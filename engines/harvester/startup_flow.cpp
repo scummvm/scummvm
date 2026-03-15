@@ -652,8 +652,7 @@ static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, St
 	if (object.operatable)
 		return kCursorSequenceOperate;
 
-	StartupInteractionResult interaction;
-	if (startupScript.resolveObjectInteraction(object, interaction))
+	if (startupScript.hasObjectInteraction(object))
 		return kCursorSequenceExamine;
 	if (startupScript.resolveObjectInspectText(object, inspectText))
 		return kCursorSequenceExamine;
@@ -1096,17 +1095,16 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 
 		mousePos = probePoint;
 		const Common::String objectLabel = startupScript->resolveObjectLabel(*hoveredObject);
-		StartupInteractionResult interaction;
 		StartupResolvedText inspectText;
 		const StartupRoomHoverState hoverState = resolveRoomHoverState(engine, scene.state, scene.sceneObjects, probePoint);
-		const bool hasInteraction = startupScript->resolveObjectInteraction(*hoveredObject, interaction);
+		const bool hasInteraction = startupScript->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugGeneral,
 			"Harvester: startup probe hotspot room='%s' object='%s' point=(%d,%d) label='%s' prompt='%s' cursor_sequence=%d action_tag='%s' interaction=%d next_room='%s' inspect=%d",
 			scene.state.roomName.c_str(), hoveredObject->objectName.c_str(), probePoint.x, probePoint.y,
 			objectLabel.c_str(), hoverState.promptText.c_str(), hoverState.cursorSequence,
 			hoveredObject->actionTag.c_str(), hasInteraction,
-			interaction.nextRoomName.c_str(), hasInspectText);
+			"", hasInspectText);
 
 		if (roomSupportsMovementBand(scene.state)) {
 			Common::Point floorProbe;
@@ -1226,10 +1224,12 @@ Common::Error StartupFlow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
 
+	_engine.getStartupScript()->resetRuntimeState();
 	Common::Error error = runQuickTips();
 	if (error.getCode() != Common::kNoError)
 		return error;
 
+	_engine.getStartupScript()->resetRuntimeState();
 	return runRoomLoop("START");
 }
 
@@ -1426,6 +1426,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 						return Common::kNoError;
 
 					if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+						_engine.getStartupScript()->resetRuntimeState();
 						Common::Error roomError = runRoomLoop("START");
 						if (roomError.getCode() == Common::kReadingFailed) {
 							statusMessage = "Unable to resolve START room setup from HARVEST.SCR.";
@@ -1455,6 +1456,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 					return Common::kNoError;
 
 				if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+					_engine.getStartupScript()->resetRuntimeState();
 					Common::Error roomError = runRoomLoop("START");
 					_engine.stopStartupMusic();
 					_engine.stopStartupSound();
@@ -1541,9 +1543,56 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 	bool moveUp = false;
 	bool moveDown = false;
 	StartupRoomIdleAnimationState idleState;
-	idleState.activityTick = getRuntimeClockTicks();
-	idleState.resetTick = idleState.activityTick;
-	updatePlayerIdleTrigger(idleState);
+	auto resetIdleState = [&]() {
+		idleState = StartupRoomIdleAnimationState();
+		idleState.activityTick = getRuntimeClockTicks();
+		idleState.resetTick = idleState.activityTick;
+		updatePlayerIdleTrigger(idleState);
+	};
+	resetIdleState();
+	auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
+		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
+		StartupRoomSetupState refreshedState;
+		if (!_engine.getStartupScript()->materializeRoomState(
+				scene.state.entranceName, scene.state.roomName, refreshedState)) {
+			return false;
+		}
+
+		refreshedState.audioCommands = entryAudioCommands;
+		if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
+			return false;
+		if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
+			return false;
+
+		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
+		if (playerState.entity) {
+			if (!preservePlayerPlacement || playerState.facing < 0) {
+				playerState.centerX = scene.state.playerSpawnX;
+				playerState.bottomY = scene.state.playerSpawnY;
+				playerState.z = (float)scene.state.playerSpawnZ;
+				playerState.facing = scene.state.playerFacing;
+			}
+
+			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
+			(void)setPlayerIdleAnimation(playerState, facing);
+			(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+				playerState.centerX, playerState.bottomY, playerState.z);
+		}
+
+		playerState.hasMoveTarget = false;
+		playerState.turnActive = false;
+		playerState.turnTargetFacing = -1;
+		resetIdleState();
+		resetCursorAnimationSequence();
+		return true;
+	};
+	auto runRoomExitCommands = [&]() {
+		Common::Array<StartupAudioCommand> exitAudioCommands;
+		if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitAudioCommands))
+			return false;
+		executeStartupAudioCommands(exitAudioCommands);
+		return true;
+	};
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -1642,6 +1691,7 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				if (!clickedObject->identShown && canShowInspectText) {
 					inspectText = resolvedInspectText;
 					clickedObject->identShown = true;
+					_engine.getStartupScript()->markObjectIdentShown(*clickedObject);
 					showingInspectText = true;
 					inspectCanDismiss = false;
 					playerState.hasMoveTarget = false;
@@ -1677,28 +1727,26 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				needsRedraw = true;
 
 				if (!interaction.nextRoomName.empty()) {
-					executeStartupAudioCommands(scene.state.exitAudioCommands);
+					if (!runRoomExitCommands())
+						return Common::kReadingFailed;
+
 					Common::Error roomError = runRoomLoop(interaction.nextRoomName);
 					if (roomError.getCode() != Common::kReadingFailed &&
 						roomError.getCode() != Common::kNoError) {
 						return roomError;
 					}
 
-					(void)populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations);
-					resetCursorAnimationSequence();
+					if (!refreshCurrentScene(true))
+						return Common::kReadingFailed;
+
 					executeStartupAudioCommands(scene.state.audioCommands);
 					if (!restoreMusicPath.empty())
 						(void)_engine.playStartupMusic(restoreMusicPath);
 					else
 						_engine.stopStartupMusic();
-					playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
-					playerState.centerX = state.playerSpawnX;
-					playerState.bottomY = state.playerSpawnY;
-					playerState.z = (float)state.playerSpawnZ;
-					playerState.facing = state.playerFacing;
-					playerState.hasMoveTarget = false;
-					playerState.turnActive = false;
-					playerState.turnTargetFacing = -1;
+				} else if (interaction.mutatedRuntimeState) {
+					if (!refreshCurrentScene(true))
+						return Common::kReadingFailed;
 					needsRedraw = true;
 				}
 				break;
@@ -1733,7 +1781,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
 					event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					executeStartupAudioCommands(scene.state.exitAudioCommands);
+					if (!runRoomExitCommands())
+						return Common::kReadingFailed;
 					return Common::kNoError;
 				}
 				break;

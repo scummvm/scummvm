@@ -166,6 +166,7 @@ bool StartupScript::load(ResourceManager &resources) {
 
 	decode();
 	parseTownRecords(resources);
+	resetRuntimeState();
 	debug(1, "Harvester: loaded startup script '%s' (%u bytes)", _path.c_str(), (uint)_data.size());
 	return true;
 }
@@ -427,36 +428,221 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 }
 
 bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources) const {
+		ResourceManager &resources) {
+	(void)resources;
 	state = StartupRoomSetupState();
 
-	const StartupEntranceRecord *entrance = nullptr;
-	for (const StartupEntranceRecord &candidate : _entrances) {
-		if (candidate.entranceName.equalsIgnoreCase(entranceName)) {
-			entrance = &candidate;
-			break;
-		}
-	}
-
-	Common::String resolvedRoomName;
-	if (entrance)
-		resolvedRoomName = entrance->roomName;
-	else
-		resolvedRoomName = entranceName;
-
-	const StartupRoomRecord *room = nullptr;
-	for (const StartupRoomRecord &candidate : _rooms) {
-		if (candidate.roomName.equalsIgnoreCase(resolvedRoomName)) {
-			room = &candidate;
-			break;
-		}
-	}
+	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
+	const Common::String resolvedRoomName = entrance ? entrance->roomName : entranceName;
+	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
 	if (!room)
 		return false;
 
+	Common::String musicPath;
+	Common::Array<StartupAudioCommand> audioCommands;
+	bool mutatedRuntimeState = false;
+	executeCommandChain(room->onEnterCommand, "room setup command", room->roomName, false,
+		&musicPath, &audioCommands, nullptr, &mutatedRuntimeState);
+
+	if (!buildRuntimeRoomState(*room, entrance, state))
+		return false;
+
+	state.audioCommands = audioCommands;
+	if (!musicPath.empty())
+		state.musicPath = musicPath;
+
+	debugC(1, kDebugGeneral,
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u mutated=%d",
+		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
+		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
+		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
+		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
+		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), mutatedRuntimeState);
+
+	return true;
+}
+
+void StartupScript::resetRuntimeState() {
+	_runtimeFlags = _flags;
+	_runtimeObjects = _objects;
+	_runtimeAnimations = _animations;
+
+	for (StartupObjectRecord &object : _runtimeObjects) {
+		object.currentX = object.initialX;
+		object.currentY = object.initialY;
+		object.currentZ = object.initialZ;
+		object.currentOwnerOrRoom = object.initialOwnerOrRoom;
+		object.runtimeVisible = object.visible;
+		object.identShown = object.identTextKey.empty();
+	}
+
+	for (StartupAnimRecord &anim : _runtimeAnimations) {
+		anim.runtimeActive = anim.active;
+		anim.runtimeVisible = anim.visible;
+		anim.runtimeState = -1;
+	}
+}
+
+bool StartupScript::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
+		StartupRoomSetupState &state) const {
+	state = StartupRoomSetupState();
+
+	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
+	const Common::String resolvedRoomName = !roomName.empty()
+		? roomName
+		: (entrance ? entrance->roomName : Common::String());
+	if (resolvedRoomName.empty())
+		return false;
+
+	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
+	if (!room)
+		return false;
+
+	return buildRuntimeRoomState(*room, entrance, state);
+}
+
+bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
+		Common::Array<StartupAudioCommand> &audioCommands) {
+	audioCommands.clear();
+
+	const StartupRoomRecord *room = findRoomRecord(roomName);
+	if (!room)
+		return false;
+
+	bool mutatedRuntimeState = false;
+	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
+		nullptr, &audioCommands, nullptr, &mutatedRuntimeState);
+	return true;
+}
+
+bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) {
+	result = StartupInteractionResult();
+	if (object.actionTag.empty())
+		return false;
+
+	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+
+	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
+}
+
+bool StartupScript::hasObjectInteraction(const StartupObjectRecord &object) const {
+	if (object.actionTag.empty())
+		return false;
+
+	return hasActionableCommandChain(object.actionTag);
+}
+
+void StartupScript::markObjectIdentShown(const StartupObjectRecord &object) {
+	if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
+		runtimeObject->identShown = true;
+}
+
+const StartupEntranceRecord *StartupScript::findEntranceRecord(const Common::String &entranceName) const {
+	if (entranceName.empty())
+		return nullptr;
+
+	for (const StartupEntranceRecord &entrance : _entrances) {
+		if (entrance.entranceName.equalsIgnoreCase(entranceName))
+			return &entrance;
+	}
+
+	return nullptr;
+}
+
+const StartupRoomRecord *StartupScript::findRoomRecord(const Common::String &roomName) const {
+	if (roomName.empty())
+		return nullptr;
+
+	for (const StartupRoomRecord &room : _rooms) {
+		if (room.roomName.equalsIgnoreCase(roomName))
+			return &room;
+	}
+
+	return nullptr;
+}
+
+const StartupCommandRecord *StartupScript::findCommandRecord(const Common::String &tag) const {
+	if (tag.empty())
+		return nullptr;
+
+	for (const StartupCommandRecord &command : _commands) {
+		if (command.triggerTag.equalsIgnoreCase(tag))
+			return &command;
+	}
+
+	return nullptr;
+}
+
+const StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &flagName) const {
+	if (flagName.empty())
+		return nullptr;
+
+	for (const StartupFlagRecord &flag : _runtimeFlags) {
+		if (flag.name.equalsIgnoreCase(flagName))
+			return &flag;
+	}
+
+	return nullptr;
+}
+
+StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &flagName) {
+	if (flagName.empty())
+		return nullptr;
+
+	for (StartupFlagRecord &flag : _runtimeFlags) {
+		if (flag.name.equalsIgnoreCase(flagName))
+			return &flag;
+	}
+
+	return nullptr;
+}
+
+StartupObjectRecord *StartupScript::findRuntimeObject(const Common::String &ownerOrRoom,
+		const Common::String &objectName) {
+	if (objectName.empty())
+		return nullptr;
+
+	StartupObjectRecord *fallback = nullptr;
+	for (StartupObjectRecord &object : _runtimeObjects) {
+		if (!object.objectName.equalsIgnoreCase(objectName))
+			continue;
+
+		if (ownerOrRoom.empty())
+			return &object;
+
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) ||
+			object.initialOwnerOrRoom.equalsIgnoreCase(ownerOrRoom)) {
+			return &object;
+		}
+
+		if (!fallback)
+			fallback = &object;
+	}
+
+	return fallback;
+}
+
+StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName) {
+	if (animName.empty())
+		return nullptr;
+
+	for (StartupAnimRecord &anim : _runtimeAnimations) {
+		if (anim.animName.equalsIgnoreCase(animName))
+			return &anim;
+	}
+
+	return nullptr;
+}
+
+bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
+		StartupRoomSetupState &state) const {
+	state = StartupRoomSetupState();
+
 	const StartupObjectRecord *background = nullptr;
-	for (const StartupObjectRecord &candidate : _objects) {
-		if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room->roomName) ||
+	for (const StartupObjectRecord &candidate : _runtimeObjects) {
+		if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room.roomName) ||
 			!candidate.spritePath.hasPrefixIgnoreCase("GRAPHIC/ROOMS/") ||
 			!candidate.spritePath.hasSuffixIgnoreCase(".BM")) {
 			continue;
@@ -468,19 +654,19 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	if (!background)
 		return false;
 
-	state.roomName = room->roomName;
-	state.palettePath = room->palettePath;
+	state.roomName = room.roomName;
+	state.palettePath = room.palettePath;
 	state.backgroundPath = background->spritePath;
-	state.roomMinZ = room->minZ;
-	state.roomMaxZ = room->maxZ;
-	state.roomMaxZScreenY = room->maxZScreenY;
-	state.roomMinZScreenY = room->minZScreenY;
-	state.roomFullScaleZ = room->fullScaleZ;
-	state.roomMaxZScalePercent = room->maxZScalePercent;
-	state.roomPerspectiveScale = room->perspectiveScale;
-	state.roomZVelocityStep = room->zVelocityStep;
-	state.musicPath = room->musicPath;
-	if (entrance) {
+	state.roomMinZ = room.minZ;
+	state.roomMaxZ = room.maxZ;
+	state.roomMaxZScreenY = room.maxZScreenY;
+	state.roomMinZScreenY = room.minZScreenY;
+	state.roomFullScaleZ = room.fullScaleZ;
+	state.roomMaxZScalePercent = room.maxZScalePercent;
+	state.roomPerspectiveScale = room.perspectiveScale;
+	state.roomZVelocityStep = room.zVelocityStep;
+	state.musicPath = room.musicPath;
+	if (entrance && entrance->roomName.equalsIgnoreCase(room.roomName)) {
 		state.entranceName = entrance->entranceName;
 		state.hasEntrance = true;
 		state.playerSpawnX = entrance->posX;
@@ -488,186 +674,23 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		state.playerSpawnZ = entrance->posZ;
 		state.playerFacing = entrance->facing;
 	}
-	for (const StartupObjectRecord &object : _objects) {
-		if (object.currentOwnerOrRoom.equalsIgnoreCase(room->roomName))
+	for (const StartupObjectRecord &object : _runtimeObjects) {
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
 			state.roomObjects.push_back(object);
 	}
-	for (const StartupAnimRecord &anim : _animations) {
-		if (anim.roomName.equalsIgnoreCase(room->roomName))
+	for (const StartupAnimRecord &anim : _runtimeAnimations) {
+		if (anim.roomName.equalsIgnoreCase(room.roomName))
 			state.roomAnimations.push_back(anim);
 	}
 
-	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
-	auto getFlagValue = [&](const Common::String &flagName) {
-		for (const StartupFlagRecord &flag : resolvedFlags) {
-			if (flag.name.equalsIgnoreCase(flagName))
-				return flag.value;
-		}
-		return false;
-	};
-	auto setFlagValue = [&](const Common::String &flagName, bool value) {
-		for (StartupFlagRecord &flag : resolvedFlags) {
-			if (flag.name.equalsIgnoreCase(flagName)) {
-				flag.value = value;
-				return;
-			}
-		}
-
-		StartupFlagRecord flag;
-		flag.name = flagName;
-		flag.value = value;
-		resolvedFlags.push_back(flag);
-	};
-	auto addObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
-		for (const StartupObjectRecord &candidate : _objects) {
-			if (!candidate.initialOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) ||
-				!candidate.objectName.equalsIgnoreCase(objectName)) {
-				continue;
-			}
-
-			for (const StartupObjectRecord &activeObject : state.activeObjects) {
-				if (activeObject.currentOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
-					activeObject.objectName.equalsIgnoreCase(candidate.objectName)) {
-					return;
-				}
-			}
-
-			StartupObjectRecord object = candidate;
-			object.currentOwnerOrRoom = ownerOrRoom;
-			state.activeObjects.push_back(object);
-			return;
-		}
-	};
-	auto removeObject = [&](const Common::String &ownerOrRoom, const Common::String &objectName) {
-		for (uint i = 0; i < state.activeObjects.size(); ++i) {
-			if (state.activeObjects[i].currentOwnerOrRoom.equalsIgnoreCase(ownerOrRoom) &&
-				state.activeObjects[i].objectName.equalsIgnoreCase(objectName)) {
-				state.activeObjects.remove_at(i);
-				return;
-			}
-		}
-	};
-	auto findCommand = [&](const Common::String &tag) -> const StartupCommandRecord * {
-		for (const StartupCommandRecord &command : _commands) {
-			if (command.triggerTag.equalsIgnoreCase(tag))
-				return &command;
-		}
-		return nullptr;
-	};
-
-	Common::String currentTag = room->onEnterCommand;
-	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommand(currentTag);
-		if (!command) {
-			debug(1, "Harvester: unresolved startup command tag '%s' for room '%s'",
-				currentTag.c_str(), room->roomName.c_str());
-			break;
-		}
-
-		debugC(1, kDebugScene,
-			"Harvester: room setup command room='%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
-			room->roomName.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
-			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
-
-		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			debugC(1, kDebugScene, "Harvester: room setup flag '%s' -> %d",
-				command->arg1.c_str(), getFlagValue(command->arg1));
-			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
-			continue;
-		}
-
-		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
-			debugC(1, kDebugScene, "Harvester: room setup set flag '%s' = %d",
-				command->arg1.c_str(), command->arg2.equalsIgnoreCase("T"));
-			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
-			debugC(1, kDebugScene, "Harvester: room setup spool music '%s'",
-				command->arg1.c_str());
-			state.musicPath = resources.normalizeResourcePath(command->arg1);
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (appendStartupAudioCommand(*command, state.audioCommands)) {
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (command->opcodeName.equalsIgnoreCase("ADD")) {
-			debugC(1, kDebugScene, "Harvester: room setup add object owner='%s' object='%s'",
-				command->arg1.c_str(), command->arg2.c_str());
-			addObject(command->arg1, command->arg2);
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (command->opcodeName.equalsIgnoreCase("DELETE")) {
-			debugC(1, kDebugScene, "Harvester: room setup delete object owner='%s' object='%s'",
-				command->arg1.c_str(), command->arg2.c_str());
-			removeObject(command->arg1, command->arg2);
-			currentTag = command->arg4;
-			continue;
-		}
-
-		debug(1, "Harvester: unsupported startup command '%s' for tag '%s'",
-			command->opcodeName.c_str(), command->triggerTag.c_str());
-		break;
-	}
-
-	currentTag = room->onExitCommand;
-	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommand(currentTag);
-		if (!command) {
-			debug(1, "Harvester: unresolved startup room-exit command tag '%s' for room '%s'",
-				currentTag.c_str(), room->roomName.c_str());
-			break;
-		}
-
-		debugC(1, kDebugScene,
-			"Harvester: room exit command room='%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
-			room->roomName.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
-			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
-
-		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
-			continue;
-		}
-
-		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
-			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (appendStartupAudioCommand(*command, state.exitAudioCommands)) {
-			currentTag = command->arg4;
-			continue;
-		}
-
-		// Preserve the confirmed teardown audio chain even when later exit opcodes
-		// still depend on broader persistent startup script state we do not model yet.
-		currentTag = command->arg4;
-	}
-
-	state.paletteBrightness = (room->dimmable && !getFlagValue("DAY_FLAG"))
+	const StartupFlagRecord *dayFlag = findRuntimeFlag("DAY_FLAG");
+	state.paletteBrightness = (room.dimmable && (!dayFlag || !dayFlag->value))
 		? kDimmedPaletteBrightness
 		: kDefaultPaletteBrightness;
 
 	for (const StartupObjectRecord &object : state.roomObjects) {
 		debugC(1, kDebugScene,
-			"Harvester: room setup room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
-			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
-			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
-			object.currentX, object.currentY, object.currentZ,
-			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
-	}
-	for (const StartupObjectRecord &object : state.activeObjects) {
-		debugC(1, kDebugScene,
-			"Harvester: room setup active object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
+			"Harvester: materialized room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
 			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
 			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
 			object.currentX, object.currentY, object.currentZ,
@@ -675,94 +698,184 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	}
 
 	debugC(1, kDebugGeneral,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u",
-		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
-		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
-		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
-		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
-		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size());
+		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u",
+		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
+		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
+		state.musicPath.c_str(), (double)state.paletteBrightness,
+		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size());
 
 	return true;
 }
 
-bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const {
-	result = StartupInteractionResult();
-	if (object.actionTag.empty())
-		return false;
-
-	Common::Array<StartupFlagRecord> resolvedFlags = _flags;
-	auto getFlagValue = [&](const Common::String &flagName) {
-		for (const StartupFlagRecord &flag : resolvedFlags) {
-			if (flag.name.equalsIgnoreCase(flagName))
-				return flag.value;
-		}
-		return false;
+void StartupScript::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
+		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
+		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		bool *mutatedRuntimeState) {
+	auto isTruthy = [](const Common::String &value) {
+		return value.equalsIgnoreCase("T") || value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE");
 	};
-	auto setFlagValue = [&](const Common::String &flagName, bool value) {
-		for (StartupFlagRecord &flag : resolvedFlags) {
-			if (flag.name.equalsIgnoreCase(flagName)) {
-				flag.value = value;
-				return;
-			}
-		}
-
-		StartupFlagRecord flag;
-		flag.name = flagName;
-		flag.value = value;
-		resolvedFlags.push_back(flag);
-	};
-	auto findCommand = [&](const Common::String &tag) -> const StartupCommandRecord * {
-		for (const StartupCommandRecord &command : _commands) {
-			if (command.triggerTag.equalsIgnoreCase(tag))
-				return &command;
-		}
-		return nullptr;
+	auto noteMutation = [&](bool changed) {
+		if (changed && mutatedRuntimeState)
+			*mutatedRuntimeState = true;
 	};
 
-	Common::String currentTag = object.actionTag;
+	Common::String currentTag = initialTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommand(currentTag);
+		const StartupCommandRecord *command = findCommandRecord(currentTag);
 		if (!command) {
-			debug(1, "Harvester: unresolved interaction command tag '%s' for object '%s'",
-				currentTag.c_str(), object.objectName.c_str());
+			debug(1, "Harvester: unresolved %s tag '%s' for '%s'",
+				contextLabel, currentTag.c_str(), contextName.c_str());
 			break;
 		}
 
+		debugC(1, kDebugScene,
+			"Harvester: %s '%s' step=%u tag='%s' opcode='%s' args=['%s','%s','%s','%s']",
+			contextLabel, contextName.c_str(), step, currentTag.c_str(), command->opcodeName.c_str(),
+			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
+
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			currentTag = getFlagValue(command->arg1) ? command->arg2 : command->arg3;
+			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			const bool flagValue = flag && flag->value;
+			debugC(1, kDebugScene, "Harvester: %s '%s' flag '%s' -> %d",
+				contextLabel, contextName.c_str(), command->arg1.c_str(), flagValue);
+			currentTag = flagValue ? command->arg2 : command->arg3;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
-			setFlagValue(command->arg1, command->arg2.equalsIgnoreCase("T"));
-			currentTag = command->arg4;
-			continue;
-		}
-
-		if (appendStartupAudioCommand(*command, result.audioCommands)) {
+			const bool flagValue = isTruthy(command->arg2);
+			StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			bool changed = false;
+			if (flag) {
+				changed = flag->value != flagValue;
+				flag->value = flagValue;
+			} else {
+				StartupFlagRecord newFlag;
+				newFlag.name = command->arg1;
+				newFlag.value = flagValue;
+				_runtimeFlags.push_back(newFlag);
+				changed = true;
+			}
+			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC")) {
-			if (result.musicPath.empty())
-				result.musicPath = command->arg1;
+			if (musicPath)
+				*musicPath = command->arg1;
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (audioCommands) {
+			if (appendStartupAudioCommand(*command, *audioCommands)) {
+				currentTag = command->arg4;
+				continue;
+			}
+		} else {
+			Common::Array<StartupAudioCommand> ignoredAudioCommands;
+			if (appendStartupAudioCommand(*command, ignoredAudioCommands)) {
+				currentTag = command->arg4;
+				continue;
+			}
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("ADD") ||
+			command->opcodeName.equalsIgnoreCase("DELETE")) {
+			StartupObjectRecord *runtimeObject = findRuntimeObject(command->arg1, command->arg2);
+			if (!runtimeObject) {
+				debug(1, "Harvester: unresolved object for %s '%s' owner='%s' object='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str(), command->arg2.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const bool visible = command->opcodeName.equalsIgnoreCase("ADD");
+			const bool changed = runtimeObject->visible != visible ||
+				runtimeObject->runtimeVisible != visible;
+			runtimeObject->visible = visible;
+			runtimeObject->runtimeVisible = visible;
+			if (visible && runtimeObject->currentOwnerOrRoom.equalsIgnoreCase("INVENTORY"))
+				runtimeObject->identShown = true;
+			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_ANIM")) {
+			StartupAnimRecord *runtimeAnim = findRuntimeAnim(command->arg1);
+			if (!runtimeAnim) {
+				debug(1, "Harvester: unresolved anim for %s '%s' anim='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const bool active = isTruthy(command->arg2);
+			const bool visible = isTruthy(command->arg3);
+			const bool changed = runtimeAnim->active != active ||
+				runtimeAnim->visible != visible ||
+				runtimeAnim->runtimeActive != active ||
+				runtimeAnim->runtimeVisible != visible;
+			runtimeAnim->active = active;
+			runtimeAnim->visible = visible;
+			runtimeAnim->runtimeActive = active;
+			runtimeAnim->runtimeVisible = visible;
+			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
-			result.nextRoomName = command->arg1;
-			return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty();
+			if (allowTransitions && nextRoomName)
+				*nextRoomName = command->arg1;
+			else
+				debugC(1, kDebugScene, "Harvester: skipped transition opcode '%s' while processing %s '%s'",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+			return;
 		}
 
-		debug(1, "Harvester: unsupported interaction command '%s' for tag '%s'",
-			command->opcodeName.c_str(), command->triggerTag.c_str());
-		break;
+		debug(1, "Harvester: unsupported startup command '%s' for %s '%s', continuing",
+			command->opcodeName.c_str(), contextLabel, contextName.c_str());
+		currentTag = command->arg4;
+	}
+}
+
+bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) const {
+	Common::String currentTag = initialTag;
+	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
+		const StartupCommandRecord *command = findCommandRecord(currentTag);
+		if (!command) {
+			debug(1, "Harvester: unresolved interaction probe tag '%s'", currentTag.c_str());
+			break;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			currentTag = (flag && flag->value) ? command->arg2 : command->arg3;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_FLAG") ||
+			command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC") ||
+			command->opcodeName.equalsIgnoreCase("ADD") ||
+			command->opcodeName.equalsIgnoreCase("DELETE") ||
+			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
+			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
+			return true;
+		}
+
+		Common::Array<StartupAudioCommand> audioCommands;
+		if (appendStartupAudioCommand(*command, audioCommands))
+			return true;
+
+		currentTag = command->arg4;
 	}
 
-	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty();
+	return false;
 }
 
 const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key) const {

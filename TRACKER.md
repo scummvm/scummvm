@@ -15,18 +15,19 @@
 
 ## Last Confirmed Action
 
-- Confirmed in Ghidra that `room_setup` dispatches the current room's `on_exit_tag` before resolving and loading the destination room.
-  - Startup exit tags such as `CEM2_EXITCOM`, `CEM10_EXITCOM0`, and `ARRESTED_EXITCOM` were decoded from `HARVEST.SCR`.
-  - The confirmed startup exit opcode mix is broader than audio alone: `DELETE_WAV`, `SET_FLAG`, `SET_NPC`, `SET_TIMER`, `KILL_TIMER`, `SET_ANIM`, `ADD`, `DELETE`, and `CHECK_FLAG` all appear on room-exit chains.
-- Patched the startup stub to mirror the confirmed room-exit audio cleanup path.
-  - `resolveRoomSetupState()` now collects room-exit audio commands alongside room-enter audio commands.
-  - `runRoomLoop()` now executes those exit audio commands before recursive room handoff and again when a stub room loop closes, so startup `DELETE_WAV` cleanup no longer depends on the global `stopStartupSound()` fallback.
-  - Parent rooms now reapply their room-enter audio setup after a nested room loop unwinds, preserving the current recursive-room stub behavior.
+- Confirmed in Ghidra that the native startup path keeps mutable town-script runtime state beyond room-local audio.
+  - `initialize_town_script_runtime` is called from the startup path before `room_setup`, which aligns with the native `ADD`/`DELETE` and `SET_ANIM` behavior observed in decoded `HARVEST.SCR`.
+  - Native room transitions still dispatch the current room's `on_exit_tag` before the destination room is resolved and loaded.
+  - Decoded startup exit chains such as `CEM10_EXITCOM0`, `DNALFT_EXITCOM`, and `SCH_HALL_EXITCOM` include `SET_FLAG`, `SET_NPC`, `SET_TIMER`, `KILL_TIMER`, `SET_ANIM`, `ADD`, `DELETE`, `DELETE_WAV`, and `CHECK_FLAG`.
+- Patched the startup stub to persist the runtime state that the current engine can model directly.
+  - `StartupScript` now keeps mutable runtime copies of flags, objects, and animations instead of rebuilding them from `_flags`, `_objects`, and `_animations` on every query.
+  - `resolveRoomSetupState()` mutates that runtime state through room-enter commands, `executeRoomExitCommands()` now applies room-exit chains at handoff time, and `materializeRoomState()` rebuilds the current room from live runtime state without re-running room-enter commands.
+  - `runRoomLoop()` now refreshes the current room from runtime state after same-room command mutations and after nested room unwind, preserving the player's current placement while carrying forward `SET_FLAG`, `ADD`, `DELETE`, and `SET_ANIM`.
 
 ## Next Suggested Action
 
-1. Introduce persistent startup script runtime state so `SET_FLAG`, `ADD`, and `DELETE` effects from room-enter, room-exit, and object-interaction chains survive across room transitions instead of being recomputed from `_flags` and `_objects` defaults.
-2. Extend startup exit handling beyond audio once that state exists, starting with the confirmed room-exit opcodes already present in startup rooms: `SET_NPC`, `SET_TIMER`, `KILL_TIMER`, and `SET_ANIM`.
+1. Parse startup NPC and timer records from `HARVEST.SCR`, then add persistent runtime state for the remaining confirmed exit and interaction opcodes: `SET_NPC`, `SET_TIMER`, and `KILL_TIMER`.
+2. Confirm the native side effects of those opcodes in Ghidra before naming any new runtime structures or script helpers.
 3. Parse `REGION` records from `HARVEST.SCR` into the startup script layer.
 4. Mirror native startup transition handling for class `0x19` region entities.
   - Spawn enabled region hotspots from `room_setup` state.

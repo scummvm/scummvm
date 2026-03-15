@@ -163,13 +163,13 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
 	Common::Array<StartupAudioCommand> audioCommands;
-	Common::Array<StartupAudioCommand> exitAudioCommands;
 };
 
 struct StartupInteractionResult {
 	Common::String musicPath;
 	Common::String nextRoomName;
 	Common::Array<StartupAudioCommand> audioCommands;
+	bool mutatedRuntimeState = false;
 };
 
 struct StartupResolvedText {
@@ -192,9 +192,15 @@ public:
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
+	void resetRuntimeState();
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources) const;
-	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) const;
+		ResourceManager &resources);
+	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
+		StartupRoomSetupState &state) const;
+	bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
+	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+	bool hasObjectInteraction(const StartupObjectRecord &object) const;
+	void markObjectIdentShown(const StartupObjectRecord &object);
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 	Common::String resolveTextValue(const Common::String &key) const;
@@ -203,7 +209,21 @@ private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
+	const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
+	const StartupRoomRecord *findRoomRecord(const Common::String &roomName) const;
+	const StartupCommandRecord *findCommandRecord(const Common::String &tag) const;
 	const StartupTextRecord *findTextRecord(const Common::String &key) const;
+	const StartupFlagRecord *findRuntimeFlag(const Common::String &flagName) const;
+	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
+	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
+	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
+	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
+		StartupRoomSetupState &state) const;
+	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
+		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
+		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		bool *mutatedRuntimeState);
+	bool hasActionableCommandChain(const Common::String &initialTag) const;
 
 	Common::String _path;
 	Common::Array<byte> _data;
@@ -214,6 +234,9 @@ private:
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
 	Common::Array<StartupTextRecord> _texts;
+	Common::Array<StartupFlagRecord> _runtimeFlags;
+	Common::Array<StartupObjectRecord> _runtimeObjects;
+	Common::Array<StartupAnimRecord> _runtimeAnimations;
 	bool _quickTipsEnabled = true;
 };
 
