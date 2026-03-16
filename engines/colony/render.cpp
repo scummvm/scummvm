@@ -876,9 +876,10 @@ void ColonyEngine::renderCorridor3D() {
 			ceilColor = wallFill;
 		}
 	} else {
-		// Mac B&W: walls are pure white (c_dwall=WHITE); EGA: light gray (7)
-		wallFill = lit ? (macMode ? 255 : 7) : 0;
-		wallLine = lit ? 0 : (macMode ? 255 : 7);
+		// IBM_DISP.C: lit → BackColor(vWHITE)=15, color_wall=vwall_Light=0 (black lines on white bg)
+		//             dark → BackColor(vBLACK)=0, color_wall=vINTWHITE=15 (white lines on black bg)
+		wallFill = lit ? (macMode ? 255 : 15) : 0;
+		wallLine = lit ? 0 : (macMode ? 255 : 15);
 		floorColor = macMode ? (lit ? 255 : 0) : wallFill;
 		ceilColor  = macMode ? (lit ? 255 : 0) : wallFill;
 	}

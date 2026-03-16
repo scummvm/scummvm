@@ -793,9 +793,9 @@ void ColonyEngine::drawCrosshair() {
 		else
 			color = (_corePower[_coreIndex] > 0) ? packRGB(0, 0, 0) : packRGB(255, 255, 255);
 	} else {
-		color = (_weapons > 0) ? 15 : 7;
-		if (_corePower[_coreIndex] > 0)
-			color = 0;
+		// IBM_DISP.C: powered → color_cursor=realcolor[vBLACK]=0
+		//             unpowered → color_cursor=realcolor[vWHITE]=15
+		color = (_corePower[_coreIndex] > 0) ? 0 : 15;
 	}
 
 	const int cx = _centerX;

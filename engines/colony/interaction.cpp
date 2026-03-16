@@ -81,6 +81,9 @@ void ColonyEngine::interactWithObject(int objNum) {
 		}
 		break;
 	case kObjPowerSuit:
+		// GANIMATE.C DoPowerSuit(): if(!corepower[coreindex])return;
+		if (!_corePower[_coreIndex])
+			break;
 		if (loadAnimation("suit"))
 			playAnimation();
 		break;

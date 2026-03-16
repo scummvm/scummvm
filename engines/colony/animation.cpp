@@ -1160,8 +1160,6 @@ void ColonyEngine::handleSuitClick(int item) {
 		setObjectState(3, _armor + 1); // display state
 		drawAnimation();
 		_gfx->copyToScreen();
-		if (_armor == 3 && _weapons == 3)
-			_corePower[_coreIndex] = 2;
 	} else if (item == 2) { // Weapons
 		if (_weapons == 3) {
 			for (int i = 6; i >= 1; i--) {
@@ -1183,8 +1181,6 @@ void ColonyEngine::handleSuitClick(int item) {
 		setObjectState(4, _weapons + 1);
 		drawAnimation();
 		_gfx->copyToScreen();
-		if (_armor == 3 && _weapons == 3)
-			_corePower[_coreIndex] = 2;
 	}
 }
 
