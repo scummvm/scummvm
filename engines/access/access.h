@@ -126,7 +126,7 @@ static const AccessActionCode MARTIAN_ACTION_CODES[] = {
 	{ kActionNone, -1 },
 };
 
-#define ACCESS_SAVEGAME_VERSION 1
+#define ACCESS_SAVEGAME_VERSION 2
 
 struct AccessSavegameHeader {
 	uint8 _version;
@@ -135,6 +135,7 @@ struct AccessSavegameHeader {
 	int _year, _month, _day;
 	int _hour, _minute;
 	int _totalFrames;
+	int _totalPlayTime;
 };
 
 class AccessEngine : public Engine {

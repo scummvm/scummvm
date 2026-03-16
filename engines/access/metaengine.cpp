@@ -97,6 +97,8 @@ bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
 }
 
@@ -177,8 +179,12 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 		desc.setThumbnail(header._thumbnail);
 		desc.setSaveDate(header._year, header._month, header._day);
 		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
 
+		if (header._version >= 2)
+			desc.setPlayTime(header._totalPlayTime * 1000);
+		else
+			desc.setPlayTime(0);
+				
 		return desc;
 	}
 

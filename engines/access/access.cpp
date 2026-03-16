@@ -192,6 +192,7 @@ void AccessEngine::initialize() {
 	_video = new VideoPlayer(this);
 
 	syncSoundSettings();
+	setTotalPlayTime(0);
 
 	setDebugger(Debugger::init(this));
 	_buffer1.create(g_system->getWidth() + TILE_WIDTH, g_system->getHeight());
@@ -506,6 +507,9 @@ Common::Error AccessEngine::loadGameState(int slot) {
 	synchronize(s);
 	delete saveFile;
 
+	// Set total playTime (ms) from header
+	setTotalPlayTime(header._totalPlayTime * 1000);
+
 	// Set extra post-load state
 	_room->_function = FN_CLEAR1;
 	_timers._timersSavedFlag = false;
@@ -568,8 +572,14 @@ WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in,
 	header._day = in->readSint16LE();
 	header._hour = in->readSint16LE();
 	header._minute = in->readSint16LE();
+
+	// Read Totalframes
 	header._totalFrames = in->readUint32LE();
 
+	// Read the Total PlayTime (if available)
+	if (header._version > 1)
+		header._totalPlayTime = in->readUint32LE();	
+	
 	return true;
 }
 
@@ -601,6 +611,9 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
 	out->writeUint32LE(_events->getFrameCounter());
+
+	// Write the total PlayTime (ms)
+	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 bool AccessEngine::shouldQuitOrRestart() {
