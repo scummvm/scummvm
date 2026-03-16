@@ -105,6 +105,24 @@ struct StartupAnimRecord {
 	int runtimeState = -1;
 };
 
+struct StartupNpcRecord {
+	int posX = 0;
+	int posY = 0;
+	int posZ = 0;
+	int frameDelay = 0;
+	Common::String onDeathActionTag;
+	Common::String modelPath;
+	Common::String npcName;
+	Common::String monsterfyTargetName;
+	Common::String roomName;
+	bool runtimeSpawned = false;
+	bool active = false;
+	bool visible = false;
+	bool savedVisible = false;
+	Common::String audioPath;
+	Common::String entityInitArg;
+};
+
 struct StartupRegionRecord {
 	int left = 0;
 	int top = 0;
@@ -185,6 +203,7 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> activeObjects;
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
+	Common::Array<StartupNpcRecord> roomNpcs;
 	Common::Array<StartupRegionRecord> roomRegions;
 	Common::Array<StartupAudioCommand> audioCommands;
 };
@@ -211,6 +230,7 @@ public:
 	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
+	const Common::Array<StartupNpcRecord> &getNpcs() const { return _npcs; }
 	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
@@ -250,6 +270,7 @@ private:
 	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
 	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
 	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
+	StartupNpcRecord *findRuntimeNpc(const Common::String &npcName);
 	bool addRuntimeObjectToInventory(const Common::String &objectName);
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const;
@@ -265,6 +286,7 @@ private:
 	Common::Array<StartupRoomRecord> _rooms;
 	Common::Array<StartupObjectRecord> _objects;
 	Common::Array<StartupAnimRecord> _animations;
+	Common::Array<StartupNpcRecord> _npcs;
 	Common::Array<StartupRegionRecord> _regions;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
@@ -273,6 +295,7 @@ private:
 	Common::Array<StartupFlagRecord> _runtimeFlags;
 	Common::Array<StartupObjectRecord> _runtimeObjects;
 	Common::Array<StartupAnimRecord> _runtimeAnimations;
+	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	bool _quickTipsEnabled = true;
 };
 
