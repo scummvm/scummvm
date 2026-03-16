@@ -1,6 +1,7 @@
 MODULE := engines/harvester
 
 MODULE_OBJS = \
+	cft_font.o \
 	harvester.o \
 	console.o \
 	fst_player.o \
