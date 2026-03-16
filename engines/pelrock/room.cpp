@@ -36,7 +36,7 @@ RoomManager::RoomManager() {
 
 RoomManager::~RoomManager() {
 	if (_pixelsShadows != nullptr) {
-		delete[] _pixelsShadows;
+		free(_pixelsShadows);
 		_pixelsShadows = nullptr;
 	}
 	delete[] _resetData;
@@ -602,7 +602,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	loadConversationData(pair12, pair12size, _conversationOffset, _conversationDataSize, _conversationData);
 
 	if (_pixelsShadows != nullptr)
-		delete[] _pixelsShadows;
+		free(_pixelsShadows);
 	_pixelsShadows = loadShadowMap(roomNumber);
 
 	loadRemaps(roomNumber);

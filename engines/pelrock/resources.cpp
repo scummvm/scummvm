@@ -91,7 +91,7 @@ ResourceManager::~ResourceManager() {
 	for (int i = 0; i < kNumVerbIcons; i++) {
 		delete[] _verbIcons[i];
 	}
-	delete[] _popUpBalloon;
+	free(_popUpBalloon);
 	for (int i = 0; i < 4; i++) {
 		// free all frame buffers
 		for (int j = 0; j < walkingAnimLengths[i]; j++) {
@@ -150,7 +150,7 @@ void ResourceManager::loadInteractionIcons() {
 	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
 
 	uint32 totalBalloonSize = kBalloonWidth * kBalloonHeight * kBalloonFrames;
-	_popUpBalloon = new byte[totalBalloonSize];
+	_popUpBalloon = nullptr;
 
 	uint32 compressedSize = kBalloonFramesSize;
 
@@ -187,7 +187,7 @@ void ResourceManager::loadAlfredAnims() {
 	alfred3.close();
 
 	uint32 capacity = 3060 * 102 + 2340 * 55;
-	byte *completePic = new byte[capacity];
+	byte *completePic = nullptr;
 	rleDecompress(bufferFile, alfred3Size, 0, capacity, &completePic);
 
 	byte *stdFramesPic = new byte[3060 * 102];
@@ -251,7 +251,7 @@ void ResourceManager::loadAlfredAnims() {
 
 	delete[] crawlFramesPic;
 	delete[] stdFramesPic;
-	delete[] completePic;
+	free(completePic);
 	free(bufferFile);
 
 	Common::File alfred7;

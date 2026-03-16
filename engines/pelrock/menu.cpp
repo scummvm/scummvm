@@ -709,7 +709,7 @@ void MenuManager::loadMenu() {
 
 	curPos += kMainMenuPart1RawSize;
 
-	byte *compressedPart1 = new byte[kMainMenuPart1CompressedSize];
+	byte *compressedPart1 = (byte *) malloc(kMainMenuPart1CompressedSize);
 	alfred7.read(compressedPart1, kMainMenuPart1CompressedSize);
 	byte *decompressedPart1 = nullptr;
 	size_t decompressedSize = rleDecompress(compressedPart1, kMainMenuPart1CompressedSize, 0, 0, &decompressedPart1, true);
@@ -717,20 +717,21 @@ void MenuManager::loadMenu() {
 	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart1, decompressedSize);
 	curPos += decompressedSize;
 
-	delete[] compressedPart1;
-	delete[] decompressedPart1;
+	free(compressedPart1);
+	free(decompressedPart1);
 	alfred7.seek(kMainMenuPart2Offset, SEEK_SET);
 	alfred7.read((byte *)_mainMenu.getPixels() + curPos, kMainMenuPart2RawSize);
 	curPos += kMainMenuPart2RawSize;
-	byte *compressedPart2 = new byte[kMainMenuPart2CompressedSize];
+	byte *compressedPart2 = (byte *) malloc(kMainMenuPart2CompressedSize);
 	alfred7.read(compressedPart2, kMainMenuPart2CompressedSize);
 	byte *decompressedPart2 = nullptr;
 	decompressedSize = rleDecompress(compressedPart2, kMainMenuPart2CompressedSize, 0, 0, &decompressedPart2, true);
 
 	memcpy((byte *)_mainMenu.getPixels() + curPos, decompressedPart2, decompressedSize);
 	curPos += decompressedSize;
-	delete[] compressedPart2;
-	delete[] decompressedPart2;
+	free(compressedPart2);
+	free(decompressedPart2);
+
 	alfred7.seek(kMainMenuPart3Offset, SEEK_SET);
 	alfred7.read((byte *)_mainMenu.getPixels() + curPos, kMainMenuPart3Size);
 
@@ -750,28 +751,28 @@ void MenuManager::loadMenu() {
 
 	readButton(soundArrowsData, 0, _soundControlArrowLeft, 36, 28);
 	readButton(soundArrowsData, 36 * 28 * 2, _soundControlArrowRight, 31, 28);
-	delete[] soundArrowsData;
+	free(soundArrowsData);
 
 	byte *soundIconMasterData = nullptr;
 	size_t soundIconMasterSize = 0;
 	rleDecompressSingleBuda(&alfred7, kSoundMasterOffset, soundIconMasterData, soundIconMasterSize);
 	_soundControlMasterIcon = new byte[66 * 64];
 	extractSingleFrame(soundIconMasterData, _soundControlMasterIcon, 0, 66, 64);
-	delete[] soundIconMasterData;
+	free(soundIconMasterData);
 
 	byte *soundIconSfxData = nullptr;
 	size_t soundIconSfxSize = 0;
 	rleDecompressSingleBuda(&alfred7, kSoundSfxOffset, soundIconSfxData, soundIconSfxSize);
 	_soundControlSfxIcon = new byte[66 * 64];
 	extractSingleFrame(soundIconSfxData, _soundControlSfxIcon, 0, 66, 64);
-	delete[] soundIconSfxData;
+	free(soundIconSfxData);
 
 	byte *soundIconMusicData = nullptr;
 	size_t soundIconMusicSize = 0;
 	rleDecompressSingleBuda(&alfred7, kSoundMusicOffset, soundIconMusicData, soundIconMusicSize);
 	_soundControlMusicIcon = new byte[66 * 64];
 	extractSingleFrame(soundIconMusicData, _soundControlMusicIcon, 0, 66, 64);
-	delete[] soundIconMusicData;
+	free(soundIconMusicData);
 
 	_menuText = _menuTexts[0];
 	alfred7.close();
