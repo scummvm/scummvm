@@ -352,6 +352,10 @@ bool FstPlayer::play(const Common::String &path) {
 	byte palette[256 * 3] = { 0 };
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
+	const bool resumeMusicAfterPlayback = _vm.isStartupMusicPlaying();
+	if (resumeMusicAfterPlayback)
+		_vm.pauseStartupMusic(true);
+
 	const bool censorshipEnabled = !_vm.isGoreEnabled();
 	const FstCensorshipToggleEntry *censorshipEntry = censorshipEnabled ? findCensorshipToggleEntry(path) : nullptr;
 	FstOverlayFrame censorshipOverlay;
@@ -481,6 +485,8 @@ bool FstPlayer::play(const Common::String &path) {
 	if (audioStarted)
 		mixer->stopHandle(audioHandle);
 	delete audioStream;
+	if (resumeMusicAfterPlayback)
+		_vm.pauseStartupMusic(false);
 
 	return !_vm.shouldQuit();
 }
