@@ -47,6 +47,9 @@ RoomManager::~RoomManager() {
 	if (_passerByAnims) {
 		delete _passerByAnims;
 	}
+	if(_conversationData) {
+		delete[] _conversationData;
+	}
 }
 
 void RoomManager::clearTalkingAnims() {

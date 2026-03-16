@@ -83,6 +83,7 @@ PelrockEngine::~PelrockEngine() {
 	if(_currentContext.movementBuffer) {
 		free(_currentContext.movementBuffer);
 	}
+	_saveThumbnail.free();
 }
 
 uint32 PelrockEngine::getFeatures() const {

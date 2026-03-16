@@ -125,6 +125,7 @@ ResourceManager::~ResourceManager() {
 	}
 
 	delete[] _inventoryIcons;
+	clearSpecialAnim();
 }
 
 void ResourceManager::loadCursors() {
