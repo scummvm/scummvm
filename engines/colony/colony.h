@@ -464,6 +464,7 @@ private:
 	int _coreState[2];
 	int _coreHeight[2];
 	int _corePower[3];
+	int _epower[3];   // log2 display levels for power bars (from qlog)
 	int _coreIndex;
 	int _orbit = 0;
 	int _armor = 0;
@@ -526,9 +527,15 @@ private:
 	Common::Rect _clip;
 	Common::Rect _screenR;
 	Common::Rect _dashBoardRect;
-	Common::Rect _compassRect;
-	Common::Rect _headsUpRect;
-	Common::Rect _powerRect;
+	Common::Rect _compassRect;   // DOS: compOval (after shrink); Mac: moveWindow
+	Common::Rect _headsUpRect;   // DOS: floorRect; Mac: minimap inside moveWindow
+	Common::Rect _powerRect;     // DOS: powerRect; Mac: infoWindow
+
+	// DOS dashboard layout (from original MetaWINDOW pix_per_Qinch values)
+	int _pQx;           // pixels per quarter-inch X (24 for EGA 640x350)
+	int _pQy;           // pixels per quarter-inch Y (18 for EGA 640x350)
+	int _powerWidth;     // width of each of the 3 power bar columns
+	int _powerHeight;    // pixel height per power bar unit (max 5)
 
 	// Cached decoded PICT surfaces for dashboard panels (Mac color mode)
 	Graphics::Surface *_pictPower = nullptr;      // PICT -32755 (normal) or -32760 (trouble)
@@ -612,6 +619,9 @@ private:
 	void updateViewportLayout();
 	void drawDashboardStep1();
 	void drawDashboardMac();
+	void drawDOSBarGraph(int x, int y, int height);
+	void updateDOSPowerBars();
+	static int qlog(int32 x);
 	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac);
 	bool hasRobotAt(int x, int y) const;
 	bool hasFoodAt(int x, int y) const;

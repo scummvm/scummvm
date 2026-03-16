@@ -296,6 +296,8 @@ void ColonyEngine::setPower(int p0, int p1, int p2) {
 			_level, _me.xindex, _me.yindex);
 	}
 
+	updateDOSPowerBars();
+
 	if (_me.power[1] <= 0) {
 		debugC(1, kColonyDebugUI, "Player died! power=[%d,%d,%d]",
 			(int)_me.power[0], (int)_me.power[1], (int)_me.power[2]);

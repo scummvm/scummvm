@@ -245,22 +245,29 @@ void ColonyEngine::updateViewportLayout() {
 		return Common::Rect(left, top, right, bottom);
 	};
 
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+
+	// Original IBM_INIT.C: pix_per_Qinch = pixResX/4, pixResY/4
+	// MetaWINDOW EGA 640x350: pixResX=96, pixResY=72 → pQx=24, pQy=18
+	_pQx = 24;
+	_pQy = 18;
+
 	int dashWidth = 0;
 	if (_showDashBoard) {
-		// Mac mode: original inits.c sets screenR.left=96  fixed 96px sidebar.
-		// Two floating windows (infoWindow + moveWindow) centered in sidebar.
-		const bool isMac = (_renderMode == Common::kRenderMacintosh);
 		if (isMac)
 			dashWidth = MIN(96, _width / 2);
 		else
-			dashWidth = CLIP<int>(_width / 6, 72, 140);
+			dashWidth = 4 * _pQx + 2; // DASHBOAR.C: DashBoard.right = 4*pix_per_Qinch_x+2
 		if (_width - dashWidth < 160)
 			dashWidth = 0;
 	}
 
 	const int menuTop = _menuBarHeight; // 0 for DOS/EGA, 20 for Mac
 
-	_screenR = makeSafeRect(dashWidth, menuTop, _width, _height);
+	// Original IBM_INIT.C: screenR.left = sR.left + 4*pix_per_Qinch_x + 4
+	// This creates a 2px gap between dashboard right edge and viewport left edge.
+	const int viewportLeft = isMac ? dashWidth : (dashWidth > 0 ? 4 * _pQx + 4 : 0);
+	_screenR = makeSafeRect(viewportLeft, menuTop, _width, _height);
 	_clip = _screenR;
 	_centerX = (_screenR.left + _screenR.right) >> 1;
 	_centerY = (_screenR.top + _screenR.bottom) >> 1;
@@ -273,9 +280,7 @@ void ColonyEngine::updateViewportLayout() {
 		return;
 	}
 
-	const bool isMac = (_renderMode == Common::kRenderMacintosh);
 	const int pad = 2;
-	const int topPad = menuTop + pad;
 
 	if (isMac) {
 		// Original Mac layout from inits.c/compass.c/power.c:
@@ -331,20 +336,81 @@ void ColonyEngine::updateViewportLayout() {
 		const int infoTop = menuTop + pad;
 		_powerRect = makeSafeRect(infoLeft, infoTop, infoLeft + infoW, infoTop + infoH);
 	} else {
-		const int blockLeft = pad;
-		const int blockRight = dashWidth - pad;
-		const int unit = MAX(8, (dashWidth - (pad * 2)) / 4);
+		// DASHBOAR.C RCompass(): compOval before shrink
+		// compOval.bottom = r->bottom - (pQy >> 2)
+		// compOval.top = r->bottom - 4*pQy
+		// compOval.left = 2, compOval.right = 4*pQx
+		// Then shrink by 2px each side for EraseOval
+		const int compBottom = _height - (_pQy >> 2) - 2;  // after shrink
+		const int compTop = _height - 4 * _pQy + 2;        // after shrink
+		const int compLeft = 2 + 2;                          // after shrink
+		const int compRight = 4 * _pQx - 2;                  // after shrink
+		_compassRect = makeSafeRect(compLeft, compTop, compRight, compBottom);
 
-		const int compassBottom = _height - MAX(2, unit / 4);
-		const int compassTop = MAX(topPad, compassBottom - unit * 4);
-		_compassRect = makeSafeRect(blockLeft, compassTop, blockRight, compassBottom);
+		// DASHBOAR.C RHeadsUp(): floorRect uses compOval.top (after shrink)
+		// floorRect.bottom = (compOval.top - 4) - (pQy >> 2)
+		// floorRect.top = (compOval.top - 4) - 4*pQy
+		// floorRect.left = 2, floorRect.right = r->right - 2
+		const int floorBottom = (compTop - 4) - (_pQy >> 2);
+		const int floorTop = (compTop - 4) - 4 * _pQy;
+		_headsUpRect = makeSafeRect(2, MAX(0, floorTop), dashWidth - 2, MAX(0, floorBottom));
 
-		const int headsUpBottom = _compassRect.top - MAX(2, unit / 4) - 4;
-		const int headsUpTop = headsUpBottom - unit * 4;
-		_headsUpRect = makeSafeRect(blockLeft, MAX(topPad, headsUpTop), blockRight, MAX(topPad, headsUpBottom));
+		// DASHBOAR.C RPower(): powerRect layout
+		// wd = r->right - r->left = dashWidth
+		// twd = wd/3; twd--; twd>>=1; twd<<=1 (round down to even)
+		// powerWidth = twd; twd *= 3; l = (wd - twd) >> 1
+		int twd = dashWidth / 3;
+		twd--;
+		twd >>= 1;
+		twd <<= 1;
+		_powerWidth = twd;
+		const int totalBarWidth = twd * 3;
+		const int powerLeft = (dashWidth - totalBarWidth) >> 1;
 
-		_powerRect = makeSafeRect(blockLeft, topPad, blockRight, _headsUpRect.top - 4);
+		// powerRect.top = r->top + 8
+		// powerRect.bottom = r->bottom - 2*(4*pQy + 8)
+		const int pTop = 8;
+		const int pBottom = _height - 2 * (4 * _pQy + 8);
+		_powerHeight = (pBottom - pTop) / 32;
+		_powerHeight = MIN(_powerHeight, 5);
+		const int pBottomAdj = pTop + _powerHeight * 32;
+		_powerRect = makeSafeRect(powerLeft, pTop, powerLeft + totalBarWidth, pBottomAdj);
 	}
+}
+
+// DASHBOAR.C qlog(): bit-length of x (equivalent to floor(log2(x))+1)
+int ColonyEngine::qlog(int32 x) {
+	int i = 0;
+	while (x > 0) {
+		x >>= 1;
+		i++;
+	}
+	return i;
+}
+
+// DASHBOAR.C DrawBarGraph(): draw a single power bar column
+void ColonyEngine::drawDOSBarGraph(int x, int y, int height) {
+	int color;
+	if (height <= 3)
+		color = 4; // vRED
+	else
+		color = 1; // vBLUE
+
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < _powerHeight - 1; j++) {
+			int h = y - (2 + i * _powerHeight + j);
+			if (h < _powerRect.top)
+				return;
+			// First line of each segment is black (separator), rest is color
+			_gfx->drawLine(x + 2, h, x + _powerWidth - 2, h, (j == 0) ? 0 : color);
+		}
+	}
+}
+
+// DASHBOAR.C SetPower() display update: recompute epower[] from Me.power[]
+void ColonyEngine::updateDOSPowerBars() {
+	for (int i = 0; i < 3; i++)
+		_epower[i] = qlog(_me.power[i]);
 }
 
 void ColonyEngine::drawDashboardStep1() {
@@ -358,54 +424,85 @@ void ColonyEngine::drawDashboardStep1() {
 		return;
 	}
 
-	// --- DOS/EGA path (unchanged) ---
-	_gfx->fillRect(_dashBoardRect, 0);
-	_gfx->fillDitherRect(_dashBoardRect, 0, 15);
-	_gfx->drawRect(_dashBoardRect, 1);
+	// --- DOS/EGA path ---
+	// Matches original DASHBOAR.C DrawDashBoard() → RConsole + RCompass + RHeadsUp + RPower
 
-	const int shiftX = MAX(1, _dashBoardRect.width() / 8);
-	const int shiftY = MAX(1, _dashBoardRect.width() / 8);
-	const Common::Rect r = _dashBoardRect;
+	// DrawDashBoard(): separator line at screenR.left-1 in vBLACK
+	if (_screenR.left > 0)
+		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, 0);
 
-	_gfx->drawLine(r.left, r.top, r.left + shiftX, r.top + shiftY, 0);
-	_gfx->drawLine(r.right - 1, r.top, r.right - 1 - shiftX, r.top + shiftY, 0);
-	_gfx->drawLine(r.left, r.bottom - 1, r.left + shiftX, r.bottom - 1 - shiftY, 0);
-	_gfx->drawLine(r.right - 1, r.bottom - 1, r.right - 1 - shiftX, r.bottom - 1 - shiftY, 0);
+	// RConsole(): fill dashboard with pattern, frame in vBLUE
+	// FillRect(r, 3) with BackColor(vWHITE) = dither pattern using black+white
+	_gfx->fillDitherRect(_dashBoardRect, 0, 7);
+	_gfx->drawRect(_dashBoardRect, 1); // vBLUE frame
 
-	const Common::Rect tr(r.left + shiftX, r.top + shiftY, r.right - shiftX, r.bottom - shiftY);
-	_gfx->fillDitherRect(tr, 0, 15);
-	_gfx->drawRect(tr, 0);
-
-	if (_compassRect.width() > 4 && _compassRect.height() > 4) {
+	// RCompass(): draw compass oval
+	// _compassRect stores the post-shrink compOval (inner erasable area)
+	if (_compassRect.width() > 2 && _compassRect.height() > 2) {
+		// Original draws FillOval on the pre-shrink rect, then EraseOval on the shrunk rect.
+		// Pre-shrink = _compassRect expanded by 2 on each side
 		const int cx = (_compassRect.left + _compassRect.right) >> 1;
 		const int cy = (_compassRect.top + _compassRect.bottom) >> 1;
-		const int rx = MAX(2, (_compassRect.width() - 6) >> 1);
-		const int ry = MAX(2, (_compassRect.height() - 6) >> 1);
+		const int outerRx = (_compassRect.width() + 4) >> 1;
+		const int outerRy = (_compassRect.height() + 4) >> 1;
+		const int innerRx = _compassRect.width() >> 1;
+		const int innerRy = _compassRect.height() >> 1;
 
-		_gfx->fillEllipse(cx, cy, rx, ry, 15);
-		_gfx->drawEllipse(cx, cy, rx, ry, 1);
+		// FillOval: filled oval (vINTWHITE background)
+		_gfx->fillEllipse(cx, cy, outerRx, outerRy, 15);
+		// EraseOval: clear interior (also vINTWHITE)
+		_gfx->fillEllipse(cx, cy, innerRx, innerRy, 15);
+		// Frame the outer oval
+		_gfx->drawEllipse(cx, cy, outerRx, outerRy, 0);
 
-		const int ex = cx + ((_cost[_me.look] * rx) >> 8);
-		const int ey = cy - ((_sint[_me.look] * ry) >> 8);
-		_gfx->drawLine(cx, cy, ex, ey, 0);
-		_gfx->drawLine(cx - 2, cy, cx + 2, cy, 0);
-		_gfx->drawLine(cx, cy - 2, cx, cy + 2, 0);
+		// Compass needle: updateDashBoard() uses Me.ang
+		const int ex = cx + ((_cost[_me.ang] * innerRx) >> 8);
+		const int ey = cy - ((_sint[_me.ang] * innerRy) >> 8);
+		_gfx->drawLine(cx, cy, ex, ey, 0); // vBLACK needle
 	}
 
-	if (_screenR.left > 0)
-		_gfx->drawLine(_screenR.left - 1, _screenR.top, _screenR.left - 1, _screenR.bottom - 1, 15);
-
-	if (_headsUpRect.width() > 4 && _headsUpRect.height() > 4) {
-		_gfx->fillRect(_headsUpRect, 15);
-		_gfx->drawRect(_headsUpRect, 1);
+	// RHeadsUp(): minimap
+	if (_headsUpRect.width() > 2 && _headsUpRect.height() > 2) {
+		_gfx->fillRect(_headsUpRect, 15); // EraseRect (vINTWHITE)
+		_gfx->drawRect(_headsUpRect, 0);  // FrameRect (vBLACK)
 		drawMiniMap(0);
 	}
 
-	if (_powerRect.width() > 4 && _powerRect.height() > 4) {
-		_gfx->fillRect(_powerRect, 15);
-		_gfx->drawRect(_powerRect, 1);
-		const int barY = _powerRect.bottom - MAX(3, _powerRect.width() / 8);
-		_gfx->drawLine(_powerRect.left + 1, barY, _powerRect.right - 2, barY, 0);
+	// RPower(): power bars (only when armored or armed)
+	if (_powerRect.width() > 2 && _powerRect.height() > 2 && (_armor > 0 || _weapons > 0)) {
+		_gfx->fillRect(_powerRect, 15); // EraseRect (vINTWHITE)
+		_gfx->drawRect(_powerRect, 0);  // FrameRect (vBLACK)
+
+		// Vertical dividers between 3 columns
+		const int pl = _powerRect.left;
+		_gfx->drawLine(pl + _powerWidth, _powerRect.bottom - 1, pl + _powerWidth, _powerRect.top, 0);
+		_gfx->drawLine(pl + _powerWidth * 2, _powerRect.bottom - 1, pl + _powerWidth * 2, _powerRect.top, 0);
+
+		// Horizontal divider above symbol area
+		_gfx->drawLine(pl, _powerRect.bottom - _powerWidth - 1, _powerRect.right - 1, _powerRect.bottom - _powerWidth - 1, 0);
+
+		// Symbol 1: triangle (weapon power)
+		_gfx->drawLine(pl + 2, _powerRect.bottom - 2, pl + _powerWidth - 2, _powerRect.bottom - 2, 0);
+		_gfx->drawLine(pl + _powerWidth - 2, _powerRect.bottom - 2, pl + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 2), 0);
+		_gfx->drawLine(pl + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 2), pl + 2, _powerRect.bottom - 2, 0);
+
+		// Symbol 2: diamond (life power)
+		const int d2l = pl + _powerWidth;
+		_gfx->drawLine(d2l + 1, _powerRect.bottom - (_powerWidth >> 1), d2l + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 1), 0);
+		_gfx->drawLine(d2l + (_powerWidth >> 1), _powerRect.bottom - (_powerWidth - 1), d2l + _powerWidth - 1, _powerRect.bottom - (_powerWidth >> 1), 0);
+		_gfx->drawLine(d2l + _powerWidth - 1, _powerRect.bottom - (_powerWidth >> 1), d2l + (_powerWidth >> 1), _powerRect.bottom - 1, 0);
+		_gfx->drawLine(d2l + (_powerWidth >> 1), _powerRect.bottom - 1, d2l + 1, _powerRect.bottom - (_powerWidth >> 1), 0);
+
+		// Symbol 3: inverted triangle (shield power)
+		const int d3l = pl + 2 * _powerWidth;
+		_gfx->drawLine(d3l + 2, _powerRect.bottom - (_powerWidth - 2), d3l + _powerWidth - 2, _powerRect.bottom - (_powerWidth - 2), 0);
+		_gfx->drawLine(d3l + _powerWidth - 2, _powerRect.bottom - (_powerWidth - 2), d3l + (_powerWidth >> 1), _powerRect.bottom - 2, 0);
+		_gfx->drawLine(d3l + (_powerWidth >> 1), _powerRect.bottom - 2, d3l + 2, _powerRect.bottom - (_powerWidth - 2), 0);
+
+		// Draw power bar graphs
+		drawDOSBarGraph(pl, _powerRect.bottom - (_powerWidth + 1), _epower[0]);
+		drawDOSBarGraph(pl + _powerWidth, _powerRect.bottom - (_powerWidth + 1), _epower[1]);
+		drawDOSBarGraph(pl + _powerWidth * 2, _powerRect.bottom - (_powerWidth + 1), _epower[2]);
 	}
 }
 
@@ -665,6 +762,17 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 		if (hasRobotAt(_me.xindex + 1, _me.yindex))
 			drawMiniMapMarker(xcorner[4] + dx, ycorner[4] - dy, robotR, lineColor, isMac);
 	}
+
+	// DASHBOAR.C DrawHeadsUp(): player eye icon at minimap center
+	// Outer oval: FrameOval ±(pQx/2, pQy/4) = ±(12, 4) for EGA
+	// Inner oval (pupil): FillOval ±(pQx/4, pQy/4) = ±(6, 4) for EGA
+	if (!isMac) {
+		const int px = _pQx >> 1;  // 12
+		const int py = _pQy >> 2;  // 4
+		_gfx->drawEllipse(ccenterx, ccentery, px, py, lineColor);
+		const int px2 = _pQx >> 2; // 6
+		_gfx->fillEllipse(ccenterx, ccentery, px2, py, lineColor);
+	}
 }
 
 void ColonyEngine::drawCrosshair() {
@@ -692,8 +800,11 @@ void ColonyEngine::drawCrosshair() {
 
 	const int cx = _centerX;
 	const int cy = _centerY;
-	const int qx = MAX(2, _screenR.width() / 32);
-	const int qy = MAX(2, _screenR.height() / 32);
+
+	// Original IBM_DISP.C: uses pix_per_Qinch for crosshair sizing
+	// pix_per_Finch = (pix_per_Qinch * 3) >> 1  (1.5x quarter-inch)
+	const int qx = isMac ? MAX(2, _screenR.width() / 32) : _pQx;
+	const int qy = isMac ? MAX(2, _screenR.height() / 32) : _pQy;
 	const int fx = (qx * 3) >> 1;
 	const int fy = (qy * 3) >> 1;
 	auto drawCrossLine = [&](int x1, int y1, int x2, int y2) {
@@ -702,17 +813,23 @@ void ColonyEngine::drawCrosshair() {
 	};
 
 	if (_weapons > 0) {
+		// Original IBM_DISP.C: two bracket shapes (left + right)
+		// insight: inner edge at pQx, outer edge at pFinch_x, height pQy..pFinch_y
+		// normal: inner edge at pQx, outer edge at pFinch_x, height pFinch_y
 		const int yTop = _insight ? (cy - qy) : (cy - fy);
 		const int yBottom = _insight ? (cy + qy) : (cy + fy);
 
+		// Left bracket: top-left corner down to bottom-left
 		drawCrossLine(cx - qx, yTop, cx - fx, yTop);
 		drawCrossLine(cx - fx, yTop, cx - fx, yBottom);
 		drawCrossLine(cx - fx, yBottom, cx - qx, yBottom);
+		// Right bracket: top-right corner down to bottom-right
 		drawCrossLine(cx + qx, yTop, cx + fx, yTop);
 		drawCrossLine(cx + fx, yTop, cx + fx, yBottom);
 		drawCrossLine(cx + fx, yBottom, cx + qx, yBottom);
 		_insight = false;
 	} else {
+		// Original IBM_DISP.C: simple cross ±pix_per_Qinch from center
 		drawCrossLine(cx - qx, cy, cx + qx, cy);
 		drawCrossLine(cx, cy - qy, cx, cy + qy);
 	}

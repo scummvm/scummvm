@@ -199,6 +199,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_me.power[0] = 256; // weapons power
 	_me.power[1] = 256; // life power
 	_me.power[2] = 256; // armor power
+	updateDOSPowerBars();
 
 	// Animation system init
 	_backgroundMask = nullptr;
@@ -672,6 +673,7 @@ void ColonyEngine::startNewGame() {
 	_me.power[0] = 256;
 	_me.power[1] = 256;
 	_me.power[2] = 256;
+	updateDOSPowerBars();
 
 	for (int i = 0; i < 4; i++)
 		_decode1[i] = _decode2[i] = _decode3[i] = 0;
