@@ -340,6 +340,7 @@ bool ThemeEngine::init() {
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
 		if (node.isDirectory()) {
+			debug("Loading unpacked theme from %s", node.getPath().toString().c_str());
 			_themeArchive = createUnpackedThemeArchive(node);
 		} else if (_themeFile.baseName().matchString("*.zip", true)) {
 			// TODO: Also use "node" directly?
@@ -881,7 +882,7 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 	}
 
 	if (!themeId.contains(".zip") && !themeId.contains(".ZIP"))
-		_themeName += " -unpacked";
+		_themeName += " (unpacked)";
 
 	Common::ArchiveMemberList members;
 	if (0 == _themeArchive->listMatchingMembers(members, "*.stx")) {
@@ -2053,21 +2054,20 @@ Common::Archive *ThemeEngine::createUnpackedThemeArchive(const Common::FSNode &t
 		line.trim();
 
 		if (line.hasPrefix("%using ")) {
-			Common::String themePath = line.substr(7);
-			themePath.trim();
+			Common::Path themePath = themeDir.getPath();
+			Common::String rawThemePath = line.substr(7);
+			rawThemePath.trim();
 
-			Common::FSNode dir;
-			if (themePath.hasPrefix("../")) {
-				Common::String childPath = themePath.substr(3);
-				dir = themeDir.getParent().getChild(childPath);
-			} else {
-				dir = themeDir.getChild(themePath);
-			}
+			themePath = themePath.append(rawThemePath);
+
+			Common::Path normalizedThemePath = Common::Path(themePath).normalize();
+
+			Common::FSNode dir(normalizedThemePath);
 
 			if (dir.exists() && dir.isDirectory()) {
 				archive->addDirectory(dir.getName(), dir, prio++);
 			} else {
-				debug("ThemeEngine: Parsed path from THEMERC doesn't exist");
+				debug("ThemeEngine: Parsed path: %s from THEMERC doesn't exist", dir.getPath().toString().c_str());
 			}
 
 		}
@@ -2124,8 +2124,8 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 			// If the name of the node object also contains
 			// the ".zip" suffix, we will strip it.
 			if (isUnpackedTheme) {
-				td.id += " -unpacked";
-				td.name += " -unpacked";
+				td.id += "-unpacked";
+				td.name += " (unpacked)";
 			} else if (td.id.matchString("*.zip", true)) {
 				for (int j = 0; j < 4; ++j)
 					td.id.deleteLastChar();
@@ -2204,7 +2204,7 @@ Common::String ThemeEngine::getThemeId(const Common::Path &filename) {
 			// unpacked theme we need to update the name with -unpacked
 			Common::String id = node.getName();
 			id.chop(1);
-			id += " -unpacked";
+			id += "-unpacked";
 			return id;
 		}
 	}
