@@ -35,6 +35,7 @@ static const char *const kStartupConfigPath = "CONFIG.INI";
 static const char *const kConfigSectionName = "harvester";
 static const char *const kDefaultTownScript = "HARVEST.SCR";
 static const char *const kInventoryOwnerName = "INVENTORY";
+static const char *const kDefaultVoicePath = "SOUND/VOICE/";
 static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
@@ -158,8 +159,11 @@ bool StartupScript::load(ResourceManager &resources) {
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
+	_heads.clear();
 	_useItems.clear();
 	_quickTipsEnabled = true;
+	_voicePath = kDefaultVoicePath;
+	_dialogueTextMode = kStartupDialogueTextYes;
 
 	loadConfig(resources);
 
@@ -201,6 +205,20 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 	if (config.getKey("QUICK_TIPS", kConfigSectionName, quickTipsValue))
 		_quickTipsEnabled = quickTipsValue.equalsIgnoreCase("ON");
 
+	Common::String voicePath;
+	if (config.getKey("VOICE", kConfigSectionName, voicePath))
+		_voicePath = resources.normalizeResourcePath(voicePath);
+
+	Common::String textMode;
+	if (config.getKey("TEXT", kConfigSectionName, textMode)) {
+		if (textMode.equalsIgnoreCase("NO"))
+			_dialogueTextMode = kStartupDialogueTextNone;
+		else if (textMode.equalsIgnoreCase("CLICK"))
+			_dialogueTextMode = kStartupDialogueTextClick;
+		else
+			_dialogueTextMode = kStartupDialogueTextYes;
+	}
+
 	return true;
 }
 
@@ -223,6 +241,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
+	_heads.clear();
 	_useItems.clear();
 
 	auto parseLine = [&](const Common::String &rawLine) {
@@ -238,7 +257,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
-				tokens[i] == "NPC" || tokens[i] == "REGION" ||
+				tokens[i] == "NPC" || tokens[i] == "REGION" || tokens[i] == "HEAD" ||
 				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
 				tagIndex = i;
 				break;
@@ -300,6 +319,18 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			}
 			if (!textRecord.key.empty())
 				_texts.push_back(textRecord);
+			return;
+		}
+
+		if (tag == "HEAD") {
+			if (tokens.size() < tagIndex + 3)
+				return;
+
+			StartupHeadRecord head;
+			head.headId = tokens[tagIndex + 1];
+			head.portraitPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+			if (!head.headId.empty() && !head.portraitPath.empty())
+				_heads.push_back(head);
 			return;
 		}
 
@@ -497,10 +528,11 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u npcs, %u regions, %u flags, %u commands, %u texts, %u useitems from '%s'",
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u npcs, %u regions, %u flags, %u commands, %u texts, %u heads, %u useitems from '%s'",
 		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
 		(uint)_npcs.size(), (uint)_regions.size(),
-		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_useItems.size(), _path.c_str());
+		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_heads.size(),
+		(uint)_useItems.size(), _path.c_str());
 }
 
 bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
@@ -1171,6 +1203,40 @@ Common::String StartupScript::resolveTextValue(const Common::String &key) const 
 		return textRecord->value;
 
 	return normalizeInteractionLabel(key);
+}
+
+const StartupHeadRecord *StartupScript::findHeadRecord(const Common::String &headId) const {
+	if (headId.empty())
+		return nullptr;
+
+	for (const StartupHeadRecord &head : _heads) {
+		if (head.headId.equalsIgnoreCase(headId))
+			return &head;
+	}
+
+	return nullptr;
+}
+
+bool StartupScript::getFlagValue(const Common::String &flagName) const {
+	const StartupFlagRecord *flag = findRuntimeFlag(flagName);
+	return flag && flag->value;
+}
+
+int StartupScript::getCurrentStoryDayIndex() const {
+	if (getFlagValue("DAY_1"))
+		return 1;
+	if (getFlagValue("DAY_2") || getFlagValue("NIGHT_2"))
+		return 2;
+	if (getFlagValue("DAY_3") || getFlagValue("NIGHT_3"))
+		return 3;
+	if (getFlagValue("DAY_4") || getFlagValue("NIGHT_4"))
+		return 4;
+	if (getFlagValue("DAY_5") || getFlagValue("NIGHT_5"))
+		return 5;
+	if (getFlagValue("DAY_6"))
+		return 6;
+
+	return 0;
 }
 
 } // End of namespace Harvester
