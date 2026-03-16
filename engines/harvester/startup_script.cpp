@@ -75,6 +75,17 @@ static int parseEntranceFacing(const Common::String &direction) {
 	return -1;
 }
 
+static int parseNpcDeathDamageType(const Common::String &value) {
+	if (value.equalsIgnoreCase("BLUDGE"))
+		return 1;
+	if (value.equalsIgnoreCase("SLASH"))
+		return 2;
+	if (value.equalsIgnoreCase("PROJ"))
+		return 4;
+
+	return 0;
+}
+
 static bool appendStartupAudioCommand(const StartupCommandRecord &command, Common::Array<StartupAudioCommand> &commands) {
 	if (command.opcodeName.equalsIgnoreCase("START_WAV")) {
 		StartupAudioCommand audioCommand;
@@ -840,6 +851,18 @@ StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
 	return nullptr;
 }
 
+const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) const {
+	if (npcName.empty())
+		return nullptr;
+
+	for (const StartupNpcRecord &npc : _runtimeNpcs) {
+		if (npc.npcName.equalsIgnoreCase(npcName))
+			return &npc;
+	}
+
+	return nullptr;
+}
+
 bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName) {
 	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
 	if (!runtimeObject)
@@ -1097,6 +1120,27 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
+				command->opcodeName.equalsIgnoreCase("MONSTERFY")) {
+			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
+			if (!runtimeNpc) {
+				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const int deathDamageType = parseNpcDeathDamageType(command->arg2);
+			const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
+				(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
+			runtimeNpc->deathOrMonsterfyFlag = true;
+			if (deathDamageType != 0)
+				runtimeNpc->deathDamageType = deathDamageType;
+			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			if (allowTransitions && nextRoomName)
@@ -1220,6 +1264,11 @@ const StartupHeadRecord *StartupScript::findHeadRecord(const Common::String &hea
 bool StartupScript::getFlagValue(const Common::String &flagName) const {
 	const StartupFlagRecord *flag = findRuntimeFlag(flagName);
 	return flag && flag->value;
+}
+
+bool StartupScript::isNamedNpcDeathTypeClear(const Common::String &npcName) const {
+	const StartupNpcRecord *npc = findRuntimeNpc(npcName);
+	return npc && npc->deathDamageType == 0;
 }
 
 int StartupScript::getCurrentStoryDayIndex() const {

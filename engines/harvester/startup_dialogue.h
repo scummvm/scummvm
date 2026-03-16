@@ -67,11 +67,17 @@ public:
 		bool dinerBurnedKarinMissingOrDeadShown = false;
 		bool burnedTvStationShown = false;
 		bool scratchedTuckerShown = false;
+		bool barberPoleStolenShown = false;
+		bool boltOfClothTakenShown = false;
 		bool dinerBurnedKarinAliveShown = false;
 		bool escapedJailShown = false;
 		bool karinKidnapedUnresolvedShown = false;
 		bool karinFoundAliveShown = false;
 		bool karinFoundDeadShown = false;
+		bool butcherAbsentShown = false;
+		bool moynahanAbsentShown = false;
+		bool jimmyAbsentShown = false;
+		bool waspWomanAbsentShown = false;
 		bool stephanieDeadPreMidgameShown = false;
 		bool day5Shown = false;
 		bool day6Shown = false;
