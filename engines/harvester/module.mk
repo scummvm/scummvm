@@ -9,7 +9,9 @@ MODULE_OBJS = \
 	resources.o \
 	runtime_entity.o \
 	startup_art.o \
+	startup_dialogue.o \
 	startup_flow.o \
+	startup_menu.o \
 	startup_script.o \
 	startup_text.o \
 	xfile_archive.o

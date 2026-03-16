@@ -26,6 +26,8 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "harvester/startup_dialogue.h"
+#include "harvester/startup_menu.h"
 #include "harvester/startup_script.h"
 
 namespace Common {
@@ -45,6 +47,9 @@ public:
 	Common::Error run();
 
 private:
+	friend class StartupDialogueSystem;
+	friend class StartupMenuSystem;
+
 	bool loadQuickTips();
 	bool loadMenuItems();
 	Common::Error runQuickTips();
@@ -64,34 +69,14 @@ private:
 	void resetRoomNpcDialogueState();
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
-	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
-	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
-	int getMenuItemAt(const Common::Point &mousePos) const;
-	int getRoomMenuItemAt(const Common::Point &mousePos) const;
-
-	struct HankRoomDialogueState {
-		bool pendingInitialConversation = true;
-		bool hasTrackedDayState = false;
-		bool pendingRangshotSequence = false;
-		bool pendingSameDayFollowup = false;
-		int trackedDayIndex = 0;
-		bool stephMidgamePlayedShown = false;
-		bool burnedTvStationShown = false;
-		bool bustedOnceShown = false;
-		bool karinKidnapedShown = false;
-		bool karinFoundAliveShown = false;
-		bool karinFoundDeadShown = false;
-		bool discussedCasketPhotoEvidence = false;
-		bool discussedWhaleyHerrillPhoto = false;
-		bool discussedLodgeTopic = false;
-	};
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
-	HankRoomDialogueState _hankRoomDialogueState;
+	StartupDialogueSystem _dialogue;
+	StartupMenuSystem _menu;
 };
 
 } // End of namespace Harvester
