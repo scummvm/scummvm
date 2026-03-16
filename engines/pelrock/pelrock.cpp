@@ -562,7 +562,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 }
 
 void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
-	debug("Executing action %d on hotspot %d", action, hotspot->extra);
 	if (action == ITEM) {
 		int inventoryObject = _state->selectedInventoryItem;
 		for (const CombinationEntry *entry = combinationTable; entry->handler != nullptr; entry++) {
@@ -623,9 +622,6 @@ void PelrockEngine::checkMouse() {
 		_actionPopupState.isActive = false;
 		// Mouse was released while popup is active
 		VerbIcon actionClicked = isActionUnder(_events->_releaseX, _events->_releaseY);
-		if (actionClicked != NO_ACTION) {
-			debug("Popup action clicked: %d, is alfredunder %d", actionClicked, _actionPopupState.isAlfredUnder);
-		}
 		if (actionClicked != NO_ACTION && _currentHotspot != nullptr) {
 			// Action was selected - queue it
 			walkAndAction(_currentHotspot, actionClicked);
@@ -746,12 +742,10 @@ void PelrockEngine::talkTo(HotSpot *hotspot) {
 		}
 	}
 	changeCursor(DEFAULT);
-	debug("Talking to hotspot %d (%d) with extra %d", hotspot->index, hotspot->isSprite ? hotspot->index : hotspot->index - _room->_currentRoomAnims.size(), hotspot->extra);
 
 	// Set NPC talk speed byte for original timing
-	TalkingAnims *th = &_room->_talkingAnimHeader;
+	TalkingAnims *th = &_room->_talkingAnims;
 	_npcTalkSpeedByte = animSet->talkingAnimIndex ? th->speedByteB : th->speedByteA;
-	debug("NPC talk speed byte: %d (slot %d)", _npcTalkSpeedByte, animSet->talkingAnimIndex);
 
 	_dialog->startConversation(_room->_conversationData, _room->_conversationDataSize, animSet->talkingAnimIndex, animSet);
 
@@ -814,7 +808,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_currentStep++;
 			if (_currentStep >= _currentContext.movementCount) {
 				_currentStep = 0;
-				debug("Finished walking to target");
 				_alfredState.setState(ALFRED_IDLE);
 				_alfredState.isWalkingCancelable = true;
 				_disableAction = false;
@@ -844,7 +837,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				// Only check exits after walking is complete AND no queued action
 				Exit *exit = isExitUnder(_alfredState.x, _alfredState.y);
 				if (exit != nullptr) {
-					debug("Using exit to room %d", exit->targetRoom);
 					exitTriggers(exit);
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
@@ -899,7 +891,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		break;
 	}
 	case ALFRED_INTERACTING: {
-		debug("Alfred interacting frame %d/%d, direction %d", _alfredState.curFrame, interactingAnimLength, _alfredState.direction);
 		drawAlfred(_res->alfredInteractFrames[_alfredState.direction][_alfredState.curFrame]);
 		_alfredState.curFrame++;
 		if (_alfredState.curFrame >= interactingAnimLength) {
@@ -1203,17 +1194,12 @@ void PelrockEngine::checkLongMouseClick(int x, int y) {
 	bool alfredUnder = isAlfredUnder(x, y);
 	if ((hotspotIndex != -1 || alfredUnder) && !_actionPopupState.isActive) {
 
-		// Original game positions balloon at alfred_x - 70, clamped to [1, 390]
 		_actionPopupState.x = CLIP((int)_alfredState.x - 70, 1, 390);
 
-		// Original game: Y = max(10, alfred_y - character_sprite_height - 102)
-		// The 102 offset is a fixed gap above Alfred's head, NOT the balloon height.
-		// This means the balloon bottom overlaps Alfred's head by ~10 pixels.
 		_actionPopupState.y = MAX(10, (int)_alfredState.y - (int)kAlfredFrameHeight - 102);
 		_actionPopupState.isActive = true;
 		_inventoryOverlayState.invStartingPos = -1;
 		_actionPopupState.curFrame = 0;
-		debug("Setting alfred under popup: %d", alfredUnder);
 		_actionPopupState.isAlfredUnder = alfredUnder;
 		if (hotspotIndex != -1) {
 			_currentHotspot = &_room->_currentRoomHotspots[hotspotIndex];
@@ -1373,7 +1359,7 @@ void PelrockEngine::animateTalkingNPC(Sprite *animSet) {
 	// Change with the right index
 
 	int index = animSet->talkingAnimIndex;
-	TalkingAnims *animHeader = &_room->_talkingAnimHeader;
+	TalkingAnims *animHeader = &_room->_talkingAnims;
 
 	int x = animSet->x + (index ? animHeader->offsetXAnimB : animHeader->offsetXAnimA);
 	int y = animSet->y + (index ? animHeader->offsetYAnimB : animHeader->offsetYAnimA);

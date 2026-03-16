@@ -78,6 +78,7 @@ class RoomManager {
 public:
 	RoomManager();
 	~RoomManager();
+	void clearAnims();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
 	/**
 	 * Passer by animations are animations of characters that merely traverse the scene as ambient
@@ -168,7 +169,7 @@ public:
 	Common::Array<WalkBox> _currentRoomWalkboxes;
 	Common::Array<Description> _currentRoomDescriptions;
 
-	TalkingAnims _talkingAnimHeader;
+	TalkingAnims _talkingAnims;
 	ScalingParams _scaleParams;
 	byte *_pixelsShadows = nullptr;
 	byte _roomPalette[768];

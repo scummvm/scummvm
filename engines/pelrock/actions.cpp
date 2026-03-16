@@ -1683,7 +1683,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].curFrame = 0;
 	guard->animData[0].nframes = 1;
 	// copy idle frame from talking animation
-	guard->animData[0].animData[0] = _room->_talkingAnimHeader.animA[0];
+	guard->animData[0].animData[0] = _room->_talkingAnims.animA[0];
 	_alfredState.direction = ALFRED_RIGHT;
 	walkAndAction(_room->findHotspotByExtra(guard->extra), TALK);
 	if (shouldQuit()) {

@@ -130,9 +130,10 @@ void VideoManager::playIntro() {
 
 				byte color;
 				_dialog->processColorAndTrim(lines, color);
-				Graphics::Surface s = _dialog->getDialogueSurface(lines, color);
-				_textSurface.transBlitFrom(s, Common::Point(subtitle->x, subtitle->y), 255);
-				s.free();
+				Graphics::Surface *s = _dialog->getDialogueSurface(lines, color);
+				_textSurface.transBlitFrom(*s, Common::Point(subtitle->x, subtitle->y), 255);
+				s->free();
+				delete s;
 			}
 
 			presentFrame();

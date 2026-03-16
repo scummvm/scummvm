@@ -302,49 +302,49 @@ struct Sprite {
 };
 
 struct HotSpot {
-	byte index;
-	byte innerIndex;
-	int id;
-	int16 x;
-	int16 y;
-	int w;
-	int h;
-	byte actionFlags;
-	int16 extra;
+	byte index = 0;
+	byte innerIndex = 0;
+	int id = 0;
+	int16 x = 0;
+	int16 y = 0;
+	int w = 0;
+	int h = 0;
+	byte actionFlags = 0;
+	int16 extra = 0;
 	bool isEnabled = true;
 	bool isSprite = false;
 	byte zOrder = 0;
 };
 
 struct TalkingAnims {
-	uint32 spritePointer;
+	uint32 spritePointer = 0;
 
 	byte unknown2[3];
 
-	int8 offsetXAnimA;
-	int8 offsetYAnimA;
+	int8 offsetXAnimA = 0;
+	int8 offsetYAnimA = 0;
 
-	byte wAnimA;
-	byte hAnimA;
+	byte wAnimA = 0;
+	byte hAnimA = 0;
 	byte unknown3[2];
-	byte numFramesAnimA;
+	byte numFramesAnimA = 0;
 	byte unknown4[4]; // slot 0 data pointer (unused in ScummVM)
-	byte speedByteA;  // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
+	byte speedByteA = 0;  // slot 0 offset 0x12: controls NPC talk render rate (original: 2+speedByte ticks per render)
 
-	byte offsetXAnimB;
-	byte offsetYAnimB;
+	int8 offsetXAnimB = 0;
+	int8 offsetYAnimB = 0;
 
-	byte wAnimB;
-	byte hAnimB;
+	byte wAnimB = 0;
+	byte hAnimB = 0;
 	byte unknown5[2]; // slot 1 stride (unused in ScummVM)
-	byte numFramesAnimB;
+	byte numFramesAnimB = 0;
 	byte unknown7[4];  // slot 1 data pointer (unused in ScummVM)
-	byte speedByteB;   // slot 1 speed byte at file offset 30
+	byte speedByteB = 0;   // slot 1 speed byte at file offset 30
 	byte unknown6[24]; // slots 2-3 (unused)
 
 	// Runtime fields (not read from file)
-	byte currentFrameAnimA;
-	byte currentFrameAnimB;
+	byte currentFrameAnimA = 0;
+	byte currentFrameAnimB = 0;
 
 	byte **animA = nullptr;
 	byte **animB = nullptr;

@@ -219,7 +219,7 @@ byte getAdjacentWalkbox(Common::Array<WalkBox> &walkboxes, byte currentBoxIndex)
 }
 
 void clearVisitedFlags(Common::Array<WalkBox> &walkboxes) {
-	for (int i = 0; i < walkboxes.size(); i++) {
+	for (uint i = 0; i < walkboxes.size(); i++) {
 		walkboxes[i].flags = 0;
 	}
 }
@@ -261,7 +261,6 @@ uint16 buildWalkboxPath(Common::Array<WalkBox> &walkboxes, byte startBox, byte d
 
 	// Terminate path
 	pathBuffer[pathIndex] = kPathEnd;
-	debug("Built walkbox path of length %d", pathIndex);
 	return pathIndex;
 }
 

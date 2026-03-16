@@ -164,7 +164,7 @@ void DialogManager::displayChoices(Common::Array<ChoiceOption> *choices, Graphic
  * the maxWidth + height then print the text onto that surface with the appropriate alignment,
  * then blit that surface to the screen.
  */
-Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId, Graphics::TextAlign alignment) {
+Graphics::Surface *DialogManager::getDialogueSurface(Common::Array<Common::String> dialogueLines, byte speakerId, Graphics::TextAlign alignment) {
 
 	int maxWidth = 0;
 	int height = dialogueLines.size() * 25; // Add some padding
@@ -172,16 +172,16 @@ Graphics::Surface DialogManager::getDialogueSurface(Common::Array<Common::String
 		maxWidth = MAX(maxWidth, g_engine->_largeFont->getStringWidth(dialogueLines[i]));
 	}
 
-	Graphics::Surface s;
-	s.create(maxWidth + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
-	s.fillRect(s.getRect(), 255); // Clear surface
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(maxWidth + 1, height + 1, Graphics::PixelFormat::createFormatCLUT8());
+	s->fillRect(s->getRect(), 255); // Clear surface
 
 	for (uint i = 0; i < dialogueLines.size(); i++) {
 
 		int xPos = 0;
 		int yPos = i * 25; // Above sprite, adjust for line
 		// debug("Drawing dialogue line %d: \"%s\" at position (%d, %d) with speaker ID %d", i, dialogueLines[i].c_str(), xPos, yPos, speakerId);
-		g_engine->_largeFont->drawString(&s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, alignment);
+		g_engine->_largeFont->drawString(s, dialogueLines[i], xPos, yPos, maxWidth, speakerId, alignment);
 	}
 
 	return s;
@@ -211,7 +211,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 			yBasePos = _curSprite->y; // Above sprite, adjust for line
 
 			// Set NPC talk speed byte for original timing.
-			TalkingAnims *th = &g_engine->_room->_talkingAnimHeader;
+			TalkingAnims *th = &g_engine->_room->_talkingAnims;
 			g_engine->_npcTalkSpeedByte = _curSprite->talkingAnimIndex ? th->speedByteB : th->speedByteA;
 		}
 	}
@@ -274,22 +274,24 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		int xPos = xBasePos - maxWidth / 2;
 		int yPos = yBasePos - height;
 
-		Graphics::Surface s = getDialogueSurface(textLines, speakerId);
+		Graphics::Surface *s = getDialogueSurface(textLines, speakerId);
 
 		// Clamp to screen bounds (original game: min Y = 1, max X = 639 - width)
 		xPos = CLIP(xPos, 0, 639 - maxWidth);
-		yPos = CLIP(yPos, 1, 400 - (int)s.getRect().height());
+		yPos = CLIP(yPos, 1, 400 - (int)s->getRect().height());
 
 		if (g_engine->_shakeEffectState.enabled) {
 			debug("Applying shake effect to dialogue, shakeX: %d", g_engine->_shakeEffectState.shakeX);
 			xPos -= g_engine->_shakeEffectState.shakeX;
 		}
 
-		_screen->transBlitFrom(s, s.getRect(), Common::Point(xPos, yPos), 255);
+		_screen->transBlitFrom(*s, s->getRect(), Common::Point(xPos, yPos), 255);
 		// drawPos(_screen, xPos, yPos, speakerId);
 
 		_screen->markAllDirty();
 		_screen->update();
+		s->free();
+		delete s;
 
 		// Check if TTL expired for this page (always applies, even for _disableClickToAdvance)
 		bool ttlExpired = !fromIntro && (pageTtlMs > 0) && (g_system->getMillis() - pageStartMs >= pageTtlMs);

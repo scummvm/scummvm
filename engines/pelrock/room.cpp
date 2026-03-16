@@ -30,7 +30,6 @@ namespace Pelrock {
 static const uint32 kPaletteRemapOffset = 0x4C77C; // JUEGO.EXE — water-effect palette remap table
 
 RoomManager::RoomManager() {
-	_pixelsShadows = new byte[640 * 400];
 	loadWaterPaletteRemap();
 }
 
@@ -39,7 +38,22 @@ RoomManager::~RoomManager() {
 		free(_pixelsShadows);
 		_pixelsShadows = nullptr;
 	}
+	clearAnims();
 	delete[] _resetData;
+}
+
+void RoomManager::clearAnims() {
+	for (auto &sprite : _currentRoomAnims) {
+		if (sprite.animData) {
+			for (int a = 0; a < sprite.numAnims; a++) {
+				for (int f = 0; f < sprite.animData[a].nframes; f++) {
+					delete[] sprite.animData[a].animData[f]; // free each frame
+				}
+				delete[] sprite.animData[a].animData; // free frame pointer array
+			}
+			delete[] sprite.animData; // free anim array
+		}
+	}
 }
 
 void RoomManager::loadWaterPaletteRemap() {
@@ -578,6 +592,10 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	Common::Array<Sprite> sprites = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
 	Common::Array<HotSpot> staticHotspots = loadHotspots(pair10, pair10size);
 
+
+	// clear anims from previous room
+	clearAnims();
+
 	_currentRoomAnims = sprites;
 	_currentRoomHotspots = unifyHotspots(sprites, staticHotspots);
 	_currentRoomExits = loadExits(pair10, pair10size);
@@ -893,7 +911,6 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 	Common::Array<Sprite> anims = Common::Array<Sprite>();
 	uint32 spriteCountPos = 5;
 	byte spriteCount = data[spriteCountPos] - 2;
-	debug("Sprite count: %d", spriteCount);
 	uint32 metadata_start = spriteCountPos + (44 * 2 + 5);
 	uint32 picOffset = 0;
 
@@ -1182,7 +1199,6 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	talkFile.read(&talkHeader.unknown6, 24);
 
 	if (talkHeader.spritePointer == 0) {
-		debug("No talking animation for room %d", roomNumber);
 		talkFile.close();
 		return;
 	}
@@ -1215,7 +1231,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		}
 	}
 	free(decompressed);
-	_talkingAnimHeader = talkHeader;
+	_talkingAnims = talkHeader;
 
 	talkFile.close();
 }
