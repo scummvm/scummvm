@@ -178,8 +178,10 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 		pictStream = _resMan->getResource(MKTAG('P', 'I', 'C', 'T'), (int16)resID);
 	}
 
-	if (!pictStream)
+	if (!pictStream) {
+		warning("loadPictSurface(%d): PICT resource not found", resID);
 		return nullptr;
+	}
 
 	::Image::PICTDecoder decoder;
 	Graphics::Surface *result = nullptr;
@@ -187,19 +189,36 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 		const Graphics::Surface *src = decoder.getSurface();
 		if (src) {
 			// Convert to a persistent RGB surface (decoder surface is transient)
+			// Detect 1-bit B&W PICTs where ScummVM's PICTDecoder inverts
+			// the Mac QuickDraw convention. In QuickDraw, 1-bit bitmaps
+			// use bit 0 = BackColor (white) and bit 1 = ForeColor (black).
+			// The PICTDecoder maps index 0 → black instead of white.
+			// We detect this by checking for CLUT8 with a tiny palette
+			// (0-2 entries, typical of 1-bit PICTs) and invert.
+			bool invert1bit = false;
+			if (src->format == Graphics::PixelFormat::createFormatCLUT8()) {
+				const Graphics::Palette &checkPal = decoder.getPalette();
+				invert1bit = ((int)checkPal.size() <= 2);
+			}
+
 			result = new Graphics::Surface();
 			result->create(src->w, src->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 			for (int y = 0; y < src->h; y++) {
 				for (int x = 0; x < src->w; x++) {
 					byte r, g, b;
 					if (src->format == Graphics::PixelFormat::createFormatCLUT8()) {
-						// For CLUT8, use the decoder's palette
 						byte idx = *((const byte *)src->getBasePtr(x, y));
-						const Graphics::Palette &pal = decoder.getPalette();
-						if (idx < (int)pal.size()) {
-							pal.get(idx, r, g, b);
+						if (invert1bit) {
+							// QuickDraw 1-bit: index 0 = white, index 1 = black
+							byte lum = (idx == 0) ? 255 : 0;
+							r = g = b = lum;
 						} else {
-							r = g = b = 0;
+							const Graphics::Palette &pal = decoder.getPalette();
+							if (idx < (int)pal.size()) {
+								pal.get(idx, r, g, b);
+							} else {
+								r = g = b = 0;
+							}
 						}
 					} else {
 						uint32 pixel = src->getPixel(x, y);
@@ -208,7 +227,7 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 					result->setPixel(x, y, result->format.ARGBToColor(255, r, g, b));
 				}
 			}
-			debugC(1, kColonyDebugUI, "loadPictSurface(%d): %dx%d", resID, result->w, result->h);
+			warning("loadPictSurface(%d): %dx%d invert1bit=%d", resID, result->w, result->h, invert1bit ? 1 : 0);
 		}
 	}
 	delete pictStream;
@@ -297,14 +316,17 @@ void ColonyEngine::updateViewportLayout() {
 		if (!_pictCompass)
 			_pictCompass = loadPictSurface(-32757);
 		if (!_pictPower) {
-			// power.c: !armor → FindDepth()>=8 ? -32761 (color) : -32752 (B&W)
+			// power.c DrawInfo(): armor → -32755/-32760; !armor → -32752/-32761
+			// In B&W, -32752 doesn't exist. The original GetPicture returns null
+			// and DrawPicture is a no-op — the panel stays blank until armor > 0.
+			// Only fall back to -32755 when armored.
 			int wantID;
 			if (_armor > 0)
 				wantID = -32755;
 			else
 				wantID = _hasMacColors ? -32761 : -32752;
 			_pictPower = loadPictSurface(wantID);
-			if (!_pictPower && wantID != -32755)
+			if (!_pictPower && _armor > 0 && wantID != -32755)
 				_pictPower = loadPictSurface(-32755);
 			_pictPowerID = _pictPower ? wantID : 0;
 		}
@@ -555,7 +577,7 @@ void ColonyEngine::drawDashboardMac() {
 		else
 			wantPictID = macColor ? -32761 : -32752;
 
-		// Reload PICT if state changed (fall back to -32755 if variant missing)
+		// Reload PICT if state changed (fall back to -32755 only when armored)
 		if (_pictPowerID != wantPictID) {
 			if (_pictPower) {
 				_pictPower->free();
@@ -563,12 +585,14 @@ void ColonyEngine::drawDashboardMac() {
 				_pictPower = nullptr;
 			}
 			_pictPower = loadPictSurface(wantPictID);
-			if (!_pictPower && wantPictID != -32755)
+			if (!_pictPower && _armor > 0 && wantPictID != -32755)
 				_pictPower = loadPictSurface(-32755);
 			_pictPowerID = wantPictID;
 		}
 
 		// power.c: SetRect(&info, -2, -2, xSize-2, ySize-2); DrawPicture(inf, &info)
+		// In the original B&W game, GetPicture(-32752) returns null when !armor,
+		// so DrawPicture is a no-op — the window just shows white fill.
 		if (_pictPower)
 			drawPictAt(_pictPower, _powerRect.left - 2, _powerRect.top - 2);
 
