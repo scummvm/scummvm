@@ -232,6 +232,18 @@ static int resolveDialogueTextboxIndex(uint lineCount) {
 	return 7;
 }
 
+static int resolveDialogueResponseTextboxIndex(uint responseRowCount) {
+	if (responseRowCount == 0)
+		return 0;
+	if (responseRowCount < 3)
+		return 3;
+	if (responseRowCount < 4)
+		return 4;
+	if (responseRowCount < 6)
+		return 5;
+	return 6;
+}
+
 static void drawDialogueTextLines(Graphics::Screen &screen, const Graphics::Font &font,
 		const Common::Array<Common::String> &lines, int x, int y, int width) {
 	const int lineHeight = getDialogueTextLineHeight(font);
@@ -327,25 +339,27 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
 		return Common::kReadingFailed;
 
-	const CftFontResource *normalFontResource = findStartupFontByName(_engine, "TEXTFONT");
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "TEXTFNT2");
-	std::unique_ptr<HarvesterCftFont> normalCftFont;
-	std::unique_ptr<HarvesterCftFont> selectedCftFont;
-	if (normalFontResource) {
-		normalCftFont.reset(new HarvesterCftFont(*normalFontResource));
-		if (!normalCftFont->isValid())
-			normalCftFont.reset();
+	const CftFontResource *subtitleFontResource = findStartupFontByName(_engine, "TEXTFONT");
+	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "TEXTFNT2");
+	std::unique_ptr<HarvesterCftFont> subtitleCftFont;
+	std::unique_ptr<HarvesterCftFont> menuCftFont;
+	if (subtitleFontResource) {
+		subtitleCftFont.reset(new HarvesterCftFont(*subtitleFontResource));
+		if (!subtitleCftFont->isValid())
+			subtitleCftFont.reset();
 	}
-	if (selectedFontResource) {
-		selectedCftFont.reset(new HarvesterCftFont(*selectedFontResource));
-		if (!selectedCftFont->isValid())
-			selectedCftFont.reset();
+	if (menuFontResource) {
+		menuCftFont.reset(new HarvesterCftFont(*menuFontResource));
+		if (!menuCftFont->isValid())
+			menuCftFont.reset();
 	}
 
-	const Graphics::Font *normalFont = normalCftFont ? static_cast<const Graphics::Font *>(normalCftFont.get()) : fallbackFont;
-	const Graphics::Font *selectedFont = selectedCftFont ? static_cast<const Graphics::Font *>(selectedCftFont.get()) : normalFont;
-	const bool normalFontUsesCft = normalCftFont.get() != nullptr;
-	const bool selectedFontUsesCft = selectedCftFont.get() != nullptr;
+	const Graphics::Font *subtitleFont = subtitleCftFont ? static_cast<const Graphics::Font *>(subtitleCftFont.get()) : fallbackFont;
+	const Graphics::Font *menuFont = menuCftFont ? static_cast<const Graphics::Font *>(menuCftFont.get()) : subtitleFont;
+	const Graphics::Font *highlightFont = subtitleFont;
+	const bool subtitleFontUsesCft = subtitleCftFont.get() != nullptr;
+	const bool menuFontUsesCft = menuCftFont.get() != nullptr;
+	const bool highlightFontUsesCft = subtitleFontUsesCft;
 
 	IndexedBitmap keywordBitmap;
 	if (!loadBitmapResource(*_engine.getResources(), kDialogueKeywordBitmapPath, keywordBitmap))
@@ -438,13 +452,13 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			blitTransparentBitmap(*screen, *overlayBitmap, kDialogueOverlayX, kDialogueOverlayY);
 
 		if (subtitleLines) {
-			if (normalFontUsesCft)
-				drawDialogueTextLines(*screen, *normalFont, *subtitleLines,
+			if (subtitleFontUsesCft)
+				drawDialogueTextLines(*screen, *subtitleFont, *subtitleLines,
 					kDialogueSubtitleTextX, kDialogueSubtitleTextY, kDialogueSubtitleTextWidth);
 			else {
-				const int lineHeight = getDialogueTextLineHeight(*normalFont);
+				const int lineHeight = getDialogueTextLineHeight(*subtitleFont);
 				for (uint i = 0; i < subtitleLines->size(); ++i) {
-					drawShadowedString(*screen, *normalFont, (*subtitleLines)[i],
+					drawShadowedString(*screen, *subtitleFont, (*subtitleLines)[i],
 						kDialogueSubtitleTextX,
 						kDialogueSubtitleTextY + (int)i * lineHeight,
 						kDialogueSubtitleTextWidth, kTextColorNormal);
@@ -453,26 +467,26 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 
 		if (topics) {
-			const int lineHeight = getDialogueTextLineHeight(*normalFont);
+			const int lineHeight = getDialogueTextLineHeight(*menuFont);
 			for (uint i = 0; i < topics->size(); ++i) {
 				const bool highlighted = (int)i == hoveredTopicIndex;
-				const Graphics::Font &font = highlighted ? *selectedFont : *normalFont;
-				const bool usesCft = highlighted ? selectedFontUsesCft : normalFontUsesCft;
+				const Graphics::Font &font = highlighted ? *highlightFont : *menuFont;
+				const bool usesCft = highlighted ? highlightFontUsesCft : menuFontUsesCft;
 				drawFontString(font, usesCft, (*topics)[i], kDialogueKeywordTextX,
 					kDialogueKeywordTextY + (int)i * lineHeight, kDialogueKeywordTextWidth,
-					highlighted ? kTextColorHover : kTextColorNormal);
+					highlighted ? kTextColorNormal : kTextColorHover);
 			}
 
-			const Graphics::Font &otherFont = hoverOther ? *selectedFont : *normalFont;
-			const bool otherUsesCft = hoverOther ? selectedFontUsesCft : normalFontUsesCft;
+			const Graphics::Font &otherFont = hoverOther ? *highlightFont : *menuFont;
+			const bool otherUsesCft = hoverOther ? highlightFontUsesCft : menuFontUsesCft;
 			drawFontString(otherFont, otherUsesCft, "Other", kDialogueOtherX, kDialogueOtherY,
-				kDialogueOtherWidth, hoverOther ? kTextColorHover : kTextColorNormal);
+				kDialogueOtherWidth, hoverOther ? kTextColorNormal : kTextColorHover);
 		}
 
 		if (textEntryValue) {
-			drawFontString(*selectedFont, selectedFontUsesCft,
+			drawFontString(*highlightFont, highlightFontUsesCft,
 				*textEntryValue + "_", kDialogueTextEntryX, kDialogueTextEntryY,
-				kDialogueKeywordTextWidth - 30, kTextColorHover);
+				kDialogueKeywordTextWidth - 30, kTextColorNormal);
 		}
 
 		if (runtimeEntities)
@@ -490,7 +504,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Array<Common::String> subtitleLines;
 		const IndexedBitmap *textboxBitmap = nullptr;
 		if (textEnabled) {
-			normalFont->wordWrapText(subtitleText, kDialogueSubtitleTextWidth, subtitleLines);
+			subtitleFont->wordWrapText(subtitleText, kDialogueSubtitleTextWidth, subtitleLines);
 			textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueTextboxIndex(subtitleLines.size()));
 		}
 
@@ -614,7 +628,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		for (const Common::String &rawOption : rawOptions) {
 			DialogueResponseOptionLayout option;
 			option.text = rawOption;
-			normalFont->wordWrapText(rawOption, kDialogueSubtitleTextWidth, option.wrappedLines);
+			menuFont->wordWrapText(rawOption, kDialogueSubtitleTextWidth, option.wrappedLines);
 			if (option.wrappedLines.empty())
 				option.wrappedLines.push_back(rawOption);
 			option.rowStart = (int)totalRows;
@@ -631,7 +645,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (mousePos.y < kDialogueKeywordTextY)
 			return -1;
 
-		const int lineHeight = getDialogueTextLineHeight(*normalFont);
+		const int lineHeight = getDialogueTextLineHeight(*menuFont);
 		const int row = (mousePos.y - kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
 		if (row < 0 || row >= (int)totalRows)
 			return -1;
@@ -657,19 +671,19 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			blitTransparentBitmap(*screen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
 
 		const Common::String title = "Responses";
-		const Graphics::Font &titleFont = *normalFont;
-		const bool titleUsesCft = normalFontUsesCft;
+		const Graphics::Font &titleFont = *highlightFont;
+		const bool titleUsesCft = highlightFontUsesCft;
 		const int titleWidth = titleFont.getStringWidth(title);
 		const int titleX = kDialogueSubtitleTextX + MAX<int>(0, (kDialogueSubtitleTextWidth - titleWidth) / 2);
 		drawFontString(titleFont, titleUsesCft, title, titleX, 11, titleWidth, kTextColorNormal);
 
-		const int lineHeight = getDialogueTextLineHeight(*normalFont);
+		const int lineHeight = getDialogueTextLineHeight(*menuFont);
 		int drawY = kDialogueKeywordTextY;
 		for (uint i = 0; i < options.size(); ++i) {
 			const bool highlighted = (int)i == hoveredOptionIndex;
-			const Graphics::Font &font = highlighted ? *selectedFont : *normalFont;
-			const bool usesCft = highlighted ? selectedFontUsesCft : normalFontUsesCft;
-			const byte color = highlighted ? kTextColorHover : kTextColorNormal;
+			const Graphics::Font &font = highlighted ? *highlightFont : *menuFont;
+			const bool usesCft = highlighted ? highlightFontUsesCft : menuFontUsesCft;
+			const byte color = highlighted ? kTextColorNormal : kTextColorHover;
 
 			for (const Common::String &wrappedLine : options[i].wrappedLines) {
 				drawFontString(font, usesCft, wrappedLine, kDialogueSubtitleTextX, drawY,
@@ -697,7 +711,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (options.empty())
 			return Common::kNoError;
 
-		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueTextboxIndex(totalRows));
+		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError)
 			return releaseError;
@@ -749,7 +763,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 		Graphics::FrameLimiter limiter(g_system, 60);
 		for (;;) {
-			const int hoveredTopicIndex = editingOther ? -1 : getDialogueMenuItemAt(*normalFont, topics.size(), _mousePos);
+			const int hoveredTopicIndex = editingOther ? -1 : getDialogueMenuItemAt(*menuFont, topics.size(), _mousePos);
 			const bool hoverOther = !editingOther && isDialogueOtherHit(_mousePos);
 			drawDialogueOverlay(&keywordBitmap, nullptr, &topics, hoveredTopicIndex, hoverOther,
 				editingOther ? &typedTopic : nullptr);
@@ -794,7 +808,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					}
 					break;
 				case Common::EVENT_LBUTTONDOWN: {
-					const int clickedTopic = getDialogueMenuItemAt(*normalFont, topics.size(), _mousePos);
+					const int clickedTopic = getDialogueMenuItemAt(*menuFont, topics.size(), _mousePos);
 					if (clickedTopic >= 0) {
 						selectedTopic = topics[(uint)clickedTopic];
 						return Common::kNoError;
