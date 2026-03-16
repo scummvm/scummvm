@@ -108,7 +108,7 @@ private:
 	AudioEffect readAudioEffect(Common::File &metadataFile);
 	char decodeChar(byte c);
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
-	int _currentSubtitleIndex = 0;
+	uint _currentSubtitleIndex = 0;
 	Graphics::Surface _videoSurface = Graphics::Surface();
 	Graphics::ManagedSurface _textSurface = Graphics::ManagedSurface();
 	Common::Array<ChunkHeader> _chunkBuffer;

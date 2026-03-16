@@ -1659,7 +1659,7 @@ VerbIcon PelrockEngine::isActionUnder(int x, int y) {
 		return NO_ACTION;
 	}*/
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
-	int loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
+	uint loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (uint i = 0; i < loopEnd; i++) {
 		Common::Point p = getPositionInBalloonForIndex(i, _actionPopupState.x, _actionPopupState.y);
 		Common::Rect actionRect = Common::Rect(p.x, p.y, p.x + kVerbIconWidth, p.y + kVerbIconHeight);

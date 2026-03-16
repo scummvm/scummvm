@@ -248,7 +248,7 @@ void RoomManager::enableSprite(byte spriteIndex, byte zOrder, int persist) {
 }
 
 void RoomManager::enableSprite(byte roomNumber, byte spriteIndex, byte zOrder, int persist) {
-	for (int i = 0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
+	for (uint i = 0; i < g_engine->_state->spriteChanges[roomNumber].size(); i++) {
 		if (g_engine->_state->spriteChanges[roomNumber][i].spriteIndex == spriteIndex) {
 			g_engine->_state->spriteChanges[roomNumber].remove_at(i);
 			break;

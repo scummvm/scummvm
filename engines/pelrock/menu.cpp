@@ -661,7 +661,7 @@ void MenuManager::drawScreen() {
 
 	_screen->blitFrom(_compositeBuffer);
 	byte defaultColor = 255;
-	for (int i = 0; _menuText.size() > i; i++) {
+	for (uint i = 0; _menuText.size() > i; i++) {
 		g_engine->_graphics->drawColoredText(_screen, _menuText[i], kTextStartX, kTextStartY + (i * _textLineH), 200, defaultColor, g_engine->_smallFont);
 	}
 
@@ -670,8 +670,8 @@ void MenuManager::drawScreen() {
 
 void MenuManager::drawInventoryIcons() {
 	bool debugIcons = false;
-	for (int i = 0; i < 4; i++) {
-		int itemIndex = _curInventoryPage * 4 + i;
+	for (uint i = 0; i < 4; i++) {
+		uint itemIndex = _curInventoryPage * 4 + i;
 		if (g_engine->_state->inventoryItems.size() <= itemIndex)
 			continue;
 		InventoryObject item = g_engine->_res->getIconForObject(g_engine->_state->inventoryItems[itemIndex]);

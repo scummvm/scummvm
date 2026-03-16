@@ -193,7 +193,7 @@ private:
 	Common::Array<Common::StringArray> _menuTexts;
 	// Temporary
 	int _selectedInvIndex = 0;
-	int _curInventoryPage = 0;
+	uint _curInventoryPage = 0;
 	Common::StringArray _menuText;
 	Common::Array<Common::StringArray> _inventoryDescriptions;
 	Common::Array<Common::Point> _inventorySlots;

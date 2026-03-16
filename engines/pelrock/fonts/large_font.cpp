@@ -116,7 +116,7 @@ int LargeFont::getCharWidth(uint32 chr) const {
 
 void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
 	chr -= 32; // Adjust for font starting at ASCII 32
-	if (!_fontData || chr >= 100 || chr < 0) {
+	if (!_fontData || chr >= 100) {
 		return;
 	}
 
