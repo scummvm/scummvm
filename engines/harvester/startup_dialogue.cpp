@@ -1031,11 +1031,19 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 						jimmyInteraction.musicPath = actionInteraction.musicPath;
 					if (!actionInteraction.nextRoomName.empty())
 						jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+					if (!actionInteraction.dialogueNpcName.empty())
+						jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
+					if (!actionInteraction.dialogueContinuationTag.empty()) {
+						jimmyInteraction.dialogueContinuationTag =
+							actionInteraction.dialogueContinuationTag;
+					}
 					for (const StartupAudioCommand &command : actionInteraction.audioCommands)
 						jimmyInteraction.audioCommands.push_back(command);
 				}
 				if (jimmyInteraction.mutatedRuntimeState || !jimmyInteraction.musicPath.empty() ||
-						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.audioCommands.empty()) {
+						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.dialogueNpcName.empty() ||
+						!jimmyInteraction.dialogueContinuationTag.empty() ||
+						!jimmyInteraction.audioCommands.empty()) {
 					startupFlow.queueDialogueInteraction(jimmyInteraction);
 				}
 
