@@ -649,6 +649,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		return playDialogueLineWithVariant(wavId, speakerId, 0);
 	};
 
+	// Multi-line exchanges in the original binary are emitted as consecutive play_dialogue_line calls.
 	auto playDialogueSequence = [&](const DialogueLineSpec *lines, uint count) -> Common::Error {
 		for (uint i = 0; i < count; ++i) {
 			Common::Error lineError = playDialogueLineWithVariant(
@@ -1235,7 +1236,15 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			return playDialogueLine(0x8dc, "HANK");
 
 		const Common::String momTopic = startupText->getDialogueResponseLine(0xd2);
-		if (!momTopic.empty() && selectedTopic.equalsIgnoreCase(momTopic)) {
+		Common::Array<Common::String> currentTopics;
+		splitDialogueMenuLine(hankTopicBuffer, currentTopics);
+		const bool matchesMomTopicByLine = !momTopic.empty() && selectedTopic.equalsIgnoreCase(momTopic);
+		const bool matchesMomTopicFromIntroBuffer = hankTopicBufferLineIndex == 0xc8 &&
+			!currentTopics.empty() && selectedTopic.equalsIgnoreCase(currentTopics[0]);
+		if (matchesMomTopicByLine || matchesMomTopicFromIntroBuffer) {
+			debugC(1, kDebugDialogue,
+				"Harvester: Hank matched special Mom branch '%s' (lineMatch=%d bufferMatch=%d)",
+				selectedTopic.c_str(), (int)matchesMomTopicByLine, (int)matchesMomTopicFromIntroBuffer);
 			const DialogueLineSpec lines[] = {
 				DialogueLineSpec(0x725, "HANK"),
 				DialogueLineSpec(0x729, "PC"),

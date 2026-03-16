@@ -23,7 +23,10 @@
 #define HARVESTER_XFILE_ARCHIVE_H
 
 #include "common/archive.h"
+#include "common/file.h"
 #include "common/hashmap.h"
+#include "common/mutex.h"
+#include "common/ptr.h"
 
 namespace Harvester {
 
@@ -52,6 +55,8 @@ private:
 	Common::SeekableReadStream *openPackedEntry(const Entry &entry) const;
 
 	Common::Path _dataPath;
+	Common::ScopedPtr<Common::File> _dataFile;
+	mutable Common::Mutex _dataFileMutex;
 	typedef Common::HashMap<Common::Path, Entry, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> EntryMap;
 	EntryMap _entries;
 };
