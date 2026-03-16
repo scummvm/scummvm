@@ -583,6 +583,9 @@ private:
 	void setPower(int p0, int p1, int p2);
 	void cShoot();
 	void destroyRobot(int num);
+	void doShootCircles(int cx, int cy);
+	void doBurnHole(int cx, int cy, int radius);
+	void meGetShot();
 
 	// battle.c: outdoor battle system (OpenGL 3D)
 	void battleInit();

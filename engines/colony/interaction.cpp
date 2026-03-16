@@ -321,31 +321,14 @@ void ColonyEngine::cShoot() {
 
 	_sound->play(Sound::kBang);
 
-	// Drain weapons power: -(1 << level) per shot
-	setPower(-(1 << _level), 0, 0);
-
-	// Draw crosshair flash via XOR lines on the 3D viewport
+	// Draw shoot effect then drain power (matching original order)
 	const Common::Point aim = getAimPoint();
 	const int cx = aim.x;
 	const int cy = aim.y;
-	_gfx->setXorMode(true);
-	for (int r = 4; r <= 20; r += 4) {
-		_gfx->drawLine(cx - r, cy - r, cx + r, cy - r, 0xFFFFFF);
-		_gfx->drawLine(cx + r, cy - r, cx + r, cy + r, 0xFFFFFF);
-		_gfx->drawLine(cx + r, cy + r, cx - r, cy + r, 0xFFFFFF);
-		_gfx->drawLine(cx - r, cy + r, cx - r, cy - r, 0xFFFFFF);
-	}
-	_gfx->copyToScreen();
-	_system->updateScreen();
-	_system->delayMillis(30);
-	// XOR again to erase
-	for (int r = 4; r <= 20; r += 4) {
-		_gfx->drawLine(cx - r, cy - r, cx + r, cy - r, 0xFFFFFF);
-		_gfx->drawLine(cx + r, cy - r, cx + r, cy + r, 0xFFFFFF);
-		_gfx->drawLine(cx + r, cy + r, cx - r, cy + r, 0xFFFFFF);
-		_gfx->drawLine(cx - r, cy + r, cx - r, cy - r, 0xFFFFFF);
-	}
-	_gfx->setXorMode(false);
+	doShootCircles(cx, cy);
+
+	// Drain weapons power: -(1 << level) per shot
+	setPower(-(1 << _level), 0, 0);
 
 	int bestIdx = -1;
 	int bestDist = INT_MAX;
@@ -385,6 +368,9 @@ void ColonyEngine::cShoot() {
 		const Thing &target = _objects[bestIdx - 1];
 		debugC(1, kColonyDebugAnimation, "CShoot: hit robot %d (type=%d, dist=%d)",
 			bestIdx, target.type, bestDist);
+		// shoot.c: s0 = rtable[dist]; InvertOval (Mac) / doBurnHole (DOS)
+		int hitRadius = (bestDist > 0) ? CLIP<int>(160 * 128 / bestDist, 1, 100) : 50;
+		doBurnHole(cx, cy, hitRadius);
 		destroyRobot(bestIdx);
 	}
 }
@@ -444,6 +430,188 @@ void ColonyEngine::destroyRobot(int num) {
 			obj.count = 0;
 			debugC(1, kColonyDebugAnimation, "Robot %d regressed to egg", num);
 		}
+	}
+}
+
+// SHOOT.C doShootCircles(): three V-shaped lines (red/white/red) from the
+// bottom-left and bottom-right corners of the viewport converging at the aim
+// point, plus a small filled oval at center. Simulates a rifle-barrel perspective.
+void ColonyEngine::doShootCircles(int cx, int cy) {
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+
+	if (isMac) {
+		// Mac shoot.c CShoot(): patXor diagonal lines radiating from aim point
+		// using rtable[] perspective scaling with PenSize decreasing from 10 to 7.
+		// Simulate thick lines by drawing multiple parallel offsets.
+		auto thickXorLine = [this](int x1, int y1, int x2, int y2, int size) {
+			int half = size / 2;
+			for (int dy = -half; dy <= half; dy++) {
+				for (int dx = -half; dx <= half; dx++) {
+					_gfx->drawLine(x1 + dx, y1 + dy, x2 + dx, y2 + dy, 0xFFFFFF);
+				}
+			}
+		};
+
+		_gfx->setXorMode(true);
+		int psize = 10;
+		for (int i = 100; i < 900; i += 200) {
+			const int s0 = CLIP<int>(160 * 128 / i, 0, 1000);
+			const int s1 = CLIP<int>(160 * 128 / (i + 100), 0, 1000);
+			// Four diagonal ray segments from outer to inner
+			thickXorLine(cx - s0, cy - s0, cx - s1, cy - s1, psize);
+			thickXorLine(cx - s0, cy + s0, cx - s1, cy + s1, psize);
+			thickXorLine(cx + s0, cy + s0, cx + s1, cy + s1, psize);
+			thickXorLine(cx + s0, cy - s0, cx + s1, cy - s1, psize);
+			psize--;
+		}
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(30);
+		// XOR again to erase
+		psize = 10;
+		for (int i = 100; i < 900; i += 200) {
+			const int s0 = CLIP<int>(160 * 128 / i, 0, 1000);
+			const int s1 = CLIP<int>(160 * 128 / (i + 100), 0, 1000);
+			thickXorLine(cx - s0, cy - s0, cx - s1, cy - s1, psize);
+			thickXorLine(cx - s0, cy + s0, cx - s1, cy + s1, psize);
+			thickXorLine(cx + s0, cy + s0, cx + s1, cy + s1, psize);
+			thickXorLine(cx + s0, cy - s0, cx + s1, cy - s1, psize);
+			psize--;
+		}
+		_gfx->setXorMode(false);
+	} else {
+		// DOS SHOOT.C doShootCircles(): three converging V-lines from viewport
+		// bottom corners to aim point (red/white/red) + center oval.
+		_gfx->drawLine(_screenR.left + 1, _screenR.bottom - 1, cx, cy - 1, 4); // vRED
+		_gfx->drawLine(cx, cy - 1, _screenR.right - 2, _screenR.bottom - 1, 4);
+
+		_gfx->drawLine(_screenR.left, _screenR.bottom - 1, cx, cy, 15); // vINTWHITE
+		_gfx->drawLine(cx, cy, _screenR.right - 1, _screenR.bottom - 1, 15);
+
+		_gfx->drawLine(_screenR.left - 1, _screenR.bottom - 1, cx, cy + 1, 4); // vRED
+		_gfx->drawLine(cx, cy + 1, _screenR.right, _screenR.bottom - 1, 4);
+
+		// Small filled oval at aim point
+		_gfx->fillEllipse(cx, cy, 2, 2, 4); // vRED
+
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(30);
+	}
+}
+
+// SHOOT.C doBurnHole(): expanding concentric random rays in blue/yellow/white
+// when a robot is hit. Creates an "explosion" effect at the hit location.
+void ColonyEngine::doBurnHole(int cx, int cy, int radius) {
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+
+	if (isMac) {
+		// Mac: InvertOval at robot bounds
+		_gfx->setXorMode(true);
+		_gfx->fillEllipse(cx, cy, radius, radius, 0xFFFFFF);
+		_gfx->setXorMode(false);
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(50);
+	} else {
+		// DOS: expanding random rays in light blue → yellow → white
+		const int ra = MIN(radius * 2, _pQx * 6);
+		const int d = ra * 2;
+		const int dd = d * 2;
+
+		for (int i = 2; i < dd; i += 1 + (i >> 1)) {
+			const int i2 = i >> 1;
+			int i4 = i2 >> 1;
+			const int i8 = i4 >> 1;
+			const int i16 = i8 >> 1;
+			if (i8 == 0)
+				i4 = 1;
+
+			// Light blue rays
+			for (int k = 0; k < i16; k++) {
+				int tx = (_randomSource.getRandomNumber(i2) - i4);
+				int ty = (_randomSource.getRandomNumber(i2) - i4);
+				if (ABS(tx) + ABS(ty) < i8 * 3)
+					_gfx->drawLine(cx + tx, cy + ty, cx - tx, cy - ty, 9); // vLTBLUE
+			}
+			// Yellow rays
+			for (int k = 0; k < i16; k++) {
+				int tx = (_randomSource.getRandomNumber(i2) - i4);
+				int ty = (_randomSource.getRandomNumber(i2) - i4);
+				if (ABS(tx) + ABS(ty) < (i * 3) >> 3)
+					_gfx->drawLine(cx + tx, cy + ty, cx - tx, cy - ty, 14); // vYELLOW
+			}
+		}
+		// White center core
+		const int i8 = dd >> 4;
+		const int i2 = dd >> 1;
+		for (int k = 0; k < i8; k++) {
+			int tx = (_randomSource.getRandomNumber(i2) / 2 - (dd >> 4));
+			int ty = (_randomSource.getRandomNumber(i2) / 2 - (dd >> 4));
+			if (ABS(tx) + ABS(ty) < (dd * 3) >> 4)
+				_gfx->drawLine(cx + tx, cy + ty, cx - tx, cy - ty, 15); // vINTWHITE
+		}
+		// Center dot
+		_gfx->fillEllipse(cx, cy, _pQx / 8, _pQy / 8, 15);
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(50);
+	}
+}
+
+// SHOOT.C MeGetShot(): XOR'd X-shaped crosshairs scattered across the viewport
+// when a robot shoots the player. Four passes of 40 X-marks each.
+void ColonyEngine::meGetShot() {
+	const int vw = _screenR.width();
+	const int vh = _screenR.height();
+	if (vw <= 0 || vh <= 0)
+		return;
+
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+
+	if (isMac) {
+		// Mac shoot.c: InvertRect(&Clip) — full viewport flash
+		_gfx->setXorMode(true);
+		_gfx->fillRect(_screenR, 0xFFFFFF);
+		_gfx->setXorMode(false);
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(30);
+		// Erase flash
+		_gfx->setXorMode(true);
+		_gfx->fillRect(_screenR, 0xFFFFFF);
+		_gfx->setXorMode(false);
+	} else {
+		// DOS SHOOT.C MeGetShot(): 4 passes × 40 XOR'd X-marks at random positions
+		const int qx = _pQx;
+		const int qy = _pQy >> 1;
+		const int qx5 = (_pQx >> 2) * 5;
+
+		_gfx->setXorMode(true);
+		for (int pass = 0; pass < 4; pass++) {
+			for (int i = 0; i < 40; i++) {
+				int x, y;
+				if (pass & 1) {
+					// Passes 1,3: centered half-region
+					x = _randomSource.getRandomNumber(vw / 2) + (vw >> 2);
+					y = _randomSource.getRandomNumber(vh / 2) + (vh >> 2);
+				} else {
+					// Passes 0,2: full region
+					x = _randomSource.getRandomNumber(vw);
+					y = _randomSource.getRandomNumber(vh);
+				}
+				x += _screenR.left;
+				y += _screenR.top;
+				// Draw X-shaped crosshair (3 lines: two diagonals + horizontal)
+				_gfx->drawLine(x - qx, y - qy, x + qx, y + qy, 15);
+				_gfx->drawLine(x - qx5, y, x + qx5, y, 15);
+				_gfx->drawLine(x - qx, y + qy, x + qx, y - qy, 15);
+			}
+		}
+		_gfx->setXorMode(false);
+		_gfx->copyToScreen();
+		_system->updateScreen();
+		_system->delayMillis(50);
 	}
 }
 

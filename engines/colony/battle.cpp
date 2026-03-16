@@ -1043,40 +1043,13 @@ void ColonyEngine::battleShoot() {
 		return;
 
 	_sound->play(Sound::kBang);
-	setPower(-2, 0, 0);
 
+	// DOS BATTLE.C: doShootCircles(cx, cy) then SetPower(-2,0,0)
 	const Common::Point aim = getAimPoint();
 	const int cx = aim.x;
 	const int cy = aim.y;
-	_gfx->setXorMode(true);
-	for (int i = 100; i < 900; i += 200) {
-		const int outer = CLIP<int>(kFloor * 128 / i, 0, 1000);
-		const int inner = CLIP<int>(kFloor * 128 / (i + 100), 0, 1000);
-		_gfx->drawLine(cx - outer, cy - outer, cx - inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy + outer, cx - inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy + outer, cx + inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy - outer, cx + inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy - outer, cx - inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy + outer, cx - inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy + outer, cx + inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy - outer, cx + inner, cy - inner, 0xFFFFFF);
-	}
-	_gfx->copyToScreen();
-	_system->updateScreen();
-	_system->delayMillis(30);
-	for (int i = 100; i < 900; i += 200) {
-		const int outer = CLIP<int>(kFloor * 128 / i, 0, 1000);
-		const int inner = CLIP<int>(kFloor * 128 / (i + 100), 0, 1000);
-		_gfx->drawLine(cx - outer, cy - outer, cx - inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy + outer, cx - inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy + outer, cx + inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy - outer, cx + inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy - outer, cx - inner, cy - inner, 0xFFFFFF);
-		_gfx->drawLine(cx - outer, cy + outer, cx - inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy + outer, cx + inner, cy + inner, 0xFFFFFF);
-		_gfx->drawLine(cx + outer, cy - outer, cx + inner, cy - inner, 0xFFFFFF);
-	}
-	_gfx->setXorMode(false);
+	doShootCircles(cx, cy);
+	setPower(-2, 0, 0);
 
 	int bestDist = 11584;
 	int bestIndex = -1;
@@ -1092,6 +1065,10 @@ void ColonyEngine::battleShoot() {
 
 	if (bestIndex < 0 || bestDist >= 4000)
 		return;
+
+	// DOS BATTLE.C: doBurnHole(&r) with r sized from rtable[dist]
+	int hitRadius = (bestDist > 0) ? CLIP<int>(kFloor * 128 / bestDist, 1, 100) : 50;
+	doBurnHole(cx, cy, hitRadius);
 
 	Locate *target = _battlePwh[bestIndex];
 	if (target->type != kRobCube)
@@ -1123,6 +1100,8 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 		debugC(1, kColonyDebugCombat,
 			"battleProjHitPlayer: proj=(%d,%d) player=(%d,%d) delta=[-4,-4,-4]",
 			xcheck, ycheck, _me.xloc, _me.yloc);
+		// Mac battle.c: InvertRect(&Clip) flash when projectile hits player
+		meGetShot();
 		setPower(-4, -4, -4);
 		_sound->play(Sound::kExplode);
 		_projon = false;

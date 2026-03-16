@@ -797,6 +797,8 @@ void ColonyEngine::robotShoot(int num) {
 			"robotShoot: robot=%d type=%d cell=(%d,%d) ang=%d delta=[%d,%d,%d] player=(%d,%d)",
 			num, obj.type, obj.where.xindex, obj.where.yindex, obj.where.ang,
 			damage0, damage1, damage2, _me.xindex, _me.yindex);
+		// shoot.c: MeGetShot() — visual feedback when player is hit
+		meGetShot();
 		setPower(damage0, damage1, damage2);
 	}
 }
