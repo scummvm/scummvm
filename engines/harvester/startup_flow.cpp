@@ -307,6 +307,29 @@ static float computeRoomPlayerDepthStep(const StartupRoomSetupState &state) {
 	return state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f;
 }
 
+uint32 getRuntimeClockTicks();
+
+static uint32 computeAnimationTickInterval(int rate) {
+	return rate > 0 ? MAX<uint32>(1, 100U / (uint32)rate) : 0;
+}
+
+static bool consumePlayerMovementTick(StartupRoomPlayerState &playerState) {
+	const uint32 interval = computeAnimationTickInterval(kRoomPlayerWalkAnimationRate);
+	if (interval == 0) {
+		playerState.nextMovementTick = 0;
+		return true;
+	}
+
+	const uint32 now = getRuntimeClockTicks();
+	if (playerState.nextMovementTick != 0 &&
+			(int32)(now - playerState.nextMovementTick) < 0) {
+		return false;
+	}
+
+	playerState.nextMovementTick = now + interval;
+	return true;
+}
+
 static int stepTowardsInt(int current, int target, int step) {
 	if (step <= 0 || current == target)
 		return current;
@@ -395,6 +418,7 @@ static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSet
 void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	playerState.hasMoveTarget = true;
+	playerState.nextMovementTick = 0;
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
 	debugC(1, kDebugScene,
@@ -994,6 +1018,7 @@ bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 		playerState.entity->getCurrentFrame() != range.idleFrame ||
 		playerState.entity->getAnimationRate() != 0;
 	playerState.facing = facing;
+	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationRate(0);
 	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
 	playerState.entity->setCurrentFrame(range.idleFrame);
@@ -1040,6 +1065,7 @@ bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFac
 	playerState.turnLastFrame = range.lastFrame;
 	playerState.turnEndFrame = range.playBackwards ? range.firstFrame : range.lastFrame;
 	playerState.turnPlayBackwards = range.playBackwards;
+	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 	playerState.entity->setPlayBackwards(range.playBackwards);
 	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
@@ -1089,6 +1115,8 @@ bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &
 	const int targetBottomY = mapRoomDepthToScreenY(state, playerState.targetZ);
 	const int moveFacing = resolveFacingFromMovementDelta(
 		playerState.targetX - playerState.centerX, targetBottomY - playerState.bottomY);
+	if (!consumePlayerMovementTick(playerState))
+		return false;
 	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
 	const float depthStep = computeRoomPlayerDepthStep(state);
 	const int candidateCenterX = stepTowardsInt(playerState.centerX, playerState.targetX, horizontalStep);
@@ -1174,6 +1202,9 @@ bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupS
 	if (desiredFacing != playerState.facing && startPlayerTurnAnimation(playerState, desiredFacing))
 		return true;
 
+	if (!consumePlayerMovementTick(playerState))
+		return false;
+
 	playerState.hasMoveTarget = false;
 	bool moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
 		playerState, candidateCenterX, candidateZ);
@@ -1204,10 +1235,10 @@ static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state
 	if (!playerState.entity)
 		return;
 
-	const Common::Rect playerRect = playerState.entity->getScreenRect();
 	idleEntity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
 	idleEntity.setDepthScale(computeActorDepthScale(state, playerState.z));
-	idleEntity.setPosition(playerRect.left, playerRect.top + kRoomPlayerIdleYOffset, playerState.z);
+	idleEntity.setPosition(playerState.entity->getX(),
+		playerState.entity->getY() + kRoomPlayerIdleYOffset, playerState.z);
 }
 
 static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
@@ -1222,8 +1253,8 @@ static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
 
 	idleState.entity = runtimeEntities->spawnSceneAnimationEntity(
 		kPlayerIdleAnimationEntityName, kPlayerIdleAnimationResourcePath,
-		Common::Point(playerState.entity->getScreenRect().left,
-			playerState.entity->getScreenRect().top + kRoomPlayerIdleYOffset),
+		Common::Point(playerState.entity->getX(),
+			playerState.entity->getY() + kRoomPlayerIdleYOffset),
 		playerState.z, 0, false, false, false, false, false);
 	if (!idleState.entity)
 		return nullptr;
