@@ -78,6 +78,7 @@ class RoomManager {
 public:
 	RoomManager();
 	~RoomManager();
+	void clearTalkingAnims();
 	void clearAnims();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
 	/**

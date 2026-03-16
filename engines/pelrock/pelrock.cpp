@@ -626,7 +626,6 @@ void PelrockEngine::checkMouse() {
 			// Action was selected - queue it
 			walkAndAction(_currentHotspot, actionClicked);
 		} else if (_actionPopupState.isAlfredUnder && actionClicked != NO_ACTION) {
-			debug("Using item on Alfred");
 			useOnAlfred(_state->selectedInventoryItem);
 		} else if (_inventoryOverlayState.isActive && _inventoryOverlayState.posInInventorySelectionArea(_events->_releaseX, _events->_releaseY)) {
 			int item = checkMouseClickInventoryOverlay(_events->_releaseX, _events->_releaseY);
@@ -1580,9 +1579,7 @@ void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
 
 void PelrockEngine::walkTo(int x, int y) {
 	_currentStep = 0;
-	PathContext context = {nullptr, nullptr, 0, 0, 0};
-	findPath(_alfredState.x, _alfredState.y, x, y, _room->_currentRoomWalkboxes, &context, _currentHotspot);
-	_currentContext = context;
+	findPath(_alfredState.x, _alfredState.y, x, y, _room->_currentRoomWalkboxes, &_currentContext, _currentHotspot);
 	_alfredState.setState(ALFRED_WALKING);
 }
 

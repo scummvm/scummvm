@@ -2034,7 +2034,6 @@ void PelrockEngine::teleportToPrincess() {
 
 void PelrockEngine::useOnAlfred(int inventoryObject) {
 
-	debug("Using item %d on Alfred", inventoryObject);
 	switch (inventoryObject) {
 	case 9: // Letter
 		_dialog->say(_res->_ingameTexts[kTextCorrespondenciaAjena]);

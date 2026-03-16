@@ -998,7 +998,6 @@ void DialogManager::maybeDisableChoice(Common::Array<Pelrock::ChoiceOption> *cho
 					currentChoicePos = scanPos;
 					isCurrentFB = true;
 					foundParent = true;
-					debug("Found parent FB at level %d, pos %u", currentLevel, currentChoicePos);
 					break;
 				}
 			}

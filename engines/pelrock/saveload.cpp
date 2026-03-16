@@ -114,12 +114,6 @@ bool syncGeneralData(Common::Serializer &s, SaveGameData *game) {
 	s.syncAsUint16LE(game->alfredY);
 	s.syncAsByte((byte &)game->alfredDir);
 
-	if (s.isLoading()) {
-		debug("LOAD: room=%d, x=%d, y=%d, dir=%d", game->currentRoom, game->alfredX, game->alfredY, game->alfredDir);
-	} else {
-		debug("SAVE: room=%d, x=%d, y=%d, dir=%d", game->currentRoom, game->alfredX, game->alfredY, game->alfredDir);
-	}
-
 	return !s.err();
 }
 

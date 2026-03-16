@@ -336,7 +336,7 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 		size_t blockSize = 0;
 		readUntilBuda(&alfredFile, anim.offset, thisBlock, blockSize);
 		rleDecompress(thisBlock, blockSize, 0, size, &_currentSpecialAnim->animData, false);
-		delete[] thisBlock;
+		free(thisBlock);
 	} else {
 		alfredFile.read(_currentSpecialAnim->animData, anim.numFrames * anim.w * anim.h);
 	}

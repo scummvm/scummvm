@@ -39,6 +39,7 @@ RoomManager::~RoomManager() {
 		_pixelsShadows = nullptr;
 	}
 	clearAnims();
+	clearTalkingAnims();
 	delete[] _resetData;
 	if(_currentPaletteAnim) {
 		delete _currentPaletteAnim;
@@ -46,6 +47,17 @@ RoomManager::~RoomManager() {
 	if(_passerByAnims) {
 		delete _passerByAnims;
 	}
+}
+
+void RoomManager::clearTalkingAnims() {
+    for (int i = 0; i < _talkingAnims.numFramesAnimA; i++)
+        delete[] _talkingAnims.animA[i];
+    delete[] _talkingAnims.animA;
+    for (int i = 0; i < _talkingAnims.numFramesAnimB; i++)
+        delete[] _talkingAnims.animB[i];
+    delete[] _talkingAnims.animB;
+    _talkingAnims.animA = nullptr;
+    _talkingAnims.animB = nullptr;
 }
 
 void RoomManager::clearAnims() {
@@ -1128,10 +1140,7 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 	// Write 0xFA at offset+2 (after FB/F1 marker and level byte)
 	// This marks the choice as disabled without destroying the marker structure
 	uint32 disableOffset = choice.dataOffset + 2;
-	debug("Adding disabled branch for room %d at offset %d (FA written at %d)",
-		  choice.room, choice.dataOffset, disableOffset);
 
-	debug("Disabled branch is: \"%s\"", choice.text.c_str());
 	ResetEntry resetEntry = ResetEntry();
 	resetEntry.room = choice.room;
 	resetEntry.offset = disableOffset;
@@ -1239,6 +1248,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 		}
 	}
 	free(decompressed);
+	clearTalkingAnims();
 	_talkingAnims = talkHeader;
 
 	talkFile.close();

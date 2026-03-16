@@ -153,7 +153,7 @@ struct AlfredSpecialAnim {
 
 	~AlfredSpecialAnim() {
 		if (animData) {
-			delete[] animData;
+			free(animData);
 			animData = nullptr;
 		}
 	}

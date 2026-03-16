@@ -180,7 +180,7 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 	}
 
 	sonidosFile.seek(sound.offset, SEEK_SET);
-	byte *data = new byte[sound.size];
+	byte *data = (byte *)malloc(sound.size);
 	sonidosFile.read(data, sound.size);
 	sonidosFile.close();
 
@@ -192,6 +192,7 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		// For WAV/RIFF files, use the wave decoder
 		Common::MemoryReadStream *memStream = new Common::MemoryReadStream(data, sound.size, DisposeAfterUse::YES);
 		stream = Audio::makeWAVStream(memStream, DisposeAfterUse::YES);
+		// no need to free 'data' here, it will be freed when memStream is disposed
 	} else if (format == SOUND_FORMAT_RAWPCM || format == SOUND_FORMAT_MILES || format == SOUND_FORMAT_MILES2) {
 		// Determine the offset to skip the header
 		uint32 headerSize = 0;
@@ -202,13 +203,13 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		uint32 pcmSize = sound.size - headerSize;
 		byte *pcmData = (byte *)malloc(pcmSize);
 		memcpy(pcmData, data + headerSize, pcmSize);
-		delete[] data;
+		free(data);
 
 		// Create raw audio stream (8-bit unsigned mono is common for old games)
 		stream = Audio::makeRawStream(pcmData, pcmSize, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 	} else {
 		debug("Unknown sound format on sound with name %s at offset %d, with size %d", sound.filename.c_str(), sound.offset, sound.size);
-		delete[] data;
+		free(data);
 		return -1;
 	}
 

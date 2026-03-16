@@ -536,7 +536,6 @@ bool MenuManager::selectInventoryItem(int i) {
 	_menuText = _inventoryDescriptions[_selectedInvIndex];
 	_sound->playSound(inventorySounds[_selectedInvIndex], 0);
 	g_engine->_state->selectedInventoryItem = _selectedInvIndex;
-	debug("Selected inventory item %d", _selectedInvIndex);
 	return true;
 }
 
@@ -583,9 +582,6 @@ void MenuManager::menuLoop() {
 	_musicVolumeLevel = mixerVolumeToLevel(_sound->getVolumeMusic());
 	_masterVolumeLevel = mixerVolumeToLevel(_sound->getVolumeMaster());
 
-	debug("Initial master volume level: %d", _masterVolumeLevel);
-	debug("Initial SFX volume level: %d", _sfxVolumeLevel);
-	debug("Initial Music volume level: %d", _musicVolumeLevel);
 	_masterSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
 	_sfxSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
 	_musicSoundIcon.create(66, 64, Graphics::PixelFormat::createFormatCLUT8());
