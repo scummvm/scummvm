@@ -85,7 +85,11 @@ public:
 	bool executeStartupAudioCommand(const StartupAudioCommand &command);
 	bool playStartupSound(const Common::String &path);
 	bool playStartupSingleSound(const Common::String &path);
+	void stopStartupSingleSound();
 	bool isStartupSingleSoundPlaying() const;
+	bool playStartupSpeech(const Common::String &path);
+	void stopStartupSpeech();
+	bool isStartupSpeechPlaying() const;
 	bool loadStartupSound(int slot, const Common::String &path);
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);
@@ -93,13 +97,14 @@ public:
 
 private:
 	void setDisplayMode(int width, int height);
-	void stopStartupSoundHandle(Audio::SoundHandle &handle);
+	void stopStartupSoundHandle(Audio::SoundHandle &handle, bool fadeOut = false);
 	bool validateStartupLoadedSoundSlot(int slot) const;
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
 	Audio::SoundHandle _startupMusicHandle;
 	Audio::SoundHandle _startupSingleSoundHandle;
+	Audio::SoundHandle _startupSpeechHandle;
 	Common::String _startupMusicPath;
 	int _startupSoundSlotIndex = -1;
 	Common::String _startupSoundPaths[8];
