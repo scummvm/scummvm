@@ -44,6 +44,7 @@ public:
 	PrintingDialog(const Graphics::ManagedSurface &surface, bool defaultFitToPage, bool defaultCenter, PageOrientation defaultOrientation);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+	void reflowLayout() override;
 
 private:
 	void updatePreview();

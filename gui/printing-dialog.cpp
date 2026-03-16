@@ -248,4 +248,9 @@ void PrintingDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 }
 
+void PrintingDialog::reflowLayout() {
+	Dialog::reflowLayout();
+	updatePreview();
+}
+
 } // End of namespace GUI
