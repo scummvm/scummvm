@@ -81,6 +81,15 @@ struct HankDialogueTopicLine {
 	bool setDiscussedLodgeTopic;
 };
 
+struct DialogueLineSpec {
+	DialogueLineSpec(int wavId, const char *speakerId, int headVariant = 0)
+		: wavId(wavId), speakerId(speakerId), headVariant(headVariant) {}
+
+	int wavId;
+	const char *speakerId;
+	int headVariant;
+};
+
 static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
 	{ 0xd2, 0x725, "HANK", false },
 	{ 0xd6, 0x74f, "PC", false },
@@ -263,14 +272,18 @@ static void splitDialogueMenuLine(const Common::String &line, Common::Array<Comm
 	}
 }
 
-static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId,
+static Common::String buildDialogueHeadId(const Common::String &speakerId, int headVariant) {
+	return Common::String::format("%s%d", speakerId.c_str(), headVariant);
+}
+
+static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId, int headVariant,
 		IndexedBitmap &bitmap) {
 	StartupScript *startupScript = engine.getStartupScript();
 	ResourceManager *resources = engine.getResources();
 	if (!startupScript || !resources || speakerId.empty())
 		return false;
 
-	const Common::String headId = Common::String::format("%s0", speakerId.c_str());
+	const Common::String headId = buildDialogueHeadId(speakerId, headVariant);
 	const StartupHeadRecord *head = startupScript->findHeadRecord(headId);
 	if (!head)
 		return false;
@@ -311,6 +324,7 @@ StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Po
 
 void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
+	_sharedDialogueStateD2ecc = false;
 }
 
 Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
@@ -321,13 +335,6 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Array<Common::String> wrappedLines;
 		int rowStart = 0;
 		int rowCount = 0;
-	};
-
-	struct DialogueLineSpec {
-		DialogueLineSpec(int wavId, const char *speakerId) : wavId(wavId), speakerId(speakerId) {}
-
-		int wavId;
-		const char *speakerId;
 	};
 
 	Graphics::Screen *screen = _engine.getScreen();
@@ -371,12 +378,12 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 	IndexedBitmap leftHeadBitmap;
 	IndexedBitmap rightHeadBitmap;
-	Common::String leftHeadSpeakerId = npc.npcName;
-	Common::String rightHeadSpeakerId = "PC";
+	Common::String leftHeadSpeakerId = buildDialogueHeadId(npc.npcName, 0);
+	Common::String rightHeadSpeakerId = buildDialogueHeadId("PC", 0);
 	bool leftHeadVisible = false;
 	bool rightHeadVisible = false;
-	(void)loadDialogueHeadBitmap(_engine, leftHeadSpeakerId, leftHeadBitmap);
-	(void)loadDialogueHeadBitmap(_engine, rightHeadSpeakerId, rightHeadBitmap);
+	(void)loadDialogueHeadBitmap(_engine, npc.npcName, 0, leftHeadBitmap);
+	(void)loadDialogueHeadBitmap(_engine, "PC", 0, rightHeadBitmap);
 	leftHeadVisible = leftHeadBitmap.isValid();
 	rightHeadVisible = rightHeadBitmap.isValid();
 
@@ -407,29 +414,30 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			drawShadowedString(*screen, font, text, x, y, width, color);
 	};
 
-	auto ensureSpeakerPortrait = [&](const Common::String &speakerId) {
+	auto ensureSpeakerPortrait = [&](const Common::String &speakerId, int headVariant) {
 		if (speakerId.empty())
 			return;
 
+		const Common::String headId = buildDialogueHeadId(speakerId, headVariant);
 		IndexedBitmap *targetBitmap = speakerId.equalsIgnoreCase("PC") ? &rightHeadBitmap : &leftHeadBitmap;
 		Common::String *targetSpeakerId = speakerId.equalsIgnoreCase("PC") ? &rightHeadSpeakerId : &leftHeadSpeakerId;
-		if (targetBitmap->isValid() && targetSpeakerId->equalsIgnoreCase(speakerId))
+		if (targetBitmap->isValid() && targetSpeakerId->equalsIgnoreCase(headId))
 			return;
 
 		IndexedBitmap updatedBitmap;
-		if (loadDialogueHeadBitmap(_engine, speakerId, updatedBitmap)) {
+		if (loadDialogueHeadBitmap(_engine, speakerId, headVariant, updatedBitmap)) {
 			*targetBitmap = updatedBitmap;
-			*targetSpeakerId = speakerId;
+			*targetSpeakerId = headId;
 		} else {
-			warning("Harvester: unable to load dialogue head for '%s'", speakerId.c_str());
+			warning("Harvester: unable to load dialogue head for '%s'", headId.c_str());
 		}
 	};
 
-	auto setActiveSpeakerPortrait = [&](const Common::String &speakerId) {
+	auto setActiveSpeakerPortrait = [&](const Common::String &speakerId, int headVariant) {
 		if (speakerId.empty() || speakerId.equalsIgnoreCase("SPEECH"))
 			return;
 
-		ensureSpeakerPortrait(speakerId);
+		ensureSpeakerPortrait(speakerId, headVariant);
 		if (speakerId.equalsIgnoreCase("PC")) {
 			leftHeadVisible = false;
 			rightHeadVisible = rightHeadBitmap.isValid();
@@ -495,8 +503,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		screen->update();
 	};
 
-	auto playDialogueLine = [&](int wavId, const Common::String &speakerId) -> Common::Error {
-		setActiveSpeakerPortrait(speakerId);
+	auto playDialogueLineWithVariant = [&](int wavId, const Common::String &speakerId, int headVariant) -> Common::Error {
+		setActiveSpeakerPortrait(speakerId, headVariant);
 
 		Common::String subtitleText;
 		const bool textEnabled = startupScript->getDialogueTextMode() != kStartupDialogueTextNone &&
@@ -608,9 +616,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		return Common::kNoError;
 	};
 
+	auto playDialogueLine = [&](int wavId, const Common::String &speakerId) -> Common::Error {
+		return playDialogueLineWithVariant(wavId, speakerId, 0);
+	};
+
 	auto playDialogueSequence = [&](const DialogueLineSpec *lines, uint count) -> Common::Error {
 		for (uint i = 0; i < count; ++i) {
-			Common::Error lineError = playDialogueLine(lines[i].wavId, lines[i].speakerId);
+			Common::Error lineError = playDialogueLineWithVariant(
+				lines[i].wavId, lines[i].speakerId, lines[i].headVariant);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -867,8 +880,6 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Error responseError = runResponseMenu(0xc7, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
-		if (responseIndex == 0)
-			return Common::kNoError;
 
 		switch (responseIndex) {
 		case 1:
@@ -942,14 +953,12 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Error responseError = runResponseMenu(0xcc, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
-		if (responseIndex == 0)
-			return Common::kNoError;
 
 		switch (responseIndex) {
 		case 1: {
 			const DialogueLineSpec lines[] = {
 				DialogueLineSpec(0x939, "HANK"),
-				DialogueLineSpec(0x93f, "MOM")
+				DialogueLineSpec(0x93f, "MOM", 2)
 			};
 			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
 			break;
@@ -974,14 +983,12 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		responseError = runResponseMenu(0xcd, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
-		if (responseIndex == 0)
-			return Common::kNoError;
 
 		switch (responseIndex) {
 		case 1: {
 			const DialogueLineSpec lines[] = {
 				DialogueLineSpec(0x95a, "HANK"),
-				DialogueLineSpec(0x961, "PC")
+				DialogueLineSpec(0x961, "PC", 2)
 			};
 			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
 			break;
@@ -1017,11 +1024,80 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Error lineError = playDialogueLine(0x9b1, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runResponseMenu(0xce, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		switch (responseIndex) {
+		case 1: {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x9bc, "HANK"),
+				DialogueLineSpec(0x9c9, "HANK")
+			};
+			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			break;
+		}
+		case 2: {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x9c1, "HANK"),
+				DialogueLineSpec(0x9c5, "PC"),
+				DialogueLineSpec(0x9c9, "HANK")
+			};
+			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			break;
+		}
+		default:
+			break;
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 	if (startupScript->getFlagValue("KARIN_KIDNAPED") &&
 			!_hankRoomDialogueState.karinKidnapedShown) {
 		_hankRoomDialogueState.karinKidnapedShown = true;
 		Common::Error lineError = playDialogueLine(0x9d5, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		if (_sharedDialogueStateD2ecc) {
+			lineError = playDialogueLineWithVariant(0x9da, "PC", 3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		const DialogueLineSpec lines[] = {
+			DialogueLineSpec(0x9de, "HANK"),
+			DialogueLineSpec(0x9df, "HANK"),
+			DialogueLineSpec(0x9e0, "HANK"),
+			DialogueLineSpec(0x9e1, "HANK"),
+			DialogueLineSpec(0x9e2, "HANK")
+		};
+		lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runResponseMenu(0xcf, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		switch (responseIndex) {
+		case 1: {
+			const DialogueLineSpec responseLines[] = {
+				DialogueLineSpec(0x9f4, "HANK"),
+				DialogueLineSpec(0x9fc, "HANK")
+			};
+			lineError = playDialogueSequence(responseLines, ARRAYSIZE(responseLines));
+			break;
+		}
+		case 2:
+			lineError = playDialogueLine(0xa01, "HANK");
+			break;
+		default:
+			break;
+		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -1043,8 +1119,6 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		Common::Error responseError = runResponseMenu(0xd0, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
-		if (responseIndex == 0)
-			return Common::kNoError;
 
 		switch (responseIndex) {
 		case 1:
@@ -1085,7 +1159,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				DialogueLineSpec(0x737, "HANK"),
 				DialogueLineSpec(0x73b, "PC"),
 				DialogueLineSpec(0x741, "HANK"),
-				DialogueLineSpec(0x747, "MOM")
+				DialogueLineSpec(0x747, "MOM", 2)
 			};
 			Common::Error lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
