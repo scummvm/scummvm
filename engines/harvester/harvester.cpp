@@ -201,6 +201,11 @@ bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
 	return true;
 }
 
+bool HarvesterEngine::isStartupSingleSoundPlaying() const {
+	return g_system && g_system->getMixer() &&
+		g_system->getMixer()->isSoundHandleActive(_startupSingleSoundHandle);
+}
+
 bool HarvesterEngine::loadStartupSound(int slot, const Common::String &path) {
 	if (!validateStartupLoadedSoundSlot(slot) || path.empty() || !_resources)
 		return false;

@@ -37,6 +37,7 @@ static const char *const kStartupFontPaths[] = {
 	"GRAPHIC/FONT/MEDFONT1.CFT",
 	"GRAPHIC/FONT/MEDFONT2.CFT"
 };
+static const char *const kDialogueResponsePath = "DIALOG.RSP";
 
 static const uint32 kCftHeaderSize = 0x448;
 static const uint32 kCftBitmapHeaderSize = kCftHeaderSize + 12;
@@ -50,9 +51,10 @@ static bool isDialogueDelimiter(byte value) {
 bool StartupText::load(ResourceManager &resources) {
 	_dialogueData.clear();
 	_dialogueEntries.clear();
+	_dialogueResponseLines.clear();
 	_fonts.clear();
 
-	if (!loadDialogueIndex(resources))
+	if (!loadDialogueIndex(resources) || !loadDialogueResponses(resources))
 		return false;
 
 	for (const char *path : kStartupFontPaths) {
@@ -106,6 +108,32 @@ bool StartupText::loadDialogueIndex(ResourceManager &resources) {
 	return !_dialogueEntries.empty();
 }
 
+bool StartupText::loadDialogueResponses(ResourceManager &resources) {
+	Common::Array<byte> responseData;
+	if (!resources.loadFile(kDialogueResponsePath, responseData) || responseData.empty()) {
+		warning("Harvester: unable to load %s", kDialogueResponsePath);
+		return false;
+	}
+
+	Common::String line;
+	for (byte value : responseData) {
+		if (value == '\r')
+			continue;
+		if (value == '\n') {
+			_dialogueResponseLines.push_back(line);
+			line.clear();
+			continue;
+		}
+
+		line += (char)value;
+	}
+
+	if (!line.empty())
+		_dialogueResponseLines.push_back(line);
+
+	return !_dialogueResponseLines.empty();
+}
+
 bool StartupText::loadFont(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < kCftBitmapHeaderSize) {
@@ -145,6 +173,39 @@ void StartupText::decodeXorText(Common::Array<byte> &data) const {
 			continue;
 		value ^= 0xaa;
 	}
+}
+
+bool StartupText::resolveDialogueSubtitle(int wavId, Common::String &text) const {
+	text.clear();
+	if (wavId <= 0 || _dialogueEntries.empty() || _dialogueData.empty())
+		return false;
+
+	int left = 0;
+	int right = (int)_dialogueEntries.size() - 1;
+	while (left <= right) {
+		const int middle = left + (right - left) / 2;
+		const DialogueIndexEntry &entry = _dialogueEntries[(uint)middle];
+		if (entry.wavId == wavId) {
+			if (entry.textOffset + entry.textLength > _dialogueData.size())
+				return false;
+
+			text = Common::String((const char *)_dialogueData.data() + entry.textOffset, entry.textLength);
+			return !text.empty();
+		}
+		if (entry.wavId < wavId)
+			left = middle + 1;
+		else
+			right = middle - 1;
+	}
+
+	return false;
+}
+
+Common::String StartupText::getDialogueResponseLine(int zeroBasedIndex) const {
+	if (zeroBasedIndex < 0 || (uint)zeroBasedIndex >= _dialogueResponseLines.size())
+		return Common::String();
+
+	return _dialogueResponseLines[(uint)zeroBasedIndex];
 }
 
 } // End of namespace Harvester

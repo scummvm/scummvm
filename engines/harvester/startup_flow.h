@@ -50,6 +50,8 @@ private:
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop);
+	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName);
 	Common::Error runRoomLoop(const Common::String &entranceName);
 	bool ensureCursorEntity();
 	bool populateRoomSceneEntities(const StartupRoomSetupState &state,
@@ -59,6 +61,7 @@ private:
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
 	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
+	void resetRoomNpcDialogueState();
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
@@ -67,10 +70,28 @@ private:
 	int getMenuItemAt(const Common::Point &mousePos) const;
 	int getRoomMenuItemAt(const Common::Point &mousePos) const;
 
+	struct HankRoomDialogueState {
+		bool pendingInitialConversation = true;
+		bool hasTrackedDayState = false;
+		bool pendingRangshotSequence = false;
+		bool pendingSameDayFollowup = false;
+		int trackedDayIndex = 0;
+		bool stephMidgamePlayedShown = false;
+		bool burnedTvStationShown = false;
+		bool bustedOnceShown = false;
+		bool karinKidnapedShown = false;
+		bool karinFoundAliveShown = false;
+		bool karinFoundDeadShown = false;
+		bool discussedCasketPhotoEvidence = false;
+		bool discussedWhaleyHerrillPhoto = false;
+		bool discussedLodgeTopic = false;
+	};
+
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
+	HankRoomDialogueState _hankRoomDialogueState;
 };
 
 } // End of namespace Harvester

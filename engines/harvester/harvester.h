@@ -85,6 +85,7 @@ public:
 	bool executeStartupAudioCommand(const StartupAudioCommand &command);
 	bool playStartupSound(const Common::String &path);
 	bool playStartupSingleSound(const Common::String &path);
+	bool isStartupSingleSoundPlaying() const;
 	bool loadStartupSound(int slot, const Common::String &path);
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);

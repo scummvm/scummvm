@@ -159,11 +159,22 @@ struct StartupTextRecord {
 	Common::String value;
 };
 
+struct StartupHeadRecord {
+	Common::String headId;
+	Common::String portraitPath;
+};
+
 struct StartupUseItemRecord {
 	Common::String itemName;
 	Common::String ownerOrRoom;
 	Common::String targetName;
 	Common::String actionTag;
+};
+
+enum StartupDialogueTextMode {
+	kStartupDialogueTextNone = 0,
+	kStartupDialogueTextYes = 1,
+	kStartupDialogueTextClick = 2
 };
 
 enum StartupAudioCommandType {
@@ -235,9 +246,12 @@ public:
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
+	const Common::Array<StartupHeadRecord> &getHeads() const { return _heads; }
 	const Common::Array<StartupUseItemRecord> &getUseItems() const { return _useItems; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
+	const Common::String &getVoicePath() const { return _voicePath; }
+	StartupDialogueTextMode getDialogueTextMode() const { return _dialogueTextMode; }
 	void resetRuntimeState();
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources);
@@ -256,6 +270,9 @@ public:
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 	Common::String resolveTextValue(const Common::String &key) const;
+	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
+	bool getFlagValue(const Common::String &flagName) const;
+	int getCurrentStoryDayIndex() const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
@@ -291,12 +308,15 @@ private:
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
 	Common::Array<StartupTextRecord> _texts;
+	Common::Array<StartupHeadRecord> _heads;
 	Common::Array<StartupUseItemRecord> _useItems;
 	Common::Array<StartupFlagRecord> _runtimeFlags;
 	Common::Array<StartupObjectRecord> _runtimeObjects;
 	Common::Array<StartupAnimRecord> _runtimeAnimations;
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	bool _quickTipsEnabled = true;
+	Common::String _voicePath = "SOUND/VOICE/";
+	StartupDialogueTextMode _dialogueTextMode = kStartupDialogueTextYes;
 };
 
 } // End of namespace Harvester
