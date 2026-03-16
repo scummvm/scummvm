@@ -27,12 +27,12 @@
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/system.h"
-#include "common/tokenizer.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
 #include "harvester/cft_font.h"
+#include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
@@ -262,14 +262,39 @@ static void drawDialogueTextLines(Graphics::Screen &screen, const Graphics::Font
 
 static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
 	parts.clear();
+	if (line.empty())
+		return;
 
-	Common::StringTokenizer tokenizer(line, "/");
-	while (!tokenizer.empty()) {
-		Common::String token = tokenizer.nextToken();
-		token.trim();
-		if (!token.empty())
+	Common::String token;
+	for (uint i = 0; i < line.size(); ++i) {
+		if (line[i] == '/') {
 			parts.push_back(token);
+			token.clear();
+			continue;
+		}
+
+		token += line[i];
 	}
+
+	parts.push_back(token);
+}
+
+static void logDialogueMenuItems(const char *label, int sourceLineIndex,
+		const Common::String &rawLine, const Common::Array<Common::String> &items) {
+	if (sourceLineIndex >= 0) {
+		debugC(1, kDebugDialogue, "Harvester: %s source line 0x%x (%d) raw='%s'",
+			label, sourceLineIndex, sourceLineIndex + 1, rawLine.c_str());
+	} else {
+		debugC(1, kDebugDialogue, "Harvester: %s source raw='%s'", label, rawLine.c_str());
+	}
+
+	if (items.empty()) {
+		debugC(1, kDebugDialogue, "Harvester: %s has no explicit items", label);
+		return;
+	}
+
+	for (uint i = 0; i < items.size(); ++i)
+		debugC(1, kDebugDialogue, "Harvester: %s item[%u]='%s'", label, i + 1, items[i].c_str());
 }
 
 static Common::String buildDialogueHeadId(const Common::String &speakerId, int headVariant) {
@@ -518,6 +543,10 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 		const Common::String voicePath = buildDialogueVoicePath(*startupScript, wavId);
 		const bool voiceStarted = !voicePath.empty() && _engine.playStartupSpeech(voicePath);
+		debugC(2, kDebugDialogue,
+			"Harvester: dialogue line wav=0x%x speaker='%s' headVariant=%d voice='%s' subtitle='%s'",
+			wavId, speakerId.c_str(), headVariant, voicePath.c_str(),
+			textEnabled ? subtitleText.c_str() : "");
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError) {
 			_engine.stopStartupSpeech();
@@ -715,14 +744,24 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		selectedIndex = 0;
 
 		const Common::String responseLine = startupText->getDialogueResponseLine(responseLineIndex);
-		if (responseLine.empty())
+		if (responseLine.empty()) {
+			debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) is empty",
+				responseLineIndex, responseLineIndex + 1);
 			return Common::kNoError;
+		}
 
 		Common::Array<DialogueResponseOptionLayout> options;
 		uint totalRows = 0;
 		buildResponseMenuLayout(responseLine, options, totalRows);
-		if (options.empty())
+		if (options.empty()) {
+			debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) produced no options",
+				responseLineIndex, responseLineIndex + 1);
 			return Common::kNoError;
+		}
+
+		Common::Array<Common::String> rawOptions;
+		splitDialogueMenuLine(responseLine, rawOptions);
+		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, rawOptions);
 
 		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
 		Common::Error releaseError = waitForPointerRelease();
@@ -741,17 +780,28 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					return result;
 
 				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) cancelled",
+							responseLineIndex, responseLineIndex + 1);
 						return Common::kNoError;
+					}
 					if (event.kbd.ascii >= '1' && event.kbd.ascii <= '9') {
 						const int menuIndex = event.kbd.ascii - '0';
 						if (menuIndex >= 1 && menuIndex <= (int)options.size()) {
 							selectedIndex = menuIndex;
+							debugC(1, kDebugDialogue,
+								"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via hotkey",
+								responseLineIndex, responseLineIndex + 1,
+								selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
 							return waitForPointerRelease();
 						}
 					}
 				} else if (event.type == Common::EVENT_LBUTTONDOWN && hoveredOptionIndex >= 0) {
 					selectedIndex = hoveredOptionIndex + 1;
+					debugC(1, kDebugDialogue,
+						"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via click",
+						responseLineIndex, responseLineIndex + 1,
+						selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
 					return waitForPointerRelease();
 				}
 			}
@@ -763,11 +813,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 	};
 
-	auto runKeywordMenu = [&](const Common::String &topicBuffer, Common::String &selectedTopic) -> Common::Error {
+	auto runKeywordMenu = [&](const Common::String &topicBuffer, int topicBufferLineIndex,
+			Common::String &selectedTopic) -> Common::Error {
 		selectedTopic.clear();
 		Common::Array<Common::String> topics;
 		splitDialogueMenuLine(topicBuffer, topics);
+		logDialogueMenuItems("Keyword menu", topicBufferLineIndex, topicBuffer, topics);
 		topics.push_back(genericByeTopic);
+		debugC(1, kDebugDialogue, "Harvester: keyword menu default topic='%s'", genericByeTopic.c_str());
 		bool editingOther = false;
 		Common::String typedTopic;
 		Common::Error releaseError = waitForPointerRelease();
@@ -792,6 +845,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 						if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 							typedTopic.clear();
 							editingOther = false;
+							debugC(1, kDebugDialogue, "Harvester: keyword menu cancelled Other input");
 							if (runtimeEntities)
 								runtimeEntities->showCursor();
 						} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
@@ -801,6 +855,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 								event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 							if (!typedTopic.empty()) {
 								selectedTopic = typedTopic;
+								debugC(1, kDebugDialogue, "Harvester: keyword menu typed topic='%s'",
+									selectedTopic.c_str());
 								if (runtimeEntities)
 									runtimeEntities->showCursor();
 								return Common::kNoError;
@@ -817,6 +873,9 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						selectedTopic = genericByeTopic;
+						debugC(1, kDebugDialogue,
+							"Harvester: keyword menu selected default topic via escape '%s'",
+							selectedTopic.c_str());
 						return Common::kNoError;
 					}
 					break;
@@ -824,11 +883,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					const int clickedTopic = getDialogueMenuItemAt(*menuFont, topics.size(), _mousePos);
 					if (clickedTopic >= 0) {
 						selectedTopic = topics[(uint)clickedTopic];
+						debugC(1, kDebugDialogue, "Harvester: keyword menu selected topic[%d]='%s'",
+							clickedTopic + 1, selectedTopic.c_str());
 						return Common::kNoError;
 					}
 					if (isDialogueOtherHit(_mousePos)) {
 						typedTopic.clear();
 						editingOther = true;
+						debugC(1, kDebugDialogue, "Harvester: keyword menu entered Other input");
 						if (runtimeEntities)
 							runtimeEntities->hideCursor();
 					}
@@ -851,6 +913,27 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		return Common::kNoError;
 	}
 
+	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+	Common::String &hankTopicBuffer = _hankRoomDialogueState.currentTopicBuffer;
+	int &hankTopicBufferLineIndex = _hankRoomDialogueState.currentTopicBufferLineIndex;
+	auto assignHankTopicBuffer = [&](int responseLineIndex) {
+		hankTopicBuffer = startupText->getDialogueResponseLine(responseLineIndex);
+		hankTopicBufferLineIndex = responseLineIndex;
+
+		Common::Array<Common::String> topics;
+		splitDialogueMenuLine(hankTopicBuffer, topics);
+		logDialogueMenuItems("Hank topic buffer", responseLineIndex, hankTopicBuffer, topics);
+	};
+
+	debugC(1, kDebugDialogue,
+		"Harvester: Hank dialogue start day=%d item='%s' initial=%d trackedDayValid=%d trackedDay=%d sameDayPending=%d rangshotPending=%d topicLine=%d topicBuffer='%s'",
+		currentStoryDayIndex, usedItemName.empty() ? "<none>" : usedItemName.c_str(),
+		(int)_hankRoomDialogueState.pendingInitialConversation,
+		(int)_hankRoomDialogueState.hasTrackedDayState, _hankRoomDialogueState.trackedDayIndex,
+		(int)_hankRoomDialogueState.pendingSameDayFollowup,
+		(int)_hankRoomDialogueState.pendingRangshotSequence,
+		hankTopicBufferLineIndex, hankTopicBuffer.c_str());
+
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
@@ -863,14 +946,15 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 		return playDialogueLine(0xa38, "HANK");
 	}
-
-	Common::String hankTopicBuffer;
-	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+	bool skipHankFollowupBranches = false;
 	if (_hankRoomDialogueState.pendingInitialConversation) {
 		_hankRoomDialogueState.trackedDayIndex = currentStoryDayIndex;
 		_hankRoomDialogueState.hasTrackedDayState = true;
 		_hankRoomDialogueState.pendingSameDayFollowup = true;
 		_hankRoomDialogueState.pendingInitialConversation = false;
+		hankTopicBuffer.clear();
+		hankTopicBufferLineIndex = -1;
+		skipHankFollowupBranches = true;
 
 		Common::Error lineError = playDialogueLine(0x703, "HANK");
 		if (lineError.getCode() != Common::kNoError)
@@ -886,27 +970,27 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			lineError = playDialogueLine(0x70f, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			hankTopicBuffer = startupText->getDialogueResponseLine(0xc8);
+			assignHankTopicBuffer(0xc8);
 			break;
 		case 2:
 			lineError = playDialogueLine(0x715, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			hankTopicBuffer = startupText->getDialogueResponseLine(0xc9);
+			assignHankTopicBuffer(0xc9);
 			break;
 		case 3:
 			lineError = playDialogueLine(0x71c, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			hankTopicBuffer = startupText->getDialogueResponseLine(0xca);
+			assignHankTopicBuffer(0xca);
 			break;
 		default:
 			break;
 		}
 	}
 
-	if (!_hankRoomDialogueState.hasTrackedDayState ||
-			currentStoryDayIndex != _hankRoomDialogueState.trackedDayIndex) {
+	if (!skipHankFollowupBranches && (!_hankRoomDialogueState.hasTrackedDayState ||
+			currentStoryDayIndex != _hankRoomDialogueState.trackedDayIndex)) {
 		if (_hankRoomDialogueState.pendingSameDayFollowup) {
 			_hankRoomDialogueState.trackedDayIndex = currentStoryDayIndex;
 			_hankRoomDialogueState.pendingSameDayFollowup = false;
@@ -928,7 +1012,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					return Common::kReadingFailed;
 			}
 		}
-	} else {
+	} else if (!skipHankFollowupBranches) {
 		_hankRoomDialogueState.pendingSameDayFollowup = true;
 		if (currentStoryDayIndex > 5) {
 			Common::Error lineError = playDialogueLine(0x8e2, "HANK");
@@ -941,7 +1025,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 	}
 
-	if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!_hankRoomDialogueState.stephMidgamePlayedShown) {
 		_hankRoomDialogueState.stephMidgamePlayedShown = true;
 
@@ -1011,14 +1095,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (startupScript->getFlagValue("BURNED_TV_STATION") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("BURNED_TV_STATION") &&
 			!_hankRoomDialogueState.burnedTvStationShown) {
 		_hankRoomDialogueState.burnedTvStationShown = true;
 		Common::Error lineError = playDialogueLine(0x987, "PC");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (startupScript->getFlagValue("BUSTED_ONCE") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("BUSTED_ONCE") &&
 			!_hankRoomDialogueState.bustedOnceShown) {
 		_hankRoomDialogueState.bustedOnceShown = true;
 		Common::Error lineError = playDialogueLine(0x9b1, "HANK");
@@ -1054,7 +1138,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (startupScript->getFlagValue("KARIN_KIDNAPED") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_KIDNAPED") &&
 			!_hankRoomDialogueState.karinKidnapedShown) {
 		_hankRoomDialogueState.karinKidnapedShown = true;
 		Common::Error lineError = playDialogueLine(0x9d5, "HANK");
@@ -1101,14 +1185,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
 			!_hankRoomDialogueState.karinFoundAliveShown) {
 		_hankRoomDialogueState.karinFoundAliveShown = true;
 		Common::Error lineError = playDialogueLine(0xa0b, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
+	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
 			!_hankRoomDialogueState.karinFoundDeadShown) {
 		_hankRoomDialogueState.karinFoundDeadShown = true;
 		Common::Error lineError = playDialogueLine(0xa15, "HANK");
@@ -1140,12 +1224,13 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 	for (;;) {
 		Common::String selectedTopic;
-		Common::Error menuError = runKeywordMenu(hankTopicBuffer, selectedTopic);
+		Common::Error menuError = runKeywordMenu(hankTopicBuffer, hankTopicBufferLineIndex, selectedTopic);
 		if (menuError.getCode() != Common::kNoError)
 			return menuError;
 
 		if (selectedTopic.empty())
 			return Common::kNoError;
+		debugC(1, kDebugDialogue, "Harvester: Hank selected topic='%s'", selectedTopic.c_str());
 		if (selectedTopic.equalsIgnoreCase(genericByeTopic))
 			return playDialogueLine(0x8dc, "HANK");
 
@@ -1164,7 +1249,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			Common::Error lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			hankTopicBuffer = startupText->getDialogueResponseLine(0xd5);
+			setActiveSpeakerPortrait("HANK", 0);
+			assignHankTopicBuffer(0xd5);
 			continue;
 		}
 
@@ -1180,6 +1266,10 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			if (topic.setDiscussedLodgeTopic)
 				_hankRoomDialogueState.discussedLodgeTopic = true;
 
+			debugC(1, kDebugDialogue,
+				"Harvester: Hank matched topic '%s' to response line 0x%x (%d) -> wav=0x%x speaker='%s'",
+				selectedTopic.c_str(), topic.responseLineIndex, topic.responseLineIndex + 1,
+				topic.wavId, topic.speakerId);
 			Common::Error lineError = playDialogueLine(topic.wavId, topic.speakerId);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -1190,9 +1280,13 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (handledTopic)
 			continue;
 
+		debugC(1, kDebugDialogue,
+			"Harvester: Hank topic '%s' fell back to generic response and exits dialogue",
+			selectedTopic.c_str());
 		Common::Error lineError = playDialogueLine(0xa32, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return playDialogueLine(0x8dc, "HANK");
 	}
 }
 

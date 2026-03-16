@@ -28,6 +28,7 @@ const DebugChannelDef HarvesterMetaEngineDetection::debugFlagList[] = {
 	{ Harvester::kDebugGeneral, "general", "General debug level" },
 	{ Harvester::kDebugResources, "resources", "Resource loading" },
 	{ Harvester::kDebugScene, "scene", "Startup room, hotspot, and actor debug" },
+	{ Harvester::kDebugDialogue, "dialogue", "Startup dialogue and NPC interaction debug" },
 	DEBUG_CHANNEL_END
 };
 
