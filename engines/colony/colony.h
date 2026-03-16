@@ -472,6 +472,7 @@ private:
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
 	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
+	int _foodCount = 32;      // Mac display.c: periodic power drain counter (FCOUNT=32)
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;
 	int _action0, _action1;

@@ -264,10 +264,11 @@ void ColonyEngine::updateViewportLayout() {
 
 	const int menuTop = _menuBarHeight; // 0 for DOS/EGA, 20 for Mac
 
-	// Original IBM_INIT.C: screenR.left = sR.left + 4*pix_per_Qinch_x + 4
-	// This creates a 2px gap between dashboard right edge and viewport left edge.
+	// DOS IBM_INIT.C: screenR.left = sR.left + 4*pix_per_Qinch_x + 4 (2px gap)
+	// Mac inits.c: screenR.left=96, screenR.bottom=rScreen.bottom-8 (8px bottom margin)
 	const int viewportLeft = isMac ? dashWidth : (dashWidth > 0 ? 4 * _pQx + 4 : 0);
-	_screenR = makeSafeRect(viewportLeft, menuTop, _width, _height);
+	const int viewportBottom = isMac ? (_height - 8) : _height;
+	_screenR = makeSafeRect(viewportLeft, menuTop, _width, viewportBottom);
 	_clip = _screenR;
 	_centerX = (_screenR.left + _screenR.right) >> 1;
 	_centerY = (_screenR.top + _screenR.bottom) >> 1;
@@ -801,12 +802,12 @@ void ColonyEngine::drawCrosshair() {
 	const int cx = _centerX;
 	const int cy = _centerY;
 
-	// Original IBM_DISP.C: uses pix_per_Qinch for crosshair sizing
-	// pix_per_Finch = (pix_per_Qinch * 3) >> 1  (1.5x quarter-inch)
-	const int qx = isMac ? MAX(2, _screenR.width() / 32) : _pQx;
-	const int qy = isMac ? MAX(2, _screenR.height() / 32) : _pQy;
-	const int fx = (qx * 3) >> 1;
-	const int fy = (qy * 3) >> 1;
+	// Mac display.c: fixed ±20/±30 pixel crosshair.
+	// DOS IBM_DISP.C: uses pix_per_Qinch (24/18) and pix_per_Finch (36/27).
+	const int qx = isMac ? 20 : _pQx;
+	const int qy = isMac ? 20 : _pQy;
+	const int fx = isMac ? 30 : ((_pQx * 3) >> 1);
+	const int fy = isMac ? 30 : ((_pQy * 3) >> 1);
 	auto drawCrossLine = [&](int x1, int y1, int x2, int y2) {
 		if (clipLineToRect(x1, y1, x2, y2, _screenR))
 			_gfx->drawLine(x1, y1, x2, y2, color);

@@ -1060,6 +1060,21 @@ Common::Error ColonyEngine::run() {
 			drawDashboardStep1();
 			drawCrosshair();
 		} else {
+			// Periodic power drain every FCOUNT(32) frames.
+			// Mac display.c implements this; DOS IBM_DISP.C defines FCOUNT but
+			// never applies the drain — a bug in the original DOS port that left
+			// equipment upgrades without any energy cost, removing the intended
+			// risk/reward trade-off. We apply the drain on both platforms.
+			// Formula: SetPower(-level*armor2, -level*(armor2+weapons2), -level*weapons2)
+			_foodCount--;
+			if (_foodCount <= 0) {
+				const int a2 = _armor * _armor;
+				const int w2 = _weapons * _weapons;
+				if (a2 > 0 || w2 > 0)
+					setPower(-_level * a2, -_level * (a2 + w2), -_level * w2);
+				_foodCount = 32;
+			}
+
 			_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
 			corridor();
 			drawDashboardStep1();
