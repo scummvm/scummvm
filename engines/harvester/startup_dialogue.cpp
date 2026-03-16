@@ -1006,6 +1006,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			if (!startupScript->getFlagValue("DAY_FLAG")) {
 				return playDialogueLine(0x256e, "MOM");
 			}
+			if (!startupScript->isNamedNpcDeathTypeClear("JIMMY"))
+				return Common::kNoError;
 
 			return playDialogueLine(0x2051, "MOM");
 		};
@@ -1086,8 +1088,26 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
-		// Native Mom dialogue also has death-damage-gated barks for the firemen and several dead NPCs.
-		// The startup runtime does not expose that persisted state yet, so those branches remain pending.
+		if (startupScript->getFlagValue("BARBER_POLE_STOLEN") &&
+				!_momRoomDialogueState.barberPoleStolenShown) {
+			_momRoomDialogueState.barberPoleStolenShown = true;
+			Common::Error lineError = playDialogueLine(0x23fb, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
+				!_momRoomDialogueState.boltOfClothTakenShown) {
+			_momRoomDialogueState.boltOfClothTakenShown = true;
+			if (startupScript->isNamedNpcDeathTypeClear("SPARKY") &&
+					startupScript->isNamedNpcDeathTypeClear("FIREMAN2")) {
+				Common::Error lineError = playDialogueLine(0x2416, "MOM");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+			Common::Error lineError = playDialogueLine(0x2420, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 		if (startupScript->getFlagValue("DINER_BURNED") &&
 				startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
 				!_momRoomDialogueState.dinerBurnedKarinAliveShown) {
@@ -1123,6 +1143,39 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				!_momRoomDialogueState.karinFoundDeadShown) {
 			_momRoomDialogueState.karinFoundDeadShown = true;
 			Common::Error lineError = playDialogueLine(0x2576, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (!startupScript->isNamedNpcDeathTypeClear("BUTCHER") &&
+				!_momRoomDialogueState.butcherAbsentShown) {
+			_momRoomDialogueState.butcherAbsentShown = true;
+			Common::Error lineError = playDialogueLine(0x2633, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (!startupScript->isNamedNpcDeathTypeClear("MOYNAHAN") &&
+				!_momRoomDialogueState.moynahanAbsentShown) {
+			_momRoomDialogueState.moynahanAbsentShown = true;
+			Common::Error lineError = playDialogueLine(0x2647, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (!startupScript->isNamedNpcDeathTypeClear("JIMMY") &&
+				!_momRoomDialogueState.jimmyAbsentShown) {
+			_momRoomDialogueState.jimmyAbsentShown = true;
+			if (startupScript->getFlagValue("JIMMY_ATTACKED")) {
+				Common::Error lineError = playDialogueLine(0x2659, "MOM");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+			Common::Error lineError = playDialogueLine(0x266c, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (!startupScript->isNamedNpcDeathTypeClear("WASP_WOMAN") &&
+				!_momRoomDialogueState.waspWomanAbsentShown) {
+			_momRoomDialogueState.waspWomanAbsentShown = true;
+			Common::Error lineError = playDialogueLine(0x2689, "MOM");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}

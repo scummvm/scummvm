@@ -115,10 +115,12 @@ struct StartupNpcRecord {
 	Common::String npcName;
 	Common::String monsterfyTargetName;
 	Common::String roomName;
+	bool deathOrMonsterfyFlag = false;
 	bool runtimeSpawned = false;
 	bool active = false;
 	bool visible = false;
 	bool savedVisible = false;
+	int deathDamageType = 0;
 	Common::String audioPath;
 	Common::String entityInitArg;
 };
@@ -272,6 +274,7 @@ public:
 	Common::String resolveTextValue(const Common::String &key) const;
 	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
 	bool getFlagValue(const Common::String &flagName) const;
+	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 
 private:
@@ -288,6 +291,7 @@ private:
 	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
 	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
 	StartupNpcRecord *findRuntimeNpc(const Common::String &npcName);
+	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
 	bool addRuntimeObjectToInventory(const Common::String &objectName);
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const;
