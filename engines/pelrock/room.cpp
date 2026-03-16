@@ -41,23 +41,23 @@ RoomManager::~RoomManager() {
 	clearAnims();
 	clearTalkingAnims();
 	delete[] _resetData;
-	if(_currentPaletteAnim) {
+	if (_currentPaletteAnim) {
 		delete _currentPaletteAnim;
 	}
-	if(_passerByAnims) {
+	if (_passerByAnims) {
 		delete _passerByAnims;
 	}
 }
 
 void RoomManager::clearTalkingAnims() {
-    for (int i = 0; i < _talkingAnims.numFramesAnimA; i++)
-        delete[] _talkingAnims.animA[i];
-    delete[] _talkingAnims.animA;
-    for (int i = 0; i < _talkingAnims.numFramesAnimB; i++)
-        delete[] _talkingAnims.animB[i];
-    delete[] _talkingAnims.animB;
-    _talkingAnims.animA = nullptr;
-    _talkingAnims.animB = nullptr;
+	for (int i = 0; i < _talkingAnims.numFramesAnimA; i++)
+		delete[] _talkingAnims.animA[i];
+	delete[] _talkingAnims.animA;
+	for (int i = 0; i < _talkingAnims.numFramesAnimB; i++)
+		delete[] _talkingAnims.animB[i];
+	delete[] _talkingAnims.animB;
+	_talkingAnims.animA = nullptr;
+	_talkingAnims.animB = nullptr;
 }
 
 void RoomManager::clearAnims() {
@@ -565,13 +565,16 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 		if (roomNumber < entry.room) {
 			// We've passed the room we care about
 			roomDone = true;
+			delete[] entry.data;
 			break;
 		}
 		if (roomNumber > entry.room) {
 			// Not the room we care about, skip
+			delete[] entry.data;
 			continue;
 		}
 		Common::copy(entry.data, entry.data + entry.dataSize, conversationData + entry.offset);
+		delete[] entry.data;
 	}
 	alfredB.close();
 }
@@ -650,10 +653,11 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	}
 
 	PaletteAnim *anim = getPaletteAnimForRoom(roomNumber);
+	if (_currentPaletteAnim != nullptr) {
+		delete _currentPaletteAnim;
+	}
 	if (anim != nullptr) {
-		if (_currentPaletteAnim != nullptr) {
-			delete _currentPaletteAnim;
-		}
+
 		_currentPaletteAnim = anim;
 	} else {
 		_currentPaletteAnim = nullptr;
@@ -688,8 +692,7 @@ int streetWalkerIndices[] = {
 	-1, // room 13,
 	2,  // room 14,
 	-1, // room 15,
-	2
-};
+	2};
 
 RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 	RoomPasserBys *anims = nullptr;
@@ -1169,10 +1172,12 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 		if (room < entry.room) {
 			// We've passed the room we care about
 			roomDone = true;
+			delete[] entry.data;
 			break;
 		}
 		if (room > entry.room) {
 			// Not the room we care about, skip
+			delete[] entry.data;
 			continue;
 		}
 		Common::copy(entry.data, entry.data + entry.dataSize, data + entry.offset);
