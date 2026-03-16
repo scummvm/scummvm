@@ -641,12 +641,14 @@ void ColonyEngine::drawAnimation() {
 			}
 		}
 	} else {
+		// Mac QuickDraw FillRect: pattern bit=1 → ForeColor (black=0),
+		// bit=0 → BackColor (white=15). Same for B&W Mac and DOS.
 		for (int y = 0; y < 264; y++) {
 			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
 			byte row = pat[y % 8];
 			for (int x = 0; x < 416; x++) {
 				bool set = (row & (0x80 >> (x % 8))) != 0;
-				_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
+				_gfx->setPixel(ox + x, oy + y, set ? 0 : 15);
 			}
 		}
 	}
@@ -712,11 +714,11 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uin
 	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh);
 	// Mac QuickDraw srcBic+srcOr rendering:
 	//   mask bit=1 -> opaque (part of sprite)
-	//   fg bit=1   -> ForeColor (black outline)
+	//   fg bit=1   -> ForeColor (black)
 	//   fg bit=0   -> BackColor (fillColor from BMColor)
-	// B&W/DOS fallback preserves existing palette-index behavior.
-	const uint32 fgColor = useColor ? (uint32)0xFF000000 : 15;
-	const uint32 bgColor = useColor ? fillColor : 0;
+	// B&W/DOS: same semantics — fg bit=1 is black (0), fg bit=0 is white (15).
+	const uint32 fgColor = useColor ? (uint32)0xFF000000 : 0;
+	const uint32 bgColor = useColor ? fillColor : 15;
 
 	for (int iy = 0; iy < img->height; iy++) {
 		for (int ix = 0; ix < img->width; ix++) {
