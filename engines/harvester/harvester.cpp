@@ -45,6 +45,9 @@ namespace Harvester {
 
 namespace {
 
+static const uint32 kStartupExclusiveFadeMs = 16;
+static const uint32 kStartupExclusiveFadeSteps = 4;
+
 static bool shouldSkipStartupMoviesForDebug() {
 	return ConfMan.hasKey("harvester_debug_skip_startup_movies") &&
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
@@ -138,7 +141,7 @@ bool HarvesterEngine::playStartupMusic(const Common::String &path) {
 
 void HarvesterEngine::stopStartupMusic() {
 	if (g_system && g_system->getMixer())
-		g_system->getMixer()->stopHandle(_startupMusicHandle);
+		stopStartupSoundHandle(_startupMusicHandle, true);
 	_startupMusicPath.clear();
 }
 
@@ -187,10 +190,10 @@ bool HarvesterEngine::playStartupSound(const Common::String &path) {
 }
 
 bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
-	stopStartupSoundHandle(_startupSingleSoundHandle);
 	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
 		return false;
 
+	stopStartupSoundHandle(_startupSingleSoundHandle, true);
 	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
@@ -201,9 +204,37 @@ bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
 	return true;
 }
 
+void HarvesterEngine::stopStartupSingleSound() {
+	stopStartupSoundHandle(_startupSingleSoundHandle, true);
+}
+
 bool HarvesterEngine::isStartupSingleSoundPlaying() const {
 	return g_system && g_system->getMixer() &&
 		g_system->getMixer()->isSoundHandleActive(_startupSingleSoundHandle);
+}
+
+bool HarvesterEngine::playStartupSpeech(const Common::String &path) {
+	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
+		return false;
+
+	stopStartupSoundHandle(_startupSpeechHandle, true);
+	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
+	if (!audioStream) {
+		warning("Harvester: unable to decode startup speech '%s'", path.c_str());
+		return false;
+	}
+
+	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_startupSpeechHandle, audioStream);
+	return true;
+}
+
+void HarvesterEngine::stopStartupSpeech() {
+	stopStartupSoundHandle(_startupSpeechHandle, true);
+}
+
+bool HarvesterEngine::isStartupSpeechPlaying() const {
+	return g_system && g_system->getMixer() &&
+		g_system->getMixer()->isSoundHandleActive(_startupSpeechHandle);
 }
 
 bool HarvesterEngine::loadStartupSound(int slot, const Common::String &path) {
@@ -255,7 +286,8 @@ bool HarvesterEngine::deleteStartupLoadedSound(int slot) {
 }
 
 void HarvesterEngine::stopStartupSound() {
-	stopStartupSoundHandle(_startupSingleSoundHandle);
+	stopStartupSingleSound();
+	stopStartupSpeech();
 	for (int i = 0; i < ARRAYSIZE(_startupSoundHandles); ++i) {
 		stopStartupSoundHandle(_startupSoundHandles[i]);
 		_startupSoundPaths[i].clear();
@@ -268,9 +300,28 @@ void HarvesterEngine::stopStartupSound() {
 	_startupSoundSlotIndex = -1;
 }
 
-void HarvesterEngine::stopStartupSoundHandle(Audio::SoundHandle &handle) {
-	if (g_system && g_system->getMixer())
-		g_system->getMixer()->stopHandle(handle);
+void HarvesterEngine::stopStartupSoundHandle(Audio::SoundHandle &handle, bool fadeOut) {
+	if (!g_system || !g_system->getMixer())
+		return;
+
+	Audio::Mixer *mixer = g_system->getMixer();
+	if (!mixer->isSoundHandleActive(handle)) {
+		mixer->stopHandle(handle);
+		return;
+	}
+
+	if (fadeOut) {
+		const byte startVolume = mixer->getChannelVolume(handle);
+		for (uint32 step = kStartupExclusiveFadeSteps; step != 0; --step) {
+			if (!mixer->isSoundHandleActive(handle))
+				return;
+
+			mixer->setChannelVolume(handle, (byte)((startVolume * (step - 1)) / kStartupExclusiveFadeSteps));
+			g_system->delayMillis(kStartupExclusiveFadeMs / kStartupExclusiveFadeSteps);
+		}
+	}
+
+	mixer->stopHandle(handle);
 }
 
 bool HarvesterEngine::validateStartupLoadedSoundSlot(int slot) const {

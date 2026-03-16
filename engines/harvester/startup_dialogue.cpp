@@ -324,7 +324,7 @@ StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Po
 
 void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
-	_sharedDialogueStateD2ecc = false;
+	_sharedKarinKidnapedDialogueState = false;
 }
 
 Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
@@ -517,10 +517,10 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 
 		const Common::String voicePath = buildDialogueVoicePath(*startupScript, wavId);
-		const bool voiceStarted = !voicePath.empty() && _engine.playStartupSingleSound(voicePath);
+		const bool voiceStarted = !voicePath.empty() && _engine.playStartupSpeech(voicePath);
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError) {
-			_engine.stopStartupSound();
+			_engine.stopStartupSpeech();
 			return releaseError;
 		}
 
@@ -533,7 +533,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
 				if (startupFlow.handleSystemEvent(event, result)) {
-					_engine.stopStartupSound();
+					_engine.stopStartupSpeech();
 					return result;
 				}
 
@@ -557,14 +557,14 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 			if (runtimeEntities)
 				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
-			if (interrupted || (!voiceStarted || !_engine.isStartupSingleSoundPlaying()))
+			if (interrupted || (!voiceStarted || !_engine.isStartupSpeechPlaying()))
 				break;
 
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
 
-		_engine.stopStartupSound();
+		_engine.stopStartupSpeech();
 		if (interrupted) {
 			Common::Error releaseResult = waitForPointerRelease();
 			if (releaseResult.getCode() != Common::kNoError)
@@ -1061,7 +1061,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		if (_sharedDialogueStateD2ecc) {
+		if (_sharedKarinKidnapedDialogueState) {
 			lineError = playDialogueLineWithVariant(0x9da, "PC", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
