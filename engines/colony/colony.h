@@ -386,6 +386,10 @@ public:
 	void startNewGame();
 	void corridor();
 	void quadrant();
+	bool hasInteractiveWallFeature(int cx, int cy, int dir) const;
+	void clampToWalls(Locate *p);
+	int checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode);
+	int checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, Locate *pobject, int dir);
 	int checkwall(int xnew, int ynew, Locate *pobject);
 	void cCommand(int xnew, int ynew, bool allowInteraction);
 	bool scrollInfo(const Graphics::Font *macFont = nullptr);
@@ -553,6 +557,7 @@ private:
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	void draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
+	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride);
 	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
@@ -574,6 +579,7 @@ private:
 	void battleInit();
 	void battleSet();
 	void battleThink();
+	void enterColonyFromBattle(int mapNum, int xloc, int yloc);
 	void battleCommand(int xnew, int ynew);
 	void battleShoot();
 	void battleProjCommand(int xcheck, int ycheck);
@@ -606,6 +612,9 @@ private:
 	void updateViewportLayout();
 	void drawDashboardStep1();
 	void drawDashboardMac();
+	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac);
+	bool hasRobotAt(int x, int y) const;
+	bool hasFoodAt(int x, int y) const;
 	void drawMiniMap(uint32 lineColor);
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;

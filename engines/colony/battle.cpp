@@ -956,6 +956,19 @@ void ColonyEngine::battleThink() {
 	}
 }
 
+void ColonyEngine::enterColonyFromBattle(int mapNum, int xloc, int yloc) {
+	playTunnelAirlockEffect();
+	_gameMode = kModeColony;
+	_projon = false;
+	_pcount = 0;
+	_me.xloc = xloc;
+	_me.yloc = yloc;
+	_me.xindex = _me.xloc >> 8;
+	_me.yindex = _me.yloc >> 8;
+	loadMap(mapNum);
+	_coreIndex = (mapNum == 1) ? 0 : 1;
+}
+
 void ColonyEngine::battleCommand(int xnew, int ynew) {
 	xnew = battleNormalizeCoord(xnew);
 	ynew = battleNormalizeCoord(ynew);
@@ -974,25 +987,12 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 		}
 	}
 
-	auto enterColony = [&](int mapNum, int xloc, int yloc) {
-		playTunnelAirlockEffect();
-		_gameMode = kModeColony;
-		_projon = false;
-		_pcount = 0;
-		_me.xloc = xloc;
-		_me.yloc = yloc;
-		_me.xindex = _me.xloc >> 8;
-		_me.yindex = _me.yloc >> 8;
-		loadMap(mapNum);
-		_coreIndex = (mapNum == 1) ? 0 : 1;
-	};
-
 	if (!_orbit &&
 	    xnew > _battleShip.xloc - 2 * kBattleSize &&
 	    xnew < _battleShip.xloc &&
 	    ynew > _battleShip.yloc - kBattleSize / 2 &&
 	    ynew < _battleShip.yloc + kBattleSize / 2) {
-		enterColony(1, 900, 3000);
+		enterColonyFromBattle(1, 900, 3000);
 		return;
 	}
 
@@ -1000,7 +1000,7 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 	    xnew < _battleEnter.xloc &&
 	    ynew > _battleEnter.yloc - kBattleSize / 2 &&
 	    ynew < _battleEnter.yloc + kBattleSize / 2) {
-		enterColony(2, 384, 640);
+		enterColonyFromBattle(2, 384, 640);
 		return;
 	}
 

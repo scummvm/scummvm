@@ -537,6 +537,41 @@ void ColonyEngine::drawDashboardMac() {
 	}
 }
 
+void ColonyEngine::drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac) {
+	if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
+	    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
+		return;
+	if (isMac) {
+		_gfx->drawEllipse(x, y, halfSize, halfSize, color);
+	} else {
+		const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
+		const int t = MAX<int>(_headsUpRect.top + 1, y - halfSize);
+		const int r = MIN<int>(_headsUpRect.right - 1, x + halfSize + 1);
+		const int b = MIN<int>(_headsUpRect.bottom - 1, y + halfSize + 1);
+		if (l >= r || t >= b)
+			return;
+		_gfx->drawRect(Common::Rect(l, t, r, b), color);
+	}
+}
+
+bool ColonyEngine::hasRobotAt(int x, int y) const {
+	if (x < 0 || x >= 32 || y < 0 || y >= 32)
+		return false;
+	return _robotArray[x][y] != 0;
+}
+
+bool ColonyEngine::hasFoodAt(int x, int y) const {
+	const int kFWALLType = 48;
+	if (x < 0 || x >= 32 || y < 0 || y >= 32)
+		return false;
+	const uint8 num = _foodArray[x][y];
+	if (num == 0)
+		return false;
+	if (num <= _objects.size())
+		return _objects[num - 1].type < kFWALLType;
+	return true;
+}
+
 // Draws the mini floor map into _headsUpRect (shared by Mac and DOS paths)
 void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	if (_gameMode != kModeColony)
@@ -544,7 +579,6 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	if (_me.xindex < 0 || _me.xindex >= 32 || _me.yindex < 0 || _me.yindex >= 32)
 		return;
 
-	const int kFWALLType = 48;
 	const Common::Rect miniMapClip(_headsUpRect.left + 1, _headsUpRect.top + 1, _headsUpRect.right - 1, _headsUpRect.bottom - 1);
 	auto drawMiniMapLine = [&](int x1, int y1, int x2, int y2, uint32 color) {
 		if (clipLineToRect(x1, y1, x2, y2, miniMapClip))
@@ -604,66 +638,32 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	const int foodR = isMac ? 3 : 1;
 	const int robotR = isMac ? 5 : 2;
 
-	auto drawMarker = [&](int x, int y, int halfSize, uint32 color) {
-		if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
-		    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
-			return;
-		if (isMac) {
-			// compass.c: FrameOval  circle outline
-			_gfx->drawEllipse(x, y, halfSize, halfSize, color);
-		} else {
-			const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
-			const int t = MAX<int>(_headsUpRect.top + 1, y - halfSize);
-			const int r = MIN<int>(_headsUpRect.right - 1, x + halfSize + 1);
-			const int b = MIN<int>(_headsUpRect.bottom - 1, y + halfSize + 1);
-			if (l >= r || t >= b)
-				return;
-			_gfx->drawRect(Common::Rect(l, t, r, b), color);
-		}
-	};
-
-	auto hasRobotAt = [&](int x, int y) -> bool {
-		if (x < 0 || x >= 32 || y < 0 || y >= 32)
-			return false;
-		return _robotArray[x][y] != 0;
-	};
-	auto hasFoodAt = [&](int x, int y) -> bool {
-		if (x < 0 || x >= 32 || y < 0 || y >= 32)
-			return false;
-		const uint8 num = _foodArray[x][y];
-		if (num == 0)
-			return false;
-		if (num <= _objects.size())
-			return _objects[num - 1].type < kFWALLType;
-		return true;
-	};
-
 	if (hasFoodAt(_me.xindex, _me.yindex))
-		drawMarker(xcorner[4], ycorner[4], foodR, lineColor);
+		drawMiniMapMarker(xcorner[4], ycorner[4], foodR, lineColor, isMac);
 
 	if (_me.yindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x01)) {
 		if (hasFoodAt(_me.xindex, _me.yindex - 1))
-			drawMarker(xcorner[4] + dy, ycorner[4] + dx, foodR, lineColor);
+			drawMiniMapMarker(xcorner[4] + dy, ycorner[4] + dx, foodR, lineColor, isMac);
 		if (hasRobotAt(_me.xindex, _me.yindex - 1))
-			drawMarker(xcorner[4] + dy, ycorner[4] + dx, robotR, lineColor);
+			drawMiniMapMarker(xcorner[4] + dy, ycorner[4] + dx, robotR, lineColor, isMac);
 	}
 	if (_me.xindex > 0 && !(_wall[_me.xindex][_me.yindex] & 0x02)) {
 		if (hasFoodAt(_me.xindex - 1, _me.yindex))
-			drawMarker(xcorner[4] - dx, ycorner[4] + dy, foodR, lineColor);
+			drawMiniMapMarker(xcorner[4] - dx, ycorner[4] + dy, foodR, lineColor, isMac);
 		if (hasRobotAt(_me.xindex - 1, _me.yindex))
-			drawMarker(xcorner[4] - dx, ycorner[4] + dy, robotR, lineColor);
+			drawMiniMapMarker(xcorner[4] - dx, ycorner[4] + dy, robotR, lineColor, isMac);
 	}
 	if (_me.yindex < 30 && !(_wall[_me.xindex][_me.yindex + 1] & 0x01)) {
 		if (hasFoodAt(_me.xindex, _me.yindex + 1))
-			drawMarker(xcorner[4] - dy, ycorner[4] - dx, foodR, lineColor);
+			drawMiniMapMarker(xcorner[4] - dy, ycorner[4] - dx, foodR, lineColor, isMac);
 		if (hasRobotAt(_me.xindex, _me.yindex + 1))
-			drawMarker(xcorner[4] - dy, ycorner[4] - dx, robotR, lineColor);
+			drawMiniMapMarker(xcorner[4] - dy, ycorner[4] - dx, robotR, lineColor, isMac);
 	}
 	if (_me.xindex < 30 && !(_wall[_me.xindex + 1][_me.yindex] & 0x02)) {
 		if (hasFoodAt(_me.xindex + 1, _me.yindex))
-			drawMarker(xcorner[4] + dx, ycorner[4] - dy, foodR, lineColor);
+			drawMiniMapMarker(xcorner[4] + dx, ycorner[4] - dy, foodR, lineColor, isMac);
 		if (hasRobotAt(_me.xindex + 1, _me.yindex))
-			drawMarker(xcorner[4] + dx, ycorner[4] - dy, robotR, lineColor);
+			drawMiniMapMarker(xcorner[4] + dx, ycorner[4] - dy, robotR, lineColor, isMac);
 	}
 }
 

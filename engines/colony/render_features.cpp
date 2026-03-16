@@ -444,6 +444,10 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	}
 }
 
+static float stairStepHeight(const float *vf, const float *vc, int d, int s) {
+	return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
+}
+
 void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	const uint8 *map = mapFeatureAt(cellX, cellY, direction);
 	if (!map || map[0] == kWallFeatureNone)
@@ -665,10 +669,6 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 			vf[i] = inset;        // floor rises toward center
 			vc[i] = 1.0f - inset; // ceiling drops toward center
 		}
-		// Step height: at depth d, step s is at fraction (s+1)/8 from floor to ceiling
-		auto vh = [&](int d, int s) -> float {
-			return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
-		};
 		// Back of passage (full depth)
 		float bi = 1.0f / 3.0f; // back inset
 		float bu = bi, bur = 1.0f - bi, bvc = 1.0f - bi;
@@ -678,10 +678,10 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		wallLine(corners, bur, 0.5f, bur, bvc, col);
 
 		// 2. Back wall landing (depth 6 to full depth)
-		wallLine(corners, ul[6], vh(6, 6), bu, bvc, col);
+		wallLine(corners, ul[6], stairStepHeight(vf, vc, 6, 6), bu, bvc, col);
 		wallLine(corners, bu, bvc, bur, bvc, col);
-		wallLine(corners, bur, bvc, ur[6], vh(6, 6), col);
-		wallLine(corners, ur[6], vh(6, 6), ul[6], vh(6, 6), col);
+		wallLine(corners, bur, bvc, ur[6], stairStepHeight(vf, vc, 6, 6), col);
+		wallLine(corners, ur[6], stairStepHeight(vf, vc, 6, 6), ul[6], stairStepHeight(vf, vc, 6, 6), col);
 
 		// 3. First step tread (floor from wall face to depth 0)
 		wallLine(corners, 0.0f, 0.0f, ul[0], vf[0], col);
@@ -690,24 +690,24 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		wallLine(corners, 1.0f, 0.0f, 0.0f, 0.0f, col);
 
 		// 4. First step riser (at depth 0)
-		wallLine(corners, ul[0], vh(0, 0), ul[0], vf[0], col);
-		wallLine(corners, ur[0], vf[0], ur[0], vh(0, 0), col);
-		wallLine(corners, ur[0], vh(0, 0), ul[0], vh(0, 0), col);
+		wallLine(corners, ul[0], stairStepHeight(vf, vc, 0, 0), ul[0], vf[0], col);
+		wallLine(corners, ur[0], vf[0], ur[0], stairStepHeight(vf, vc, 0, 0), col);
+		wallLine(corners, ur[0], stairStepHeight(vf, vc, 0, 0), ul[0], stairStepHeight(vf, vc, 0, 0), col);
 
 		// 5. Step treads (i=3..0: depth i to depth i+1)
 		for (int i = 3; i >= 0; i--) {
-			wallLine(corners, ul[i], vh(i, i), ul[i + 1], vh(i + 1, i), col);
-			wallLine(corners, ul[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i), col);
-			wallLine(corners, ur[i + 1], vh(i + 1, i), ur[i], vh(i, i), col);
-			wallLine(corners, ur[i], vh(i, i), ul[i], vh(i, i), col);
+			wallLine(corners, ul[i], stairStepHeight(vf, vc, i, i), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
+			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
+			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i], stairStepHeight(vf, vc, i, i), col);
+			wallLine(corners, ur[i], stairStepHeight(vf, vc, i, i), ul[i], stairStepHeight(vf, vc, i, i), col);
 		}
 
 		// 6. Step risers (i=5..0: vertical face at depth i+1)
 		for (int i = 5; i >= 0; i--) {
-			wallLine(corners, ul[i + 1], vh(i + 1, i + 1), ul[i + 1], vh(i + 1, i), col);
-			wallLine(corners, ul[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i), col);
-			wallLine(corners, ur[i + 1], vh(i + 1, i), ur[i + 1], vh(i + 1, i + 1), col);
-			wallLine(corners, ur[i + 1], vh(i + 1, i + 1), ul[i + 1], vh(i + 1, i + 1), col);
+			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
+			wallLine(corners, ul[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i), col);
+			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i), ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
+			wallLine(corners, ur[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), ul[i + 1], stairStepHeight(vf, vc, i + 1, i + 1), col);
 		}
 
 		// 7. Handrails: from center of wall edges up to near-ceiling at mid-depth

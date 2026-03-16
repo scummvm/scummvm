@@ -220,54 +220,87 @@ int ColonyEngine::occupiedObjectAt(int x, int y, const Locate *pobject) {
 	return rnum;
 }
 
-int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
-	const int xind2 = xnew >> 8;
-	const int yind2 = ynew >> 8;
+bool ColonyEngine::hasInteractiveWallFeature(int cx, int cy, int dir) const {
+	if (cx < 0 || cx >= 31 || cy < 0 || cy >= 31)
+		return false;
+	uint8 type = _mapData[cx][cy][dir][0];
+	return type == kWallFeatureDoor || type == kWallFeatureAirlock ||
+		type == kWallFeatureUpStairs || type == kWallFeatureDnStairs ||
+		type == kWallFeatureTunnel || type == kWallFeatureElevator;
+}
 
-	// Clamp position to maintain minimum distance from walls within a cell.
-	// This prevents the camera from clipping through thin walls.
-	// Skip clamping for walls that have any interactive feature (door, airlock,
-	// stairs, etc.) so the player can reach the boundary and trigger the interaction.
-	// The wall itself still blocks via checkwall; clamping only prevents camera clipping
-	// on plain walls with no features.
+void ColonyEngine::clampToWalls(Locate *p) {
 	static const int kWallPad = 40;
-	auto hasFeature = [this](int cx, int cy, int dir) -> bool {
-		if (cx < 0 || cx >= 31 || cy < 0 || cy >= 31)
-			return false;
-		uint8 type = _mapData[cx][cy][dir][0];
-		return type == kWallFeatureDoor || type == kWallFeatureAirlock ||
-			type == kWallFeatureUpStairs || type == kWallFeatureDnStairs ||
-			type == kWallFeatureTunnel || type == kWallFeatureElevator;
-	};
-	auto clampToWalls = [this, &hasFeature](Locate *p) {
-		int cx = p->xindex;
-		int cy = p->yindex;
-		int cellMinX = cx << 8;
-		int cellMinY = cy << 8;
-		int cellMaxX = cellMinX + 255;
-		int cellMaxY = cellMinY + 255;
+	int cx = p->xindex;
+	int cy = p->yindex;
+	int cellMinX = cx << 8;
+	int cellMinY = cy << 8;
+	int cellMaxX = cellMinX + 255;
+	int cellMaxY = cellMinY + 255;
 
-		// South wall of this cell (at cellMinY boundary)
-		if ((wallAt(cx, cy) & 0x01) && !hasFeature(cx, cy, kDirSouth))
-			p->yloc = MAX(p->yloc, cellMinY + kWallPad);
-		// North wall (at cellMaxY+1 boundary = south wall of cell above)
-		if ((wallAt(cx, cy + 1) & 0x01) && !hasFeature(cx, cy, kDirNorth))
-			p->yloc = MIN(p->yloc, cellMaxY - kWallPad);
-		// West wall of this cell (at cellMinX boundary)
-		if ((wallAt(cx, cy) & 0x02) && !hasFeature(cx, cy, kDirWest))
-			p->xloc = MAX(p->xloc, cellMinX + kWallPad);
-		// East wall (at cellMaxX+1 boundary = west wall of cell to right)
-		if ((wallAt(cx + 1, cy) & 0x02) && !hasFeature(cx, cy, kDirEast))
-			p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
-	};
+	// South wall of this cell (at cellMinY boundary)
+	if ((wallAt(cx, cy) & 0x01) && !hasInteractiveWallFeature(cx, cy, kDirSouth))
+		p->yloc = MAX(p->yloc, cellMinY + kWallPad);
+	// North wall (at cellMaxY+1 boundary = south wall of cell above)
+	if ((wallAt(cx, cy + 1) & 0x01) && !hasInteractiveWallFeature(cx, cy, kDirNorth))
+		p->yloc = MIN(p->yloc, cellMaxY - kWallPad);
+	// West wall of this cell (at cellMinX boundary)
+	if ((wallAt(cx, cy) & 0x02) && !hasInteractiveWallFeature(cx, cy, kDirWest))
+		p->xloc = MAX(p->xloc, cellMinX + kWallPad);
+	// East wall (at cellMaxX+1 boundary = west wall of cell to right)
+	if ((wallAt(cx + 1, cy) & 0x02) && !hasInteractiveWallFeature(cx, cy, kDirEast))
+		p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
+}
 
-	auto occupied = [&]() -> int {
-		return occupiedObjectAt(xind2, yind2, pobject);
-	};
-	auto moveTo = [&](uint8 trailCode) -> int {
-		const int rnum = occupied();
-		if (rnum)
+int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode) {
+	const int rnum = occupiedObjectAt(xind2, yind2, pobject);
+	if (rnum)
+		return rnum;
+	if (trailCode != 0 && pobject->type == kMeNum &&
+	    pobject->xindex >= 0 && pobject->xindex < 32 &&
+	    pobject->yindex >= 0 && pobject->yindex < 32)
+		_dirXY[pobject->xindex][pobject->yindex] = trailCode;
+	pobject->yindex = yind2;
+	pobject->xindex = xind2;
+	pobject->dx = xnew - pobject->xloc;
+	pobject->dy = ynew - pobject->yloc;
+	pobject->xloc = xnew;
+	pobject->yloc = ynew;
+	clampToWalls(pobject);
+	return 0;
+}
+
+int ColonyEngine::checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, Locate *pobject, int dir) {
+	const uint8 *feature = mapFeatureAt(pobject->xindex, pobject->yindex, dir);
+	int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
+	if (r == 2)
+		return 0; // teleported  position already updated by the feature
+	if (r == 1) {
+		const int rnum = occupiedObjectAt(xind2, yind2, pobject);
+		if (rnum) {
+			const bool showDoorText = (pobject == &_me && feature &&
+				(feature[0] == kWallFeatureDoor || feature[0] == kWallFeatureAirlock));
+			if (showDoorText)
+				doText(75, 0);
 			return rnum;
+		}
+		uint8 trailCode = 0;
+		switch (dir) {
+		case kDirNorth:
+			trailCode = 1;
+			break;
+		case kDirSouth:
+			trailCode = 5;
+			break;
+		case kDirEast:
+			trailCode = 3;
+			break;
+		case kDirWest:
+			trailCode = 7;
+			break;
+		default:
+			break;
+		}
 		if (trailCode != 0 && pobject->type == kMeNum &&
 		    pobject->xindex >= 0 && pobject->xindex < 32 &&
 		    pobject->yindex >= 0 && pobject->yindex < 32)
@@ -280,55 +313,13 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		pobject->yloc = ynew;
 		clampToWalls(pobject);
 		return 0;
-	};
+	}
+	return -2; // blocked, caller handles
+}
 
-	// tryPassThroughFeature returns: 0=blocked, 1=pass through, 2=teleported (position already set)
-	auto tryFeature = [&](int dir) -> int {
-		const uint8 *feature = mapFeatureAt(pobject->xindex, pobject->yindex, dir);
-		int r = tryPassThroughFeature(pobject->xindex, pobject->yindex, dir, pobject);
-		if (r == 2)
-			return 0; // teleported  position already updated by the feature
-		if (r == 1) {
-			const int rnum = occupied();
-			if (rnum) {
-				const bool showDoorText = (pobject == &_me && feature &&
-					(feature[0] == kWallFeatureDoor || feature[0] == kWallFeatureAirlock));
-				if (showDoorText)
-					doText(75, 0);
-				return rnum;
-			}
-			uint8 trailCode = 0;
-			switch (dir) {
-			case kDirNorth:
-				trailCode = 1;
-				break;
-			case kDirSouth:
-				trailCode = 5;
-				break;
-			case kDirEast:
-				trailCode = 3;
-				break;
-			case kDirWest:
-				trailCode = 7;
-				break;
-			default:
-				break;
-			}
-			if (trailCode != 0 && pobject->type == kMeNum &&
-			    pobject->xindex >= 0 && pobject->xindex < 32 &&
-			    pobject->yindex >= 0 && pobject->yindex < 32)
-				_dirXY[pobject->xindex][pobject->yindex] = trailCode;
-			pobject->yindex = yind2;
-			pobject->xindex = xind2;
-			pobject->dx = xnew - pobject->xloc;
-			pobject->dy = ynew - pobject->yloc;
-			pobject->xloc = xnew;
-			pobject->yloc = ynew;
-			clampToWalls(pobject);
-			return 0;
-		}
-		return -2; // blocked, caller handles
-	};
+int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
+	const int xind2 = xnew >> 8;
+	const int yind2 = ynew >> 8;
 
 	if (xind2 == pobject->xindex) {
 		if (yind2 == pobject->yindex) {
@@ -342,11 +333,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 
 		if (yind2 > pobject->yindex) {
 			if (!(_wall[pobject->xindex][yind2] & 1))
-				return moveTo(1);
+				return checkwallMoveTo(xnew, ynew, xind2, yind2, pobject, 1);
 			if (pobject->type == 2)
 				return -1;
 			{
-				int r = tryFeature(kDirNorth);
+				int r = checkwallTryFeature(xnew, ynew, xind2, yind2, pobject, kDirNorth);
 				if (r != -2)
 					return r;
 			}
@@ -358,11 +349,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 1))
-			return moveTo(5);
+			return checkwallMoveTo(xnew, ynew, xind2, yind2, pobject, 5);
 		if (pobject->type == 2)
 			return -1;
 		{
-			int r = tryFeature(kDirSouth);
+			int r = checkwallTryFeature(xnew, ynew, xind2, yind2, pobject, kDirSouth);
 			if (r != -2)
 				return r;
 		}
@@ -376,11 +367,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 	if (yind2 == pobject->yindex) {
 		if (xind2 > pobject->xindex) {
 			if (!(_wall[xind2][pobject->yindex] & 2))
-				return moveTo(3);
+				return checkwallMoveTo(xnew, ynew, xind2, yind2, pobject, 3);
 			if (pobject->type == 2)
 				return -1;
 			{
-				int r = tryFeature(kDirEast);
+				int r = checkwallTryFeature(xnew, ynew, xind2, yind2, pobject, kDirEast);
 				if (r != -2)
 					return r;
 			}
@@ -392,11 +383,11 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 
 		if (!(_wall[pobject->xindex][pobject->yindex] & 2))
-			return moveTo(7);
+			return checkwallMoveTo(xnew, ynew, xind2, yind2, pobject, 7);
 		if (pobject->type == 2)
 			return -1;
 		{
-			int r = tryFeature(kDirWest);
+			int r = checkwallTryFeature(xnew, ynew, xind2, yind2, pobject, kDirWest);
 			if (r != -2)
 				return r;
 		}
@@ -434,7 +425,7 @@ int ColonyEngine::checkwall(int xnew, int ynew, Locate *pobject) {
 		}
 	}
 
-	return moveTo(0);
+	return checkwallMoveTo(xnew, ynew, xind2, yind2, pobject, 0);
 }
 
 bool ColonyEngine::setDoorState(int x, int y, int direction, int state) {
