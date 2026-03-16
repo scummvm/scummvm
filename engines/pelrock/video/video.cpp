@@ -100,7 +100,6 @@ void VideoManager::playIntro() {
 						break;
 				}
 				AudioEffect voice = _voiceEffect[currentFrame];
-				debug("Playing voice effect: '%s'", voice.filename.c_str());
 				VoiceData voiceData = _sounds[voice.filename];
 				_introSndFile.seek(voiceData.offset, SEEK_SET);
 				byte *voiceBuffer = new byte[voiceData.length];
@@ -110,7 +109,6 @@ void VideoManager::playIntro() {
 
 			if (_sfxEffect.contains(currentFrame)) {
 				AudioEffect sfx = _sfxEffect[currentFrame];
-				debug("Playing SFX effect: '%s'", sfx.filename.c_str());
 				VoiceData sfxData = _sounds[sfx.filename];
 				_introSndFile.seek(sfxData.offset, SEEK_SET);
 				byte *sfxBuffer = new byte[sfxData.length];

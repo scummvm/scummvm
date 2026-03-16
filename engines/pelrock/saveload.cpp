@@ -318,7 +318,8 @@ bool syncGameStateData(Common::Serializer &s, GameStateData *gameState) {
 			}
 		}
 	} else {
-		gameState->disabledBranches.clear();
+
+		gameState->clearBranches();
 		for (uint16 idx = 0; idx < disabledBranchesSize; ++idx) {
 			byte roomNumber;
 			s.syncAsByte(roomNumber);

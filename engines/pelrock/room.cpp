@@ -40,6 +40,12 @@ RoomManager::~RoomManager() {
 	}
 	clearAnims();
 	delete[] _resetData;
+	if(_currentPaletteAnim) {
+		delete _currentPaletteAnim;
+	}
+	if(_passerByAnims) {
+		delete _passerByAnims;
+	}
 }
 
 void RoomManager::clearAnims() {
@@ -592,6 +598,7 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	Common::Array<Sprite> sprites = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
 	Common::Array<HotSpot> staticHotspots = loadHotspots(pair10, pair10size);
 
+	free(pic);
 
 	// clear anims from previous room
 	clearAnims();
@@ -904,6 +911,7 @@ void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset,
 			outSize = size;
 		}
 	}
+	delete[] pixelData;
 }
 
 Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
@@ -1159,7 +1167,7 @@ void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 			continue;
 		}
 		Common::copy(entry.data, entry.data + entry.dataSize, data + entry.offset);
-		// delete[] entry.data;
+		delete[] entry.data;
 	}
 	alfred8.close();
 }

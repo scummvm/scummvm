@@ -612,18 +612,29 @@ struct GameStateData {
 		for (int i = 0; i < kNumGameFlags; i++)
 			flags[i] = 0;
 		flags[FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ] = true;
-		disabledBranches.clear();
 		inventoryItems.clear();
 		stickersPerRoom.clear();
 		roomExitChanges.clear();
 		roomWalkBoxChanges.clear();
 		roomHotSpotChanges.clear();
 		spriteChanges.clear();
-		disabledBranches.clear();
+		clearBranches();
 		libraryShelf = -1;
 		selectedBookIndex = -1;
 		bookLetter = '\0';
 		stateGame = GAME;
+	}
+
+	void clearBranches() {
+		for(auto &entry : disabledBranches) {
+			for (ResetEntry &resetEntry : entry._value) {
+				if (resetEntry.data) {
+					delete[] resetEntry.data;
+					resetEntry.data = nullptr;
+				}
+			}
+		}
+		disabledBranches.clear();
 	}
 
 	void addDisabledBranch(ResetEntry entry) {

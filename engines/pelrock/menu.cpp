@@ -836,7 +836,6 @@ void MenuManager::loadMenuTexts() {
 			_menuTexts.push_back(unprocessedMenuTexts[i]);
 		}
 	}
-	debug("Menu texts size after processing: %d", (int)_menuTexts.size());
 	_menuText = _menuTexts[0];
 	delete[] textBuffer;
 
