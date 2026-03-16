@@ -64,6 +64,7 @@ private:
 	void renderRoomMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 	int getMenuItemAt(const Common::Point &mousePos) const;
+	int getRoomMenuItemAt(const Common::Point &mousePos) const;
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;

@@ -33,12 +33,14 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
+#include "harvester/cft_font.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_script.h"
+#include "harvester/startup_text.h"
 
 namespace Harvester {
 
@@ -65,6 +67,10 @@ static const int kQuickTipTextWidth = 280;
 
 static const int kMenuStartY = 100;
 static const int kMenuLineSpacing = 28;
+static const int kNativeMenuInsetX = 24;
+static const int kNativeMenuInsetTop = 72;
+static const int kNativeMenuInsetBottom = 24;
+static const int kNativeMenuLineGap = 6;
 static const int kCursorSequence7 = 7;
 static const int kIdentTextboxX = 85;
 static const int kIdentTextboxY = 177;
@@ -88,6 +94,7 @@ static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
 static const byte kQuickTipActionColor = 0xc3;
 static const byte kRoomPromptColor = 0xce;
+static const char *const kHarvfontGlyphOrder = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-1234567890";
 
 static const int kCursorSequenceWalk = 0;
 static const int kCursorSequenceExamine = 1;
@@ -763,6 +770,47 @@ static Common::Rect getInventoryPanelBounds(const StartupArt &art) {
 	const IndexedBitmap &bitmap = art.getInventoryBitmap();
 	return Common::Rect(kInventoryX, kInventoryY,
 		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
+}
+
+static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
+	const StartupText *startupText = engine.getStartupText();
+	if (!startupText || !fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : startupText->getFonts()) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
+}
+
+static void drawStartupMenuBackdrop(Graphics::Screen &screen, const StartupArt &art) {
+	screen.setPalette(art.getWaitPalette());
+	screen.fillRect(screen.getBounds(), 0);
+	blitBitmap(screen, art.getInventoryBitmap(), kInventoryX, kInventoryY);
+	blitBitmap(screen, art.getLogoBitmap(), kLogoX, kLogoY);
+}
+
+static Common::Rect getNativeMenuTextBounds(const StartupArt &art) {
+	const Common::Rect inventoryBounds = getInventoryPanelBounds(art);
+	return Common::Rect(
+		inventoryBounds.left + kNativeMenuInsetX,
+		inventoryBounds.top + kNativeMenuInsetTop,
+		inventoryBounds.right - kNativeMenuInsetX,
+		inventoryBounds.bottom - kNativeMenuInsetBottom);
+}
+
+static int getNativeMenuFirstLineY(const Graphics::Font &font, const Common::Rect &bounds,
+		uint itemCount, bool hasStatusLine) {
+	if (itemCount == 0)
+		return bounds.top;
+
+	const int lineSpacing = font.getFontHeight() + kNativeMenuLineGap;
+	const int itemBlockHeight = font.getFontHeight() + ((int)itemCount - 1) * lineSpacing;
+	const int reservedStatusHeight = hasStatusLine ? font.getFontHeight() + kNativeMenuLineGap : 0;
+	const int availableHeight = MAX(0, bounds.height() - reservedStatusHeight);
+	return bounds.top + MAX(0, (availableHeight - itemBlockHeight) / 2);
 }
 
 static void drawInventoryOverlay(Graphics::Screen &screen, const StartupArt &art, StartupScript &startupScript,
@@ -1951,8 +1999,7 @@ Common::Error StartupFlow::runMainMenuStub() {
 
 Common::Error StartupFlow::runRoomMenuStub() {
 	Graphics::FrameLimiter limiter(g_system, 60);
-	Common::String statusMessage =
-		"Native Esc enters run_main_menu(); room-menu actions still need a dedicated implementation.";
+	Common::String statusMessage = "ESC RESUMES GAME";
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
 	resetCursorAnimationSequence();
@@ -1971,7 +2018,7 @@ Common::Error StartupFlow::runRoomMenuStub() {
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredItem = getMenuItemAt(_mousePos);
+				const int hoveredItem = getRoomMenuItemAt(_mousePos);
 				if (hoveredItem != -1 && hoveredItem != selectedItem) {
 					selectedItem = hoveredItem;
 					needsRedraw = true;
@@ -1993,9 +2040,7 @@ Common::Error StartupFlow::runRoomMenuStub() {
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					statusMessage = Common::String::format(
-						"%s is still stubbed here; Esc resumes gameplay.",
-						_menuItems[selectedItem].c_str());
+					statusMessage = "NOT READY";
 					needsRedraw = true;
 				}
 				break;
@@ -2003,13 +2048,11 @@ Common::Error StartupFlow::runRoomMenuStub() {
 				if (_menuItems.empty())
 					break;
 
-				selectedItem = getMenuItemAt(_mousePos);
+				selectedItem = getRoomMenuItemAt(_mousePos);
 				if (selectedItem == -1)
 					break;
 
-				statusMessage = Common::String::format(
-					"%s is still stubbed here; Esc resumes gameplay.",
-					_menuItems[selectedItem].c_str());
+				statusMessage = "NOT READY";
 				needsRedraw = true;
 				break;
 			default:
@@ -2918,35 +2961,33 @@ void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &sta
 void StartupFlow::renderRoomMenuStub(int selectedItem, const Common::String &statusMessage) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const StartupArt *art = _engine.getStartupArt();
-	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
-	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !titleFont || !bodyFont)
+	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "HARVFONT");
+	if (!screen || !art || !menuFontResource)
 		return;
 
-	screen->setPalette(art->getWaitPalette());
-	screen->fillRect(screen->getBounds(), 0);
-	blitBitmap(*screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
-	blitBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
+	HarvesterCftFont menuFont(*menuFontResource, kHarvfontGlyphOrder);
+	if (!menuFont.isValid())
+		return;
 
-	const Common::Rect panel(96, 96, 544, 432);
-	screen->fillRect(panel, kPanelFillColor);
+	drawStartupMenuBackdrop(*screen, *art);
 
-	drawShadowedString(*screen, *titleFont, "Game Menu Stub", panel.left, 110, panel.width(),
-		kTextColorNormal, Graphics::kTextAlignCenter);
-
+	const Common::Rect menuBounds = getNativeMenuTextBounds(*art);
+	const int firstLineY = getNativeMenuFirstLineY(menuFont, menuBounds, _menuItems.size(), !statusMessage.empty());
+	const int lineSpacing = menuFont.getFontHeight() + kNativeMenuLineGap;
 	for (uint i = 0; i < _menuItems.size(); ++i) {
-		const int itemY = kMenuStartY + (int)i * kMenuLineSpacing;
+		const int itemY = firstLineY + (int)i * lineSpacing;
 		const byte color = ((int)i == selectedItem) ? kTextColorHover : kTextColorNormal;
-		drawShadowedString(*screen, *bodyFont, _menuItems[i], panel.left, itemY, panel.width(), color,
+		drawShadowedString(*screen, menuFont, _menuItems[i], menuBounds.left, itemY, menuBounds.width(), color,
 			Graphics::kTextAlignCenter);
 	}
 
-	drawShadowedString(*screen, *bodyFont, "Native Esc routes through run_main_menu().", panel.left, 330,
-		panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
-	drawWrappedShadowedText(*screen, *bodyFont, statusMessage, panel.left + 24, 360, panel.width() - 48,
-		kTextColorNormal);
-	drawShadowedString(*screen, *bodyFont, "Use mouse or arrow keys. Esc resumes gameplay.",
-		panel.left, 404, panel.width(), kTextColorDim, Graphics::kTextAlignCenter);
+	if (!statusMessage.empty()) {
+		Common::String nativeStatus = statusMessage;
+		nativeStatus.toUppercase();
+		drawShadowedString(*screen, menuFont, nativeStatus,
+			menuBounds.left, menuBounds.bottom - menuFont.getFontHeight(),
+			menuBounds.width(), kTextColorDim, Graphics::kTextAlignCenter);
+	}
 
 	if (_engine.getRuntimeEntities())
 		_engine.getRuntimeEntities()->drawCursor(*screen);
@@ -2984,6 +3025,31 @@ int StartupFlow::getMenuItemAt(const Common::Point &mousePos) const {
 		const int x = (640 - width) / 2;
 		const int y = kMenuStartY + (int)i * kMenuLineSpacing;
 		const Common::Rect bounds(x - 12, y - 2, x + width + 12, y + font->getFontHeight() + 2);
+		if (bounds.contains(mousePos))
+			return (int)i;
+	}
+
+	return -1;
+}
+
+int StartupFlow::getRoomMenuItemAt(const Common::Point &mousePos) const {
+	const StartupArt *art = _engine.getStartupArt();
+	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "HARVFONT");
+	if (!art || !menuFontResource)
+		return getMenuItemAt(mousePos);
+
+	HarvesterCftFont menuFont(*menuFontResource, kHarvfontGlyphOrder);
+	if (!menuFont.isValid())
+		return getMenuItemAt(mousePos);
+
+	const Common::Rect menuBounds = getNativeMenuTextBounds(*art);
+	const int firstLineY = getNativeMenuFirstLineY(menuFont, menuBounds, _menuItems.size(), true);
+	const int lineSpacing = menuFont.getFontHeight() + kNativeMenuLineGap;
+	for (uint i = 0; i < _menuItems.size(); ++i) {
+		const int width = menuFont.getStringWidth(_menuItems[i]);
+		const int x = menuBounds.left + (menuBounds.width() - width) / 2;
+		const int y = firstLineY + (int)i * lineSpacing;
+		const Common::Rect bounds(x - 8, y - 2, x + width + 8, y + menuFont.getFontHeight() + 2);
 		if (bounds.contains(mousePos))
 			return (int)i;
 	}
