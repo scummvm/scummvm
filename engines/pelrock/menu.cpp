@@ -1016,6 +1016,19 @@ Pelrock::MenuManager::~MenuManager() {
 	delete[] _inventoryLeftArrow[1];
 	delete[] _inventoryRightArrow[0];
 	delete[] _inventoryRightArrow[1];
+	// delete buttons
+	delete[] _saveButtons[0]; delete[] _saveButtons[1];
+	delete[] _loadButtons[0]; delete[] _loadButtons[1];
+	delete[] _soundsButtons[0]; delete[] _soundsButtons[1];
+	delete[] _exitToDosButtons[0]; delete[] _exitToDosButtons[1];
+	delete[] _savesUpArrows[0]; delete[] _savesUpArrows[1];
+	delete[] _savesDownArrows[0]; delete[] _savesDownArrows[1];
+	delete[] _soundControlArrowLeft[0]; delete[] _soundControlArrowLeft[1];
+	delete[] _soundControlArrowRight[0]; delete[] _soundControlArrowRight[1];
+
+	delete[] _soundControlMasterIcon;
+	delete[] _soundControlSfxIcon;
+	delete[] _soundControlMusicIcon;
 }
 
 } // End of namespace Pelrock
