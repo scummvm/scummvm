@@ -67,6 +67,7 @@ private:
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	HankRoomDialogueState _hankRoomDialogueState;
+	bool _sharedDialogueStateD2ecc = false;
 };
 
 } // End of namespace Harvester
