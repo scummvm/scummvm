@@ -951,10 +951,11 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 	scene.sceneRegions = state.roomRegions;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u regions=%u",
+		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u npcs=%u regions=%u",
 		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
-		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size(), (uint)scene.sceneRegions.size());
+		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size(),
+		(uint)state.roomNpcs.size(), (uint)scene.sceneRegions.size());
 
 	return true;
 }
@@ -2855,6 +2856,30 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
 				anim.animName.c_str(), anim.resourcePath.c_str());
 		}
+	}
+	for (const StartupNpcRecord &npc : state.roomNpcs) {
+		RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(npc.npcName,
+			npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
+		if (!entity) {
+			debug(1, "Harvester: unable to spawn room npc entity '%s' from '%s'",
+				npc.npcName.c_str(), npc.modelPath.c_str());
+			continue;
+		}
+
+		entity->setClassId(kRuntimeEntityClassNpc);
+		entity->setHitTestMode(kRuntimeEntityHitTestNone);
+		entity->setLooping(true);
+		if (npc.frameDelay > 0)
+			entity->setAnimationRate(npc.frameDelay);
+		if (!applyRoomActorPlacement(state, *entity, npc.posX, npc.posY, (float)npc.posZ)) {
+			debug(1, "Harvester: unable to apply room npc placement for '%s'",
+				npc.npcName.c_str());
+		}
+		debugC(1, kDebugScene,
+			"Harvester: scene npc spawned room='%s' npc='%s' class=0x%x pos=(%d,%d,z=%.2f) frame_delay=%d model='%s' active=%d visible=%d",
+			state.roomName.c_str(), npc.npcName.c_str(), entity->getClassId(),
+			entity->getX(), entity->getY(), (double)entity->getZ(),
+			npc.frameDelay, npc.modelPath.c_str(), npc.active, npc.visible);
 	}
 	if (state.hasEntrance) {
 		const int playerFrame = resolvePlayerFacingFrame(state.playerFacing);

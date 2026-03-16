@@ -40,6 +40,7 @@ enum RuntimeEntityClass {
 	kRuntimeEntityClassAnimation = 1,
 	kRuntimeEntityClassCursor = 2,
 	kRuntimeEntityClassBackground = 3,
+	kRuntimeEntityClassNpc = 4,
 	kRuntimeEntityClassPlayer = 5,
 	kRuntimeEntityClassRectHotspot = 0x15,
 	kRuntimeEntityClassDisabledHotspot = 0x16,

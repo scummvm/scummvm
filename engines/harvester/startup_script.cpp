@@ -153,6 +153,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
+	_npcs.clear();
 	_regions.clear();
 	_flags.clear();
 	_commands.clear();
@@ -217,6 +218,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
+	_npcs.clear();
 	_regions.clear();
 	_flags.clear();
 	_commands.clear();
@@ -236,7 +238,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
-				tokens[i] == "REGION" ||
+				tokens[i] == "NPC" || tokens[i] == "REGION" ||
 				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
 				tagIndex = i;
 				break;
@@ -365,6 +367,34 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
+		if (tag == "NPC") {
+			if (tokens.size() < tagIndex + 10)
+				return;
+
+			StartupNpcRecord npc;
+			if (tagIndex >= 4) {
+				npc.posX = atoi(tokens[0].c_str());
+				npc.posY = atoi(tokens[1].c_str());
+				npc.posZ = atoi(tokens[2].c_str());
+				npc.frameDelay = atoi(tokens[3].c_str());
+			}
+			npc.roomName = tokens[tagIndex + 1];
+			npc.modelPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
+			npc.npcName = tokens[tagIndex + 3];
+			npc.monsterfyTargetName = tokens[tagIndex + 4];
+			npc.active = tokens[tagIndex + 5].equalsIgnoreCase("T");
+			npc.visible = tokens[tagIndex + 6].equalsIgnoreCase("T");
+			if (npc.active)
+				npc.visible = true;
+			npc.savedVisible = npc.visible;
+			npc.onDeathActionTag = tokens[tagIndex + 7];
+			npc.audioPath = resources.normalizeResourcePath(tokens[tagIndex + 8]);
+			npc.entityInitArg = tokens[tagIndex + 9];
+			if (!npc.roomName.empty() && !npc.modelPath.empty() && !npc.npcName.empty())
+				_npcs.push_back(npc);
+			return;
+		}
+
 		if (tag == "REGION") {
 			if (tokens.size() < tagIndex + 7)
 				return;
@@ -467,9 +497,9 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u regions, %u flags, %u commands, %u texts, %u useitems from '%s'",
+	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u npcs, %u regions, %u flags, %u commands, %u texts, %u useitems from '%s'",
 		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
-		(uint)_regions.size(),
+		(uint)_npcs.size(), (uint)_regions.size(),
 		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_useItems.size(), _path.c_str());
 }
 
@@ -498,12 +528,12 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		state.musicPath = musicPath;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomRegions=%u mutated=%d",
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomRegions=%u mutated=%d",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
-		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(),
+		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
 		(uint)state.roomRegions.size(), mutatedRuntimeState);
 
 	return true;
@@ -513,6 +543,7 @@ void StartupScript::resetRuntimeState() {
 	_runtimeFlags = _flags;
 	_runtimeObjects = _objects;
 	_runtimeAnimations = _animations;
+	_runtimeNpcs = _npcs;
 
 	for (StartupObjectRecord &object : _runtimeObjects) {
 		object.currentX = object.initialX;
@@ -527,6 +558,11 @@ void StartupScript::resetRuntimeState() {
 		anim.runtimeActive = anim.active;
 		anim.runtimeVisible = anim.visible;
 		anim.runtimeState = -1;
+	}
+
+	for (StartupNpcRecord &npc : _runtimeNpcs) {
+		npc.runtimeSpawned = false;
+		npc.savedVisible = npc.visible;
 	}
 }
 
@@ -761,6 +797,18 @@ StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName
 	return nullptr;
 }
 
+StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
+	if (npcName.empty())
+		return nullptr;
+
+	for (StartupNpcRecord &npc : _runtimeNpcs) {
+		if (npc.npcName.equalsIgnoreCase(npcName))
+			return &npc;
+	}
+
+	return nullptr;
+}
+
 bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName) {
 	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
 	if (!runtimeObject)
@@ -832,6 +880,10 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 		if (anim.roomName.equalsIgnoreCase(room.roomName))
 			state.roomAnimations.push_back(anim);
 	}
+	for (const StartupNpcRecord &npc : _runtimeNpcs) {
+		if (npc.roomName.equalsIgnoreCase(room.roomName) && npc.visible)
+			state.roomNpcs.push_back(npc);
+	}
 	for (const StartupRegionRecord &region : _regions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
@@ -850,13 +902,21 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 			object.currentX, object.currentY, object.currentZ,
 			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
 	}
+	for (const StartupNpcRecord &npc : state.roomNpcs) {
+		debugC(1, kDebugScene,
+			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
+			state.roomName.c_str(), npc.npcName.c_str(), npc.visible, npc.active,
+			npc.posX, npc.posY, npc.posZ, npc.frameDelay,
+			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
+	}
 
 	debugC(1, kDebugGeneral,
-		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomRegions=%u",
+		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
 		state.musicPath.c_str(), (double)state.paletteBrightness,
-		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomRegions.size());
+		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size(),
+		(uint)state.roomNpcs.size(), (uint)state.roomRegions.size());
 
 	return true;
 }
@@ -987,6 +1047,25 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("SET_NPC")) {
+			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
+			if (!runtimeNpc) {
+				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const bool active = isTruthy(command->arg2);
+			const bool visible = isTruthy(command->arg3);
+			const bool changed = runtimeNpc->active != active || runtimeNpc->visible != visible;
+			runtimeNpc->active = active;
+			runtimeNpc->visible = visible;
+			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			if (allowTransitions && nextRoomName)
@@ -1024,6 +1103,7 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("DELETE") ||
 			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
+			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			return true;
