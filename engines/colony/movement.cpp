@@ -520,6 +520,9 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 		playTunnelAirlockEffect();
 
 		if (_orbit || !(_armor || _fl)) {
+			debugC(1, kColonyDebugMove,
+				"Airlock death: no protection (orbit=%d armor=%d fl=%d) at (%d,%d) level=%d",
+				_orbit, _armor, _fl, _me.xindex, _me.yindex, _level);
 			terminateGame(false);
 			return 0;
 		}
@@ -997,15 +1000,25 @@ void ColonyEngine::fallThroughHole() {
 }
 
 void ColonyEngine::checkCenter() {
-	// DOS CCenter(): check if player is standing on a floor hole or hotfoot
+	// DOS CCenter(): check if player is standing on a floor hole or hotfoot.
+	// Called every render frame at 60fps for responsive hole/egg detection.
+	// HOTFOOT damage is time-gated via _hotfootAccum to match the original
+	// Mac Display() cadence (~8fps). The original had no throttle — damage
+	// fired once per Display() call, which was hardware-limited to ~5-8fps
+	// on a Mac Plus.
 	if (_me.xindex < 0 || _me.xindex >= 31 || _me.yindex < 0 || _me.yindex >= 31)
 		return;
 
 	const uint8 cellType = _mapData[_me.xindex][_me.yindex][4][0];
 	if (cellType != 0) {
+		debugC(2, kColonyDebugMove,
+			"checkCenter: cellType=%d at (%d,%d) dest=[%d,%d,%d] level=%d",
+			cellType, _me.xindex, _me.yindex,
+			_mapData[_me.xindex][_me.yindex][4][2],
+			_mapData[_me.xindex][_me.yindex][4][3],
+			_mapData[_me.xindex][_me.yindex][4][4], _level);
 		switch (cellType) {
 		case 1: { // SMHOLEFLR  small floor hole, must be near center
-			// DOS: xcheck=abs(xloc-(xindex<<8)); if(xcheck>64&&xcheck<192)
 			int xcheck = ABS(_me.xloc - (_me.xindex << 8));
 			int ycheck = ABS(_me.yloc - (_me.yindex << 8));
 			if (xcheck > 64 && xcheck < 192 && ycheck > 64 && ycheck < 192)
@@ -1015,13 +1028,21 @@ void ColonyEngine::checkCenter() {
 		case 2: // LGHOLEFLR  large floor hole, full cell
 			fallThroughHole();
 			break;
-		case 5: // HOTFOOT  electric floor, damages power
-			_sound->play(Sound::kBzzz);
-			debugC(1, kColonyDebugCombat,
-				"hotfoot: level=%d cell=(%d,%d) delta=[%d,%d,%d]",
-				_level, _me.xindex, _me.yindex, -(5 << _level), -(5 << _level), -(5 << _level));
-			setPower(-(5 << _level), -(5 << _level), -(5 << _level));
+		case 5: { // HOTFOOT  electric floor, damages power
+			// Time-gate damage: accumulate ms, fire at ~8fps (125ms intervals)
+			uint32 now = _system->getMillis();
+			uint32 elapsed = now - _lastHotfootTime;
+			if (elapsed >= 125) {
+				_lastHotfootTime = now;
+				_sound->play(Sound::kBzzz);
+				debugC(1, kColonyDebugCombat,
+					"hotfoot: level=%d cell=(%d,%d) delta=[%d,%d,%d]",
+					_level, _me.xindex, _me.yindex,
+					-(5 << _level), -(5 << _level), -(5 << _level));
+				setPower(-(5 << _level), -(5 << _level), -(5 << _level));
+			}
 			break;
+		}
 		default:
 			break;
 		}

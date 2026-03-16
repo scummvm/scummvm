@@ -805,6 +805,7 @@ Common::Error ColonyEngine::run() {
 	uint32 lastMoveTick = _system->getMillis();
 	uint32 lastColonyTick = lastMoveTick;
 	uint32 lastBattleTick = lastMoveTick;
+	uint32 lastCenterTick = lastMoveTick;
 	while (!shouldQuit()) {
 		_frameLimiter->startFrame();
 
@@ -824,15 +825,34 @@ Common::Error ColonyEngine::run() {
 			_lastWarningChimeTime = now;
 		}
 
-		if (_gameMode == kModeColony && now - lastColonyTick >= 66) {
+		// Original Mac gmain.c: CThink()+Display() run in one loop with no
+		// throttle — both at the hardware-limited frame rate (~8fps on Mac
+		// Plus). Robot AI, movement, and shooting all happen at this cadence.
+		// 125ms (~8fps) matches the original balance for robot aggression.
+		if (_gameMode == kModeColony && now - lastColonyTick >= 125) {
 			lastColonyTick = now;
 			cThink();
 		}
 
-		// The original battle loop advanced AI on the game loop cadence, not
-		// every rendered frame. Running this at 60 fps makes enemies and
-		// projectiles several times more aggressive than DOS/Mac.
-		if (_gameMode == kModeBattle && now - lastBattleTick >= 66) {
+		// Periodic equipment power drain every FCOUNT(32) game ticks at ~8fps.
+		// Mac display.c implements this; DOS IBM_DISP.C defines FCOUNT but
+		// never applies the drain — a bug in the original DOS port that
+		// removed the intended equipment energy cost trade-off.
+		if (_gameMode == kModeColony && now - lastCenterTick >= 125) {
+			lastCenterTick = now;
+			_foodCount--;
+			if (_foodCount <= 0) {
+				const int a2 = _armor * _armor;
+				const int w2 = _weapons * _weapons;
+				if (a2 > 0 || w2 > 0)
+					setPower(-_level * a2, -_level * (a2 + w2), -_level * w2);
+				_foodCount = 32;
+			}
+		}
+
+		// Original Mac gmain.c: BThink()+Display() both at hardware frame rate.
+		// 125ms (~8fps) matches original Mac Plus battle cadence.
+		if (_gameMode == kModeBattle && now - lastBattleTick >= 125) {
 			lastBattleTick = now;
 			battleThink();
 		}
@@ -1060,21 +1080,6 @@ Common::Error ColonyEngine::run() {
 			drawDashboardStep1();
 			drawCrosshair();
 		} else {
-			// Periodic power drain every FCOUNT(32) frames.
-			// Mac display.c implements this; DOS IBM_DISP.C defines FCOUNT but
-			// never applies the drain — a bug in the original DOS port that left
-			// equipment upgrades without any energy cost, removing the intended
-			// risk/reward trade-off. We apply the drain on both platforms.
-			// Formula: SetPower(-level*armor2, -level*(armor2+weapons2), -level*weapons2)
-			_foodCount--;
-			if (_foodCount <= 0) {
-				const int a2 = _armor * _armor;
-				const int w2 = _weapons * _weapons;
-				if (a2 > 0 || w2 > 0)
-					setPower(-_level * a2, -_level * (a2 + w2), -_level * w2);
-				_foodCount = 32;
-			}
-
 			_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
 			corridor();
 			drawDashboardStep1();
