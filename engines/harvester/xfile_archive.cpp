@@ -62,6 +62,13 @@ bool XFileArchive::open(const Common::String &indexPath, const Common::String &d
 		return false;
 	}
 
+	_dataFile.reset(new Common::File());
+	if (!_dataFile->open(_dataPath)) {
+		debugC(1, kDebugResources, "Harvester: unable to open archive data %s", dataPath.c_str());
+		close();
+		return false;
+	}
+
 	const uint32 fileCount = indexStream->size() / kEntrySize;
 	for (uint32 i = 0; i < fileCount; ++i) {
 		if (indexStream->readUint32BE() != kSignatureXfle) {
@@ -97,6 +104,7 @@ bool XFileArchive::open(const Common::String &indexPath, const Common::String &d
 
 void XFileArchive::close() {
 	_dataPath.clear();
+	_dataFile.reset();
 	_entries.clear();
 }
 
@@ -130,26 +138,26 @@ Common::SeekableReadStream *XFileArchive::createReadStreamForMember(const Common
 }
 
 Common::SeekableReadStream *XFileArchive::openStoredEntry(const Entry &entry) const {
-	Common::File *dataFile = new Common::File();
-	if (!dataFile->open(_dataPath)) {
-		delete dataFile;
+	if (!_dataFile)
 		return nullptr;
-	}
 
-	return new Common::SeekableSubReadStream(dataFile, entry._archiveOffset, entry._archiveOffset + entry._storedSize, DisposeAfterUse::YES);
+	return new Common::SafeMutexedSeekableSubReadStream(
+		_dataFile.get(), entry._archiveOffset, entry._archiveOffset + entry._storedSize,
+		DisposeAfterUse::NO, _dataFileMutex);
 }
 
 Common::SeekableReadStream *XFileArchive::openPackedEntry(const Entry &entry) const {
-	Common::File dataFile;
-	if (!dataFile.open(_dataPath))
+	if (!_dataFile)
 		return nullptr;
 
-	dataFile.seek(entry._archiveOffset);
+	Common::ScopedPtr<Common::SeekableReadStream> dataStream(new Common::SafeMutexedSeekableSubReadStream(
+		_dataFile.get(), entry._archiveOffset, entry._archiveOffset + entry._storedSize,
+		DisposeAfterUse::NO, _dataFileMutex));
 
 	Common::Array<byte> compressed;
 	compressed.resize(entry._storedSize);
 	if (!compressed.empty())
-		dataFile.read(compressed.data(), compressed.size());
+		dataStream->read(compressed.data(), compressed.size());
 
 	byte *output = (byte *)malloc(entry._unpackedSize);
 	if (!output)
