@@ -27,7 +27,9 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/startup_dialogue.h"
+#include "harvester/startup_inventory.h"
 #include "harvester/startup_menu.h"
+#include "harvester/startup_room.h"
 #include "harvester/startup_script.h"
 
 namespace Common {
@@ -48,7 +50,9 @@ public:
 
 private:
 	friend class StartupDialogueSystem;
+	friend class StartupInventorySystem;
 	friend class StartupMenuSystem;
+	friend class StartupRoomSystem;
 
 	bool loadQuickTips();
 	bool loadMenuItems();
@@ -76,7 +80,9 @@ private:
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
 	StartupDialogueSystem _dialogue;
+	StartupInventorySystem _inventory;
 	StartupMenuSystem _menu;
+	StartupRoomSystem _room;
 };
 
 } // End of namespace Harvester

@@ -49,12 +49,6 @@ static const char *const kQuickTipsPath = "ADJHEAD.RCS";
 static const char *const kMenuPath = "MENU.INI";
 static const char *const kMenuSectionName = "menu";
 
-static const int kInventoryX = 64;
-static const int kInventoryY = 48;
-static const int kInventoryItemStartX = 73;
-static const int kInventoryItemStartY = 115;
-static const int kInventoryItemMaxRight = 564;
-static const int kInventoryItemSpacing = 5;
 static const int kQuickTipsOverlayX = 167;
 static const int kQuickTipsOverlayY = 200;
 
@@ -81,7 +75,6 @@ static const byte kIdentTextColor = 0xd3;
 static const byte kTextColorNormal = 255;
 static const byte kShadowColor = 0;
 static const byte kQuickTipActionColor = 0xc3;
-static const byte kRoomPromptColor = 0xce;
 
 static const int kCursorSequenceWalk = 0;
 static const int kCursorSequenceExamine = 1;
@@ -99,66 +92,6 @@ static const int kRoomPlayerIdleLoopStartFrame = 0x0f;
 static const int kRoomPlayerIdleLoopLastFrame = 0xb2;
 static const int kRoomPlayerIdleExitLastFrame = 0xbf;
 static const int kRoomPlayerIdleYOffset = 4;
-
-struct StartupRoomSceneResources {
-	StartupRoomSetupState state;
-	byte palette[256 * 3] = { 0 };
-	Common::Array<StartupObjectRecord> sceneObjects;
-	Common::Array<StartupAnimRecord> sceneAnimations;
-	Common::Array<StartupRegionRecord> sceneRegions;
-	float targetPaletteBrightness = 1.0f;
-};
-
-struct StartupRoomPlayerState {
-	RuntimeEntity *entity = nullptr;
-	int centerX = 0;
-	int bottomY = 0;
-	float z = 0.0f;
-	int facing = -1;
-	bool hasMoveTarget = false;
-	int targetX = 0;
-	float targetZ = 0.0f;
-	bool turnActive = false;
-	int turnTargetFacing = -1;
-	int turnFirstFrame = -1;
-	int turnLastFrame = -1;
-	int turnEndFrame = -1;
-	bool turnPlayBackwards = false;
-};
-
-struct StartupRoomHoverState {
-	const StartupObjectRecord *object = nullptr;
-	const StartupNpcRecord *npc = nullptr;
-	const StartupRegionRecord *region = nullptr;
-	const RuntimeEntity *playerEntity = nullptr;
-	Common::String promptText;
-	int cursorSequence = kCursorSequenceNeutral;
-};
-
-struct StartupInventoryVisual {
-	StartupObjectRecord object;
-	IndexedBitmap bitmap;
-	Common::Rect bounds;
-	bool hasBitmap = false;
-};
-
-struct StartupInventoryOverlayState {
-	Common::Array<StartupInventoryVisual> items;
-	bool open = false;
-	Common::String selectedItemName;
-	Common::String promptText;
-};
-
-struct StartupRoomIdleAnimationState {
-	RuntimeEntity *entity = nullptr;
-	int restoreFacing = -1;
-	uint32 activityTick = 0;
-	uint32 resetTick = 0;
-	uint32 triggerTick = 0;
-	bool active = false;
-	bool loopStarted = false;
-	bool exiting = false;
-};
 
 struct PlayerAnimationRange {
 	PlayerAnimationRange() {}
@@ -179,6 +112,8 @@ struct PlayerTurnAnimationRange {
 	int lastFrame = 0;
 	bool playBackwards = false;
 };
+
+} // End of anonymous namespace
 
 static int roundToInt(float value) {
 	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
@@ -317,8 +252,8 @@ static void setRoomActorScreenPosition(RuntimeEntity &entity, int centerX, int b
 	entity.setPosition(centerX - xOffset - width / 2, bottomY - height - yOffset, z);
 }
 
-static bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
-		int centerX, int bottomY, float z, const Common::String *entranceName = nullptr) {
+bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
+		int centerX, int bottomY, float z, const Common::String *entranceName) {
 	int width = 0;
 	int height = 0;
 	int xOffset = 0;
@@ -457,7 +392,7 @@ static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSet
 		playerState.centerX, playerState.bottomY, playerState.z);
 }
 
-static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	playerState.hasMoveTarget = true;
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
@@ -468,13 +403,13 @@ static void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomP
 		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ);
 }
 
-static void setPlayerMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
+void setPlayerMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, int targetX, int targetBottomY) {
 	setPlayerMoveTarget(state, playerState, targetX,
 		mapRoomScreenYToDepth(state, clampRoomMovementY(state, targetBottomY)));
 }
 
-static int resolveRegionTargetX(const StartupRegionRecord &region, const StartupRoomPlayerState &playerState) {
+int resolveRegionTargetX(const StartupRegionRecord &region, const StartupRoomPlayerState &playerState) {
 	const Common::Rect bounds(region.left, region.top, region.right + 1, region.bottom + 1);
 	int targetX = bounds.left + bounds.width() / 2;
 	if (playerState.entity && targetX + kRoomRegionTargetXBias < playerState.entity->getScreenRect().right)
@@ -482,7 +417,7 @@ static int resolveRegionTargetX(const StartupRegionRecord &region, const Startup
 	return CLIP<int>(targetX, 0, 639);
 }
 
-static float resolveRegionTargetZ(const StartupRegionRecord &region) {
+float resolveRegionTargetZ(const StartupRegionRecord &region) {
 	if (region.desiredFacing == 0)
 		return (float)region.maxZ;
 	if (region.desiredFacing == 3)
@@ -491,11 +426,11 @@ static float resolveRegionTargetZ(const StartupRegionRecord &region) {
 	return (float)(region.minZ + (region.maxZ - region.minZ) / 2);
 }
 
-static uint32 getRuntimeClockTicks() {
+uint32 getRuntimeClockTicks() {
 	return g_system ? (g_system->getMillis() / kRuntimeClockDivisorMs) : 0;
 }
 
-static bool isIdleAnimationExcludedRoom(const Common::String &roomName) {
+bool isIdleAnimationExcludedRoom(const Common::String &roomName) {
 	static const char *const kExcludedRooms[] = {
 		"JAWS",
 		"SUPPLY1",
@@ -515,13 +450,8 @@ static bool isIdleAnimationExcludedRoom(const Common::String &roomName) {
 	return false;
 }
 
-static void updatePlayerIdleTrigger(StartupRoomIdleAnimationState &idleState) {
+void updatePlayerIdleTrigger(StartupRoomIdleAnimationState &idleState) {
 	idleState.triggerTick = MAX(idleState.activityTick, idleState.resetTick) + kRoomPlayerIdleDelayTicks;
-}
-
-static void notePlayerActivity(StartupRoomIdleAnimationState &idleState) {
-	idleState.activityTick = getRuntimeClockTicks();
-	updatePlayerIdleTrigger(idleState);
 }
 
 static void notePlayerIdleReset(StartupRoomIdleAnimationState &idleState) {
@@ -549,7 +479,7 @@ static uint32 hashPalette(const byte *palette) {
 	return hash;
 }
 
-static void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness) {
+void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness) {
 	const byte *palette = scene.palette;
 	byte minValue = 0;
 	byte maxValue = 0;
@@ -584,7 +514,7 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
 }
 
-static bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
+bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
 	if (screen.w <= 0 || screen.h <= 0 || screen.format.bytesPerPixel != 1)
 		return false;
 
@@ -652,7 +582,7 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	return true;
 }
 
-static Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
+Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 
@@ -666,7 +596,7 @@ static Common::Rect getRegionBounds(const StartupRegionRecord &region) {
 	return Common::Rect();
 }
 
-static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &object) {
+Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &object) {
 	const bool atInitialPlacement = object.currentX == object.initialX &&
 		object.currentY == object.initialY &&
 		object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
@@ -677,7 +607,7 @@ static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &ob
 	return object.spritePath;
 }
 
-static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 12)
 		return false;
@@ -692,109 +622,6 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	bitmap.pixels.resize(pixelCount);
 	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
 	return true;
-}
-
-static bool isInventoryExitObject(const StartupObjectRecord &object) {
-	return object.objectName.equalsIgnoreCase("INV_EXIT");
-}
-
-static bool isInventoryStatusObject(const StartupObjectRecord &object) {
-	return object.objectName.hasPrefixIgnoreCase("INV_STAT");
-}
-
-static bool buildInventoryVisuals(StartupScript &startupScript, ResourceManager &resources,
-		Common::Array<StartupInventoryVisual> &items) {
-	items.clear();
-
-	Common::Array<StartupObjectRecord> inventoryObjects;
-	startupScript.getVisibleInventoryObjects(inventoryObjects);
-	int nextX = kInventoryItemStartX;
-	int nextY = kInventoryItemStartY;
-	int rowHeight = 0;
-
-	for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
-		StartupInventoryVisual visual;
-		visual.object = inventoryObject;
-
-		if (isInventoryExitObject(inventoryObject)) {
-			visual.bounds = getHotspotBounds(inventoryObject);
-			items.push_back(visual);
-			continue;
-		}
-		if (isInventoryStatusObject(inventoryObject))
-			continue;
-
-		const Common::String spritePath = resolveSceneObjectSpritePath(inventoryObject);
-		if (!spritePath.empty() && loadBitmapResource(resources, spritePath, visual.bitmap)) {
-			visual.hasBitmap = true;
-			if (nextX + (int)visual.bitmap.width > kInventoryItemMaxRight) {
-				nextX = kInventoryItemStartX;
-				nextY += rowHeight + kInventoryItemSpacing;
-				rowHeight = 0;
-			}
-
-			visual.object.currentX = nextX;
-			visual.object.currentY = nextY;
-			visual.bounds = Common::Rect(nextX, nextY, nextX + visual.bitmap.width, nextY + visual.bitmap.height);
-			nextX += visual.bitmap.width + kInventoryItemSpacing;
-			rowHeight = MAX<int>(rowHeight, visual.bitmap.height);
-		} else {
-			visual.bounds = getHotspotBounds(inventoryObject);
-		}
-
-		items.push_back(visual);
-	}
-
-	return true;
-}
-
-static const StartupInventoryVisual *findInventoryVisualAtPoint(
-		const Common::Array<StartupInventoryVisual> &items, const Common::Point &point) {
-	for (int i = (int)items.size() - 1; i >= 0; --i) {
-		if (items[i].bounds.contains(point))
-			return &items[i];
-	}
-
-	return nullptr;
-}
-
-static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
-	if (itemLabel.empty())
-		return Common::String();
-	if (targetLabel.empty())
-		return Common::String::format("Use %s on ...", itemLabel.c_str());
-
-	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
-}
-
-static Common::Rect getInventoryPanelBounds(const StartupArt &art) {
-	const IndexedBitmap &bitmap = art.getInventoryBitmap();
-	return Common::Rect(kInventoryX, kInventoryY,
-		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
-}
-
-static void drawInventoryOverlay(Graphics::Screen &screen, const StartupArt &art, StartupScript &startupScript,
-		const Graphics::Font &font, const Common::Array<StartupInventoryVisual> &items,
-		const Common::String &selectedItemName, const Common::String &promptText) {
-	blitBitmap(screen, art.getInventoryBitmap(), kInventoryX, kInventoryY);
-
-	for (const StartupInventoryVisual &item : items) {
-		if (item.hasBitmap && item.bitmap.isValid())
-			blitBitmap(screen, item.bitmap, item.object.currentX, item.object.currentY);
-	}
-
-	Common::String overlayPrompt = promptText;
-	if (overlayPrompt.empty() && !selectedItemName.empty()) {
-		for (const StartupInventoryVisual &item : items) {
-			if (item.object.objectName.equalsIgnoreCase(selectedItemName)) {
-				overlayPrompt = buildUseItemPrompt(startupScript.resolveObjectLabel(item.object), Common::String());
-				break;
-			}
-		}
-	}
-
-	if (!overlayPrompt.empty())
-		drawShadowedString(screen, font, overlayPrompt, 0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
 }
 
 static void logSceneObjectSelection(const char *decision, const char *source, const StartupObjectRecord &object,
@@ -857,7 +684,7 @@ static void queueVisibleSceneObject(const char *source, const StartupObjectRecor
 	logSceneObjectSelection("queued", source, object);
 }
 
-static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene) {
+bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene) {
 	scene = StartupRoomSceneResources();
 	scene.state = state;
 	scene.targetPaletteBrightness = state.paletteBrightness;
@@ -888,12 +715,12 @@ static bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceM
 	return true;
 }
 
-static bool shouldRunStartupRoomProbe() {
+bool shouldRunStartupRoomProbe() {
 	return ConfMan.hasKey("harvester_debug_probe_startup_room") &&
 		ConfMan.getBool("harvester_debug_probe_startup_room");
 }
 
-static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
+void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
 		float brightness) {
 	setScaledPalette(screen, scene.palette, brightness);
 	screen.fillRect(screen.getBounds(), 0);
@@ -901,7 +728,7 @@ static void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, con
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
 }
 
-static const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,
+const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,
 		const Common::String &objectName) {
 	for (const StartupObjectRecord &object : objects) {
 		if (object.objectName.equalsIgnoreCase(objectName))
@@ -911,7 +738,7 @@ static const StartupObjectRecord *findSceneObjectByName(const Common::Array<Star
 	return nullptr;
 }
 
-static const StartupRegionRecord *findSceneRegionByName(const Common::Array<StartupRegionRecord> &regions,
+const StartupRegionRecord *findSceneRegionByName(const Common::Array<StartupRegionRecord> &regions,
 		const Common::String &regionName) {
 	for (const StartupRegionRecord &region : regions) {
 		if (region.regionName.equalsIgnoreCase(regionName))
@@ -931,7 +758,7 @@ static const StartupNpcRecord *findSceneNpcByName(const Common::Array<StartupNpc
 	return nullptr;
 }
 
-static StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
+StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
 		const Common::String &objectName) {
 	for (StartupObjectRecord &object : objects) {
 		if (object.objectName.equalsIgnoreCase(objectName))
@@ -1016,7 +843,7 @@ static const StartupNpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 	return findSceneNpcByName(sceneNpcs, entity->getName());
 }
 
-static const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
+const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
 	if (text.boxName.equalsIgnoreCase("BOX1"))
 		return art.getTextboxBitmap(0);
 	if (text.boxName.equalsIgnoreCase("BOX2"))
@@ -1029,7 +856,7 @@ static const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, c
 	return nullptr;
 }
 
-static void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const Graphics::Font &font,
+void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const Graphics::Font &font,
 		const StartupResolvedText &inspectText) {
 	const IndexedBitmap *textbox = resolveInspectTextboxBitmap(art, inspectText);
 	if (!textbox || !textbox->isValid())
@@ -1043,7 +870,7 @@ static void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art,
 		kIdentTextColor);
 }
 
-static bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
+bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
 		StartupScript &startupScript) {
 	return object.operatable || startupScript.isPickupObject(object);
 }
@@ -1099,11 +926,11 @@ static Common::String buildRoomNpcPrompt(const StartupNpcRecord &npc) {
 	return Common::String::format("Talk to %s", label.c_str());
 }
 
-static bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region) {
+bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region) {
 	return region.desiredFacing < 0 || playerFacing == region.desiredFacing;
 }
 
-static bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupRegionRecord &region) {
+bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupRegionRecord &region) {
 	const Common::Rect regionBounds = getRegionBounds(region);
 	if (regionBounds.isEmpty())
 		return false;
@@ -1114,7 +941,7 @@ static bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const Sta
 	return playerMaxZ >= (float)region.minZ && (float)region.maxZ >= playerEntity.getZ();
 }
 
-static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
+StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects,
 		const Common::Array<StartupNpcRecord> &sceneNpcs,
 		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos) {
@@ -1158,7 +985,7 @@ static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, cons
 	return hoverState;
 }
 
-static bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
+bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 	if (!playerState.entity)
 		return false;
 
@@ -1199,7 +1026,7 @@ static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int faci
 	return true;
 }
 
-static bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
+bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
 	if (!playerState.entity || playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
 
@@ -1224,7 +1051,7 @@ static bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int ta
 	return true;
 }
 
-static bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState) {
+bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState) {
 	if (!playerState.turnActive || !playerState.entity)
 		return false;
 	if (playerState.entity->getCurrentFrame() != playerState.turnEndFrame)
@@ -1244,7 +1071,7 @@ static bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState) 
 	return true;
 }
 
-static bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
+bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects,
 		const Common::Array<StartupAnimRecord> &sceneAnimations,
 		StartupRoomPlayerState &playerState) {
@@ -1300,7 +1127,7 @@ static bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetup
 	return true;
 }
 
-static bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
+bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects,
 		const Common::Array<StartupAnimRecord> &sceneAnimations,
 		StartupRoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
@@ -1437,7 +1264,7 @@ static bool finishPlayerIdleAnimation(const StartupRoomSetupState &state, Startu
 	return true;
 }
 
-static bool requestPlayerIdleAnimationExit(const StartupRoomSetupState &state,
+bool requestPlayerIdleAnimationExit(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
 	if (!idleState.active || idleState.exiting || !idleState.entity)
 		return false;
@@ -1459,7 +1286,7 @@ static bool requestPlayerIdleAnimationExit(const StartupRoomSetupState &state,
 	return true;
 }
 
-static bool startPlayerIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
+bool startPlayerIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
 	if (!playerState.entity || idleState.active || isIdleAnimationExcludedRoom(state.roomName))
 		return false;
@@ -1490,7 +1317,7 @@ static bool startPlayerIdleAnimation(HarvesterEngine &engine, const StartupRoomS
 	return true;
 }
 
-static bool updatePlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+bool updatePlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
 		StartupRoomIdleAnimationState &idleState) {
 	if (!idleState.active || !idleState.entity)
 		return false;
@@ -1560,7 +1387,7 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 	return false;
 }
 
-static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
+void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
 		const Common::String &entranceName, Common::Point &mousePos) {
 	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
 	StartupScript *startupScript = engine.getStartupScript();
@@ -1725,10 +1552,9 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 	screen->update();
 }
 
-} // End of anonymous namespace
-
 StartupFlow::StartupFlow(HarvesterEngine &engine)
-	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _menu(engine, _mousePos, _menuItems) {
+	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _inventory(engine),
+	  _menu(engine, _mousePos, _menuItems), _room(engine, _mousePos, _inventory) {
 }
 
 bool StartupFlow::load() {
@@ -1908,711 +1734,7 @@ Common::Error StartupFlow::runRoomNpcDialogue(const IndexedBitmap &backdrop, con
 }
 
 Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
-	StartupRoomSetupState state;
-	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
-		return Common::kReadingFailed;
-
-	Common::Error transitionError = beginRoomSetupTransition();
-	if (transitionError.getCode() != Common::kNoError)
-		return transitionError;
-
-	StartupRoomSceneResources scene;
-	if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
-		return Common::kReadingFailed;
-
-	Graphics::Screen *screen = _engine.getScreen();
-	const StartupArt *art = _engine.getStartupArt();
-	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !bodyFont)
-		return Common::kNoError;
-
-	if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-		return Common::kReadingFailed;
-
-	logScenePaletteSummary("room setup stub palette", scene, kPaletteBrightnessBlack);
-	drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
-	screen->makeAllDirty();
-	screen->update();
-
-	logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
-	transitionError = fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
-	if (transitionError.getCode() != Common::kNoError)
-		return transitionError;
-
-	resetCursorAnimationSequence();
-	executeStartupAudioCommands(scene.state.audioCommands);
-	if (!scene.state.musicPath.empty())
-		(void)_engine.playStartupMusic(scene.state.musicPath);
-	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
-	StartupRoomPlayerState playerState;
-	playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
-	playerState.centerX = state.playerSpawnX;
-	playerState.bottomY = state.playerSpawnY;
-	playerState.z = (float)state.playerSpawnZ;
-	playerState.facing = state.playerFacing;
-	playerState.turnActive = false;
-	playerState.turnTargetFacing = -1;
-	StartupResolvedText inspectText;
-	bool showingInspectText = false;
-	bool inspectCanDismiss = false;
-	bool moveLeft = false;
-	bool moveRight = false;
-	bool moveUp = false;
-	bool moveDown = false;
-	Common::String pendingRegionName;
-	StartupInventoryOverlayState inventoryState;
-	StartupRoomIdleAnimationState idleState;
-	bool needsRedraw = true;
-	auto resetIdleState = [&]() {
-		idleState = StartupRoomIdleAnimationState();
-		idleState.activityTick = getRuntimeClockTicks();
-		idleState.resetTick = idleState.activityTick;
-		updatePlayerIdleTrigger(idleState);
-	};
-	resetIdleState();
-	auto refreshInventoryState = [&]() {
-		if (!buildInventoryVisuals(*_engine.getStartupScript(), *_engine.getResources(), inventoryState.items))
-			return false;
-
-		if (inventoryState.selectedItemName.empty())
-			return true;
-
-		for (const StartupInventoryVisual &item : inventoryState.items) {
-			if (item.object.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
-				return true;
-		}
-
-		inventoryState.selectedItemName.clear();
-		inventoryState.promptText.clear();
-		return true;
-	};
-	auto resolveSelectedInventoryLabel = [&]() {
-		if (inventoryState.selectedItemName.empty())
-			return Common::String();
-
-		for (const StartupInventoryVisual &item : inventoryState.items) {
-			if (item.object.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
-				return _engine.getStartupScript()->resolveObjectLabel(item.object);
-		}
-
-		Common::Array<StartupObjectRecord> inventoryObjects;
-		_engine.getStartupScript()->getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &item : inventoryObjects) {
-			if (item.objectName.equalsIgnoreCase(inventoryState.selectedItemName))
-				return _engine.getStartupScript()->resolveObjectLabel(item);
-		}
-
-		return normalizeHarvesterResourcePath(inventoryState.selectedItemName);
-	};
-	auto clearInventorySelection = [&]() {
-		if (inventoryState.selectedItemName.empty() && inventoryState.promptText.empty())
-			return false;
-
-		inventoryState.selectedItemName.clear();
-		inventoryState.promptText.clear();
-		return true;
-	};
-	auto closeInventoryOverlay = [&]() {
-		bool changed = clearInventorySelection();
-		if (inventoryState.open)
-			changed = true;
-		inventoryState.open = false;
-		return changed;
-	};
-	auto openInventoryOverlay = [&]() {
-		moveLeft = false;
-		moveRight = false;
-		moveUp = false;
-		moveDown = false;
-		pendingRegionName.clear();
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		inventoryState.open = true;
-		inventoryState.promptText.clear();
-		return refreshInventoryState();
-	};
-	auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
-		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
-		StartupRoomSetupState refreshedState;
-		if (!_engine.getStartupScript()->materializeRoomState(
-				scene.state.entranceName, scene.state.roomName, refreshedState)) {
-			return false;
-		}
-
-		refreshedState.audioCommands = entryAudioCommands;
-		if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
-			return false;
-		if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-			return false;
-
-		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName(kPlayerActorEntityName) : nullptr;
-		if (playerState.entity) {
-			if (!preservePlayerPlacement || playerState.facing < 0) {
-				playerState.centerX = scene.state.playerSpawnX;
-				playerState.bottomY = scene.state.playerSpawnY;
-				playerState.z = (float)scene.state.playerSpawnZ;
-				playerState.facing = scene.state.playerFacing;
-			}
-
-			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
-			(void)setPlayerIdleAnimation(playerState, facing);
-			(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-				playerState.centerX, playerState.bottomY, playerState.z);
-		}
-
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		pendingRegionName.clear();
-		resetIdleState();
-		resetCursorAnimationSequence();
-		return refreshInventoryState();
-	};
-	auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
-		drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-		return captureScreenBackdrop(*screen, dialogueBackdrop);
-	};
-	auto runRoomExitCommands = [&]() {
-		Common::Array<StartupAudioCommand> exitAudioCommands;
-		if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitAudioCommands))
-			return false;
-		executeStartupAudioCommands(exitAudioCommands);
-		return true;
-	};
-	auto handleInteractionResult = [&](const StartupInteractionResult &interaction) -> Common::Error {
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		pendingRegionName.clear();
-
-		Common::String restoreMusicPath = _engine.getStartupMusicPath();
-		if (!interaction.musicPath.empty()) {
-			(void)_engine.playStartupMusic(interaction.musicPath);
-			restoreMusicPath = _engine.getStartupMusicPath();
-		}
-		executeStartupAudioCommands(interaction.audioCommands);
-
-		if (!interaction.nextRoomName.empty()) {
-			if (!runRoomExitCommands())
-				return Common::kReadingFailed;
-
-			Common::Error roomError = runRoomLoop(interaction.nextRoomName);
-			if (roomError.getCode() != Common::kReadingFailed &&
-				roomError.getCode() != Common::kNoError) {
-				return roomError;
-			}
-
-			if (!refreshCurrentScene(true))
-				return Common::kReadingFailed;
-
-			executeStartupAudioCommands(scene.state.audioCommands);
-			if (!restoreMusicPath.empty())
-				(void)_engine.playStartupMusic(restoreMusicPath);
-			else
-				_engine.stopStartupMusic();
-		} else if (interaction.mutatedRuntimeState) {
-			if (!refreshCurrentScene(true))
-				return Common::kReadingFailed;
-		}
-
-		return Common::kNoError;
-	};
-	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target, bool preferPickup) -> Common::Error {
-		if (inventoryState.selectedItemName.empty())
-			return Common::kNoError;
-
-		StartupInteractionResult interaction;
-		bool handled = false;
-		if (preferPickup && _engine.getStartupScript()->isPickupObject(target))
-			handled = _engine.getStartupScript()->resolveObjectInteraction(target, interaction);
-		else
-			handled = _engine.getStartupScript()->resolveUseItemInteraction(
-				inventoryState.selectedItemName, target, interaction);
-		if (!handled)
-			return Common::kNoError;
-
-		clearInventorySelection();
-		Common::Error interactionError = handleInteractionResult(interaction);
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-		if (!refreshInventoryState())
-			return Common::kReadingFailed;
-
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto queueRegionInteraction = [&](const StartupRegionRecord &region) {
-		pendingRegionName = region.regionName;
-		if (!playerState.entity)
-			return;
-
-		if (doesPlayerOverlapRegion(*playerState.entity, region))
-			return;
-
-		setPlayerMoveTarget(scene.state, playerState,
-			resolveRegionTargetX(region, playerState), resolveRegionTargetZ(region));
-	};
-	auto runRegionInteraction = [&](const StartupRegionRecord &region) -> Common::Error {
-		StartupInteractionResult interaction;
-		if (!_engine.getStartupScript()->resolveRegionInteraction(region, interaction))
-			return Common::kNoError;
-
-		Common::Error interactionError = handleInteractionResult(interaction);
-		if (interactionError.getCode() != Common::kNoError)
-			return interactionError;
-
-		if (!refreshInventoryState())
-			return Common::kReadingFailed;
-		needsRedraw = true;
-		return Common::kNoError;
-	};
-	auto tryActivatePendingRegion = [&]() -> Common::Error {
-		if (pendingRegionName.empty() || !playerState.entity)
-			return Common::kNoError;
-
-		const StartupRegionRecord *region = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
-		if (!region || !region->startEnabled) {
-			pendingRegionName.clear();
-			return Common::kNoError;
-		}
-		if (!doesPlayerOverlapRegion(*playerState.entity, *region))
-			return Common::kNoError;
-		if (!doesPlayerFacingMatchRegion(playerState.facing, *region)) {
-			if (!playerState.hasMoveTarget && !playerState.turnActive && region->desiredFacing >= 0)
-				(void)startPlayerTurnAnimation(playerState, region->desiredFacing);
-			return Common::kNoError;
-		}
-
-		pendingRegionName.clear();
-		return runRegionInteraction(*region);
-	};
-	if (!refreshInventoryState())
-		return Common::kReadingFailed;
-	Graphics::FrameLimiter limiter(g_system, 60);
-
-	if (shouldRunStartupRoomProbe())
-		logStartupRoomProbe(_engine, scene, entranceName, _mousePos);
-
-	while (!_engine.shouldQuit()) {
-		if (needsRedraw) {
-			const Common::Rect inventoryPanelBounds = getInventoryPanelBounds(*art);
-			const bool inventoryPanelContainsMouse = inventoryState.open && inventoryPanelBounds.contains(_mousePos);
-			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
-				(inventoryState.open && (inventoryPanelContainsMouse || inventoryState.selectedItemName.empty()));
-			StartupRoomHoverState hoverState = suppressHover
-				? StartupRoomHoverState()
-				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-					scene.sceneRegions, _mousePos);
-			Common::String promptText;
-			if (inventoryState.open) {
-				const StartupInventoryVisual *inventoryHover = findInventoryVisualAtPoint(inventoryState.items, _mousePos);
-				if (!inventoryState.selectedItemName.empty()) {
-					Common::String targetLabel;
-					if (inventoryHover && !isInventoryExitObject(inventoryHover->object) &&
-						!isInventoryStatusObject(inventoryHover->object)) {
-						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
-					} else if (!inventoryPanelContainsMouse && hoverState.object) {
-						targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
-					}
-					promptText = buildUseItemPrompt(resolveSelectedInventoryLabel(), targetLabel);
-				} else if (inventoryHover) {
-					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
-				}
-				inventoryState.promptText = promptText;
-				hoverState.cursorSequence = kCursorSequenceNeutral;
-			} else {
-				promptText = hoverState.promptText;
-			}
-			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
-				cursor->setAnimationSequence(
-					(showingInspectText || idleState.active || idleState.exiting || inventoryState.open)
-						? kCursorSequenceNeutral
-						: hoverState.cursorSequence);
-			}
-
-			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-			if (inventoryState.open)
-				drawInventoryOverlay(*screen, *art, *_engine.getStartupScript(), *bodyFont,
-					inventoryState.items, inventoryState.selectedItemName, inventoryState.promptText);
-
-			if (showingInspectText) {
-				drawRoomInspectText(*screen, *art, *bodyFont, inspectText);
-			} else if (!promptText.empty()) {
-				drawShadowedString(*screen, *bodyFont, promptText,
-					0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
-			}
-
-			if (runtimeEntities)
-				runtimeEntities->drawCursor(*screen);
-			screen->makeAllDirty();
-			screen->update();
-			needsRedraw = false;
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error result = Common::kNoError;
-			if (handleSystemEvent(event, result))
-				return result;
-
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				needsRedraw = true;
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				notePlayerActivity(idleState);
-				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
-						needsRedraw = true;
-					break;
-				}
-				pendingRegionName.clear();
-				if (inventoryState.open) {
-					if (clearInventorySelection() || closeInventoryOverlay())
-						needsRedraw = true;
-					break;
-				}
-				break;
-			case Common::EVENT_LBUTTONUP:
-				if (showingInspectText)
-					inspectCanDismiss = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN: {
-				notePlayerActivity(idleState);
-				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
-						needsRedraw = true;
-					break;
-				}
-
-				if (showingInspectText) {
-					if (inspectCanDismiss) {
-						showingInspectText = false;
-						inspectCanDismiss = false;
-						inspectText = StartupResolvedText();
-						needsRedraw = true;
-					}
-					break;
-				}
-
-				const Common::Rect inventoryPanelBounds = getInventoryPanelBounds(*art);
-				if (inventoryState.open) {
-					const StartupInventoryVisual *inventoryHover =
-						findInventoryVisualAtPoint(inventoryState.items, _mousePos);
-					if (inventoryHover) {
-						if (isInventoryExitObject(inventoryHover->object)) {
-							if (closeInventoryOverlay())
-								needsRedraw = true;
-							break;
-						}
-
-						if (inventoryState.selectedItemName.empty()) {
-							inventoryState.selectedItemName = inventoryHover->object.objectName;
-							inventoryState.promptText = buildUseItemPrompt(
-								resolveSelectedInventoryLabel(), Common::String());
-							needsRedraw = true;
-							break;
-						}
-
-						if (!inventoryHover->object.objectName.equalsIgnoreCase(inventoryState.selectedItemName)) {
-							Common::Error interactionError =
-								handleInventoryTargetInteraction(inventoryHover->object, false);
-							if (interactionError.getCode() != Common::kNoError)
-								return interactionError;
-						}
-						needsRedraw = true;
-						break;
-					}
-
-					if (!inventoryState.selectedItemName.empty()) {
-						const StartupRoomHoverState useHoverState = resolveRoomHoverState(
-							_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-							scene.sceneRegions, _mousePos);
-						if (useHoverState.npc) {
-							IndexedBitmap dialogueBackdrop;
-							if (!captureDialogueBackdrop(dialogueBackdrop))
-								return Common::kReadingFailed;
-
-							Common::Error dialogueError = runRoomNpcDialogue(
-								dialogueBackdrop, scene.palette, scene.targetPaletteBrightness,
-								*useHoverState.npc, inventoryState.selectedItemName);
-							if (dialogueError.getCode() != Common::kNoError)
-								return dialogueError;
-							if (clearInventorySelection() || closeInventoryOverlay())
-								needsRedraw = true;
-							resetCursorAnimationSequence();
-							resetIdleState();
-							needsRedraw = true;
-							break;
-						}
-						const StartupObjectRecord *roomTarget = useHoverState.object
-							? findSceneObjectByName(scene.sceneObjects, useHoverState.object->objectName)
-							: nullptr;
-						if (roomTarget) {
-							Common::Error interactionError =
-								handleInventoryTargetInteraction(*roomTarget, true);
-							if (interactionError.getCode() != Common::kNoError)
-								return interactionError;
-							needsRedraw = true;
-							break;
-						}
-					}
-
-					if (!inventoryPanelBounds.contains(_mousePos) && !inventoryState.selectedItemName.empty()) {
-						needsRedraw = true;
-						break;
-					}
-					if (!inventoryPanelBounds.contains(_mousePos) && closeInventoryOverlay())
-						needsRedraw = true;
-					break;
-				}
-
-				const StartupRoomHoverState hoverState = resolveRoomHoverState(
-					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
-				debugC(1, kDebugScene,
-					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
-					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
-					hoverState.object ? hoverState.object->objectName.c_str() : "",
-					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
-					hoverState.region ? hoverState.region->regionName.c_str() : "",
-					hoverState.cursorSequence, hoverState.promptText.c_str());
-				if (hoverState.playerEntity) {
-					if (!playerState.entity || hoverState.playerEntity != playerState.entity ||
-						idleState.active || idleState.exiting ||
-						playerState.hasMoveTarget || playerState.turnActive ||
-						playerState.entity->getAnimationRate() != 0) {
-						break;
-					}
-					if (!openInventoryOverlay())
-						return Common::kReadingFailed;
-					needsRedraw = true;
-					break;
-				}
-				if (hoverState.npc) {
-					pendingRegionName.clear();
-					moveLeft = false;
-					moveRight = false;
-					moveUp = false;
-					moveDown = false;
-					playerState.hasMoveTarget = false;
-					playerState.turnActive = false;
-					playerState.turnTargetFacing = -1;
-					IndexedBitmap dialogueBackdrop;
-					if (!captureDialogueBackdrop(dialogueBackdrop))
-						return Common::kReadingFailed;
-					Common::Error dialogueError = runRoomNpcDialogue(
-						dialogueBackdrop, scene.palette, scene.targetPaletteBrightness,
-						*hoverState.npc, Common::String());
-					if (dialogueError.getCode() != Common::kNoError)
-						return dialogueError;
-					resetCursorAnimationSequence();
-					resetIdleState();
-					needsRedraw = true;
-					break;
-				}
-				if (hoverState.region && playerState.entity) {
-					queueRegionInteraction(*hoverState.region);
-					Common::Error interactionError = tryActivatePendingRegion();
-					if (interactionError.getCode() != Common::kNoError)
-						return interactionError;
-					needsRedraw = true;
-					break;
-				}
-				StartupObjectRecord *clickedObject = hoverState.object
-					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
-					: nullptr;
-				if (!clickedObject) {
-					pendingRegionName.clear();
-					if (hoverState.cursorSequence == kCursorSequenceWalk && playerState.entity) {
-						setPlayerMoveTargetFromScreenPoint(scene.state, playerState, _mousePos.x, _mousePos.y);
-						needsRedraw = true;
-					}
-					break;
-				}
-				pendingRegionName.clear();
-				if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
-					clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
-					if (!runRoomExitCommands())
-						return Common::kReadingFailed;
-					return Common::kNoError;
-				}
-
-				StartupResolvedText resolvedInspectText;
-				const bool hasInspectText =
-					_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, resolvedInspectText);
-				const bool unlocksAfterInitialExamine =
-					unlocksRoomObjectInteractionAfterInitialExamine(*clickedObject, *_engine.getStartupScript());
-				const bool canShowInspectText = hasInspectText &&
-					resolveInspectTextboxBitmap(*art, resolvedInspectText);
-				if (!clickedObject->identShown && unlocksAfterInitialExamine) {
-					clickedObject->identShown = true;
-					_engine.getStartupScript()->markObjectIdentShown(*clickedObject);
-					if (canShowInspectText) {
-						inspectText = resolvedInspectText;
-						showingInspectText = true;
-						inspectCanDismiss = false;
-					} else if (hasInspectText) {
-						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
-							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
-					}
-					playerState.hasMoveTarget = false;
-					playerState.turnActive = false;
-					playerState.turnTargetFacing = -1;
-					needsRedraw = true;
-					break;
-				}
-
-				StartupInteractionResult interaction;
-				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
-					if (canShowInspectText) {
-						inspectText = resolvedInspectText;
-						showingInspectText = true;
-						inspectCanDismiss = false;
-					} else if (hasInspectText) {
-						debug(1, "Harvester: unsupported IDENT textbox '%s' for object '%s'",
-							resolvedInspectText.boxName.c_str(), clickedObject->objectName.c_str());
-					}
-					needsRedraw = true;
-					break;
-				}
-
-				Common::Error interactionError = handleInteractionResult(interaction);
-				if (interactionError.getCode() != Common::kNoError)
-					return interactionError;
-				needsRedraw = true;
-				break;
-			}
-			case Common::EVENT_KEYDOWN:
-				if (showingInspectText) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						showingInspectText = false;
-						inspectCanDismiss = false;
-						inspectText = StartupResolvedText();
-						needsRedraw = true;
-					}
-					break;
-				}
-
-				notePlayerActivity(idleState);
-				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
-						needsRedraw = true;
-					break;
-				}
-
-				if (inventoryState.open) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						if (clearInventorySelection() || closeInventoryOverlay())
-							needsRedraw = true;
-					} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-							event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
-							event.kbd.keycode == Common::KEYCODE_i) {
-						if (closeInventoryOverlay())
-							needsRedraw = true;
-					}
-					break;
-				}
-
-				if (event.kbd.keycode == Common::KEYCODE_LEFT)
-					moveLeft = true;
-				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-					moveRight = true;
-				else if (event.kbd.keycode == Common::KEYCODE_UP)
-					moveUp = true;
-				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
-					moveDown = true;
-				else if (event.kbd.keycode == Common::KEYCODE_i) {
-					if (!openInventoryOverlay())
-						return Common::kReadingFailed;
-					needsRedraw = true;
-					break;
-				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					moveLeft = false;
-					moveRight = false;
-					moveUp = false;
-					moveDown = false;
-					pendingRegionName.clear();
-					playerState.hasMoveTarget = false;
-					playerState.turnActive = false;
-					playerState.turnTargetFacing = -1;
-					IndexedBitmap roomMenuBackdrop;
-					drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-					if (!captureScreenBackdrop(*screen, roomMenuBackdrop))
-						return Common::kReadingFailed;
-					Common::Error menuError = runRoomMenuStub(roomMenuBackdrop);
-					if (menuError.getCode() != Common::kNoError)
-						return menuError;
-					resetCursorAnimationSequence();
-					resetIdleState();
-					needsRedraw = true;
-					break;
-				}
-
-				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-					event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					if (!runRoomExitCommands())
-						return Common::kReadingFailed;
-					return Common::kNoError;
-				}
-				break;
-			case Common::EVENT_KEYUP:
-				if (event.kbd.keycode == Common::KEYCODE_LEFT)
-					moveLeft = false;
-				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-					moveRight = false;
-				else if (event.kbd.keycode == Common::KEYCODE_UP)
-					moveUp = false;
-				else if (event.kbd.keycode == Common::KEYCODE_DOWN)
-					moveDown = false;
-				break;
-			default:
-				break;
-			}
-		}
-
-		if (updatePlayerTurnAnimationState(playerState))
-			needsRedraw = true;
-
-		if (!idleState.active && !idleState.exiting) {
-			if (stepPlayerKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
-					playerState, moveLeft, moveRight, moveUp, moveDown)) {
-				notePlayerActivity(idleState);
-				needsRedraw = true;
-			} else if (stepPlayerMoveTarget(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
-					playerState)) {
-				notePlayerActivity(idleState);
-				needsRedraw = true;
-			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
-					!playerState.turnActive &&
-					playerState.entity && playerState.facing >= 0 &&
-					setPlayerIdleAnimation(playerState, playerState.facing)) {
-				needsRedraw = true;
-			}
-
-			if (!showingInspectText && !moveLeft && !moveRight && !moveUp && !moveDown &&
-					!playerState.hasMoveTarget && !playerState.turnActive &&
-					playerState.entity && playerState.facing >= 0 &&
-					!isIdleAnimationExcludedRoom(scene.state.roomName) &&
-					getRuntimeClockTicks() > idleState.triggerTick &&
-					startPlayerIdleAnimation(_engine, scene.state, playerState, idleState)) {
-				needsRedraw = true;
-			}
-		}
-		Common::Error pendingRegionError = tryActivatePendingRegion();
-		if (pendingRegionError.getCode() != Common::kNoError)
-			return pendingRegionError;
-
-		if (tickRuntimeEntities())
-			needsRedraw = true;
-		if (updatePlayerIdleAnimation(scene.state, playerState, idleState))
-			needsRedraw = true;
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
-	return Common::kNoError;
+	return _room.runRoomLoop(*this, entranceName);
 }
 
 bool StartupFlow::ensureCursorEntity() {

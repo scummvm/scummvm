@@ -11,7 +11,9 @@ MODULE_OBJS = \
 	startup_art.o \
 	startup_dialogue.o \
 	startup_flow.o \
+	startup_inventory.o \
 	startup_menu.o \
+	startup_room.o \
 	startup_script.o \
 	startup_text.o \
 	xfile_archive.o
