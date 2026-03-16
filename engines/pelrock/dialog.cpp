@@ -622,12 +622,14 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		if (choices->empty()) {
 			state.position = positionStack.empty() ? 0 : positionStack.pop();
 			if (state.position == 0) {
+				delete choices;
 				// No choices and no previous position to go back to, ending conversation
 				break;
 			}
 			checkAllSubBranchesExhausted(conversationData, dataSize, state.position, state.currentChoiceLevel - 1);
 			// No choices found, popping back to previous choice menu, position %u
 			skipToChoices = true;
+			delete choices;
 			continue;
 		}
 
