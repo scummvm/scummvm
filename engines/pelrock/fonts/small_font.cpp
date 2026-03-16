@@ -49,7 +49,7 @@ bool SmallFont::load(const Common::String &filename) {
 }
 
 int SmallFont::getCharWidth(uint32 chr) const {
-	return CHAR_WIDTH;
+	return SMALL_FONT_CHAR_WIDTH;
 }
 
 void SmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {

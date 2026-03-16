@@ -38,8 +38,8 @@ public:
 	bool load(const Common::String &filename);
 
 	// Required Font interface methods
-	int getFontHeight() const override { return CHAR_HEIGHT; }
-	int getMaxCharWidth() const override { return CHAR_WIDTH; }
+	int getFontHeight() const override { return SMALL_FONT_CHAR_HEIGHT; }
+	int getMaxCharWidth() const override { return SMALL_FONT_CHAR_WIDTH; }
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
@@ -47,8 +47,8 @@ public:
 
 protected:
 private:
-	static const int CHAR_WIDTH = 8;
-	static const int CHAR_HEIGHT = 8;
+	static const int SMALL_FONT_CHAR_WIDTH = 8;
+	static const int SMALL_FONT_CHAR_HEIGHT = 8;
 };
 
 } // End of namespace Pelrock

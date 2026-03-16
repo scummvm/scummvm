@@ -36,12 +36,12 @@ public:
 
 	// Required Font interface methods
 	int getFontHeight() const override { return CHAR_HEIGHT; }
-	int getMaxCharWidth() const override { return CHAR_WIDTH; }
+	int getMaxCharWidth() const override { return LARGE_FONT_CHAR_WIDTH; }
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
 
 private:
-	static const int CHAR_WIDTH = 12;
+	static const int LARGE_FONT_CHAR_WIDTH = 12;
 	static const int CHAR_HEIGHT = 24;
 	byte *_fontData;
 };

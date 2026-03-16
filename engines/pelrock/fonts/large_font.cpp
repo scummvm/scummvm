@@ -111,7 +111,7 @@ bool LargeFont::load(const Common::String &filename) {
 }
 
 int LargeFont::getCharWidth(uint32 chr) const {
-	return CHAR_WIDTH + 1;
+	return LARGE_FONT_CHAR_WIDTH + 1;
 }
 
 void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
