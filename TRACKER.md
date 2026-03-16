@@ -15,15 +15,16 @@
 
 ## Last Confirmed Action
 
-- Recovered `SET_REGION` and `START_DIALOG` from `dispatch_room_event_actions @ 0x60ee0`, then aligned the startup script/runtime flow with the native continuation behavior.
-  - Confirmed `case 0x16` finds a `RegionRecord` by name, treats `arg2 == "F"` as the disable sentinel, updates `start_enabled`, and toggles the live room-region entity from that runtime state; ScummVM now keeps runtime region records and materializes room regions from them instead of the immutable parse-time table.
-  - Confirmed `case 0x1a` refreshes/fades the room palette if needed, calls `run_npc_dialogue(arg1, 0)`, then resumes at `arg4` unless the native post-dialogue abort flag trips; ScummVM now suspends `START_DIALOG`, runs the named NPC dialogue with no presented item, drains queued dialogue-side effects, and resumes the continuation tag afterward.
-  - Unified direct room-NPC clicks and scripted `START_DIALOG` through the same post-dialogue interaction path, so no-item dialogue handlers can now mutate startup state consistently.
-  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the dispatcher/room-loop changes.
+- Recovered the native post-dialogue abort flag `DAT_000d60bc` around `dispatch_room_event_actions @ 0x60ee0`, then aligned the startup dialogue continuation flow with the confirmed nested-dispatch behavior.
+  - Confirmed `dispatch_room_event_actions` `case 0x1a` calls `run_npc_dialogue(arg1, 0)`, waits for mouse release, then returns early when `DAT_000d60bc != 0` instead of always resuming `arg4`.
+  - Confirmed `run_inventory_screen @ 0x7ec02`, `handle_target_interaction @ 0x801cc`, and three `update_actor_runtime_state` paths (`0x50a50`, `0x514fb`, `0x5154e`) all set `DAT_000d60bc = 1` immediately after nested `dispatch_room_event_actions` calls, establishing it as the native “abort the caller’s remaining command chain” signal.
+  - Confirmed `run_game_over_screen @ 0x7c749` stores `1` or `2`, and `run_harvester_main_loop` clears `1` to restart the loop but treats `2` as the outer exit path; ScummVM only needed the value-`1` nested-abort behavior for current startup dialogue parity.
+  - ScummVM now propagates a dedicated nested action-tag abort bit through queued dialogue interactions, so `START_DIALOG` continuations are skipped not only on room transitions but also when the dialogue triggers a nested startup action-tag analogue such as Jimmy’s `ACTV_HOUSE_EXIT`.
+  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the abort-path runtime changes.
 
 ## Next Suggested Action
 
-1. Recover the native post-dialogue abort flag checked immediately after `run_npc_dialogue` in `dispatch_room_event_actions @ 0x60ee0`.
-   - ScummVM now skips `START_DIALOG` continuations when the dialogue result already transitions rooms, but the DOS handler also has a separate `DAT_000d60bc` early-return path that still needs a confirmed engine-side mapping.
-2. Recover the monster-record replacement half of `MONSTERFY`.
+1. Recover the monster-record replacement half of `MONSTERFY`.
    - `DIAL_JIM_4_D -> MONST_JIM` is now reachable through the restored `START_DIALOG` continuation, but ScummVM still only sets the NPC death/monsterfy flag and suppresses the original NPC; the native monster-record spawn/replacement path is still missing.
+2. Confirm whether any startup dialogue/action-tag path needs a value-`2` / outer-exit analogue of `DAT_000d60bc`.
+   - Current startup parity only needs the confirmed value-`1` nested-abort case; the DOS main loop also treats `2` as a high-level exit request, but no startup-script path has been tied to that behavior yet.
