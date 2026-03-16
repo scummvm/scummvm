@@ -1,0 +1,1111 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include <memory>
+
+#include "harvester/startup_dialogue.h"
+
+#include "common/debug.h"
+#include "common/endian.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/tokenizer.h"
+#include "graphics/blit.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/framelimiter.h"
+#include "harvester/cft_font.h"
+#include "harvester/fst_player.h"
+#include "harvester/harvester.h"
+#include "harvester/resources.h"
+#include "harvester/runtime_entity.h"
+#include "harvester/startup_art.h"
+#include "harvester/startup_flow.h"
+#include "harvester/startup_text.h"
+
+namespace Harvester {
+
+namespace {
+
+static const int kDialogueOverlayX = 167;
+static const int kDialogueOverlayY = 6;
+static const int kDialogueLeftHeadX = 6;
+static const int kDialogueRightHeadX = 474;
+static const int kDialogueHeadY = 6;
+static const int kDialogueSubtitleTextX = 178;
+static const int kDialogueSubtitleTextY = 12;
+static const int kDialogueSubtitleTextWidth = 316;
+static const int kDialogueKeywordTextX = 178;
+static const int kDialogueKeywordTextY = 34;
+static const int kDialogueKeywordTextWidth = 300;
+static const int kDialogueOtherX = 171;
+static const int kDialogueOtherY = 183;
+static const int kDialogueTextEntryX = 208;
+static const int kDialogueTextEntryY = 184;
+static const int kDialogueOtherWidth = 120;
+static const int kDialogueTopicStartX = 168;
+static const int kDialogueTopicEndX = 482;
+static const int kDialogueOtherStartY = 170;
+static const int kDialogueOtherEndY = 193;
+static const int kDialogueGenericByeResponseIndex = 13;
+static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
+static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
+
+static const byte kTextColorNormal = 255;
+static const byte kTextColorHover = 251;
+static const byte kShadowColor = 0;
+static const byte kTransparentPaletteIndex = 0;
+
+struct HankDialogueTopicLine {
+	int responseLineIndex;
+	int wavId;
+	const char *speakerId;
+	bool setDiscussedLodgeTopic;
+};
+
+static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
+	{ 0xd2, 0x725, "HANK", false },
+	{ 0xd6, 0x74f, "PC", false },
+	{ 0xd8, 0x76d, "PC", false },
+	{ 0xd9, 0x76d, "PC", false },
+	{ 0xdb, 0x77b, "PC", false },
+	{ 0xdc, 0x77b, "PC", false },
+	{ 0xe0, 0x7ad, "HANK", false },
+	{ 0xe1, 0x7b7, "PC", false },
+	{ 0xe3, 0x7d6, "PC", false },
+	{ 0xe5, 0x7f4, "HANK", false },
+	{ 0xe6, 0x7fc, "PC", false },
+	{ 0xe9, 0x82d, "PC", false },
+	{ 0xeb, 0x863, "PC", false },
+	{ 0xed, 0x881, "PC", false },
+	{ 0xee, 0x8a0, "HANK", false },
+	{ 0xef, 0x8a0, "HANK", false },
+	{ 0xf0, 0x8a0, "HANK", false },
+	{ 0xf1, 0x8bf, "HANK", true }
+};
+
+static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
+	const StartupText *startupText = engine.getStartupText();
+	if (!startupText || !fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : startupText->getFonts()) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
+}
+
+static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
+	if (!bitmap.isValid())
+		return;
+
+	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
+}
+
+static void blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
+	if (!bitmap.isValid())
+		return;
+
+	int srcX = 0;
+	int srcY = 0;
+	int destX = x;
+	int destY = y;
+	int width = (int)bitmap.width;
+	int height = (int)bitmap.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
+}
+
+static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
+		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
+	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
+	font.drawString(&screen, text, x, y, width, color, align);
+}
+
+static void buildScaledPalette(const byte *source, float brightness, byte *dest) {
+	memset(dest, 0, 256 * 3);
+	if (!source)
+		return;
+
+	for (uint color = 1; color < 256; ++color) {
+		for (uint channel = 0; channel < 3; ++channel) {
+			const uint index = color * 3 + channel;
+			const int scaled = (int)(source[index] * brightness + 0.5f);
+			dest[index] = (byte)MIN<int>(scaled, 255);
+		}
+	}
+}
+
+static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
+	byte scaledPalette[256 * 3];
+	buildScaledPalette(palette, brightness, scaledPalette);
+	screen.setPalette(scaledPalette);
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap = IndexedBitmap();
+	bitmap.width = READ_LE_UINT32(data.data());
+	bitmap.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = bitmap.width * bitmap.height;
+	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
+		return false;
+
+	bitmap.pixels.resize(pixelCount);
+	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
+}
+
+static bool isPrimaryMouseDown() {
+	return g_system && g_system->getEventManager() &&
+		((g_system->getEventManager()->getButtonState() & 1) != 0);
+}
+
+static bool isSecondaryMouseDown() {
+	return g_system && g_system->getEventManager() &&
+		((g_system->getEventManager()->getButtonState() & 2) != 0);
+}
+
+static int getDialogueTextLineHeight(const Graphics::Font &font) {
+	return font.getFontHeight() + 2;
+}
+
+static int resolveDialogueTextboxIndex(uint lineCount) {
+	if (lineCount <= 1)
+		return 0;
+	if (lineCount < 3)
+		return 1;
+	if (lineCount < 4)
+		return 2;
+	if (lineCount < 6)
+		return 3;
+	if (lineCount < 7)
+		return 4;
+	if (lineCount < 9)
+		return 5;
+	if (lineCount < 11)
+		return 6;
+	return 7;
+}
+
+static void drawDialogueTextLines(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::Array<Common::String> &lines, int x, int y, int width) {
+	const int lineHeight = getDialogueTextLineHeight(font);
+	for (uint i = 0; i < lines.size(); ++i)
+		font.drawString(&screen, lines[i], x, y + (int)i * lineHeight, width, 0);
+}
+
+static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
+	parts.clear();
+
+	Common::StringTokenizer tokenizer(line, "/");
+	while (!tokenizer.empty()) {
+		Common::String token = tokenizer.nextToken();
+		token.trim();
+		if (!token.empty())
+			parts.push_back(token);
+	}
+}
+
+static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId,
+		IndexedBitmap &bitmap) {
+	StartupScript *startupScript = engine.getStartupScript();
+	ResourceManager *resources = engine.getResources();
+	if (!startupScript || !resources || speakerId.empty())
+		return false;
+
+	const Common::String headId = Common::String::format("%s0", speakerId.c_str());
+	const StartupHeadRecord *head = startupScript->findHeadRecord(headId);
+	if (!head)
+		return false;
+
+	return loadBitmapResource(*resources, head->portraitPath + ".BM", bitmap);
+}
+
+static Common::String buildDialogueVoicePath(const StartupScript &startupScript, int wavId) {
+	if (wavId <= 0)
+		return Common::String();
+
+	return Common::String::format("%s%d.CMP", startupScript.getVoicePath().c_str(), wavId);
+}
+
+static int getDialogueMenuItemAt(const Graphics::Font &font, uint itemCount, const Common::Point &mousePos) {
+	if (itemCount == 0)
+		return -1;
+	if (mousePos.x < kDialogueTopicStartX || mousePos.x > kDialogueTopicEndX)
+		return -1;
+	if (mousePos.y < kDialogueKeywordTextY)
+		return -1;
+
+	const int lineHeight = getDialogueTextLineHeight(font);
+	const int selection = (mousePos.y - kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
+	return selection >= 0 && selection < (int)itemCount ? selection : -1;
+}
+
+static bool isDialogueOtherHit(const Common::Point &mousePos) {
+	return mousePos.x >= kDialogueTopicStartX && mousePos.x <= kDialogueTopicEndX &&
+		mousePos.y >= kDialogueOtherStartY && mousePos.y <= kDialogueOtherEndY;
+}
+
+} // End of anonymous namespace
+
+StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos)
+	: _engine(engine), _mousePos(mousePos) {
+}
+
+void StartupDialogueSystem::resetRoomNpcDialogueState() {
+	_hankRoomDialogueState = HankRoomDialogueState();
+}
+
+Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
+		StartupFlow &startupFlow) {
+	struct DialogueResponseOptionLayout {
+		Common::String text;
+		Common::Array<Common::String> wrappedLines;
+		int rowStart = 0;
+		int rowCount = 0;
+	};
+
+	struct DialogueLineSpec {
+		DialogueLineSpec(int wavId, const char *speakerId) : wavId(wavId), speakerId(speakerId) {}
+
+		int wavId;
+		const char *speakerId;
+	};
+
+	Graphics::Screen *screen = _engine.getScreen();
+	StartupScript *startupScript = _engine.getStartupScript();
+	StartupText *startupText = _engine.getStartupText();
+	StartupArt *startupArt = _engine.getStartupArt();
+	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
+		return Common::kReadingFailed;
+
+	const CftFontResource *normalFontResource = findStartupFontByName(_engine, "TEXTFONT");
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "TEXTFNT2");
+	std::unique_ptr<HarvesterCftFont> normalCftFont;
+	std::unique_ptr<HarvesterCftFont> selectedCftFont;
+	if (normalFontResource) {
+		normalCftFont.reset(new HarvesterCftFont(*normalFontResource));
+		if (!normalCftFont->isValid())
+			normalCftFont.reset();
+	}
+	if (selectedFontResource) {
+		selectedCftFont.reset(new HarvesterCftFont(*selectedFontResource));
+		if (!selectedCftFont->isValid())
+			selectedCftFont.reset();
+	}
+
+	const Graphics::Font *normalFont = normalCftFont ? static_cast<const Graphics::Font *>(normalCftFont.get()) : fallbackFont;
+	const Graphics::Font *selectedFont = selectedCftFont ? static_cast<const Graphics::Font *>(selectedCftFont.get()) : normalFont;
+	const bool normalFontUsesCft = normalCftFont.get() != nullptr;
+	const bool selectedFontUsesCft = selectedCftFont.get() != nullptr;
+
+	IndexedBitmap keywordBitmap;
+	if (!loadBitmapResource(*_engine.getResources(), kDialogueKeywordBitmapPath, keywordBitmap))
+		return Common::kReadingFailed;
+
+	Common::String genericByeTopic = startupText->getDialogueResponseLine(kDialogueGenericByeResponseIndex);
+	if (genericByeTopic.empty())
+		genericByeTopic = "BYE";
+
+	IndexedBitmap leftHeadBitmap;
+	IndexedBitmap rightHeadBitmap;
+	Common::String leftHeadSpeakerId = npc.npcName;
+	Common::String rightHeadSpeakerId = "PC";
+	bool leftHeadVisible = false;
+	bool rightHeadVisible = false;
+	(void)loadDialogueHeadBitmap(_engine, leftHeadSpeakerId, leftHeadBitmap);
+	(void)loadDialogueHeadBitmap(_engine, rightHeadSpeakerId, rightHeadBitmap);
+	leftHeadVisible = leftHeadBitmap.isValid();
+	rightHeadVisible = rightHeadBitmap.isValid();
+
+	auto waitForPointerRelease = [&]() -> Common::Error {
+		Graphics::FrameLimiter limiter(g_system, 60);
+		while (!_engine.shouldQuit() && (isPrimaryMouseDown() || isSecondaryMouseDown())) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+			}
+
+			if (runtimeEntities)
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+
+		return Common::kNoError;
+	};
+
+	auto drawFontString = [&](const Graphics::Font &font, bool usesCft, const Common::String &text,
+			int x, int y, int width, byte color) {
+		if (usesCft)
+			font.drawString(screen, text, x, y, width, 0);
+		else
+			drawShadowedString(*screen, font, text, x, y, width, color);
+	};
+
+	auto ensureSpeakerPortrait = [&](const Common::String &speakerId) {
+		if (speakerId.empty())
+			return;
+
+		IndexedBitmap *targetBitmap = speakerId.equalsIgnoreCase("PC") ? &rightHeadBitmap : &leftHeadBitmap;
+		Common::String *targetSpeakerId = speakerId.equalsIgnoreCase("PC") ? &rightHeadSpeakerId : &leftHeadSpeakerId;
+		if (targetBitmap->isValid() && targetSpeakerId->equalsIgnoreCase(speakerId))
+			return;
+
+		IndexedBitmap updatedBitmap;
+		if (loadDialogueHeadBitmap(_engine, speakerId, updatedBitmap)) {
+			*targetBitmap = updatedBitmap;
+			*targetSpeakerId = speakerId;
+		} else {
+			warning("Harvester: unable to load dialogue head for '%s'", speakerId.c_str());
+		}
+	};
+
+	auto setActiveSpeakerPortrait = [&](const Common::String &speakerId) {
+		if (speakerId.empty() || speakerId.equalsIgnoreCase("SPEECH"))
+			return;
+
+		ensureSpeakerPortrait(speakerId);
+		if (speakerId.equalsIgnoreCase("PC")) {
+			leftHeadVisible = false;
+			rightHeadVisible = rightHeadBitmap.isValid();
+		} else {
+			leftHeadVisible = leftHeadBitmap.isValid();
+			rightHeadVisible = false;
+		}
+	};
+
+	auto drawDialogueOverlay = [&](const IndexedBitmap *overlayBitmap,
+			const Common::Array<Common::String> *subtitleLines, const Common::Array<Common::String> *topics,
+			int hoveredTopicIndex, bool hoverOther, const Common::String *textEntryValue) {
+		setScaledPalette(*screen, palette, paletteBrightness);
+		blitBitmap(*screen, backdrop, 0, 0);
+		if (leftHeadVisible && leftHeadBitmap.isValid())
+			blitTransparentBitmap(*screen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+		if (rightHeadVisible && rightHeadBitmap.isValid())
+			blitTransparentBitmap(*screen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+		if (overlayBitmap && overlayBitmap->isValid())
+			blitTransparentBitmap(*screen, *overlayBitmap, kDialogueOverlayX, kDialogueOverlayY);
+
+		if (subtitleLines) {
+			if (normalFontUsesCft)
+				drawDialogueTextLines(*screen, *normalFont, *subtitleLines,
+					kDialogueSubtitleTextX, kDialogueSubtitleTextY, kDialogueSubtitleTextWidth);
+			else {
+				const int lineHeight = getDialogueTextLineHeight(*normalFont);
+				for (uint i = 0; i < subtitleLines->size(); ++i) {
+					drawShadowedString(*screen, *normalFont, (*subtitleLines)[i],
+						kDialogueSubtitleTextX,
+						kDialogueSubtitleTextY + (int)i * lineHeight,
+						kDialogueSubtitleTextWidth, kTextColorNormal);
+				}
+			}
+		}
+
+		if (topics) {
+			const int lineHeight = getDialogueTextLineHeight(*normalFont);
+			for (uint i = 0; i < topics->size(); ++i) {
+				const bool highlighted = (int)i == hoveredTopicIndex;
+				const Graphics::Font &font = highlighted ? *selectedFont : *normalFont;
+				const bool usesCft = highlighted ? selectedFontUsesCft : normalFontUsesCft;
+				drawFontString(font, usesCft, (*topics)[i], kDialogueKeywordTextX,
+					kDialogueKeywordTextY + (int)i * lineHeight, kDialogueKeywordTextWidth,
+					highlighted ? kTextColorHover : kTextColorNormal);
+			}
+
+			const Graphics::Font &otherFont = hoverOther ? *selectedFont : *normalFont;
+			const bool otherUsesCft = hoverOther ? selectedFontUsesCft : normalFontUsesCft;
+			drawFontString(otherFont, otherUsesCft, "Other", kDialogueOtherX, kDialogueOtherY,
+				kDialogueOtherWidth, hoverOther ? kTextColorHover : kTextColorNormal);
+		}
+
+		if (textEntryValue) {
+			drawFontString(*selectedFont, selectedFontUsesCft,
+				*textEntryValue + "_", kDialogueTextEntryX, kDialogueTextEntryY,
+				kDialogueKeywordTextWidth - 30, kTextColorHover);
+		}
+
+		if (runtimeEntities)
+			runtimeEntities->drawCursor(*screen);
+		screen->makeAllDirty();
+		screen->update();
+	};
+
+	auto playDialogueLine = [&](int wavId, const Common::String &speakerId) -> Common::Error {
+		setActiveSpeakerPortrait(speakerId);
+
+		Common::String subtitleText;
+		const bool textEnabled = startupScript->getDialogueTextMode() != kStartupDialogueTextNone &&
+			startupText->resolveDialogueSubtitle(wavId, subtitleText);
+		Common::Array<Common::String> subtitleLines;
+		const IndexedBitmap *textboxBitmap = nullptr;
+		if (textEnabled) {
+			normalFont->wordWrapText(subtitleText, kDialogueSubtitleTextWidth, subtitleLines);
+			textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueTextboxIndex(subtitleLines.size()));
+		}
+
+		const Common::String voicePath = buildDialogueVoicePath(*startupScript, wavId);
+		const bool voiceStarted = !voicePath.empty() && _engine.playStartupSingleSound(voicePath);
+		Common::Error releaseError = waitForPointerRelease();
+		if (releaseError.getCode() != Common::kNoError) {
+			_engine.stopStartupSound();
+			return releaseError;
+		}
+
+		bool interrupted = false;
+		Graphics::FrameLimiter limiter(g_system, 60);
+		for (;;) {
+			drawDialogueOverlay(textboxBitmap, textEnabled ? &subtitleLines : nullptr, nullptr, -1, false, nullptr);
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result)) {
+					_engine.stopStartupSound();
+					return result;
+				}
+
+				switch (event.type) {
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+					interrupted = true;
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+							event.kbd.keycode == Common::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+							event.kbd.keycode == Common::KEYCODE_SPACE) {
+						interrupted = true;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (runtimeEntities)
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (interrupted || (!voiceStarted || !_engine.isStartupSingleSoundPlaying()))
+				break;
+
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+
+		_engine.stopStartupSound();
+		if (interrupted) {
+			Common::Error releaseResult = waitForPointerRelease();
+			if (releaseResult.getCode() != Common::kNoError)
+				return releaseResult;
+		} else if (textEnabled && startupScript->getDialogueTextMode() == kStartupDialogueTextClick) {
+			Graphics::FrameLimiter clickLimiter(g_system, 60);
+			for (;;) {
+				drawDialogueOverlay(textboxBitmap, &subtitleLines, nullptr, -1, false, nullptr);
+
+				bool continuePressed = false;
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					Common::Error result = Common::kNoError;
+					if (startupFlow.handleSystemEvent(event, result))
+						return result;
+
+					switch (event.type) {
+					case Common::EVENT_LBUTTONDOWN:
+					case Common::EVENT_RBUTTONDOWN:
+						continuePressed = true;
+						break;
+					case Common::EVENT_KEYDOWN:
+						if (event.kbd.keycode == Common::KEYCODE_ESCAPE ||
+								event.kbd.keycode == Common::KEYCODE_RETURN ||
+								event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+								event.kbd.keycode == Common::KEYCODE_SPACE) {
+							continuePressed = true;
+						}
+						break;
+					default:
+						break;
+					}
+				}
+
+				if (runtimeEntities)
+					(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+				if (continuePressed)
+					break;
+
+				clickLimiter.delayBeforeSwap();
+				clickLimiter.startFrame();
+			}
+
+			Common::Error releaseResult = waitForPointerRelease();
+			if (releaseResult.getCode() != Common::kNoError)
+				return releaseResult;
+		}
+
+		return Common::kNoError;
+	};
+
+	auto playDialogueSequence = [&](const DialogueLineSpec *lines, uint count) -> Common::Error {
+		for (uint i = 0; i < count; ++i) {
+			Common::Error lineError = playDialogueLine(lines[i].wavId, lines[i].speakerId);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		return Common::kNoError;
+	};
+
+	auto buildResponseMenuLayout = [&](const Common::String &responseLine,
+			Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows) {
+		options.clear();
+		totalRows = 0;
+
+		Common::Array<Common::String> rawOptions;
+		splitDialogueMenuLine(responseLine, rawOptions);
+		for (const Common::String &rawOption : rawOptions) {
+			DialogueResponseOptionLayout option;
+			option.text = rawOption;
+			normalFont->wordWrapText(rawOption, kDialogueSubtitleTextWidth, option.wrappedLines);
+			if (option.wrappedLines.empty())
+				option.wrappedLines.push_back(rawOption);
+			option.rowStart = (int)totalRows;
+			option.rowCount = MAX<int>(1, option.wrappedLines.size());
+			totalRows += option.rowCount;
+			options.push_back(option);
+		}
+	};
+
+	auto getResponseMenuItemAt = [&](const Common::Array<DialogueResponseOptionLayout> &options,
+			uint totalRows, const Common::Point &mousePos) -> int {
+		if (mousePos.x < kDialogueTopicStartX || mousePos.x > kDialogueTopicEndX)
+			return -1;
+		if (mousePos.y < kDialogueKeywordTextY)
+			return -1;
+
+		const int lineHeight = getDialogueTextLineHeight(*normalFont);
+		const int row = (mousePos.y - kDialogueKeywordTextY) / MAX<int>(1, lineHeight);
+		if (row < 0 || row >= (int)totalRows)
+			return -1;
+
+		for (uint i = 0; i < options.size(); ++i) {
+			const DialogueResponseOptionLayout &option = options[i];
+			if (row >= option.rowStart && row < option.rowStart + option.rowCount)
+				return (int)i;
+		}
+
+		return -1;
+	};
+
+	auto drawDialogueResponseMenu = [&](const IndexedBitmap *textboxBitmap,
+			const Common::Array<DialogueResponseOptionLayout> &options, int hoveredOptionIndex) {
+		setScaledPalette(*screen, palette, paletteBrightness);
+		blitBitmap(*screen, backdrop, 0, 0);
+		if (leftHeadVisible && leftHeadBitmap.isValid())
+			blitTransparentBitmap(*screen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+		if (rightHeadVisible && rightHeadBitmap.isValid())
+			blitTransparentBitmap(*screen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+		if (textboxBitmap && textboxBitmap->isValid())
+			blitTransparentBitmap(*screen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
+
+		const Common::String title = "Responses";
+		const Graphics::Font &titleFont = *normalFont;
+		const bool titleUsesCft = normalFontUsesCft;
+		const int titleWidth = titleFont.getStringWidth(title);
+		const int titleX = kDialogueSubtitleTextX + MAX<int>(0, (kDialogueSubtitleTextWidth - titleWidth) / 2);
+		drawFontString(titleFont, titleUsesCft, title, titleX, 11, titleWidth, kTextColorNormal);
+
+		const int lineHeight = getDialogueTextLineHeight(*normalFont);
+		int drawY = kDialogueKeywordTextY;
+		for (uint i = 0; i < options.size(); ++i) {
+			const bool highlighted = (int)i == hoveredOptionIndex;
+			const Graphics::Font &font = highlighted ? *selectedFont : *normalFont;
+			const bool usesCft = highlighted ? selectedFontUsesCft : normalFontUsesCft;
+			const byte color = highlighted ? kTextColorHover : kTextColorNormal;
+
+			for (const Common::String &wrappedLine : options[i].wrappedLines) {
+				drawFontString(font, usesCft, wrappedLine, kDialogueSubtitleTextX, drawY,
+					kDialogueSubtitleTextWidth, color);
+				drawY += lineHeight;
+			}
+		}
+
+		if (runtimeEntities)
+			runtimeEntities->drawCursor(*screen);
+		screen->makeAllDirty();
+		screen->update();
+	};
+
+	auto runResponseMenu = [&](int responseLineIndex, int &selectedIndex) -> Common::Error {
+		selectedIndex = 0;
+
+		const Common::String responseLine = startupText->getDialogueResponseLine(responseLineIndex);
+		if (responseLine.empty())
+			return Common::kNoError;
+
+		Common::Array<DialogueResponseOptionLayout> options;
+		uint totalRows = 0;
+		buildResponseMenuLayout(responseLine, options, totalRows);
+		if (options.empty())
+			return Common::kNoError;
+
+		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueTextboxIndex(totalRows));
+		Common::Error releaseError = waitForPointerRelease();
+		if (releaseError.getCode() != Common::kNoError)
+			return releaseError;
+
+		Graphics::FrameLimiter limiter(g_system, 60);
+		for (;;) {
+			const int hoveredOptionIndex = getResponseMenuItemAt(options, totalRows, _mousePos);
+			drawDialogueResponseMenu(textboxBitmap, options, hoveredOptionIndex);
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+
+				if (event.type == Common::EVENT_KEYDOWN) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+						return Common::kNoError;
+					if (event.kbd.ascii >= '1' && event.kbd.ascii <= '9') {
+						const int menuIndex = event.kbd.ascii - '0';
+						if (menuIndex >= 1 && menuIndex <= (int)options.size()) {
+							selectedIndex = menuIndex;
+							return waitForPointerRelease();
+						}
+					}
+				} else if (event.type == Common::EVENT_LBUTTONDOWN && hoveredOptionIndex >= 0) {
+					selectedIndex = hoveredOptionIndex + 1;
+					return waitForPointerRelease();
+				}
+			}
+
+			if (runtimeEntities)
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+	};
+
+	auto runKeywordMenu = [&](const Common::String &topicBuffer, Common::String &selectedTopic) -> Common::Error {
+		selectedTopic.clear();
+		Common::Array<Common::String> topics;
+		splitDialogueMenuLine(topicBuffer, topics);
+		topics.push_back(genericByeTopic);
+		bool editingOther = false;
+		Common::String typedTopic;
+		Common::Error releaseError = waitForPointerRelease();
+		if (releaseError.getCode() != Common::kNoError)
+			return releaseError;
+
+		Graphics::FrameLimiter limiter(g_system, 60);
+		for (;;) {
+			const int hoveredTopicIndex = editingOther ? -1 : getDialogueMenuItemAt(*normalFont, topics.size(), _mousePos);
+			const bool hoverOther = !editingOther && isDialogueOtherHit(_mousePos);
+			drawDialogueOverlay(&keywordBitmap, nullptr, &topics, hoveredTopicIndex, hoverOther,
+				editingOther ? &typedTopic : nullptr);
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+
+				if (editingOther) {
+					if (event.type == Common::EVENT_KEYDOWN) {
+						if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+							typedTopic.clear();
+							editingOther = false;
+							if (runtimeEntities)
+								runtimeEntities->showCursor();
+						} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+							if (!typedTopic.empty())
+								typedTopic.deleteLastChar();
+						} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+								event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+							if (!typedTopic.empty()) {
+								selectedTopic = typedTopic;
+								if (runtimeEntities)
+									runtimeEntities->showCursor();
+								return Common::kNoError;
+							}
+						} else if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7e &&
+								typedTopic.size() < 79) {
+							typedTopic += (char)event.kbd.ascii;
+						}
+					}
+					continue;
+				}
+
+				switch (event.type) {
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						selectedTopic = genericByeTopic;
+						return Common::kNoError;
+					}
+					break;
+				case Common::EVENT_LBUTTONDOWN: {
+					const int clickedTopic = getDialogueMenuItemAt(*normalFont, topics.size(), _mousePos);
+					if (clickedTopic >= 0) {
+						selectedTopic = topics[(uint)clickedTopic];
+						return Common::kNoError;
+					}
+					if (isDialogueOtherHit(_mousePos)) {
+						typedTopic.clear();
+						editingOther = true;
+						if (runtimeEntities)
+							runtimeEntities->hideCursor();
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			}
+
+			if (runtimeEntities)
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+	};
+
+	if (!npc.npcName.equalsIgnoreCase("HANK")) {
+		debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
+		return Common::kNoError;
+	}
+
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			_hankRoomDialogueState.discussedCasketPhotoEvidence = true;
+			return playDialogueLine(0xa3e, "HANK");
+		}
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			_hankRoomDialogueState.discussedWhaleyHerrillPhoto = true;
+			return playDialogueLine(0xa53, "HANK");
+		}
+		return playDialogueLine(0xa38, "HANK");
+	}
+
+	Common::String hankTopicBuffer;
+	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+	if (_hankRoomDialogueState.pendingInitialConversation) {
+		_hankRoomDialogueState.trackedDayIndex = currentStoryDayIndex;
+		_hankRoomDialogueState.hasTrackedDayState = true;
+		_hankRoomDialogueState.pendingSameDayFollowup = true;
+		_hankRoomDialogueState.pendingInitialConversation = false;
+
+		Common::Error lineError = playDialogueLine(0x703, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runResponseMenu(0xc7, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+		if (responseIndex == 0)
+			return Common::kNoError;
+
+		switch (responseIndex) {
+		case 1:
+			lineError = playDialogueLine(0x70f, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			hankTopicBuffer = startupText->getDialogueResponseLine(0xc8);
+			break;
+		case 2:
+			lineError = playDialogueLine(0x715, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			hankTopicBuffer = startupText->getDialogueResponseLine(0xc9);
+			break;
+		case 3:
+			lineError = playDialogueLine(0x71c, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			hankTopicBuffer = startupText->getDialogueResponseLine(0xca);
+			break;
+		default:
+			break;
+		}
+	}
+
+	if (!_hankRoomDialogueState.hasTrackedDayState ||
+			currentStoryDayIndex != _hankRoomDialogueState.trackedDayIndex) {
+		if (_hankRoomDialogueState.pendingSameDayFollowup) {
+			_hankRoomDialogueState.trackedDayIndex = currentStoryDayIndex;
+			_hankRoomDialogueState.pendingSameDayFollowup = false;
+			_hankRoomDialogueState.pendingRangshotSequence = true;
+
+			Common::Error lineError = playDialogueLine(0x8f5, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		if (_hankRoomDialogueState.pendingRangshotSequence) {
+			if (currentStoryDayIndex > 5) {
+				Common::Error lineError = playDialogueLine(0x8e2, "HANK");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			} else {
+				FstPlayer fstPlayer(_engine);
+				if (!fstPlayer.play(kDialogueRangshotFstPath))
+					return Common::kReadingFailed;
+			}
+		}
+	} else {
+		_hankRoomDialogueState.pendingSameDayFollowup = true;
+		if (currentStoryDayIndex > 5) {
+			Common::Error lineError = playDialogueLine(0x8e2, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else {
+			FstPlayer fstPlayer(_engine);
+			if (!fstPlayer.play(kDialogueRangshotFstPath))
+				return Common::kReadingFailed;
+		}
+	}
+
+	if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
+			!_hankRoomDialogueState.stephMidgamePlayedShown) {
+		_hankRoomDialogueState.stephMidgamePlayedShown = true;
+
+		Common::Error lineError = playDialogueLine(0x92c, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runResponseMenu(0xcc, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+		if (responseIndex == 0)
+			return Common::kNoError;
+
+		switch (responseIndex) {
+		case 1: {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x939, "HANK"),
+				DialogueLineSpec(0x93f, "MOM")
+			};
+			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			break;
+		}
+		case 2:
+			lineError = playDialogueLine(0x944, "HANK");
+			break;
+		case 3:
+			lineError = playDialogueLine(0x948, "HANK");
+			break;
+		default:
+			break;
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playDialogueLine(0x94f, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		responseIndex = 0;
+		responseError = runResponseMenu(0xcd, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+		if (responseIndex == 0)
+			return Common::kNoError;
+
+		switch (responseIndex) {
+		case 1: {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x95a, "HANK"),
+				DialogueLineSpec(0x961, "PC")
+			};
+			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			break;
+		}
+		case 2: {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x965, "HANK"),
+				DialogueLineSpec(0x96b, "PC")
+			};
+			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			break;
+		}
+		default:
+			break;
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playDialogueLine(0x971, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (startupScript->getFlagValue("BURNED_TV_STATION") &&
+			!_hankRoomDialogueState.burnedTvStationShown) {
+		_hankRoomDialogueState.burnedTvStationShown = true;
+		Common::Error lineError = playDialogueLine(0x987, "PC");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (startupScript->getFlagValue("BUSTED_ONCE") &&
+			!_hankRoomDialogueState.bustedOnceShown) {
+		_hankRoomDialogueState.bustedOnceShown = true;
+		Common::Error lineError = playDialogueLine(0x9b1, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (startupScript->getFlagValue("KARIN_KIDNAPED") &&
+			!_hankRoomDialogueState.karinKidnapedShown) {
+		_hankRoomDialogueState.karinKidnapedShown = true;
+		Common::Error lineError = playDialogueLine(0x9d5, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+			!_hankRoomDialogueState.karinFoundAliveShown) {
+		_hankRoomDialogueState.karinFoundAliveShown = true;
+		Common::Error lineError = playDialogueLine(0xa0b, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
+			!_hankRoomDialogueState.karinFoundDeadShown) {
+		_hankRoomDialogueState.karinFoundDeadShown = true;
+		Common::Error lineError = playDialogueLine(0xa15, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runResponseMenu(0xd0, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+		if (responseIndex == 0)
+			return Common::kNoError;
+
+		switch (responseIndex) {
+		case 1:
+			lineError = playDialogueLine(0xa20, "HANK");
+			break;
+		case 2:
+			lineError = playDialogueLine(0xa26, "HANK");
+			break;
+		default:
+			break;
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playDialogueLine(0xa2b, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	for (;;) {
+		Common::String selectedTopic;
+		Common::Error menuError = runKeywordMenu(hankTopicBuffer, selectedTopic);
+		if (menuError.getCode() != Common::kNoError)
+			return menuError;
+
+		if (selectedTopic.empty())
+			return Common::kNoError;
+		if (selectedTopic.equalsIgnoreCase(genericByeTopic))
+			return playDialogueLine(0x8dc, "HANK");
+
+		const Common::String coolDaddioTopic = startupText->getDialogueResponseLine(0xd2);
+		if (!coolDaddioTopic.empty() && selectedTopic.equalsIgnoreCase(coolDaddioTopic)) {
+			const DialogueLineSpec lines[] = {
+				DialogueLineSpec(0x725, "HANK"),
+				DialogueLineSpec(0x729, "PC"),
+				DialogueLineSpec(0x72d, "HANK"),
+				DialogueLineSpec(0x733, "PC"),
+				DialogueLineSpec(0x737, "HANK"),
+				DialogueLineSpec(0x73b, "PC"),
+				DialogueLineSpec(0x741, "HANK"),
+				DialogueLineSpec(0x747, "MOM")
+			};
+			Common::Error lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			hankTopicBuffer = startupText->getDialogueResponseLine(0xd5);
+			continue;
+		}
+
+		bool handledTopic = false;
+		for (const HankDialogueTopicLine &topic : kHankDialogueTopicLines) {
+			if (topic.responseLineIndex == 0xd2)
+				continue;
+
+			const Common::String topicText = startupText->getDialogueResponseLine(topic.responseLineIndex);
+			if (topicText.empty() || !selectedTopic.equalsIgnoreCase(topicText))
+				continue;
+
+			if (topic.setDiscussedLodgeTopic)
+				_hankRoomDialogueState.discussedLodgeTopic = true;
+
+			Common::Error lineError = playDialogueLine(topic.wavId, topic.speakerId);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			handledTopic = true;
+			break;
+		}
+
+		if (handledTopic)
+			continue;
+
+		Common::Error lineError = playDialogueLine(0xa32, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+}
+
+} // End of namespace Harvester
