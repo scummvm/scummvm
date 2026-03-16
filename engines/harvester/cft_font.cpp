@@ -21,7 +21,6 @@
 
 #include "harvester/cft_font.h"
 
-#include "common/algorithm.h"
 #include "common/endian.h"
 #include "graphics/surface.h"
 
@@ -30,81 +29,43 @@ namespace Harvester {
 namespace {
 
 static const uint32 kCftFontHeightOffset = 0x40;
-static const uint32 kCftStartTableOffset = 0x48;
-static const uint32 kCftWidthTableOffset = 0x248;
-static const uint32 kCftGlyphCount = 128;
-
-static uint32 normalizeGlyphChar(uint32 chr) {
-	if (chr >= 'a' && chr <= 'z')
-		return chr - ('a' - 'A');
-
-	return chr;
-}
+static const uint32 kCftStartTableOffset = 0x42;
+static const uint32 kCftWidthTableOffset = 0x242;
+static const uint32 kCftSpaceWidthOffset = 0x442;
+static const uint32 kCftGlyphCount = 256;
 
 } // End of anonymous namespace
 
-HarvesterCftFont::HarvesterCftFont(const CftFontResource &resource, const char *glyphOrder, int spaceWidth)
-		: _resource(resource) {
-	Common::Array<GlyphSlice> atlasGlyphs;
+HarvesterCftFont::HarvesterCftFont(const CftFontResource &resource) : _resource(resource) {
+	if (_resource.header.size() < kCftWidthTableOffset + kCftGlyphCount * 2 || _resource.atlasWidth == 0 || _resource.atlasHeight == 0)
+		return;
 
-	if (_resource.header.size() >= kCftWidthTableOffset + kCftGlyphCount * 2) {
-		const byte *header = _resource.header.data();
-		const int headerFontHeight = READ_LE_UINT16(header + kCftFontHeightOffset);
-		if (headerFontHeight > 0)
-			_fontHeight = MIN<int>(headerFontHeight, _resource.atlasHeight);
-		if (_fontHeight <= 0)
-			_fontHeight = _resource.atlasHeight;
+	const byte *header = _resource.header.data();
+	_fontHeight = READ_LE_UINT16(header + kCftFontHeightOffset);
+	_drawHeight = MAX<int>(0, (int)_resource.atlasHeight - 1);
+	if (_fontHeight <= 0)
+		_fontHeight = _drawHeight;
+	_spaceWidth = READ_LE_UINT16(header + kCftSpaceWidthOffset);
 
-		for (uint i = 0; i < kCftGlyphCount; ++i) {
-			GlyphSlice glyph;
-			glyph.x = READ_LE_UINT16(header + kCftStartTableOffset + i * 2);
-			glyph.width = READ_LE_UINT16(header + kCftWidthTableOffset + i * 2);
-			if (glyph.width <= 0 || glyph.x >= (int)_resource.atlasWidth)
-				continue;
-
-			glyph.width = MIN<int>(glyph.width, (int)_resource.atlasWidth - glyph.x);
-			glyph.valid = glyph.width > 0;
-			if (!glyph.valid)
-				continue;
-
-			bool duplicate = false;
-			for (const GlyphSlice &existing : atlasGlyphs) {
-				if (existing.x == glyph.x && existing.width == glyph.width) {
-					duplicate = true;
-					break;
-				}
-			}
-			if (!duplicate)
-				atlasGlyphs.push_back(glyph);
-		}
-	}
-
-	Common::sort(atlasGlyphs.begin(), atlasGlyphs.end(), [](const GlyphSlice &left, const GlyphSlice &right) {
-		return left.x < right.x;
-	});
-
-	const Common::String glyphOrderString(glyphOrder ? glyphOrder : "");
-	const uint glyphCount = MIN<uint>(glyphOrderString.size(), atlasGlyphs.size());
-	for (uint i = 0; i < glyphCount; ++i) {
-		const byte chr = glyphOrderString[i];
-		if (chr == ' ')
+	for (uint i = 0; i < kCftGlyphCount; ++i) {
+		GlyphSlice &glyph = _glyphs[i];
+		glyph.x = READ_LE_UINT16(header + kCftStartTableOffset + i * 2);
+		glyph.width = READ_LE_UINT16(header + kCftWidthTableOffset + i * 2);
+		if (glyph.width <= 0 || glyph.x >= (int)_resource.atlasWidth)
 			continue;
 
-		_glyphs[chr] = atlasGlyphs[i];
-		_maxCharWidth = MAX(_maxCharWidth, _glyphs[chr].width);
+		glyph.width = MIN<int>(glyph.width, (int)_resource.atlasWidth - glyph.x);
+		glyph.valid = glyph.width > 0;
+		if (glyph.valid)
+			_maxCharWidth = MAX(_maxCharWidth, glyph.width);
 	}
 
-	if (spaceWidth > 0) {
-		_spaceWidth = spaceWidth;
-	} else if (_glyphs['I'].valid) {
-		_spaceWidth = MAX<int>(1, _glyphs['I'].width / 2);
-	} else {
-		_spaceWidth = MAX<int>(1, _maxCharWidth / 2);
-	}
+	if (_spaceWidth <= 0)
+		_spaceWidth = MAX<int>(1, _maxCharWidth);
 }
 
 int HarvesterCftFont::getCharWidth(uint32 chr) const {
-	if (chr == ' ')
+	if (chr == ' ' || chr == '_')
 		return _spaceWidth;
 
 	const GlyphSlice *glyph = findGlyph(chr);
@@ -112,15 +73,15 @@ int HarvesterCftFont::getCharWidth(uint32 chr) const {
 }
 
 void HarvesterCftFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const {
-	if (!dst || chr == ' ')
+	if (!dst || chr == ' ' || chr == '_')
 		return;
+	(void)color;
 
 	const GlyphSlice *glyph = findGlyph(chr);
 	if (!glyph)
 		return;
 
-	const int drawHeight = MIN<int>(_fontHeight, _resource.atlasHeight);
-	for (int row = 0; row < drawHeight; ++row) {
+	for (int row = 0; row < _drawHeight; ++row) {
 		const int dstY = y + row;
 		if (dstY < 0 || dstY >= dst->h)
 			continue;
@@ -128,18 +89,19 @@ void HarvesterCftFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y
 		const byte *srcRow = _resource.atlasPixels.data() + row * _resource.atlasWidth + glyph->x;
 		for (int col = 0; col < glyph->width; ++col) {
 			const int dstX = x + col;
-			if (dstX < 0 || dstX >= dst->w || srcRow[col] == 0)
+			const byte srcColor = srcRow[col];
+			if (dstX < 0 || dstX >= dst->w || srcColor == 0)
 				continue;
 
 			switch (dst->format.bytesPerPixel) {
 			case 1:
-				*((byte *)dst->getBasePtr(dstX, dstY)) = color;
+				*((byte *)dst->getBasePtr(dstX, dstY)) = srcColor;
 				break;
 			case 2:
-				*((uint16 *)dst->getBasePtr(dstX, dstY)) = color;
+				*((uint16 *)dst->getBasePtr(dstX, dstY)) = srcColor;
 				break;
 			case 4:
-				*((uint32 *)dst->getBasePtr(dstX, dstY)) = color;
+				*((uint32 *)dst->getBasePtr(dstX, dstY)) = srcColor;
 				break;
 			default:
 				break;
@@ -152,7 +114,7 @@ const HarvesterCftFont::GlyphSlice *HarvesterCftFont::findGlyph(uint32 chr) cons
 	if (chr >= ARRAYSIZE(_glyphs))
 		return nullptr;
 
-	const GlyphSlice &glyph = _glyphs[normalizeGlyphChar(chr)];
+	const GlyphSlice &glyph = _glyphs[chr];
 	return glyph.valid ? &glyph : nullptr;
 }
 

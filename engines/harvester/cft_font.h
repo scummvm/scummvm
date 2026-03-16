@@ -29,9 +29,9 @@ namespace Harvester {
 
 class HarvesterCftFont : public Graphics::Font {
 public:
-	HarvesterCftFont(const CftFontResource &resource, const char *glyphOrder, int spaceWidth = 0);
+	explicit HarvesterCftFont(const CftFontResource &resource);
 
-	bool isValid() const { return _maxCharWidth > 0 && _fontHeight > 0; }
+	bool isValid() const { return _maxCharWidth > 0 && _fontHeight > 0 && _drawHeight > 0; }
 
 	int getFontHeight() const override { return _fontHeight; }
 	Common::String getFontName() const override { return _resource.name; }
@@ -51,6 +51,7 @@ private:
 	const CftFontResource &_resource;
 	GlyphSlice _glyphs[256];
 	int _fontHeight = 0;
+	int _drawHeight = 0;
 	int _spaceWidth = 0;
 	int _maxCharWidth = 0;
 };

@@ -35,6 +35,7 @@ struct Event;
 namespace Harvester {
 
 class HarvesterEngine;
+struct IndexedBitmap;
 
 class StartupFlow {
 public:
@@ -48,7 +49,7 @@ private:
 	bool loadMenuItems();
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
-	Common::Error runRoomMenuStub();
+	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop);
 	Common::Error runRoomLoop(const Common::String &entranceName);
 	bool ensureCursorEntity();
 	bool populateRoomSceneEntities(const StartupRoomSetupState &state,
@@ -61,7 +62,7 @@ private:
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
-	void renderRoomMenuStub(int selectedItem, const Common::String &statusMessage) const;
+	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 	int getMenuItemAt(const Common::Point &mousePos) const;
 	int getRoomMenuItemAt(const Common::Point &mousePos) const;

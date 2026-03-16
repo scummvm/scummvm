@@ -30,6 +30,7 @@
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
@@ -67,10 +68,6 @@ static const int kQuickTipTextWidth = 280;
 
 static const int kMenuStartY = 100;
 static const int kMenuLineSpacing = 28;
-static const int kNativeMenuInsetX = 24;
-static const int kNativeMenuInsetTop = 72;
-static const int kNativeMenuInsetBottom = 24;
-static const int kNativeMenuLineGap = 6;
 static const int kCursorSequence7 = 7;
 static const int kIdentTextboxX = 85;
 static const int kIdentTextboxY = 177;
@@ -94,7 +91,7 @@ static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
 static const byte kQuickTipActionColor = 0xc3;
 static const byte kRoomPromptColor = 0xce;
-static const char *const kHarvfontGlyphOrder = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-1234567890";
+static const byte kTransparentPaletteIndex = 0;
 
 static const int kCursorSequenceWalk = 0;
 static const int kCursorSequenceExamine = 1;
@@ -596,6 +593,54 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
 }
 
+static void blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
+	if (!bitmap.isValid())
+		return;
+
+	int srcX = 0;
+	int srcY = 0;
+	int destX = x;
+	int destY = y;
+	int width = (int)bitmap.width;
+	int height = (int)bitmap.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
+}
+
+static bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap) {
+	if (screen.w <= 0 || screen.h <= 0 || screen.format.bytesPerPixel != 1)
+		return false;
+
+	bitmap.width = (uint32)screen.w;
+	bitmap.height = (uint32)screen.h;
+	bitmap.pixels.resize(bitmap.width * bitmap.height);
+	for (int y = 0; y < screen.h; ++y)
+		memcpy(bitmap.pixels.data() + y * bitmap.width, screen.getBasePtr(0, y), bitmap.width);
+
+	return true;
+}
+
 static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
 		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
 	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
@@ -785,32 +830,21 @@ static const CftFontResource *findStartupFontByName(const HarvesterEngine &engin
 	return nullptr;
 }
 
-static void drawStartupMenuBackdrop(Graphics::Screen &screen, const StartupArt &art) {
-	screen.setPalette(art.getWaitPalette());
-	screen.fillRect(screen.getBounds(), 0);
-	blitBitmap(screen, art.getInventoryBitmap(), kInventoryX, kInventoryY);
-	blitBitmap(screen, art.getLogoBitmap(), kLogoX, kLogoY);
+static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont) {
+	return selectedFont.getFontHeight() + 2;
 }
 
-static Common::Rect getNativeMenuTextBounds(const StartupArt &art) {
-	const Common::Rect inventoryBounds = getInventoryPanelBounds(art);
-	return Common::Rect(
-		inventoryBounds.left + kNativeMenuInsetX,
-		inventoryBounds.top + kNativeMenuInsetTop,
-		inventoryBounds.right - kNativeMenuInsetX,
-		inventoryBounds.bottom - kNativeMenuInsetBottom);
-}
-
-static int getNativeMenuFirstLineY(const Graphics::Font &font, const Common::Rect &bounds,
-		uint itemCount, bool hasStatusLine) {
+static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFont, uint itemCount,
+		const Common::Point &mousePos) {
 	if (itemCount == 0)
-		return bounds.top;
+		return -1;
 
-	const int lineSpacing = font.getFontHeight() + kNativeMenuLineGap;
-	const int itemBlockHeight = font.getFontHeight() + ((int)itemCount - 1) * lineSpacing;
-	const int reservedStatusHeight = hasStatusLine ? font.getFontHeight() + kNativeMenuLineGap : 0;
-	const int availableHeight = MAX(0, bounds.height() - reservedStatusHeight);
-	return bounds.top + MAX(0, (availableHeight - itemBlockHeight) / 2);
+	int selection = mousePos.y - kMenuStartY;
+	if (selection < 1)
+		selection = 1;
+
+	selection /= getNativeRoomMenuLineHeight(selectedFont);
+	return MIN<int>(selection, (int)itemCount - 1);
 }
 
 static void drawInventoryOverlay(Graphics::Screen &screen, const StartupArt &art, StartupScript &startupScript,
@@ -1997,16 +2031,15 @@ Common::Error StartupFlow::runMainMenuStub() {
 	return Common::kNoError;
 }
 
-Common::Error StartupFlow::runRoomMenuStub() {
+Common::Error StartupFlow::runRoomMenuStub(const IndexedBitmap &backdrop) {
 	Graphics::FrameLimiter limiter(g_system, 60);
-	Common::String statusMessage = "ESC RESUMES GAME";
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
 	resetCursorAnimationSequence();
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderRoomMenuStub(selectedItem, statusMessage);
+			renderRoomMenuStub(backdrop, selectedItem);
 			needsRedraw = false;
 		}
 
@@ -2040,8 +2073,8 @@ Common::Error StartupFlow::runRoomMenuStub() {
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					statusMessage = "NOT READY";
-					needsRedraw = true;
+					debug(1, "Harvester: room menu item '%s' selected but not implemented",
+						selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -2052,8 +2085,8 @@ Common::Error StartupFlow::runRoomMenuStub() {
 				if (selectedItem == -1)
 					break;
 
-				statusMessage = "NOT READY";
-				needsRedraw = true;
+				debug(1, "Harvester: room menu item '%s' clicked but not implemented",
+					_menuItems[selectedItem].c_str());
 				break;
 			default:
 				break;
@@ -2654,7 +2687,11 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
 					playerState.turnTargetFacing = -1;
-					Common::Error menuError = runRoomMenuStub();
+					IndexedBitmap roomMenuBackdrop;
+					drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
+					if (!captureScreenBackdrop(*screen, roomMenuBackdrop))
+						return Common::kReadingFailed;
+					Common::Error menuError = runRoomMenuStub(roomMenuBackdrop);
 					if (menuError.getCode() != Common::kNoError)
 						return menuError;
 					resetCursorAnimationSequence();
@@ -2958,35 +2995,31 @@ void StartupFlow::renderMainMenuStub(int selectedItem, const Common::String &sta
 	screen->update();
 }
 
-void StartupFlow::renderRoomMenuStub(int selectedItem, const Common::String &statusMessage) const {
+void StartupFlow::renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const StartupArt *art = _engine.getStartupArt();
-	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "HARVFONT");
-	if (!screen || !art || !menuFontResource)
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	if (!screen || !art || !selectedFontResource || !unselectedFontResource || !backdrop.isValid())
 		return;
 
-	HarvesterCftFont menuFont(*menuFontResource, kHarvfontGlyphOrder);
-	if (!menuFont.isValid())
+	HarvesterCftFont selectedFont(*selectedFontResource);
+	HarvesterCftFont unselectedFont(*unselectedFontResource);
+	if (!selectedFont.isValid() || !unselectedFont.isValid())
 		return;
 
-	drawStartupMenuBackdrop(*screen, *art);
+	blitBitmap(*screen, backdrop, 0, 0);
+	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
 
-	const Common::Rect menuBounds = getNativeMenuTextBounds(*art);
-	const int firstLineY = getNativeMenuFirstLineY(menuFont, menuBounds, _menuItems.size(), !statusMessage.empty());
-	const int lineSpacing = menuFont.getFontHeight() + kNativeMenuLineGap;
+	const int lineSpacing = getNativeRoomMenuLineHeight(selectedFont);
 	for (uint i = 0; i < _menuItems.size(); ++i) {
-		const int itemY = firstLineY + (int)i * lineSpacing;
-		const byte color = ((int)i == selectedItem) ? kTextColorHover : kTextColorNormal;
-		drawShadowedString(*screen, menuFont, _menuItems[i], menuBounds.left, itemY, menuBounds.width(), color,
-			Graphics::kTextAlignCenter);
-	}
-
-	if (!statusMessage.empty()) {
-		Common::String nativeStatus = statusMessage;
-		nativeStatus.toUppercase();
-		drawShadowedString(*screen, menuFont, nativeStatus,
-			menuBounds.left, menuBounds.bottom - menuFont.getFontHeight(),
-			menuBounds.width(), kTextColorDim, Graphics::kTextAlignCenter);
+		const Graphics::Font *font = ((int)i == selectedItem)
+			? static_cast<const Graphics::Font *>(&selectedFont)
+			: static_cast<const Graphics::Font *>(&unselectedFont);
+		const int width = font->getStringWidth(_menuItems[i]);
+		const int x = (screen->w - width) / 2;
+		const int y = kMenuStartY + (int)i * lineSpacing;
+		font->drawString(screen, _menuItems[i], x, y, width, 0);
 	}
 
 	if (_engine.getRuntimeEntities())
@@ -3033,28 +3066,15 @@ int StartupFlow::getMenuItemAt(const Common::Point &mousePos) const {
 }
 
 int StartupFlow::getRoomMenuItemAt(const Common::Point &mousePos) const {
-	const StartupArt *art = _engine.getStartupArt();
-	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "HARVFONT");
-	if (!art || !menuFontResource)
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	if (!selectedFontResource)
 		return getMenuItemAt(mousePos);
 
-	HarvesterCftFont menuFont(*menuFontResource, kHarvfontGlyphOrder);
-	if (!menuFont.isValid())
+	HarvesterCftFont selectedFont(*selectedFontResource);
+	if (!selectedFont.isValid())
 		return getMenuItemAt(mousePos);
 
-	const Common::Rect menuBounds = getNativeMenuTextBounds(*art);
-	const int firstLineY = getNativeMenuFirstLineY(menuFont, menuBounds, _menuItems.size(), true);
-	const int lineSpacing = menuFont.getFontHeight() + kNativeMenuLineGap;
-	for (uint i = 0; i < _menuItems.size(); ++i) {
-		const int width = menuFont.getStringWidth(_menuItems[i]);
-		const int x = menuBounds.left + (menuBounds.width() - width) / 2;
-		const int y = firstLineY + (int)i * lineSpacing;
-		const Common::Rect bounds(x - 8, y - 2, x + width + 8, y + menuFont.getFontHeight() + 2);
-		if (bounds.contains(mousePos))
-			return (int)i;
-	}
-
-	return -1;
+	return getNativeRoomMenuSelectionFromMouse(selectedFont, _menuItems.size(), mousePos);
 }
 
 } // End of namespace Harvester
