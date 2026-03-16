@@ -351,14 +351,9 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 	if (now < _nextAnimationTick)
 		return false;
 
-	bool advanced = false;
-	do {
-		advanceAnimationFrame(_playBackwards ? -1 : -2);
-		_nextAnimationTick = now + _animationTickInterval;
-		advanced = true;
-	} while (_animationTickInterval != 0 && now >= _nextAnimationTick);
-
-	return advanced;
+	advanceAnimationFrame(_playBackwards ? -1 : -2);
+	_nextAnimationTick = now + _animationTickInterval;
+	return true;
 }
 
 Common::Point RuntimeEntity::getDrawOrigin() const {

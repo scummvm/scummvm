@@ -56,6 +56,7 @@ struct StartupRoomPlayerState {
 	int bottomY = 0;
 	float z = 0.0f;
 	int facing = -1;
+	uint32 nextMovementTick = 0;
 	bool hasMoveTarget = false;
 	int targetX = 0;
 	float targetZ = 0.0f;
