@@ -58,6 +58,29 @@ public:
 		int currentTopicBufferLineIndex = -1;
 	};
 
+	struct MomRoomDialogueState {
+		bool introPending = true;
+		bool sameDayIntroLineEnabled = false;
+		bool postIntroDefaultLineEnabled = false;
+		int introDayIndex = 0;
+		bool stephMidgameShown = false;
+		bool dinerBurnedKarinMissingOrDeadShown = false;
+		bool burnedTvStationShown = false;
+		bool scratchedTuckerShown = false;
+		bool dinerBurnedKarinAliveShown = false;
+		bool escapedJailShown = false;
+		bool karinKidnapedUnresolvedShown = false;
+		bool karinFoundAliveShown = false;
+		bool karinFoundDeadShown = false;
+		bool stephanieDeadPreMidgameShown = false;
+		bool day5Shown = false;
+		bool day6Shown = false;
+		bool fatherTopicState = false;
+		bool goodCauseDay5State = false;
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
+	};
+
 	StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
 
 	void resetRoomNpcDialogueState();
@@ -69,6 +92,7 @@ private:
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	HankRoomDialogueState _hankRoomDialogueState;
+	MomRoomDialogueState _momRoomDialogueState;
 	bool _sharedKarinKidnapedDialogueState = false;
 };
 
