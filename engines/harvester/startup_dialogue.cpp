@@ -1234,8 +1234,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (selectedTopic.equalsIgnoreCase(genericByeTopic))
 			return playDialogueLine(0x8dc, "HANK");
 
-		const Common::String coolDaddioTopic = startupText->getDialogueResponseLine(0xd2);
-		if (!coolDaddioTopic.empty() && selectedTopic.equalsIgnoreCase(coolDaddioTopic)) {
+		const Common::String momTopic = startupText->getDialogueResponseLine(0xd2);
+		if (!momTopic.empty() && selectedTopic.equalsIgnoreCase(momTopic)) {
 			const DialogueLineSpec lines[] = {
 				DialogueLineSpec(0x725, "HANK"),
 				DialogueLineSpec(0x729, "PC"),
@@ -1277,8 +1277,15 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			break;
 		}
 
-		if (handledTopic)
-			continue;
+		if (handledTopic) {
+			debugC(1, kDebugDialogue,
+				"Harvester: Hank handled topic '%s' and now falls through to generic response/exit",
+				selectedTopic.c_str());
+			Common::Error lineError = playDialogueLine(0xa32, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			return playDialogueLine(0x8dc, "HANK");
+		}
 
 		debugC(1, kDebugDialogue,
 			"Harvester: Hank topic '%s' fell back to generic response and exits dialogue",
