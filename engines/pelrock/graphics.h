@@ -57,7 +57,7 @@ public:
 	// Sticker rendering
 	void placeStickersFirstPass();
 	void placeStickersSecondPass();
-	void placeSticker(Sticker sticker);
+	void placeSticker(Sticker &sticker, byte *pixels);
 
 	// Palette animations
 	void updatePaletteAnimations();

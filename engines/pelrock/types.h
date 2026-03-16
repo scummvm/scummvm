@@ -448,7 +448,6 @@ struct Sticker {
 	uint16 y;
 	byte w;
 	byte h;
-	byte *stickerData;
 };
 
 struct PaletteAnimRotate {

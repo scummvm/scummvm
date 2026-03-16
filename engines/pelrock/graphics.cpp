@@ -301,27 +301,26 @@ void GraphicsManager::animateRotatePalette(PaletteAnim *anim) {
 void GraphicsManager::placeStickersFirstPass() {
 	// also place temporary stickers
 	for (uint i = 0; i < g_engine->_room->_roomStickers.size(); i++) {
-		Sticker sticker = g_engine->_room->_roomStickers[i];
-		placeSticker(sticker);
+		placeSticker(g_engine->_room->_roomStickers[i], g_engine->_room->_roomStickerPixelData[i]);
 	}
 }
 
 void GraphicsManager::placeStickersSecondPass() {
 	// Some stickers need to be placed AFTER sprites, hardcoded in the original
 	if (g_engine->_room->_currentRoomNumber == 3) {
-		for (uint i = 0; i < g_engine->_state->stickersPerRoom[3].size(); i++) {
-			if (g_engine->_state->stickersPerRoom[3][i].stickerIndex == 14) {
-				placeSticker(g_engine->_state->stickersPerRoom[3][i]);
+		for (uint i = 0; i < g_engine->_room->_roomStickers.size(); i++) {
+			if (g_engine->_room->_roomStickers[i].stickerIndex == 14) {
+				placeSticker(g_engine->_room->_roomStickers[i], g_engine->_room->_roomStickerPixelData[i]);
 				break;
 			}
 		}
 	}
 }
 
-void GraphicsManager::placeSticker(Sticker sticker) {
+void GraphicsManager::placeSticker(Sticker &sticker, byte *pixels) {
 	// Wrap sticker data as a surface and blit (no transparency - all pixels copied)
 	Graphics::Surface stickerSurf;
-	stickerSurf.init(sticker.w, sticker.h, sticker.w, sticker.stickerData, Graphics::PixelFormat::createFormatCLUT8());
+	stickerSurf.init(sticker.w, sticker.h, sticker.w, pixels, Graphics::PixelFormat::createFormatCLUT8());
 	// Clip to screen bounds
 	Common::Rect destRect(sticker.x, sticker.y, sticker.x + sticker.w, sticker.y + sticker.h);
 	Common::Rect screenRect(0, 0, 640, 400);

@@ -539,10 +539,21 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	sticker.w = alfred6File.readByte();
 	sticker.h = alfred6File.readByte();
 	sticker.stickerIndex = stickerIndex;
-	sticker.stickerData = new byte[sticker.w * sticker.h];
-	alfred6File.read(sticker.stickerData, sticker.w * sticker.h);
 	alfred6File.close();
 	return sticker;
+}
+
+byte *ResourceManager::loadStickerPixels(const Sticker &sticker) {
+	Common::File alfred6File;
+	if (!alfred6File.open("ALFRED.6")) {
+		error("Couldnt find file ALFRED.6");
+	}
+	uint32 pixelOffset = stickerOffsets[sticker.stickerIndex] + 6; // skip x(2)+y(2)+w(1)+h(1)
+	alfred6File.seek(pixelOffset, SEEK_SET);
+	byte *pixels = new byte[sticker.w * sticker.h];
+	alfred6File.read(pixels, sticker.w * sticker.h);
+	alfred6File.close();
+	return pixels;
 }
 
 InventoryObject ResourceManager::getIconForObject(byte objectIndex) {

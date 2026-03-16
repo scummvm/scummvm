@@ -80,6 +80,7 @@ public:
 	~RoomManager();
 	void clearTalkingAnims();
 	void clearAnims();
+	void clearRoomStickerPixels();
 	void loadRoomMetadata(Common::File *roomFile, int roomNumber);
 	/**
 	 * Passer by animations are animations of characters that merely traverse the scene as ambient
@@ -182,6 +183,7 @@ public:
 	byte *_conversationData = nullptr;
 	size_t _conversationDataSize = 0;
 	Common::Array<Sticker> _roomStickers;
+	Common::Array<byte *> _roomStickerPixelData;
 	uint32 _conversationOffset;
 
 private:

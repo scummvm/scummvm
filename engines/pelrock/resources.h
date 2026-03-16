@@ -65,6 +65,7 @@ public:
 	Common::Array<Common::StringArray> getCredits();
 	Common::Array<Common::Array<Common::String>> processTextData(byte *data, size_t size, bool decode = false);
 	Sticker getSticker(int stickerIndex);
+	byte *loadStickerPixels(const Sticker &sticker);
 	InventoryObject getIconForObject(byte index);
 	byte *loadExtra();
 

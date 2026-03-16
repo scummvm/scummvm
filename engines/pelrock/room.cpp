@@ -34,6 +34,7 @@ RoomManager::RoomManager() {
 }
 
 RoomManager::~RoomManager() {
+	clearRoomStickerPixels();
 	if (_pixelsShadows != nullptr) {
 		free(_pixelsShadows);
 		_pixelsShadows = nullptr;
@@ -75,6 +76,14 @@ void RoomManager::clearAnims() {
 			delete[] sprite.animData; // free anim array
 		}
 	}
+}
+
+void RoomManager::clearRoomStickerPixels() {
+	for (uint i = 0; i < _roomStickerPixelData.size(); i++) {
+		delete[] _roomStickerPixelData[i];
+	}
+	_roomStickerPixelData.clear();
+	_roomStickers.clear();
 }
 
 void RoomManager::loadWaterPaletteRemap() {
@@ -140,16 +149,23 @@ void RoomManager::addSticker(int stickerId, int persist) {
 }
 
 void RoomManager::addStickerToRoom(byte room, int stickerId, int persist) {
-	Sticker sticker = g_engine->_res->getSticker(stickerId);
-	if (room == _currentRoomNumber && persist & PERSIST_TEMP) {
-		if (hasSticker(sticker.stickerIndex)) {
+	// Check for duplicate before loading
+	if (room == _currentRoomNumber && (persist & PERSIST_TEMP)) {
+		if (hasSticker(stickerId)) {
 			debug("Sticker %d already exists in room %d, skipping add", stickerId, room);
 			return;
 		}
-		_roomStickers.push_back(sticker);
 	}
+	Sticker stickerMetadata = g_engine->_res->getSticker(stickerId); // metadata only
 	if (persist & PERSIST_PERM) {
-		g_engine->_state->stickersPerRoom[room].push_back(sticker);
+		// stickersPerRoom stores persistent metadata only
+		g_engine->_state->stickersPerRoom[room].push_back(stickerMetadata);
+	}
+
+	if (room == _currentRoomNumber && (persist & PERSIST_TEMP)) {
+		// Load pixel data only when the sticker is visible in the current room
+		_roomStickers.push_back(stickerMetadata);
+		_roomStickerPixelData.push_back(g_engine->_res->loadStickerPixels(stickerMetadata));
 	}
 }
 
@@ -158,15 +174,17 @@ void RoomManager::removeSticker(int stickerId) {
 }
 
 void RoomManager::removeStickerFromRoom(byte room, int stickerId) {
-	// First check and remove from room stickers
+	// Remove from current room view and free its pixel data
 	for (uint i = 0; i < _roomStickers.size(); i++) {
 		if (_roomStickers[i].stickerIndex == stickerId) {
+			delete[] _roomStickerPixelData[i];
+			_roomStickerPixelData.remove_at(i);
 			_roomStickers.remove_at(i);
-			return;
+			break;
 		}
 	}
 
-	// Then check and remove from persisted stickers
+	// Remove from persisted metadata store
 	for (uint i = 0; i < g_engine->_state->stickersPerRoom[room].size(); i++) {
 		if (g_engine->_state->stickersPerRoom[room][i].stickerIndex == stickerId) {
 			g_engine->_state->stickersPerRoom[room].remove_at(i);
@@ -584,7 +602,6 @@ void RoomManager::resetConversationStates(byte roomNumber, byte *conversationDat
 
 void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 
-	_roomStickers.clear();
 	_prevRoomNumber = _currentRoomNumber;
 	_currentRoomNumber = roomNumber;
 	int roomOffset = roomNumber * kRoomStructSize;
@@ -626,7 +643,12 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	_currentRoomExits = loadExits(pair10, pair10size);
 	_currentRoomWalkboxes = loadWalkboxes(pair10, pair10size);
 	_scaleParams = loadScalingParams(pair10, pair10size);
+
+	clearRoomStickerPixels(); // free all sticker buffers first
 	_roomStickers = g_engine->_state->stickersPerRoom[roomNumber];
+	for (uint i = 0; i < _roomStickers.size(); i++) {
+		_roomStickerPixelData.push_back(g_engine->_res->loadStickerPixels(_roomStickers[i]));
+	}
 	// Pair 11 is the palette, already loaded
 
 	// Pair 12 - Room Texts
