@@ -224,6 +224,8 @@ struct StartupRoomSetupState {
 struct StartupInteractionResult {
 	Common::String musicPath;
 	Common::String nextRoomName;
+	Common::String dialogueNpcName;
+	Common::String dialogueContinuationTag;
 	Common::Array<StartupAudioCommand> audioCommands;
 	bool mutatedRuntimeState = false;
 };
@@ -276,6 +278,7 @@ public:
 		Common::String resolveTextValue(const Common::String &key) const;
 		const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
 		bool getFlagValue(const Common::String &flagName) const;
+		const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 		bool setRuntimeFlagValue(const Common::String &flagName, bool value);
 		bool resetRuntimeObjectToInitialState(const Common::String &objectName);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
@@ -294,6 +297,7 @@ private:
 	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
 	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
 	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
+	StartupRegionRecord *findRuntimeRegion(const Common::String &regionName);
 	StartupNpcRecord *findRuntimeNpc(const Common::String &npcName);
 	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
 	bool addRuntimeObjectToInventory(const Common::String &objectName);
@@ -302,6 +306,7 @@ private:
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		bool *mutatedRuntimeState);
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 
@@ -321,6 +326,7 @@ private:
 	Common::Array<StartupFlagRecord> _runtimeFlags;
 	Common::Array<StartupObjectRecord> _runtimeObjects;
 	Common::Array<StartupAnimRecord> _runtimeAnimations;
+	Common::Array<StartupRegionRecord> _runtimeRegions;
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	bool _quickTipsEnabled = true;
 	Common::String _voicePath = "SOUND/VOICE/";

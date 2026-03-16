@@ -172,6 +172,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	_texts.clear();
 	_heads.clear();
 	_useItems.clear();
+	_runtimeRegions.clear();
 	_quickTipsEnabled = true;
 	_voicePath = kDefaultVoicePath;
 	_dialogueTextMode = kStartupDialogueTextYes;
@@ -561,7 +562,7 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	Common::Array<StartupAudioCommand> audioCommands;
 	bool mutatedRuntimeState = false;
 	executeCommandChain(room->onEnterCommand, "room setup command", room->roomName, false,
-		&musicPath, &audioCommands, nullptr, &mutatedRuntimeState);
+		&musicPath, &audioCommands, nullptr, nullptr, nullptr, &mutatedRuntimeState);
 
 	if (!buildRuntimeRoomState(*room, entrance, state))
 		return false;
@@ -586,6 +587,7 @@ void StartupScript::resetRuntimeState() {
 	_runtimeFlags = _flags;
 	_runtimeObjects = _objects;
 	_runtimeAnimations = _animations;
+	_runtimeRegions = _regions;
 	_runtimeNpcs = _npcs;
 
 	for (StartupObjectRecord &object : _runtimeObjects) {
@@ -637,7 +639,7 @@ bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
 
 	bool mutatedRuntimeState = false;
 	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
-		nullptr, &audioCommands, nullptr, &mutatedRuntimeState);
+		nullptr, &audioCommands, nullptr, nullptr, nullptr, &mutatedRuntimeState);
 	return true;
 }
 
@@ -657,10 +659,11 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		return result.mutatedRuntimeState;
 
 	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
-		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 
-	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
+	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
+		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
 bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
@@ -669,9 +672,10 @@ bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, 
 		return false;
 
 	executeCommandChain(region.actionTag, "region command", region.regionName, true,
-		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
-	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
+		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
+	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
+		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
 
 bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
@@ -684,7 +688,8 @@ bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, co
 
 	executeCommandChain(useItem->actionTag, "useitem command",
 		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()), true,
-		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 	return true;
 }
 
@@ -695,10 +700,11 @@ bool StartupScript::executeActionTag(const Common::String &tag, StartupInteracti
 		return false;
 
 	executeCommandChain(tag, "action tag", tag, allowTransitions,
-		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 
-	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		result.mutatedRuntimeState || hasActionableCommandChain(tag);
+	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
+		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
 bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
@@ -852,6 +858,18 @@ StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName
 	return nullptr;
 }
 
+StartupRegionRecord *StartupScript::findRuntimeRegion(const Common::String &regionName) {
+	if (regionName.empty())
+		return nullptr;
+
+	for (StartupRegionRecord &region : _runtimeRegions) {
+		if (region.regionName.equalsIgnoreCase(regionName))
+			return &region;
+	}
+
+	return nullptr;
+}
+
 StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
 	if (npcName.empty())
 		return nullptr;
@@ -874,6 +892,10 @@ const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcN
 	}
 
 	return nullptr;
+}
+
+const StartupNpcRecord *StartupScript::findRuntimeNpcRecord(const Common::String &npcName) const {
+	return findRuntimeNpc(npcName);
 }
 
 bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName) {
@@ -948,10 +970,19 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 			state.roomAnimations.push_back(anim);
 	}
 	for (const StartupNpcRecord &npc : _runtimeNpcs) {
-		if (npc.roomName.equalsIgnoreCase(room.roomName) && npc.visible)
-			state.roomNpcs.push_back(npc);
+		if (!npc.roomName.equalsIgnoreCase(room.roomName) || !npc.visible)
+			continue;
+		if (npc.deathOrMonsterfyFlag) {
+			debugC(1, kDebugScene,
+				"Harvester: suppressed room npc room='%s' npc='%s' death_or_monsterfy=%d damage_type=%d model='%s' monsterfy_target='%s'",
+				room.roomName.c_str(), npc.npcName.c_str(), npc.deathOrMonsterfyFlag, npc.deathDamageType,
+				npc.modelPath.c_str(), npc.monsterfyTargetName.c_str());
+			continue;
+		}
+
+		state.roomNpcs.push_back(npc);
 	}
-	for (const StartupRegionRecord &region : _regions) {
+	for (const StartupRegionRecord &region : _runtimeRegions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
 	}
@@ -991,6 +1022,7 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 void StartupScript::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		bool *mutatedRuntimeState) {
 	auto isTruthy = [](const Common::String &value) {
 		return value.equalsIgnoreCase("T") || value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE");
@@ -1114,6 +1146,23 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("SET_REGION")) {
+			StartupRegionRecord *runtimeRegion = findRuntimeRegion(command->arg1);
+			if (!runtimeRegion) {
+				debug(1, "Harvester: unresolved region for %s '%s' region='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const bool enabled = !command->arg2.equalsIgnoreCase("F");
+			const bool changed = runtimeRegion->startEnabled != enabled;
+			runtimeRegion->startEnabled = enabled;
+			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("SET_NPC")) {
 			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
 			if (!runtimeNpc) {
@@ -1131,6 +1180,22 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("START_DIALOG")) {
+			if (!dialogueNpcName || !dialogueContinuationTag) {
+				debug(1, "Harvester: unsupported startup command '%s' for %s '%s' without dialogue context",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+				return;
+			}
+			if (command->arg1.empty()) {
+				currentTag = command->arg4;
+				continue;
+			}
+
+			*dialogueNpcName = command->arg1;
+			*dialogueContinuationTag = command->arg4;
+			return;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
@@ -1191,7 +1256,9 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("DELETE") ||
 			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
+			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
+			command->opcodeName.equalsIgnoreCase("START_DIALOG") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			return true;
