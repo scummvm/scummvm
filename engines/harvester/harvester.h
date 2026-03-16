@@ -80,7 +80,9 @@ public:
 	StartupText *getStartupText() const { return _startupText; }
 	bool isGoreEnabled() const;
 	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
+	bool isStartupMusicPlaying() const;
 	bool playStartupMusic(const Common::String &path);
+	void pauseStartupMusic(bool paused);
 	void stopStartupMusic();
 	bool executeStartupAudioCommand(const StartupAudioCommand &command);
 	bool playStartupSound(const Common::String &path);
@@ -97,7 +99,7 @@ public:
 
 private:
 	void setDisplayMode(int width, int height);
-	void stopStartupSoundHandle(Audio::SoundHandle &handle, bool fadeOut = false);
+	void stopStartupSoundHandle(Audio::SoundHandle &handle);
 	bool validateStartupLoadedSoundSlot(int slot) const;
 
 	const ADGameDescription *const _gameDescription;
