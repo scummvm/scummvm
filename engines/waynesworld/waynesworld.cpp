@@ -30,16 +30,21 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 #include "graphics/palette.h"
-#include "graphics/surface.h"
 #include "graphics/paletteman.h"
+#include "graphics/surface.h"
+#include "graphics/thumbnail.h"
+#include "graphics/scaler.h"
 
 namespace WaynesWorld {
+
+const char *savegameStr = "SCUMMVM_WAYNES";
 
 WaynesWorldEngine::WaynesWorldEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
@@ -64,7 +69,80 @@ WaynesWorldEngine::~WaynesWorldEngine() {
 #endif
 
 	delete _random;
+}
 
+bool WaynesWorldEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
+	header.version = 0;
+	header.saveName.clear();
+	header.thumbnail = nullptr;
+	header.saveYear = 0;
+	header.saveMonth = 0;
+	header.saveDay = 0;
+	header.saveHour = 0;
+	header.saveMinutes = 0;
+	header.playTime = 0;
+
+	// Get the savegame version
+	header.version = in->readByte();
+	if (header.version > kWWSavegameVersion)
+		return false;
+
+	// Read in the string
+	char ch;
+	while ((ch = (char)in->readByte()) != '\0')
+		header.saveName += ch;
+
+	// Get the thumbnail
+	if (!Graphics::loadThumbnail(*in, header.thumbnail, skipThumbnail)) {
+		return false;
+	}
+
+	// Read in save date/time
+	header.saveYear = in->readSint16LE();
+	header.saveMonth = in->readSint16LE();
+	header.saveDay = in->readSint16LE();
+	header.saveHour = in->readSint16LE();
+	header.saveMinutes = in->readSint16LE();
+
+	if (header.version >= 3) {
+		header.playTime = in->readUint32LE();
+	}
+
+	return true;
+}
+
+void WaynesWorldEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header) {
+	// Write out a savegame header
+	out->write(savegameStr, kWWSavegameStrSize + 1);
+
+	out->writeByte(kWWSavegameVersion);
+
+	// Write savegame name
+	out->write(header.saveName.c_str(), header.saveName.size() + 1);
+
+	// Get the active palette
+	uint8 thumbPalette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(thumbPalette, 0, 256);
+
+	// Create a thumbnail and save it
+	Graphics::Surface *thumb = new Graphics::Surface();
+	_screen->saveScreenshot();
+
+	::createThumbnail(thumb, (const byte *)_screen->_screenCopy->getPixels(), 320, 200, thumbPalette);
+	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
+	delete thumb;
+
+	// Write out the save date/time
+	TimeDate td;
+	g_system->getTimeAndDate(td);
+	out->writeSint16LE(td.tm_year + 1900);
+	out->writeSint16LE(td.tm_mon + 1);
+	out->writeSint16LE(td.tm_mday);
+	out->writeSint16LE(td.tm_hour);
+	out->writeSint16LE(td.tm_min);
+
+	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
 
 Common::Error WaynesWorldEngine::run() {

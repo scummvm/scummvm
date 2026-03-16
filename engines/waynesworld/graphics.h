@@ -62,6 +62,8 @@ protected:
 
 class Screen {
 public:
+	Graphics::Surface *_screenCopy = nullptr;
+
 	Screen();
 	~Screen();
 	void beginUpdate();
@@ -74,9 +76,11 @@ public:
 	void clear(byte color);
 	void drawText(GFTFont *font, const char *text, int x, int y, byte color);
 	void drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color);
+	void saveScreenshot();
+	
 protected:
-	Graphics::Surface *_vgaSurface;
-	int _lockCtr;
+	Graphics::Surface *_vgaSurface = nullptr;
+	int _lockCtr = 0;
 };
 
 class ScreenEffect {

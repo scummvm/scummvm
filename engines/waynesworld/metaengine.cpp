@@ -29,18 +29,133 @@
 
 #include "waynesworld/detection.h"
 
+namespace WaynesWorld {
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{GAMEOPTION_ORIGINAL_SAVELOAD,
+	 {
+	 		_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+	 	"originalsaveload",
+	 	true,
+	 	0,
+	 	0
+			}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // namespace WaynesWorld
+
 class WaynesWorldMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "waynesworld";
 	}
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return WaynesWorld::optionsList;
+	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
+	SaveStateList listSaves(const char *target) const override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
+
+bool WaynesWorldMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return (f == kSupportsLoadingDuringStartup) ||
+		   checkExtendedSaves(f);
+}
 
 Common::Error WaynesWorldMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new WaynesWorld::WaynesWorldEngine(syst,desc);
 	return Common::kNoError;
+}
+
+SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	const Common::String pattern = "ww##.sav";
+	Common::StringArray filenames = saveFileMan->listSavefiles(pattern);
+
+	SaveStateList saveList;
+	for (const auto &filename : filenames) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		Common::String numb = filename.substr(2, 2);
+		const int slotNum = atoi(numb.c_str());
+
+		if (slotNum > 0 && slotNum <= 99) {
+
+			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
+			if (file) {
+				WaynesWorld::SavegameHeader header;
+
+				// Check to see if it's a ScummVM savegame or an original format savegame
+				char buffer[kWWSavegameStrSize + 1];
+				if (file->size() < 1140) {
+					saveList.push_back(SaveStateDescriptor(this, slotNum, "Unknown"));
+				} else {
+					file->seek(1135);
+					file->read(buffer, kWWSavegameStrSize + 1);
+
+					if (!strncmp(buffer, WaynesWorld::savegameStr, kWWSavegameStrSize + 1)) {
+						// Valid savegame
+						if (WaynesWorld::WaynesWorldEngine::readSavegameHeader(file, header)) {
+							saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
+						}
+					} else {
+						// Unexpected savegame format? 
+					}
+				}
+				delete file;
+			}
+		}
+	}
+
+	// Sort saves based on slot number.
+	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+	return saveList;
+}
+
+SaveStateDescriptor WaynesWorldMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::format("ww%02d.sav", slot);
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (f) {
+		WaynesWorld::SavegameHeader header;
+
+		// Check to see if it's a ScummVM savegame or not
+		char buffer[kWWSavegameStrSize + 1];
+		if (f->size() < 1140)
+			buffer[0] = 0;
+		else {
+			f->seek(1135);
+			f->read(buffer, kWWSavegameStrSize + 1);
+		}
+
+		bool hasHeader = !strncmp(buffer, WaynesWorld::savegameStr, kWWSavegameStrSize + 1) &&
+						 WaynesWorld::WaynesWorldEngine::readSavegameHeader(f, header, false);
+		delete f;
+
+		if (!hasHeader) {
+			// Original savegame perhaps?
+			SaveStateDescriptor desc(this, slot, "Unknown");
+			return desc;
+		}
+
+		// Create the return descriptor
+		SaveStateDescriptor desc(this, slot, header.saveName);
+		desc.setThumbnail(header.thumbnail);
+		desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
+		desc.setSaveTime(header.saveHour, header.saveMinutes);
+
+		if (header.playTime) {
+			desc.setPlayTime(header.playTime * 1000);
+		}
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(WAYNESWORLD)

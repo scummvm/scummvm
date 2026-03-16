@@ -260,10 +260,11 @@ int GFTFont::getCharWidth(byte ch) const {
 
 // Screen
 
-Screen::Screen() : _lockCtr(0), _vgaSurface(nullptr) {
+Screen::Screen() {
 }
 
 Screen::~Screen() {
+	delete _screenCopy;
 }
 
 void Screen::beginUpdate() {
@@ -339,6 +340,14 @@ void Screen::drawText(GFTFont *font, const char *text, int x, int y, byte color)
 void Screen::drawWrappedText(GFTFont *font, const char *text, int x, int y, int maxWidth, byte color) {
 	beginUpdate();
 	font->drawWrappedText(_vgaSurface, text, x, y, maxWidth, color);
+	endUpdate();
+}
+
+void Screen::saveScreenshot() {
+	beginUpdate();
+	delete _screenCopy;
+	_screenCopy = new Graphics::Surface();
+	_screenCopy->copyFrom(*_vgaSurface);
 	endUpdate();
 }
 

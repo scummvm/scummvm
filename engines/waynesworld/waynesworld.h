@@ -35,11 +35,12 @@
 
 #include "waynesworld/sound.h"
 
+#define kWWSavegameVersion 1
+#define kWWSavegameStrSize 14
+#define kWWSavegameStr "SCUMMVM_WAYNES"
 
 namespace WaynesWorld {
 class GxlArchive;
-
-#define WAYNESWORLD_SAVEGAME_VERSION 0
 
 enum {
 	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
@@ -49,6 +50,15 @@ class Screen;
 class WWSurface;
 class GFTFont;
 class GameLogic;
+
+struct SavegameHeader {
+	uint8 version;
+	Common::String saveName;
+	Graphics::Surface *thumbnail;
+	int16 saveYear, saveMonth, saveDay;
+	int16 saveHour, saveMinutes;
+	uint32 playTime;
+};
 
 struct RoomObject {
     int roomNumber;
@@ -97,14 +107,19 @@ const int kInventorySize = 50;
 const int kFirstInventoryObjectId = 28;
 const int kLastInventoryObjectId = 77;
 
+extern const char *savegameStr;
+
 class WaynesWorldEngine : public Engine {
 protected:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+
 public:
 	WaynesWorldEngine(OSystem *syst, const ADGameDescription *gd);
 	~WaynesWorldEngine() override;
 	const Common::String getTargetName() { return _targetName; }
+	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
+
 	const ADGameDescription *_gameDescription;
 	bool _isSoundEnabled = true;
 	bool _isMusicEnabled = true;
@@ -464,6 +479,7 @@ public:
 		uint32 playTime;
 		Graphics::Surface *thumbnail;
 	};
+	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 
 	bool _isSaveAllowed;
 

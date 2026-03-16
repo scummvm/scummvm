@@ -8703,7 +8703,7 @@ void GameLogic::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_r39_flags);
 }
 
-bool GameLogic::saveSavegame(int slot) {
+bool GameLogic::saveSavegame(int slot, const Common::String *desc) {
 	if (slot == 0)
 		error("Can't save on slot 0 - RST file");
 
@@ -8720,6 +8720,15 @@ bool GameLogic::saveSavegame(int slot) {
 	Common::Serializer s(nullptr, saveFile);
 	synchronize(s);
 
+	// Write out the ScummVM savegame header
+	SavegameHeader header;
+	if (desc)
+		header.saveName = *desc;
+	else
+		header.saveName = Common::String::format("Unnamed savegame %2d", slot);
+	
+	header.version = kWWSavegameVersion;
+	_vm->writeSavegameHeader(saveFile, header);
 	delete saveFile;
 
 	return true;
@@ -8811,7 +8820,7 @@ void GameLogic::handleGameMenu() {
 				slot += 6;
 
 			if (_menuIsSaveLoad == 1)
-				saveSavegame(slot);
+				saveSavegame(slot, nullptr);
 			else
 				if (!loadSavegame(slot))
 					return;
