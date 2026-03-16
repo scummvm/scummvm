@@ -729,9 +729,9 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String 
 	if (!entity)
 		return nullptr;
 
-	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
+	entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 	entity->setZExtent(3.0f);
-	entity->setHitTestMode(kRuntimeEntityHitTestNone);
+	entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
 	entity->setCurrentFrame(initialFrame);
 	debugC(1, kDebugScene,
 		"Harvester: spawned scene actor '%s' resource='%s' frames=0..%d initial_frame=%d animation_rate=%d sequence=%d pos=(%d,%d,z=%.2f)",

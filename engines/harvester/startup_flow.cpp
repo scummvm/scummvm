@@ -138,6 +138,7 @@ struct StartupRoomPlayerState {
 
 struct StartupRoomHoverState {
 	const StartupObjectRecord *object = nullptr;
+	const StartupNpcRecord *npc = nullptr;
 	const StartupRegionRecord *region = nullptr;
 	const RuntimeEntity *playerEntity = nullptr;
 	Common::String promptText;
@@ -993,6 +994,16 @@ static const StartupRegionRecord *findSceneRegionByName(const Common::Array<Star
 	return nullptr;
 }
 
+static const StartupNpcRecord *findSceneNpcByName(const Common::Array<StartupNpcRecord> &npcs,
+		const Common::String &npcName) {
+	for (const StartupNpcRecord &npc : npcs) {
+		if (npc.npcName.equalsIgnoreCase(npcName))
+			return &npc;
+	}
+
+	return nullptr;
+}
+
 static StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
 		const Common::String &objectName) {
 	for (StartupObjectRecord &object : objects) {
@@ -1063,6 +1074,19 @@ static const RuntimeEntity *findRoomPlayerAtPoint(HarvesterEngine &engine, const
 		return nullptr;
 
 	return entity;
+}
+
+static const StartupNpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
+		const Common::Array<StartupNpcRecord> &sceneNpcs, const Common::Point &point) {
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	if (!runtimeEntities)
+		return nullptr;
+
+	const RuntimeEntity *entity = runtimeEntities->findTopSceneEntityAt(point);
+	if (!entity || entity->getClassId() != kRuntimeEntityClassNpc)
+		return nullptr;
+
+	return findSceneNpcByName(sceneNpcs, entity->getName());
 }
 
 static const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
@@ -1136,6 +1160,18 @@ static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, S
 	return Common::String::format("Examine %s", label.c_str());
 }
 
+static Common::String buildRoomNpcPrompt(const StartupNpcRecord &npc) {
+	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	if (label.empty())
+		return Common::String();
+	return Common::String::format("Talk to %s", label.c_str());
+}
+
 static bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region) {
 	return region.desiredFacing < 0 || playerFacing == region.desiredFacing;
 }
@@ -1153,11 +1189,18 @@ static bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const Sta
 
 static StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupNpcRecord> &sceneNpcs,
 		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos) {
 	StartupRoomHoverState hoverState;
 	if (const RuntimeEntity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
 		hoverState.playerEntity = playerEntity;
 		hoverState.cursorSequence = kCursorSequenceExamine;
+		return hoverState;
+	}
+	if (const StartupNpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos)) {
+		hoverState.npc = npc;
+		hoverState.cursorSequence = kCursorSequenceTalk;
+		hoverState.promptText = buildRoomNpcPrompt(*npc);
 		return hoverState;
 	}
 
@@ -1638,7 +1681,7 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 		const Common::String objectLabel = startupScript->resolveObjectLabel(*hoveredObject);
 		StartupResolvedText inspectText;
 		const StartupRoomHoverState hoverState = resolveRoomHoverState(
-			engine, scene.state, scene.sceneObjects, scene.sceneRegions, probePoint);
+			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, probePoint);
 		const bool hasInteraction = startupScript->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
 		debugC(1, kDebugGeneral,
@@ -1654,7 +1697,8 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 			for (int y = scene.state.roomMaxZScreenY; y <= scene.state.roomMinZScreenY && !foundFloorProbe; y += 12) {
 				for (int x = 48; x < 592; x += 16) {
 					const StartupRoomHoverState candidateHover = resolveRoomHoverState(
-						engine, scene.state, scene.sceneObjects, scene.sceneRegions, Common::Point(x, y));
+						engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+						Common::Point(x, y));
 					if (candidateHover.cursorSequence == kCursorSequenceWalk) {
 						floorProbe = Common::Point(x, y);
 						foundFloorProbe = true;
@@ -1664,7 +1708,8 @@ static void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneR
 			}
 
 			const StartupRoomHoverState floorHover = foundFloorProbe
-				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.sceneRegions, floorProbe)
+				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
+					scene.sceneRegions, floorProbe)
 				: StartupRoomHoverState();
 			debugC(1, kDebugGeneral,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
@@ -2396,7 +2441,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				(inventoryState.open && (inventoryPanelContainsMouse || inventoryState.selectedItemName.empty()));
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
-				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
+				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
+					scene.sceneRegions, _mousePos);
 			Common::String promptText;
 			if (inventoryState.open) {
 				const StartupInventoryVisual *inventoryHover = findInventoryVisualAtPoint(inventoryState.items, _mousePos);
@@ -2520,7 +2566,8 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 
 					if (!inventoryState.selectedItemName.empty()) {
 						const StartupRoomHoverState useHoverState = resolveRoomHoverState(
-							_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
+							_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
+							scene.sceneRegions, _mousePos);
 						const StartupObjectRecord *roomTarget = useHoverState.object
 							? findSceneObjectByName(scene.sceneObjects, useHoverState.object->objectName)
 							: nullptr;
@@ -2544,11 +2591,12 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 				}
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
-					_engine, scene.state, scene.sceneObjects, scene.sceneRegions, _mousePos);
+					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
 				debugC(1, kDebugScene,
-					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' region='%s' cursor_sequence=%d prompt='%s'",
+					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
 					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
 					hoverState.object ? hoverState.object->objectName.c_str() : "",
+					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
 					hoverState.region ? hoverState.region->regionName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
 				if (hoverState.playerEntity) {
@@ -2560,6 +2608,13 @@ Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
 					}
 					if (!openInventoryOverlay())
 						return Common::kReadingFailed;
+					needsRedraw = true;
+					break;
+				}
+				if (hoverState.npc) {
+					pendingRegionName.clear();
+					debug(1, "Harvester: native room NPC dialogue path for '%s' is not implemented",
+						hoverState.npc->npcName.c_str());
 					needsRedraw = true;
 					break;
 				}
@@ -2867,7 +2922,7 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		}
 
 		entity->setClassId(kRuntimeEntityClassNpc);
-		entity->setHitTestMode(kRuntimeEntityHitTestNone);
+		entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
 		entity->setLooping(true);
 		if (npc.frameDelay > 0)
 			entity->setAnimationRate(npc.frameDelay);
