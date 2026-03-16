@@ -1761,7 +1761,24 @@ Common::Error StartupFlow::runRoomMenuStub(const IndexedBitmap &backdrop) {
 
 Common::Error StartupFlow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName) {
+	_queuedDialogueInteraction = StartupInteractionResult();
+	_hasQueuedDialogueInteraction = false;
 	return _dialogue.runRoomNpcDialogue(backdrop, palette, paletteBrightness, npc, usedItemName, *this);
+}
+
+void StartupFlow::queueDialogueInteraction(const StartupInteractionResult &interaction) {
+	_queuedDialogueInteraction = interaction;
+	_hasQueuedDialogueInteraction = true;
+}
+
+bool StartupFlow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) {
+	if (!_hasQueuedDialogueInteraction)
+		return false;
+
+	interaction = _queuedDialogueInteraction;
+	_queuedDialogueInteraction = StartupInteractionResult();
+	_hasQueuedDialogueInteraction = false;
+	return true;
 }
 
 Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {

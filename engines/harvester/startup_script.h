@@ -259,23 +259,27 @@ public:
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		StartupRoomSetupState &state) const;
-	bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
-	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
-	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
-	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
-		StartupInteractionResult &result);
-	bool isPickupObject(const StartupObjectRecord &object) const;
-	bool hasObjectInteraction(const StartupObjectRecord &object) const;
-	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
-	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
-	void markObjectIdentShown(const StartupObjectRecord &object);
-	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
-	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
-	Common::String resolveTextValue(const Common::String &key) const;
-	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
-	bool getFlagValue(const Common::String &flagName) const;
-	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
-	int getCurrentStoryDayIndex() const;
+		bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
+		bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+		bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
+		bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
+			StartupInteractionResult &result);
+		bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+			bool allowTransitions = true);
+		bool isPickupObject(const StartupObjectRecord &object) const;
+		bool hasObjectInteraction(const StartupObjectRecord &object) const;
+		bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
+		void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
+		void markObjectIdentShown(const StartupObjectRecord &object);
+		bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
+		Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
+		Common::String resolveTextValue(const Common::String &key) const;
+		const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
+		bool getFlagValue(const Common::String &flagName) const;
+		bool setRuntimeFlagValue(const Common::String &flagName, bool value);
+		bool resetRuntimeObjectToInitialState(const Common::String &objectName);
+		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
+		int getCurrentStoryDayIndex() const;
 
 private:
 	bool loadConfig(ResourceManager &resources);
