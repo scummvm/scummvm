@@ -86,6 +86,7 @@ public:
 
 	void setAnimationRate(int rate);
 	int getAnimationRate() const { return _animationRate; }
+	void setAnimationEnabled(bool enabled);
 	void setCurrentFrame(int frame);
 	int getCurrentFrame() const { return _currentFrame; }
 	int getLastFrame() const { return _lastFrame; }

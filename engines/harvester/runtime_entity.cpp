@@ -253,6 +253,10 @@ void RuntimeEntity::setAnimationRate(int rate) {
 	}
 }
 
+void RuntimeEntity::setAnimationEnabled(bool enabled) {
+	_animationEnabled = enabled && !_frames.empty() && _currentFrame >= 0;
+}
+
 void RuntimeEntity::setCurrentFrame(int frame) {
 	if (_frames.empty())
 		return;
@@ -714,6 +718,7 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 		entity->setCurrentFrame(entity->getLastFrame());
 	else
 		entity->setCurrentFrame(0);
+	entity->setAnimationEnabled(active);
 
 	if (!active && !visible)
 		entity->setVisible(false);
