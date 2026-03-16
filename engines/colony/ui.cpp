@@ -1013,22 +1013,27 @@ void ColonyEngine::doText(int entry, int center) {
 		}
 	}
 
+	// DOS DOTEXT.C: r positioned at (cX ± wdth, cY ± ((maxlines+1)*7 + 4))
+	// then offset by (+3,+3) for shadow. 3 nested FrameRects shrinking by 1.
+	const int halfH = ((maxlines + 1) * (lineheight / 2)) + 4;
 	Common::Rect r;
-	r.top = _centerY - (((maxlines + 1) * lineheight / 2) + 4);
-	r.bottom = _centerY + (((maxlines + 1) * lineheight / 2) + 4);
-	r.left = _centerX - (width / 2);
-	r.right = _centerX + (width / 2);
+	r.left = _centerX - (width / 2) + 3;
+	r.right = _centerX + (width / 2) + 3;
+	r.top = _centerY - halfH + 3;
+	r.bottom = _centerY + halfH + 3;
 
+	// DoGray(): dither the viewport background
 	_gfx->fillDitherRect(_screenR, 0, 15);
 
-	// Draw shadow/border (original draws 3 frames total)
-	for (int i = 0; i < 2; i++) {
+	// 3 nested FrameRects (shadow), then erase interior + final frame
+	for (int i = 0; i < 3; i++) {
 		_gfx->drawRect(r, 0);
 		r.translate(-1, -1);
 	}
 	_gfx->fillRect(r, 15);
 	_gfx->drawRect(r, 0);
 
+	// Draw first page of text
 	for (int i = 0; i < maxlines; i++) {
 		_gfx->drawString(&font, lineArray[i], r.left + 3, r.top + 4 + i * lineheight, 0);
 		if (center == 2) {
@@ -1037,11 +1042,32 @@ void ColonyEngine::doText(int entry, int center) {
 		}
 	}
 
-	_gfx->drawString(&font, (int)lineArray.size() > maxlines ? kmore : kpress, (r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
+	// Show "More" or "Press Any Key" prompt
+	const bool hasMore = ((int)lineArray.size() > maxlines);
+	_gfx->drawString(&font, hasMore ? "-Press Any Key For More...-" : kpress,
+		(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
 	_gfx->copyToScreen();
-
-	// Wait for key
 	waitForInput();
+
+	// Second page: if text was truncated, show remainder
+	// DOS DOTEXT.C: starts from maxlines-1 (repeats last line of page 1 for context)
+	if (hasMore) {
+		_gfx->fillRect(r, 15);
+		_gfx->drawRect(r, 0);
+		int pageStart = maxlines - 1;
+		for (int i = pageStart; i < (int)lineArray.size() && (i - pageStart) < maxlines; i++) {
+			_gfx->drawString(&font, lineArray[i], r.left + 3,
+				r.top + 6 + (1 + i - pageStart) * lineheight, 0);
+			if (center == 2) {
+				_sound->play(Sound::kDit);
+				_system->delayMillis(20);
+			}
+		}
+		_gfx->drawString(&font, kpress,
+			(r.left + r.right) / 2, r.top + 6 + maxlines * lineheight, 0, Graphics::kTextAlignCenter);
+		_gfx->copyToScreen();
+		waitForInput();
+	}
 
 	delete[] page;
 }
