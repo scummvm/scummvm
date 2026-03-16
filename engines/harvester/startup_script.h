@@ -227,6 +227,7 @@ struct StartupInteractionResult {
 	Common::String dialogueNpcName;
 	Common::String dialogueContinuationTag;
 	Common::Array<StartupAudioCommand> audioCommands;
+	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;
 };
 
@@ -267,6 +268,8 @@ public:
 		bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
 			StartupInteractionResult &result);
 		bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+			bool allowTransitions = true);
+		bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
 			bool allowTransitions = true);
 		bool isPickupObject(const StartupObjectRecord &object) const;
 		bool hasObjectInteraction(const StartupObjectRecord &object) const;

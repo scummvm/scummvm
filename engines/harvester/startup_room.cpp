@@ -252,12 +252,14 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			}
 
 			StartupInteractionResult dialogueInteraction;
+			bool abortRemainingCommandChain = false;
 			if (startupFlow.takeQueuedDialogueInteraction(dialogueInteraction)) {
+				abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
 				Common::Error interactionError = handleInteractionResult(dialogueInteraction, didTransition);
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
 			}
-			if (!didTransition && !continuationTag.empty()) {
+			if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
 				StartupInteractionResult continuationInteraction;
 				if (engine.getStartupScript()->executeActionTag(continuationTag, continuationInteraction)) {
 					Common::Error interactionError =

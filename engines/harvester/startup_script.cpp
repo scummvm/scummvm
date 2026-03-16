@@ -707,6 +707,15 @@ bool StartupScript::executeActionTag(const Common::String &tag, StartupInteracti
 		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
+bool StartupScript::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
+		bool allowTransitions) {
+	const bool handled = executeActionTag(tag, result, allowTransitions);
+	if (handled)
+		result.abortRemainingCommandChain = true;
+
+	return handled;
+}
+
 bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
 	return !object.altSpritePath.empty() &&
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);

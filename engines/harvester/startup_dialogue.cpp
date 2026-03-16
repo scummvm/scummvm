@@ -1024,7 +1024,10 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
 
 				StartupInteractionResult actionInteraction;
-				if (startupScript->executeActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
+				if (startupScript->executeNestedActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
+					jimmyInteraction.abortRemainingCommandChain =
+						jimmyInteraction.abortRemainingCommandChain ||
+						actionInteraction.abortRemainingCommandChain;
 					jimmyInteraction.mutatedRuntimeState =
 						jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
 					if (!actionInteraction.musicPath.empty())
@@ -1040,7 +1043,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					for (const StartupAudioCommand &command : actionInteraction.audioCommands)
 						jimmyInteraction.audioCommands.push_back(command);
 				}
-				if (jimmyInteraction.mutatedRuntimeState || !jimmyInteraction.musicPath.empty() ||
+				if (jimmyInteraction.abortRemainingCommandChain || jimmyInteraction.mutatedRuntimeState ||
+						!jimmyInteraction.musicPath.empty() ||
 						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.dialogueNpcName.empty() ||
 						!jimmyInteraction.dialogueContinuationTag.empty() ||
 						!jimmyInteraction.audioCommands.empty()) {
