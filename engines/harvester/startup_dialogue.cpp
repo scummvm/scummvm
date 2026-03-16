@@ -90,6 +90,12 @@ struct DialogueLineSpec {
 	int headVariant;
 };
 
+struct DialogueLineEntry {
+	int wavId;
+	const char *speakerId;
+	int headVariant;
+};
+
 static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
 	{ 0xd2, 0x725, "HANK", false },
 	{ 0xd6, 0x74f, "PC", false },
@@ -110,6 +116,52 @@ static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
 	{ 0xf0, 0x8a0, "HANK", false },
 	{ 0xf1, 0x8bf, "HANK", true }
 };
+
+static const DialogueLineEntry kMomIntroLines[] = {
+	{ 0x1dd7, "MOM", 0 },
+	{ 0x1ddc, "PC", 0 },
+	{ 0x1de0, "MOM", 0 },
+	{ 0x1de4, "PC", 0 }
+};
+
+static const DialogueLineEntry kMomCookiesLines[] = {
+	{ 0x1e18, "PC", 0 },
+	{ 0x1e1d, "MOM", 0 },
+	{ 0x1e21, "PC", 0 }
+};
+
+static const DialogueLineEntry kMomSparkyLines[] = {
+	{ 0x1ed7, "PC", 0 },
+	{ 0x1edb, "MOM", 0 },
+	{ 0x1ee1, "PC", 0 },
+	{ 0x1ee5, "MOM", 0 }
+};
+
+static const DialogueLineEntry kMomFatherLines[] = {
+	{ 0x1fc8, "PC", 0 },
+	{ 0x1fcc, "MOM", 0 }
+};
+
+static const DialogueLineEntry kMomFatherHeardDadMoanLines[] = {
+	{ 0x1fd3, "PC", 0 },
+	{ 0x1fd8, "MOM", 0 }
+};
+
+static const DialogueLineEntry kMomGoodCauseDay5Lines[] = {
+	{ 0x21a3, "PC", 0 },
+	{ 0x21a8, "MOM", 0 },
+	{ 0x21ad, "PC", 0 },
+	{ 0x21b2, "MOM", 0 },
+	{ 0x21b7, "PC", 0 }
+};
+
+static const int kMomPtaTopicResponseLines[] = { 0x125, 0x126, 0x127, 0x128 };
+static const int kMomCookingTopicResponseLines[] = { 0x131, 0x132, 0x133 };
+static const int kMomBakeSaleTopicResponseLines[] = { 0x145, 0x146, 0x147 };
+static const int kMomPottsdamTopicResponseLines[] = { 0x14b, 0x14c };
+static const int kMomMeatPlantTopicResponseLines[] = { 0x151, 0x152 };
+static const int kMomMoynahanTopicResponseLines[] = { 0x160, 0x161 };
+static const int kMomNewspaperFireTopicResponseLines[] = { 0x162, 0x163 };
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const StartupText *startupText = engine.getStartupText();
@@ -349,6 +401,7 @@ StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Po
 
 void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
+	_momRoomDialogueState = MomRoomDialogueState();
 	_sharedKarinKidnapedDialogueState = false;
 }
 
@@ -661,6 +714,17 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		return Common::kNoError;
 	};
 
+	auto playDialogueEntrySequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
+		for (uint i = 0; i < count; ++i) {
+			Common::Error lineError = playDialogueLineWithVariant(
+				lines[i].wavId, lines[i].speakerId, lines[i].headVariant);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		return Common::kNoError;
+	};
+
 	auto buildResponseMenuLayout = [&](const Common::String &responseLine,
 			Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows) {
 		options.clear();
@@ -909,6 +973,286 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 	};
 
+	auto matchesResponseLine = [&](const Common::String &selectedTopic, int responseLineIndex) {
+		const Common::String topicText = startupText->getDialogueResponseLine(responseLineIndex);
+		return !topicText.empty() && selectedTopic.equalsIgnoreCase(topicText);
+	};
+
+	auto matchesAnyResponseLine = [&](const Common::String &selectedTopic, const int *responseLineIndices,
+			uint responseLineCount) {
+		for (uint i = 0; i < responseLineCount; ++i) {
+			if (matchesResponseLine(selectedTopic, responseLineIndices[i]))
+				return true;
+		}
+
+		return false;
+	};
+
+	auto assignTopicBuffer = [&](Common::String &topicBuffer, int &topicBufferLineIndex,
+			int responseLineIndex, const char *label) {
+		topicBuffer = startupText->getDialogueResponseLine(responseLineIndex);
+		topicBufferLineIndex = responseLineIndex;
+
+		Common::Array<Common::String> topics;
+		splitDialogueMenuLine(topicBuffer, topics);
+		logDialogueMenuItems(label, responseLineIndex, topicBuffer, topics);
+	};
+
+	if (npc.npcName.equalsIgnoreCase("MOM")) {
+		const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+		Common::String &momTopicBuffer = _momRoomDialogueState.currentTopicBuffer;
+		int &momTopicBufferLineIndex = _momRoomDialogueState.currentTopicBufferLineIndex;
+		auto runMomGoodbye = [&]() -> Common::Error {
+			if (!startupScript->getFlagValue("DAY_FLAG")) {
+				return playDialogueLine(0x256e, "MOM");
+			}
+
+			return playDialogueLine(0x2051, "MOM");
+		};
+
+		if (!usedItemName.empty()) {
+			if (usedItemName.equalsIgnoreCase("NOTE") ||
+					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+				return playDialogueLine(0x2317, "MOM");
+			}
+			if ((usedItemName.equalsIgnoreCase("LEDGER") ||
+					usedItemName.equalsIgnoreCase("LEDGER2")) &&
+					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) {
+				return playDialogueLine(0x2320, "MOM");
+			}
+			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				return playDialogueLine(0x233b, "PC");
+			}
+			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
+				return playDialogueLine(0x239c, "MOM");
+			if (usedItemName.equalsIgnoreCase("TV_DEED") ||
+					usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+				return playDialogueLine(0x2382, "MOM");
+			}
+
+			return playDialogueLine(0x26cc, "MOM");
+		}
+
+		if (_momRoomDialogueState.introPending) {
+			_momRoomDialogueState.introPending = false;
+			_momRoomDialogueState.sameDayIntroLineEnabled = true;
+			_momRoomDialogueState.postIntroDefaultLineEnabled = true;
+			_momRoomDialogueState.introDayIndex = currentStoryDayIndex;
+			Common::Error lineError = playDialogueEntrySequence(kMomIntroLines, ARRAYSIZE(kMomIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (_momRoomDialogueState.sameDayIntroLineEnabled &&
+				currentStoryDayIndex == _momRoomDialogueState.introDayIndex) {
+			Common::Error lineError = playDialogueLine(0x2047, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (_momRoomDialogueState.postIntroDefaultLineEnabled) {
+			Common::Error lineError = playDialogueLine(0x2311, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
+				!_momRoomDialogueState.stephMidgameShown) {
+			_momRoomDialogueState.stephMidgameShown = true;
+			Common::Error lineError = playDialogueLine(0x205a, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("DINER_BURNED") &&
+				(startupScript->getFlagValue("KARIN_KIDNAPED") ||
+					startupScript->getFlagValue("KARIN_FOUND_DEAD")) &&
+				!_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown) {
+			_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown = true;
+			Common::Error lineError = playDialogueLine(0x2456, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("BURNED_TV_STATION") &&
+				!_momRoomDialogueState.burnedTvStationShown) {
+			_momRoomDialogueState.burnedTvStationShown = true;
+			Common::Error lineError = playDialogueLine(0x2220, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("SCRATCHED_TUCKER") &&
+				!_momRoomDialogueState.scratchedTuckerShown) {
+			_momRoomDialogueState.scratchedTuckerShown = true;
+			Common::Error lineError = playDialogueLine(0x23f3, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		// Native Mom dialogue also has death-damage-gated barks for the firemen and several dead NPCs.
+		// The startup runtime does not expose that persisted state yet, so those branches remain pending.
+		if (startupScript->getFlagValue("DINER_BURNED") &&
+				startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+				!_momRoomDialogueState.dinerBurnedKarinAliveShown) {
+			_momRoomDialogueState.dinerBurnedKarinAliveShown = true;
+			Common::Error lineError = playDialogueLine(0x2434, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("PC_ESCAPED_JAIL") &&
+				!_momRoomDialogueState.escapedJailShown) {
+			_momRoomDialogueState.escapedJailShown = true;
+			Common::Error lineError = playDialogueLine(0x2495, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("KARIN_KIDNAPED") &&
+				!startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
+				!startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+				!_momRoomDialogueState.karinKidnapedUnresolvedShown) {
+			_momRoomDialogueState.karinKidnapedUnresolvedShown = true;
+			Common::Error lineError = playDialogueLine(0x24d7, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+				!_momRoomDialogueState.karinFoundAliveShown) {
+			_momRoomDialogueState.karinFoundAliveShown = true;
+			Common::Error lineError = playDialogueLine(0x2505, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
+				!_momRoomDialogueState.karinFoundDeadShown) {
+			_momRoomDialogueState.karinFoundDeadShown = true;
+			Common::Error lineError = playDialogueLine(0x2576, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("STEPHANIE_IS_DEAD") &&
+				!startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
+				!_momRoomDialogueState.stephanieDeadPreMidgameShown) {
+			_momRoomDialogueState.stephanieDeadPreMidgameShown = true;
+			Common::Error lineError = playDialogueLine(0x217c, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("DAY_5") && !_momRoomDialogueState.day5Shown) {
+			_momRoomDialogueState.day5Shown = true;
+			Common::Error lineError = playDialogueLine(0x218d, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("DAY_6") && !_momRoomDialogueState.day6Shown) {
+			_momRoomDialogueState.day6Shown = true;
+			Common::Error lineError = playDialogueLine(0x22a8, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		for (;;) {
+			Common::String selectedTopic;
+			Common::Error menuError = runKeywordMenu(momTopicBuffer, momTopicBufferLineIndex, selectedTopic);
+			if (menuError.getCode() != Common::kNoError)
+				return menuError;
+			if (selectedTopic.empty())
+				return Common::kNoError;
+			if (selectedTopic.equalsIgnoreCase(genericByeTopic))
+				return runMomGoodbye();
+
+			Common::Error lineError = Common::kNoError;
+			if (matchesResponseLine(selectedTopic, 0x116)) {
+				lineError = playDialogueEntrySequence(kMomCookiesLines, ARRAYSIZE(kMomCookiesLines));
+			} else if (matchesResponseLine(selectedTopic, 0x119)) {
+				lineError = playDialogueLine(0x1e47, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x11d)) {
+				lineError = playDialogueLine(0x1e7c, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x121)) {
+				lineError = playDialogueLine(0x1ec0, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x123)) {
+				lineError = playDialogueEntrySequence(kMomSparkyLines, ARRAYSIZE(kMomSparkyLines));
+			} else if (matchesAnyResponseLine(selectedTopic, kMomPtaTopicResponseLines,
+					ARRAYSIZE(kMomPtaTopicResponseLines))) {
+				lineError = playDialogueLine(0x1eee, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x12b)) {
+				lineError = playDialogueLine(0x1efd, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x12d)) {
+				lineError = playDialogueLine(0x1f14, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x12f)) {
+				lineError = playDialogueLine(0x1f41, "PC");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomCookingTopicResponseLines,
+					ARRAYSIZE(kMomCookingTopicResponseLines))) {
+				lineError = playDialogueLine(0x1f58, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x135)) {
+				lineError = playDialogueLine(0x1f71, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x137)) {
+				lineError = playDialogueLine(0x1f7f, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x13a)) {
+				lineError = playDialogueLine(0x1fa3, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x13c)) {
+				lineError = playDialogueLine(0x1faf, "PC");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			} else if (matchesResponseLine(selectedTopic, 0x13f)) {
+				_momRoomDialogueState.fatherTopicState = true;
+				lineError = playDialogueEntrySequence(kMomFatherLines, ARRAYSIZE(kMomFatherLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				if (startupScript->getFlagValue("HEARD_DAD_MOAN")) {
+					lineError = playDialogueEntrySequence(kMomFatherHeardDadMoanLines,
+						ARRAYSIZE(kMomFatherHeardDadMoanLines));
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+				assignTopicBuffer(momTopicBuffer, momTopicBufferLineIndex, 0x140, "Mom topic buffer");
+				continue;
+			} else if (matchesResponseLine(selectedTopic, 0x141)) {
+				if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED"))
+					lineError = playDialogueLine(0x2154, "PC");
+				else
+					lineError = playDialogueLine(0x1fe1, "PC");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomBakeSaleTopicResponseLines,
+					ARRAYSIZE(kMomBakeSaleTopicResponseLines))) {
+				lineError = playDialogueLine(0x2017, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x14a)) {
+				lineError = playDialogueLine(0x2036, "MOM");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomPottsdamTopicResponseLines,
+					ARRAYSIZE(kMomPottsdamTopicResponseLines))) {
+				if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED"))
+					lineError = playDialogueLine(0x2086, "MOM");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomMeatPlantTopicResponseLines,
+					ARRAYSIZE(kMomMeatPlantTopicResponseLines))) {
+				lineError = playDialogueLine(0x20f7, "PC");
+			} else if (matchesResponseLine(selectedTopic, 0x155)) {
+				lineError = playDialogueLine(0x2125, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x156)) {
+				lineError = playDialogueLine(0x2142, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x15b) && currentStoryDayIndex == 5) {
+				if (_momRoomDialogueState.goodCauseDay5State)
+					lineError = playDialogueEntrySequence(kMomGoodCauseDay5Lines, ARRAYSIZE(kMomGoodCauseDay5Lines));
+				else
+					lineError = playDialogueLine(0x21dd, "PC");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomMoynahanTopicResponseLines,
+					ARRAYSIZE(kMomMoynahanTopicResponseLines))) {
+				lineError = playDialogueLine(0x220a, "PC");
+			} else if (matchesAnyResponseLine(selectedTopic, kMomNewspaperFireTopicResponseLines,
+					ARRAYSIZE(kMomNewspaperFireTopicResponseLines))) {
+				lineError = playDialogueLine(0x229e, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x16d)) {
+				lineError = playDialogueLine(0x2696, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x16e)) {
+				lineError = playDialogueLine(0x26a3, "MOM");
+			} else if (matchesResponseLine(selectedTopic, 0x170)) {
+				lineError = playDialogueLine(0x26bc, "MOM");
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = playDialogueLine(0x26c6, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			return runMomGoodbye();
+		}
+	}
+
 	if (!npc.npcName.equalsIgnoreCase("HANK")) {
 		debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
 		return Common::kNoError;
@@ -918,12 +1262,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 	Common::String &hankTopicBuffer = _hankRoomDialogueState.currentTopicBuffer;
 	int &hankTopicBufferLineIndex = _hankRoomDialogueState.currentTopicBufferLineIndex;
 	auto assignHankTopicBuffer = [&](int responseLineIndex) {
-		hankTopicBuffer = startupText->getDialogueResponseLine(responseLineIndex);
-		hankTopicBufferLineIndex = responseLineIndex;
-
-		Common::Array<Common::String> topics;
-		splitDialogueMenuLine(hankTopicBuffer, topics);
-		logDialogueMenuItems("Hank topic buffer", responseLineIndex, hankTopicBuffer, topics);
+		assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex, responseLineIndex, "Hank topic buffer");
 	};
 
 	debugC(1, kDebugDialogue,
