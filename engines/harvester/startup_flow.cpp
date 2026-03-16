@@ -2911,8 +2911,9 @@ Common::Error StartupFlow::beginRoomSetupTransition() {
 		_engine.getRuntimeEntities()->hideCursor();
 
 	const StartupArt *art = _engine.getStartupArt();
-	if (art)
-		art->drawWaitFrame();
+	Graphics::Screen *screen = _engine.getScreen();
+	if (art && screen)
+		art->drawWaitFrame(*screen);
 
 	Common::Error result = Common::kNoError;
 	if (pumpTransitionEvents(result))

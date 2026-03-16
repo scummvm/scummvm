@@ -24,6 +24,10 @@
 
 #include "common/array.h"
 
+namespace Graphics {
+class Screen;
+}
+
 namespace Harvester {
 
 class ResourceManager;
@@ -47,7 +51,7 @@ class StartupArt {
 public:
 	bool load(ResourceManager &resources);
 	bool loadQuickTipsResources(ResourceManager &resources);
-	void drawWaitFrame() const;
+	void drawWaitFrame(Graphics::Screen &screen) const;
 
 	const byte *getWaitPalette() const { return _waitPalette; }
 	const Common::Array<AbmFrame> &getWaitFrames() const { return _waitFrames; }
@@ -63,8 +67,9 @@ private:
 	bool loadBitmap(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) const;
 	bool loadAnimation(ResourceManager &resources, const Common::String &path, Common::Array<AbmFrame> &frames) const;
 	bool decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) const;
-	void blitBitmap(const IndexedBitmap &bitmap, int x, int y) const;
-	void blitAnimationFrame(const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) const;
+	void blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) const;
+	void blitTransparentAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames,
+		uint frameIndex, int x, int y) const;
 
 	byte _waitPalette[256 * 3] = { 0 };
 	Common::Array<AbmFrame> _waitFrames;

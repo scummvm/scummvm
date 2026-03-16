@@ -23,8 +23,8 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
-#include "common/system.h"
-#include "graphics/paletteman.h"
+#include "graphics/blit.h"
+#include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/resources.h"
 
@@ -69,12 +69,9 @@ static void logPaletteSummary(const char *label, const Common::String &path, con
 		palette[255 * 3], palette[255 * 3 + 1], palette[255 * 3 + 2]);
 }
 
-static const int kInventoryX = 64;
-static const int kInventoryY = 48;
-static const int kLogoX = 160;
-static const int kLogoY = 0;
 static const int kWaitX = 250;
 static const int kWaitY = 160;
+static const byte kTransparentPaletteIndex = 0;
 
 static const char *const kTextboxPaths[] = {
 	"1:/GRAPHIC/OTHER/TEXTBOX1.BM",
@@ -122,17 +119,15 @@ bool StartupArt::loadQuickTipsResources(ResourceManager &resources) {
 	return loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
 }
 
-void StartupArt::drawWaitFrame() const {
+void StartupArt::drawWaitFrame(Graphics::Screen &screen) const {
 	if (_waitFrames.empty() || !_waitFrames[0].isValid())
 		return;
 
 	logPaletteSummary("applying wait palette", "1:/GRAPHIC/PAL/WAIT.PAL", _waitPalette);
-	g_system->getPaletteManager()->setPalette(_waitPalette, 0, 256);
-	g_system->fillScreen(0);
-	blitBitmap(_inventoryBitmap, kInventoryX, kInventoryY);
-	blitBitmap(_logoBitmap, kLogoX, kLogoY);
-	blitAnimationFrame(_waitFrames, 0, kWaitX, kWaitY);
-	g_system->updateScreen();
+	screen.setPalette(_waitPalette);
+	blitTransparentAnimationFrame(screen, _waitFrames, 0, kWaitX, kWaitY);
+	screen.makeAllDirty();
+	screen.update();
 }
 
 bool StartupArt::loadPalette(ResourceManager &resources, const Common::String &path, byte *dest) const {
@@ -243,19 +238,48 @@ bool StartupArt::decodeAnimationFrame(const byte *source, uint32 sourceSize, boo
 	return dstOffset == dest.size();
 }
 
-void StartupArt::blitBitmap(const IndexedBitmap &bitmap, int x, int y) const {
+void StartupArt::blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) const {
 	if (!bitmap.isValid())
 		return;
 
-	g_system->copyRectToScreen(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
+	int srcX = 0;
+	int srcY = 0;
+	int destX = x;
+	int destY = y;
+	int width = (int)bitmap.width;
+	int height = (int)bitmap.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
-void StartupArt::blitAnimationFrame(const Common::Array<AbmFrame> &frames, uint frameIndex, int x, int y) const {
+void StartupArt::blitTransparentAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames,
+		uint frameIndex, int x, int y) const {
 	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
 		return;
 
 	const AbmFrame &frame = frames[frameIndex];
-	blitBitmap(frame, x + frame.xOffset, y + frame.yOffset);
+	blitTransparentBitmap(screen, frame, x + frame.xOffset, y + frame.yOffset);
 }
 
 } // End of namespace Harvester
