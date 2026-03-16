@@ -1183,6 +1183,9 @@ void ColonyEngine::handleSuitClick(int item) {
 		setObjectState(4, _weapons + 1);
 		drawAnimation();
 		_gfx->copyToScreen();
+	} else if (item == 6) {
+		// GANIMATE.C DoPowerSuit() case 6: help/info text
+		doText(13, 0);
 	}
 }
 
