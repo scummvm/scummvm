@@ -321,7 +321,8 @@ Common::Error HarvesterEngine::run() {
 	_startupArt = new StartupArt();
 	if (!_startupArt->load(*_resources))
 		return Common::kReadingFailed;
-	_startupArt->drawWaitFrame();
+	if (_screen)
+		_startupArt->drawWaitFrame(*_screen);
 
 	_startupText = new StartupText();
 	if (!_startupText->load(*_resources))
