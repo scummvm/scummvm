@@ -176,6 +176,8 @@ public:
 	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
 	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;
 	RuntimeEntity *findSceneEntityByName(const Common::String &name);
+	RuntimeEntity *detachSceneEntityByName(const Common::String &name);
+	void adoptSceneEntity(RuntimeEntity *entity);
 
 private:
 	void insertSceneEntity(RuntimeEntity *entity);

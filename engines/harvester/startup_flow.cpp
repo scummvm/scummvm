@@ -896,6 +896,8 @@ static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, Startup
 		return true;
 	if (!startupScript)
 		return false;
+	if (startupScript->isPickupObject(object))
+		return true;
 
 	StartupResolvedText inspectText;
 	return startupScript->resolveObjectInspectText(object, inspectText);
@@ -2839,6 +2841,7 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	if (!runtimeEntities)
 		return false;
 
+	RuntimeEntity *preservedPlayer = runtimeEntities->detachSceneEntityByName(kPlayerActorEntityName);
 	runtimeEntities->clearSceneEntities();
 	for (const StartupRegionRecord &region : state.roomRegions) {
 		const Common::Rect regionBounds = getRegionBounds(region);
@@ -2938,24 +2941,38 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	}
 	if (state.hasEntrance) {
 		const int playerFrame = resolvePlayerFacingFrame(state.playerFacing);
-		RuntimeEntity *player = runtimeEntities->spawnSceneActorEntity(kPlayerActorEntityName,
-			kPlayerActorResourcePath, Common::Point(state.playerSpawnX, state.playerSpawnY),
-			(float)state.playerSpawnZ, playerFrame);
+		const bool reusedPlayer = preservedPlayer != nullptr;
+		RuntimeEntity *player = preservedPlayer;
+		if (!reusedPlayer) {
+			player = runtimeEntities->spawnSceneActorEntity(kPlayerActorEntityName,
+				kPlayerActorResourcePath, Common::Point(state.playerSpawnX, state.playerSpawnY),
+				(float)state.playerSpawnZ, playerFrame);
+		}
 		if (!player) {
 			debug(1, "Harvester: unable to spawn startup player actor from '%s'", kPlayerActorResourcePath);
 		} else {
 			player->setClassId(kRuntimeEntityClassPlayer);
+			player->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 			player->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
+			player->setVisible(true);
+			player->setAnimationRate(0);
+			player->setAnimationFrameRange(playerFrame, playerFrame, false);
+			player->setCurrentFrame(playerFrame);
 			if (!applyStartupActorPlacement(state, *player)) {
 				debug(1, "Harvester: unable to apply startup player placement for entrance '%s'",
 					state.entranceName.c_str());
 			}
+			if (reusedPlayer)
+				runtimeEntities->adoptSceneEntity(player);
 			debugC(1, kDebugGeneral,
-				"Harvester: spawned startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
-				kPlayerActorResourcePath, state.entranceName.c_str(),
+				"Harvester: %s startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
+				reusedPlayer ? "reused" : "spawned", kPlayerActorResourcePath, state.entranceName.c_str(),
 				state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ,
 				state.playerFacing, playerFrame);
 		}
+		preservedPlayer = nullptr;
+	} else if (preservedPlayer) {
+		delete preservedPlayer;
 	}
 
 	return true;
