@@ -54,6 +54,8 @@ public:
 		bool discussedCasketPhotoEvidence = false;
 		bool discussedWhaleyHerrillPhoto = false;
 		bool discussedLodgeTopic = false;
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
 	};
 
 	StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
