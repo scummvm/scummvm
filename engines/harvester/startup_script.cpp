@@ -646,8 +646,7 @@ bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, co
 }
 
 bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
-	return object.operatable &&
-		!object.altSpritePath.empty() &&
+	return !object.altSpritePath.empty() &&
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
 }
 

@@ -78,8 +78,8 @@ static void blitAnimationFrame(Graphics::Screen &screen, const Common::Array<Abm
 		return;
 
 	const AbmFrame &frame = frames[frameIndex];
-	int destX = x + frame.xOffset;
-	int destY = y + frame.yOffset;
+	int destX = x;
+	int destY = y;
 	int srcX = 0;
 	int srcY = 0;
 	int width = (int)frame.width;
@@ -809,6 +809,26 @@ RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String 
 	}
 
 	return nullptr;
+}
+
+RuntimeEntity *RuntimeEntityManager::detachSceneEntityByName(const Common::String &name) {
+	for (uint i = 0; i < _sceneEntities.size(); ++i) {
+		RuntimeEntity *entity = _sceneEntities[i];
+		if (!entity->getName().equalsIgnoreCase(name))
+			continue;
+
+		_sceneEntities.remove_at(i);
+		return entity;
+	}
+
+	return nullptr;
+}
+
+void RuntimeEntityManager::adoptSceneEntity(RuntimeEntity *entity) {
+	if (!entity)
+		return;
+
+	insertSceneEntity(entity);
 }
 
 void RuntimeEntityManager::insertSceneEntity(RuntimeEntity *entity) {
