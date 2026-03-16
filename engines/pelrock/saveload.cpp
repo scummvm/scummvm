@@ -357,6 +357,7 @@ Common::Error PelrockEngine::syncGame(Common::Serializer &s) {
 	} else {
 		SaveGameData *saveGame = createSaveGameData();
 		result = syncSaveData(s, saveGame);
+		delete saveGame;
 	}
 	return result;
 }
