@@ -68,6 +68,34 @@ enum InterfaceHotspotStatus {
 	kHotspotSelected = 3
 };
 
+enum LilliputAction {
+	// Adventures of Robin Hood actions
+	kActionBow = 0,
+	kActionEye,
+	kActionPause,
+	kActionSave,
+	kActionLoad,
+	kActionToggleSound,
+	kActionRestart,
+	// Rome Pathway to Power actions
+	kActionUse,
+	kActionDo,
+	kActionWho,
+	kActionMap,
+	kActionFollow,
+	kActionRun,
+	kActionQuit,
+	kActionUnitI,
+	kActionUnitII,
+	kActionUnitIII,
+	kActionUnitIV,
+	kActionForm,
+	kActionOrder,
+	kActionStd,
+	kActionAll,
+	kActionCount
+};
+
 #define kSeqNone	0
 #define kSeqNoInc	1 << 0
 #define kSeqRepeat	1 << 1
@@ -367,6 +395,12 @@ private:
 	Common::Platform _platform;
 
 	void initialize();
+
+   int _actionHotspot[kActionCount]; // Map acion ID to hotspot index
+   int _walkDirection;               // -1 = none, 0 = right, 1 = up, 2 = down, 3 = left
+   bool _paused;
+   void initActionHotspots();
+   void handleSystemAction(int action, bool start);
 };
 
 } // End of namespace Lilliput
