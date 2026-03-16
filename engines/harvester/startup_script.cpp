@@ -688,6 +688,19 @@ bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, co
 	return true;
 }
 
+bool StartupScript::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+		bool allowTransitions) {
+	result = StartupInteractionResult();
+	if (tag.empty())
+		return false;
+
+	executeCommandChain(tag, "action tag", tag, allowTransitions,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.mutatedRuntimeState);
+
+	return !result.nextRoomName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(tag);
+}
+
 bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
 	return !object.altSpritePath.empty() &&
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
@@ -1264,6 +1277,60 @@ const StartupHeadRecord *StartupScript::findHeadRecord(const Common::String &hea
 bool StartupScript::getFlagValue(const Common::String &flagName) const {
 	const StartupFlagRecord *flag = findRuntimeFlag(flagName);
 	return flag && flag->value;
+}
+
+bool StartupScript::setRuntimeFlagValue(const Common::String &flagName, bool value) {
+	if (flagName.empty())
+		return false;
+
+	StartupFlagRecord *flag = findRuntimeFlag(flagName);
+	if (flag) {
+		const bool changed = flag->value != value;
+		flag->value = value;
+		return changed;
+	}
+
+	StartupFlagRecord newFlag;
+	newFlag.name = flagName;
+	newFlag.value = value;
+	_runtimeFlags.push_back(newFlag);
+	return true;
+}
+
+bool StartupScript::resetRuntimeObjectToInitialState(const Common::String &objectName) {
+	if (objectName.empty())
+		return false;
+
+	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
+	if (!runtimeObject)
+		return false;
+
+	const StartupObjectRecord *baseObject = nullptr;
+	for (const StartupObjectRecord &object : _objects) {
+		if (object.objectName.equalsIgnoreCase(objectName)) {
+			baseObject = &object;
+			break;
+		}
+	}
+	if (!baseObject)
+		return false;
+
+	const bool changed = runtimeObject->currentX != runtimeObject->initialX ||
+		runtimeObject->currentY != runtimeObject->initialY ||
+		runtimeObject->currentZ != runtimeObject->initialZ ||
+		!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(runtimeObject->initialOwnerOrRoom) ||
+		runtimeObject->visible != baseObject->visible ||
+		runtimeObject->runtimeVisible != baseObject->visible ||
+		runtimeObject->identShown != baseObject->identShown;
+
+	runtimeObject->currentX = runtimeObject->initialX;
+	runtimeObject->currentY = runtimeObject->initialY;
+	runtimeObject->currentZ = runtimeObject->initialZ;
+	runtimeObject->currentOwnerOrRoom = runtimeObject->initialOwnerOrRoom;
+	runtimeObject->visible = baseObject->visible;
+	runtimeObject->runtimeVisible = baseObject->visible;
+	runtimeObject->identShown = baseObject->identShown;
+	return changed;
 }
 
 bool StartupScript::isNamedNpcDeathTypeClear(const Common::String &npcName) const {

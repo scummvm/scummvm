@@ -58,7 +58,7 @@ public:
 		int currentTopicBufferLineIndex = -1;
 	};
 
-	struct MomRoomDialogueState {
+		struct MomRoomDialogueState {
 		bool introPending = true;
 		bool sameDayIntroLineEnabled = false;
 		bool postIntroDefaultLineEnabled = false;
@@ -83,9 +83,14 @@ public:
 		bool day6Shown = false;
 		bool fatherTopicState = false;
 		bool goodCauseDay5State = false;
-		Common::String currentTopicBuffer;
-		int currentTopicBufferLineIndex = -1;
-	};
+			Common::String currentTopicBuffer;
+			int currentTopicBufferLineIndex = -1;
+		};
+
+		struct JimmyRoomDialogueState {
+			bool firstNoItemLinePending = true;
+			bool paperHandoffStateSet = false;
+		};
 
 	StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
 
@@ -96,11 +101,12 @@ public:
 
 private:
 	HarvesterEngine &_engine;
-	Common::Point &_mousePos;
-	HankRoomDialogueState _hankRoomDialogueState;
-	MomRoomDialogueState _momRoomDialogueState;
-	bool _sharedKarinKidnapedDialogueState = false;
-};
+		Common::Point &_mousePos;
+		HankRoomDialogueState _hankRoomDialogueState;
+		MomRoomDialogueState _momRoomDialogueState;
+		JimmyRoomDialogueState _jimmyRoomDialogueState;
+		bool _sharedKarinKidnapedDialogueState = false;
+	};
 
 } // End of namespace Harvester
 

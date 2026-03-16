@@ -402,6 +402,7 @@ StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Po
 void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
 	_momRoomDialogueState = MomRoomDialogueState();
+	_jimmyRoomDialogueState = JimmyRoomDialogueState();
 	_sharedKarinKidnapedDialogueState = false;
 }
 
@@ -997,6 +998,117 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		splitDialogueMenuLine(topicBuffer, topics);
 		logDialogueMenuItems(label, responseLineIndex, topicBuffer, topics);
 	};
+
+	if (npc.npcName.equalsIgnoreCase("JIMMY")) {
+		auto playJimmyLine = [&](int wavId, int headVariant) -> Common::Error {
+			return playDialogueLineWithVariant(wavId, "JIMMY", headVariant);
+		};
+		auto hasInventoryItem = [&](const char *objectName) {
+			Common::Array<StartupObjectRecord> inventoryObjects;
+			startupScript->getVisibleInventoryObjects(inventoryObjects);
+			for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+				if (inventoryObject.objectName.equalsIgnoreCase(objectName))
+					return true;
+			}
+
+			return false;
+		};
+
+		if (!usedItemName.empty()) {
+			if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
+				StartupInteractionResult jimmyInteraction;
+				const bool changedGivenPaperToday =
+					startupScript->setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+				const bool changedNewspaperState =
+					startupScript->resetRuntimeObjectToInitialState("NEWSPAPER");
+				jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
+
+				StartupInteractionResult actionInteraction;
+				if (startupScript->executeActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
+					jimmyInteraction.mutatedRuntimeState =
+						jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
+					if (!actionInteraction.musicPath.empty())
+						jimmyInteraction.musicPath = actionInteraction.musicPath;
+					if (!actionInteraction.nextRoomName.empty())
+						jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+					for (const StartupAudioCommand &command : actionInteraction.audioCommands)
+						jimmyInteraction.audioCommands.push_back(command);
+				}
+				if (jimmyInteraction.mutatedRuntimeState || !jimmyInteraction.musicPath.empty() ||
+						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.audioCommands.empty()) {
+					startupFlow.queueDialogueInteraction(jimmyInteraction);
+				}
+
+				if (!_jimmyRoomDialogueState.paperHandoffStateSet) {
+					_jimmyRoomDialogueState.paperHandoffStateSet = true;
+					Common::Error lineError = playJimmyLine(0x4a4c, 1);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+
+				return _engine.getRandomNumber(1) == 0
+					? playJimmyLine(0x4acc, 0)
+					: playJimmyLine(0x4a4b, 1);
+			}
+			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
+				return playJimmyLine(0x4af8, 1);
+			if (((usedItemName.equalsIgnoreCase("LEDGER") ||
+						usedItemName.equalsIgnoreCase("LEDGER2")) &&
+					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) ||
+					usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				return playJimmyLine(0x4b00, 0);
+			}
+			if (usedItemName.equalsIgnoreCase("NOTE") ||
+					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+				return playJimmyLine(0x4b21, 0);
+			}
+			if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
+				Common::Error lineError = playJimmyLine(0x4a9e, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			return playJimmyLine(0x4af2, 0);
+		}
+
+		if (_jimmyRoomDialogueState.firstNoItemLinePending) {
+			_jimmyRoomDialogueState.firstNoItemLinePending = false;
+			if (!_jimmyRoomDialogueState.paperHandoffStateSet) {
+				Common::Error lineError = playJimmyLine(0x4a4c, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			Common::Error lineError = playJimmyLine(0x4a58, 0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
+			Common::Error lineError = playJimmyLine(0x4ac3, 0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("PAPER_CHK_4")) {
+			Common::Error lineError = playJimmyLine(0x4ae2, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("PAPER_CHK_3")) {
+			Common::Error lineError = playJimmyLine(0x4adb, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (startupScript->getFlagValue("PAPER_CHK_2")) {
+			Common::Error lineError = playJimmyLine(0x4ad4, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		return playJimmyLine(0x4b38, 0);
+	}
 
 	if (npc.npcName.equalsIgnoreCase("MOM")) {
 		const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();

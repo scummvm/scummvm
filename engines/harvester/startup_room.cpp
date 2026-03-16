@@ -428,11 +428,19 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 								*useHoverState.npc, _inventory.getSelectedItemName());
 							if (dialogueError.getCode() != Common::kNoError)
 								return dialogueError;
+							StartupInteractionResult dialogueInteraction;
+							const bool hasDialogueInteraction =
+								startupFlow.takeQueuedDialogueInteraction(dialogueInteraction);
 							if (_inventory.clearSelection() || _inventory.close())
 								needsRedraw = true;
+							if (hasDialogueInteraction) {
+								Common::Error interactionError = handleInteractionResult(dialogueInteraction);
+								if (interactionError.getCode() != Common::kNoError)
+									return interactionError;
+							}
 							startupFlow.resetCursorAnimationSequence();
 							resetIdleState();
-							needsRedraw = true;
+								needsRedraw = true;
 							break;
 						}
 						const StartupObjectRecord *roomTarget = useHoverState.object

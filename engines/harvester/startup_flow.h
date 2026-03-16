@@ -67,23 +67,27 @@ private:
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
-	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
-	bool pumpTransitionEvents(Common::Error &result);
-	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
-	void resetRoomNpcDialogueState();
-	void resetCursorAnimationSequence();
-	bool tickRuntimeEntities();
-	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
+		Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
+		bool pumpTransitionEvents(Common::Error &result);
+		void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
+		void queueDialogueInteraction(const StartupInteractionResult &interaction);
+		bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
+		void resetRoomNpcDialogueState();
+		void resetCursorAnimationSequence();
+		bool tickRuntimeEntities();
+		bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
-	StartupDialogueSystem _dialogue;
-	StartupInventorySystem _inventory;
-	StartupMenuSystem _menu;
-	StartupRoomSystem _room;
-};
+		StartupDialogueSystem _dialogue;
+		StartupInventorySystem _inventory;
+		StartupMenuSystem _menu;
+		StartupRoomSystem _room;
+		StartupInteractionResult _queuedDialogueInteraction;
+		bool _hasQueuedDialogueInteraction = false;
+	};
 
 } // End of namespace Harvester
 
