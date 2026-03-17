@@ -39,6 +39,7 @@
 #include "harvester/npc/hank_dialogue.h"
 #include "harvester/npc/jimmy_dialogue.h"
 #include "harvester/npc/mom_dialogue.h"
+#include "harvester/npc/pta_mom_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/wasp_woman_dialogue.h"
 #include "harvester/resources.h"
@@ -193,6 +194,8 @@ static const char *const kShownEvidenceSheriffOwnsFlag = "SHOWN_EVIDENCE_SHERIFF
 static const char *const kShownLedgersToAnyoneFlag = "SHOWN_LEDGERS_TO_ANYONE_OTH";
 static const char *const kShownPhotoOfCorpseFlag = "SHOWN_PHOTO_OF_CORPSE_AROUN";
 static const char *const kShownPhotoOfWhaleyHerrillFlag = "SHOWN_PHOTO_OF_WHALEY_HERRI";
+static const char *const kPtaRespondToTvFlag = "PTA_RESPOND_TO_TV";
+static const char *const kPtaMomSpeakerId = "PTA_MOM1";
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
@@ -442,6 +445,23 @@ static const DialogueLineEntry kWaspWomanIntroTailLines[] = {
 static const DialogueLineEntry kWaspWomanTopic305Response1Lines[] = {
 	{ 0x4c4d, "WASP_WOMAN", 1 },
 	{ 0x4c53, "WASP_WOMAN", 1 }
+};
+
+static const DialogueLineEntry kPtaMomResponse1Lines[] = {
+	{ 0x3204, kPtaMomSpeakerId, 2 },
+	{ 0x320b, kPtaMomSpeakerId, 2 }
+};
+
+static const DialogueLineEntry kPtaMomResponse2Lines[] = {
+	{ 0x320f, kPtaMomSpeakerId, 0 },
+	{ 0x3213, kPtaMomSpeakerId, 0 }
+};
+
+static const DialogueLineEntry kPtaMomResponse3Lines[] = {
+	{ 0x3217, kPtaMomSpeakerId, 0 },
+	{ 0x321c, kPtaMomSpeakerId, 0 },
+	{ 0x3221, "PC", 0 },
+	{ 0x3226, kPtaMomSpeakerId, 0 }
 };
 
 static const int kMomPtaTopicResponseLines[] = { 0x125, 0x126, 0x127, 0x128 };
@@ -714,15 +734,9 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new MomDialogueHandler());
 	_npcHandlers.push_back(new HankDialogueHandler());
+	_npcHandlers.push_back(new PtaMomDialogueHandler());
 
-	Common::Array<Common::String> ptaMomNames;
-	ptaMomNames.push_back(Common::String("PTA_MOM"));
-	ptaMomNames.push_back(Common::String("PTA_MOM1"));
-	ptaMomNames.push_back(Common::String("PTA_MOM2"));
-	ptaMomNames.push_back(Common::String("PTA_MOM3"));
-	ptaMomNames.push_back(Common::String("PTA_MOM4"));
-	ptaMomNames.push_back(Common::String("PTA_MOM5"));
-	_npcHandlers.push_back(new StubNpcDialogueHandler(ptaMomNames));
+	_npcHandlers.push_back(new StubNpcDialogueHandler("PTA_MOM"));
 	_npcHandlers.push_back(new StubNpcDialogueHandler("DWAYNE"));
 	_npcHandlers.push_back(new StubNpcDialogueHandler("EDNA"));
 	_npcHandlers.push_back(new StubNpcDialogueHandler("HERRILL"));
@@ -1482,6 +1496,55 @@ Common::Error DialogueSystem::handleJimmyDialogue(DialogueRuntime &runtime, cons
 	}
 
 	return playJimmyLine(0x4b38, 0);
+}
+
+Common::Error DialogueSystem::handlePtaMomDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName) {
+	(void)usedItemName;
+
+	auto playPtaMomLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kPtaMomSpeakerId, headVariant);
+	};
+
+	if (runtime.startupScript().getFlagValue(kPtaRespondToTvFlag)) {
+		Common::Error lineError = playPtaMomLine(0x3233, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().setRuntimeFlagValue(kPtaRespondToTvFlag, false);
+		return Common::kNoError;
+	}
+
+	Common::Error lineError = Common::kNoError;
+	switch (runtime.getRandomNumber(2)) {
+	case 0:
+		lineError = playPtaMomLine(0x31ee, 1);
+		break;
+	case 1:
+		lineError = playPtaMomLine(0x31f2, 1);
+		break;
+	default:
+		lineError = playPtaMomLine(0x31f6, 1);
+		break;
+	}
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(0x297, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	switch (responseIndex) {
+	case 1:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse1Lines, ARRAYSIZE(kPtaMomResponse1Lines));
+	case 2:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse2Lines, ARRAYSIZE(kPtaMomResponse2Lines));
+	case 3:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse3Lines, ARRAYSIZE(kPtaMomResponse3Lines));
+	default:
+		return Common::kNoError;
+	}
 }
 
 Common::Error DialogueSystem::handleWaspWomanDialogue(DialogueRuntime &runtime,
