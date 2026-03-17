@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_mother @ 0x2b5b0` into a dedicated `engines/harvester/npc/mother_dialogue.*` handler.
-  - Native Mother dialogue is a one-shot local talk-state branch: when `g_mother_talk_state_block` is set, native clears it and plays `0x26d6` for `MOTHER`; otherwise the handler returns without dialogue.
-  - The engine now routes `MOTHER` through a concrete handler with matching per-NPC state instead of falling back to the unsupported NPC path.
+- Ported `handle_talk_to_inquisitor @ 0x2af70` into a dedicated `engines/harvester/npc/inquisitor_dialogue.*` handler.
+  - Native Inquisitor dialogue is a one-shot local talk-state branch gated by the global `PAIN_SOLVED` flag: when the puzzle is still unsolved and `g_inquisitor_talk_state_block` is set, native clears it and plays `0x18e7` for `INQUISITOR`.
+  - The engine now routes `INQUISITOR` through a concrete handler with matching per-NPC state instead of falling back to the unsupported NPC path.
 
 ## Next Suggested Action
 
-1. Port `handle_talk_to_inquisitor @ 0x2af70` as the next small state-gated NPC handler.
-   - Ghidra decompilation currently shows a single local talk-state gate plus the `PAIN_SOLVED` flag: when the puzzle is not solved and `g_inquisitor_talk_state_block` is set, native clears it and plays `0x18e7` for `INQUISITOR`.
+1. Port `handle_talk_to_authority @ 0x2b730` as the next small flag-driven NPC handler.
+   - Ghidra decompilation currently shows three flag-controlled outcomes: `STOP_AUTHOR_TALK` suppresses dialogue entirely, `IF_DON_T_EAT_THE_FOOD` forces `0x3992`, and otherwise the handler picks `0x398a` or `0x399b` based on `IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES`.
 2. After the remaining single-branch handlers are covered, resume the larger hidden-topic ports starting with Boyle.
    - Boyle already has bounded hidden keyword and gas-can branches, so he remains the highest-signal multi-branch NPC once the trivial handlers are out of the way.

@@ -43,6 +43,7 @@
 #include "harvester/npc/edna_dialogue.h"
 #include "harvester/npc/hank_dialogue.h"
 #include "harvester/npc/herrill_dialogue.h"
+#include "harvester/npc/inquisitor_dialogue.h"
 #include "harvester/npc/jimmy_dialogue.h"
 #include "harvester/npc/johnson_dialogue.h"
 #include "harvester/npc/lodge_chef_dialogue.h"
@@ -337,6 +338,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new ChessmasterDialogueHandler());
 	_npcHandlers.push_back(new CuratorDialogueHandler());
 	_npcHandlers.push_back(new JimmyDialogueHandler());
+	_npcHandlers.push_back(new InquisitorDialogueHandler());
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new MomDialogueHandler());
 	_npcHandlers.push_back(new MotherDialogueHandler());
