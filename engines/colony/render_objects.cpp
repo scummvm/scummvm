@@ -222,15 +222,21 @@ static const int kDeskScreenSurf[1][8] = {{kColorMacScreen, 4, 3, 2, 1, 0, 0, 0}
 static const int kCSeatPts[4][3] = {
 	{-40, 40, 60}, {40, 40, 60}, {40, -40, 60}, {-40, -40, 60}
 };
-static const int kCSeatSurf[1][8] = {{kColorChair, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCSeatSurf[2][8] = {
+	{kColorChair, 4, 3, 2, 1, 0, 0, 0}, {kColorChair, 4, 0, 1, 2, 3, 0, 0}
+};
 static const int kCArmLeftPts[4][3] = {
 	{-50, 40, 90}, {-40, 40, 60}, {-40, -40, 60}, {-50, -40, 90}
 };
-static const int kCArmLeftSurf[1][8] = {{kColorChair, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCArmLeftSurf[2][8] = {
+	{kColorChair, 4, 3, 2, 1, 0, 0, 0}, {kColorChair, 4, 0, 1, 2, 3, 0, 0}
+};
 static const int kCArmRightPts[4][3] = {
 	{50, 40, 90}, {40, 40, 60}, {40, -40, 60}, {50, -40, 90}
 };
-static const int kCArmRightSurf[1][8] = {{kColorChair, 4, 3, 2, 1, 0, 0, 0}};
+static const int kCArmRightSurf[2][8] = {
+	{kColorChair, 4, 3, 2, 1, 0, 0, 0}, {kColorChair, 4, 0, 1, 2, 3, 0, 0}
+};
 static const int kCBackPts[4][3] = {
 	{-20, 60, 150}, {20, 60, 150}, {40, 40, 60}, {-40, 40, 60}
 };
@@ -412,9 +418,9 @@ static const Colony::ColonyEngine::PrismPartDef kDeskParts[10] = {
 	{4, kDeskScreenPts, 1, kDeskScreenSurf}
 };
 static const Colony::ColonyEngine::PrismPartDef kCChairParts[5] = {
-	{4, kCSeatPts, 1, kCSeatSurf},
-	{4, kCArmLeftPts, 1, kCArmLeftSurf},
-	{4, kCArmRightPts, 1, kCArmRightSurf},
+	{4, kCSeatPts, 2, kCSeatSurf},
+	{4, kCArmLeftPts, 2, kCArmLeftSurf},
+	{4, kCArmRightPts, 2, kCArmRightSurf},
 	{4, kCBackPts, 1, kCBackSurf},
 	{8, kCBasePts, 4, kCBaseSurf}
 };
@@ -1168,7 +1174,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjCChair:
 		for (int i = 0; i < 5; i++) {
 			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
-			draw3DPrism(obj, kCChairParts[i], false, -1, true, false);
+			// Flat quad parts (seat, arms, back) need forceVisible to avoid
+			// edge-on culling; box base (i==4) uses normal culling.
+			draw3DPrism(obj, kCChairParts[i], false, -1, true, i < 4);
 		}
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
