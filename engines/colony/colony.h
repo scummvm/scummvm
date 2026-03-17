@@ -670,6 +670,7 @@ private:
 	void playIntro();
 	bool makeStars(const Common::Rect &r, int btn);
 	bool makeBlackHole();
+	bool makePlanet();
 	bool timeSquare(const Common::String &str, const Graphics::Font *macFont = nullptr);
 	bool drawPict(int resID);
 	bool loadAnimation(const Common::String &name);

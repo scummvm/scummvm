@@ -640,15 +640,26 @@ void ColonyEngine::drawAnimation() {
 				_gfx->setPixel(ox + x, oy + y, set ? (uint32)0xFF000000 : bg);
 			}
 		}
-	} else {
+	} else if (_renderMode == Common::kRenderMacintosh) {
 		// Mac QuickDraw FillRect: pattern bit=1 → ForeColor (black=0),
-		// bit=0 → BackColor (white=15). Same for B&W Mac and DOS.
+		// bit=0 → BackColor (white=15).
 		for (int y = 0; y < 264; y++) {
 			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
 			byte row = pat[y % 8];
 			for (int x = 0; x < 416; x++) {
 				bool set = (row & (0x80 >> (x % 8))) != 0;
 				_gfx->setPixel(ox + x, oy + y, set ? 0 : 15);
+			}
+		}
+	} else {
+		// DOS MetaWINDOW: pattern bit=1 → pen color (white=15),
+		// bit=0 → background (black=0). Opposite of Mac QuickDraw.
+		for (int y = 0; y < 264; y++) {
+			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
+			byte row = pat[y % 8];
+			for (int x = 0; x < 416; x++) {
+				bool set = (row & (0x80 >> (x % 8))) != 0;
+				_gfx->setPixel(ox + x, oy + y, set ? 15 : 0);
 			}
 		}
 	}
@@ -716,9 +727,20 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uin
 	//   mask bit=1 -> opaque (part of sprite)
 	//   fg bit=1   -> ForeColor (black)
 	//   fg bit=0   -> BackColor (fillColor from BMColor)
-	// B&W/DOS: same semantics — fg bit=1 is black (0), fg bit=0 is white (15).
-	const uint32 fgColor = useColor ? (uint32)0xFF000000 : 0;
-	const uint32 bgColor = useColor ? fillColor : 15;
+	// Mac B&W: same — fg bit=1 is black (0), fg bit=0 is white (15).
+	// DOS MetaWINDOW: OPPOSITE — fg bit=1 is white (15), fg bit=0 is black (0).
+	const bool isMacMode = (_renderMode == Common::kRenderMacintosh);
+	uint32 fgColor, bgColor;
+	if (useColor) {
+		fgColor = (uint32)0xFF000000;
+		bgColor = fillColor;
+	} else if (isMacMode) {
+		fgColor = 0;
+		bgColor = 15;
+	} else {
+		fgColor = 15;
+		bgColor = 0;
+	}
 
 	for (int iy = 0; iy < img->height; iy++) {
 		for (int ix = 0; ix < img->width; ix++) {

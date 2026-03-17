@@ -234,6 +234,7 @@ void ColonyEngine::playIntro() {
 
 			if (!qt) {
 				// 7. Makeblackhole()
+				// Original: SetPort(&metaPort); FillRect(&rScreen,black);
 				_gfx->clear(_gfx->black());
 				_gfx->copyToScreen();
 				qt = makeBlackHole();
@@ -252,10 +253,10 @@ void ColonyEngine::playIntro() {
 
 			if (!qt) {
 				// 10. makeplanet() + EndCSound()
-				// Simplified: starfield + delay (makeplanet draws a rotating planet)
+				// 3D wireframe planet: stars + sphere rotation + zoom approach
 				_gfx->clear(_gfx->black());
 				_gfx->copyToScreen();
-				qt = makeStars(_screenR, 0);
+				qt = makePlanet();
 				_sound->stop(); // EndCSound()
 			}
 		}
@@ -267,17 +268,31 @@ void ColonyEngine::playIntro() {
 		while (!qt && !shouldQuit() && _sound->isPlaying())
 			_system->delayMillis(10);
 
-		// Original: DoExplodeSound(); while(!SoundDone()) InvertRect(&rScreen); StopSound();
-		_sound->play(Sound::kExplode);
-		while (!shouldQuit() && _sound->isPlaying()) {
-			_gfx->clear(_gfx->white());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
-			_gfx->clear(_gfx->black());
-			_gfx->copyToScreen();
-			_system->delayMillis(50);
+		// Original intro.c lines 103-113:
+		// if(!soundon) { for(i=0;i<16;i++) InvertRect(&rScreen); }
+		// else { DoExplodeSound(); while(!SoundDone()) InvertRect(&rScreen); StopSound(); }
+		// InvertRect in a tight loop = rapid XOR flicker (each inversion toggles all pixels)
+		// Original: one InvertRect per Display() loop iteration at ~8fps hardware.
+		// Each inversion toggles the entire screen (black↔white) creating a
+		// ~4Hz strobe effect. We match this with 125ms per inversion.
+		if (!_soundOn) {
+			// No sound: exactly 16 inversions at ~8fps cadence
+			for (int i = 0; i < 16 && !shouldQuit(); i++) {
+				_gfx->clear(i % 2 ? _gfx->black() : _gfx->white());
+				_gfx->copyToScreen();
+				_system->delayMillis(125);
+			}
+		} else {
+			_sound->play(Sound::kExplode);
+			int frame = 0;
+			while (!shouldQuit() && _sound->isPlaying()) {
+				_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+				_gfx->copyToScreen();
+				_system->delayMillis(125);
+				frame++;
+			}
+			_sound->stop();
 		}
-		_sound->stop();
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
 		delete macFont;
@@ -293,7 +308,101 @@ void ColonyEngine::playIntro() {
 		}
 		_gfx->setPalette(restorePal + 128 * 3, 128, 128);
 	} else {
-		scrollInfo();
+		// DOS IBM_INTR.C intro(): full sequence after ScrollInfo
+		// Use full screen for intro (not gameplay viewport with dashboard offset)
+		Common::Rect savedScreenR = _screenR;
+		_screenR = Common::Rect(0, 0, _width, _height);
+		_centerX = _width / 2;
+		_centerY = _height / 2;
+		bool qt = scrollInfo();
+
+		if (!qt) {
+			// Logo 2: "Mindscape Presents"
+			_sound->stop();
+			_sound->play(Sound::kStars1);
+			_gfx->clear(_gfx->black());
+			if (loadAnimation("logo2")) {
+				drawAnimation();
+				_gfx->copyToScreen();
+			}
+			qt = makeStars(_screenR, 0);
+			_gfx->clear(_gfx->black());
+		}
+
+		if (!qt) {
+			// Logo 1: "The Colony by David A. Smith"
+			_sound->stop();
+			_sound->play(Sound::kStars2);
+			if (loadAnimation("logo1")) {
+				drawAnimation();
+				_gfx->copyToScreen();
+			}
+			qt = makeStars(_screenR, 0);
+			_gfx->clear(_gfx->black());
+		}
+
+		if (!qt) {
+			// Empty starfield 1
+			_sound->stop();
+			_sound->play(Sound::kStars3);
+			_gfx->copyToScreen();
+			qt = makeStars(_screenR, 0);
+			_gfx->clear(_gfx->black());
+		}
+
+		if (!qt) {
+			// Empty starfield 2
+			_sound->stop();
+			_sound->play(Sound::kStars4);
+			_gfx->copyToScreen();
+			qt = makeStars(_screenR, 0);
+			_gfx->clear(_gfx->black());
+		}
+
+		if (!qt)
+			qt = timeSquare("...BLACK HOLE COLLISION...", nullptr);
+
+		if (!qt) {
+			_gfx->clear(_gfx->black());
+			_gfx->copyToScreen();
+			qt = makeBlackHole();
+			_gfx->clear(_gfx->black());
+		}
+
+		if (!qt)
+			qt = timeSquare("...FUEL HAS BEEN DEPLETED...", nullptr);
+
+		if (!qt)
+			qt = timeSquare("...PREPARE FOR CRASH LANDING...", nullptr);
+
+		if (!qt) {
+			_sound->stop();
+			_sound->play(Sound::kStars4);
+			_gfx->clear(_gfx->black());
+			_gfx->copyToScreen();
+			qt = makePlanet();
+			_gfx->clear(_gfx->black());
+		}
+
+		// Final crash: DOS IBM_INTR.C lines 119-131
+		// Original: while(!SoundDone()) { EraseRect; PaintRect; } at ~8fps
+		_sound->stop();
+		_sound->play(Sound::kExplode);
+		int frame = 0;
+		while (!shouldQuit() && _sound->isPlaying()) {
+			_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+			_gfx->copyToScreen();
+			_system->delayMillis(125);
+			frame++;
+		}
+		_sound->stop();
+		_gfx->clear(_gfx->black());
+		_gfx->copyToScreen();
+
+		// Restore gameplay viewport
+		_screenR = savedScreenR;
+		_centerX = (_screenR.left + _screenR.right) / 2;
+		_centerY = (_screenR.top + _screenR.bottom) / 2;
 	}
 }
 
@@ -446,7 +555,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		int xx = centerX + (int)(((long long)s * rr) >> 7);
 		int yy = centerY + (int)(((long long)c * rr) >> 7);
 		if (xx >= 0 && xx < _width && yy >= 0 && yy < _height)
-			_gfx->setPixel(xx, yy, 15);
+			_gfx->setPixel(xx, yy, 0xFFFFFFFF);
 	}
 
 	// Initialize moving stars  original uses PenMode(patXor) so stars
@@ -475,7 +584,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
 		ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
 
-		_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
+		_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 	}
 	_gfx->copyToScreen();
 
@@ -488,7 +597,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 
 		for (int i = 0; i < NSTARS; i++) {
 			// Erase previous  XOR the same line again to restore underlying pixels
-			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
+			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 
 			int s = xang[i];
 			int c = yang[i];
@@ -511,7 +620,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
 
 			// Draw new star position
-			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 15);
+			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 		}
 		_gfx->copyToScreen();
 		_system->delayMillis(16);
@@ -545,7 +654,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 				int y1 = centerY + (int)(((long long)c * rr1) >> 7);
 				int x2 = centerX + (int)(((long long)s * rr2) >> 7);
 				int y2 = centerY + (int)(((long long)c * rr2) >> 7);
-				_gfx->drawLine(x1, y1, x2, y2, 15);
+				_gfx->drawLine(x1, y1, x2, y2, 0xFFFFFFFF);
 			}
 		}
 		_gfx->copyToScreen();
@@ -627,6 +736,164 @@ bool ColonyEngine::makeBlackHole() {
 	return false;
 }
 
+// intro.c makeplanet(): 3D wireframe planet with rotation and zoom-in.
+// Phase 1: draw background stars + initial sphere wireframe
+// Phase 2: rotate the planet in place (25 frames)
+// Phase 3: planet approaches the camera (zoom from dist 800 to 32)
+// All rendering in XOR mode so dots toggle on/off.
+bool ColonyEngine::makePlanet() {
+	static const int PDELTA = 16;
+	// Original rtable has 11585 entries; planet uses indices up to 800.
+	static const int RTABLE_SIZE = 801;
+
+	int rtable[RTABLE_SIZE];
+	rtable[0] = 32000;
+	for (int i = 1; i < RTABLE_SIZE; i++)
+		rtable[i] = (160 * 128) / i; // Floor=160
+
+	const int centerx = _width / 2;
+	const int centery = _height / 2;
+	const int sintheta = _sint[210];
+	const int costheta = _cost[210];
+
+	// Phase 1a: draw background stars
+	static const int STAR_COUNT = 192; // (800-32)/16 * 4 = ~192
+	int xstars[STAR_COUNT], ystars[STAR_COUNT];
+	int starcnt = 0;
+
+	_gfx->setXorMode(true);
+	for (int i = 800; i > 32 && starcnt < STAR_COUNT - 4; i -= 16) {
+		for (int m = 0; m < 4; m++) {
+			int sindex = _randomSource.getRandomNumber(255);
+			int xx = centerx + (int)(((long)rtable[i] * _sint[sindex]) >> 7);
+			int yy = centery + (int)(((long)rtable[i] * _cost[sindex]) >> 7);
+			if (starcnt < STAR_COUNT) {
+				xstars[starcnt] = xx;
+				ystars[starcnt] = yy;
+				starcnt++;
+			}
+			_gfx->setPixel(xx, yy, 0xFFFFFFFF);
+		}
+	}
+
+	// Phase 1b: draw initial planet wireframe at distance 800
+	// Sphere: j=latitude (0..255 step PDELTA), k=longitude (0..127 step PDELTA)
+	// Tilted by sintheta/costheta around X axis (viewing angle)
+	static const int MAX_POINTS = (256 / PDELTA) * (128 / PDELTA); // 16*8 = 128
+	int xsave[MAX_POINTS], ysave[MAX_POINTS];
+	bool zsave[MAX_POINTS];
+	int start = 0, dstart = 1;
+
+	long rt = rtable[800];
+	int save = 0;
+	for (int j = 0; j < 256; j += PDELTA) {
+		for (int k = start; k < 128; k += PDELTA) {
+			int xx = (int)(((rt * _sint[j]) >> 7) * _cost[k] >> 7);
+			int zz = (int)(((rt * _sint[j]) >> 7) * _sint[k] >> 7);
+			int y = (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
+			zz = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+			if (save < MAX_POINTS) {
+				zsave[save] = (zz >= 0);
+				if (zsave[save]) {
+					xsave[save] = xx + centerx;
+					ysave[save] = centery + y;
+					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
+				}
+				save++;
+			}
+		}
+	}
+	_gfx->copyToScreen();
+
+	// Phase 2: rotate the planet in place (25 frames)
+	for (int frame = 0; frame < 25; frame++) {
+		if (checkSkipRequested()) {
+			_gfx->setXorMode(false);
+			return true;
+		}
+
+		save = 0;
+		for (int j = 0; j < 256; j += PDELTA) {
+			for (int k = start, l = dstart; k < 128; k += PDELTA, l += PDELTA) {
+				if (save >= MAX_POINTS)
+					break;
+				// Erase old point
+				if (zsave[save])
+					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
+
+				rt = rtable[800];
+				int xx = (int)(((rt * _sint[j]) >> 7) * _cost[l] >> 7);
+				int zz = (int)(((rt * _sint[j]) >> 7) * _sint[l] >> 7);
+				int z = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+				zsave[save] = (z >= 0);
+				if (zsave[save]) {
+					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
+					xsave[save] = xx + centerx;
+					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
+				}
+				save++;
+			}
+		}
+		start++;
+		if (start == PDELTA)
+			start = 0;
+		dstart++;
+		if (dstart == PDELTA)
+			dstart = 0;
+		_gfx->copyToScreen();
+		_system->delayMillis(33);
+	}
+
+	// Phase 3: planet approaches camera (zoom from dist 800 to 32)
+	starcnt = 0;
+	for (int i = 800; i > 32; i -= 16) {
+		if (checkSkipRequested()) {
+			_gfx->setXorMode(false);
+			return true;
+		}
+
+		// Erase stars as planet passes them
+		for (int m = 0; m < 4 && starcnt < STAR_COUNT; m++) {
+			_gfx->setPixel(xstars[starcnt], ystars[starcnt], 0xFFFFFFFF);
+			starcnt++;
+		}
+
+		save = 0;
+		for (int j = 0; j < 256; j += PDELTA) {
+			for (int k = start, l = dstart; k < 128; k += PDELTA, l += PDELTA) {
+				if (save >= MAX_POINTS)
+					break;
+				// Erase old
+				if (zsave[save])
+					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
+
+				rt = rtable[i];
+				int xx = (int)(((rt * _sint[j]) >> 7) * _cost[l] >> 7);
+				int zz = (int)(((rt * _sint[j]) >> 7) * _sint[l] >> 7);
+				int z = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+				zsave[save] = (z >= 0);
+				if (zsave[save]) {
+					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
+					xsave[save] = xx + centerx;
+					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
+				}
+				save++;
+			}
+		}
+		start++;
+		if (start == PDELTA)
+			start = 0;
+		dstart++;
+		if (dstart == PDELTA)
+			dstart = 0;
+		_gfx->copyToScreen();
+		_system->delayMillis(16);
+	}
+
+	_gfx->setXorMode(false);
+	return false;
+}
+
 bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *macFont) {
 	// Original: TimeSquare() in intro.c
 	// 1. Draw horizontal blue gradient lines above/below center
@@ -684,27 +951,27 @@ bool ColonyEngine::timeSquare(const Common::String &str, const Graphics::Font *m
 		_system->delayMillis(8);
 	}
 
-	// Phase 2: Klaxon flash  original: EndCSound(); then 6 iterations of:
-	//   if(Button()) if(qt=OptionKey()) break;
-	//   while(!SoundDone()); StopSound(); PlayKlaxon(); InvertRect(&invrt);
-	_sound->stop(); // EndCSound()
+	// Phase 2: Klaxon flash — original intro.c lines 312-322:
+	// EndCSound(); for 6 iterations: wait for sound, stop, play klaxon,
+	// InvertRect. The klaxon is short (~200ms). Inversions happen rapidly
+	// at the start of each klaxon, creating a fast strobe effect.
+	_sound->stop();
+	_gfx->setXorMode(true);
 	for (int i = 0; i < 6; i++) {
-		if (checkSkipRequested())
+		if (checkSkipRequested()) {
+			_gfx->setXorMode(false);
 			return true;
-
-		// Wait for previous klaxon to finish
-		while (_sound->isPlaying() && !shouldQuit())
-			_system->delayMillis(10);
-		_sound->stop();
+		}
 
 		_sound->play(Sound::kKlaxon);
-
-		// InvertRect(&invrt)  toggle the text band
-		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), i % 2 ? 0 : 15);
-		_gfx->drawString(font, str, targetX, centery + 2, i % 2 ? 15 : 0, Graphics::kTextAlignLeft);
+		// InvertRect(&invrt) — XOR the text band
+		_gfx->fillRect(Common::Rect(0, centery + 1, _width, centery + 16), 0xFFFFFFFF);
 		_gfx->copyToScreen();
+		// Brief pause matching klaxon duration (~200ms)
+		_system->delayMillis(200);
 	}
-	// Wait for last klaxon
+	_gfx->setXorMode(false);
+	// Wait for last klaxon to finish
 	while (_sound->isPlaying() && !shouldQuit())
 		_system->delayMillis(10);
 	_sound->stop();
