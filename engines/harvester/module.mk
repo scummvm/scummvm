@@ -30,6 +30,7 @@ MODULE_OBJS = \
 	npc/priest_dialogue.o \
 	npc/pta_mom_dialogue.o \
 	npc/stub_dialogue.o \
+	npc/valet_dialogue.o \
 	npc/wasp_woman_dialogue.o \
 	resources.o \
 	runtime_entity.o \
