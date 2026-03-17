@@ -1345,11 +1345,11 @@ void PelrockEngine::pickupCondoms(HotSpot *hotspot) {
 }
 
 void PelrockEngine::openEgyptMuseumDoor(HotSpot *hotspot) {
-	openDoor(hotspot, 0, 59, MASCULINE, false);
+	openDoor(hotspot, 0, 68, MASCULINE, false);
 }
 
 void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
-	closeDoor(hotspot, 0, 59, MASCULINE, false);
+	closeDoor(hotspot, 0, 68, MASCULINE, false);
 }
 
 void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
