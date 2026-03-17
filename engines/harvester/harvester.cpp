@@ -415,6 +415,8 @@ void HarvesterEngine::setDisplayMode(int width, int height) {
 
 	initGraphics(width, height);
 	_screen = new Graphics::Screen();
+	_displayWidth = width;
+	_displayHeight = height;
 	debugC(1, kDebugGeneral, "Harvester: switched display mode to %dx%d", width, height);
 }
 

@@ -75,9 +75,12 @@ public:
 	ResourceManager *getResources() const { return _resources; }
 	RuntimeEntityManager *getRuntimeEntities() const { return _runtimeEntities; }
 	Graphics::Screen *getScreen() const { return _screen; }
+	int getDisplayWidth() const { return _displayWidth; }
+	int getDisplayHeight() const { return _displayHeight; }
 	StartupScript *getStartupScript() const { return _startupScript; }
 	StartupArt *getStartupArt() const { return _startupArt; }
 	StartupText *getStartupText() const { return _startupText; }
+	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
 	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
 	bool isStartupMusicPlaying() const;
@@ -98,7 +101,6 @@ public:
 	void stopStartupSound();
 
 private:
-	void setDisplayMode(int width, int height);
 	void stopStartupSoundHandle(Audio::SoundHandle &handle);
 	bool validateStartupLoadedSoundSlot(int slot) const;
 
@@ -115,6 +117,8 @@ private:
 	Common::Array<byte> _startupLoadedSoundData[4];
 	Audio::SoundHandle _startupLoadedSoundHandles[4];
 	Graphics::Screen *_screen = nullptr;
+	int _displayWidth = 0;
+	int _displayHeight = 0;
 	ResourceManager *_resources = nullptr;
 	RuntimeEntityManager *_runtimeEntities = nullptr;
 	StartupScript *_startupScript = nullptr;

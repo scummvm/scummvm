@@ -352,6 +352,14 @@ bool FstPlayer::play(const Common::String &path) {
 	byte palette[256 * 3] = { 0 };
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
+	const bool shouldSwitchToMovieDisplay =
+		header.width == 320 && header.height == 200 &&
+		(_vm.getDisplayWidth() != 320 || _vm.getDisplayHeight() != 200);
+	const int previousDisplayWidth = _vm.getDisplayWidth();
+	const int previousDisplayHeight = _vm.getDisplayHeight();
+	if (shouldSwitchToMovieDisplay)
+		_vm.setDisplayMode(320, 200);
+
 	const bool resumeMusicAfterPlayback = _vm.isStartupMusicPlaying();
 	if (resumeMusicAfterPlayback)
 		_vm.pauseStartupMusic(true);
@@ -487,6 +495,8 @@ bool FstPlayer::play(const Common::String &path) {
 	delete audioStream;
 	if (resumeMusicAfterPlayback)
 		_vm.pauseStartupMusic(false);
+	if (shouldSwitchToMovieDisplay)
+		_vm.setDisplayMode(previousDisplayWidth, previousDisplayHeight);
 
 	return !_vm.shouldQuit();
 }

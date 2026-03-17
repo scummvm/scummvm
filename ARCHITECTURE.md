@@ -178,6 +178,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `printf_ascii` prints the copyright line through `g_stdout_stream` after the `puts_ascii` version banner.
     - `set_random_seed` seeds `g_random_seed` from the first startup tick, and `next_random_value` is the 15-bit LCG step used by script/random branches.
     - `configure_video_surface` swaps `g_video_surface_context` between the normal gameplay surface and the narrower FST playback surface before the movie path hands off to `run_fst_sequence_player`.
+    - `play_fst_sequence` at `0x72550` is the wrapper that makes that swap visible to the rest of the engine: when a movie is triggered from the gameplay/UI side it pauses music, clears pending keypress state, switches the active surface back to `320x200x8` through `configure_video_surface(&g_video_surface_context, 0x140, 8, 1)`, runs the decoded FST player, then restores the `640`-wide gameplay surface with `configure_video_surface(&g_video_surface_context, 0x280)`, reapplies the gameplay palette, resets mouse bounds, and resumes music.
   - The video backend records behind that selector are now bounded as one linear VGA descriptor plus four 8bpp banked VESA descriptors:
     - `g_vga_mode_320x200_8bpp`
     - `g_vesa_mode_640x400_8bpp`
@@ -1098,7 +1099,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `run_fst_sequence_player` at `0x12b00` is the inner FST decoder/player reached from `play_fst_sequence`.
     - `FstFileHeader` is now a confirmed 0x20-byte header with fields `magic`, `width`, `height`, `max_frame_size`, `frame_count`, `frame_rate`, `sample_rate`, and `bits_per_sample`.
     - `FstFrameIndexEntry` is the 6-byte per-frame index record `{ video_size, audio_size }`; `run_fst_sequence_player` reads `frame_count` of them immediately after the header and then reads `video_size + audio_size` bytes for each frame.
-    - It configures `g_video_surface_context` from the header width/height at 8bpp backend class `1`, seeds PCM playback from the header sample rate / bits per sample, computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
+    - It assumes the wrapper has already switched back to the movie-capable surface, then configures `g_video_surface_context` again from the header width/height at 8bpp backend class `1`, seeds PCM playback from the header sample rate / bits per sample, computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
     - The frame loop queues each frame's PCM chunk before decode/blit and then waits until the cumulative playback cursor reaches the current frame's byte target; timer pacing is only the silent fallback.
     - `initialize_vesa_banked_mode` precomputes the banked-surface row tables that the movie decoder relies on:
       - `g_vesa_scanline_start_bank_indices` at `0xc7fca` gives the starting write-window bank for each possible scanline
