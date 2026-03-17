@@ -46,74 +46,77 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 	if (startupFlow.hasPendingMainMenuReturn())
 		return Common::kNoError;
 
-	StartupRoomSetupState state;
-	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
-		return Common::kReadingFailed;
+	Common::String currentRoomTarget = entranceName;
+	while (!currentRoomTarget.empty()) {
+		StartupRoomSetupState state;
+		if (!_engine.getStartupScript()->resolveRoomSetupState(currentRoomTarget, state, *_engine.getResources()))
+			return Common::kReadingFailed;
 
-	Common::Error transitionError = startupFlow.beginRoomSetupTransition();
-	if (transitionError.getCode() != Common::kNoError)
-		return transitionError;
+		Common::Error transitionError = startupFlow.beginRoomSetupTransition();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
 
-	StartupRoomSceneResources scene;
-	if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
-		return Common::kReadingFailed;
+		StartupRoomSceneResources scene;
+		if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
+			return Common::kReadingFailed;
 
-	auto getActiveScreen = [&]() -> Graphics::Screen * {
-		return _engine.getScreen();
-	};
-	Graphics::Screen *screen = getActiveScreen();
-	const StartupArt *art = _engine.getStartupArt();
-	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !art || !bodyFont)
-		return Common::kNoError;
+		auto getActiveScreen = [&]() -> Graphics::Screen * {
+			return _engine.getScreen();
+		};
+		Graphics::Screen *screen = getActiveScreen();
+		const StartupArt *art = _engine.getStartupArt();
+		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+		if (!screen || !art || !bodyFont)
+			return Common::kNoError;
 
-	if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-		return Common::kReadingFailed;
+		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
+			return Common::kReadingFailed;
 
-	logScenePaletteSummary("room setup stub palette", scene, 0.0f);
-	drawRoomScene(_engine, *screen, scene, 0.0f);
-	screen->makeAllDirty();
-	screen->update();
+		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
+		drawRoomScene(_engine, *screen, scene, 0.0f);
+		screen->makeAllDirty();
+		screen->update();
 
-	logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
-	transitionError = startupFlow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
-	if (transitionError.getCode() != Common::kNoError)
-		return transitionError;
+		logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
+		transitionError = startupFlow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
 
-	startupFlow.resetCursorAnimationSequence();
-	startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
-	if (!scene.state.musicPath.empty())
-		(void)_engine.playStartupMusic(scene.state.musicPath);
-	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
-	StartupRoomPlayerState playerState;
-	playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
-	playerState.centerX = state.playerSpawnX;
-	playerState.bottomY = state.playerSpawnY;
-	playerState.z = (float)state.playerSpawnZ;
-	playerState.facing = state.playerFacing;
-	playerState.turnActive = false;
-	playerState.turnTargetFacing = -1;
-	StartupResolvedText inspectText;
-	bool showingInspectText = false;
-	bool inspectCanDismiss = false;
-	bool moveLeft = false;
-	bool moveRight = false;
-	bool moveUp = false;
-	bool moveDown = false;
-	Common::String pendingRegionName;
-	StartupRoomIdleAnimationState idleState;
-	bool needsRedraw = true;
-	auto resetIdleState = [&]() {
-		idleState = StartupRoomIdleAnimationState();
-		idleState.activityTick = getRuntimeClockTicks();
-		idleState.resetTick = idleState.activityTick;
-		updatePlayerIdleTrigger(idleState);
-	};
-	auto notePlayerActivity = [&]() {
-		idleState.activityTick = getRuntimeClockTicks();
-		updatePlayerIdleTrigger(idleState);
-	};
-	resetIdleState();
+		startupFlow.resetCursorAnimationSequence();
+		startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
+		if (!scene.state.musicPath.empty())
+			(void)_engine.playStartupMusic(scene.state.musicPath);
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		StartupRoomPlayerState playerState;
+		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
+		playerState.centerX = state.playerSpawnX;
+		playerState.bottomY = state.playerSpawnY;
+		playerState.z = (float)state.playerSpawnZ;
+		playerState.facing = state.playerFacing;
+		playerState.turnActive = false;
+		playerState.turnTargetFacing = -1;
+		StartupResolvedText inspectText;
+		bool showingInspectText = false;
+		bool inspectCanDismiss = false;
+		bool moveLeft = false;
+		bool moveRight = false;
+		bool moveUp = false;
+		bool moveDown = false;
+		Common::String pendingRegionName;
+		Common::String pendingRoomChange;
+		StartupRoomIdleAnimationState idleState;
+		bool needsRedraw = true;
+		auto resetIdleState = [&]() {
+			idleState = StartupRoomIdleAnimationState();
+			idleState.activityTick = getRuntimeClockTicks();
+			idleState.resetTick = idleState.activityTick;
+			updatePlayerIdleTrigger(idleState);
+		};
+		auto notePlayerActivity = [&]() {
+			idleState.activityTick = getRuntimeClockTicks();
+			updatePlayerIdleTrigger(idleState);
+		};
+		resetIdleState();
 
 	auto openInventoryOverlay = [&]() {
 		moveLeft = false;
@@ -184,6 +187,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		StartupRoomSceneResources &scene;
 		StartupRoomPlayerState &playerState;
 		Common::String &pendingRegionName;
+		Common::String &pendingRoomChange;
 		decltype(refreshCurrentScene) &refreshCurrentSceneFn;
 		decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
 		decltype(runRoomExitCommands) &runRoomExitCommandsFn;
@@ -217,7 +221,19 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			}
 			startupFlow.executeStartupAudioCommands(interaction.audioCommands);
 
-			if (!interaction.nextRoomName.empty()) {
+			StartupRoomTransitionKind roomTransition = interaction.roomTransition;
+			if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
+				roomTransition = kStartupRoomTransitionCloseup;
+
+			if (!interaction.nextRoomName.empty() &&
+					roomTransition == kStartupRoomTransitionChangeRoom) {
+				if (!runRoomExitCommandsFn())
+					return Common::kReadingFailed;
+
+				// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
+				pendingRoomChange = interaction.nextRoomName;
+				didTransition = true;
+			} else if (!interaction.nextRoomName.empty()) {
 				if (!runRoomExitCommandsFn())
 					return Common::kReadingFailed;
 
@@ -305,7 +321,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		}
 	};
 	InteractionProcessor interactionProcessor = {
-		_engine, startupFlow, scene, playerState, pendingRegionName, refreshCurrentScene,
+		_engine, startupFlow, scene, playerState, pendingRegionName, pendingRoomChange,
+		refreshCurrentScene,
 		captureDialogueBackdrop, runRoomExitCommands, resetIdleState
 	};
 	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target, bool preferPickup) -> Common::Error {
@@ -389,11 +406,13 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldRunStartupRoomProbe())
-		logStartupRoomProbe(_engine, scene, entranceName, _mousePos);
+		logStartupRoomProbe(_engine, scene, currentRoomTarget, _mousePos);
 
 	while (!_engine.shouldQuit()) {
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
+		if (!pendingRoomChange.empty())
+			break;
 
 		if (needsRedraw) {
 			Graphics::Screen *activeScreen = getActiveScreen();
@@ -778,6 +797,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				break;
 			}
 		}
+		if (!pendingRoomChange.empty())
+			break;
 
 		if (updatePlayerTurnAnimationState(playerState))
 			needsRedraw = true;
@@ -812,6 +833,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
+		if (!pendingRoomChange.empty())
+			break;
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;
@@ -820,6 +843,15 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
+	}
+	if (_engine.shouldQuit())
+		return Common::kNoError;
+	if (startupFlow.hasPendingMainMenuReturn())
+		return Common::kNoError;
+	if (pendingRoomChange.empty())
+		return Common::kNoError;
+
+	currentRoomTarget = pendingRoomChange;
 	}
 
 	return Common::kNoError;

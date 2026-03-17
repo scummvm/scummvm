@@ -267,10 +267,20 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `room_setup` uses it as a fade-in from `0.0` to either `1.0` or the dimmed target `0.6`.
   - The helper updates music stream state between palette uploads instead of blocking in a tight delay loop.
 - `dispatch_room_event_actions` at `0x60ee0` interprets action records keyed by a tag string. It is used by `room_setup`, the main loop, and nested action groups.
+- `parse_command_record` at `0x5e410` now has enough parser evidence to anchor the room-handoff opcodes directly.
+  - `CHANGE_ROOM -> 0x02`
+  - `CLOSEUP -> 0x06`
+  - `EXIT_CLOSEUP -> 0x35`
+- Ordinary room changes are queued rather than performed directly inside the dispatcher.
+  - `CHANGE_ROOM` resolves `arg1` through `resolve_room_entrance`, stores `g_current_room_entrance`, and queues `g_pending_room_name = entrance->room_name`.
+  - `CLOSEUP` queues the raw room name from `arg1` and clears `g_player_present_in_room`, so `room_setup` builds the target without spawning the live player.
+  - `EXIT_CLOSEUP` restores `g_pending_room_name = g_player_room_name`, copies the live player position/facing into the `SAVE_GAME` entrance, and restores `g_player_present_in_room = 1`.
+- `run_harvester_main_loop` is the code that actually consumes `g_pending_room_name`.
+  - At the top of each gameplay iteration it checks for a queued handoff, clears any selected carried object / interaction text state that would leak across the boundary, and then calls `room_setup(g_pending_room_name)`.
 - `dispatch_room_event_actions` supports:
   - Conditional branching between alternate action tags
   - Recursive dispatch of named action groups
-  - Room transitions via `room_setup`
+  - Queued room handoffs via `g_pending_room_name` / `room_setup`
   - Palette and fade mode changes
   - FST / cutscene style playback
   - Sound and music loading / playback / stop operations
@@ -313,7 +323,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `parse_room_record` at `0x5fea0`
   - `parse_text_record` at `0x600b0`
   - `parse_timer_record` at `0x60160`
-- `parse_command_record` now has enough parser evidence to anchor the room-event combat-control opcodes directly.
+- `parse_command_record` now has enough parser evidence to anchor both room-handoff and combat-control opcodes directly.
+  - `CHANGE_ROOM -> 0x02`
+  - `CLOSEUP -> 0x06`
+  - `EXIT_CLOSEUP -> 0x35`
   - `KILL_NPC -> 0x0c`
   - `KILL_PC -> 0x0d`
   - `MONSTERFY -> 0x0e`
@@ -351,6 +364,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `g_timer_records` at `0xd5ad0` is the `TIMER` list.
 - `g_useitem_records` at `0xd5ad4` is the `USEITEM` list.
 - `g_pending_room_name` at `0xd60a4` is the pending next-room string consumed by the main loop.
+- `g_player_present_in_room` at `0xc3eb1` gates whether `room_setup` re-spawns the live player from `g_current_room_entrance` or instead injects the synthetic `EXIT_BM` / `EXIT_HS` closeup exits.
 - `g_game_session_active` at `0xc3f08` is the live gameplay-session gate shared by room setup, the save/load menus, and the game-over flow.
   - `run_save_game_menu` returns immediately when it is clear.
   - `run_load_game_menu` sets it before applying a slot.

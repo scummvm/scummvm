@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Rebuild talk-handler ports from corrected native control flow
-- Keep each NPC port scoped to confirmed native behavior only
-- Commit each completed NPC update as an isolated change
+- Match startup-room handoff behavior to the native `CHANGE_ROOM` / map-transition flow
+- Keep room and closeup transitions scoped to behavior confirmed in Ghidra
+- Only replace recursive engine behavior where the binary shows a queued pending-room handoff
 
 ## Progress
 
@@ -15,11 +15,11 @@
 
 ## Last Confirmed Action
 
-- Re-ran the native room-NPC spawn/update path from `room_setup` through `spawn_npc_entity_from_record` and `update_actor_runtime_state`.
-  - Native room NPCs are not allowed to free-run their full ABM. Ordinary passive NPC spawn seeds actor state `0x34` and clamps the live ambient frame window to `0..0x3b`; the higher banks are reserved for later state-machine-driven reactions, deaths, and monsterfy transitions.
-  - The engine startup-room NPC path now matches that bounded ambient loop instead of cycling every decoded frame in the ABM.
+- Recovered the native startup-room handoff path for `CHANGE_ROOM`, `CLOSEUP`, and `EXIT_CLOSEUP` from `parse_command_record`, `dispatch_room_event_actions`, and `run_harvester_main_loop`.
+  - `CHANGE_ROOM` resolves an entrance and queues `g_pending_room_name`; `CLOSEUP` queues a raw room name and clears `g_player_present_in_room`; the main loop later consumes `g_pending_room_name` and calls `room_setup`.
+  - Updated the Ghidra plate comments for those functions and changed the engine startup-room loop so `CHANGE_ROOM` now performs a same-loop handoff instead of recursing into a nested room loop and then rebuilding the source room on return.
 
 ## Next Suggested Action
 
-1. Exercise several room NPC ABMs with known post-`0x3b` reaction/death banks to confirm the bounded ambient loop fixes the visible over-seek without breaking passive idle playback.
-2. Continue the native actor-system pass on room monsters and any NPCs that rely on leaving ambient state `0x34`, so later startup-room behavior can move from static frame-window emulation toward the real class-4/class-6 state machine where needed.
+1. Run the live `PCHOUSE_X4B -> PCHOUSE_2_MAP` transition and confirm the room loop no longer rebuilds `PCHOUSE` after the click.
+2. Audit closeup exits against the native `EXIT_CLOSEUP` / `SAVE_GAME` handoff so closeups can eventually stop relying on recursive room-loop unwinding.
