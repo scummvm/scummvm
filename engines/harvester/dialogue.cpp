@@ -78,6 +78,7 @@
 #include "harvester/npc/ryder_dialogue.h"
 #include "harvester/npc/sergeant_dialogue.h"
 #include "harvester/npc/nude_man_dialogue.h"
+#include "harvester/palette_utils.h"
 #include "harvester/npc/stephanie_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/sparky_dialogue.h"
@@ -185,23 +186,9 @@ static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &f
 	font.drawString(&screen, text, x, y, width, color, align);
 }
 
-static void buildScaledPalette(const byte *source, float brightness, byte *dest) {
-	memset(dest, 0, 256 * 3);
-	if (!source)
-		return;
-
-	for (uint color = 1; color < 256; ++color) {
-		for (uint channel = 0; channel < 3; ++channel) {
-			const uint index = color * 3 + channel;
-			const int scaled = (int)(source[index] * brightness + 0.5f);
-			dest[index] = (byte)MIN<int>(scaled, 255);
-		}
-	}
-}
-
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	buildScaledPalette(palette, brightness, scaledPalette);
+	buildHarvesterDisplayPalette(palette, brightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
 
