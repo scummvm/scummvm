@@ -125,12 +125,17 @@ bool StartupInventorySystem::refresh() {
 			_items.push_back(visual);
 			continue;
 		}
-		if (isStatusObject(inventoryObject))
-			continue;
 
 		const Common::String spritePath = resolveSceneObjectSpritePath(inventoryObject);
 		if (!spritePath.empty() && loadBitmapResource(*resources, spritePath, visual.bitmap)) {
 			visual.hasBitmap = true;
+			if (isStatusObject(inventoryObject)) {
+				visual.bounds = Common::Rect(visual.object.currentX, visual.object.currentY,
+					visual.object.currentX + visual.bitmap.width, visual.object.currentY + visual.bitmap.height);
+				_items.push_back(visual);
+				continue;
+			}
+
 			if (nextX + (int)visual.bitmap.width > kInventoryItemMaxRight) {
 				nextX = kInventoryItemStartX;
 				nextY += rowHeight + kInventoryItemSpacing;
@@ -144,6 +149,11 @@ bool StartupInventorySystem::refresh() {
 			rowHeight = MAX<int>(rowHeight, visual.bitmap.height);
 		} else {
 			visual.bounds = getHotspotBounds(inventoryObject);
+		}
+
+		if (isStatusObject(inventoryObject)) {
+			_items.push_back(visual);
+			continue;
 		}
 
 		_items.push_back(visual);

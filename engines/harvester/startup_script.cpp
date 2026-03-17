@@ -40,6 +40,27 @@ static const char *const kDefaultVoicePath = "SOUND/VOICE/";
 static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
+static const int kDefaultPlayerHitPoints = 30;
+
+static int clampPlayerHitPoints(int hitPoints) {
+	if (hitPoints < 0)
+		return 0;
+	if (hitPoints > kDefaultPlayerHitPoints)
+		return kDefaultPlayerHitPoints;
+
+	return hitPoints;
+}
+
+static const char *resolveInventoryStatusObjectName(int hitPoints) {
+	if (hitPoints < 8)
+		return "INV_STAT4";
+	if (hitPoints < 15)
+		return "INV_STAT3";
+	if (hitPoints < 23)
+		return "INV_STAT2";
+
+	return "INV_STAT1";
+}
 
 static Common::String trimAsciiLine(const Common::String &value) {
 	uint start = 0;
@@ -690,6 +711,7 @@ void StartupScript::resetRuntimeState() {
 	_runtimeRegions = _regions;
 	_runtimeNpcs = _npcs;
 	_runtimeMonsters = _monsters;
+	_playerCurrentHitPoints = kDefaultPlayerHitPoints;
 
 	for (StartupObjectRecord &object : _runtimeObjects) {
 		object.currentX = object.initialX;
@@ -848,11 +870,29 @@ bool StartupScript::hasUseItemInteraction(const Common::String &itemName, const 
 
 void StartupScript::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const {
 	objects.clear();
+	const char *const statusObjectName = resolveInventoryStatusObjectName(_playerCurrentHitPoints);
+	const StartupObjectRecord *statusObject = nullptr;
 
 	for (const StartupObjectRecord &object : _runtimeObjects) {
+		if (object.objectName.hasPrefixIgnoreCase("INV_STAT")) {
+			if (object.objectName.equalsIgnoreCase(statusObjectName))
+				statusObject = &object;
+			continue;
+		}
+
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) && object.visible)
 			objects.push_back(object);
 	}
+
+	if (!statusObject)
+		return;
+
+	StartupObjectRecord activeStatusObject = *statusObject;
+	activeStatusObject.currentOwnerOrRoom = kInventoryOwnerName;
+	activeStatusObject.visible = true;
+	activeStatusObject.runtimeVisible = true;
+	activeStatusObject.identShown = true;
+	objects.push_back(activeStatusObject);
 }
 
 void StartupScript::markObjectIdentShown(const StartupObjectRecord &object) {
@@ -1099,6 +1139,13 @@ bool StartupScript::setRuntimeNpcState(const Common::String &npcName, bool activ
 	const bool changed = runtimeNpc->active != active || runtimeNpc->visible != visible;
 	runtimeNpc->active = active;
 	runtimeNpc->visible = visible;
+	return changed;
+}
+
+bool StartupScript::setPlayerCurrentHitPoints(int hitPoints) {
+	const int clampedHitPoints = clampPlayerHitPoints(hitPoints);
+	const bool changed = _playerCurrentHitPoints != clampedHitPoints;
+	_playerCurrentHitPoints = clampedHitPoints;
 	return changed;
 }
 
@@ -1500,6 +1547,20 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("HEAL_PC") ||
+			command->opcodeName.equalsIgnoreCase("ADJ_HP")) {
+			noteMutation(setPlayerCurrentHitPoints(
+				_playerCurrentHitPoints + atoi(command->arg1.c_str())));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("KILL_PC")) {
+			noteMutation(setPlayerCurrentHitPoints(0));
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			if (allowTransitions && nextRoomName) {
@@ -1550,6 +1611,9 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
 			command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
 			command->opcodeName.equalsIgnoreCase("MONSTERFY") ||
+			command->opcodeName.equalsIgnoreCase("HEAL_PC") ||
+			command->opcodeName.equalsIgnoreCase("ADJ_HP") ||
+			command->opcodeName.equalsIgnoreCase("KILL_PC") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			return true;
