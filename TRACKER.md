@@ -15,12 +15,11 @@
 
 ## Last Confirmed Action
 
-- Fixed the dialogue crash introduced by the recovered movie-surface switch.
-  - The native `play_fst_sequence @ 0x72550` surface swap was correct, but `DialogueSystem::runRoomNpcDialogue` had cached `_engine.getScreen()` before FST playback and kept using that freed `Graphics::Screen` after `setDisplayMode()` recreated it.
-  - Dialogue rendering now resolves the active screen on demand for palette, blit, and cursor draws after FST playback returns, so native-style dialogue movie playback can switch `320x200` movie mode in and back out without leaving stale screen pointers behind.
+- Fixed the room-loop crash exposed by the recovered movie-surface switch.
+  - The native `play_fst_sequence @ 0x72550` surface swap remains correct, but `StartupRoomSystem::runRoomLoop` had cached `_engine.getScreen()` at room entry and kept reusing that freed `Graphics::Screen` for room redraws, dialogue-backdrop capture, and ESC room-menu capture after `setDisplayMode()` recreated the screen.
+  - Room rendering now resolves the active screen on demand in those post-FST paths, so dialogue movie playback can return to the `640`-wide gameplay UI without leaving the room loop holding a stale screen pointer.
 
 ## Next Suggested Action
 
-1. Exercise the remaining in-game FST callers against the shared movie-surface switch and confirm whether any of them rely on an additional redraw step after playback returns to the `640`-wide gameplay UI.
-   - The wrapper and dialogue system now both survive the mode transition, but the surrounding caller-side redraw expectations still need a quick pass across other dialogue-triggered clips and death-FST playback.
-2. Apply any additional high-confidence Ghidra renames or comments that fall directly out of that next confirmed thread before the next commit.
+1. Audit the remaining long-lived `_engine.getScreen()` caches that can survive an FST-triggered mode swap, especially startup/menu loops that redraw after returning from shared movie playback.
+2. Exercise other in-game FST callers, including death-FST and menu-adjacent playback, to confirm whether any caller still needs an explicit active-screen refresh or redraw after the native `320x200` movie surface returns to the gameplay UI.
