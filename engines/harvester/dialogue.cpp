@@ -474,6 +474,10 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	if (genericByeTopic.empty())
 		genericByeTopic = "BYE";
 
+	auto getActiveScreen = [&]() -> Graphics::Screen * {
+		return _engine.getScreen();
+	};
+
 	IndexedBitmap leftHeadBitmap;
 	IndexedBitmap rightHeadBitmap;
 	Common::String leftHeadSpeakerId = buildDialogueHeadId(npc.npcName, 0);
@@ -506,10 +510,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 	auto drawFontString = [&](const Graphics::Font &font, bool usesCft, const Common::String &text,
 			int x, int y, int width, byte color) {
+		Graphics::Screen *activeScreen = getActiveScreen();
+		if (!activeScreen)
+			return;
+
 		if (usesCft)
-			font.drawString(screen, text, x, y, width, 0);
+			font.drawString(activeScreen, text, x, y, width, 0);
 		else
-			drawShadowedString(*screen, font, text, x, y, width, color);
+			drawShadowedString(*activeScreen, font, text, x, y, width, color);
 	};
 
 	auto ensureSpeakerPortrait = [&](const Common::String &speakerId, int headVariant) {
@@ -548,23 +556,27 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	auto drawDialogueOverlay = [&](const IndexedBitmap *overlayBitmap,
 			const Common::Array<Common::String> *subtitleLines, const Common::Array<Common::String> *topics,
 			int hoveredTopicIndex, bool hoverOther, const Common::String *textEntryValue) {
-		setScaledPalette(*screen, palette, paletteBrightness);
-		blitBitmap(*screen, backdrop, 0, 0);
+		Graphics::Screen *activeScreen = getActiveScreen();
+		if (!activeScreen)
+			return;
+
+		setScaledPalette(*activeScreen, palette, paletteBrightness);
+		blitBitmap(*activeScreen, backdrop, 0, 0);
 		if (leftHeadVisible && leftHeadBitmap.isValid())
-			blitTransparentBitmap(*screen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+			blitTransparentBitmap(*activeScreen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
 		if (rightHeadVisible && rightHeadBitmap.isValid())
-			blitTransparentBitmap(*screen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+			blitTransparentBitmap(*activeScreen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
 		if (overlayBitmap && overlayBitmap->isValid())
-			blitTransparentBitmap(*screen, *overlayBitmap, kDialogueOverlayX, kDialogueOverlayY);
+			blitTransparentBitmap(*activeScreen, *overlayBitmap, kDialogueOverlayX, kDialogueOverlayY);
 
 		if (subtitleLines) {
 			if (subtitleFontUsesCft)
-				drawDialogueTextLines(*screen, *subtitleFont, *subtitleLines,
+				drawDialogueTextLines(*activeScreen, *subtitleFont, *subtitleLines,
 					kDialogueSubtitleTextX, kDialogueSubtitleTextY, kDialogueSubtitleTextWidth);
 			else {
 				const int lineHeight = getDialogueTextLineHeight(*subtitleFont);
 				for (uint i = 0; i < subtitleLines->size(); ++i) {
-					drawShadowedString(*screen, *subtitleFont, (*subtitleLines)[i],
+					drawShadowedString(*activeScreen, *subtitleFont, (*subtitleLines)[i],
 						kDialogueSubtitleTextX,
 						kDialogueSubtitleTextY + (int)i * lineHeight,
 						kDialogueSubtitleTextWidth, kTextColorNormal);
@@ -596,9 +608,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		}
 
 		if (runtimeEntities)
-			runtimeEntities->drawCursor(*screen);
-		screen->makeAllDirty();
-		screen->update();
+			runtimeEntities->drawCursor(*activeScreen);
+		activeScreen->makeAllDirty();
+		activeScreen->update();
 	};
 
 	auto playDialogueLineWithVariant = [&](int wavId, const Common::String &speakerId, int headVariant) -> Common::Error {
@@ -864,14 +876,18 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 	auto drawDialogueResponseMenu = [&](const IndexedBitmap *textboxBitmap,
 			const Common::Array<DialogueResponseOptionLayout> &options, int hoveredOptionIndex) {
-		setScaledPalette(*screen, palette, paletteBrightness);
-		blitBitmap(*screen, backdrop, 0, 0);
+		Graphics::Screen *activeScreen = getActiveScreen();
+		if (!activeScreen)
+			return;
+
+		setScaledPalette(*activeScreen, palette, paletteBrightness);
+		blitBitmap(*activeScreen, backdrop, 0, 0);
 		if (leftHeadVisible && leftHeadBitmap.isValid())
-			blitTransparentBitmap(*screen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
+			blitTransparentBitmap(*activeScreen, leftHeadBitmap, kDialogueLeftHeadX, kDialogueHeadY);
 		if (rightHeadVisible && rightHeadBitmap.isValid())
-			blitTransparentBitmap(*screen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
+			blitTransparentBitmap(*activeScreen, rightHeadBitmap, kDialogueRightHeadX, kDialogueHeadY);
 		if (textboxBitmap && textboxBitmap->isValid())
-			blitTransparentBitmap(*screen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
+			blitTransparentBitmap(*activeScreen, *textboxBitmap, kDialogueOverlayX, kDialogueOverlayY);
 
 		const Common::String title = "Responses";
 		const Graphics::Font &titleFont = *highlightFont;
@@ -896,9 +912,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		}
 
 		if (runtimeEntities)
-			runtimeEntities->drawCursor(*screen);
-		screen->makeAllDirty();
-		screen->update();
+			runtimeEntities->drawCursor(*activeScreen);
+		activeScreen->makeAllDirty();
+		activeScreen->update();
 	};
 
 	auto runResponseMenuText = [&](const Common::String &responseLine, int responseLineIndex,
