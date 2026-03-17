@@ -24,6 +24,7 @@
 #include <cstdlib>
 
 #include "common/debug.h"
+#include "common/endian.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "harvester/detection.h"
@@ -129,6 +130,33 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	}
 
 	return false;
+}
+
+static bool loadBitmapDimensions(ResourceManager &resources, const Common::String &path,
+		uint32 &width, uint32 &height) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 8)
+		return false;
+
+	width = READ_LE_UINT32(data.data());
+	height = READ_LE_UINT32(data.data() + 4);
+	return true;
+}
+
+static bool isRoomBackgroundObject(const StartupObjectRecord &candidate, const StartupRoomRecord &room,
+		ResourceManager &resources) {
+	if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room.roomName) ||
+			candidate.spritePath.empty() ||
+			candidate.initialX != 0 || candidate.initialY != 0) {
+		return false;
+	}
+
+	uint32 width = 0;
+	uint32 height = 0;
+	if (!loadBitmapDimensions(resources, candidate.spritePath, width, height))
+		return false;
+
+	return width == 640 && height == 480;
 }
 
 static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Common::String> &tokens) {
@@ -571,14 +599,16 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources) {
-	(void)resources;
 	state = StartupRoomSetupState();
 
 	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
 	const Common::String resolvedRoomName = entrance ? entrance->roomName : entranceName;
 	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
-	if (!room)
+	if (!room) {
+		warning("Harvester: unresolved room setup target '%s' (resolved room '%s')",
+			entranceName.c_str(), resolvedRoomName.c_str());
 		return false;
+	}
 
 	Common::String musicPath;
 	Common::Array<StartupAudioCommand> audioCommands;
@@ -587,7 +617,7 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		&musicPath, &audioCommands, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
 		&mutatedRuntimeState);
 
-	if (!buildRuntimeRoomState(*room, entrance, state))
+	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
 	state.audioCommands = audioCommands;
@@ -636,7 +666,7 @@ void StartupScript::resetRuntimeState() {
 }
 
 bool StartupScript::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
-		StartupRoomSetupState &state) const {
+		StartupRoomSetupState &state, ResourceManager &resources) const {
 	state = StartupRoomSetupState();
 
 	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
@@ -647,10 +677,13 @@ bool StartupScript::materializeRoomState(const Common::String &entranceName, con
 		return false;
 
 	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
-	if (!room)
+	if (!room) {
+		warning("Harvester: unresolved materialized room target entrance='%s' room='%s'",
+			entranceName.c_str(), resolvedRoomName.c_str());
 		return false;
+	}
 
-	return buildRuntimeRoomState(*room, entrance, state);
+	return buildRuntimeRoomState(*room, entrance, resources, state);
 }
 
 bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
@@ -1037,22 +1070,20 @@ bool StartupScript::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcN
 }
 
 bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
-		StartupRoomSetupState &state) const {
+		ResourceManager &resources, StartupRoomSetupState &state) const {
 	state = StartupRoomSetupState();
 
 	const StartupObjectRecord *background = nullptr;
 	for (const StartupObjectRecord &candidate : _runtimeObjects) {
-		if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room.roomName) ||
-			!candidate.spritePath.hasPrefixIgnoreCase("GRAPHIC/ROOMS/") ||
-			!candidate.spritePath.hasSuffixIgnoreCase(".BM")) {
-			continue;
+		if (isRoomBackgroundObject(candidate, room, resources)) {
+			background = &candidate;
+			break;
 		}
-
-		background = &candidate;
-		break;
 	}
-	if (!background)
+	if (!background) {
+		warning("Harvester: no fullscreen background object found for room '%s'", room.roomName.c_str());
 		return false;
+	}
 
 	state.roomName = room.roomName;
 	state.palettePath = room.palettePath;

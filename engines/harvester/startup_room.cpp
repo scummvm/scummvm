@@ -133,7 +133,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
 		StartupRoomSetupState refreshedState;
 		if (!_engine.getStartupScript()->materializeRoomState(
-				scene.state.entranceName, scene.state.roomName, refreshedState)) {
+				scene.state.entranceName, scene.state.roomName, refreshedState, *_engine.getResources())) {
 			return false;
 		}
 

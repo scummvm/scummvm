@@ -285,7 +285,7 @@ public:
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
-		StartupRoomSetupState &state) const;
+		StartupRoomSetupState &state, ResourceManager &resources) const;
 		bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
 		bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
 		bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
@@ -335,7 +335,7 @@ private:
 	StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName);
 	const StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
-		StartupRoomSetupState &state) const;
+		ResourceManager &resources, StartupRoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
