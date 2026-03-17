@@ -404,7 +404,7 @@ ScaleCalculation GraphicsManager::calculateScaling(int yPos, ScalingParams scali
 }
 
 byte *GraphicsManager::scale(int scaleY, int finalWidth, int finalHeight, byte *buf) {
-	// The scaling table is indexed by how many scanlines to skip (scaleY), not by final height
+	// The table marks which source rows to skip: non-zero = skip.
 	int scaleIndex = scaleY;
 	if (scaleIndex >= (int)_heightScalingTable.size()) {
 		scaleIndex = _heightScalingTable.size() - 1;
@@ -412,69 +412,26 @@ byte *GraphicsManager::scale(int scaleY, int finalWidth, int finalHeight, byte *
 	if (scaleIndex < 0) {
 		scaleIndex = 0;
 	}
-	int linesToSkip = kAlfredFrameHeight - finalHeight;
 
 	byte *finalBuf = new byte[finalWidth * finalHeight];
+	memset(finalBuf, 255, finalWidth * finalHeight);
 
-	if (linesToSkip > 0) {
-		int skipInterval = kAlfredFrameHeight / linesToSkip;
-		Common::Array<float> idealSkipPositions;
-		for (int i = 0; i < linesToSkip; i++) {
-			float idealPos = (i + 0.5f) * skipInterval;
-			idealSkipPositions.push_back(idealPos);
-		}
-
-		Common::Array<int> tableSkipPositions;
-		for (int scanline = 0; scanline < kAlfredFrameHeight; scanline++) {
-			if (_heightScalingTable[scaleIndex][scanline] != 0) {
-				tableSkipPositions.push_back(scanline);
-			}
-		}
-
-		Common::Array<int> skipTheseLines;
-		for (size_t i = 0; i < idealSkipPositions.size(); i++) {
-			float idealPos = idealSkipPositions[i];
-			int closest = -1;
-			int minDiff = INT32_MAX;
-			for (size_t j = 0; j < tableSkipPositions.size(); j++) {
-				int candidate = tableSkipPositions[j];
-				int diff = static_cast<int>(abs(candidate - idealPos));
-				if (diff < minDiff) {
-					minDiff = diff;
-					closest = candidate;
-				}
-			}
-			if (closest != -1) {
-				skipTheseLines.push_back(closest);
-			}
-			if (skipTheseLines.size() >= static_cast<size_t>(linesToSkip)) {
-				break;
-			}
-		}
-
+	if (scaleIndex > 0) {
 		int outY = 0;
-		for (int srcY = 0; srcY < kAlfredFrameHeight; srcY++) {
-			bool skipLine = false;
-			for (size_t skipIdx = 0; skipIdx < skipTheseLines.size(); ++skipIdx) {
-				if (skipTheseLines[skipIdx] == srcY) {
-					skipLine = true;
-					break;
-				}
+		for (int srcY = 0; srcY < kAlfredFrameHeight && outY < finalHeight; srcY++) {
+			// Skip rows where the height scaling table says to skip (non-zero value)
+			if (_heightScalingTable[scaleIndex][srcY] != 0) {
+				continue;
 			}
-			if (!skipLine) {
-				for (int outX = 0; outX < finalWidth; outX++) {
-					int srcX = static_cast<int>(outX * kAlfredFrameWidth / finalWidth);
-					if (srcX >= kAlfredFrameWidth) {
-						srcX = kAlfredFrameWidth - 1;
-					}
-					int srcIndex = srcY * kAlfredFrameWidth + srcX;
-					int outIndex = outY * finalWidth + outX;
-					if (outIndex >= finalWidth * finalHeight || srcIndex >= kAlfredFrameWidth * kAlfredFrameHeight) {
-					} else
-						finalBuf[outIndex] = buf[srcIndex];
+
+			for (int outX = 0; outX < finalWidth; outX++) {
+				int srcX = outX * kAlfredFrameWidth / finalWidth;
+				if (srcX >= kAlfredFrameWidth) {
+					srcX = kAlfredFrameWidth - 1;
 				}
-				outY++;
+				finalBuf[outY * finalWidth + outX] = buf[srcY * kAlfredFrameWidth + srcX];
 			}
+			outY++;
 		}
 	} else {
 		Common::copy(buf, buf + (kAlfredFrameWidth * kAlfredFrameHeight), finalBuf);
