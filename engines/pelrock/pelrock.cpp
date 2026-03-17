@@ -20,20 +20,14 @@
  */
 
 #include "common/config-manager.h"
-#include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/scummsys.h"
-#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
-#include "image/pcx.h"
-#include "image/png.h"
 
-#include "backends/audiocd/audiocd.h"
-
+#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/computer.h"
 #include "pelrock/console.h"
@@ -98,7 +92,9 @@ bool PelrockEngine::isAlternateTiming() const {
 	return ConfMan.getBool("alternate_timing");
 }
 
-// Common::Array<Common::Array<Common::String>> wordWrap(Common::String text);
+bool PelrockEngine::isScreenSaverDisabled() const {
+	return ConfMan.getBool("disable_screensaver");
+}
 
 Common::Error PelrockEngine::run() {
 	// Initialize 320x200 paletted graphics mode
@@ -761,7 +757,7 @@ void PelrockEngine::lookAt(HotSpot *hotspot) {
 
 void PelrockEngine::chooseAlfredStateAndDraw() {
 	if (_alfredState.animState != ALFRED_IDLE &&
-		 _alfredState.animState != ALFRED_COMB // need to exclude comb so that screen saver can still engage
+		_alfredState.animState != ALFRED_COMB // need to exclude comb so that screen saver can still engage
 	) {
 		_alfredState.resetIdles(); // reset idle frame counter when not idle
 	} else {
@@ -772,11 +768,13 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.idleFrameCounter = 0;
 			_alfredState.setState(ALFRED_COMB);
 		}
-		if(_alfredState.screenSaverFrameCounter++ >= kAlfredIdleScreenSaverFrameCount &&
+		if (_alfredState.screenSaverFrameCounter++ >= kAlfredIdleScreenSaverFrameCount &&
 			_alfredState.animState == ALFRED_IDLE) {
-			SlidingPuzzle slidingPuzzle(_events, _sound);
-			_alfredState.screenSaverFrameCounter = 0;
-			slidingPuzzle.run();
+			if (!isScreenSaverDisabled()) {
+				SlidingPuzzle slidingPuzzle(_events, _sound);
+				_alfredState.screenSaverFrameCounter = 0;
+				slidingPuzzle.run();
+			}
 		}
 	}
 
@@ -1492,60 +1490,8 @@ int PelrockEngine::checkMouseClickInventoryOverlay(int x, int y) {
 }
 
 void PelrockEngine::gameLoop() {
-
 	_events->pollEvent();
 	checkMouse();
-
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_m) {
-		travelToEgypt();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_n) {
-		loadExtraScreenAndPresent(10);
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_p) {
-		antiPiracyEffect();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_w) {
-		Computer computer(_events);
-
-		computer.run();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_e && _room->_currentRoomNumber == 52) {
-		teleportToPrincess();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_q) {
-		endingScene();
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_u) {
-		if (_room->_currentRoomNumber == 36) {
-			pyramidCollapse();
-		}
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_k) {
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-		credits();
-	}
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_v) {
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-		SlidingPuzzle puzzle(_events, _sound);
-		puzzle.run();
-	}
-
-	if (_events->_lastKeyEvent == Common::KeyCode::KEYCODE_h) {
-		_events->_lastKeyEvent = Common::KeyCode::KEYCODE_INVALID;
-		antiPiracyEffect();
-	}
-
 	renderScene();
 	_screen->update();
 }

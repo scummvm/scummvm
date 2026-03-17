@@ -210,6 +210,8 @@ public:
 	 */
 	bool isAlternateTiming() const;
 
+	bool isScreenSaverDisabled() const;
+
 	bool hasFeature(EngineFeature f) const override {
 		return (f == kSupportsLoadingDuringRuntime) ||
 			   (f == kSupportsSavingDuringRuntime) ||

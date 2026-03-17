@@ -62,6 +62,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_DISABLE_SCREENSAVER,
+		{
+			_s("Disable screensaver"),
+			_s("Disable original screensaver slider mini-game every 60 seconds."),
+			"disable_screensaver",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
