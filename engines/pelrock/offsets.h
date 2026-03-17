@@ -229,7 +229,7 @@ enum TextStringId {
 
 // ALFRED.7 extra screen data (file offsets given per entry in extraScreens[])
 static const ExtraScreen extraScreens[] = {
-	{0x00007984, 0x000305A2, 8},      // 0 - Portrait above bed
+	{0x0000000, 0x0007984, 8},      // 0 - Portrait above bed
 	{0x001A9EE, 0x00305A2, 8},        // 1 - Computer screen
 	{0x00647C3, 0x007B6B1, 4},        // 2 - Alfred circle
 	{0x006FBCD, 0x007B6B1, 8},        // 3 - Recipe
@@ -237,13 +237,13 @@ static const ExtraScreen extraScreens[] = {
 	{0x009237B, 0x00B0EE7, 8},        // 5 - Tablet
 	{0x00B11F1, 0x00DE011, 8},        // 6 - Map
 	{0x00FFC47, 0x01180C9, 8},        // 7 - Girl book
-	{0x118649,  0x135A13, 8},         // 8 - Unknown
-	{0x152A88,  0x15BFC8, 8},         // 9 - Portrait
-	{0x299E0C,  0x2B3C3C, 8},         // 10 - CD
-	{0x2B3F1C,  0x2D5B18, 8},         // 11 - Pyramid map
-	{0x232B1A,  0x237C28, 8},         // 12 - CENSORED
-	{0x226358,  0x236AA8, 8},         // 13 - Background book
-	{0x2EBD12,  0x309E40, 8}          // 14 - Ending
+	{0x01183C9, 0x01358F3, 8},         // 8 - Spellbook
+	{0x0152A88, 0x015BFC8, 8},         // 9 - Portrait
+	{0x0299E8C, 0x02B3B7C, 8},         // 10 - CD
+	{0x02B3E7C, 0x02D5898, 8},         // 11 - Pyramid map
+	{0x02331EA, 0x0236AA8, 8},         // 12 - CENSORED
+	{0x0226358, 0x0236AA8, 8},         // 13 - Background book
+	{0x02EAA32, 0x0309A80, 8}          // 14 - Ending
 };
 
 
