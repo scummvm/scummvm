@@ -1609,14 +1609,24 @@ Common::Error StartupFlow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
 
+	clearPendingMainMenuReturn();
 	resetRoomNpcDialogueState();
 	_engine.getStartupScript()->resetRuntimeState();
 	Common::Error error = runQuickTips();
 	if (error.getCode() != Common::kNoError)
 		return error;
 
+	clearPendingMainMenuReturn();
 	_engine.getStartupScript()->resetRuntimeState();
-	return runRoomLoop("START");
+	error = runRoomLoop("START");
+	if (error.getCode() != Common::kNoError)
+		return error;
+	if (!takePendingMainMenuReturn())
+		return Common::kNoError;
+
+	_engine.stopStartupMusic();
+	_engine.stopStartupSound();
+	return runMainMenuStub();
 }
 
 bool StartupFlow::loadQuickTips() {
@@ -1792,6 +1802,24 @@ bool StartupFlow::takeQueuedDialogueInteraction(StartupInteractionResult &intera
 	_queuedDialogueInteraction = StartupInteractionResult();
 	_hasQueuedDialogueInteraction = false;
 	return true;
+}
+
+void StartupFlow::requestMainMenuReturn() {
+	_pendingMainMenuReturn = true;
+}
+
+bool StartupFlow::hasPendingMainMenuReturn() const {
+	return _pendingMainMenuReturn;
+}
+
+bool StartupFlow::takePendingMainMenuReturn() {
+	const bool requested = _pendingMainMenuReturn;
+	_pendingMainMenuReturn = false;
+	return requested;
+}
+
+void StartupFlow::clearPendingMainMenuReturn() {
+	_pendingMainMenuReturn = false;
 }
 
 Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {

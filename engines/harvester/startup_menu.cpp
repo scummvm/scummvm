@@ -191,13 +191,19 @@ Common::Error StartupMenuSystem::runMainMenuStub(StartupFlow &startupFlow) {
 						return Common::kNoError;
 
 					if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+						startupFlow.clearPendingMainMenuReturn();
 						_engine.getStartupScript()->resetRuntimeState();
 						Common::Error roomError = startupFlow.runRoomLoop("START");
+						_engine.stopStartupMusic();
+						_engine.stopStartupSound();
 						if (roomError.getCode() == Common::kReadingFailed) {
 							statusMessage = "Unable to resolve START room setup from HARVEST.SCR.";
 							needsRedraw = true;
 						} else if (roomError.getCode() != Common::kNoError) {
 							return roomError;
+						} else if (startupFlow.takePendingMainMenuReturn()) {
+							statusMessage = "Returned to main menu after startup death sequence.";
+							needsRedraw = true;
 						} else {
 							statusMessage = "Resolved START room handoff from HARVEST.SCR.";
 							needsRedraw = true;
@@ -221,6 +227,7 @@ Common::Error StartupMenuSystem::runMainMenuStub(StartupFlow &startupFlow) {
 					return Common::kNoError;
 
 				if (_menuItems[selectedItem].equalsIgnoreCase("NEW GAME")) {
+					startupFlow.clearPendingMainMenuReturn();
 					_engine.getStartupScript()->resetRuntimeState();
 					Common::Error roomError = startupFlow.runRoomLoop("START");
 					_engine.stopStartupMusic();
@@ -230,6 +237,9 @@ Common::Error StartupMenuSystem::runMainMenuStub(StartupFlow &startupFlow) {
 						needsRedraw = true;
 					} else if (roomError.getCode() != Common::kNoError) {
 						return roomError;
+					} else if (startupFlow.takePendingMainMenuReturn()) {
+						statusMessage = "Returned to main menu after startup death sequence.";
+						needsRedraw = true;
 					} else {
 						statusMessage = "Resolved START room handoff from HARVEST.SCR.";
 						needsRedraw = true;

@@ -584,7 +584,7 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	Common::Array<StartupAudioCommand> audioCommands;
 	bool mutatedRuntimeState = false;
 	executeCommandChain(room->onEnterCommand, "room setup command", room->roomName, false,
-		&musicPath, &audioCommands, nullptr, nullptr, nullptr, &mutatedRuntimeState);
+		&musicPath, &audioCommands, nullptr, nullptr, nullptr, nullptr, nullptr, &mutatedRuntimeState);
 
 	if (!buildRuntimeRoomState(*room, entrance, state))
 		return false;
@@ -662,7 +662,7 @@ bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
 
 	bool mutatedRuntimeState = false;
 	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
-		nullptr, &audioCommands, nullptr, nullptr, nullptr, &mutatedRuntimeState);
+		nullptr, &audioCommands, nullptr, nullptr, nullptr, nullptr, nullptr, &mutatedRuntimeState);
 	return true;
 }
 
@@ -683,10 +683,12 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 
 	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.deathFlicPath, &result.requestMainMenu,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 
-	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
-		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
+	return !result.nextRoomName.empty() || !result.deathFlicPath.empty() || result.requestMainMenu ||
+		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
 bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
@@ -696,9 +698,11 @@ bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, 
 
 	executeCommandChain(region.actionTag, "region command", region.regionName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.deathFlicPath, &result.requestMainMenu,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
-	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
-		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
+	return !result.nextRoomName.empty() || !result.deathFlicPath.empty() || result.requestMainMenu ||
+		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
 
 bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
@@ -712,6 +716,7 @@ bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, co
 	executeCommandChain(useItem->actionTag, "useitem command",
 		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()), true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.deathFlicPath, &result.requestMainMenu,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 	return true;
 }
@@ -724,10 +729,12 @@ bool StartupScript::executeActionTag(const Common::String &tag, StartupInteracti
 
 	executeCommandChain(tag, "action tag", tag, allowTransitions,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName,
+		&result.deathFlicPath, &result.requestMainMenu,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.mutatedRuntimeState);
 
-	return !result.nextRoomName.empty() || !result.dialogueNpcName.empty() || !result.musicPath.empty() ||
-		!result.audioCommands.empty() || result.mutatedRuntimeState || hasActionableCommandChain(tag);
+	return !result.nextRoomName.empty() || !result.deathFlicPath.empty() || result.requestMainMenu ||
+		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
 bool StartupScript::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
@@ -1093,7 +1100,8 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 void StartupScript::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
-		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
+		Common::String *deathFlicPath, bool *requestMainMenu, Common::String *dialogueNpcName,
+		Common::String *dialogueContinuationTag,
 		bool *mutatedRuntimeState) {
 	auto isTruthy = [](const Common::String &value) {
 		return value.equalsIgnoreCase("T") || value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE");
@@ -1288,6 +1296,23 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			return;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("GODEATHFLIC")) {
+			if (!deathFlicPath || !requestMainMenu) {
+				debug(1, "Harvester: unsupported startup command '%s' for %s '%s' without menu-exit context",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+				return;
+			}
+
+			if (allowTransitions) {
+				*deathFlicPath = command->arg1;
+				*requestMainMenu = true;
+			} else {
+				debugC(1, kDebugScene, "Harvester: skipped transition opcode '%s' while processing %s '%s'",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+			}
+			return;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
 				command->opcodeName.equalsIgnoreCase("MONSTERFY")) {
 			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
@@ -1364,6 +1389,7 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
 			command->opcodeName.equalsIgnoreCase("SET_MONSTER") ||
 			command->opcodeName.equalsIgnoreCase("START_DIALOG") ||
+			command->opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
 			command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
 			command->opcodeName.equalsIgnoreCase("MONSTERFY") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
