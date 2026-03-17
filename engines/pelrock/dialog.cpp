@@ -648,6 +648,7 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 			}
 
 			if (!foundExpectedLevel) {
+				delete choices;
 				break;
 			}
 		}
@@ -673,6 +674,9 @@ void DialogManager::startConversation(const byte *conversationData, uint32 dataS
 		}
 
 		state.position = processChoiceSelection(conversationData, dataSize, choices, selectedIndex, state);
+		if (choices != _currentChoices) {
+			delete choices;
+		}
 	}
 
 	debug("Conversation ended");

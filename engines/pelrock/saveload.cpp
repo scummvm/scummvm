@@ -366,6 +366,7 @@ void PelrockEngine::loadGame(SaveGameData &saveGame) {
 	_alfredState.x = saveGame.alfredX;
 	_alfredState.y = saveGame.alfredY;
 	_alfredState.direction = (AlfredDirection)saveGame.alfredDir;
+	delete _state;
 	_state = saveGame.gameState;
 
 	setScreenAndPrepare(saveGame.currentRoom, _alfredState.direction);

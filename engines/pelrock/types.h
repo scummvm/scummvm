@@ -153,7 +153,7 @@ struct AlfredSpecialAnim {
 
 	~AlfredSpecialAnim() {
 		if (animData) {
-			free(animData);
+			delete[] animData;
 			animData = nullptr;
 		}
 	}
@@ -602,6 +602,7 @@ struct GameStateData {
 	}
 
 	~GameStateData() {
+		clearBranches();
 		delete[] conversationCurrentRoot;
 		conversationCurrentRoot = nullptr;
 	}
