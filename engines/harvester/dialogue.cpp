@@ -42,6 +42,7 @@
 #include "harvester/npc/hank_dialogue.h"
 #include "harvester/npc/herrill_dialogue.h"
 #include "harvester/npc/jimmy_dialogue.h"
+#include "harvester/npc/johnson_dialogue.h"
 #include "harvester/npc/mom_dialogue.h"
 #include "harvester/npc/pta_mom_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
@@ -334,10 +335,10 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new MomDialogueHandler());
 	_npcHandlers.push_back(new HankDialogueHandler());
 	_npcHandlers.push_back(new HerrillDialogueHandler());
+	_npcHandlers.push_back(new JohnsonDialogueHandler());
 	_npcHandlers.push_back(new PtaMomDialogueHandler());
 
 	_npcHandlers.push_back(new StubNpcDialogueHandler("PTA_MOM"));
-	_npcHandlers.push_back(new StubNpcDialogueHandler("JOHNSON"));
 }
 
 void DialogueSystem::resetRoomNpcDialogueState() {
