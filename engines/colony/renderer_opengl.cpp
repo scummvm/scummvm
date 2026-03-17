@@ -551,6 +551,23 @@ void OpenGLRenderer::scroll(int dx, int dy, uint32 background) {
 }
 
 void OpenGLRenderer::drawEllipse(int x, int y, int rx, int ry, uint32 color) {
+	GLint savedViewport[4];
+	GLint savedScissor[4];
+	glGetIntegerv(GL_VIEWPORT, savedViewport);
+	glGetIntegerv(GL_SCISSOR_BOX, savedScissor);
+	const int32 screenHeight = _system->getHeight();
+	glViewport(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+	glScissor(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, _width, _height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+
 	useColor(color);
 	glBegin(GL_LINE_LOOP);
 	for (int i = 0; i < 360; i += 10) {
@@ -558,9 +575,34 @@ void OpenGLRenderer::drawEllipse(int x, int y, int rx, int ry, uint32 color) {
 		glVertex2f(x + cos(rad) * (float)rx, y + sin(rad) * (float)ry);
 	}
 	glEnd();
+
+	glEnable(GL_DEPTH_TEST);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
+	glScissor(savedScissor[0], savedScissor[1], savedScissor[2], savedScissor[3]);
 }
 
 void OpenGLRenderer::fillEllipse(int x, int y, int rx, int ry, uint32 color) {
+	GLint savedViewport[4];
+	GLint savedScissor[4];
+	glGetIntegerv(GL_VIEWPORT, savedViewport);
+	glGetIntegerv(GL_SCISSOR_BOX, savedScissor);
+	const int32 screenHeight = _system->getHeight();
+	glViewport(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+	glScissor(_screenViewport.left, screenHeight - _screenViewport.bottom, _screenViewport.width(), _screenViewport.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0, _width, _height, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);
+
 	useColor(color);
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < 360; i += 10) {
@@ -568,6 +610,14 @@ void OpenGLRenderer::fillEllipse(int x, int y, int rx, int ry, uint32 color) {
 		glVertex2f(x + cos(rad) * (float)rx, y + sin(rad) * (float)ry);
 	}
 	glEnd();
+
+	glEnable(GL_DEPTH_TEST);
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	glViewport(savedViewport[0], savedViewport[1], savedViewport[2], savedViewport[3]);
+	glScissor(savedScissor[0], savedScissor[1], savedScissor[2], savedScissor[3]);
 }
 
 void OpenGLRenderer::fillDitherRect(const Common::Rect &rect, uint32 color1, uint32 color2) {
