@@ -311,8 +311,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return menuError;
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesResponseLine(selectedTopic, 0x283)) {
+		if (runtime.matchesResponseLine(selectedTopic, 0x283)) {
 			return playHerrillLine(0x2ff4);
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x284)) {
