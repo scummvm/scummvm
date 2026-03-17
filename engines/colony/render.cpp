@@ -570,7 +570,17 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 			} else if (lit) {
 				if (_renderMode == Common::kRenderMacintosh) {
 					// Mac B&W: stipple dither pattern fill + black outline
-					int pattern = lookupMacPattern(colorIdx, _level);
+					int pattern;
+					if (colorIdx == kColorCorridorWall) {
+						// Original Mac c_lwall: WHITE pattern = white fill + black outline,
+						// matching the grid wall rendering.
+						if (!_wireframe) {
+							_gfx->setWireframe(true, 255);
+						}
+						_gfx->draw3DPolygon(px, py, pz, count, 0);
+						continue;
+					}
+					pattern = lookupMacPattern(colorIdx, _level);
 					if (pattern == kPatternClear)
 						continue;
 					if (!_wireframe) {

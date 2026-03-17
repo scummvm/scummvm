@@ -1211,16 +1211,16 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		_gfx->setDepthRange(0.0, 1.0);
 		break;
 	case kObjFWall:
-		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			draw3DPrism(obj, kFWallPart, false, kColorCorridorWall, true, false);
+		if (_renderMode == Common::kRenderMacintosh)
+			draw3DPrism(obj, kFWallPart, false, kColorCorridorWall, true, true);
 		else
-			draw3DPrism(obj, kFWallPart, false, -1, true, false);
+			draw3DPrism(obj, kFWallPart, false, -1, true, true);
 		break;
 	case kObjCWall:
-		if (_renderMode == Common::kRenderMacintosh && _hasMacColors)
-			draw3DPrism(obj, kCWallPart, false, kColorCorridorWall, true, false);
+		if (_renderMode == Common::kRenderMacintosh)
+			draw3DPrism(obj, kCWallPart, false, kColorCorridorWall, true, true);
 		else
-			draw3DPrism(obj, kCWallPart, false, -1, true, false);
+			draw3DPrism(obj, kCWallPart, false, -1, true, true);
 		break;
 	case kObjScreen:
 		draw3DPrism(obj, kScreenPart, false, -1, true, false);
