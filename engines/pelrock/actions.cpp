@@ -585,6 +585,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 297: {
 		// sprite moves to right
 		_room->enableExit(0);
+		_state->setFlag(FLAG_VIGILANTE_PAJEANDOSE, true);
 		Sprite *sprite = _room->findSpriteByIndex(0);
 		sprite->animData[0].movementFlags = 0x1C; // Move right
 		// Basic loop to wait until the sprite has reached the door
@@ -948,7 +949,7 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[kTextQueHaSidoEso], x, dialog1y);
 	_dialog->say(_res->_ingameTexts[kTextQuienAndaAhi], x, dialog2y);
 	_dialog->say(_res->_ingameTexts[kTextYoMeVoy]);
-
+	_state->setFlag(FLAG_HE_TIRADO_PIEDRA, true);
 	_state->setFlag(FLAG_TIENDA_ABIERTA, true);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 9, PERSIST_PERM);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
@@ -1389,6 +1390,7 @@ void PelrockEngine::checkAllSymbols() {
 	if (symbolsPulled == 0x0F) {
 		// Activates animation
 		_sound->playSound(_room->_roomSfx[0]);
+		_state->setFlag(FLAG_PUERTA_SECRETA_ABIERTA, true);
 		_room->enableSprite(4, 100, PERSIST_TEMP);
 		_room->enableExit(0, PERSIST_BOTH);
 		_room->addSticker(61);
@@ -1674,6 +1676,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 		_screen->update();
 		g_system->delayMillis(10);
 	}
+	_state->setFlag(FLAG_APARECE_EUNUCO, true);
 	Sprite *guard = _room->findSpriteByIndex(0);
 	guard->animData[0].movementFlags = 0x14;
 	while (!shouldQuit()) {
@@ -1700,6 +1703,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_alfredState.x = 271;
 	_alfredState.y = 385;
 	setScreenAndPrepare(40, ALFRED_UP);
+	_state->setFlag(FLAG_AL_FARAON, true);
 	walkAndAction(_room->findHotspotByExtra(640), TALK);
 	if (shouldQuit()) {
 		return;
@@ -1707,6 +1711,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 271;
 	_alfredState.y = 385;
+	_state->setFlag(FLAG_A_CURRAR, true);
 	setScreenAndPrepare(41, ALFRED_UP);
 }
 
@@ -1782,6 +1787,7 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
 	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
 		smokeAnimation(-1);
+		_state->setFlag(FLAG_VIAJA_AL_PASADO, true);
 		_alfredState.setState(ALFRED_IDLE);
 		_state->clearInventory();
 		_state->addInventoryItem(88);

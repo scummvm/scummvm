@@ -268,6 +268,7 @@ void PelrockEngine::playSoundIfNeeded() {
  * Travel to egypt sequence loads extra screen, plays palette animation then loads room 21
  */
 void PelrockEngine::travelToEgypt() {
+	_state->setFlag(FLAG_VIAJE_A_EGIPTO, true);
 	_graphics->fadeToBlack(10);
 
 	_sound->playMusicTrack(26, false);
@@ -1932,6 +1933,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_alfredState.x = 294;
 			_alfredState.y = 387;
 			_room->addSticker(136);
+			_state->setFlag(FLAG_A_LOS_PASILLOS, true);
 			setScreenAndPrepare(49, ALFRED_UP);
 
 		} else {
@@ -1949,6 +1951,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 
 			walkAndAction(fatMummy, TALK);
 			_state->clear();
+			_state->setFlag(FLAG_VUELTA_A_EMPEZAR, true);
 			_alfredState.x = kAlfredInitialPosX;
 			_alfredState.y = kAlfredInitialPosY;
 			_graphics->fadeToBlack(20);
