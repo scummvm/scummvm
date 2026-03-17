@@ -415,6 +415,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Because `dialogue.idx` is opened without a `1:\` / `2:\` set prefix, `open_xfile_stream` routes it through the direct-file path rather than the DAT archives.
 - `play_dialogue_line` at `0x7a690` is the single-line voice/subtitle presenter used by the talk handlers.
   - It formats the voice sample path as `<VOICE config><wavId>.CMP`, loads that direct `CMP` file if present, seeks `g_dialogue_index_stream` to the matching `dialogue.idx` text span, XOR-decodes the subtitle text, selects the textbox art by wrapped-line count, refreshes the active portrait/head slot, and blocks until the line completes or is interrupted.
+  - Raw call-site tracing now confirms the argument registers used by the talk handlers: `EAX = wav id`, `EDX = speaker/head id string`, and `EBX = portrait variant`.
   - The per-NPC talk handlers do not embed literal subtitle or keyword text in code. They hardcode WAV ids, head-id strings / variants, and zero-based `dialog.rsp` line indices; the human-readable subtitle and keyword text is loaded from `dialogue.idx` and `dialog.rsp` at runtime.
 - `load_dialogue_response_line` at `0x3a1a0` is the indexed `dialog.rsp` line loader used by the talk-to handlers.
   - It opens the ASCII `dialog.rsp` file, reads forward to the requested zero-based line index, strips the trailing CR/LF, and returns the shared `g_dialogue_response_line_buffer`.

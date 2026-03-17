@@ -265,7 +265,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return lineError;
 	}
 
-	if (state.whaleyDisciplineFollowupState &&
+	if (sharedState.dwayneWhaleyDisciplineFollowupState &&
 			!state.whaleyDisciplineFollowupShown) {
 		state.whaleyDisciplineFollowupShown = true;
 		Common::Error lineError = playDwayneLine(0x34b3, 1);
