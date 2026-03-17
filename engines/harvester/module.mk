@@ -1,10 +1,11 @@
 MODULE := engines/harvester
 
 	MODULE_OBJS = \
-		npc/authority_dialogue.o \
-		npc/beggar_dialogue.o \
-		npc/buster_dialogue.o \
-		cft_font.o \
+	npc/authority_dialogue.o \
+	npc/beggar_dialogue.o \
+	npc/buster_dialogue.o \
+	npc/butcher_dialogue.o \
+	cft_font.o \
 	harvester.o \
 	npc/chessmaster_dialogue.o \
 	npc/cloak_atnd_dialogue.o \
