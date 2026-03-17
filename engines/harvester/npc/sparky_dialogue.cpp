@@ -142,8 +142,7 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return menuError;
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2c3)) {
+		if (runtime.matchesResponseLine(selectedTopic, 0x2c3)) {
 			return playSparkyLine(0x39e);
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2c4) ||
