@@ -92,6 +92,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 		if (_fl == 1) {
 			// In empty forklift  pick up the teleporter itself
 			if (loadAnimation("lift")) {
+				_sound->play(Sound::kLift); // GANIMATE.C DoLift: DoLiftSound()
 				_animationResult = 0;
 				playAnimation();
 				if (_animationResult) {
@@ -217,6 +218,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 		if (_fl == 1) {
 			// In empty forklift  pick up object
 			if (loadAnimation("lift")) {
+				_sound->play(Sound::kLift); // GANIMATE.C DoLift: DoLiftSound()
 				_animationResult = 0;
 				playAnimation();
 				if (_animationResult) {
@@ -249,6 +251,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 		if (_fl == 1 && _coreState[_coreIndex] == 1) {
 			// Empty forklift at open reactor  pick up reactor core
 			if (loadAnimation("lift")) {
+				_sound->play(Sound::kLift); // GANIMATE.C DoLift: DoLiftSound()
 				_animationResult = 0;
 				playAnimation();
 				if (_animationResult) {
@@ -262,6 +265,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 		} else if (_fl == 2 && _carryType == kObjReactor && _coreState[_coreIndex] == 2) {
 			// Carrying reactor core  drop it into reactor
 			if (loadAnimation("lift")) {
+				_sound->play(Sound::kDrop); // GANIMATE.C DoLift: DoDropSound()
 				_animationResult = 0;
 				playAnimation();
 				if (!_animationResult) {
@@ -274,6 +278,8 @@ void ColonyEngine::interactWithObject(int objNum) {
 		}
 		break;
 	default:
+		// IBM_COMM.C: DoBonkSound() for unhandled object interactions
+		_sound->play(Sound::kBonk);
 		break;
 	}
 }

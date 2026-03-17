@@ -1122,16 +1122,17 @@ void ColonyEngine::dropCarriedObject() {
 	if (_fl != 2)
 		return;
 
-	// Special case: carrying reactor core
+	// Special case: carrying reactor core — IBM_COMM.C: DoGlassSound()
 	if (_carryType == kObjReactor) {
-		_sound->play(Sound::kChime); // glass break sound
+		_sound->play(Sound::kGlass);
 		_carryType = 0;
 		_fl = 1;
 		return;
 	}
 
-	// Play the drop animation
+	// Play the drop animation — GANIMATE.C DoLift: DoDropSound()
 	if (loadAnimation("lift")) {
+		_sound->play(Sound::kDrop);
 		_animationResult = 0;
 		playAnimation();
 		if (!_animationResult) {

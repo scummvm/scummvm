@@ -1054,7 +1054,8 @@ void ColonyEngine::handleVanityClick(int item) {
 }
 
 void ColonyEngine::handleSlidesClick(int item) {
-	if (item == 2) { // Speaker
+	if (item == 2) { // Speaker — GANIMATE.C DoCreatures: DoTestSound() + DoText
+		_sound->play(Sound::kTest);
 		doText(261 + _creature, 0);
 	} else if (item == 5) { // Prev
 		_creature--;
@@ -1070,7 +1071,8 @@ void ColonyEngine::handleSlidesClick(int item) {
 }
 
 void ColonyEngine::handleTeleshowClick(int item) {
-	if (item == 2) { // Speaker
+	if (item == 2) { // Speaker — GANIMATE.C DoTeleShow: DoTestSound() + DoText
+		_sound->play(Sound::kTest);
 		doText(269 + _creature, 0);
 	} else if (item == 5) { // Prev
 		_creature--;
@@ -1512,6 +1514,8 @@ void ColonyEngine::handleControlsClick(int item) {
 	switch (item) {
 	case 4: // Accelerator
 		if (_corePower[_coreIndex] < 2 || _coreState[_coreIndex] != 0) {
+			// GANIMATE.C: if(corepower<2) DoStopSound(); else if(corestate!=0) DoStopSound();
+			_sound->play(Sound::kStop);
 			debugC(1, kColonyDebugAnimation, "Accelerator failed: power=%d, state=%d", _corePower[_coreIndex], _coreState[_coreIndex]);
 			setObjectState(4, 1);
 			for (int i = 6; i > 0; i--) {
