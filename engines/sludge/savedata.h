@@ -35,6 +35,7 @@ public:
 
 private:
 	static const char UTF8_CHECKER[];
+	static const char CP1252_CHECKER[];
 	static char _encode1;
 	static char _encode2;
 
