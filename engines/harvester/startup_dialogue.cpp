@@ -118,23 +118,23 @@ static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
 };
 
 static const DialogueLineEntry kMomIntroLines[] = {
-	{ 0x1dd7, "MOM", 0 },
+	{ 0x1dd7, "MOM", 1 },
 	{ 0x1ddc, "PC", 0 },
-	{ 0x1de0, "MOM", 0 },
-	{ 0x1de4, "PC", 0 }
+	{ 0x1de0, "MOM", 2 },
+	{ 0x1de4, "PC", 2 }
 };
 
 static const DialogueLineEntry kMomCookiesLines[] = {
 	{ 0x1e18, "PC", 0 },
-	{ 0x1e1d, "MOM", 0 },
+	{ 0x1e1d, "MOM", 1 },
 	{ 0x1e21, "PC", 0 }
 };
 
 static const DialogueLineEntry kMomSparkyLines[] = {
 	{ 0x1ed7, "PC", 0 },
-	{ 0x1edb, "MOM", 0 },
+	{ 0x1edb, "MOM", 2 },
 	{ 0x1ee1, "PC", 0 },
-	{ 0x1ee5, "MOM", 0 }
+	{ 0x1ee5, "MOM", 2 }
 };
 
 static const DialogueLineEntry kMomFatherLines[] = {
@@ -155,6 +155,13 @@ static const DialogueLineEntry kMomGoodCauseDay5Lines[] = {
 	{ 0x21b7, "PC", 0 }
 };
 
+static const DialogueLineEntry kMomSlaughterhouseLines[] = {
+	{ 0x1faf, "PC", 4 },
+	{ 0x1fb4, "MOM", 0 },
+	{ 0x1fb9, "PC", 2 },
+	{ 0x1fbd, "MOM", 0 }
+};
+
 static const int kMomPtaTopicResponseLines[] = { 0x125, 0x126, 0x127, 0x128 };
 static const int kMomCookingTopicResponseLines[] = { 0x131, 0x132, 0x133 };
 static const int kMomBakeSaleTopicResponseLines[] = { 0x145, 0x146, 0x147 };
@@ -162,6 +169,9 @@ static const int kMomPottsdamTopicResponseLines[] = { 0x14b, 0x14c };
 static const int kMomMeatPlantTopicResponseLines[] = { 0x151, 0x152 };
 static const int kMomMoynahanTopicResponseLines[] = { 0x160, 0x161 };
 static const int kMomNewspaperFireTopicResponseLines[] = { 0x162, 0x163 };
+static const int kMomInitialTopicBufferResponseLine = 0x102;
+static const int kMomSlaughterhouseFollowupTopicBufferResponseLine = 0x13e;
+static const int kMomFatherFollowupTopicBufferResponseLine = 0x140;
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const StartupText *startupText = engine.getStartupText();
@@ -1129,8 +1139,11 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 	if (npc.npcName.equalsIgnoreCase("MOM")) {
 		const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
-		Common::String &momTopicBuffer = _momRoomDialogueState.currentTopicBuffer;
-		int &momTopicBufferLineIndex = _momRoomDialogueState.currentTopicBufferLineIndex;
+		Common::String momTopicBuffer;
+		int momTopicBufferLineIndex = -1;
+		auto assignMomTopicBuffer = [&](int responseLineIndex) {
+			assignTopicBuffer(momTopicBuffer, momTopicBufferLineIndex, responseLineIndex, "Mom topic buffer");
+		};
 		auto runMomGoodbye = [&]() -> Common::Error {
 			if (!startupScript->getFlagValue("DAY_FLAG")) {
 				return playDialogueLine(0x256e, "MOM");
@@ -1140,6 +1153,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 			return playDialogueLine(0x2051, "MOM");
 		};
+		assignMomTopicBuffer(kMomInitialTopicBufferResponseLine);
 
 		if (!usedItemName.empty()) {
 			if (usedItemName.equalsIgnoreCase("NOTE") ||
@@ -1369,9 +1383,10 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			} else if (matchesResponseLine(selectedTopic, 0x13a)) {
 				lineError = playDialogueLine(0x1fa3, "MOM");
 			} else if (matchesResponseLine(selectedTopic, 0x13c)) {
-				lineError = playDialogueLine(0x1faf, "PC");
+				lineError = playDialogueEntrySequence(kMomSlaughterhouseLines, ARRAYSIZE(kMomSlaughterhouseLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMomTopicBuffer(kMomSlaughterhouseFollowupTopicBufferResponseLine);
 				continue;
 			} else if (matchesResponseLine(selectedTopic, 0x13f)) {
 				_momRoomDialogueState.fatherTopicState = true;
@@ -1384,7 +1399,7 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
-				assignTopicBuffer(momTopicBuffer, momTopicBufferLineIndex, 0x140, "Mom topic buffer");
+				assignMomTopicBuffer(kMomFatherFollowupTopicBufferResponseLine);
 				continue;
 			} else if (matchesResponseLine(selectedTopic, 0x141)) {
 				if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED"))
