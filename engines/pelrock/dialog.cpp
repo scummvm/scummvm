@@ -281,7 +281,6 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 		yPos = CLIP(yPos, 1, 400 - (int)s->getRect().height());
 
 		if (g_engine->_shakeEffectState.enabled) {
-			debug("Applying shake effect to dialogue, shakeX: %d", g_engine->_shakeEffectState.shakeX);
 			xPos -= g_engine->_shakeEffectState.shakeX;
 		}
 

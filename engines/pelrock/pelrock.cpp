@@ -1886,11 +1886,10 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_shakeEffectState.disable();
 		}
 		if (_state->getBoolFlag(FLAG_PYRAMID_COLLAPSED) == true &&
-			// _state->getBoolFlag(FLAG_GUARD_PEEING) == true &&
+			_state->getBoolFlag(FLAG_GUARD_PEEING) == true &&
 			_state->getFlag(FLAG_PYRAMID_COLLAPSED2) == false) {
 			_state->setFlag(FLAG_GUARD_PEEING, false);
 			_state->setFlag(FLAG_PYRAMID_COLLAPSED2, true);
-			debug("Pyramid is now active!");
 			pyramidCollapse();
 		}
 		break;
