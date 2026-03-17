@@ -2051,17 +2051,13 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 }
 
 void PelrockEngine::pyramidCollapse() {
-	// === Pyramid Collapse Sequence (Room 36 per-frame handler at 0x1098F) ===
-	// Binary: sprite index 2 = collapse animation, sprite index 0 = NPC guard.
-	// Original sprite table indices are offset by 2 from ScummVM indices due
-	// to the 2 header sprite slots in the room data.
 
-	// Hide NPC initially — binary sets sprite_2 field 0x21 = 0xFF (zOrder = 255)
+	// Hide NPC initially
 	Sprite *npc = _room->findSpriteByIndex(0);
 	if (npc)
 		npc->zOrder = 255;
 
-	// Start collapse animation — binary sets sprite_4 field 0x21 = 0xFE (zOrder = 254)
+	// Start collapse animation
 	Sprite *collapseSprite = _room->findSpriteByIndex(2);
 	if (collapseSprite)
 		collapseSprite->zOrder = 254;
@@ -2069,8 +2065,7 @@ void PelrockEngine::pyramidCollapse() {
 	// Play collapse sound
 	_sound->playSound("QUAKE1ZZ.SMP", 0);
 
-	// ----- PHASE 1: Wait for collapse animation frame 5 -----
-	// Binary: loop sleep(0x69) + tick + render, check sprite_4 field 0x20 == 5
+	// Wait for collapse animation frame 5
 	while (!shouldQuit()) {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
@@ -2078,17 +2073,15 @@ void PelrockEngine::pyramidCollapse() {
 		g_system->delayMillis(10);
 		collapseSprite = _room->findSpriteByIndex(2);
 		if (!collapseSprite || collapseSprite->animData[collapseSprite->curAnimIndex].curFrame >= 5) {
-			collapseSprite->zOrder = 255; // Hide collapse animation sprite after frame 5
+			collapseSprite->zOrder = 255; // Hide collapse animation sprite
 			break;
 		}
 	}
-	debug("Collapse animation reached frame 5, applying background changes");
 
-	// ----- PHASE 2: Background tile copies (hide pyramid top) -----
-	// Copy 1: 99×45 from secondary buffer to front buffer (fills collapsed area)
+	// Background tile copies to have collapsed pyramid stick
+	// copy 99×45 from secondary buffer to front buffer
 	{
 		static const int srcX = 240, srcY = 145;
-		// static const int dstX = 510, dstY = 33;
 		static const int copyW = 99, copyH = 45;
 		Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
 		_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));

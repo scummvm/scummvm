@@ -1226,13 +1226,20 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 		_alfredState.x -= 10;
 		_alfredState.y += 20;
 		playAlfredSpecialAnim(5);
+		{
+			// Copy crocodile into background so it sticks during fade
+			static const int srcX = 189, srcY = 260;
+			static const int copyW = 127, copyH = 80;
+			Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
+			_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));
+		}
 		_alfredState.animState = ALFRED_SKIP_DRAWING;
 		_sound->playSound(_room->_roomSfx[0], 0); // Belch
 		waitForSoundEnd();
-		_graphics->fadeToBlack(10);
+		_graphics->fadeToBlack(20);
+		_graphics->clearScreen();
 		_alfredState.x = 300;
 		_alfredState.y = 238;
-		waitForSoundEnd();
 		_alfredState.animState = ALFRED_IDLE;
 		setScreenAndPrepare(28, ALFRED_DOWN);
 		_dialog->say(_res->_ingameTexts[kTextQueOscuroEstaEsto]);
