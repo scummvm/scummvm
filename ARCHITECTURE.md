@@ -493,6 +493,12 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Each helper is a tiny read/write shim over a dedicated global (`g_discussed_note_checkbook_evidence`, `g_discussed_tv_deed_evidence`, `g_discussed_ledger_evidence`, `g_discussed_casket_photo_evidence`, `g_discussed_whaley_herrill_photo`, `g_discussed_karin_purse`, `g_discussed_lodge_topic`).
 - Boyle's hidden `GASCAN` return branch is now explicit through `get_set_boyle_gascan_application_state` at `0x38240`.
   - When that state is nonzero, `handle_talk_to_boyle` plays the `0x1f2` / `0x1f6` / `0x1fa` / `0x206` exchange, removes `GASCAN` from inventory, awards `LODGE_APPLICATION`, and sets `HAVE_LODGE_APP`.
+  - Boyle's hidden keyword block around `0x2d620` is now bounded enough to map its major topic groups.
+    - `Amnesia` (zero-based `dialog.rsp` line `0x17`) plays the fixed `0xee` / `0xf2` / `0xf6` / `0xfa` exchange.
+    - `Button`, `Epaulet`, `Shirt`, and `Postal Button` (`0x18` through `0x1b`) all converge on the neutral `get_set_shared_dialogue_state_d2eb0` read. When that shared bit is clear, Boyle first calls `play_c019b_fst_sequence` and then plays `0x10e`; when the bit is set, the same topic group jumps straight to `0x115`.
+    - `Arson` (`0x1d`) and the literal keyword string `Arsonist` share one branch: Boyle plays `0x11c`, opens the zero-based `dialog.rsp` response menu at `0x1e`, then takes either the `0x126` / `0x12c` / `0x130` continuation for choice `1` or the `0x135` continuation for choice `2`.
+    - `Blackmail` (`0x1f`) plays `0x13d` / `0x141` / `0x145` / `0x14a` / `0x14e`, `BYE` (`0x20`) falls through the common exit path, and unmatched keywords drop to Boyle's `0x243` fallback line.
+  - `play_c019b_fst_sequence` at `0x38620` is a direct wrapper around `play_fst_sequence("GRAPHIC/FST/C019B.FST", 0)` and is currently only called from Boyle's `d2eb0 == 0` evidence-topic branch.
 - The adjacent `0x383d0`-`0x384e0` range is now confirmed to be another overlapping run of tiny read/write dialogue-state wrappers over globals in the same contiguous block (`0xd2f00` through `0xd2f28`).
   - `get_set_sergeant_completed_first_task_state` at `0x384e0` is the Sergeant-local bit set on the `SCRATCHED_TUCKER` branch immediately before dialogue `0x420d` ("So, you have completed your first task.").
   - The same block also contains the recovered Pottsdam alibi bits at `0x38440` and `0x38460`, so it is no longer Sergeant-only even though several remaining wrappers in that span are still only identified by locality.
