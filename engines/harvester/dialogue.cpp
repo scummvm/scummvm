@@ -74,6 +74,7 @@
 #include "harvester/npc/priest_dialogue.h"
 #include "harvester/npc/pta_mom_dialogue.h"
 #include "harvester/npc/ryder_dialogue.h"
+#include "harvester/npc/sergeant_dialogue.h"
 #include "harvester/npc/nude_man_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/sparky_dialogue.h"
@@ -408,6 +409,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new JohnsonDialogueHandler());
 	_npcHandlers.push_back(new PtaMomDialogueHandler());
 
+	_npcHandlers.push_back(new SergeantDialogueHandler());
 	_npcHandlers.push_back(new StubNpcDialogueHandler("PTA_MOM"));
 }
 
