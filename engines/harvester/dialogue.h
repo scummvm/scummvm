@@ -34,6 +34,7 @@ struct Event;
 
 namespace Harvester {
 
+class DwayneDialogueHandler;
 class HankDialogueHandler;
 class HarvesterEngine;
 class JimmyDialogueHandler;
@@ -48,6 +49,40 @@ struct IndexedBitmap;
 
 class DialogueSystem {
 public:
+	struct DwayneRoomDialogueState {
+		bool pendingInitialConversation = true;
+		bool sheriffInDinerIntroPending = true;
+		bool sheriffInDinerIntroPlayed = false;
+		bool eventFollowupGate = false;
+		bool tvDeedReplyOverride = false;
+		bool presentedEvidenceReplyOverride = false;
+		bool discussedBoylesButton = false;
+		bool discussedKarinPurse = false;
+		bool pendingKarinAliveFollowup = false;
+		bool completedKarinAliveFollowup = false;
+		int pendingKarinAliveFollowupDayIndex = 0;
+		bool bringKarinToSheriffLinePlayed = false;
+		bool whaleyDisciplineFollowupState = false;
+		bool whaleyDisciplineFollowupShown = false;
+		bool noteCheckbookFollowupShown = false;
+		bool scratchedTuckerShown = false;
+		bool boltOfClothTakenShown = false;
+		bool barberPoleStolenShown = false;
+		bool dinerBurnedShown = false;
+		bool escapedJailShown = false;
+		bool gotRemainsForLodgeShown = false;
+		bool burnedTvStationShown = false;
+		bool karinKidnapedShown = false;
+		bool pendingKarinAliveFollowupLinePlayed = false;
+		bool karinFoundDeadWithoutPurseShown = false;
+		bool jimmyAbsentShown = false;
+		bool moynahanAbsentShown = false;
+		bool ednaHungShown = false;
+		bool mcknightAbsentShown = false;
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
+	};
+
 	struct HankRoomDialogueState {
 		bool pendingInitialConversation = true;
 		bool hasTrackedDayState = false;
@@ -109,6 +144,7 @@ public:
 		StartupFlow &startupFlow);
 
 private:
+	friend class DwayneDialogueHandler;
 	friend class HankDialogueHandler;
 	friend class JimmyDialogueHandler;
 	friend class MomDialogueHandler;
@@ -117,6 +153,7 @@ private:
 
 	void registerNpcHandlers();
 
+	Common::Error handleDwayneDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 	Common::Error handleJimmyDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 	Common::Error handleWaspWomanDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 	Common::Error handleMomDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
@@ -125,10 +162,13 @@ private:
 
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
+	DwayneRoomDialogueState _dwayneRoomDialogueState;
 	HankRoomDialogueState _hankRoomDialogueState;
 	MomRoomDialogueState _momRoomDialogueState;
 	JimmyRoomDialogueState _jimmyRoomDialogueState;
 	WaspWomanRoomDialogueState _waspWomanRoomDialogueState;
+	bool _sharedBoyleGascanApplicationState = false;
+	bool _sharedDialogueStateD2f04 = false;
 	bool _sharedKarinKidnapedDialogueState = false;
 	bool _sharedDiscussedLodgeTopic = false;
 	bool _sharedWaspWomanDialogueState = false;
