@@ -19,9 +19,37 @@
  *
  */
 
+#include <functional>
+
 #include "harvester/npc/pta_mom_dialogue.h"
 
+#include "harvester/npc/dialogue_runtime.h"
+
 namespace Harvester {
+
+namespace {
+
+static const char *const kPtaRespondToTvFlag = "PTA_RESPOND_TO_TV";
+static const char *const kPtaMomSpeakerId = "PTA_MOM1";
+
+static const DialogueLineEntry kPtaMomResponse1Lines[] = {
+	{ 0x3204, kPtaMomSpeakerId, 2 },
+	{ 0x320b, kPtaMomSpeakerId, 2 }
+};
+
+static const DialogueLineEntry kPtaMomResponse2Lines[] = {
+	{ 0x320f, kPtaMomSpeakerId, 0 },
+	{ 0x3213, kPtaMomSpeakerId, 0 }
+};
+
+static const DialogueLineEntry kPtaMomResponse3Lines[] = {
+	{ 0x3217, kPtaMomSpeakerId, 0 },
+	{ 0x321c, kPtaMomSpeakerId, 0 },
+	{ 0x3221, "PC", 0 },
+	{ 0x3226, kPtaMomSpeakerId, 0 }
+};
+
+} // End of namespace
 
 bool PtaMomDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("PTA_MOM1") ||
@@ -29,6 +57,55 @@ bool PtaMomDialogueHandler::matchesNpc(const Common::String &npcName) const {
 		npcName.equalsIgnoreCase("PTA_MOM3") ||
 		npcName.equalsIgnoreCase("PTA_MOM4") ||
 		npcName.equalsIgnoreCase("PTA_MOM5");
+}
+
+Common::Error PtaMomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &) {
+	(void)usedItemName;
+
+	auto playPtaMomLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kPtaMomSpeakerId, headVariant);
+	};
+
+	if (runtime.startupScript().getFlagValue(kPtaRespondToTvFlag)) {
+		Common::Error lineError = playPtaMomLine(0x3233, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().setRuntimeFlagValue(kPtaRespondToTvFlag, false);
+		return Common::kNoError;
+	}
+
+	Common::Error lineError = Common::kNoError;
+	switch (runtime.getRandomNumber(2)) {
+	case 0:
+		lineError = playPtaMomLine(0x31ee, 1);
+		break;
+	case 1:
+		lineError = playPtaMomLine(0x31f2, 1);
+		break;
+	default:
+		lineError = playPtaMomLine(0x31f6, 1);
+		break;
+	}
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(0x297, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	switch (responseIndex) {
+	case 1:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse1Lines, ARRAYSIZE(kPtaMomResponse1Lines));
+	case 2:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse2Lines, ARRAYSIZE(kPtaMomResponse2Lines));
+	case 3:
+		return runtime.playDialogueEntrySequence(kPtaMomResponse3Lines, ARRAYSIZE(kPtaMomResponse3Lines));
+	default:
+		return Common::kNoError;
+	}
 }
 
 } // End of namespace Harvester
