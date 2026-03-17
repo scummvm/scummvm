@@ -227,11 +227,19 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 			if (!interaction.nextRoomName.empty() &&
 					roomTransition == kStartupRoomTransitionChangeRoom) {
+				Common::String resolvedTransitionTarget = interaction.nextRoomName;
+				Common::Error resolveError = startupFlow.resolveRoomTransitionTarget(
+					interaction.nextRoomName, resolvedTransitionTarget);
+				if (resolveError.getCode() != Common::kNoError)
+					return resolveError;
+				if (resolvedTransitionTarget.empty())
+					return Common::kNoError;
+
 				if (!runRoomExitCommandsFn())
 					return Common::kReadingFailed;
 
 				// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
-				pendingRoomChange = interaction.nextRoomName;
+				pendingRoomChange = resolvedTransitionTarget;
 				didTransition = true;
 			} else if (!interaction.nextRoomName.empty()) {
 				if (!runRoomExitCommandsFn())

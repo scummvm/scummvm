@@ -20,8 +20,9 @@
   - Updated the Ghidra plate comments for those functions and changed the engine startup-room loop so `CHANGE_ROOM` now performs a same-loop handoff instead of recursing into a nested room loop and then rebuilding the source room on return.
 - Confirmed the dialogue-triggered Jimmy paper handoff was still losing `CHANGE_ROOM` semantics in engine code: `jimmy_dialogue.cpp` manually copied `nextRoomName` out of `ACTV_HOUSE_EXIT` but dropped `roomTransition`, which downgraded the queued handoff back into the legacy nested-room path.
 - Confirmed another room-setup mismatch against the recovered native constructor rules: the engine was requiring room backgrounds to live under `GRAPHIC/ROOMS/*.BM`, while the documented native `spawn_object_entity_from_record` promotion rule is based on a sprite-backed object at origin whose loaded bitmap is `640x480`.
+- Confirmed the remaining `PCHOUSE_2_MAP` failure was not a missing room at all: native `resolve_room_entrance` falls back from `ENTRANCE` to `MAP_ENTRANCE`, and map-entry matches open the town map UI which then resolves a final destination through `MAP_LOCATION -> destination_entrance -> ENTRANCE`.
 
 ## Next Suggested Action
 
-1. Re-test both `PCHOUSE_X4B -> PCHOUSE_2_MAP` and the Jimmy `DIAL_JIM_1_C -> CHANGE_ROOM PCHOUSE_2_MAP` path to confirm the map handoff no longer dies during target-room setup.
-2. Audit closeup exits against the native `EXIT_CLOSEUP` / `SAVE_GAME` handoff so closeups can eventually stop relying on recursive room-loop unwinding.
+1. Re-test both `PCHOUSE_X4B -> PCHOUSE_2_MAP` and the Jimmy `DIAL_JIM_1_C -> CHANGE_ROOM PCHOUSE_2_MAP` path and confirm they now open the town map UI instead of throwing `reading data failed`.
+2. If the map UI is functionally correct but visually off, compare initial cursor placement and panel-switch polish against the native `select_town_map_destination` path before moving on to closeup cleanup.
