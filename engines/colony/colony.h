@@ -632,6 +632,7 @@ private:
 	bool hasRobotAt(int x, int y) const;
 	bool hasFoodAt(int x, int y) const;
 	void drawMiniMap(uint32 lineColor);
+	void drawForkliftOverlay();
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;
 	void wallLine(const float corners[4][3], float u1, float v1, float u2, float v2, uint32 color);

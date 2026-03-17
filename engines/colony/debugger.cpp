@@ -79,6 +79,7 @@ Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("core", WRAP_METHOD(Debugger, cmdCore));
 	registerCmd("battle", WRAP_METHOD(Debugger, cmdBattle));
 	registerCmd("colony", WRAP_METHOD(Debugger, cmdColony));
+	registerCmd("forklift", WRAP_METHOD(Debugger, cmdForklift));
 }
 
 bool Debugger::cmdTeleport(int argc, const char **argv) {
@@ -395,6 +396,42 @@ bool Debugger::cmdColony(int argc, const char **argv) {
 	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
 	debugPrintf("Security state forced to unlocked for colony debug entry\n");
 	return false;
+}
+
+bool Debugger::cmdForklift(int argc, const char **argv) {
+	if (_vm->_gameMode != kModeColony) {
+		debugPrintf("Must be in colony mode\n");
+		return true;
+	}
+
+	if (argc >= 2) {
+		int state = atoi(argv[1]);
+		if (state < 0 || state > 2) {
+			debugPrintf("Invalid state %d (must be 0-2)\n", state);
+			return true;
+		}
+		_vm->_fl = state;
+		if (state > 0)
+			_vm->_me.lookY = 0; // reset vertical look
+		if (state == 0) {
+			_vm->_carryType = 0;
+			debugPrintf("Exited forklift (fl=0)\n");
+		} else if (state == 1) {
+			_vm->_carryType = 0;
+			debugPrintf("Entered empty forklift (fl=1)\n");
+		} else {
+			if (_vm->_carryType == 0)
+				_vm->_carryType = kObjBox1;
+			debugPrintf("In forklift carrying type %d (fl=2)\n", _vm->_carryType);
+		}
+	} else {
+		debugPrintf("Usage: forklift <state>\n");
+		debugPrintf("  0 = exit forklift\n");
+		debugPrintf("  1 = enter empty forklift\n");
+		debugPrintf("  2 = enter forklift carrying object\n");
+		debugPrintf("Current: fl=%d carryType=%d\n", _vm->_fl, _vm->_carryType);
+	}
+	return true;
 }
 
 } // End of namespace Colony

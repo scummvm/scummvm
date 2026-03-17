@@ -989,6 +989,18 @@ void ColonyEngine::handleAnimationClick(int item) {
 		handleElevatorClick(item);
 	} else if (_animationName == "controls") {
 		handleControlsClick(item);
+	} else if (_animationName == "forklift") {
+		// Original DoForkLift: waits for item==1 (entrance click) to confirm entry
+		if (item == 1) {
+			_animationResult = 1;
+			_animationRunning = false;
+		}
+	} else if (_animationName == "lift") {
+		// Original DoLift: item==8 puts down (when carrying), item==9 picks up (when empty)
+		if (item == 8 || item == 9) {
+			_animationResult = 1;
+			_animationRunning = false;
+		}
 	}
 }
 

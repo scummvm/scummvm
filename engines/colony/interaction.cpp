@@ -41,6 +41,20 @@ void ColonyEngine::interactWithObject(int objNum) {
 	_action1 = _mapData[x][y][4][4];
 	_creature = 1;
 
+	// Original command.c: interaction is filtered by forklift state.
+	// fl==1 (empty forklift): only CRYO/BOX1/BOX2/TELEPORT (pick up), REACTOR, SCREEN
+	// fl==2 (carrying): only REACTOR (drop), TELEPORT (use), SCREEN; others → bonk
+	if (_fl == 1) {
+		if (obj.type != kObjBox1 && obj.type != kObjBox2 && obj.type != kObjCryo &&
+		    obj.type != kObjTeleport && obj.type != kObjReactor && obj.type != kObjScreen)
+			return; // silently ignore — original has no default for fl==1
+	} else if (_fl == 2) {
+		if (obj.type != kObjReactor && obj.type != kObjTeleport && obj.type != kObjScreen) {
+			_sound->play(Sound::kBonk);
+			return;
+		}
+	}
+
 	switch (obj.type) {
 	case kObjDesk:
 		if (loadAnimation("desk"))
@@ -207,6 +221,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 					_robotArray[obj.where.xindex][obj.where.yindex] = 0;
 					_objects[objNum - 1].alive = 0;
 					_me.look = _me.ang = obj.where.ang;
+					_me.lookY = 0;
 					_fl = 1;
 				}
 			}
@@ -321,6 +336,10 @@ void ColonyEngine::cShoot() {
 		battleShoot();
 		return;
 	}
+
+	// Original command.c: space bar disabled when in forklift
+	if (_fl)
+		return;
 
 	if (_me.power[0] <= 0 || _weapons <= 0)
 		return;

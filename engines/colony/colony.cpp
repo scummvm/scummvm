@@ -1015,7 +1015,7 @@ Common::Error ColonyEngine::run() {
 				if (_gameMode == kModeBattle)
 					_me.ang = _me.look;
 			}
-			if (mouseDY != 0) {
+			if (mouseDY != 0 && !_fl) {
 				_me.lookY = (int8)CLIP<int>((int)_me.lookY - (mouseDY * _mouseSensitivity), -64, 64);
 			}
 			// Warp back to center and purge remaining mouse events
@@ -1086,6 +1086,7 @@ Common::Error ColonyEngine::run() {
 		} else {
 			_gfx->clear((_corePower[_coreIndex] > 0) ? 15 : 0);
 			corridor();
+			drawForkliftOverlay();
 			drawDashboardStep1();
 			drawCrosshair();
 			checkCenter();

@@ -800,6 +800,32 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	}
 }
 
+void ColonyEngine::drawForkliftOverlay() {
+	if (_fl <= 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
+		return;
+
+	// Original display.c: two diagonal fork arm lines when fl > 0.
+	// Left arm:  (centerX/4, 0) to (centerX/2, Height)
+	// Right arm: (Width - centerX/4, 0) to (Width - centerX/2, Height)
+	// Drawn with PenSize(2,2) in black (white in battle mode).
+	const int left = _screenR.left;
+	const int top = _screenR.top;
+	const int w = _screenR.width();
+	const int h = _screenR.height();
+	const int cx = w / 2;
+	const uint32 color = (_renderMode == Common::kRenderMacintosh) ? packRGB(0, 0, 0) : 0;
+
+	const int tx2 = cx >> 2;  // centerX/4
+	const int tx1 = cx >> 1;  // centerX/2
+
+	// Left fork arm
+	_gfx->drawLine(left + tx2, top, left + tx1, top + h - 1, color);
+	_gfx->drawLine(left + tx2 + 1, top, left + tx1 + 1, top + h - 1, color);
+	// Right fork arm
+	_gfx->drawLine(left + w - tx2, top, left + w - tx1, top + h - 1, color);
+	_gfx->drawLine(left + w - tx2 - 1, top, left + w - tx1 - 1, top + h - 1, color);
+}
+
 void ColonyEngine::drawCrosshair() {
 	if (!_crosshair || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;

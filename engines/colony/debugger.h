@@ -44,6 +44,7 @@ private:
 	bool cmdCore(int argc, const char **argv);
 	bool cmdBattle(int argc, const char **argv);
 	bool cmdColony(int argc, const char **argv);
+	bool cmdForklift(int argc, const char **argv);
 };
 
 }
