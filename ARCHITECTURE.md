@@ -1194,6 +1194,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 **Notes**
 - The inventory status portrait is a presentation of the persistent player HP state, not a separate UI-only counter.
 - The portrait is recalculated inside the inventory loop, so native healing or damage that lands while the inventory is open updates the selected `INV_STAT*` image immediately.
+- The portrait is materialized through `spawn_object_entity_from_record` and the shared render-entity path, so the rotated photo depends on palette-index-0 transparency rather than an opaque rectangular bitmap blit.
 
 ## Current Blockers
 
