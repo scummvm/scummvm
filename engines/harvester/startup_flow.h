@@ -26,7 +26,7 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "harvester/startup_dialogue.h"
+#include "harvester/dialogue.h"
 #include "harvester/startup_inventory.h"
 #include "harvester/startup_menu.h"
 #include "harvester/startup_room.h"
@@ -49,7 +49,7 @@ public:
 	Common::Error run();
 
 private:
-	friend class StartupDialogueSystem;
+	friend class DialogueSystem;
 	friend class StartupInventorySystem;
 	friend class StartupMenuSystem;
 	friend class StartupRoomSystem;
@@ -85,14 +85,14 @@ private:
 	Common::Array<Common::String> _quickTips;
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
-		StartupDialogueSystem _dialogue;
-		StartupInventorySystem _inventory;
-		StartupMenuSystem _menu;
-		StartupRoomSystem _room;
-		StartupInteractionResult _queuedDialogueInteraction;
-		bool _hasQueuedDialogueInteraction = false;
-		bool _pendingMainMenuReturn = false;
-	};
+	DialogueSystem _dialogue;
+	StartupInventorySystem _inventory;
+	StartupMenuSystem _menu;
+	StartupRoomSystem _room;
+	StartupInteractionResult _queuedDialogueInteraction;
+	bool _hasQueuedDialogueInteraction = false;
+	bool _pendingMainMenuReturn = false;
+};
 
 } // End of namespace Harvester
 

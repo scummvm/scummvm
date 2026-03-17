@@ -19,9 +19,10 @@
  *
  */
 
+#include <functional>
 #include <memory>
 
-#include "harvester/startup_dialogue.h"
+#include "harvester/dialogue.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -35,6 +36,11 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
+#include "harvester/npc/hank_dialogue.h"
+#include "harvester/npc/jimmy_dialogue.h"
+#include "harvester/npc/mom_dialogue.h"
+#include "harvester/npc/stub_dialogue.h"
+#include "harvester/npc/wasp_woman_dialogue.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
@@ -42,6 +48,117 @@
 #include "harvester/startup_text.h"
 
 namespace Harvester {
+
+struct DialogueLineEntry {
+	int wavId;
+	const char *speakerId;
+	int headVariant;
+};
+
+class DialogueRuntime {
+public:
+	typedef std::function<Common::Error(int, const Common::String &, int)> PlayDialogueLineWithVariantFn;
+	typedef std::function<Common::Error(int, const Common::String &)> PlayDialogueLineFn;
+	typedef std::function<Common::Error(const DialogueLineEntry *, uint)> PlayDialogueEntrySequenceFn;
+	typedef std::function<Common::Error(const Common::String &)> PlayDialogueFstFn;
+	typedef std::function<Common::Error(const Common::String &, int, Common::String &)> RunKeywordMenuFn;
+	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
+	typedef std::function<void(Common::String &, int &, int, const char *)> AssignTopicBufferFn;
+	typedef std::function<bool(const Common::String &, int)> MatchesResponseLineFn;
+	typedef std::function<bool(const Common::String &, const int *, uint)> MatchesAnyResponseLineFn;
+	typedef std::function<void(const StartupInteractionResult &)> QueueDialogueInteractionIfNeededFn;
+	typedef std::function<int(int)> GetRandomNumberFn;
+	typedef std::function<void(const Common::String &, int)> SetActiveSpeakerPortraitFn;
+
+	DialogueRuntime(HarvesterEngine &engine, StartupScript &startupScript, StartupText &startupText,
+			StartupFlow &startupFlow, const Common::String &genericByeTopic,
+			const PlayDialogueLineWithVariantFn &playDialogueLineWithVariant,
+			const PlayDialogueLineFn &playDialogueLine,
+			const PlayDialogueEntrySequenceFn &playDialogueEntrySequence,
+			const PlayDialogueFstFn &playDialogueFst,
+			const RunKeywordMenuFn &runKeywordMenu,
+			const RunResponseMenuFn &runResponseMenu,
+			const AssignTopicBufferFn &assignTopicBuffer,
+			const MatchesResponseLineFn &matchesResponseLine,
+			const MatchesAnyResponseLineFn &matchesAnyResponseLine,
+			const QueueDialogueInteractionIfNeededFn &queueDialogueInteractionIfNeeded,
+			const GetRandomNumberFn &getRandomNumber,
+			const SetActiveSpeakerPortraitFn &setActiveSpeakerPortrait)
+		: _engine(engine), _startupScript(startupScript), _startupText(startupText),
+		  _startupFlow(startupFlow), _genericByeTopic(genericByeTopic),
+		  _playDialogueLineWithVariant(playDialogueLineWithVariant),
+		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
+		  _playDialogueFst(playDialogueFst), _runKeywordMenu(runKeywordMenu),
+		  _runResponseMenu(runResponseMenu), _assignTopicBuffer(assignTopicBuffer),
+		  _matchesResponseLine(matchesResponseLine),
+		  _matchesAnyResponseLine(matchesAnyResponseLine),
+		  _queueDialogueInteractionIfNeeded(queueDialogueInteractionIfNeeded),
+		  _getRandomNumber(getRandomNumber),
+		  _setActiveSpeakerPortrait(setActiveSpeakerPortrait) {
+	}
+
+	HarvesterEngine &engine() const { return _engine; }
+	StartupScript &startupScript() const { return _startupScript; }
+	StartupText &startupText() const { return _startupText; }
+	StartupFlow &startupFlow() const { return _startupFlow; }
+	const Common::String &genericByeTopic() const { return _genericByeTopic; }
+
+	Common::Error playDialogueLineWithVariant(int wavId, const Common::String &speakerId,
+			int headVariant) const {
+		return _playDialogueLineWithVariant(wavId, speakerId, headVariant);
+	}
+	Common::Error playDialogueLine(int wavId, const Common::String &speakerId) const {
+		return _playDialogueLine(wavId, speakerId);
+	}
+	Common::Error playDialogueEntrySequence(const DialogueLineEntry *lines, uint count) const {
+		return _playDialogueEntrySequence(lines, count);
+	}
+	Common::Error playDialogueFst(const Common::String &path) const { return _playDialogueFst(path); }
+	Common::Error runKeywordMenu(const Common::String &topicBuffer, int topicBufferLineIndex,
+			Common::String &selectedTopic) const {
+		return _runKeywordMenu(topicBuffer, topicBufferLineIndex, selectedTopic);
+	}
+	Common::Error runResponseMenu(int responseLineIndex, int &responseIndex) const {
+		return _runResponseMenu(responseLineIndex, responseIndex);
+	}
+	void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
+			int responseLineIndex, const char *label) const {
+		_assignTopicBuffer(topicBuffer, topicBufferLineIndex, responseLineIndex, label);
+	}
+	bool matchesResponseLine(const Common::String &selectedTopic, int responseLineIndex) const {
+		return _matchesResponseLine(selectedTopic, responseLineIndex);
+	}
+	bool matchesAnyResponseLine(const Common::String &selectedTopic,
+			const int *responseLineIndices, uint responseLineCount) const {
+		return _matchesAnyResponseLine(selectedTopic, responseLineIndices, responseLineCount);
+	}
+	void queueDialogueInteractionIfNeeded(const StartupInteractionResult &interaction) const {
+		_queueDialogueInteractionIfNeeded(interaction);
+	}
+	int getRandomNumber(int maxValue) const { return _getRandomNumber(maxValue); }
+	void setActiveSpeakerPortrait(const Common::String &speakerId, int headVariant) const {
+		_setActiveSpeakerPortrait(speakerId, headVariant);
+	}
+
+private:
+	HarvesterEngine &_engine;
+	StartupScript &_startupScript;
+	StartupText &_startupText;
+	StartupFlow &_startupFlow;
+	const Common::String &_genericByeTopic;
+	PlayDialogueLineWithVariantFn _playDialogueLineWithVariant;
+	PlayDialogueLineFn _playDialogueLine;
+	PlayDialogueEntrySequenceFn _playDialogueEntrySequence;
+	PlayDialogueFstFn _playDialogueFst;
+	RunKeywordMenuFn _runKeywordMenu;
+	RunResponseMenuFn _runResponseMenu;
+	AssignTopicBufferFn _assignTopicBuffer;
+	MatchesResponseLineFn _matchesResponseLine;
+	MatchesAnyResponseLineFn _matchesAnyResponseLine;
+	QueueDialogueInteractionIfNeededFn _queueDialogueInteractionIfNeeded;
+	GetRandomNumberFn _getRandomNumber;
+	SetActiveSpeakerPortraitFn _setActiveSpeakerPortrait;
+};
 
 namespace {
 
@@ -87,21 +204,6 @@ struct HankDialogueTopicLine {
 	int wavId;
 	const char *speakerId;
 	bool setDiscussedLodgeTopic;
-};
-
-struct DialogueLineSpec {
-	DialogueLineSpec(int wavId, const char *speakerId, int headVariant = 0)
-		: wavId(wavId), speakerId(speakerId), headVariant(headVariant) {}
-
-	int wavId;
-	const char *speakerId;
-	int headVariant;
-};
-
-struct DialogueLineEntry {
-	int wavId;
-	const char *speakerId;
-	int headVariant;
 };
 
 static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
@@ -597,11 +699,37 @@ static bool isDialogueOtherHit(const Common::Point &mousePos) {
 
 } // End of anonymous namespace
 
-StartupDialogueSystem::StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos)
+DialogueSystem::DialogueSystem(HarvesterEngine &engine, Common::Point &mousePos)
 	: _engine(engine), _mousePos(mousePos) {
+	registerNpcHandlers();
 }
 
-void StartupDialogueSystem::resetRoomNpcDialogueState() {
+DialogueSystem::~DialogueSystem() {
+	for (uint i = 0; i < _npcHandlers.size(); ++i)
+		delete _npcHandlers[i];
+}
+
+void DialogueSystem::registerNpcHandlers() {
+	_npcHandlers.push_back(new JimmyDialogueHandler());
+	_npcHandlers.push_back(new WaspWomanDialogueHandler());
+	_npcHandlers.push_back(new MomDialogueHandler());
+	_npcHandlers.push_back(new HankDialogueHandler());
+
+	Common::Array<Common::String> ptaMomNames;
+	ptaMomNames.push_back(Common::String("PTA_MOM"));
+	ptaMomNames.push_back(Common::String("PTA_MOM1"));
+	ptaMomNames.push_back(Common::String("PTA_MOM2"));
+	ptaMomNames.push_back(Common::String("PTA_MOM3"));
+	ptaMomNames.push_back(Common::String("PTA_MOM4"));
+	ptaMomNames.push_back(Common::String("PTA_MOM5"));
+	_npcHandlers.push_back(new StubNpcDialogueHandler(ptaMomNames));
+	_npcHandlers.push_back(new StubNpcDialogueHandler("DWAYNE"));
+	_npcHandlers.push_back(new StubNpcDialogueHandler("EDNA"));
+	_npcHandlers.push_back(new StubNpcDialogueHandler("HERRILL"));
+	_npcHandlers.push_back(new StubNpcDialogueHandler("JOHNSON"));
+}
+
+void DialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
 	_momRoomDialogueState = MomRoomDialogueState();
 	_jimmyRoomDialogueState = JimmyRoomDialogueState();
@@ -611,7 +739,7 @@ void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_sharedWaspWomanDialogueState = false;
 }
 
-Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
+Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
 		StartupFlow &startupFlow) {
 	struct DialogueResponseOptionLayout {
@@ -906,18 +1034,6 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 
 	auto playDialogueLine = [&](int wavId, const Common::String &speakerId) -> Common::Error {
 		return playDialogueLineWithVariant(wavId, speakerId, 0);
-	};
-
-	// Multi-line exchanges in the original binary are emitted as consecutive play_dialogue_line calls.
-	auto playDialogueSequence = [&](const DialogueLineSpec *lines, uint count) -> Common::Error {
-		for (uint i = 0; i < count; ++i) {
-			Common::Error lineError = playDialogueLineWithVariant(
-				lines[i].wavId, lines[i].speakerId, lines[i].headVariant);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-
-		return Common::kNoError;
 	};
 
 	auto playDialogueEntrySequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
@@ -1223,801 +1339,829 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		logDialogueMenuItems(label, responseLineIndex, topicBuffer, topics);
 	};
 
-	if (npc.npcName.equalsIgnoreCase("JIMMY")) {
-		auto playJimmyLine = [&](int wavId, int headVariant) -> Common::Error {
-			return playDialogueLineWithVariant(wavId, "JIMMY", headVariant);
-		};
-		auto hasInventoryItem = [&](const char *objectName) {
-			Common::Array<StartupObjectRecord> inventoryObjects;
-			startupScript->getVisibleInventoryObjects(inventoryObjects);
-			for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
-				if (inventoryObject.objectName.equalsIgnoreCase(objectName))
-					return true;
-			}
+	DialogueRuntime runtime(
+		_engine, *startupScript, *startupText, startupFlow, genericByeTopic,
+		playDialogueLineWithVariant, playDialogueLine, playDialogueEntrySequence,
+		playDialogueFst, runKeywordMenu, runResponseMenu, assignTopicBuffer,
+		matchesResponseLine, matchesAnyResponseLine, queueDialogueInteractionIfNeeded,
+		[&](int maxValue) { return _engine.getRandomNumber(maxValue); },
+		setActiveSpeakerPortrait);
 
-			return false;
-		};
+	for (uint i = 0; i < _npcHandlers.size(); ++i) {
+		if (_npcHandlers[i]->matchesNpc(npc.npcName))
+			return _npcHandlers[i]->handle(*this, runtime, usedItemName);
+	}
 
-		if (!usedItemName.empty()) {
-			if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
-				StartupInteractionResult jimmyInteraction;
-				const bool changedGivenPaperToday =
-					startupScript->setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
-				const bool changedNewspaperState =
-					startupScript->resetRuntimeObjectToInitialState("NEWSPAPER");
-				jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
+	debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
+	return Common::kNoError;
+}
 
-				StartupInteractionResult actionInteraction;
-				if (startupScript->executeNestedActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
-					jimmyInteraction.abortRemainingCommandChain =
-						jimmyInteraction.abortRemainingCommandChain ||
-						actionInteraction.abortRemainingCommandChain;
-					jimmyInteraction.mutatedRuntimeState =
-						jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
-					if (!actionInteraction.musicPath.empty())
-						jimmyInteraction.musicPath = actionInteraction.musicPath;
-					if (!actionInteraction.nextRoomName.empty())
-						jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
-					if (!actionInteraction.deathFlicPath.empty())
-						jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
-					if (!actionInteraction.dialogueNpcName.empty())
-						jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
-					if (!actionInteraction.dialogueContinuationTag.empty()) {
-						jimmyInteraction.dialogueContinuationTag =
-							actionInteraction.dialogueContinuationTag;
-					}
-					jimmyInteraction.requestMainMenu =
-						jimmyInteraction.requestMainMenu || actionInteraction.requestMainMenu;
-					for (const StartupAudioCommand &command : actionInteraction.audioCommands)
-						jimmyInteraction.audioCommands.push_back(command);
-				}
-				if (jimmyInteraction.abortRemainingCommandChain || jimmyInteraction.mutatedRuntimeState ||
-						!jimmyInteraction.musicPath.empty() ||
-						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.deathFlicPath.empty() ||
-						jimmyInteraction.requestMainMenu || !jimmyInteraction.dialogueNpcName.empty() ||
-						!jimmyInteraction.dialogueContinuationTag.empty() ||
-						!jimmyInteraction.audioCommands.empty()) {
-					startupFlow.queueDialogueInteraction(jimmyInteraction);
-				}
-
-				if (!_jimmyRoomDialogueState.paperHandoffStateSet) {
-					_jimmyRoomDialogueState.paperHandoffStateSet = true;
-					Common::Error lineError = playJimmyLine(0x4a4c, 1);
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-				}
-
-				return _engine.getRandomNumber(1) == 0
-					? playJimmyLine(0x4acc, 0)
-					: playJimmyLine(0x4a4b, 1);
-			}
-			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
-				return playJimmyLine(0x4af8, 1);
-			}
-			if (((usedItemName.equalsIgnoreCase("LEDGER") ||
-						usedItemName.equalsIgnoreCase("LEDGER2")) &&
-					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) ||
-					usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
-					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-				if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
-						usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-					(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
-				} else {
-					(void)startupScript->setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
-				}
-				return playJimmyLine(0x4b00, 0);
-			}
-			if (usedItemName.equalsIgnoreCase("NOTE") ||
-					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
-				return playJimmyLine(0x4b21, 0);
-			}
-			if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
-				Common::Error lineError = playJimmyLine(0x4a9e, 1);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			}
-
-			return playJimmyLine(0x4af2, 0);
+Common::Error DialogueSystem::handleJimmyDialogue(DialogueRuntime &runtime, const Common::String &usedItemName) {
+	auto playJimmyLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "JIMMY", headVariant);
+	};
+	auto hasInventoryItem = [&](const char *objectName) {
+		Common::Array<StartupObjectRecord> inventoryObjects;
+		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
+		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
+				return true;
 		}
 
-		if (_jimmyRoomDialogueState.firstNoItemLinePending) {
-			_jimmyRoomDialogueState.firstNoItemLinePending = false;
+		return false;
+	};
+
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
+			StartupInteractionResult jimmyInteraction;
+			const bool changedGivenPaperToday =
+				runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+			const bool changedNewspaperState =
+				runtime.startupScript().resetRuntimeObjectToInitialState("NEWSPAPER");
+			jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
+
+			StartupInteractionResult actionInteraction;
+			if (runtime.startupScript().executeNestedActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
+				jimmyInteraction.abortRemainingCommandChain =
+					jimmyInteraction.abortRemainingCommandChain ||
+					actionInteraction.abortRemainingCommandChain;
+				jimmyInteraction.mutatedRuntimeState =
+					jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
+				if (!actionInteraction.musicPath.empty())
+					jimmyInteraction.musicPath = actionInteraction.musicPath;
+				if (!actionInteraction.nextRoomName.empty())
+					jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+				if (!actionInteraction.deathFlicPath.empty())
+					jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
+				if (!actionInteraction.dialogueNpcName.empty())
+					jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
+				if (!actionInteraction.dialogueContinuationTag.empty())
+					jimmyInteraction.dialogueContinuationTag = actionInteraction.dialogueContinuationTag;
+				jimmyInteraction.requestMainMenu =
+					jimmyInteraction.requestMainMenu || actionInteraction.requestMainMenu;
+				for (const StartupAudioCommand &command : actionInteraction.audioCommands)
+					jimmyInteraction.audioCommands.push_back(command);
+			}
+			runtime.queueDialogueInteractionIfNeeded(jimmyInteraction);
+
 			if (!_jimmyRoomDialogueState.paperHandoffStateSet) {
+				_jimmyRoomDialogueState.paperHandoffStateSet = true;
 				Common::Error lineError = playJimmyLine(0x4a4c, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 
-			Common::Error lineError = playJimmyLine(0x4a58, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+			return runtime.getRandomNumber(1) == 0
+				? playJimmyLine(0x4acc, 0)
+				: playJimmyLine(0x4a4b, 1);
 		}
-		if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
-			Common::Error lineError = playJimmyLine(0x4ac3, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+			return playJimmyLine(0x4af8, 1);
 		}
-		if (startupScript->getFlagValue("PAPER_CHK_4")) {
-			Common::Error lineError = playJimmyLine(0x4ae2, 2);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("PAPER_CHK_3")) {
-			Common::Error lineError = playJimmyLine(0x4adb, 2);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("PAPER_CHK_2")) {
-			Common::Error lineError = playJimmyLine(0x4ad4, 2);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-
-		return playJimmyLine(0x4b38, 0);
-	}
-
-	if (npc.npcName.equalsIgnoreCase("WASP_WOMAN")) {
-		Common::String waspWomanTopicBuffer;
-		int waspWomanTopicBufferLineIndex = -1;
-		auto assignWaspWomanTopicBuffer = [&](int responseLineIndex) {
-			assignTopicBuffer(waspWomanTopicBuffer, waspWomanTopicBufferLineIndex, responseLineIndex,
-				"Wasp Woman topic buffer");
-		};
-		auto playWaspWomanLine = [&](int wavId, int headVariant) -> Common::Error {
-			return playDialogueLineWithVariant(wavId, "WASP_WOMAN", headVariant);
-		};
-
-		if (!usedItemName.empty()) {
-			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
-				return playDialogueEntrySequence(kWaspWomanWhaleyLines, ARRAYSIZE(kWaspWomanWhaleyLines));
-			}
+		if (((usedItemName.equalsIgnoreCase("LEDGER") ||
+					usedItemName.equalsIgnoreCase("LEDGER2")) &&
+				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
-				return playWaspWomanLine(0x4cbd, 0);
+				(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+			} else {
+				(void)runtime.startupScript().setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
 			}
-			if (usedItemName.equalsIgnoreCase("NOTE") ||
-					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
-				return playWaspWomanLine(0x4cc3, 0);
-			}
-
-			return playWaspWomanLine(0x4ca0, 0);
+			return playJimmyLine(0x4b00, 0);
 		}
-
-		if (_waspWomanRoomDialogueState.introPending) {
-			_waspWomanRoomDialogueState.introPending = false;
-
-			Common::Error lineError = playWaspWomanLine(0x4bee, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			if (_sharedWaspWomanDialogueState) {
-				lineError = playDialogueLine(0x4bf2, "PC");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			}
-			lineError = playDialogueEntrySequence(kWaspWomanIntroTailLines, ARRAYSIZE(kWaspWomanIntroTailLines));
+		if (usedItemName.equalsIgnoreCase("NOTE") ||
+				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
+			return playJimmyLine(0x4b21, 0);
+		}
+		if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
+			Common::Error lineError = playJimmyLine(0x4a9e, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		Common::Error lineError = playWaspWomanLine(0x4bee, 0);
+		return playJimmyLine(0x4af2, 0);
+	}
+
+	if (_jimmyRoomDialogueState.firstNoItemLinePending) {
+		_jimmyRoomDialogueState.firstNoItemLinePending = false;
+		if (!_jimmyRoomDialogueState.paperHandoffStateSet) {
+			Common::Error lineError = playJimmyLine(0x4a4c, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		Common::Error lineError = playJimmyLine(0x4a58, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		assignWaspWomanTopicBuffer(kWaspWomanTopicBufferResponseLine);
-
-		for (;;) {
-			Common::String selectedTopic;
-			Common::Error menuError = runKeywordMenu(
-				waspWomanTopicBuffer, waspWomanTopicBufferLineIndex, selectedTopic);
-			if (menuError.getCode() != Common::kNoError)
-				return menuError;
-			if (selectedTopic.empty() || selectedTopic.equalsIgnoreCase(genericByeTopic))
-				return Common::kNoError;
-
-			if (matchesResponseLine(selectedTopic, 0x302)) {
-				lineError = playWaspWomanLine(0x4c0a, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x305)) {
-				lineError = playWaspWomanLine(0x4c31, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				if (!_sharedWaspWomanDialogueState)
-					continue;
-
-				int responseIndex = 0;
-				Common::Error responseError = runResponseMenu(0x307, responseIndex);
-				if (responseError.getCode() != Common::kNoError)
-					return responseError;
-
-				switch (responseIndex) {
-				case 1:
-					lineError = playDialogueEntrySequence(kWaspWomanTopic305Response1Lines,
-						ARRAYSIZE(kWaspWomanTopic305Response1Lines));
-					break;
-				case 2:
-					lineError = playWaspWomanLine(0x4c5e, 2);
-					break;
-				default:
-					lineError = Common::kNoError;
-					break;
-				}
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x308)) {
-				lineError = playWaspWomanLine(0x4c67, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x30a)) {
-				lineError = playWaspWomanLine(0x4c74, 1);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x30c)) {
-				lineError = playWaspWomanLine(0x4c85, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x30e)) {
-				lineError = playWaspWomanLine(0x4c9a, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				return Common::kNoError;
-			}
-		}
+	}
+	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
+		Common::Error lineError = playJimmyLine(0x4ac3, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_4")) {
+		Common::Error lineError = playJimmyLine(0x4ae2, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_3")) {
+		Common::Error lineError = playJimmyLine(0x4adb, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_2")) {
+		Common::Error lineError = playJimmyLine(0x4ad4, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 
-	if (npc.npcName.equalsIgnoreCase("MOM")) {
-		const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
-		Common::String momTopicBuffer;
-		int momTopicBufferLineIndex = -1;
-		auto assignMomTopicBuffer = [&](int responseLineIndex) {
-			assignTopicBuffer(momTopicBuffer, momTopicBufferLineIndex, responseLineIndex, "Mom topic buffer");
-		};
-		auto runMomGoodbye = [&]() -> Common::Error {
-			if (!startupScript->getFlagValue("DAY_FLAG")) {
-				return playDialogueLine(0x256e, "MOM");
-			}
-			if (!startupScript->isNamedNpcDeathTypeClear("JIMMY"))
-				return Common::kNoError;
+	return playJimmyLine(0x4b38, 0);
+}
 
-			return playDialogueLine(0x2051, "MOM");
-		};
-		momTopicBuffer.clear();
-		momTopicBufferLineIndex = -1;
+Common::Error DialogueSystem::handleWaspWomanDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName) {
+	Common::String waspWomanTopicBuffer;
+	int waspWomanTopicBufferLineIndex = -1;
+	auto assignWaspWomanTopicBuffer = [&](int responseLineIndex) {
+		runtime.assignTopicBuffer(waspWomanTopicBuffer, waspWomanTopicBufferLineIndex,
+			responseLineIndex, "Wasp Woman topic buffer");
+	};
+	auto playWaspWomanLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "WASP_WOMAN", headVariant);
+	};
 
-		if (!usedItemName.empty()) {
-			if (usedItemName.equalsIgnoreCase("NOTE") ||
-					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
-					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
-				return playDialogueLine(0x2317, "MOM");
-			}
-			if ((usedItemName.equalsIgnoreCase("LEDGER") ||
-					usedItemName.equalsIgnoreCase("LEDGER2")) &&
-					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) {
-				(void)startupScript->setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
-				return playDialogueLine(0x2320, "MOM");
-			}
-			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
-					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
-				return playDialogueLine(0x233b, "PC");
-			}
-			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
-				return playDialogueLine(0x239c, "MOM");
-			}
-			if (usedItemName.equalsIgnoreCase("TV_DEED") ||
-					usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
-				(void)startupScript->setRuntimeFlagValue(kShownEvidenceSheriffOwnsFlag, true);
-				return playDialogueLine(0x2382, "MOM");
-			}
-
-			return playDialogueLine(0x26cc, "MOM");
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+			return runtime.playDialogueEntrySequence(kWaspWomanWhaleyLines,
+				ARRAYSIZE(kWaspWomanWhaleyLines));
+		}
+		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+			return playWaspWomanLine(0x4cbd, 0);
+		}
+		if (usedItemName.equalsIgnoreCase("NOTE") ||
+				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
+			return playWaspWomanLine(0x4cc3, 0);
 		}
 
-		bool skipMomDefaultKeywordSeed = false;
-		if (_momRoomDialogueState.introPending) {
-			_momRoomDialogueState.introPending = false;
-			_momRoomDialogueState.sameDayIntroLineEnabled = true;
-			_momRoomDialogueState.postIntroDefaultLineEnabled = true;
-			_momRoomDialogueState.introDayIndex = currentStoryDayIndex;
-			Common::Error lineError = playDialogueEntrySequence(kMomIntroLines, ARRAYSIZE(kMomIntroLines));
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			assignMomTopicBuffer(kMomInitialTopicBufferResponseLine);
-			skipMomDefaultKeywordSeed = true;
-		}
-		if (!skipMomDefaultKeywordSeed && _momRoomDialogueState.sameDayIntroLineEnabled &&
-				currentStoryDayIndex == _momRoomDialogueState.introDayIndex) {
-			Common::Error lineError = playDialogueLine(0x2047, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			assignMomTopicBuffer(kMomSameDayTopicBufferResponseLine);
-			skipMomDefaultKeywordSeed = true;
-		}
-		if (!skipMomDefaultKeywordSeed && _momRoomDialogueState.postIntroDefaultLineEnabled) {
-			Common::Error lineError = playDialogueLine(0x2311, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			assignMomTopicBuffer(kMomPostIntroTopicBufferResponseLine);
-		}
-		if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
-				!_momRoomDialogueState.stephMidgameShown) {
-			_momRoomDialogueState.stephMidgameShown = true;
-			Common::Error lineError = playDialogueLine(0x205a, "MOM");
+		return playWaspWomanLine(0x4ca0, 0);
+	}
+
+	if (_waspWomanRoomDialogueState.introPending) {
+		_waspWomanRoomDialogueState.introPending = false;
+
+		Common::Error lineError = playWaspWomanLine(0x4bee, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		if (_sharedWaspWomanDialogueState) {
+			lineError = runtime.playDialogueLine(0x4bf2, "PC");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
-		if (startupScript->getFlagValue("DINER_BURNED") &&
-				(startupScript->getFlagValue("KARIN_KIDNAPED") ||
-					startupScript->getFlagValue("KARIN_FOUND_DEAD")) &&
-				!_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown) {
-			_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown = true;
-			Common::Error lineError = playDialogueLine(0x2456, "MOM");
+		lineError = runtime.playDialogueEntrySequence(kWaspWomanIntroTailLines,
+			ARRAYSIZE(kWaspWomanIntroTailLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	Common::Error lineError = playWaspWomanLine(0x4bee, 0);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+	assignWaspWomanTopicBuffer(kWaspWomanTopicBufferResponseLine);
+
+	for (;;) {
+		Common::String selectedTopic;
+		Common::Error menuError = runtime.runKeywordMenu(
+			waspWomanTopicBuffer, waspWomanTopicBufferLineIndex, selectedTopic);
+		if (menuError.getCode() != Common::kNoError)
+			return menuError;
+		if (selectedTopic.empty() || selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()))
+			return Common::kNoError;
+
+		if (runtime.matchesResponseLine(selectedTopic, 0x302)) {
+			lineError = playWaspWomanLine(0x4c0a, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			continue;
 		}
-		if (startupScript->getFlagValue("BURNED_TV_STATION") &&
-				!_momRoomDialogueState.burnedTvStationShown) {
-			_momRoomDialogueState.burnedTvStationShown = true;
-			Common::Error lineError = playDialogueLine(0x2220, "MOM");
+		if (runtime.matchesResponseLine(selectedTopic, 0x305)) {
+			lineError = playWaspWomanLine(0x4c31, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-		}
-		if (startupScript->getFlagValue("SCRATCHED_TUCKER") &&
-				!_momRoomDialogueState.scratchedTuckerShown) {
-			_momRoomDialogueState.scratchedTuckerShown = true;
-			Common::Error lineError = playDialogueLine(0x23f3, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("BARBER_POLE_STOLEN") &&
-				!_momRoomDialogueState.barberPoleStolenShown) {
-			_momRoomDialogueState.barberPoleStolenShown = true;
-			Common::Error lineError = playDialogueLine(0x23fb, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
-				!_momRoomDialogueState.boltOfClothTakenShown) {
-			_momRoomDialogueState.boltOfClothTakenShown = true;
-			if (startupScript->isNamedNpcDeathTypeClear("SPARKY") &&
-					startupScript->isNamedNpcDeathTypeClear("FIREMAN2")) {
-				Common::Error lineError = playDialogueLine(0x2416, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
+			if (!_sharedWaspWomanDialogueState)
+				continue;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x307, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			switch (responseIndex) {
+			case 1:
+				lineError = runtime.playDialogueEntrySequence(kWaspWomanTopic305Response1Lines,
+					ARRAYSIZE(kWaspWomanTopic305Response1Lines));
+				break;
+			case 2:
+				lineError = playWaspWomanLine(0x4c5e, 2);
+				break;
+			default:
+				lineError = Common::kNoError;
+				break;
 			}
-			Common::Error lineError = playDialogueLine(0x2420, "MOM");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			continue;
 		}
-		if (startupScript->getFlagValue("DINER_BURNED") &&
-				startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
-				!_momRoomDialogueState.dinerBurnedKarinAliveShown) {
-			_momRoomDialogueState.dinerBurnedKarinAliveShown = true;
-			Common::Error lineError = playDialogueLine(0x2434, "MOM");
+		if (runtime.matchesResponseLine(selectedTopic, 0x308)) {
+			lineError = playWaspWomanLine(0x4c67, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			continue;
 		}
-		if (startupScript->getFlagValue("PC_ESCAPED_JAIL") &&
-				!_momRoomDialogueState.escapedJailShown) {
-			_momRoomDialogueState.escapedJailShown = true;
-			Common::Error lineError = playDialogueLine(0x2495, "MOM");
+		if (runtime.matchesResponseLine(selectedTopic, 0x30a)) {
+			lineError = playWaspWomanLine(0x4c74, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			continue;
 		}
-		if (startupScript->getFlagValue("KARIN_KIDNAPED") &&
-				!startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
-				!startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
-				!_momRoomDialogueState.karinKidnapedUnresolvedShown) {
-			_momRoomDialogueState.karinKidnapedUnresolvedShown = true;
-			Common::Error lineError = playDialogueLine(0x24d7, "MOM");
+		if (runtime.matchesResponseLine(selectedTopic, 0x30c)) {
+			lineError = playWaspWomanLine(0x4c85, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			continue;
 		}
-		if (startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
-				!_momRoomDialogueState.karinFoundAliveShown) {
-			_momRoomDialogueState.karinFoundAliveShown = true;
-			Common::Error lineError = playDialogueLine(0x2505, "MOM");
+		if (runtime.matchesResponseLine(selectedTopic, 0x30e)) {
+			lineError = playWaspWomanLine(0x4c9a, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			return Common::kNoError;
 		}
-		if (startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
-				!_momRoomDialogueState.karinFoundDeadShown) {
-			_momRoomDialogueState.karinFoundDeadShown = true;
-			Common::Error lineError = playDialogueLine(0x2576, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+	}
+}
+
+Common::Error DialogueSystem::handleMomDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName) {
+	const int currentStoryDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
+	Common::String momTopicBuffer;
+	int momTopicBufferLineIndex = -1;
+	auto assignMomTopicBuffer = [&](int responseLineIndex) {
+		runtime.assignTopicBuffer(momTopicBuffer, momTopicBufferLineIndex,
+			responseLineIndex, "Mom topic buffer");
+	};
+	auto runMomGoodbye = [&]() -> Common::Error {
+		if (!runtime.startupScript().getFlagValue("DAY_FLAG"))
+			return runtime.playDialogueLine(0x256e, "MOM");
+		if (!runtime.startupScript().isNamedNpcDeathTypeClear("JIMMY"))
+			return Common::kNoError;
+
+		return runtime.playDialogueLine(0x2051, "MOM");
+	};
+
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("NOTE") ||
+				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
+			return runtime.playDialogueLine(0x2317, "MOM");
 		}
-		if (!startupScript->isNamedNpcDeathTypeClear("BUTCHER") &&
-				!_momRoomDialogueState.butcherAbsentShown) {
-			_momRoomDialogueState.butcherAbsentShown = true;
-			Common::Error lineError = playDialogueLine(0x2633, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
+				usedItemName.equalsIgnoreCase("LEDGER2")) &&
+				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
+			return runtime.playDialogueLine(0x2320, "MOM");
 		}
-		if (!startupScript->isNamedNpcDeathTypeClear("MOYNAHAN") &&
-				!_momRoomDialogueState.moynahanAbsentShown) {
-			_momRoomDialogueState.moynahanAbsentShown = true;
-			Common::Error lineError = playDialogueLine(0x2647, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+			return runtime.playDialogueLine(0x233b, "PC");
 		}
-		if (!startupScript->isNamedNpcDeathTypeClear("JIMMY") &&
-				!_momRoomDialogueState.jimmyAbsentShown) {
-			_momRoomDialogueState.jimmyAbsentShown = true;
-			if (startupScript->getFlagValue("JIMMY_ATTACKED")) {
-				Common::Error lineError = playDialogueLine(0x2659, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			}
-			Common::Error lineError = playDialogueLine(0x266c, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+			return runtime.playDialogueLine(0x239c, "MOM");
 		}
-		if (!startupScript->isNamedNpcDeathTypeClear("WASP_WOMAN") &&
-				!_momRoomDialogueState.waspWomanAbsentShown) {
-			_momRoomDialogueState.waspWomanAbsentShown = true;
-			Common::Error lineError = playDialogueLine(0x2689, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("STEPHANIE_IS_DEAD") &&
-				!startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
-				!_momRoomDialogueState.stephanieDeadPreMidgameShown) {
-			_momRoomDialogueState.stephanieDeadPreMidgameShown = true;
-			Common::Error lineError = playDialogueLine(0x217c, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-		if (startupScript->getFlagValue("DAY_5") && !_momRoomDialogueState.day5Shown) {
-			_momRoomDialogueState.day5Shown = true;
-			Common::Error lineError = playDialogueLine(0x218d, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			assignMomTopicBuffer(kMomDay5TopicBufferResponseLine);
-		}
-		if (startupScript->getFlagValue("DAY_6") && !_momRoomDialogueState.day6Shown) {
-			_momRoomDialogueState.day6Shown = true;
-			Common::Error lineError = playDialogueLine(0x22a8, "MOM");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			assignMomTopicBuffer(kMomDay6TopicBufferResponseLine);
+		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
+				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceSheriffOwnsFlag, true);
+			return runtime.playDialogueLine(0x2382, "MOM");
 		}
 
-		for (;;) {
-			Common::String selectedTopic;
-			Common::Error menuError = runKeywordMenu(momTopicBuffer, momTopicBufferLineIndex, selectedTopic);
-			if (menuError.getCode() != Common::kNoError)
-				return menuError;
-			if (selectedTopic.empty())
-				return Common::kNoError;
-			if (selectedTopic.equalsIgnoreCase(genericByeTopic))
-				return runMomGoodbye();
+		return runtime.playDialogueLine(0x26cc, "MOM");
+	}
 
-			if (matchesResponseLine(selectedTopic, 0x116)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomCookiesLines, ARRAYSIZE(kMomCookiesLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x118);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x119)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic119Lines, ARRAYSIZE(kMomTopic119Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x11a);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x11d)) {
-				Common::Error lineError = playDialogueEntrySequence(
-					kMomTopic11dOpeningLines, ARRAYSIZE(kMomTopic11dOpeningLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				lineError = playDialogueFst(kDialogueC008AFstPath);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				lineError = playDialogueEntrySequence(
-					kMomTopic11dPostC008ALines, ARRAYSIZE(kMomTopic11dPostC008ALines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-
-				StartupInteractionResult babyGurgleInteraction;
-				if (startupScript->executeActionTag(kBabyGurgleActionTag, babyGurgleInteraction)) {
-					if (!babyGurgleInteraction.musicPath.empty())
-						(void)_engine.playStartupMusic(babyGurgleInteraction.musicPath);
-					if (!babyGurgleInteraction.audioCommands.empty())
-						startupFlow.executeStartupAudioCommands(babyGurgleInteraction.audioCommands);
-
-					babyGurgleInteraction.musicPath.clear();
-					babyGurgleInteraction.audioCommands.clear();
-					queueDialogueInteractionIfNeeded(babyGurgleInteraction);
-				}
-
-				lineError = playDialogueEntrySequence(
-					kMomTopic11dClosingLines, ARRAYSIZE(kMomTopic11dClosingLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				lineError = playDialogueFst(kDialogueC008BFstPath);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x120);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x121)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic121Lines, ARRAYSIZE(kMomTopic121Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x122);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x123)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomSparkyLines, ARRAYSIZE(kMomSparkyLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x124);
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomPtaTopicResponseLines,
-					ARRAYSIZE(kMomPtaTopicResponseLines))) {
-				Common::Error lineError = playDialogueEntrySequence(kMomPtaLines, ARRAYSIZE(kMomPtaLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomPtaFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x12b)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic12bLines, ARRAYSIZE(kMomTopic12bLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x12c);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x12d)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic12dLines, ARRAYSIZE(kMomTopic12dLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x12e);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x12f)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic12fLines, ARRAYSIZE(kMomTopic12fLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x130);
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomCookingTopicResponseLines,
-					ARRAYSIZE(kMomCookingTopicResponseLines))) {
-				Common::Error lineError = playDialogueEntrySequence(kMomCookingLines, ARRAYSIZE(kMomCookingLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomCookingFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x135)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic135Lines, ARRAYSIZE(kMomTopic135Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x136);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x137)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic137Lines, ARRAYSIZE(kMomTopic137Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x13a)) {
-				Common::Error lineError = playDialogueLine(0x1fa3, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(0x13b);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x13c)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomSlaughterhouseLines, ARRAYSIZE(kMomSlaughterhouseLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomSlaughterhouseFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x13f)) {
-				_momRoomDialogueState.fatherTopicState = true;
-				Common::Error lineError = playDialogueEntrySequence(kMomFatherLines, ARRAYSIZE(kMomFatherLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				if (startupScript->getFlagValue("HEARD_DAD_MOAN")) {
-					lineError = playDialogueEntrySequence(kMomFatherHeardDadMoanLines,
-						ARRAYSIZE(kMomFatherHeardDadMoanLines));
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-				}
-				assignMomTopicBuffer(kMomFatherFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x141)) {
-				Common::Error lineError = Common::kNoError;
-				if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED")) {
-					lineError = playDialogueEntrySequence(kMomStephMidgameLodgeLines,
-						ARRAYSIZE(kMomStephMidgameLodgeLines));
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-					continue;
-				}
-				_sharedDiscussedLodgeTopic = true;
-				lineError = playDialogueEntrySequence(kMomLodgeLines, ARRAYSIZE(kMomLodgeLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-
-				int responseIndex = 0;
-				Common::Error responseError = runResponseMenu(0x142, responseIndex);
-				if (responseError.getCode() != Common::kNoError)
-					return responseError;
-
-				switch (responseIndex) {
-				case 1:
-					lineError = playDialogueEntrySequence(kMomLodgeResponse1Lines,
-						ARRAYSIZE(kMomLodgeResponse1Lines));
-					break;
-				case 2:
-					lineError = playDialogueEntrySequence(kMomLodgeResponse2Lines,
-						ARRAYSIZE(kMomLodgeResponse2Lines));
-					break;
-				default:
-					break;
-				}
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomLodgeFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomBakeSaleTopicResponseLines,
-					ARRAYSIZE(kMomBakeSaleTopicResponseLines))) {
-				Common::Error lineError = playDialogueEntrySequence(kMomBakeSaleLines, ARRAYSIZE(kMomBakeSaleLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomBakeSaleFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x14a)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic14aLines, ARRAYSIZE(kMomTopic14aLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomPottsdamTopicResponseLines,
-					ARRAYSIZE(kMomPottsdamTopicResponseLines))) {
-				Common::Error lineError = Common::kNoError;
-				if (startupScript->getFlagValue("STEPH_MIDGAME_PLAYED"))
-					lineError = playDialogueLine(0x2086, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomPottsdamFollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomMeatPlantTopicResponseLines,
-					ARRAYSIZE(kMomMeatPlantTopicResponseLines))) {
-				Common::Error lineError = playDialogueEntrySequence(kMomMeatPlantIntroLines,
-					ARRAYSIZE(kMomMeatPlantIntroLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-
-				int responseIndex = 0;
-				Common::Error responseError = runResponseMenu(0x153, responseIndex);
-				if (responseError.getCode() != Common::kNoError)
-					return responseError;
-
-				switch (responseIndex) {
-				case 1:
-					lineError = playDialogueEntrySequence(kMomMeatPlantResponse1Lines,
-						ARRAYSIZE(kMomMeatPlantResponse1Lines));
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-					continue;
-				case 2:
-					lineError = playDialogueEntrySequence(kMomMeatPlantResponse2Lines,
-						ARRAYSIZE(kMomMeatPlantResponse2Lines));
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-					assignMomTopicBuffer(kMomMeatPlantFollowupTopicBufferResponseLine);
-					continue;
-				default:
-					continue;
-				}
-			}
-			if (matchesResponseLine(selectedTopic, 0x155)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic155Lines, ARRAYSIZE(kMomTopic155Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x156)) {
-				Common::Error lineError = playDialogueEntrySequence(kMomTopic156Lines, ARRAYSIZE(kMomTopic156Lines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x15b) && currentStoryDayIndex == 5) {
-				Common::Error lineError = Common::kNoError;
-				if (_momRoomDialogueState.goodCauseDay5State)
-					lineError = playDialogueEntrySequence(kMomGoodCauseDay5Lines, ARRAYSIZE(kMomGoodCauseDay5Lines));
-				else
-					lineError = playDialogueLine(0x21dd, "PC");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				assignMomTopicBuffer(kMomGoodCauseDay5FollowupTopicBufferResponseLine);
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomMoynahanTopicResponseLines,
-					ARRAYSIZE(kMomMoynahanTopicResponseLines))) {
-				Common::Error lineError = playDialogueLine(0x220a, "PC");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesAnyResponseLine(selectedTopic, kMomNewspaperFireTopicResponseLines,
-					ARRAYSIZE(kMomNewspaperFireTopicResponseLines))) {
-				Common::Error lineError = playDialogueLine(0x229e, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x16d)) {
-				Common::Error lineError = playDialogueLine(0x2696, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x16e)) {
-				Common::Error lineError = playDialogueLine(0x26a3, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-			if (matchesResponseLine(selectedTopic, 0x170)) {
-				Common::Error lineError = playDialogueLine(0x26bc, "MOM");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				continue;
-			}
-
-			Common::Error lineError = playDialogueLine(0x26c6, "MOM");
+	bool skipMomDefaultKeywordSeed = false;
+	if (_momRoomDialogueState.introPending) {
+		_momRoomDialogueState.introPending = false;
+		_momRoomDialogueState.sameDayIntroLineEnabled = true;
+		_momRoomDialogueState.postIntroDefaultLineEnabled = true;
+		_momRoomDialogueState.introDayIndex = currentStoryDayIndex;
+		Common::Error lineError = runtime.playDialogueEntrySequence(kMomIntroLines, ARRAYSIZE(kMomIntroLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignMomTopicBuffer(kMomInitialTopicBufferResponseLine);
+		skipMomDefaultKeywordSeed = true;
+	}
+	if (!skipMomDefaultKeywordSeed && _momRoomDialogueState.sameDayIntroLineEnabled &&
+			currentStoryDayIndex == _momRoomDialogueState.introDayIndex) {
+		Common::Error lineError = runtime.playDialogueLine(0x2047, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignMomTopicBuffer(kMomSameDayTopicBufferResponseLine);
+		skipMomDefaultKeywordSeed = true;
+	}
+	if (!skipMomDefaultKeywordSeed && _momRoomDialogueState.postIntroDefaultLineEnabled) {
+		Common::Error lineError = runtime.playDialogueLine(0x2311, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignMomTopicBuffer(kMomPostIntroTopicBufferResponseLine);
+	}
+	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
+			!_momRoomDialogueState.stephMidgameShown) {
+		_momRoomDialogueState.stephMidgameShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x205a, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
+			(runtime.startupScript().getFlagValue("KARIN_KIDNAPED") ||
+				runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD")) &&
+			!_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown) {
+		_momRoomDialogueState.dinerBurnedKarinMissingOrDeadShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2456, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
+			!_momRoomDialogueState.burnedTvStationShown) {
+		_momRoomDialogueState.burnedTvStationShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2220, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("SCRATCHED_TUCKER") &&
+			!_momRoomDialogueState.scratchedTuckerShown) {
+		_momRoomDialogueState.scratchedTuckerShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x23f3, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN") &&
+			!_momRoomDialogueState.barberPoleStolenShown) {
+		_momRoomDialogueState.barberPoleStolenShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x23fb, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
+			!_momRoomDialogueState.boltOfClothTakenShown) {
+		_momRoomDialogueState.boltOfClothTakenShown = true;
+		if (runtime.startupScript().isNamedNpcDeathTypeClear("SPARKY") &&
+				runtime.startupScript().isNamedNpcDeathTypeClear("FIREMAN2")) {
+			Common::Error lineError = runtime.playDialogueLine(0x2416, "MOM");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+		}
+		Common::Error lineError = runtime.playDialogueLine(0x2420, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
+			runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
+			!_momRoomDialogueState.dinerBurnedKarinAliveShown) {
+		_momRoomDialogueState.dinerBurnedKarinAliveShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2434, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PC_ESCAPED_JAIL") &&
+			!_momRoomDialogueState.escapedJailShown) {
+		_momRoomDialogueState.escapedJailShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2495, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
+			!runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
+			!runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
+			!_momRoomDialogueState.karinKidnapedUnresolvedShown) {
+		_momRoomDialogueState.karinKidnapedUnresolvedShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x24d7, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
+			!_momRoomDialogueState.karinFoundAliveShown) {
+		_momRoomDialogueState.karinFoundAliveShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2505, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
+			!_momRoomDialogueState.karinFoundDeadShown) {
+		_momRoomDialogueState.karinFoundDeadShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2576, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (!runtime.startupScript().isNamedNpcDeathTypeClear("BUTCHER") &&
+			!_momRoomDialogueState.butcherAbsentShown) {
+		_momRoomDialogueState.butcherAbsentShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2633, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (!runtime.startupScript().isNamedNpcDeathTypeClear("MOYNAHAN") &&
+			!_momRoomDialogueState.moynahanAbsentShown) {
+		_momRoomDialogueState.moynahanAbsentShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2647, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (!runtime.startupScript().isNamedNpcDeathTypeClear("JIMMY") &&
+			!_momRoomDialogueState.jimmyAbsentShown) {
+		_momRoomDialogueState.jimmyAbsentShown = true;
+		if (runtime.startupScript().getFlagValue("JIMMY_ATTACKED")) {
+			Common::Error lineError = runtime.playDialogueLine(0x2659, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		Common::Error lineError = runtime.playDialogueLine(0x266c, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (!runtime.startupScript().isNamedNpcDeathTypeClear("WASP_WOMAN") &&
+			!_momRoomDialogueState.waspWomanAbsentShown) {
+		_momRoomDialogueState.waspWomanAbsentShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x2689, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD") &&
+			!runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
+			!_momRoomDialogueState.stephanieDeadPreMidgameShown) {
+		_momRoomDialogueState.stephanieDeadPreMidgameShown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x217c, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("DAY_5") && !_momRoomDialogueState.day5Shown) {
+		_momRoomDialogueState.day5Shown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x218d, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignMomTopicBuffer(kMomDay5TopicBufferResponseLine);
+	}
+	if (runtime.startupScript().getFlagValue("DAY_6") && !_momRoomDialogueState.day6Shown) {
+		_momRoomDialogueState.day6Shown = true;
+		Common::Error lineError = runtime.playDialogueLine(0x22a8, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignMomTopicBuffer(kMomDay6TopicBufferResponseLine);
+	}
+
+	for (;;) {
+		Common::String selectedTopic;
+		Common::Error menuError = runtime.runKeywordMenu(
+			momTopicBuffer, momTopicBufferLineIndex, selectedTopic);
+		if (menuError.getCode() != Common::kNoError)
+			return menuError;
+		if (selectedTopic.empty())
+			return Common::kNoError;
+		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()))
 			return runMomGoodbye();
+
+		if (runtime.matchesResponseLine(selectedTopic, 0x116)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomCookiesLines, ARRAYSIZE(kMomCookiesLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x118);
+			continue;
 		}
-	}
+		if (runtime.matchesResponseLine(selectedTopic, 0x119)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic119Lines, ARRAYSIZE(kMomTopic119Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x11a);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x11d)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic11dOpeningLines, ARRAYSIZE(kMomTopic11dOpeningLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueFst(kDialogueC008AFstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueEntrySequence(
+				kMomTopic11dPostC008ALines, ARRAYSIZE(kMomTopic11dPostC008ALines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 
-	if (!npc.npcName.equalsIgnoreCase("HANK")) {
-		debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
-		return Common::kNoError;
-	}
+			StartupInteractionResult babyGurgleInteraction;
+			if (runtime.startupScript().executeActionTag(kBabyGurgleActionTag, babyGurgleInteraction)) {
+				if (!babyGurgleInteraction.musicPath.empty())
+					(void)runtime.engine().playStartupMusic(babyGurgleInteraction.musicPath);
+				if (!babyGurgleInteraction.audioCommands.empty())
+					runtime.startupFlow().executeStartupAudioCommands(babyGurgleInteraction.audioCommands);
 
-	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+				babyGurgleInteraction.musicPath.clear();
+				babyGurgleInteraction.audioCommands.clear();
+				runtime.queueDialogueInteractionIfNeeded(babyGurgleInteraction);
+			}
+
+			lineError = runtime.playDialogueEntrySequence(
+				kMomTopic11dClosingLines, ARRAYSIZE(kMomTopic11dClosingLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueFst(kDialogueC008BFstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x120);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x121)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic121Lines, ARRAYSIZE(kMomTopic121Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x122);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x123)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomSparkyLines, ARRAYSIZE(kMomSparkyLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x124);
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomPtaTopicResponseLines,
+				ARRAYSIZE(kMomPtaTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomPtaLines, ARRAYSIZE(kMomPtaLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomPtaFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x12b)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic12bLines, ARRAYSIZE(kMomTopic12bLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x12c);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x12d)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic12dLines, ARRAYSIZE(kMomTopic12dLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x12e);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x12f)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic12fLines, ARRAYSIZE(kMomTopic12fLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x130);
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomCookingTopicResponseLines,
+				ARRAYSIZE(kMomCookingTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomCookingLines, ARRAYSIZE(kMomCookingLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomCookingFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x135)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic135Lines, ARRAYSIZE(kMomTopic135Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x136);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x137)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic137Lines, ARRAYSIZE(kMomTopic137Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x13a)) {
+			Common::Error lineError = runtime.playDialogueLine(0x1fa3, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(0x13b);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x13c)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomSlaughterhouseLines, ARRAYSIZE(kMomSlaughterhouseLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomSlaughterhouseFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x13f)) {
+			_momRoomDialogueState.fatherTopicState = true;
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomFatherLines, ARRAYSIZE(kMomFatherLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (runtime.startupScript().getFlagValue("HEARD_DAD_MOAN")) {
+				lineError = runtime.playDialogueEntrySequence(
+					kMomFatherHeardDadMoanLines, ARRAYSIZE(kMomFatherHeardDadMoanLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+			assignMomTopicBuffer(kMomFatherFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x141)) {
+			Common::Error lineError = Common::kNoError;
+			if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED")) {
+				lineError = runtime.playDialogueEntrySequence(
+					kMomStephMidgameLodgeLines, ARRAYSIZE(kMomStephMidgameLodgeLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			_sharedDiscussedLodgeTopic = true;
+			lineError = runtime.playDialogueEntrySequence(kMomLodgeLines, ARRAYSIZE(kMomLodgeLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x142, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			switch (responseIndex) {
+			case 1:
+				lineError = runtime.playDialogueEntrySequence(
+					kMomLodgeResponse1Lines, ARRAYSIZE(kMomLodgeResponse1Lines));
+				break;
+			case 2:
+				lineError = runtime.playDialogueEntrySequence(
+					kMomLodgeResponse2Lines, ARRAYSIZE(kMomLodgeResponse2Lines));
+				break;
+			default:
+				break;
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomLodgeFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomBakeSaleTopicResponseLines,
+				ARRAYSIZE(kMomBakeSaleTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomBakeSaleLines, ARRAYSIZE(kMomBakeSaleLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomBakeSaleFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x14a)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic14aLines, ARRAYSIZE(kMomTopic14aLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomPottsdamTopicResponseLines,
+				ARRAYSIZE(kMomPottsdamTopicResponseLines))) {
+			Common::Error lineError = Common::kNoError;
+			if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED"))
+				lineError = runtime.playDialogueLine(0x2086, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomPottsdamFollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomMeatPlantTopicResponseLines,
+				ARRAYSIZE(kMomMeatPlantTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomMeatPlantIntroLines, ARRAYSIZE(kMomMeatPlantIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x153, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			switch (responseIndex) {
+			case 1:
+				lineError = runtime.playDialogueEntrySequence(
+					kMomMeatPlantResponse1Lines, ARRAYSIZE(kMomMeatPlantResponse1Lines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			case 2:
+				lineError = runtime.playDialogueEntrySequence(
+					kMomMeatPlantResponse2Lines, ARRAYSIZE(kMomMeatPlantResponse2Lines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				assignMomTopicBuffer(kMomMeatPlantFollowupTopicBufferResponseLine);
+				continue;
+			default:
+				continue;
+			}
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x155)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic155Lines, ARRAYSIZE(kMomTopic155Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x156)) {
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kMomTopic156Lines, ARRAYSIZE(kMomTopic156Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x15b) && currentStoryDayIndex == 5) {
+			Common::Error lineError = Common::kNoError;
+			if (_momRoomDialogueState.goodCauseDay5State) {
+				lineError = runtime.playDialogueEntrySequence(
+					kMomGoodCauseDay5Lines, ARRAYSIZE(kMomGoodCauseDay5Lines));
+			} else {
+				lineError = runtime.playDialogueLine(0x21dd, "PC");
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMomTopicBuffer(kMomGoodCauseDay5FollowupTopicBufferResponseLine);
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomMoynahanTopicResponseLines,
+				ARRAYSIZE(kMomMoynahanTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueLine(0x220a, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMomNewspaperFireTopicResponseLines,
+				ARRAYSIZE(kMomNewspaperFireTopicResponseLines))) {
+			Common::Error lineError = runtime.playDialogueLine(0x229e, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x16d)) {
+			Common::Error lineError = runtime.playDialogueLine(0x2696, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x16e)) {
+			Common::Error lineError = runtime.playDialogueLine(0x26a3, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x170)) {
+			Common::Error lineError = runtime.playDialogueLine(0x26bc, "MOM");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+
+		Common::Error lineError = runtime.playDialogueLine(0x26c6, "MOM");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runMomGoodbye();
+	}
+}
+
+Common::Error DialogueSystem::handleHankDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName) {
+	const int currentStoryDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 	Common::String &hankTopicBuffer = _hankRoomDialogueState.currentTopicBuffer;
 	int &hankTopicBufferLineIndex = _hankRoomDialogueState.currentTopicBufferLineIndex;
 	auto assignHankTopicBuffer = [&](int responseLineIndex) {
-		assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex, responseLineIndex, "Hank topic buffer");
+		runtime.assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex,
+			responseLineIndex, "Hank topic buffer");
 	};
 
 	debugC(1, kDebugDialogue,
@@ -2032,15 +2176,16 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-			(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
-			return playDialogueLine(0xa3e, "HANK");
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+			return runtime.playDialogueLine(0xa3e, "HANK");
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-			(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
-			return playDialogueLine(0xa53, "HANK");
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+			return runtime.playDialogueLine(0xa53, "HANK");
 		}
-		return playDialogueLine(0xa38, "HANK");
+		return runtime.playDialogueLine(0xa38, "HANK");
 	}
+
 	bool skipHankFollowupBranches = false;
 	if (_hankRoomDialogueState.pendingInitialConversation) {
 		_hankRoomDialogueState.trackedDayIndex = currentStoryDayIndex;
@@ -2051,30 +2196,30 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		hankTopicBufferLineIndex = -1;
 		skipHankFollowupBranches = true;
 
-		Common::Error lineError = playDialogueLine(0x703, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0x703, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runResponseMenu(0xc7, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0xc7, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1:
-			lineError = playDialogueLine(0x70f, "HANK");
+			lineError = runtime.playDialogueLine(0x70f, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignHankTopicBuffer(0xc8);
 			break;
 		case 2:
-			lineError = playDialogueLine(0x715, "HANK");
+			lineError = runtime.playDialogueLine(0x715, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignHankTopicBuffer(0xc9);
 			break;
 		case 3:
-			lineError = playDialogueLine(0x71c, "HANK");
+			lineError = runtime.playDialogueLine(0x71c, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignHankTopicBuffer(0xca);
@@ -2091,62 +2236,54 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			_hankRoomDialogueState.pendingSameDayFollowup = false;
 			_hankRoomDialogueState.pendingRangshotSequence = true;
 
-			Common::Error lineError = playDialogueLine(0x8f5, "HANK");
+			Common::Error lineError = runtime.playDialogueLine(0x8f5, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
 		if (_hankRoomDialogueState.pendingRangshotSequence) {
-			if (currentStoryDayIndex > 5) {
-				Common::Error lineError = playDialogueLine(0x8e2, "HANK");
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			} else {
-				FstPlayer fstPlayer(_engine);
-				if (!fstPlayer.play(kDialogueRangshotFstPath))
-					return Common::kReadingFailed;
-			}
+			Common::Error lineError = currentStoryDayIndex > 5
+				? runtime.playDialogueLine(0x8e2, "HANK")
+				: runtime.playDialogueFst(kDialogueRangshotFstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
 	} else if (!skipHankFollowupBranches) {
 		_hankRoomDialogueState.pendingSameDayFollowup = true;
-		if (currentStoryDayIndex > 5) {
-			Common::Error lineError = playDialogueLine(0x8e2, "HANK");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		} else {
-			FstPlayer fstPlayer(_engine);
-			if (!fstPlayer.play(kDialogueRangshotFstPath))
-				return Common::kReadingFailed;
-		}
+		Common::Error lineError = currentStoryDayIndex > 5
+			? runtime.playDialogueLine(0x8e2, "HANK")
+			: runtime.playDialogueFst(kDialogueRangshotFstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("STEPH_MIDGAME_PLAYED") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!_hankRoomDialogueState.stephMidgamePlayedShown) {
 		_hankRoomDialogueState.stephMidgamePlayedShown = true;
 
-		Common::Error lineError = playDialogueLine(0x92c, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0x92c, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runResponseMenu(0xcc, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0xcc, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1: {
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x939, "HANK"),
-				DialogueLineSpec(0x93f, "MOM", 2)
+			const DialogueLineEntry lines[] = {
+				{ 0x939, "HANK", 0 },
+				{ 0x93f, "MOM", 2 }
 			};
-			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
 		}
 		case 2:
-			lineError = playDialogueLine(0x944, "HANK");
+			lineError = runtime.playDialogueLine(0x944, "HANK");
 			break;
 		case 3:
-			lineError = playDialogueLine(0x948, "HANK");
+			lineError = runtime.playDialogueLine(0x948, "HANK");
 			break;
 		default:
 			break;
@@ -2154,30 +2291,30 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDialogueLine(0x94f, "HANK");
+		lineError = runtime.playDialogueLine(0x94f, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		responseIndex = 0;
-		responseError = runResponseMenu(0xcd, responseIndex);
+		responseError = runtime.runResponseMenu(0xcd, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1: {
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x95a, "HANK"),
-				DialogueLineSpec(0x961, "PC", 2)
+			const DialogueLineEntry lines[] = {
+				{ 0x95a, "HANK", 0 },
+				{ 0x961, "PC", 2 }
 			};
-			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
 		}
 		case 2: {
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x965, "HANK"),
-				DialogueLineSpec(0x96b, "PC")
+			const DialogueLineEntry lines[] = {
+				{ 0x965, "HANK", 0 },
+				{ 0x96b, "PC", 0 }
 			};
-			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
 		}
 		default:
@@ -2186,45 +2323,45 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDialogueLine(0x971, "HANK");
+		lineError = runtime.playDialogueLine(0x971, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("BURNED_TV_STATION") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!_hankRoomDialogueState.burnedTvStationShown) {
 		_hankRoomDialogueState.burnedTvStationShown = true;
-		Common::Error lineError = playDialogueLine(0x987, "PC");
+		Common::Error lineError = runtime.playDialogueLine(0x987, "PC");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("BUSTED_ONCE") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("BUSTED_ONCE") &&
 			!_hankRoomDialogueState.bustedOnceShown) {
 		_hankRoomDialogueState.bustedOnceShown = true;
-		Common::Error lineError = playDialogueLine(0x9b1, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0x9b1, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runResponseMenu(0xce, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0xce, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1: {
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x9bc, "HANK"),
-				DialogueLineSpec(0x9c9, "HANK")
+			const DialogueLineEntry lines[] = {
+				{ 0x9bc, "HANK", 0 },
+				{ 0x9c9, "HANK", 0 }
 			};
-			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
 		}
 		case 2: {
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x9c1, "HANK"),
-				DialogueLineSpec(0x9c5, "PC"),
-				DialogueLineSpec(0x9c9, "HANK")
+			const DialogueLineEntry lines[] = {
+				{ 0x9c1, "HANK", 0 },
+				{ 0x9c5, "PC", 0 },
+				{ 0x9c9, "HANK", 0 }
 			};
-			lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
 		}
 		default:
@@ -2233,46 +2370,46 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_KIDNAPED") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!_hankRoomDialogueState.karinKidnapedShown) {
 		_hankRoomDialogueState.karinKidnapedShown = true;
-		Common::Error lineError = playDialogueLine(0x9d5, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0x9d5, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		if (_sharedKarinKidnapedDialogueState) {
-			lineError = playDialogueLineWithVariant(0x9da, "PC", 3);
+			lineError = runtime.playDialogueLineWithVariant(0x9da, "PC", 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		const DialogueLineSpec lines[] = {
-			DialogueLineSpec(0x9de, "HANK"),
-			DialogueLineSpec(0x9df, "HANK"),
-			DialogueLineSpec(0x9e0, "HANK"),
-			DialogueLineSpec(0x9e1, "HANK"),
-			DialogueLineSpec(0x9e2, "HANK")
+		const DialogueLineEntry lines[] = {
+			{ 0x9de, "HANK", 0 },
+			{ 0x9df, "HANK", 0 },
+			{ 0x9e0, "HANK", 0 },
+			{ 0x9e1, "HANK", 0 },
+			{ 0x9e2, "HANK", 0 }
 		};
-		lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+		lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runResponseMenu(0xcf, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0xcf, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1: {
-			const DialogueLineSpec responseLines[] = {
-				DialogueLineSpec(0x9f4, "HANK"),
-				DialogueLineSpec(0x9fc, "HANK")
+			const DialogueLineEntry responseLines[] = {
+				{ 0x9f4, "HANK", 0 },
+				{ 0x9fc, "HANK", 0 }
 			};
-			lineError = playDialogueSequence(responseLines, ARRAYSIZE(responseLines));
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
 			break;
 		}
 		case 2:
-			lineError = playDialogueLine(0xa01, "HANK");
+			lineError = runtime.playDialogueLine(0xa01, "HANK");
 			break;
 		default:
 			break;
@@ -2280,31 +2417,31 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_FOUND_ALIVE") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
 			!_hankRoomDialogueState.karinFoundAliveShown) {
 		_hankRoomDialogueState.karinFoundAliveShown = true;
-		Common::Error lineError = playDialogueLine(0xa0b, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0xa0b, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (!skipHankFollowupBranches && startupScript->getFlagValue("KARIN_FOUND_DEAD") &&
+	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
 			!_hankRoomDialogueState.karinFoundDeadShown) {
 		_hankRoomDialogueState.karinFoundDeadShown = true;
-		Common::Error lineError = playDialogueLine(0xa15, "HANK");
+		Common::Error lineError = runtime.playDialogueLine(0xa15, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runResponseMenu(0xd0, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0xd0, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		switch (responseIndex) {
 		case 1:
-			lineError = playDialogueLine(0xa20, "HANK");
+			lineError = runtime.playDialogueLine(0xa20, "HANK");
 			break;
 		case 2:
-			lineError = playDialogueLine(0xa26, "HANK");
+			lineError = runtime.playDialogueLine(0xa26, "HANK");
 			break;
 		default:
 			break;
@@ -2312,24 +2449,25 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		lineError = playDialogueLine(0xa2b, "HANK");
+		lineError = runtime.playDialogueLine(0xa2b, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
 	for (;;) {
 		Common::String selectedTopic;
-		Common::Error menuError = runKeywordMenu(hankTopicBuffer, hankTopicBufferLineIndex, selectedTopic);
+		Common::Error menuError = runtime.runKeywordMenu(
+			hankTopicBuffer, hankTopicBufferLineIndex, selectedTopic);
 		if (menuError.getCode() != Common::kNoError)
 			return menuError;
 
 		if (selectedTopic.empty())
 			return Common::kNoError;
 		debugC(1, kDebugDialogue, "Harvester: Hank selected topic='%s'", selectedTopic.c_str());
-		if (selectedTopic.equalsIgnoreCase(genericByeTopic))
-			return playDialogueLine(0x8dc, "HANK");
+		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()))
+			return runtime.playDialogueLine(0x8dc, "HANK");
 
-		const Common::String momTopic = startupText->getDialogueResponseLine(0xd2);
+		const Common::String momTopic = runtime.startupText().getDialogueResponseLine(0xd2);
 		Common::Array<Common::String> currentTopics;
 		splitDialogueMenuLine(hankTopicBuffer, currentTopics);
 		const bool matchesMomTopicByLine = !momTopic.empty() && selectedTopic.equalsIgnoreCase(momTopic);
@@ -2339,20 +2477,20 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			debugC(1, kDebugDialogue,
 				"Harvester: Hank matched special Mom branch '%s' (lineMatch=%d bufferMatch=%d)",
 				selectedTopic.c_str(), (int)matchesMomTopicByLine, (int)matchesMomTopicFromIntroBuffer);
-			const DialogueLineSpec lines[] = {
-				DialogueLineSpec(0x725, "HANK"),
-				DialogueLineSpec(0x729, "PC"),
-				DialogueLineSpec(0x72d, "HANK"),
-				DialogueLineSpec(0x733, "PC"),
-				DialogueLineSpec(0x737, "HANK"),
-				DialogueLineSpec(0x73b, "PC"),
-				DialogueLineSpec(0x741, "HANK"),
-				DialogueLineSpec(0x747, "MOM", 2)
+			const DialogueLineEntry lines[] = {
+				{ 0x725, "HANK", 0 },
+				{ 0x729, "PC", 0 },
+				{ 0x72d, "HANK", 0 },
+				{ 0x733, "PC", 0 },
+				{ 0x737, "HANK", 0 },
+				{ 0x73b, "PC", 0 },
+				{ 0x741, "HANK", 0 },
+				{ 0x747, "MOM", 2 }
 			};
-			Common::Error lineError = playDialogueSequence(lines, ARRAYSIZE(lines));
+			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			setActiveSpeakerPortrait("HANK", 0);
+			runtime.setActiveSpeakerPortrait("HANK", 0);
 			assignHankTopicBuffer(0xd5);
 			continue;
 		}
@@ -2362,7 +2500,8 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 			if (topic.responseLineIndex == 0xd2)
 				continue;
 
-			const Common::String topicText = startupText->getDialogueResponseLine(topic.responseLineIndex);
+			const Common::String topicText =
+				runtime.startupText().getDialogueResponseLine(topic.responseLineIndex);
 			if (topicText.empty() || !selectedTopic.equalsIgnoreCase(topicText))
 				continue;
 
@@ -2373,30 +2512,28 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				"Harvester: Hank matched topic '%s' to response line 0x%x (%d) -> wav=0x%x speaker='%s'",
 				selectedTopic.c_str(), topic.responseLineIndex, topic.responseLineIndex + 1,
 				topic.wavId, topic.speakerId);
-			Common::Error lineError = playDialogueLine(topic.wavId, topic.speakerId);
+			Common::Error lineError = runtime.playDialogueLine(topic.wavId, topic.speakerId);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			handledTopic = true;
 			break;
 		}
 
+		Common::Error lineError = runtime.playDialogueLine(0xa32, "HANK");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
 		if (handledTopic) {
 			debugC(1, kDebugDialogue,
 				"Harvester: Hank handled topic '%s' and now falls through to generic response/exit",
 				selectedTopic.c_str());
-			Common::Error lineError = playDialogueLine(0xa32, "HANK");
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			return playDialogueLine(0x8dc, "HANK");
+		} else {
+			debugC(1, kDebugDialogue,
+				"Harvester: Hank topic '%s' fell back to generic response and exits dialogue",
+				selectedTopic.c_str());
 		}
 
-		debugC(1, kDebugDialogue,
-			"Harvester: Hank topic '%s' fell back to generic response and exits dialogue",
-			selectedTopic.c_str());
-		Common::Error lineError = playDialogueLine(0xa32, "HANK");
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-		return playDialogueLine(0x8dc, "HANK");
+		return runtime.playDialogueLine(0x8dc, "HANK");
 	}
 }
 
