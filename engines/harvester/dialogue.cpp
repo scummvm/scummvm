@@ -34,6 +34,7 @@
 #include "graphics/framelimiter.h"
 #include "harvester/npc/authority_dialogue.h"
 #include "harvester/npc/beggar_dialogue.h"
+#include "harvester/npc/boyle_dialogue.h"
 #include "harvester/npc/buster_dialogue.h"
 #include "harvester/npc/butcher_dialogue.h"
 #include "harvester/cft_font.h"
@@ -367,6 +368,7 @@ DialogueSystem::~DialogueSystem() {
 void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new AuthorityDialogueHandler());
 	_npcHandlers.push_back(new BeggarDialogueHandler());
+	_npcHandlers.push_back(new BoyleDialogueHandler());
 	_npcHandlers.push_back(new BusterDialogueHandler());
 	_npcHandlers.push_back(new ButcherDialogueHandler());
 	_npcHandlers.push_back(new DwayneDialogueHandler());

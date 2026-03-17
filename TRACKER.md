@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_dad @ 0x2b020` into a dedicated `engines/harvester/npc/dad_dialogue.*` handler.
-  - Dad is now covered as a compact visible handler: the `TAKING_BONDAGE` interrupt, the two-state no-item bark path, and the linear evidence-item fan-out for corpse photo, Whaley/Herrill photo, note/checkbook evidence, and `MEAT_PERMISSION0`.
-  - The only still-unrecovered piece in that handler is the gameplay-side setter behind Dad's local `MEAT_PERMISSION0` wrapper at `0x38400`; the engine keeps that state explicit instead of guessing a write path.
+- Ported `handle_talk_to_boyle @ 0x2cb20` into a dedicated `engines/harvester/npc/boyle_dialogue.*` handler.
+  - Boyle is now covered as a compact visible handler: the one-shot no-item bark, the button / evidence item replies, and the recovered hidden `GASCAN` return exchange that awards `LODGE_APPLICATION`, clears the gas can, and sets `HAVE_LODGE_APP`.
+  - The larger hidden Boyle keyword block around `0x2d620` is still documented in `ARCHITECTURE.md` as a follow-on fidelity target, but the top-level dispatch target is no longer stubbed in the engine.
 
 ## Next Suggested Action
 
 1. Port `handle_talk_to_stephanie @ 0x36710` next.
-   - Stephanie is now the only remaining large visible/topic-heavy handler before the final compact Boyle pass.
-2. After Stephanie, finish the last remaining non-stub top-level handler: `handle_talk_to_boyle @ 0x2cb20`.
-   - Revisit the Mom raw-disassembly audit afterward as a separate fidelity pass once `STEPHANIE` and `BOYLE` are both in place.
+   - Stephanie is now the last remaining Ghidra-identified top-level NPC dialogue handler without an engine-side class, and the Sergeant / Potts shared-state prerequisites for her known branches are already in place.
+2. After Stephanie lands, switch from coverage work back to fidelity work.
+   - Highest-value followups are Stephanie's deeper hidden topic branches, Boyle's `0x2d620` keyword block, and the separate Mom raw-disassembly rebuild.
