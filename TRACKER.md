@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Match startup-room handoff behavior to the native `CHANGE_ROOM` / map-transition flow
+- Match startup-room exit interactions to the native region-overlap and rapid-click behavior
 - Keep room and closeup transitions scoped to behavior confirmed in Ghidra
-- Only replace recursive engine behavior where the binary shows a queued pending-room handoff
+- Only replace recursive or simplified engine behavior where the binary shows a distinct queued or immediate handoff
 
 ## Progress
 
@@ -21,8 +21,15 @@
 - Confirmed the dialogue-triggered Jimmy paper handoff was still losing `CHANGE_ROOM` semantics in engine code: `jimmy_dialogue.cpp` manually copied `nextRoomName` out of `ACTV_HOUSE_EXIT` but dropped `roomTransition`, which downgraded the queued handoff back into the legacy nested-room path.
 - Confirmed another room-setup mismatch against the recovered native constructor rules: the engine was requiring room backgrounds to live under `GRAPHIC/ROOMS/*.BM`, while the documented native `spawn_object_entity_from_record` promotion rule is based on a sprite-backed object at origin whose loaded bitmap is `640x480`.
 - Confirmed the remaining `PCHOUSE_2_MAP` failure was not a missing room at all: native `resolve_room_entrance` falls back from `ENTRANCE` to `MAP_ENTRANCE`, and map-entry matches open the town map UI which then resolves a final destination through `MAP_LOCATION -> destination_entrance -> ENTRANCE`.
+- Confirmed two native exit-region behaviors in Ghidra before patching the room loop:
+  - `check_player_region_interaction` is called from `run_harvester_main_loop` for every class `0x19` region each frame and dispatches the region action as soon as the player sprite overlaps the region bounds, the Z ranges overlap, the region is enabled, and the facing matches.
+  - The mouse callback installed by `initialize_mouse_input` sets the `DAT_000d5975` fast-click latch when a left-button press happens within 20 ticks of the previous left-button release; `run_harvester_main_loop` uses that latch to jump straight into region dispatch on exit clicks except in `LAVAPIT`, `RMNBATH`, and `BOWLSNTRY1`.
+- Updated the engine room loop to match those confirmed behaviors:
+  - walking into an enabled exit region now triggers the region action without requiring that exact hotspot to have been clicked first;
+  - a native-style rapid second left click on an exit region now dispatches immediately instead of queuing a walk-up first;
+  - region activation now stops active room movement before dispatch so exit/dialogue actions do not continue the previous walk path.
 
 ## Next Suggested Action
 
-1. Re-test both `PCHOUSE_X4B -> PCHOUSE_2_MAP` and the Jimmy `DIAL_JIM_1_C -> CHANGE_ROOM PCHOUSE_2_MAP` path and confirm they now open the town map UI instead of throwing `reading data failed`.
-2. If the map UI is functionally correct but visually off, compare initial cursor placement and panel-switch polish against the native `select_town_map_destination` path before moving on to closeup cleanup.
+1. Re-test `PCHOUSE_X4B` in two ways: walk across the exit after clicking nearby ground, and rapid-double-click the exit itself. Both should now enter the town-map path without waiting for the player to finish a queued walk.
+2. Re-test a non-map exit plus one of the native fast-click blacklist rooms (`LAVAPIT`, `RMNBATH`, or `BOWLSNTRY1`) to confirm the new shortcut is limited to the same rooms the binary allows.

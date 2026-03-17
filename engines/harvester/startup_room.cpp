@@ -37,6 +37,14 @@
 
 namespace Harvester {
 
+static const uint32 kRoomExitFastClickWindowTicks = 20;
+
+static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
+	return !roomName.equalsIgnoreCase("LAVAPIT") &&
+		!roomName.equalsIgnoreCase("RMNBATH") &&
+		!roomName.equalsIgnoreCase("BOWLSNTRY1");
+}
+
 StartupRoomSystem::StartupRoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		StartupInventorySystem &inventory)
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
@@ -104,6 +112,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		bool moveDown = false;
 		Common::String pendingRegionName;
 		Common::String pendingRoomChange;
+		uint32 lastLeftButtonReleaseTick = 0;
 		StartupRoomIdleAnimationState idleState;
 		bool needsRedraw = true;
 		auto resetIdleState = [&]() {
@@ -117,6 +126,18 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			updatePlayerIdleTrigger(idleState);
 		};
 		resetIdleState();
+		auto stopPlayerRegionInteraction = [&]() {
+			moveLeft = false;
+			moveRight = false;
+			moveUp = false;
+			moveDown = false;
+			pendingRegionName.clear();
+			playerState.hasMoveTarget = false;
+			playerState.turnActive = false;
+			playerState.turnTargetFacing = -1;
+			if (playerState.entity && playerState.facing >= 0)
+				(void)setPlayerIdleAnimation(playerState, playerState.facing);
+		};
 
 	auto openInventoryOverlay = [&]() {
 		moveLeft = false;
@@ -406,12 +427,30 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			return Common::kNoError;
 		}
 
-		pendingRegionName.clear();
+		stopPlayerRegionInteraction();
 		return runRegionInteraction(*region);
 	};
-	if (!_inventory.refresh())
-		return Common::kReadingFailed;
-	Graphics::FrameLimiter limiter(g_system, 60);
+	auto tryActivateOverlappedRegion = [&]() -> Common::Error {
+		if (!playerState.entity)
+			return Common::kNoError;
+
+		for (const StartupRegionRecord &region : scene.sceneRegions) {
+			if (!region.startEnabled)
+				continue;
+			if (!doesPlayerOverlapRegion(*playerState.entity, region))
+				continue;
+			if (!doesPlayerFacingMatchRegion(playerState.facing, region))
+				continue;
+
+			stopPlayerRegionInteraction();
+			return runRegionInteraction(region);
+		}
+
+		return Common::kNoError;
+	};
+		if (!_inventory.refresh())
+			return Common::kReadingFailed;
+		Graphics::FrameLimiter limiter(g_system, 60);
 
 	if (shouldRunStartupRoomProbe())
 		logStartupRoomProbe(_engine, scene, currentRoomTarget, _mousePos);
@@ -511,10 +550,15 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
+				lastLeftButtonReleaseTick = getRuntimeClockTicks();
 				if (showingInspectText)
 					inspectCanDismiss = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN: {
+				const uint32 now = getRuntimeClockTicks();
+				const bool isFastExitClick =
+					lastLeftButtonReleaseTick != 0 &&
+					now - lastLeftButtonReleaseTick < kRoomExitFastClickWindowTicks;
 				notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
 					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
@@ -640,6 +684,18 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					break;
 				}
 				if (hoverState.region && playerState.entity) {
+					if (isFastExitClick &&
+						hoverState.region->startEnabled &&
+						roomAllowsImmediateExitClick(scene.state.roomName)) {
+						stopPlayerRegionInteraction();
+						Common::Error interactionError = runRegionInteraction(*hoverState.region);
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
+						if (startupFlow.hasPendingMainMenuReturn())
+							return Common::kNoError;
+						needsRedraw = true;
+						break;
+					}
 					queueRegionInteraction(*hoverState.region);
 					Common::Error interactionError = tryActivatePendingRegion();
 					if (interactionError.getCode() != Common::kNoError)
@@ -808,16 +864,21 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		if (!pendingRoomChange.empty())
 			break;
 
-		if (updatePlayerTurnAnimationState(playerState))
+		bool playerAdvancedThisFrame = false;
+		if (updatePlayerTurnAnimationState(playerState)) {
+			playerAdvancedThisFrame = true;
 			needsRedraw = true;
+		}
 
 		if (!idleState.active && !idleState.exiting) {
 			if (stepPlayerKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
+				playerAdvancedThisFrame = true;
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (stepPlayerMoveTarget(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState)) {
+				playerAdvancedThisFrame = true;
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
@@ -837,6 +898,13 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			}
 		}
 		Common::Error pendingRegionError = tryActivatePendingRegion();
+		if (pendingRegionError.getCode() != Common::kNoError)
+			return pendingRegionError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
+		if (!pendingRoomChange.empty())
+			break;
+		pendingRegionError = playerAdvancedThisFrame ? tryActivateOverlappedRegion() : Common::kNoError;
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
