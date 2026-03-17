@@ -27,6 +27,7 @@ MODULE := engines/harvester
 	npc/johnson_dialogue.o \
 	npc/karin_dialogue.o \
 	npc/librarian_dialogue.o \
+	npc/loomis_dialogue.o \
 	npc/lodge_chef_dialogue.o \
 	npc/mcknight_dialogue.o \
 	npc/memb_dir_dialogue.o \

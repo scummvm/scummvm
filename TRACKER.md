@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_karin @ 0x2ea90` into a dedicated `engines/harvester/npc/karin_dialogue.*` handler.
-  - Native Karin dialogue is a compact stateful handler: the CEM10 alive line (`0x10a5`) and the pre-rescue default line (`0x1076`) are both one-shot PC-spoken branches, the item path handles casket/photo evidence and `INV_MAG`, and an extra photo-reply override bit suppresses native evidence writes when set.
-  - The engine now routes `KARIN` through a concrete handler with matching one-shot state and evidence replies; the photo-reply override remains explicit local state until its gameplay-side setter is recovered.
+- Ported `handle_talk_to_loomis @ 0x34f80` into a dedicated `engines/harvester/npc/loomis_dialogue.*` handler.
+  - Native Loomis dialogue uses a small two-step no-item state machine: the intro clears the local talk-state block, sets a return-visit followup bit, optionally plays the pre-Dwayne line `0x10fd`, then falls through to `0x1121`; the next no-item talk plays `0x11a8`, and later talks settle on `0x11f6`.
+  - The item path is mostly linear but includes one native quirk: `TV_DEED` and `TV_DEED_PHOTOCOPY` collapse into the same note/checkbook helper and `0x1209` line instead of using the usual TV-deed shared flag, and `PHOTO_OF_WHALEY_HERRILL` plays `0x1143` without writing the shared Whaley/Herrill evidence bit.
 
 ## Next Suggested Action
 
 1. Move back to the more stateful visible handlers now that the compact visible bucket is mostly cleared.
-   - The next best candidates are the larger visible stateful handlers: `LOOMIS`, `MOYNAHAN`, `MR_POTTS`, and `MRS_POTTS`, followed by the heavier hidden-topic handlers.
+   - The next best candidates are the larger visible stateful handlers: `MOYNAHAN`, `MR_POTTS`, and `MRS_POTTS`, followed by the heavier hidden-topic handlers.
 2. After that visible evidence-handler pass, return to Boyle and the other larger hidden-topic handlers.
    - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.

@@ -57,6 +57,7 @@
 #include "harvester/npc/johnson_dialogue.h"
 #include "harvester/npc/karin_dialogue.h"
 #include "harvester/npc/librarian_dialogue.h"
+#include "harvester/npc/loomis_dialogue.h"
 #include "harvester/npc/lodge_chef_dialogue.h"
 #include "harvester/npc/mcknight_dialogue.h"
 #include "harvester/npc/memb_dir_dialogue.h"
@@ -376,6 +377,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new GladiatorDialogueHandler());
 	_npcHandlers.push_back(new LibrarianDialogueHandler());
+	_npcHandlers.push_back(new LoomisDialogueHandler());
 	_npcHandlers.push_back(new McknightDialogueHandler());
 	_npcHandlers.push_back(new MembDirDialogueHandler());
 	_npcHandlers.push_back(new MaintManDialogueHandler());
