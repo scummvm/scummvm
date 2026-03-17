@@ -2,26 +2,25 @@
 
 ## Current Focus
 
-- Implement the remaining Ghidra-identified NPC dialogue handlers in the engine
+- Rebuild talk-handler ports from corrected native control flow
 - Keep each NPC port scoped to confirmed native behavior only
-- Update `TRACKER.md` and commit after each completed NPC
+- Commit each completed NPC update as an isolated change
 
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `896`
-- Named/documented: `577`
+- Total functions: `902`
+- Named/documented: `583`
 - Still `FUN_*` / undocumented: `319`
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_stephanie @ 0x36710` into a dedicated `engines/harvester/npc/stephanie_dialogue.*` handler.
-  - Stephanie now covers the confirmed top-level dispatch surface: evidence-item replies, the staged intro / revisit flow, the nasty-path FST and action-tag branch, the day-5 and Karin outcome one-shots, and the recovered keyword-menu branches that hang off her visible topic buffers.
-  - This completes engine-side coverage for every currently identified top-level NPC dialogue handler recovered from Ghidra.
+- Rebuilt `handle_talk_to_mom @ 0x31140` from corrected native control flow and fixed the engine port to follow the full recovered sequence.
+  - Mom now uses the confirmed native line sequences, head variants, FST calls, action tags, and keyword / response menu branches instead of the earlier truncated decompile.
+  - The engine-side dialogue shared state now exposes Mom's day-5 cross-handler state so the remaining audit can wire the native producer back in.
 
 ## Next Suggested Action
 
-1. Switch from NPC coverage work back to dialogue fidelity work.
-   - Highest-value followups are Stephanie's deeper hidden topic branches, Boyle's `0x2d620` keyword block, and the separate Mom raw-disassembly rebuild.
-2. Keep folding any newly confirmed hidden helper fixes from Ghidra back into the per-NPC handlers.
-   - The coverage pass is complete, so remaining work is behavior parity and disassembly cleanup rather than adding more top-level handler classes.
+1. Audit the remaining `handle_talk_to_*` ports against the corrected native disassembly.
+   - The highest-value follow-up is `handle_talk_to_whaley @ 0x23ec0`, which still contains major unported menu and event logic, including the native producer for Mom's day-5 shared dialogue state.
+2. Apply any additional high-confidence Ghidra renames or comments that fall directly out of those audited handlers before each commit.
