@@ -46,13 +46,10 @@ public:
 		bool karinFoundDeadShown = false;
 		bool butcherAbsentShown = false;
 		bool moynahanAbsentShown = false;
-		bool jimmyAbsentShown = false;
 		bool waspWomanAbsentShown = false;
 		bool stephanieDeadPreMidgameShown = false;
 		bool day5Shown = false;
 		bool day6Shown = false;
-		bool fatherTopicState = false;
-		bool goodCauseDay5State = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
