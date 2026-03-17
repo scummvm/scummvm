@@ -235,6 +235,12 @@ struct StartupRoomSetupState {
 	Common::Array<StartupAudioCommand> audioCommands;
 };
 
+enum StartupRoomTransitionKind {
+	kStartupRoomTransitionNone = 0,
+	kStartupRoomTransitionChangeRoom,
+	kStartupRoomTransitionCloseup
+};
+
 struct StartupInteractionResult {
 	Common::String musicPath;
 	Common::String nextRoomName;
@@ -242,6 +248,7 @@ struct StartupInteractionResult {
 	Common::String dialogueNpcName;
 	Common::String dialogueContinuationTag;
 	Common::Array<StartupAudioCommand> audioCommands;
+	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
 	bool requestMainMenu = false;
 	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;
@@ -332,6 +339,7 @@ private:
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		StartupRoomTransitionKind *roomTransition,
 		Common::String *deathFlicPath, bool *requestMainMenu, Common::String *dialogueNpcName,
 		Common::String *dialogueContinuationTag,
 		bool *mutatedRuntimeState);
