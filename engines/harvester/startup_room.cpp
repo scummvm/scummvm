@@ -58,7 +58,10 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 	if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
 		return Common::kReadingFailed;
 
-	Graphics::Screen *screen = _engine.getScreen();
+	auto getActiveScreen = [&]() -> Graphics::Screen * {
+		return _engine.getScreen();
+	};
+	Graphics::Screen *screen = getActiveScreen();
 	const StartupArt *art = _engine.getStartupArt();
 	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !art || !bodyFont)
@@ -161,8 +164,12 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		return _inventory.refresh();
 	};
 	auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
-		drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-		return captureScreenBackdrop(*screen, dialogueBackdrop);
+		Graphics::Screen *activeScreen = getActiveScreen();
+		if (!activeScreen)
+			return false;
+
+		drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+		return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
 	};
 	auto runRoomExitCommands = [&]() {
 		Common::Array<StartupAudioCommand> exitAudioCommands;
@@ -389,6 +396,10 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			return Common::kNoError;
 
 		if (needsRedraw) {
+			Graphics::Screen *activeScreen = getActiveScreen();
+			if (!activeScreen)
+				return Common::kNoError;
+
 			const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
@@ -424,26 +435,27 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 						: hoverState.cursorSequence);
 			}
 
-			drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
+			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 			if (_inventory.isOpen())
-				_inventory.drawOverlay(*screen, *bodyFont);
+				_inventory.drawOverlay(*activeScreen, *bodyFont);
 
 			if (showingInspectText) {
-				drawRoomInspectText(*screen, *art, *bodyFont, inspectText);
+				drawRoomInspectText(*activeScreen, *art, *bodyFont, inspectText);
 			} else if (!promptText.empty()) {
-				_engine.getScreen();
 				// Shared room prompt rendering remains in the orchestration layer.
 				{
 					const byte shadowColor = 0;
-					bodyFont->drawString(screen, promptText, 1, 463, 640, shadowColor, Graphics::kTextAlignCenter);
-					bodyFont->drawString(screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
+					bodyFont->drawString(activeScreen, promptText, 1, 463, 640, shadowColor,
+						Graphics::kTextAlignCenter);
+					bodyFont->drawString(activeScreen, promptText, 0, 462, 640, 0xce,
+						Graphics::kTextAlignCenter);
 				}
 			}
 
 			if (runtimeEntities)
-				runtimeEntities->drawCursor(*screen);
-			screen->makeAllDirty();
-			screen->update();
+				runtimeEntities->drawCursor(*activeScreen);
+			activeScreen->makeAllDirty();
+			activeScreen->update();
 			needsRedraw = false;
 		}
 
@@ -729,9 +741,12 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
 					playerState.turnTargetFacing = -1;
+					Graphics::Screen *activeScreen = getActiveScreen();
+					if (!activeScreen)
+						return Common::kNoError;
 					IndexedBitmap roomMenuBackdrop;
-					drawRoomScene(_engine, *screen, scene, scene.targetPaletteBrightness);
-					if (!captureScreenBackdrop(*screen, roomMenuBackdrop))
+					drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+					if (!captureScreenBackdrop(*activeScreen, roomMenuBackdrop))
 						return Common::kReadingFailed;
 					Common::Error menuError = startupFlow.runRoomMenuStub(roomMenuBackdrop);
 					if (menuError.getCode() != Common::kNoError)
