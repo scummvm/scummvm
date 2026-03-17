@@ -47,6 +47,7 @@
 #include "harvester/npc/johnson_dialogue.h"
 #include "harvester/npc/lodge_chef_dialogue.h"
 #include "harvester/npc/mom_dialogue.h"
+#include "harvester/npc/mother_dialogue.h"
 #include "harvester/npc/pta_mom_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/wasp_woman_dialogue.h"
@@ -338,6 +339,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new JimmyDialogueHandler());
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new MomDialogueHandler());
+	_npcHandlers.push_back(new MotherDialogueHandler());
 	_npcHandlers.push_back(new LodgeChefDialogueHandler());
 	_npcHandlers.push_back(new HankDialogueHandler());
 	_npcHandlers.push_back(new HerrillDialogueHandler());
