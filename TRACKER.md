@@ -15,12 +15,12 @@
 
 ## Last Confirmed Action
 
-- Rebuilt `handle_talk_to_mrs_potts @ 0x2ee70` from the corrected native flow and turned the orphan helpers at `0x382c0` and `0x38920` into named functions: `get_set_shared_dialogue_state_d2eb8` and `play_c040_fst`.
-  - Mrs. Potts now preserves the native intro response menu, the room-specific dead-Stephanie branches, the `REMAINS` death sequence through `C040.FST` and `DIE_IN_CHAIR`, the `KARIN_KIDNAPED` response menu, and the hidden keyword loop over `dialog.rsp[0x237..0x24a]`.
-  - The next highest-value corrective pass is `handle_talk_to_phelps`, whose native handler still contains response menus, multi-line evidence branches, and a large no-item one-shot chain that the current engine port flattens away.
+- Rebuilt `handle_talk_to_phelps @ 0x29920` from the corrected native flow and updated the native notes for its restored response menus and one-shot chain.
+  - Phelps now preserves the six-line intro, the pre-day-5 response menu at `dialog.rsp[0x22a]`, the multi-line Whaley / casket / quarter item branches, the quarter-side action tags `GET_PRN_MAG` and `DEL_DRT_MAG`, and the ordered late-game one-shot bark chain through the Jimmy, Butcher, Moynahan, and Karin outcomes.
+  - The next highest-value corrective pass is `handle_talk_to_moynahan`, whose native function still hides a much larger keyword/menu block and several item-driven response menus than the current engine port reflects.
 
 ## Next Suggested Action
 
 1. Audit the remaining `handle_talk_to_*` ports against the corrected native disassembly.
-   - The highest-value immediate follow-up is `handle_talk_to_phelps`, then the other remaining handlers that still hide native menu/event logic behind mistyped `play_dialogue_line` calls or orphan `run_dialogue_response_menu` / `run_dialogue_keyword_menu` blocks.
+   - The highest-value immediate follow-up is `handle_talk_to_moynahan`, then the other remaining handlers that still hide native menu/event logic behind mistyped `play_dialogue_line` calls or orphan `run_dialogue_response_menu` / `run_dialogue_keyword_menu` blocks.
 2. Apply any additional high-confidence Ghidra renames or comments that fall directly out of those audited handlers before each commit.
