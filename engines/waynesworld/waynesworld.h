@@ -158,6 +158,7 @@ private:
 	int _startOawPos = 0;
 	int _startOagPos = 0;
 	int _startOaoPos = 0;
+	int _loadSaveSlot = -1;
 	
 	void sub3009A(int textId);
 	void sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId);

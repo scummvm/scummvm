@@ -166,7 +166,15 @@ Common::Error WaynesWorldEngine::run() {
 
 	syncSoundSettings();
 
-	runIntro();
+	if (ConfMan.hasKey("save_slot")) {
+		int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot > 0 && saveSlot <= 99)
+			_loadSaveSlot = saveSlot;
+	}
+
+	if (_loadSaveSlot < 0) {
+		runIntro();
+	}
 	_introOngoing = false;
 	_fontWW = new GFTFont();
 	_fontWWInv = new GFTFont();
@@ -211,7 +219,7 @@ Common::Error WaynesWorldEngine::run() {
 	_gameState = 7;
 	_currentMapItemIndex = -1;
 	_musicIndex = 0;
-	
+
 	loadMainActorSprites();
 
 	initRoomObjects();
@@ -225,11 +233,15 @@ Common::Error WaynesWorldEngine::run() {
 	CursorMan.showMouse(true);
 
 	drawInterface(2);
-	changeRoom(0);
-	changeMusic();
 	
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
-
+	_currentRoomNumber = 0;
+	if (_loadSaveSlot > 0) {
+		_logic->loadSavegame(_loadSaveSlot);
+	}
+	changeRoom(_currentRoomNumber);
+	changeMusic();
+	
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;
 		// _keyInput = 0;

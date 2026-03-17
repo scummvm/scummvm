@@ -79,7 +79,7 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 
 	SaveStateList saveList;
 	for (const auto &filename : filenames) {
-		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		// Obtain the 2 digits from the filename, since they correspond to the save slot
 		Common::String numb = filename.substr(2, 2);
 		const int slotNum = atoi(numb.c_str());
 
