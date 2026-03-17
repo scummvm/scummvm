@@ -9,21 +9,19 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `885`
-- Named/documented: `565`
-- Still `FUN_*` / undocumented: `320`
+- Total functions: `886`
+- Named/documented: `568`
+- Still `FUN_*` / undocumented: `318`
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_johnson @ 0x27dd0` into `DialogueSystem` as `engines/harvester/npc/johnson_dialogue.*`.
-  - `JOHNSON` now routes through a dedicated handler instead of the generic stub registry entry, and the engine mirrors the bounded native early short-circuit flags (`2ND_SCRATCH_TUCKER`, `TRY_TO_SCRATCH_TUCKER`, `OPENING_MANHOLE_DAYTIME`), the shared-evidence item replies, the intro gate at `0xd2bf4`, the one-shot no-item bark chain, and the looping keyword menu seeded from zero-based `dialog.rsp` line `0x176`.
-  - The previously truncated mid-function block is now recovered from raw bytes: `SCRATCHED_TUCKER` re-arms the intro after `0xc25`, the intro itself is `0xa86` / `0xa8a` / `0xa8e` / `0xa97` / `0xa9b`, and the event bark chain covers `STEPH_MIDGAME_PLAYED`, `KARIN_KIDNAPED`, `KARIN_FOUND_ALIVE`, `BARBER_POLE_STOLEN`, `DINER_BURNED`, `PC_ESCAPED_JAIL`, `GOT_REMAINS_FOR_LODGE`, and `BURNED_TV_STATION`.
-  - Johnson's keyword loop is now mirrored in-engine with the native branch grouping: `0x178` / `0x179` opens response line `0x17a` and rewrites to `0x17b`, `0x17c` rewrites to `0x17d`, `0x17e` rewrites to `0x17f`, `0x180` / `0x181` / `0x182`, `0x184` / `0x185`, and `0x187` fall through the generic `0xb69` / `0xbda` exit, and `0x189` loops silently.
-  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the Johnson handler port.
+- Traced the neutral shared talk-state wrappers at `0x38230`, `0x382a0`, and `0x38380`, then renamed them in Ghidra as `get_set_shared_dialogue_state_d2e98`, `get_set_shared_dialogue_state_d2eb0`, and `get_set_shared_dialogue_state_d2eec`.
+  - The recovered gameplay callers are all read-only: Herrill's `GASCAN` path calls `0x38230` at `0x2e056` with `eax = 1` / `edx = 0`, Herrill's `HAVE_LODGE_APP` continuation calls `0x38380` at `0x2e10f` with the same read-only convention, and the only current caller of `0x382a0` is a hidden Boyle dialogue branch at `0x2d6e3`, which also passes `eax = 1` / `edx = 0`.
+  - No gameplay-side setter call has been recovered yet for `0xd2e98`, `0xd2eb0`, or `0xd2eec`. In the current database, those globals are otherwise only touched by the shared reset helper and, for `0xd2e98`, save/load serialization.
 
 ## Next Suggested Action
 
-1. Trace the gameplay-side setters for the neutral shared talk-state bits at `0xd2e98`, `0xd2eb0`, and `0xd2eec`.
-   - Herrill now reads those bits in-engine on the `GASCAN` path, and Johnson was the last bounded startup-room stub in the same shared-evidence cluster, so the next useful pass is to recover who actually writes those values.
-2. After those setters are bounded, continue the wider helper scan around the `0x38230`-`0x38380` dialogue-state wrapper cluster.
-   - That range still contains the highest-signal unresolved shared-state shims tied directly to already-confirmed talk-to handlers.
+1. Continue the wider helper scan around the `0x38230`-`0x38380` dialogue-state wrapper cluster, starting with the hidden Boyle block around `0x2d620`.
+   - That block now owns the only recovered gameplay read of `get_set_shared_dialogue_state_d2eb0`, and it is adjacent to the already-bounded `get_set_boyle_gascan_application_state @ 0x38240` plus the still-unresolved helper at `0x38620`.
+2. After the Boyle-side helper cluster is bounded, trace the adjacent unresolved shared-state writers at `0xd2ea4` / `0xd2ea8`.
+   - Edna's `DNA_S_SUICIDE_NOTE` path still writes those two globals directly, and they sit in the same neutral-wrapper neighborhood as the newly bounded `d2e98` / `d2eb0` / `d2eec` gates.
