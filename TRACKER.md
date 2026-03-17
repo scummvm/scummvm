@@ -18,8 +18,9 @@
 - Recovered the native startup-room handoff path for `CHANGE_ROOM`, `CLOSEUP`, and `EXIT_CLOSEUP` from `parse_command_record`, `dispatch_room_event_actions`, and `run_harvester_main_loop`.
   - `CHANGE_ROOM` resolves an entrance and queues `g_pending_room_name`; `CLOSEUP` queues a raw room name and clears `g_player_present_in_room`; the main loop later consumes `g_pending_room_name` and calls `room_setup`.
   - Updated the Ghidra plate comments for those functions and changed the engine startup-room loop so `CHANGE_ROOM` now performs a same-loop handoff instead of recursing into a nested room loop and then rebuilding the source room on return.
+- Confirmed the dialogue-triggered Jimmy paper handoff was still losing `CHANGE_ROOM` semantics in engine code: `jimmy_dialogue.cpp` manually copied `nextRoomName` out of `ACTV_HOUSE_EXIT` but dropped `roomTransition`, which downgraded the queued handoff back into the legacy nested-room path.
 
 ## Next Suggested Action
 
-1. Run the live `PCHOUSE_X4B -> PCHOUSE_2_MAP` transition and confirm the room loop no longer rebuilds `PCHOUSE` after the click.
+1. Re-test both `PCHOUSE_X4B -> PCHOUSE_2_MAP` and the Jimmy `DIAL_JIM_1_C -> CHANGE_ROOM PCHOUSE_2_MAP` path to confirm dialogue-issued room changes now stay on the queued handoff path.
 2. Audit closeup exits against the native `EXIT_CLOSEUP` / `SAVE_GAME` handoff so closeups can eventually stop relying on recursive room-loop unwinding.

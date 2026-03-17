@@ -71,6 +71,8 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					jimmyInteraction.musicPath = actionInteraction.musicPath;
 				if (!actionInteraction.nextRoomName.empty())
 					jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+				if (actionInteraction.roomTransition != kStartupRoomTransitionNone)
+					jimmyInteraction.roomTransition = actionInteraction.roomTransition;
 				if (!actionInteraction.deathFlicPath.empty())
 					jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
 				if (!actionInteraction.dialogueNpcName.empty())
