@@ -36,6 +36,7 @@
 #include "graphics/framelimiter.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
@@ -685,23 +686,9 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 		drawShadowedString(screen, font, lines[i], x, y + i * lineHeight, width, color);
 }
 
-static void buildScaledPalette(const byte *source, float brightness, byte *dest) {
-	memset(dest, 0, 256 * 3);
-	if (!source)
-		return;
-
-	for (uint color = 1; color < 256; ++color) {
-		for (uint channel = 0; channel < 3; ++channel) {
-			const uint index = color * 3 + channel;
-			const int scaled = (int)(source[index] * brightness + 0.5f);
-			dest[index] = (byte)MIN<int>(scaled, 255);
-		}
-	}
-}
-
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	buildScaledPalette(palette, brightness, scaledPalette);
+	buildHarvesterDisplayPalette(palette, brightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
 

@@ -29,6 +29,7 @@
 #include "graphics/framelimiter.h"
 #include "harvester/cft_font.h"
 #include "harvester/harvester.h"
+#include "harvester/palette_utils.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_flow.h"
@@ -346,7 +347,9 @@ void StartupMenuSystem::renderMainMenuStub(int selectedItem, const Common::Strin
 	if (!screen || !art || !titleFont || !bodyFont)
 		return;
 
-	screen->setPalette(art->getWaitPalette());
+	byte displayPalette[256 * 3];
+	buildHarvesterDisplayPalette(art->getWaitPalette(), 1.0f, displayPalette);
+	screen->setPalette(displayPalette);
 	screen->fillRect(screen->getBounds(), 0);
 	blitBitmap(*screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
 	blitBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);

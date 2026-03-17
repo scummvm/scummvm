@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Trace the native player-HP path from the inventory portrait back through room-event and actor-runtime state
-- Keep health-related engine changes scoped to behavior confirmed in Ghidra
-- Only rename health state when the inventory screen, command handlers, and persistence path all agree on the same field or global
+- Match room and inventory palette presentation to the native VGA DAC upload path
+- Keep palette changes scoped to confirmed Ghidra behavior instead of screenshot-only tuning
+- Distinguish true native defaults from user config settings before changing brightness or gamma handling
 
 ## Progress
 
@@ -25,8 +25,12 @@
   - the inventory panel now synthesizes the native `INV_STAT1..4` status object from current HP instead of treating those records as ordinary grid items;
   - the health portrait remains non-actionable in the inventory UI;
   - revisiting `run_inventory_screen` showed the native portrait is spawned through `spawn_object_entity_from_record` and drawn by the shared render-entity keyed-blit path, so the engine inventory overlay now uses palette-index-0 transparency instead of an opaque bitmap copy.
+- Revisited the palette/brightness path in Ghidra after comparing DOSBox and engine captures.
+  - Confirmed the native `CONFIG.INI` in the installed game currently has `GAMMA=0`, so the washed-out comparison is not explained by a non-default gamma setting that DOSBox applies and the engine ignores.
+  - Confirmed `update_gamma_brightness_scale` sets the native gamma scalar to `1.0` when `g_gamma_level_index <= 0`, and `upload_palette_to_vga` / `upload_palette_to_vga_unscaled` always quantize stored `.PAL` bytes down to VGA DAC `0..63` before display.
+  - The engine was uploading room and wait palettes as raw 8-bit RGB, so it skipped that DAC quantization step. Updated the engine palette path to emulate the native VGA upload rule before applying room brightness.
 
 ## Next Suggested Action
 
-1. Trace where combat or scripted damage outside `dispatch_room_event_actions` decrements `RenderEntityRuntime.current_hit_points`, then decide whether the engine needs a second HP producer beyond the startup-script command path.
-2. Confirm whether the adjacent player actor fields around `+0x1188` participate in death-state or portrait-side effects before naming more of `RenderEntityRuntime`.
+1. Re-test the same inventory scene against DOSBox after the DAC-quantized palette change to see whether the remaining mismatch is explained by palette upload alone or by a later post-processing/display difference.
+2. If the image is still visibly off, trace whether DOSBox capture differences come from a second native layer such as menu fade timing, scaler/aspect treatment, or platform-side palette handling rather than from Harvester’s own palette math.
