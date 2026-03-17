@@ -338,6 +338,7 @@ public:
 		bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 		int getCurrentStoryDayIndex() const;
+		int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
 
 private:
 	bool loadConfig(ResourceManager &resources);
@@ -366,6 +367,7 @@ private:
 		Common::String *dialogueContinuationTag,
 		bool *mutatedRuntimeState);
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
+	bool setPlayerCurrentHitPoints(int hitPoints);
 
 	Common::String _path;
 	Common::Array<byte> _data;
@@ -389,6 +391,7 @@ private:
 	Common::Array<StartupRegionRecord> _runtimeRegions;
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	Common::Array<StartupMonsterRecord> _runtimeMonsters;
+	int _playerCurrentHitPoints = 30;
 	bool _quickTipsEnabled = true;
 	Common::String _voicePath = "SOUND/VOICE/";
 	StartupDialogueTextMode _dialogueTextMode = kStartupDialogueTextYes;

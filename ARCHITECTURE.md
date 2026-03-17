@@ -1168,6 +1168,33 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It always appends `g_dialogue_keyword_menu_default_topic`, loaded by `load_dialogue_index` from zero-based `dialog.rsp` line `13`, plus a literal `Other` entry that calls `run_text_entry_dialog`.
   - ESC does not silently cancel the keyword menu; it writes that default topic into `g_dialogue_selected_topic_text` and returns through the normal handler path.
 
+## Player Health And Inventory Status Portrait
+
+**Confidence:** High
+
+**Evidence**
+- `run_inventory_screen` reads `RenderEntityRuntime.current_hit_points` from the live player combat-avatar runtime and selects `INV_STAT1`, `INV_STAT2`, `INV_STAT3`, or `INV_STAT4` for the portrait in the lower-left of the inventory panel.
+- The thresholds are explicit in the inventory screen logic: `23..30 -> INV_STAT1`, `15..22 -> INV_STAT2`, `8..14 -> INV_STAT3`, `0..7 -> INV_STAT4`.
+- `run_harvester_main_loop` initializes `g_player_current_hit_points` to `30`, `spawn_player_combat_avatar` copies that global into `RenderEntityRuntime.current_hit_points`, and `teardown_player_combat_avatar` writes the runtime value back to the same global.
+- `dispatch_room_event_actions` handles `HEAL_PC`, `ADJ_HP`, and `KILL_PC` against that player HP state; `HEAL_PC` and `ADJ_HP` add to the current value and clamp to `30`, while `KILL_PC` zeros it.
+- `run_save_game_menu` and `run_load_game_menu` persist the same player combat-avatar HP field.
+
+**Key Functions**
+- `run_inventory_screen`
+- `dispatch_room_event_actions`
+- `spawn_player_combat_avatar`
+- `teardown_player_combat_avatar`
+- `run_save_game_menu`
+- `run_load_game_menu`
+
+**Key Data**
+- `g_player_current_hit_points`
+- `RenderEntityRuntime.current_hit_points`
+
+**Notes**
+- The inventory status portrait is a presentation of the persistent player HP state, not a separate UI-only counter.
+- The portrait is recalculated inside the inventory loop, so native healing or damage that lands while the inventory is open updates the selected `INV_STAT*` image immediately.
+
 ## Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.

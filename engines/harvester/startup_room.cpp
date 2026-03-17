@@ -480,13 +480,14 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				if (_inventory.hasSelection()) {
 					Common::String targetLabel;
 					if (inventoryHover && !StartupInventorySystem::isExitObject(inventoryHover->object) &&
-						!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
+							!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 					} else if (!inventoryPanelContainsMouse && hoverState.object) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
 					}
 					promptText = _inventory.buildSelectedPrompt(targetLabel);
-				} else if (inventoryHover) {
+				} else if (inventoryHover &&
+						!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
 					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 				}
 				_inventory.setPromptText(promptText);
@@ -585,6 +586,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 								needsRedraw = true;
 							break;
 						}
+						if (StartupInventorySystem::isStatusObject(inventoryHover->object))
+							break;
 
 						if (!_inventory.hasSelection()) {
 							_inventory.selectItem(inventoryHover->object.objectName);
