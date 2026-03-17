@@ -41,7 +41,6 @@ public:
 		bool completedKarinAliveFollowup = false;
 		int pendingKarinAliveFollowupDayIndex = 0;
 		bool bringKarinToSheriffLinePlayed = false;
-		bool whaleyDisciplineFollowupState = false;
 		bool whaleyDisciplineFollowupShown = false;
 		bool noteCheckbookFollowupShown = false;
 		bool scratchedTuckerShown = false;

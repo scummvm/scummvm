@@ -29,7 +29,12 @@ namespace Harvester {
 class WhaleyDialogueHandler : public NpcDialogueHandler {
 public:
 	struct WhaleyRoomDialogueState {
-		bool talkStatePending = true;
+		bool introPending = true;
+		bool stephMidgameShown = false;
+		bool day5Shown = false;
+		bool karinKidnapedShown = false;
+		bool whaleyHerrillPhotoFollowupShown = false;
+		bool burnedTvStationShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
