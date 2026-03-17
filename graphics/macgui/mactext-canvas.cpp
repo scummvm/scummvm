@@ -691,7 +691,9 @@ void MacTextCanvas::render(int from, int to, ManagedSurface *target, uint32 fill
 
 	for (int i = myFrom; i != myTo; i += delta) {
 		if (!_text[i].picfname.empty()) {
+			_imageArchive.setFiltering(false);
 			const Surface *image = _imageArchive.getImageSurface(_text[i].picfname, _text[i].charwidth, _text[i].height);
+			_imageArchive.setFiltering(true);
 
 			if (image) {
 				int xOffset = (_text[i].width - _text[i].charwidth) / 2;
