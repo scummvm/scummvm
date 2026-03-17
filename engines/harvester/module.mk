@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	npc/madam_dialogue.o \
 	npc/mom_dialogue.o \
 	npc/mother_dialogue.o \
+	npc/pastorelli_dialogue.o \
 	npc/pta_mom_dialogue.o \
 	npc/stub_dialogue.o \
 	npc/wasp_woman_dialogue.o \
