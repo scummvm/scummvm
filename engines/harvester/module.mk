@@ -25,6 +25,7 @@ MODULE := engines/harvester
 	npc/inquisitor_dialogue.o \
 	npc/jimmy_dialogue.o \
 	npc/johnson_dialogue.o \
+	npc/librarian_dialogue.o \
 	npc/lodge_chef_dialogue.o \
 	npc/mcknight_dialogue.o \
 	npc/maint_man_dialogue.o \

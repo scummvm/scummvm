@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_mcknight @ 0x2c770` into a dedicated `engines/harvester/npc/mcknight_dialogue.*` handler.
-  - Native McKnight dialogue is another compact visible handler: `LOOK_SAFE_2ND` forces `0x15d0`, `LOOK_SAFE_1ST` reads an additional unresolved gate before `0x15c9`, the no-item path is a one-shot intro (`0x1587`) that falls through to `0x15e4`, and the item path handles the shared Whaley/casket/ledger/note evidence cluster.
-  - The engine now routes `MCKNIGHT` through a concrete handler with matching talk-state and evidence writes; the extra `LOOK_SAFE_1ST` gate remains locally represented until its gameplay-side setter is recovered.
+- Ported `handle_talk_to_librarian @ 0x28f40` into a dedicated `engines/harvester/npc/librarian_dialogue.*` handler.
+  - Native Librarian dialogue is a small inventory gate: if the player already has `CLUE` or `CAINBOOK`, or explicitly presents `CAINBOOK`, she grants `CLUE` to inventory and plays `0x1db1`; otherwise she falls through to the default `0x1d5b` response.
+  - The engine now routes `LIBRARIAN` through a concrete handler with the same inventory check and `CLUE` handoff behavior.
 
 ## Next Suggested Action
 
 1. Move back to the more stateful visible handlers now that the compact visible bucket is mostly cleared.
-   - The next best candidates are `LOOMIS`, `MOYNAHAN`, `MR_POTTS`, and `MRS_POTTS`, followed by the larger hidden-topic handlers such as Boyle.
+   - The next bounded cleanup candidates before the largest trees are `NUDE_MAN`, `MEMB_DIR`, and `KARIN`, followed by `LOOMIS`, `MOYNAHAN`, `MR_POTTS`, and `MRS_POTTS`.
 2. After that visible evidence-handler pass, return to Boyle and the other larger hidden-topic handlers.
    - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.
