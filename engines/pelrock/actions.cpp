@@ -304,10 +304,10 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 329:
-		_state->setFlag(FLAG_PUTA_250_VECES, true);
+		_state->setFlag(FLAG_HOOKER_250_TIMES, true);
 		break;
 	case 258:
-		_state->setFlag(FLAG_GUARDIA_PIDECOSAS, true);
+		_state->setFlag(FLAG_GUARD_ASKS_FOR_STUFF, true);
 		_state->setCurrentRoot(4, 2, 0);
 		break;
 	case 259:
@@ -341,6 +341,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 273: {
+		_state->setFlag(FLAG_SALESMAN_LEAVES_ALFRED_ALONE, true);
 		WalkBox w1 = {3, 436, 356, 4, 14, 0};
 		WalkBox w2 = {4, 440, 368, 148, 2, 0};
 
@@ -355,7 +356,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	case 277:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
-		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, true);
+		_state->setFlag(FLAG_BOSS_WIRED_MONEY, true);
 		break;
 	case 278:
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
@@ -411,14 +412,14 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	}
 	case 349:
-		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
-		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
+		_state->setFlag(FLAG_MERCHANT_SLOGANS, _state->getFlag(FLAG_MERCHANT_SLOGANS) + 1);
+		if (_state->getFlag(FLAG_MERCHANT_SLOGANS) == 2) {
 			_state->setCurrentRoot(room, rootIndex + 1, 1);
 		}
 		break;
 	case 350:
-		_state->setFlag(FLAG_CONSIGNAS_VENDEDOR, _state->getFlag(FLAG_CONSIGNAS_VENDEDOR) + 1);
-		if (_state->getFlag(FLAG_CONSIGNAS_VENDEDOR) == 2) {
+		_state->setFlag(FLAG_MERCHANT_SLOGANS, _state->getFlag(FLAG_MERCHANT_SLOGANS) + 1);
+		if (_state->getFlag(FLAG_MERCHANT_SLOGANS) == 2) {
 			_state->setCurrentRoot(room, rootIndex + 1, 1);
 		}
 		break;
@@ -475,33 +476,33 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 
 	case 357: // wrong answer: counter-- (min 0)
 	{
-		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) > 0) {
-			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 1);
+		if (_state->getFlag(FLAG_CORRECT_ANSWERS) > 0) {
+			_state->setFlag(FLAG_CORRECT_ANSWERS, _state->getFlag(FLAG_CORRECT_ANSWERS) - 1);
 		}
 		advanceQuotesConversation(rootIndex, room);
 		break;
 	}
 	case 358: // very wrong answer: counter-=2 (min 0)
 	{
-		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) > 1) {
-			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) - 2);
+		if (_state->getFlag(FLAG_CORRECT_ANSWERS) > 1) {
+			_state->setFlag(FLAG_CORRECT_ANSWERS, _state->getFlag(FLAG_CORRECT_ANSWERS) - 2);
 		}
 		advanceQuotesConversation(rootIndex, room);
 		break;
 	}
 	case 359: // correct answer: counter++, award pin at 15
 	{
-		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, _state->getFlag(FLAG_RESPUESTAS_ACERTADAS) + 1);
-		if (_state->getFlag(FLAG_RESPUESTAS_ACERTADAS) == 15) {
+		_state->setFlag(FLAG_CORRECT_ANSWERS, _state->getFlag(FLAG_CORRECT_ANSWERS) + 1);
+		if (_state->getFlag(FLAG_CORRECT_ANSWERS) == 15) {
 			addInventoryItem(106); // pin
-			_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
+			_state->setFlag(FLAG_CORRECT_ANSWERS, 0);
 		}
 		advanceQuotesConversation(rootIndex, room);
 		break;
 	}
 	case 360: // neutral reset: counter = 0
 	{
-		_state->setFlag(FLAG_RESPUESTAS_ACERTADAS, 0);
+		_state->setFlag(FLAG_CORRECT_ANSWERS, 0);
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		advanceQuotesConversation(rootIndex, room);
 		break;
@@ -523,7 +524,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	}
 	case 365: // riddle correct: set riddle-solved flag
-		_state->setFlag(FLAG_PARADOJA_RESUELTA, 1);
+		_state->setFlag(FLAG_SOLVED_PARADOX, 1);
 		_state->setCurrentRoot(room, 1, 0);
 		break;
 	case 292:
@@ -585,7 +586,7 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 297: {
 		// sprite moves to right
 		_room->enableExit(0);
-		_state->setFlag(FLAG_VIGILANTE_PAJEANDOSE, true);
+		_state->setFlag(FLAG_GUARD_HAVINGFUN, true);
 		Sprite *sprite = _room->findSpriteByIndex(0);
 		sprite->animData[0].movementFlags = 0x1C; // Move right
 		// Basic loop to wait until the sprite has reached the door
@@ -672,8 +673,8 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(43, 3, 0);
 		break;
 	case 325:
-		_state->setFlag(FLAG_ESQUELETO_RECONOCE, _state->getFlag(FLAG_ESQUELETO_RECONOCE) + 1);
-		if (_state->getFlag(FLAG_ESQUELETO_RECONOCE) == 2) {
+		_state->setFlag(FLAG_SKELETON_RECOGNIZES, _state->getFlag(FLAG_SKELETON_RECOGNIZES) + 1);
+		if (_state->getFlag(FLAG_SKELETON_RECOGNIZES) == 2) {
 			_state->setCurrentRoot(49, 1, 0);
 		}
 		break;
@@ -733,7 +734,7 @@ void PelrockEngine::toJail() {
 	_alfredState.x = 342;
 	_alfredState.y = 277;
 	setScreenAndPrepare(31, ALFRED_DOWN);
-	_state->setFlag(FLAG_A_LA_CARCEL, true);
+	_state->setFlag(FLAG_TO_JAIL, true);
 	_room->moveHotspot(_room->findHotspotByExtra(101), 444, 166);
 }
 
@@ -809,8 +810,8 @@ void PelrockEngine::openClosedDrawer(HotSpot *hotspot) {
 
 void PelrockEngine::useCardWithATM(int inventoryObject, HotSpot *hotspot) {
 	debug("Withdrawing money from ATM using card (inv obj %d)", inventoryObject);
-	if (_state->getFlag(FLAG_JEFE_INGRESA_PASTA)) {
-		_state->setFlag(FLAG_JEFE_INGRESA_PASTA, false);
+	if (_state->getFlag(FLAG_BOSS_WIRED_MONEY)) {
+		_state->setFlag(FLAG_BOSS_WIRED_MONEY, false);
 		addInventoryItem(75);
 		_state->setCurrentRoot(20, 2, 0);
 	} else {
@@ -871,7 +872,7 @@ void PelrockEngine::closeKitchenDoor(HotSpot *HotSpot) {
 }
 
 void PelrockEngine::openKitchenDrawer(HotSpot *hotspot) {
-	if (!_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
+	if (!_state->getFlag(FLAG_BOSS_IN_JAIL)) {
 		_dialog->say(_res->_ingameTexts[kTextQuitaEsasManos]);
 	} else if (!_state->getFlag(FLAG_RECIPE_TAKEN)) {
 		_state->setFlag(FLAG_RECIPE_TAKEN, true);
@@ -889,13 +890,13 @@ void PelrockEngine::openKitchenDoorFromInside(HotSpot *hotspot) {
 }
 
 void PelrockEngine::useSpicySauceWithBurger(int inventoryObject, HotSpot *hotspot) {
-	_state->setFlag(FLAG_PUESTA_SALSA_PICANTE, true);
+	_state->setFlag(FLAG_SPICY_SAUCE_PLACED, true);
 	_sound->playSound(_room->_roomSfx[2]);
 	_dialog->say(_res->_ingameTexts[kTextVaestarPocoFuerte]);
 }
 
 void PelrockEngine::openShopDoor(HotSpot *hotspot) {
-	if (!_state->getFlag(FLAG_TIENDA_ABIERTA)) {
+	if (!_state->getFlag(FLAG_OPEN_SHOP)) {
 		_dialog->say(_res->_ingameTexts[kTextTiendaCerrada]);
 		return;
 	} else {
@@ -949,8 +950,8 @@ void PelrockEngine::useBrickWithWindow(int inventoryObject, HotSpot *hotspot) {
 	_dialog->say(_res->_ingameTexts[kTextQueHaSidoEso], x, dialog1y);
 	_dialog->say(_res->_ingameTexts[kTextQuienAndaAhi], x, dialog2y);
 	_dialog->say(_res->_ingameTexts[kTextYoMeVoy]);
-	_state->setFlag(FLAG_HE_TIRADO_PIEDRA, true);
-	_state->setFlag(FLAG_TIENDA_ABIERTA, true);
+	_state->setFlag(FLAG_STONE_THROWN, true);
+	_state->setFlag(FLAG_OPEN_SHOP, true);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 9, PERSIST_PERM);
 	_room->addStickerToRoom(_room->_currentRoomNumber, 10, PERSIST_PERM);
 	_room->disableHotspot(_room->findHotspotByExtra(295));
@@ -965,7 +966,7 @@ void PelrockEngine::moveCable(HotSpot *hotspot) {
 	_room->addSticker(16);
 	_room->addSticker(17);
 	_room->addStickerToRoom(4, 20);
-	_state->setFlag(FLAG_CABLES_PUESTOS, true);
+	_state->setFlag(FLAG_CABLES_PLACED, true);
 }
 
 void PelrockEngine::useBrickWithShopWindow(int inventoryObject, HotSpot *hotspot) {
@@ -1028,7 +1029,7 @@ void PelrockEngine::useCordWithPlug(int inventoryObject, HotSpot *hotspot) {
 	if (!_room->hasSticker(18)) {
 		_dialog->say(_res->_ingameTexts[kTextPrimeroAbrirlo]);
 	} else {
-		if (_state->getFlag(FLAG_CABLES_PUESTOS)) {
+		if (_state->getFlag(FLAG_CABLES_PLACED)) {
 			_room->addSticker(19);
 			_room->moveHotspot(_room->findHotspotByIndex(6), 391, 381);
 			_state->removeInventoryItem(6);
@@ -1060,16 +1061,16 @@ void PelrockEngine::pickCables(HotSpot *hotspot) {
 }
 
 void PelrockEngine::showIdToGuard(int inventoryObject, HotSpot *hotspot) {
-	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+	if (!_state->getFlag(FLAG_GUARD_ASKS_FOR_STUFF)) {
 		_dialog->say(_res->_ingameTexts[kTextCuandoMeLoPida]);
 		return;
 	}
 
-	if (!_state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
-		_state->setFlag(FLAG_GUARDIA_DNI_ENTREGADO, true);
+	if (!_state->getFlag(FLAG_GUARD_ID_DELIVERED)) {
+		_state->setFlag(FLAG_GUARD_ID_DELIVERED, true);
 		_dialog->say(_res->_ingameTexts[kTextDeAcuerdo]);
 	}
-	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+	if (_state->getFlag(FLAG_DOORMAN_BRIBED) && _state->getFlag(FLAG_GUARD_ID_DELIVERED)) {
 		unlockMuseum();
 		return;
 	}
@@ -1086,27 +1087,27 @@ void PelrockEngine::unlockMuseum() {
 }
 
 void PelrockEngine::giveMoneyToGuard(int inventoryObject, HotSpot *hotspot) {
-	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+	if (!_state->getFlag(FLAG_GUARD_ASKS_FOR_STUFF)) {
 		_dialog->say(_res->_ingameTexts[kTextPretendeUstedSobornarme]);
 		return;
-	} else if (!_state->getFlag(FLAG_SOBORNO_PORTERO)) {
-		_state->setFlag(FLAG_SOBORNO_PORTERO, true);
+	} else if (!_state->getFlag(FLAG_DOORMAN_BRIBED)) {
+		_state->setFlag(FLAG_DOORMAN_BRIBED, true);
 		_dialog->say(_res->_ingameTexts[kTextMuyBien]);
 		_state->removeInventoryItem(5);
 	}
-	if (_state->getFlag(FLAG_SOBORNO_PORTERO) && _state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+	if (_state->getFlag(FLAG_DOORMAN_BRIBED) && _state->getFlag(FLAG_GUARD_ID_DELIVERED)) {
 		unlockMuseum();
 		return;
 	}
 }
 
 void PelrockEngine::openMuseumDoor(HotSpot *hotspot) {
-	if (!_state->getFlag(FLAG_GUARDIA_PIDECOSAS)) {
+	if (!_state->getFlag(FLAG_GUARD_ASKS_FOR_STUFF)) {
 		_dialog->say(_res->_ingameTexts[kTextAlto]);
 		return;
-	} else if (!_state->getFlag(FLAG_GUARDIA_DNI_ENTREGADO)) {
+	} else if (!_state->getFlag(FLAG_GUARD_ID_DELIVERED)) {
 		_dialog->say(_res->_ingameTexts[kTextNecesitaDni]);
-	} else if (!_state->getFlag(FLAG_SOBORNO_PORTERO)) {
+	} else if (!_state->getFlag(FLAG_DOORMAN_BRIBED)) {
 		_dialog->say(_res->_ingameTexts[kTextQueReciboACambio]);
 	} else {
 		openDoor(hotspot, 1, 22, FEMININE, false);
@@ -1207,7 +1208,7 @@ void PelrockEngine::closeNewspaperBossDoor(HotSpot *hotspot) {
 
 void PelrockEngine::openTravelAgencyDoor(HotSpot *hotspot) {
 
-	if (_state->getFlag(FLAG_AGENCIA_ABIERTA)) {
+	if (_state->getFlag(FLAG_TRAVELAGENCY_OPEN)) {
 		openDoor(hotspot, 1, 57, FEMININE, false);
 	}
 	// The game originally already did nothing here
@@ -1220,7 +1221,7 @@ void PelrockEngine::closeTravelAgencyDoor(HotSpot *hotspot) {
 void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 	_state->removeInventoryItem(76);
 	addInventoryItem(86);
-	if (_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == false) {
+	if (_state->getFlag(FLAG_CROCODILE_ON) == false) {
 		_sound->playMusicTrack(27);
 		checkIngredients();
 		_dialog->say(_res->_ingameTexts[kTextCuidadoImprudente]);
@@ -1263,7 +1264,7 @@ void PelrockEngine::waitForSoundEnd(int channel) {
 }
 
 void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_PARADOJA_RESUELTA) == false) {
+	if (_state->getFlag(FLAG_SOLVED_PARADOX) == false) {
 		if (_state->getFlag(FLAG_RIDDLE_PRESENTED)) {
 			// try to take the sunflower before solving the riddle
 			_dialog->say(_res->_ingameTexts[kTextLeEstoyVigilando]);
@@ -1283,10 +1284,10 @@ void PelrockEngine::pickupSunflower(HotSpot *hotspot) {
 }
 
 void PelrockEngine::checkIngredients() {
-	byte ingredientes = _state->getFlag(FLAG_INGREDIENTES_CONSEGUIDOS);
+	byte ingredientes = _state->getFlag(FLAG_COLLECTED_INGREDIENTS);
 	int textLine = kTextPrimerIngrediente + ingredientes;
 	_dialog->say(_res->_ingameTexts[textLine]);
-	_state->setFlag(FLAG_INGREDIENTES_CONSEGUIDOS, ingredientes + 1);
+	_state->setFlag(FLAG_COLLECTED_INGREDIENTS, ingredientes + 1);
 }
 
 void PelrockEngine::pickUpBook(int i) {
@@ -1354,7 +1355,7 @@ void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x1);
 		checkAllSymbols();
@@ -1362,7 +1363,7 @@ void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x2);
 		checkAllSymbols();
@@ -1370,7 +1371,7 @@ void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x4);
 		checkAllSymbols();
@@ -1378,7 +1379,7 @@ void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO) == true) {
+	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x8);
 		checkAllSymbols();
@@ -1390,7 +1391,7 @@ void PelrockEngine::checkAllSymbols() {
 	if (symbolsPulled == 0x0F) {
 		// Activates animation
 		_sound->playSound(_room->_roomSfx[0]);
-		_state->setFlag(FLAG_PUERTA_SECRETA_ABIERTA, true);
+		_state->setFlag(FLAG_SECRET_DOOR_OPEN, true);
 		_room->enableSprite(4, 100, PERSIST_TEMP);
 		_room->enableExit(0, PERSIST_BOTH);
 		_room->addSticker(61);
@@ -1400,7 +1401,7 @@ void PelrockEngine::checkAllSymbols() {
 
 void PelrockEngine::pickUpHairStrand(HotSpot *hotspot) {
 	checkIngredients();
-	_state->setFlag(FLAG_ROBA_PELO_PRINCESA, true);
+	_state->setFlag(FLAG_STOLE_PRINCESS_HAIR, true);
 }
 
 void PelrockEngine::openJailFloorTile(HotSpot *hotspot) {
@@ -1423,7 +1424,7 @@ void PelrockEngine::useKeyWithPortrait(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::openSafe(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_CLAVE_CAJA_FUERTE) == true) {
+	if (_state->getFlag(FLAG_SAFE_COMBINATION) == true) {
 		_room->addSticker(102);
 		_dialog->say(_res->_ingameTexts[kTextGranCantidadDinero]);
 		addInventoryItem(82);
@@ -1452,7 +1453,7 @@ void PelrockEngine::useDollWithBed(int inventoryObject, HotSpot *hotspot) {
 	_alfredState.y += 12;
 	playAlfredSpecialAnim(12);
 	_alfredState.direction = ALFRED_DOWN;
-	_state->setFlag(FLAG_SE_HA_PUESTO_EL_MUNECO, true);
+	_state->setFlag(FLAG_DOLL_PLACED, true);
 	_state->removeInventoryItem(83);
 	_room->addSticker(126);
 	_alfredState.x = x;
@@ -1466,14 +1467,14 @@ void PelrockEngine::giveMagazineToGuard(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
-	_state->setFlag(FLAG_VIGILANTE_BEBE_AGUA, _state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) + 1);
+	_state->setFlag(FLAG_GUARD_WATER_DRINKED, _state->getFlag(FLAG_GUARD_WATER_DRINKED) + 1);
 
 	_dialog->say(_res->_ingameTexts[kTextAlaConUsted]);
 	_state->removeInventoryItem(86);
 	addInventoryItem(76);
-	if (_state->getFlag(FLAG_VIGILANTE_BEBE_AGUA) == 3) {
+	if (_state->getFlag(FLAG_GUARD_WATER_DRINKED) == 3) {
 		_dialog->say(_res->_ingameTexts[kTextMeMeo]);
-		_state->setFlag(FLAG_VIGILANTE_MEANDO, true);
+		_state->setFlag(FLAG_GUARD_PEEING, true);
 		guardMovement();
 		_room->disableSprite(36, 0, PERSIST_BOTH);
 		_room->enableExit(0, PERSIST_BOTH);
@@ -1513,7 +1514,7 @@ void PelrockEngine::guardMovement() {
 
 void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 	_room->addSticker(117);
-	_state->setFlag(FLAG_PIRAMIDE_JODIDA, true);
+	_state->setFlag(FLAG_PYRAMID_COLLAPSED, true);
 	_sound->playSound("QUAKE2ZZ.SMP", 0, -1);
 	_shakeEffectState.enable();
 	checkIngredients();
@@ -1578,7 +1579,7 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 
 	_dialog->say(_res->_ingameTexts[kTextHayQueCelebrarlo]);
 
-	byte counter = _state->getFlag(FLAG_DA_PIEDRA);
+	byte counter = _state->getFlag(FLAG_STONE_GIVEN);
 	// drinking animation and sound
 	_sound->playSound(_room->_roomSfx[1], 2);
 
@@ -1589,10 +1590,10 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 	// Increment stone delivery counter (tracks 0→1→2→3)
 	debug("Current stone delivery count: %d", counter);
 	if (counter < 3) {
-		_state->setFlag(FLAG_DA_PIEDRA, ++counter);
+		_state->setFlag(FLAG_STONE_GIVEN, ++counter);
 		_room->findSpriteByIndex(0)->zOrder = zIndex;
 	}
-	debug("New stone delivery count: %d", _state->getFlag(FLAG_DA_PIEDRA));
+	debug("New stone delivery count: %d", _state->getFlag(FLAG_STONE_GIVEN));
 	// At 2nd stone delivery: masters starts singing (conversation root 2)
 	if (counter == 2) {
 		_state->setCurrentRoot(41, 2, 0);
@@ -1607,7 +1608,7 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 		WalkBox w2 = {4, 141, 374, 46, 4, 0};
 		_room->addWalkbox(w1);
 		_room->addWalkbox(w2);
-		_state->setFlag(FLAG_GUARDIAS_BORRACHOS, true);
+		_state->setFlag(FLAG_DRUNK_GUARDS, true);
 	}
 }
 
@@ -1676,7 +1677,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 		_screen->update();
 		g_system->delayMillis(10);
 	}
-	_state->setFlag(FLAG_APARECE_EUNUCO, true);
+	_state->setFlag(FLAG_EUNUCH_APPEARS, true);
 	Sprite *guard = _room->findSpriteByIndex(0);
 	guard->animData[0].movementFlags = 0x14;
 	while (!shouldQuit()) {
@@ -1703,7 +1704,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_alfredState.x = 271;
 	_alfredState.y = 385;
 	setScreenAndPrepare(40, ALFRED_UP);
-	_state->setFlag(FLAG_AL_FARAON, true);
+	_state->setFlag(FLAG_PHARAOH_VIEWING, true);
 	walkAndAction(_room->findHotspotByExtra(640), TALK);
 	if (shouldQuit()) {
 		return;
@@ -1711,7 +1712,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	_graphics->fadeToBlack(10);
 	_alfredState.x = 271;
 	_alfredState.y = 385;
-	_state->setFlag(FLAG_A_CURRAR, true);
+	_state->setFlag(FLAG_TO_WORK, true);
 	setScreenAndPrepare(41, ALFRED_UP);
 }
 
@@ -1720,22 +1721,22 @@ void PelrockEngine::pickUpStones(HotSpot *hotspot) {
 		_dialog->say(_res->_ingameTexts[kTextPesaDemasiado]);
 		return;
 	}
-	if (_state->getFlag(FLAG_PIEDRAS_COGIDAS) >= 2) {
+	if (_state->getFlag(FLAG_COLLECTED_STONES) >= 2) {
 		_dialog->say(_res->_ingameTexts[kTextNingunaTamanhoApropiado]);
 		return;
 	} else {
 		addInventoryItem(91);
-		_state->setFlag(FLAG_PIEDRAS_COGIDAS, _state->getFlag(FLAG_PIEDRAS_COGIDAS) + 1);
+		_state->setFlag(FLAG_COLLECTED_STONES, _state->getFlag(FLAG_COLLECTED_STONES) + 1);
 	}
 }
 
 void PelrockEngine::pickUpMud(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_PIEDRAS_COGIDAS) != 2) {
+	if (_state->getFlag(FLAG_COLLECTED_STONES) != 2) {
 		_dialog->say(_res->_ingameTexts[kTextParaQueCogeBarro]);
 		return;
 	} else {
 		addInventoryItem(92);
-		_state->setFlag(FLAG_PIEDRAS_COGIDAS, _state->getFlag(FLAG_PIEDRAS_COGIDAS) + 1);
+		_state->setFlag(FLAG_COLLECTED_STONES, _state->getFlag(FLAG_COLLECTED_STONES) + 1);
 		_dialog->say(_res->_ingameTexts[kTextBuenoCogereUnPoco]);
 	}
 }
@@ -1751,7 +1752,7 @@ void PelrockEngine::usePumpkinWithPond(int inventoryObject, HotSpot *hotspot) {
 
 void PelrockEngine::useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot) {
 
-	int count = _state->getFlag(FLAG_PIEDRA_FAKE_MOJADA);
+	int count = _state->getFlag(FLAG_FAKE_STONE_WET);
 	if (count != 3) {
 		_state->removeInventoryItem(86);
 		addInventoryItem(76);
@@ -1770,7 +1771,7 @@ void PelrockEngine::useWaterOnFakeStone(int inventoryObject, HotSpot *hotspot) {
 			break;
 		}
 		count++;
-		_state->setFlag(FLAG_PIEDRA_FAKE_MOJADA, count);
+		_state->setFlag(FLAG_FAKE_STONE_WET, count);
 	}
 }
 
@@ -1784,10 +1785,10 @@ void PelrockEngine::magicFormula(int inventoryObject, HotSpot *hotspot) {
 	if (inventoryObject == 86) {
 		addInventoryItem(76);
 	}
-	_state->setFlag(FLAG_FORMULA_MAGICA, _state->getFlag(FLAG_FORMULA_MAGICA) + 1);
-	if (_state->getFlag(FLAG_FORMULA_MAGICA) == 4) {
+	_state->setFlag(FLAG_MAGIC_FORMULA, _state->getFlag(FLAG_MAGIC_FORMULA) + 1);
+	if (_state->getFlag(FLAG_MAGIC_FORMULA) == 4) {
 		smokeAnimation(-1);
-		_state->setFlag(FLAG_VIAJA_AL_PASADO, true);
+		_state->setFlag(FLAG_TIME_TRAVEL, true);
 		_alfredState.setState(ALFRED_IDLE);
 		_state->clearInventory();
 		_state->addInventoryItem(88);
@@ -1903,7 +1904,7 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_dialog->say(_res->_ingameTexts[kTextSeLorecomiendo]);
 		break;
 	case 327:
-		_state->setFlag(FLAG_MIRA_SIMBOLO_FUERA_MUSEO, true);
+		_state->setFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR, true);
 		break;
 	case 294: {
 		HotSpot *floorTile = _room->findHotspotByExtra(462);
@@ -2076,7 +2077,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	case 17: // Egyptian book
 		playAlfredSpecialAnim(0);
 		_dialog->say(_res->_ingameTexts[kTextYaSeEgipcio]);
-		_state->setFlag(FLAG_ALFRED_SABE_EGIPCIO, true);
+		_state->setFlag(FLAG_ALFRED_SPEAKS_EGYPTIAN, true);
 		break;
 	case 24: // Encyclopedia
 		if (_state->getFlag(FLAG_RIDDLE_PRESENTED) == true) {
@@ -2085,14 +2086,14 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		} else {
 			playAlfredSpecialAnim(0);
 			_dialog->say(_res->_ingameTexts[kTextCosasAprendido]);
-			_state->setFlag(FLAG_ALFRED_INTELIGENTE, true);
+			_state->setFlag(FLAG_ALFRED_SMART, true);
 			_state->setCurrentRoot(14, 2, 0);
 		}
 		break;
 	case 64: // Formula for time travel
 		playAlfredSpecialAnim(0);
 		loadExtraScreenAndPresent(5);
-		if (_state->getFlag(FLAG_ALFRED_SABE_EGIPCIO)) {
+		if (_state->getFlag(FLAG_ALFRED_SPEAKS_EGYPTIAN)) {
 			_dialog->say(_res->_ingameTexts[kTextFormulaViajeAlTiempo]);
 		} else {
 			_dialog->say(_res->_ingameTexts[kTextQueLastimaNoSeeEgipcio]);
@@ -2143,13 +2144,13 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 				_dialog->say(_res->_ingameTexts[kTextDiosHalcon + spell->page], 1);
 				int flightIndex = _room->_currentRoomNumber - 51;
 				if (_fightSorcererAppeared && !_fightInBlockingAnim && spell->page == kFightRooms[flightIndex].spellPage) {
-					_state->setFlag(FLAG_COMO_ESTAN_LOS_DIOSES, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) | (1 << flightIndex));
+					_state->setFlag(FLAG_GODS_STANCES, _state->getFlag(FLAG_GODS_STANCES) | (1 << flightIndex));
 					_sound->playSound(_room->_roomSfx[1], 0);
 					smokeAnimation(kFightRooms[flightIndex].spriteIdx, true);
 					_room->addStickerToRoom(_room->_currentRoomNumber, 127 + flightIndex);
 					_room->addStickerToRoom(52, 106 + flightIndex);
 
-					if (_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) == 15) { // all 4 spells successful
+					if (_state->getFlag(FLAG_GODS_STANCES) == 15) { // all 4 spells successful
 						HotSpot hotspot = HotSpot();
 						hotspot.actionFlags = 0;
 						hotspot.extra = 999;
@@ -2179,7 +2180,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 	case 101: // combination
 		playAlfredSpecialAnim(1);
 		_dialog->say(_res->_ingameTexts[kTextPareceCombinacionCajaFuerte]);
-		_state->setFlag(FLAG_CLAVE_CAJA_FUERTE, true);
+		_state->setFlag(FLAG_SAFE_COMBINATION, true);
 		break;
 	case 108: // glue + patches
 	case 109: {
@@ -2253,12 +2254,12 @@ void PelrockEngine::sayRandomIncorrectResponse() {
 
 void PelrockEngine::chooseCorrectDoor() {
 	playAlfredSpecialAnim(1);
-	byte puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
+	byte puertaBuena = _state->getFlag(FLAG_CORRECT_DOOR);
 	if (puertaBuena == 0) { // if not set yet, choose randomly
 		int choice = getRandomNumber(1);
-		_state->setFlag(FLAG_PUERTA_BUENA, choice + 1);
+		_state->setFlag(FLAG_CORRECT_DOOR, choice + 1);
 	}
-	puertaBuena = _state->getFlag(FLAG_PUERTA_BUENA);
+	puertaBuena = _state->getFlag(FLAG_CORRECT_DOOR);
 	Common::String doorText = _res->_izquierda;
 	if (puertaBuena == 1) {
 		doorText = _res->_izquierda;
@@ -2361,12 +2362,12 @@ void PelrockEngine::checkObjectsForPart2() {
 	if (_state->hasInventoryItem(17) &&
 		_state->hasInventoryItem(59) &&
 		_state->hasInventoryItem(24)) {
-		if (_state->getFlag(FLAG_AGENCIA_ABIERTA) == false) {
+		if (_state->getFlag(FLAG_TRAVELAGENCY_OPEN) == false) {
 			_room->addStickerToRoom(19, 54, PERSIST_BOTH);
 			_room->addStickerToRoom(19, 55, PERSIST_BOTH);
 			_room->addStickerToRoom(19, 56, PERSIST_BOTH);
 			_room->addStickerToRoom(19, 58, PERSIST_BOTH);
-			_state->setFlag(FLAG_AGENCIA_ABIERTA, true);
+			_state->setFlag(FLAG_TRAVELAGENCY_OPEN, true);
 		}
 	}
 }
@@ -2393,7 +2394,7 @@ void PelrockEngine::pickUpMatches(HotSpot *hotspot) {
 	// Pick up the item
 	_room->disableHotspot(hotspot);
 	Common::copy(targetPalette, targetPalette + 768, _room->_roomPalette);
-	_state->setFlag(FLAG_CROCODILLO_ENCENDIDO, true);
+	_state->setFlag(FLAG_CROCODILE_ON, true);
 	_room->moveHotspot(_room->findHotspotByExtra(87), 415, 171);
 	_room->moveHotspot(_room->findHotspotByExtra(88), 305, 217);
 	_room->moveHotspot(_room->findHotspotByExtra(89), 201, 239);

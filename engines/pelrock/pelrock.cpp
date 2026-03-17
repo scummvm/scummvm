@@ -268,7 +268,7 @@ void PelrockEngine::playSoundIfNeeded() {
  * Travel to egypt sequence loads extra screen, plays palette animation then loads room 21
  */
 void PelrockEngine::travelToEgypt() {
-	_state->setFlag(FLAG_VIAJE_A_EGIPTO, true);
+	_state->setFlag(FLAG_TRAVEL_TO_EGYPT, true);
 	_graphics->fadeToBlack(10);
 
 	_sound->playMusicTrack(26, false);
@@ -397,7 +397,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		// Easter egg in room 2, pressing x 250 times after the character has mentioned it triggers a special dialog
 		if (_events->_lastKeyEvent == Common::KEYCODE_x) {
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
-			if (_state->getFlag(FLAG_PUTA_250_VECES) == true) {
+			if (_state->getFlag(FLAG_HOOKER_250_TIMES) == true) {
 				_numPressedX++;
 				if (_numPressedX == 250) {
 					_dialog->say(_res->_ingameTexts[kTextYLosCondones]);
@@ -953,11 +953,11 @@ void PelrockEngine::exitTriggers(Pelrock::Exit *exit) {
 		smokeAnimation(-1);
 		uint16 x = _alfredState.x;
 		if (x < 282) {
-			if (_state->getFlag(FLAG_PUERTA_BUENA) == 1) {
+			if (_state->getFlag(FLAG_CORRECT_DOOR) == 1) {
 				_state->setFlag(FLAG_CORRECT_DOOR_CHOSEN, true);
 			}
 		} else {
-			if (_state->getFlag(FLAG_PUERTA_BUENA) == 2) {
+			if (_state->getFlag(FLAG_CORRECT_DOOR) == 2) {
 				_state->setFlag(FLAG_CORRECT_DOOR_CHOSEN, true);
 			}
 		}
@@ -1760,8 +1760,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	switch (roomNumber) {
 	case 4:
 	case 0:
-		if (_state->getFlag(FLAG_PUESTA_SALSA_PICANTE) && !_state->getFlag(FLAG_JEFE_ENCARCELADO)) {
-			_state->setFlag(FLAG_JEFE_ENCARCELADO, true);
+		if (_state->getFlag(FLAG_SPICY_SAUCE_PLACED) && !_state->getFlag(FLAG_BOSS_IN_JAIL)) {
+			_state->setFlag(FLAG_BOSS_IN_JAIL, true);
 			_room->disableSprite(13, 0, PERSIST_BOTH);
 			loadExtraScreenAndPresent(4);
 		}
@@ -1771,8 +1771,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 15:
-		if (_state->getFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ)) {
-			_state->setFlag(FLAG_ENTRA_EN_TIENDA_PRIMERA_VEZ, false);
+		if (_state->getFlag(FLAG_FIRST_TIME_IN_SHOP)) {
+			_state->setFlag(FLAG_FIRST_TIME_IN_SHOP, false);
 			_dialog->say(_res->_ingameTexts[kTextGamberros]);
 			_dialog->say(_res->_ingameTexts[kTextQuienYo]);
 			_dialog->say(_res->_ingameTexts[kTextPintaBuenaPersona]);
@@ -1848,7 +1848,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 28: {
-		if (_state->getFlag(FLAG_CROCODILLO_ENCENDIDO) == true) {
+		if (_state->getFlag(FLAG_CROCODILE_ON) == true) {
 			byte palette[768];
 			_res->getPaletteForRoom28(palette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -1857,9 +1857,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 26: {
-		if (_state->getFlag(FLAG_A_LA_CARCEL) == true) {
+		if (_state->getFlag(FLAG_TO_JAIL) == true) {
 			_dialog->_goodbyeDisabled = true;
-			if (_state->getFlag(FLAG_SE_HA_PUESTO_EL_MUNECO) == true) {
+			if (_state->getFlag(FLAG_DOLL_PLACED) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
 				_dialog->say(_res->_ingameTexts[kTextOigaUsted], 1);
@@ -1872,9 +1872,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 30: {
-		if (_state->getFlag(FLAG_ROBA_PELO_PRINCESA) == true) {
+		if (_state->getFlag(FLAG_STOLE_PRINCESS_HAIR) == true) {
 			_dialog->_goodbyeDisabled = true;
-			_state->setFlag(FLAG_ROBA_PELO_PRINCESA, false);
+			_state->setFlag(FLAG_STOLE_PRINCESS_HAIR, false);
 			_room->enableSprite(0, 200, PERSIST_TEMP);
 			_dialog->say(_res->_ingameTexts[kTextOigaUsted]);
 			walkAndAction(_room->findHotspotByExtra(0), TALK);
@@ -1885,11 +1885,11 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		if (_shakeEffectState.enabled) {
 			_shakeEffectState.disable();
 		}
-		if (_state->getFlag(FLAG_PIRAMIDE_JODIDA) == true &&
+		if (_state->getFlag(FLAG_PYRAMID_COLLAPSED) == true &&
 			// _state->getFlag(FLAG_VIGILANTE_MEANDO) == true &&
-			_state->getFlag(FLAG_PIRAMIDE_JODIDA2) == false) {
-			_state->setFlag(FLAG_VIGILANTE_MEANDO, false);
-			_state->setFlag(FLAG_PIRAMIDE_JODIDA2, true);
+			_state->getFlag(FLAG_PYRAMID_COLLAPSED2) == false) {
+			_state->setFlag(FLAG_GUARD_PEEING, false);
+			_state->setFlag(FLAG_PYRAMID_COLLAPSED2, true);
 			debug("Pyramid is now active!");
 			pyramidCollapse();
 		}
@@ -1916,7 +1916,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		} else if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
 			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
 			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
-			_state->setFlag(FLAG_TRAMPILLA_ABIERTA, true);
+			_state->setFlag(FLAG_TRAPDOOR_OPEN, true);
 			walkAndAction(_room->findHotspotByExtra(634), TALK);
 			_room->addSticker(134);
 			// wait a few frames
@@ -1933,7 +1933,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			_alfredState.x = 294;
 			_alfredState.y = 387;
 			_room->addSticker(136);
-			_state->setFlag(FLAG_A_LOS_PASILLOS, true);
+			_state->setFlag(FLAG_CORRIDORS, true);
 			setScreenAndPrepare(49, ALFRED_UP);
 
 		} else {
@@ -1951,7 +1951,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 
 			walkAndAction(fatMummy, TALK);
 			_state->clear();
-			_state->setFlag(FLAG_VUELTA_A_EMPEZAR, true);
+			_state->setFlag(FLAG_GAME_RESTART, true);
 			_alfredState.x = kAlfredInitialPosX;
 			_alfredState.y = kAlfredInitialPosY;
 			_graphics->fadeToBlack(20);
@@ -2324,7 +2324,7 @@ void PelrockEngine::handleFightRoomFrame() {
 		return;
 	int idx = room - 51;
 
-	if (_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx)) {
+	if (_state->getFlag(FLAG_GODS_STANCES) & (1 << idx)) {
 		// Gods are already defeated in this room, no need to run sequence
 		return;
 	}
@@ -2358,7 +2358,7 @@ void PelrockEngine::handleFightRoomFrame() {
 	// Phase 3: wait 40 ticks after spell trigger, then cast
 	if (_fightSpellCast) {
 		_fightSpellFrameCounter++;
-		if (_fightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {
+		if (_fightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_GODS_STANCES) & (1 << idx))) {
 			_fightInBlockingAnim = true;
 
 			int spellFrames = kFightRooms[idx].spellFrames;
