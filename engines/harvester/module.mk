@@ -28,6 +28,7 @@ MODULE := engines/harvester
 	npc/librarian_dialogue.o \
 	npc/lodge_chef_dialogue.o \
 	npc/mcknight_dialogue.o \
+	npc/memb_dir_dialogue.o \
 	npc/maint_man_dialogue.o \
 	npc/madam_dialogue.o \
 	npc/mom_dialogue.o \
