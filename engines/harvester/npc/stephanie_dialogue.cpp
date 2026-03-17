@@ -23,6 +23,8 @@
 
 #include "harvester/npc/stephanie_dialogue.h"
 
+#include "graphics/screen.h"
+#include "harvester/harvester.h"
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 
@@ -63,6 +65,14 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 		}
 	};
+	auto clearScreenToBlack = [&]() {
+		Graphics::Screen *screen = runtime.engine().getScreen();
+		if (!screen)
+			return;
+
+		screen->fillRect(screen->getBounds(), 0);
+		screen->update();
+	};
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
@@ -82,12 +92,12 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueLine(0x4675, "PC");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			if (sharedState.dialogueStateD2ea8) {
+			if (sharedState.dialogueStateD2ec0) {
 				lineError = runtime.playDialogueLine(0x467b, "PC");
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
-			if (sharedState.dialogueStateD2ea4) {
+			if (sharedState.dialogueStateD2ebc) {
 				lineError = runtime.playDialogueLine(0x467f, "PC");
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
@@ -233,6 +243,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
+			clearScreenToBlack();
 			(void)runtime.playDialogueFst(kDialogueC025BFstPath);
 			(void)runtime.playDialogueFst(kDialogueC007FstPath);
 			executeDialogueActionTag("LEAVE_STEPH_AFTER_NASTY");
@@ -267,6 +278,299 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
+	if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
+			!state.burnedTvStationShown) {
+		state.burnedTvStationShown = true;
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4918, "STEPHANIE", 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		const DialogueLineEntry openingLines[] = {
+			{ 0x491e, "PC", 0 },
+			{ 0x4928, "STEPHANIE", 0 },
+			{ 0x492c, "PC", 0 },
+			{ 0x4930, "STEPHANIE", 0 }
+		};
+		lineError = runtime.playDialogueEntrySequence(openingLines, ARRAYSIZE(openingLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2d7, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playStephanieLine(0x493a);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			clearScreenToBlack();
+			(void)runtime.playDialogueFst(kDialogueC007FstPath);
+			executeDialogueActionTag("LEAVE_STEPH_AFTER_NASTY");
+			return Common::kNoError;
+		}
+		if (responseIndex == 2) {
+			const DialogueLineEntry responseLines[] = {
+				{ 0x4944, "STEPHANIE", 0 },
+				{ 0x4949, "PC", 0 },
+				{ 0x494d, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	}
+	if (runtime.startupScript().getFlagValue("SCRATCHED_TUCKER") &&
+			!state.scratchedTuckerShown) {
+		state.scratchedTuckerShown = true;
+		const DialogueLineEntry openingLines[] = {
+			{ 0x46d2, "STEPHANIE", 0 },
+			{ 0x46db, "PC", 0 },
+			{ 0x46e0, "STEPHANIE", 0 }
+		};
+		Common::Error lineError = runtime.playDialogueEntrySequence(openingLines, ARRAYSIZE(openingLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2d9, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			const DialogueLineEntry responseOneLines[] = {
+				{ 0x46ea, "STEPHANIE", 0 },
+				{ 0x46ee, "PC", 0 },
+				{ 0x46f2, "STEPHANIE", 0 },
+				{ 0x46f6, "PC", 0 },
+				{ 0x46fb, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseOneLines, ARRAYSIZE(responseOneLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int followupResponseIndex = 0;
+			responseError = runtime.runResponseMenu(0x2da, followupResponseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (followupResponseIndex == 1) {
+				const DialogueLineEntry followupLines[] = {
+					{ 0x4705, "STEPHANIE", 0 },
+					{ 0x4709, "PC", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+			} else if (followupResponseIndex == 2) {
+				const DialogueLineEntry followupLines[] = {
+					{ 0x470e, "STEPHANIE", 0 },
+					{ 0x470f, "PC", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = playStephanieLine(0x4717);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			lineError = playStephanieLine(0x471e);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	}
+	if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
+			!state.boltOfClothTakenShown) {
+		state.boltOfClothTakenShown = true;
+		Common::Error lineError = playStephanieLine(0x4724);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2db, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playStephanieLine(0x472f);
+		} else if (responseIndex == 2) {
+			state.boltOfClothEscalationTriggered = true;
+			const DialogueLineEntry responseTwoLines[] = {
+				{ 0x4736, "STEPHANIE", 0 },
+				{ 0x473b, "PC", 0 },
+				{ 0x4740, "STEPHANIE", 0 },
+				{ 0x4744, "PC", 0 },
+				{ 0x4748, "STEPHANIE", 0 },
+				{ 0x474d, "PC", 0 },
+				{ 0x4753, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN") &&
+			!state.barberPoleStolenShown) {
+		state.barberPoleStolenShown = true;
+		Common::Error lineError = playStephanieLine(0x47a0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2dd, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			const DialogueLineEntry responseOneLines[] = {
+				{ 0x47af, "STEPHANIE", 0 },
+				{ 0x47b4, "PC", 0 },
+				{ 0x47b8, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseOneLines, ARRAYSIZE(responseOneLines));
+		} else if (responseIndex == 2) {
+			const DialogueLineEntry responseTwoLines[] = {
+				{ 0x47be, "STEPHANIE", 0 },
+				{ 0x47c2, "PC", 0 },
+				{ 0x47c7, "STEPHANIE", 0 },
+				{ 0x47cc, "PC", 0 },
+				{ 0x47d0, "STEPHANIE", 0 },
+				{ 0x47d6, "PC", 0 },
+				{ 0x47da, "STEPHANIE", 0 },
+				{ 0x47de, "PC", 0 },
+				{ 0x47e3, "STEPHANIE", 0 },
+				{ 0x47eb, "PC", 0 },
+				{ 0x47ef, "STEPHANIE", 0 },
+				{ 0x482b, "STEPHANIE", 0 },
+				{ 0x4830, "PC", 0 },
+				{ 0x4834, "STEPHANIE", 0 },
+				{ 0x4839, "PC", 0 },
+				{ 0x483d, "STEPHANIE", 0 },
+				{ 0x47fe, "PC", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
+			!state.dinerBurnedShown) {
+		state.dinerBurnedShown = true;
+		const DialogueLineEntry openingLines[] = {
+			{ 0x4845, "STEPHANIE", 0 },
+			{ 0x484a, "PC", 0 },
+			{ 0x484e, "STEPHANIE", 0 }
+		};
+		Common::Error lineError = runtime.playDialogueEntrySequence(openingLines, ARRAYSIZE(openingLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2df, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playStephanieLine(0x4858);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE")) {
+				lineError = playStephanieLine(0x485c);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			int followupResponseIndex = 0;
+			responseError = runtime.runResponseMenu(0x2e0, followupResponseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (followupResponseIndex == 1) {
+				const DialogueLineEntry followupLines[] = {
+					{ 0x4866, "STEPHANIE", 0 },
+					{ 0x486b, "PC", 0 },
+					{ 0x4870, "STEPHANIE", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+			} else if (followupResponseIndex == 2) {
+				const DialogueLineEntry responseTwoLines[] = {
+					{ 0x4877, "STEPHANIE", 0 },
+					{ 0x487b, "PC", 0 },
+					{ 0x4880, "STEPHANIE", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+
+				int nestedResponseIndex = 0;
+				responseError = runtime.runResponseMenu(0x2e1, nestedResponseIndex);
+				if (responseError.getCode() != Common::kNoError)
+					return responseError;
+
+				if (nestedResponseIndex == 1) {
+					lineError = playStephanieLine(0x488e);
+				} else if (nestedResponseIndex == 2) {
+					const DialogueLineEntry nestedLines[] = {
+						{ 0x4895, "STEPHANIE", 0 },
+						{ 0x4899, "PC", 0 },
+						{ 0x489d, "STEPHANIE", 0 },
+						{ 0x461b, "PC", 0 }
+					};
+					lineError = runtime.playDialogueEntrySequence(nestedLines, ARRAYSIZE(nestedLines));
+				}
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			const DialogueLineEntry responseTwoLines[] = {
+				{ 0x48c2, "STEPHANIE", 0 },
+				{ 0x48c6, "PC", 0 },
+				{ 0x48ca, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
+					!state.dinerBurnedKarinAliveFollowupShown) {
+				state.dinerBurnedKarinAliveFollowupShown = true;
+				const DialogueLineEntry karinAliveLines[] = {
+					{ 0x48ce, "STEPHANIE", 0 },
+					{ 0x48d3, "STEPHANIE", 0 },
+					{ 0x48d8, "PC", 0 },
+					{ 0x48dc, "STEPHANIE", 0 },
+					{ 0x48e1, "PC", 0 },
+					{ 0x48e5, "STEPHANIE", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(karinAliveLines, ARRAYSIZE(karinAliveLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+		}
+	}
+	if (runtime.startupScript().getFlagValue("PC_ESCAPED_JAIL") &&
+			!state.pcEscapedJailShown) {
+		state.pcEscapedJailShown = true;
+		Common::Error lineError = playStephanieLine(0x48eb);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x2e3, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			const DialogueLineEntry responseLines[] = {
+				{ 0x48f7, "STEPHANIE", 0 },
+				{ 0x4908, "PC", 0 },
+				{ 0x490d, "STEPHANIE", 0 },
+				{ 0x4912, "PC", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	}
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedLinePlayed &&
 			sharedState.karinKidnapedDialogueState) {
@@ -282,35 +586,68 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
+	if (state.playedSpyholeBranch) {
+		Common::Error lineError = runtime.playDialogueLine(0x4970, "STEPHANIE");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = runtime.playDialogueLine(0x4975, "STEPHANIE");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		if (sharedState.discussedMrPottsTuesdayNightAlibi) {
+			lineError = runtime.playDialogueLineWithVariant(0x4980, "PC", 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (sharedState.discussedMrsPottsTuesdayNightAlibi) {
+			const DialogueLineEntry lines[] = {
+				{ 0x4984, "PC", 0 },
+				{ 0x4989, "PC", 0 },
+				{ 0x498f, "STEPHANIE", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	}
 	if ((runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") ||
 				runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD")) &&
 			!state.karinOutcomeLinePlayed) {
 		state.karinOutcomeLinePlayed = true;
-		Common::Error lineError = playStephanieLine(0x4996);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4996, "STEPHANIE", 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE")) {
 			const DialogueLineEntry aliveLines[] = {
-				{ 0x499a, "PC", 0 },
-				{ 0x49a1, "STEPHANIE", 0 },
+				{ 0x499a, "PC", 2 },
+				{ 0x49a1, "STEPHANIE", 2 },
 				{ 0x49ad, "PC", 0 },
-				{ 0x49b1, "STEPHANIE", 0 },
+				{ 0x49b1, "STEPHANIE", 4 },
 				{ 0x49b6, "PC", 0 },
 				{ 0x49ba, "STEPHANIE", 0 }
 			};
 			lineError = runtime.playDialogueEntrySequence(aliveLines, ARRAYSIZE(aliveLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			if (sharedState.dwayneCompletedKarinAliveFollowup) {
+				lineError = playStephanieLine(0x49c1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
 		} else {
 			const DialogueLineEntry deadLines[] = {
-				{ 0x49da, "PC", 0 },
-				{ 0x49e0, "STEPHANIE", 0 },
-				{ 0x49e4, "PC", 0 }
+				{ 0x49da, "PC", 3 },
+				{ 0x49e0, "STEPHANIE", 3 },
+				{ 0x49e4, "PC", 3 }
 			};
 			lineError = runtime.playDialogueEntrySequence(deadLines, ARRAYSIZE(deadLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
+		const DialogueLineEntry outcomeTailLines[] = {
+			{ 0x49ea, "STEPHANIE", 2 },
+			{ 0x49ef, "PC", 2 }
+		};
+		return runtime.playDialogueEntrySequence(outcomeTailLines, ARRAYSIZE(outcomeTailLines));
 	}
 
 	if (stephanieTopicBufferLineIndex < 0)
@@ -516,13 +853,27 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				runtime.matchesResponseLine(selectedTopic, 0x2fb) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2fc) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2fd)) {
-			const DialogueLineEntry lines[] = {
-				{ 0x4a05, "PC", 0 },
-				{ 0x4a0a, "STEPHANIE", 0 },
-				{ 0x4a0e, "PC", 0 },
-				{ 0x4a12, "STEPHANIE", 0 }
-			};
-			return runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
+			state.playedSpyholeBranch = true;
+			Common::Error lineError = runtime.playDialogueLine(0x4a05, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLineWithVariant(0x4a0a, "STEPHANIE", 4);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLine(0x4a0e, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLineWithVariant(0x4a12, "STEPHANIE", 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLine(
+				sharedState.confrontedMrPottsAboutSpyhole ? 0x4a19 : 0x4a1e, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLineWithVariant(0x4a23, "STEPHANIE", 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
 		}
 
 		Common::Error lineError = playStephanieLine(0x465c);

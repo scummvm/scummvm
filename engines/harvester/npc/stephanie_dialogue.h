@@ -30,12 +30,21 @@ class StephanieDialogueHandler : public NpcDialogueHandler {
 public:
 	struct StephanieRoomDialogueState {
 		bool introPending = true;
-		int introDayIndex = -1;
-		bool firstFollowupPending = false;
-		int firstFollowupDayIndex = -1;
-		bool secondFollowupPending = false;
-		int secondFollowupDayIndex = -1;
+		int introDayIndex = 0;
+		bool firstFollowupPending = true;
+		int firstFollowupDayIndex = 0;
+		bool boltOfClothEscalationTriggered = false;
+		bool playedSpyholeBranch = false;
+		bool secondFollowupPending = true;
+		int secondFollowupDayIndex = 0;
+		bool scratchedTuckerShown = false;
+		bool boltOfClothTakenShown = false;
+		bool barberPoleStolenShown = false;
+		bool burnedTvStationShown = false;
+		bool dinerBurnedShown = false;
+		bool dinerBurnedKarinAliveFollowupShown = false;
 		bool dayFiveLinePlayed = false;
+		bool pcEscapedJailShown = false;
 		bool karinKidnapedLinePlayed = false;
 		bool karinOutcomeLinePlayed = false;
 		Common::String currentTopicBuffer;
