@@ -560,6 +560,7 @@ Common::Error MomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.sameDayIntroLineEnabled = true;
 		state.postIntroDefaultLineEnabled = true;
 		state.introDayIndex = currentStoryDayIndex;
+		sharedState.dialogueStateD2ef4 = true;
 
 		Common::Error lineError = playSequence(kMomIntroLines, ARRAYSIZE(kMomIntroLines));
 		if (lineError.getCode() != Common::kNoError)

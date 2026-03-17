@@ -34,6 +34,8 @@ struct DialogueSharedState {
 	bool dialogueStateD2e98 = false;
 	bool dialogueStateD2eb0 = false;
 	bool dialogueStateD2eec = false;
+	bool dialogueStateD2ed0 = false;
+	bool dialogueStateD2ef4 = false;
 	bool dialogueStateD2f04 = false;
 	bool dialogueStateD2ea4 = false;
 	bool dialogueStateD2ea8 = false;
@@ -44,6 +46,8 @@ struct DialogueSharedState {
 	bool waspWomanDialogueState = false;
 	bool momGoodCauseDay5State = false;
 	bool dwayneWhaleyDisciplineFollowupState = false;
+	bool discussedMrPottsTuesdayNightAlibi = false;
+	bool confrontedMrPottsAboutSpyhole = false;
 };
 
 class NpcDialogueHandler {

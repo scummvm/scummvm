@@ -431,6 +431,14 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `0x141` first calls `get_set_discussed_lodge_topic(0, 1)`, plays `0x1fe1` / `0x1fe5` / `0x1feb` / `0x1fef`, then shows zero-based `dialog.rsp` line `0x142`; response `1` plays `0x1ffe`, response `2` plays `0x2005` / `0x200a` / `0x200e`, and the branch then rewrites the keyword buffer to `0x144`.
     - When `STEPH_MIDGAME_PLAYED` is already set, that same `0x141` topic instead plays `0x2154` / `0x215a` and loops on the current keyword buffer without rewriting it.
     - `0x151..0x152` plays `0x20f7` / `0x20fb`, then shows zero-based `dialog.rsp` line `0x153`; response `1` plays `0x2106` / `0x210a` / `0x210e` and loops on the current keyword buffer, while response `2` plays `0x2114` / `0x2119` / `0x211d` and rewrites the buffer to `0x154`.
+  - Hidden `handle_talk_to_mr_potts` blocks confirm the native response-menu text format more precisely than the earlier engine port:
+    - Slash characters are explicit row breaks inside a menu entry, not generic option separators.
+    - Numeric prefixes (`1.`, `2.`, ...) start a new selectable response.
+    - The accusation branch builds a runtime menu string by taking zero-based `dialog.rsp` line `0x20f` and appending hardcoded accusation text fragments before routing the result back through the same response-menu routine.
+  - `handle_talk_to_mr_potts @ 0x26000` is now bounded enough for a direct startup-room port despite the truncated primary function stub.
+    - The auxiliary intro is the only place that reseeds Mr. Potts's keyword buffer, writing zero-based `dialog.rsp` lines `0x1d8`, `0x1d9`, `0x1da`, or `0x1db` depending on the selected response and whether Stephanie is already dead.
+    - That keyword buffer persists outside `reset_talk_to_mr_potts_aux_state`; later visits reuse it through the hidden loop rooted at `0x26fc8`, which clears the selected topic text and re-enters `run_dialogue_keyword_menu`.
+    - The hidden keyword loop now has confirmed branches for `AMNESIA`, `MARRIAGE`, `COMMITMENT`, `FATHER`, `SLAUGHTERHOUSE`, `MEAT`, `STEPHANIE`, `LODGE`, `NEWSPAPER`, `MOYNAHAN`, the peephole aliases `0x204..0x20a`, the murder aliases `0x20c..0x20e`, `TOILET`, the molest/pervert aliases `0x216..0x218`, the later `BYE` topic `0x21c`, and the generic fallback line `0x2c73`.
   - `handle_talk_to_pta_mom @ 0x34e30` is now constrained to a compact one-screen exchange.
     - If `PTA_RESPOND_TO_TV` is set, it plays `0x3233` with `PTA_MOM1` head variant `2`, clears that flag, and returns without opening the response menu.
     - Otherwise it chooses one of three random opener lines, `0x31ee`, `0x31f2`, or `0x31f6`, all spoken as `PTA_MOM1` with head variant `1`, then opens zero-based `dialog.rsp` line `0x297`.

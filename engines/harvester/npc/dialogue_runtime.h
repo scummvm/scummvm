@@ -27,6 +27,7 @@ public:
 	typedef std::function<Common::Error(const Common::String &)> PlayDialogueFstFn;
 	typedef std::function<Common::Error(const Common::String &, int, Common::String &)> RunKeywordMenuFn;
 	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
+	typedef std::function<Common::Error(const Common::String &, int &)> RunResponseMenuTextFn;
 	typedef std::function<void(Common::String &, int &, int, const char *)> AssignTopicBufferFn;
 	typedef std::function<bool(const Common::String &, int)> MatchesResponseLineFn;
 	typedef std::function<bool(const Common::String &, const int *, uint)> MatchesAnyResponseLineFn;
@@ -44,6 +45,7 @@ public:
 			const PlayDialogueFstFn &playDialogueFst,
 			const RunKeywordMenuFn &runKeywordMenu,
 			const RunResponseMenuFn &runResponseMenu,
+			const RunResponseMenuTextFn &runResponseMenuText,
 			const AssignTopicBufferFn &assignTopicBuffer,
 			const MatchesResponseLineFn &matchesResponseLine,
 			const MatchesAnyResponseLineFn &matchesAnyResponseLine,
@@ -57,7 +59,8 @@ public:
 		  _playDialogueLineWithVariant(playDialogueLineWithVariant),
 		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
 		  _playDialogueFst(playDialogueFst), _runKeywordMenu(runKeywordMenu),
-		  _runResponseMenu(runResponseMenu), _assignTopicBuffer(assignTopicBuffer),
+		  _runResponseMenu(runResponseMenu), _runResponseMenuText(runResponseMenuText),
+		  _assignTopicBuffer(assignTopicBuffer),
 		  _matchesResponseLine(matchesResponseLine),
 		  _matchesAnyResponseLine(matchesAnyResponseLine),
 		  _queueDialogueInteractionIfNeeded(queueDialogueInteractionIfNeeded),
@@ -90,6 +93,9 @@ public:
 	}
 	Common::Error runResponseMenu(int responseLineIndex, int &responseIndex) const {
 		return _runResponseMenu(responseLineIndex, responseIndex);
+	}
+	Common::Error runResponseMenuText(const Common::String &responseLine, int &responseIndex) const {
+		return _runResponseMenuText(responseLine, responseIndex);
 	}
 	void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
 			int responseLineIndex, const char *label) const {
@@ -126,6 +132,7 @@ private:
 	PlayDialogueFstFn _playDialogueFst;
 	RunKeywordMenuFn _runKeywordMenu;
 	RunResponseMenuFn _runResponseMenu;
+	RunResponseMenuTextFn _runResponseMenuText;
 	AssignTopicBufferFn _assignTopicBuffer;
 	MatchesResponseLineFn _matchesResponseLine;
 	MatchesAnyResponseLineFn _matchesAnyResponseLine;
