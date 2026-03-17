@@ -522,6 +522,45 @@ void ColonyEngine::playAnimation() {
 			setObjectOnOff(13, false);
 			setObjectOnOff(4, false);
 		}
+	} else if (_animationName == "lift") {
+		// Original DoLift: set up initial state based on forklift mode.
+		// _fl==1 → picking up (up=0, object starts at bottom)
+		// _fl==2 → putting down (up=1, object starts at top)
+		// Object sprite mapping: BOX1/BOX2→2, TELEPORT→1, CRYO→3, REACTOR→4
+		_liftUp = (_fl == 2);
+		switch (_fl == 2 ? _carryType : 0) {
+		case kObjBox1: case kObjBox2: _liftObject = 2; break;
+		case kObjTeleport: _liftObject = 1; break;
+		case kObjCryo: _liftObject = 3; break;
+		case kObjReactor: _liftObject = 4; break;
+		default: _liftObject = 2; break; // pickup: we don't know yet, but dolSprite handles it
+		}
+		// For pickup, determine object from what we're about to pick up
+		if (!_liftUp) {
+			// The interaction code sets _carryType AFTER the animation,
+			// but the object type is in the Thing we're interacting with.
+			// We can infer from which sprites are visible.
+			for (int i = 1; i <= 4; i++) {
+				if (i < (int)_lSprites.size() && _lSprites[i - 1] && _lSprites[i - 1]->onoff)
+					_liftObject = i;
+			}
+		}
+		// Hide all object sprites except the active one
+		for (int i = 1; i <= 4; i++) {
+			if (i != _liftObject)
+				setObjectOnOff(i, false);
+		}
+		if (_liftUp) {
+			setObjectState(9, 2); // up arrow OFF
+			setObjectState(8, 1); // down arrow ON
+			setObjectState(_liftObject, 5); // object at top
+		} else {
+			setObjectState(9, 1); // up arrow ON
+			setObjectState(8, 2); // down arrow OFF
+			setObjectState(_liftObject, 1); // object at bottom
+		}
+		drawAnimation();
+		_gfx->copyToScreen();
 	}
 
 	while (_animationRunning && !shouldQuit()) {
@@ -996,10 +1035,33 @@ void ColonyEngine::handleAnimationClick(int item) {
 			_animationRunning = false;
 		}
 	} else if (_animationName == "lift") {
-		// Original DoLift: item==8 puts down (when carrying), item==9 picks up (when empty)
-		if (item == 8 || item == 9) {
+		// Original DoLift state machine:
+		// item 8 = lower button (active when _liftUp)
+		// item 9 = raise button (active when !_liftUp)
+		if (item == 8 && _liftUp) {
+			// Lower the object: animate states 5→1
+			setObjectState(8, 2); // lower arrow OFF
+			setObjectState(9, 1); // raise arrow ON
+			for (int i = 5; i >= 1; i--) {
+				setObjectState(_liftObject, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				responsiveAnimationDelay(_system, 50);
+			}
+			_liftUp = false;
 			_animationResult = 1;
-			_animationRunning = false;
+		} else if (item == 9 && !_liftUp) {
+			// Raise the object: animate states 1→5
+			setObjectState(9, 2); // raise arrow OFF
+			setObjectState(8, 1); // lower arrow ON
+			for (int i = 1; i <= 5; i++) {
+				setObjectState(_liftObject, i);
+				drawAnimation();
+				_gfx->copyToScreen();
+				responsiveAnimationDelay(_system, 50);
+			}
+			_liftUp = true;
+			_animationResult = 1;
 		}
 	}
 }
@@ -1147,6 +1209,12 @@ void ColonyEngine::handleKeypadClick(int item) {
 					_coreState[_coreIndex] = 0;
 				_gametest = true;
 				debug("Reactor: code accepted! New coreState=%d", _coreState[_coreIndex]);
+			} else {
+				// Original ganimate.c: wrong reactor code → Terminate(TRUE)
+				debug("Reactor: WRONG CODE — terminating game");
+				_animationRunning = false;
+				terminateGame(true);
+				return;
 			}
 			_animationRunning = false;
 		} else if (_animationName == "security") {
@@ -1157,6 +1225,16 @@ void ColonyEngine::handleKeypadClick(int item) {
 					match = false;
 			}
 			if (match || isBackdoorCode111111(_animDisplay)) {
+				// Original ganimate.c: flash all 10 keypad objects on success
+				for (int i = 1; i <= 10; i++)
+					setObjectState(i, 2);
+				drawAnimation();
+				_gfx->copyToScreen();
+				responsiveAnimationDelay(_system, 200);
+				for (int i = 1; i <= 10; i++)
+					setObjectState(i, 1);
+				drawAnimation();
+				_gfx->copyToScreen();
 				_unlocked = true;
 				_gametest = true;
 			}

@@ -663,6 +663,8 @@ private:
 	bool _animationRunning;
 	int _animationResult;
 	bool _doorOpen;
+	int _liftObject;  // sprite index for the carried object in lift animation
+	bool _liftUp;     // current lift state: true=raised, false=lowered
 	int _elevatorFloor;
 	int _airlockX = -1;
 	int _airlockY = -1;

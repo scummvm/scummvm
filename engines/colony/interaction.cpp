@@ -283,7 +283,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 				_sound->play(Sound::kDrop); // GANIMATE.C DoLift: DoDropSound()
 				_animationResult = 0;
 				playAnimation();
-				if (!_animationResult) {
+				if (_animationResult) {
 					_carryType = 0;
 					_coreState[_coreIndex] = 1;
 					_corePower[_coreIndex] = _corePower[2];
