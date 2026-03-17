@@ -39,6 +39,7 @@
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/npc/chessmaster_dialogue.h"
+#include "harvester/npc/cloak_atnd_dialogue.h"
 #include "harvester/npc/curator_dialogue.h"
 #include "harvester/npc/dwayne_dialogue.h"
 #include "harvester/npc/dialogue_runtime.h"
@@ -351,6 +352,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new Fireman1DialogueHandler());
 	_npcHandlers.push_back(new Fireman2DialogueHandler());
 	_npcHandlers.push_back(new ChessmasterDialogueHandler());
+	_npcHandlers.push_back(new CloakAtndDialogueHandler());
 	_npcHandlers.push_back(new CuratorDialogueHandler());
 	_npcHandlers.push_back(new JimmyDialogueHandler());
 	_npcHandlers.push_back(new InquisitorDialogueHandler());

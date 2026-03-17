@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_vet @ 0x2fd20` into a dedicated `engines/harvester/npc/vet_dialogue.*` handler.
-  - Native Vet dialogue is a one-shot interrupt branch on `VET_INTERRUPT`: when the flag is set it is cleared and `0x6d9` plays for `VET`, otherwise the handler falls through.
-  - The engine now routes `VET` through a concrete handler that mirrors the same flag clear and conditional line playback.
+- Ported `handle_talk_to_cloak_atnd @ 0x2db80` into a dedicated `engines/harvester/npc/cloak_atnd_dialogue.*` handler.
+  - Native Cloak Attendant dialogue is a small no-item/item split: if no item is presented and `CLEANED_CLOTHES` is still clear, it plays `0x1066` for `CLOAK_ATND`; if `BARCASHFIVE` is presented, it dispatches `CLEAN_CLOTHES`.
+  - The engine now routes `CLOAK_ATND` through a concrete handler that mirrors the same flag check and action-tag dispatch, including queued interaction side effects.
 
 ## Next Suggested Action
 
 1. Resume the remaining low-complexity visible handlers before returning to the bounded multi-branch ports.
-   - The next best candidates are the remaining short non-hidden handlers that do not require new shared state reconstruction: `CLOAK_ATND` and `DARK_WOMAN`.
+   - The remaining short visible handler before the evidence-heavy pass is `DARK_WOMAN`.
 2. After that short-handler pass, return to Boyle and the other larger hidden-topic handlers.
-   - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.
+   - After `DARK_WOMAN`, the next best bounded visible ports are the evidence-heavy but still linear handlers such as `BUSTER`, `BUTCHER`, `PHELPS`, `SWELL`, and `PARSONS`, before returning to Boyle.
