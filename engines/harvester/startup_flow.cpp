@@ -70,6 +70,7 @@ static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
+static const int kRoomNpcAmbientLastFrame = 0x3b;
 
 static const byte kIdentTextColor = 0xd3;
 static const byte kTextColorNormal = 255;
@@ -1928,7 +1929,8 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 
 		entity->setClassId(kRuntimeEntityClassNpc);
 		entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
-		entity->setLooping(true);
+		// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
+		entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
 		if (npc.frameDelay > 0)
 			entity->setAnimationRate(npc.frameDelay);
 		if (!applyRoomActorPlacement(state, *entity, npc.posX, npc.posY, (float)npc.posZ)) {

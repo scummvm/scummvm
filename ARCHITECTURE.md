@@ -723,6 +723,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `spawn_region_entity_from_record` builds runtime class `0x19` rectangular hotspots from the record bounds and Z span, copies `desired_facing`, and maps `cursor_enabled` onto the runtime hotspot interaction flag.
   - `spawn_anim_entity_from_record` immediately drives `show_entity_visual`, so room `ANIM` records use the centered anchor path during room setup, while room bitmap objects are inserted at their record `x` / `y` without that initial recentering step.
   - `spawn_timer_entity_from_record` builds runtime class `0x17` timer entities keyed by `TimerRecord.timer_name`; when the timer starts enabled it seeds the start tick from `DAT_000c7e44` and computes the first expiration as `start_tick + initial_value * 100`.
+  - `spawn_npc_entity_from_record` seeds ordinary room-NPC ambient playback as actor state `0x34` with a bounded frame window of `0..0x3b`; the later death / monsterfy / reaction banks begin above that range, so passive room NPCs do not free-run the whole ABM.
 - `CommandRecord` is now stable enough to use directly in the event interpreter:
   - `opcode`, `trigger_tag`, `arg1`..`arg4`, `runtime_flag`, `next`
 - `EntranceRecord` is stable and drives room transitions and save/load handoff:
@@ -982,6 +983,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Runtime bytes `+0x11a1` and `+0x11a0` are now bounded separately:
     - `+0x11a1` is the actor dispatch-state byte; `update_actor_runtime_state` switches on it directly.
     - `+0x11a0` is the latched animation/state byte; it is usually mirrored into `+0x11a1` on direct state changes, but remains distinct during entry, turn, and terminal sequences.
+    - the room-NPC ambient state seeded by `spawn_npc_entity_from_record` is `0x34`; when both bytes remain `0x34` on a class-4 actor, the function bypasses the locomotion/combat switch and falls straight through to `tick_entity_visual_state`, so that state simply loops over the frame window the spawn path already seeded.
   - The state families are now bounded at a subsystem level:
     - `0` / `4` are the room-`min_z` locomotion family.
     - `3` / `0xb` are the room-`max_z` locomotion family.

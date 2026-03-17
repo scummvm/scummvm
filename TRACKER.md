@@ -9,17 +9,17 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `899`
-- Named/documented: `586`
+- Total functions: `900`
+- Named/documented: `587`
 - Still `FUN_*` / undocumented: `313`
 
 ## Last Confirmed Action
 
-- Fixed the room-loop crash exposed by the recovered movie-surface switch.
-  - The native `play_fst_sequence @ 0x72550` surface swap remains correct, but `StartupRoomSystem::runRoomLoop` had cached `_engine.getScreen()` at room entry and kept reusing that freed `Graphics::Screen` for room redraws, dialogue-backdrop capture, and ESC room-menu capture after `setDisplayMode()` recreated the screen.
-  - Room rendering now resolves the active screen on demand in those post-FST paths, so dialogue movie playback can return to the `640`-wide gameplay UI without leaving the room loop holding a stale screen pointer.
+- Re-ran the native room-NPC spawn/update path from `room_setup` through `spawn_npc_entity_from_record` and `update_actor_runtime_state`.
+  - Native room NPCs are not allowed to free-run their full ABM. Ordinary passive NPC spawn seeds actor state `0x34` and clamps the live ambient frame window to `0..0x3b`; the higher banks are reserved for later state-machine-driven reactions, deaths, and monsterfy transitions.
+  - The engine startup-room NPC path now matches that bounded ambient loop instead of cycling every decoded frame in the ABM.
 
 ## Next Suggested Action
 
-1. Audit the remaining long-lived `_engine.getScreen()` caches that can survive an FST-triggered mode swap, especially startup/menu loops that redraw after returning from shared movie playback.
-2. Exercise other in-game FST callers, including death-FST and menu-adjacent playback, to confirm whether any caller still needs an explicit active-screen refresh or redraw after the native `320x200` movie surface returns to the gameplay UI.
+1. Exercise several room NPC ABMs with known post-`0x3b` reaction/death banks to confirm the bounded ambient loop fixes the visible over-seek without breaking passive idle playback.
+2. Continue the native actor-system pass on room monsters and any NPCs that rely on leaving ambient state `0x34`, so later startup-room behavior can move from static frame-window emulation toward the real class-4/class-6 state machine where needed.
