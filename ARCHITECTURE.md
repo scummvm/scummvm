@@ -429,6 +429,12 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `0x141` first calls `get_set_discussed_lodge_topic(0, 1)`, plays `0x1fe1` / `0x1fe5` / `0x1feb` / `0x1fef`, then shows zero-based `dialog.rsp` line `0x142`; response `1` plays `0x1ffe`, response `2` plays `0x2005` / `0x200a` / `0x200e`, and the branch then rewrites the keyword buffer to `0x144`.
     - When `STEPH_MIDGAME_PLAYED` is already set, that same `0x141` topic instead plays `0x2154` / `0x215a` and loops on the current keyword buffer without rewriting it.
     - `0x151..0x152` plays `0x20f7` / `0x20fb`, then shows zero-based `dialog.rsp` line `0x153`; response `1` plays `0x2106` / `0x210a` / `0x210e` and loops on the current keyword buffer, while response `2` plays `0x2114` / `0x2119` / `0x211d` and rewrites the buffer to `0x154`.
+  - `handle_talk_to_pta_mom @ 0x34e30` is now constrained to a compact one-screen exchange.
+    - If `PTA_RESPOND_TO_TV` is set, it plays `0x3233` with `PTA_MOM1` head variant `2`, clears that flag, and returns without opening the response menu.
+    - Otherwise it chooses one of three random opener lines, `0x31ee`, `0x31f2`, or `0x31f6`, all spoken as `PTA_MOM1` with head variant `1`, then opens zero-based `dialog.rsp` line `0x297`.
+    - Response `1` plays `0x3204` then `0x320b`, both as `PTA_MOM1` with head variant `2`.
+    - Response `2` plays `0x320f` then `0x3213`, both as `PTA_MOM1` with head variant `0`.
+    - Response `3` plays `0x3217`, `0x321c`, `0x3221`, and `0x3226`, where `0x3221` is the only `PC` line and the others stay on `PTA_MOM1` head variant `0`.
 - The shared dialogue evidence/topic state shims behind those handlers are now partially explicit:
   - `get_set_boyle_gascan_application_state` at `0x38240` is the Boyle-local `GASCAN` state bit that gates the hidden gas-can-for-application continuation.
   - `get_set_discussed_note_checkbook_evidence` at `0x38330` gates the shared `NOTE` / `NOTE_PHOTOCOPY` / `CHECKBOOK` / `CHECKBOOK_PHOTOCOPY` evidence path used by Dwayne, Edna, Herrill, Johnson, Mom, and related handlers.

@@ -40,6 +40,7 @@ class JimmyDialogueHandler;
 class MomDialogueHandler;
 class NpcDialogueHandler;
 class DialogueRuntime;
+class PtaMomDialogueHandler;
 class StartupFlow;
 class StartupText;
 class WaspWomanDialogueHandler;
@@ -111,6 +112,7 @@ private:
 	friend class HankDialogueHandler;
 	friend class JimmyDialogueHandler;
 	friend class MomDialogueHandler;
+	friend class PtaMomDialogueHandler;
 	friend class WaspWomanDialogueHandler;
 
 	void registerNpcHandlers();
@@ -119,6 +121,7 @@ private:
 	Common::Error handleWaspWomanDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 	Common::Error handleMomDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 	Common::Error handleHankDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
+	Common::Error handlePtaMomDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
 
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
