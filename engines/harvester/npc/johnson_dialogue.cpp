@@ -225,8 +225,7 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return menuError;
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesAnyResponseLine(selectedTopic, kJohnsonDirectExitTopicLines,
+		if (runtime.matchesAnyResponseLine(selectedTopic, kJohnsonDirectExitTopicLines,
 					ARRAYSIZE(kJohnsonDirectExitTopicLines))) {
 			return playJohnsonLine(0xbda, 1);
 		}
@@ -288,29 +287,26 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			Common::Error lineError = playJohnsonLine(0xb3a);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playJohnsonLine(0xb69);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			return playJohnsonLine(0xbda, 1);
+			assignJohnsonTopicBuffer(0x183);
+			continue;
 		}
 		if (runtime.matchesAnyResponseLine(selectedTopic, kJohnsonSecondGenericReplyTopicLines,
 				ARRAYSIZE(kJohnsonSecondGenericReplyTopicLines))) {
 			Common::Error lineError = playJohnsonLine(0xb46);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playJohnsonLine(0xb69);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			return playJohnsonLine(0xbda, 1);
+			assignJohnsonTopicBuffer(0x186);
+			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x187)) {
-			Common::Error lineError = playJohnsonLine(0xb52);
+			Common::Error lineError = runtime.playDialogueLineWithVariant(0xb52, "PC", 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playJohnsonLine(0xb69);
+			lineError = playJohnsonLine(0xb56, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			return playJohnsonLine(0xbda, 1);
+			assignJohnsonTopicBuffer(0x188);
+			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x189))
 			continue;
