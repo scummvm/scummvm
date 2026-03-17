@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_sergeant @ 0x30340` into a dedicated `engines/harvester/npc/sergeant_dialogue.*` handler.
-  - Native Sergeant dialogue is still a compact quest-delivery handler: the intro/revisit bark pair plus direct item or flag-driven branches for `REMAINS`, `INVITE`, `BARBER_POLE`, `BOLTCLTH`, `SCRATCHED_TUCKER`, `DINER_BURNED`, and `COMPLETED_LODGE_APPLICATION`.
-  - This pass also added a minimal runtime `setRuntimeNpcState()` helper so dialogue handlers can mirror native `SET_NPC`-style scene changes, and the shared neutral Sergeant wrapper bits now live in engine-side shared dialogue state for later Stephanie/Dad followups.
+- Ported `handle_talk_to_dad @ 0x2b020` into a dedicated `engines/harvester/npc/dad_dialogue.*` handler.
+  - Dad is now covered as a compact visible handler: the `TAKING_BONDAGE` interrupt, the two-state no-item bark path, and the linear evidence-item fan-out for corpse photo, Whaley/Herrill photo, note/checkbook evidence, and `MEAT_PERMISSION0`.
+  - The only still-unrecovered piece in that handler is the gameplay-side setter behind Dad's local `MEAT_PERMISSION0` wrapper at `0x38400`; the engine keeps that state explicit instead of guessing a write path.
 
 ## Next Suggested Action
 
 1. Port `handle_talk_to_stephanie @ 0x36710` next.
-   - Stephanie is now the last compact-ish named handler before the remaining heavier `DAD` / `BOYLE` hidden-topic ports, and Sergeant's shared-state writes are now in place for the known Tuesday-night / quest followups.
-2. After Stephanie, finish the last two Ghidra-identified top-level handlers: `handle_talk_to_dad @ 0x2b020` and `handle_talk_to_boyle @ 0x2cb20`.
-   - Revisit the Mom raw-disassembly audit afterward as a separate fidelity pass once the remaining named dispatch targets are no longer stubbed.
+   - Stephanie is now the only remaining large visible/topic-heavy handler before the final compact Boyle pass.
+2. After Stephanie, finish the last remaining non-stub top-level handler: `handle_talk_to_boyle @ 0x2cb20`.
+   - Revisit the Mom raw-disassembly audit afterward as a separate fidelity pass once `STEPHANIE` and `BOYLE` are both in place.
