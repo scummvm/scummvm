@@ -120,12 +120,19 @@ public:
 	const Common::String getTargetName() { return _targetName; }
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::Error loadGameState(int slot) override;
+
 	const ADGameDescription *_gameDescription;
 	bool _isSoundEnabled = true;
 	bool _isMusicEnabled = true;
 
 	bool _introOngoing = true;
 	bool _escPressed = false;
+	bool _useOriginalSaveLoad = true;
 
 private:
 	Graphics::PixelFormat _pixelFormat;

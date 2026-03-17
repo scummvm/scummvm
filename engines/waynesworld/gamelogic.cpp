@@ -8839,10 +8839,18 @@ void GameLogic::handleGameMenu() {
 			menuDrawSoundEnabled();
 			break;
 		case 2:
-			menuSaveLoadMenu(true);
+			if (!_vm->_useOriginalSaveLoad) {
+				_vm->loadGameDialog();
+				menuExit();
+			} else {
+				menuSaveLoadMenu(true);
+			}
 			break;
 		case 3:
-			menuSaveLoadMenu(false);
+			if (!_vm->_useOriginalSaveLoad)
+				_vm->saveGameDialog();
+			else
+				menuSaveLoadMenu(false);
 			break;
 		case 4:
 			loadSavegame(0);

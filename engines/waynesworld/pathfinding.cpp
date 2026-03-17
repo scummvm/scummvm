@@ -375,12 +375,10 @@ int WaynesWorldEngine::walkAddWalkLine(int flag, int x1, int y1, int x2, int y2,
 }
 
 bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction, int actor2_destX, int actor2_destY) {
-    WalkPoint *actor1Points = 0, *actor2Points = 0;
+    WalkPoint *actor1Points, *actor2Points;
     int flag1, flag2;
     int actor1X, actor1Y, actor2X, actor2Y;
     int actor2WalkDestX, actor2WalkDestY;
-
-	debug("walkTo(%d, %d, %d, %d, %d)", actor1_destX, actor1_destY, direction, actor2_destX, actor2_destY);
 
     _isTextVisible = false;
 
@@ -440,7 +438,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
     }
 
     for (int pointIndex = 0, walkIncr = 0; pointIndex < actor1PointsCount || pointIndex < actor2PointsCount; pointIndex += 2, walkIncr += 2) {
-        int scale = 0;
+        int scale;
         if (_scrollRemaining > 0) {
             scrollRoom();
         }
@@ -464,7 +462,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         //     waitMillis(10000 / (scale * scale) * 10);
         // }
         waitMillis(100); // TODO Fix this
-        if (_scrollRemaining == 0) {
+        if (_scrollRemaining > 0) {
 			warning("STUB - Missing scrolling in WalkTo");
             // TOOD
             // if (updateGame()) {

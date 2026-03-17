@@ -111,6 +111,22 @@ bool WaynesWorldEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeade
 	return true;
 }
 
+Common::Error WaynesWorldEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::Error result = Common::kNoError;
+	if (!_logic->saveSavegame(slot, &desc))
+		result = Common::kUnknownError;
+
+	return result;
+}
+
+Common::Error WaynesWorldEngine::loadGameState(int slot) {
+	Common::Error result = Common::kNoError;
+	if (!_logic->loadSavegame(slot))
+		result = Common::kUnknownError;
+
+	return result;
+}
+
 void WaynesWorldEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header) {
 	// Write out a savegame header
 	out->write(savegameStr, kWWSavegameStrSize + 1);
@@ -166,8 +182,9 @@ Common::Error WaynesWorldEngine::run() {
 
 	syncSoundSettings();
 
+	_useOriginalSaveLoad = ConfMan.getBool("originalsaveload");
 	if (ConfMan.hasKey("save_slot")) {
-		int saveSlot = ConfMan.getInt("save_slot");
+		const int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot > 0 && saveSlot <= 99)
 			_loadSaveSlot = saveSlot;
 	}

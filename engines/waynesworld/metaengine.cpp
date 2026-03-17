@@ -36,7 +36,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	 		_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 	 	"originalsaveload",
-	 	true,
+	 	false,
 	 	0,
 	 	0
 			}
@@ -63,8 +63,12 @@ public:
 };
 
 bool WaynesWorldMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return (f == kSupportsLoadingDuringStartup) ||
-		   checkExtendedSaves(f);
+	return (f == kSupportsListSaves) ||
+		   (f == kSupportsLoadingDuringStartup) ||
+		   (f == kSavesSupportMetaInfo) ||
+		   (f == kSavesSupportThumbnail) ||
+		   (f == kSavesSupportCreationDate) ||
+		   (f == kSavesSupportPlayTime);
 }
 
 Common::Error WaynesWorldMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
