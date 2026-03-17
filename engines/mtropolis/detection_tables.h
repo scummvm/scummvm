@@ -2223,6 +2223,44 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_UTS_SHADOW_WARRIOR_WIN_EN,
 	},
 
+	{ // Wanna-Be a Dino Finder (English, Windows)
+	  // Published by Cloud 9 Interactive, 1996
+		{
+			"wb_dino_finder",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "DATA.Z", 0, "b8162cc7cfd3b3fc1b7b6bd6af0bcb14", 1478532 },
+				{ "WBDF.C9A", 0, "6186fc0971507fb3fd98ef928e388826", 574456708 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WB_DINOFINDER,
+		0,
+		MTBOOT_WBDINO_RETAIL_WIN_EN,
+	},
+	{ // Wanna-Be a Dino Finder (English, Macintosh)
+		{
+			"wb_dino_finder",
+			MetaEngineDetection::GAME_NOT_IMPLEMENTED,
+			{
+				{ "Install Dino Finder", 0, "c8039ef26cc7b10bd2821a9eb401d2f0", 1426816 },
+				{ "WBDF.C9A", 0, "6186fc0971507fb3fd98ef928e388826", 574456708 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO0()
+		},
+		GID_WB_DINOFINDER,
+		0,
+		MTBOOT_WBDINO_RETAIL_MAC_EN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 

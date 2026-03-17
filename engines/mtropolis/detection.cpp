@@ -44,6 +44,7 @@ static const PlainGameDescriptor mTropolisGames[] = {
 	{"dilbert", "The Totally Techie World of Young Dilbert: Hi-Tech Hijinks"},
 	{"freewilly", "Free Willy Activity Center"},
 	{"hercules", "Hercules & Xena Learning Adventure: Quest for the Scrolls"},
+	{"wb_dino_finder", "Wanna-Be A Dino Finder"},
 	{"idino", "I Can Be a Dinosaur Finder"},
 	{"idoctor", "I Can Be an Animal Doctor"},
 	{"drawmarvelway", "How to Draw the Marvel Way"},

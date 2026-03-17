@@ -1130,6 +1130,8 @@ public:
 	void bootFTTSWin();
 	void bootArchitectureWin();
 	void bootDrawMarvelWin();
+	void bootDinoFinderWin();
+	void bootDinoFinderMac();
 	void bootDinosaurFinderWin();
 	void bootAnimalDoctorWin();
 	void bootIvoclarWin();
@@ -1506,6 +1508,28 @@ void BootScriptContext::bootDrawMarvelWin() {
 	addPlugIn(kPlugInStandard);
 	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
 	setMainSegmentFile("workspace/MDRAW.C9A");
+}
+
+void BootScriptContext::bootDinoFinderWin() {
+	addPlugIn(kPlugInStandard);
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
+
+	addArchive(kArchiveTypeInstallShieldV3, "installer", "fs/DATA.Z");
+	addJunction("", "installer/WIN95");
+
+	addJunction("", "fs");
+	setMainSegmentFile("workspace/WBDF.C9A");
+}
+
+void BootScriptContext::bootDinoFinderMac() {
+	addPlugIn(kPlugInStandard);
+	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
+
+	addArchive(kArchiveTypeMacVISE, "installer", "fs:Install Dino Finder");
+	addJunction("", "installer:Cloud 9");
+
+	addJunction("", "fs");
+	setMainSegmentFile("workspace/WBDF.C9A");
 }
 
 void BootScriptContext::bootDinosaurFinderWin() {
@@ -2130,12 +2154,12 @@ const Game games[] = {
 	// Fun With Architecture - Windows - English
 	{
 		MTBOOT_ARCHITECTURE_EN,
-	 	&BootScriptContext::bootArchitectureWin
+		&BootScriptContext::bootArchitectureWin
 	},
 	// The Magic World of Beatrix Potter - Windows - English
 	{
 		MTBOOT_BEATRIX_EN,
-	 	&BootScriptContext::bootBeatrixWin
+		&BootScriptContext::bootBeatrixWin
 	},
 	// The Magic World of Beatrix Potter - Demo - Windows - English
 	{
@@ -2145,37 +2169,47 @@ const Game games[] = {
 	// Whitetail Impact - Windows - English
 	{
 		MTBOOT_WT_IMPACT_EN,
-	 	&BootScriptContext::bootWhitetailWin
+		&BootScriptContext::bootWhitetailWin
 	},
 	// The Day The World Broke - Windows - English
 	{
 		MTBOOT_WORLDBROKE_EN,
-	 	&BootScriptContext::bootWorldBrokeWin
+		&BootScriptContext::bootWorldBrokeWin
 	},
 	// The Totally Techie World of Young Dilbert: Hi-Tech Hijinks - Windows - English
 	{
 		MTBOOT_DILBERT_WIN_EN,
-	 	&BootScriptContext::bootDilbertWin
+		&BootScriptContext::bootDilbertWin
 	},
 	// Free Willy Activity Center - Windows - English
 	{
 		MTBOOT_FREEWILLY_WIN_EN,
-	 	&BootScriptContext::bootFreeWillyWin
+		&BootScriptContext::bootFreeWillyWin
 	},
 	// Hercules & Xena Learning Adventure: Quest for the Scrolls - Windows - English
 	{
 		MTBOOT_HERCULES_WIN_EN,
-	 	&BootScriptContext::bootHerculesWin
+		&BootScriptContext::bootHerculesWin
+	},
+	// Wanna-Be A Dino Finder - Retail - Windows - English
+	{
+		MTBOOT_WBDINO_RETAIL_WIN_EN,
+		&BootScriptContext::bootDinoFinderWin
+	},
+	// Wanna-Be A Dino Finder - Retail - Macintosh - English
+	{
+		MTBOOT_WBDINO_RETAIL_MAC_EN,
+		&BootScriptContext::bootDinoFinderMac
 	},
 	// I Can Be a Dinosaur Finder - Retail - Windows - English
 	{
 		MTBOOT_IDINO_RETAIL_EN,
-	 	&BootScriptContext::bootDinosaurFinderWin
+		&BootScriptContext::bootDinosaurFinderWin
 	},
 	// I Can Be an Animal Doctor - Retail - Windows - English
 	{
 		MTBOOT_IDOCTOR_RETAIL_EN,
-	 	&BootScriptContext::bootAnimalDoctorWin
+		&BootScriptContext::bootAnimalDoctorWin
 	},
 	// How to Draw the Marvel Way - Windows - English
 	{
@@ -2185,32 +2219,32 @@ const Game games[] = {
 	// FairyTale: A True Story - Activity Center - Windows - English
 	{
 		MTBOOT_FTTS_WIN_EN,
-	 	&BootScriptContext::bootFTTSWin
+		&BootScriptContext::bootFTTSWin
 	},
 	// Purple Moon Sampler - Demo - Windows - English
 	{
 		MTBOOT_PURPLEMOON_WIN_EN,
-	 	&BootScriptContext::bootPurpleMoonWin
+		&BootScriptContext::bootPurpleMoonWin
 	},
 	// Chomp! The Video Game - Retail - Windows - English
 	{
 		MTBOOT_CHOMP_RETAIL_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+		&BootScriptContext::bootGeneric
 	},
 	// Chomp! The Video Game - Demo - Windows - English
 	{
 		MTBOOT_CHOMP_DEMO_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+		&BootScriptContext::bootGeneric
 	},
 	// 24 Hours in Cyberspace - Windows - English
 	{
 		MTBOOT_CYBER24_WIN_EN,
-	 	&BootScriptContext::bootGeneric
+		&BootScriptContext::bootGeneric
 	},
 	// IVOCLAR - Windows - English
 	{
 		MTBOOT_IVOCLAR_WIN_EN,
-	 	&BootScriptContext::bootIvoclarWin
+		&BootScriptContext::bootIvoclarWin
 	},
 	// Real Wild Child! Australian Rock Music 1950s-90s - Windows - English
 	{
@@ -2220,7 +2254,7 @@ const Game games[] = {
 	// How to Build a Telemedicine Program - Windows - English
 	{
 		MTBOOT_TELEMED_WIN_EN,
-	 	&BootScriptContext::bootTelemedWin
+		&BootScriptContext::bootTelemedWin
 	},
 	// Rugrats: Totally Angelica Boredom Buster - Windows - English
 	{
@@ -2365,17 +2399,17 @@ const Game games[] = {
 	// An Odyssey Of Discovery: Living Science - Windows - English
 	{
 		MTBOOT_OD_LIVING_WIN_EN,
-	 &BootScriptContext::bootODLivingWin
+		&BootScriptContext::bootODLivingWin
 	},
 	// The Facts about Genes & our Food: A Compendium - Windows - English
 	{
 		MTBOOT_FOODGENES_WIN_EN,
-	 &BootScriptContext::bootGeneric
+		&BootScriptContext::bootGeneric
 	},
 	// Unlock the Secrets: Shadow Warrior - Windows - English
 	{
 		MTBOOT_UTS_SHADOW_WARRIOR_WIN_EN,
-	 &BootScriptContext::bootOTSSWWin
+		&BootScriptContext::bootOTSSWWin
 	},
 };
 
