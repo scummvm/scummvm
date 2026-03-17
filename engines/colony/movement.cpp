@@ -252,6 +252,67 @@ void ColonyEngine::clampToWalls(Locate *p) {
 		p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
 }
 
+void ColonyEngine::clampToDiagonalWalls(Locate *p) {
+	// CWall/FWall objects are diagonal corner fills not registered in _robotArray.
+	// Enforce geometric collision: the CWall inner face is the line lx+ly=kThreshold
+	// in the object's local coordinate space.  The player must stay on the room side.
+	static const int kThreshold = 120; // inner face ~112 + padding
+	for (uint i = 0; i < _objects.size(); i++) {
+		const Thing &obj = _objects[i];
+		if (!obj.alive)
+			continue;
+		if (obj.type != kObjCWall && obj.type != kObjFWall)
+			continue;
+
+		// Quick reject: skip objects more than 1 cell away
+		if (ABS(p->xloc - obj.where.xloc) > 300 || ABS(p->yloc - obj.where.yloc) > 300)
+			continue;
+
+		// Transform player position into object's local space (inverse rotation)
+		const int wx = p->xloc - obj.where.xloc;
+		const int wy = p->yloc - obj.where.yloc;
+		const uint8 invAng = (uint8)(0 - obj.where.ang);
+		const int lx = (int)(((long)wx * _cost[invAng] - (long)wy * _sint[invAng]) >> 7);
+		const int ly = (int)(((long)wx * _sint[invAng] + (long)wy * _cost[invAng]) >> 7);
+
+		// Also reject if clearly outside the cell (local coords span -128..128)
+		if (lx < -140 || lx > 140 || ly < -140 || ly > 140)
+			continue;
+
+		const int diag = lx + ly;
+		if (obj.type == kObjCWall) {
+			if (diag >= kThreshold)
+				continue; // already on room side
+
+			// Push player along normal (1,1) in local space to reach threshold
+			const int push = (kThreshold - diag + 1) / 2;
+			const int nlx = lx + push;
+			const int nly = ly + push;
+
+			// Transform back to world space
+			const uint8 ang = obj.where.ang;
+			p->xloc = obj.where.xloc + (int)(((long)nlx * _cost[ang] - (long)nly * _sint[ang]) >> 7);
+			p->yloc = obj.where.yloc + (int)(((long)nlx * _sint[ang] + (long)nly * _cost[ang]) >> 7);
+			p->xindex = p->xloc >> 8;
+			p->yindex = p->yloc >> 8;
+		} else { // kObjFWall — flat wall along the diagonal
+			static const int kFWallThreshold = 20;
+			if (diag >= kFWallThreshold)
+				continue;
+
+			const int push = (kFWallThreshold - diag + 1) / 2;
+			const int nlx = lx + push;
+			const int nly = ly + push;
+
+			const uint8 ang = obj.where.ang;
+			p->xloc = obj.where.xloc + (int)(((long)nlx * _cost[ang] - (long)nly * _sint[ang]) >> 7);
+			p->yloc = obj.where.yloc + (int)(((long)nlx * _sint[ang] + (long)nly * _cost[ang]) >> 7);
+			p->xindex = p->xloc >> 8;
+			p->yindex = p->yloc >> 8;
+		}
+	}
+}
+
 int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode) {
 	const int rnum = occupiedObjectAt(xind2, yind2, pobject);
 	if (rnum)
@@ -267,6 +328,7 @@ int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Loca
 	pobject->xloc = xnew;
 	pobject->yloc = ynew;
 	clampToWalls(pobject);
+	clampToDiagonalWalls(pobject);
 	return 0;
 }
 

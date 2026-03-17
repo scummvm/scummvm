@@ -138,7 +138,9 @@ void ColonyEngine::loadMap(int mnum) {
 								}
 								_objects.push_back(obj);
 								const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
-								if (objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
+								// CWall/FWall use diagonal collision, not cell-based blocking.
+								if (obj.type != kObjFWall && obj.type != kObjCWall &&
+								    objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
 									_robotArray[i][j] = (uint8)objNum;
 							}
 					} else {

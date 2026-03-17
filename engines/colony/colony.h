@@ -388,6 +388,7 @@ public:
 	void quadrant();
 	bool hasInteractiveWallFeature(int cx, int cy, int dir) const;
 	void clampToWalls(Locate *p);
+	void clampToDiagonalWalls(Locate *p);
 	int checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Locate *pobject, uint8 trailCode);
 	int checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, Locate *pobject, int dir);
 	int checkwall(int xnew, int ynew, Locate *pobject);
