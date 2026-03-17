@@ -44,6 +44,7 @@
 #include "harvester/npc/dialogue_runtime.h"
 #include "harvester/npc/edna_dialogue.h"
 #include "harvester/npc/gladiator_dialogue.h"
+#include "harvester/npc/fireman1_dialogue.h"
 #include "harvester/npc/hank_dialogue.h"
 #include "harvester/npc/herrill_dialogue.h"
 #include "harvester/npc/inquisitor_dialogue.h"
@@ -342,6 +343,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new BeggarDialogueHandler());
 	_npcHandlers.push_back(new DwayneDialogueHandler());
 	_npcHandlers.push_back(new EdnaDialogueHandler());
+	_npcHandlers.push_back(new Fireman1DialogueHandler());
 	_npcHandlers.push_back(new ChessmasterDialogueHandler());
 	_npcHandlers.push_back(new CuratorDialogueHandler());
 	_npcHandlers.push_back(new JimmyDialogueHandler());
