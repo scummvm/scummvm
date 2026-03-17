@@ -1034,18 +1034,23 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 						jimmyInteraction.musicPath = actionInteraction.musicPath;
 					if (!actionInteraction.nextRoomName.empty())
 						jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+					if (!actionInteraction.deathFlicPath.empty())
+						jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
 					if (!actionInteraction.dialogueNpcName.empty())
 						jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
 					if (!actionInteraction.dialogueContinuationTag.empty()) {
 						jimmyInteraction.dialogueContinuationTag =
 							actionInteraction.dialogueContinuationTag;
 					}
+					jimmyInteraction.requestMainMenu =
+						jimmyInteraction.requestMainMenu || actionInteraction.requestMainMenu;
 					for (const StartupAudioCommand &command : actionInteraction.audioCommands)
 						jimmyInteraction.audioCommands.push_back(command);
 				}
 				if (jimmyInteraction.abortRemainingCommandChain || jimmyInteraction.mutatedRuntimeState ||
 						!jimmyInteraction.musicPath.empty() ||
-						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.dialogueNpcName.empty() ||
+						!jimmyInteraction.nextRoomName.empty() || !jimmyInteraction.deathFlicPath.empty() ||
+						jimmyInteraction.requestMainMenu || !jimmyInteraction.dialogueNpcName.empty() ||
 						!jimmyInteraction.dialogueContinuationTag.empty() ||
 						!jimmyInteraction.audioCommands.empty()) {
 					startupFlow.queueDialogueInteraction(jimmyInteraction);

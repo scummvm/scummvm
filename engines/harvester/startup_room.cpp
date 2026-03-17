@@ -27,6 +27,7 @@
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
 #include "harvester/detection.h"
+#include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
@@ -42,6 +43,9 @@ StartupRoomSystem::StartupRoomSystem(HarvesterEngine &engine, Common::Point &mou
 }
 
 Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Common::String &entranceName) {
+	if (startupFlow.hasPendingMainMenuReturn())
+		return Common::kNoError;
+
 	StartupRoomSetupState state;
 	if (!_engine.getStartupScript()->resolveRoomSetupState(entranceName, state, *_engine.getResources()))
 		return Common::kReadingFailed;
@@ -186,6 +190,19 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			playerState.turnTargetFacing = -1;
 			pendingRegionName.clear();
 
+			if (interaction.requestMainMenu) {
+				engine.stopStartupMusic();
+				engine.stopStartupSound();
+				if (!interaction.deathFlicPath.empty()) {
+					FstPlayer fstPlayer(engine);
+					if (!fstPlayer.play(interaction.deathFlicPath))
+						return Common::kReadingFailed;
+				}
+
+				startupFlow.requestMainMenuReturn();
+				return Common::kNoError;
+			}
+
 			Common::String restoreMusicPath = engine.getStartupMusicPath();
 			if (!interaction.musicPath.empty()) {
 				(void)engine.playStartupMusic(interaction.musicPath);
@@ -198,6 +215,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					return Common::kReadingFailed;
 
 				Common::Error roomError = startupFlow.runRoomLoop(interaction.nextRoomName);
+				if (startupFlow.hasPendingMainMenuReturn())
+					return Common::kNoError;
 				if (roomError.getCode() != Common::kReadingFailed &&
 					roomError.getCode() != Common::kNoError) {
 					return roomError;
@@ -258,6 +277,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				Common::Error interactionError = handleInteractionResult(dialogueInteraction, didTransition);
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
+				if (startupFlow.hasPendingMainMenuReturn())
+					return Common::kNoError;
 			}
 			if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
 				StartupInteractionResult continuationInteraction;
@@ -266,6 +287,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 						handleInteractionResult(continuationInteraction, didTransition);
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
+					if (startupFlow.hasPendingMainMenuReturn())
+						return Common::kNoError;
 				}
 			}
 
@@ -297,6 +320,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		Common::Error interactionError = interactionProcessor.handleInteractionResult(interaction, didTransition);
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
 		if (!_inventory.refresh())
 			return Common::kReadingFailed;
 
@@ -324,6 +349,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			interactionProcessor.handleInteractionResult(interaction, didTransition);
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
 
 		if (!_inventory.refresh())
 			return Common::kReadingFailed;
@@ -358,6 +385,9 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		logStartupRoomProbe(_engine, scene, entranceName, _mousePos);
 
 	while (!_engine.shouldQuit()) {
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
+
 		if (needsRedraw) {
 			const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
@@ -501,6 +531,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 								Common::String(), didTransition);
 							if (dialogueError.getCode() != Common::kNoError)
 								return dialogueError;
+							if (startupFlow.hasPendingMainMenuReturn())
+								return Common::kNoError;
 							if (_inventory.clearSelection() || _inventory.close())
 								needsRedraw = true;
 							needsRedraw = true;
@@ -563,6 +595,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 						hoverState.npc->npcName, Common::String(), Common::String(), didTransition);
 					if (dialogueError.getCode() != Common::kNoError)
 						return dialogueError;
+					if (startupFlow.hasPendingMainMenuReturn())
+						return Common::kNoError;
 					needsRedraw = true;
 					break;
 				}
@@ -637,6 +671,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					interactionProcessor.handleInteractionResult(interaction, didTransition);
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
+				if (startupFlow.hasPendingMainMenuReturn())
+					return Common::kNoError;
 				needsRedraw = true;
 				break;
 			}
@@ -759,6 +795,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		Common::Error pendingRegionError = tryActivatePendingRegion();
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;

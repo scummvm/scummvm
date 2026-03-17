@@ -72,6 +72,10 @@ private:
 		void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
 		void queueDialogueInteraction(const StartupInteractionResult &interaction);
 		bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
+		void requestMainMenuReturn();
+		bool hasPendingMainMenuReturn() const;
+		bool takePendingMainMenuReturn();
+		void clearPendingMainMenuReturn();
 		void resetRoomNpcDialogueState();
 		void resetCursorAnimationSequence();
 		bool tickRuntimeEntities();
@@ -87,6 +91,7 @@ private:
 		StartupRoomSystem _room;
 		StartupInteractionResult _queuedDialogueInteraction;
 		bool _hasQueuedDialogueInteraction = false;
+		bool _pendingMainMenuReturn = false;
 	};
 
 } // End of namespace Harvester
