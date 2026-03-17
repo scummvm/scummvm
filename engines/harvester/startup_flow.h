@@ -61,7 +61,9 @@ private:
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName);
+	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);
 	Common::Error runRoomLoop(const Common::String &entranceName);
+	Common::Error resolveRoomTransitionTarget(const Common::String &targetName, Common::String &resolvedTargetName);
 	bool ensureCursorEntity();
 	bool populateRoomSceneEntities(const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,

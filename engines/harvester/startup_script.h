@@ -39,6 +39,25 @@ struct StartupEntranceRecord {
 	Common::String entranceName;
 };
 
+struct StartupMapEntranceRecord {
+	int field0 = 0;
+	int field4 = 0;
+	int initialPanelIndex = 0;
+	Common::String entryName;
+};
+
+struct StartupMapLocationRecord {
+	int minX = 0;
+	int minY = 0;
+	int maxX = 0;
+	int maxY = 0;
+	int panelIndex = 0;
+	int labelX = 0;
+	int labelY = 0;
+	Common::String labelText;
+	Common::String destinationEntranceName;
+};
+
 struct StartupRoomRecord {
 	int minZ = 0;
 	int maxZ = 0;
@@ -266,6 +285,8 @@ public:
 	const Common::String &getPath() const { return _path; }
 	const Common::Array<byte> &getData() const { return _data; }
 	const Common::Array<StartupEntranceRecord> &getEntrances() const { return _entrances; }
+	const Common::Array<StartupMapEntranceRecord> &getMapEntrances() const { return _mapEntrances; }
+	const Common::Array<StartupMapLocationRecord> &getMapLocations() const { return _mapLocations; }
 	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
@@ -304,6 +325,8 @@ public:
 		Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 		Common::String resolveTextValue(const Common::String &key) const;
 		const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
+		const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
+		const StartupMapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
 		bool getFlagValue(const Common::String &flagName) const;
 		const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 		bool setRuntimeFlagValue(const Common::String &flagName, bool value);
@@ -320,7 +343,6 @@ private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
-	const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
 	const StartupRoomRecord *findRoomRecord(const Common::String &roomName) const;
 	const StartupCommandRecord *findCommandRecord(const Common::String &tag) const;
 	const StartupTextRecord *findTextRecord(const Common::String &key) const;
@@ -348,6 +370,8 @@ private:
 	Common::String _path;
 	Common::Array<byte> _data;
 	Common::Array<StartupEntranceRecord> _entrances;
+	Common::Array<StartupMapEntranceRecord> _mapEntrances;
+	Common::Array<StartupMapLocationRecord> _mapLocations;
 	Common::Array<StartupRoomRecord> _rooms;
 	Common::Array<StartupObjectRecord> _objects;
 	Common::Array<StartupAnimRecord> _animations;

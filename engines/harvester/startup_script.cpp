@@ -190,6 +190,8 @@ bool StartupScript::load(ResourceManager &resources) {
 	_path = kDefaultTownScript;
 	_data.clear();
 	_entrances.clear();
+	_mapEntrances.clear();
+	_mapLocations.clear();
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
@@ -273,6 +275,8 @@ void StartupScript::decode() {
 
 void StartupScript::parseTownRecords(ResourceManager &resources) {
 	_entrances.clear();
+	_mapEntrances.clear();
+	_mapLocations.clear();
 	_rooms.clear();
 	_objects.clear();
 	_animations.clear();
@@ -296,7 +300,8 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 		uint tagIndex = tokens.size();
 		for (uint i = 0; i < tokens.size(); ++i) {
-			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
+			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "MAP_ENTRANCE" ||
+				tokens[i] == "MAP_LOCATION" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
 				tokens[i] == "NPC" || tokens[i] == "REGION" || tokens[i] == "HEAD" ||
 				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
 				tagIndex = i;
@@ -404,6 +409,47 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			entrance.entranceName = tokens[tagIndex + 3];
 			if (!entrance.roomName.empty() && !entrance.entranceName.empty())
 				_entrances.push_back(entrance);
+			return;
+		}
+
+		if (tag == "MAP_ENTRANCE") {
+			if (tokens.size() < tagIndex + 2)
+				return;
+
+			StartupMapEntranceRecord mapEntrance;
+			if (tagIndex >= 3) {
+				mapEntrance.field0 = atoi(tokens[0].c_str());
+				mapEntrance.field4 = atoi(tokens[1].c_str());
+				mapEntrance.initialPanelIndex = atoi(tokens[2].c_str());
+			}
+			mapEntrance.entryName = tokens[tagIndex + 1];
+			if (!mapEntrance.entryName.empty())
+				_mapEntrances.push_back(mapEntrance);
+			return;
+		}
+
+		if (tag == "MAP_LOCATION") {
+			if (tokens.size() < tagIndex + 3)
+				return;
+
+			StartupMapLocationRecord mapLocation;
+			if (tagIndex >= 7) {
+				mapLocation.minX = atoi(tokens[0].c_str());
+				mapLocation.minY = atoi(tokens[1].c_str());
+				mapLocation.maxX = atoi(tokens[2].c_str());
+				mapLocation.maxY = atoi(tokens[3].c_str());
+				mapLocation.panelIndex = atoi(tokens[4].c_str());
+				mapLocation.labelX = atoi(tokens[5].c_str());
+				mapLocation.labelY = atoi(tokens[6].c_str());
+			}
+			mapLocation.labelText = tokens[tagIndex + 1];
+			for (uint i = 0; i < mapLocation.labelText.size(); ++i) {
+				if (mapLocation.labelText[i] == '_')
+					mapLocation.labelText.setChar(' ', i);
+			}
+			mapLocation.destinationEntranceName = tokens[tagIndex + 2];
+			if (!mapLocation.destinationEntranceName.empty())
+				_mapLocations.push_back(mapLocation);
 			return;
 		}
 
@@ -590,8 +636,9 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 
 	parseLine(line);
 
-	debug(1, "Harvester: parsed %u entrances, %u rooms, %u objects, %u anims, %u npcs, %u regions, %u flags, %u commands, %u texts, %u heads, %u useitems from '%s'",
-		(uint)_entrances.size(), (uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
+	debug(1, "Harvester: parsed %u entrances, %u map entrances, %u map locations, %u rooms, %u objects, %u anims, %u npcs, %u regions, %u flags, %u commands, %u texts, %u heads, %u useitems from '%s'",
+		(uint)_entrances.size(), (uint)_mapEntrances.size(), (uint)_mapLocations.size(),
+		(uint)_rooms.size(), (uint)_objects.size(), (uint)_animations.size(),
 		(uint)_npcs.size(), (uint)_regions.size(),
 		(uint)_flags.size(), (uint)_commands.size(), (uint)_texts.size(), (uint)_heads.size(),
 		(uint)_useItems.size(), _path.c_str());
@@ -820,6 +867,18 @@ const StartupEntranceRecord *StartupScript::findEntranceRecord(const Common::Str
 	for (const StartupEntranceRecord &entrance : _entrances) {
 		if (entrance.entranceName.equalsIgnoreCase(entranceName))
 			return &entrance;
+	}
+
+	return nullptr;
+}
+
+const StartupMapEntranceRecord *StartupScript::findMapEntranceRecord(const Common::String &entryName) const {
+	if (entryName.empty())
+		return nullptr;
+
+	for (const StartupMapEntranceRecord &mapEntrance : _mapEntrances) {
+		if (mapEntrance.entryName.equalsIgnoreCase(entryName))
+			return &mapEntrance;
 	}
 
 	return nullptr;

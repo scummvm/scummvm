@@ -396,10 +396,27 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `resolve_room_entrance` at `0x62d80` first searches `g_room_entrances` by entrance tag, then falls back to `g_town_map_entrypoints`.
   - On direct entrance matches it updates `g_pending_room_name`.
   - On map-entry matches it launches the town map selector and then updates the pending room / player position from the chosen destination.
+- `MapEntranceRecord` is now stable enough for engine use:
+  - `field_00`
+  - `field_04`
+  - `initial_panel_index`
+  - `entry_name`
+  - `next`
 - `select_town_map_destination` at `0x66460` is the town-map travel UI.
   - It loads `harvmap.pal` and `harvmap1.bm` through `harvmap4.bm`.
   - It seeds the initial map panel from `g_town_map_entrypoints`.
   - It uses `g_town_map_hotspots` to resolve the selected destination back into a named entrance record.
+- `MapLocationRecord` is now stable enough for engine use:
+  - `min_x`
+  - `min_y`
+  - `max_x`
+  - `max_y`
+  - `panel_index`
+  - `label_x`
+  - `label_y`
+  - `label_text`
+  - `destination_entrance`
+  - `next`
 - `get_flag_value` at `0x7c790` and `set_flag_value` at `0x7c7e0` are the core `FLAG` accessors used throughout startup, room setup, and event dispatch.
 - `run_npc_dialogue` at `0x79e50` is the conversation/head UI for named NPCs.
   - It validates the NPC through `g_npc_records`.
