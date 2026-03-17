@@ -174,19 +174,6 @@ void PelrockEngine::init() {
 		gameInitialized = true;
 		loadAnims();
 		setScreenAndPrepare(0, ALFRED_DOWN);
-		// setScreenAndPrepare(36, ALFRED_LEFT);
-
-		// setScreen(3, ALFRED_RIGHT);
-		// setScreen(22, ALFRED_DOWN);
-		// setScreen(41, ALFRED_DOWN);
-		// setScreen(43, ALFRED_DOWN);
-		// setScreen(46, ALFRED_RIGHT);
-		// setScreen(0, ALFRED_DOWN);
-		// setScreen(52, ALFRED_DOWN);
-		// setScreen(15, ALFRED_DOWN);
-		// setScreen(2, ALFRED_LEFT);
-		// _alfredState.x = 576;
-		// alfredState.y = 374;
 	}
 
 	loadInventoryArrows();
@@ -198,7 +185,7 @@ void PelrockEngine::loadInventoryArrows() {
 		error("Failed to open ALFRED.7 to load inventory arrows");
 		return;
 	}
-	alfred7.seek(kInventoryArrowsOffset, SEEK_SET); // Inventory arrows in ALFRED.7
+	alfred7.seek(kInventoryArrowsOffset, SEEK_SET);
 	_inventoryOverlayState.arrows[0] = new byte[20 * 60];
 	_inventoryOverlayState.arrows[1] = new byte[20 * 60];
 	alfred7.read(_inventoryOverlayState.arrows[0], 20 * 60);
@@ -243,7 +230,7 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 
 Common::Point getPositionInBallonForIndex(int i);
 
-// Sort sprites by zOrder in-place using insertion sort (efficient for nearly-sorted data)
+// Sort sprites by zOrder in-place
 void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 	for (size_t i = 0; i < anims.size(); ++i) {
 		Sprite key = anims[i];
@@ -255,10 +242,6 @@ void sortAnimsByZOrder(Common::Array<Sprite> &anims) {
 		}
 		anims[j] = key;
 	}
-	// debug("Sorted anims by zOrder");
-	// for (size_t i = 0; i < anims.size(); i++) {
-	// debug("Anim %d, extra = %d: zOrder=%d", i, anims[i].extra, anims[i].zOrder);
-	// }
 }
 
 void PelrockEngine::playSoundIfNeeded() {
@@ -281,6 +264,9 @@ void PelrockEngine::playSoundIfNeeded() {
 	}
 }
 
+/**
+ * Travel to egypt sequence loads extra screen, plays palette animation then loads room 21
+ */
 void PelrockEngine::travelToEgypt() {
 	_graphics->fadeToBlack(10);
 
@@ -328,13 +314,17 @@ void PelrockEngine::travelToEgypt() {
 	// Original gives 4 items after room load (items 17, 64, 24, 59)
 	_state->inventoryItems.clear();
 	_state->selectedInventoryItem = -1;
-	// we dont want a flashing animation in this case!
+	// we dont want a flashing animation in this case! calling state->addInventory directly
 	_state->addInventoryItem(17);
 	_state->addInventoryItem(64);
 	_state->addInventoryItem(24);
 	_state->addInventoryItem(59);
 }
 
+/**
+ * Original would skip fram ticks during walking & talking
+ * Alternate timing avoids this.
+ */
 bool PelrockEngine::shouldSkipFrame() {
 	if (isAlternateTiming()) {
 		return false; // never skip frames in alternate timing mode
@@ -403,9 +393,9 @@ bool PelrockEngine::renderScene(int overlayMode) {
 
 	switch (_room->_currentRoomNumber) {
 	case 2: {
+		// Easter egg in room 2, pressing x 250 times after the character has mentioned it triggers a special dialog
 		if (_events->_lastKeyEvent == Common::KEYCODE_x) {
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
-			debug("Pressed X in room 2, numPressedX is now %d, flag is %d", _numPressedX + 1, _state->getFlag(FLAG_PUTA_250_VECES));
 			if (_state->getFlag(FLAG_PUTA_250_VECES) == true) {
 				_numPressedX++;
 				if (_numPressedX == 250) {
@@ -429,12 +419,15 @@ void PelrockEngine::mouseHoverForMap() {
 
 void PelrockEngine::frameTriggers() {
 	uint32 frameCount = _chrono->getFrameCount();
-	passerByAnim(frameCount);
+	maybeUpdatePasserByAnim(frameCount);
 	handleFightRoomFrame();
-	shakeEffect();
+	maybeShakeEffect();
 	maybeHaveDogPee();
 }
 
+/**
+ * Dog pees in room 19 only when alfred gets close.
+ */
 void PelrockEngine::maybeHaveDogPee() {
 
 	if (_room->_currentRoomNumber != 19) {
@@ -480,22 +473,21 @@ void PelrockEngine::maybePlayPostIntro() {
 		_alfredState.direction = ALFRED_DOWN;
 		_alfredState.x = kAlfredInitialPosX;
 		_alfredState.y = kAlfredInitialPosY;
-		// setScreenAndPrepare(0, ALFRED_DOWN);
 		_dialog->say(_res->_ingameTexts[kTextMensajeOtraEpoca]);
 	}
 }
 
-void PelrockEngine::shakeEffect() {
+void PelrockEngine::maybeShakeEffect() {
 	if (!_shakeEffectState.enabled) {
 		return;
 	}
 
 	_shakeEffectState.shakeX = (_chrono->getFrameCount() % 4 < 2) ? 2 : -2;
 	g_system->setShakePos(_shakeEffectState.shakeX, _shakeEffectState.shakeY);
-	_alfredState.x += (_shakeEffectState.shakeX / 2); // Adjust Alfred's position to counteract shake for better readability
+	_alfredState.x += (_shakeEffectState.shakeX / 2);
 }
 
-void PelrockEngine::passerByAnim(uint32 frameCount) {
+void PelrockEngine::maybeUpdatePasserByAnim(uint32 frameCount) {
 	if (_room->_passerByAnims == nullptr) {
 		return;
 	}
@@ -505,7 +497,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 		if ((frameCount & anim.frameTrigger) == anim.frameTrigger) {
 			Sprite *sprite = _room->findSpriteByIndex(anim.spriteIndex);
 			if (sprite && sprite->zOrder == 255) {
-				debug("Starting passerby anim for sprite %d at index %d", anim.spriteIndex, animIndex);
 				sprite->zOrder = anim.targetZIndex;
 				sprite->curAnimIndex = 0;
 				sprite->animData[0].curFrame = 0;
@@ -521,10 +512,8 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 		int spriteIndex = anim.spriteIndex;
 		int startX = anim.startX;
 		int startY = anim.startY;
-		// debug("Checking passerby anim %d for sprite %d, direction %d", _room->_passerByAnims->currentAnimIndex, spriteIndex, direction);
 		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
 		if (direction == kPasserbyRight) {
-			// debug("Checking passerby anim for sprite %d moving RIGHT, curpos is %d", spriteIndex, sprite->x);
 			if (sprite->x >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
@@ -534,7 +523,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				_room->_passerByAnims->latch = false;
 			}
 		} else if (direction == kPasserbyLeft) {
-			// debug("Checking passerby anim for sprite %d moving LEFT, curpos is %d", spriteIndex, sprite->x);
 
 			if (sprite->x <= anim.resetCoord) {
 				sprite->x = startX;
@@ -545,7 +533,6 @@ void PelrockEngine::passerByAnim(uint32 frameCount) {
 				_room->_passerByAnims->latch = false;
 			}
 		} else if (direction == kPasserbyDown) {
-			// debug("Checking passerby anim for sprite %d moving DOWN, curpos is %d, reset %d", spriteIndex, sprite->y, anim.resetCoord);
 			if (sprite->y >= anim.resetCoord) {
 				sprite->x = startX;
 				sprite->y = startY;
@@ -568,7 +555,6 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 			}
 		}
 		noOpItem(inventoryObject, hotspot);
-		warning("No handler for using inventory object %d with hotspot %d", inventoryObject, hotspot->extra);
 		return;
 	}
 
@@ -588,7 +574,7 @@ void PelrockEngine::executeAction(VerbIcon action, HotSpot *hotspot) {
 		}
 	}
 
-	// No handler found
+	// No handler found - should never get to this point
 	warning("No handler for hotspot %d with action %d", hotspot->extra, action);
 }
 
@@ -611,6 +597,7 @@ void PelrockEngine::checkMouse() {
 		_alfredState.curFrame = 0;
 		_alfredState.setState(ALFRED_IDLE);
 	}
+
 	// Handle mouse release after long press (popup selection mode)
 	if (_events->_popupSelectionMode && !_events->_leftMouseButton) {
 		_events->_leftMouseButton = false;
@@ -668,7 +655,6 @@ void PelrockEngine::updateAnimations() {
 	// First pass: sprites behind Alfred (sprite zOrder > alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder > alfredZOrder || _room->_currentRoomAnims[i].zOrder == 255) {
-			// debug("Drawing anim %d with zOrder %d in first pass (behind Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
@@ -679,7 +665,6 @@ void PelrockEngine::updateAnimations() {
 	// Second pass: sprites in front of Alfred (sprite zOrder <= alfredZOrder)
 	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
 		if (_room->_currentRoomAnims[i].zOrder <= alfredZOrder && _room->_currentRoomAnims[i].zOrder != 255) {
-			// debug("Drawing anim %d with zOrder %d in second pass (in front of Alfred)", i, _room->_currentRoomAnims[i].zOrder);
 			drawNextFrame(&_room->_currentRoomAnims[i]);
 		}
 	}
@@ -852,10 +837,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 					_alfredState.x = exit->targetX;
 					_alfredState.y = exit->targetY;
 					setScreenAndPrepare(exit->targetRoom, exit->dir);
-					// setScreen() resets the composite buffer to the bare background;
-					// place first-pass stickers now so they are present in the very
-					// first presentFrame() for the new room (avoids a one-frame flash
-					// without stickers).
 					_graphics->placeStickersFirstPass();
 				}
 			}
@@ -867,7 +848,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 				_alfredState.curFrame = 0;
 			}
 			if (_alfredState.animState == ALFRED_WALKING) { // in case it changed to idle above
-				debug("Drawing crawl frame %d for direction %d", _alfredState.curFrame, _alfredState.direction);
 				drawSpriteToBuffer(_compositeBuffer, _res->alfredCrawlFrames[_alfredState.direction][_alfredState.curFrame], _alfredState.x, _alfredState.y - 55, 130, 55, 255);
 				_alfredState.curFrame++;
 			}
@@ -950,6 +930,9 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	}
 }
 
+/**
+ * Triggers upon exiting certain rooms, namely exit animations (like climbing a ladder)
+ */
 void PelrockEngine::exitTriggers(Pelrock::Exit *exit) {
 	if (exit->targetRoom == 31 && _room->_currentRoomNumber == 32) {
 		_res->loadAlfredSpecialAnim(8);
@@ -1015,8 +998,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	_alfredSprite = scaledBuf;
 
 	// Shadow detection: scan across Alfred's width at feet line.
-	// Original game scans shadow buffer
-	// at (topY + 0x66) * 640 + X + col for col = 0..width, where topY + 0x66 = feetY.
 	// The shadow map value (0-3) indexes into the palette remap tables.
 	if (_room->_pixelsShadows != nullptr) {
 		byte shadowLevel = 0xFF; // 0xFF = no shadow
@@ -1028,7 +1009,7 @@ void PelrockEngine::drawAlfred(byte *buf) {
 					byte shadowVal = _room->_pixelsShadows[feetY * 640 + checkX];
 					if (shadowVal != 0xFF) {
 						shadowLevel = shadowVal;
-						break; // Original breaks on first shadow pixel found
+						break;
 					}
 				}
 			}
@@ -1038,7 +1019,6 @@ void PelrockEngine::drawAlfred(byte *buf) {
 			for (int i = 0; i < finalWidth * finalHeight; i++) {
 				if (_alfredSprite[i] != 255) {
 					_alfredSprite[i] = _room->_paletteRemaps[shadowLevel][_alfredSprite[i]];
-					// _alfredSprite[i] = _room->_paletteRemaps[0][_alfredSprite[i]];
 				}
 			}
 		}
@@ -1054,6 +1034,9 @@ void PelrockEngine::drawAlfred(byte *buf) {
 	}
 }
 
+/**
+ * displace sprites in accordance to the movement flags
+ */
 void applyMovement(int16 *x, int16 *y, byte *z, uint16 flags) {
 	// X-axis movement
 	if (flags & 0x10) {            // Bit 4: X movement enabled
@@ -1089,7 +1072,7 @@ void applyMovement(int16 *x, int16 *y, byte *z, uint16 flags) {
 void PelrockEngine::drawNextFrame(Sprite *sprite) {
 	Anim &animData = sprite->animData[sprite->curAnimIndex];
 	if (sprite->zOrder == 255) {
-		// Skip disabled sprites (zOrder 0xFF = disabled in original game)
+		// Skip disabled sprites
 		return;
 	}
 
@@ -1105,7 +1088,6 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 
 	int curFrame = animData.curFrame;
 	if (curFrame >= animData.nframes) {
-		debug("Warning: curFrame %d exceeds nframes %d for sprite %d anim %d", curFrame, animData.nframes, sprite->index, sprite->curAnimIndex);
 		curFrame = 0;
 	}
 	drawSpriteToBuffer(_compositeBuffer, animData.animData[curFrame], x, y, w, h, 255);
@@ -1130,7 +1112,7 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 				if (sprite->curAnimIndex < sprite->numAnims - 1) {
 					sprite->curAnimIndex++;
 
-					// Trigger ring on phone on every start of animation 2
+					// Trigger ring on phone on every start of animation 2 in room 9
 					if (_room->_currentRoomNumber == 9 && sprite->index == 3) {
 						if (sprite->curAnimIndex == 1 && animData.curLoop == 0) {
 							byte soundFileIndex = _room->_roomSfx[2];
@@ -1411,7 +1393,7 @@ Common::Point getPositionInOverlayForIndex(uint index) {
 
 void PelrockEngine::pickupIconFlash() {
 	uint invSize = _state->inventoryItems.size();
-	// focus on the last positionin the inventory, where the newly picked up item would be, if there is at least 1 item in the inventory
+	// focus on the last position in the inventory, where the newly picked up item would be, if there is at least 1 item in the inventory
 	_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->inventoryItems[invSize - 1]);
 	_inventoryOverlayState.flashingIconIndex = invSize - 1;
 	showInventoryOverlay();
@@ -1421,7 +1403,7 @@ void PelrockEngine::showInventoryOverlay() {
 	_graphics->showOverlay(60, _compositeBuffer);
 	uint invSize = _state->inventoryItems.size();
 	// invStartingPos is an ITEM index (not a page number).
-	// The original game scrolls 1 item at a time, not 1 page at a time.
+	// Scrolls 1 item at a time, not 1 page at a time.
 	if (_inventoryOverlayState.invStartingPos == -1) {
 		_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->selectedInventoryItem);
 		if (_inventoryOverlayState.invStartingPos == -1) {
@@ -1448,26 +1430,20 @@ void PelrockEngine::showInventoryOverlay() {
 }
 
 void PelrockEngine::checkMouseOverInventoryOverlay(int x, int y) {
-	// Original game: invStartingPos is an item index, scrolls 1 item per frame
-	// with no frame throttling (scrolls every game tick = ~55ms).
 	if (x < 20) {
 		if (_inventoryOverlayState.invStartingPos > 0) {
 			_inventoryOverlayState.invStartingPos--;
 		}
-		debug("Mouse at x=%d triggers scroll left, new invStartingPos=%d", x, _inventoryOverlayState.invStartingPos);
 	} else if (x >= 620) {
 		if (_inventoryOverlayState.invStartingPos + kInventoryPageSize < (int)_state->inventoryItems.size()) {
 			_inventoryOverlayState.invStartingPos++;
 		}
-		debug("Mouse at x=%d triggers scroll right, new invStartingPos=%d", x, _inventoryOverlayState.invStartingPos);
 	} else {
 		// mouse hover over inventory item, laid out horizontally, y coordinate is not relevant
 		int index = (x - 20) / 60 + _inventoryOverlayState.invStartingPos;
 		if (index < (int)_state->inventoryItems.size()) {
-			debug("hovering over inventory item %d at index %d", _state->inventoryItems[index], index);
 			_inventoryOverlayState.flashingIconIndex = index;
 		} else {
-			debug("hovering over empty slot in inventory overlay, no item at index %d", index);
 			_inventoryOverlayState.flashingIconIndex = -1;
 		}
 	}
@@ -1534,7 +1510,6 @@ void PelrockEngine::walkLoop(int16 x, int16 y, AlfredDirection direction) {
 		_screen->update();
 		g_system->delayMillis(10);
 	}
-	debug("Walk loop ended");
 }
 
 void PelrockEngine::walkTo(int x, int y) {
@@ -1598,9 +1573,7 @@ AlfredDirection PelrockEngine::calculateAlfredsDirection(HotSpot *hotspot) {
 }
 
 VerbIcon PelrockEngine::isActionUnder(int x, int y) {
-	/*if (_currentHotspot == nullptr) {
-		return NO_ACTION;
-	}*/
+
 	Common::Array<VerbIcon> actions = availableActions(_currentHotspot);
 	uint loopEnd = _state->selectedInventoryItem != -1 ? actions.size() + 1 : actions.size();
 	for (uint i = 0; i < loopEnd; i++) {
@@ -1927,16 +1900,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		// paths lead to capture, no voluntary exit allowed.
 		_dialog->_goodbyeDisabled = true;
 		break;
-	case 10: {
-		// _events->waitForKey();
-		// while(!shouldQuit()) {
-		// 	playSpecialAnim(212915, true, 287, 152, 62, 58, 10);
-		// 	playSpecialAnim(236645, true, 287, 152, 62, 58, 10);
-		// 	// setScreen(11, ALFRED_DOWN);
-		// 	playSpecialAnim(261449, true, 0, 223, 64, 97, 8);
-		// }
-		break;
-	}
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
 
@@ -1974,7 +1937,6 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		} else {
 			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
 			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
-			// _state->setCurrentRoot(48, 0, 1);
 			HotSpot *fatMummy = nullptr;
 			for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
 				if (_room->_currentRoomHotspots[i].isSprite && _room->_currentRoomHotspots[i].index == 1) {
@@ -2386,17 +2348,14 @@ void PelrockEngine::handleFightRoomFrame() {
 
 	// Phase 2: spell trigger at tick 104 (64 + 40)
 	if (_fightSorcererAppeared && !_fightSpellCast && _fightFrameCounter >= 104) {
-		debug("spell cast triggered for room %d at frame %d", room, _fightFrameCounter);
 		_fightSpellCast = true;
 		_fightSpellFrameCounter = 0;
 	}
 
 	// Phase 3: wait 40 ticks after spell trigger, then cast
 	if (_fightSpellCast) {
-		debug("in spell cast phase for room %d at frame %d", room, _fightFrameCounter);
 		_fightSpellFrameCounter++;
 		if (_fightSpellFrameCounter >= 40 && !(_state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES) & (1 << idx))) {
-			debug("spell cast animation starting for room %d at frame %d, flag is %d", room, _fightFrameCounter, _state->getFlag(FLAG_COMO_ESTAN_LOS_DIOSES));
 			_fightInBlockingAnim = true;
 
 			int spellFrames = kFightRooms[idx].spellFrames;

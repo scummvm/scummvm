@@ -257,11 +257,11 @@ public:
 	void frameTriggers();
 	void maybeHaveDogPee();
 	void maybePlayPostIntro();
-	void shakeEffect();
+	void maybeShakeEffect();
 	void handleFightRoomFrame();
 	void paintDebugLayer();
 
-	void passerByAnim(uint32 frameCount);
+	void maybeUpdatePasserByAnim(uint32 frameCount);
 	void changeCursor(Cursor cursor);
 
 	void travelToEgypt();
