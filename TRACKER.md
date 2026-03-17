@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_maint_man @ 0x2b6a0` into a dedicated `engines/harvester/npc/maint_man_dialogue.*` handler.
-  - Native Maintenance Man dialogue is a compact flag-driven selector with no local room state: `MAINTENANCE_MAN_FIRST_CONVERSATION` forces `0xdaf`, `MAINTENANCE_MAN_THIRD_CONVERSATION` forces `0xdbc`, `MAINTENANCE_MAN_FOURTH_CONVERSATION` forces `0xdc4`, and the default path falls through to `0xdb6`.
-  - The engine now routes `MAINT_MAN` through a concrete handler instead of falling back to the unsupported NPC path.
+- Ported `handle_talk_to_beggar @ 0x34d40` into a dedicated `engines/harvester/npc/beggar_dialogue.*` handler.
+  - Native Beggar dialogue is a single interrupt branch: when `BEGGAR_INTERRUPT_CONVERSATION` is set, native dispatches the `BEGGAR_DIALOG_3` action tag, then plays `0x1276` for `BEGGAR` with head variant `1`; otherwise the handler returns without dialogue.
+  - The engine now routes `BEGGAR` through a concrete handler instead of falling back to the unsupported NPC path.
 
 ## Next Suggested Action
 
-1. Port `handle_talk_to_beggar @ 0x34d40` as the next small interrupt-driven NPC handler.
-   - Ghidra decompilation currently shows one flag gate plus one action tag: `BEGGAR_INTERRUPT_CONVERSATION` triggers `dispatch_action_tag_if_set("BEGGAR_DIALOG_3", "BEGGAR")` and then plays `0x1276`; otherwise the native handler returns without dialogue.
-2. Add the minimal runtime callback needed for the interrupt/action-tag handlers, then continue through Beggar, Madam, and Gladiator.
-   - Those three handlers are the next confirmed low-complexity group after the visible flag-driven ports and they share the same native shape.
+1. Port `handle_talk_to_madam @ 0x2adc0` as the next small interrupt-driven NPC handler.
+   - Ghidra decompilation currently shows a single interrupt flag gate: when `MADAM_INTERRUPT_CONVERSATION` is set, native clears it and plays `0x1537` for `MADAM` with head variant `1`; otherwise the handler returns without dialogue.
+2. After Madam, port `handle_talk_to_gladiator @ 0x2c630`, which shares the same interrupt-flag shape.
+   - Gladiator is the same pattern with `GLADIATOR_INTERRUPT_CONVERSATION`, a clear-to-zero write, and a single `0x69c` `GLADIATOR` line.
