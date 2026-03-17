@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_authority @ 0x2b730` into a dedicated `engines/harvester/npc/authority_dialogue.*` handler.
-  - Native Authority dialogue is a small flag-driven selector with no local room state: `STOP_AUTHOR_TALK` suppresses dialogue entirely, `IF_DON_T_EAT_THE_FOOD` forces `0x3992`, and otherwise the handler picks `0x398a` or `0x399b` based on `IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES`.
-  - The engine now routes `AUTHORITY` through a concrete handler instead of falling back to the unsupported NPC path.
+- Ported `handle_talk_to_maint_man @ 0x2b6a0` into a dedicated `engines/harvester/npc/maint_man_dialogue.*` handler.
+  - Native Maintenance Man dialogue is a compact flag-driven selector with no local room state: `MAINTENANCE_MAN_FIRST_CONVERSATION` forces `0xdaf`, `MAINTENANCE_MAN_THIRD_CONVERSATION` forces `0xdbc`, `MAINTENANCE_MAN_FOURTH_CONVERSATION` forces `0xdc4`, and the default path falls through to `0xdb6`.
+  - The engine now routes `MAINT_MAN` through a concrete handler instead of falling back to the unsupported NPC path.
 
 ## Next Suggested Action
 
-1. Port `handle_talk_to_maint_man @ 0x2b6a0` as the next small flag-driven NPC handler.
-   - Ghidra decompilation currently shows a compact four-way branch on the maintenance-man conversation flags, with `0xdaf`, `0xdb6`, `0xdbc`, and `0xdc4` as the only native outcomes.
-2. After the remaining single-branch handlers are covered, resume the larger hidden-topic ports starting with Boyle.
-   - Boyle already has bounded hidden keyword and gas-can branches, so he remains the highest-signal multi-branch NPC once the trivial handlers are out of the way.
+1. Port `handle_talk_to_beggar @ 0x34d40` as the next small interrupt-driven NPC handler.
+   - Ghidra decompilation currently shows one flag gate plus one action tag: `BEGGAR_INTERRUPT_CONVERSATION` triggers `dispatch_action_tag_if_set("BEGGAR_DIALOG_3", "BEGGAR")` and then plays `0x1276`; otherwise the native handler returns without dialogue.
+2. Add the minimal runtime callback needed for the interrupt/action-tag handlers, then continue through Beggar, Madam, and Gladiator.
+   - Those three handlers are the next confirmed low-complexity group after the visible flag-driven ports and they share the same native shape.
