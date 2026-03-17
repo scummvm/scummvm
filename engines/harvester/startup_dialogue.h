@@ -53,7 +53,6 @@ public:
 		bool karinFoundDeadShown = false;
 		bool discussedCasketPhotoEvidence = false;
 		bool discussedWhaleyHerrillPhoto = false;
-		bool discussedLodgeTopic = false;
 		Common::String currentTopicBuffer;
 		int currentTopicBufferLineIndex = -1;
 	};
@@ -104,6 +103,7 @@ private:
 	MomRoomDialogueState _momRoomDialogueState;
 	JimmyRoomDialogueState _jimmyRoomDialogueState;
 	bool _sharedKarinKidnapedDialogueState = false;
+	bool _sharedDiscussedLodgeTopic = false;
 };
 
 } // End of namespace Harvester
