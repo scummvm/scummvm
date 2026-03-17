@@ -9,18 +9,18 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `910`
-- Named/documented: `594`
-- Still `FUN_*` / undocumented: `316`
+- Total functions: `899`
+- Named/documented: `586`
+- Still `FUN_*` / undocumented: `313`
 
 ## Last Confirmed Action
 
-- Rebuilt `handle_talk_to_moynahan @ 0x24a20` from the corrected native flow and renamed the recovered shared wrappers at `0x382e0` / `0x38300`.
-  - Moynahan now preserves the six-line intro, the `IF_TRY_TO_TAKE_THE_GLUE` interrupt branch, the slashes-on-body keyword injection through `dialog.rsp[0x194]` / `0x195`, the `HAVE_BOTH_LEDGERS` / casket / blackmail response menus, the room-specific ledger portrait override, and the ordered late-game one-shot bark chain through Karin, Butcher, Jimmy, and the day-5-only typed-topic branches.
-  - The remaining work is the consistency audit across the other `handle_talk_to_*` ports to confirm which handlers still diverge materially from the corrected native control flow.
+- Rebuilt `handle_talk_to_stephanie @ 0x36710` from the corrected native flow, labeled the recovered orphan tails at `0x37650` and `0x37e78`, and wired Dwayne's completed Karin-alive follow-up into shared dialogue state so Stephanie can see it.
+  - Stephanie now preserves the day-gated intro ladder, the hidden TV-station / SCRATCHED_TUCKER / BOLT_OF_CLOTH / BARBER_POLE / DINER / jail response menus, the `0x2f9..0x2fd` spyhole keyword continuation through `0x4a19` / `0x4a1e` / `0x4a23`, the post-`KARIN_KIDNAPED` Potts-alibi follow-up block, and the extended Karin outcome tail through `0x49c1` / `0x49ea` / `0x49ef`.
+  - The next corrective pass is now the audit of handlers that feed Stephanie's recovered shared follow-up states, starting with `handle_talk_to_mrs_potts`, because the engine still has a `discussedMrsPottsTuesdayNightAlibi` state that is never written.
 
 ## Next Suggested Action
 
 1. Audit the remaining `handle_talk_to_*` ports against the corrected native disassembly.
-   - The next audit pass should start with the remaining keyword-loop handlers, especially `handle_talk_to_hank` and `handle_talk_to_stephanie`, to confirm whether their existing engine ports already cover the corrected native menu transitions and late-game one-shot chains.
+   - The highest-value immediate follow-up is `handle_talk_to_mrs_potts`, then any other previously rebuilt handlers that still leave recovered shared dialogue states unwired in the engine-side ports.
 2. Apply any additional high-confidence Ghidra renames or comments that fall directly out of those audited handlers before each commit.

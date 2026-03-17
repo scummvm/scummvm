@@ -52,7 +52,9 @@ struct DialogueSharedState {
 	bool moynahanKarinKidnapedDiscussionState = false;
 	bool dwayneWhaleyDisciplineFollowupState = false;
 	bool dwayneDiscussedBoylesButton = false;
+	bool dwayneCompletedKarinAliveFollowup = false;
 	bool discussedMrPottsTuesdayNightAlibi = false;
+	bool discussedMrsPottsTuesdayNightAlibi = false;
 	bool confrontedMrPottsAboutSpyhole = false;
 };
 

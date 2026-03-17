@@ -364,6 +364,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.pendingKarinAliveFollowupLinePlayed = true;
 		state.pendingKarinAliveFollowup = false;
 		state.completedKarinAliveFollowup = true;
+		sharedState.dwayneCompletedKarinAliveFollowup = true;
 
 		const DialogueLineEntry lines[] = {
 			{ 0x3780, "DWAYNE", 0 },
