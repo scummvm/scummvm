@@ -15,16 +15,15 @@
 
 ## Last Confirmed Action
 
-- Recovered the native dialogue resource split and the Mom/Hank keyword-buffer state transitions, then aligned the startup runtime with the confirmed Mom menu path.
-  - Confirmed `load_dialogue_response_line @ 0x3a1a0` reads keyword/menu text from direct file `dialog.rsp`, while `load_dialogue_index @ 0x79a20` and `play_dialogue_line @ 0x7a690` map wav ids through direct `dialogue.idx` subtitle records plus `VOICE/*.CMP` audio, not DAT-backed archive paths.
-  - Confirmed `handle_talk_to_hank @ 0x33a30` seeds `g_dialogue_keyword_list_spec` from `dialog.rsp` lines `0xc8`, `0xc9`, or `0xca` after the opening response menu and rewrites it to line `0xd5` after the hidden `0x725` / `0x729` / `0x72d` / `0x733` / `0x737` / `0x73b` / `0x741` / `0x747` branch.
-  - Confirmed `handle_talk_to_mom @ 0x31140` compares keyword selections against `dialog.rsp` lines `0x116` through `0x171`, rewrites the keyword buffer to line `0x13e` after the `0x1faf` / `0x1fb4` / `0x1fb9` / `0x1fbd` Slaughterhouse exchange, and rewrites it to line `0x140` after the `FATHER` branch; the observed early-game DOSBox kitchen menu matches zero-based `dialog.rsp` line `0x102` exactly.
-  - ScummVM now seeds Mom's keyword menu from that confirmed `dialog.rsp` line, restores the hidden Slaughterhouse follow-up sequence and menu rewrite, and updates the confirmed Mom portrait-variant calls on the intro, Cookies, and Sparky exchanges.
-  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the dialogue/resource alignment work.
+- Recovered Mom's hidden keyword-buffer loop directly from raw Ghidra disassembly and aligned the startup runtime with the confirmed native menu state machine.
+  - Confirmed `handle_talk_to_mom @ 0x31140` really does seed `g_dialogue_keyword_list_spec` from zero-based `dialog.rsp` line `0x102` in code, not just from the observed DOSBox kitchen screenshot; the hidden pre-menu seeds are now bounded to `0x102` (intro), `0x104` (same-day follow-up), `0x105` (later default), `0x113` (day 5), and `0x114` (day 6).
+  - Confirmed the earlier Ghidra decompiler view understated Mom's topic-state machine: hidden inline copy/jump blocks loop back to `run_dialogue_keyword_menu` and rewrite the keyword buffer through `0x116->0x118`, `0x119->0x11a`, `0x11d->0x120`, `0x121->0x122`, `0x123->0x124`, `0x125..0x128->0x12a`, `0x12b->0x12c`, `0x12d->0x12e`, `0x12f->0x130`, `0x131..0x133->0x134`, `0x135->0x136`, `0x137->0x13b`, `0x13c->0x13e`, `0x13f->0x140`, `0x141->0x144`, `0x145..0x147->0x148`, `0x14b..0x14c->0x150`, `0x151..0x152->0x154`, and `0x15b->0x15c`.
+  - ScummVM now follows those confirmed Mom menu seeds/transitions instead of unconditionally seeding `0x102` and falling through to `0x26c6` after every recognized topic.
+  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the Mom menu-loop update.
 
 ## Next Suggested Action
 
-1. Isolate Mom's initial `g_dialogue_keyword_list_spec` seed in Ghidra instead of relying on the observed DOSBox `dialog.rsp` line match.
-   - Static disassembly already confirms the later `0x13e` and `0x140` rewrites plus all keyword comparisons, but the first native buffer write that produces the observed day-1 line `0x102` has not been recovered cleanly yet.
-2. Audit the remaining startup NPC talk handlers for the same direct-file `dialog.rsp` / `dialogue.idx` / `VOICE/*.CMP` split.
-   - Hank is now bounded (`0xc8` / `0xc9` / `0xca` -> `0xd5`) and Mom is partially bounded, but the other keyword-driven handlers still need the same parity pass before broader dialogue cleanup.
+1. Restore the remaining hidden Mom multi-line exchanges that sit next to the confirmed keyword-buffer rewrites.
+   - Raw disassembly shows the menu/state transitions clearly, but several Mom branches still have extra `play_dialogue_line` calls in those hidden blocks that the current engine only partially mirrors.
+2. Audit the remaining startup NPC talk handlers for the same direct-file `dialog.rsp` / `dialogue.idx` / `VOICE/*.CMP` split and hidden keyword-loop blocks.
+   - Hank and Mom now show the pattern explicitly; the other keyword-driven handlers still need the same parity pass before broader dialogue cleanup.
