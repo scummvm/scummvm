@@ -19,12 +19,149 @@
  *
  */
 
+#include <functional>
+
 #include "harvester/npc/jimmy_dialogue.h"
+
+#include "common/array.h"
+#include "harvester/npc/dialogue_flags.h"
+#include "harvester/npc/dialogue_runtime.h"
 
 namespace Harvester {
 
 bool JimmyDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("JIMMY");
+}
+
+Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &) {
+	JimmyRoomDialogueState &state = _state;
+
+	auto playJimmyLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "JIMMY", headVariant);
+	};
+	auto hasInventoryItem = [&](const char *objectName) {
+		Common::Array<StartupObjectRecord> inventoryObjects;
+		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
+		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
+				return true;
+		}
+
+		return false;
+	};
+
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
+			StartupInteractionResult jimmyInteraction;
+			const bool changedGivenPaperToday =
+				runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+			const bool changedNewspaperState =
+				runtime.startupScript().resetRuntimeObjectToInitialState("NEWSPAPER");
+			jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
+
+			StartupInteractionResult actionInteraction;
+			if (runtime.startupScript().executeNestedActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
+				jimmyInteraction.abortRemainingCommandChain =
+					jimmyInteraction.abortRemainingCommandChain ||
+					actionInteraction.abortRemainingCommandChain;
+				jimmyInteraction.mutatedRuntimeState =
+					jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
+				if (!actionInteraction.musicPath.empty())
+					jimmyInteraction.musicPath = actionInteraction.musicPath;
+				if (!actionInteraction.nextRoomName.empty())
+					jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
+				if (!actionInteraction.deathFlicPath.empty())
+					jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
+				if (!actionInteraction.dialogueNpcName.empty())
+					jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
+				if (!actionInteraction.dialogueContinuationTag.empty())
+					jimmyInteraction.dialogueContinuationTag = actionInteraction.dialogueContinuationTag;
+				jimmyInteraction.requestMainMenu =
+					jimmyInteraction.requestMainMenu || actionInteraction.requestMainMenu;
+				for (const StartupAudioCommand &command : actionInteraction.audioCommands)
+					jimmyInteraction.audioCommands.push_back(command);
+			}
+			runtime.queueDialogueInteractionIfNeeded(jimmyInteraction);
+
+			if (!state.paperHandoffStateSet) {
+				state.paperHandoffStateSet = true;
+				Common::Error lineError = playJimmyLine(0x4a4c, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			return runtime.getRandomNumber(1) == 0
+				? playJimmyLine(0x4acc, 0)
+				: playJimmyLine(0x4a4b, 1);
+		}
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
+			return playJimmyLine(0x4af8, 1);
+		}
+		if (((usedItemName.equalsIgnoreCase("LEDGER") ||
+					usedItemName.equalsIgnoreCase("LEDGER2")) &&
+				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
+			} else {
+				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+			}
+			return playJimmyLine(0x4b00, 0);
+		}
+		if (usedItemName.equalsIgnoreCase("NOTE") ||
+				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
+			return playJimmyLine(0x4b21, 0);
+		}
+		if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
+			Common::Error lineError = playJimmyLine(0x4a9e, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		return playJimmyLine(0x4af2, 0);
+	}
+
+	if (state.firstNoItemLinePending) {
+		state.firstNoItemLinePending = false;
+		if (!state.paperHandoffStateSet) {
+			Common::Error lineError = playJimmyLine(0x4a4c, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		Common::Error lineError = playJimmyLine(0x4a58, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
+		Common::Error lineError = playJimmyLine(0x4ac3, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_4")) {
+		Common::Error lineError = playJimmyLine(0x4ae2, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_3")) {
+		Common::Error lineError = playJimmyLine(0x4adb, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_2")) {
+		Common::Error lineError = playJimmyLine(0x4ad4, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	return playJimmyLine(0x4b38, 0);
 }
 
 } // End of namespace Harvester
