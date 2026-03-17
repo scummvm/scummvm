@@ -39,6 +39,7 @@ MODULE := engines/harvester
 	npc/swell_dialogue.o \
 	npc/valet_dialogue.o \
 	npc/vet_dialogue.o \
+	npc/whaley_dialogue.o \
 	npc/wasp_woman_dialogue.o \
 	resources.o \
 	runtime_entity.o \
