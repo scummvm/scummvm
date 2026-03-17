@@ -32,6 +32,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
+#include "harvester/npc/authority_dialogue.h"
 #include "harvester/cft_font.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
@@ -333,6 +334,7 @@ DialogueSystem::~DialogueSystem() {
 }
 
 void DialogueSystem::registerNpcHandlers() {
+	_npcHandlers.push_back(new AuthorityDialogueHandler());
 	_npcHandlers.push_back(new DwayneDialogueHandler());
 	_npcHandlers.push_back(new EdnaDialogueHandler());
 	_npcHandlers.push_back(new ChessmasterDialogueHandler());
