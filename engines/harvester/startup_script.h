@@ -304,6 +304,7 @@ public:
 		bool addRuntimeObjectToInventory(const Common::String &objectName);
 		bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
 			bool visible);
+		bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 		int getCurrentStoryDayIndex() const;
 

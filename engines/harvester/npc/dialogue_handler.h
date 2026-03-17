@@ -37,8 +37,10 @@ struct DialogueSharedState {
 	bool dialogueStateD2f04 = false;
 	bool dialogueStateD2ea4 = false;
 	bool dialogueStateD2ea8 = false;
+	bool dialogueStateD2f00 = false;
 	bool karinKidnapedDialogueState = false;
 	bool discussedLodgeTopic = false;
+	bool dialogueStateD2f08 = false;
 	bool waspWomanDialogueState = false;
 };
 

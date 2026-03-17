@@ -994,6 +994,20 @@ bool StartupScript::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 	return changed;
 }
 
+bool StartupScript::setRuntimeNpcState(const Common::String &npcName, bool active, bool visible) {
+	if (npcName.empty())
+		return false;
+
+	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	if (!runtimeNpc)
+		return false;
+
+	const bool changed = runtimeNpc->active != active || runtimeNpc->visible != visible;
+	runtimeNpc->active = active;
+	runtimeNpc->visible = visible;
+	return changed;
+}
+
 bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const {
 	state = StartupRoomSetupState();

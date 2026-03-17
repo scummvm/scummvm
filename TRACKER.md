@@ -9,19 +9,19 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `886`
-- Named/documented: `569`
-- Still `FUN_*` / undocumented: `317`
+- Total functions: `896`
+- Named/documented: `577`
+- Still `FUN_*` / undocumented: `319`
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_sparky @ 0x39240` into a dedicated `engines/harvester/npc/sparky_dialogue.*` handler.
-  - Native Sparky dialogue is a compact stateful handler: one interrupt bark for the light switch, a first-visit `SPARKY_SPOTS_MEAT` sequence bracketed by `C135.FST` / `C098.FST`, and then a revisit keyword loop with a `0x2c9` submenu rewrite and `NUDETATU.FST` branch.
-  - This pass also fixed a Ghidra blind spot by promoting and renaming the tiny FST wrappers at `0x38630`, `0x38650`, `0x38660`, `0x38670`, `0x38690`, and `0x38b80` to `play_c135_fst`, `play_c096_fst`, `play_c096a_fst`, `play_nudetatu_fst`, `play_c098_fst`, and `play_c149_fst`.
+- Ported `handle_talk_to_sergeant @ 0x30340` into a dedicated `engines/harvester/npc/sergeant_dialogue.*` handler.
+  - Native Sergeant dialogue is still a compact quest-delivery handler: the intro/revisit bark pair plus direct item or flag-driven branches for `REMAINS`, `INVITE`, `BARBER_POLE`, `BOLTCLTH`, `SCRATCHED_TUCKER`, `DINER_BURNED`, and `COMPLETED_LODGE_APPLICATION`.
+  - This pass also added a minimal runtime `setRuntimeNpcState()` helper so dialogue handlers can mirror native `SET_NPC`-style scene changes, and the shared neutral Sergeant wrapper bits now live in engine-side shared dialogue state for later Stephanie/Dad followups.
 
 ## Next Suggested Action
 
-1. Move back to the more stateful visible handlers now that the compact visible bucket is mostly cleared.
-   - The next best candidate is `SERGEANT`, which is still compact enough to port directly but needs a couple of runtime NPC/object state helpers.
-2. After that visible evidence-handler pass, return to Boyle and the other larger hidden-topic handlers.
-   - After `SERGEANT`, the remaining Ghidra-backed handlers are `STEPHANIE`, `DAD`, and `BOYLE`.
+1. Port `handle_talk_to_stephanie @ 0x36710` next.
+   - Stephanie is now the last compact-ish named handler before the remaining heavier `DAD` / `BOYLE` hidden-topic ports, and Sergeant's shared-state writes are now in place for the known Tuesday-night / quest followups.
+2. After Stephanie, finish the last two Ghidra-identified top-level handlers: `handle_talk_to_dad @ 0x2b020` and `handle_talk_to_boyle @ 0x2cb20`.
+   - Revisit the Mom raw-disassembly audit afterward as a separate fidelity pass once the remaining named dispatch targets are no longer stubbed.
