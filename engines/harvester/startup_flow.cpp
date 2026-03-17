@@ -362,8 +362,8 @@ static void setRoomActorScreenPosition(RuntimeEntity &entity, int centerX, int b
 	entity.setPosition(centerX - xOffset - width / 2, bottomY - height - yOffset, z);
 }
 
-bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
-		int centerX, int bottomY, float z, const Common::String *entranceName) {
+static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, RuntimeEntity &entity,
+		int centerX, int bottomY, float z, const Common::String *entranceName, bool applyDepthScale) {
 	int width = 0;
 	int height = 0;
 	int xOffset = 0;
@@ -374,11 +374,14 @@ bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &
 	entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
 	setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
 
-	const float depthScale = computeActorDepthScale(state, z);
-	entity.setDepthScale(depthScale);
-	if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
-		return false;
-	setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+	float depthScale = 1.0f;
+	if (applyDepthScale) {
+		depthScale = computeActorDepthScale(state, z);
+		entity.setDepthScale(depthScale);
+		if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
+			return false;
+		setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+	}
 
 	if (entranceName) {
 		debugC(1, kDebugGeneral,
@@ -387,6 +390,11 @@ bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &
 			entity.getX(), entity.getY(), width, height, xOffset, yOffset, (double)depthScale);
 	}
 	return true;
+}
+
+bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
+		int centerX, int bottomY, float z, const Common::String *entranceName) {
+	return applyRoomActorPlacementInternal(state, entity, centerX, bottomY, z, entranceName, true);
 }
 
 static bool applyStartupActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity) {
@@ -2184,7 +2192,9 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
 		if (npc.frameDelay > 0)
 			entity->setAnimationRate(npc.frameDelay);
-		if (!applyRoomActorPlacement(state, *entity, npc.posX, npc.posY, (float)npc.posZ)) {
+		// Native room NPCs come from spawn_abm_entity_base, which leaves the depth-scale flag cleared.
+		if (!applyRoomActorPlacementInternal(state, *entity,
+				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {
 			debug(1, "Harvester: unable to apply room npc placement for '%s'",
 				npc.npcName.c_str());
 		}
