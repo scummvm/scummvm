@@ -26,10 +26,24 @@
 
 namespace Harvester {
 
-class PhelpsDialogueHandler : public NpcDialogueHandler {
+	class PhelpsDialogueHandler : public NpcDialogueHandler {
 public:
 	struct PhelpsRoomDialogueState {
 		bool talkStatePending = true;
+		bool stephMidgameShown = false;
+		bool dayFiveShown = false;
+		bool scratchedTuckerShown = false;
+		bool barberPoleStolenShown = false;
+		bool boltOfClothTakenShown = false;
+		bool dinerBurnedShown = false;
+		bool escapedJailShown = false;
+		bool gotRemainsForLodgeShown = false;
+		bool burnedTvStationShown = false;
+		bool butcherDeadShown = false;
+		bool moynahanDeadShown = false;
+		bool jimmyDeadShown = false;
+		bool karinFoundDeadShown = false;
+		bool karinKidnapedShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
