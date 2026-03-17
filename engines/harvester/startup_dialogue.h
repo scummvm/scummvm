@@ -51,8 +51,6 @@ public:
 		bool karinKidnapedShown = false;
 		bool karinFoundAliveShown = false;
 		bool karinFoundDeadShown = false;
-		bool discussedCasketPhotoEvidence = false;
-		bool discussedWhaleyHerrillPhoto = false;
 		Common::String currentTopicBuffer;
 		int currentTopicBufferLineIndex = -1;
 	};

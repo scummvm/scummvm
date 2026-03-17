@@ -68,6 +68,10 @@ static const int kDialogueOtherEndY = 193;
 static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
+static const char *const kShownEvidenceOfBlackmailFlag = "SHOWN_EVIDENCE_OF_BLACKMAIL";
+static const char *const kShownLedgersToAnyoneFlag = "SHOWN_LEDGERS_TO_ANYONE_OTH";
+static const char *const kShownPhotoOfCorpseFlag = "SHOWN_PHOTO_OF_CORPSE_AROUN";
+static const char *const kShownPhotoOfWhaleyHerrillFlag = "SHOWN_PHOTO_OF_WHALEY_HERRI";
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
@@ -1222,19 +1226,28 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					? playJimmyLine(0x4acc, 0)
 					: playJimmyLine(0x4a4b, 1);
 			}
-			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
+			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
 				return playJimmyLine(0x4af8, 1);
+			}
 			if (((usedItemName.equalsIgnoreCase("LEDGER") ||
 						usedItemName.equalsIgnoreCase("LEDGER2")) &&
 					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) ||
 					usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+						usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+					(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+				} else {
+					(void)startupScript->setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
+				}
 				return playJimmyLine(0x4b00, 0);
 			}
 			if (usedItemName.equalsIgnoreCase("NOTE") ||
 					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
 				return playJimmyLine(0x4b21, 0);
 			}
 			if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
@@ -1797,11 +1810,11 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-			_hankRoomDialogueState.discussedCasketPhotoEvidence = true;
+			(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
 			return playDialogueLine(0xa3e, "HANK");
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-			_hankRoomDialogueState.discussedWhaleyHerrillPhoto = true;
+			(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
 			return playDialogueLine(0xa53, "HANK");
 		}
 		return playDialogueLine(0xa38, "HANK");
