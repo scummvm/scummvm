@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	dialogue.o \
 	fst_player.o \
 	metaengine.o \
+	npc/curator_dialogue.o \
 	npc/dwayne_dialogue.o \
 	npc/edna_dialogue.o \
 	npc/hank_dialogue.o \

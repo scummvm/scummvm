@@ -36,6 +36,7 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
+#include "harvester/npc/curator_dialogue.h"
 #include "harvester/npc/dwayne_dialogue.h"
 #include "harvester/npc/dialogue_runtime.h"
 #include "harvester/npc/edna_dialogue.h"
@@ -330,6 +331,7 @@ DialogueSystem::~DialogueSystem() {
 void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new DwayneDialogueHandler());
 	_npcHandlers.push_back(new EdnaDialogueHandler());
+	_npcHandlers.push_back(new CuratorDialogueHandler());
 	_npcHandlers.push_back(new JimmyDialogueHandler());
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new MomDialogueHandler());
