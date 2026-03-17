@@ -35,6 +35,7 @@ MODULE := engines/harvester
 	npc/phelps_dialogue.o \
 	npc/priest_dialogue.o \
 	npc/pta_mom_dialogue.o \
+	npc/ryder_dialogue.o \
 	npc/stub_dialogue.o \
 	npc/swell_dialogue.o \
 	npc/valet_dialogue.o \
