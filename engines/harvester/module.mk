@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	cft_font.o \
 	harvester.o \
 	npc/chessmaster_dialogue.o \
+	npc/cloak_atnd_dialogue.o \
 	console.o \
 	dialogue.o \
 	fst_player.o \

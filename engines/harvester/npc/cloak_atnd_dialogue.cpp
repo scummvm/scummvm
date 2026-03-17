@@ -1,0 +1,63 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include <functional>
+
+#include "harvester/npc/cloak_atnd_dialogue.h"
+
+#include "harvester/npc/dialogue_runtime.h"
+
+namespace Harvester {
+
+namespace {
+
+static const char *const kCleanedClothesFlag = "CLEANED_CLOTHES";
+static const char *const kCleanClothesActionTag = "CLEAN_CLOTHES";
+static const char *const kPaymentItemName = "BARCASHFIVE";
+
+} // End of namespace
+
+bool CloakAtndDialogueHandler::matchesNpc(const Common::String &npcName) const {
+	return npcName.equalsIgnoreCase("CLOAK_ATND");
+}
+
+Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &) {
+	if (usedItemName.empty()) {
+		if (runtime.startupScript().getFlagValue(kCleanedClothesFlag))
+			return Common::kNoError;
+
+		return runtime.playDialogueLine(0x1066, "CLOAK_ATND");
+	}
+
+	if (!usedItemName.equalsIgnoreCase(kPaymentItemName))
+		return Common::kNoError;
+
+	StartupInteractionResult interaction;
+	if (runtime.startupScript().executeActionTag(kCleanClothesActionTag, interaction)) {
+		runtime.applyImmediateDialogueInteractionEffects(interaction);
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+	}
+
+	return Common::kNoError;
+}
+
+} // End of namespace Harvester
