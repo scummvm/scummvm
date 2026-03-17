@@ -84,7 +84,8 @@ const int kAlfredFrameHeight = 102;
 const int kTalkAnimationSpeed = 2;   // Frames per update
 const int kAlfredAnimationSpeed = 2; // Frames per update
 
-const int kAlfredIdleAnimationFrameCount = 300;
+const int kAlfredIdleAnimationFrameCount = 300; // comb animation plays every ~16 seconds of idle alfred
+const int kAlfredIdleScreenSaverFrameCount = 1090; // screen saver shows up after 60 seconds
 
 const int kInventoryPageSize = 10;
 
@@ -192,11 +193,17 @@ struct AlfredState {
 	byte w = kAlfredFrameWidth;
 	byte h = kAlfredFrameHeight;
 	int idleFrameCounter = 0;
+	int screenSaverFrameCounter = 0;
 	bool isWalkingCancelable = true;
 
 	void setState(AlfredAnimState nextState) {
 		animState = nextState;
 		curFrame = 0;
+	}
+
+	void resetIdles() {
+		idleFrameCounter = 0;
+		screenSaverFrameCounter = 0;
 	}
 };
 

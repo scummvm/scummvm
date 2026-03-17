@@ -77,10 +77,10 @@ PelrockEngine::~PelrockEngine() {
 	delete[] _inventoryOverlayState.arrows[0];
 	delete[] _inventoryOverlayState.arrows[1];
 	// Free path-finding buffers (allocated via malloc in findPath)
-	if(_currentContext.pathBuffer) {
+	if (_currentContext.pathBuffer) {
 		free(_currentContext.pathBuffer);
 	}
-	if(_currentContext.movementBuffer) {
+	if (_currentContext.movementBuffer) {
 		free(_currentContext.movementBuffer);
 	}
 	_saveThumbnail.free();
@@ -444,12 +444,12 @@ void PelrockEngine::maybeHaveDogPee() {
 	if (_room->_currentRoomNumber != 19) {
 		return;
 	}
-	Sprite * dog = _room->findSpriteByIndex(2);
+	Sprite *dog = _room->findSpriteByIndex(2);
 
-	if(_alfredState.x < 146 && !_isDogPeeing) {
+	if (_alfredState.x < 146 && !_isDogPeeing) {
 		_isDogPeeing = true;
 		dog->animData[0].nframes = 24;
-		while(!shouldQuit() && dog->animData[0].curFrame < 23) {
+		while (!shouldQuit() && dog->animData[0].curFrame < 23) {
 			_events->pollEvent();
 			renderScene(OVERLAY_NONE);
 
@@ -631,7 +631,7 @@ void PelrockEngine::checkMouse() {
 		} else if (_inventoryOverlayState.isActive && _inventoryOverlayState.posInInventorySelectionArea(_events->_releaseX, _events->_releaseY)) {
 			int item = checkMouseClickInventoryOverlay(_events->_releaseX, _events->_releaseY);
 			_state->selectedInventoryItem = item;
-			if(_actionPopupState.isAlfredUnder) {
+			if (_actionPopupState.isAlfredUnder) {
 				useOnAlfred(item);
 			} else if (_currentHotspot != nullptr) {
 				walkAndAction(_currentHotspot, ITEM);
@@ -760,11 +760,24 @@ void PelrockEngine::lookAt(HotSpot *hotspot) {
 }
 
 void PelrockEngine::chooseAlfredStateAndDraw() {
-	if (_alfredState.idleFrameCounter++ >= kAlfredIdleAnimationFrameCount &&
-		_alfredState.animState == ALFRED_IDLE &&
-		(_alfredState.direction == ALFRED_LEFT || _alfredState.direction == ALFRED_RIGHT)) {
-		_alfredState.idleFrameCounter = 0;
-		_alfredState.setState(ALFRED_COMB);
+	if (_alfredState.animState != ALFRED_IDLE &&
+		 _alfredState.animState != ALFRED_COMB // need to exclude comb so that screen saver can still engage
+	) {
+		_alfredState.resetIdles(); // reset idle frame counter when not idle
+	} else {
+
+		if (_alfredState.idleFrameCounter++ >= kAlfredIdleAnimationFrameCount &&
+			_alfredState.animState == ALFRED_IDLE &&
+			(_alfredState.direction == ALFRED_LEFT || _alfredState.direction == ALFRED_RIGHT)) {
+			_alfredState.idleFrameCounter = 0;
+			_alfredState.setState(ALFRED_COMB);
+		}
+		if(_alfredState.screenSaverFrameCounter++ >= kAlfredIdleScreenSaverFrameCount &&
+			_alfredState.animState == ALFRED_IDLE) {
+			SlidingPuzzle slidingPuzzle(_events, _sound);
+			_alfredState.screenSaverFrameCounter = 0;
+			slidingPuzzle.run();
+		}
 	}
 
 	switch (_alfredState.animState) {
@@ -1189,7 +1202,7 @@ void PelrockEngine::paintDebugLayer() {
 }
 
 void PelrockEngine::checkLongMouseClick(int x, int y) {
-	_alfredState.idleFrameCounter = 0;
+	_alfredState.resetIdles(); // reset idle frame counter on interaction
 	int hotspotIndex = isHotspotUnder(x, y);
 	bool alfredUnder = isAlfredUnder(x, y);
 	if ((hotspotIndex != -1 || alfredUnder) && !_actionPopupState.isActive) {
@@ -1308,7 +1321,7 @@ void PelrockEngine::showActionBalloon(int posx, int posy, int curFrame) {
 	if (_inventoryOverlayState.isActive) {
 		// find selectedInventoryItem index in inventoryItems, set invStartingPos to that index if found, otherwise 0
 		int scrollPos = getScrollPositionForItem(_state->selectedInventoryItem);
-		if(_inventoryOverlayState.invStartingPos == -1) {
+		if (_inventoryOverlayState.invStartingPos == -1) {
 			_inventoryOverlayState.invStartingPos = scrollPos != -1 ? scrollPos : 0;
 		}
 		showInventoryOverlay();
@@ -1411,9 +1424,9 @@ void PelrockEngine::showInventoryOverlay() {
 	uint invSize = _state->inventoryItems.size();
 	// invStartingPos is an ITEM index (not a page number).
 	// The original game scrolls 1 item at a time, not 1 page at a time.
-	if(_inventoryOverlayState.invStartingPos == -1) {
+	if (_inventoryOverlayState.invStartingPos == -1) {
 		_inventoryOverlayState.invStartingPos = getScrollPositionForItem(_state->selectedInventoryItem);
-		if(_inventoryOverlayState.invStartingPos == -1) {
+		if (_inventoryOverlayState.invStartingPos == -1) {
 			_inventoryOverlayState.invStartingPos = 0;
 		}
 	}
@@ -1585,7 +1598,7 @@ void PelrockEngine::walkTo(int x, int y) {
 }
 
 void PelrockEngine::walkAndAction(HotSpot *hotspot, VerbIcon action) {
-	if(hotspot == nullptr) {
+	if (hotspot == nullptr) {
 		return;
 	}
 	_disableAction = true;
@@ -1678,7 +1691,7 @@ void PelrockEngine::checkMouseClick(int x, int y) {
 	_queuedAction = QueuedAction{NO_ACTION, -1, false, false};
 	_actionPopupState.isActive = false;
 	_currentHotspot = nullptr;
-	_alfredState.idleFrameCounter = 0;
+	_alfredState.resetIdles();
 	int hotspotIndex = isHotspotUnder(_events->_mouseX, _events->_mouseY);
 	bool isHotspotUnder = false;
 	if (hotspotIndex != -1) {
@@ -1696,7 +1709,7 @@ void PelrockEngine::changeCursor(Cursor cursor) {
 }
 
 void PelrockEngine::checkMouseHover() {
-	if(_actionPopupState.isActive) {
+	if (_actionPopupState.isActive) {
 		return;
 	}
 
@@ -1853,7 +1866,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 24: {
 		_room->findSpriteByIndex(1)->numAnims = 1;
 
-		if(_state->hasInventoryItem(88) && _state->getFlag(FLAG_PIGEON_DEAD) == false) {
+		if (_state->hasInventoryItem(88) && _state->getFlag(FLAG_PIGEON_DEAD) == false) {
 			_dialog->say(_res->_ingameTexts[kTextProbarLibro]);
 			playAlfredSpecialAnim(0);
 			Sprite *pigeons = _room->findSpriteByIndex(1);
@@ -1861,7 +1874,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 			pigeons->curAnimIndex = 0;
 			pigeons->disableAfterSequence = true;
 			pigeons->animData[0].curFrame = 0;
-			while(!g_engine->shouldQuit() && pigeons->zOrder != 255) {
+			while (!g_engine->shouldQuit() && pigeons->zOrder != 255) {
 				_events->pollEvent();
 				renderScene();
 				_screen->update();
@@ -2041,7 +2054,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 53:
 	case 54:
 		initGodsSequences(_room->_currentRoomNumber);
-		if(roomNumber == 52) {
+		if (roomNumber == 52) {
 			_room->addStickerToRoom(52, 105);
 		}
 		break;
@@ -2303,7 +2316,7 @@ void PelrockEngine::credits() {
 	Common::Array<Common::StringArray> creditTexts = _res->getCredits();
 	Common::Array<int> creditsSpeakerId;
 	// Preprocess credit texts: extract speaker IDs and apply word wrapping
-	for(uint i = 0; i < creditTexts.size(); i++) {
+	for (uint i = 0; i < creditTexts.size(); i++) {
 		byte speakerId;
 		_dialog->processColorAndTrim(creditTexts[i], speakerId);
 		creditsSpeakerId.push_back(speakerId);
@@ -2325,7 +2338,7 @@ void PelrockEngine::credits() {
 		for (int page = 0; page < kNumCreditPages && !shouldQuit(); page++) {
 			// loads screen
 			setScreen(kCreditRooms[page]);
-			if(kCreditRooms[page] == 24) {
+			if (kCreditRooms[page] == 24) {
 				Sprite *pigeons = _room->findSpriteByIndex(1);
 				pigeons->disableAfterSequence = true;
 			}
