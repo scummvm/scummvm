@@ -28,9 +28,47 @@ namespace Harvester {
 
 class DwayneDialogueHandler : public NpcDialogueHandler {
 public:
+	struct DwayneRoomDialogueState {
+		bool pendingInitialConversation = true;
+		bool sheriffInDinerIntroPending = true;
+		bool sheriffInDinerIntroPlayed = false;
+		bool eventFollowupGate = false;
+		bool tvDeedReplyOverride = false;
+		bool presentedEvidenceReplyOverride = false;
+		bool discussedBoylesButton = false;
+		bool discussedKarinPurse = false;
+		bool pendingKarinAliveFollowup = false;
+		bool completedKarinAliveFollowup = false;
+		int pendingKarinAliveFollowupDayIndex = 0;
+		bool bringKarinToSheriffLinePlayed = false;
+		bool whaleyDisciplineFollowupState = false;
+		bool whaleyDisciplineFollowupShown = false;
+		bool noteCheckbookFollowupShown = false;
+		bool scratchedTuckerShown = false;
+		bool boltOfClothTakenShown = false;
+		bool barberPoleStolenShown = false;
+		bool dinerBurnedShown = false;
+		bool escapedJailShown = false;
+		bool gotRemainsForLodgeShown = false;
+		bool burnedTvStationShown = false;
+		bool karinKidnapedShown = false;
+		bool pendingKarinAliveFollowupLinePlayed = false;
+		bool karinFoundDeadWithoutPurseShown = false;
+		bool jimmyAbsentShown = false;
+		bool moynahanAbsentShown = false;
+		bool ednaHungShown = false;
+		bool mcknightAbsentShown = false;
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
+	};
+
 	bool matchesNpc(const Common::String &npcName) const override;
-	Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) override;
+	void resetState() override { _state = DwayneRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	DwayneRoomDialogueState _state;
 };
 
 } // End of namespace Harvester

@@ -28,9 +28,18 @@ namespace Harvester {
 
 class JimmyDialogueHandler : public NpcDialogueHandler {
 public:
+	struct JimmyRoomDialogueState {
+		bool firstNoItemLinePending = true;
+		bool paperHandoffStateSet = false;
+	};
+
 	bool matchesNpc(const Common::String &npcName) const override;
-	Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) override;
+	void resetState() override { _state = JimmyRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	JimmyRoomDialogueState _state;
 };
 
 } // End of namespace Harvester

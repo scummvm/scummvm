@@ -28,9 +28,29 @@ namespace Harvester {
 
 class HankDialogueHandler : public NpcDialogueHandler {
 public:
+	struct HankRoomDialogueState {
+		bool pendingInitialConversation = true;
+		bool hasTrackedDayState = false;
+		bool pendingRangshotSequence = false;
+		bool pendingSameDayFollowup = false;
+		int trackedDayIndex = 0;
+		bool stephMidgamePlayedShown = false;
+		bool burnedTvStationShown = false;
+		bool bustedOnceShown = false;
+		bool karinKidnapedShown = false;
+		bool karinFoundAliveShown = false;
+		bool karinFoundDeadShown = false;
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
+	};
+
 	bool matchesNpc(const Common::String &npcName) const override;
-	Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) override;
+	void resetState() override { _state = HankRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	HankRoomDialogueState _state;
 };
 
 } // End of namespace Harvester

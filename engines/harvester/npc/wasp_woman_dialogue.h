@@ -28,9 +28,17 @@ namespace Harvester {
 
 class WaspWomanDialogueHandler : public NpcDialogueHandler {
 public:
+	struct WaspWomanRoomDialogueState {
+		bool introPending = true;
+	};
+
 	bool matchesNpc(const Common::String &npcName) const override;
-	Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) override;
+	void resetState() override { _state = WaspWomanRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	WaspWomanRoomDialogueState _state;
 };
 
 } // End of namespace Harvester

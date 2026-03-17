@@ -22,8 +22,6 @@
 #include "harvester/npc/stub_dialogue.h"
 
 #include "common/debug.h"
-#include "harvester/dialogue.h"
-
 namespace Harvester {
 
 StubNpcDialogueHandler::StubNpcDialogueHandler(const char *npcName) {
@@ -43,8 +41,8 @@ bool StubNpcDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return false;
 }
 
-Common::Error StubNpcDialogueHandler::handle(DialogueSystem &, DialogueRuntime &,
-		const Common::String &usedItemName) {
+Common::Error StubNpcDialogueHandler::handleDialogue(DialogueRuntime &,
+		const Common::String &usedItemName, DialogueSharedState &) {
 	debug(1, "Harvester: stub NPC dialogue handler '%s' item='%s'",
 		_npcNames.empty() ? "<unknown>" : _npcNames.front().c_str(),
 		usedItemName.empty() ? "<none>" : usedItemName.c_str());

@@ -19,7 +19,6 @@
  *
  */
 
-#include "harvester/dialogue.h"
 #include "harvester/npc/pta_mom_dialogue.h"
 
 namespace Harvester {
@@ -30,11 +29,6 @@ bool PtaMomDialogueHandler::matchesNpc(const Common::String &npcName) const {
 		npcName.equalsIgnoreCase("PTA_MOM3") ||
 		npcName.equalsIgnoreCase("PTA_MOM4") ||
 		npcName.equalsIgnoreCase("PTA_MOM5");
-}
-
-Common::Error PtaMomDialogueHandler::handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) {
-	return dialogue.handlePtaMomDialogue(runtime, usedItemName);
 }
 
 } // End of namespace Harvester

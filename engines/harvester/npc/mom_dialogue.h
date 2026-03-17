@@ -28,9 +28,40 @@ namespace Harvester {
 
 class MomDialogueHandler : public NpcDialogueHandler {
 public:
+	struct MomRoomDialogueState {
+		bool introPending = true;
+		bool sameDayIntroLineEnabled = false;
+		bool postIntroDefaultLineEnabled = false;
+		int introDayIndex = 0;
+		bool stephMidgameShown = false;
+		bool dinerBurnedKarinMissingOrDeadShown = false;
+		bool burnedTvStationShown = false;
+		bool scratchedTuckerShown = false;
+		bool barberPoleStolenShown = false;
+		bool boltOfClothTakenShown = false;
+		bool dinerBurnedKarinAliveShown = false;
+		bool escapedJailShown = false;
+		bool karinKidnapedUnresolvedShown = false;
+		bool karinFoundAliveShown = false;
+		bool karinFoundDeadShown = false;
+		bool butcherAbsentShown = false;
+		bool moynahanAbsentShown = false;
+		bool jimmyAbsentShown = false;
+		bool waspWomanAbsentShown = false;
+		bool stephanieDeadPreMidgameShown = false;
+		bool day5Shown = false;
+		bool day6Shown = false;
+		bool fatherTopicState = false;
+		bool goodCauseDay5State = false;
+	};
+
 	bool matchesNpc(const Common::String &npcName) const override;
-	Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) override;
+	void resetState() override { _state = MomRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	MomRoomDialogueState _state;
 };
 
 } // End of namespace Harvester
