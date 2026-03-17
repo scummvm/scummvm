@@ -106,14 +106,91 @@ static bool isProjectedSurfaceVisible(const int *surface, int pointCount, const 
 		const long dy = screenY[cur] - screenY[next];
 		const long dxp = screenX[next2] - screenX[next];
 		const long dyp = screenY[next2] - screenY[next];
-		const long cross = dx * dyp - dy * dxp;
-		if (cross < 0)
-			return true;
-		if (cross > 0)
-			return false;
+
+		if (dx < 0) {
+			if (dy == 0) {
+				if (dyp > 0)
+					return false;
+				if (dyp < 0)
+					return true;
+			} else {
+				const long b = dy * dxp - dx * dyp;
+				if (b > 0)
+					return false;
+				if (b < 0)
+					return true;
+			}
+		} else if (dx > 0) {
+			if (dy == 0) {
+				if (dyp < 0)
+					return false;
+				if (dyp > 0)
+					return true;
+			} else {
+				const long b = dx * dyp - dy * dxp;
+				if (b < 0)
+					return false;
+				if (b > 0)
+					return true;
+			}
+		} else {
+			if (dy < 0) {
+				if (dxp > 0)
+					return true;
+				if (dxp < 0)
+					return false;
+			}
+			if (dy > 0) {
+				if (dxp < 0)
+					return true;
+				if (dxp > 0)
+					return false;
+			}
+		}
 	}
 
 	return false;
+}
+
+static bool isProjectedPrismSurfaceVisible(const Common::Rect &screenR, const Colony::Thing &thing,
+		const Colony::ColonyEngine::PrismPartDef &def, bool useLook, int surfaceIndex,
+		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
+		const int *sint, const int *cost) {
+	if (surfaceIndex < 0 || surfaceIndex >= def.surfaceCount)
+		return false;
+
+	const int pointCount = def.surfaces[surfaceIndex][1];
+	if (pointCount < 3)
+		return false;
+
+	const uint8 ang = (useLook ? thing.where.look : thing.where.ang) + 32;
+	const long rotCos = cost[ang];
+	const long rotSin = sint[ang];
+	int projectedX[32];
+	int projectedY[32];
+	bool projected[32];
+
+	assert(def.pointCount <= ARRAYSIZE(projectedX));
+
+	for (int i = 0; i < def.pointCount; ++i) {
+		const int ox = def.points[i][0];
+		const int oy = def.points[i][1];
+		const int oz = def.points[i][2];
+		const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
+		const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+		projected[i] = projectCorridorPointRaw(screenR, cameraLook, cameraLookY, sint, cost, cameraX, cameraY,
+												   (float)(rx + thing.where.xloc), (float)(ry + thing.where.yloc), (float)(oz - 160),
+												   projectedX[i], projectedY[i]);
+	}
+
+	const int *surface = &def.surfaces[surfaceIndex][2];
+	for (int i = 0; i < pointCount; ++i) {
+		const int pointIdx = surface[i];
+		if (pointIdx < 0 || pointIdx >= def.pointCount || !projected[pointIdx])
+			return false;
+	}
+
+	return isProjectedSurfaceVisible(surface, pointCount, projectedX, projectedY);
 }
 
 static const int kScreenPts[8][3] = {
@@ -1370,19 +1447,32 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		_gfx->setDepthRange(0.0, 1.0);
 		draw3DPrism(obj, kCryoParts[0], false, -1, true, false); // top second
 		break;
-	case kObjProjector:
-		// Projector sits on table  draw table first, then projector parts
+	case kObjProjector: {
+		// Match the original Mac MakeProjector() ordering.
+		// The body/lens order flips depending on whether the front lens cap
+		// surface is facing the camera, because each part uses a separate
+		// depth range bucket rather than true inter-part depth sorting.
+		const bool lensFrontVisible = isProjectedPrismSurfaceVisible(_screenR, obj, kProjectorParts[2], false, 6,
+															_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
 		_gfx->setDepthRange(0.008, 1.0);
-		draw3DPrism(obj, kTableParts[0], false, -1, true, false); // table base
+		draw3DPrism(obj, kTableParts[1], false, -1, true, false); // table base
 		_gfx->setDepthRange(0.006, 1.0);
-		draw3DPrism(obj, kTableParts[1], false, -1, true, false); // table top
+		draw3DPrism(obj, kTableParts[0], false, -1, true, false); // table top
 		_gfx->setDepthRange(0.004, 1.0);
-		draw3DPrism(obj, kProjectorParts[1], false, -1, true, false); // stand
-		_gfx->setDepthRange(0.002, 1.0);
-		draw3DPrism(obj, kProjectorParts[0], false, -1, true, false); // body
-		_gfx->setDepthRange(0.0, 1.0);
-		draw3DPrism(obj, kProjectorParts[2], false, -1, true, false); // lens
+		draw3DPrism(obj, kProjectorParts[1], false, -1, true, true); // stand
+		if (lensFrontVisible) {
+			_gfx->setDepthRange(0.002, 1.0);
+			draw3DPrism(obj, kProjectorParts[0], false, -1, true, false); // body
+			_gfx->setDepthRange(0.0, 1.0);
+			draw3DPrism(obj, kProjectorParts[2], false, -1, true, false); // lens
+		} else {
+			_gfx->setDepthRange(0.002, 1.0);
+			draw3DPrism(obj, kProjectorParts[2], false, -1, true, false); // lens
+			_gfx->setDepthRange(0.0, 1.0);
+			draw3DPrism(obj, kProjectorParts[0], false, -1, true, false); // body
+		}
 		break;
+	}
 	case kObjTub:
 		for (int i = 0; i < 2; i++) {
 			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
