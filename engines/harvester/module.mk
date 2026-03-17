@@ -48,6 +48,7 @@ MODULE := engines/harvester
 	npc/pta_mom_dialogue.o \
 	npc/ryder_dialogue.o \
 	npc/sergeant_dialogue.o \
+	npc/stephanie_dialogue.o \
 	npc/sparky_dialogue.o \
 	npc/stub_dialogue.o \
 	npc/swell_dialogue.o \
