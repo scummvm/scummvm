@@ -68,6 +68,36 @@ static const DialogueLineEntry kMrsPottsIntroResponse2Lines[] = {
 	{ 0x274c, "MRS_POTTS", 0 }
 };
 
+static const DialogueLineEntry kMrsPottsPearlsLines[] = {
+	{ 0x2756, "MRS_POTTS", 0 },
+	{ 0x275d, "PC", 0 },
+	{ 0x2762, "MRS_POTTS", 0 },
+	{ 0x2766, "PC", 0 },
+	{ 0x276b, "MRS_POTTS", 0 }
+};
+
+static const DialogueLineEntry kMrsPottsBakeSaleLines[] = {
+	{ 0x2775, "PC", 0 },
+	{ 0x2779, "MRS_POTTS", 3 },
+	{ 0x277f, "PC", 0 },
+	{ 0x2783, "MRS_POTTS", 0 }
+};
+
+static const DialogueLineEntry kMrsPottsWeddingLines[] = {
+	{ 0x278c, "PC", 0 },
+	{ 0x2790, "MRS_POTTS", 0 },
+	{ 0x2795, "MRS_POTTS", 0 },
+	{ 0x2799, "PC", 0 }
+};
+
+static const DialogueLineEntry kMrsPottsGroundedIntroLines[] = {
+	{ 0x27a3, "MRS_POTTS", 3 },
+	{ 0x27a8, "PC", 0 },
+	{ 0x27ac, "MRS_POTTS", 2 },
+	{ 0x27b0, "PC", 2 },
+	{ 0x27b5, "MRS_POTTS", 2 }
+};
+
 static const DialogueLineEntry kMrsPottsGotRemainsIntroLines[] = {
 	{ 0x289e, "MRS_POTTS", 0 },
 	{ 0x28a8, "MRS_POTTS", 0 },
@@ -83,7 +113,18 @@ static const DialogueLineEntry kMrsPottsRemainsDeathLines[] = {
 static const DialogueLineEntry kMrsPottsKarinKidnapedResponse1Lines[] = {
 	{ 0x28e8, "MRS_POTTS", 0 },
 	{ 0x28ee, "PC", 0 },
-	{ 0x28f2, "MRS_POTTS", 0 }
+	{ 0x28f2, "MRS_POTTS", 2 }
+};
+
+static const DialogueLineEntry kMrsPottsKarinKidnapedResponse2Lines[] = {
+	{ 0x28fb, "MRS_POTTS", 3 },
+	{ 0x2903, "PC", 0 },
+	{ 0x2907, "MRS_POTTS", 2 }
+};
+
+static const DialogueLineEntry kMrsPottsLodgeLines[] = {
+	{ 0x27ef, "PC", 0 },
+	{ 0x27f3, "MRS_POTTS", 1 }
 };
 
 static const int kMrsPottsTopic27d6ResponseLines[] = { 0x241, 0x242 };
@@ -326,12 +367,16 @@ Common::Error MrsPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (runtime.startupScript().getCurrentStoryDayIndex() == 5 && !state.day5LinePlayed) {
 		state.day5LinePlayed = true;
-		return playMrsPottsLine(0x2889);
+		Common::Error lineError = playMrsPottsLine(0x2889);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 	if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationLinePlayed) {
 		state.burnedTvStationLinePlayed = true;
-		return playMrsPottsLine(0x2891, 1);
+		Common::Error lineError = playMrsPottsLine(0x2891, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnappedLinePlayed) {
@@ -347,16 +392,24 @@ Common::Error MrsPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			return playSequence(kMrsPottsKarinKidnapedResponse1Lines,
+			lineError = playSequence(kMrsPottsKarinKidnapedResponse1Lines,
 				ARRAYSIZE(kMrsPottsKarinKidnapedResponse1Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			sharedState.discussedMrsPottsTuesdayNightAlibi = true;
+		} else if (responseIndex == 2) {
+			lineError = playSequence(kMrsPottsKarinKidnapedResponse2Lines,
+				ARRAYSIZE(kMrsPottsKarinKidnapedResponse2Lines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
-		if (responseIndex == 2)
-			return playMrsPottsLine(0x28fb);
 	}
 	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
 			!state.dinerBurnedLinePlayed) {
 		state.dinerBurnedLinePlayed = true;
-		return playMrsPottsLine(0x290e);
+		Common::Error lineError = playMrsPottsLine(0x290e, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 
 	Common::String selectedTopic;
@@ -365,34 +418,90 @@ Common::Error MrsPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			mrsPottsTopicBuffer, mrsPottsTopicBufferLineIndex, selectedTopic);
 		if (menuError.getCode() != Common::kNoError)
 			return menuError;
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesResponseLine(selectedTopic, 0x237)) {
+		if (runtime.matchesResponseLine(selectedTopic, 0x237)) {
 			return playMrsPottsLine(0x297e);
 		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x238))
-			return playMrsPottsLine(0x2756);
-		if (runtime.matchesResponseLine(selectedTopic, 0x23a))
-			return playMrsPottsLine(0x2775, 0, "PC");
-		if (runtime.matchesResponseLine(selectedTopic, 0x23c))
-			return playMrsPottsLine(0x278c, 0, "PC");
-		if (runtime.matchesResponseLine(selectedTopic, 0x23e))
-			return playMrsPottsLine(0x27a3);
+		if (runtime.matchesResponseLine(selectedTopic, 0x238)) {
+			Common::Error lineError = playSequence(
+				kMrsPottsPearlsLines, ARRAYSIZE(kMrsPottsPearlsLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x239);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x23a)) {
+			Common::Error lineError = playSequence(
+				kMrsPottsBakeSaleLines, ARRAYSIZE(kMrsPottsBakeSaleLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x23b);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x23c)) {
+			Common::Error lineError = playSequence(
+				kMrsPottsWeddingLines, ARRAYSIZE(kMrsPottsWeddingLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x23d);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0x23e)) {
+			Common::Error lineError = playSequence(
+				kMrsPottsGroundedIntroLines, ARRAYSIZE(kMrsPottsGroundedIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x23f, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1) {
+				lineError = playMrsPottsLine(0x27c3, 1);
+			} else if (responseIndex == 2) {
+				lineError = playMrsPottsLine(0x27c7, 2, "PC");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				lineError = playMrsPottsLine(0x27cc, 1);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			(void)runtime.startupScript().setRuntimeFlagValue(kPermissionToSeeStephanieFlag, true);
+			executeDialogueActionTag(kStephHallExitActionTag);
+			assignMrsPottsTopicBuffer(0x240);
+			continue;
+		}
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMrsPottsTopic27d6ResponseLines,
 				ARRAYSIZE(kMrsPottsTopic27d6ResponseLines))) {
-			return playMrsPottsLine(0x27d6);
+			Common::Error lineError = playMrsPottsLine(0x27d6, 3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x243);
+			continue;
 		}
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMrsPottsTopic27e3ResponseLines,
 				ARRAYSIZE(kMrsPottsTopic27e3ResponseLines))) {
-			return playMrsPottsLine(0x27e3);
+			Common::Error lineError = playMrsPottsLine(0x27e3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x246);
+			continue;
 		}
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMrsPottsLodgeTopicResponseLines,
 				ARRAYSIZE(kMrsPottsLodgeTopicResponseLines))) {
 			sharedState.discussedLodgeTopic = true;
-			return playMrsPottsLine(0x27ef, 0, "PC");
+			Common::Error lineError = playSequence(
+				kMrsPottsLodgeLines, ARRAYSIZE(kMrsPottsLodgeLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrsPottsTopicBuffer(0x249);
+			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x24a))
 			continue;
-		return playMrsPottsLine(0x2930);
+		Common::Error lineError = playMrsPottsLine(0x2930);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 }
 

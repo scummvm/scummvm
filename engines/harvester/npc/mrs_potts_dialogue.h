@@ -29,7 +29,7 @@ namespace Harvester {
 class MrsPottsDialogueHandler : public NpcDialogueHandler {
 public:
 	struct MrsPottsRoomDialogueState {
-		bool auxIntroPending = false;
+		bool auxIntroPending = true;
 		bool returnVisitFollowupPending = false;
 		bool gotRemainsForLodgeLinePlayed = false;
 		bool takenInviteToSergeantLinePlayed = false;
