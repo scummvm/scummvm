@@ -25,13 +25,13 @@
 
 namespace Pelrock {
 
-const int kTickMs = 55;
+const uint32 kTickMs = 55;
 const int kHalfTickMultiplier = 2;
 
 class ChronoManager {
 private:
 	uint32 _lastTick = 0;
-	byte _speedMultiplier = 1;
+	uint32 _speedMultiplier = 1;
 	uint32 _frameCount = 0;
 	bool _pauseCounter = false;
 
