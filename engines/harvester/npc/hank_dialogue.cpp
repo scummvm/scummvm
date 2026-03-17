@@ -19,18 +19,12 @@
  *
  */
 
-#include "harvester/dialogue.h"
 #include "harvester/npc/hank_dialogue.h"
 
 namespace Harvester {
 
 bool HankDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("HANK");
-}
-
-Common::Error HankDialogueHandler::handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) {
-	return dialogue.handleHankDialogue(runtime, usedItemName);
 }
 
 } // End of namespace Harvester

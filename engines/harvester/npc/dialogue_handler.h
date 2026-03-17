@@ -28,15 +28,23 @@
 namespace Harvester {
 
 class DialogueRuntime;
-class DialogueSystem;
+
+struct DialogueSharedState {
+	bool boyleGascanApplicationState = false;
+	bool dialogueStateD2f04 = false;
+	bool karinKidnapedDialogueState = false;
+	bool discussedLodgeTopic = false;
+	bool waspWomanDialogueState = false;
+};
 
 class NpcDialogueHandler {
 public:
 	virtual ~NpcDialogueHandler() {}
 
 	virtual bool matchesNpc(const Common::String &npcName) const = 0;
-	virtual Common::Error handle(DialogueSystem &dialogue, DialogueRuntime &runtime,
-		const Common::String &usedItemName) = 0;
+	virtual void resetState() {}
+	virtual Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) = 0;
 };
 
 } // End of namespace Harvester
