@@ -134,6 +134,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("BOYLES_BUTTON")) {
 			state.discussedBoylesButton = true;
+			sharedState.dwayneDiscussedBoylesButton = true;
 			return playDwayneLine(0x339b);
 		}
 		if (usedItemName.equalsIgnoreCase("K_PURSE")) {
