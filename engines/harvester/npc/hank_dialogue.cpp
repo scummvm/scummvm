@@ -23,12 +23,8 @@
 
 #include "harvester/npc/hank_dialogue.h"
 
-#include "common/array.h"
-#include "common/debug.h"
-#include "harvester/detection.h"
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
-#include "harvester/startup_text.h"
 
 namespace Harvester {
 
@@ -36,52 +32,107 @@ namespace {
 
 static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
 
-struct HankDialogueTopicLine {
-	int responseLineIndex;
-	int wavId;
-	const char *speakerId;
-	bool setDiscussedLodgeTopic;
+static const DialogueLineEntry kHankMomTopicLines[] = {
+	{ 0x725, "HANK", 0 },
+	{ 0x729, "PC", 0 },
+	{ 0x72d, "HANK", 0 },
+	{ 0x733, "PC", 0 },
+	{ 0x737, "HANK", 0 },
+	{ 0x73b, "PC", 0 },
+	{ 0x741, "HANK", 0 },
+	{ 0x747, "MOM", 2 }
 };
 
-static const HankDialogueTopicLine kHankDialogueTopicLines[] = {
-	{ 0xd2, 0x725, "HANK", false },
-	{ 0xd6, 0x74f, "PC", false },
-	{ 0xd8, 0x76d, "PC", false },
-	{ 0xd9, 0x76d, "PC", false },
-	{ 0xdb, 0x77b, "PC", false },
-	{ 0xdc, 0x77b, "PC", false },
-	{ 0xe0, 0x7ad, "HANK", false },
-	{ 0xe1, 0x7b7, "PC", false },
-	{ 0xe3, 0x7d6, "PC", false },
-	{ 0xe5, 0x7f4, "HANK", false },
-	{ 0xe6, 0x7fc, "PC", false },
-	{ 0xe9, 0x82d, "PC", false },
-	{ 0xeb, 0x863, "PC", false },
-	{ 0xed, 0x881, "PC", false },
-	{ 0xee, 0x8a0, "HANK", false },
-	{ 0xef, 0x8a0, "HANK", false },
-	{ 0xf0, 0x8a0, "HANK", false },
-	{ 0xf1, 0x8bf, "HANK", true }
+static const DialogueLineEntry kHankSteveTopicLines[] = {
+	{ 0x74f, "PC", 0 },
+	{ 0x753, "HANK", 0 },
+	{ 0x758, "PC", 2 },
+	{ 0x75d, "HANK", 0 },
+	{ 0x761, "PC", 2 },
+	{ 0x765, "HANK", 0 }
 };
 
-static void splitDialogueMenuLine(const Common::String &line, Common::Array<Common::String> &parts) {
-	parts.clear();
-	if (line.empty())
-		return;
+static const DialogueLineEntry kHankLousyRatTopicLines[] = {
+	{ 0x76d, "PC", 0 },
+	{ 0x771, "HANK", 0 }
+};
 
-	Common::String token;
-	for (uint i = 0; i < line.size(); ++i) {
-		if (line[i] == '/') {
-			parts.push_back(token);
-			token.clear();
-			continue;
-		}
+static const DialogueLineEntry kHankLightingOutTopicLines[] = {
+	{ 0x77b, "PC", 0 },
+	{ 0x77f, "HANK", 0 },
+	{ 0x784, "PC", 2 },
+	{ 0x788, "HANK", 0 },
+	{ 0x78e, "PC", 2 },
+	{ 0x793, "HANK", 0 }
+};
 
-		token += line[i];
-	}
+static const DialogueLineEntry kHankDaddyTopicLines[] = {
+	{ 0x7b7, "PC", 0 },
+	{ 0x7bb, "HANK", 0 },
+	{ 0x7c0, "PC", 0 },
+	{ 0x7c4, "HANK", 0 },
+	{ 0x7ca, "PC", 0 },
+	{ 0x7ce, "HANK", 0 }
+};
 
-	parts.push_back(token);
-}
+static const DialogueLineEntry kHankGirlTopicLines[] = {
+	{ 0x7d6, "PC", 0 },
+	{ 0x7da, "HANK", 0 },
+	{ 0x7df, "PC", 0 },
+	{ 0x7e3, "HANK", 0 },
+	{ 0x7e8, "PC", 4 },
+	{ 0x7ec, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankTvTopicIntroLines[] = {
+	{ 0x7fc, "PC", 0 },
+	{ 0x801, "HANK", 0 },
+	{ 0x805, "PC", 0 },
+	{ 0x809, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankTvTopicOutroLines[] = {
+	{ 0x812, "HANK", 0 },
+	{ 0x816, "PC", 0 },
+	{ 0x81a, "HANK", 0 },
+	{ 0x81e, "PC", 0 },
+	{ 0x824, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankCowboyShowTopicLines[] = {
+	{ 0x82d, "PC", 0 },
+	{ 0x831, "HANK", 0 },
+	{ 0x835, "PC", 0 },
+	{ 0x839, "HANK", 0 },
+	{ 0x83d, "PC", 4 },
+	{ 0x842, "HANK", 0 },
+	{ 0x848, "HANK", 0 },
+	{ 0x84c, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankSickTopicLines[] = {
+	{ 0x863, "PC", 0 },
+	{ 0x867, "HANK", 0 },
+	{ 0x86b, "PC", 0 },
+	{ 0x86f, "HANK", 0 },
+	{ 0x873, "PC", 0 }
+};
+
+static const DialogueLineEntry kHankNewspaperFireSentinelTopicLines[] = {
+	{ 0x8a0, "HANK", 0 },
+	{ 0x8a5, "PC", 0 },
+	{ 0x8a9, "HANK", 0 },
+	{ 0x8af, "PC", 0 },
+	{ 0x8b3, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankLodgeTopicLines[] = {
+	{ 0x8bf, "HANK", 0 },
+	{ 0x8c5, "PC", 0 },
+	{ 0x8c9, "HANK", 0 },
+	{ 0x8cf, "PC", 0 },
+	{ 0x8d3, "HANK", 0 }
+};
 
 } // End of namespace
 
@@ -99,15 +150,13 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.assignTopicBuffer(hankTopicBuffer, hankTopicBufferLineIndex,
 			responseLineIndex, "Hank topic buffer");
 	};
-
-	debugC(1, kDebugDialogue,
-		"Harvester: Hank dialogue start day=%d item='%s' initial=%d trackedDayValid=%d trackedDay=%d sameDayPending=%d rangshotPending=%d topicLine=%d topicBuffer='%s'",
-		currentStoryDayIndex, usedItemName.empty() ? "<none>" : usedItemName.c_str(),
-		(int)state.pendingInitialConversation,
-		(int)state.hasTrackedDayState, state.trackedDayIndex,
-		(int)state.pendingSameDayFollowup,
-		(int)state.pendingRangshotSequence,
-		hankTopicBufferLineIndex, hankTopicBuffer.c_str());
+	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
+		return runtime.playDialogueEntrySequence(lines, count);
+	};
+	auto playLine = [&](int wavId, const char *speakerId = "HANK",
+			int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
+	};
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
@@ -399,77 +448,160 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		debugC(1, kDebugDialogue, "Harvester: Hank selected topic='%s'", selectedTopic.c_str());
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()))
-			return runtime.playDialogueLine(0x8dc, "HANK");
-
-		const Common::String momTopic = runtime.startupText().getDialogueResponseLine(0xd2);
-		Common::Array<Common::String> currentTopics;
-		splitDialogueMenuLine(hankTopicBuffer, currentTopics);
-		const bool matchesMomTopicByLine = !momTopic.empty() && selectedTopic.equalsIgnoreCase(momTopic);
-		const bool matchesMomTopicFromIntroBuffer = hankTopicBufferLineIndex == 0xc8 &&
-			!currentTopics.empty() && selectedTopic.equalsIgnoreCase(currentTopics[0]);
-		if (matchesMomTopicByLine || matchesMomTopicFromIntroBuffer) {
-			debugC(1, kDebugDialogue,
-				"Harvester: Hank matched special Mom branch '%s' (lineMatch=%d bufferMatch=%d)",
-				selectedTopic.c_str(), (int)matchesMomTopicByLine, (int)matchesMomTopicFromIntroBuffer);
-			const DialogueLineEntry lines[] = {
-				{ 0x725, "HANK", 0 },
-				{ 0x729, "PC", 0 },
-				{ 0x72d, "HANK", 0 },
-				{ 0x733, "PC", 0 },
-				{ 0x737, "HANK", 0 },
-				{ 0x73b, "PC", 0 },
-				{ 0x741, "HANK", 0 },
-				{ 0x747, "MOM", 2 }
-			};
-			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
+		if (runtime.matchesResponseLine(selectedTopic, 0xd2)) {
+			Common::Error lineError = playSequence(
+				kHankMomTopicLines, ARRAYSIZE(kHankMomTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			runtime.setActiveSpeakerPortrait("HANK", 0);
 			assignHankTopicBuffer(0xd5);
 			continue;
 		}
-
-		bool handledTopic = false;
-		for (const HankDialogueTopicLine &topic : kHankDialogueTopicLines) {
-			if (topic.responseLineIndex == 0xd2)
-				continue;
-
-			const Common::String topicText =
-				runtime.startupText().getDialogueResponseLine(topic.responseLineIndex);
-			if (topicText.empty() || !selectedTopic.equalsIgnoreCase(topicText))
-				continue;
-
-			if (topic.setDiscussedLodgeTopic)
-				sharedState.discussedLodgeTopic = true;
-
-			debugC(1, kDebugDialogue,
-				"Harvester: Hank matched topic '%s' to response line 0x%x (%d) -> wav=0x%x speaker='%s'",
-				selectedTopic.c_str(), topic.responseLineIndex, topic.responseLineIndex + 1,
-				topic.wavId, topic.speakerId);
-			Common::Error lineError = runtime.playDialogueLine(topic.wavId, topic.speakerId);
+		if (runtime.matchesResponseLine(selectedTopic, 0xd6)) {
+			Common::Error lineError = playSequence(
+				kHankSteveTopicLines, ARRAYSIZE(kHankSteveTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			handledTopic = true;
-			break;
+			assignHankTopicBuffer(0xd7);
+			continue;
 		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xd8) ||
+				runtime.matchesResponseLine(selectedTopic, 0xd9)) {
+			Common::Error lineError = playSequence(
+				kHankLousyRatTopicLines, ARRAYSIZE(kHankLousyRatTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignHankTopicBuffer(0xda);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xdb) ||
+				runtime.matchesResponseLine(selectedTopic, 0xdc)) {
+			Common::Error lineError = playSequence(
+				kHankLightingOutTopicLines, ARRAYSIZE(kHankLightingOutTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 
-		Common::Error lineError = runtime.playDialogueLine(0xa32, "HANK");
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0xdd, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1) {
+				lineError = playLine(0x79d);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				assignHankTopicBuffer(0xde);
+				continue;
+			}
+			if (responseIndex == 2) {
+				lineError = playLine(0x7a4);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				assignHankTopicBuffer(0xdf);
+				continue;
+			}
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe0)) {
+			Common::Error lineError = playLine(0x7ad);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe1)) {
+			Common::Error lineError = playSequence(
+				kHankDaddyTopicLines, ARRAYSIZE(kHankDaddyTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignHankTopicBuffer(0xe2);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe3)) {
+			Common::Error lineError = playSequence(
+				kHankGirlTopicLines, ARRAYSIZE(kHankGirlTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignHankTopicBuffer(0xe4);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe5)) {
+			Common::Error lineError = playLine(0x7f4);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe6)) {
+			Common::Error lineError = playSequence(
+				kHankTvTopicIntroLines, ARRAYSIZE(kHankTvTopicIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueFst(kDialogueRangshotFstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playSequence(
+				kHankTvTopicOutroLines, ARRAYSIZE(kHankTvTopicOutroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignHankTopicBuffer(0xe8);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xe9)) {
+			Common::Error lineError = playSequence(
+				kHankCowboyShowTopicLines, ARRAYSIZE(kHankCowboyShowTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0xea, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1) {
+				lineError = playLine(0x856);
+			} else if (responseIndex == 2) {
+				lineError = playLine(0x85a);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xeb)) {
+			Common::Error lineError = playSequence(
+				kHankSickTopicLines, ARRAYSIZE(kHankSickTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignHankTopicBuffer(0xec);
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xed)) {
+			Common::Error lineError = playLine(0x881, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xee) ||
+				runtime.matchesResponseLine(selectedTopic, 0xef) ||
+				runtime.matchesResponseLine(selectedTopic, 0xf0)) {
+			Common::Error lineError = playSequence(
+				kHankNewspaperFireSentinelTopicLines,
+				ARRAYSIZE(kHankNewspaperFireSentinelTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xf1)) {
+			sharedState.discussedLodgeTopic = true;
+			Common::Error lineError = playSequence(
+				kHankLodgeTopicLines, ARRAYSIZE(kHankLodgeTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesResponseLine(selectedTopic, 0xf2))
+			return playLine(0x8dc);
+
+		Common::Error lineError = playLine(0xa32);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-
-		if (handledTopic) {
-			debugC(1, kDebugDialogue,
-				"Harvester: Hank handled topic '%s' and now falls through to generic response/exit",
-				selectedTopic.c_str());
-		} else {
-			debugC(1, kDebugDialogue,
-				"Harvester: Hank topic '%s' fell back to generic response and exits dialogue",
-				selectedTopic.c_str());
-		}
-
-		return runtime.playDialogueLine(0x8dc, "HANK");
+		return playLine(0x8dc);
 	}
 }
 
