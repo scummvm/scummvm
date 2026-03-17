@@ -652,6 +652,10 @@ struct GameStateData {
 		return flags[flagIndex];
 	}
 
+	bool getBoolFlag(int flagIndex) const {
+		return getFlag(flagIndex) != 0;
+	}
+
 	void setFlag(int flagIndex, byte value) {
 		if (flagIndex < 0 || flagIndex >= kNumGameFlags)
 			return;

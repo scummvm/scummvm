@@ -191,7 +191,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	int16 xBasePos = 0;
 	int16 yBasePos = 0;
 	if (speakerId == kAlfredColor) {
-		if (g_engine->_state->getFlag(FLAG_FROM_INTRO) == true) {
+		if (g_engine->_state->getBoolFlag(FLAG_FROM_INTRO) == true) {
 			// Different talking animation for the post-intro sequence in which Alfred speaks in bed
 			g_engine->_alfredState.setState(ALFRED_SPECIAL_ANIM);
 		} else {
@@ -247,7 +247,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	_events->_leftMouseClicked = false;
 	_dialogActive = true;
 	int curPage = 0;
-	bool fromIntro = g_engine->_state->getFlag(FLAG_FROM_INTRO) == true;
+	bool fromIntro = g_engine->_state->getBoolFlag(FLAG_FROM_INTRO) == true;
 
 	uint32 pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
 	uint32 pageStartMs = g_system->getMillis();
@@ -1035,7 +1035,7 @@ void DialogManager::maybeDisableChoice(Common::Array<Pelrock::ChoiceOption> *cho
  * Convenience method if we know it's Alfred talking
  */
 void DialogManager::sayAlfred(Common::StringArray texts) {
-	if (g_engine->_state->getFlag(FLAG_FROM_INTRO) == true) {
+	if (g_engine->_state->getBoolFlag(FLAG_FROM_INTRO) == true) {
 		g_engine->_alfredState.setState(ALFRED_SPECIAL_ANIM);
 	} else {
 		g_engine->_alfredState.setState(ALFRED_TALKING);

@@ -1355,7 +1355,7 @@ void PelrockEngine::closeEgyptMuseumDoor(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
+	if (_state->getBoolFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x1);
 		checkAllSymbols();
@@ -1363,7 +1363,7 @@ void PelrockEngine::pushSymbol1(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
+	if (_state->getBoolFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x2);
 		checkAllSymbols();
@@ -1371,7 +1371,7 @@ void PelrockEngine::pushSymbol2(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
+	if (_state->getBoolFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x4);
 		checkAllSymbols();
@@ -1379,7 +1379,7 @@ void PelrockEngine::pushSymbol3(HotSpot *hotspot) {
 }
 
 void PelrockEngine::pushSymbol4(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
+	if (_state->getBoolFlag(FLAG_LOOKED_SYMBOL_MUSEUM_EXTERIOR) == true) {
 		byte symbolsPulled = _state->getFlag(FLAG_SYMBOLS_PUSHED);
 		_state->setFlag(FLAG_SYMBOLS_PUSHED, symbolsPulled | 0x8);
 		checkAllSymbols();
@@ -1424,7 +1424,7 @@ void PelrockEngine::useKeyWithPortrait(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::openSafe(HotSpot *hotspot) {
-	if (_state->getFlag(FLAG_SAFE_COMBINATION) == true) {
+	if (_state->getBoolFlag(FLAG_SAFE_COMBINATION) == true) {
 		_room->addSticker(102);
 		_dialog->say(_res->_ingameTexts[kTextGranCantidadDinero]);
 		addInventoryItem(82);
@@ -2080,7 +2080,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		_state->setFlag(FLAG_ALFRED_SPEAKS_EGYPTIAN, true);
 		break;
 	case 24: // Encyclopedia
-		if (_state->getFlag(FLAG_RIDDLE_PRESENTED) == true) {
+		if (_state->getBoolFlag(FLAG_RIDDLE_PRESENTED) == true) {
 			_dialog->say(_res->_ingameTexts[kTextCapituloParadojas]);
 			_state->setCurrentRoot(25, 44, 0);
 		} else {

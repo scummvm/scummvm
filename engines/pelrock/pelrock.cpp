@@ -397,7 +397,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		// Easter egg in room 2, pressing x 250 times after the character has mentioned it triggers a special dialog
 		if (_events->_lastKeyEvent == Common::KEYCODE_x) {
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
-			if (_state->getFlag(FLAG_HOOKER_250_TIMES) == true) {
+			if (_state->getFlag(FLAG_HOOKER_250_TIMES)) {
 				_numPressedX++;
 				if (_numPressedX == 250) {
 					_dialog->say(_res->_ingameTexts[kTextYLosCondones]);
@@ -457,7 +457,7 @@ void PelrockEngine::maybeHaveDogPee() {
 }
 
 void PelrockEngine::maybePlayPostIntro() {
-	if (_state->getFlag(FLAG_FROM_INTRO) == true) {
+	if (_state->getFlag(FLAG_FROM_INTRO)) {
 		setScreenAndPrepare(0, ALFRED_LEFT);
 		_alfredState.x = 396;
 		_alfredState.y = 267;
@@ -1848,7 +1848,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 28: {
-		if (_state->getFlag(FLAG_CROCODILE_ON) == true) {
+		if (_state->getFlag(FLAG_CROCODILE_ON)) {
 			byte palette[768];
 			_res->getPaletteForRoom28(palette);
 			g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -1857,9 +1857,9 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 26: {
-		if (_state->getFlag(FLAG_TO_JAIL) == true) {
+		if (_state->getBoolFlag(FLAG_TO_JAIL) == true) {
 			_dialog->_goodbyeDisabled = true;
-			if (_state->getFlag(FLAG_DOLL_PLACED) == true) {
+			if (_state->getBoolFlag(FLAG_DOLL_PLACED) == true) {
 				_state->setCurrentRoot(26, 2, 1);
 			} else {
 				_dialog->say(_res->_ingameTexts[kTextOigaUsted], 1);
@@ -1872,7 +1872,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		break;
 	}
 	case 30: {
-		if (_state->getFlag(FLAG_STOLE_PRINCESS_HAIR) == true) {
+		if (_state->getBoolFlag(FLAG_STOLE_PRINCESS_HAIR) == true) {
 			_dialog->_goodbyeDisabled = true;
 			_state->setFlag(FLAG_STOLE_PRINCESS_HAIR, false);
 			_room->enableSprite(0, 200, PERSIST_TEMP);
@@ -1885,8 +1885,8 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 		if (_shakeEffectState.enabled) {
 			_shakeEffectState.disable();
 		}
-		if (_state->getFlag(FLAG_PYRAMID_COLLAPSED) == true &&
-			// _state->getFlag(FLAG_VIGILANTE_MEANDO) == true &&
+		if (_state->getBoolFlag(FLAG_PYRAMID_COLLAPSED) == true &&
+			// _state->getBoolFlag(FLAG_GUARD_PEEING) == true &&
 			_state->getFlag(FLAG_PYRAMID_COLLAPSED2) == false) {
 			_state->setFlag(FLAG_GUARD_PEEING, false);
 			_state->setFlag(FLAG_PYRAMID_COLLAPSED2, true);
@@ -1904,7 +1904,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 	case 48: {
 		_dialog->_goodbyeDisabled = true;
 
-		if (_state->getFlag(FLAG_END_OF_GAME) == true) {
+		if (_state->getBoolFlag(FLAG_END_OF_GAME) == true) {
 
 			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
 			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
@@ -1913,7 +1913,7 @@ void PelrockEngine::doExtraActions(int roomNumber) {
 
 			endingScene();
 
-		} else if (_state->getFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
+		} else if (_state->getBoolFlag(FLAG_CORRECT_DOOR_CHOSEN) == true) {
 			_dialog->say(_res->_ingameTexts[kTextOhMiSalvador]);
 			_dialog->say(_res->_ingameTexts[kTextVoyPoriPrincesa]);
 			_state->setFlag(FLAG_TRAPDOOR_OPEN, true);
