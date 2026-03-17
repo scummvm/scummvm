@@ -760,24 +760,85 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		interaction.audioCommands.clear();
 	};
 
-	auto buildResponseMenuLayout = [&](const Common::String &responseLine,
+	auto parseResponseMenuLine = [&](const Common::String &responseLine,
 			Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows) {
 		options.clear();
 		totalRows = 0;
+		if (responseLine.empty())
+			return;
 
-		Common::Array<Common::String> rawOptions;
-		splitDialogueMenuLine(responseLine, rawOptions);
-		for (const Common::String &rawOption : rawOptions) {
+		Common::String segment;
+		Common::Array<Common::String> explicitLines;
+		Common::String optionText;
+
+		auto flushOption = [&]() {
+			if (explicitLines.empty())
+				return;
+
 			DialogueResponseOptionLayout option;
-			option.text = rawOption;
-			menuFont->wordWrapText(rawOption, kDialogueSubtitleTextWidth, option.wrappedLines);
-			if (option.wrappedLines.empty())
-				option.wrappedLines.push_back(rawOption);
+			option.text = optionText;
 			option.rowStart = (int)totalRows;
+			for (const Common::String &explicitLine : explicitLines) {
+				Common::Array<Common::String> wrappedExplicitLines;
+				menuFont->wordWrapText(explicitLine, kDialogueSubtitleTextWidth, wrappedExplicitLines);
+				if (wrappedExplicitLines.empty())
+					wrappedExplicitLines.push_back(explicitLine);
+				for (const Common::String &wrappedExplicitLine : wrappedExplicitLines)
+					option.wrappedLines.push_back(wrappedExplicitLine);
+			}
 			option.rowCount = MAX<int>(1, option.wrappedLines.size());
 			totalRows += option.rowCount;
 			options.push_back(option);
+
+			explicitLines.clear();
+			optionText.clear();
+		};
+
+		auto consumeSegment = [&](const Common::String &rawSegment) {
+			Common::String segmentText = rawSegment;
+			if (segmentText.empty())
+				return;
+
+			uint digitEnd = 0;
+			while (digitEnd < segmentText.size() && segmentText[digitEnd] >= '0' &&
+					segmentText[digitEnd] <= '9') {
+				++digitEnd;
+			}
+			const bool startsNewOption = digitEnd > 0 && digitEnd < segmentText.size() &&
+				segmentText[digitEnd] == '.';
+			if (startsNewOption) {
+				flushOption();
+
+				Common::String optionLine = segmentText.substr(digitEnd + 1);
+				optionLine.trim();
+				explicitLines.push_back(optionLine);
+				optionText = optionLine;
+				return;
+			}
+
+			explicitLines.push_back(segmentText);
+			if (!optionText.empty())
+				optionText += ' ';
+			optionText += segmentText;
+		};
+
+		for (uint i = 0; i < responseLine.size(); ++i) {
+			if (responseLine[i] == '/') {
+				consumeSegment(segment);
+				segment.clear();
+				continue;
+			}
+
+			segment += responseLine[i];
 		}
+
+		consumeSegment(segment);
+		flushOption();
+	};
+
+	auto buildResponseMenuLayout = [&](const Common::String &responseLine,
+			Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows) {
+		parseResponseMenuLine(responseLine, options, totalRows);
 	};
 
 	auto getResponseMenuItemAt = [&](const Common::Array<DialogueResponseOptionLayout> &options,
@@ -840,13 +901,17 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		screen->update();
 	};
 
-	auto runResponseMenu = [&](int responseLineIndex, int &selectedIndex) -> Common::Error {
+	auto runResponseMenuText = [&](const Common::String &responseLine, int responseLineIndex,
+			int &selectedIndex) -> Common::Error {
 		selectedIndex = 0;
 
-		const Common::String responseLine = startupText->getDialogueResponseLine(responseLineIndex);
 		if (responseLine.empty()) {
-			debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) is empty",
-				responseLineIndex, responseLineIndex + 1);
+			if (responseLineIndex >= 0) {
+				debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) is empty",
+					responseLineIndex, responseLineIndex + 1);
+			} else {
+				debugC(1, kDebugDialogue, "Harvester: response menu text is empty");
+			}
 			return Common::kNoError;
 		}
 
@@ -854,14 +919,19 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		uint totalRows = 0;
 		buildResponseMenuLayout(responseLine, options, totalRows);
 		if (options.empty()) {
-			debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) produced no options",
-				responseLineIndex, responseLineIndex + 1);
+			if (responseLineIndex >= 0) {
+				debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) produced no options",
+					responseLineIndex, responseLineIndex + 1);
+			} else {
+				debugC(1, kDebugDialogue, "Harvester: response menu text produced no options");
+			}
 			return Common::kNoError;
 		}
 
-		Common::Array<Common::String> rawOptions;
-		splitDialogueMenuLine(responseLine, rawOptions);
-		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, rawOptions);
+		Common::Array<Common::String> optionTexts;
+		for (const DialogueResponseOptionLayout &option : options)
+			optionTexts.push_back(option.text);
+		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, optionTexts);
 
 		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
 		Common::Error releaseError = waitForPointerRelease();
@@ -881,27 +951,43 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 				if (event.type == Common::EVENT_KEYDOWN) {
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) cancelled",
-							responseLineIndex, responseLineIndex + 1);
+						if (responseLineIndex >= 0) {
+							debugC(1, kDebugDialogue, "Harvester: response menu line 0x%x (%d) cancelled",
+								responseLineIndex, responseLineIndex + 1);
+						} else {
+							debugC(1, kDebugDialogue, "Harvester: response menu text cancelled");
+						}
 						return Common::kNoError;
 					}
 					if (event.kbd.ascii >= '1' && event.kbd.ascii <= '9') {
 						const int menuIndex = event.kbd.ascii - '0';
 						if (menuIndex >= 1 && menuIndex <= (int)options.size()) {
 							selectedIndex = menuIndex;
-							debugC(1, kDebugDialogue,
-								"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via hotkey",
-								responseLineIndex, responseLineIndex + 1,
-								selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
+							if (responseLineIndex >= 0) {
+								debugC(1, kDebugDialogue,
+									"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via hotkey",
+									responseLineIndex, responseLineIndex + 1,
+									selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
+							} else {
+								debugC(1, kDebugDialogue,
+									"Harvester: response menu text selected option[%d]='%s' via hotkey",
+									selectedIndex, options[(uint)(selectedIndex - 1)].text.c_str());
+							}
 							return waitForPointerRelease();
 						}
 					}
 				} else if (event.type == Common::EVENT_LBUTTONDOWN && hoveredOptionIndex >= 0) {
 					selectedIndex = hoveredOptionIndex + 1;
-					debugC(1, kDebugDialogue,
-						"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via click",
-						responseLineIndex, responseLineIndex + 1,
-						selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
+					if (responseLineIndex >= 0) {
+						debugC(1, kDebugDialogue,
+							"Harvester: response menu line 0x%x (%d) selected option[%d]='%s' via click",
+							responseLineIndex, responseLineIndex + 1,
+							selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
+					} else {
+						debugC(1, kDebugDialogue,
+							"Harvester: response menu text selected option[%d]='%s' via click",
+							selectedIndex, options[(uint)hoveredOptionIndex].text.c_str());
+					}
 					return waitForPointerRelease();
 				}
 			}
@@ -911,6 +997,11 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
+	};
+
+	auto runResponseMenu = [&](int responseLineIndex, int &selectedIndex) -> Common::Error {
+		const Common::String responseLine = startupText->getDialogueResponseLine(responseLineIndex);
+		return runResponseMenuText(responseLine, responseLineIndex, selectedIndex);
 	};
 
 	auto runKeywordMenu = [&](const Common::String &topicBuffer, int topicBufferLineIndex,
@@ -1036,7 +1127,11 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	DialogueRuntime runtime(
 		_engine, *startupScript, *startupText, startupFlow, npc.roomName, genericByeTopic,
 		playDialogueLineWithVariant, playDialogueLine, playDialogueEntrySequence,
-		playDialogueFst, runKeywordMenu, runResponseMenu, assignTopicBuffer,
+		playDialogueFst, runKeywordMenu, runResponseMenu,
+		[&](const Common::String &responseLine, int &selectedIndex) {
+			return runResponseMenuText(responseLine, -1, selectedIndex);
+		},
+		assignTopicBuffer,
 		matchesResponseLine, matchesAnyResponseLine, queueDialogueInteractionIfNeeded,
 		applyImmediateDialogueInteractionEffects,
 		[&](int maxValue) { return _engine.getRandomNumber(maxValue); },

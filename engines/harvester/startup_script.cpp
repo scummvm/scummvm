@@ -1008,6 +1008,32 @@ bool StartupScript::setRuntimeNpcState(const Common::String &npcName, bool activ
 	return changed;
 }
 
+bool StartupScript::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
+	if (npcName.empty())
+		return false;
+
+	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	if (!runtimeNpc)
+		return false;
+
+	bool monsterChanged = false;
+	if (!runtimeNpc->monsterfyTargetName.empty()) {
+		StartupMonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
+		if (runtimeMonster) {
+			monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
+			runtimeMonster->active = true;
+			runtimeMonster->visible = true;
+		} else {
+			debug(1, "Harvester: unresolved monsterfy target for dialogue npc='%s' target='%s'",
+				runtimeNpc->npcName.c_str(), runtimeNpc->monsterfyTargetName.c_str());
+		}
+	}
+
+	const bool changed = !runtimeNpc->deathOrMonsterfyFlag;
+	runtimeNpc->deathOrMonsterfyFlag = true;
+	return changed || monsterChanged;
+}
+
 bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const {
 	state = StartupRoomSetupState();
