@@ -149,56 +149,12 @@ void GraphicsManager::drawColoredText(Graphics::ManagedSurface *screen, const Co
 	}
 }
 
-void GraphicsManager::drawColoredText(Graphics::ManagedSurface &buf, const Common::String &text, int x, int y, int w, byte &defaultColor, Graphics::Font *font) {
-
-	Graphics::Surface tempSurface;
-	Common::Rect r = font->getBoundingBox(text); // Ensure font metrics are loaded before creating surface
-
-	tempSurface.create(r.width(), r.height(), Graphics::PixelFormat::createFormatCLUT8());
-
-	int currentX = x;
-
-	Common::String segment;
-	for (uint i = 0; i < text.size(); i++) {
-		if (text[i] == '@' && i + 1 < text.size()) {
-			// Draw accumulated segment
-			if (!segment.empty()) {
-				font->drawString(&tempSurface, segment, currentX, y, w, defaultColor);
-				currentX += font->getStringWidth(segment);
-				segment.clear();
-			}
-			defaultColor = text[i + 1];
-			i++; // skip color code
-		} else {
-			segment += text[i];
-		}
-	}
-
-	// Draw remaining segment
-	if (!segment.empty()) {
-		font->drawString(&tempSurface, segment, currentX, y, w, defaultColor);
-	}
-
-	// Use transBlitFrom to blit non-zero pixels
-	buf.transBlitFrom(tempSurface, Common::Point(x, y), 0);
-	tempSurface.free();
-}
-
 void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface *surface, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
 	int currentX = x;
 	byte currentColor = 255;
 
 	for (uint i = 0; i < text.size(); i++) {
 		drawColoredText(surface, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
-	}
-}
-
-void GraphicsManager::drawColoredTexts(Graphics::ManagedSurface &buf, const Common::StringArray &text, int x, int y, int w, int yPadding, Graphics::Font *font) {
-	int currentX = x;
-	byte currentColor = 255;
-
-	for (uint i = 0; i < text.size(); i++) {
-		drawColoredText(buf, text[i], currentX, y + i * (font->getFontHeight() + yPadding), w, currentColor, font);
 	}
 }
 

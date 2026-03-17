@@ -122,13 +122,10 @@ void SpellBook::drawScreen() {
 
 	if (_spell != nullptr) {
 		drawSpriteToBuffer(_compositeScreen, _spell->image, 168, 143, 119, 99, 207);
-		g_engine->_graphics->drawColoredTexts(_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
+		g_engine->_graphics->drawColoredTexts(&_compositeScreen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
 	}
 
 	g_engine->_screen->blitFrom(_compositeScreen);
-	if (_spell != nullptr) {
-		g_engine->_graphics->drawColoredTexts(g_engine->_screen, _spell->text, textX, textY, 640, 0, g_engine->_smallFont);
-	}
 }
 
 void SpellBook::loadBackground() {
