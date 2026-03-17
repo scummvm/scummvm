@@ -78,6 +78,7 @@
 #include "harvester/npc/ryder_dialogue.h"
 #include "harvester/npc/sergeant_dialogue.h"
 #include "harvester/npc/nude_man_dialogue.h"
+#include "harvester/npc/stephanie_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/sparky_dialogue.h"
 #include "harvester/npc/swell_dialogue.h"
@@ -406,6 +407,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new ValetDialogueHandler());
 	_npcHandlers.push_back(new VetDialogueHandler());
 	_npcHandlers.push_back(new SparkyDialogueHandler());
+	_npcHandlers.push_back(new StephanieDialogueHandler());
 	_npcHandlers.push_back(new SwellDialogueHandler());
 	_npcHandlers.push_back(new WhaleyDialogueHandler());
 	_npcHandlers.push_back(new HankDialogueHandler());
