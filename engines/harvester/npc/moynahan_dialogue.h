@@ -29,8 +29,19 @@ namespace Harvester {
 class MoynahanDialogueHandler : public NpcDialogueHandler {
 public:
 	struct MoynahanRoomDialogueState {
-		bool talkStatePending = true;
+		bool introPending = true;
+		bool slashMarksTopicUnlocked = false;
+		bool slashMarksIntroShown = false;
+		bool gotGlue = false;
+		bool ledgersIntroduced = false;
 		bool ledgerEvidenceLinePlayed = false;
+		bool stephMidgameShown = false;
+		bool dayFiveShown = false;
+		bool burnedTvStationShown = false;
+		bool karinKidnapedShown = false;
+		bool butcherDeadShown = false;
+		bool jimmyDeadShown = false;
+		bool karinFoundDeadShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
