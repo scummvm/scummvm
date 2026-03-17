@@ -57,11 +57,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Pelrock";
+		return "Alfred Pelrock";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Pelrock (C)";
+		return "(C) 1997 DDM";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
