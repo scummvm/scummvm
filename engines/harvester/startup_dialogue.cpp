@@ -68,6 +68,9 @@ static const int kDialogueOtherEndY = 193;
 static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
+static const char *const kDialogueC008AFstPath = "GRAPHIC/FST/C008A.FST";
+static const char *const kDialogueC008BFstPath = "GRAPHIC/FST/C008B.FST";
+static const char *const kBabyGurgleActionTag = "BABY_GURGLE";
 static const char *const kShownEvidenceOfBlackmailFlag = "SHOWN_EVIDENCE_OF_BLACKMAIL";
 static const char *const kShownEvidenceSheriffOwnsFlag = "SHOWN_EVIDENCE_SHERIFF_OWNS";
 static const char *const kShownLedgersToAnyoneFlag = "SHOWN_LEDGERS_TO_ANYONE_OTH";
@@ -143,6 +146,28 @@ static const DialogueLineEntry kMomTopic119Lines[] = {
 	{ 0x1e4f, "PC", 0 },
 	{ 0x1e53, "MOM", 0 },
 	{ 0x1f99, "MOM", 2 }
+};
+
+static const DialogueLineEntry kMomTopic11dOpeningLines[] = {
+	{ 0x1e7c, "PC", 4 },
+	{ 0x1e80, "MOM", 2 }
+};
+
+static const DialogueLineEntry kMomTopic11dPostC008ALines[] = {
+	{ 0x1e8e, "MOM", 2 },
+	{ 0x1e94, "PC", 2 }
+};
+
+static const DialogueLineEntry kMomTopic11dClosingLines[] = {
+	{ 0x1e9d, "MOM", 3 },
+	{ 0x1ea3, "MOM", 3 }
+};
+
+static const DialogueLineEntry kMomTopic121Lines[] = {
+	{ 0x1ec0, "PC", 0 },
+	{ 0x1ec4, "MOM", 2 },
+	{ 0x1ec9, "PC", 0 },
+	{ 0x1ecd, "MOM", 2 }
 };
 
 static const DialogueLineEntry kMomPtaLines[] = {
@@ -886,6 +911,25 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		return Common::kNoError;
 	};
 
+	auto playDialogueFst = [&](const Common::String &path) -> Common::Error {
+		FstPlayer fstPlayer(_engine);
+		if (!fstPlayer.play(path))
+			return Common::kReadingFailed;
+
+		return Common::kNoError;
+	};
+
+	auto queueDialogueInteractionIfNeeded = [&](const StartupInteractionResult &interaction) {
+		if (interaction.abortRemainingCommandChain || interaction.mutatedRuntimeState ||
+				!interaction.musicPath.empty() || !interaction.nextRoomName.empty() ||
+				!interaction.deathFlicPath.empty() || interaction.requestMainMenu ||
+				!interaction.dialogueNpcName.empty() ||
+				!interaction.dialogueContinuationTag.empty() ||
+				!interaction.audioCommands.empty()) {
+			startupFlow.queueDialogueInteraction(interaction);
+		}
+	};
+
 	auto buildResponseMenuLayout = [&](const Common::String &responseLine,
 			Common::Array<DialogueResponseOptionLayout> &options, uint &totalRows) {
 		options.clear();
@@ -1542,14 +1586,42 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 				continue;
 			}
 			if (matchesResponseLine(selectedTopic, 0x11d)) {
-				Common::Error lineError = playDialogueLine(0x1e7c, "PC");
+				Common::Error lineError = playDialogueEntrySequence(
+					kMomTopic11dOpeningLines, ARRAYSIZE(kMomTopic11dOpeningLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				lineError = playDialogueFst(kDialogueC008AFstPath);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				lineError = playDialogueEntrySequence(
+					kMomTopic11dPostC008ALines, ARRAYSIZE(kMomTopic11dPostC008ALines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+
+				StartupInteractionResult babyGurgleInteraction;
+				if (startupScript->executeActionTag(kBabyGurgleActionTag, babyGurgleInteraction)) {
+					if (!babyGurgleInteraction.musicPath.empty())
+						(void)_engine.playStartupMusic(babyGurgleInteraction.musicPath);
+					if (!babyGurgleInteraction.audioCommands.empty())
+						startupFlow.executeStartupAudioCommands(babyGurgleInteraction.audioCommands);
+
+					babyGurgleInteraction.musicPath.clear();
+					babyGurgleInteraction.audioCommands.clear();
+					queueDialogueInteractionIfNeeded(babyGurgleInteraction);
+				}
+
+				lineError = playDialogueEntrySequence(
+					kMomTopic11dClosingLines, ARRAYSIZE(kMomTopic11dClosingLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				lineError = playDialogueFst(kDialogueC008BFstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignMomTopicBuffer(0x120);
 				continue;
 			}
 			if (matchesResponseLine(selectedTopic, 0x121)) {
-				Common::Error lineError = playDialogueLine(0x1ec0, "PC");
+				Common::Error lineError = playDialogueEntrySequence(kMomTopic121Lines, ARRAYSIZE(kMomTopic121Lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignMomTopicBuffer(0x122);
