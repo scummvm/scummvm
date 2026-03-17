@@ -125,6 +125,19 @@ struct StartupNpcRecord {
 	Common::String entityInitArg;
 };
 
+struct StartupMonsterRecord {
+	int posX = 0;
+	int posY = 0;
+	int posZ = 0;
+	int initialFacing = -1;
+	Common::String roomName;
+	Common::String monsterName;
+	Common::String modelPath;
+	Common::String onDeathActionTag;
+	bool active = false;
+	bool visible = false;
+};
+
 struct StartupRegionRecord {
 	int left = 0;
 	int top = 0;
@@ -217,6 +230,7 @@ struct StartupRoomSetupState {
 	Common::Array<StartupObjectRecord> roomObjects;
 	Common::Array<StartupAnimRecord> roomAnimations;
 	Common::Array<StartupNpcRecord> roomNpcs;
+	Common::Array<StartupMonsterRecord> roomMonsters;
 	Common::Array<StartupRegionRecord> roomRegions;
 	Common::Array<StartupAudioCommand> audioCommands;
 };
@@ -247,6 +261,7 @@ public:
 	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
 	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
 	const Common::Array<StartupNpcRecord> &getNpcs() const { return _npcs; }
+	const Common::Array<StartupMonsterRecord> &getMonsters() const { return _monsters; }
 	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
@@ -303,6 +318,8 @@ private:
 	StartupRegionRecord *findRuntimeRegion(const Common::String &regionName);
 	StartupNpcRecord *findRuntimeNpc(const Common::String &npcName);
 	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
+	StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName);
+	const StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
 	bool addRuntimeObjectToInventory(const Common::String &objectName);
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const;
@@ -320,6 +337,7 @@ private:
 	Common::Array<StartupObjectRecord> _objects;
 	Common::Array<StartupAnimRecord> _animations;
 	Common::Array<StartupNpcRecord> _npcs;
+	Common::Array<StartupMonsterRecord> _monsters;
 	Common::Array<StartupRegionRecord> _regions;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
@@ -331,6 +349,7 @@ private:
 	Common::Array<StartupAnimRecord> _runtimeAnimations;
 	Common::Array<StartupRegionRecord> _runtimeRegions;
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
+	Common::Array<StartupMonsterRecord> _runtimeMonsters;
 	bool _quickTipsEnabled = true;
 	Common::String _voicePath = "SOUND/VOICE/";
 	StartupDialogueTextMode _dialogueTextMode = kStartupDialogueTextYes;

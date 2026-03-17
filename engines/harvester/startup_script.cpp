@@ -438,6 +438,28 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 			return;
 		}
 
+		if (tag == "MONSTER") {
+			if (tokens.size() < tagIndex + 24)
+				return;
+
+			StartupMonsterRecord monster;
+			if (tagIndex >= 3) {
+				monster.posX = atoi(tokens[0].c_str());
+				monster.posY = atoi(tokens[1].c_str());
+				monster.posZ = atoi(tokens[2].c_str());
+			}
+			monster.roomName = tokens[tagIndex + 1];
+			monster.monsterName = tokens[tagIndex + 2];
+			monster.modelPath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
+			monster.initialFacing = parseEntranceFacing(tokens[tagIndex + 8]);
+			monster.active = tokens[tagIndex + 19].equalsIgnoreCase("T");
+			monster.visible = tokens[tagIndex + 20].equalsIgnoreCase("T");
+			monster.onDeathActionTag = tokens[tagIndex + 21];
+			if (!monster.roomName.empty() && !monster.monsterName.empty() && !monster.modelPath.empty())
+				_monsters.push_back(monster);
+			return;
+		}
+
 		if (tag == "REGION") {
 			if (tokens.size() < tagIndex + 7)
 				return;
@@ -572,13 +594,13 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 		state.musicPath = musicPath;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomRegions=%u mutated=%d",
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomRegions=%u mutated=%d",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
-		(uint)state.roomRegions.size(), mutatedRuntimeState);
+		(uint)state.roomMonsters.size(), (uint)state.roomRegions.size(), mutatedRuntimeState);
 
 	return true;
 }
@@ -589,6 +611,7 @@ void StartupScript::resetRuntimeState() {
 	_runtimeAnimations = _animations;
 	_runtimeRegions = _regions;
 	_runtimeNpcs = _npcs;
+	_runtimeMonsters = _monsters;
 
 	for (StartupObjectRecord &object : _runtimeObjects) {
 		object.currentX = object.initialX;
@@ -891,6 +914,18 @@ StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
 	return nullptr;
 }
 
+StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::String &monsterName) {
+	if (monsterName.empty())
+		return nullptr;
+
+	for (StartupMonsterRecord &monster : _runtimeMonsters) {
+		if (monster.monsterName.equalsIgnoreCase(monsterName))
+			return &monster;
+	}
+
+	return nullptr;
+}
+
 const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) const {
 	if (npcName.empty())
 		return nullptr;
@@ -898,6 +933,18 @@ const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcN
 	for (const StartupNpcRecord &npc : _runtimeNpcs) {
 		if (npc.npcName.equalsIgnoreCase(npcName))
 			return &npc;
+	}
+
+	return nullptr;
+}
+
+const StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::String &monsterName) const {
+	if (monsterName.empty())
+		return nullptr;
+
+	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
+		if (monster.monsterName.equalsIgnoreCase(monsterName))
+			return &monster;
 	}
 
 	return nullptr;
@@ -991,6 +1038,14 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 
 		state.roomNpcs.push_back(npc);
 	}
+	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
+		if (!monster.roomName.equalsIgnoreCase(room.roomName))
+			continue;
+		if (!monster.active && !monster.visible)
+			continue;
+
+		state.roomMonsters.push_back(monster);
+	}
 	for (const StartupRegionRecord &region : _runtimeRegions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
@@ -1016,14 +1071,21 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 			npc.posX, npc.posY, npc.posZ, npc.frameDelay,
 			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
 	}
+	for (const StartupMonsterRecord &monster : state.roomMonsters) {
+		debugC(1, kDebugScene,
+			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d model='%s' on_death='%s'",
+			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
+			monster.posX, monster.posY, monster.posZ, monster.initialFacing,
+			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
+	}
 
 	debugC(1, kDebugGeneral,
-		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomRegions=%u",
+		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
 		state.musicPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size(),
-		(uint)state.roomNpcs.size(), (uint)state.roomRegions.size());
+		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(), (uint)state.roomRegions.size());
 
 	return true;
 }
@@ -1191,6 +1253,25 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			continue;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("SET_MONSTER")) {
+			StartupMonsterRecord *runtimeMonster = findRuntimeMonster(command->arg1);
+			if (!runtimeMonster) {
+				debug(1, "Harvester: unresolved monster for %s '%s' monster='%s'",
+					contextLabel, contextName.c_str(), command->arg1.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const bool active = isTruthy(command->arg2);
+			const bool visible = isTruthy(command->arg3);
+			const bool changed = runtimeMonster->active != active || runtimeMonster->visible != visible;
+			runtimeMonster->active = active;
+			runtimeMonster->visible = visible;
+			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("START_DIALOG")) {
 			if (!dialogueNpcName || !dialogueContinuationTag) {
 				debug(1, "Harvester: unsupported startup command '%s' for %s '%s' without dialogue context",
@@ -1218,12 +1299,26 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 			}
 
 			const int deathDamageType = parseNpcDeathDamageType(command->arg2);
+			bool monsterChanged = false;
+			if (command->opcodeName.equalsIgnoreCase("MONSTERFY") && !runtimeNpc->monsterfyTargetName.empty()) {
+				StartupMonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
+				if (runtimeMonster) {
+					monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
+					runtimeMonster->active = true;
+					runtimeMonster->visible = true;
+				} else {
+					debug(1, "Harvester: unresolved monsterfy target for %s '%s' npc='%s' target='%s'",
+						contextLabel, contextName.c_str(), command->arg1.c_str(),
+						runtimeNpc->monsterfyTargetName.c_str());
+				}
+			}
+
 			const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
 				(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
 			runtimeNpc->deathOrMonsterfyFlag = true;
 			if (deathDamageType != 0)
 				runtimeNpc->deathDamageType = deathDamageType;
-			noteMutation(changed);
+			noteMutation(changed || monsterChanged);
 			currentTag = command->arg4;
 			continue;
 		}
@@ -1267,7 +1362,10 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
 			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
+			command->opcodeName.equalsIgnoreCase("SET_MONSTER") ||
 			command->opcodeName.equalsIgnoreCase("START_DIALOG") ||
+			command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
+			command->opcodeName.equalsIgnoreCase("MONSTERFY") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			return true;
