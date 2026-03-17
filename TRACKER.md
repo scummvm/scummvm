@@ -23,7 +23,8 @@
 - Updated the engine inventory/runtime path to match those confirmed behaviors:
   - the startup script now keeps a persistent player HP value and applies native `HEAL_PC`, `ADJ_HP`, and `KILL_PC` mutations to it;
   - the inventory panel now synthesizes the native `INV_STAT1..4` status object from current HP instead of treating those records as ordinary grid items;
-  - the health portrait remains non-actionable in the inventory UI.
+  - the health portrait remains non-actionable in the inventory UI;
+  - revisiting `run_inventory_screen` showed the native portrait is spawned through `spawn_object_entity_from_record` and drawn by the shared render-entity keyed-blit path, so the engine inventory overlay now uses palette-index-0 transparency instead of an opaque bitmap copy.
 
 ## Next Suggested Action
 

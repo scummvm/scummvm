@@ -22,7 +22,9 @@
 #include "harvester/startup_inventory.h"
 
 #include "common/endian.h"
+#include "graphics/blit.h"
 #include "graphics/font.h"
+#include "graphics/screen.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
 #include "harvester/startup_art.h"
@@ -39,12 +41,41 @@ static const int kInventoryItemMaxRight = 564;
 static const int kInventoryItemSpacing = 5;
 static const byte kShadowColor = 0;
 static const byte kRoomPromptColor = 0xce;
+static const byte kTransparentPaletteIndex = 0;
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
 	if (!bitmap.isValid())
 		return;
 
-	screen.copyRectToSurface(bitmap.pixels.data(), bitmap.width, x, y, bitmap.width, bitmap.height);
+	int destX = x;
+	int destY = y;
+	int srcX = 0;
+	int srcY = 0;
+	int width = (int)bitmap.width;
+	int height = (int)bitmap.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
 static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
