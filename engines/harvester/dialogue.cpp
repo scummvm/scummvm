@@ -65,6 +65,7 @@
 #include "harvester/npc/phelps_dialogue.h"
 #include "harvester/npc/priest_dialogue.h"
 #include "harvester/npc/pta_mom_dialogue.h"
+#include "harvester/npc/ryder_dialogue.h"
 #include "harvester/npc/stub_dialogue.h"
 #include "harvester/npc/swell_dialogue.h"
 #include "harvester/npc/valet_dialogue.h"
@@ -377,6 +378,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new PastorelliDialogueHandler());
 	_npcHandlers.push_back(new PhelpsDialogueHandler());
 	_npcHandlers.push_back(new PriestDialogueHandler());
+	_npcHandlers.push_back(new RyderDialogueHandler());
 	_npcHandlers.push_back(new ValetDialogueHandler());
 	_npcHandlers.push_back(new VetDialogueHandler());
 	_npcHandlers.push_back(new SwellDialogueHandler());
