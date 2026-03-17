@@ -132,6 +132,10 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 
 	if (_saveEncoding) {
 		checker = readStringEncoded(fp);
+
+		// ScummVM used UTF8_CHECKER when writing files before March 2026 due to a conversion error.
+		// For backward compatibility, we still accept UTF8_CHECKER when reading files.
+		// Files written after March 2026 use CP1252_CHECKER, the correct encoding.
 		if ((checker != CP1252_CHECKER) && (checker != UTF8_CHECKER)) {
 			delete fp;
 			return fatal(LOAD_ERROR "The current file encoding setting does not match the encoding setting used when this file was created:", filename);
