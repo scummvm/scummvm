@@ -134,6 +134,19 @@ static int resolvePlayerFacingFrame(int facing) {
 	}
 }
 
+static int resolveMonsterFacingFrame(int facing) {
+	switch (facing) {
+	case 1:
+		return 0x0e;
+	case 2:
+		return 0x2c;
+	case 3:
+		return 0x28;
+	default:
+		return 0;
+	}
+}
+
 static PlayerAnimationRange resolvePlayerAnimationRange(int facing) {
 	switch (facing) {
 	case 0:
@@ -730,11 +743,11 @@ bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager 
 	scene.sceneRegions = state.roomRegions;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u npcs=%u regions=%u",
+		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u npcs=%u monsters=%u regions=%u",
 		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
 		(uint)state.roomAnimations.size(), (uint)scene.sceneAnimations.size(),
-		(uint)state.roomNpcs.size(), (uint)scene.sceneRegions.size());
+		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(), (uint)scene.sceneRegions.size());
 
 	return true;
 }
@@ -1899,6 +1912,29 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			state.roomName.c_str(), npc.npcName.c_str(), entity->getClassId(),
 			entity->getX(), entity->getY(), (double)entity->getZ(),
 			npc.frameDelay, npc.modelPath.c_str(), npc.active, npc.visible);
+	}
+	for (const StartupMonsterRecord &monster : state.roomMonsters) {
+		RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(monster.monsterName,
+			monster.modelPath, Common::Point(monster.posX, monster.posY), (float)monster.posZ,
+			resolveMonsterFacingFrame(monster.initialFacing));
+		if (!entity) {
+			debug(1, "Harvester: unable to spawn room monster entity '%s' from '%s'",
+				monster.monsterName.c_str(), monster.modelPath.c_str());
+			continue;
+		}
+
+		entity->setClassId(kRuntimeEntityClassMonster);
+		entity->setHitTestMode(kRuntimeEntityHitTestNone);
+		entity->setVisible(monster.visible);
+		if (!applyRoomActorPlacement(state, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
+			debug(1, "Harvester: unable to apply room monster placement for '%s'",
+				monster.monsterName.c_str());
+		}
+		debugC(1, kDebugScene,
+			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d model='%s' active=%d visible=%d",
+			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
+			entity->getX(), entity->getY(), (double)entity->getZ(), monster.initialFacing,
+			monster.modelPath.c_str(), monster.active, monster.visible);
 	}
 	if (state.hasEntrance) {
 		const int playerFrame = resolvePlayerFacingFrame(state.playerFacing);

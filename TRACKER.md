@@ -15,16 +15,16 @@
 
 ## Last Confirmed Action
 
-- Recovered the native post-dialogue abort flag `DAT_000d60bc` around `dispatch_room_event_actions @ 0x60ee0`, then aligned the startup dialogue continuation flow with the confirmed nested-dispatch behavior.
-  - Confirmed `dispatch_room_event_actions` `case 0x1a` calls `run_npc_dialogue(arg1, 0)`, waits for mouse release, then returns early when `DAT_000d60bc != 0` instead of always resuming `arg4`.
-  - Confirmed `run_inventory_screen @ 0x7ec02`, `handle_target_interaction @ 0x801cc`, and three `update_actor_runtime_state` paths (`0x50a50`, `0x514fb`, `0x5154e`) all set `DAT_000d60bc = 1` immediately after nested `dispatch_room_event_actions` calls, establishing it as the native “abort the caller’s remaining command chain” signal.
-  - Confirmed `run_game_over_screen @ 0x7c749` stores `1` or `2`, and `run_harvester_main_loop` clears `1` to restart the loop but treats `2` as the outer exit path; ScummVM only needed the value-`1` nested-abort behavior for current startup dialogue parity.
-  - ScummVM now propagates a dedicated nested action-tag abort bit through queued dialogue interactions, so `START_DIALOG` continuations are skipped not only on room transitions but also when the dialogue triggers a nested startup action-tag analogue such as Jimmy’s `ACTV_HOUSE_EXIT`.
-  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the abort-path runtime changes.
+- Recovered the startup monster-record half of `MONSTERFY` from `HARVEST.SCR` and the matching native room/action logic, then aligned the startup runtime with that confirmed replacement path.
+  - Confirmed `CONFIG.INI` routes the town script to `HARVEST.SCR`, and decoding that file with the native `0xaa` XOR shows Jimmy’s restored dialogue chain as `DIAL_JIM_4_D -> START_DIALOG "JIMMY" -> MONST_JIM -> MONSTERFY "JIMMY"`.
+  - Confirmed the same decoded script contains both the `NPC "PCHOUSE" ... "JIMMY" "JIMMY_M"` record and a live `MONSTER "PCHOUSE" "JIMMY_M" ... "JIMMY_DEATH_COM"` record, which provides the replacement model path, spawn state, facing, and on-death command tag.
+  - Confirmed `dispatch_room_event_actions @ 0x60ee0` recognizes `MONSTERFY` (`case 0x0e`) and `SET_MONSTER` (`case 0x14`), while `room_setup @ 0x73540` separately materializes matching monster records when their room matches and their active/visible state is enabled.
+  - ScummVM now parses startup `MONSTER` records, keeps runtime monster state alongside objects/anims/NPCs, materializes active-or-visible room monsters as non-interactive scene actors, supports `SET_MONSTER`, and makes `MONSTERFY` both suppress the original NPC and activate/show the linked `monsterfyTargetName` monster record.
+  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the monster-record runtime changes.
 
 ## Next Suggested Action
 
-1. Recover the monster-record replacement half of `MONSTERFY`.
-   - `DIAL_JIM_4_D -> MONST_JIM` is now reachable through the restored `START_DIALOG` continuation, but ScummVM still only sets the NPC death/monsterfy flag and suppresses the original NPC; the native monster-record spawn/replacement path is still missing.
+1. Recover startup monster death / on-death command execution.
+   - The decoded `MONSTER` records carry native death action tags such as `JIMMY_DEATH_COM`, and `room_setup`/`MONSTERFY` parity now reaches the replacement spawn, but the startup runtime still has no monster combat/death path to fire those follow-up commands.
 2. Confirm whether any startup dialogue/action-tag path needs a value-`2` / outer-exit analogue of `DAT_000d60bc`.
-   - Current startup parity only needs the confirmed value-`1` nested-abort case; the DOS main loop also treats `2` as a high-level exit request, but no startup-script path has been tied to that behavior yet.
+   - Current startup parity still only needs the confirmed value-`1` nested-abort case; the DOS main loop also treats `2` as a high-level exit request, but no startup-script path has been tied to that behavior yet.
