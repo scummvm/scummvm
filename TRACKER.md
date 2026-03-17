@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_fireman1 @ 0x33850` into a dedicated `engines/harvester/npc/fireman1_dialogue.*` handler.
-  - Native Fireman 1 dialogue is a two-outcome local talk-state branch: the first talk clears `g_fireman1_talk_state_block` and plays `0x453` for `FIREMAN1`, while subsequent talks fall through to `0x463`.
-  - The engine now routes `FIREMAN1` through a concrete handler with matching per-NPC state instead of falling back to the unsupported NPC path.
+- Ported `handle_talk_to_fireman2 @ 0x33940` into a dedicated `engines/harvester/npc/fireman2_dialogue.*` handler.
+  - Native Fireman 2 dialogue is a two-outcome local talk-state branch: the first talk clears `g_fireman2_talk_state_block` and plays `0x5b9` for `FIREMAN2`, while subsequent talks fall through to `0x5c7`.
+  - The engine now routes `FIREMAN2` through a concrete handler with matching per-NPC state instead of falling back to the unsupported NPC path.
 
 ## Next Suggested Action
 
-1. Port `handle_talk_to_fireman2 @ 0x33940` as the next short local-state handler.
-   - Ghidra decompilation currently shows the same two-outcome shape as Fireman 1: the first talk clears `g_fireman2_talk_state_block` and plays `0x5b9`, while the steady path plays `0x5c7`.
-2. After the short visible handlers are exhausted, return to the bounded multi-branch ports starting with Boyle.
+1. Resume the remaining low-complexity visible handlers before returning to the bounded multi-branch ports.
+   - The next best candidates are the short non-hidden handlers that do not require new shared state reconstruction, followed by the already-bounded multi-branch Boyle port.
+2. After that short-handler pass, return to Boyle and the other larger hidden-topic handlers.
    - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.
