@@ -69,6 +69,7 @@ static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
 static const char *const kShownEvidenceOfBlackmailFlag = "SHOWN_EVIDENCE_OF_BLACKMAIL";
+static const char *const kShownEvidenceSheriffOwnsFlag = "SHOWN_EVIDENCE_SHERIFF_OWNS";
 static const char *const kShownLedgersToAnyoneFlag = "SHOWN_LEDGERS_TO_ANYONE_OTH";
 static const char *const kShownPhotoOfCorpseFlag = "SHOWN_PHOTO_OF_CORPSE_AROUN";
 static const char *const kShownPhotoOfWhaleyHerrillFlag = "SHOWN_PHOTO_OF_WHALEY_HERRI";
@@ -1319,21 +1320,27 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
 				return playDialogueLine(0x2317, "MOM");
 			}
 			if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 					usedItemName.equalsIgnoreCase("LEDGER2")) &&
 					startupScript->getFlagValue("HAVE_BOTH_LEDGERS")) {
+				(void)startupScript->setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
 				return playDialogueLine(0x2320, "MOM");
 			}
 			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
 				return playDialogueLine(0x233b, "PC");
 			}
-			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
+			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
 				return playDialogueLine(0x239c, "MOM");
+			}
 			if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 					usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownEvidenceSheriffOwnsFlag, true);
 				return playDialogueLine(0x2382, "MOM");
 			}
 
