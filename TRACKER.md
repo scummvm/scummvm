@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_ryder @ 0x38c80` into a dedicated `engines/harvester/npc/ryder_dialogue.*` handler.
-  - Native Ryder dialogue is a compact stateful visible handler: `BURNED_TV_STATION` switches him outright to the `RYDER_TV_OUT` bark at `0x5a6`, otherwise the no-item path is a one-shot intro (`0x477`) that falls through to `0x4cf`, and the item path handles Whaley/casket/note evidence only.
-  - The engine now routes both `RYDER` and `RYDER_TV_OUT` through a concrete handler with matching speaker selection, local talk-state, and shared evidence-flag writes.
+- Ported `handle_talk_to_mcknight @ 0x2c770` into a dedicated `engines/harvester/npc/mcknight_dialogue.*` handler.
+  - Native McKnight dialogue is another compact visible handler: `LOOK_SAFE_2ND` forces `0x15d0`, `LOOK_SAFE_1ST` reads an additional unresolved gate before `0x15c9`, the no-item path is a one-shot intro (`0x1587`) that falls through to `0x15e4`, and the item path handles the shared Whaley/casket/ledger/note evidence cluster.
+  - The engine now routes `MCKNIGHT` through a concrete handler with matching talk-state and evidence writes; the extra `LOOK_SAFE_1ST` gate remains locally represented until its gameplay-side setter is recovered.
 
 ## Next Suggested Action
 
-1. Continue the evidence-heavy but still linear visible handlers before returning to the bounded multi-branch ports.
-   - The next best candidate in the visible linear bucket is `MCKNIGHT`; after that, the remaining work shifts back toward more stateful or hidden-topic handlers like `LOOMIS`, `MOYNAHAN`, `MR_POTTS`, and Boyle.
+1. Move back to the more stateful visible handlers now that the compact visible bucket is mostly cleared.
+   - The next best candidates are `LOOMIS`, `MOYNAHAN`, `MR_POTTS`, and `MRS_POTTS`, followed by the larger hidden-topic handlers such as Boyle.
 2. After that visible evidence-handler pass, return to Boyle and the other larger hidden-topic handlers.
    - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.
