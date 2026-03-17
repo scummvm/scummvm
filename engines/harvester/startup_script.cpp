@@ -975,6 +975,25 @@ bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName
 	return changed;
 }
 
+bool StartupScript::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
+		const Common::String &objectName, bool visible) {
+	if (objectName.empty())
+		return false;
+
+	StartupObjectRecord *runtimeObject = findRuntimeObject(ownerOrRoom, objectName);
+	if (!runtimeObject)
+		return false;
+
+	const bool changed = runtimeObject->visible != visible ||
+		runtimeObject->runtimeVisible != visible;
+	runtimeObject->visible = visible;
+	runtimeObject->runtimeVisible = visible;
+	if (visible && runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName))
+		runtimeObject->identShown = true;
+
+	return changed;
+}
+
 bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const {
 	state = StartupRoomSetupState();

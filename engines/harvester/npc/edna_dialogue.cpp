@@ -19,36 +19,12 @@
  *
  */
 
-#ifndef HARVESTER_NPC_DIALOGUE_HANDLER_H
-#define HARVESTER_NPC_DIALOGUE_HANDLER_H
-
-#include "common/error.h"
-#include "common/str.h"
+#include "harvester/npc/edna_dialogue.h"
 
 namespace Harvester {
 
-class DialogueRuntime;
-
-struct DialogueSharedState {
-	bool boyleGascanApplicationState = false;
-	bool dialogueStateD2f04 = false;
-	bool dialogueStateD2ea4 = false;
-	bool dialogueStateD2ea8 = false;
-	bool karinKidnapedDialogueState = false;
-	bool discussedLodgeTopic = false;
-	bool waspWomanDialogueState = false;
-};
-
-class NpcDialogueHandler {
-public:
-	virtual ~NpcDialogueHandler() {}
-
-	virtual bool matchesNpc(const Common::String &npcName) const = 0;
-	virtual void resetState() {}
-	virtual Common::Error handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &sharedState) = 0;
-};
+bool EdnaDialogueHandler::matchesNpc(const Common::String &npcName) const {
+	return npcName.equalsIgnoreCase("EDNA");
+}
 
 } // End of namespace Harvester
-
-#endif // HARVESTER_NPC_DIALOGUE_HANDLER_H
