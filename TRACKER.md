@@ -15,12 +15,12 @@
 
 ## Last Confirmed Action
 
-- Rebuilt `handle_talk_to_mrs_potts @ 0x2ee70` from the corrected native flow, labeled the recovered Karin-alibi and grounded-keyword tails at `0x2f694` and `0x2f9d1`, and wired Mrs. Potts's Tuesday-night alibi follow-up into shared dialogue state so Stephanie can see it.
-  - Mrs. Potts now preserves the native intro default, the non-dead one-shot event gates through the keyword loop, the hidden `Pearls` / `Bake Sale` / `Wedding` / `Grounded` topic expansions and reseeds, the later `Mr. Pottsdam` / `Moynahan` / `Lodge` reseeds, and the `KARIN_KIDNAPED` response-1 alibi setter through `0x28f2`.
-  - The next corrective pass is now the remaining talk-handler audit beyond the Potts family/Stephanie shared-state chain, starting with `handle_talk_to_johnson`.
+- Rebuilt `handle_talk_to_johnson @ 0x27dd0` from the corrected native flow, labeled the recovered reseed tails at `0x28699`, `0x28708`, and `0x28760`, and fixed the engine-side keyword loop so the hidden topic-buffer rewrites are preserved instead of collapsing straight to the generic exit.
+  - Johnson now keeps `0x180` / `0x181` / `0x182` on the `0xb3a -> dialog.rsp[0x183]` path, `0x184` / `0x185` on the `0xb46 -> dialog.rsp[0x186]` path, and `0x187` on the `PC 0xb52` / `JOHNSON 0xb56` / `dialog.rsp[0x188]` path; only `0x177` is the direct exit, while `0x189` remains a silent loop.
+  - The next corrective pass is the remaining keyword-loop / event-tail audit, starting with `handle_talk_to_herrill`.
 
 ## Next Suggested Action
 
 1. Audit the remaining `handle_talk_to_*` ports against the corrected native disassembly.
-   - The highest-value immediate follow-up is `handle_talk_to_johnson`, then the rest of the remaining `handle_talk_to_*` ports whose keyword loops or event tails may still be truncated by the old `play_dialogue_line` decompile breakage.
+   - The highest-value immediate follow-up is `handle_talk_to_herrill`, then the rest of the remaining `handle_talk_to_*` ports whose keyword loops or event tails may still be truncated by the old `play_dialogue_line` decompile breakage.
 2. Apply any additional high-confidence Ghidra renames or comments that fall directly out of those audited handlers before each commit.
