@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	fst_player.o \
 	metaengine.o \
 	npc/dwayne_dialogue.o \
+	npc/edna_dialogue.o \
 	npc/hank_dialogue.o \
 	npc/jimmy_dialogue.o \
 	npc/mom_dialogue.o \

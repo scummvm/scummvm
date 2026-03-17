@@ -37,6 +37,7 @@
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
 #include "harvester/npc/dwayne_dialogue.h"
+#include "harvester/npc/edna_dialogue.h"
 #include "harvester/npc/hank_dialogue.h"
 #include "harvester/npc/jimmy_dialogue.h"
 #include "harvester/npc/mom_dialogue.h"
@@ -200,6 +201,8 @@ static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.
 static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
 static const char *const kDialogueC008AFstPath = "GRAPHIC/FST/C008A.FST";
 static const char *const kDialogueC008BFstPath = "GRAPHIC/FST/C008B.FST";
+static const char *const kDialogueC043FstPath = "GRAPHIC/FST/C043.FST";
+static const char *const kDialogueC043KFstPath = "GRAPHIC/FST/C043K.FST";
 static const char *const kBabyGurgleActionTag = "BABY_GURGLE";
 static const char *const kShownEvidenceOfBlackmailFlag = "SHOWN_EVIDENCE_OF_BLACKMAIL";
 static const char *const kShownEvidenceSheriffOwnsFlag = "SHOWN_EVIDENCE_SHERIFF_OWNS";
@@ -743,6 +746,7 @@ DialogueSystem::~DialogueSystem() {
 
 void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new DwayneDialogueHandler());
+	_npcHandlers.push_back(new EdnaDialogueHandler());
 	_npcHandlers.push_back(new JimmyDialogueHandler());
 	_npcHandlers.push_back(new WaspWomanDialogueHandler());
 	_npcHandlers.push_back(new MomDialogueHandler());
@@ -750,7 +754,6 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new PtaMomDialogueHandler());
 
 	_npcHandlers.push_back(new StubNpcDialogueHandler("PTA_MOM"));
-	_npcHandlers.push_back(new StubNpcDialogueHandler("EDNA"));
 	_npcHandlers.push_back(new StubNpcDialogueHandler("HERRILL"));
 	_npcHandlers.push_back(new StubNpcDialogueHandler("JOHNSON"));
 }
@@ -1385,6 +1388,134 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 	debug(1, "Harvester: unsupported room NPC dialogue handler '%s'", npc.npcName.c_str());
 	return Common::kNoError;
+}
+
+Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
+	EdnaRoomDialogueState &state = _state;
+	auto playEdnaLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "EDNA", headVariant);
+	};
+
+	if (runtime.startupScript().getFlagValue("KILLED_KARIN1"))
+		return playEdnaLine(0x3cdf, 2);
+
+	if (runtime.startupScript().getFlagValue("DNA_S_SUICIDE_NOTE")) {
+		(void)runtime.startupScript().setRuntimeFlagValue("DNA_S_SUICIDE_NOTE", false);
+		Common::Error lineError = runtime.playDialogueFst(
+			runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE")
+				? kDialogueC043KFstPath
+				: kDialogueC043FstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		sharedState.dialogueStateD2ea4 = true;
+		sharedState.dialogueStateD2ea8 = true;
+		(void)runtime.startupScript().setRuntimeObjectVisible("DNAEXT", "SIGNOUT", true);
+		return Common::kNoError;
+	}
+
+	if (!usedItemName.empty()) {
+		if (usedItemName.equalsIgnoreCase("K_PURSE")) {
+			state.karinPurseLinePlayed = true;
+			return playEdnaLine(0x3d05, 3);
+		}
+		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+			return playEdnaLine(0x3bd6);
+		}
+		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
+				usedItemName.equalsIgnoreCase("LEDGER2")) &&
+				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownLedgersToAnyoneFlag, true);
+			return playEdnaLine(0x3bd6);
+		}
+		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+			return playEdnaLine(0x3bde, 2);
+		}
+		if (usedItemName.equalsIgnoreCase("NOTE") ||
+				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
+			return playEdnaLine(0x3be5, 2);
+		}
+		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
+				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			(void)runtime.startupScript().setRuntimeFlagValue(kShownEvidenceSheriffOwnsFlag, true);
+			return playEdnaLine(0x3bee);
+		}
+
+		return playEdnaLine(0x3bcf);
+	}
+
+	if (runtime.startupScript().getFlagValue("BRING_KARIN_TO_SHERIFF")) {
+		Common::Error lineError = playEdnaLine(0x3cce, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = runtime.playDialogueLine(0x3cd2, "PC");
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playEdnaLine(0x3cd7, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().addRuntimeObjectToInventory("REWARD_MONEY");
+		(void)runtime.startupScript().setRuntimeFlagValue("BRING_KARIN_TO_SHERIFF", false);
+		return Common::kNoError;
+	}
+
+	if (state.introPending) {
+		state.introPending = false;
+		Common::Error lineError = playEdnaLine(0x3a95);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x9f, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playEdnaLine(0x3aa1, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueLine(0x3aa6, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playEdnaLine(0x3aaa);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			sharedState.dialogueStateD2f04 = true;
+			lineError = runtime.playDialogueLine(0x3aae, "PC");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			const DialogueLineEntry responseLines[] = {
+				{ 0x3ab2, "EDNA", 0 },
+				{ 0x3ab7, "PC", 0 },
+				{ 0x3abb, "EDNA", 0 },
+				{ 0x3ac2, "EDNA", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		lineError = playEdnaLine(0x3ac6, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	if (!runtime.startupScript().getFlagValue("KARIN_KIDNAPED")) {
+		Common::Error lineError = playEdnaLine(0x3bf8);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	return playEdnaLine(0x3bff);
 }
 
 Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,

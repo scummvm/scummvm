@@ -19,36 +19,29 @@
  *
  */
 
-#ifndef HARVESTER_NPC_DIALOGUE_HANDLER_H
-#define HARVESTER_NPC_DIALOGUE_HANDLER_H
+#ifndef HARVESTER_NPC_EDNA_DIALOGUE_H
+#define HARVESTER_NPC_EDNA_DIALOGUE_H
 
-#include "common/error.h"
-#include "common/str.h"
+#include "harvester/npc/dialogue_handler.h"
 
 namespace Harvester {
 
-class DialogueRuntime;
-
-struct DialogueSharedState {
-	bool boyleGascanApplicationState = false;
-	bool dialogueStateD2f04 = false;
-	bool dialogueStateD2ea4 = false;
-	bool dialogueStateD2ea8 = false;
-	bool karinKidnapedDialogueState = false;
-	bool discussedLodgeTopic = false;
-	bool waspWomanDialogueState = false;
-};
-
-class NpcDialogueHandler {
+class EdnaDialogueHandler : public NpcDialogueHandler {
 public:
-	virtual ~NpcDialogueHandler() {}
+	struct EdnaRoomDialogueState {
+		bool introPending = true;
+		bool karinPurseLinePlayed = false;
+	};
 
-	virtual bool matchesNpc(const Common::String &npcName) const = 0;
-	virtual void resetState() {}
-	virtual Common::Error handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &sharedState) = 0;
+	bool matchesNpc(const Common::String &npcName) const override;
+	void resetState() override { _state = EdnaRoomDialogueState(); }
+	Common::Error handleDialogue(DialogueRuntime &runtime,
+		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
+
+private:
+	EdnaRoomDialogueState _state;
 };
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_NPC_DIALOGUE_HANDLER_H
+#endif // HARVESTER_NPC_EDNA_DIALOGUE_H

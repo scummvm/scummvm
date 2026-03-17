@@ -301,6 +301,9 @@ public:
 		const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 		bool setRuntimeFlagValue(const Common::String &flagName, bool value);
 		bool resetRuntimeObjectToInitialState(const Common::String &objectName);
+		bool addRuntimeObjectToInventory(const Common::String &objectName);
+		bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
+			bool visible);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 		int getCurrentStoryDayIndex() const;
 
@@ -322,7 +325,6 @@ private:
 	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
 	StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName);
 	const StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
-	bool addRuntimeObjectToInventory(const Common::String &objectName);
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		StartupRoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
