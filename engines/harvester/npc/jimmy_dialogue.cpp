@@ -86,9 +86,7 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			if (!state.paperHandoffStateSet) {
 				state.paperHandoffStateSet = true;
-				Common::Error lineError = playJimmyLine(0x4a4c, 1);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
+				return playJimmyLine(0x4a4c, 1);
 			}
 
 			return runtime.getRandomNumber(1) == 0
@@ -120,9 +118,7 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return playJimmyLine(0x4b21, 0);
 		}
 		if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
-			Common::Error lineError = playJimmyLine(0x4a9e, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+			return playJimmyLine(0x4a9e, 1);
 		}
 
 		return playJimmyLine(0x4af2, 0);
@@ -130,15 +126,9 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (state.firstNoItemLinePending) {
 		state.firstNoItemLinePending = false;
-		if (!state.paperHandoffStateSet) {
-			Common::Error lineError = playJimmyLine(0x4a4c, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
-
-		Common::Error lineError = playJimmyLine(0x4a58, 0);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+		return !state.paperHandoffStateSet
+			? playJimmyLine(0x4a4c, 1)
+			: playJimmyLine(0x4a58, 0);
 	}
 	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
 		Common::Error lineError = playJimmyLine(0x4ac3, 0);
