@@ -14,6 +14,7 @@ MODULE_OBJS = \
 	npc/dwayne_dialogue.o \
 	npc/edna_dialogue.o \
 	npc/fireman1_dialogue.o \
+	npc/fireman2_dialogue.o \
 	npc/gladiator_dialogue.o \
 	npc/hank_dialogue.o \
 	npc/herrill_dialogue.o \
