@@ -30,6 +30,7 @@ class WaspWomanDialogueHandler : public NpcDialogueHandler {
 public:
 	struct WaspWomanRoomDialogueState {
 		bool introPending = true;
+		int topicBufferLineIndex = 0x300;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
