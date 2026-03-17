@@ -19,9 +19,10 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_DIALOGUE_H
-#define HARVESTER_STARTUP_DIALOGUE_H
+#ifndef HARVESTER_DIALOGUE_H
+#define HARVESTER_DIALOGUE_H
 
+#include "common/array.h"
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -33,11 +34,18 @@ struct Event;
 
 namespace Harvester {
 
+class HankDialogueHandler;
 class HarvesterEngine;
+class JimmyDialogueHandler;
+class MomDialogueHandler;
+class NpcDialogueHandler;
+class DialogueRuntime;
 class StartupFlow;
+class StartupText;
+class WaspWomanDialogueHandler;
 struct IndexedBitmap;
 
-class StartupDialogueSystem {
+class DialogueSystem {
 public:
 	struct HankRoomDialogueState {
 		bool pendingInitialConversation = true;
@@ -91,7 +99,8 @@ public:
 		bool introPending = true;
 	};
 
-	StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
+	DialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
+	~DialogueSystem();
 
 	void resetRoomNpcDialogueState();
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
@@ -99,6 +108,18 @@ public:
 		StartupFlow &startupFlow);
 
 private:
+	friend class HankDialogueHandler;
+	friend class JimmyDialogueHandler;
+	friend class MomDialogueHandler;
+	friend class WaspWomanDialogueHandler;
+
+	void registerNpcHandlers();
+
+	Common::Error handleJimmyDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
+	Common::Error handleWaspWomanDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
+	Common::Error handleMomDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
+	Common::Error handleHankDialogue(DialogueRuntime &runtime, const Common::String &usedItemName);
+
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	HankRoomDialogueState _hankRoomDialogueState;
@@ -108,8 +129,9 @@ private:
 	bool _sharedKarinKidnapedDialogueState = false;
 	bool _sharedDiscussedLodgeTopic = false;
 	bool _sharedWaspWomanDialogueState = false;
+	Common::Array<NpcDialogueHandler *> _npcHandlers;
 };
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_DIALOGUE_H
+#endif // HARVESTER_DIALOGUE_H

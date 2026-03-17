@@ -4,12 +4,17 @@ MODULE_OBJS = \
 	cft_font.o \
 	harvester.o \
 	console.o \
+	dialogue.o \
 	fst_player.o \
 	metaengine.o \
+	npc/hank_dialogue.o \
+	npc/jimmy_dialogue.o \
+	npc/mom_dialogue.o \
+	npc/stub_dialogue.o \
+	npc/wasp_woman_dialogue.o \
 	resources.o \
 	runtime_entity.o \
 	startup_art.o \
-	startup_dialogue.o \
 	startup_flow.o \
 	startup_inventory.o \
 	startup_menu.o \
