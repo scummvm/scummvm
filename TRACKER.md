@@ -15,15 +15,15 @@
 
 ## Last Confirmed Action
 
-- Recovered and ported Mom's hidden `0x11d` / `0x121` branches instead of the old one-line stubs.
-  - `0x11d` now mirrors the native `0x1e7c` / `0x1e80` exchange, `C008A.FST`, `0x1e8e` / `0x1e94`, the `BABY_GURGLE` action-tag dispatch, `0x1e9d` / `0x1ea3`, `C008B.FST`, and the keyword-buffer rewrite to `0x120`.
-  - `0x121` now mirrors the native `0x1ec0` / `0x1ec4` / `0x1ec9` / `0x1ecd` exchange before rewriting the keyword buffer to `0x122`.
-  - The raw-byte audit corrected the earlier helper guess: `0x388d0` and `0x388e0` belong to Mom `0x11d`, while `0x388c0` and `0x38420` are real nearby helpers but not part of Mom `0x11d` / `0x121`.
-  - `rtk make -C /Users/alex/Workspace/scummvm/build-vscode-harvester-debug -j4` succeeded after the Mom hidden-branch recovery.
+- Completed the follow-up audit on the remaining Mom/Wasp Woman helper cluster after the Mom `0x11d` / `0x121` recovery.
+  - `get_set_wasp_woman_dialogue_state_d2f10 @ 0x38420` is no longer treated as a Mom/Wasp shared helper: a linear call scan only finds `CALL 0x38420` at `0x2ff4e` and `0x3010f`, both inside hidden `handle_talk_to_wasp_woman @ 0x2fde0`, so the Ghidra name was corrected accordingly.
+  - Those two Wasp Woman call sites gate the no-item intro exchange (`0x4bee`, optional `0x4bf2`, then `0x4bf6` / `0x4bfc`) and the hidden `0x305` keyword branch (`0x4c31` followed by the `0x307` response-menu lines `0x4c4d` / `0x4c53` or `0x4c5e`).
+  - `play_c008_prelude_fst @ 0x388c0` is confirmed as a `GRAPHIC/FST/C123.FST` wrapper, but both normal xrefs and a whole-program call scan still show no direct callers in the current database.
+  - This pass was Ghidra/documentation-only; no engine build was needed after the audit.
 
 ## Next Suggested Action
 
-1. Audit the remaining hidden Mom/Wasp Woman helper cluster that is still unresolved after closing Mom `0x11d` / `0x121`.
-   - `play_c008_prelude_fst @ 0x388c0` and `get_set_wasp_woman_mom_dialogue_state_d2f10 @ 0x38420` are confirmed helpers, but the raw-byte recovery showed they are not part of Mom `0x11d` / `0x121`; identify which hidden Mom/Wasp Woman topics actually call them.
-2. If wider evidence parity work is needed beyond Mom/Hank/Jimmy, port the next native talk handler cluster into `startup_dialogue.cpp` before auditing its shared `SHOWN_*` writes.
-   - Dwayne, Edna, Herrill, and Johnson already have confirmed native evidence-wrapper behavior, but there is no explicit engine-side room handler for them yet.
+1. Port `handle_talk_to_wasp_woman @ 0x2fde0` into `startup_dialogue.cpp`.
+   - The engine only has explicit room dialogue handlers for Jimmy, Mom, and Hank today; Wasp Woman is now the best-bounded next target, including the `0x38420`-gated intro path and the hidden `0x305` -> `0x307` response-menu branch.
+2. After Wasp Woman, port the next bounded startup-room handler cluster rather than jumping back to broad helper scans.
+   - `handle_talk_to_pta_mom @ 0x34e30` is already identified, while Dwayne, Edna, Herrill, and Johnson still need explicit engine-side room handlers before their shared `SHOWN_*` evidence writes can be mirrored.
