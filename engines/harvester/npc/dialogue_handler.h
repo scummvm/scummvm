@@ -33,6 +33,7 @@ struct DialogueSharedState {
 	bool boyleGascanApplicationState = false;
 	bool dialogueStateD2e98 = false;
 	bool dialogueStateD2eb0 = false;
+	bool dialogueStateD2eb8 = false;
 	bool dialogueStateD2ebc = false;
 	bool dialogueStateD2eec = false;
 	bool dialogueStateD2ed0 = false;
