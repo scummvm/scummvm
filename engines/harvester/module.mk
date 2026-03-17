@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	npc/dwayne_dialogue.o \
 	npc/edna_dialogue.o \
 	npc/hank_dialogue.o \
+	npc/herrill_dialogue.o \
 	npc/jimmy_dialogue.o \
 	npc/mom_dialogue.o \
 	npc/pta_mom_dialogue.o \
