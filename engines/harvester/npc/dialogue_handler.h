@@ -35,6 +35,8 @@ struct DialogueSharedState {
 	bool dialogueStateD2eb0 = false;
 	bool dialogueStateD2eb8 = false;
 	bool dialogueStateD2ebc = false;
+	bool dialogueStateD2ec0 = false;
+	bool dialogueStateD2ec8 = false;
 	bool dialogueStateD2eec = false;
 	bool dialogueStateD2ed0 = false;
 	bool dialogueStateD2ef4 = false;
@@ -47,6 +49,7 @@ struct DialogueSharedState {
 	bool dialogueStateD2f08 = false;
 	bool waspWomanDialogueState = false;
 	bool momGoodCauseDay5State = false;
+	bool moynahanKarinKidnapedDiscussionState = false;
 	bool dwayneWhaleyDisciplineFollowupState = false;
 	bool dwayneDiscussedBoylesButton = false;
 	bool discussedMrPottsTuesdayNightAlibi = false;
