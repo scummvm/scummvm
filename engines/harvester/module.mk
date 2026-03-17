@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	npc/edna_dialogue.o \
 	npc/hank_dialogue.o \
 	npc/herrill_dialogue.o \
+	npc/inquisitor_dialogue.o \
 	npc/jimmy_dialogue.o \
 	npc/johnson_dialogue.o \
 	npc/lodge_chef_dialogue.o \
