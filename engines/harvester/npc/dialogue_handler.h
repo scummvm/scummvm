@@ -31,6 +31,9 @@ class DialogueRuntime;
 
 struct DialogueSharedState {
 	bool boyleGascanApplicationState = false;
+	bool dialogueStateD2e98 = false;
+	bool dialogueStateD2eb0 = false;
+	bool dialogueStateD2eec = false;
 	bool dialogueStateD2f04 = false;
 	bool dialogueStateD2ea4 = false;
 	bool dialogueStateD2ea8 = false;
