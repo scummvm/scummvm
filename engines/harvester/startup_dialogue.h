@@ -87,6 +87,10 @@ public:
 		bool paperHandoffStateSet = false;
 	};
 
+	struct WaspWomanRoomDialogueState {
+		bool introPending = true;
+	};
+
 	StartupDialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
 
 	void resetRoomNpcDialogueState();
@@ -100,8 +104,10 @@ private:
 	HankRoomDialogueState _hankRoomDialogueState;
 	MomRoomDialogueState _momRoomDialogueState;
 	JimmyRoomDialogueState _jimmyRoomDialogueState;
+	WaspWomanRoomDialogueState _waspWomanRoomDialogueState;
 	bool _sharedKarinKidnapedDialogueState = false;
 	bool _sharedDiscussedLodgeTopic = false;
+	bool _sharedWaspWomanDialogueState = false;
 };
 
 } // End of namespace Harvester

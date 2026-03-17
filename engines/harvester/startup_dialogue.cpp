@@ -325,6 +325,23 @@ static const DialogueLineEntry kMomSlaughterhouseLines[] = {
 	{ 0x1fbd, "MOM", 0 }
 };
 
+static const DialogueLineEntry kWaspWomanWhaleyLines[] = {
+	{ 0x4ca6, "WASP_WOMAN", 0 },
+	{ 0x4cae, "WASP_WOMAN", 1 },
+	{ 0x4cb2, "PC", 0 },
+	{ 0x4cb6, "WASP_WOMAN", 0 }
+};
+
+static const DialogueLineEntry kWaspWomanIntroTailLines[] = {
+	{ 0x4bf6, "WASP_WOMAN", 0 },
+	{ 0x4bfc, "PC", 0 }
+};
+
+static const DialogueLineEntry kWaspWomanTopic305Response1Lines[] = {
+	{ 0x4c4d, "WASP_WOMAN", 1 },
+	{ 0x4c53, "WASP_WOMAN", 1 }
+};
+
 static const int kMomPtaTopicResponseLines[] = { 0x125, 0x126, 0x127, 0x128 };
 static const int kMomCookingTopicResponseLines[] = { 0x131, 0x132, 0x133 };
 static const int kMomBakeSaleTopicResponseLines[] = { 0x145, 0x146, 0x147 };
@@ -346,6 +363,7 @@ static const int kMomBakeSaleFollowupTopicBufferResponseLine = 0x148;
 static const int kMomPottsdamFollowupTopicBufferResponseLine = 0x150;
 static const int kMomMeatPlantFollowupTopicBufferResponseLine = 0x154;
 static const int kMomGoodCauseDay5FollowupTopicBufferResponseLine = 0x15c;
+static const int kWaspWomanTopicBufferResponseLine = 0x301;
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const StartupText *startupText = engine.getStartupText();
@@ -587,8 +605,10 @@ void StartupDialogueSystem::resetRoomNpcDialogueState() {
 	_hankRoomDialogueState = HankRoomDialogueState();
 	_momRoomDialogueState = MomRoomDialogueState();
 	_jimmyRoomDialogueState = JimmyRoomDialogueState();
+	_waspWomanRoomDialogueState = WaspWomanRoomDialogueState();
 	_sharedKarinKidnapedDialogueState = false;
 	_sharedDiscussedLodgeTopic = false;
+	_sharedWaspWomanDialogueState = false;
 }
 
 Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
@@ -1338,6 +1358,129 @@ Common::Error StartupDialogueSystem::runRoomNpcDialogue(const IndexedBitmap &bac
 		}
 
 		return playJimmyLine(0x4b38, 0);
+	}
+
+	if (npc.npcName.equalsIgnoreCase("WASP_WOMAN")) {
+		Common::String waspWomanTopicBuffer;
+		int waspWomanTopicBufferLineIndex = -1;
+		auto assignWaspWomanTopicBuffer = [&](int responseLineIndex) {
+			assignTopicBuffer(waspWomanTopicBuffer, waspWomanTopicBufferLineIndex, responseLineIndex,
+				"Wasp Woman topic buffer");
+		};
+		auto playWaspWomanLine = [&](int wavId, int headVariant) -> Common::Error {
+			return playDialogueLineWithVariant(wavId, "WASP_WOMAN", headVariant);
+		};
+
+		if (!usedItemName.empty()) {
+			if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfWhaleyHerrillFlag, true);
+				return playDialogueEntrySequence(kWaspWomanWhaleyLines, ARRAYSIZE(kWaspWomanWhaleyLines));
+			}
+			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
+					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownPhotoOfCorpseFlag, true);
+				return playWaspWomanLine(0x4cbd, 0);
+			}
+			if (usedItemName.equalsIgnoreCase("NOTE") ||
+					usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK") ||
+					usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+				(void)startupScript->setRuntimeFlagValue(kShownEvidenceOfBlackmailFlag, true);
+				return playWaspWomanLine(0x4cc3, 0);
+			}
+
+			return playWaspWomanLine(0x4ca0, 0);
+		}
+
+		if (_waspWomanRoomDialogueState.introPending) {
+			_waspWomanRoomDialogueState.introPending = false;
+
+			Common::Error lineError = playWaspWomanLine(0x4bee, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (_sharedWaspWomanDialogueState) {
+				lineError = playDialogueLine(0x4bf2, "PC");
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+			lineError = playDialogueEntrySequence(kWaspWomanIntroTailLines, ARRAYSIZE(kWaspWomanIntroTailLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		Common::Error lineError = playWaspWomanLine(0x4bee, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		assignWaspWomanTopicBuffer(kWaspWomanTopicBufferResponseLine);
+
+		for (;;) {
+			Common::String selectedTopic;
+			Common::Error menuError = runKeywordMenu(
+				waspWomanTopicBuffer, waspWomanTopicBufferLineIndex, selectedTopic);
+			if (menuError.getCode() != Common::kNoError)
+				return menuError;
+			if (selectedTopic.empty() || selectedTopic.equalsIgnoreCase(genericByeTopic))
+				return Common::kNoError;
+
+			if (matchesResponseLine(selectedTopic, 0x302)) {
+				lineError = playWaspWomanLine(0x4c0a, 0);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			if (matchesResponseLine(selectedTopic, 0x305)) {
+				lineError = playWaspWomanLine(0x4c31, 0);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				if (!_sharedWaspWomanDialogueState)
+					continue;
+
+				int responseIndex = 0;
+				Common::Error responseError = runResponseMenu(0x307, responseIndex);
+				if (responseError.getCode() != Common::kNoError)
+					return responseError;
+
+				switch (responseIndex) {
+				case 1:
+					lineError = playDialogueEntrySequence(kWaspWomanTopic305Response1Lines,
+						ARRAYSIZE(kWaspWomanTopic305Response1Lines));
+					break;
+				case 2:
+					lineError = playWaspWomanLine(0x4c5e, 2);
+					break;
+				default:
+					lineError = Common::kNoError;
+					break;
+				}
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			if (matchesResponseLine(selectedTopic, 0x308)) {
+				lineError = playWaspWomanLine(0x4c67, 0);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			if (matchesResponseLine(selectedTopic, 0x30a)) {
+				lineError = playWaspWomanLine(0x4c74, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			if (matchesResponseLine(selectedTopic, 0x30c)) {
+				lineError = playWaspWomanLine(0x4c85, 0);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				continue;
+			}
+			if (matchesResponseLine(selectedTopic, 0x30e)) {
+				lineError = playWaspWomanLine(0x4c9a, 0);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				return Common::kNoError;
+			}
+		}
 	}
 
 	if (npc.npcName.equalsIgnoreCase("MOM")) {
