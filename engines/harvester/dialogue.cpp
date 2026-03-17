@@ -66,6 +66,7 @@
 #include "harvester/npc/mom_dialogue.h"
 #include "harvester/npc/mother_dialogue.h"
 #include "harvester/npc/moynahan_dialogue.h"
+#include "harvester/npc/mr_potts_dialogue.h"
 #include "harvester/npc/parsons_dialogue.h"
 #include "harvester/npc/pastorelli_dialogue.h"
 #include "harvester/npc/phelps_dialogue.h"
@@ -386,6 +387,7 @@ void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new MomDialogueHandler());
 	_npcHandlers.push_back(new MotherDialogueHandler());
 	_npcHandlers.push_back(new MoynahanDialogueHandler());
+	_npcHandlers.push_back(new MrPottsDialogueHandler());
 	_npcHandlers.push_back(new LodgeChefDialogueHandler());
 	_npcHandlers.push_back(new NudeManDialogueHandler());
 	_npcHandlers.push_back(new ParsonsDialogueHandler());

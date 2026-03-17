@@ -36,6 +36,7 @@ MODULE := engines/harvester
 	npc/mom_dialogue.o \
 	npc/mother_dialogue.o \
 	npc/moynahan_dialogue.o \
+	npc/mr_potts_dialogue.o \
 	npc/nude_man_dialogue.o \
 	npc/parsons_dialogue.o \
 	npc/pastorelli_dialogue.o \
