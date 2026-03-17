@@ -30,6 +30,10 @@ class BoyleDialogueHandler : public NpcDialogueHandler {
 public:
 	struct BoyleRoomDialogueState {
 		bool introPending = true;
+		bool evidenceFollowupShown = false;
+		bool stephMidgameShown = false;
+		bool dayFiveShown = false;
+		bool burnedTvStationShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
