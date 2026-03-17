@@ -15,13 +15,13 @@
 
 ## Last Confirmed Action
 
-- Ported `handle_talk_to_cloak_atnd @ 0x2db80` into a dedicated `engines/harvester/npc/cloak_atnd_dialogue.*` handler.
-  - Native Cloak Attendant dialogue is a small no-item/item split: if no item is presented and `CLEANED_CLOTHES` is still clear, it plays `0x1066` for `CLOAK_ATND`; if `BARCASHFIVE` is presented, it dispatches `CLEAN_CLOTHES`.
-  - The engine now routes `CLOAK_ATND` through a concrete handler that mirrors the same flag check and action-tag dispatch, including queued interaction side effects.
+- Ported `handle_talk_to_dark_woman @ 0x33610` into a dedicated `engines/harvester/npc/dark_woman_dialogue.*` handler.
+  - Native Dark Woman dialogue is a short two-branch handler: presenting `HANDMIRROR` plays `0x4d03` for `DARK_WOMAN`, otherwise the one-shot `g_dark_woman_talk_state_block` branch clears itself and plays `0x4cd5`.
+  - The engine now routes `DARK_WOMAN` through a concrete handler with matching item handling and a local one-shot talk-state bit.
 
 ## Next Suggested Action
 
-1. Resume the remaining low-complexity visible handlers before returning to the bounded multi-branch ports.
-   - The remaining short visible handler before the evidence-heavy pass is `DARK_WOMAN`.
-2. After that short-handler pass, return to Boyle and the other larger hidden-topic handlers.
-   - After `DARK_WOMAN`, the next best bounded visible ports are the evidence-heavy but still linear handlers such as `BUSTER`, `BUTCHER`, `PHELPS`, `SWELL`, and `PARSONS`, before returning to Boyle.
+1. Continue the evidence-heavy but still linear visible handlers before returning to the bounded multi-branch ports.
+   - The next best candidates are `BUSTER`, `BUTCHER`, `PHELPS`, `SWELL`, and `PARSONS`, which mostly reuse the already-confirmed shared evidence state writes and straight no-item talk-state branches.
+2. After that visible evidence-handler pass, return to Boyle and the other larger hidden-topic handlers.
+   - Boyle still has the best confirmed hidden-topic coverage among the larger remaining NPC handlers.
