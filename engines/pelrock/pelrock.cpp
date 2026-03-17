@@ -222,9 +222,6 @@ Common::Array<VerbIcon> PelrockEngine::availableActions(HotSpot *hotspot) {
 	if (hotspot->actionFlags & kActionMaskPush) {
 		verbs.push_back(PUSH);
 	}
-	if (hotspot->actionFlags & kActionMaskPull) {
-		verbs.push_back(PULL);
-	}
 	return verbs;
 }
 

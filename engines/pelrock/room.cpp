@@ -54,11 +54,19 @@ RoomManager::~RoomManager() {
 }
 
 void RoomManager::clearTalkingAnims() {
-	for (int i = 0; i < _talkingAnims.numFramesAnimA; i++)
-		delete[] _talkingAnims.animA[i];
+	for (int i = 0; i < _talkingAnims.numFramesAnimA; i++) {
+		if(_talkingAnims.animA[i]) {
+			delete[] _talkingAnims.animA[i];
+			_talkingAnims.animA[i] = nullptr;
+		}
+	}
 	delete[] _talkingAnims.animA;
-	for (int i = 0; i < _talkingAnims.numFramesAnimB; i++)
-		delete[] _talkingAnims.animB[i];
+	for (int i = 0; i < _talkingAnims.numFramesAnimB; i++) {
+		if(_talkingAnims.animB[i]) {
+			delete[] _talkingAnims.animB[i];
+			_talkingAnims.animB[i] = nullptr;
+		}
+	}
 	delete[] _talkingAnims.animB;
 	_talkingAnims.animA = nullptr;
 	_talkingAnims.animB = nullptr;

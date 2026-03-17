@@ -1588,12 +1588,10 @@ void PelrockEngine::giveStoneToSlaves(int inventoryObject, HotSpot *hotspot) {
 	playSpecialAnim(1473360, true, mastersX - 6, mastersY - 1, 152, 83, 7);
 
 	// Increment stone delivery counter (tracks 0→1→2→3)
-	debug("Current stone delivery count: %d", counter);
 	if (counter < 3) {
 		_state->setFlag(FLAG_STONE_GIVEN, ++counter);
 		_room->findSpriteByIndex(0)->zOrder = zIndex;
 	}
-	debug("New stone delivery count: %d", _state->getFlag(FLAG_STONE_GIVEN));
 	// At 2nd stone delivery: masters starts singing (conversation root 2)
 	if (counter == 2) {
 		_state->setCurrentRoot(41, 2, 0);
@@ -1694,7 +1692,7 @@ void PelrockEngine::swimmingPoolCutscene(HotSpot *hotspot) {
 	guard->animData[0].curFrame = 0;
 	guard->animData[0].nframes = 1;
 	// copy idle frame from talking animation
-	guard->animData[0].animData[0] = _room->_talkingAnims.animA[0];
+	Common::copy(_room->_talkingAnims.animA[0], _room->_talkingAnims.animA[0] +  guard->stride, guard->animData[0].animData[0]);
 	_alfredState.direction = ALFRED_RIGHT;
 	walkAndAction(_room->findHotspotByExtra(guard->extra), TALK);
 	if (shouldQuit()) {

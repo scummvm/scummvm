@@ -92,7 +92,7 @@ Common::Point calculateWalkTarget(Common::Array<WalkBox> &walkboxes, int sourceX
 	if (hotspot != nullptr) {
 		// if there is a hotspot then the source is the center of the hotspot.
 		sourceX = hotspot->x + hotspot->w / 2;
-		sourceY = hotspot->y + hotspot->h / 2;
+		sourceY = hotspot->y + hotspot->h;
 	}
 
 	// Find nearest walkbox
