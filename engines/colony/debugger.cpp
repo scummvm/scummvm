@@ -80,6 +80,7 @@ Debugger::Debugger(ColonyEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("battle", WRAP_METHOD(Debugger, cmdBattle));
 	registerCmd("colony", WRAP_METHOD(Debugger, cmdColony));
 	registerCmd("forklift", WRAP_METHOD(Debugger, cmdForklift));
+	registerCmd("spawn", WRAP_METHOD(Debugger, cmdSpawn));
 }
 
 bool Debugger::cmdTeleport(int argc, const char **argv) {
@@ -432,6 +433,94 @@ bool Debugger::cmdForklift(int argc, const char **argv) {
 		debugPrintf("Current: fl=%d carryType=%d\n", _vm->_fl, _vm->_carryType);
 	}
 	return true;
+}
+
+bool Debugger::cmdSpawn(int argc, const char **argv) {
+	if (_vm->_gameMode != kModeColony) {
+		debugPrintf("Must be in colony mode\n");
+		return true;
+	}
+
+	static const struct { const char *name; int type; } spawnTypes[] = {
+		{"eye",       kRobEye},
+		{"pyramid",   kRobPyramid},
+		{"cube",      kRobCube},
+		{"upyramid",  kRobUPyramid},
+		{"queen",     kRobQueen},
+		{"drone",     kRobDrone},
+		{"soldier",   kRobSoldier},
+		{"snoop",     kRobSnoop},
+		{"feye",      kRobFEye},
+		{"fpyramid",  kRobFPyramid},
+		{"fcube",     kRobFCube},
+		{"fupyramid", kRobFUPyramid},
+		{"seye",      kRobSEye},
+		{"spyramid",  kRobSPyramid},
+		{"scube",     kRobSCube},
+		{"supyramid", kRobSUPyramid},
+		{"meye",      kRobMEye},
+		{"mpyramid",  kRobMPyramid},
+		{"mcube",     kRobMCube},
+		{"mupyramid", kRobMUPyramid},
+	};
+
+	if (argc < 2) {
+		debugPrintf("Usage: spawn <type>\n");
+		debugPrintf("Spawns an enemy in the cell in front of the player.\n\n");
+		debugPrintf("Full robots:\n");
+		debugPrintf("  eye, pyramid, cube, upyramid\n");
+		debugPrintf("  queen, drone, soldier, snoop\n");
+		debugPrintf("Egg stages (floating/small/mini):\n");
+		debugPrintf("  feye, fpyramid, fcube, fupyramid\n");
+		debugPrintf("  seye, spyramid, scube, supyramid\n");
+		debugPrintf("  meye, mpyramid, mcube, mupyramid\n");
+		return true;
+	}
+
+	Common::String name(argv[1]);
+	name.toLowercase();
+
+	int type = -1;
+	for (uint i = 0; i < ARRAYSIZE(spawnTypes); i++) {
+		if (name == spawnTypes[i].name) {
+			type = spawnTypes[i].type;
+			break;
+		}
+	}
+
+	if (type < 0) {
+		debugPrintf("Unknown enemy type '%s'. Use 'spawn' with no arguments to see valid types.\n", argv[1]);
+		return true;
+	}
+
+	// Compute the cell in front of the player
+	const int dx = _vm->_cost[_vm->_me.ang] >> 2;
+	const int dy = _vm->_sint[_vm->_me.ang] >> 2;
+	int targetX = _vm->_me.xindex + (dx > 0 ? 1 : (dx < 0 ? -1 : 0));
+	int targetY = _vm->_me.yindex + (dy > 0 ? 1 : (dy < 0 ? -1 : 0));
+
+	if (targetX < 1 || targetX > 30 || targetY < 1 || targetY > 30) {
+		debugPrintf("Target cell (%d,%d) is out of bounds\n", targetX, targetY);
+		return true;
+	}
+
+	if (_vm->_robotArray[targetX][targetY] != 0) {
+		debugPrintf("Target cell (%d,%d) is already occupied\n", targetX, targetY);
+		return true;
+	}
+
+	int xloc = (targetX << 8) + 128;
+	int yloc = (targetY << 8) + 128;
+	uint8 ang = _vm->_me.ang + 128; // face the player
+
+	if (!_vm->createObject(type, xloc, yloc, ang)) {
+		debugPrintf("Failed to create object (no free slot?)\n");
+		return true;
+	}
+
+	debugPrintf("Spawned %s (type %d) at cell (%d,%d) facing player\n",
+	            robotTypeName(type), type, targetX, targetY);
+	return false;
 }
 
 } // End of namespace Colony
