@@ -385,7 +385,7 @@ void ByleRLEDecode_Mode1(
 				do {
 					if (!(*mask & maskbit)) {
 						uint16 pcolor = _palette[color];
-						if (pcolor == 13 && _shadowTable) {
+						if (pcolor == 13) {
 							*dst = _shadowTable[*dst];
 						} else {
 							*dst = pcolor;
@@ -780,7 +780,7 @@ void ByleRLEDecode_Scaled_Mode1(
 							uint16 pcolor;
 
 							pcolor = _palette[color];
-							if (pcolor == 13 && _shadowTable) {
+							if (pcolor == 13) {
 								if (lastColumnX != compData.x)
 									*dst = _shadowTable[*dst];
 							} else {
@@ -870,7 +870,7 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 							uint16 pcolor;
 
 							pcolor = _palette[color];
-							if (pcolor == 13 && _shadowTable) {
+							if (pcolor == 13) {
 								if (lastColumnX != compData.x)
 									*dst = _shadowTable[*dst];
 							} else {
@@ -1116,7 +1116,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 	if (!_akosRendering) {
 		if (_shadowMode & 0x20)
 			shadowMode = ShadowMode::Classic;
-		else
+		else if (_shadowTable)
 			shadowMode = ShadowMode::Mode1;
 	} else {
 		if (_shadowMode == 1)
@@ -1210,7 +1210,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 
 							case ShadowMode::Mode1:
 								pcolor = _palette[color];
-								if (pcolor == 13 && _shadowTable) {
+								if (pcolor == 13) {
 									if (lastColumnX != compData.x)
 										*dst = _shadowTable[*dst];
 								} else {
