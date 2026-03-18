@@ -477,6 +477,7 @@ private:
 	bool _strafeRight;
 	bool _rotateLeft;
 	bool _rotateRight;
+	bool _sprint;
 
 	Common::RandomSource _randomSource;
 	Common::Point _mousePos;

@@ -160,6 +160,7 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	_strafeRight = false;
 	_rotateLeft = false;
 	_rotateRight = false;
+	_sprint = false;
 	_wm = nullptr;
 	_macMenu = nullptr;
 	_menuSurface = nullptr;
@@ -980,6 +981,8 @@ Common::Error ColonyEngine::run() {
 					break;
 				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT)
+					_sprint = true;
 				// Speed keys 1-5 remain as raw keyboard events
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_1:
@@ -993,6 +996,9 @@ Common::Error ColonyEngine::run() {
 				default:
 					break;
 				}
+			} else if (event.type == Common::EVENT_KEYUP) {
+				if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT)
+					_sprint = false;
 			} else if (event.type == Common::EVENT_LBUTTONDOWN && (_mouseLocked || _cursorShoot)) {
 				cShoot();
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
@@ -1029,8 +1035,9 @@ Common::Error ColonyEngine::run() {
 		// throttled to ~15 ticks/sec to match original key-repeat feel
 		if (now - lastMoveTick >= 66) {
 			lastMoveTick = now;
-			const int moveX = (_cost[_me.look] * (1 << _speedShift)) >> 4;
-			const int moveY = (_sint[_me.look] * (1 << _speedShift)) >> 4;
+			const int spd = _sprint ? _speedShift + 1 : _speedShift;
+			const int moveX = (_cost[_me.look] * (1 << spd)) >> 4;
+			const int moveY = (_sint[_me.look] * (1 << spd)) >> 4;
 			const int rotSpeed = 1 << (_speedShift - 1);
 
 			if (_gameMode == kModeBattle) {
@@ -1040,14 +1047,14 @@ Common::Error ColonyEngine::run() {
 					battleCommand(_me.xloc - moveX, _me.yloc - moveY);
 				if (_strafeLeft) {
 					uint8 strafeAngle = (uint8)((int)_me.look + 64);
-					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << spd)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << spd)) >> 4;
 					battleCommand(_me.xloc + sx, _me.yloc + sy);
 				}
 				if (_strafeRight) {
 					uint8 strafeAngle = (uint8)((int)_me.look - 64);
-					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << spd)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << spd)) >> 4;
 					battleCommand(_me.xloc + sx, _me.yloc + sy);
 				}
 			} else {
@@ -1057,14 +1064,14 @@ Common::Error ColonyEngine::run() {
 					cCommand(_me.xloc - moveX, _me.yloc - moveY, true);
 				if (_strafeLeft) {
 					uint8 strafeAngle = (uint8)((int)_me.look + 64);
-					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << spd)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << spd)) >> 4;
 					cCommand(_me.xloc + sx, _me.yloc + sy, true);
 				}
 				if (_strafeRight) {
 					uint8 strafeAngle = (uint8)((int)_me.look - 64);
-					int sx = (_cost[strafeAngle] * (1 << _speedShift)) >> 4;
-					int sy = (_sint[strafeAngle] * (1 << _speedShift)) >> 4;
+					int sx = (_cost[strafeAngle] * (1 << spd)) >> 4;
+					int sy = (_sint[strafeAngle] * (1 << spd)) >> 4;
 					cCommand(_me.xloc + sx, _me.yloc + sy, true);
 				}
 			}
@@ -1140,6 +1147,7 @@ bool ColonyEngine::waitForInput() {
 	_moveForward = _moveBackward = false;
 	_strafeLeft = _strafeRight = false;
 	_rotateLeft = _rotateRight = false;
+	_sprint = false;
 
 	while (!shouldQuit()) {
 		Common::Event event;

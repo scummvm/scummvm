@@ -573,6 +573,7 @@ void ColonyEngine::playAnimation() {
 				}
 			} else if (event.type == Common::EVENT_RBUTTONDOWN) {
 				// DOS: right-click exits animation (AnimControl returns FALSE on button-up)
+				debugC(1, kColonyDebugAnimation, "Animation: RBUTTONDOWN exit at pos=%d,%d", event.mouse.x, event.mouse.y);
 				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				debugC(5, kColonyDebugAnimation, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
@@ -606,6 +607,19 @@ void ColonyEngine::playAnimation() {
 	_system->showMouse(false);
 	CursorMan.showMouse(false);
 	CursorMan.popAllCursors();
+
+	// Purge pending mouse/keyboard events AFTER re-locking the mouse,
+	// so that any synthetic events from the lock transition are also
+	// drained and don't trigger actions (e.g. cShoot) in the main loop.
+	_system->getEventManager()->purgeMouseEvents();
+	_system->getEventManager()->purgeKeyboardEvents();
+
+	// Suppress collision sound on the first few wall hits after animation exit.
+	// The player is at a door/wall boundary and held movement keys will
+	// immediately trigger checkwall collisions that play kBang — which sounds
+	// like a spurious gunshot. The flag auto-clears on the first successful move.
+	_suppressCollisionSound = true;
+
 	deleteAnimation();
 }
 

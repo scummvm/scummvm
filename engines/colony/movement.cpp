@@ -1136,6 +1136,8 @@ void ColonyEngine::cCommand(int xnew, int ynew, bool allowInteraction) {
 
 	if (_me.xindex >= 0 && _me.xindex < 32 && _me.yindex >= 0 && _me.yindex < 32)
 		_robotArray[_me.xindex][_me.yindex] = kMeNum;
+
+	_suppressCollisionSound = false;
 }
 
 // DOS ExitFL(): step back one cell and drop the forklift.
