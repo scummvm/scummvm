@@ -48,6 +48,7 @@ VideoManager::VideoManager(
 VideoManager::~VideoManager() {
 	_videoSurface.free();
 	_introSndFile.close();
+	_textSurface.free();
 }
 
 void VideoManager::playIntro() {
