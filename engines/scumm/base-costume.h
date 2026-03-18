@@ -126,6 +126,9 @@ public:
 		Common::Rect boundsRect;
 		int scaleXIndex, scaleYIndex;
 		int scaleIndexMask;
+#ifdef SCUMM_OPTIMISED_CODE
+		int scaledHeight;
+#endif
 	};
 
     BaseCostumeRenderer(ScummEngine *scumm, bool akosRendering = false) {

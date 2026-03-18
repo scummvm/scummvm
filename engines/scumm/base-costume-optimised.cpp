@@ -169,6 +169,7 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	compData.scaleYIndex = startScaleIndexY;
 	compData.skipWidth = _width;
 	compData.scaleXStep = _drawActorToRight ? 1 : -1;
+	compData.scaledHeight = rect.bottom - rect.top;
 
 	// All the important 'rect' values. scale sequence = 'compData.scaleTable[i] < _scaleX' result)
 	//
@@ -1124,7 +1125,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 			shadowMode = ShadowMode::Mode3;
 	}
 
-	if (compData.y >= compData.boundsRect.top && compData.y + _height <= compData.boundsRect.bottom) {
+	if (compData.y >= compData.boundsRect.top && compData.y + compData.scaledHeight <= compData.boundsRect.bottom) {
 		const int scaled = (_scaleX != 255 || _scaleY != 255);
 		if (!scaled) {
 			byleRLEDecodeNoScaleTable[static_cast<int>(shadowMode)](
