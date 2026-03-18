@@ -479,8 +479,11 @@ Common::Error ColonyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	if (objectCount > kMaxSaveObjects)
 		return makeCorruptSaveError(Common::String::format("object count %u exceeds max %u", objectCount, kMaxSaveObjects).c_str());
 	_objects.resize(objectCount);
-	for (uint i = 0; i < objectCount; i++)
+	for (uint i = 0; i < objectCount; i++) {
 		_objects[i] = readThing(stream);
+		// wallPad is not serialized — recompute from object type
+		_objects[i].where.wallPad = robotWallPad(_objects[i].type);
+	}
 
 	for (int i = 0; i < 16; i++)
 		_bfight[i] = readLocate(stream);
