@@ -1168,6 +1168,36 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It always appends `g_dialogue_keyword_menu_default_topic`, loaded by `load_dialogue_index` from zero-based `dialog.rsp` line `13`, plus a literal `Other` entry that calls `run_text_entry_dialog`.
   - ESC does not silently cancel the keyword menu; it writes that default topic into `g_dialogue_selected_topic_text` and returns through the normal handler path.
 
+## Room Menu Options UI
+
+**Confidence:** High
+
+**Evidence**
+- `run_main_menu` handles the `OPTIONS` row inline as case `3` and loads `options_menu_1` through `options_menu_7` from `MENU.INI`.
+- It spawns three `VOLUME.BM` bars and three `INDICATR.BM` sliders, with the active positions driven by `g_fx_volume_level_index`, `g_music_volume_level_index`, and `g_gamma_level_index`.
+- Moving the FX slider previews `1:\SOUND\EFFECTS\WHIP2.WAV`; moving the music slider updates `g_music_stream_state`; moving the gamma slider calls `update_gamma_brightness_scale` and reuploads `g_current_palette_buffer`.
+- The text / gore / password rows append inline ` - ...` suffixes through `format_main_menu_option_status_suffix`.
+- The `QUICK TIPS` row opens the same `TIPS.BM` overlay used by the startup quick-tips path, fed by lines from `ADJHEAD.RCS`.
+- The password row calls `prompt_for_password`, which in turn uses the shared `run_text_entry_dialog`; the stored string lives in `g_parental_password_buffer`.
+
+**Key Functions**
+- `run_main_menu`
+- `format_main_menu_option_status_suffix`
+- `update_gamma_brightness_scale`
+- `prompt_for_password`
+- `run_text_entry_dialog`
+
+**Key Data**
+- `g_fx_volume_level_index`
+- `g_music_volume_level_index`
+- `g_gamma_level_index`
+- `g_text_option_mode`
+- `g_gore_enabled`
+- `g_parental_password_buffer`
+
+**Notes**
+- The native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates the string-backed `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while the submenu is active.
+
 ## Player Health And Inventory Status Portrait
 
 **Confidence:** High

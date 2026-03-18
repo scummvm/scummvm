@@ -21,7 +21,11 @@
 
 #include "harvester/startup_menu.h"
 
+#include "common/config-manager.h"
+#include "common/endian.h"
 #include "common/events.h"
+#include "common/formats/ini-file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
@@ -30,6 +34,7 @@
 #include "harvester/cft_font.h"
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
+#include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_flow.h"
@@ -53,6 +58,38 @@ static const byte kTextColorDim = 248;
 static const byte kShadowColor = 0;
 static const byte kPanelFillColor = 1;
 static const byte kTransparentPaletteIndex = 0;
+static const byte kQuickTipActionColor = 0xc3;
+
+static const char *const kMenuPath = "MENU.INI";
+static const char *const kMenuSectionName = "menu";
+static const char *const kOptionsVolumeBitmapPath = "1:/GRAPHIC/OTHER/VOLUME.BM";
+static const char *const kOptionsIndicatorBitmapPath = "1:/GRAPHIC/OTHER/INDICATR.BM";
+static const char *const kOptionsPreviewSoundPath = "1:/SOUND/EFFECTS/WHIP2.WAV";
+
+static const int kOptionsSliderMinX = 0x16f;
+static const int kOptionsSliderMaxX = 0x22b;
+static const int kOptionsSliderStep = 0x13;
+static const int kOptionsVolumeBitmapX = 0x168;
+static const int kOptionsVolumeBitmapY = 0x68;
+static const int kOptionsIndicatorY = 0x6c;
+static const int kOptionsSliderHeight = 0x1e;
+static const int kOptionsItemCount = 7;
+static const int kStartupOptionMaxLevel = 9;
+
+static const int kQuickTipsOverlayX = 167;
+static const int kQuickTipsOverlayY = 200;
+static const int kQuickTipTextX = 180;
+static const int kQuickTipTextY = 228;
+static const int kQuickTipTextWidth = 280;
+
+struct RoomMenuTextConfig {
+	Common::Array<Common::String> optionItems;
+	Common::String yesLabel = "YES";
+	Common::String noLabel = "NO";
+	Common::String clickLabel = "CLICK";
+};
+
+static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const StartupText *startupText = engine.getStartupText();
@@ -65,6 +102,161 @@ static const CftFontResource *findStartupFontByName(const HarvesterEngine &engin
 	}
 
 	return nullptr;
+}
+
+static int clampStartupOptionLevel(int level) {
+	if (level < 0)
+		return 0;
+	if (level > kStartupOptionMaxLevel)
+		return kStartupOptionMaxLevel;
+
+	return level;
+}
+
+static Common::Rect quickTipsExitRect() {
+	return Common::Rect(180, 280, 238, 291);
+}
+
+static Common::Rect quickTipsNextRect() {
+	return Common::Rect(420, 280, 492, 291);
+}
+
+static Common::Rect quickTipsToggleRect() {
+	return Common::Rect(258, 280, 366, 291);
+}
+
+static Common::Rect textEntryInputRect() {
+	return Common::Rect(176, 212, 464, 234);
+}
+
+static Common::Rect textEntryOkRect() {
+	return Common::Rect(224, 278, 286, 292);
+}
+
+static Common::Rect textEntryCancelRect() {
+	return Common::Rect(344, 278, 424, 292);
+}
+
+static Common::Rect optionsSliderRect(int sliderIndex, int lineHeight) {
+	const int y = kOptionsIndicatorY + sliderIndex * lineHeight;
+	return Common::Rect(kOptionsSliderMinX, y, kOptionsSliderMaxX + 1, y + kOptionsSliderHeight + 1);
+}
+
+static int resolveOptionsSliderIndexFromMouseX(int mouseX) {
+	const int relativeX = mouseX - kOptionsSliderMinX;
+	return clampStartupOptionLevel((relativeX + (kOptionsSliderStep / 2)) / kOptionsSliderStep);
+}
+
+static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &config) {
+	config = RoomMenuTextConfig();
+	config.optionItems.resize(kOptionsItemCount);
+	config.optionItems[0] = "SOUND FX";
+	config.optionItems[1] = "MUSIC";
+	config.optionItems[2] = "GAMMA";
+	config.optionItems[3] = "TEXT";
+	config.optionItems[4] = "GORE";
+	config.optionItems[5] = "QUICK TIPS";
+	config.optionItems[6] = "PASSWORD";
+
+	ResourceManager *resources = engine.getResources();
+	if (!resources)
+		return false;
+
+	Common::Array<byte> data;
+	if (!resources->loadFile(kMenuPath, data))
+		return false;
+
+	Common::MemoryReadStream stream(data.data(), data.size());
+	Common::INIFile menu;
+	menu.setDefaultSectionName(kMenuSectionName);
+	menu.requireKeyValueDelimiter();
+	menu.suppressValuelessLineWarning();
+	if (!menu.loadFromStream(stream))
+		return false;
+
+	for (uint i = 0; i < config.optionItems.size(); ++i) {
+		Common::String value;
+		if (menu.getKey(Common::String::format("options_menu_%u", i + 1), kMenuSectionName, value) && !value.empty())
+			config.optionItems[i] = value;
+	}
+
+	Common::String value;
+	if (menu.getKey("yes", kMenuSectionName, value) && !value.empty())
+		config.yesLabel = value;
+	if (menu.getKey("no", kMenuSectionName, value) && !value.empty())
+		config.noLabel = value;
+	if (menu.getKey("click", kMenuSectionName, value) && !value.empty())
+		config.clickLabel = value;
+
+	return true;
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap.width = READ_LE_UINT32(data.data());
+	bitmap.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = bitmap.width * bitmap.height;
+	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
+		return false;
+
+	bitmap.pixels.resize(pixelCount);
+	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
+}
+
+static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &engine,
+		const byte *palette, float brightness) {
+	if (!palette)
+		return;
+
+	byte displayPalette[256 * 3];
+	buildHarvesterDisplayPalette(palette, brightness * engine.getStartupGammaBrightnessScale(), displayPalette);
+	screen.setPalette(displayPalette);
+}
+
+static Common::String buildTextModeSuffix(const StartupScript &startupScript, const RoomMenuTextConfig &config) {
+	switch (startupScript.getDialogueTextMode()) {
+	case kStartupDialogueTextNone:
+		return Common::String::format(" - %s", config.noLabel.c_str());
+	case kStartupDialogueTextClick:
+		return Common::String::format(" - %s", config.clickLabel.c_str());
+	case kStartupDialogueTextYes:
+	default:
+		return Common::String::format(" - %s", config.yesLabel.c_str());
+	}
+}
+
+static Common::String buildOptionsMenuItemLabel(const StartupScript &startupScript,
+		const RoomMenuTextConfig &config, int index) {
+	if (index < 0 || index >= (int)config.optionItems.size())
+		return Common::String();
+
+	switch (index) {
+	case 3:
+		return config.optionItems[index] + buildTextModeSuffix(startupScript, config);
+	case 4:
+		return config.optionItems[index] + (startupScript.isGoreEnabled() ? " - On" : " - Off");
+	case 6:
+		return config.optionItems[index] + (startupScript.getParentalPassword().empty() ? " - Off" : " - On");
+	default:
+		return config.optionItems[index];
+	}
+}
+
+static bool appendTextEntryCharacter(Common::String &text, const Graphics::Font &font,
+		uint32 ascii, uint maxCharacters) {
+	if (ascii < 32 || ascii > 126 || ascii == '~' || text.size() >= maxCharacters)
+		return false;
+
+	const Common::String candidate = text + (char)ascii;
+	if (font.getStringWidth(candidate) > textEntryInputRect().width() - 10)
+		return false;
+
+	text = candidate;
+	return true;
 }
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -123,6 +315,119 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 		drawShadowedString(screen, font, lines[i], x, y + (int)i * (font.getFontHeight() + 2), width, color);
 }
 
+static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
+		const byte *palette, float paletteBrightness,
+		const Graphics::Font &selectedFont, const Graphics::Font &unselectedFont,
+		const StartupArt &art, const RoomMenuTextConfig &config,
+		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem) {
+	Graphics::Screen *screen = engine.getScreen();
+	StartupScript *startupScript = engine.getStartupScript();
+	if (!screen || !startupScript)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, paletteBrightness);
+	blitBitmap(*screen, backdrop, 0, 0);
+	blitTransparentBitmap(*screen, art.getLogoBitmap(), kLogoX, kLogoY);
+
+	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
+	for (int i = 0; i < 3; ++i) {
+		blitTransparentBitmap(*screen, volumeBar, kOptionsVolumeBitmapX, kOptionsVolumeBitmapY + i * lineHeight);
+	}
+
+	const int levels[3] = {
+		startupScript->getFxVolumeLevel(),
+		startupScript->getMusicVolumeLevel(),
+		startupScript->getGammaLevel()
+	};
+	for (int i = 0; i < 3; ++i) {
+		blitTransparentBitmap(*screen, indicator, kOptionsSliderMinX + levels[i] * kOptionsSliderStep,
+			kOptionsIndicatorY + i * lineHeight);
+	}
+
+	for (int i = 0; i < (int)config.optionItems.size(); ++i) {
+		const Common::String label = buildOptionsMenuItemLabel(*startupScript, config, i);
+		const Graphics::Font &font = (i == selectedItem) ? selectedFont : unselectedFont;
+		const int width = font.getStringWidth(label);
+		const int x = (screen->w - width) / 2;
+		const int y = kMenuStartY + i * lineHeight;
+		font.drawString(screen, label, x, y, width, 0);
+	}
+
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap &backdrop,
+		const byte *palette, float paletteBrightness,
+		const Common::String &tipText) {
+	Graphics::Screen *screen = engine.getScreen();
+	const StartupArt *art = engine.getStartupArt();
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	StartupScript *startupScript = engine.getStartupScript();
+	if (!screen || !art || !font || !startupScript)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, paletteBrightness);
+	blitBitmap(*screen, backdrop, 0, 0);
+	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
+	blitBitmap(*screen, art->getTipsBitmap(), kQuickTipsOverlayX, kQuickTipsOverlayY);
+
+	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth,
+		kTextColorNormal);
+	const Common::String toggleLabel = startupScript->resolveTextValue(
+		startupScript->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
+	drawShadowedString(*screen, *font, "Exit", quickTipsExitRect().left, quickTipsExitRect().top,
+		quickTipsExitRect().width(), kQuickTipActionColor);
+	drawShadowedString(*screen, *font, "Next", quickTipsNextRect().left, quickTipsNextRect().top,
+		quickTipsNextRect().width(), kQuickTipActionColor);
+	drawShadowedString(*screen, *font, toggleLabel, quickTipsToggleRect().left, quickTipsToggleRect().top,
+		quickTipsToggleRect().width(), kQuickTipActionColor);
+
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+static void renderTextEntryDialog(HarvesterEngine &engine, const IndexedBitmap &backdrop,
+		const byte *palette, float paletteBrightness, const Graphics::Font &titleFont,
+		const Graphics::Font &entryFont, const Common::String &title, const Common::String &text,
+		bool cursorVisible, bool okHover, bool cancelHover) {
+	Graphics::Screen *screen = engine.getScreen();
+	if (!screen)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, paletteBrightness);
+	blitBitmap(*screen, backdrop, 0, 0);
+
+	screen->fillRect(Common::Rect(132, 148, 508, 320), kPanelFillColor);
+	drawShadowedString(*screen, titleFont, title, 132, 168, 376, kTextColorNormal,
+		Graphics::kTextAlignCenter);
+	screen->fillRect(textEntryInputRect(), kTransparentPaletteIndex);
+	screen->frameRect(textEntryInputRect(), kTextColorDim);
+
+	Common::String displayText = text;
+	if (cursorVisible)
+		displayText += "_";
+	const Common::Rect inputRect = textEntryInputRect();
+	const Common::Rect okRect = textEntryOkRect();
+	const Common::Rect cancelRect = textEntryCancelRect();
+	drawShadowedString(*screen, entryFont, displayText, inputRect.left + 5, inputRect.top + 4,
+		inputRect.width() - 10, kTextColorNormal);
+	drawShadowedString(*screen, entryFont, "OK", okRect.left, okRect.top,
+		okRect.width(), okHover ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
+	drawShadowedString(*screen, entryFont, "Cancel", cancelRect.left, cancelRect.top,
+		cancelRect.width(), cancelHover ? kTextColorHover : kTextColorNormal,
+		Graphics::kTextAlignCenter);
+
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont) {
 	return selectedFont.getFontHeight() + 2;
 }
@@ -134,9 +439,13 @@ static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFon
 
 	int selection = mousePos.y - kMenuStartY;
 	if (selection < 1)
-		selection = 1;
+		return -1;
 
-	return (selection - 1) / MAX<int>(1, getNativeRoomMenuLineHeight(selectedFont));
+	selection = (selection - 1) / MAX<int>(1, getNativeRoomMenuLineHeight(selectedFont));
+	if (selection < 0 || selection >= (int)itemCount)
+		return -1;
+
+	return selection;
 }
 
 } // End of anonymous namespace
@@ -266,7 +575,8 @@ Common::Error StartupMenuSystem::runMainMenuStub(StartupFlow &startupFlow) {
 	return Common::kNoError;
 }
 
-Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, StartupFlow &startupFlow) {
+Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, StartupFlow &startupFlow) {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
@@ -308,8 +618,15 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
-					debug(1, "Harvester: room menu item '%s' selected but not implemented",
-						selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
+					if (selectedItem >= 0 && _menuItems[selectedItem].equalsIgnoreCase("OPTIONS")) {
+						Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, startupFlow);
+						if (optionsError.getCode() != Common::kNoError)
+							return optionsError;
+						needsRedraw = true;
+					} else {
+						debug(1, "Harvester: room menu item '%s' selected but not implemented",
+							selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
+					}
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -320,8 +637,15 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 				if (selectedItem == -1)
 					break;
 
-				debug(1, "Harvester: room menu item '%s' clicked but not implemented",
-					_menuItems[selectedItem].c_str());
+				if (_menuItems[selectedItem].equalsIgnoreCase("OPTIONS")) {
+					Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, startupFlow);
+					if (optionsError.getCode() != Common::kNoError)
+						return optionsError;
+					needsRedraw = true;
+				} else {
+					debug(1, "Harvester: room menu item '%s' clicked but not implemented",
+						_menuItems[selectedItem].c_str());
+				}
 				break;
 			default:
 				break;
@@ -337,6 +661,386 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 	}
 
 	return Common::kNoError;
+}
+
+Common::Error StartupMenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, StartupFlow &startupFlow) {
+	const StartupArt *art = _engine.getStartupArt();
+	StartupScript *startupScript = _engine.getStartupScript();
+	ResourceManager *resources = _engine.getResources();
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	if (!art || !startupScript || !resources || !selectedFontResource || !unselectedFontResource)
+		return Common::kReadingFailed;
+
+	HarvesterCftFont selectedFont(*selectedFontResource);
+	HarvesterCftFont unselectedFont(*unselectedFontResource);
+	if (!selectedFont.isValid() || !unselectedFont.isValid())
+		return Common::kReadingFailed;
+
+	RoomMenuTextConfig config;
+	(void)loadMenuTextConfig(_engine, config);
+
+	IndexedBitmap volumeBar;
+	IndexedBitmap indicator;
+	if (!loadBitmapResource(*resources, kOptionsVolumeBitmapPath, volumeBar) ||
+			!loadBitmapResource(*resources, kOptionsIndicatorBitmapPath, indicator)) {
+		return Common::kReadingFailed;
+	}
+
+	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
+	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	const Graphics::Font &entryFont = bodyFont ? *bodyFont : static_cast<const Graphics::Font &>(unselectedFont);
+	int selectedItem = 0;
+	int capturedSlider = -1;
+	bool showingQuickTips = false;
+	bool needsRedraw = true;
+	uint quickTipIndex = startupFlow._quickTips.empty() ? 0 : _engine.getRandomNumber(startupFlow._quickTips.size() - 1);
+
+	auto persistConfig = [&]() {
+		(void)startupScript->saveConfig();
+	};
+
+	auto updateSlider = [&](int sliderIndex) {
+		const int newLevel = resolveOptionsSliderIndexFromMouseX(_mousePos.x);
+		switch (sliderIndex) {
+		case 0:
+			if (newLevel != startupScript->getFxVolumeLevel()) {
+				_engine.setStartupFxVolumeLevel(newLevel);
+				_engine.playStartupSingleSound(kOptionsPreviewSoundPath);
+				persistConfig();
+				needsRedraw = true;
+			}
+			break;
+		case 1:
+			if (newLevel != startupScript->getMusicVolumeLevel()) {
+				_engine.setStartupMusicVolumeLevel(newLevel);
+				persistConfig();
+				needsRedraw = true;
+			}
+			break;
+		case 2:
+			if (newLevel != startupScript->getGammaLevel()) {
+				_engine.setStartupGammaLevel(newLevel);
+				persistConfig();
+				needsRedraw = true;
+			}
+			break;
+		default:
+			break;
+		}
+	};
+
+	auto cycleTextMode = [&]() {
+		switch (startupScript->getDialogueTextMode()) {
+		case kStartupDialogueTextNone:
+			startupScript->setDialogueTextMode(kStartupDialogueTextYes);
+			break;
+		case kStartupDialogueTextYes:
+			startupScript->setDialogueTextMode(kStartupDialogueTextClick);
+			break;
+		case kStartupDialogueTextClick:
+		default:
+			startupScript->setDialogueTextMode(kStartupDialogueTextNone);
+			break;
+		}
+		persistConfig();
+		needsRedraw = true;
+	};
+
+	auto toggleGore = [&]() {
+		startupScript->setGoreEnabled(!startupScript->isGoreEnabled());
+		ConfMan.setBool("gore", startupScript->isGoreEnabled());
+		persistConfig();
+		needsRedraw = true;
+	};
+
+	auto togglePassword = [&]() {
+		if (startupScript->getParentalPassword().empty()) {
+			const Common::String password = runModalTextEntryDialog(backdrop, palette, paletteBrightness,
+				selectedFont, entryFont, "ENTER PASSWORD", Common::String(), startupFlow);
+			if (!password.empty()) {
+				startupScript->setParentalPassword(password);
+				persistConfig();
+				needsRedraw = true;
+			}
+		} else {
+			startupScript->setParentalPassword(Common::String());
+			persistConfig();
+			needsRedraw = true;
+		}
+	};
+
+	auto activateSelectedItem = [&]() -> Common::Error {
+		switch (selectedItem) {
+		case 3:
+			cycleTextMode();
+			break;
+		case 4:
+			toggleGore();
+			break;
+		case 5:
+			if (!startupFlow._quickTips.empty()) {
+				showingQuickTips = true;
+				needsRedraw = true;
+			}
+			break;
+		case 6:
+			togglePassword();
+			break;
+		default:
+			break;
+		}
+
+		return Common::kNoError;
+	};
+
+	Graphics::FrameLimiter limiter(g_system, 60);
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			if (showingQuickTips) {
+				renderQuickTipsOverlay(_engine, backdrop, palette, paletteBrightness,
+					startupFlow._quickTips[quickTipIndex]);
+			} else {
+				renderOptionsMenuScreen(_engine, backdrop, palette, paletteBrightness,
+					selectedFont, unselectedFont, *art, config, volumeBar, indicator, selectedItem);
+			}
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+
+			if (showingQuickTips) {
+				switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					needsRedraw = true;
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					if (quickTipsExitRect().contains(_mousePos)) {
+						showingQuickTips = false;
+						needsRedraw = true;
+					} else if (quickTipsNextRect().contains(_mousePos)) {
+						quickTipIndex = (quickTipIndex + 1) % startupFlow._quickTips.size();
+						needsRedraw = true;
+					} else if (quickTipsToggleRect().contains(_mousePos)) {
+						startupScript->setQuickTipsEnabled(!startupScript->isQuickTipsEnabled());
+						persistConfig();
+						needsRedraw = true;
+					}
+					break;
+				case Common::EVENT_RBUTTONDOWN:
+					showingQuickTips = false;
+					needsRedraw = true;
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						showingQuickTips = false;
+						needsRedraw = true;
+					}
+					break;
+				default:
+					break;
+				}
+				continue;
+			}
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE: {
+				if (capturedSlider != -1) {
+					selectedItem = capturedSlider;
+					updateSlider(capturedSlider);
+					needsRedraw = true;
+				} else {
+					const int hoveredItem = getNativeRoomMenuSelectionFromMouse(selectedFont,
+						config.optionItems.size(), _mousePos);
+					if (hoveredItem != -1 && hoveredItem != selectedItem) {
+						selectedItem = hoveredItem;
+						needsRedraw = true;
+					}
+				}
+				break;
+			}
+			case Common::EVENT_LBUTTONDOWN: {
+				bool handled = false;
+				for (int sliderIndex = 0; sliderIndex < 3; ++sliderIndex) {
+					if (optionsSliderRect(sliderIndex, lineHeight).contains(_mousePos)) {
+						selectedItem = sliderIndex;
+						capturedSlider = sliderIndex;
+						updateSlider(sliderIndex);
+						needsRedraw = true;
+						handled = true;
+						break;
+					}
+				}
+				if (handled)
+					break;
+
+				const int clickedItem = getNativeRoomMenuSelectionFromMouse(selectedFont,
+					config.optionItems.size(), _mousePos);
+				if (clickedItem == -1)
+					break;
+
+				selectedItem = clickedItem;
+				needsRedraw = true;
+				if (selectedItem >= 3) {
+					Common::Error activateError = activateSelectedItem();
+					if (activateError.getCode() != Common::kNoError)
+						return activateError;
+				}
+				break;
+			}
+			case Common::EVENT_LBUTTONUP:
+				capturedSlider = -1;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				return Common::kNoError;
+			case Common::EVENT_KEYDOWN:
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					return Common::kNoError;
+				case Common::KEYCODE_UP:
+					selectedItem = (selectedItem + (int)config.optionItems.size() - 1) % (int)config.optionItems.size();
+					needsRedraw = true;
+					break;
+				case Common::KEYCODE_DOWN:
+					selectedItem = (selectedItem + 1) % (int)config.optionItems.size();
+					needsRedraw = true;
+					break;
+				case Common::KEYCODE_LEFT:
+					if (selectedItem < 3) {
+						_mousePos.x = MAX<int>(kOptionsSliderMinX, _mousePos.x - kOptionsSliderStep);
+						updateSlider(selectedItem);
+						needsRedraw = true;
+					}
+					break;
+				case Common::KEYCODE_RIGHT:
+					if (selectedItem < 3) {
+						_mousePos.x = MIN<int>(kOptionsSliderMaxX, _mousePos.x + kOptionsSliderStep);
+						updateSlider(selectedItem);
+						needsRedraw = true;
+					}
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER: {
+					Common::Error activateError = activateSelectedItem();
+					if (activateError.getCode() != Common::kNoError)
+						return activateError;
+					break;
+				}
+				case Common::KEYCODE_t:
+					selectedItem = 3;
+					cycleTextMode();
+					break;
+				case Common::KEYCODE_g:
+					selectedItem = 4;
+					toggleGore();
+					break;
+				case Common::KEYCODE_q:
+					selectedItem = 5;
+					if (!startupFlow._quickTips.empty()) {
+						showingQuickTips = true;
+						needsRedraw = true;
+					}
+					break;
+				case Common::KEYCODE_p:
+					selectedItem = 6;
+					togglePassword();
+					break;
+				default:
+					break;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+Common::String StartupMenuSystem::runModalTextEntryDialog(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const Graphics::Font &titleFont, const Graphics::Font &entryFont,
+		const Common::String &title, const Common::String &initialText, StartupFlow &startupFlow) {
+	Graphics::FrameLimiter limiter(g_system, 60);
+	Common::String text = initialText;
+	const uint maxCharacters = 30;
+	bool needsRedraw = true;
+	bool cursorVisible = true;
+	uint32 cursorToggleTicks = g_system->getMillis() + 400;
+
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			renderTextEntryDialog(_engine, backdrop, palette, paletteBrightness, titleFont, entryFont,
+				title, text, cursorVisible, textEntryOkRect().contains(_mousePos), textEntryCancelRect().contains(_mousePos));
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return Common::String();
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				needsRedraw = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (textEntryOkRect().contains(_mousePos))
+					return text;
+				if (textEntryCancelRect().contains(_mousePos))
+					return Common::String();
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				return Common::String();
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return Common::String();
+				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+					return text;
+				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+					if (!text.empty()) {
+						text.deleteLastChar();
+						needsRedraw = true;
+					}
+					break;
+				}
+				if (appendTextEntryCharacter(text, entryFont, event.kbd.ascii, maxCharacters))
+					needsRedraw = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		const uint32 now = g_system->getMillis();
+		if ((int32)(now - cursorToggleTicks) >= 0) {
+			cursorVisible = !cursorVisible;
+			cursorToggleTicks = now + 400;
+			needsRedraw = true;
+		}
+
+		if (_engine.getRuntimeEntities() && _engine.getRuntimeEntities()->syncCursorEntityPosition(_mousePos))
+			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::String();
 }
 
 void StartupMenuSystem::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {

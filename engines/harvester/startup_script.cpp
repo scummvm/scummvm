@@ -23,8 +23,10 @@
 
 #include <cstdlib>
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/file.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "harvester/detection.h"
@@ -41,6 +43,16 @@ static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
 static const int kDefaultPlayerHitPoints = 30;
+static const int kMaxStartupOptionLevel = 9;
+
+static int clampStartupOptionLevel(int level) {
+	if (level < 0)
+		return 0;
+	if (level > kMaxStartupOptionLevel)
+		return kMaxStartupOptionLevel;
+
+	return level;
+}
 
 static int clampPlayerHitPoints(int hitPoints) {
 	if (hitPoints < 0)
@@ -82,6 +94,28 @@ static Common::String normalizeInteractionLabel(const Common::String &value) {
 	}
 
 	return label;
+}
+
+static Common::String toNativeConfigPath(const Common::String &value) {
+	Common::String result(value);
+	for (uint i = 0; i < result.size(); ++i) {
+		if (result[i] == '/')
+			result.setChar('\\', i);
+	}
+
+	return result;
+}
+
+static Common::String dialogueTextModeToConfigValue(StartupDialogueTextMode mode) {
+	switch (mode) {
+	case kStartupDialogueTextNone:
+		return "NO";
+	case kStartupDialogueTextClick:
+		return "CLICK";
+	case kStartupDialogueTextYes:
+	default:
+		return "YES";
+	}
 }
 
 static int parseEntranceFacing(const Common::String &direction) {
@@ -224,8 +258,19 @@ bool StartupScript::load(ResourceManager &resources) {
 	_heads.clear();
 	_useItems.clear();
 	_runtimeRegions.clear();
+	_fxVolumeLevel = 9;
+	_musicVolumeLevel = 3;
+	_gammaLevel = 0;
 	_quickTipsEnabled = true;
+	_goreEnabled = true;
 	_voicePath = kDefaultVoicePath;
+	_parentalPassword.clear();
+	_savePath = "./";
+	_townPath = kDefaultTownScript;
+	_cdRomPath.clear();
+	_drive1Path.clear();
+	_drive2Path.clear();
+	_drive3Path.clear();
 	_dialogueTextMode = kStartupDialogueTextYes;
 
 	loadConfig(resources);
@@ -261,8 +306,19 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 	}
 
 	Common::String townPath;
-	if (config.getKey("TOWN", kConfigSectionName, townPath))
+	if (config.getKey("TOWN", kConfigSectionName, townPath)) {
+		_townPath = townPath;
 		_path = resources.normalizeResourcePath(townPath);
+	}
+
+	Common::String savePath;
+	if (config.getKey("SAVE", kConfigSectionName, savePath))
+		_savePath = savePath;
+
+	(void)config.getKey("CD_ROM", kConfigSectionName, _cdRomPath);
+	(void)config.getKey("DRIVE_1", kConfigSectionName, _drive1Path);
+	(void)config.getKey("DRIVE_2", kConfigSectionName, _drive2Path);
+	(void)config.getKey("DRIVE_3", kConfigSectionName, _drive3Path);
 
 	Common::String quickTipsValue;
 	if (config.getKey("QUICK_TIPS", kConfigSectionName, quickTipsValue))
@@ -271,6 +327,18 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 	Common::String voicePath;
 	if (config.getKey("VOICE", kConfigSectionName, voicePath))
 		_voicePath = resources.normalizeResourcePath(voicePath);
+
+	Common::String fxVolume;
+	if (config.getKey("FX_VOLUME", kConfigSectionName, fxVolume))
+		_fxVolumeLevel = clampStartupOptionLevel(atoi(fxVolume.c_str()));
+
+	Common::String musicVolume;
+	if (config.getKey("MUSIC_VOLUME", kConfigSectionName, musicVolume))
+		_musicVolumeLevel = clampStartupOptionLevel(atoi(musicVolume.c_str()));
+
+	Common::String gammaValue;
+	if (config.getKey("GAMMA", kConfigSectionName, gammaValue))
+		_gammaLevel = clampStartupOptionLevel(atoi(gammaValue.c_str()));
 
 	Common::String textMode;
 	if (config.getKey("TEXT", kConfigSectionName, textMode)) {
@@ -282,7 +350,64 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 			_dialogueTextMode = kStartupDialogueTextYes;
 	}
 
+	Common::String goreValue;
+	if (config.getKey("GORE", kConfigSectionName, goreValue))
+		_goreEnabled = !goreValue.equalsIgnoreCase("NO") && !goreValue.equalsIgnoreCase("OFF");
+
+	Common::String passwordValue;
+	if (config.getKey("PASSWORD", kConfigSectionName, passwordValue))
+		_parentalPassword = passwordValue;
+
 	return true;
+}
+
+bool StartupScript::saveConfig() const {
+	Common::DumpFile file;
+	const Common::Path configPath = ConfMan.getPath("path").join(kStartupConfigPath, Common::Path::kNoSeparator);
+	if (!file.open(configPath)) {
+		warning("Harvester: unable to save startup config '%s'", configPath.toString(Common::Path::kNativeSeparator).c_str());
+		return false;
+	}
+
+	auto writeKey = [&](const char *key, const Common::String &value) {
+		file.writeString(Common::String::format("%s=%s\n", key, value.c_str()));
+	};
+
+	writeKey("FX_VOLUME", Common::String::format("%d", _fxVolumeLevel));
+	writeKey("MUSIC_VOLUME", Common::String::format("%d", _musicVolumeLevel));
+	writeKey("TEXT", dialogueTextModeToConfigValue(_dialogueTextMode));
+	writeKey("GORE", _goreEnabled ? "YES" : "NO");
+	writeKey("QUICK_TIPS", _quickTipsEnabled ? "ON" : "OFF");
+	if (!_savePath.empty())
+		writeKey("SAVE", toNativeConfigPath(_savePath));
+	writeKey("VOICE", toNativeConfigPath(_voicePath));
+	writeKey("GAMMA", Common::String::format("%d", _gammaLevel));
+	writeKey("TOWN", toNativeConfigPath(_townPath));
+	if (!_parentalPassword.empty())
+		writeKey("PASSWORD", _parentalPassword);
+	if (!_cdRomPath.empty())
+		writeKey("CD_ROM", _cdRomPath);
+	if (!_drive1Path.empty())
+		writeKey("DRIVE_1", _drive1Path);
+	if (!_drive2Path.empty())
+		writeKey("DRIVE_2", _drive2Path);
+	if (!_drive3Path.empty())
+		writeKey("DRIVE_3", _drive3Path);
+
+	file.flush();
+	return !file.err();
+}
+
+void StartupScript::setFxVolumeLevel(int level) {
+	_fxVolumeLevel = clampStartupOptionLevel(level);
+}
+
+void StartupScript::setMusicVolumeLevel(int level) {
+	_musicVolumeLevel = clampStartupOptionLevel(level);
+}
+
+void StartupScript::setGammaLevel(int level) {
+	_gammaLevel = clampStartupOptionLevel(level);
 }
 
 void StartupScript::decode() {

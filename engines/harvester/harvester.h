@@ -82,6 +82,13 @@ public:
 	StartupText *getStartupText() const { return _startupText; }
 	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
+	int getStartupFxVolumeLevel() const;
+	int getStartupMusicVolumeLevel() const;
+	int getStartupGammaLevel() const;
+	float getStartupGammaBrightnessScale() const;
+	void setStartupFxVolumeLevel(int level);
+	void setStartupMusicVolumeLevel(int level);
+	void setStartupGammaLevel(int level);
 	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
 	bool isStartupMusicPlaying() const;
 	bool playStartupMusic(const Common::String &path);
@@ -103,6 +110,7 @@ public:
 private:
 	void stopStartupSoundHandle(Audio::SoundHandle &handle);
 	bool validateStartupLoadedSoundSlot(int slot) const;
+	void applyStartupMixerLevels();
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;

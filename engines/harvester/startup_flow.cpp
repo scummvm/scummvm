@@ -688,7 +688,8 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	buildHarvesterDisplayPalette(palette, brightness, scaledPalette);
+	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
+	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
 
@@ -1870,8 +1871,8 @@ Common::Error StartupFlow::runMainMenuStub() {
 	return _menu.runMainMenuStub(*this);
 }
 
-Common::Error StartupFlow::runRoomMenuStub(const IndexedBitmap &backdrop) {
-	return _menu.runRoomMenuStub(backdrop, *this);
+Common::Error StartupFlow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness) {
+	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this);
 }
 
 Common::Error StartupFlow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

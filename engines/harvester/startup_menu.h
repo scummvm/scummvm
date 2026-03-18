@@ -27,6 +27,10 @@
 #include "common/rect.h"
 #include "common/str.h"
 
+namespace Graphics {
+class Font;
+}
+
 namespace Harvester {
 
 class HarvesterEngine;
@@ -39,9 +43,15 @@ public:
 		const Common::Array<Common::String> &menuItems);
 
 	Common::Error runMainMenuStub(StartupFlow &startupFlow);
-	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, StartupFlow &startupFlow);
+	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, StartupFlow &startupFlow);
 
 private:
+	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, StartupFlow &startupFlow);
+	Common::String runModalTextEntryDialog(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const Graphics::Font &titleFont, const Graphics::Font &entryFont,
+		const Common::String &title, const Common::String &initialText, StartupFlow &startupFlow);
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos) const;
