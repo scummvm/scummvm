@@ -132,26 +132,14 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			? playJimmyLine(0x4a4c, 1)
 			: playJimmyLine(0x4a58, 0);
 	}
-	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
-		Common::Error lineError = playJimmyLine(0x4ac3, 0);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-	}
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_4")) {
-		Common::Error lineError = playJimmyLine(0x4ae2, 2);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-	}
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_3")) {
-		Common::Error lineError = playJimmyLine(0x4adb, 2);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-	}
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_2")) {
-		Common::Error lineError = playJimmyLine(0x4ad4, 2);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-	}
+	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY"))
+		return playJimmyLine(0x4ac3, 0);
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_4"))
+		return playJimmyLine(0x4ae2, 2);
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_3"))
+		return playJimmyLine(0x4adb, 2);
+	if (runtime.startupScript().getFlagValue("PAPER_CHK_2"))
+		return playJimmyLine(0x4ad4, 2);
 
 	return playJimmyLine(0x4b38, 0);
 }

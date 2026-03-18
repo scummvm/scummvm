@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Verify the split between player-present carry pickup and no-player direct-to-inventory pickup directly from `run_harvester_main_loop`
-- Keep the engine-side pickup path aligned with the native in-place scene mutation instead of forcing a room rebuild after plain pickup
-- Re-check only the remaining in-game drag/drop edge cases that still need native capture confirmation
+- Verify NPC-specific dialogue handlers against their native hardcoded dispatchers before assuming they should use the generic keyword flow
+- Keep the engine-side Jimmy conversation aligned with the native short-circuit branch order instead of letting special barks fall through
+- Re-check only the remaining in-game drag/drop and dialogue edge cases that still need native capture confirmation
 
 ## Progress
 
@@ -15,14 +15,13 @@
 
 ## Last Confirmed Action
 
-- Revisited the native pickup branch in Ghidra and confirmed the deciding condition is player presence in the room, not the item name.
-  - When the player is present, `run_harvester_main_loop` enters cursor-follow carry mode for pickup objects and keeps using the class `5` / `"your inventory"` overlap target for the explicit room-item-to-inventory handoff.
-  - When the player is absent, the same loop moves pickup objects straight into `INVENTORY`, removes the live room entity in place, and skips the carry state entirely.
-  - The pickup path itself does not rerun full room setup in the native binary; only later action-driven mutations or room transitions take the heavier refresh path.
-- Adjusted the engine-side startup-room flow to match that split more closely.
-  - Full rooms still use carried-item mode, closeup/no-player rooms now transfer pickup objects directly into inventory, and plain pickup no longer forces a full room scene rebuild.
+- Revisited the native Jimmy conversation path in Ghidra and confirmed it is a dedicated hardcoded handler, not a generic keyword-loop dialogue.
+  - `handle_talk_to_jimmy` is a short-circuit chain: first no-item talk returns `0x4a4c` or `0x4a58`, special no-item cases for `SNEAKERS` and `PAPER_CHK_4/3/2` each terminate immediately on their own line, and only the final fallback returns `0x4b38`.
+  - The original Jimmy handler does not call the keyword or response menu helpers directly, so there is no evidence that bare click-talk should fan out into a larger dynamic conversation tree.
+- Adjusted the engine-side Jimmy handler to match that native branch behavior more closely.
+  - Jimmy's special no-item barks now return immediately instead of falling through to later lines, preserving the native priority order.
 
 ## Next Suggested Action
 
-1. Compare the native and engine behavior in-game for both pickup branches: `NEWSPAPER` in `PCLIVRM` should stay carried until it reaches `"your inventory"`, while `PC_PEN` / `QUARTER` in `PCDRWR` should jump straight into inventory with no interim carry mode.
-2. If pickup-side visuals still diverge from DOSBox, inspect the native carried-entity anchor and the no-player closeup redraw order before changing any draw offsets.
+1. Compare the native and engine Jimmy talk paths in-game with and without `SNEAKERS`, `BROOMKEY`, and `PAPER_CHK_2/3/4` set to confirm the branch priorities now match the DOS behavior.
+2. If another NPC still looks too shallow or too chatty versus DOSBox, verify that NPC's dedicated handler in Ghidra before changing any engine dialogue flow assumptions.
