@@ -10,8 +10,8 @@
 namespace Harvester {
 
 class HarvesterEngine;
-class StartupFlow;
-class StartupText;
+class Flow;
+class Text;
 
 struct DialogueLineEntry {
 	int wavId;
@@ -36,8 +36,8 @@ public:
 	typedef std::function<int(int)> GetRandomNumberFn;
 	typedef std::function<void(const Common::String &, int)> SetActiveSpeakerPortraitFn;
 
-	DialogueRuntime(HarvesterEngine &engine, StartupScript &startupScript, StartupText &startupText,
-			StartupFlow &startupFlow, const Common::String &currentRoomName,
+	DialogueRuntime(HarvesterEngine &engine, Script &startupScript, Text &startupText,
+			Flow &startupFlow, const Common::String &currentRoomName,
 			const Common::String &genericByeTopic,
 			const PlayDialogueLineWithVariantFn &playDialogueLineWithVariant,
 			const PlayDialogueLineFn &playDialogueLine,
@@ -70,9 +70,9 @@ public:
 	}
 
 	HarvesterEngine &engine() const { return _engine; }
-	StartupScript &startupScript() const { return _startupScript; }
-	StartupText &startupText() const { return _startupText; }
-	StartupFlow &startupFlow() const { return _startupFlow; }
+	Script &startupScript() const { return _startupScript; }
+	Text &startupText() const { return _startupText; }
+	Flow &startupFlow() const { return _startupFlow; }
 	const Common::String &currentRoomName() const { return _currentRoomName; }
 	const Common::String &genericByeTopic() const { return _genericByeTopic; }
 
@@ -121,9 +121,9 @@ public:
 
 private:
 	HarvesterEngine &_engine;
-	StartupScript &_startupScript;
-	StartupText &_startupText;
-	StartupFlow &_startupFlow;
+	Script &_startupScript;
+	Text &_startupText;
+	Flow &_startupFlow;
 	const Common::String &_currentRoomName;
 	const Common::String &_genericByeTopic;
 	PlayDialogueLineWithVariantFn _playDialogueLineWithVariant;

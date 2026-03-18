@@ -94,7 +94,7 @@ static const char *const kAmmoIconPaths[] = {
 
 } // End of anonymous namespace
 
-bool StartupArt::load(ResourceManager &resources) {
+bool Art::load(ResourceManager &resources) {
 	_waitFrames.clear();
 	_textboxes.clear();
 	_ammoIcons.clear();
@@ -108,7 +108,7 @@ bool StartupArt::load(ResourceManager &resources) {
 	       loadBitmap(resources, "1:/GRAPHIC/OTHER/HARVLOGO.BM", _logoBitmap);
 }
 
-bool StartupArt::loadQuickTipsResources(ResourceManager &resources) {
+bool Art::loadQuickTipsResources(ResourceManager &resources) {
 	_textboxes.resize(ARRAYSIZE(kTextboxPaths));
 	for (uint i = 0; i < _textboxes.size(); ++i) {
 		if (!loadBitmap(resources, kTextboxPaths[i], _textboxes[i]))
@@ -124,7 +124,7 @@ bool StartupArt::loadQuickTipsResources(ResourceManager &resources) {
 	return loadBitmap(resources, "1:/GRAPHIC/OTHER/TIPS.BM", _tipsBitmap);
 }
 
-void StartupArt::drawWaitFrame(Graphics::Screen &screen) const {
+void Art::drawWaitFrame(Graphics::Screen &screen) const {
 	if (_waitFrames.empty() || !_waitFrames[0].isValid())
 		return;
 
@@ -137,7 +137,7 @@ void StartupArt::drawWaitFrame(Graphics::Screen &screen) const {
 	screen.update();
 }
 
-bool StartupArt::loadPalette(ResourceManager &resources, const Common::String &path, byte *dest) const {
+bool Art::loadPalette(ResourceManager &resources, const Common::String &path, byte *dest) const {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 256 * 3) {
 		warning("Harvester: unable to load palette '%s'", path.c_str());
@@ -150,7 +150,7 @@ bool StartupArt::loadPalette(ResourceManager &resources, const Common::String &p
 	return true;
 }
 
-bool StartupArt::loadBitmap(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) const {
+bool Art::loadBitmap(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) const {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 12) {
 		warning("Harvester: unable to load bitmap '%s'", path.c_str());
@@ -170,7 +170,7 @@ bool StartupArt::loadBitmap(ResourceManager &resources, const Common::String &pa
 	return true;
 }
 
-bool StartupArt::loadAnimation(ResourceManager &resources, const Common::String &path, Common::Array<AbmFrame> &frames) const {
+bool Art::loadAnimation(ResourceManager &resources, const Common::String &path, Common::Array<AbmFrame> &frames) const {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 8) {
 		warning("Harvester: unable to load animation '%s'", path.c_str());
@@ -213,7 +213,7 @@ bool StartupArt::loadAnimation(ResourceManager &resources, const Common::String 
 	return true;
 }
 
-bool StartupArt::decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) const {
+bool Art::decodeAnimationFrame(const byte *source, uint32 sourceSize, bool compressed, Common::Array<byte> &dest) const {
 	if (!compressed) {
 		if (sourceSize < dest.size())
 			return false;
@@ -245,7 +245,7 @@ bool StartupArt::decodeAnimationFrame(const byte *source, uint32 sourceSize, boo
 	return dstOffset == dest.size();
 }
 
-void StartupArt::blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) const {
+void Art::blitTransparentBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) const {
 	if (!bitmap.isValid())
 		return;
 
@@ -280,7 +280,7 @@ void StartupArt::blitTransparentBitmap(Graphics::Screen &screen, const IndexedBi
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
 }
 
-void StartupArt::blitTransparentAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames,
+void Art::blitTransparentAnimationFrame(Graphics::Screen &screen, const Common::Array<AbmFrame> &frames,
 		uint frameIndex, int x, int y) const {
 	if (frameIndex >= frames.size() || !frames[frameIndex].isValid())
 		return;

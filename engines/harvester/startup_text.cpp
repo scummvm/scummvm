@@ -126,7 +126,7 @@ static bool tryLoadPreferredDialogueResponsesFromGamePath(Common::Array<Common::
 
 } // End of anonymous namespace
 
-bool StartupText::load(ResourceManager &resources) {
+bool Text::load(ResourceManager &resources) {
 	_dialogueData.clear();
 	_dialogueEntries.clear();
 	_dialogueResponseLines.clear();
@@ -145,7 +145,7 @@ bool StartupText::load(ResourceManager &resources) {
 	return true;
 }
 
-bool StartupText::loadDialogueIndex(ResourceManager &resources) {
+bool Text::loadDialogueIndex(ResourceManager &resources) {
 	if (!resources.loadFile("DIALOGUE.IDX", _dialogueData) || _dialogueData.empty()) {
 		warning("Harvester: unable to load DIALOGUE.IDX");
 		return false;
@@ -186,7 +186,7 @@ bool StartupText::loadDialogueIndex(ResourceManager &resources) {
 	return !_dialogueEntries.empty();
 }
 
-bool StartupText::loadDialogueResponses(ResourceManager &resources) {
+bool Text::loadDialogueResponses(ResourceManager &resources) {
 	Common::Array<byte> responseData;
 	if (!resources.loadFile(kDialogueResponsePath, responseData) || responseData.empty()) {
 		warning("Harvester: unable to load %s", kDialogueResponsePath);
@@ -206,7 +206,7 @@ bool StartupText::loadDialogueResponses(ResourceManager &resources) {
 	return !_dialogueResponseLines.empty();
 }
 
-bool StartupText::loadFont(ResourceManager &resources, const Common::String &path) {
+bool Text::loadFont(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < kCftBitmapHeaderSize) {
 		warning("Harvester: unable to load font '%s'", path.c_str());
@@ -239,7 +239,7 @@ bool StartupText::loadFont(ResourceManager &resources, const Common::String &pat
 	return true;
 }
 
-void StartupText::decodeXorText(Common::Array<byte> &data) const {
+void Text::decodeXorText(Common::Array<byte> &data) const {
 	for (byte &value : data) {
 		if (value == '\n' || value == '\r')
 			continue;
@@ -247,7 +247,7 @@ void StartupText::decodeXorText(Common::Array<byte> &data) const {
 	}
 }
 
-bool StartupText::resolveDialogueSubtitle(int wavId, Common::String &text) const {
+bool Text::resolveDialogueSubtitle(int wavId, Common::String &text) const {
 	text.clear();
 	if (wavId <= 0 || _dialogueEntries.empty() || _dialogueData.empty())
 		return false;
@@ -273,7 +273,7 @@ bool StartupText::resolveDialogueSubtitle(int wavId, Common::String &text) const
 	return false;
 }
 
-Common::String StartupText::getDialogueResponseLine(int zeroBasedIndex) const {
+Common::String Text::getDialogueResponseLine(int zeroBasedIndex) const {
 	if (zeroBasedIndex < 0 || (uint)zeroBasedIndex >= _dialogueResponseLines.size())
 		return Common::String();
 

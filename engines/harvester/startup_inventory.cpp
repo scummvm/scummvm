@@ -122,13 +122,13 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 
 } // End of anonymous namespace
 
-StartupInventorySystem::StartupInventorySystem(HarvesterEngine &engine) : _engine(engine) {
+InventorySystem::InventorySystem(HarvesterEngine &engine) : _engine(engine) {
 }
 
-bool StartupInventorySystem::refresh() {
+bool InventorySystem::refresh() {
 	_items.clear();
 
-	StartupScript *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getStartupScript();
 	ResourceManager *resources = _engine.getResources();
 	if (!startupScript || !resources)
 		return false;
@@ -195,14 +195,14 @@ bool StartupInventorySystem::refresh() {
 	return true;
 }
 
-bool StartupInventorySystem::open() {
+bool InventorySystem::open() {
 	const bool wasOpen = _open;
 	_open = true;
 	_promptText.clear();
 	return refresh() || !wasOpen;
 }
 
-bool StartupInventorySystem::close() {
+bool InventorySystem::close() {
 	if (!_open)
 		return false;
 
@@ -210,7 +210,7 @@ bool StartupInventorySystem::close() {
 	return true;
 }
 
-bool StartupInventorySystem::clearSelection() {
+bool InventorySystem::clearSelection() {
 	if (_selectedItemName.empty() && _promptText.empty())
 		return false;
 
@@ -219,20 +219,20 @@ bool StartupInventorySystem::clearSelection() {
 	return true;
 }
 
-bool StartupInventorySystem::isOpen() const {
+bool InventorySystem::isOpen() const {
 	return _open;
 }
 
-bool StartupInventorySystem::hasSelection() const {
+bool InventorySystem::hasSelection() const {
 	return !_selectedItemName.empty();
 }
 
-const Common::String &StartupInventorySystem::getSelectedItemName() const {
+const Common::String &InventorySystem::getSelectedItemName() const {
 	return _selectedItemName;
 }
 
-Common::String StartupInventorySystem::resolveSelectedLabel() const {
-	StartupScript *startupScript = _engine.getStartupScript();
+Common::String InventorySystem::resolveSelectedLabel() const {
+	Script *startupScript = _engine.getStartupScript();
 	if (!startupScript || _selectedItemName.empty())
 		return Common::String();
 
@@ -251,23 +251,23 @@ Common::String StartupInventorySystem::resolveSelectedLabel() const {
 	return normalizeHarvesterResourcePath(_selectedItemName);
 }
 
-Common::String StartupInventorySystem::buildSelectedPrompt(const Common::String &targetLabel) const {
+Common::String InventorySystem::buildSelectedPrompt(const Common::String &targetLabel) const {
 	return buildUseItemPrompt(resolveSelectedLabel(), targetLabel);
 }
 
-void StartupInventorySystem::selectItem(const Common::String &objectName) {
+void InventorySystem::selectItem(const Common::String &objectName) {
 	_selectedItemName = objectName;
 }
 
-void StartupInventorySystem::setPromptText(const Common::String &promptText) {
+void InventorySystem::setPromptText(const Common::String &promptText) {
 	_promptText = promptText;
 }
 
-const Common::String &StartupInventorySystem::getPromptText() const {
+const Common::String &InventorySystem::getPromptText() const {
 	return _promptText;
 }
 
-const StartupInventoryVisual *StartupInventorySystem::findItemAtPoint(const Common::Point &point) const {
+const StartupInventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {
 	for (int i = (int)_items.size() - 1; i >= 0; --i) {
 		if (_items[i].bounds.contains(point))
 			return &_items[i];
@@ -276,8 +276,8 @@ const StartupInventoryVisual *StartupInventorySystem::findItemAtPoint(const Comm
 	return nullptr;
 }
 
-Common::Rect StartupInventorySystem::getPanelBounds() const {
-	const StartupArt *art = _engine.getStartupArt();
+Common::Rect InventorySystem::getPanelBounds() const {
+	const Art *art = _engine.getStartupArt();
 	if (!art)
 		return Common::Rect();
 
@@ -286,7 +286,7 @@ Common::Rect StartupInventorySystem::getPanelBounds() const {
 		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
 }
 
-void StartupInventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const {
+void InventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const {
 	if (_selectedItemName.empty())
 		return;
 
@@ -303,8 +303,8 @@ void StartupInventorySystem::drawSelectedDragItem(Graphics::Screen &screen, cons
 	}
 }
 
-void StartupInventorySystem::drawOverlay(Graphics::Screen &screen) const {
-	const StartupArt *art = _engine.getStartupArt();
+void InventorySystem::drawOverlay(Graphics::Screen &screen) const {
+	const Art *art = _engine.getStartupArt();
 	if (!art)
 		return;
 
@@ -318,11 +318,11 @@ void StartupInventorySystem::drawOverlay(Graphics::Screen &screen) const {
 	}
 }
 
-bool StartupInventorySystem::isExitObject(const StartupObjectRecord &object) {
+bool InventorySystem::isExitObject(const StartupObjectRecord &object) {
 	return object.objectName.equalsIgnoreCase("INV_EXIT");
 }
 
-bool StartupInventorySystem::isStatusObject(const StartupObjectRecord &object) {
+bool InventorySystem::isStatusObject(const StartupObjectRecord &object) {
 	return object.objectName.hasPrefixIgnoreCase("INV_STAT");
 }
 

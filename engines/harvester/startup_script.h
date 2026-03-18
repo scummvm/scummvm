@@ -282,7 +282,7 @@ struct StartupResolvedText {
 	Common::String value;
 };
 
-class StartupScript {
+class Script {
 public:
 	bool load(ResourceManager &resources);
 

@@ -43,9 +43,9 @@ struct StartupInventoryVisual {
 	bool hasBitmap = false;
 };
 
-class StartupInventorySystem {
+class InventorySystem {
 public:
-	explicit StartupInventorySystem(HarvesterEngine &engine);
+	explicit InventorySystem(HarvesterEngine &engine);
 
 	bool refresh();
 	bool open();

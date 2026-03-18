@@ -38,7 +38,7 @@ namespace Harvester {
 class HarvesterEngine;
 class ResourceManager;
 class RuntimeEntity;
-class StartupArt;
+class Art;
 struct IndexedBitmap;
 
 struct StartupRoomSceneResources {
@@ -111,11 +111,11 @@ const StartupRegionRecord *findSceneRegionByName(const Common::Array<StartupRegi
 	const Common::String &regionName);
 StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
 	const Common::String &objectName);
-const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text);
-void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const Graphics::Font &font,
+const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupResolvedText &text);
+void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
 	const StartupResolvedText &inspectText);
 bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
-	StartupScript &startupScript);
+	Script &startupScript);
 bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region);
 bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupRegionRecord &region);
 StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,

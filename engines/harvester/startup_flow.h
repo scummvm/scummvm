@@ -41,18 +41,18 @@ namespace Harvester {
 class HarvesterEngine;
 struct IndexedBitmap;
 
-class StartupFlow {
+class Flow {
 public:
-	explicit StartupFlow(HarvesterEngine &engine);
+	explicit Flow(HarvesterEngine &engine);
 
 	bool load();
 	Common::Error run();
 
 private:
 	friend class DialogueSystem;
-	friend class StartupInventorySystem;
-	friend class StartupMenuSystem;
-	friend class StartupRoomSystem;
+	friend class InventorySystem;
+	friend class MenuSystem;
+	friend class RoomSystem;
 
 	bool loadQuickTips();
 	bool loadMenuItems();
@@ -88,9 +88,9 @@ private:
 	Common::Array<Common::String> _menuItems;
 	Common::Point _mousePos;
 	DialogueSystem _dialogue;
-	StartupInventorySystem _inventory;
-	StartupMenuSystem _menu;
-	StartupRoomSystem _room;
+	InventorySystem _inventory;
+	MenuSystem _menu;
+	RoomSystem _room;
 	StartupInteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
 	bool _pendingMainMenuReturn = false;
