@@ -26,38 +26,6 @@
 namespace Scumm {
 
 #ifdef SCUMM_OPTIMISED_CODE
-byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf) {
-	int i;
-	byte result = 0;
-
-	_out = vs;
-	if (drawToBackBuf)
-		_out.setPixels(vs.getBackPixels(0, 0));
-	else
-		_out.setPixels(vs.getPixels(0, 0));
-
-	_actorX += _vm->_virtscr[kMainVirtScreen].xstart & 7;
-	_out.w = _out.pitch / _vm->_bytesPerPixel;
-	// We do not use getBasePtr here because the offset to pixels never used
-	// _vm->_bytesPerPixel, but it seems unclear why.
-	_out.setPixels((byte *)_out.getPixels() - (_vm->_virtscr[kMainVirtScreen].xstart & 7));
-
-	_numStrips = numStrips;
-
-	if (_vm->_game.version <= 1) {
-		_xMove = 0;
-		_yMove = 0;
-	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
-		_xMove = -72;
-		_yMove = -100;
-	} else {
-		_xMove = _yMove = 0;
-	}
-	for (i = 0; i < 16; i++)
-		result |= drawLimb(a, i);
-	return result;
-}
-
 byte BaseCostumeRenderer::paintCelByleRLECommon(
 	int xMoveCur,
 	int yMoveCur,
@@ -419,37 +387,6 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 		StartPos:;
 		} while (--len);
 	} while (true);
-}
-
-void BaseCostumeRenderer::skipCelLines(ByleRLEData &compData, int num) {
-	num *= _height;
-
-	do {
-		compData.repLen = *_srcPtr++;
-		compData.repColor = compData.repLen >> compData.shr;
-		compData.repLen &= compData.mask;
-
-		if (!compData.repLen)
-			compData.repLen = *_srcPtr++;
-
-		do {
-			if (!--num)
-				return;
-		} while (--compData.repLen);
-	} while (true);
-}
-
-bool ScummEngine::isCostumeInUse(int cost) const {
-	Actor *a;
-
-	if (_roomResource != 0)
-		for (int i = 1; i < _numActors; i++) {
-			a = derefActor(i);
-			if (a->isInCurrentRoom() && a->_costume == cost)
-				return true;
-		}
-
-	return false;
 }
 #endif
 

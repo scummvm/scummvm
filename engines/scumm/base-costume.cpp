@@ -25,7 +25,6 @@
 
 namespace Scumm {
 
-#ifndef SCUMM_OPTIMISED_CODE
 byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf) {
 	int i;
 	byte result = 0;
@@ -58,6 +57,7 @@ byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const
 	return result;
 }
 
+#ifndef SCUMM_OPTIMISED_CODE
 byte BaseCostumeRenderer::paintCelByleRLECommon(
 	int xMoveCur,
 	int yMoveCur,
@@ -420,6 +420,7 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 		} while (--len);
 	} while (true);
 }
+#endif
 
 void BaseCostumeRenderer::skipCelLines(ByleRLEData &compData, int num) {
 	num *= _height;
@@ -451,6 +452,5 @@ bool ScummEngine::isCostumeInUse(int cost) const {
 
 	return false;
 }
-#endif
 
 } // End of namespace Scumm
