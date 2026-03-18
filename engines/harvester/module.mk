@@ -14,6 +14,7 @@ MODULE := engines/harvester
 	dialogue.o \
 	fst_player.o \
 	metaengine.o \
+	media_manager.o \
 	npc/curator_dialogue.o \
 	npc/dad_dialogue.o \
 	npc/dark_woman_dialogue.o \
