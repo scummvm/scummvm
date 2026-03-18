@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
+#include "common/serializer.h"
 #include "harvester/detection.h"
 #include "harvester/resources.h"
 
@@ -44,6 +45,123 @@ static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
 static const int kDefaultPlayerHitPoints = 30;
 static const int kMaxStartupOptionLevel = 9;
+
+static void syncBool(Common::Serializer &s, bool &value) {
+	byte serialized = value ? 1 : 0;
+	s.syncAsByte(serialized);
+	if (s.isLoading())
+		value = serialized != 0;
+}
+
+template <typename RecordType, typename SyncFn>
+static void syncRecordArray(Common::Serializer &s, Common::Array<RecordType> &records, SyncFn syncFn) {
+	uint32 count = (uint32)records.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading())
+		records.resize(count);
+	for (uint32 i = 0; i < count; ++i)
+		syncFn(s, records[i]);
+}
+
+static void syncStartupFlagRecord(Common::Serializer &s, StartupFlagRecord &record) {
+	s.syncString(record.name);
+	syncBool(s, record.value);
+}
+
+static void syncStartupObjectRecord(Common::Serializer &s, StartupObjectRecord &record) {
+	s.syncAsSint32LE(record.initialX);
+	s.syncAsSint32LE(record.initialY);
+	s.syncAsSint32LE(record.initialZ);
+	s.syncAsSint32LE(record.currentX);
+	s.syncAsSint32LE(record.currentY);
+	s.syncAsSint32LE(record.currentZ);
+	s.syncAsSint32LE(record.boundsX2);
+	s.syncAsSint32LE(record.boundsY2);
+	s.syncAsSint32LE(record.zExtent);
+	s.syncString(record.actionTag);
+	s.syncString(record.spritePath);
+	s.syncString(record.altSpritePath);
+	s.syncString(record.objectName);
+	s.syncString(record.field34);
+	s.syncString(record.identTextKey);
+	s.syncString(record.currentOwnerOrRoom);
+	s.syncString(record.field40);
+	s.syncString(record.inventoryTextKey);
+	s.syncString(record.initialOwnerOrRoom);
+	s.syncString(record.interactionLabel);
+	syncBool(s, record.operatable);
+	syncBool(s, record.visible);
+	syncBool(s, record.runtimeVisible);
+	syncBool(s, record.identShown);
+}
+
+static void syncStartupAnimRecord(Common::Serializer &s, StartupAnimRecord &record) {
+	s.syncAsSint32LE(record.x);
+	s.syncAsSint32LE(record.y);
+	s.syncAsSint32LE(record.z);
+	s.syncAsSint32LE(record.frameDelay);
+	s.syncString(record.roomName);
+	s.syncString(record.resourcePath);
+	s.syncString(record.animName);
+	syncBool(s, record.active);
+	syncBool(s, record.visible);
+	syncBool(s, record.looping);
+	syncBool(s, record.backward);
+	syncBool(s, record.pingPong);
+	syncBool(s, record.remove);
+	syncBool(s, record.runtimeActive);
+	syncBool(s, record.runtimeVisible);
+	s.syncAsSint32LE(record.runtimeState);
+}
+
+static void syncStartupNpcRecord(Common::Serializer &s, StartupNpcRecord &record) {
+	s.syncAsSint32LE(record.posX);
+	s.syncAsSint32LE(record.posY);
+	s.syncAsSint32LE(record.posZ);
+	s.syncAsSint32LE(record.frameDelay);
+	s.syncString(record.onDeathActionTag);
+	s.syncString(record.modelPath);
+	s.syncString(record.npcName);
+	s.syncString(record.monsterfyTargetName);
+	s.syncString(record.roomName);
+	syncBool(s, record.deathOrMonsterfyFlag);
+	syncBool(s, record.runtimeSpawned);
+	syncBool(s, record.active);
+	syncBool(s, record.visible);
+	syncBool(s, record.savedVisible);
+	s.syncAsSint32LE(record.deathDamageType);
+	s.syncString(record.audioPath);
+	s.syncString(record.entityInitArg);
+}
+
+static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord &record) {
+	s.syncAsSint32LE(record.posX);
+	s.syncAsSint32LE(record.posY);
+	s.syncAsSint32LE(record.posZ);
+	s.syncAsSint32LE(record.initialFacing);
+	s.syncString(record.roomName);
+	s.syncString(record.monsterName);
+	s.syncString(record.modelPath);
+	s.syncString(record.onDeathActionTag);
+	syncBool(s, record.active);
+	syncBool(s, record.visible);
+}
+
+static void syncStartupRegionRecord(Common::Serializer &s, StartupRegionRecord &record) {
+	s.syncAsSint32LE(record.left);
+	s.syncAsSint32LE(record.top);
+	s.syncAsSint32LE(record.right);
+	s.syncAsSint32LE(record.bottom);
+	s.syncAsSint32LE(record.minZ);
+	s.syncAsSint32LE(record.maxZ);
+	s.syncAsSint32LE(record.desiredFacing);
+	s.syncString(record.regionName);
+	s.syncString(record.direction);
+	s.syncString(record.roomName);
+	s.syncString(record.actionTag);
+	syncBool(s, record.startEnabled);
+	syncBool(s, record.cursorEnabled);
+}
 
 static int clampStartupOptionLevel(int level) {
 	if (level < 0)
@@ -857,6 +975,18 @@ void StartupScript::resetRuntimeState() {
 		npc.runtimeSpawned = false;
 		npc.savedVisible = npc.visible;
 	}
+}
+
+void StartupScript::syncRuntimeSaveState(Common::Serializer &s) {
+	syncRecordArray(s, _runtimeFlags, syncStartupFlagRecord);
+	syncRecordArray(s, _runtimeObjects, syncStartupObjectRecord);
+	syncRecordArray(s, _runtimeAnimations, syncStartupAnimRecord);
+	syncRecordArray(s, _runtimeRegions, syncStartupRegionRecord);
+	syncRecordArray(s, _runtimeNpcs, syncStartupNpcRecord);
+	syncRecordArray(s, _runtimeMonsters, syncStartupMonsterRecord);
+	s.syncAsSint32LE(_playerCurrentHitPoints);
+	if (s.isLoading())
+		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 }
 
 bool StartupScript::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,

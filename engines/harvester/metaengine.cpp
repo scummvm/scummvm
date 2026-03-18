@@ -55,6 +55,14 @@ Common::Error HarvesterMetaEngine::createInstance(OSystem *syst, Engine **engine
 	return Common::kNoError;
 }
 
+int HarvesterMetaEngine::getMaximumSaveSlot() const {
+	return 24;
+}
+
+int HarvesterMetaEngine::getAutosaveSlot() const {
+	return -1;
+}
+
 bool HarvesterMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);

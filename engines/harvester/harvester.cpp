@@ -84,6 +84,16 @@ static float mapStartupGammaLevelToBrightnessScale(int level) {
 	return 1.0f + 0.1f * clampStartupOptionLevel(level);
 }
 
+static void syncSerializedBool(Common::Serializer &s, bool &value) {
+	byte serialized = value ? 1 : 0;
+	s.syncAsByte(serialized);
+	if (s.isLoading())
+		value = serialized != 0;
+}
+
+static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
+static const uint32 kHarvesterSaveVersion = 1;
+
 static uint32 decodeHarvesterFcmp(byte *dest, const byte *src, uint32 srcSize, uint16 bitsPerSample) {
 	const uint32 decodedBytesPerInputByte = bitsPerSample >> 2;
 	const uint32 decodedSize = srcSize * decodedBytesPerInputByte;
@@ -217,6 +227,14 @@ HarvesterEngine::~HarvesterEngine() {
 
 Common::String HarvesterEngine::getGameId() const {
 	return _gameDescription->gameId;
+}
+
+bool HarvesterEngine::canLoadGameStateCurrently(Common::U32String *) {
+	return _startupScript != nullptr;
+}
+
+bool HarvesterEngine::canSaveGameStateCurrently(Common::U32String *) {
+	return _startupScript != nullptr && _currentStartupSaveRoomState.valid;
 }
 
 bool HarvesterEngine::isGoreEnabled() const {
@@ -467,6 +485,39 @@ void HarvesterEngine::stopStartupSound() {
 	_startupSoundSlotIndex = -1;
 }
 
+void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &entranceName,
+		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
+		const Common::String &musicPath) {
+	_currentStartupSaveRoomState.entranceName = entranceName;
+	_currentStartupSaveRoomState.roomName = roomName;
+	_currentStartupSaveRoomState.musicPath =
+		(_resources && !musicPath.empty()) ? _resources->normalizeResourcePath(musicPath) : musicPath;
+	_currentStartupSaveRoomState.playerX = playerX;
+	_currentStartupSaveRoomState.playerY = playerY;
+	_currentStartupSaveRoomState.playerZ = playerZ;
+	_currentStartupSaveRoomState.playerFacing = playerFacing;
+	_currentStartupSaveRoomState.valid = !roomName.empty();
+}
+
+void HarvesterEngine::clearCurrentStartupSaveRoomState() {
+	_currentStartupSaveRoomState.clear();
+}
+
+void HarvesterEngine::clearPendingLoadedStartupSaveRoomState() {
+	_pendingLoadedStartupSaveRoomState.clear();
+}
+
+void HarvesterEngine::syncStartupSaveRoomState(Common::Serializer &s, StartupSaveRoomState &state) {
+	syncSerializedBool(s, state.valid);
+	s.syncString(state.entranceName);
+	s.syncString(state.roomName);
+	s.syncString(state.musicPath);
+	s.syncAsSint32LE(state.playerX);
+	s.syncAsSint32LE(state.playerY);
+	s.syncAsSint32LE(state.playerZ);
+	s.syncAsSint32LE(state.playerFacing);
+}
+
 void HarvesterEngine::stopStartupSoundHandle(Audio::SoundHandle &handle) {
 	if (g_system && g_system->getMixer())
 		g_system->getMixer()->stopHandle(handle);
@@ -557,13 +608,29 @@ bool HarvesterEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	uint32 dummy = 0;
-	s.syncAsUint32LE(dummy);
+	if (!_startupScript)
+		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
+	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
+		return Common::kWritingFailed;
+	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
+		return Common::kReadingFailed;
+	if (!s.syncVersion(kHarvesterSaveVersion))
+		return Common::kReadingFailed;
 
+	StartupSaveRoomState roomState = s.isLoading()
+		? StartupSaveRoomState()
+		: _currentStartupSaveRoomState;
+	syncStartupSaveRoomState(s, roomState);
+	_startupScript->syncRuntimeSaveState(s);
+	if (s.err())
+		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
+
+	if (s.isLoading()) {
+		if (!roomState.valid || roomState.roomName.empty())
+			return Common::kReadingFailed;
+		_currentStartupSaveRoomState = roomState;
+		_pendingLoadedStartupSaveRoomState = roomState;
+	}
 	return Common::kNoError;
 }
 

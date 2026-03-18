@@ -27,6 +27,7 @@
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "engines/metaengine.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -65,6 +66,8 @@ static const char *const kMenuSectionName = "menu";
 static const char *const kOptionsVolumeBitmapPath = "1:/GRAPHIC/OTHER/VOLUME.BM";
 static const char *const kOptionsIndicatorBitmapPath = "1:/GRAPHIC/OTHER/INDICATR.BM";
 static const char *const kOptionsPreviewSoundPath = "1:/SOUND/EFFECTS/WHIP2.WAV";
+static const char *const kSaveGameBitmapPath = "1:/GRAPHIC/OTHER/SAVEGAME.BM";
+static const char *const kSaveGamePalettePath = "1:/GRAPHIC/PAL/SAVEGAME.PAL";
 
 static const int kOptionsSliderMinX = 0x16f;
 static const int kOptionsSliderMaxX = 0x22b;
@@ -81,6 +84,14 @@ static const int kQuickTipsOverlayY = 200;
 static const int kQuickTipTextX = 180;
 static const int kQuickTipTextY = 228;
 static const int kQuickTipTextWidth = 280;
+static const int kSaveSlotCount = 25;
+static const int kSaveSlotLabelX = 8;
+static const int kSaveSlotNameX = 0x50;
+static const int kSaveSlotStartY = 0x19;
+static const int kSaveSlotStride = 0x11;
+static const int kSaveSlotTextWidth = 0x27b - kSaveSlotNameX;
+static const int kSaveStatusTextY = 0x1b8;
+static const int kSaveSlotMaxCharacters = 63;
 
 struct RoomMenuTextConfig {
 	Common::Array<Common::String> optionItems;
@@ -136,6 +147,19 @@ static Common::Rect textEntryOkRect() {
 
 static Common::Rect textEntryCancelRect() {
 	return Common::Rect(344, 278, 424, 292);
+}
+
+static Common::Rect saveSlotRect(int slotIndex) {
+	const int top = kSaveSlotStartY + slotIndex * kSaveSlotStride;
+	return Common::Rect(8, top, 0x27b + 1, top + kSaveSlotStride);
+}
+
+static Common::Rect saveConfirmRect() {
+	return Common::Rect(3, 0x1cc, 0x13d + 1, 0x1dc + 1);
+}
+
+static Common::Rect saveCancelRect() {
+	return Common::Rect(0x141, 0x1cc, 0x27b + 1, 0x1dc + 1);
 }
 
 static Common::Rect optionsSliderRect(int sliderIndex, int lineHeight) {
@@ -281,6 +305,22 @@ static bool appendTextEntryCharacter(Common::String &text, const Graphics::Font 
 
 	text = candidate;
 	return true;
+}
+
+static bool appendInlineSaveCharacter(Common::String &text, const Graphics::Font &font, uint32 ascii) {
+	if (ascii < 32 || ascii > 126 || ascii == '~' || text.size() >= kSaveSlotMaxCharacters)
+		return false;
+
+	const Common::String candidate = text + (char)ascii;
+	if (font.getStringWidth(candidate) > kSaveSlotTextWidth)
+		return false;
+
+	text = candidate;
+	return true;
+}
+
+static Common::String buildDefaultSaveSlotLabel(int slotIndex) {
+	return Common::String::format("GAME %02d", slotIndex + 1);
 }
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -445,6 +485,49 @@ static void renderTextEntryDialog(HarvesterEngine &engine, const IndexedBitmap &
 	drawShadowedString(*screen, entryFont, "Cancel", cancelRect.left, cancelRect.top,
 		cancelRect.width(), cancelHover ? kTextColorHover : kTextColorNormal,
 		Graphics::kTextAlignCenter);
+
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitmap &background,
+		const byte *palette, float paletteBrightness, const Graphics::Font &selectedFont,
+		const Graphics::Font &unselectedFont, const Common::Array<Common::String> &slotTitles,
+		int activeSlot, bool hoverSave, bool hoverCancel, const Common::String &statusMessage,
+		int editingSlot = -1, const Common::String *editingText = nullptr) {
+	Graphics::Screen *screen = engine.getScreen();
+	if (!screen)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, paletteBrightness);
+	blitBitmap(*screen, background, 0, 0);
+
+	for (int i = 0; i < kSaveSlotCount; ++i) {
+		const bool selected = i == activeSlot;
+		const Graphics::Font &labelFont = selected ? selectedFont : unselectedFont;
+		const Graphics::Font &nameFont = (i == editingSlot || selected) ? selectedFont : unselectedFont;
+		const int y = kSaveSlotStartY + i * kSaveSlotStride;
+		const Common::String slotLabel = buildDefaultSaveSlotLabel(i);
+		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y, 64, 0);
+
+		Common::String displayTitle = slotTitles[i];
+		if (i == editingSlot && editingText)
+			displayTitle = *editingText + "_";
+		nameFont.drawString(screen, displayTitle, kSaveSlotNameX, y, kSaveSlotTextWidth, 0);
+	}
+
+	drawShadowedString(*screen, selectedFont, "SAVE", saveConfirmRect().left, saveConfirmRect().top,
+		saveConfirmRect().width(), hoverSave ? kTextColorHover : kTextColorNormal,
+		Graphics::kTextAlignCenter);
+	drawShadowedString(*screen, selectedFont, "CANCEL", saveCancelRect().left, saveCancelRect().top,
+		saveCancelRect().width(), hoverCancel ? kTextColorHover : kTextColorNormal,
+		Graphics::kTextAlignCenter);
+	if (!statusMessage.empty()) {
+		drawShadowedString(*screen, unselectedFont, statusMessage, 20, kSaveStatusTextY,
+			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
+	}
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -652,6 +735,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 						if (helpError.getCode() != Common::kNoError)
 							return helpError;
 						needsRedraw = true;
+					} else if (selectedItem >= 0 && _menuItems[selectedItem].equalsIgnoreCase("SAVE GAME")) {
+						Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow);
+						if (saveError.getCode() != Common::kNoError)
+							return saveError;
+						needsRedraw = true;
 					} else {
 						debug(1, "Harvester: room menu item '%s' selected but not implemented",
 							selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
@@ -676,6 +764,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 					if (helpError.getCode() != Common::kNoError)
 						return helpError;
 					needsRedraw = true;
+				} else if (_menuItems[selectedItem].equalsIgnoreCase("SAVE GAME")) {
+					Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow);
+					if (saveError.getCode() != Common::kNoError)
+						return saveError;
+					needsRedraw = true;
 				} else {
 					debug(1, "Harvester: room menu item '%s' clicked but not implemented",
 						_menuItems[selectedItem].c_str());
@@ -689,6 +782,236 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float paletteBrightness,
+		StartupFlow &startupFlow) {
+	(void)palette;
+	(void)paletteBrightness;
+	ResourceManager *resources = _engine.getResources();
+	MetaEngine *metaEngine = _engine.getMetaEngine();
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
+	if (!resources || !metaEngine || !selectedFontResource || !unselectedFontResource)
+		return Common::kReadingFailed;
+	if (!_engine.canSaveGameStateCurrently())
+		return Common::kNoError;
+
+	HarvesterCftFont selectedFont(*selectedFontResource);
+	HarvesterCftFont unselectedFont(*unselectedFontResource);
+	if (!selectedFont.isValid() || !unselectedFont.isValid())
+		return Common::kReadingFailed;
+
+	IndexedBitmap background;
+	byte savePalette[256 * 3];
+	if (!loadBitmapResource(*resources, kSaveGameBitmapPath, background) ||
+			!loadPaletteResource(*resources, kSaveGamePalettePath, savePalette)) {
+		return Common::kReadingFailed;
+	}
+
+	Common::Array<Common::String> slotTitles;
+	slotTitles.resize(kSaveSlotCount);
+	auto reloadSlotTitles = [&]() {
+		for (int i = 0; i < kSaveSlotCount; ++i)
+			slotTitles[i].clear();
+
+		const SaveStateList saves = metaEngine->listSaves(ConfMan.getActiveDomainName().c_str());
+		for (const SaveStateDescriptor &save : saves) {
+			const int slot = save.getSaveSlot();
+			if (slot < 0 || slot >= kSaveSlotCount)
+				continue;
+			slotTitles[slot] = save.getDescription().encode();
+		}
+	};
+	reloadSlotTitles();
+
+	auto resolveHoveredSlot = [&]() -> int {
+		for (int slot = 0; slot < kSaveSlotCount; ++slot) {
+			if (saveSlotRect(slot).contains(_mousePos))
+				return slot;
+		}
+		return -1;
+	};
+	auto runInlineSlotEditor = [&](int slotIndex, Common::String &editedTitle,
+			bool &confirmed) -> Common::Error {
+		confirmed = false;
+		bool needsRedraw = true;
+		startupFlow.resetCursorAnimationSequence();
+		Graphics::FrameLimiter entryLimiter(g_system, 60);
+
+		while (!_engine.shouldQuit()) {
+			const bool hoverSave = saveConfirmRect().contains(_mousePos);
+			const bool hoverCancel = saveCancelRect().contains(_mousePos);
+			if (needsRedraw) {
+				renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
+					selectedFont, unselectedFont, slotTitles, slotIndex, hoverSave, hoverCancel,
+					Common::String(), slotIndex, &editedTitle);
+				needsRedraw = false;
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+
+				switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					needsRedraw = true;
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					if (saveConfirmRect().contains(_mousePos)) {
+						confirmed = true;
+						return Common::kNoError;
+					}
+					if (saveCancelRect().contains(_mousePos))
+						return Common::kNoError;
+					break;
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+						return Common::kNoError;
+					if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+						confirmed = true;
+						return Common::kNoError;
+					}
+					if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+						if (!editedTitle.empty()) {
+							editedTitle.deleteLastChar();
+							needsRedraw = true;
+						}
+						break;
+					}
+					if (appendInlineSaveCharacter(editedTitle, selectedFont, event.kbd.ascii))
+						needsRedraw = true;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+
+			entryLimiter.delayBeforeSwap();
+			entryLimiter.startFrame();
+		}
+
+		return Common::kNoError;
+	};
+
+	int activeSlot = 0;
+	Common::String statusMessage;
+	bool needsRedraw = true;
+	startupFlow.resetCursorAnimationSequence();
+	Graphics::FrameLimiter limiter(g_system, 60);
+
+	auto activateSelectedSlot = [&](bool &saved) -> Common::Error {
+		saved = false;
+		Common::String editedTitle = slotTitles[activeSlot];
+		bool confirmed = false;
+		Common::Error entryError = runInlineSlotEditor(activeSlot, editedTitle, confirmed);
+		if (entryError.getCode() != Common::kNoError)
+			return entryError;
+		if (!confirmed)
+			return Common::kNoError;
+
+		Common::Error saveError = _engine.saveGameState(activeSlot, editedTitle);
+		if (saveError.getCode() == Common::kNoError) {
+			saved = true;
+			return Common::kNoError;
+		}
+
+		statusMessage = saveError.getDesc();
+		reloadSlotTitles();
+		needsRedraw = true;
+		return Common::kNoError;
+	};
+
+	while (!_engine.shouldQuit()) {
+		const bool hoverSave = saveConfirmRect().contains(_mousePos);
+		const bool hoverCancel = saveCancelRect().contains(_mousePos);
+		if (needsRedraw) {
+			renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
+				selectedFont, unselectedFont, slotTitles, activeSlot, hoverSave, hoverCancel, statusMessage);
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE: {
+				const int hoveredSlot = resolveHoveredSlot();
+				if (hoveredSlot != -1 && hoveredSlot != activeSlot)
+					activeSlot = hoveredSlot;
+				needsRedraw = true;
+				break;
+			}
+			case Common::EVENT_LBUTTONDOWN: {
+				const int hoveredSlot = resolveHoveredSlot();
+				bool saved = false;
+				statusMessage.clear();
+				if (hoveredSlot != -1) {
+					activeSlot = hoveredSlot;
+					Common::Error saveError = activateSelectedSlot(saved);
+					if (saveError.getCode() != Common::kNoError)
+						return saveError;
+					if (saved)
+						return Common::kNoError;
+					break;
+				}
+				if (saveConfirmRect().contains(_mousePos)) {
+					Common::Error saveError = activateSelectedSlot(saved);
+					if (saveError.getCode() != Common::kNoError)
+						return saveError;
+					if (saved)
+						return Common::kNoError;
+				} else if (saveCancelRect().contains(_mousePos)) {
+					return Common::kNoError;
+				}
+				needsRedraw = true;
+				break;
+			}
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return Common::kNoError;
+				if (event.kbd.keycode == Common::KEYCODE_UP) {
+					activeSlot = (activeSlot + kSaveSlotCount - 1) % kSaveSlotCount;
+					statusMessage.clear();
+					needsRedraw = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
+					activeSlot = (activeSlot + 1) % kSaveSlotCount;
+					statusMessage.clear();
+					needsRedraw = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					bool saved = false;
+					statusMessage.clear();
+					Common::Error saveError = activateSelectedSlot(saved);
+					if (saveError.getCode() != Common::kNoError)
+						return saveError;
+					if (saved)
+						return Common::kNoError;
+					needsRedraw = true;
+				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
 		limiter.startFrame();

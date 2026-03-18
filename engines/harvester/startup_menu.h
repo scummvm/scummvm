@@ -50,6 +50,7 @@ private:
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, StartupFlow &startupFlow);
 	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, StartupFlow &startupFlow);
+	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, StartupFlow &startupFlow);
 	Common::String runModalTextEntryDialog(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const Graphics::Font &titleFont, const Graphics::Font &entryFont,
 		const Common::String &title, const Common::String &initialText, StartupFlow &startupFlow);
