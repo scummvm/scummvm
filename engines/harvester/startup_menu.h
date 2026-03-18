@@ -53,9 +53,6 @@ private:
 	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, StartupFlow &startupFlow);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, StartupFlow &startupFlow);
-	Common::String runModalTextEntryDialog(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const Graphics::Font &titleFont, const Graphics::Font &entryFont,
-		const Common::String &title, const Common::String &initialText, StartupFlow &startupFlow);
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos) const;

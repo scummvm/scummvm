@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Verify dialogue-resource selection against native expectations before changing NPC branch logic
-- Keep Hank's keyword and response flow aligned with the native `DIALOG.RSP` table the executable actually expects
-- Re-check only the remaining in-game drag/drop and dialogue edge cases that still need native capture confirmation
+- Keep the in-room ESC menu handlers aligned with the native SAVE / OPTIONS layout and font usage
+- Verify remaining menu overlays against Ghidra before introducing any more custom UI panels
+- Re-test room-menu edge cases after each menu fix instead of bundling multiple visual changes together
 
 ## Progress
 
@@ -15,12 +15,13 @@
 
 ## Last Confirmed Action
 
-- Revisited Hank's talk path in Ghidra and confirmed the native issue is data selection, not a missing generic conversation tree.
-  - `handle_talk_to_hank` is a native keyword/response-menu conversation that expects a `DIALOG.RSP` where zero-based line `0xd2` is `Mom`, `0xd6` is `STEVE`, `0xeb` is `SICK`, and `0xf2` is `bye`.
-  - The duplicate `DIALOG.RSP` under `iso/Harvester` does not match that layout, while the root-game `DIALOG.RSP` does, which explains why a visible `Mom` selection can fall into Hank's generic `0xa32` plus `0x8dc` fallback when the wrong copy is loaded.
-- Adjusted startup dialogue-text loading to prefer the native-compatible ancestor/root `DIALOG.RSP` when the initially resolved table does not match Hank's verified native signature.
+- Revisited `run_main_menu`, `run_save_game_menu`, `prompt_for_password`, and `run_text_entry_dialog` in Ghidra and corrected the engine-side SAVE / OPTIONS menu mismatches they exposed.
+  - Native SAVE uses `MEDFONT2` for inactive `GAME_##` labels, `MEDFONT1` for the active label and every slot title, and relies on `SAVEGAME.BM` for the lower action-strip art instead of drawing extra `SAVE` / `CANCEL` text.
+  - Native save-name editing spawns `TEXT_ENTRY` inline at `(0x50, rowY)` with `g_medfont1_cft`, while password entry overlays the options menu with centered `ENTER PASSWORD` text in `g_harvfont_cft` and `TEXT_ENTRY` at `(0xdc, 0xdc)` in `g_harvfnt2_cft`.
+  - The password prompt's hidden max-length register is `8`, not the larger generic limit the engine had been using.
+- Updated `startup_menu.cpp` to match those native font/layout rules and rebuilt `engines/harvester/startup_menu.o` successfully.
 
 ## Next Suggested Action
 
-1. Re-test Hank's `Mom`, `TV`, and `Sick` topic paths in-game and confirm the keyword menu now reaches the native follow-up trees instead of the generic fallback pair.
-2. If another NPC still diverges, compare the active `DIALOG.RSP` lines for that branch before changing the handler logic itself.
+1. Re-test the in-room SAVE menu and OPTIONS password prompt in-engine and compare them against DOSBox captures for any remaining cursor or quick-tips overlay drift.
+2. If another menu artifact remains, capture the exact submenu state first and then inspect the corresponding `run_main_menu` branch in Ghidra before editing.
