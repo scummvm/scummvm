@@ -98,8 +98,14 @@ void ColonyEngine::interactWithObject(int objNum) {
 		// GANIMATE.C DoPowerSuit(): if(!corepower[coreindex])return;
 		if (!_corePower[_coreIndex])
 			break;
-		if (loadAnimation("suit"))
+		if (loadAnimation("suit")) {
+			// DOS DoPowerSuit: initialize switch positions from current armor/weapons
+			setObjectState(1, _armor * 2 + 1);
+			setObjectState(3, _armor + 1);
+			setObjectState(2, _weapons * 2 + 1);
+			setObjectState(4, _weapons + 1);
 			playAnimation();
+		}
 		break;
 	case kObjTeleport:
 	{
