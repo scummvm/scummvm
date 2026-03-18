@@ -37,6 +37,7 @@ namespace Harvester {
 
 class ResourceManager;
 class RuntimeEntityManager;
+class MediaManager;
 class Script;
 class Art;
 class Text;
@@ -95,13 +96,14 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	ResourceManager *getResources() const { return _resources; }
-	RuntimeEntityManager *getRuntimeEntities() const { return _runtimeEntities; }
-	Graphics::Screen *getScreen() const { return _screen; }
-	int getDisplayWidth() const { return _displayWidth; }
-	int getDisplayHeight() const { return _displayHeight; }
+	MediaManager *getMedia() const { return _media; }
+	RuntimeEntityManager *getRuntimeEntities() const;
+	Graphics::Screen *getScreen() const;
+	int getDisplayWidth() const;
+	int getDisplayHeight() const;
 	Script *getStartupScript() const { return _startupScript; }
-	Art *getStartupArt() const { return _startupArt; }
-	Text *getStartupText() const { return _startupText; }
+	Art *getStartupArt() const;
+	Text *getStartupText() const;
 	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
 	int getStartupFxVolumeLevel() const;
@@ -111,7 +113,7 @@ public:
 	void setStartupFxVolumeLevel(int level);
 	void setStartupMusicVolumeLevel(int level);
 	void setStartupGammaLevel(int level);
-	const Common::String &getStartupMusicPath() const { return _startupMusicPath; }
+	const Common::String &getStartupMusicPath() const;
 	bool isStartupMusicPlaying() const;
 	bool playStartupMusic(const Common::String &path);
 	void pauseStartupMusic(bool paused);
@@ -141,30 +143,13 @@ public:
 
 private:
 	void syncStartupSaveRoomState(Common::Serializer &s, StartupSaveRoomState &state);
-	void stopStartupSoundHandle(Audio::SoundHandle &handle);
-	bool validateStartupLoadedSoundSlot(int slot) const;
 	void applyStartupMixerLevels();
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;
-	Audio::SoundHandle _startupMusicHandle;
-	Audio::SoundHandle _startupSingleSoundHandle;
-	Audio::SoundHandle _startupSpeechHandle;
-	Common::String _startupMusicPath;
-	int _startupSoundSlotIndex = -1;
-	Common::String _startupSoundPaths[8];
-	Audio::SoundHandle _startupSoundHandles[8];
-	Common::String _startupLoadedSoundPaths[4];
-	Common::Array<byte> _startupLoadedSoundData[4];
-	Audio::SoundHandle _startupLoadedSoundHandles[4];
-	Graphics::Screen *_screen = nullptr;
-	int _displayWidth = 0;
-	int _displayHeight = 0;
 	ResourceManager *_resources = nullptr;
-	RuntimeEntityManager *_runtimeEntities = nullptr;
+	MediaManager *_media = nullptr;
 	Script *_startupScript = nullptr;
-	Art *_startupArt = nullptr;
-	Text *_startupText = nullptr;
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
 };

@@ -19,69 +19,25 @@
  *
  */
 
-#include <cstring>
-
 #include "harvester/harvester.h"
 
-#include "audio/audiostream.h"
-#include "audio/decoders/raw.h"
-#include "audio/decoders/wave.h"
 #include "common/config-manager.h"
-#include "common/memstream.h"
-#include "common/system.h"
 #include "engines/util.h"
-#include "graphics/paletteman.h"
 #include "harvester/console.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
+#include "harvester/media_manager.h"
 #include "harvester/resources.h"
-#include "harvester/runtime_entity.h"
-#include "harvester/art.h"
 #include "harvester/flow.h"
 #include "harvester/script.h"
-#include "harvester/text.h"
 
 namespace Harvester {
 
 namespace {
 
-static const int8 kHarvesterImaIndexAdjustTable[16] = {
-	-1, -1, -1, -1, 2, 4, 6, 8,
-	-1, -1, -1, -1, 2, 4, 6, 8
-};
-
-static const uint16 kHarvesterImaStepTable[89] = {
-	7, 8, 9, 10, 11, 12, 13, 14, 16, 17,
-	19, 21, 23, 25, 28, 31, 34, 37, 41, 45,
-	50, 55, 60, 66, 73, 80, 88, 97, 107, 118,
-	130, 143, 157, 173, 190, 209, 230, 253, 279, 307,
-	337, 371, 408, 449, 494, 544, 598, 658, 724, 796,
-	876, 963, 1060, 1166, 1282, 1411, 1552, 1707, 1878, 2066,
-	2272, 2499, 2749, 3024, 3327, 3660, 4026, 4428, 4871, 5358,
-	5894, 6484, 7132, 7845, 8630, 9493, 10442, 11487, 12635, 13899,
-	15289, 16818, 18500, 20350, 22385, 24623, 27086, 29794, 32767
-};
-
 static bool shouldSkipStartupMoviesForDebug() {
 	return ConfMan.hasKey("harvester_debug_skip_startup_movies") &&
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
-}
-
-static int clampStartupOptionLevel(int level) {
-	if (level < 0)
-		return 0;
-	if (level > 9)
-		return 9;
-
-	return level;
-}
-
-static int mapStartupVolumeLevelToMixerVolume(int level) {
-	return (clampStartupOptionLevel(level) * Audio::Mixer::kMaxMixerVolume + 4) / 9;
-}
-
-static float mapStartupGammaLevelToBrightnessScale(int level) {
-	return 1.0f + 0.1f * clampStartupOptionLevel(level);
 }
 
 static void syncSerializedBool(Common::Serializer &s, bool &value) {
@@ -94,116 +50,6 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
 static const uint32 kHarvesterSaveVersion = 1;
 
-static uint32 decodeHarvesterFcmp(byte *dest, const byte *src, uint32 srcSize, uint16 bitsPerSample) {
-	const uint32 decodedBytesPerInputByte = bitsPerSample >> 2;
-	const uint32 decodedSize = srcSize * decodedBytesPerInputByte;
-	const uint32 sampleCount = (bitsPerSample == 16) ? (decodedSize >> 1) : decodedSize;
-	int predictor = 0;
-	int stepIndex = 0;
-	int stepSize = 7;
-	byte cachedByte = 0;
-	uint32 srcPos = 0;
-
-	for (uint32 sample = 0; sample < sampleCount; ++sample) {
-		const byte nibble = ((sample & 1) == 0)
-			? ((cachedByte = src[srcPos++]) & 0x0f)
-			: ((cachedByte >> 4) & 0x0f);
-		int delta = stepSize >> 3;
-		if (nibble & 4)
-			delta += stepSize;
-		if (nibble & 2)
-			delta += stepSize >> 1;
-		if (nibble & 1)
-			delta += stepSize >> 2;
-		if (nibble & 8)
-			delta = -delta;
-
-		predictor += delta;
-		if (predictor > 0x7fff)
-			predictor = 0x7fff;
-		else if (predictor < -0x8000)
-			predictor = -0x8000;
-
-		if (bitsPerSample == 16) {
-			WRITE_LE_INT16(dest, predictor);
-			dest += 2;
-		} else {
-			*dest++ = (byte)(((predictor >> 8) & 0xff) ^ 0x80);
-		}
-
-		stepIndex += kHarvesterImaIndexAdjustTable[nibble];
-		if (stepIndex < 0)
-			stepIndex = 0;
-		else if (stepIndex > 88)
-			stepIndex = 88;
-		stepSize = kHarvesterImaStepTable[stepIndex];
-	}
-
-	return decodedSize;
-}
-
-static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableReadStream *stream) {
-	if (!stream)
-		return nullptr;
-
-	if (stream->size() >= 14) {
-		char magic[4];
-		stream->read(magic, sizeof(magic));
-		if (!memcmp(magic, "FCMP", sizeof(magic))) {
-			const uint32 payloadSizeFromHeader = stream->readUint32LE();
-			const uint32 sampleRate = stream->readUint32LE();
-			const uint16 bitsPerSample = stream->readUint16LE();
-			const uint32 availablePayloadSize = stream->size() - 14;
-			const uint32 payloadSize = payloadSizeFromHeader != 0
-				? MIN<uint32>(payloadSizeFromHeader, availablePayloadSize)
-				: availablePayloadSize;
-
-			if (sampleRate == 0 || (bitsPerSample != 8 && bitsPerSample != 16) || payloadSize == 0) {
-				delete stream;
-				return nullptr;
-			}
-
-			if (!stream->seek(14)) {
-				delete stream;
-				return nullptr;
-			}
-
-			byte *compressedPayload = (byte *)malloc(payloadSize);
-			if (!compressedPayload) {
-				delete stream;
-				return nullptr;
-			}
-			if (stream->read(compressedPayload, payloadSize) != payloadSize) {
-				free(compressedPayload);
-				delete stream;
-				return nullptr;
-			}
-
-			const uint32 decodedSize = payloadSize * (bitsPerSample >> 2);
-			byte *decodedPcm = (byte *)malloc(decodedSize);
-			if (!decodedPcm) {
-				free(compressedPayload);
-				delete stream;
-				return nullptr;
-			}
-
-			decodeHarvesterFcmp(decodedPcm, compressedPayload, payloadSize, bitsPerSample);
-			free(compressedPayload);
-			delete stream;
-			return Audio::makeRawStream(decodedPcm, decodedSize, sampleRate,
-				Audio::FLAG_LITTLE_ENDIAN | ((bitsPerSample == 16) ? Audio::FLAG_16BITS : 0),
-				DisposeAfterUse::YES);
-		}
-	}
-
-	stream->seek(0);
-	return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-}
-
-static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources, const Common::String &path) {
-	return decodeStartupAudioStream(resources.openFile(path));
-}
-
 } // End of anonymous namespace
 
 HarvesterEngine *g_engine = nullptr;
@@ -214,14 +60,9 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 }
 
 HarvesterEngine::~HarvesterEngine() {
-	stopStartupMusic();
-	stopStartupSound();
-	delete _startupText;
-	delete _startupArt;
+	delete _media;
 	delete _startupScript;
-	delete _runtimeEntities;
 	delete _resources;
-	delete _screen;
 	g_engine = nullptr;
 }
 
@@ -235,6 +76,30 @@ bool HarvesterEngine::canLoadGameStateCurrently(Common::U32String *) {
 
 bool HarvesterEngine::canSaveGameStateCurrently(Common::U32String *) {
 	return _startupScript != nullptr && _currentStartupSaveRoomState.valid;
+}
+
+RuntimeEntityManager *HarvesterEngine::getRuntimeEntities() const {
+	return _media ? _media->getRuntimeEntities() : nullptr;
+}
+
+Graphics::Screen *HarvesterEngine::getScreen() const {
+	return _media ? _media->getScreen() : nullptr;
+}
+
+int HarvesterEngine::getDisplayWidth() const {
+	return _media ? _media->getDisplayWidth() : 0;
+}
+
+int HarvesterEngine::getDisplayHeight() const {
+	return _media ? _media->getDisplayHeight() : 0;
+}
+
+Art *HarvesterEngine::getStartupArt() const {
+	return _media ? _media->getArt() : nullptr;
+}
+
+Text *HarvesterEngine::getStartupText() const {
+	return _media ? _media->getText() : nullptr;
 }
 
 bool HarvesterEngine::isGoreEnabled() const {
@@ -257,20 +122,12 @@ int HarvesterEngine::getStartupGammaLevel() const {
 }
 
 float HarvesterEngine::getStartupGammaBrightnessScale() const {
-	return mapStartupGammaLevelToBrightnessScale(getStartupGammaLevel());
+	return MediaManager::mapGammaLevelToBrightnessScale(getStartupGammaLevel());
 }
 
 void HarvesterEngine::applyStartupMixerLevels() {
-	if (!g_system || !g_system->getMixer())
-		return;
-
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
-		mapStartupVolumeLevelToMixerVolume(getStartupFxVolumeLevel()));
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
-		mapStartupVolumeLevelToMixerVolume(getStartupMusicVolumeLevel()));
-
-	if (g_system->getMixer()->isSoundHandleActive(_startupMusicHandle))
-		g_system->getMixer()->pauseHandle(_startupMusicHandle, getStartupMusicVolumeLevel() == 0);
+	if (_media)
+		_media->applyMixerLevels(getStartupFxVolumeLevel(), getStartupMusicVolumeLevel());
 }
 
 void HarvesterEngine::setStartupFxVolumeLevel(int level) {
@@ -290,199 +147,84 @@ void HarvesterEngine::setStartupGammaLevel(int level) {
 		_startupScript->setGammaLevel(level);
 }
 
+const Common::String &HarvesterEngine::getStartupMusicPath() const {
+	static const Common::String kEmptyMusicPath;
+	return _media ? _media->getMusicPath() : kEmptyMusicPath;
+}
+
 bool HarvesterEngine::isStartupMusicPlaying() const {
-	return g_system && g_system->getMixer() &&
-		g_system->getMixer()->isSoundHandleActive(_startupMusicHandle);
+	return _media && _media->isMusicPlaying();
 }
 
 bool HarvesterEngine::playStartupMusic(const Common::String &path) {
-	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
+	if (!_media)
 		return false;
 
-	const Common::String normalizedPath = _resources->normalizeResourcePath(path);
-	if (_startupMusicPath.equalsIgnoreCase(normalizedPath) &&
-			g_system->getMixer()->isSoundHandleActive(_startupMusicHandle)) {
-		return true;
-	}
-
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
-	if (!audioStream) {
-		warning("Harvester: unable to decode startup music '%s'", path.c_str());
-		return false;
-	}
-
-	stopStartupMusic();
-	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_startupMusicHandle,
-		Audio::makeLoopingAudioStream(audioStream, 0));
-	_startupMusicPath = normalizedPath;
-	applyStartupMixerLevels();
-	return true;
+	const bool started = _media->playMusic(path);
+	if (started)
+		applyStartupMixerLevels();
+	return started;
 }
 
 void HarvesterEngine::pauseStartupMusic(bool paused) {
-	if (g_system && g_system->getMixer())
-		g_system->getMixer()->pauseHandle(_startupMusicHandle, paused);
+	if (_media)
+		_media->pauseMusic(paused);
 }
 
 void HarvesterEngine::stopStartupMusic() {
-	if (g_system && g_system->getMixer())
-		stopStartupSoundHandle(_startupMusicHandle);
-	_startupMusicPath.clear();
+	if (_media)
+		_media->stopMusic();
 }
 
 bool HarvesterEngine::executeStartupAudioCommand(const StartupAudioCommand &command) {
-	switch (command.type) {
-	case kStartupAudioCommandStartWav:
-		return playStartupSound(command.path);
-	case kStartupAudioCommandStartSingleWav:
-		return playStartupSingleSound(command.path);
-	case kStartupAudioCommandLoadWav:
-		return loadStartupSound(command.slot, command.path);
-	case kStartupAudioCommandPlayWav:
-		return playStartupLoadedSound(command.slot);
-	case kStartupAudioCommandDeleteWav:
-		return deleteStartupLoadedSound(command.slot);
-	default:
-		return false;
-	}
+	return _media && _media->executeAudioCommand(command);
 }
 
 bool HarvesterEngine::playStartupSound(const Common::String &path) {
-	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
-		return false;
-
-	const Common::String normalizedPath = _resources->normalizeResourcePath(path);
-	for (int i = 0; i < ARRAYSIZE(_startupSoundPaths); ++i) {
-		if (_startupSoundPaths[i].equalsIgnoreCase(normalizedPath)) {
-			stopStartupSoundHandle(_startupSoundHandles[i]);
-			_startupSoundPaths[i].clear();
-		}
-	}
-
-	_startupSoundSlotIndex = (_startupSoundSlotIndex + 1) % ARRAYSIZE(_startupSoundHandles);
-	stopStartupSoundHandle(_startupSoundHandles[_startupSoundSlotIndex]);
-
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
-	if (!audioStream) {
-		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
-		return false;
-	}
-
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType,
-		&_startupSoundHandles[_startupSoundSlotIndex], audioStream);
-	_startupSoundPaths[_startupSoundSlotIndex] = normalizedPath;
-	return true;
+	return _media && _media->playSound(path);
 }
 
 bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
-	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
-		return false;
-
-	stopStartupSoundHandle(_startupSingleSoundHandle);
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
-	if (!audioStream) {
-		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
-		return false;
-	}
-
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupSingleSoundHandle, audioStream);
-	return true;
+	return _media && _media->playSingleSound(path);
 }
 
 void HarvesterEngine::stopStartupSingleSound() {
-	stopStartupSoundHandle(_startupSingleSoundHandle);
+	if (_media)
+		_media->stopSingleSound();
 }
 
 bool HarvesterEngine::isStartupSingleSoundPlaying() const {
-	return g_system && g_system->getMixer() &&
-		g_system->getMixer()->isSoundHandleActive(_startupSingleSoundHandle);
+	return _media && _media->isSingleSoundPlaying();
 }
 
 bool HarvesterEngine::playStartupSpeech(const Common::String &path) {
-	if (path.empty() || !_resources || !g_system || !g_system->getMixer())
-		return false;
-
-	stopStartupSoundHandle(_startupSpeechHandle);
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(*_resources, path);
-	if (!audioStream) {
-		warning("Harvester: unable to decode startup speech '%s'", path.c_str());
-		return false;
-	}
-
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_startupSpeechHandle, audioStream);
-	return true;
+	return _media && _media->playSpeech(path);
 }
 
 void HarvesterEngine::stopStartupSpeech() {
-	stopStartupSoundHandle(_startupSpeechHandle);
+	if (_media)
+		_media->stopSpeech();
 }
 
 bool HarvesterEngine::isStartupSpeechPlaying() const {
-	return g_system && g_system->getMixer() &&
-		g_system->getMixer()->isSoundHandleActive(_startupSpeechHandle);
+	return _media && _media->isSpeechPlaying();
 }
 
 bool HarvesterEngine::loadStartupSound(int slot, const Common::String &path) {
-	if (!validateStartupLoadedSoundSlot(slot) || path.empty() || !_resources)
-		return false;
-
-	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
-	_startupLoadedSoundPaths[slot].clear();
-	_startupLoadedSoundData[slot].clear();
-
-	if (!_resources->loadFile(path, _startupLoadedSoundData[slot])) {
-		warning("Harvester: unable to load startup sound '%s' into slot %d", path.c_str(), slot);
-		return false;
-	}
-
-	_startupLoadedSoundPaths[slot] = _resources->normalizeResourcePath(path);
-	return true;
+	return _media && _media->loadSound(slot, path);
 }
 
 bool HarvesterEngine::playStartupLoadedSound(int slot) {
-	if (!validateStartupLoadedSoundSlot(slot) || !g_system || !g_system->getMixer())
-		return false;
-	if (_startupLoadedSoundData[slot].empty())
-		return false;
-
-	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
-
-	Common::SeekableReadStream *stream = new Common::MemoryReadStream(
-		_startupLoadedSoundData[slot].data(), _startupLoadedSoundData[slot].size(), DisposeAfterUse::NO);
-	Audio::SeekableAudioStream *audioStream = decodeStartupAudioStream(stream);
-	if (!audioStream) {
-		warning("Harvester: unable to decode startup sound slot %d ('%s')",
-			slot, _startupLoadedSoundPaths[slot].c_str());
-		return false;
-	}
-
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &_startupLoadedSoundHandles[slot], audioStream);
-	return true;
+	return _media && _media->playLoadedSound(slot);
 }
 
 bool HarvesterEngine::deleteStartupLoadedSound(int slot) {
-	if (!validateStartupLoadedSoundSlot(slot))
-		return false;
-
-	stopStartupSoundHandle(_startupLoadedSoundHandles[slot]);
-	_startupLoadedSoundPaths[slot].clear();
-	_startupLoadedSoundData[slot].clear();
-	return true;
+	return _media && _media->deleteLoadedSound(slot);
 }
 
 void HarvesterEngine::stopStartupSound() {
-	stopStartupSingleSound();
-	stopStartupSpeech();
-	for (int i = 0; i < ARRAYSIZE(_startupSoundHandles); ++i) {
-		stopStartupSoundHandle(_startupSoundHandles[i]);
-		_startupSoundPaths[i].clear();
-	}
-	for (int i = 0; i < ARRAYSIZE(_startupLoadedSoundHandles); ++i) {
-		stopStartupSoundHandle(_startupLoadedSoundHandles[i]);
-		_startupLoadedSoundPaths[i].clear();
-		_startupLoadedSoundData[i].clear();
-	}
-	_startupSoundSlotIndex = -1;
+	if (_media)
+		_media->stopSound();
 }
 
 void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &entranceName,
@@ -518,23 +260,10 @@ void HarvesterEngine::syncStartupSaveRoomState(Common::Serializer &s, StartupSav
 	s.syncAsSint32LE(state.playerFacing);
 }
 
-void HarvesterEngine::stopStartupSoundHandle(Audio::SoundHandle &handle) {
-	if (g_system && g_system->getMixer())
-		g_system->getMixer()->stopHandle(handle);
-}
-
-bool HarvesterEngine::validateStartupLoadedSoundSlot(int slot) const {
-	return slot >= 0 && slot < ARRAYSIZE(_startupLoadedSoundHandles);
-}
-
 void HarvesterEngine::setDisplayMode(int width, int height) {
-	delete _screen;
-	_screen = nullptr;
-
 	initGraphics(width, height);
-	_screen = new Graphics::Screen();
-	_displayWidth = width;
-	_displayHeight = height;
+	if (_media)
+		_media->resetScreen(width, height);
 	debugC(1, kDebugGeneral, "Harvester: switched display mode to %dx%d", width, height);
 }
 
@@ -551,7 +280,7 @@ Common::Error HarvesterEngine::run() {
 
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
-	_runtimeEntities = new RuntimeEntityManager(*_resources);
+	_media = new MediaManager(*_resources);
 	_startupScript = new Script();
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;
@@ -576,17 +305,14 @@ Common::Error HarvesterEngine::run() {
 	// The original executable switches back to the gameplay UI surface after INTROFIN.FST.
 	setDisplayMode(640, 480);
 
-	_startupArt = new Art();
-	if (!_startupArt->load(*_resources))
+	if (!_media->loadArt())
 		return Common::kReadingFailed;
-	if (_screen)
-		_startupArt->drawWaitFrame(*_screen);
+	_media->drawWaitFrame();
 
-	_startupText = new Text();
-	if (!_startupText->load(*_resources))
+	if (!_media->loadText())
 		return Common::kReadingFailed;
 
-	if (!_startupArt->loadQuickTipsResources(*_resources))
+	if (!_media->loadQuickTipsResources())
 		return Common::kReadingFailed;
 
 	// If a savegame was selected from the launcher, load it
