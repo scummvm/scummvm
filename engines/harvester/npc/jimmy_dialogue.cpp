@@ -29,6 +29,36 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kJimmyNpc = "JIMMY";
+static const char *const kPcSpeaker = "PC";
+static const char *const kRahRoomName = "RAH";
+static const char *const kJimmyFirstMeetingFlag = "PAPER_CHK_1";
+static const int kJimmyFirstResponseLineIndex = 0xf5;
+static const int kJimmySecondResponseLineIndex = 0xf6;
+static const int kJimmyThirdResponseLineIndex = 0xf7;
+
+static const DialogueLineEntry kJimmyFirstMeetingFollowupLines[] = {
+	{ 0x4a6b, kJimmyNpc, 0 },
+	{ 0x4a70, kPcSpeaker, 0 },
+	{ 0x4a74, kJimmyNpc, 0 },
+	{ 0x4a7a, kJimmyNpc, 0 }
+};
+
+static const DialogueLineEntry kJimmySecondResponsePreludeLines[] = {
+	{ 0x4a8a, kPcSpeaker, 0 },
+	{ 0x4a8e, kJimmyNpc, 1 }
+};
+
+static const DialogueLineEntry kJimmyNoSneakersLines[] = {
+	{ 0x4aa6, kJimmyNpc, 0 },
+	{ 0x4aaa, kPcSpeaker, 0 },
+	{ 0x4aae, kJimmyNpc, 2 }
+};
+
+} // End of namespace
+
 bool JimmyDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("JIMMY");
 }
@@ -36,9 +66,13 @@ bool JimmyDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	JimmyRoomDialogueState &state = _state;
+	Common::Error lineError = Common::kNoError;
 
 	auto playJimmyLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "JIMMY", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kJimmyNpc, headVariant);
+	};
+	auto playJimmySequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
+		return runtime.playDialogueEntrySequence(lines, count);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
 		Common::Array<StartupObjectRecord> inventoryObjects;
@@ -49,6 +83,18 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		return false;
+	};
+	auto playJimmyNoItemFallback = [&]() -> Common::Error {
+		if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY"))
+			return playJimmyLine(0x4ac3, 0);
+		if (runtime.startupScript().getFlagValue("PAPER_CHK_4"))
+			return playJimmyLine(0x4ae2, 2);
+		if (runtime.startupScript().getFlagValue("PAPER_CHK_3"))
+			return playJimmyLine(0x4adb, 2);
+		if (runtime.startupScript().getFlagValue("PAPER_CHK_2"))
+			return playJimmyLine(0x4ad4, 2);
+
+		return playJimmyLine(0x4b38, 0);
 	};
 
 	if (!usedItemName.empty()) {
@@ -88,7 +134,9 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			if (!state.paperHandoffStateSet) {
 				state.paperHandoffStateSet = true;
-				return playJimmyLine(0x4a4c, 1);
+				lineError = playJimmyLine(0x4a4c, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
 			}
 
 			return runtime.getRandomNumber(1) == 0
@@ -120,7 +168,9 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return playJimmyLine(0x4b21, 0);
 		}
 		if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
-			return playJimmyLine(0x4a9e, 1);
+			lineError = playJimmyLine(0x4a9e, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
 
 		return playJimmyLine(0x4af2, 0);
@@ -128,20 +178,85 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (state.firstNoItemLinePending) {
 		state.firstNoItemLinePending = false;
-		return !state.paperHandoffStateSet
-			? playJimmyLine(0x4a4c, 1)
-			: playJimmyLine(0x4a58, 0);
-	}
-	if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY"))
-		return playJimmyLine(0x4ac3, 0);
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_4"))
-		return playJimmyLine(0x4ae2, 2);
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_3"))
-		return playJimmyLine(0x4adb, 2);
-	if (runtime.startupScript().getFlagValue("PAPER_CHK_2"))
-		return playJimmyLine(0x4ad4, 2);
+		if (!state.paperHandoffStateSet) {
+			lineError = playJimmyLine(0x4a4c, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 
-	return playJimmyLine(0x4b38, 0);
+		lineError = playJimmyLine(0x4a58, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().setRuntimeFlagValue(kJimmyFirstMeetingFlag, true);
+		(void)runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(kJimmyFirstResponseLineIndex, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playJimmyLine(0x4a63, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			lineError = playJimmyLine(0x4a67, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		lineError = playJimmySequence(kJimmyFirstMeetingFollowupLines, ARRAYSIZE(kJimmyFirstMeetingFollowupLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		responseIndex = 0;
+		responseError = runtime.runResponseMenu(kJimmySecondResponseLineIndex, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playJimmyLine(0x4a86, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = playJimmySequence(kJimmySecondResponsePreludeLines,
+				ARRAYSIZE(kJimmySecondResponsePreludeLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int thirdResponseIndex = 0;
+			responseError = runtime.runResponseMenu(kJimmyThirdResponseLineIndex, thirdResponseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (thirdResponseIndex == 1) {
+				if (hasInventoryItem("SNEAKERS")) {
+					lineError = playJimmyLine(0x4a9e, 1);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+
+					(void)runtime.startupScript().resetRuntimeObjectToInitialState("SNEAKERS");
+					(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoomName, "SNEAKERS", true);
+					(void)runtime.startupScript().addRuntimeObjectToInventory("BROOMKEY");
+				} else {
+					lineError = playJimmySequence(kJimmyNoSneakersLines, ARRAYSIZE(kJimmyNoSneakersLines));
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+			} else if (thirdResponseIndex == 2) {
+				lineError = playJimmyLine(0x4ab4, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+		} else if (responseIndex == 2) {
+			lineError = playJimmyLine(0x4abc, 0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+	}
+
+	return playJimmyNoItemFallback();
 }
 
 } // End of namespace Harvester
