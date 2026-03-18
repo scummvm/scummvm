@@ -433,7 +433,7 @@ void ColonyEngine::destroyRobot(int num) {
 
 	if (obj.where.power[1] <= 0) {
 		if (obj.count != 0) {
-			// Robot fully destroyed: remove and drop egg
+			// Robot fully destroyed: remove from grid and recycle slot
 			obj.alive = 0;
 			int gx = obj.where.xindex;
 			int gy = obj.where.yindex;
@@ -444,16 +444,16 @@ void ColonyEngine::destroyRobot(int num) {
 				} else if (_robotArray[gx][gy] == num) {
 					_robotArray[gx][gy] = 0;
 				}
-				}
-				_sound->play(Sound::kExplode);
-				copyOverflowObjectToSlot(num);
-				debugC(1, kColonyDebugAnimation, "Robot %d destroyed!", num);
-			} else {
+			}
+			_sound->play(Sound::kExplode);
+			copyOverflowObjectToSlot(num);
+			debugC(1, kColonyDebugCombat, "Robot %d destroyed!", num);
+		} else {
 			// Robot regresses to egg form
 			obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15)) << _level);
 			obj.grow = -1;
 			obj.count = 0;
-			debugC(1, kColonyDebugAnimation, "Robot %d regressed to egg", num);
+			debugC(1, kColonyDebugCombat, "Robot %d regressed to egg", num);
 		}
 	}
 }
