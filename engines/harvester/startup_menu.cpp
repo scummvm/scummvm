@@ -84,6 +84,11 @@ static const int kQuickTipsOverlayY = 200;
 static const int kQuickTipTextX = 180;
 static const int kQuickTipTextY = 228;
 static const int kQuickTipTextWidth = 280;
+static const int kConfirmDialogX = 167;
+static const int kConfirmDialogY = 200;
+static const int kConfirmPromptX = 182;
+static const int kConfirmPromptY = 214;
+static const int kConfirmPromptWidth = 280;
 static const int kSaveSlotCount = 25;
 static const int kSaveSlotLabelX = 8;
 static const int kSaveSlotNameX = 0x50;
@@ -98,6 +103,7 @@ struct RoomMenuTextConfig {
 	Common::String yesLabel = "YES";
 	Common::String noLabel = "NO";
 	Common::String clickLabel = "CLICK";
+	Common::String quitGamePrompt = "QUIT GAME";
 };
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
@@ -162,6 +168,14 @@ static Common::Rect saveCancelRect() {
 	return Common::Rect(0x141, 0x1cc, 0x27b + 1, 0x1dc + 1);
 }
 
+static Common::Rect quitConfirmYesRect() {
+	return Common::Rect(0xd2, 0xee, 0x104 + 1, 0x108 + 1);
+}
+
+static Common::Rect quitConfirmNoRect() {
+	return Common::Rect(0x172, 0xee, 0x19a + 1, 0x108 + 1);
+}
+
 static Common::Rect optionsSliderRect(int sliderIndex, int lineHeight) {
 	const int y = kOptionsIndicatorY + sliderIndex * lineHeight;
 	return Common::Rect(kOptionsSliderMinX, y, kOptionsSliderMaxX + 1, y + kOptionsSliderHeight + 1);
@@ -212,6 +226,8 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 		config.noLabel = value;
 	if (menu.getKey("click", kMenuSectionName, value) && !value.empty())
 		config.clickLabel = value;
+	if (menu.getKey("quitgame", kMenuSectionName, value) && !value.empty())
+		config.quitGamePrompt = value;
 
 	return true;
 }
@@ -379,6 +395,20 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 		drawShadowedString(screen, font, lines[i], x, y + (int)i * (font.getFontHeight() + 2), width, color);
 }
 
+static void splitMenuConfigLines(const Common::String &text, Common::Array<Common::String> &lines) {
+	lines.clear();
+	Common::String currentLine;
+	for (uint i = 0; i < text.size(); ++i) {
+		if (text[i] == '/') {
+			lines.push_back(currentLine);
+			currentLine.clear();
+			continue;
+		}
+		currentLine += text[i];
+	}
+	lines.push_back(currentLine);
+}
+
 static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
 		const byte *palette, float paletteBrightness,
 		const Graphics::Font &selectedFont, const Graphics::Font &unselectedFont,
@@ -528,6 +558,38 @@ static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitma
 		drawShadowedString(*screen, unselectedFont, statusMessage, 20, kSaveStatusTextY,
 			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
 	}
+
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
+}
+
+static void renderQuitGameConfirmScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
+		const byte *palette, float paletteBrightness, const Graphics::Font &font,
+		const IndexedBitmap &textbox, const RoomMenuTextConfig &config, bool hoverYes, bool hoverNo) {
+	Graphics::Screen *screen = engine.getScreen();
+	const StartupArt *art = engine.getStartupArt();
+	if (!screen || !art)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, paletteBrightness);
+	blitBitmap(*screen, backdrop, 0, 0);
+	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
+	blitTransparentBitmap(*screen, textbox, kConfirmDialogX, kConfirmDialogY);
+	Common::Array<Common::String> promptLines;
+	splitMenuConfigLines(config.quitGamePrompt, promptLines);
+	for (uint i = 0; i < promptLines.size(); ++i) {
+		drawShadowedString(*screen, font, promptLines[i], kConfirmPromptX,
+			kConfirmPromptY + (int)i * (font.getFontHeight() + 2), kConfirmPromptWidth,
+			kTextColorNormal, Graphics::kTextAlignCenter);
+	}
+	drawShadowedString(*screen, font, config.yesLabel,
+		quitConfirmYesRect().left, quitConfirmYesRect().top, quitConfirmYesRect().width(),
+		hoverYes ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
+	drawShadowedString(*screen, font, config.noLabel,
+		quitConfirmNoRect().left, quitConfirmNoRect().top, quitConfirmNoRect().width(),
+		hoverNo ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -740,6 +802,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 						if (saveError.getCode() != Common::kNoError)
 							return saveError;
 						needsRedraw = true;
+					} else if (selectedItem >= 0 && _menuItems[selectedItem].equalsIgnoreCase("QUIT GAME")) {
+						Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, startupFlow);
+						if (quitError.getCode() != Common::kNoError)
+							return quitError;
+						needsRedraw = true;
 					} else {
 						debug(1, "Harvester: room menu item '%s' selected but not implemented",
 							selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
@@ -768,6 +835,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 					Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow);
 					if (saveError.getCode() != Common::kNoError)
 						return saveError;
+					needsRedraw = true;
+				} else if (_menuItems[selectedItem].equalsIgnoreCase("QUIT GAME")) {
+					Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, startupFlow);
+					if (quitError.getCode() != Common::kNoError)
+						return quitError;
 					needsRedraw = true;
 				} else {
 					debug(1, "Harvester: room menu item '%s' clicked but not implemented",
@@ -1004,6 +1076,85 @@ Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float pale
 						return Common::kNoError;
 					needsRedraw = true;
 				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+Common::Error StartupMenuSystem::runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, StartupFlow &startupFlow) {
+	const StartupArt *art = _engine.getStartupArt();
+	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
+	if (!art || !selectedFontResource)
+		return Common::kReadingFailed;
+
+	HarvesterCftFont selectedFont(*selectedFontResource);
+	if (!selectedFont.isValid())
+		return Common::kReadingFailed;
+
+	RoomMenuTextConfig config;
+	(void)loadMenuTextConfig(_engine, config);
+	const IndexedBitmap *textbox = art->getTextboxBitmap(3);
+	if (!textbox || !textbox->isValid())
+		return Common::kReadingFailed;
+
+	startupFlow.resetCursorAnimationSequence();
+	bool needsRedraw = true;
+	Graphics::FrameLimiter limiter(g_system, 60);
+
+	while (!_engine.shouldQuit()) {
+		const bool hoverYes = quitConfirmYesRect().contains(_mousePos);
+		const bool hoverNo = quitConfirmNoRect().contains(_mousePos);
+		if (needsRedraw) {
+			renderQuitGameConfirmScreen(_engine, backdrop, palette, paletteBrightness,
+				selectedFont, *textbox, config, hoverYes, hoverNo);
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				needsRedraw = true;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				return Common::kNoError;
+			case Common::EVENT_LBUTTONDOWN:
+				if (quitConfirmYesRect().contains(_mousePos)) {
+					_engine.stopStartupMusic();
+					_engine.stopStartupSound();
+					_engine.quitGame();
+					return Common::kNoError;
+				}
+				if (quitConfirmNoRect().contains(_mousePos))
+					return Common::kNoError;
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return Common::kNoError;
+				if (event.kbd.keycode == Common::KEYCODE_y || event.kbd.ascii == 'y' || event.kbd.ascii == 'Y') {
+					_engine.stopStartupMusic();
+					_engine.stopStartupSound();
+					_engine.quitGame();
+					return Common::kNoError;
+				}
+				if (event.kbd.keycode == Common::KEYCODE_n || event.kbd.ascii == 'n' || event.kbd.ascii == 'N')
+					return Common::kNoError;
 				break;
 			default:
 				break;

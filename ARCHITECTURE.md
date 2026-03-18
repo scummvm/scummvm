@@ -1221,6 +1221,28 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 **Notes**
 - The help viewer is palette-driven and does not reuse the room backdrop while active; the room/menu image only returns after the fullscreen help page is dismissed.
 
+## Room Menu Quit Confirmation
+
+**Confidence:** High
+
+**Evidence**
+- `run_main_menu` handles the `QUIT GAME` row inline by spawning `textbox4.bm` at `(167, 200)` over the current room/menu backdrop and reusing the live room palette.
+- The prompt text comes from the `quitgame` key in `MENU.INI`, and the native string parser treats `/` as an inline line break for the confirmation message.
+- The YES/NO actions use fixed hit regions: YES at `x=0xd2..0x104`, `y=0xee..0x108`; NO at `x=0x172..0x19a`, `y=0xee..0x108`.
+- The loop confirms quit on the `Y` key path and cancels on `N`, `ESC`, or secondary mouse.
+- A confirmed quit returns the menu sentinel that unwinds the room loop into shutdown rather than restoring gameplay.
+
+**Key Functions**
+- `run_main_menu`
+
+**Key Data**
+- `MENU.INI:quitgame`
+- `textbox4.bm`
+
+**Notes**
+- Unlike the fullscreen help viewer or save UI, the quit confirm is an inline modal layered over the current room/menu frame.
+- The native branch is fully self-contained inside `run_main_menu`; no separate helper crossed the rename-confidence threshold during this pass.
+
 ## Player Health And Inventory Status Portrait
 
 **Confidence:** High
