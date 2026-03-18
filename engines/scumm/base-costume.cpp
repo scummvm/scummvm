@@ -446,10 +446,10 @@ void BaseCostumeRenderer::skipCelLines(ByleRLEData &compData, int num) {
 		if (!compData.repLen)
 			compData.repLen = *_srcPtr++;
 
-		do {
-			if (!--num)
-				return;
-		} while (--compData.repLen);
+		if ((num -= compData.repLen) <= 0) {
+			compData.repLen = 1 - num;
+			return;
+		}
 	} while (true);
 }
 
