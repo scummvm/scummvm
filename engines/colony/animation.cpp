@@ -1256,9 +1256,9 @@ void ColonyEngine::handleKeypadClick(int item) {
 		}
 	}
 	if (item <= 12) {
-		// setObjectState(item, 1); // Reset to ensure animation runs Off -> On - handled by dolSprite
-		if (item > 10) // Clear/Enter should return to Off
-			setObjectState(item, 1);
+		// Original GANIMATE.C: SetObjectState(item,1) + AnimNextFram()
+		// resets button to unpressed after processing the digit.
+		setObjectState(item, 1);
 		drawAnimation();
 		_gfx->copyToScreen();
 	} else if (item == 25 && _animationName == "security") {
