@@ -384,6 +384,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It enumerates the same 25 save slots and supports text entry for save names.
   - The active slot is derived from the list rectangle `x=0x08..0x27b`, `y=0x19..0x1c2` with a native row stride of `0x11`.
   - Clicking a slot, pressing `Enter`, or clicking the lower-left action area `x=0x03..0x13d`, `y=0x1cc..0x1dc` all route into the same `run_text_entry_dialog` path for the active slot; `ESC` and the lower-right area `x=0x141..0x27b`, `y=0x1cc..0x1dc` cancel back to gameplay.
+  - The slot list uses the medium fonts rather than the main room-menu fonts: unselected `GAME_##` labels use `g_medfont2_cft`, the active slot label is respawned with `g_medfont1_cft`, and all slot-name text plus inline slot editing also use `g_medfont1_cft` at `x=0x50`.
+  - The `SAVEGAME.BM` background already carries the lower action-strip art; the native code does not spawn extra `SAVE` / `CANCEL` text entities over that strip.
+  - Entering slot-name edit mode spawns `TEXT_ENTRY` at `(0x50, activeSlot * 0x11 + 0x19)`, temporarily moves the mouse to `(0x14, 0x1ce)`, constrains mouse travel to the bottom confirm/cancel band, and then calls `run_text_entry_dialog` with hidden max length `0xf6`.
   - It first calls `sync_current_room_runtime_state_before_save_load`, which copies current-room monster runtime positions/facing back into `MonsterRecord` fields and refreshes the `SAVE_GAME` entrance from `g_player_combat_avatar`.
   - The save header is now explicit: current disc id, `g_player_present_in_room`, `g_game_clock_tick_remainder_ms`, `g_current_room_def->room_name`, and `g_player_room_name`.
   - The remainder of the save blob persists the player combat-avatar state, record lists (`ANIM`, `FLAG`, `MONSTER`, `NPC`, `OBJECT`, `REGION`, `TIMER`), the talk-state blocks, ammo counters, and `g_current_music_path`.
@@ -449,8 +452,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Because `dialogue.idx` is opened without a `1:\` / `2:\` set prefix, `open_xfile_stream` routes it through the direct-file path rather than the DAT archives.
 - `play_dialogue_line` at `0x7a690` is the single-line voice/subtitle presenter used by the talk handlers.
   - It formats the voice sample path as `<VOICE config><wavId>.CMP`, loads that direct `CMP` file if present, seeks `g_dialogue_index_stream` to the matching `dialogue.idx` text span, XOR-decodes the subtitle text, selects the textbox art by wrapped-line count, refreshes the active portrait/head slot, and blocks until the line completes or is interrupted.
+  - `load_dialogue_voice_sample` routes those `.CMP` loads back through `open_xfile_stream`, so numbered set paths can resolve through the `INDEX.00N` XFILE catalogs while bare relative voice paths still fall through to direct CD-ROM file access.
   - Raw call-site tracing now confirms the argument registers used by the talk handlers: `EAX = wav id`, `EDX = speaker/head id string`, and `EBX = portrait variant`.
   - The per-NPC talk handlers do not embed literal subtitle or keyword text in code. They hardcode WAV ids, head-id strings / variants, and zero-based `dialog.rsp` line indices; the human-readable subtitle and keyword text is loaded from `dialogue.idx` and `dialog.rsp` at runtime.
+  - The dialogue resources are not a declarative conversation tree: `dialog.rsp` supplies menu/topic text, `dialogue.idx` supplies subtitle spans keyed by WAV id, and `INDEX.00N` only catalogs archive-backed file entries for XFILE lookup. The actual topic branching, state gates, and follow-up rewrites stay compiled inside the per-NPC talk handlers reached from `g_talk_to_handler_entries`.
 - `load_dialogue_response_line` at `0x3a1a0` is the indexed `dialog.rsp` line loader used by the talk-to handlers.
   - It opens the ASCII `dialog.rsp` file, reads forward to the requested zero-based line index, strips the trailing CR/LF, and returns the shared `g_dialogue_response_line_buffer`.
   - Handlers such as `handle_talk_to_dwayne`, `handle_talk_to_hank`, and `handle_talk_to_mom` use it to map keyword-menu selections back to concrete topic strings before branching.
@@ -1168,6 +1173,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It parses one numbered slash-delimited `dialog.rsp` line into wrapped response rows, chooses `TEXTBOX1`..`TEXTBOX8` from the total wrapped line count, titles the panel with the literal `Responses`, and returns a 1-based selection from mouse row hit-testing or digit keys `1` through `9`.
 - `run_dialogue_keyword_menu` at `0x7ba40` is the slash-delimited keyword menu plus free-text `Other` path used by the NPC dialogue system.
   - It always appends `g_dialogue_keyword_menu_default_topic`, loaded by `load_dialogue_index` from zero-based `dialog.rsp` line `13`, plus a literal `Other` entry that calls `run_text_entry_dialog`.
+  - Choosing a visible keyword copies that literal on-screen topic text into `g_dialogue_selected_topic_text`; the `Other` path copies the typed text there as well. There is no separate hidden topic-id remap layer behind `dialog.rsp`.
   - ESC does not silently cancel the keyword menu; it writes that default topic into `g_dialogue_selected_topic_text` and returns through the normal handler path.
 
 ## Room Menu Options UI
@@ -1200,6 +1206,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 **Notes**
 - The native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates the string-backed `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while the submenu is active.
 - The options text entities are spawned before the `VOLUME.BM` bars and `INDICATR.BM` sliders are added to the render list, so the first three labels sit underneath the bar art where their trailing edge overlaps that UI.
+- `prompt_for_password` does not open a separate boxed dialog. It overlays the current options menu with centered `ENTER PASSWORD` text rendered in `g_harvfont_cft`, spawns a `TEXT_ENTRY` entity at `(0xdc, 0xdc)` using `g_harvfnt2_cft`, hides the cursor entity while typing, and calls `run_text_entry_dialog` with hidden max length `8`.
 
 ## Room Menu Help Screen
 

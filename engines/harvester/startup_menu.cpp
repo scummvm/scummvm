@@ -96,7 +96,11 @@ static const int kSaveSlotStartY = 0x19;
 static const int kSaveSlotStride = 0x11;
 static const int kSaveSlotTextWidth = 0x27b - kSaveSlotNameX;
 static const int kSaveStatusTextY = 0x1b8;
-static const int kSaveSlotMaxCharacters = 63;
+static const int kSaveSlotMaxCharacters = 0xf6;
+static const int kPasswordEntryX = 0xdc;
+static const int kPasswordEntryY = 0xdc;
+static const int kPasswordEntryWidth = 0x226;
+static const int kPasswordMaxCharacters = 8;
 
 struct RoomMenuTextConfig {
 	Common::Array<Common::String> optionItems;
@@ -141,18 +145,6 @@ static Common::Rect quickTipsNextRect() {
 
 static Common::Rect quickTipsToggleRect() {
 	return Common::Rect(258, 280, 366, 291);
-}
-
-static Common::Rect textEntryInputRect() {
-	return Common::Rect(176, 212, 464, 234);
-}
-
-static Common::Rect textEntryOkRect() {
-	return Common::Rect(224, 278, 286, 292);
-}
-
-static Common::Rect textEntryCancelRect() {
-	return Common::Rect(344, 278, 424, 292);
 }
 
 static Common::Rect saveSlotRect(int slotIndex) {
@@ -310,13 +302,13 @@ static Common::String buildOptionsMenuItemLabel(const StartupScript &startupScri
 	}
 }
 
-static bool appendTextEntryCharacter(Common::String &text, const Graphics::Font &font,
-		uint32 ascii, uint maxCharacters) {
+static bool appendBoundedTextEntryCharacter(Common::String &text, const Graphics::Font &font,
+		uint32 ascii, uint maxCharacters, int maxWidth) {
 	if (ascii < 32 || ascii > 126 || ascii == '~' || text.size() >= maxCharacters)
 		return false;
 
 	const Common::String candidate = text + (char)ascii;
-	if (font.getStringWidth(candidate) > textEntryInputRect().width() - 10)
+	if (font.getStringWidth(candidate) > maxWidth)
 		return false;
 
 	text = candidate;
@@ -324,15 +316,7 @@ static bool appendTextEntryCharacter(Common::String &text, const Graphics::Font 
 }
 
 static bool appendInlineSaveCharacter(Common::String &text, const Graphics::Font &font, uint32 ascii) {
-	if (ascii < 32 || ascii > 126 || ascii == '~' || text.size() >= kSaveSlotMaxCharacters)
-		return false;
-
-	const Common::String candidate = text + (char)ascii;
-	if (font.getStringWidth(candidate) > kSaveSlotTextWidth)
-		return false;
-
-	text = candidate;
-	return true;
+	return appendBoundedTextEntryCharacter(text, font, ascii, kSaveSlotMaxCharacters, kSaveSlotTextWidth);
 }
 
 static Common::String buildDefaultSaveSlotLabel(int slotIndex) {
@@ -413,7 +397,8 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 		const byte *palette, float paletteBrightness,
 		const Graphics::Font &selectedFont, const Graphics::Font &unselectedFont,
 		const StartupArt &art, const RoomMenuTextConfig &config,
-		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem) {
+		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem,
+		bool drawCursor = true) {
 	Graphics::Screen *screen = engine.getScreen();
 	StartupScript *startupScript = engine.getStartupScript();
 	if (!screen || !startupScript)
@@ -449,7 +434,7 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 			kOptionsIndicatorY + i * lineHeight);
 	}
 
-	if (engine.getRuntimeEntities())
+	if (drawCursor && engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
 	screen->makeAllDirty();
 	screen->update();
@@ -487,48 +472,12 @@ static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap 
 	screen->update();
 }
 
-static void renderTextEntryDialog(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness, const Graphics::Font &titleFont,
-		const Graphics::Font &entryFont, const Common::String &title, const Common::String &text,
-		bool cursorVisible, bool okHover, bool cancelHover) {
-	Graphics::Screen *screen = engine.getScreen();
-	if (!screen)
-		return;
-
-	applyMenuPalette(*screen, engine, palette, paletteBrightness);
-	blitBitmap(*screen, backdrop, 0, 0);
-
-	screen->fillRect(Common::Rect(132, 148, 508, 320), kPanelFillColor);
-	drawShadowedString(*screen, titleFont, title, 132, 168, 376, kTextColorNormal,
-		Graphics::kTextAlignCenter);
-	screen->fillRect(textEntryInputRect(), kTransparentPaletteIndex);
-	screen->frameRect(textEntryInputRect(), kTextColorDim);
-
-	Common::String displayText = text;
-	if (cursorVisible)
-		displayText += "_";
-	const Common::Rect inputRect = textEntryInputRect();
-	const Common::Rect okRect = textEntryOkRect();
-	const Common::Rect cancelRect = textEntryCancelRect();
-	drawShadowedString(*screen, entryFont, displayText, inputRect.left + 5, inputRect.top + 4,
-		inputRect.width() - 10, kTextColorNormal);
-	drawShadowedString(*screen, entryFont, "OK", okRect.left, okRect.top,
-		okRect.width(), okHover ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
-	drawShadowedString(*screen, entryFont, "Cancel", cancelRect.left, cancelRect.top,
-		cancelRect.width(), cancelHover ? kTextColorHover : kTextColorNormal,
-		Graphics::kTextAlignCenter);
-
-	if (engine.getRuntimeEntities())
-		engine.getRuntimeEntities()->drawCursor(*screen);
-	screen->makeAllDirty();
-	screen->update();
-}
-
 static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitmap &background,
-		const byte *palette, float paletteBrightness, const Graphics::Font &selectedFont,
-		const Graphics::Font &unselectedFont, const Common::Array<Common::String> &slotTitles,
-		int activeSlot, bool hoverSave, bool hoverCancel, const Common::String &statusMessage,
-		int editingSlot = -1, const Common::String *editingText = nullptr) {
+		const byte *palette, float paletteBrightness, const Graphics::Font &selectedLabelFont,
+		const Graphics::Font &unselectedLabelFont, const Graphics::Font &slotNameFont,
+		const Common::Array<Common::String> &slotTitles, int activeSlot,
+		const Common::String &statusMessage, int editingSlot = -1,
+		const Common::String *editingText = nullptr) {
 	Graphics::Screen *screen = engine.getScreen();
 	if (!screen)
 		return;
@@ -537,9 +486,7 @@ static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitma
 	blitBitmap(*screen, background, 0, 0);
 
 	for (int i = 0; i < kSaveSlotCount; ++i) {
-		const bool selected = i == activeSlot;
-		const Graphics::Font &labelFont = selected ? selectedFont : unselectedFont;
-		const Graphics::Font &nameFont = (i == editingSlot || selected) ? selectedFont : unselectedFont;
+		const Graphics::Font &labelFont = (i == activeSlot) ? selectedLabelFont : unselectedLabelFont;
 		const int y = kSaveSlotStartY + i * kSaveSlotStride;
 		const Common::String slotLabel = buildDefaultSaveSlotLabel(i);
 		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y, 64, 0);
@@ -547,17 +494,11 @@ static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitma
 		Common::String displayTitle = slotTitles[i];
 		if (i == editingSlot && editingText)
 			displayTitle = *editingText + "_";
-		nameFont.drawString(screen, displayTitle, kSaveSlotNameX, y, kSaveSlotTextWidth, 0);
+		slotNameFont.drawString(screen, displayTitle, kSaveSlotNameX, y, kSaveSlotTextWidth, 0);
 	}
 
-	drawShadowedString(*screen, selectedFont, "SAVE", saveConfirmRect().left, saveConfirmRect().top,
-		saveConfirmRect().width(), hoverSave ? kTextColorHover : kTextColorNormal,
-		Graphics::kTextAlignCenter);
-	drawShadowedString(*screen, selectedFont, "CANCEL", saveCancelRect().left, saveCancelRect().top,
-		saveCancelRect().width(), hoverCancel ? kTextColorHover : kTextColorNormal,
-		Graphics::kTextAlignCenter);
 	if (!statusMessage.empty()) {
-		drawShadowedString(*screen, unselectedFont, statusMessage, 20, kSaveStatusTextY,
+		drawShadowedString(*screen, slotNameFont, statusMessage, 20, kSaveStatusTextY,
 			screen->w - 40, kTextColorNormal, Graphics::kTextAlignCenter);
 	}
 
@@ -610,11 +551,11 @@ static int getNativeRoomMenuSelectionFromMouse(const Graphics::Font &selectedFon
 
 	int selection = mousePos.y - kMenuStartY;
 	if (selection < 1)
-		return -1;
+		selection = 1;
 
-	selection = (selection - 1) / MAX<int>(1, getNativeRoomMenuLineHeight(selectedFont));
-	if (selection < 0 || selection >= (int)itemCount)
-		return -1;
+	selection /= MAX<int>(1, getNativeRoomMenuLineHeight(selectedFont));
+	if (selection >= (int)itemCount)
+		selection = (int)itemCount - 1;
 
 	return selection;
 }
@@ -870,16 +811,16 @@ Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float pale
 	(void)paletteBrightness;
 	ResourceManager *resources = _engine.getResources();
 	MetaEngine *metaEngine = _engine.getMetaEngine();
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
-	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
-	if (!resources || !metaEngine || !selectedFontResource || !unselectedFontResource)
+	const CftFontResource *slotNameFontResource = findStartupFontByName(_engine, "MEDFONT1");
+	const CftFontResource *slotLabelFontResource = findStartupFontByName(_engine, "MEDFONT2");
+	if (!resources || !metaEngine || !slotNameFontResource || !slotLabelFontResource)
 		return Common::kReadingFailed;
 	if (!_engine.canSaveGameStateCurrently())
 		return Common::kNoError;
 
-	HarvesterCftFont selectedFont(*selectedFontResource);
-	HarvesterCftFont unselectedFont(*unselectedFontResource);
-	if (!selectedFont.isValid() || !unselectedFont.isValid())
+	HarvesterCftFont slotNameFont(*slotNameFontResource);
+	HarvesterCftFont slotLabelFont(*slotLabelFontResource);
+	if (!slotNameFont.isValid() || !slotLabelFont.isValid())
 		return Common::kReadingFailed;
 
 	IndexedBitmap background;
@@ -920,11 +861,9 @@ Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float pale
 		Graphics::FrameLimiter entryLimiter(g_system, 60);
 
 		while (!_engine.shouldQuit()) {
-			const bool hoverSave = saveConfirmRect().contains(_mousePos);
-			const bool hoverCancel = saveCancelRect().contains(_mousePos);
 			if (needsRedraw) {
 				renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
-					selectedFont, unselectedFont, slotTitles, slotIndex, hoverSave, hoverCancel,
+					slotNameFont, slotLabelFont, slotNameFont, slotTitles, slotIndex,
 					Common::String(), slotIndex, &editedTitle);
 				needsRedraw = false;
 			}
@@ -962,7 +901,7 @@ Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float pale
 						}
 						break;
 					}
-					if (appendInlineSaveCharacter(editedTitle, selectedFont, event.kbd.ascii))
+					if (appendInlineSaveCharacter(editedTitle, slotNameFont, event.kbd.ascii))
 						needsRedraw = true;
 					break;
 				default:
@@ -1009,11 +948,9 @@ Common::Error StartupMenuSystem::runSaveGameMenu(const byte *palette, float pale
 	};
 
 	while (!_engine.shouldQuit()) {
-		const bool hoverSave = saveConfirmRect().contains(_mousePos);
-		const bool hoverCancel = saveCancelRect().contains(_mousePos);
 		if (needsRedraw) {
 			renderSaveGameMenuScreen(_engine, background, savePalette, 1.0f,
-				selectedFont, unselectedFont, slotTitles, activeSlot, hoverSave, hoverCancel, statusMessage);
+				slotNameFont, slotLabelFont, slotNameFont, slotTitles, activeSlot, statusMessage);
 			needsRedraw = false;
 		}
 
@@ -1199,8 +1136,6 @@ Common::Error StartupMenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, c
 	}
 
 	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
-	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	const Graphics::Font &entryFont = bodyFont ? *bodyFont : static_cast<const Graphics::Font &>(unselectedFont);
 	int selectedItem = 0;
 	int capturedSlider = -1;
 	bool showingQuickTips = false;
@@ -1265,10 +1200,85 @@ Common::Error StartupMenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, c
 		needsRedraw = true;
 	};
 
+	auto runPasswordPrompt = [&]() -> Common::String {
+		Graphics::FrameLimiter promptLimiter(g_system, 60);
+		Common::String text;
+		bool needsPromptRedraw = true;
+		bool cursorVisible = true;
+		uint32 cursorToggleTicks = g_system->getMillis() + 400;
+
+		while (!_engine.shouldQuit()) {
+			if (needsPromptRedraw) {
+				renderOptionsMenuScreen(_engine, backdrop, palette, paletteBrightness,
+					selectedFont, unselectedFont, *art, config, volumeBar, indicator, selectedItem, false);
+
+				Graphics::Screen *screen = _engine.getScreen();
+				if (screen) {
+					const int titleWidth = selectedFont.getStringWidth("ENTER PASSWORD");
+					const int titleX = (screen->w - titleWidth) / 2;
+					selectedFont.drawString(screen, "ENTER PASSWORD", titleX, 0xa0, titleWidth, 0);
+
+					Common::String displayText = text;
+					if (cursorVisible)
+						displayText += "_";
+					unselectedFont.drawString(screen, displayText, kPasswordEntryX, kPasswordEntryY,
+						kPasswordEntryWidth, 0);
+					screen->makeAllDirty();
+					screen->update();
+				}
+
+				needsPromptRedraw = false;
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return Common::String();
+
+				switch (event.type) {
+				case Common::EVENT_RBUTTONDOWN:
+					return Common::String();
+				case Common::EVENT_KEYDOWN:
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+						return Common::String();
+					if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+							event.kbd.keycode == Common::KEYCODE_KP_ENTER)
+						return text;
+					if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+						if (!text.empty()) {
+							text.deleteLastChar();
+							needsPromptRedraw = true;
+						}
+						break;
+					}
+					if (appendBoundedTextEntryCharacter(text, unselectedFont, event.kbd.ascii,
+							kPasswordMaxCharacters, kPasswordEntryWidth)) {
+						needsPromptRedraw = true;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+
+			const uint32 now = g_system->getMillis();
+			if ((int32)(now - cursorToggleTicks) >= 0) {
+				cursorVisible = !cursorVisible;
+				cursorToggleTicks = now + 400;
+				needsPromptRedraw = true;
+			}
+
+			promptLimiter.delayBeforeSwap();
+			promptLimiter.startFrame();
+		}
+
+		return Common::String();
+	};
+
 	auto togglePassword = [&]() {
 		if (startupScript->getParentalPassword().empty()) {
-			const Common::String password = runModalTextEntryDialog(backdrop, palette, paletteBrightness,
-				selectedFont, entryFont, "ENTER PASSWORD", Common::String(), startupFlow);
+			const Common::String password = runPasswordPrompt();
 			if (!password.empty()) {
 				startupScript->setParentalPassword(password);
 				persistConfig();
@@ -1552,79 +1562,6 @@ Common::Error StartupMenuSystem::runHelpScreen(const byte *palette, float palett
 	}
 
 	return Common::kNoError;
-}
-
-Common::String StartupMenuSystem::runModalTextEntryDialog(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const Graphics::Font &titleFont, const Graphics::Font &entryFont,
-		const Common::String &title, const Common::String &initialText, StartupFlow &startupFlow) {
-	Graphics::FrameLimiter limiter(g_system, 60);
-	Common::String text = initialText;
-	const uint maxCharacters = 30;
-	bool needsRedraw = true;
-	bool cursorVisible = true;
-	uint32 cursorToggleTicks = g_system->getMillis() + 400;
-
-	while (!_engine.shouldQuit()) {
-		if (needsRedraw) {
-			renderTextEntryDialog(_engine, backdrop, palette, paletteBrightness, titleFont, entryFont,
-				title, text, cursorVisible, textEntryOkRect().contains(_mousePos), textEntryCancelRect().contains(_mousePos));
-			needsRedraw = false;
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
-				return Common::String();
-
-			switch (event.type) {
-			case Common::EVENT_MOUSEMOVE:
-				needsRedraw = true;
-				break;
-			case Common::EVENT_LBUTTONDOWN:
-				if (textEntryOkRect().contains(_mousePos))
-					return text;
-				if (textEntryCancelRect().contains(_mousePos))
-					return Common::String();
-				break;
-			case Common::EVENT_RBUTTONDOWN:
-				return Common::String();
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return Common::String();
-				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
-						event.kbd.keycode == Common::KEYCODE_KP_ENTER)
-					return text;
-				if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
-					if (!text.empty()) {
-						text.deleteLastChar();
-						needsRedraw = true;
-					}
-					break;
-				}
-				if (appendTextEntryCharacter(text, entryFont, event.kbd.ascii, maxCharacters))
-					needsRedraw = true;
-				break;
-			default:
-				break;
-			}
-		}
-
-		const uint32 now = g_system->getMillis();
-		if ((int32)(now - cursorToggleTicks) >= 0) {
-			cursorVisible = !cursorVisible;
-			cursorToggleTicks = now + 400;
-			needsRedraw = true;
-		}
-
-		if (_engine.getRuntimeEntities() && _engine.getRuntimeEntities()->syncCursorEntityPosition(_mousePos))
-			needsRedraw = true;
-
-		limiter.delayBeforeSwap();
-		limiter.startFrame();
-	}
-
-	return Common::String();
 }
 
 void StartupMenuSystem::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {
