@@ -36,10 +36,10 @@
 #include "harvester/fst_player.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
-#include "harvester/startup_art.h"
-#include "harvester/startup_flow.h"
-#include "harvester/startup_script.h"
-#include "harvester/startup_text.h"
+#include "harvester/art.h"
+#include "harvester/flow.h"
+#include "harvester/script.h"
+#include "harvester/text.h"
 
 namespace Harvester {
 

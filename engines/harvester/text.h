@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_TEXT_H
-#define HARVESTER_STARTUP_TEXT_H
+#ifndef HARVESTER_TEXT_H
+#define HARVESTER_TEXT_H
 
 #include "common/array.h"
 #include "common/str.h"
@@ -69,4 +69,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_TEXT_H
+#endif // HARVESTER_TEXT_H

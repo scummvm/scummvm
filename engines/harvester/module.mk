@@ -58,13 +58,13 @@ MODULE := engines/harvester
 	npc/wasp_woman_dialogue.o \
 	resources.o \
 	runtime_entity.o \
-	startup_art.o \
-	startup_flow.o \
-	startup_inventory.o \
-	startup_menu.o \
-	startup_room.o \
-	startup_script.o \
-	startup_text.o \
+	art.o \
+	flow.o \
+	inventory.o \
+	menu.o \
+	room.o \
+	script.o \
+	text.o \
 	xfile_archive.o
 
 # This module can be built as a plugin

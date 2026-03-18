@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_INVENTORY_H
-#define HARVESTER_STARTUP_INVENTORY_H
+#ifndef HARVESTER_INVENTORY_H
+#define HARVESTER_INVENTORY_H
 
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "harvester/startup_art.h"
-#include "harvester/startup_room_support.h"
+#include "harvester/art.h"
+#include "harvester/room_support.h"
 
 namespace Graphics {
 class Screen;
@@ -77,4 +77,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_INVENTORY_H
+#endif // HARVESTER_INVENTORY_H

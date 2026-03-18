@@ -89,9 +89,9 @@
 #include "harvester/npc/wasp_woman_dialogue.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
-#include "harvester/startup_art.h"
-#include "harvester/startup_flow.h"
-#include "harvester/startup_text.h"
+#include "harvester/art.h"
+#include "harvester/flow.h"
+#include "harvester/text.h"
 
 namespace Harvester {
 

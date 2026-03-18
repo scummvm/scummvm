@@ -23,7 +23,7 @@
 #define HARVESTER_CFT_FONT_H
 
 #include "graphics/font.h"
-#include "harvester/startup_text.h"
+#include "harvester/text.h"
 
 namespace Harvester {
 

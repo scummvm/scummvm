@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/startup_art.h"
+#include "harvester/art.h"
 
 #include "common/debug.h"
 #include "common/endian.h"

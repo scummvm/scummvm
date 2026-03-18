@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/startup_room.h"
+#include "harvester/room.h"
 
 #include "common/endian.h"
 #include "common/events.h"
@@ -35,10 +35,10 @@
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
-#include "harvester/startup_art.h"
-#include "harvester/startup_flow.h"
-#include "harvester/startup_inventory.h"
-#include "harvester/startup_room_support.h"
+#include "harvester/art.h"
+#include "harvester/flow.h"
+#include "harvester/inventory.h"
+#include "harvester/room_support.h"
 
 namespace Harvester {
 

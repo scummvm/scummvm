@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/startup_script.h"
+#include "harvester/script.h"
 
 #include <cstdlib>
 
