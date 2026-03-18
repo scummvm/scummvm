@@ -5,23 +5,24 @@ MODULE_OBJS = \
 	avalanche.o \
 	avalot.o \
 	background.o \
+	clock.o \
 	closing.o \
 	console.o \
-	graphics.o \
-	dropdown.o \
-	parser.o \
 	dialogs.o \
-	sequence.o \
-	sound.o \
-	timer.o \
+	dropdown.o \
+	ghostroom.o \
+	graphics.o \
+	help.o \
+	highscore.o \
+	intro.o \
+	mainmenu.o \
 	metaengine.o \
 	nim.o \
-	clock.o \
-	ghostroom.o \
-	help.o \
+	parser.o \
+	sequence.o \
 	shootemup.o \
-	mainmenu.o \
-	highscore.o
+	sound.o \
+	timer.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

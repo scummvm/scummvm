@@ -24,12 +24,14 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "avalanche/avalanche.h"
-
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
+
 #include "graphics/thumbnail.h"
+
+#include "avalanche/avalanche.h"
+#include "avalanche/intro.h"
 
 namespace Avalanche {
 
@@ -54,6 +56,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_ghostroom = nullptr;
 	_help = nullptr;
 	_highscore = nullptr;
+	_intro = nullptr;
 
 	initVariables();
 }
@@ -77,6 +80,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _ghostroom;
 	delete _help;
 	delete _highscore;
+	delete _intro;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -162,6 +166,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_ghostroom = new GhostRoom(this);
 	_help = new Help(this);
 	_highscore = new HighScore(this);
+	_intro = new Intro(this);
 
 	_graphics->init();
 	_dialogs->init();

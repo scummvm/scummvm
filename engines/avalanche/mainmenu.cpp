@@ -24,10 +24,11 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#include "common/system.h"
+
 #include "avalanche/avalanche.h"
 #include "avalanche/mainmenu.h"
-
-#include "common/system.h"
+#include "avalanche/intro.h"
 
 namespace Avalanche {
 
@@ -101,6 +102,10 @@ void MainMenu::wait() {
 				_vm->_graphics->menuRestoreScreen();
 				CursorMan.showMouse(true);
 				return;
+			case Common::KEYCODE_2:
+				_vm->_intro->run();
+				_vm->_graphics->menuInitialize();
+				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_6: // Falltroughs are inteded.
 				// Exit back to DOS

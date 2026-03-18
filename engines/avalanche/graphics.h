@@ -160,6 +160,8 @@ public:
 	void restoreScreen();
 	void removeBackup();
 
+	Graphics::Surface &getSurface() { return _surface; }
+
 private:
 	static const int16 kMouseSize = 134;
 	static const uint16 kBackgroundWidth = kScreenWidth;
