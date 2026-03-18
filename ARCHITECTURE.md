@@ -1198,6 +1198,27 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 **Notes**
 - The native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates the string-backed `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while the submenu is active.
 
+## Room Menu Help Screen
+
+**Confidence:** High
+
+**Evidence**
+- `run_controls_help_screen` at `0x6c3e0` is the dedicated two-page controls help viewer, and `run_main_menu` also contains the same behavior inline for the `HELP` row.
+- Page `0` loads `graphic\other\moushelp.bm` with `1:\graphic\pal\moushelp.pal`; page `1` loads `graphic\other\keyshelp.bm` with `1:\graphic\pal\keyshelp.pal`.
+- Each page is a fullscreen bitmap entity shown at `(0, 0)` after clearing the screen and uploading the page palette.
+- The loop waits for input, exits on `ESC` or secondary mouse, and toggles pages on primary mouse or any other key.
+- On exit it reuploads `g_current_palette_buffer`, clears the screen, reuploads the room palette again, and resumes the paused timer countdowns.
+
+**Key Functions**
+- `run_controls_help_screen`
+- `run_main_menu`
+
+**Key Data**
+- `g_current_palette_buffer`
+
+**Notes**
+- The help viewer is palette-driven and does not reuse the room backdrop while active; the room/menu image only returns after the fullscreen help page is dismissed.
+
 ## Player Health And Inventory Status Portrait
 
 **Confidence:** High
