@@ -294,6 +294,23 @@ Common::Rect StartupInventorySystem::getPanelBounds() const {
 		kInventoryX + (int)bitmap.width, kInventoryY + (int)bitmap.height);
 }
 
+void StartupInventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const {
+	if (_selectedItemName.empty())
+		return;
+
+	for (const StartupInventoryVisual &item : _items) {
+		if (!item.object.objectName.equalsIgnoreCase(_selectedItemName))
+			continue;
+		if (!item.hasBitmap || !item.bitmap.isValid())
+			return;
+
+		const int drawX = point.x - (int)item.bitmap.width / 2;
+		const int drawY = point.y - (int)item.bitmap.height / 2;
+		blitBitmap(screen, item.bitmap, drawX, drawY);
+		return;
+	}
+}
+
 void StartupInventorySystem::drawOverlay(Graphics::Screen &screen, const Graphics::Font &font) const {
 	const StartupArt *art = _engine.getStartupArt();
 	StartupScript *startupScript = _engine.getStartupScript();
