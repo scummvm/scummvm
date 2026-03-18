@@ -424,9 +424,20 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 	blitTransparentBitmap(*screen, art.getLogoBitmap(), kLogoX, kLogoY);
 
 	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
-	for (int i = 0; i < 3; ++i) {
-		blitTransparentBitmap(*screen, volumeBar, kOptionsVolumeBitmapX, kOptionsVolumeBitmapY + i * lineHeight);
+	for (int i = 0; i < (int)config.optionItems.size(); ++i) {
+		const Common::String label = buildOptionsMenuItemLabel(*startupScript, config, i);
+		const Graphics::Font &font = (i == selectedItem) ? selectedFont : unselectedFont;
+		const int width = font.getStringWidth(label);
+		const int x = (screen->w - width) / 2;
+		const int y = kMenuStartY + i * lineHeight;
+		font.drawString(screen, label, x, y, width, 0);
 	}
+
+	// Native run_main_menu spawns the option text entities before adding the
+	// VOLUME/INDICATR bitmap entities, so the bars clip the trailing overlap on
+	// the first three rows instead of the text painting over them.
+	for (int i = 0; i < 3; ++i)
+		blitTransparentBitmap(*screen, volumeBar, kOptionsVolumeBitmapX, kOptionsVolumeBitmapY + i * lineHeight);
 
 	const int levels[3] = {
 		startupScript->getFxVolumeLevel(),
@@ -436,15 +447,6 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 	for (int i = 0; i < 3; ++i) {
 		blitTransparentBitmap(*screen, indicator, kOptionsSliderMinX + levels[i] * kOptionsSliderStep,
 			kOptionsIndicatorY + i * lineHeight);
-	}
-
-	for (int i = 0; i < (int)config.optionItems.size(); ++i) {
-		const Common::String label = buildOptionsMenuItemLabel(*startupScript, config, i);
-		const Graphics::Font &font = (i == selectedItem) ? selectedFont : unselectedFont;
-		const int width = font.getStringWidth(label);
-		const int x = (screen->w - width) / 2;
-		const int y = kMenuStartY + i * lineHeight;
-		font.drawString(screen, label, x, y, width, 0);
 	}
 
 	if (engine.getRuntimeEntities())

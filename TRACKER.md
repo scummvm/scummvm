@@ -15,14 +15,12 @@
 
 ## Last Confirmed Action
 
-- Recovered and implemented the native `QUIT GAME` room-menu confirmation branch from `run_main_menu`.
-  - Confirmed the native dialog is an inline modal over the room/menu backdrop, uses `textbox4.bm` at `(167, 200)`, and pulls its prompt text from `MENU.INI:quitgame` with `/` treated as an explicit line break.
-  - Confirmed the native YES/NO hit regions are fixed at `0xd2..0x104,0xee..0x108` and `0x172..0x19a,0xee..0x108`, with keyboard confirm/cancel on `Y` / `N` and cancel also on `ESC` or secondary mouse.
-- Implemented the engine-side `QUIT GAME` room-menu flow:
-  - room-menu `QUIT GAME` now opens the native-shaped confirmation dialog instead of logging an unimplemented stub;
-  - confirm stops startup audio and exits cleanly through the engine quit path, while cancel returns to the room menu without disturbing the active room backdrop or palette.
+- Rechecked the native `OPTIONS` room-menu draw order in `run_main_menu` to explain the slider-row text mismatch from the visual comparison.
+  - Confirmed all seven option text entities are spawned before the three `VOLUME.BM` bars and three `INDICATR.BM` sliders are added to the render list, so the top three labels are partially covered where they overlap the slider art.
+- Adjusted the engine-side `OPTIONS` renderer to match that native layering.
+  - `SOUND FX`, `MUSIC`, and `GAMMA` now draw underneath the volume bars and indicators instead of painting on top of them, which restores the native-looking spacing against the sliders.
 
 ## Next Suggested Action
 
-1. Run a fresh native-vs-engine visual/input comparison for all four recovered ESC room-menu branches (`OPTIONS`, `HELP`, `SAVE GAME`, `QUIT GAME`) and log any remaining palette, layout, or interaction mismatches.
-2. Continue the room/UI pass from the next still-native-only modal or overlay path that shares `run_main_menu` assets and timing behavior.
+1. Re-run the native-vs-engine visual comparison for the `OPTIONS` submenu with the same selected row in both captures to confirm the slider-row spacing now matches.
+2. Continue the remaining room/UI visual-parity pass, especially any menus where native render-list ordering still differs from the engine's direct blit order.

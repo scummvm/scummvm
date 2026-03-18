@@ -1199,6 +1199,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 
 **Notes**
 - The native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates the string-backed `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while the submenu is active.
+- The options text entities are spawned before the `VOLUME.BM` bars and `INDICATR.BM` sliders are added to the render list, so the first three labels sit underneath the bar art where their trailing edge overlaps that UI.
 
 ## Room Menu Help Screen
 
