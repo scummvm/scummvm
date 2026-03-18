@@ -309,19 +309,23 @@ void ByleRLEDecode_Mode0(
 
 			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
 
-			do {
-				if (color) {
+			if (color) {
+				do {
 					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 					|| (*mask & maskbit);
 
 					if (!masked) {
 						*dst = _palette[color];
 					}
-				}
-				dst += pitch;
-				mask += _numStrips;
-				y++;
-			} while (--batch);
+					dst += pitch;
+					mask += _numStrips;
+					y++;
+				} while (--batch);
+			} else {
+				dst += batch * pitch;
+				mask += batch * _numStrips;
+				y += batch;
+			}
 
 			if (height == 0) {
 				if (--compData.skipWidth == 0)
@@ -388,8 +392,8 @@ void ByleRLEDecode_Mode1(
 
 			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
 
-			do {
-				if (color) {
+			if (color) {
+				do {
 					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 					|| (*mask & maskbit);
 
@@ -404,11 +408,15 @@ void ByleRLEDecode_Mode1(
 							*dst = pcolor;
 						}
 					}
-				}
-				dst += pitch;
-				mask += _numStrips;
-				y++;
-			} while (--batch);
+					dst += pitch;
+					mask += _numStrips;
+					y++;
+				} while (--batch);
+			} else {
+				dst += batch * pitch;
+				mask += batch * _numStrips;
+				y += batch;
+			}
 
 			if (height == 0) {
 				if (--compData.skipWidth == 0)
@@ -477,8 +485,8 @@ void ByleRLEDecode_Mode3(
 
 			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
 
-			do {
-				if (color) {
+			if (color) {
+				do {
 					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 					|| (*mask & maskbit);
 
@@ -495,11 +503,15 @@ void ByleRLEDecode_Mode3(
 							*dst = pcolor;
 						}
 					}
-				}
-				dst += pitch;
-				mask += _numStrips;
-				y++;
-			} while (--batch);
+					dst += pitch;
+					mask += _numStrips;
+					y++;
+				} while (--batch);
+			} else {
+				dst += batch * pitch;
+				mask += batch * _numStrips;
+				y += batch;
+			}
 
 			if (height == 0) {
 				if (--compData.skipWidth == 0)
@@ -568,8 +580,8 @@ void ByleRLEDecode_Classic(
 
 			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
 
-			do {
-				if (color) {
+			if (color) {
+				do {
 					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
 					|| (*mask & maskbit);
 
@@ -577,11 +589,15 @@ void ByleRLEDecode_Classic(
 						if (lastColumnX != compData.x)
 							*dst = _shadowTable[*dst];
 					}
-				}
-				dst += pitch;
-				mask += _numStrips;
-				y++;
-			} while (--batch);
+					dst += pitch;
+					mask += _numStrips;
+					y++;
+				} while (--batch);
+			} else {
+				dst += batch * pitch;
+				mask += batch * _numStrips;
+				y += batch;
+			}
 
 			if (height == 0) {
 				if (--compData.skipWidth == 0)
