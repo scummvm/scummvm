@@ -15,16 +15,14 @@
 
 ## Last Confirmed Action
 
-- Recovered and implemented the native `SAVE GAME` room-menu path from `run_save_game_menu` and `sync_current_room_runtime_state_before_save_load`.
-  - Confirmed the save screen uses `SAVEGAME.BM` + `SAVEGAME.PAL`, exposes 25 fixed slots, and routes slot-click, `Enter`, and the lower-left action area through the same inline text-entry-and-save path.
-  - Confirmed the native pre-save sync step copies live room state back into persistent records before serialization, and that the room menu cancels via `ESC` or the lower-right action area.
-- Implemented the engine-side `SAVE GAME` screen on the ESC room menu:
-  - room-menu `SAVE GAME` now opens a native-shaped 25-slot save UI with inline text entry and immediate commit after confirmation;
-  - Harvester now has a real ScummVM save serializer for the current startup/runtime subset, including room resume context, runtime script records, and Steve's current HP;
-  - launcher/runtime loads now resume via `materializeRoomState()` so a loaded room comes back without replaying room-enter command chains;
-  - the Harvester metaengine now exposes the same `0..24` slot range the native menu uses and disables generic autosave slot reservation.
+- Recovered and implemented the native `QUIT GAME` room-menu confirmation branch from `run_main_menu`.
+  - Confirmed the native dialog is an inline modal over the room/menu backdrop, uses `textbox4.bm` at `(167, 200)`, and pulls its prompt text from `MENU.INI:quitgame` with `/` treated as an explicit line break.
+  - Confirmed the native YES/NO hit regions are fixed at `0xd2..0x104,0xee..0x108` and `0x172..0x19a,0xee..0x108`, with keyboard confirm/cancel on `Y` / `N` and cancel also on `ESC` or secondary mouse.
+- Implemented the engine-side `QUIT GAME` room-menu flow:
+  - room-menu `QUIT GAME` now opens the native-shaped confirmation dialog instead of logging an unimplemented stub;
+  - confirm stops startup audio and exits cleanly through the engine quit path, while cancel returns to the room menu without disturbing the active room backdrop or palette.
 
 ## Next Suggested Action
 
-1. Recover the native `QUIT GAME` confirmation branch from `run_main_menu`, especially the `textbox4.bm` prompt, YES/NO hit regions, keyboard shortcuts, and the post-confirm quit handoff.
-2. Mirror that confirmation flow in the ESC room menu so `QUIT GAME` stops being a stub without regressing palette restoration or room-loop cleanup on cancel.
+1. Run a fresh native-vs-engine visual/input comparison for all four recovered ESC room-menu branches (`OPTIONS`, `HELP`, `SAVE GAME`, `QUIT GAME`) and log any remaining palette, layout, or interaction mismatches.
+2. Continue the room/UI pass from the next still-native-only modal or overlay path that shares `run_main_menu` assets and timing behavior.
