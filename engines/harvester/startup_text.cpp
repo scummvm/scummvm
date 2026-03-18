@@ -21,8 +21,12 @@
 
 #include "harvester/startup_text.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/fs.h"
+#include "common/ptr.h"
+#include "common/stream.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -44,6 +48,80 @@ static const uint32 kCftBitmapHeaderSize = kCftHeaderSize + 12;
 
 static bool isDialogueDelimiter(byte value) {
 	return value == 0 || value == '\n' || value == '\r' || value == '\f';
+}
+
+static void parseDialogueResponseLines(const Common::Array<byte> &responseData,
+		Common::Array<Common::String> &lines) {
+	lines.clear();
+
+	Common::String line;
+	for (byte value : responseData) {
+		if (value == '\r')
+			continue;
+		if (value == '\n') {
+			lines.push_back(line);
+			line.clear();
+			continue;
+		}
+
+		line += (char)value;
+	}
+
+	if (!line.empty())
+		lines.push_back(line);
+}
+
+static bool hasNativeHankDialogueResponseLayout(const Common::Array<Common::String> &lines) {
+	return lines.size() > 0xf2 &&
+		lines[0xd2].equalsIgnoreCase("Mom") &&
+		lines[0xd6].equalsIgnoreCase("STEVE") &&
+		lines[0xeb].equalsIgnoreCase("SICK") &&
+		lines[0xf2].equalsIgnoreCase("bye");
+}
+
+static bool loadDialogueResponseLinesFromNode(const Common::FSNode &node,
+		Common::Array<Common::String> &lines) {
+	if (!node.exists() || node.isDirectory())
+		return false;
+
+	Common::ScopedPtr<Common::SeekableReadStream> stream(node.createReadStream());
+	if (!stream)
+		return false;
+
+	Common::Array<byte> responseData;
+	responseData.resize(stream->size());
+	if (!responseData.empty())
+		stream->read(responseData.data(), responseData.size());
+	parseDialogueResponseLines(responseData, lines);
+	return !lines.empty();
+}
+
+static bool tryLoadPreferredDialogueResponsesFromGamePath(Common::Array<Common::String> &lines) {
+	if (!ConfMan.hasKey("path"))
+		return false;
+
+	Common::FSNode current(ConfMan.getPath("path"));
+	if (!current.exists())
+		return false;
+
+	for (int depth = 0; depth < 4; ++depth) {
+		const Common::FSNode candidate = current.getChild(kDialogueResponsePath);
+		Common::Array<Common::String> candidateLines;
+		if (loadDialogueResponseLinesFromNode(candidate, candidateLines) &&
+				hasNativeHankDialogueResponseLayout(candidateLines)) {
+			lines = candidateLines;
+			debug(1, "Harvester: using native-compatible DIALOG.RSP from '%s'",
+				candidate.getPath().toString(Common::Path::kNativeSeparator).c_str());
+			return true;
+		}
+
+		const Common::FSNode parent = current.getParent();
+		if (parent.getPath().toString('/') == current.getPath().toString('/'))
+			break;
+		current = parent;
+	}
+
+	return false;
 }
 
 } // End of anonymous namespace
@@ -115,21 +193,15 @@ bool StartupText::loadDialogueResponses(ResourceManager &resources) {
 		return false;
 	}
 
-	Common::String line;
-	for (byte value : responseData) {
-		if (value == '\r')
-			continue;
-		if (value == '\n') {
-			_dialogueResponseLines.push_back(line);
-			line.clear();
-			continue;
-		}
+	parseDialogueResponseLines(responseData, _dialogueResponseLines);
+	if (_dialogueResponseLines.empty())
+		return false;
 
-		line += (char)value;
+	if (!hasNativeHankDialogueResponseLayout(_dialogueResponseLines)) {
+		Common::Array<Common::String> preferredLines;
+		if (tryLoadPreferredDialogueResponsesFromGamePath(preferredLines))
+			_dialogueResponseLines = preferredLines;
 	}
-
-	if (!line.empty())
-		_dialogueResponseLines.push_back(line);
 
 	return !_dialogueResponseLines.empty();
 }
