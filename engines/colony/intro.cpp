@@ -385,17 +385,27 @@ void ColonyEngine::playIntro() {
 		}
 
 		// Final crash: DOS IBM_INTR.C lines 119-131
-		// Original: while(!SoundDone()) { EraseRect; PaintRect; } at ~8fps
+		// Original DOS: while(!SoundDone()) { EraseRect; PaintRect; } — flashes
+		// for the full Explode2 sound (~7s). On Mac the digitized sample is shorter.
 		_sound->stop();
-		_sound->play(Sound::kExplode);
-		int frame = 0;
-		while (!shouldQuit() && _sound->isPlaying()) {
-			_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+		if (getPlatform() == Common::kPlatformMacintosh) {
+			// Mac: play short digitized crash sample with brief flash
+			_sound->play(Sound::kExplode);
+			uint32 crashStart = _system->getMillis();
+			int frame = 0;
+			while (!shouldQuit() && _sound->isPlaying() && _system->getMillis() - crashStart < 2000) {
+				_gfx->clear(frame % 2 ? _gfx->black() : _gfx->white());
+				_gfx->copyToScreen();
+				_system->delayMillis(125);
+				frame++;
+			}
+			_sound->stop();
+		} else {
+			// DOS: skip the harsh 7-second PC speaker explode
+			_gfx->clear(_gfx->black());
 			_gfx->copyToScreen();
-			_system->delayMillis(125);
-			frame++;
+			_system->delayMillis(1000);
 		}
-		_sound->stop();
 		_gfx->clear(_gfx->black());
 		_gfx->copyToScreen();
 
