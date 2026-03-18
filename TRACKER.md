@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Keep the in-room ESC menu handlers aligned with the native SAVE / OPTIONS layout and font usage
-- Verify remaining menu overlays against Ghidra before introducing any more custom UI panels
-- Re-test room-menu edge cases after each menu fix instead of bundling multiple visual changes together
+- Re-test Jimmy's first no-item conversation in-engine against DOSBox now that the hidden response-menu chain is wired up
+- Verify any remaining NPC openings that were decompiled as single-line returns against raw post-`play_dialogue_line` blocks in Ghidra
+- Keep dialogue handler edits tied to confirmed `DIALOG.RSP` line indices and native state writes instead of inferred subtitle order
 
 ## Progress
 
@@ -15,13 +15,12 @@
 
 ## Last Confirmed Action
 
-- Revisited `run_main_menu`, `run_save_game_menu`, `prompt_for_password`, and `run_text_entry_dialog` in Ghidra and corrected the engine-side SAVE / OPTIONS menu mismatches they exposed.
-  - Native SAVE uses `MEDFONT2` for inactive `GAME_##` labels, `MEDFONT1` for the active label and every slot title, and relies on `SAVEGAME.BM` for the lower action-strip art instead of drawing extra `SAVE` / `CANCEL` text.
-  - Native save-name editing spawns `TEXT_ENTRY` inline at `(0x50, rowY)` with `g_medfont1_cft`, while password entry overlays the options menu with centered `ENTER PASSWORD` text in `g_harvfont_cft` and `TEXT_ENTRY` at `(0xdc, 0xdc)` in `g_harvfnt2_cft`.
-  - The password prompt's hidden max-length register is `8`, not the larger generic limit the engine had been using.
-- Updated `startup_menu.cpp` to match those native font/layout rules and rebuilt `engines/harvester/startup_menu.o` successfully.
+- Revisited `handle_talk_to_jimmy`, `run_dialogue_response_menu`, and the hidden post-`play_dialogue_line` Jimmy blocks in Ghidra after DOSBox showed the engine was stopping too early.
+  - Jimmy still has no keyword loop, but his first no-item conversation is not a single bark: native code plays `0x4a4c` / `0x4a58`, sets `PAPER_CHK_1` and `GIVEN_PAPER_TODAY`, then opens zero-based `DIALOG.RSP` response menus `0xf5`, `0xf6`, and `0xf7` in sequence.
+  - The third response-menu branch checks inventory `SNEAKERS`, restores them to `RAH`, and awards `BROOMKEY`; the direct `SNEAKERS` and first-time `NEWSPAPER` item paths also continue into extra native follow-up lines that the earlier decompile had hidden.
+- Updated `engines/harvester/npc/jimmy_dialogue.cpp` to follow that native response order and rebuilt `engines/harvester/npc/jimmy_dialogue.o` successfully.
 
 ## Next Suggested Action
 
-1. Re-test the in-room SAVE menu and OPTIONS password prompt in-engine and compare them against DOSBox captures for any remaining cursor or quick-tips overlay drift.
-2. If another menu artifact remains, capture the exact submenu state first and then inspect the corresponding `run_main_menu` branch in Ghidra before editing.
+1. Re-test Jimmy's first conversation from a fresh state and confirm the response menus appear in the native `0xf5 -> 0xf6 -> 0xf7` order with the same follow-up lines as DOSBox.
+2. If another NPC opener still stops after one line, inspect its raw xrefs to `run_dialogue_response_menu` and `load_dialogue_response_line` before trusting the decompiler output.
