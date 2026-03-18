@@ -24,6 +24,7 @@
 #include "agos/vga.h"
 
 #include "common/endian.h"
+#include "common/str.h"
 #include "common/textconsole.h"
 
 namespace AGOS {
@@ -499,6 +500,10 @@ void AGOSEngine_PN::opn_opcode37() {
 
 	_inputReady = true;
 	interact(_inputline, 49);
+
+	Common::String typed(_inputline);
+	typed.trim();
+	_pendingWaitCommandDelay = typed.equalsIgnoreCase("wait");
 
 	if ((_inpp = strchr(_inputline,'\n')) != nullptr)
 		*_inpp = '\0';

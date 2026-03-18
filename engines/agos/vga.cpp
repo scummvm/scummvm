@@ -32,6 +32,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
 namespace AGOS {
@@ -613,6 +614,19 @@ void AGOSEngine::vc10_draw() {
 	}
 
 	drawImage_init(image, palette, x, y, flags);
+
+	if (getGameType() == GType_PN && image == 172 &&
+		(_pendingPNWaitScreenDelay || (getPlatform() == Common::kPlatformDOS && _pendingWaitCommandDelay))) {
+
+		if (_displayFlag) {
+			displayScreen();
+			_displayFlag = 0;
+		}
+
+		_pendingPNWaitScreenDelay = false;
+		_pendingWaitCommandDelay = false;
+		delay(2000);
+	}
 }
 
 void AGOSEngine::drawImage_init(int16 image, uint16 palette, int16 x, int16 y, uint16 flags) {
@@ -924,8 +938,7 @@ static const uint8 iconPalette[64] = {
 void AGOSEngine::vc22_setPalette() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
-
-	b = vcReadNextWord();
+	const uint16 origB = b = vcReadNextWord();
 
 	// PC EGA version of Personal Nightmare uses standard EGA palette
 	if (getGameType() == GType_PN && (getFeatures() & GF_EGA))
@@ -991,6 +1004,23 @@ void AGOSEngine::vc22_setPalette() {
 		palptr += 3;
 		src += 2;
 	} while (--num);
+
+	if (getGameType() == GType_PN && origB == 9 &&
+			(getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga)) {
+		// Workaround for Atari ST and Amiga 'time passes' screen palette.
+		for (int i = 12; i <= 13; ++i) {
+			byte *entry = _displayPalette + i * 3;
+			const uint grey = (entry[0] * 30 + entry[1] * 59 + entry[2] * 11) / 100;
+			entry[0] = grey;
+			entry[1] = grey;
+			entry[2] = grey;
+		}
+
+		memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
+		_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
+		_paletteFlag = 0;
+		_pendingPNWaitScreenDelay = true;
+	}
 
 	_paletteFlag = 2;
 	_vgaSpriteChanged++;

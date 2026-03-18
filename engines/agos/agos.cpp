@@ -533,6 +533,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_musicVolume = 192;
 	_effectsVolume = 192;
 	_useDigitalSfx = true;
+	_pendingWaitCommandDelay = false;
+	_pendingPNWaitScreenDelay = false;
 
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;

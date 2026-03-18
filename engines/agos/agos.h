@@ -641,6 +641,8 @@ protected:
 	// and/or ambient sounds are currently muted.
 	uint16 _effectsVolume;
 	bool _useDigitalSfx;
+	bool _pendingWaitCommandDelay;
+	bool _pendingPNWaitScreenDelay;
 
 	uint8 _saveGameNameLen;
 	uint16 _saveLoadRowCurPos;
