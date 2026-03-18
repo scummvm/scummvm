@@ -8704,9 +8704,6 @@ void GameLogic::synchronize(Common::Serializer &s) {
 }
 
 bool GameLogic::saveSavegame(int slot, const Common::String *desc) {
-	if (slot == 0)
-		error("Can't save on slot 0 - RST file");
-
 	// TODO: we could put the extra ScummVM info after the 1135 bytes of a standard savegame or modify loadSavegame to skip it when it's not a RST file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(Common::String::format("ww%02d.sav", slot), true);
 
@@ -8734,11 +8731,11 @@ bool GameLogic::saveSavegame(int slot, const Common::String *desc) {
 	return true;
 }
 
-bool GameLogic::loadSavegame(int slot) {
+bool GameLogic::loadSavegame(int slot, bool rstSave) {
 	Common::InSaveFile *saveFile;
 	byte *buffer = nullptr;
 	
-	if (slot == 0) {
+	if (rstSave) {
 		Common::File fd;
 		if (!fd.open(Common::Path("ww.rst")))
 			error("WaynesWorldEngine::loadSavegame() Could not open ww.rst");
@@ -8853,7 +8850,7 @@ void GameLogic::handleGameMenu() {
 				menuSaveLoadMenu(false);
 			break;
 		case 4:
-			loadSavegame(0);
+			loadSavegame(0, true);
 			menuExit();
 			refresh = false;
 			break;

@@ -120,8 +120,13 @@ public:
 	const Common::String getTargetName() { return _targetName; }
 	static bool readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail = true);
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	// _gameState 0 = game, 4 = menu
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
+		return _isSaveAllowed && (_gameState == 0 || _gameState == 4);
+	}
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
+		return _isSaveAllowed && (_gameState == 0 || _gameState == 4);
+	}
 
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error loadGameState(int slot) override;
@@ -489,19 +494,7 @@ public:
 	};
 	void writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader &header);
 
-	bool _isSaveAllowed;
-
-	/* TODO
-	bool canLoadGameStateCurrently() override { return _isSaveAllowed; }
-	bool canSaveGameStateCurrently() override { return _isSaveAllowed; }
-	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &description, bool isAutosave = false) override;
-	void savegame(const char *filename, const char *description);
-	void loadgame(const char *filename);
-	bool existsSavegame(int num);
-	static Common::String getSavegameFilename(const Common::String &target, int num);
-	WARN_UNUSED_RESULT static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, SaveHeader &header, bool skipThumbnail = true);
-	*/
+	bool _isSaveAllowed; // not properly handled yet
 
 };
 

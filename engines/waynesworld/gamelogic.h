@@ -467,7 +467,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	void menuSaveLoadMenu(bool isLoad);
 	void synchronize(Common::Serializer &s);
 	bool saveSavegame(int slot, const Common::String *desc);
-	bool loadSavegame(int slot);
+	bool loadSavegame(int slot, bool rstSave = false);
 	void handleGameMenu();
 	void menuQuitGame();
 	void menuExit();

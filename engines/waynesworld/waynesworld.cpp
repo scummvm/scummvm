@@ -115,7 +115,7 @@ Common::Error WaynesWorldEngine::saveGameState(int slot, const Common::String &d
 	Common::Error result = Common::kNoError;
 	if (!_logic->saveSavegame(slot, &desc))
 		result = Common::kUnknownError;
-
+	
 	return result;
 }
 
@@ -185,7 +185,7 @@ Common::Error WaynesWorldEngine::run() {
 	_useOriginalSaveLoad = ConfMan.getBool("originalsaveload");
 	if (ConfMan.hasKey("save_slot")) {
 		const int saveSlot = ConfMan.getInt("save_slot");
-		if (saveSlot > 0 && saveSlot <= 99)
+		if (saveSlot >= 0 && saveSlot <= 99)
 			_loadSaveSlot = saveSlot;
 	}
 
@@ -253,11 +253,12 @@ Common::Error WaynesWorldEngine::run() {
 	
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	_currentRoomNumber = 0;
-	if (_loadSaveSlot > 0) {
+	if (_loadSaveSlot >= 0) {
 		_logic->loadSavegame(_loadSaveSlot);
 	}
 	changeRoom(_currentRoomNumber);
 	changeMusic();
+	_isSaveAllowed = true;
 	
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;

@@ -87,7 +87,7 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 		Common::String numb = filename.substr(2, 2);
 		const int slotNum = atoi(numb.c_str());
 
-		if (slotNum > 0 && slotNum <= 99) {
+		if (slotNum >= 0 && slotNum <= 99) {
 
 			Common::InSaveFile *file = saveFileMan->openForLoading(filename);
 			if (file) {
