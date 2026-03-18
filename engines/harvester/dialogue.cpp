@@ -188,7 +188,8 @@ static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &f
 
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	buildHarvesterDisplayPalette(palette, brightness, scaledPalette);
+	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
+	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
 

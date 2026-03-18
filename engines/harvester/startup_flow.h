@@ -58,7 +58,7 @@ private:
 	bool loadMenuItems();
 	Common::Error runQuickTips();
 	Common::Error runMainMenuStub();
-	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop);
+	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName);
 	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);

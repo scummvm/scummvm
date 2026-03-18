@@ -67,6 +67,23 @@ static bool shouldSkipStartupMoviesForDebug() {
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
 }
 
+static int clampStartupOptionLevel(int level) {
+	if (level < 0)
+		return 0;
+	if (level > 9)
+		return 9;
+
+	return level;
+}
+
+static int mapStartupVolumeLevelToMixerVolume(int level) {
+	return (clampStartupOptionLevel(level) * Audio::Mixer::kMaxMixerVolume + 4) / 9;
+}
+
+static float mapStartupGammaLevelToBrightnessScale(int level) {
+	return 1.0f + 0.1f * clampStartupOptionLevel(level);
+}
+
 static uint32 decodeHarvesterFcmp(byte *dest, const byte *src, uint32 srcSize, uint16 bitsPerSample) {
 	const uint32 decodedBytesPerInputByte = bitsPerSample >> 2;
 	const uint32 decodedSize = srcSize * decodedBytesPerInputByte;
@@ -203,7 +220,56 @@ Common::String HarvesterEngine::getGameId() const {
 }
 
 bool HarvesterEngine::isGoreEnabled() const {
+	if (_startupScript)
+		return _startupScript->isGoreEnabled();
+
 	return !ConfMan.hasKey("gore") || ConfMan.getBool("gore");
+}
+
+int HarvesterEngine::getStartupFxVolumeLevel() const {
+	return _startupScript ? _startupScript->getFxVolumeLevel() : 9;
+}
+
+int HarvesterEngine::getStartupMusicVolumeLevel() const {
+	return _startupScript ? _startupScript->getMusicVolumeLevel() : 9;
+}
+
+int HarvesterEngine::getStartupGammaLevel() const {
+	return _startupScript ? _startupScript->getGammaLevel() : 0;
+}
+
+float HarvesterEngine::getStartupGammaBrightnessScale() const {
+	return mapStartupGammaLevelToBrightnessScale(getStartupGammaLevel());
+}
+
+void HarvesterEngine::applyStartupMixerLevels() {
+	if (!g_system || !g_system->getMixer())
+		return;
+
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+		mapStartupVolumeLevelToMixerVolume(getStartupFxVolumeLevel()));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+		mapStartupVolumeLevelToMixerVolume(getStartupMusicVolumeLevel()));
+
+	if (g_system->getMixer()->isSoundHandleActive(_startupMusicHandle))
+		g_system->getMixer()->pauseHandle(_startupMusicHandle, getStartupMusicVolumeLevel() == 0);
+}
+
+void HarvesterEngine::setStartupFxVolumeLevel(int level) {
+	if (_startupScript)
+		_startupScript->setFxVolumeLevel(level);
+	applyStartupMixerLevels();
+}
+
+void HarvesterEngine::setStartupMusicVolumeLevel(int level) {
+	if (_startupScript)
+		_startupScript->setMusicVolumeLevel(level);
+	applyStartupMixerLevels();
+}
+
+void HarvesterEngine::setStartupGammaLevel(int level) {
+	if (_startupScript)
+		_startupScript->setGammaLevel(level);
 }
 
 bool HarvesterEngine::isStartupMusicPlaying() const {
@@ -231,6 +297,7 @@ bool HarvesterEngine::playStartupMusic(const Common::String &path) {
 	g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_startupMusicHandle,
 		Audio::makeLoopingAudioStream(audioStream, 0));
 	_startupMusicPath = normalizedPath;
+	applyStartupMixerLevels();
 	return true;
 }
 
@@ -437,6 +504,7 @@ Common::Error HarvesterEngine::run() {
 	_startupScript = new StartupScript();
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;
+	applyStartupMixerLevels();
 
 	// The intro FST files play on the narrower startup movie surface.
 	setDisplayMode(320, 200);

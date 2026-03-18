@@ -2,9 +2,9 @@
 
 ## Current Focus
 
-- Match room and inventory palette presentation to the native VGA DAC upload path
-- Keep palette changes scoped to confirmed Ghidra behavior instead of screenshot-only tuning
-- Distinguish true native defaults from user config settings before changing brightness or gamma handling
+- Recover the native ESC room-menu systems one item at a time from `run_main_menu`
+- Keep each menu item implementation grounded in confirmed Ghidra behavior before broadening engine UI helpers
+- Extend engine-side persistence only where the native menu paths actually require it
 
 ## Progress
 
@@ -15,22 +15,17 @@
 
 ## Last Confirmed Action
 
-- Traced the inventory portrait health path in Ghidra from `run_inventory_screen` back into room-event handling and actor persistence.
-  - Renamed `DAT_000d5bb4` to `g_player_current_hit_points` and recovered `RenderEntityRuntime.current_hit_points` at offset `0x1184`.
-  - Confirmed the inventory portrait thresholds used by `run_inventory_screen`: `23..30 -> INV_STAT1`, `15..22 -> INV_STAT2`, `8..14 -> INV_STAT3`, `0..7 -> INV_STAT4`.
-  - Confirmed `dispatch_room_event_actions` applies `HEAL_PC`, `ADJ_HP`, and `KILL_PC` directly to that HP state, with the healing/adjust path clamped to `30`.
-  - Confirmed `run_harvester_main_loop` seeds HP to `30`, `spawn_player_combat_avatar` copies the global into the live actor runtime, `teardown_player_combat_avatar` copies it back out, and the save/load menu code persists the same runtime field.
-- Updated the engine inventory/runtime path to match those confirmed behaviors:
-  - the startup script now keeps a persistent player HP value and applies native `HEAL_PC`, `ADJ_HP`, and `KILL_PC` mutations to it;
-  - the inventory panel now synthesizes the native `INV_STAT1..4` status object from current HP instead of treating those records as ordinary grid items;
-  - the health portrait remains non-actionable in the inventory UI;
-  - revisiting `run_inventory_screen` showed the native portrait is spawned through `spawn_object_entity_from_record` and drawn by the shared render-entity keyed-blit path, so the engine inventory overlay now uses palette-index-0 transparency instead of an opaque bitmap copy.
-- Revisited the palette/brightness path in Ghidra after comparing DOSBox and engine captures.
-  - Confirmed the native `CONFIG.INI` in the installed game currently has `GAMMA=0`, so the washed-out comparison is not explained by a non-default gamma setting that DOSBox applies and the engine ignores.
-  - Confirmed `update_gamma_brightness_scale` sets the native gamma scalar to `1.0` when `g_gamma_level_index <= 0`, and `upload_palette_to_vga` / `upload_palette_to_vga_unscaled` always quantize stored `.PAL` bytes down to VGA DAC `0..63` before display.
-  - The engine was uploading room and wait palettes as raw 8-bit RGB, so it skipped that DAC quantization step. Updated the engine palette path to emulate the native VGA upload rule before applying room brightness.
+- Recovered the native `OPTIONS` room-menu branch from `run_main_menu` case `3`.
+  - Confirmed it loads `options_menu_1..7` from `MENU.INI`, draws three `VOLUME.BM` bars plus three `INDICATR.BM` sliders, previews `WHIP2.WAV` for FX volume, updates music volume through `g_music_stream_state`, and reapplies the current room palette after gamma changes through `update_gamma_brightness_scale`.
+  - Confirmed only the `TEXT`, `GORE`, and `PASSWORD` rows append native ` - ...` status suffixes through `format_main_menu_option_status_suffix`.
+  - Confirmed the `QUICK TIPS` row reuses the `TIPS.BM` overlay and `ADJHEAD.RCS` text pool, and the password row calls `prompt_for_password` / `run_text_entry_dialog`.
+  - Renamed `DAT_000c7e5c` to `g_parental_password_buffer` once the password storage path was bounded from both the options menu and parental-password validation path.
+- Implemented the engine-side `OPTIONS` submenu on the ESC room menu:
+  - room-menu `OPTIONS` now opens a native-style overlay with working FX / music / gamma sliders, text-mode cycling, gore toggling, quick-tips browsing, and parental-password add/remove behavior;
+  - startup config state now tracks `FX_VOLUME`, `MUSIC_VOLUME`, `GAMMA`, `TEXT`, `GORE`, `QUICK_TIPS`, and the parental password buffer, and rewrites sectionless `CONFIG.INI` updates back to the game directory;
+  - mixer volume and room/dialogue palette scaling now honor those recovered startup-option values so the submenu changes are live rather than cosmetic.
 
 ## Next Suggested Action
 
-1. Re-test the same inventory scene against DOSBox after the DAC-quantized palette change to see whether the remaining mismatch is explained by palette upload alone or by a later post-processing/display difference.
-2. If the image is still visibly off, trace whether DOSBox capture differences come from a second native layer such as menu fade timing, scaler/aspect treatment, or platform-side palette handling rather than from Harvester’s own palette math.
+1. Trace and implement the native `HELP` room-menu branch next by matching `run_controls_help_screen` / the inline `run_main_menu` help path, including the two-page bitmap toggle and palette restore behavior.
+2. After `HELP`, recover the `SAVE GAME` path with the current engine serializer in mind so the room-menu slot UI and actual save-state coverage can be closed together instead of drifting apart.

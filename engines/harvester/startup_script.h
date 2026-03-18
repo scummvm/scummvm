@@ -301,7 +301,19 @@ public:
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
 	const Common::String &getVoicePath() const { return _voicePath; }
+	bool isGoreEnabled() const { return _goreEnabled; }
+	void setGoreEnabled(bool enabled) { _goreEnabled = enabled; }
 	StartupDialogueTextMode getDialogueTextMode() const { return _dialogueTextMode; }
+	void setDialogueTextMode(StartupDialogueTextMode mode) { _dialogueTextMode = mode; }
+	int getFxVolumeLevel() const { return _fxVolumeLevel; }
+	void setFxVolumeLevel(int level);
+	int getMusicVolumeLevel() const { return _musicVolumeLevel; }
+	void setMusicVolumeLevel(int level);
+	int getGammaLevel() const { return _gammaLevel; }
+	void setGammaLevel(int level);
+	const Common::String &getParentalPassword() const { return _parentalPassword; }
+	void setParentalPassword(const Common::String &password) { _parentalPassword = password; }
+	bool saveConfig() const;
 	void resetRuntimeState();
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources);
@@ -392,8 +404,19 @@ private:
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	Common::Array<StartupMonsterRecord> _runtimeMonsters;
 	int _playerCurrentHitPoints = 30;
+	int _fxVolumeLevel = 9;
+	int _musicVolumeLevel = 3;
+	int _gammaLevel = 0;
 	bool _quickTipsEnabled = true;
+	bool _goreEnabled = true;
 	Common::String _voicePath = "SOUND/VOICE/";
+	Common::String _parentalPassword;
+	Common::String _savePath = "./";
+	Common::String _townPath = "HARVEST.SCR";
+	Common::String _cdRomPath;
+	Common::String _drive1Path;
+	Common::String _drive2Path;
+	Common::String _drive3Path;
 	StartupDialogueTextMode _dialogueTextMode = kStartupDialogueTextYes;
 };
 
