@@ -356,7 +356,6 @@ void ByleRLEDecode_Mode1(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
 	uint16 height = _height;
 	byte maskbit = revBitMask(compData.x & 7);
 	const byte *mask = compData.maskPtr + compData.x / 8;
@@ -386,8 +385,7 @@ void ByleRLEDecode_Mode1(
 					if (!(*mask & maskbit)) {
 						uint16 pcolor = _palette[color];
 						if (pcolor == 13 && _shadowTable) {
-							if (lastColumnX != compData.x)
-								*dst = _shadowTable[*dst];
+							*dst = _shadowTable[*dst];
 						} else {
 							*dst = pcolor;
 						}
@@ -404,8 +402,6 @@ void ByleRLEDecode_Mode1(
 				if (--compData.skipWidth == 0)
 					return;
 				height = _height;
-
-				lastColumnX = compData.x;
 
 				compData.x += compData.scaleXStep;
 				maskbit = revBitMask(compData.x & 7);
@@ -439,7 +435,6 @@ void ByleRLEDecode_Mode3(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
 	uint16 height = _height;
 	byte maskbit = revBitMask(compData.x & 7);
 	const byte *mask = compData.maskPtr + compData.x / 8;
@@ -469,10 +464,8 @@ void ByleRLEDecode_Mode3(
 					if (!(*mask & maskbit)) {
 						uint16 pcolor = _palette[color];
 						if (pcolor < 8) {
-							if (lastColumnX != compData.x) {
-								pcolor = (pcolor << 8) + *dst;
-								*dst = _shadowTable[pcolor];
-							}
+							pcolor = (pcolor << 8) + *dst;
+							*dst = _shadowTable[pcolor];
 						} else {
 							*dst = pcolor;
 						}
@@ -489,8 +482,6 @@ void ByleRLEDecode_Mode3(
 				if (--compData.skipWidth == 0)
 					return;
 				height = _height;
-
-				lastColumnX = compData.x;
 
 				compData.x += compData.scaleXStep;
 				maskbit = revBitMask(compData.x & 7);
@@ -524,7 +515,6 @@ void ByleRLEDecode_Classic(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
 	uint16 height = _height;
 	byte maskbit = revBitMask(compData.x & 7);
 	const byte *mask = compData.maskPtr + compData.x / 8;
@@ -551,10 +541,8 @@ void ByleRLEDecode_Classic(
 
 			if (color) {
 				do {
-					if (!(*mask & maskbit)) {
-						if (lastColumnX != compData.x)
-							*dst = _shadowTable[*dst];
-					}
+					if (!(*mask & maskbit))
+						*dst = _shadowTable[*dst];
 					dst  += pitch;
 					mask += _numStrips;
 				} while (--batch);
@@ -567,8 +555,6 @@ void ByleRLEDecode_Classic(
 				if (--compData.skipWidth == 0)
 					return;
 				height = _height;
-
-				lastColumnX = compData.x;
 
 				compData.x += compData.scaleXStep;
 				maskbit = revBitMask(compData.x & 7);
