@@ -67,7 +67,7 @@ void AGOSEngine_PN::uncomstr(char *c, uint32 x) {
 	*c = 0;
 }
 
-#define OBJECT_NAME_SIZE 15
+#define OBJECT_NAME_SIZE 18
 
 static const char *const objectNames[30] = {
 	"\0",

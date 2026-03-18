@@ -705,6 +705,12 @@ void AGOSEngine_PN::opn_opcode63() {
 
 int AGOSEngine_PN::inventoryOn(int val) {
 	writeVariable(210, val);
+
+	if (getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga) {
+		saveInventoryPalette();
+		applyInventoryPalette();
+	}
+
 	if (_videoLockOut & 0x10) {
 		iconPage();
 	} else {
@@ -729,6 +735,10 @@ int AGOSEngine_PN::inventoryOff() {
 		_windowArray[2]->textColor = 15;
 
 		restoreBlock(48, 2, 272, 130);
+
+		if (getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga) {
+			restoreInventoryPalette();
+		}
 
 		_hitAreaList = _hitAreas;
 		_videoLockOut &= ~0x10;
