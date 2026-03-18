@@ -1710,8 +1710,11 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			const PrismPartDef &nearWing = leftFirst ? kQRWingDef : kQLWingDef;
 			const int wingColor = (_renderMode != Common::kRenderMacintosh && _level == 7) ? kColorQueenWingRed : kColorClear;
 
+			// DOS draweyes(): queen eyeball is RED fill + WHITE outline
+			// (hardcoded, not from color table). Iris is GREEN.
+			const int queenEyeballColor = 5; // vRED (EGA index 4 = kColorRed... use raw 5 = cRED index)
 			draw3DPrism(obj, farWing, false, wingColor, true, true);
-			draw3DSphere(farEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(farEye, 0, 0, 130, 0, 0, 155, queenEyeballColor, kColorBlack, true);
 			drawEyeOverlays3D(farEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
 			if (farEye.where.xmn < obj.where.xmn)
 				obj.where.xmn = farEye.where.xmn;
@@ -1726,7 +1729,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			draw3DPrism(obj, kQAbdomenDef, false, -1, true, false);
 
 			draw3DPrism(obj, nearWing, false, wingColor, true, true);
-			draw3DSphere(nearEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(nearEye, 0, 0, 130, 0, 0, 155, queenEyeballColor, kColorBlack, true);
 			drawEyeOverlays3D(nearEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
 			if (nearEye.where.xmn < obj.where.xmn)
 				obj.where.xmn = nearEye.where.xmn;
@@ -1758,14 +1761,15 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			rightEye.where.yloc = (int)(eyeBaseY - c2);
 			resetObjectBounds(_screenR, rightEye.where);
 
+			// DOS draweyes(): shared with Queen — RED eyeball, GREEN iris
 			draw3DPrism(obj, kDAbdomenDef, false, -1, true, false);
 			draw3DPrism(obj, kDLLPincerDef, false, -1, true, false);
 			draw3DPrism(obj, kDRRPincerDef, false, -1, true, false);
 			draw3DPrism(obj, kDLEyeDef, false, -1, true, false);
 			draw3DPrism(obj, kDREyeDef, false, -1, true, false);
-			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
 			drawEyeOverlays3D(leftEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
 			drawEyeOverlays3D(rightEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
 		}
 		break;
@@ -1808,11 +1812,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			draw3DPrism(obj, kDAbdomenDef, false, kColorSoldierBody, true, false);
 			draw3DPrism(obj, leftPincerDef, false, -1, true, false);
 			draw3DPrism(obj, rightPincerDef, false, -1, true, false);
+			// DOS draweyes(): shared with Queen — RED eyeball, GREEN iris
 			draw3DPrism(obj, kDLEyeDef, false, kColorSoldierEye, true, false);
 			draw3DPrism(obj, kDREyeDef, false, kColorSoldierEye, true, false);
-			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(leftEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
 			drawEyeOverlays3D(leftEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
-			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, eyeballColor, kColorBlack, true);
+			draw3DSphere(rightEye, 0, 0, 130, 0, 0, 155, 5, kColorBlack, true);
 			drawEyeOverlays3D(rightEye, kQIrisDef, -1, kQPupilDef, pupilColor, true);
 		}
 		break;

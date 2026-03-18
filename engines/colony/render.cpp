@@ -158,7 +158,7 @@ static const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 	case kColorEyeball: return g_dosColors[kColorEye];
 	case kColorEyeIris:
 	case kColorMiniEyeIris:
-	case kColorQueenEye: return g_dosColors[kColorIris];
+	case kColorQueenEye: return g_dosColors[3]; // DOS draweyes(): hardcoded vGREEN (cGREEN=3)
 	case kColorDroneEye:
 	case kColorSoldierEye: return g_dosColors[kColorEyes];
 	case kColorSoldierBody: return g_dosColors[kColorDrone];
