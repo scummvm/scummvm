@@ -1980,6 +1980,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS },
 
+	// King's Quest 5 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "x.yyy.zzz", VERSION file reports "1.000.052"
+	{"kq5", "CD", {
+		{"resource.map", 0, "f68ba690e5920725dcf9328001b90e33", 13122},
+		{"resource.000", 0, "449471bfd77be52f18a3773c7f7d843d", 571368},
+		{"resource.001", 0, "b45a581ff8751e052c7e364f58d3617f", 16800210},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_CD, GUIO_KQ5_CD_WINDOWS},
+
 	// King's Quest 5 - English DOS Floppy
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
