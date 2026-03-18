@@ -15,17 +15,15 @@
 
 ## Last Confirmed Action
 
-- Recovered the native `OPTIONS` room-menu branch from `run_main_menu` case `3`.
-  - Confirmed it loads `options_menu_1..7` from `MENU.INI`, draws three `VOLUME.BM` bars plus three `INDICATR.BM` sliders, previews `WHIP2.WAV` for FX volume, updates music volume through `g_music_stream_state`, and reapplies the current room palette after gamma changes through `update_gamma_brightness_scale`.
-  - Confirmed only the `TEXT`, `GORE`, and `PASSWORD` rows append native ` - ...` status suffixes through `format_main_menu_option_status_suffix`.
-  - Confirmed the `QUICK TIPS` row reuses the `TIPS.BM` overlay and `ADJHEAD.RCS` text pool, and the password row calls `prompt_for_password` / `run_text_entry_dialog`.
-  - Renamed `DAT_000c7e5c` to `g_parental_password_buffer` once the password storage path was bounded from both the options menu and parental-password validation path.
-- Implemented the engine-side `OPTIONS` submenu on the ESC room menu:
-  - room-menu `OPTIONS` now opens a native-style overlay with working FX / music / gamma sliders, text-mode cycling, gore toggling, quick-tips browsing, and parental-password add/remove behavior;
-  - startup config state now tracks `FX_VOLUME`, `MUSIC_VOLUME`, `GAMMA`, `TEXT`, `GORE`, `QUICK_TIPS`, and the parental password buffer, and rewrites sectionless `CONFIG.INI` updates back to the game directory;
-  - mixer volume and room/dialogue palette scaling now honor those recovered startup-option values so the submenu changes are live rather than cosmetic.
+- Recovered the native `HELP` room-menu branch from both `run_controls_help_screen` and the inline `run_main_menu` help path.
+  - Confirmed it alternates between `MOUSHELP.BM` + `MOUSHELP.PAL` and `KEYSHELP.BM` + `KEYSHELP.PAL`, exits on `ESC` or right mouse, and toggles pages on left mouse or any other key.
+  - Confirmed the viewer is palette-driven fullscreen help rather than an overlay on the room/menu backdrop, and that it restores `g_current_palette_buffer` before returning to gameplay UI.
+- Implemented the engine-side `HELP` screen on the ESC room menu:
+  - room-menu `HELP` now loads and displays the two native help pages with their own palettes;
+  - page toggling and exit behavior now match the native input flow closely enough for side-by-side validation;
+  - returning from help restores the active room palette so the room menu redraw resumes on the correct color state.
 
 ## Next Suggested Action
 
-1. Trace and implement the native `HELP` room-menu branch next by matching `run_controls_help_screen` / the inline `run_main_menu` help path, including the two-page bitmap toggle and palette restore behavior.
-2. After `HELP`, recover the `SAVE GAME` path with the current engine serializer in mind so the room-menu slot UI and actual save-state coverage can be closed together instead of drifting apart.
+1. Recover the native `SAVE GAME` room-menu path next, including the slot list, description entry, and the pre-save room-state sync point, then compare that against the current ScummVM serializer coverage.
+2. If the serializer is still too shallow for real room-state saves, close that gap before wiring the room-menu save UI so the menu does not outpace actual persistence.

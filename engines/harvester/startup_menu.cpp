@@ -89,6 +89,7 @@ struct RoomMenuTextConfig {
 	Common::String clickLabel = "CLICK";
 };
 
+static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
@@ -207,6 +208,15 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return true;
 }
 
+static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
+		return false;
+
+	memcpy(palette, data.data(), 256 * 3);
+	return true;
+}
+
 static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &engine,
 		const byte *palette, float brightness) {
 	if (!palette)
@@ -215,6 +225,20 @@ static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &en
 	byte displayPalette[256 * 3];
 	buildHarvesterDisplayPalette(palette, brightness * engine.getStartupGammaBrightnessScale(), displayPalette);
 	screen.setPalette(displayPalette);
+}
+
+static void renderHelpScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap, const byte *palette) {
+	Graphics::Screen *screen = engine.getScreen();
+	if (!screen)
+		return;
+
+	applyMenuPalette(*screen, engine, palette, 1.0f);
+	screen->fillRect(screen->getBounds(), 0);
+	blitBitmap(*screen, bitmap, 0, 0);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
 }
 
 static Common::String buildTextModeSuffix(const StartupScript &startupScript, const RoomMenuTextConfig &config) {
@@ -623,6 +647,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 						if (optionsError.getCode() != Common::kNoError)
 							return optionsError;
 						needsRedraw = true;
+					} else if (selectedItem >= 0 && _menuItems[selectedItem].equalsIgnoreCase("HELP")) {
+						Common::Error helpError = runHelpScreen(palette, paletteBrightness, startupFlow);
+						if (helpError.getCode() != Common::kNoError)
+							return helpError;
+						needsRedraw = true;
 					} else {
 						debug(1, "Harvester: room menu item '%s' selected but not implemented",
 							selectedItem >= 0 ? _menuItems[selectedItem].c_str() : "");
@@ -641,6 +670,11 @@ Common::Error StartupMenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, 
 					Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, startupFlow);
 					if (optionsError.getCode() != Common::kNoError)
 						return optionsError;
+					needsRedraw = true;
+				} else if (_menuItems[selectedItem].equalsIgnoreCase("HELP")) {
+					Common::Error helpError = runHelpScreen(palette, paletteBrightness, startupFlow);
+					if (helpError.getCode() != Common::kNoError)
+						return helpError;
 					needsRedraw = true;
 				} else {
 					debug(1, "Harvester: room menu item '%s' clicked but not implemented",
@@ -953,6 +987,80 @@ Common::Error StartupMenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, c
 				default:
 					break;
 				}
+				break;
+			default:
+				break;
+			}
+		}
+
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+			needsRedraw = true;
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+Common::Error StartupMenuSystem::runHelpScreen(const byte *palette, float paletteBrightness, StartupFlow &startupFlow) {
+	ResourceManager *resources = _engine.getResources();
+	if (!resources)
+		return Common::kReadingFailed;
+
+	IndexedBitmap mouseHelp;
+	IndexedBitmap keysHelp;
+	byte mouseHelpPalette[256 * 3];
+	byte keysHelpPalette[256 * 3];
+	if (!loadBitmapResource(*resources, "1:/GRAPHIC/OTHER/MOUSHELP.BM", mouseHelp) ||
+			!loadBitmapResource(*resources, "1:/GRAPHIC/OTHER/KEYSHELP.BM", keysHelp) ||
+			!loadPaletteResource(*resources, "1:/GRAPHIC/PAL/MOUSHELP.PAL", mouseHelpPalette) ||
+			!loadPaletteResource(*resources, "1:/GRAPHIC/PAL/KEYSHELP.PAL", keysHelpPalette)) {
+		return Common::kReadingFailed;
+	}
+
+	int page = 0;
+	bool needsRedraw = true;
+	Graphics::FrameLimiter limiter(g_system, 60);
+
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			renderHelpScreen(_engine, page == 0 ? mouseHelp : keysHelp,
+				page == 0 ? mouseHelpPalette : keysHelpPalette);
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				needsRedraw = true;
+				break;
+			case Common::EVENT_RBUTTONDOWN:
+				if (Graphics::Screen *screen = _engine.getScreen()) {
+					applyMenuPalette(*screen, _engine, palette, paletteBrightness);
+					screen->fillRect(screen->getBounds(), 0);
+				}
+				return Common::kNoError;
+			case Common::EVENT_LBUTTONDOWN:
+				page ^= 1;
+				needsRedraw = true;
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					if (Graphics::Screen *screen = _engine.getScreen()) {
+						applyMenuPalette(*screen, _engine, palette, paletteBrightness);
+						screen->fillRect(screen->getBounds(), 0);
+					}
+					return Common::kNoError;
+				}
+				page ^= 1;
+				needsRedraw = true;
 				break;
 			default:
 				break;
