@@ -27,7 +27,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/npc/dialogue_handler.h"
-#include "harvester/startup_script.h"
+#include "harvester/script.h"
 
 namespace Common {
 struct Event;

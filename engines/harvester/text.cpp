@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/startup_text.h"
+#include "harvester/text.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"

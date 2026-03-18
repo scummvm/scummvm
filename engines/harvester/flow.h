@@ -19,18 +19,18 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_FLOW_H
-#define HARVESTER_STARTUP_FLOW_H
+#ifndef HARVESTER_FLOW_H
+#define HARVESTER_FLOW_H
 
 #include "common/array.h"
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/dialogue.h"
-#include "harvester/startup_inventory.h"
-#include "harvester/startup_menu.h"
-#include "harvester/startup_room.h"
-#include "harvester/startup_script.h"
+#include "harvester/inventory.h"
+#include "harvester/menu.h"
+#include "harvester/room.h"
+#include "harvester/script.h"
 
 namespace Common {
 struct Event;
@@ -98,4 +98,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_FLOW_H
+#endif // HARVESTER_FLOW_H

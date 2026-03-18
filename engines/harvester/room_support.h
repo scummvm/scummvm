@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_ROOM_SUPPORT_H
-#define HARVESTER_STARTUP_ROOM_SUPPORT_H
+#ifndef HARVESTER_ROOM_SUPPORT_H
+#define HARVESTER_ROOM_SUPPORT_H
 
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "harvester/startup_script.h"
+#include "harvester/script.h"
 
 namespace Graphics {
 class Font;
@@ -145,4 +145,4 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_ROOM_SUPPORT_H
+#endif // HARVESTER_ROOM_SUPPORT_H

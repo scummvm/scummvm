@@ -5,7 +5,7 @@
 
 #include "common/error.h"
 #include "common/str.h"
-#include "harvester/startup_script.h"
+#include "harvester/script.h"
 
 namespace Harvester {
 

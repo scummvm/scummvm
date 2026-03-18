@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_ART_H
-#define HARVESTER_STARTUP_ART_H
+#ifndef HARVESTER_ART_H
+#define HARVESTER_ART_H
 
 #include "common/array.h"
 
@@ -82,4 +82,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_ART_H
+#endif // HARVESTER_ART_H

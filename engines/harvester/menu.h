@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_MENU_H
-#define HARVESTER_STARTUP_MENU_H
+#ifndef HARVESTER_MENU_H
+#define HARVESTER_MENU_H
 
 #include "common/array.h"
 #include "common/error.h"
@@ -65,4 +65,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_MENU_H
+#endif // HARVESTER_MENU_H

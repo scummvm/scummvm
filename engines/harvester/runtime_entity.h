@@ -25,7 +25,7 @@
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/str.h"
-#include "harvester/startup_art.h"
+#include "harvester/art.h"
 
 namespace Graphics {
 class Screen;

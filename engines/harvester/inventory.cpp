@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/startup_inventory.h"
+#include "harvester/inventory.h"
 
 #include "common/endian.h"
 #include "graphics/blit.h"
@@ -27,7 +27,7 @@
 #include "graphics/screen.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
-#include "harvester/startup_art.h"
+#include "harvester/art.h"
 
 namespace Harvester {
 

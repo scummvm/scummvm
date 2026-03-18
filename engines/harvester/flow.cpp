@@ -21,7 +21,7 @@
 
 #include <math.h>
 
-#include "harvester/startup_flow.h"
+#include "harvester/flow.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -39,8 +39,8 @@
 #include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
-#include "harvester/startup_art.h"
-#include "harvester/startup_script.h"
+#include "harvester/art.h"
+#include "harvester/script.h"
 
 namespace Harvester {
 

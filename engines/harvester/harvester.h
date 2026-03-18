@@ -29,7 +29,7 @@
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
-#include "harvester/startup_script.h"
+#include "harvester/script.h"
 
 struct ADGameDescription;
 

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_SCRIPT_H
-#define HARVESTER_STARTUP_SCRIPT_H
+#ifndef HARVESTER_SCRIPT_H
+#define HARVESTER_SCRIPT_H
 
 #include "common/array.h"
 #include "common/str.h"
@@ -427,4 +427,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_SCRIPT_H
+#endif // HARVESTER_SCRIPT_H

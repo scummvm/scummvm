@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef HARVESTER_STARTUP_ROOM_H
-#define HARVESTER_STARTUP_ROOM_H
+#ifndef HARVESTER_ROOM_H
+#define HARVESTER_ROOM_H
 
 #include "common/error.h"
 #include "common/rect.h"
@@ -46,4 +46,4 @@ private:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_STARTUP_ROOM_H
+#endif // HARVESTER_ROOM_H
