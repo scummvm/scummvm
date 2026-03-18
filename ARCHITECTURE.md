@@ -1281,7 +1281,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - While that latch is set, `run_inventory_screen` treats the selected inventory object as the live dragged entity: it probes overlap against other inventory entities for `USEITEM` / dialogue routing, and if the dragged item leaves the inventory panel rect (`x=0x49..0x234`, `y=0x73..0x19b`) it reassigns the object's owner/room to the current room and returns that entity to the caller.
 - `run_harvester_main_loop` consumes that returned entity as the active selected item. Each frame it repositions the entity under the mouse, rebuilds the same centered `USING_ON_ID` overlay with `g_medfont1_cft`, and routes left-click use through `handle_target_interaction`.
 - `spawn_player_combat_avatar` seeds the live player entity with class `5` and the label string `"your inventory"`, and `handle_target_interaction` special-cases overlap with that target to move a non-inventory carried room item into `INVENTORY`.
-- The room loop also enters that same carried-item state directly from pickup objects: selecting a carryable room object starts cursor-follow carry first, while right-click, room/menu exits, game-over cleanup, and the `I` reopen-inventory path clear the latch and stow the carried object into `INVENTORY`.
+- `run_harvester_main_loop` branches pickup handling on the room-player presence flag at `0xd596c`: when the player is present, selecting a carryable room object enters the same cursor-follow carry state; when the player is absent, the loop moves the object straight into `INVENTORY`, removes its live render entity, and only then considers its action tag.
 
 **Key Functions**
 - `run_inventory_screen`
@@ -1296,6 +1296,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 **Notes**
 - The standalone inventory UI does not use room-region exits while an item is active; the active item must first return to the room loop.
 - Native bottom-of-screen carry prompts are not drawn with the fallback GUI font path; they are materialized as the `USING_ON_ID` text-entry overlay using `MEDFONT1.CFT` at y `0x1ce`.
+- Plain pickup does not rerun full room materialization. Native mutates the live scene in place for both carry-start and direct-to-inventory pickup, and only action-driven runtime mutations or room transitions trigger the heavier refresh paths.
 
 ## Current Blockers
 

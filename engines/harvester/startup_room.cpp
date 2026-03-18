@@ -44,6 +44,7 @@ namespace Harvester {
 
 static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
+static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
@@ -149,6 +150,15 @@ static bool shouldDispatchPickupActionOnCarryStart(const StartupObjectRecord &ob
 	return !object.objectName.equalsIgnoreCase("SANDWICH") &&
 		!object.objectName.equalsIgnoreCase("SANDWICH2") &&
 		!object.objectName.equalsIgnoreCase("SYRINGE");
+}
+
+static bool shouldDispatchPickupActionOnDirectInventoryTransfer(const StartupObjectRecord &object) {
+	if (object.actionTag.empty())
+		return false;
+
+	return !object.objectName.equalsIgnoreCase("ST_ASPRIN") &&
+		!object.objectName.equalsIgnoreCase("ST_COUGHM") &&
+		!object.objectName.equalsIgnoreCase("ST_VITAMN");
 }
 
 static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
@@ -273,6 +283,23 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			carriedRoomItemName.clear();
 			carriedRoomItemLabel.clear();
 			carriedRoomItemBitmap = IndexedBitmap();
+		};
+		auto hideSceneObject = [&](const Common::String &objectName, const Common::String *ownerOrRoom) {
+			StartupObjectRecord *sceneObject = findSceneObjectByName(scene.sceneObjects, objectName);
+			if (!sceneObject)
+				return;
+
+			sceneObject->visible = false;
+			sceneObject->runtimeVisible = false;
+			if (ownerOrRoom)
+				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
+		};
+		auto removeSceneObjectEntity = [&](const Common::String &objectName) {
+			if (!runtimeEntities)
+				return;
+
+			RuntimeEntity *entity = runtimeEntities->detachSceneEntityByName(objectName);
+			delete entity;
 		};
 		auto resetIdleState = [&]() {
 			idleState = StartupRoomIdleAnimationState();
@@ -529,6 +556,34 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		refreshCurrentScene,
 		captureDialogueBackdrop, runRoomExitCommands, resetIdleState
 	};
+	auto moveRoomItemDirectlyToInventory = [&](const StartupObjectRecord &object) -> Common::Error {
+		StartupScript *startupScript = _engine.getStartupScript();
+		if (!startupScript)
+			return Common::kReadingFailed;
+
+		startupScript->addRuntimeObjectToInventory(object.objectName);
+		const Common::String inventoryOwner(kInventoryOwnerName);
+		hideSceneObject(object.objectName, &inventoryOwner);
+		removeSceneObjectEntity(object.objectName);
+
+		bool didTransition = false;
+		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
+			StartupInteractionResult pickupInteraction;
+			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
+				Common::Error interactionError =
+					interactionProcessor.handleInteractionResult(pickupInteraction, didTransition);
+				if (interactionError.getCode() != Common::kNoError)
+					return interactionError;
+				if (startupFlow.hasPendingMainMenuReturn())
+					return Common::kNoError;
+			}
+		}
+
+		if (!_inventory.refresh())
+			return Common::kReadingFailed;
+		needsRedraw = true;
+		return Common::kNoError;
+	};
 	auto beginRoomItemCarry = [&](const StartupObjectRecord &object) -> Common::Error {
 		StartupScript *startupScript = _engine.getStartupScript();
 		ResourceManager *resources = _engine.getResources();
@@ -543,6 +598,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			loadBitmapResource(*resources, spritePath, carriedRoomItemBitmap);
 
 		startupScript->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
+		hideSceneObject(object.objectName, nullptr);
+		removeSceneObjectEntity(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
@@ -563,8 +620,6 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			needsRedraw = true;
 			return Common::kNoError;
 		}
-		if (!didTransition && !refreshCurrentScene(true))
-			return Common::kReadingFailed;
 
 		needsRedraw = true;
 		return Common::kNoError;
@@ -1019,9 +1074,11 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					break;
 				}
 				if (_engine.getStartupScript()->isPickupObject(*clickedObject)) {
-					Common::Error carryError = beginRoomItemCarry(*clickedObject);
-					if (carryError.getCode() != Common::kNoError)
-						return carryError;
+					Common::Error pickupError = playerState.entity
+						? beginRoomItemCarry(*clickedObject)
+						: moveRoomItemDirectlyToInventory(*clickedObject);
+					if (pickupError.getCode() != Common::kNoError)
+						return pickupError;
 					break;
 				}
 
