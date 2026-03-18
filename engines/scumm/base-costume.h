@@ -173,7 +173,9 @@ protected:
 		bool &decode);
 
 	void byleRLEDecode(ByleRLEData &compData, int16 actorHitX = 0, int16 actorHitY = 0, bool *actorHitResult = nullptr, const uint8 *xmap = nullptr);
-
+#ifdef SCUMM_OPTIMISED_CODE
+	void byleRLEDecodeFast(ByleRLEData &compData);
+#endif
 	void skipCelLines(ByleRLEData &compData, int num);
 
 private:

@@ -252,7 +252,14 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	return drawFlag;
 }
 
-void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
+enum class ShadowMode : int {
+	Mode0,
+	Mode1,
+	Mode3,
+	Classic
+};
+
+void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 	const byte *src = _srcPtr;
 	byte *dst = compData.destPtr;
 
@@ -268,6 +275,19 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 	byte maskbit = revBitMask(compData.x & 7);
 	const byte *mask = compData.maskPtr + compData.x / 8;
 
+	ShadowMode shadowMode = ShadowMode::Mode0;
+	if (!_akosRendering) {
+		if (_shadowMode & 0x20)
+			shadowMode = ShadowMode::Classic;
+		else
+			shadowMode = ShadowMode::Mode1;
+	} else {
+		if (_shadowMode == 1)
+			shadowMode = ShadowMode::Mode1;
+		else if (_shadowMode == 3)
+			shadowMode = ShadowMode::Mode3;
+	}
+
 	if (len)
 		goto StartPos;
 
@@ -280,73 +300,43 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 
 		do {
 			if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
-				if (actorHitResult) {
-					if (color && y == actorHitY && compData.x == actorHitX) {
-						*actorHitResult = true;
-						return;
-					}
-				} else {
-					const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
-						|| (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
-						|| (compData.maskPtr && (*mask & maskbit));
-					bool skipColumn = false;
+				const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
+				|| (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
+					|| (*mask & maskbit);
+				if (color && !masked) {
+					uint16 pcolor;
 
-					if (color && !masked) {
-						uint16 pcolor;
+					switch(shadowMode) {
+					case ShadowMode::Mode0:
+						*dst = _palette[color];
+						break;
 
-						if (!_akosRendering) {
-							if (_shadowMode & 0x20) {
-								pcolor = _shadowTable[*dst];
-							} else {
-								pcolor = _palette[color];
-								if (pcolor == 13 && _shadowTable)
-									pcolor = _shadowTable[*dst];
+					case ShadowMode::Classic:
+						if (lastColumnX != compData.x)
+							*dst = _shadowTable[*dst];
+						break;
+
+					case ShadowMode::Mode1:
+						pcolor = _palette[color];
+						if (pcolor == 13 && _shadowTable) {
+							if (lastColumnX != compData.x)
+								*dst = _shadowTable[*dst];
+						} else {
+							*dst = pcolor;
+						}
+						break;
+
+					case ShadowMode::Mode3:
+						pcolor = _palette[color];
+						if (pcolor < 8) {
+							if (lastColumnX != compData.x) {
+								pcolor = (pcolor << 8) + *dst;
+								*dst = _shadowTable[pcolor];
 							}
 						} else {
-							pcolor = _palette[color];
-
-							if (_shadowMode == 1) {
-								if (pcolor == 13) {
-									// In shadow mode 1 skipColumn works more or less the same way as in shadow
-									// mode 3. It is only ever checked and applied if pcolor is 13.
-									skipColumn = (lastColumnX == compData.x);
-									pcolor = _shadowTable[*dst];
-								}
-							} else if (_shadowMode == 2) {
-								error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
-							} else if (_shadowMode == 3) {
-								if (_vm->_game.features & GF_16BIT_COLOR) {
-									// I add the column skip here, too, although I don't know whether it always
-									// applies. But this is the only way to prevent recursive shading of pixels.
-									// This might need more fine tuning...
-									skipColumn = (lastColumnX == compData.x);
-									uint16 srcColor = (pcolor >> 1) & 0x7DEF;
-									uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
-									pcolor = srcColor + dstColor;
-								} else if (_vm->_game.heversion >= 90) {
-									// I add the column skip here, too, although I don't know whether it always
-									// applies. But this is the only way to prevent recursive shading of pixels.
-									// This might need more fine tuning...
-									skipColumn = (lastColumnX == compData.x);
-									pcolor = (pcolor << 8) + *dst;
-									pcolor = xmap[pcolor];
-								} else if (pcolor < 8) {
-									// This mode is used in COMI. The column skip only takes place when the shading
-									// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
-									// already have been shaded.
-									skipColumn = (lastColumnX == compData.x);
-									pcolor = (pcolor << 8) + *dst;
-									pcolor = _shadowTable[pcolor];
-								}
-							}
+							*dst = pcolor;
 						}
-						if (!skipColumn) {
-							if (_vm->_bytesPerPixel == 2) {
-								WRITE_UINT16(dst, pcolor);
-							} else {
-								*dst = pcolor;
-							}
-						}
+						break;
 					}
 				}
 				dst += _out.pitch;
@@ -367,19 +357,10 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 					if (compData.x < compData.boundsRect.left || compData.x >= compData.boundsRect.right)
 						return;
 					maskbit = revBitMask(compData.x & 7);
-					compData.destPtr += compData.scaleXStep * _vm->_bytesPerPixel;
+					compData.destPtr += compData.scaleXStep;
 				}
 
-				// From MONKEY1 EGA disasm: we only increment by 1.
-				// This accurately produces the original wonky scaling
-				// for the floppy editions of Monkey Island 1.
-				// Also valid for all other v4 games (this code is
-				// also in the executable for LOOM CD).
-				if (_vm->_game.version == 4) {
-					compData.scaleXIndex = (compData.scaleXIndex + 1) & compData.scaleIndexMask;
-				} else {
-					compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
-				}
+				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
 
 				dst = compData.destPtr;
 				mask = compData.maskPtr + compData.x / 8;
