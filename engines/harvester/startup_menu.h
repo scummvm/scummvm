@@ -34,25 +34,25 @@ class Font;
 namespace Harvester {
 
 class HarvesterEngine;
-class StartupFlow;
+class Flow;
 struct IndexedBitmap;
 
-class StartupMenuSystem {
+class MenuSystem {
 public:
-	StartupMenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
+	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems);
 
-	Common::Error runMainMenuStub(StartupFlow &startupFlow);
+	Common::Error runMainMenuStub(Flow &startupFlow);
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, StartupFlow &startupFlow);
+		float paletteBrightness, Flow &startupFlow);
 
 private:
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, StartupFlow &startupFlow);
-	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, StartupFlow &startupFlow);
-	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, StartupFlow &startupFlow);
+		float paletteBrightness, Flow &startupFlow);
+	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &startupFlow);
+	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, Flow &startupFlow);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, StartupFlow &startupFlow);
+		float paletteBrightness, Flow &startupFlow);
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
 	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos) const;

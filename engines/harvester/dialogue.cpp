@@ -126,7 +126,7 @@ static const byte kShadowColor = 0;
 static const byte kTransparentPaletteIndex = 0;
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const StartupText *startupText = engine.getStartupText();
+	const Text *startupText = engine.getStartupText();
 	if (!startupText || !fontName)
 		return nullptr;
 
@@ -304,7 +304,7 @@ static Common::String buildDialogueHeadId(const Common::String &speakerId, int h
 
 static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId, int headVariant,
 		IndexedBitmap &bitmap) {
-	StartupScript *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getStartupScript();
 	ResourceManager *resources = engine.getResources();
 	if (!startupScript || !resources || speakerId.empty())
 		return false;
@@ -317,7 +317,7 @@ static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String
 	return loadBitmapResource(*resources, head->portraitPath + ".BM", bitmap);
 }
 
-static Common::String buildDialogueVoicePath(const StartupScript &startupScript, int wavId) {
+static Common::String buildDialogueVoicePath(const Script &startupScript, int wavId) {
 	if (wavId <= 0)
 		return Common::String();
 
@@ -415,7 +415,7 @@ void DialogueSystem::resetRoomNpcDialogueState() {
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
-		StartupFlow &startupFlow) {
+		Flow &startupFlow) {
 	struct DialogueResponseOptionLayout {
 		Common::String text;
 		Common::Array<Common::String> wrappedLines;
@@ -424,9 +424,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 
 	Graphics::Screen *screen = _engine.getScreen();
-	StartupScript *startupScript = _engine.getStartupScript();
-	StartupText *startupText = _engine.getStartupText();
-	StartupArt *startupArt = _engine.getStartupArt();
+	Script *startupScript = _engine.getStartupScript();
+	Text *startupText = _engine.getStartupText();
+	Art *startupArt = _engine.getStartupArt();
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())

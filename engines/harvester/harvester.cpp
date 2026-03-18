@@ -552,7 +552,7 @@ Common::Error HarvesterEngine::run() {
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
 	_runtimeEntities = new RuntimeEntityManager(*_resources);
-	_startupScript = new StartupScript();
+	_startupScript = new Script();
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;
 	applyStartupMixerLevels();
@@ -576,13 +576,13 @@ Common::Error HarvesterEngine::run() {
 	// The original executable switches back to the gameplay UI surface after INTROFIN.FST.
 	setDisplayMode(640, 480);
 
-	_startupArt = new StartupArt();
+	_startupArt = new Art();
 	if (!_startupArt->load(*_resources))
 		return Common::kReadingFailed;
 	if (_screen)
 		_startupArt->drawWaitFrame(*_screen);
 
-	_startupText = new StartupText();
+	_startupText = new Text();
 	if (!_startupText->load(*_resources))
 		return Common::kReadingFailed;
 
@@ -594,7 +594,7 @@ Common::Error HarvesterEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	StartupFlow startupFlow(*this);
+	Flow startupFlow(*this);
 	if (!startupFlow.load())
 		return Common::kReadingFailed;
 

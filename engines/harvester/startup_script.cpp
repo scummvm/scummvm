@@ -359,7 +359,7 @@ static void tokenizeTownScriptLine(const Common::String &line, Common::Array<Com
 	}
 }
 
-bool StartupScript::load(ResourceManager &resources) {
+bool Script::load(ResourceManager &resources) {
 	_path = kDefaultTownScript;
 	_data.clear();
 	_entrances.clear();
@@ -405,7 +405,7 @@ bool StartupScript::load(ResourceManager &resources) {
 	return true;
 }
 
-bool StartupScript::loadConfig(ResourceManager &resources) {
+bool Script::loadConfig(ResourceManager &resources) {
 	Common::Array<byte> configData;
 	if (!resources.loadFile(kStartupConfigPath, configData)) {
 		warning("Harvester: unable to load startup config '%s', using defaults", kStartupConfigPath);
@@ -479,7 +479,7 @@ bool StartupScript::loadConfig(ResourceManager &resources) {
 	return true;
 }
 
-bool StartupScript::saveConfig() const {
+bool Script::saveConfig() const {
 	Common::DumpFile file;
 	const Common::Path configPath = ConfMan.getPath("path").join(kStartupConfigPath, Common::Path::kNoSeparator);
 	if (!file.open(configPath)) {
@@ -516,19 +516,19 @@ bool StartupScript::saveConfig() const {
 	return !file.err();
 }
 
-void StartupScript::setFxVolumeLevel(int level) {
+void Script::setFxVolumeLevel(int level) {
 	_fxVolumeLevel = clampStartupOptionLevel(level);
 }
 
-void StartupScript::setMusicVolumeLevel(int level) {
+void Script::setMusicVolumeLevel(int level) {
 	_musicVolumeLevel = clampStartupOptionLevel(level);
 }
 
-void StartupScript::setGammaLevel(int level) {
+void Script::setGammaLevel(int level) {
 	_gammaLevel = clampStartupOptionLevel(level);
 }
 
-void StartupScript::decode() {
+void Script::decode() {
 	for (byte &value : _data) {
 		if (value == '\r' || value == '\n')
 			continue;
@@ -537,7 +537,7 @@ void StartupScript::decode() {
 	}
 }
 
-void StartupScript::parseTownRecords(ResourceManager &resources) {
+void Script::parseTownRecords(ResourceManager &resources) {
 	_entrances.clear();
 	_mapEntrances.clear();
 	_mapLocations.clear();
@@ -908,7 +908,7 @@ void StartupScript::parseTownRecords(ResourceManager &resources) {
 		(uint)_useItems.size(), _path.c_str());
 }
 
-bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
+bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources) {
 	state = StartupRoomSetupState();
 
@@ -947,7 +947,7 @@ bool StartupScript::resolveRoomSetupState(const Common::String &entranceName, St
 	return true;
 }
 
-void StartupScript::resetRuntimeState() {
+void Script::resetRuntimeState() {
 	_runtimeFlags = _flags;
 	_runtimeObjects = _objects;
 	_runtimeAnimations = _animations;
@@ -977,7 +977,7 @@ void StartupScript::resetRuntimeState() {
 	}
 }
 
-void StartupScript::syncRuntimeSaveState(Common::Serializer &s) {
+void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	syncRecordArray(s, _runtimeFlags, syncStartupFlagRecord);
 	syncRecordArray(s, _runtimeObjects, syncStartupObjectRecord);
 	syncRecordArray(s, _runtimeAnimations, syncStartupAnimRecord);
@@ -989,7 +989,7 @@ void StartupScript::syncRuntimeSaveState(Common::Serializer &s) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 }
 
-bool StartupScript::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
+bool Script::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		StartupRoomSetupState &state, ResourceManager &resources) const {
 	state = StartupRoomSetupState();
 
@@ -1010,7 +1010,7 @@ bool StartupScript::materializeRoomState(const Common::String &entranceName, con
 	return buildRuntimeRoomState(*room, entrance, resources, state);
 }
 
-bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
+bool Script::executeRoomExitCommands(const Common::String &roomName,
 		Common::Array<StartupAudioCommand> &audioCommands) {
 	audioCommands.clear();
 
@@ -1025,7 +1025,7 @@ bool StartupScript::executeRoomExitCommands(const Common::String &roomName,
 	return true;
 }
 
-bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) {
+bool Script::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) {
 	result = StartupInteractionResult();
 
 	if (isPickupObject(object)) {
@@ -1050,7 +1050,7 @@ bool StartupScript::resolveObjectInteraction(const StartupObjectRecord &object, 
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
-bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
+bool Script::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
 	result = StartupInteractionResult();
 	if (region.actionTag.empty())
 		return false;
@@ -1064,7 +1064,7 @@ bool StartupScript::resolveRegionInteraction(const StartupRegionRecord &region, 
 		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
 
-bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
+bool Script::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
 		StartupInteractionResult &result) {
 	result = StartupInteractionResult();
 
@@ -1080,7 +1080,7 @@ bool StartupScript::resolveUseItemInteraction(const Common::String &itemName, co
 	return true;
 }
 
-bool StartupScript::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+bool Script::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions) {
 	result = StartupInteractionResult();
 	if (tag.empty())
@@ -1096,7 +1096,7 @@ bool StartupScript::executeActionTag(const Common::String &tag, StartupInteracti
 		result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
-bool StartupScript::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
+bool Script::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions) {
 	const bool handled = executeActionTag(tag, result, allowTransitions);
 	if (handled)
@@ -1105,12 +1105,12 @@ bool StartupScript::executeNestedActionTag(const Common::String &tag, StartupInt
 	return handled;
 }
 
-bool StartupScript::isPickupObject(const StartupObjectRecord &object) const {
+bool Script::isPickupObject(const StartupObjectRecord &object) const {
 	return !object.altSpritePath.empty() &&
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
 }
 
-bool StartupScript::hasObjectInteraction(const StartupObjectRecord &object) const {
+bool Script::hasObjectInteraction(const StartupObjectRecord &object) const {
 	if (isPickupObject(object))
 		return true;
 	if (object.actionTag.empty())
@@ -1119,11 +1119,11 @@ bool StartupScript::hasObjectInteraction(const StartupObjectRecord &object) cons
 	return hasActionableCommandChain(object.actionTag);
 }
 
-bool StartupScript::hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const {
+bool Script::hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const {
 	return findUseItemRecord(itemName, target) != nullptr;
 }
 
-void StartupScript::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const {
+void Script::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const {
 	objects.clear();
 	const char *const statusObjectName = resolveInventoryStatusObjectName(_playerCurrentHitPoints);
 	const StartupObjectRecord *statusObject = nullptr;
@@ -1150,12 +1150,12 @@ void StartupScript::getVisibleInventoryObjects(Common::Array<StartupObjectRecord
 	objects.push_back(activeStatusObject);
 }
 
-void StartupScript::markObjectIdentShown(const StartupObjectRecord &object) {
+void Script::markObjectIdentShown(const StartupObjectRecord &object) {
 	if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
 		runtimeObject->identShown = true;
 }
 
-const StartupEntranceRecord *StartupScript::findEntranceRecord(const Common::String &entranceName) const {
+const StartupEntranceRecord *Script::findEntranceRecord(const Common::String &entranceName) const {
 	if (entranceName.empty())
 		return nullptr;
 
@@ -1167,7 +1167,7 @@ const StartupEntranceRecord *StartupScript::findEntranceRecord(const Common::Str
 	return nullptr;
 }
 
-const StartupMapEntranceRecord *StartupScript::findMapEntranceRecord(const Common::String &entryName) const {
+const StartupMapEntranceRecord *Script::findMapEntranceRecord(const Common::String &entryName) const {
 	if (entryName.empty())
 		return nullptr;
 
@@ -1179,7 +1179,7 @@ const StartupMapEntranceRecord *StartupScript::findMapEntranceRecord(const Commo
 	return nullptr;
 }
 
-const StartupUseItemRecord *StartupScript::findUseItemRecord(const Common::String &itemName,
+const StartupUseItemRecord *Script::findUseItemRecord(const Common::String &itemName,
 		const StartupObjectRecord &target) const {
 	if (itemName.empty() || target.objectName.empty())
 		return nullptr;
@@ -1201,7 +1201,7 @@ const StartupUseItemRecord *StartupScript::findUseItemRecord(const Common::Strin
 	return nullptr;
 }
 
-const StartupRoomRecord *StartupScript::findRoomRecord(const Common::String &roomName) const {
+const StartupRoomRecord *Script::findRoomRecord(const Common::String &roomName) const {
 	if (roomName.empty())
 		return nullptr;
 
@@ -1213,7 +1213,7 @@ const StartupRoomRecord *StartupScript::findRoomRecord(const Common::String &roo
 	return nullptr;
 }
 
-const StartupCommandRecord *StartupScript::findCommandRecord(const Common::String &tag) const {
+const StartupCommandRecord *Script::findCommandRecord(const Common::String &tag) const {
 	if (tag.empty())
 		return nullptr;
 
@@ -1225,7 +1225,7 @@ const StartupCommandRecord *StartupScript::findCommandRecord(const Common::Strin
 	return nullptr;
 }
 
-const StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &flagName) const {
+const StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName) const {
 	if (flagName.empty())
 		return nullptr;
 
@@ -1237,7 +1237,7 @@ const StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &fl
 	return nullptr;
 }
 
-StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &flagName) {
+StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName) {
 	if (flagName.empty())
 		return nullptr;
 
@@ -1249,7 +1249,7 @@ StartupFlagRecord *StartupScript::findRuntimeFlag(const Common::String &flagName
 	return nullptr;
 }
 
-StartupObjectRecord *StartupScript::findRuntimeObject(const Common::String &ownerOrRoom,
+StartupObjectRecord *Script::findRuntimeObject(const Common::String &ownerOrRoom,
 		const Common::String &objectName) {
 	if (objectName.empty())
 		return nullptr;
@@ -1274,7 +1274,7 @@ StartupObjectRecord *StartupScript::findRuntimeObject(const Common::String &owne
 	return fallback;
 }
 
-StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName) {
+StartupAnimRecord *Script::findRuntimeAnim(const Common::String &animName) {
 	if (animName.empty())
 		return nullptr;
 
@@ -1286,7 +1286,7 @@ StartupAnimRecord *StartupScript::findRuntimeAnim(const Common::String &animName
 	return nullptr;
 }
 
-StartupRegionRecord *StartupScript::findRuntimeRegion(const Common::String &regionName) {
+StartupRegionRecord *Script::findRuntimeRegion(const Common::String &regionName) {
 	if (regionName.empty())
 		return nullptr;
 
@@ -1298,7 +1298,7 @@ StartupRegionRecord *StartupScript::findRuntimeRegion(const Common::String &regi
 	return nullptr;
 }
 
-StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
+StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) {
 	if (npcName.empty())
 		return nullptr;
 
@@ -1310,7 +1310,7 @@ StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) {
 	return nullptr;
 }
 
-StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::String &monsterName) {
+StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) {
 	if (monsterName.empty())
 		return nullptr;
 
@@ -1322,7 +1322,7 @@ StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::String &mo
 	return nullptr;
 }
 
-const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcName) const {
+const StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) const {
 	if (npcName.empty())
 		return nullptr;
 
@@ -1334,7 +1334,7 @@ const StartupNpcRecord *StartupScript::findRuntimeNpc(const Common::String &npcN
 	return nullptr;
 }
 
-const StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::String &monsterName) const {
+const StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) const {
 	if (monsterName.empty())
 		return nullptr;
 
@@ -1346,11 +1346,11 @@ const StartupMonsterRecord *StartupScript::findRuntimeMonster(const Common::Stri
 	return nullptr;
 }
 
-const StartupNpcRecord *StartupScript::findRuntimeNpcRecord(const Common::String &npcName) const {
+const StartupNpcRecord *Script::findRuntimeNpcRecord(const Common::String &npcName) const {
 	return findRuntimeNpc(npcName);
 }
 
-bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName) {
+bool Script::addRuntimeObjectToInventory(const Common::String &objectName) {
 	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
 	if (!runtimeObject)
 		return false;
@@ -1364,7 +1364,7 @@ bool StartupScript::addRuntimeObjectToInventory(const Common::String &objectName
 	return changed;
 }
 
-bool StartupScript::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
+bool Script::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 		const Common::String &objectName, bool visible) {
 	if (objectName.empty())
 		return false;
@@ -1383,7 +1383,7 @@ bool StartupScript::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 	return changed;
 }
 
-bool StartupScript::setRuntimeNpcState(const Common::String &npcName, bool active, bool visible) {
+bool Script::setRuntimeNpcState(const Common::String &npcName, bool active, bool visible) {
 	if (npcName.empty())
 		return false;
 
@@ -1397,14 +1397,14 @@ bool StartupScript::setRuntimeNpcState(const Common::String &npcName, bool activ
 	return changed;
 }
 
-bool StartupScript::setPlayerCurrentHitPoints(int hitPoints) {
+bool Script::setPlayerCurrentHitPoints(int hitPoints) {
 	const int clampedHitPoints = clampPlayerHitPoints(hitPoints);
 	const bool changed = _playerCurrentHitPoints != clampedHitPoints;
 	_playerCurrentHitPoints = clampedHitPoints;
 	return changed;
 }
 
-bool StartupScript::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
+bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
 	if (npcName.empty())
 		return false;
 
@@ -1430,7 +1430,7 @@ bool StartupScript::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcN
 	return changed || monsterChanged;
 }
 
-bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
+bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		ResourceManager &resources, StartupRoomSetupState &state) const {
 	state = StartupRoomSetupState();
 
@@ -1550,7 +1550,7 @@ bool StartupScript::buildRuntimeRoomState(const StartupRoomRecord &room, const S
 	return true;
 }
 
-void StartupScript::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
+void Script::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
@@ -1838,7 +1838,7 @@ void StartupScript::executeCommandChain(const Common::String &initialTag, const 
 	}
 }
 
-bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) const {
+bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 	Common::String currentTag = initialTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
 		const StartupCommandRecord *command = findCommandRecord(currentTag);
@@ -1884,7 +1884,7 @@ bool StartupScript::hasActionableCommandChain(const Common::String &initialTag) 
 	return false;
 }
 
-const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key) const {
+const StartupTextRecord *Script::findTextRecord(const Common::String &key) const {
 	if (key.empty())
 		return nullptr;
 
@@ -1896,7 +1896,7 @@ const StartupTextRecord *StartupScript::findTextRecord(const Common::String &key
 	return nullptr;
 }
 
-bool StartupScript::resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const {
+bool Script::resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const {
 	text = StartupResolvedText();
 
 	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
@@ -1908,7 +1908,7 @@ bool StartupScript::resolveObjectInspectText(const StartupObjectRecord &object, 
 	return !text.value.empty();
 }
 
-Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &object) const {
+Common::String Script::resolveObjectLabel(const StartupObjectRecord &object) const {
 	if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
 		const StartupTextRecord *inventoryText = findTextRecord(object.inventoryTextKey);
 		if (inventoryText && !inventoryText->value.empty())
@@ -1931,7 +1931,7 @@ Common::String StartupScript::resolveObjectLabel(const StartupObjectRecord &obje
 	return Common::String();
 }
 
-Common::String StartupScript::resolveTextValue(const Common::String &key) const {
+Common::String Script::resolveTextValue(const Common::String &key) const {
 	const StartupTextRecord *textRecord = findTextRecord(key);
 	if (textRecord && !textRecord->value.empty())
 		return textRecord->value;
@@ -1939,7 +1939,7 @@ Common::String StartupScript::resolveTextValue(const Common::String &key) const 
 	return normalizeInteractionLabel(key);
 }
 
-const StartupHeadRecord *StartupScript::findHeadRecord(const Common::String &headId) const {
+const StartupHeadRecord *Script::findHeadRecord(const Common::String &headId) const {
 	if (headId.empty())
 		return nullptr;
 
@@ -1951,12 +1951,12 @@ const StartupHeadRecord *StartupScript::findHeadRecord(const Common::String &hea
 	return nullptr;
 }
 
-bool StartupScript::getFlagValue(const Common::String &flagName) const {
+bool Script::getFlagValue(const Common::String &flagName) const {
 	const StartupFlagRecord *flag = findRuntimeFlag(flagName);
 	return flag && flag->value;
 }
 
-bool StartupScript::setRuntimeFlagValue(const Common::String &flagName, bool value) {
+bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 	if (flagName.empty())
 		return false;
 
@@ -1974,7 +1974,7 @@ bool StartupScript::setRuntimeFlagValue(const Common::String &flagName, bool val
 	return true;
 }
 
-bool StartupScript::resetRuntimeObjectToInitialState(const Common::String &objectName) {
+bool Script::resetRuntimeObjectToInitialState(const Common::String &objectName) {
 	if (objectName.empty())
 		return false;
 
@@ -2010,12 +2010,12 @@ bool StartupScript::resetRuntimeObjectToInitialState(const Common::String &objec
 	return changed;
 }
 
-bool StartupScript::isNamedNpcDeathTypeClear(const Common::String &npcName) const {
+bool Script::isNamedNpcDeathTypeClear(const Common::String &npcName) const {
 	const StartupNpcRecord *npc = findRuntimeNpc(npcName);
 	return npc && npc->deathDamageType == 0;
 }
 
-int StartupScript::getCurrentStoryDayIndex() const {
+int Script::getCurrentStoryDayIndex() const {
 	if (getFlagValue("DAY_1"))
 		return 1;
 	if (getFlagValue("DAY_2") || getFlagValue("NIGHT_2"))

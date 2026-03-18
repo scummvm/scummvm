@@ -37,8 +37,8 @@ namespace Harvester {
 
 class HarvesterEngine;
 class NpcDialogueHandler;
-class StartupFlow;
-class StartupText;
+class Flow;
+class Text;
 struct IndexedBitmap;
 
 class DialogueSystem {
@@ -49,7 +49,7 @@ public:
 	void resetRoomNpcDialogueState();
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
-		StartupFlow &startupFlow);
+		Flow &startupFlow);
 
 private:
 	void registerNpcHandlers();

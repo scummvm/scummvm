@@ -37,9 +37,9 @@ namespace Harvester {
 
 class ResourceManager;
 class RuntimeEntityManager;
-class StartupScript;
-class StartupArt;
-class StartupText;
+class Script;
+class Art;
+class Text;
 
 struct StartupSaveRoomState {
 	Common::String entranceName;
@@ -99,9 +99,9 @@ public:
 	Graphics::Screen *getScreen() const { return _screen; }
 	int getDisplayWidth() const { return _displayWidth; }
 	int getDisplayHeight() const { return _displayHeight; }
-	StartupScript *getStartupScript() const { return _startupScript; }
-	StartupArt *getStartupArt() const { return _startupArt; }
-	StartupText *getStartupText() const { return _startupText; }
+	Script *getStartupScript() const { return _startupScript; }
+	Art *getStartupArt() const { return _startupArt; }
+	Text *getStartupText() const { return _startupText; }
 	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
 	int getStartupFxVolumeLevel() const;
@@ -162,9 +162,9 @@ private:
 	int _displayHeight = 0;
 	ResourceManager *_resources = nullptr;
 	RuntimeEntityManager *_runtimeEntities = nullptr;
-	StartupScript *_startupScript = nullptr;
-	StartupArt *_startupArt = nullptr;
-	StartupText *_startupText = nullptr;
+	Script *_startupScript = nullptr;
+	Art *_startupArt = nullptr;
+	Text *_startupText = nullptr;
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
 };

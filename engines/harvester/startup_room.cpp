@@ -89,7 +89,7 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 }
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const StartupText *startupText = engine.getStartupText();
+	const Text *startupText = engine.getStartupText();
 	if (!startupText || !fontName)
 		return nullptr;
 
@@ -175,12 +175,12 @@ static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
 	font.drawString(&screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
 }
 
-StartupRoomSystem::StartupRoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
-		StartupInventorySystem &inventory)
+RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
+		InventorySystem &inventory)
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
 }
 
-Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Common::String &entranceName) {
+Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &entranceName) {
 	if (startupFlow.hasPendingMainMenuReturn())
 		return Common::kNoError;
 
@@ -219,7 +219,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			return _engine.getScreen();
 		};
 		Graphics::Screen *screen = getActiveScreen();
-		const StartupArt *art = _engine.getStartupArt();
+		const Art *art = _engine.getStartupArt();
 		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
 		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
@@ -406,7 +406,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 	};
 	struct InteractionProcessor {
 		HarvesterEngine &engine;
-		StartupFlow &startupFlow;
+		Flow &startupFlow;
 		StartupRoomSceneResources &scene;
 		StartupRoomPlayerState &playerState;
 		Common::String &pendingRegionName;
@@ -557,7 +557,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		captureDialogueBackdrop, runRoomExitCommands, resetIdleState
 	};
 	auto moveRoomItemDirectlyToInventory = [&](const StartupObjectRecord &object) -> Common::Error {
-		StartupScript *startupScript = _engine.getStartupScript();
+		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)
 			return Common::kReadingFailed;
 
@@ -585,7 +585,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		return Common::kNoError;
 	};
 	auto beginRoomItemCarry = [&](const StartupObjectRecord &object) -> Common::Error {
-		StartupScript *startupScript = _engine.getStartupScript();
+		Script *startupScript = _engine.getStartupScript();
 		ResourceManager *resources = _engine.getResources();
 		if (!startupScript || !resources)
 			return Common::kReadingFailed;
@@ -770,8 +770,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				Common::String targetLabel;
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (_inventory.isOpen()) {
-					if (inventoryHover && !StartupInventorySystem::isExitObject(inventoryHover->object) &&
-							!StartupInventorySystem::isStatusObject(inventoryHover->object) &&
+					if (inventoryHover && !InventorySystem::isExitObject(inventoryHover->object) &&
+							!InventorySystem::isStatusObject(inventoryHover->object) &&
 							!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 					} else if (!inventoryPanelContainsMouse) {
@@ -790,7 +790,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			} else if (_inventory.isOpen()) {
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (inventoryHover &&
-						!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
+						!InventorySystem::isStatusObject(inventoryHover->object)) {
 					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 				}
 				_inventory.setPromptText(promptText);
@@ -897,14 +897,14 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				if (_inventory.isOpen()) {
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 					if (inventoryHover) {
-						if (StartupInventorySystem::isExitObject(inventoryHover->object)) {
+						if (InventorySystem::isExitObject(inventoryHover->object)) {
 							const bool clearedSelection = _inventory.clearSelection();
 							const bool closedInventory = _inventory.close();
 							if (clearedSelection || closedInventory)
 								needsRedraw = true;
 							break;
 						}
-						if (StartupInventorySystem::isStatusObject(inventoryHover->object))
+						if (InventorySystem::isStatusObject(inventoryHover->object))
 							break;
 
 						if (!_inventory.hasSelection()) {

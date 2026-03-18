@@ -29,19 +29,19 @@
 namespace Harvester {
 
 class HarvesterEngine;
-class StartupFlow;
-class StartupInventorySystem;
+class Flow;
+class InventorySystem;
 
-class StartupRoomSystem {
+class RoomSystem {
 public:
-	StartupRoomSystem(HarvesterEngine &engine, Common::Point &mousePos, StartupInventorySystem &inventory);
+	RoomSystem(HarvesterEngine &engine, Common::Point &mousePos, InventorySystem &inventory);
 
-	Common::Error runRoomLoop(StartupFlow &startupFlow, const Common::String &entranceName);
+	Common::Error runRoomLoop(Flow &startupFlow, const Common::String &entranceName);
 
 private:
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
-	StartupInventorySystem &_inventory;
+	InventorySystem &_inventory;
 };
 
 } // End of namespace Harvester

@@ -773,7 +773,7 @@ static bool isBackgroundSceneObject(const StartupObjectRecord &object, const Run
 		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
 }
 
-static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, StartupScript *startupScript) {
+static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, Script *startupScript) {
 	if (object.operatable || !object.actionTag.empty())
 		return true;
 	if (!startupScript)
@@ -786,7 +786,7 @@ static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, Startup
 }
 
 static int resolveSceneObjectClass(const StartupObjectRecord &object, const RuntimeEntity *entity,
-		StartupScript *startupScript) {
+		Script *startupScript) {
 	if (entity)
 		return isBackgroundSceneObject(object, *entity) ? kRuntimeEntityClassBackground : kRuntimeEntityClassObject;
 
@@ -973,7 +973,7 @@ static const StartupNpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 	return findSceneNpcByName(sceneNpcs, entity->getName());
 }
 
-const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const StartupResolvedText &text) {
+const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupResolvedText &text) {
 	if (text.boxName.equalsIgnoreCase("BOX1"))
 		return art.getTextboxBitmap(0);
 	if (text.boxName.equalsIgnoreCase("BOX2"))
@@ -986,7 +986,7 @@ const IndexedBitmap *resolveInspectTextboxBitmap(const StartupArt &art, const St
 	return nullptr;
 }
 
-void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const Graphics::Font &font,
+void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
 		const StartupResolvedText &inspectText) {
 	const IndexedBitmap *textbox = resolveInspectTextboxBitmap(art, inspectText);
 	if (!textbox || !textbox->isValid())
@@ -1001,11 +1001,11 @@ void drawRoomInspectText(Graphics::Screen &screen, const StartupArt &art, const 
 }
 
 bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
-		StartupScript &startupScript) {
+		Script &startupScript) {
 	return object.operatable || startupScript.isPickupObject(object);
 }
 
-static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, StartupScript &startupScript) {
+static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, Script &startupScript) {
 	if (object.objectName.equalsIgnoreCase("EXIT_BM") || object.objectName.equalsIgnoreCase("EXIT_HS"))
 		return kCursorSequenceTransition;
 
@@ -1026,7 +1026,7 @@ static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, St
 	return kCursorSequenceNeutral;
 }
 
-static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, StartupScript &startupScript,
+static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, Script &startupScript,
 		int cursorSequence) {
 	const Common::String label = startupScript.resolveObjectLabel(object);
 	if (label.empty())
@@ -1088,7 +1088,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		return hoverState;
 	}
 
-	StartupScript *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getStartupScript();
 	if (!startupScript)
 		return hoverState;
 	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
@@ -1527,7 +1527,7 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
 		const Common::String &entranceName, Common::Point &mousePos) {
 	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
-	StartupScript *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getStartupScript();
 	if (!runtimeEntities || !startupScript)
 		return;
 
@@ -1661,9 +1661,9 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, StartupRoomSceneResource
 static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
 		const Common::Point &mousePos, const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
-	const StartupArt *art = engine.getStartupArt();
+	const Art *art = engine.getStartupArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	StartupScript *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getStartupScript();
 	if (!screen || !art || !font || !startupScript)
 		return;
 
@@ -1689,16 +1689,16 @@ static void renderQuickTipsScreen(HarvesterEngine &engine, const StartupRoomScen
 	screen->update();
 }
 
-StartupFlow::StartupFlow(HarvesterEngine &engine)
+Flow::Flow(HarvesterEngine &engine)
 	: _engine(engine), _mousePos(320, 200), _dialogue(engine, _mousePos), _inventory(engine),
 	  _menu(engine, _mousePos, _menuItems), _room(engine, _mousePos, _inventory) {
 }
 
-bool StartupFlow::load() {
+bool Flow::load() {
 	return loadQuickTips() && loadMenuItems();
 }
 
-Common::Error StartupFlow::run() {
+Common::Error Flow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
 
@@ -1731,7 +1731,7 @@ Common::Error StartupFlow::run() {
 	return runMainMenuStub();
 }
 
-bool StartupFlow::loadQuickTips() {
+bool Flow::loadQuickTips() {
 	_quickTips.clear();
 
 	Common::Array<byte> data;
@@ -1764,7 +1764,7 @@ bool StartupFlow::loadQuickTips() {
 	return true;
 }
 
-bool StartupFlow::loadMenuItems() {
+bool Flow::loadMenuItems() {
 	_menuItems.clear();
 
 	Common::Array<byte> data;
@@ -1794,7 +1794,7 @@ bool StartupFlow::loadMenuItems() {
 	return true;
 }
 
-Common::Error StartupFlow::runQuickTips() {
+Common::Error Flow::runQuickTips() {
 	if (!_engine.getStartupScript()->isQuickTipsEnabled() || _quickTips.empty())
 		return Common::kNoError;
 
@@ -1876,26 +1876,26 @@ Common::Error StartupFlow::runQuickTips() {
 	return Common::kNoError;
 }
 
-Common::Error StartupFlow::runMainMenuStub() {
+Common::Error Flow::runMainMenuStub() {
 	return _menu.runMainMenuStub(*this);
 }
 
-Common::Error StartupFlow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness) {
+Common::Error Flow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness) {
 	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this);
 }
 
-Common::Error StartupFlow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
+Common::Error Flow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName) {
 	_queuedDialogueInteraction = StartupInteractionResult();
 	_hasQueuedDialogueInteraction = false;
 	return _dialogue.runRoomNpcDialogue(backdrop, palette, paletteBrightness, npc, usedItemName, *this);
 }
 
-Common::Error StartupFlow::runTownMapSelector(const Common::String &mapEntryName,
+Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		Common::String &destinationEntranceName) {
 	destinationEntranceName.clear();
 
-	StartupScript *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getStartupScript();
 	ResourceManager *resources = _engine.getResources();
 	Graphics::Screen *screen = _engine.getScreen();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
@@ -2032,11 +2032,11 @@ Common::Error StartupFlow::runTownMapSelector(const Common::String &mapEntryName
 	return Common::kNoError;
 }
 
-Common::Error StartupFlow::resolveRoomTransitionTarget(const Common::String &targetName,
+Common::Error Flow::resolveRoomTransitionTarget(const Common::String &targetName,
 		Common::String &resolvedTargetName) {
 	resolvedTargetName = targetName;
 
-	StartupScript *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getStartupScript();
 	if (!startupScript || targetName.empty())
 		return Common::kNoError;
 
@@ -2046,12 +2046,12 @@ Common::Error StartupFlow::resolveRoomTransitionTarget(const Common::String &tar
 	return Common::kNoError;
 }
 
-void StartupFlow::queueDialogueInteraction(const StartupInteractionResult &interaction) {
+void Flow::queueDialogueInteraction(const StartupInteractionResult &interaction) {
 	_queuedDialogueInteraction = interaction;
 	_hasQueuedDialogueInteraction = true;
 }
 
-bool StartupFlow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) {
+bool Flow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) {
 	if (!_hasQueuedDialogueInteraction)
 		return false;
 
@@ -2061,30 +2061,30 @@ bool StartupFlow::takeQueuedDialogueInteraction(StartupInteractionResult &intera
 	return true;
 }
 
-void StartupFlow::requestMainMenuReturn() {
+void Flow::requestMainMenuReturn() {
 	_pendingMainMenuReturn = true;
 	_engine.clearCurrentStartupSaveRoomState();
 }
 
-bool StartupFlow::hasPendingMainMenuReturn() const {
+bool Flow::hasPendingMainMenuReturn() const {
 	return _pendingMainMenuReturn;
 }
 
-bool StartupFlow::takePendingMainMenuReturn() {
+bool Flow::takePendingMainMenuReturn() {
 	const bool requested = _pendingMainMenuReturn;
 	_pendingMainMenuReturn = false;
 	return requested;
 }
 
-void StartupFlow::clearPendingMainMenuReturn() {
+void Flow::clearPendingMainMenuReturn() {
 	_pendingMainMenuReturn = false;
 }
 
-Common::Error StartupFlow::runRoomLoop(const Common::String &entranceName) {
+Common::Error Flow::runRoomLoop(const Common::String &entranceName) {
 	return _room.runRoomLoop(*this, entranceName);
 }
 
-bool StartupFlow::ensureCursorEntity() {
+bool Flow::ensureCursorEntity() {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return false;
@@ -2094,7 +2094,7 @@ bool StartupFlow::ensureCursorEntity() {
 	return runtimeEntities->spawnCursorEntity(_mousePos) != nullptr;
 }
 
-bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
+bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations) {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
@@ -2264,11 +2264,11 @@ bool StartupFlow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	return true;
 }
 
-Common::Error StartupFlow::beginRoomSetupTransition() {
+Common::Error Flow::beginRoomSetupTransition() {
 	if (_engine.getRuntimeEntities())
 		_engine.getRuntimeEntities()->hideCursor();
 
-	const StartupArt *art = _engine.getStartupArt();
+	const Art *art = _engine.getStartupArt();
 	Graphics::Screen *screen = _engine.getScreen();
 	if (art && screen)
 		art->drawWaitFrame(*screen);
@@ -2280,7 +2280,7 @@ Common::Error StartupFlow::beginRoomSetupTransition() {
 	return Common::kNoError;
 }
 
-Common::Error StartupFlow::fadeInRoomScene(const byte *palette, float targetBrightness) {
+Common::Error Flow::fadeInRoomScene(const byte *palette, float targetBrightness) {
 	Graphics::Screen *screen = _engine.getScreen();
 	if (!screen || !palette)
 		return Common::kNoError;
@@ -2305,7 +2305,7 @@ Common::Error StartupFlow::fadeInRoomScene(const byte *palette, float targetBrig
 	return Common::kNoError;
 }
 
-bool StartupFlow::pumpTransitionEvents(Common::Error &result) {
+bool Flow::pumpTransitionEvents(Common::Error &result) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		if (handleSystemEvent(event, result))
@@ -2315,16 +2315,16 @@ bool StartupFlow::pumpTransitionEvents(Common::Error &result) {
 	return false;
 }
 
-void StartupFlow::executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands) {
+void Flow::executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands) {
 	for (const StartupAudioCommand &command : commands)
 		(void)_engine.executeStartupAudioCommand(command);
 }
 
-void StartupFlow::resetRoomNpcDialogueState() {
+void Flow::resetRoomNpcDialogueState() {
 	_dialogue.resetRoomNpcDialogueState();
 }
 
-void StartupFlow::resetCursorAnimationSequence() {
+void Flow::resetCursorAnimationSequence() {
 	if (!ensureCursorEntity())
 		return;
 
@@ -2337,14 +2337,14 @@ void StartupFlow::resetCursorAnimationSequence() {
 	(void)_engine.getRuntimeEntities()->syncCursorEntityPosition(_mousePos);
 }
 
-bool StartupFlow::tickRuntimeEntities() {
+bool Flow::tickRuntimeEntities() {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return false;
 	return runtimeEntities->tickSceneEntities() || runtimeEntities->syncCursorEntityPosition(_mousePos);
 }
 
-bool StartupFlow::handleSystemEvent(const Common::Event &event, Common::Error &result) {
+bool Flow::handleSystemEvent(const Common::Event &event, Common::Error &result) {
 	switch (event.type) {
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RETURN_TO_LAUNCHER:

@@ -47,7 +47,7 @@ struct AbmFrame : IndexedBitmap {
 	int32 yOffset = 0;
 };
 
-class StartupArt {
+class Art {
 public:
 	bool load(ResourceManager &resources);
 	bool loadQuickTipsResources(ResourceManager &resources);

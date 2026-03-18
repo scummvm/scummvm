@@ -44,7 +44,7 @@ struct CftFontResource {
 	Common::Array<byte> atlasPixels;
 };
 
-class StartupText {
+class Text {
 public:
 	bool load(ResourceManager &resources);
 
