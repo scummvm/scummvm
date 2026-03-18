@@ -25,7 +25,7 @@
 
 namespace Scumm {
 
-#ifndef SCUMM_OPTIMISED_CODE
+#ifdef SCUMM_OPTIMISED_CODE
 byte BaseCostumeRenderer::drawCostume(const VirtScreen &vs, int numStrips, const Actor *a, bool drawToBackBuf) {
 	int i;
 	byte result = 0;

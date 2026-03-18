@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	akos.o \
 	base-costume.o \
+	base-costume-optimised.o \
 	bomp.o \
 	boxes.o \
 	camera.o \
