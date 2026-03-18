@@ -1704,14 +1704,23 @@ Common::Error StartupFlow::run() {
 
 	clearPendingMainMenuReturn();
 	resetRoomNpcDialogueState();
-	_engine.getStartupScript()->resetRuntimeState();
-	Common::Error error = runQuickTips();
-	if (error.getCode() != Common::kNoError)
-		return error;
+	Common::Error error = Common::kNoError;
+	if (_engine.hasPendingLoadedStartupSaveRoomState()) {
+		Common::String initialTarget = _engine.getPendingLoadedStartupSaveRoomState().entranceName;
+		if (initialTarget.empty())
+			initialTarget = _engine.getPendingLoadedStartupSaveRoomState().roomName;
+		error = runRoomLoop(initialTarget);
+	} else {
+		_engine.clearCurrentStartupSaveRoomState();
+		_engine.getStartupScript()->resetRuntimeState();
+		error = runQuickTips();
+		if (error.getCode() != Common::kNoError)
+			return error;
 
-	clearPendingMainMenuReturn();
-	_engine.getStartupScript()->resetRuntimeState();
-	error = runRoomLoop("START");
+		clearPendingMainMenuReturn();
+		_engine.getStartupScript()->resetRuntimeState();
+		error = runRoomLoop("START");
+	}
 	if (error.getCode() != Common::kNoError)
 		return error;
 	if (!takePendingMainMenuReturn())
@@ -2054,6 +2063,7 @@ bool StartupFlow::takeQueuedDialogueInteraction(StartupInteractionResult &intera
 
 void StartupFlow::requestMainMenuReturn() {
 	_pendingMainMenuReturn = true;
+	_engine.clearCurrentStartupSaveRoomState();
 }
 
 bool StartupFlow::hasPendingMainMenuReturn() const {

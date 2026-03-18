@@ -382,6 +382,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `run_save_game_menu` at `0x632c0` is the matching save-game UI.
   - It loads `savegame.pal` and `savegame.bm`.
   - It enumerates the same 25 save slots and supports text entry for save names.
+  - The active slot is derived from the list rectangle `x=0x08..0x27b`, `y=0x19..0x1c2` with a native row stride of `0x11`.
+  - Clicking a slot, pressing `Enter`, or clicking the lower-left action area `x=0x03..0x13d`, `y=0x1cc..0x1dc` all route into the same `run_text_entry_dialog` path for the active slot; `ESC` and the lower-right area `x=0x141..0x27b`, `y=0x1cc..0x1dc` cancel back to gameplay.
   - It first calls `sync_current_room_runtime_state_before_save_load`, which copies current-room monster runtime positions/facing back into `MonsterRecord` fields and refreshes the `SAVE_GAME` entrance from `g_player_combat_avatar`.
   - The save header is now explicit: current disc id, `g_player_present_in_room`, `g_game_clock_tick_remainder_ms`, `g_current_room_def->room_name`, and `g_player_room_name`.
   - The remainder of the save blob persists the player combat-avatar state, record lists (`ANIM`, `FLAG`, `MONSTER`, `NPC`, `OBJECT`, `REGION`, `TIMER`), the talk-state blocks, ammo counters, and `g_current_music_path`.

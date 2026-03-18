@@ -41,6 +41,28 @@ class StartupScript;
 class StartupArt;
 class StartupText;
 
+struct StartupSaveRoomState {
+	Common::String entranceName;
+	Common::String roomName;
+	Common::String musicPath;
+	int playerX = 0;
+	int playerY = 0;
+	int playerZ = 0;
+	int playerFacing = -1;
+	bool valid = false;
+
+	void clear() {
+		entranceName.clear();
+		roomName.clear();
+		musicPath.clear();
+		playerX = 0;
+		playerY = 0;
+		playerZ = 0;
+		playerFacing = -1;
+		valid = false;
+	}
+};
+
 class HarvesterEngine : public Engine {
 public:
 	HarvesterEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -61,8 +83,8 @@ public:
 		return _randomSource.getRandomNumber(maxNum);
 	}
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return true; }
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	/**
 	 * Uses a serializer to allow implementing savegame
@@ -106,8 +128,19 @@ public:
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);
 	void stopStartupSound();
+	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
+		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
+		const Common::String &musicPath);
+	void clearCurrentStartupSaveRoomState();
+	bool hasCurrentStartupSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
+	bool hasPendingLoadedStartupSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
+	const StartupSaveRoomState &getPendingLoadedStartupSaveRoomState() const {
+		return _pendingLoadedStartupSaveRoomState;
+	}
+	void clearPendingLoadedStartupSaveRoomState();
 
 private:
+	void syncStartupSaveRoomState(Common::Serializer &s, StartupSaveRoomState &state);
 	void stopStartupSoundHandle(Audio::SoundHandle &handle);
 	bool validateStartupLoadedSoundSlot(int slot) const;
 	void applyStartupMixerLevels();
@@ -132,6 +165,8 @@ private:
 	StartupScript *_startupScript = nullptr;
 	StartupArt *_startupArt = nullptr;
 	StartupText *_startupText = nullptr;
+	StartupSaveRoomState _currentStartupSaveRoomState;
+	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
 };
 
 extern HarvesterEngine *g_engine;

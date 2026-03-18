@@ -25,6 +25,10 @@
 #include "common/array.h"
 #include "common/str.h"
 
+namespace Common {
+class Serializer;
+}
+
 namespace Harvester {
 
 class ResourceManager;
@@ -315,6 +319,7 @@ public:
 	void setParentalPassword(const Common::String &password) { _parentalPassword = password; }
 	bool saveConfig() const;
 	void resetRuntimeState();
+	void syncRuntimeSaveState(Common::Serializer &s);
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
