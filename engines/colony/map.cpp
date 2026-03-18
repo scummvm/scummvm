@@ -188,6 +188,7 @@ void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8
 	obj.where.ang = ang;
 	obj.where.look = ang;
 	obj.where.lookx = 0;
+	obj.where.wallPad = robotWallPad(type);
 	obj.count = 0;
 	obj.time = 10 + (_randomSource.getRandomNumber(0x3F) & 0x3F);
 	obj.grow = 0;

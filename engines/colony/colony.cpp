@@ -838,20 +838,19 @@ Common::Error ColonyEngine::run() {
 			cThink();
 		}
 
-		// Periodic equipment power drain every FCOUNT(32) game ticks at ~8fps.
-		// Mac display.c implements this; DOS IBM_DISP.C defines FCOUNT but
-		// never applies the drain — a bug in the original DOS port that
-		// removed the intended equipment energy cost trade-off.
-		if (_gameMode == kModeColony && now - lastCenterTick >= 125) {
+		// Periodic equipment power drain from Mac display.c.
+		// Original: foodcount-- once per Display() call at hardware frame
+		// rate (~5fps on Mac Plus), fires SetPower every FCOUNT(32) frames
+		// → drain period ≈ 32/5 = 6.4 seconds.  DOS IBM_DISP.C defines
+		// FCOUNT but never applies the drain.
+		// We use a fixed 6400ms wall-clock interval to match the original
+		// Mac Plus cadence regardless of our render frame rate.
+		if (_gameMode == kModeColony && now - lastCenterTick >= 6400) {
 			lastCenterTick = now;
-			_foodCount--;
-			if (_foodCount <= 0) {
-				const int a2 = _armor * _armor;
-				const int w2 = _weapons * _weapons;
-				if (a2 > 0 || w2 > 0)
-					setPower(-_level * a2, -_level * (a2 + w2), -_level * w2);
-				_foodCount = 32;
-			}
+			const int a2 = _armor * _armor;
+			const int w2 = _weapons * _weapons;
+			if (a2 > 0 || w2 > 0)
+				setPower(-_level * a2, -_level * (a2 + w2), -_level * w2);
 		}
 
 		// Original Mac gmain.c: BThink()+Display() both at hardware frame rate.

@@ -312,6 +312,7 @@ void ColonyEngine::droneThink(int num) {
 		copyOverflowObjectToSlot(num);
 	} else {
 		obj.type = kRobDrone;
+		obj.where.wallPad = robotWallPad(kRobDrone);
 		obj.grow = 0;
 		obj.where.power[1] = 10 + ((_randomSource.getRandomNumber(15) & 0x0F) << _level);
 	}
@@ -599,6 +600,7 @@ void ColonyEngine::bigGrow(int num) {
 		if (_robotArray[xindex][yindex] == num)
 			_robotArray[xindex][yindex] = 0;
 		obj.type += 4;
+		obj.where.wallPad = robotWallPad(obj.type);
 		obj.count = 0;
 		obj.time = 10 + (_randomSource.getRandomNumber(63) & 0x3F);
 	} else {
@@ -628,6 +630,7 @@ void ColonyEngine::growRobot(int num) {
 			} else {
 				obj.type += 4;
 			}
+			obj.where.wallPad = robotWallPad(obj.type);
 		}
 		break;
 
@@ -643,6 +646,7 @@ void ColonyEngine::growRobot(int num) {
 				obj.grow = 0;
 				obj.type += 4;
 			}
+			obj.where.wallPad = robotWallPad(obj.type);
 		}
 		break;
 
@@ -655,6 +659,7 @@ void ColonyEngine::growRobot(int num) {
 		    _robotArray[obj.where.xindex][obj.where.yindex] == 0) {
 			obj.count = 0;
 			obj.type -= 4;
+			obj.where.wallPad = robotWallPad(obj.type);
 			_robotArray[obj.where.xindex][obj.where.yindex] = (uint8)num;
 			if (_foodArray[obj.where.xindex][obj.where.yindex] == num)
 				_foodArray[obj.where.xindex][obj.where.yindex] = 0;

@@ -109,6 +109,27 @@ enum RobotType {
 	kRobSnoop = 20
 };
 
+// 3D bounding radius (max XY extent from center) for each robot type.
+// Used by clampToWalls to keep robot geometry from intersecting wall polygons.
+// The original 2D wireframe renderer drew walls over robots (painter's algorithm);
+// in OpenGL 3D both exist as real geometry, so padding is needed.
+// Capped at 112 so the robot keeps at least 32 units of movement freedom
+// within a 256-unit cell (256 - 2*112 = 32).
+inline int robotWallPad(int robotType) {
+	static const int kMaxPad = 112;
+	switch (robotType) {
+	case kRobEye:      return 66;
+	case kRobPyramid:
+	case kRobUPyramid: return 85;
+	case kRobCube:     return 100;
+	case kRobQueen:    return kMaxPad; // actual 120
+	case kRobDrone:
+	case kRobSoldier:  return kMaxPad; // actual 130
+	case kRobSnoop:    return kMaxPad; // actual 180
+	default:           return 40;      // eggs and other small types
+	}
+}
+
 enum ObjectType {
 	kObjDesk = 21,
 	kObjPlant = 22,
@@ -265,6 +286,7 @@ struct Locate {
 	int type;
 	int dx, dy;
 	int dist;
+	int wallPad; // 3D bounding radius for wall clamping (0 = use default kWallPad)
 };
 
 struct Thing {
@@ -473,7 +495,6 @@ private:
 	uint32 _blackoutColor = 0;
 	uint32 _lastClickTime = 0;
 	uint32 _displayCount = 0; // Frame counter for COLOR wall animation (Mac: count)
-	int _foodCount = 32;      // Mac display.c: periodic power drain counter (FCOUNT=32)
 	uint32 _lastHotfootTime = 0;  // Time-gate for HOTFOOT damage (~8fps)
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;

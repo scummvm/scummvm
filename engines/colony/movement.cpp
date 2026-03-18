@@ -230,7 +230,9 @@ bool ColonyEngine::hasInteractiveWallFeature(int cx, int cy, int dir) const {
 }
 
 void ColonyEngine::clampToWalls(Locate *p) {
-	static const int kWallPad = 40;
+	static const int kPlayerWallPad = 40;
+	const bool isPlayer = (p == &_me);
+	const int pad = isPlayer ? kPlayerWallPad : p->wallPad;
 	int cx = p->xindex;
 	int cy = p->yindex;
 	int cellMinX = cx << 8;
@@ -239,17 +241,19 @@ void ColonyEngine::clampToWalls(Locate *p) {
 	int cellMaxY = cellMinY + 255;
 
 	// South wall of this cell (at cellMinY boundary)
-	if ((wallAt(cx, cy) & 0x01) && !hasInteractiveWallFeature(cx, cy, kDirSouth))
-		p->yloc = MAX(p->yloc, cellMinY + kWallPad);
+	// Player can skip clamping near interactive features (doors etc.) to walk through;
+	// robots cannot use features, so they always get clamped.
+	if ((wallAt(cx, cy) & 0x01) && !(isPlayer && hasInteractiveWallFeature(cx, cy, kDirSouth)))
+		p->yloc = MAX(p->yloc, cellMinY + pad);
 	// North wall (at cellMaxY+1 boundary = south wall of cell above)
-	if ((wallAt(cx, cy + 1) & 0x01) && !hasInteractiveWallFeature(cx, cy, kDirNorth))
-		p->yloc = MIN(p->yloc, cellMaxY - kWallPad);
+	if ((wallAt(cx, cy + 1) & 0x01) && !(isPlayer && hasInteractiveWallFeature(cx, cy, kDirNorth)))
+		p->yloc = MIN(p->yloc, cellMaxY - pad);
 	// West wall of this cell (at cellMinX boundary)
-	if ((wallAt(cx, cy) & 0x02) && !hasInteractiveWallFeature(cx, cy, kDirWest))
-		p->xloc = MAX(p->xloc, cellMinX + kWallPad);
+	if ((wallAt(cx, cy) & 0x02) && !(isPlayer && hasInteractiveWallFeature(cx, cy, kDirWest)))
+		p->xloc = MAX(p->xloc, cellMinX + pad);
 	// East wall (at cellMaxX+1 boundary = west wall of cell to right)
-	if ((wallAt(cx + 1, cy) & 0x02) && !hasInteractiveWallFeature(cx, cy, kDirEast))
-		p->xloc = MIN(p->xloc, cellMaxX - kWallPad);
+	if ((wallAt(cx + 1, cy) & 0x02) && !(isPlayer && hasInteractiveWallFeature(cx, cy, kDirEast)))
+		p->xloc = MIN(p->xloc, cellMaxX - pad);
 }
 
 void ColonyEngine::clampToDiagonalWalls(Locate *p) {
@@ -328,7 +332,8 @@ int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Loca
 	pobject->xloc = xnew;
 	pobject->yloc = ynew;
 	clampToWalls(pobject);
-	clampToDiagonalWalls(pobject);
+	if (pobject == &_me)
+		clampToDiagonalWalls(pobject);
 	return 0;
 }
 
