@@ -659,17 +659,18 @@ void ColonyEngine::drawDashboardMac() {
 	}
 }
 
-void ColonyEngine::drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac) {
-	if (x < _headsUpRect.left + 1 || x >= _headsUpRect.right - 1 ||
-	    y < _headsUpRect.top + 1 || y >= _headsUpRect.bottom - 1)
+void ColonyEngine::drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip) {
+	const Common::Rect &cr = clip ? *clip : _headsUpRect;
+	if (x < cr.left + 1 || x >= cr.right - 1 ||
+	    y < cr.top + 1 || y >= cr.bottom - 1)
 		return;
 	if (isMac) {
 		_gfx->drawEllipse(x, y, halfSize, halfSize, color);
 	} else {
-		const int l = MAX<int>(_headsUpRect.left + 1, x - halfSize);
-		const int t = MAX<int>(_headsUpRect.top + 1, y - halfSize);
-		const int r = MIN<int>(_headsUpRect.right - 1, x + halfSize + 1);
-		const int b = MIN<int>(_headsUpRect.bottom - 1, y + halfSize + 1);
+		const int l = MAX<int>(cr.left + 1, x - halfSize);
+		const int t = MAX<int>(cr.top + 1, y - halfSize);
+		const int r = MIN<int>(cr.right - 1, x + halfSize + 1);
+		const int b = MIN<int>(cr.bottom - 1, y + halfSize + 1);
 		if (l >= r || t >= b)
 			return;
 		_gfx->drawRect(Common::Rect(l, t, r, b), color);
@@ -800,6 +801,215 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 	}
 }
 
+void ColonyEngine::markVisited() {
+	if (_level < 1 || _level > 8)
+		return;
+	const int lv = _level - 1;
+	const int cx = _me.xindex;
+	const int cy = _me.yindex;
+	if (cx < 0 || cx >= 32 || cy < 0 || cy >= 32)
+		return;
+
+	// Always mark the player's own cell
+	_visited[lv][cx][cy] = true;
+
+	// Check cardinal neighbors: blocked by wall bit OR door/airlock feature
+	bool canN = false, canS = false, canE = false, canW = false;
+
+	// North: wall at south edge of cell (cx, cy+1)
+	if (cy + 1 < 32) {
+		canN = !(_wall[cx][cy + 1] & 0x01);
+		if (canN && cx < 31 && cy < 31 &&
+		    (_mapData[cx][cy][kDirNorth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirNorth][0] == kWallFeatureAirlock))
+			canN = false;
+	}
+	// South: wall at south edge of cell (cx, cy)
+	if (cy - 1 >= 0) {
+		canS = !(_wall[cx][cy] & 0x01);
+		if (canS && cx < 31 && cy < 31 &&
+		    (_mapData[cx][cy][kDirSouth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirSouth][0] == kWallFeatureAirlock))
+			canS = false;
+	}
+	// East: wall at west edge of cell (cx+1, cy)
+	if (cx + 1 < 32) {
+		canE = !(_wall[cx + 1][cy] & 0x02);
+		if (canE && cx < 31 && cy < 31 &&
+		    (_mapData[cx][cy][kDirEast][0] == kWallFeatureDoor || _mapData[cx][cy][kDirEast][0] == kWallFeatureAirlock))
+			canE = false;
+	}
+	// West: wall at west edge of cell (cx, cy)
+	if (cx - 1 >= 0) {
+		canW = !(_wall[cx][cy] & 0x02);
+		if (canW && cx < 31 && cy < 31 &&
+		    (_mapData[cx][cy][kDirWest][0] == kWallFeatureDoor || _mapData[cx][cy][kDirWest][0] == kWallFeatureAirlock))
+			canW = false;
+	}
+
+	if (canN) _visited[lv][cx][cy + 1] = true;
+	if (canS) _visited[lv][cx][cy - 1] = true;
+	if (canE) _visited[lv][cx + 1][cy] = true;
+	if (canW) _visited[lv][cx - 1][cy] = true;
+
+	// Diagonal neighbors: visible only if both adjacent cardinal directions are open
+	if (canN && canE && cx + 1 < 32 && cy + 1 < 32) _visited[lv][cx + 1][cy + 1] = true;
+	if (canN && canW && cx - 1 >= 0 && cy + 1 < 32) _visited[lv][cx - 1][cy + 1] = true;
+	if (canS && canE && cx + 1 < 32 && cy - 1 >= 0) _visited[lv][cx + 1][cy - 1] = true;
+	if (canS && canW && cx - 1 >= 0 && cy - 1 >= 0) _visited[lv][cx - 1][cy - 1] = true;
+}
+
+static bool isPassableFeature(int feat) {
+	return feat == kWallFeatureDoor || feat == kWallFeatureAirlock ||
+	       feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
+	       feat == kWallFeatureTunnel || feat == kWallFeatureElevator;
+}
+
+void ColonyEngine::automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy) {
+	const long ox = xloc + (long)dx * lExt;
+	const long oy = yloc + (long)dy * lExt;
+	sx = ccx + (int)((ox * tsin - oy * tcos) >> 8);
+	sy = ccy - (int)((oy * tsin + ox * tcos) >> 8);
+}
+
+void ColonyEngine::automapDrawWall(const Common::Rect &vp, int x1, int y1, int x2, int y2, uint32 color) {
+	if (clipLineToRect(x1, y1, x2, y2, vp)) {
+		_gfx->drawLine(x1, y1, x2, y2, color);
+		// Thicker wall: offset by 1 pixel perpendicular
+		int ox = y2 - y1, oy = x1 - x2;
+		int len = (int)sqrtf((float)(ox * ox + oy * oy));
+		if (len > 0) {
+			ox = ox / len;
+			oy = oy / len;
+			int ax1 = x1 + ox, ay1 = y1 + oy, ax2 = x2 + ox, ay2 = y2 + oy;
+			if (clipLineToRect(ax1, ay1, ax2, ay2, vp))
+				_gfx->drawLine(ax1, ay1, ax2, ay2, color);
+		}
+	}
+}
+
+int ColonyEngine::automapWallFeature(int fx, int fy, int dir) {
+	if (fx >= 0 && fx < 31 && fy >= 0 && fy < 31) {
+		int feat = _mapData[fx][fy][dir][0];
+		if (isPassableFeature(feat))
+			return feat;
+	}
+	int nx = fx, ny = fy, opp = -1;
+	switch (dir) {
+	case kDirNorth: ny = fy + 1; opp = kDirSouth; break;
+	case kDirSouth: ny = fy - 1; opp = kDirNorth; break;
+	case kDirEast:  nx = fx + 1; opp = kDirWest;  break;
+	case kDirWest:  nx = fx - 1; opp = kDirEast;  break;
+	default: return 0;
+	}
+	if (nx >= 0 && nx < 31 && ny >= 0 && ny < 31) {
+		int feat = _mapData[nx][ny][opp][0];
+		if (isPassableFeature(feat))
+			return feat;
+	}
+	return 0;
+}
+
+void ColonyEngine::automapDrawWallWithFeature(const Common::Rect &vp, int wx1, int wy1, int wx2, int wy2, int feat, int lExt, uint32 color) {
+	automapDrawWall(vp, wx1, wy1, wx2, wy2, color);
+
+	if (isPassableFeature(feat)) {
+		const int ppx = (wy2 - wy1);
+		const int ppy = (wx1 - wx2);
+		const int tickLen = MAX(2, lExt / 8);
+		const int plen = (int)sqrtf((float)(ppx * ppx + ppy * ppy));
+		if (plen > 0) {
+			const int tx = (ppx * tickLen) / plen;
+			const int ty = (ppy * tickLen) / plen;
+			const int ax = wx1 + (wx2 - wx1) / 4;
+			const int ay = wy1 + (wy2 - wy1) / 4;
+			const int bx = wx1 + 3 * (wx2 - wx1) / 4;
+			const int by = wy1 + 3 * (wy2 - wy1) / 4;
+			automapDrawWall(vp, ax - tx, ay - ty, ax + tx, ay + ty, color);
+			automapDrawWall(vp, bx - tx, by - ty, bx + tx, by + ty, color);
+		}
+	}
+}
+
+void ColonyEngine::drawAutomap() {
+	if (_level < 1 || _level > 8)
+		return;
+
+	const int lv = _level - 1;
+	const bool isMac = (_renderMode == Common::kRenderMacintosh);
+
+	const Common::Rect vp(0, _menuBarHeight, _width, _height);
+	const int vpW = vp.width();
+	const int vpH = vp.height();
+	if (vpW <= 0 || vpH <= 0)
+		return;
+
+	_gfx->fillRect(vp, isMac ? 0xFFA0D0FF : 15);
+	_gfx->drawRect(vp, 0);
+
+	const int lExt = MIN(vpW, vpH) / 12;
+	if (lExt < 8)
+		return;
+
+	const int xloc = (lExt * ((_me.xindex << 8) - _me.xloc)) >> 8;
+	const int yloc = (lExt * ((_me.yindex << 8) - _me.yloc)) >> 8;
+	const int ccx = (vp.left + vp.right) >> 1;
+	const int ccy = (vp.top + vp.bottom) >> 1;
+	const int tsin = _sint[_me.look];
+	const int tcos = _cost[_me.look];
+	const uint32 lineColor = 0;
+
+	const int radius = (int)(sqrtf((float)(vpW * vpW + vpH * vpH)) / (2.0f * lExt)) + 2;
+	const int px = _me.xindex;
+	const int py = _me.yindex;
+	const int markerR = isMac ? 5 : 3;
+	const int foodR = isMac ? 3 : 2;
+
+	for (int dy = -radius; dy <= radius; dy++) {
+		for (int dx = -radius; dx <= radius; dx++) {
+			const int cx = px + dx;
+			const int cy = py + dy;
+			if (cx < 0 || cx >= 32 || cy < 0 || cy >= 32)
+				continue;
+			if (!_visited[lv][cx][cy])
+				continue;
+
+			int x0, y0, x1, y1, x2, y2, x3, y3;
+			automapCellCorner(dx, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x0, y0);
+			automapCellCorner(dx + 1, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x1, y1);
+			automapCellCorner(dx + 1, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x2, y2);
+			automapCellCorner(dx, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, x3, y3);
+
+			if (_wall[cx][cy] & 0x01)
+				automapDrawWallWithFeature(vp, x0, y0, x1, y1, automapWallFeature(cx, cy, kDirSouth), lExt, lineColor);
+			if (_wall[cx][cy] & 0x02)
+				automapDrawWallWithFeature(vp, x0, y0, x3, y3, automapWallFeature(cx, cy, kDirWest), lExt, lineColor);
+			if (cy + 1 < 32 && (_wall[cx][cy + 1] & 0x01))
+				automapDrawWallWithFeature(vp, x3, y3, x2, y2, automapWallFeature(cx, cy, kDirNorth), lExt, lineColor);
+			if (cx + 1 < 32 && (_wall[cx + 1][cy] & 0x02))
+				automapDrawWallWithFeature(vp, x1, y1, x2, y2, automapWallFeature(cx, cy, kDirEast), lExt, lineColor);
+
+			if (ABS(dx) <= 6 && ABS(dy) <= 6) {
+				int mx, my;
+				automapCellCorner(dx, dy, xloc, yloc, lExt, tsin, tcos, ccx, ccy, mx, my);
+				int mx2, my2;
+				automapCellCorner(dx + 1, dy + 1, xloc, yloc, lExt, tsin, tcos, ccx, ccy, mx2, my2);
+				mx = (mx + mx2) >> 1;
+				my = (my + my2) >> 1;
+
+				const uint8 rnum = _robotArray[cx][cy];
+				if (rnum > 0 && rnum != kMeNum && rnum <= _objects.size() && _objects[rnum - 1].alive)
+					drawMiniMapMarker(mx, my, markerR, lineColor, isMac, &vp);
+				if (_foodArray[cx][cy] > 0)
+					drawMiniMapMarker(mx, my, foodR, lineColor, isMac, &vp);
+			}
+		}
+	}
+
+	// Player eye icon at center
+	const int eyeRx = lExt >> 2;
+	const int eyeRy = lExt >> 3;
+	_gfx->drawEllipse(ccx, ccy, eyeRx, eyeRy, lineColor);
+	_gfx->fillEllipse(ccx, ccy, eyeRx >> 1, eyeRy, lineColor);
+}
 void ColonyEngine::drawForkliftOverlay() {
 	if (_fl <= 0 || _screenR.width() <= 0 || _screenR.height() <= 0)
 		return;

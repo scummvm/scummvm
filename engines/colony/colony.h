@@ -436,6 +436,8 @@ private:
 	uint8 _robotArray[32][32];
 	uint8 _foodArray[32][32];
 	uint8 _dirXY[32][32];
+	bool _visited[8][32][32];  // per-level fog-of-war: _visited[level-1][x][y]
+	bool _showAutomap;
 
 	Locate _me;
 	Common::Array<Thing> _objects;
@@ -652,10 +654,16 @@ private:
 	void drawDOSBarGraph(int x, int y, int height);
 	void updateDOSPowerBars();
 	static int qlog(int32 x);
-	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac);
+	void drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip = nullptr);
 	bool hasRobotAt(int x, int y) const;
 	bool hasFoodAt(int x, int y) const;
 	void drawMiniMap(uint32 lineColor);
+	void drawAutomap();
+	void markVisited();
+	void automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy);
+	void automapDrawWall(const Common::Rect &vp, int x1, int y1, int x2, int y2, uint32 color);
+	int automapWallFeature(int fx, int fy, int dir);
+	void automapDrawWallWithFeature(const Common::Rect &vp, int wx1, int wy1, int wx2, int wy2, int feat, int lExt, uint32 color);
 	void drawForkliftOverlay();
 	void drawCrosshair();
 	bool clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Common::Rect &clip) const;

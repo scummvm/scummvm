@@ -240,7 +240,7 @@ bool ColonyEngine::createObject(int type, int xloc, int yloc, uint8 ang) {
 			}
 		}
 		if (slot < 0) {
-			warning("createObject: no free dynamic slot for type %d on level %d", type, _level);
+			debugC(2, kColonyDebugMap, "createObject: no free dynamic slot for type %d on level %d", type, _level);
 			return false;
 		}
 	} else {

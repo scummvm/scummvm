@@ -171,6 +171,8 @@ ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(
 	memset(_robotArray, 0, sizeof(_robotArray));
 	memset(_foodArray, 0, sizeof(_foodArray));
 	memset(_dirXY, 0, sizeof(_dirXY));
+	memset(_visited, 0, sizeof(_visited));
+	_showAutomap = false;
 
 	// PATCH.C init
 	memset(_levelData, 0, sizeof(_levelData));
@@ -983,6 +985,8 @@ Common::Error ColonyEngine::run() {
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT)
 					_sprint = true;
+				if (event.kbd.keycode == Common::KEYCODE_TAB)
+					_showAutomap = !_showAutomap;
 				// Speed keys 1-5 remain as raw keyboard events
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_1:
@@ -1096,7 +1100,11 @@ Common::Error ColonyEngine::run() {
 			drawDashboardStep1();
 			drawCrosshair();
 			checkCenter();
+			markVisited();
 		}
+
+		if (_showAutomap && _gameMode == kModeColony)
+			drawAutomap();
 
 		// Draw Mac menu bar overlay (render directly to our surface, skip WM's
 		// g_system->copyRectToScreen which conflicts with the OpenGL backend)
