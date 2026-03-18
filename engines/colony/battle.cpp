@@ -782,8 +782,15 @@ void ColonyEngine::battleDrawTanks() {
 			_battleEnter.dist = forward;
 			draw3DBattlePrism(kEntDef, _battleEnter.xloc, _battleEnter.yloc,
 			                  _battleEnter.ang, -kFloor);
+			// Draw door with depth test disabled so it renders fully
+			// on top of the coplanar entrance wall (same fill color,
+			// but the black outline becomes clearly visible).
+			_gfx->setDepthState(true, false);
+			_gfx->setDepthRange(0.0, 0.999);
 			draw3DBattlePrism(kEntDoorDef, _battleEnter.xloc, _battleEnter.yloc,
 			                  _battleEnter.ang, -kFloor);
+			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleEnter;
 				_battleMaxP++;
@@ -833,8 +840,12 @@ void ColonyEngine::battleDrawTanks() {
 			                  _battleShip.ang, -kFloor);
 			draw3DBattlePrism(kFRightDef, _battleShip.xloc, _battleShip.yloc,
 			                  _battleShip.ang, -kFloor);
+			_gfx->setDepthState(true, false);
+			_gfx->setDepthRange(0.0, 0.999);
 			draw3DBattlePrism(kSDoorDef, _battleShip.xloc, _battleShip.yloc,
 			                  _battleShip.ang, -kFloor);
+			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleShip;
 				_battleMaxP++;
