@@ -45,6 +45,16 @@ static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 		!roomName.equalsIgnoreCase("BOWLSNTRY1");
 }
 
+static Common::String resolveStartupNpcLabel(const StartupNpcRecord &npc) {
+	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return label;
+}
+
 StartupRoomSystem::StartupRoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		StartupInventorySystem &inventory)
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
@@ -499,26 +509,39 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				return Common::kNoError;
 
 			const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
+			const bool inventorySelectionActive = _inventory.hasSelection();
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
-				(_inventory.isOpen() && (inventoryPanelContainsMouse || !_inventory.hasSelection()));
+				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos);
 			Common::String promptText;
-			if (_inventory.isOpen()) {
+			if (inventorySelectionActive) {
+				Common::String targetLabel;
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
-				if (_inventory.hasSelection()) {
-					Common::String targetLabel;
+				if (_inventory.isOpen()) {
 					if (inventoryHover && !StartupInventorySystem::isExitObject(inventoryHover->object) &&
-							!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
+							!StartupInventorySystem::isStatusObject(inventoryHover->object) &&
+							!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 					} else if (!inventoryPanelContainsMouse && hoverState.object) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
+					} else if (!inventoryPanelContainsMouse && hoverState.npc) {
+						targetLabel = resolveStartupNpcLabel(*hoverState.npc);
 					}
-					promptText = _inventory.buildSelectedPrompt(targetLabel);
-				} else if (inventoryHover &&
+				} else if (hoverState.object) {
+					targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
+				} else if (hoverState.npc) {
+					targetLabel = resolveStartupNpcLabel(*hoverState.npc);
+				}
+				promptText = _inventory.buildSelectedPrompt(targetLabel);
+				_inventory.setPromptText(promptText);
+				hoverState.cursorSequence = 7;
+			} else if (_inventory.isOpen()) {
+				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+				if (inventoryHover &&
 						!StartupInventorySystem::isStatusObject(inventoryHover->object)) {
 					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
 				}
@@ -529,7 +552,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			}
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
-					(showingInspectText || idleState.active || idleState.exiting || _inventory.isOpen())
+					(showingInspectText || idleState.active || idleState.exiting ||
+						_inventory.isOpen() || inventorySelectionActive)
 						? 7
 						: hoverState.cursorSequence);
 			}
@@ -537,6 +561,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 			if (_inventory.isOpen())
 				_inventory.drawOverlay(*activeScreen, *bodyFont);
+			else if (inventorySelectionActive)
+				_inventory.drawSelectedDragItem(*activeScreen, _mousePos);
 
 			if (showingInspectText) {
 				drawRoomInspectText(*activeScreen, *art, *bodyFont, inspectText);
@@ -577,7 +603,14 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				}
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
-					if (_inventory.clearSelection() || _inventory.close())
+					const bool clearedSelection = _inventory.clearSelection();
+					const bool closedInventory = _inventory.close();
+					if (clearedSelection || closedInventory)
+						needsRedraw = true;
+					break;
+				}
+				if (_inventory.hasSelection()) {
+					if (_inventory.clearSelection())
 						needsRedraw = true;
 					break;
 				}
@@ -614,7 +647,9 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 					if (inventoryHover) {
 						if (StartupInventorySystem::isExitObject(inventoryHover->object)) {
-							if (_inventory.close())
+							const bool clearedSelection = _inventory.clearSelection();
+							const bool closedInventory = _inventory.close();
+							if (clearedSelection || closedInventory)
 								needsRedraw = true;
 							break;
 						}
@@ -639,38 +674,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					}
 
 					if (_inventory.hasSelection()) {
-						const StartupRoomHoverState useHoverState = resolveRoomHoverState(
-							_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-							scene.sceneRegions, _mousePos);
-						if (useHoverState.npc) {
-							bool didTransition = false;
-							Common::Error dialogueError = interactionProcessor.runScriptedDialogue(
-								useHoverState.npc->npcName, _inventory.getSelectedItemName(),
-								Common::String(), didTransition);
-							if (dialogueError.getCode() != Common::kNoError)
-								return dialogueError;
-							if (startupFlow.hasPendingMainMenuReturn())
-								return Common::kNoError;
-							if (_inventory.clearSelection() || _inventory.close())
-								needsRedraw = true;
+						if (!inventoryPanelBounds.contains(_mousePos) && _inventory.close())
 							needsRedraw = true;
-							break;
-						}
-						const StartupObjectRecord *roomTarget = useHoverState.object
-							? findSceneObjectByName(scene.sceneObjects, useHoverState.object->objectName)
-							: nullptr;
-						if (roomTarget) {
-							Common::Error interactionError =
-								handleInventoryTargetInteraction(*roomTarget, true);
-							if (interactionError.getCode() != Common::kNoError)
-								return interactionError;
-							needsRedraw = true;
-							break;
-						}
-					}
-
-					if (!inventoryPanelBounds.contains(_mousePos) && _inventory.hasSelection()) {
-						needsRedraw = true;
 						break;
 					}
 					if (!inventoryPanelBounds.contains(_mousePos) && _inventory.close())
@@ -687,6 +692,33 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
 					hoverState.region ? hoverState.region->regionName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
+				if (_inventory.hasSelection()) {
+					if (hoverState.npc) {
+						bool didTransition = false;
+						Common::Error dialogueError = interactionProcessor.runScriptedDialogue(
+							hoverState.npc->npcName, _inventory.getSelectedItemName(),
+							Common::String(), didTransition);
+						if (dialogueError.getCode() != Common::kNoError)
+							return dialogueError;
+						if (startupFlow.hasPendingMainMenuReturn())
+							return Common::kNoError;
+						if (_inventory.clearSelection())
+							needsRedraw = true;
+						break;
+					}
+
+					StartupObjectRecord *roomTarget = hoverState.object
+						? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
+						: nullptr;
+					if (roomTarget) {
+						Common::Error interactionError =
+							handleInventoryTargetInteraction(*roomTarget, true);
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
+						needsRedraw = true;
+					}
+					break;
+				}
 				if (hoverState.playerEntity) {
 					if (!playerState.entity || hoverState.playerEntity != playerState.entity ||
 						idleState.active || idleState.exiting ||
@@ -826,7 +858,9 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 				if (_inventory.isOpen()) {
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						if (_inventory.clearSelection() || _inventory.close())
+						const bool clearedSelection = _inventory.clearSelection();
+						const bool closedInventory = _inventory.close();
+						if (clearedSelection || closedInventory)
 							needsRedraw = true;
 					} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 							event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
@@ -835,6 +869,21 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 							needsRedraw = true;
 					}
 					break;
+				}
+				if (_inventory.hasSelection()) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						if (_inventory.clearSelection())
+							needsRedraw = true;
+						break;
+					}
+					if (event.kbd.keycode == Common::KEYCODE_i) {
+						if (_inventory.clearSelection())
+							needsRedraw = true;
+						if (!openInventoryOverlay())
+							return Common::kReadingFailed;
+						needsRedraw = true;
+						break;
+					}
 				}
 
 				if (event.kbd.keycode == Common::KEYCODE_LEFT)

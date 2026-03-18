@@ -63,6 +63,7 @@ public:
 	const StartupInventoryVisual *findItemAtPoint(const Common::Point &point) const;
 	Common::Rect getPanelBounds() const;
 	void drawOverlay(Graphics::Screen &screen, const Graphics::Font &font) const;
+	void drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const;
 
 	static bool isExitObject(const StartupObjectRecord &object);
 	static bool isStatusObject(const StartupObjectRecord &object);

@@ -1272,6 +1272,30 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - The portrait is recalculated inside the inventory loop, so native healing or damage that lands while the inventory is open updates the selected `INV_STAT*` image immediately.
 - The portrait is materialized through `spawn_object_entity_from_record` and the shared render-entity path, so the rotated photo depends on palette-index-0 transparency rather than an opaque rectangular bitmap blit.
 
+## Inventory Item Carry / Use Handoff
+
+**Confidence:** High
+
+**Evidence**
+- `run_inventory_screen` sets the active-item latch when a carryable inventory object is selected, clears the previous interaction-text overlay, and rebuilds the centered `USING_ON_ID` prompt from `Use %s on ...`.
+- While that latch is set, `run_inventory_screen` treats the selected inventory object as the live dragged entity: it probes overlap against other inventory entities for `USEITEM` / dialogue routing, and if the dragged item leaves the inventory panel rect (`x=0x49..0x234`, `y=0x73..0x19b`) it reassigns the object's owner/room to the current room and returns that entity to the caller.
+- `run_harvester_main_loop` consumes that returned entity as the active selected item. Each frame it repositions the entity under the mouse, rebuilds the same `USING_ON_ID` prompt from overlapping room targets, and routes left-click use through `handle_target_interaction`.
+- The cancel paths are explicit in the main loop: right-click, room/menu exits, game-over cleanup, and the `I` reopen-inventory path all clear the active-item latch and put the carried object back into `INVENTORY`.
+
+**Key Functions**
+- `run_inventory_screen`
+- `run_harvester_main_loop`
+- `handle_target_interaction`
+
+**Key Data**
+- `g_useitem_records`
+- `ObjectRecord.current_owner_or_room`
+- the active-item latch at `0xd60b8`
+
+**Notes**
+- The standalone inventory UI does not use room-region exits while an item is active; the active item must first return to the room loop.
+- Room-world use and pickup both funnel through the same carried-item state, so picking up a room object while carrying an inventory item clears the carry state after the pickup path resolves.
+
 ## Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.
