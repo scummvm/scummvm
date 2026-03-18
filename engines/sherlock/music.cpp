@@ -260,6 +260,9 @@ Music::Music(SherlockEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			if (ConfMan.getBool("native_mt32")) {
 				_midiDriver = MidiDriver_MT32_create();
 				_musicType = MT_MT32;
+			} else {
+				_midiDriver = MidiDriver_SH_AdLib_create();
+				_musicType = MT_ADLIB;
 			}
 			break;
 		default:
