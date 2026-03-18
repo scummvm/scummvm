@@ -21,14 +21,19 @@
 
 #include "harvester/startup_room.h"
 
+#include "common/endian.h"
 #include "common/events.h"
+#include "common/ptr.h"
 #include "common/system.h"
+#include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
+#include "harvester/cft_font.h"
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
+#include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/startup_art.h"
 #include "harvester/startup_flow.h"
@@ -38,11 +43,70 @@
 namespace Harvester {
 
 static const uint32 kRoomExitFastClickWindowTicks = 20;
+static const char *const kPlayerInventoryLabel = "your inventory";
+static const byte kTransparentPaletteIndex = 0;
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
 		!roomName.equalsIgnoreCase("RMNBATH") &&
 		!roomName.equalsIgnoreCase("BOWLSNTRY1");
+}
+
+static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
+	if (!bitmap.isValid())
+		return;
+
+	int destX = x;
+	int destY = y;
+	int srcX = 0;
+	int srcY = 0;
+	int width = (int)bitmap.width;
+	int height = (int)bitmap.height;
+
+	if (destX < 0) {
+		srcX = -destX;
+		width += destX;
+		destX = 0;
+	}
+	if (destY < 0) {
+		srcY = -destY;
+		height += destY;
+		destY = 0;
+	}
+	if (destX >= screen.w || destY >= screen.h || width <= 0 || height <= 0)
+		return;
+
+	width = MIN<int>(width, screen.w - destX);
+	height = MIN<int>(height, screen.h - destY);
+	if (width <= 0 || height <= 0)
+		return;
+
+	const byte *src = bitmap.pixels.data() + srcY * bitmap.width + srcX;
+	byte *dst = (byte *)screen.getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
+		screen.format.bytesPerPixel, kTransparentPaletteIndex);
+}
+
+static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
+	const StartupText *startupText = engine.getStartupText();
+	if (!startupText || !fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : startupText->getFonts()) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
+}
+
+static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
+	if (itemLabel.empty())
+		return Common::String();
+	if (targetLabel.empty())
+		return Common::String::format("Use %s on ...", itemLabel.c_str());
+
+	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
 }
 
 static Common::String resolveStartupNpcLabel(const StartupNpcRecord &npc) {
@@ -53,6 +117,52 @@ static Common::String resolveStartupNpcLabel(const StartupNpcRecord &npc) {
 	}
 
 	return label;
+}
+
+static Common::String resolveCarriedObjectSpritePath(const StartupObjectRecord &object) {
+	if (!object.altSpritePath.empty())
+		return object.altSpritePath;
+	return object.spritePath;
+}
+
+static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 12)
+		return false;
+
+	bitmap = IndexedBitmap();
+	bitmap.width = READ_LE_UINT32(data.data());
+	bitmap.height = READ_LE_UINT32(data.data() + 4);
+	const uint32 pixelCount = bitmap.width * bitmap.height;
+	if (bitmap.width == 0 || bitmap.height == 0 || data.size() < 12 + pixelCount)
+		return false;
+
+	bitmap.pixels.resize(pixelCount);
+	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
+}
+
+static bool shouldDispatchPickupActionOnCarryStart(const StartupObjectRecord &object) {
+	if (object.actionTag.empty())
+		return false;
+
+	return !object.objectName.equalsIgnoreCase("SANDWICH") &&
+		!object.objectName.equalsIgnoreCase("SANDWICH2") &&
+		!object.objectName.equalsIgnoreCase("SYRINGE");
+}
+
+static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &promptText, bool useNativeFont) {
+	if (promptText.empty())
+		return;
+
+	if (useNativeFont) {
+		font.drawString(&screen, promptText, 0, 462, 640, 0, Graphics::kTextAlignCenter);
+		return;
+	}
+
+	font.drawString(&screen, promptText, 1, 463, 640, 0, Graphics::kTextAlignCenter);
+	font.drawString(&screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
 }
 
 StartupRoomSystem::StartupRoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -101,7 +211,18 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		Graphics::Screen *screen = getActiveScreen();
 		const StartupArt *art = _engine.getStartupArt();
 		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-		if (!screen || !art || !bodyFont)
+		const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
+		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
+		const Graphics::Font *promptFont = bodyFont;
+		bool useNativePromptFont = false;
+		if (promptFontResource) {
+			promptCftFont.reset(new HarvesterCftFont(*promptFontResource));
+			if (promptCftFont->isValid()) {
+				promptFont = promptCftFont.get();
+				useNativePromptFont = true;
+			}
+		}
+		if (!screen || !art || !bodyFont || !promptFont)
 			return Common::kNoError;
 
 		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
@@ -142,6 +263,17 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		uint32 lastLeftButtonReleaseTick = 0;
 		StartupRoomIdleAnimationState idleState;
 		bool needsRedraw = true;
+		Common::String carriedRoomItemName;
+		Common::String carriedRoomItemLabel;
+		IndexedBitmap carriedRoomItemBitmap;
+		auto hasCarriedRoomItem = [&]() {
+			return !carriedRoomItemName.empty();
+		};
+		auto clearCarriedRoomItem = [&]() {
+			carriedRoomItemName.clear();
+			carriedRoomItemLabel.clear();
+			carriedRoomItemBitmap = IndexedBitmap();
+		};
 		auto resetIdleState = [&]() {
 			idleState = StartupRoomIdleAnimationState();
 			idleState.activityTick = getRuntimeClockTicks();
@@ -171,18 +303,6 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			if (playerState.entity && playerState.facing >= 0)
 				(void)setPlayerIdleAnimation(playerState, playerState.facing);
 		};
-
-	auto openInventoryOverlay = [&]() {
-		moveLeft = false;
-		moveRight = false;
-		moveUp = false;
-		moveDown = false;
-		pendingRegionName.clear();
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		return _inventory.open();
-	};
 	auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
 		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
 		StartupRoomSetupState refreshedState;
@@ -220,6 +340,27 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		startupFlow.resetCursorAnimationSequence();
 		captureCurrentSaveState();
 		return _inventory.refresh();
+	};
+	auto stowCarriedRoomItemToInventory = [&]() {
+		if (!hasCarriedRoomItem())
+			return true;
+
+		_engine.getStartupScript()->addRuntimeObjectToInventory(carriedRoomItemName);
+		clearCarriedRoomItem();
+		return _inventory.refresh();
+	};
+	auto openInventoryOverlay = [&]() {
+		moveLeft = false;
+		moveRight = false;
+		moveUp = false;
+		moveDown = false;
+		pendingRegionName.clear();
+		playerState.hasMoveTarget = false;
+		playerState.turnActive = false;
+		playerState.turnTargetFacing = -1;
+		if (!stowCarriedRoomItemToInventory())
+			return false;
+		return _inventory.open();
 	};
 	auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
 		Graphics::Screen *activeScreen = getActiveScreen();
@@ -388,25 +529,61 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 		refreshCurrentScene,
 		captureDialogueBackdrop, runRoomExitCommands, resetIdleState
 	};
-	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target, bool preferPickup) -> Common::Error {
+	auto beginRoomItemCarry = [&](const StartupObjectRecord &object) -> Common::Error {
+		StartupScript *startupScript = _engine.getStartupScript();
+		ResourceManager *resources = _engine.getResources();
+		if (!startupScript || !resources)
+			return Common::kReadingFailed;
+
+		clearCarriedRoomItem();
+		carriedRoomItemName = object.objectName;
+		carriedRoomItemLabel = startupScript->resolveObjectLabel(object);
+		const Common::String spritePath = resolveCarriedObjectSpritePath(object);
+		if (!spritePath.empty())
+			loadBitmapResource(*resources, spritePath, carriedRoomItemBitmap);
+
+		startupScript->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
+
+		bool didTransition = false;
+		if (shouldDispatchPickupActionOnCarryStart(object)) {
+			StartupInteractionResult pickupInteraction;
+			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
+				Common::Error interactionError =
+					interactionProcessor.handleInteractionResult(pickupInteraction, didTransition);
+				if (interactionError.getCode() != Common::kNoError)
+					return interactionError;
+				if (startupFlow.hasPendingMainMenuReturn())
+					return Common::kNoError;
+			}
+		}
+
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			needsRedraw = true;
+			return Common::kNoError;
+		}
+		if (!didTransition && !refreshCurrentScene(true))
+			return Common::kReadingFailed;
+
+		needsRedraw = true;
+		return Common::kNoError;
+	};
+	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target) -> Common::Error {
 		if (!_inventory.hasSelection())
 			return Common::kNoError;
 
 		StartupInteractionResult interaction;
-		bool handled = false;
-		if (preferPickup && _engine.getStartupScript()->isPickupObject(target))
-			handled = _engine.getStartupScript()->resolveObjectInteraction(target, interaction);
-		else
-			handled = _engine.getStartupScript()->resolveUseItemInteraction(
-				_inventory.getSelectedItemName(), target, interaction);
+		const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
+			_inventory.getSelectedItemName(), target, interaction);
 		if (!handled)
 			return Common::kNoError;
 
-		_inventory.clearSelection();
 		bool didTransition = false;
 		Common::Error interactionError = interactionProcessor.handleInteractionResult(interaction, didTransition);
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
+		_inventory.clearSelection();
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
 		if (!_inventory.refresh())
@@ -497,10 +674,15 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			pendingRoomChange = _engine.getPendingLoadedStartupSaveRoomState().entranceName;
 			if (pendingRoomChange.empty())
 				pendingRoomChange = _engine.getPendingLoadedStartupSaveRoomState().roomName;
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
 			break;
 		}
-		if (!pendingRoomChange.empty())
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
 			break;
+		}
 		captureCurrentSaveState();
 
 		if (needsRedraw) {
@@ -510,6 +692,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 			const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 			const bool inventorySelectionActive = _inventory.hasSelection();
+			const bool roomCarryActive = hasCarriedRoomItem();
+			const bool activeCarry = inventorySelectionActive || roomCarryActive;
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
 				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
@@ -518,7 +702,16 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos);
 			Common::String promptText;
-			if (inventorySelectionActive) {
+			auto resolveCarryTargetLabel = [&]() {
+				if (hoverState.playerEntity && playerState.entity && hoverState.playerEntity == playerState.entity)
+					return Common::String(kPlayerInventoryLabel);
+				if (hoverState.object)
+					return _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
+				if (hoverState.npc)
+					return resolveStartupNpcLabel(*hoverState.npc);
+				return Common::String();
+			};
+			if (activeCarry) {
 				Common::String targetLabel;
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (_inventory.isOpen()) {
@@ -526,18 +719,18 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 							!StartupInventorySystem::isStatusObject(inventoryHover->object) &&
 							!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
 						targetLabel = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
-					} else if (!inventoryPanelContainsMouse && hoverState.object) {
-						targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
-					} else if (!inventoryPanelContainsMouse && hoverState.npc) {
-						targetLabel = resolveStartupNpcLabel(*hoverState.npc);
+					} else if (!inventoryPanelContainsMouse) {
+						targetLabel = resolveCarryTargetLabel();
 					}
-				} else if (hoverState.object) {
-					targetLabel = _engine.getStartupScript()->resolveObjectLabel(*hoverState.object);
-				} else if (hoverState.npc) {
-					targetLabel = resolveStartupNpcLabel(*hoverState.npc);
+				} else {
+					targetLabel = resolveCarryTargetLabel();
 				}
-				promptText = _inventory.buildSelectedPrompt(targetLabel);
-				_inventory.setPromptText(promptText);
+				if (inventorySelectionActive) {
+					promptText = _inventory.buildSelectedPrompt(targetLabel);
+					_inventory.setPromptText(promptText);
+				} else {
+					promptText = buildUseItemPrompt(carriedRoomItemLabel, targetLabel);
+				}
 				hoverState.cursorSequence = 7;
 			} else if (_inventory.isOpen()) {
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
@@ -553,28 +746,26 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
-						_inventory.isOpen() || inventorySelectionActive)
+						_inventory.isOpen() || activeCarry)
 						? 7
 						: hoverState.cursorSequence);
 			}
 
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 			if (_inventory.isOpen())
-				_inventory.drawOverlay(*activeScreen, *bodyFont);
-			else if (inventorySelectionActive)
+				_inventory.drawOverlay(*activeScreen);
+			if (inventorySelectionActive) {
 				_inventory.drawSelectedDragItem(*activeScreen, _mousePos);
+			} else if (roomCarryActive && carriedRoomItemBitmap.isValid()) {
+				const int drawX = _mousePos.x - (int)carriedRoomItemBitmap.width / 2;
+				const int drawY = _mousePos.y - (int)carriedRoomItemBitmap.height / 2;
+				blitBitmap(*activeScreen, carriedRoomItemBitmap, drawX, drawY);
+			}
 
 			if (showingInspectText) {
 				drawRoomInspectText(*activeScreen, *art, *bodyFont, inspectText);
 			} else if (!promptText.empty()) {
-				// Shared room prompt rendering remains in the orchestration layer.
-				{
-					const byte shadowColor = 0;
-					bodyFont->drawString(activeScreen, promptText, 1, 463, 640, shadowColor,
-						Graphics::kTextAlignCenter);
-					bodyFont->drawString(activeScreen, promptText, 0, 462, 640, 0xce,
-						Graphics::kTextAlignCenter);
-				}
+				drawRoomPrompt(*activeScreen, *promptFont, promptText, useNativePromptFont);
 			}
 
 			if (runtimeEntities)
@@ -613,6 +804,11 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					if (_inventory.clearSelection())
 						needsRedraw = true;
 					break;
+				}
+				if (hasCarriedRoomItem()) {
+					if (!stowCarriedRoomItemToInventory())
+						return Common::kReadingFailed;
+					needsRedraw = true;
 				}
 				break;
 			case Common::EVENT_LBUTTONUP:
@@ -665,7 +861,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 						if (!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
 							Common::Error interactionError =
-								handleInventoryTargetInteraction(inventoryHover->object, false);
+								handleInventoryTargetInteraction(inventoryHover->object);
 							if (interactionError.getCode() != Common::kNoError)
 								return interactionError;
 						}
@@ -692,6 +888,15 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
 					hoverState.region ? hoverState.region->regionName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
+				if (hasCarriedRoomItem()) {
+					if (hoverState.playerEntity && playerState.entity &&
+							hoverState.playerEntity == playerState.entity) {
+						if (!stowCarriedRoomItemToInventory())
+							return Common::kReadingFailed;
+						needsRedraw = true;
+					}
+					break;
+				}
 				if (_inventory.hasSelection()) {
 					if (hoverState.npc) {
 						bool didTransition = false;
@@ -712,7 +917,7 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 						: nullptr;
 					if (roomTarget) {
 						Common::Error interactionError =
-							handleInventoryTargetInteraction(*roomTarget, true);
+							handleInventoryTargetInteraction(*roomTarget);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
 						needsRedraw = true;
@@ -813,6 +1018,12 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					needsRedraw = true;
 					break;
 				}
+				if (_engine.getStartupScript()->isPickupObject(*clickedObject)) {
+					Common::Error carryError = beginRoomItemCarry(*clickedObject);
+					if (carryError.getCode() != Common::kNoError)
+						return carryError;
+					break;
+				}
 
 				StartupInteractionResult interaction;
 				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
@@ -900,6 +1111,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 					needsRedraw = true;
 					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					if (!stowCarriedRoomItemToInventory())
+						return Common::kReadingFailed;
 					moveLeft = false;
 					moveRight = false;
 					moveUp = false;
@@ -928,6 +1141,8 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 
 				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
+					if (!stowCarriedRoomItemToInventory())
+						return Common::kReadingFailed;
 					if (!runRoomExitCommands())
 						return Common::kReadingFailed;
 					return Common::kNoError;
@@ -947,8 +1162,11 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 				break;
 			}
 		}
-		if (!pendingRoomChange.empty())
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
 			break;
+		}
 
 		bool playerAdvancedThisFrame = false;
 		if (updatePlayerTurnAnimationState(playerState)) {
@@ -988,15 +1206,21 @@ Common::Error StartupRoomSystem::runRoomLoop(StartupFlow &startupFlow, const Com
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
-		if (!pendingRoomChange.empty())
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
 			break;
+		}
 		pendingRegionError = playerAdvancedThisFrame ? tryActivateOverlappedRegion() : Common::kNoError;
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
-		if (!pendingRoomChange.empty())
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
 			break;
+		}
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;

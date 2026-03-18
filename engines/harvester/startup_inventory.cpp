@@ -39,8 +39,6 @@ static const int kInventoryItemStartX = 73;
 static const int kInventoryItemStartY = 115;
 static const int kInventoryItemMaxRight = 564;
 static const int kInventoryItemSpacing = 5;
-static const byte kShadowColor = 0;
-static const byte kRoomPromptColor = 0xce;
 static const byte kTransparentPaletteIndex = 0;
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -76,12 +74,6 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 	byte *dst = (byte *)screen.getBasePtr(destX, destY);
 	Graphics::keyBlit(dst, src, screen.pitch, bitmap.width, width, height,
 		screen.format.bytesPerPixel, kTransparentPaletteIndex);
-}
-
-static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
-		int x, int y, int width, byte color, Graphics::TextAlign align = Graphics::kTextAlignLeft) {
-	font.drawString(&screen, text, x + 1, y + 1, width, kShadowColor, align);
-	font.drawString(&screen, text, x, y, width, color, align);
 }
 
 static Common::String buildUseItemPrompt(const Common::String &itemLabel, const Common::String &targetLabel) {
@@ -311,31 +303,19 @@ void StartupInventorySystem::drawSelectedDragItem(Graphics::Screen &screen, cons
 	}
 }
 
-void StartupInventorySystem::drawOverlay(Graphics::Screen &screen, const Graphics::Font &font) const {
+void StartupInventorySystem::drawOverlay(Graphics::Screen &screen) const {
 	const StartupArt *art = _engine.getStartupArt();
-	StartupScript *startupScript = _engine.getStartupScript();
-	if (!art || !startupScript)
+	if (!art)
 		return;
 
 	blitBitmap(screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
 
 	for (const StartupInventoryVisual &item : _items) {
+		if (!_selectedItemName.empty() && item.object.objectName.equalsIgnoreCase(_selectedItemName))
+			continue;
 		if (item.hasBitmap && item.bitmap.isValid())
 			blitBitmap(screen, item.bitmap, item.object.currentX, item.object.currentY);
 	}
-
-	Common::String overlayPrompt = _promptText;
-	if (overlayPrompt.empty() && !_selectedItemName.empty()) {
-		for (const StartupInventoryVisual &item : _items) {
-			if (item.object.objectName.equalsIgnoreCase(_selectedItemName)) {
-				overlayPrompt = buildUseItemPrompt(startupScript->resolveObjectLabel(item.object), Common::String());
-				break;
-			}
-		}
-	}
-
-	if (!overlayPrompt.empty())
-		drawShadowedString(screen, font, overlayPrompt, 0, 462, 640, kRoomPromptColor, Graphics::kTextAlignCenter);
 }
 
 bool StartupInventorySystem::isExitObject(const StartupObjectRecord &object) {
