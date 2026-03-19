@@ -62,7 +62,8 @@ private:
 		const Common::String &statusMessage) const;
 	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
 		bool drawCursor, const Common::Array<Common::String> &menuItems) const;
-	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
+	void renderRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos, const Common::Array<Common::String> &menuItems) const;
 	int getRoomMenuItemAt(const Common::Point &mousePos) const;
 

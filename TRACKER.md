@@ -16,6 +16,8 @@
 
 ## Last Confirmed Action
 
+- On March 19, 2026, ran a manual desktop validation pass against the live in-room ESC overlay with a persistent ScummVM GUI session and `osascript` keyboard input: confirmed the six-row room menu is reachable and keyboard-driven, reproduced a real palette-return regression on `SAVE GAME -> Esc` / `LOAD GAME -> Esc`, and fixed it by reapplying the room palette whenever `runRoomMenuStub` redraws its backdrop after a submenu returns.
+- Rebuilt the touched Harvester binary after that room-menu palette fix: `engines/harvester/menu.o` and `scummvm`, then revalidated that both `SAVE GAME -> Esc` and `LOAD GAME -> Esc` return to the room-menu overlay without the corrupted palette.
 - On March 19, 2026, audited the legitimate `run_main_menu` callers against the live `HARVEST.LE` Ghidra session instead of the cold-start path: confirmed that the six-row in-room ESC overlay belongs to the room-menu path, while the true `run_main_menu` return/death path blanks `SAVE GAME` and `LOAD GAME` unless an active room session is still live.
 - Applied that parity fix in `engines/harvester/menu.cpp` / `engines/harvester/menu.h`: `runMainMenuStub` now filters `SAVE GAME` and `LOAD GAME` out of the true main-menu stub when there is no current startup save-room state, while `runRoomMenuStub` continues to expose the full six-row in-room menu.
 - Rebuilt the touched Harvester objects successfully after the caller-audit fix: `engines/harvester/menu.o`, `engines/harvester/flow.o`, `engines/harvester/room.o`, and `engines/harvester/harvester.o`.
@@ -39,7 +41,7 @@
 
 ## Next Suggested Action
 
-1. Run a manual desktop validation pass against the legitimate menu entry points with a persistent GUI session: confirm that the true `run_main_menu` path now shows only `NEW GAME`, `OPTIONS`, `HELP`, and `QUIT GAME`, while the live in-room ESC menu still shows the full six-row overlay and preserves `NEW GAME` / `SAVE GAME` / `LOAD GAME` / `OPTIONS` / `HELP` / `QUIT GAME` behavior without palette or scene-state leaks.
+1. Continue the manual desktop validation pass from the live GUI session: finish spot-checking the remaining in-room ESC rows (`NEW GAME`, `OPTIONS`, `HELP`, `QUIT GAME`), then find a reproducible `GODEATHFLIC` / game-over trigger or suitable save so the legitimate `run_main_menu` path can be reached and confirmed to show only `NEW GAME`, `OPTIONS`, `HELP`, and `QUIT GAME`.
 2. Continue the remaining top-level/main-title rendering parity only on the true `run_main_menu` callers from `run_harvester_main_loop` / `run_game_over_screen`; the cold-start quick-tips exit and the room ESC overlay are now separated from that work.
 
 ## Reimplementation Priority Order

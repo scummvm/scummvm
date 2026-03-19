@@ -884,7 +884,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderRoomMenuStub(backdrop, selectedItem);
+			renderRoomMenuStub(backdrop, palette, paletteBrightness, selectedItem);
 			needsRedraw = false;
 		}
 
@@ -1946,7 +1946,8 @@ void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &st
 	screen->update();
 }
 
-void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const {
+void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, int selectedItem) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const Art *art = _engine.getStartupArt();
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
@@ -1959,6 +1960,7 @@ void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedI
 	if (!selectedFont.isValid() || !unselectedFont.isValid())
 		return;
 
+	applyMenuPalette(*screen, _engine, palette, paletteBrightness);
 	blitBitmap(*screen, backdrop, 0, 0);
 	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
 
