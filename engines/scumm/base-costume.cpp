@@ -291,10 +291,10 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, int16 actorHitY, bool *actorHitResult, const uint8 *xmap) {
 #ifdef SCUMM_OPTIMISED_CODE
 	if ((_vm->_bytesPerPixel == 1) &&
-		(!_akosRendering || _shadowMode != 3 || (!(_vm->_game.features & GF_16BIT_COLOR) && _vm->_game.heversion < 90)) &&
+		(!(_vm->_game.features & GF_16BIT_COLOR)) &&
 		(actorHitResult == NULL) &&
 		(compData.maskPtr != NULL)) {
-		byleRLEDecodeFast(compData);
+		byleRLEDecodeFast(compData, xmap);
 		return;
 	}
 	warning("%s: unoptimised version is being executed", __FUNCTION__);

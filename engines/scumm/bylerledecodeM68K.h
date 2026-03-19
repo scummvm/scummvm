@@ -57,6 +57,17 @@ extern "C" void ByleRLEDecode_Mode3(
 	const byte *_shadowTable,
 	const uint16 *_palette);
 
+extern "C" void ByleRLEDecode_Mode3_HE90(
+	Scumm::BaseCostumeRenderer::ByleRLEData *pcompData,
+	const byte _scaleX,
+	const byte _scaleY,
+	const int _height,
+	const int pitch,
+	const int _numStrips,
+	const byte *_srcPtr,
+	const byte *_shadowTable,
+	const uint16 *_palette);
+
 extern "C" void ByleRLEDecode_Classic(
 	Scumm::BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX, /* unused */

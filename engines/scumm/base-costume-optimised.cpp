@@ -265,13 +265,6 @@ byte BaseCostumeRenderer::paintCelByleRLECommon(
 	return drawFlag;
 }
 
-enum class ShadowMode : int {
-	Mode0,
-	Mode1,
-	Mode3,
-	Classic
-};
-
 #ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Mode0(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
@@ -486,6 +479,85 @@ void ByleRLEDecode_Mode3(
 						} else {
 							*dst = pcolor;
 						}
+					}
+					dst  += pitch;
+					mask += _numStrips;
+				} while (--batch);
+			} else {
+				dst  += batch * pitch;
+				mask += batch * _numStrips;
+			}
+
+			if (height == 0) {
+				if (--compData.skipWidth == 0)
+					return;
+				height = _height;
+
+				compData.x += compData.scaleXStep;
+				maskbit = revBitMask(compData.x & 7);
+				compData.destPtr += compData.scaleXStep;
+
+				dst = compData.destPtr;
+				mask = compData.maskPtr + compData.x / 8;
+			}
+		StartPos:;
+		} while (len > 0);
+	} while (true);
+}
+#endif
+
+#ifndef USE_M68K_COSTUME_ASM
+void ByleRLEDecode_Mode3_HE90(
+	BaseCostumeRenderer::ByleRLEData *pcompData,
+	const byte _scaleX, /* unused */
+	const byte _scaleY, /* unused */
+	const int _height,
+	const int pitch,
+	const int _numStrips,
+	const byte *_srcPtr,
+	const byte *_shadowTable,
+	const uint16 *_palette) {
+
+	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
+
+	const byte *src = _srcPtr;
+
+	uint16 len = compData.repLen;
+	uint16 color = compData.repColor;
+
+	// reset every column
+	byte *dst = compData.destPtr;
+	uint16 height = _height;
+	byte maskbit = revBitMask(compData.x & 7);
+	const byte *mask = compData.maskPtr + compData.x / 8;
+
+	uint16 batch;
+	if (len) {
+		--len;
+		goto StartPos;
+	}
+
+	do {
+		len = *src++;
+		color = len >> compData.shr;
+		len &= compData.mask;
+		if (!len)
+			len = *src++;
+
+		do {
+			batch = height < len ? height : len;
+			len -= batch;
+			height -= batch;
+
+			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
+
+			if (color) {
+				do {
+					if (!(*mask & maskbit)) {
+						uint16 pcolor = _palette[color];
+						pcolor = (pcolor << 8) + *dst;
+						*dst = _shadowTable[pcolor];
 					}
 					dst  += pitch;
 					mask += _numStrips;
@@ -1034,6 +1106,95 @@ void ByleRLEDecode_Scaled_Mode3(
 }
 #endif
 
+void ByleRLEDecode_Scaled_Mode3_HE90_SMask(
+	Scumm::BaseCostumeRenderer::ByleRLEData *pcompData,
+	const byte _scaleX,
+	const byte _scaleY,
+	const int _height,
+	const int pitch,
+	const int _numStrips,
+	const byte *_srcPtr,
+	const byte *_shadowTable,
+	const uint16 *_palette) {
+
+	Scumm::BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	warning("%s: unexpected call, save your game and report", __FUNCTION__);
+
+	const byte *src = _srcPtr;
+
+	byte len = compData.repLen;
+	uint16 color = compData.repColor;
+
+	// reset every column
+	byte *dst = compData.destPtr;
+	int lastColumnX = -1;
+	uint16 height = _height;
+	int scaleIndexY = compData.scaleYIndex;
+	byte maskbit = revBitMask(compData.x & 7);
+	const byte *mask = compData.maskPtr + compData.x / 8;
+
+	byte batch;
+	if (len) {
+		--len;
+		goto StartPos;
+	}
+
+	do {
+		len = *src++;
+		color = len >> compData.shr;
+		len &= compData.mask;
+		if (!len)
+			len = *src++;
+
+		do {
+			batch = height < len ? (byte)height : len;
+			len -= batch;
+			height -= batch;
+
+			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
+
+			do {
+				if (compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
+					if (color) {
+						if (!(*mask & maskbit)) {
+							uint16 pcolor;
+
+							pcolor = _palette[color];
+							if (lastColumnX != compData.x) {
+								pcolor = (pcolor << 8) + *dst;
+								*dst = _shadowTable[pcolor];
+							}
+						}
+					}
+					dst += pitch;
+					mask += _numStrips;
+				}
+			} while (--batch);
+
+			if (height == 0) {
+				if (--compData.skipWidth == 0)
+					return;
+				height = _height;
+
+				scaleIndexY = compData.scaleYIndex;
+				lastColumnX = compData.x;
+
+				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					compData.x += compData.scaleXStep;
+					maskbit = revBitMask(compData.x & 7);
+					compData.destPtr += compData.scaleXStep;
+				}
+
+				compData.scaleXIndex = (compData.scaleXIndex + compData.scaleXStep) & compData.scaleIndexMask;
+
+				dst = compData.destPtr;
+				mask = compData.maskPtr + compData.x / 8;
+			}
+		StartPos:;
+		} while (len > 0);
+	} while (true);
+}
+
 void ByleRLEDecode_Scaled_Classic_SMask(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -1118,6 +1279,14 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 	} while (true);
 }
 
+enum class ShadowMode : int {
+	Mode0,
+	Mode1,
+	Mode3,	// COMI: pcolor < 8
+	Mode3_HE,	// HE >= 90
+	Classic
+};
+
 typedef void (*ByleRLEDecodeFunc)(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -1129,36 +1298,46 @@ typedef void (*ByleRLEDecodeFunc)(
 	const byte *_shadowTable,
 	const uint16 *_palette);
 
-static const ByleRLEDecodeFunc byleRLEDecodeNoScaleTable[4] = {
-	ByleRLEDecode_Mode0,    // 0: Mode0
-	ByleRLEDecode_Mode1,    // 1: Mode1
-	ByleRLEDecode_Mode3,    // 2: Mode3
-	ByleRLEDecode_Classic,  // 3: Classic
+static const ByleRLEDecodeFunc byleRLEDecodeNoScaleTable[5] = {
+	ByleRLEDecode_Mode0,       // 0: Mode0
+	ByleRLEDecode_Mode1,       // 1: Mode1
+	ByleRLEDecode_Mode3,       // 2: Mode3 COMI
+	ByleRLEDecode_Mode3_HE90,  // 3: Mode3 HE >= 90
+	ByleRLEDecode_Classic,     // 4: Classic
 };
 
-static const ByleRLEDecodeFunc byleRLEDecodeScaledTable[8] = {
-	ByleRLEDecode_Scaled_Mode0,         // 0: Mode0,   no scaleIndexMask
-	ByleRLEDecode_Scaled_Mode0_SMask,   // 1: Mode0,   scaleIndexMask
-	ByleRLEDecode_Scaled_Mode1,         // 2: Mode1,   no scaleIndexMask
-	ByleRLEDecode_Scaled_Mode1_SMask,   // 3: Mode1,   scaleIndexMask
-	ByleRLEDecode_Scaled_Mode3,         // 4: Mode3,   no scaleIndexMask
-	nullptr,                            // 5: Mode3,   scaleIndexMask (COMI's Mode3 always uses bigCostumeScaleTable)
-	nullptr,                            // 6: Classic, no scaleIndexMask (_shadowMode & 0x20 always uses smallCostumeScaleTable)
-	ByleRLEDecode_Scaled_Classic_SMask, // 7: Classic, scaleIndexMask
+static const ByleRLEDecodeFunc byleRLEDecodeScaledTable[10] = {
+	ByleRLEDecode_Scaled_Mode0,            // 0: Mode0,   no scaleIndexMask
+	ByleRLEDecode_Scaled_Mode0_SMask,      // 1: Mode0,   scaleIndexMask
+	ByleRLEDecode_Scaled_Mode1,            // 2: Mode1,   no scaleIndexMask
+	ByleRLEDecode_Scaled_Mode1_SMask,      // 3: Mode1,   scaleIndexMask
+	ByleRLEDecode_Scaled_Mode3,            // 4: Mode3,   no scaleIndexMask
+	nullptr,                               // 5: Mode3,   scaleIndexMask (COMI's Mode3 always uses bigCostumeScaleTable)
+	nullptr,                               // 6: HE>=90,  no scaleIndexMask (HE>=90 always uses smallCostumeScaleTable)
+	ByleRLEDecode_Scaled_Mode3_HE90_SMask, // 7: HE>=90,  scaleIndexMask (unconfirmed)
+	nullptr,                               // 8: Classic, no scaleIndexMask (_shadowMode & 0x20 always uses smallCostumeScaleTable)
+	ByleRLEDecode_Scaled_Classic_SMask,    // 9: Classic, scaleIndexMask (unconfirmed)
 };
 
-void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
+void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *xmap) {
 	ShadowMode shadowMode = ShadowMode::Mode0;
+	const byte *shadowTable = _shadowTable;
 	if (!_akosRendering) {
 		if (_shadowMode & 0x20)
 			shadowMode = ShadowMode::Classic;
 		else if (_shadowTable)
 			shadowMode = ShadowMode::Mode1;
 	} else {
-		if (_shadowMode == 1)
+		if (_shadowMode == 1) {
 			shadowMode = ShadowMode::Mode1;
-		else if (_shadowMode == 3)
-			shadowMode = ShadowMode::Mode3;
+		} else if (_shadowMode == 3) {
+			if (_vm->_game.heversion >= 90) {
+				shadowMode = ShadowMode::Mode3_HE;
+				shadowTable = xmap;
+			} else {
+				shadowMode = ShadowMode::Mode3;
+			}
+		}
 	}
 
 	if (compData.y >= compData.boundsRect.top && compData.y + compData.scaledHeight <= compData.boundsRect.bottom) {
@@ -1172,7 +1351,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 				_out.pitch,
 				_numStrips,
 				_srcPtr,
-				_shadowTable,
+				shadowTable,
 				_palette);
 		} else {
 			const int useScaleIndexMask = compData.scaleIndexMask != -1;
@@ -1185,7 +1364,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 				_out.pitch,
 				_numStrips,
 				_srcPtr,
-				_shadowTable,
+				shadowTable,
 				_palette);
 		}
 		return;
@@ -1266,6 +1445,14 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 									}
 								} else {
 									*dst = pcolor;
+								}
+								break;
+
+							case ShadowMode::Mode3_HE:
+								pcolor = _palette[color];
+								if (lastColumnX != compData.x) {
+									pcolor = (pcolor << 8) + *dst;
+									*dst = xmap[pcolor];
 								}
 								break;
 							}

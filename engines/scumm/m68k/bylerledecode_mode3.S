@@ -24,8 +24,10 @@
 #include "bylerledecode.inc"
 
 	.globl	SYM(ByleRLEDecode_Mode3)
+	.globl	SYM(ByleRLEDecode_Mode3_HE90)
 
 	add_var	len,2+2	// uint16 len; (align stack)
+	add_var	shadow_threshold,2
 
 
 	.text
@@ -41,9 +43,27 @@
 |	const byte *_shadowTable,
 |	const uint16 *_palette);
 SYM(ByleRLEDecode_Mode3):
+	moveq	#8,d0
+	bra.b	mode3_common
+
+| void ByleRLEDecode_Mode3_HE90(
+|	BaseCostumeRenderer::ByleRLEData *pcompData,
+|	const byte _scaleX, /* unused */
+|	const byte _scaleY, /* unused */
+|	const int _height,
+|	const int pitch,
+|	const int _numStrips,
+|	const byte *_srcPtr,
+|	const byte *_shadowTable,
+|	const uint16 *_palette);
+SYM(ByleRLEDecode_Mode3_HE90):
+	move.w	#256,d0
+
+mode3_common:
 // TODO: __FASTCALL__
 	link	a6,#-sizeof_local_vars		| a6: frame pointer
 	movem.l	d2-d7/a2-a5,-(sp)
+	move.w	d0,(shadow_threshold,a6)
 
 	// registers taken so far:
 	// - d7(pcolor), d6(color), d5(height), d4(maskbit), d3(pitch), d2(_numStrips)
@@ -115,7 +135,7 @@ pcolor_setup:
 	tst.b	d6
 	beq.b	len_loop
 	move.w	(a3,d6.l*2),d7			| d7.w: pcolor = _palette[color] (used as long, too)
-	cmp.w	#8,d7
+	cmp.w	(shadow_threshold,a6),d7
 	bhs.b	len_loop
 	lsl.w	#8,d7				| d7.w: if pcolor < 8: pcolor << 8
 	or.w	#0x8000,d6			| d6.w: "shadow_on" bit set
