@@ -2139,9 +2139,15 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 			it->reset();
 	}
 
-	// Zero out the copyback mask on all sprites, so we know what changed
+	// Reset the copyback mask on all sprites, so we know what changed
 	for (auto &it : _currentFrame->_sprites) {
-		it->_copyBackMask = 0;
+		if (frameNum <= (int)_curFrameNumber) {
+			// starting from rewind, copy back everything
+			it->_copyBackMask = -1;
+		} else {
+			// starting at delta, only copy back changes
+			it->_copyBackMask = 0;
+		}
 	}
 
 	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset 0x%x", sourceFrame, targetFrame, (uint32)_framesStream->pos());
