@@ -16,7 +16,9 @@
 
 ## Last Confirmed Action
 
-- On March 19, 2026, completed the first real startup/room-menu parity pass in `engines/harvester`: `Flow::run()` now hands off from quick tips into the startup menu instead of dropping straight into `runRoomLoop("START")`; `LOAD GAME` now uses the native `LOADGAME.BM` / `LOADGAME.PAL` slot picker; `NEW GAME` now uses the confirmed `MENU.INI:newgame` confirmation prompt in both startup and in-room menus; and the in-room ESC menu now unwinds cleanly into restart/load handoffs instead of leaving those rows as stubs.
+- On March 19, 2026, fixed the cold-start regression from the previous menu pass: `Flow::run()` no longer jumps from the initial quick-tips overlay into `run_main_menu`, and instead restores the confirmed native cold-start path back into `runRoomLoop("START")`. The real `run_main_menu` work remains limited to its live main-loop / game-over entry points, while the new `LOAD GAME` UI and `NEW GAME` confirmation support stay available on those legitimate menu paths.
+- Rebuilt the touched Harvester object successfully after that correction: `engines/harvester/flow.o`.
+- On March 19, 2026, completed the first real `run_main_menu` / room-menu parity pass in `engines/harvester`: `LOAD GAME` now uses the native `LOADGAME.BM` / `LOADGAME.PAL` slot picker; `NEW GAME` now uses the confirmed `MENU.INI:newgame` confirmation prompt in both the legitimate top-level menu path and the in-room ESC menu; and the in-room ESC menu now unwinds cleanly into restart/load handoffs instead of leaving those rows as stubs.
 - Rebuilt the touched Harvester objects successfully: `engines/harvester/menu.o`, `engines/harvester/flow.o`, `engines/harvester/room.o`, and `engines/harvester/harvester.o`.
 - On March 19, 2026, audited the current `engines/harvester` implementation against the live `HARVEST.LE` Ghidra session and the confirmed notes in `ARCHITECTURE.md`; verified that boot/resource loading, room setup, inventory, dialogue, save menu, help, options, and quit confirmation are already implemented, while the main remaining reimplementation gaps are startup/room menu parity, actor runtime/combat/timers, and wider script opcode coverage.
 - Finished another rename pass, saved `HARVEST.LE`, and advanced the current tracker cycle to 194 confident renames total.
@@ -34,15 +36,15 @@
 
 ## Next Suggested Action
 
-1. Re-test the startup menu and in-room ESC menu in-engine against the confirmed `run_main_menu` / `run_load_game_menu` notes: verify `NEW GAME`, `SAVE GAME`, `LOAD GAME`, `OPTIONS`, `HELP`, and `QUIT GAME` all unwind to the correct room/palette state and that the restart/load handoffs do not leave stale scene state behind.
-2. Finish the remaining startup-menu parity gap by replacing the temporary inventory-panel startup backdrop with the live `START` room/menu presentation and checking the missing timer pause/resume details before moving on to the actor runtime/combat/timer work in priority item 2.
+1. Re-test only the legitimate `run_main_menu` entry points in-engine against the confirmed notes: the live in-room ESC menu plus any game-over / no-active-session path that actually reaches `run_main_menu`. Verify `NEW GAME`, `SAVE GAME`, `LOAD GAME`, `OPTIONS`, `HELP`, and `QUIT GAME` all unwind to the correct room/palette state and that restart/load handoffs do not leave stale scene state behind.
+2. Separate the remaining top-level/main-title rendering work from the cold-start path before touching it again: the startup quick-tips exit already belongs to `room_setup("START")`, so any future `run_main_menu` parity work should target only the true callers from `run_harvester_main_loop` and `run_game_over_screen`.
 
 ## Reimplementation Priority Order
 
 1. Finish startup and room menu parity.
    Files: `engines/harvester/menu.cpp`, `engines/harvester/menu.h`, `engines/harvester/flow.cpp`, `engines/harvester/harvester.cpp`, `engines/harvester/harvester.h`.
    Native anchors: `run_main_menu @ 0x67390`, `run_load_game_menu @ 0x64910`, `run_save_game_menu @ 0x632c0`, `run_controls_help_screen @ 0x6c3e0`.
-   Concrete tasks: keep the new real `LOAD GAME` path, startup-menu handoff, and `NEW GAME` / restart confirmation aligned with the confirmed native notes; finish swapping the startup menu off the temporary stub backdrop and onto the live `START` scene; verify the menu/timer/palette restore details after each branch.
+   Concrete tasks: keep the new real `LOAD GAME` path and `NEW GAME` / restart confirmation aligned with the confirmed native notes; do not route the cold-start quick-tips exit through `run_main_menu`; finish the remaining true `run_main_menu` rendering/timer/palette restore details only on its legitimate live callers.
    Exit criteria: every visible menu row performs real work instead of falling back to a debug stub, and the startup-menu return path plus the in-room ESC menu expose the same native actions.
 2. Implement the actor runtime and combat-adjacent substrate.
    Files: `engines/harvester/room.cpp`, `engines/harvester/flow.cpp`, `engines/harvester/runtime_entity.cpp`, `engines/harvester/runtime_entity.h`, `engines/harvester/script.cpp`, `engines/harvester/script.h`.

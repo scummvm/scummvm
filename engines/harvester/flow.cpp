@@ -1719,9 +1719,8 @@ Common::Error Flow::run() {
 			return error;
 
 		clearPendingMainMenuReturn();
-		clearPendingNewGameRestart();
-		error = runMainMenuStub();
-		return error;
+		_engine.getStartupScript()->resetRuntimeState();
+		error = runRoomLoop("START");
 	}
 	if (error.getCode() != Common::kNoError)
 		return error;
