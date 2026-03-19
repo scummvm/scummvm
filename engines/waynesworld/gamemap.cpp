@@ -190,7 +190,6 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
         _currentMapItemIndex = _hoverObjectNumber;
         drawImageToScreen(lib, tagFilename.c_str(), tagX, tagY);
     }
-
 }
 
 void WaynesWorldEngine::gameMapHandleMouseClick() {
@@ -225,7 +224,6 @@ void WaynesWorldEngine::gameMapHandleMouseClick() {
         gameMapFinish();
         loadPalette(_m01Gxl, "wstand0.pcx");
     }
-
 }
 
 void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int animY) {

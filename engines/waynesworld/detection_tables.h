@@ -24,7 +24,7 @@ namespace WaynesWorld {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"waynesworld",
-		nullptr,
+		"CD Version",
 		AD_ENTRY2s("R00.GXL", "197ae9fb74a79a6dad4e3336f94c7545", 36272,
 				"e00.txt", "78769d60d48aea314ed6be2f725c8c2f", 1293),
 		Common::EN_ANY,
