@@ -198,6 +198,9 @@ void Window::probeResources(Archive *archive) {
 	}
 
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
+		// Load any fonts from the projector resource fork
+		_vm->_wm->_fontMan->loadFonts(archive->getPathName());
+
 		// On Macintosh, you can add additional chunks to the resource
 		// fork of the file to state which XObject or HyperCard XCMD/XFCNs
 		// need to be loaded in.
