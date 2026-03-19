@@ -32,7 +32,7 @@
 namespace AGOS {
 
 static bool g_pnInventoryPaletteSaved = false;
-static byte g_pnSavedInventoryPalette[768];
+static byte g_pnSavedInventoryPalette[16 * 3];
 
 static const uint16 kPnAmigaAtariStInventoryPalette[16] = {
 	0x000, 0x111, 0x500, 0x733,
@@ -1093,8 +1093,8 @@ void AGOSEngine_PN::applyInventoryPalette() {
 		_displayPalette[i * 3 + 2] = ((color & 0x000F) >> 0) * 32;
 	}
 
-	memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
-	_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
+	memcpy(_currentPalette, _displayPalette, sizeof(g_pnSavedInventoryPalette));
+	_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
 	_paletteFlag = 0;
 }
 
@@ -1104,7 +1104,7 @@ void AGOSEngine_PN::restoreInventoryPalette() {
 
 	memcpy(_displayPalette, g_pnSavedInventoryPalette, sizeof(g_pnSavedInventoryPalette));
 	memcpy(_currentPalette, g_pnSavedInventoryPalette, sizeof(g_pnSavedInventoryPalette));
-	_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
+	_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
 	_paletteFlag = 0;
 
 	g_pnInventoryPaletteSaved = false;
