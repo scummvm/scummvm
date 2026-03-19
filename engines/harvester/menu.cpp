@@ -617,13 +617,22 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	if (!art)
 		return Common::kReadingFailed;
 
+	Common::Array<Common::String> mainMenuItems;
+	const bool showSessionActions = _engine.hasCurrentStartupSaveRoomState();
+	for (const Common::String &item : _menuItems) {
+		if (!showSessionActions &&
+				(item.equalsIgnoreCase("SAVE GAME") || item.equalsIgnoreCase("LOAD GAME")))
+			continue;
+		mainMenuItems.push_back(item);
+	}
+
 	Graphics::FrameLimiter limiter(g_system, 60);
-	int selectedItem = _menuItems.empty() ? -1 : 0;
+	int selectedItem = mainMenuItems.empty() ? -1 : 0;
 	Common::String statusMessage;
 	bool needsRedraw = true;
 
 	auto captureMenuBackdrop = [&](IndexedBitmap &backdrop) -> bool {
-		renderMainMenuScreen(selectedItem, statusMessage, false);
+		renderMainMenuScreen(selectedItem, statusMessage, false, mainMenuItems);
 		Graphics::Screen *screen = _engine.getScreen();
 		return screen && captureScreenBackdrop(*screen, backdrop);
 	};
@@ -646,10 +655,10 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		return Common::kNoError;
 	};
 	auto activateSelectedItem = [&]() -> Common::Error {
-		if (selectedItem < 0 || selectedItem >= (int)_menuItems.size())
+		if (selectedItem < 0 || selectedItem >= (int)mainMenuItems.size())
 			return Common::kNoError;
 
-		const Common::String &item = _menuItems[selectedItem];
+		const Common::String &item = mainMenuItems[selectedItem];
 		const byte *menuPalette = art->getWaitPalette();
 		statusMessage.clear();
 
@@ -729,7 +738,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderMainMenuStub(selectedItem, statusMessage);
+			renderMainMenuStub(mainMenuItems, selectedItem, statusMessage);
 			needsRedraw = false;
 		}
 
@@ -741,7 +750,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredItem = getMenuItemAt(_mousePos);
+				const int hoveredItem = getMenuItemAt(_mousePos, mainMenuItems);
 				if (hoveredItem != -1 && hoveredItem != selectedItem) {
 					selectedItem = hoveredItem;
 					needsRedraw = true;
@@ -752,14 +761,14 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return Common::kNoError;
 
-				if (_menuItems.empty())
+				if (mainMenuItems.empty())
 					break;
 
 				if (event.kbd.keycode == Common::KEYCODE_UP) {
-					selectedItem = (selectedItem + _menuItems.size() - 1) % _menuItems.size();
+					selectedItem = (selectedItem + mainMenuItems.size() - 1) % mainMenuItems.size();
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					selectedItem = (selectedItem + 1) % _menuItems.size();
+					selectedItem = (selectedItem + 1) % mainMenuItems.size();
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
@@ -769,10 +778,10 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN: {
-				if (_menuItems.empty())
+				if (mainMenuItems.empty())
 					break;
 
-				selectedItem = getMenuItemAt(_mousePos);
+				selectedItem = getMenuItemAt(_mousePos, mainMenuItems);
 				if (selectedItem == -1)
 					break;
 
@@ -1890,12 +1899,13 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 	return Common::kNoError;
 }
 
-void MenuSystem::renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const {
-	renderMainMenuScreen(selectedItem, statusMessage, true);
+void MenuSystem::renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
+		const Common::String &statusMessage) const {
+	renderMainMenuScreen(selectedItem, statusMessage, true, menuItems);
 }
 
 void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
-		bool drawCursor) const {
+		bool drawCursor, const Common::Array<Common::String> &menuItems) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const Art *art = _engine.getStartupArt();
 	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
@@ -1916,10 +1926,10 @@ void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &st
 	drawShadowedString(*screen, *titleFont, "Harvester", panel.left, 110, panel.width(),
 		kTextColorNormal, Graphics::kTextAlignCenter);
 
-	for (uint i = 0; i < _menuItems.size(); ++i) {
+	for (uint i = 0; i < menuItems.size(); ++i) {
 		const int itemY = kMenuStartY + (int)i * kMenuLineSpacing;
 		const byte color = ((int)i == selectedItem) ? kTextColorHover : kTextColorNormal;
-		drawShadowedString(*screen, *bodyFont, _menuItems[i], panel.left, itemY, panel.width(), color,
+		drawShadowedString(*screen, *bodyFont, menuItems[i], panel.left, itemY, panel.width(), color,
 			Graphics::kTextAlignCenter);
 	}
 
@@ -1969,13 +1979,14 @@ void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedI
 	screen->update();
 }
 
-int MenuSystem::getMenuItemAt(const Common::Point &mousePos) const {
+int MenuSystem::getMenuItemAt(const Common::Point &mousePos,
+		const Common::Array<Common::String> &menuItems) const {
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!font)
 		return -1;
 
-	for (uint i = 0; i < _menuItems.size(); ++i) {
-		const int width = font->getStringWidth(_menuItems[i]);
+	for (uint i = 0; i < menuItems.size(); ++i) {
+		const int width = font->getStringWidth(menuItems[i]);
 		const int x = (640 - width) / 2;
 		const int y = kMenuStartY + (int)i * kMenuLineSpacing;
 		const Common::Rect bounds(x - 12, y - 2, x + width + 12, y + font->getFontHeight() + 2);
@@ -1989,11 +2000,11 @@ int MenuSystem::getMenuItemAt(const Common::Point &mousePos) const {
 int MenuSystem::getRoomMenuItemAt(const Common::Point &mousePos) const {
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
 	if (!selectedFontResource)
-		return getMenuItemAt(mousePos);
+		return getMenuItemAt(mousePos, _menuItems);
 
 	HarvesterCftFont selectedFont(*selectedFontResource);
 	if (!selectedFont.isValid())
-		return getMenuItemAt(mousePos);
+		return getMenuItemAt(mousePos, _menuItems);
 
 	return getNativeRoomMenuSelectionFromMouse(selectedFont, _menuItems.size(), mousePos);
 }
