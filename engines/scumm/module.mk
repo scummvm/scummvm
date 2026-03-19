@@ -165,6 +165,11 @@ MODULE_OBJS += \
 	gfxARM.o
 endif
 
+ifdef USE_M68K_GFX_ASM
+MODULE_OBJS += \
+	gfxM68K.o
+endif
+
 ifdef ENABLE_HE
 MODULE_OBJS += \
 	he/animation_he.o \

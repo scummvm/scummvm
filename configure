@@ -4231,6 +4231,7 @@ case $_backend in
 	atari)
 		append_var DEFINES "-DATARI"
 		define_in_config_if_yes yes "USE_M68K_COSTUME_ASM"
+		define_in_config_if_yes yes "USE_M68K_GFX_ASM"
 		append_var DEFINES "-DDISABLE_NES_APU"
 		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lgem"
