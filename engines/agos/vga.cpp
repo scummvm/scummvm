@@ -1016,8 +1016,8 @@ void AGOSEngine::vc22_setPalette() {
 			entry[2] = grey;
 		}
 
-		memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
-		_system->getPaletteManager()->setPalette(_displayPalette, 0, 256);
+		memcpy(_currentPalette, _displayPalette, 16 * 3);
+		_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
 		_paletteFlag = 0;
 		_pendingPNWaitScreenDelay = true;
 	}
