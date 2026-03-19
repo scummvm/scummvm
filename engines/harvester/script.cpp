@@ -44,6 +44,8 @@ static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
 static const int kDefaultPlayerHitPoints = 30;
+static const int kDefaultPlayerCombatLoadout = 0;
+static const int kMaxPlayerCombatLoadout = 0x14;
 static const int kMaxStartupOptionLevel = 9;
 
 static void syncBool(Common::Serializer &s, bool &value) {
@@ -138,13 +140,53 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncAsSint32LE(record.posX);
 	s.syncAsSint32LE(record.posY);
 	s.syncAsSint32LE(record.posZ);
-	s.syncAsSint32LE(record.initialFacing);
+	s.syncAsSint32LE(record.facing);
 	s.syncString(record.roomName);
 	s.syncString(record.monsterName);
 	s.syncString(record.modelPath);
 	s.syncString(record.onDeathActionTag);
 	syncBool(s, record.active);
 	syncBool(s, record.visible);
+	if (s.getVersion() < 2)
+		return;
+
+	s.syncAsSint32LE(record.initialHitPoints);
+	s.syncAsSint32LE(record.currentHitPoints);
+	s.syncAsSint32LE(record.damageAmount);
+	s.syncAsSint32LE(record.engageDistance);
+	s.syncAsSint32LE(record.damageType);
+	s.syncString(record.field38);
+	s.syncString(record.field3c);
+	s.syncString(record.field44);
+	s.syncString(record.field48);
+	s.syncString(record.attackSound1);
+	s.syncString(record.attackSound2);
+	s.syncString(record.attackSound3);
+	s.syncString(record.hitSound1);
+	s.syncString(record.hitSound2);
+	s.syncString(record.hitSound3);
+	s.syncString(record.footstepSoundLeft);
+	s.syncString(record.footstepSoundRight);
+	s.syncString(record.deathSound);
+	syncBool(s, record.savedVisible);
+	syncBool(s, record.runtimeSpawned);
+	s.syncAsSint32LE(record.minXBound);
+	s.syncAsSint32LE(record.maxXBound);
+	s.syncAsSint32LE(record.field70);
+	s.syncAsSint32LE(record.field74);
+	s.syncAsSint32LE(record.field78);
+	s.syncAsSint32LE(record.field7c);
+}
+
+static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &record) {
+	s.syncAsSint32LE(record.initialValue);
+	s.syncAsSint32LE(record.currentValue);
+	s.syncString(record.timerName);
+	s.syncString(record.arg1);
+	s.syncString(record.arg2);
+	syncBool(s, record.enabled);
+	syncBool(s, record.looping);
+	syncBool(s, record.global);
 }
 
 static void syncStartupRegionRecord(Common::Serializer &s, StartupRegionRecord &record) {
@@ -179,6 +221,10 @@ static int clampPlayerHitPoints(int hitPoints) {
 		return kDefaultPlayerHitPoints;
 
 	return hitPoints;
+}
+
+static int clampPlayerCombatLoadout(int loadout) {
+	return CLIP<int>(loadout, 0, kMaxPlayerCombatLoadout);
 }
 
 static const char *resolveInventoryStatusObjectName(int hitPoints) {
@@ -369,13 +415,24 @@ bool Script::load(ResourceManager &resources) {
 	_objects.clear();
 	_animations.clear();
 	_npcs.clear();
+	_monsters.clear();
+	_timers.clear();
 	_regions.clear();
 	_flags.clear();
 	_commands.clear();
 	_texts.clear();
 	_heads.clear();
 	_useItems.clear();
+	_runtimeFlags.clear();
+	_runtimeObjects.clear();
+	_runtimeAnimations.clear();
+	_runtimeNpcs.clear();
+	_runtimeMonsters.clear();
+	_runtimeTimers.clear();
 	_runtimeRegions.clear();
+	_playerCurrentHitPoints = kDefaultPlayerHitPoints;
+	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
+	_playerControlPaused = false;
 	_fxVolumeLevel = 9;
 	_musicVolumeLevel = 3;
 	_gammaLevel = 0;
@@ -545,6 +602,8 @@ void Script::parseTownRecords(ResourceManager &resources) {
 	_objects.clear();
 	_animations.clear();
 	_npcs.clear();
+	_monsters.clear();
+	_timers.clear();
 	_regions.clear();
 	_flags.clear();
 	_commands.clear();
@@ -566,8 +625,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 		for (uint i = 0; i < tokens.size(); ++i) {
 			if (tokens[i] == "ANIM" || tokens[i] == "ENTRANCE" || tokens[i] == "MAP_ENTRANCE" ||
 				tokens[i] == "MAP_LOCATION" || tokens[i] == "ROOM" || tokens[i] == "OBJECT" ||
-				tokens[i] == "NPC" || tokens[i] == "REGION" || tokens[i] == "HEAD" ||
-				tokens[i] == "FLAG" || tokens[i] == "COMMAND" || tokens[i] == "TEXT" || tokens[i] == "USEITEM") {
+				tokens[i] == "NPC" || tokens[i] == "MONSTER" || tokens[i] == "REGION" ||
+				tokens[i] == "HEAD" || tokens[i] == "FLAG" || tokens[i] == "COMMAND" ||
+				tokens[i] == "TEXT" || tokens[i] == "TIMER" || tokens[i] == "USEITEM") {
 				tagIndex = i;
 				break;
 			}
@@ -781,20 +841,71 @@ void Script::parseTownRecords(ResourceManager &resources) {
 				return;
 
 			StartupMonsterRecord monster;
-			if (tagIndex >= 3) {
+			if (tagIndex >= 6) {
 				monster.posX = atoi(tokens[0].c_str());
 				monster.posY = atoi(tokens[1].c_str());
 				monster.posZ = atoi(tokens[2].c_str());
+				monster.initialHitPoints = atoi(tokens[3].c_str());
+				monster.damageAmount = atoi(tokens[4].c_str());
+				monster.engageDistance = atoi(tokens[5].c_str());
+			}
+			if (tagIndex >= 10) {
+				monster.field70 = atoi(tokens[6].c_str());
+				monster.field74 = atoi(tokens[7].c_str());
+				monster.field78 = atoi(tokens[8].c_str());
+				monster.field7c = atoi(tokens[9].c_str());
 			}
 			monster.roomName = tokens[tagIndex + 1];
 			monster.monsterName = tokens[tagIndex + 2];
 			monster.modelPath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
-			monster.initialFacing = parseEntranceFacing(tokens[tagIndex + 8]);
+			monster.field44 = tokens[tagIndex + 4];
+			monster.field48 = tokens[tagIndex + 5];
+			monster.field38 = tokens[tagIndex + 6];
+			monster.field3c = tokens[tagIndex + 7];
+			monster.facing = parseEntranceFacing(tokens[tagIndex + 8]);
+			monster.damageType = parseNpcDeathDamageType(tokens[tagIndex + 9]);
+			monster.attackSound1 = resources.normalizeResourcePath(tokens[tagIndex + 10]);
+			monster.attackSound2 = resources.normalizeResourcePath(tokens[tagIndex + 11]);
+			monster.attackSound3 = resources.normalizeResourcePath(tokens[tagIndex + 12]);
+			monster.hitSound1 = resources.normalizeResourcePath(tokens[tagIndex + 13]);
+			monster.hitSound2 = resources.normalizeResourcePath(tokens[tagIndex + 14]);
+			monster.hitSound3 = resources.normalizeResourcePath(tokens[tagIndex + 15]);
+			monster.footstepSoundLeft = resources.normalizeResourcePath(tokens[tagIndex + 16]);
+			monster.footstepSoundRight = resources.normalizeResourcePath(tokens[tagIndex + 17]);
+			monster.deathSound = resources.normalizeResourcePath(tokens[tagIndex + 18]);
 			monster.active = tokens[tagIndex + 19].equalsIgnoreCase("T");
 			monster.visible = tokens[tagIndex + 20].equalsIgnoreCase("T");
 			monster.onDeathActionTag = tokens[tagIndex + 21];
+			if (tokens.size() > tagIndex + 22 && !tokens[tagIndex + 22].empty())
+				monster.minXBound = atoi(tokens[tagIndex + 22].c_str());
+			if (tokens.size() > tagIndex + 23 && !tokens[tagIndex + 23].empty())
+				monster.maxXBound = atoi(tokens[tagIndex + 23].c_str());
+			monster.currentHitPoints = monster.initialHitPoints;
+			monster.savedVisible = monster.visible;
+			if (monster.active)
+				monster.visible = true;
 			if (!monster.roomName.empty() && !monster.monsterName.empty() && !monster.modelPath.empty())
 				_monsters.push_back(monster);
+			return;
+		}
+
+		if (tag == "TIMER") {
+			if (tokens.size() < tagIndex + 7)
+				return;
+
+			StartupTimerRecord timer;
+			if (tagIndex >= 1) {
+				timer.initialValue = atoi(tokens[0].c_str());
+				timer.currentValue = timer.initialValue;
+			}
+			timer.timerName = tokens[tagIndex + 1];
+			timer.arg1 = tokens[tagIndex + 2];
+			timer.arg2 = tokens[tagIndex + 3];
+			timer.enabled = tokens[tagIndex + 4].equalsIgnoreCase("T");
+			timer.looping = tokens[tagIndex + 5].equalsIgnoreCase("T");
+			timer.global = tokens[tagIndex + 6].equalsIgnoreCase("T");
+			if (!timer.timerName.empty())
+				_timers.push_back(timer);
 			return;
 		}
 
@@ -936,13 +1047,14 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 		state.musicPath = musicPath;
 
 	debugC(1, kDebugGeneral,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomRegions=%u mutated=%d",
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
-		(uint)state.roomMonsters.size(), (uint)state.roomRegions.size(), mutatedRuntimeState);
+		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
+		(uint)state.roomRegions.size(), mutatedRuntimeState);
 
 	return true;
 }
@@ -954,7 +1066,10 @@ void Script::resetRuntimeState() {
 	_runtimeRegions = _regions;
 	_runtimeNpcs = _npcs;
 	_runtimeMonsters = _monsters;
+	_runtimeTimers = _timers;
 	_playerCurrentHitPoints = kDefaultPlayerHitPoints;
+	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
+	_playerControlPaused = false;
 
 	for (StartupObjectRecord &object : _runtimeObjects) {
 		object.currentX = object.initialX;
@@ -975,6 +1090,17 @@ void Script::resetRuntimeState() {
 		npc.runtimeSpawned = false;
 		npc.savedVisible = npc.visible;
 	}
+
+	for (StartupMonsterRecord &monster : _runtimeMonsters) {
+		monster.currentHitPoints = monster.initialHitPoints;
+		monster.runtimeSpawned = false;
+		monster.savedVisible = monster.visible;
+		if (monster.active)
+			monster.visible = true;
+	}
+
+	for (StartupTimerRecord &timer : _runtimeTimers)
+		timer.currentValue = timer.initialValue;
 }
 
 void Script::syncRuntimeSaveState(Common::Serializer &s) {
@@ -985,8 +1111,58 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	syncRecordArray(s, _runtimeNpcs, syncStartupNpcRecord);
 	syncRecordArray(s, _runtimeMonsters, syncStartupMonsterRecord);
 	s.syncAsSint32LE(_playerCurrentHitPoints);
-	if (s.isLoading())
+	if (s.getVersion() >= 2) {
+		syncRecordArray(s, _runtimeTimers, syncStartupTimerRecord);
+		s.syncAsSint32LE(_playerCombatLoadout);
+		syncBool(s, _playerControlPaused);
+	}
+	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
+		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
+		if (s.getVersion() < 2) {
+			_runtimeTimers = _timers;
+			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
+				const StartupMonsterRecord *baseMonster = nullptr;
+				for (const StartupMonsterRecord &monster : _monsters) {
+					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
+						baseMonster = &monster;
+						break;
+					}
+				}
+				if (!baseMonster)
+					continue;
+
+				runtimeMonster.initialHitPoints = baseMonster->initialHitPoints;
+				runtimeMonster.currentHitPoints = runtimeMonster.initialHitPoints;
+				runtimeMonster.damageAmount = baseMonster->damageAmount;
+				runtimeMonster.engageDistance = baseMonster->engageDistance;
+				runtimeMonster.damageType = baseMonster->damageType;
+				runtimeMonster.field38 = baseMonster->field38;
+				runtimeMonster.field3c = baseMonster->field3c;
+				runtimeMonster.field44 = baseMonster->field44;
+				runtimeMonster.field48 = baseMonster->field48;
+				runtimeMonster.attackSound1 = baseMonster->attackSound1;
+				runtimeMonster.attackSound2 = baseMonster->attackSound2;
+				runtimeMonster.attackSound3 = baseMonster->attackSound3;
+				runtimeMonster.hitSound1 = baseMonster->hitSound1;
+				runtimeMonster.hitSound2 = baseMonster->hitSound2;
+				runtimeMonster.hitSound3 = baseMonster->hitSound3;
+				runtimeMonster.footstepSoundLeft = baseMonster->footstepSoundLeft;
+				runtimeMonster.footstepSoundRight = baseMonster->footstepSoundRight;
+				runtimeMonster.deathSound = baseMonster->deathSound;
+				runtimeMonster.savedVisible = runtimeMonster.visible;
+				runtimeMonster.runtimeSpawned = false;
+				runtimeMonster.minXBound = baseMonster->minXBound;
+				runtimeMonster.maxXBound = baseMonster->maxXBound;
+				runtimeMonster.field70 = baseMonster->field70;
+				runtimeMonster.field74 = baseMonster->field74;
+				runtimeMonster.field78 = baseMonster->field78;
+				runtimeMonster.field7c = baseMonster->field7c;
+			}
+			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
+			_playerControlPaused = false;
+		}
+	}
 }
 
 bool Script::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
@@ -1322,6 +1498,18 @@ StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterNa
 	return nullptr;
 }
 
+StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
+	if (timerName.empty())
+		return nullptr;
+
+	for (StartupTimerRecord &timer : _runtimeTimers) {
+		if (timer.timerName.equalsIgnoreCase(timerName))
+			return &timer;
+	}
+
+	return nullptr;
+}
+
 const StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) const {
 	if (npcName.empty())
 		return nullptr;
@@ -1341,6 +1529,18 @@ const StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &mon
 	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
 		if (monster.monsterName.equalsIgnoreCase(monsterName))
 			return &monster;
+	}
+
+	return nullptr;
+}
+
+const StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerName) const {
+	if (timerName.empty())
+		return nullptr;
+
+	for (const StartupTimerRecord &timer : _runtimeTimers) {
+		if (timer.timerName.equalsIgnoreCase(timerName))
+			return &timer;
 	}
 
 	return nullptr;
@@ -1404,6 +1604,50 @@ bool Script::setPlayerCurrentHitPoints(int hitPoints) {
 	return changed;
 }
 
+bool Script::setPlayerCombatLoadout(int loadout) {
+	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
+	const bool changed = _playerCombatLoadout != clampedLoadout;
+	_playerCombatLoadout = clampedLoadout;
+	return changed;
+}
+
+bool Script::setPlayerControlPaused(bool paused) {
+	const bool changed = _playerControlPaused != paused;
+	_playerControlPaused = paused;
+	return changed;
+}
+
+bool Script::syncRuntimeMonsterRecord(const StartupMonsterRecord &monster) {
+	StartupMonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
+	if (!runtimeMonster)
+		return false;
+
+	*runtimeMonster = monster;
+	return true;
+}
+
+bool Script::syncRuntimeTimerRecord(const StartupTimerRecord &timer) {
+	StartupTimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
+	if (!runtimeTimer)
+		return false;
+
+	*runtimeTimer = timer;
+	return true;
+}
+
+bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enabled) {
+	StartupTimerRecord *runtimeTimer = findRuntimeTimer(timerName);
+	if (!runtimeTimer)
+		return false;
+
+	const bool changed = runtimeTimer->enabled != enabled ||
+		(enabled && runtimeTimer->currentValue != runtimeTimer->initialValue);
+	runtimeTimer->enabled = enabled;
+	if (enabled)
+		runtimeTimer->currentValue = runtimeTimer->initialValue;
+	return changed;
+}
+
 bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
 	if (npcName.empty())
 		return false;
@@ -1419,6 +1663,8 @@ bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
 			monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
 			runtimeMonster->active = true;
 			runtimeMonster->visible = true;
+			if (runtimeMonster->currentHitPoints <= 0)
+				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 		} else {
 			debug(1, "Harvester: unresolved monsterfy target for dialogue npc='%s' target='%s'",
 				runtimeNpc->npcName.c_str(), runtimeNpc->monsterfyTargetName.c_str());
@@ -1506,6 +1752,10 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 
 		state.roomMonsters.push_back(monster);
 	}
+	for (const StartupTimerRecord &timer : _runtimeTimers) {
+		if (timer.arg1.equalsIgnoreCase(room.roomName))
+			state.roomTimers.push_back(timer);
+	}
 	for (const StartupRegionRecord &region : _runtimeRegions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
@@ -1533,19 +1783,27 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 	}
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
 		debugC(1, kDebugScene,
-			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d model='%s' on_death='%s'",
+			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d hp=%d/%d model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
-			monster.posX, monster.posY, monster.posZ, monster.initialFacing,
+			monster.posX, monster.posY, monster.posZ, monster.facing,
+			monster.currentHitPoints, monster.initialHitPoints,
 			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
+	}
+	for (const StartupTimerRecord &timer : state.roomTimers) {
+		debugC(1, kDebugScene,
+			"Harvester: materialized room timer room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
+			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
+			timer.enabled, timer.looping, timer.global);
 	}
 
 	debugC(1, kDebugGeneral,
-		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomRegions=%u",
+		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
 		state.musicPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.roomAnimations.size(),
-		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(), (uint)state.roomRegions.size());
+		(uint)state.roomNpcs.size(), (uint)state.roomMonsters.size(),
+		(uint)state.roomTimers.size(), (uint)state.roomRegions.size());
 
 	return true;
 }
@@ -1728,8 +1986,22 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool visible = isTruthy(command->arg3);
 			const bool changed = runtimeMonster->active != active || runtimeMonster->visible != visible;
 			runtimeMonster->active = active;
-			runtimeMonster->visible = visible;
+			runtimeMonster->visible = active ? true : visible;
+			if (active && runtimeMonster->currentHitPoints <= 0)
+				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 			noteMutation(changed);
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("SET_TIMER")) {
+			noteMutation(setRuntimeTimerEnabled(command->arg1, command->arg2.equalsIgnoreCase("ON")));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("KILL_TIMER")) {
+			noteMutation(setRuntimeTimerEnabled(command->arg1, false));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -1785,6 +2057,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
 					runtimeMonster->active = true;
 					runtimeMonster->visible = true;
+					if (runtimeMonster->currentHitPoints <= 0)
+						runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 				} else {
 					debug(1, "Harvester: unresolved monsterfy target for %s '%s' npc='%s' target='%s'",
 						contextLabel, contextName.c_str(), command->arg1.c_str(),
@@ -1812,6 +2086,18 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_PC")) {
 			noteMutation(setPlayerCurrentHitPoints(0));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("PAUSE_PC")) {
+			noteMutation(setPlayerControlPaused(true));
+			currentTag = command->arg4;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("RESUME_PC")) {
+			noteMutation(setPlayerControlPaused(false));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -1862,6 +2148,8 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
 			command->opcodeName.equalsIgnoreCase("SET_MONSTER") ||
+			command->opcodeName.equalsIgnoreCase("SET_TIMER") ||
+			command->opcodeName.equalsIgnoreCase("KILL_TIMER") ||
 			command->opcodeName.equalsIgnoreCase("START_DIALOG") ||
 			command->opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
 			command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
@@ -1869,6 +2157,8 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("HEAL_PC") ||
 			command->opcodeName.equalsIgnoreCase("ADJ_HP") ||
 			command->opcodeName.equalsIgnoreCase("KILL_PC") ||
+			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
+			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			return true;

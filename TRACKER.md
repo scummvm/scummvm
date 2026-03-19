@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 19, 2026, implemented the first actor-runtime / combat-adjacent substrate pass in `engines/harvester`: parsed and persisted richer `MONSTER` plus `TIMER` records from `HARVEST.SCR`, bumped startup-save serialization to version `2` with backward-compatible load fallback, preserved player combat HP/loadout/control-pause state in the startup runtime snapshot, spawned non-visual timer entities during room setup, and paused/resumed their countdowns across room setup fades and the true `run_main_menu` path.
+- Extended the live room loop to sync timer and monster runtime state back into the startup snapshot before save/refresh handoffs, dispatch expired room timers through the confirmed town-script action-tag path, and promote room monsters from static single-frame props into live runtime entities with facing-based idle/walk frame bands.
+- Rebuilt the touched Harvester objects successfully after the actor-runtime/timer pass: `engines/harvester/script.o`, `engines/harvester/runtime_entity.o`, `engines/harvester/flow.o`, `engines/harvester/room.o`, `engines/harvester/menu.o`, `engines/harvester/harvester.o`, and `scummvm`.
 - On March 19, 2026, ran a manual desktop validation pass against the live in-room ESC overlay with a persistent ScummVM GUI session and `osascript` keyboard input: confirmed the six-row room menu is reachable and keyboard-driven, reproduced a real palette-return regression on `SAVE GAME -> Esc` / `LOAD GAME -> Esc`, and fixed it by reapplying the room palette whenever `runRoomMenuStub` redraws its backdrop after a submenu returns.
 - Rebuilt the touched Harvester binary after that room-menu palette fix: `engines/harvester/menu.o` and `scummvm`, then revalidated that both `SAVE GAME -> Esc` and `LOAD GAME -> Esc` return to the room-menu overlay without the corrupted palette.
 - On March 19, 2026, audited the legitimate `run_main_menu` callers against the live `HARVEST.LE` Ghidra session instead of the cold-start path: confirmed that the six-row in-room ESC overlay belongs to the room-menu path, while the true `run_main_menu` return/death path blanks `SAVE GAME` and `LOAD GAME` unless an active room session is still live.
@@ -41,31 +44,26 @@
 
 ## Next Suggested Action
 
-1. Continue the manual desktop validation pass from the live GUI session: finish spot-checking the remaining in-room ESC rows (`NEW GAME`, `OPTIONS`, `HELP`, `QUIT GAME`), then find a reproducible `GODEATHFLIC` / game-over trigger or suitable save so the legitimate `run_main_menu` path can be reached and confirmed to show only `NEW GAME`, `OPTIONS`, `HELP`, and `QUIT GAME`.
-2. Continue the remaining top-level/main-title rendering parity only on the true `run_main_menu` callers from `run_harvester_main_loop` / `run_game_over_screen`; the cold-start quick-tips exit and the room ESC overlay are now separated from that work.
+1. Run a manual desktop validation pass against a live gameplay room using the new actor-runtime/timer substrate: confirm room setup pauses timer countdowns during the fade-in, `HELP` and the true `run_main_menu` stop countdowns while open, expired room timers fire the expected action tags once, and a monster room now shows animated live monster entities instead of static props.
+2. If that validation exposes any remaining room progression failures, widen only the specific town-script opcodes or runtime side effects revealed by those timer/monster rooms; keep unsupported commands explicit instead of guessing.
 
 ## Reimplementation Priority Order
 
-1. Finish startup and room menu parity.
-   Files: `engines/harvester/menu.cpp`, `engines/harvester/menu.h`, `engines/harvester/flow.cpp`, `engines/harvester/harvester.cpp`, `engines/harvester/harvester.h`.
-   Native anchors: `run_main_menu @ 0x67390`, `run_load_game_menu @ 0x64910`, `run_save_game_menu @ 0x632c0`, `run_controls_help_screen @ 0x6c3e0`.
-   Concrete tasks: keep the new real `LOAD GAME` path and `NEW GAME` / restart confirmation aligned with the confirmed native notes; do not route the cold-start quick-tips exit through `run_main_menu`; finish the remaining true `run_main_menu` rendering/timer/palette restore details only on its legitimate live callers.
-   Exit criteria: every visible menu row performs real work instead of falling back to a debug stub, and the startup-menu return path plus the in-room ESC menu expose the same native actions.
-2. Implement the actor runtime and combat-adjacent substrate.
+1. Validate and finish the actor runtime and combat-adjacent substrate.
    Files: `engines/harvester/room.cpp`, `engines/harvester/flow.cpp`, `engines/harvester/runtime_entity.cpp`, `engines/harvester/runtime_entity.h`, `engines/harvester/script.cpp`, `engines/harvester/script.h`.
    Native anchors: `spawn_player_combat_avatar @ 0x54220`, `update_player_combat_avatar_state @ 0x553a0`, `teardown_player_combat_avatar @ 0x55010`, `tick_monster_entity_runtime @ 0x54140`, `spawn_timer_entity_from_record @ 0x59390`, `pause_timer_entity_countdowns @ 0x80460`, `resume_timer_entity_countdowns @ 0x804a0`.
-   Concrete tasks: separate passive scene visuals from live actor state; persist the player combat-avatar HP/loadout state instead of only the coarse room-placement snapshot; add monster update hooks; add timer countdown bookkeeping needed by help/menu pauses and room events.
-   Exit criteria: monsters are no longer static scene art only, and timer-sensitive menu/help behavior matches the confirmed native flow.
-3. Widen town-script action and room-event coverage only where native behavior is already confirmed.
+   Concrete tasks: validate the new timer pause/resume bookkeeping and timer-to-action dispatch in a live room; confirm the true `run_main_menu` pause path now freezes room countdowns; if the live monster rooms still need more than the new facing/animation hooks, extend only the proven actor state transitions from the native anchors.
+   Exit criteria: room timers survive save/load and pause correctly across menus/help, and the remaining monster/combat gaps are narrowed to explicit missing native state-machine branches instead of static-scene placeholders.
+2. Widen town-script action and room-event coverage only where native behavior is already confirmed.
    Files: `engines/harvester/script.cpp`, `engines/harvester/room.cpp`, `engines/harvester/dialogue.cpp`.
    Native anchors: `dispatch_room_event_actions @ 0x60ee0`, `run_town_script_interpreter @ 0x46d80`, and the confirmed town-script notes in `ARCHITECTURE.md`.
    Concrete tasks: drive missing work from broken rooms and interactions; add only the opcodes and side effects needed to unblock verified room paths; keep unsupported commands explicit rather than guessing.
    Exit criteria: room progression failures shrink to a small, explicit list of still-unimplemented native commands instead of broad "unsupported" fallthrough.
-4. Tighten inventory and item-use flow against that actor runtime.
+3. Tighten inventory and item-use flow against that actor runtime.
    Files: `engines/harvester/inventory.cpp`, `engines/harvester/room.cpp`, `engines/harvester/script.cpp`.
    Native anchors: `run_inventory_screen @ 0x7df10`, `add_object_to_inventory @ 0x7c8b0`, `sync_player_combat_weapon_resource_icons @ 0x792c0`, and the confirmed inventory carry/use notes in `ARCHITECTURE.md`.
    Concrete tasks: keep the current carry/use handoff model, but recheck it once actor runtime state, HP, timers, and combat-adjacent HUD elements are live; fold any missing status/icon behavior in here rather than earlier.
    Exit criteria: inventory, carried items, and room-target use cases all operate against the same live actor state that room gameplay uses.
-5. Leave low-level runtime, HMIDRV, and x87 cleanup as deferred RE work unless they block a confirmed gameplay feature.
+4. Leave low-level runtime, HMIDRV, and x87 cleanup as deferred RE work unless they block a confirmed gameplay feature.
    Ghidra anchors: the remaining unwind helpers around `FUN_0008f64b` through `FUN_000905df`, the HMIDRV wrapper band around `FUN_00087005`, and the x87/no-87 runtime cluster beginning near `FUN_0008c3d8`.
    Rationale: those clusters still matter for naming completeness, but the current engine-side gaps are better bounded and have higher reimplementation value.

@@ -48,7 +48,7 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-static const uint32 kHarvesterSaveVersion = 1;
+static const uint32 kHarvesterSaveVersion = 2;
 
 } // End of anonymous namespace
 

@@ -45,6 +45,7 @@ enum RuntimeEntityClass {
 	kRuntimeEntityClassMonster = 6,
 	kRuntimeEntityClassRectHotspot = 0x15,
 	kRuntimeEntityClassDisabledHotspot = 0x16,
+	kRuntimeEntityClassTimer = 0x17,
 	kRuntimeEntityClassRectHotspot18 = 0x18,
 	kRuntimeEntityClassRectHotspot19 = 0x19
 };
@@ -101,6 +102,16 @@ public:
 	bool getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const;
 	void setDepthScale(float scale);
 	Common::Rect getScreenRect() const;
+	void configureTimerCountdown(int initialValue, int currentValue, bool enabled, bool looping, bool global);
+	bool tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames);
+	void pauseTimerCountdown(uint32 now);
+	void resumeTimerCountdown(uint32 now);
+	void setTimerEnabled(bool enabled);
+	bool isTimerEnabled() const { return _timerEnabled; }
+	bool isTimerLooping() const { return _timerLooping; }
+	bool isTimerGlobal() const { return _timerGlobal; }
+	int getTimerInitialValue() const { return _timerInitialValue; }
+	int getTimerCurrentValue() const { return _timerCurrentValue; }
 
 	bool hasFrames() const { return !_frames.empty(); }
 	bool tickVisualState(uint32 now);
@@ -146,6 +157,15 @@ private:
 	RuntimeEntityAnchorMode _anchorMode = kRuntimeEntityAnchorTopLeft;
 	float _zExtent = 0.0f;
 	float _depthScale = 1.0f;
+	int _timerInitialValue = 0;
+	int _timerCurrentValue = 0;
+	uint32 _timerStartTick = 0;
+	uint32 _timerNextFireTick = 0;
+	uint32 _timerPauseTick = 0;
+	bool _timerEnabled = false;
+	bool _timerLooping = false;
+	bool _timerGlobal = false;
+	bool _timerPaused = false;
 };
 
 class RuntimeEntityManager {
@@ -168,9 +188,14 @@ public:
 		bool playBackwards, bool pingPong);
 	RuntimeEntity *spawnSceneActorEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int initialFrame);
+	RuntimeEntity *spawnSceneTimerEntity(const Common::String &name, int initialValue, int currentValue,
+		bool enabled, bool looping, bool global);
 	RuntimeEntity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();
+	void pauseTimerCountdowns();
+	void resumeTimerCountdowns();
+	bool takeExpiredTimerNames(Common::Array<Common::String> &expiredTimerNames);
 	bool tickSceneEntities();
 	bool syncCursorEntityPosition(const Common::Point &position);
 	void drawSceneEntities(Graphics::Screen &screen) const;
@@ -186,7 +211,9 @@ private:
 
 	ResourceManager &_resources;
 	Common::Array<RuntimeEntity *> _sceneEntities;
+	Common::Array<Common::String> _expiredTimerNames;
 	RuntimeEntity *_cursorEntity = nullptr;
+	int _timerPauseDepth = 0;
 };
 
 } // End of namespace Harvester

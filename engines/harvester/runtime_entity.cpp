@@ -383,6 +383,97 @@ Common::Rect RuntimeEntity::getScreenRect() const {
 	return getFrameRect();
 }
 
+void RuntimeEntity::configureTimerCountdown(int initialValue, int currentValue,
+		bool enabled, bool looping, bool global) {
+	_timerInitialValue = MAX(initialValue, 0);
+	_timerCurrentValue = MAX(currentValue, 0);
+	_timerEnabled = false;
+	_timerLooping = looping;
+	_timerGlobal = global;
+	_timerPaused = false;
+	_timerPauseTick = 0;
+	_timerStartTick = 0;
+	_timerNextFireTick = 0;
+	_visible = false;
+	_drawEnabled = false;
+	_animationEnabled = false;
+	_hitTestMode = kRuntimeEntityHitTestNone;
+	setTimerEnabled(enabled);
+}
+
+void RuntimeEntity::setTimerEnabled(bool enabled) {
+	if (_classId != kRuntimeEntityClassTimer)
+		return;
+
+	if (!enabled) {
+		_timerEnabled = false;
+		_timerPaused = false;
+		_timerPauseTick = 0;
+		_timerStartTick = 0;
+		_timerNextFireTick = 0;
+		return;
+	}
+
+	const uint32 now = getAnimationClockTicks();
+	const int remainingValue = _timerCurrentValue > 0 ? _timerCurrentValue : _timerInitialValue;
+	_timerEnabled = true;
+	_timerPaused = false;
+	_timerPauseTick = 0;
+	_timerStartTick = now;
+	_timerCurrentValue = MAX(remainingValue, 0);
+	_timerNextFireTick = now + (uint32)_timerCurrentValue * 100U;
+}
+
+bool RuntimeEntity::tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames) {
+	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
+		return false;
+
+	if (_timerNextFireTick != 0 && (int32)(now - _timerNextFireTick) < 0) {
+		const uint32 remainingTicks = _timerNextFireTick - now;
+		_timerCurrentValue = (int)((remainingTicks + 99U) / 100U);
+		return false;
+	}
+
+	_timerCurrentValue = 0;
+	expiredTimerNames.push_back(_name);
+	if (_timerLooping) {
+		_timerCurrentValue = _timerInitialValue;
+		_timerStartTick = now;
+		_timerNextFireTick = now + (uint32)_timerInitialValue * 100U;
+	} else {
+		_timerEnabled = false;
+		_timerStartTick = 0;
+		_timerNextFireTick = 0;
+	}
+
+	return false;
+}
+
+void RuntimeEntity::pauseTimerCountdown(uint32 now) {
+	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
+		return;
+
+	if (_timerNextFireTick != 0 && (int32)(now - _timerNextFireTick) < 0) {
+		const uint32 remainingTicks = _timerNextFireTick - now;
+		_timerCurrentValue = (int)((remainingTicks + 99U) / 100U);
+	} else {
+		_timerCurrentValue = 0;
+	}
+
+	_timerPaused = true;
+	_timerPauseTick = now;
+}
+
+void RuntimeEntity::resumeTimerCountdown(uint32 now) {
+	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || !_timerPaused)
+		return;
+
+	if (_timerNextFireTick != 0)
+		_timerNextFireTick += now - _timerPauseTick;
+	_timerPaused = false;
+	_timerPauseTick = 0;
+}
+
 void RuntimeEntity::draw(Graphics::Screen &screen) const {
 	if (!_visible || !_drawEnabled || _currentFrame < 0)
 		return;
@@ -620,6 +711,8 @@ void RuntimeEntityManager::clearSceneEntities() {
 	for (RuntimeEntity *entity : _sceneEntities)
 		delete entity;
 	_sceneEntities.clear();
+	_expiredTimerNames.clear();
+	_timerPauseDepth = 0;
 }
 
 RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::String &name,
@@ -742,6 +835,16 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String 
 	return entity;
 }
 
+RuntimeEntity *RuntimeEntityManager::spawnSceneTimerEntity(const Common::String &name,
+		int initialValue, int currentValue, bool enabled, bool looping, bool global) {
+	RuntimeEntity *entity = new RuntimeEntity();
+	entity->setName(name);
+	entity->setClassId(kRuntimeEntityClassTimer);
+	entity->configureTimerCountdown(initialValue, currentValue, enabled, looping, global);
+	insertSceneEntity(entity);
+	return entity;
+}
+
 void RuntimeEntityManager::hideCursor() {
 	if (_cursorEntity)
 		_cursorEntity->setVisible(false);
@@ -752,12 +855,48 @@ void RuntimeEntityManager::showCursor() {
 		_cursorEntity->setVisible(true);
 }
 
+void RuntimeEntityManager::pauseTimerCountdowns() {
+	if (_timerPauseDepth++ > 0)
+		return;
+
+	const uint32 now = getAnimationClockTicks();
+	for (RuntimeEntity *entity : _sceneEntities)
+		entity->pauseTimerCountdown(now);
+}
+
+void RuntimeEntityManager::resumeTimerCountdowns() {
+	if (_timerPauseDepth == 0)
+		return;
+	if (--_timerPauseDepth > 0)
+		return;
+
+	const uint32 now = getAnimationClockTicks();
+	for (RuntimeEntity *entity : _sceneEntities)
+		entity->resumeTimerCountdown(now);
+}
+
+bool RuntimeEntityManager::takeExpiredTimerNames(Common::Array<Common::String> &expiredTimerNames) {
+	if (_expiredTimerNames.empty())
+		return false;
+
+	expiredTimerNames = _expiredTimerNames;
+	_expiredTimerNames.clear();
+	return true;
+}
+
 bool RuntimeEntityManager::tickSceneEntities() {
 	const uint32 now = getAnimationClockTicks();
 	bool changed = false;
 
-	for (RuntimeEntity *entity : _sceneEntities)
+	for (RuntimeEntity *entity : _sceneEntities) {
+		if (entity->getClassId() == kRuntimeEntityClassTimer) {
+			if (_timerPauseDepth == 0)
+				(void)entity->tickTimerState(now, _expiredTimerNames);
+			continue;
+		}
+
 		changed |= entity->tickVisualState(now);
+	}
 
 	return changed;
 }
