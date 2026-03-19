@@ -184,6 +184,38 @@ static int resolveOptionsSliderIndexFromMouseX(int mouseX) {
 	return clampStartupOptionLevel((relativeX + (kOptionsSliderStep / 2)) / kOptionsSliderStep);
 }
 
+static bool loadRawMenuValue(const Common::Array<byte> &data, const char *key, Common::String &value) {
+	value.clear();
+	if (!key)
+		return false;
+
+	Common::String line;
+	for (uint i = 0; i <= data.size(); ++i) {
+		const bool atEnd = i == data.size();
+		const byte chr = atEnd ? '\n' : data[i];
+		if (chr == '\r')
+			continue;
+
+		if (chr != '\n') {
+			line += (char)chr;
+			continue;
+		}
+
+		const char *separator = strchr(line.c_str(), '=');
+		if (separator) {
+			const Common::String currentKey(line.c_str(), separator);
+			if (currentKey.equalsIgnoreCase(key)) {
+				value = Common::String(separator + 1);
+				return true;
+			}
+		}
+
+		line.clear();
+	}
+
+	return false;
+}
+
 static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &config) {
 	config = RoomMenuTextConfig();
 	config.optionItems.resize(kOptionsItemCount);
@@ -224,9 +256,9 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 		config.noLabel = value;
 	if (menu.getKey("click", kMenuSectionName, value) && !value.empty())
 		config.clickLabel = value;
-	if (menu.getKey("newgame", kMenuSectionName, value) && !value.empty())
+	if (loadRawMenuValue(data, "newgame", value) && !value.empty())
 		config.newGamePrompt = value;
-	if (menu.getKey("quitgame", kMenuSectionName, value) && !value.empty())
+	if (loadRawMenuValue(data, "quitgame", value) && !value.empty())
 		config.quitGamePrompt = value;
 
 	return true;
