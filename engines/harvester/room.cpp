@@ -46,6 +46,17 @@ static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
+static const int kRoomMonsterAnimationRate = 17;
+
+struct MonsterAnimationRange {
+	MonsterAnimationRange() {}
+	MonsterAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
+		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
+
+	int walkFirstFrame = 0;
+	int walkLastFrame = 0;
+	int idleFrame = 0;
+};
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
@@ -175,6 +186,39 @@ static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
 	font.drawString(&screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
 }
 
+static MonsterAnimationRange resolveRoomMonsterAnimationRange(int facing) {
+	switch (facing) {
+	case 0:
+		return MonsterAnimationRange(0x00, 0x09, 0x3b);
+	case 1:
+		return MonsterAnimationRange(0x0f, 0x18, 0x0e);
+	case 2:
+		return MonsterAnimationRange(0x2d, 0x36, 0x2c);
+	case 3:
+		return MonsterAnimationRange(0x1e, 0x27, 0x28);
+	default:
+		return MonsterAnimationRange(0x00, 0x09, 0x3b);
+	}
+}
+
+static void applyRoomMonsterAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster) {
+	entity.setVisible(monster.visible);
+	if (!monster.visible)
+		return;
+
+	const MonsterAnimationRange range = resolveRoomMonsterAnimationRange(monster.facing);
+	if (monster.active) {
+		entity.setAnimationRate(kRoomMonsterAnimationRate);
+		entity.setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
+		entity.setAnimationEnabled(true);
+	} else {
+		entity.setAnimationRate(0);
+		entity.setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
+		entity.setCurrentFrame(range.idleFrame);
+		entity.setAnimationEnabled(false);
+	}
+}
+
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		InventorySystem &inventory)
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
@@ -234,9 +278,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 		if (!screen || !art || !bodyFont || !promptFont)
 			return Common::kNoError;
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 
 		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 			return Common::kReadingFailed;
+		if (runtimeEntities) {
+			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+				if (entity)
+					applyRoomMonsterAnimation(*entity, monster);
+			}
+			runtimeEntities->pauseTimerCountdowns();
+		}
 
 		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
 		drawRoomScene(_engine, *screen, scene, 0.0f);
@@ -247,12 +300,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		transitionError = startupFlow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
 		if (transitionError.getCode() != Common::kNoError)
 			return transitionError;
+		if (runtimeEntities)
+			runtimeEntities->resumeTimerCountdowns();
 
 		startupFlow.resetCursorAnimationSequence();
 		startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
 			(void)_engine.playStartupMusic(scene.state.musicPath);
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		StartupRoomPlayerState playerState;
 		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
 		playerState.centerX = state.playerSpawnX;
@@ -311,7 +365,27 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			idleState.activityTick = getRuntimeClockTicks();
 			updatePlayerIdleTrigger(idleState);
 		};
+		auto syncCurrentRoomRuntimeState = [&]() {
+			Script *startupScript = _engine.getStartupScript();
+			if (!startupScript)
+				return;
+
+			for (const StartupMonsterRecord &monster : scene.state.roomMonsters)
+				(void)startupScript->syncRuntimeMonsterRecord(monster);
+			if (!runtimeEntities)
+				return;
+
+			for (StartupTimerRecord &timer : scene.state.roomTimers) {
+				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(timer.timerName);
+				if (!entity)
+					continue;
+				timer.currentValue = entity->getTimerCurrentValue();
+				timer.enabled = entity->isTimerEnabled();
+				(void)startupScript->syncRuntimeTimerRecord(timer);
+			}
+		};
 		auto captureCurrentSaveState = [&]() {
+			syncCurrentRoomRuntimeState();
 			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
 			_engine.captureCurrentStartupSaveRoomState(scene.state.entranceName, scene.state.roomName,
 				playerState.centerX, playerState.bottomY, (int)playerState.z, facing,
@@ -343,6 +417,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return false;
 		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 			return false;
+		if (runtimeEntities) {
+			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+				if (entity)
+					applyRoomMonsterAnimation(*entity, monster);
+			}
+		}
 
 		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
 		if (playerState.entity) {
@@ -1288,6 +1369,28 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;
+		if (runtimeEntities) {
+			Common::Array<Common::String> expiredTimerNames;
+			if (runtimeEntities->takeExpiredTimerNames(expiredTimerNames)) {
+				syncCurrentRoomRuntimeState();
+				for (const Common::String &timerName : expiredTimerNames) {
+					StartupInteractionResult timerInteraction;
+					if (!_engine.getStartupScript()->executeActionTag(timerName, timerInteraction))
+						continue;
+
+					bool didTransition = false;
+					Common::Error interactionError =
+						interactionProcessor.handleInteractionResult(timerInteraction, didTransition);
+					if (interactionError.getCode() != Common::kNoError)
+						return interactionError;
+					if (startupFlow.hasPendingMainMenuReturn())
+						return Common::kNoError;
+					needsRedraw = true;
+					if (!pendingRoomChange.empty())
+						break;
+				}
+			}
+		}
 		if (updatePlayerIdleAnimation(scene.state, playerState, idleState))
 			needsRedraw = true;
 

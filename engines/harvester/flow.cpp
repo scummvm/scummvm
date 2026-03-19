@@ -234,6 +234,8 @@ static int resolvePlayerFacingFrame(int facing) {
 
 static int resolveMonsterFacingFrame(int facing) {
 	switch (facing) {
+	case 0:
+		return 0x3b;
 	case 1:
 		return 0x0e;
 	case 2:
@@ -241,7 +243,7 @@ static int resolveMonsterFacingFrame(int facing) {
 	case 3:
 		return 0x28;
 	default:
-		return 0;
+		return 0x3b;
 	}
 }
 
@@ -2159,6 +2161,19 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
 			region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 	}
+	for (const StartupTimerRecord &timer : state.roomTimers) {
+		if (!runtimeEntities->spawnSceneTimerEntity(timer.timerName,
+				timer.initialValue, timer.currentValue, timer.enabled, timer.looping, timer.global)) {
+			debug(1, "Harvester: unable to spawn room timer entity '%s'",
+				timer.timerName.c_str());
+			continue;
+		}
+
+		debugC(1, kDebugScene,
+			"Harvester: scene timer spawned room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
+			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
+			timer.enabled, timer.looping, timer.global);
+	}
 	for (const StartupObjectRecord &object : drawableObjects) {
 		RuntimeEntity *entity = nullptr;
 		const Common::String spritePath = resolveSceneObjectSpritePath(object);
@@ -2234,7 +2249,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
 		RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(monster.monsterName,
 			monster.modelPath, Common::Point(monster.posX, monster.posY), (float)monster.posZ,
-			resolveMonsterFacingFrame(monster.initialFacing));
+			resolveMonsterFacingFrame(monster.facing));
 		if (!entity) {
 			debug(1, "Harvester: unable to spawn room monster entity '%s' from '%s'",
 				monster.monsterName.c_str(), monster.modelPath.c_str());
@@ -2249,9 +2264,10 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				monster.monsterName.c_str());
 		}
 		debugC(1, kDebugScene,
-			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d model='%s' active=%d visible=%d",
+			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d model='%s' active=%d visible=%d",
 			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
-			entity->getX(), entity->getY(), (double)entity->getZ(), monster.initialFacing,
+			entity->getX(), entity->getY(), (double)entity->getZ(), monster.facing,
+			monster.currentHitPoints, monster.initialHitPoints,
 			monster.modelPath.c_str(), monster.active, monster.visible);
 	}
 	if (state.hasEntrance) {

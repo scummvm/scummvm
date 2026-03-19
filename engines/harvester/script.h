@@ -152,13 +152,50 @@ struct StartupMonsterRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
-	int initialFacing = -1;
+	int initialHitPoints = 0;
+	int currentHitPoints = 0;
+	int damageAmount = 0;
+	int engageDistance = 0;
+	int damageType = 0;
+	int facing = -1;
 	Common::String roomName;
 	Common::String monsterName;
 	Common::String modelPath;
+	Common::String field38;
+	Common::String field3c;
+	Common::String field44;
+	Common::String field48;
+	Common::String attackSound1;
+	Common::String attackSound2;
+	Common::String attackSound3;
+	Common::String hitSound1;
+	Common::String hitSound2;
+	Common::String hitSound3;
+	Common::String footstepSoundLeft;
+	Common::String footstepSoundRight;
+	Common::String deathSound;
 	Common::String onDeathActionTag;
 	bool active = false;
 	bool visible = false;
+	bool savedVisible = false;
+	bool runtimeSpawned = false;
+	int minXBound = 0x14;
+	int maxXBound = 0x26b;
+	int field70 = 0;
+	int field74 = 0;
+	int field78 = 0;
+	int field7c = 0;
+};
+
+struct StartupTimerRecord {
+	int initialValue = 0;
+	int currentValue = 0;
+	Common::String timerName;
+	Common::String arg1;
+	Common::String arg2;
+	bool enabled = false;
+	bool looping = false;
+	bool global = false;
 };
 
 struct StartupRegionRecord {
@@ -254,6 +291,7 @@ struct StartupRoomSetupState {
 	Common::Array<StartupAnimRecord> roomAnimations;
 	Common::Array<StartupNpcRecord> roomNpcs;
 	Common::Array<StartupMonsterRecord> roomMonsters;
+	Common::Array<StartupTimerRecord> roomTimers;
 	Common::Array<StartupRegionRecord> roomRegions;
 	Common::Array<StartupAudioCommand> audioCommands;
 };
@@ -296,6 +334,7 @@ public:
 	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
 	const Common::Array<StartupNpcRecord> &getNpcs() const { return _npcs; }
 	const Common::Array<StartupMonsterRecord> &getMonsters() const { return _monsters; }
+	const Common::Array<StartupTimerRecord> &getTimers() const { return _timers; }
 	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
@@ -354,8 +393,15 @@ public:
 		bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
 		bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
-		int getCurrentStoryDayIndex() const;
-		int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
+	int getCurrentStoryDayIndex() const;
+	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
+	int getPlayerCombatLoadout() const { return _playerCombatLoadout; }
+	bool isPlayerControlPaused() const { return _playerControlPaused; }
+	bool setPlayerCombatLoadout(int loadout);
+	bool setPlayerControlPaused(bool paused);
+	bool syncRuntimeMonsterRecord(const StartupMonsterRecord &monster);
+	bool syncRuntimeTimerRecord(const StartupTimerRecord &timer);
+	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);
 
 private:
 	bool loadConfig(ResourceManager &resources);
@@ -374,6 +420,8 @@ private:
 	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
 	StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName);
 	const StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
+	StartupTimerRecord *findRuntimeTimer(const Common::String &timerName);
+	const StartupTimerRecord *findRuntimeTimer(const Common::String &timerName) const;
 	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
 		ResourceManager &resources, StartupRoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
@@ -396,6 +444,7 @@ private:
 	Common::Array<StartupAnimRecord> _animations;
 	Common::Array<StartupNpcRecord> _npcs;
 	Common::Array<StartupMonsterRecord> _monsters;
+	Common::Array<StartupTimerRecord> _timers;
 	Common::Array<StartupRegionRecord> _regions;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
@@ -408,7 +457,10 @@ private:
 	Common::Array<StartupRegionRecord> _runtimeRegions;
 	Common::Array<StartupNpcRecord> _runtimeNpcs;
 	Common::Array<StartupMonsterRecord> _runtimeMonsters;
+	Common::Array<StartupTimerRecord> _runtimeTimers;
 	int _playerCurrentHitPoints = 30;
+	int _playerCombatLoadout = 0;
+	bool _playerControlPaused = false;
 	int _fxVolumeLevel = 9;
 	int _musicVolumeLevel = 3;
 	int _gammaLevel = 0;

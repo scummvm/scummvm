@@ -116,6 +116,38 @@ struct RoomMenuTextConfig {
 	Common::String quitGamePrompt = "QUIT GAME";
 };
 
+class ScopedSceneTimerPause {
+public:
+	explicit ScopedSceneTimerPause(HarvesterEngine &engine) : _engine(engine) {
+		pause();
+	}
+
+	~ScopedSceneTimerPause() {
+		resume();
+	}
+
+	void pause() {
+		if (_paused)
+			return;
+		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
+			runtimeEntities->pauseTimerCountdowns();
+			_paused = true;
+		}
+	}
+
+	void resume() {
+		if (!_paused)
+			return;
+		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+			runtimeEntities->resumeTimerCountdowns();
+		_paused = false;
+	}
+
+private:
+	HarvesterEngine &_engine;
+	bool _paused = false;
+};
+
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y);
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
@@ -616,6 +648,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	const Art *art = _engine.getStartupArt();
 	if (!art)
 		return Common::kReadingFailed;
+	ScopedSceneTimerPause pausedTimers(_engine);
 
 	Common::Array<Common::String> mainMenuItems;
 	const bool showSessionActions = _engine.hasCurrentStartupSaveRoomState();
@@ -637,7 +670,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		return screen && captureScreenBackdrop(*screen, backdrop);
 	};
 	auto runSelectedRoomLoop = [&](const Common::String &targetName) -> Common::Error {
+		pausedTimers.resume();
 		Common::Error roomError = startupFlow.runRoomLoop(targetName);
+		pausedTimers.pause();
 		_engine.stopStartupMusic();
 		_engine.stopStartupSound();
 		if (roomError.getCode() == Common::kReadingFailed) {
