@@ -187,7 +187,7 @@ bool WaynesWorldEngine::walkFindPoint(int flag, int &sourceX, int &sourceY, int 
         int scan1Sign = -1;
         while (scan1Sign < 2 && !walkable) {
             if (ABS(slopeX) >= 1.0f) {
-                float slopeY = 1.0f / slopeX;
+	            const float slopeY = 1.0f / slopeX;
                 scan1Y = sourceY + scan1Incr * scan1Sign;
                 scan1X = sourceX + (scan1Y - sourceY) * slopeY;
             } else {
@@ -463,7 +463,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
         waitMillis(100); // TODO Fix this
         if (_scrollRemaining > 0) {
 			warning("STUB - Missing scrolling in WalkTo");
-            // TOOD
+            // TODO
             // if (updateGame()) {
             //     return true;
             // }

@@ -32,6 +32,7 @@ public:
 	WWSurface(int width, int height);
 	WWSurface(const Graphics::Surface *sourceSurface);
 	~WWSurface();
+
 	void drawSurface(const Graphics::Surface *surface, int x, int y);
 	void drawSurfaceTransparent(const Graphics::Surface *surface, int x, int y);
 	void scaleSurface(const Graphics::Surface *surface);
@@ -45,6 +46,7 @@ class GFTFont {
 public:
 	GFTFont();
 	~GFTFont();
+
 	void loadFromFile(const char *filename);
 	void drawText(Graphics::Surface *surface, const char *text, int x, int y, byte color);
 	void drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color);
@@ -65,6 +67,7 @@ public:
 
 	Screen();
 	~Screen();
+
 	void beginUpdate();
 	void endUpdate();
 	void drawSurface(const Graphics::Surface *surface, int x, int y);
@@ -85,6 +88,7 @@ protected:
 class ScreenEffect {
 public:
 	ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight);
+
 	void drawSpiralEffect();
 	void drawRandomEffect();
 protected:
