@@ -4266,8 +4266,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("elroycostume", "", "ECCLOSET.EXE", "f2fb9b1c60d3d1ee2b664165f4199391", 1327420, 404),
 	WINDEMO1("elroycostume", "Demo", "elroy.exe", "9d18c6a224dd0e5be4ad03a05c74254b", 854349, 404),
 
-	MACGAME1("elroypave", "", "Elroy Hits the Pavement", "17efee018a660458fae80de4364021ac", 525584, 404),
-	WINGAME1("elroypave", "", "PAVEMENT.EXE", "7937f42747788b558bc32cced3d8f66b", 758491, 404),
+	MACGAME1("elroypave", "", "Elroy Hits the Pavement", "r:17efee018a660458fae80de4364021ac", 525584, 404),
+	WINGAME1("elroypave", "", "PAVEMENT.EXE", "t:e49b3ba79da895a934461146ee642d16", 758491, 404),
 	MACDEMO1("elroypave", "Demo", "Pavement Demo", "17efee018a660458fae80de4364021ac", 520880, 404),
 	WINDEMO2("elroypave", "Demo", "PAVEDEMO.EXE",			 "073eb1dd818796efe9513b11a8a4bb2d", 802180,
 								  "PAVEDEMO/P12/SHARED.DXR", "7fe5e2fa28260cbfa2d8675d948401b8", 112470, 404),

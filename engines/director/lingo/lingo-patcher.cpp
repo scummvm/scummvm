@@ -394,6 +394,14 @@ on GetCDLetter tagFile, discNumber\r\
 end \r\
 ";
 
+/* Elroy Hits the Pavement has a missing mouseUp script for clicking on the map when
+ * you game over in the gangster's hideout. */
+const char *const elroypaveMapFix = " \
+on mouseUp\r\
+  handleMapClick()\r\
+end \r\
+";
+
 /* Frankenstein: Through The Eyes Of The Monster uses a projector FRANKIE.EXE, which calls an
  * identically-named submovie FRANKIE.DIR. For now we can work around this mess by referring to
  * the full "path" of the embedded submovie so path detection doesn't collide with FRANKIE.EXE.
@@ -536,6 +544,10 @@ struct ScriptHandlerPatch {
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\opening\\shared.dxr", kMovieScript, 802, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rajoumon\\shared.dxr", kMovieScript, 840, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
 	{"kyoto", nullptr, kPlatformWindows, "ck_data\\rokudou\\shared.dxr", kMovieScript, 846, DEFAULT_CAST_LIB, &kyotoTextEntryFix},
+	{"elroypave", nullptr, kPlatformWindows, "P04\\P04HAZ\\ENDING.DXR", kScoreScript, 27, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformWindows, "P04\\P04HAZ\\ENDING.DXR", kScoreScript, 29, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformMacintosh, "P04:p04Haz:ending.Dxr", kScoreScript, 27, DEFAULT_CAST_LIB, &elroypaveMapFix},
+	{"elroypave", nullptr, kPlatformMacintosh, "P04:p04Haz:ending.Dxr", kScoreScript, 29, DEFAULT_CAST_LIB, &elroypaveMapFix},
 	{"vnc", nullptr, kPlatformWindows, "VNC\\VNC.EXE", kMovieScript, 57, DEFAULT_CAST_LIB, &vncSkipDetection},
 	{"vnc", nullptr, kPlatformWindows, "VNC2\\SHARED.DXR", kMovieScript, 1248, DEFAULT_CAST_LIB, &vncEnableCheats},
 	{"vnc", nullptr, kPlatformWindows, "VNC\\Shared.DXR", kMovieScript, 1562, DEFAULT_CAST_LIB, &vncFixIntro},
