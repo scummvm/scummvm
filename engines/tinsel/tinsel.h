@@ -135,6 +135,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &, const Common::CustomEventType 
 
 #define READ_16(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
 #define READ_32(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT32(v) : READ_LE_UINT32(v))
+#define WRITE_16(p, v) (TinselV1Mac || TinselV1Saturn ? WRITE_BE_UINT16(p, v) : WRITE_LE_UINT16(p, v))
 #define WRITE_32(p, v) (TinselV1Mac || TinselV1Saturn ? WRITE_BE_UINT32(p, v) : WRITE_LE_UINT32(p, v))
 #define FROM_16(v) (TinselV1Mac || TinselV1Saturn ? FROM_BE_16(v) : FROM_LE_16(v))
 #define FROM_32(v) (TinselV1Mac || TinselV1Saturn ? FROM_BE_32(v) : FROM_LE_32(v))
