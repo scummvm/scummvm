@@ -106,6 +106,19 @@ MODULE_OBJS += \
 	debugger/resource.o
 endif
 
+ifdef USE_M68K_COSTUME_ASM
+MODULE_OBJS += \
+	m68k/bylerledecode_classic.o \
+	m68k/bylerledecode_mode0.o \
+	m68k/bylerledecode_mode1.o \
+	m68k/bylerledecode_mode3.o \
+	m68k/bylerledecode_scaled_mode0.o \
+	m68k/bylerledecode_scaled_mode0_smask.o \
+	m68k/bylerledecode_scaled_mode1.o \
+	m68k/bylerledecode_scaled_mode1_smask.o \
+	m68k/bylerledecode_scaled_mode3.o
+endif
+
 ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \

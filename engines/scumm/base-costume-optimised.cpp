@@ -20,12 +20,20 @@
  */
 
 
+#ifdef SCUMM_OPTIMISED_CODE
+
+#define FORCE_TEXT_CONSOLE
+
+#include "common/textconsole.h"
 #include "scumm/base-costume.h"
 #include "scumm/util.h"
 
+#ifdef USE_M68K_COSTUME_ASM
+#include "bylerledecodeM68K.h"
+#endif
+
 namespace Scumm {
 
-#ifdef SCUMM_OPTIMISED_CODE
 byte BaseCostumeRenderer::paintCelByleRLECommon(
 	int xMoveCur,
 	int yMoveCur,
@@ -264,6 +272,7 @@ enum class ShadowMode : int {
 	Classic
 };
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Mode0(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX, /* unused */
@@ -276,6 +285,7 @@ void ByleRLEDecode_Mode0(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -336,7 +346,9 @@ void ByleRLEDecode_Mode0(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Mode1(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX, /* unused */
@@ -349,6 +361,7 @@ void ByleRLEDecode_Mode1(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -415,7 +428,9 @@ void ByleRLEDecode_Mode1(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Mode3(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX, /* unused */
@@ -428,6 +443,7 @@ void ByleRLEDecode_Mode3(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -495,7 +511,9 @@ void ByleRLEDecode_Mode3(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Classic(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX, /* unused */
@@ -508,6 +526,7 @@ void ByleRLEDecode_Classic(
 	const uint16 *_palette /* unused */) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -568,7 +587,9 @@ void ByleRLEDecode_Classic(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Scaled_Mode0(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -581,6 +602,7 @@ void ByleRLEDecode_Scaled_Mode0(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -647,7 +669,9 @@ void ByleRLEDecode_Scaled_Mode0(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Scaled_Mode0_SMask(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -660,6 +684,7 @@ void ByleRLEDecode_Scaled_Mode0_SMask(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -726,7 +751,9 @@ void ByleRLEDecode_Scaled_Mode0_SMask(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Scaled_Mode1(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -739,6 +766,7 @@ void ByleRLEDecode_Scaled_Mode1(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -816,7 +844,9 @@ void ByleRLEDecode_Scaled_Mode1(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Scaled_Mode1_SMask(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -829,6 +859,7 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -906,7 +937,9 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
+#ifndef USE_M68K_COSTUME_ASM
 void ByleRLEDecode_Scaled_Mode3(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
 	const byte _scaleX,
@@ -919,6 +952,7 @@ void ByleRLEDecode_Scaled_Mode3(
 	const uint16 *_palette) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -998,6 +1032,7 @@ void ByleRLEDecode_Scaled_Mode3(
 		} while (len > 0);
 	} while (true);
 }
+#endif
 
 void ByleRLEDecode_Scaled_Classic_SMask(
 	BaseCostumeRenderer::ByleRLEData *pcompData,
@@ -1011,6 +1046,7 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 	const uint16 *_palette /* unused */) {
 
 	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	warning("%s: unexpected call, save your game and report", __FUNCTION__);
 
 	const byte *src = _srcPtr;
 
@@ -1155,6 +1191,9 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 		return;
 	}
 
+	warning("%s: unexpected call, save your game and report: %d (%d, %d, %d, %d)", __FUNCTION__, (int)shadowMode,
+			compData.y, compData.boundsRect.top, compData.y + compData.scaledHeight, compData.boundsRect.bottom);
+
 	const byte *src = _srcPtr;
 
 	byte len = compData.repLen;
@@ -1262,6 +1301,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData) {
 		} while (len > 0);
 	} while (true);
 }
-#endif
 
 } // End of namespace Scumm
+
+#endif

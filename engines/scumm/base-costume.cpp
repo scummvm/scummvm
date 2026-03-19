@@ -20,6 +20,9 @@
  */
 
 
+#define FORCE_TEXT_CONSOLE
+
+#include "common/textconsole.h"
 #include "scumm/base-costume.h"
 #include "scumm/util.h"
 
@@ -294,6 +297,7 @@ void BaseCostumeRenderer::byleRLEDecode(ByleRLEData &compData, int16 actorHitX, 
 		byleRLEDecodeFast(compData);
 		return;
 	}
+	warning("%s: unoptimised version is being executed", __FUNCTION__);
 #endif
 	const byte *src = _srcPtr;
 	byte *dst = compData.destPtr;
