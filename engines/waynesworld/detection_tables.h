@@ -29,11 +29,32 @@ static const ADGameDescription gameDescriptions[] = {
 				"e00.txt", "78769d60d48aea314ed6be2f725c8c2f", 1293),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO1(GUIO_NOASPECT)
 	},
 
-	AD_TABLE_END_MARKER
-};
+	{
+		"waynesworld",
+		"Demo",
+		AD_ENTRY2s("R00.GXL", "6a05df806dedb69f1333cb9d81b6821c", 34392,
+					"CAPSPIN.GXL", "b9d2cd46b4ebe49fcf634b221f11f8df", 281089),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+
+	{
+		"waynesworld",
+		"Selectware Demo",
+		AD_ENTRY2s("R00.GXL", "6a05df806dedb69f1333cb9d81b6821c", 34392,
+					"CAP.GXL", "4823b4ae534716b8ea115ab34b7eac6b", 87864),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
+	},
+	
+	AD_TABLE_END_MARKER};
 
 } // End of namespace WaynesWorld
