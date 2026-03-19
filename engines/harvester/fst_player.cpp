@@ -259,23 +259,23 @@ static void decodeMaskBlock(byte *dest, int pitch, const byte *source) {
 	}
 }
 
-static bool decodeFrame(const FstHeader &header, const Common::Array<byte> &frameData, Common::Array<byte> &pixels, byte *palette) {
-	if (frameData.size() < 2)
+static bool decodeFrame(const FstHeader &header, const byte *frameData, uint32 frameSize, Common::Array<byte> &pixels, byte *palette) {
+	if (!frameData || frameSize < 2)
 		return false;
 
-	const uint16 bitCount = READ_LE_UINT16(frameData.data());
+	const uint16 bitCount = READ_LE_UINT16(frameData);
 	const uint32 bitstreamSize = (bitCount >> 3) + 1;
-	if (frameData.size() < 2 + bitstreamSize)
+	if (frameSize < 2 + bitstreamSize)
 		return false;
 
-	FstBitReader bitReader(frameData.data() + 2, bitCount);
+	FstBitReader bitReader(frameData + 2, bitCount);
 	uint32 payloadOffset = 2 + bitstreamSize;
 
 	if (bitReader.readBit()) {
-		if (frameData.size() < payloadOffset + 256 * 3)
+		if (frameSize < payloadOffset + 256 * 3)
 			return false;
 
-		convertVgaPalette(frameData.data() + payloadOffset, palette);
+		convertVgaPalette(frameData + payloadOffset, palette);
 		payloadOffset += 256 * 3;
 	}
 
@@ -283,6 +283,7 @@ static bool decodeFrame(const FstHeader &header, const Common::Array<byte> &fram
 	const int height = (int)header.height;
 	const int blocksX = width / 4;
 	const int blocksY = height / 4;
+	bool truncatedTail = false;
 
 	for (int blockY = 0; blockY < blocksY; ++blockY) {
 		for (int blockX = 0; blockX < blocksX; ++blockX) {
@@ -293,20 +294,29 @@ static bool decodeFrame(const FstHeader &header, const Common::Array<byte> &fram
 			byte *dest = pixels.data() + blockOffset;
 
 			if (bitReader.readBit()) {
-				if (frameData.size() < payloadOffset + 4)
-					return false;
+				// Some shipped FST frames stop before the full 320x200 block grid.
+				// Treat the missing tail blocks as unchanged instead of reading into PCM data.
+				if (frameSize < payloadOffset + 4) {
+					truncatedTail = true;
+					break;
+				}
 
-				decodeMaskBlock(dest, width, frameData.data() + payloadOffset);
+				decodeMaskBlock(dest, width, frameData + payloadOffset);
 				payloadOffset += 4;
 			} else {
-				if (frameData.size() < payloadOffset + 16)
-					return false;
+				if (frameSize < payloadOffset + 16) {
+					truncatedTail = true;
+					break;
+				}
 
 				for (int y = 0; y < 4; ++y)
-					memcpy(dest + y * width, frameData.data() + payloadOffset + y * 4, 4);
+					memcpy(dest + y * width, frameData + payloadOffset + y * 4, 4);
 				payloadOffset += 16;
 			}
 		}
+
+		if (truncatedTail)
+			break;
 	}
 
 	return true;
@@ -466,7 +476,7 @@ bool FstPlayer::play(const Common::String &path) {
 			continue;
 		}
 
-		if (!decodeFrame(header, frameData, pixels, palette)) {
+		if (!decodeFrame(header, videoData, videoSize, pixels, palette)) {
 			warning("Harvester: unable to decode '%s' frame %u", path.c_str(), frameIndex);
 			break;
 		}
