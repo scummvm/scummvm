@@ -1703,6 +1703,7 @@ Common::Error Flow::run() {
 		return Common::kReadingFailed;
 
 	clearPendingMainMenuReturn();
+	clearPendingNewGameRestart();
 	resetRoomNpcDialogueState();
 	Common::Error error = Common::kNoError;
 	if (_engine.hasPendingLoadedStartupSaveRoomState()) {
@@ -1718,8 +1719,9 @@ Common::Error Flow::run() {
 			return error;
 
 		clearPendingMainMenuReturn();
-		_engine.getStartupScript()->resetRuntimeState();
-		error = runRoomLoop("START");
+		clearPendingNewGameRestart();
+		error = runMainMenuStub();
+		return error;
 	}
 	if (error.getCode() != Common::kNoError)
 		return error;
@@ -2059,6 +2061,34 @@ bool Flow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) 
 	_queuedDialogueInteraction = StartupInteractionResult();
 	_hasQueuedDialogueInteraction = false;
 	return true;
+}
+
+void Flow::prepareForNewGame() {
+	clearPendingMainMenuReturn();
+	clearPendingNewGameRestart();
+	_engine.clearPendingLoadedStartupSaveRoomState();
+	_engine.clearCurrentStartupSaveRoomState();
+	if (_engine.getStartupScript())
+		_engine.getStartupScript()->resetRuntimeState();
+	resetRoomNpcDialogueState();
+}
+
+void Flow::requestNewGameRestart() {
+	_pendingNewGameRestart = true;
+}
+
+bool Flow::hasPendingNewGameRestart() const {
+	return _pendingNewGameRestart;
+}
+
+bool Flow::takePendingNewGameRestart() {
+	const bool requested = _pendingNewGameRestart;
+	_pendingNewGameRestart = false;
+	return requested;
+}
+
+void Flow::clearPendingNewGameRestart() {
+	_pendingNewGameRestart = false;
 }
 
 void Flow::requestMainMenuReturn() {

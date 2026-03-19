@@ -72,13 +72,18 @@ private:
 		Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 		bool pumpTransitionEvents(Common::Error &result);
 		void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
-		void queueDialogueInteraction(const StartupInteractionResult &interaction);
-		bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
-		void requestMainMenuReturn();
-		bool hasPendingMainMenuReturn() const;
-		bool takePendingMainMenuReturn();
-		void clearPendingMainMenuReturn();
-		void resetRoomNpcDialogueState();
+	void queueDialogueInteraction(const StartupInteractionResult &interaction);
+	bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
+	void prepareForNewGame();
+	void requestNewGameRestart();
+	bool hasPendingNewGameRestart() const;
+	bool takePendingNewGameRestart();
+	void clearPendingNewGameRestart();
+	void requestMainMenuReturn();
+	bool hasPendingMainMenuReturn() const;
+	bool takePendingMainMenuReturn();
+	void clearPendingMainMenuReturn();
+	void resetRoomNpcDialogueState();
 		void resetCursorAnimationSequence();
 		bool tickRuntimeEntities();
 		bool handleSystemEvent(const Common::Event &event, Common::Error &result);
@@ -93,6 +98,7 @@ private:
 	RoomSystem _room;
 	StartupInteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
+	bool _pendingNewGameRestart = false;
 	bool _pendingMainMenuReturn = false;
 };
 
