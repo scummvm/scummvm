@@ -48,10 +48,10 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 	// signature (2) + copyright (50) + version (2) + garbage(40)
 	_gxlFile->seek(94);
 	const uint16 count = _gxlFile->readUint16LE();
-	
+
 	GxlHeader header;
 	_gxlFile->seek(128);
-	
+
 	for (uint i = 0; i < count; i++) {
 		_gxlFile->readByte(); // Packing Type
 		char baseName[9] = {0};
@@ -62,10 +62,10 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 		fullName.trim();
 		fullName += Common::String(extension);
 		fullName.trim();
-		
+
 		strncpy(header.filename, fullName.c_str(), 12);
 		header.filename[12] = 0;
-		
+
 		header.offset = _gxlFile->readUint32LE();
 		header.size = _gxlFile->readUint32LE();
 

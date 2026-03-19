@@ -114,7 +114,7 @@ Common::Error WaynesWorldEngine::saveGameState(int slot, const Common::String &d
 	Common::Error result = Common::kNoError;
 	if (!_logic->saveSavegame(slot, &desc))
 		result = Common::kUnknownError;
-	
+
 	return result;
 }
 
@@ -161,8 +161,8 @@ void WaynesWorldEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHe
 }
 
 Common::Error WaynesWorldEngine::run() {
-	_isSaveAllowed = false;	
-	
+	_isSaveAllowed = false;
+
 	for (uint i = 0; i < kRoomAnimationsCount; i++)
 		_roomAnimations[i] = nullptr;
 
@@ -249,7 +249,7 @@ Common::Error WaynesWorldEngine::run() {
 	CursorMan.showMouse(true);
 
 	drawInterface(2);
-	
+
 	_gameState = 0; // DEBUG Initial _gameState 0 is set by room event in room 0
 	_currentRoomNumber = 0;
 	if (_loadSaveSlot >= 0) {
@@ -258,7 +258,7 @@ Common::Error WaynesWorldEngine::run() {
 	changeRoom(_currentRoomNumber);
 	changeMusic();
 	_isSaveAllowed = true;
-	
+
 	while (!shouldQuit()) {
 		_mouseClickButtons = 0;
 		// _keyInput = 0;
@@ -291,7 +291,7 @@ Common::Error WaynesWorldEngine::run() {
 	delete _m02Gxl;
 	delete _m01Gxl;
 	delete _m00Gxl;
-	
+
 	delete _fontWW;
 	delete _fontWWInv;
 	delete _fontBit5x7;
@@ -317,7 +317,7 @@ bool WaynesWorldEngine::hasFeature(EngineFeature f) const {
 void WaynesWorldEngine::updateEvents() {
 	Common::Event event;
 	Common::Point clickPt;
-	
+
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
@@ -393,14 +393,14 @@ void WaynesWorldEngine::initMouseCursor() {
 	const uint kCursorHotspotX = 4;
 	const uint kCursorHotspotY = 4;
 	static const byte kCursorData[kCursorWidth * kCursorHeight] = {
-		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-		0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x00, 0x0F, 0x0F, 0x0F, 
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 
-		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00, 
+		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x0F, 0x0F, 0x0F, 0x00, 0x00, 0x00, 0x0F, 0x0F, 0x0F,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00, 0x00
 	};
 	CursorMan.replaceCursor(kCursorData, kCursorWidth, kCursorHeight, kCursorHotspotX, kCursorHotspotY, 0);
@@ -539,7 +539,7 @@ void WaynesWorldEngine::handleMouseLeftClick() {
     case 5:
         extremeCloseUpHandleMouseClick();
         break;
-  
+
 	default:
 		warning("handleMouseLeftClick - Unhandled game state %d", _gameState);
 		break;
@@ -786,7 +786,7 @@ void WaynesWorldEngine::changeMusic() {
 		return;
 
 	_midi->stopSong();
-	
+
 	switch (_musicIndex) {
 	case 0:
 		_midi->playMusic("pop-a.xmi");
@@ -1002,7 +1002,7 @@ void WaynesWorldEngine::loadMainActorSprites() {
     for (int direction = 0; direction < 8; direction++) {
 		_wayneSprites[direction] = _m01Gxl->loadSurface(Common::String::format("wstand%d.pcx", direction).c_str());
 		_garthSprites[direction] = _m01Gxl->loadSurface(Common::String::format("gstand%d.pcx", direction).c_str());
-		for (int frameNum = 0; frameNum < 4; frameNum++) {			
+		for (int frameNum = 0; frameNum < 4; frameNum++) {
 			_wayneWalkSprites[direction][frameNum] = _m01Gxl->loadSurface(Common::String::format("wwalk%d%d.pcx", direction, frameNum).c_str());
 			_garthWalkSprites[direction][frameNum] = _m01Gxl->loadSurface(Common::String::format("gwalk%d%d.pcx", direction, frameNum).c_str());
 		}
@@ -1263,7 +1263,7 @@ void WaynesWorldEngine::openRoomLibrary(int roomNum) {
 void WaynesWorldEngine::loadRoomBackground() {
 	loadPalette(_roomGxl, "backg.pcx");
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);
-	
+
     drawRoomImageToSurface("backg.pcx", _backgroundSurface, 0, 0);
     refreshRoomBackground(_currentRoomNumber);
     refreshActors();
@@ -2176,7 +2176,7 @@ void WaynesWorldEngine::lookAtUnusedTicket() {
     // sysMouseDriver(2);
     _gameState = 3;
     _logic->_didScratchTicket = false;
-    stopRoomAnimations();    
+    stopRoomAnimations();
     if (!(_logic->_r10_flags & 0x80)) {
         _roomAnimations[19] = _r10Gxl->loadSurface("win.pcx");
     } else {
