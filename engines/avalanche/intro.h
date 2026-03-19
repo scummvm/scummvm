@@ -27,6 +27,9 @@
 #ifndef AVALANCHE_INTRO_H
 #define AVALANCHE_INTRO_H
 
+#include "common/str.h"
+#include "common/array.h"
+
 namespace Avalanche {
 
 class AvalancheEngine;
@@ -39,18 +42,23 @@ public:
 	void run();
 
 private:
+	void loadText();
 	void resetPlanes();
-	void moveStars();
+	void movePlanes();
 	void plotStar(uint8 plane, int x, int y);
 	void plotStars(uint8 plane, int y);
 	void combineAndDraw();
 
 	AvalancheEngine *_vm;
+	Common::Array<Common::String> _textStrings;
 	
 	// Each plane is 320x200 (40 bytes per row)
-	// Plane 0: Slow pace stars, Plane 1: Mid pace stars, Plane 2: Fast pace stars
-	uint8 _planes[3][40*200];
+	// Plane 0-2: Different pace stars, Plane 3: Scrolling text
+	uint8 _planes[4][40*200]; 
 	
+	int _thisLine;
+	int _nextBitline;
+	bool _cutOut;
 	int _displayCounter;
 };
 

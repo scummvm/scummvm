@@ -35,12 +35,133 @@
 
 namespace Avalanche {
 
-Intro::Intro(AvalancheEngine *vm) : _vm(vm), _displayCounter(0) {
+Intro::Intro(AvalancheEngine *vm) : _vm(vm), _thisLine(0), _nextBitline(16), _cutOut(false), _displayCounter(0) {
 	resetPlanes();
 }
 
 void Intro::resetPlanes() {
 	memset(_planes, 0, sizeof(_planes));
+}
+
+void Intro::loadText() {
+	_textStrings.clear();
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("It is the Year of Our Lord 1179.");
+	_textStrings.push_back("");
+	_textStrings.push_back("Our story starts on a tiny island");
+	_textStrings.push_back("off the coast of the Lleyn Peninsula,");
+	_textStrings.push_back("Gwynedd, Wales. The isle is called");
+	_textStrings.push_back("Ynys Enlli by those who live there,");
+	_textStrings.push_back("but in English its name is BARDSEY.");
+	_textStrings.push_back("");
+	_textStrings.push_back("The island has been a monarchy for");
+	_textStrings.push_back("many years. Tonight, the King");
+	_textStrings.push_back("of Bardsey, SIR GERALD WINTERWATER,");
+	_textStrings.push_back("sits down to a quiet game of shove");
+	_textStrings.push_back("ha'penny with his beautiful only");
+	_textStrings.push_back("daughter, GEIDA.");
+	_textStrings.push_back("");
+	_textStrings.push_back("Suddenly...");
+	_textStrings.push_back("there is a rattling at the door.");
+	_textStrings.push_back("`Owpen! Owpen the dowwur!\"");
+	_textStrings.push_back("cries a voice.");
+	_textStrings.push_back("");
+	_textStrings.push_back("One of the King's few guards");
+	_textStrings.push_back("hurries up.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Your Majesty,\" he cries, `there's a");
+	_textStrings.push_back("Brummie knight without who craves");
+	_textStrings.push_back("entrance!\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Well, he can stay without for all");
+	_textStrings.push_back("I care.\" says the King, who is annoyed");
+	_textStrings.push_back("at being interrupted at a crucial stage");
+	_textStrings.push_back("in his game. `Pass the mead.\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`But, Sire, he wants your daughter's");
+	_textStrings.push_back("hand in marriage!\" says the guard.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`He can go without her, too.\" the King");
+	_textStrings.push_back("replies.");
+	_textStrings.push_back("");
+	_textStrings.push_back("Just at that moment, the door bursts");
+	_textStrings.push_back("open, and a tall baron stands in the");
+	_textStrings.push_back("doorway. `Sir Gerald!\" he declaims,");
+	_textStrings.push_back("`I claim your daughter's hand!\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Go away.\" says the King, waving his");
+	_textStrings.push_back("ha'penny at the Baron.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Then, Sire, I shall hold your");
+	_textStrings.push_back("daughter to ransom!\" He motions to one");
+	_textStrings.push_back("of his guards, who strides forward to");
+	_textStrings.push_back("grab her.");
+	_textStrings.push_back("");
+	_textStrings.push_back("She knocks him to the ground. But even");
+	_textStrings.push_back("Geida cannot repel twelve strong");
+	_textStrings.push_back("knights. Soon she is bound up");
+	_textStrings.push_back("with rope.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Fifty pounds if you want her back.\"");
+	_textStrings.push_back("smirks the Baron.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`FIFTY POUNDS?!\" says the King faintly.");
+	_textStrings.push_back("` 50? You could buy Essex for that!\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Exactly.\" says the Baron. He claps his");
+	_textStrings.push_back("hands, and the guards begin to drag");
+	_textStrings.push_back("Geida away.");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Wait!\" calls Sir Gerald. `I had a");
+	_textStrings.push_back("letter from the Duke of Cardiff this");
+	_textStrings.push_back("morning saying that he was going to");
+	_textStrings.push_back("give away Essex and Cornwall in a");
+	_textStrings.push_back("prize draw. Why don't you enter that?\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Sir Gerald,\" says the Baron, `don't");
+	_textStrings.push_back("be a fool. If you haven't got  50,");
+	_textStrings.push_back("get it. Soon.\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("He starts to go out of the door.");
+	_textStrings.push_back("`Never trifle with Baron du Lustie!\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`You won't get away with this!\" calls");
+	_textStrings.push_back("the King. `I have friends in high");
+	_textStrings.push_back("places! I'll get the best knight in");
+	_textStrings.push_back("England to win her back!\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`Who?\"");
+	_textStrings.push_back("enquires the Baron sarcastically.");
+	_textStrings.push_back("`Lord Avalot d'Argent?\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`I'm serious. Sir Roamalot of Romford.\"");
+	_textStrings.push_back("");
+	_textStrings.push_back("`You haven't got a hope, Sir Gerald.");
+	_textStrings.push_back("Pay up.\" With that, du Lustie leaves");
+	_textStrings.push_back("the throneroom. Soon he is on his way");
+	_textStrings.push_back("back to Warwickshire, to lock Geida");
+	_textStrings.push_back("up in his deepest dungeon...");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("To Be Continued...");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
+	_textStrings.push_back("");
 }
 
 void Intro::plotStar(uint8 plane, int x, int y) {
@@ -61,46 +182,47 @@ void Intro::plotStars(uint8 plane, int y) {
 		plotStar(plane, _vm->_rnd->getRandomNumber(319), y);
 }
 
-void Intro::moveStars() {
+void Intro::movePlanes() {
+	// Stars move DOWN (Planes 0-2)
 	for (int p = 0; p < 3; p++) {
 		bool moveThisFrame = false;
 		if ((p == 0 && (_displayCounter % 10 == 0)) || (p == 1 && (_displayCounter % 2 == 0)) || (p == 2))
 			moveThisFrame = true;
 
 		if (moveThisFrame) {
-			// Shift plane index 0-2 (stars) DOWN by one line
-			// Using memmove to shift 199 lines (7960 bytes) forward by 40 bytes
-			memmove(_planes[p] + 40, _planes[p], 199*40);
-			// Clear the top line
+			// Shift plane index 0-2 (stars) DOWN by one row
+			// Using memmove to shift 199 rows (7960 bytes) forward by 40 bytes
+			memmove(_planes[p] + 40, _planes[p], 199 * 40);
+			// Clear the top row
 			memset(_planes[p], 0, 40);
 			// Add new stars at the top
 			plotStars(p, 0);
 		}
 	}
+
+	// Text moves UP (Plane 3)
+	memmove(_planes[3], _planes[3] + 40, 199 * 40);
+	// Clear the bottom-most row
+	memset(_planes[3] + 199 * 40, 0, 40);
 }
 
 void Intro::combineAndDraw() {
 	for (int y = 0; y < 200; y++) {
-		uint8 *dstRow = (uint8 *)_vm->_graphics->getSurface().getBasePtr(0, y); // Get the pointer to the starting pixel of each Row
+		uint8 *dstRow = (uint8 *)_vm->_graphics->getSurface().getBasePtr(0, y); // Get the pointer to the starting pixel of each row
 		for (int xByte = 0; xByte < 40; xByte++) {
-			// Get 3 plane bytes for particular row + position
+			// Get bytes for particular row + position in 4 planes
 			uint8 b0 = _planes[0][y * 40 + xByte];
 			uint8 b1 = _planes[1][y * 40 + xByte];
 			uint8 b2 = _planes[2][y * 40 + xByte];
+			uint8 b3 = _planes[3][y * 40 + xByte];
 
 			// Process 8 pixels inside the byte (bit by bit)
 			for (int bit = 7; bit >= 0; bit--) {
 				uint8 color = kColorBlack; // default bg color
 				
-				// Priority matching the original 'our_palette' logic:
-				// If Bit 3 (Text) is set -> White (15)
-				// Else if Bit 2 (Fast) is set -> Light Gray (7)
-				// Else if Bit 1 (Mid) is set -> Light Blue (9)
-				// Else if Bit 0 (Slow) is set -> Blue (1)
-				
-				// Plane 3 (soon to be implemented)
-
-				if (b2 & (1 << bit))
+				if (b3 & (1 << bit))
+					color = kColorWhite;
+				else if (b2 & (1 << bit))
 					color = kColorLightgray;
 				else if (b1 & (1 << bit))
 					color = kColorLightblue;
@@ -119,23 +241,74 @@ void Intro::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->menuRestoreScreen();
 
+    loadText();
     resetPlanes();
+    _thisLine = 0;
+    _nextBitline = 16;
     _displayCounter = 0;
+    _cutOut = false;
+
+    // Load original font
+    uint8 font[256][16];
+    Common::File fontFile;
+    if (fontFile.open("avalot.fnt")) {
+        for (int i = 0; i < 256; i++)
+			fontFile.read(font[i], 16);
+        fontFile.close();
+    } else {
+		warning("Failed to load font avalot.fnt");
+        memset(font, 0, sizeof(font)); // Clear the text plane if font file not found
+    }
 
     // Pre-populate stars across the screen before we can start shifting
     for (int p = 0; p < 3; p++) {
-        for (int y = 0; y < 200; y++) 
+        for (int y = 0; y < 200; y++)
 			plotStars(p, y);
     }
+	// Clear the text plane before we start shifting
+	memset(_planes[3], 0, 200 * 40);
 
-	while (!_vm->shouldQuit()) {
+    // Buffer for the character line
+    uint8 nextLineBuffer[40][16];
+
+	while (!_vm->shouldQuit() && !_cutOut) {
 		uint32 beginLoop = g_system->getMillis();
 
         _displayCounter++;
-        if (_displayCounter > 40) 
+        if (_displayCounter > 40)
 			_displayCounter = 1;
 
-        moveStars();
+        movePlanes();
+
+        if (_nextBitline == 16) {
+            if (_thisLine >= (int)_textStrings.size()) {
+				// Story over
+                _cutOut = true;
+            } else {
+                memset(nextLineBuffer, 0, sizeof(nextLineBuffer));
+                Common::String currentLine = _textStrings[_thisLine++];
+                int start = (20 - (currentLine.size() / 2)) - 1;
+
+                for (uint charIdx = 0; charIdx < currentLine.size(); charIdx++) {
+                    uint8 ascii = (uint8)currentLine[charIdx];
+                    for (int fontByte = 0; fontByte < 16; fontByte++) {
+                        uint8 fontBits = font[ascii][fontByte];
+						if (start + charIdx + 1 < 40)
+							nextLineBuffer[start + charIdx + 1][fontByte] = fontBits;
+                    }
+                }
+                _nextBitline = 0;
+            }
+        }
+
+        // Draw current bitline of the text into the bottom-most row of Plane 3
+        if (!_cutOut) {
+            for (int charIdx = 0; charIdx < 40; charIdx++) {
+                _planes[3][199 * 40 + charIdx] = nextLineBuffer[charIdx][_nextBitline];
+            }
+            _nextBitline++;
+        }
+
 		combineAndDraw();
 		_vm->_graphics->refreshScreen();
 
