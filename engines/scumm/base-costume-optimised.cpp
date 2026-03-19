@@ -847,7 +847,7 @@ void ByleRLEDecode_Scaled_Mode1(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
 	byte maskbit = revBitMask(compData.x & 7);
@@ -866,6 +866,9 @@ void ByleRLEDecode_Scaled_Mode1(
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn && _palette[color] == 13)
+			color = 0;
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -881,8 +884,7 @@ void ByleRLEDecode_Scaled_Mode1(
 
 							pcolor = _palette[color];
 							if (pcolor == 13) {
-								if (lastColumnX != compData.x)
-									*dst = _shadowTable[*dst];
+								*dst = _shadowTable[*dst];
 							} else {
 								*dst = pcolor;
 							}
@@ -899,9 +901,10 @@ void ByleRLEDecode_Scaled_Mode1(
 				height = _height;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
@@ -940,7 +943,7 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
 	byte maskbit = revBitMask(compData.x & 7);
@@ -959,6 +962,9 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn && _palette[color] == 13)
+			color = 0;
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -974,8 +980,7 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 
 							pcolor = _palette[color];
 							if (pcolor == 13) {
-								if (lastColumnX != compData.x)
-									*dst = _shadowTable[*dst];
+								*dst = _shadowTable[*dst];
 							} else {
 								*dst = pcolor;
 							}
@@ -992,9 +997,10 @@ void ByleRLEDecode_Scaled_Mode1_SMask(
 				height = _height;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
@@ -1033,7 +1039,7 @@ void ByleRLEDecode_Scaled_Mode3(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
 	byte maskbit = revBitMask(compData.x & 7);
@@ -1052,6 +1058,9 @@ void ByleRLEDecode_Scaled_Mode3(
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn && _palette[color] < 8)
+			color = 0;
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -1067,10 +1076,8 @@ void ByleRLEDecode_Scaled_Mode3(
 
 							pcolor = _palette[color];
 							if (pcolor < 8) {
-								if (lastColumnX != compData.x) {
-									pcolor = (pcolor << 8) + *dst;
-									*dst = _shadowTable[pcolor];
-								}
+								pcolor = (pcolor << 8) + *dst;
+								*dst = _shadowTable[pcolor];
 							} else {
 								*dst = pcolor;
 							}
@@ -1087,9 +1094,10 @@ void ByleRLEDecode_Scaled_Mode3(
 				height = _height;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
@@ -1127,7 +1135,7 @@ void ByleRLEDecode_Scaled_Mode3_HE90_SMask(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
 	byte maskbit = revBitMask(compData.x & 7);
@@ -1146,6 +1154,9 @@ void ByleRLEDecode_Scaled_Mode3_HE90_SMask(
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn)
+			color = 0;
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -1160,10 +1171,8 @@ void ByleRLEDecode_Scaled_Mode3_HE90_SMask(
 							uint16 pcolor;
 
 							pcolor = _palette[color];
-							if (lastColumnX != compData.x) {
-								pcolor = (pcolor << 8) + *dst;
-								*dst = _shadowTable[pcolor];
-							}
+							pcolor = (pcolor << 8) + *dst;
+							*dst = _shadowTable[pcolor];
 						}
 					}
 					dst += pitch;
@@ -1177,9 +1186,10 @@ void ByleRLEDecode_Scaled_Mode3_HE90_SMask(
 				height = _height;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
@@ -1216,7 +1226,7 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
 	byte maskbit = revBitMask(compData.x & 7);
@@ -1235,6 +1245,9 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn)
+			color = 0;
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -1245,10 +1258,8 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 			do {
 				if (compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
 					if (color) {
-						if (!(*mask & maskbit)) {
-							if (lastColumnX != compData.x)
-								*dst = _shadowTable[*dst];
-						}
+						if (!(*mask & maskbit))
+							*dst = _shadowTable[*dst];
 					}
 					dst += pitch;
 					mask += _numStrips;
@@ -1261,9 +1272,10 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 				height = _height;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
@@ -1380,7 +1392,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 
 	// reset every column
 	byte *dst = compData.destPtr;
-	int lastColumnX = -1;
+	bool isNewColumn = true;
 	int y = compData.y;
 	uint16 height = _height;
 	int scaleIndexY = compData.scaleYIndex;
@@ -1400,6 +1412,25 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 		if (!len)
 			len = *src++;
 
+		if (color && !isNewColumn) {
+			switch(shadowMode) {
+			case ShadowMode::Classic:
+			case ShadowMode::Mode3_HE:
+				color = 0;
+				break;
+			case ShadowMode::Mode1:
+				if (_palette[color] == 13)
+					color = 0;
+				break;
+			case ShadowMode::Mode3:
+				if (_palette[color] < 8)
+					color = 0;
+				break;
+			default:
+				break;
+			}
+		}
+
 		do {
 			batch = height < len ? (byte)height : len;
 			len -= batch;
@@ -1411,7 +1442,7 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 				if (_scaleY == 255 || compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
 					if (color) {
 						const bool masked = (y < compData.boundsRect.top || y >= compData.boundsRect.bottom)
-							|| (*mask & maskbit);
+						|| (*mask & maskbit);
 
 						if (!masked) {
 							uint16 pcolor;
@@ -1422,15 +1453,13 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 								break;
 
 							case ShadowMode::Classic:
-								if (lastColumnX != compData.x)
-									*dst = _shadowTable[*dst];
+								*dst = _shadowTable[*dst];
 								break;
 
 							case ShadowMode::Mode1:
 								pcolor = _palette[color];
 								if (pcolor == 13) {
-									if (lastColumnX != compData.x)
-										*dst = _shadowTable[*dst];
+									*dst = _shadowTable[*dst];
 								} else {
 									*dst = pcolor;
 								}
@@ -1439,10 +1468,8 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 							case ShadowMode::Mode3:
 								pcolor = _palette[color];
 								if (pcolor < 8) {
-									if (lastColumnX != compData.x) {
-										pcolor = (pcolor << 8) + *dst;
-										*dst = _shadowTable[pcolor];
-									}
+									pcolor = (pcolor << 8) + *dst;
+									*dst = _shadowTable[pcolor];
 								} else {
 									*dst = pcolor;
 								}
@@ -1450,10 +1477,8 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 
 							case ShadowMode::Mode3_HE:
 								pcolor = _palette[color];
-								if (lastColumnX != compData.x) {
-									pcolor = (pcolor << 8) + *dst;
-									*dst = xmap[pcolor];
-								}
+								pcolor = (pcolor << 8) + *dst;
+								*dst = xmap[pcolor];
 								break;
 							}
 						}
@@ -1471,9 +1496,10 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 				y = compData.y;
 
 				scaleIndexY = compData.scaleYIndex;
-				lastColumnX = compData.x;
+				isNewColumn = false;
 
 				if (_scaleX == 255 || compData.scaleTable[compData.scaleXIndex] < _scaleX) {
+					isNewColumn = true;
 					compData.x += compData.scaleXStep;
 					maskbit = revBitMask(compData.x & 7);
 					compData.destPtr += compData.scaleXStep;
