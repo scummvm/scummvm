@@ -125,7 +125,7 @@ void WaynesWorldEngine::walkCalcOtherActorDest(int flag, int &x, int &y) {
     case 7:
         y += actorDistance;
         break;
-  
+
     default:
     	break;
     }
@@ -447,7 +447,7 @@ bool WaynesWorldEngine::walkTo(int actor1_destX, int actor1_destY, int direction
             if (flag1 == 0) {
                 scale = drawActors(actor1Points[pointIndex].direction, 0, 1, (walkIncr % 8) / 2, _wayneWalkPoints[pointIndex].x - _scrollPosition, _wayneWalkPoints[pointIndex].y, _garthSpriteX, _garthSpriteY);
             } else {
-                scale = drawActors(actor1Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);            
+                scale = drawActors(actor1Points[pointIndex].direction, 1, 0, (walkIncr % 8) / 2, _wayneSpriteX, _wayneSpriteY, _garthWalkPoints[pointIndex].x - _scrollPosition, _garthWalkPoints[pointIndex].y);
             }
         } else {
             if (flag2 == 0) {

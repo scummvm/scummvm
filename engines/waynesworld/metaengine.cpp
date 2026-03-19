@@ -107,7 +107,7 @@ SaveStateList WaynesWorldMetaEngine::listSaves(const char *target) const {
 							saveList.push_back(SaveStateDescriptor(this, slotNum, header.saveName));
 						}
 					} else {
-						// Unexpected savegame format? 
+						// Unexpected savegame format?
 					}
 				}
 				delete file;

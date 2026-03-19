@@ -33,10 +33,10 @@ void WaynesWorldEngine::runIntro() {
 
 	if (continueFl)
 		continueFl = introPt2();
-	
+
 	if (continueFl)
 		continueFl = introPt3(false);
-	
+
 	if (continueFl)
 		continueFl = introPt4();
 
@@ -70,7 +70,7 @@ bool WaynesWorldEngine::introPt1() {
 		delete oa2Gxl;
 		return false;
 	}
-	
+
 	WWSurface *paramaSprite = new WWSurface(190, 112);
 	// "And" animation
 	drawImageToSurface(oa2Gxl, "parama.pcx", paramaSprite, 0, 0);
@@ -323,8 +323,8 @@ bool WaynesWorldEngine::introPt3(bool flag) {
 	_sound->playSound("sv16.snd", false);
 
 	waitSeconds(1);
-	paletteFadeOut(0, 256, 4); 
-	
+	paletteFadeOut(0, 256, 4);
+
 	cleanPt3();
 
 	if (_escPressed) {
@@ -354,7 +354,7 @@ bool WaynesWorldEngine::introPt4() {
 		retVal = introPt4_playGuitar();
 
 	introPt4_cleanup();
-	
+
 	return retVal;
 }
 
@@ -367,9 +367,9 @@ void WaynesWorldEngine::introPt6() {
 	WWSurface *introPt6Surface[5] = {nullptr};
 	WWSurface *signBottomSurface = nullptr;
 	WWSurface *scrollSurface = nullptr;
-	
+
 	_escPressed = false;
-	
+
 	while (_sound->isSFXPlaying())
 		waitMillis(10);
 
@@ -435,7 +435,7 @@ void WaynesWorldEngine::sub3009A(int textId) {
 	int textColor;
 	int textType = 0;
 	Common::String filename;
-	
+
 	switch (textId) {
 	case 0:
 		filename = "oaw";
@@ -497,7 +497,7 @@ void WaynesWorldEngine::sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int
 	if (arg_TextId != -1) {
 		sub3009A(arg_TextId);
 	}
-	
+
 	_screen->drawSurface(_demoPt2Surface, 0, 0);
 	waitMillis(170);
 }
@@ -508,7 +508,7 @@ void WaynesWorldEngine::introPt4_init() {
 
 	while(_sound->isSFXPlaying())
 		waitMillis(30);
-	
+
 	_musicIndex = 2;
 	changeMusic();
 
@@ -552,7 +552,7 @@ bool WaynesWorldEngine::introPt4_intro() {
 
 	while (_sound->isSFXPlaying())
 		waitMillis(30);
-	
+
 	_sound->playSound("sv25.snd", false);
 
 	for (int i = 0; i < 8; ++i) {
@@ -586,7 +586,7 @@ bool WaynesWorldEngine::introPt4_intro() {
 	if (_escPressed) {
 		return false;
 	}
-	
+
 	return true;
 }
 bool WaynesWorldEngine::introPt4_displayCallInTime() {
@@ -776,7 +776,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 		}
 		++_startOagPos;
 	}
-	
+
 	for (int i = 0; i < 4; ++i) {
 		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
 		waitSeconds(2);
@@ -856,7 +856,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 		}
 		++_startOawPos;
 	}
-	
+
 	if (_escPressed) {
 		return false;
 	}
@@ -966,7 +966,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 		}
 	}
 	++_startOawPos;
-	
+
 	for (int j = 0; j < 2; ++j) {
 		for (int i = 0; i < 15; ++i) {
 			sub2FEFB(1, 0, 1, 0, getRandom(11), 1);
@@ -1034,7 +1034,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 				return false;
 			}
 		}
-		++_startOawPos;	
+		++_startOawPos;
 	}
 
 	for (int i = 0; i < 8; ++i) {
@@ -1064,7 +1064,7 @@ bool WaynesWorldEngine::introPt4_caller4() {
 	}
 
 	_sound->playSound("sv45.snd", true);
-	
+
 	for (int j = 0; j < 3; ++j) {
 		for (int i = 0; i < 8; ++i) {
 			sub2FEFB(1, 0, 1, getRandom(3), 9, 0);
@@ -1114,7 +1114,7 @@ bool WaynesWorldEngine::introPt4_playGuitar() {
 	sub2FEFB(1, 2, 1, 0, 9, -1);
 	sub2FEFB(1, 3, 1, 0, 9, -1);
 	sub2FEFB(1, 4, 1, 0, 9, -1);
-	
+
 	_midi->stopSong();
 
 	if (_escPressed) {

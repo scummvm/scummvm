@@ -48,7 +48,7 @@ void SoundManager::playSound(const char *filename, int flag) {
 		_vm->waitMillis(10);
 
 	_filename = Common::String(filename);
-	
+
 	Common::File fd;
 	if (!fd.open(Common::Path(filename))) {
 		error("playSound : Enable to open %s", filename);
@@ -61,7 +61,7 @@ void SoundManager::playSound(const char *filename, int flag) {
 	Common::SeekableReadStream *rawStream = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 	Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(rawStream, 9000, Audio::FLAG_UNSIGNED);
 
-/*	
+/*
 	if (loop)
 		Audio::LoopingAudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::NO));
 */

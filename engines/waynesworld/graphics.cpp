@@ -289,7 +289,7 @@ void Screen::drawSurface(const Graphics::Surface *surface, int x, int y) {
 		warning("drawSurface - Trying to draw on a null surface!");
 		return;
 	}
-	
+
 	beginUpdate();
 	drawSurfaceIntern(_vgaSurface, surface, x, y, false);
 	endUpdate();
