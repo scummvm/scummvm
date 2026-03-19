@@ -89,9 +89,11 @@ static const int kQuickTipTextY = 228;
 static const int kQuickTipTextWidth = 280;
 static const int kConfirmDialogX = 167;
 static const int kConfirmDialogY = 200;
-static const int kConfirmPromptX = 182;
-static const int kConfirmPromptY = 214;
-static const int kConfirmPromptWidth = 280;
+static const int kConfirmPromptTextX = 0xea;
+static const int kConfirmPromptTextY = 0xd6;
+static const int kConfirmChoiceTextY = 0xf8;
+static const int kConfirmYesTextX = 0xdc;
+static const int kConfirmNoTextX = 0x17c;
 static const int kSaveSlotCount = 25;
 static const int kSaveSlotLabelX = 8;
 static const int kSaveSlotNameX = 0x50;
@@ -377,6 +379,14 @@ static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &f
 	font.drawString(&screen, text, x, y, width, color, align);
 }
 
+static void drawSinglePassString(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &text, int x, int y) {
+	if (text.empty())
+		return;
+
+	font.drawString(&screen, text, x, y, font.getStringWidth(text), 0);
+}
+
 static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Font &font,
 		const Common::String &text, int x, int y, int width, byte color) {
 	Common::Array<Common::String> lines;
@@ -515,9 +525,10 @@ static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitma
 }
 
 static void renderConfirmPromptScreen(HarvesterEngine &engine, const IndexedBitmap &backdrop,
-		const byte *palette, float paletteBrightness, const Graphics::Font &font,
+		const byte *palette, float paletteBrightness, const Graphics::Font &promptFont,
+		const Graphics::Font &yesFont, const Graphics::Font &noFont,
 		const IndexedBitmap &textbox, const Common::String &promptText,
-		const RoomMenuTextConfig &config, bool hoverYes, bool hoverNo) {
+		const RoomMenuTextConfig &config) {
 	Graphics::Screen *screen = engine.getScreen();
 	const Art *art = engine.getStartupArt();
 	if (!screen || !art)
@@ -530,16 +541,11 @@ static void renderConfirmPromptScreen(HarvesterEngine &engine, const IndexedBitm
 	Common::Array<Common::String> promptLines;
 	splitMenuConfigLines(promptText, promptLines);
 	for (uint i = 0; i < promptLines.size(); ++i) {
-		drawShadowedString(*screen, font, promptLines[i], kConfirmPromptX,
-			kConfirmPromptY + (int)i * (font.getFontHeight() + 2), kConfirmPromptWidth,
-			kTextColorNormal, Graphics::kTextAlignCenter);
+		drawSinglePassString(*screen, promptFont, promptLines[i], kConfirmPromptTextX,
+			kConfirmPromptTextY + (int)i * (promptFont.getFontHeight() + 2));
 	}
-	drawShadowedString(*screen, font, config.yesLabel,
-		quitConfirmYesRect().left, quitConfirmYesRect().top, quitConfirmYesRect().width(),
-		hoverYes ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
-	drawShadowedString(*screen, font, config.noLabel,
-		quitConfirmNoRect().left, quitConfirmNoRect().top, quitConfirmNoRect().width(),
-		hoverNo ? kTextColorHover : kTextColorNormal, Graphics::kTextAlignCenter);
+	drawSinglePassString(*screen, yesFont, config.yesLabel, kConfirmYesTextX, kConfirmChoiceTextY);
+	drawSinglePassString(*screen, noFont, config.noLabel, kConfirmNoTextX, kConfirmChoiceTextY);
 
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawCursor(*screen);
@@ -1300,12 +1306,14 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
 		bool &confirmed) {
 	const Art *art = _engine.getStartupArt();
-	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
-	if (!art || !selectedFontResource)
+	const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
+	const CftFontResource *choiceFontResource = findStartupFontByName(_engine, "MEDFONT2");
+	if (!art || !promptFontResource || !choiceFontResource)
 		return Common::kReadingFailed;
 
-	HarvesterCftFont selectedFont(*selectedFontResource);
-	if (!selectedFont.isValid())
+	HarvesterCftFont promptFont(*promptFontResource);
+	HarvesterCftFont choiceFont(*choiceFontResource);
+	if (!promptFont.isValid() || !choiceFont.isValid())
 		return Common::kReadingFailed;
 
 	RoomMenuTextConfig config;
@@ -1323,8 +1331,12 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 		const bool hoverYes = quitConfirmYesRect().contains(_mousePos);
 		const bool hoverNo = quitConfirmNoRect().contains(_mousePos);
 		if (needsRedraw) {
+			const Graphics::Font &yesFont = hoverYes ? static_cast<const Graphics::Font &>(promptFont)
+				: static_cast<const Graphics::Font &>(choiceFont);
+			const Graphics::Font &noFont = hoverNo ? static_cast<const Graphics::Font &>(promptFont)
+				: static_cast<const Graphics::Font &>(choiceFont);
 			renderConfirmPromptScreen(_engine, backdrop, palette, paletteBrightness,
-				selectedFont, *textbox, promptText, config, hoverYes, hoverNo);
+				promptFont, yesFont, noFont, *textbox, promptText, config);
 			needsRedraw = false;
 		}
 
