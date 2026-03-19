@@ -47,13 +47,20 @@ public:
 		float paletteBrightness, Flow &startupFlow);
 
 private:
+	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
+		Flow &startupFlow, bool &loadedGame);
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow);
 	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &startupFlow);
 	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, Flow &startupFlow);
+	Common::Error runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
+		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow);
 	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
+	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
+		bool drawCursor) const;
 	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos) const;
 	int getRoomMenuItemAt(const Common::Point &mousePos) const;

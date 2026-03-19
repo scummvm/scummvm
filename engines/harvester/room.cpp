@@ -725,6 +725,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 	while (!_engine.shouldQuit()) {
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
+		if (startupFlow.takePendingNewGameRestart()) {
+			startupFlow.prepareForNewGame();
+			pendingRoomChange = "START";
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			break;
+		}
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
 			pendingRoomChange = _engine.getPendingLoadedStartupSaveRoomState().entranceName;
 			if (pendingRoomChange.empty())
