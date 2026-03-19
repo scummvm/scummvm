@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 19, 2026, audited the legitimate `run_main_menu` callers against the live `HARVEST.LE` Ghidra session instead of the cold-start path: confirmed that the six-row in-room ESC overlay belongs to the room-menu path, while the true `run_main_menu` return/death path blanks `SAVE GAME` and `LOAD GAME` unless an active room session is still live.
+- Applied that parity fix in `engines/harvester/menu.cpp` / `engines/harvester/menu.h`: `runMainMenuStub` now filters `SAVE GAME` and `LOAD GAME` out of the true main-menu stub when there is no current startup save-room state, while `runRoomMenuStub` continues to expose the full six-row in-room menu.
+- Rebuilt the touched Harvester objects successfully after the caller-audit fix: `engines/harvester/menu.o`, `engines/harvester/flow.o`, `engines/harvester/room.o`, and `engines/harvester/harvester.o`.
 - On March 19, 2026, fixed the cold-start regression from the previous menu pass: `Flow::run()` no longer jumps from the initial quick-tips overlay into `run_main_menu`, and instead restores the confirmed native cold-start path back into `runRoomLoop("START")`. The real `run_main_menu` work remains limited to its live main-loop / game-over entry points, while the new `LOAD GAME` UI and `NEW GAME` confirmation support stay available on those legitimate menu paths.
 - Rebuilt the touched Harvester object successfully after that correction: `engines/harvester/flow.o`.
 - On March 19, 2026, completed the first real `run_main_menu` / room-menu parity pass in `engines/harvester`: `LOAD GAME` now uses the native `LOADGAME.BM` / `LOADGAME.PAL` slot picker; `NEW GAME` now uses the confirmed `MENU.INI:newgame` confirmation prompt in both the legitimate top-level menu path and the in-room ESC menu; and the in-room ESC menu now unwinds cleanly into restart/load handoffs instead of leaving those rows as stubs.
@@ -36,8 +39,8 @@
 
 ## Next Suggested Action
 
-1. Re-test only the legitimate `run_main_menu` entry points in-engine against the confirmed notes: the live in-room ESC menu plus any game-over / no-active-session path that actually reaches `run_main_menu`. Verify `NEW GAME`, `SAVE GAME`, `LOAD GAME`, `OPTIONS`, `HELP`, and `QUIT GAME` all unwind to the correct room/palette state and that restart/load handoffs do not leave stale scene state behind.
-2. Separate the remaining top-level/main-title rendering work from the cold-start path before touching it again: the startup quick-tips exit already belongs to `room_setup("START")`, so any future `run_main_menu` parity work should target only the true callers from `run_harvester_main_loop` and `run_game_over_screen`.
+1. Run a manual desktop validation pass against the legitimate menu entry points with a persistent GUI session: confirm that the true `run_main_menu` path now shows only `NEW GAME`, `OPTIONS`, `HELP`, and `QUIT GAME`, while the live in-room ESC menu still shows the full six-row overlay and preserves `NEW GAME` / `SAVE GAME` / `LOAD GAME` / `OPTIONS` / `HELP` / `QUIT GAME` behavior without palette or scene-state leaks.
+2. Continue the remaining top-level/main-title rendering parity only on the true `run_main_menu` callers from `run_harvester_main_loop` / `run_game_over_screen`; the cold-start quick-tips exit and the room ESC overlay are now separated from that work.
 
 ## Reimplementation Priority Order
 

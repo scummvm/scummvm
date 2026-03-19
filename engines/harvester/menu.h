@@ -58,11 +58,12 @@ private:
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow);
-	void renderMainMenuStub(int selectedItem, const Common::String &statusMessage) const;
+	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
+		const Common::String &statusMessage) const;
 	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
-		bool drawCursor) const;
+		bool drawCursor, const Common::Array<Common::String> &menuItems) const;
 	void renderRoomMenuStub(const IndexedBitmap &backdrop, int selectedItem) const;
-	int getMenuItemAt(const Common::Point &mousePos) const;
+	int getMenuItemAt(const Common::Point &mousePos, const Common::Array<Common::String> &menuItems) const;
 	int getRoomMenuItemAt(const Common::Point &mousePos) const;
 
 	HarvesterEngine &_engine;
