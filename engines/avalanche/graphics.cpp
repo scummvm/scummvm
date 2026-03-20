@@ -872,13 +872,6 @@ void GraphicManager::menuDrawBigText(FontType font, uint16 x, uint16 y, Common::
 	drawBigText(_menu, text, font, 14, x, y, color);
 }
 
-void GraphicManager::menuDrawIndicator(int x) { // TODO: Implement striped pattern for the indicator.
-	if (x > 0)
-		_menu.fillRect(Common::Rect(x - 1, 330, x, 337), kColorBlack);
-	_menu.fillRect(Common::Rect(x, 330, x + 1, 337), kColorWhite);
-	menuRefreshScreen();
-}
-
 /**
  * This function is for skipping the difference between a stored 'size' value associated with a picture
  * and the actual size of the pictures  when reading them from files for Ghostroom and Shoot em' up.

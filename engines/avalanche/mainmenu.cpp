@@ -88,7 +88,6 @@ void MainMenu::centre(int16 y, Common::String text) {
 void MainMenu::wait() {
 	int x = 0;
 	while (!_vm->shouldQuit()) {
-		_vm->_graphics->menuDrawIndicator(x);
 		_vm->_system->delayMillis(40);
 		x++;
 		if (x == 641)
