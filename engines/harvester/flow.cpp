@@ -216,16 +216,26 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
 	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
 	const byte darkGray = findNearestPaletteColor(displayPalette, 0x40, 0x40, 0x40);
+	Common::String roomName = scene.state.roomName;
+	roomName.toUppercase();
 
-	drawRoomDebugLabel(screen, *font, scene.state.roomName,
+	drawRoomDebugLabel(screen, *font, roomName,
 		kRoomDebugRoomNameX, kRoomDebugRoomNameY, black, white);
 
 	for (const StartupRegionRecord &region : scene.sceneRegions)
 		drawRoomDebugLabel(screen, *font, region.regionName, region.left, region.top, white, darkGray);
 
-	for (const StartupObjectRecord &object : scene.sceneObjects)
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	for (const StartupObjectRecord &object : scene.sceneObjects) {
+		const RuntimeEntity *entity = runtimeEntities
+			? runtimeEntities->findSceneEntityByName(object.objectName)
+			: nullptr;
+		if (entity && entity->getClassId() == kRuntimeEntityClassBackground)
+			continue;
+
 		drawRoomDebugLabel(screen, *font, resolveRoomDebugObjectLabel(engine, object),
 			object.currentX, object.currentY, white, black);
+	}
 }
 
 static int clampTownMapPanelIndex(int panelIndex) {
