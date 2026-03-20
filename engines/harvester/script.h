@@ -460,6 +460,7 @@ private:
 		bool *mutatedRuntimeState);
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 	bool setPlayerCurrentHitPoints(int hitPoints);
+	void logRuntimeSaveState(const char *operation) const;
 
 	Common::String _path;
 	Common::Array<byte> _data;
