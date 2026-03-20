@@ -29,6 +29,8 @@ namespace Harvester {
 class LoomisDialogueHandler : public NpcDialogueHandler {
 public:
 	struct LoomisRoomDialogueState {
+		Common::String currentTopicBuffer;
+		int currentTopicBufferLineIndex = -1;
 		bool talkStatePending = true;
 		bool returnVisitFollowupPending = false;
 	};
