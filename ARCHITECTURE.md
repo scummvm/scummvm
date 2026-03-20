@@ -727,6 +727,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `room_setup`, `run_save_game_menu`, `run_load_game_menu`, the intro/logo sequence helper, the main-menu return path, and the idle-animation cleanup path all refresh it from the current tick source.
 - `g_idle_animation_trigger_time` at `0xd60c4` is the computed threshold for the `IDLE_ANIM` room-animation path.
   - `run_harvester_main_loop` recomputes it as `max(g_idle_animation_activity_timestamp, g_idle_animation_reset_timestamp) + 3000`, skips the branch in excluded rooms, and otherwise spawns `IDLE_ANIM` from `graphic\\roomanim\\pcloun02.abm`.
+  - The same idle-animation spawn path loads `EBX = 0x0e` immediately before `spawn_scaled_abm_entity_from_resource`, so the native `PCLOUN02.ABM` animation rate is 14 rather than the previously inferred 30.
   - After the idle animation exits, the main loop re-arms the threshold by another 3000 ticks.
 - `show_pause_message` at `0x797c0` renders the `HARVESTER IS PAUSED` overlay and backdates both idle timestamps by `0xc1c`, allowing the idle-animation gate to become eligible again immediately after pause dismissal.
   - It reuses `g_box3_panel_entity`, while `show_target_ident_text` selects among `g_box1_panel_entity` .. `g_box4_panel_entity` by matching `TextRecord.panel_id` against the `BOX1` / `BOX2` / `BOX3` / `BOX4` strings.
