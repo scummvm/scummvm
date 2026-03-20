@@ -863,10 +863,6 @@ void AGOSEngine::drawMousePointer() {
 
 			if (_dragFlag) {
 				cursor = _amiga_handInfo;
-			} else if (_mouseCursor == 0) {
-				cursor = _amiga_mouseInfo;
-			} else if (_mouseCursor == 1) {
-				cursor = _amiga_mouseInfo;
 			} else {
 				cursor = _amiga_mouseInfo;
 			}
