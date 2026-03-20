@@ -338,6 +338,11 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					// Detection flags get removed after final detection attempt to avoid further attempts.
 					flags &= ~(MDT_MIDI | MDT_PREFER_GM | MDT_PREFER_MT32);
 				}
+			} else {
+				if (flags & MDT_PREFER_MT32)
+					flags &= ~MDT_PREFER_MT32;
+				else if (flags & MDT_PREFER_GM)
+					flags &= ~MDT_PREFER_GM;
 			}
 		}
 

@@ -2312,14 +2312,23 @@ public:
 
 MusicDevices AdLibEmuMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, "", MT_ADLIB));
+
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		devices.push_back(MusicDevice(this, "", MT_ADLIB));
+	}
+
 	return devices;
 }
 
 Common::Error AdLibEmuMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_ADLIB();
+	if (OPL::Config::detect(OPL::Config::kOpl2) > 0 ||
+	    OPL::Config::detect(OPL::Config::kOpl3) > 0) {
+		*mididriver = new MidiDriver_ADLIB();
+		return Common::kNoError;
+	}
 
-	return Common::kNoError;
+	return Common::kAudioDeviceInitFailed;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ADLIB)
