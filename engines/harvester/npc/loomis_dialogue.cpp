@@ -31,6 +31,7 @@ namespace Harvester {
 namespace {
 
 static const int kLoomisSheriffTopicLineIndices[] = { 0x5f, 0x60, 0x61 };
+static const char *const kDialogueC048FstPath = "GRAPHIC/FST/C048.FST";
 
 } // End of namespace
 
@@ -203,22 +204,29 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return lineError;
 
 		int responseIndex = 0;
-		Common::Error responseError = runtime.runResponseMenu(0x1d4, responseIndex);
+		Common::Error responseError = runtime.runResponseMenu(0x51, responseIndex);
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
 		if (responseIndex == 1) {
-			StartupInteractionResult interaction;
-			bool changed = false;
+			bool changed = runtime.startupScript().setRuntimeObjectVisible("INVENTORY", "INV_MAG", false);
 			if (runtime.currentRoomName().equalsIgnoreCase("SHRFOFC")) {
 				changed |= runtime.startupScript().setRuntimeFlagValue("GAVE_MAG_TO_LOOMIS_TODAY", true);
 				changed |= runtime.startupScript().setRuntimeNpcState("LOOMIS", false, false);
 				changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR", true);
 				changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR2", false);
 			}
+			lineError = runtime.playDialogueLine(0x11c6, "LOOMIS");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = runtime.playDialogueFst(kDialogueC048FstPath);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			StartupInteractionResult interaction;
 			interaction.mutatedRuntimeState = changed;
 			runtime.queueDialogueInteractionIfNeeded(interaction);
-			return runtime.playDialogueLine(0x11c6, "LOOMIS");
+			return Common::kNoError;
 		}
 
 		(void)runtime.startupScript().addRuntimeObjectToInventory("INV_MAG");
