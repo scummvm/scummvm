@@ -648,7 +648,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			decltype(resetIdleState) &resetIdleStateFn;
 
 			Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
-					bool &didTransition) {
+					bool &didTransition, const Common::String &usedItemName) {
 				didTransition = false;
 				playerState.hasMoveTarget = false;
 				playerState.turnActive = false;
@@ -747,7 +747,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				if (!interaction.dialogueNpcName.empty()) {
 					Common::Error dialogueError = runScriptedDialogue(
-						interaction.dialogueNpcName, Common::String(), interaction.dialogueContinuationTag,
+						interaction.dialogueNpcName, usedItemName, interaction.dialogueContinuationTag,
 						didTransition);
 					if (dialogueError.getCode() != Common::kNoError)
 						return dialogueError;
@@ -761,7 +761,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					if (engine.getStartupScript()->executeActionTag(
 							interaction.continuationTag, continuationInteraction)) {
 						Common::Error interactionError =
-							handleInteractionResult(continuationInteraction, didTransition);
+							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
 					}
@@ -794,7 +794,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				bool abortRemainingCommandChain = false;
 				if (startupFlow.takeQueuedDialogueInteraction(dialogueInteraction)) {
 					abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
-					Common::Error interactionError = handleInteractionResult(dialogueInteraction, didTransition);
+					Common::Error interactionError =
+						handleInteractionResult(dialogueInteraction, didTransition, usedItemName);
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
 					if (startupFlow.hasPendingMainMenuReturn())
@@ -804,7 +805,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					StartupInteractionResult continuationInteraction;
 					if (engine.getStartupScript()->executeActionTag(continuationTag, continuationInteraction)) {
 						Common::Error interactionError =
-							handleInteractionResult(continuationInteraction, didTransition);
+							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
 						if (interactionError.getCode() != Common::kNoError)
 							return interactionError;
 						if (startupFlow.hasPendingMainMenuReturn())
@@ -837,7 +838,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			StartupInteractionResult pickupInteraction;
 			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
 				Common::Error interactionError =
-					interactionProcessor.handleInteractionResult(pickupInteraction, didTransition);
+					interactionProcessor.handleInteractionResult(
+						pickupInteraction, didTransition, Common::String());
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
 				if (startupFlow.hasPendingMainMenuReturn())
@@ -872,7 +874,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			StartupInteractionResult pickupInteraction;
 			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
 				Common::Error interactionError =
-					interactionProcessor.handleInteractionResult(pickupInteraction, didTransition);
+					interactionProcessor.handleInteractionResult(
+						pickupInteraction, didTransition, Common::String());
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
 				if (startupFlow.hasPendingMainMenuReturn())
@@ -894,14 +897,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (!_inventory.hasSelection())
 			return Common::kNoError;
 
+		const Common::String selectedItemName = _inventory.getSelectedItemName();
 		StartupInteractionResult interaction;
 		const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
-			_inventory.getSelectedItemName(), target, interaction);
+			selectedItemName, target, interaction);
 		if (!handled)
 			return Common::kNoError;
 
 		bool didTransition = false;
-		Common::Error interactionError = interactionProcessor.handleInteractionResult(interaction, didTransition);
+		Common::Error interactionError =
+			interactionProcessor.handleInteractionResult(interaction, didTransition, selectedItemName);
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
 		_inventory.clearSelection();
@@ -931,7 +936,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		bool didTransition = false;
 		Common::Error interactionError =
-			interactionProcessor.handleInteractionResult(interaction, didTransition);
+			interactionProcessor.handleInteractionResult(
+				interaction, didTransition, Common::String());
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
 		if (startupFlow.hasPendingMainMenuReturn())
@@ -1246,13 +1252,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					break;
 				}
 				if (_inventory.hasSelection()) {
+					const Common::String selectedItemName = _inventory.getSelectedItemName();
 					if (hoverState.npc) {
+						StartupInteractionResult interaction;
 						bool didTransition = false;
-						Common::Error dialogueError = interactionProcessor.runScriptedDialogue(
-							hoverState.npc->npcName, _inventory.getSelectedItemName(),
-							Common::String(), didTransition);
-						if (dialogueError.getCode() != Common::kNoError)
-							return dialogueError;
+						// Some NPC item uses are script-driven and only fall back to direct dialogue otherwise.
+						const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
+							selectedItemName, *hoverState.npc, interaction);
+						Common::Error interactionError = handled
+							? interactionProcessor.handleInteractionResult(
+								interaction, didTransition, selectedItemName)
+							: interactionProcessor.runScriptedDialogue(
+								hoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
 						if (startupFlow.hasPendingMainMenuReturn())
 							return Common::kNoError;
 						if (_inventory.clearSelection())
@@ -1391,7 +1404,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				bool didTransition = false;
 				Common::Error interactionError =
-					interactionProcessor.handleInteractionResult(interaction, didTransition);
+					interactionProcessor.handleInteractionResult(
+						interaction, didTransition, Common::String());
 				if (interactionError.getCode() != Common::kNoError)
 					return interactionError;
 				if (startupFlow.hasPendingMainMenuReturn())
@@ -1585,7 +1599,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 					bool didTransition = false;
 					Common::Error interactionError =
-						interactionProcessor.handleInteractionResult(timerInteraction, didTransition);
+						interactionProcessor.handleInteractionResult(
+							timerInteraction, didTransition, Common::String());
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
 					if (startupFlow.hasPendingMainMenuReturn())
