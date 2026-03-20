@@ -962,9 +962,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		stopPlayerRegionInteraction();
 		return runRegionInteraction(*region);
 	};
-	auto tryActivateOverlappedRegion = [&]() -> Common::Error {
-		if (!playerState.entity)
-			return Common::kNoError;
+		auto tryActivateOverlappedRegion = [&]() -> Common::Error {
+			if (!playerState.entity)
+				return Common::kNoError;
 
 		for (const StartupRegionRecord &region : scene.sceneRegions) {
 			if (!region.startEnabled)
@@ -978,7 +978,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return runRegionInteraction(region);
 		}
 
-		return Common::kNoError;
+			return Common::kNoError;
 		};
 		if (!_inventory.refresh())
 			return Common::kReadingFailed;
@@ -1012,6 +1012,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			break;
 		}
 		captureCurrentSaveState();
+		if (_inventory.isOpen() && _inventory.refreshIfRuntimeStateChanged())
+			needsRedraw = true;
 
 		if (needsRedraw) {
 			Graphics::Screen *activeScreen = getActiveScreen();
@@ -1122,9 +1124,27 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
-					const bool clearedSelection = _inventory.clearSelection();
-					const bool closedInventory = _inventory.close();
-					if (clearedSelection || closedInventory)
+					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					if (_inventory.hasSelection()) {
+						if (_inventory.clearSelection())
+							needsRedraw = true;
+						break;
+					}
+					if (inventoryHover &&
+							!InventorySystem::isExitObject(inventoryHover->object) &&
+							!InventorySystem::isStatusObject(inventoryHover->object)) {
+						bool loadoutChanged = false;
+						if (_inventory.toggleCombatLoadout(inventoryHover->object, loadoutChanged)) {
+							if (loadoutChanged) {
+								captureCurrentSaveState();
+								if (!_inventory.refresh())
+									return Common::kReadingFailed;
+							}
+							needsRedraw = true;
+							break;
+						}
+					}
+					if (_inventory.close())
 						needsRedraw = true;
 					break;
 				}

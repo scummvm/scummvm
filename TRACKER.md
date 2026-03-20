@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, tightened the current integrated inventory / room-item handoff against the persisted actor runtime instead of inventing a separate inventory state machine: right-clicking confirmed weapon inventory items now toggles the saved player combat loadout ids recovered from the native inventory screen, the open inventory overlay now refreshes its `INV_STAT*` portrait immediately when live player HP changes, and secondary-click while an inventory item is actively selected now cancels that carry/use latch without forcibly closing the panel.
+- Kept the current ScummVM-side carry/use handoff model intact, but bounded it more tightly to the same live actor state that save/load and timer-driven room actions already use: inventory weapon toggles write through `Script::setPlayerCombatLoadout`, and the room loop captures that updated runtime state immediately for later save/menu handoffs.
+- Rebuilt the touched Harvester objects successfully after that inventory/runtime parity pass: `engines/harvester/inventory.o`, `engines/harvester/room.o`, and `scummvm`.
 - On March 19, 2026, widened the confirmed town-script / room-event coverage in `engines/harvester` using only opcode behavior already bounded in Ghidra and `ARCHITECTURE.md`: added `CHECK_PERC`, `EXEC_LIST`, `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, and `CHANGE_LIGHTING` to the startup-script dispatcher, parsed `EXEC_LIST` records from `HARVEST.SCR`, and threaded the new deferred action results through room interactions plus queued dialogue follow-ups instead of dropping them as generic unsupported fallthrough.
 - The room loop now applies confirmed deferred side effects in native order where applicable: `GOFLIC` plays FST cutscenes then continues with the chained action tag, `SHOW_TEXT` runs a blocking room-modal textbox using the existing inspect-text resources, `PC_GOTO_XZ` repositions the live player avatar on the current room depth line, and `CHANGE_LIGHTING` covers the confirmed `DIM`, `NORMAL`, and `NONE` modes while keeping `FADE_IN` explicit as a still-unbounded no-op.
 - Rebuilt the touched Harvester objects successfully after that script/event coverage pass: `engines/harvester/script.o`, `engines/harvester/room.o`, `engines/harvester/dialogue.o`, and `scummvm`.
@@ -47,8 +50,8 @@
 
 ## Next Suggested Action
 
-1. Run a manual desktop validation pass against the specific live rooms/interactions that exercise the newly supported deferred action opcodes: verify at least one `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, `CHANGE_LIGHTING`, and `EXEC_LIST` room path against the desktop build so the remaining progression failures are grounded in concrete room names instead of static unsupported-opcode logs.
-2. Keep the residual unsupported list explicit during that pass. The current narrowed gaps are `CHANGE_CD` and the exact room-side effect of `CHANGE_LIGHTING FADE_IN`; if those still block progression, bound them from the native anchors before widening anything else.
+1. Run a manual desktop validation pass that specifically covers the tightened inventory/runtime hooks: verify live HP changes update the open inventory `INV_STAT*` portrait immediately, right-clicking weapon items toggles the persisted combat loadout without desynchronizing save/load state, and closing/reopening the inventory preserves carried-item handoff semantics.
+2. If that pass exposes any remaining inventory gaps, keep them narrowly bounded to confirmed native behaviors only. The next likely candidates are the room HUD weapon-resource icon strip and any still-missing inventory secondary-click item actions beyond the now-confirmed weapon-loadout path.
 
 ## Reimplementation Priority Order
 
@@ -62,11 +65,11 @@
    Native anchors: `dispatch_room_event_actions @ 0x60ee0`, `run_town_script_interpreter @ 0x46d80`, and the confirmed town-script notes in `ARCHITECTURE.md`.
    Concrete tasks: exercise the now-supported `CHECK_PERC`, `EXEC_LIST`, `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, and `CHANGE_LIGHTING` paths in live rooms; only if validation still fails, add the exact missing command or side effect proven by that room.
    Exit criteria: the remaining room progression failures reduce to a short, named list of still-unimplemented native commands or side effects, with `CHANGE_CD` / `FADE_IN` either confirmed as blockers or explicitly ruled out.
-3. Tighten inventory and item-use flow against that actor runtime.
+3. Validate the tightened inventory and item-use flow against live gameplay, then only extend the remaining confirmed inventory-specific behavior that still blocks parity.
    Files: `engines/harvester/inventory.cpp`, `engines/harvester/room.cpp`, `engines/harvester/script.cpp`.
    Native anchors: `run_inventory_screen @ 0x7df10`, `add_object_to_inventory @ 0x7c8b0`, `sync_player_combat_weapon_resource_icons @ 0x792c0`, and the confirmed inventory carry/use notes in `ARCHITECTURE.md`.
-   Concrete tasks: keep the current carry/use handoff model, but recheck it once actor runtime state, HP, timers, and combat-adjacent HUD elements are live; fold any missing status/icon behavior in here rather than earlier.
-   Exit criteria: inventory, carried items, and room-target use cases all operate against the same live actor state that room gameplay uses.
+   Concrete tasks: validate the new live HP portrait refresh plus weapon-loadout toggles, then decide from a desktop pass whether the remaining native inventory-specific gaps are limited to HUD icon strip restoration or broader item secondary-click actions.
+   Exit criteria: any remaining inventory parity work is reduced to a short, explicit list of still-unimplemented native inventory behaviors instead of a broad actor-runtime mismatch.
 4. Leave low-level runtime, HMIDRV, and x87 cleanup as deferred RE work unless they block a confirmed gameplay feature.
    Ghidra anchors: the remaining unwind helpers around `FUN_0008f64b` through `FUN_000905df`, the HMIDRV wrapper band around `FUN_00087005`, and the x87/no-87 runtime cluster beginning near `FUN_0008c3d8`.
    Rationale: those clusters still matter for naming completeness, but the current engine-side gaps are better bounded and have higher reimplementation value.
