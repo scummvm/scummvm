@@ -21,8 +21,6 @@
 
 #include "harvester/script.h"
 
-#include <cstdlib>
-
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/endian.h"
@@ -32,6 +30,7 @@
 #include "common/serializer.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/parse_utils.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -328,7 +327,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 		StartupAudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandLoadWav;
 		audioCommand.path = command.arg1;
-		audioCommand.slot = command.arg2.empty() ? -1 : atoi(command.arg2.c_str());
+		audioCommand.slot = command.arg2.empty() ? -1 : parseAsciiIntOrZero(command.arg2);
 		commands.push_back(audioCommand);
 		return true;
 	}
@@ -336,7 +335,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	if (command.opcodeName.equalsIgnoreCase("PLAY_WAV")) {
 		StartupAudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandPlayWav;
-		audioCommand.slot = command.arg1.empty() ? -1 : atoi(command.arg1.c_str());
+		audioCommand.slot = command.arg1.empty() ? -1 : parseAsciiIntOrZero(command.arg1);
 		commands.push_back(audioCommand);
 		return true;
 	}
@@ -344,7 +343,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	if (command.opcodeName.equalsIgnoreCase("DELETE_WAV")) {
 		StartupAudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandDeleteWav;
-		audioCommand.slot = command.arg1.empty() ? -1 : atoi(command.arg1.c_str());
+		audioCommand.slot = command.arg1.empty() ? -1 : parseAsciiIntOrZero(command.arg1);
 		commands.push_back(audioCommand);
 		return true;
 	}
@@ -507,15 +506,15 @@ bool Script::loadConfig(ResourceManager &resources) {
 
 	Common::String fxVolume;
 	if (config.getKey("FX_VOLUME", kConfigSectionName, fxVolume))
-		_fxVolumeLevel = clampStartupOptionLevel(atoi(fxVolume.c_str()));
+		_fxVolumeLevel = clampStartupOptionLevel(parseAsciiIntOrZero(fxVolume));
 
 	Common::String musicVolume;
 	if (config.getKey("MUSIC_VOLUME", kConfigSectionName, musicVolume))
-		_musicVolumeLevel = clampStartupOptionLevel(atoi(musicVolume.c_str()));
+		_musicVolumeLevel = clampStartupOptionLevel(parseAsciiIntOrZero(musicVolume));
 
 	Common::String gammaValue;
 	if (config.getKey("GAMMA", kConfigSectionName, gammaValue))
-		_gammaLevel = clampStartupOptionLevel(atoi(gammaValue.c_str()));
+		_gammaLevel = clampStartupOptionLevel(parseAsciiIntOrZero(gammaValue));
 
 	Common::String textMode;
 	if (config.getKey("TEXT", kConfigSectionName, textMode)) {
@@ -743,9 +742,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupEntranceRecord entrance;
 			if (tagIndex >= 3) {
-				entrance.posX = atoi(tokens[0].c_str());
-				entrance.posY = atoi(tokens[1].c_str());
-				entrance.posZ = atoi(tokens[2].c_str());
+				entrance.posX = parseAsciiIntOrZero(tokens[0]);
+				entrance.posY = parseAsciiIntOrZero(tokens[1]);
+				entrance.posZ = parseAsciiIntOrZero(tokens[2]);
 			}
 			entrance.direction = tokens[tagIndex + 1];
 			entrance.facing = parseEntranceFacing(entrance.direction);
@@ -762,9 +761,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupMapEntranceRecord mapEntrance;
 			if (tagIndex >= 3) {
-				mapEntrance.field0 = atoi(tokens[0].c_str());
-				mapEntrance.field4 = atoi(tokens[1].c_str());
-				mapEntrance.initialPanelIndex = atoi(tokens[2].c_str());
+				mapEntrance.field0 = parseAsciiIntOrZero(tokens[0]);
+				mapEntrance.field4 = parseAsciiIntOrZero(tokens[1]);
+				mapEntrance.initialPanelIndex = parseAsciiIntOrZero(tokens[2]);
 			}
 			mapEntrance.entryName = tokens[tagIndex + 1];
 			if (!mapEntrance.entryName.empty())
@@ -778,13 +777,13 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupMapLocationRecord mapLocation;
 			if (tagIndex >= 7) {
-				mapLocation.minX = atoi(tokens[0].c_str());
-				mapLocation.minY = atoi(tokens[1].c_str());
-				mapLocation.maxX = atoi(tokens[2].c_str());
-				mapLocation.maxY = atoi(tokens[3].c_str());
-				mapLocation.panelIndex = atoi(tokens[4].c_str());
-				mapLocation.labelX = atoi(tokens[5].c_str());
-				mapLocation.labelY = atoi(tokens[6].c_str());
+				mapLocation.minX = parseAsciiIntOrZero(tokens[0]);
+				mapLocation.minY = parseAsciiIntOrZero(tokens[1]);
+				mapLocation.maxX = parseAsciiIntOrZero(tokens[2]);
+				mapLocation.maxY = parseAsciiIntOrZero(tokens[3]);
+				mapLocation.panelIndex = parseAsciiIntOrZero(tokens[4]);
+				mapLocation.labelX = parseAsciiIntOrZero(tokens[5]);
+				mapLocation.labelY = parseAsciiIntOrZero(tokens[6]);
 			}
 			mapLocation.labelText = tokens[tagIndex + 1];
 			for (uint i = 0; i < mapLocation.labelText.size(); ++i) {
@@ -803,12 +802,12 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupRoomRecord room;
 			if (tagIndex >= 6) {
-				room.minZ = atoi(tokens[0].c_str());
-				room.maxZ = atoi(tokens[1].c_str());
-				room.maxZScreenY = atoi(tokens[2].c_str());
-				room.minZScreenY = atoi(tokens[3].c_str());
-				room.fullScaleZ = atoi(tokens[4].c_str());
-				room.maxZScalePercent = atoi(tokens[5].c_str());
+				room.minZ = parseAsciiIntOrZero(tokens[0]);
+				room.maxZ = parseAsciiIntOrZero(tokens[1]);
+				room.maxZScreenY = parseAsciiIntOrZero(tokens[2]);
+				room.minZScreenY = parseAsciiIntOrZero(tokens[3]);
+				room.fullScaleZ = parseAsciiIntOrZero(tokens[4]);
+				room.maxZScalePercent = parseAsciiIntOrZero(tokens[5]);
 				if (room.maxZ != room.fullScaleZ) {
 					room.perspectiveScale = ((100.0f - (float)room.maxZScalePercent) /
 						(float)(room.maxZ - room.fullScaleZ)) * 0.01f;
@@ -834,10 +833,10 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupNpcRecord npc;
 			if (tagIndex >= 4) {
-				npc.posX = atoi(tokens[0].c_str());
-				npc.posY = atoi(tokens[1].c_str());
-				npc.posZ = atoi(tokens[2].c_str());
-				npc.frameDelay = atoi(tokens[3].c_str());
+				npc.posX = parseAsciiIntOrZero(tokens[0]);
+				npc.posY = parseAsciiIntOrZero(tokens[1]);
+				npc.posZ = parseAsciiIntOrZero(tokens[2]);
+				npc.frameDelay = parseAsciiIntOrZero(tokens[3]);
 			}
 			npc.roomName = tokens[tagIndex + 1];
 			npc.modelPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
@@ -862,18 +861,18 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupMonsterRecord monster;
 			if (tagIndex >= 6) {
-				monster.posX = atoi(tokens[0].c_str());
-				monster.posY = atoi(tokens[1].c_str());
-				monster.posZ = atoi(tokens[2].c_str());
-				monster.initialHitPoints = atoi(tokens[3].c_str());
-				monster.damageAmount = atoi(tokens[4].c_str());
-				monster.engageDistance = atoi(tokens[5].c_str());
+				monster.posX = parseAsciiIntOrZero(tokens[0]);
+				monster.posY = parseAsciiIntOrZero(tokens[1]);
+				monster.posZ = parseAsciiIntOrZero(tokens[2]);
+				monster.initialHitPoints = parseAsciiIntOrZero(tokens[3]);
+				monster.damageAmount = parseAsciiIntOrZero(tokens[4]);
+				monster.engageDistance = parseAsciiIntOrZero(tokens[5]);
 			}
 			if (tagIndex >= 10) {
-				monster.field70 = atoi(tokens[6].c_str());
-				monster.field74 = atoi(tokens[7].c_str());
-				monster.field78 = atoi(tokens[8].c_str());
-				monster.field7c = atoi(tokens[9].c_str());
+				monster.field70 = parseAsciiIntOrZero(tokens[6]);
+				monster.field74 = parseAsciiIntOrZero(tokens[7]);
+				monster.field78 = parseAsciiIntOrZero(tokens[8]);
+				monster.field7c = parseAsciiIntOrZero(tokens[9]);
 			}
 			monster.roomName = tokens[tagIndex + 1];
 			monster.monsterName = tokens[tagIndex + 2];
@@ -897,9 +896,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			monster.visible = tokens[tagIndex + 20].equalsIgnoreCase("T");
 			monster.onDeathActionTag = tokens[tagIndex + 21];
 			if (tokens.size() > tagIndex + 22 && !tokens[tagIndex + 22].empty())
-				monster.minXBound = atoi(tokens[tagIndex + 22].c_str());
+				monster.minXBound = parseAsciiIntOrZero(tokens[tagIndex + 22]);
 			if (tokens.size() > tagIndex + 23 && !tokens[tagIndex + 23].empty())
-				monster.maxXBound = atoi(tokens[tagIndex + 23].c_str());
+				monster.maxXBound = parseAsciiIntOrZero(tokens[tagIndex + 23]);
 			monster.currentHitPoints = monster.initialHitPoints;
 			monster.savedVisible = monster.visible;
 			if (monster.active)
@@ -915,7 +914,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupTimerRecord timer;
 			if (tagIndex >= 1) {
-				timer.initialValue = atoi(tokens[0].c_str());
+				timer.initialValue = parseAsciiIntOrZero(tokens[0]);
 				timer.currentValue = timer.initialValue;
 			}
 			timer.timerName = tokens[tagIndex + 1];
@@ -935,12 +934,12 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupRegionRecord region;
 			if (tagIndex >= 6) {
-				region.left = atoi(tokens[0].c_str());
-				region.top = atoi(tokens[1].c_str());
-				region.right = atoi(tokens[2].c_str());
-				region.bottom = atoi(tokens[3].c_str());
-				region.minZ = atoi(tokens[4].c_str());
-				region.maxZ = atoi(tokens[5].c_str());
+				region.left = parseAsciiIntOrZero(tokens[0]);
+				region.top = parseAsciiIntOrZero(tokens[1]);
+				region.right = parseAsciiIntOrZero(tokens[2]);
+				region.bottom = parseAsciiIntOrZero(tokens[3]);
+				region.minZ = parseAsciiIntOrZero(tokens[4]);
+				region.maxZ = parseAsciiIntOrZero(tokens[5]);
 			}
 			region.regionName = tokens[tagIndex + 1];
 			region.direction = tokens[tagIndex + 2];
@@ -960,10 +959,10 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupAnimRecord anim;
 			if (tagIndex >= 4) {
-				anim.x = atoi(tokens[0].c_str());
-				anim.y = atoi(tokens[1].c_str());
-				anim.z = atoi(tokens[2].c_str());
-				anim.frameDelay = atoi(tokens[3].c_str());
+				anim.x = parseAsciiIntOrZero(tokens[0]);
+				anim.y = parseAsciiIntOrZero(tokens[1]);
+				anim.z = parseAsciiIntOrZero(tokens[2]);
+				anim.frameDelay = parseAsciiIntOrZero(tokens[3]);
 			}
 			anim.roomName = tokens[tagIndex + 1];
 			anim.resourcePath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
@@ -986,12 +985,12 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 		StartupObjectRecord object;
 		if (tagIndex >= 6) {
-			object.initialX = atoi(tokens[0].c_str());
-			object.initialY = atoi(tokens[1].c_str());
-			object.boundsX2 = atoi(tokens[2].c_str());
-			object.boundsY2 = atoi(tokens[3].c_str());
-			object.initialZ = atoi(tokens[4].c_str());
-			object.zExtent = atoi(tokens[5].c_str());
+			object.initialX = parseAsciiIntOrZero(tokens[0]);
+			object.initialY = parseAsciiIntOrZero(tokens[1]);
+			object.boundsX2 = parseAsciiIntOrZero(tokens[2]);
+			object.boundsY2 = parseAsciiIntOrZero(tokens[3]);
+			object.initialZ = parseAsciiIntOrZero(tokens[4]);
+			object.zExtent = parseAsciiIntOrZero(tokens[5]);
 		}
 		object.currentX = object.initialX;
 		object.currentY = object.initialY;
@@ -2072,7 +2071,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("CHECK_PERC")) {
-			const int threshold = CLIP<int>(atoi(command->arg1.c_str()), 0, 100);
+			const int threshold = CLIP<int>(parseAsciiIntOrZero(command->arg1), 0, 100);
 			const int roll = g_engine ? (int)g_engine->getRandomNumber(99) : 0;
 			currentTag = roll < threshold ? command->arg2 : command->arg3;
 			continue;
@@ -2373,7 +2372,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		if (command->opcodeName.equalsIgnoreCase("HEAL_PC") ||
 			command->opcodeName.equalsIgnoreCase("ADJ_HP")) {
 			noteMutation(setPlayerCurrentHitPoints(
-				_playerCurrentHitPoints + atoi(command->arg1.c_str())));
+				_playerCurrentHitPoints + parseAsciiIntOrZero(command->arg1)));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -2405,8 +2404,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			*requestPlayerGotoXZ = true;
-			*playerGotoX = atoi(command->arg1.c_str());
-			*playerGotoZ = atoi(command->arg2.c_str());
+			*playerGotoX = parseAsciiIntOrZero(command->arg1);
+			*playerGotoZ = parseAsciiIntOrZero(command->arg2);
 			if (continuationTag)
 				*continuationTag = command->arg4;
 			return;

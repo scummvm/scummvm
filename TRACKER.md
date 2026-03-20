@@ -9,13 +9,19 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `900`
-- Named/documented: `789`
+- Total functions: `901`
+- Named/documented: `790`
 - Remaining `FUN_*`: `111`
 - Remaining undocumented total: `111`
 
 ## Last Confirmed Action
 
+- On March 20, 2026, scanned `engines/harvester` for native libc/std helper usage instead of assuming the existing parser code already matched ScummVM conventions.
+- Confirmed Harvester's `MIN`/`MAX` calls already come from ScummVM's own `common/util.h`, so the only real replacement target in the engine sources was `atoi`.
+- Added `engines/harvester/parse_utils.h` with `parseAsciiIntOrZero`, a Common-based permissive decimal parser that mirrors Harvester's prior `atoi` usage closely enough for config/script/dialogue fields while relying on `Common::String`, `Common::isSpace`, and `Common::isDigit` instead of libc; rewired all Harvester `atoi` call sites in `script.cpp` and `text.cpp` to use it, removed the direct `<cstdlib>` dependency from `script.cpp`, and rebuilt `engines/harvester/script.o` plus `engines/harvester/text.o` successfully.
+- On March 20, 2026, scanned the remaining `FUN_*` band in the live `HARVEST.LE` Ghidra session and only applied a rename where the evidence was explicit enough to survive review.
+- Confirmed `FUN_00038750 @ 0x38750` is a single-purpose wrapper around `play_fst_sequence("GRAPHIC/FST/C048.FST", 0, param_3, param_2)`, renamed it to `play_c048_fst_sequence`, added a plate comment with the hardcoded asset-path evidence plus the Loomis sheriff-office caller context, and saved `HARVEST.LE`.
+- Rechecked the other still-unnamed outliers instead of forcing more names: the `0x21100/0x21120` pair is still only proven as shared min/max extent updaters with unresolved axis ownership, the `0x83fb3..0x87439` band is still HMIDRV / sound-driver plumbing where only subcommand IDs and timer/vector side effects are concrete, and the remaining `0x8c3d8..0x91518` cluster is still largely exception / x87 runtime support below the semantic rename threshold.
 - On March 20, 2026, split Harvester save/load plumbing into a dedicated module instead of continuing to grow `harvester.cpp` with serializer helpers and save-state mutation code.
 - Moved the `StartupSaveRoomState` type into new `engines/harvester/saveload.h`, moved the `HarvesterEngine` save/load/capture/clear implementations into new `engines/harvester/saveload.cpp`, removed the now-local serializer helpers from `harvester.cpp`, and wired `saveload.o` into `engines/harvester/module.mk`.
 - Kept the existing save/load behavior and debug instrumentation intact while changing only the code organization; rebuilt `engines/harvester/saveload.o`, `engines/harvester/harvester.o`, and `scummvm` successfully.
@@ -83,12 +89,14 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester save/load validation pass with `general` debug enabled and confirm the extracted `saveload` module still produces the same logs and behavior: the serialized room target at save time, the loaded room target at load time, the pending room state application in `RoomSystem`, and the restored runtime flags/objects/NPCs/monsters/timers that differ from script defaults.
-2. Run a live Harvester validation pass on the inventory overlay: click and hold an inventory item, drag it past the native window `x=69..568`, `y=75..435`, and confirm the overlay closes immediately while the selected item remains active for room use.
-3. Run a live Harvester validation pass in `SHRFOFC` to confirm the restored Loomis first-talk topic menu, the `4520/4524/4528` revisit follow-up, and the accepted magazine branch now plays `C048.FST`, consumes the magazine, hides Loomis, and exposes the real drawer hotspot.
-4. If the drawer is still blocked after the accepted magazine branch, instrument `resolveRoomHoverState` / `findRoomObjectAtPoint` in `SHRFOFC` to verify whether the `SHERIF_DRAWR` / `SHERIF_DRAWR2` visibility flip is sufficient or whether same-bounds hotspot precedence is still masking the unlocked drawer.
-5. Re-audit the remaining Loomis response-driven evidence branches next, especially the blackmail submenu implied by `DIALOG.RSP` line `80` and subtitle ids `4617/4628/4633/4639`, since the simplified handler still reduces those to single-line returns.
-6. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
+1. Run a Harvester smoke pass that exercises every numeric text-input source touched by the new parser helper: startup `CONFIG.INI` option loading, `HARVEST.SCR` room/script parsing, and `DIALOGUE.IDX` WAV-id loading, so the Common-based `parseAsciiIntOrZero` replacement is confirmed against live data instead of only object compilation.
+2. Re-open the IRQ0 sound-timer helper band around `install_irq0_timer_handler @ 0x8b1f3`, the second same-named function at `0x8b30d`, and `FUN_0008b389`: the `0x8b30d` body clearly restores the saved IRQ0 vector rather than installing a new one, and `FUN_0008b389` appears to participate in that saved callback/vector unwind path, so that cluster is the best remaining non-x87/non-HMIDRV candidate for another high-confidence rename pass.
+3. Run a live Harvester save/load validation pass with `general` debug enabled and confirm the extracted `saveload` module still produces the same logs and behavior: the serialized room target at save time, the loaded room target at load time, the pending room state application in `RoomSystem`, and the restored runtime flags/objects/NPCs/monsters/timers that differ from script defaults.
+4. Run a live Harvester validation pass on the inventory overlay: click and hold an inventory item, drag it past the native window `x=69..568`, `y=75..435`, and confirm the overlay closes immediately while the selected item remains active for room use.
+5. Run a live Harvester validation pass in `SHRFOFC` to confirm the restored Loomis first-talk topic menu, the `4520/4524/4528` revisit follow-up, and the accepted magazine branch now plays `C048.FST`, consumes the magazine, hides Loomis, and exposes the real drawer hotspot.
+6. If the drawer is still blocked after the accepted magazine branch, instrument `resolveRoomHoverState` / `findRoomObjectAtPoint` in `SHRFOFC` to verify whether the `SHERIF_DRAWR` / `SHERIF_DRAWR2` visibility flip is sufficient or whether same-bounds hotspot precedence is still masking the unlocked drawer.
+7. Re-audit the remaining Loomis response-driven evidence branches next, especially the blackmail submenu implied by `DIALOG.RSP` line `80` and subtitle ids `4617/4628/4633/4639`, since the simplified handler still reduces those to single-line returns.
+8. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
 
 ## Reimplementation Priority Order
 
