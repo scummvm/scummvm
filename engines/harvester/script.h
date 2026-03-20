@@ -228,6 +228,11 @@ struct StartupCommandRecord {
 	Common::String arg4;
 };
 
+struct StartupExecListRecord {
+	Common::String listName;
+	Common::Array<Common::String> entries;
+};
+
 struct StartupTextRecord {
 	Common::String key;
 	Common::String boxName;
@@ -302,22 +307,37 @@ enum StartupRoomTransitionKind {
 	kStartupRoomTransitionCloseup
 };
 
-struct StartupInteractionResult {
-	Common::String musicPath;
-	Common::String nextRoomName;
-	Common::String deathFlicPath;
-	Common::String dialogueNpcName;
-	Common::String dialogueContinuationTag;
-	Common::Array<StartupAudioCommand> audioCommands;
-	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
-	bool requestMainMenu = false;
-	bool abortRemainingCommandChain = false;
-	bool mutatedRuntimeState = false;
+enum StartupLightingCommand {
+	kStartupLightingCommandNone = 0,
+	kStartupLightingCommandDim,
+	kStartupLightingCommandNormal,
+	kStartupLightingCommandBlack,
+	kStartupLightingCommandFadeIn
 };
 
 struct StartupResolvedText {
 	Common::String boxName;
 	Common::String value;
+};
+
+struct StartupInteractionResult {
+	Common::String musicPath;
+	Common::String nextRoomName;
+	Common::String cutscenePath;
+	Common::String deathFlicPath;
+	Common::String dialogueNpcName;
+	Common::String dialogueContinuationTag;
+	Common::String continuationTag;
+	StartupResolvedText modalText;
+	Common::Array<StartupAudioCommand> audioCommands;
+	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
+	StartupLightingCommand lightingCommand = kStartupLightingCommandNone;
+	int playerGotoX = 0;
+	int playerGotoZ = 0;
+	bool requestPlayerGotoXZ = false;
+	bool requestMainMenu = false;
+	bool abortRemainingCommandChain = false;
+	bool mutatedRuntimeState = false;
 };
 
 class Script {
@@ -338,6 +358,7 @@ public:
 	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
 	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
 	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
+	const Common::Array<StartupExecListRecord> &getExecLists() const { return _execLists; }
 	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
 	const Common::Array<StartupHeadRecord> &getHeads() const { return _heads; }
 	const Common::Array<StartupUseItemRecord> &getUseItems() const { return _useItems; }
@@ -378,6 +399,7 @@ public:
 		void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
 		void markObjectIdentShown(const StartupObjectRecord &object);
 		bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
+		bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
 		Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 		Common::String resolveTextValue(const Common::String &key) const;
 		const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
@@ -409,6 +431,7 @@ private:
 	void parseTownRecords(ResourceManager &resources);
 	const StartupRoomRecord *findRoomRecord(const Common::String &roomName) const;
 	const StartupCommandRecord *findCommandRecord(const Common::String &tag) const;
+	const StartupExecListRecord *findExecListRecord(const Common::String &name) const;
 	const StartupTextRecord *findTextRecord(const Common::String &key) const;
 	const StartupUseItemRecord *findUseItemRecord(const Common::String &itemName, const StartupObjectRecord &target) const;
 	const StartupFlagRecord *findRuntimeFlag(const Common::String &flagName) const;
@@ -428,8 +451,11 @@ private:
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
-		Common::String *deathFlicPath, bool *requestMainMenu, Common::String *dialogueNpcName,
-		Common::String *dialogueContinuationTag,
+		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
+		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
+		Common::String *continuationTag, StartupResolvedText *modalText,
+		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
+		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState);
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 	bool setPlayerCurrentHitPoints(int hitPoints);
@@ -448,6 +474,7 @@ private:
 	Common::Array<StartupRegionRecord> _regions;
 	Common::Array<StartupFlagRecord> _flags;
 	Common::Array<StartupCommandRecord> _commands;
+	Common::Array<StartupExecListRecord> _execLists;
 	Common::Array<StartupTextRecord> _texts;
 	Common::Array<StartupHeadRecord> _heads;
 	Common::Array<StartupUseItemRecord> _useItems;

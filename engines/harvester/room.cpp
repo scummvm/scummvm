@@ -33,6 +33,7 @@
 #include "harvester/detection.h"
 #include "harvester/fst_player.h"
 #include "harvester/harvester.h"
+#include "harvester/palette_utils.h"
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/art.h"
@@ -184,6 +185,33 @@ static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
 
 	font.drawString(&screen, promptText, 1, 463, 640, 0, Graphics::kTextAlignCenter);
 	font.drawString(&screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
+}
+
+static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
+	byte scaledPalette[256 * 3];
+	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
+	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
+	screen.setPalette(scaledPalette);
+}
+
+static float clampRoomDepthForEvent(const StartupRoomSetupState &state, float z) {
+	return CLIP<float>(z,
+		(float)MIN(state.roomMinZ, state.roomMaxZ),
+		(float)MAX(state.roomMinZ, state.roomMaxZ));
+}
+
+static int mapRoomDepthToScreenYForEvent(const StartupRoomSetupState &state, float z, int fallbackY) {
+	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
+		return fallbackY;
+	if (state.roomMaxZ == state.roomMinZ)
+		return CLIP<int>(fallbackY, state.roomMaxZScreenY, state.roomMinZScreenY);
+
+	const float clampedZ = clampRoomDepthForEvent(state, z);
+	const float offset = ((float)state.roomMaxZ - clampedZ) *
+		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
+		(float)(state.roomMaxZ - state.roomMinZ);
+	return CLIP<int>(state.roomMaxZScreenY + (int)(offset >= 0.0f ? offset + 0.5f : offset - 0.5f),
+		state.roomMaxZScreenY, state.roomMinZScreenY);
 }
 
 static MonsterAnimationRange resolveRoomMonsterAnimationRange(int facing) {
@@ -478,165 +506,322 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 		return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
 	};
-	auto runRoomExitCommands = [&]() {
-		Common::Array<StartupAudioCommand> exitAudioCommands;
-		if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitAudioCommands))
-			return false;
-		startupFlow.executeStartupAudioCommands(exitAudioCommands);
-		return true;
-	};
-	struct InteractionProcessor {
-		HarvesterEngine &engine;
-		Flow &startupFlow;
-		StartupRoomSceneResources &scene;
-		StartupRoomPlayerState &playerState;
-		Common::String &pendingRegionName;
-		Common::String &pendingRoomChange;
-		decltype(refreshCurrentScene) &refreshCurrentSceneFn;
-		decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
-		decltype(runRoomExitCommands) &runRoomExitCommandsFn;
-		decltype(resetIdleState) &resetIdleStateFn;
-
-		Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
-				bool &didTransition) {
-			didTransition = false;
-			playerState.hasMoveTarget = false;
-			playerState.turnActive = false;
-			playerState.turnTargetFacing = -1;
-			pendingRegionName.clear();
-
-			if (interaction.requestMainMenu) {
-				engine.stopStartupMusic();
-				engine.stopStartupSound();
-				if (!interaction.deathFlicPath.empty()) {
-					FstPlayer fstPlayer(engine);
-					if (!fstPlayer.play(interaction.deathFlicPath))
-						return Common::kReadingFailed;
-				}
-
-				startupFlow.requestMainMenuReturn();
-				return Common::kNoError;
-			}
-
-			Common::String restoreMusicPath = engine.getStartupMusicPath();
-			if (!interaction.musicPath.empty()) {
-				(void)engine.playStartupMusic(interaction.musicPath);
-				restoreMusicPath = engine.getStartupMusicPath();
-			}
-			startupFlow.executeStartupAudioCommands(interaction.audioCommands);
-
-			StartupRoomTransitionKind roomTransition = interaction.roomTransition;
-			if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
-				roomTransition = kStartupRoomTransitionCloseup;
-
-			if (!interaction.nextRoomName.empty() &&
-					roomTransition == kStartupRoomTransitionChangeRoom) {
-				Common::String resolvedTransitionTarget = interaction.nextRoomName;
-				Common::Error resolveError = startupFlow.resolveRoomTransitionTarget(
-					interaction.nextRoomName, resolvedTransitionTarget);
-				if (resolveError.getCode() != Common::kNoError)
-					return resolveError;
-				if (resolvedTransitionTarget.empty())
-					return Common::kNoError;
-
-				if (!runRoomExitCommandsFn())
-					return Common::kReadingFailed;
-
-				// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
-				pendingRoomChange = resolvedTransitionTarget;
-				didTransition = true;
-			} else if (!interaction.nextRoomName.empty()) {
-				if (!runRoomExitCommandsFn())
-					return Common::kReadingFailed;
-
-				Common::Error roomError = startupFlow.runRoomLoop(interaction.nextRoomName);
-				if (startupFlow.hasPendingMainMenuReturn())
-					return Common::kNoError;
-				if (roomError.getCode() != Common::kReadingFailed &&
-					roomError.getCode() != Common::kNoError) {
-					return roomError;
-				}
-
-				if (!refreshCurrentSceneFn(true))
-					return Common::kReadingFailed;
-
-				startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
-				if (!restoreMusicPath.empty())
-					(void)engine.playStartupMusic(restoreMusicPath);
-				else
-					engine.stopStartupMusic();
-				didTransition = true;
-			} else if (interaction.mutatedRuntimeState) {
-				if (!refreshCurrentSceneFn(true))
-					return Common::kReadingFailed;
-			}
-
-			if (didTransition)
+		auto runRoomExitCommands = [&]() {
+			Common::Array<StartupAudioCommand> exitAudioCommands;
+			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitAudioCommands))
+				return false;
+			startupFlow.executeStartupAudioCommands(exitAudioCommands);
+			return true;
+		};
+		auto applyLightingCommand = [&](StartupLightingCommand lightingCommand) -> Common::Error {
+			Graphics::Screen *activeScreen = getActiveScreen();
+			if (!activeScreen)
 				return Common::kNoError;
 
-			if (!interaction.dialogueNpcName.empty()) {
-				Common::Error dialogueError = runScriptedDialogue(
-					interaction.dialogueNpcName, Common::String(), interaction.dialogueContinuationTag,
-					didTransition);
-				if (dialogueError.getCode() != Common::kNoError)
-					return dialogueError;
+			switch (lightingCommand) {
+			case kStartupLightingCommandNone:
+				return Common::kNoError;
+			case kStartupLightingCommandDim:
+				drawRoomScene(_engine, *activeScreen, scene, 0.6f);
+				setScaledRoomPalette(*activeScreen, scene.palette, 0.6f);
+				activeScreen->makeAllDirty();
+				activeScreen->update();
+				return Common::kNoError;
+			case kStartupLightingCommandNormal:
+				drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
+				activeScreen->makeAllDirty();
+				activeScreen->update();
+				return Common::kNoError;
+			case kStartupLightingCommandBlack: {
+				byte blackPalette[256 * 3] = { 0 };
+				activeScreen->fillRect(activeScreen->getBounds(), 0);
+				activeScreen->setPalette(blackPalette);
+				activeScreen->makeAllDirty();
+				activeScreen->update();
+				return Common::kNoError;
+			}
+			case kStartupLightingCommandFadeIn:
+				debugC(1, kDebugScene,
+					"Harvester: CHANGE_LIGHTING FADE_IN has no direct room-side equivalent yet; preserving control flow");
+				return Common::kNoError;
 			}
 
 			return Common::kNoError;
-		}
-
-		Common::Error runScriptedDialogue(const Common::String &npcName, const Common::String &usedItemName,
-				const Common::String &continuationTag, bool &didTransition) {
-			didTransition = false;
-
-			const StartupNpcRecord *dialogueNpc = engine.getStartupScript()->findRuntimeNpcRecord(npcName);
-			if (dialogueNpc) {
-				IndexedBitmap dialogueBackdrop;
-				if (!captureDialogueBackdropFn(dialogueBackdrop))
-					return Common::kReadingFailed;
-
-				Common::Error dialogueError = startupFlow.runRoomNpcDialogue(
-					dialogueBackdrop, scene.palette, scene.targetPaletteBrightness, *dialogueNpc,
-					usedItemName);
-				if (dialogueError.getCode() != Common::kNoError)
-					return dialogueError;
-			} else {
-				warning("Harvester: unresolved startup dialogue npc '%s' while processing room dialogue",
-					npcName.c_str());
+		};
+		auto applyPlayerGotoXZ = [&](int x, int z) {
+			playerState.hasMoveTarget = false;
+			playerState.turnActive = false;
+			playerState.turnTargetFacing = -1;
+			playerState.centerX = x;
+			playerState.z = clampRoomDepthForEvent(scene.state, (float)z);
+			playerState.bottomY = mapRoomDepthToScreenYForEvent(scene.state, playerState.z, playerState.bottomY);
+			if (playerState.entity) {
+				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
+				if (facing >= 0)
+					(void)setPlayerIdleAnimation(playerState, facing);
+				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+					playerState.centerX, playerState.bottomY, playerState.z);
+			}
+			resetIdleState();
+			captureCurrentSaveState();
+		};
+		auto runModalShowText = [&](const StartupResolvedText &modalText) -> Common::Error {
+			Graphics::Screen *activeScreen = getActiveScreen();
+			if (!activeScreen || !art || !bodyFont)
+				return Common::kNoError;
+			if (!resolveInspectTextboxBitmap(*art, modalText)) {
+				debug(1, "Harvester: unsupported SHOW_TEXT textbox '%s' text='%s'",
+					modalText.boxName.c_str(), modalText.value.c_str());
+				return Common::kNoError;
 			}
 
-			StartupInteractionResult dialogueInteraction;
-			bool abortRemainingCommandChain = false;
-			if (startupFlow.takeQueuedDialogueInteraction(dialogueInteraction)) {
-				abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
-				Common::Error interactionError = handleInteractionResult(dialogueInteraction, didTransition);
-				if (interactionError.getCode() != Common::kNoError)
-					return interactionError;
-				if (startupFlow.hasPendingMainMenuReturn())
+			IndexedBitmap backdrop;
+			if (!captureDialogueBackdrop(backdrop))
+				return Common::kReadingFailed;
+
+			Graphics::FrameLimiter limiter(g_system, 60);
+			bool initialInputReleased = false;
+			bool dismissPressed = false;
+			uint frameCount = 0;
+
+			while (!_engine.shouldQuit()) {
+				Common::Event event;
+				Common::Error result = Common::kNoError;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if (startupFlow.handleSystemEvent(event, result))
+						return result;
+
+					if (!initialInputReleased) {
+						if (event.type == Common::EVENT_LBUTTONUP ||
+								event.type == Common::EVENT_RBUTTONUP ||
+								event.type == Common::EVENT_KEYUP) {
+							initialInputReleased = true;
+						}
+						continue;
+					}
+
+					if (!dismissPressed) {
+						if (event.type == Common::EVENT_LBUTTONDOWN ||
+								event.type == Common::EVENT_RBUTTONDOWN) {
+							dismissPressed = true;
+						} else if (event.type == Common::EVENT_KEYDOWN) {
+							return Common::kNoError;
+						}
+						continue;
+					}
+
+					if (event.type == Common::EVENT_LBUTTONUP ||
+							event.type == Common::EVENT_RBUTTONUP) {
+						return Common::kNoError;
+					}
+				}
+
+				if (!initialInputReleased && frameCount++ > 0)
+					initialInputReleased = true;
+
+				blitBitmap(*activeScreen, backdrop, 0, 0);
+				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
+				drawRoomInspectText(*activeScreen, *art, *bodyFont, modalText);
+				activeScreen->makeAllDirty();
+				activeScreen->update();
+
+				limiter.delayBeforeSwap();
+				limiter.startFrame();
+			}
+
+			return Common::kNoError;
+		};
+		struct InteractionProcessor {
+			HarvesterEngine &engine;
+			Flow &startupFlow;
+			StartupRoomSceneResources &scene;
+			StartupRoomPlayerState &playerState;
+			Common::String &pendingRegionName;
+			Common::String &pendingRoomChange;
+			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
+			decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
+			decltype(runRoomExitCommands) &runRoomExitCommandsFn;
+			decltype(applyLightingCommand) &applyLightingCommandFn;
+			decltype(applyPlayerGotoXZ) &applyPlayerGotoXZFn;
+			decltype(runModalShowText) &runModalShowTextFn;
+			decltype(resetIdleState) &resetIdleStateFn;
+
+			Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
+					bool &didTransition) {
+				didTransition = false;
+				playerState.hasMoveTarget = false;
+				playerState.turnActive = false;
+				playerState.turnTargetFacing = -1;
+				pendingRegionName.clear();
+
+				if (interaction.requestMainMenu) {
+					engine.stopStartupMusic();
+					engine.stopStartupSound();
+					if (!interaction.deathFlicPath.empty()) {
+						FstPlayer fstPlayer(engine);
+						if (!fstPlayer.play(interaction.deathFlicPath))
+							return Common::kReadingFailed;
+					}
+
+					startupFlow.requestMainMenuReturn();
 					return Common::kNoError;
+				}
+
+				Common::String restoreMusicPath = engine.getStartupMusicPath();
+				if (!interaction.musicPath.empty()) {
+					(void)engine.playStartupMusic(interaction.musicPath);
+					restoreMusicPath = engine.getStartupMusicPath();
+				}
+				startupFlow.executeStartupAudioCommands(interaction.audioCommands);
+
+				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
+				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
+					roomTransition = kStartupRoomTransitionCloseup;
+
+				if (!interaction.nextRoomName.empty() &&
+						roomTransition == kStartupRoomTransitionChangeRoom) {
+					Common::String resolvedTransitionTarget = interaction.nextRoomName;
+					Common::Error resolveError = startupFlow.resolveRoomTransitionTarget(
+						interaction.nextRoomName, resolvedTransitionTarget);
+					if (resolveError.getCode() != Common::kNoError)
+						return resolveError;
+					if (resolvedTransitionTarget.empty())
+						return Common::kNoError;
+
+					if (!runRoomExitCommandsFn())
+						return Common::kReadingFailed;
+
+					// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
+					pendingRoomChange = resolvedTransitionTarget;
+					didTransition = true;
+				} else if (!interaction.nextRoomName.empty()) {
+					if (!runRoomExitCommandsFn())
+						return Common::kReadingFailed;
+
+					Common::Error roomError = startupFlow.runRoomLoop(interaction.nextRoomName);
+					if (startupFlow.hasPendingMainMenuReturn())
+						return Common::kNoError;
+					if (roomError.getCode() != Common::kReadingFailed &&
+						roomError.getCode() != Common::kNoError) {
+						return roomError;
+					}
+
+					if (!refreshCurrentSceneFn(true))
+						return Common::kReadingFailed;
+
+					startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
+					if (!restoreMusicPath.empty())
+						(void)engine.playStartupMusic(restoreMusicPath);
+					else
+						engine.stopStartupMusic();
+					didTransition = true;
+				} else if (interaction.mutatedRuntimeState) {
+					if (!refreshCurrentSceneFn(true))
+						return Common::kReadingFailed;
+				}
+
+				if (didTransition)
+					return Common::kNoError;
+
+				if (interaction.requestPlayerGotoXZ)
+					applyPlayerGotoXZFn(interaction.playerGotoX, interaction.playerGotoZ);
+
+				if (interaction.lightingCommand != kStartupLightingCommandNone) {
+					Common::Error lightingError = applyLightingCommandFn(interaction.lightingCommand);
+					if (lightingError.getCode() != Common::kNoError)
+						return lightingError;
+				}
+
+				if (!interaction.cutscenePath.empty()) {
+					FstPlayer fstPlayer(engine);
+					if (!fstPlayer.play(interaction.cutscenePath))
+						return Common::kReadingFailed;
+				}
+
+				if (!interaction.modalText.value.empty()) {
+					Common::Error modalError = runModalShowTextFn(interaction.modalText);
+					if (modalError.getCode() != Common::kNoError)
+						return modalError;
+				}
+
+				if (!interaction.dialogueNpcName.empty()) {
+					Common::Error dialogueError = runScriptedDialogue(
+						interaction.dialogueNpcName, Common::String(), interaction.dialogueContinuationTag,
+						didTransition);
+					if (dialogueError.getCode() != Common::kNoError)
+						return dialogueError;
+				}
+
+				if (didTransition)
+					return Common::kNoError;
+
+				if (!interaction.continuationTag.empty()) {
+					StartupInteractionResult continuationInteraction;
+					if (engine.getStartupScript()->executeActionTag(
+							interaction.continuationTag, continuationInteraction)) {
+						Common::Error interactionError =
+							handleInteractionResult(continuationInteraction, didTransition);
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
+					}
+				}
+
+				return Common::kNoError;
 			}
-			if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
-				StartupInteractionResult continuationInteraction;
-				if (engine.getStartupScript()->executeActionTag(continuationTag, continuationInteraction)) {
-					Common::Error interactionError =
-						handleInteractionResult(continuationInteraction, didTransition);
+
+			Common::Error runScriptedDialogue(const Common::String &npcName, const Common::String &usedItemName,
+					const Common::String &continuationTag, bool &didTransition) {
+				didTransition = false;
+
+				const StartupNpcRecord *dialogueNpc = engine.getStartupScript()->findRuntimeNpcRecord(npcName);
+				if (dialogueNpc) {
+					IndexedBitmap dialogueBackdrop;
+					if (!captureDialogueBackdropFn(dialogueBackdrop))
+						return Common::kReadingFailed;
+
+					Common::Error dialogueError = startupFlow.runRoomNpcDialogue(
+						dialogueBackdrop, scene.palette, scene.targetPaletteBrightness, *dialogueNpc,
+						usedItemName);
+					if (dialogueError.getCode() != Common::kNoError)
+						return dialogueError;
+				} else {
+					warning("Harvester: unresolved startup dialogue npc '%s' while processing room dialogue",
+						npcName.c_str());
+				}
+
+				StartupInteractionResult dialogueInteraction;
+				bool abortRemainingCommandChain = false;
+				if (startupFlow.takeQueuedDialogueInteraction(dialogueInteraction)) {
+					abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
+					Common::Error interactionError = handleInteractionResult(dialogueInteraction, didTransition);
 					if (interactionError.getCode() != Common::kNoError)
 						return interactionError;
 					if (startupFlow.hasPendingMainMenuReturn())
 						return Common::kNoError;
 				}
-			}
+				if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
+					StartupInteractionResult continuationInteraction;
+					if (engine.getStartupScript()->executeActionTag(continuationTag, continuationInteraction)) {
+						Common::Error interactionError =
+							handleInteractionResult(continuationInteraction, didTransition);
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
+						if (startupFlow.hasPendingMainMenuReturn())
+							return Common::kNoError;
+					}
+				}
 
-			startupFlow.resetCursorAnimationSequence();
-			resetIdleStateFn();
-			return Common::kNoError;
-		}
-	};
-	InteractionProcessor interactionProcessor = {
-		_engine, startupFlow, scene, playerState, pendingRegionName, pendingRoomChange,
-		refreshCurrentScene,
-		captureDialogueBackdrop, runRoomExitCommands, resetIdleState
-	};
+				startupFlow.resetCursorAnimationSequence();
+				resetIdleStateFn();
+				return Common::kNoError;
+			}
+		};
+		InteractionProcessor interactionProcessor = {
+			_engine, startupFlow, scene, playerState, pendingRegionName, pendingRoomChange,
+			refreshCurrentScene, captureDialogueBackdrop, runRoomExitCommands,
+			applyLightingCommand, applyPlayerGotoXZ, runModalShowText, resetIdleState
+		};
 	auto moveRoomItemDirectlyToInventory = [&](const StartupObjectRecord &object) -> Common::Error {
 		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)

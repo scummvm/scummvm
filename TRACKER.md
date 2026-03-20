@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 19, 2026, widened the confirmed town-script / room-event coverage in `engines/harvester` using only opcode behavior already bounded in Ghidra and `ARCHITECTURE.md`: added `CHECK_PERC`, `EXEC_LIST`, `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, and `CHANGE_LIGHTING` to the startup-script dispatcher, parsed `EXEC_LIST` records from `HARVEST.SCR`, and threaded the new deferred action results through room interactions plus queued dialogue follow-ups instead of dropping them as generic unsupported fallthrough.
+- The room loop now applies confirmed deferred side effects in native order where applicable: `GOFLIC` plays FST cutscenes then continues with the chained action tag, `SHOW_TEXT` runs a blocking room-modal textbox using the existing inspect-text resources, `PC_GOTO_XZ` repositions the live player avatar on the current room depth line, and `CHANGE_LIGHTING` covers the confirmed `DIM`, `NORMAL`, and `NONE` modes while keeping `FADE_IN` explicit as a still-unbounded no-op.
+- Rebuilt the touched Harvester objects successfully after that script/event coverage pass: `engines/harvester/script.o`, `engines/harvester/room.o`, `engines/harvester/dialogue.o`, and `scummvm`.
 - On March 19, 2026, implemented the first actor-runtime / combat-adjacent substrate pass in `engines/harvester`: parsed and persisted richer `MONSTER` plus `TIMER` records from `HARVEST.SCR`, bumped startup-save serialization to version `2` with backward-compatible load fallback, preserved player combat HP/loadout/control-pause state in the startup runtime snapshot, spawned non-visual timer entities during room setup, and paused/resumed their countdowns across room setup fades and the true `run_main_menu` path.
 - Extended the live room loop to sync timer and monster runtime state back into the startup snapshot before save/refresh handoffs, dispatch expired room timers through the confirmed town-script action-tag path, and promote room monsters from static single-frame props into live runtime entities with facing-based idle/walk frame bands.
 - Rebuilt the touched Harvester objects successfully after the actor-runtime/timer pass: `engines/harvester/script.o`, `engines/harvester/runtime_entity.o`, `engines/harvester/flow.o`, `engines/harvester/room.o`, `engines/harvester/menu.o`, `engines/harvester/harvester.o`, and `scummvm`.
@@ -44,8 +47,8 @@
 
 ## Next Suggested Action
 
-1. Run a manual desktop validation pass against a live gameplay room using the new actor-runtime/timer substrate: confirm room setup pauses timer countdowns during the fade-in, `HELP` and the true `run_main_menu` stop countdowns while open, expired room timers fire the expected action tags once, and a monster room now shows animated live monster entities instead of static props.
-2. If that validation exposes any remaining room progression failures, widen only the specific town-script opcodes or runtime side effects revealed by those timer/monster rooms; keep unsupported commands explicit instead of guessing.
+1. Run a manual desktop validation pass against the specific live rooms/interactions that exercise the newly supported deferred action opcodes: verify at least one `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, `CHANGE_LIGHTING`, and `EXEC_LIST` room path against the desktop build so the remaining progression failures are grounded in concrete room names instead of static unsupported-opcode logs.
+2. Keep the residual unsupported list explicit during that pass. The current narrowed gaps are `CHANGE_CD` and the exact room-side effect of `CHANGE_LIGHTING FADE_IN`; if those still block progression, bound them from the native anchors before widening anything else.
 
 ## Reimplementation Priority Order
 
@@ -54,11 +57,11 @@
    Native anchors: `spawn_player_combat_avatar @ 0x54220`, `update_player_combat_avatar_state @ 0x553a0`, `teardown_player_combat_avatar @ 0x55010`, `tick_monster_entity_runtime @ 0x54140`, `spawn_timer_entity_from_record @ 0x59390`, `pause_timer_entity_countdowns @ 0x80460`, `resume_timer_entity_countdowns @ 0x804a0`.
    Concrete tasks: validate the new timer pause/resume bookkeeping and timer-to-action dispatch in a live room; confirm the true `run_main_menu` pause path now freezes room countdowns; if the live monster rooms still need more than the new facing/animation hooks, extend only the proven actor state transitions from the native anchors.
    Exit criteria: room timers survive save/load and pause correctly across menus/help, and the remaining monster/combat gaps are narrowed to explicit missing native state-machine branches instead of static-scene placeholders.
-2. Widen town-script action and room-event coverage only where native behavior is already confirmed.
+2. Validate the widened town-script action and room-event coverage, then only implement any remaining script-side gaps that are still explicitly proven.
    Files: `engines/harvester/script.cpp`, `engines/harvester/room.cpp`, `engines/harvester/dialogue.cpp`.
    Native anchors: `dispatch_room_event_actions @ 0x60ee0`, `run_town_script_interpreter @ 0x46d80`, and the confirmed town-script notes in `ARCHITECTURE.md`.
-   Concrete tasks: drive missing work from broken rooms and interactions; add only the opcodes and side effects needed to unblock verified room paths; keep unsupported commands explicit rather than guessing.
-   Exit criteria: room progression failures shrink to a small, explicit list of still-unimplemented native commands instead of broad "unsupported" fallthrough.
+   Concrete tasks: exercise the now-supported `CHECK_PERC`, `EXEC_LIST`, `GOFLIC`, `SHOW_TEXT`, `PC_GOTO_XZ`, and `CHANGE_LIGHTING` paths in live rooms; only if validation still fails, add the exact missing command or side effect proven by that room.
+   Exit criteria: the remaining room progression failures reduce to a short, named list of still-unimplemented native commands or side effects, with `CHANGE_CD` / `FADE_IN` either confirmed as blockers or explicitly ruled out.
 3. Tighten inventory and item-use flow against that actor runtime.
    Files: `engines/harvester/inventory.cpp`, `engines/harvester/room.cpp`, `engines/harvester/script.cpp`.
    Native anchors: `run_inventory_screen @ 0x7df10`, `add_object_to_inventory @ 0x7c8b0`, `sync_player_combat_weapon_resource_icons @ 0x792c0`, and the confirmed inventory carry/use notes in `ARCHITECTURE.md`.
