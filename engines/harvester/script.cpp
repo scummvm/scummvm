@@ -1125,7 +1125,165 @@ void Script::resetRuntimeState() {
 		timer.currentValue = timer.initialValue;
 }
 
+void Script::logRuntimeSaveState(const char *operation) const {
+	debugC(1, kDebugGeneral,
+		"Harvester: %s runtime save state flags=%u objects=%u anims=%u regions=%u npcs=%u monsters=%u timers=%u hp=%d loadout=%d paused=%d",
+		operation, (uint)_runtimeFlags.size(), (uint)_runtimeObjects.size(),
+		(uint)_runtimeAnimations.size(), (uint)_runtimeRegions.size(),
+		(uint)_runtimeNpcs.size(), (uint)_runtimeMonsters.size(),
+		(uint)_runtimeTimers.size(), _playerCurrentHitPoints, _playerCombatLoadout,
+		_playerControlPaused);
+
+	for (const StartupFlagRecord &flag : _runtimeFlags) {
+		const StartupFlagRecord *baseFlag = nullptr;
+		for (const StartupFlagRecord &candidate : _flags) {
+			if (candidate.name.equalsIgnoreCase(flag.name)) {
+				baseFlag = &candidate;
+				break;
+			}
+		}
+		if (!baseFlag || flag.value != baseFlag->value) {
+			debugC(1, kDebugGeneral,
+				"Harvester: %s runtime flag '%s' value=%d base=%d defined_in_script=%d",
+				operation, flag.name.c_str(), flag.value, baseFlag ? baseFlag->value : 0,
+				baseFlag != nullptr);
+		}
+	}
+
+	for (const StartupObjectRecord &object : _runtimeObjects) {
+		const StartupObjectRecord *baseObject = nullptr;
+		for (const StartupObjectRecord &candidate : _objects) {
+			if (candidate.objectName.equalsIgnoreCase(object.objectName)) {
+				baseObject = &candidate;
+				break;
+			}
+		}
+
+		const Common::String &defaultOwner = baseObject ? baseObject->initialOwnerOrRoom : object.initialOwnerOrRoom;
+		const int defaultX = baseObject ? baseObject->initialX : object.initialX;
+		const int defaultY = baseObject ? baseObject->initialY : object.initialY;
+		const int defaultZ = baseObject ? baseObject->initialZ : object.initialZ;
+		const bool defaultRuntimeVisible = baseObject ? baseObject->visible : object.visible;
+		const bool defaultVisible = baseObject ? baseObject->visible : object.visible;
+		const bool defaultIdentShown = baseObject ? baseObject->identTextKey.empty() : object.identTextKey.empty();
+		if (!baseObject ||
+				!object.currentOwnerOrRoom.equalsIgnoreCase(defaultOwner) ||
+				object.currentX != defaultX ||
+				object.currentY != defaultY ||
+				object.currentZ != defaultZ ||
+				object.runtimeVisible != defaultRuntimeVisible ||
+				object.visible != defaultVisible ||
+				object.identShown != defaultIdentShown) {
+			debugC(1, kDebugGeneral,
+				"Harvester: %s runtime object '%s' owner='%s' pos=(%d,%d,%d) visible=%d runtimeVisible=%d identShown=%d base_owner='%s' base_pos=(%d,%d,%d) base_visible=%d base_runtimeVisible=%d base_identShown=%d",
+				operation, object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+				object.currentX, object.currentY, object.currentZ,
+				object.visible, object.runtimeVisible, object.identShown,
+				defaultOwner.c_str(), defaultX, defaultY, defaultZ,
+				defaultVisible, defaultRuntimeVisible, defaultIdentShown);
+		}
+	}
+
+	for (const StartupNpcRecord &npc : _runtimeNpcs) {
+		const StartupNpcRecord *baseNpc = nullptr;
+		for (const StartupNpcRecord &candidate : _npcs) {
+			if (candidate.npcName.equalsIgnoreCase(npc.npcName)) {
+				baseNpc = &candidate;
+				break;
+			}
+		}
+
+		const bool defaultActive = baseNpc ? baseNpc->active : npc.active;
+		const bool defaultVisible = baseNpc ? baseNpc->visible : npc.visible;
+		const bool defaultSavedVisible = baseNpc ? baseNpc->visible : npc.visible;
+		const bool defaultDeathOrMonsterfy = baseNpc ? baseNpc->deathOrMonsterfyFlag : npc.deathOrMonsterfyFlag;
+		const int defaultDeathDamageType = baseNpc ? baseNpc->deathDamageType : npc.deathDamageType;
+		if (!baseNpc ||
+				npc.active != defaultActive ||
+				npc.visible != defaultVisible ||
+				npc.savedVisible != defaultSavedVisible ||
+				npc.deathOrMonsterfyFlag != defaultDeathOrMonsterfy ||
+				npc.deathDamageType != defaultDeathDamageType ||
+				npc.runtimeSpawned) {
+			debugC(1, kDebugGeneral,
+				"Harvester: %s runtime npc '%s' active=%d visible=%d savedVisible=%d spawned=%d deathOrMonsterfy=%d damageType=%d base_active=%d base_visible=%d base_savedVisible=%d base_deathOrMonsterfy=%d base_damageType=%d",
+				operation, npc.npcName.c_str(), npc.active, npc.visible, npc.savedVisible,
+				npc.runtimeSpawned, npc.deathOrMonsterfyFlag, npc.deathDamageType,
+				defaultActive, defaultVisible, defaultSavedVisible,
+				defaultDeathOrMonsterfy, defaultDeathDamageType);
+		}
+	}
+
+	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
+		const StartupMonsterRecord *baseMonster = nullptr;
+		for (const StartupMonsterRecord &candidate : _monsters) {
+			if (candidate.monsterName.equalsIgnoreCase(monster.monsterName)) {
+				baseMonster = &candidate;
+				break;
+			}
+		}
+
+		const bool defaultActive = baseMonster ? baseMonster->active : monster.active;
+		const bool defaultVisible = baseMonster
+			? (baseMonster->active ? true : baseMonster->visible)
+			: (monster.active ? true : monster.visible);
+		const bool defaultSavedVisible = defaultVisible;
+		const int defaultCurrentHitPoints = baseMonster ? baseMonster->initialHitPoints : monster.initialHitPoints;
+		const int defaultMinXBound = baseMonster ? baseMonster->minXBound : monster.minXBound;
+		const int defaultMaxXBound = baseMonster ? baseMonster->maxXBound : monster.maxXBound;
+		if (!baseMonster ||
+				monster.active != defaultActive ||
+				monster.visible != defaultVisible ||
+				monster.savedVisible != defaultSavedVisible ||
+				monster.currentHitPoints != defaultCurrentHitPoints ||
+				monster.runtimeSpawned ||
+				monster.minXBound != defaultMinXBound ||
+				monster.maxXBound != defaultMaxXBound) {
+			debugC(1, kDebugGeneral,
+				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d hp=%d/%d bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_hp=%d/%d base_bounds=[%d,%d]",
+				operation, monster.monsterName.c_str(), monster.active, monster.visible,
+				monster.savedVisible, monster.runtimeSpawned,
+				monster.currentHitPoints, monster.initialHitPoints,
+				monster.minXBound, monster.maxXBound,
+				defaultActive, defaultVisible, defaultSavedVisible,
+				defaultCurrentHitPoints, baseMonster ? baseMonster->initialHitPoints : monster.initialHitPoints,
+				defaultMinXBound, defaultMaxXBound);
+		}
+	}
+
+	for (const StartupTimerRecord &timer : _runtimeTimers) {
+		const StartupTimerRecord *baseTimer = nullptr;
+		for (const StartupTimerRecord &candidate : _timers) {
+			if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
+				baseTimer = &candidate;
+				break;
+			}
+		}
+
+		const int defaultInitialValue = baseTimer ? baseTimer->initialValue : timer.initialValue;
+		const int defaultCurrentValue = defaultInitialValue;
+		const bool defaultEnabled = baseTimer ? baseTimer->enabled : timer.enabled;
+		const bool defaultLooping = baseTimer ? baseTimer->looping : timer.looping;
+		const bool defaultGlobal = baseTimer ? baseTimer->global : timer.global;
+		if (!baseTimer ||
+				timer.initialValue != defaultInitialValue ||
+				timer.currentValue != defaultCurrentValue ||
+				timer.enabled != defaultEnabled ||
+				timer.looping != defaultLooping ||
+				timer.global != defaultGlobal) {
+			debugC(1, kDebugGeneral,
+				"Harvester: %s runtime timer '%s' current=%d initial=%d enabled=%d loop=%d global=%d base_current=%d base_initial=%d base_enabled=%d base_loop=%d base_global=%d",
+				operation, timer.timerName.c_str(), timer.currentValue, timer.initialValue,
+				timer.enabled, timer.looping, timer.global,
+				defaultCurrentValue, defaultInitialValue, defaultEnabled, defaultLooping, defaultGlobal);
+		}
+	}
+}
+
 void Script::syncRuntimeSaveState(Common::Serializer &s) {
+	if (s.isSaving())
+		logRuntimeSaveState("saving");
+
 	syncRecordArray(s, _runtimeFlags, syncStartupFlagRecord);
 	syncRecordArray(s, _runtimeObjects, syncStartupObjectRecord);
 	syncRecordArray(s, _runtimeAnimations, syncStartupAnimRecord);
@@ -1184,6 +1342,7 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 			_playerControlPaused = false;
 		}
+		logRuntimeSaveState("loaded");
 	}
 }
 
@@ -1923,7 +2082,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool flagValue = isTruthy(command->arg2);
 			StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
 			bool changed = false;
+			bool oldValue = false;
+			const bool existed = flag != nullptr;
 			if (flag) {
+				oldValue = flag->value;
 				changed = flag->value != flagValue;
 				flag->value = flagValue;
 			} else {
@@ -1933,6 +2095,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				_runtimeFlags.push_back(newFlag);
 				changed = true;
 			}
+			debugC(1, kDebugGeneral,
+				"Harvester: %s '%s' SET_FLAG '%s' %d -> %d existed=%d changed=%d",
+				contextLabel, contextName.c_str(), command->arg1.c_str(), oldValue, flagValue,
+				existed, changed);
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
@@ -2443,7 +2609,11 @@ bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 	StartupFlagRecord *flag = findRuntimeFlag(flagName);
 	if (flag) {
 		const bool changed = flag->value != value;
+		const bool oldValue = flag->value;
 		flag->value = value;
+		debugC(1, kDebugGeneral,
+			"Harvester: direct runtime flag '%s' %d -> %d existed=1 changed=%d",
+			flagName.c_str(), oldValue, value, changed);
 		return changed;
 	}
 
@@ -2451,6 +2621,9 @@ bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 	newFlag.name = flagName;
 	newFlag.value = value;
 	_runtimeFlags.push_back(newFlag);
+	debugC(1, kDebugGeneral,
+		"Harvester: direct runtime flag '%s' %d -> %d existed=0 changed=1",
+		flagName.c_str(), 0, value);
 	return true;
 }
 

@@ -50,6 +50,13 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
 static const uint32 kHarvesterSaveVersion = 2;
 
+static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
+	debugC(1, kDebugGeneral,
+		"Harvester: %s startup save room state valid=%d entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+		operation, state.valid, state.entranceName.c_str(), state.roomName.c_str(),
+		state.playerX, state.playerY, state.playerZ, state.playerFacing, state.musicPath.c_str());
+}
+
 } // End of anonymous namespace
 
 HarvesterEngine *g_engine = nullptr;
@@ -351,6 +358,8 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	StartupSaveRoomState roomState = s.isLoading()
 		? StartupSaveRoomState()
 		: _currentStartupSaveRoomState;
+	if (s.isSaving())
+		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
 	_startupScript->syncRuntimeSaveState(s);
 	if (s.err())
@@ -361,6 +370,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 			return Common::kReadingFailed;
 		_currentStartupSaveRoomState = roomState;
 		_pendingLoadedStartupSaveRoomState = roomState;
+		logStartupSaveRoomState("loaded", roomState);
 	}
 	return Common::kNoError;
 }
