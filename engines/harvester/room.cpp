@@ -48,6 +48,10 @@ static const char *const kPlayerInventoryLabel = "your inventory";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
 static const int kRoomMonsterAnimationRate = 17;
+static const int kNativeInventoryDragCloseLeft = 0x45;
+static const int kNativeInventoryDragCloseTop = 0x4b;
+static const int kNativeInventoryDragCloseRight = 0x239;
+static const int kNativeInventoryDragCloseBottom = 0x1b4;
 
 struct MonsterAnimationRange {
 	MonsterAnimationRange() {}
@@ -63,6 +67,18 @@ static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
 		!roomName.equalsIgnoreCase("RMNBATH") &&
 		!roomName.equalsIgnoreCase("BOWLSNTRY1");
+}
+
+static bool isPrimaryMouseDown() {
+	return g_system && g_system->getEventManager() &&
+		((g_system->getEventManager()->getButtonState() & 1) != 0);
+}
+
+static bool isOutsideNativeInventoryDragCloseBounds(const Common::Point &point) {
+	return point.x < kNativeInventoryDragCloseLeft ||
+		point.x >= kNativeInventoryDragCloseRight ||
+		point.y < kNativeInventoryDragCloseTop ||
+		point.y >= kNativeInventoryDragCloseBottom;
 }
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -1119,6 +1135,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
+				if (_inventory.isOpen() && _inventory.hasSelection() && isPrimaryMouseDown()) {
+					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					if (!inventoryHover && isOutsideNativeInventoryDragCloseBounds(_mousePos)) {
+						if (_inventory.close())
+							needsRedraw = true;
+					}
+				}
 				needsRedraw = true;
 				break;
 			case Common::EVENT_RBUTTONDOWN:

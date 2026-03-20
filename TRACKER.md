@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, rechecked the inventory drag-out close path against native `run_inventory_screen @ 0x7df10` in Ghidra instead of assuming the room overlay should only close on an outside click.
+- Confirmed the native inventory loop sets its close flag while the primary mouse button is still held, no inventory render entity is under the cursor, and the cursor leaves the hardcoded drag window `x=69..568`, `y=75..435`; when that close exits with a carried inventory entity still active, the caller keeps the carry state rather than clearing it.
+- Patched `engines/harvester/room.cpp` to mirror that behavior in the overlay room loop: during `EVENT_MOUSEMOVE`, a selected inventory item now closes the inventory overlay once the cursor is dragged outside the recovered native bounds with the primary button still held, while leaving the selection active for room targeting. Rebuilt `engines/harvester/room.o` and `scummvm` successfully.
 - On March 20, 2026, re-opened the Loomis magazine handoff in the native `handle_talk_to_loomis @ 0x34f80` control-flow gap instead of assuming the sheriff-office acceptance branch was completely driven by the nearby room script or by the explicit `DIALOG.RSP` magazine prompt text.
 - Decoded the hidden native block after Loomis line `0x11bb`: it loads response line `0x51`, runs the response menu, plays line `0x11c6` on the accepted branch, then sets `GAVE_MAG_TO_LOOMIS_TODAY`, flips `SHERIF_DRAWR` visible / `SHERIF_DRAWR2` hidden, hides Loomis, and finally calls `FUN_00038750`, which decompiles to `play_fst_sequence("GRAPHIC/FST/C048.FST", ...)`; the refusal branch plays `0x11cc`.
 - Confirmed the first Loomis no-item conversation was also underimplemented in ScummVM: the subtitle block around `4349..4502` plus `DIALOG.RSP` lines `84..102` exposes the missing sheriff-office topic menu (`Stephanie`, `Mrs. Loomis`, `Mrs. Phelps`, `A Man's Needs`, `French Postcards`, `Sheriff Dwayne`, `Mattress`) and the follow-up `4520/4524/4528` revisit exchange that the simplified handler never ran.
@@ -73,10 +76,11 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass in `SHRFOFC` to confirm the restored Loomis first-talk topic menu, the `4520/4524/4528` revisit follow-up, and the accepted magazine branch now plays `C048.FST`, consumes the magazine, hides Loomis, and exposes the real drawer hotspot.
-2. If the drawer is still blocked after the accepted magazine branch, instrument `resolveRoomHoverState` / `findRoomObjectAtPoint` in `SHRFOFC` to verify whether the `SHERIF_DRAWR` / `SHERIF_DRAWR2` visibility flip is sufficient or whether same-bounds hotspot precedence is still masking the unlocked drawer.
-3. Re-audit the remaining Loomis response-driven evidence branches next, especially the blackmail submenu implied by `DIALOG.RSP` line `80` and subtitle ids `4617/4628/4633/4639`, since the simplified handler still reduces those to single-line returns.
-4. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
+1. Run a live Harvester validation pass on the inventory overlay: click and hold an inventory item, drag it past the native window `x=69..568`, `y=75..435`, and confirm the overlay closes immediately while the selected item remains active for room use.
+2. Run a live Harvester validation pass in `SHRFOFC` to confirm the restored Loomis first-talk topic menu, the `4520/4524/4528` revisit follow-up, and the accepted magazine branch now plays `C048.FST`, consumes the magazine, hides Loomis, and exposes the real drawer hotspot.
+3. If the drawer is still blocked after the accepted magazine branch, instrument `resolveRoomHoverState` / `findRoomObjectAtPoint` in `SHRFOFC` to verify whether the `SHERIF_DRAWR` / `SHERIF_DRAWR2` visibility flip is sufficient or whether same-bounds hotspot precedence is still masking the unlocked drawer.
+4. Re-audit the remaining Loomis response-driven evidence branches next, especially the blackmail submenu implied by `DIALOG.RSP` line `80` and subtitle ids `4617/4628/4633/4639`, since the simplified handler still reduces those to single-line returns.
+5. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
 
 ## Reimplementation Priority Order
 
