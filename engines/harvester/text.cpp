@@ -27,6 +27,7 @@
 #include "common/fs.h"
 #include "common/ptr.h"
 #include "common/stream.h"
+#include "harvester/parse_utils.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -165,7 +166,7 @@ bool Text::loadDialogueIndex(ResourceManager &resources) {
 			++cursor;
 
 		const Common::String wavIdString((const char *)_dialogueData.data() + wavIdStart, cursor - wavIdStart);
-		const int wavId = atoi(wavIdString.c_str());
+		const int wavId = parseAsciiIntOrZero(wavIdString);
 
 		while (cursor < _dialogueData.size() && isDialogueDelimiter(_dialogueData[cursor]))
 			++cursor;
