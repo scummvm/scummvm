@@ -60,6 +60,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	int getMaximumSaveSlot() const override { return 99; }
 };
 
 bool WaynesWorldMetaEngine::hasFeature(MetaEngineFeature f) const {
