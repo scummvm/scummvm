@@ -1764,7 +1764,7 @@ void WaynesWorldEngine::handleDialogMouseClick() {
 
     if (_gameState == 0) {
         drawInterface(_verbNumber);
-    } else if (continueDialog != 0) {
+	} else if (continueDialog != 0 || replyTextIndex1 != -1) {
         drawDialogChoices(-9);
     }
 }
