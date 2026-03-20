@@ -40,23 +40,6 @@ static bool shouldSkipStartupMoviesForDebug() {
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
 }
 
-static void syncSerializedBool(Common::Serializer &s, bool &value) {
-	byte serialized = value ? 1 : 0;
-	s.syncAsByte(serialized);
-	if (s.isLoading())
-		value = serialized != 0;
-}
-
-static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-static const uint32 kHarvesterSaveVersion = 2;
-
-static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
-	debugC(1, kDebugGeneral,
-		"Harvester: %s startup save room state valid=%d entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
-		operation, state.valid, state.entranceName.c_str(), state.roomName.c_str(),
-		state.playerX, state.playerY, state.playerZ, state.playerFacing, state.musicPath.c_str());
-}
-
 } // End of anonymous namespace
 
 HarvesterEngine *g_engine = nullptr;
@@ -239,39 +222,6 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 	return _roomDebugEnabled;
 }
 
-void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &entranceName,
-		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
-		const Common::String &musicPath) {
-	_currentStartupSaveRoomState.entranceName = entranceName;
-	_currentStartupSaveRoomState.roomName = roomName;
-	_currentStartupSaveRoomState.musicPath =
-		(_resources && !musicPath.empty()) ? _resources->normalizeResourcePath(musicPath) : musicPath;
-	_currentStartupSaveRoomState.playerX = playerX;
-	_currentStartupSaveRoomState.playerY = playerY;
-	_currentStartupSaveRoomState.playerZ = playerZ;
-	_currentStartupSaveRoomState.playerFacing = playerFacing;
-	_currentStartupSaveRoomState.valid = !roomName.empty();
-}
-
-void HarvesterEngine::clearCurrentStartupSaveRoomState() {
-	_currentStartupSaveRoomState.clear();
-}
-
-void HarvesterEngine::clearPendingLoadedStartupSaveRoomState() {
-	_pendingLoadedStartupSaveRoomState.clear();
-}
-
-void HarvesterEngine::syncStartupSaveRoomState(Common::Serializer &s, StartupSaveRoomState &state) {
-	syncSerializedBool(s, state.valid);
-	s.syncString(state.entranceName);
-	s.syncString(state.roomName);
-	s.syncString(state.musicPath);
-	s.syncAsSint32LE(state.playerX);
-	s.syncAsSint32LE(state.playerY);
-	s.syncAsSint32LE(state.playerZ);
-	s.syncAsSint32LE(state.playerFacing);
-}
-
 void HarvesterEngine::setDisplayMode(int width, int height) {
 	initGraphics(width, height);
 	if (_media)
@@ -343,46 +293,6 @@ bool HarvesterEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsLoadingDuringRuntime) ||
 	       (f == kSupportsSavingDuringRuntime) ||
 	       (f == kSupportsReturnToLauncher);
-}
-
-Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
-	if (!_startupScript)
-		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
-	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
-		return Common::kWritingFailed;
-	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
-		return Common::kReadingFailed;
-	if (!s.syncVersion(kHarvesterSaveVersion))
-		return Common::kReadingFailed;
-
-	StartupSaveRoomState roomState = s.isLoading()
-		? StartupSaveRoomState()
-		: _currentStartupSaveRoomState;
-	if (s.isSaving())
-		logStartupSaveRoomState("saving", roomState);
-	syncStartupSaveRoomState(s, roomState);
-	_startupScript->syncRuntimeSaveState(s);
-	if (s.err())
-		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
-
-	if (s.isLoading()) {
-		if (!roomState.valid || roomState.roomName.empty())
-			return Common::kReadingFailed;
-		_currentStartupSaveRoomState = roomState;
-		_pendingLoadedStartupSaveRoomState = roomState;
-		logStartupSaveRoomState("loaded", roomState);
-	}
-	return Common::kNoError;
-}
-
-Common::Error HarvesterEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	Common::Serializer serializer(nullptr, stream);
-	return syncGame(serializer);
-}
-
-Common::Error HarvesterEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	Common::Serializer serializer(stream, nullptr);
-	return syncGame(serializer);
 }
 
 } // End of namespace Harvester
