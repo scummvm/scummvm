@@ -363,6 +363,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `g_text_records` at `0xd5acc` is the `TEXT` list.
 - `g_timer_records` at `0xd5ad0` is the `TIMER` list.
 - `g_useitem_records` at `0xd5ad4` is the `USEITEM` list.
+  - The list is not limited to object hotspots. Confirmed NPC-targeted entries include sheriff-office `INV_MAG -> LOOMIS -> GO_LOOMISA`, which sets `GAVE_MAG_TO_LOOMIS_TODAY` and immediately hides Loomis with `SET_NPC "LOOMIS" "F" "F"`, plus post-office Boyle entries for `BOYLES_BUTTON` and `GASCAN`.
 - `g_pending_room_name` at `0xd60a4` is the pending next-room string consumed by the main loop.
 - `g_player_present_in_room` at `0xc3eb1` gates whether `room_setup` re-spawns the live player from `g_current_room_entrance` or instead injects the synthetic `EXIT_BM` / `EXIT_HS` closeup exits.
 - `g_game_session_active` at `0xc3f08` is the live gameplay-session gate shared by room setup, the save/load menus, and the game-over flow.

@@ -71,6 +71,15 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLine(0x1229, "LOOMIS");
 	}
 	if (usedItemName.equalsIgnoreCase("INV_MAG")) {
+		if (runtime.currentRoomName().equalsIgnoreCase("SHRFOFC")) {
+			StartupInteractionResult interaction;
+			const bool changedFlag = runtime.startupScript().setRuntimeFlagValue(
+				"GAVE_MAG_TO_LOOMIS_TODAY", true);
+			const bool changedNpc = runtime.startupScript().setRuntimeNpcState("LOOMIS", false, false);
+			interaction.mutatedRuntimeState = changedFlag || changedNpc;
+			runtime.queueDialogueInteractionIfNeeded(interaction);
+		}
+
 		if (runtime.startupScript().getFlagValue("SHERIFF_IN_DINER"))
 			return runtime.playDialogueLine(0x11bb, "LOOMIS");
 
