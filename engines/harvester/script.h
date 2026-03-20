@@ -389,8 +389,6 @@ public:
 		bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
 		bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
 			StartupInteractionResult &result);
-		bool resolveUseItemInteraction(const Common::String &itemName, const StartupNpcRecord &target,
-			StartupInteractionResult &result);
 		bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 			bool allowTransitions = true);
 		bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
@@ -437,8 +435,6 @@ private:
 	const StartupTextRecord *findTextRecord(const Common::String &key) const;
 	const StartupUseItemRecord *findUseItemRecord(const Common::String &itemName,
 		const StartupObjectRecord &target) const;
-	const StartupUseItemRecord *findUseItemRecord(const Common::String &itemName,
-		const StartupNpcRecord &target) const;
 	const StartupFlagRecord *findRuntimeFlag(const Common::String &flagName) const;
 	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
 	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);

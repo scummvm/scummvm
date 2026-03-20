@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, rechecked the Loomis sheriff-office handoff against native `handle_target_interaction @ 0x7ff50` after the immediate-disappear regression instead of assuming NPC-targeted `USEITEM` records were the direct room-click entry point.
+- Confirmed the native room loop treats class-4 NPC clicks differently from object hotspots: item-on-NPC interaction calls `run_npc_dialogue(npcName, presentedObject)` directly, which seeds `g_dialogue_presented_object_name` before the talk handler runs, while the generic `USEITEM` record scan is only reached for non-NPC targets.
+- Reverted the generic NPC `USEITEM` interception in `engines/harvester/room.cpp` and removed the now-unneeded NPC overloads from `engines/harvester/script.{h,cpp}` so Loomis item use again enters the native-style dialogue path first; rebuilt `engines/harvester/script.o`, `engines/harvester/room.o`, and `scummvm` successfully.
 - On March 20, 2026, traced the room inventory-click path against the existing Loomis notes instead of layering more Loomis-specific special cases onto `handle_talk_to_loomis`.
 - Confirmed the broader parity gap was room-side: selected inventory items clicked on NPCs bypassed `HARVEST.SCR` `USEITEM` records entirely and jumped straight into `runRoomNpcDialogue`, which meant NPC-targeted script actions such as sheriff-office `INV_MAG -> LOOMIS -> GO_LOOMISA` could not drive their `START_DIALOG`/continuation flow or keep `g_dialogue_presented_object_name` semantics intact.
 - Patched `engines/harvester/script.{h,cpp}` and `engines/harvester/room.cpp` to resolve NPC-targeted `USEITEM` records, preserve the selected item name through deferred scripted dialogue/continuation handling, and only fall back to direct NPC dialogue when no matching NPC `USEITEM` record exists; rebuilt `engines/harvester/script.o`, `engines/harvester/room.o`, and `scummvm` successfully.
@@ -66,10 +69,10 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass on NPC-targeted `USEITEM` dialogue, starting with the sheriff-office Loomis magazine handoff, to confirm the recovered script path now surfaces the expected confirmation dialogue/options and only sets/hides Loomis after the accepted branch completes.
-2. Audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any additional room-script side effects or deferred dialogue continuations still need explicit parity fixes.
-3. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
-4. If any room movement mismatch remains after that live pass, continue the same RE thread from `run_harvester_main_loop @ 0x6dc70` by reconstructing the mouse-floor waypoint writes and `DAT_000c3f0c` direction selection, rather than widening the engine logic speculatively.
+1. Run a live Harvester validation pass on the Loomis sheriff-office magazine handoff to re-establish the correct entry path, then trace which post-dialogue side effect still gates the expected confirmation/follow-up exchange before any `SET_FLAG` / `SET_NPC` hide happens.
+2. Re-audit native `handle_talk_to_loomis @ 0x34f80` against the live subtitles/response menus to determine where the missing Loomis confirmation dialogue and option mapping actually live, rather than assuming the room-script `GO_LOOMISA` tag owns that branch.
+3. Only after that Loomis path is bounded again, audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether they are post-dialogue side effects, non-NPC target entries, or true unused script leftovers.
+4. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
 
 ## Reimplementation Priority Order
 
