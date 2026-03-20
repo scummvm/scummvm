@@ -41,6 +41,34 @@ static const int kInventoryItemMaxRight = 564;
 static const int kInventoryItemSpacing = 5;
 static const byte kTransparentPaletteIndex = 0;
 
+struct InventoryCombatLoadoutEntry {
+	const char *objectName;
+	int loadoutId;
+};
+
+static const InventoryCombatLoadoutEntry kInventoryCombatLoadoutMap[] = {
+	{ "CLEAVER", 1 },
+	{ "NAILGUN", 2 },
+	{ "SHOTGUN", 3 },
+	{ "9GUN", 4 },
+	{ "38GUN", 5 },
+	{ "TOMAHAWK", 6 },
+	{ "KNIFE", 7 },
+	{ "FLAIL", 8 },
+	{ "HANDAXE", 9 },
+	{ "WRENCH", 10 },
+	{ "PITCHFORK", 11 },
+	{ "SCYTHE", 12 },
+	{ "SWORD", 13 },
+	{ "CHAINSAW", 14 },
+	{ "HARVEST_BLADE", 15 },
+	{ "SHOVEL", 16 },
+	{ "FIREAXE", 17 },
+	{ "BAT", 18 },
+	{ "RAZOR", 19 },
+	{ "POOLSTICK", 20 }
+};
+
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
 	if (!bitmap.isValid())
 		return;
@@ -120,6 +148,21 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	return true;
 }
 
+static bool resolveInventoryCombatLoadoutId(const Common::String &objectName, int &loadoutId) {
+	loadoutId = 0;
+	if (objectName.empty())
+		return false;
+
+	for (const InventoryCombatLoadoutEntry &entry : kInventoryCombatLoadoutMap) {
+		if (objectName.equalsIgnoreCase(entry.objectName)) {
+			loadoutId = entry.loadoutId;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 } // End of anonymous namespace
 
 InventorySystem::InventorySystem(HarvesterEngine &engine) : _engine(engine) {
@@ -132,6 +175,8 @@ bool InventorySystem::refresh() {
 	ResourceManager *resources = _engine.getResources();
 	if (!startupScript || !resources)
 		return false;
+
+	_lastPlayerHitPoints = startupScript->getPlayerCurrentHitPoints();
 
 	Common::Array<StartupObjectRecord> inventoryObjects;
 	startupScript->getVisibleInventoryObjects(inventoryObjects);
@@ -219,6 +264,18 @@ bool InventorySystem::clearSelection() {
 	return true;
 }
 
+bool InventorySystem::refreshIfRuntimeStateChanged() {
+	Script *startupScript = _engine.getStartupScript();
+	if (!startupScript)
+		return false;
+
+	const int currentHitPoints = startupScript->getPlayerCurrentHitPoints();
+	if (currentHitPoints == _lastPlayerHitPoints)
+		return false;
+
+	return refresh();
+}
+
 bool InventorySystem::isOpen() const {
 	return _open;
 }
@@ -257,6 +314,22 @@ Common::String InventorySystem::buildSelectedPrompt(const Common::String &target
 
 void InventorySystem::selectItem(const Common::String &objectName) {
 	_selectedItemName = objectName;
+}
+
+bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, bool &changed) {
+	changed = false;
+
+	int loadoutId = 0;
+	if (!resolveInventoryCombatLoadoutId(object.objectName, loadoutId))
+		return false;
+
+	Script *startupScript = _engine.getStartupScript();
+	if (!startupScript)
+		return false;
+
+	const int nextLoadout = startupScript->getPlayerCombatLoadout() == loadoutId ? 0 : loadoutId;
+	changed = startupScript->setPlayerCombatLoadout(nextLoadout);
+	return true;
 }
 
 void InventorySystem::setPromptText(const Common::String &promptText) {

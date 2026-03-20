@@ -51,12 +51,14 @@ public:
 	bool open();
 	bool close();
 	bool clearSelection();
+	bool refreshIfRuntimeStateChanged();
 	bool isOpen() const;
 	bool hasSelection() const;
 	const Common::String &getSelectedItemName() const;
 	Common::String resolveSelectedLabel() const;
 	Common::String buildSelectedPrompt(const Common::String &targetLabel) const;
 	void selectItem(const Common::String &objectName);
+	bool toggleCombatLoadout(const StartupObjectRecord &object, bool &changed);
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
 	const StartupInventoryVisual *findItemAtPoint(const Common::Point &point) const;
@@ -70,6 +72,7 @@ public:
 private:
 	Common::Array<StartupInventoryVisual> _items;
 	bool _open = false;
+	int _lastPlayerHitPoints = -1;
 	Common::String _selectedItemName;
 	Common::String _promptText;
 	HarvesterEngine &_engine;
