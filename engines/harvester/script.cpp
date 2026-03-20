@@ -1291,24 +1291,6 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Sta
 	return true;
 }
 
-bool Script::resolveUseItemInteraction(const Common::String &itemName, const StartupNpcRecord &target,
-		StartupInteractionResult &result) {
-	result = StartupInteractionResult();
-
-	const StartupUseItemRecord *useItem = findUseItemRecord(itemName, target);
-	if (!useItem)
-		return false;
-
-	executeCommandChain(useItem->actionTag, "useitem command",
-		Common::String::format("%s -> %s", itemName.c_str(), target.npcName.c_str()), true,
-		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
-		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
-		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
-		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
-	return true;
-}
-
 bool Script::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions) {
 	result = StartupInteractionResult();
@@ -1426,28 +1408,6 @@ const StartupUseItemRecord *Script::findUseItemRecord(const Common::String &item
 
 		if (!useItem.ownerOrRoom.empty() &&
 			!useItem.ownerOrRoom.equalsIgnoreCase(target.currentOwnerOrRoom)) {
-			continue;
-		}
-
-		return &useItem;
-	}
-
-	return nullptr;
-}
-
-const StartupUseItemRecord *Script::findUseItemRecord(const Common::String &itemName,
-		const StartupNpcRecord &target) const {
-	if (itemName.empty() || target.npcName.empty())
-		return nullptr;
-
-	for (const StartupUseItemRecord &useItem : _useItems) {
-		if (!useItem.itemName.equalsIgnoreCase(itemName) ||
-			!useItem.targetName.equalsIgnoreCase(target.npcName)) {
-			continue;
-		}
-
-		if (!useItem.ownerOrRoom.empty() &&
-			!useItem.ownerOrRoom.equalsIgnoreCase(target.roomName)) {
 			continue;
 		}
 

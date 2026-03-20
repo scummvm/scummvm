@@ -1254,18 +1254,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (_inventory.hasSelection()) {
 					const Common::String selectedItemName = _inventory.getSelectedItemName();
 					if (hoverState.npc) {
-						StartupInteractionResult interaction;
 						bool didTransition = false;
-						// Some NPC item uses are script-driven and only fall back to direct dialogue otherwise.
-						const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
-							selectedItemName, *hoverState.npc, interaction);
-						Common::Error interactionError = handled
-							? interactionProcessor.handleInteractionResult(
-								interaction, didTransition, selectedItemName)
-							: interactionProcessor.runScriptedDialogue(
-								hoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
-						if (interactionError.getCode() != Common::kNoError)
-							return interactionError;
+						Common::Error dialogueError = interactionProcessor.runScriptedDialogue(
+							hoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
+						if (dialogueError.getCode() != Common::kNoError)
+							return dialogueError;
 						if (startupFlow.hasPendingMainMenuReturn())
 							return Common::kNoError;
 						if (_inventory.clearSelection())
