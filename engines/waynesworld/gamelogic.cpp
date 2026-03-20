@@ -4392,7 +4392,7 @@ void GameLogic::r10_buyItem() {
 		_vm->playAnimation("getmon", 0, 3, 98, 7, 0, 100);
 		_vm->displayText("c04r", 8, 0, 320, 115, 0);
 		_vm->playAnimation("gest", 0, 7, 127, 7, 0, 200);
-		_vm->playAnimation("getmon", 4, 2, 98, 7, 0, 100);
+		_vm->playAnimation("getmon", 3, 2, 98, 7, 0, 100);
 		if (_r10_selectedItemToBuy == 1) {
 			_r10_flags |= 0x08;
 		} else {
