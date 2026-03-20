@@ -81,6 +81,8 @@ static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
+static const int kRoomPlayerMinOpaqueLeftX = 4;
+static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
 static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
@@ -392,37 +394,37 @@ static PlayerAnimationRange resolvePlayerAnimationRange(int facing) {
 }
 
 static bool resolvePlayerTurnAnimationRange(int fromFacing, int toFacing, PlayerTurnAnimationRange &range) {
-	// Ghidra confirms stationary startup keyboard turn states between the locomotion banks.
+	// Native desired-state transitions play these banks forward or backward depending on the source facing.
 	if (fromFacing == 0 && toFacing == 1) {
-		range = PlayerTurnAnimationRange{ 0x0a, 0x0e, true };
-		return true;
-	}
-	if (fromFacing == 1 && toFacing == 0) {
 		range = PlayerTurnAnimationRange{ 0x0a, 0x0e, false };
 		return true;
 	}
-	if (fromFacing == 1 && toFacing == 3) {
-		range = PlayerTurnAnimationRange{ 0x19, 0x1d, true };
+	if (fromFacing == 1 && toFacing == 0) {
+		range = PlayerTurnAnimationRange{ 0x0a, 0x0e, true };
 		return true;
 	}
-	if (fromFacing == 3 && toFacing == 1) {
+	if (fromFacing == 1 && toFacing == 3) {
 		range = PlayerTurnAnimationRange{ 0x19, 0x1d, false };
 		return true;
 	}
-	if (fromFacing == 3 && toFacing == 2) {
-		range = PlayerTurnAnimationRange{ 0x28, 0x2c, true };
+	if (fromFacing == 3 && toFacing == 1) {
+		range = PlayerTurnAnimationRange{ 0x19, 0x1d, true };
 		return true;
 	}
-	if (fromFacing == 2 && toFacing == 3) {
+	if (fromFacing == 3 && toFacing == 2) {
 		range = PlayerTurnAnimationRange{ 0x28, 0x2c, false };
 		return true;
 	}
+	if (fromFacing == 2 && toFacing == 3) {
+		range = PlayerTurnAnimationRange{ 0x28, 0x2c, true };
+		return true;
+	}
 	if (fromFacing == 2 && toFacing == 0) {
-		range = PlayerTurnAnimationRange{ 0x37, 0x3b, true };
+		range = PlayerTurnAnimationRange{ 0x37, 0x3b, false };
 		return true;
 	}
 	if (fromFacing == 0 && toFacing == 2) {
-		range = PlayerTurnAnimationRange{ 0x37, 0x3b, false };
+		range = PlayerTurnAnimationRange{ 0x37, 0x3b, true };
 		return true;
 	}
 
@@ -557,6 +559,23 @@ static float computeRoomPlayerDepthStep(const StartupRoomSetupState &state) {
 	return state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f;
 }
 
+static int clampPlayerCenterXToNativeBounds(const StartupRoomPlayerState &playerState, int centerX) {
+	if (!playerState.entity)
+		return CLIP<int>(centerX, 0, 639);
+
+	int width = 0;
+	int height = 0;
+	int xOffset = 0;
+	int yOffset = 0;
+	if (!playerState.entity->getCurrentFrameMetrics(width, height, xOffset, yOffset))
+		return CLIP<int>(centerX, 0, 639);
+
+	const int minCenterX = kRoomPlayerMinOpaqueLeftX + width / 2;
+	const int maxCenterX = MAX(minCenterX,
+		kRoomPlayerMaxOpaqueRightX - (width - width / 2));
+	return CLIP<int>(centerX, minCenterX, maxCenterX);
+}
+
 uint32 getRuntimeClockTicks();
 
 static uint32 computeAnimationTickInterval(int rate) {
@@ -647,7 +666,7 @@ static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSet
 	if (!playerState.entity)
 		return false;
 
-	candidateCenterX = CLIP<int>(candidateCenterX, 0, 639);
+	candidateCenterX = clampPlayerCenterXToNativeBounds(playerState, candidateCenterX);
 	candidateZ = clampRoomDepth(state, candidateZ);
 	if (candidateCenterX == playerState.centerX &&
 			fabsf(candidateZ - playerState.z) <= kRoomDepthCompareEpsilon) {
@@ -669,7 +688,7 @@ void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerSt
 		int targetX, float targetZ) {
 	playerState.hasMoveTarget = true;
 	playerState.nextMovementTick = 0;
-	playerState.targetX = CLIP<int>(targetX, 0, 639);
+	playerState.targetX = clampPlayerCenterXToNativeBounds(playerState, targetX);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
 	debugC(1, kDebugScene,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
@@ -1411,7 +1430,8 @@ bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupS
 	const float previousZ = playerState.z;
 	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
 	const float depthStep = computeRoomPlayerDepthStep(state);
-	int candidateCenterX = CLIP<int>(playerState.centerX + horizontalInput * horizontalStep, 0, 639);
+	int candidateCenterX = clampPlayerCenterXToNativeBounds(
+		playerState, playerState.centerX + horizontalInput * horizontalStep);
 	float candidateZ = playerState.z;
 	if (verticalInput != 0) {
 		const float positiveZ = clampRoomDepth(state, playerState.z + depthStep);

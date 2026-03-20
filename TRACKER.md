@@ -10,18 +10,25 @@
 
 - Program: `HARVEST.LE`
 - Total functions: `900`
-- Named/documented: `784`
-- Remaining `FUN_*`: `116`
-- Remaining undocumented total: `116`
+- Named/documented: `789`
+- Remaining `FUN_*`: `111`
+- Remaining undocumented total: `111`
 
 ## Last Confirmed Action
 
-- On March 20, 2026, rescanned every native startup-room NPC item branch against the decoded `HARVEST.SCR` `USEITEM` table instead of assuming that every NPC-targeted action tag still needed separate ScummVM plumbing.
-- Confirmed there are only three NPC-targeted `USEITEM` records in the shipped script: `INV_MAG -> LOOMIS`, `BOYLES_BUTTON -> BOYLE`, and `GASCAN -> BOYLE`. Ghidra plus the current `handle_talk_to_boyle` port showed Boyle's two cases already carry their native item-side effects inside the dialogue handler, while Loomis was the only remaining script-side room-state gap.
-- No additional engine-side behavior changes were justified after that audit pass; the earlier Loomis patch remains the only required NPC-targeted `USEITEM` fix, and the next safe step is live validation rather than more speculative handler changes.
+- On March 20, 2026, re-audited room-player locomotion and input-driven turn handling against native `update_player_combat_avatar_state @ 0x553a0` and `update_actor_runtime_state @ 0x4d750` instead of relying on the simplified ScummVM helper alone.
+- Confirmed the native 5-frame turn banks are directional, not symmetric: up->left uses `0x0a..0x0e` forward while left->up reverses that bank; left->down uses `0x19..0x1d` forward while down->left reverses it; down->right uses `0x28..0x2c` forward while right->down reverses it; right->up uses `0x37..0x3b` forward while up->right reverses it. That exposed that `resolvePlayerTurnAnimationRange` in `engines/harvester/flow.cpp` had every recovered turn pair inverted.
+- Confirmed the native room wrapper also clamps horizontal movement against the live opaque sprite edges rather than a raw center `0..639` range: left-facing motion stops once `screen_x + frame_x_offset <= 4`, and right-facing motion stops once `screen_x + frame_x_offset + scaled_bitmap->width >= 0x27c`.
+- Updated the `update_actor_runtime_state` plate comment in Ghidra with that directional turn-bank mapping, saved `HARVEST.LE`, patched `engines/harvester/flow.cpp` to mirror the recovered turn directions plus native horizontal bounds, documented the confirmed rules in `ARCHITECTURE.md`, and rebuilt `scummvm` successfully.
 - On March 20, 2026, compared the ScummVM Loomis item-use path against both native `handle_talk_to_loomis @ 0x34f80` in Ghidra and the decoded `HARVEST.SCR` sheriff-office records instead of guessing from dialogue alone.
 - Confirmed that the native Loomis talk handler already matches the ScummVM dialogue lines for `INV_MAG`, but the room script also defines `USEITEM "INV_MAG" "SHRFOFC" "LOOMIS" "GO_LOOMISA"`; that action sets `GAVE_MAG_TO_LOOMIS_TODAY` and immediately `SET_NPC "LOOMIS" "F" "F"`, which explained why ScummVM kept Loomis in the room after the magazine handoff.
 - Patched `engines/harvester/npc/loomis_dialogue.cpp` to apply those confirmed room-script side effects during the Loomis magazine branch and queue a mutated-runtime refresh so the live sheriff-office scene drops Loomis after the dialogue, then rebuilt `scummvm` successfully.
+- On March 20, 2026, traced the startup room idle-animation branch back to native `run_harvester_main_loop` and confirmed the player idle overlay does not use the previously inferred ScummVM rate of `30`: the `PCLOUN02.ABM` spawn path sets `EBX = 0x0e` immediately before `spawn_scaled_abm_entity_from_resource`, so `engines/harvester/flow.cpp` now uses `kRoomPlayerIdleAnimationRate = 14` to match the original timing.
+- Recorded that recovered native timing detail in `ARCHITECTURE.md` under the confirmed idle-animation notes so the parity fix stays tied to the underlying evidence instead of a visual guess.
+- On March 20, 2026, ran another conservative Ghidra rename pass across the remaining non-image `FUN_*` set and only kept names with direct behavioral proof from callers/callees, data flow, and decompiler output instead of semantic guesses.
+- Saved `HARVEST.LE` after renaming five high-confidence helpers: `set_math_status_flags_and_invoke_callback` (`FUN_0008c5e8`), `compare_extended_values_with_nan_code` (`FUN_0008dcc2`), `convert_uint32_to_extended` (`FUN_0008e12b`), `rewind_runtime_handler_iterator_by_two` (`FUN_0008f64b`), and `debug_break_or_write_console_message_and_exit` (`FUN_0008f368`).
+- The same pass explicitly rejected several tempting but still-ambiguous entries: `FUN_00077e80`, `FUN_000813b4`, and `FUN_000820e8` decompile as stubs only; `FUN_000c55f8` still looks like a bad function boundary / misidentified data block rather than a stable callable function; and the remaining `0x8daee-0x91518` band still needs owner-structure recovery before more precise names are justified.
+- The unresolved buckets are now narrower but unchanged in kind: `FUN_00021100` / `FUN_00021120` are still only proven as paired extent updaters; `FUN_0002e3b4`, `FUN_0002e41b`, `FUN_0002e46a`, `FUN_0002f7fd`, `FUN_000324a2`, and `FUN_0003351b` remain jump-entered dialogue mis-splits; the `FUN_00083fb3` / `FUN_00084a8b` / `FUN_00084b6b` plus `FUN_00087005` through `FUN_00087439` band remains HMIDRV wrapper territory; and the leading `.image::` entries are still zero-xref fragments with no reliable subsystem context.
 - On March 20, 2026, tightened the current integrated inventory / room-item handoff against the persisted actor runtime instead of inventing a separate inventory state machine: right-clicking confirmed weapon inventory items now toggles the saved player combat loadout ids recovered from the native inventory screen, the open inventory overlay now refreshes its `INV_STAT*` portrait immediately when live player HP changes, and secondary-click while an inventory item is actively selected now cancels that carry/use latch without forcibly closing the panel.
 - Kept the current ScummVM-side carry/use handoff model intact, but bounded it more tightly to the same live actor state that save/load and timer-driven room actions already use: inventory weapon toggles write through `Script::setPlayerCombatLoadout`, and the room loop captures that updated runtime state immediately for later save/menu handoffs.
 - Rebuilt the touched Harvester objects successfully after that inventory/runtime parity pass: `engines/harvester/inventory.o`, `engines/harvester/room.o`, and `scummvm`.
@@ -56,9 +63,10 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass that covers the sheriff-office magazine handoff plus Boyle's button/gascan item branches, confirming that the Loomis disappearance now lands correctly and that the already-ported Boyle logic still matches the native outcomes in gameplay.
-2. Run a manual desktop validation pass that specifically covers the tightened inventory/runtime hooks: verify live HP changes update the open inventory `INV_STAT*` portrait immediately, right-clicking weapon items toggles the persisted combat loadout without desynchronizing save/load state, and closing/reopening the inventory preserves carried-item handoff semantics.
-3. If that pass exposes any remaining inventory gaps, keep them narrowly bounded to confirmed native behaviors only. The next likely candidates are the room HUD weapon-resource icon strip and any still-missing inventory secondary-click item actions beyond the now-confirmed weapon-loadout path.
+1. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
+2. If any room movement mismatch remains after that live pass, continue the same RE thread from `run_harvester_main_loop @ 0x6dc70` by reconstructing the mouse-floor waypoint writes and `DAT_000c3f0c` direction selection, rather than widening the engine logic speculatively.
+3. Run a live Harvester validation pass on the sheriff office magazine handoff and then audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any other room-script side effects are still bypassing the current dialogue-first item path.
+4. Reconstruct owner tables and hidden state for the remaining no87/x87 runtime band before attempting another rename pass. The best starting points are the still-unnamed helpers around `FUN_0008c3d8`, `FUN_0008db56`, `FUN_0008dd85`, `FUN_0008df5a`, `FUN_0008e0ab`, and `FUN_00090c10`, using their named callers (`convert_double_to_decimal_digits`, `report_math_error_from_status_flags`, `execute_runtime_module_handler_list`, `compute_extended_*`) to recover structure fields first.
 
 ## Reimplementation Priority Order
 
@@ -78,5 +86,5 @@
    Concrete tasks: validate the new live HP portrait refresh plus weapon-loadout toggles, then decide from a desktop pass whether the remaining native inventory-specific gaps are limited to HUD icon strip restoration or broader item secondary-click actions.
    Exit criteria: any remaining inventory parity work is reduced to a short, explicit list of still-unimplemented native inventory behaviors instead of a broad actor-runtime mismatch.
 4. Leave low-level runtime, HMIDRV, and x87 cleanup as deferred RE work unless they block a confirmed gameplay feature.
-   Ghidra anchors: the remaining unwind helpers around `FUN_0008f64b` through `FUN_000905df`, the HMIDRV wrapper band around `FUN_00087005`, and the x87/no-87 runtime cluster beginning near `FUN_0008c3d8`.
+   Ghidra anchors: the remaining unwind helpers around `rewind_runtime_handler_iterator_by_two @ 0x8f64b` through `FUN_000905df`, the HMIDRV wrapper band around `FUN_00087005`, and the x87/no-87 runtime cluster beginning near `FUN_0008c3d8`.
    Rationale: those clusters still matter for naming completeness, but the current engine-side gaps are better bounded and have higher reimplementation value.
