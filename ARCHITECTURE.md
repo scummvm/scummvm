@@ -1034,6 +1034,11 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `3` / `0xb` are the room-`max_z` locomotion family.
     - `1` / `7` and `2` / `0xe` are the two opposing horizontal locomotion families.
     - `5`, `6`, `9`, `0xa`, `0xc`, `0xd`, `0x10`, and `0x11` are bridging turn/transition handlers between those locomotion families.
+    - Those turn handlers are directional 5-frame banks rather than symmetric bank swaps:
+      `0x05` is up->left (`0x0a..0x0e` forward), `0x06` is left->up (same bank reversed),
+      `0x09` is left->down (`0x19..0x1d` forward), `0x0a` is down->left (same bank reversed),
+      `0x0c` is down->right (`0x28..0x2c` forward), `0x0d` is right->down (same bank reversed),
+      `0x10` is right->up (`0x37..0x3b` forward), and `0x11` is up->right (same bank reversed).
     - `0x16` through `0x1b` are attack states; on a confirmed hit they assign victim states `0x1c` through `0x21` via `attacker_state + 6`, which bounds `0x1c` through `0x21` as hit-reaction states.
     - `0x28` through `0x33` are death-animation entry states. They play the actor death sound, run the final animation bank, and fall into terminal state `0x38`.
     - `0x35` is the NPC death / monsterfy transition state, and `0x38` is the terminal dead / removed state that dispatches `on_death_action_tag`.
@@ -1050,6 +1055,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `g_player_attack_pressed` at `0xd5929` is the player-only combat input that selects attack states `0x16` through `0x1b`, and `g_player_attack_cooldown_deadline` at `0xd5a74` rate-limits repeated attack entry.
   - The same wrapper also confirms that live actor field `+0x11bc` is the player combat loadout selection: it is seeded by `spawn_player_combat_avatar`, changed by `set_player_combat_loadout`, and serialized through the save/load path.
   - `g_input_right_shift_pressed` at `0xd5942` is the separate Right Shift modifier gate, not a duplicate attack input.
+  - The wrapper also enforces native horizontal room bounds against the live opaque sprite edges, not an abstract `0..639` center clamp:
+    left-facing states stop when `screen_x + frame_x_offset <= 4`, and right-facing states stop when
+    `screen_x + frame_x_offset + scaled_bitmap->width >= 0x27c`.
   - Under that gate, `g_input_up_pressed` selects states `0x12` / `0x13` by facing, and those states apply horizontal velocity `-16` / `+16`, opposite the current facing family. That bounds `0x12` / `0x13` as fast reverse-step states.
   - The paired down-input states `0x14` / `0x15` are selected from the same modifier gate and use the slower signed horizontal speeds `-8` / `+8`, again opposite the current facing family. That bounds `0x14` / `0x15` as the slower reverse-step pair.
   - States `0x39` and `0x3a` are now bounded as forced horizontal shove states. They install fixed left/right-facing animation banks, drive `x` velocity as `-8` / `+8`, and fall back to locomotion states `1` / `2` once the actor hits world bounds or a blocking entity.
