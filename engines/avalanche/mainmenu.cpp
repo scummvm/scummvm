@@ -39,12 +39,16 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
-	CursorMan.showMouse(false);
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
 	loadFont();
+	drawMenu();
+	wait();
+}
 
+void MainMenu::drawMenu() {
+	CursorMan.showMouse(false);
 	option(1, "Play the game.");
 	option(2, "Read the background.");
 	option(3, "Preview... perhaps...");
@@ -55,8 +59,6 @@ void MainMenu::run() {
 	centre(301, "Make your choice, or wait for the demo.");
 
 	_vm->_graphics->menuRefreshScreen();
-
-	wait();
 }
 
 void MainMenu::loadFont() {
@@ -105,6 +107,8 @@ void MainMenu::wait() {
 			case Common::KEYCODE_2:
 				_vm->_intro->run();
 				_vm->_graphics->menuInitialize();
+				_vm->_graphics->menuLoadPictures();
+				drawMenu();
 				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_6: // Falltroughs are inteded.
