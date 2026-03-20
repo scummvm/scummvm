@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "engines/engine.h"
 #include "graphics/screen.h"
+#include "harvester/saveload.h"
 #include "harvester/script.h"
 
 struct ADGameDescription;
@@ -41,28 +42,6 @@ class MediaManager;
 class Script;
 class Art;
 class Text;
-
-struct StartupSaveRoomState {
-	Common::String entranceName;
-	Common::String roomName;
-	Common::String musicPath;
-	int playerX = 0;
-	int playerY = 0;
-	int playerZ = 0;
-	int playerFacing = -1;
-	bool valid = false;
-
-	void clear() {
-		entranceName.clear();
-		roomName.clear();
-		musicPath.clear();
-		playerX = 0;
-		playerY = 0;
-		playerZ = 0;
-		playerFacing = -1;
-		valid = false;
-	}
-};
 
 class HarvesterEngine : public Engine {
 public:
@@ -144,7 +123,6 @@ public:
 	void clearPendingLoadedStartupSaveRoomState();
 
 private:
-	void syncStartupSaveRoomState(Common::Serializer &s, StartupSaveRoomState &state);
 	void applyStartupMixerLevels();
 
 	const ADGameDescription *const _gameDescription;
