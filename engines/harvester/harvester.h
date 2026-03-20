@@ -130,6 +130,8 @@ public:
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);
 	void stopStartupSound();
+	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
+	bool toggleRoomDebugEnabled();
 	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath);
@@ -152,6 +154,7 @@ private:
 	Script *_startupScript = nullptr;
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
+	bool _roomDebugEnabled = false;
 };
 
 extern HarvesterEngine *g_engine;
