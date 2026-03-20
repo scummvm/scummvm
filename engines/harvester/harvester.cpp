@@ -227,6 +227,11 @@ void HarvesterEngine::stopStartupSound() {
 		_media->stopSound();
 }
 
+bool HarvesterEngine::toggleRoomDebugEnabled() {
+	_roomDebugEnabled = !_roomDebugEnabled;
+	return _roomDebugEnabled;
+}
+
 void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath) {

@@ -90,6 +90,10 @@ static const byte kTextColorNormal = 255;
 static const byte kShadowColor = 0;
 static const byte kQuickTipActionColor = 0xc3;
 static const byte kTownMapLabelColor = 0x28;
+static const int kRoomDebugLabelPaddingX = 3;
+static const int kRoomDebugLabelPaddingY = 2;
+static const int kRoomDebugRoomNameX = 4;
+static const int kRoomDebugRoomNameY = 4;
 
 static const int kCursorSequenceWalk = 0;
 static const int kCursorSequenceExamine = 1;
@@ -146,6 +150,82 @@ static const CftFontResource *findStartupFontByName(const HarvesterEngine &engin
 	}
 
 	return nullptr;
+}
+
+static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
+	if (!palette)
+		return 0;
+
+	byte bestIndex = 0;
+	uint32 bestDistance = 0xffffffffu;
+	for (int i = 0; i < 256; ++i) {
+		const int paletteOffset = i * 3;
+		const int dr = (int)palette[paletteOffset] - red;
+		const int dg = (int)palette[paletteOffset + 1] - green;
+		const int db = (int)palette[paletteOffset + 2] - blue;
+		const uint32 distance = (uint32)(dr * dr + dg * dg + db * db);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestIndex = (byte)i;
+		}
+	}
+
+	return bestIndex;
+}
+
+static Common::String resolveRoomDebugObjectLabel(HarvesterEngine &engine, const StartupObjectRecord &object) {
+	if (Script *startupScript = engine.getStartupScript()) {
+		const Common::String resolvedLabel = startupScript->resolveObjectLabel(object);
+		if (!resolvedLabel.empty())
+			return resolvedLabel;
+	}
+
+	return object.objectName;
+}
+
+static void drawRoomDebugLabel(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &text, int x, int y, byte textColor, byte backgroundColor) {
+	if (text.empty())
+		return;
+
+	const int labelWidth = font.getStringWidth(text) + kRoomDebugLabelPaddingX * 2;
+	const int labelHeight = font.getFontHeight() + kRoomDebugLabelPaddingY * 2;
+	const int drawX = CLIP<int>(x, 0, MAX(0, screen.w - labelWidth));
+	const int drawY = CLIP<int>(y, 0, MAX(0, screen.h - labelHeight));
+	const Common::Rect background(drawX, drawY,
+		MIN<int>(screen.w, drawX + labelWidth), MIN<int>(screen.h, drawY + labelHeight));
+	screen.fillRect(background, backgroundColor);
+	font.drawString(&screen, text,
+		background.left + kRoomDebugLabelPaddingX,
+		background.top + kRoomDebugLabelPaddingY,
+		MAX(0, background.width() - kRoomDebugLabelPaddingX * 2),
+		textColor);
+}
+
+static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const StartupRoomSceneResources &scene) {
+	if (!engine.isRoomDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font)
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+	const byte darkGray = findNearestPaletteColor(displayPalette, 0x40, 0x40, 0x40);
+
+	drawRoomDebugLabel(screen, *font, scene.state.roomName,
+		kRoomDebugRoomNameX, kRoomDebugRoomNameY, black, white);
+
+	for (const StartupRegionRecord &region : scene.sceneRegions)
+		drawRoomDebugLabel(screen, *font, region.regionName, region.left, region.top, white, darkGray);
+
+	for (const StartupObjectRecord &object : scene.sceneObjects)
+		drawRoomDebugLabel(screen, *font, resolveRoomDebugObjectLabel(engine, object),
+			object.currentX, object.currentY, white, black);
 }
 
 static int clampTownMapPanelIndex(int panelIndex) {
@@ -874,6 +954,7 @@ void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const Star
 	screen.fillRect(screen.getBounds(), 0);
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
+	drawRoomDebugOverlay(engine, screen, scene);
 }
 
 const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,

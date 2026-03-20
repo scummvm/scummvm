@@ -20,11 +20,13 @@
  */
 
 #include "harvester/console.h"
+#include "harvester/harvester.h"
 
 namespace Harvester {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
+	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
 }
 
 Console::~Console() {
@@ -32,6 +34,22 @@ Console::~Console() {
 
 bool Console::Cmd_about(int argc, const char **argv) {
 	debugPrintf("Harvester engine scaffold\n");
+	return true;
+}
+
+bool Console::Cmd_debugRoom(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: DEBUG_ROOM\n");
+		return true;
+	}
+
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	const bool enabled = g_engine->toggleRoomDebugEnabled();
+	debugPrintf("Room debug overlay %s\n", enabled ? "enabled" : "disabled");
 	return true;
 }
 
