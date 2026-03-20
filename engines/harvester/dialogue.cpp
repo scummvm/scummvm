@@ -744,9 +744,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	auto queueDialogueInteractionIfNeeded = [&](const StartupInteractionResult &interaction) {
 		if (interaction.abortRemainingCommandChain || interaction.mutatedRuntimeState ||
 				!interaction.musicPath.empty() || !interaction.nextRoomName.empty() ||
+				!interaction.cutscenePath.empty() ||
 				!interaction.deathFlicPath.empty() || interaction.requestMainMenu ||
 				!interaction.dialogueNpcName.empty() ||
 				!interaction.dialogueContinuationTag.empty() ||
+				!interaction.continuationTag.empty() ||
+				!interaction.modalText.value.empty() ||
+				interaction.lightingCommand != kStartupLightingCommandNone ||
+				interaction.requestPlayerGotoXZ ||
 				!interaction.audioCommands.empty()) {
 			startupFlow.queueDialogueInteraction(interaction);
 		}
