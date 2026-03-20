@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, compared the ScummVM Loomis item-use path against both native `handle_talk_to_loomis @ 0x34f80` in Ghidra and the decoded `HARVEST.SCR` sheriff-office records instead of guessing from dialogue alone.
+- Confirmed that the native Loomis talk handler already matches the ScummVM dialogue lines for `INV_MAG`, but the room script also defines `USEITEM "INV_MAG" "SHRFOFC" "LOOMIS" "GO_LOOMISA"`; that action sets `GAVE_MAG_TO_LOOMIS_TODAY` and immediately `SET_NPC "LOOMIS" "F" "F"`, which explained why ScummVM kept Loomis in the room after the magazine handoff.
+- Patched `engines/harvester/npc/loomis_dialogue.cpp` to apply those confirmed room-script side effects during the Loomis magazine branch and queue a mutated-runtime refresh so the live sheriff-office scene drops Loomis after the dialogue, then rebuilt `scummvm` successfully.
 - On March 20, 2026, tightened the current integrated inventory / room-item handoff against the persisted actor runtime instead of inventing a separate inventory state machine: right-clicking confirmed weapon inventory items now toggles the saved player combat loadout ids recovered from the native inventory screen, the open inventory overlay now refreshes its `INV_STAT*` portrait immediately when live player HP changes, and secondary-click while an inventory item is actively selected now cancels that carry/use latch without forcibly closing the panel.
 - Kept the current ScummVM-side carry/use handoff model intact, but bounded it more tightly to the same live actor state that save/load and timer-driven room actions already use: inventory weapon toggles write through `Script::setPlayerCombatLoadout`, and the room loop captures that updated runtime state immediately for later save/menu handoffs.
 - Rebuilt the touched Harvester objects successfully after that inventory/runtime parity pass: `engines/harvester/inventory.o`, `engines/harvester/room.o`, and `scummvm`.
@@ -50,8 +53,9 @@
 
 ## Next Suggested Action
 
-1. Run a manual desktop validation pass that specifically covers the tightened inventory/runtime hooks: verify live HP changes update the open inventory `INV_STAT*` portrait immediately, right-clicking weapon items toggles the persisted combat loadout without desynchronizing save/load state, and closing/reopening the inventory preserves carried-item handoff semantics.
-2. If that pass exposes any remaining inventory gaps, keep them narrowly bounded to confirmed native behaviors only. The next likely candidates are the room HUD weapon-resource icon strip and any still-missing inventory secondary-click item actions beyond the now-confirmed weapon-loadout path.
+1. Run a live Harvester validation pass on the sheriff office magazine handoff and then audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any other room-script side effects are still bypassing the current dialogue-first item path.
+2. Run a manual desktop validation pass that specifically covers the tightened inventory/runtime hooks: verify live HP changes update the open inventory `INV_STAT*` portrait immediately, right-clicking weapon items toggles the persisted combat loadout without desynchronizing save/load state, and closing/reopening the inventory preserves carried-item handoff semantics.
+3. If that pass exposes any remaining inventory gaps, keep them narrowly bounded to confirmed native behaviors only. The next likely candidates are the room HUD weapon-resource icon strip and any still-missing inventory secondary-click item actions beyond the now-confirmed weapon-loadout path.
 
 ## Reimplementation Priority Order
 
