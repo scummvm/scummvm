@@ -1961,6 +1961,10 @@ Common::Error Flow::runQuickTips() {
 					needsRedraw = true;
 				}
 				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return Common::kNoError;
+				break;
 			default:
 				break;
 			}
