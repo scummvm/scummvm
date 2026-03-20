@@ -90,7 +90,8 @@ public:
 	/**
 	 * Detects a driver for the specific type.
 	 *
-	 * @return Returns a valid driver id on success, -1 otherwise.
+	 * @return Returns a valid driver id on success, 0 for null device,
+	 *         -1 on failure.
 	 */
 	static DriverId detect(OplType type);
 
@@ -185,6 +186,18 @@ protected:
 
 	bool _rhythmMode;
 	int _connectionFeedbackValues[3];
+};
+
+/**
+ * A null implementation of a Yamaha OPL chip that runs the callback
+ * but doesn't output any audio.
+ */
+class NullOPL final : public ::OPL::OPL, public Audio::RealChip {
+public:
+	bool init() override { return true; }
+	void reset() override {}
+	void write(int a, int v) override {}
+	void writeReg(int r, int v) override {}
 };
 
 /** @} */

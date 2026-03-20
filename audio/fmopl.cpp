@@ -74,24 +74,25 @@ OPL *create(Config::OplType type, enum NfmOPL::OplDevice dt);
 // Config implementation
 
 enum OplEmulator {
-	kAuto = 0,
-	kMame = 1,
-	kDOSBox = 2,
-	kALSA = 3,
-	kNuked = 4,
-	kOPL2LPT = 5,
-	kOPL3LPT = 6,
-	kRWOPL3 = 7,
+	kNull = 0,
+	kAuto = 1,
+	kMame = 2,
+	kDOSBox = 3,
+	kALSA = 4,
+	kNuked = 5,
+	kOPL2LPT = 6,
+	kOPL3LPT = 7,
+	kRWOPL3 = 8
 #ifdef USE_NFM
-	kNfmNokturnFM2 = 8,
-	kNfmNokturnFM3 = 9,
-	kNfmRWOpl3Express = 10,
-	kNfmOPL2LPT = 11,
-	kNfmOPL3LPT = 12,
-	kNfmCeOPL2AudioBoard = 13,
-	kNfmCeOPL3Duo = 14,
-	kNfmNatfeatsNull = 15,
-	kNfmNukedOpl3 = 16,
+	kNfmNokturnFM2 = 9,
+	kNfmNokturnFM3 = 10,
+	kNfmRWOpl3Express = 11,
+	kNfmOPL2LPT = 12,
+	kNfmOPL3LPT = 13,
+	kNfmCeOPL2AudioBoard = 14,
+	kNfmCeOPL3Duo = 15,
+	kNfmNatfeatsNull = 16,
+	kNfmNukedOpl3 = 17,
 #endif
 };
 
@@ -107,6 +108,7 @@ OPL::OPL() {
 
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "null", _s("None"), kNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
 	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
@@ -203,7 +205,7 @@ Config::DriverId Config::detect(OplType type) {
 	// Detect the first matching emulator
 	drv = -1;
 
-	for (int i = 1; _drivers[i].name; ++i) {
+	for (int i = 2; _drivers[i].name; ++i) {
 		if (_drivers[i].flags & flags) {
 			drv = _drivers[i].id;
 			break;
@@ -320,10 +322,11 @@ OPL *Config::create(DriverId driver, OplType type) {
 		return NfmOPL::EmulatedChip::create(type, NfmOPL::dtNukedOpl3);
 #endif
 
+	case kNull:
+		return new NullOPL();
+
 	default:
 		warning("Unsupported OPL emulator %d", driver);
-		// TODO: Maybe we should add some dummy emulator too, which just outputs
-		// silence as sound?
 		return nullptr;
 	}
 }
