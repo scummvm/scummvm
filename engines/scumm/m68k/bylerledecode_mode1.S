@@ -93,8 +93,8 @@ SYM(ByleRLEDecode_Mode1):
 	// 2      1    jump into len_loop (1x)
 	// 3      2    jump into len_loop (2x)
 	subq.w	#1,(len,a6)
-	bgt.b	pcolor_setup
-main_loop:
+	bgt.b	.Lpcolor_setup
+.Lmain_loop:
 	// do {
 	// len = *src++;
 	// color = len >> compData.shr;
@@ -111,14 +111,14 @@ main_loop:
 	move.b	(a0)+,d7
 1:	move.w	d7,(len,a6)
 
-pcolor_setup:
+.Lpcolor_setup:
 	tst.b	d6
-	beq.b	len_loop
+	beq.b	.Llen_loop
 	move.w	(a3,d6.l*2),d7			| d7.w: pcolor = _palette[color] (used as long, too)
 	cmp.w	#13,d7
-	bne.b	len_loop
+	bne.b	.Llen_loop
 	or.w	#0x8000,d6			| d6.w: "shadow_on" bit set
-len_loop:
+.Llen_loop:
 	// do {
 	// 	batch = height < len ? height : len;
 	move.w	(len,a6),d0
@@ -136,8 +136,8 @@ len_loop:
 
 	subq.w	#1,d1				| dbra
 	tst.w	d6
-	bmi.b	batch_loop_shadow
-batch_loop:
+	bmi.b	.Lbatch_loop_shadow
+.Lbatch_loop:
 	// 		do {
 	// 			if (!(*mask & maskbit))
 	btst	d4,(a2)
@@ -149,10 +149,10 @@ batch_loop:
 	add.l	d3,a1
 	add.l	d2,a2
 	// 		} while (--batch);
-	dbra	d1,batch_loop
+	dbra	d1,.Lbatch_loop
 	bra.b	3f
 
-batch_loop_shadow:
+.Lbatch_loop_shadow:
 	// 		do {
 	// 			if (!(*mask & maskbit))
 	btst	d4,(a2)
@@ -165,7 +165,7 @@ batch_loop_shadow:
 	add.l	d3,a1
 	add.l	d2,a2
 	// 		} while (--batch);
-	dbra	d1,batch_loop_shadow
+	dbra	d1,.Lbatch_loop_shadow
 	bra.b	3f
 
 	// 	} else {
@@ -213,6 +213,6 @@ batch_loop_shadow:
 5:	// StartPos:
 	// } while (len > 0);
 	tst.w	(len,a6)
-	bne.w	len_loop
+	bne.w	.Llen_loop
 	// } while (true);
-	bra.w	main_loop
+	bra.w	.Lmain_loop

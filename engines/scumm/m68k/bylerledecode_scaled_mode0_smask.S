@@ -100,8 +100,8 @@ SYM(ByleRLEDecode_Scaled_Mode0_SMask):
 	// 2      1    jump into len_loop (1x)
 	// 3      2    jump into len_loop (2x)
 	subq.w	#1,d6
-	bgt.b	pcolor_setup
-main_loop:
+	bgt.b	.Lpcolor_setup
+.Lmain_loop:
 	// do {
 	// len = *src++;
 	// color = len >> compData.shr;
@@ -115,11 +115,11 @@ main_loop:
 	lsr.b	d1,d0				| d0.b: color
 	move.b	d0,(color,a6)
 	and.b	(compData.mask,a5),d6		| d6.w: len
-	bne.b	pcolor_setup
+	bne.b	.Lpcolor_setup
 	move.b	(a0)+,d6
-pcolor_setup:
+.Lpcolor_setup:
 	move.w	([arg_palette,a6],d0.l*2),d7	| d7.w: _palette[color]
-len_loop:
+.Llen_loop:
 	// do {
 	// 	batch = height < len ? height : len;
 	move.w	(height,a6),d1			| d1.w: batch
@@ -137,7 +137,7 @@ len_loop:
 	clr.l	d0
 	move.b	(scaleIndexY,a6),d0
 
-batch_loop:
+.Lbatch_loop:
 	// 		do {
 	// 			if (compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY)
 	cmp.b	(a3,d0.l),d5
@@ -158,7 +158,7 @@ batch_loop:
 	// 			}
 2:	addq.b	#1,d0				| scaleIndexY++ (byte wrap)
 	// 		} while (--batch);
-	dbra	d1,batch_loop
+	dbra	d1,.Lbatch_loop
 
 	move.b	d0,(scaleIndexY,a6)
 	// 	if (height == 0) {
@@ -211,6 +211,6 @@ batch_loop:
 6:	// StartPos:
 	// } while (len > 0);
 	tst.w	d6
-	bne.w	len_loop
+	bne.w	.Llen_loop
 	// } while (true);
-	bra.w	main_loop
+	bra.w	.Lmain_loop

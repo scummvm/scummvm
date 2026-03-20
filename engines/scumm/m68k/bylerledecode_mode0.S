@@ -93,8 +93,8 @@ SYM(ByleRLEDecode_Mode0):
 	// 2      1    jump into len_loop (1x)
 	// 3      2    jump into len_loop (2x)
 	subq.w	#1,d6
-	bgt.b	pcolor_setup
-main_loop:
+	bgt.b	.Lpcolor_setup
+.Lmain_loop:
 	// do {
 	// len = *src++;
 	// color = len >> compData.shr;
@@ -108,11 +108,11 @@ main_loop:
 	lsr.b	d1,d0				| d0.b: color (used as long, too)
 	move.b	d0,(color,a6)
 	and.b	(compData.mask,a5),d6		| d6.w: len
-	bne.b	pcolor_setup
+	bne.b	.Lpcolor_setup
 	move.b	(a0)+,d6
-pcolor_setup:
+.Lpcolor_setup:
 	move.w	(a3,d0.l*2),d7			| d7.w: _palette[color]
-len_loop:
+.Llen_loop:
 	// do {
 	// 	batch = height < len ? height : len;
 	move.w	d5,d1				| d1.w: batch
@@ -128,7 +128,7 @@ len_loop:
 	beq.b	2f
 
 	subq.w	#1,d1				| dbra
-batch_loop:
+.Lbatch_loop:
 	// 		do {
 	// 			if (!(*mask & maskbit))
 	btst	d4,(a2)
@@ -140,7 +140,7 @@ batch_loop:
 	add.l	d3,a1
 	add.l	d2,a2
 	// 		} while (--batch);
-	dbra	d1,batch_loop
+	dbra	d1,.Lbatch_loop
 	bra.b	3f
 	// 	} else {
 2:	// 		dst  += batch * pitch;
@@ -186,6 +186,6 @@ batch_loop:
 5:	// StartPos:
 	// } while (len > 0);
 	tst.w	d6
-	bne.b	len_loop
+	bne.b	.Llen_loop
 	// } while (true);
-	bra.w	main_loop
+	bra.w	.Lmain_loop

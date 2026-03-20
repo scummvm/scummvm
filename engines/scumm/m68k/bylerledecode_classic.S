@@ -92,8 +92,8 @@ SYM(ByleRLEDecode_Classic):
 	// 2      1    jump into len_loop (1x)
 	// 3      2    jump into len_loop (2x)
 	subq.w	#1,d6
-	bgt.b	len_loop
-main_loop:
+	bgt.b	.Llen_loop
+.Lmain_loop:
 	// do {
 	// len = *src++;
 	// color = len >> compData.shr;
@@ -107,9 +107,9 @@ main_loop:
 	lsr.b	d1,d0				| d0.b: color (only care about zero/nonzero)
 	move.b	d0,(color,a6)
 	and.b	(compData.mask,a5),d6		| d6.w: len
-	bne.b	len_loop
+	bne.b	.Llen_loop
 	move.b	(a0)+,d6
-len_loop:
+.Llen_loop:
 	// do {
 	// 	batch = height < len ? height : len;
 	move.w	d5,d1				| d1.w: batch
@@ -125,7 +125,7 @@ len_loop:
 	beq.b	2f
 
 	subq.w	#1,d1				| dbra
-batch_loop_shadow:
+.Lbatch_loop_shadow:
 	// 		do {
 	// 			if (!(*mask & maskbit))
 	btst	d4,(a2)
@@ -138,7 +138,7 @@ batch_loop_shadow:
 	add.l	d3,a1
 	add.l	d2,a2
 	// 		} while (--batch);
-	dbra	d1,batch_loop_shadow
+	dbra	d1,.Lbatch_loop_shadow
 	bra.b	3f
 
 	// 	} else {
@@ -185,6 +185,6 @@ batch_loop_shadow:
 5:	// StartPos:
 	// } while (len > 0);
 	tst.w	d6
-	bne.b	len_loop
+	bne.b	.Llen_loop
 	// } while (true);
-	bra.w	main_loop
+	bra.w	.Lmain_loop

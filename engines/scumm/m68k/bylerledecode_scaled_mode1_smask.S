@@ -103,8 +103,8 @@ SYM(ByleRLEDecode_Scaled_Mode1_SMask):
 	// 2      1    jump into len_loop (1x)
 	// 3      2    jump into len_loop (2x)
 	subq.w	#1,(len,a6)
-	bgt.b	pcolor_setup
-main_loop:
+	bgt.b	.Lpcolor_setup
+.Lmain_loop:
 	// do {
 	// len = *src++;
 	// color = len >> compData.shr;
@@ -121,15 +121,15 @@ main_loop:
 	move.b	(a0)+,d7
 1:	move.w	d7,(len,a6)
 
-pcolor_setup:
+.Lpcolor_setup:
 	tst.b	d6
-	beq.b	len_loop
+	beq.b	.Llen_loop
 	move.w	([arg_palette,a6],d6.l*2),d7	| d7.w: pcolor = _palette[color] (used as long, too)
 	cmp.w	#13,d7
-	bne.b	len_loop
+	bne.b	.Llen_loop
 	or.w	#0x8000,d6			| d6.w: "shadow_on" bit set
 	and.b	(shadowMask,a6),d6		| 0xFF: no-op; 0x00: clears color, suppresses writes
-len_loop:
+.Llen_loop:
 	// do {
 	// 	batch = height < len ? height : len;
 	move.w	(len,a6),d0
@@ -146,8 +146,8 @@ len_loop:
 	clr.l	d0
 	move.b	(scaleIndexY,a6),d0
 	tst.w	d6
-	bmi.b	batch_loop_shadow
-batch_loop:
+	bmi.b	.Lbatch_loop_shadow
+.Lbatch_loop:
 	// 		do {
 	// 			if (compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY)
 	cmp.b	(a3,d0.l),d5
@@ -168,10 +168,10 @@ batch_loop:
 	// 			}
 2:	addq.b	#1,d0				| scaleIndexY++ (byte wrap)
 	// 		} while (--batch);
-	dbra	d1,batch_loop
+	dbra	d1,.Lbatch_loop
 	bra.b	3f
 
-batch_loop_shadow:
+.Lbatch_loop_shadow:
 	// 		do {
 	// 			if (compData.scaleTable[scaleIndexY++ & compData.scaleIndexMask] < _scaleY) {
 	cmp.b	(a3,d0.l),d5
@@ -193,7 +193,7 @@ batch_loop_shadow:
 	// 			}
 2:	addq.b	#1,d0				| scaleIndexY++ (byte wrap)
 	// 		} while (--batch);
-	dbra	d1,batch_loop_shadow
+	dbra	d1,.Lbatch_loop_shadow
 
 3:	move.b	d0,(scaleIndexY,a6)
 	// 	if (height == 0) {
@@ -249,6 +249,6 @@ batch_loop_shadow:
 6:	// StartPos:
 	// } while (len > 0);
 	tst.w	(len,a6)
-	bne.w	len_loop
+	bne.w	.Llen_loop
 	// } while (true);
-	bra.w	main_loop
+	bra.w	.Lmain_loop
