@@ -20,6 +20,7 @@
  */
 
 #include <math.h>
+#include <memory>
 
 #include "harvester/flow.h"
 
@@ -34,6 +35,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/framelimiter.h"
+#include "harvester/cft_font.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/palette_utils.h"
@@ -131,6 +133,19 @@ struct PlayerTurnAnimationRange {
 
 static int roundToInt(float value) {
 	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
+}
+
+static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
+	const Text *startupText = engine.getStartupText();
+	if (!startupText || !fontName)
+		return nullptr;
+
+	for (const CftFontResource &font : startupText->getFonts()) {
+		if (font.name.equalsIgnoreCase(fontName))
+			return &font;
+	}
+
+	return nullptr;
 }
 
 static int clampTownMapPanelIndex(int panelIndex) {
@@ -1903,6 +1918,14 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 	ResourceManager *resources = _engine.getResources();
 	Graphics::Screen *screen = _engine.getScreen();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	std::unique_ptr<HarvesterCftFont> townMapFont;
+	if (const CftFontResource *townMapFontResource = findStartupFontByName(_engine, "TEXTFONT")) {
+		townMapFont.reset(new HarvesterCftFont(*townMapFontResource));
+		if (townMapFont->isValid())
+			font = townMapFont.get();
+		else
+			townMapFont.reset();
+	}
 	if (!startupScript || !resources || !screen || !font)
 		return Common::kReadingFailed;
 
