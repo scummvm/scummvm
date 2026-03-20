@@ -183,6 +183,16 @@ static Common::String resolveRoomDebugObjectLabel(HarvesterEngine &engine, const
 	return object.objectName;
 }
 
+static Common::String resolveRoomDebugNpcLabel(const StartupNpcRecord &npc) {
+	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return label;
+}
+
 static void drawRoomDebugLabel(Graphics::Screen &screen, const Graphics::Font &font,
 		const Common::String &text, int x, int y, byte textColor, byte backgroundColor) {
 	if (text.empty())
@@ -216,6 +226,7 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
 	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
 	const byte darkGray = findNearestPaletteColor(displayPalette, 0x40, 0x40, 0x40);
+	const byte red = findNearestPaletteColor(displayPalette, 0xff, 0x00, 0x00);
 	Common::String roomName = scene.state.roomName;
 	roomName.toUppercase();
 
@@ -235,6 +246,18 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 
 		drawRoomDebugLabel(screen, *font, resolveRoomDebugObjectLabel(engine, object),
 			object.currentX, object.currentY, white, black);
+	}
+
+	for (const StartupNpcRecord &npc : scene.state.roomNpcs) {
+		const RuntimeEntity *entity = runtimeEntities
+			? runtimeEntities->findSceneEntityByName(npc.npcName)
+			: nullptr;
+		if (!entity || entity->getClassId() != kRuntimeEntityClassNpc || !entity->isVisible())
+			continue;
+
+		const Common::Rect npcRect = entity->getScreenRect();
+		drawRoomDebugLabel(screen, *font, resolveRoomDebugNpcLabel(npc),
+			npcRect.left, npcRect.top, white, red);
 	}
 }
 
