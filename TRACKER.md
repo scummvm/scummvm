@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, rescanned every native startup-room NPC item branch against the decoded `HARVEST.SCR` `USEITEM` table instead of assuming that every NPC-targeted action tag still needed separate ScummVM plumbing.
+- Confirmed there are only three NPC-targeted `USEITEM` records in the shipped script: `INV_MAG -> LOOMIS`, `BOYLES_BUTTON -> BOYLE`, and `GASCAN -> BOYLE`. Ghidra plus the current `handle_talk_to_boyle` port showed Boyle's two cases already carry their native item-side effects inside the dialogue handler, while Loomis was the only remaining script-side room-state gap.
+- No additional engine-side behavior changes were justified after that audit pass; the earlier Loomis patch remains the only required NPC-targeted `USEITEM` fix, and the next safe step is live validation rather than more speculative handler changes.
 - On March 20, 2026, compared the ScummVM Loomis item-use path against both native `handle_talk_to_loomis @ 0x34f80` in Ghidra and the decoded `HARVEST.SCR` sheriff-office records instead of guessing from dialogue alone.
 - Confirmed that the native Loomis talk handler already matches the ScummVM dialogue lines for `INV_MAG`, but the room script also defines `USEITEM "INV_MAG" "SHRFOFC" "LOOMIS" "GO_LOOMISA"`; that action sets `GAVE_MAG_TO_LOOMIS_TODAY` and immediately `SET_NPC "LOOMIS" "F" "F"`, which explained why ScummVM kept Loomis in the room after the magazine handoff.
 - Patched `engines/harvester/npc/loomis_dialogue.cpp` to apply those confirmed room-script side effects during the Loomis magazine branch and queue a mutated-runtime refresh so the live sheriff-office scene drops Loomis after the dialogue, then rebuilt `scummvm` successfully.
@@ -53,7 +56,7 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass on the sheriff office magazine handoff and then audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any other room-script side effects are still bypassing the current dialogue-first item path.
+1. Run a live Harvester validation pass that covers the sheriff-office magazine handoff plus Boyle's button/gascan item branches, confirming that the Loomis disappearance now lands correctly and that the already-ported Boyle logic still matches the native outcomes in gameplay.
 2. Run a manual desktop validation pass that specifically covers the tightened inventory/runtime hooks: verify live HP changes update the open inventory `INV_STAT*` portrait immediately, right-clicking weapon items toggles the persisted combat loadout without desynchronizing save/load state, and closing/reopening the inventory preserves carried-item handoff semantics.
 3. If that pass exposes any remaining inventory gaps, keep them narrowly bounded to confirmed native behaviors only. The next likely candidates are the room HUD weapon-resource icon strip and any still-missing inventory secondary-click item actions beyond the now-confirmed weapon-loadout path.
 
