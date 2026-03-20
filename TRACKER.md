@@ -16,6 +16,10 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, re-opened the Loomis conversation branch with the native subtitles plus `DIALOG.RSP` instead of assuming the sheriff-office magazine problem was only a room-script side effect.
+- Confirmed the missing Loomis response mapping from the shipped text resources: `DIALOG.RSP` line `468` is the magazine confirmation menu (`"1. Sure... you can have it!/2. No, just thought you'd like a peek."`), while nearby `DIALOGUE.IDX` lines `4539`, `4550`, `4556`, and `4571` are the ask / accept / refuse / sheriff-present guard lines for the magazine handoff.
+- Confirmed the first Loomis no-item conversation was also underimplemented in ScummVM: the subtitle block around `4349..4502` plus `DIALOG.RSP` lines `84..102` exposes the missing sheriff-office topic menu (`Stephanie`, `Mrs. Loomis`, `Mrs. Phelps`, `A Man's Needs`, `French Postcards`, `Sheriff Dwayne`, `Mattress`) and the follow-up `4520/4524/4528` revisit exchange that the simplified handler never ran.
+- Patched `engines/harvester/npc/loomis_dialogue.{h,cpp}` to restore that topic-menu/follow-up flow, route the magazine branch through the recovered confirmation response menu, and only set `GAVE_MAG_TO_LOOMIS_TODAY` / hide Loomis on the accepted branch; the accept path also now flips the sheriff-office drawer pair to `SHERIF_DRAWR` visible and `SHERIF_DRAWR2` hidden so the post-handoff drawer interaction can surface in the refreshed room state. Rebuilt `engines/harvester/npc/loomis_dialogue.o` and `scummvm` successfully.
 - On March 20, 2026, rechecked the Loomis sheriff-office handoff against native `handle_target_interaction @ 0x7ff50` after the immediate-disappear regression instead of assuming NPC-targeted `USEITEM` records were the direct room-click entry point.
 - Confirmed the native room loop treats class-4 NPC clicks differently from object hotspots: item-on-NPC interaction calls `run_npc_dialogue(npcName, presentedObject)` directly, which seeds `g_dialogue_presented_object_name` before the talk handler runs, while the generic `USEITEM` record scan is only reached for non-NPC targets.
 - Reverted the generic NPC `USEITEM` interception in `engines/harvester/room.cpp` and removed the now-unneeded NPC overloads from `engines/harvester/script.{h,cpp}` so Loomis item use again enters the native-style dialogue path first; rebuilt `engines/harvester/script.o`, `engines/harvester/room.o`, and `scummvm` successfully.
@@ -69,9 +73,9 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass on the Loomis sheriff-office magazine handoff to re-establish the correct entry path, then trace which post-dialogue side effect still gates the expected confirmation/follow-up exchange before any `SET_FLAG` / `SET_NPC` hide happens.
-2. Re-audit native `handle_talk_to_loomis @ 0x34f80` against the live subtitles/response menus to determine where the missing Loomis confirmation dialogue and option mapping actually live, rather than assuming the room-script `GO_LOOMISA` tag owns that branch.
-3. Only after that Loomis path is bounded again, audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether they are post-dialogue side effects, non-NPC target entries, or true unused script leftovers.
+1. Run a live Harvester validation pass in `SHRFOFC` to confirm the restored Loomis first-talk topic menu, the `4520/4524/4528` revisit follow-up, and the magazine accept/refuse menu all appear in the right order and that accepting the magazine now both hides Loomis and exposes the real drawer hotspot.
+2. If the drawer is still blocked after the accepted magazine branch, instrument `resolveRoomHoverState` / `findRoomObjectAtPoint` in `SHRFOFC` to verify whether the `SHERIF_DRAWR` / `SHERIF_DRAWR2` visibility flip is sufficient or whether same-bounds hotspot precedence is still masking the unlocked drawer.
+3. Re-audit the remaining Loomis response-driven evidence branches next, especially the blackmail submenu implied by `DIALOG.RSP` line `80` and subtitle ids `4617/4628/4633/4639`, since the simplified handler still reduces those to single-line returns.
 4. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
 
 ## Reimplementation Priority Order
