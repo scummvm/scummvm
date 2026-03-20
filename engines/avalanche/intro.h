@@ -30,6 +30,10 @@
 #include "common/str.h"
 #include "common/array.h"
 
+namespace Audio {
+class SoundHandle;
+}
+
 namespace Avalanche {
 
 class AvalancheEngine;
@@ -37,7 +41,7 @@ class AvalancheEngine;
 class Intro {
 public:
 	Intro(AvalancheEngine *vm);
-	virtual ~Intro() {}
+	virtual ~Intro();
 
 	void run();
 
@@ -60,6 +64,8 @@ private:
 	int _nextBitline;
 	bool _cutOut;
 	int _displayCounter;
+
+	Audio::SoundHandle *_musicHandle;
 };
 
 } // End of namespace Avalanche

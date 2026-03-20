@@ -28,6 +28,8 @@
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
+#include "audio/mixer.h"
+#include "audio/mods/protracker.h"
 
 #include "avalanche/avalanche.h"
 #include "avalanche/graphics.h"
@@ -37,6 +39,11 @@ namespace Avalanche {
 
 Intro::Intro(AvalancheEngine *vm) : _vm(vm), _thisLine(0), _nextBitline(16), _cutOut(false), _displayCounter(0) {
 	resetPlanes();
+	_musicHandle = new Audio::SoundHandle();
+}
+
+Intro::~Intro() {
+	delete _musicHandle;
 }
 
 void Intro::resetPlanes() {
@@ -241,6 +248,15 @@ void Intro::run() {
 	CursorMan.showMouse(false);
 	_vm->_graphics->menuRestoreScreen();
 
+    // Load and play music (glover.mod)
+    Common::File musicFile;
+    if (musicFile.open("glover.mod")) {
+        Audio::AudioStream *stream = Audio::makeProtrackerStream(&musicFile);
+        if (stream) {
+            _vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, _musicHandle, stream);
+        }
+    }
+
     loadText();
     resetPlanes();
     _thisLine = 0;
@@ -315,6 +331,7 @@ void Intro::run() {
 		Common::Event event;
 		while (_vm->getEvent(event)) {
 			if (event.type == Common::EVENT_KEYDOWN || event.type == Common::EVENT_LBUTTONDOWN) {
+                _vm->_mixer->stopHandle(*_musicHandle);
 				CursorMan.showMouse(true);
 				return;
 			}
@@ -325,6 +342,7 @@ void Intro::run() {
 			g_system->delayMillis(55 - delay);
 	}
 
+    _vm->_mixer->stopHandle(*_musicHandle);
 	CursorMan.showMouse(true);
 }
 
