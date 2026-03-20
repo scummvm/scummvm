@@ -39,6 +39,7 @@ MainMenu::MainMenu(AvalancheEngine *vm) {
 }
 
 void MainMenu::run() {
+	_vm->_intro->run();
 	_vm->_graphics->menuInitialize();
 	_vm->_graphics->menuLoadPictures();
 	loadRegiInfo();
