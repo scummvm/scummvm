@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, traced the room inventory-click path against the existing Loomis notes instead of layering more Loomis-specific special cases onto `handle_talk_to_loomis`.
+- Confirmed the broader parity gap was room-side: selected inventory items clicked on NPCs bypassed `HARVEST.SCR` `USEITEM` records entirely and jumped straight into `runRoomNpcDialogue`, which meant NPC-targeted script actions such as sheriff-office `INV_MAG -> LOOMIS -> GO_LOOMISA` could not drive their `START_DIALOG`/continuation flow or keep `g_dialogue_presented_object_name` semantics intact.
+- Patched `engines/harvester/script.{h,cpp}` and `engines/harvester/room.cpp` to resolve NPC-targeted `USEITEM` records, preserve the selected item name through deferred scripted dialogue/continuation handling, and only fall back to direct NPC dialogue when no matching NPC `USEITEM` record exists; rebuilt `engines/harvester/script.o`, `engines/harvester/room.o`, and `scummvm` successfully.
 - On March 20, 2026, re-audited room-player locomotion and input-driven turn handling against native `update_player_combat_avatar_state @ 0x553a0` and `update_actor_runtime_state @ 0x4d750` instead of relying on the simplified ScummVM helper alone.
 - Confirmed the native 5-frame turn banks are directional, not symmetric: up->left uses `0x0a..0x0e` forward while left->up reverses that bank; left->down uses `0x19..0x1d` forward while down->left reverses it; down->right uses `0x28..0x2c` forward while right->down reverses it; right->up uses `0x37..0x3b` forward while up->right reverses it. That exposed that `resolvePlayerTurnAnimationRange` in `engines/harvester/flow.cpp` had every recovered turn pair inverted.
 - Confirmed the native room wrapper also clamps horizontal movement against the live opaque sprite edges rather than a raw center `0..639` range: left-facing motion stops once `screen_x + frame_x_offset <= 4`, and right-facing motion stops once `screen_x + frame_x_offset + scaled_bitmap->width >= 0x27c`.
@@ -63,10 +66,10 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
-2. If any room movement mismatch remains after that live pass, continue the same RE thread from `run_harvester_main_loop @ 0x6dc70` by reconstructing the mouse-floor waypoint writes and `DAT_000c3f0c` direction selection, rather than widening the engine logic speculatively.
-3. Run a live Harvester validation pass on the sheriff office magazine handoff and then audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any other room-script side effects are still bypassing the current dialogue-first item path.
-4. Reconstruct owner tables and hidden state for the remaining no87/x87 runtime band before attempting another rename pass. The best starting points are the still-unnamed helpers around `FUN_0008c3d8`, `FUN_0008db56`, `FUN_0008dd85`, `FUN_0008df5a`, `FUN_0008e0ab`, and `FUN_00090c10`, using their named callers (`convert_double_to_decimal_digits`, `report_math_error_from_status_flags`, `execute_runtime_module_handler_list`, `compute_extended_*`) to recover structure fields first.
+1. Run a live Harvester validation pass on NPC-targeted `USEITEM` dialogue, starting with the sheriff-office Loomis magazine handoff, to confirm the recovered script path now surfaces the expected confirmation dialogue/options and only sets/hides Loomis after the accepted branch completes.
+2. Audit the remaining NPC-targeted `USEITEM` records, especially Boyle's `BOYLES_BUTTON` and `GASCAN` branches, to determine whether any additional room-script side effects or deferred dialogue continuations still need explicit parity fixes.
+3. Run a live Harvester validation pass focused on room-player walking at the screen edges and on stationary turn starts from all four facings, to confirm the corrected directional turn banks and opaque-edge clamps now match the native feel closely enough that no additional waypoint or frame-boundary work is needed.
+4. If any room movement mismatch remains after that live pass, continue the same RE thread from `run_harvester_main_loop @ 0x6dc70` by reconstructing the mouse-floor waypoint writes and `DAT_000c3f0c` direction selection, rather than widening the engine logic speculatively.
 
 ## Reimplementation Priority Order
 
