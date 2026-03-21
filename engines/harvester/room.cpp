@@ -84,6 +84,25 @@ static bool isOutsideNativeInventoryDragCloseBounds(const Common::Point &point) 
 		point.y >= kNativeInventoryDragCloseBottom;
 }
 
+static void debugLogInventoryClick(const char *buttonLabel, const Common::Point &point,
+		const StartupInventoryVisual *inventoryHover) {
+	if (!inventoryHover) {
+		debugC(1, kDebugInventory,
+			"Harvester: inventory %s click at (%d,%d) hit no item", buttonLabel, point.x, point.y);
+		return;
+	}
+
+	debugC(1, kDebugInventory,
+		"Harvester: inventory %s click at (%d,%d) object='%s' sprite='%s' alt='%s' action='%s' owner='%s' text='%s' bounds=(%d,%d)-(%d,%d) exit=%d status=%d",
+		buttonLabel, point.x, point.y, inventoryHover->object.objectName.c_str(),
+		inventoryHover->object.spritePath.c_str(), inventoryHover->object.altSpritePath.c_str(),
+		inventoryHover->object.actionTag.c_str(), inventoryHover->object.currentOwnerOrRoom.c_str(),
+		inventoryHover->object.inventoryTextKey.c_str(), inventoryHover->bounds.left,
+		inventoryHover->bounds.top, inventoryHover->bounds.right, inventoryHover->bounds.bottom,
+		InventorySystem::isExitObject(inventoryHover->object),
+		InventorySystem::isStatusObject(inventoryHover->object));
+}
+
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
 	if (!bitmap.isValid())
 		return;
@@ -1224,7 +1243,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					debugLogInventoryClick("right", _mousePos, inventoryHover);
 					if (_inventory.hasSelection()) {
+						debugC(1, kDebugInventory,
+							"Harvester: inventory right click cleared active selection='%s'",
+							_inventory.getSelectedItemName().c_str());
 						if (_inventory.clearSelection())
 							needsRedraw = true;
 						break;
@@ -1234,6 +1257,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							!InventorySystem::isStatusObject(inventoryHover->object)) {
 						bool loadoutChanged = false;
 						if (_inventory.toggleCombatLoadout(inventoryHover->object, loadoutChanged)) {
+							debugC(1, kDebugInventory,
+								"Harvester: inventory right click handled as combat toggle object='%s' changed=%d",
+								inventoryHover->object.objectName.c_str(), loadoutChanged);
 							if (loadoutChanged) {
 								captureCurrentSaveState();
 								if (!_inventory.refresh())
@@ -1245,16 +1271,30 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 						InventorySecondaryAction secondaryAction;
 						if (_inventory.resolveSecondaryAction(inventoryHover->object, secondaryAction)) {
+							debugC(1, kDebugInventory,
+								"Harvester: inventory right click executing secondary action object='%s' action='%s' closeInventory=%d",
+								inventoryHover->object.objectName.c_str(),
+								secondaryAction.actionTag.c_str(), secondaryAction.closeInventory);
 							if (secondaryAction.closeInventory)
 								(void)_inventory.close();
 
 							StartupInteractionResult interaction;
-							if (_engine.getStartupScript()->executeActionTag(
-									secondaryAction.actionTag, interaction)) {
+							const bool executedActionTag = _engine.getStartupScript()->executeActionTag(
+									secondaryAction.actionTag, interaction);
+							debugC(1, kDebugInventory,
+								"Harvester: inventory right click executeActionTag('%s') -> %d music='%s' cutscene='%s' nextRoom='%s'",
+								secondaryAction.actionTag.c_str(), executedActionTag,
+								interaction.musicPath.c_str(), interaction.cutscenePath.c_str(),
+								interaction.nextRoomName.c_str());
+							if (executedActionTag) {
 								bool didTransition = false;
 								Common::Error interactionError =
 									interactionProcessor.handleInteractionResult(
 										interaction, didTransition, Common::String());
+								debugC(1, kDebugInventory,
+									"Harvester: inventory right click action='%s' interaction result error=%d transitioned=%d pendingMainMenu=%d",
+									secondaryAction.actionTag.c_str(), interactionError.getCode(),
+									didTransition, startupFlow.hasPendingMainMenuReturn());
 								if (interactionError.getCode() != Common::kNoError)
 									return interactionError;
 								if (startupFlow.hasPendingMainMenuReturn())
@@ -1266,7 +1306,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							needsRedraw = true;
 							break;
 						}
+						debugC(1, kDebugInventory,
+							"Harvester: inventory right click object='%s' produced no combat toggle or secondary action",
+							inventoryHover->object.objectName.c_str());
 					}
+					debugC(1, kDebugInventory, "Harvester: inventory right click closing overlay");
 					if (_inventory.close())
 						needsRedraw = true;
 					break;
@@ -1312,8 +1356,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 				if (_inventory.isOpen()) {
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					debugLogInventoryClick("left", _mousePos, inventoryHover);
 					if (inventoryHover) {
 						if (InventorySystem::isExitObject(inventoryHover->object)) {
+							debugC(1, kDebugInventory, "Harvester: inventory left click exit button");
 							const bool clearedSelection = _inventory.clearSelection();
 							const bool closedInventory = _inventory.close();
 							if (clearedSelection || closedInventory)
@@ -1324,6 +1370,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							break;
 
 						if (!_inventory.hasSelection()) {
+							debugC(1, kDebugInventory,
+								"Harvester: inventory left click selecting object='%s'",
+								inventoryHover->object.objectName.c_str());
 							_inventory.selectItem(inventoryHover->object.objectName);
 							_inventory.setPromptText(_inventory.buildSelectedPrompt(Common::String()));
 							needsRedraw = true;
@@ -1331,6 +1380,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						}
 
 						if (!inventoryHover->object.objectName.equalsIgnoreCase(_inventory.getSelectedItemName())) {
+							debugC(1, kDebugInventory,
+								"Harvester: inventory left click using selected='%s' on target='%s'",
+								_inventory.getSelectedItemName().c_str(),
+								inventoryHover->object.objectName.c_str());
 							Common::Error interactionError =
 								handleInventoryTargetInteraction(inventoryHover->object);
 							if (interactionError.getCode() != Common::kNoError)
