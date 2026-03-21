@@ -379,12 +379,13 @@ public:
 		bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
 			bool visible);
 		bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
-		bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName);
+		bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
 		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
 	int getPlayerCombatLoadout() const { return _playerCombatLoadout; }
 	bool isPlayerControlPaused() const { return _playerControlPaused; }
+	bool adjustPlayerCurrentHitPoints(int delta);
 	bool setPlayerCombatLoadout(int loadout);
 	bool setPlayerControlPaused(bool paused);
 	bool syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame);

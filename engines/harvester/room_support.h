@@ -70,9 +70,13 @@ struct StartupRoomPlayerState {
 	bool attackActive = false;
 	int attackFirstFrame = -1;
 	int attackLastFrame = -1;
+	int attackContactFrame = -1;
 	int attackResumeFacing = -1;
 	bool attackSoundPlayed = false;
 	int attackSoundFrame = -1;
+	bool attackContactResolved = false;
+	Common::String attackTargetName;
+	int attackTargetClassId = -1;
 };
 
 struct StartupRoomHoverState {

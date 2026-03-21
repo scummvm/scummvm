@@ -31,6 +31,10 @@ public:
 	static float computeDepthScale(const StartupRoomSetupState &state, float z);
 	static int resolveFacingFrame(int facing);
 	static Common::String resolveCombatLoadoutResourcePath(int loadout);
+	static int resolveCombatLoadoutDamageAmount(int loadout);
+	static int resolveCombatLoadoutDamageType(int loadout);
+	static int resolveCombatLoadoutContactFrameOffset(int loadout);
+	static bool isProjectileCombatLoadout(int loadout);
 	static bool supportsMovementBand(const StartupRoomSetupState &state);
 	static uint32 getRuntimeClockTicks();
 	static bool isIdleAnimationExcludedRoom(const Common::String &roomName);

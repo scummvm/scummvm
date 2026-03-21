@@ -90,6 +90,12 @@ struct PlayerAttackSoundSet {
 	const char *soundPaths[3];
 };
 
+struct PlayerCombatLoadoutTuning {
+	int damageType;
+	int damageAmount;
+	int contactFrameOffset;
+};
+
 // Recovered from spawn_player_combat_avatar and update_actor_runtime_state:
 // the native room-combat path commits player attack audio on first_frame + 1.
 static const int kPlayerAttackSoundTriggerFrameOffset = 1;
@@ -115,6 +121,30 @@ static const PlayerAttackSoundSet kPlayerAttackSoundSets[] = {
 	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
 	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
 	{ 3, { "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } }
+};
+
+static const PlayerCombatLoadoutTuning kPlayerCombatLoadoutTunings[] = {
+	{ 1, 1, 5 },
+	{ 2, 4, 2 },
+	{ 4, 2, 2 },
+	{ 4, 7, 2 },
+	{ 4, 6, 2 },
+	{ 4, 6, 2 },
+	{ 2, 3, 2 },
+	{ 2, 3, 2 },
+	{ 2, 3, 2 },
+	{ 2, 3, 2 },
+	{ 1, 3, 2 },
+	{ 2, 3, 2 },
+	{ 2, 4, 2 },
+	{ 2, 5, 2 },
+	{ 2, 4, 2 },
+	{ 2, 8, 2 },
+	{ 1, 3, 2 },
+	{ 2, 3, 2 },
+	{ 1, 3, 2 },
+	{ 2, 3, 2 },
+	{ 1, 2, 2 }
 };
 
 static int roundToInt(float value) {
@@ -182,6 +212,15 @@ static const PlayerAttackSoundSet *resolvePlayerAttackSoundSet(int loadout) {
 		return nullptr;
 
 	return &kPlayerAttackSoundSets[loadout];
+}
+
+static const PlayerCombatLoadoutTuning &resolvePlayerCombatLoadoutTuning(int loadout) {
+	static const PlayerCombatLoadoutTuning kDefaultTuning = { 1, 1, 2 };
+
+	if (loadout < 0 || loadout >= (int)ARRAYSIZE(kPlayerCombatLoadoutTunings))
+		return kDefaultTuning;
+
+	return kPlayerCombatLoadoutTunings[loadout];
 }
 
 static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
@@ -544,6 +583,22 @@ Common::String Player::resolveCombatLoadoutResourcePath(int loadout) {
 	return Common::String::format("1:/GRAPHIC/MONSTERS/PC/PC%02d.ABM", loadout);
 }
 
+int Player::resolveCombatLoadoutDamageAmount(int loadout) {
+	return resolvePlayerCombatLoadoutTuning(loadout).damageAmount;
+}
+
+int Player::resolveCombatLoadoutDamageType(int loadout) {
+	return resolvePlayerCombatLoadoutTuning(loadout).damageType;
+}
+
+int Player::resolveCombatLoadoutContactFrameOffset(int loadout) {
+	return resolvePlayerCombatLoadoutTuning(loadout).contactFrameOffset;
+}
+
+bool Player::isProjectileCombatLoadout(int loadout) {
+	return resolveCombatLoadoutDamageType(loadout) == 4;
+}
+
 bool Player::supportsMovementBand(const StartupRoomSetupState &state) {
 	return state.roomMaxZScreenY >= 0 &&
 		state.roomMinZScreenY >= state.roomMaxZScreenY;
@@ -634,9 +689,13 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	playerState.attackActive = false;
 	playerState.attackFirstFrame = -1;
 	playerState.attackLastFrame = -1;
+	playerState.attackContactFrame = -1;
 	playerState.attackResumeFacing = -1;
 	playerState.attackSoundPlayed = false;
 	playerState.attackSoundFrame = -1;
+	playerState.attackContactResolved = false;
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
 	(void)setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	(void)applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
@@ -687,11 +746,14 @@ bool Player::startAttackAnimation(const StartupRoomSetupState &state,
 	playerState.attackActive = true;
 	playerState.attackFirstFrame = range.firstFrame;
 	playerState.attackLastFrame = range.lastFrame;
+	playerState.attackContactFrame =
+		range.firstFrame + resolveCombatLoadoutContactFrameOffset(playerState.combatLoadout);
 	playerState.attackResumeFacing = range.resumeFacing;
 	playerState.attackSoundPlayed = resolvePlayerAttackSoundSet(playerState.combatLoadout) == nullptr;
 	playerState.attackSoundFrame = playerState.attackSoundPlayed
 		? -1
 		: (range.firstFrame + kPlayerAttackSoundTriggerFrameOffset);
+	playerState.attackContactResolved = false;
 	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
@@ -721,9 +783,13 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	playerState.attackActive = false;
 	playerState.attackFirstFrame = -1;
 	playerState.attackLastFrame = -1;
+	playerState.attackContactFrame = -1;
 	playerState.attackResumeFacing = -1;
 	playerState.attackSoundPlayed = false;
 	playerState.attackSoundFrame = -1;
+	playerState.attackContactResolved = false;
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
 	return setIdleAnimation(playerState, resumeFacing);
 }
 

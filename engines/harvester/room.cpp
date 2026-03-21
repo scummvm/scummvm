@@ -58,6 +58,42 @@ static const int kNativeInventoryTooltipY = 0x19e;
 static const int kNativeInventoryWeekdayX = 0x1e0;
 static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
+static const int kRoomMonsterAnimationRate = 17;
+static const float kRoomActorAttackUpperYOffset = 144.44f;
+static const float kRoomActorAttackMidYOffset = 75.36f;
+static const int kDefaultMonsterAttackContactFrameOffset = 2;
+static const int kMuckeyAttackContactFrameOffset = 7;
+
+struct RoomMonsterFacingAnimationRange {
+	RoomMonsterFacingAnimationRange() {}
+	RoomMonsterFacingAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
+		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
+
+	int walkFirstFrame = 0;
+	int walkLastFrame = 0;
+	int idleFrame = 0;
+};
+
+struct RoomAttackAnimationRange {
+	RoomAttackAnimationRange() {}
+	RoomAttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
+		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
+
+	int firstFrame = 0;
+	int lastFrame = 0;
+	int resumeFacing = 0;
+};
+
+struct RoomMonsterCombatState {
+	bool attackActive = false;
+	int attackFirstFrame = -1;
+	int attackLastFrame = -1;
+	int attackContactFrame = -1;
+	int attackResumeFacing = -1;
+	bool attackSoundPlayed = false;
+	uint32 nextMovementTick = 0;
+	uint32 nextAttackAllowedTick = 0;
+};
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
@@ -243,6 +279,89 @@ static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, 
 	screen.setPalette(scaledPalette);
 }
 
+static RoomMonsterFacingAnimationRange resolveRoomMonsterFacingAnimationRange(int facing) {
+	switch (facing) {
+	case 0:
+		return RoomMonsterFacingAnimationRange(0x00, 0x09, 0x3b);
+	case 1:
+		return RoomMonsterFacingAnimationRange(0x0f, 0x18, 0x0e);
+	case 2:
+		return RoomMonsterFacingAnimationRange(0x2d, 0x36, 0x2c);
+	case 3:
+		return RoomMonsterFacingAnimationRange(0x1e, 0x27, 0x28);
+	default:
+		return RoomMonsterFacingAnimationRange(0x00, 0x09, 0x3b);
+	}
+}
+
+static bool setRoomMonsterAnimation(RuntimeEntity &entity, int facing, bool walking) {
+	const RoomMonsterFacingAnimationRange range = resolveRoomMonsterFacingAnimationRange(facing);
+	if (walking) {
+		const bool changed = entity.getAnimationRate() != kRoomMonsterAnimationRate ||
+			entity.getCurrentFrame() < range.walkFirstFrame ||
+			entity.getCurrentFrame() > range.walkLastFrame;
+		entity.setAnimationRate(kRoomMonsterAnimationRate);
+		entity.setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
+		entity.setAnimationEnabled(true);
+		return changed;
+	}
+
+	const bool changed = entity.getAnimationRate() != 0 ||
+		entity.getCurrentFrame() != range.idleFrame;
+	entity.setAnimationRate(0);
+	entity.setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
+	entity.setCurrentFrame(range.idleFrame);
+	entity.setAnimationEnabled(false);
+	return changed;
+}
+
+static bool resolveRoomActorAttackAnimationRange(const StartupRoomSetupState &state,
+		int actorCenterX, int actorBottomY, float actorZ, const Common::Point &targetPoint,
+		RoomAttackAnimationRange &range) {
+	const float depthScale = Player::computeDepthScale(state, actorZ);
+	const float upperThresholdY =
+		(float)actorBottomY - depthScale * kRoomActorAttackUpperYOffset;
+	const float midThresholdY =
+		(float)actorBottomY - depthScale * kRoomActorAttackMidYOffset;
+
+	if (targetPoint.x < actorCenterX) {
+		if ((float)targetPoint.y < upperThresholdY)
+			range = RoomAttackAnimationRange(0x50, 0x59, 1);
+		else if ((float)targetPoint.y < midThresholdY)
+			range = RoomAttackAnimationRange(0x5a, 0x63, 1);
+		else
+			range = RoomAttackAnimationRange(0x64, 0x6d, 1);
+	} else {
+		if ((float)targetPoint.y < upperThresholdY)
+			range = RoomAttackAnimationRange(0x6e, 0x77, 2);
+		else if ((float)targetPoint.y < midThresholdY)
+			range = RoomAttackAnimationRange(0x78, 0x81, 2);
+		else
+			range = RoomAttackAnimationRange(0x82, 0x8b, 2);
+	}
+
+	return true;
+}
+
+static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &sound1,
+		const Common::String &sound2, const Common::String &sound3) {
+	const Common::String *availableSounds[3];
+	uint availableCount = 0;
+	if (!sound1.empty())
+		availableSounds[availableCount++] = &sound1;
+	if (!sound2.empty())
+		availableSounds[availableCount++] = &sound2;
+	if (!sound3.empty())
+		availableSounds[availableCount++] = &sound3;
+	if (availableCount == 0)
+		return false;
+
+	const uint soundIndex = availableCount > 1
+		? engine.getRandomNumber(availableCount - 1)
+		: 0;
+	return engine.playStartupSound(*availableSounds[soundIndex]);
+}
+
 static float clampRoomDepthForEvent(const StartupRoomSetupState &state, float z) {
 	return CLIP<float>(z,
 		(float)MIN(state.roomMinZ, state.roomMaxZ),
@@ -261,6 +380,30 @@ static int mapRoomDepthToScreenYForEvent(const StartupRoomSetupState &state, flo
 		(float)(state.roomMaxZ - state.roomMinZ);
 	return CLIP<int>(state.roomMaxZScreenY + (int)(offset >= 0.0f ? offset + 0.5f : offset - 0.5f),
 		state.roomMaxZScreenY, state.roomMinZScreenY);
+}
+
+static int roundRoomCombatFloat(float value) {
+	return value >= 0.0f ? (int)(value + 0.5f) : (int)(value - 0.5f);
+}
+
+static int mapRoomDepthToScreenYForCombat(const StartupRoomSetupState &state, float z, int fallbackY) {
+	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
+		return fallbackY;
+	if (state.roomMaxZ == state.roomMinZ)
+		return CLIP<int>(fallbackY, state.roomMaxZScreenY, state.roomMinZScreenY);
+
+	const float clampedZ = clampRoomDepthForEvent(state, z);
+	const float offset = ((float)state.roomMaxZ - clampedZ) *
+		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
+		(float)(state.roomMaxZ - state.roomMinZ);
+	return CLIP<int>(state.roomMaxZScreenY + roundRoomCombatFloat(offset),
+		state.roomMaxZScreenY, state.roomMinZScreenY);
+}
+
+static int resolveMonsterAttackContactFrameOffset(const StartupMonsterRecord &monster) {
+	return monster.monsterName.equalsIgnoreCase("MUCKEY")
+		? kMuckeyAttackContactFrameOffset
+		: kDefaultMonsterAttackContactFrameOffset;
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -378,6 +521,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
+		Common::Array<RoomMonsterCombatState> monsterCombatStates;
+		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		StartupResolvedText inspectText;
 		bool showingInspectText = false;
 		bool inspectCanDismiss = false;
@@ -435,10 +580,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.attackActive = false;
 			playerState.attackFirstFrame = -1;
 			playerState.attackLastFrame = -1;
+			playerState.attackContactFrame = -1;
 			if (!playerState.entity)
 				return false;
 			playerState.attackSoundPlayed = false;
 			playerState.attackSoundFrame = -1;
+			playerState.attackContactResolved = false;
+			playerState.attackTargetName.clear();
+			playerState.attackTargetClassId = -1;
 			const int resumeFacing = playerState.attackResumeFacing >= 0
 				? playerState.attackResumeFacing
 				: (playerState.facing >= 0 ? playerState.facing : 0);
@@ -536,11 +685,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.attackActive = false;
 			playerState.attackFirstFrame = -1;
 			playerState.attackLastFrame = -1;
+			playerState.attackContactFrame = -1;
 			playerState.attackResumeFacing = -1;
 			playerState.attackSoundPlayed = false;
 			playerState.attackSoundFrame = -1;
+			playerState.attackContactResolved = false;
+			playerState.attackTargetName.clear();
+			playerState.attackTargetClassId = -1;
 			playerState.combatLoadout =
 				_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
+			monsterCombatStates.clear();
+			monsterCombatStates.resize(scene.state.roomMonsters.size());
 			pendingRegionName.clear();
 			resetIdleState();
 			startupFlow.resetCursorAnimationSequence();
@@ -941,6 +1096,350 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			refreshCurrentScene, captureDialogueBackdrop, runRoomExitCommands,
 			applyLightingCommand, applyPlayerGotoXZ, runModalShowText, resetIdleState
 		};
+	auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> StartupNpcRecord * {
+		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+			if (npc.npcName.equalsIgnoreCase(npcName))
+				return &npc;
+		}
+
+		return nullptr;
+	};
+	auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> StartupMonsterRecord * {
+		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			if (monster.monsterName.equalsIgnoreCase(monsterName))
+				return &monster;
+		}
+
+		return nullptr;
+	};
+	auto findRoomMonsterIndexByName = [&](const Common::String &monsterName) -> int {
+		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
+			if (scene.state.roomMonsters[i].monsterName.equalsIgnoreCase(monsterName))
+				return (int)i;
+		}
+
+		return -1;
+	};
+	auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> RuntimeEntity * {
+		return runtimeEntities ? runtimeEntities->findSceneEntityByName(entityName) : nullptr;
+	};
+	auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> StartupMonsterRecord * {
+		StartupMonsterRecord *bestMonster = nullptr;
+		int bestZ = -0x7fffffff;
+		int bestTop = -0x7fffffff;
+		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+				continue;
+
+			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+			if (!entity || !entity->isVisible())
+				continue;
+
+			const Common::Rect entityRect = entity->getScreenRect();
+			if (!entityRect.contains(point))
+				continue;
+
+			if (!bestMonster || monster.posZ > bestZ ||
+					(monster.posZ == bestZ && entityRect.top > bestTop)) {
+				bestMonster = &monster;
+				bestZ = monster.posZ;
+				bestTop = entityRect.top;
+			}
+		}
+
+		return bestMonster;
+	};
+	auto findOverlappingMonsterTarget = [&]() -> StartupMonsterRecord * {
+		if (!playerState.entity)
+			return nullptr;
+
+		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+				continue;
+
+			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+			if (entity && playerState.entity->overlapsEntity(*entity))
+				return &monster;
+		}
+
+		return nullptr;
+	};
+	auto findOverlappingNpcTarget = [&]() -> StartupNpcRecord * {
+		if (!playerState.entity)
+			return nullptr;
+
+		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+			if (!npc.visible || npc.deathOrMonsterfyFlag)
+				continue;
+
+			RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
+			if (entity && playerState.entity->overlapsEntity(*entity))
+				return &npc;
+		}
+
+		return nullptr;
+	};
+	auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity) {
+		if (!playerState.entity || !targetEntity)
+			return false;
+		if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
+			return true;
+
+		return playerState.entity->overlapsEntity(*targetEntity);
+	};
+	auto handleCombatInteraction = [&](StartupInteractionResult interaction) -> Common::Error {
+		bool didTransition = false;
+		Common::Error interactionError =
+			interactionProcessor.handleInteractionResult(interaction, didTransition, Common::String());
+		if (interactionError.getCode() != Common::kNoError)
+			return interactionError;
+
+		needsRedraw = true;
+		return Common::kNoError;
+	};
+	auto capturePlayerAttackTarget = [&]() {
+		playerState.attackTargetName.clear();
+		playerState.attackTargetClassId = -1;
+
+		const StartupRoomHoverState hoverState = resolveRoomHoverState(
+			_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
+		if (hoverState.npc) {
+			playerState.attackTargetName = hoverState.npc->npcName;
+			playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+			return;
+		}
+
+		if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
+			playerState.attackTargetName = monster->monsterName;
+			playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+		}
+	};
+	auto resolvePlayerAttackContact = [&]() -> Common::Error {
+		if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
+				playerState.attackContactFrame < 0 ||
+				playerState.entity->getCurrentFrame() < playerState.attackContactFrame) {
+			return Common::kNoError;
+		}
+
+		playerState.attackContactResolved = true;
+		Script *startupScript = _engine.getStartupScript();
+		if (!startupScript)
+			return Common::kNoError;
+
+		const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
+		if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
+			if (StartupNpcRecord *fallbackNpc = findOverlappingNpcTarget()) {
+				playerState.attackTargetName = fallbackNpc->npcName;
+				playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+			}
+		}
+		if (playerState.attackTargetClassId == kRuntimeEntityClassNpc) {
+			StartupNpcRecord *npc = findRoomNpcRecordByName(playerState.attackTargetName);
+			RuntimeEntity *npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
+			if (!npc || !npcEntity || !playerAttackCanReachTarget(npcEntity))
+				npc = Player::isProjectileCombatLoadout(playerState.combatLoadout) ? nullptr : findOverlappingNpcTarget();
+			if (!npc)
+				return Common::kNoError;
+
+			const bool runtimeChanged =
+				startupScript->triggerRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
+			const bool jimmyFlagChanged = npc->npcName.equalsIgnoreCase("JIMMY")
+				? startupScript->setRuntimeFlagValue("JIMMY_ATTACKED", true)
+				: false;
+			if (!runtimeChanged && !jimmyFlagChanged)
+				return Common::kNoError;
+
+			StartupInteractionResult interaction;
+			interaction.mutatedRuntimeState = runtimeChanged;
+			if (npc->monsterfyTargetName.empty() && !npc->onDeathActionTag.empty()) {
+				StartupInteractionResult deathInteraction;
+				if (startupScript->executeActionTag(npc->onDeathActionTag, deathInteraction)) {
+					interaction = deathInteraction;
+					interaction.mutatedRuntimeState = true;
+				}
+			}
+
+			return handleCombatInteraction(interaction);
+		}
+
+		StartupMonsterRecord *monster = nullptr;
+		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
+			monster = findRoomMonsterRecordByName(playerState.attackTargetName);
+		RuntimeEntity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity)) {
+			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout))
+				monster = findOverlappingMonsterTarget();
+			else
+				monster = nullptr;
+			monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+		}
+		if (!monster || !monsterEntity)
+			return Common::kNoError;
+
+		monster->currentHitPoints = MAX(0,
+			monster->currentHitPoints - Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout));
+		if (monster->currentHitPoints > 0) {
+			(void)startupScript->syncRuntimeMonsterRecord(*monster);
+			needsRedraw = true;
+			return Common::kNoError;
+		}
+
+		monster->active = false;
+		monster->visible = false;
+		const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
+		if (monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size())
+			monsterCombatStates[(uint)monsterIndex] = RoomMonsterCombatState();
+		(void)startupScript->syncRuntimeMonsterRecord(*monster);
+
+		StartupInteractionResult interaction;
+		interaction.mutatedRuntimeState = true;
+		if (!monster->onDeathActionTag.empty()) {
+			StartupInteractionResult deathInteraction;
+			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
+				interaction = deathInteraction;
+				interaction.mutatedRuntimeState = true;
+			}
+		}
+
+		return handleCombatInteraction(interaction);
+	};
+	auto updateRoomMonsterCombat = [&]() -> Common::Error {
+		if (!runtimeEntities)
+			return Common::kNoError;
+
+		Script *startupScript = _engine.getStartupScript();
+		const uint32 now = Player::getRuntimeClockTicks();
+		const uint32 moveInterval = MAX<uint32>(1, 100U / (uint32)kRoomMonsterAnimationRate);
+		const int horizontalStepBase = 8;
+		const int depthStep = MAX<int>(1, roundRoomCombatFloat(
+			scene.state.roomZVelocityStep > 0.0f ? scene.state.roomZVelocityStep : 1.0f));
+		bool playerAlive = startupScript && startupScript->getPlayerCurrentHitPoints() > 0;
+
+		if (monsterCombatStates.size() != scene.state.roomMonsters.size())
+			monsterCombatStates.resize(scene.state.roomMonsters.size());
+
+		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
+			StartupMonsterRecord &monster = scene.state.roomMonsters[i];
+			RoomMonsterCombatState &combatState = monsterCombatStates[i];
+			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+			if (!entity || !monster.visible || monster.currentHitPoints <= 0) {
+				combatState = RoomMonsterCombatState();
+				continue;
+			}
+
+			if (!monster.active || !playerState.entity || !playerAlive) {
+				combatState = RoomMonsterCombatState();
+				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+				continue;
+			}
+
+			if (combatState.attackActive) {
+				const int currentFrame = entity->getCurrentFrame();
+				if (!combatState.attackSoundPlayed &&
+						monster.attackSoundTriggerFrame >= 0 &&
+						currentFrame >= combatState.attackFirstFrame + monster.attackSoundTriggerFrame) {
+					(void)playRandomRoomAttackSound(_engine,
+						monster.attackSound1, monster.attackSound2, monster.attackSound3);
+					combatState.attackSoundPlayed = true;
+				}
+				if (combatState.attackContactFrame >= 0 &&
+						currentFrame >= combatState.attackContactFrame) {
+					combatState.attackContactFrame = -1;
+					if (startupScript &&
+							startupScript->adjustPlayerCurrentHitPoints(-monster.damageAmount) &&
+							startupScript->getPlayerCurrentHitPoints() <= 0) {
+						playerAlive = false;
+						stopPlayerRegionInteraction();
+					}
+					needsRedraw = true;
+				}
+				if (currentFrame == combatState.attackLastFrame) {
+					combatState.attackActive = false;
+					combatState.attackFirstFrame = -1;
+					combatState.attackLastFrame = -1;
+					combatState.attackContactFrame = -1;
+					combatState.attackResumeFacing = -1;
+					combatState.attackSoundPlayed = false;
+					needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+				}
+				continue;
+			}
+
+			if (combatState.nextMovementTick != 0 && (int32)(now - combatState.nextMovementTick) < 0)
+				continue;
+			combatState.nextMovementTick = now + moveInterval;
+
+			const int targetBottomY = playerState.bottomY;
+			const int dx = playerState.centerX - monster.posX;
+			const int dy = targetBottomY - monster.posY;
+			const int absDx = ABS(dx);
+			const int absDy = ABS(dy);
+			const int engageDistance = MAX(0, monster.engageDistance);
+			bool moved = false;
+			if (absDx > engageDistance) {
+				const int step = MAX<int>(1, roundRoomCombatFloat(
+					Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
+				const int direction = dx < 0 ? -1 : 1;
+				const int desiredX = playerState.centerX - direction * engageDistance;
+				if (direction < 0)
+					monster.posX = MAX(monster.posX - step, desiredX);
+				else
+					monster.posX = MIN(monster.posX + step, desiredX);
+				monster.posX = CLIP<int>(monster.posX, monster.minXBound, monster.maxXBound);
+				moved = true;
+			}
+			if (absDy > depthStep) {
+				if (dy < 0)
+					monster.posZ -= depthStep;
+				else
+					monster.posZ += depthStep;
+				monster.posZ = (int)clampRoomDepthForEvent(scene.state, (float)monster.posZ);
+				monster.posY = mapRoomDepthToScreenYForCombat(scene.state, (float)monster.posZ, monster.posY);
+				moved = true;
+			}
+
+			if (moved) {
+				if (absDx > absDy)
+					monster.facing = dx < 0 ? 1 : 2;
+				else if (dy != 0)
+					monster.facing = dy < 0 ? 3 : 0;
+				(void)applyRoomActorPlacement(scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+				if (startupScript)
+					(void)startupScript->syncRuntimeMonsterRecord(monster);
+				needsRedraw = true;
+				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, true) || needsRedraw;
+				continue;
+			}
+
+			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+			const bool attackCooldownExpired =
+				combatState.nextAttackAllowedTick == 0 || (int32)(now - combatState.nextAttackAllowedTick) >= 0;
+			if (!attackCooldownExpired && absDx > MAX(1, engageDistance / 3))
+				continue;
+
+			RoomAttackAnimationRange range;
+			const Common::Point playerPoint(playerState.centerX, playerState.bottomY);
+			(void)resolveRoomActorAttackAnimationRange(
+				scene.state, monster.posX, monster.posY, (float)monster.posZ, playerPoint, range);
+			combatState.attackActive = true;
+			combatState.attackFirstFrame = range.firstFrame;
+			combatState.attackLastFrame = range.lastFrame;
+			combatState.attackContactFrame =
+				range.firstFrame + resolveMonsterAttackContactFrameOffset(monster);
+			combatState.attackResumeFacing = range.resumeFacing;
+			combatState.attackSoundPlayed =
+				monster.attackSound1.empty() && monster.attackSound2.empty() && monster.attackSound3.empty();
+			combatState.nextAttackAllowedTick = now + 50 + _engine.getRandomNumber(99);
+			monster.facing = range.resumeFacing;
+			entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+			entity->setAnimationRate(kRoomMonsterAnimationRate);
+			entity->setAnimationEnabled(true);
+			entity->setCurrentFrame(range.firstFrame);
+			needsRedraw = true;
+		}
+
+		return Common::kNoError;
+	};
 	auto moveRoomItemDirectlyToInventory = [&](const StartupObjectRecord &object) -> Common::Error {
 		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)
@@ -1376,8 +1875,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					playerState.turnPlayBackwards = false;
 					(void)Player::syncCombatLoadoutVisual(_engine, scene.state, playerState,
 						startupScript->getPlayerCombatLoadout());
+					capturePlayerAttackTarget();
 					if (Player::startAttackAnimation(scene.state, playerState, _mousePos))
 						needsRedraw = true;
+					else {
+						playerState.attackTargetName.clear();
+						playerState.attackTargetClassId = -1;
+					}
 				}
 				break;
 			}
@@ -1757,6 +2261,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		bool playerAdvancedThisFrame = false;
+		Common::Error combatError = resolvePlayerAttackContact();
+		if (combatError.getCode() != Common::kNoError)
+			return combatError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			break;
+		}
 		if (Player::updateAttackAnimationState(_engine, playerState)) {
 			needsRedraw = true;
 		}
@@ -1792,6 +2306,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					Player::startIdleAnimation(_engine, scene.state, playerState, idleState)) {
 				needsRedraw = true;
 			}
+		}
+		combatError = updateRoomMonsterCombat();
+		if (combatError.getCode() != Common::kNoError)
+			return combatError;
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
+		if (!pendingRoomChange.empty()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			break;
 		}
 		Common::Error pendingRegionError =
 			playerState.attackActive ? Common::kNoError : tryActivatePendingRegion();

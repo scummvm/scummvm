@@ -1859,6 +1859,10 @@ bool Script::setPlayerCurrentHitPoints(int hitPoints) {
 	return changed;
 }
 
+bool Script::adjustPlayerCurrentHitPoints(int delta) {
+	return setPlayerCurrentHitPoints(_playerCurrentHitPoints + delta);
+}
+
 bool Script::setPlayerCombatLoadout(int loadout) {
 	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
 	const bool changed = _playerCombatLoadout != clampedLoadout;
@@ -1921,7 +1925,7 @@ bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enable
 	return changed;
 }
 
-bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
+bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType) {
 	if (npcName.empty())
 		return false;
 
@@ -1944,8 +1948,11 @@ bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName) {
 		}
 	}
 
-	const bool changed = !runtimeNpc->deathOrMonsterfyFlag;
+	const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
+		(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
 	runtimeNpc->deathOrMonsterfyFlag = true;
+	if (deathDamageType != 0)
+		runtimeNpc->deathDamageType = deathDamageType;
 	return changed || monsterChanged;
 }
 
