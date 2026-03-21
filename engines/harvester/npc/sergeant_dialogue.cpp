@@ -32,6 +32,11 @@ namespace {
 
 static const char *const kDialogueC149FstPath = "GRAPHIC/FST/C149.FST";
 static const char *const kGoDay2ActionTag = "GO_DAY_2";
+static const int kSergeantCompletedApplicationResponseLine = 0x2b6;
+static const int kSergeantIntroResponseLine = 0x2b7;
+static const int kSergeantApplicationResponseLine = 0x2b8;
+static const int kSergeantAmnesiaResponseLine = 0x2b9;
+static const int kSergeantReminderResponseLine = 0x2bb;
 
 } // End of namespace
 
@@ -59,6 +64,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.dialogueStateD2f08 = true;
 		sharedState.dialogueStateD2f00 = true;
 		state.introPending = false;
+		state.dialogueStateD2d50 = true;
 		state.dialogueStateD2d54 = true;
 	};
 	auto restoreItemToRah = [&](const char *objectName) {
@@ -73,6 +79,119 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 		return Common::kNoError;
+	};
+	auto runDay5ReminderIfNeeded = [&]() -> Common::Error {
+		if (!runtime.startupScript().getFlagValue("DAY_5") || state.day5ReminderShown)
+			return Common::kNoError;
+
+		state.day5ReminderShown = true;
+		return playSergeantLine(0x4324, 1);
+	};
+	auto runApplicationDiscussion = [&]() -> Common::Error {
+		Common::Error lineError = playSergeantLine(0x415d);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(
+			kSergeantApplicationResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			const DialogueLineEntry applicationLines[] = {
+				{ 0x4168, "SERGEANT", 1 },
+				{ 0x416c, "PC", 0 },
+				{ 0x4170, "SERGEANT", 1 }
+			};
+			lineError = runtime.playDialogueEntrySequence(
+				applicationLines, ARRAYSIZE(applicationLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			responseIndex = 0;
+			responseError = runtime.runResponseMenu(kSergeantAmnesiaResponseLine, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1)
+				lineError = playSergeantLine(0x417c);
+			else if (responseIndex == 2)
+				lineError = playSergeantLine(0x4182, 2);
+		} else {
+			const DialogueLineEntry applicationLines[] = {
+				{ 0x4188, "SERGEANT", 0 },
+				{ 0x418e, "PC", 0 },
+				{ 0x4192, "SERGEANT", 0 }
+			};
+			lineError = runtime.playDialogueEntrySequence(
+				applicationLines, ARRAYSIZE(applicationLines));
+		}
+
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runDay5ReminderIfNeeded();
+	};
+	auto runInitialIntroBranch = [&]() -> Common::Error {
+		sharedState.dialogueStateD2f08 = true;
+		state.introPending = false;
+
+		const DialogueLineEntry introLines[] = {
+			{ 0x413f, "SERGEANT", 2 },
+			{ 0x4144, "PC", 0 },
+			{ 0x4145, "SERGEANT", 0 },
+			{ 0x4146, "PC", 0 },
+			{ 0x4148, "SERGEANT", 2 }
+		};
+		Common::Error lineError = runtime.playDialogueEntrySequence(
+			introLines, ARRAYSIZE(introLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(
+			kSergeantIntroResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1)
+			lineError = playSergeantLine(0x4153);
+		else if (responseIndex == 2)
+			lineError = playSergeantLine(0x4157, 1);
+
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runApplicationDiscussion();
+	};
+	auto runApplicationReminderBranch = [&]() -> Common::Error {
+		Common::Error lineError = playSergeantLine(0x41ac);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		if (!runtime.startupScript().getFlagValue("HAVE_LODGE_APP")) {
+			lineError = playSergeantLine(0x41b0);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		lineError = playSergeantLine(0x41b4, 3);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(
+			kSergeantReminderResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playSergeantLine(0x41bf, 2);
+			state.dialogueStateD2d50 = true;
+		} else if (responseIndex == 2) {
+			lineError = playSergeantLine(0x41c4);
+		}
+
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runDay5ReminderIfNeeded();
 	};
 	auto handleRemainsBranch = [&]() -> Common::Error {
 		markSergeantProgress();
@@ -110,6 +229,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.dialogueStateD2f08 = true;
 		sharedState.dialogueStateD2f00 = true;
 		state.introPending = false;
+		state.dialogueStateD2d50 = true;
 		restoreItemToRah("COMPLETED_LODGE_APPLICATION");
 		if (!runtime.startupScript().getFlagValue("QUEST_1")) {
 			Common::Error lineError = playSergeantLine(0x41cd, 1);
@@ -121,9 +241,58 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			(void)runtime.startupScript().setRuntimeFlagValue("QUEST_1", true);
 			return executeActionTagIfSet(kGoDay2ActionTag);
 		}
-		if (!state.dialogueStateD2d54)
-			return playSergeantLine(0x41d2, 1);
-		return playSergeantLine(0x41f0);
+		if (!state.dialogueStateD2d54) {
+			Common::Error lineError = playSergeantLine(0x41d2, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(
+				kSergeantCompletedApplicationResponseLine, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				const DialogueLineEntry acceptedTaskLines[] = {
+					{ 0x41db, "SERGEANT", 0 },
+					{ 0x41e2, "PC", 0 },
+					{ 0x41e6, "SERGEANT", 0 },
+					{ 0x41ec, "PC", 2 },
+					{ 0x41f0, "SERGEANT", 0 },
+					{ 0x41f6, "PC", 0 },
+					{ 0x41fa, "SERGEANT", 0 }
+				};
+				lineError = runtime.playDialogueEntrySequence(
+					acceptedTaskLines, ARRAYSIZE(acceptedTaskLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				state.dialogueStateD2d54 = true;
+			} else if (responseIndex == 2) {
+				const DialogueLineEntry declinedTaskLines[] = {
+					{ 0x4201, "SERGEANT", 3 },
+					{ 0x4202, "SERGEANT", 3 },
+					{ 0x4203, "SERGEANT", 2 }
+				};
+				lineError = runtime.playDialogueEntrySequence(
+					declinedTaskLines, ARRAYSIZE(declinedTaskLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				state.dialogueStateD2d54 = false;
+			}
+
+			return runDay5ReminderIfNeeded();
+		}
+
+		const DialogueLineEntry repeatTaskLines[] = {
+			{ 0x41f0, "SERGEANT", 0 },
+			{ 0x41f6, "PC", 0 },
+			{ 0x41fa, "SERGEANT", 0 }
+		};
+		Common::Error lineError = runtime.playDialogueEntrySequence(
+			repeatTaskLines, ARRAYSIZE(repeatTaskLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runDay5ReminderIfNeeded();
 	};
 
 	if (usedItemName.empty()) {
@@ -146,18 +315,15 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			sharedState.dialogueStateD2f08 = true;
 			sharedState.dialogueStateD2f00 = true;
 			state.introPending = false;
+			state.dialogueStateD2d50 = true;
 			state.dialogueStateD2d54 = true;
-			state.completedFirstTaskState = true;
 			return playSergeantLine(0x420d);
 		}
 		if (runtime.startupScript().getFlagValue("HAVE_COMPLETED_LODGE_APP"))
 			return handleCompletedApplicationBranch();
-		if (state.introPending) {
-			sharedState.dialogueStateD2f08 = true;
-			state.introPending = false;
-			return playSergeantLine(0x413f);
-		}
-		return playSergeantLine(0x41ac);
+		if (state.introPending)
+			return runInitialIntroBranch();
+		return runApplicationReminderBranch();
 	}
 
 	if (usedItemName.equalsIgnoreCase("BARBER_POLE"))
