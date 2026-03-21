@@ -664,7 +664,6 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return menuError;
 		if (selectedTopic.empty())
 			return Common::kNoError;
-		const bool inSpyholeKeywordState = stephanieTopicBufferLineIndex == 0x2f8;
 		if (runtime.matchesResponseLine(selectedTopic, 0x2e5) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2e6)) {
 			Common::Error lineError = playStephanieLine(0x4406);
@@ -848,9 +847,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			assignStephanieTopicBuffer(0x2f8);
 			continue;
 		}
-		if ((inSpyholeKeywordState &&
-				selectedTopic.equalsIgnoreCase(runtime.genericByeTopic())) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2f9) ||
+		if (runtime.matchesResponseLine(selectedTopic, 0x2f9) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2fa) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2fb) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2fc) ||
@@ -877,8 +874,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 			continue;
 		}
-		if ((!inSpyholeKeywordState &&
-				selectedTopic.equalsIgnoreCase(runtime.genericByeTopic())) ||
+		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2e4)) {
 			return playStephanieLine(0x46a4);
 		}
