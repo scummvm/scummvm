@@ -16,6 +16,8 @@
 
 ## Last Confirmed Action
 
+- On March 21, 2026, re-opened native `run_save_game_menu @ 0x632c0` and `run_load_game_menu @ 0x64910` in the live `HARVEST.LE` Ghidra session after ScummVM’s startup save/load menus started clipping slot labels such as `GAME 02` and `GAME 25`.
+- Confirmed the original executable spawns the slot-label text entities directly at `x = 8` using the static `PTR_s_GAME_01_000c3c20` table, while the editable save-name text starts separately at `x = 0x50`; there is no native width clamp on the `GAME xx` label. Patched `engines/harvester/menu.cpp` to stop drawing the label through the ScummVM-only `64` pixel cap so the native `GAME 01` through `GAME 25` labels render in full again.
 - On March 21, 2026, added a Harvester debugger-console workflow helper instead of re-opening Ghidra for every Sergeant comparison: new `DEBUG_DIALOGUE <NPC_ID>` support now routes through `engines/harvester/dialogue_debug.cpp` and prints a structured branch dump with flag conditions, `DIALOG.RSP` response indices, WAV ids, head variants, and resolved subtitle text.
 - The first structured dump targets `SERGEANT`, mirroring the currently recovered ScummVM tree for the intro `0x2b7` / `0x2b8` / `0x2b9` menus, the `0x2bb` application-reminder menu, the post-`0x41d2` `0x2b6` branch, and the item-use shortcuts so those paths can be diffed against Ghidra without manually hopping back into the native executable for every check.
 - On March 21, 2026, re-opened the remaining hidden Sergeant talk tails in the live `HARVEST.LE` Ghidra session and cross-checked them against the native `DIALOG.RSP` plus `iso/Harvester/DIALOGUE.IDX` data after a live `SERGEANTRM` repro showed ScummVM stopping on Sergeant line `0x41d2` without opening the expected prompt.
@@ -147,6 +149,7 @@
 
 ## Next Suggested Action
 
+- Immediate: run a live Harvester validation pass on the native startup `SAVE GAME` and `LOAD GAME` screens. Confirm all labels now render as full `GAME 01` through `GAME 25` strings, including previously clipped rows such as `GAME 02`, `GAME 09`, `GAME 20`, and `GAME 25`.
 - Immediate: use `DEBUG_DIALOGUE SERGEANT` during the next live `SERGEANTRM` repro and compare the printed branch structure against the Ghidra tail blocks. If the workflow is useful, extend `engines/harvester/dialogue_debug.cpp` to the next NPC you are actively auditing instead of re-reading native control flow from scratch each time.
 - Immediate: run a live Harvester validation pass in `SERGEANTRM` across all recovered Sergeant states. Verify first contact now reaches `0x413f` -> `0x4148` with response lines `0x2b7` / `0x2b8` / `0x2b9`, the application reminder path now reaches `0x41ac` / optional `0x41b0` / `0x41b4` with response line `0x2bb`, and the post-application path now opens response line `0x2b6` after `0x41d2` before branching into the Johnson-task or refusal sequence.
 1. Run a live Harvester validation pass on room right-click attacks with both bare hands and equipped weapons: confirm the player still swaps to the correct `PC0/PC01..PC20` art after inventory weapon toggles, and that attacks now play the recovered second-frame sound timing for unarmed swings, melee weapons, firearms, and the chainsaw.
