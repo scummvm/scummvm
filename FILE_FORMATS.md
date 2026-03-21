@@ -205,13 +205,13 @@ python3 -c 'import sys,pathlib,signal; signal.signal(signal.SIGPIPE, signal.SIG_
 | Tag | Leading numeric fields | Fields after the tag |
 | --- | --- | --- |
 | `ENTRANCE` | `x y z` | `direction roomName entranceName` |
-| `MAP_ENTRANCE` | `field0 field4 initialPanelIndex` | `entryName` |
+| `MAP_ENTRANCE` | `mapX mapY initialPanelIndex` | `entryName` |
 | `MAP_LOCATION` | `minX minY maxX maxY panelIndex labelX labelY` | `labelText destinationEntranceName` |
-| `ROOM` | `minZ maxZ maxZScreenY minZScreenY fullScaleZ maxZScalePercent` | `roomName musicPath field38 field3c field40 palettePath dimmable onEnterCommand onExitCommand` |
-| `OBJECT` | `initialX initialY boundsX2 boundsY2 initialZ zExtent` | `initialOwnerOrRoom objectName spritePath altSpritePath field40 inventoryTextKey field34 identTextKey operatable visible actionTag interactionLabel` |
+| `ROOM` | `minZ maxZ maxZScreenY minZScreenY fullScaleZ maxZScalePercent` | `roomName musicPath reservedString38 reservedString3c reservedString40 palettePath dimmable onEnterCommand onExitCommand` |
+| `OBJECT` | `initialX initialY boundsX2 boundsY2 initialZ zExtent` | `initialOwnerOrRoom objectName spritePath altSpritePath reservedString40 inventoryTextKey reservedXFlag identTextKey operatable visible actionTag interactionLabel` |
 | `ANIM` | `x y z frameDelay` | `roomName resourcePath animName active visible looping backward pingPong remove` |
 | `NPC` | `x y z frameDelay` | `roomName modelPath npcName monsterfyTargetName active visible onDeathActionTag audioPath entityInitArg` |
-| `MONSTER` | `x y z ...` | Sample data and native analysis confirm a wider combat-oriented record. The current work has high confidence only for `roomName`, `monsterName`, `modelPath`, `initialFacing`, `active`, `visible`, and `onDeathActionTag`; several intermediate sound/combat columns remain only partially typed. |
+| `MONSTER` | `x y z ...` | Sample data and native analysis confirm sound-trigger timing columns for attack, hit, footstep, and death. The intermediate string columns at offsets `0x38`, `0x3c`, `0x44`, and `0x48` remain reserved in current data and have no recovered read-side consumers. |
 | `REGION` | `left top right bottom minZ maxZ` | `regionName direction roomName actionTag startEnabled cursorEnabled` |
 | `FLAG` | none | `name value` |
 | `COMMAND` | none | `triggerTag opcodeName arg1 arg2 arg3 [arg4]` |
