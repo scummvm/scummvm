@@ -34,6 +34,8 @@ static const char *const kDialogueC052FstPath = "GRAPHIC/FST/C052.FST";
 static const char *const kDialogueC053FstPath = "GRAPHIC/FST/C053.FST";
 static const char *const kDialogueC055FstPath = "GRAPHIC/FST/C055.FST";
 static const char *const kDialogueC057FstPath = "GRAPHIC/FST/C057.FST";
+static const char *const kBaseballBatObjectName = "BAT";
+static const char *const kInventoryOwnerName = "INVENTORY";
 static const char *const kReverseBroomActionTag = "REVERSE_BROOM";
 static const char *const kSoundAirRaidActionTag = "SOUND_AIR_RAID";
 static const char *const kWhaleyPhotoObjectName = "PHOTO_OF_WHALEY_HERRILL";
@@ -183,6 +185,11 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		return false;
 	};
+	auto tradePhotoForBat = [&]() {
+		(void)runtime.startupScript().addRuntimeObjectToInventory(kBaseballBatObjectName);
+		(void)runtime.startupScript().setRuntimeObjectVisible(
+			kInventoryOwnerName, kWhaleyPhotoObjectName, false);
+	};
 
 	if (runtime.startupScript().getFlagValue("BUSTED_SCREWING_MIDGAME")) {
 		Common::Error lineError = playWhaleyLine(0x143b, 2);
@@ -238,7 +245,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						lineError = playWhaleyLine(0x1482, 0);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
-						(void)runtime.startupScript().addRuntimeObjectToInventory(kWhaleyPhotoObjectName);
+						tradePhotoForBat();
 					} else if (nestedResponseIndex == 2) {
 						lineError = playWhaleyLine(0x1487, 2);
 						if (lineError.getCode() != Common::kNoError)
@@ -252,7 +259,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						ARRAYSIZE(kWhaleyBustedScrewingResponse2Menu2Lines));
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-					(void)runtime.startupScript().addRuntimeObjectToInventory(kWhaleyPhotoObjectName);
+					tradePhotoForBat();
 				}
 			}
 		}
