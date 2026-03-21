@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "harvester/monster.h"
 
 namespace Common {
 class Serializer;
@@ -146,45 +147,6 @@ struct StartupNpcRecord {
 	int deathDamageType = 0;
 	Common::String audioPath;
 	Common::String entityInitArg;
-};
-
-struct StartupMonsterRecord {
-	int posX = 0;
-	int posY = 0;
-	int posZ = 0;
-	int initialHitPoints = 0;
-	int currentHitPoints = 0;
-	int damageAmount = 0;
-	int engageDistance = 0;
-	int damageType = 0;
-	int facing = -1;
-	Common::String roomName;
-	Common::String monsterName;
-	Common::String modelPath;
-	Common::String field38;
-	Common::String field3c;
-	Common::String field44;
-	Common::String field48;
-	Common::String attackSound1;
-	Common::String attackSound2;
-	Common::String attackSound3;
-	Common::String hitSound1;
-	Common::String hitSound2;
-	Common::String hitSound3;
-	Common::String footstepSoundLeft;
-	Common::String footstepSoundRight;
-	Common::String deathSound;
-	Common::String onDeathActionTag;
-	bool active = false;
-	bool visible = false;
-	bool savedVisible = false;
-	bool runtimeSpawned = false;
-	int minXBound = 0x14;
-	int maxXBound = 0x26b;
-	int field70 = 0;
-	int field74 = 0;
-	int field78 = 0;
-	int field7c = 0;
 };
 
 struct StartupTimerRecord {
