@@ -873,6 +873,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `spawn_anim_entity_from_record` uses that saved `runtime_state` as the initial frame for non-reverse anims, so same-room rebuilds and save/load do not restart a partially progressed visible animation from frame `0`
   - `room_setup` materializes a room animation when either `active` or `visible` is set, but `spawn_anim_entity_from_record` copies only `active` into the live animation-enable flag.
   - The `SET_ANIM` dispatcher branch updates both record bytes, respawns or removes the live entity from `visible`, and toggles ticking on the already-spawned entity from `active`, so a visible-but-inactive room anim remains on its initial frame instead of advancing.
+  - The `GOFLIC` dispatcher branch runs `play_fst_sequence` immediately after those record/entity mutations; it does not force an intermediate same-room rebuild before the FST starts.
+  - For same-room interactions such as `USE_BROOMKEY -> SCHL_DOOR_HS`, native ordering is therefore: mutate `SCHDOOR` / `WAYLHERL` with `SET_ANIM`, play `GRAPHIC/FST/C132.FST`, then let the later room refresh respawn `SCHDOOR` from the saved post-animation `runtime_state`.
 - `TextRecord` now has stable string identity:
   - `text_id`, `panel_id`, `text_value`, `next`
   - The parser normalizes `_` to space characters in `text_value`
