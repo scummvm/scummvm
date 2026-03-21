@@ -35,12 +35,18 @@ bool KarinDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error KarinDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	KarinRoomDialogueState &state = _state;
+	auto playKarinLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "KARIN", headVariant);
+	};
+	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
+	};
 
 	const bool karinFoundAlive = runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE");
 	if (karinFoundAlive && runtime.startupScript().getFlagValue("IN_CEM10") &&
 			!state.cem10AliveLinePlayed) {
 		state.cem10AliveLinePlayed = true;
-		Common::Error lineError = runtime.playDialogueLine(0x10a5, "PC");
+		Common::Error lineError = playPcLine(0x10a5, 4);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -53,26 +59,26 @@ Common::Error KarinDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 					(void)runtime.startupScript().setRuntimeFlagValue(
 						DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-				} else {
-					(void)runtime.startupScript().setRuntimeFlagValue(
-						DialogueFlags::kShownPhotoOfCorpse, true);
+					} else {
+						(void)runtime.startupScript().setRuntimeFlagValue(
+							DialogueFlags::kShownPhotoOfCorpse, true);
+					}
 				}
-			}
-			return runtime.playDialogueLine(0x10e3, "KARIN");
+			return playKarinLine(0x10e3, 4);
 		}
 		if (usedItemName.equalsIgnoreCase("INV_MAG"))
-			return runtime.playDialogueLine(0x10ee, "KARIN");
-		return runtime.playDialogueLine(0x10d6, "KARIN");
+			return playKarinLine(0x10ee);
+		return playKarinLine(0x10d6, 1);
 	}
 
 	if (!karinFoundAlive && !state.notFoundAliveLinePlayed) {
 		state.notFoundAliveLinePlayed = true;
-		Common::Error lineError = runtime.playDialogueLine(0x1076, "PC");
+		Common::Error lineError = playPcLine(0x1076, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
-	return runtime.playDialogueLine(0x10dc, "KARIN");
+	return playKarinLine(0x10dc);
 }
 
 } // End of namespace Harvester

@@ -493,6 +493,11 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - Response `1` plays `0x3204` then `0x320b`, both as `PTA_MOM1` with head variant `2`.
     - Response `2` plays `0x320f` then `0x3213`, both as `PTA_MOM1` with head variant `0`.
     - Response `3` plays `0x3217`, `0x321c`, `0x3221`, and `0x3226`, where `0x3221` is the only `PC` line and the others stay on `PTA_MOM1` head variant `0`.
+  - `handle_talk_to_karin @ 0x2ea90` is now bounded enough for a direct startup-room port.
+    - `KARIN_FOUND_ALIVE` plus `IN_CEM10` drives a one-shot opener: Karin first triggers `PC 0x10a5` with head variant `4`, then falls through into the normal item/no-item handling.
+    - The photo evidence branch is compact and local-state driven: `CASKET_PHOTO`, `CASKET_PHOTOCOPY`, and `PHOTO_OF_WHALEY_HERRILL` all answer with `KARIN 0x10e3` on head variant `4`, while the clear `g_karin_photo_reply_override_flag` path also records the shared corpse-photo or Whaley/Herrill-photo evidence bit before that line.
+    - `INV_MAG` is the one special non-photo item and exits on `KARIN 0x10ee`; all other presented items fall back to `KARIN 0x10d6` with head variant `1`.
+    - The no-item tail is linear: before Karin is found alive, the first visit plays `PC 0x1076` with head variant `1`, then always ends on `KARIN 0x10dc`.
   - `handle_talk_to_dwayne @ 0x3a310` is now bounded enough to mirror directly in the engine-side room dispatcher.
     - The top-level no-item flow splits between the sheriff-in-diner intro (`0x3482` / `0x3486` / `0x348b` / `0x3490`, optional `EDNA 0x3496` when `KARIN_KIDNAPED`, then `0x349b` / `0x34ac`) and the outside-sheriff opener (`0x3245` / `0x324a` / `0x324e` / `0x3252`), which seeds the first keyword buffer from zero-based `dialog.rsp` line `0x78`.
     - The arrest path clears `ARREST_FLAG` and then dispatches a strict priority bark chain over the `PC_BUSTED_KILLED_*` flags, `IF_KILL_POTTSDAM_AT_GRAVE`, `GENERIC_BUST`, `DNALFT_PERVERT`, the `PC_HAS_GOOJF_CARD` special case, and the escalating `BUSTED_ONCE` / `BUSTED_TWICE` / `BUSTED_THIRD` lines.
