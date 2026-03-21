@@ -691,6 +691,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `g_input_up_pressed` / `g_input_left_pressed` / `g_input_right_pressed` / `g_input_down_pressed` are the `0x48` / `0x4b` / `0x4d` / `0x50` slots in `g_keyboard_scancode_pressed`.
   - `g_input_right_shift_pressed` at `0xd5942` is scan code `0x36` and is the reverse-step modifier used by `update_player_combat_avatar_state`.
   - `g_player_attack_pressed` at `0xd5929` is the scan-code `0x1d` slot consumed by the player-combat attack path.
+  - With `g_player_attack_pressed` held, `update_player_combat_avatar_state` uses the directional scan-code slots as a keyboard-only attack selector: right picks state `0x1a` / frames `0x78..0x81`, left picks `0x17` / `0x5a..0x63`, and up/down only choose the upper/lower side-attack banks (`0x1b` / `0x6e..0x77`, `0x18` / `0x50..0x59`, `0x19` / `0x82..0x8b`, `0x16` / `0x64..0x6d`) when the current facing family is already right or left.
 
 ## Pointer / Cursor Input
 
@@ -1031,6 +1032,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - it plays the selected attack sample when `current_frame == anim_base + +0x116c`
     - it waits until `current_frame >= anim_base + +0x113c` before resolving contact
     - on a confirmed hit it subtracts attacker `+0x1180` from victim HP
+    - for keyboard-driven player attacks, the same contact path picks the nearest live target on the chosen side; upper/lower side attacks also require the target center to stay within a `30`-pixel horizontal side window and to overlap the attacker's live Z/depth span
   - Runtime dword `+0x118c` is now bounded as a mixed combat/capability mask rather than as a pure damage-type field.
     - its low bits carry the attack damage type (`1 = BLUDGE`, `2 = SLASH`, `4 = PROJ`)
     - the player combat-avatar path seeds it with `0x00fffff8` before adding those low bits, while monster construction copies `MonsterRecord.damage_type` and then ORs extra low-byte availability bits from ABM frame counts
