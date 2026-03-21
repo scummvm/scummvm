@@ -527,12 +527,47 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 		return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
 	};
-		auto runRoomExitCommands = [&]() {
-			Common::Array<StartupAudioCommand> exitAudioCommands;
-			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitAudioCommands))
-				return false;
-			startupFlow.executeStartupAudioCommands(exitAudioCommands);
-			return true;
+	auto runRoomExitCommands = [&]() -> Common::Error {
+			StartupInteractionResult exitInteraction;
+			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitInteraction))
+				return Common::kReadingFailed;
+
+			for (uint exitStep = 0; exitStep < 128; ++exitStep) {
+				if (!exitInteraction.musicPath.empty())
+					(void)_engine.playStartupMusic(exitInteraction.musicPath);
+				startupFlow.executeStartupAudioCommands(exitInteraction.audioCommands);
+
+				if (!exitInteraction.cutscenePath.empty()) {
+					FstPlayer fstPlayer(_engine);
+					if (!fstPlayer.play(exitInteraction.cutscenePath))
+						return Common::kReadingFailed;
+				}
+
+				if (!exitInteraction.dialogueNpcName.empty() ||
+						!exitInteraction.dialogueContinuationTag.empty() ||
+						!exitInteraction.modalText.value.empty() ||
+						exitInteraction.lightingCommand != kStartupLightingCommandNone ||
+						exitInteraction.requestPlayerGotoXZ) {
+					debugC(1, kDebugScene,
+						"Harvester: room exit command for '%s' produced unsupported deferred output; preserving accumulated state",
+						scene.state.roomName.c_str());
+				}
+
+				if (exitInteraction.continuationTag.empty())
+					return Common::kNoError;
+
+				StartupInteractionResult continuationInteraction;
+				if (!_engine.getStartupScript()->executeActionTag(
+						exitInteraction.continuationTag, continuationInteraction, false)) {
+					return Common::kNoError;
+				}
+
+				exitInteraction = continuationInteraction;
+			}
+
+			warning("Harvester: room exit command chain for '%s' exceeded continuation safety limit",
+				scene.state.roomName.c_str());
+			return Common::kNoError;
 		};
 		auto applyLightingCommand = [&](StartupLightingCommand lightingCommand) -> Common::Error {
 			Graphics::Screen *activeScreen = getActiveScreen();
@@ -710,15 +745,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					if (resolvedTransitionTarget.empty())
 						return Common::kNoError;
 
-					if (!runRoomExitCommandsFn())
-						return Common::kReadingFailed;
+					Common::Error exitError = runRoomExitCommandsFn();
+					if (exitError.getCode() != Common::kNoError)
+						return exitError;
 
 					// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
 					pendingRoomChange = resolvedTransitionTarget;
 					didTransition = true;
 				} else if (!interaction.nextRoomName.empty()) {
-					if (!runRoomExitCommandsFn())
-						return Common::kReadingFailed;
+					Common::Error exitError = runRoomExitCommandsFn();
+					if (exitError.getCode() != Common::kNoError)
+						return exitError;
 
 					Common::Error roomError = startupFlow.runRoomLoop(interaction.nextRoomName);
 					if (startupFlow.hasPendingMainMenuReturn())
@@ -1395,8 +1432,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				pendingRegionName.clear();
 				if (clickedObject->objectName.equalsIgnoreCase("EXIT_BM") ||
 					clickedObject->objectName.equalsIgnoreCase("EXIT_HS")) {
-					if (!runRoomExitCommands())
-						return Common::kReadingFailed;
+					Common::Error exitError = runRoomExitCommands();
+					if (exitError.getCode() != Common::kNoError)
+						return exitError;
 					return Common::kNoError;
 				}
 
@@ -1552,8 +1590,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 					if (!stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
-					if (!runRoomExitCommands())
-						return Common::kReadingFailed;
+					Common::Error exitError = runRoomExitCommands();
+					if (exitError.getCode() != Common::kNoError)
+						return exitError;
 					return Common::kNoError;
 				}
 				break;
