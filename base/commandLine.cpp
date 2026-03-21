@@ -1566,8 +1566,7 @@ static Common::Error listSaves(const Common::String &singleTarget) {
 					   "  ---- ------------------------------------------------------\n");
 
 			for (const auto &x : saveList) {
-				const Common::String displaySlot = metaEngine.formatSaveSlotForDisplay(x.getSaveSlot());
-				printf("  %-4s %s\n", displaySlot.c_str(), x.getDescription().c_str());
+				printf("  %-4d %s\n", x.getSaveSlot(), x.getDescription().c_str());
 				// TODO: Could also iterate over the full hashmap, printing all key-value pairs
 			}
 			atLeastOneFound = true;

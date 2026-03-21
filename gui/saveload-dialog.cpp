@@ -1130,7 +1130,7 @@ int SaveLoadChooserGrid::runIntern() {
 
 bool SaveLoadChooserGrid::selectDescription() {
 	_savenameDialog.setDescription(_resultString);
-	_savenameDialog.setTargetSlot(_metaEngine, getResult());
+	_savenameDialog.setTargetSlot(getResult());
 	if (_savenameDialog.runModal() == 0) {
 		_resultString = _savenameDialog.getDescription();
 		return true;
@@ -1168,7 +1168,6 @@ void SaveLoadChooserGrid::updateSaves() {
 
 	for (uint i = _curPage * _entriesPerPage, curNum = 0; i < _saveList.size() && curNum < _entriesPerPage; ++i, ++curNum) {
 		const uint saveSlot = _saveList[i].getSaveSlot();
-		const Common::String displaySlot = _metaEngine->formatSaveSlotForDisplay(saveSlot);
 
 		SaveStateDescriptor desc =  (_saveList[i].getLocked() ? _saveList[i] : _metaEngine->querySaveMetaInfos(_target.c_str(), saveSlot));
 		if (!_saveList[i].getLocked() && desc.getSaveSlot() >= 0 && !desc.getDescription().empty())
@@ -1181,7 +1180,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::U32String(displaySlot + ". ") + _saveList[i].getDescription().decode());
+		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + _saveList[i].getDescription().decode());
 
 		Common::U32String tooltip(_("Name: "));
 		tooltip += _saveList[i].getDescription().decode();
@@ -1238,8 +1237,7 @@ void SaveLoadChooserGrid::updateSaves() {
 }
 
 SavenameDialog::SavenameDialog()
-	: Dialog("SavenameDialog"),
-	  _metaEngine(nullptr) {
+	: Dialog("SavenameDialog") {
 	_title = new StaticTextWidget(this, "SavenameDialog.DescriptionText", Common::String());
 
 	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
@@ -1262,10 +1260,7 @@ void SavenameDialog::open() {
 	Dialog::open();
 	setResult(-1);
 
-	const Common::String displaySlot = _metaEngine
-		? _metaEngine->formatSaveSlotForDisplay(_targetSlot)
-		: Common::String::format("%d", _targetSlot);
-	_title->setLabel(Common::U32String::format(_("Enter a description for slot %s:"), displaySlot.c_str()));
+	_title->setLabel(Common::U32String::format(_("Enter a description for slot %d:"), _targetSlot));
 }
 
 void SavenameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
