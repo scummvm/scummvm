@@ -588,11 +588,15 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	// Native only reaches the spyhole/alibi tail from the post-kidnap continuation.
-	if (ranKarinKidnapedBranch && state.playedSpyholeBranch) {
-		Common::Error lineError = runtime.playDialogueLine(0x4970, "STEPHANIE");
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+	// Native only reaches the kidnap tail from the post-kidnap continuation, but 0x4975
+	// always fires once that branch runs; the spyhole flag only prepends 0x4970.
+	if (ranKarinKidnapedBranch) {
+		Common::Error lineError = Common::kNoError;
+		if (state.playedSpyholeBranch) {
+			lineError = runtime.playDialogueLine(0x4970, "STEPHANIE");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 		lineError = runtime.playDialogueLine(0x4975, "STEPHANIE");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
