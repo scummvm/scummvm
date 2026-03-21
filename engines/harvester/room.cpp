@@ -473,6 +473,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			if (!startupScript)
 				return;
 
+			if (runtimeEntities) {
+				for (StartupAnimRecord &anim : scene.state.roomAnimations) {
+					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
+					if (!entity)
+						continue;
+					(void)startupScript->syncRuntimeAnimState(anim.animName,
+						entity->isAnimationEnabled(), entity->isVisible(), entity->getCurrentFrame());
+				}
+			}
 			for (const StartupMonsterRecord &monster : scene.state.roomMonsters)
 				(void)startupScript->syncRuntimeMonsterRecord(monster);
 			if (!runtimeEntities)

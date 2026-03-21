@@ -1841,6 +1841,24 @@ bool Script::setPlayerControlPaused(bool paused) {
 	return changed;
 }
 
+bool Script::syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame) {
+	StartupAnimRecord *runtimeAnim = findRuntimeAnim(animName);
+	if (!runtimeAnim)
+		return false;
+
+	const bool changed = runtimeAnim->active != active ||
+		runtimeAnim->visible != visible ||
+		runtimeAnim->runtimeActive != active ||
+		runtimeAnim->runtimeVisible != visible ||
+		runtimeAnim->runtimeState != currentFrame;
+	runtimeAnim->active = active;
+	runtimeAnim->visible = visible;
+	runtimeAnim->runtimeActive = active;
+	runtimeAnim->runtimeVisible = visible;
+	runtimeAnim->runtimeState = currentFrame;
+	return changed;
+}
+
 bool Script::syncRuntimeMonsterRecord(const StartupMonsterRecord &monster) {
 	StartupMonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
 	if (!runtimeMonster)

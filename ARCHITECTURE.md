@@ -869,6 +869,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `room_name`, `anim_path`, `anim_name`
   - script booleans: `active`, `visible`, `loop`, `backward`, `ping_pong`, `remove`
   - `room_setup` and room teardown reuse the same live bytes as runtime state: `runtime_active`, `runtime_visible`, and `runtime_state`
+  - Before tearing the outgoing room down, `room_setup` walks the live render list, finds room anim entities by `anim_name`, copies each entity's `current_frame_index` back into `runtime_state`, forces `runtime_visible = 1`, and mirrors the live animation-enabled bit back into `runtime_active`
+  - `spawn_anim_entity_from_record` uses that saved `runtime_state` as the initial frame for non-reverse anims, so same-room rebuilds and save/load do not restart a partially progressed visible animation from frame `0`
   - `room_setup` materializes a room animation when either `active` or `visible` is set, but `spawn_anim_entity_from_record` copies only `active` into the live animation-enable flag.
   - The `SET_ANIM` dispatcher branch updates both record bytes, respawns or removes the live entity from `visible`, and toggles ticking on the already-spawned entity from `active`, so a visible-but-inactive room anim remains on its initial frame instead of advancing.
 - `TextRecord` now has stable string identity:

@@ -791,7 +791,7 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneHotspotEntity(const Common::Strin
 
 RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int animationRate,
-		bool active, bool visible, bool looping, bool playBackwards, bool pingPong) {
+		bool active, bool visible, bool looping, bool playBackwards, bool pingPong, int initialFrame) {
 	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
 		position, z, animationRate, looping, pingPong);
 	if (!entity)
@@ -802,10 +802,10 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);
 	entity->setHitTestMode(kRuntimeEntityHitTestNone);
-	if (playBackwards)
-		entity->setCurrentFrame(entity->getLastFrame());
-	else
-		entity->setCurrentFrame(0);
+	int startFrame = playBackwards ? entity->getLastFrame() : 0;
+	if (!playBackwards && initialFrame >= 0)
+		startFrame = CLIP<int>(initialFrame, 0, entity->getLastFrame());
+	entity->setCurrentFrame(startFrame);
 	entity->setAnimationEnabled(active);
 
 	if (!active && !visible)

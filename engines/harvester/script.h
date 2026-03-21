@@ -423,6 +423,7 @@ public:
 	bool isPlayerControlPaused() const { return _playerControlPaused; }
 	bool setPlayerCombatLoadout(int loadout);
 	bool setPlayerControlPaused(bool paused);
+	bool syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame);
 	bool syncRuntimeMonsterRecord(const StartupMonsterRecord &monster);
 	bool syncRuntimeTimerRecord(const StartupTimerRecord &timer);
 	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);

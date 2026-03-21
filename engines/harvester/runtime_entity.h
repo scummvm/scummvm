@@ -89,6 +89,7 @@ public:
 	void setAnimationRate(int rate);
 	int getAnimationRate() const { return _animationRate; }
 	void setAnimationEnabled(bool enabled);
+	bool isAnimationEnabled() const { return _animationEnabled; }
 	void setCurrentFrame(int frame);
 	int getCurrentFrame() const { return _currentFrame; }
 	int getLastFrame() const { return _lastFrame; }
@@ -185,7 +186,7 @@ public:
 	RuntimeEntity *spawnSceneHotspotEntity(const Common::String &name, const Common::Rect &bounds, float z);
 	RuntimeEntity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int animationRate, bool active, bool visible, bool looping,
-		bool playBackwards, bool pingPong);
+		bool playBackwards, bool pingPong, int initialFrame = -1);
 	RuntimeEntity *spawnSceneActorEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int initialFrame);
 	RuntimeEntity *spawnSceneTimerEntity(const Common::String &name, int initialValue, int currentValue,
