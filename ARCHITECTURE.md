@@ -1157,8 +1157,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `run_fst_sequence_player` at `0x12b00` is the inner FST decoder/player reached from `play_fst_sequence`.
     - `FstFileHeader` is now a confirmed 0x20-byte header with fields `magic`, `width`, `height`, `max_frame_size`, `frame_count`, `frame_rate`, `sample_rate`, and `bits_per_sample`.
     - `FstFrameIndexEntry` is the 6-byte per-frame index record `{ video_size, audio_size }`; `run_fst_sequence_player` reads `frame_count` of them immediately after the header and then reads `video_size + audio_size` bytes for each frame.
+    - Native allocates one large payload buffer up front and reuses it for every `video_size + audio_size` frame read instead of reallocating a temporary frame buffer during playback.
     - It assumes the wrapper has already switched back to the movie-capable surface, then configures `g_video_surface_context` again from the header width/height at 8bpp backend class `1`, seeds PCM playback from the header sample rate / bits per sample, computes `bytes_per_frame = get_pcm_byte_rate(...) / frame_rate`, and uses `get_sound_state_playback_position` to keep movie frames aligned with the loaded soundtrack.
     - The frame loop queues each frame's PCM chunk before decode/blit and then waits until the cumulative playback cursor reaches the current frame's byte target; timer pacing is only the silent fallback.
+    - `play_fst_sequence` clears pending keypress state before entering the player, and `run_fst_sequence_player` only honors skip input after frame `0` has already started; the first frame is not skipped by a stale triggering click.
     - `initialize_vesa_banked_mode` precomputes the banked-surface row tables that the movie decoder relies on:
       - `g_vesa_scanline_start_bank_indices` at `0xc7fca` gives the starting write-window bank for each possible scanline
       - `g_vesa_scanline_window_offsets` at `0xc87cc` gives the in-window linear offset for that scanline's left edge
