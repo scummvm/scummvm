@@ -340,6 +340,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			runtimeEntities->pauseTimerCountdowns();
 		}
 
+		transitionError = startupFlow.waitForRoomSetupTransitionHold();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+
 		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
 		drawRoomScene(_engine, *screen, scene, 0.0f);
 		screen->makeAllDirty();
