@@ -67,6 +67,7 @@ public:
 	bool resolveSecondaryAction(const StartupObjectRecord &object, InventorySecondaryAction &action) const;
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
+	Common::String resolveWeekdayLabel() const;
 	const StartupInventoryVisual *findItemAtPoint(const Common::Point &point) const;
 	Common::Rect getPanelBounds() const;
 	void drawOverlay(Graphics::Screen &screen) const;
@@ -79,6 +80,8 @@ private:
 	Common::Array<StartupInventoryVisual> _items;
 	bool _open = false;
 	int _lastPlayerHitPoints = -1;
+	int _lastStoryDayIndex = -1;
+	bool _lastHasHarvestBlade = false;
 	Common::String _selectedItemName;
 	Common::String _promptText;
 	HarvesterEngine &_engine;

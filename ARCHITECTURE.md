@@ -1370,6 +1370,29 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - Native inventory hover text is not centered and does not reuse the room hover prompt renderer.
 - The inventory exit entity is handled separately; the fixed `INV_TEXT` hover path applies to inventory objects and the `INV_STAT*` status entities that resolve through `inventory_text_key`.
 
+## Inventory Weekday Label
+
+**Confidence:** High
+
+**Evidence**
+- Early in `run_inventory_screen`, the setup branch calls `is_object_in_inventory("HARVEST_BLADE")` and only spawns the weekday label when that check is false.
+- The same branch calls `get_current_story_day_index`, indexes the pointer table at `0xc4110`, and resolves the visible strings `Monday` through `Saturday` from that table.
+- The resulting text entity is spawned through the inventory text-font path with text id `DAYS_TEXT` at `(0x1e0, 0x18c)` and color `0xfffffff4`, which matches the recovered `TEXTFONT.CFT` inventory-label styling rather than the centered bottom prompt path.
+
+**Key Functions**
+- `run_inventory_screen`
+- `get_current_story_day_index`
+- `is_object_in_inventory`
+
+**Key Data**
+- the weekday string table at `0xc4110`
+- `g_textfont_cft`
+- `DAYS_TEXT`
+
+**Notes**
+- Native inventory weekday display is a persistent overlay element, not part of the hover-tooltip or carry-prompt branches.
+- The visible label is explicitly suppressed once `HARVEST_BLADE` has entered inventory.
+
 ## Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.

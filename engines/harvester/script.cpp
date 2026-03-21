@@ -1525,6 +1525,19 @@ void Script::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &obje
 	objects.push_back(activeStatusObject);
 }
 
+bool Script::isObjectInInventory(const Common::String &objectName) const {
+	if (objectName.empty())
+		return false;
+
+	for (const StartupObjectRecord &object : _runtimeObjects) {
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
+				object.objectName.equalsIgnoreCase(objectName))
+			return true;
+	}
+
+	return false;
+}
+
 void Script::markObjectIdentShown(const StartupObjectRecord &object) {
 	if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
 		runtimeObject->identShown = true;
