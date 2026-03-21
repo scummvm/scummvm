@@ -19,7 +19,7 @@
  *
  */
 
-#include "harvester/room_monster.h"
+#include "harvester/monster.h"
 
 #include "harvester/runtime_entity.h"
 
@@ -56,11 +56,11 @@ static MonsterAnimationRange resolveAnimationRange(int facing) {
 
 } // End of anonymous namespace
 
-int RoomMonsterLogic::resolveFacingFrame(int facing) {
+int Monster::resolveFacingFrame(int facing) {
 	return resolveAnimationRange(facing).idleFrame;
 }
 
-void RoomMonsterLogic::applyAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster) {
+void Monster::applyAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster) {
 	entity.setVisible(monster.visible);
 	if (!monster.visible)
 		return;

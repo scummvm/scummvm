@@ -42,8 +42,8 @@
 #include "harvester/resources.h"
 #include "harvester/runtime_entity.h"
 #include "harvester/art.h"
-#include "harvester/room_monster.h"
-#include "harvester/room_player.h"
+#include "harvester/monster.h"
+#include "harvester/player.h"
 #include "harvester/script.h"
 
 namespace Harvester {
@@ -333,7 +333,7 @@ static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, 
 
 	float depthScale = 1.0f;
 	if (applyDepthScale) {
-		depthScale = RoomPlayerLogic::computeDepthScale(state, z);
+		depthScale = Player::computeDepthScale(state, z);
 		entity.setDepthScale(depthScale);
 		if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
 			return false;
@@ -872,7 +872,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		return hoverState;
 	}
 
-	if (RoomPlayerLogic::supportsMovementBand(state) &&
+	if (Player::supportsMovementBand(state) &&
 		mousePos.y >= state.roomMaxZScreenY &&
 		mousePos.y <= state.roomMinZScreenY) {
 		hoverState.cursorSequence = kCursorSequenceWalk;
@@ -977,7 +977,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 			hoveredObject->actionTag.c_str(), hasInteraction,
 			"", hasInspectText);
 
-		if (RoomPlayerLogic::supportsMovementBand(scene.state)) {
+		if (Player::supportsMovementBand(scene.state)) {
 			Common::Point floorProbe;
 			bool foundFloorProbe = false;
 			for (int y = scene.state.roomMaxZScreenY; y <= scene.state.roomMinZScreenY && !foundFloorProbe; y += 12) {
@@ -1010,9 +1010,9 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 				probePlayer.bottomY = scene.state.playerSpawnY;
 				probePlayer.z = (float)scene.state.playerSpawnZ;
 				probePlayer.facing = scene.state.playerFacing;
-				RoomPlayerLogic::setMoveTargetFromScreenPoint(scene.state, probePlayer, floorProbe.x, floorProbe.y);
+				Player::setMoveTargetFromScreenPoint(scene.state, probePlayer, floorProbe.x, floorProbe.y);
 				for (int i = 0; i < 32 && probePlayer.hasMoveTarget; ++i)
-					(void)RoomPlayerLogic::stepMoveTarget(
+					(void)Player::stepMoveTarget(
 						engine, scene.state, scene.sceneObjects, scene.sceneAnimations, probePlayer);
 
 				const Common::Rect movedRect = player->getScreenRect();
@@ -1021,7 +1021,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 					scene.state.roomName.c_str(), floorProbe.x, floorProbe.y,
 					movedRect.left, movedRect.top, movedRect.right, movedRect.bottom, (double)probePlayer.z);
 
-				player->setCurrentFrame(RoomPlayerLogic::resolveFacingFrame(scene.state.playerFacing));
+				player->setCurrentFrame(Player::resolveFacingFrame(scene.state.playerFacing));
 				(void)applyRoomActorPlacement(scene.state, *player,
 					scene.state.playerSpawnX, scene.state.playerSpawnY, (float)scene.state.playerSpawnZ);
 			}
@@ -1659,7 +1659,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
 		RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(monster.monsterName,
 			monster.modelPath, Common::Point(monster.posX, monster.posY), (float)monster.posZ,
-			RoomMonsterLogic::resolveFacingFrame(monster.facing));
+			Monster::resolveFacingFrame(monster.facing));
 		if (!entity) {
 			debug(1, "Harvester: unable to spawn room monster entity '%s' from '%s'",
 				monster.monsterName.c_str(), monster.modelPath.c_str());
@@ -1681,11 +1681,11 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			monster.modelPath.c_str(), monster.active, monster.visible);
 	}
 	if (state.hasEntrance) {
-		const int playerFrame = RoomPlayerLogic::resolveFacingFrame(state.playerFacing);
+		const int playerFrame = Player::resolveFacingFrame(state.playerFacing);
 		Script *startupScript = _engine.getStartupScript();
 		const int playerCombatLoadout = startupScript ? startupScript->getPlayerCombatLoadout() : 0;
 		const Common::String playerResourcePath =
-			RoomPlayerLogic::resolveCombatLoadoutResourcePath(playerCombatLoadout);
+			Player::resolveCombatLoadoutResourcePath(playerCombatLoadout);
 		const bool reusedPlayer = preservedPlayer != nullptr;
 		RuntimeEntity *player = preservedPlayer;
 		if (!reusedPlayer) {
@@ -1715,7 +1715,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				playerState.z = (float)state.playerSpawnZ;
 				playerState.facing = state.playerFacing;
 				playerState.combatLoadout = -1;
-				(void)RoomPlayerLogic::syncCombatLoadoutVisual(_engine, state, playerState, playerCombatLoadout);
+				(void)Player::syncCombatLoadoutVisual(_engine, state, playerState, playerCombatLoadout);
 			}
 			if (reusedPlayer)
 				runtimeEntities->adoptSceneEntity(player);

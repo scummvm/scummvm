@@ -19,14 +19,14 @@
  *
  */
 
-#ifndef HARVESTER_ROOM_PLAYER_H
-#define HARVESTER_ROOM_PLAYER_H
+#ifndef HARVESTER_PLAYER_H
+#define HARVESTER_PLAYER_H
 
 #include "harvester/room_support.h"
 
 namespace Harvester {
 
-class RoomPlayerLogic {
+class Player {
 public:
 	static float computeDepthScale(const StartupRoomSetupState &state, float z);
 	static int resolveFacingFrame(int facing);
@@ -68,4 +68,4 @@ public:
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_ROOM_PLAYER_H
+#endif // HARVESTER_PLAYER_H
