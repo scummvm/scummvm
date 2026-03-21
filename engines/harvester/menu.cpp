@@ -569,7 +569,8 @@ static void renderSaveGameMenuScreen(HarvesterEngine &engine, const IndexedBitma
 		const Graphics::Font &labelFont = (i == activeSlot) ? selectedLabelFont : unselectedLabelFont;
 		const int y = kSaveSlotStartY + i * kSaveSlotStride;
 		const Common::String slotLabel = buildDefaultSaveSlotLabel(i);
-		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y, 64, 0);
+		labelFont.drawString(screen, slotLabel, kSaveSlotLabelX, y,
+			labelFont.getStringWidth(slotLabel), 0);
 
 		Common::String displayTitle = slotTitles[i];
 		if (i == editingSlot && editingText)
