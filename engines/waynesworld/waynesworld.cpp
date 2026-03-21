@@ -2173,6 +2173,10 @@ void WaynesWorldEngine::handleVerbClose() {
 }
 
 void WaynesWorldEngine::lookAtUnusedTicket() {
+	// Move the mouse cursor out of the ticket so it's not directly turned into a used ticket
+	_mouseX = _mouseY = 10;
+	g_system->warpMouse(_mouseX, _mouseY);
+
     // sysMouseDriver(2);
     _gameState = 3;
     _logic->_didScratchTicket = false;
