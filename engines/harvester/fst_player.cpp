@@ -198,7 +198,22 @@ static bool extractFramePalette(const byte *frameData, uint32 frameSize, Common:
 	return true;
 }
 
-static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested) {
+static bool clearPendingVideoInput(HarvesterEngine &vm) {
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			return false;
+		default:
+			break;
+		}
+	}
+
+	return !vm.shouldQuit();
+}
+
+static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested, bool &deferredSkipRequested, bool allowSkipInput) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -208,7 +223,11 @@ static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested) {
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
-			skipRequested = true;
+			if (allowSkipInput) {
+				skipRequested = true;
+			} else {
+				deferredSkipRequested = true;
+			}
 			break;
 		default:
 			break;
@@ -219,13 +238,14 @@ static bool pumpVideoEvents(HarvesterEngine &vm, bool &skipRequested) {
 }
 
 static bool waitForAudioSync(HarvesterEngine &vm, Audio::Mixer &mixer, Audio::SoundHandle audioHandle,
-		uint64 targetPlaybackBytes, uint32 audioByteRate, bool &skipRequested) {
+		uint64 targetPlaybackBytes, uint32 audioByteRate, bool &skipRequested,
+		bool &deferredSkipRequested, bool allowSkipInput) {
 	if (audioByteRate == 0)
 		return true;
 
 	const uint32 targetPlaybackMs = (uint32)((targetPlaybackBytes * 1000ULL) / audioByteRate);
 	while (!skipRequested) {
-		if (!pumpVideoEvents(vm, skipRequested))
+		if (!pumpVideoEvents(vm, skipRequested, deferredSkipRequested, allowSkipInput))
 			return false;
 		if (skipRequested || !mixer.isSoundHandleActive(audioHandle))
 			return true;
@@ -350,17 +370,27 @@ bool FstPlayer::play(const Common::String &path) {
 
 	Common::Array<FstFrameEntry> frames;
 	frames.resize(header.frameCount);
+	uint32 maxTotalFrameSize = 0;
 	for (uint32 i = 0; i < header.frameCount; ++i) {
 		frames[i].videoSize = stream->readUint32LE();
 		frames[i].audioSize = stream->readUint16LE();
+		maxTotalFrameSize = MAX(maxTotalFrameSize, frames[i].videoSize + (uint32)frames[i].audioSize);
 	}
 
 	Common::Array<byte> pixels;
 	pixels.resize(header.width * header.height);
 	Common::fill(pixels.begin(), pixels.end(), 0);
 
+	// The original player keeps one payload buffer for the full sequence instead of
+	// reallocating per frame during playback.
+	Common::Array<byte> frameData;
+	frameData.resize(maxTotalFrameSize);
+
 	byte palette[256 * 3] = { 0 };
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	if (!clearPendingVideoInput(_vm))
+		return false;
 
 	const bool shouldSwitchToMovieDisplay =
 		header.width == 320 && header.height == 200 &&
@@ -394,6 +424,7 @@ bool FstPlayer::play(const Common::String &path) {
 
 	bool audioStarted = false;
 	bool skipRequested = false;
+	bool deferredSkipRequested = false;
 	uint32 nextFrameTime = g_system->getMillis();
 	const uint32 audioByteRate = hasPcmAudio ? header.sampleRate * 2 : 0;
 	const uint32 audioBytesPerFrame = (audioByteRate != 0 && header.frameRate != 0) ? audioByteRate / header.frameRate : 0;
@@ -401,9 +432,13 @@ bool FstPlayer::play(const Common::String &path) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	for (uint32 frameIndex = 0; frameIndex < header.frameCount; ++frameIndex) {
+		if (frameIndex != 0 && deferredSkipRequested)
+			skipRequested = true;
+		if (skipRequested)
+			break;
+
+		const bool allowSkipInput = frameIndex != 0;
 		const uint32 totalFrameSize = frames[frameIndex].videoSize + frames[frameIndex].audioSize;
-		Common::Array<byte> frameData;
-		frameData.resize(totalFrameSize);
 		if (stream->read(frameData.data(), totalFrameSize) != totalFrameSize) {
 			warning("Harvester: short read while decoding '%s' frame %u", path.c_str(), frameIndex);
 			break;
@@ -425,7 +460,9 @@ bool FstPlayer::play(const Common::String &path) {
 			}
 		}
 
-		if (audioStarted && !waitForAudioSync(_vm, *mixer, audioHandle, nextAudioSyncBytes, audioByteRate, skipRequested))
+		if (audioStarted &&
+				!waitForAudioSync(_vm, *mixer, audioHandle, nextAudioSyncBytes, audioByteRate,
+					skipRequested, deferredSkipRequested, allowSkipInput))
 			break;
 
 		const byte *videoData = frameData.data();
@@ -465,13 +502,13 @@ bool FstPlayer::play(const Common::String &path) {
 			} else {
 				nextFrameTime += 1000 / header.frameRate;
 				while (!skipRequested && g_system->getMillis() < nextFrameTime) {
-					if (!pumpVideoEvents(_vm, skipRequested))
+					if (!pumpVideoEvents(_vm, skipRequested, deferredSkipRequested, allowSkipInput))
 						break;
 					g_system->delayMillis(1);
 				}
 			}
 
-			if (!pumpVideoEvents(_vm, skipRequested) || skipRequested)
+			if (!pumpVideoEvents(_vm, skipRequested, deferredSkipRequested, allowSkipInput) || skipRequested)
 				break;
 			continue;
 		}
@@ -490,13 +527,13 @@ bool FstPlayer::play(const Common::String &path) {
 		} else {
 			nextFrameTime += 1000 / header.frameRate;
 			while (!skipRequested && g_system->getMillis() < nextFrameTime) {
-				if (!pumpVideoEvents(_vm, skipRequested))
+				if (!pumpVideoEvents(_vm, skipRequested, deferredSkipRequested, allowSkipInput))
 					break;
 				g_system->delayMillis(1);
 			}
 		}
 
-		if (!pumpVideoEvents(_vm, skipRequested) || skipRequested)
+		if (!pumpVideoEvents(_vm, skipRequested, deferredSkipRequested, allowSkipInput) || skipRequested)
 			break;
 	}
 
