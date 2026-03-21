@@ -604,6 +604,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `get_set_sergeant_completed_first_task_state` at `0x384e0` is the Sergeant-local bit set on the `SCRATCHED_TUCKER` branch immediately before dialogue `0x420d` ("So, you have completed your first task.").
   - The same block also contains the recovered Pottsdam alibi bits at `0x38440` and `0x38460`, so it is no longer Sergeant-only even though several remaining wrappers in that span are still only identified by locality.
   - `handle_talk_to_sergeant` calls into that run for quest-driven lines tied to `REMAINS`, `INVITE`, `BARBER_POLE`, `BOLTCLTH`, `SCRATCHED_TUCKER`, and `COMPLETED_LODGE_APPLICATION`.
+  - The native `COMPLETED_LODGE_APPLICATION` Monday branch is a deferred quest handoff rather than a single bark: after restoring the item to `RAH`, the handler plays Sergeant lines `0x41cd` then `0x4292`, sets `QUEST_1`, and dispatches action tag `GO_DAY_2`, which drives the story-day advance / cutscene path.
   - `handle_talk_to_dad` also reads the neighboring `FUN_00038400` wrapper on the `MEAT_PERMISSION0` item path.
   - The wrapper mechanics are confirmed, but most of the remaining local quest-state semantics in that run are still left unnamed pending stronger caller/readback evidence from the hidden no-function regions.
 - `reset_all_talk_to_handler_state` at `0x3a0b0` is the startup/menu bulk reset for the talk-to subsystem.
