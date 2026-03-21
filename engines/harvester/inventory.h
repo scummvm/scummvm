@@ -43,6 +43,11 @@ struct StartupInventoryVisual {
 	bool hasBitmap = false;
 };
 
+struct InventorySecondaryAction {
+	Common::String actionTag;
+	bool closeInventory = false;
+};
+
 class InventorySystem {
 public:
 	explicit InventorySystem(HarvesterEngine &engine);
@@ -59,6 +64,7 @@ public:
 	Common::String buildSelectedPrompt(const Common::String &targetLabel) const;
 	void selectItem(const Common::String &objectName);
 	bool toggleCombatLoadout(const StartupObjectRecord &object, bool &changed);
+	bool resolveSecondaryAction(const StartupObjectRecord &object, InventorySecondaryAction &action) const;
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
 	const StartupInventoryVisual *findItemAtPoint(const Common::Point &point) const;

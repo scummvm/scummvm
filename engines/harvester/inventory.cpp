@@ -46,6 +46,12 @@ struct InventoryCombatLoadoutEntry {
 	int loadoutId;
 };
 
+struct InventorySecondaryActionEntry {
+	const char *objectName;
+	const char *actionTag;
+	bool closeInventory;
+};
+
 static const InventoryCombatLoadoutEntry kInventoryCombatLoadoutMap[] = {
 	{ "CLEAVER", 1 },
 	{ "NAILGUN", 2 },
@@ -67,6 +73,38 @@ static const InventoryCombatLoadoutEntry kInventoryCombatLoadoutMap[] = {
 	{ "BAT", 18 },
 	{ "RAZOR", 19 },
 	{ "POOLSTICK", 20 }
+};
+
+// Recovered from native run_inventory_screen: right-clicked document/photo items dispatch
+// hardcoded closeup action tags instead of using their object records directly.
+static const InventorySecondaryActionEntry kInventorySecondaryActionMap[] = {
+	{ "NOTE_PHOTOCOPY", "GO_BOYLCOPYCU", true },
+	{ "PHOTO_OF_WHALEY_HERRILL_PHOTOCOPY", "GO_BROOMCPYCU", true },
+	{ "PHOTO_OF_WHALEY_HERRILL", "GO_BROOMPICCU", true },
+	{ "CASKET_PHOTOCOPY", "GO_CASKTCPYCU", true },
+	{ "CASKET_PHOTO", "GO_CASKTPICCU", true },
+	{ "LODGE_APPLICATION", "GO_LODGAPP1CU", true },
+	{ "COMPLETED_LODGE_APPLICATION", "GO_LODGAPP2CU", true },
+	{ "MEAT_PERMISSION0", "GO_PERMIT1CU", true },
+	{ "MEAT_PERMISSION", "GO_PERMIT2CU", true },
+	{ "CHECKBOOK", "GO_REGISTERCU", true },
+	{ "CHECKBOOK_PHOTOCOPY", "GO_RGSTRCPYCU", true },
+	{ "SAFEBOOK", "GO_SAFEBOOKCU", true },
+	{ "PATROL_SCHED", "GO_SCHEDULECU", true },
+	{ "TV_DEED", "GO_TVDEED1CU", true },
+	{ "TV_DEED_PHOTOCOPY", "GO_TVDEED2CU", true },
+	{ "INVITE", "GO_INVITECU", true },
+	{ "CLUE", "GOTO_CLUE_CU", true },
+	{ "AUTOGRAPH", "GO_AUTOGRPHCU", true }
+};
+
+static const char *const kInventoryObjectActionItems[] = {
+	"SANDWICH",
+	"SANDWICH2",
+	"SYRINGE",
+	"ST_ASPRIN",
+	"ST_COUGHM",
+	"ST_VITAMN"
 };
 
 static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, int x, int y) {
@@ -158,6 +196,36 @@ static bool resolveInventoryCombatLoadoutId(const Common::String &objectName, in
 			loadoutId = entry.loadoutId;
 			return true;
 		}
+	}
+
+	return false;
+}
+
+static bool resolveInventorySecondaryActionEntry(const Common::String &objectName,
+		InventorySecondaryAction &action) {
+	action = InventorySecondaryAction();
+	if (objectName.empty())
+		return false;
+
+	for (const InventorySecondaryActionEntry &entry : kInventorySecondaryActionMap) {
+		if (!objectName.equalsIgnoreCase(entry.objectName))
+			continue;
+
+		action.actionTag = entry.actionTag;
+		action.closeInventory = entry.closeInventory;
+		return true;
+	}
+
+	return false;
+}
+
+static bool usesObjectActionForInventorySecondaryClick(const Common::String &objectName) {
+	if (objectName.empty())
+		return false;
+
+	for (const char *itemName : kInventoryObjectActionItems) {
+		if (objectName.equalsIgnoreCase(itemName))
+			return true;
 	}
 
 	return false;
@@ -329,6 +397,19 @@ bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, boo
 
 	const int nextLoadout = startupScript->getPlayerCombatLoadout() == loadoutId ? 0 : loadoutId;
 	changed = startupScript->setPlayerCombatLoadout(nextLoadout);
+	return true;
+}
+
+bool InventorySystem::resolveSecondaryAction(const StartupObjectRecord &object,
+		InventorySecondaryAction &action) const {
+	if (resolveInventorySecondaryActionEntry(object.objectName, action))
+		return true;
+
+	action = InventorySecondaryAction();
+	if (object.actionTag.empty() || !usesObjectActionForInventorySecondaryClick(object.objectName))
+		return false;
+
+	action.actionTag = object.actionTag;
 	return true;
 }
 

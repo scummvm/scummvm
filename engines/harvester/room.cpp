@@ -1177,6 +1177,30 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							needsRedraw = true;
 							break;
 						}
+
+						InventorySecondaryAction secondaryAction;
+						if (_inventory.resolveSecondaryAction(inventoryHover->object, secondaryAction)) {
+							if (secondaryAction.closeInventory)
+								(void)_inventory.close();
+
+							StartupInteractionResult interaction;
+							if (_engine.getStartupScript()->executeActionTag(
+									secondaryAction.actionTag, interaction)) {
+								bool didTransition = false;
+								Common::Error interactionError =
+									interactionProcessor.handleInteractionResult(
+										interaction, didTransition, Common::String());
+								if (interactionError.getCode() != Common::kNoError)
+									return interactionError;
+								if (startupFlow.hasPendingMainMenuReturn())
+									return Common::kNoError;
+							}
+
+							if (!_inventory.refresh())
+								return Common::kReadingFailed;
+							needsRedraw = true;
+							break;
+						}
 					}
 					if (_inventory.close())
 						needsRedraw = true;
