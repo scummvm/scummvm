@@ -63,6 +63,10 @@ static const float kRoomActorAttackUpperYOffset = 144.44f;
 static const float kRoomActorAttackMidYOffset = 75.36f;
 static const int kDefaultMonsterAttackContactFrameOffset = 2;
 static const int kMuckeyAttackContactFrameOffset = 7;
+static const float kNativeMonsterPursuitZTolerance = 2.0f;
+static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
+
+static int roundRoomCombatFloat(float value);
 
 struct RoomMonsterFacingAnimationRange {
 	RoomMonsterFacingAnimationRange() {}
@@ -341,6 +345,44 @@ static bool resolveRoomActorAttackAnimationRange(const StartupRoomSetupState &st
 	}
 
 	return true;
+}
+
+static int stepTowardsRoomCombatInt(int current, int target, int step) {
+	if (step <= 0 || current == target)
+		return current;
+	if (current < target)
+		return MIN(current + step, target);
+	return MAX(current - step, target);
+}
+
+static int computeRectAxisGap(int minA, int maxA, int minB, int maxB) {
+	if (maxA <= minB)
+		return minB - maxA;
+	if (maxB <= minA)
+		return minA - maxB;
+	return 0;
+}
+
+static int computeRuntimeEntityHorizontalGap(const RuntimeEntity &left, const RuntimeEntity &right) {
+	const Common::Rect leftRect = left.getScreenRect();
+	const Common::Rect rightRect = right.getScreenRect();
+	return computeRectAxisGap(leftRect.left, leftRect.right, rightRect.left, rightRect.right);
+}
+
+static bool areCombatantsWithinNativeCloseRange(const StartupRoomSetupState &state,
+		const RuntimeEntity &attacker, float attackerZ,
+		const RuntimeEntity &target, float targetZ, int engageDistance) {
+	if (attacker.overlapsEntity(target))
+		return true;
+
+	const float zDelta = attackerZ >= targetZ ? attackerZ - targetZ : targetZ - attackerZ;
+	if (zDelta > kNativeMonsterPursuitZTolerance)
+		return false;
+
+	const float nearZ = attackerZ < targetZ ? attackerZ : targetZ;
+	const int nativeTolerance = roundRoomCombatFloat(
+		Player::computeDepthScale(state, nearZ) * kNativeMonsterHorizontalWaypointTolerance);
+	return computeRuntimeEntityHorizontalGap(attacker, target) <= MAX(MAX(0, engageDistance), nativeTolerance);
 }
 
 static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &sound1,
@@ -1158,7 +1200,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				continue;
 
 			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
-			if (entity && playerState.entity->overlapsEntity(*entity))
+			if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+					*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
 				return &monster;
 		}
 
@@ -1173,19 +1216,40 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				continue;
 
 			RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
-			if (entity && playerState.entity->overlapsEntity(*entity))
+			if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+					*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
 				return &npc;
 		}
 
 		return nullptr;
 	};
-	auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity) {
+	auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity, int engageDistance = 0) {
 		if (!playerState.entity || !targetEntity)
 			return false;
 		if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
 			return true;
 
-		return playerState.entity->overlapsEntity(*targetEntity);
+		return areCombatantsWithinNativeCloseRange(scene.state,
+			*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
+	};
+	auto monsterAttackCanReachPlayer = [&](const StartupMonsterRecord &monster, const RuntimeEntity &monsterEntity) {
+		if (!playerState.entity)
+			return false;
+
+		return areCombatantsWithinNativeCloseRange(scene.state,
+			monsterEntity, (float)monster.posZ, *playerState.entity, playerState.z, monster.engageDistance);
+	};
+	auto describeCombatTargetClass = [](int classId) -> const char * {
+		switch (classId) {
+		case kRuntimeEntityClassNpc:
+			return "npc";
+		case kRuntimeEntityClassMonster:
+			return "monster";
+		case kRuntimeEntityClassPlayer:
+			return "player";
+		default:
+			return "none";
+		}
 	};
 	auto handleCombatInteraction = [&](StartupInteractionResult interaction) -> Common::Error {
 		bool didTransition = false;
@@ -1206,13 +1270,24 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (hoverState.npc) {
 			playerState.attackTargetName = hoverState.npc->npcName;
 			playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+			debugC(1, kDebugCombat,
+				"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
+				playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
 			return;
 		}
 
 		if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
 			playerState.attackTargetName = monster->monsterName;
 			playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+			debugC(1, kDebugCombat,
+				"Harvester: combat player target capture class='monster' name='%s' cursor=(%d,%d)",
+				playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
+			return;
 		}
+
+		debugC(1, kDebugCombat,
+			"Harvester: combat player target capture class='none' cursor=(%d,%d)",
+			_mousePos.x, _mousePos.y);
 	};
 	auto resolvePlayerAttackContact = [&]() -> Common::Error {
 		if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
@@ -1222,6 +1297,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		playerState.attackContactResolved = true;
+		debugC(1, kDebugCombat,
+			"Harvester: combat player attack contact frame=%d loadout=%d target_class='%s' target='%s'",
+			playerState.entity->getCurrentFrame(), playerState.combatLoadout,
+			describeCombatTargetClass(playerState.attackTargetClassId), playerState.attackTargetName.c_str());
 		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)
 			return Common::kNoError;
@@ -1238,14 +1317,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			RuntimeEntity *npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
 			if (!npc || !npcEntity || !playerAttackCanReachTarget(npcEntity))
 				npc = Player::isProjectileCombatLoadout(playerState.combatLoadout) ? nullptr : findOverlappingNpcTarget();
-			if (!npc)
+			if (!npc) {
+				debugC(1, kDebugCombat,
+					"Harvester: combat player attack missed class='npc' target='%s' reason='no reachable npc'",
+					playerState.attackTargetName.c_str());
 				return Common::kNoError;
+			}
 
 			const bool runtimeChanged =
 				startupScript->triggerRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
 			const bool jimmyFlagChanged = npc->npcName.equalsIgnoreCase("JIMMY")
 				? startupScript->setRuntimeFlagValue("JIMMY_ATTACKED", true)
 				: false;
+			debugC(1, kDebugCombat,
+				"Harvester: combat player npc hit target='%s' damage_type=%d runtime_changed=%d jimmy_flag=%d",
+				npc->npcName.c_str(), damageType, runtimeChanged, jimmyFlagChanged);
 			if (!runtimeChanged && !jimmyFlagChanged)
 				return Common::kNoError;
 
@@ -1266,18 +1352,27 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
 			monster = findRoomMonsterRecordByName(playerState.attackTargetName);
 		RuntimeEntity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
-		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity)) {
+		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity, monster ? monster->engageDistance : 0)) {
 			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout))
 				monster = findOverlappingMonsterTarget();
 			else
 				monster = nullptr;
 			monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
 		}
-		if (!monster || !monsterEntity)
+		if (!monster || !monsterEntity) {
+			debugC(1, kDebugCombat,
+				"Harvester: combat player attack missed class='monster' target='%s' reason='no reachable monster'",
+				playerState.attackTargetName.c_str());
 			return Common::kNoError;
+		}
 
+		const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
+		const int hitPointsBefore = monster->currentHitPoints;
 		monster->currentHitPoints = MAX(0,
-			monster->currentHitPoints - Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout));
+			monster->currentHitPoints - damageAmount);
+		debugC(1, kDebugCombat,
+			"Harvester: combat player monster hit target='%s' damage=%d hp=%d->%d reachable=1",
+			monster->monsterName.c_str(), damageAmount, hitPointsBefore, monster->currentHitPoints);
 		if (monster->currentHitPoints > 0) {
 			(void)startupScript->syncRuntimeMonsterRecord(*monster);
 			needsRedraw = true;
@@ -1293,6 +1388,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		StartupInteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
+		debugC(1, kDebugCombat,
+			"Harvester: combat monster defeated target='%s' on_death='%s'",
+			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
 		if (!monster->onDeathActionTag.empty()) {
 			StartupInteractionResult deathInteraction;
 			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
@@ -1345,11 +1443,27 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (combatState.attackContactFrame >= 0 &&
 						currentFrame >= combatState.attackContactFrame) {
 					combatState.attackContactFrame = -1;
-					if (startupScript &&
-							startupScript->adjustPlayerCurrentHitPoints(-monster.damageAmount) &&
-							startupScript->getPlayerCurrentHitPoints() <= 0) {
-						playerAlive = false;
-						stopPlayerRegionInteraction();
+					const bool playerInRange = playerState.entity && monsterAttackCanReachPlayer(monster, *entity);
+					if (!startupScript) {
+						debugC(1, kDebugCombat,
+							"Harvester: combat monster attack contact monster='%s' frame=%d skipped reason='no startup script'",
+							monster.monsterName.c_str(), currentFrame);
+					} else if (!playerInRange) {
+						debugC(1, kDebugCombat,
+							"Harvester: combat monster attack miss monster='%s' frame=%d player_hp=%d reason='out of range'",
+							monster.monsterName.c_str(), currentFrame, startupScript->getPlayerCurrentHitPoints());
+					} else {
+						const int playerHitPointsBefore = startupScript->getPlayerCurrentHitPoints();
+						const bool changed = startupScript->adjustPlayerCurrentHitPoints(-monster.damageAmount);
+						const int playerHitPointsAfter = startupScript->getPlayerCurrentHitPoints();
+						debugC(1, kDebugCombat,
+							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d player_hp=%d->%d changed=%d",
+							monster.monsterName.c_str(), currentFrame, monster.damageAmount,
+							playerHitPointsBefore, playerHitPointsAfter, changed);
+						if (changed && playerHitPointsAfter <= 0) {
+							playerAlive = false;
+							stopPlayerRegionInteraction();
+						}
 					}
 					needsRedraw = true;
 				}
@@ -1369,46 +1483,58 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				continue;
 			combatState.nextMovementTick = now + moveInterval;
 
-			const int targetBottomY = playerState.bottomY;
+			const int previousX = monster.posX;
+			const int previousY = monster.posY;
+			const int previousZ = monster.posZ;
 			const int dx = playerState.centerX - monster.posX;
-			const int dy = targetBottomY - monster.posY;
 			const int absDx = ABS(dx);
-			const int absDy = ABS(dy);
+			const int playerTargetZ = roundRoomCombatFloat(playerState.z);
+			const float zDelta = playerState.z - (float)monster.posZ;
+			const float absZDelta = zDelta >= 0.0f ? zDelta : -zDelta;
 			const int engageDistance = MAX(0, monster.engageDistance);
-			bool moved = false;
+			bool attemptedMoveX = false;
+			bool attemptedMoveZ = false;
 			if (absDx > engageDistance) {
+				attemptedMoveX = true;
 				const int step = MAX<int>(1, roundRoomCombatFloat(
 					Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
 				const int direction = dx < 0 ? -1 : 1;
 				const int desiredX = playerState.centerX - direction * engageDistance;
-				if (direction < 0)
-					monster.posX = MAX(monster.posX - step, desiredX);
-				else
-					monster.posX = MIN(monster.posX + step, desiredX);
+				monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredX, step);
 				monster.posX = CLIP<int>(monster.posX, monster.minXBound, monster.maxXBound);
-				moved = true;
 			}
-			if (absDy > depthStep) {
-				if (dy < 0)
-					monster.posZ -= depthStep;
-				else
-					monster.posZ += depthStep;
+			if (absZDelta > kNativeMonsterPursuitZTolerance) {
+				attemptedMoveZ = true;
+				monster.posZ = stepTowardsRoomCombatInt(monster.posZ, playerTargetZ, depthStep);
 				monster.posZ = (int)clampRoomDepthForEvent(scene.state, (float)monster.posZ);
 				monster.posY = mapRoomDepthToScreenYForCombat(scene.state, (float)monster.posZ, monster.posY);
-				moved = true;
 			}
 
+			const bool moved = monster.posX != previousX || monster.posY != previousY || monster.posZ != previousZ;
 			if (moved) {
-				if (absDx > absDy)
-					monster.facing = dx < 0 ? 1 : 2;
-				else if (dy != 0)
-					monster.facing = dy < 0 ? 3 : 0;
+				const int movedX = monster.posX - previousX;
+				const int movedY = monster.posY - previousY;
+				if (ABS(movedX) > ABS(movedY))
+					monster.facing = movedX < 0 ? 1 : 2;
+				else if (movedY != 0)
+					monster.facing = movedY < 0 ? 3 : 0;
 				(void)applyRoomActorPlacement(scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
 				if (startupScript)
 					(void)startupScript->syncRuntimeMonsterRecord(monster);
+				debugC(1, kDebugCombat,
+					"Harvester: combat monster chase move monster='%s' center_dx=%d z_delta=%.2f engage=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
+					monster.monsterName.c_str(), dx, (double)zDelta, engageDistance,
+					previousX, previousY, previousZ, monster.posX, monster.posY, monster.posZ, monster.facing);
 				needsRedraw = true;
 				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, true) || needsRedraw;
 				continue;
+			}
+
+			if (attemptedMoveX || attemptedMoveZ) {
+				debugC(1, kDebugCombat,
+					"Harvester: combat monster chase stalled monster='%s' center_dx=%d z_delta=%.2f engage=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
+					monster.monsterName.c_str(), dx, (double)zDelta, engageDistance,
+					monster.posX, monster.posY, monster.posZ, attemptedMoveX, attemptedMoveZ);
 			}
 
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
@@ -1435,6 +1561,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			entity->setAnimationRate(kRoomMonsterAnimationRate);
 			entity->setAnimationEnabled(true);
 			entity->setCurrentFrame(range.firstFrame);
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster attack start monster='%s' frames=%d..%d contact=%d resume_facing=%d center_dx=%d z_delta=%.2f engage=%d next_attack_tick=%u",
+				monster.monsterName.c_str(), range.firstFrame, range.lastFrame,
+				combatState.attackContactFrame, range.resumeFacing, dx, (double)zDelta,
+				engageDistance, combatState.nextAttackAllowedTick);
 			needsRedraw = true;
 		}
 
@@ -1876,9 +2007,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					(void)Player::syncCombatLoadoutVisual(_engine, scene.state, playerState,
 						startupScript->getPlayerCombatLoadout());
 					capturePlayerAttackTarget();
-					if (Player::startAttackAnimation(scene.state, playerState, _mousePos))
+					if (Player::startAttackAnimation(scene.state, playerState, _mousePos)) {
+						debugC(1, kDebugCombat,
+							"Harvester: combat player attack start loadout=%d target_class='%s' target='%s' cursor=(%d,%d)",
+							playerState.combatLoadout,
+							describeCombatTargetClass(playerState.attackTargetClassId),
+							playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
 						needsRedraw = true;
-					else {
+					} else {
 						playerState.attackTargetName.clear();
 						playerState.attackTargetClassId = -1;
 					}
