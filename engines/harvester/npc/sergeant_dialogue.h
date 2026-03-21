@@ -30,8 +30,9 @@ class SergeantDialogueHandler : public NpcDialogueHandler {
 public:
 	struct SergeantRoomDialogueState {
 		bool introPending = true;
+		bool dialogueStateD2d50 = false;
 		bool dialogueStateD2d54 = false;
-		bool completedFirstTaskState = false;
+		bool day5ReminderShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
