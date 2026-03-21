@@ -28,6 +28,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/compression/installshield_cab.h"
+#include "common/fs.h"
+#include "common/language.h"
 
 #include "agos/detection.h"
 #include "agos/intern_detection.h"
@@ -71,6 +73,71 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
+
+static bool hasSimon2LangFile(const Common::FSNode &gameDir, const char *filename) {
+	Common::FSNode rootFile = gameDir.getChild(filename);
+	if (rootFile.exists())
+		return true;
+
+	Common::FSNode dataDir = gameDir.getChild("data");
+	if (dataDir.exists() && dataDir.isDirectory()) {
+		Common::FSNode dataFile = dataDir.getChild(filename);
+		if (dataFile.exists())
+			return true;
+	}
+
+	return false;
+}
+
+static Common::String stripLanguageGUIOptions(const Common::String &guiOptions) {
+	Common::String filtered;
+	const char *p = guiOptions.c_str();
+
+	while (*p) {
+		while (*p == ' ')
+			++p;
+		if (!*p)
+			break;
+
+		const char *start = p;
+		while (*p && *p != ' ')
+			++p;
+
+		Common::String token(start, p);
+		if (!token.hasPrefix("lang_")) {
+			if (!filtered.empty())
+				filtered += " ";
+			filtered += token;
+		}
+	}
+
+	return filtered;
+}
+
+static void applySimon2LanguageGUIOptions(DetectedGame &game, const Common::FSNode &gameDir) {
+	if (game.gameId != "simon2" || !gameDir.exists() || !gameDir.isDirectory())
+		return;
+
+	const bool hasEnglish = hasSimon2LangFile(gameDir, "simon2.english");
+	const bool hasGerman = hasSimon2LangFile(gameDir, "simon2.german");
+	const bool hasItalian = hasSimon2LangFile(gameDir, "simon2.italian");
+	const bool hasFrench = hasSimon2LangFile(gameDir, "simon2.french");
+
+	if (!hasEnglish && !hasGerman && !hasItalian && !hasFrench)
+		return;
+
+	game.setGUIOptions(stripLanguageGUIOptions(game.getGUIOptions()));
+
+	if (hasEnglish)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
+	if (hasGerman)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::DE_DEU));
+	if (hasItalian)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::IT_ITA));
+	if (hasFrench)
+		game.appendGUIOptions(Common::getGameGUIOptionsDescriptionLanguage(Common::FR_FRA));
+}
+
 using namespace AGOS;
 
 class AgosMetaEngineDetection : public AdvancedMetaEngineDetection<AGOS::AGOSGameDescription> {
@@ -87,7 +154,30 @@ public:
 
 	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
-		return AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+		Common::Error err = AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+
+		if (err.getCode() == Common::kNoError && game.gameId == "simon2" && ConfMan.hasKey("path")) {
+			Common::FSNode gameDir(ConfMan.getPath("path"));
+			applySimon2LanguageGUIOptions(game, gameDir);
+		}
+
+		return err;
+	}
+
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override {
+		DetectedGames games = AdvancedMetaEngineDetection::detectGames(fslist, skipADFlags, skipIncomplete);
+
+		if (fslist.empty())
+			return games;
+
+		Common::FSNode gameDir = fslist.begin()->getParent();
+
+		for (DetectedGame &game : games) {
+			if (game.gameId == "simon2")
+				applySimon2LanguageGUIOptions(game, gameDir);
+		}
+
+		return games;
 	}
 
 	const char *getName() const override {

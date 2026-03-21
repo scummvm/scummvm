@@ -26,6 +26,7 @@
 
 #include "common/array.h"
 #include "common/error.h"
+#include "common/hashmap.h"
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
@@ -385,6 +386,8 @@ protected:
 	bool _backFlag;
 
 	Common::Language _language;
+	bool _useSimon2LanguageOverlay;
+	Common::HashMap<Common::String, Common::String> _simon2LanguageOverlay;
 	bool _copyProtection;
 	bool _pause;
 	bool _speech;
@@ -775,6 +778,9 @@ protected:
 
 	void showMessageFormat(MSVC_PRINTF const char *s, ...) GCC_PRINTF(2, 3);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
+	void loadSimon2LanguageOverlay();
+	bool hasSimon2LanguageFiles() const;
+	Common::String translateLanguageOverlay(const Common::String &english) const;
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
 
