@@ -42,6 +42,7 @@ static const int kInventoryItemStartY = 115;
 static const int kInventoryItemMaxRight = 564;
 static const int kInventoryItemSpacing = 5;
 static const byte kTransparentPaletteIndex = 0;
+static const char *const kHarvestBladeObjectName = "HARVEST_BLADE";
 
 struct InventoryCombatLoadoutEntry {
 	const char *objectName;
@@ -233,6 +234,25 @@ static bool usesObjectActionForInventorySecondaryClick(const Common::String &obj
 	return false;
 }
 
+static Common::String resolveInventoryWeekdayLabel(int storyDayIndex) {
+	switch (storyDayIndex) {
+	case 1:
+		return "Monday";
+	case 2:
+		return "Tuesday";
+	case 3:
+		return "Wednesday";
+	case 4:
+		return "Thursday";
+	case 5:
+		return "Friday";
+	case 6:
+		return "Saturday";
+	default:
+		return Common::String();
+	}
+}
+
 static void debugLogInventoryVisual(const StartupInventoryVisual &visual, const Common::String &spritePath) {
 	debugC(1, kDebugInventory,
 		"Harvester: inventory visual object='%s' sprite='%s' alt='%s' chosen='%s' bounds=(%d,%d)-(%d,%d) action='%s' owner='%s' text='%s'",
@@ -256,6 +276,8 @@ bool InventorySystem::refresh() {
 		return false;
 
 	_lastPlayerHitPoints = startupScript->getPlayerCurrentHitPoints();
+	_lastStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+	_lastHasHarvestBlade = startupScript->isObjectInInventory(kHarvestBladeObjectName);
 
 	Common::Array<StartupObjectRecord> inventoryObjects;
 	startupScript->getVisibleInventoryObjects(inventoryObjects);
@@ -351,7 +373,11 @@ bool InventorySystem::refreshIfRuntimeStateChanged() {
 		return false;
 
 	const int currentHitPoints = startupScript->getPlayerCurrentHitPoints();
-	if (currentHitPoints == _lastPlayerHitPoints)
+	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
+	const bool hasHarvestBlade = startupScript->isObjectInInventory(kHarvestBladeObjectName);
+	if (currentHitPoints == _lastPlayerHitPoints &&
+			currentStoryDayIndex == _lastStoryDayIndex &&
+			hasHarvestBlade == _lastHasHarvestBlade)
 		return false;
 
 	return refresh();
@@ -447,6 +473,14 @@ void InventorySystem::setPromptText(const Common::String &promptText) {
 
 const Common::String &InventorySystem::getPromptText() const {
 	return _promptText;
+}
+
+Common::String InventorySystem::resolveWeekdayLabel() const {
+	Script *startupScript = _engine.getStartupScript();
+	if (!startupScript || startupScript->isObjectInInventory(kHarvestBladeObjectName))
+		return Common::String();
+
+	return resolveInventoryWeekdayLabel(startupScript->getCurrentStoryDayIndex());
 }
 
 const StartupInventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {

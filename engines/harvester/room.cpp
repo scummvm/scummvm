@@ -54,6 +54,8 @@ static const int kNativeInventoryDragCloseRight = 0x239;
 static const int kNativeInventoryDragCloseBottom = 0x1b4;
 static const int kNativeInventoryTooltipX = 0xbc;
 static const int kNativeInventoryTooltipY = 0x19e;
+static const int kNativeInventoryWeekdayX = 0x1e0;
+static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
 
 struct MonsterAnimationRange {
@@ -232,6 +234,15 @@ static void drawInventoryTooltip(Graphics::Screen &screen, const Graphics::Font 
 
 	font.drawString(&screen, tooltipText, kNativeInventoryTooltipX, kNativeInventoryTooltipY,
 		font.getStringWidth(tooltipText), kNativeInventoryTooltipColor);
+}
+
+static void drawInventoryWeekday(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &weekdayText) {
+	if (weekdayText.empty())
+		return;
+
+	font.drawString(&screen, weekdayText, kNativeInventoryWeekdayX, kNativeInventoryWeekdayY,
+		font.getStringWidth(weekdayText), kNativeInventoryTooltipColor);
 }
 
 static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
@@ -1191,8 +1202,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-			if (_inventory.isOpen())
+			if (_inventory.isOpen()) {
 				_inventory.drawOverlay(*activeScreen);
+				drawInventoryWeekday(*activeScreen, *inventoryTooltipFont, _inventory.resolveWeekdayLabel());
+			}
 			if (inventorySelectionActive) {
 				_inventory.drawSelectedDragItem(*activeScreen, _mousePos);
 			} else if (roomCarryActive && carriedRoomItemBitmap.isValid()) {

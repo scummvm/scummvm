@@ -397,6 +397,7 @@ public:
 	bool hasObjectInteraction(const StartupObjectRecord &object) const;
 	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
 	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
+	bool isObjectInInventory(const Common::String &objectName) const;
 	void markObjectIdentShown(const StartupObjectRecord &object);
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
