@@ -479,6 +479,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.attackLastFrame = -1;
 			if (!playerState.entity)
 				return false;
+			playerState.attackSoundPlayed = false;
+			playerState.attackSoundFrame = -1;
 			const int resumeFacing = playerState.attackResumeFacing >= 0
 				? playerState.attackResumeFacing
 				: (playerState.facing >= 0 ? playerState.facing : 0);
@@ -577,6 +579,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.attackFirstFrame = -1;
 			playerState.attackLastFrame = -1;
 			playerState.attackResumeFacing = -1;
+			playerState.attackSoundPlayed = false;
+			playerState.attackSoundFrame = -1;
 			playerState.combatLoadout =
 				_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
 			pendingRegionName.clear();
@@ -1317,7 +1321,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							!InventorySystem::isExitObject(inventoryHover->object) &&
 							!InventorySystem::isStatusObject(inventoryHover->object)) {
 						bool loadoutChanged = false;
-						if (_inventory.toggleCombatLoadout(inventoryHover->object, loadoutChanged)) {
+						if (_inventory.toggleCombatLoadout(inventoryHover->object,
+								playerState.combatLoadout, loadoutChanged)) {
 							debugC(1, kDebugInventory,
 								"Harvester: inventory right click handled as combat toggle object='%s' changed=%d",
 								inventoryHover->object.objectName.c_str(), loadoutChanged);
@@ -1326,6 +1331,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 								if (playerState.entity) {
 									(void)syncPlayerCombatLoadoutVisual(_engine, scene.state, playerState,
 										_engine.getStartupScript()->getPlayerCombatLoadout());
+								} else if (_engine.getStartupScript()) {
+									playerState.combatLoadout =
+										_engine.getStartupScript()->getPlayerCombatLoadout();
 								}
 								if (!_inventory.refresh())
 									return Common::kReadingFailed;
@@ -1790,7 +1798,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		bool playerAdvancedThisFrame = false;
-		if (updatePlayerAttackAnimationState(playerState)) {
+		if (updatePlayerAttackAnimationState(_engine, playerState)) {
 			needsRedraw = true;
 		}
 		if (!playerState.attackActive && updatePlayerTurnAnimationState(playerState)) {
