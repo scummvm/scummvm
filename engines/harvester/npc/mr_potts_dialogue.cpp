@@ -90,6 +90,17 @@ static const DialogueLineEntry kMrPottsKarinFoundAliveWithStephMidgameLines[] = 
 	{ 0x2ba4, "MR_POTTS", 0 }
 };
 
+static const DialogueLineEntry kMrPottsDay6KarinFoundAliveAlibiFollowupLines[] = {
+	{ 0x2bf2, "MRS_POTTS", 1 },
+	{ 0x2bf7, "MR_POTTS", 2 },
+	{ 0x2bfe, "MR_POTTS", 4 }
+};
+
+static const DialogueLineEntry kMrPottsDay6KarinFoundAliveNoMoynahanLines[] = {
+	{ 0x2c1a, "MR_POTTS", 0 },
+	{ 0x2c20, "MRS_POTTS", 0 }
+};
+
 static const DialogueLineEntry kMrPottsMurderAccusationOpeningLines[] = {
 	{ 0x2d58, "MR_POTTS", 2 },
 	{ 0x2d60, "MRS_POTTS", 1 },
@@ -173,6 +184,9 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto playMrPottsLine = [&](int wavId, int headVariant) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, "MR_POTTS", headVariant);
+	};
+	auto playMrsPottsLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "MRS_POTTS", headVariant);
 	};
 	auto playPcLine = [&](int wavId, int headVariant) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
@@ -474,6 +488,52 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playMrPottsLine(0x2bd1, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+
+			if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE") &&
+					!state.day6KarinFoundAliveFollowupShown) {
+				state.day6KarinFoundAliveFollowupShown = true;
+
+				int followupResponseIndex = 0;
+				responseError = runtime.runResponseMenu(0x1e4, followupResponseIndex);
+				if (responseError.getCode() != Common::kNoError)
+					return responseError;
+
+				if (followupResponseIndex == 1) {
+					lineError = playMrPottsLine(0x2be9, 2);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+
+					sharedState.discussedMrPottsTuesdayNightAlibi = true;
+					lineError = playSequence(kMrPottsDay6KarinFoundAliveAlibiFollowupLines,
+						ARRAYSIZE(kMrPottsDay6KarinFoundAliveAlibiFollowupLines));
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+
+					const bool discussedMoynahanKarinKidnaped =
+						sharedState.moynahanKarinKidnapedDiscussionState;
+					int nestedResponseIndex = 0;
+					responseError = runtime.runResponseMenu(
+						discussedMoynahanKarinKidnaped ? 0x1e5 : 0x1e6,
+						nestedResponseIndex);
+					if (responseError.getCode() != Common::kNoError)
+						return responseError;
+
+					if (nestedResponseIndex == 1) {
+						lineError = discussedMoynahanKarinKidnaped
+							? playMrPottsLine(0x2c15, 2)
+							: playSequence(kMrPottsDay6KarinFoundAliveNoMoynahanLines,
+								ARRAYSIZE(kMrPottsDay6KarinFoundAliveNoMoynahanLines));
+					} else if (nestedResponseIndex == 2) {
+						lineError = playMrsPottsLine(0x2c24, 2);
+					}
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				} else if (followupResponseIndex == 2) {
+					lineError = playMrPottsLine(0x2c2c, 0);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+			}
 		}
 	}
 
@@ -702,7 +762,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			const bool hasMoynahanAccusation = state.discussedMoynahanKarinKidnapedState;
+			const bool hasMoynahanAccusation = sharedState.moynahanKarinKidnapedDiscussionState;
 			const bool hasWeddingMatchesAccusation = hasInventoryItem(kWeddingMatchesObjectName);
 			if (!hasMoynahanAccusation && !hasWeddingMatchesAccusation) {
 				lineError = playPcLine(0x2e46, 2);
