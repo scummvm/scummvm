@@ -1320,6 +1320,30 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - Native bottom-of-screen carry prompts are not drawn with the fallback GUI font path; they are materialized as the `USING_ON_ID` text-entry overlay using `MEDFONT1.CFT` at y `0x1ce`.
 - Plain pickup does not rerun full room materialization. Native mutates the live scene in place for both carry-start and direct-to-inventory pickup, and only action-driven runtime mutations or room transitions trigger the heavier refresh paths.
 
+## Inventory Secondary-Click Actions
+
+**Confidence:** High
+
+**Evidence**
+- In `run_inventory_screen`, the right-click branch first maps the weapon subset (`CLEAVER` through `POOLSTICK`) to fixed combat-loadout ids `1..20`, then calls `set_player_combat_loadout` and refreshes the inventory status state without leaving the inventory loop.
+- The same branch maps a separate hardcoded document/photo subset to fixed action tags rather than object-record metadata: `NOTE_PHOTOCOPY -> GO_BOYLCOPYCU`, `CHECKBOOK -> GO_REGISTERCU`, `CHECKBOOK_PHOTOCOPY -> GO_RGSTRCPYCU`, `TV_DEED -> GO_TVDEED1CU`, `TV_DEED_PHOTOCOPY -> GO_TVDEED2CU`, `CLUE -> GOTO_CLUE_CU`, `AUTOGRAPH -> GO_AUTOGRPHCU`, plus the corresponding Whaley photo, casket photo, permit, lodge-application, safebook, patrol-schedule, and invite entries.
+- After dispatching one of those hardcoded closeup action tags, `run_inventory_screen` tears down the inventory render state and returns to the caller instead of remaining inside the inventory loop.
+- Only the six consumable/self-use items `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN` fall back to the clicked object's own `action_tag`; that branch stays inside the inventory loop so HP/status changes are visible immediately.
+
+**Key Functions**
+- `run_inventory_screen`
+- `dispatch_room_event_actions`
+- `set_player_combat_loadout`
+
+**Key Data**
+- the weapon-name to loadout-id mapping inside `run_inventory_screen`
+- the document/photo action-tag table at `0xc40c8`
+- `ObjectRecord.action_tag`
+
+**Notes**
+- Native inventory secondary-click is not a generic inspect path. It is a hardcoded dispatcher with three distinct behaviors: weapon loadout toggle, document/photo closeup, and object-defined consumable self-use.
+- The document/photo closeups are driven by global action tags rather than per-object metadata, which is why the ScummVM inventory overlay needs its own recovered mapping table for parity.
+
 ## Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.
