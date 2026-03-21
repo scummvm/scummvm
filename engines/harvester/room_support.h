@@ -71,6 +71,8 @@ struct StartupRoomPlayerState {
 	int attackFirstFrame = -1;
 	int attackLastFrame = -1;
 	int attackResumeFacing = -1;
+	bool attackSoundPlayed = false;
+	int attackSoundFrame = -1;
 };
 
 struct StartupRoomHoverState {
@@ -133,7 +135,7 @@ bool syncPlayerCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSet
 bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing);
 bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
 	StartupRoomPlayerState &playerState, const Common::Point &mousePos);
-bool updatePlayerAttackAnimationState(StartupRoomPlayerState &playerState);
+bool updatePlayerAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
 bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
 bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState);
 bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,

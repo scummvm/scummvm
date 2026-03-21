@@ -865,6 +865,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `current_hit_points` is the save/load-persisted monster HP field; parser initialization copies `initial_hit_points` into it.
   - `min_x_bound` defaults to `0x14` and `max_x_bound` defaults to `0x26b` when omitted by the parser.
   - The sound-slot mapping is confirmed both by `spawn_monster_entity_from_record` and by the player combat avatar builder, which installs the same runtime sound layout explicitly.
+  - `spawn_player_combat_avatar` seeds loadout-specific player attack samples into those same `+0x1148..+0x1150` slots, and `update_actor_runtime_state` triggers the player attack sound when `current_frame_index == first_frame_index + 1`; melee loadouts randomly choose one loaded attack sample, while ranged loadouts route that frame through the weapon fire/empty helper instead of the random selector.
   - `field_38`, `field_3c`, `field_44`, and `field_48` are heap strings freed during world teardown, but no confirmed live consumers have been recovered yet.
   - `field_74` and `field_7c` are copied into live runtime slots `+0x1170` and `+0x1178`, but the current binary only writes those slots; no read-side consumers were recovered.
   - Remaining unknowns include `field_1c`, `field_38`, `field_3c`, `field_44`, `field_48`, `field_74`, `field_7c`

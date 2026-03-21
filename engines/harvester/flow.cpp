@@ -150,6 +150,38 @@ struct PlayerAttackAnimationRange {
 	int resumeFacing = 0;
 };
 
+struct PlayerAttackSoundSet {
+	uint soundCount;
+	const char *soundPaths[3];
+};
+
+// Recovered from spawn_player_combat_avatar and update_actor_runtime_state:
+// the native room-combat path commits player attack audio on first_frame + 1.
+static const int kPlayerAttackSoundTriggerFrameOffset = 1;
+static const PlayerAttackSoundSet kPlayerAttackSoundSets[] = {
+	{ 3, { "2:/sound/effects/swoosh1.wav", "2:/sound/effects/swoosh2.wav", "2:/sound/effects/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 1, { "2:/SOUND/EFFECTS/NAILGUN1.wav", nullptr, nullptr } },
+	{ 1, { "1:/sound/effects/shotgun2.wav", nullptr, nullptr } },
+	{ 1, { "2:/SOUND/EFFECTS/gunshot.wav", nullptr, nullptr } },
+	{ 1, { "2:/SOUND/EFFECTS/gunshot.wav", nullptr, nullptr } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/sound/effects/swoosh1.wav", "2:/sound/effects/swoosh2.wav", "2:/sound/effects/swoosh3.wav" } },
+	{ 1, { "1:/sound/effects/CLN_atk0.wav", nullptr, nullptr } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh3.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
+	{ 3, { "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } }
+};
+
 } // End of anonymous namespace
 
 static int roundToInt(float value) {
@@ -451,6 +483,29 @@ static Common::String resolvePlayerCombatLoadoutResourcePath(int loadout) {
 		return Common::String(kPlayerActorResourcePath);
 
 	return Common::String::format("1:/GRAPHIC/MONSTERS/PC/PC%02d.ABM", loadout);
+}
+
+static const PlayerAttackSoundSet *resolvePlayerAttackSoundSet(int loadout) {
+	if (loadout < 0 || loadout >= (int)ARRAYSIZE(kPlayerAttackSoundSets))
+		return nullptr;
+
+	if (kPlayerAttackSoundSets[loadout].soundCount == 0)
+		return nullptr;
+
+	return &kPlayerAttackSoundSets[loadout];
+}
+
+static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
+	const PlayerAttackSoundSet *soundSet = resolvePlayerAttackSoundSet(loadout);
+	if (!soundSet)
+		return false;
+
+	uint soundIndex = 0;
+	if (soundSet->soundCount > 1)
+		soundIndex = engine.getRandomNumber(soundSet->soundCount - 1);
+
+	const char *soundPath = soundSet->soundPaths[soundIndex];
+	return soundPath && engine.playStartupSound(soundPath);
 }
 
 static float computeActorDepthScale(const StartupRoomSetupState &state, float z);
@@ -1372,6 +1427,8 @@ bool syncPlayerCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSet
 	playerState.attackFirstFrame = -1;
 	playerState.attackLastFrame = -1;
 	playerState.attackResumeFacing = -1;
+	playerState.attackSoundPlayed = false;
+	playerState.attackSoundFrame = -1;
 	(void)setPlayerIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	(void)applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
@@ -1423,6 +1480,10 @@ bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
 	playerState.attackFirstFrame = range.firstFrame;
 	playerState.attackLastFrame = range.lastFrame;
 	playerState.attackResumeFacing = range.resumeFacing;
+	playerState.attackSoundPlayed = resolvePlayerAttackSoundSet(playerState.combatLoadout) == nullptr;
+	playerState.attackSoundFrame = playerState.attackSoundPlayed
+		? -1
+		: (range.firstFrame + kPlayerAttackSoundTriggerFrameOffset);
 	playerState.nextMovementTick = 0;
 	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
@@ -1433,9 +1494,15 @@ bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
 	return true;
 }
 
-bool updatePlayerAttackAnimationState(StartupRoomPlayerState &playerState) {
+bool updatePlayerAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState) {
 	if (!playerState.attackActive || !playerState.entity)
 		return false;
+	if (!playerState.attackSoundPlayed &&
+			playerState.attackSoundFrame >= 0 &&
+			playerState.entity->getCurrentFrame() >= playerState.attackSoundFrame) {
+		(void)playPlayerAttackSound(engine, playerState.combatLoadout);
+		playerState.attackSoundPlayed = true;
+	}
 	if (playerState.entity->getCurrentFrame() != playerState.attackLastFrame)
 		return false;
 
@@ -1446,6 +1513,8 @@ bool updatePlayerAttackAnimationState(StartupRoomPlayerState &playerState) {
 	playerState.attackFirstFrame = -1;
 	playerState.attackLastFrame = -1;
 	playerState.attackResumeFacing = -1;
+	playerState.attackSoundPlayed = false;
+	playerState.attackSoundFrame = -1;
 	return setPlayerIdleAnimation(playerState, resumeFacing);
 }
 
