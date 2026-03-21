@@ -353,6 +353,8 @@ public:
 		StartupInteractionResult &result);
 	bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions = true);
+	bool executeTimerAction(const Common::String &timerName, StartupInteractionResult &result,
+		bool allowTransitions = true);
 	bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions = true);
 	bool isPickupObject(const StartupObjectRecord &object) const;

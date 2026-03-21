@@ -280,6 +280,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `run_harvester_main_loop` is the code that actually consumes `g_pending_room_name`.
   - At the top of each gameplay iteration it checks for a queued handoff, clears any selected carried object / interaction text state that would leak across the boundary, and then calls `room_setup(g_pending_room_name)`.
   - The same loop also owns the live room right-click attack selector when no carried item is active and the player is alive.
+  - When a live class `0x17` timer entity expires, the same loop resolves the backing `TimerRecord` by `timer_name` and dispatches `dispatch_room_event_actions(timer->arg2)`; the timer name is only the lookup key, not the action tag.
   - It sets `DAT_000d61d0 = 3`, compares cursor X against the player midpoint, and then compares cursor Y against `player_bottom - depth_scale * 144.44` and `player_bottom - depth_scale * 75.36`.
   - Those thresholds choose the six directional attack states `0x18/0x17/0x16` on the left side and `0x1b/0x1a/0x19` on the right side.
   - `update_actor_runtime_state` maps those states to frame banks `0x50..0x59`, `0x5a..0x63`, `0x64..0x6d`, `0x6e..0x77`, `0x78..0x81`, and `0x82..0x8b`.
@@ -905,6 +906,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `initial_value`, `current_value`, `timer_name`, `arg1`, `arg2`, `enabled`, `next`
   - parser booleans are `loop` and `global`
   - `room_setup` treats `arg1` as the room/scope key for room-local timers and only materializes timer entities when it matches the resolved room name.
+  - `arg2` is the action-tag target executed when the timer expires; native main-loop expiry first resolves the record by `timer_name`, then dispatches `dispatch_room_event_actions(arg2)`.
   - `initialize_timer_entity_common_fields` at `0x4ab10` zeroes the lightweight timer-entity header before `spawn_timer_entity_from_record` installs the countdown fields and adds the entity to `g_render_entity_list`.
 - `UseItemRecord` is stable:
   - `item_name`, `target_name`, `action_tag`, `next`
