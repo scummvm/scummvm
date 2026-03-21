@@ -1367,18 +1367,19 @@ bool Script::materializeRoomState(const Common::String &entranceName, const Comm
 }
 
 bool Script::executeRoomExitCommands(const Common::String &roomName,
-		Common::Array<StartupAudioCommand> &audioCommands) {
-	audioCommands.clear();
+		StartupInteractionResult &result) {
+	result = StartupInteractionResult();
 
 	const StartupRoomRecord *room = findRoomRecord(roomName);
 	if (!room)
 		return false;
 
-	bool mutatedRuntimeState = false;
 	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
-		nullptr, &audioCommands, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		&mutatedRuntimeState);
+		&result.musicPath, &result.audioCommands, nullptr, nullptr, &result.cutscenePath,
+		nullptr, nullptr, &result.dialogueNpcName, &result.dialogueContinuationTag,
+		&result.continuationTag, &result.modalText, &result.lightingCommand,
+		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
+		&result.mutatedRuntimeState);
 	return true;
 }
 

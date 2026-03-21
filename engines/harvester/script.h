@@ -384,30 +384,30 @@ public:
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		StartupRoomSetupState &state, ResourceManager &resources) const;
-		bool executeRoomExitCommands(const Common::String &roomName, Common::Array<StartupAudioCommand> &audioCommands);
-		bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
-		bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
-		bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
-			StartupInteractionResult &result);
-		bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
-			bool allowTransitions = true);
-		bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
-			bool allowTransitions = true);
-		bool isPickupObject(const StartupObjectRecord &object) const;
-		bool hasObjectInteraction(const StartupObjectRecord &object) const;
-		bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
-		void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
-		void markObjectIdentShown(const StartupObjectRecord &object);
-		bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
-		bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
-		Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
-		Common::String resolveTextValue(const Common::String &key) const;
-		const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
-		const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
-		const StartupMapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
-		bool getFlagValue(const Common::String &flagName) const;
-		const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
-		bool setRuntimeFlagValue(const Common::String &flagName, bool value);
+	bool executeRoomExitCommands(const Common::String &roomName, StartupInteractionResult &result);
+	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
+	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
+	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
+		StartupInteractionResult &result);
+	bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+		bool allowTransitions = true);
+	bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
+		bool allowTransitions = true);
+	bool isPickupObject(const StartupObjectRecord &object) const;
+	bool hasObjectInteraction(const StartupObjectRecord &object) const;
+	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
+	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
+	void markObjectIdentShown(const StartupObjectRecord &object);
+	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
+	bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
+	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
+	Common::String resolveTextValue(const Common::String &key) const;
+	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
+	const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
+	const StartupMapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
+	bool getFlagValue(const Common::String &flagName) const;
+	const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
+	bool setRuntimeFlagValue(const Common::String &flagName, bool value);
 		bool resetRuntimeObjectToInitialState(const Common::String &objectName);
 		bool addRuntimeObjectToInventory(const Common::String &objectName);
 		bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
