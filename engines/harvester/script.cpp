@@ -84,10 +84,10 @@ static void syncStartupObjectRecord(Common::Serializer &s, StartupObjectRecord &
 	s.syncString(record.spritePath);
 	s.syncString(record.altSpritePath);
 	s.syncString(record.objectName);
-	s.syncString(record.field34);
+	s.syncString(record.reservedXFlag);
 	s.syncString(record.identTextKey);
 	s.syncString(record.currentOwnerOrRoom);
-	s.syncString(record.field40);
+	s.syncString(record.reservedString40);
 	s.syncString(record.inventoryTextKey);
 	s.syncString(record.initialOwnerOrRoom);
 	s.syncString(record.interactionLabel);
@@ -155,10 +155,10 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncAsSint32LE(record.damageAmount);
 	s.syncAsSint32LE(record.engageDistance);
 	s.syncAsSint32LE(record.damageType);
-	s.syncString(record.field38);
-	s.syncString(record.field3c);
-	s.syncString(record.field44);
-	s.syncString(record.field48);
+	s.syncString(record.reservedString38);
+	s.syncString(record.reservedString3c);
+	s.syncString(record.reservedString44);
+	s.syncString(record.reservedString48);
 	s.syncString(record.attackSound1);
 	s.syncString(record.attackSound2);
 	s.syncString(record.attackSound3);
@@ -172,10 +172,10 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	syncBool(s, record.runtimeSpawned);
 	s.syncAsSint32LE(record.minXBound);
 	s.syncAsSint32LE(record.maxXBound);
-	s.syncAsSint32LE(record.field70);
-	s.syncAsSint32LE(record.field74);
-	s.syncAsSint32LE(record.field78);
-	s.syncAsSint32LE(record.field7c);
+	s.syncAsSint32LE(record.attackSoundTriggerFrame);
+	s.syncAsSint32LE(record.hitSoundTriggerFrame);
+	s.syncAsSint32LE(record.footstepSoundTriggerFrame);
+	s.syncAsSint32LE(record.deathSoundTriggerFrame);
 }
 
 static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &record) {
@@ -761,8 +761,8 @@ void Script::parseTownRecords(ResourceManager &resources) {
 
 			StartupMapEntranceRecord mapEntrance;
 			if (tagIndex >= 3) {
-				mapEntrance.field0 = parseAsciiIntOrZero(tokens[0]);
-				mapEntrance.field4 = parseAsciiIntOrZero(tokens[1]);
+				mapEntrance.mapX = parseAsciiIntOrZero(tokens[0]);
+				mapEntrance.mapY = parseAsciiIntOrZero(tokens[1]);
 				mapEntrance.initialPanelIndex = parseAsciiIntOrZero(tokens[2]);
 			}
 			mapEntrance.entryName = tokens[tagIndex + 1];
@@ -815,9 +815,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			}
 			room.roomName = tokens[tagIndex + 1];
 			room.musicPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
-			room.field38 = tokens[tagIndex + 3];
-			room.field3c = tokens[tagIndex + 4];
-			room.field40 = tokens[tagIndex + 5];
+			room.reservedString38 = tokens[tagIndex + 3];
+			room.reservedString3c = tokens[tagIndex + 4];
+			room.reservedString40 = tokens[tagIndex + 5];
 			room.palettePath = resources.normalizeResourcePath(tokens[tagIndex + 6]);
 			room.dimmable = tokens[tagIndex + 7].equalsIgnoreCase("T");
 			room.onEnterCommand = tokens[tagIndex + 8];
@@ -869,18 +869,18 @@ void Script::parseTownRecords(ResourceManager &resources) {
 				monster.engageDistance = parseAsciiIntOrZero(tokens[5]);
 			}
 			if (tagIndex >= 10) {
-				monster.field70 = parseAsciiIntOrZero(tokens[6]);
-				monster.field74 = parseAsciiIntOrZero(tokens[7]);
-				monster.field78 = parseAsciiIntOrZero(tokens[8]);
-				monster.field7c = parseAsciiIntOrZero(tokens[9]);
+				monster.attackSoundTriggerFrame = parseAsciiIntOrZero(tokens[6]);
+				monster.hitSoundTriggerFrame = parseAsciiIntOrZero(tokens[7]);
+				monster.footstepSoundTriggerFrame = parseAsciiIntOrZero(tokens[8]);
+				monster.deathSoundTriggerFrame = parseAsciiIntOrZero(tokens[9]);
 			}
 			monster.roomName = tokens[tagIndex + 1];
 			monster.monsterName = tokens[tagIndex + 2];
 			monster.modelPath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
-			monster.field44 = tokens[tagIndex + 4];
-			monster.field48 = tokens[tagIndex + 5];
-			monster.field38 = tokens[tagIndex + 6];
-			monster.field3c = tokens[tagIndex + 7];
+			monster.reservedString44 = tokens[tagIndex + 4];
+			monster.reservedString48 = tokens[tagIndex + 5];
+			monster.reservedString38 = tokens[tagIndex + 6];
+			monster.reservedString3c = tokens[tagIndex + 7];
 			monster.facing = parseEntranceFacing(tokens[tagIndex + 8]);
 			monster.damageType = parseNpcDeathDamageType(tokens[tagIndex + 9]);
 			monster.attackSound1 = resources.normalizeResourcePath(tokens[tagIndex + 10]);
@@ -999,9 +999,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 		object.objectName = tokens[tagIndex + 2];
 		object.spritePath = resources.normalizeResourcePath(tokens[tagIndex + 3]);
 		object.altSpritePath = resources.normalizeResourcePath(tokens[tagIndex + 4]);
-		object.field40 = tokens[tagIndex + 5];
+		object.reservedString40 = tokens[tagIndex + 5];
 		object.inventoryTextKey = tokens[tagIndex + 6];
-		object.field34 = tokens[tagIndex + 7];
+		object.reservedXFlag = tokens[tagIndex + 7];
 		object.identTextKey = tokens[tagIndex + 8];
 		object.operatable = tokens[tagIndex + 9].equalsIgnoreCase("T");
 		object.visible = tokens[tagIndex + 10].equalsIgnoreCase("T");
@@ -1316,10 +1316,10 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				runtimeMonster.damageAmount = baseMonster->damageAmount;
 				runtimeMonster.engageDistance = baseMonster->engageDistance;
 				runtimeMonster.damageType = baseMonster->damageType;
-				runtimeMonster.field38 = baseMonster->field38;
-				runtimeMonster.field3c = baseMonster->field3c;
-				runtimeMonster.field44 = baseMonster->field44;
-				runtimeMonster.field48 = baseMonster->field48;
+				runtimeMonster.reservedString38 = baseMonster->reservedString38;
+				runtimeMonster.reservedString3c = baseMonster->reservedString3c;
+				runtimeMonster.reservedString44 = baseMonster->reservedString44;
+				runtimeMonster.reservedString48 = baseMonster->reservedString48;
 				runtimeMonster.attackSound1 = baseMonster->attackSound1;
 				runtimeMonster.attackSound2 = baseMonster->attackSound2;
 				runtimeMonster.attackSound3 = baseMonster->attackSound3;
@@ -1333,10 +1333,10 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				runtimeMonster.runtimeSpawned = false;
 				runtimeMonster.minXBound = baseMonster->minXBound;
 				runtimeMonster.maxXBound = baseMonster->maxXBound;
-				runtimeMonster.field70 = baseMonster->field70;
-				runtimeMonster.field74 = baseMonster->field74;
-				runtimeMonster.field78 = baseMonster->field78;
-				runtimeMonster.field7c = baseMonster->field7c;
+				runtimeMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
+				runtimeMonster.hitSoundTriggerFrame = baseMonster->hitSoundTriggerFrame;
+				runtimeMonster.footstepSoundTriggerFrame = baseMonster->footstepSoundTriggerFrame;
+				runtimeMonster.deathSoundTriggerFrame = baseMonster->deathSoundTriggerFrame;
 			}
 			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 			_playerControlPaused = false;

@@ -41,10 +41,10 @@ struct StartupMonsterRecord {
 	Common::String roomName;
 	Common::String monsterName;
 	Common::String modelPath;
-	Common::String field38;
-	Common::String field3c;
-	Common::String field44;
-	Common::String field48;
+	Common::String reservedString38;
+	Common::String reservedString3c;
+	Common::String reservedString44;
+	Common::String reservedString48;
 	Common::String attackSound1;
 	Common::String attackSound2;
 	Common::String attackSound3;
@@ -61,10 +61,10 @@ struct StartupMonsterRecord {
 	bool runtimeSpawned = false;
 	int minXBound = 0x14;
 	int maxXBound = 0x26b;
-	int field70 = 0;
-	int field74 = 0;
-	int field78 = 0;
-	int field7c = 0;
+	int attackSoundTriggerFrame = 0;
+	int hitSoundTriggerFrame = 0;
+	int footstepSoundTriggerFrame = 0;
+	int deathSoundTriggerFrame = 0;
 };
 
 class Monster {

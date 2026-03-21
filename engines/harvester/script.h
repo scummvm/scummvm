@@ -45,8 +45,8 @@ struct StartupEntranceRecord {
 };
 
 struct StartupMapEntranceRecord {
-	int field0 = 0;
-	int field4 = 0;
+	int mapX = 0;
+	int mapY = 0;
 	int initialPanelIndex = 0;
 	Common::String entryName;
 };
@@ -74,9 +74,9 @@ struct StartupRoomRecord {
 	float zVelocityStep = 1.0f;
 	Common::String roomName;
 	Common::String musicPath;
-	Common::String field38;
-	Common::String field3c;
-	Common::String field40;
+	Common::String reservedString38;
+	Common::String reservedString3c;
+	Common::String reservedString40;
 	Common::String palettePath;
 	Common::String onEnterCommand;
 	Common::String onExitCommand;
@@ -97,10 +97,10 @@ struct StartupObjectRecord {
 	Common::String spritePath;
 	Common::String altSpritePath;
 	Common::String objectName;
-	Common::String field34;
+	Common::String reservedXFlag;
 	Common::String identTextKey;
 	Common::String currentOwnerOrRoom;
-	Common::String field40;
+	Common::String reservedString40;
 	Common::String inventoryTextKey;
 	Common::String initialOwnerOrRoom;
 	Common::String interactionLabel;

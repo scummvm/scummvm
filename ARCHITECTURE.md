@@ -410,11 +410,12 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - On direct entrance matches it updates `g_pending_room_name`.
   - On map-entry matches it launches the town map selector and then updates the pending room / player position from the chosen destination.
 - `MapEntranceRecord` is now stable enough for engine use:
-  - `field_00`
-  - `field_04`
+  - `map_x`
+  - `map_y`
   - `initial_panel_index`
   - `entry_name`
   - `next`
+  - The selector currently only reads `initial_panel_index`; `map_x` / `map_y` remain stored script coordinates with no recovered read-side consumer in the current binary.
 - `select_town_map_destination` at `0x66460` is the town-map travel UI.
   - It loads `harvmap.pal` and `harvmap1.bm` through `harvmap4.bm`.
   - It seeds the initial map panel from `g_town_map_entrypoints`.
@@ -804,7 +805,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Save/load only persists the mutable object state: `current_x`, `current_y`, `current_z`, `current_owner_or_room`, `visible`, and `ident_shown`, keyed by `object_name`.
   - `interaction_label` is copied into the runtime object entity and drives the main-loop hover / use prompt text; a `NULL_ID` label suppresses prompt generation.
   - `z_extent` is copied into the runtime object entity at offset `+0x20`; `FUN_0004cae0` uses the live interval `[entity + 0x1c, entity + 0x1c + 0x20]` before the 2D overlap test, which confirms that the field participates in third-axis collision gating.
-  - `field_40` is a heap string freed by `free_loaded_world_data`, but no confirmed live consumer has been recovered yet.
+  - `reserved_x_flag` is a parsed string slot that is either empty or the literal `X` in current `HARVEST.SCR` data. No read-side consumer has been recovered, so it remains a reserved script flag rather than a gameplay name.
+  - `reserved_string_40` is a heap string freed by `free_loaded_world_data`, but no confirmed live consumer has been recovered yet. In current `HARVEST.SCR` data it is always empty.
   - `spawn_object_entity_from_record` uses `sprite_path` while the object remains at its initial position / owner outside `INVENTORY`, otherwise it switches to `alt_sprite_path`.
   - When `sprite_path` is null, the same helper allocates a rectangle-only hotspot from `current_x`, `current_y`, `bounds_x2`, and `bounds_y2` instead of a bitmap-backed render entity.
 - `RegionRecord` is now structurally clear:
@@ -864,16 +866,17 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - attacker `0x1000` must be set before attack states `0x17/0x1a` can be chosen
     - target `0x10000` must be set before attack states `0x18/0x1b` can be chosen
     - the player combat-avatar base mask `0x00fffff8` keeps both bits set by default
-  - `field_70` is the attack-sound trigger frame
-  - `field_78` is the walk / footstep-sound trigger frame
+  - `attack_sound_trigger_frame` is the attack-sound trigger frame
+  - `hit_sound_trigger_frame` is the reserved frame slot paired with the hit-sound bank at runtime offsets `+0x1154..+0x115c` / `+0x1170`
+  - `footstep_sound_trigger_frame` is the walk / footstep-sound trigger frame
+  - `death_sound_trigger_frame` is the reserved frame slot paired with the death sound slot at runtime offsets `+0x1168` / `+0x1178`
   - `saved_enabled`, `runtime_spawned`, `next`
   - `current_hit_points` is the save/load-persisted monster HP field; parser initialization copies `initial_hit_points` into it.
   - `min_x_bound` defaults to `0x14` and `max_x_bound` defaults to `0x26b` when omitted by the parser.
   - The sound-slot mapping is confirmed both by `spawn_monster_entity_from_record` and by the player combat avatar builder, which installs the same runtime sound layout explicitly.
   - `spawn_player_combat_avatar` seeds loadout-specific player attack samples into those same `+0x1148..+0x1150` slots, and `update_actor_runtime_state` triggers the player attack sound when `current_frame_index == first_frame_index + 1`; melee loadouts randomly choose one loaded attack sample, while ranged loadouts route that frame through the weapon fire/empty helper instead of the random selector.
-  - `field_38`, `field_3c`, `field_44`, and `field_48` are heap strings freed during world teardown, but no confirmed live consumers have been recovered yet.
-  - `field_74` and `field_7c` are copied into live runtime slots `+0x1170` and `+0x1178`, but the current binary only writes those slots; no read-side consumers were recovered.
-  - Remaining unknowns include `field_1c`, `field_38`, `field_3c`, `field_44`, `field_48`, `field_74`, `field_7c`
+  - `reserved_string_38`, `reserved_string_3c`, `reserved_string_44`, and `reserved_string_48` are heap strings freed during world teardown, but no confirmed live consumers have been recovered yet. In the sampled shipping `HARVEST.SCR` data those columns are empty for every monster record.
+  - `reserved_dword_1c` remains zero-filled with no recovered producer beyond the initial allocator clear and no recovered read-side consumer.
 - `AnimRecord` now has stable placement/resource identity plus mirrored runtime state:
   - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
   - `room_name`, `anim_path`, `anim_name`
@@ -908,9 +911,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `full_scale_z` is the room Z depth where entities remain at 100% sprite scale.
   - `max_z_scale_percent` is the sprite scale percentage at `max_z`; the parser derives `perspective_scale` from `(100 - max_z_scale_percent) / (max_z - full_scale_z)`, and the runtime applies it with the additional `0.01` factor stored at `0xbed80`.
   - `z_velocity_step` is the room-specific vertical movement increment used by the main actor state machine
-  - the trailing unknown room slots at `field_38`, `field_3c`, and `field_40` are confirmed `char *` fields.
-  - parser order is now explicit: after `room_name` and `music_path`, the parser reads three additional strings into `field_38`, `field_3c`, and `field_40`, then reads the separately validated `palette_path`, then the `dimmable` token, then `on_enter_tag` / `on_exit_tag`.
-  - `free_loaded_world_data` frees `palette_path`, `field_38`, `field_3c`, and `field_40` as room-owned strings, which confirms that the old `runtime_40` interpretation was wrong.
+  - the trailing `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40` slots are confirmed `char *` fields.
+  - parser order is now explicit: after `room_name` and `music_path`, the parser reads three additional strings into `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40`, then reads the separately validated `palette_path`, then the `dimmable` token, then `on_enter_tag` / `on_exit_tag`.
+  - `free_loaded_world_data` frees `palette_path`, `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40` as room-owned strings, which confirms that the old `runtime_40` interpretation was wrong. In the sampled shipping `HARVEST.SCR` data all three reserved strings are empty.
 
 ## Helper Functions
 
@@ -1415,15 +1418,13 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.
 - The main unresolved clusters are:
-  - `MonsterRecord.field_1c`, which is still an untyped numeric field with no confirmed consumer
-  - `MonsterRecord.field_38`, `field_3c`, `field_44`, and `field_48`, which are bounded as monster-owned heap strings but still have no confirmed live consumers
-  - `MonsterRecord.field_74` and `field_7c`, which are copied into live runtime slots at `+0x1170` and `+0x1178`; constructor/reset writes were recovered, but no read-side consumers were found in the current binary
   - the exact persisted-visibility semantics of `NpcRecord.saved_visible`
-  - `ObjectRecord.field_34`, which is a parsed heap string but is still absent from the direct `find_object_record_by_name` consumers and from the object save/load blob
-  - `ObjectRecord.field_40`, which is now bounded as an object-owned heap string, but still has no confirmed live consumer
-  - `RoomRecord` remaining string fields at `field_38`, `field_3c`, `field_40`
+  - `ObjectRecord.reserved_x_flag`, which is a parsed heap string that is either empty or the literal `X`, but is still absent from the direct `find_object_record_by_name` consumers and from the object save/load blob
+  - `ObjectRecord.reserved_string_40`, which is now bounded as an object-owned heap string, but still has no confirmed live consumer and is empty in current shipping script data
+  - `RoomRecord.reserved_string_38`, `reserved_string_3c`, `reserved_string_40`
+  - `MonsterRecord.reserved_dword_1c`, which remains zero-filled with no recovered producer or consumer
+  - `MonsterRecord.reserved_string_38`, `reserved_string_3c`, `reserved_string_44`, and `reserved_string_48`
   - `TextRecord.field_00` / `field_04`
-- The monster frame slots at `field_74` and `field_7c` are now more tightly bounded: they are copied into the shared runtime sound-trigger area (`+0x1170` and `+0x1178`) by the monster and player constructors, but no confirmed consumers have been recovered yet, so they remain unnamed.
 - The remaining actor-state work is narrower now:
   - the shared input/UI bytes at `0xd596c` and `0xd5971` through `0xd597c`; the keyboard producer side is now resolved through the IRQ1 handler, but the mouse/button producer path is still not named
 - On March 13, 2026 I resumed with a live bridge and used Java Ghidra scripts to push the recovered struct names back into `HARVEST.LE`.
