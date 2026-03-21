@@ -769,6 +769,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
 					bool &didTransition, const Common::String &usedItemName) {
 				didTransition = false;
+				bool deferredSceneRefresh = false;
 				playerState.hasMoveTarget = false;
 				playerState.turnActive = false;
 				playerState.turnTargetFacing = -1;
@@ -838,8 +839,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						engine.stopStartupMusic();
 					didTransition = true;
 				} else if (interaction.mutatedRuntimeState) {
-					if (!refreshCurrentSceneFn(true))
-						return Common::kReadingFailed;
+					deferredSceneRefresh = !interaction.cutscenePath.empty();
+					if (!deferredSceneRefresh) {
+						if (!refreshCurrentSceneFn(true))
+							return Common::kReadingFailed;
+					}
 				}
 
 				if (didTransition)
@@ -858,6 +862,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					FstPlayer fstPlayer(engine);
 					if (!fstPlayer.play(interaction.cutscenePath))
 						return Common::kReadingFailed;
+					if (deferredSceneRefresh) {
+						if (!refreshCurrentSceneFn(true))
+							return Common::kReadingFailed;
+						deferredSceneRefresh = false;
+					}
 				}
 
 				if (!interaction.modalText.value.empty()) {
