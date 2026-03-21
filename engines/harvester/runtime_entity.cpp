@@ -797,10 +797,10 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	if (!entity)
 		return nullptr;
 
-	// Native room ANIM entities keep their record x/y as the fixed screen anchor.
-	// Per-frame ABM x/y offsets handle any origin adjustment, so recentering on the
-	// current frame size makes narrowing animations drift horizontally.
-	entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+	// Native room ANIM entities are positioned around their record x/y pivot.
+	// The runtime centers the current decoded bitmap on that pivot, then applies
+	// the ABM frame header x/y offsets as a separate step.
+	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
 	entity->setZExtent(3.0f);
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);

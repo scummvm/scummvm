@@ -416,6 +416,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		playerState.bottomY = state.playerSpawnY;
 		playerState.z = (float)state.playerSpawnZ;
 		playerState.facing = state.playerFacing;
+		playerState.combatLoadout =
+			_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
 		playerState.turnActive = false;
 		playerState.turnTargetFacing = -1;
 		StartupResolvedText inspectText;
@@ -468,6 +470,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			idleState.activityTick = getRuntimeClockTicks();
 			updatePlayerIdleTrigger(idleState);
 		};
+		auto cancelPlayerAttackAnimation = [&]() {
+			if (!playerState.attackActive)
+				return false;
+
+			playerState.attackActive = false;
+			playerState.attackFirstFrame = -1;
+			playerState.attackLastFrame = -1;
+			if (!playerState.entity)
+				return false;
+			const int resumeFacing = playerState.attackResumeFacing >= 0
+				? playerState.attackResumeFacing
+				: (playerState.facing >= 0 ? playerState.facing : 0);
+			playerState.attackResumeFacing = -1;
+			return setPlayerIdleAnimation(playerState, resumeFacing);
+		};
 		auto syncCurrentRoomRuntimeState = [&]() {
 			Script *startupScript = _engine.getStartupScript();
 			if (!startupScript)
@@ -510,87 +527,95 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			moveUp = false;
 			moveDown = false;
 			pendingRegionName.clear();
+			(void)cancelPlayerAttackAnimation();
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
 			if (playerState.entity && playerState.facing >= 0)
 				(void)setPlayerIdleAnimation(playerState, playerState.facing);
 		};
-	auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
-		const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
-		StartupRoomSetupState refreshedState;
-		if (!_engine.getStartupScript()->materializeRoomState(
-				scene.state.entranceName, scene.state.roomName, refreshedState, *_engine.getResources())) {
-			return false;
-		}
-
-		refreshedState.audioCommands = entryAudioCommands;
-		if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
-			return false;
-		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
-			return false;
-		if (runtimeEntities) {
-			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
-				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
-				if (entity)
-					applyRoomMonsterAnimation(*entity, monster);
-			}
-		}
-
-		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
-		if (playerState.entity) {
-			if (!preservePlayerPlacement || playerState.facing < 0) {
-				playerState.centerX = scene.state.playerSpawnX;
-				playerState.bottomY = scene.state.playerSpawnY;
-				playerState.z = (float)scene.state.playerSpawnZ;
-				playerState.facing = scene.state.playerFacing;
+		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
+			const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
+			StartupRoomSetupState refreshedState;
+			if (!_engine.getStartupScript()->materializeRoomState(
+					scene.state.entranceName, scene.state.roomName, refreshedState, *_engine.getResources())) {
+				return false;
 			}
 
-			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
-			(void)setPlayerIdleAnimation(playerState, facing);
-			(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-				playerState.centerX, playerState.bottomY, playerState.z);
-		}
+			refreshedState.audioCommands = entryAudioCommands;
+			if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
+				return false;
+			if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
+				return false;
+			if (runtimeEntities) {
+				for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
+					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+					if (entity)
+						applyRoomMonsterAnimation(*entity, monster);
+				}
+			}
 
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		pendingRegionName.clear();
-		resetIdleState();
-		startupFlow.resetCursorAnimationSequence();
-		captureCurrentSaveState();
-		return _inventory.refresh();
-	};
-	auto stowCarriedRoomItemToInventory = [&]() {
-		if (!hasCarriedRoomItem())
-			return true;
+			playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
+			if (playerState.entity) {
+				if (!preservePlayerPlacement || playerState.facing < 0) {
+					playerState.centerX = scene.state.playerSpawnX;
+					playerState.bottomY = scene.state.playerSpawnY;
+					playerState.z = (float)scene.state.playerSpawnZ;
+					playerState.facing = scene.state.playerFacing;
+				}
 
-		_engine.getStartupScript()->addRuntimeObjectToInventory(carriedRoomItemName);
-		clearCarriedRoomItem();
-		return _inventory.refresh();
-	};
-	auto openInventoryOverlay = [&]() {
-		moveLeft = false;
-		moveRight = false;
-		moveUp = false;
-		moveDown = false;
-		pendingRegionName.clear();
-		playerState.hasMoveTarget = false;
-		playerState.turnActive = false;
-		playerState.turnTargetFacing = -1;
-		if (!stowCarriedRoomItemToInventory())
-			return false;
-		return _inventory.open();
-	};
-	auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
-		Graphics::Screen *activeScreen = getActiveScreen();
-		if (!activeScreen)
-			return false;
+				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
+				(void)setPlayerIdleAnimation(playerState, facing);
+				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+					playerState.centerX, playerState.bottomY, playerState.z);
+			}
 
-		drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
-		return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
-	};
-	auto runRoomExitCommands = [&]() -> Common::Error {
+			playerState.hasMoveTarget = false;
+			playerState.turnActive = false;
+			playerState.turnTargetFacing = -1;
+			playerState.attackActive = false;
+			playerState.attackFirstFrame = -1;
+			playerState.attackLastFrame = -1;
+			playerState.attackResumeFacing = -1;
+			playerState.combatLoadout =
+				_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
+			pendingRegionName.clear();
+			resetIdleState();
+			startupFlow.resetCursorAnimationSequence();
+			captureCurrentSaveState();
+			return _inventory.refresh();
+		};
+		auto stowCarriedRoomItemToInventory = [&]() {
+			if (!hasCarriedRoomItem())
+				return true;
+
+			_engine.getStartupScript()->addRuntimeObjectToInventory(carriedRoomItemName);
+			clearCarriedRoomItem();
+			return _inventory.refresh();
+		};
+		auto openInventoryOverlay = [&]() {
+			moveLeft = false;
+			moveRight = false;
+			moveUp = false;
+			moveDown = false;
+			pendingRegionName.clear();
+			(void)cancelPlayerAttackAnimation();
+			playerState.hasMoveTarget = false;
+			playerState.turnActive = false;
+			playerState.turnTargetFacing = -1;
+			if (!stowCarriedRoomItemToInventory())
+				return false;
+			return _inventory.open();
+		};
+		auto captureDialogueBackdrop = [&](IndexedBitmap &dialogueBackdrop) {
+			Graphics::Screen *activeScreen = getActiveScreen();
+			if (!activeScreen)
+				return false;
+
+			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+			return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
+		};
+		auto runRoomExitCommands = [&]() -> Common::Error {
 			StartupInteractionResult exitInteraction;
 			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitInteraction))
 				return Common::kReadingFailed;
@@ -669,6 +694,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return Common::kNoError;
 		};
 		auto applyPlayerGotoXZ = [&](int x, int z) {
+			(void)cancelPlayerAttackAnimation();
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
@@ -1162,6 +1188,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			const bool activeCarry = inventorySelectionActive || roomCarryActive;
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
+				playerState.attackActive ||
 				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
@@ -1214,6 +1241,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
+						playerState.attackActive ||
 						_inventory.isOpen() || activeCarry)
 						? 7
 						: hoverState.cursorSequence);
@@ -1264,13 +1292,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 				needsRedraw = true;
 				break;
-			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN: {
 				notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
 					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
 				}
+				if (playerState.attackActive)
+					break;
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
@@ -1293,6 +1323,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 								inventoryHover->object.objectName.c_str(), loadoutChanged);
 							if (loadoutChanged) {
 								captureCurrentSaveState();
+								if (playerState.entity) {
+									(void)syncPlayerCombatLoadoutVisual(_engine, scene.state, playerState,
+										_engine.getStartupScript()->getPlayerCombatLoadout());
+								}
 								if (!_inventory.refresh())
 									return Common::kReadingFailed;
 							}
@@ -1361,8 +1395,25 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					if (!stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
 					needsRedraw = true;
+					break;
+				}
+				Script *startupScript = _engine.getStartupScript();
+				if (!showingInspectText && startupScript && playerState.entity &&
+						startupScript->getPlayerCurrentHitPoints() > 0) {
+					playerState.hasMoveTarget = false;
+					playerState.turnActive = false;
+					playerState.turnTargetFacing = -1;
+					playerState.turnFirstFrame = -1;
+					playerState.turnLastFrame = -1;
+					playerState.turnEndFrame = -1;
+					playerState.turnPlayBackwards = false;
+					(void)syncPlayerCombatLoadoutVisual(_engine, scene.state, playerState,
+						startupScript->getPlayerCombatLoadout());
+					if (startPlayerAttackAnimation(scene.state, playerState, _mousePos))
+						needsRedraw = true;
 				}
 				break;
+			}
 			case Common::EVENT_LBUTTONUP:
 				lastLeftButtonReleaseTick = getRuntimeClockTicks();
 				if (showingInspectText)
@@ -1389,6 +1440,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					}
 					break;
 				}
+				if (playerState.attackActive)
+					break;
 
 				const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 				if (_inventory.isOpen()) {
@@ -1676,6 +1729,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					needsRedraw = true;
 					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					if (cancelPlayerAttackAnimation())
+						needsRedraw = true;
 					if (!stowCarriedRoomItemToInventory())
 						return Common::kReadingFailed;
 					moveLeft = false;
@@ -1735,12 +1790,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		bool playerAdvancedThisFrame = false;
-		if (updatePlayerTurnAnimationState(playerState)) {
+		if (updatePlayerAttackAnimationState(playerState)) {
+			needsRedraw = true;
+		}
+		if (!playerState.attackActive && updatePlayerTurnAnimationState(playerState)) {
 			playerAdvancedThisFrame = true;
 			needsRedraw = true;
 		}
 
-		if (!idleState.active && !idleState.exiting) {
+		if (!playerState.attackActive && !idleState.active && !idleState.exiting) {
 			if (stepPlayerKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				playerAdvancedThisFrame = true;
@@ -1767,7 +1825,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				needsRedraw = true;
 			}
 		}
-		Common::Error pendingRegionError = tryActivatePendingRegion();
+		Common::Error pendingRegionError =
+			playerState.attackActive ? Common::kNoError : tryActivatePendingRegion();
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
@@ -1777,7 +1836,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				return Common::kReadingFailed;
 			break;
 		}
-		pendingRegionError = playerAdvancedThisFrame ? tryActivateOverlappedRegion() : Common::kNoError;
+		pendingRegionError =
+			(playerAdvancedThisFrame && !playerState.attackActive)
+				? tryActivateOverlappedRegion()
+				: Common::kNoError;
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())

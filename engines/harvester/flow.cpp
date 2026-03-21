@@ -83,9 +83,12 @@ static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
+static const int kRoomPlayerAttackAnimationRate = kRoomPlayerWalkAnimationRate;
 static const int kRoomPlayerMinOpaqueLeftX = 4;
 static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
+static const float kRoomPlayerAttackUpperYOffset = 144.44f;
+static const float kRoomPlayerAttackMidYOffset = 75.36f;
 static const int kTownMapEdgeThreshold = 9;
 static const int kTownMapCursorHitExtent = 5;
 
@@ -135,6 +138,16 @@ struct PlayerTurnAnimationRange {
 	int firstFrame = 0;
 	int lastFrame = 0;
 	bool playBackwards = false;
+};
+
+struct PlayerAttackAnimationRange {
+	PlayerAttackAnimationRange() {}
+	PlayerAttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
+		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
+
+	int firstFrame = 0;
+	int lastFrame = 0;
+	int resumeFacing = 0;
 };
 
 } // End of anonymous namespace
@@ -431,6 +444,46 @@ static bool resolvePlayerTurnAnimationRange(int fromFacing, int toFacing, Player
 	}
 
 	return false;
+}
+
+static Common::String resolvePlayerCombatLoadoutResourcePath(int loadout) {
+	if (loadout <= 0)
+		return Common::String(kPlayerActorResourcePath);
+
+	return Common::String::format("1:/GRAPHIC/MONSTERS/PC/PC%02d.ABM", loadout);
+}
+
+static float computeActorDepthScale(const StartupRoomSetupState &state, float z);
+
+static bool resolvePlayerAttackAnimationRange(const StartupRoomSetupState &state,
+		const StartupRoomPlayerState &playerState, const Common::Point &mousePos,
+		PlayerAttackAnimationRange &range) {
+	if (!playerState.entity)
+		return false;
+
+	const float depthScale = computeActorDepthScale(state, playerState.z);
+	const float upperThresholdY =
+		(float)playerState.bottomY - depthScale * kRoomPlayerAttackUpperYOffset;
+	const float midThresholdY =
+		(float)playerState.bottomY - depthScale * kRoomPlayerAttackMidYOffset;
+
+	if (mousePos.x < playerState.centerX) {
+		if ((float)mousePos.y < upperThresholdY)
+			range = PlayerAttackAnimationRange(0x50, 0x59, 1);
+		else if ((float)mousePos.y < midThresholdY)
+			range = PlayerAttackAnimationRange(0x5a, 0x63, 1);
+		else
+			range = PlayerAttackAnimationRange(0x64, 0x6d, 1);
+	} else {
+		if ((float)mousePos.y < upperThresholdY)
+			range = PlayerAttackAnimationRange(0x6e, 0x77, 2);
+		else if ((float)mousePos.y < midThresholdY)
+			range = PlayerAttackAnimationRange(0x78, 0x81, 2);
+		else
+			range = PlayerAttackAnimationRange(0x82, 0x8b, 2);
+	}
+
+	return true;
 }
 
 static bool roomSupportsMovementBand(const StartupRoomSetupState &state) {
@@ -1297,6 +1350,38 @@ bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 	return changed;
 }
 
+bool syncPlayerCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, int loadout) {
+	if (!playerState.entity)
+		return false;
+
+	ResourceManager *resources = engine.getResources();
+	if (!resources)
+		return false;
+
+	const int clampedLoadout = CLIP<int>(loadout, 0, 0x14);
+	if (playerState.combatLoadout == clampedLoadout)
+		return false;
+
+	const Common::String resourcePath = resolvePlayerCombatLoadoutResourcePath(clampedLoadout);
+	if (!playerState.entity->loadAbmResource(*resources, resourcePath))
+		return false;
+
+	playerState.combatLoadout = clampedLoadout;
+	playerState.attackActive = false;
+	playerState.attackFirstFrame = -1;
+	playerState.attackLastFrame = -1;
+	playerState.attackResumeFacing = -1;
+	(void)setPlayerIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
+	(void)applyRoomActorPlacement(state, *playerState.entity,
+		playerState.centerX, playerState.bottomY, playerState.z);
+	debugC(1, kDebugScene,
+		"Harvester: player combat loadout visual loadout=%d resource='%s' facing=%d pos=(%d,%d,z=%.2f)",
+		playerState.combatLoadout, resourcePath.c_str(), playerState.facing,
+		playerState.centerX, playerState.bottomY, (double)playerState.z);
+	return true;
+}
+
 static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int facing) {
 	if (!playerState.entity)
 		return false;
@@ -1316,6 +1401,52 @@ static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int faci
 		"Harvester: player walk animation facing=%d frames=%d..%d rate=%d",
 		facing, range.walkFirstFrame, range.walkLastFrame, kRoomPlayerWalkAnimationRate);
 	return true;
+}
+
+bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, const Common::Point &mousePos) {
+	if (!playerState.entity || playerState.attackActive)
+		return false;
+
+	PlayerAttackAnimationRange range;
+	if (!resolvePlayerAttackAnimationRange(state, playerState, mousePos, range))
+		return false;
+
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.turnFirstFrame = -1;
+	playerState.turnLastFrame = -1;
+	playerState.turnEndFrame = -1;
+	playerState.turnPlayBackwards = false;
+	playerState.attackActive = true;
+	playerState.attackFirstFrame = range.firstFrame;
+	playerState.attackLastFrame = range.lastFrame;
+	playerState.attackResumeFacing = range.resumeFacing;
+	playerState.nextMovementTick = 0;
+	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
+	playerState.entity->setCurrentFrame(range.firstFrame);
+	debugC(1, kDebugScene,
+		"Harvester: player attack animation frames=%d..%d resume_facing=%d cursor=(%d,%d)",
+		range.firstFrame, range.lastFrame, range.resumeFacing, mousePos.x, mousePos.y);
+	return true;
+}
+
+bool updatePlayerAttackAnimationState(StartupRoomPlayerState &playerState) {
+	if (!playerState.attackActive || !playerState.entity)
+		return false;
+	if (playerState.entity->getCurrentFrame() != playerState.attackLastFrame)
+		return false;
+
+	const int resumeFacing = playerState.attackResumeFacing >= 0
+		? playerState.attackResumeFacing
+		: (playerState.facing >= 0 ? playerState.facing : 0);
+	playerState.attackActive = false;
+	playerState.attackFirstFrame = -1;
+	playerState.attackLastFrame = -1;
+	playerState.attackResumeFacing = -1;
+	return setPlayerIdleAnimation(playerState, resumeFacing);
 }
 
 bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
@@ -2448,15 +2579,19 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	}
 	if (state.hasEntrance) {
 		const int playerFrame = resolvePlayerFacingFrame(state.playerFacing);
+		Script *startupScript = _engine.getStartupScript();
+		const int playerCombatLoadout = startupScript ? startupScript->getPlayerCombatLoadout() : 0;
+		const Common::String playerResourcePath =
+			resolvePlayerCombatLoadoutResourcePath(playerCombatLoadout);
 		const bool reusedPlayer = preservedPlayer != nullptr;
 		RuntimeEntity *player = preservedPlayer;
 		if (!reusedPlayer) {
 			player = runtimeEntities->spawnSceneActorEntity(kPlayerActorEntityName,
-				kPlayerActorResourcePath, Common::Point(state.playerSpawnX, state.playerSpawnY),
+				playerResourcePath, Common::Point(state.playerSpawnX, state.playerSpawnY),
 				(float)state.playerSpawnZ, playerFrame);
 		}
 		if (!player) {
-			debug(1, "Harvester: unable to spawn startup player actor from '%s'", kPlayerActorResourcePath);
+			debug(1, "Harvester: unable to spawn startup player actor from '%s'", playerResourcePath.c_str());
 		} else {
 			player->setClassId(kRuntimeEntityClassPlayer);
 			player->setAnchorMode(kRuntimeEntityAnchorTopLeft);
@@ -2469,11 +2604,21 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				debug(1, "Harvester: unable to apply startup player placement for entrance '%s'",
 					state.entranceName.c_str());
 			}
+			if (reusedPlayer) {
+				StartupRoomPlayerState playerState;
+				playerState.entity = player;
+				playerState.centerX = state.playerSpawnX;
+				playerState.bottomY = state.playerSpawnY;
+				playerState.z = (float)state.playerSpawnZ;
+				playerState.facing = state.playerFacing;
+				playerState.combatLoadout = -1;
+				(void)syncPlayerCombatLoadoutVisual(_engine, state, playerState, playerCombatLoadout);
+			}
 			if (reusedPlayer)
 				runtimeEntities->adoptSceneEntity(player);
 			debugC(1, kDebugGeneral,
 				"Harvester: %s startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
-				reusedPlayer ? "reused" : "spawned", kPlayerActorResourcePath, state.entranceName.c_str(),
+				reusedPlayer ? "reused" : "spawned", playerResourcePath.c_str(), state.entranceName.c_str(),
 				state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ,
 				state.playerFacing, playerFrame);
 		}

@@ -56,6 +56,7 @@ struct StartupRoomPlayerState {
 	int bottomY = 0;
 	float z = 0.0f;
 	int facing = -1;
+	int combatLoadout = 0;
 	uint32 nextMovementTick = 0;
 	bool hasMoveTarget = false;
 	int targetX = 0;
@@ -66,6 +67,10 @@ struct StartupRoomPlayerState {
 	int turnLastFrame = -1;
 	int turnEndFrame = -1;
 	bool turnPlayBackwards = false;
+	bool attackActive = false;
+	int attackFirstFrame = -1;
+	int attackLastFrame = -1;
+	int attackResumeFacing = -1;
 };
 
 struct StartupRoomHoverState {
@@ -123,7 +128,12 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 	const Common::Array<StartupNpcRecord> &npcs,
 	const Common::Array<StartupRegionRecord> &regions,
 	const Common::Point &mousePos);
+bool syncPlayerCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSetupState &state,
+	StartupRoomPlayerState &playerState, int loadout);
 bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing);
+bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
+	StartupRoomPlayerState &playerState, const Common::Point &mousePos);
+bool updatePlayerAttackAnimationState(StartupRoomPlayerState &playerState);
 bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
 bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState);
 bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
