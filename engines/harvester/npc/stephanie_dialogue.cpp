@@ -571,10 +571,12 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 		}
 	}
+	bool ranKarinKidnapedBranch = false;
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedLinePlayed &&
 			sharedState.karinKidnapedDialogueState) {
 		state.karinKidnapedLinePlayed = true;
+		ranKarinKidnapedBranch = true;
 		const DialogueLineEntry kidnapedLines[] = {
 			{ 0x4957, "STEPHANIE", 0 },
 			{ 0x495b, "PC", 0 },
@@ -586,7 +588,8 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
-	if (state.playedSpyholeBranch) {
+	// Native only reaches the spyhole/alibi tail from the post-kidnap continuation.
+	if (ranKarinKidnapedBranch && state.playedSpyholeBranch) {
 		Common::Error lineError = runtime.playDialogueLine(0x4970, "STEPHANIE");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
