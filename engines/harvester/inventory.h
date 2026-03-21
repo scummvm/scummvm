@@ -63,7 +63,7 @@ public:
 	Common::String resolveSelectedLabel() const;
 	Common::String buildSelectedPrompt(const Common::String &targetLabel) const;
 	void selectItem(const Common::String &objectName);
-	bool toggleCombatLoadout(const StartupObjectRecord &object, bool &changed);
+	bool toggleCombatLoadout(const StartupObjectRecord &object, int currentLoadout, bool &changed);
 	bool resolveSecondaryAction(const StartupObjectRecord &object, InventorySecondaryAction &action) const;
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
