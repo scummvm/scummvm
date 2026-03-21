@@ -1346,6 +1346,30 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - Native inventory secondary-click is not a generic inspect path. It is a hardcoded dispatcher with three distinct behaviors: weapon loadout toggle, document/photo closeup, and object-defined consumable self-use.
 - The document/photo closeups are driven by global action tags rather than per-object metadata, which is why the ScummVM inventory overlay needs its own recovered mapping table for parity.
 
+## Inventory Hover Tooltip
+
+**Confidence:** High
+
+**Evidence**
+- In `run_inventory_screen`, the plain hover branch only runs when no inventory item is actively selected and neither mouse button is pressed. It walks `g_text_records`, matches the hovered inventory object's `inventory_text_key`, and rebuilds the hover label only when the resolved text changes.
+- The rebuilt label is created through `spawn_text_entity(..., "INV_TEXT", 0xbc, 0x19e, 0xfffffff4, 0)`, which confirms a fixed left-aligned tooltip anchor at `(188, 414)` with color `-12` rather than the centered bottom-of-screen interaction prompt path.
+- The callsite loads `EBX` from `g_textfont_cft @ 0xd5bc4` immediately before `spawn_text_entity`, so the inventory hover label uses `TEXTFONT.CFT`, not `MEDFONT1.CFT`.
+- The separate carry/use branch still measures text with `g_medfont1_cft` and spawns the centered `USING_ON_ID` overlay at y `0x1ce`, so the inventory tooltip and the carry prompt are distinct native UI elements.
+
+**Key Functions**
+- `run_inventory_screen`
+- `spawn_text_entity`
+- `spawn_text_entry_entity`
+
+**Key Data**
+- `ObjectRecord.inventory_text_key`
+- `g_textfont_cft`
+- `g_medfont1_cft`
+
+**Notes**
+- Native inventory hover text is not centered and does not reuse the room hover prompt renderer.
+- The inventory exit entity is handled separately; the fixed `INV_TEXT` hover path applies to inventory objects and the `INV_STAT*` status entities that resolve through `inventory_text_key`.
+
 ## Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.

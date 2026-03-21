@@ -2554,11 +2554,19 @@ bool Script::resolveTextRecord(const Common::String &key, StartupResolvedText &t
 	return !text.value.empty();
 }
 
+Common::String Script::resolveInventoryTooltipText(const StartupObjectRecord &object) const {
+	const StartupTextRecord *textRecord = findTextRecord(object.inventoryTextKey);
+	if (textRecord && !textRecord->value.empty())
+		return textRecord->value;
+
+	return Common::String();
+}
+
 Common::String Script::resolveObjectLabel(const StartupObjectRecord &object) const {
 	if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
-		const StartupTextRecord *inventoryText = findTextRecord(object.inventoryTextKey);
-		if (inventoryText && !inventoryText->value.empty())
-			return inventoryText->value;
+		const Common::String inventoryLabel = resolveInventoryTooltipText(object);
+		if (!inventoryLabel.empty())
+			return inventoryLabel;
 	}
 
 	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
