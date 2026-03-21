@@ -424,7 +424,8 @@ void InventorySystem::selectItem(const Common::String &objectName) {
 	_selectedItemName = objectName;
 }
 
-bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, bool &changed) {
+bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, int currentLoadout,
+		bool &changed) {
 	changed = false;
 
 	int loadoutId = 0;
@@ -435,11 +436,16 @@ bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, boo
 	if (!startupScript)
 		return false;
 
-	const int nextLoadout = startupScript->getPlayerCombatLoadout() == loadoutId ? 0 : loadoutId;
-	changed = startupScript->setPlayerCombatLoadout(nextLoadout);
+	// Native run_inventory_screen compares the clicked weapon against the live combat avatar loadout.
+	const int savedLoadout = startupScript->getPlayerCombatLoadout();
+	const int activeLoadout = currentLoadout >= 0 ? currentLoadout : savedLoadout;
+	const int nextLoadout = activeLoadout == loadoutId ? 0 : loadoutId;
+	const bool scriptChanged = startupScript->setPlayerCombatLoadout(nextLoadout);
+	changed = activeLoadout != nextLoadout;
 	debugC(1, kDebugInventory,
-		"Harvester: inventory combat toggle object='%s' requested_loadout=%d changed=%d resulting_loadout=%d",
-		object.objectName.c_str(), nextLoadout, changed, startupScript->getPlayerCombatLoadout());
+		"Harvester: inventory combat toggle object='%s' active_loadout=%d saved_loadout=%d requested_loadout=%d changed=%d script_changed=%d resulting_loadout=%d",
+		object.objectName.c_str(), activeLoadout, savedLoadout, nextLoadout, changed,
+		scriptChanged, startupScript->getPlayerCombatLoadout());
 	return true;
 }
 
