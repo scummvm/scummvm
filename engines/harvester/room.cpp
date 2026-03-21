@@ -52,6 +52,9 @@ static const int kNativeInventoryDragCloseLeft = 0x45;
 static const int kNativeInventoryDragCloseTop = 0x4b;
 static const int kNativeInventoryDragCloseRight = 0x239;
 static const int kNativeInventoryDragCloseBottom = 0x1b4;
+static const int kNativeInventoryTooltipX = 0xbc;
+static const int kNativeInventoryTooltipY = 0x19e;
+static const byte kNativeInventoryTooltipColor = 0xf4;
 
 struct MonsterAnimationRange {
 	MonsterAnimationRange() {}
@@ -203,6 +206,15 @@ static void drawRoomPrompt(Graphics::Screen &screen, const Graphics::Font &font,
 	font.drawString(&screen, promptText, 0, 462, 640, 0xce, Graphics::kTextAlignCenter);
 }
 
+static void drawInventoryTooltip(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &tooltipText) {
+	if (tooltipText.empty())
+		return;
+
+	font.drawString(&screen, tooltipText, kNativeInventoryTooltipX, kNativeInventoryTooltipY,
+		font.getStringWidth(tooltipText), kNativeInventoryTooltipColor);
+}
+
 static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
 	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
@@ -315,8 +327,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		const Art *art = _engine.getStartupArt();
 		const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 		const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
+		const CftFontResource *inventoryTooltipFontResource = findStartupFontByName(_engine, "TEXTFONT");
 		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
+		Common::ScopedPtr<HarvesterCftFont> inventoryTooltipCftFont;
 		const Graphics::Font *promptFont = bodyFont;
+		const Graphics::Font *inventoryTooltipFont = bodyFont;
 		bool useNativePromptFont = false;
 		if (promptFontResource) {
 			promptCftFont.reset(new HarvesterCftFont(*promptFontResource));
@@ -325,7 +340,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				useNativePromptFont = true;
 			}
 		}
-		if (!screen || !art || !bodyFont || !promptFont)
+		if (inventoryTooltipFontResource) {
+			inventoryTooltipCftFont.reset(new HarvesterCftFont(*inventoryTooltipFontResource));
+			if (inventoryTooltipCftFont->isValid())
+				inventoryTooltipFont = inventoryTooltipCftFont.get();
+		}
+		if (!screen || !art || !bodyFont || !promptFont || !inventoryTooltipFont)
 			return Common::kNoError;
 		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 
@@ -1100,6 +1120,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos);
 			Common::String promptText;
+			Common::String inventoryTooltipText;
 			auto resolveCarryTargetLabel = [&]() {
 				if (hoverState.playerEntity && playerState.entity && hoverState.playerEntity == playerState.entity)
 					return Common::String(kPlayerInventoryLabel);
@@ -1133,10 +1154,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			} else if (_inventory.isOpen()) {
 				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (inventoryHover &&
-						!InventorySystem::isStatusObject(inventoryHover->object)) {
-					promptText = _engine.getStartupScript()->resolveObjectLabel(inventoryHover->object);
+						!InventorySystem::isExitObject(inventoryHover->object)) {
+					inventoryTooltipText =
+						_engine.getStartupScript()->resolveInventoryTooltipText(inventoryHover->object);
 				}
-				_inventory.setPromptText(promptText);
+				_inventory.setPromptText(Common::String());
 				hoverState.cursorSequence = 7;
 			} else {
 				promptText = hoverState.promptText;
@@ -1162,6 +1184,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			if (showingInspectText) {
 				drawRoomInspectText(*activeScreen, *art, *bodyFont, inspectText);
+			} else if (!inventoryTooltipText.empty()) {
+				drawInventoryTooltip(*activeScreen, *inventoryTooltipFont, inventoryTooltipText);
 			} else if (!promptText.empty()) {
 				drawRoomPrompt(*activeScreen, *promptFont, promptText, useNativePromptFont);
 			}

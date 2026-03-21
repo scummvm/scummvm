@@ -400,6 +400,7 @@ public:
 	void markObjectIdentShown(const StartupObjectRecord &object);
 	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
 	bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
+	Common::String resolveInventoryTooltipText(const StartupObjectRecord &object) const;
 	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
 	Common::String resolveTextValue(const Common::String &key) const;
 	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
