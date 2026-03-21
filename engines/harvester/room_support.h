@@ -97,15 +97,6 @@ struct StartupRoomIdleAnimationState {
 
 bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
-void setPlayerMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-	int targetX, float targetZ);
-void setPlayerMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
-	StartupRoomPlayerState &playerState, int targetX, int targetBottomY);
-int resolveRegionTargetX(const StartupRegionRecord &region, const StartupRoomPlayerState &playerState);
-float resolveRegionTargetZ(const StartupRegionRecord &region);
-uint32 getRuntimeClockTicks();
-bool isIdleAnimationExcludedRoom(const Common::String &roomName);
-void updatePlayerIdleTrigger(StartupRoomIdleAnimationState &idleState);
 void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
 bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene);
@@ -130,28 +121,6 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 	const Common::Array<StartupNpcRecord> &npcs,
 	const Common::Array<StartupRegionRecord> &regions,
 	const Common::Point &mousePos);
-bool syncPlayerCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSetupState &state,
-	StartupRoomPlayerState &playerState, int loadout);
-bool setPlayerIdleAnimation(StartupRoomPlayerState &playerState, int facing);
-bool startPlayerAttackAnimation(const StartupRoomSetupState &state,
-	StartupRoomPlayerState &playerState, const Common::Point &mousePos);
-bool updatePlayerAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
-bool startPlayerTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
-bool updatePlayerTurnAnimationState(StartupRoomPlayerState &playerState);
-bool stepPlayerMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
-	const Common::Array<StartupObjectRecord> &sceneObjects,
-	const Common::Array<StartupAnimRecord> &sceneAnimations,
-	StartupRoomPlayerState &playerState);
-bool stepPlayerKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
-	const Common::Array<StartupObjectRecord> &sceneObjects,
-	const Common::Array<StartupAnimRecord> &sceneAnimations,
-	StartupRoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown);
-bool requestPlayerIdleAnimationExit(const StartupRoomSetupState &state,
-	StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState);
-bool startPlayerIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
-	StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState);
-bool updatePlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-	StartupRoomIdleAnimationState &idleState);
 void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
 	const Common::String &entranceName, Common::Point &mousePos);
 

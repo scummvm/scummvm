@@ -39,6 +39,8 @@
 #include "harvester/art.h"
 #include "harvester/flow.h"
 #include "harvester/inventory.h"
+#include "harvester/room_monster.h"
+#include "harvester/room_player.h"
 #include "harvester/room_support.h"
 
 namespace Harvester {
@@ -47,7 +49,6 @@ static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
-static const int kRoomMonsterAnimationRate = 17;
 static const int kNativeInventoryDragCloseLeft = 0x45;
 static const int kNativeInventoryDragCloseTop = 0x4b;
 static const int kNativeInventoryDragCloseRight = 0x239;
@@ -57,16 +58,6 @@ static const int kNativeInventoryTooltipY = 0x19e;
 static const int kNativeInventoryWeekdayX = 0x1e0;
 static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
-
-struct MonsterAnimationRange {
-	MonsterAnimationRange() {}
-	MonsterAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
-		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
-
-	int walkFirstFrame = 0;
-	int walkLastFrame = 0;
-	int idleFrame = 0;
-};
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
@@ -272,39 +263,6 @@ static int mapRoomDepthToScreenYForEvent(const StartupRoomSetupState &state, flo
 		state.roomMaxZScreenY, state.roomMinZScreenY);
 }
 
-static MonsterAnimationRange resolveRoomMonsterAnimationRange(int facing) {
-	switch (facing) {
-	case 0:
-		return MonsterAnimationRange(0x00, 0x09, 0x3b);
-	case 1:
-		return MonsterAnimationRange(0x0f, 0x18, 0x0e);
-	case 2:
-		return MonsterAnimationRange(0x2d, 0x36, 0x2c);
-	case 3:
-		return MonsterAnimationRange(0x1e, 0x27, 0x28);
-	default:
-		return MonsterAnimationRange(0x00, 0x09, 0x3b);
-	}
-}
-
-static void applyRoomMonsterAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster) {
-	entity.setVisible(monster.visible);
-	if (!monster.visible)
-		return;
-
-	const MonsterAnimationRange range = resolveRoomMonsterAnimationRange(monster.facing);
-	if (monster.active) {
-		entity.setAnimationRate(kRoomMonsterAnimationRate);
-		entity.setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
-		entity.setAnimationEnabled(true);
-	} else {
-		entity.setAnimationRate(0);
-		entity.setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
-		entity.setCurrentFrame(range.idleFrame);
-		entity.setAnimationEnabled(false);
-	}
-}
-
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		InventorySystem &inventory)
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
@@ -385,7 +343,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
 				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
 				if (entity)
-					applyRoomMonsterAnimation(*entity, monster);
+					RoomMonsterLogic::applyAnimation(*entity, monster);
 			}
 			runtimeEntities->pauseTimerCountdowns();
 		}
@@ -462,13 +420,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		};
 		auto resetIdleState = [&]() {
 			idleState = StartupRoomIdleAnimationState();
-			idleState.activityTick = getRuntimeClockTicks();
+			idleState.activityTick = RoomPlayerLogic::getRuntimeClockTicks();
 			idleState.resetTick = idleState.activityTick;
-			updatePlayerIdleTrigger(idleState);
+			RoomPlayerLogic::updateIdleTrigger(idleState);
 		};
 		auto notePlayerActivity = [&]() {
-			idleState.activityTick = getRuntimeClockTicks();
-			updatePlayerIdleTrigger(idleState);
+			idleState.activityTick = RoomPlayerLogic::getRuntimeClockTicks();
+			RoomPlayerLogic::updateIdleTrigger(idleState);
 		};
 		auto cancelPlayerAttackAnimation = [&]() {
 			if (!playerState.attackActive)
@@ -485,7 +443,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				? playerState.attackResumeFacing
 				: (playerState.facing >= 0 ? playerState.facing : 0);
 			playerState.attackResumeFacing = -1;
-			return setPlayerIdleAnimation(playerState, resumeFacing);
+			return RoomPlayerLogic::setIdleAnimation(playerState, resumeFacing);
 		};
 		auto syncCurrentRoomRuntimeState = [&]() {
 			Script *startupScript = _engine.getStartupScript();
@@ -534,7 +492,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
 			if (playerState.entity && playerState.facing >= 0)
-				(void)setPlayerIdleAnimation(playerState, playerState.facing);
+				(void)RoomPlayerLogic::setIdleAnimation(playerState, playerState.facing);
 		};
 		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
 			const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
@@ -553,7 +511,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
 					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
 					if (entity)
-						applyRoomMonsterAnimation(*entity, monster);
+						RoomMonsterLogic::applyAnimation(*entity, monster);
 				}
 			}
 
@@ -567,7 +525,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 
 				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
-				(void)setPlayerIdleAnimation(playerState, facing);
+				(void)RoomPlayerLogic::setIdleAnimation(playerState, facing);
 				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
 					playerState.centerX, playerState.bottomY, playerState.z);
 			}
@@ -708,7 +666,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			if (playerState.entity) {
 				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
 				if (facing >= 0)
-					(void)setPlayerIdleAnimation(playerState, facing);
+					(void)RoomPlayerLogic::setIdleAnimation(playerState, facing);
 				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
 					playerState.centerX, playerState.bottomY, playerState.z);
 			}
@@ -1086,8 +1044,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (doesPlayerOverlapRegion(*playerState.entity, region))
 			return;
 
-		setPlayerMoveTarget(scene.state, playerState,
-			resolveRegionTargetX(region, playerState), resolveRegionTargetZ(region));
+		RoomPlayerLogic::setMoveTarget(scene.state, playerState,
+			RoomPlayerLogic::resolveRegionTargetX(region, playerState),
+			RoomPlayerLogic::resolveRegionTargetZ(region));
 	};
 	auto runRegionInteraction = [&](const StartupRegionRecord &region) -> Common::Error {
 		StartupInteractionResult interaction;
@@ -1121,7 +1080,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return Common::kNoError;
 		if (!doesPlayerFacingMatchRegion(playerState.facing, *region)) {
 			if (!playerState.hasMoveTarget && !playerState.turnActive && region->desiredFacing >= 0)
-				(void)startPlayerTurnAnimation(playerState, region->desiredFacing);
+				(void)RoomPlayerLogic::startTurnAnimation(playerState, region->desiredFacing);
 			return Common::kNoError;
 		}
 
@@ -1299,7 +1258,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			case Common::EVENT_RBUTTONDOWN: {
 				notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+					if (RoomPlayerLogic::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
 				}
@@ -1329,7 +1288,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							if (loadoutChanged) {
 								captureCurrentSaveState();
 								if (playerState.entity) {
-									(void)syncPlayerCombatLoadoutVisual(_engine, scene.state, playerState,
+									(void)RoomPlayerLogic::syncCombatLoadoutVisual(_engine, scene.state, playerState,
 										_engine.getStartupScript()->getPlayerCombatLoadout());
 								} else if (_engine.getStartupScript()) {
 									playerState.combatLoadout =
@@ -1415,26 +1374,26 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					playerState.turnLastFrame = -1;
 					playerState.turnEndFrame = -1;
 					playerState.turnPlayBackwards = false;
-					(void)syncPlayerCombatLoadoutVisual(_engine, scene.state, playerState,
+					(void)RoomPlayerLogic::syncCombatLoadoutVisual(_engine, scene.state, playerState,
 						startupScript->getPlayerCombatLoadout());
-					if (startPlayerAttackAnimation(scene.state, playerState, _mousePos))
+					if (RoomPlayerLogic::startAttackAnimation(scene.state, playerState, _mousePos))
 						needsRedraw = true;
 				}
 				break;
 			}
 			case Common::EVENT_LBUTTONUP:
-				lastLeftButtonReleaseTick = getRuntimeClockTicks();
+				lastLeftButtonReleaseTick = RoomPlayerLogic::getRuntimeClockTicks();
 				if (showingInspectText)
 					inspectCanDismiss = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN: {
-				const uint32 now = getRuntimeClockTicks();
+				const uint32 now = RoomPlayerLogic::getRuntimeClockTicks();
 				const bool isFastExitClick =
 					lastLeftButtonReleaseTick != 0 &&
 					now - lastLeftButtonReleaseTick < kRoomExitFastClickWindowTicks;
 				notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+					if (RoomPlayerLogic::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
 				}
@@ -1603,7 +1562,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (!clickedObject) {
 					pendingRegionName.clear();
 					if (hoverState.cursorSequence == 0 && playerState.entity) {
-						setPlayerMoveTargetFromScreenPoint(scene.state, playerState, _mousePos.x, _mousePos.y);
+						RoomPlayerLogic::setMoveTargetFromScreenPoint(scene.state, playerState, _mousePos.x, _mousePos.y);
 						needsRedraw = true;
 					}
 					break;
@@ -1688,7 +1647,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				notePlayerActivity();
 				if (idleState.active || idleState.exiting) {
-					if (requestPlayerIdleAnimationExit(scene.state, playerState, idleState))
+					if (RoomPlayerLogic::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
 					break;
 				}
@@ -1798,21 +1757,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		bool playerAdvancedThisFrame = false;
-		if (updatePlayerAttackAnimationState(_engine, playerState)) {
+		if (RoomPlayerLogic::updateAttackAnimationState(_engine, playerState)) {
 			needsRedraw = true;
 		}
-		if (!playerState.attackActive && updatePlayerTurnAnimationState(playerState)) {
+		if (!playerState.attackActive && RoomPlayerLogic::updateTurnAnimationState(playerState)) {
 			playerAdvancedThisFrame = true;
 			needsRedraw = true;
 		}
 
 		if (!playerState.attackActive && !idleState.active && !idleState.exiting) {
-			if (stepPlayerKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
+			if (RoomPlayerLogic::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				playerAdvancedThisFrame = true;
 				notePlayerActivity();
 				needsRedraw = true;
-			} else if (stepPlayerMoveTarget(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
+			} else if (RoomPlayerLogic::stepMoveTarget(
+					_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState)) {
 				playerAdvancedThisFrame = true;
 				notePlayerActivity();
@@ -1820,16 +1780,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
 					!playerState.turnActive &&
 					playerState.entity && playerState.facing >= 0 &&
-					setPlayerIdleAnimation(playerState, playerState.facing)) {
+					RoomPlayerLogic::setIdleAnimation(playerState, playerState.facing)) {
 				needsRedraw = true;
 			}
 
 			if (!showingInspectText && !moveLeft && !moveRight && !moveUp && !moveDown &&
 					!playerState.hasMoveTarget && !playerState.turnActive &&
 					playerState.entity && playerState.facing >= 0 &&
-					!isIdleAnimationExcludedRoom(scene.state.roomName) &&
-					getRuntimeClockTicks() > idleState.triggerTick &&
-					startPlayerIdleAnimation(_engine, scene.state, playerState, idleState)) {
+					!RoomPlayerLogic::isIdleAnimationExcludedRoom(scene.state.roomName) &&
+					RoomPlayerLogic::getRuntimeClockTicks() > idleState.triggerTick &&
+					RoomPlayerLogic::startIdleAnimation(_engine, scene.state, playerState, idleState)) {
 				needsRedraw = true;
 			}
 		}
@@ -1883,7 +1843,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 			}
 		}
-		if (updatePlayerIdleAnimation(scene.state, playerState, idleState))
+		if (RoomPlayerLogic::updateIdleAnimation(scene.state, playerState, idleState))
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();

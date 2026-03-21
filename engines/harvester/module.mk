@@ -64,6 +64,8 @@ MODULE := engines/harvester
 	flow.o \
 	inventory.o \
 	menu.o \
+	room_monster.o \
+	room_player.o \
 	room.o \
 	script.o \
 	text.o \
