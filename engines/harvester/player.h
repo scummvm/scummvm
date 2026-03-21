@@ -51,6 +51,8 @@ public:
 	static bool setIdleAnimation(StartupRoomPlayerState &playerState, int facing);
 	static bool startAttackAnimation(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, const Common::Point &mousePos);
+	static bool startKeyboardAttackAnimation(const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown);
 	static bool updateAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
 	static bool startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
 	static bool updateTurnAnimationState(StartupRoomPlayerState &playerState);

@@ -267,6 +267,76 @@ static bool resolvePlayerAttackAnimationRange(const StartupRoomSetupState &state
 	return true;
 }
 
+static bool resolveKeyboardAttackAnimationRange(const StartupRoomPlayerState &playerState,
+		bool attackLeft, bool attackRight, bool attackUp, bool attackDown,
+		PlayerAttackAnimationRange &range) {
+	// Native update_player_combat_avatar_state uses scan-code 0x1d as the attack modifier:
+	// Left/Right pick the side mid attacks directly, while Up/Down only choose upper/lower
+	// attacks when the current actor state is already in the matching horizontal family.
+	if (attackRight) {
+		range = PlayerAttackAnimationRange(0x78, 0x81, 2);
+		return true;
+	}
+	if (attackLeft) {
+		range = PlayerAttackAnimationRange(0x5a, 0x63, 1);
+		return true;
+	}
+	if (attackUp) {
+		if (playerState.facing == 2) {
+			range = PlayerAttackAnimationRange(0x6e, 0x77, 2);
+			return true;
+		}
+		if (playerState.facing == 1) {
+			range = PlayerAttackAnimationRange(0x50, 0x59, 1);
+			return true;
+		}
+		return false;
+	}
+	if (attackDown) {
+		if (playerState.facing == 2) {
+			range = PlayerAttackAnimationRange(0x82, 0x8b, 2);
+			return true;
+		}
+		if (playerState.facing == 1) {
+			range = PlayerAttackAnimationRange(0x64, 0x6d, 1);
+			return true;
+		}
+		return false;
+	}
+
+	return false;
+}
+
+static bool startResolvedAttackAnimation(StartupRoomPlayerState &playerState,
+		const PlayerAttackAnimationRange &range) {
+	if (!playerState.entity || playerState.attackActive)
+		return false;
+
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.turnFirstFrame = -1;
+	playerState.turnLastFrame = -1;
+	playerState.turnEndFrame = -1;
+	playerState.turnPlayBackwards = false;
+	playerState.attackActive = true;
+	playerState.attackFirstFrame = range.firstFrame;
+	playerState.attackLastFrame = range.lastFrame;
+	playerState.attackContactFrame =
+		range.firstFrame + Player::resolveCombatLoadoutContactFrameOffset(playerState.combatLoadout);
+	playerState.attackResumeFacing = range.resumeFacing;
+	playerState.attackSoundPlayed = resolvePlayerAttackSoundSet(playerState.combatLoadout) == nullptr;
+	playerState.attackSoundFrame = playerState.attackSoundPlayed
+		? -1
+		: (range.firstFrame + kPlayerAttackSoundTriggerFrameOffset);
+	playerState.attackContactResolved = false;
+	playerState.nextMovementTick = 0;
+	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
+	playerState.entity->setCurrentFrame(range.firstFrame);
+	return true;
+}
+
 static int clampRoomMovementY(const StartupRoomSetupState &state, int screenY) {
 	if (!Player::supportsMovementBand(state))
 		return screenY;
@@ -729,38 +799,30 @@ bool Player::setIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 
 bool Player::startAttackAnimation(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, const Common::Point &mousePos) {
-	if (!playerState.entity || playerState.attackActive)
-		return false;
-
 	PlayerAttackAnimationRange range;
 	if (!resolvePlayerAttackAnimationRange(state, playerState, mousePos, range))
 		return false;
-
-	playerState.hasMoveTarget = false;
-	playerState.turnActive = false;
-	playerState.turnTargetFacing = -1;
-	playerState.turnFirstFrame = -1;
-	playerState.turnLastFrame = -1;
-	playerState.turnEndFrame = -1;
-	playerState.turnPlayBackwards = false;
-	playerState.attackActive = true;
-	playerState.attackFirstFrame = range.firstFrame;
-	playerState.attackLastFrame = range.lastFrame;
-	playerState.attackContactFrame =
-		range.firstFrame + resolveCombatLoadoutContactFrameOffset(playerState.combatLoadout);
-	playerState.attackResumeFacing = range.resumeFacing;
-	playerState.attackSoundPlayed = resolvePlayerAttackSoundSet(playerState.combatLoadout) == nullptr;
-	playerState.attackSoundFrame = playerState.attackSoundPlayed
-		? -1
-		: (range.firstFrame + kPlayerAttackSoundTriggerFrameOffset);
-	playerState.attackContactResolved = false;
-	playerState.nextMovementTick = 0;
-	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
-	playerState.entity->setAnimationRate(kRoomPlayerAttackAnimationRate);
-	playerState.entity->setCurrentFrame(range.firstFrame);
+	if (!startResolvedAttackAnimation(playerState, range))
+		return false;
 	debugC(1, kDebugScene,
 		"Harvester: player attack animation frames=%d..%d resume_facing=%d cursor=(%d,%d)",
 		range.firstFrame, range.lastFrame, range.resumeFacing, mousePos.x, mousePos.y);
+	return true;
+}
+
+bool Player::startKeyboardAttackAnimation(const StartupRoomSetupState &state,
+		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) {
+	(void)state;
+
+	PlayerAttackAnimationRange range;
+	if (!resolveKeyboardAttackAnimationRange(playerState, attackLeft, attackRight, attackUp, attackDown, range))
+		return false;
+	if (!startResolvedAttackAnimation(playerState, range))
+		return false;
+	debugC(1, kDebugScene,
+		"Harvester: player keyboard attack animation frames=%d..%d resume_facing=%d input=(L=%d R=%d U=%d D=%d) facing=%d",
+		range.firstFrame, range.lastFrame, range.resumeFacing,
+		attackLeft, attackRight, attackUp, attackDown, playerState.facing);
 	return true;
 }
 

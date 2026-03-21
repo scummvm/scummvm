@@ -65,6 +65,8 @@ static const int kDefaultMonsterAttackContactFrameOffset = 2;
 static const int kMuckeyAttackContactFrameOffset = 7;
 static const float kNativeMonsterPursuitZTolerance = 2.0f;
 static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
+static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
+static const int kNativeKeyboardAttackSideWindow = 30;
 
 static int roundRoomCombatFloat(float value);
 
@@ -369,6 +371,14 @@ static int computeRuntimeEntityHorizontalGap(const RuntimeEntity &left, const Ru
 	return computeRectAxisGap(leftRect.left, leftRect.right, rightRect.left, rightRect.right);
 }
 
+static bool doRuntimeEntityDepthExtentsOverlap(const RuntimeEntity &first, const RuntimeEntity &second) {
+	const float firstZMin = first.getZ();
+	const float firstZMax = firstZMin + first.getZExtent();
+	const float secondZMin = second.getZ();
+	const float secondZMax = secondZMin + second.getZExtent();
+	return !(firstZMax < secondZMin || secondZMax < firstZMin);
+}
+
 static bool areCombatantsWithinNativeCloseRange(const StartupRoomSetupState &state,
 		const RuntimeEntity &attacker, float attackerZ,
 		const RuntimeEntity &target, float targetZ, int engageDistance) {
@@ -572,9 +582,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		bool moveRight = false;
 		bool moveUp = false;
 		bool moveDown = false;
+		bool attackModifierHeld = false;
 		Common::String pendingRegionName;
 		Common::String pendingRoomChange;
 		uint32 lastLeftButtonReleaseTick = 0;
+		uint32 nextKeyboardAttackAllowedTick = 0;
 		StartupRoomIdleAnimationState idleState;
 		bool needsRedraw = true;
 		Common::String carriedRoomItemName;
@@ -1288,6 +1300,125 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		debugC(1, kDebugCombat,
 			"Harvester: combat player target capture class='none' cursor=(%d,%d)",
 			_mousePos.x, _mousePos.y);
+	};
+	auto capturePlayerAttackTargetForKeyboard = [&](bool attackLeft, bool attackRight, bool attackUp, bool attackDown) {
+		playerState.attackTargetName.clear();
+		playerState.attackTargetClassId = -1;
+		if (!playerState.entity)
+			return;
+
+		enum KeyboardAttackSide {
+			kKeyboardAttackSideNone,
+			kKeyboardAttackSideLeft,
+			kKeyboardAttackSideRight
+		};
+		enum KeyboardAttackBand {
+			kKeyboardAttackBandMid,
+			kKeyboardAttackBandUpper,
+			kKeyboardAttackBandLower
+		};
+
+		KeyboardAttackSide attackSide = kKeyboardAttackSideNone;
+		KeyboardAttackBand attackBand = kKeyboardAttackBandMid;
+		if (attackRight) {
+			attackSide = kKeyboardAttackSideRight;
+			attackBand = kKeyboardAttackBandMid;
+		} else if (attackLeft) {
+			attackSide = kKeyboardAttackSideLeft;
+			attackBand = kKeyboardAttackBandMid;
+		} else if (attackUp) {
+			if (playerState.facing == 2) {
+				attackSide = kKeyboardAttackSideRight;
+				attackBand = kKeyboardAttackBandUpper;
+			} else if (playerState.facing == 1) {
+				attackSide = kKeyboardAttackSideLeft;
+				attackBand = kKeyboardAttackBandUpper;
+			}
+		} else if (attackDown) {
+			if (playerState.facing == 2) {
+				attackSide = kKeyboardAttackSideRight;
+				attackBand = kKeyboardAttackBandLower;
+			} else if (playerState.facing == 1) {
+				attackSide = kKeyboardAttackSideLeft;
+				attackBand = kKeyboardAttackBandLower;
+			}
+		}
+		if (attackSide == kKeyboardAttackSideNone) {
+			debugC(1, kDebugCombat,
+				"Harvester: combat player keyboard target capture class='none' input=(L=%d R=%d U=%d D=%d) facing=%d reason='no native attack family'",
+				attackLeft, attackRight, attackUp, attackDown, playerState.facing);
+			return;
+		}
+
+		const Common::Rect playerRect = playerState.entity->getScreenRect();
+		const int playerLeft = playerRect.left;
+		const int playerRight = playerRect.right;
+		const int playerCenterX = playerState.centerX;
+		RuntimeEntity *bestEntity = nullptr;
+		Common::String bestName;
+		int bestClassId = -1;
+		int bestLeadingEdge = attackSide == kKeyboardAttackSideLeft ? -0x7fffffff : 0x7fffffff;
+
+		auto considerTarget = [&](RuntimeEntity *targetEntity, const Common::String &targetName, int classId) {
+			if (!targetEntity || !targetEntity->isVisible() ||
+					!doRuntimeEntityDepthExtentsOverlap(*playerState.entity, *targetEntity)) {
+				return;
+			}
+
+			const Common::Rect targetRect = targetEntity->getScreenRect();
+			const int targetLeft = targetRect.left;
+			const int targetCenterX = targetLeft + (targetRect.width() / 2);
+			bool matchesDirection = false;
+			if (attackSide == kKeyboardAttackSideLeft) {
+				if (attackBand == kKeyboardAttackBandMid)
+					matchesDirection = targetLeft < playerCenterX;
+				else
+					matchesDirection =
+						targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeKeyboardAttackSideWindow;
+				if (!matchesDirection || targetLeft <= bestLeadingEdge)
+					return;
+			} else {
+				if (attackBand == kKeyboardAttackBandMid)
+					matchesDirection = playerCenterX < targetLeft;
+				else
+					matchesDirection =
+						playerCenterX < targetLeft && targetCenterX < playerRight + kNativeKeyboardAttackSideWindow;
+				if (!matchesDirection || targetLeft >= bestLeadingEdge)
+					return;
+			}
+
+			bestEntity = targetEntity;
+			bestName = targetName;
+			bestClassId = classId;
+			bestLeadingEdge = targetLeft;
+		};
+
+		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+			if (!npc.visible || npc.deathOrMonsterfyFlag)
+				continue;
+			considerTarget(findSceneRuntimeEntity(npc.npcName), npc.npcName, kRuntimeEntityClassNpc);
+		}
+		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+				continue;
+			considerTarget(findSceneRuntimeEntity(monster.monsterName), monster.monsterName, kRuntimeEntityClassMonster);
+		}
+
+		if (!bestEntity) {
+			debugC(1, kDebugCombat,
+				"Harvester: combat player keyboard target capture class='none' input=(L=%d R=%d U=%d D=%d) facing=%d reason='no directional target'",
+				attackLeft, attackRight, attackUp, attackDown, playerState.facing);
+			return;
+		}
+
+		playerState.attackTargetName = bestName;
+		playerState.attackTargetClassId = bestClassId;
+		debugC(1, kDebugCombat,
+			"Harvester: combat player keyboard target capture class='%s' name='%s' input=(L=%d R=%d U=%d D=%d) facing=%d target_rect=(%d,%d)-(%d,%d)",
+			describeCombatTargetClass(bestClassId), bestName.c_str(),
+			attackLeft, attackRight, attackUp, attackDown, playerState.facing,
+			bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
+			bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
 	};
 	auto resolvePlayerAttackContact = [&]() -> Common::Error {
 		if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
@@ -2286,6 +2417,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 
 				notePlayerActivity();
+				if (event.kbd.hasFlags(Common::KBD_CTRL))
+					attackModifierHeld = true;
 				if (idleState.active || idleState.exiting) {
 					if (Player::requestIdleAnimationExit(scene.state, playerState, idleState))
 						needsRedraw = true;
@@ -2322,7 +2455,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					}
 				}
 
-				if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
+						event.kbd.keycode == Common::KEYCODE_RCTRL) {
+					attackModifierHeld = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					moveLeft = true;
 				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 					moveRight = true;
@@ -2377,7 +2513,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				}
 				break;
 			case Common::EVENT_KEYUP:
-				if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
+						event.kbd.keycode == Common::KEYCODE_RCTRL)
+					attackModifierHeld = false;
+				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					moveLeft = false;
 				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 					moveRight = false;
@@ -2410,12 +2549,36 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (Player::updateAttackAnimationState(_engine, playerState)) {
 			needsRedraw = true;
 		}
+		const bool keyboardAttackRequested =
+			attackModifierHeld && (moveLeft || moveRight || moveUp || moveDown);
+		if (!playerState.attackActive && keyboardAttackRequested &&
+				!idleState.active && !idleState.exiting) {
+			const uint32 now = Player::getRuntimeClockTicks();
+			if (nextKeyboardAttackAllowedTick == 0 || (int32)(now - nextKeyboardAttackAllowedTick) >= 0) {
+				capturePlayerAttackTargetForKeyboard(moveLeft, moveRight, moveUp, moveDown);
+				if (Player::startKeyboardAttackAnimation(
+						scene.state, playerState, moveLeft, moveRight, moveUp, moveDown)) {
+					nextKeyboardAttackAllowedTick = now + kNativeKeyboardAttackRepeatTicks;
+					notePlayerActivity();
+					debugC(1, kDebugCombat,
+						"Harvester: combat player keyboard attack start loadout=%d target_class='%s' target='%s' input=(L=%d R=%d U=%d D=%d) facing=%d",
+						playerState.combatLoadout,
+						describeCombatTargetClass(playerState.attackTargetClassId),
+						playerState.attackTargetName.c_str(),
+						moveLeft, moveRight, moveUp, moveDown, playerState.facing);
+					needsRedraw = true;
+				} else {
+					playerState.attackTargetName.clear();
+					playerState.attackTargetClassId = -1;
+				}
+			}
+		}
 		if (!playerState.attackActive && Player::updateTurnAnimationState(playerState)) {
 			playerAdvancedThisFrame = true;
 			needsRedraw = true;
 		}
 
-		if (!playerState.attackActive && !idleState.active && !idleState.exiting) {
+		if (!playerState.attackActive && !keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				playerAdvancedThisFrame = true;
@@ -2434,7 +2597,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				needsRedraw = true;
 			}
 
-			if (!showingInspectText && !moveLeft && !moveRight && !moveUp && !moveDown &&
+			if (!showingInspectText && !keyboardAttackRequested &&
+					!moveLeft && !moveRight && !moveUp && !moveDown &&
 					!playerState.hasMoveTarget && !playerState.turnActive &&
 					playerState.entity && playerState.facing >= 0 &&
 					!Player::isIdleAnimationExcludedRoom(scene.state.roomName) &&
