@@ -1826,7 +1826,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				syncCurrentRoomRuntimeState();
 				for (const Common::String &timerName : expiredTimerNames) {
 					StartupInteractionResult timerInteraction;
-					if (!_engine.getStartupScript()->executeActionTag(timerName, timerInteraction))
+					if (!_engine.getStartupScript()->executeTimerAction(timerName, timerInteraction))
 						continue;
 
 					bool didTransition = false;

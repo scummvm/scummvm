@@ -1471,6 +1471,37 @@ bool Script::executeActionTag(const Common::String &tag, StartupInteractionResul
 		result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
+bool Script::executeTimerAction(const Common::String &timerName, StartupInteractionResult &result,
+		bool allowTransitions) {
+	result = StartupInteractionResult();
+	if (timerName.empty())
+		return false;
+
+	const StartupTimerRecord *timer = findRuntimeTimer(timerName);
+	if (!timer) {
+		debug(1, "Harvester: unresolved timer record '%s'", timerName.c_str());
+		return false;
+	}
+	if (timer->arg2.empty()) {
+		debug(1, "Harvester: timer '%s' has no action tag", timerName.c_str());
+		return false;
+	}
+
+	executeCommandChain(timer->arg2, "timer command", timer->timerName, allowTransitions,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
+		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
+		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
+
+	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
+		!result.deathFlicPath.empty() || result.requestMainMenu ||
+		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
+		!result.continuationTag.empty() || !result.modalText.value.empty() ||
+		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
+		result.mutatedRuntimeState || hasActionableCommandChain(timer->arg2);
+}
+
 bool Script::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions) {
 	const bool handled = executeActionTag(tag, result, allowTransitions);
