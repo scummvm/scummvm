@@ -1292,6 +1292,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 								(void)_inventory.close();
 
 							StartupInteractionResult interaction;
+							bool didTransition = false;
 							const bool executedActionTag = _engine.getStartupScript()->executeActionTag(
 									secondaryAction.actionTag, interaction);
 							debugC(1, kDebugInventory,
@@ -1300,7 +1301,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 								interaction.musicPath.c_str(), interaction.cutscenePath.c_str(),
 								interaction.nextRoomName.c_str());
 							if (executedActionTag) {
-								bool didTransition = false;
 								Common::Error interactionError =
 									interactionProcessor.handleInteractionResult(
 										interaction, didTransition, Common::String());
@@ -1314,8 +1314,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 									return Common::kNoError;
 							}
 
-							if (!_inventory.refresh())
-								return Common::kReadingFailed;
+							if (_inventory.isOpen()) {
+								if (!_inventory.refresh())
+									return Common::kReadingFailed;
+							} else {
+								debugC(1, kDebugInventory,
+									"Harvester: inventory right click skipped overlay refresh after action='%s' transitioned=%d closeInventory=%d",
+									secondaryAction.actionTag.c_str(), didTransition, secondaryAction.closeInventory);
+							}
 							needsRedraw = true;
 							break;
 						}
