@@ -69,9 +69,10 @@ private:
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
-		Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
-		bool pumpTransitionEvents(Common::Error &result);
-		void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
+	Common::Error waitForRoomSetupTransitionHold();
+	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
+	bool pumpTransitionEvents(Common::Error &result);
+	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
 	void queueDialogueInteraction(const StartupInteractionResult &interaction);
 	bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
 	void prepareForNewGame();
@@ -100,6 +101,7 @@ private:
 	bool _hasQueuedDialogueInteraction = false;
 	bool _pendingNewGameRestart = false;
 	bool _pendingMainMenuReturn = false;
+	uint32 _roomSetupTransitionShownTick = 0;
 };
 
 } // End of namespace Harvester

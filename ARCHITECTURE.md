@@ -254,6 +254,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `room_setup` resolves the requested room or `START` entrance, finds the matching room definition, loads the room palette, instantiates exits / hotspots / overlays / room actors, positions the player, runs room-enter handlers, and updates the current music file.
 - `g_current_palette_buffer` at `0xd6084` is the shared room/menu palette buffer used by `run_harvester_main_loop`, `room_setup`, `dispatch_room_event_actions`, inventory/help screens, and the CD prompt path.
   - `room_setup` first resolves the target room / entrance and, when `g_current_room_def->palette_path` is non-null, rereads that room palette into `g_current_palette_buffer`.
+  - Before rebuilding the wait transition, `room_setup` uses `ramp_palette_brightness` to fade the outgoing palette down to black when a current room palette is active; only the no-current-room startup case skips directly to a black palette upload.
   - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition while the cursor is hidden, re-shows the cursor, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
   - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
   - On the player-present branch it then re-adds the stored live player actor from `DAT_000d5bd4`, places it from `g_current_room_entrance`, and seeds exact facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
@@ -264,7 +265,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `upload_palette_to_vga` at `0x22770` writes a caller-supplied RGB palette to the VGA DAC, forces palette index 0 to black, and applies a caller-supplied brightness scalar before clamping each channel to the hardware `0x3f` range.
   - Archive inspection plus the helper body confirm the room/menu `.PAL` resources are already stored as 768-byte 8-bit RGB triplets; the upload path shifts those bytes down to VGA `0..63` before brightness scaling instead of expanding 6-bit source values.
 - `ramp_palette_brightness` at `0x23a30` is the shared timed palette ramp helper.
-  - `room_setup` uses it as a fade-in from `0.0` to either `1.0` or the dimmed target `0.6`.
+  - `room_setup`, `run_inventory_screen`, and `dispatch_room_event_actions` all call it on room / closeup transition paths.
+  - The helper steps brightness in `0.1` increments and waits until `get_elapsed_milliseconds() + 4` between uploads while pumping `update_music_stream`, so the native fade pacing comes from repeated short timed palette uploads rather than a single blocking delay.
   - The helper updates music stream state between palette uploads instead of blocking in a tight delay loop.
 - `dispatch_room_event_actions` at `0x60ee0` interprets action records keyed by a tag string. It is used by `room_setup`, the main loop, and nested action groups.
 - `parse_command_record` at `0x5e410` now has enough parser evidence to anchor the room-handoff opcodes directly.

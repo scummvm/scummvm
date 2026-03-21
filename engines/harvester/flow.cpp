@@ -77,6 +77,8 @@ static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
+// Native keeps WAIT_BM visible while room construction runs; fast local loads need a short floor.
+static const uint32 kTransitionWaitFrameMinMs = 120;
 static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
@@ -840,6 +842,14 @@ static void setScaledPalette(Graphics::Screen &screen, const byte *palette, floa
 	byte scaledPalette[256 * 3];
 	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
+	screen.setPalette(scaledPalette);
+}
+
+static void setScaledDisplayPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
+	byte scaledPalette[256 * 3];
+	const float clampedBrightness = CLIP<float>(brightness, 0.0f, 1.0f);
+	for (uint i = 0; i < ARRAYSIZE(scaledPalette); ++i)
+		scaledPalette[i] = (byte)CLIP<int>((int)(palette[i] * clampedBrightness + 0.5f), 0, 255);
 	screen.setPalette(scaledPalette);
 }
 
@@ -1964,6 +1974,10 @@ Common::Error Flow::runQuickTips() {
 		if (!populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 			return Common::kReadingFailed;
 
+		transitionError = waitForRoomSetupTransitionHold();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+
 		logScenePaletteSummary("quick tips scene palette", scene, kPaletteBrightnessBlack);
 		drawRoomScene(_engine, *screen, scene, kPaletteBrightnessBlack);
 		screen->makeAllDirty();
@@ -2472,18 +2486,68 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 }
 
 Common::Error Flow::beginRoomSetupTransition() {
+	Graphics::Screen *screen = _engine.getScreen();
+	if (screen) {
+		byte displayPalette[256 * 3];
+		screen->getPalette(displayPalette);
+		bool hasVisiblePalette = false;
+		for (byte value : displayPalette) {
+			if (value != 0) {
+				hasVisiblePalette = true;
+				break;
+			}
+		}
+
+		if (hasVisiblePalette) {
+			for (float brightness = 1.0f - kPaletteFadeStep;
+					brightness > kPaletteBrightnessBlack; brightness -= kPaletteFadeStep) {
+				setScaledDisplayPalette(*screen, displayPalette, brightness);
+				screen->makeAllDirty();
+				screen->update();
+
+				const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
+				while ((int32)(nextTick - g_system->getMillis()) > 0) {
+					Common::Error result = Common::kNoError;
+					if (pumpTransitionEvents(result))
+						return result;
+					g_system->delayMillis(1);
+				}
+			}
+
+			setScaledDisplayPalette(*screen, displayPalette, kPaletteBrightnessBlack);
+			screen->makeAllDirty();
+			screen->update();
+		}
+	}
+
 	if (_engine.getRuntimeEntities())
 		_engine.getRuntimeEntities()->hideCursor();
 
 	const Art *art = _engine.getStartupArt();
-	Graphics::Screen *screen = _engine.getScreen();
 	if (art && screen)
 		art->drawWaitFrame(*screen);
+	_roomSetupTransitionShownTick = g_system ? g_system->getMillis() : 0;
 
 	Common::Error result = Common::kNoError;
 	if (pumpTransitionEvents(result))
 		return result;
 
+	return Common::kNoError;
+}
+
+Common::Error Flow::waitForRoomSetupTransitionHold() {
+	if (_roomSetupTransitionShownTick == 0 || !g_system)
+		return Common::kNoError;
+
+	const uint32 deadline = _roomSetupTransitionShownTick + kTransitionWaitFrameMinMs;
+	while ((int32)(deadline - g_system->getMillis()) > 0) {
+		Common::Error result = Common::kNoError;
+		if (pumpTransitionEvents(result))
+			return result;
+		g_system->delayMillis(1);
+	}
+
+	_roomSetupTransitionShownTick = 0;
 	return Common::kNoError;
 }
 
