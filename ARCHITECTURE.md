@@ -279,6 +279,10 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `EXIT_CLOSEUP` restores `g_pending_room_name = g_player_room_name`, copies the live player position/facing into the `SAVE_GAME` entrance, and restores `g_player_present_in_room = 1`.
 - `run_harvester_main_loop` is the code that actually consumes `g_pending_room_name`.
   - At the top of each gameplay iteration it checks for a queued handoff, clears any selected carried object / interaction text state that would leak across the boundary, and then calls `room_setup(g_pending_room_name)`.
+  - The same loop also owns the live room right-click attack selector when no carried item is active and the player is alive.
+  - It sets `DAT_000d61d0 = 3`, compares cursor X against the player midpoint, and then compares cursor Y against `player_bottom - depth_scale * 144.44` and `player_bottom - depth_scale * 75.36`.
+  - Those thresholds choose the six directional attack states `0x18/0x17/0x16` on the left side and `0x1b/0x1a/0x19` on the right side.
+  - `update_actor_runtime_state` maps those states to frame banks `0x50..0x59`, `0x5a..0x63`, `0x64..0x6d`, `0x6e..0x77`, `0x78..0x81`, and `0x82..0x8b`.
 - `dispatch_room_event_actions` supports:
   - Conditional branching between alternate action tags
   - Recursive dispatch of named action groups
@@ -769,7 +773,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `spawn_object_entity_from_record` promotes sprite-backed objects whose initial coordinates are `(0, 0)` and whose loaded bitmap is `640x480` to runtime class `3`, the room-background object class.
   - Hotspot-only objects with no action tag become class `0x16`; the other hotspot-only objects become class `0x15`.
   - `spawn_region_entity_from_record` builds runtime class `0x19` rectangular hotspots from the record bounds and Z span, copies `desired_facing`, and maps `cursor_enabled` onto the runtime hotspot interaction flag.
-  - `spawn_anim_entity_from_record` immediately drives `show_entity_visual`, but room `ANIM` records do not use a centered draw anchor. The runtime keeps the record `x` / `y` as the fixed screen anchor and applies only the current ABM frame header `x_offset` / `y_offset`.
+  - `spawn_anim_entity_from_record` immediately drives `show_entity_visual`, which centers the current decoded bitmap on the record `x` / `y` pivot before later movement code applies the current frame header `x_offset` / `y_offset`.
   - `spawn_timer_entity_from_record` builds runtime class `0x17` timer entities keyed by `TimerRecord.timer_name`; when the timer starts enabled it seeds the start tick from `DAT_000c7e44` and computes the first expiration as `start_tick + initial_value * 100`.
   - `spawn_npc_entity_from_record` seeds ordinary room-NPC ambient playback as actor state `0x34` with a bounded frame window of `0..0x3b`; the later death / monsterfy / reaction banks begin above that range, so passive room NPCs do not free-run the whole ABM.
 - `CommandRecord` is now stable enough to use directly in the event interpreter:
@@ -868,13 +872,12 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `pos_x`, `pos_y`, `pos_z`, `frame_delay`
   - `room_name`, `anim_path`, `anim_name`
   - script booleans: `active`, `visible`, `loop`, `backward`, `ping_pong`, `remove`
-  - `advance_entity_animation_frame` copies the current ABM frame header offsets into `frame_x_offset` / `frame_y_offset`, and `update_render_entity_screen_position` renders from `screen_x + frame_x_offset` / `screen_y + frame_y_offset`; room anims are not recentered from the current frame width/height.
+  - `advance_entity_animation_frame` copies the current ABM frame header offsets into `frame_x_offset` / `frame_y_offset`, and `update_visible_entity_screen_position` later adds those offsets onto the already-centered entity position computed by `show_entity_visual`.
   - `room_setup` and room teardown reuse the same live bytes as runtime state: `runtime_active`, `runtime_visible`, and `runtime_state`
   - Before tearing the outgoing room down, `room_setup` walks the live render list, finds room anim entities by `anim_name`, copies each entity's `current_frame_index` back into `runtime_state`, forces `runtime_visible = 1`, and mirrors the live animation-enabled bit back into `runtime_active`
   - `spawn_anim_entity_from_record` uses that saved `runtime_state` as the initial frame for non-reverse anims, so same-room rebuilds and save/load do not restart a partially progressed visible animation from frame `0`
   - `room_setup` materializes a room animation when either `active` or `visible` is set, but `spawn_anim_entity_from_record` copies only `active` into the live animation-enable flag.
   - The `SET_ANIM` dispatcher branch updates both record bytes, respawns or removes the live entity from `visible`, and toggles ticking on the already-spawned entity from `active`, so a visible-but-inactive room anim remains on its initial frame instead of advancing.
-  - `HALLDOOR.ABM` frame headers carry zero `x_offset`, so the broom-closet door stays pinned to its record `x` while later open frames narrow; a centered re-anchor makes that sequence drift too far right.
   - The `GOFLIC` dispatcher branch runs `play_fst_sequence` immediately after those record/entity mutations; it does not force an intermediate same-room rebuild before the FST starts.
   - For same-room interactions such as `USE_BROOMKEY -> SCHL_DOOR_HS`, native ordering is therefore: mutate `SCHDOOR` / `WAYLHERL` with `SET_ANIM`, play `GRAPHIC/FST/C132.FST`, then let the later room refresh respawn `SCHDOOR` from the saved post-animation `runtime_state`.
 - `TextRecord` now has stable string identity:
