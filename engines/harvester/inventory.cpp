@@ -21,10 +21,12 @@
 
 #include "harvester/inventory.h"
 
+#include "common/debug.h"
 #include "common/endian.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
 #include "graphics/screen.h"
+#include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/resources.h"
 #include "harvester/art.h"
@@ -231,6 +233,15 @@ static bool usesObjectActionForInventorySecondaryClick(const Common::String &obj
 	return false;
 }
 
+static void debugLogInventoryVisual(const StartupInventoryVisual &visual, const Common::String &spritePath) {
+	debugC(1, kDebugInventory,
+		"Harvester: inventory visual object='%s' sprite='%s' alt='%s' chosen='%s' bounds=(%d,%d)-(%d,%d) action='%s' owner='%s' text='%s'",
+		visual.object.objectName.c_str(), visual.object.spritePath.c_str(), visual.object.altSpritePath.c_str(),
+		spritePath.c_str(), visual.bounds.left, visual.bounds.top, visual.bounds.right, visual.bounds.bottom,
+		visual.object.actionTag.c_str(), visual.object.currentOwnerOrRoom.c_str(),
+		visual.object.inventoryTextKey.c_str());
+}
+
 } // End of anonymous namespace
 
 InventorySystem::InventorySystem(HarvesterEngine &engine) : _engine(engine) {
@@ -289,10 +300,12 @@ bool InventorySystem::refresh() {
 
 		if (isStatusObject(inventoryObject)) {
 			_items.push_back(visual);
+			debugLogInventoryVisual(visual, spritePath);
 			continue;
 		}
 
 		_items.push_back(visual);
+		debugLogInventoryVisual(visual, spritePath);
 	}
 
 	if (_selectedItemName.empty())
@@ -397,19 +410,34 @@ bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, boo
 
 	const int nextLoadout = startupScript->getPlayerCombatLoadout() == loadoutId ? 0 : loadoutId;
 	changed = startupScript->setPlayerCombatLoadout(nextLoadout);
+	debugC(1, kDebugInventory,
+		"Harvester: inventory combat toggle object='%s' requested_loadout=%d changed=%d resulting_loadout=%d",
+		object.objectName.c_str(), nextLoadout, changed, startupScript->getPlayerCombatLoadout());
 	return true;
 }
 
 bool InventorySystem::resolveSecondaryAction(const StartupObjectRecord &object,
 		InventorySecondaryAction &action) const {
-	if (resolveInventorySecondaryActionEntry(object.objectName, action))
+	if (resolveInventorySecondaryActionEntry(object.objectName, action)) {
+		debugC(1, kDebugInventory,
+			"Harvester: inventory secondary action object='%s' resolved hardcoded action='%s' closeInventory=%d",
+			object.objectName.c_str(), action.actionTag.c_str(), action.closeInventory);
 		return true;
+	}
 
 	action = InventorySecondaryAction();
-	if (object.actionTag.empty() || !usesObjectActionForInventorySecondaryClick(object.objectName))
+	if (object.actionTag.empty() || !usesObjectActionForInventorySecondaryClick(object.objectName)) {
+		debugC(1, kDebugInventory,
+			"Harvester: inventory secondary action object='%s' has no supported action (objectAction='%s' supported=%d)",
+			object.objectName.c_str(), object.actionTag.c_str(),
+			usesObjectActionForInventorySecondaryClick(object.objectName));
 		return false;
+	}
 
 	action.actionTag = object.actionTag;
+	debugC(1, kDebugInventory,
+		"Harvester: inventory secondary action object='%s' falling back to object action='%s'",
+		object.objectName.c_str(), action.actionTag.c_str());
 	return true;
 }
 
