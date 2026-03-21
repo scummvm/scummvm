@@ -63,6 +63,10 @@ int HarvesterMetaEngine::getAutosaveSlot() const {
 	return -1;
 }
 
+Common::String HarvesterMetaEngine::formatSaveSlotForDisplay(int slot) const {
+	return Common::String::format("%02d", slot + 1);
+}
+
 bool HarvesterMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);

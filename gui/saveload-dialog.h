@@ -191,12 +191,16 @@ public:
 	void setDescription(const Common::String &desc);
 	const Common::String getDescription();
 
-	void setTargetSlot(int slot) { _targetSlot = slot; }
+	void setTargetSlot(const MetaEngine *metaEngine, int slot) {
+		_metaEngine = metaEngine;
+		_targetSlot = slot;
+	}
 
 	void open() override;
 protected:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
+	const MetaEngine *_metaEngine;
 	int _targetSlot;
 	StaticTextWidget *_title;
 	EditTextWidget *_description;

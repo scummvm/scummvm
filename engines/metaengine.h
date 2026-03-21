@@ -375,6 +375,14 @@ public:
 	virtual Common::String getSavegameFile(int saveGameIdx, const char *target = nullptr) const;
 
 	/**
+	 * Return the user-facing slot label for the given save slot.
+	 *
+	 * This only affects presentation in generic ScummVM UI and does not alter
+	 * the underlying save slot number or filename mapping.
+	 */
+	virtual Common::String formatSaveSlotForDisplay(int slot) const;
+
+	/**
 	 * Return the pattern for save files.
 	 *
 	 * @param target  Game target. If omitted, then the engine ID is used.
