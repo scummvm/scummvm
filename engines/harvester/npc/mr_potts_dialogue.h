@@ -47,7 +47,7 @@ public:
 		bool butcherDeathShown = false;
 		bool moynahanDeathShown = false;
 		bool ednaHungShown = false;
-		bool discussedMoynahanKarinKidnapedState = false;
+		bool day6KarinFoundAliveFollowupShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
