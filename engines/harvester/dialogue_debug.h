@@ -1,4 +1,3 @@
-
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -20,23 +19,19 @@
  *
  */
 
-#ifndef HARVESTER_CONSOLE_H
-#define HARVESTER_CONSOLE_H
+#ifndef HARVESTER_DIALOGUE_DEBUG_H
+#define HARVESTER_DIALOGUE_DEBUG_H
 
-#include "gui/debugger.h"
+#include "common/array.h"
+#include "common/str.h"
 
 namespace Harvester {
 
-class Console : public GUI::Debugger {
-private:
-	bool Cmd_about(int argc, const char **argv);
-	bool Cmd_debugDialogue(int argc, const char **argv);
-	bool Cmd_debugRoom(int argc, const char **argv);
-public:
-	Console();
-	~Console() override;
-};
+class Text;
+
+bool buildDialogueDebugDump(const Common::String &npcName, const Text &text,
+	Common::Array<Common::String> &lines);
 
 } // End of namespace Harvester
 
-#endif // HARVESTER_CONSOLE_H
+#endif // HARVESTER_DIALOGUE_DEBUG_H
