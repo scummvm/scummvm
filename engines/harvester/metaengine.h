@@ -32,6 +32,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	int getMaximumSaveSlot() const override;
 	int getAutosaveSlot() const override;
+	Common::String formatSaveSlotForDisplay(int slot) const override;
 
 	/**
 	 * Determine whether the engine supports the specified MetaEngine feature.

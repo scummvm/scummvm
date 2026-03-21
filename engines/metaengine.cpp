@@ -69,6 +69,10 @@ Common::String MetaEngine::getSavegameFile(int saveGameIdx, const char *target) 
 	}
 }
 
+Common::String MetaEngine::formatSaveSlotForDisplay(int slot) const {
+	return Common::String::format("%d", slot);
+}
+
 Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 
