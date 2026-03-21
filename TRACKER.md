@@ -16,6 +16,9 @@
 
 ## Last Confirmed Action
 
+- On March 20, 2026, re-checked the native document-closeup exit path in `run_inventory_screen @ 0x7df10` after the live `NOTE` fix still showed redundant ScummVM inventory bitmap loads following `GO_BOYLNOTECU`.
+- Confirmed the native hardcoded document/photo branch destroys the inventory-local text/status entities, dispatches the closeup action, and tears down the inventory screen before returning to the caller; it does not rebuild the carried inventory visuals after the closeup branch closes.
+- Patched `engines/harvester/room.cpp` so right-click secondary actions only call `_inventory.refresh()` when the overlay is still open; closeup actions such as `NOTE -> GO_BOYLNOTECU` now skip the redundant inventory cache rebuild once the inventory screen has been closed.
 - On March 20, 2026, re-opened the native inventory secondary-click dispatcher in `run_inventory_screen @ 0x7df10` after live ScummVM logs showed the runtime object under `NOTE.BM` is `NOTE`, not `NOTE_PHOTOCOPY`.
 - Confirmed from the hardcoded object-name ladder around `0x7efc6` plus the adjacent action-tag pointer table at `0xc40c8` that native supports both note variants separately: `NOTE_PHOTOCOPY -> GO_BOYLCOPYCU` and `NOTE -> GO_BOYLNOTECU`, with the note entry occupying the slot immediately after `NOTE_PHOTOCOPY` before the Whaley photo entries.
 - Patched `engines/harvester/inventory.cpp` to add the missing `NOTE` secondary-action mapping so right-clicking the live note object now follows the native closeup/document branch instead of falling through to the generic "close inventory" path.
@@ -112,7 +115,7 @@
 
 ## Next Suggested Action
 
-1. Run a live Harvester validation pass on the inventory overlay and confirm right-clicking `NOTE` now dispatches `GO_BOYLNOTECU`, closes the overlay only because the closeup branch is executing, and enters the same document-view transition class as `NOTE_PHOTOCOPY`.
+1. Run a live Harvester validation pass on the inventory overlay and confirm right-clicking `NOTE` now dispatches `GO_BOYLNOTECU` without the redundant post-closeup inventory bitmap reloads, and that the overlay only reappears when the player explicitly reopens it after returning from the closeup.
 2. Run a live Harvester validation pass on the inventory overlay and confirm the native weekday label now appears at `(480, 396)` in `TEXTFONT` when `HARVEST_BLADE` is not in inventory, updates if the day changes while the panel stays open, and disappears immediately once `HARVEST_BLADE` is acquired.
 3. Run a live Harvester validation pass on the inventory overlay and confirm plain hover labels now use the native `TEXTFONT` placement: check regular inventory items such as `CHECKBOOK` plus any `INV_STAT*` status portrait entry that has an `inventory_text_key`, and verify the label appears at `(188, 414)` instead of the centered bottom prompt line.
 4. Run a live Harvester validation pass in `SHRFOFC` / `POL_EVD`: enter the evidence room from the sheriff office, leave via `EVDEXIT1`, and confirm `GRAPHIC/FST/C044.FST` now plays exactly once before the return to `SHRFOFC`, with later exits skipping the movie because `JUST_LEFT_EV_ROOM_1ST` stayed latched.
