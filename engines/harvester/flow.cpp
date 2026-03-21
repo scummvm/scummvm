@@ -2390,7 +2390,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	for (const StartupAnimRecord &anim : drawableAnimations) {
 		if (!runtimeEntities->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
 				Common::Point(anim.x, anim.y), (float)anim.z, anim.frameDelay, anim.active, anim.visible,
-				anim.looping, anim.backward, anim.pingPong)) {
+				anim.looping, anim.backward, anim.pingPong, anim.runtimeState)) {
 			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
 				anim.animName.c_str(), anim.resourcePath.c_str());
 		}
