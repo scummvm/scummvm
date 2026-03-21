@@ -20,12 +20,14 @@
  */
 
 #include "harvester/console.h"
+#include "harvester/dialogue_debug.h"
 #include "harvester/harvester.h"
 
 namespace Harvester {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
+	registerCmd("DEBUG_DIALOGUE", WRAP_METHOD(Console, Cmd_debugDialogue));
 	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
 }
 
@@ -34,6 +36,34 @@ Console::~Console() {
 
 bool Console::Cmd_about(int argc, const char **argv) {
 	debugPrintf("Harvester engine scaffold\n");
+	return true;
+}
+
+bool Console::Cmd_debugDialogue(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: DEBUG_DIALOGUE <NPC_ID>\n");
+		return true;
+	}
+
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	Text *startupText = g_engine->getStartupText();
+	if (!startupText) {
+		debugPrintf("Harvester startup text is not loaded\n");
+		return true;
+	}
+
+	Common::Array<Common::String> dumpLines;
+	if (!buildDialogueDebugDump(argv[1], *startupText, dumpLines)) {
+		debugPrintf("No structured dialogue dump is available for NPC '%s'\n", argv[1]);
+		return true;
+	}
+
+	for (uint i = 0; i < dumpLines.size(); ++i)
+		debugPrintf("%s\n", dumpLines[i].c_str());
 	return true;
 }
 

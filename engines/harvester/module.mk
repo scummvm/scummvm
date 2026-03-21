@@ -11,6 +11,7 @@ MODULE := engines/harvester
 	npc/chessmaster_dialogue.o \
 	npc/cloak_atnd_dialogue.o \
 	console.o \
+	dialogue_debug.o \
 	dialogue.o \
 	fst_player.o \
 	metaengine.o \
