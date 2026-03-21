@@ -23,6 +23,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/path.h"
 #include "common/textconsole.h"
 
 #include "engines/util.h"
@@ -569,6 +570,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_moveYMax = 0;
 
 	_forceAscii = false;
+	_useSimon2LanguageOverlay = false;
 
 	_vc10BasePtrOld = nullptr;
 	memcpy (_hebrewCharWidths,
@@ -586,6 +588,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	// Add default file directories for Amiga/Macintosh
 	// versions of Simon the Sorcerer 2
 	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
@@ -690,6 +693,7 @@ Common::Error AGOSEngine::init() {
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_language = Common::parseLanguage(ConfMan.get("language"));
+	loadSimon2LanguageOverlay();
 
 	if (getGameType() == GType_PP) {
 		_speech = true;
@@ -1165,6 +1169,81 @@ void AGOSEngine::syncSoundSettingsIntern() {
 
 	if (_midiEnabled)
 		_midi->syncSoundSettings();
+}
+
+static bool decodeSimon2LanguageFile(const Common::String &filename, Common::Array<Common::String> &entries) {
+	Common::SeekableReadStream *in = SearchMan.createReadStreamForMember(Common::Path(filename));
+	if (!in)
+		return false;
+
+	Common::String current;
+	while (!in->eos()) {
+		byte raw = in->readByte();
+		byte decoded = raw + 1;
+		if (decoded == 0) {
+			entries.push_back(current);
+			current.clear();
+		} else {
+			current += (char)decoded;
+		}
+	}
+
+	delete in;
+	return !entries.empty();
+}
+
+bool AGOSEngine::hasSimon2LanguageFiles() const {
+	if (getGameType() != GType_SIMON2)
+		return false;
+
+	return SearchMan.hasFile("simon2.english") || SearchMan.hasFile("simon2.german") ||
+		SearchMan.hasFile("simon2.italian") || SearchMan.hasFile("simon2.french");
+}
+
+void AGOSEngine::loadSimon2LanguageOverlay() {
+	_useSimon2LanguageOverlay = false;
+	_simon2LanguageOverlay.clear();
+
+	if (!hasSimon2LanguageFiles())
+		return;
+
+	Common::String targetFile;
+	switch (_language) {
+	case Common::DE_DEU:
+		targetFile = "simon2.german";
+		break;
+	case Common::IT_ITA:
+		targetFile = "simon2.italian";
+		break;
+	case Common::FR_FRA:
+		targetFile = "simon2.french";
+		break;
+	default:
+		return;
+	}
+
+	Common::Array<Common::String> englishEntries;
+	Common::Array<Common::String> translatedEntries;
+	if (!decodeSimon2LanguageFile("simon2.english", englishEntries))
+		return;
+	if (!decodeSimon2LanguageFile(targetFile, translatedEntries))
+		return;
+
+	size_t count = MIN(englishEntries.size(), translatedEntries.size());
+	for (size_t i = 0; i < count; ++i) {
+		if (!englishEntries[i].empty() && englishEntries[i] != translatedEntries[i])
+			_simon2LanguageOverlay.setVal(englishEntries[i], translatedEntries[i]);
+	}
+
+	_useSimon2LanguageOverlay = !_simon2LanguageOverlay.empty();
+}
+
+Common::String AGOSEngine::translateLanguageOverlay(const Common::String &english) const {
+	if (!_useSimon2LanguageOverlay)
+		return english;
+	if (!_simon2LanguageOverlay.contains(english))
+		return english;
+	return _simon2LanguageOverlay.getValOrDefault(english);
 }
 
 } // End of namespace AGOS
