@@ -31,6 +31,7 @@ namespace Harvester {
 namespace {
 
 static const char *const kDialogueC149FstPath = "GRAPHIC/FST/C149.FST";
+static const char *const kGoDay2ActionTag = "GO_DAY_2";
 
 } // End of namespace
 
@@ -63,6 +64,15 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto restoreItemToRah = [&](const char *objectName) {
 		(void)runtime.startupScript().resetRuntimeObjectToInitialState(objectName);
 		(void)runtime.startupScript().setRuntimeObjectVisible("RAH", objectName, true);
+	};
+	auto executeActionTagIfSet = [&](const char *actionTag) -> Common::Error {
+		StartupInteractionResult interaction;
+		if (!runtime.startupScript().executeActionTag(actionTag, interaction))
+			return Common::kNoError;
+
+		runtime.applyImmediateDialogueInteractionEffects(interaction);
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+		return Common::kNoError;
 	};
 	auto handleRemainsBranch = [&]() -> Common::Error {
 		markSergeantProgress();
@@ -101,10 +111,18 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.dialogueStateD2f00 = true;
 		state.introPending = false;
 		restoreItemToRah("COMPLETED_LODGE_APPLICATION");
-		if (!runtime.startupScript().getFlagValue("QUEST_1"))
-			return playSergeantLine(0x41cd);
+		if (!runtime.startupScript().getFlagValue("QUEST_1")) {
+			Common::Error lineError = playSergeantLine(0x41cd, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playSergeantLine(0x4292);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			(void)runtime.startupScript().setRuntimeFlagValue("QUEST_1", true);
+			return executeActionTagIfSet(kGoDay2ActionTag);
+		}
 		if (!state.dialogueStateD2d54)
-			return playSergeantLine(0x41d2);
+			return playSergeantLine(0x41d2, 1);
 		return playSergeantLine(0x41f0);
 	};
 
