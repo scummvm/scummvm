@@ -380,9 +380,10 @@ static void psxSaturnDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool
 				} else {
 					for (int xp = boxBounds.left; xp <= boxBounds.right; ++xp) {
 						// Extract pixel value from byte
-						byte pixValue =  (*(p + (xp / 2)) & ((xp % 2) ? 0xf0 : 0x0f)) >> ((xp % 2) ? 4 : 0);
-						if (pixValue || !transparency)
-							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = psxMapperTable[pixValue];
+						byte psxIndexValue =  (*(p + (xp / 2)) & ((xp % 2) ? 0xf0 : 0x0f)) >> ((xp % 2) ? 4 : 0);
+						byte pixelValue = psxMapperTable[psxIndexValue];
+						if (pixelValue || !transparency)
+							*(tempDest + SCREEN_WIDTH * (yp - boxBounds.top) + (xp - boxBounds.left)) = pixelValue;
 					}
 				}
 			}
