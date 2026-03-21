@@ -82,6 +82,7 @@ static const InventoryCombatLoadoutEntry kInventoryCombatLoadoutMap[] = {
 // hardcoded closeup action tags instead of using their object records directly.
 static const InventorySecondaryActionEntry kInventorySecondaryActionMap[] = {
 	{ "NOTE_PHOTOCOPY", "GO_BOYLCOPYCU", true },
+	{ "NOTE", "GO_BOYLNOTECU", true },
 	{ "PHOTO_OF_WHALEY_HERRILL_PHOTOCOPY", "GO_BROOMCPYCU", true },
 	{ "PHOTO_OF_WHALEY_HERRILL", "GO_BROOMPICCU", true },
 	{ "CASKET_PHOTOCOPY", "GO_CASKTCPYCU", true },
