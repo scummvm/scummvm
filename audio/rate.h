@@ -35,34 +35,34 @@ namespace Audio {
 
 class AudioStream;
 
-typedef int16 st_sample_t;
 typedef uint16 st_volume_t;
 typedef uint32 st_size_t;
 typedef uint32 st_rate_t;
 
-/* Minimum and maximum values a sample can hold. */
-enum {
-	ST_SAMPLE_MAX = 0x7fffL,
-	ST_SAMPLE_MIN = (-ST_SAMPLE_MAX - 1L)
-};
+// This assumes that 'a' and 'b' are 24-bit samples at most
+template <typename T>
+static inline void clampedAdd(T& a, int b) {
+	constexpr unsigned long long highestBit = 1ULL << (sizeof(T) * 8 - 1);
+	constexpr int maxVal = (int)(highestBit - 1);
+	constexpr int minVal = ~maxVal;
 
-static inline void clampedAdd(int16& a, int b) {
 	int val;
 #ifdef OUTPUT_UNSIGNED_AUDIO
-	val = (a ^ 0x8000) + b;
+	constexpr int signMask = (int)highestBit;
+	val = ((int)a ^ signMask) + b;
 #else
-	val = a + b;
+	val = (int)a + b;
 #endif
 
-	if (val > ST_SAMPLE_MAX)
-		val = ST_SAMPLE_MAX;
-	else if (val < ST_SAMPLE_MIN)
-		val = ST_SAMPLE_MIN;
+	if (val > maxVal)
+		val = maxVal;
+	else if (val < minVal)
+		val = minVal;
 
 #ifdef OUTPUT_UNSIGNED_AUDIO
-	a = ((int16)val) ^ 0x8000;
+	a = (T)(val ^ signMask);
 #else
-	a = val;
+	a = (T)val;
 #endif
 }
 
@@ -79,16 +79,17 @@ public:
 
 	/**
 	 * Convert the provided AudioStream to the target sample rate.
-	 * 
-	 * @param input			The AudioStream to read data from.
-	 * @param outBuffer		The buffer that the resampled audio will be written to. Must have size of at least @p numSamples.
-	 * @param numSamples	The desired number of samples to be written into the buffer.
-	 * @param vol_l			Volume for left channel.
-	 * @param vol_r			Volume for right channel.
-	 * 
+	 *
+	 * @param input				The AudioStream to read data from.
+	 * @param outBuffer			The buffer that the resampled audio will be written to. Must have size of at least @p numSamples.
+	 * @param outBytesPerSample	The size of each output sample in bytes (e.g. sizeof(int16) or sizeof(int32)).
+	 * @param numSamples		The desired number of samples to be written into the buffer.
+	 * @param vol_l				Volume for left channel.
+	 * @param vol_r				Volume for right channel.
+	 *
 	 * @return Number of sample pairs written into the buffer.
 	 */
-	virtual int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) = 0;
+	virtual int convert(AudioStream &input, byte *outBuffer, uint outBytesPerSample, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) = 0;
 
 	virtual void setInputRate(st_rate_t inputRate) = 0;
 	virtual void setOutputRate(st_rate_t outputRate) = 0;
@@ -98,7 +99,7 @@ public:
 
 	/**
 	 * Does the internal buffer still have some leftover data?
-	 * 
+	 *
 	 * @return True if we need to drain, false otherwise
 	 */
 	virtual bool needsDraining() const = 0;

@@ -80,9 +80,15 @@ private:
 	/** Current sample(s) in the input stream (left/right channel) */
 	int16 _inCurL, _inCurR;
 
+	template<typename st_sample_t>
 	int copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	template<typename st_sample_t>
 	int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+	template<typename st_sample_t>
 	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
+
+	template<typename st_sample_t>
+	int convertForType(AudioStream &input, byte *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR);
 
 	// keep a single printConvertType shared across all RateConverter_Impl specializations.
 	// PrintContext must be trivially destructible: it lives in a function-scope static and
@@ -110,7 +116,7 @@ public:
 	RateConverter_Impl(st_rate_t inputRate, st_rate_t outputRate);
 	virtual ~RateConverter_Impl() {}
 
-	int convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) override;
+	int convert(AudioStream &input, byte *outBuffer, uint outBytesPerSample, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r) override;
 
 	void setInputRate(st_rate_t inputRate) override { _inRate = inputRate; }
 	void setOutputRate(st_rate_t outputRate) override { _outRate = outputRate; }
@@ -122,6 +128,7 @@ public:
 };
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
+template<typename st_sample_t>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
 	PRINT_OUTPUT_RATE;
 
@@ -170,6 +177,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStr
 }
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
+template<typename st_sample_t>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
 	PRINT_OUTPUT_RATE;
 
@@ -231,6 +239,7 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioS
 }
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
+template<typename st_sample_t>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
 	PRINT_OUTPUT_RATE;
 
@@ -315,17 +324,27 @@ RateConverter_Impl<inStereo, outStereo, reverseStereo>::RateConverter_Impl(st_ra
 	_bufferPos(nullptr) {}
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
-int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+template<typename st_sample_t>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convertForType(AudioStream &input, byte *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
 	assert(input.isStereo() == inStereo);
 
 	if (_inRate == _outRate) {
-		return copyConvert(input, outBuffer, numSamples, volL, volR);
+		return copyConvert<st_sample_t>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
 	} else {
 		if ((_inRate % _outRate) == 0 && (_inRate < 65536)) {
-			return simpleConvert(input, outBuffer, numSamples, volL, volR);
+			return simpleConvert<st_sample_t>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
 		} else {
-			return interpolateConvert(input, outBuffer, numSamples, volL, volR);
+			return interpolateConvert<st_sample_t>(input, (st_sample_t *)outBuffer, numSamples, volL, volR);
 		}
+	}
+}
+
+template<bool inStereo, bool outStereo, bool reverseStereo>
+int RateConverter_Impl<inStereo, outStereo, reverseStereo>::convert(AudioStream &input, byte *outBuffer, uint outBytesPerSample, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+	if (outBytesPerSample == sizeof(int32)) {
+		return convertForType<int32>(input, outBuffer, numSamples, volL, volR);
+	} else {
+		return convertForType<int16>(input, outBuffer, numSamples, volL, volR);
 	}
 }
 

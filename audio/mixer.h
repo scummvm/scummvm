@@ -390,6 +390,15 @@ public:
 	 * @return The number of samples processed at each audio callback.
 	 */
 	virtual uint getOutputBufSize() const = 0;
+
+	/**
+	 * Return the output sample size of the system.
+	 *
+	 * The return value is measured in bytes.
+	 *
+	 * @return The output sample size is bytes.
+	 */
+	virtual uint getOutputBytesPerSample() const = 0;
 };
 
 /** @} */

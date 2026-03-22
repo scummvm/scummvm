@@ -66,6 +66,7 @@ private:
 	const uint _sampleRate;
 	const bool _stereo;
 	uint _outBufSize;
+	const uint _outBytesPerSample;
 	bool _mixerReady;
 	uint32 _handleSeed;
 
@@ -82,7 +83,7 @@ private:
 
 public:
 
-	MixerImpl(uint sampleRate, bool stereo = true, uint outBufSize = 0);
+	MixerImpl(uint sampleRate, bool stereo = true, uint outBufSize = 0, uint outBytesPerSample = 2);
 	~MixerImpl();
 
 	bool isReady() const override { Common::StackLock lock(_mutex); return _mixerReady; }
@@ -139,6 +140,7 @@ public:
 	uint getOutputRate() const override;
 	bool getOutputStereo() const override;
 	uint getOutputBufSize() const override;
+	uint getOutputBytesPerSample() const override;
 
 protected:
 	void insertChannel(SoundHandle *handle, Channel *chan);
