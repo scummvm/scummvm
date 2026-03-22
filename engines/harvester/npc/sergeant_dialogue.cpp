@@ -32,6 +32,7 @@ namespace {
 
 static const char *const kDialogueC149FstPath = "GRAPHIC/FST/C149.FST";
 static const char *const kGoDay2ActionTag = "GO_DAY_2";
+static const int kSergeantSecondTaskResponseLine = 0x2b4;
 static const int kSergeantCompletedApplicationResponseLine = 0x2b6;
 static const int kSergeantIntroResponseLine = 0x2b7;
 static const int kSergeantApplicationResponseLine = 0x2b8;
@@ -225,6 +226,36 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		restoreItemToRah("BOLTCLTH");
 		return playSergeantLine(0x4241);
 	};
+	auto handleCompletedFirstTaskBranch = [&]() -> Common::Error {
+		markSergeantProgress();
+
+		Common::Error lineError = playSergeantLine(0x420d);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playSergeantLine(0x421e);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(
+			kSergeantSecondTaskResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1)
+			return playSergeantLine(0x422a);
+
+		if (responseIndex == 2) {
+			const DialogueLineEntry reluctantTaskLines[] = {
+				{ 0x422f, "SERGEANT", 0 },
+				{ 0x4239, "SERGEANT", 0 }
+			};
+			return runtime.playDialogueEntrySequence(
+				reluctantTaskLines, ARRAYSIZE(reluctantTaskLines));
+		}
+
+		return Common::kNoError;
+	};
 	auto handleCompletedApplicationBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;
 		sharedState.dialogueStateD2f00 = true;
@@ -312,12 +343,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN"))
 			return handleBoltClothBranch();
 		if (runtime.startupScript().getFlagValue("SCRATCHED_TUCKER")) {
-			sharedState.dialogueStateD2f08 = true;
-			sharedState.dialogueStateD2f00 = true;
-			state.introPending = false;
-			state.dialogueStateD2d50 = true;
-			state.dialogueStateD2d54 = true;
-			return playSergeantLine(0x420d);
+			return handleCompletedFirstTaskBranch();
 		}
 		if (runtime.startupScript().getFlagValue("HAVE_COMPLETED_LODGE_APP"))
 			return handleCompletedApplicationBranch();

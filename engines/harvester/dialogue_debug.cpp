@@ -93,6 +93,13 @@ static void buildSergeantDialogueDebugDump(const Text &text, Common::Array<Commo
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x4241, 0);
 	appendLine(lines, "  IF FLAG SCRATCHED_TUCKER");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x420d, 0);
+	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x421e, 0);
+	appendResponseMenu(lines, text, "    ", 0x2b4);
+	appendLine(lines, "      CHOICE 1");
+	appendDialogueLine(lines, text, "        ", "SERGEANT", 0x422a, 0);
+	appendLine(lines, "      CHOICE 2");
+	appendDialogueLine(lines, text, "        ", "SERGEANT", 0x422f, 0);
+	appendDialogueLine(lines, text, "        ", "SERGEANT", 0x4239, 0);
 	appendLine(lines, "  IF FLAG HAVE_COMPLETED_LODGE_APP");
 	appendLine(lines, "    ACTION restore item COMPLETED_LODGE_APPLICATION to owner RAH");
 	appendLine(lines, "    IF !FLAG QUEST_1");
