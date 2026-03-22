@@ -49,12 +49,13 @@ public:
 	 * Mixes the channel's samples into the given buffer.
 	 *
 	 * @param data buffer where to mix the data
-	 * @param len  number of sample *pairs*. So a value of
-	 *             10 means that the buffer contains twice 10 sample, each
-	 *             16 bits, for a total of 40 bytes.
+	 * @param len  number of sample *pairs*. So a value of 10
+	 *             in stereo and 16-bit samples means that the
+	 *             buffer contains twice 10 sample, each 16 bits,
+	 *             for a total of 40 bytes.
 	 * @return number of sample pairs processed (which can still be silence!)
 	 */
-	int mix(int16 *data, uint len);
+	int mix(byte *data, uint len);
 
 	/**
 	 * Queries whether the channel is still playing or not.
@@ -226,8 +227,9 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize)
-	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize, uint outBytesPerSample)
+	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _outBytesPerSample(outBytesPerSample)
+	, _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 
@@ -256,6 +258,10 @@ bool MixerImpl::getOutputStereo() const {
 
 uint MixerImpl::getOutputBufSize() const {
 	return _outBufSize;
+}
+
+uint MixerImpl::getOutputBytesPerSample() const {
+	return _outBytesPerSample;
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
@@ -333,22 +339,16 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 
 	Common::StackLock lock(_mutex);
 
-	int16 *buf = (int16 *)samples;
-
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
 
-	//  zero the buf
-	memset(buf, 0, len);
+	// zero the sample buffer
+	memset(samples, 0, len);
 
-	// we store 16-bit samples
-	if (_stereo) {
-		assert(len % 4 == 0);
-		len >>= 2;
-	} else {
-		assert(len % 2 == 0);
-		len >>= 1;
-	}
+	// we store samples of size defined by the backend
+	const uint bytesPerFrame = _outBytesPerSample * (_stereo ? 2 : 1);
+	assert(len % bytesPerFrame == 0);
+	len /= bytesPerFrame;
 
 	// mix all channels
 	int res = 0, tmp;
@@ -358,7 +358,7 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 				delete _channels[i];
 				_channels[i] = nullptr;
 			} else if (!_channels[i]->isPaused()) {
-				tmp = _channels[i]->mix(buf, len);
+				tmp = _channels[i]->mix(samples, len);
 
 				if (tmp > res)
 					res = tmp;
@@ -793,7 +793,7 @@ void Channel::loop() {
 	}
 }
 
-int Channel::mix(int16 *data, uint len) {
+int Channel::mix(byte *data, uint len) {
 	assert(_stream);
 	assert(_converter);
 
@@ -802,7 +802,7 @@ int Channel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
-		res = _converter->convert(*_stream, data, len, _volL, _volR);
+		res = _converter->convert(*_stream, data, _mixer->getOutputBytesPerSample(), len, _volL, _volR);
 		_samplesDecoded += res;
 	}
 
