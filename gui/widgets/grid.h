@@ -238,7 +238,7 @@ public:
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
-	void setSelected(int id);
+	void setSelected(int id, bool clearExisting = true);
 	void setFilter(const Common::U32String &filter);
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
 

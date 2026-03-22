@@ -1241,6 +1241,14 @@ void LauncherSimple::updateListing(int selPos) {
 	}
 
 	const int oldSel = _list->getSelected();
+	const Common::Array<bool> &oldSelections = _list->getSelectedItems();
+	Common::Array<int> oldSelectionIndices;
+	
+	for (uint i = 0; i < oldSelections.size(); i++) {
+		if (oldSelections[i]) 
+			oldSelectionIndices.push_back(i);
+	}	
+
 	_list->setList(l);
 
 	groupEntries(domainList);
@@ -1254,8 +1262,14 @@ void LauncherSimple::updateListing(int selPos) {
 
 	if (_groupBy != kGroupByNone && selPos != -1) {
 		_list->setSelected(_list->getNewSel(selPos));
-	} else if (oldSel < (int)l.size() && oldSel >= 0)
+	} else if (oldSel < (int)l.size() && oldSel >= 0) {
 		_list->setSelected(oldSel);	// Restore the old selection
+		
+		// Restore multiple old selections
+		for (const auto &index : oldSelectionIndices) {
+			_list->setSelected(index, false);
+		}
+	}
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
@@ -1732,14 +1746,26 @@ void LauncherGrid::updateListing(int selPos) {
 	}
 
 	const int oldSel = _grid->getSelected();
+	const Common::Array<bool> &oldSelectedItems = _grid->getSelectedItems(); 
+	Common::Array<int> oldSelectedIndices;
+	
+	for (uint i = 0; i < oldSelectedItems.size(); i++) {
+		if (oldSelectedItems[i]) oldSelectedIndices.push_back(i);
+	}
 
 	_grid->setEntryList(&gridList);
 	groupEntries(domainList);
 
 	if (_groupBy != kGroupByNone && selPos != -1) {
 		_grid->setSelected(_grid->getNewSel(selPos));
-	} else if (oldSel < (int)gridList.size() && oldSel >= 0)
+	} else if (oldSel < (int)gridList.size() && oldSel >= 0) {
 		_grid->setSelected(oldSel);	// Restore the old selection
+		
+		// Restore multiple old selections
+		for (const auto &index : oldSelectedIndices) {
+			_grid->setSelected(index, false);
+		}	
+	}	
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
 		_grid->setSelected(gridList.size() - 1);

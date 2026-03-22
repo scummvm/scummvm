@@ -114,7 +114,7 @@ public:
 
 	void append(const Common::String &s);
 
-	void setSelected(int item);
+	void setSelected(int item, bool clearExisting = true);
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
 	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }

@@ -173,7 +173,7 @@ int ListWidget::findDataIndex(int dataIndex) const {
 	return -1;
 }
 
-void ListWidget::setSelected(int item) {
+void ListWidget::setSelected(int item, bool clearExisting) {
 	if (item < -1 || item >= (int)_list.size())
 		return;
 
@@ -185,7 +185,7 @@ void ListWidget::setSelected(int item) {
 		_selectedItem = findDataIndex(item);
 
 		// Clear previous selections and mark only this item
-		if (_multiSelectEnabled) {
+		if (_multiSelectEnabled && clearExisting) {
 			clearSelection();
 		}
 		markSelectedItem(_selectedItem, true);

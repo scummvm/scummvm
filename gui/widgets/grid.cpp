@@ -1244,13 +1244,13 @@ void GridWidget::setFilter(const Common::U32String &filter) {
 	sortGroups();
 }
 
-void GridWidget::setSelected(int id) {
+void GridWidget::setSelected(int id, bool clearExisting) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			_selectedEntry = _sortedEntryList[i];
 
 			// Clear previous selections and mark only this item
-			if (_multiSelectEnabled) {
+			if (_multiSelectEnabled && clearExisting) {
 				clearSelection();
 			}
 			markSelectedItem(id, true);
