@@ -57,16 +57,16 @@ Common::Error BusterDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (_state.introPending) {
 		_state.introPending = false;
 		_state.secondIntroPending = true;
-		return runtime.playDialogueLine(0x163c, "BUSTER");
+		return runtime.playDialogueLineWithVariant(0x163c, "BUSTER", 2);
 	}
 	if (_state.secondIntroPending) {
 		_state.secondIntroPending = false;
 		_state.thirdIntroPending = true;
-		return runtime.playDialogueLine(0x1828, "BUSTER");
+		return runtime.playDialogueLineWithVariant(0x1828, "BUSTER", 2);
 	}
 	if (_state.thirdIntroPending) {
 		_state.thirdIntroPending = false;
-		return runtime.playDialogueLine(0x18c5, "BUSTER");
+		return runtime.playDialogueLineWithVariant(0x18c5, "BUSTER", 2);
 	}
 
 	return runtime.playDialogueLine(0x1868, "BUSTER");

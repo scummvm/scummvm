@@ -65,7 +65,7 @@ Common::Error ButcherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLine(0x1a9e, "BUTCHER");
 	}
 	if (usedItemName.equalsIgnoreCase("MEAT_PERMISSION"))
-		return runtime.playDialogueLine(0x1ac4, "BUTCHER");
+		return runtime.playDialogueLineWithVariant(0x1ac4, "BUTCHER", 1);
 
 	return runtime.playDialogueLine(0x1a54, "BUTCHER");
 }

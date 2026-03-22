@@ -49,8 +49,9 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.assignTopicBuffer(loomisTopicBuffer, loomisTopicBufferLineIndex,
 			responseLineIndex, "Loomis topic buffer");
 	};
-	auto playLoomisLine = [&](int wavId, const char *speakerId = "LOOMIS") -> Common::Error {
-		return runtime.playDialogueLine(wavId, speakerId);
+	auto playLoomisLine = [&](int wavId, const char *speakerId = "LOOMIS",
+			int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
 	};
 	auto clearLoomisTopicBuffer = [&]() {
 		loomisTopicBuffer.clear();
@@ -62,7 +63,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (state.returnVisitFollowupPending) {
 				state.returnVisitFollowupPending = false;
 				const DialogueLineEntry followupLines[] = {
-					{ 0x11a8, "LOOMIS", 0 },
+					{ 0x11a8, "LOOMIS", 1 },
 					{ 0x11ac, "PC", 0 },
 					{ 0x11b0, "LOOMIS", 0 }
 				};
@@ -115,7 +116,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			}
 
 			if (runtime.matchesResponseLine(selectedTopic, 0x57)) {
-				lineError = playLoomisLine(0x1143);
+				lineError = playLoomisLine(0x1143, "LOOMIS", 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignLoomisTopicBuffer(0x58);
@@ -196,7 +197,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.equalsIgnoreCase("INV_MAG")) {
 		if (!runtime.startupScript().getFlagValue("SHERIFF_IN_DINER")) {
 			(void)runtime.startupScript().addRuntimeObjectToInventory("INV_MAG");
-			return runtime.playDialogueLine(0x11db, "LOOMIS");
+			return runtime.playDialogueLineWithVariant(0x11db, "LOOMIS", 1);
 		}
 
 		Common::Error lineError = runtime.playDialogueLine(0x11bb, "LOOMIS");
@@ -233,7 +234,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLine(0x11cc, "LOOMIS");
 	}
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
-		return runtime.playDialogueLine(0x1143, "LOOMIS");
+		return runtime.playDialogueLineWithVariant(0x1143, "LOOMIS", 1);
 
 	return runtime.playDialogueLine(0x1202, "LOOMIS");
 }

@@ -34,13 +34,13 @@ bool MembDirDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error MembDirDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	if (!runtime.startupScript().getFlagValue("PC_KILLED_KEWPIE"))
-		return runtime.playDialogueLine(0x2b7, "MEMB_DIR");
+		return runtime.playDialogueLineWithVariant(0x2b7, "MEMB_DIR", 1);
 
 	if (_state.kewpieKillLinePlayed)
 		return Common::kNoError;
 
 	_state.kewpieKillLinePlayed = true;
-	return runtime.playDialogueLine(0x2d5, "MEMB_DIR");
+	return runtime.playDialogueLineWithVariant(0x2d5, "MEMB_DIR", 1);
 }
 
 } // End of namespace Harvester

@@ -37,7 +37,7 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 
 	_state.talkStatePending = false;
-	return runtime.playDialogueLine(0x26d6, "MOTHER");
+	return runtime.playDialogueLineWithVariant(0x26d6, "MOTHER", 3);
 }
 
 } // End of namespace Harvester

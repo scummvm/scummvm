@@ -35,10 +35,10 @@ Common::Error Fireman2DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	if (_state.talkStatePending) {
 		_state.talkStatePending = false;
-		return runtime.playDialogueLine(0x5b9, "FIREMAN2");
+		return runtime.playDialogueLineWithVariant(0x5b9, "FIREMAN2", 2);
 	}
 
-	return runtime.playDialogueLine(0x5c7, "FIREMAN2");
+	return runtime.playDialogueLineWithVariant(0x5c7, "FIREMAN2", 2);
 }
 
 } // End of namespace Harvester
