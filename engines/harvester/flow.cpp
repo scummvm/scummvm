@@ -74,7 +74,6 @@ static const int kIdentTextboxX = 177;
 static const int kIdentTextboxY = 85;
 static const int kIdentTextboxTextInsetX = 10;
 static const int kIdentTextboxTextInsetY = 5;
-static const int kNativeIdentTextYOffset = 1;
 static const int kNativeIdentTextLineSpacing = 3;
 static const char *const kPlayerActorEntityName = "PLAYER";
 static const uint32 kPaletteFadeTickMs = 4;
@@ -774,9 +773,9 @@ void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphic
 	blitBitmap(screen, *textbox, kIdentTextboxX, kIdentTextboxY);
 	if (useNativeFont) {
 		drawWrappedText(screen, font, inspectText.value,
-			kIdentTextboxX,
-			kIdentTextboxY + kNativeIdentTextYOffset,
-			(int)textbox->width,
+			kIdentTextboxX + kIdentTextboxTextInsetX,
+			kIdentTextboxY + kIdentTextboxTextInsetY,
+			MAX<int>(0, (int)textbox->width - 2),
 			0,
 			kNativeIdentTextLineSpacing);
 		return;
