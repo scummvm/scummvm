@@ -91,7 +91,7 @@ void SoundManager::stopSound() {
 
 /******************************************************************************************/
 
-MusicManager::MusicManager(WaynesWorldEngine *vm) : _vm(vm) {
+MusicManager::MusicManager(WaynesWorldEngine *vm)/* : _vm(vm) */{
 	_music = nullptr;
 	_isLooping = false;
 	_driver = nullptr;

@@ -59,7 +59,7 @@ public:
 
 class MusicManager : public Audio::MidiPlayer {
 private:
-	WaynesWorldEngine *_vm;
+	//WaynesWorldEngine *_vm;
 	byte *_music;
 
 	// MidiDriver_BASE interface implementation
