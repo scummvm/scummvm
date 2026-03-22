@@ -335,7 +335,10 @@ static bool setRoomMonsterAnimation(RuntimeEntity &entity, int facing, bool walk
 }
 
 static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
-	return entity.hasFrames() && firstFrame >= 0 && entity.getLastFrame() >= lastFrame;
+	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
+		return false;
+
+	return (uint)lastFrame < entity.getFrameCount();
 }
 
 static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
