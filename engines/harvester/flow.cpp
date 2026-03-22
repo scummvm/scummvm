@@ -1123,9 +1123,10 @@ bool Flow::load() {
 	return loadQuickTips() && loadMenuItems();
 }
 
-bool Flow::buildDialogueSaveStateBlob(Common::Array<byte> &blob) {
+bool Flow::buildDialogueSaveStateBlob(Common::Array<byte> &blob, uint32 saveVersion) {
 	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
 	Common::Serializer serializer(nullptr, &stream);
+	serializer.setVersion(saveVersion);
 	_dialogue.syncRuntimeSaveState(serializer);
 	if (serializer.err())
 		return false;
@@ -1136,12 +1137,13 @@ bool Flow::buildDialogueSaveStateBlob(Common::Array<byte> &blob) {
 	return true;
 }
 
-bool Flow::loadDialogueSaveStateBlob(const Common::Array<byte> &blob) {
+bool Flow::loadDialogueSaveStateBlob(const Common::Array<byte> &blob, uint32 saveVersion) {
 	if (blob.empty())
 		return false;
 
 	Common::MemoryReadStream stream(blob.data(), blob.size());
 	Common::Serializer serializer(&stream, nullptr);
+	serializer.setVersion(saveVersion);
 	_dialogue.syncRuntimeSaveState(serializer);
 	return !serializer.err();
 }

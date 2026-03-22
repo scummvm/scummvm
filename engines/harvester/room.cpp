@@ -549,7 +549,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
 			startupFlow.resetRoomNpcDialogueState();
 			if (_engine.hasPendingLoadedDialogueStateBlob()) {
-				if (!startupFlow.loadDialogueSaveStateBlob(_engine.getPendingLoadedDialogueStateBlob()))
+				if (!startupFlow.loadDialogueSaveStateBlob(
+						_engine.getPendingLoadedDialogueStateBlob(),
+						_engine.getPendingLoadedDialogueStateBlobVersion()))
 					return Common::kReadingFailed;
 				_engine.clearPendingLoadedDialogueStateBlob();
 			}

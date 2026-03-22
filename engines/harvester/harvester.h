@@ -124,7 +124,11 @@ public:
 	void clearPendingLoadedStartupSaveRoomState();
 	bool hasPendingLoadedDialogueStateBlob() const { return !_pendingLoadedDialogueStateBlob.empty(); }
 	const Common::Array<byte> &getPendingLoadedDialogueStateBlob() const { return _pendingLoadedDialogueStateBlob; }
-	void clearPendingLoadedDialogueStateBlob() { _pendingLoadedDialogueStateBlob.clear(); }
+	uint32 getPendingLoadedDialogueStateBlobVersion() const { return _pendingLoadedDialogueStateBlobVersion; }
+	void clearPendingLoadedDialogueStateBlob() {
+		_pendingLoadedDialogueStateBlob.clear();
+		_pendingLoadedDialogueStateBlobVersion = 0;
+	}
 
 private:
 	void applyStartupMixerLevels();
@@ -137,6 +141,7 @@ private:
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
 	Common::Array<byte> _pendingLoadedDialogueStateBlob;
+	uint32 _pendingLoadedDialogueStateBlobVersion = 0;
 	Flow *_activeFlow = nullptr;
 	bool _roomDebugEnabled = false;
 };
