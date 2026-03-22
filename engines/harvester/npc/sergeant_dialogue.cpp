@@ -32,6 +32,7 @@ namespace {
 
 static const char *const kDialogueC149FstPath = "GRAPHIC/FST/C149.FST";
 static const char *const kGoDay2ActionTag = "GO_DAY_2";
+static const char *const kGoDay3ActionTag = "GO_DAY_3";
 static const int kSergeantSecondTaskResponseLine = 0x2b4;
 static const int kSergeantCompletedApplicationResponseLine = 0x2b6;
 static const int kSergeantIntroResponseLine = 0x2b7;
@@ -196,11 +197,13 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto handleRemainsBranch = [&]() -> Common::Error {
 		markSergeantProgress();
+		state.dialogueStateD2d58 = true;
 		restoreItemToRah("REMAINS");
 		return playSergeantLine(0x4333);
 	};
 	auto handleInviteBranch = [&]() -> Common::Error {
 		markSergeantProgress();
+		state.dialogueStateD2d58 = true;
 		(void)runtime.startupScript().resetRuntimeObjectToInitialState("STEFSKULL");
 		(void)runtime.startupScript().setRuntimeObjectVisible("ST_BEDRM", "STEFSKULL", true);
 		restoreItemToRah("INVITE");
@@ -217,12 +220,14 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto handleBarberPoleBranch = [&]() -> Common::Error {
 		markSergeantProgress();
+		state.dialogueStateD2d58 = true;
 		restoreItemToRah("BARBER_POLE");
 		(void)runtime.startupScript().setRuntimeFlagValue("ASSIGNED_DNA_TASK", true);
 		return playSergeantLine(0x426f);
 	};
 	auto handleBoltClothBranch = [&]() -> Common::Error {
 		markSergeantProgress();
+		state.dialogueStateD2d58 = true;
 		restoreItemToRah("BOLTCLTH");
 		return playSergeantLine(0x4241);
 	};
@@ -242,18 +247,24 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
+		lineError = Common::kNoError;
 		if (responseIndex == 1)
-			return playSergeantLine(0x422a);
-
-		if (responseIndex == 2) {
+			lineError = playSergeantLine(0x422a);
+		else if (responseIndex == 2) {
 			const DialogueLineEntry reluctantTaskLines[] = {
 				{ 0x422f, "SERGEANT", 0 },
 				{ 0x4239, "SERGEANT", 0 }
 			};
-			return runtime.playDialogueEntrySequence(
+			lineError = runtime.playDialogueEntrySequence(
 				reluctantTaskLines, ARRAYSIZE(reluctantTaskLines));
 		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 
+		if (!state.dialogueStateD2d58) {
+			state.dialogueStateD2d58 = true;
+			return executeActionTagIfSet(kGoDay3ActionTag);
+		}
 		return Common::kNoError;
 	};
 	auto handleCompletedApplicationBranch = [&]() -> Common::Error {
@@ -336,6 +347,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (runtime.startupScript().getFlagValue("DINER_BURNED")) {
 			markSergeantProgress();
+			state.dialogueStateD2d58 = true;
 			return playSergeantLine(0x42b5, 1);
 		}
 		if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN"))

@@ -70,26 +70,31 @@ static void appendSergeantDay5Exit(Common::Array<Common::String> &lines, const T
 
 static void buildSergeantDialogueDebugDump(const Text &text, Common::Array<Common::String> &lines) {
 	appendLine(lines, "NPC SERGEANT");
-	appendLine(lines, "STATE sergeant.introPending, sergeant.dialogueStateD2d50, sergeant.dialogueStateD2d54, sergeant.day5ReminderShown");
+	appendLine(lines, "STATE sergeant.introPending, sergeant.dialogueStateD2d50, sergeant.dialogueStateD2d54, sergeant.dialogueStateD2d58, sergeant.day5ReminderShown");
 	appendLine(lines, "BRANCH no_item");
 	appendLine(lines, "  IF FLAG GOT_REMAINS_FOR_LODGE");
 	appendLine(lines, "    ACTION restore item REMAINS to owner RAH");
+	appendLine(lines, "    ACTION set STATE sergeant.dialogueStateD2d58");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x4333, 0);
 	appendLine(lines, "  IF FLAG STEPHANIE_IS_DEAD && (INVENTORY INVITE || FLAG TAKEN_INVITE_TO_SERGEANT)");
 	appendLine(lines, "    ACTION show ST_BEDRM/STEFSKULL");
 	appendLine(lines, "    ACTION restore item INVITE to owner RAH");
 	appendLine(lines, "    ACTION set flags TAKEN_INVITE_TO_SERGEANT, NEED_REMAINS_FOR_LODGE");
+	appendLine(lines, "    ACTION set STATE sergeant.dialogueStateD2d58");
 	appendLine(lines, "    ACTION hide NPCs DWAYNE_ST_BEDRM, MRS_POTTS_ST_BEDRM; show NPC MRS_POTTS");
 	appendLine(lines, "    ACTION play FST GRAPHIC/FST/C149.FST");
 	appendDialogueLine(lines, text, "    ", "PC", 0x4305, 0);
 	appendLine(lines, "  IF FLAG DINER_BURNED");
+	appendLine(lines, "    ACTION set STATE sergeant.dialogueStateD2d58");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x42b5, 1);
 	appendLine(lines, "  IF FLAG BARBER_POLE_STOLEN");
 	appendLine(lines, "    ACTION restore item BARBER_POLE to owner RAH");
 	appendLine(lines, "    ACTION set flag ASSIGNED_DNA_TASK");
+	appendLine(lines, "    ACTION set STATE sergeant.dialogueStateD2d58");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x426f, 0);
 	appendLine(lines, "  IF FLAG BOLT_OF_CLOTH_TAKEN");
 	appendLine(lines, "    ACTION restore item BOLTCLTH to owner RAH");
+	appendLine(lines, "    ACTION set STATE sergeant.dialogueStateD2d58");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x4241, 0);
 	appendLine(lines, "  IF FLAG SCRATCHED_TUCKER");
 	appendDialogueLine(lines, text, "    ", "SERGEANT", 0x420d, 0);
@@ -100,6 +105,9 @@ static void buildSergeantDialogueDebugDump(const Text &text, Common::Array<Commo
 	appendLine(lines, "      CHOICE 2");
 	appendDialogueLine(lines, text, "        ", "SERGEANT", 0x422f, 0);
 	appendDialogueLine(lines, text, "        ", "SERGEANT", 0x4239, 0);
+	appendLine(lines, "    IF !STATE sergeant.dialogueStateD2d58");
+	appendLine(lines, "      ACTION set STATE sergeant.dialogueStateD2d58");
+	appendLine(lines, "      ACTION execute GO_DAY_3");
 	appendLine(lines, "  IF FLAG HAVE_COMPLETED_LODGE_APP");
 	appendLine(lines, "    ACTION restore item COMPLETED_LODGE_APPLICATION to owner RAH");
 	appendLine(lines, "    IF !FLAG QUEST_1");
