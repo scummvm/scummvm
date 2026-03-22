@@ -43,29 +43,12 @@ public:
 
 	void receivedFocus(int x = -1, int y = -1) override {}
 protected:
-	void handleMouseDown(int x, int y, int button, int clickCount) override {
-		close();
-		_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
-	}
-	void handleMouseUp(int x, int y, int button, int clickCount) override {
-		close();
-		_parent->handleMouseUp(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
-	}
-	void handleMouseWheel(int x, int y, int direction) override {
-		close();
-		_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
-	}
-	void handleKeyDown(Common::KeyState state) override {
-		close();
-		_parent->handleKeyDown(state);
-	}
-	void handleKeyUp(Common::KeyState state) override {
-		close();
-		_parent->handleKeyUp(state);
-	}
-	void handleMouseMoved(int x, int y, int button) override {
-		close();
-	}
+	void handleKeyDown(Common::KeyState state) override;
+	void handleKeyUp(Common::KeyState state) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseWheel(int x, int y, int direction) override;
 
 	int _maxWidth;
 	int _xdelta, _ydelta;
