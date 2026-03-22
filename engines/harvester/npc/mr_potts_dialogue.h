@@ -56,6 +56,27 @@ public:
 		_state = MrPottsRoomDialogueState();
 		_state.topicBufferLineIndex = topicBufferLineIndex;
 	}
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.auxIntroPending);
+		syncDialogueInt(s, _state.followupDayIndex);
+		syncDialogueBool(s, _state.pottsdamDiggingLinePlayed);
+		syncDialogueInt(s, _state.topicBufferLineIndex);
+		syncDialogueBool(s, _state.stephanieAliveLaterDayShown);
+		syncDialogueBool(s, _state.karinKidnapedShown);
+		syncDialogueBool(s, _state.karinFoundDeadShown);
+		syncDialogueBool(s, _state.karinFoundAliveShown);
+		syncDialogueBool(s, _state.day6KarinShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.dinerBurnedShown);
+		syncDialogueBool(s, _state.gotRemainsForLodgeShown);
+		syncDialogueBool(s, _state.escapedJailShown);
+		syncDialogueBool(s, _state.butcherDeathShown);
+		syncDialogueBool(s, _state.moynahanDeathShown);
+		syncDialogueBool(s, _state.ednaHungShown);
+		syncDialogueBool(s, _state.day6KarinFoundAliveFollowupShown);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
+#include "common/serializer.h"
 #include "common/system.h"
 #include "graphics/blit.h"
 #include "graphics/font.h"
@@ -1122,6 +1123,29 @@ bool Flow::load() {
 	return loadQuickTips() && loadMenuItems();
 }
 
+bool Flow::buildDialogueSaveStateBlob(Common::Array<byte> &blob) {
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::NO);
+	Common::Serializer serializer(nullptr, &stream);
+	_dialogue.syncRuntimeSaveState(serializer);
+	if (serializer.err())
+		return false;
+
+	blob.resize(stream.size());
+	if (!blob.empty())
+		memcpy(blob.data(), stream.getData(), blob.size());
+	return true;
+}
+
+bool Flow::loadDialogueSaveStateBlob(const Common::Array<byte> &blob) {
+	if (blob.empty())
+		return false;
+
+	Common::MemoryReadStream stream(blob.data(), blob.size());
+	Common::Serializer serializer(&stream, nullptr);
+	_dialogue.syncRuntimeSaveState(serializer);
+	return !serializer.err();
+}
+
 Common::Error Flow::run() {
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
@@ -1137,6 +1161,7 @@ Common::Error Flow::run() {
 		error = runRoomLoop(initialTarget);
 	} else {
 		_engine.clearCurrentStartupSaveRoomState();
+		_engine.clearPendingLoadedDialogueStateBlob();
 		_engine.getStartupScript()->resetRuntimeState();
 		error = runQuickTips();
 		if (error.getCode() != Common::kNoError)
@@ -1509,6 +1534,7 @@ void Flow::prepareForNewGame() {
 	clearPendingMainMenuReturn();
 	clearPendingNewGameRestart();
 	_engine.clearPendingLoadedStartupSaveRoomState();
+	_engine.clearPendingLoadedDialogueStateBlob();
 	_engine.clearCurrentStartupSaveRoomState();
 	if (_engine.getStartupScript())
 		_engine.getStartupScript()->resetRuntimeState();

@@ -37,6 +37,12 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = LoomisRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueString(s, _state.currentTopicBuffer);
+		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
+		syncDialogueBool(s, _state.talkStatePending);
+		syncDialogueBool(s, _state.returnVisitFollowupPending);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

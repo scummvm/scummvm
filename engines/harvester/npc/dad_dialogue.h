@@ -35,6 +35,10 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = DadRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueBool(s, _state.meatPermissionState);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

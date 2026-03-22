@@ -63,6 +63,38 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = DwayneRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.pendingInitialConversation);
+		syncDialogueBool(s, _state.sheriffInDinerIntroPending);
+		syncDialogueBool(s, _state.sheriffInDinerIntroPlayed);
+		syncDialogueBool(s, _state.eventFollowupGate);
+		syncDialogueBool(s, _state.tvDeedReplyOverride);
+		syncDialogueBool(s, _state.presentedEvidenceReplyOverride);
+		syncDialogueBool(s, _state.discussedBoylesButton);
+		syncDialogueBool(s, _state.discussedKarinPurse);
+		syncDialogueBool(s, _state.pendingKarinAliveFollowup);
+		syncDialogueBool(s, _state.completedKarinAliveFollowup);
+		syncDialogueInt(s, _state.pendingKarinAliveFollowupDayIndex);
+		syncDialogueBool(s, _state.bringKarinToSheriffLinePlayed);
+		syncDialogueBool(s, _state.whaleyDisciplineFollowupShown);
+		syncDialogueBool(s, _state.noteCheckbookFollowupShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.dinerBurnedShown);
+		syncDialogueBool(s, _state.escapedJailShown);
+		syncDialogueBool(s, _state.gotRemainsForLodgeShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.karinKidnapedShown);
+		syncDialogueBool(s, _state.pendingKarinAliveFollowupLinePlayed);
+		syncDialogueBool(s, _state.karinFoundDeadWithoutPurseShown);
+		syncDialogueBool(s, _state.jimmyAbsentShown);
+		syncDialogueBool(s, _state.moynahanAbsentShown);
+		syncDialogueBool(s, _state.ednaHungShown);
+		syncDialogueBool(s, _state.mcknightAbsentShown);
+		syncDialogueString(s, _state.currentTopicBuffer);
+		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

@@ -283,10 +283,15 @@ Common::Error HarvesterEngine::run() {
 		(void)loadGameState(saveSlot);
 
 	Flow startupFlow(*this);
-	if (!startupFlow.load())
+	_activeFlow = &startupFlow;
+	if (!startupFlow.load()) {
+		_activeFlow = nullptr;
 		return Common::kReadingFailed;
+	}
 
-	return startupFlow.run();
+	const Common::Error error = startupFlow.run();
+	_activeFlow = nullptr;
+	return error;
 }
 
 bool HarvesterEngine::hasFeature(EngineFeature f) const {

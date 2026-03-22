@@ -35,6 +35,10 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = WaspWomanRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueInt(s, _state.topicBufferLineIndex);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

@@ -34,6 +34,9 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = MotherRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.talkStatePending);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

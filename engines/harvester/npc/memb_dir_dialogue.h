@@ -34,6 +34,9 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = MembDirRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.kewpieKillLinePlayed);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

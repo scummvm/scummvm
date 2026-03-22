@@ -53,6 +53,28 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = StephanieRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueInt(s, _state.introDayIndex);
+		syncDialogueBool(s, _state.firstFollowupPending);
+		syncDialogueInt(s, _state.firstFollowupDayIndex);
+		syncDialogueBool(s, _state.boltOfClothEscalationTriggered);
+		syncDialogueBool(s, _state.playedSpyholeBranch);
+		syncDialogueBool(s, _state.secondFollowupPending);
+		syncDialogueInt(s, _state.secondFollowupDayIndex);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.dinerBurnedShown);
+		syncDialogueBool(s, _state.dinerBurnedKarinAliveFollowupShown);
+		syncDialogueBool(s, _state.dayFiveLinePlayed);
+		syncDialogueBool(s, _state.pcEscapedJailShown);
+		syncDialogueBool(s, _state.karinKidnapedLinePlayed);
+		syncDialogueBool(s, _state.karinOutcomeLinePlayed);
+		syncDialogueString(s, _state.currentTopicBuffer);
+		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

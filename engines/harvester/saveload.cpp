@@ -23,6 +23,7 @@
 
 #include "common/serializer.h"
 #include "harvester/detection.h"
+#include "harvester/flow.h"
 #include "harvester/resources.h"
 #include "harvester/script.h"
 
@@ -38,7 +39,7 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-static const uint32 kHarvesterSaveVersion = 2;
+static const uint32 kHarvesterSaveVersion = 3;
 
 static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
 	debugC(1, kDebugGeneral,
@@ -85,6 +86,8 @@ void HarvesterEngine::clearPendingLoadedStartupSaveRoomState() {
 Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!_startupScript)
 		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
+	if (s.isLoading())
+		clearPendingLoadedDialogueStateBlob();
 	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
 		return Common::kWritingFailed;
 	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
@@ -99,6 +102,26 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
 	_startupScript->syncRuntimeSaveState(s);
+	if (s.getVersion() >= 3) {
+		Common::Array<byte> dialogueStateBlob;
+		uint32 dialogueStateSize = 0;
+		if (s.isSaving()) {
+			if (!_activeFlow || !_activeFlow->buildDialogueSaveStateBlob(dialogueStateBlob))
+				return Common::kWritingFailed;
+			dialogueStateSize = dialogueStateBlob.size();
+			if (dialogueStateSize == 0)
+				return Common::kWritingFailed;
+		}
+		s.syncAsUint32LE(dialogueStateSize);
+		if (s.isLoading()) {
+			if (dialogueStateSize == 0)
+				return Common::kReadingFailed;
+			dialogueStateBlob.resize(dialogueStateSize);
+		}
+		s.syncBytes(dialogueStateBlob.data(), dialogueStateSize);
+		if (s.isLoading())
+			_pendingLoadedDialogueStateBlob = dialogueStateBlob;
+	}
 	if (s.err())
 		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 

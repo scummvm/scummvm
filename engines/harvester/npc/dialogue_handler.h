@@ -23,9 +23,25 @@
 #define HARVESTER_NPC_DIALOGUE_HANDLER_H
 
 #include "common/error.h"
+#include "common/serializer.h"
 #include "common/str.h"
 
 namespace Harvester {
+
+inline void syncDialogueBool(Common::Serializer &s, bool &value) {
+	byte serialized = value ? 1 : 0;
+	s.syncAsByte(serialized);
+	if (s.isLoading())
+		value = serialized != 0;
+}
+
+inline void syncDialogueInt(Common::Serializer &s, int &value) {
+	s.syncAsSint32LE(value);
+}
+
+inline void syncDialogueString(Common::Serializer &s, Common::String &value) {
+	s.syncString(value);
+}
 
 class DialogueRuntime;
 
@@ -64,6 +80,7 @@ public:
 
 	virtual bool matchesNpc(const Common::String &npcName) const = 0;
 	virtual void resetState() {}
+	virtual void syncState(Common::Serializer &) {}
 	virtual Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) = 0;
 };

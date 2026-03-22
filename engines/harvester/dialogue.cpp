@@ -125,6 +125,35 @@ static const byte kTextColorHover = 251;
 static const byte kShadowColor = 0;
 static const byte kTransparentPaletteIndex = 0;
 
+static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &state) {
+	syncDialogueBool(s, state.boyleGascanApplicationState);
+	syncDialogueBool(s, state.dialogueStateD2e98);
+	syncDialogueBool(s, state.dialogueStateD2eb0);
+	syncDialogueBool(s, state.dialogueStateD2eb8);
+	syncDialogueBool(s, state.dialogueStateD2ebc);
+	syncDialogueBool(s, state.dialogueStateD2ec0);
+	syncDialogueBool(s, state.dialogueStateD2ec8);
+	syncDialogueBool(s, state.dialogueStateD2eec);
+	syncDialogueBool(s, state.dialogueStateD2ed0);
+	syncDialogueBool(s, state.dialogueStateD2ef4);
+	syncDialogueBool(s, state.dialogueStateD2f04);
+	syncDialogueBool(s, state.dialogueStateD2ea4);
+	syncDialogueBool(s, state.dialogueStateD2ea8);
+	syncDialogueBool(s, state.dialogueStateD2f00);
+	syncDialogueBool(s, state.karinKidnapedDialogueState);
+	syncDialogueBool(s, state.discussedLodgeTopic);
+	syncDialogueBool(s, state.dialogueStateD2f08);
+	syncDialogueBool(s, state.waspWomanDialogueState);
+	syncDialogueBool(s, state.momGoodCauseDay5State);
+	syncDialogueBool(s, state.moynahanKarinKidnapedDiscussionState);
+	syncDialogueBool(s, state.dwayneWhaleyDisciplineFollowupState);
+	syncDialogueBool(s, state.dwayneDiscussedBoylesButton);
+	syncDialogueBool(s, state.dwayneCompletedKarinAliveFollowup);
+	syncDialogueBool(s, state.discussedMrPottsTuesdayNightAlibi);
+	syncDialogueBool(s, state.discussedMrsPottsTuesdayNightAlibi);
+	syncDialogueBool(s, state.confrontedMrPottsAboutSpyhole);
+}
+
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const Text *startupText = engine.getStartupText();
 	if (!startupText || !fontName)
@@ -475,6 +504,12 @@ void DialogueSystem::resetRoomNpcDialogueState() {
 	_sharedDialogueState = DialogueSharedState();
 	for (uint i = 0; i < _npcHandlers.size(); ++i)
 		_npcHandlers[i]->resetState();
+}
+
+void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
+	syncDialogueSharedState(s, _sharedDialogueState);
+	for (uint i = 0; i < _npcHandlers.size(); ++i)
+		_npcHandlers[i]->syncState(s);
 }
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
