@@ -30,7 +30,8 @@ namespace Harvester {
 
 namespace {
 
-static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
+static const char *const kDialogueC021FstPath = "GRAPHIC/FST/C021.FST";
+static const char *const kInventoryOwnerName = "INVENTORY";
 
 static const DialogueLineEntry kHankMomTopicLines[] = {
 	{ 0x725, "HANK", 0 },
@@ -62,7 +63,7 @@ static const DialogueLineEntry kHankLightingOutTopicLines[] = {
 	{ 0x77f, "HANK", 0 },
 	{ 0x784, "PC", 2 },
 	{ 0x788, "HANK", 0 },
-	{ 0x78e, "PC", 2 },
+	{ 0x78e, "MOM", 2 },
 	{ 0x793, "HANK", 0 }
 };
 
@@ -115,7 +116,8 @@ static const DialogueLineEntry kHankSickTopicLines[] = {
 	{ 0x867, "HANK", 0 },
 	{ 0x86b, "PC", 0 },
 	{ 0x86f, "HANK", 0 },
-	{ 0x873, "PC", 0 }
+	{ 0x873, "PC", 0 },
+	{ 0x877, "HANK", 0 }
 };
 
 static const DialogueLineEntry kHankNewspaperFireSentinelTopicLines[] = {
@@ -132,6 +134,45 @@ static const DialogueLineEntry kHankLodgeTopicLines[] = {
 	{ 0x8c9, "HANK", 0 },
 	{ 0x8cf, "PC", 0 },
 	{ 0x8d3, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankRangshotResponse1Lines[] = {
+	{ 0x8ff, "HANK", 0 },
+	{ 0x903, "PC", 0 },
+	{ 0x908, "HANK", 0 },
+	{ 0x90d, "PC", 4 },
+	{ 0x911, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankRangshotResponse2Lines[] = {
+	{ 0x918, "HANK", 0 },
+	{ 0x91f, "PC", 0 },
+	{ 0x924, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankBurnedTvStationLines[] = {
+	{ 0x987, "PC", 0 },
+	{ 0x98b, "HANK", 0 },
+	{ 0x98f, "PC", 0 },
+	{ 0x993, "HANK", 0 },
+	{ 0x99a, "MOM", 2 },
+	{ 0x99f, "HANK", 0 },
+	{ 0x9a6, "HANK", 0 },
+	{ 0x9aa, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankKarinFoundDeadResponse2Lines[] = {
+	{ 0xa26, "HANK", 0 },
+	{ 0xa2b, "HANK", 0 }
+};
+
+static const DialogueLineEntry kHankResponse0EdTopicLines[] = {
+	{ 0x881, "PC", 0 },
+	{ 0x885, "HANK", 0 },
+	{ 0x88a, "PC", 0 },
+	{ 0x88f, "HANK", 0 },
+	{ 0x894, "PC", 0 },
+	{ 0x898, "HANK", 0 }
 };
 
 } // End of namespace
@@ -157,16 +198,50 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
 	};
+	auto hidePresentedInventoryItem = [&]() {
+		(void)runtime.startupScript().setRuntimeObjectVisible(
+			kInventoryOwnerName, usedItemName, false);
+	};
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			return runtime.playDialogueLine(0xa3e, "HANK");
+			Common::Error lineError = runtime.playDialogueLine(0xa3e, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0xc5, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1) {
+				(void)runtime.startupScript().addRuntimeObjectToInventory("GILLMAN");
+				hidePresentedInventoryItem();
+				return runtime.playDialogueLine(0xa5e, "HANK");
+			}
+			if (responseIndex == 2)
+				return runtime.playDialogueLine(0xa62, "HANK");
+			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-			return runtime.playDialogueLine(0xa53, "HANK");
+			Common::Error lineError = runtime.playDialogueLine(0xa53, "HANK");
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0xc6, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+			if (responseIndex == 1) {
+				(void)runtime.startupScript().addRuntimeObjectToInventory("ROBOT");
+				hidePresentedInventoryItem();
+				return runtime.playDialogueLine(0xa5e, "HANK");
+			}
+			if (responseIndex == 2)
+				return runtime.playDialogueLine(0xa62, "HANK");
+			return Common::kNoError;
 		}
 		return runtime.playDialogueLine(0xa38, "HANK");
 	}
@@ -218,18 +293,32 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			currentStoryDayIndex != state.trackedDayIndex)) {
 		if (state.pendingSameDayFollowup) {
 			state.trackedDayIndex = currentStoryDayIndex;
+			state.hasTrackedDayState = true;
 			state.pendingSameDayFollowup = false;
 			state.pendingRangshotSequence = true;
 
 			Common::Error lineError = runtime.playDialogueLine(0x8f5, "HANK");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-		}
-
-		if (state.pendingRangshotSequence) {
+			if (currentStoryDayIndex < 4) {
+				int responseIndex = 0;
+				Common::Error responseError = runtime.runResponseMenu(0xcb, responseIndex);
+				if (responseError.getCode() != Common::kNoError)
+					return responseError;
+				if (responseIndex == 1) {
+					lineError = playSequence(
+						kHankRangshotResponse1Lines, ARRAYSIZE(kHankRangshotResponse1Lines));
+				} else if (responseIndex == 2) {
+					lineError = playSequence(
+						kHankRangshotResponse2Lines, ARRAYSIZE(kHankRangshotResponse2Lines));
+				}
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+		} else if (state.pendingRangshotSequence) {
 			Common::Error lineError = currentStoryDayIndex > 5
 				? runtime.playDialogueLine(0x8e2, "HANK")
-				: runtime.playDialogueFst(kDialogueRangshotFstPath);
+				: runtime.playDialogueFst(kDialogueC021FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -237,7 +326,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.pendingSameDayFollowup = true;
 		Common::Error lineError = currentStoryDayIndex > 5
 			? runtime.playDialogueLine(0x8e2, "HANK")
-			: runtime.playDialogueFst(kDialogueRangshotFstPath);
+			: runtime.playDialogueFst(kDialogueC021FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -315,7 +404,8 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!skipHankFollowupBranches && runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
-		Common::Error lineError = runtime.playDialogueLine(0x987, "PC");
+		Common::Error lineError = playSequence(
+			kHankBurnedTvStationLines, ARRAYSIZE(kHankBurnedTvStationLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -334,8 +424,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		switch (responseIndex) {
 		case 1: {
 			const DialogueLineEntry lines[] = {
-				{ 0x9bc, "HANK", 0 },
-				{ 0x9c9, "HANK", 0 }
+				{ 0x9bc, "HANK", 0 }
 			};
 			lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			break;
@@ -426,15 +515,13 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueLine(0xa20, "HANK");
 			break;
 		case 2:
-			lineError = runtime.playDialogueLine(0xa26, "HANK");
+			lineError = playSequence(
+				kHankKarinFoundDeadResponse2Lines,
+				ARRAYSIZE(kHankKarinFoundDeadResponse2Lines));
 			break;
 		default:
 			break;
 		}
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-
-		lineError = runtime.playDialogueLine(0xa2b, "HANK");
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -534,7 +621,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				kHankTvTopicIntroLines, ARRAYSIZE(kHankTvTopicIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = runtime.playDialogueFst(kDialogueRangshotFstPath);
+			lineError = runtime.playDialogueFst(kDialogueC021FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = playSequence(
@@ -572,7 +659,8 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0xed)) {
-			Common::Error lineError = playLine(0x881, "PC");
+			Common::Error lineError = playSequence(
+				kHankResponse0EdTopicLines, ARRAYSIZE(kHankResponse0EdTopicLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
