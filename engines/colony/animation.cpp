@@ -304,65 +304,67 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 		return false;
 	}
 
+	bool isBE = (getPlatform() == Common::kPlatformMacintosh);
+	Common::SeekableReadStreamEndianWrapper stream(file, isBE, DisposeAfterUse::YES);
+
 	deleteAnimation();
 
 	// Read background data
-	file->read(_topBG, 8);
-	file->read(_bottomBG, 8);
-	_divideBG = readSint16(*file);
-	_backgroundActive = readSint16(*file) != 0;
+	stream.read(_topBG, 8);
+	stream.read(_bottomBG, 8);
+	_divideBG = stream.readSint16();
+	_backgroundActive = stream.readSint16() != 0;
 	if (_backgroundActive) {
-		_backgroundClip = readRect(*file);
-		_backgroundLocate = readRect(*file);
-		_backgroundMask = loadImage(*file);
-		_backgroundFG = loadImage(*file);
+		_backgroundClip = readRect(stream);
+		_backgroundLocate = readRect(stream);
+		_backgroundMask = loadImage(stream);
+		_backgroundFG = loadImage(stream);
 	}
 
 	// Read sprite data
-	int16 maxsprite = readSint16(*file);
-	readSint16(*file); // locSprite
+	int16 maxsprite = stream.readSint16();
+	stream.readSint16(); // locSprite
 	for (int i = 0; i < maxsprite; i++) {
 		Sprite *s = new Sprite();
-		s->fg = loadImage(*file);
-		s->mask = loadImage(*file);
-		s->used = readSint16(*file) != 0;
-		s->clip = readRect(*file);
-		s->locate = readRect(*file);
+		s->fg = loadImage(stream);
+		s->mask = loadImage(stream);
+		s->used = stream.readSint16() != 0;
+		s->clip = readRect(stream);
+		s->locate = readRect(stream);
 		_cSprites.push_back(s);
 	}
 
 	// Read complex sprite data
-	int16 maxLSprite = readSint16(*file);
-	readSint16(*file); // anum
+	int16 maxLSprite = stream.readSint16();
+	stream.readSint16(); // anum
 	for (int i = 0; i < maxLSprite; i++) {
 		ComplexSprite *ls = new ComplexSprite();
-		int16 size = readSint16(*file);
+		int16 size = stream.readSint16();
 		for (int j = 0; j < size; j++) {
 			ComplexSprite::SubObject sub;
-			sub.spritenum = readSint16(*file);
-			sub.xloc = readSint16(*file);
-			sub.yloc = readSint16(*file);
+			sub.spritenum = stream.readSint16();
+			sub.xloc = stream.readSint16();
+			sub.yloc = stream.readSint16();
 			ls->objects.push_back(sub);
 		}
-		ls->bounds = readRect(*file);
-		ls->visible = readSint16(*file) != 0;
-		ls->current = readSint16(*file);
-		ls->xloc = readSint16(*file);
-		ls->yloc = readSint16(*file);
-		ls->acurrent = readSint16(*file);
-		ls->axloc = readSint16(*file);
-		ls->ayloc = readSint16(*file);
-		ls->type = file->readByte();
-		ls->frozen = file->readByte();
-		ls->locked = file->readByte();
-		ls->link = readSint16(*file);
-		ls->key = readSint16(*file);
-		ls->lock = readSint16(*file);
+		ls->bounds = readRect(stream);
+		ls->visible = stream.readSint16() != 0;
+		ls->current = stream.readSint16();
+		ls->xloc = stream.readSint16();
+		ls->yloc = stream.readSint16();
+		ls->acurrent = stream.readSint16();
+		ls->axloc = stream.readSint16();
+		ls->ayloc = stream.readSint16();
+		ls->type = stream.readByte();
+		ls->frozen = stream.readByte();
+		ls->locked = stream.readByte();
+		ls->link = stream.readSint16();
+		ls->key = stream.readSint16();
+		ls->lock = stream.readSint16();
 		ls->onoff = true;
 		_lSprites.push_back(ls);
 	}
 
-	delete file;
 	return true;
 }
 
@@ -824,11 +826,11 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uin
 	}
 }
 
-Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
+Image *ColonyEngine::loadImage(Common::SeekableReadStreamEndian &file) {
 	Image *im = new Image();
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		readUint32(file); // baseAddr placeholder
-		im->rowBytes = readSint16(file);
+		file.readUint32(); // baseAddr placeholder
+		im->rowBytes = file.readSint16();
 		Common::Rect r = readRect(file);
 		im->width = r.width();
 		im->height = r.height();
@@ -836,22 +838,22 @@ Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 		im->bits = 1;
 		im->planes = 1;
 	} else {
-		im->width = readSint16(file);
-		im->height = readSint16(file);
-		im->align = readSint16(file);
-		im->rowBytes = readSint16(file);
+		im->width = file.readSint16();
+		im->height = file.readSint16();
+		im->align = file.readSint16();
+		im->rowBytes = file.readSint16();
 		im->bits = file.readByte();
 		im->planes = file.readByte();
 	}
 
-	int16 tf = readSint16(file);
+	int16 tf = file.readSint16();
 	uint32 size;
 	if (tf) {
 		// Mac original loadbitmap: reads bsize bytes into a buffer, then
 		// decompresses from that buffer. We must read exactly bsize bytes
 		// from the stream to keep file position aligned.
-		uint32 bsize = readUint32(file);
-		size = readUint32(file);
+		uint32 bsize = file.readUint32();
+		size = file.readUint32();
 		im->data = new byte[size];
 		byte *packed = new byte[bsize + 8](); // +8 matches original NewPtr(bsize+8)
 		file.read(packed, bsize);
@@ -871,14 +873,14 @@ Image *ColonyEngine::loadImage(Common::SeekableReadStream &file) {
 		}
 		delete[] packed;
 	} else {
-		size = readUint32(file);
+		size = file.readUint32();
 		im->data = new byte[size];
 		file.read(im->data, size);
 	}
 	return im;
 }
 
-void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len) {
+void ColonyEngine::unpackBytes(Common::SeekableReadStreamEndian &file, byte *dst, uint32 len) {
 	uint32 i = 0;
 	while (i < len) {
 		byte count = file.readByte();
@@ -889,18 +891,18 @@ void ColonyEngine::unpackBytes(Common::SeekableReadStream &file, byte *dst, uint
 	}
 }
 
-Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
+Common::Rect ColonyEngine::readRect(Common::SeekableReadStreamEndian &file) {
 	int16 top, left, bottom, right;
 	if (getPlatform() == Common::kPlatformMacintosh) {
-		top = readSint16(file);
-		left = readSint16(file);
-		bottom = readSint16(file);
-		right = readSint16(file);
+		top = file.readSint16();
+		left = file.readSint16();
+		bottom = file.readSint16();
+		right = file.readSint16();
 	} else {
-		left = readSint16(file);
-		top = readSint16(file);
-		right = readSint16(file);
-		bottom = readSint16(file);
+		left = file.readSint16();
+		top = file.readSint16();
+		right = file.readSint16();
+		bottom = file.readSint16();
 	}
 	// Guard against invalid rects from animation data
 	if (left > right || top > bottom)
@@ -908,23 +910,6 @@ Common::Rect ColonyEngine::readRect(Common::SeekableReadStream &file) {
 	return Common::Rect(left, top, right, bottom);
 }
 
-int16 ColonyEngine::readSint16(Common::SeekableReadStream &s) {
-	if (getPlatform() == Common::kPlatformMacintosh)
-		return s.readSint16BE();
-	return s.readSint16LE();
-}
-
-uint16 ColonyEngine::readUint16(Common::SeekableReadStream &s) {
-	if (getPlatform() == Common::kPlatformMacintosh)
-		return s.readUint16BE();
-	return s.readUint16LE();
-}
-
-uint32 ColonyEngine::readUint32(Common::SeekableReadStream &s) {
-	if (getPlatform() == Common::kPlatformMacintosh)
-		return s.readUint32BE();
-	return s.readUint32LE();
-}
 
 int ColonyEngine::whichSprite(const Common::Point &p) {
 	int ox = _screenR.left + (_screenR.width() - 416) / 2;

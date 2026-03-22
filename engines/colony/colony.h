@@ -33,6 +33,7 @@
 #include "common/array.h"
 #include "common/random.h"
 #include "common/rect.h"
+#include "common/stream.h"
 #include "graphics/framelimiter.h"
 #include "common/rendermode.h"
 #include "colony/renderer.h"
@@ -726,12 +727,9 @@ private:
 	void drawComplexSprite(int index, int ox, int oy);
 	void drawAnimationImage(Image *img, Image *mask, int x, int y, uint32 fillColor = 0xFFFFFFFF);
 	uint32 resolveAnimColor(int16 bmEntry) const;
-	Image *loadImage(Common::SeekableReadStream &file);
-	void unpackBytes(Common::SeekableReadStream &file, byte *dst, uint32 len);
-	Common::Rect readRect(Common::SeekableReadStream &file);
-	int16 readSint16(Common::SeekableReadStream &s);
-	uint16 readUint16(Common::SeekableReadStream &s);
-	uint32 readUint32(Common::SeekableReadStream &s);
+	Image *loadImage(Common::SeekableReadStreamEndian &file);
+	void unpackBytes(Common::SeekableReadStreamEndian &file, byte *dst, uint32 len);
+	Common::Rect readRect(Common::SeekableReadStreamEndian &file);
 	int whichSprite(const Common::Point &p);
 	void handleAnimationClick(int item);
 	void handleDeskClick(int item);
