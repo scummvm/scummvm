@@ -657,6 +657,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `play_dialogue_line` binary-searches that table by WAV id, seeks through `g_dialogue_index_stream`, and reads the subtitle text by offset/length.
 - `play_dialogue_line` at `0x7a690` is the inner dialogue-line player.
   - It resolves a `VOICE` asset, finds subtitle text for the WAV id, updates current head/textbox visuals, and waits for playback or interruption to finish.
+  - Its live call ABI is now confirmed as custom register storage rather than a named Borland convention: callers pass `wavId` in `EAX`, `speakerId` in `EDX`, and `headVariant` in `EBX`.
   - The voice path is formatted from the `VOICE` config value plus the decimal WAV id (`<VOICE><wavId>.CMP`), while portrait loads use the `HEAD` `portrait_path` base plus `.bm`.
   - Subtitle text is rendered at `(178, 12)` with width `316`, and the textbox art is selected strictly from wrapped line count:
     - 1 line -> `TEXTBOX1`
@@ -674,6 +675,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - `g_dialogue_head_bitmap_path` is the shared path buffer used by `run_npc_dialogue` and `play_dialogue_line` when selecting the current head bitmap resource.
     - `g_dialogue_head_id_slots` is the five-slot cached head-ID table used to avoid unnecessary portrait reloads within the same conversation.
     - `g_dialogue_skip_full_ui_flag` is checked at the top of `play_dialogue_line`; when nonzero, the function skips the full portrait/textbox presentation path.
+  - The decompiler warning `Removing unreachable block (ram,0x7adfb)` is a false positive from the post-line input-release stabilization loop, not an embedded lookup table or missing body chunk.
   - After picking a non-`PC` speaker, it removes the right PC head entity from the render list, refreshes the left portrait if needed, and re-adds only the speaking-side portrait before the line finishes; `run_dialogue_response_menu` and `run_dialogue_keyword_menu` inherit that render-list state, which is why native conversation menus show only the last speaker's portrait.
   - `reload_bitmap_entity_pixels_from_resource` at `0x4b7a0` refreshes the pixel payload of an already spawned bitmap entity from a same-sized XFILE bitmap resource; `play_dialogue_line` uses it to swap the currently visible left or right head portrait without respawning the entity.
 - The dialogue/text bitmap raster helpers on the same UI path are now explicit:

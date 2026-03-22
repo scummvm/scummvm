@@ -33,7 +33,7 @@ bool CuratorDialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error CuratorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLine(0x425, "CURATOR");
+	return runtime.playDialogueLineWithVariant(0x425, "CURATOR", 1);
 }
 
 } // End of namespace Harvester

@@ -34,13 +34,13 @@ bool MaintManDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error MaintManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
 	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_FIRST_CONVERSATION"))
-		return runtime.playDialogueLine(0xdaf, "MAINT_MAN");
+		return runtime.playDialogueLineWithVariant(0xdaf, "MAINT_MAN", 1);
 
 	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_THIRD_CONVERSATION"))
-		return runtime.playDialogueLine(0xdbc, "MAINT_MAN");
+		return runtime.playDialogueLineWithVariant(0xdbc, "MAINT_MAN", 2);
 
 	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_FOURTH_CONVERSATION"))
-		return runtime.playDialogueLine(0xdc4, "MAINT_MAN");
+		return runtime.playDialogueLineWithVariant(0xdc4, "MAINT_MAN", 2);
 
 	return runtime.playDialogueLine(0xdb6, "MAINT_MAN");
 }

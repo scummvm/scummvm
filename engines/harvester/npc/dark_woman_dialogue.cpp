@@ -40,13 +40,13 @@ bool DarkWomanDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	if (usedItemName.equalsIgnoreCase(kHandMirrorItemName))
-		return runtime.playDialogueLine(0x4d03, "DARK_WOMAN");
+		return runtime.playDialogueLineWithVariant(0x4d03, "DARK_WOMAN", 2);
 
 	if (!_state.talkStatePending)
 		return Common::kNoError;
 
 	_state.talkStatePending = false;
-	return runtime.playDialogueLine(0x4cd5, "DARK_WOMAN");
+	return runtime.playDialogueLineWithVariant(0x4cd5, "DARK_WOMAN", 1);
 }
 
 } // End of namespace Harvester

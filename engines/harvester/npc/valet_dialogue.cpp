@@ -33,7 +33,7 @@ bool ValetDialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error ValetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLine(0xf2c, "VALET");
+	return runtime.playDialogueLineWithVariant(0xf2c, "VALET", 1);
 }
 
 } // End of namespace Harvester

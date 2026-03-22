@@ -33,7 +33,7 @@ bool LodgeChefDialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error LodgeChefDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLine(0x1b10, "LODGE_CHEF");
+	return runtime.playDialogueLineWithVariant(0x1b10, "LODGE_CHEF", 2);
 }
 
 } // End of namespace Harvester
