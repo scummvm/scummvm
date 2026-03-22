@@ -29,11 +29,17 @@ namespace Harvester {
 class SergeantDialogueHandler : public NpcDialogueHandler {
 public:
 	struct SergeantRoomDialogueState {
-		bool introPending = true;
+		bool talkStateBlock = false;
 		bool dialogueStateD2d50 = false;
-		bool dialogueStateD2d54 = false;
+		bool postApplicationBriefingCompleted = false;
 		bool dialogueStateD2d58 = false;
-		bool day5ReminderShown = false;
+		bool dialogueStateD2d5c = false;
+		bool dialogueStateD2d60 = false;
+		bool dialogueStateD2d64 = false;
+		bool dialogueStateD2d68 = false;
+		bool dialogueStateD2d6c = false;
+		bool completedFirstTaskState = false;
+		bool day5ExitLinePlayed = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
