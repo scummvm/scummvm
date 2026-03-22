@@ -498,7 +498,7 @@ void ColonyEngine::updateMouseCapture(bool recenter) {
 Common::Point ColonyEngine::getAimPoint() const {
 	if (_cursorShoot && !_mouseLocked) {
 		return Common::Point(CLIP<int>(_mousePos.x, _screenR.left, _screenR.right - 1),
-		                     CLIP<int>(_mousePos.y, _screenR.top, _screenR.bottom - 1));
+			CLIP<int>(_mousePos.y, _screenR.top, _screenR.bottom - 1));
 	}
 
 	return Common::Point(_centerX, _centerY);

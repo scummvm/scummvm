@@ -268,9 +268,9 @@ static int mapObjColorToMacColor(int colorIdx, int level) {
 }
 
 static void projectCorridorPointClamped(const Common::Rect &screenR, int look, int lookY,
-                                        const int *sint, const int *cost, int camX, int camY,
-                                        float worldX, float worldY, float worldZ,
-                                        int &screenX, int &screenY) {
+	const int *sint, const int *cost, int camX, int camY,
+	float worldX, float worldY, float worldZ,
+	int &screenX, int &screenY) {
 	const float dx = worldX - camX;
 	const float dy = worldY - camY;
 	const float dz = worldZ;
@@ -409,9 +409,9 @@ const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 }
 
 static bool projectCorridorPoint(const Common::Rect &screenR, uint8 look, int8 lookY,
-                                 const int *sint, const int *cost, int camX, int camY,
-                                 float worldX, float worldY, float worldZ,
-                                 int &screenX, int &screenY) {
+	const int *sint, const int *cost, int camX, int camY,
+	float worldX, float worldY, float worldZ,
+	int &screenX, int &screenY) {
 	const float dx = worldX - camX;
 	const float dy = worldY - camY;
 	const float dz = worldZ;
@@ -466,14 +466,14 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 		transformedY[i] = (float)(ry + obj.where.yloc);
 		transformedZ[i] = (float)(oz - 160);
 		projectCorridorPointClamped(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
-		                            transformedX[i], transformedY[i], transformedZ[i],
-		                            projectedX[i], projectedY[i]);
+			transformedX[i], transformedY[i], transformedZ[i],
+			projectedX[i], projectedY[i]);
 
 		if (accumulateBounds) {
 			int sx = 0;
 			int sy = 0;
 			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
-			                         transformedX[i], transformedY[i], transformedZ[i], sx, sy)) {
+				transformedX[i], transformedY[i], transformedZ[i], sx, sy)) {
 				obj.where.xmn = MIN(obj.where.xmn, sx);
 				obj.where.xmx = MAX(obj.where.xmx, sx);
 				obj.where.zmn = MIN(obj.where.zmn, sy);
@@ -517,7 +517,7 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 				for (int j = 0; j < count; j++) {
 					int next = (j + 1) % count;
 					_gfx->draw3DLine(px[j], py[j], pz[j],
-					                 px[next], py[next], pz[next], color);
+						px[next], py[next], pz[next], color);
 				}
 				continue;
 			}
@@ -541,14 +541,14 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 						fg = bg;
 					}
 					debugC(5, kColonyDebugRender, "draw3DPrism Mac corridor wall: fg=0x%08X bg=0x%08X lit=%d",
-					      fg, bg, lit);
+						fg, bg, lit);
 				} else {
 					int mIdx = mapObjColorToMacColor(colorIdx, _level);
 					pattern = _macColors[mIdx].pattern;
 					fg = packMacColor(_macColors[mIdx].fg);
 					bg = packMacColor(_macColors[mIdx].bg);
 					debugC(5, kColonyDebugRender, "draw3DPrism Mac: colorIdx=%d mIdx=%d pat=%d fg=0x%08X bg=0x%08X lit=%d",
-					      colorIdx, mIdx, pattern, fg, bg, lit);
+						colorIdx, mIdx, pattern, fg, bg, lit);
 
 					if (!lit) {
 						// Mac unlit: all non-wall surfaces fill solid black
@@ -668,8 +668,8 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 }
 
 void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
-                                int pt1x, int pt1y, int pt1z,
-                                uint32 fillColor, uint32 outlineColor, bool accumulateBounds) {
+	int pt1x, int pt1y, int pt1z,
+	uint32 fillColor, uint32 outlineColor, bool accumulateBounds) {
 	// Original Colony eye/ball primitives store the bottom pole in pt0 and the
 	// sphere center in pt1. The classic renderer builds the oval from the
 	// screen-space delta between those two projected points, so the world-space
@@ -731,7 +731,7 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 			int sx = 0;
 			int sy = 0;
 			if (projectCorridorPoint(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
-			                         px[i], py[i], pz[i], sx, sy)) {
+				px[i], py[i], pz[i], sx, sy)) {
 				obj.where.xmn = MIN(obj.where.xmn, sx);
 				obj.where.xmx = MAX(obj.where.xmx, sx);
 				obj.where.zmn = MIN(obj.where.zmn, sy);
@@ -914,15 +914,15 @@ void ColonyEngine::renderCorridor3D() {
 	// Set wireframe fill to each surface's own color so they aren't all wallFill.
 	_gfx->setWireframe(true, floorColor);
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.0f,
-	                100000.0f, -100000.0f, -160.0f,
-	                100000.0f, 100000.0f, -160.0f,
-	                -100000.0f, 100000.0f, -160.0f, floorColor);
+		100000.0f, -100000.0f, -160.0f,
+		100000.0f, 100000.0f, -160.0f,
+		-100000.0f, 100000.0f, -160.0f, floorColor);
 
 	_gfx->setWireframe(true, ceilColor);
 	_gfx->draw3DQuad(-100000.0f, -100000.0f, 160.0f,
-	                100000.0f, -100000.0f, 160.0f,
-	                100000.0f, 100000.0f, 160.0f,
-	                -100000.0f, 100000.0f, 160.0f, ceilColor);
+		100000.0f, -100000.0f, 160.0f,
+		100000.0f, 100000.0f, 160.0f,
+		-100000.0f, 100000.0f, 160.0f, ceilColor);
 
 	// Ceiling grid (Cuadricule) - DOS wireframe mode only.
 	// Mac color mode: original corridor renderer only showed ceiling edges at wall

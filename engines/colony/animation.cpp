@@ -224,7 +224,7 @@ static uint32 macSysColorToARGB(int sysColor) {
 
 static uint32 packMacColorBG(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
-	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
+		((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
 }
 
 static int getAnimationStateCount(const Common::Array<ComplexSprite *> &sprites, int num) {
@@ -679,7 +679,7 @@ void ColonyEngine::drawAnimation() {
 	int oy = _screenR.top + (_screenR.height() - 264) / 2;
 
 	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
-	                       && !_animBMColors.empty());
+		&& !_animBMColors.empty());
 
 	// Fill background patterns (416x264 area).
 	// Color mode: QuickDraw pattern bit 1 -> ForeColor (black), bit 0 -> BackColor.
@@ -736,8 +736,8 @@ void ColonyEngine::drawAnimation() {
 				bgFill = resolveAnimColor(_animBMColors[0]); // unpowered: inherits top
 		}
 		drawAnimationImage(_backgroundFG, _backgroundMask,
-		                   ox + _backgroundLocate.left, oy + _backgroundLocate.top,
-		                   bgFill);
+			ox + _backgroundLocate.left, oy + _backgroundLocate.top,
+			bgFill);
 	}
 
 	// Draw complex sprites
@@ -767,7 +767,7 @@ void ColonyEngine::drawComplexSprite(int index, int ox, int oy) {
 	// Resolve fill color from BMColor[index+2] (ganimate.c DrawlSprite).
 	uint32 fillColor = 0xFFFFFFFF; // B&W default: white
 	const bool useColor = (_hasMacColors && _renderMode == Common::kRenderMacintosh
-	                       && !_animBMColors.empty());
+		&& !_animBMColors.empty());
 	if (useColor) {
 		int bmIdx = index + 2;
 		if (bmIdx < (int)_animBMColors.size())
@@ -1721,7 +1721,7 @@ void ColonyEngine::moveObject(int index) {
 			const Sprite *s = _cSprites[spriteIdx];
 			Common::Rect r = s->clip;
 			r.translate(target->xloc + target->objects[cnum].xloc,
-			            target->yloc + target->objects[cnum].yloc);
+				target->yloc + target->objects[cnum].yloc);
 
 			if (pt.x < r.left || pt.x > r.right || pt.y < r.top || pt.y > r.bottom)
 				continue;

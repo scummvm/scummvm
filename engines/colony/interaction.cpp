@@ -52,7 +52,7 @@ void ColonyEngine::interactWithObject(int objNum) {
 	// fl==2 (carrying): only REACTOR (drop), TELEPORT (use), SCREEN; others → bonk
 	if (_fl == 1) {
 		if (obj.type != kObjBox1 && obj.type != kObjBox2 && obj.type != kObjCryo &&
-		    obj.type != kObjTeleport && obj.type != kObjReactor && obj.type != kObjScreen)
+			obj.type != kObjTeleport && obj.type != kObjReactor && obj.type != kObjScreen)
 			return; // silently ignore — original has no default for fl==1
 	} else if (_fl == 2) {
 		if (obj.type != kObjReactor && obj.type != kObjTeleport && obj.type != kObjScreen) {
@@ -379,7 +379,7 @@ void ColonyEngine::cShoot() {
 		if (obj.where.xmn > obj.where.xmx || obj.where.zmn > obj.where.zmx)
 			continue;
 		if (obj.where.xmn > cx || obj.where.xmx < cx ||
-		    obj.where.zmn > cy || obj.where.zmx < cy)
+			obj.where.zmn > cy || obj.where.zmx < cy)
 			continue;
 
 		int t = obj.type;

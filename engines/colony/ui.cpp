@@ -353,7 +353,7 @@ void ColonyEngine::updateViewportLayout() {
 		// _headsUpRect = floorRect (8,8)-(62,62) relative to moveWindow
 		// This is the minimap clipping area  must NOT overlap compass dish
 		_headsUpRect = makeSafeRect(moveLeft + 8, moveTop + 8,
-		                            moveLeft + 2 * CCENTER - 8, moveTop + 2 * CCENTER - 8);
+			moveLeft + 2 * CCENTER - 8, moveTop + 2 * CCENTER - 8);
 
 		// _compassRect = entire moveWindow (used for compass dish drawing)
 		_compassRect = makeSafeRect(moveLeft, moveTop, moveLeft + moveW, moveTop + moveH);
@@ -668,7 +668,7 @@ void ColonyEngine::drawDashboardMac() {
 void ColonyEngine::drawMiniMapMarker(int x, int y, int halfSize, uint32 color, bool isMac, const Common::Rect *clip) {
 	const Common::Rect &cr = clip ? *clip : _headsUpRect;
 	if (x < cr.left + 1 || x >= cr.right - 1 ||
-	    y < cr.top + 1 || y >= cr.bottom - 1)
+		y < cr.top + 1 || y >= cr.bottom - 1)
 		return;
 	if (isMac) {
 		_gfx->drawEllipse(x, y, halfSize, halfSize, color);
@@ -826,28 +826,28 @@ void ColonyEngine::markVisited() {
 	if (cy + 1 < 32) {
 		canN = !(_wall[cx][cy + 1] & 0x01);
 		if (canN && cx < 31 && cy < 31 &&
-		    (_mapData[cx][cy][kDirNorth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirNorth][0] == kWallFeatureAirlock))
+			(_mapData[cx][cy][kDirNorth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirNorth][0] == kWallFeatureAirlock))
 			canN = false;
 	}
 	// South: wall at south edge of cell (cx, cy)
 	if (cy - 1 >= 0) {
 		canS = !(_wall[cx][cy] & 0x01);
 		if (canS && cx < 31 && cy < 31 &&
-		    (_mapData[cx][cy][kDirSouth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirSouth][0] == kWallFeatureAirlock))
+			(_mapData[cx][cy][kDirSouth][0] == kWallFeatureDoor || _mapData[cx][cy][kDirSouth][0] == kWallFeatureAirlock))
 			canS = false;
 	}
 	// East: wall at west edge of cell (cx+1, cy)
 	if (cx + 1 < 32) {
 		canE = !(_wall[cx + 1][cy] & 0x02);
 		if (canE && cx < 31 && cy < 31 &&
-		    (_mapData[cx][cy][kDirEast][0] == kWallFeatureDoor || _mapData[cx][cy][kDirEast][0] == kWallFeatureAirlock))
+			(_mapData[cx][cy][kDirEast][0] == kWallFeatureDoor || _mapData[cx][cy][kDirEast][0] == kWallFeatureAirlock))
 			canE = false;
 	}
 	// West: wall at west edge of cell (cx, cy)
 	if (cx - 1 >= 0) {
 		canW = !(_wall[cx][cy] & 0x02);
 		if (canW && cx < 31 && cy < 31 &&
-		    (_mapData[cx][cy][kDirWest][0] == kWallFeatureDoor || _mapData[cx][cy][kDirWest][0] == kWallFeatureAirlock))
+			(_mapData[cx][cy][kDirWest][0] == kWallFeatureDoor || _mapData[cx][cy][kDirWest][0] == kWallFeatureAirlock))
 			canW = false;
 	}
 
@@ -865,8 +865,8 @@ void ColonyEngine::markVisited() {
 
 static bool isPassableFeature(int feat) {
 	return feat == kWallFeatureDoor || feat == kWallFeatureAirlock ||
-	       feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
-	       feat == kWallFeatureTunnel || feat == kWallFeatureElevator;
+		feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
+		feat == kWallFeatureTunnel || feat == kWallFeatureElevator;
 }
 
 void ColonyEngine::automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy) {

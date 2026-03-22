@@ -183,7 +183,7 @@ void ColonyEngine::playIntro() {
 				Common::MacResIDArray nfntIDs = _resMan->getResIDArray(MKTAG('N', 'F', 'N', 'T'));
 				Common::MacResIDArray fontIDs = _resMan->getResIDArray(MKTAG('F', 'O', 'N', 'T'));
 				debugC(1, kColonyDebugUI, "playIntro: FONT/NFNT %d not found. Available NFNT IDs: %d, FONT IDs: %d",
-				      fontResID, nfntIDs.size(), fontIDs.size());
+					fontResID, nfntIDs.size(), fontIDs.size());
 				for (uint i = 0; i < nfntIDs.size(); i++)
 					debugC(1, kColonyDebugUI, "  NFNT %d", nfntIDs[i]);
 				for (uint i = 0; i < fontIDs.size(); i++)
@@ -664,7 +664,7 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 				int rr1 = rtable[d];
 				int d2 = d - deltapd;
 				if (d2 < 1)
-			d2 = 1;
+					d2 = 1;
 				int rr2 = rtable[d2];
 				int x1 = centerX + (int)(((long long)s * rr1) >> 7);
 				int y1 = centerY + (int)(((long long)c * rr1) >> 7);
@@ -1044,8 +1044,8 @@ bool ColonyEngine::drawPict(int resID) {
 			int clipY2 = y + surface->h - 1;
 
 			debugC(1, kColonyDebugUI, "drawPict(%d): %dx%d at (%d,%d), format=%dbpp, palette=%d entries",
-			      resID, surface->w, surface->h, x, y,
-			      surface->format.bytesPerPixel * 8, pictPal.size());
+				resID, surface->w, surface->h, x, y,
+				surface->format.bytesPerPixel * 8, pictPal.size());
 
 			// Draw PICT pixels using direct RGB (packRGB) for full color support.
 			for (int iy = 0; iy < surface->h; iy++) {

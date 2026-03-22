@@ -124,31 +124,31 @@ void ColonyEngine::loadMap(int mnum) {
 						for (int l = 0; l < 5; l++) {
 							_mapData[i][j][k][l] = buffer[c++];
 						}
-							// PACKIT.C: center feature type 6 marks static map objects.
-							if (k == 4 && _mapData[i][j][4][0] == 6 && i < 31 && j < 31) {
-								Thing obj;
-								clearThing(obj);
-								obj.alive = 1;
-								obj.visible = 0;
-								obj.type = _mapData[i][j][4][1] + kBaseObject;
-								obj.where.xloc = (i << 8) + 128;
-								obj.where.yloc = (j << 8) + 128;
-								obj.where.xindex = i;
-								obj.where.yindex = j;
-								obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
-								obj.where.look = obj.where.ang;
-								if ((int)_objects.size() >= kMaxObjectSlots) {
-									warning("loadMap: object table full on level %d, skipping static object type %d at (%d,%d)",
-										mnum, obj.type, i, j);
-									continue;
-								}
-								_objects.push_back(obj);
-								const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
-								// CWall/FWall use diagonal collision, not cell-based blocking.
-								if (obj.type != kObjFWall && obj.type != kObjCWall &&
-								    objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
-									_robotArray[i][j] = (uint8)objNum;
+						// PACKIT.C: center feature type 6 marks static map objects.
+						if (k == 4 && _mapData[i][j][4][0] == 6 && i < 31 && j < 31) {
+							Thing obj;
+							clearThing(obj);
+							obj.alive = 1;
+							obj.visible = 0;
+							obj.type = _mapData[i][j][4][1] + kBaseObject;
+							obj.where.xloc = (i << 8) + 128;
+							obj.where.yloc = (j << 8) + 128;
+							obj.where.xindex = i;
+							obj.where.yindex = j;
+							obj.where.ang = (uint8)(_mapData[i][j][4][2] + 32);
+							obj.where.look = obj.where.ang;
+							if ((int)_objects.size() >= kMaxObjectSlots) {
+								warning("loadMap: object table full on level %d, skipping static object type %d at (%d,%d)",
+									mnum, obj.type, i, j);
+								continue;
 							}
+							_objects.push_back(obj);
+							const int objNum = (int)_objects.size(); // 1-based, DOS-style robot slots
+							// CWall/FWall use diagonal collision, not cell-based blocking.
+							if (obj.type != kObjFWall && obj.type != kObjCWall &&
+								objNum > 0 && objNum < 256 && _robotArray[i][j] == 0)
+								_robotArray[i][j] = (uint8)objNum;
+						}
 					} else {
 						_mapData[i][j][k][0] = 0;
 					}
@@ -219,7 +219,7 @@ void ColonyEngine::resetObjectSlot(int slot, int type, int xloc, int yloc, uint8
 
 	const int objNum = slot + 1;
 	if (obj.where.xindex >= 0 && obj.where.xindex < 32 &&
-	    obj.where.yindex >= 0 && obj.where.yindex < 32) {
+		obj.where.yindex >= 0 && obj.where.yindex < 32) {
 		if (type > kRobUPyramid && type < kRobQueen)
 			_foodArray[obj.where.xindex][obj.where.yindex] = (uint8)objNum;
 		else
@@ -370,8 +370,8 @@ void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to
 	// Search for existing patch where 'from' matches an existing 'to'
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (from.level == _patches[i].to.level &&
-		    from.xindex == _patches[i].to.xindex &&
-		    from.yindex == _patches[i].to.yindex) {
+			from.xindex == _patches[i].to.xindex &&
+			from.yindex == _patches[i].to.yindex) {
 			_patches[i].to.level = to.level;
 			_patches[i].to.xindex = to.xindex;
 			_patches[i].to.yindex = to.yindex;
@@ -408,8 +408,8 @@ void ColonyEngine::newPatch(int type, const PassPatch &from, const PassPatch &to
 bool ColonyEngine::patchMapTo(const PassPatch &to, uint8 *mapdata) {
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (to.level == _patches[i].to.level &&
-		    to.xindex == _patches[i].to.xindex &&
-		    to.yindex == _patches[i].to.yindex) {
+			to.xindex == _patches[i].to.xindex &&
+			to.yindex == _patches[i].to.yindex) {
 			for (int j = 0; j < 5; j++)
 				mapdata[j] = _patches[i].mapdata[j];
 			return true;
@@ -422,8 +422,8 @@ bool ColonyEngine::patchMapTo(const PassPatch &to, uint8 *mapdata) {
 bool ColonyEngine::patchMapFrom(const PassPatch &from, uint8 *mapdata) {
 	for (uint i = 0; i < _patches.size(); i++) {
 		if (from.level == _patches[i].from.level &&
-		    from.xindex == _patches[i].from.xindex &&
-		    from.yindex == _patches[i].from.yindex) {
+			from.xindex == _patches[i].from.xindex &&
+			from.yindex == _patches[i].from.yindex) {
 			mapdata[2] = _patches[i].to.level;
 			mapdata[3] = _patches[i].to.xindex;
 			mapdata[4] = _patches[i].to.yindex;

@@ -544,7 +544,7 @@ void OpenGLRenderer::computeScreenViewport() {
 
 		// Pillarboxing/Letterboxing
 		_screenViewport.translate((screenWidth - viewportWidth) / 2,
-		                           (screenHeight - viewportHeight) / 2);
+			(screenHeight - viewportHeight) / 2);
 	} else {
 		_screenViewport = Common::Rect(screenWidth, screenHeight);
 	}
@@ -706,7 +706,7 @@ void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
 	glLoadIdentity();
 
 	glViewport(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
-	           _screenViewport.width(), _screenViewport.height());
+		_screenViewport.width(), _screenViewport.height());
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
@@ -723,7 +723,7 @@ void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
 	// GL_UNSIGNED_INT_8_8_8_8 reads a uint32 and maps bits 24..31→R, 16..23→G,
 	// 8..15→B, 0..7→A, matching our pixel layout regardless of endianness.
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0,
-	             GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->getPixels());
+		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->getPixels());
 
 	// Draw textured quad covering the specified region
 	float dx = x * scaleX;
@@ -752,7 +752,7 @@ void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
 
 	// Restore the game's 2D ortho viewport
 	glViewport(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
-	           _screenViewport.width(), _screenViewport.height());
+		_screenViewport.width(), _screenViewport.height());
 }
 
 void OpenGLRenderer::copyToScreen() {
@@ -763,11 +763,11 @@ void OpenGLRenderer::copyToScreen() {
 Graphics::Surface *OpenGLRenderer::getScreenshot() {
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->create(_screenViewport.width(), _screenViewport.height(),
-	                Graphics::PixelFormat::createFormatRGBA32());
+		Graphics::PixelFormat::createFormatRGBA32());
 
 	glReadPixels(_screenViewport.left, _system->getHeight() - _screenViewport.bottom,
-	             _screenViewport.width(), _screenViewport.height(),
-	             GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
+		_screenViewport.width(), _screenViewport.height(),
+		GL_RGBA, GL_UNSIGNED_BYTE, surface->getPixels());
 	surface->flipVertical(Common::Rect(surface->w, surface->h));
 	return surface;
 }

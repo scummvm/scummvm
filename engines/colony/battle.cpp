@@ -104,9 +104,9 @@ static int wrapBattleCoord(int coord) {
 }
 
 static bool battleProjectPoint(const Common::Rect &screenR, uint8 look, int8 lookY, const int *sint,
-                               const int *cost, int camX, int camY,
-                               float worldX, float worldY, float worldZ,
-                               int &screenX, int &screenY) {
+	const int *cost, int camX, int camY,
+	float worldX, float worldY, float worldZ,
+	int &screenX, int &screenY) {
 	const float dx = worldX - camX;
 	const float dy = worldY - camY;
 	const float dz = worldZ;
@@ -143,9 +143,9 @@ static void battleResetBounds(const Common::Rect &screenR, Locate &loc) {
 }
 
 static bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::PrismPartDef &def,
-                                   Locate &loc, int worldX, int worldY, uint8 ang, int zShift,
-                                   uint8 look, int8 lookY, const int *sint, const int *cost,
-                                   int camX, int camY) {
+	Locate &loc, int worldX, int worldY, uint8 ang, int zShift,
+	uint8 look, int8 lookY, const int *sint, const int *cost,
+	int camX, int camY) {
 	const uint8 rotAng = ang + 32;
 	const long rotCos = cost[rotAng];
 	const long rotSin = sint[rotAng];
@@ -162,7 +162,7 @@ static bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngi
 		int sx = 0;
 		int sy = 0;
 		if (!battleProjectPoint(screenR, look, lookY, sint, cost, camX, camY,
-		                        (float)(rx + worldX), (float)(ry + worldY), (float)(oz + zShift), sx, sy))
+			(float)(rx + worldX), (float)(ry + worldY), (float)(oz + zShift), sx, sy))
 			continue;
 
 		loc.xmn = MIN(loc.xmn, sx);
@@ -497,13 +497,13 @@ void ColonyEngine::battleSet() {
 						fy = 0x2000 * j + kBattleSize + (0x1FFF & _randomSource.getRandomNumber(0x7FFF));
 				} while (
 					(fx > _battleEnter.xloc - 8 * kBattleSize &&
-					 fx < _battleEnter.xloc + 2 * kBattleSize &&
-					 fy > _battleEnter.yloc - 2 * kBattleSize &&
-					 fy < _battleEnter.yloc + 2 * kBattleSize) ||
+						fx < _battleEnter.xloc + 2 * kBattleSize &&
+						fy > _battleEnter.yloc - 2 * kBattleSize &&
+						fy < _battleEnter.yloc + 2 * kBattleSize) ||
 					(fx > _battleShip.xloc - 2 * kBattleSize &&
-					 fx < _battleShip.xloc + 2 * kBattleSize &&
-					 fy > _battleShip.yloc - 2 * kBattleSize &&
-					 fy < _battleShip.yloc + 2 * kBattleSize));
+						fx < _battleShip.xloc + 2 * kBattleSize &&
+						fy > _battleShip.yloc - 2 * kBattleSize &&
+						fy < _battleShip.yloc + 2 * kBattleSize));
 
 				_pyramids[i][j][p].xloc = fx;
 				_pyramids[i][j][p].yloc = fy;
@@ -541,7 +541,7 @@ void ColonyEngine::battleBackdrop() {
 	// Ground fill (below horizon)
 	uint32 groundColor = 0xFF404040;
 	Common::Rect ground(_screenR.left, CLIP<int>(horizonY, _screenR.top, _screenR.bottom),
-	                    _screenR.right, _screenR.bottom);
+		_screenR.right, _screenR.bottom);
 	if (ground.bottom > ground.top)
 		_gfx->fillRect(ground, groundColor);
 
@@ -621,7 +621,7 @@ void ColonyEngine::battleDrawPyramids() {
 			const int wy = battleNormalizeCoord(_me.yloc + relY);
 
 			battleAccumulateBounds(_screenR, kRockDef, pyr, wx, wy, pyr.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			pyr.dist = forward;
 			draw3DBattlePrism(kRockDef, wx, wy, pyr.ang, -kFloor);
 
@@ -689,7 +689,7 @@ void ColonyEngine::battleDrawTanks() {
 
 		// Abdomen
 		battleAccumulateBounds(_screenR, kBDroneAbdDef, drone, drone.xloc, drone.yloc, droneAng, 0,
-		                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+			_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 		draw3DBattlePrism(kBDroneAbdDef, drone.xloc, drone.yloc, droneAng, 0);
 
 		// Animated pincers: rotate base points by lookx offset
@@ -713,7 +713,7 @@ void ColonyEngine::battleDrawTanks() {
 		}
 		PrismPartDef lPincerDef = {4, lPincerPts, 4, kBLPincerSurf};
 		battleAccumulateBounds(_screenR, lPincerDef, drone, drone.xloc, drone.yloc, droneAng, 0,
-		                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+			_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 		draw3DBattlePrism(lPincerDef, drone.xloc, drone.yloc, droneAng, 0);
 
 		// Build animated right pincer vertices
@@ -731,14 +731,14 @@ void ColonyEngine::battleDrawTanks() {
 		}
 		PrismPartDef rPincerDef = {4, rPincerPts, 4, kBRPincerSurf};
 		battleAccumulateBounds(_screenR, rPincerDef, drone, drone.xloc, drone.yloc, droneAng, 0,
-		                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+			_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 		draw3DBattlePrism(rPincerDef, drone.xloc, drone.yloc, droneAng, 0);
 
 		// Eyes
 		battleAccumulateBounds(_screenR, kBLEyeDef, drone, drone.xloc, drone.yloc, droneAng, 0,
-		                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+			_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 		battleAccumulateBounds(_screenR, kBREyeDef, drone, drone.xloc, drone.yloc, droneAng, 0,
-		                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+			_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 		draw3DBattlePrism(kBLEyeDef, drone.xloc, drone.yloc, droneAng, 0);
 		draw3DBattlePrism(kBREyeDef, drone.xloc, drone.yloc, droneAng, 0);
 		drone.dist = forward;
@@ -760,11 +760,11 @@ void ColonyEngine::battleDrawTanks() {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleProj);
 			battleAccumulateBounds(_screenR, kProjDef, _battleProj,
-			                       _battleProj.xloc, _battleProj.yloc, _battleProj.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleProj.xloc, _battleProj.yloc, _battleProj.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			_battleProj.dist = forward;
 			draw3DBattlePrism(kProjDef, _battleProj.xloc, _battleProj.yloc,
-			                  _battleProj.ang, -kFloor);
+				_battleProj.ang, -kFloor);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleProj;
 				_battleMaxP++;
@@ -780,21 +780,21 @@ void ColonyEngine::battleDrawTanks() {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleEnter);
 			battleAccumulateBounds(_screenR, kEntDef, _battleEnter,
-			                       _battleEnter.xloc, _battleEnter.yloc, _battleEnter.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleEnter.xloc, _battleEnter.yloc, _battleEnter.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kEntDoorDef, _battleEnter,
-			                       _battleEnter.xloc, _battleEnter.yloc, _battleEnter.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleEnter.xloc, _battleEnter.yloc, _battleEnter.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			_battleEnter.dist = forward;
 			draw3DBattlePrism(kEntDef, _battleEnter.xloc, _battleEnter.yloc,
-			                  _battleEnter.ang, -kFloor);
+				_battleEnter.ang, -kFloor);
 			// Draw door with depth test disabled so it renders fully
 			// on top of the coplanar entrance wall (same fill color,
 			// but the black outline becomes clearly visible).
 			_gfx->setDepthState(true, false);
 			_gfx->setDepthRange(0.0, 0.999);
 			draw3DBattlePrism(kEntDoorDef, _battleEnter.xloc, _battleEnter.yloc,
-			                  _battleEnter.ang, -kFloor);
+				_battleEnter.ang, -kFloor);
 			_gfx->setDepthRange(0.0, 1.0);
 			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
@@ -812,44 +812,44 @@ void ColonyEngine::battleDrawTanks() {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleShip);
 			battleAccumulateBounds(_screenR, kSBodyDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kSFrontDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kSBackDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kFTopDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kFLeftDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kFRightDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			battleAccumulateBounds(_screenR, kSDoorDef, _battleShip,
-			                       _battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
-			                       _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
+				_battleShip.xloc, _battleShip.yloc, _battleShip.ang, -kFloor,
+				_me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc);
 			_battleShip.dist = forward;
 			draw3DBattlePrism(kSBodyDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kSFrontDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kSBackDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			// Fins: force-draw (no backface cull) — single-sided surfaces
 			draw3DBattlePrism(kFTopDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kFLeftDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			draw3DBattlePrism(kFRightDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			_gfx->setDepthState(true, false);
 			_gfx->setDepthRange(0.0, 0.999);
 			draw3DBattlePrism(kSDoorDef, _battleShip.xloc, _battleShip.yloc,
-			                  _battleShip.ang, -kFloor);
+				_battleShip.ang, -kFloor);
 			_gfx->setDepthRange(0.0, 1.0);
 			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
@@ -877,12 +877,12 @@ void ColonyEngine::battleThink() {
 
 	for (int i = 0; i < 16; i++) {
 		if (i != _battleRound &&
-		    xcheck > _bfight[i].xloc - kBattleSize &&
-		    xcheck < _bfight[i].xloc + kBattleSize &&
-		    ycheck > _bfight[i].yloc - kBattleSize &&
-		    ycheck < _bfight[i].yloc + kBattleSize) {
+			xcheck > _bfight[i].xloc - kBattleSize &&
+			xcheck < _bfight[i].xloc + kBattleSize &&
+			ycheck > _bfight[i].yloc - kBattleSize &&
+			ycheck < _bfight[i].yloc + kBattleSize) {
 			while (_bfight[i].xloc - _me.xloc < 2000 &&
-			       _bfight[i].yloc - _me.yloc < 2000) {
+				_bfight[i].yloc - _me.yloc < 2000) {
 				_bfight[i].xloc = _randomSource.getRandomNumber(0x7FFF);
 				_bfight[i].yloc = _randomSource.getRandomNumber(0x7FFF);
 			}
@@ -936,15 +936,15 @@ void ColonyEngine::battleThink() {
 		const int fy = _bfight[i].yloc + (_sint[ang] >> 2);
 		if (distance > 250 || tooFar) {
 			if ((!_orbit) &&
-			    fx > _battleShip.xloc - 2 * kBattleSize &&
-			    fx < _battleShip.xloc + 2 * kBattleSize &&
-			    fy > _battleShip.yloc - 4 * kBattleSize &&
-			    fy < _battleShip.yloc + 4 * kBattleSize) {
+				fx > _battleShip.xloc - 2 * kBattleSize &&
+				fx < _battleShip.xloc + 2 * kBattleSize &&
+				fy > _battleShip.yloc - 4 * kBattleSize &&
+				fy < _battleShip.yloc + 4 * kBattleSize) {
 				ang += 8;
 			} else if (fx > _battleEnter.xloc - 2 * kBattleSize &&
-			           fx < _battleEnter.xloc + 2 * kBattleSize &&
-			           fy > _battleEnter.yloc - 2 * kBattleSize &&
-			           fy < _battleEnter.yloc + 2 * kBattleSize) {
+				fx < _battleEnter.xloc + 2 * kBattleSize &&
+				fy > _battleEnter.yloc - 2 * kBattleSize &&
+				fy < _battleEnter.yloc + 2 * kBattleSize) {
 				ang += 8;
 			} else {
 				_bfight[i].xloc = battleNormalizeCoord(fx);
@@ -996,40 +996,40 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 
 	for (int i = 0; i < 16; i++) {
 		if (xnew > _bfight[i].xloc - kBattleSize &&
-		    xnew < _bfight[i].xloc + kBattleSize &&
-		    ynew > _bfight[i].yloc - kBattleSize &&
-		    ynew < _bfight[i].yloc + kBattleSize) {
+			xnew < _bfight[i].xloc + kBattleSize &&
+			ynew > _bfight[i].yloc - kBattleSize &&
+			ynew < _bfight[i].yloc + kBattleSize) {
 			bonk();
 			return;
 		}
 	}
 
 	if (!_orbit &&
-	    xnew > _battleShip.xloc - 2 * kBattleSize &&
-	    xnew < _battleShip.xloc &&
-	    ynew > _battleShip.yloc - kBattleSize / 2 &&
-	    ynew < _battleShip.yloc + kBattleSize / 2) {
+		xnew > _battleShip.xloc - 2 * kBattleSize &&
+		xnew < _battleShip.xloc &&
+		ynew > _battleShip.yloc - kBattleSize / 2 &&
+		ynew < _battleShip.yloc + kBattleSize / 2) {
 		enterColonyFromBattle(1, 900, 3000);
 		return;
 	}
 
 	if (xnew > _battleEnter.xloc - 2 * kBattleSize &&
-	    xnew < _battleEnter.xloc &&
-	    ynew > _battleEnter.yloc - kBattleSize / 2 &&
-	    ynew < _battleEnter.yloc + kBattleSize / 2) {
+		xnew < _battleEnter.xloc &&
+		ynew > _battleEnter.yloc - kBattleSize / 2 &&
+		ynew < _battleEnter.yloc + kBattleSize / 2) {
 		enterColonyFromBattle(2, 384, 640);
 		return;
 	}
 
 	if ((!_orbit &&
-	     xnew > _battleShip.xloc - 2 * kBattleSize &&
-	     xnew < _battleShip.xloc + 2 * kBattleSize &&
-	     ynew > _battleShip.yloc - 4 * kBattleSize &&
-	     ynew < _battleShip.yloc + 4 * kBattleSize) ||
-	    (xnew > _battleEnter.xloc - 2 * kBattleSize &&
-	     xnew < _battleEnter.xloc + 2 * kBattleSize &&
-	     ynew > _battleEnter.yloc - 2 * kBattleSize &&
-	     ynew < _battleEnter.yloc + 2 * kBattleSize)) {
+		xnew > _battleShip.xloc - 2 * kBattleSize &&
+		xnew < _battleShip.xloc + 2 * kBattleSize &&
+		ynew > _battleShip.yloc - 4 * kBattleSize &&
+		ynew < _battleShip.yloc + 4 * kBattleSize) ||
+		(xnew > _battleEnter.xloc - 2 * kBattleSize &&
+		xnew < _battleEnter.xloc + 2 * kBattleSize &&
+		ynew > _battleEnter.yloc - 2 * kBattleSize &&
+		ynew < _battleEnter.yloc + 2 * kBattleSize)) {
 		bonk();
 		return;
 	}
@@ -1041,7 +1041,7 @@ void ColonyEngine::battleCommand(int xnew, int ynew) {
 	Locate *pw = _pyramids[qx][qy];
 	for (int i = 0; i < kMaxQuad; i++) {
 		if (wrappedX > pw[i].xloc - kBattleSize && wrappedX < pw[i].xloc + kBattleSize &&
-		    wrappedY > pw[i].yloc - kBattleSize && wrappedY < pw[i].yloc + kBattleSize) {
+			wrappedY > pw[i].yloc - kBattleSize && wrappedY < pw[i].yloc + kBattleSize) {
 			bonk();
 			return;
 		}
@@ -1073,8 +1073,8 @@ void ColonyEngine::battleShoot() {
 	for (int i = 0; i < _battleMaxP; i++) {
 		Locate *target = _battlePwh[i];
 		if (target->xmn < cx && target->xmx > cx &&
-		    target->zmn < cy && target->zmx > cy &&
-		    target->dist < bestDist) {
+			target->zmn < cy && target->zmx > cy &&
+			target->dist < bestDist) {
 			bestDist = target->dist;
 			bestIndex = i;
 		}
@@ -1113,7 +1113,7 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 	_battleProj.yloc = ycheck;
 
 	if (xcheck > _me.xloc - 200 && xcheck < _me.xloc + 200 &&
-	    ycheck > _me.yloc - 200 && ycheck < _me.yloc + 200) {
+		ycheck > _me.yloc - 200 && ycheck < _me.yloc + 200) {
 		debugC(1, kColonyDebugCombat,
 			"battleProjHitPlayer: proj=(%d,%d) player=(%d,%d) delta=[-4,-4,-4]",
 			xcheck, ycheck, _me.xloc, _me.yloc);
@@ -1127,11 +1127,11 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 
 	for (int i = 0; i < 16; i++) {
 		if (xcheck > _bfight[i].xloc - kBattleSize &&
-		    xcheck < _bfight[i].xloc + kBattleSize &&
-		    ycheck > _bfight[i].yloc - kBattleSize &&
-		    ycheck < _bfight[i].yloc + kBattleSize) {
+			xcheck < _bfight[i].xloc + kBattleSize &&
+			ycheck > _bfight[i].yloc - kBattleSize &&
+			ycheck < _bfight[i].yloc + kBattleSize) {
 			while (_bfight[i].xloc - _me.xloc < 2000 &&
-			       _bfight[i].yloc - _me.yloc < 2000) {
+				_bfight[i].yloc - _me.yloc < 2000) {
 				_bfight[i].xloc = _randomSource.getRandomNumber(0x7FFF);
 				_bfight[i].yloc = _randomSource.getRandomNumber(0x7FFF);
 			}
@@ -1142,14 +1142,14 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 	}
 
 	if ((!_orbit &&
-	     xcheck > _battleShip.xloc - 2 * kBattleSize &&
-	     xcheck < _battleShip.xloc + 2 * kBattleSize &&
-	     ycheck > _battleShip.yloc - 4 * kBattleSize &&
-	     ycheck < _battleShip.yloc + 4 * kBattleSize) ||
-	    (xcheck > _battleEnter.xloc - 2 * kBattleSize &&
-	     xcheck < _battleEnter.xloc + 2 * kBattleSize &&
-	     ycheck > _battleEnter.yloc - 2 * kBattleSize &&
-	     ycheck < _battleEnter.yloc + 2 * kBattleSize)) {
+		xcheck > _battleShip.xloc - 2 * kBattleSize &&
+		xcheck < _battleShip.xloc + 2 * kBattleSize &&
+		ycheck > _battleShip.yloc - 4 * kBattleSize &&
+		ycheck < _battleShip.yloc + 4 * kBattleSize) ||
+		(xcheck > _battleEnter.xloc - 2 * kBattleSize &&
+		xcheck < _battleEnter.xloc + 2 * kBattleSize &&
+		ycheck > _battleEnter.yloc - 2 * kBattleSize &&
+		ycheck < _battleEnter.yloc + 2 * kBattleSize)) {
 		_sound->play(Sound::kBonk);
 		_projon = false;
 		return;
@@ -1162,7 +1162,7 @@ void ColonyEngine::battleProjCommand(int xcheck, int ycheck) {
 	Locate *pw = _pyramids[qx][qy];
 	for (int i = 0; i < kMaxQuad; i++) {
 		if (wrappedX > pw[i].xloc - kBattleSize && wrappedX < pw[i].xloc + kBattleSize &&
-		    wrappedY > pw[i].yloc - kBattleSize && wrappedY < pw[i].yloc + kBattleSize) {
+			wrappedY > pw[i].yloc - kBattleSize && wrappedY < pw[i].yloc + kBattleSize) {
 			_sound->play(Sound::kBonk);
 			_projon = false;
 			return;
@@ -1189,9 +1189,9 @@ void ColonyEngine::renderBattle() {
 		_gfx->setDepthState(false, false);
 		_gfx->setWireframe(true, groundColor);
 		_gfx->draw3DQuad(-100000.0f, -100000.0f, -160.0f,
-		                  100000.0f, -100000.0f, -160.0f,
-		                  100000.0f,  100000.0f, -160.0f,
-		                 -100000.0f,  100000.0f, -160.0f, groundColor);
+			100000.0f, -100000.0f, -160.0f,
+			100000.0f,  100000.0f, -160.0f,
+			-100000.0f,  100000.0f, -160.0f, groundColor);
 	}
 
 	// Phase 4: 3D objects with depth testing.

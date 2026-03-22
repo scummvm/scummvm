@@ -85,9 +85,9 @@ static int mapEyeOverlayColorToMacPattern(int colorIdx) {
 }
 
 static bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY,
-                                    const int *sint, const int *cost, int camX, int camY,
-                                    float worldX, float worldY, float worldZ,
-                                    int &screenX, int &screenY) {
+	const int *sint, const int *cost, int camX, int camY,
+	float worldX, float worldY, float worldZ,
+	int &screenX, int &screenY) {
 	const float dx = worldX - camX;
 	const float dy = worldY - camY;
 	const float dz = worldZ;
@@ -1187,7 +1187,7 @@ void ColonyEngine::drawStaticObjects() {
 		// (narrows crosshair brackets to indicate a target is in the line of fire)
 		int t = obj.type;
 		if ((t >= kRobEye && t <= kRobUPyramid) ||
-		    (t >= kRobQueen && t <= kRobSoldier)) {
+			(t >= kRobQueen && t <= kRobSoldier)) {
 			if (obj.where.xmn < _centerX && obj.where.xmx > _centerX)
 				_insight = true;
 		}
@@ -1221,8 +1221,8 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		transformedY[i] = (float)(ry + thing.where.yloc);
 		transformedZ[i] = (float)(oz - 160);
 		projected[i] = projectCorridorPointRaw(_screenR, _me.look, _me.lookY, _sint, _cost, _me.xloc, _me.yloc,
-		                                       transformedX[i], transformedY[i], transformedZ[i],
-		                                       projectedX[i], projectedY[i]);
+			transformedX[i], transformedY[i], transformedZ[i],
+			projectedX[i], projectedY[i]);
 	}
 
 	const int *surface = &def.surfaces[0][2];
@@ -1605,7 +1605,7 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	// === Robot types (1-20) ===
 	case kRobEye:
 		if ((obj.where.xloc - _me.xloc) * (obj.where.xloc - _me.xloc) +
-		    (obj.where.yloc - _me.yloc) * (obj.where.yloc - _me.yloc) <= 64 * 64) {
+			(obj.where.yloc - _me.yloc) * (obj.where.yloc - _me.yloc) <= 64 * 64) {
 			break;
 		}
 		draw3DSphere(obj, 0, 0, 100, 0, 0, 200, eyeballColor, kColorBlack, true);
@@ -1706,9 +1706,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			resetObjectBounds(_screenR, rightEye.where);
 
 			const long leftDist = (leftEye.where.xloc - _me.xloc) * (leftEye.where.xloc - _me.xloc) +
-			                      (leftEye.where.yloc - _me.yloc) * (leftEye.where.yloc - _me.yloc);
+				(leftEye.where.yloc - _me.yloc) * (leftEye.where.yloc - _me.yloc);
 			const long rightDist = (rightEye.where.xloc - _me.xloc) * (rightEye.where.xloc - _me.xloc) +
-			                       (rightEye.where.yloc - _me.yloc) * (rightEye.where.yloc - _me.yloc);
+				(rightEye.where.yloc - _me.yloc) * (rightEye.where.yloc - _me.yloc);
 			const bool leftFirst = leftDist >= rightDist;
 			Thing &farEye = leftFirst ? leftEye : rightEye;
 			Thing &nearEye = leftFirst ? rightEye : leftEye;

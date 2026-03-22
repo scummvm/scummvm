@@ -116,7 +116,7 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 
 	// Clear player from current robot array position
 	if (_vm->_me.xindex >= 0 && _vm->_me.xindex < 32 &&
-	    _vm->_me.yindex >= 0 && _vm->_me.yindex < 32)
+		_vm->_me.yindex >= 0 && _vm->_me.yindex < 32)
 		_vm->_robotArray[_vm->_me.xindex][_vm->_me.yindex] = 0;
 
 	// Load the target level
@@ -131,7 +131,7 @@ bool Debugger::cmdTeleport(int argc, const char **argv) {
 				for (int d = 0; d < 5; d++) {
 					int feat = _vm->_mapData[x][y][d][0];
 					if (feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
-					    feat == kWallFeatureTunnel || feat == kWallFeatureElevator) {
+						feat == kWallFeatureTunnel || feat == kWallFeatureElevator) {
 						targetX = x;
 						targetY = y;
 						const char *name = featureTypeName(feat);
@@ -173,20 +173,20 @@ bool Debugger::cmdPos(int argc, const char **argv) {
 bool Debugger::cmdInfo(int argc, const char **argv) {
 	debugPrintf("=== Colony Game State ===\n");
 	debugPrintf("Level: %d  Position: (%d, %d)  Angle: %d\n",
-	            _vm->_level, _vm->_me.xindex, _vm->_me.yindex, _vm->_me.ang);
+		_vm->_level, _vm->_me.xindex, _vm->_me.yindex, _vm->_me.ang);
 	debugPrintf("Core index: %d\n", _vm->_coreIndex);
 	debugPrintf("Core power:  [0]=%d  [1]=%d  [2]=%d\n",
-	            _vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
+		_vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
 	debugPrintf("Core state:  [0]=%d  [1]=%d\n",
-	            _vm->_coreState[0], _vm->_coreState[1]);
+		_vm->_coreState[0], _vm->_coreState[1]);
 	debugPrintf("Core height: [0]=%d  [1]=%d\n",
-	            _vm->_coreHeight[0], _vm->_coreHeight[1]);
+		_vm->_coreHeight[0], _vm->_coreHeight[1]);
 	debugPrintf("Keycard: %s  Unlocked: %s\n",
-	            _vm->_hasKeycard ? "yes" : "no",
-	            _vm->_unlocked ? "yes" : "no");
+		_vm->_hasKeycard ? "yes" : "no",
+		_vm->_unlocked ? "yes" : "no");
 	debugPrintf("Weapons: %d  Armor: %d\n", _vm->_weapons, _vm->_armor);
 	debugPrintf("Orbit: %d  Forklift: %d  CarryType: %d\n",
-	            _vm->_orbit, _vm->_fl, _vm->_carryType);
+		_vm->_orbit, _vm->_fl, _vm->_carryType);
 	debugPrintf("Robots: %d  Speed: %d\n", _vm->_robotNum, _vm->_speedShift);
 	return true;
 }
@@ -197,9 +197,9 @@ bool Debugger::cmdRobots(int argc, const char **argv) {
 		const Thing &obj = _vm->_objects[i];
 		if (obj.alive) {
 			debugPrintf("  #%d  type=%d (%s)  pos=(%d,%d)  alive=%d  visible=%d\n",
-			            i, obj.type, robotTypeName(obj.type),
-			            obj.where.xindex, obj.where.yindex,
-			            obj.alive, obj.visible);
+				i, obj.type, robotTypeName(obj.type),
+				obj.where.xindex, obj.where.yindex,
+				obj.alive, obj.visible);
 			count++;
 		}
 	}
@@ -274,7 +274,7 @@ bool Debugger::cmdGive(int argc, const char **argv) {
 bool Debugger::cmdPower(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Core power: [0]=%d  [1]=%d  [2]=%d\n",
-		            _vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
+			_vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
 		debugPrintf("Usage: power <core 0-2> <level 0-2>\n");
 		debugPrintf("  0=off, 1=emergency, 2=full\n");
 		return true;
@@ -295,7 +295,7 @@ bool Debugger::cmdPower(int argc, const char **argv) {
 		debugPrintf("Core %d power set to %d\n", core, level);
 	} else {
 		debugPrintf("Core power: [0]=%d  [1]=%d  [2]=%d\n",
-		            _vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
+			_vm->_corePower[0], _vm->_corePower[1], _vm->_corePower[2]);
 	}
 	return true;
 }
@@ -357,10 +357,10 @@ bool Debugger::cmdBattle(int argc, const char **argv) {
 	prepareBattleDebugState(-500, 0, 96);
 
 	debugPrintf("Entered battle mode outside the ship at (%d, %d) ang=%d\n",
-	            _vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
+		_vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
 	debugPrintf("Suit: power=[%d,%d,%d] weapons=%d armor=%d\n",
-	            (int)_vm->_me.power[0], (int)_vm->_me.power[1],
-	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
+		(int)_vm->_me.power[0], (int)_vm->_me.power[1],
+		(int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
 	return false;
 }
 
@@ -397,10 +397,10 @@ bool Debugger::cmdColony(int argc, const char **argv) {
 	prepareBattleDebugState(16000 - 500, 16000, 96);
 
 	debugPrintf("Entered battle mode outside the colony at (%d, %d) ang=%d\n",
-	            _vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
+		_vm->_me.xloc, _vm->_me.yloc, _vm->_me.ang);
 	debugPrintf("Suit: power=[%d,%d,%d] weapons=%d armor=%d\n",
-	            (int)_vm->_me.power[0], (int)_vm->_me.power[1],
-	            (int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
+		(int)_vm->_me.power[0], (int)_vm->_me.power[1],
+		(int)_vm->_me.power[2], _vm->_weapons, _vm->_armor);
 	debugPrintf("Security state forced to unlocked for colony debug entry\n");
 	return false;
 }
@@ -525,7 +525,7 @@ bool Debugger::cmdSpawn(int argc, const char **argv) {
 	}
 
 	debugPrintf("Spawned %s (type %d) at cell (%d,%d) facing player\n",
-	            robotTypeName(type), type, targetX, targetY);
+		robotTypeName(type), type, targetX, targetY);
 	return false;
 }
 

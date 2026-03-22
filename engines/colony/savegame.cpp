@@ -276,8 +276,8 @@ bool findInvalidActiveObjectSlot(const Common::Array<Thing> &objects, uint32 &in
 
 bool ColonyEngine::hasFeature(EngineFeature f) const {
 	return f == kSupportsReturnToLauncher ||
-	       f == kSupportsLoadingDuringRuntime ||
-	       f == kSupportsSavingDuringRuntime;
+		f == kSupportsLoadingDuringRuntime ||
+		f == kSupportsSavingDuringRuntime;
 }
 
 bool ColonyEngine::canSaveGameStateCurrently(Common::U32String *msg) {

@@ -64,7 +64,7 @@ static const int kTunnelStraight[60] = {0};
 
 static uint32 packTunnelMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
-	       ((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
+		((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
 }
 
 static void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
@@ -328,8 +328,8 @@ int ColonyEngine::checkwallMoveTo(int xnew, int ynew, int xind2, int yind2, Loca
 	if (rnum)
 		return rnum;
 	if (trailCode != 0 && pobject->type == kMeNum &&
-	    pobject->xindex >= 0 && pobject->xindex < 32 &&
-	    pobject->yindex >= 0 && pobject->yindex < 32)
+		pobject->xindex >= 0 && pobject->xindex < 32 &&
+		pobject->yindex >= 0 && pobject->yindex < 32)
 		_dirXY[pobject->xindex][pobject->yindex] = trailCode;
 	pobject->yindex = yind2;
 	pobject->xindex = xind2;
@@ -375,8 +375,8 @@ int ColonyEngine::checkwallTryFeature(int xnew, int ynew, int xind2, int yind2, 
 			break;
 		}
 		if (trailCode != 0 && pobject->type == kMeNum &&
-		    pobject->xindex >= 0 && pobject->xindex < 32 &&
-		    pobject->yindex >= 0 && pobject->yindex < 32)
+			pobject->xindex >= 0 && pobject->xindex < 32 &&
+			pobject->yindex >= 0 && pobject->yindex < 32)
 			_dirXY[pobject->xindex][pobject->yindex] = trailCode;
 		pobject->yindex = yind2;
 		pobject->xindex = xind2;
@@ -601,7 +601,7 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 		}
 
 		if (_me.xindex >= 0 && _me.xindex < 32 &&
-		    _me.yindex >= 0 && _me.yindex < 32)
+			_me.yindex >= 0 && _me.yindex < 32)
 			_robotArray[_me.xindex][_me.yindex] = 0;
 
 		_gameMode = kModeBattle;
@@ -641,7 +641,7 @@ int ColonyEngine::goToDestination(const uint8 *map, Locate *pobject) {
 	}
 
 	if (pobject->xindex >= 0 && pobject->xindex < 32 &&
-	    pobject->yindex >= 0 && pobject->yindex < 32)
+		pobject->yindex >= 0 && pobject->yindex < 32)
 		_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
 	return 2;
@@ -726,9 +726,9 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 		const int result = goToDestination(map, pobject);
 		if (result == 2) {
 			debugC(1, kColonyDebugMove, "Level change via %s: level=%d pos=(%d,%d)",
-			      map[0] == kWallFeatureUpStairs ? "upstairs" :
-			      map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
-			      _level, pobject->xindex, pobject->yindex);
+				map[0] == kWallFeatureUpStairs ? "upstairs" :
+				map[0] == kWallFeatureDnStairs ? "downstairs" : "tunnel",
+				_level, pobject->xindex, pobject->yindex);
 		}
 		return result;
 	}
@@ -777,7 +777,7 @@ int ColonyEngine::tryPassThroughFeature(int fromX, int fromY, int direction, Loc
 			}
 
 			if (pobject->xindex >= 0 && pobject->xindex < 32 &&
-			    pobject->yindex >= 0 && pobject->yindex < 32)
+				pobject->yindex >= 0 && pobject->yindex < 32)
 				_robotArray[pobject->xindex][pobject->yindex] = kMeNum;
 
 			debugC(1, kColonyDebugMove, "Elevator: level=%d pos=(%d,%d)", _level, pobject->xindex, pobject->yindex);

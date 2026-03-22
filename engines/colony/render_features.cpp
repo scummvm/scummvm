@@ -275,9 +275,9 @@ void ColonyEngine::wallChar(const float corners[4][3], uint8 cnum) {
 				if (i == 0 && nextJ == 0)
 					continue;
 				if ((nearlyEqual(u[i], u[j]) && nearlyEqual(v[i], v[j])) ||
-				    (nearlyEqual(u[i], u[nextJ]) && nearlyEqual(v[i], v[nextJ])) ||
-				    (nearlyEqual(u[nextI], u[j]) && nearlyEqual(v[nextI], v[j])) ||
-				    (nearlyEqual(u[nextI], u[nextJ]) && nearlyEqual(v[nextI], v[nextJ])))
+					(nearlyEqual(u[i], u[nextJ]) && nearlyEqual(v[i], v[nextJ])) ||
+					(nearlyEqual(u[nextI], u[j]) && nearlyEqual(v[nextI], v[j])) ||
+					(nearlyEqual(u[nextI], u[nextJ]) && nearlyEqual(v[nextI], v[nextJ])))
 					continue;
 
 				float ix, iy;

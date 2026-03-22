@@ -597,10 +597,10 @@ private:
 	void draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook, int colorOverride = -1, bool accumulateBounds = false, bool forceVisible = false);
 	void draw3DLeaf(const Thing &obj, const PrismPartDef &def);
 	void draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
-	                  int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
+		int pt1x, int pt1y, int pt1z, uint32 fillColor, uint32 outlineColor, bool accumulateBounds = false);
 	void drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool useLook, int colorOverride, bool forceVisible = false);
 	void drawEyeOverlays3D(Thing &thing, const PrismPartDef &irisDef, int irisColorOverride,
-	                     const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook);
+		const PrismPartDef &pupilDef, int pupilColorOverride, bool useLook);
 	bool drawStaticObjectPrisms3D(Thing &obj);
 	void initRobots();
 	void renderCorridor3D();
