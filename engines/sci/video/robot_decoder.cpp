@@ -299,7 +299,7 @@ RobotAudioStream::StreamState RobotAudioStream::getStatus() const {
 	return status;
 }
 
-int RobotAudioStream::readBuffer(Audio::st_sample_t *outBuffer, int numSamples) {
+int RobotAudioStream::readBuffer(int16 *outBuffer, int numSamples) {
 	Common::StackLock lock(_mutex);
 
 	if (_waiting) {
@@ -307,7 +307,7 @@ int RobotAudioStream::readBuffer(Audio::st_sample_t *outBuffer, int numSamples) 
 	}
 
 	assert(!((_writeHeadAbs - _readHeadAbs) & 1));
-	const int maxNumSamples = (_writeHeadAbs - _readHeadAbs) / sizeof(Audio::st_sample_t);
+	const int maxNumSamples = (_writeHeadAbs - _readHeadAbs) / sizeof(int16);
 	numSamples = MIN(numSamples, maxNumSamples);
 
 	if (!numSamples) {
@@ -316,22 +316,22 @@ int RobotAudioStream::readBuffer(Audio::st_sample_t *outBuffer, int numSamples) 
 
 	interpolateMissingSamples(numSamples);
 
-	Audio::st_sample_t *inBuffer = (Audio::st_sample_t *)(_loopBuffer + _readHead);
+	int16 *inBuffer = (int16 *)(_loopBuffer + _readHead);
 
 	assert(!((_loopBufferSize - _readHead) & 1));
-	const int numSamplesToEnd = (_loopBufferSize - _readHead) / sizeof(Audio::st_sample_t);
+	const int numSamplesToEnd = (_loopBufferSize - _readHead) / sizeof(int16);
 
 	int numSamplesToRead = MIN(numSamples, numSamplesToEnd);
 	Common::copy(inBuffer, inBuffer + numSamplesToRead, outBuffer);
 
 	if (numSamplesToRead < numSamples) {
-		inBuffer = (Audio::st_sample_t *)_loopBuffer;
+		inBuffer = (int16 *)_loopBuffer;
 		outBuffer += numSamplesToRead;
 		numSamplesToRead = numSamples - numSamplesToRead;
 		Common::copy(inBuffer, inBuffer + numSamplesToRead, outBuffer);
 	}
 
-	const int32 numBytes = numSamples * sizeof(Audio::st_sample_t);
+	const int32 numBytes = numSamples * sizeof(int16);
 
 	_readHead += numBytes;
 	if (_readHead > _loopBufferSize) {
