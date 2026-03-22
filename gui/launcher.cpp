@@ -1239,8 +1239,10 @@ void LauncherSimple::updateListing(int selPos) {
 		_domains.push_back(curDomain.key);
 		_domainTitles.push_back(curDomain.description);
 	}
-
+	
 	const int oldSel = _list->getSelected();
+
+	_list->saveSelections();
 	_list->setList(l);
 
 	groupEntries(domainList);
@@ -1254,8 +1256,9 @@ void LauncherSimple::updateListing(int selPos) {
 
 	if (_groupBy != kGroupByNone && selPos != -1) {
 		_list->setSelected(_list->getNewSel(selPos));
-	} else if (oldSel < (int)l.size() && oldSel >= 0)
-		_list->setSelected(oldSel);	// Restore the old selection
+	} else if (oldSel < (int)l.size() && oldSel >= 0) {
+		_list->restoreSelections();	
+	}
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
@@ -1737,13 +1740,16 @@ void LauncherGrid::updateListing(int selPos) {
 
 	const int oldSel = _grid->getSelected();
 
+	_grid->saveSelections();
+
 	_grid->setEntryList(&gridList);
 	groupEntries(domainList);
 
 	if (_groupBy != kGroupByNone && selPos != -1) {
 		_grid->setSelected(_grid->getNewSel(selPos));
-	} else if (oldSel < (int)gridList.size() && oldSel >= 0)
-		_grid->setSelected(oldSel);	// Restore the old selection
+	} else if (oldSel < (int)gridList.size() && oldSel >= 0) {
+		_grid->restoreSelections();	// Restore the old selection
+	}	
 	else if (oldSel != -1)
 		// Select the last entry if the list has been reduced
 		_grid->setSelected(gridList.size() - 1);

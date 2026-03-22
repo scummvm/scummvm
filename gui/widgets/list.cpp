@@ -173,7 +173,7 @@ int ListWidget::findDataIndex(int dataIndex) const {
 	return -1;
 }
 
-void ListWidget::setSelected(int item) {
+void ListWidget::setSelected(int item, bool clearExisting) {
 	if (item == -1) {
 		// Clear selection
 		clearSelection();
@@ -193,7 +193,7 @@ void ListWidget::setSelected(int item) {
 		_selectedItem = findDataIndex(item);
 
 		// Clear previous selections and mark only this item
-		if (_multiSelectEnabled) {
+		if (_multiSelectEnabled && clearExisting) {
 			clearSelection();
 		}
 		markSelectedItem(_selectedItem, true);
@@ -258,6 +258,30 @@ void ListWidget::selectItemRange(int from, int to) {
 	markAsDirty();
 }
 
+void ListWidget::saveSelections() {
+	_savedSelectedIndices.clear();
+	
+	for (uint i = 0; i < _selectedItems.size(); i++) {
+		if(_selectedItems[i]) { 
+			_savedSelectedIndices.push_back(i);
+		}
+	}
+}
+
+void ListWidget::restoreSelections() {
+	if (_savedSelectedIndices.empty())
+			return ;
+
+	clearSelection();
+
+	for (int index : _savedSelectedIndices) {
+		if (index >= 0 && index < (int) _selectedItems.size()) {
+			setSelected(index, false);
+		}
+	}
+
+	_savedSelectedIndices.clear();
+}
 void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);

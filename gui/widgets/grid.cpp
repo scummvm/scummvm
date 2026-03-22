@@ -1246,13 +1246,13 @@ void GridWidget::setFilter(const Common::U32String &filter) {
 	sortGroups();
 }
 
-void GridWidget::setSelected(int id) {
+void GridWidget::setSelected(int id, bool clearExisting) {
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			_selectedEntry = _sortedEntryList[i];
 
 			// Clear previous selections and mark only this item
-			if (_multiSelectEnabled) {
+			if (_multiSelectEnabled && clearExisting) {
 				clearSelection();
 			}
 			markSelectedItem(id, true);
@@ -1282,6 +1282,29 @@ bool GridWidget::isItemSelected(int entryID) const {
 
 void GridWidget::clearSelection() {
 	Common::fill(_selectedItems.begin(), _selectedItems.end(), false);
+}
+
+void GridWidget::saveSelections() {
+	_savedSelectedIndices.clear();
+
+	for (uint i = 0; i < _selectedItems.size(); i++) {
+		if (_selectedItems[i]) {
+			_savedSelectedIndices.push_back(i);
+		}
+	}	
+}
+
+void GridWidget::restoreSelections() {
+	if (_savedSelectedIndices.empty())
+			return ;
+	
+	clearSelection();
+
+	for (int index : _savedSelectedIndices) {
+		if (index >= 0 && index < (int) _selectedItems.size()) {
+			setSelected(index, false);
+		}
+	}
 }
 
 } // End of namespace GUI

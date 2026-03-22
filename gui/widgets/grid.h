@@ -240,7 +240,7 @@ public:
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
-	void setSelected(int id);
+	void setSelected(int id, bool clearExisting = true);
 	void setFilter(const Common::U32String &filter);
 	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
 
@@ -248,11 +248,14 @@ public:
 	void setMultiSelectEnabled(bool enabled) { _multiSelectEnabled = enabled; }
 	bool isMultiSelectEnabled() const { return _multiSelectEnabled; }
 	Common::Array<bool> _selectedItems;	/// Multiple selected items (bool array)
+	Common::Array<int> _savedSelectedIndices; /// Multiple selected items (int index array)
 	int _lastSelectedEntryID = -1;		/// Used for Shift+Click range selection
 	bool isItemSelected(int entryID) const;
 	void markSelectedItem(int entryID, bool state);
 	void clearSelection();
 	const Common::Array<bool> &getSelectedItems() const { return _selectedItems; }
+	void saveSelections();
+	void restoreSelections();
 };
 
 /* GridItemWidget */
