@@ -95,7 +95,7 @@ static const byte *kMacStippleData[] = {
 };
 
 // Pack Mac 16-bit RGB into 32-bit ARGB with 0xFF000000 marker for direct RGB.
-static uint32 packMacColor(const uint16 rgb[3]) {
+inline uint32 packMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
 }
 
