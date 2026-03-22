@@ -1200,6 +1200,37 @@ bool AGOSEngine::hasSimon2LanguageFiles() const {
 		SearchMan.hasFile("simon2.italian") || SearchMan.hasFile("simon2.french");
 }
 
+Common::Language AGOSEngine::getNextSimon2OverlayLanguage() const {
+	Common::Array<Common::Language> available;
+
+	if (SearchMan.hasFile("simon2.english"))
+		available.push_back(Common::EN_ANY);
+	if (SearchMan.hasFile("simon2.german"))
+		available.push_back(Common::DE_DEU);
+	if (SearchMan.hasFile("simon2.italian"))
+		available.push_back(Common::IT_ITA);
+	if (SearchMan.hasFile("simon2.french"))
+		available.push_back(Common::FR_FRA);
+
+	if (available.empty())
+		return _language;
+
+	for (uint i = 0; i < available.size(); ++i) {
+		if (available[i] == _language)
+			return available[(i + 1) % available.size()];
+	}
+
+	return available[0];
+}
+
+void AGOSEngine::cycleSimon2LanguageOverlay() {
+	if (!hasSimon2LanguageFiles())
+		return;
+
+	_language = getNextSimon2OverlayLanguage();
+	loadSimon2LanguageOverlay();
+}
+
 void AGOSEngine::loadSimon2LanguageOverlay() {
 	_useSimon2LanguageOverlay = false;
 	_simon2LanguageOverlay.clear();
