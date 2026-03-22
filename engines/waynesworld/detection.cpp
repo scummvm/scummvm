@@ -55,7 +55,7 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "WaynesWorld";
+		return "Wayne's World";
 	}
 
 	const char *getOriginalCopyright() const override {
