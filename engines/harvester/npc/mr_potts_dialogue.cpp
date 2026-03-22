@@ -242,11 +242,13 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playMrPottsLine(0x2c63, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			return Common::kNoError;
 		}
 
 		lineError = playMrPottsLine(0x2cd9, 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return Common::kNoError;
 	}
 
 	if (runtime.startupScript().getFlagValue("POTTSDAM_DIGGING_KARIN")) {

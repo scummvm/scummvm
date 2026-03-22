@@ -794,6 +794,11 @@ static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, Sc
 
 static Common::String buildRoomObjectPrompt(const StartupObjectRecord &object, Script &startupScript,
 		int cursorSequence) {
+	// Native room prompts come from explicit interaction metadata. Neutral scene sprites
+	// should not surface synthetic "Examine <object id>" prompts or steal hover/click focus.
+	if (cursorSequence == kCursorSequenceNeutral)
+		return Common::String();
+
 	const Common::String label = startupScript.resolveObjectLabel(object);
 	if (label.empty())
 		return Common::String();
@@ -864,6 +869,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *startupScript, hoverState.cursorSequence);
 		if (hoverState.cursorSequence != kCursorSequenceNeutral || !hoverState.promptText.empty())
 			return hoverState;
+		hoverState.object = nullptr;
 	}
 	if (hoverState.region && hoverState.region->cursorEnabled) {
 		hoverState.object = nullptr;
