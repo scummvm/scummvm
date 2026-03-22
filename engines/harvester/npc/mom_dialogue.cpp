@@ -48,16 +48,11 @@ static const DialogueLineEntry kMomLedgerLines[] = {
 };
 
 static const DialogueLineEntry kMomCasketPhotoLines[] = {
-	{ 0x233b, "PC", 0 },
-	{ 0x233f, "MOM", 1 },
-	{ 0x2344, "PC", 0 },
-	{ 0x2348, "MOM", 0 }
+	{ 0x233b, "PC", 0 }
 };
 
 static const DialogueLineEntry kMomWhaleyPhotoLines[] = {
-	{ 0x239c, "MOM", 2 },
-	{ 0x23a0, "PC", 0 },
-	{ 0x23a5, "MOM", 0 }
+	{ 0x239c, "MOM", 2 }
 };
 
 static const DialogueLineEntry kMomIntroLines[] = {
@@ -181,7 +176,7 @@ static const DialogueLineEntry kMomMoynahanAbsentLines[] = {
 
 static const DialogueLineEntry kMomJimmyAttackedLines[] = {
 	{ 0x2659, "MOM", 2 },
-	{ 0x265f, "PC", 0 },
+	{ 0x265f, "PC", 2 },
 	{ 0x2663, "MOM", 0 }
 };
 
@@ -383,7 +378,7 @@ static const DialogueLineEntry kMomPottsdamSecondResponse2Lines[] = {
 	{ 0x20d5, "MOM", 0 },
 	{ 0x20da, "PC", 4 },
 	{ 0x20df, "MOM", 0 },
-	{ 0x20e3, "MOM", 3 },
+	{ 0x20e3, "PC", 3 },
 	{ 0x20e8, "MOM", 1 }
 };
 
@@ -393,9 +388,9 @@ static const DialogueLineEntry kMomMeatPlantIntroLines[] = {
 };
 
 static const DialogueLineEntry kMomMeatPlantResponse1Lines[] = {
-	{ 0x2106, "PC", 0 },
-	{ 0x210a, "MOM", 0 },
-	{ 0x210e, "PC", 0 }
+	{ 0x2106, "MOM", 0 },
+	{ 0x210a, "PC", 0 },
+	{ 0x210e, "MOM", 0 }
 };
 
 static const DialogueLineEntry kMomMeatPlantResponse2Lines[] = {
@@ -1075,6 +1070,7 @@ Common::Error MomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x13f)) {
+			sharedState.momFatherTopicState = 1;
 			Common::Error lineError = playSequence(kMomFatherLines, ARRAYSIZE(kMomFatherLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -1352,7 +1348,7 @@ Common::Error MomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playMomLine(0x26c6, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return runMomGoodbye();
+		continue;
 	}
 }
 
