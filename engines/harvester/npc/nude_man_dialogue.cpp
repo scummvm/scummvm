@@ -27,21 +27,85 @@
 
 namespace Harvester {
 
+namespace {
+
+static const int kNudeManInitialResponseLine = 0x25d;
+static const int kNudeManFollowupResponseLine = 0x25e;
+
+} // End of namespace
+
 bool NudeManDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("NUDE_MAN");
 }
 
 Common::Error NudeManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &, DialogueSharedState &) {
+		const Common::String &, DialogueSharedState &sharedState) {
+	auto playNudeManLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "NUDE_MAN", headVariant);
+	};
+
 	if (runtime.startupScript().getFlagValue("DAY_FLAG"))
-		return runtime.playDialogueLine(0x65c, "NUDE_MAN");
+		return playNudeManLine(0x65c);
 
 	if (_state.talkStatePending) {
 		_state.talkStatePending = false;
-		return runtime.playDialogueLine(0x606, "PC");
+		const DialogueLineEntry introLines[] = {
+			{ 0x606, "PC", 4 },
+			{ 0x60a, "NUDE_MAN", 0 },
+			{ 0x60e, "PC", 0 },
+			{ 0x612, "NUDE_MAN", 0 },
+			{ 0x618, "PC", 0 },
+			{ 0x61c, "NUDE_MAN", 0 }
+		};
+		Common::Error lineError = runtime.playDialogueEntrySequence(
+			introLines, ARRAYSIZE(introLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(
+			kNudeManInitialResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playNudeManLine(0x628, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			// Native gates the second prompt on get_set_sergeant_completed_first_task_state.
+			if (!sharedState.dialogueStateD2f08)
+				return Common::kNoError;
+
+			lineError = playNudeManLine(0x62c);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			responseIndex = 0;
+			responseError = runtime.runResponseMenu(
+				kNudeManFollowupResponseLine, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1)
+				return playNudeManLine(0x636);
+			if (responseIndex == 2)
+				return playNudeManLine(0x63f);
+			return Common::kNoError;
+		}
+
+		if (responseIndex == 2)
+			return playNudeManLine(0x648, 1);
+		return Common::kNoError;
 	}
 
-	return runtime.playDialogueLine(0x651, "PC");
+	const DialogueLineEntry revisitLines[] = {
+		{ 0x651, "PC", 0 },
+		{ 0x655, "NUDE_MAN", 0 },
+		{ 0x3063, "PC", 0 },
+		{ 0x628, "NUDE_MAN", 0 }
+	};
+	return runtime.playDialogueEntrySequence(revisitLines, ARRAYSIZE(revisitLines));
 }
 
 } // End of namespace Harvester

@@ -497,6 +497,11 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - Response `1` plays `0x3204` then `0x320b`, both as `PTA_MOM1` with head variant `2`.
     - Response `2` plays `0x320f` then `0x3213`, both as `PTA_MOM1` with head variant `0`.
     - Response `3` plays `0x3217`, `0x321c`, `0x3221`, and `0x3226`, where `0x3221` is the only `PC` line and the others stay on `PTA_MOM1` head variant `0`.
+  - `handle_talk_to_nude_man @ 0x2d9b0` is now bounded enough for a direct startup-room port.
+    - The broken one-byte Ghidra stub was reconstructed to the real `0x2d9b0-0x2db3e` body before comparing flow.
+    - The first no-item visit is not a single bark. It plays `0x606` / `0x60a` / `0x60e` / `0x612` / `0x618` / `0x61c`, then opens zero-based `dialog.rsp` line `0x25d`.
+    - On that first `0x25d` menu, response `1` plays `NUDE_MAN 0x628` with head variant `1`; if `get_set_sergeant_completed_first_task_state` is already set, the handler also plays `0x62c`, opens zero-based `dialog.rsp` line `0x25e`, and answers with `0x636` or `0x63f`. Response `2` instead plays `NUDE_MAN 0x648` with head variant `1`.
+    - Later no-item revisits are also multi-line: they play `PC 0x651`, `NUDE_MAN 0x655`, `PC 0x3063`, then `NUDE_MAN 0x628`. `DAY_FLAG` still short-circuits the whole handler to `NUDE_MAN 0x65c`.
   - `handle_talk_to_karin @ 0x2ea90` is now bounded enough for a direct startup-room port.
     - `KARIN_FOUND_ALIVE` plus `IN_CEM10` drives a one-shot opener: Karin first triggers `PC 0x10a5` with head variant `4`, then falls through into the normal item/no-item handling.
     - The photo evidence branch is compact and local-state driven: `CASKET_PHOTO`, `CASKET_PHOTOCOPY`, and `PHOTO_OF_WHALEY_HERRILL` all answer with `KARIN 0x10e3` on head variant `4`, while the clear `g_karin_photo_reply_override_flag` path also records the shared corpse-photo or Whaley/Herrill-photo evidence bit before that line.
