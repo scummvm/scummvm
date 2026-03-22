@@ -40,7 +40,9 @@ static const int kSlashDeathDamageType = 2;
 static const int kSergeantRemainsResponseLine = 0x2ad;
 static const int kSergeantInviteResponseLine = 0x2ae;
 static const int kSergeantDinerBurnedResponseLine = 0x2af;
+static const int kSergeantDinerBurnedFollowupResponseLine = 0x2b0;
 static const int kSergeantBarberPoleResponseLine = 0x2b1;
+static const int kSergeantBarberPoleFollowupResponseLine = 0x2b2;
 static const int kSergeantBoltClothResponseLine = 0x2b3;
 static const int kSergeantSecondTaskResponseLine = 0x2b4;
 static const int kSergeantCompletedApplicationResponseLine = 0x2b6;
@@ -80,9 +82,12 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		return false;
 	};
-	auto returnItemToRah = [&](const char *objectName, bool visible) {
+	auto resetAndSetObjectVisible = [&](const char *ownerOrRoom, const char *objectName, bool visible) {
 		(void)runtime.startupScript().resetRuntimeObjectToInitialState(objectName);
-		(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoomName, objectName, visible);
+		(void)runtime.startupScript().setRuntimeObjectVisible(ownerOrRoom, objectName, visible);
+	};
+	auto returnItemToRah = [&](const char *objectName, bool visible) {
+		resetAndSetObjectVisible(kRahRoomName, objectName, visible);
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag) -> Common::Error {
 		StartupInteractionResult interaction;
@@ -180,8 +185,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.dialogueStateD2d60 = true;
 		state.dialogueStateD2d64 = true;
 		state.dialogueStateD2d68 = true;
-		(void)runtime.startupScript().resetRuntimeObjectToInitialState("STEFSKULL");
-		(void)runtime.startupScript().setRuntimeObjectVisible("ST_BEDRM", "STEFSKULL", true);
+		resetAndSetObjectVisible("ST_BEDRM", "STEFSKULL", true);
 		returnItemToRah("INVITE", false);
 		(void)runtime.startupScript().setRuntimeFlagValue("TAKEN_INVITE_TO_SERGEANT", true);
 		(void)runtime.startupScript().setRuntimeFlagValue("NEED_REMAINS_FOR_LODGE", true);
@@ -256,7 +260,35 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 		}
 
-		return playSergeantLine(0x428d);
+		lineError = playSergeantLine(0x428d);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playSergeantLine(0x4299);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		responseIndex = 0;
+		responseError = runtime.runResponseMenu(
+			kSergeantBarberPoleFollowupResponseLine, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playSergeantLine(0x42a4, 3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (runtime.startupScript().getFlagValue("PC_KILLED_ANYONE")) {
+				lineError = playSergeantLine(0x42a8);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+		} else if (responseIndex == 2) {
+			lineError = playSergeantLine(0x42ad);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		return runDay5ExitIfNeeded();
 	};
 	auto handleBoltClothBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;
@@ -569,7 +601,42 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return lineError;
 			}
 
-			return playSergeantLine(0x42d2, 1);
+			lineError = playSergeantLine(0x42d2, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			responseIndex = 0;
+			responseError = runtime.runResponseMenu(
+				kSergeantDinerBurnedFollowupResponseLine, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				lineError = playSergeantLine(0x42de, 2);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			} else if (responseIndex == 2) {
+				lineError = playSergeantLine(0x42e3);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			const DialogueLineEntry dinerBurnedTailLines[] = {
+				{ 0x42e9, "SERGEANT", 0 },
+				{ 0x42ef, "PC", 0 },
+				{ 0x42f3, "SERGEANT", 0 }
+			};
+			lineError = playSequence(dinerBurnedTailLines, ARRAYSIZE(dinerBurnedTailLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			resetAndSetObjectVisible("ST_BEDRM", "INVITE", true);
+			resetAndSetObjectVisible("ST_BEDRM", "STEFSKULL", true);
+			(void)runtime.startupScript().setRuntimeNpcState("DWAYNE_ST_BEDRM", true, true);
+			(void)runtime.startupScript().setRuntimeFlagValue("STEPHANIE_IS_DEAD", true);
+			(void)runtime.startupScript().setRuntimeFlagValue(
+				"STEPHANIE_DEAD_IN_HALL_JUST_OUTSIDE", true);
+			return runDay5ExitIfNeeded();
 		}
 		if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN"))
 			return handleBarberPoleBranch();
