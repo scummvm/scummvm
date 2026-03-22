@@ -32,7 +32,7 @@ class Widget;
 
 class Tooltip : public Dialog {
 private:
-	Dialog *_parent;
+	Widget *_widget;
 
 public:
 	Tooltip();

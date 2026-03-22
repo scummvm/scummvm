@@ -31,7 +31,7 @@ namespace GUI {
 
 
 Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(nullptr), _xdelta(0), _ydelta(0), _xpadding(0), _ypadding(0) {
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _widget(nullptr), _xdelta(0), _ydelta(0), _xpadding(0), _ypadding(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
@@ -39,7 +39,7 @@ Tooltip::Tooltip() :
 void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	assert(widget->hasTooltip());
 
-	_parent = parent;
+	_widget = widget;
 
 	setMouseUpdatedOnFocus(false);
 
@@ -100,27 +100,27 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 void Tooltip::handleMouseDown(int x, int y, int button, int clickCount) {
 	close();
-	_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+	_widget->handleMouseDown(x + (getAbsX() - _widget->getAbsX()), y + (getAbsY() - _widget->getAbsY()), button, clickCount);
 }
 
 void Tooltip::handleMouseUp(int x, int y, int button, int clickCount) {
 	close();
-	_parent->handleMouseUp(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+	_widget->handleMouseUp(x + (getAbsX() - _widget->getAbsX()), y + (getAbsY() - _widget->getAbsY()), button, clickCount);
 }
 
 void Tooltip::handleMouseWheel(int x, int y, int direction) {
 	close();
-	_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
+	_widget->handleMouseWheel(x + (getAbsX() - _widget->getAbsX()), y + (getAbsX() - _widget->getAbsX()), direction);
 }
 
 void Tooltip::handleKeyDown(Common::KeyState state) {
 	close();
-	_parent->handleKeyDown(state);
+	_widget->handleKeyDown(state);
 }
 
 void Tooltip::handleKeyUp(Common::KeyState state) {
 	close();
-	_parent->handleKeyUp(state);
+	_widget->handleKeyUp(state);
 }
 
 void Tooltip::handleMouseMoved(int x, int y, int button) {
