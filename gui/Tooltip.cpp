@@ -125,6 +125,7 @@ void Tooltip::handleKeyUp(Common::KeyState state) {
 
 void Tooltip::handleMouseMoved(int x, int y, int button) {
 	close();
+	_widget->handleMouseMoved(x, y, button);
 }
 
 }
