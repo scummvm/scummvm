@@ -433,7 +433,7 @@ private:
 #pragma mark -
 #pragma mark RobotAudioStream - AudioStream implementation
 public:
-	int readBuffer(Audio::st_sample_t *outBuffer, int numSamples) override;
+	int readBuffer(int16 *outBuffer, int numSamples) override;
 	bool isStereo() const override { return false; };
 	int getRate() const override { return 22050; };
 	bool endOfData() const override {

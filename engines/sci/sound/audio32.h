@@ -196,7 +196,7 @@ private:
 #pragma mark -
 #pragma mark AudioStream implementation
 public:
-	int readBuffer(Audio::st_sample_t *buffer, const int numSamples) override;
+	int readBuffer(int16 *buffer, const int numSamples) override;
 	bool isStereo() const override { return true; }
 	int getRate() const override { return _mixer->getOutputRate(); }
 	bool endOfData() const override { return _numActiveChannels == 0; }
@@ -219,7 +219,7 @@ private:
 	 * Mixes audio from the given source stream into the target buffer using the
 	 * given rate converter.
 	 */
-	int writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, Audio::st_sample_t *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume);
+	int writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, int16 *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume);
 
 #pragma mark -
 #pragma mark Channel management
@@ -627,7 +627,7 @@ private:
 	 * The data buffer holding decompressed audio data for the channel that will
 	 * be monitored for an audio signal.
 	 */
-	Common::Array<Audio::st_sample_t> _monitoredBuffer;
+	Common::Array<int16> _monitoredBuffer;
 
 	/**
 	 * The number of valid audio samples in the signal monitoring buffer.
