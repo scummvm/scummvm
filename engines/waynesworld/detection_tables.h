@@ -29,7 +29,7 @@ static const ADGameDescription gameDescriptions[] = {
 				"e00.txt", "78769d60d48aea314ed6be2f725c8c2f", 1293),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_TESTING,
+		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 
