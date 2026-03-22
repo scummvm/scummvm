@@ -688,6 +688,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `handle_target_interaction` at `0x7ff50` is the high-level click/use dispatcher for world targets.
   - It can branch into NPC dialogue, inventory transfer, `USEITEM` actions, or generic fallback responses depending on the clicked entity and current item state.
 - `show_target_ident_text` at `0x80270` renders `IDENT` text for the current target by resolving the matching `TEXT` record and showing it until dismissal.
+  - The callsite selects `g_box1_panel_entity` .. `g_box4_panel_entity` from `TextRecord.panel_id`, then reuses the same textbox entity anchor loaded at startup: `x = 0xb1`, `y = 0x55`.
+  - Immediately before `spawn_text_entity`, it loads `EBX` from `g_textfont_cft @ 0xd5bc4`, so IDENT overlays use `TEXTFONT.CFT` atlas pixels rather than a generic single-color font path.
+  - The same callsite passes the selected panel bitmap width as the wrap bound, so IDENT text layout is derived from the textbox art instead of a room-local hardcoded inset.
 
 ## Keyboard Input
 

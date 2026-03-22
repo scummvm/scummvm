@@ -574,8 +574,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		Common::ScopedPtr<HarvesterCftFont> promptCftFont;
 		Common::ScopedPtr<HarvesterCftFont> inventoryTooltipCftFont;
 		const Graphics::Font *promptFont = bodyFont;
+		const Graphics::Font *inspectFont = bodyFont;
 		const Graphics::Font *inventoryTooltipFont = bodyFont;
 		bool useNativePromptFont = false;
+		bool useNativeInspectFont = false;
 		if (promptFontResource) {
 			promptCftFont.reset(new HarvesterCftFont(*promptFontResource));
 			if (promptCftFont->isValid()) {
@@ -585,10 +587,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 		if (inventoryTooltipFontResource) {
 			inventoryTooltipCftFont.reset(new HarvesterCftFont(*inventoryTooltipFontResource));
-			if (inventoryTooltipCftFont->isValid())
+			if (inventoryTooltipCftFont->isValid()) {
 				inventoryTooltipFont = inventoryTooltipCftFont.get();
+				inspectFont = inventoryTooltipCftFont.get();
+				useNativeInspectFont = true;
+			}
 		}
-		if (!screen || !art || !bodyFont || !promptFont || !inventoryTooltipFont)
+		if (!screen || !art || !bodyFont || !promptFont || !inventoryTooltipFont || !inspectFont)
 			return Common::kNoError;
 		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
 
@@ -944,7 +949,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		};
 		auto runModalShowText = [&](const StartupResolvedText &modalText) -> Common::Error {
 			Graphics::Screen *activeScreen = getActiveScreen();
-			if (!activeScreen || !art || !bodyFont)
+			if (!activeScreen || !art || !inspectFont)
 				return Common::kNoError;
 			if (!resolveInspectTextboxBitmap(*art, modalText)) {
 				debug(1, "Harvester: unsupported SHOW_TEXT textbox '%s' text='%s'",
@@ -998,7 +1003,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				blitBitmap(*activeScreen, backdrop, 0, 0);
 				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
-				drawRoomInspectText(*activeScreen, *art, *bodyFont, modalText);
+				drawRoomInspectText(*activeScreen, *art, *inspectFont, modalText, useNativeInspectFont);
 				activeScreen->makeAllDirty();
 				activeScreen->update();
 
@@ -2119,7 +2124,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 
 			if (showingInspectText) {
-				drawRoomInspectText(*activeScreen, *art, *bodyFont, inspectText);
+				drawRoomInspectText(*activeScreen, *art, *inspectFont, inspectText, useNativeInspectFont);
 			} else if (!inventoryTooltipText.empty()) {
 				drawInventoryTooltip(*activeScreen, *inventoryTooltipFont, inventoryTooltipText);
 			} else if (!promptText.empty()) {
