@@ -29,7 +29,8 @@
 namespace Harvester {
 
 inline byte expandHarvesterVgaDacColor(byte value) {
-	return (value * 255 + 31) / 63;
+	// Match VGA/DOSBox-X DAC expansion: replicate the high 2 bits into the low 2 bits.
+	return (value << 2) | (value >> 4);
 }
 
 inline void buildHarvesterDisplayPalette(const byte *source, float brightness, byte *dest) {
