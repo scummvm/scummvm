@@ -824,10 +824,10 @@ void Room::executeCommand(int commandId) {
 				Noctropolis::NoctropolisEngine *vm = (Noctropolis::NoctropolisEngine *)_vm;
 				vm->_inventory->displayInv();
 				//debug("getVariable(99) = %d", getVariable(99));
-				if (_vm->_flags[99] == 62) {
+				if (_vm->_useItem == 62) {
 					vm->doSpecialComic();
-				} else if (_vm->_flags[99] != 255) {
-					vm->_invScript->_sequence = _vm->_flags[99];
+				} else if (_vm->_useItem != -1) {
+					vm->_invScript->_sequence = _vm->_inventory->useItem();
 					vm->_invScript->searchForSequence();
 					vm->_invScript->executeScript();
 				} else

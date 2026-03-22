@@ -22,118 +22,117 @@
 #include "access/noctropolis/noctropolis_inventory.h"
 #include "access/access.h"
 #include "access/resources.h"
+#include "access/asurface.h"
 
 namespace Access {
 
 namespace Noctropolis {
 
-NoctropolisInventory::NoctropolisInventory(AccessEngine *vm) : InventoryManager(vm) {
+NoctropolisInventory::NoctropolisInventory(AccessEngine *vm) : InventoryManager(vm),
+_keepInventoryPosition(false), _topItemIndex(0) {
 }
 
 
 int NoctropolisInventory::displayInv() {
 	int selectedItem = -1;
-	warning("TODO: finish NoctropolisInventory::displayInv");
-	/*
+
 	const byte kDownArrow   = 1;
 	const byte kUpArrow     = 2;
 
 	int hoveredItem = -1;
 	byte slotItems[20];
-	Common::Array<byte> items;
 	SpriteResource *inventorySprites;
-	StringResource *inventoryItemNames;
-	GrabRect savedRect;
 	bool upArrow, downArrow;
-	uint prevInventoryTopItemIndex = -1;
+	int prevTopItemIndex = -1;
+
+	Screen *screen = _vm->_screen;
+
+	setUseItem(-1);
 
 	if (!_keepInventoryPosition) {
 		int16 warpMouseX, warpMouseY;
-		_inventoryBaseX = clipMouseCenter(_vm->_events->_mousePos.x, 252, 640, warpMouseX);
-		_inventoryBaseY = clipMouseCenter(_vm->_events->_mousePos.y, 220, 400, warpMouseY);
+		_inventoryBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 252, 640, warpMouseX);
+		_inventoryBase.y = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.y, 220, 400, warpMouseY);
 		_keepInventoryPosition = true;
 		if (warpMouseX != _vm->_events->_mousePos.x || warpMouseY != _vm->_events->_mousePos.y)
-			_system->warpMouse(warpMouseX, warpMouseY);
+			g_system->warpMouse(warpMouseX, warpMouseY);
 	}
 
 	// TODO: Maybe move/load these globally?
-
-	inventorySprites = new SpriteResource();
-	_vm->_res->load(inventorySprites, "INV.AP");
-
-	inventoryItemNames = new StringResource();
-	_vm->_res->load(inventoryItemNames, GID_NOCTROPOLIS, kResStringTable, 3);
+	Resource *iconData = _vm->_files->loadRawFile("INV.AP");
+	inventorySprites = new SpriteResource(_vm, iconData);
+	delete iconData;
 
 	// Build the list of available inventory items
-	for (int i = 0; i < 256; i++) {
-		if (getInventoryItem(i) == 1)
-			items.push_back(i);
-	}
+	getList();
 
-	_vgaScreen->lock();
 	// Grab screen background
-	_vgaScreen->saveRect(savedRect, _inventoryBaseX, _inventoryBaseY, 252, 220);
+	screen->saveBlock(Common::Rect(_inventoryBase, 252, 220));
+
 	// Draw inventory panel
-	_vgaScreen->drawSprite(_icons, 0, _inventoryBaseX, _inventoryBaseY);
-	_vgaScreen->unlock();
+	screen->plotImage(_vm->getIcons(), 0, _inventoryBase);
 
-	prevInventoryTopItemIndex = -1;
+	const Font *font = _vm->_fonts.getFont(1);
 
-	while (selectedItem == -1) {
+	const int itemXOff = (_vm->getLanguage() == Common::DE_DEU ? 60 : 66);
 
-		int x = _events->_mousePos.x - _inventoryBaseX - 23;
-		int y = _events->_mousePos.y - _inventoryBaseY - 26;
+	// TODO: Check these colours.
+	Font::_fontColors[0] = 246;
+	Font::_fontColors[1] = 238;
 
-		if (prevInventoryTopItemIndex != _inventoryTopItemIndex) {
+	while (selectedItem == -1 && !_vm->shouldQuitOrRestart()) {
+		int x = _vm->_events->_mousePos.x - _inventoryBase.x - 23;
+		int y = _vm->_events->_mousePos.y - _inventoryBase.y - 26;
+
+		if (prevTopItemIndex != _topItemIndex) {
 
 			int slotIndex = 0, slotCount = 20, skipIndex = 0;
 
 			memset(slotItems, 0, 20);
 
-			prevInventoryTopItemIndex = _inventoryTopItemIndex;
+			prevTopItemIndex = _topItemIndex;
 			upArrow = false;
 			downArrow = false;
 
-			if (_inventoryTopItemIndex > 0) {
+			if (_startInvItem > 0) {
 				upArrow = true;
 				slotItems[slotIndex++] = kUpArrow;
 				slotCount--;
 				skipIndex = 1;
 			}
 
-			if (_inventoryTopItemIndex + slotCount + skipIndex < items.size()) {
+			if (_topItemIndex + slotCount + skipIndex < (int)_items.size()) {
 				downArrow = true;
 				slotItems[19] = kDownArrow;
 				slotCount--;
 			} else {
-				slotCount = items.size() - _inventoryTopItemIndex - skipIndex;
+				slotCount = _items.size() - _topItemIndex - skipIndex;
 			}
 
 			for (int i = 0; i < slotCount; i++)
-				slotItems[slotIndex++] = items[skipIndex + _inventoryTopItemIndex + i];
+				slotItems[slotIndex++] = _items[skipIndex + _topItemIndex + i];
 
-			_vgaScreen->lock();
 			for (int slotNum = 0; slotNum < 20; slotNum++) {
 				int spriteIndex = slotItems[slotNum];
 				if (spriteIndex > 2)
 					spriteIndex++;
-				uint16 slotX = _inventoryBaseX + 23 + (slotNum % 5) * 41;
-				uint16 slotY = _inventoryBaseY + 26 + (slotNum / 5) * 38;
-				_vgaScreen->drawSprite(inventorySprites, 3, slotX, slotY); // draw empty slot
-				slotX += 20 - inventorySprites->getSprite(spriteIndex)->width / 2;
-				slotY += MAX(0, 38 - inventorySprites->getSprite(spriteIndex)->height) / 2;
-				_vgaScreen->drawSprite(inventorySprites, spriteIndex, slotX, slotY);
-				//_vgaScreen->drawText(_fonts[1], (const byte*)Common::String::format("%d", spriteIndex).c_str(), slotX, slotY, 238, 246, kFontBackground);
+				uint16 slotX = _inventoryBase.x + 23 + (slotNum % 5) * 41;
+				uint16 slotY = _inventoryBase.y + 26 + (slotNum / 5) * 38;
+				screen->plotImage(inventorySprites, 3, Common::Point(slotX, slotY)); // draw empty slot
+				slotX += 20 - inventorySprites->getFrame(spriteIndex)->w / 2;
+				slotY += MAX(0, 38 - inventorySprites->getFrame(spriteIndex)->h) / 2;
+				const Common::Point slotPt(slotX, slotY);
+				screen->plotImage(inventorySprites, spriteIndex, slotPt);
+				font->drawString(screen, Common::String::format("%d", spriteIndex), slotPt);
 			}
-			_vgaScreen->unlock();
 
 		}
 
 		// Support the mouse wheel for scrolling through the inventory items
-		if (upArrow && _mouseWheelDelta < 0) {
-			_inventoryTopItemIndex = MAX<int>(_inventoryTopItemIndex - 1, 0);
-		} else if (downArrow && _mouseWheelDelta > 0) {
-			_inventoryTopItemIndex = MIN<int>(_inventoryTopItemIndex + 1, items.size());
+		if (upArrow && _vm->_events->_wheelUp) {
+			_startInvItem = MAX<int>(_topItemIndex - 1, 0);
+		} else if (downArrow && _vm->_events->_wheelDown) {
+			_startInvItem = MIN<int>(_topItemIndex + 1, _items.size());
 		}
 
 		if (x >= 0 && x < 205 && y >= 0 && y < 152) {
@@ -143,47 +142,44 @@ int NoctropolisInventory::displayInv() {
 			if (hoveredItem != item) {
 				//debug("slotIndex = %d; item = %d", slotIndex, item);
 				hoveredItem = item;
-				_vgaScreen->lock();
-				_vgaScreen->fillRect(_inventoryBaseX + 66, _inventoryBaseY + 184, _inventoryBaseX + 66 + 146, _inventoryBaseY + 184 + 8, 246);
+				const Common::Point itemBase = Common::Point(_inventoryBase.x + itemXOff, _inventoryBase.y + 184);
+				screen->fillRect(Common::Rect(itemBase, 146, 8), 246);
 				if (item != 0) {
-					_vgaScreen->drawText(_fonts[1], inventoryItemNames->getString(item), _inventoryBaseX + 66, _inventoryBaseY + 184, 238, 246, kFontBackground);
+					font->drawString(screen, _inv[item]._name, itemBase);
 				}
-				_vgaScreen->unlock();
 			}
 
-			if (leftMouseButton()) {
+			if (_vm->_events->_leftButton) {
 				if (item == kDownArrow)
-					_inventoryTopItemIndex = MIN<int>(_inventoryTopItemIndex + 1, items.size());
+					_topItemIndex = MIN<int>(_topItemIndex + 1, _items.size());
 				else if (item == kUpArrow)
-					_inventoryTopItemIndex = MAX<int>(_inventoryTopItemIndex - 1, 0);
-				else
+					_topItemIndex = MAX<int>(_topItemIndex - 1, 0);
+				else if (item)
 					selectedItem = item;
-				waitUntilLeftButtonIsReleased();
+				_vm->_events->debounceLeft();
 			}
 
 		}
 
-		if (rightMouseButton()) {
-			selectedItem = 255;
-			waitUntilRightButtonIsReleased();
+		if (_vm->_events->_rightButton) {
+			selectedItem = -1;
+			_vm->_events->debounceRight();
 			_keepInventoryPosition = false;
+			break;
 		}
 
-		updateEvents();
-		updateScreen();
-
+		_vm->_events->pollEventsAndWait();
 	}
 
-	_flags[99] = selectedItem;
+	if (selectedItem == 0)
+		selectedItem = -1;
+
+	setUseItem(selectedItem);
 
 	// Restore screen background
-	_vgaScreen->lock();
-	_vgaScreen->restoreRect(savedRect);
-	_vgaScreen->unlock();
+	_vm->_screen->restoreBlock();
 
 	delete inventorySprites;
-	delete inventoryItemNames;
-	*/
 
 	return selectedItem;
 }

@@ -72,7 +72,6 @@ class InventoryManager : public Manager {
 		SavedFields();
 	};
 private:
-	Common::Array<int> _items;
 	Common::Array<Common::Rect> _invCoords;
 	ASurface _savedBuffer1;
 	ASurface _savedScreen;
@@ -103,6 +102,8 @@ protected:
 	void freeInvCells();
 	void restoreScreens();
 
+	Common::Array<int> _items;
+
 public:
 	Common::Array<InventoryEntry> _inv;
 	int _startInvItem;
@@ -117,7 +118,7 @@ public:
 
 	int &operator[](int idx);
 
-	int useItem();
+	int useItem() const;
 	void setUseItem(int itemId);
 
 	void refreshInventory();

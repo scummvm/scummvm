@@ -1781,6 +1781,18 @@ static const byte CURSOR_10_DATA[] = {
 };
 
 
+static const char *INVNAMES[4][76] = {
+{" ", "      MORE ITEMS", "      MORE ITEMS", "      FENCE SPIRE", "     SILVER TOKEN", "      GOLD TOKEN", "       NOTICES", "     TICKET STUB", "    DIVORCE PAPERS", "       POSTCARD", "    BANK STATEMENT", "    LOTTERY LETTER", "       NEWSPAPER", "     BUTTER KNIFE", "         WIRE", "       DETONATOR", "PLASTIC EXPLOSIVE STATUE", "        CHALICE", "       COFFIN KEY", "         BILLS", "     SCRAP OF LACE", "         NOTE", "         DIARY", "   LIQUIDARK GRENADE", "       NEWSPAPERS", "   DARKSHEER HISTORY", "      GLASS CUTTER", "     SHARD OF GLASS", "       CLIPBOARD", "     ELEVATOR PASS", "         CLOCK", "  QUICKGROW SOLUTION", "         BONE", "     SACK OF SEEDS", "    THROWING KNIVES", "      MAGIC WAND", "      SCREWDRIVER", "       LOG BOOK", "        OIL CAN", "          LENS", "       MAKEUP KIT", "        JEWELRY", "        HAMMER", "        CHISEL", "    BUTCHER KNIFE", "      MEAT HOOK", "        BEAKER", "         ACID", "     VALVE WHEEL", "         ROPE", "        RE-BAR", "         NET", "         RAT", "         FORK", "         MATCH", "         PAINT", "      PAINT BRUSH", "        PEPPER", "      DENTAL PICK", "         SPEAR", "       EGG SACK", "       DIAMOND", "        COMIC", "          WEB", "   WROUGHT IRON SHAFT", "   CHALICE WITH WATER", "      BROKEN CHAIR", "       SAUSAGE", "        POSTER", "        BRICK", "      NOCTROGLYPH", "       DUCT TAPE", "         BROOM", "        OIL LAMP", "     BROOM AND HOOK", "    ROPE AND SAUSAGE"},
+{" ", "      AUTRES OBJETS", "      AUTRES OBJETS", "      MONTANT DE GRILLE", "     PIECE D'ARGENT", "      PIECE D'OR", "       AVERTISSEMENTS", "     SOUCHE DE TICKET", "    PAPIERS DE DIVORCE", "    CARTE POSTALE", "    RELEVE BANCAIRE", "    LETTRE DU CONCOURS", "       JOURNAL", "     COUTEAU A BEURRE", "         CABLE", "       DETONATEUR", "STATUETTE EXPLOSIVE", "        CALICE", "   CLEF DE CERCUEIL", "      FACTURES", " MORCEAU DE DENTELLE", "       MESSAGE", "      JOURNAL", "  GRENADE DE LIQUIDARK", "       JOURNAL", " HISTOIRE DE DARKSHEER", "      DIAMANT A VITRES", "     ECLAT DE VERRE", "       BLOC-NOTES", "  CARTE MAGNETIQUE", "         REVEIL", "  ENGRAIS MIRACLE", "         MACHOIRE", "     SAC DE GRAINES", "    COUTEAUX", "  BAGUETTE MAGIQUE", "     TOURNEVIS", "     JOURNAL", "       HUILE", "       LENTILLE", " TROUSSE DE MAQUILLAGE", "      BIJOUX", "      MARTEAU", "       BURIN", "   COUTEAU DE BOUCHER", "     CROCHET A VIANDE", "        FIOLE", "         ACIDE", "     VANNE", "         CORDE", "      FER A BETON", "        FILET", "         RAT", "      FOURCHETTE", "      ALLUMETTE", "         PEINTURE", "      PINCEAU", "        POIVRE", "      CURE-DENTS", "        LANCE", "       OEUFS", "       DIAMANT", "   BANDE DESSINEE", "        TOILE", "   TIGE D'ACIER ROUILLEE", "   CALICE PLEIN D'EAU", "      CHAISE CASSEE", "       SAUCISSE", "       AFFICHE", "        BRIQUE", "      NOCTROGLYPHE", "       TEFLON", "         BALAI", "      LAMPE A HUILE", "     BALAI ET CROCHET", "    CORDE ET SAUCISSE"},
+{" ", "      MAS OBJETOS", "      MAS OBJETOS", "  HIERRO DE VERJA", "  MONEDA PLATEADA", "   MONEDA DORADA", "         NOTAS", "     COMPROBANTE", " DEMANDA DE DIVORCIO", "         POSTAL", "   CARTA DEL BANCO", " CARTA DE LA LOTERIA", "      PERIODICO", " CUCHILLO MANTEQUILLA", "      ALAMBRE", "       DETONADOR", "ESTATUA EXPLOSIVA", "        CALIZ", "   LLAVE DE ATAUD", "      FACTURAS", "  TIRA DE ENCAJE", "         NOTA", "         DIARIO", "  GRANADA DE LIQUIOSCURO", "      PERIODICOS", "  TRATADO DE TINIEBLAS", "  CORTADOR DE CRISTAL", "   PEDAZO DE CRISTAL", "     PORTAPAPELES", "  PASE DE ELEVADOR", "         RELOJ", " SOLUCION DE CRECIMIENTO", "        HUESO", "        SEMILLAS", " CUCHILLOS ARROJADIZOS", "     VARA MAGICA", "    DESTORNILLADOR", "       REGISTRO", "  LATA DE ACEITE", "         LENTE", "      MAQUILLAJE", "          JOYAS", "      MARTILLO", "        CINCEL", " CUCHILLO DE CARNE", "  GANCHO DE CARNE", "         JARRA", "        ACIDO", " RUEDA DE VALVULA", "         SOGA", "      PALANCA", "         RED", "        RATA", "      TENEDOR", "       CERILLA", "      PINTURA", "        BROCHA", "      PIMIENTA", "     PICO DENTAL", "         LANZA", "  SACO DE HUEVOS", "       DIAMANTE", "        COMIC", "         TELA", "   ASTA DE HIERRO", "   CALIZ CON AGUA", "     SILLA ROTA", "    SALCHICHA", "        CARTEL", "     LADRILLO", "      NOCTROGLIFO", " CINTA ADHESIVA", "        ESCOBA", " LAMPARA DE ACEITE", "  ESCOBA CON GANCHO", "  SOGA CON SALCHICHA"},
+{" ", "  WEITERE GEGENST\x8E""NDE", "  WEITERE GEGENST\x8E""NDE", "      ZAUNSTREBE", "   SILBERNES SYMBOL", "   GOLDENES SYMBOL", "       MAHNUNGEN", "     LOSABSCHNITT", "  SCHEIDUNGSPAPIERE", "      POSTKARTE", "     KONTOAUSZUG", "   WETTBEWERBSBRIEF", "       ZEITUNG", "    BUTTERMESSER", "        KABEL", "       Z\x9A""NDER", "STATUE AUS PLASTIKSPRENGSTOFF", "       KELCH", "   SARGSCHL\x9A""SSEL", "     RECHNUNGEN", "       SPITZE", "       ZETTEL", "      TAGEBUCH", "   DUSTER\x99""L-GRANATE", "      ZEITUNG", "DIE GESCHICHTE VON DARKSHEER", "   GLASSCHNEIDER", "      SCHERBE", "     KLEMMBRETT", "     MAGNETKARTE", "       WECKER", "  WUCHSBESCHLEUNIGER", "       KNOCHEN", "     SAMENBEUTEL", "      WURFMESSER", "      ZAUBERSTAB", "   SCHRAUBENDREHER", "       LOGBUCH", "      \x99""LK\x8E""NNCHEN", "        LINSE", "     SCHMINKSET", "        SCHMUCK", "        HAMMER", "        MEISSEL", "        MESSER", "    FLEISCHERHAKEN", "       MESSBECHER", "        S\x8E""URE", "    VENTILSTELLRAD", "         SEIL", "     MONIEREISEN", "         NETZ", "        RATTE", "        GABEL", "     STREICHHOLZ", "         LACK", "        PINSEL", "        PFEFFER", "      ZAHNSTOCHER", "         SPEER", "       EIERSACK", "        DIAMANT", "        COMIC", "         NETZ", "  SCHMIEDEEISERNE STANGE", "    KELCH MIT WASSER", "      STUHLTR\x9A""MMER", "       W\x9A""RSTCHEN", "        PLAKAT", "        ZIEGEL", "      NOCTROGLYPH", "      ISOLIERBAND", "         BESEN", "        \x99""LLAMPE", "     STIEL MIT HAKEN", "    SEIL MIT W\x9A""RSTCHEN"},
+};
+
+
+
+
+
+
 ///////////////////////////////////////////////////////////////
 
 NoctropolisResources::NoctropolisResources(AccessEngine *_vm) : Resources(_vm), _fontChaleteu(nullptr), _fontSystemeu(nullptr),
@@ -1843,17 +1855,17 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	_vm->_fonts._font2 = _fontSystemeu;
 
 	// Set up the room data
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_02, ARRAYSIZE(ROOMDATA_02))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_03, ARRAYSIZE(ROOMDATA_03))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_04, ARRAYSIZE(ROOMDATA_04))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_11, ARRAYSIZE(ROOMDATA_11))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_12, ARRAYSIZE(ROOMDATA_12))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_13, ARRAYSIZE(ROOMDATA_13))}));
@@ -1862,13 +1874,13 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_16, ARRAYSIZE(ROOMDATA_16))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_17, ARRAYSIZE(ROOMDATA_17))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_18, ARRAYSIZE(ROOMDATA_18))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_20, ARRAYSIZE(ROOMDATA_20))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_22, ARRAYSIZE(ROOMDATA_22))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_24, ARRAYSIZE(ROOMDATA_24))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_26, ARRAYSIZE(ROOMDATA_26))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_27, ARRAYSIZE(ROOMDATA_27))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_28, ARRAYSIZE(ROOMDATA_28))}));
@@ -1879,18 +1891,18 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_33, ARRAYSIZE(ROOMDATA_33))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_34, ARRAYSIZE(ROOMDATA_34))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_35, ARRAYSIZE(ROOMDATA_35))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_37, ARRAYSIZE(ROOMDATA_37))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_38, ARRAYSIZE(ROOMDATA_38))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_39, ARRAYSIZE(ROOMDATA_39))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_41, ARRAYSIZE(ROOMDATA_41))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_42, ARRAYSIZE(ROOMDATA_42))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_43, ARRAYSIZE(ROOMDATA_43))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_44, ARRAYSIZE(ROOMDATA_44))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_45, ARRAYSIZE(ROOMDATA_45))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_46, ARRAYSIZE(ROOMDATA_46))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_48, ARRAYSIZE(ROOMDATA_48))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_49, ARRAYSIZE(ROOMDATA_49))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_50, ARRAYSIZE(ROOMDATA_50))}));
@@ -1899,7 +1911,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_53, ARRAYSIZE(ROOMDATA_53))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_54, ARRAYSIZE(ROOMDATA_54))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_55, ARRAYSIZE(ROOMDATA_55))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_57, ARRAYSIZE(ROOMDATA_57))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_58, ARRAYSIZE(ROOMDATA_58))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_59, ARRAYSIZE(ROOMDATA_59))}));
@@ -1909,7 +1921,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_63, ARRAYSIZE(ROOMDATA_63))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_64, ARRAYSIZE(ROOMDATA_64))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_65, ARRAYSIZE(ROOMDATA_65))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_67, ARRAYSIZE(ROOMDATA_67))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_68, ARRAYSIZE(ROOMDATA_68))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_69, ARRAYSIZE(ROOMDATA_69))}));
@@ -1918,20 +1930,20 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_72, ARRAYSIZE(ROOMDATA_72))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_73, ARRAYSIZE(ROOMDATA_73))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_74, ARRAYSIZE(ROOMDATA_74))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_81, ARRAYSIZE(ROOMDATA_81))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_82, ARRAYSIZE(ROOMDATA_82))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_85, ARRAYSIZE(ROOMDATA_85))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_86, ARRAYSIZE(ROOMDATA_86))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_87, ARRAYSIZE(ROOMDATA_87))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_89, ARRAYSIZE(ROOMDATA_89))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_90, ARRAYSIZE(ROOMDATA_90))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_91, ARRAYSIZE(ROOMDATA_91))}));
@@ -1941,8 +1953,8 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_95, ARRAYSIZE(ROOMDATA_95))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_96, ARRAYSIZE(ROOMDATA_96))}));
 	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>(ROOMDATA_97, ARRAYSIZE(ROOMDATA_97))}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
-	ROOMTBL.push_back(RoomEntry({"", Common::Point(), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry());
+	ROOMTBL.push_back(RoomEntry());
 
 	// Load the menu polys
 	int i = 0;
@@ -1956,6 +1968,20 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 			poly.points.push_back(point);
 		}
 		_menus.push_back(poly);
+	}
+
+	// Fill out the inventory
+	const Common::Language lang = _vm->getLanguage();
+	INVENTORY.resize(ARRAYSIZE(INVNAMES[0]));
+	for (int i = 0; i < ARRAYSIZE(INVNAMES[0]); i++) {
+		switch (lang) {
+		case Common::EN_ANY: INVENTORY[i]._desc = INVNAMES[0][i]; break;
+		case Common::FR_FRA: INVENTORY[i]._desc = INVNAMES[1][i]; break;
+		case Common::ES_ESP: INVENTORY[i]._desc = INVNAMES[2][i]; break;
+		case Common::DE_DEU: INVENTORY[i]._desc = INVNAMES[3][i]; break;
+		default: error("Unsupported language for response title");
+		}
+		memset(INVENTORY[i]._combo, 0, sizeof(INVENTORY[i]._combo));
 	}
 }
 

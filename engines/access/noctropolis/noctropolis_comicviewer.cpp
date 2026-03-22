@@ -151,7 +151,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 
 		if (_vm->_events->_rightButton) {
 			result = kPageResultExit;
-			_vm->_events->debounceLeft();
+			_vm->_events->debounceRight();
 		}
 
 		_vm->_events->delay();
