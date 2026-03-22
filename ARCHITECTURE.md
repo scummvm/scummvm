@@ -419,6 +419,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - The selector currently only reads `initial_panel_index`; `map_x` / `map_y` remain stored script coordinates with no recovered read-side consumer in the current binary.
 - `select_town_map_destination` at `0x66460` is the town-map travel UI.
   - It loads `harvmap.pal` and `harvmap1.bm` through `harvmap4.bm`.
+  - It checks `DAY_FLAG` before both map fade points; night travel uses the same dim target as room setup, `1.0 + (-0.4) = 0.6`, instead of the daytime full-bright palette.
   - It seeds the initial map panel from `g_town_map_entrypoints`.
   - It uses `g_town_map_hotspots` to resolve the selected destination back into a named entrance record.
 - `MapLocationRecord` is now stable enough for engine use:
