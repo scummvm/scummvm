@@ -28,19 +28,27 @@
 
 namespace Harvester {
 
-inline void syncDialogueBool(Common::Serializer &s, bool &value) {
+inline void syncDialogueBool(Common::Serializer &s, bool &value,
+		Common::Serializer::Version minVersion = 0,
+		Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	if (s.getVersion() < minVersion || s.getVersion() > maxVersion)
+		return;
 	byte serialized = value ? 1 : 0;
 	s.syncAsByte(serialized);
 	if (s.isLoading())
 		value = serialized != 0;
 }
 
-inline void syncDialogueInt(Common::Serializer &s, int &value) {
-	s.syncAsSint32LE(value);
+inline void syncDialogueInt(Common::Serializer &s, int &value,
+		Common::Serializer::Version minVersion = 0,
+		Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	s.syncAsSint32LE(value, minVersion, maxVersion);
 }
 
-inline void syncDialogueString(Common::Serializer &s, Common::String &value) {
-	s.syncString(value);
+inline void syncDialogueString(Common::Serializer &s, Common::String &value,
+		Common::Serializer::Version minVersion = 0,
+		Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion) {
+	s.syncString(value, minVersion, maxVersion);
 }
 
 class DialogueRuntime;
@@ -72,6 +80,20 @@ struct DialogueSharedState {
 	bool discussedMrPottsTuesdayNightAlibi = false;
 	bool discussedMrsPottsTuesdayNightAlibi = false;
 	bool confrontedMrPottsAboutSpyhole = false;
+	int serializedTalkStateFlagD2cd8 = 1;
+	int dwaynePendingKarinAliveFollowupState = 0;
+	int dialogueStateD2eac = 0;
+	int dialogueStateD2eb4 = 0;
+	int discussedNoteCheckbookEvidence = 0;
+	int discussedTvDeedEvidence = 0;
+	int discussedLedgerEvidence = 0;
+	int discussedCasketPhotoEvidence = 0;
+	int discussedWhaleyHerrillPhoto = 0;
+	int discussedKarinPurse = 0;
+	int momFatherTopicState = 0;
+	int dadMeatPermissionState = 0;
+	int sergeantCompletedFirstTaskState = 0;
+	int dialogueStateD2f30 = 0;
 };
 
 class NpcDialogueHandler {
