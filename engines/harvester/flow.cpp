@@ -78,6 +78,7 @@ static const char *const kPlayerActorEntityName = "PLAYER";
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
 static const float kPaletteBrightnessBlack = 0.0f;
+static const float kTownMapNightPaletteBrightness = 0.6f;
 // Native keeps WAIT_BM visible while room construction runs; fast local loads need a short floor.
 static const uint32 kTransitionWaitFrameMinMs = 120;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
@@ -1326,6 +1327,9 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		warning("Harvester: unresolved town map entry '%s'", mapEntryName.c_str());
 		return Common::kReadingFailed;
 	}
+	const float paletteBrightness = startupScript->getFlagValue("DAY_FLAG")
+		? 1.0f
+		: kTownMapNightPaletteBrightness;
 
 	byte palette[256 * 3];
 	if (!loadPaletteResource(*resources, kTownMapPalettePath, palette))
@@ -1379,7 +1383,7 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		const StartupMapLocationRecord *hoveredLocation =
 			findTownMapLocationAt(startupScript->getMapLocations(), currentPanel, _mousePos);
 		if (needsRedraw) {
-			setScaledPalette(*screen, palette, 1.0f);
+			setScaledPalette(*screen, palette, paletteBrightness);
 			screen->fillRect(screen->getBounds(), 0);
 			blitBitmap(*screen, panels[(uint)currentPanel], 0, 0);
 			if (hoveredLocation) {

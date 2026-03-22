@@ -9,13 +9,15 @@
 ## Progress
 
 - Program: `HARVEST.LE`
-- Total functions: `903`
+- Total functions: `906`
 - Named/documented: `791`
-- Remaining `FUN_*`: `112`
-- Remaining undocumented total: `112`
+- Remaining `FUN_*`: `115`
+- Remaining undocumented total: `115`
 
 ## Last Confirmed Action
 
+- On March 22, 2026, re-opened native `select_town_map_destination @ 0x66460` in the live `HARVEST.LE` Ghidra session after the ScummVM town map still rendered with the daytime palette at night.
+- Confirmed the native town-map travel UI checks `DAY_FLAG` at both palette-ramp sites and uses the same dim target as room setup when the flag is clear: `1.0 + (-0.4) = 0.6`. Patched `engines/harvester/flow.cpp` so the ScummVM town map now scales `HARVMAP.PAL` to `0.6f` at night instead of always using `1.0f`, and recorded the confirmed behavior in `ARCHITECTURE.md`.
 - On March 22, 2026, re-audited the ScummVM NPC talk handlers immediately after fixing `play_dialogue_line @ 0x7a690` to take its third argument from `EBX` instead of the bogus prior `ECX` decompile path.
 - Confirmed a clean low-risk set of portrait mismatches where ScummVM still hardcoded head variant `0` even though the native handlers now decompile with stable nonzero variants. Patched `engines/harvester/npc/maint_man_dialogue.cpp`, `buster_dialogue.cpp`, `mother_dialogue.cpp`, `butcher_dialogue.cpp`, `curator_dialogue.cpp`, `lodge_chef_dialogue.cpp`, `memb_dir_dialogue.cpp`, `mcknight_dialogue.cpp`, `dark_woman_dialogue.cpp`, `fireman2_dialogue.cpp`, `valet_dialogue.cpp`, and `loomis_dialogue.cpp` to use the recovered native variants: `MAINT_MAN` `0xdaf -> 1`, `0xdbc/0xdc4 -> 2`; Buster intro `0x163c/0x1828/0x18c5 -> 2`; `MOTHER 0x26d6 -> 3`; `BUTCHER 0x1ac4 -> 1`; `CURATOR 0x425 -> 1`; `LODGE_CHEF 0x1b10 -> 2`; `MEMB_DIR 0x2b7/0x2d5 -> 1`; McKnight `0x15d0/0x15c9/0x1587 -> 2` plus `0x15ea/0x1611/0x161b -> 1`; `DARK_WOMAN 0x4cd5 -> 1`, `0x4d03 -> 2`; `FIREMAN2 0x5b9/0x5c7 -> 2`; `VALET 0xf2c -> 1`; and Loomis `0x11a8/0x11db/0x1143 -> 1`. Rebuilt the touched NPC object files successfully in `build-vscode-harvester-debug`.
 - On March 22, 2026, re-opened `play_dialogue_line @ 0x7a690` in the live `HARVEST.LE` Ghidra session after repeated NPC-dialogue audits kept running into a suspicious decompiler warning about a removed unreachable block.
@@ -175,6 +177,7 @@
 
 ## Next Suggested Action
 
+- Immediate: run a live Harvester validation pass on the town map from one daytime entrance and one nighttime entrance such as `PCHOUSE` versus `BARB_OUT` after dusk. Confirm the native-mirrored `DAY_FLAG` gate now keeps daytime `HARVMAP.PAL` at `1.0` brightness and dims the night map to `0.6` without changing hotspot labels or destination selection.
 - Immediate: use the corrected `EBX` head-variant ABI to re-audit the still larger dialogue handlers where the fresh native decompiles now show broader mismatches than just portrait constants. Start with `handle_talk_to_valet` and `handle_talk_to_ryder`, because both now show nonzero native variants plus additional response/menu flow that the current ScummVM handlers still compress heavily.
 - Immediate: the next time an NPC conversation looks wrong, compare it against the fresh `play_dialogue_line` Ghidra state first instead of second-guessing the warning at `0x7adfb`. Use the corrected `EBX` head-variant parameter plus the saved block comments to walk subtitle lookup, portrait swaps, and input-release behavior before chasing per-NPC handler bugs.
 - Immediate: run a live Harvester validation pass in `FIRENSIDE` after uncovering `NUDE_MAN`. Confirm first contact now reaches the recovered `0x606` / `0x60a` / `0x60e` / `0x612` / `0x618` / `0x61c` opener, opens response line `0x25d`, and then branches into `0x628` or `0x648`; if the Sergeant first-task bit is already set, confirm the extra `0x62c` prompt opens response line `0x25e` and ends on `0x636` or `0x63f`. Re-enter the conversation afterward and confirm revisits now play `0x651` / `0x655` / `0x3063` / `0x628` instead of stopping after a single bark.
