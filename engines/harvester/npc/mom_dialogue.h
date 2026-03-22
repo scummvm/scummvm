@@ -54,6 +54,29 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = MomRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueBool(s, _state.sameDayIntroLineEnabled);
+		syncDialogueBool(s, _state.postIntroDefaultLineEnabled);
+		syncDialogueInt(s, _state.introDayIndex);
+		syncDialogueBool(s, _state.stephMidgameShown);
+		syncDialogueBool(s, _state.dinerBurnedKarinMissingOrDeadShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.dinerBurnedKarinAliveShown);
+		syncDialogueBool(s, _state.escapedJailShown);
+		syncDialogueBool(s, _state.karinKidnapedUnresolvedShown);
+		syncDialogueBool(s, _state.karinFoundAliveShown);
+		syncDialogueBool(s, _state.karinFoundDeadShown);
+		syncDialogueBool(s, _state.butcherAbsentShown);
+		syncDialogueBool(s, _state.moynahanAbsentShown);
+		syncDialogueBool(s, _state.waspWomanAbsentShown);
+		syncDialogueBool(s, _state.stephanieDeadPreMidgameShown);
+		syncDialogueBool(s, _state.day5Shown);
+		syncDialogueBool(s, _state.day6Shown);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

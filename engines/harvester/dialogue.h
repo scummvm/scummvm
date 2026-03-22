@@ -47,6 +47,7 @@ public:
 	~DialogueSystem();
 
 	void resetRoomNpcDialogueState();
+	void syncRuntimeSaveState(Common::Serializer &s);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
 		Flow &startupFlow);

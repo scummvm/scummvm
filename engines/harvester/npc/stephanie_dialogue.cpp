@@ -58,6 +58,9 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playStephanieLine = [&](int wavId, const char *speakerId = "STEPHANIE") -> Common::Error {
 		return runtime.playDialogueLine(wavId, speakerId);
 	};
+	auto playStephanieLineWithVariant = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "STEPHANIE", headVariant);
+	};
 	auto executeDialogueActionTag = [&](const char *tag) {
 		StartupInteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(tag, interaction)) {
@@ -81,12 +84,12 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
-			return playStephanieLine(0x466a);
+			return playStephanieLineWithVariant(0x466a, 2);
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			Common::Error lineError = playStephanieLine(0x4671);
+			Common::Error lineError = playStephanieLineWithVariant(0x4671, 4);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueLine(0x4675, "PC");
@@ -127,7 +130,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.introPending = false;
 		state.introDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 		const DialogueLineEntry introLines[] = {
-			{ 0x43db, "STEPHANIE", 0 },
+			{ 0x43db, "STEPHANIE", 2 },
 			{ 0x43df, "PC", 0 },
 			{ 0x43e3, "STEPHANIE", 0 },
 			{ 0x43e7, "PC", 0 },
@@ -150,7 +153,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.firstFollowupPending = false;
 		state.firstFollowupDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 
-		Common::Error lineError = playStephanieLine(0x45a7);
+		Common::Error lineError = playStephanieLineWithVariant(0x45a7, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (sharedState.dialogueStateD2f08) {
@@ -192,7 +195,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.secondFollowupDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 
 		const DialogueLineEntry nastyIntroLines[] = {
-			{ 0x45e8, "STEPHANIE", 0 },
+			{ 0x45e8, "STEPHANIE", 1 },
 			{ 0x45ed, "PC", 0 },
 			{ 0x45f2, "STEPHANIE", 0 }
 		};
@@ -268,11 +271,11 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const DialogueLineEntry dayFiveLines[] = {
 			{ 0x46aa, "STEPHANIE", 0 },
 			{ 0x46ae, "PC", 0 },
-			{ 0x46b3, "STEPHANIE", 0 },
+			{ 0x46b3, "STEPHANIE", 2 },
 			{ 0x46bf, "STEPHANIE", 0 },
 			{ 0x46ba, "PC", 0 },
 			{ 0x46c5, "PC", 0 },
-			{ 0x46c9, "STEPHANIE", 0 }
+			{ 0x46c9, "STEPHANIE", 3 }
 		};
 		Common::Error lineError = runtime.playDialogueEntrySequence(dayFiveLines, ARRAYSIZE(dayFiveLines));
 		if (lineError.getCode() != Common::kNoError)
@@ -281,14 +284,14 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("BURNED_TV_STATION") &&
 			!state.burnedTvStationShown) {
 		state.burnedTvStationShown = true;
-		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4918, "STEPHANIE", 1);
+		Common::Error lineError = runtime.playDialogueLineWithVariant(0x4918, "STEPHANIE", 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		const DialogueLineEntry openingLines[] = {
 			{ 0x491e, "PC", 0 },
-			{ 0x4928, "STEPHANIE", 0 },
-			{ 0x492c, "PC", 0 },
-			{ 0x4930, "STEPHANIE", 0 }
+			{ 0x4928, "STEPHANIE", 3 },
+			{ 0x492c, "PC", 3 },
+			{ 0x4930, "STEPHANIE", 3 }
 		};
 		lineError = runtime.playDialogueEntrySequence(openingLines, ARRAYSIZE(openingLines));
 		if (lineError.getCode() != Common::kNoError)
@@ -300,7 +303,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playStephanieLine(0x493a);
+			lineError = playStephanieLineWithVariant(0x493a, 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			clearScreenToBlack();
@@ -310,9 +313,9 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (responseIndex == 2) {
 			const DialogueLineEntry responseLines[] = {
-				{ 0x4944, "STEPHANIE", 0 },
-				{ 0x4949, "PC", 0 },
-				{ 0x494d, "STEPHANIE", 0 }
+				{ 0x4944, "STEPHANIE", 3 },
+				{ 0x4949, "PC", 3 },
+				{ 0x494d, "STEPHANIE", 3 }
 			};
 			lineError = runtime.playDialogueEntrySequence(responseLines, ARRAYSIZE(responseLines));
 			if (lineError.getCode() != Common::kNoError)
@@ -338,11 +341,11 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (responseIndex == 1) {
 			const DialogueLineEntry responseOneLines[] = {
-				{ 0x46ea, "STEPHANIE", 0 },
+				{ 0x46ea, "STEPHANIE", 2 },
 				{ 0x46ee, "PC", 0 },
-				{ 0x46f2, "STEPHANIE", 0 },
+				{ 0x46f2, "STEPHANIE", 2 },
 				{ 0x46f6, "PC", 0 },
-				{ 0x46fb, "STEPHANIE", 0 }
+				{ 0x46fb, "STEPHANIE", 2 }
 			};
 			lineError = runtime.playDialogueEntrySequence(responseOneLines, ARRAYSIZE(responseOneLines));
 			if (lineError.getCode() != Common::kNoError)
@@ -355,21 +358,18 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			if (followupResponseIndex == 1) {
 				const DialogueLineEntry followupLines[] = {
-					{ 0x4705, "STEPHANIE", 0 },
+					{ 0x4705, "STEPHANIE", 2 },
 					{ 0x4709, "PC", 0 }
 				};
-				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+				return runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
 			} else if (followupResponseIndex == 2) {
 				const DialogueLineEntry followupLines[] = {
-					{ 0x470e, "STEPHANIE", 0 },
+					{ 0x470e, "STEPHANIE", 2 },
 					{ 0x470f, "PC", 0 }
 				};
-				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+				return runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
 			}
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-
-			lineError = playStephanieLine(0x4717);
+			lineError = playStephanieLineWithVariant(0x4717, 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else if (responseIndex == 2) {
@@ -395,18 +395,19 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		} else if (responseIndex == 2) {
 			state.boltOfClothEscalationTriggered = true;
 			const DialogueLineEntry responseTwoLines[] = {
-				{ 0x4736, "STEPHANIE", 0 },
+				{ 0x4736, "STEPHANIE", 2 },
 				{ 0x473b, "PC", 0 },
-				{ 0x4740, "STEPHANIE", 0 },
+				{ 0x4740, "STEPHANIE", 2 },
 				{ 0x4744, "PC", 0 },
-				{ 0x4748, "STEPHANIE", 0 },
-				{ 0x474d, "PC", 0 },
+				{ 0x4748, "STEPHANIE", 2 },
+				{ 0x474d, "PC", 4 },
 				{ 0x4753, "STEPHANIE", 0 }
 			};
 			lineError = runtime.playDialogueEntrySequence(responseTwoLines, ARRAYSIZE(responseTwoLines));
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return Common::kNoError;
 	}
 	if (runtime.startupScript().getFlagValue("BARBER_POLE_STOLEN") &&
 			!state.barberPoleStolenShown) {
@@ -429,20 +430,20 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueEntrySequence(responseOneLines, ARRAYSIZE(responseOneLines));
 		} else if (responseIndex == 2) {
 			const DialogueLineEntry responseTwoLines[] = {
-				{ 0x47be, "STEPHANIE", 0 },
-				{ 0x47c2, "PC", 0 },
-				{ 0x47c7, "STEPHANIE", 0 },
-				{ 0x47cc, "PC", 0 },
-				{ 0x47d0, "STEPHANIE", 0 },
-				{ 0x47d6, "PC", 0 },
+				{ 0x47be, "STEPHANIE", 2 },
+				{ 0x47c2, "PC", 3 },
+				{ 0x47c7, "STEPHANIE", 4 },
+				{ 0x47cc, "PC", 2 },
+				{ 0x47d0, "STEPHANIE", 2 },
+				{ 0x47d6, "PC", 2 },
 				{ 0x47da, "STEPHANIE", 0 },
-				{ 0x47de, "PC", 0 },
+				{ 0x47de, "PC", 2 },
 				{ 0x47e3, "STEPHANIE", 0 },
 				{ 0x47eb, "PC", 0 },
-				{ 0x47ef, "STEPHANIE", 0 },
-				{ 0x482b, "STEPHANIE", 0 },
-				{ 0x4830, "PC", 0 },
-				{ 0x4834, "STEPHANIE", 0 },
+				{ 0x47ef, "STEPHANIE", 2 },
+				{ 0x482b, "STEPHANIE", 2 },
+				{ 0x4830, "PC", 4 },
+				{ 0x4834, "STEPHANIE", 2 },
 				{ 0x4839, "PC", 0 },
 				{ 0x483d, "STEPHANIE", 0 },
 				{ 0x47fe, "PC", 0 }
@@ -451,12 +452,13 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return Common::kNoError;
 	}
 	if (runtime.startupScript().getFlagValue("DINER_BURNED") &&
 			!state.dinerBurnedShown) {
 		state.dinerBurnedShown = true;
 		const DialogueLineEntry openingLines[] = {
-			{ 0x4845, "STEPHANIE", 0 },
+			{ 0x4845, "STEPHANIE", 3 },
 			{ 0x484a, "PC", 0 },
 			{ 0x484e, "STEPHANIE", 0 }
 		};
@@ -470,11 +472,11 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			lineError = playStephanieLine(0x4858);
+			lineError = playStephanieLineWithVariant(0x4858, 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (runtime.startupScript().getFlagValue("KARIN_FOUND_ALIVE")) {
-				lineError = playStephanieLine(0x485c);
+				lineError = playStephanieLineWithVariant(0x485c, 3);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -486,14 +488,14 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			if (followupResponseIndex == 1) {
 				const DialogueLineEntry followupLines[] = {
-					{ 0x4866, "STEPHANIE", 0 },
-					{ 0x486b, "PC", 0 },
-					{ 0x4870, "STEPHANIE", 0 }
+					{ 0x4866, "STEPHANIE", 2 },
+					{ 0x486b, "PC", 4 },
+					{ 0x4870, "STEPHANIE", 2 }
 				};
-				lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
+				return runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
 			} else if (followupResponseIndex == 2) {
 				const DialogueLineEntry responseTwoLines[] = {
-					{ 0x4877, "STEPHANIE", 0 },
+					{ 0x4877, "STEPHANIE", 3 },
 					{ 0x487b, "PC", 0 },
 					{ 0x4880, "STEPHANIE", 0 }
 				};
@@ -507,19 +509,20 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return responseError;
 
 				if (nestedResponseIndex == 1) {
-					lineError = playStephanieLine(0x488e);
+					lineError = playStephanieLineWithVariant(0x488e, 2);
 				} else if (nestedResponseIndex == 2) {
 					const DialogueLineEntry nestedLines[] = {
-						{ 0x4895, "STEPHANIE", 0 },
-						{ 0x4899, "PC", 0 },
-						{ 0x489d, "STEPHANIE", 0 },
-						{ 0x461b, "PC", 0 }
+						{ 0x4895, "STEPHANIE", 1 },
+						{ 0x4899, "PC", 3 },
+						{ 0x489d, "STEPHANIE", 3 },
+						{ 0x461b, "PC", 3 }
 					};
 					lineError = runtime.playDialogueEntrySequence(nestedLines, ARRAYSIZE(nestedLines));
 				}
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			return Common::kNoError;
 		} else if (responseIndex == 2) {
 			const DialogueLineEntry responseTwoLines[] = {
 				{ 0x48c2, "STEPHANIE", 0 },
@@ -534,23 +537,21 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					!state.dinerBurnedKarinAliveFollowupShown) {
 				state.dinerBurnedKarinAliveFollowupShown = true;
 				const DialogueLineEntry karinAliveLines[] = {
-					{ 0x48ce, "STEPHANIE", 0 },
-					{ 0x48d3, "STEPHANIE", 0 },
+					{ 0x48ce, "STEPHANIE", 3 },
+					{ 0x48d3, "STEPHANIE", 3 },
 					{ 0x48d8, "PC", 0 },
 					{ 0x48dc, "STEPHANIE", 0 },
 					{ 0x48e1, "PC", 0 },
 					{ 0x48e5, "STEPHANIE", 0 }
 				};
-				lineError = runtime.playDialogueEntrySequence(karinAliveLines, ARRAYSIZE(karinAliveLines));
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
+				return runtime.playDialogueEntrySequence(karinAliveLines, ARRAYSIZE(karinAliveLines));
 			}
 		}
 	}
 	if (runtime.startupScript().getFlagValue("PC_ESCAPED_JAIL") &&
 			!state.pcEscapedJailShown) {
 		state.pcEscapedJailShown = true;
-		Common::Error lineError = playStephanieLine(0x48eb);
+		Common::Error lineError = playStephanieLineWithVariant(0x48eb, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -561,7 +562,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (responseIndex == 1) {
 			const DialogueLineEntry responseLines[] = {
-				{ 0x48f7, "STEPHANIE", 0 },
+				{ 0x48f7, "STEPHANIE", 3 },
 				{ 0x4908, "PC", 0 },
 				{ 0x490d, "STEPHANIE", 0 },
 				{ 0x4912, "PC", 0 }
@@ -755,9 +756,10 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playStephanieLine(0x4495);
+				lineError = playStephanieLineWithVariant(0x4495, 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				return Common::kNoError;
 			} else if (responseIndex == 2) {
 				lineError = playStephanieLine(0x4499);
 				if (lineError.getCode() != Common::kNoError)
@@ -765,6 +767,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = runtime.playDialogueLine(0x449e, "PC");
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				return Common::kNoError;
 			}
 			const DialogueLineEntry lines[] = {
 				{ 0x44a2, "PC", 0 },
@@ -782,7 +785,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			const DialogueLineEntry lines[] = {
 				{ 0x44ba, "STEPHANIE", 0 },
 				{ 0x44bf, "PC", 0 },
-				{ 0x44c4, "STEPHANIE", 0 },
+				{ 0x44c4, "STEPHANIE", 1 },
 				{ 0x44c9, "PC", 0 },
 				{ 0x44ce, "STEPHANIE", 0 },
 				{ 0x44dd, "PC", 0 },
@@ -795,7 +798,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2f3)) {
-			Common::Error lineError = playStephanieLine(0x44f1);
+			Common::Error lineError = playStephanieLineWithVariant(0x44f1, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC022AFstPath);
@@ -812,9 +815,9 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return lineError;
 			}
 			const DialogueLineEntry lines[] = {
-				{ 0x4513, "STEPHANIE", 0 },
+				{ 0x4513, "STEPHANIE", 2 },
 				{ 0x4517, "PC", 0 },
-				{ 0x451b, "STEPHANIE", 0 },
+				{ 0x451b, "STEPHANIE", 2 },
 				{ 0x451f, "PC", 0 },
 				{ 0x4523, "STEPHANIE", 0 },
 				{ 0x452a, "PC", 0 },
@@ -832,7 +835,7 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			Common::Error lineError = runtime.playDialogueLine(0x453d, "PC");
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playStephanieLine(0x4541);
+			lineError = playStephanieLineWithVariant(0x4541, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			int responseIndex = 0;
@@ -840,11 +843,11 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 			if (responseIndex == 1) {
-				lineError = playStephanieLine(0x454b);
+				lineError = playStephanieLineWithVariant(0x454b, 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playStephanieLine(0x454f);
+				lineError = playStephanieLineWithVariant(0x454f, 2);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}

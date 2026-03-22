@@ -46,6 +46,8 @@ public:
 	explicit Flow(HarvesterEngine &engine);
 
 	bool load();
+	bool buildDialogueSaveStateBlob(Common::Array<byte> &blob);
+	bool loadDialogueSaveStateBlob(const Common::Array<byte> &blob);
 	Common::Error run();
 
 private:

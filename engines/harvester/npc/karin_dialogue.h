@@ -36,6 +36,11 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = KarinRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.photoReplyOverrideFlag);
+		syncDialogueBool(s, _state.cem10AliveLinePlayed);
+		syncDialogueBool(s, _state.notFoundAliveLinePlayed);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

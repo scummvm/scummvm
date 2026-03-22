@@ -41,6 +41,16 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = MrsPottsRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.auxIntroPending);
+		syncDialogueBool(s, _state.returnVisitFollowupPending);
+		syncDialogueBool(s, _state.gotRemainsForLodgeLinePlayed);
+		syncDialogueBool(s, _state.takenInviteToSergeantLinePlayed);
+		syncDialogueBool(s, _state.day5LinePlayed);
+		syncDialogueBool(s, _state.burnedTvStationLinePlayed);
+		syncDialogueBool(s, _state.karinKidnappedLinePlayed);
+		syncDialogueBool(s, _state.dinerBurnedLinePlayed);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

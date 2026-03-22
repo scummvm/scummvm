@@ -42,6 +42,7 @@ class MediaManager;
 class Script;
 class Art;
 class Text;
+class Flow;
 
 class HarvesterEngine : public Engine {
 public:
@@ -121,6 +122,9 @@ public:
 		return _pendingLoadedStartupSaveRoomState;
 	}
 	void clearPendingLoadedStartupSaveRoomState();
+	bool hasPendingLoadedDialogueStateBlob() const { return !_pendingLoadedDialogueStateBlob.empty(); }
+	const Common::Array<byte> &getPendingLoadedDialogueStateBlob() const { return _pendingLoadedDialogueStateBlob; }
+	void clearPendingLoadedDialogueStateBlob() { _pendingLoadedDialogueStateBlob.clear(); }
 
 private:
 	void applyStartupMixerLevels();
@@ -132,6 +136,8 @@ private:
 	Script *_startupScript = nullptr;
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
+	Common::Array<byte> _pendingLoadedDialogueStateBlob;
+	Flow *_activeFlow = nullptr;
 	bool _roomDebugEnabled = false;
 };
 

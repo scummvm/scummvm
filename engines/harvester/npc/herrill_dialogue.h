@@ -49,6 +49,24 @@ public:
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = HerrillRoomDialogueState(); }
+	void syncState(Common::Serializer &s) override {
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueBool(s, _state.gascanPresented);
+		syncDialogueBool(s, _state.dialogueStateD2ce4);
+		syncDialogueBool(s, _state.dialogueSuppressed);
+		syncDialogueBool(s, _state.requiresEvidenceForDialogue);
+		syncDialogueBool(s, _state.stephMidgamePlayedShown);
+		syncDialogueBool(s, _state.dayFiveShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.karinKidnapedShown);
+		syncDialogueBool(s, _state.karinFoundAliveShown);
+		syncDialogueBool(s, _state.karinFoundDeadShown);
+		syncDialogueBool(s, _state.dinerBurnedShown);
+		syncDialogueBool(s, _state.whaleyHerrillFollowupShown);
+		syncDialogueString(s, _state.currentTopicBuffer);
+		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 
