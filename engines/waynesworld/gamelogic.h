@@ -196,6 +196,7 @@ public://DEBUG So logic functions can be called from the engine class for testin
 	int r5_handleVerbOpen();
 	bool r5_handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3);
 	void r5_refreshRoomBackground();
+	void r5_handleCassandra(const char *filename, int startFrame, int maxFrame, int startX, int startY, int targetX, int targetY, int width, int height, int totalSpeed, bool refreshBackground);
 	void r5_handleRoomEvent();
 
 	int r6_handleVerbPickUp();
