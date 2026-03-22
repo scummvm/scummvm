@@ -2933,12 +2933,73 @@ void GameLogic::r5_refreshRoomBackground() {
 	}
 }
 
+void GameLogic::r5_handleCassandra(const char *filename, int startFrame, int maxFrame, int startX, int startY, int targetX, int targetY, int width, int height, int totalSpeed, bool refreshBackground) {
+	const int stepX = (targetX > startX) ? 1 : -1;
+	const int stepY = (targetY > startY) ? 1 : -1;
+	const int deltaX = abs(targetX - startX);
+	const int deltaY = abs(targetY - startY);
+
+	int velX, velY;
+
+	if (deltaX == 0) {
+		velX = 0;
+		velY = totalSpeed * stepY;
+	} else if (deltaY == 0) {
+		velY = 0;
+		velX = totalSpeed * stepX;
+	} else if (deltaX > deltaY) {
+		velX = totalSpeed * stepX;
+		velY = ((totalSpeed * deltaY) / deltaX) * stepY;
+	} else {
+		velY = totalSpeed * stepY;
+		velX = ((totalSpeed * deltaX) / deltaY) * stepX;
+	}
+
+	const int stepNumb = abs(deltaX / velX);
+	WWSurface *workBackground = new WWSurface(320, 150);
+	workBackground->drawSurface(_vm->_backgroundSurface, 0, 0);
+	// sysMouseDriver(2)
+
+	int curX = startX;
+	int curY = startY;
+
+	// The original has a lot of scaling code and a bunch of code to handle how to position Garth and Wayne as if Cassandra was walking by them
+	// As she stop before them, and as the scaling computed was 1:1, the code has been significantly simplified
+	
+	WWSurface *cassSurface = new WWSurface(width, height);
+	for (int i = 0; i < stepNumb; ++i) {
+		updateRoomAnimations();
+		if (i > 0) {
+			_vm->_backgroundSurface->copyRectToSurface((Graphics::Surface)*workBackground, curX - velX, curY - velY - height, Common::Rect(curX - velX, curY - velY - height, curX - velX + width, curY - velY));
+		}
+		const int key = (i % maxFrame) + startFrame;
+		Common::String curFile = Common::String::format("%s%d.pcx", filename, key);
+		_vm->drawImageToSurface(_vm->_roomGxl, curFile.c_str(), cassSurface, 0, 0);
+
+		_vm->_backgroundSurface->drawSurfaceTransparent(cassSurface, curX, curY - height);
+		_vm->refreshActors();
+		curX += velX;
+		curY += velY;
+
+		// Add delay for better visual result
+		_vm->waitMillis(45);
+	}
+	
+	delete cassSurface;
+	delete workBackground;
+
+	// sysMouseDriver(1);
+	// if (refreshBackground) {
+	//		_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
+	//		r5_refreshRoomBackground();
+	// }
+}
+
 void GameLogic::r5_handleRoomEvent() {
 	_r5_flags |= 0x01;
 	_vm->walkTo(195, 102, -1, 209, 96);
-	// TODO sub_185C0("wcass2", 0, 4, 0, 104, 170, 104, 26, 46, 8, 1);
-	// TODO sub_185C0("scass", 2, 1, 170, 104, 171, 104, 15, 46, 2, 0);
-	warning("STUB - r5_handleRoomEvent - sub_185C0?");
+	r5_handleCassandra("wcass2", 0, 4, 0, 104, 170, 104, 26, 46, 8, true);
+	r5_handleCassandra("scass", 2, 1, 170, 104, 171, 104, 15, 46, 2, false);
 	_vm->displayTextLines("c04r", 87, 150, 30, 1);
 	_vm->setDialogChoices(170, 171, 172, 173, 174);
 	_vm->startDialog();
