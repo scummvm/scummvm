@@ -1026,6 +1026,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
   - For class-6 monsters specifically, pursuit is not a free-running room-script heuristic: the native state machine first closes base Z to within `g_player_combat_avatar->z +/- 2.0`, then compares center-to-center X against `engage_distance`, and only arms the close-range attack picker after that spacing gate is satisfied.
   - The same class-6 path derives its horizontal chase waypoint from the player's live left edge plus the current player/monster frame widths and treats that waypoint as satisfied within `50.0 * depth_scale` pixels, so native monster pursuit does not require exact center equality before it can stop walking and attack.
+  - Fresh monster spawns do not wait in a neutral idle loop: `spawn_monster_entity_from_record` immediately seeds desired state `0x07` or `0x0e` from the monster's placement relative to the player, which is the native locomotion handoff into left/right pursuit.
   - It also contains the confirmed NPC-to-monster replacement path used by the `change2monster` flow.
   - The attack-state reader side is now bounded directly from states `0x16` through `0x1b`:
     - it treats `+0x1134` as the attack sample count and randomly selects from `+0x1148/+0x114c/+0x1150`
@@ -1047,6 +1048,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Runtime byte `+0x118e` is the death-bank availability byte, with one shared hit-reaction gate in its low bit.
     - bit `0x01` is the third hit-reaction gate used by states `0x1e/0x21`
     - bits `0x02`, `0x04`, and `0x08` gate the death-state families `0x28/0x29/0x2e/0x2f`, `0x2a/0x2b/0x30/0x31`, and `0x2c/0x2d/0x32/0x33`
+  - Once `current_hit_points < 1`, native class-6 monsters do not disappear immediately. `update_actor_runtime_state` pushes them into facing-specific death states `0x28/0x29`, `0x2a/0x2b`, or `0x2c/0x2d` according to gore/damage-type availability, then leaves desired state `0x38` latched until the last death frame dispatches the monster record's `on_death_action_tag`.
   - Runtime byte `+0x11b4` is now bounded for the player-combat path:
     - `parse_command_record` maps room-event commands `PAUSE_PC` / `RESUME_PC` to action cases `0x25` / `0x26`, and those cases set and clear `g_player + 0x11b4`
     - `update_actor_runtime_state` consults that byte only for class-5 player combat-avatar updates and returns early while it is set

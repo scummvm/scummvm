@@ -90,6 +90,15 @@ struct RoomAttackAnimationRange {
 	int resumeFacing = 0;
 };
 
+struct RoomDeathAnimationRange {
+	RoomDeathAnimationRange() {}
+	RoomDeathAnimationRange(int firstFrame, int lastFrame)
+		: firstFrame(firstFrame), lastFrame(lastFrame) {}
+
+	int firstFrame = -1;
+	int lastFrame = -1;
+};
+
 struct RoomMonsterCombatState {
 	bool attackActive = false;
 	int attackFirstFrame = -1;
@@ -97,6 +106,10 @@ struct RoomMonsterCombatState {
 	int attackContactFrame = -1;
 	int attackResumeFacing = -1;
 	bool attackSoundPlayed = false;
+	bool deathActive = false;
+	int deathFirstFrame = -1;
+	int deathLastFrame = -1;
+	int deathDamageType = 0;
 	uint32 nextMovementTick = 0;
 	uint32 nextAttackAllowedTick = 0;
 };
@@ -349,6 +362,49 @@ static bool resolveRoomActorAttackAnimationRange(const StartupRoomSetupState &st
 	return true;
 }
 
+static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
+	return entity.hasFrames() && firstFrame >= 0 && entity.getLastFrame() >= lastFrame;
+}
+
+static bool resolveMonsterDeathAnimationRange(const RuntimeEntity &entity, int facing,
+		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
+	const bool preferLeftBank = facing == 1;
+	const RoomDeathAnimationRange rightBludge(0xb0, 0xb9);
+	const RoomDeathAnimationRange leftBludge(0xba, 0xc3);
+	const RoomDeathAnimationRange rightSlash(0x100, 0x109);
+	const RoomDeathAnimationRange leftSlash(0x10a, 0x113);
+	const RoomDeathAnimationRange rightProjectile(0x114, 0x11d);
+	const RoomDeathAnimationRange leftProjectile(0x11e, 0x127);
+
+	const RoomDeathAnimationRange primaryBludge = preferLeftBank ? leftBludge : rightBludge;
+	const RoomDeathAnimationRange primarySlash = preferLeftBank ? leftSlash : rightSlash;
+	const RoomDeathAnimationRange primaryProjectile = preferLeftBank ? leftProjectile : rightProjectile;
+	const RoomDeathAnimationRange fallbackBludge = preferLeftBank ? rightBludge : leftBludge;
+	const RoomDeathAnimationRange fallbackSlash = preferLeftBank ? rightSlash : leftSlash;
+	const RoomDeathAnimationRange fallbackProjectile = preferLeftBank ? rightProjectile : leftProjectile;
+
+	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
+		if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+			return false;
+		range = candidate;
+		return true;
+	};
+
+	if ((!goreEnabled || deathDamageType == 1) &&
+			(chooseIfAvailable(primaryBludge) || chooseIfAvailable(fallbackBludge)))
+		return true;
+	if (deathDamageType == 2 &&
+			(chooseIfAvailable(primarySlash) || chooseIfAvailable(fallbackSlash)))
+		return true;
+	if (deathDamageType == 4 &&
+			(chooseIfAvailable(primaryProjectile) || chooseIfAvailable(fallbackProjectile)))
+		return true;
+
+	return chooseIfAvailable(primaryBludge) || chooseIfAvailable(primarySlash) ||
+		chooseIfAvailable(primaryProjectile) || chooseIfAvailable(fallbackBludge) ||
+		chooseIfAvailable(fallbackSlash) || chooseIfAvailable(fallbackProjectile);
+}
+
 static int stepTowardsRoomCombatInt(int current, int target, int step) {
 	if (step <= 0 || current == target)
 		return current;
@@ -456,6 +512,10 @@ static int resolveMonsterAttackContactFrameOffset(const StartupMonsterRecord &mo
 	return monster.monsterName.equalsIgnoreCase("MUCKEY")
 		? kMuckeyAttackContactFrameOffset
 		: kDefaultMonsterAttackContactFrameOffset;
+}
+
+static void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState) {
+	combatState = RoomMonsterCombatState();
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -1510,18 +1570,46 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return Common::kNoError;
 		}
 
-		monster->active = false;
-		monster->visible = false;
 		const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
-		if (monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size())
-			monsterCombatStates[(uint)monsterIndex] = RoomMonsterCombatState();
+		RoomMonsterCombatState *combatState =
+			monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size()
+				? &monsterCombatStates[(uint)monsterIndex]
+				: nullptr;
+		if (combatState)
+			clearRoomMonsterCombatState(*combatState);
 		(void)startupScript->syncRuntimeMonsterRecord(*monster);
 
+		RoomDeathAnimationRange deathRange;
+		if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
+				damageType, _engine.isGoreEnabled(), deathRange)) {
+			combatState->deathActive = true;
+			combatState->deathFirstFrame = deathRange.firstFrame;
+			combatState->deathLastFrame = deathRange.lastFrame;
+			combatState->deathDamageType = damageType;
+			combatState->nextMovementTick = 0;
+			combatState->nextAttackAllowedTick = 0;
+			monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
+			monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
+			monsterEntity->setAnimationEnabled(true);
+			monsterEntity->setCurrentFrame(deathRange.firstFrame);
+			if (!monster->deathSound.empty())
+				(void)_engine.playStartupSound(monster->deathSound);
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster death start target='%s' damage_type=%d frames=%d..%d gore=%d on_death='%s'",
+				monster->monsterName.c_str(), damageType,
+				deathRange.firstFrame, deathRange.lastFrame,
+				_engine.isGoreEnabled(), monster->onDeathActionTag.c_str());
+			needsRedraw = true;
+			return Common::kNoError;
+		}
+
+		monster->active = false;
+		monster->visible = false;
+		debugC(1, kDebugCombat,
+			"Harvester: combat monster defeated target='%s' on_death='%s' fallback='no death bank'",
+			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
 		StartupInteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
-		debugC(1, kDebugCombat,
-			"Harvester: combat monster defeated target='%s' on_death='%s'",
-			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
 		if (!monster->onDeathActionTag.empty()) {
 			StartupInteractionResult deathInteraction;
 			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
@@ -1551,13 +1639,43 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			StartupMonsterRecord &monster = scene.state.roomMonsters[i];
 			RoomMonsterCombatState &combatState = monsterCombatStates[i];
 			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
-			if (!entity || !monster.visible || monster.currentHitPoints <= 0) {
-				combatState = RoomMonsterCombatState();
+			if (!entity || !monster.visible) {
+				clearRoomMonsterCombatState(combatState);
+				continue;
+			}
+			if (combatState.deathActive) {
+				if (entity->getCurrentFrame() == combatState.deathLastFrame) {
+					combatState.deathActive = false;
+					monster.active = false;
+					monster.visible = false;
+					(void)startupScript->syncRuntimeMonsterRecord(monster);
+					debugC(1, kDebugCombat,
+						"Harvester: combat monster death complete target='%s' damage_type=%d on_death='%s'",
+						monster.monsterName.c_str(), combatState.deathDamageType,
+						monster.onDeathActionTag.c_str());
+					clearRoomMonsterCombatState(combatState);
+
+					StartupInteractionResult interaction;
+					interaction.mutatedRuntimeState = true;
+					if (startupScript && !monster.onDeathActionTag.empty()) {
+						StartupInteractionResult deathInteraction;
+						if (startupScript->executeActionTag(monster.onDeathActionTag, deathInteraction)) {
+							interaction = deathInteraction;
+							interaction.mutatedRuntimeState = true;
+						}
+					}
+
+					return handleCombatInteraction(interaction);
+				}
+				continue;
+			}
+			if (monster.currentHitPoints <= 0) {
+				clearRoomMonsterCombatState(combatState);
 				continue;
 			}
 
 			if (!monster.active || !playerState.entity || !playerAlive) {
-				combatState = RoomMonsterCombatState();
+				clearRoomMonsterCombatState(combatState);
 				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 				continue;
 			}
@@ -1617,28 +1735,39 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			const int previousX = monster.posX;
 			const int previousY = monster.posY;
 			const int previousZ = monster.posZ;
-			const int dx = playerState.centerX - monster.posX;
-			const int absDx = ABS(dx);
+			const Common::Rect playerRect = playerState.entity->getScreenRect();
+			const Common::Rect monsterRect = entity->getScreenRect();
+			const int playerCenterX = playerRect.left + playerRect.width() / 2;
+			const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
+			const int liveCenterDx = playerCenterX - monsterCenterX;
+			const int absLiveCenterDx = ABS(liveCenterDx);
+			const int monsterLiveCenterOffset = monsterCenterX - monster.posX;
 			const int playerTargetZ = roundRoomCombatFloat(playerState.z);
 			const float zDelta = playerState.z - (float)monster.posZ;
 			const float absZDelta = zDelta >= 0.0f ? zDelta : -zDelta;
 			const int engageDistance = MAX(0, monster.engageDistance);
+			const int liveWaypointTolerance = roundRoomCombatFloat(
+				Player::computeDepthScale(scene.state,
+					MIN<float>(playerState.z, (float)monster.posZ)) * kNativeMonsterHorizontalWaypointTolerance);
 			bool attemptedMoveX = false;
 			bool attemptedMoveZ = false;
-			if (absDx > engageDistance) {
-				attemptedMoveX = true;
-				const int step = MAX<int>(1, roundRoomCombatFloat(
-					Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
-				const int direction = dx < 0 ? -1 : 1;
-				const int desiredX = playerState.centerX - direction * engageDistance;
-				monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredX, step);
-				monster.posX = CLIP<int>(monster.posX, monster.minXBound, monster.maxXBound);
-			}
 			if (absZDelta > kNativeMonsterPursuitZTolerance) {
 				attemptedMoveZ = true;
 				monster.posZ = stepTowardsRoomCombatInt(monster.posZ, playerTargetZ, depthStep);
 				monster.posZ = (int)clampRoomDepthForEvent(scene.state, (float)monster.posZ);
 				monster.posY = mapRoomDepthToScreenYForCombat(scene.state, (float)monster.posZ, monster.posY);
+			} else if (absLiveCenterDx > engageDistance) {
+				const int desiredLiveCenterX = monsterCenterX < playerCenterX
+					? playerRect.left - engageDistance + monsterRect.width() / 2
+					: playerRect.right + engageDistance - monsterRect.width() / 2;
+				if (ABS(monsterCenterX - desiredLiveCenterX) > liveWaypointTolerance) {
+					attemptedMoveX = true;
+					const int step = MAX<int>(1, roundRoomCombatFloat(
+						Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
+					const int desiredLogicalCenterX = desiredLiveCenterX - monsterLiveCenterOffset;
+					monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredLogicalCenterX, step);
+					monster.posX = CLIP<int>(monster.posX, monster.minXBound, monster.maxXBound);
+				}
 			}
 
 			const bool moved = monster.posX != previousX || monster.posY != previousY || monster.posZ != previousZ;
@@ -1653,8 +1782,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (startupScript)
 					(void)startupScript->syncRuntimeMonsterRecord(monster);
 				debugC(1, kDebugCombat,
-					"Harvester: combat monster chase move monster='%s' center_dx=%d z_delta=%.2f engage=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
-					monster.monsterName.c_str(), dx, (double)zDelta, engageDistance,
+					"Harvester: combat monster chase move monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d from=(%d,%d,z=%d) to=(%d,%d,z=%d) facing=%d",
+					monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
 					previousX, previousY, previousZ, monster.posX, monster.posY, monster.posZ, monster.facing);
 				needsRedraw = true;
 				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, true) || needsRedraw;
@@ -1663,19 +1792,24 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			if (attemptedMoveX || attemptedMoveZ) {
 				debugC(1, kDebugCombat,
-					"Harvester: combat monster chase stalled monster='%s' center_dx=%d z_delta=%.2f engage=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
-					monster.monsterName.c_str(), dx, (double)zDelta, engageDistance,
+					"Harvester: combat monster chase stalled monster='%s' live_center_dx=%d z_delta=%.2f engage=%d waypoint_tol=%d pos=(%d,%d,z=%d) attempted_x=%d attempted_z=%d",
+					monster.monsterName.c_str(), liveCenterDx, (double)zDelta, engageDistance, liveWaypointTolerance,
 					monster.posX, monster.posY, monster.posZ, attemptedMoveX, attemptedMoveZ);
 			}
 
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+			const bool closeEnoughForAttack =
+				absZDelta <= kNativeMonsterPursuitZTolerance &&
+				absLiveCenterDx <= engageDistance;
 			const bool attackCooldownExpired =
 				combatState.nextAttackAllowedTick == 0 || (int32)(now - combatState.nextAttackAllowedTick) >= 0;
-			if (!attackCooldownExpired && absDx > MAX(1, engageDistance / 3))
+			if (!closeEnoughForAttack)
+				continue;
+			if (!attackCooldownExpired && absLiveCenterDx > MAX(1, engageDistance / 3))
 				continue;
 
 			RoomAttackAnimationRange range;
-			const Common::Point playerPoint(playerState.centerX, playerState.bottomY);
+			const Common::Point playerPoint(playerCenterX, playerState.bottomY);
 			(void)resolveRoomActorAttackAnimationRange(
 				scene.state, monster.posX, monster.posY, (float)monster.posZ, playerPoint, range);
 			combatState.attackActive = true;
@@ -1693,9 +1827,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			entity->setAnimationEnabled(true);
 			entity->setCurrentFrame(range.firstFrame);
 			debugC(1, kDebugCombat,
-				"Harvester: combat monster attack start monster='%s' frames=%d..%d contact=%d resume_facing=%d center_dx=%d z_delta=%.2f engage=%d next_attack_tick=%u",
+				"Harvester: combat monster attack start monster='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d next_attack_tick=%u",
 				monster.monsterName.c_str(), range.firstFrame, range.lastFrame,
-				combatState.attackContactFrame, range.resumeFacing, dx, (double)zDelta,
+				combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
 				engageDistance, combatState.nextAttackAllowedTick);
 			needsRedraw = true;
 		}
