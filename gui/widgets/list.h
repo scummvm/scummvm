@@ -201,6 +201,10 @@ protected:
 	/// Check if an item at a given position is selectable
 	virtual bool isItemSelectable(int item) const { return true; }
 
+	// Searches for the next selectable item in the given direction (1 for down, -1 for up) starting from 'item' and returns its index.
+	// Returns -1 if no selectable item is found.
+	int findSelectableItem(int item, int direction) const;
+
 	virtual ThemeEngine::WidgetStateInfo getItemState(int item) const { return _state; }
 
 	void drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled,

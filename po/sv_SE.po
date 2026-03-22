@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-19 17:17+0000\n"
+"POT-Creation-Date: 2026-03-22 17:43+0000\n"
 "PO-Revision-Date: 2026-03-12 13:22+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -328,7 +328,7 @@ msgstr "En annan lagring fungerar just nu. Vill du avbryta den?"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1913 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
@@ -347,7 +347,7 @@ msgstr "Ja"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1914 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -1693,11 +1693,11 @@ msgstr "Okänt år"
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1786
+#: gui/launcher.cpp:1790
 msgid "Icons per row:"
 msgstr "Ikoner per rad:"
 
-#: gui/launcher.cpp:1837
+#: gui/launcher.cpp:1841
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -15275,7 +15275,9 @@ msgid "Show game menu; Cancel action if in middle of action"
 msgstr "Visa spelmeny; Avbryt handling om du är mitt i en handling"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-msgid "Toggle Cursor"
+#, fuzzy
+#| msgid "Toggle Cursor"
+msgid "Toggle cursor"
 msgstr "Växla markör"
 
 #: engines/ultima/nuvie/metaengine.cpp:98

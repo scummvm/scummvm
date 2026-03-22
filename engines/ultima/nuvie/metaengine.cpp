@@ -94,7 +94,7 @@ static const NuvieActionDescription NuvieActionDescriptions[] = {
 	//{ "QUIT_NO_DIALOG", "_s(Quit without confirmation"), "M+q", nullptr },
 	{ "GAME_MENU_DIALOG", _s("Show game menu; Cancel action if in middle of action"), "ESCAPE", nullptr },
 	//{ "TOGGLE_FULLSCREEN", "_s(Toggle fullscreen"), "M+RETURN", nullptr },
-	{ "TOGGLE_CURSOR", _s("Toggle Cursor"), "TAB", nullptr },
+	{ "TOGGLE_CURSOR", _s("Toggle cursor"), "TAB", nullptr },
 	{ "TOGGLE_COMBAT_STRATEGY", _s("Toggle combat strategy"), "BACKQUOTE", nullptr },
 	{ "TOGGLE_FPS_DISPLAY", _s("Toggle frames per second display"), "C+PLUS", nullptr },
 	{ "TOGGLE_AUDIO", _s("Toggle audio"), "C+a", nullptr },

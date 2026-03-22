@@ -1734,13 +1734,17 @@ void LauncherGrid::updateListing(int selPos) {
 		Common::String platform;
 		Common::String extra;
 		Common::String path;
+		Common::String guioptions;
 		bool valid_path = false;
+		bool canLoad;
 		curDomain.domain->tryGetVal("engineid", engineid);
 		curDomain.domain->tryGetVal("language", language);
 		curDomain.domain->tryGetVal("platform", platform);
 		curDomain.domain->tryGetVal("extra", extra);
+		curDomain.domain->tryGetVal("guioptions", guioptions);
 		valid_path = (!curDomain.domain->tryGetVal("path", path) || !Common::FSNode(Common::Path::fromConfig(path)).isDirectory()) ? false : true;
-		gridList.push_back(GridItemInfo(k++, engineid, gameid, curDomain.description, curDomain.title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path));
+		canLoad = !Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, guioptions);
+		gridList.push_back(GridItemInfo(k++, engineid, gameid, curDomain.description, curDomain.title, extra, Common::parseLanguage(language), Common::parsePlatform(platform), valid_path, canLoad));
 		_domains.push_back(curDomain.key);
 		_domainTitles.push_back(curDomain.description); // Store the game description (user's name for it)
 	}

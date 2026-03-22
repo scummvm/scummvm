@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-19 17:17+0000\n"
+"POT-Creation-Date: 2026-03-22 17:43+0000\n"
 "PO-Revision-Date: 2026-03-17 16:21+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -327,7 +327,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1913 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
@@ -346,7 +346,7 @@ msgstr "예"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1914 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -1675,11 +1675,11 @@ msgstr "알 수 없는 연도"
 msgid "All"
 msgstr "모두"
 
-#: gui/launcher.cpp:1786
+#: gui/launcher.cpp:1790
 msgid "Icons per row:"
 msgstr "열당 아이콘:"
 
-#: gui/launcher.cpp:1837
+#: gui/launcher.cpp:1841
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -15080,7 +15080,9 @@ msgid "Show game menu; Cancel action if in middle of action"
 msgstr "게임 메뉴 표시; 작업 중이면 작업 취소"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-msgid "Toggle Cursor"
+#, fuzzy
+#| msgid "Toggle Cursor"
+msgid "Toggle cursor"
 msgstr "커서 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:98

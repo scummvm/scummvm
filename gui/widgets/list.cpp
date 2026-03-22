@@ -173,8 +173,16 @@ int ListWidget::findDataIndex(int dataIndex) const {
 	return -1;
 }
 
-void ListWidget::setSelected(int item, bool clearExisting) {
-	if (item < -1 || item >= (int)_list.size())
+void ListWidget::setSelected(int item) {
+	if (item == -1) {
+		// Clear selection
+		clearSelection();
+		_selectedItem = -1;
+		markAsDirty();
+		return;
+	}
+
+	if (item < 0 || item >= (int)_list.size())
 		return;
 
 	// We only have to do something if the widget is enabled and the selection actually changes
@@ -446,6 +454,16 @@ static int matchingCharsIgnoringCase(const char *x, const char *y, bool &stop, b
 	return match;
 }
 
+int ListWidget::findSelectableItem(int item, int direction) const {
+	int newItem = item;
+	while (newItem >= 0 && newItem < (int)_list.size()) {
+		if (isItemSelectable(newItem))
+			return newItem;
+		newItem += direction;
+	}
+	return -1;
+}
+
 bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool handled = true;
 	bool dirty = false;
@@ -546,12 +564,11 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// fall through
 		case Common::KEYCODE_END:
 			clearSelection();
-			markSelectedItem(_selectedItem, false);
-			_selectedItem = _list.size() - 1;
+			scrollTo((int)_list.size() - 1);
+			_selectedItem = findSelectableItem((int)_list.size() - 1, -1);
 			markSelectedItem(_selectedItem, true);
 			scrollToCurrent();
 			break;
-
 
 		case Common::KEYCODE_KP2:
 			if (state.flags & Common::KBD_NUM) {
@@ -566,9 +583,9 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				bool scrolled = false;
 				if ( g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					// Skip selecting Group Headers
-					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
-						newItem++;
-					if (newItem < (int)_list.size()) {
+					newItem = findSelectableItem(newItem, 1);
+
+					if (newItem != -1) {
 						if (_lastSelectionStartItem < newItem)
 							markSelectedItem(newItem, true);
 						else
@@ -579,9 +596,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				} else {
 					clearSelection();
 					// Skip selecting Group Headers
-					while (newItem < (int)_list.size() && !isItemSelectable(newItem))
-						newItem++;
-					if (newItem < (int)_list.size()) {
+					newItem = findSelectableItem(newItem, 1);
+					if (newItem != -1) {
 						_selectedItem = newItem;
 						scrolled = true;
 					}
@@ -604,15 +620,23 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_PAGEDOWN:
-			clearSelection();
-			markSelectedItem(_selectedItem, false);
-			_selectedItem += _entriesPerPage - 1;
-			if (_selectedItem >= (int)_list.size())
-				_selectedItem = _list.size() - 1;
+			{
+				int newItem = _selectedItem + _entriesPerPage - 1;
+				if (newItem >= (int)_list.size()) {
+					newItem = _list.size() - 1;
+					scrollTo((int)_list.size() - 1);
+				}
 
-			markSelectedItem(_selectedItem, true);
-			scrollToCurrent();
-			break;
+				newItem = findSelectableItem(newItem, -1);
+
+				if (newItem != -1) {
+					clearSelection();
+					_selectedItem = newItem;
+					markSelectedItem(_selectedItem, true);
+					scrollToCurrent();
+				}
+				break;
+			}
 
 		case Common::KEYCODE_KP7:
 			if (state.flags & Common::KBD_NUM) {
@@ -622,8 +646,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			// fall through
 		case Common::KEYCODE_HOME:
 			clearSelection();
-			markSelectedItem(_selectedItem, false);
-			_selectedItem = 0;
+			scrollTo(0);
+			_selectedItem = findSelectableItem(0, 1);
 			markSelectedItem(_selectedItem, true);
 			scrollToCurrent();
 			break;
@@ -641,9 +665,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				bool scrolled = false;
 				if (g_system->getEventManager()->getModifierState() & Common::KBD_SHIFT) {
 					// Skip selecting Group Headers
-					while (newItem >= 0 && !isItemSelectable(newItem))
-						newItem--;
-					if (newItem >= 0) {
+					newItem = findSelectableItem(newItem, -1);
+					if (newItem != -1) {
 						if (_lastSelectionStartItem > newItem)
 							markSelectedItem(newItem, true);
 						else
@@ -654,9 +677,8 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 				} else {
 					clearSelection();
 					// Skip selecting Group Headers
-					while (newItem >= 0 && !isItemSelectable(newItem))
-						newItem--;
-					if (newItem >= 0) {
+					newItem = findSelectableItem(newItem, -1);
+					if (newItem != -1) {
 						_selectedItem = newItem;
 						scrolled = true;
 					}
@@ -679,15 +701,23 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			}
 			// fall through
 		case Common::KEYCODE_PAGEUP:
-			clearSelection();
-			markSelectedItem(_selectedItem, false);
-			_selectedItem -= _entriesPerPage - 1;
-			if (_selectedItem < 0)
-				_selectedItem = 0;
-			markSelectedItem(_selectedItem, true);
-			scrollToCurrent();
-			break;
+			{
+				int newItem = _selectedItem - _entriesPerPage + 1;
+				if (newItem < 0) {
+					newItem = 0;
+					scrollTo(0);
+				}
 
+				newItem = findSelectableItem(newItem, 1);
+
+				if (newItem != -1) {
+					clearSelection();
+					_selectedItem = newItem;
+					markSelectedItem(_selectedItem, true);
+					scrollToCurrent();
+				}
+				break;
+			}
 		default:
 			handled = false;
 		}

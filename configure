@@ -4129,6 +4129,7 @@ if test -n "$_host"; then
 			#the -gcc- variants allow link time optimization
 			_ar="$_host_alias-gcc-ar cr"
 			_ranlib=$_host_alias-gcc-ranlib
+			_pkgconfig="${VITASDK}/bin/arm-vita-eabi-pkg-config"
 			;;
 		psp)
 			_backend="psp"

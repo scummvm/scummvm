@@ -1,5 +1,5 @@
 ScummVM 2026.1.1git
-=============
+================
 
 This is a port of ScummVM (https://www.scummvm.org), a program which allows you
 to run certain classic graphical adventure and role-playing games, provided you
@@ -97,8 +97,10 @@ features but also improves performance and reduces executable size.
 
 - Overlay doesn't support alternative themes => faster loading time.
 
-- "STMIDI" driver is automatically enabled (i.e. MIDI emulation is never used
-  but still allows playing speech/sfx samples and/or CD audio).
+- "null" music driver is automatically enabled (i.e. MIDI/OPL emulation is never
+  used but still allows playing speech/sfx samples and/or CD audio).
+
+- DOSBox OPL emulator is disabled => smaller executable size.
 
 FireBee package
 ~~~~~~~~~~~~~~~
@@ -367,6 +369,9 @@ good chunk of CPU time which could be utilised elsewhere. However, there are
 games which are fine with sampled music/speech even on a plain TT (e.g. Lands
 of Lore).
 
+Unfortunately, it is not possible to disable OPL emulation and still use native
+ST MIDI. You have to tweak the setting for each game.
+
 CD music slows everything down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -392,7 +397,7 @@ music (and therefore avoiding the expensive synthesis emulation) but beware, it
 doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
 
 The least amount of cycles is spent when:
-- "No music" as "Preferred device": This prevents MIDI synthesis of any kind.
+- "No music" as "Preferred device": This prevents MIDI/OPL synthesis of any kind.
 - "Subtitles" as "Text and speech": This prevents any sampled speech to be
   mixed.
 - All external audio files are deleted (typically *.wav); that way the mixer

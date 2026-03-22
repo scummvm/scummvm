@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-19 17:17+0000\n"
+"POT-Creation-Date: 2026-03-22 17:43+0000\n"
 "PO-Revision-Date: 2026-02-09 20:22+0000\n"
 "Last-Translator: AsciiWolf <mail@asciiwolf.com>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -344,7 +344,7 @@ msgstr "Jiné úložiště právě pracuje. Chcete ho přerušit?"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1913 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
@@ -363,7 +363,7 @@ msgstr "Ano"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1914 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -1647,11 +1647,11 @@ msgstr "Neznámá chyba"
 msgid "All"
 msgstr "Alt"
 
-#: gui/launcher.cpp:1786
+#: gui/launcher.cpp:1790
 msgid "Icons per row:"
 msgstr ""
 
-#: gui/launcher.cpp:1837
+#: gui/launcher.cpp:1841
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -15657,7 +15657,7 @@ msgstr ""
 
 #: engines/ultima/nuvie/metaengine.cpp:97
 #, fuzzy
-msgid "Toggle Cursor"
+msgid "Toggle cursor"
 msgstr "Povolit zachycování myši"
 
 #: engines/ultima/nuvie/metaengine.cpp:98

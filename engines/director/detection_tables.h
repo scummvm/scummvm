@@ -1265,6 +1265,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "schoolworld",		"A-L: Artificial Life: School World" },
 	{ "seesawc1",			"SeesawC1" },
 	{ "shikiotabisuru",		"四季を旅する" },
+	{ "shouchan",			"しょうちゃんの大冒険" },
 	{ "smallhouse",			"Small House" },
 	{ "startover",			"Start Over ROM" },
 	{ "tantei",				"完全探偵マニュアル" },								// Perfect Detective Manual
@@ -5966,6 +5967,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("shine", "", "Shine PPC",   "rt:5ee46e7c000032b39780a90478df5f13", 137904, Common::DE_DEU, 404),
 	WINGAME2_l("shine", "", "Shine.exe",   "t:60469b7f995ca4fa7dc10edd3092841f", 1937650,
 							"TRAILER.DXR", "f:5d295bbffb2a4cc0e124503b39bfaf42",  171382, Common::DE_DEU, 404),
+
+	// Original filename is 'しょうちゃんの大冒険'
+	MACGAME1_l("shouchan", "",		   "xn--p8j7a5a2cyfva1gr294adjoqv8l", "r:3555cb434e61f33790783b23113b4f52",  502617, Common::JA_JPN, 404),
 
 	// Original filename is '心象風景'
 	MACGAME1_l("shinshofukei", "",		   "xn--15t91mv19ahjk", "r:8b138db44d4421cc7294a9dc792ccf1b",  502617, Common::JA_JPN, 404),

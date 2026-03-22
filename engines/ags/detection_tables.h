@@ -4972,6 +4972,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("gobliins6", "Gobliins6.exe", "t:aac0f0616ede4ec1d4300103b008f34b", 1287057715),
 	// Steam release 2026-03-04 / Itch.io v10 release
 	GAME_ENTRY_STEAM("gobliins6", "Gobliins6.exe", "t:aac0f0616ede4ec1d4300103b008f34b", 1287057535),
+	// Steam release 2026-03-20 / Itch.io v11 release
+	GAME_ENTRY_STEAM("gobliins6", "Gobliins6.exe", "t:aac0f0616ede4ec1d4300103b008f34b", 1287059536),
 
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "dbe281d93c914899886e77c09c3c65ec", 130844360), // Linux & Mac
 	GAME_ENTRY_EN_STEAM("goldenwake", "a-golden-wake.exe", "e7080df9729aae2a0097b752198f3cca", 130846774),

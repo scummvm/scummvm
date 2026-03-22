@@ -60,12 +60,13 @@ struct GridItemInfo {
 	Common::String		attribute;
 	Common::Language	language;
 	Common::Platform 	platform;
+	bool                    canLoadGame;
 
 	int32				x, y, w, h;
 
 	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
-		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p, bool v)
-		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), validEntry(v), isHeader(false) {
+		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p, bool v, bool cl)
+		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), validEntry(v), canLoadGame(cl), isHeader(false) {
 		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
@@ -85,6 +86,7 @@ class GridItemTray: public Dialog, public CommandSender {
 	PicButtonWidget	*_editButton;
 public:
 	GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entryID, GridWidget *grid);
+	void enableLoadButton(bool canLoad) { _loadButton->setEnabled(canLoad); }
 
 	void reflowLayout() override;
 

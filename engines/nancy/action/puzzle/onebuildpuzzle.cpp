@@ -243,7 +243,7 @@ void OneBuildPuzzle::handleInput(NancyInput &input) {
 	if (_isDragging) {
 		// Always update drag position while carrying a piece
 		updateDragPosition(mouseVP);
-		g_nancy->_cursor->setCursorType(CursorManager::kHotspot);
+		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
 
 		if (_solveState != kIdle)
 			return;

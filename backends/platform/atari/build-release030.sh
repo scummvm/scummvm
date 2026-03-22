@@ -9,7 +9,7 @@ cd build-release030
 PLATFORM=m68k-atari-mintelf
 FASTCALL=false
 export ASFLAGS="-m68030"
-export CXXFLAGS="-m68030 -DDISABLE_FANCY_THEMES"
+export CXXFLAGS="-m68030 -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL"
 export LDFLAGS="-m68030"
 
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-19 17:17+0000\n"
-"PO-Revision-Date: 2026-03-19 17:35+0000\n"
+"POT-Creation-Date: 2026-03-22 17:43+0000\n"
+"PO-Revision-Date: 2026-03-21 22:22+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -327,7 +327,7 @@ msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1913 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
@@ -346,7 +346,7 @@ msgstr "Sí"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1914 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -1698,11 +1698,11 @@ msgstr "Año desconocido"
 msgid "All"
 msgstr "Todo"
 
-#: gui/launcher.cpp:1786
+#: gui/launcher.cpp:1790
 msgid "Icons per row:"
 msgstr "Iconos por fila:"
 
-#: gui/launcher.cpp:1837
+#: gui/launcher.cpp:1841
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -1884,7 +1884,7 @@ msgstr "Zona inactiva stick:"
 #: gui/options.cpp:1557
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr "Quedan %d logro(s) oculto(s)"
+msgstr "Logros ocultos: %d"
 
 #: gui/options.cpp:1562
 #, c-format
@@ -2658,7 +2658,7 @@ msgstr ""
 
 #: gui/options.cpp:2862
 msgid "Closing options dialog will stop the server."
-msgstr "Cerrar el panel de opciones parará el servidor."
+msgstr "Cerrar el panel de opciones detendrá el servidor."
 
 #: gui/options.cpp:2873
 msgid "Use Text to speech"
@@ -3051,9 +3051,8 @@ msgid ""
 "which requires access to the Internet. Would you\n"
 "like to enable this feature?"
 msgstr ""
-"ScummVM puede buscar actualizaciones automáticamente,\n"
-"para lo cual hace falta una conexión a Internet. ¿Quieres\n"
-"activar esta opción?"
+"ScummVM puede buscar actualizaciones automáticamente\n"
+"si tienes conexión a Internet. ¿Quieres activar esta opción?"
 
 #: gui/updates-dialog.cpp:50
 msgid ""
@@ -3470,7 +3469,7 @@ msgstr ""
 
 #: dists/android.strings.xml.cpp:44
 msgid "Toggle virtual keyboard"
-msgstr "Alternar teclado virtual"
+msgstr "Mostrar/Ocultar teclado virtual"
 
 #: dists/android.strings.xml.cpp:45 engines/scumm/help.cpp:82
 #: engines/scumm/help.cpp:86 engines/scumm/help.cpp:88
@@ -4129,13 +4128,13 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"El dispositivo de sonido seleccionado, '%s', no se ha podido encontrar "
-"(puede estar apagado o desconectado)."
+"No se ha encontrado el dispositivo de sonido «%s» (puede estar apagado o "
+"desconectado)."
 
 #: audio/mididrv.cpp:233 audio/mididrv.cpp:247 audio/mididrv.cpp:285
 #: audio/mididrv.cpp:302
 msgid "Attempting to fall back to the next available device..."
-msgstr "Pasando al siguiente dispositivo disponible..."
+msgstr "Buscando el siguiente dispositivo disponible..."
 
 #: audio/mididrv.cpp:246
 #, c-format
@@ -4143,8 +4142,8 @@ msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"El dispositivo de sonido seleccionado, '%s', no se puede utilizar. Consulta "
-"el registro para más información."
+"No se puede utilizar el dispositivo de sonido «%s». Consulta el registro "
+"para más información."
 
 #: audio/mididrv.cpp:284
 #, c-format
@@ -4152,8 +4151,8 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"El dispositivo de sonido preferido, '%s', no se ha podido encontrar (puede "
-"estar apagado o desconectado)."
+"No se ha encontrado el dispositivo de sonido preferido «%s» (puede estar "
+"apagado o desconectado)."
 
 #: audio/mididrv.cpp:301
 #, c-format
@@ -4161,7 +4160,7 @@ msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
 msgstr ""
-"El dispositivo de sonido preferido, '%s', no se puede utilizar. Consulta el "
+"No se puede utilizar el dispositivo de sonido preferido «%s». Consulta el "
 "registro para más información."
 
 #: audio/mididrv.cpp:469
@@ -4178,7 +4177,7 @@ msgstr "Sin música"
 
 #: audio/softsynth/appleiigs.cpp:34
 msgid "Apple II GS emulator (NOT IMPLEMENTED)"
-msgstr "Emulación de Apple II GS (NO IMPLEMENTADO)"
+msgstr "Emulación de Apple II GS (SIN IMPLEMENTAR)"
 
 #: audio/softsynth/cms.cpp:372
 msgid "Creative Music System emulator"
@@ -4238,7 +4237,7 @@ msgstr "<sincronizando...>"
 
 #: backends/cloud/storage.cpp:246
 msgid "Saved games sync was cancelled."
-msgstr "La sincronización se ha cancelado."
+msgstr "Se ha cancelado la sincronización."
 
 #: backends/cloud/storage.cpp:248
 msgid ""
@@ -4297,7 +4296,7 @@ msgstr "Mostrar teclado"
 #: backends/events/default/default-events.cpp:352
 #: engines/ngi/metaengine.cpp:149
 msgid "Toggle mute"
-msgstr "Silenciar audio"
+msgstr "Silenciar/Desilenciar audio"
 
 #: backends/events/default/default-events.cpp:380
 msgid "Open Debugger"
@@ -4341,7 +4340,7 @@ msgstr "Elegir una carpeta nueva"
 #: backends/graphics/atari/atari-graphics.cpp:1058
 #: backends/graphics/sdl/sdl-graphics.cpp:515 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
-msgstr "Corregir relación de aspecto"
+msgstr "Alternar corrección de relación de aspecto"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:316
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:128
@@ -4426,16 +4425,16 @@ msgstr "Modo ventana"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:492 engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
-msgstr "Activar/Desactivar pantalla completa"
+msgstr "Alternar pantalla completa"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:499 engines/scumm/help.cpp:100
 #: engines/wintermute/keymapper_tables.h:960
 msgid "Toggle mouse capture"
-msgstr "Activar/Desactivar captura de ratón"
+msgstr "Alternar captura de ratón"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:504
 msgid "Toggle resizable window"
-msgstr "Activar/Desactivar cambio de tamaño de ventana"
+msgstr "Alternar cambio de tamaño de ventana"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:509 engines/stark/metaengine.cpp:240
 #: engines/wintermute/keymapper_tables.h:646
@@ -4452,7 +4451,7 @@ msgstr "Guardar captura de pantalla"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:522
 msgid "Toggle linear filtered scaling"
-msgstr "Escalado con filtro lineal"
+msgstr "Activar/Desactivar escalado con filtro lineal"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:529
 msgid "Cycle through stretch modes"
@@ -4980,11 +4979,11 @@ msgstr "Tocar"
 
 #: backends/platform/3ds/osystem-events.cpp:309
 msgid "Toggle Drag Mode"
-msgstr "Modo de arrastre"
+msgstr "Activar/Desactivar modo de arrastre"
 
 #: backends/platform/3ds/osystem-events.cpp:314
 msgid "Toggle Magnify Mode"
-msgstr "Modo aumentado"
+msgstr "Activar/Desactivar modo aumentado"
 
 #: backends/platform/3ds/osystem-events.cpp:349
 msgid ""
@@ -5441,12 +5440,11 @@ msgstr "Selecciona el destino de la copia de seguridad"
 
 #: backends/platform/android/options.cpp:280
 msgid "The backup has been saved successfully."
-msgstr "La copia de seguridad se ha guardado con éxito."
+msgstr "Se ha guardado la copia de seguridad."
 
 #: backends/platform/android/options.cpp:282
 msgid "The backup has been saved successfully to the Downloads folder."
-msgstr ""
-"La copia de seguridad se ha guardado con éxito en la carpeta de descargas."
+msgstr "Se ha guardado la copia de seguridad en la carpeta de descargas."
 
 #: backends/platform/android/options.cpp:284
 #: backends/platform/android/options.cpp:317
@@ -6204,7 +6202,7 @@ msgstr "R3"
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:43
 #: engines/dragons/metaengine.cpp:200
 msgid "Cross"
-msgstr "Cruz"
+msgstr "Cruz/X"
 
 #. I18N: Hardware key on controller
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:45
@@ -6600,7 +6598,7 @@ msgstr "No se puede localizar el archivo de datos del motor '%s'."
 #: engines/toon/toon.cpp:5438
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr "El archivo de datos del motor '%s' está corrupto."
+msgstr "El archivo de datos del motor '%s' está dañado."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:1020
 #: engines/hugo/hugo.cpp:483 engines/lure/lure.cpp:69
@@ -7026,7 +7024,7 @@ msgstr "Activar/Desactivar efectos de sonido"
 #: engines/sky/metaengine.cpp:131 engines/teenagent/metaengine.cpp:239
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
-msgstr "Modo rápido"
+msgstr "Activar/Desactivar modo rápido"
 
 #: engines/agos/metaengine.cpp:216 engines/lab/metaengine.cpp:264
 msgid "Walk forward"
@@ -7066,7 +7064,7 @@ msgstr "Girar a la derecha"
 
 #: engines/agos/metaengine.cpp:241
 msgid "Toggle fight mode"
-msgstr "Alternar modo de combate"
+msgstr "Activar/Desactivar modo de combate"
 
 #: engines/agos/metaengine.cpp:250
 msgid "Text speed - Fast"
@@ -7095,7 +7093,7 @@ msgstr "Cambiar de personaje"
 
 #: engines/agos/metaengine.cpp:287
 msgid "Toggle hitbox names"
-msgstr "Activar/Desactivar nombres de puntos de interés"
+msgstr "Mostrar/Ocultar nombres de puntos de interés"
 
 #: engines/agos/metaengine.cpp:294
 msgid "Switches between speech only and combined speech and subtitles"
@@ -7319,7 +7317,7 @@ msgstr "Calidad alta"
 
 #: engines/alcachofa/metaengine.cpp:41
 msgid "Toggles some optional graphical effects"
-msgstr "Activar/Desactivar ciertos efectos gráficos opcionales"
+msgstr "Mostrar/Ocultar ciertos efectos gráficos opcionales"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
@@ -7353,7 +7351,7 @@ msgstr "Mirar"
 #: engines/alcachofa/metaengine.cpp:122 engines/stark/metaengine.cpp:245
 #: engines/toon/metaengine.cpp:124 engines/wintermute/keymapper_tables.h:1345
 msgid "Toggle subtitles"
-msgstr "Subtítulos"
+msgstr "Mostrar/Ocultar subtítulos"
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
@@ -7689,7 +7687,7 @@ msgstr "Andar/Mirar/Hablar/Seleccionar/Disparar"
 #: engines/bladerunner/metaengine.cpp:220
 #: engines/ultima/nuvie/metaengine.cpp:73
 msgid "Toggle combat"
-msgstr "Entrar/salir del modo de combate"
+msgstr "Entrar/Salir del modo de combate"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
@@ -8443,11 +8441,11 @@ msgstr "Avanzar tiempo"
 
 #: engines/dgds/metaengine.cpp:76
 msgid "Toggle Menu"
-msgstr "Alternar menú"
+msgstr "Mostrar/Ocultar menú"
 
 #: engines/dgds/metaengine.cpp:77
 msgid "Toggle Clock"
-msgstr "Alternar reloj"
+msgstr "Mostrar/Ocultar reloj"
 
 #: engines/dgds/metaengine.cpp:78
 msgid "Next dialog / menu item"
@@ -9107,7 +9105,7 @@ msgstr "Seleccionar a la princesa"
 #: engines/freescape/games/eclipse/eclipse.cpp:254
 #: engines/hugo/metaengine.cpp:154
 msgid "Toggle sound"
-msgstr "Alternar sonido"
+msgstr "Activar/Desactivar sonido"
 
 #: engines/freescape/games/castle/castle.cpp:382
 #: engines/freescape/games/dark/dark.cpp:223
@@ -9215,7 +9213,7 @@ msgstr "Descansar"
 
 #: engines/freescape/games/eclipse/eclipse.cpp:298
 msgid "Toggle flashlight"
-msgstr "Alternar linterna"
+msgstr "Encender/Apagar linterna"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -11093,7 +11091,7 @@ msgstr "Inicia el juego con el panel de control de depuración activado."
 
 #: engines/mtropolis/metaengine.cpp:179
 msgid "Toggle debug overlay"
-msgstr "Alternar superposición de depuración"
+msgstr "Mostrar/Ocultar superposición de depuración"
 
 #: engines/mtropolis/metaengine.cpp:184
 msgid "Force any playing movies to end"
@@ -11473,7 +11471,7 @@ msgstr "Activar/Desactivar menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
-msgstr "IA locuaz"
+msgstr "Activar/Desactivar IA locuaz"
 
 #: engines/petka/metaengine.cpp:117
 msgid "Interact / Skip dialog"
@@ -12860,7 +12858,7 @@ msgstr "Tercer chaval"
 
 #: engines/scumm/help.cpp:296
 msgid "Toggle Inventory/IQ Points display"
-msgstr "Alternar pantallas de inventario/puntuación"
+msgstr "Mostrar/Ocultar pantallas de inventario/puntuación"
 
 #: engines/scumm/help.cpp:297
 msgid "Toggle Keyboard/Mouse Fighting (*)"
@@ -15436,7 +15434,7 @@ msgid "Show game menu; Cancel action if in middle of action"
 msgstr "Mostrar menú del juego/Cancelar acciones en curso"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-msgid "Toggle Cursor"
+msgid "Toggle cursor"
 msgstr "Mostrar/Ocultar cursor"
 
 #: engines/ultima/nuvie/metaengine.cpp:98

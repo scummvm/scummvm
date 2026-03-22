@@ -975,4 +975,14 @@ const Common::Array<const char *> _nancy9EventFlagNames = {
 	"EV_Empty114",
 };
 
+const Common::Array<const char *> nancy9PatchSrcFiles {
+	"NCP06na.HIS"
+};
+
+// Patch notes:
+// - The missing sound file is a patch from the original devs. Should only be enabled in the English version
+const Common::Array<PatchAssociation> nancy9PatchAssociations {
+	{ { "language", "en" }, { "NCP06na.HIS" } }
+};
+
 #endif // NANCY9DATA_H

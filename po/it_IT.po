@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-03-19 17:17+0000\n"
-"PO-Revision-Date: 2026-03-18 09:57+0000\n"
+"POT-Creation-Date: 2026-03-22 17:43+0000\n"
+"PO-Revision-Date: 2026-03-21 11:31+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -328,7 +328,7 @@ msgstr "Un altro servizio di archiviazione è attivo. Vuoi interromperlo?"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1909 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1913 gui/options.cpp:3485
 #: gui/options.cpp:3859 base/main.cpp:597
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:91 engines/director/events.cpp:122
@@ -347,7 +347,7 @@ msgstr "Sì"
 #: gui/cloudconnectionwizard.cpp:530 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:428 gui/launcher.cpp:457
-#: gui/launcher.cpp:530 gui/launcher.cpp:1910 gui/options.cpp:3485
+#: gui/launcher.cpp:530 gui/launcher.cpp:1914 gui/options.cpp:3485
 #: gui/options.cpp:3859 engines/buried/buried.cpp:598
 #: engines/chamber/metaengine.cpp:97 engines/director/events.cpp:122
 #: engines/director/lingo/xlibs/j/jitdraw3.cpp:139
@@ -1701,11 +1701,11 @@ msgstr "Anno sconosciuto"
 msgid "All"
 msgstr "Tutti"
 
-#: gui/launcher.cpp:1786
+#: gui/launcher.cpp:1790
 msgid "Icons per row:"
 msgstr "Icone per riga:"
 
-#: gui/launcher.cpp:1837
+#: gui/launcher.cpp:1841
 #, c-format
 msgid ""
 "Do you really want to remove the following %d game configuration(s)?\n"
@@ -14479,8 +14479,6 @@ msgid "Save and load game"
 msgstr "Salva / carica gioco"
 
 #: engines/tot/metaengine.cpp:164
-#, fuzzy
-#| msgid "Main menu/Exit"
 msgid "Main menu / Exit"
 msgstr "Menù principale / Uscita"
 
@@ -15012,38 +15010,26 @@ msgid "Shield"
 msgstr "Scudo"
 
 #: engines/ultima/ultima0/metaengine.cpp:55
-#, fuzzy
-#| msgid "Bow & Arrow"
 msgid "Bow & arrow"
 msgstr "Arco e frecce"
 
 #: engines/ultima/ultima0/metaengine.cpp:56
-#, fuzzy
-#| msgid "Magic Amulet"
 msgid "Magic amulet"
 msgstr "Amuleto magico"
 
 #: engines/ultima/ultima0/metaengine.cpp:57
-#, fuzzy
-#| msgid "Amulet Option 1"
 msgid "Amulet option 1"
 msgstr "Amuleto opzione 1"
 
 #: engines/ultima/ultima0/metaengine.cpp:58
-#, fuzzy
-#| msgid "Amulet Option 2"
 msgid "Amulet option 2"
 msgstr "Amuleto opzione 2"
 
 #: engines/ultima/ultima0/metaengine.cpp:59
-#, fuzzy
-#| msgid "Amulet Option 3"
 msgid "Amulet option 3"
 msgstr "Amuleto opzione 3"
 
 #: engines/ultima/ultima0/metaengine.cpp:60
-#, fuzzy
-#| msgid "Amulet Option 4"
 msgid "Amulet option 4"
 msgstr "Amuleto opzione 4"
 
@@ -15065,17 +15051,13 @@ msgstr "Est"
 
 #: engines/ultima/ultima0/metaengine.cpp:69
 #: engines/ultima/ultima0/metaengine.cpp:83
-#, fuzzy
-#| msgid "Enter/Exit"
 msgid "Enter / Exit"
-msgstr "Entra/Esci"
+msgstr "Entra / Esci"
 
 #: engines/ultima/ultima0/metaengine.cpp:72
 #: engines/ultima/ultima0/metaengine.cpp:86
-#, fuzzy
-#| msgid "Pass/Wait"
 msgid "Pass / Wait"
-msgstr "Passa/Attendi"
+msgstr "Passa / Attendi"
 
 #: engines/ultima/ultima0/metaengine.cpp:73
 #: engines/ultima/ultima0/metaengine.cpp:87
@@ -15083,8 +15065,6 @@ msgid "Minimap"
 msgstr "Minimappa"
 
 #: engines/ultima/ultima0/metaengine.cpp:79
-#, fuzzy
-#| msgid "Turn Around"
 msgid "Turn around"
 msgstr "Voltati"
 
@@ -15093,29 +15073,21 @@ msgstr "Voltati"
 #: engines/ultima/ultima0/metaengine.cpp:111
 #: engines/ultima/ultima0/metaengine.cpp:117
 #: engines/ultima/ultima0/metaengine.cpp:123
-#, fuzzy
-#| msgid "Basic Keys"
 msgid "Basic keys"
 msgstr "Tasti di base"
 
 #: engines/ultima/ultima0/metaengine.cpp:99
 #: engines/ultima/ultima0/metaengine.cpp:112
-#, fuzzy
-#| msgid "Menu Keys"
 msgid "Menu keys"
 msgstr "Tasti dei menù"
 
 #: engines/ultima/ultima0/metaengine.cpp:100
 #: engines/ultima/ultima0/metaengine.cpp:118
-#, fuzzy
-#| msgid "Overworld Keys"
 msgid "Overworld keys"
 msgstr "Tasti nel mondo esterno"
 
 #: engines/ultima/ultima0/metaengine.cpp:101
 #: engines/ultima/ultima0/metaengine.cpp:124
-#, fuzzy
-#| msgid "Dungeon Keys"
 msgid "Dungeon keys"
 msgstr "Tasti nei dungeon"
 
@@ -15444,7 +15416,7 @@ msgid "Show game menu; Cancel action if in middle of action"
 msgstr "Mostra menù di gioco; Annulla azione in corso"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-msgid "Toggle Cursor"
+msgid "Toggle cursor"
 msgstr "Mostra / nascondi cursore"
 
 #: engines/ultima/nuvie/metaengine.cpp:98
