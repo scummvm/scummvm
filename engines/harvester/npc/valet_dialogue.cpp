@@ -27,13 +27,48 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kValetSpeakerId = "VALET";
+static const char *const kValetCutscenePath = "GRAPHIC/FST/MIDGET02.FST";
+
+static const DialogueLineEntry kValetIntroLines[] = {
+	{ 0xf2c, kValetSpeakerId, 1 },
+	{ 0xf31, "PC", 0 },
+	{ 0xf35, kValetSpeakerId, 0 },
+	{ 0xf39, "PC", 0 }
+};
+
+} // End of namespace
+
 bool ValetDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("VALET");
 }
 
 Common::Error ValetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLineWithVariant(0xf2c, "VALET", 1);
+	Common::Error lineError = runtime.playDialogueEntrySequence(kValetIntroLines, ARRAYSIZE(kValetIntroLines));
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = runtime.playDialogueFst(kValetCutscenePath);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(0x2fe, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1) {
+		lineError = runtime.playDialogueLine(0xf4a, kValetSpeakerId);
+	} else if (responseIndex == 2) {
+		lineError = runtime.playDialogueLineWithVariant(0xf50, kValetSpeakerId, 2);
+	}
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	return runtime.playDialogueLine(0xf56, kValetSpeakerId);
 }
 
 } // End of namespace Harvester
