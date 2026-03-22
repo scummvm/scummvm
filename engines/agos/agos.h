@@ -780,6 +780,8 @@ protected:
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	void loadSimon2LanguageOverlay();
 	bool hasSimon2LanguageFiles() const;
+	Common::Language getNextSimon2OverlayLanguage() const;
+	void cycleSimon2LanguageOverlay();
 	Common::String translateLanguageOverlay(const Common::String &english) const;
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
@@ -896,6 +898,8 @@ protected:
 
 	void endCutscene();
 	virtual void runSubroutine101();
+	bool isSimon2LanguageToggleKeyPressed() const;
+	void refreshSimon2LanguageText();
 
 	virtual void inventoryUp(WindowBlock *window);
 	virtual void inventoryDown(WindowBlock *window);
