@@ -98,4 +98,33 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 	}
 }
 
+void Tooltip::handleMouseDown(int x, int y, int button, int clickCount) {
+	close();
+	_parent->handleMouseDown(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+}
+
+void Tooltip::handleMouseUp(int x, int y, int button, int clickCount) {
+	close();
+	_parent->handleMouseUp(x + (getAbsX() - _parent->getAbsX()), y + (getAbsY() - _parent->getAbsY()), button, clickCount);
+}
+
+void Tooltip::handleMouseWheel(int x, int y, int direction) {
+	close();
+	_parent->handleMouseWheel(x + (getAbsX() - _parent->getAbsX()), y + (getAbsX() - _parent->getAbsX()), direction);
+}
+
+void Tooltip::handleKeyDown(Common::KeyState state) {
+	close();
+	_parent->handleKeyDown(state);
+}
+
+void Tooltip::handleKeyUp(Common::KeyState state) {
+	close();
+	_parent->handleKeyUp(state);
+}
+
+void Tooltip::handleMouseMoved(int x, int y, int button) {
+	close();
+}
+
 }
