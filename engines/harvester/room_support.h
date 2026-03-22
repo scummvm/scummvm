@@ -115,7 +115,7 @@ StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &o
 	const Common::String &objectName);
 const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupResolvedText &text);
 void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
-	const StartupResolvedText &inspectText);
+	const StartupResolvedText &inspectText, bool useNativeFont);
 bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
 	Script &startupScript);
 bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region);

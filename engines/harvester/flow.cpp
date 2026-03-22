@@ -70,10 +70,12 @@ static const int kQuickTipTextY = 228;
 static const int kQuickTipTextWidth = 280;
 
 static const int kCursorSequence7 = 7;
-static const int kIdentTextboxX = 85;
-static const int kIdentTextboxY = 177;
+static const int kIdentTextboxX = 177;
+static const int kIdentTextboxY = 85;
 static const int kIdentTextboxTextInsetX = 10;
 static const int kIdentTextboxTextInsetY = 5;
+static const int kNativeIdentTextYOffset = 1;
+static const int kNativeIdentTextLineSpacing = 3;
 static const char *const kPlayerActorEntityName = "PLAYER";
 static const uint32 kPaletteFadeTickMs = 4;
 static const float kPaletteFadeStep = 0.1f;
@@ -444,6 +446,16 @@ static void drawWrappedShadowedText(Graphics::Screen &screen, const Graphics::Fo
 		drawShadowedString(screen, font, lines[i], x, y + i * lineHeight, width, color);
 }
 
+static void drawWrappedText(Graphics::Screen &screen, const Graphics::Font &font, const Common::String &text,
+		int x, int y, int width, byte color, int lineSpacing) {
+	Common::Array<Common::String> lines;
+	font.wordWrapText(text, width, lines);
+
+	const int lineHeight = font.getFontHeight() + lineSpacing;
+	for (uint i = 0; i < lines.size(); ++i)
+		font.drawString(&screen, lines[i], x, y + i * lineHeight, width, color);
+}
+
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
 	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
@@ -754,12 +766,22 @@ const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupRe
 }
 
 void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
-		const StartupResolvedText &inspectText) {
+		const StartupResolvedText &inspectText, bool useNativeFont) {
 	const IndexedBitmap *textbox = resolveInspectTextboxBitmap(art, inspectText);
 	if (!textbox || !textbox->isValid())
 		return;
 
 	blitBitmap(screen, *textbox, kIdentTextboxX, kIdentTextboxY);
+	if (useNativeFont) {
+		drawWrappedText(screen, font, inspectText.value,
+			kIdentTextboxX,
+			kIdentTextboxY + kNativeIdentTextYOffset,
+			(int)textbox->width,
+			0,
+			kNativeIdentTextLineSpacing);
+		return;
+	}
+
 	drawWrappedShadowedText(screen, font, inspectText.value,
 		kIdentTextboxX + kIdentTextboxTextInsetX,
 		kIdentTextboxY + kIdentTextboxTextInsetY,
