@@ -33,6 +33,13 @@ public:
 	NoctropolisInventory(AccessEngine *vm);
 
 	int displayInv() override;
+
+private:
+	bool _keepInventoryPosition;
+
+	Common::Point _inventoryBase;
+
+	int _topItemIndex;
 };
 
 } // end namespace Noctropolis

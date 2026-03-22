@@ -64,7 +64,7 @@ int AmazonInventory::displayInv() {
 
 	if (!_invRefreshFlag) {
 		chooseItem();
-		if (_vm->_useItem != -1) {
+		if (useItem() != -1) {
 			int savedScale = _vm->_scale;
 			_vm->_scale = 153;
 			_vm->_screen->setScaleTable(_vm->_scale);
@@ -117,7 +117,7 @@ int AmazonInventory::displayInv() {
 
 	int result = 0;
 	if (!_invRefreshFlag) {
-		if (_vm->_useItem == -1) {
+		if (useItem() == -1) {
 			result = 2;
 			events.forceSetCursor(CURSOR_CROSSHAIRS);
 		} else

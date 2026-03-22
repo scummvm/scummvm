@@ -401,4 +401,21 @@ void EventsManager::restrictMouse() {
 	// No implementation in ScummVM
 }
 
+/*static*/
+int16 EventsManager::clipMouseCenter(int16 mousePos, int16 length, int16 maxLength, int16 &warpMousePos) {
+	int16 basePos;
+	if (mousePos - (length / 2) < 0) {
+		basePos = 0;
+		warpMousePos = length / 2;
+	} else if (mousePos + length >= maxLength) {
+		basePos = maxLength - length;
+		warpMousePos = maxLength - (length / 2);
+	} else {
+		basePos = mousePos - (length / 2);
+		warpMousePos = mousePos;
+	}
+	return basePos;
+}
+
+
 } // End of namespace Access

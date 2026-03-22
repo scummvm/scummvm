@@ -94,7 +94,7 @@ int &InventoryManager::operator[](int idx) {
 	return (idx >= (int)_inv.size()) ? invalid : _inv[idx]._value;
 }
 
-int InventoryManager::useItem() {
+int InventoryManager::useItem() const {
 	return _vm->_useItem;
 }
 
@@ -218,7 +218,7 @@ void InventoryManager::putInvIcon(int itemIndex, int itemId) {
 
 void InventoryManager::chooseItem() {
 	EventsManager &events = *_vm->_events;
-	_vm->_useItem = -1;
+	setUseItem(-1);
 
 	while (!_vm->shouldQuit()) {
 		// Check for events
@@ -231,7 +231,7 @@ void InventoryManager::chooseItem() {
 
 		if (selIndex > 23) {
 			if (selIndex == 25)
-				_vm->_useItem = -1;
+				setUseItem(-1);
 			break;
 		} else if (selIndex < (int)_items.size() && _items[selIndex] != -1) {
 			_boxNum = selIndex;
@@ -239,7 +239,7 @@ void InventoryManager::chooseItem() {
 			combineItems();
 			_vm->copyBF2Vid();
 			outlineIcon(_boxNum);
-			_vm->_useItem = _items[_boxNum];
+			setUseItem(_items[_boxNum]);
 		}
 	}
 }

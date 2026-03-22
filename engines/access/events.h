@@ -173,6 +173,8 @@ public:
 	void centerMousePos();
 	void restrictMouse();
 
+	static int16 clipMouseCenter(int16 mousePos, int16 length, int16 maxLength, int16 &warpMousePos);
+
 	/* get ms delay before considering something a double-click */
 	uint32 getDoubleClickTime() const;
 };

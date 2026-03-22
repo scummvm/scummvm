@@ -54,9 +54,9 @@ int MartianInventory::displayInv() {
 		btnSelected = 2;
 
 	if (btnSelected != 2)
-		_vm->_useItem = _vm->_invBox->_tempListIdx[boxX];
+		setUseItem(_vm->_invBox->_tempListIdx[boxX]);
 	else
-		_vm->_useItem = -1;
+		setUseItem(-1);
 
 	return 0;
 }

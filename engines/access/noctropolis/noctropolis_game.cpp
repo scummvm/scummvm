@@ -24,6 +24,7 @@
 #include "access/noctropolis/noctropolis_scripts.h"
 #include "access/noctropolis/noctropolis_resources.h"
 #include "access/noctropolis/noctropolis_comicviewer.h"
+#include "access/noctropolis/noctropolis_inventory.h"
 #include "image/png.h"
 #include "graphics/color_quantizer.h"
 #include "common/config-manager.h"
@@ -47,6 +48,7 @@ void NoctropolisEngine::initObjects() {
 	_room = new NoctropolisRoom(this);
 	_scripts = new NoctropolisScripts(this);
 	_invScript = new NoctropolisScripts(this);
+	_inventory = new NoctropolisInventory(this);
 	_stil = new Player(this);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
