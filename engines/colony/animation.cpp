@@ -17,6 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * Based on the original sources
+ *   https://github.com/Croquetx/thecolony
+ * Copyright (C) 1988, David A. Smith
+ *
+ * Distributed under Apache Version 2.0 License
+ *
  */
 
 #include "colony/colony.h"
