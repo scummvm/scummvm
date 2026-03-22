@@ -36,12 +36,10 @@ private:
 
 public:
 	Tooltip();
-
 	void setup(Dialog *parent, Widget *widget, int x, int y);
-
 	void drawDialog(DrawLayer layerToDraw) override;
-
 	void receivedFocus(int x = -1, int y = -1) override {}
+
 protected:
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;

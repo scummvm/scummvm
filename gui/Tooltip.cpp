@@ -23,16 +23,13 @@
 #include "gui/widget.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
-
 #include "gui/Tooltip.h"
 #include "gui/ThemeEval.h"
 
 namespace GUI {
 
-
 Tooltip::Tooltip() :
 	Dialog(-1, -1, -1, -1), _maxWidth(-1), _widget(nullptr), _xdelta(0), _ydelta(0), _xpadding(0), _ypadding(0) {
-
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
 
@@ -128,4 +125,4 @@ void Tooltip::handleMouseMoved(int x, int y, int button) {
 	_widget->handleMouseMoved(x, y, button);
 }
 
-}
+} // End of namespace GUI
