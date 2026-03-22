@@ -32,6 +32,7 @@ public:
 		bool introPending = true;
 		bool dialogueStateD2d50 = false;
 		bool dialogueStateD2d54 = false;
+		bool dialogueStateD2d58 = false;
 		bool day5ReminderShown = false;
 	};
 
