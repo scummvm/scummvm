@@ -209,6 +209,21 @@ const AnimColorEntry kAnimColors[] = {
 	{ nullptr, nullptr, 0 }
 };
 
+// Desk animation sprite indices (from desk.pic ComplexSprite layout).
+enum {
+	kDeskTeeth = 6,
+	kDeskLetterEnv = 7,    // letter envelope
+	kDeskLetterOpen = 8,   // letter opened
+	kDeskClipboard = 9,
+	kDeskScreen = 17,
+	kDeskJackFirst = 18,   // jack-in-the-box sprites 18..21
+	kDeskJackLast = 21,
+	kDeskBook = 22,
+	kDeskCigarette1 = 23,
+	kDeskCigarette2 = 24,
+	kDeskPostIt = 25
+};
+
 // Convert Mac Toolbox BackColor constant to ARGB.
 uint32 macSysColorToARGB(int sysColor) {
 	switch (sysColor) {
@@ -449,13 +464,13 @@ void ColonyEngine::playAnimation() {
 		}
 
 		if (_action0 != 10) {
-			setObjectOnOff(23, false);
-			setObjectOnOff(24, false);
+			setObjectOnOff(kDeskCigarette1, false);
+			setObjectOnOff(kDeskCigarette2, false);
 		}
 		if (_action0 != 30)
-			setObjectOnOff(6, false); // Teeth
-		if (_action0 != 33) { // Jack-in-the-box
-			for (int i = 18; i <= 21; i++)
+			setObjectOnOff(kDeskTeeth, false);
+		if (_action0 != 33) {
+			for (int i = kDeskJackFirst; i <= kDeskJackLast; i++)
 				setObjectOnOff(i, false);
 		}
 
@@ -465,34 +480,34 @@ void ColonyEngine::playAnimation() {
 		case 1:
 		case 2:
 		case 3:
-			setObjectOnOff(7, false);
-			setObjectOnOff(8, false);
-			setObjectOnOff(9, false);
-			setObjectOnOff(22, false);
-			setObjectOnOff(25, false);
+			setObjectOnOff(kDeskLetterEnv, false);
+			setObjectOnOff(kDeskLetterOpen, false);
+			setObjectOnOff(kDeskClipboard, false);
+			setObjectOnOff(kDeskBook, false);
+			setObjectOnOff(kDeskPostIt, false);
 			break;
 		case 4: // letters
-			setObjectOnOff(22, false);
-			setObjectOnOff(9, false);
-			setObjectOnOff(25, false);
+			setObjectOnOff(kDeskBook, false);
+			setObjectOnOff(kDeskClipboard, false);
+			setObjectOnOff(kDeskPostIt, false);
 			break;
 		case 5: // book
-			setObjectOnOff(7, false);
-			setObjectOnOff(8, false);
-			setObjectOnOff(9, false);
-			setObjectOnOff(25, false);
+			setObjectOnOff(kDeskLetterEnv, false);
+			setObjectOnOff(kDeskLetterOpen, false);
+			setObjectOnOff(kDeskClipboard, false);
+			setObjectOnOff(kDeskPostIt, false);
 			break;
 		case 6: // clipboard
-			setObjectOnOff(22, false);
-			setObjectOnOff(7, false);
-			setObjectOnOff(8, false);
-			setObjectOnOff(25, false);
+			setObjectOnOff(kDeskBook, false);
+			setObjectOnOff(kDeskLetterEnv, false);
+			setObjectOnOff(kDeskLetterOpen, false);
+			setObjectOnOff(kDeskPostIt, false);
 			break;
 		case 7: // postit
-			setObjectOnOff(22, false);
-			setObjectOnOff(7, false);
-			setObjectOnOff(8, false);
-			setObjectOnOff(9, false);
+			setObjectOnOff(kDeskBook, false);
+			setObjectOnOff(kDeskLetterEnv, false);
+			setObjectOnOff(kDeskLetterOpen, false);
+			setObjectOnOff(kDeskClipboard, false);
 			break;
 		}
 	} else if (_animationName == "vanity") {
@@ -1091,19 +1106,19 @@ void ColonyEngine::handleDeskClick(int item) {
 			drawAnimation();
 			_gfx->copyToScreen();
 		}
-	} else if (item == 7) { // Letter
-		if (_lSprites[6]->current > 0)
+	} else if (item == kDeskLetterEnv) {
+		if (_lSprites[kDeskLetterEnv - 1]->current > 0)
 			doText(_action1, 0);
-	} else if (item == 9) { // Clipboard
+	} else if (item == kDeskClipboard) {
 		doText(_action1, 0);
-	} else if (item == 17) { // Screen
+	} else if (item == kDeskScreen) {
 		doText(_action0, 0);
-	} else if (item == 22) { // Book
+	} else if (item == kDeskBook) {
 		doText(_action1, 0);
-	} else if (item == 24) { // Cigarette
+	} else if (item == kDeskCigarette2) { // Cigarette
 		doText(55, 0);
 		terminateGame(false);
-	} else if (item == 25) { // Post-it
+	} else if (item == kDeskPostIt) {
 		doText(_action1, 0);
 	}
 }
