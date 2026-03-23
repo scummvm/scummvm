@@ -31,7 +31,41 @@ namespace Harvester {
 namespace {
 
 static const int kLoomisSheriffTopicLineIndices[] = { 0x5f, 0x60, 0x61 };
+static const char *const kLoomisNpc = "LOOMIS";
+static const char *const kPcSpeaker = "PC";
+static const char *const kLoomisTopicAlias = "LOOMIS";
+static const char *const kPhelpsTopicAlias = "Phelps";
+static const char *const kMensNeedsTopicAlias = "Man's Needs";
+static const char *const kPcFryDaddyActionTag = "PC_FRY_DADDY_1";
 static const char *const kDialogueC048FstPath = "GRAPHIC/FST/C048.FST";
+
+static const DialogueLineEntry kLoomisIntroOpeningLines[] = {
+	{ 0x10fd, kLoomisNpc, 0 },
+	{ 0x1101, kPcSpeaker, 0 },
+	{ 0x1105, kLoomisNpc, 0 },
+	{ 0x110a, kPcSpeaker, 0 },
+	{ 0x110e, kLoomisNpc, 0 }
+};
+
+static const DialogueLineEntry kLoomisReturnVisitFollowupLines[] = {
+	{ 0x11a8, kLoomisNpc, 1 },
+	{ 0x11ac, kPcSpeaker, 0 },
+	{ 0x11b0, kLoomisNpc, 3 }
+};
+
+static const DialogueLineEntry kLoomisMrsLoomisLines[] = {
+	{ 0x114f, kLoomisNpc, 1 },
+	{ 0x1150, kLoomisNpc, 2 },
+	{ 0x1151, kLoomisNpc, 2 },
+	{ 0x1152, kLoomisNpc, 2 },
+	{ 0x1153, kLoomisNpc, 3 }
+};
+
+static const DialogueLineEntry kLoomisMrsPhelpsLines[] = {
+	{ 0x1161, kLoomisNpc, 0 },
+	{ 0x1162, kLoomisNpc, 3 },
+	{ 0x1163, kLoomisNpc, 3 }
+};
 
 } // End of namespace
 
@@ -40,7 +74,7 @@ bool LoomisDialogueHandler::matchesNpc(const Common::String &npcName) const {
 }
 
 Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &) {
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	LoomisRoomDialogueState &state = _state;
 	Common::String &loomisTopicBuffer = state.currentTopicBuffer;
 	int &loomisTopicBufferLineIndex = state.currentTopicBufferLineIndex;
@@ -49,53 +83,80 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.assignTopicBuffer(loomisTopicBuffer, loomisTopicBufferLineIndex,
 			responseLineIndex, "Loomis topic buffer");
 	};
-	auto playLoomisLine = [&](int wavId, const char *speakerId = "LOOMIS",
+	auto playLoomisLine = [&](int wavId, const char *speakerId = kLoomisNpc,
 			int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
 	};
-	auto clearLoomisTopicBuffer = [&]() {
-		loomisTopicBuffer.clear();
-		loomisTopicBufferLineIndex = -1;
+	auto executeLoomisActionTag = [&](const char *tag) {
+		StartupInteractionResult interaction;
+		if (!runtime.startupScript().executeActionTag(tag, interaction))
+			return;
+
+		runtime.applyImmediateDialogueInteractionEffects(interaction);
+		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 
 	if (usedItemName.empty()) {
-		if (!state.talkStatePending) {
-			if (state.returnVisitFollowupPending) {
-				state.returnVisitFollowupPending = false;
-				const DialogueLineEntry followupLines[] = {
-					{ 0x11a8, "LOOMIS", 1 },
-					{ 0x11ac, "PC", 0 },
-					{ 0x11b0, "LOOMIS", 0 }
-				};
-				return runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
-			}
-			return runtime.playDialogueLine(0x11f6, "LOOMIS");
-		}
+		Common::Error lineError = Common::kNoError;
+		if (state.talkStatePending) {
+			state.talkStatePending = false;
+			state.returnVisitFollowupPending = true;
 
-		state.talkStatePending = false;
-		if (!runtime.startupScript().getFlagValue("DWAYNE_INTRODUCED")) {
-			const DialogueLineEntry introLines[] = {
-				{ 0x10fd, "LOOMIS", 0 },
-				{ 0x1101, "PC", 0 },
-				{ 0x1105, "LOOMIS", 0 },
-				{ 0x110a, "PC", 0 },
-				{ 0x110e, "LOOMIS", 0 },
-				{ 0x1112, "PC", 0 },
-				{ runtime.startupScript().getFlagValue("SHERIFF_IN_DINER") ? 0x1118 : 0x111e, "LOOMIS", 0 },
-				{ 0x1121, "LOOMIS", 0 }
-			};
-			Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
+			if (!runtime.startupScript().getFlagValue("DWAYNE_INTRODUCED")) {
+				lineError = runtime.playDialogueEntrySequence(
+					kLoomisIntroOpeningLines, ARRAYSIZE(kLoomisIntroOpeningLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+
+				sharedState.dialogueStateD2f04 = true;
+				if (runtime.startupScript().getFlagValue("SHERIFF_IN_DINER")) {
+					lineError = playLoomisLine(0x1112, kPcSpeaker);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+					lineError = playLoomisLine(0x1118);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+			}
+
+			lineError = playLoomisLine(0x1121);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int ignoredResponseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x53, ignoredResponseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			lineError = playLoomisLine(0x1130, kLoomisNpc, 3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (state.returnVisitFollowupPending) {
+			state.returnVisitFollowupPending = false;
+			lineError = runtime.playDialogueEntrySequence(
+				kLoomisReturnVisitFollowupLines, ARRAYSIZE(kLoomisReturnVisitFollowupLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else {
-			Common::Error lineError = runtime.playDialogueLine(0x1121, "LOOMIS");
+			lineError = playLoomisLine(0x11f6);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
 
-		Common::Error lineError = playLoomisLine(0x1130);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+		if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
+				!state.stephMidgameShown) {
+			state.stephMidgameShown = true;
+			lineError = playLoomisLine(0x1230, kLoomisNpc, 3);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+		if (runtime.startupScript().getCurrentStoryDayIndex() == 5 &&
+				!state.dayFiveShown) {
+			state.dayFiveShown = true;
+			lineError = playLoomisLine(0x123c);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 
 		assignLoomisTopicBuffer(0x54);
 		for (;;) {
@@ -108,48 +169,38 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return Common::kNoError;
 
 			if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-					runtime.matchesResponseLine(selectedTopic, 0x56) ||
-					runtime.matchesResponseLine(selectedTopic, 0x66)) {
-				clearLoomisTopicBuffer();
-				state.returnVisitFollowupPending = true;
-				return playLoomisLine(0x113a);
+					runtime.matchesResponseLine(selectedTopic, 0x56)) {
+				return playLoomisLine(0x11a1, kLoomisNpc, 1);
 			}
 
 			if (runtime.matchesResponseLine(selectedTopic, 0x57)) {
-				lineError = playLoomisLine(0x1143, "LOOMIS", 1);
+				lineError = playLoomisLine(0x1143, kLoomisNpc, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignLoomisTopicBuffer(0x58);
 				continue;
 			}
-			if (runtime.matchesResponseLine(selectedTopic, 0x59)) {
-				const DialogueLineEntry mrsLoomisLines[] = {
-					{ 0x114f, "LOOMIS", 0 },
-					{ 0x1150, "LOOMIS", 0 },
-					{ 0x1151, "LOOMIS", 0 },
-					{ 0x1152, "LOOMIS", 0 },
-					{ 0x1153, "LOOMIS", 0 }
-				};
-				lineError = runtime.playDialogueEntrySequence(mrsLoomisLines, ARRAYSIZE(mrsLoomisLines));
+			if (runtime.matchesResponseLine(selectedTopic, 0x59) ||
+					selectedTopic.equalsIgnoreCase(kLoomisTopicAlias)) {
+				lineError = runtime.playDialogueEntrySequence(
+					kLoomisMrsLoomisLines, ARRAYSIZE(kLoomisMrsLoomisLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignLoomisTopicBuffer(0x5a);
 				continue;
 			}
-			if (runtime.matchesResponseLine(selectedTopic, 0x5b)) {
-				const DialogueLineEntry mrsPhelpsLines[] = {
-					{ 0x1161, "LOOMIS", 0 },
-					{ 0x1162, "LOOMIS", 0 },
-					{ 0x1163, "LOOMIS", 0 }
-				};
-				lineError = runtime.playDialogueEntrySequence(mrsPhelpsLines, ARRAYSIZE(mrsPhelpsLines));
+			if (runtime.matchesResponseLine(selectedTopic, 0x5b) ||
+					selectedTopic.equalsIgnoreCase(kPhelpsTopicAlias)) {
+				lineError = runtime.playDialogueEntrySequence(
+					kLoomisMrsPhelpsLines, ARRAYSIZE(kLoomisMrsPhelpsLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignLoomisTopicBuffer(0x5c);
 				continue;
 			}
-			if (runtime.matchesResponseLine(selectedTopic, 0x5d)) {
-				lineError = playLoomisLine(0x1170);
+			if (runtime.matchesResponseLine(selectedTopic, 0x5d) ||
+					selectedTopic.equalsIgnoreCase(kMensNeedsTopicAlias)) {
+				lineError = playLoomisLine(0x1170, kLoomisNpc, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				assignLoomisTopicBuffer(0x5e);
@@ -171,11 +222,17 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				continue;
 			}
 			if (runtime.matchesResponseLine(selectedTopic, 0x65)) {
-				lineError = playLoomisLine(0x1196);
+				lineError = playLoomisLine(0x1196, kLoomisNpc, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				continue;
 			}
+			if (runtime.matchesResponseLine(selectedTopic, 0x66))
+				continue;
+
+			lineError = playLoomisLine(0x11fc);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 		}
 	}
 
@@ -186,21 +243,45 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("TV_DEED") ||
 			usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-		return runtime.playDialogueLine(0x1209, "LOOMIS");
+		Common::Error lineError = playLoomisLine(0x1209);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x50, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playLoomisLine(0x1214);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		} else if (responseIndex == 2) {
+			lineError = playLoomisLine(0x1219);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
+
+		lineError = playLoomisLine(0x121f, kLoomisNpc, 3);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		executeLoomisActionTag(kPcFryDaddyActionTag);
+		return Common::kNoError;
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-		return runtime.playDialogueLine(0x1229, "LOOMIS");
+		return playLoomisLine(0x1229);
 	}
 	if (usedItemName.equalsIgnoreCase("INV_MAG")) {
 		if (!runtime.startupScript().getFlagValue("SHERIFF_IN_DINER")) {
 			(void)runtime.startupScript().addRuntimeObjectToInventory("INV_MAG");
-			return runtime.playDialogueLineWithVariant(0x11db, "LOOMIS", 1);
+			return playLoomisLine(0x11db, kLoomisNpc, 1);
 		}
 
-		Common::Error lineError = runtime.playDialogueLine(0x11bb, "LOOMIS");
+		Common::Error lineError = playLoomisLine(0x11bb);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -210,16 +291,17 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return responseError;
 
 		if (responseIndex == 1) {
-			bool changed = runtime.startupScript().setRuntimeObjectVisible("INVENTORY", "INV_MAG", false);
-			if (runtime.currentRoomName().equalsIgnoreCase("SHRFOFC")) {
-				changed |= runtime.startupScript().setRuntimeFlagValue("GAVE_MAG_TO_LOOMIS_TODAY", true);
-				changed |= runtime.startupScript().setRuntimeNpcState("LOOMIS", false, false);
-				changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR", true);
-				changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR2", false);
-			}
-			lineError = runtime.playDialogueLine(0x11c6, "LOOMIS");
+			lineError = playLoomisLine(0x11c6, kLoomisNpc, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+
+			bool changed = false;
+			changed |= runtime.startupScript().setRuntimeFlagValue("GAVE_MAG_TO_LOOMIS_TODAY", true);
+			changed |= runtime.startupScript().setRuntimeObjectVisible("INVENTORY", "INV_MAG", false);
+			changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR", true);
+			changed |= runtime.startupScript().setRuntimeObjectVisible("SHRFOFC", "SHERIF_DRAWR2", false);
+			changed |= runtime.startupScript().setRuntimeNpcState("LOOMIS", false, false);
+
 			lineError = runtime.playDialogueFst(kDialogueC048FstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -231,12 +313,14 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 
 		(void)runtime.startupScript().addRuntimeObjectToInventory("INV_MAG");
-		return runtime.playDialogueLine(0x11cc, "LOOMIS");
+		if (responseIndex == 2)
+			return playLoomisLine(0x11cc, kLoomisNpc, 3);
+		return Common::kNoError;
 	}
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL"))
-		return runtime.playDialogueLineWithVariant(0x1143, "LOOMIS", 1);
+		return playLoomisLine(0x1143, kLoomisNpc, 1);
 
-	return runtime.playDialogueLine(0x1202, "LOOMIS");
+	return playLoomisLine(0x1202);
 }
 
 } // End of namespace Harvester

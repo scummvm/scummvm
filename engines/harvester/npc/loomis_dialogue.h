@@ -33,6 +33,8 @@ public:
 		int currentTopicBufferLineIndex = -1;
 		bool talkStatePending = true;
 		bool returnVisitFollowupPending = false;
+		bool stephMidgameShown = false;
+		bool dayFiveShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
@@ -42,6 +44,8 @@ public:
 		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
 		syncDialogueBool(s, _state.talkStatePending);
 		syncDialogueBool(s, _state.returnVisitFollowupPending);
+		syncDialogueBool(s, _state.stephMidgameShown);
+		syncDialogueBool(s, _state.dayFiveShown);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
