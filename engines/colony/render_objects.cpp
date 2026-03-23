@@ -137,7 +137,7 @@ bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *sc
 				if (dyp < 0)
 					return true;
 			} else {
-				const int32 b = dy * dxp - dx * dyp;
+				const int64 b = (int64)dy * dxp - (int64)dx * dyp;
 				if (b > 0)
 					return false;
 				if (b < 0)
@@ -150,7 +150,7 @@ bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *sc
 				if (dyp > 0)
 					return true;
 			} else {
-				const int32 b = dx * dyp - dy * dxp;
+				const int64 b = (int64)dx * dyp - (int64)dy * dxp;
 				if (b < 0)
 					return false;
 				if (b > 0)
