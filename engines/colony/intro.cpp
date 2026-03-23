@@ -1156,7 +1156,6 @@ void ColonyEngine::terminateGame(bool blowup) {
 					return;
 				}
 				break;
-			case Graphics::kMacDialogQuitRequested:
 			default:
 				quitGame();
 				return;
@@ -1184,7 +1183,6 @@ void ColonyEngine::terminateGame(bool blowup) {
 				return;
 			}
 			break;
-		case GUI::kMessageAlt + 1:
 		default:
 			quitGame();
 			return;

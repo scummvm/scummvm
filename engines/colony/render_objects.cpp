@@ -79,7 +79,7 @@ int mapEyeOverlayColorToMacPattern(int colorIdx) {
 	case kColorIris:
 	case kColorEyeIris:
 	case kColorMiniEyeIris:
-	case kColorQueenEye:
+	case kColorQueenEye: // fallthrough: explicitly grouped with default
 	default:
 		return kPatternGray;
 	}
