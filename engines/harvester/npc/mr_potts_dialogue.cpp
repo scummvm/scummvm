@@ -23,7 +23,8 @@
 
 #include "harvester/npc/mr_potts_dialogue.h"
 
-#include "common/array.h"
+#include "graphics/screen.h"
+#include "harvester/harvester.h"
 #include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 #include "harvester/text.h"
@@ -32,32 +33,99 @@ namespace Harvester {
 
 namespace {
 
+static const char *const kDialogueC001BFstPath = "GRAPHIC/FST/C001B.FST";
 static const char *const kDialogueC016AFstPath = "GRAPHIC/FST/C016A.FST";
+static const char *const kStephHallExitActionTag = "STHLEXIT2B";
+static const char *const kMonsterfyPottsActionTag = "MONSTERFY_POTTS";
+static const char *const kMeatObjectName = "MEAT";
 static const char *const kWeddingMatchesObjectName = "WED_MATCHES";
 static const char *const kMrPottsMoynahanAccusationResponseText =
 	"Mr. Moynahan says you were out and/   about the night she disappeared.";
 static const char *const kMrPottsWeddingMatchesResponseText =
 	"I found one of our wedding match-/   books in the cemetary.";
 
+static const DialogueLineEntry kMrPottsHarvestBladeOpeningLines[] = {
+	{ 0x2f1d, "POTTS_FLESH", 2 },
+	{ 0x2f22, "PC", 4 },
+	{ 0x2f26, "POTTS_FLESH", 2 },
+	{ 0x2f2d, "PC", 0 },
+	{ 0x2f31, "POTTS_FLESH", 2 }
+};
+
+static const DialogueLineEntry kMrPottsStephanieDeadInHallLines[] = {
+	{ 0x2afc, "MR_POTTS", 3 },
+	{ 0x2b00, "PC", 0 },
+	{ 0x2b04, "MR_POTTS", 3 },
+	{ 0x2b09, "PC", 2 },
+	{ 0x2b0d, "MR_POTTS", 3 }
+};
+
+static const DialogueLineEntry kMrPottsPottsdamDiggingIntroLines[] = {
+	{ 0x2c63, "MR_POTTS", 2 },
+	{ 0x2c69, "PC", 0 },
+	{ 0x2c6d, "MR_POTTS", 4 }
+};
+
 static const DialogueLineEntry kMrPottsPottsdamDiggingKarinLines[] = {
 	{ 0x2c33, "MR_POTTS", 2 },
+	{ 0x2c37, "PC", 0 },
+	{ 0x2c3b, "MR_POTTS", 4 },
+	{ 0x2c42, "PC", 0 },
+	{ 0x2c46, "MR_POTTS", 2 },
 	{ 0x2c47, "MR_POTTS", 4 },
 	{ 0x2c48, "MR_POTTS", 4 },
 	{ 0x2c49, "MR_POTTS", 0 },
-	{ 0x2c54, "MR_POTTS", 0 },
+	{ 0x2c54, "PC", 0 },
 	{ 0x2c58, "MR_POTTS", 2 }
 };
 
 static const DialogueLineEntry kMrPottsAuxIntroResponse1Lines[] = {
 	{ 0x2994, "MR_POTTS", 1 },
-	{ 0x2998, "MR_POTTS", 2 },
+	{ 0x2998, "PC", 2 },
 	{ 0x299d, "MR_POTTS", 1 }
 };
 
 static const DialogueLineEntry kMrPottsAuxIntroResponse1WithMomIntroLines[] = {
 	{ 0x29a3, "MR_POTTS", 1 },
-	{ 0x29ab, "MR_POTTS", 1 },
-	{ 0x29b0, "MR_POTTS", 1 }
+	{ 0x29ab, "MRS_POTTS", 1 }
+};
+
+static const DialogueLineEntry kMrPottsAmnesiaTopicLines[] = {
+	{ 0x29c5, "PC", 2 },
+	{ 0x29ca, "MR_POTTS", 4 },
+	{ 0x29cf, "PC", 2 },
+	{ 0x29d3, "MR_POTTS", 4 }
+};
+
+static const DialogueLineEntry kMrPottsMarriageTopicLines[] = {
+	{ 0x29de, "PC", 0 },
+	{ 0x29e2, "MR_POTTS", 3 }
+};
+
+static const DialogueLineEntry kMrPottsCommitmentTopicLines[] = {
+	{ 0x29ee, "PC", 0 },
+	{ 0x29f3, "MR_POTTS", 0 },
+	{ 0x29f4, "MR_POTTS", 4 },
+	{ 0x29f5, "MR_POTTS", 4 },
+	{ 0x29f6, "MR_POTTS", 4 }
+};
+
+static const DialogueLineEntry kMrPottsFatherTopicLines[] = {
+	{ 0x2a12, "MR_POTTS", 4 },
+	{ 0x2a16, "PC", 0 },
+	{ 0x2a1b, "MR_POTTS", 1 },
+	{ 0x2a22, "PC", 0 },
+	{ 0x2a26, "MR_POTTS", 4 }
+};
+
+static const DialogueLineEntry kMrPottsSlaughterhouseTopicClosingLines[] = {
+	{ 0x2a4c, "MR_POTTS", 0 },
+	{ 0x2a55, "MR_POTTS", 1 }
+};
+
+static const DialogueLineEntry kMrPottsLodgeTopicLines[] = {
+	{ 0x2a8b, "PC", 0 },
+	{ 0x2aa2, "MR_POTTS", 1 }
 };
 
 static const DialogueLineEntry kMrPottsKarinKidnapedResponse1Lines[] = {
@@ -67,26 +135,25 @@ static const DialogueLineEntry kMrPottsKarinKidnapedResponse1Lines[] = {
 };
 
 static const DialogueLineEntry kMrPottsKarinKidnapedResponse1NestedResponse2Lines[] = {
-	{ 0x2b4b, "MR_POTTS", 0 },
 	{ 0x2b55, "MR_POTTS", 0 },
-	{ 0x2b5b, "MR_POTTS", 0 },
+	{ 0x2b5b, "PC", 0 },
 	{ 0x2b5f, "MR_POTTS", 1 }
 };
 
-static const DialogueLineEntry kMrPottsKarinFoundAliveLines[] = {
+static const DialogueLineEntry kMrPottsKarinFoundDeadIntroLines[] = {
 	{ 0x2b8d, "MR_POTTS", 3 },
-	{ 0x2b91, "MR_POTTS", 3 }
+	{ 0x2b91, "PC", 3 }
 };
 
-static const DialogueLineEntry kMrPottsKarinFoundAliveWithoutStephMidgameLines[] = {
+static const DialogueLineEntry kMrPottsKarinFoundDeadWithoutStephMidgameLines[] = {
 	{ 0x2b9b, "MR_POTTS", 0 },
-	{ 0x2b9f, "MR_POTTS", 0 },
+	{ 0x2b9f, "PC", 0 },
 	{ 0x2ba4, "MR_POTTS", 0 }
 };
 
-static const DialogueLineEntry kMrPottsKarinFoundAliveWithStephMidgameLines[] = {
-	{ 0x2b96, "MR_POTTS", 3 },
-	{ 0x2b9f, "MR_POTTS", 0 },
+static const DialogueLineEntry kMrPottsKarinFoundDeadWithStephMidgameLines[] = {
+	{ 0x2b96, "PC", 3 },
+	{ 0x2b9f, "PC", 0 },
 	{ 0x2ba4, "MR_POTTS", 0 }
 };
 
@@ -122,14 +189,14 @@ static const DialogueLineEntry kMrPottsPeepholeOpeningLines[] = {
 
 static const DialogueLineEntry kMrPottsPeepholeResponse2Lines[] = {
 	{ 0x2d19, "MR_POTTS", 4 },
-	{ 0x2d1d, "MR_POTTS", 2 },
+	{ 0x2d1d, "PC", 2 },
 	{ 0x2d22, "MR_POTTS", 1 }
 };
 
 static const DialogueLineEntry kMrPottsPeepholeClosingLines[] = {
-	{ 0x2d2c, "MR_POTTS", 0 },
+	{ 0x2d2c, "PC", 0 },
 	{ 0x2d30, "MR_POTTS", 0 },
-	{ 0x2d35, "MR_POTTS", 0 }
+	{ 0x2d35, "PC", 0 }
 };
 
 static const DialogueLineEntry kMrPottsPeepholeFollowupLines[] = {
@@ -137,16 +204,52 @@ static const DialogueLineEntry kMrPottsPeepholeFollowupLines[] = {
 	{ 0x2d3e, "PC", 0 }
 };
 
-static const DialogueLineEntry kMrPottsMolestTopicOpeningLines[] = {
-	{ 0x2def, "MR_POTTS", 4 },
-	{ 0x2e06, "PC", 4 },
+static const DialogueLineEntry kMrPottsMolestResponse1OpeningLines[] = {
+	{ 0x2dfb, "MR_POTTS", 2 },
+	{ 0x2e01, "MR_POTTS", 0 },
+	{ 0x2e06, "PC", 2 },
 	{ 0x2e0a, "MR_POTTS", 0 }
 };
 
-static const DialogueLineEntry kMrPottsMolestTopicResponse2Lines[] = {
+static const DialogueLineEntry kMrPottsMolestResponse2IntroLines[] = {
 	{ 0x2e18, "MR_POTTS", 3 },
 	{ 0x2e1c, "PC", 2 },
-	{ 0x2e2b, "MR_POTTS", 3 }
+};
+
+static const DialogueLineEntry kMrPottsMolestAlternativeOpeningLines[] = {
+	{ 0x2e3a, "MR_POTTS", 1 },
+	{ 0x2e3e, "PC", 0 },
+	{ 0x2e42, "MR_POTTS", 0 },
+	{ 0x2e46, "PC", 2 },
+	{ 0x2e4a, "MR_POTTS", 1 }
+};
+
+static const DialogueLineEntry kMrPottsCasketPhotoLines[] = {
+	{ 0x2c97, "MR_POTTS", 0 },
+	{ 0x2c9b, "PC", 2 },
+	{ 0x2ca0, "MR_POTTS", 0 }
+};
+
+static const DialogueLineEntry kMrPottsCasketPhotoFollowupLines[] = {
+	{ 0x2ca4, "PC", 2 },
+	{ 0x2cab, "MR_POTTS", 0 }
+};
+
+static const DialogueLineEntry kMrPottsWhaleyHerrillPhotoLines[] = {
+	{ 0x2cb3, "MR_POTTS", 1 },
+	{ 0x2cb8, "PC", 1 },
+	{ 0x2cbd, "MR_POTTS", 0 }
+};
+
+static const DialogueLineEntry kMrPottsBlackmailEvidenceLines[] = {
+	{ 0x2ce0, "MR_POTTS", 4 },
+	{ 0x2ce6, "PC", 0 }
+};
+
+static const DialogueLineEntry kMrPottsTvDeedEvidenceLines[] = {
+	{ 0x2ce0, "MR_POTTS", 4 },
+	{ 0x2ceb, "PC", 0 },
+	{ 0x2cf0, "MR_POTTS", 2 }
 };
 
 static const int kMrPottsMurderTopicResponseLines[] = { 0x20c, 0x20d, 0x20e };
@@ -198,19 +301,29 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueEntrySequence(lines, count);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
-		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
-			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
-				return true;
-		}
-		return false;
+		return runtime.startupScript().isObjectInInventory(objectName);
+	};
+	auto executeActionTagIfSet = [&](const char *tag) {
+		StartupInteractionResult interaction;
+		if (!runtime.startupScript().executeActionTag(tag, interaction))
+			return;
+
+		runtime.applyImmediateDialogueInteractionEffects(interaction);
+		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto queueNpcDeathOrMonsterfyTransition = [&](const char *npcName) {
 		StartupInteractionResult interaction;
 		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(npcName))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
+	};
+	auto clearScreenToBlack = [&]() {
+		Graphics::Screen *screen = runtime.engine().getScreen();
+		if (!screen)
+			return;
+
+		screen->fillRect(screen->getBounds(), 0);
+		screen->update();
 	};
 
 	Common::Error lineError = Common::kNoError;
@@ -219,18 +332,52 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (hasInventoryItem("HARVEST_BLADE")) {
 		(void)runtime.startupScript().setRuntimeFlagValue("PC_TALKED_TO_POTTS", true);
-		lineError = playPottsFleshLine(0x2f1d, 2);
+		lineError = playSequence(kMrPottsHarvestBladeOpeningLines,
+			ARRAYSIZE(kMrPottsHarvestBladeOpeningLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playMrPottsLine(0x2f22, 4);
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(0x1d2, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			lineError = playPottsFleshLine(0x2f3d, 4);
+		} else if (responseIndex == 2) {
+			lineError = playPottsFleshLine(0x2f42, 0);
+		}
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playPottsFleshLine(0x2f46, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playPottsFleshLine(0x2f4d, 4);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		executeActionTagIfSet(kMonsterfyPottsActionTag);
+		return Common::kNoError;
 	}
 
 	if (runtime.startupScript().getFlagValue("STEPHANIE_DEAD_IN_HALL_JUST_OUTSIDE")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(
 			"STEPHANIE_DEAD_IN_HALL_JUST_OUTSIDE", false);
-		lineError = playMrPottsLine(0x2afc, 3);
+		lineError = playSequence(kMrPottsStephanieDeadInHallLines,
+			ARRAYSIZE(kMrPottsStephanieDeadInHallLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+
+		sharedState.dialogueStateD2eb8 = true;
+		(void)runtime.startupScript().setRuntimeFlagValue("STEPH_MIDGAME_PLAYED", true);
+		clearScreenToBlack();
+		lineError = runtime.playDialogueFst(kDialogueC001BFstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		executeActionTagIfSet(kStephHallExitActionTag);
+		return Common::kNoError;
 	}
 
 	if (runtime.startupScript().getFlagValue("POTTSDAM_DIGGING")) {
@@ -239,7 +386,8 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = runtime.playDialogueFst(kDialogueC016AFstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playMrPottsLine(0x2c63, 2);
+			lineError = playSequence(kMrPottsPottsdamDiggingIntroLines,
+				ARRAYSIZE(kMrPottsPottsdamDiggingIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			return Common::kNoError;
@@ -264,37 +412,85 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("MEAT")) {
 			lineError = playMrPottsLine(0x2c7f, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x1d4, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				lineError = playMrPottsLine(0x2c8a, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				(void)runtime.startupScript().resetRuntimeObjectToInitialState(kMeatObjectName);
+			} else if (responseIndex == 2) {
+				lineError = playMrPottsLine(0x2c8f, 2);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+			return Common::kNoError;
 		} else if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			lineError = playMrPottsLine(0x2c97, 0);
+			lineError = playSequence(kMrPottsCasketPhotoLines, ARRAYSIZE(kMrPottsCasketPhotoLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (sharedState.dialogueStateD2ebc) {
+				lineError = playSequence(
+					kMrPottsCasketPhotoFollowupLines, ARRAYSIZE(kMrPottsCasketPhotoFollowupLines));
+			}
 		} else if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-			lineError = playMrPottsLine(0x2cb3, 1);
+			lineError = playSequence(
+				kMrPottsWhaleyHerrillPhotoLines, ARRAYSIZE(kMrPottsWhaleyHerrillPhotoLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x1d5, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				lineError = playMrPottsLine(0x2cca, 0);
+			} else if (responseIndex == 2) {
+				lineError = playMrPottsLine(0x2ccf, 0);
+			} else if (responseIndex == 3) {
+				lineError = playMrPottsLine(0x2cd4, 0);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playMrPottsLine(0x2cd9, 0);
 		} else if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
-			lineError = playMrPottsLine(0x2ce0, 4);
+			lineError = playSequence(
+				kMrPottsBlackmailEvidenceLines, ARRAYSIZE(kMrPottsBlackmailEvidenceLines));
 		} else if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceSheriffOwns, true);
-			lineError = playMrPottsLine(0x2ce0, 4);
+			lineError = playSequence(
+				kMrPottsTvDeedEvidenceLines, ARRAYSIZE(kMrPottsTvDeedEvidenceLines));
 		} else {
 			lineError = playMrPottsLine(0x2c79, 0);
 		}
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return Common::kNoError;
 	}
 
 	if (runtime.startupScript().getFlagValue("IF_TRY_TO_SEE_STEPHANIE")) {
 		lineError = playMrPottsLine(0x2b18, 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		return Common::kNoError;
 	}
 
 	if (state.auxIntroPending && !stephanieIsDead) {
@@ -323,6 +519,9 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
+			lineError = playMrPottsLine(0x29b0, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 
 			assignMrPottsTopicBuffer(
 				runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD") ? 0x1d9 : 0x1d8);
@@ -359,17 +558,17 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 		}
 
-		if (!runtime.startupScript().getFlagValue("DAY_2") &&
-				!runtime.startupScript().getFlagValue("DAY_3") &&
-				!runtime.startupScript().getFlagValue("DAY_4") &&
-				!runtime.startupScript().getFlagValue("DAY_5") &&
+		if ((runtime.startupScript().getFlagValue("DAY_2") ||
+				runtime.startupScript().getFlagValue("DAY_3") ||
+				runtime.startupScript().getFlagValue("DAY_4") ||
+				runtime.startupScript().getFlagValue("DAY_5")) &&
 				!state.stephanieAliveLaterDayShown) {
 			state.stephanieAliveLaterDayShown = true;
 			lineError = playMrPottsLine(0x2ae5, 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			state.followupDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 		}
+		state.followupDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 	} else {
 		lineError = playMrPottsLine(0x2bdf, 3);
 		if (lineError.getCode() != Common::kNoError)
@@ -408,8 +607,8 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
-				int followupResponseIndex = 0;
-				responseError = runtime.runResponseMenu(0x1e1, followupResponseIndex);
+				int ignoredResponseIndex = 0;
+				responseError = runtime.runResponseMenu(0x1e1, ignoredResponseIndex);
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 
@@ -419,7 +618,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return lineError;
 			}
 		} else if (responseIndex == 2) {
-			lineError = runtime.startupScript().getFlagValue("DAY_6")
+			lineError = runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED")
 				? playMrPottsLine(0x2b79, 3)
 				: playMrPottsLine(0x2b65, 0);
 			if (lineError.getCode() != Common::kNoError)
@@ -436,18 +635,18 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return lineError;
 	}
 
-	if (runtime.startupScript().getFlagValue("KARIN") && !state.karinFoundAliveShown) {
+	if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") && !state.karinFoundAliveShown) {
 		state.karinFoundAliveShown = true;
-		lineError = playSequence(kMrPottsKarinFoundAliveLines,
-			ARRAYSIZE(kMrPottsKarinFoundAliveLines));
+		lineError = playSequence(kMrPottsKarinFoundDeadIntroLines,
+			ARRAYSIZE(kMrPottsKarinFoundDeadIntroLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		lineError = runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED")
-			? playSequence(kMrPottsKarinFoundAliveWithStephMidgameLines,
-				ARRAYSIZE(kMrPottsKarinFoundAliveWithStephMidgameLines))
-			: playSequence(kMrPottsKarinFoundAliveWithoutStephMidgameLines,
-				ARRAYSIZE(kMrPottsKarinFoundAliveWithoutStephMidgameLines));
+			? playSequence(kMrPottsKarinFoundDeadWithStephMidgameLines,
+				ARRAYSIZE(kMrPottsKarinFoundDeadWithStephMidgameLines))
+			: playSequence(kMrPottsKarinFoundDeadWithoutStephMidgameLines,
+				ARRAYSIZE(kMrPottsKarinFoundDeadWithoutStephMidgameLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -468,8 +667,8 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	}
 
 	if (runtime.startupScript().getFlagValue("DAY_6") &&
-			runtime.startupScript().getFlagValue("KARIN") &&
-			!runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
+			(runtime.startupScript().getFlagValue("KARIN") ||
+				runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD")) &&
 			!state.day6KarinShown) {
 		state.day6KarinShown = true;
 
@@ -653,25 +852,29 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (runtime.matchesResponseLine(selectedTopic, 0x1ea)) {
 			if (!runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD")) {
-				lineError = playMrPottsLine(0x29c5, 2);
+				lineError = playSequence(kMrPottsAmnesiaTopicLines, ARRAYSIZE(kMrPottsAmnesiaTopicLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1eb);
 			}
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x1ec)) {
 			if (!runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD")) {
-				lineError = playMrPottsLine(0x29de, 0);
+				lineError = playSequence(kMrPottsMarriageTopicLines, ARRAYSIZE(kMrPottsMarriageTopicLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1ed);
 			}
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x1ee)) {
 			if (!runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD")) {
-				lineError = playMrPottsLine(0x29ee, 0);
+				lineError = playSequence(
+					kMrPottsCommitmentTopicLines, ARRAYSIZE(kMrPottsCommitmentTopicLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1ef);
 			}
 			continue;
 		}
@@ -685,12 +888,36 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			}
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			lineError = playSequence(kMrPottsFatherTopicLines, ARRAYSIZE(kMrPottsFatherTopicLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrPottsTopicBuffer(
+				runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD") ? 0x1f2 : 0x1f1);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x1f3)) {
 			lineError = playMrPottsLine(0x2a31, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x1f4, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				lineError = playMrPottsLine(0x2a3c, 2);
+			} else if (responseIndex == 2) {
+				lineError = playMrPottsLine(0x2a42, 1);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playSequence(kMrPottsSlaughterhouseTopicClosingLines,
+				ARRAYSIZE(kMrPottsSlaughterhouseTopicClosingLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			assignMrPottsTopicBuffer(
+				runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD") ? 0x1f6 : 0x1f5);
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x1f7)) {
@@ -698,6 +925,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = playMrPottsLine(0x2a5e, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1f8);
 			}
 			continue;
 		}
@@ -721,15 +949,17 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = playMrPottsLine(0x2a81, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1fb);
 			}
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x1fd)) {
 			if (!runtime.startupScript().getFlagValue("STEPHANIE_IS_DEAD")) {
 				sharedState.discussedLodgeTopic = true;
-				lineError = playMrPottsLine(0x2a8b, 0);
+				lineError = playSequence(kMrPottsLodgeTopicLines, ARRAYSIZE(kMrPottsLodgeTopicLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x1fe);
 			}
 			continue;
 		}
@@ -737,6 +967,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playMrPottsLine(0x2aaf, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+			assignMrPottsTopicBuffer(0x200);
 			continue;
 		}
 		if (runtime.matchesAnyResponseLine(selectedTopic, kMrPottsMoynahanTopicResponseLines,
@@ -745,6 +976,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = playMrPottsLine(0x2abb, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
+				assignMrPottsTopicBuffer(0x203);
 			}
 			continue;
 		}
@@ -776,20 +1008,22 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				continue;
 			}
 
-			Common::String accusationMenuLine =
-				runtime.startupText().getDialogueResponseLine(0x20f);
+			Common::String accusationMenuLine = runtime.startupText().getDialogueResponseLine(0x20f);
 			int nextResponseIndex = 2;
 			int moynahanResponseIndex = 0;
 			int weddingMatchesResponseIndex = 0;
 			if (hasMoynahanAccusation) {
 				moynahanResponseIndex = nextResponseIndex++;
-				accusationMenuLine += Common::String::format("/%d. %s",
-					moynahanResponseIndex, kMrPottsMoynahanAccusationResponseText);
+				accusationMenuLine = Common::String::format(
+					runtime.startupText().getDialogueResponseLine(0x210).c_str(),
+					accusationMenuLine.c_str(), kMrPottsMoynahanAccusationResponseText);
 			}
 			if (hasWeddingMatchesAccusation) {
 				weddingMatchesResponseIndex = nextResponseIndex++;
-				accusationMenuLine += Common::String::format("/%d. %s",
-					weddingMatchesResponseIndex, kMrPottsWeddingMatchesResponseText);
+				accusationMenuLine = Common::String::format(
+					runtime.startupText().getDialogueResponseLine(0x212).c_str(),
+					accusationMenuLine.c_str(), weddingMatchesResponseIndex,
+					kMrPottsWeddingMatchesResponseText);
 			}
 
 			int accusationResponseIndex = 0;
@@ -835,44 +1069,81 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playMrPottsLine(0x2dd3, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			continue;
-		}
-		if (runtime.matchesAnyResponseLine(selectedTopic, kMrPottsMolestTopicResponseLines,
-				ARRAYSIZE(kMrPottsMolestTopicResponseLines))) {
-			lineError = playSequence(kMrPottsMolestTopicOpeningLines,
-				ARRAYSIZE(kMrPottsMolestTopicOpeningLines));
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
 
 			int responseIndex = 0;
-			Common::Error responseError = runtime.runResponseMenu(0x21a, responseIndex);
+			Common::Error responseError = runtime.runResponseMenu(0x215, responseIndex);
 			if (responseError.getCode() != Common::kNoError)
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playMrPottsLine(0x2e14, 3);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
+				lineError = playMrPottsLine(0x2ddf, 1);
 			} else if (responseIndex == 2) {
-				lineError = playSequence(kMrPottsMolestTopicResponse2Lines,
-					ARRAYSIZE(kMrPottsMolestTopicResponse2Lines));
+				lineError = playMrPottsLine(0x2de4, 0);
+			}
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			continue;
+		}
+		if (runtime.matchesAnyResponseLine(selectedTopic, kMrPottsMolestTopicResponseLines,
+				ARRAYSIZE(kMrPottsMolestTopicResponseLines))) {
+			lineError = playMrPottsLine(0x2def, 4);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			int responseIndex = 0;
+			Common::Error responseError = runtime.runResponseMenu(0x219, responseIndex);
+			if (responseError.getCode() != Common::kNoError)
+				return responseError;
+
+			if (responseIndex == 1) {
+				lineError = playSequence(kMrPottsMolestResponse1OpeningLines,
+					ARRAYSIZE(kMrPottsMolestResponse1OpeningLines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
-				int followupResponseIndex = 0;
-				responseError = runtime.runResponseMenu(0x21b, followupResponseIndex);
+				responseIndex = 0;
+				responseError = runtime.runResponseMenu(0x21a, responseIndex);
 				if (responseError.getCode() != Common::kNoError)
 					return responseError;
 
-				if (followupResponseIndex == 1) {
-					lineError = playMrPottsLine(0x2e2f, 3);
+				if (responseIndex == 1) {
+					lineError = playMrPottsLine(0x2e14, 3);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
-				} else if (followupResponseIndex == 2) {
-					lineError = playPcLine(0x2e34, 2);
+				} else if (responseIndex == 2) {
+					lineError = playSequence(kMrPottsMolestResponse2IntroLines,
+						ARRAYSIZE(kMrPottsMolestResponse2IntroLines));
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
+
+					for (;;) {
+						lineError = playMrPottsLine(0x2e2b, 3);
+						if (lineError.getCode() != Common::kNoError)
+							return lineError;
+
+						int followupResponseIndex = 0;
+						responseError = runtime.runResponseMenu(0x21b, followupResponseIndex);
+						if (responseError.getCode() != Common::kNoError)
+							return responseError;
+
+						if (followupResponseIndex == 1)
+							continue;
+						if (followupResponseIndex == 2) {
+							lineError = playMrPottsLine(0x2e2f, 3);
+							if (lineError.getCode() != Common::kNoError)
+								return lineError;
+							lineError = playPcLine(0x2e34, 2);
+							if (lineError.getCode() != Common::kNoError)
+								return lineError;
+						}
+						break;
+					}
 				}
+			} else if (responseIndex == 2) {
+				lineError = playSequence(kMrPottsMolestAlternativeOpeningLines,
+					ARRAYSIZE(kMrPottsMolestAlternativeOpeningLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
 			}
 			continue;
 		}
