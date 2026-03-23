@@ -31,21 +31,27 @@ namespace Harvester {
 
 namespace {
 
+static const char *const kHerrillNpc = "HERRILL";
+static const char *const kHerrillLogNpc = "HERRILL_LOG";
+static const char *const kPcSpeaker = "PC";
+static const char *const kGrandMuckNpc = "GRAND_MUCK";
+static const int kSlashDeathDamageType = 1;
+
 static const int kHerrillGascanResponseLine = 0x280;
 static const int kHerrillTopicBufferResponseLine = 0x281;
 
 static const DialogueLineEntry kHerrillIntroLines[] = {
-	{ 0x2f59, "HERRILL", 1 },
-	{ 0x2f5e, "PC", 0 },
-	{ 0x2f62, "HERRILL", 1 },
-	{ 0x1654, "PC", 0 },
-	{ 0x2f6e, "HERRILL", 0 }
+	{ 0x2f59, kHerrillNpc, 1 },
+	{ 0x2f5e, kPcSpeaker, 0 },
+	{ 0x2f62, kHerrillNpc, 1 },
+	{ 0x1654, kPcSpeaker, 0 },
+	{ 0x2f6e, kHerrillNpc, 0 }
 };
 
 static const DialogueLineEntry kHerrillGascanIntroLines[] = {
-	{ 0x30cf, "HERRILL", 1 },
-	{ 0x30d3, "PC", 0 },
-	{ 0x30d8, "HERRILL", 0 }
+	{ 0x30cf, kHerrillNpc, 1 },
+	{ 0x30d3, kPcSpeaker, 0 },
+	{ 0x30d8, kHerrillNpc, 0 }
 };
 
 } // End of namespace
@@ -65,13 +71,24 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			responseLineIndex, "Herrill topic buffer");
 	};
 	auto playHerrillLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "HERRILL", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kHerrillNpc, headVariant);
 	};
 	auto playHerrillLogLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "HERRILL_LOG", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kHerrillLogNpc, headVariant);
 	};
 	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
+	};
+	auto playGrandMuckLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kGrandMuckNpc, headVariant);
+	};
+	auto queueNpcSlashTransition = [&](const char *npcName) {
+		StartupInteractionResult interaction;
+		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(
+				npcName, kSlashDeathDamageType)) {
+			interaction.mutatedRuntimeState = true;
+		}
+		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
 		Common::Array<StartupObjectRecord> inventoryObjects;
@@ -96,8 +113,34 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 
 	if (runtime.startupScript().getFlagValue("HERRILL_IN_LODGE")) {
-		if (!runtime.startupScript().getFlagValue("PC_TALKED_TO_HERRILL"))
-			return playHerrillLogLine(0x31ca, 1);
+		if (!runtime.startupScript().getFlagValue("PC_TALKED_TO_HERRILL")) {
+			Common::Error lineError = playHerrillLogLine(0x31ca, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playPcLine(0x31ce, 4);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playHerrillLogLine(0x31d2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playPcLine(0x31da);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			lineError = playGrandMuckLine(0x31de, 2);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (shownWhaleyHerrillPhoto()) {
+				lineError = playGrandMuckLine(0x31e0, 2);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				lineError = playHerrillLogLine(0x31e2, 2);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+			}
+
+			queueNpcSlashTransition(kGrandMuckNpc);
+			(void)runtime.startupScript().setRuntimeFlagValue("PC_TALKED_TO_HERRILL", true);
+		}
 		return Common::kNoError;
 	}
 
@@ -108,7 +151,6 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			return playHerrillLine(0x309f, 2);
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
@@ -260,19 +302,11 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playHerrillLine(0x304c, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = shownWhaleyHerrillPhoto()
-			? playHerrillLine(0x3050, 2)
-			: playHerrillLine(0x3057, 1);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
 	}
 	if (runtime.startupScript().getFlagValue("KARIN_FOUND_DEAD") &&
 			!state.karinFoundDeadShown) {
 		state.karinFoundDeadShown = true;
 		Common::Error lineError = playHerrillLine(0x305e);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-		lineError = playPcLine(0x461b, 3);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED")) {
@@ -351,21 +385,25 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 			continue;
 		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x28f))
+		if (runtime.matchesResponseLine(selectedTopic, 0x28f)) {
+			sharedState.discussedLodgeTopic = true;
+			Common::Error lineError = playHerrillLine(0x2fdd);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 			continue;
+		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x291)) {
 			Common::Error lineError = playHerrillLine(0x2fe9, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x293)) {
-			Common::Error lineError = playHerrillLine(0x3099);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+		if (runtime.matchesResponseLine(selectedTopic, 0x293))
 			return playHerrillLine(0x2ff4);
-		}
 
+		Common::Error lineError = playHerrillLine(0x3099);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 		return playHerrillLine(0x2ff4);
 	}
 }
