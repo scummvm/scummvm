@@ -749,7 +749,7 @@ private:
 	int objectState(int num) const;
 	void setObjectOnOff(int num, bool on);
 	void refreshAnimationDisplay();
-	void crypt(uint8 sarray[6], int i, int j, int k, int l);
+	void cryptArray(uint8 sarray[6], int i, int j, int k, int l);
 	void terminateGame(bool blowup);
 
 	// think.c / shoot.c: colony robot AI, egg growth, and egg eating

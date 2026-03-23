@@ -1198,7 +1198,7 @@ void ColonyEngine::handleKeypadClick(int item) {
 		uint8 testarray[6];
 		if (_animationName == "reactor") {
 			uint8 *decode = (_level == 1) ? _decode2 : _decode3;
-			crypt(testarray, decode[3] - 2, decode[2] - 2, decode[1] - 2, decode[0] - 2);
+			cryptArray(testarray, decode[3] - 2, decode[2] - 2, decode[1] - 2, decode[0] - 2);
 
 			debug("Reactor code check: decode=[%d,%d,%d,%d] expected=[%d,%d,%d,%d,%d,%d] entered=[%d,%d,%d,%d,%d,%d]",
 				decode[0], decode[1], decode[2], decode[3],
@@ -1233,7 +1233,7 @@ void ColonyEngine::handleKeypadClick(int item) {
 			}
 			_animationRunning = false;
 		} else if (_animationName == "security") {
-			crypt(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
+			cryptArray(testarray, _decode1[0] - 2, _decode1[1] - 2, _decode1[2] - 2, _decode1[3] - 2);
 			bool match = true;
 			for (int i = 0; i < 6; i++) {
 				if (testarray[i] != _animDisplay[5 - i])
@@ -1982,7 +1982,7 @@ void ColonyEngine::refreshAnimationDisplay() {
 	}
 }
 
-void ColonyEngine::crypt(uint8 sarray[6], int i, int j, int k, int l) {
+void ColonyEngine::cryptArray(uint8 sarray[6], int i, int j, int k, int l) {
 	int res[6];
 	res[0] = ((3 * l) ^ i ^ j ^ k) % 10;
 	res[1] = ((i * 3) ^ (j * 7) ^ (k * 11) ^ (l * 13)) % 10;
