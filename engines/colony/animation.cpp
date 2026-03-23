@@ -47,6 +47,8 @@ void responsiveAnimationDelay(OSystem *system, uint32 delayMs) {
 	while (elapsed < delayMs) {
 		Common::Event event;
 		while (system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
 			if (event.type == Common::EVENT_MOUSEMOVE) {
 				mouseMoveCount++;
 			} else {
@@ -574,7 +576,12 @@ void ColonyEngine::playAnimation() {
 	while (_animationRunning && !shouldQuit()) {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
-			if (event.type == Common::EVENT_LBUTTONDOWN) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_animationRunning = false;
+				return;
+			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+				_gfx->computeScreenViewport();
+			} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 				int item = whichSprite(event.mouse);
 				if (item > 0) {
 					handleAnimationClick(item);
@@ -1758,6 +1765,10 @@ void ColonyEngine::moveObject(int index) {
 		Common::Event event;
 		bool buttonDown = true;
 		while (_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (event.type == Common::EVENT_SCREEN_CHANGED)
+				_gfx->computeScreenViewport();
 			if (event.type == Common::EVENT_LBUTTONUP) {
 				buttonDown = false;
 				break;

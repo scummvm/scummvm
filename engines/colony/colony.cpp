@@ -893,7 +893,11 @@ Common::Error ColonyEngine::run() {
 				}
 			}
 
-			if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+			if (event.type == Common::EVENT_QUIT || event.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				return Common::kNoError;
+			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
+				_gfx->computeScreenViewport();
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				switch (event.customType) {
 				case kActionMoveForward:
 					_moveForward = true;
