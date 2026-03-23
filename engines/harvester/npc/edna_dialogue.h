@@ -31,6 +31,13 @@ public:
 	struct EdnaRoomDialogueState {
 		bool introPending = true;
 		bool karinPurseLinePlayed = false;
+		bool dayFiveShown = false;
+		bool scratchedTuckerShown = false;
+		bool barberPoleStolenShown = false;
+		bool boltOfClothTakenShown = false;
+		bool escapedJailShown = false;
+		bool burnedTvStationShown = false;
+		bool karinFoundDeadShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
@@ -38,6 +45,13 @@ public:
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);
 		syncDialogueBool(s, _state.karinPurseLinePlayed);
+		syncDialogueBool(s, _state.dayFiveShown, 6);
+		syncDialogueBool(s, _state.scratchedTuckerShown, 6);
+		syncDialogueBool(s, _state.barberPoleStolenShown, 6);
+		syncDialogueBool(s, _state.boltOfClothTakenShown, 6);
+		syncDialogueBool(s, _state.escapedJailShown, 6);
+		syncDialogueBool(s, _state.burnedTvStationShown, 6);
+		syncDialogueBool(s, _state.karinFoundDeadShown, 6);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
