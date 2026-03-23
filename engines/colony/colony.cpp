@@ -122,7 +122,7 @@ static Graphics::Cursor *cloneAndScaleCursor(const Graphics::Cursor &src, int sc
 		src.getPaletteStartIndex(), src.getPaletteCount(), scale);
 }
 
-} // namespace
+} // anonymous namespace
 
 ColonyEngine::ColonyEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd), _randomSource("colony") {
 	_level = 0;
