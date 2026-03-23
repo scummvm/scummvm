@@ -70,6 +70,11 @@ public:
 		return Common::kNoError;
 	}
 
+	bool hasFeature(MetaEngineFeature f) const override {
+		return checkExtendedSaves(f) ||
+			(f == kSupportsLoadingDuringStartup);
+	}
+
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
