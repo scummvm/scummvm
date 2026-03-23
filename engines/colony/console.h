@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef COLONY_DEBUGGER_H
-#define COLONY_DEBUGGER_H
+#ifndef COLONY_CONSOLE_H
+#define COLONY_CONSOLE_H
 
 #include "gui/debugger.h"
 

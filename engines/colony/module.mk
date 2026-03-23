@@ -4,7 +4,7 @@ MODULE_OBJS := \
 	animation.o \
 	battle.o \
 	colony.o \
-	debugger.o \
+	console.o \
 	gfx.o \
 	interaction.o \
 	intro.o \

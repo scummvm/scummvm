@@ -41,7 +41,7 @@
 #include "graphics/paletteman.h"
 
 #include "colony/colony.h"
-#include "colony/debugger.h"
+#include "colony/console.h"
 #include "colony/renderer.h"
 
 namespace Colony {
