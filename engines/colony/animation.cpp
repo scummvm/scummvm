@@ -984,7 +984,7 @@ int ColonyEngine::whichSprite(const Common::Point &p) {
 	}
 
 	// Dump accurately calculated bounds if debug is high enough
-	if (gDebugLevel >= 2) {
+	if (debugChannelSet(2, kColonyDebugAnimation)) {
 		for (int i = 0; i < (int)_lSprites.size(); i++) {
 			ComplexSprite *ls = _lSprites[i];
 			if (ls->onoff) {
