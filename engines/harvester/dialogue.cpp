@@ -119,6 +119,9 @@ static const int kDialogueOtherStartY = 170;
 static const int kDialogueOtherEndY = 193;
 static const int kDialogueGenericByeResponseIndex = 13;
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
+static const char *const kDialogueGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
+static const char *const kDialogueGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
+static const char *const kDialogueGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
 
 static const byte kTextColorNormal = 255;
 static const byte kTextColorHover = 251;
@@ -250,6 +253,15 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 
 	bitmap.pixels.resize(pixelCount);
 	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
+	return true;
+}
+
+static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *dest) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
+		return false;
+
+	memcpy(dest, data.data(), 256 * 3);
 	return true;
 }
 
@@ -858,6 +870,72 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 		return Common::kNoError;
 	};
+	auto runGameOverScreen = [&]() -> Common::Error {
+		Graphics::Screen *screen = _engine.getScreen();
+		ResourceManager *resources = _engine.getResources();
+		if (!screen || !resources)
+			return Common::kReadingFailed;
+
+		IndexedBitmap gameOverBitmap;
+		byte gameOverPalette[256 * 3];
+		if (!loadBitmapResource(*resources, kDialogueGameOverBitmapPath, gameOverBitmap) ||
+				!loadPaletteResource(*resources, kDialogueGameOverPalettePath, gameOverPalette)) {
+			return Common::kReadingFailed;
+		}
+
+		_engine.stopStartupSpeech();
+		_engine.stopStartupMusic();
+		_engine.stopStartupSound();
+
+		screen->fillRect(screen->getBounds(), 0);
+		blitBitmap(*screen, gameOverBitmap, 0, 0);
+		setScaledPalette(*screen, gameOverPalette, 1.0f);
+		screen->makeAllDirty();
+		screen->update();
+
+		(void)_engine.playStartupMusic(kDialogueGameOverMusicPath);
+
+		bool dismissed = false;
+		Graphics::FrameLimiter limiter(g_system, 60);
+		while (!dismissed && !SHOULD_QUIT) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result)) {
+					_engine.stopStartupMusic();
+					return result;
+				}
+
+				switch (event.type) {
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+				case Common::EVENT_KEYDOWN:
+					dismissed = true;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (runtimeEntities)
+				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (dismissed)
+				break;
+
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+
+		_engine.stopStartupMusic();
+		if (dismissed) {
+			Common::Error releaseError = waitForPointerRelease();
+			if (releaseError.getCode() != Common::kNoError)
+				return releaseError;
+		}
+
+		startupFlow.requestMainMenuReturn();
+		return Common::kNoError;
+	};
 
 	auto queueDialogueInteractionIfNeeded = [&](const StartupInteractionResult &interaction) {
 		if (interaction.abortRemainingCommandChain || interaction.mutatedRuntimeState ||
@@ -1259,6 +1337,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		[&](const Common::String &responseLine, int &selectedIndex) {
 			return runResponseMenuText(responseLine, -1, selectedIndex);
 		},
+		runGameOverScreen,
 		assignTopicBuffer,
 		matchesResponseLine, matchesAnyResponseLine, queueDialogueInteractionIfNeeded,
 		applyImmediateDialogueInteractionEffects,
