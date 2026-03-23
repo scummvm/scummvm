@@ -100,8 +100,8 @@ AtariMixerManager::~AtariMixerManager() {
 	Mfree(_atariSampleBuffer);
 	_atariSampleBuffer = _atariPhysicalSampleBuffer = _atariLogicalSampleBuffer = nullptr;
 
-	delete[] _samplesBuf;
-	_samplesBuf = nullptr;
+	delete[] _sampleBuf;
+	_sampleBuf = nullptr;
 }
 
 void AtariMixerManager::init() {
@@ -149,9 +149,10 @@ void AtariMixerManager::init() {
 	// enable and mix both sources (ADC and connection matrix) to the output
 	Soundcmd(ADDERIN, MATIN|ADCIN);
 
-	_samplesBuf = new uint8[_samples * _outputChannels * 2];	// always 16-bit
+	_sampleBufSize = _samples * _outputChannels * 4;	// always 32-bit
+	_sampleBuf = new uint8[_sampleBufSize];
 
-	_mixer = new Audio::MixerImpl(_outputRate, _outputChannels == 2, _samples);
+	_mixer = new Audio::MixerImpl(_outputRate, _outputChannels == 2, _samples, 4, false);
 	_mixer->setReady(true);
 
 	resumeAudio();
@@ -201,7 +202,7 @@ void AtariMixerManager::update() {
 
 	if (muted || endOfPlayback) {
 		endOfPlayback = false;
-		processed = _mixer->mixCallback(_samplesBuf, _samples * _outputChannels * 2);
+		processed = _mixer->mixCallback(_sampleBuf, _sampleBufSize);
 	}
 
 	if (processed > 0) {
@@ -210,42 +211,54 @@ void AtariMixerManager::update() {
 		_atariLogicalSampleBuffer = tmp;
 
 		if (_downsample) {
-			// use the trick with move.b (a7)+,dx which skips two bytes at once
-			// basically supplying move.w (src)+,dx; asr.w #8,dx; move.b dx,(dst)+
 			__asm__ volatile(
-				"	move.l	%%a7,%%d0\n"
-				"	move.l	%0,%%a7\n"
-				"	moveq	#0x0f,%%d1\n"
-				"	and.l	%2,%%d1\n"
-				"	neg.l	%%d1\n"
-				"	lsr.l	#4,%2\n"
-				"	jmp		(2f,%%pc,%%d1.l*2)\n"
-				"1:	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"	move.b	(%%a7)+,(%1)+\n"
-				"2:	dbra	%2,1b\n"
-				"	move.l	%%d0,%%a7\n"
+				"	move.l	#32768,%%d2\n"
+				"	move.l	#65535,%%d3\n"
+				"	subq.l	#1,%2\n"
+				"1:	move.l	(%0)+,%%d0\n"
+				"	move.l	%%d0,%%d1\n"
+				"	add.l	%%d2,%%d1\n"
+				"	cmp.l	%%d3,%%d1\n"
+				"	bhi.b	3f\n"
+				"2:	asr.l	#8,%%d0\n"	// TODO: tweak (there were reports that >> 8 is too quiet)
+				"	move.b	%%d0,(%1)+\n"
+				"	dbra	%2,1b\n"
+				"	bra.b	4f\n"
+				"3:	tst.l	%%d0\n"
+				"	spl		%%d0\n"
+				"	ext.w	%%d0\n"
+				"	add.w	%%d2,%%d0\n"
+				"	bra.b	2b\n"
+				"4:\n"
 				: // outputs
-				: "g"(_samplesBuf), "a"(_atariPhysicalSampleBuffer), "d"(processed * _outputChannels * 2/2) // inputs
-				: "d0", "d1", "cc" AND_MEMORY
+				: "a"(_sampleBuf), "a"(_atariPhysicalSampleBuffer), "d"(processed * _outputChannels) // inputs
+				: "d0", "d1", "d2", "d3", "cc" AND_MEMORY
 				);
 			memset(_atariPhysicalSampleBuffer + processed * _outputChannels * 2/2, 0, (_samples - processed) * _outputChannels * 2/2);
 			Setbuffer(SR_PLAY, _atariPhysicalSampleBuffer, _atariPhysicalSampleBuffer + _samples * _outputChannels * 2/2);
 		} else {
-			memcpy(_atariPhysicalSampleBuffer, _samplesBuf, processed * _outputChannels * 2);
+			__asm__ volatile(
+				"	move.l	#32768,%%d2\n"
+				"	move.l	#65535,%%d3\n"
+				"	subq.l	#1,%2\n"
+				"1:	move.l	(%0)+,%%d0\n"
+				"	move.l	%%d0,%%d1\n"
+				"	add.l	%%d2,%%d1\n"
+				"	cmp.l	%%d3,%%d1\n"
+				"	bhi.b	3f\n"
+				"2:	move.w	%%d0,(%1)+\n"
+				"	dbra	%2,1b\n"
+				"	bra.b	4f\n"
+				"3:	tst.l	%%d0\n"
+				"	spl		%%d0\n"
+				"	ext.w	%%d0\n"
+				"	add.w	%%d2,%%d0\n"
+				"	bra.b	2b\n"
+				"4:\n"
+				: // outputs
+				: "a"(_sampleBuf), "a"(_atariPhysicalSampleBuffer), "d"(processed * _outputChannels) // inputs
+				: "d0", "d1", "d2", "d3", "cc" AND_MEMORY
+				);
 			memset(_atariPhysicalSampleBuffer + processed * _outputChannels * 2, 0, (_samples - processed) * _outputChannels * 2);
 			Setbuffer(SR_PLAY, _atariPhysicalSampleBuffer, _atariPhysicalSampleBuffer + _samples * _outputChannels * 2);
 		}

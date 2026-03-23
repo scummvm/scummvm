@@ -408,15 +408,20 @@ Mute vs. "No music"
 
 Currently ScummVM requires each backend to mix samples, even though they may
 contain muted output (i.e. zeroes). This is because the progression of sample
-playback tells ScummVM how much time has passed in e.g. an animation.
+playback tells ScummVM how much time has passed in e.g. an animation. However,
+an optimisation kicks in for muted channels: the input stream is still loaded
+and decoded but it is not mixed which alone leads to an enormous performance
+boost!
 
 "No music" means using the null audio plugin which prevents generating any MIDI
 music (and therefore avoiding the expensive synthesis emulation) but beware, it
-doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
+doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx. So
+mute one or all of those if frame rate drops noticeably.
 
 The least amount of cycles is spent when:
 - "No music" as "Preferred device": This prevents MIDI/OPL synthesis of any
   kind.
+- "Mute all" in "Volume" setting.
 - "output_rate" set to a DOS/Windows compatible value (default). Even if game
   uses 22050 Hz and your Falcon supports 22050 Hz, it is always faster to use
   11025 Hz!
