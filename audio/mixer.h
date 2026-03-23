@@ -399,6 +399,13 @@ public:
 	 * @return The output sample size is bytes.
 	 */
 	virtual uint getOutputBytesPerSample() const = 0;
+
+	/**
+	 * Return whether the mixer is expected to clamp outgoing samples.
+	 *
+	 * @return true if output is clamped, false if not.
+	 */
+	virtual bool getClamping() const = 0;
 };
 
 /** @} */

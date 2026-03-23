@@ -227,8 +227,8 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize, uint outBytesPerSample)
-	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _outBytesPerSample(outBytesPerSample)
+MixerImpl::MixerImpl(uint sampleRate, bool stereo, uint outBufSize, uint outBytesPerSample, bool clamp)
+	: _mutex(), _sampleRate(sampleRate), _stereo(stereo), _outBufSize(outBufSize), _outBytesPerSample(outBytesPerSample), _clamp(clamp)
 	, _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
@@ -262,6 +262,10 @@ uint MixerImpl::getOutputBufSize() const {
 
 uint MixerImpl::getOutputBytesPerSample() const {
 	return _outBytesPerSample;
+}
+
+bool MixerImpl::getClamping() const {
+	return _clamp;
 }
 
 void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
@@ -802,7 +806,14 @@ int Channel::mix(byte *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
-		res = _converter->convert(*_stream, data, _mixer->getOutputBytesPerSample(), len, _volL, _volR, MIX_CLAMPED_ADD);
+		res = _converter->convert(
+			*_stream,
+			data,
+			_mixer->getOutputBytesPerSample(),
+			len,
+			_volL,
+			_volR,
+			_mixer->getClamping() ? MIX_CLAMPED_ADD : MIX_ADD);
 		_samplesDecoded += res;
 	}
 
