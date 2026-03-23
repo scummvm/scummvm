@@ -24,73 +24,106 @@
 #include "harvester/npc/boyle_dialogue.h"
 
 #include "common/array.h"
-#include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 
 namespace Harvester {
 
 namespace {
 
+static const char *const kBoyleNpc = "BOYLE";
+static const char *const kPcSpeaker = "PC";
+static const char *const kInventoryOwnerName = "INVENTORY";
+static const char *const kBoylesButtonObject = "BOYLES_BUTTON";
+static const char *const kGascanObject = "GASCAN";
+static const char *const kLodgeApplicationObject = "LODGE_APPLICATION";
+static const char *const kHaveLodgeAppFlag = "HAVE_LODGE_APP";
+static const char *const kSheriffInDinerFlag = "SHERIFF_IN_DINER";
 static const char *const kBoyleArsonistTopic = "Arsonist";
 static const char *const kDialogueC019BFstPath = "GRAPHIC/FST/C019B.FST";
 
 static const DialogueLineEntry kBoyleHaveLodgeAppEvidenceLines[] = {
-	{ 0x13d, "BOYLE", 2 },
-	{ 0x141, "BOYLE", 0 },
-	{ 0x145, "BOYLE", 2 },
-	{ 0x14a, "BOYLE", 0 },
-	{ 0x14e, "BOYLE", 3 }
+	{ 0x13d, kBoyleNpc, 2 },
+	{ 0x141, kPcSpeaker, 0 },
+	{ 0x145, kBoyleNpc, 2 },
+	{ 0x14a, kPcSpeaker, 0 },
+	{ 0x14e, kBoyleNpc, 3 }
+};
+
+static const DialogueLineEntry kBoyleButtonIntroLines[] = {
+	{ 0x155, kBoyleNpc, 1 },
+	{ 0x15a, kPcSpeaker, 0 },
+	{ 0x15f, kBoyleNpc, 2 }
 };
 
 static const DialogueLineEntry kBoyleButtonResponse2Lines[] = {
-	{ 0x174, "BOYLE", 0 },
-	{ 0x179, "BOYLE", 0 },
-	{ 0x17d, "BOYLE", 0 }
+	{ 0x174, kBoyleNpc, 0 },
+	{ 0x179, kPcSpeaker, 0 },
+	{ 0x17d, kBoyleNpc, 0 }
 };
 
-static const DialogueLineEntry kBoyleNoteResponse1Lines[] = {
-	{ 0x1a1, "BOYLE", 2 },
-	{ 0x1a9, "BOYLE", 0 },
-	{ 0x1ad, "BOYLE", 0 },
-	{ 0x186, "BOYLE", 0 },
-	{ 0x1b8, "BOYLE", 0 },
-	{ 0x1d2, "BOYLE", 0 }
+static const DialogueLineEntry kBoyleNoteResponse1IntroLines[] = {
+	{ 0x1a1, kBoyleNpc, 2 },
+	{ 0x1a9, kPcSpeaker, 0 },
+	{ 0x1ad, kBoyleNpc, 0 }
 };
 
 static const DialogueLineEntry kBoyleGascanRewardLines[] = {
-	{ 0x1f2, "BOYLE", 3 },
-	{ 0x1f6, "BOYLE", 2 },
-	{ 0x1fa, "BOYLE", 3 },
-	{ 0x202, "BOYLE", 2 },
-	{ 0x206, "BOYLE", 2 }
+	{ 0x1f2, kBoyleNpc, 3 },
+	{ 0x1f6, kPcSpeaker, 2 },
+	{ 0x1fa, kBoyleNpc, 3 },
+	{ 0x202, kPcSpeaker, 2 },
+	{ 0x206, kBoyleNpc, 2 }
+};
+
+static const DialogueLineEntry kBoyleIntroOpeningLines[] = {
+	{ 0x7, kBoyleNpc, 0 },
+	{ 0xb, kPcSpeaker, 0 },
+	{ 0xf, kBoyleNpc, 1 }
+};
+
+static const DialogueLineEntry kBoyleIntroResponse1Lines[] = {
+	{ 0x19, kBoyleNpc, 0 },
+	{ 0x1d, kPcSpeaker, 2 },
+	{ 0x21, kBoyleNpc, 1 }
+};
+
+static const DialogueLineEntry kBoyleIntroResponse1TailLines[] = {
+	{ 0x3a, kBoyleNpc, 0 },
+	{ 0x41, kPcSpeaker, 2 },
+	{ 0x45, kBoyleNpc, 0 }
+};
+
+static const DialogueLineEntry kBoyleIntroResponse2Choice2Lines[] = {
+	{ 0x76, kBoyleNpc, 0 },
+	{ 0x77, kBoyleNpc, 2 }
 };
 
 static const DialogueLineEntry kBoyleKeywordTopic0eLines[] = {
-	{ 0x8c, "BOYLE", 0 },
-	{ 0x90, "BOYLE", 0 },
-	{ 0x94, "BOYLE", 0 },
-	{ 0x98, "BOYLE", 0 },
-	{ 0x9d, "BOYLE", 0 },
-	{ 0xa1, "BOYLE", 1 }
+	{ 0x8c, kPcSpeaker, 0 },
+	{ 0x90, kBoyleNpc, 0 },
+	{ 0x94, kPcSpeaker, 0 },
+	{ 0x98, kBoyleNpc, 0 },
+	{ 0x9d, kPcSpeaker, 0 },
+	{ 0xa1, kBoyleNpc, 1 }
 };
 
 static const DialogueLineEntry kBoyleKeywordTopic17Lines[] = {
-	{ 0xee, "BOYLE", 0 },
-	{ 0xf2, "BOYLE", 2 },
-	{ 0xf6, "BOYLE", 4 },
-	{ 0xfa, "BOYLE", 0 }
+	{ 0xee, kPcSpeaker, 0 },
+	{ 0xf2, kBoyleNpc, 2 },
+	{ 0xf6, kPcSpeaker, 4 },
+	{ 0xfa, kBoyleNpc, 0 }
 };
 
 static const DialogueLineEntry kBoyleKeywordArsonResponse1Lines[] = {
-	{ 0x126, "BOYLE", 0 },
-	{ 0x12c, "BOYLE", 0 },
-	{ 0x130, "BOYLE", 2 }
+	{ 0x126, kBoyleNpc, 0 },
+	{ 0x12c, kPcSpeaker, 0 },
+	{ 0x130, kBoyleNpc, 2 }
 };
 
 static const DialogueLineEntry kBoyleFollowupBurnedTvLines[] = {
-	{ 0x28a, "BOYLE", 1 },
-	{ 0x28e, "BOYLE", 0 },
-	{ 0x292, "BOYLE", 1 }
+	{ 0x28a, kBoyleNpc, 1 },
+	{ 0x28e, kPcSpeaker, 0 },
+	{ 0x292, kBoyleNpc, 1 }
 };
 
 static const int kBoyleKeywordTopic0fTo12Lines[] = { 0xf, 0x10, 0x11, 0x12 };
@@ -101,7 +134,7 @@ static const int kBoyleKeywordTopic18To1bLines[] = { 0x18, 0x19, 0x1a, 0x1b };
 } // End of namespace
 
 bool BoyleDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("BOYLE");
+	return npcName.equalsIgnoreCase(kBoyleNpc);
 }
 
 Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
@@ -118,11 +151,18 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		boyleTopicBuffer.clear();
 		boyleTopicBufferLineIndex = -1;
 	};
-	auto playBoyleLine = [&](int wavId, int headVariant) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "BOYLE", headVariant);
+	auto playLine = [&](int wavId, const char *speakerId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
+	};
+	auto playBoyleLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return playLine(wavId, kBoyleNpc, headVariant);
 	};
 	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
 		return runtime.playDialogueEntrySequence(lines, count);
+	};
+	auto hideInventoryItem = [&](const char *objectName) {
+		return runtime.startupScript().setRuntimeObjectVisible(
+			kInventoryOwnerName, objectName, false);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
 		Common::Array<StartupObjectRecord> inventoryObjects;
@@ -133,19 +173,19 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		return false;
 	};
+	auto isBlackmailEvidence = [&](const Common::String &itemName) {
+		return itemName.equalsIgnoreCase("NOTE") ||
+			itemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
+			itemName.equalsIgnoreCase("CHECKBOOK") ||
+			itemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY");
+	};
 
 	Common::Error lineError = Common::kNoError;
-	const bool hasBoylesButton = hasInventoryItem("BOYLES_BUTTON");
+	const bool hasBoylesButton = hasInventoryItem(kBoylesButtonObject);
 
 	if (!usedItemName.empty()) {
-		if (usedItemName.equalsIgnoreCase("BOYLES_BUTTON")) {
-			lineError = playBoyleLine(0x155, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			lineError = playBoyleLine(0x15a, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			lineError = playBoyleLine(0x15f, 2);
+		if (usedItemName.equalsIgnoreCase(kBoylesButtonObject)) {
+			lineError = playSequence(kBoyleButtonIntroLines, ARRAYSIZE(kBoyleButtonIntroLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -166,37 +206,35 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
-				lineError = sharedState.boyleGascanApplicationState
-					? playBoyleLine(0x186, 0)
-					: playBoyleLine(0x1d2, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				if (sharedState.boyleGascanApplicationState) {
-					lineError = playBoyleLine(0x18b, 0);
+				if (state.extraEvidenceReplyEnabled) {
+					lineError = playLine(0x186, kPcSpeaker, 0);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+					lineError = playBoyleLine(0x18b);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				} else {
+					lineError = playBoyleLine(0x1d2);
 					if (lineError.getCode() != Common::kNoError)
 						return lineError;
 				}
 
-				(void)runtime.startupScript().resetRuntimeObjectToInitialState("BOYLES_BUTTON");
+				(void)hideInventoryItem(kBoylesButtonObject);
 				sharedState.boyleGascanApplicationState = true;
 				sharedState.dialogueStateD2e98 = true;
 				sharedState.dialogueStateD2eb0 = true;
-				(void)runtime.startupScript().setRuntimeFlagValue("SHERIFF_IN_DINER", true);
+				(void)runtime.startupScript().setRuntimeFlagValue(kSheriffInDinerFlag, true);
 			}
 			return Common::kNoError;
 		}
 
-		if (usedItemName.equalsIgnoreCase("NOTE") ||
-				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
-				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
-				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(
-				DialogueFlags::kShownEvidenceOfBlackmail, true);
-			if (runtime.startupScript().getFlagValue("HAVE_LODGE_APP"))
+		if (isBlackmailEvidence(usedItemName)) {
+			if (runtime.startupScript().getFlagValue(kHaveLodgeAppFlag)) {
 				return playSequence(kBoyleHaveLodgeAppEvidenceLines,
 					ARRAYSIZE(kBoyleHaveLodgeAppEvidenceLines));
+			}
 
-			lineError = playBoyleLine(0x197, 0);
+			lineError = playBoyleLine(0x197);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -207,8 +245,19 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			if (responseIndex == 1) {
 				sharedState.boyleGascanApplicationState = true;
-				return playSequence(kBoyleNoteResponse1Lines,
-					ARRAYSIZE(kBoyleNoteResponse1Lines));
+				lineError = playSequence(kBoyleNoteResponse1IntroLines,
+					ARRAYSIZE(kBoyleNoteResponse1IntroLines));
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+				if (state.extraEvidenceReplyEnabled) {
+					lineError = playLine(0x186, kPcSpeaker, 0);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+					lineError = playBoyleLine(0x1b8);
+					if (lineError.getCode() != Common::kNoError)
+						return lineError;
+				}
+				return playBoyleLine(0x1d2);
 			}
 			if (responseIndex == 2) {
 				lineError = playBoyleLine(0x1d9, 1);
@@ -228,55 +277,45 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 		}
 
-		if (usedItemName.equalsIgnoreCase("GASCAN") &&
+		if (usedItemName.equalsIgnoreCase(kGascanObject) &&
 				sharedState.boyleGascanApplicationState) {
 			lineError = playSequence(kBoyleGascanRewardLines,
 				ARRAYSIZE(kBoyleGascanRewardLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			sharedState.boyleGascanApplicationState = false;
-			(void)runtime.startupScript().resetRuntimeObjectToInitialState("GASCAN");
-			(void)runtime.startupScript().setRuntimeFlagValue("SHERIFF_IN_DINER", true);
-			(void)runtime.startupScript().addRuntimeObjectToInventory("LODGE_APPLICATION");
-			(void)runtime.startupScript().setRuntimeFlagValue("HAVE_LODGE_APP", true);
+			(void)hideInventoryItem(kGascanObject);
+			(void)runtime.startupScript().addRuntimeObjectToInventory(kLodgeApplicationObject);
+			(void)runtime.startupScript().setRuntimeFlagValue(kHaveLodgeAppFlag, true);
 			return Common::kNoError;
 		}
 
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(
-				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			return playBoyleLine(0x25f, 2);
 		}
 
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(
-				DialogueFlags::kShownPhotoOfCorpse, true);
+			sharedState.discussedCasketPhotoEvidence = 1;
 			lineError = playBoyleLine(0x24f, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			if (sharedState.dialogueStateD2ebc) {
-				lineError = playBoyleLine(0x253, 0);
+				lineError = playLine(0x253, kPcSpeaker, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
 			return playBoyleLine(0x258, 2);
 		}
 
-		return playBoyleLine(0x249, 0);
+		return playBoyleLine(0x249);
 	}
 
 	if (state.introPending) {
 		state.introPending = false;
 
-		lineError = playBoyleLine(0x7, 0);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-		lineError = playBoyleLine(0xb, 0);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-		lineError = playBoyleLine(0xf, 1);
+		lineError = playSequence(kBoyleIntroOpeningLines, ARRAYSIZE(kBoyleIntroOpeningLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -285,14 +324,10 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 
+		bool seedButtonTopicBuffer = false;
 		if (responseIndex == 1) {
-			lineError = playBoyleLine(0x19, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			lineError = playBoyleLine(0x1d, 2);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			lineError = playBoyleLine(0x21, 1);
+			lineError = playSequence(kBoyleIntroResponse1Lines,
+				ARRAYSIZE(kBoyleIntroResponse1Lines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -302,7 +337,7 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (followupResponseIndex == 1) {
-				lineError = playBoyleLine(0x2f, 0);
+				lineError = playBoyleLine(0x2f);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (followupResponseIndex == 2) {
@@ -311,15 +346,11 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return lineError;
 			}
 
-			lineError = playBoyleLine(0x3a, 0);
+			lineError = playSequence(kBoyleIntroResponse1TailLines,
+				ARRAYSIZE(kBoyleIntroResponse1TailLines));
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playBoyleLine(0x41, 2);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-			lineError = playBoyleLine(0x45, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+			seedButtonTopicBuffer = true;
 		} else if (responseIndex == 2) {
 			lineError = playBoyleLine(0x4d, 1);
 			if (lineError.getCode() != Common::kNoError)
@@ -350,11 +381,9 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						return lineError;
 				}
 			} else if (followupResponseIndex == 2) {
-				sharedState.dialogueStateD2ebc = true;
-				lineError = playBoyleLine(0x76, 0);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-				lineError = playBoyleLine(0x77, 2);
+				state.extraEvidenceReplyEnabled = true;
+				lineError = playSequence(kBoyleIntroResponse2Choice2Lines,
+					ARRAYSIZE(kBoyleIntroResponse2Choice2Lines));
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -363,26 +392,27 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignBoyleTopicBuffer(0x9);
+			seedButtonTopicBuffer = true;
 		}
 
-		if (hasBoylesButton)
+		if (seedButtonTopicBuffer && hasBoylesButton)
 			assignBoyleTopicBuffer(0xa);
 	} else {
-		lineError = playBoyleLine(0x23c, 0);
+		lineError = playBoyleLine(0x23c);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 		if (hasBoylesButton)
 			assignBoyleTopicBuffer(0xb);
 	}
 
-	if ((runtime.startupScript().getFlagValue(DialogueFlags::kShownEvidenceOfBlackmail) ||
+	if ((sharedState.discussedNoteCheckbookEvidence != 0 ||
 				sharedState.dwayneDiscussedBoylesButton) &&
 			!state.evidenceFollowupShown) {
 		state.evidenceFollowupShown = true;
 		lineError = playBoyleLine(0x210, 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		if (runtime.startupScript().getFlagValue(DialogueFlags::kShownEvidenceOfBlackmail)) {
+		if (sharedState.discussedNoteCheckbookEvidence != 0) {
 			lineError = playBoyleLine(0x21a, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -393,7 +423,7 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return lineError;
 		}
 
-		if (!runtime.startupScript().getFlagValue("HAVE_LODGE_APP")) {
+		if (!runtime.startupScript().getFlagValue(kHaveLodgeAppFlag)) {
 			lineError = playBoyleLine(0x21f, 2);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -424,7 +454,7 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
 			!state.stephMidgameShown) {
 		state.stephMidgameShown = true;
-		lineError = playBoyleLine(0x267, 0);
+		lineError = playBoyleLine(0x267);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -462,15 +492,15 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				ARRAYSIZE(kBoyleKeywordTopic0eLines));
 		} else if (runtime.matchesAnyResponseLine(selectedTopic, kBoyleKeywordTopic0fTo12Lines,
 				ARRAYSIZE(kBoyleKeywordTopic0fTo12Lines))) {
-			lineError = playBoyleLine(0xab, 0);
+			lineError = playBoyleLine(0xab);
 		} else if (runtime.matchesAnyResponseLine(selectedTopic, kBoyleKeywordTopic13To14Lines,
 				ARRAYSIZE(kBoyleKeywordTopic13To14Lines))) {
 			lineError = playBoyleLine(0xb6, 3);
 		} else if (runtime.matchesAnyResponseLine(selectedTopic, kBoyleKeywordTopic15To16Lines,
 				ARRAYSIZE(kBoyleKeywordTopic15To16Lines))) {
 			lineError = runtime.startupScript().getCurrentStoryDayIndex() >= 3
-				? playBoyleLine(0xc6, 0)
-				: playBoyleLine(0x243, 0);
+				? playBoyleLine(0xc6)
+				: playBoyleLine(0x243);
 		} else if (runtime.matchesResponseLine(selectedTopic, 0x17)) {
 			lineError = playSequence(kBoyleKeywordTopic17Lines,
 				ARRAYSIZE(kBoyleKeywordTopic17Lines));
@@ -480,13 +510,13 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = runtime.playDialogueFst(kDialogueC019BFstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
-				lineError = playBoyleLine(0x10e, 0);
+				lineError = playBoyleLine(0x10e);
 			} else {
 				lineError = playBoyleLine(0x115, 1);
 			}
 		} else if (runtime.matchesResponseLine(selectedTopic, 0x1d) ||
 				selectedTopic.equalsIgnoreCase(kBoyleArsonistTopic)) {
-			lineError = playBoyleLine(0x11c, 0);
+			lineError = playBoyleLine(0x11c);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -499,7 +529,7 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				lineError = playSequence(kBoyleKeywordArsonResponse1Lines,
 					ARRAYSIZE(kBoyleKeywordArsonResponse1Lines));
 			} else if (responseIndex == 2) {
-				lineError = playBoyleLine(0x135, 0);
+				lineError = playBoyleLine(0x135);
 			} else {
 				lineError = Common::kNoError;
 			}
@@ -507,7 +537,7 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			lineError = playSequence(kBoyleHaveLodgeAppEvidenceLines,
 				ARRAYSIZE(kBoyleHaveLodgeAppEvidenceLines));
 		} else {
-			lineError = playBoyleLine(0x243, 0);
+			lineError = playBoyleLine(0x243);
 		}
 
 		if (lineError.getCode() != Common::kNoError)
