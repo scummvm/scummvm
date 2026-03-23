@@ -33,7 +33,7 @@ bool DadDialogueHandler::matchesNpc(const Common::String &npcName) const {
 }
 
 Common::Error DadDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &) {
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	DadRoomDialogueState &state = _state;
 	auto playDadLine = [&](int wavId, const char *speakerId = "DAD") -> Common::Error {
 		return runtime.playDialogueLine(wavId, speakerId);
@@ -45,6 +45,7 @@ Common::Error DadDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.empty()) {
 		if (state.introPending) {
 			state.introPending = false;
+			sharedState.dialogueStateD2ed0 = true;
 			return playDadLine(0x39a5);
 		}
 		return playDadLine(0x3a17);
@@ -69,7 +70,7 @@ Common::Error DadDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return playDadLine(0x3a51);
 	}
 	if (usedItemName.equalsIgnoreCase("MEAT_PERMISSION0")) {
-		if (state.meatPermissionState)
+		if (sharedState.dadMeatPermissionState)
 			return playDadLine(0x39f2, "PC");
 		return playDadLine(0x3a32);
 	}
