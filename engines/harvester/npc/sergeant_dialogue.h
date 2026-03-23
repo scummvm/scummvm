@@ -57,6 +57,10 @@ public:
 		syncDialogueBool(s, _state.completedFirstTaskState);
 		syncDialogueBool(s, _state.day5ExitLinePlayed);
 	}
+	void migrateSharedState(DialogueSharedState &sharedState) override {
+		if (sharedState.sergeantCompletedFirstTaskState == 0 && _state.completedFirstTaskState)
+			sharedState.sergeantCompletedFirstTaskState = 1;
+	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
 

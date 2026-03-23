@@ -335,6 +335,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto handleCompletedFirstTaskBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;
 		sharedState.dialogueStateD2f00 = true;
+		sharedState.sergeantCompletedFirstTaskState = 1;
 		state.talkStateBlock = true;
 		state.dialogueStateD2d50 = true;
 		state.postApplicationBriefingCompleted = true;
