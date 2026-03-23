@@ -33,12 +33,13 @@ bool Fireman2DialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error Fireman2DialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	if (_state.talkStatePending) {
-		_state.talkStatePending = false;
-		return runtime.playDialogueLineWithVariant(0x5b9, "FIREMAN2", 2);
+	int wavId = 0x5c7;
+	if (_state.talkStateBlock) {
+		_state.talkStateBlock = false;
+		wavId = 0x5b9;
 	}
 
-	return runtime.playDialogueLineWithVariant(0x5c7, "FIREMAN2", 2);
+	return runtime.playDialogueLineWithVariant(wavId, "FIREMAN2", 2);
 }
 
 } // End of namespace Harvester
