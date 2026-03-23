@@ -524,6 +524,10 @@ void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 	syncDialogueSharedState(s, _sharedDialogueState);
 	for (uint i = 0; i < _npcHandlers.size(); ++i)
 		_npcHandlers[i]->syncState(s);
+	if (s.isLoading()) {
+		for (uint i = 0; i < _npcHandlers.size(); ++i)
+			_npcHandlers[i]->migrateSharedState(_sharedDialogueState);
+	}
 }
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

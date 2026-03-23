@@ -73,8 +73,7 @@ Common::Error NudeManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			// Native gates the second prompt on get_set_sergeant_completed_first_task_state.
-			if (!sharedState.dialogueStateD2f08)
+			if (sharedState.sergeantCompletedFirstTaskState == 0)
 				return Common::kNoError;
 
 			lineError = playNudeManLine(0x62c);
