@@ -273,7 +273,7 @@ bool findInvalidActiveObjectSlot(const Common::Array<Thing> &objects, uint32 &in
 	return false;
 }
 
-} // namespace
+} // anonymous namespace
 
 bool ColonyEngine::hasFeature(EngineFeature f) const {
 	return f == kSupportsReturnToLauncher ||
