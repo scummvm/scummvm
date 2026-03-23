@@ -367,10 +367,6 @@ void ColonyEngine::loadMacCursorResources() {
 		MKTAG('C', 'U', 'R', 'S'),
 		MKTAG('c', 'r', 's', 'r')
 	};
-	const char *typeNames[] = {
-		"CURS",
-		"crsr"
-	};
 	const int cursorScale = getMacCursorScaleFactor(_system);
 	const byte *arrowData = nullptr;
 	const byte *arrowPalette = nullptr;
@@ -400,13 +396,13 @@ void ColonyEngine::loadMacCursorResources() {
 				continue;
 
 			warning("Colony cursor: found %s 1000 in %s resource fork (stream size=%u)",
-				typeNames[typeIdx], sources[sourceIdx].label, (uint)cursorStream->size());
+				tag2str(types[typeIdx]), sources[sourceIdx].label, (uint)cursorStream->size());
 
 			Graphics::MacCursor *cursor = new Graphics::MacCursor();
 			const bool forceCURSFormat = (types[typeIdx] == MKTAG('C', 'U', 'R', 'S'));
 			if (!cursor->readFromStream(*cursorStream, false, 0xff, forceCURSFormat)) {
 				warning("Colony cursor: failed to decode %s 1000 from %s resource fork",
-					typeNames[typeIdx], sources[sourceIdx].label);
+					tag2str(types[typeIdx]), sources[sourceIdx].label);
 				delete cursor;
 				cursor = nullptr;
 			} else {
@@ -415,7 +411,7 @@ void ColonyEngine::loadMacCursorResources() {
 				cursor = nullptr;
 				_macCrossCursor = scaledCursor;
 				warning("Colony cursor: loaded %s 1000 from %s resource fork at %dx scale (%ux%u hotspot=%u,%u)",
-					typeNames[typeIdx], sources[sourceIdx].label,
+					tag2str(types[typeIdx]), sources[sourceIdx].label,
 					cursorScale,
 					_macCrossCursor->getWidth(), _macCrossCursor->getHeight(),
 					_macCrossCursor->getHotspotX(), _macCrossCursor->getHotspotY());
