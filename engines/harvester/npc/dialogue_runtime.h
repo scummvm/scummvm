@@ -28,6 +28,7 @@ public:
 	typedef std::function<Common::Error(const Common::String &, int, Common::String &)> RunKeywordMenuFn;
 	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
 	typedef std::function<Common::Error(const Common::String &, int &)> RunResponseMenuTextFn;
+	typedef std::function<Common::Error()> RunGameOverScreenFn;
 	typedef std::function<void(Common::String &, int &, int, const char *)> AssignTopicBufferFn;
 	typedef std::function<bool(const Common::String &, int)> MatchesResponseLineFn;
 	typedef std::function<bool(const Common::String &, const int *, uint)> MatchesAnyResponseLineFn;
@@ -46,6 +47,7 @@ public:
 			const RunKeywordMenuFn &runKeywordMenu,
 			const RunResponseMenuFn &runResponseMenu,
 			const RunResponseMenuTextFn &runResponseMenuText,
+			const RunGameOverScreenFn &runGameOverScreen,
 			const AssignTopicBufferFn &assignTopicBuffer,
 			const MatchesResponseLineFn &matchesResponseLine,
 			const MatchesAnyResponseLineFn &matchesAnyResponseLine,
@@ -60,6 +62,7 @@ public:
 		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
 		  _playDialogueFst(playDialogueFst), _runKeywordMenu(runKeywordMenu),
 		  _runResponseMenu(runResponseMenu), _runResponseMenuText(runResponseMenuText),
+		  _runGameOverScreen(runGameOverScreen),
 		  _assignTopicBuffer(assignTopicBuffer),
 		  _matchesResponseLine(matchesResponseLine),
 		  _matchesAnyResponseLine(matchesAnyResponseLine),
@@ -97,6 +100,7 @@ public:
 	Common::Error runResponseMenuText(const Common::String &responseLine, int &responseIndex) const {
 		return _runResponseMenuText(responseLine, responseIndex);
 	}
+	Common::Error runGameOverScreen() const { return _runGameOverScreen(); }
 	void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
 			int responseLineIndex, const char *label) const {
 		_assignTopicBuffer(topicBuffer, topicBufferLineIndex, responseLineIndex, label);
@@ -133,6 +137,7 @@ private:
 	RunKeywordMenuFn _runKeywordMenu;
 	RunResponseMenuFn _runResponseMenu;
 	RunResponseMenuTextFn _runResponseMenuText;
+	RunGameOverScreenFn _runGameOverScreen;
 	AssignTopicBufferFn _assignTopicBuffer;
 	MatchesResponseLineFn _matchesResponseLine;
 	MatchesAnyResponseLineFn _matchesAnyResponseLine;
