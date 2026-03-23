@@ -100,17 +100,17 @@ public:
 
 private:
 	void useColor(uint32 color);
-	GLuint _overlayTexId;
+	GLuint _overlayTexId = 0;
 
-	OSystem *_system;
-	int _width;
-	int _height;
-	byte _palette[256 * 3];
-	bool _wireframe;
-	int64_t _wireframeFillColor; // -1 = no fill (outline only)
-	const byte *_stippleData; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
-	uint32 _stippleFgColor;
-	uint32 _stippleBgColor;
+	OSystem *_system = nullptr;
+	int _width = 0;
+	int _height = 0;
+	byte _palette[256 * 3] = {};
+	bool _wireframe = true;
+	int64_t _wireframeFillColor = 0; // -1 = no fill (outline only)
+	const byte *_stippleData = nullptr; // GL_POLYGON_STIPPLE pattern (128 bytes), null = disabled
+	uint32 _stippleFgColor = 0;
+	uint32 _stippleBgColor = 0;
 	Common::Rect _screenViewport;
 };
 

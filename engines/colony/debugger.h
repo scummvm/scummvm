@@ -39,7 +39,7 @@ public:
 	Debugger(ColonyEngine *vm);
 
 private:
-	ColonyEngine *_vm;
+	ColonyEngine *_vm = nullptr;
 	bool cmdTeleport(int argc, const char **argv);
 	bool cmdPos(int argc, const char **argv);
 	bool cmdInfo(int argc, const char **argv);

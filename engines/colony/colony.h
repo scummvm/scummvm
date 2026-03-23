@@ -279,35 +279,35 @@ static const int kBaseObject = 20;
 static const int kMeNum = 101;
 
 struct Locate {
-	uint8 ang;
-	uint8 look;
-	int8  lookY;
-	int lookx;
-	int delta;
-	int xloc;
-	int yloc;
-	int xindex;
-	int yindex;
-	int xmx, xmn;
-	int zmx, zmn;
-	int32 power[3];
-	int type;
-	int dx, dy;
-	int dist;
-	int wallPad; // 3D bounding radius for wall clamping (0 = use default kWallPad)
+	uint8 ang = 0;
+	uint8 look = 0;
+	int8  lookY = 0;
+	int lookx = 0;
+	int delta = 0;
+	int xloc = 0;
+	int yloc = 0;
+	int xindex = 0;
+	int yindex = 0;
+	int xmx = 0, xmn = 0;
+	int zmx = 0, zmn = 0;
+	int32 power[3] = {};
+	int type = 0;
+	int dx = 0, dy = 0;
+	int dist = 0;
+	int wallPad = 0; // 3D bounding radius for wall clamping (0 = use default kWallPad)
 };
 
 struct Thing {
-	int type;
-	int visible;
-	int alive;
+	int type = 0;
+	int visible = 0;
+	int alive = 0;
 	Common::Rect clip;
-	int count;
+	int count = 0;
 	Locate where;
-	int opcode;
-	int counter;
-	int time;
-	int grow;
+	int opcode = 0;
+	int counter = 0;
+	int time = 0;
+	int grow = 0;
 	// void (*make)(); // To be implemented as virtual functions or member function pointers
 	// void (*think)();
 };

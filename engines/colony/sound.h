@@ -83,10 +83,10 @@ public:
 	};
 
 private:
-	ColonyEngine *_vm;
-	Audio::PCSpeaker *_speaker;
-	Common::MacResManager *_resMan;
-	Common::MacResManager *_appResMan;
+	ColonyEngine *_vm = nullptr;
+	Audio::PCSpeaker *_speaker = nullptr;
+	Common::MacResManager *_resMan = nullptr;
+	Common::MacResManager *_appResMan = nullptr;
 	Audio::SoundHandle _handle;
 
 	void playPCSpeaker(int soundID);
