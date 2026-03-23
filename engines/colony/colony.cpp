@@ -591,7 +591,7 @@ void ColonyEngine::initMacMenus() {
 	//   index 0 = Apple, 1 = File, 2 = Edit, 3 = Options
 	// NOTE: menunum=0 is the loop terminator, so Apple submenu items
 	// must be added manually after addStaticMenus() (see WAGE pattern).
-	static const Graphics::MacMenuData menuItems[] = {
+	const Graphics::MacMenuData menuItems[] = {
 		{-1, "File",            0, 0, true},
 		{-1, "Edit",            0, 0, true},
 		{-1, "Options",         0, 0, true},
@@ -766,7 +766,7 @@ Common::Error ColonyEngine::run() {
 
 	// Setup a palette with standard 16 colors followed by grayscale
 	byte pal[256 * 3];
-	static const byte egaColors[16][3] = {
+	const byte egaColors[16][3] = {
 		{0, 0, 0}, {0, 0, 170}, {0, 170, 0}, {0, 170, 170},
 		{170, 0, 0}, {170, 0, 170}, {170, 85, 0}, {170, 170, 170},
 		{85, 85, 85}, {85, 85, 255}, {85, 255, 85}, {85, 255, 255},

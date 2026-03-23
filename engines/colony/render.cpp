@@ -36,7 +36,7 @@
 
 namespace Colony {
 
-static const int g_indexTable[4][10] = {
+const int g_indexTable[4][10] = {
 	{0, 0,  0, 0,  0,  1,  1,  0,  1, 2},
 	{1, 0,  0, 0, -1,  0,  0,  1,  2, 1},
 	{0, 1,  1, 0,  0, -1, -1,  0,  1, 2},
@@ -59,7 +59,7 @@ struct DOSColorEntry {
 	uint8 pattern;
 };
 
-static const DOSColorEntry g_dosColors[79] = {
+const DOSColorEntry g_dosColors[79] = {
 	//                     MONO BK  FILL LFIL LINE PAT
 	/* 0  cCLEAR      */ { 5,  0,  0,  0,  0, 1},
 	/* 1  cBLACK      */ { 4,  0,  0,  0,  0, 1},
@@ -715,7 +715,7 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	float upZ = 1.0f;
 
 	// Create 12-sided polygon
-	static const int N = 12;
+	const int N = 12;
 	float px[N], py[N], pz[N];
 	for (int i = 0; i < N; i++) {
 		float a = (float)i * 2.0f * (float)M_PI / (float)N;

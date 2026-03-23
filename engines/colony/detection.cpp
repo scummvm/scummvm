@@ -30,7 +30,7 @@
 
 namespace Colony {
 
-static const DebugChannelDef debugFlagList[] = {
+const DebugChannelDef debugFlagList[] = {
 	{ kColonyDebugMove, "move", "Movement and collision" },
 	{ kColonyDebugRender, "render", "3D rendering and graphics" },
 	{ kColonyDebugAnimation, "animation", "Animation and sprites" },
@@ -41,7 +41,7 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const PlainGameDescriptor colonyGames[] = {
+const PlainGameDescriptor colonyGames[] = {
 	{"colony", "The Colony"},
 	{0, 0}
 };

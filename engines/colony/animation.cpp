@@ -104,7 +104,7 @@ enum {
 // BMColor arrays from ganimate.c  per-animation color maps.
 // Index 0 = background top, 1 = background image, 2+ = per-sprite fill.
 // Positive = cColor[] index, negative = -MacSystemColor, 0 = level-based.
-static const int16 kBMC_Desk[] = {
+const int16 kBMC_Desk[] = {
 	0, mc_desktop,
 	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan,
 	-kMacWhite, -kMacWhite, -kMacMagenta, -kMacYellow, mc_desk,
@@ -112,13 +112,13 @@ static const int16 kBMC_Desk[] = {
 	-kMacWhite, mc_screen, -kMacMagenta, -kMacCyan, -kMacCyan,
 	-kMacBlue, -kMacWhite, -kMacRed, -kMacWhite, -kMacYellow
 };
-static const int16 kBMC_Vanity[] = {
+const int16 kBMC_Vanity[] = {
 	0, mc_vanity,
 	mc_mirror, -kMacRed, -kMacCyan, -kMacWhite, -kMacYellow,
 	-kMacGreen, -kMacBlue, -kMacRed, -kMacMagenta, -kMacRed,
 	mc_vanity, -kMacWhite, -kMacYellow, mc_mirror
 };
-static const int16 kBMC_Reactor[] = {
+const int16 kBMC_Reactor[] = {
 	0, mc_console,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
@@ -127,7 +127,7 @@ static const int16 kBMC_Reactor[] = {
 	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacCyan,
 	-kMacMagenta, -kMacWhite
 };
-static const int16 kBMC_Security[] = {
+const int16 kBMC_Security[] = {
 	0, mc_console,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
@@ -136,42 +136,42 @@ static const int16 kBMC_Security[] = {
 	-kMacRed, -kMacRed, -kMacRed, -kMacRed, -kMacWhite,
 	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan
 };
-static const int16 kBMC_Teleport[] = {
+const int16 kBMC_Teleport[] = {
 	0, mc_teleport, 0, mc_teledoor
 };
-static const int16 kBMC_Creatures[] = {
+const int16 kBMC_Creatures[] = {
 	-kMacWhite, 0, -kMacWhite, -kMacCyan, mc_proj,
 	-kMacBlue, -kMacMagenta, -kMacMagenta
 };
-static const int16 kBMC_Controls[] = {
+const int16 kBMC_Controls[] = {
 	0, mc_console,
 	-kMacRed, -kMacYellow, -kMacYellow, -kMacBlue, -kMacYellow, -kMacGreen, mc_screen
 };
-static const int16 kBMC_Lift[] = {
+const int16 kBMC_Lift[] = {
 	0, mc_flglass,
 	mc_teleport, mc_box1, mc_cryo, mc_ccore, 0,
 	-kMacRed, -kMacRed, -kMacCyan, -kMacCyan
 };
-static const int16 kBMC_Powersuit[] = {
+const int16 kBMC_Powersuit[] = {
 	0, mc_powerbase,
 	-kMacMagenta, -kMacMagenta, -kMacYellow, -kMacYellow, mc_powerbase, -kMacWhite
 };
-static const int16 kBMC_Forklift[] = {
+const int16 kBMC_Forklift[] = {
 	0, mc_forklift, mc_forklift, mc_forklift
 };
-static const int16 kBMC_Door[] = {
+const int16 kBMC_Door[] = {
 	0, mc_bulkhead, 0, mc_door, -kMacYellow
 };
-static const int16 kBMC_Bulkhead[] = {
+const int16 kBMC_Bulkhead[] = {
 	0, mc_bulkhead, 0, mc_bulkhead, -kMacYellow
 };
-static const int16 kBMC_Airlock[] = {
+const int16 kBMC_Airlock[] = {
 	0, mc_bulkhead, mc_bulkhead, -kMacRed, mc_airlock
 };
-static const int16 kBMC_Elevator[] = {
+const int16 kBMC_Elevator[] = {
 	0, mc_bulkhead, 0, mc_elevator, mc_elevator, -kMacYellow
 };
-static const int16 kBMC_Elevator2[] = {
+const int16 kBMC_Elevator2[] = {
 	0, mc_bulkhead, 0, -kMacMagenta, mc_elevator, mc_elevator,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow
 };
@@ -182,7 +182,7 @@ struct AnimColorEntry {
 	int count;
 };
 
-static const AnimColorEntry kAnimColors[] = {
+const AnimColorEntry kAnimColors[] = {
 	{ "desk",        kBMC_Desk,       ARRAYSIZE(kBMC_Desk) },
 	{ "vanity",      kBMC_Vanity,     ARRAYSIZE(kBMC_Vanity) },
 	{ "reactor",     kBMC_Reactor,    ARRAYSIZE(kBMC_Reactor) },
@@ -257,7 +257,7 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 
 	// DOS uses short names (suit.pic, elev.pic, etc.); Mac uses full names
 	// (spacesuit, elevator, etc.) without extensions, in a CData folder.
-	static const struct { const char *dosName; const char *macName; } nameMap[] = {
+	const struct { const char *dosName; const char *macName; } nameMap[] = {
 		{ "suit",   "spacesuit" },
 		{ "elev",   "elevator" },
 		{ "slides", "slideshow" },

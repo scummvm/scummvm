@@ -29,9 +29,9 @@ namespace Colony {
 
 namespace {
 
-static const uint32 kSaveVersion = 1;
-static const uint32 kMaxSaveObjects = 4096;
-static const uint32 kMaxSavePatches = 100;
+const uint32 kSaveVersion = 1;
+const uint32 kMaxSaveObjects = 4096;
+const uint32 kMaxSavePatches = 100;
 
 Common::Error makeReadError(const char *msg) {
 	return Common::Error(Common::kReadingFailed, msg);

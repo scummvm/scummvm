@@ -39,7 +39,7 @@
 
 namespace Colony {
 
-static const ADExtraGuiOptionsMap optionsList[] = {
+const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_WIDESCREEN,
 		{

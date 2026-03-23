@@ -447,7 +447,7 @@ bool Debugger::cmdSpawn(int argc, const char **argv) {
 		return true;
 	}
 
-	static const struct { const char *name; int type; } spawnTypes[] = {
+	const struct { const char *name; int type; } spawnTypes[] = {
 		{"eye",       kRobEye},
 		{"pyramid",   kRobPyramid},
 		{"cube",      kRobCube},

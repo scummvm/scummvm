@@ -33,7 +33,7 @@
 
 namespace Colony {
 
-static const int kTunnelXT[] = {
+const int kTunnelXT[] = {
 	4, 8, 8, 15, 16, 16, 16, 17, 20, 22,
 	22, 22, 25, 25, 28, 25, 25, 23, 20, 18,
 	18, 16, 14, 14, 13, 12, 10, 9, 7, 3,
@@ -42,7 +42,7 @@ static const int kTunnelXT[] = {
 	0, 0, 0, 0, 0, 0
 };
 
-static const int kTunnelYT[] = {
+const int kTunnelYT[] = {
 	2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
 	7, 8, 9, 10, 11, 12, 11, 9, 7, 6,
 	5, 4, 3, 2, 1, 1, 0, 0, -1, -2,
@@ -51,7 +51,7 @@ static const int kTunnelYT[] = {
 	-7, -4, -2, 0, 0, 0, 0, 0, 0, 0
 };
 
-static const int kTunnelST[] = {
+const int kTunnelST[] = {
 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -60,7 +60,7 @@ static const int kTunnelST[] = {
 	2, 2, 2, 2, 2, 2, 2, 2, 2, 2
 };
 
-static const int kTunnelStraight[60] = {0};
+const int kTunnelStraight[60] = {0};
 
 uint32 packTunnelMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
@@ -236,7 +236,7 @@ bool ColonyEngine::hasInteractiveWallFeature(int cx, int cy, int dir) const {
 }
 
 void ColonyEngine::clampToWalls(Locate *p) {
-	static const int kPlayerWallPad = 40;
+	const int kPlayerWallPad = 40;
 	const bool isPlayer = (p == &_me);
 	const int pad = isPlayer ? kPlayerWallPad : p->wallPad;
 	int cx = p->xindex;
@@ -266,7 +266,7 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 	// CWall/FWall objects are diagonal corner fills not registered in _robotArray.
 	// Enforce geometric collision: the CWall inner face is the line lx+ly=kThreshold
 	// in the object's local coordinate space.  The player must stay on the room side.
-	static const int kThreshold = 120; // inner face ~112 + padding
+	const int kThreshold = 120; // inner face ~112 + padding
 	for (uint i = 0; i < _objects.size(); i++) {
 		const Thing &obj = _objects[i];
 		if (!obj.alive)
@@ -306,7 +306,7 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 			p->xindex = p->xloc >> 8;
 			p->yindex = p->yloc >> 8;
 		} else { // kObjFWall — flat wall along the diagonal
-			static const int kFWallThreshold = 20;
+			const int kFWallThreshold = 20;
 			if (diag >= kFWallThreshold)
 				continue;
 

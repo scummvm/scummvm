@@ -171,7 +171,7 @@ void sortWallCharSpans(WallCharSpan *spans, int count) {
 	}
 }
 
-static const char *const kWallCharData[] = {
+const char *const kWallCharData[] = {
 	"\00",
 	"\02\10\02\00\03\00\03\01\02\01\10\02\02\03\02\03\06\02\06",
 	"\02\10\01\04\02\04\02\05\01\05\10\03\04\04\04\04\05\03\05",
@@ -510,8 +510,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 		bool shipLevel = (_level == 1 || _level == 5 || _level == 6);
 
 		if (shipLevel) {
-			static const float uSs[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
-			static const float vSs[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
+			const float uSs[8] = { 0.375f, 0.250f, 0.250f, 0.375f, 0.625f, 0.750f, 0.750f, 0.625f };
+			const float vSs[8] = { 0.125f, 0.250f, 0.750f, 0.875f, 0.875f, 0.750f, 0.250f, 0.125f };
 			const uint32 shipDoorColor = macColors ? (uint32)0xFF000000 : (macMode ? 0 : (_wireframe ? 8u : 0u));
 
 			if (macMode) {
@@ -553,8 +553,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 				wallLine(corners, 0.625f, 0.25f, 0.375f, 0.25f, shipDoorColor);
 			}
 		} else {
-			static const float xl = 0.25f, xr = 0.75f;
-			static const float yb = 0.0f, yt = 0.875f;
+			const float xl = 0.25f, xr = 0.75f;
+			const float yb = 0.0f, yt = 0.875f;
 
 			if (macMode) {
 				float ud[4] = {xl, xr, xr, xl};
@@ -828,8 +828,8 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	}
 	case kWallFeatureTunnel: {
 		// Tunnel: hexagonal opening from Grid (0,0 0,5 1,6 5,6 6,5 6,0)
-		static const float uT[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
-		static const float vT[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
+		const float uT[6] = { 0.0f,    0.0f,    1/6.0f,  5/6.0f,  1.0f,    1.0f };
+		const float vT[6] = { 0.0f,    0.750f,  0.875f,  0.875f,  0.750f,  0.0f };
 		if (_renderMode == Common::kRenderMacintosh) {
 			if (macColors) {
 				macFillPoly(uT, vT, 6, 24); // c_tunnel
@@ -846,12 +846,12 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 	case kWallFeatureAirlock: {
 		// Direct port of drawALOpen/drawALClosed from WALLFTRS.C / wallftrs.c.
 		// These are the exact split7x7 positions on the wall face.
-		static const float u[8] = {0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f};
-		static const float v[8] = {0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f, 0.125f, 0.25f};
-		static const float spokeU[8] = {0.375f, 0.5f, 0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f};
-		static const float spokeV[8] = {0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f, 0.375f, 0.5f};
-		static const float centerU = 0.5f;
-		static const float centerV = 0.5f;
+		const float u[8] = {0.125f, 0.25f, 0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f};
+		const float v[8] = {0.5f, 0.75f, 0.875f, 0.75f, 0.5f, 0.25f, 0.125f, 0.25f};
+		const float spokeU[8] = {0.375f, 0.5f, 0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f};
+		const float spokeV[8] = {0.625f, 0.625f, 0.625f, 0.5f, 0.375f, 0.375f, 0.375f, 0.5f};
+		const float centerU = 0.5f;
+		const float centerV = 0.5f;
 
 		if (map[1] == 0) {
 			// Original drawALOpen: solid black opening on both DOS and Mac.
@@ -916,7 +916,7 @@ void ColonyEngine::drawWallFeature3D(int cellX, int cellY, int direction) {
 					}
 				}
 			} else {
-				static const byte *stripPatterns[5] = {
+				const byte *stripPatterns[5] = {
 					nullptr, kStippleLtGray, kStippleGray, kStippleDkGray, nullptr
 				};
 				for (int i = 0; i < 4; i++) {

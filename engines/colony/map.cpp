@@ -32,7 +32,7 @@
 
 namespace Colony {
 
-static const int kRobotTypeOrder[] = {
+const int kRobotTypeOrder[] = {
 	0,
 	kRobQueen,
 	kRobSnoop,
@@ -56,10 +56,10 @@ static const int kRobotTypeOrder[] = {
 	kRobSCube
 };
 
-static const int kDynamicObjectLimit = kMeNum - 1;
-static const int kReservedPlayerSlotIndex = kMeNum - 1;
-static const int kStaticObjectStartIndex = kMeNum;
-static const int kMaxObjectSlots = 255;
+const int kDynamicObjectLimit = kMeNum - 1;
+const int kReservedPlayerSlotIndex = kMeNum - 1;
+const int kStaticObjectStartIndex = kMeNum;
+const int kMaxObjectSlots = 255;
 
 void clearThing(Thing &thing) {
 	thing = Thing();

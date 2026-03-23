@@ -42,18 +42,18 @@ namespace Colony {
 // =====================================================================
 // Constants
 // =====================================================================
-static const int kBattleSize = 150;   // BSIZE: collision/spawn radius
-static const int kMaxQuad = 15;       // pyramids per quadrant
-static const int kTankMax = 24;       // turret pincer animation range
-static const int kFloor = 160;        // ground z-offset
-static const float kBattleFovY = 75.0f;
+const int kBattleSize = 150;   // BSIZE: collision/spawn radius
+const int kMaxQuad = 15;       // pyramids per quadrant
+const int kTankMax = 24;       // turret pincer animation range
+const int kFloor = 160;        // ground z-offset
+const float kBattleFovY = 75.0f;
 
 // =====================================================================
 // Battle color constants (original Mac QuickDraw pattern indices)
 // Values 0-5 are QuickDraw patterns; >=6 are ObjColor enum values.
 // =====================================================================
-static const int kBLtGray = 1;
-static const int kBBlack  = 4;
+const int kBLtGray = 1;
+const int kBBlack  = 4;
 
 // Map battle surface color index to a packed ARGB color.
 uint32 battleColor(int colorIdx) {
@@ -180,25 +180,25 @@ bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::Pri
 // Original: base at z=0, peak at z=200. Floor subtracted → base -160, peak 40.
 // We store raw vertices (pre-Floor); draw3DBattlePrism applies zShift=-160.
 // =====================================================================
-static const int kRockPts[5][3] = {
+const int kRockPts[5][3] = {
 	{-75,  75, 0},
 	{ 75,  75, 0},
 	{ 75, -75, 0},
 	{-75, -75, 0},
 	{  0,   0, 200}
 };
-static const int kRockSurf[4][8] = {
+const int kRockSurf[4][8] = {
 	{kBLtGray, 3, 1, 0, 4, 0, 0, 0},
 	{kBLtGray, 3, 2, 1, 4, 0, 0, 0},
 	{kBLtGray, 3, 3, 2, 4, 0, 0, 0},
 	{kBLtGray, 3, 0, 3, 4, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kRockDef = {5, kRockPts, 4, kRockSurf};
+const ColonyEngine::PrismPartDef kRockDef = {5, kRockPts, 4, kRockSurf};
 
 // =====================================================================
 // 3D Model Data - Entrance (airlock structure)
 // =====================================================================
-static const int kEntPts[8][3] = {
+const int kEntPts[8][3] = {
 	{-300,  300,   0},
 	{ 300,  300,   0},
 	{ 300, -300,   0},
@@ -208,50 +208,50 @@ static const int kEntPts[8][3] = {
 	{ 250, -250, 600},
 	{-250, -250, 600}
 };
-static const int kEntSurf[4][8] = {
+const int kEntSurf[4][8] = {
 	{kBLtGray, 4, 1, 0, 4, 5, 0, 0},
 	{kBLtGray, 4, 0, 3, 7, 4, 0, 0},
 	{kBLtGray, 4, 3, 2, 6, 7, 0, 0},
 	{kBLtGray, 4, 2, 1, 5, 6, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kEntDef = {8, kEntPts, 4, kEntSurf};
+const ColonyEngine::PrismPartDef kEntDef = {8, kEntPts, 4, kEntSurf};
 
-static const int kEntDoorPts[4][3] = {
+const int kEntDoorPts[4][3] = {
 	{-60,  300,   0},
 	{ 60,  300,   0},
 	{ 50,  275, 200},
 	{-50,  275, 200}
 };
-static const int kEntDoorSurf[1][8] = {
+const int kEntDoorSurf[1][8] = {
 	{kBLtGray, 4, 0, 3, 2, 1, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kEntDoorDef = {4, kEntDoorPts, 1, kEntDoorSurf};
+const ColonyEngine::PrismPartDef kEntDoorDef = {4, kEntDoorPts, 1, kEntDoorSurf};
 
 // =====================================================================
 // 3D Model Data - Shuttle (spaceship)
 // =====================================================================
 // Body (fuselage)
-static const int kSBodyPts[12][3] = {
+const int kSBodyPts[12][3] = {
 	{ 500,  250,   0}, { 500,  350, 200}, { 500,  150, 400},
 	{ 500, -150, 400}, { 500, -350, 200}, { 500, -250,   0},
 	{-500,  250,   0}, {-500,  350, 200}, {-500,  150, 400},
 	{-500, -150, 400}, {-500, -350, 200}, {-500, -250,   0}
 };
-static const int kSBodySurf[4][8] = {
+const int kSBodySurf[4][8] = {
 	{kBLtGray, 4, 0, 6, 7, 1, 0, 0},
 	{kBLtGray, 4, 1, 7, 8, 2, 0, 0},
 	{kBLtGray, 4, 3, 9, 10, 4, 0, 0},
 	{kBLtGray, 4, 4, 10, 11, 5, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kSBodyDef = {12, kSBodyPts, 4, kSBodySurf};
+const ColonyEngine::PrismPartDef kSBodyDef = {12, kSBodyPts, 4, kSBodySurf};
 
 // Front (nose cone)
-static const int kSFrontPts[7][3] = {
+const int kSFrontPts[7][3] = {
 	{ 500,  250,   0}, { 500,  350, 200}, { 500,  150, 400},
 	{ 500, -150, 400}, { 500, -350, 200}, { 500, -250,   0},
 	{ 900,    0,  50}
 };
-static const int kSFrontSurf[6][8] = {
+const int kSFrontSurf[6][8] = {
 	{kBLtGray, 3, 0, 1, 6, 0, 0, 0},
 	{kBLtGray, 3, 1, 2, 6, 0, 0, 0},
 	{kBLtGray, 3, 2, 3, 6, 0, 0, 0},
@@ -259,77 +259,77 @@ static const int kSFrontSurf[6][8] = {
 	{kBLtGray, 3, 4, 5, 6, 0, 0, 0},
 	{kBLtGray, 3, 5, 0, 6, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kSFrontDef = {7, kSFrontPts, 6, kSFrontSurf};
+const ColonyEngine::PrismPartDef kSFrontDef = {7, kSFrontPts, 6, kSFrontSurf};
 
 // Back (engine section)
-static const int kSBackPts[7][3] = {
+const int kSBackPts[7][3] = {
 	{-500,  250,   0}, {-500,  350, 200}, {-500,  150, 400},
 	{-500, -150, 400}, {-500, -350, 200}, {-500, -250,   0},
 	{-900,    0, 400}
 };
-static const int kSBackSurf[5][8] = {
+const int kSBackSurf[5][8] = {
 	{kBLtGray, 3, 0, 6, 1, 0, 0, 0},
 	{kBLtGray, 3, 1, 6, 2, 0, 0, 0},
 	{kBLtGray, 3, 3, 6, 4, 0, 0, 0},
 	{kBLtGray, 3, 4, 6, 5, 0, 0, 0},
 	{kBLtGray, 3, 5, 6, 0, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kSBackDef = {7, kSBackPts, 5, kSBackSurf};
+const ColonyEngine::PrismPartDef kSBackDef = {7, kSBackPts, 5, kSBackSurf};
 
 // Top fin
-static const int kFTopPts[4][3] = {
+const int kFTopPts[4][3] = {
 	{ -500, 0, 400}, {-900, 0, 400}, {-1000, 0, 800}, {-700, 0, 800}
 };
-static const int kFTopSurf[1][8] = {
+const int kFTopSurf[1][8] = {
 	{kBLtGray, 4, 0, 1, 2, 3, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kFTopDef = {4, kFTopPts, 1, kFTopSurf};
+const ColonyEngine::PrismPartDef kFTopDef = {4, kFTopPts, 1, kFTopSurf};
 
 // Left fin
-static const int kFLeftPts[4][3] = {
+const int kFLeftPts[4][3] = {
 	{-100, -350, 200}, {-700, -350, 200}, {-900, -750, 200}, {-500, -750, 200}
 };
-static const int kFLeftSurf[1][8] = {
+const int kFLeftSurf[1][8] = {
 	{kBLtGray, 4, 0, 1, 2, 3, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kFLeftDef = {4, kFLeftPts, 1, kFLeftSurf};
+const ColonyEngine::PrismPartDef kFLeftDef = {4, kFLeftPts, 1, kFLeftSurf};
 
 // Right fin
-static const int kFRightPts[4][3] = {
+const int kFRightPts[4][3] = {
 	{-100, 350, 200}, {-700, 350, 200}, {-900, 750, 200}, {-500, 750, 200}
 };
-static const int kFRightSurf[1][8] = {
+const int kFRightSurf[1][8] = {
 	{kBLtGray, 4, 0, 1, 2, 3, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kFRightDef = {4, kFRightPts, 1, kFRightSurf};
+const ColonyEngine::PrismPartDef kFRightDef = {4, kFRightPts, 1, kFRightSurf};
 
 // Shuttle door
-static const int kSDoorPts[4][3] = {
+const int kSDoorPts[4][3] = {
 	{-50, 262, 25}, {50, 262, 25}, {60, 325, 150}, {-60, 325, 150}
 };
-static const int kSDoorSurf[1][8] = {
+const int kSDoorSurf[1][8] = {
 	{kBLtGray, 4, 0, 3, 2, 1, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kSDoorDef = {4, kSDoorPts, 1, kSDoorSurf};
+const ColonyEngine::PrismPartDef kSDoorDef = {4, kSDoorPts, 1, kSDoorSurf};
 
 // =====================================================================
 // 3D Model Data - Projectile
 // =====================================================================
-static const int kProjPts[5][3] = {
+const int kProjPts[5][3] = {
 	{ 80,   0,  80},
 	{-80,  20,  80},
 	{-80,   0, 100},
 	{-80, -20,  80},
 	{-80,   0,  60}
 };
-static const int kProjSurf[5][8] = {
+const int kProjSurf[5][8] = {
 	{kBBlack,  4, 1, 4, 3, 2, 0, 0},
 	{kBLtGray, 3, 0, 1, 2, 0, 0, 0},
 	{kBLtGray, 3, 0, 2, 3, 0, 0, 0},
 	{kBLtGray, 3, 0, 3, 4, 0, 0, 0},
 	{kBLtGray, 3, 0, 4, 1, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kProjDef = {5, kProjPts, 5, kProjSurf};
+const ColonyEngine::PrismPartDef kProjDef = {5, kProjPts, 5, kProjSurf};
 
 // =====================================================================
 // 3D Model Data - Drone (enemy tank)
@@ -337,55 +337,55 @@ static const ColonyEngine::PrismPartDef kProjDef = {5, kProjPts, 5, kProjSurf};
 // Drawn with zShift=0 (their z values are in absolute world coords).
 // =====================================================================
 // Abdomen (body)
-static const int kBDroneAbdPts[6][3] = {
+const int kBDroneAbdPts[6][3] = {
 	{0, 0, 170}, {120, 0, 130}, {0, 100, 130},
 	{-130, 0, 130}, {0, -100, 130}, {0, 0, 100}
 };
-static const int kBDroneAbdSurf[8][8] = {
+const int kBDroneAbdSurf[8][8] = {
 	{kColorDrone, 3, 0, 1, 2, 0, 0, 0}, {kColorDrone, 3, 0, 2, 3, 0, 0, 0},
 	{kColorDrone, 3, 0, 3, 4, 0, 0, 0}, {kColorDrone, 3, 0, 4, 1, 0, 0, 0},
 	{kColorDrone, 3, 5, 2, 1, 0, 0, 0}, {kColorDrone, 3, 5, 3, 2, 0, 0, 0},
 	{kColorDrone, 3, 5, 4, 3, 0, 0, 0}, {kColorDrone, 3, 5, 1, 4, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kBDroneAbdDef = {6, kBDroneAbdPts, 8, kBDroneAbdSurf};
+const ColonyEngine::PrismPartDef kBDroneAbdDef = {6, kBDroneAbdPts, 8, kBDroneAbdSurf};
 
 // Left pincer base points (for rotation source)
-static const int kLLPincerPts[4][3] = {
+const int kLLPincerPts[4][3] = {
 	{0, 0, 130}, {50, -2, 130}, {35, -20, 140}, {35, -20, 120}
 };
 // Right pincer base points (for rotation source)
-static const int kRRPincerPts[4][3] = {
+const int kRRPincerPts[4][3] = {
 	{0, 0, 130}, {50, 2, 130}, {35, 20, 140}, {35, 20, 120}
 };
 
 // Left pincer surfaces
-static const int kBLPincerSurf[4][8] = {
+const int kBLPincerSurf[4][8] = {
 	{kColorClaw1, 3, 0, 2, 1, 0, 0, 0}, {kColorClaw1, 3, 0, 1, 3, 0, 0, 0},
 	{kColorClaw2, 3, 0, 3, 2, 0, 0, 0}, {kColorClaw2, 3, 1, 2, 3, 0, 0, 0}
 };
 // Right pincer surfaces
-static const int kBRPincerSurf[4][8] = {
+const int kBRPincerSurf[4][8] = {
 	{kColorClaw1, 3, 0, 1, 2, 0, 0, 0}, {kColorClaw1, 3, 0, 3, 1, 0, 0, 0},
 	{kColorClaw2, 3, 0, 2, 3, 0, 0, 0}, {kColorClaw2, 3, 1, 3, 2, 0, 0, 0}
 };
 
 // Left eye
-static const int kBLEyePts[3][3] = {
+const int kBLEyePts[3][3] = {
 	{60, 0, 150}, {60, 50, 130}, {60, 25, 150}
 };
-static const int kBLEyeSurf[2][8] = {
+const int kBLEyeSurf[2][8] = {
 	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kBLEyeDef = {3, kBLEyePts, 2, kBLEyeSurf};
+const ColonyEngine::PrismPartDef kBLEyeDef = {3, kBLEyePts, 2, kBLEyeSurf};
 
 // Right eye
-static const int kBREyePts[3][3] = {
+const int kBREyePts[3][3] = {
 	{60, 0, 150}, {60, -50, 130}, {60, -25, 150}
 };
-static const int kBREyeSurf[2][8] = {
+const int kBREyeSurf[2][8] = {
 	{kColorEyes, 3, 0, 1, 2, 0, 0, 0}, {kColorEyes, 3, 0, 2, 1, 0, 0, 0}
 };
-static const ColonyEngine::PrismPartDef kBREyeDef = {3, kBREyePts, 2, kBREyeSurf};
+const ColonyEngine::PrismPartDef kBREyeDef = {3, kBREyePts, 2, kBREyeSurf};
 
 // =====================================================================
 // draw3DBattlePrism: Render a PrismPartDef at a world position.

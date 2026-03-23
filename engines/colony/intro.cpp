@@ -758,9 +758,9 @@ bool ColonyEngine::makeBlackHole() {
 // Phase 3: planet approaches the camera (zoom from dist 800 to 32)
 // All rendering in XOR mode so dots toggle on/off.
 bool ColonyEngine::makePlanet() {
-	static const int PDELTA = 16;
+	const int PDELTA = 16;
 	// Original rtable has 11585 entries; planet uses indices up to 800.
-	static const int RTABLE_SIZE = 801;
+	const int RTABLE_SIZE = 801;
 
 	int rtable[RTABLE_SIZE];
 	rtable[0] = 32000;
@@ -773,7 +773,7 @@ bool ColonyEngine::makePlanet() {
 	const int costheta = _cost[210];
 
 	// Phase 1a: draw background stars
-	static const int STAR_COUNT = 192; // (800-32)/16 * 4 = ~192
+	const int STAR_COUNT = 192; // (800-32)/16 * 4 = ~192
 	int xstars[STAR_COUNT], ystars[STAR_COUNT];
 	int starcnt = 0;
 
@@ -795,7 +795,7 @@ bool ColonyEngine::makePlanet() {
 	// Phase 1b: draw initial planet wireframe at distance 800
 	// Sphere: j=latitude (0..255 step PDELTA), k=longitude (0..127 step PDELTA)
 	// Tilted by sintheta/costheta around X axis (viewing angle)
-	static const int MAX_POINTS = (256 / PDELTA) * (128 / PDELTA); // 16*8 = 128
+	const int MAX_POINTS = (256 / PDELTA) * (128 / PDELTA); // 16*8 = 128
 	int xsave[MAX_POINTS], ysave[MAX_POINTS];
 	bool zsave[MAX_POINTS];
 	int start = 0, dstart = 1;
