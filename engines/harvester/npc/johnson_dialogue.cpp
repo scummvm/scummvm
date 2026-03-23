@@ -30,6 +30,9 @@ namespace Harvester {
 
 namespace {
 
+static const char *const kJohnsonNpc = "JOHNSON";
+static const char *const kPcSpeaker = "PC";
+
 static const int kJohnsonInitialTopicBufferLine = 0x176;
 static const int kJohnsonResponseTopicBufferLine = 0x17b;
 static const int kJohnsonStephTopicBufferLine = 0x17d;
@@ -41,28 +44,51 @@ static const int kJohnsonGenericReplyTopicLines[] = { 0x180, 0x181, 0x182 };
 static const int kJohnsonSecondGenericReplyTopicLines[] = { 0x184, 0x185 };
 
 static const DialogueLineEntry kJohnsonIntroLines[] = {
-	{ 0xa86, "JOHNSON", 1 },
-	{ 0xa8a, "PC", 0 },
-	{ 0xa8e, "JOHNSON", 1 },
-	{ 0xa97, "PC", 0 },
-	{ 0xa9b, "JOHNSON", 0 }
+	{ 0xa86, kJohnsonNpc, 1 },
+	{ 0xa8a, kPcSpeaker, 0 },
+	{ 0xa8e, kJohnsonNpc, 1 },
+	{ 0xa97, kPcSpeaker, 0 },
+	{ 0xa9b, kJohnsonNpc, 0 }
+};
+
+static const DialogueLineEntry kJohnsonWhaleyPhotoLines[] = {
+	{ 0xb75, kJohnsonNpc, 1 },
+	{ 0xb7b, kPcSpeaker, 1 },
+	{ 0xb80, kJohnsonNpc, 1 }
+};
+
+static const DialogueLineEntry kJohnsonLedgerLines[] = {
+	{ 0xba0, kJohnsonNpc, 1 },
+	{ 0xba4, kPcSpeaker, 0 },
+	{ 0xba8, kJohnsonNpc, 1 }
+};
+
+static const DialogueLineEntry kJohnsonScratchedTuckerLines[] = {
+	{ 0xc25, kJohnsonNpc, 2 },
+	{ 0xc2b, kJohnsonNpc, 3 },
+	{ 0xc30, kJohnsonNpc, 2 }
+};
+
+static const DialogueLineEntry kJohnsonBoltOfClothLines[] = {
+	{ 0xc5f, kJohnsonNpc, 3 },
+	{ 0xc69, kJohnsonNpc, 3 }
 };
 
 static const DialogueLineEntry kJohnsonStephMidgameLines[] = {
-	{ 0xbf0, "JOHNSON", 3 },
-	{ 0xbf1, "JOHNSON", 3 },
-	{ 0xbf2, "JOHNSON", 3 }
+	{ 0xbf0, kJohnsonNpc, 3 },
+	{ 0xbf1, kJohnsonNpc, 3 },
+	{ 0xbf2, kJohnsonNpc, 3 }
 };
 
 static const DialogueLineEntry kJohnsonKarinKidnapedLines[] = {
-	{ 0xbff, "JOHNSON", 0 },
-	{ 0xc06, "JOHNSON", 0 }
+	{ 0xbff, kJohnsonNpc, 0 },
+	{ 0xc06, kJohnsonNpc, 0 }
 };
 
 static const DialogueLineEntry kJohnsonBarberPoleStolenLines[] = {
-	{ 0xc46, "JOHNSON", 3 },
-	{ 0xc4d, "JOHNSON", 3 },
-	{ 0xc59, "JOHNSON", 3 }
+	{ 0xc46, kJohnsonNpc, 3 },
+	{ 0xc4d, kJohnsonNpc, 3 },
+	{ 0xc59, kJohnsonNpc, 3 }
 };
 
 } // End of namespace
@@ -82,7 +108,7 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			responseLineIndex, "Johnson topic buffer");
 	};
 	auto playJohnsonLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "JOHNSON", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kJohnsonNpc, headVariant);
 	};
 
 	if (runtime.startupScript().getFlagValue("2ND_SCRATCH_TUCKER"))
@@ -93,23 +119,43 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return playJohnsonLine(0xbe0, 2);
 	}
 	if (runtime.startupScript().getFlagValue("OPENING_MANHOLE_DAYTIME"))
-		return playJohnsonLine(0xbe0, 2);
+	{
+		Common::Error lineError = playJohnsonLine(0xbe0, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().setRuntimeFlagValue("OPENING_MANHOLE_DAYTIME", false);
+		return Common::kNoError;
+	}
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
-			return playJohnsonLine(0xb75, 1);
+			return runtime.playDialogueEntrySequence(
+				kJohnsonWhaleyPhotoLines, ARRAYSIZE(kJohnsonWhaleyPhotoLines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-			return playJohnsonLine(0xb89, 1);
+			Common::Error lineError = playJohnsonLine(0xb89, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			if (!sharedState.dialogueStateD2ebc)
+				return Common::kNoError;
+
+			const DialogueLineEntry followupLines[] = {
+				{ 0xb90, kPcSpeaker, 0 },
+				{ 0xb94, kJohnsonNpc, 0 },
+				{ 0xb99, kJohnsonNpc, 0 }
+			};
+			return runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
 		}
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 					usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
-			return playJohnsonLine(0xba0, 1);
+			return runtime.playDialogueEntrySequence(
+				kJohnsonLedgerLines, ARRAYSIZE(kJohnsonLedgerLines));
 		}
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
@@ -131,23 +177,33 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			!state.scratchedTuckerReintroShown) {
 		state.scratchedTuckerReintroShown = true;
 		state.introPending = true;
-		Common::Error lineError = playJohnsonLine(0xc25, 2);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
-	}
-
-	if (state.introPending) {
-		state.introPending = false;
 		Common::Error lineError = runtime.playDialogueEntrySequence(
-			kJohnsonIntroLines, ARRAYSIZE(kJohnsonIntroLines));
+			kJohnsonScratchedTuckerLines, ARRAYSIZE(kJohnsonScratchedTuckerLines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		sharedState.dialogueStateD2f04 = true;
-		assignJohnsonTopicBuffer(kJohnsonInitialTopicBufferLine);
+
+		if (runtime.startupScript().getFlagValue("BOLT_OF_CLOTH_TAKEN") &&
+				!state.boltOfClothTakenShown) {
+			state.boltOfClothTakenShown = true;
+			lineError = runtime.playDialogueEntrySequence(
+				kJohnsonBoltOfClothLines, ARRAYSIZE(kJohnsonBoltOfClothLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 	} else {
-		Common::Error lineError = playJohnsonLine(0xb62);
-		if (lineError.getCode() != Common::kNoError)
-			return lineError;
+		if (state.introPending) {
+			state.introPending = false;
+			Common::Error lineError = runtime.playDialogueEntrySequence(
+				kJohnsonIntroLines, ARRAYSIZE(kJohnsonIntroLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			sharedState.dialogueStateD2f04 = true;
+			assignJohnsonTopicBuffer(kJohnsonInitialTopicBufferLine);
+		} else {
+			Common::Error lineError = playJohnsonLine(0xb62);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+		}
 	}
 
 	if (runtime.startupScript().getFlagValue("STEPH_MIDGAME_PLAYED") &&
@@ -161,7 +217,7 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedShown) {
 		state.karinKidnapedShown = true;
-		sharedState.dialogueStateD2f04 = true;
+		sharedState.karinKidnapedDialogueState = true;
 		Common::Error lineError = runtime.playDialogueEntrySequence(
 			kJohnsonKarinKidnapedLines, ARRAYSIZE(kJohnsonKarinKidnapedLines));
 		if (lineError.getCode() != Common::kNoError)
@@ -252,9 +308,9 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			}
 
 			const DialogueLineEntry followupLines[] = {
-				{ 0xabd, "JOHNSON", 0 },
-				{ 0xac3, "JOHNSON", 0 },
-				{ 0xac7, "JOHNSON", 2 }
+				{ 0xabd, kJohnsonNpc, 0 },
+				{ 0xac3, kPcSpeaker, 0 },
+				{ 0xac7, kJohnsonNpc, 2 }
 			};
 			lineError = runtime.playDialogueEntrySequence(followupLines, ARRAYSIZE(followupLines));
 			if (lineError.getCode() != Common::kNoError)
@@ -265,9 +321,9 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x17c)) {
 			const DialogueLineEntry lines[] = {
-				{ 0xb17, "JOHNSON", 0 },
-				{ 0xb1c, "JOHNSON", 0 },
-				{ 0xb20, "JOHNSON", 1 }
+				{ 0xb17, kJohnsonNpc, 0 },
+				{ 0xb1c, kPcSpeaker, 0 },
+				{ 0xb20, kJohnsonNpc, 1 }
 			};
 			Common::Error lineError = runtime.playDialogueEntrySequence(lines, ARRAYSIZE(lines));
 			if (lineError.getCode() != Common::kNoError)
