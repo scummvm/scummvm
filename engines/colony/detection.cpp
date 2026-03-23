@@ -60,8 +60,9 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"colony",
 		"",
-		AD_ENTRY2s("logo1.pic", "70d44e40ac19ea0413f1253b781399de", 6689,
-			"MAP.1", "ab40dc3d9658e8cdc0bee63c2ca9c79b", 3350),
+		AD_ENTRY3s("logo1.pic", "70d44e40ac19ea0413f1253b781399de", 6689,
+			"MAP.1", "ab40dc3d9658e8cdc0bee63c2ca9c79b", 3350,
+			"COL.EXE", "3fa09322759a47d817d2bda36aae9255", 250837),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,

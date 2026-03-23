@@ -25,6 +25,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -301,19 +302,14 @@ void ColonyEngine::loadMacColors() {
 	Common::SeekableReadStream *file = nullptr;
 
 	// Try MacResManager first (for resource fork / AppleDouble files)
+	// CData/ is in SearchMan, so plain "Color256" finds it in either location.
 	Common::Path path("Color256");
 	file = Common::MacResManager::openFileOrDataFork(path);
-	if (!file) {
-		path = Common::Path("CData/Color256");
-		file = Common::MacResManager::openFileOrDataFork(path);
-	}
 
 	// Fallback to plain file open (for raw data files)
 	if (!file) {
 		Common::File *f = new Common::File();
-		if (f->open(Common::Path("Color256"))) {
-			file = f;
-		} else if (f->open(Common::Path("CData/Color256"))) {
+		if (f->open(path)) {
 			file = f;
 		} else {
 			delete f;
@@ -717,6 +713,11 @@ void ColonyEngine::startNewGame() {
 }
 
 Common::Error ColonyEngine::run() {
+	// Add CData subdirectory to search path so Mac animation files
+	// and color data are found without manual path prefixing.
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "CData");
+
 	// Open Colony resource fork (must happen in run(), not constructor,
 	// because SearchMan doesn't have the game path until now)
 	if (getPlatform() == Common::kPlatformMacintosh) {

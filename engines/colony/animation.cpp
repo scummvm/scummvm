@@ -272,8 +272,9 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 		}
 	}
 
-	// DOS uses short names (suit.pic, elev.pic, etc.); Mac uses full names
-	// (spacesuit, elevator, etc.) without extensions, in a CData folder.
+	// DOS uses short names with .pic extension (suit.pic, elev.pic, etc.);
+	// Mac uses full names without extensions (spacesuit, elevator, etc.)
+	// stored in a CData folder (added to SearchMan at engine start).
 	const struct { const char *dosName; const char *macName; } nameMap[] = {
 		{ "suit",   "spacesuit" },
 		{ "elev",   "elevator" },
@@ -285,34 +286,15 @@ bool ColonyEngine::loadAnimation(const Common::String &name) {
 	Common::String fileName = name + ".pic";
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
 	if (!file) {
-		// Try lowercase (Mac resource fork)
-		fileName = name;
-		fileName.toLowercase();
-		file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
+		// Try without extension (Mac resource fork — SearchMan is case-agnostic)
+		file = Common::MacResManager::openFileOrDataFork(Common::Path(name));
 	}
 	if (!file) {
-		// Try Mac long name mapping
-		Common::String macName;
+		// Try Mac long name mapping (e.g. "suit" -> "spacesuit")
 		for (int i = 0; nameMap[i].dosName; i++) {
 			if (nameLower == nameMap[i].dosName) {
-				macName = nameMap[i].macName;
+				file = Common::MacResManager::openFileOrDataFork(Common::Path(nameMap[i].macName));
 				break;
-			}
-		}
-		if (!macName.empty())
-			file = Common::MacResManager::openFileOrDataFork(Common::Path(macName));
-	}
-	if (!file) {
-		// Try CData directory with both DOS and Mac names
-		fileName = "CData/" + nameLower;
-		file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
-		if (!file) {
-			for (int i = 0; nameMap[i].dosName; i++) {
-				if (nameLower == nameMap[i].dosName) {
-					fileName = Common::String("CData/") + nameMap[i].macName;
-					file = Common::MacResManager::openFileOrDataFork(Common::Path(fileName));
-					break;
-				}
 			}
 		}
 	}
