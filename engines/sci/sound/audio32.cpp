@@ -234,7 +234,7 @@ Audio32::~Audio32() {
 
 int Audio32::writeAudioInternal(Audio::AudioStream &sourceStream, Audio::RateConverter &converter, int16 *targetBuffer, const int numSamples, const Audio::st_volume_t leftVolume, const Audio::st_volume_t rightVolume) {
 	const int samplePairsToRead = numSamples >> 1;
-	const int samplePairsWritten = converter.convert(sourceStream, (byte *)targetBuffer, sizeof(int16), samplePairsToRead, leftVolume, rightVolume);
+	const int samplePairsWritten = converter.convert(sourceStream, (byte *)targetBuffer, sizeof(int16), samplePairsToRead, leftVolume, rightVolume, Audio::MIX_CLAMPED_ADD);
 	return samplePairsWritten << 1;
 }
 
