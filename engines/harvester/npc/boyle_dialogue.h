@@ -30,6 +30,7 @@ class BoyleDialogueHandler : public NpcDialogueHandler {
 public:
 	struct BoyleRoomDialogueState {
 		bool introPending = true;
+		bool extraEvidenceReplyEnabled = false;
 		bool evidenceFollowupShown = false;
 		bool stephMidgameShown = false;
 		bool dayFiveShown = false;
@@ -40,6 +41,7 @@ public:
 	void resetState() override { _state = BoyleRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);
+		syncDialogueBool(s, _state.extraEvidenceReplyEnabled, 8);
 		syncDialogueBool(s, _state.evidenceFollowupShown);
 		syncDialogueBool(s, _state.stephMidgameShown);
 		syncDialogueBool(s, _state.dayFiveShown);
