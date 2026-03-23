@@ -25,14 +25,14 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/system.h"
+#include "graphics/cursorman.h"
+
 #include "colony/colony.h"
 #include "colony/renderer.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "graphics/cursorman.h"
-#include <math.h>
 
 namespace Colony {
 

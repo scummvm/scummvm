@@ -25,10 +25,10 @@
  *
  */
 
+#include "common/system.h"
+
 #include "colony/colony.h"
 #include "colony/render_internal.h"
-#include "common/system.h"
-#include <math.h>
 
 namespace Colony {
 

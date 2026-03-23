@@ -25,9 +25,10 @@
  *
  */
 
-#include "colony/colony.h"
-#include "common/file.h"
 #include "common/debug.h"
+#include "common/file.h"
+
+#include "colony/colony.h"
 
 namespace Colony {
 

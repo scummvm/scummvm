@@ -30,12 +30,12 @@
 // Original used software 2D projection + wireframe; this uses the existing
 // OpenGL renderer with filled polygons and depth-tested 3D.
 
+#include "common/debug.h"
+#include "common/system.h"
+
 #include "colony/colony.h"
 #include "colony/renderer.h"
 #include "colony/sound.h"
-#include "common/debug.h"
-#include "common/system.h"
-#include <math.h>
 
 namespace Colony {
 

@@ -25,11 +25,11 @@
  *
  */
 
-#include "common/system.h"
 #include "common/config-manager.h"
-#include "graphics/surface.h"
+#include "common/system.h"
 #include "graphics/font.h"
-#include <math.h>
+#include "graphics/surface.h"
+
 #include "colony/renderer.h"
 
 #ifdef USE_OPENGL_GAME

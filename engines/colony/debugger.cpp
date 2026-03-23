@@ -25,8 +25,8 @@
  *
  */
 
-#include "colony/debugger.h"
 #include "colony/colony.h"
+#include "colony/debugger.h"
 
 namespace Colony {
 

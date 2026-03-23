@@ -25,23 +25,23 @@
  *
  */
 
-#include "colony/colony.h"
-#include "colony/debugger.h"
-#include "colony/renderer.h"
 #include "common/config-manager.h"
-#include "common/file.h"
-#include "common/system.h"
-#include "common/util.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/keyboard.h"
+#include "common/system.h"
+#include "common/util.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
-#include <math.h>
+
+#include "colony/colony.h"
+#include "colony/debugger.h"
+#include "colony/renderer.h"
 
 namespace Colony {
 

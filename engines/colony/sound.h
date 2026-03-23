@@ -28,10 +28,10 @@
 #ifndef COLONY_SOUND_H
 #define COLONY_SOUND_H
 
-#include "audio/softsynth/pcspk.h"
 #include "audio/mixer.h"
-#include "common/ptr.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/macresman.h"
+#include "common/ptr.h"
 
 namespace Colony {
 

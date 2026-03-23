@@ -28,19 +28,20 @@
 #ifndef COLONY_COLONY_H
 #define COLONY_COLONY_H
 
-#include "engines/engine.h"
-#include "engines/advancedDetector.h"
 #include "common/array.h"
 #include "common/random.h"
 #include "common/rect.h"
-#include "common/stream.h"
-#include "graphics/framelimiter.h"
 #include "common/rendermode.h"
+#include "common/stream.h"
+#include "engines/advancedDetector.h"
+#include "engines/engine.h"
+#include "graphics/cursor.h"
+#include "graphics/framelimiter.h"
+#include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/macwindowmanager.h"
+
 #include "colony/renderer.h"
 #include "colony/sound.h"
-#include "graphics/cursor.h"
-#include "graphics/macgui/macwindowmanager.h"
-#include "graphics/macgui/macmenu.h"
 
 
 namespace Colony {

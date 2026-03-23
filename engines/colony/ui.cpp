@@ -25,20 +25,20 @@
  *
  */
 
-#include "colony/colony.h"
-#include "colony/renderer.h"
+#include "common/debug.h"
+#include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/events.h"
-#include "graphics/palette.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowborder.h"
+#include "graphics/palette.h"
 #include "image/pict.h"
-#include <math.h>
+
+#include "colony/colony.h"
+#include "colony/renderer.h"
 
 namespace Colony {
 

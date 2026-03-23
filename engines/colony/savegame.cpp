@@ -21,8 +21,9 @@
  *
  */
 
-#include "colony/colony.h"
 #include "common/translation.h"
+
+#include "colony/colony.h"
 
 namespace Colony {
 

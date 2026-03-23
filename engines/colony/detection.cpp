@@ -25,8 +25,8 @@
  *
  */
 
-#include "colony/detection.h"
 #include "colony/colony.h"
+#include "colony/detection.h"
 
 namespace Colony {
 

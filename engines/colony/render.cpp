@@ -25,14 +25,14 @@
  *
  */
 
+#include "common/algorithm.h"
+#include "common/debug.h"
+#include "common/system.h"
+#include "common/util.h"
+
 #include "colony/colony.h"
 #include "colony/render_internal.h"
 #include "colony/renderer.h"
-#include "common/system.h"
-#include "common/util.h"
-#include "common/algorithm.h"
-#include "common/debug.h"
-#include <math.h>
 
 namespace Colony {
 

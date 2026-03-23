@@ -25,16 +25,17 @@
  *
  */
 
-#include "colony/colony.h"
-#include "colony/detection.h"
-#include "common/system.h"
-#include "common/translation.h"
-#include "common/config-manager.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
+#include "common/config-manager.h"
+#include "common/system.h"
+#include "common/translation.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
+
+#include "colony/colony.h"
+#include "colony/detection.h"
 
 namespace Colony {
 

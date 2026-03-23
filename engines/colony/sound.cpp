@@ -25,11 +25,12 @@
  *
  */
 
-#include "colony/sound.h"
-#include "colony/colony.h"
-#include "common/stream.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/stream.h"
+
+#include "colony/colony.h"
+#include "colony/sound.h"
 
 namespace Colony {
 
