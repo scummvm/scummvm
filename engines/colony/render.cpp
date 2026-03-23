@@ -359,8 +359,8 @@ void ColonyEngine::quadrant() {
 	int remain;
 	int quad;
 
-	quad = _me.look >> 6;				/*divide by 64		*/
-	remain = _me.look - (quad << 6);		/*multiply by 64	*/
+	quad = _me.look >> 6;				// divide by 64
+	remain = _me.look - (quad << 6);		// multiply by 64
 	_tsin = _sint[remain];
 	_tcos = _cost[remain];
 
