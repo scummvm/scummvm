@@ -30,12 +30,16 @@ class Fireman1DialogueHandler : public NpcDialogueHandler {
 public:
 	struct Fireman1RoomDialogueState {
 		bool talkStatePending = true;
+		bool stephMidgamePlayedShown = false;
+		bool boltOfClothTakenShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = Fireman1RoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);
+		syncDialogueBool(s, _state.stephMidgamePlayedShown, 11);
+		syncDialogueBool(s, _state.boltOfClothTakenShown, 11);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
