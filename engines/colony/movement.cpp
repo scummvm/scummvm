@@ -121,7 +121,7 @@ void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, int roy) 
 
 	const int centerX = (rect.left + rect.right) >> 1;
 	const int centerY = (rect.top + rect.bottom) >> 1;
-	long p = centerX + (((long)rox) * 512) / roy;
+	int32 p = centerX + (((int32)rox) * 512) / roy;
 
 	if (p < -32000)
 		p = -32000;
@@ -282,8 +282,8 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 		const int wx = p->xloc - obj.where.xloc;
 		const int wy = p->yloc - obj.where.yloc;
 		const uint8 invAng = (uint8)(0 - obj.where.ang);
-		const int lx = (int)(((long)wx * _cost[invAng] - (long)wy * _sint[invAng]) >> 7);
-		const int ly = (int)(((long)wx * _sint[invAng] + (long)wy * _cost[invAng]) >> 7);
+		const int lx = (int)(((int32)wx * _cost[invAng] - (int32)wy * _sint[invAng]) >> 7);
+		const int ly = (int)(((int32)wx * _sint[invAng] + (int32)wy * _cost[invAng]) >> 7);
 
 		// Also reject if clearly outside the cell (local coords span -128..128)
 		if (lx < -140 || lx > 140 || ly < -140 || ly > 140)
@@ -301,8 +301,8 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 
 			// Transform back to world space
 			const uint8 ang = obj.where.ang;
-			p->xloc = obj.where.xloc + (int)(((long)nlx * _cost[ang] - (long)nly * _sint[ang]) >> 7);
-			p->yloc = obj.where.yloc + (int)(((long)nlx * _sint[ang] + (long)nly * _cost[ang]) >> 7);
+			p->xloc = obj.where.xloc + (int)(((int32)nlx * _cost[ang] - (int32)nly * _sint[ang]) >> 7);
+			p->yloc = obj.where.yloc + (int)(((int32)nlx * _sint[ang] + (int32)nly * _cost[ang]) >> 7);
 			p->xindex = p->xloc >> 8;
 			p->yindex = p->yloc >> 8;
 		} else { // kObjFWall — flat wall along the diagonal
@@ -315,8 +315,8 @@ void ColonyEngine::clampToDiagonalWalls(Locate *p) {
 			const int nly = ly + push;
 
 			const uint8 ang = obj.where.ang;
-			p->xloc = obj.where.xloc + (int)(((long)nlx * _cost[ang] - (long)nly * _sint[ang]) >> 7);
-			p->yloc = obj.where.yloc + (int)(((long)nlx * _sint[ang] + (long)nly * _cost[ang]) >> 7);
+			p->xloc = obj.where.xloc + (int)(((int32)nlx * _cost[ang] - (int32)nly * _sint[ang]) >> 7);
+			p->yloc = obj.where.yloc + (int)(((int32)nlx * _sint[ang] + (int32)nly * _cost[ang]) >> 7);
 			p->xindex = p->xloc >> 8;
 			p->yindex = p->yloc >> 8;
 		}

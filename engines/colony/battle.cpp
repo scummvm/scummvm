@@ -147,8 +147,8 @@ bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::Pri
 	uint8 look, int8 lookY, const int *sint, const int *cost,
 	int camX, int camY) {
 	const uint8 rotAng = ang + 32;
-	const long rotCos = cost[rotAng];
-	const long rotSin = sint[rotAng];
+	const int32 rotCos = cost[rotAng];
+	const int32 rotSin = sint[rotAng];
 	bool hasPoint = false;
 
 	for (int i = 0; i < def.pointCount; i++) {
@@ -156,8 +156,8 @@ bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::Pri
 		const int oy = def.points[i][1];
 		const int oz = def.points[i][2];
 
-		const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-		const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+		const int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+		const int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 
 		int sx = 0;
 		int sy = 0;
@@ -396,8 +396,8 @@ const ColonyEngine::PrismPartDef kBREyeDef = {3, kBREyePts, 2, kBREyeSurf};
 void ColonyEngine::draw3DBattlePrism(const PrismPartDef &def, int worldX, int worldY, uint8 ang, int zShift) {
 	// +32 compensates for sine table's 45-degree phase offset
 	const uint8 rotAng = ang + 32;
-	const long rotCos = _cost[rotAng];
-	const long rotSin = _sint[rotAng];
+	const int32 rotCos = _cost[rotAng];
+	const int32 rotSin = _sint[rotAng];
 
 	for (int i = 0; i < def.surfaceCount; i++) {
 		const int colorIdx = def.surfaces[i][0];
@@ -418,8 +418,8 @@ void ColonyEngine::draw3DBattlePrism(const PrismPartDef &def, int worldX, int wo
 			int oz = def.points[cur][2];
 
 			// Rotate around Z axis by object angle
-			long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-			long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+			int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+			int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 
 			px[count] = (float)(rx + worldX);
 			py[count] = (float)(ry + worldY);
@@ -676,8 +676,8 @@ void ColonyEngine::battleDrawTanks() {
 
 	// --- 16 enemy drones ---
 	for (int i = 0; i < 16; i++) {
-		long relX = _bfight[i].xloc - _me.xloc;
-		long relY = _bfight[i].yloc - _me.yloc;
+		int32 relX = _bfight[i].xloc - _me.xloc;
+		int32 relY = _bfight[i].yloc - _me.yloc;
 		if (ABS(relX) + ABS(relY) >= 8000)
 			continue;
 
@@ -704,10 +704,10 @@ void ColonyEngine::battleDrawTanks() {
 		if (lLook < 0)
 			lLook += 256;
 		for (int j = 0; j < 4; j++) {
-			long tcos = _cost[(uint8)lLook];
-			long tsin = _sint[(uint8)lLook];
-			lPincerPts[j][0] = (int)(((long)kLLPincerPts[j][0] * tcos - (long)kLLPincerPts[j][1] * tsin) >> 7);
-			lPincerPts[j][1] = (int)(((long)kLLPincerPts[j][0] * tsin + (long)kLLPincerPts[j][1] * tcos) >> 7);
+			int32 tcos = _cost[(uint8)lLook];
+			int32 tsin = _sint[(uint8)lLook];
+			lPincerPts[j][0] = (int)(((int32)kLLPincerPts[j][0] * tcos - (int32)kLLPincerPts[j][1] * tsin) >> 7);
+			lPincerPts[j][1] = (int)(((int32)kLLPincerPts[j][0] * tsin + (int32)kLLPincerPts[j][1] * tcos) >> 7);
 			lPincerPts[j][2] = kLLPincerPts[j][2];
 			lPincerPts[j][0] += 120; // offset from abdomen center
 		}
@@ -722,10 +722,10 @@ void ColonyEngine::battleDrawTanks() {
 		if (rLook < 0)
 			rLook += 256;
 		for (int j = 0; j < 4; j++) {
-			long tcos = _cost[(uint8)rLook];
-			long tsin = _sint[(uint8)rLook];
-			rPincerPts[j][0] = (int)(((long)kRRPincerPts[j][0] * tcos - (long)kRRPincerPts[j][1] * tsin) >> 7);
-			rPincerPts[j][1] = (int)(((long)kRRPincerPts[j][0] * tsin + (long)kRRPincerPts[j][1] * tcos) >> 7);
+			int32 tcos = _cost[(uint8)rLook];
+			int32 tsin = _sint[(uint8)rLook];
+			rPincerPts[j][0] = (int)(((int32)kRRPincerPts[j][0] * tcos - (int32)kRRPincerPts[j][1] * tsin) >> 7);
+			rPincerPts[j][1] = (int)(((int32)kRRPincerPts[j][0] * tsin + (int32)kRRPincerPts[j][1] * tcos) >> 7);
 			rPincerPts[j][2] = kRRPincerPts[j][2];
 			rPincerPts[j][0] += 120;
 		}
@@ -754,8 +754,8 @@ void ColonyEngine::battleDrawTanks() {
 
 	// --- Projectile ---
 	if (_projon) {
-		long relX = _battleProj.xloc - _me.xloc;
-		long relY = _battleProj.yloc - _me.yloc;
+		int32 relX = _battleProj.xloc - _me.xloc;
+		int32 relY = _battleProj.yloc - _me.yloc;
 		if (ABS(relX) + ABS(relY) < 20000) {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleProj);
@@ -774,8 +774,8 @@ void ColonyEngine::battleDrawTanks() {
 
 	// --- Entrance ---
 	{
-		long relX = _battleEnter.xloc - _me.xloc;
-		long relY = _battleEnter.yloc - _me.yloc;
+		int32 relX = _battleEnter.xloc - _me.xloc;
+		int32 relY = _battleEnter.yloc - _me.yloc;
 		if (ABS(relX) + ABS(relY) < 20000) {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleEnter);
@@ -806,8 +806,8 @@ void ColonyEngine::battleDrawTanks() {
 
 	// --- Shuttle (only if not in orbit) ---
 	if (!_orbit) {
-		long relX = _battleShip.xloc - _me.xloc;
-		long relY = _battleShip.yloc - _me.yloc;
+		int32 relX = _battleShip.xloc - _me.xloc;
+		int32 relY = _battleShip.yloc - _me.yloc;
 		if (ABS(relX) + ABS(relY) < 20000) {
 			const int forward = (int)((relX * _cost[_me.look] + relY * _sint[_me.look]) >> 7);
 			battleResetBounds(_screenR, _battleShip);
@@ -889,12 +889,12 @@ void ColonyEngine::battleThink() {
 		}
 
 		uint8 &ang = _bfight[i].ang;
-		long dx = _bfight[i].xloc - _me.xloc;
-		long dy = _bfight[i].yloc - _me.yloc;
-		long adx = ABS(dx);
-		long ady = ABS(dy);
+		int32 dx = _bfight[i].xloc - _me.xloc;
+		int32 dy = _bfight[i].yloc - _me.yloc;
+		int32 adx = ABS(dx);
+		int32 ady = ABS(dy);
 		bool tooFar = false;
-		long distance = 0;
+		int32 distance = 0;
 
 		if (adx > 4000 || ady > 4000) {
 			dx >>= 8;
@@ -902,9 +902,9 @@ void ColonyEngine::battleThink() {
 			tooFar = true;
 		}
 
-		long dir = dx * _sint[ang] - dy * _cost[ang];
+		int32 dir = dx * _sint[ang] - dy * _cost[ang];
 		if (!tooFar) {
-			distance = (long)sqrt((double)(dx * dx + dy * dy));
+			distance = (int32)sqrt((double)(dx * dx + dy * dy));
 			if (distance > 0) {
 				dir /= distance;
 				if (ABS(dir) < 10) {

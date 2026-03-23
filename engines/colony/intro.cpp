@@ -568,8 +568,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		if (d < 1)
 			d = 1;
 		int rr = rtable[d];
-		int xx = centerX + (int)(((long long)s * rr) >> 7);
-		int yy = centerY + (int)(((long long)c * rr) >> 7);
+		int xx = centerX + (int)(((int64)s * rr) >> 7);
+		int yy = centerY + (int)(((int64)c * rr) >> 7);
 		if (xx >= 0 && xx < _width && yy >= 0 && yy < _height)
 			_gfx->setPixel(xx, yy, 0xFFFFFFFF);
 	}
@@ -590,15 +590,15 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 		int c = yang[i] = (int16)(_randomSource.getRandomNumber(0xFFFF)) >> 7;
 
 		int rr = rtable[d];
-		xsave1[i] = centerX + (int)(((long long)s * rr) >> 7);
-		ysave1[i] = centerY + (int)(((long long)c * rr) >> 7);
+		xsave1[i] = centerX + (int)(((int64)s * rr) >> 7);
+		ysave1[i] = centerY + (int)(((int64)c * rr) >> 7);
 
 		int d2 = d - deltapd;
 		if (d2 < 1)
 			d2 = 1;
 		rr = rtable[d2];
-		xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
-		ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
+		xsave2[i] = centerX + (int)(((int64)s * rr) >> 7);
+		ysave2[i] = centerY + (int)(((int64)c * rr) >> 7);
 
 		_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
 	}
@@ -621,8 +621,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			if (dist[i] <= 0x030) {
 				dist[i] = MAXSTAR;
 				int rr = rtable[MAXSTAR];
-				xsave1[i] = centerX + (int)(((long long)s * rr) >> 7);
-				ysave1[i] = centerY + (int)(((long long)c * rr) >> 7);
+				xsave1[i] = centerX + (int)(((int64)s * rr) >> 7);
+				ysave1[i] = centerY + (int)(((int64)c * rr) >> 7);
 			} else {
 				xsave1[i] = xsave2[i];
 				ysave1[i] = ysave2[i];
@@ -632,8 +632,8 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 			if (d < 1)
 				d = 1;
 			int rr = rtable[d];
-			xsave2[i] = centerX + (int)(((long long)s * rr) >> 7);
-			ysave2[i] = centerY + (int)(((long long)c * rr) >> 7);
+			xsave2[i] = centerX + (int)(((int64)s * rr) >> 7);
+			ysave2[i] = centerY + (int)(((int64)c * rr) >> 7);
 
 			// Draw new star position
 			_gfx->drawLine(xsave1[i], ysave1[i], xsave2[i], ysave2[i], 0xFFFFFFFF);
@@ -666,10 +666,10 @@ bool ColonyEngine::makeStars(const Common::Rect &r, int btn) {
 				if (d2 < 1)
 					d2 = 1;
 				int rr2 = rtable[d2];
-				int x1 = centerX + (int)(((long long)s * rr1) >> 7);
-				int y1 = centerY + (int)(((long long)c * rr1) >> 7);
-				int x2 = centerX + (int)(((long long)s * rr2) >> 7);
-				int y2 = centerY + (int)(((long long)c * rr2) >> 7);
+				int x1 = centerX + (int)(((int64)s * rr1) >> 7);
+				int y1 = centerY + (int)(((int64)c * rr1) >> 7);
+				int x2 = centerX + (int)(((int64)s * rr2) >> 7);
+				int y2 = centerY + (int)(((int64)c * rr2) >> 7);
 				_gfx->drawLine(x1, y1, x2, y2, 0xFFFFFFFF);
 			}
 		}
@@ -729,12 +729,12 @@ bool ColonyEngine::makeBlackHole() {
 			for (int j = 0; j < 256; j += 8) {
 				int idx = (j + starcnt) & 0xFF;
 				int rt1 = rtable[MIN(i + k, 1023)];
-				int x1 = centerX + (int)(((long long)rt1 * _sint[idx]) >> 7);
-				int y1 = centerY + (int)(((long long)rt1 * _cost[idx]) >> 7);
+				int x1 = centerX + (int)(((int64)rt1 * _sint[idx]) >> 7);
+				int y1 = centerY + (int)(((int64)rt1 * _cost[idx]) >> 7);
 
 				int rt2 = rtable[MIN(i + k + 8, 1023)];
-				int x2 = centerX + (int)(((long long)rt2 * _sint[idx]) >> 7);
-				int y2 = centerY + (int)(((long long)rt2 * _cost[idx]) >> 7);
+				int x2 = centerX + (int)(((int64)rt2 * _sint[idx]) >> 7);
+				int y2 = centerY + (int)(((int64)rt2 * _cost[idx]) >> 7);
 
 				_gfx->drawLine(x1, y1, x2, y2, 128);
 			}
@@ -781,8 +781,8 @@ bool ColonyEngine::makePlanet() {
 	for (int i = 800; i > 32 && starcnt < STAR_COUNT - 4; i -= 16) {
 		for (int m = 0; m < 4; m++) {
 			int sindex = _randomSource.getRandomNumber(255);
-			int xx = centerx + (int)(((long)rtable[i] * _sint[sindex]) >> 7);
-			int yy = centery + (int)(((long)rtable[i] * _cost[sindex]) >> 7);
+			int xx = centerx + (int)(((int32)rtable[i] * _sint[sindex]) >> 7);
+			int yy = centery + (int)(((int32)rtable[i] * _cost[sindex]) >> 7);
 			if (starcnt < STAR_COUNT) {
 				xstars[starcnt] = xx;
 				ystars[starcnt] = yy;
@@ -800,14 +800,14 @@ bool ColonyEngine::makePlanet() {
 	bool zsave[MAX_POINTS];
 	int start = 0, dstart = 1;
 
-	long rt = rtable[800];
+	int32 rt = rtable[800];
 	int save = 0;
 	for (int j = 0; j < 256; j += PDELTA) {
 		for (int k = start; k < 128; k += PDELTA) {
 			int xx = (int)(((rt * _sint[j]) >> 7) * _cost[k] >> 7);
 			int zz = (int)(((rt * _sint[j]) >> 7) * _sint[k] >> 7);
-			int y = (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
-			zz = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+			int y = (int)((((rt * _cost[j]) >> 7) * (int32)costheta - (int32)zz * sintheta) >> 7);
+			zz = (int)(((int32)_cost[j] * sintheta + (int32)zz * costheta) >> 7);
 			if (save < MAX_POINTS) {
 				zsave[save] = (zz >= 0);
 				if (zsave[save]) {
@@ -840,10 +840,10 @@ bool ColonyEngine::makePlanet() {
 				rt = rtable[800];
 				int xx = (int)(((rt * _sint[j]) >> 7) * _cost[l] >> 7);
 				int zz = (int)(((rt * _sint[j]) >> 7) * _sint[l] >> 7);
-				int z = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+				int z = (int)(((int32)_cost[j] * sintheta + (int32)zz * costheta) >> 7);
 				zsave[save] = (z >= 0);
 				if (zsave[save]) {
-					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
+					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (int32)costheta - (int32)zz * sintheta) >> 7);
 					xsave[save] = xx + centerx;
 					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
 				}
@@ -886,10 +886,10 @@ bool ColonyEngine::makePlanet() {
 				rt = rtable[i];
 				int xx = (int)(((rt * _sint[j]) >> 7) * _cost[l] >> 7);
 				int zz = (int)(((rt * _sint[j]) >> 7) * _sint[l] >> 7);
-				int z = (int)(((long)_cost[j] * sintheta + (long)zz * costheta) >> 7);
+				int z = (int)(((int32)_cost[j] * sintheta + (int32)zz * costheta) >> 7);
 				zsave[save] = (z >= 0);
 				if (zsave[save]) {
-					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (long)costheta - (long)zz * sintheta) >> 7);
+					ysave[save] = centery + (int)((((rt * _cost[j]) >> 7) * (int32)costheta - (int32)zz * sintheta) >> 7);
 					xsave[save] = xx + centerx;
 					_gfx->setPixel(xsave[save], ysave[save], 0xFFFFFFFF);
 				}

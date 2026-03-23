@@ -305,10 +305,10 @@ bool isSurfaceVisible(const int *surface, int pointCount, const int *screenX, co
 		const int cur = surface[i];
 		const int next = surface[(i + 1) % pointCount];
 		const int next2 = surface[(i + 2) % pointCount];
-		const long dx = screenX[cur] - screenX[next];
-		const long dy = screenY[cur] - screenY[next];
-		const long dxp = screenX[next2] - screenX[next];
-		const long dyp = screenY[next2] - screenY[next];
+		const int32 dx = screenX[cur] - screenX[next];
+		const int32 dy = screenY[cur] - screenY[next];
+		const int32 dxp = screenX[next2] - screenX[next];
+		const int32 dyp = screenY[next2] - screenY[next];
 
 		if (dx < 0) {
 			if (dy == 0) {
@@ -317,7 +317,7 @@ bool isSurfaceVisible(const int *surface, int pointCount, const int *screenX, co
 				if (dyp < 0)
 					return true;
 			} else {
-				const long b = dy * dxp - dx * dyp;
+				const int32 b = dy * dxp - dx * dyp;
 				if (b > 0)
 					return false;
 				if (b < 0)
@@ -330,7 +330,7 @@ bool isSurfaceVisible(const int *surface, int pointCount, const int *screenX, co
 				if (dyp > 0)
 					return true;
 			} else {
-				const long b = dx * dyp - dy * dxp;
+				const int32 b = dx * dyp - dy * dxp;
 				if (b < 0)
 					return false;
 				if (b > 0)
@@ -444,8 +444,8 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 	// +32 compensates for the original sine table's 45° phase offset.
 	// Object angles from game data were stored assuming that offset.
 	const uint8 ang = (useLook ? obj.where.look : obj.where.ang) + 32;
-	const long rotCos = _cost[ang];
-	const long rotSin = _sint[ang];
+	const int32 rotCos = _cost[ang];
+	const int32 rotSin = _sint[ang];
 	const bool lit = (_corePower[_coreIndex] > 0);
 	float transformedX[32];
 	float transformedY[32];
@@ -459,8 +459,8 @@ void ColonyEngine::draw3DPrism(Thing &obj, const PrismPartDef &def, bool useLook
 		const int ox = def.points[i][0];
 		const int oy = def.points[i][1];
 		const int oz = def.points[i][2];
-		const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-		const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+		const int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+		const int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 
 		transformedX[i] = (float)(rx + obj.where.xloc);
 		transformedY[i] = (float)(ry + obj.where.yloc);
@@ -627,8 +627,8 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 	// DOS DrawLeaf: draws leaf surfaces as lines (MoveTo/LineTo), not filled polygons.
 	// PenColor is set to vGREEN by the caller (MakePlant).
 	const uint8 ang = obj.where.ang + 32;
-	const long rotCos = _cost[ang];
-	const long rotSin = _sint[ang];
+	const int32 rotCos = _cost[ang];
+	const int32 rotSin = _sint[ang];
 	const bool lit = (_corePower[_coreIndex] > 0);
 	// Mac color: c_plant bg; Mac B&W: black; EGA: green; unlit: white/black
 	uint32 color;
@@ -653,8 +653,8 @@ void ColonyEngine::draw3DLeaf(const Thing &obj, const PrismPartDef &def) {
 			int ox = def.points[cur][0];
 			int oy = def.points[cur][1];
 			int oz = def.points[cur][2];
-			long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-			long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+			int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+			int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 			px[count] = (float)(rx + obj.where.xloc);
 			py[count] = (float)(ry + obj.where.yloc);
 			pz[count] = (float)(oz - 160);
@@ -676,19 +676,19 @@ void ColonyEngine::draw3DSphere(Thing &obj, int pt0x, int pt0y, int pt0z,
 	// radius is the full pt0↔pt1 distance, not half.
 	// Rendered as a billboard polygon facing the camera.
 	const uint8 ang = obj.where.ang + 32;
-	const long rotCos = _cost[ang];
-	const long rotSin = _sint[ang];
+	const int32 rotCos = _cost[ang];
+	const int32 rotSin = _sint[ang];
 	const bool lit = (_corePower[_coreIndex] > 0);
 
 	// Transform both points to world space
-	long rx0 = ((long)pt0x * rotCos - (long)pt0y * rotSin) >> 7;
-	long ry0 = ((long)pt0x * rotSin + (long)pt0y * rotCos) >> 7;
+	int32 rx0 = ((int32)pt0x * rotCos - (int32)pt0y * rotSin) >> 7;
+	int32 ry0 = ((int32)pt0x * rotSin + (int32)pt0y * rotCos) >> 7;
 	float wx0 = (float)(rx0 + obj.where.xloc);
 	float wy0 = (float)(ry0 + obj.where.yloc);
 	float wz0 = (float)(pt0z - 160);
 
-	long rx1 = ((long)pt1x * rotCos - (long)pt1y * rotSin) >> 7;
-	long ry1 = ((long)pt1x * rotSin + (long)pt1y * rotCos) >> 7;
+	int32 rx1 = ((int32)pt1x * rotCos - (int32)pt1y * rotSin) >> 7;
+	int32 ry1 = ((int32)pt1x * rotSin + (int32)pt1y * rotCos) >> 7;
 	float wx1 = (float)(rx1 + obj.where.xloc);
 	float wy1 = (float)(ry1 + obj.where.yloc);
 	float wz1 = (float)(pt1z - 160);

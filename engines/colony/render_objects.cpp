@@ -125,10 +125,10 @@ bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *sc
 		const int cur = surface[i];
 		const int next = surface[(i + 1) % pointCount];
 		const int next2 = surface[(i + 2) % pointCount];
-		const long dx = screenX[cur] - screenX[next];
-		const long dy = screenY[cur] - screenY[next];
-		const long dxp = screenX[next2] - screenX[next];
-		const long dyp = screenY[next2] - screenY[next];
+		const int32 dx = screenX[cur] - screenX[next];
+		const int32 dy = screenY[cur] - screenY[next];
+		const int32 dxp = screenX[next2] - screenX[next];
+		const int32 dyp = screenY[next2] - screenY[next];
 
 		if (dx < 0) {
 			if (dy == 0) {
@@ -137,7 +137,7 @@ bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *sc
 				if (dyp < 0)
 					return true;
 			} else {
-				const long b = dy * dxp - dx * dyp;
+				const int32 b = dy * dxp - dx * dyp;
 				if (b > 0)
 					return false;
 				if (b < 0)
@@ -150,7 +150,7 @@ bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *sc
 				if (dyp > 0)
 					return true;
 			} else {
-				const long b = dx * dyp - dy * dxp;
+				const int32 b = dx * dyp - dy * dxp;
 				if (b < 0)
 					return false;
 				if (b > 0)
@@ -187,8 +187,8 @@ bool isProjectedPrismSurfaceVisible(const Common::Rect &screenR, const Colony::T
 		return false;
 
 	const uint8 ang = (useLook ? thing.where.look : thing.where.ang) + 32;
-	const long rotCos = cost[ang];
-	const long rotSin = sint[ang];
+	const int32 rotCos = cost[ang];
+	const int32 rotSin = sint[ang];
 	int projectedX[32];
 	int projectedY[32];
 	bool projected[32];
@@ -199,8 +199,8 @@ bool isProjectedPrismSurfaceVisible(const Common::Rect &screenR, const Colony::T
 		const int ox = def.points[i][0];
 		const int oy = def.points[i][1];
 		const int oz = def.points[i][2];
-		const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-		const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+		const int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+		const int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 		projected[i] = projectCorridorPointRaw(screenR, cameraLook, cameraLookY, sint, cost, cameraX, cameraY,
 												   (float)(rx + thing.where.xloc), (float)(ry + thing.where.yloc), (float)(oz - 160),
 												   projectedX[i], projectedY[i]);
@@ -1159,10 +1159,10 @@ int wrapAngle256(int angle) {
 }
 
 void rotatePoint(int angle, const int src[3], int dst[3], const int *cost, const int *sint) {
-	const long tcos = cost[angle];
-	const long tsin = sint[angle];
-	dst[0] = (int)(((long)src[0] * tcos - (long)src[1] * tsin) >> 7);
-	dst[1] = (int)(((long)src[0] * tsin + (long)src[1] * tcos) >> 7);
+	const int32 tcos = cost[angle];
+	const int32 tsin = sint[angle];
+	dst[0] = (int)(((int32)src[0] * tcos - (int32)src[1] * tsin) >> 7);
+	dst[1] = (int)(((int32)src[0] * tsin + (int32)src[1] * tcos) >> 7);
 	dst[2] = src[2];
 }
 
@@ -1200,8 +1200,8 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		return;
 
 	const uint8 ang = (useLook ? thing.where.look : thing.where.ang) + 32;
-	const long rotCos = _cost[ang];
-	const long rotSin = _sint[ang];
+	const int32 rotCos = _cost[ang];
+	const int32 rotSin = _sint[ang];
 	const bool lit = (_corePower[_coreIndex] > 0);
 	float transformedX[32];
 	float transformedY[32];
@@ -1216,8 +1216,8 @@ void ColonyEngine::drawPrismOval3D(Thing &thing, const PrismPartDef &def, bool u
 		const int ox = def.points[i][0];
 		const int oy = def.points[i][1];
 		const int oz = def.points[i][2];
-		const long rx = ((long)ox * rotCos - (long)oy * rotSin) >> 7;
-		const long ry = ((long)ox * rotSin + (long)oy * rotCos) >> 7;
+		const int32 rx = ((int32)ox * rotCos - (int32)oy * rotSin) >> 7;
+		const int32 ry = ((int32)ox * rotSin + (int32)oy * rotCos) >> 7;
 		transformedX[i] = (float)(rx + thing.where.xloc);
 		transformedY[i] = (float)(ry + thing.where.yloc);
 		transformedZ[i] = (float)(oz - 160);
@@ -1689,12 +1689,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kRobQueen:
 		{
-			const long s1 = _sint[obj.where.ang] >> 1;
-			const long c1 = _cost[obj.where.ang] >> 1;
-			const long s2 = s1 >> 1;
-			const long c2 = c1 >> 1;
-			const long eyeBaseX = obj.where.xloc + c1;
-			const long eyeBaseY = obj.where.yloc + s1;
+			const int32 s1 = _sint[obj.where.ang] >> 1;
+			const int32 c1 = _cost[obj.where.ang] >> 1;
+			const int32 s2 = s1 >> 1;
+			const int32 c2 = c1 >> 1;
+			const int32 eyeBaseX = obj.where.xloc + c1;
+			const int32 eyeBaseY = obj.where.yloc + s1;
 
 			Thing leftEye = obj;
 			leftEye.where.xloc = (int)(eyeBaseX - s2);
@@ -1706,9 +1706,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			rightEye.where.yloc = (int)(eyeBaseY - c2);
 			resetObjectBounds(_screenR, rightEye.where);
 
-			const long leftDist = (leftEye.where.xloc - _me.xloc) * (leftEye.where.xloc - _me.xloc) +
+			const int32 leftDist = (leftEye.where.xloc - _me.xloc) * (leftEye.where.xloc - _me.xloc) +
 				(leftEye.where.yloc - _me.yloc) * (leftEye.where.yloc - _me.yloc);
-			const long rightDist = (rightEye.where.xloc - _me.xloc) * (rightEye.where.xloc - _me.xloc) +
+			const int32 rightDist = (rightEye.where.xloc - _me.xloc) * (rightEye.where.xloc - _me.xloc) +
 				(rightEye.where.yloc - _me.yloc) * (rightEye.where.yloc - _me.yloc);
 			const bool leftFirst = leftDist >= rightDist;
 			Thing &farEye = leftFirst ? leftEye : rightEye;
@@ -1752,12 +1752,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		{
 			// DOS DRONE.C: body + seteyes()/draweyes() — same two-eye
 			// system as Queen, positioned at offsets from body center.
-			const long s1 = _sint[obj.where.ang] >> 1;
-			const long c1 = _cost[obj.where.ang] >> 1;
-			const long s2 = s1 >> 1;
-			const long c2 = c1 >> 1;
-			const long eyeBaseX = obj.where.xloc + c1;
-			const long eyeBaseY = obj.where.yloc + s1;
+			const int32 s1 = _sint[obj.where.ang] >> 1;
+			const int32 c1 = _cost[obj.where.ang] >> 1;
+			const int32 s2 = s1 >> 1;
+			const int32 c2 = c1 >> 1;
+			const int32 eyeBaseX = obj.where.xloc + c1;
+			const int32 eyeBaseY = obj.where.yloc + s1;
 
 			Thing leftEye = obj;
 			leftEye.where.xloc = (int)(eyeBaseX - s2);
@@ -1800,12 +1800,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 			const PrismPartDef leftPincerDef = {4, leftPincerPts, 4, kDLPincerSurf};
 			const PrismPartDef rightPincerDef = {4, rightPincerPts, 4, kDRPincerSurf};
 
-			const long s1 = _sint[obj.where.ang] >> 1;
-			const long c1 = _cost[obj.where.ang] >> 1;
-			const long s2 = s1 >> 1;
-			const long c2 = c1 >> 1;
-			const long eyeBaseX = obj.where.xloc + c1;
-			const long eyeBaseY = obj.where.yloc + s1;
+			const int32 s1 = _sint[obj.where.ang] >> 1;
+			const int32 c1 = _cost[obj.where.ang] >> 1;
+			const int32 s2 = s1 >> 1;
+			const int32 c2 = c1 >> 1;
+			const int32 eyeBaseX = obj.where.xloc + c1;
+			const int32 eyeBaseY = obj.where.yloc + s1;
 
 			Thing leftEye = obj;
 			leftEye.where.xloc = (int)(eyeBaseX - s2);

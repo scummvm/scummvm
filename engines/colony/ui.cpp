@@ -743,18 +743,18 @@ void ColonyEngine::drawMiniMap(uint32 lineColor) {
 
 	int xcorner[6];
 	int ycorner[6];
-	xcorner[0] = ccenterx + (((long)xloc * tsin - (long)yloc * tcos) >> 8);
-	ycorner[0] = ccentery - (((long)yloc * tsin + (long)xloc * tcos) >> 8);
-	xcorner[1] = ccenterx + (((long)(xloc + lExt) * tsin - (long)yloc * tcos) >> 8);
-	ycorner[1] = ccentery - (((long)yloc * tsin + (long)(xloc + lExt) * tcos) >> 8);
-	xcorner[2] = ccenterx + (((long)(xloc + lExt) * tsin - (long)(yloc + lExt) * tcos) >> 8);
-	ycorner[2] = ccentery - (((long)(yloc + lExt) * tsin + (long)(xloc + lExt) * tcos) >> 8);
-	xcorner[3] = ccenterx + (((long)xloc * tsin - (long)(yloc + lExt) * tcos) >> 8);
-	ycorner[3] = ccentery - (((long)(yloc + lExt) * tsin + (long)xloc * tcos) >> 8);
-	xcorner[4] = ccenterx + (((long)(xloc + sExt) * tsin - (long)(yloc + sExt) * tcos) >> 8);
-	ycorner[4] = ccentery - (((long)(yloc + sExt) * tsin + (long)(xloc + sExt) * tcos) >> 8);
-	xcorner[5] = ccenterx + (((long)(xloc + sExt) * tsin - (long)yloc * tcos) >> 8);
-	ycorner[5] = ccentery - (((long)yloc * tsin + (long)(xloc + sExt) * tcos) >> 8);
+	xcorner[0] = ccenterx + (((int32)xloc * tsin - (int32)yloc * tcos) >> 8);
+	ycorner[0] = ccentery - (((int32)yloc * tsin + (int32)xloc * tcos) >> 8);
+	xcorner[1] = ccenterx + (((int32)(xloc + lExt) * tsin - (int32)yloc * tcos) >> 8);
+	ycorner[1] = ccentery - (((int32)yloc * tsin + (int32)(xloc + lExt) * tcos) >> 8);
+	xcorner[2] = ccenterx + (((int32)(xloc + lExt) * tsin - (int32)(yloc + lExt) * tcos) >> 8);
+	ycorner[2] = ccentery - (((int32)(yloc + lExt) * tsin + (int32)(xloc + lExt) * tcos) >> 8);
+	xcorner[3] = ccenterx + (((int32)xloc * tsin - (int32)(yloc + lExt) * tcos) >> 8);
+	ycorner[3] = ccentery - (((int32)(yloc + lExt) * tsin + (int32)xloc * tcos) >> 8);
+	xcorner[4] = ccenterx + (((int32)(xloc + sExt) * tsin - (int32)(yloc + sExt) * tcos) >> 8);
+	ycorner[4] = ccentery - (((int32)(yloc + sExt) * tsin + (int32)(xloc + sExt) * tcos) >> 8);
+	xcorner[5] = ccenterx + (((int32)(xloc + sExt) * tsin - (int32)yloc * tcos) >> 8);
+	ycorner[5] = ccentery - (((int32)yloc * tsin + (int32)(xloc + sExt) * tcos) >> 8);
 
 	const int dx = xcorner[1] - xcorner[0];
 	const int dy = ycorner[0] - ycorner[1];
@@ -870,8 +870,8 @@ bool isPassableFeature(int feat) {
 }
 
 void ColonyEngine::automapCellCorner(int dx, int dy, int xloc, int yloc, int lExt, int tsin, int tcos, int ccx, int ccy, int &sx, int &sy) {
-	const long ox = xloc + (long)dx * lExt;
-	const long oy = yloc + (long)dy * lExt;
+	const int32 ox = xloc + (int32)dx * lExt;
+	const int32 oy = yloc + (int32)dy * lExt;
 	sx = ccx + (int)((ox * tsin - oy * tcos) >> 8);
 	sy = ccy - (int)((oy * tsin + ox * tcos) >> 8);
 }
