@@ -44,15 +44,18 @@ bool SparkyDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	SparkyRoomDialogueState &state = _state;
-	Common::String &sparkyTopicBuffer = state.currentTopicBuffer;
-	int &sparkyTopicBufferLineIndex = state.currentTopicBufferLineIndex;
+	Common::String sparkyTopicBuffer;
+	int sparkyTopicBufferLineIndex = -1;
 
 	auto assignSparkyTopicBuffer = [&](int responseLineIndex) {
 		runtime.assignTopicBuffer(sparkyTopicBuffer, sparkyTopicBufferLineIndex,
 			responseLineIndex, "Sparky topic buffer");
 	};
-	auto playSparkyLine = [&](int wavId, const char *speakerId = "SPARKY") -> Common::Error {
-		return runtime.playDialogueLine(wavId, speakerId);
+	auto playSparkyLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "SPARKY", headVariant);
+	};
+	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
 	};
 	auto executeDialogueActionTag = [&](const char *tag) {
 		StartupInteractionResult interaction;
@@ -64,11 +67,11 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (runtime.startupScript().getFlagValue("PC_TRIES_TO_TURN_ON_LIGHT")) {
 		(void)runtime.startupScript().setRuntimeFlagValue("PC_TRIES_TO_TURN_ON_LIGHT", false);
-		return playSparkyLine(0x3a4);
+		return playSparkyLine(0x3a4, 0);
 	}
 
 	if (!usedItemName.empty())
-		return playSparkyLine(0x3c7);
+		return playSparkyLine(0x3c7, 2);
 
 	if (state.introPending) {
 		state.introPending = false;
@@ -76,8 +79,8 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.returnVisitDayIndex = runtime.startupScript().getCurrentStoryDayIndex();
 
 		const DialogueLineEntry introLines[] = {
-			{ 0x2f7, "PC", 0 },
-			{ 0x2fe, "SPARKY", 0 },
+			{ 0x2f7, "PC", 1 },
+			{ 0x2fe, "SPARKY", 2 },
 			{ 0x302, "SPARKY", 0 }
 		};
 		Common::Error lineError = runtime.playDialogueEntrySequence(introLines, ARRAYSIZE(introLines));
@@ -90,7 +93,7 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		lineError = runtime.playDialogueFst(kDialogueC098FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		lineError = runtime.playDialogueLine(0x30d, "PC");
+		lineError = playPcLine(0x30d, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
@@ -101,26 +104,26 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (responseIndex == 1) {
 			sharedState.dialogueStateD2f04 = true;
-			return playSparkyLine(0x319);
+			return playSparkyLine(0x319, 1);
 		}
 		if (responseIndex == 2)
-			return playSparkyLine(0x334);
+			return playSparkyLine(0x334, 0);
 
 		lineError = runtime.playDialogueFst(kDialogueC096FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playSparkyLine(0x33f);
+		return playSparkyLine(0x33f, 0);
 	}
 
 	if (state.returnVisitPending) {
 		Common::Error lineError = Common::kNoError;
 		if (runtime.startupScript().getCurrentStoryDayIndex() == state.returnVisitDayIndex) {
-			lineError = playSparkyLine(0x3bb);
+			lineError = playSparkyLine(0x3bb, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		} else {
 			const DialogueLineEntry returnVisitLines[] = {
-				{ 0x3ac, "SPARKY", 0 },
+				{ 0x3ac, "SPARKY", 1 },
 				{ 0x3b0, "PC", 0 },
 				{ 0x3b4, "SPARKY", 0 }
 			};
@@ -131,9 +134,6 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 	}
 
-	if (sparkyTopicBufferLineIndex < 0)
-		assignSparkyTopicBuffer(0x2c3);
-
 	for (;;) {
 		Common::String selectedTopic;
 		Common::Error menuError = runtime.runKeywordMenu(
@@ -143,11 +143,11 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (selectedTopic.empty())
 			return Common::kNoError;
 		if (runtime.matchesResponseLine(selectedTopic, 0x2c3)) {
-			return playSparkyLine(0x39e);
+			return playSparkyLine(0x39e, 1);
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2c4) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2c5)) {
-			Common::Error lineError = playSparkyLine(0x34c);
+			Common::Error lineError = playSparkyLine(0x34c, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			lineError = runtime.playDialogueFst(kDialogueC096AFstPath);
@@ -156,16 +156,16 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2c7)) {
-			Common::Error lineError = playSparkyLine(0x35f);
+			Common::Error lineError = playSparkyLine(0x35f, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			continue;
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2c8)) {
-			Common::Error lineError = playSparkyLine(0x36c);
+			Common::Error lineError = playSparkyLine(0x36c, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
-			lineError = playSparkyLine(0x36d);
+			lineError = playSparkyLine(0x36d, 0);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 			assignSparkyTopicBuffer(0x2c9);
@@ -173,7 +173,7 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (runtime.matchesResponseLine(selectedTopic, 0x2ca) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2cb)) {
-			Common::Error lineError = playSparkyLine(0x37a);
+			Common::Error lineError = playSparkyLine(0x37a, 3);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
@@ -183,14 +183,14 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				return responseError;
 
 			if (responseIndex == 1) {
-				lineError = playSparkyLine(0x38f);
+				lineError = playSparkyLine(0x38f, 4);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 				lineError = runtime.playDialogueFst(kDialogueNudetatuFstPath);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			} else if (responseIndex == 2) {
-				lineError = playSparkyLine(0x35f);
+				lineError = playSparkyLine(0x35f, 0);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 			}
@@ -199,7 +199,7 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (runtime.matchesResponseLine(selectedTopic, 0x2ce))
 			continue;
 
-		Common::Error lineError = playSparkyLine(0x3c1);
+		Common::Error lineError = playSparkyLine(0x3c1, 1);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
