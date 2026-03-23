@@ -21,9 +21,9 @@
 
 #include "common/translation.h"
 
+#include "bolt/bolt.h"
 #include "bolt/metaengine.h"
 #include "bolt/detection.h"
-#include "bolt/bolt.h"
 
 namespace Bolt {
 

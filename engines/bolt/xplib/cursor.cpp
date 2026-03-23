@@ -19,10 +19,10 @@
  *
  */
 
+#include "graphics/cursorman.h"
+
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
-
-#include "graphics/cursorman.h"
 
 namespace Bolt {
 

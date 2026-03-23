@@ -22,8 +22,6 @@
 #ifndef XPLIB_XPLIB_H
 #define XPLIB_XPLIB_H
 
-#include "bolt/bolt.h"
-
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
@@ -32,6 +30,8 @@
 #include "common/mutex.h"
 
 #include "graphics/paletteman.h"
+
+#include "bolt/bolt.h"
 
 namespace Bolt {
 

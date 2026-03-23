@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/file.h"
+
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
-
-#include "common/file.h"
 
 namespace Bolt {
 

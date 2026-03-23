@@ -19,10 +19,6 @@
  *
  */
 
-#include "bolt/bolt.h"
-#include "bolt/detection.h"
-#include "bolt/xplib/xplib.h"
-
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -30,6 +26,10 @@
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
+
+#include "bolt/bolt.h"
+#include "bolt/detection.h"
+#include "bolt/xplib/xplib.h"
 
 namespace Bolt {
 

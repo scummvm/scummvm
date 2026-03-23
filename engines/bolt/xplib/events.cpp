@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/events.h"
+
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
-
-#include "common/events.h"
 
 namespace Bolt {
 

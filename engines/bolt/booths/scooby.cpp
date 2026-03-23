@@ -19,9 +19,9 @@
  *
  */
 
-#include "bolt/bolt.h"
-
 #include "common/memstream.h"
+
+#include "bolt/bolt.h"
 
 namespace Bolt {
 

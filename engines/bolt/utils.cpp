@@ -19,9 +19,9 @@
  *
  */
 
-#include "bolt/bolt.h"
-
 #include "common/config-manager.h"
+
+#include "bolt/bolt.h"
 
 namespace Bolt {
 

@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/timer.h"
+
 #include "bolt/bolt.h"
 #include "bolt/xplib/xplib.h"
-
-#include "common/timer.h"
 
 namespace Bolt {
 

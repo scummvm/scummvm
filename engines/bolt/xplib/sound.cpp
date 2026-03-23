@@ -19,12 +19,12 @@
  *
  */
 
-#include "bolt/bolt.h"
-#include "bolt/xplib/xplib.h"
-
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
 #include "audio/mixer.h"
+
+#include "bolt/bolt.h"
+#include "bolt/xplib/xplib.h"
 
 namespace Bolt {
 
