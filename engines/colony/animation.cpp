@@ -592,6 +592,11 @@ void ColonyEngine::playAnimation() {
 				_animationRunning = false;
 			} else if (event.type == Common::EVENT_MOUSEMOVE) {
 				debugC(5, kColonyDebugAnimation, "Animation Mouse: %d, %d", event.mouse.x, event.mouse.y);
+			} else if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+				if (event.customType == kActionEscape) {
+					openMainMenuDialog();
+					_gfx->computeScreenViewport();
+				}
 			} else if (event.type == Common::EVENT_KEYDOWN) {
 				int item = 0;
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9) {
@@ -602,8 +607,6 @@ void ColonyEngine::playAnimation() {
 					item = 12; // Enter
 				} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE || event.kbd.keycode == Common::KEYCODE_DELETE) {
 					item = 11; // Clear
-				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_animationRunning = false;
 				}
 
 				if (item > 0) {
