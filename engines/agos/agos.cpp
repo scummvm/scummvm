@@ -1097,6 +1097,13 @@ Common::Error AGOSEngine::go() {
 
 	while (!shouldQuit()) {
 		waitForInput();
+
+		if (getGameType() == GType_SIMON2 && (_keyPressed.keycode == Common::KEYCODE_SPACE || _keyPressed.ascii == ' ' ) && hasSimon2LanguageFiles()) {
+			cycleSimon2LanguageOverlay();
+			_keyPressed.reset();
+			continue;
+		}
+
 		handleVerbClicked(_verbHitArea);
 		delay(100);
 	}
@@ -1228,7 +1235,11 @@ void AGOSEngine::cycleSimon2LanguageOverlay() {
 		return;
 
 	_language = getNextSimon2OverlayLanguage();
+	_simon2OverlayLanguage = _language;
 	loadSimon2LanguageOverlay();
+	_simon2LanguageFlagTimer = 0x32;
+	_simon2LanguageFlagClearPending = false;
+	_displayFlag = 1;
 }
 
 void AGOSEngine::loadSimon2LanguageOverlay() {

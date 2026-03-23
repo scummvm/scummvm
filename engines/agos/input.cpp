@@ -167,7 +167,7 @@ out_of_here:
 
 bool AGOSEngine::isSimon2LanguageToggleKeyPressed() const {
 	return getGameType() == GType_SIMON2 && hasSimon2LanguageFiles() &&
-		(_keyPressed.keycode == Common::KEYCODE_l || _keyPressed.ascii == 'l' || _keyPressed.ascii == 'L');
+		(_keyPressed.keycode == Common::KEYCODE_SPACE);
 }
 
 void AGOSEngine::refreshSimon2LanguageText() {

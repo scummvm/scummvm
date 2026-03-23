@@ -690,6 +690,15 @@ void AGOSEngine::timerProc() {
 
 	handleMouseMoved();
 
+	if (_simon2LanguageFlagTimer != 0) {
+		--_simon2LanguageFlagTimer;
+		_displayFlag = 1;
+		if (_simon2LanguageFlagTimer == 0)
+			_simon2LanguageFlagClearPending = true;
+	} else if (_simon2LanguageFlagClearPending) {
+		_displayFlag = 1;
+	}
+
 	if (!(_videoLockOut & 0x10)) {
 		processVgaEvents();
 		processVgaEvents();
