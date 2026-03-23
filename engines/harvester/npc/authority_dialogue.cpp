@@ -27,8 +27,14 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kAuthorityNpc = "AUTHORITY";
+
+} // End of namespace
+
 bool AuthorityDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("AUTHORITY");
+	return npcName.equalsIgnoreCase(kAuthorityNpc);
 }
 
 Common::Error AuthorityDialogueHandler::handleDialogue(DialogueRuntime &runtime,
@@ -36,14 +42,22 @@ Common::Error AuthorityDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("STOP_AUTHOR_TALK"))
 		return Common::kNoError;
 
-	if (runtime.startupScript().getFlagValue("IF_DON_T_EAT_THE_FOOD"))
-		return runtime.playDialogueLine(0x3992, "AUTHORITY");
+	if (runtime.startupScript().getFlagValue("IF_DON_T_EAT_THE_FOOD")) {
+		Common::Error lineError = runtime.playDialogueLine(0x3992, kAuthorityNpc);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		if (runtime.startupScript().getFlagValue("IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES"))
+			return runtime.playDialogueLine(0x399b, kAuthorityNpc);
+
+		return Common::kNoError;
+	}
 
 	return runtime.playDialogueLine(
 		runtime.startupScript().getFlagValue("IF_YOU_EAT_THE_FOOD_AND_DEFEAT_THE_ENEMIES")
 			? 0x399b
 			: 0x398a,
-		"AUTHORITY");
+		kAuthorityNpc);
 }
 
 } // End of namespace Harvester
