@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef COLONY_COLONY_H
-#define COLONY_COLONY_H
+#ifndef COLONY_H
+#define COLONY_H
 
 #include "common/array.h"
 #include "common/random.h"
@@ -776,4 +776,4 @@ private:
 
 } // End of namespace Colony
 
-#endif // COLONY_COLONY_H
+#endif // COLONY_H
