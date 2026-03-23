@@ -1910,8 +1910,8 @@ RemovalConfirmationDialog::RemovalConfirmationDialog(const Common::U32String &me
 	}
 
 	// Create Button Widgets with bogus size (will be sized in reflowLayout)
-	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("Yes")), Common::U32String(), kRemovalYes, 'y'));
-	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("No")), Common::U32String(), kRemovalNo, 'n'));
+	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("Yes")), Common::U32String(), kRemovalYes, Common::ASCII_RETURN));
+	_buttons.push_back(new ButtonWidget(this, 0, 0, 0, 0, Common::U32String(_("No")), Common::U32String(), kRemovalNo, Common::ASCII_ESCAPE));
 
 	reflowLayout();
 }
