@@ -29,13 +29,25 @@ namespace Harvester {
 class ParsonsDialogueHandler : public NpcDialogueHandler {
 public:
 	struct ParsonsRoomDialogueState {
-		bool talkStatePending = true;
+		bool introPending = true;
+		bool stephMidgameShown = false;
+		bool scratchedTuckerShown = false;
+		bool barberPoleStolenShown = false;
+		bool dinerBurnedShown = false;
+		bool burnedTvStationShown = false;
+		bool karinKidnapedShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = ParsonsRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
-		syncDialogueBool(s, _state.talkStatePending);
+		syncDialogueBool(s, _state.introPending);
+		syncDialogueBool(s, _state.stephMidgameShown, 9);
+		syncDialogueBool(s, _state.scratchedTuckerShown, 9);
+		syncDialogueBool(s, _state.barberPoleStolenShown, 9);
+		syncDialogueBool(s, _state.dinerBurnedShown, 9);
+		syncDialogueBool(s, _state.burnedTvStationShown, 9);
+		syncDialogueBool(s, _state.karinKidnapedShown, 9);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

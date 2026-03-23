@@ -39,7 +39,7 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-static const uint32 kHarvesterSaveVersion = 8;
+static const uint32 kHarvesterSaveVersion = 9;
 
 static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
 	debugC(1, kDebugGeneral,
