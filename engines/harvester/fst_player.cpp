@@ -49,7 +49,8 @@ struct FstHeader {
 	uint32 frameCount = 0;
 	uint32 frameRate = 0;
 	uint32 sampleRate = 0;
-	uint32 bitsPerSample = 0;
+	uint16 bitsPerSample = 0;
+	uint16 unknown2 = 0;
 };
 
 struct FstFrameEntry {
@@ -89,6 +90,7 @@ private:
 };
 
 static const uint32 kFstMagic = MKTAG('F', 'S', 'T', '2');
+static const uint32 kFstAltMagic = MKTAG('2', 'T', 'S', 'F');
 static const FstCensorshipToggleEntry kFstCensorshipToggleEntries[] = {
 	{ "C001B.FST", { 170, 369, -1, -1, -1, -1 } },
 	{ "C004.FST", { 23, 174, 860, 995, 1834, -1 } },
@@ -124,6 +126,37 @@ static byte expand6BitColor(byte value) {
 static void convertVgaPalette(const byte *source, byte *dest) {
 	for (uint i = 0; i < 256 * 3; ++i)
 		dest[i] = expand6BitColor(source[i]);
+}
+
+static bool isValidFstMagic(uint32 magic) {
+	// The published format docs describe the header as "2TSF", while the
+	// recovered Harvester samples and native notes use the little-endian FST2 tag.
+	return magic == kFstMagic || magic == kFstAltMagic;
+}
+
+static uint32 getTrailingFstAudioFrameSkip(const Common::Array<FstFrameEntry> &frames) {
+	if (frames.size() < 2)
+		return 0;
+
+	const uint16 firstFrameAudioSize = frames[0].audioSize;
+	const uint16 steadyStateAudioSize = frames[1].audioSize;
+	if (firstFrameAudioSize == 0 || steadyStateAudioSize == 0 || firstFrameAudioSize <= steadyStateAudioSize)
+		return 0;
+	if ((firstFrameAudioSize % steadyStateAudioSize) != 0)
+		return 0;
+
+	const uint32 skipFrameCount = firstFrameAudioSize / steadyStateAudioSize - 1;
+	if (skipFrameCount == 0 || skipFrameCount >= frames.size())
+		return 0;
+
+	// FutureVision docs note that some files front-load multiple frames of PCM
+	// into frame 0 and expect the corresponding tail chunks to be ignored.
+	for (uint32 i = frames.size() - skipFrameCount; i < frames.size(); ++i) {
+		if (frames[i].audioSize != steadyStateAudioSize)
+			return 0;
+	}
+
+	return skipFrameCount;
 }
 
 static const FstCensorshipToggleEntry *findCensorshipToggleEntry(const Common::String &path) {
@@ -361,9 +394,10 @@ bool FstPlayer::play(const Common::String &path) {
 	header.frameCount = stream->readUint32LE();
 	header.frameRate = stream->readUint32LE();
 	header.sampleRate = stream->readUint32LE();
-	header.bitsPerSample = stream->readUint32LE();
+	header.bitsPerSample = stream->readUint16LE();
+	header.unknown2 = stream->readUint16LE();
 
-	if (header.magic != kFstMagic || header.width == 0 || header.height == 0 || header.frameCount == 0 || header.frameRate == 0) {
+	if (!isValidFstMagic(header.magic) || header.width == 0 || header.height == 0 || header.frameCount == 0 || header.frameRate == 0) {
 		warning("Harvester: invalid FST header in '%s'", path.c_str());
 		return false;
 	}
@@ -419,14 +453,17 @@ bool FstPlayer::play(const Common::String &path) {
 	Audio::SoundHandle audioHandle;
 	Audio::QueuingAudioStream *audioStream = nullptr;
 	const bool hasPcmAudio = header.sampleRate != 0 && header.bitsPerSample == 16;
+	const uint32 trailingAudioFrameSkip = hasPcmAudio ? getTrailingFstAudioFrameSkip(frames) : 0;
 	if (hasPcmAudio)
 		audioStream = Audio::makeQueuingAudioStream(header.sampleRate, false);
+	else if (header.sampleRate != 0 && header.bitsPerSample != 0)
+		warning("Harvester: unsupported FST audio format %u-bit in '%s'", header.bitsPerSample, path.c_str());
 
 	bool audioStarted = false;
 	bool skipRequested = false;
 	bool deferredSkipRequested = false;
 	uint32 nextFrameTime = g_system->getMillis();
-	const uint32 audioByteRate = hasPcmAudio ? header.sampleRate * 2 : 0;
+	const uint32 audioByteRate = hasPcmAudio ? header.sampleRate * (header.bitsPerSample / 8) : 0;
 	const uint32 audioBytesPerFrame = (audioByteRate != 0 && header.frameRate != 0) ? audioByteRate / header.frameRate : 0;
 	uint64 nextAudioSyncBytes = 0;
 	Audio::Mixer *mixer = g_system->getMixer();
@@ -444,7 +481,8 @@ bool FstPlayer::play(const Common::String &path) {
 			break;
 		}
 
-		if (audioStream && frames[frameIndex].audioSize != 0) {
+		if (audioStream && frames[frameIndex].audioSize != 0 &&
+				frameIndex + trailingAudioFrameSkip < header.frameCount) {
 			byte *audioBuffer = (byte *)malloc(frames[frameIndex].audioSize);
 			if (!audioBuffer)
 				error("Harvester: unable to allocate audio buffer");
