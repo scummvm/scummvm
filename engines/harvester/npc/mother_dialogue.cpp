@@ -27,6 +27,14 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kMotherSpeakerId = "MOTHER";
+static const char *const kDialogueC072FstPath = "GRAPHIC/FST/C072.FST";
+static const char *const kDialogueC073FstPath = "GRAPHIC/FST/C073.FST";
+
+} // End of namespace
+
 bool MotherDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("MOTHER");
 }
@@ -36,8 +44,57 @@ Common::Error MotherDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!_state.talkStatePending)
 		return Common::kNoError;
 
+	auto playMotherLine = [&](int wavId, int headVariant) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kMotherSpeakerId, headVariant);
+	};
+
 	_state.talkStatePending = false;
-	return runtime.playDialogueLineWithVariant(0x26d6, "MOTHER", 3);
+
+	Common::Error lineError = playMotherLine(0x26d6, 3);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = runtime.playDialogueFst(kDialogueC072FstPath);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = playMotherLine(0x26e9, 0);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(0x173, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1) {
+		lineError = playMotherLine(0x26f5, 3);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		return runtime.playDialogueFst(kDialogueC073FstPath);
+	}
+
+	if (responseIndex != 2)
+		return Common::kNoError;
+
+	lineError = runtime.playDialogueFst(kDialogueC073FstPath);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = playMotherLine(0x2709, 3);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = runtime.playDialogueFst(kDialogueC072FstPath);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	lineError = playMotherLine(0x2714, 0);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	return playMotherLine(0x2719, 3);
 }
 
 } // End of namespace Harvester
