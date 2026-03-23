@@ -2847,6 +2847,14 @@ int32 ToonEngine::characterTalk(int32 dialogid, bool blocking) {
 	if (!myLine)
 		return 0;
 
+	// Fix typo in original game data: "repsonsible" -> "responsible" (bug #16153)
+	// Both strings are 11 chars so we can swap in-place without reallocation.
+	char *typo = strstr(myLine, "repsonsible");
+	if (typo) {
+		typo[2] = 's';
+		typo[3] = 'p';
+	}
+
 	bool oldMouseHidden = _gameState->_mouseHidden;
 	if (blocking)
 		_gameState->_mouseHidden = true;
