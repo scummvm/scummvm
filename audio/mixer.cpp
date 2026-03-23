@@ -802,7 +802,7 @@ int Channel::mix(byte *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis(true);
 		_pauseTime = 0;
-		res = _converter->convert(*_stream, data, _mixer->getOutputBytesPerSample(), len, _volL, _volR);
+		res = _converter->convert(*_stream, data, _mixer->getOutputBytesPerSample(), len, _volL, _volR, MIX_CLAMPED_ADD);
 		_samplesDecoded += res;
 	}
 
