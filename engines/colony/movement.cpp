@@ -133,10 +133,10 @@ void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, int roy) 
 }
 
 enum {
-	kTunnelClipLeft = 1,
-	kTunnelClipRight = 2,
-	kTunnelClipTop = 4,
-	kTunnelClipBottom = 8
+	kTunnelClipLeft = 1 << 0,
+	kTunnelClipRight = 1 << 1,
+	kTunnelClipTop = 1 << 2,
+	kTunnelClipBottom = 1 << 3
 };
 
 int tunnelClipCode(const Common::Rect &rect, int x, int y) {

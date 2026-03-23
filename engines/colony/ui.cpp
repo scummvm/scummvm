@@ -1324,13 +1324,13 @@ bool ColonyEngine::clipLineToRect(int &x1, int &y1, int &x2, int &y2, const Comm
 	auto outCode = [&](int x, int y) {
 		int code = 0;
 		if (x < l)
-			code |= 1;
+			code |= (1 << 0);
 		else if (x > r)
-			code |= 2;
+			code |= (1 << 1);
 		if (y < t)
-			code |= 4;
+			code |= (1 << 2);
 		else if (y > b)
-			code |= 8;
+			code |= (1 << 3);
 		return code;
 	};
 
