@@ -35,9 +35,16 @@ static const char *const kJimmyNpc = "JIMMY";
 static const char *const kPcSpeaker = "PC";
 static const char *const kRahRoomName = "RAH";
 static const char *const kJimmyFirstMeetingFlag = "PAPER_CHK_1";
+static const char *const kGivenPaperTodayFlag = "GIVEN_PAPER_TODAY";
 static const int kJimmyFirstResponseLineIndex = 0xf5;
 static const int kJimmySecondResponseLineIndex = 0xf6;
 static const int kJimmyThirdResponseLineIndex = 0xf7;
+static const int kJimmySneakersResponseLineIndex = 0xf8;
+
+static const DialogueLineEntry kJimmyPaperHandoffLines[] = {
+	{ 0x4a4c, kJimmyNpc, 1 },
+	{ 0x4a52, kPcSpeaker, 0 }
+};
 
 static const DialogueLineEntry kJimmyFirstMeetingFollowupLines[] = {
 	{ 0x4a6b, kJimmyNpc, 0 },
@@ -55,6 +62,24 @@ static const DialogueLineEntry kJimmyNoSneakersLines[] = {
 	{ 0x4aa6, kJimmyNpc, 0 },
 	{ 0x4aaa, kPcSpeaker, 0 },
 	{ 0x4aae, kJimmyNpc, 2 }
+};
+
+static const DialogueLineEntry kJimmyLedgersAndCorpseEvidenceLines[] = {
+	{ 0x4b00, kJimmyNpc, 0 },
+	{ 0x4b04, kPcSpeaker, 0 },
+	{ 0x4b08, kJimmyNpc, 0 },
+	{ 0x4b0c, kPcSpeaker, 0 },
+	{ 0x4b10, kJimmyNpc, 0 },
+	{ 0x4b15, kPcSpeaker, 0 },
+	{ 0x4b19, kJimmyNpc, 0 }
+};
+
+static const DialogueLineEntry kJimmyBlackmailEvidenceLines[] = {
+	{ 0x4b21, kJimmyNpc, 0 },
+	{ 0x4b25, kPcSpeaker, 0 },
+	{ 0x4b29, kJimmyNpc, 0 },
+	{ 0x4b2d, kPcSpeaker, 0 },
+	{ 0x4b31, kJimmyNpc, 1 }
 };
 
 } // End of namespace
@@ -75,18 +100,92 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueEntrySequence(lines, count);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
-		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
-			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
-				return true;
-		}
+		return runtime.startupScript().isObjectInInventory(objectName);
+	};
+	auto executeActionTagIfSet = [&](const char *tag) {
+		StartupInteractionResult interaction;
+		if (!runtime.startupScript().executeActionTag(tag, interaction))
+			return;
 
-		return false;
+		runtime.applyImmediateDialogueInteractionEffects(interaction);
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+	};
+	auto restoreItemToRah = [&](const char *objectName) {
+		(void)runtime.startupScript().resetRuntimeObjectToInitialState(objectName);
+		(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoomName, objectName, true);
+	};
+	auto completeSneakersTrade = [&]() {
+		restoreItemToRah("SNEAKERS");
+		(void)runtime.startupScript().addRuntimeObjectToInventory("BROOMKEY");
+	};
+	auto playPaperHandoffPreludeIfNeeded = [&]() -> Common::Error {
+		if (state.paperHandoffStateSet)
+			return Common::kNoError;
+
+		Common::Error preludeError = playJimmySequence(
+			kJimmyPaperHandoffLines, ARRAYSIZE(kJimmyPaperHandoffLines));
+		if (preludeError.getCode() != Common::kNoError)
+			return preludeError;
+
+		state.paperHandoffStateSet = true;
+		return Common::kNoError;
+	};
+	auto runSneakersOfferMenu = [&]() -> Common::Error {
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(kJimmyThirdResponseLineIndex, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			if (hasInventoryItem("SNEAKERS")) {
+				Common::Error lineError = playJimmyLine(0x4a9e, 1);
+				if (lineError.getCode() != Common::kNoError)
+					return lineError;
+
+				completeSneakersTrade();
+				return Common::kNoError;
+			}
+
+			return playJimmySequence(kJimmyNoSneakersLines, ARRAYSIZE(kJimmyNoSneakersLines));
+		}
+		if (responseIndex == 2)
+			return playJimmyLine(0x4ab4, 1);
+
+		return Common::kNoError;
+	};
+	auto runJimmySneakersPrompt = [&](int responseLineIndex) -> Common::Error {
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(responseLineIndex, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1) {
+			Common::Error lineError = playJimmyLine(0x4a86, 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			lineError = playJimmySequence(kJimmySecondResponsePreludeLines,
+				ARRAYSIZE(kJimmySecondResponsePreludeLines));
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+
+			return runSneakersOfferMenu();
+		}
+		if (responseIndex == 2)
+			return playJimmyLine(0x4abc, 0);
+
+		return Common::kNoError;
 	};
 	auto playJimmyNoItemFallback = [&]() -> Common::Error {
-		if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY"))
-			return playJimmyLine(0x4ac3, 0);
+		if (hasInventoryItem("SNEAKERS") && !hasInventoryItem("BROOMKEY")) {
+			Common::Error sneakersLineError = playJimmyLine(0x4ac3, 0);
+			if (sneakersLineError.getCode() != Common::kNoError)
+				return sneakersLineError;
+
+			Common::Error sneakersPromptError = runJimmySneakersPrompt(kJimmySneakersResponseLineIndex);
+			if (sneakersPromptError.getCode() != Common::kNoError)
+				return sneakersPromptError;
+		}
 		if (runtime.startupScript().getFlagValue("PAPER_CHK_4"))
 			return playJimmyLine(0x4ae2, 2);
 		if (runtime.startupScript().getFlagValue("PAPER_CHK_3"))
@@ -99,49 +198,25 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
-			StartupInteractionResult jimmyInteraction;
-			const bool changedGivenPaperToday =
-				runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
-			const bool changedNewspaperState =
-				runtime.startupScript().resetRuntimeObjectToInitialState("NEWSPAPER");
-			jimmyInteraction.mutatedRuntimeState = changedGivenPaperToday || changedNewspaperState;
+			(void)runtime.startupScript().setRuntimeFlagValue(kGivenPaperTodayFlag, true);
+			executeActionTagIfSet("ACTV_HOUSE_EXIT");
+			restoreItemToRah("NEWSPAPER");
 
-			StartupInteractionResult actionInteraction;
-			if (runtime.startupScript().executeNestedActionTag("ACTV_HOUSE_EXIT", actionInteraction)) {
-				jimmyInteraction.abortRemainingCommandChain =
-					jimmyInteraction.abortRemainingCommandChain ||
-					actionInteraction.abortRemainingCommandChain;
-				jimmyInteraction.mutatedRuntimeState =
-					jimmyInteraction.mutatedRuntimeState || actionInteraction.mutatedRuntimeState;
-				if (!actionInteraction.musicPath.empty())
-					jimmyInteraction.musicPath = actionInteraction.musicPath;
-				if (!actionInteraction.nextRoomName.empty())
-					jimmyInteraction.nextRoomName = actionInteraction.nextRoomName;
-				if (actionInteraction.roomTransition != kStartupRoomTransitionNone)
-					jimmyInteraction.roomTransition = actionInteraction.roomTransition;
-				if (!actionInteraction.deathFlicPath.empty())
-					jimmyInteraction.deathFlicPath = actionInteraction.deathFlicPath;
-				if (!actionInteraction.dialogueNpcName.empty())
-					jimmyInteraction.dialogueNpcName = actionInteraction.dialogueNpcName;
-				if (!actionInteraction.dialogueContinuationTag.empty())
-					jimmyInteraction.dialogueContinuationTag = actionInteraction.dialogueContinuationTag;
-				jimmyInteraction.requestMainMenu =
-					jimmyInteraction.requestMainMenu || actionInteraction.requestMainMenu;
-				for (const StartupAudioCommand &command : actionInteraction.audioCommands)
-					jimmyInteraction.audioCommands.push_back(command);
-			}
-			runtime.queueDialogueInteractionIfNeeded(jimmyInteraction);
+			lineError = playPaperHandoffPreludeIfNeeded();
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 
-			if (!state.paperHandoffStateSet) {
-				state.paperHandoffStateSet = true;
-				lineError = playJimmyLine(0x4a4c, 1);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			}
+			const bool playJimmyRevisitBark = runtime.getRandomNumber(1) == 0;
+			lineError = playJimmyLine(
+				playJimmyRevisitBark ? 0x4acc : 0x4a4b,
+				playJimmyRevisitBark ? 0 : 1);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
 
-			return runtime.getRandomNumber(1) == 0
-				? playJimmyLine(0x4acc, 0)
-				: playJimmyLine(0x4a4b, 1);
+			state.firstNoItemLinePending = false;
+			(void)runtime.startupScript().setRuntimeFlagValue(kJimmyFirstMeetingFlag, true);
+			(void)runtime.startupScript().setRuntimeFlagValue(kGivenPaperTodayFlag, true);
+			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
@@ -158,19 +233,24 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			} else {
 				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			}
-			return playJimmyLine(0x4b00, 0);
+			return playJimmySequence(kJimmyLedgersAndCorpseEvidenceLines,
+				ARRAYSIZE(kJimmyLedgersAndCorpseEvidenceLines));
 		}
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-			return playJimmyLine(0x4b21, 0);
+			return playJimmySequence(kJimmyBlackmailEvidenceLines,
+				ARRAYSIZE(kJimmyBlackmailEvidenceLines));
 		}
 		if (usedItemName.equalsIgnoreCase("SNEAKERS")) {
 			lineError = playJimmyLine(0x4a9e, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
+
+			completeSneakersTrade();
+			return Common::kNoError;
 		}
 
 		return playJimmyLine(0x4af2, 0);
@@ -178,18 +258,16 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (state.firstNoItemLinePending) {
 		state.firstNoItemLinePending = false;
-		if (!state.paperHandoffStateSet) {
-			lineError = playJimmyLine(0x4a4c, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
+		lineError = playPaperHandoffPreludeIfNeeded();
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 
 		lineError = playJimmyLine(0x4a58, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
 		(void)runtime.startupScript().setRuntimeFlagValue(kJimmyFirstMeetingFlag, true);
-		(void)runtime.startupScript().setRuntimeFlagValue("GIVEN_PAPER_TODAY", true);
+		(void)runtime.startupScript().setRuntimeFlagValue(kGivenPaperTodayFlag, true);
 
 		int responseIndex = 0;
 		Common::Error responseError = runtime.runResponseMenu(kJimmyFirstResponseLineIndex, responseIndex);
@@ -210,50 +288,9 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		responseIndex = 0;
-		responseError = runtime.runResponseMenu(kJimmySecondResponseLineIndex, responseIndex);
-		if (responseError.getCode() != Common::kNoError)
-			return responseError;
-
-		if (responseIndex == 1) {
-			lineError = playJimmyLine(0x4a86, 1);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-
-			lineError = playJimmySequence(kJimmySecondResponsePreludeLines,
-				ARRAYSIZE(kJimmySecondResponsePreludeLines));
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-
-			int thirdResponseIndex = 0;
-			responseError = runtime.runResponseMenu(kJimmyThirdResponseLineIndex, thirdResponseIndex);
-			if (responseError.getCode() != Common::kNoError)
-				return responseError;
-
-			if (thirdResponseIndex == 1) {
-				if (hasInventoryItem("SNEAKERS")) {
-					lineError = playJimmyLine(0x4a9e, 1);
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-
-					(void)runtime.startupScript().resetRuntimeObjectToInitialState("SNEAKERS");
-					(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoomName, "SNEAKERS", true);
-					(void)runtime.startupScript().addRuntimeObjectToInventory("BROOMKEY");
-				} else {
-					lineError = playJimmySequence(kJimmyNoSneakersLines, ARRAYSIZE(kJimmyNoSneakersLines));
-					if (lineError.getCode() != Common::kNoError)
-						return lineError;
-				}
-			} else if (thirdResponseIndex == 2) {
-				lineError = playJimmyLine(0x4ab4, 1);
-				if (lineError.getCode() != Common::kNoError)
-					return lineError;
-			}
-		} else if (responseIndex == 2) {
-			lineError = playJimmyLine(0x4abc, 0);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
-		}
+		lineError = runJimmySneakersPrompt(kJimmySecondResponseLineIndex);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 	}
 
 	return playJimmyNoItemFallback();
