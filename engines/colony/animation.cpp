@@ -83,16 +83,16 @@ bool isBackdoorCode111111(const uint8 display[6]) {
 
 // Mac color indices from colordef.h enum (cColor[] table in Color256).
 enum {
-	mc_dwall = 6, mc_lwall = 7,
-	mc_char0 = 8,    // char0..char6 = 8..14
-	mc_bulkhead = 15, mc_door = 16,
-	mc_desk = 58, mc_desktop = 59, mc_screen = 62,
-	mc_proj = 72, mc_console = 79, mc_powerbase = 81,
-	mc_box1 = 84, mc_forklift = 86, mc_flglass = 87,
-	mc_cryo = 90, mc_ccore = 111,
-	mc_teleport = 93, mc_teledoor = 94,
-	mc_vanity = 96, mc_mirror = 103,
-	mc_airlock = 25, mc_elevator = 23
+	kMcDwall = 6, kMcLwall = 7,
+	kMcChar0 = 8,    // char0..char6 = 8..14
+	kMcBulkhead = 15, kMcDoor = 16,
+	kMcDesk = 58, kMcDesktop = 59, kMcScreen = 62,
+	kMcProj = 72, kMcConsole = 79, kMcPowerbase = 81,
+	kMcBox1 = 84, kMcForklift = 86, kMcFlglass = 87,
+	kMcCryo = 90, kMcCcore = 111,
+	kMcTeleport = 93, kMcTeledoor = 94,
+	kMcVanity = 96, kMcMirror = 103,
+	kMcAirlock = 25, kMcElevator = 23
 };
 
 // Mac Toolbox BackColor() constants.
@@ -107,21 +107,21 @@ enum {
 // Index 0 = background top, 1 = background image, 2+ = per-sprite fill.
 // Positive = cColor[] index, negative = -MacSystemColor, 0 = level-based.
 const int16 kBMC_Desk[] = {
-	0, mc_desktop,
+	0, kMcDesktop,
 	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan,
-	-kMacWhite, -kMacWhite, -kMacMagenta, -kMacYellow, mc_desk,
-	mc_desk, mc_desk, mc_desk, mc_desk, mc_desk,
-	-kMacWhite, mc_screen, -kMacMagenta, -kMacCyan, -kMacCyan,
+	-kMacWhite, -kMacWhite, -kMacMagenta, -kMacYellow, kMcDesk,
+	kMcDesk, kMcDesk, kMcDesk, kMcDesk, kMcDesk,
+	-kMacWhite, kMcScreen, -kMacMagenta, -kMacCyan, -kMacCyan,
 	-kMacBlue, -kMacWhite, -kMacRed, -kMacWhite, -kMacYellow
 };
 const int16 kBMC_Vanity[] = {
-	0, mc_vanity,
-	mc_mirror, -kMacRed, -kMacCyan, -kMacWhite, -kMacYellow,
+	0, kMcVanity,
+	kMcMirror, -kMacRed, -kMacCyan, -kMacWhite, -kMacYellow,
 	-kMacGreen, -kMacBlue, -kMacRed, -kMacMagenta, -kMacRed,
-	mc_vanity, -kMacWhite, -kMacYellow, mc_mirror
+	kMcVanity, -kMacWhite, -kMacYellow, kMcMirror
 };
 const int16 kBMC_Reactor[] = {
-	0, mc_console,
+	0, kMcConsole,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacRed, -kMacRed, -kMacRed,
@@ -130,7 +130,7 @@ const int16 kBMC_Reactor[] = {
 	-kMacMagenta, -kMacWhite
 };
 const int16 kBMC_Security[] = {
-	0, mc_console,
+	0, kMcConsole,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow,
 	-kMacYellow, -kMacYellow, -kMacRed, -kMacRed, -kMacRed,
@@ -139,42 +139,42 @@ const int16 kBMC_Security[] = {
 	-kMacRed, -kMacCyan, -kMacCyan, -kMacCyan, -kMacCyan
 };
 const int16 kBMC_Teleport[] = {
-	0, mc_teleport, 0, mc_teledoor
+	0, kMcTeleport, 0, kMcTeledoor
 };
 const int16 kBMC_Creatures[] = {
-	-kMacWhite, 0, -kMacWhite, -kMacCyan, mc_proj,
+	-kMacWhite, 0, -kMacWhite, -kMacCyan, kMcProj,
 	-kMacBlue, -kMacMagenta, -kMacMagenta
 };
 const int16 kBMC_Controls[] = {
-	0, mc_console,
-	-kMacRed, -kMacYellow, -kMacYellow, -kMacBlue, -kMacYellow, -kMacGreen, mc_screen
+	0, kMcConsole,
+	-kMacRed, -kMacYellow, -kMacYellow, -kMacBlue, -kMacYellow, -kMacGreen, kMcScreen
 };
 const int16 kBMC_Lift[] = {
-	0, mc_flglass,
-	mc_teleport, mc_box1, mc_cryo, mc_ccore, 0,
+	0, kMcFlglass,
+	kMcTeleport, kMcBox1, kMcCryo, kMcCcore, 0,
 	-kMacRed, -kMacRed, -kMacCyan, -kMacCyan
 };
 const int16 kBMC_Powersuit[] = {
-	0, mc_powerbase,
-	-kMacMagenta, -kMacMagenta, -kMacYellow, -kMacYellow, mc_powerbase, -kMacWhite
+	0, kMcPowerbase,
+	-kMacMagenta, -kMacMagenta, -kMacYellow, -kMacYellow, kMcPowerbase, -kMacWhite
 };
 const int16 kBMC_Forklift[] = {
-	0, mc_forklift, mc_forklift, mc_forklift
+	0, kMcForklift, kMcForklift, kMcForklift
 };
 const int16 kBMC_Door[] = {
-	0, mc_bulkhead, 0, mc_door, -kMacYellow
+	0, kMcBulkhead, 0, kMcDoor, -kMacYellow
 };
 const int16 kBMC_Bulkhead[] = {
-	0, mc_bulkhead, 0, mc_bulkhead, -kMacYellow
+	0, kMcBulkhead, 0, kMcBulkhead, -kMacYellow
 };
 const int16 kBMC_Airlock[] = {
-	0, mc_bulkhead, mc_bulkhead, -kMacRed, mc_airlock
+	0, kMcBulkhead, kMcBulkhead, -kMacRed, kMcAirlock
 };
 const int16 kBMC_Elevator[] = {
-	0, mc_bulkhead, 0, mc_elevator, mc_elevator, -kMacYellow
+	0, kMcBulkhead, 0, kMcElevator, kMcElevator, -kMacYellow
 };
 const int16 kBMC_Elevator2[] = {
-	0, mc_bulkhead, 0, -kMacMagenta, mc_elevator, mc_elevator,
+	0, kMcBulkhead, 0, -kMacMagenta, kMcElevator, kMcElevator,
 	-kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow, -kMacYellow
 };
 
@@ -675,8 +675,8 @@ uint32 ColonyEngine::resolveAnimColor(int16 bmEntry) const {
 		//   if(corepower[coreindex]) RGBBackColor(&cColor[c_char0+level-1].f);
 		//   else RGBBackColor(&cColor[c_dwall].b);
 		if (_corePower[_coreIndex] > 0 && _level >= 1 && _level <= 7)
-			return packMacColorBG(_macColors[mc_char0 + _level - 1].fg);
-		return packMacColorBG(_macColors[mc_dwall].bg);
+			return packMacColorBG(_macColors[kMcChar0 + _level - 1].fg);
+		return packMacColorBG(_macColors[kMcDwall].bg);
 	}
 }
 
@@ -701,7 +701,7 @@ void ColonyEngine::drawAnimation() {
 		const bool powered = (_corePower[_coreIndex] > 0);
 		uint32 topBG = resolveAnimColor(_animBMColors[0]);
 		// Bottom: only uses c_lwall.f when powered; unpowered inherits top color
-		uint32 botBG = powered ? packMacColorBG(_macColors[mc_lwall].fg) : topBG;
+		uint32 botBG = powered ? packMacColorBG(_macColors[kMcLwall].fg) : topBG;
 		for (int y = 0; y < 264; y++) {
 			byte *pat = (y < _divideBG) ? _topBG : _bottomBG;
 			byte row = pat[y % 8];
