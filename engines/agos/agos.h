@@ -386,6 +386,7 @@ protected:
 	bool _backFlag;
 
 	Common::Language _language;
+	Common::Language _simon2OverlayLanguage;
 	bool _useSimon2LanguageOverlay;
 	Common::HashMap<Common::String, Common::String> _simon2LanguageOverlay;
 	bool _copyProtection;
@@ -602,6 +603,8 @@ protected:
 
 	uint8 _currentPalette[768];
 	uint8 _displayPalette[768];
+	uint8 _simon2LanguageFlagTimer;
+	bool _simon2LanguageFlagClearPending;
 
 	byte *_planarBuf;
 	byte _videoBuf1[32000];
@@ -900,6 +903,10 @@ protected:
 	virtual void runSubroutine101();
 	bool isSimon2LanguageToggleKeyPressed() const;
 	void refreshSimon2LanguageText();
+	uint8 mapRGBToPaletteIndex(uint8 r, uint8 g, uint8 b) const;
+	void fillSimon2LanguageFlagRect(int x1, int y1, int x2, int y2, uint8 color);
+	void restoreSimon2LanguageFlagArea();
+	void drawSimon2LanguageFlag();
 
 	virtual void inventoryUp(WindowBlock *window);
 	virtual void inventoryDown(WindowBlock *window);

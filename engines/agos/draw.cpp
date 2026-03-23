@@ -772,6 +772,131 @@ void AGOSEngine::setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height) {
 		_moveYMax = height;
 }
 
+
+uint8 AGOSEngine::mapRGBToPaletteIndex(uint8 r, uint8 g, uint8 b) const {
+	uint8 bestIndex = 0;
+	int redDistance = _displayPalette[0] - r;
+	int greenDistance = _displayPalette[1] - g;
+	int blueDistance = _displayPalette[2] - b;
+	uint32 bestDistance = redDistance * redDistance + greenDistance * greenDistance + blueDistance * blueDistance;
+
+	for (uint i = 1; i < 256; ++i) {
+		const uint paletteOffset = i * 3;
+		redDistance = _displayPalette[paletteOffset + 0] - r;
+		greenDistance = _displayPalette[paletteOffset + 1] - g;
+		blueDistance = _displayPalette[paletteOffset + 2] - b;
+
+		const uint32 distance = redDistance * redDistance + greenDistance * greenDistance + blueDistance * blueDistance;
+		if (distance >= bestDistance)
+			continue;
+
+		bestDistance = distance;
+		bestIndex = i;
+		if (distance == 0)
+			break;
+	}
+
+	return bestIndex;
+}
+
+void AGOSEngine::fillSimon2LanguageFlagRect(int x1, int y1, int x2, int y2, uint8 color) {
+	Graphics::Surface *screen = getBackendSurface();
+
+	if (x1 > x2) {
+		const int t = x1;
+		x1 = x2;
+		x2 = t;
+	}
+	if (y1 > y2) {
+		const int t = y1;
+		y1 = y2;
+		y2 = t;
+	}
+
+	if (x1 < 0)
+		x1 = 0;
+	if (y1 < 0)
+		y1 = 0;
+	if (x2 >= screen->w)
+		x2 = screen->w - 1;
+	if (y2 >= screen->h)
+		y2 = screen->h - 1;
+	if (x1 > x2 || y1 > y2)
+		return;
+
+	const int width = x2 - x1 + 1;
+	byte *dst = (byte *)screen->getBasePtr(x1, y1);
+	for (int y = y1; y <= y2; ++y) {
+		memset(dst, color, width);
+		dst += screen->pitch;
+	}
+}
+
+void AGOSEngine::restoreSimon2LanguageFlagArea() {
+	if (getGameType() != GType_SIMON2)
+		return;
+
+	Graphics::Surface *screen = getBackendSurface();
+	if (!screen)
+		return;
+
+	const int kFlagX = 10;
+	const int kFlagY = 10;
+	const int kFlagWidth = 24;
+	const int kFlagHeight = 15;
+
+	byte *src = getBackGround() + kFlagX + kFlagY * _backGroundBuf->pitch;
+	byte *dst = (byte *)screen->getBasePtr(kFlagX, kFlagY);
+
+	for (int y = 0; y < kFlagHeight; ++y) {
+		memcpy(dst, src, kFlagWidth);
+		dst += screen->pitch;
+		src += _backGroundBuf->pitch;
+	}
+}
+
+void AGOSEngine::drawSimon2LanguageFlag() {
+	if (getGameType() != GType_SIMON2 || _simon2LanguageFlagTimer == 0)
+		return;
+
+	const uint8 timer = _simon2LanguageFlagTimer;
+	const uint8 fadeIntensity = (timer > 23) ? 255 : (uint8)(timer * 11);
+	uint8 yellowFadeIntensity = (timer > 28) ? 230 : (uint8)(timer * 8);
+	yellowFadeIntensity &= 0xFE;
+
+	const uint8 black = mapRGBToPaletteIndex(0, 0, 0);
+	const uint8 red = mapRGBToPaletteIndex(fadeIntensity, 0, 0);
+	const uint8 white = mapRGBToPaletteIndex(fadeIntensity, fadeIntensity, fadeIntensity);
+	const uint8 blue = mapRGBToPaletteIndex(0, 0, fadeIntensity);
+	const uint8 green = mapRGBToPaletteIndex(0, fadeIntensity, 0);
+	const uint8 yellow = mapRGBToPaletteIndex(yellowFadeIntensity, yellowFadeIntensity, 0);
+
+	switch (_simon2OverlayLanguage) {
+	case Common::EN_ANY:
+		fillSimon2LanguageFlagRect(10, 10, 33, 24, white);
+		fillSimon2LanguageFlagRect(10, 15, 33, 19, red);
+		fillSimon2LanguageFlagRect(19, 10, 24, 24, red);
+		break;
+	case Common::DE_DEU:
+		fillSimon2LanguageFlagRect(10, 10, 33, 14, black);
+		fillSimon2LanguageFlagRect(10, 15, 33, 19, red);
+		fillSimon2LanguageFlagRect(10, 20, 33, 24, yellow);
+		break;
+	case Common::IT_ITA:
+		fillSimon2LanguageFlagRect(10, 10, 17, 24, green);
+		fillSimon2LanguageFlagRect(18, 10, 25, 24, white);
+		fillSimon2LanguageFlagRect(26, 10, 33, 24, red);
+		break;
+	case Common::FR_FRA:
+		fillSimon2LanguageFlagRect(10, 10, 17, 24, blue);
+		fillSimon2LanguageFlagRect(18, 10, 25, 24, white);
+		fillSimon2LanguageFlagRect(26, 10, 33, 24, red);
+		break;
+	default:
+		break;
+	}
+}
+
 void AGOSEngine::displayScreen() {
 	if (_fastFadeInFlag == 0 && _paletteFlag == 1) {
 		_paletteFlag = 0;
@@ -840,6 +965,11 @@ void AGOSEngine::displayScreen() {
 		}
 	}
 
+	if (_simon2LanguageFlagTimer != 0 || _simon2LanguageFlagClearPending)
+		restoreSimon2LanguageFlagArea();
+	drawSimon2LanguageFlag();
+	if (_simon2LanguageFlagClearPending)
+		_simon2LanguageFlagClearPending = false;
 	updateBackendSurface();
 
 	if (getGameType() == GType_FF && _scrollFlag) {
