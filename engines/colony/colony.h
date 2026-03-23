@@ -453,14 +453,14 @@ private:
 	int _robotNum;
 	int _dynamicObjectBase = 0;
 
-	Renderer *_gfx;
-	Sound *_sound;
-	Graphics::FrameLimiter *_frameLimiter;
+	Renderer *_gfx = nullptr;
+	Sound *_sound = nullptr;
+	Graphics::FrameLimiter *_frameLimiter = nullptr;
 	Common::RenderMode _renderMode;
 	Graphics::Surface *_savedScreen = nullptr;
 
 
-	int _tsin, _tcos;
+	int _tsin = 0, _tcos = 0;
 	int _sint[256];
 	int _cost[256];
 	int _centerX, _centerY;
@@ -509,8 +509,8 @@ private:
 	uint32 _lastHotfootTime = 0;  // Time-gate for HOTFOOT damage (~8fps)
 	uint32 _lastAnimUpdate = 0;
 	uint32 _lastWarningChimeTime = 0;
-	int _action0, _action1;
-	int _creature;
+	int _action0 = 0, _action1 = 0;
+	int _creature = 0;
 	bool _allGrow = false;
 	bool _suppressCollisionSound = false;
 
@@ -525,7 +525,7 @@ private:
 	int _mountains[256];          // mountain height profile
 	int _battledx = 0;            // mountain parallax divisor (Width/59)
 	int _battleRound = 0;         // AI round-robin counter
-	Locate *_battlePwh[100];      // visible object pointers (for hit detection)
+	Locate *_battlePwh[100] = {};  // visible object pointers (for hit detection)
 	int _battleMaxP = 0;          // count of visible objects
 	Locate _pyramids[4][4][15];   // pyramid obstacles: 4x4 quadrants, 15 each
 
@@ -543,21 +543,21 @@ private:
 	int _lastLoggedCursorMode = -1;
 
 	// Mac menu bar (MacWindowManager overlay)
-	Graphics::MacWindowManager *_wm;
-	Graphics::MacMenu *_macMenu;
-	Graphics::ManagedSurface *_menuSurface;
-	int _menuBarHeight;
+	Graphics::MacWindowManager *_wm = nullptr;
+	Graphics::MacMenu *_macMenu = nullptr;
+	Graphics::ManagedSurface *_menuSurface = nullptr;
+	int _menuBarHeight = 0;
 	void initMacMenus();
 	void loadMacCursorResources();
 	void handleMenuAction(int action);
 	static void menuCommandsCallback(int action, Common::String &text, void *data);
 
-	int _frntxWall, _frntyWall;
-	int _sidexWall, _sideyWall;
-	int _frntx, _frnty;
-	int _sidex, _sidey;
-	int _front, _side;
-	int _direction;
+	int _frntxWall = 0, _frntyWall = 0;
+	int _sidexWall = 0, _sideyWall = 0;
+	int _frntx = 0, _frnty = 0;
+	int _sidex = 0, _sidey = 0;
+	int _front = 0, _side = 0;
+	int _direction = 0;
 
 	Common::Rect _clip;
 	Common::Rect _screenR;
@@ -567,10 +567,10 @@ private:
 	Common::Rect _powerRect;     // DOS: powerRect; Mac: infoWindow
 
 	// DOS dashboard layout (from original MetaWINDOW pix_per_Qinch values)
-	int _pQx;           // pixels per quarter-inch X (24 for EGA 640x350)
-	int _pQy;           // pixels per quarter-inch Y (18 for EGA 640x350)
-	int _powerWidth;     // width of each of the 3 power bar columns
-	int _powerHeight;    // pixel height per power bar unit (max 5)
+	int _pQx = 0;           // pixels per quarter-inch X (24 for EGA 640x350)
+	int _pQy = 0;           // pixels per quarter-inch Y (18 for EGA 640x350)
+	int _powerWidth = 0;     // width of each of the 3 power bar columns
+	int _powerHeight = 0;    // pixel height per power bar unit (max 5)
 
 	// Cached decoded PICT surfaces for dashboard panels (Mac color mode)
 	Graphics::Surface *_pictPower = nullptr;      // PICT -32755 (normal) or -32760 (trouble)
@@ -582,7 +582,7 @@ private:
 
 	uint8 wallAt(int x, int y) const;
 	const uint8 *mapFeatureAt(int x, int y, int direction) const;
-	bool _visibleCell[32][32];
+	bool _visibleCell[32][32] = {};
 	void computeVisibleCells();
 	void drawStaticObjects();
 
@@ -688,23 +688,23 @@ private:
 	// Animation system
 	Common::Array<Sprite *> _cSprites;
 	Common::Array<ComplexSprite *> _lSprites;
-	Image *_backgroundMask;
-	Image *_backgroundFG;
+	Image *_backgroundMask = nullptr;
+	Image *_backgroundFG = nullptr;
 	Common::Rect _backgroundClip;
 	Common::Rect _backgroundLocate;
 	bool _backgroundActive;
-	Common::MacResManager *_resMan;
-	Common::MacResManager *_colorResMan;
-	byte _topBG[8];
-	byte _bottomBG[8];
+	Common::MacResManager *_resMan = nullptr;
+	Common::MacResManager *_colorResMan = nullptr;
+	byte _topBG[8] = {};
+	byte _bottomBG[8] = {};
 	int16 _divideBG;
 	Common::String _animationName;
 	Common::Array<int16> _animBMColors;
 	bool _animationRunning;
 	int _animationResult;
 	bool _doorOpen;
-	int _liftObject;  // sprite index for the carried object in lift animation
-	bool _liftUp;     // current lift state: true=raised, false=lowered
+	int _liftObject = 0;  // sprite index for the carried object in lift animation
+	bool _liftUp = false;     // current lift state: true=raised, false=lowered
 	int _elevatorFloor;
 	int _airlockX = -1;
 	int _airlockY = -1;
