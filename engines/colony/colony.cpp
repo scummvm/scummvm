@@ -87,14 +87,14 @@ private:
 	uint16 _paletteCount;
 };
 
-static int getMacCursorScaleFactor(OSystem *system) {
+int getMacCursorScaleFactor(OSystem *system) {
 	if (!system)
 		return 1;
 
 	return MAX(1, (int)floorf(system->getHiDPIScreenFactor() + 0.5f));
 }
 
-static Graphics::Cursor *createScaledCursor(const byte *srcSurface, const byte *srcMask,
+Graphics::Cursor *createScaledCursor(const byte *srcSurface, const byte *srcMask,
 		uint16 srcWidth, uint16 srcHeight, uint16 hotspotX, uint16 hotspotY, byte keyColor,
 		const byte *palette, byte paletteStart, uint16 paletteCount, int scale) {
 	scale = MAX(1, scale);
@@ -116,7 +116,7 @@ static Graphics::Cursor *createScaledCursor(const byte *srcSurface, const byte *
 	return cursor;
 }
 
-static Graphics::Cursor *cloneAndScaleCursor(const Graphics::Cursor &src, int scale) {
+Graphics::Cursor *cloneAndScaleCursor(const Graphics::Cursor &src, int scale) {
 	return createScaledCursor(src.getSurface(), src.getMask(), src.getWidth(), src.getHeight(),
 		src.getHotspotX(), src.getHotspotY(), src.getKeyColor(), src.getPalette(),
 		src.getPaletteStartIndex(), src.getPaletteCount(), scale);

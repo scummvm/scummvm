@@ -43,16 +43,16 @@
 namespace Colony {
 
 // Pack RGB into 32-bit ARGB with 0xFF000000 marker for direct RGB rendering.
-static uint32 packRGB(byte r, byte g, byte b) {
+uint32 packRGB(byte r, byte g, byte b) {
 	return 0xFF000000 | ((uint32)r << 16) | ((uint32)g << 8) | b;
 }
 
 // Pack Mac 16-bit RGB into 32-bit ARGB.
-static uint32 packMacColorUI(const uint16 rgb[3]) {
+uint32 packMacColorUI(const uint16 rgb[3]) {
 	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
 }
 
-static bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
+bool drawMacTextPopup(Graphics::MacWindowManager *wm, Renderer *gfx,
 		int screenWidth, int screenHeight, int centerX, int centerY,
 		const Common::Array<Common::String> &lines, Graphics::TextAlign align, bool macColor) {
 	if (!gfx || lines.empty())
@@ -863,7 +863,7 @@ void ColonyEngine::markVisited() {
 	if (canS && canW && cx - 1 >= 0 && cy - 1 >= 0) _visited[lv][cx - 1][cy - 1] = true;
 }
 
-static bool isPassableFeature(int feat) {
+bool isPassableFeature(int feat) {
 	return feat == kWallFeatureDoor || feat == kWallFeatureAirlock ||
 		feat == kWallFeatureUpStairs || feat == kWallFeatureDnStairs ||
 		feat == kWallFeatureTunnel || feat == kWallFeatureElevator;

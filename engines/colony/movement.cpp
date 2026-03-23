@@ -62,12 +62,12 @@ static const int kTunnelST[] = {
 
 static const int kTunnelStraight[60] = {0};
 
-static uint32 packTunnelMacColor(const uint16 rgb[3]) {
+uint32 packTunnelMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
 		((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
 }
 
-static void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
+void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg, uint32 bg, int pattern) {
 	if (rect.isEmpty())
 		return;
 
@@ -115,7 +115,7 @@ static void fillTunnelPattern(Renderer *gfx, const Common::Rect &rect, uint32 fg
 	}
 }
 
-static void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, int roy) {
+void projectTunnelPoint(const Common::Rect &rect, int pnt[2], int rox, int roy) {
 	if (roy <= 0)
 		roy = 1;
 
@@ -139,7 +139,7 @@ enum {
 	kTunnelClipBottom = 8
 };
 
-static int tunnelClipCode(const Common::Rect &rect, int x, int y) {
+int tunnelClipCode(const Common::Rect &rect, int x, int y) {
 	int code = 0;
 
 	if (x < rect.left)
@@ -155,7 +155,7 @@ static int tunnelClipCode(const Common::Rect &rect, int x, int y) {
 	return code;
 }
 
-static void drawTunnelLine(Renderer *gfx, const Common::Rect &rect, int x1, int y1, int x2, int y2, uint32 color) {
+void drawTunnelLine(Renderer *gfx, const Common::Rect &rect, int x1, int y1, int x2, int y2, uint32 color) {
 	if (rect.isEmpty())
 		return;
 

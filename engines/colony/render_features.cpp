@@ -75,7 +75,7 @@ void ColonyEngine::getWallFace3D(int cellX, int cellY, int direction, float corn
 // Interpolate a point on the wall face.
 // u: 0=left, 1=right (horizontal fraction)
 // v: 0=bottom, 1=top (vertical fraction)
-static void wallPoint(const float corners[4][3], float u, float v, float out[3]) {
+void wallPoint(const float corners[4][3], float u, float v, float out[3]) {
 	float botX = corners[0][0] + (corners[1][0] - corners[0][0]) * u;
 	float botY = corners[0][1] + (corners[1][1] - corners[0][1]) * u;
 	float botZ = corners[0][2] + (corners[1][2] - corners[0][2]) * u;
@@ -109,11 +109,11 @@ void ColonyEngine::wallPolygon(const float corners[4][3], const float *u, const 
 	_gfx->draw3DPolygon(px, py, pz, count, color);
 }
 
-static bool nearlyEqual(float a, float b, float eps = 0.0001f) {
+bool nearlyEqual(float a, float b, float eps = 0.0001f) {
 	return fabsf(a - b) <= eps;
 }
 
-static void addSortedUniqueFloat(float *values, int &count, float value, float eps = 0.0001f) {
+void addSortedUniqueFloat(float *values, int &count, float value, float eps = 0.0001f) {
 	for (int i = 0; i < count; ++i) {
 		if (nearlyEqual(values[i], value, eps))
 			return;
@@ -129,7 +129,7 @@ static void addSortedUniqueFloat(float *values, int &count, float value, float e
 	values[count++] = value;
 }
 
-static bool segmentIntersection2D(float ax, float ay, float bx, float by,
+bool segmentIntersection2D(float ax, float ay, float bx, float by,
 		float cx, float cy, float dx, float dy, float &ix, float &iy) {
 	const float den = (ax - bx) * (cy - dy) - (ay - by) * (cx - dx);
 	if (fabsf(den) < 0.0001f)
@@ -145,7 +145,7 @@ static bool segmentIntersection2D(float ax, float ay, float bx, float by,
 	return true;
 }
 
-static float edgeXAtY(float x0, float y0, float x1, float y1, float y) {
+float edgeXAtY(float x0, float y0, float x1, float y1, float y) {
 	if (nearlyEqual(y0, y1))
 		return x0;
 
@@ -159,7 +159,7 @@ struct WallCharSpan {
 	float xBottom;
 };
 
-static void sortWallCharSpans(WallCharSpan *spans, int count) {
+void sortWallCharSpans(WallCharSpan *spans, int count) {
 	for (int i = 1; i < count; ++i) {
 		WallCharSpan span = spans[i];
 		int j = i - 1;
@@ -450,7 +450,7 @@ void ColonyEngine::drawCellFeature3D(int cellX, int cellY) {
 	}
 }
 
-static float stairStepHeight(const float *vf, const float *vc, int d, int s) {
+float stairStepHeight(const float *vf, const float *vc, int d, int s) {
 	return vf[d] + (s + 1) / 8.0f * (vc[d] - vf[d]);
 }
 

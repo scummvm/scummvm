@@ -30,14 +30,14 @@
 
 namespace Colony {
 
-static int wrapBattleDebugCoord(int coord) {
+int wrapBattleDebugCoord(int coord) {
 	coord = (int16)coord;
 	if (coord < 0)
 		coord += 0x8000;
 	return coord;
 }
 
-static const char *robotTypeName(int type) {
+const char *robotTypeName(int type) {
 	switch (type) {
 	case kRobEye: return "Eye";
 	case kRobPyramid: return "Pyramid";
@@ -63,7 +63,7 @@ static const char *robotTypeName(int type) {
 	}
 }
 
-static const char *featureTypeName(int type) {
+const char *featureTypeName(int type) {
 	switch (type) {
 	case kWallFeatureUpStairs: return "UpStairs";
 	case kWallFeatureDnStairs: return "DnStairs";

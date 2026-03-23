@@ -144,7 +144,7 @@ static const DOSColorEntry g_dosColors[79] = {
 
 // Look up the DOS lsColor entry for a given ObjColor index.
 // Returns a fallback entry for out-of-range indices.
-static const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
+const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 	// DOS pcycle for animated reactor/suit: WHITE,LTGRAY,GRAY,DKGRAY,BLACK (bounce)
 	static const DOSColorEntry kHCore1 = {0, 0, 15, 15, 15, 1}; // WHITE
 	static const DOSColorEntry kHCore2 = {1, 8,  8, 15,  8, 3}; // LTGRAY
@@ -183,12 +183,12 @@ static const DOSColorEntry &lookupDOSColor(int colorIdx, int level) {
 // Map ObjColor → Mac B&W dither pattern (from ROBOCOLR.C MONOCHROME field).
 // The monochrome field in the DOS table matches MacPattern enum values directly:
 // WHITE=0, LTGRAY=1, GRAY=2, DKGRAY=3, BLACK=4, CLEAR=5.
-static int lookupMacPattern(int colorIdx, int level) {
+int lookupMacPattern(int colorIdx, int level) {
 	return lookupDOSColor(colorIdx, level).monochrome;
 }
 
 // Map ObjColor constant → Mac Color256 index (cColor[] from colordef.h).
-static int mapObjColorToMacColor(int colorIdx, int level) {
+int mapObjColorToMacColor(int colorIdx, int level) {
 	switch (colorIdx) {
 	case kColorBath:      return 97;  // c_tub
 	case kColorWater:     return 102; // c_water
@@ -267,7 +267,7 @@ static int mapObjColorToMacColor(int colorIdx, int level) {
 	}
 }
 
-static void projectCorridorPointClamped(const Common::Rect &screenR, int look, int lookY,
+void projectCorridorPointClamped(const Common::Rect &screenR, int look, int lookY,
 	const int *sint, const int *cost, int camX, int camY,
 	float worldX, float worldY, float worldZ,
 	int &screenX, int &screenY) {
@@ -297,7 +297,7 @@ static void projectCorridorPointClamped(const Common::Rect &screenR, int look, i
 	screenY = (int)roundf(centerY - (eyeY * focal / depth));
 }
 
-static bool isSurfaceVisible(const int *surface, int pointCount, const int *screenX, const int *screenY) {
+bool isSurfaceVisible(const int *surface, int pointCount, const int *screenX, const int *screenY) {
 	if (pointCount < 3)
 		return false;
 
@@ -408,7 +408,7 @@ const uint8 *ColonyEngine::mapFeatureAt(int x, int y, int direction) const {
 	return _mapData[x][y][direction];
 }
 
-static bool projectCorridorPoint(const Common::Rect &screenR, uint8 look, int8 lookY,
+bool projectCorridorPoint(const Common::Rect &screenR, uint8 look, int8 lookY,
 	const int *sint, const int *cost, int camX, int camY,
 	float worldX, float worldY, float worldZ,
 	int &screenX, int &screenY) {

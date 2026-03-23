@@ -61,11 +61,11 @@ static const int kReservedPlayerSlotIndex = kMeNum - 1;
 static const int kStaticObjectStartIndex = kMeNum;
 static const int kMaxObjectSlots = 255;
 
-static void clearThing(Thing &thing) {
+void clearThing(Thing &thing) {
 	thing = Thing();
 }
 
-static void ensureObjectLayout(Common::Array<Thing> &objects) {
+void ensureObjectLayout(Common::Array<Thing> &objects) {
 	const int oldSize = (int)objects.size();
 	if (oldSize >= kMeNum)
 		return;
@@ -75,7 +75,7 @@ static void ensureObjectLayout(Common::Array<Thing> &objects) {
 		clearThing(objects[i]);
 }
 
-static void resetObjectLayout(Common::Array<Thing> &objects) {
+void resetObjectLayout(Common::Array<Thing> &objects) {
 	objects.clear();
 	objects.resize(kMeNum);
 	for (int i = 0; i < kMeNum; i++)

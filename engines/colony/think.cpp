@@ -39,15 +39,15 @@ enum {
 	kOpcodeSnoop = 20
 };
 
-static bool isBaseRobotType(int type) {
+bool isBaseRobotType(int type) {
 	return type >= kRobEye && type <= kRobUPyramid;
 }
 
-static bool isEggType(int type) {
+bool isEggType(int type) {
 	return type > kRobUPyramid && type < kRobQueen;
 }
 
-static int trailTargetAngle(uint8 code) {
+int trailTargetAngle(uint8 code) {
 	switch (code) {
 	case 2:
 		return 0;

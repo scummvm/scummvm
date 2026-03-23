@@ -32,11 +32,11 @@
 
 namespace Colony {
 
-static uint32 packEyeOverlayMacColor(const uint16 rgb[3]) {
+uint32 packEyeOverlayMacColor(const uint16 rgb[3]) {
 	return 0xFF000000 | ((rgb[0] >> 8) << 16) | ((rgb[1] >> 8) << 8) | (rgb[2] >> 8);
 }
 
-static int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
+int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
 	switch (colorIdx) {
 	case kColorPupil:        return 36; // c_pupil
 	case kColorEyeball:      return 34; // c_eyeball
@@ -48,7 +48,7 @@ static int mapEyeOverlayColorToMacColor(int colorIdx, int level) {
 	}
 }
 
-static uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
+uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
 	switch (colorIdx) {
 	case kColorBlack:
 	case kColorPupil:
@@ -69,7 +69,7 @@ static uint8 mapEyeOverlayColorToDOSFill(int colorIdx, int level) {
 	}
 }
 
-static int mapEyeOverlayColorToMacPattern(int colorIdx) {
+int mapEyeOverlayColorToMacPattern(int colorIdx) {
 	switch (colorIdx) {
 	case kColorBlack:
 	case kColorPupil:
@@ -85,7 +85,7 @@ static int mapEyeOverlayColorToMacPattern(int colorIdx) {
 	}
 }
 
-static bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY,
+bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int8 lookY,
 	const int *sint, const int *cost, int camX, int camY,
 	float worldX, float worldY, float worldZ,
 	int &screenX, int &screenY) {
@@ -117,7 +117,7 @@ static bool projectCorridorPointRaw(const Common::Rect &screenR, uint8 look, int
 	return true;
 }
 
-static bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *screenX, const int *screenY) {
+bool isProjectedSurfaceVisible(const int *surface, int pointCount, const int *screenX, const int *screenY) {
 	if (pointCount < 3)
 		return false;
 
@@ -175,7 +175,7 @@ static bool isProjectedSurfaceVisible(const int *surface, int pointCount, const 
 	return false;
 }
 
-static bool isProjectedPrismSurfaceVisible(const Common::Rect &screenR, const Colony::Thing &thing,
+bool isProjectedPrismSurfaceVisible(const Common::Rect &screenR, const Colony::Thing &thing,
 		const Colony::ColonyEngine::PrismPartDef &def, bool useLook, int surfaceIndex,
 		uint8 cameraLook, int8 cameraLookY, int cameraX, int cameraY,
 		const int *sint, const int *cost) {
@@ -1153,12 +1153,12 @@ static const int kSnoopHeadSurf[3][8] = {
 static const Colony::ColonyEngine::PrismPartDef kSnoopAbdomenDef = {4, kSnoopAbdomenPts, 2, kSnoopAbdomenSurf};
 static const Colony::ColonyEngine::PrismPartDef kSnoopHeadDef = {4, kSnoopHeadPts, 3, kSnoopHeadSurf};
 
-static int wrapAngle256(int angle) {
+int wrapAngle256(int angle) {
 	angle %= 256;
 	return (angle < 0) ? (angle + 256) : angle;
 }
 
-static void rotatePoint(int angle, const int src[3], int dst[3], const int *cost, const int *sint) {
+void rotatePoint(int angle, const int src[3], int dst[3], const int *cost, const int *sint) {
 	const long tcos = cost[angle];
 	const long tsin = sint[angle];
 	dst[0] = (int)(((long)src[0] * tcos - (long)src[1] * tsin) >> 7);
@@ -1166,7 +1166,7 @@ static void rotatePoint(int angle, const int src[3], int dst[3], const int *cost
 	dst[2] = src[2];
 }
 
-static void resetObjectBounds(const Common::Rect &screenR, Locate &loc) {
+void resetObjectBounds(const Common::Rect &screenR, Locate &loc) {
 	loc.xmn = screenR.right;
 	loc.xmx = screenR.left;
 	loc.zmn = screenR.bottom;

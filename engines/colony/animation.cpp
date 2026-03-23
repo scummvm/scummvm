@@ -36,7 +36,7 @@
 
 namespace Colony {
 
-static void responsiveAnimationDelay(OSystem *system, uint32 delayMs) {
+void responsiveAnimationDelay(OSystem *system, uint32 delayMs) {
 	if (!system || delayMs == 0)
 		return;
 
@@ -70,7 +70,7 @@ static void responsiveAnimationDelay(OSystem *system, uint32 delayMs) {
 	}
 }
 
-static bool isBackdoorCode111111(const uint8 display[6]) {
+bool isBackdoorCode111111(const uint8 display[6]) {
 	for (int i = 0; i < 6; i++) {
 		if (display[i] != 3)
 			return false;
@@ -208,7 +208,7 @@ static const AnimColorEntry kAnimColors[] = {
 };
 
 // Convert Mac Toolbox BackColor constant to ARGB.
-static uint32 macSysColorToARGB(int sysColor) {
+uint32 macSysColorToARGB(int sysColor) {
 	switch (sysColor) {
 	case kMacWhite:   return 0xFFFFFFFF;
 	case kMacBlack:   return 0xFF000000;
@@ -222,12 +222,12 @@ static uint32 macSysColorToARGB(int sysColor) {
 	}
 }
 
-static uint32 packMacColorBG(const uint16 rgb[3]) {
+uint32 packMacColorBG(const uint16 rgb[3]) {
 	return 0xFF000000 | ((uint32)(rgb[0] >> 8) << 16) |
 		((uint32)(rgb[1] >> 8) << 8) | (uint32)(rgb[2] >> 8);
 }
 
-static int getAnimationStateCount(const Common::Array<ComplexSprite *> &sprites, int num) {
+int getAnimationStateCount(const Common::Array<ComplexSprite *> &sprites, int num) {
 	num--;
 	if (num >= 0 && num < (int)sprites.size()) {
 		int count = (int)sprites[num]->objects.size();

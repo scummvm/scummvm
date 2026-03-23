@@ -56,7 +56,7 @@ static const int kBLtGray = 1;
 static const int kBBlack  = 4;
 
 // Map battle surface color index to a packed ARGB color.
-static uint32 battleColor(int colorIdx) {
+uint32 battleColor(int colorIdx) {
 	switch (colorIdx) {
 	case 0:  return 0xFFFFFFFF; // WHITE
 	case 1:  return 0xFFC0C0C0; // LTGRAY
@@ -73,7 +73,7 @@ static uint32 battleColor(int colorIdx) {
 	}
 }
 
-static int battleHorizonY(const Common::Rect &screenR, int lookY) {
+int battleHorizonY(const Common::Rect &screenR, int lookY) {
 	const float halfHeight = screenR.height() * 0.5f;
 	const float centerY = screenR.top + halfHeight;
 	const float clampedLookY = CLIP<float>((float)lookY, -63.5f, 63.5f);
@@ -83,7 +83,7 @@ static int battleHorizonY(const Common::Rect &screenR, int lookY) {
 	return (int)roundf(centerY - focalY * tanf(pitchRad));
 }
 
-static int battlePowerLevel(int32 power) {
+int battlePowerLevel(int32 power) {
 	int level = 0;
 	while (power > 0) {
 		power >>= 1;
@@ -92,18 +92,18 @@ static int battlePowerLevel(int32 power) {
 	return level;
 }
 
-static int battleNormalizeCoord(int coord) {
+int battleNormalizeCoord(int coord) {
 	return (int16)coord;
 }
 
-static int wrapBattleCoord(int coord) {
+int wrapBattleCoord(int coord) {
 	coord = battleNormalizeCoord(coord);
 	if (coord < 0)
 		coord += 0x8000;
 	return coord;
 }
 
-static bool battleProjectPoint(const Common::Rect &screenR, uint8 look, int8 lookY, const int *sint,
+bool battleProjectPoint(const Common::Rect &screenR, uint8 look, int8 lookY, const int *sint,
 	const int *cost, int camX, int camY,
 	float worldX, float worldY, float worldZ,
 	int &screenX, int &screenY) {
@@ -135,14 +135,14 @@ static bool battleProjectPoint(const Common::Rect &screenR, uint8 look, int8 loo
 	return true;
 }
 
-static void battleResetBounds(const Common::Rect &screenR, Locate &loc) {
+void battleResetBounds(const Common::Rect &screenR, Locate &loc) {
 	loc.xmn = screenR.right;
 	loc.xmx = screenR.left;
 	loc.zmn = screenR.bottom;
 	loc.zmx = screenR.top;
 }
 
-static bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::PrismPartDef &def,
+bool battleAccumulateBounds(const Common::Rect &screenR, const ColonyEngine::PrismPartDef &def,
 	Locate &loc, int worldX, int worldY, uint8 ang, int zShift,
 	uint8 look, int8 lookY, const int *sint, const int *cost,
 	int camX, int camY) {
