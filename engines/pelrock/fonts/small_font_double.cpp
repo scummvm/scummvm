@@ -42,8 +42,8 @@ void DoubleSmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
 			int yPos = y + (i * 2);
 			if (pixelOn) {
 				if ((x + bit) < dst->w && (yPos + 1) < dst->h) {
-					*((byte *)dst->getBasePtr(x + bit, yPos)) = color;
-					*((byte *)dst->getBasePtr(x + bit, yPos + 1)) = color;
+					dst->setPixel(x + bit, yPos, color);
+					dst->setPixel(x + bit, yPos + 1, color);
 				}
 			}
 		}

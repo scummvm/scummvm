@@ -132,9 +132,9 @@ void LargeFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint3
 			if (px < 0 || px >= dst->w || py < 0 || py >= dst->h)
 				continue;
 			if (val == 1) {
-				*((byte *)dst->getBasePtr(px, py)) = 0;
+				dst->setPixel(px, py, 0);
 			} else if (val == 2) {
-				*((byte *)dst->getBasePtr(px, py)) = color;
+				dst->setPixel(px, py, color);
 			}
 		}
 	}

@@ -1311,7 +1311,7 @@ static uint32 readUint24(Common::ReadStream &stream) {
 byte *RoomManager::loadShadowMap(int roomNumber) {
 	Common::File shadowMapFile;
 	if (!shadowMapFile.open("ALFRED.5")) {
-		error("Couldnt find file ALFRED.5");
+		error("RoomManager::loadShadowMap(): Couldnt find file ALFRED.5");
 	}
 
 	uint32 entryOffset = roomNumber * 6;
@@ -1339,7 +1339,7 @@ void RoomManager::loadRemaps(int roomNumber) {
 
 	Common::File remapFile;
 	if (!remapFile.open("ALFRED.9")) {
-		error("Couldnt find file ALFRED.9");
+		error("RoomManager::loadRemaps(): Couldnt find file ALFRED.9");
 	}
 
 	uint32 remapOffset = /* 0x200 + */ (roomNumber * 1024);

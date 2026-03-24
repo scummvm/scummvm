@@ -65,7 +65,7 @@ void SmallFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint3
 			bool pixelOn = (rowByte & (0x80 >> bit)) != 0;
 			if (pixelOn) {
 				if ((x + bit) < dst->w && (y + i) < dst->h) {
-					*((byte *)dst->getBasePtr(x + bit, y + i)) = color;
+					dst->setPixel(x + bit, y + i, color);
 				}
 			}
 		}
