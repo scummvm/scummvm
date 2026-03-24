@@ -133,7 +133,6 @@ private:
 	Common::Point _curWalkTarget;
 	QueuedAction _queuedAction = {NO_ACTION, -1, false, false};
 
-	bool showShadows = false;
 	bool shouldPlayIntro = false;
 	bool gameInitialized = false;
 	bool screenReady = false;

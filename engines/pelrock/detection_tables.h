@@ -30,7 +30,11 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"pelrock",
 		nullptr,
-		AD_ENTRY1s("ALFRED.1", "ee0047cfcceece9c4f6a426245b6f449", 12915352),
+
+		AD_ENTRY2s(
+			"ALFRED.1", "ee0047cfcceece9c4f6a426245b6f449", 12915352,
+  			"ALFRED.2", "ca76c50da4a3af83c08d274a3c2ae101", 540260
+		),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
