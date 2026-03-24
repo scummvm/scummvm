@@ -29,35 +29,37 @@ namespace Harvester {
 
 namespace {
 
+static const char *const kCloakAtndNpc = "CLOAK_ATND";
 static const char *const kCleanedClothesFlag = "CLEANED_CLOTHES";
 static const char *const kCleanClothesActionTag = "CLEAN_CLOTHES";
 static const char *const kPaymentItemName = "BARCASHFIVE";
+static const int kNeedCleaningPaymentLine = 0x1066;
 
 } // End of namespace
 
 bool CloakAtndDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("CLOAK_ATND");
+	return npcName.equalsIgnoreCase(kCloakAtndNpc);
 }
 
 Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
-	if (usedItemName.empty()) {
-		if (runtime.startupScript().getFlagValue(kCleanedClothesFlag))
+	if (!usedItemName.empty()) {
+		if (!usedItemName.equalsIgnoreCase(kPaymentItemName))
 			return Common::kNoError;
 
-		return runtime.playDialogueLine(0x1066, "CLOAK_ATND");
+		StartupInteractionResult interaction;
+		if (runtime.startupScript().executeActionTag(kCleanClothesActionTag, interaction)) {
+			runtime.applyImmediateDialogueInteractionEffects(interaction);
+			runtime.queueDialogueInteractionIfNeeded(interaction);
+		}
+
+		return Common::kNoError;
 	}
 
-	if (!usedItemName.equalsIgnoreCase(kPaymentItemName))
+	if (runtime.startupScript().getFlagValue(kCleanedClothesFlag))
 		return Common::kNoError;
 
-	StartupInteractionResult interaction;
-	if (runtime.startupScript().executeActionTag(kCleanClothesActionTag, interaction)) {
-		runtime.applyImmediateDialogueInteractionEffects(interaction);
-		runtime.queueDialogueInteractionIfNeeded(interaction);
-	}
-
-	return Common::kNoError;
+	return runtime.playDialogueLine(kNeedCleaningPaymentLine, kCloakAtndNpc);
 }
 
 } // End of namespace Harvester
