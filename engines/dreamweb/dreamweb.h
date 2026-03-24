@@ -47,6 +47,11 @@ class File;
 
 namespace DreamWeb {
 
+enum DreamWebAction {
+	kDreamWebActionEscape,
+	kDreamWebActionSkip
+};
+
 const unsigned int kNumReelRoutines = 57;
 const unsigned int kUnderTextSizeX = 180;
 const unsigned int kUnderTextSizeY = 10;
