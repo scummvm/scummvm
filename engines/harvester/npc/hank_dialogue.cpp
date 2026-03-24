@@ -31,6 +31,7 @@ namespace Harvester {
 namespace {
 
 static const char *const kDialogueC021FstPath = "GRAPHIC/FST/C021.FST";
+static const char *const kDialogueRangshotFstPath = "GRAPHIC/FST/RANGSHOT.FST";
 static const char *const kInventoryOwnerName = "INVENTORY";
 
 static const DialogueLineEntry kHankMomTopicLines[] = {
@@ -206,6 +207,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			Common::Error lineError = runtime.playDialogueLine(0xa3e, "HANK");
 			if (lineError.getCode() != Common::kNoError)
@@ -225,6 +227,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			Common::Error lineError = runtime.playDialogueLine(0xa53, "HANK");
 			if (lineError.getCode() != Common::kNoError)
@@ -318,7 +321,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		} else if (state.pendingRangshotSequence) {
 			Common::Error lineError = currentStoryDayIndex > 5
 				? runtime.playDialogueLine(0x8e2, "HANK")
-				: runtime.playDialogueFst(kDialogueC021FstPath);
+				: runtime.playDialogueFst(kDialogueRangshotFstPath);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
@@ -326,7 +329,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.pendingSameDayFollowup = true;
 		Common::Error lineError = currentStoryDayIndex > 5
 			? runtime.playDialogueLine(0x8e2, "HANK")
-			: runtime.playDialogueFst(kDialogueC021FstPath);
+			: runtime.playDialogueFst(kDialogueRangshotFstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
@@ -689,7 +692,7 @@ Common::Error HankDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playLine(0xa32);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return playLine(0x8dc);
+		continue;
 	}
 }
 
