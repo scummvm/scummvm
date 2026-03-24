@@ -99,8 +99,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto clearGoojfCard = [&]() {
 		(void)startupScript.setRuntimeFlagValue("PC_HAS_GOOJF_CARD", false);
-		if (startupScript.isObjectInInventory("GOOJF_CARD"))
-			(void)startupScript.setRuntimeObjectVisible(kRahRoomName, "GOOJF_CARD", false);
+		(void)startupScript.setRuntimeObjectVisible(kRahRoomName, "GOOJF_CARD", false);
 	};
 	const bool sheriffInDiner = startupScript.getFlagValue("SHERIFF_IN_DINER");
 	const int currentStoryDayIndex = startupScript.getCurrentStoryDayIndex();
@@ -265,7 +264,6 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY")) {
-			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			Common::Error lineError = playDwayneLine(0x33b9, 2);
 			if (lineError.getCode() != Common::kNoError)
@@ -309,7 +307,6 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		}
 		if (usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("NOTE")) {
-			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			if (state.presentedEvidenceReplyOverride) {
 				const DialogueLineEntry introLines[] = {
@@ -461,7 +458,6 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 		}
 		if (state.tvDeedReplyOverride && usedItemName.equalsIgnoreCase("TV_DEED")) {
-			sharedState.discussedTvDeedEvidence = 1;
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 
 			const DialogueLineEntry introLines[] = {
@@ -499,7 +495,6 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return playDwayneLine(0x3935);
 		}
 
-		sharedState.discussedTvDeedEvidence = 1;
 		(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 
 		Common::Error lineError = playDwayneLine(0x3608);
@@ -592,6 +587,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 	}
 
+	bool handledIntroOrRevisit = false;
 	if (state.sheriffInDinerIntroPending && sheriffInDiner) {
 		state.sheriffInDinerIntroPending = false;
 		state.sheriffInDinerIntroPlayed = true;
@@ -624,11 +620,13 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 		}
+		handledIntroOrRevisit = true;
 	}
 	else if (state.sheriffInDinerIntroPlayed && sheriffInDiner) {
 		Common::Error lineError = playDwayneLine(0x34ac);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		handledIntroOrRevisit = true;
 	} else if (state.pendingInitialConversation && !sheriffInDiner) {
 		state.pendingInitialConversation = false;
 		state.eventFollowupGate = true;
@@ -646,9 +644,10 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		assignDwayneTopicBuffer(0x78);
 		if (sharedState.boyleGascanApplicationState)
 			(void)startupScript.setRuntimeFlagValue("MOVE_SHERIFF", true);
+		handledIntroOrRevisit = true;
 	}
 
-	if (state.eventFollowupGate) {
+	if (!handledIntroOrRevisit && state.eventFollowupGate) {
 		Common::Error lineError = playDwayneLine(0x34d3, 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -816,8 +815,6 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		state.pendingKarinAliveFollowupLinePlayed = true;
 		state.pendingKarinAliveFollowup = false;
 		sharedState.dwaynePendingKarinAliveFollowupState = 0;
-		state.completedKarinAliveFollowup = true;
-		sharedState.dwayneCompletedKarinAliveFollowup = true;
 
 		const DialogueLineEntry lines[] = {
 			{ 0x3780, kDwayneNpc, 0 },
@@ -827,6 +824,8 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		Common::Error lineError = playSequence(lines, ARRAYSIZE(lines));
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
+		state.completedKarinAliveFollowup = true;
+		sharedState.dwayneCompletedKarinAliveFollowup = true;
 	}
 
 	if (startupScript.getFlagValue("KARIN_FOUND_DEAD") &&
@@ -844,9 +843,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (responseError.getCode() != Common::kNoError)
 			return responseError;
 		if (responseIndex == 1) {
-			lineError = playDwayneLine(0x379d);
-			if (lineError.getCode() != Common::kNoError)
-				return lineError;
+			return playDwayneLine(0x379d);
 		} else if (responseIndex == 2) {
 			lineError = playDwayneLine(0x37a4, 2);
 			if (lineError.getCode() != Common::kNoError)
