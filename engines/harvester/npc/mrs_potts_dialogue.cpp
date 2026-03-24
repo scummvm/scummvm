@@ -187,18 +187,21 @@ Common::Error MrsPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			return playSequence(kMrsPottsWhaleyLines, ARRAYSIZE(kMrsPottsWhaleyLines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			return playMrsPottsLine(0x294d, 3);
 		}
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			return playMrsPottsLine(0x294d, 3);
 		}
@@ -206,12 +209,14 @@ Common::Error MrsPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
 			return playSequence(kMrsPottsBlackmailLines, ARRAYSIZE(kMrsPottsBlackmailLines));
 		}
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			sharedState.discussedTvDeedEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceSheriffOwns, true);
 			return playSequence(kMrsPottsTvDeedLines, ARRAYSIZE(kMrsPottsTvDeedLines));
