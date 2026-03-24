@@ -27,22 +27,37 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kMaintManNpc = "MAINT_MAN";
+static const char *const kMaintManFirstConversationFlag = "MAINTENANCE_MAN_FIRST_CONVERSATION";
+static const char *const kMaintManThirdConversationFlag = "MAINTENANCE_MAN_THIRD_CONVERSATION";
+static const char *const kMaintManFourthConversationFlag = "MAINTENANCE_MAN_FOURTH_CONVERSATION";
+
+} // End of namespace
+
 bool MaintManDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("MAINT_MAN");
+	return npcName.equalsIgnoreCase(kMaintManNpc);
 }
 
 Common::Error MaintManDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_FIRST_CONVERSATION"))
-		return runtime.playDialogueLineWithVariant(0xdaf, "MAINT_MAN", 1);
+	int wavId = 0xdb6;
+	int headVariant = 0;
 
-	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_THIRD_CONVERSATION"))
-		return runtime.playDialogueLineWithVariant(0xdbc, "MAINT_MAN", 2);
+	if (runtime.startupScript().getFlagValue(kMaintManFirstConversationFlag)) {
+		wavId = 0xdaf;
+		headVariant = 1;
+	} else if (runtime.startupScript().getFlagValue(kMaintManThirdConversationFlag)) {
+		return runtime.playDialogueLineWithVariant(0xdbc, kMaintManNpc, 2);
+	} else if (runtime.startupScript().getFlagValue(kMaintManFourthConversationFlag)) {
+		return runtime.playDialogueLineWithVariant(0xdc4, kMaintManNpc, 2);
+	}
 
-	if (runtime.startupScript().getFlagValue("MAINTENANCE_MAN_FOURTH_CONVERSATION"))
-		return runtime.playDialogueLineWithVariant(0xdc4, "MAINT_MAN", 2);
+	if (headVariant != 0)
+		return runtime.playDialogueLineWithVariant(wavId, kMaintManNpc, headVariant);
 
-	return runtime.playDialogueLine(0xdb6, "MAINT_MAN");
+	return runtime.playDialogueLine(wavId, kMaintManNpc);
 }
 
 } // End of namespace Harvester
