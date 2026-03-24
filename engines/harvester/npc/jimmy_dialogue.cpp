@@ -24,7 +24,6 @@
 #include "harvester/npc/jimmy_dialogue.h"
 
 #include "common/array.h"
-#include "harvester/npc/dialogue_flags.h"
 #include "harvester/npc/dialogue_runtime.h"
 
 namespace Harvester {
@@ -89,7 +88,7 @@ bool JimmyDialogueHandler::matchesNpc(const Common::String &npcName) const {
 }
 
 Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &) {
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	JimmyRoomDialogueState &state = _state;
 	Common::Error lineError = Common::kNoError;
 
@@ -199,8 +198,8 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("NEWSPAPER")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(kGivenPaperTodayFlag, true);
-			executeActionTagIfSet("ACTV_HOUSE_EXIT");
 			restoreItemToRah("NEWSPAPER");
+			executeActionTagIfSet("ACTV_HOUSE_EXIT");
 
 			lineError = playPaperHandoffPreludeIfNeeded();
 			if (lineError.getCode() != Common::kNoError)
@@ -219,7 +218,7 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			return playJimmyLine(0x4af8, 1);
 		}
 		if (((usedItemName.equalsIgnoreCase("LEDGER") ||
@@ -229,9 +228,9 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 					usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
-				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
+				sharedState.discussedCasketPhotoEvidence = 1;
 			} else {
-				(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+				sharedState.discussedLedgerEvidence = 1;
 			}
 			return playJimmySequence(kJimmyLedgersAndCorpseEvidenceLines,
 				ARRAYSIZE(kJimmyLedgersAndCorpseEvidenceLines));
@@ -240,7 +239,7 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
-			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			return playJimmySequence(kJimmyBlackmailEvidenceLines,
 				ARRAYSIZE(kJimmyBlackmailEvidenceLines));
 		}
