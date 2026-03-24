@@ -35,6 +35,12 @@
 
 namespace Fool {
 
+void Toolbox::BackPat(const Pattern &pat) {
+	if (_port) {
+		_port->bkPat = pat;
+	}
+}
+
 void Toolbox::BeginUpdate(WindowRecord &theWindow) {
 	warning("STUB: Toolbox::BeginUpdate");
 }
@@ -55,8 +61,8 @@ void Toolbox::ClosePoly() {
 				for (size_t i = 2; i < _port->polySave->polyPoints.size(); i++) {
 					_port->polySave->polyBBox.extend(_port->polySave->polyPoints[i]);
 				}
-				_port->polySave->polySize = _port->polySave->polyPoints.size();
 			}
+			_port->polySave->polySize = _port->polySave->polyPoints.size()*2 + 10;
 			_port->polySave = nullptr;
 		}
 	}
@@ -90,6 +96,10 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 	}
 	Common::Rect clipSrcRect = srcRect;
 	Common::Rect clipDstRect = dstRect;
+
+	// destination rectangle should be moved relative to port origin
+	clipDstRect.translate(_port->portRect.left, _port->portRect.top);
+
 	// the source rectangle can include areas out of bounds, crop it
 	clipSrcRect.clip(srcBits->getBounds());
 
@@ -126,16 +136,6 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 		_defaultWindow->addDirtyRect(result);
 		_defaultWindow->setDirty(true);
 	}
-}
-
-void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
-	const Graphics::Surface *surface = myPicture->getSurface();
-	const Graphics::Palette &palette = myPicture->getPalette();
-	//const BitMap mask(nullptr);
-	const BitMap mask(new Graphics::ManagedSurface());
-	mask->copyFrom(*myPicture->getMask());
-	const BitMap intermediate(createRemappedSurface(surface, palette.data(), palette.size()));
-	_copyBits(intermediate, mask, _port->portBits, intermediate->getBounds(), dstRect, kSrcCopy, nullptr);
 }
 
 // maybe the better way of refactoring this would be to fork the Primitives
@@ -285,6 +285,10 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 }
 
 void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight) {
+	if (!r.isValidRect()) {
+		warning("Toolbox::_drawRoundRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
+		return;
+	}
 	if (_port && _port->pnVis == 0) {
 		BitMap intermediate(new Graphics::ManagedSurface(r.width(), r.height()));
 		BitMap mask(new Graphics::ManagedSurface(r.width(), r.height()));
@@ -320,18 +324,21 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 
 void Toolbox::FillPoly(PolyHandle &poly, const Pattern &pat) {
 	if (_port) {
+		_port->fillPat = pat;
 		_drawPoly(poly, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
 	}
 }
 
 void Toolbox::FillRect(const Common::Rect &r, const Pattern &pat) {
 	if (_port) {
+		_port->fillPat = pat;
 		_drawRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor);
 	}
 }
 
 void Toolbox::FillRoundRect(const Common::Rect &r, uint16 ovalWidth, uint16 ovalHeight, const Pattern &pat) {
 	if (_port) {
+		_port->fillPat = pat;
 		_drawRoundRect(r, pat, kPatCopy, false, _port->fgColor, _port->bkColor, ovalWidth, ovalHeight);
 	}
 }
@@ -388,22 +395,6 @@ Handle Toolbox::GetIcon(uint16 iconID) {
 		return handle;
 	} else {
 		warning("Toolbox::GetIcon: failed to load ICON id %d", iconID);
-	}
-
-	return nullptr;
-}
-
-PicHandle Toolbox::GetPicture(uint16 picID) {
-	Handle handle = this->GetResource(MKTAG('P', 'I', 'C', 'T'), picID);
-	if (handle) {
-		Common::MemoryReadStream stream(handle->data(), handle->size());
-		PicHandle decoder(new Image::PICTDecoder());
-		if (decoder->loadStream(stream)) {
-			_resPicts[decoder] = handle;
-			return decoder;
-		} else {
-			warning("Toolbox::GetPicture: failed to load PICT id %d", picID);
-		}
 	}
 
 	return nullptr;
@@ -483,7 +474,7 @@ void Toolbox::KillPoly(PolyHandle &poly) {
 
 void Toolbox::Line(int16 dh, int16 dv) {
 	if (_port) {
-		LineTo(_port->pnLoc.x + dh, _port->pnLoc.x + dv);
+		LineTo(_port->pnLoc.x + dh, _port->pnLoc.y + dv);
 	}
 }
 
@@ -497,6 +488,10 @@ void Toolbox::LineTo(int16 h, int16 v) {
 		BitMap intermediate(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		BitMap mask(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
+		// move to port coordinate space
+		destPos.x += _port->portRect.left;
+		destPos.y += _port->portRect.top;
+
 		Graphics::MacPatterns macpat({_port->pnPat.data});
 
 		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, _port->bkColor);
@@ -511,7 +506,7 @@ void Toolbox::LineTo(int16 h, int16 v) {
 
 	}
 	if (_port) {
-		// update polygon if we're in ypenPoly mode
+		// update polygon if we're in openPoly mode
 		if (_port->polySave) {
 			if (_port->polySave->polyPoints.size() == 0) {
 				_port->polySave->polyPoints.push_back(_port->pnLoc);
@@ -634,6 +629,13 @@ void Toolbox::SetCursor(const Common::SharedPtr<Cursor> &crsr) {
 	_cursor = crsr;
 	if (_cursorLevel == 0)
 		g_engine->_wm.replaceCursor(Graphics::MacGUIConstants::kMacCursorCustom, crsr.get());
+}
+
+void Toolbox::SetOrigin(uint16 h, uint16 v) {
+	if (_port) {
+		_port->portRect.left = h;
+		_port->portRect.top = v;
+	}
 }
 
 void Toolbox::SetPort(GrafPtr port) {

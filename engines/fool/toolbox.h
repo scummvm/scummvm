@@ -39,9 +39,47 @@
 
 namespace Fool {
 
+struct RGBColor {
+	uint16 red;
+	uint16 green;
+	uint16 blue;
+};
+
+struct ColorSpec {
+	uint16 value;
+	RGBColor rgb;
+};
+
+struct ColorTable {
+	uint32 ctSeed;
+	uint16 ctFlags;
+	uint16 ctSize;
+	Common::Array<ColorSpec> ctTable;
+};
+
 struct Region {
 	uint16 rgnSize;
 	Common::Rect rgnBBox;
+	Common::Array<int16> rgnData;
+};
+
+struct PixMap {
+	uint32 baseAddr;
+	uint16 rowBytes;
+	Common::Rect bounds;
+	uint16 pmVersion;
+	uint16 packType;
+	uint32 packSize;
+	uint32 hRes;
+	uint32 vRes;
+	uint16 pixelType;
+	uint16 pixelSize;
+	uint16 cmpCount;
+	uint16 cmpSize;
+	uint32 planeBytes;
+	uint32 pmTable;
+	uint32 pmReserved;
+	bool _isBitMap = false;
 };
 
 struct Polygon {
@@ -50,9 +88,133 @@ struct Polygon {
 	Common::Array<Common::Point> polyPoints;
 };
 
+enum PictureOpType : uint16 {
+	kOpNOP =		0x0000,
+	kOpClip =		0x0001,
+	kOpBkPat =		0x0002,
+	kOpTxFont =		0x0003,
+	kOpTxFace =		0x0004,
+	kOpTxMode =		0x0005,
+	kOpSpExtra =	0x0006,
+	kOpPnSize =		0x0007,
+	kOpPnMode =		0x0008,
+	kOpPnPat =		0x0009,
+	kOpFillPat =	0x000a,
+	kOpOvSize =		0x000b,
+	kOpOrigin =		0x000c,
+	kOpTxSize =		0x000d,
+	kOpFgColor =	0x000e,
+	kOpBkColor =	0x000f,
+	kOpTxRatio =	0x0010,
+	kOpVersion2 =	0x0011,
+	kOpBkPixPat	=	0x0012,
+	kOpPnPixPat =	0x0013,
+	kOpFillPixPat = 0x0014,
+	kOpPnLocHFrac = 0x0015,
+	kOpChExtra =	0x0016,
+	// reserved 0x0017
+	// reserved 0x0018
+	// reserved 0x0019
+	kOpRGBFgCol =	0x001a,
+	kOpRGBBkCol =	0x001b,
+	kOpHiliteMode = 0x001c,
+	kOpHiliteColor = 0x001d,
+	kOpDefHilite =	0x001e,
+	kOpColor =		0x001f,
+	kOpLine =		0x0020,
+	kOpLineFrom =	0x0021,
+	kOpShortLine =	0x0022,
+	kOpShortLineFrom = 0x0023,
+	// reserved 0x0024
+	// reserved 0x0025
+	// reserved 0x0026
+	// reserved 0x0027
+	kOpLongText	=	0x0028,
+	kOpDHText =		0x0029,
+	kOpDVText =		0x002a,
+	kOpDHDVText =	0x002b,
+	kOpFontName =	0x002c,
+	kOpLineJustify = 0x002d,
+	kOpGlyphState = 0x002e,
+	// reserved 0x002f
+	kOpFrameRect = 0x0030,
+	kOpPaintRect = 0x0031,
+	kOpEraseRect = 0x0032,
+	kOpInvertRect = 0x0033,
+	kOpFillRect = 0x0034,
+	// reserved 0x0035
+	// reserved 0x0036
+	// reserved 0x0037
+	kOpFrameSameRect = 0x0038,
+	kOpPaintSameRect = 0x0039,
+	kOpEraseSameRect = 0x003a,
+	kOpInvertSameRect = 0x003b,
+	kOpFillSameRect = 0x003c,
+	// reserved 0x003d
+	// reserved 0x003e
+	// reserved 0x003f
+	kOpFrameRRect = 0x0040,
+	kOpPaintRRect = 0x0041,
+	kOpEraseRRect = 0x0042,
+	kOpInvertRRect = 0x0043,
+	kOpFillRRect = 0x0044,
+	// reserved 0x0045
+	// reserved 0x0046
+	// reserved 0x0047
+	kOpFrameSameRRect = 0x0048,
+	kOpPaintSameRRect = 0x0049,
+	kOpEraseSameRRect = 0x004a,
+	kOpInvertSameRRect = 0x004b,
+	kOpFillSameRRect = 0x004c,
+	// reserved 0x004d
+	// reserved 0x004e
+	// reserved 0x004f
+	kOpFrameOval = 0x0050,
+	kOpPaintOval = 0x0051,
+	kOpEraseOval = 0x0052,
+	kOpInvertOval = 0x0053,
+	kOpFillOval = 0x0054,
+	// reserved 0x0055
+	// reserved 0x0056
+	// reserved 0x0057
+	kOpFrameSameOval = 0x0058,
+	kOpPaintSameOval = 0x0059,
+	kOpEraseSameOval = 0x005a,
+	kOpInvertSameOval = 0x005b,
+	kOpFillSameOval = 0x005c,
+	// reserved 0x005d
+	// reserved 0x005e
+	// reserved 0x005f
+
+	kOpBitsRect = 0x0090,
+	kOpBitsRgn = 0x0091,
+
+	kOpPackBitsRect = 0x0098,
+	kOpPackBitsRgn = 0x0099,
+
+	kOpShortComment = 0x00a0,
+	kOpLongComment = 0x00a1,
+
+	kOpEndPic = 0x00ff,
+
+	kOpHeaderOp = 0x0c00,
+	kOpVersion1 = 0x1101,
+};
+
+struct Picture {
+	uint32 picSize = 0;
+	Common::Rect picFrame;
+	Common::Array<byte> picData;
+	size_t picPtr = 0;
+	// simulate slow drawing
+	uint32 _opsPerTick = 0;
+};
+
+
+
 typedef Common::SharedPtr<Common::Array<byte>> Handle;
 typedef Common::SharedPtr<Region> RgnHandle;
-typedef Common::SharedPtr<Image::PICTDecoder> PicHandle;
+typedef Common::SharedPtr<Picture> PicHandle;
 // BitMap is the monochrome surface format.
 typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
 typedef Common::SharedPtr<Polygon> PolyHandle;
@@ -136,12 +298,6 @@ private:
 typedef uint32 OSType;
 typedef uint16 OSErr;
 typedef uint32 ProcPtr;
-
-struct RGBColor {
-	uint16 red;
-	uint16 green;
-	uint16 blue;
-};
 
 enum EventCode : uint16 {
 	kNullEvent = 0,
@@ -591,8 +747,47 @@ public:
 	// on—remain in effect. ItemString may be blank but should not be the empty string.
 	void SetItem(MenuHandle &theMenu, uint16 item, const Common::U32String &itemString);
 
+	// toolbox_pict.cpp
+
+	// PROCEDURE ClosePicture;
+	// The ClosePicture procedure stops collecting drawing commands and picture
+	// comments for the currently open picture. You should perform one and only one call to
+	// ClosePicture for every call to the OpenCPicture (or OpenPicture) function.
+	void ClosePicture();
+
+	// PROCEDURE DrawPicture (myPicture: PicHandle; dstRect: Rect);
+	// Within the rectangle that you specify in the dstRect parameter, the DrawPicture
+	// procedure draws the picture that you specify in the myPicture parameter.
+	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
+
+	// FUNCTION GetPicture (picID: INTEGER) : PicHandle;
+	// GetPicture returns a handle to the picture having the given resource ID, reading it from the
+	// resource file if necessary. It calls the Resource Manager function GetResource('PICT',picID). If
+	// the resource can't be read, GetPicture returns NIL. The PicHandle data type is defined in
+	// QuickDraw.
+	PicHandle GetPicture(uint16 picID);
+
+	// PROCEDURE KillPicture(myPicture: PicHandle);
+	// The KillPicture procedure releases the memory occupied by the picture whose
+	// handle you pass in the myPicture parameter. Use this only when you’re completely
+	// finished with a picture.
+	void KillPicture(PicHandle &myPicture);
+
+	// FUNCTION OpenPicture (picFrame: Rect): PicHandle;
+	// OpenPicture returns a handle to a new picture that has the given rectangle as its picture frame, and
+	// tells QuickDraw to start saving as the picture definition all calls to drawing routines and all picture
+	// comments (if any).
+	PicHandle OpenPicture(const Common::Rect &picFame);
 
 	// toolbox_quickdraw.cpp
+
+	// PROCEDURE BackPat (pat: Pattern);
+	// The BackPat procedure sets the bit pattern defined in the Pattern record, which you
+	// specify in the pat parameter, to be the background pattern. (The standard bit patterns
+	// white, black, gray, ltGray, and dkGray are predefined; the initial background
+	// pattern for the graphics port is white.) This pattern is stored in the bkPat field of a
+	// GrafPort record.
+	void BackPat(const Pattern &pat);
 
 	// PROCEDURE BeginUpdate (theWindow: WindowPtr);
 	// Call BeginUpdate when an update event occurs for theWindow. BeginUpdate replaces the
@@ -625,11 +820,6 @@ public:
 	// the dstBits.bounds coordinate system, and the srcRect coordinates are in terms of the
 	// srcBits.bounds coordinates.
 	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
-
-	// PROCEDURE DrawPicture (myPicture: PicHandle; dstRect: Rect);
-	// Within the rectangle that you specify in the dstRect parameter, the DrawPicture
-	// procedure draws the picture that you specify in the myPicture parameter.
-	void DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect);
 
 	// PROCEDURE ErasePoly (poly: PolyHandle);
 	// Using the patCopy pattern mode, the ErasePoly procedure draws the interior of the
@@ -732,13 +922,6 @@ public:
 	// example, your program could include GetPort(savePort) before setting a new
 	// graphics port, followed by SetPort(savePort) to restore the previous port.
 	void GetPort(GrafPtr &port);
-
-	// FUNCTION GetPicture (picID: INTEGER) : PicHandle;
-	// GetPicture returns a handle to the picture having the given resource ID, reading it from the
-	// resource file if necessary. It calls the Resource Manager function GetResource('PICT',picID). If
-	// the resource can't be read, GetPicture returns NIL. The PicHandle data type is defined in
-	// QuickDraw.
-	PicHandle GetPicture(uint16 picID);
 
 	// PROCEDURE GlobalToLocal (VAR pt: Point);
 	// GlobalToLocal takes a point expressed in global coordinates (with the top left corner of the bit
@@ -923,6 +1106,14 @@ public:
 
 	void SetCursor(const Common::SharedPtr<Cursor> &crsr);
 
+	// PROCEDURE SetOrigin(h, v: Integer);
+	// The SetOrigin procedure changes the coordinates of the upper-left corner of the
+	// current graphics port’s port rectangle to the values supplied by the h and v parameters.
+	// All other points in the current graphics port’s local coordinate system are calculated from
+	// this point. All subsequent drawing and calculation routines use the new coordinate
+	// system.
+	void SetOrigin(uint16 h, uint16 v);
+
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
 	void SetPort(GrafPtr port);
@@ -1016,6 +1207,7 @@ private:
 	void _drawPoly(const PolyHandle &p, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight);
+	void _drawPackBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 

@@ -141,14 +141,24 @@ public:
 	void sub_132_13ea();
 	void sub_132_1444();
 
+	// fool_polyomino.cpp
 	void sub_133_004();
+	void sub_133_87c();
+	void sub_133_eb2();
+	void sub_133_f04();
+	void sub_133_10a0();
+	void sub_133_11cc();
+	void sub_133_12d4();
+	void sub_133_12f2();
+	void sub_133_13e2();
+	void sub_133_1452();
 
 	// fool_reveal.cpp
-	void sub_134_004();
-	void sub_134_67c();
-	void sub_134_74a();
-	void sub_134_7bc();
-	void sub_134_872();
+	void revealRun(); // sub_134_004
+	void revealOnClick(); // sub_134_67c
+	void revealSelectButton(); // sub_134_74a
+	void revealReset(); // sub_134_7bc
+	void revealSuccess(); // sub_134_872
 
 	void sub_135_004();
 	void sub_136_004();
@@ -298,12 +308,21 @@ private:
 	Common::U32String var_str_1272;
 	int16 var_i16_1372;
 
+	int16 var_i16_1a96;
+	int16 var_i16_1a98;
+	uint16 var_i16_1a9c;
 	int16 var_i16_1a9e;
 	int16 var_i16_1aa0;
 	int16 var_i16_1aa4;
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
 	int16 var_i16_1aaa;
+	PolyHandle var_poly_1aac;
+	int16 var_i16_1ab0;
+	int16 var_i16_1ab2;
+	int16 var_i16_1ab4;
+	int16 var_i16_1ab6;
+	int16 var_i16_1ab8;
 	int16 var_i16_1aba;
 
 
@@ -331,11 +350,13 @@ private:
 	int16 arr_i16_3738[0x400];
 	int16 arr_i16_3b38[0xc00]; // 96x32?
 	Common::Rect arr_rect_4338;
-	int16 arr_i16_4738[16];
+	// general-purpose puzzle buffer
+	int16 arr_i16_4338[0x200];
+	uint16 bitLUT[16]; // arr_i16_4738
 	int16 arr_i16_4758[15];
 	Common::Rect arr_rect_4776;
 	int16 arr_i16_47d8[0x100];
-	int16 arr_i16_49d8[0x100];
+	PicHandle arr_pic_49d8[0x80];
 	int16 arr_i16_4bd8[0x52];
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[48];
