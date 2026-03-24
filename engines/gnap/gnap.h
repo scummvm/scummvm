@@ -59,6 +59,14 @@ class GameSys;
 class SoundMan;
 class MusicPlayer;
 
+enum GnapActions {
+	kGnapPause,
+	kGnapSkip,
+	kGnapConfirm,
+	kGnapMoveLeft,
+	kGnapMoveRight
+};
+
 #define GNAP_SAVEGAME_VERSION 2
 
 struct MouseButtonState {
