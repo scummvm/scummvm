@@ -514,14 +514,13 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		advanceQuotesConversation(rootIndex, room);
 		break;
 	case 364: // riddle wrong answer: advance to next riddle
-	{
-		int targetIndex = rootIndex + 1;
 		if (rootIndex == 43) {
-			targetIndex = 27; // skip riddle explanation
+			_state->setCurrentRoot(room, 27, 0); // skip riddle explanation
 		}
-		_state->setCurrentRoot(room, targetIndex, 0);
+		else {
+			_state->setCurrentRoot(room, rootIndex + 1, 0);
+		}
 		break;
-	}
 	case 365: // riddle correct: set riddle-solved flag
 		_state->setFlag(FLAG_SOLVED_PARADOX, 1);
 		_state->setCurrentRoot(room, 1, 0);
@@ -605,11 +604,10 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	case 308: {
-		int targetBranch = rootIndex + 1;
-		if (targetBranch > 17) {
-			targetBranch = 2;
-		}
-		_state->setCurrentRoot(room, targetBranch, 0);
+		if (rootIndex + 1 > 17)
+			_state->setCurrentRoot(room, 2, 0);
+		else
+			_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
 	}
 		/* pyramid merchant*/
@@ -656,11 +654,11 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		_state->setCurrentRoot(45, 1, 0);
 		_sound->playSound("TWANGZZZ.SMP", 0);
 		break;
-	case 376: {
+	case 376:
 		playAlfredSpecialAnim(14);
 		loadExtraScreenAndPresent(12);
 		_state->setCurrentRoot(45, 2, 0);
-	} break;
+		break;
 	case 377:
 		_state->setCurrentRoot(45, 3, 0);
 		break;
@@ -1300,7 +1298,6 @@ void PelrockEngine::pickUpBook(int i) {
 		_alfredState.isWalkingCancelable = false;
 		walkAndAction(_room->findHotspotByExtra(358), TALK);
 		if (!_state->hasInventoryItem(3)) {
-
 			_state->setCurrentRoot(9, 0, 0);
 		} else {
 			_state->setCurrentRoot(9, 3, 0);
@@ -1481,7 +1478,6 @@ void PelrockEngine::giveWaterToGuard(int inventoryObject, HotSpot *hotspot) {
 }
 
 void PelrockEngine::guardMovement() {
-
 	// guard running
 	Sprite *sprite = _room->findSpriteByIndex(0);
 	sprite->animData[0].nframes = 5;
@@ -2249,18 +2245,12 @@ void PelrockEngine::sayRandomIncorrectResponse() {
 
 void PelrockEngine::chooseCorrectDoor() {
 	playAlfredSpecialAnim(1);
-	byte puertaBuena = _state->getFlag(FLAG_CORRECT_DOOR);
-	if (puertaBuena == 0) { // if not set yet, choose randomly
-		int choice = getRandomNumber(1);
-		_state->setFlag(FLAG_CORRECT_DOOR, choice + 1);
+	byte correctDoor = _state->getFlag(FLAG_CORRECT_DOOR);
+	if (correctDoor == 0) { // if not set yet, choose randomly
+		_state->setFlag(FLAG_CORRECT_DOOR, getRandomNumber(1) + 1);
 	}
-	puertaBuena = _state->getFlag(FLAG_CORRECT_DOOR);
-	Common::String doorText = _res->_izquierda;
-	if (puertaBuena == 1) {
-		doorText = _res->_izquierda;
-	} else if (puertaBuena == 2) {
-		doorText = _res->_derecha;
-	}
+	correctDoor = _state->getFlag(FLAG_CORRECT_DOOR);
+	Common::String doorText = (correctDoor == 1) ? _res->_left : _res->_right;
 	Common::StringArray fullTextArray = _res->_ingameTexts[kTextPuertaAutenticaIzquierda];
 	fullTextArray[0] = fullTextArray[0].substr(0, 45);
 	fullTextArray[0].append(doorText);

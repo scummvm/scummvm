@@ -206,7 +206,7 @@ private:
 	int _saveGamePage = 0;
 	int _editingSaveSlot = -1;                  // -1 = not editing any slot
 	Common::String _editingName;                // name being typed for a save
-	Common::Rect _cancelarRect;                 // hit-rect for the CANCELAR row
+	Common::Rect _cancelRect;                 // hit-rect for the CANCELAR row
 	Common::Array<Common::Rect> _saveSlotRects; // hit-rects for the 8 visible save rows
 	Common::StringArray _saveDescriptions;      // indexed by slot 0-255
 };

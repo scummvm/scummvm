@@ -75,11 +75,7 @@ void PelrockEventManager::pollEvent() {
 			_rightMouseButton = 1;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			if (_rightMouseButton == 1) {
-				_rightMouseClicked = true;
-			} else {
-				_rightMouseClicked = false;
-			}
+			_rightMouseClicked = (_rightMouseButton == 1);
 			_rightMouseButton = 0;
 			break;
 		default:
@@ -100,7 +96,6 @@ void PelrockEventManager::pollEvent() {
 void PelrockEventManager::waitForKey() {
 	bool waitForKey = false;
 	Common::Event e;
-	debug("Waiting for key!");
 	while (!waitForKey && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN) {

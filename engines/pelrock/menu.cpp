@@ -344,7 +344,7 @@ bool MenuManager::checkMouseClick(int x, int y) {
 			break;
 		}
 		// CANCEL
-		if (_cancelarRect.contains(x, y)) {
+		if (_cancelRect.contains(x, y)) {
 			_editingSaveSlot = -1;
 			backToMainMenu();
 			break;
@@ -372,8 +372,8 @@ bool MenuManager::checkMouseClick(int x, int y) {
 				_saveGamePage++;
 			break;
 		}
-		// CANCELAR
-		if (_cancelarRect.contains(x, y)) {
+		// Cancel
+		if (_cancelRect.contains(x, y)) {
 			backToMainMenu();
 			break;
 		}
@@ -938,8 +938,8 @@ void MenuManager::drawSaves() {
 	}
 
 	// CANCEL row
-	_cancelarRect = Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
-	byte cancelColor = _cancelarRect.contains(mousePos) ? 18 : kWhiteColor;
+	_cancelRect = Common::Rect(startX - 2, y - 1, startX + overlayW - 2, y + _textLineH);
+	byte cancelColor = _cancelRect.contains(mousePos) ? 18 : kWhiteColor;
 	Common::String cancelText = _menuTexts[4][0].substr(2, _menuTexts[4][0].size() - 2);
 	drawText(_compositeBuffer, g_engine->_smallFont, cancelText, startX, y, overlayW, cancelColor);
 }

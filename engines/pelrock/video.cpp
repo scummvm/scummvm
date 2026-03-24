@@ -179,14 +179,11 @@ byte *VideoManager::decodeCopyBlock(byte *data, uint32 offset) {
 	// the first 3 bytes are the offset within the screen to which to
 	// copy the bytes. The 5th byte is the length of the block to copy.
 	while (true) {
-		byte dest_lo = data[pos];
-		byte dest_mid = data[pos + 1];
-		byte dest_hi = data[pos + 2];
 		byte length = data[pos + 4];
 		if (length == 0) {
 			break;
 		}
-		uint32 dest_offset = dest_lo | (dest_mid << 8) | (dest_hi << 16);
+		uint32 dest_offset = READ_LE_UINT24(data + pos);
 
 		if (dest_offset + length > 256000) {
 			break;

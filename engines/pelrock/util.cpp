@@ -250,21 +250,21 @@ byte decodeChar(byte b) {
 
 	switch (b) {
 	case 0x82:
-		return special_chars[1];
+		return specialChars[1];
 	case 0x83:
-		return special_chars[0];
+		return specialChars[0];
 	case 0x80:
-		return special_chars[3]; // n tilde
+		return specialChars[3]; // n tilde
 	case 0x7F:
-		return special_chars[4];
+		return specialChars[4];
 	case 0x7E:
-		return special_chars[5];
+		return specialChars[5];
 	case 0x7D:
-		return special_chars[6];
+		return specialChars[6];
 	case 0x7C:
-		return special_chars[7];
+		return specialChars[7];
 	case 0x7B:
-		return special_chars[8];
+		return specialChars[8];
 	default:
 		return b;
 	}

@@ -83,8 +83,8 @@ public:
 	byte *_verbIcons[9];
 	byte *_popUpBalloon = nullptr;
 	Common::Array<Common::StringArray> _ingameTexts;
-	Common::String _izquierda;
-	Common::String _derecha;
+	Common::String _left;
+	Common::String _right;
 	Common::String _conversationTerminator;
 
 	// Special anims

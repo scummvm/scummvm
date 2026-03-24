@@ -163,7 +163,6 @@ void GraphicsManager::copyBackgroundToBuffer() {
 
 void GraphicsManager::presentFrame() {
 	g_engine->_screen->blitFrom(g_engine->_compositeBuffer);
-	// g_engine->paintDebugLayer();
 	g_engine->_screen->markAllDirty();
 }
 

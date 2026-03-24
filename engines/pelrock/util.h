@@ -48,7 +48,7 @@ void drawRect(Graphics::ManagedSurface *surface, int x, int y, int w, int h, byt
 void drawPos(Graphics::ManagedSurface *surface, int x, int y, byte color);
 void drawPaletteSquares(Graphics::ManagedSurface &dest, byte *palette);
 
-static const int special_chars[] = {
+static const int specialChars[] = {
 	168, // inverted ?
 	173, // inverted !
 	165, // capital N tilde
