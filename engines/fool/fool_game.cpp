@@ -559,6 +559,7 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 }
 
 void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
+	// flash a rectangle on the screen until we get a click
 	// 128:0d34
 	this->arr_rect_5b7c.top = unk5;
 	this->arr_rect_5b7c.left = unk4;
@@ -567,13 +568,15 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 	while (this->var_ev_46.modifiers & kModMouseButtonUp) {
 		// 128:0d94
 		do {
+			// FIXME: Flashing far too intense
 			g_toolbox->InvertRect(this->arr_rect_5b7c);
 			this->var_i16_3a = 0;
 			do {
 				this->sub_128_c6a(0);
 				this->var_i16_3a += 1;
-				g_toolbox->Delay(0);
-			} while ((this->var_i16_38 == this->var_i16_3a) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0));
+				if (this->var_ev_46.what == kNullEvent)
+					g_toolbox->Delay(0);
+			} while (!((unk1 == this->var_i16_3a) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
 		} while ((this->var_ev_46.modifiers & kModMouseButtonUp) != 0);
 	}
 }
@@ -1240,8 +1243,7 @@ void FoolGame::sub_128_2bc6() {
 		// 128:2c5e
 		for (int i = 0; i <= 0xf; i++) {
 			this->var_i16_484++;
-			// arr_i16_4738 is 1 << i
-			if (this->arr_i16_4758[j] & this->arr_i16_4738[i]) {
+			if (this->arr_i16_4758[j] & this->bitLUT[i]) {
 				this->arr_i16_1b90[this->var_i16_484] = 1;
 			} else {
 				// 128:2ca6
@@ -1602,7 +1604,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_133_004();
 		break;
 	case 7:
-		this->sub_134_004();
+		this->revealRun();
 		break;
 	case 8:
 		this->sub_135_004();
@@ -1945,7 +1947,13 @@ void FoolGame::sub_128_4472() {
 			g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_4758[1]]);
 		}
 		// 128:4a64
-		Common::Rect temp(this->arr_i16_4758[9], this->arr_i16_4758[8], this->arr_i16_4758[11], this->arr_i16_4758[10]);
+		// FIXME: These can sometimes be invalid.
+		// Create manually to avoid the assert crash in the constructor.
+		Common::Rect temp;
+		temp.left = this->arr_i16_4758[9];
+		temp.top = this->arr_i16_4758[8];
+		temp.right = this->arr_i16_4758[11];
+		temp.bottom = this->arr_i16_4758[10];
 		g_toolbox->FrameRect(temp);
 		// add fake delay for drawing visibility
 		if ((i % 4) == 0) {
@@ -2455,7 +2463,8 @@ void FoolGame::sub_129_068() {
 	}
 	// 129:0ad4
 	for (int i = 0; i <= 0xf; i++) {
-		this->arr_i16_4738[i] = this->puzzlesReadShort();
+		// bitLUT is 1 << i
+		this->bitLUT[i] = this->puzzlesReadShort();
 	}
 	// 129:0b02
 	for (int i = 1; i <= 0x51; i++) {
@@ -2575,6 +2584,7 @@ void FoolGame::sub_129_068() {
 		// 129:0fea
 	}
 	// 129:0ff8
+	Common::fill(this->arr_i16_1dee, this->arr_i16_1dee + 202, 0);
 	for (int j = 1; j <= this->storyPageCount; j++) {
 		for (int i = this->pageLineRanges[j*2]; i <= this->pageLineRanges[j*2 + 1]; i++) {
 			if (this->pageLineBreak[i] != 0) {
@@ -2715,7 +2725,7 @@ void FoolGame::sub_130_004() {
 			// 130:035a
 				for (int i = 0; i <= 0xc; i++) {
 					this->var_i16_484++;
-					if (this->var_i16_106a && this->arr_i16_4738[i]) {
+					if (this->var_i16_106a & this->bitLUT[i]) {
 						g_toolbox->PaintRect(this->arr_rect_1f38[this->var_i16_484]);
 					}
 				}
@@ -2753,84 +2763,6 @@ void FoolGame::sub_130_004() {
 
 // word search game
 void FoolGame::sub_131_004() {
-	warning("STUB: %s", __func__);
-}
-
-// polyomino puzzle
-void FoolGame::sub_133_004() {
-	// 133:0004
-	this->sub_128_271a();
-	this->var_i16_c00 = 1;
-	for (int i = 0; i <= 0x11; i++) {
-		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
-	}
-	// 133:003c
-	this->var_str_384 = this->puzzlesReadString();
-	// "the completed puzzle will reveal..."
-	this->var_str_384 = g_zbasic->str(209) + this->var_str_384 + g_zbasic->str(210);
-	g_zbasic->menu(8, 0xf, 1, this->var_str_384);
-	this->var_i16_484 = 0;
-	this->var_i16_68c = this->arr_i16_1eb8[8];
-	do {
-		// 133:009e
-		this->var_i16_68a = this->arr_i16_1eb8[10];
-		do {
-			// 133:00b2
-			this->var_i16_484 += 1;
-			g_toolbox->SetRect(
-				this->arr_rect_1f38[this->var_i16_484],
-				this->var_i16_68a,
-				this->var_i16_68c,
-				this->var_i16_68a + this->arr_i16_1eb8[13],
-				this->var_i16_68c + this->arr_i16_1eb8[12]
-			);
-			// 133:0112
-		} while (g_zbasic->incrAndCheck(
-			this->var_i16_68a,
-			this->arr_i16_1eb8[11],
-			this->arr_i16_1eb8[6]
-		));
-		// 133:0142
-	} while (g_zbasic->incrAndCheck(
-		this->var_i16_68c,
-		this->arr_i16_1eb8[9],
-		this->arr_i16_1eb8[7]
-	));
-	// 133:0172
-	this->var_i16_484 = 0;
-	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-			// 133:0184
-			this->var_i16_484++;
-			this->arr_i16_2f38[i*32 + j] = 0;
-			this->arr_i16_3b38[i*32 + j] = this->var_i16_484;
-		}
-	}
-	// 133:01fa
-	for (int i = 0x12; i <= 0x19; i++) {
-		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
-	}
-	// 133:0228
-	g_toolbox->SetPort(this->var_i32_f24);
-	g_zbasic->text(0xfb, 0x18, 0, kSrcOr);
-	this->var_i16_7cc = 1;
-	this->var_i16_103a = this->puzzlesReadShort();
-	for (int i = 0; i <= 4; i++) {
-		this->arr_i16_47d8[this->var_i16_7cc*8 + i] = this->puzzlesReadShort();
-	}
-	// 133:0284
-	for (int i = 5; i <= 6; i++) {
-		this->arr_i16_47d8[this->var_i16_7cc*8 + i] = this->arr_i16_47d8[this->var_i16_7cc*8 + i - 2];
-	}
-	// 133:02de
-	if (this->var_str_c06 != g_zbasic->str(211)) {
-		if (this->var_i16_7cc != 1)  {
-			this->var_i16_1aa8 = 1;
-		}
-		this->var_i16_1aaa = 3;
-		//this->arr_i16_47d8[this->var_i16_7cc*8 + this->var_i16_1aaa], this->var_str_c06
-	}
-	// 133:0356
 	warning("STUB: %s", __func__);
 }
 

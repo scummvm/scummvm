@@ -791,19 +791,6 @@ void FoolPrologue::prologueRun() {
 	// 130:034a
 	for (int i = 0xd; i <= 0x12; i++) {
 		// priestess silhouette -> fool on the cliff.
-		// Image two in this sequence is a PICT that draws the words
-		// "...for no-one can undo the treachery I have inflicted upon the land!"
-		// using the ShortLine opcode. Because the lines are drawn in white,
-		// and the default background colour is white, this is an example of a PICT
-		// that needs to be drawn to the target buffer with a mask.
-
-		// FIXME: On original (slow) hardware, this image takes a while to render to the
-		// screen with the line tool and gives a cool fade-in effect. It's unclear
-		// what the best way to replicate that here would be, as we are drawing to
-		// an offscreen buffer. Maybe we could add some generic way for the PICTDecoder
-		// to run a callback between opcodes? That probably wouldn't help, given
-		// the image is decoded to a surface at stream load time. Alternatively we could
-		// dump the opcodes for just that picture and draw it ourselves.
 		this->prologueBufferNextPicture();
 	}
 
@@ -956,9 +943,21 @@ void FoolPrologue::prologueRun() {
 
 	// 130:083c
 
-	// Draw the priestess silhouette + "treachery" message
+	// Draw the priestess silhouette
 	g_zbasic->picture(0, 0, this->arr_i32_0[0xd]);
+
+	// Image two in this sequence is a PICT that draws the words
+	// "...for no-one can undo the treachery I have inflicted upon the land!"
+	// using the ShortLine opcode to fill in random rows of pixels.
+	// Because the lines are drawn in white, and the default background colour
+	// is white, this is an example of a PICT that needs to be drawn to the
+	// target buffer live, or with a mask.
+	// On original (i.e. slow) hardware, this image takes a while to render to the
+	// screen with the line tool and gives a cool fade-in effect, which we
+	// simulate here.
+	this->arr_i32_0[0xe]->_opsPerTick = 32;
 	g_zbasic->picture(5, 0, this->arr_i32_0[0xe]);
+
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xd]);
 	g_toolbox->ReleaseResource(this->arr_i32_0[0xe]);
 

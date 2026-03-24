@@ -386,7 +386,7 @@ void ZBasic::picture(int16 x, int16 y, PicHandle &src) {
 		return;
 	}
 
-	Common::Rect destRect(x, y, x+src->getSurface()->w, y+src->getSurface()->h);
+	Common::Rect destRect(x, y, x+src->picFrame.width(), y+src->picFrame.height());
 	_toolbox->DrawPicture(src, destRect);
 
 	//Common::Rect badnews = src->getBounds();
