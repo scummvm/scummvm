@@ -433,6 +433,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 		} else if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			lineError = playSequence(kMrPottsCasketPhotoLines, ARRAYSIZE(kMrPottsCasketPhotoLines));
 			if (lineError.getCode() != Common::kNoError)
@@ -442,6 +443,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					kMrPottsCasketPhotoFollowupLines, ARRAYSIZE(kMrPottsCasketPhotoFollowupLines));
 			}
 		} else if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			lineError = playSequence(
@@ -468,12 +470,14 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceOfBlackmail, true);
 			lineError = playSequence(
 				kMrPottsBlackmailEvidenceLines, ARRAYSIZE(kMrPottsBlackmailEvidenceLines));
 		} else if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			sharedState.discussedTvDeedEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(
 				DialogueFlags::kShownEvidenceSheriffOwns, true);
 			lineError = playSequence(
