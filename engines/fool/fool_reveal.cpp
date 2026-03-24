@@ -19,8 +19,6 @@
  *
  */
 
-#include "graphics/managed_surface.h"
-
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
@@ -32,13 +30,14 @@ extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
 // mask reveal puzzle
-void FoolGame::sub_134_004() {
+void FoolGame::revealRun() {
 	// 134:0004
 	this->sub_128_271a();
 	this->var_i16_c00 = 1;
 	this->arr_i16_1eb8[15] = this->puzzlesReadShort();
 	this->arr_i16_1eb8[16] = this->puzzlesReadShort();
 	this->arr_i16_1eb8[21] = this->puzzlesReadShort();
+	debugC(5, kDebugLoading, "%d, %d, %04x", this->arr_i16_1eb8[15], this->arr_i16_1eb8[16], this->arr_i16_1eb8[21]);
 	this->var_str_384 = this->puzzlesReadString();
 	this->var_str_384 = g_zbasic->str(213) + this->var_str_384 + g_zbasic->str(214);
 	g_zbasic->menu(8, 6, 1, this->var_str_384);
@@ -65,8 +64,8 @@ void FoolGame::sub_134_004() {
 			// 134:015c
 		}
 		g_toolbox->ClosePoly();
-		if (this->arr_i16_1eb8[16] <= i) {
-			this->arr_i16_1eb8[20] |= this->arr_i16_4738[i - 1];
+		if (i <= this->arr_i16_1eb8[16]) {
+			this->arr_i16_1eb8[20] |= this->bitLUT[i - 1];
 		}
 		// 134:01ce
 	}
@@ -108,8 +107,8 @@ void FoolGame::sub_134_004() {
 		);
 		g_toolbox->DrawString(this->var_str_384);
 		// 134:04d6
-		if (this->arr_i16_1eb8[19] && this->arr_i16_4738[this->arr_i16_3738[i] - 1]) {
-			this->sub_134_74a();
+		if (this->arr_i16_1eb8[19] & this->bitLUT[this->arr_i16_3738[i] - 1]) {
+			this->revealSelectButton();
 		}
 	}
 	// 134:0538
@@ -130,7 +129,7 @@ void FoolGame::sub_134_004() {
 			// 134:0582
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseDown) {
-				this->sub_134_67c();
+				this->revealOnClick();
 			}
 			if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
 				this->var_i16_d0c = 1;
@@ -142,7 +141,7 @@ void FoolGame::sub_134_004() {
 		}
 		// 134:05e2
 		if (this->var_i16_7c6 == 2) {
-			this->sub_134_7bc();
+			this->revealReset();
 		}
 		if (this->var_i16_7c6 == 4) {
 			this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
@@ -151,8 +150,8 @@ void FoolGame::sub_134_004() {
 		// 134:061e
 	}
 	// 134:0648
-	if (this->var_i16_d0c == 0) {
-		this->sub_134_872();
+	if (this->var_i16_d0c != 0) {
+		this->revealSuccess();
 	}
 	this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
 	// 134:0678: JMP - [0x8ae]
@@ -161,7 +160,7 @@ void FoolGame::sub_134_004() {
 	}
 }
 
-void FoolGame::sub_134_67c() {
+void FoolGame::revealOnClick() {
 	// 134:067c
 	this->var_i16_7be = 0;
 	for (int j = 1; j <= this->arr_i16_1eb8[15]; j++) {
@@ -175,26 +174,28 @@ void FoolGame::sub_134_67c() {
 		return;
 	}
 	// 134:06f4
-	this->sub_134_74a();
-	this->arr_i16_1eb8[19] ^= this->arr_i16_4738[this->arr_i16_3738[this->var_i16_7be]-1];
+	this->revealSelectButton();
+	this->arr_i16_1eb8[19] ^= this->bitLUT[this->arr_i16_3738[this->var_i16_7be]-1];
+	debugC(5, kDebugLoading, "reveal: %d, %04x, %04x", this->var_i16_7be, this->arr_i16_1eb8[19], this->arr_i16_1eb8[20]);
 	this->sub_128_6186();
 }
 
-void FoolGame::sub_134_74a() {
+void FoolGame::revealSelectButton() {
 	// 134:074a
+	// invert the button
 	g_toolbox->InvertRoundRect(this->arr_rect_1f38[this->var_i16_7be], 0x19, 0x19);
 	g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[21]]);
+	// fill the polygon
 	g_toolbox->PenMode(kPatXor);
 	g_toolbox->PaintPoly(this->arr_poly_192c0[this->arr_i16_3738[this->var_i16_7be]]);
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_134_7bc() {
+void FoolGame::revealReset() {
 	// 134:07bc
 	this->fillRect(0x37, 0x13, 0xff, 0x1ee, 0);
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
-		this->var_i16_7be = 1;
-		if (this->arr_i16_1eb8[19] & this->arr_i16_4738[this->arr_i16_3738[i]-1]) {
+		if (this->arr_i16_1eb8[19] & this->bitLUT[this->arr_i16_3738[i]-1]) {
 			g_toolbox->InvertRoundRect(this->arr_rect_1f38[i], 0x19, 0x19);
 		}
 	}
@@ -203,7 +204,7 @@ void FoolGame::sub_134_7bc() {
 	this->var_i16_7c6 = 0;
 }
 
-void FoolGame::sub_134_872() {
+void FoolGame::revealSuccess() {
 	// 134:0872
 	if (this->var_i16_c04 < 0x64) {
 		this->var_i16_c04 = 0x64;

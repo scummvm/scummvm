@@ -5,12 +5,14 @@ MODULE_OBJS = \
 	fool.o \
 	fool_game.o \
 	fool_jigsaw.o \
+	fool_polyomino.o \
 	fool_prologue.o \
 	fool_reveal.o \
 	toolbox.o \
 	toolbox_fileman.o \
 	toolbox_menu.o \
 	toolbox_quickdraw.o \
+	toolbox_pict.o \
 	toolbox_resman.o \
 	toolbox_sound.o \
 	toolbox_text.o \
