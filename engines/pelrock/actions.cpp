@@ -664,8 +664,6 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 	case 377:
 		_state->setCurrentRoot(45, 3, 0);
 		break;
-	case 30840:
-		break;
 
 	case 323:
 		_state->setCurrentRoot(47, 1, 0);

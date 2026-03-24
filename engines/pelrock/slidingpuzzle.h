@@ -19,10 +19,9 @@
  *
  */
 
-#ifndef PELROCK_SLIDING_PUZZLE_H
-#define PELROCK_SLIDING_PUZZLE_H
+#ifndef PELROCK_SLIDINGPUZZLE_H
+#define PELROCK_SLIDINGPUZZLE_H
 
-#include "common/scummsys.h"
 #include "graphics/managed_surface.h"
 
 #include "pelrock/events.h"
