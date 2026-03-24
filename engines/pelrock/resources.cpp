@@ -130,7 +130,7 @@ ResourceManager::~ResourceManager() {
 void ResourceManager::loadCursors() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
-		error("Couldnt find file ALFRED.7");
+		error("ResourceManager::loadCursors(): Couldnt find file ALFRED.7");
 	}
 	for (int i = 0; i < 5; i++) {
 		uint32 cursorOffset = cursor_offsets[i];
@@ -144,7 +144,7 @@ void ResourceManager::loadCursors() {
 void ResourceManager::loadInteractionIcons() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
-		error("Couldnt find file ALFRED.7");
+		error("ResourceManager::loadInteractionIcons(): Couldnt find file ALFRED.7");
 	}
 
 	alfred7File.seek(kBalloonFramesOffset, SEEK_SET);
@@ -163,7 +163,7 @@ void ResourceManager::loadInteractionIcons() {
 	alfred7File.close();
 	Common::File alfred4File;
 	if (!alfred4File.open("ALFRED.4")) {
-		error("Couldnt find file ALFRED.4");
+		error("ResourceManager::loadInteractionIcons(): Couldnt find file ALFRED.4");
 	}
 
 	int iconSize = kVerbIconHeight * kVerbIconWidth;
@@ -177,7 +177,7 @@ void ResourceManager::loadInteractionIcons() {
 void ResourceManager::loadAlfredAnims() {
 	Common::File alfred3;
 	if (!alfred3.open(Common::Path("ALFRED.3"))) {
-		error("Could not open ALFRED.3");
+		error("ResourceManager::loadAlfredAnims(): Could not open ALFRED.3");
 		return;
 	}
 	int alfred3Size = alfred3.size();
@@ -256,7 +256,7 @@ void ResourceManager::loadAlfredAnims() {
 
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+		error("ResourceManager::loadAlfredAnims(): Could not open ALFRED.7");
 		return;
 	}
 	int spriteMapSize = frameSize * 11;
@@ -299,7 +299,7 @@ void ResourceManager::loadAlfredAnims() {
 void ResourceManager::loadOtherSpecialAnim(uint32 offset, bool rleCompressed, byte *&buffer, size_t &bufferSize) {
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+		error("ResourceManager::loadOtherSpecialAnim(): Could not open ALFRED.7");
 		return;
 	}
 
@@ -321,7 +321,7 @@ void ResourceManager::loadAlfredSpecialAnim(int numAnim, bool reverse) {
 	Common::String filename = Common::String::format("ALFRED.%d", anim.numAlfred);
 	Common::File alfredFile;
 	if (!alfredFile.open(Common::Path(filename))) {
-		error("Could not open %s", filename.c_str());
+		error("ResourceManager::loadAlfredSpecialAnim(): Could not open %s", filename.c_str());
 		return;
 	}
 
@@ -367,7 +367,7 @@ void ResourceManager::loadInventoryItems() {
 	// loadInventoryDescriptions();
 	Common::File alfred4File;
 	if (!alfred4File.open("ALFRED.4")) {
-		error("Couldnt find file ALFRED.4");
+		error("ResourceManager::loadInventoryItems(): Couldnt find file ALFRED.4");
 	}
 	uint32 iconsSize = alfred4File.size() - kInventoryIconsTailSize;
 	byte *iconData = new byte[iconsSize];
@@ -385,7 +385,7 @@ void ResourceManager::loadHardcodedText() {
 
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
+		error("ResourceManager::loadHardcodedText(): Couldnt find file JUEGO.EXE");
 	}
 	byte *descBuffer = new byte[kAlfredResponsesSize];
 	exe.seek(kAlfredResponsesOffset, SEEK_SET);
@@ -428,7 +428,7 @@ Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
 
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
+		error("ResourceManager::loadComputerText(): Couldnt find file JUEGO.EXE");
 	}
 	int bufSize = kComputerTextSize;
 	byte *computerTextBuf = new byte[bufSize];
@@ -444,7 +444,7 @@ Common::Array<Common::StringArray> ResourceManager::loadComputerText() {
 void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *palette) {
 	Common::File alfred7;
 	if (!alfred7.open("ALFRED.7")) {
-		error("Couldnt find file ALFRED.7");
+		error("ResourceManager::getExtraScreen(): Couldnt find file ALFRED.7");
 	}
 	ExtraScreen screen = extraScreens[screenIndex];
 	mergeRleBlocks(&alfred7, screen.offset, 8, screenBuf);
@@ -461,7 +461,7 @@ void ResourceManager::getExtraScreen(int screenIndex, byte *screenBuf, byte *pal
 Common::Array<Common::StringArray> ResourceManager::getCredits() {
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
+		error("ResourceManager::getCredits(): Couldnt find file JUEGO.EXE");
 	}
 	byte *descBuffer = new byte[kCreditsSize];
 	exe.seek(kCreditsOffset, SEEK_SET);
@@ -527,7 +527,7 @@ Common::Array<Common::StringArray> ResourceManager::processTextData(byte *data, 
 Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 	Common::File alfred6File;
 	if (!alfred6File.open("ALFRED.6")) {
-		error("Couldnt find file ALFRED.6");
+		error("ResourceManager::getSticker(): Couldnt find file ALFRED.6");
 	}
 
 	uint32 stickerOffset = stickerOffsets[stickerIndex];
@@ -545,7 +545,7 @@ Pelrock::Sticker ResourceManager::getSticker(int stickerIndex) {
 byte *ResourceManager::loadStickerPixels(const Sticker &sticker) {
 	Common::File alfred6File;
 	if (!alfred6File.open("ALFRED.6")) {
-		error("Couldnt find file ALFRED.6");
+		error("ResourceManager::loadStickerPixels(): Couldnt find file ALFRED.6");
 	}
 	uint32 pixelOffset = stickerOffsets[sticker.stickerIndex] + 6; // skip x(2)+y(2)+w(1)+h(1)
 	alfred6File.seek(pixelOffset, SEEK_SET);

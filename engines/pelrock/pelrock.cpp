@@ -181,7 +181,7 @@ void PelrockEngine::init() {
 void PelrockEngine::loadInventoryArrows() {
 	Common::File alfred7;
 	if (!alfred7.open("ALFRED.7")) {
-		error("Failed to open ALFRED.7 to load inventory arrows");
+		error("PelrockEngine::loadInventoryArrows(): Failed to open ALFRED.7 to load inventory arrows");
 		return;
 	}
 	alfred7.seek(kInventoryArrowsOffset, SEEK_SET);
@@ -1676,7 +1676,7 @@ void PelrockEngine::checkMouseHover() {
 void PelrockEngine::setScreen(int roomNumber) {
 	Common::File roomFile;
 	if (!roomFile.open(Common::Path("ALFRED.1"))) {
-		error("Could not open ALFRED.1");
+		error("PelrockEngine::setScreen(): Could not open ALFRED.1");
 		return;
 	}
 	changeCursor(DEFAULT);
@@ -2094,7 +2094,7 @@ void PelrockEngine::endingScene() {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+		error("PelrockEngine::endingScene(): Could not open ALFRED.7");
 		return;
 	}
 	byte *decompressedBuf = nullptr;

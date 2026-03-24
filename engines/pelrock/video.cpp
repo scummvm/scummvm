@@ -40,7 +40,7 @@ VideoManager::VideoManager(
 	_videoSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	_textSurface.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 	if (!_introSndFile.open("introsnd.dat")) {
-		error("Could not open introsnd.dat");
+		error("VideoManager::VideoManager(): Could not open introsnd.dat");
 	}
 }
 
@@ -54,7 +54,7 @@ void VideoManager::playIntro() {
 	initMetadata();
 	Common::File videoFile;
 	if (!videoFile.open("ESCENAX.SSN")) {
-		error("Could not open ESCENAX.SSN");
+		error("VideoManager::playIntro(): Could not open ESCENAX.SSN");
 		return;
 	}
 	videoFile.seek(0, SEEK_SET);
@@ -268,7 +268,7 @@ void VideoManager::presentFrame() {
 void VideoManager::initMetadata() {
 	Common::File metadataFile;
 	if (!metadataFile.open("ESCENAX.SCR")) {
-		error("Could not open ESCENAX.SCR");
+		error("VideoManager::initMetadata(): Could not open ESCENAX.SCR");
 		return;
 	}
 

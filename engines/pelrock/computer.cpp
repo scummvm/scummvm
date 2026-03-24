@@ -59,7 +59,7 @@ Common::StringArray split(const Common::String &str) {
 void Computer::init() {
 	Common::File alfred7File;
 	if (!alfred7File.open("ALFRED.7")) {
-		error("Could not open ALFRED.7");
+		error("Computer::init(): Could not open ALFRED.7");
 		return;
 	}
 

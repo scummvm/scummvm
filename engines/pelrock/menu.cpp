@@ -492,7 +492,7 @@ void MenuManager::showCredits() {
 	_compositeBuffer.clear(0);
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+		error("MenuManager::showCredits(): Could not open ALFRED.7");
 		return;
 	}
 
@@ -683,7 +683,7 @@ void MenuManager::loadMenu() {
 
 	Common::File alfred7;
 	if (!alfred7.open(Common::Path("ALFRED.7"))) {
-		error("Could not open ALFRED.7");
+		error("MenuManager::loadMenu(): Could not open ALFRED.7");
 		return;
 	}
 
@@ -804,7 +804,7 @@ void MenuManager::loadMenuTexts() {
 
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
+		error("MenuManager::loadMenuTexts(): Couldnt find file JUEGO.EXE");
 	}
 	byte *descBuffer = new byte[kInventoryDescriptionsSize];
 	exe.seek(kInventoryDescriptionsOffset, SEEK_SET);

@@ -97,7 +97,7 @@ void RoomManager::loadWaterPaletteRemap() {
 	// Extra remap for water effect
 	Common::File exe;
 	if (!exe.open("JUEGO.EXE")) {
-		error("Couldnt find file JUEGO.EXE");
+		error("RoomManager::loadWaterPaletteRemap(): Couldnt find file JUEGO.EXE");
 	}
 	exe.seek(kPaletteRemapOffset, SEEK_SET);
 	exe.read(_paletteRemaps[4], 256);
@@ -935,7 +935,7 @@ Common::Array<HotSpot> RoomManager::unifyHotspots(Common::Array<Pelrock::Sprite>
 void RoomManager::init() {
 	Common::File alfred8;
 	if (!alfred8.open("ALFRED.8")) {
-		error("Couldnt find file ALFRED.8");
+		error("RoomManager::init(): Couldnt find file ALFRED.8");
 	}
 }
 
@@ -1191,7 +1191,7 @@ void RoomManager::addDisabledChoice(ChoiceOption choice) {
 void RoomManager::resetMetadataDefaults(byte room, byte *&data, size_t size) {
 	Common::File alfred8;
 	if (!alfred8.open("ALFRED.8")) {
-		error("Couldnt find file ALFRED.8");
+		error("RoomManager::resetMetadataDefaults(): Couldnt find file ALFRED.8");
 	}
 	bool roomDone = false;
 	while (!alfred8.eos() && !roomDone) {
@@ -1226,7 +1226,7 @@ void RoomManager::loadRoomTalkingAnimations(int roomNumber) {
 	TalkingAnims talkHeader;
 	Common::File talkFile;
 	if (!talkFile.open("ALFRED.2")) {
-		error("Couldnt find file ALFRED.2");
+		error("RoomManager::loadRoomTalkingAnimations(): Couldnt find file ALFRED.2");
 	}
 
 	talkFile.seek(offset, SEEK_SET);

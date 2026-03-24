@@ -118,7 +118,7 @@ void BackgroundBook::loadRoomNames() {
 	Common::StringArray roomNames;
 	Common::File juegoExe;
 	if (!juegoExe.open(Common::Path("JUEGO.EXE"))) {
-		error("Couldnt find file JUEGO.EXE");
+		error("BackgroundBook::loadRoomNames(): Couldnt find file JUEGO.EXE");
 	}
 
 	size_t namesSize = kRoomNamesSize;
