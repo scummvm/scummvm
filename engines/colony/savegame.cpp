@@ -21,6 +21,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "common/translation.h"
 
 #include "colony/colony.h"

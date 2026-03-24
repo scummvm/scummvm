@@ -32,19 +32,28 @@
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/rendermode.h"
-#include "common/stream.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
-#include "graphics/cursor.h"
-#include "graphics/framelimiter.h"
-#include "graphics/macgui/macmenu.h"
-#include "graphics/macgui/macwindowmanager.h"
 
-#include "colony/renderer.h"
-#include "colony/sound.h"
+namespace Common {
+class MacResManager;
+class SeekableReadStreamEndian;
+}
 
+namespace Graphics {
+class Cursor;
+class Font;
+class FrameLimiter;
+class MacMenu;
+class MacWindowManager;
+class ManagedSurface;
+class Surface;
+}
 
 namespace Colony {
+
+class Renderer;
+class Sound;
 
 enum ColonyAction {
 	kActionNone,

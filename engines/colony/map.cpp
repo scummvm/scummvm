@@ -27,6 +27,7 @@
 
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/macresman.h"
 
 #include "colony/colony.h"
 

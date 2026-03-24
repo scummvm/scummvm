@@ -28,6 +28,7 @@
 #include "common/debug.h"
 
 #include "colony/colony.h"
+#include "colony/sound.h"
 
 namespace Colony {
 

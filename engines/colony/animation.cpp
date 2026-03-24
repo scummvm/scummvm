@@ -28,11 +28,14 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/macresman.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "graphics/cursorman.h"
 
 #include "colony/colony.h"
 #include "colony/renderer.h"
+#include "colony/sound.h"
 
 namespace Colony {
 

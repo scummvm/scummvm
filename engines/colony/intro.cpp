@@ -27,6 +27,7 @@
 
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/macresman.h"
 #include "common/system.h"
 #include "common/translation.h"
 #include "graphics/cursorman.h"
@@ -35,11 +36,14 @@
 #include "graphics/fonts/macfont.h"
 #include "graphics/macgui/macdialog.h"
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macwindowmanager.h"
+#include "graphics/managed_surface.h"
 #include "gui/message.h"
 #include "image/pict.h"
 
 #include "colony/colony.h"
 #include "colony/renderer.h"
+#include "colony/sound.h"
 
 namespace Colony {
 

@@ -28,17 +28,20 @@
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/fontman.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindowborder.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/palette.h"
 #include "image/pict.h"
 
 #include "colony/colony.h"
 #include "colony/renderer.h"
+#include "colony/sound.h"
 
 namespace Colony {
 

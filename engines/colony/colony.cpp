@@ -32,17 +32,22 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
+#include "common/macresman.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
+#include "graphics/framelimiter.h"
 #include "graphics/maccursor.h"
+#include "graphics/managed_surface.h"
+#include "graphics/macgui/macwindowmanager.h"
 #include "graphics/palette.h"
 #include "graphics/paletteman.h"
 
 #include "colony/colony.h"
 #include "colony/console.h"
 #include "colony/renderer.h"
+#include "colony/sound.h"
 
 namespace Colony {
 
