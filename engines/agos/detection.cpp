@@ -154,7 +154,18 @@ public:
 
 	Common::Error identifyGame(DetectedGame &game, const void **descriptor) override {
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+
+		const bool isSimon2Target = ConfMan.hasKey("gameid") && ConfMan.get("gameid") == "simon2";
+		const bool hadLanguage = ConfMan.hasKey("language");
+		const Common::String originalLanguage = hadLanguage ? ConfMan.get("language") : Common::String();
+
+		if (isSimon2Target && hadLanguage)
+			ConfMan.set("language", Common::getLanguageCode(Common::EN_ANY));
+
 		Common::Error err = AdvancedMetaEngineDetection::identifyGame(game, descriptor);
+
+		if (isSimon2Target && hadLanguage)
+			ConfMan.set("language", originalLanguage);
 
 		if (err.getCode() == Common::kNoError && game.gameId == "simon2" && ConfMan.hasKey("path")) {
 			Common::FSNode gameDir(ConfMan.getPath("path"));

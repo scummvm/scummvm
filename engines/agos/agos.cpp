@@ -273,6 +273,11 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_speech = false;
 	_subtitles = false;
 
+	_simon2OverlayLanguage = Common::EN_ANY;
+	_useSimon2LanguageOverlay = false;
+	_simon2LanguageFlagTimer = 0;
+	_simon2LanguageFlagClearPending = false;
+
 	_animatePointer = 0;
 	_maxCursorWidth = 0;
 	_maxCursorHeight = 0;
@@ -625,7 +630,8 @@ Common::Error AGOSEngine::init() {
 
 	_midi = new MidiPlayer(this);
 
-	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
+	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) || 
+			(getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformAmiga) ||
 			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 			((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 			(getPlatform() == Common::kPlatformDOS && getGameType() != GType_PN && getGameType() != GType_FF) ||
@@ -693,6 +699,7 @@ Common::Error AGOSEngine::init() {
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_language = Common::parseLanguage(ConfMan.get("language"));
+	_simon2OverlayLanguage = _language;
 	loadSimon2LanguageOverlay();
 
 	if (getGameType() == GType_PP) {
@@ -1098,7 +1105,7 @@ Common::Error AGOSEngine::go() {
 	while (!shouldQuit()) {
 		waitForInput();
 
-		if (getGameType() == GType_SIMON2 && (_keyPressed.keycode == Common::KEYCODE_SPACE || _keyPressed.ascii == ' ' ) && hasSimon2LanguageFiles()) {
+		if (getGameType() == GType_SIMON2 && (_keyPressed.keycode == Common::KEYCODE_SPACE) && hasSimon2LanguageFiles()) {
 			cycleSimon2LanguageOverlay();
 			_keyPressed.reset();
 			continue;
