@@ -500,12 +500,10 @@ void PelrockEngine::dialogActionTrigger(uint16 actionTrigger, byte room, byte ro
 		break;
 	}
 	case 360: // neutral reset: counter = 0
-	{
 		_state->setFlag(FLAG_CORRECT_ANSWERS, 0);
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		advanceQuotesConversation(rootIndex, room);
 		break;
-	}
 	case 361: // "no sé" (I don't know): no counter change, just advance
 		_state->setCurrentRoot(room, rootIndex + 1, 0);
 		break;
@@ -1225,8 +1223,8 @@ void PelrockEngine::usePumpkinWithRiver(int inventoryObject, HotSpot *hotspot) {
 		playAlfredSpecialAnim(5);
 		{
 			// Copy crocodile into background so it sticks during fade
-			static const int srcX = 189, srcY = 260;
-			static const int copyW = 127, copyH = 80;
+			const int srcX = 189, srcY = 260;
+			const int copyW = 127, copyH = 80;
 			Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
 			_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));
 		}
@@ -1521,7 +1519,7 @@ void PelrockEngine::pickUpStone(HotSpot *hotspot) {
 }
 
 void PelrockEngine::playSpecialAnim(uint32 offset, bool compressed, int x, int y, int width, int height, int numFrames) {
-	size_t frameSize = width * height;
+	uint frameSize = width * height;
 	size_t bufSize = frameSize * numFrames;
 	byte *animData = new byte[bufSize];
 	_res->loadOtherSpecialAnim(offset, compressed, animData, bufSize);
@@ -1915,10 +1913,9 @@ void PelrockEngine::performActionTrigger(uint16 actionTrigger) {
 		_dialog->say(_res->_ingameTexts[kTextNoSeTeCurraCercarte]);
 		break;
 	}
-	case 375: {
+	case 375:
 		teleportToPrincess();
 		break;
-	}
 	}
 }
 
@@ -1970,6 +1967,7 @@ void PelrockEngine::teleportToPrincess() {
 			_events->pollEvent();
 			renderScene(OVERLAY_NONE);
 			_screen->update();
+			g_system->delayMillis(10);
 		}
 
 		_sound->playSound(_room->_roomSfx[3], 0);
@@ -2225,7 +2223,7 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		book.run();
 		break;
 	}
-	default: {
+	default:
 		// Original game incorrectly checked until object 47; Reading any book.
 		if (inventoryObject >= 11 && inventoryObject <= 58) {
 			playAlfredSpecialAnim(0);
@@ -2234,7 +2232,6 @@ void PelrockEngine::useOnAlfred(int inventoryObject) {
 		}
 		sayRandomIncorrectResponse();
 		break;
-	}
 	}
 }
 

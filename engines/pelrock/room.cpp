@@ -1103,7 +1103,7 @@ uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common
 	uint32 pos = 0;
 	uint32 lastDescPos = 0;
 	outDescriptions.clear();
-	while (pos < (pair12size)) {
+	while (pos < pair12size) {
 		if (pair12data[pos] == 0xFF) {
 			Description description;
 

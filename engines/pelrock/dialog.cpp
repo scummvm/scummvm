@@ -251,7 +251,7 @@ void DialogManager::displayDialogue(Common::Array<Common::Array<Common::String>>
 	uint32 pageTtlMs = calcPageTtlMs(dialogueLines[curPage]);
 	uint32 pageStartMs = g_system->getMillis();
 
-	if(speakerId != kAlfredColor) {
+	if (speakerId != kAlfredColor) {
 		_isNPCTalking = true;
 	}
 	// Render loop - display text and wait for click or TTL

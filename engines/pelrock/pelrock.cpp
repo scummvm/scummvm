@@ -280,7 +280,6 @@ void PelrockEngine::travelToEgypt() {
 	int frameCount = 0;
 	while (!shouldQuit() && frameCount < 96) {
 		_events->pollEvent();
-		g_system->delayMillis(10);
 		_chrono->updateChrono();
 		if (_chrono->_gameTick && _chrono->getFrameCount() % 2 == 0) {
 			int colorIndex = 160 + frameCount;
@@ -294,6 +293,7 @@ void PelrockEngine::travelToEgypt() {
 
 		_screen->markAllDirty();
 		_screen->update();
+		g_system->delayMillis(10);
 	}
 	_graphics->clearScreen();
 
@@ -388,8 +388,7 @@ bool PelrockEngine::renderScene(int overlayMode) {
 		return true;
 	}
 
-	switch (_room->_currentRoomNumber) {
-	case 2: {
+	if (_room->_currentRoomNumber == 2) {
 		// Easter egg in room 2, pressing x 250 times after the character has mentioned it triggers a special dialog
 		if (_events->_lastKeyEvent == Common::KEYCODE_x) {
 			_events->_lastKeyEvent = Common::KEYCODE_INVALID;
@@ -400,8 +399,6 @@ bool PelrockEngine::renderScene(int overlayMode) {
 				}
 			}
 		}
-		break;
-	}
 	}
 
 	return false;
@@ -860,7 +857,7 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 		}
 		break;
 	}
-	case ALFRED_TALKING: {
+	case ALFRED_TALKING:
 		drawAlfred(_res->alfredTalkFrames[_alfredState.direction][_alfredState.curFrame]);
 		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
 			_alfredState.curFrame++;
@@ -868,7 +865,6 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 			_alfredState.curFrame = 0;
 		}
 		break;
-	}
 	case ALFRED_COMB: {
 
 		drawAlfred(_res->alfredCombFrames[_alfredState.direction][_alfredState.curFrame]);
@@ -1125,54 +1121,37 @@ void PelrockEngine::drawNextFrame(Sprite *sprite) {
 }
 
 void PelrockEngine::paintDebugLayer() {
-	bool showWalkboxes = true;
-
-	if (showWalkboxes) {
-		for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
-			WalkBox box = _room->_currentRoomWalkboxes[i];
-			drawRect(_screen, box.x, box.y, box.w, box.h, 13);
-		}
+	for (uint i = 0; i < _room->_currentRoomWalkboxes.size(); i++) {
+		WalkBox box = _room->_currentRoomWalkboxes[i];
+		drawRect(_screen, box.x, box.y, box.w, box.h, 13);
 	}
 
-	bool showSprites = true;
-	if (showSprites) {
-		for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
-			Sprite sprite = _room->_currentRoomAnims[i];
-			if (sprite.zOrder == 255) {
-				continue;
-			}
-			drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
-			_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
+	for (uint i = 0; i < _room->_currentRoomAnims.size(); i++) {
+		Sprite sprite = _room->_currentRoomAnims[i];
+		if (sprite.zOrder == 255) {
+			continue;
 		}
+		drawRect(_screen, sprite.x, sprite.y, sprite.w, sprite.h, 14);
+		_smallFont->drawString(_screen, Common::String::format("S %d", sprite.index), sprite.x + 2, sprite.y, 640, 14);
 	}
 
-	bool showHotspots = true;
-	if (showHotspots) {
-		for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
-			HotSpot hotspot = _room->_currentRoomHotspots[i];
-			if (!hotspot.isEnabled || hotspot.isSprite)
-				continue;
-			drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
-			_smallFont->drawString(_screen, Common::String::format("HS %d - %d", hotspot.index - _room->_currentRoomAnims.size(), hotspot.extra), hotspot.x + 2, hotspot.y + 2, 640, 12);
-		}
+	for (uint i = 0; i < _room->_currentRoomHotspots.size(); i++) {
+		HotSpot hotspot = _room->_currentRoomHotspots[i];
+		if (!hotspot.isEnabled || hotspot.isSprite)
+			continue;
+		drawRect(_screen, hotspot.x, hotspot.y, hotspot.w, hotspot.h, 12);
+		_smallFont->drawString(_screen, Common::String::format("HS %d - %d", hotspot.index - _room->_currentRoomAnims.size(), hotspot.extra), hotspot.x + 2, hotspot.y + 2, 640, 12);
 	}
-
-	bool showExits = true;
-	if (showExits) {
-		for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
-			Exit exit = _room->_currentRoomExits[i];
-			drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
-			_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
-		}
+	for (uint i = 0; i < _room->_currentRoomExits.size(); i++) {
+		Exit exit = _room->_currentRoomExits[i];
+		drawRect(_screen, exit.x, exit.y, exit.w, exit.h, 200 + i);
+		_smallFont->drawString(_screen, Common::String::format("Exit %d -> Room %d", i, exit.targetRoom), exit.x + 2, exit.y + 2, 640, 14);
 	}
 
 	drawPos(_screen, _alfredState.x, _alfredState.y, 13);
 	drawPos(_screen, _alfredState.x, _alfredState.y - kAlfredFrameHeight, 13);
 	drawPos(_screen, _curWalkTarget.x, _curWalkTarget.y, 100);
 
-	if (showShadows) {
-		_screen->copyRectToSurface(_room->_pixelsShadows, 640, 0, 0, 640, 400);
-	}
 	_smallFont->drawString(_screen, Common::String::format("Room number: %d", _room->_currentRoomNumber), 0, 4, 640, 13);
 	_smallFont->drawString(_screen, Common::String::format("Alfred pos: %d, %d (%d)", _alfredState.x, _alfredState.y, _alfredState.y - kAlfredFrameHeight), 0, 18, 640, 13);
 	_smallFont->drawString(_screen, Common::String::format("Frame number: %d", _chrono->getFrameCount()), 0, 30, 640, 13);
@@ -1488,9 +1467,9 @@ void PelrockEngine::extraScreenLoop() {
 			_events->_leftMouseClicked = false;
 			break;
 		}
-		g_system->delayMillis(10);
 		_screen->markAllDirty();
 		_screen->update();
+		g_system->delayMillis(10);
 	}
 
 	g_system->getPaletteManager()->setPalette(_room->_roomPalette, 0, 256);
@@ -2000,8 +1979,8 @@ void PelrockEngine::pyramidCollapse() {
 	// Background tile copies to have collapsed pyramid stick
 	// copy 99×45 from secondary buffer to front buffer
 	{
-		static const int srcX = 240, srcY = 145;
-		static const int copyW = 99, copyH = 45;
+		const int srcX = 240, srcY = 145;
+		const int copyW = 99, copyH = 45;
 		Common::Rect copyRect(srcX, srcY, srcX + copyW, srcY + copyH);
 		_currentBackground.blitFrom(_compositeBuffer, copyRect, Common::Point(srcX, srcY));
 	}
@@ -2048,10 +2027,10 @@ void PelrockEngine::pyramidCollapse() {
 		_events->pollEvent();
 		renderScene(OVERLAY_NONE);
 		_screen->update();
-		g_system->delayMillis(10);
 		npc = _room->findSpriteByIndex(0);
 		if (!npc || npc->x <= 307)
 			break;
+		g_system->delayMillis(10);
 	}
 
 	// Stop NPC movement

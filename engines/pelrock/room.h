@@ -47,7 +47,8 @@ static const int unpickableHotspotExtras[] = {
 	6,
 	7,
 	91, // mud and stone should only be picked under certain conditions!
-	92};
+	92
+};
 
 static const uint32 stickerOffsets[137] = {
 	0x000000, 0x00005B, 0x0000B6, 0x000298, 0x00047A, 0x0023C8, 0x004316, 0x004376,

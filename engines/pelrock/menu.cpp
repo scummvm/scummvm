@@ -927,7 +927,7 @@ void MenuManager::drawSaves() {
 		drawText(_compositeBuffer, g_engine->_smallFont, slotNumber, startX, y, overlayW, kNumberColor);
 		drawText(_compositeBuffer, g_engine->_smallFont, slotText, startX + slotNumberWidth, y, overlayW - slotNumberWidth, textColor);
 
-		if(_editingSaveSlot == slot) {
+		if (_editingSaveSlot == slot) {
 			// Draw cursor
 			int cursorX = startX + slotNumberWidth + g_engine->_smallFont->getStringWidth(slotText);
 			drawText(_compositeBuffer, g_engine->_smallFont, Common::String(kCursorChar), cursorX, y, overlayW - (cursorX - startX), kWhiteColor);
