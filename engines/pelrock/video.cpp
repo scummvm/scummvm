@@ -26,8 +26,7 @@
 #include "pelrock/chrono.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/util.h"
-#include "pelrock/video/video.h"
-#include "video.h"
+#include "pelrock/video.h"
 
 namespace Pelrock {
 
@@ -59,6 +58,7 @@ void VideoManager::playIntro() {
 		return;
 	}
 	videoFile.seek(0, SEEK_SET);
+
 
 	_videoSurface.fillRect(Common::Rect(0, 0, 640, 400), 0);
 	_textSurface.fillRect(Common::Rect(0, 0, 640, 400), 255);
@@ -107,6 +107,9 @@ void VideoManager::playIntro() {
 				_introSndFile.read(voiceBuffer, voiceData.length);
 				_sound->playSound(voiceBuffer, voiceData.length, 0);
 			}
+
+
+
 
 			if (_sfxEffect.contains(currentFrame)) {
 				AudioEffect sfx = _sfxEffect[currentFrame];

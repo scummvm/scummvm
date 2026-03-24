@@ -50,7 +50,7 @@
 #include "pelrock/room.h"
 #include "pelrock/sound.h"
 #include "pelrock/types.h"
-#include "pelrock/video/video.h"
+#include "pelrock/video.h"
 
 namespace Pelrock {
 
