@@ -1173,12 +1173,11 @@ void ColonyEngine::makeMessageRect(Common::Rect &rr) {
 
 void ColonyEngine::doText(int entry, int center) {
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(Common::Path("T.DAT"));
+	if (!file)
+		file = Common::MacResManager::openFileOrDataFork(Common::Path("Tdata"));
 	if (!file) {
-		file = Common::MacResManager::openFileOrDataFork(Common::Path("CData/Tdata"));
-		if (!file) {
-			warning("doText: Could not open text file");
-			return;
-		}
+		warning("doText: Could not open text file");
+		return;
 	}
 
 	uint32 entries = file->readUint32BE();

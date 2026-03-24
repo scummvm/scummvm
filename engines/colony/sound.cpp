@@ -44,9 +44,7 @@ void Sound::init() {
 	// Must be called from run() after SearchMan has the game data path.
 	_resMan = new Common::MacResManager();
 	if (!_resMan->open("Zounds")) {
-		if (!_resMan->open("CData/Zounds")) {
-			debugC(1, kColonyDebugSound, "Could not open Zounds resource file");
-		}
+		debugC(1, kColonyDebugSound, "Could not open Zounds resource file");
 	}
 
 	// Open Colony application binary (contains snd resources for

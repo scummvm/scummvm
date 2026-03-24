@@ -88,13 +88,8 @@ void ColonyEngine::loadMap(int mnum) {
 	Common::Path mapPath(Common::String::format("MAP.%d", mnum));
 	Common::SeekableReadStream *file = Common::MacResManager::openFileOrDataFork(mapPath);
 	if (!file) {
-		// Try Mac-style path
-		mapPath = Common::Path(Common::String::format("CData/map.%d", mnum));
-		file = Common::MacResManager::openFileOrDataFork(mapPath);
-		if (!file) {
-			warning("Could not open map file %s", mapPath.toString().c_str());
-			return;
-		}
+		warning("Could not open map file %s", mapPath.toString().c_str());
+		return;
 	}
 
 	file->readUint32BE(); // "DAVE" header
