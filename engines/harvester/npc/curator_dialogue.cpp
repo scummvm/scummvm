@@ -27,13 +27,47 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kCuratorNpc = "CURATOR";
+static const char *const kPcSpeaker = "PC";
+static const int kCuratorResponseLine = 0x4a;
+
+static const DialogueLineEntry kCuratorTailLines[] = {
+	{ 0x43a, kCuratorNpc, 0 },
+	{ 0x43b, kCuratorNpc, 0 },
+	{ 0x447, kPcSpeaker, 0 },
+	{ 0x44b, kCuratorNpc, 3 }
+};
+
+} // End of namespace
+
 bool CuratorDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("CURATOR");
+	return npcName.equalsIgnoreCase(kCuratorNpc);
 }
 
 Common::Error CuratorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLineWithVariant(0x425, "CURATOR", 1);
+	Common::Error lineError = runtime.playDialogueLineWithVariant(0x425, kCuratorNpc, 1);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(kCuratorResponseLine, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1) {
+		lineError = runtime.playDialogueLineWithVariant(0x430, kCuratorNpc, 3);
+	} else if (responseIndex == 2) {
+		lineError = runtime.playDialogueLineWithVariant(0x435, kCuratorNpc, 0);
+	} else {
+		lineError = Common::kNoError;
+	}
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	return runtime.playDialogueEntrySequence(kCuratorTailLines, ARRAYSIZE(kCuratorTailLines));
 }
 
 } // End of namespace Harvester
