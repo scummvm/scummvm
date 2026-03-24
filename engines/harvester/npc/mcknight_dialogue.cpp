@@ -28,26 +28,50 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kMcknightNpc = "MCKNIGHT";
+static const char *const kPcSpeaker = "PC";
+
+} // End of namespace
+
 bool McknightDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("MCKNIGHT");
+	return npcName.equalsIgnoreCase(kMcknightNpc);
 }
 
 Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &) {
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	auto playMcknightLine = [&](int wavId, int headVariant = 0) -> Common::Error {
-		return runtime.playDialogueLineWithVariant(wavId, "MCKNIGHT", headVariant);
+		return runtime.playDialogueLineWithVariant(wavId, kMcknightNpc, headVariant);
+	};
+	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
+	};
+	auto playSequence = [&](const DialogueLineEntry *lines, uint count) -> Common::Error {
+		return runtime.playDialogueEntrySequence(lines, count);
 	};
 
 	if (runtime.startupScript().getFlagValue("LOOK_SAFE_2ND"))
 		return playMcknightLine(0x15d0, 2);
 
-	if (runtime.startupScript().getFlagValue("LOOK_SAFE_1ST") && !_state.lookSafeFirstLineGate)
+	if (runtime.startupScript().getFlagValue("LOOK_SAFE_1ST") && !_state.lookSafeFirstLineGate) {
+		_state.lookSafeFirstLineGate = true;
 		return playMcknightLine(0x15c9, 2);
+	}
 
 	if (usedItemName.empty()) {
 		if (_state.talkStatePending) {
 			_state.talkStatePending = false;
-			return playMcknightLine(0x1587, 2);
+			sharedState.dialogueStateD2f04 = true;
+			const DialogueLineEntry lines[] = {
+				{ 0x1587, kMcknightNpc, 2 },
+				{ 0x158b, kPcSpeaker, 0 },
+				{ 0x158f, kMcknightNpc, 0 },
+				{ 0x1594, kPcSpeaker, 0 },
+				{ 0x1598, kMcknightNpc, 2 },
+				{ 0x159d, kPcSpeaker, 0 }
+			};
+			return playSequence(lines, sizeof(lines) / sizeof(lines[0]));
 		}
 		return playMcknightLine(0x15e4);
 	}
@@ -59,7 +83,21 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
-		return playMcknightLine(0x15f2);
+		Common::Error lineError = playMcknightLine(0x15f2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		if (sharedState.dialogueStateD2ebc) {
+			lineError = playPcLine(0x15f8);
+			if (lineError.getCode() != Common::kNoError)
+				return lineError;
+			return playMcknightLine(0x15fd);
+		}
+
+		lineError = playPcLine(0x1605);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return playMcknightLine(0x1609);
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
@@ -72,7 +110,14 @@ Common::Error McknightDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
-		return playMcknightLine(0x161b, 1);
+		const DialogueLineEntry lines[] = {
+			{ 0x161b, kMcknightNpc, 1 },
+			{ 0x1621, kPcSpeaker, 0 },
+			{ 0x1626, kMcknightNpc, 3 },
+			{ 0x162b, kPcSpeaker, 4 },
+			{ 0x1631, kMcknightNpc, 0 }
+		};
+		return playSequence(lines, sizeof(lines) / sizeof(lines[0]));
 	}
 
 	return playMcknightLine(0x15de);
