@@ -27,13 +27,54 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kLodgeChefNpc = "LODGE_CHEF";
+static const char *const kPcSpeaker = "PC";
+static const int kLodgeChefResponseLine = 0x21;
+
+static const DialogueLineEntry kLodgeChefIntroLines[] = {
+	{ 0x1b10, kLodgeChefNpc, 2 },
+	{ 0x1b19, kLodgeChefNpc, 0 },
+	{ 0x1b1a, kLodgeChefNpc, 3 },
+	{ 0x1b1b, kLodgeChefNpc, 0 }
+};
+
+static const DialogueLineEntry kLodgeChefTailLines[] = {
+	{ 0x1b36, kPcSpeaker, 0 },
+	{ 0x1b3a, kLodgeChefNpc, 3 }
+};
+
+} // End of namespace
+
 bool LodgeChefDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("LODGE_CHEF");
+	return npcName.equalsIgnoreCase(kLodgeChefNpc);
 }
 
 Common::Error LodgeChefDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	return runtime.playDialogueLineWithVariant(0x1b10, "LODGE_CHEF", 2);
+	Common::Error lineError = runtime.playDialogueEntrySequence(
+		kLodgeChefIntroLines, ARRAYSIZE(kLodgeChefIntroLines));
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(
+		kLodgeChefResponseLine, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1) {
+		lineError = runtime.playDialogueLineWithVariant(0x1b2c, kLodgeChefNpc, 3);
+	} else if (responseIndex == 2) {
+		lineError = runtime.playDialogueLineWithVariant(0x1b31, kLodgeChefNpc, 0);
+	} else {
+		lineError = Common::kNoError;
+	}
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	return runtime.playDialogueEntrySequence(kLodgeChefTailLines, ARRAYSIZE(kLodgeChefTailLines));
 }
 
 } // End of namespace Harvester
