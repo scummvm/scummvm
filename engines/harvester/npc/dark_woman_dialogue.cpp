@@ -29,24 +29,139 @@ namespace Harvester {
 
 namespace {
 
+static const char *const kDarkWomanNpc = "DARK_WOMAN";
 static const char *const kHandMirrorItemName = "HANDMIRROR";
+static const char *const kInventoryOwnerName = "INVENTORY";
+static const char *const kSetDarkWomanFlagActionTag = "SET_D_W_FLAG";
+static const char *const kDialogueC109FstPath = "GRAPHIC/FST/C109.FST";
+static const int kDarkWomanInitialResponseLine = 0x4b;
+static const int kDarkWomanSecondResponseLine = 0x4c;
+static const int kDarkWomanThirdResponseLine = 0x4d;
+static const int kDarkWomanHasMirrorResponseLine = 0x4e;
+static const int kDarkWomanNeedsMirrorResponseLine = 0x4f;
 
 } // End of namespace
 
 bool DarkWomanDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("DARK_WOMAN");
+	return npcName.equalsIgnoreCase(kDarkWomanNpc);
 }
 
 Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
+	auto playDarkWomanLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kDarkWomanNpc, headVariant);
+	};
+	auto queueDarkWomanDeathOrMonsterfyTransition = [&]() {
+		StartupInteractionResult interaction;
+		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc))
+			interaction.mutatedRuntimeState = true;
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+	};
+	auto runDarkWomanDeathBranch = [&]() -> Common::Error {
+		Common::Error lineError = playDarkWomanLine(0x4ce2, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		queueDarkWomanDeathOrMonsterfyTransition();
+		return Common::kNoError;
+	};
+	auto runMirrorRevealBranch = [&]() -> Common::Error {
+		Common::Error lineError = playDarkWomanLine(0x4d03, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = runtime.playDialogueFst(kDialogueC109FstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		lineError = playDarkWomanLine(0x4d0d, 3);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		const bool changed = runtime.startupScript().setRuntimeObjectVisible(
+			kInventoryOwnerName, kHandMirrorItemName, false);
+		StartupInteractionResult interaction;
+		if (runtime.startupScript().executeActionTag(kSetDarkWomanFlagActionTag, interaction)) {
+			interaction.mutatedRuntimeState |= changed;
+			runtime.applyImmediateDialogueInteractionEffects(interaction);
+		} else {
+			interaction.mutatedRuntimeState = changed;
+		}
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+		return Common::kNoError;
+	};
+
 	if (usedItemName.equalsIgnoreCase(kHandMirrorItemName))
-		return runtime.playDialogueLineWithVariant(0x4d03, "DARK_WOMAN", 2);
+		return runMirrorRevealBranch();
 
 	if (!_state.talkStatePending)
 		return Common::kNoError;
 
 	_state.talkStatePending = false;
-	return runtime.playDialogueLineWithVariant(0x4cd5, "DARK_WOMAN", 1);
+
+	Common::Error lineError = playDarkWomanLine(0x4cd5, 1);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(
+		kDarkWomanInitialResponseLine, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1)
+		return runDarkWomanDeathBranch();
+	if (responseIndex != 2)
+		return Common::kNoError;
+
+	lineError = playDarkWomanLine(0x4ce6, 4);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	responseIndex = 0;
+	responseError = runtime.runResponseMenu(
+		kDarkWomanSecondResponseLine, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1)
+		return runDarkWomanDeathBranch();
+	if (responseIndex != 2)
+		return Common::kNoError;
+
+	lineError = playDarkWomanLine(0x4ce6, 4);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	responseIndex = 0;
+	responseError = runtime.runResponseMenu(
+		kDarkWomanThirdResponseLine, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1)
+		return runDarkWomanDeathBranch();
+	if (responseIndex != 2)
+		return Common::kNoError;
+
+	lineError = playDarkWomanLine(0x4ce6, 4);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	const bool hasHandMirror = runtime.startupScript().isObjectInInventory(kHandMirrorItemName);
+	responseIndex = 0;
+	responseError = runtime.runResponseMenu(
+		hasHandMirror ? kDarkWomanHasMirrorResponseLine : kDarkWomanNeedsMirrorResponseLine,
+		responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1)
+		return runDarkWomanDeathBranch();
+	if (!hasHandMirror)
+		return playDarkWomanLine(0x4cfc, 2);
+
+	return runMirrorRevealBranch();
 }
 
 } // End of namespace Harvester
