@@ -523,26 +523,31 @@ Common::Error MomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			return playMomLine(0x2317, 1);
 		}
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			return playSequence(kMomLedgerLines, ARRAYSIZE(kMomLedgerLines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			return playSequence(kMomCasketPhotoLines, ARRAYSIZE(kMomCasketPhotoLines));
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 			return playSequence(kMomWhaleyPhotoLines, ARRAYSIZE(kMomWhaleyPhotoLines));
 		}
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
+			sharedState.discussedTvDeedEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
 			return playMomLine(0x2382, 1);
 		}
