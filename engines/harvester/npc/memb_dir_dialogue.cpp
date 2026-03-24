@@ -27,20 +27,53 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kMembDirNpc = "MEMB_DIR";
+static const int kMembDirResponseLineIndex = 0xfe;
+
+} // End of namespace
+
 bool MembDirDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("MEMB_DIR");
+	return npcName.equalsIgnoreCase(kMembDirNpc);
 }
 
 Common::Error MembDirDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	if (!runtime.startupScript().getFlagValue("PC_KILLED_KEWPIE"))
-		return runtime.playDialogueLineWithVariant(0x2b7, "MEMB_DIR", 1);
+	auto playMembDirLine = [&](int wavId, int headVariant = 0) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(wavId, kMembDirNpc, headVariant);
+	};
+
+	if (!runtime.startupScript().getFlagValue("PC_KILLED_KEWPIE")) {
+		Common::Error lineError = playMembDirLine(0x2b7, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		int responseIndex = 0;
+		Common::Error responseError = runtime.runResponseMenu(kMembDirResponseLineIndex, responseIndex);
+		if (responseError.getCode() != Common::kNoError)
+			return responseError;
+
+		if (responseIndex == 1)
+			return playMembDirLine(0x2c2);
+		if (responseIndex == 2)
+			return playMembDirLine(0x2cb);
+
+		return Common::kNoError;
+	}
 
 	if (_state.kewpieKillLinePlayed)
 		return Common::kNoError;
 
 	_state.kewpieKillLinePlayed = true;
-	return runtime.playDialogueLineWithVariant(0x2d5, "MEMB_DIR", 1);
+	Common::Error lineError = playMembDirLine(0x2d5, 1);
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	if (runtime.startupScript().getFlagValue("TOOK_THE_DOLL"))
+		return playMembDirLine(0x2e3);
+
+	return playMembDirLine(0x2ea);
 }
 
 } // End of namespace Harvester
