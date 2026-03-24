@@ -30,12 +30,22 @@ class SwellDialogueHandler : public NpcDialogueHandler {
 public:
 	struct SwellRoomDialogueState {
 		bool talkStatePending = true;
+		bool stephMidgameShown = false;
+		bool barberPoleStolenShown = false;
+		bool boltOfClothTakenShown = false;
+		bool burnedTvStationShown = false;
+		bool karinKidnapedShown = false;
 	};
 
 	bool matchesNpc(const Common::String &npcName) const override;
 	void resetState() override { _state = SwellRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);
+		syncDialogueBool(s, _state.stephMidgameShown, 13);
+		syncDialogueBool(s, _state.barberPoleStolenShown, 13);
+		syncDialogueBool(s, _state.boltOfClothTakenShown, 13);
+		syncDialogueBool(s, _state.burnedTvStationShown, 13);
+		syncDialogueBool(s, _state.karinKidnapedShown, 13);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
