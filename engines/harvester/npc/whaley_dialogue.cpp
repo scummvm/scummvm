@@ -110,14 +110,6 @@ static const DialogueLineEntry kWhaleyDay5Response2Lines[] = {
 	{ 0x13df, "WHALEY", 2 }
 };
 
-static const DialogueLineEntry kWhaleyKarinKidnapedLines[] = {
-	{ 0x13e5, "WHALEY", 0 },
-	{ 0x13ee, "WHALEY", 1 },
-	{ 0x13f3, "PC", 0 },
-	{ 0x13f8, "WHALEY", 0 },
-	{ 0x13ff, "WHALEY", 0 }
-};
-
 static const DialogueLineEntry kWhaleyBurnedTvStationLines[] = {
 	{ 0x14f7, "WHALEY", 1 },
 	{ 0x14fe, "WHALEY", 1 },
@@ -278,6 +270,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+			sharedState.discussedCasketPhotoEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 			Common::Error lineError = playSequence(kWhaleyCasketPhotoLines,
 				ARRAYSIZE(kWhaleyCasketPhotoLines));
@@ -300,6 +293,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+			sharedState.discussedLedgerEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 			return playSequence(kWhaleyLedgerLines, ARRAYSIZE(kWhaleyLedgerLines));
 		}
@@ -308,6 +302,7 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 			return playSequence(kWhaleyBlackmailLines, ARRAYSIZE(kWhaleyBlackmailLines));
 		}
@@ -401,15 +396,25 @@ Common::Error WhaleyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (runtime.startupScript().getFlagValue("KARIN_KIDNAPED") &&
 			!state.karinKidnapedShown) {
 		state.karinKidnapedShown = true;
+		Common::Error lineError = playWhaleyLine(0x13e5, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
 		sharedState.karinKidnapedDialogueState = true;
-
-		Common::Error lineError = playSequence(kWhaleyKarinKidnapedLines,
-			ARRAYSIZE(kWhaleyKarinKidnapedLines));
+		lineError = playWhaleyLine(0x13ee, 1);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playPcLine(0x13f3, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playWhaleyLine(0x13f8, 0);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = playWhaleyLine(0x13ff, 0);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 	}
 
-	if (runtime.startupScript().getFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill) &&
+	if (sharedState.discussedWhaleyHerrillPhoto != 0 &&
 			!state.whaleyHerrillPhotoFollowupShown) {
 		state.whaleyHerrillPhotoFollowupShown = true;
 		Common::Error lineError = playWhaleyLine(0x14dd, 2);
