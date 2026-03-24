@@ -499,7 +499,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `handle_talk_to_pta_mom @ 0x34e30` is now constrained to a compact one-screen exchange.
     - If `PTA_RESPOND_TO_TV` is set, it plays `0x3233` with `PTA_MOM1` head variant `2`, clears that flag, and returns without opening the response menu.
     - Otherwise it chooses one of three random opener lines, `0x31ee`, `0x31f2`, or `0x31f6`, all spoken as `PTA_MOM1` with head variant `1`, then opens zero-based `dialog.rsp` line `0x297`.
-    - Response `1` plays `0x3204` then `0x320b`, both as `PTA_MOM1` with head variant `2`.
+    - Response `1` plays `0x3204` as `PTA_MOM1` with head variant `2`, then `0x320b` as `PTA_MOM1` with head variant `0`.
     - Response `2` plays `0x320f` then `0x3213`, both as `PTA_MOM1` with head variant `0`.
     - Response `3` plays `0x3217`, `0x321c`, `0x3221`, and `0x3226`, where `0x3221` is the only `PC` line and the others stay on `PTA_MOM1` head variant `0`.
   - `handle_talk_to_nude_man @ 0x2d9b0` is now bounded enough for a direct startup-room port.
