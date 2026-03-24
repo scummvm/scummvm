@@ -75,7 +75,7 @@ bool SwellDialogueHandler::matchesNpc(const Common::String &npcName) const {
 }
 
 Common::Error SwellDialogueHandler::handleDialogue(DialogueRuntime &runtime,
-		const Common::String &usedItemName, DialogueSharedState &) {
+		const Common::String &usedItemName, DialogueSharedState &sharedState) {
 	auto playSwellLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kSwellNpc, headVariant);
 	};
@@ -89,17 +89,20 @@ Common::Error SwellDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 		return playSwellLine(0xfc6, 1);
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 		return playSwellLine(0xfcd);
 	}
 	if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
+		sharedState.discussedLedgerEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
 		return playSequence(kSwellLedgerLines, ARRAYSIZE(kSwellLedgerLines));
 	}
@@ -107,6 +110,7 @@ Common::Error SwellDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 		return playSwellLine(0xfe6, 1);
 	}
@@ -172,8 +176,7 @@ Common::Error SwellDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (selectedTopic.empty())
 			return Common::kNoError;
 
-		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesResponseLine(selectedTopic, kSwellExitTopicLine))
+		if (runtime.matchesResponseLine(selectedTopic, kSwellExitTopicLine))
 			return playSwellLine(0xff1, 1);
 
 		if (runtime.matchesAnyResponseLine(selectedTopic, kSwellTopicBranchAResponseLines,
