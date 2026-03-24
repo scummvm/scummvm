@@ -58,7 +58,7 @@ private:
 	
 	// Each plane is 320x200 (40 bytes per row)
 	// Plane 0-2: Different pace stars, Plane 3: Scrolling text
-	uint8 _planes[4][40*200]; 
+	uint8 *_planes[4]; 
 	
 	int _thisLine;
 	int _nextBitline;

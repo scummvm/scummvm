@@ -38,16 +38,25 @@
 namespace Avalanche {
 
 Intro::Intro(AvalancheEngine *vm) : _vm(vm), _thisLine(0), _nextBitline(16), _cutOut(false), _displayCounter(0) {
-	resetPlanes();
+	// Allocate planes on the heap to avoid large stack allocations
+	for (int i = 0; i < 4; i++) {
+		_planes[i] = new uint8[40 * 200];
+	}
 	_musicHandle = new Audio::SoundHandle();
 }
 
 Intro::~Intro() {
+	// Delete planes
+	for (int i = 0; i < 4; i++) {
+		delete[] _planes[i];
+	}
 	delete _musicHandle;
 }
 
 void Intro::resetPlanes() {
-	memset(_planes, 0, sizeof(_planes));
+	for (int i = 0; i < 4; i++) {
+		memset(_planes[i], 0, 40 * 200);
+	}
 }
 
 void Intro::loadText() {
