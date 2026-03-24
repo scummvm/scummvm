@@ -20,7 +20,6 @@
  */
 #include "common/savefile.h"
 
-#include "pelrock.h"
 #include "pelrock/pelrock.h"
 #include "pelrock/types.h"
 

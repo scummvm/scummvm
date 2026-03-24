@@ -35,7 +35,6 @@
 
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
-#include "sound.h"
 
 namespace Pelrock {
 

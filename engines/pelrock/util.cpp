@@ -26,7 +26,6 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/types.h"
 #include "pelrock/util.h"
-#include "util.h"
 
 namespace Pelrock {
 

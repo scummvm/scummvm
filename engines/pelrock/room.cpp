@@ -23,7 +23,6 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
-#include "room.h"
 
 namespace Pelrock {
 

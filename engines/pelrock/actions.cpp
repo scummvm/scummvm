@@ -24,7 +24,6 @@
 #include "audio/mixer.h"
 #include "graphics/paletteman.h"
 
-#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/backgroundbook.h"
 #include "pelrock/cdplayer.h"

@@ -24,6 +24,7 @@
 #define PELROCK_CONSOLE_H
 
 #include "gui/debugger.h"
+
 #include "pelrock/pelrock.h"
 
 namespace Pelrock {

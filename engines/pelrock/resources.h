@@ -23,6 +23,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+
 #include "pelrock/offsets.h"
 #include "pelrock/types.h"
 

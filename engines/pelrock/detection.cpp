@@ -26,6 +26,7 @@
 #include "common/str-array.h"
 #include "common/translation.h"
 #include "common/util.h"
+
 #include "pelrock/detection.h"
 #include "pelrock/detection_tables.h"
 

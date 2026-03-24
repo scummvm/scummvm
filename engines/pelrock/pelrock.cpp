@@ -27,7 +27,6 @@
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
-#include "pelrock.h"
 #include "pelrock/actions.h"
 #include "pelrock/computer.h"
 #include "pelrock/console.h"

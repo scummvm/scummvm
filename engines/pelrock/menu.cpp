@@ -26,7 +26,6 @@
 #include "graphics/paletteman.h"
 #include "graphics/thumbnail.h"
 
-#include "menu.h"
 #include "pelrock/menu.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"

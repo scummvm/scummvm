@@ -20,7 +20,6 @@
  */
 #include "common/stack.h"
 
-#include "dialog.h"
 #include "pelrock/dialog.h"
 #include "pelrock/offsets.h"
 #include "pelrock/pelrock.h"
