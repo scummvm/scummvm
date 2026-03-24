@@ -118,7 +118,7 @@ int PCSpeakerStream::readBuffer(int16 *buffer, const int numSamples) {
 			// Note that this will end playback started by the play method.
 			Command command = _commandQueue->pop();
 			_wave = command.waveForm;
-			_oscLength = (uint32)(_rate / command.frequency);
+			_oscLength = command.frequency > 0 ? (uint32)(_rate / command.frequency) : 0;
 			_oscSamples = 0;
 			// Length is in microseconds.
 			_remainingSamples = ((uint64)_rate * (uint64)command.length) / 1000000;
