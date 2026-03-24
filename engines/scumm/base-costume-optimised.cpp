@@ -1291,6 +1291,249 @@ void ByleRLEDecode_Scaled_Classic_SMask(
 	} while (true);
 }
 
+// Each column spans _height pixels starting at compData.y:
+//
+//   compData.y  ┌────────────────┐
+//               │   blankTop     │  skipped
+//  boundsRect   ├────────────────┤
+//  .top         │                │
+//               │  activeHeight  │  mask check + pixel write
+//               │                │
+//  boundsRect   ├────────────────┤
+//  .bottom      │  blankBottom   │  skipped
+//               └────────────────┘  (compData.y + _height)
+//
+// Optimisation, instead of this:
+//
+// uint16 blankLinesOnBotRem = blankLinesOnBot;
+// ...
+// below = batch < blankLinesOnBotRem ? batch : blankLinesOnBotRem;
+// batch -= below;
+// assert(batch == 0);
+// blankLinesOnBotRem -= below;
+// dst  += below * pitch;
+// mask += below * _numStrips;
+// ...
+// blankLinesOnBotRem = blankLinesOnBot;
+//
+// we use just:
+//
+// dst  += batch * pitch;
+// mask += batch * _numStrips;
+void ByleRLEDecode_Mode0_YClip(
+	BaseCostumeRenderer::ByleRLEData *pcompData,
+	const byte _scaleX, /* unused */
+	const byte _scaleY, /* unused */
+	const int _height,
+	const int pitch,
+	const int _numStrips,
+	const byte *_srcPtr,
+	const byte *_shadowTable, /* unused */
+	const uint16 *_palette) {
+
+	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+
+	const byte *src = _srcPtr;
+
+	uint16 len = compData.repLen;
+	uint16 color = compData.repColor;
+
+	const int activeTop = compData.y;
+	const int clipTop   = compData.boundsRect.top;
+	const int clipBot   = compData.boundsRect.bottom;
+
+	const uint16 blankLinesOnTop = (activeTop < clipTop) ? (clipTop - activeTop) : 0;
+	const uint16 blankLinesOnBot = (activeTop + _height > clipBot) ? (activeTop + _height - clipBot) : 0;
+	const uint16 activeLines     = _height - blankLinesOnTop - blankLinesOnBot;
+
+	assert(blankLinesOnTop + activeLines + blankLinesOnBot == _height);
+
+	// reset every column
+	byte *dst = compData.destPtr;
+	uint16 blankLinesOnTopRem = blankLinesOnTop;
+	uint16 activeLinesRem = activeLines;
+	uint16 height = _height;
+	byte maskbit = revBitMask(compData.x & 7);
+	const byte *mask = compData.maskPtr + compData.x / 8;
+
+	uint16 above, active, batch;
+	if (len) {
+		--len;
+		goto StartPos;
+	}
+
+	do {
+		len = *src++;
+		color = len >> compData.shr;
+		len &= compData.mask;
+		if (!len)
+			len = *src++;
+
+		do {
+			batch = height < len ? height : len;
+			len -= batch;
+			height -= batch;
+
+			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
+
+			// blank top: skip
+			above = batch < blankLinesOnTopRem ? batch : blankLinesOnTopRem;
+			batch -= above;
+			blankLinesOnTopRem -= above;
+			dst  += above * pitch;
+			mask += above * _numStrips;
+
+			// active lines: draw or skip transparent
+			active = batch < activeLinesRem ? batch : activeLinesRem;
+			batch -= active;
+			activeLinesRem -= active;
+			if (color) {
+				while (active--) {
+					if (!(*mask & maskbit))
+						*dst = _palette[color];
+					dst  += pitch;
+					mask += _numStrips;
+				}
+			} else {
+				dst  += active * pitch;
+				mask += active * _numStrips;
+			}
+
+			// blank bottom: skip
+			dst  += batch * pitch;
+			mask += batch * _numStrips;
+
+			if (height == 0) {
+				if (--compData.skipWidth == 0)
+					return;
+				height = _height;
+
+				blankLinesOnTopRem = blankLinesOnTop;
+				activeLinesRem     = activeLines;
+
+				compData.x += compData.scaleXStep;
+				maskbit = revBitMask(compData.x & 7);
+				compData.destPtr += compData.scaleXStep;
+
+				dst = compData.destPtr;
+				mask = compData.maskPtr + compData.x / 8;
+			}
+		StartPos:;
+		} while (len > 0);
+	} while (true);
+}
+
+void ByleRLEDecode_Mode1_YClip(
+	BaseCostumeRenderer::ByleRLEData *pcompData,
+	const byte _scaleX, /* unused */
+	const byte _scaleY, /* unused */
+	const int _height,
+	const int pitch,
+	const int _numStrips,
+	const byte *_srcPtr,
+	const byte *_shadowTable,
+	const uint16 *_palette) {
+
+	BaseCostumeRenderer::ByleRLEData &compData = *pcompData;
+	//warning("%s: unexpected call, save your game and report", __FUNCTION__);
+
+	const byte *src = _srcPtr;
+
+	uint16 len = compData.repLen;
+	uint16 color = compData.repColor;
+
+	const int activeTop = compData.y;
+	const int clipTop   = compData.boundsRect.top;
+	const int clipBot   = compData.boundsRect.bottom;
+
+	const uint16 blankLinesOnTop = (activeTop < clipTop) ? (clipTop - activeTop) : 0;
+	const uint16 blankLinesOnBot = (activeTop + _height > clipBot) ? (activeTop + _height - clipBot) : 0;
+	const uint16 activeLines     = _height - blankLinesOnTop - blankLinesOnBot;
+
+	assert(blankLinesOnTop + activeLines + blankLinesOnBot == _height);
+
+	// reset every column
+	byte *dst = compData.destPtr;
+	uint16 blankLinesOnTopRem = blankLinesOnTop;
+	uint16 activeLinesRem = activeLines;
+	uint16 height = _height;
+	byte maskbit = revBitMask(compData.x & 7);
+	const byte *mask = compData.maskPtr + compData.x / 8;
+
+	uint16 above, active, batch;
+	if (len) {
+		--len;
+		goto StartPos;
+	}
+
+	do {
+		len = *src++;
+		color = len >> compData.shr;
+		len &= compData.mask;
+		if (!len)
+			len = *src++;
+
+		do {
+			batch = height < len ? height : len;
+			len -= batch;
+			height -= batch;
+
+			assert(compData.x >= compData.boundsRect.left && compData.x < compData.boundsRect.right);
+
+			// blank top: skip
+			above = batch < blankLinesOnTopRem ? batch : blankLinesOnTopRem;
+			batch -= above;
+			blankLinesOnTopRem -= above;
+			dst  += above * pitch;
+			mask += above * _numStrips;
+
+			// active lines: draw or skip transparent
+			active = batch < activeLinesRem ? batch : activeLinesRem;
+			batch -= active;
+			activeLinesRem -= active;
+
+			if (color) {
+				while (active--) {
+					if (!(*mask & maskbit)) {
+						uint16 pcolor = _palette[color];
+						if (pcolor == 13) {
+							*dst = _shadowTable[*dst];
+						} else {
+							*dst = pcolor;
+						}
+					}
+					dst  += pitch;
+					mask += _numStrips;
+				}
+			} else {
+				dst  += active * pitch;
+				mask += active * _numStrips;
+			}
+
+			// blank bottom: skip
+			dst  += batch * pitch;
+			mask += batch * _numStrips;
+
+			if (height == 0) {
+				if (--compData.skipWidth == 0)
+					return;
+				height = _height;
+
+				blankLinesOnTopRem = blankLinesOnTop;
+				activeLinesRem     = activeLines;
+
+				compData.x += compData.scaleXStep;
+				maskbit = revBitMask(compData.x & 7);
+				compData.destPtr += compData.scaleXStep;
+
+				dst = compData.destPtr;
+				mask = compData.maskPtr + compData.x / 8;
+			}
+		StartPos:;
+		} while (len > 0);
+	} while (true);
+}
+
 enum class ShadowMode : int {
 	Mode0,
 	Mode1,
@@ -1352,8 +1595,8 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 		}
 	}
 
+	const int scaled = (_scaleX != 255 || _scaleY != 255);
 	if (compData.y >= compData.boundsRect.top && compData.y + compData.scaledHeight <= compData.boundsRect.bottom) {
-		const int scaled = (_scaleX != 255 || _scaleY != 255);
 		if (!scaled) {
 			byleRLEDecodeNoScaleTable[static_cast<int>(shadowMode)](
 				&compData,
@@ -1380,9 +1623,36 @@ void BaseCostumeRenderer::byleRLEDecodeFast(ByleRLEData &compData, const byte *x
 				_palette);
 		}
 		return;
+	} else if (!scaled) {
+		if (shadowMode == ShadowMode::Mode0) {
+			ByleRLEDecode_Mode0_YClip(
+				&compData,
+				_scaleX,
+				_scaleY,
+				_height,
+				_out.pitch,
+				_numStrips,
+				_srcPtr,
+				shadowTable,
+				_palette);
+			return;
+		} else if (shadowMode == ShadowMode::Mode1) {
+			ByleRLEDecode_Mode1_YClip(
+				&compData,
+				_scaleX,
+				_scaleY,
+				_height,
+				_out.pitch,
+				_numStrips,
+				_srcPtr,
+				shadowTable,
+				_palette);
+			return;
+		}
 	}
 
-	warning("%s: unexpected call, save your game and report: %d (%d, %d, %d, %d)", __FUNCTION__, (int)shadowMode,
+	if (!scaled)
+		warning("%s: unexpected call, save your game and report: %d (%d, %d, %d, %d)", __FUNCTION__, (int)shadowMode,
 			compData.y, compData.boundsRect.top, compData.y + compData.scaledHeight, compData.boundsRect.bottom);
 
 	const byte *src = _srcPtr;
