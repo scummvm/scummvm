@@ -323,6 +323,19 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			quit();
 			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kDreamWebActionEscape:
+				_lastHardKey = Common::KEYCODE_ESCAPE;
+				break;
+			case kDreamWebActionSkip:
+				_lastHardKey = Common::KEYCODE_SPACE;
+				break;
+			default:
+				break;
+			}
+			break;
+
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags & Common::KBD_CTRL) {
 				switch (event.kbd.keycode) {

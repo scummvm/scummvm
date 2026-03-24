@@ -19,6 +19,10 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/savefile.h"
 #include "common/translation.h"
 
@@ -109,6 +113,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 
+	Common::KeymapArray initKeymaps(const char *target) const override;
+
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
@@ -120,6 +126,28 @@ public:
 			return Common::String::format("DREAMWEB.D%02d", saveGameIdx);
 	}
 };
+
+Common::KeymapArray DreamWebMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "dreamweb", "DreamWeb");
+
+	Action *act;
+
+	act = new Action(kStandardActionSkip, _("Escape / menu"));
+	act->setCustomEngineActionEvent(DreamWeb::kDreamWebActionEscape);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip / advance text"));
+	act->setCustomEngineActionEvent(DreamWeb::kDreamWebActionSkip);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
+}
 
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
