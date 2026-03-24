@@ -84,11 +84,13 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	}
 
 	if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
+		sharedState.discussedWhaleyHerrillPhoto = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
 		return runtime.playDialogueEntrySequence(kRyderWhaleyPhotoLines, ARRAYSIZE(kRyderWhaleyPhotoLines));
 	}
 	if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 			usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
+		sharedState.discussedCasketPhotoEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
 		return playRyderLine(0x54f, 1);
 	}
@@ -96,6 +98,7 @@ Common::Error RyderDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("NOTE_PHOTOCOPY") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 			usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
+		sharedState.discussedNoteCheckbookEvidence = 1;
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
 		return runtime.playDialogueEntrySequence(
 			kRyderBlackmailEvidenceLines, ARRAYSIZE(kRyderBlackmailEvidenceLines));
