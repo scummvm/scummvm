@@ -28,13 +28,47 @@
 
 namespace Harvester {
 
+namespace {
+
+static const char *const kLibrarianNpc = "LIBRARIAN";
+static const char *const kPcSpeaker = "PC";
+static const char *const kRahRoomName = "RAH";
+static const int kLibrarianResponseLineIndex = 0xfa;
+
+static const DialogueLineEntry kLibrarianCainbookTradeLines[] = {
+	{ 0x1db1, kLibrarianNpc, 1 },
+	{ 0x1db7, kPcSpeaker, 0 },
+	{ 0x1dbb, kLibrarianNpc, 0 },
+	{ 0x1dc2, kPcSpeaker, 4 },
+	{ 0x1dc6, kLibrarianNpc, 0 }
+};
+
+static const DialogueLineEntry kLibrarianIntroLines[] = {
+	{ 0x1d5b, kLibrarianNpc, 0 },
+	{ 0x1d5f, kPcSpeaker, 0 },
+	{ 0x1d63, kLibrarianNpc, 2 },
+	{ 0x1d67, kPcSpeaker, 0 },
+	{ 0x1d6c, kLibrarianNpc, 0 },
+	{ 0x1d77, kLibrarianNpc, 0 }
+};
+
+static const DialogueLineEntry kLibrarianNoItemFollowupLines[] = {
+	{ 0x1d8f, kLibrarianNpc, 0 },
+	{ 0x1d94, kPcSpeaker, 0 },
+	{ 0x1d98, kLibrarianNpc, 0 },
+	{ 0x1da1, kPcSpeaker, 0 },
+	{ 0x1da5, kLibrarianNpc, 0 }
+};
+
+} // End of namespace
+
 bool LibrarianDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("LIBRARIAN");
+	return npcName.equalsIgnoreCase(kLibrarianNpc);
 }
 
 Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
-	auto hasInventoryItem = [&](const char *objectName) {
+	auto hasVisibleInventoryItem = [&](const char *objectName) {
 		Common::Array<StartupObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
 		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
@@ -44,14 +78,52 @@ Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		return false;
 	};
+	auto playSequence = [&](const DialogueLineEntry *lines, uint count) {
+		return runtime.playDialogueEntrySequence(lines, count);
+	};
+	auto completeCainbookTrade = [&]() -> Common::Error {
+		(void)runtime.startupScript().addRuntimeObjectToInventory("CLUE");
 
-	if (!hasInventoryItem("CLUE") && !hasInventoryItem("CAINBOOK")) {
-		if (usedItemName.empty() || !usedItemName.equalsIgnoreCase("CAINBOOK"))
-			return runtime.playDialogueLine(0x1d5b, "LIBRARIAN");
+		Common::Error lineError = playSequence(
+			kLibrarianCainbookTradeLines, ARRAYSIZE(kLibrarianCainbookTradeLines));
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		(void)runtime.startupScript().setRuntimeObjectVisible(
+			kRahRoomName, "CAINBOOK", false);
+		return Common::kNoError;
+	};
+
+	if (!hasVisibleInventoryItem("CLUE") && hasVisibleInventoryItem("CAINBOOK"))
+		return completeCainbookTrade();
+
+	if (!usedItemName.empty()) {
+		if (!usedItemName.equalsIgnoreCase("CAINBOOK"))
+			return runtime.playDialogueLine(0x1d5b, kLibrarianNpc);
+
+		return completeCainbookTrade();
 	}
 
-	(void)runtime.startupScript().addRuntimeObjectToInventory("CLUE");
-	return runtime.playDialogueLine(0x1db1, "LIBRARIAN");
+	Common::Error lineError = playSequence(kLibrarianIntroLines, ARRAYSIZE(kLibrarianIntroLines));
+	if (lineError.getCode() != Common::kNoError)
+		return lineError;
+
+	int responseIndex = 0;
+	Common::Error responseError = runtime.runResponseMenu(kLibrarianResponseLineIndex, responseIndex);
+	if (responseError.getCode() != Common::kNoError)
+		return responseError;
+
+	if (responseIndex == 1) {
+		lineError = runtime.playDialogueLine(0x1d85, kLibrarianNpc);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	} else if (responseIndex == 2) {
+		lineError = runtime.playDialogueLineWithVariant(0x1d8b, kLibrarianNpc, 4);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
+
+	return playSequence(kLibrarianNoItemFollowupLines, ARRAYSIZE(kLibrarianNoItemFollowupLines));
 }
 
 } // End of namespace Harvester
