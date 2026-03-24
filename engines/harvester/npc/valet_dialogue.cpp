@@ -30,14 +30,22 @@ namespace Harvester {
 namespace {
 
 static const char *const kValetSpeakerId = "VALET";
+static const char *const kPcSpeakerId = "PC";
 static const char *const kValetCutscenePath = "GRAPHIC/FST/MIDGET02.FST";
+static const int kValetResponseLineIndex = 0x2fe;
+static const int kValetFirstResponseIndex = 1;
+static const int kValetSecondResponseIndex = 2;
 
 static const DialogueLineEntry kValetIntroLines[] = {
 	{ 0xf2c, kValetSpeakerId, 1 },
-	{ 0xf31, "PC", 0 },
+	{ 0xf31, kPcSpeakerId, 0 },
 	{ 0xf35, kValetSpeakerId, 0 },
-	{ 0xf39, "PC", 0 }
+	{ 0xf39, kPcSpeakerId, 0 }
 };
+
+static const DialogueLineEntry kValetFirstResponseLine = { 0xf4a, kValetSpeakerId, 0 };
+static const DialogueLineEntry kValetSecondResponseLine = { 0xf50, kValetSpeakerId, 2 };
+static const DialogueLineEntry kValetExitLine = { 0xf56, kValetSpeakerId, 0 };
 
 } // End of namespace
 
@@ -47,6 +55,10 @@ bool ValetDialogueHandler::matchesNpc(const Common::String &npcName) const {
 
 Common::Error ValetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
+	auto playValetLine = [&](const DialogueLineEntry &line) -> Common::Error {
+		return runtime.playDialogueLineWithVariant(line.wavId, line.speakerId, line.headVariant);
+	};
+
 	Common::Error lineError = runtime.playDialogueEntrySequence(kValetIntroLines, ARRAYSIZE(kValetIntroLines));
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
@@ -56,19 +68,19 @@ Common::Error ValetDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return lineError;
 
 	int responseIndex = 0;
-	Common::Error responseError = runtime.runResponseMenu(0x2fe, responseIndex);
+	Common::Error responseError = runtime.runResponseMenu(kValetResponseLineIndex, responseIndex);
 	if (responseError.getCode() != Common::kNoError)
 		return responseError;
 
-	if (responseIndex == 1) {
-		lineError = runtime.playDialogueLine(0xf4a, kValetSpeakerId);
-	} else if (responseIndex == 2) {
-		lineError = runtime.playDialogueLineWithVariant(0xf50, kValetSpeakerId, 2);
+	if (responseIndex == kValetFirstResponseIndex) {
+		lineError = playValetLine(kValetFirstResponseLine);
+	} else if (responseIndex == kValetSecondResponseIndex) {
+		lineError = playValetLine(kValetSecondResponseLine);
 	}
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	return runtime.playDialogueLine(0xf56, kValetSpeakerId);
+	return playValetLine(kValetExitLine);
 }
 
 } // End of namespace Harvester
