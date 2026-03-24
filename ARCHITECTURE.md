@@ -867,6 +867,8 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
     - It writes the matching record's `active` / `visible` bytes, removes the current-room render entity when visibility clears, respawns it through `spawn_npc_entity_from_record` when visibility becomes set, and mirrors the `active` byte onto the live entity state at `+0x52`.
   - `queue_named_npc_death_or_monsterfy_transition` at `0x7c940` is the name-based `KILL_NPC` / `MONSTERFY` helper.
     - It resolves the live NPC render entity when present, translates `BLUDGE` / `SLASH` / `PROJ` into the pending damage-type values `1` / `2` / `4`, queues `queue_npc_death_or_monsterfy_transition`, and preserves the pending damage-type selection on the record when no live entity exists yet.
+  - `queue_live_named_npc_death_or_monsterfy_transition` at `0x7ca90` is the live-entity-only wrapper used by the Beggar talk path.
+    - It resolves the named live NPC render entity and forwards to `queue_npc_death_or_monsterfy_transition` only when that render entity exists, without touching the persisted `NpcRecord`.
   - `is_named_npc_death_type_clear` at `0x7c840` is the talk-handler predicate shared by `handle_talk_to_mom` and `handle_talk_to_dwayne`.
     - It resolves the named `NpcRecord` and returns true only while `death_damage_type` is still zero, so dialogue branches stop treating that NPC as available after a persisted kill / monsterfy transition has been latched.
   - `room_setup` walks the room-matching NPC list after room animations and before the player handoff, which is why `PCLIVRM` needs the `SET_PC_LIV_DAY -> SET_NPC "HANK" "T" "T"` startup chain to materialize Hank in the living room.
