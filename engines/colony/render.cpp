@@ -942,7 +942,7 @@ void ColonyEngine::renderCorridor3D() {
 	// --- Phase 2: Walls ---
 	// Depth test + write enabled. Pushed-back depth range so features/objects beat walls.
 	_gfx->setDepthState(true, true);
-	_gfx->setDepthRange(0.01, 1.0);
+	_gfx->setDepthRange(0.01f, 1.0f);
 	_gfx->setWireframe(true, wallFill);
 
 	for (int y = 0; y < 32; y++) {
@@ -960,12 +960,12 @@ void ColonyEngine::renderCorridor3D() {
 	// --- Phase 3: Wall & cell features ---
 	// Closer depth range than walls  features always beat their own wall surface.
 	// Depth test still active so far-away features are hidden behind nearer walls.
-	_gfx->setDepthRange(0.005, 1.0);
+	_gfx->setDepthRange(0.005f, 1.0f);
 	drawWallFeatures3D();
 
 	// --- Phase 4: Objects ---
 	// Full depth range  objects beat walls and features at the same distance.
-	_gfx->setDepthRange(0.0, 1.0);
+	_gfx->setDepthRange(0.0f, 1.0f);
 
 	// F7 toggles object fill.
 	// EGA: default is filled (wall background); F7 = outline-only (see-through).

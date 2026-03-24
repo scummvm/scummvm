@@ -1337,12 +1337,12 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kObjCChair:
 		for (int i = 0; i < 5; i++) {
-			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((4 - i) * 0.002f, 1.0f);
 			// Flat quad parts (seat, arms, back) need forceVisible to avoid
 			// edge-on culling; box base (i==4) uses normal culling.
 			draw3DPrism(obj, kCChairParts[i], false, -1, true, i < 4);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjPlant:
 		// DOS MakePlant draw order: top pot, then green leaf lines, then pot on top.
@@ -1355,24 +1355,24 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kObjChair: {
 		const PrismPartDef *parts = (obj.type == kObjCouch) ? kCouchParts : kChairParts;
 		for (int i = 0; i < 4; i++) {
-			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((3 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, parts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	}
 	case kObjTV:
-		_gfx->setDepthRange(0.002, 1.0); // body base layer (pushed back)
+		_gfx->setDepthRange(0.002f, 1.0f); // body base layer (pushed back)
 		draw3DPrism(obj, kTVParts[0], false, -1, true, false);
-		_gfx->setDepthRange(0.0, 1.0);   // screen on top of body face
+		_gfx->setDepthRange(0.0f, 1.0f);   // screen on top of body face
 		draw3DPrism(obj, kTVParts[1], false, -1, true, false);
 		break;
 	case kObjDrawer:
 		for (int i = 0; i < 2; i++) {
-			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kDrawerParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjFWall:
 		if (_renderMode == Common::kRenderMacintosh)
@@ -1391,27 +1391,27 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kObjTable:
 		for (int i = 0; i < 2; i++) {
-			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kTableParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjBed:
 	case kObjBBed: {
 		const PrismPartDef *parts = (obj.type == kObjBBed) ? kBBedParts : kBedParts;
 		for (int i = 0; i < 3; i++) {
-			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((2 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, parts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	}
 	case kObjDesk:
 		for (int i = 0; i < 10; i++) {
-			_gfx->setDepthRange((9 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((9 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kDeskParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjBox1:
 		draw3DPrism(obj, kBox1Part, false, -1, true, false);
@@ -1421,15 +1421,15 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		break;
 	case kObjCBench:
 		for (int i = 0; i < 2; i++) {
-			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kCBenchParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjBox2:
-		_gfx->setDepthRange(0.002, 1.0);
+		_gfx->setDepthRange(0.002f, 1.0f);
 		draw3DPrism(obj, kBox2Parts[1], false, -1, true, false); // base first
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DPrism(obj, kBox2Parts[0], false, -1, true, false); // top second
 		break;
 	case kObjReactor: {
@@ -1500,15 +1500,15 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 
 		// Depth separation matches the original draw order closely, but the
 		// per-face colors now follow MakeReactor() exactly.
-		_gfx->setDepthRange(0.004, 1.0);
+		_gfx->setDepthRange(0.004f, 1.0f);
 		draw3DPrism(obj, modTopDef, false, -1, true, false);
-		_gfx->setDepthRange(0.002, 1.0);
+		_gfx->setDepthRange(0.002f, 1.0f);
 		draw3DPrism(obj, modRingDef, false, -1, true, false);
 		if (_coreState[_coreIndex] < 2) {
-			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthRange(0.0f, 1.0f);
 			draw3DPrism(obj, modCoreDef, false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	}
 	case kObjPowerSuit: {
@@ -1518,10 +1518,10 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		int sourceColor = kSuitCycle[_displayCount % 6];
 
 		for (int i = 0; i < 4; i++) {
-			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((4 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kPowerSuitParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DPrism(obj, kPowerSuitParts[4], false, sourceColor, true, false);
 		break;
 	}
@@ -1529,9 +1529,9 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		draw3DPrism(obj, kTelePart, false, -1, true, false);
 		break;
 	case kObjCryo:
-		_gfx->setDepthRange(0.002, 1.0);
+		_gfx->setDepthRange(0.002f, 1.0f);
 		draw3DPrism(obj, kCryoParts[1], false, -1, true, false); // base first
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DPrism(obj, kCryoParts[0], false, -1, true, false); // top second
 		break;
 	case kObjProjector: {
@@ -1541,66 +1541,66 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		// depth range bucket rather than true inter-part depth sorting.
 		const bool lensFrontVisible = isProjectedPrismSurfaceVisible(_screenR, obj, kProjectorParts[2], false, 6,
 															_me.look, _me.lookY, _me.xloc, _me.yloc, _sint, _cost);
-		_gfx->setDepthRange(0.008, 1.0);
+		_gfx->setDepthRange(0.008f, 1.0f);
 		draw3DPrism(obj, kTableParts[1], false, -1, true, false); // table base
-		_gfx->setDepthRange(0.006, 1.0);
+		_gfx->setDepthRange(0.006f, 1.0f);
 		draw3DPrism(obj, kTableParts[0], false, -1, true, false); // table top
-		_gfx->setDepthRange(0.004, 1.0);
+		_gfx->setDepthRange(0.004f, 1.0f);
 		draw3DPrism(obj, kProjectorParts[1], false, -1, true, true); // stand
 		if (lensFrontVisible) {
-			_gfx->setDepthRange(0.002, 1.0);
+			_gfx->setDepthRange(0.002f, 1.0f);
 			draw3DPrism(obj, kProjectorParts[0], false, -1, true, false); // body
-			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthRange(0.0f, 1.0f);
 			draw3DPrism(obj, kProjectorParts[2], false, -1, true, false); // lens
 		} else {
-			_gfx->setDepthRange(0.002, 1.0);
+			_gfx->setDepthRange(0.002f, 1.0f);
 			draw3DPrism(obj, kProjectorParts[2], false, -1, true, false); // lens
-			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthRange(0.0f, 1.0f);
 			draw3DPrism(obj, kProjectorParts[0], false, -1, true, false); // body
 		}
 		break;
 	}
 	case kObjTub:
 		for (int i = 0; i < 2; i++) {
-			_gfx->setDepthRange((1 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((1 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kTubParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjSink:
 		for (int i = 0; i < 3; i++) {
-			_gfx->setDepthRange((2 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((2 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kSinkParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjToilet:
 		for (int i = 0; i < 4; i++) {
-			_gfx->setDepthRange((3 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((3 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kToiletParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjPToilet:
 		for (int i = 0; i < 5; i++) {
-			_gfx->setDepthRange((4 - i) * 0.002, 1.0);
+			_gfx->setDepthRange((4 - i) * 0.002f, 1.0f);
 			draw3DPrism(obj, kPToiletParts[i], false, -1, true, false);
 		}
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kObjForkLift:
 		// Draw order: forks, arms, treads, cab (back-to-front)
-		_gfx->setDepthRange(0.010, 1.0);
+		_gfx->setDepthRange(0.010f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[3], false, -1, true, false); // FLLL (left fork)
-		_gfx->setDepthRange(0.008, 1.0);
+		_gfx->setDepthRange(0.008f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[2], false, -1, true, false); // FLUL (left arm)
-		_gfx->setDepthRange(0.006, 1.0);
+		_gfx->setDepthRange(0.006f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[5], false, -1, true, false); // FLLR (right fork)
-		_gfx->setDepthRange(0.004, 1.0);
+		_gfx->setDepthRange(0.004f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[4], false, -1, true, false); // FLUR (right arm)
-		_gfx->setDepthRange(0.002, 1.0);
+		_gfx->setDepthRange(0.002f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[1], false, -1, true, false); // treads
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DPrism(obj, kForkliftParts[0], false, -1, true, false); // cab
 		break;
 	// === Robot types (1-20) ===
@@ -1613,17 +1613,17 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 		drawEyeOverlays3D(obj, kEyeIrisDef, -1, kEyePupilDef, pupilColor, false);
 		break;
 	case kRobPyramid:
-		_gfx->setDepthRange(0.030, 1.0);
+		_gfx->setDepthRange(0.030f, 1.0f);
 		draw3DPrism(obj, kPShadowDef, false, -1, true, false);
-		_gfx->setDepthRange(0.020, 1.0);
+		_gfx->setDepthRange(0.020f, 1.0f);
 		draw3DPrism(obj, kPyramidBodyDef, false, -1, true, false);
-		_gfx->setDepthRange(0.004, 1.0);
+		_gfx->setDepthRange(0.004f, 1.0f);
 		_gfx->setDepthState(true, false);
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack, true);
 		drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
 		_gfx->setDepthState(true, true);
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kRobCube:
 		// DOS CUBE.C: body + draweye() (same shared eye as Pyramid/UPyramid)
@@ -1636,17 +1636,17 @@ bool ColonyEngine::drawStaticObjectPrisms3D(Thing &obj) {
 	case kRobUPyramid:
 		// DOS UPYRAMID.C: draweye() drawn first, then shadow, then body.
 		// Same eye geometry as Pyramid (shared draweye function).
-		_gfx->setDepthRange(0.030, 1.0);
+		_gfx->setDepthRange(0.030f, 1.0f);
 		draw3DPrism(obj, kUPShadowDef, false, -1, true, false);
-		_gfx->setDepthRange(0.020, 1.0);
+		_gfx->setDepthRange(0.020f, 1.0f);
 		draw3DPrism(obj, kUPyramidBodyDef, false, -1, true, false);
-		_gfx->setDepthRange(0.004, 1.0);
+		_gfx->setDepthRange(0.004f, 1.0f);
 		_gfx->setDepthState(true, false);
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		draw3DSphere(obj, 0, 0, 175, 0, 0, 200, eyeballColor, kColorBlack, true);
 		drawEyeOverlays3D(obj, kPIrisDef, -1, kPPupilDef, pupilColor, false);
 		_gfx->setDepthState(true, true);
-		_gfx->setDepthRange(0.0, 1.0);
+		_gfx->setDepthRange(0.0f, 1.0f);
 		break;
 	case kRobFEye:
 		draw3DSphere(obj, 0, 0, 0, 0, 0, 100, eyeballColor, kColorBlack, true);

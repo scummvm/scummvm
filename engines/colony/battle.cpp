@@ -792,10 +792,10 @@ void ColonyEngine::battleDrawTanks() {
 			// on top of the coplanar entrance wall (same fill color,
 			// but the black outline becomes clearly visible).
 			_gfx->setDepthState(true, false);
-			_gfx->setDepthRange(0.0, 0.999);
+			_gfx->setDepthRange(0.0f, 0.999f);
 			draw3DBattlePrism(kEntDoorDef, _battleEnter.xloc, _battleEnter.yloc,
 				_battleEnter.ang, -kFloor);
-			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthRange(0.0f, 1.0f);
 			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleEnter;
@@ -847,10 +847,10 @@ void ColonyEngine::battleDrawTanks() {
 			draw3DBattlePrism(kFRightDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
 			_gfx->setDepthState(true, false);
-			_gfx->setDepthRange(0.0, 0.999);
+			_gfx->setDepthRange(0.0f, 0.999f);
 			draw3DBattlePrism(kSDoorDef, _battleShip.xloc, _battleShip.yloc,
 				_battleShip.ang, -kFloor);
-			_gfx->setDepthRange(0.0, 1.0);
+			_gfx->setDepthRange(0.0f, 1.0f);
 			_gfx->setDepthState(true, true);
 			if (_battleMaxP < 100) {
 				_battlePwh[_battleMaxP] = &_battleShip;
@@ -1196,7 +1196,7 @@ void ColonyEngine::renderBattle() {
 
 	// Phase 4: 3D objects with depth testing.
 	_gfx->setDepthState(true, true);
-	_gfx->setDepthRange(0.0, 1.0);
+	_gfx->setDepthRange(0.0f, 1.0f);
 
 	// Draw pyramids (obstacles)
 	battleDrawPyramids();

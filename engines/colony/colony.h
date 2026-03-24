@@ -47,7 +47,7 @@ class FrameLimiter;
 class MacMenu;
 class MacWindowManager;
 class ManagedSurface;
-class Surface;
+struct Surface;
 }
 
 namespace Colony {
