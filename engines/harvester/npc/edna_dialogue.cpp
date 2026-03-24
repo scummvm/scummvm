@@ -166,16 +166,19 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
+			sharedState.discussedCasketPhotoEvidence = 1;
 			return playEdnaLine(0x3bd6);
 		}
 		if ((usedItemName.equalsIgnoreCase("LEDGER") ||
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				startupScript.getFlagValue("HAVE_BOTH_LEDGERS")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+			sharedState.discussedLedgerEvidence = 1;
 			return playEdnaLine(0x3bd6);
 		}
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			return playEdnaLine(0x3bde, 2);
 		}
 		if (usedItemName.equalsIgnoreCase("NOTE") ||
@@ -183,11 +186,13 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			return playEdnaLine(0x3be5, 2);
 		}
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 			(void)startupScript.setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
+			sharedState.discussedTvDeedEvidence = 1;
 			return playEdnaLine(0x3bee);
 		}
 
@@ -394,8 +399,7 @@ Common::Error EdnaDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		if (runtime.matchesResponseLine(selectedTopic, 0xa6)) {
 			if (!startupScript.getFlagValue("KARIN_KIDNAPED") &&
-					!startupScript.getFlagValue("KARIN_FOUND_DEAD") &&
-					!startupScript.getFlagValue("KARIN_FOUND_ALIVE")) {
+					!startupScript.getFlagValue("KARIN_FOUND_DEAD")) {
 				Common::Error lineError = playEdnaLine(0x3ad9, 1);
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
