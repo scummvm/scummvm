@@ -243,6 +243,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			usedItemName.equalsIgnoreCase("TV_DEED") ||
 			usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
+		sharedState.discussedNoteCheckbookEvidence = 1;
 		Common::Error lineError = playLoomisLine(0x1209);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
@@ -273,6 +274,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("LEDGER2")) &&
 			runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 		(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+		sharedState.discussedLedgerEvidence = 1;
 		return playLoomisLine(0x1229);
 	}
 	if (usedItemName.equalsIgnoreCase("INV_MAG")) {
