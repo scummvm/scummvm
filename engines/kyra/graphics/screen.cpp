@@ -1426,8 +1426,22 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				fnt->load(str);
 			}
 		} else if (fontId == FID_KOREAN_FNT) {
-			const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
-			fnt = new JohabFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
+			if (_vm->game() == GI_KYRA2) {
+				Common::Array<Font*> *fa = new Common::Array<Font*>;
+				fa->push_back(new KoreanOneByteFontHOF(SCREEN_W));
+				fa->push_back(new KoreanTwoByteFontHOF(SCREEN_W));
+				fnt = new MultiSubsetFont(fa);
+				// Load 1-byte (ASCII) font from ENGLISH.FNT first, then
+				// the main KOREAN.FNT call below will load the 2-byte glyphs.
+				Common::SeekableReadStream *engFile = _vm->resource()->createReadStream("ENGLISH.FNT");
+				if (engFile) {
+					fnt->load(*engFile);
+					delete engFile;
+				}
+			} else {
+				const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
+				fnt = new JohabFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
+			}
 		} else {
 			fnt = new DOSFont();
 		}

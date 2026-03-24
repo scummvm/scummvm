@@ -109,4 +109,29 @@ void ChineseTwoByteFontHOF::processColorMap() {
 	_pixelColorShading = !(_colorMap[1] == 207 || _colorMap[1] > 240);
 }
 
+void KoreanOneByteFontHOF::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+	_pixelColorShading = false;
+}
+
+uint32 KoreanTwoByteFontHOF::getFontOffset(uint16 c) const {
+	// fetchChar() stores: first byte (EUC-KR high) in low 8 bits,
+	// second byte (EUC-KR low) in high 8 bits. So:
+	//   c & 0xFF = first byte (high byte of EUC-KR, 0xB0-0xC8)
+	//   c >> 8   = second byte (low byte of EUC-KR, 0xA1-0xFE)
+	uint8 high = c & 0xFF;
+	uint8 low = (c >> 8) & 0xFF;
+	if (high < 0xB0 || high > 0xC8 || low < 0xA1 || low > 0xFE)
+		return 0;
+	uint32 index = (high - 0xB0) * 94 + (low - 0xA1);
+	return index * 18; // 10x9 pixels, 2 bytes/row, 9 rows = 18 bytes/glyph
+}
+
+void KoreanTwoByteFontHOF::processColorMap() {
+	_textColor[0] = _colorMap[1];
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+	_pixelColorShading = false;
+}
+
 } // End of namespace Kyra

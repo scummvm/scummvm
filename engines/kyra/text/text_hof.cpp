@@ -86,6 +86,12 @@ char *TextDisplayer_HoF::preprocessString(const char *str) {
 	if (_vm->gameFlags().lang == Common::ZH_TWN)
 		return _talkBuffer;
 
+	// Korean fan translation: delegate to base class which already handles
+	// 2-byte character width measurement with FID_KOREAN_FNT and has
+	// correct maxTextWidth limits for Korean text.
+	if (_vm->gameFlags().lang == Common::KO_KOR)
+		return TextDisplayer::preprocessString(_talkBuffer);
+
 	char *p = _talkBuffer;
 	while (*p) {
 		if (*p == '\r')
@@ -424,7 +430,7 @@ void KyraEngine_HoF::randomSceneChat() {
 
 void KyraEngine_HoF::updateDlgBuffer() {
 	static const char suffixTalkie[] = "EFG";
-	static const char suffixTowns[] = "G  J";
+	static const char suffixTowns[] = "G  J K";
 
 	if (_currentChapter == _npcTalkChpIndex && _mainCharacter.dlgIndex == _npcTalkDlgIndex)
 		return;
@@ -434,11 +440,18 @@ void KyraEngine_HoF::updateDlgBuffer() {
 
 	Common::String filename = Common::String::format("CH%.02d-S%.02d.DL", _currentChapter, _npcTalkDlgIndex);
 
-	const char *suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
-	if (_flags.platform != Common::kPlatformDOS || _flags.isTalkie)
-		filename += suffix[_lang];
-	else
-		filename += 'G';
+	// Korean fan translation always uses .DLK regardless of talkie/platform.
+	// suffixTalkie[] = "EFG" only covers _lang 0-2; _lang=5 (KO_KOR) would
+	// be an out-of-bounds read, so we handle it explicitly before the lookup.
+	if (_flags.lang == Common::KO_KOR) {
+		filename += 'K';
+	} else {
+		const char *suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
+		if (_flags.platform != Common::kPlatformDOS || _flags.isTalkie)
+			filename += suffix[_lang];
+		else
+			filename += 'G';
+	}
 
 	delete[] _dlgBuffer;
 	_dlgBuffer = _res->fileData(filename.c_str(), nullptr);

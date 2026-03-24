@@ -729,6 +729,42 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA2_FLOPPY_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
 
+	{ // Korean fan translation (based on FM-TOWNS).
+		// Detection language is KO_KOR so the entry is distinguishable from the
+		// base EN_ANY FM-Towns entries (all share the same WSCORE.PAK hash).
+		// kyra.dat does not carry KO_KOR data; loadStaticResourceFile() falls
+		// back to replacedLang (EN_ANY) automatically for fan translations.
+		{
+			"kyra2",
+			nullptr,
+			AD_ENTRY2s("WSCORE.PAK", "c44de1302b67f27d4707409987b7a685", AD_NO_SIZE,
+					   "KOREAN.FNT", "6b32ad695188e82b770a7739ffeb57db", 42300),
+			Common::KO_KOR,
+			Common::kPlatformFMTowns,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_RENDERFMTOWNS)
+		},
+		FLAGS_FAN(Common::KO_KOR, Common::EN_ANY, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+	},
+
+	{ // Korean fan translation (based on DOS CD), English voice + Korean subtitles.
+		// Detection language is KO_KOR so the entry is distinguishable from the
+		// base EN_ANY CD entry (both share the same FATE.PAK hash). kyra.dat does
+		// not carry KO_KOR data; loadStaticResourceFile() falls back to
+		// replacedLang (EN_ANY) automatically for fan translations.
+		{
+			"kyra2",
+			"CD",
+			AD_ENTRY2s("FATE.PAK", "28cbad1c5bf06b2d3825ae57d760d032", AD_NO_SIZE,
+					   "KOREAN.FNT", "6b32ad695188e82b770a7739ffeb57db", 42300),
+			Common::KO_KOR,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_CD_FAN_FLAGS(Common::KO_KOR, Common::EN_ANY)
+	},
+
 	{ // CD version
 		{
 			"kyra2",

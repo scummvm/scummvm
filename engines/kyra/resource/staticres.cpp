@@ -157,7 +157,33 @@ bool StaticResource::loadStaticResourceFile() {
 		if (!res->loadPakFile(staticDataFilename(), *i))
 			continue;
 
-		if ((setLanguage(_vm->gameFlags().lang) && prefetchId(-1))) {
+		// Fan translations (e.g. Korean) may provide only a subset of
+		// resources in kyra.dat (e.g. intro strings).  Load the base
+		// (replaced) language first, then merge fan language entries on
+		// top — only replacing IDs that the fan language provides.
+		if (_vm->gameFlags().fanLang != Common::UNK_LANG &&
+		    _vm->gameFlags().replacedLang != Common::UNK_LANG) {
+			if ((setLanguage(_vm->gameFlags().replacedLang) && prefetchId(-1))) {
+				foundWorkingKyraDat = true;
+				// Merge: load the fan language ID map WITHOUT clearing
+				// existing _dataTable entries, then reload only the
+				// IDs that changed.
+				Common::SeekableReadStream *fanMap = loadIdMap(_vm->gameFlags().fanLang);
+				if (fanMap) {
+					int numIDs = fanMap->readUint16BE();
+					while (numIDs--) {
+						uint16 id2 = fanMap->readUint16BE();
+						uint8 type = fanMap->readByte();
+						uint32 filename = fanMap->readUint32BE();
+						_dataTable[id2] = DataDescriptor(filename, type);
+						unloadId(id2);
+						prefetchId(id2);
+					}
+					delete fanMap;
+				}
+				break;
+			}
+		} else if ((setLanguage(_vm->gameFlags().lang) && prefetchId(-1))) {
 			foundWorkingKyraDat = true;
 			break;
 		}
@@ -1455,7 +1481,8 @@ const char *const KyraEngine_HoF::_languageExtension[] = {
 	"ITA",      Italian and Spanish were never included
 	"SPA"*/
 	"JPN",
-	"POL"
+	"POL",
+	"KOR"
 };
 
 const char *const KyraEngine_HoF::_scriptLangExt[] = {

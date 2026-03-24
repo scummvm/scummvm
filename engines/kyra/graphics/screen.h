@@ -410,6 +410,26 @@ private:
 	void processColorMap() override;
 };
 
+class KoreanOneByteFontHOF final : public ChineseFont {
+public:
+	KoreanOneByteFontHOF(int pitch) : ChineseFont(pitch, 8, 9, 8, 10, 0, 0) {}
+	Type getType() const override { return kJohab; }
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return !(c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override { return (c & 0x7F) * 9; }
+	void processColorMap() override;
+};
+
+class KoreanTwoByteFontHOF final : public ChineseFont {
+public:
+	KoreanTwoByteFontHOF(int pitch) : ChineseFont(pitch, 10, 9, 10, 10, 0, 0) {}
+	Type getType() const override { return kJohab; }
+private:
+	bool hasGlyphForCharacter(uint16 c) const override { return (c & 0x80); }
+	uint32 getFontOffset(uint16 c) const override;
+	void processColorMap() override;
+};
+
 class MultiSubsetFont final : public Font {
 public:
 	MultiSubsetFont(Common::Array<Font*> *subsets) : Font(), _subsets(subsets) {}

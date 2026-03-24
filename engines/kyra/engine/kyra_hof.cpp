@@ -192,13 +192,11 @@ Common::Error KyraEngine_HoF::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_text = new TextDisplayer_HoF(this, _screen);
-	assert(_text);
-	_gui = new GUI_HoF(this);
-	assert(_gui);
-	_gui->initStaticData();
-	_tim = new TIMInterpreter(this, _screen, _system);
-	assert(_tim);
+	// Korean fan translation: kyra.dat was loaded with EN_ANY, now switch to KO_KOR
+	// so that file extensions and text handling all use Korean paths.
+	// Font loading must happen before initStaticData() which calls getFontHeight().
+	if (_flags.fanLang == Common::KO_KOR)
+		_flags.lang = Common::KO_KOR;
 
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
@@ -210,7 +208,21 @@ Common::Error KyraEngine_HoF::init() {
 		_screen->loadFont(_screen->FID_8_FNT, "8FAT.FNT");
 		_screen->loadFont(_screen->FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	}
+
+	if (_flags.lang == Common::KO_KOR) {
+		_screen->loadFont(Screen::FID_KOREAN_FNT, "KOREAN.FNT");
+		_defaultFont = Screen::FID_KOREAN_FNT;
+		_bookFont = Screen::FID_KOREAN_FNT;
+	}
 	_screen->setFont(_defaultFont);
+
+	_text = new TextDisplayer_HoF(this, _screen);
+	assert(_text);
+	_gui = new GUI_HoF(this);
+	assert(_gui);
+	_gui->initStaticData();
+	_tim = new TIMInterpreter(this, _screen, _system);
+	assert(_tim);
 
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);
@@ -293,6 +305,9 @@ void KyraEngine_HoF::startup() {
 	// for FM-TOWNS and DOS
 	_trackMap = _dosTrackMap;
 	_trackMapSize = _dosTrackMapSize;
+
+	// Restore the default font after intro sequences may have changed it
+	_screen->setFont(_defaultFont);
 
 	allocAnimObjects(1, 10, 30);
 
@@ -826,7 +841,7 @@ uint8 *KyraEngine_HoF::getTableEntry(uint8 *buffer, int id) {
 Common::String KyraEngine_HoF::getTableString(int id, uint8 *buffer, bool decode) {
 	Common::String string((char *)getTableEntry(buffer, id));
 
-	if (decode && _flags.lang != Common::JA_JPN) {
+	if (decode && _flags.lang != Common::JA_JPN && _flags.lang != Common::KO_KOR) {
 		string = Util::decodeString2(Util::decodeString1(string));
 	}
 
@@ -881,7 +896,7 @@ void KyraEngine_HoF::showChapterMessage(int id, int16 palIndex) {
 void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	Common::String str = getTableString(str1, _cCodeBuffer, true);
 
-	if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR) {
+	if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::KO_KOR && _flags.lang != Common::HE_ISR) {
 		if (uint32 i = (uint32)str.findFirstOf(' ') + 1) {
 			str.erase(0, i);
 			str.setChar(toupper(str[0]), 0);
@@ -889,7 +904,7 @@ void KyraEngine_HoF::updateCommandLineEx(int str1, int str2, int16 palIndex) {
 	}
 
 	if (str2 > 0) {
-		if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::HE_ISR)
+		if (_flags.lang != Common::ZH_TWN && _flags.lang != Common::JA_JPN && _flags.lang != Common::KO_KOR && _flags.lang != Common::HE_ISR)
 			str += " ";
 		if (_flags.lang == Common::HE_ISR)
 			str = getTableString(str2, _cCodeBuffer, 1) + " " + str + ".";
@@ -1006,6 +1021,12 @@ void KyraEngine_HoF::loadNPCScript() {
 
 		case 3:
 			filename[5] = 'J';
+			break;
+
+		case 5:
+			// Korean fan translation: no Korean NPC script exists, fall back
+			// to the English one (_NPCE.EMC) which is present on DOS CD.
+			filename[5] = 'E';
 			break;
 
 		default:
@@ -1928,15 +1949,27 @@ void KyraEngine_HoF::writeSettings() {
 		_flags.lang = Common::JA_JPN;
 		break;
 
+	case 5:
+		_flags.lang = Common::KO_KOR;
+		break;
+
 	case 0:
 	default:
 		_flags.lang = _langIntern ? Common::ZH_TWN : Common::EN_ANY;
 	}
 
-	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG
+	        && _flags.fanLang != Common::KO_KOR)
 		_flags.lang = _flags.fanLang;
 
-	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
+	// Korean fan translation: the detection entry now uses KO_KOR as the
+	// detection language with ADGF_DROPLANGUAGE, so we must write "ko" to
+	// config.  Writing "en" would cause the Advanced Detector to prefer the
+	// base EN_ANY CD entry on next launch, reverting to English.
+	if (_flags.fanLang == Common::KO_KOR)
+		ConfMan.set("language", Common::getLanguageCode(Common::KO_KOR));
+	else
+		ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
 	KyraEngine_v1::writeSettings();
 }

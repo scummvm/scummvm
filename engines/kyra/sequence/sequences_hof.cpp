@@ -389,7 +389,7 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 
 	memset(_hofDemoItemShapes, 0, sizeof(_hofDemoItemShapes));
 
-	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : ((_vm->gameFlags().lang == Common::KO_KOR) ? Screen::FID_KOREAN_FNT : Screen::FID_GOLDFONT_FNT));
 	_creditsFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT;
 	_creditsFont2 = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_GOLDFONT_FNT : Screen::FID_8_FNT;
 
@@ -463,7 +463,9 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 		int8 ls = 0;
 		Screen::FontId fid = Screen::FID_8_FNT;
 
-		if (_vm->gameFlags().lang == Common::JA_JPN) {
+		if (_vm->gameFlags().lang == Common::KO_KOR) {
+			fid = Screen::FID_KOREAN_FNT;
+		} else if (_vm->gameFlags().lang == Common::JA_JPN) {
 			fid = Screen::FID_SJIS_FNT;
 			ls = 1;
 		} else if (_vm->gameFlags().lang == Common::ZH_TWN) {
@@ -504,7 +506,7 @@ SeqPlayer_HOF::~SeqPlayer_HOF() {
 	delete _menu;
 
 	if (_vm->game() != GI_LOL)
-		_screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT));
+		_screen->setFont(_vm->gameFlags().lang == Common::ZH_TWN ? Screen::FID_CHINESE_FNT : (_vm->gameFlags().lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : (_vm->gameFlags().lang == Common::KO_KOR ? Screen::FID_KOREAN_FNT : Screen::FID_8_FNT)));
 }
 
 int SeqPlayer_HOF::play(SequenceID firstScene, SequenceID loopStartScene) {

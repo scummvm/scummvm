@@ -96,6 +96,7 @@ const Game kyra2Games[] = {
 	{ kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP },
 	{ kKyra2, kPlatformDOS, kTalkieVersion, HE_ISR },
 	{ kKyra2, kPlatformDOS, kTalkieVersion, CS_CZE },
+	{ kKyra2, kPlatformDOS, kTalkieVersion, KO_KOR },
 
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, EN_ANY },
 	{ kKyra2, kPlatformFMTowns, kNoSpecial, JA_JPN },
