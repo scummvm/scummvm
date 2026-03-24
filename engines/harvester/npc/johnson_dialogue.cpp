@@ -131,12 +131,14 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (!usedItemName.empty()) {
 		if (usedItemName.equalsIgnoreCase("PHOTO_OF_WHALEY_HERRILL")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfWhaleyHerrill, true);
+			sharedState.discussedWhaleyHerrillPhoto = 1;
 			return runtime.playDialogueEntrySequence(
 				kJohnsonWhaleyPhotoLines, ARRAYSIZE(kJohnsonWhaleyPhotoLines));
 		}
 		if (usedItemName.equalsIgnoreCase("CASKET_PHOTO") ||
 				usedItemName.equalsIgnoreCase("CASKET_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownPhotoOfCorpse, true);
+			sharedState.discussedCasketPhotoEvidence = 1;
 			Common::Error lineError = playJohnsonLine(0xb89, 1);
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
@@ -154,6 +156,7 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					usedItemName.equalsIgnoreCase("LEDGER2")) &&
 				runtime.startupScript().getFlagValue("HAVE_BOTH_LEDGERS")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownLedgersToAnyone, true);
+			sharedState.discussedLedgerEvidence = 1;
 			return runtime.playDialogueEntrySequence(
 				kJohnsonLedgerLines, ARRAYSIZE(kJohnsonLedgerLines));
 		}
@@ -162,11 +165,13 @@ Common::Error JohnsonDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				usedItemName.equalsIgnoreCase("CHECKBOOK") ||
 				usedItemName.equalsIgnoreCase("CHECKBOOK_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceOfBlackmail, true);
+			sharedState.discussedNoteCheckbookEvidence = 1;
 			return playJohnsonLine(0xbb1, 1);
 		}
 		if (usedItemName.equalsIgnoreCase("TV_DEED") ||
 				usedItemName.equalsIgnoreCase("TV_DEED_PHOTOCOPY")) {
 			(void)runtime.startupScript().setRuntimeFlagValue(DialogueFlags::kShownEvidenceSheriffOwns, true);
+			sharedState.discussedTvDeedEvidence = 1;
 			return playJohnsonLine(0xbce, 1);
 		}
 
