@@ -681,6 +681,7 @@ uint32 ColonyEngine::resolveAnimColor(int16 bmEntry) const {
 }
 
 void ColonyEngine::drawAnimation() {
+	// Full clear required: OpenGL framebuffer is undefined between frames.
 	_gfx->clear(0);
 
 	// Center 416x264 animation area on screen (from original InitDejaVu)
