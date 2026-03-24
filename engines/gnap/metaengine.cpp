@@ -28,6 +28,11 @@
 #include "base/plugins.h"
 #include "graphics/thumbnail.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+#include "common/translation.h"
+
 class GnapMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
@@ -37,6 +42,7 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
+	Common::KeymapArray initKeymaps(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -141,6 +147,46 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray GnapMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "gnap", "Gnap!");
+
+	Action *act;
+
+	act = new Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(Gnap::kGnapPause);
+	act->addDefaultInputMapping("p");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionSkip, _("Skip / Menu"));
+	act->setCustomEngineActionEvent(Gnap::kGnapSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("CONFIRM", _("Confirm"));
+	act->setCustomEngineActionEvent(Gnap::kGnapConfirm);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveLeft, _("Move Left"));
+	act->setCustomEngineActionEvent(Gnap::kGnapMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionMoveRight, _("Move Right"));
+	act->setCustomEngineActionEvent(Gnap::kGnapMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 Common::Error GnapMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

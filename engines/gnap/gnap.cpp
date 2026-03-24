@@ -299,6 +299,16 @@ void GnapEngine::updateEvents() {
   			_mouseButtonState._right = true;
   			_mouseClickState._right = true;
   			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kGnapPause:    _keyPressState[Common::KEYCODE_p] = true; break;
+			case kGnapSkip:     _keyPressState[Common::KEYCODE_ESCAPE] = true; break;
+			case kGnapConfirm:  _keyPressState[Common::KEYCODE_RETURN] = true; break;
+			case kGnapMoveLeft:  _keyPressState[Common::KEYCODE_LEFT] = true; break;
+			case kGnapMoveRight: _keyPressState[Common::KEYCODE_RIGHT] = true; break;
+			default: break;
+			}
+			break;
 		case Common::EVENT_QUIT:
 			quitGame();
 			break;
