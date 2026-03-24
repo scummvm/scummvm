@@ -31,11 +31,7 @@ namespace {
 
 static const char *const kPtaRespondToTvFlag = "PTA_RESPOND_TO_TV";
 static const char *const kPtaMomSpeakerId = "PTA_MOM1";
-
-static const DialogueLineEntry kPtaMomResponse1Lines[] = {
-	{ 0x3204, kPtaMomSpeakerId, 2 },
-	{ 0x320b, kPtaMomSpeakerId, 2 }
-};
+static const int kPtaMomResponseLineIndex = 0x297;
 
 static const DialogueLineEntry kPtaMomResponse2Lines[] = {
 	{ 0x320f, kPtaMomSpeakerId, 0 },
@@ -92,13 +88,18 @@ Common::Error PtaMomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return lineError;
 
 	int responseIndex = 0;
-	Common::Error responseError = runtime.runResponseMenu(0x297, responseIndex);
+	Common::Error responseError = runtime.runResponseMenu(kPtaMomResponseLineIndex, responseIndex);
 	if (responseError.getCode() != Common::kNoError)
 		return responseError;
 
 	switch (responseIndex) {
-	case 1:
-		return runtime.playDialogueEntrySequence(kPtaMomResponse1Lines, ARRAYSIZE(kPtaMomResponse1Lines));
+	case 1: {
+		lineError = playPtaMomLine(0x3204, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		return playPtaMomLine(0x320b, 0);
+	}
 	case 2:
 		return runtime.playDialogueEntrySequence(kPtaMomResponse2Lines, ARRAYSIZE(kPtaMomResponse2Lines));
 	case 3:
