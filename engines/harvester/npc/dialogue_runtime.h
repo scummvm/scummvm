@@ -21,11 +21,22 @@ struct DialogueLineEntry {
 
 class DialogueRuntime {
 public:
+	struct KeywordMenuSelectionState {
+		KeywordMenuSelectionState()
+			: fromTypedInput(false), fromEscape(false), fromGenericBye(false) {
+		}
+
+		bool fromTypedInput;
+		bool fromEscape;
+		bool fromGenericBye;
+	};
+
 	typedef std::function<Common::Error(int, const Common::String &, int)> PlayDialogueLineWithVariantFn;
 	typedef std::function<Common::Error(int, const Common::String &)> PlayDialogueLineFn;
 	typedef std::function<Common::Error(const DialogueLineEntry *, uint)> PlayDialogueEntrySequenceFn;
 	typedef std::function<Common::Error(const Common::String &)> PlayDialogueFstFn;
-	typedef std::function<Common::Error(const Common::String &, int, Common::String &)> RunKeywordMenuFn;
+	typedef std::function<Common::Error(const Common::String &, int, Common::String &,
+			KeywordMenuSelectionState &)> RunKeywordMenuFn;
 	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
 	typedef std::function<Common::Error(const Common::String &, int &)> RunResponseMenuTextFn;
 	typedef std::function<Common::Error()> RunGameOverScreenFn;
@@ -92,7 +103,8 @@ public:
 	Common::Error playDialogueFst(const Common::String &path) const { return _playDialogueFst(path); }
 	Common::Error runKeywordMenu(const Common::String &topicBuffer, int topicBufferLineIndex,
 			Common::String &selectedTopic) const {
-		return _runKeywordMenu(topicBuffer, topicBufferLineIndex, selectedTopic);
+		_lastKeywordSelection = KeywordMenuSelectionState();
+		return _runKeywordMenu(topicBuffer, topicBufferLineIndex, selectedTopic, _lastKeywordSelection);
 	}
 	Common::Error runResponseMenu(int responseLineIndex, int &responseIndex) const {
 		return _runResponseMenu(responseLineIndex, responseIndex);
@@ -112,6 +124,8 @@ public:
 			const int *responseLineIndices, uint responseLineCount) const {
 		return _matchesAnyResponseLine(selectedTopic, responseLineIndices, responseLineCount);
 	}
+	bool lastKeywordSelectionWasTypedInput() const { return _lastKeywordSelection.fromTypedInput; }
+	bool lastKeywordSelectionWasGenericBye() const { return _lastKeywordSelection.fromGenericBye; }
 	void queueDialogueInteractionIfNeeded(const StartupInteractionResult &interaction) const {
 		_queueDialogueInteractionIfNeeded(interaction);
 	}
@@ -141,6 +155,7 @@ private:
 	AssignTopicBufferFn _assignTopicBuffer;
 	MatchesResponseLineFn _matchesResponseLine;
 	MatchesAnyResponseLineFn _matchesAnyResponseLine;
+	mutable KeywordMenuSelectionState _lastKeywordSelection;
 	QueueDialogueInteractionIfNeededFn _queueDialogueInteractionIfNeeded;
 	ApplyImmediateDialogueInteractionEffectsFn _applyImmediateDialogueInteractionEffects;
 	GetRandomNumberFn _getRandomNumber;

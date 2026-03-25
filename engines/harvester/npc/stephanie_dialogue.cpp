@@ -38,6 +38,7 @@ static const char *const kDialogueC023AFstPath = "GRAPHIC/FST/C023A.FST";
 static const char *const kDialogueC025AFstPath = "GRAPHIC/FST/C025A.FST";
 static const char *const kDialogueC025BFstPath = "GRAPHIC/FST/C025B.FST";
 static const char *const kDialogueC007FstPath = "GRAPHIC/FST/C007.FST";
+static const int kStephanieSpyholeTopicLines[] = { 0x2f9, 0x2fa, 0x2fb, 0x2fc, 0x2fd };
 
 } // End of namespace
 
@@ -680,6 +681,8 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return menuError;
 		if (selectedTopic.empty())
 			return Common::kNoError;
+		if (runtime.lastKeywordSelectionWasGenericBye())
+			return playStephanieLine(0x46a4);
 		if (runtime.matchesResponseLine(selectedTopic, 0x2e5) ||
 				runtime.matchesResponseLine(selectedTopic, 0x2e6)) {
 			Common::Error lineError = playStephanieLine(0x4406);
@@ -866,11 +869,13 @@ Common::Error StephanieDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			assignStephanieTopicBuffer(0x2f8);
 			continue;
 		}
-		if (runtime.matchesResponseLine(selectedTopic, 0x2f9) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2fa) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2fb) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2fc) ||
-				runtime.matchesResponseLine(selectedTopic, 0x2fd)) {
+		// The spyhole continuation is a hidden typed-topic branch. Native only reaches
+		// it after the visible buffer has advanced to dialog.rsp[0x2f8], while the
+		// generic BYE path remains the immediate 0x46a4 exit.
+		if (stephanieTopicBufferLineIndex == 0x2f8 &&
+				runtime.lastKeywordSelectionWasTypedInput() &&
+				runtime.matchesAnyResponseLine(selectedTopic, kStephanieSpyholeTopicLines,
+					ARRAYSIZE(kStephanieSpyholeTopicLines))) {
 			state.playedSpyholeBranch = true;
 			Common::Error lineError = runtime.playDialogueLine(0x4a05, "PC");
 			if (lineError.getCode() != Common::kNoError)
