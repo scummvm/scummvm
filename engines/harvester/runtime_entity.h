@@ -71,7 +71,7 @@ public:
 
 	void setClassId(int classId) { _classId = classId; }
 	int getClassId() const { return _classId; }
-	void setAnchorMode(RuntimeEntityAnchorMode anchorMode) { _anchorMode = anchorMode; }
+	void setAnchorMode(RuntimeEntityAnchorMode anchorMode);
 	void setZExtent(float zExtent) { _zExtent = zExtent; }
 	float getZExtent() const { return _zExtent; }
 
@@ -131,6 +131,7 @@ private:
 	bool isOpaqueAt(const Common::Point &point) const;
 	void advanceAnimationFrame(int directive);
 	void updateBoundsFromCurrentFrame();
+	void updateScreenBaseFromCurrentFrame();
 	void rebuildScaledFrames();
 
 	Common::String _name;
@@ -141,6 +142,8 @@ private:
 	int _x = 0;
 	int _y = 0;
 	float _z = 0.0f;
+	int _screenBaseX = 0;
+	int _screenBaseY = 0;
 	int _currentFrame = -1;
 	int _firstFrame = -1;
 	int _lastFrame = -1;
@@ -202,9 +205,9 @@ public:
 	bool tickSceneEntities();
 	bool syncCursorEntityPosition(const Common::Point &position);
 	void drawSceneEntities(Graphics::Screen &screen) const;
-	void logSceneEntityOrder(const char *label) const;
 	void drawCursor(Graphics::Screen &screen) const;
 	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
+	int findSceneEntityDrawIndexByName(const Common::String &name) const;
 	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;
 	RuntimeEntity *findSceneEntityByName(const Common::String &name);
 	RuntimeEntity *detachSceneEntityByName(const Common::String &name);

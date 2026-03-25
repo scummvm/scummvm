@@ -2230,16 +2230,22 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				continue;
 			}
 
+			const bool wasVisible = runtimeAnim->visible;
 			const bool active = isTruthy(command->arg2);
 			const bool visible = isTruthy(command->arg3);
+			int runtimeState = runtimeAnim->runtimeState;
+			if (!wasVisible && visible)
+				runtimeState = 0;
 			const bool changed = runtimeAnim->active != active ||
 				runtimeAnim->visible != visible ||
 				runtimeAnim->runtimeActive != active ||
-				runtimeAnim->runtimeVisible != visible;
+				runtimeAnim->runtimeVisible != visible ||
+				runtimeAnim->runtimeState != runtimeState;
 			runtimeAnim->active = active;
 			runtimeAnim->visible = visible;
 			runtimeAnim->runtimeActive = active;
 			runtimeAnim->runtimeVisible = visible;
+			runtimeAnim->runtimeState = runtimeState;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;

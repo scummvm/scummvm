@@ -106,10 +106,6 @@ static const int kCursorSequenceTransition = 6;
 static const int kCursorSequenceNeutral = 7;
 } // End of anonymous namespace
 
-static int roundToInt(float value) {
-	return value >= 0.0f ? (int)floorf(value + 0.5f) : (int)ceilf(value - 0.5f);
-}
-
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
 	const Text *startupText = engine.getStartupText();
 	if (!startupText || !fontName)
@@ -329,23 +325,6 @@ static float computeRoomActorRenderZ(float z, const RuntimeEntity &entity) {
 	return z - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
 }
 
-static void logRoomActorPlacement(const RuntimeEntity &entity, int centerX, int bottomY,
-		float sourceZ, float renderZ, float depthScale, bool applyDepthScale) {
-	int width = 0;
-	int height = 0;
-	int xOffset = 0;
-	int yOffset = 0;
-	const bool hasMetrics = entity.getCurrentFrameMetrics(width, height, xOffset, yOffset);
-	const Common::Rect rect = entity.getScreenRect();
-	debugC(1, kDebugScene,
-		"Harvester: actor placement entity='%s' class=0x%x source=(center=%d,bottom=%d,z=%.2f) render_z=%.2f z_extent=%.2f apply_depth=%d depth_scale=%.3f pos=(%d,%d,z=%.2f) frame=%d rect=(%d,%d)-(%d,%d) metrics=%s size=%dx%d offsets=(%d,%d)",
-		entity.getName().c_str(), entity.getClassId(), centerX, bottomY, (double)sourceZ, (double)renderZ,
-		(double)entity.getZExtent(), applyDepthScale, (double)depthScale,
-		entity.getX(), entity.getY(), (double)entity.getZ(), entity.getCurrentFrame(),
-		rect.left, rect.top, rect.right, rect.bottom,
-		hasMetrics ? "frame" : "none", width, height, xOffset, yOffset);
-}
-
 static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, RuntimeEntity &entity,
 		int centerX, int bottomY, float z, const Common::String *entranceName, bool applyDepthScale) {
 	int width = 0;
@@ -368,13 +347,6 @@ static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, 
 		setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
 	}
 
-	if (entranceName) {
-		debugC(1, kDebugGeneral,
-			"Harvester: startup player placement entrance='%s' spawn=(%d,%d,%d) screen_base=(%d,%d) size=%dx%d offsets=(%d,%d) scale=%.3f",
-			entranceName->c_str(), centerX, bottomY, roundToInt(z),
-			entity.getX(), entity.getY(), width, height, xOffset, yOffset, (double)depthScale);
-	}
-	logRoomActorPlacement(entity, centerX, bottomY, z, renderZ, depthScale, applyDepthScale);
 	return true;
 }
 
@@ -710,6 +682,7 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	const RuntimeEntity *topEntity = nullptr;
+	int topDrawIndex = -1;
 	for (const StartupObjectRecord &object : sceneObjects) {
 		if (object.objectName.empty())
 			continue;
@@ -722,8 +695,13 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 			entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
 			continue;
 		}
-		if (!topEntity || entity->getZ() <= topEntity->getZ())
+		const int drawIndex = runtimeEntities->findSceneEntityDrawIndexByName(entity->getName());
+		if (drawIndex < 0)
+			continue;
+		if (!topEntity || drawIndex > topDrawIndex) {
 			topEntity = entity;
+			topDrawIndex = drawIndex;
+		}
 	}
 	if (!topEntity)
 		return nullptr;
@@ -738,14 +716,20 @@ static const StartupRegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	const RuntimeEntity *topEntity = nullptr;
+	int topDrawIndex = -1;
 	for (const StartupRegionRecord &region : sceneRegions) {
 		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(region.regionName);
 		if (!entity || !entity->hitTest(point))
 			continue;
 		if (entity->getClassId() != kRuntimeEntityClassRectHotspot19)
 			continue;
-		if (!topEntity || entity->getZ() <= topEntity->getZ())
+		const int drawIndex = runtimeEntities->findSceneEntityDrawIndexByName(entity->getName());
+		if (drawIndex < 0)
+			continue;
+		if (!topEntity || drawIndex > topDrawIndex) {
 			topEntity = entity;
+			topDrawIndex = drawIndex;
+		}
 	}
 	if (!topEntity)
 		return nullptr;
@@ -896,6 +880,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		const Common::Array<StartupNpcRecord> &sceneNpcs,
 		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos) {
 	StartupRoomHoverState hoverState;
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
 	if (const RuntimeEntity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
 		hoverState.playerEntity = playerEntity;
 		hoverState.cursorSequence = kCursorSequenceExamine;
@@ -913,6 +898,14 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		return hoverState;
 	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
 	hoverState.region = findRoomRegionAtPoint(engine, sceneRegions, mousePos);
+	if (runtimeEntities && hoverState.object && hoverState.region) {
+		const int objectDrawIndex =
+			runtimeEntities->findSceneEntityDrawIndexByName(hoverState.object->objectName);
+		const int regionDrawIndex =
+			runtimeEntities->findSceneEntityDrawIndexByName(hoverState.region->regionName);
+		if (regionDrawIndex >= 0 && objectDrawIndex >= 0 && regionDrawIndex > objectDrawIndex)
+			hoverState.object = nullptr;
+	}
 	if (hoverState.object) {
 		hoverState.cursorSequence = resolveRoomObjectCursorSequence(*hoverState.object, *startupScript);
 		hoverState.promptText = buildRoomObjectPrompt(*hoverState.object, *startupScript, hoverState.cursorSequence);
@@ -1819,7 +1812,6 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		delete preservedPlayer;
 	}
 
-	runtimeEntities->logSceneEntityOrder(state.roomName.c_str());
 	return true;
 }
 

@@ -701,11 +701,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			if (ownerOrRoom)
 				sceneObject->currentOwnerOrRoom = *ownerOrRoom;
 		};
-		auto removeSceneObjectEntity = [&](const Common::String &objectName) {
+		auto removeSceneEntityByName = [&](const Common::String &entityName) {
 			if (!runtimeEntities)
 				return;
 
-			RuntimeEntity *entity = runtimeEntities->detachSceneEntityByName(objectName);
+			RuntimeEntity *entity = runtimeEntities->detachSceneEntityByName(entityName);
 			delete entity;
 		};
 		auto resetIdleState = [&]() {
@@ -773,6 +773,276 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			_engine.captureCurrentStartupSaveRoomState(scene.state.entranceName, scene.state.roomName,
 				playerState.centerX, playerState.bottomY, (int)playerState.z, facing,
 				_engine.getStartupMusicPath());
+		};
+		auto getSceneObjectBounds = [&](const StartupObjectRecord &object) {
+			if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
+				return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
+			return Common::Rect();
+		};
+		auto resolveSceneObjectSpritePathLocal = [&](const StartupObjectRecord &object) {
+			const bool atInitialPlacement = object.currentX == object.initialX &&
+				object.currentY == object.initialY &&
+				object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
+			if (!object.altSpritePath.empty() &&
+					(!atInitialPlacement || object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)))
+				return object.altSpritePath;
+			return object.spritePath;
+		};
+		auto isInteractiveSceneHotspot = [&](const StartupObjectRecord &object) {
+			if (object.operatable || !object.actionTag.empty())
+				return true;
+
+			Script *startupScript = _engine.getStartupScript();
+			if (!startupScript)
+				return false;
+			if (startupScript->isPickupObject(object))
+				return true;
+
+			StartupResolvedText inspectText;
+			return startupScript->resolveObjectInspectText(object, inspectText);
+		};
+		auto resolveSceneObjectClassLocal = [&](const StartupObjectRecord &object,
+				const RuntimeEntity *entity) {
+			if (entity) {
+				return object.initialX == 0 && object.initialY == 0 &&
+					entity->getBoundsWidth() == 640 && entity->getBoundsHeight() == 480
+					? kRuntimeEntityClassBackground
+					: kRuntimeEntityClassObject;
+			}
+
+			return isInteractiveSceneHotspot(object)
+				? kRuntimeEntityClassRectHotspot
+				: kRuntimeEntityClassDisabledHotspot;
+		};
+		auto sameRect = [](const Common::Rect &lhs, const Common::Rect &rhs) {
+			return lhs.left == rhs.left && lhs.top == rhs.top &&
+				lhs.right == rhs.right && lhs.bottom == rhs.bottom;
+		};
+		auto spawnSceneObjectEntityFromRecord = [&](const StartupObjectRecord &object) {
+			if (!runtimeEntities)
+				return;
+
+			const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
+			const Common::Rect hotspotBounds = getSceneObjectBounds(object);
+			RuntimeEntity *entity = nullptr;
+			if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
+				entity = runtimeEntities->spawnSceneBitmapEntity(object.objectName, spritePath,
+					Common::Point(object.currentX, object.currentY), (float)object.currentZ);
+			} else if (!hotspotBounds.isEmpty()) {
+				entity = runtimeEntities->spawnSceneHotspotEntity(object.objectName, hotspotBounds,
+					(float)object.currentZ);
+			}
+			if (!entity)
+				return;
+
+			entity->setClassId(resolveSceneObjectClassLocal(
+				object, entity->hasFrames() ? entity : nullptr));
+			entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+			entity->setZExtent((float)object.zExtent);
+		};
+		auto getSceneRegionBounds = [](const StartupRegionRecord &region) {
+			if (region.right > region.left && region.bottom > region.top)
+				return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
+			return Common::Rect();
+		};
+		auto spawnSceneRegionEntityFromRecord = [&](const StartupRegionRecord &region) {
+			if (!runtimeEntities)
+				return;
+
+			const Common::Rect bounds = getSceneRegionBounds(region);
+			if (bounds.isEmpty())
+				return;
+
+			RuntimeEntity *entity = runtimeEntities->spawnSceneHotspotEntity(
+				region.regionName, bounds, (float)region.minZ);
+			if (!entity)
+				return;
+
+			entity->setClassId(kRuntimeEntityClassRectHotspot19);
+			entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+			entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
+			if (!region.cursorEnabled)
+				entity->setHitTestMode(kRuntimeEntityHitTestNone);
+		};
+		auto findRoomAnimByNameConst = [](const Common::Array<StartupAnimRecord> &anims,
+				const Common::String &animName) -> const StartupAnimRecord * {
+			for (const StartupAnimRecord &anim : anims) {
+				if (anim.animName.equalsIgnoreCase(animName))
+					return &anim;
+			}
+			return nullptr;
+		};
+		auto applyCurrentRoomRuntimeMutationsInPlace = [&]() {
+			Script *startupScript = _engine.getStartupScript();
+			ResourceManager *resources = _engine.getResources();
+			if (!startupScript || !resources)
+				return false;
+
+			const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
+			StartupRoomSetupState updatedState;
+			if (!startupScript->materializeRoomState(
+					scene.state.entranceName, scene.state.roomName, updatedState, *resources)) {
+				return false;
+			}
+			updatedState.audioCommands = entryAudioCommands;
+
+			// Keep the live patch narrowly scoped to the current same-room cases we
+			// understand well: room objects, regions, timers, and room ANIM entities.
+			// Native NPC/monster live mutation semantics are more involved, so those
+			// interactions still fall back to the existing full refresh path.
+			if (!scene.state.roomNpcs.empty() || !scene.state.roomMonsters.empty() ||
+					!updatedState.roomNpcs.empty() || !updatedState.roomMonsters.empty()) {
+				return false;
+			}
+
+			StartupRoomSceneResources updatedScene;
+			if (!loadRoomSceneResources(updatedState, *resources, updatedScene))
+				return false;
+
+			for (const StartupObjectRecord &object : scene.sceneObjects) {
+				if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
+					removeSceneEntityByName(object.objectName);
+			}
+			for (const StartupObjectRecord &object : updatedScene.sceneObjects) {
+				const StartupObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
+				const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
+				const Common::Rect bounds = getSceneObjectBounds(object);
+				const bool changed = !previous ||
+					previous->currentX != object.currentX ||
+					previous->currentY != object.currentY ||
+					previous->currentZ != object.currentZ ||
+					previous->zExtent != object.zExtent ||
+					previous->operatable != object.operatable ||
+					!previous->actionTag.equalsIgnoreCase(object.actionTag) ||
+					!previous->identTextKey.equalsIgnoreCase(object.identTextKey) ||
+					!resolveSceneObjectSpritePathLocal(*previous).equalsIgnoreCase(spritePath) ||
+					!sameRect(getSceneObjectBounds(*previous), bounds);
+				if (!changed)
+					continue;
+
+				removeSceneEntityByName(object.objectName);
+				spawnSceneObjectEntityFromRecord(object);
+			}
+
+			for (const StartupRegionRecord &region : scene.sceneRegions) {
+				if (!findSceneRegionByName(updatedScene.sceneRegions, region.regionName))
+					removeSceneEntityByName(region.regionName);
+			}
+			for (const StartupRegionRecord &region : updatedScene.sceneRegions) {
+				const StartupRegionRecord *previous =
+					findSceneRegionByName(scene.sceneRegions, region.regionName);
+				const bool changed = !previous ||
+					previous->left != region.left ||
+					previous->top != region.top ||
+					previous->right != region.right ||
+					previous->bottom != region.bottom ||
+					previous->minZ != region.minZ ||
+					previous->maxZ != region.maxZ ||
+					previous->cursorEnabled != region.cursorEnabled;
+				if (!changed)
+					continue;
+
+				removeSceneEntityByName(region.regionName);
+				spawnSceneRegionEntityFromRecord(region);
+			}
+
+			for (const StartupTimerRecord &timer : scene.state.roomTimers) {
+				bool found = false;
+				for (const StartupTimerRecord &updatedTimer : updatedState.roomTimers) {
+					if (updatedTimer.timerName.equalsIgnoreCase(timer.timerName)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					removeSceneEntityByName(timer.timerName);
+			}
+			for (const StartupTimerRecord &timer : updatedState.roomTimers) {
+				const StartupTimerRecord *previous = nullptr;
+				for (const StartupTimerRecord &candidate : scene.state.roomTimers) {
+					if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
+						previous = &candidate;
+						break;
+					}
+				}
+				const bool changed = !previous ||
+					previous->initialValue != timer.initialValue ||
+					previous->currentValue != timer.currentValue ||
+					previous->enabled != timer.enabled ||
+					previous->looping != timer.looping ||
+					previous->global != timer.global;
+				if (!changed)
+					continue;
+
+				removeSceneEntityByName(timer.timerName);
+				if (runtimeEntities) {
+					(void)runtimeEntities->spawnSceneTimerEntity(
+						timer.timerName, timer.initialValue, timer.currentValue,
+						timer.enabled, timer.looping, timer.global);
+				}
+			}
+
+			for (StartupAnimRecord &anim : updatedState.roomAnimations) {
+				const StartupAnimRecord *previous =
+					findRoomAnimByNameConst(scene.state.roomAnimations, anim.animName);
+				const bool becameVisible = (!previous || !previous->visible) && anim.visible;
+				if (becameVisible)
+					anim.runtimeState = 0;
+
+				RuntimeEntity *entity = runtimeEntities
+					? runtimeEntities->findSceneEntityByName(anim.animName)
+					: nullptr;
+				if (!anim.visible) {
+					removeSceneEntityByName(anim.animName);
+					continue;
+				}
+
+				const bool needsRespawn = !entity || !previous ||
+					!previous->resourcePath.equalsIgnoreCase(anim.resourcePath) ||
+					previous->x != anim.x ||
+					previous->y != anim.y ||
+					previous->z != anim.z ||
+					previous->frameDelay != anim.frameDelay ||
+					previous->looping != anim.looping ||
+					previous->pingPong != anim.pingPong ||
+					previous->backward != anim.backward;
+				if (needsRespawn) {
+					removeSceneEntityByName(anim.animName);
+					if (runtimeEntities) {
+						entity = runtimeEntities->spawnSceneAnimationEntity(
+							anim.animName, anim.resourcePath, Common::Point(anim.x, anim.y),
+							(float)anim.z, anim.frameDelay, anim.active, anim.visible, anim.looping,
+							anim.backward, anim.pingPong, anim.runtimeState);
+					}
+				} else if (entity) {
+					const float renderZ =
+						(float)anim.z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f);
+					const bool zChanged = entity->getZ() != renderZ;
+					entity->setPosition(anim.x, anim.y, renderZ);
+					entity->setLooping(anim.looping);
+					entity->setPingPong(anim.pingPong);
+					entity->setPlayBackwards(anim.backward);
+					entity->setAnimationRate(anim.frameDelay);
+					entity->setVisible(anim.visible);
+					entity->setAnimationEnabled(anim.active);
+					if (zChanged)
+						runtimeEntities->reinsertSceneEntity(entity);
+				}
+			}
+
+			for (const StartupAnimRecord &anim : scene.state.roomAnimations) {
+				if (!findRoomAnimByNameConst(updatedState.roomAnimations, anim.animName))
+					removeSceneEntityByName(anim.animName);
+			}
+
+			scene.state = updatedState;
+			scene.sceneObjects = updatedScene.sceneObjects;
+			scene.sceneAnimations = updatedScene.sceneAnimations;
+			scene.sceneRegions = updatedScene.sceneRegions;
+			memcpy(scene.palette, updatedScene.palette, sizeof(scene.palette));
+			scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
+			captureCurrentSaveState();
+			return _inventory.refresh();
 		};
 		resetIdleState();
 		auto stopPlayerRegionInteraction = [&]() {
@@ -1047,6 +1317,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			Common::String &pendingRegionName;
 			Common::String &pendingRoomChange;
 			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
+			decltype(applyCurrentRoomRuntimeMutationsInPlace) &applyCurrentRoomRuntimeMutationsInPlaceFn;
 			decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
 			decltype(runRoomExitCommands) &runRoomExitCommandsFn;
 			decltype(applyLightingCommand) &applyLightingCommandFn;
@@ -1057,7 +1328,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
 					bool &didTransition, const Common::String &usedItemName) {
 				didTransition = false;
-				bool deferredSceneRefresh = false;
+
 				playerState.hasMoveTarget = false;
 				playerState.turnActive = false;
 				playerState.turnTargetFacing = -1;
@@ -1127,10 +1398,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						engine.stopStartupMusic();
 					didTransition = true;
 				} else if (interaction.mutatedRuntimeState) {
-					deferredSceneRefresh = !interaction.cutscenePath.empty();
-					if (!deferredSceneRefresh) {
-						if (!refreshCurrentSceneFn(true))
-							return Common::kReadingFailed;
+					if (!applyCurrentRoomRuntimeMutationsInPlaceFn() &&
+							!refreshCurrentSceneFn(true)) {
+						return Common::kReadingFailed;
 					}
 				}
 
@@ -1150,11 +1420,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					FstPlayer fstPlayer(engine);
 					if (!fstPlayer.play(interaction.cutscenePath))
 						return Common::kReadingFailed;
-					if (deferredSceneRefresh) {
-						if (!refreshCurrentSceneFn(true))
-							return Common::kReadingFailed;
-						deferredSceneRefresh = false;
-					}
 				}
 
 				if (!interaction.modalText.value.empty()) {
@@ -1238,8 +1503,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		};
 		InteractionProcessor interactionProcessor = {
 			_engine, startupFlow, scene, playerState, pendingRegionName, pendingRoomChange,
-			refreshCurrentScene, captureDialogueBackdrop, runRoomExitCommands,
-			applyLightingCommand, applyPlayerGotoXZ, runModalShowText, resetIdleState
+			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace, captureDialogueBackdrop,
+			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
+			resetIdleState
 		};
 	auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> StartupNpcRecord * {
 		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
@@ -1873,7 +2139,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		startupScript->addRuntimeObjectToInventory(object.objectName);
 		const Common::String inventoryOwner(kInventoryOwnerName);
 		hideSceneObject(object.objectName, &inventoryOwner);
-		removeSceneObjectEntity(object.objectName);
+		removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
@@ -1909,7 +2175,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		startupScript->setRuntimeObjectVisible(object.currentOwnerOrRoom, object.objectName, false);
 		hideSceneObject(object.objectName, nullptr);
-		removeSceneObjectEntity(object.objectName);
+		removeSceneEntityByName(object.objectName);
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
@@ -2403,7 +2669,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
 					hoverState.region ? hoverState.region->regionName.c_str() : "",
 					hoverState.cursorSequence, hoverState.promptText.c_str());
-				if (hasCarriedRoomItem()) {
+					if (hasCarriedRoomItem()) {
 					if (hoverState.playerEntity && playerState.entity &&
 							hoverState.playerEntity == playerState.entity) {
 						if (!stowCarriedRoomItemToInventory())
