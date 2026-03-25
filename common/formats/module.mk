@@ -2,6 +2,8 @@ MODULE := common/formats
 
 MODULE_OBJS := \
 	cue.o \
+	iso9660.o \
+	iso9660archive.o \
 	disk_image.o \
 	formatinfo.o \
 	iff_container.o \
