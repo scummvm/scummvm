@@ -923,6 +923,27 @@ void RuntimeEntityManager::drawSceneEntities(Graphics::Screen &screen) const {
 		entity->draw(screen);
 }
 
+void RuntimeEntityManager::logSceneEntityOrder(const char *label) const {
+	for (uint i = 0; i < _sceneEntities.size(); ++i) {
+		const RuntimeEntity *entity = _sceneEntities[i];
+		const Common::Rect rect = entity->getScreenRect();
+		int width = 0;
+		int height = 0;
+		int xOffset = 0;
+		int yOffset = 0;
+		const bool hasMetrics = entity->getCurrentFrameMetrics(width, height, xOffset, yOffset);
+		debugC(1, kDebugScene,
+			"Harvester: scene render order label='%s' index=%u/%u name='%s' class=0x%x visible=%d pos=(%d,%d,z=%.2f) z_extent=%.2f depth_scale=%.3f frame=%d rect=(%d,%d)-(%d,%d) metrics=%s size=%dx%d offsets=(%d,%d)",
+			label ? label : "", i, (uint)_sceneEntities.size(),
+			entity->getName().c_str(), entity->getClassId(), entity->isVisible(),
+			entity->getX(), entity->getY(), (double)entity->getZ(), (double)entity->getZExtent(),
+			(double)entity->getDepthScale(), entity->getCurrentFrame(),
+			rect.left, rect.top, rect.right, rect.bottom,
+			hasMetrics ? "frame" : "none",
+			width, height, xOffset, yOffset);
+	}
+}
+
 const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Point &point, int classIdFilter) const {
 	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
 		const RuntimeEntity *entity = _sceneEntities[(uint)i];

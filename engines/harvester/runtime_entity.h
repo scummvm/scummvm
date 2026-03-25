@@ -103,6 +103,7 @@ public:
 	int getBoundsHeight() const { return _boundsHeight; }
 	bool getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const;
 	void setDepthScale(float scale);
+	float getDepthScale() const { return _depthScale; }
 	Common::Rect getScreenRect() const;
 	void configureTimerCountdown(int initialValue, int currentValue, bool enabled, bool looping, bool global);
 	bool tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames);
@@ -201,6 +202,7 @@ public:
 	bool tickSceneEntities();
 	bool syncCursorEntityPosition(const Common::Point &position);
 	void drawSceneEntities(Graphics::Screen &screen) const;
+	void logSceneEntityOrder(const char *label) const;
 	void drawCursor(Graphics::Screen &screen) const;
 	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
 	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;

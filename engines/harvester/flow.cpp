@@ -329,6 +329,23 @@ static float computeRoomActorRenderZ(float z, const RuntimeEntity &entity) {
 	return z - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
 }
 
+static void logRoomActorPlacement(const RuntimeEntity &entity, int centerX, int bottomY,
+		float sourceZ, float renderZ, float depthScale, bool applyDepthScale) {
+	int width = 0;
+	int height = 0;
+	int xOffset = 0;
+	int yOffset = 0;
+	const bool hasMetrics = entity.getCurrentFrameMetrics(width, height, xOffset, yOffset);
+	const Common::Rect rect = entity.getScreenRect();
+	debugC(1, kDebugScene,
+		"Harvester: actor placement entity='%s' class=0x%x source=(center=%d,bottom=%d,z=%.2f) render_z=%.2f z_extent=%.2f apply_depth=%d depth_scale=%.3f pos=(%d,%d,z=%.2f) frame=%d rect=(%d,%d)-(%d,%d) metrics=%s size=%dx%d offsets=(%d,%d)",
+		entity.getName().c_str(), entity.getClassId(), centerX, bottomY, (double)sourceZ, (double)renderZ,
+		(double)entity.getZExtent(), applyDepthScale, (double)depthScale,
+		entity.getX(), entity.getY(), (double)entity.getZ(), entity.getCurrentFrame(),
+		rect.left, rect.top, rect.right, rect.bottom,
+		hasMetrics ? "frame" : "none", width, height, xOffset, yOffset);
+}
+
 static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, RuntimeEntity &entity,
 		int centerX, int bottomY, float z, const Common::String *entranceName, bool applyDepthScale) {
 	int width = 0;
@@ -357,6 +374,7 @@ static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, 
 			entranceName->c_str(), centerX, bottomY, roundToInt(z),
 			entity.getX(), entity.getY(), width, height, xOffset, yOffset, (double)depthScale);
 	}
+	logRoomActorPlacement(entity, centerX, bottomY, z, renderZ, depthScale, applyDepthScale);
 	return true;
 }
 
@@ -1797,6 +1815,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		delete preservedPlayer;
 	}
 
+	runtimeEntities->logSceneEntityOrder(state.roomName.c_str());
 	return true;
 }
 
