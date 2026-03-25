@@ -1601,7 +1601,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_132_004();
 		break;
 	case 6:
-		this->sub_133_004();
+		this->polyominoRun();
 		break;
 	case 7:
 		this->revealRun();

@@ -142,8 +142,8 @@ public:
 	void sub_132_1444();
 
 	// fool_polyomino.cpp
-	void sub_133_004();
-	void sub_133_87c();
+	void polyominoRun(); // sub_133_004
+	void polyominoOnClick(); // sub_133_87c
 	void sub_133_eb2();
 	void sub_133_f04();
 	void sub_133_10a0();
@@ -151,7 +151,7 @@ public:
 	void sub_133_12d4();
 	void sub_133_12f2();
 	void sub_133_13e2();
-	void sub_133_1452();
+	void polyominoStoreState(); // sub_133_1452
 
 	// fool_reveal.cpp
 	void revealRun(); // sub_134_004

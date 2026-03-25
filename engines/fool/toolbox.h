@@ -88,6 +88,15 @@ struct Polygon {
 	Common::Array<Common::Point> polyPoints;
 };
 
+// In QuickDraw 0 means white and 1 means black
+struct Pattern {
+	uint8 data[8];
+
+	Common::String format() const {
+		return Common::String::format("%02x%02x%02x%02x%02x%02x%02x%02x", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
+	}
+};
+
 enum PictureOpType : uint16 {
 	kOpNOP =		0x0000,
 	kOpClip =		0x0001,
@@ -186,6 +195,23 @@ enum PictureOpType : uint16 {
 	// reserved 0x005e
 	// reserved 0x005f
 
+	kOpFramePoly = 0x0070,
+	kOpPaintPoly = 0x0071,
+	kOpErasePoly = 0x0072,
+	kOpInvertPoly = 0x0073,
+	kOpFillPoly = 0x0074,
+	// reserved 0x0075
+	// reserved 0x0076
+	// reserved 0x0077
+	kOpFrameSamePoly = 0x0078,
+	kOpPaintSamePoly = 0x0079,
+	kOpEraseSamePoly = 0x007a,
+	kOpInvertSamePoly = 0x007b,
+	kOpFillSamePoly = 0x007c,
+	// reserved 0x007d
+	// reserved 0x007e
+	// reserved 0x007f
+
 	kOpBitsRect = 0x0090,
 	kOpBitsRgn = 0x0091,
 
@@ -201,6 +227,12 @@ enum PictureOpType : uint16 {
 	kOpVersion1 = 0x1101,
 };
 
+// BitMap is the monochrome surface format.
+typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
+typedef Common::SharedPtr<Polygon> PolyHandle;
+typedef Common::SharedPtr<Common::Array<byte>> Handle;
+typedef Common::SharedPtr<Region> RgnHandle;
+
 struct Picture {
 	uint32 picSize = 0;
 	Common::Rect picFrame;
@@ -208,16 +240,30 @@ struct Picture {
 	size_t picPtr = 0;
 	// simulate slow drawing
 	uint32 _opsPerTick = 0;
+
+	void pushOp(PictureOpType op) {
+		picData.push_back(op >> 8);
+		picData.push_back(op & 0xff);
+	}
+
+	void pushOpU16(PictureOpType op, uint16 val) {
+		picData.push_back(op >> 8);
+		picData.push_back(op & 0xff);
+		picData.push_back(val >> 8);
+		picData.push_back(val & 0xff);
+	}
+
+	void pushHeader();
+	void pushOpPoly(PictureOpType op, const PolyHandle &poly);
+	void pushOpPat(PictureOpType op, const Pattern &pat);
+	void pushOpRect(PictureOpType op, const Common::Rect &rect);
+	void pushOpPoint(PictureOpType op, const Common::Point &point);
+	void pushOpPointStr(PictureOpType op, const Common::Point &point, const Common::String &str);
 };
 
 
-
-typedef Common::SharedPtr<Common::Array<byte>> Handle;
-typedef Common::SharedPtr<Region> RgnHandle;
 typedef Common::SharedPtr<Picture> PicHandle;
-// BitMap is the monochrome surface format.
-typedef Common::SharedPtr<Graphics::ManagedSurface> BitMap;
-typedef Common::SharedPtr<Polygon> PolyHandle;
+
 typedef uint32 ResType;
 typedef size_t Size;
 
@@ -251,15 +297,6 @@ namespace Fool {
 // TYPE CHAR: int16
 // TYPE Rect: top: INTEGER; left: INTEGER; bottom: INTEGER; right: INTEGER;
 // TYPE Point: v: INTEGER; h: INTEGER;
-
-// In QuickDraw 0 means white and 1 means black
-struct Pattern {
-	uint8 data[8];
-
-	Common::String format() const {
-		return Common::String::format("%02x%02x%02x%02x%02x%02x%02x%02x", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-	}
-};
 
 class Cursor: public Graphics::Cursor {
 public:
@@ -821,11 +858,18 @@ public:
 	// srcBits.bounds coordinates.
 	void CopyBits(const BitMap &srcBits, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 
+	// PROCEDURE EraseOval (r: Rect);
+	// Using the background pattern for the current graphics port and the patCopy pattern
+	// mode, the EraseOval procedure draws the interior of an oval just inside the bounding
+	// rectangle that you specify in the r parameter. This effectively erases the oval bounded by
+	// the specified rectangle.
+	void EraseOval(const Common::Rect &r);
+
 	// PROCEDURE ErasePoly (poly: PolyHandle);
 	// Using the patCopy pattern mode, the ErasePoly procedure draws the interior of the
 	// polygon whose handle you pass in the poly parameter with the background pattern for
 	// the current graphics port.
-	void ErasePoly(PolyHandle &poly);
+	void ErasePoly(const PolyHandle &poly);
 
 	// PROCEDURE EraseRect (r: Rect);
 	// Using the patCopy pattern mode, the EraseRect procedure draws the interior of the
@@ -857,7 +901,7 @@ public:
 	// Using the patCopy pattern mode, the FillPoly procedure draws the interior of the
 	// polygon whose handle you pass in the poly parameter with the pattern defined in the
 	// Pattern record that you specify in the pat parameter.
-	void FillPoly(PolyHandle &poly, const Pattern &pat);
+	void FillPoly(const PolyHandle &poly, const Pattern &pat);
 
 	// PROCEDURE FillRect (r: Rect; pat: Pattern);
 	// FillRect fills the specified rectangle with the given pattern (in patCopy mode). The grafPort's
@@ -888,7 +932,7 @@ public:
 	// Using the current graphics port’s pen pattern, pattern mode, and size, the FramePoly
 	// procedure plays back the line-drawing commands that define the polygon whose handle
 	// you pass in the poly parameter.
-	void FramePoly(PolyHandle &poly);
+	void FramePoly(const PolyHandle &poly);
 
 	// PROCEDURE FrameRect (r: Rect);
 	// FrameRect draws an outline just inside the specified rectangle, using the current grafPort's pen
@@ -968,7 +1012,7 @@ public:
 	// The InvertPoly procedure inverts the pixels enclosed by the polygon whose handle
 	// you pass in the poly parameter. Every white pixel becomes black and every black pixel
 	// becomes white.
-	void InvertPoly(PolyHandle &poly);
+	void InvertPoly(const PolyHandle &poly);
 
 	// PROCEDURE InvertRect (r: Rect);
 	// InvertRect inverts the pixels enclosed by the specified rectangle: Every white pixel becomes
@@ -1051,7 +1095,7 @@ public:
 	// PaintPoly paints the specified polygon with the current grafPort's pen pattern and pen mode. The
 	// polygon is filled with the pnPat, according to the pattern transfer mode specified by pnMode.
 	// The pen location is not changed by this procedure.
-	void PaintPoly(PolyHandle &poly);
+	void PaintPoly(const PolyHandle &poly);
 
 	// PROCEDURE PaintRect (r: Rect);
 	// PaintRect paints the specified rectangle with the current grafPoit's pen pattern and mode. The
@@ -1112,7 +1156,7 @@ public:
 	// All other points in the current graphics port’s local coordinate system are calculated from
 	// this point. All subsequent drawing and calculation routines use the new coordinate
 	// system.
-	void SetOrigin(uint16 h, uint16 v);
+	void SetOrigin(int16 h, int16 v);
 
 	// PROCEDURE SetPort (port: GrafPtr);
 	// SetPort makes the specified grafPort the current port.
@@ -1204,10 +1248,11 @@ private:
 
 	void _pumpEvents();
 	void _updateScreen();
+	void _drawOval(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawPoly(const PolyHandle &p, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor);
 	void _drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight);
-	void _drawPackBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame);
+	void _drawBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame, bool compressed);
 	void _copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBits, const Common::Rect &srcRect, const Common::Rect &dstRect, SourceMode mode, RgnHandle maskRgn);
 };
 
