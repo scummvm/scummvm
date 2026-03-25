@@ -1735,6 +1735,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			debug(1, "Harvester: unable to apply room npc placement for '%s'",
 				npc.npcName.c_str());
 		}
+		runtimeEntities->reinsertSceneEntity(entity);
 		debugC(1, kDebugScene,
 			"Harvester: scene npc spawned room='%s' npc='%s' class=0x%x pos=(%d,%d,z=%.2f) frame_delay=%d model='%s' active=%d visible=%d",
 			state.roomName.c_str(), npc.npcName.c_str(), entity->getClassId(),
@@ -1758,6 +1759,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			debug(1, "Harvester: unable to apply room monster placement for '%s'",
 				monster.monsterName.c_str());
 		}
+		runtimeEntities->reinsertSceneEntity(entity);
 		debugC(1, kDebugScene,
 			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d model='%s' active=%d visible=%d",
 			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
@@ -1804,6 +1806,8 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			}
 			if (reusedPlayer)
 				runtimeEntities->adoptSceneEntity(player);
+			else
+				runtimeEntities->reinsertSceneEntity(player);
 			debugC(1, kDebugGeneral,
 				"Harvester: %s startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
 				reusedPlayer ? "reused" : "spawned", playerResourcePath.c_str(), state.entranceName.c_str(),
