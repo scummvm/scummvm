@@ -6045,7 +6045,7 @@ void GameLogic::r20_handleRoomEvent() {
 	_vm->waitSeconds(1);
 	_vm->playAnimation("expl", 0, 36, 40, 32, 0, 150);
 	_vm->playSound("ss17.snd", 0);
-	_vm->playAnimation("expl", 37, 66, 40, 32, 0, 150);
+	_vm->playAnimation("expl", 37, 66 - 37, 40, 32, 0, 150);
 	_r19_flags &= ~0x01;
 	_r19_flags |= 0x08;
 	_vm->_wayneSpriteX = _r19_wayneSpriteX;
