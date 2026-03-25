@@ -224,6 +224,11 @@ bool ListWidget::isItemSelected(int item) const {
 }
 
 void ListWidget::markSelectedItem(int item, bool state) {
+	// Initialize _lastSelectionStartItem if not already set
+	if (state && _lastSelectionStartItem == -1) {
+		_lastSelectionStartItem = item;
+	}
+
 	// Convert to actual item index if filtering is active
 	int actualItem = item;
 	if (!_listIndex.empty() && item >= 0 && item < (int)_listIndex.size()) {
@@ -376,7 +381,6 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 		clearSelection();
 		_selectedItem = newSelectedItem;
 		markSelectedItem(newSelectedItem, true);
-		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
@@ -603,7 +607,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					}
 					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
-					_lastSelectionStartItem = _selectedItem;
 				}
 				if (_selectedItem < (int)_list.size() && !isItemVisible(_selectedItem))
 					scrollToCurrent();
@@ -684,7 +687,6 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 					}
 					// If dead end, restore the previous selection
 					markSelectedItem(_selectedItem, true);
-					_lastSelectionStartItem = _selectedItem;
 				}
 				if (_selectedItem >= 0 && !isItemVisible(_selectedItem))
 					scrollToCurrent();

@@ -252,7 +252,6 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 		clearSelection();
 		_selectedItem = newSelectedItem;
 		markSelectedItem(newSelectedItem, true);
-		_lastSelectionStartItem = newSelectedItem;
 		sendCommand(kListSelectionChangedCmd, _selectedItem);
 	}
 
