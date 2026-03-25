@@ -322,6 +322,13 @@ static void setRoomActorScreenPosition(RuntimeEntity &entity, int centerX, int b
 	entity.setPosition(centerX - xOffset - width / 2, bottomY - height - yOffset, z);
 }
 
+static float computeRoomActorRenderZ(float z, const RuntimeEntity &entity) {
+	// Native actor spawns lower the render-list depth anchor by half the z extent
+	// before insertion. Without that adjustment, cemetery Karin lands one layer
+	// too far back and gets occluded by the grave mask in CEM10.
+	return z - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
+}
+
 static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, RuntimeEntity &entity,
 		int centerX, int bottomY, float z, const Common::String *entranceName, bool applyDepthScale) {
 	int width = 0;
@@ -331,16 +338,17 @@ static bool applyRoomActorPlacementInternal(const StartupRoomSetupState &state, 
 	if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
 		return false;
 
+	const float renderZ = computeRoomActorRenderZ(z, entity);
 	entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
-	setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+	setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
 
 	float depthScale = 1.0f;
 	if (applyDepthScale) {
-		depthScale = Player::computeDepthScale(state, z);
+		depthScale = Player::computeDepthScale(state, renderZ);
 		entity.setDepthScale(depthScale);
 		if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
 			return false;
-		setRoomActorScreenPosition(entity, centerX, bottomY, z, width, height, xOffset, yOffset);
+		setRoomActorScreenPosition(entity, centerX, bottomY, renderZ, width, height, xOffset, yOffset);
 	}
 
 	if (entranceName) {
