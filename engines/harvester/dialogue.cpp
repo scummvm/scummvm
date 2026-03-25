@@ -1211,8 +1211,10 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 
 	auto runKeywordMenu = [&](const Common::String &topicBuffer, int topicBufferLineIndex,
-			Common::String &selectedTopic) -> Common::Error {
+			Common::String &selectedTopic,
+			DialogueRuntime::KeywordMenuSelectionState &selection) -> Common::Error {
 		selectedTopic.clear();
+		selection = DialogueRuntime::KeywordMenuSelectionState();
 		Common::Array<Common::String> topics;
 		splitDialogueMenuLine(topicBuffer, topics);
 		logDialogueMenuItems("Keyword menu", topicBufferLineIndex, topicBuffer, topics);
@@ -1252,6 +1254,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 								event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
 							if (!typedTopic.empty()) {
 								selectedTopic = typedTopic;
+								selection.fromTypedInput = true;
 								debugC(1, kDebugDialogue, "Harvester: keyword menu typed topic='%s'",
 									selectedTopic.c_str());
 								if (runtimeEntities)
@@ -1270,6 +1273,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				case Common::EVENT_KEYDOWN:
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						selectedTopic = genericByeTopic;
+						selection.fromEscape = true;
+						selection.fromGenericBye = true;
 						debugC(1, kDebugDialogue,
 							"Harvester: keyword menu selected default topic via escape '%s'",
 							selectedTopic.c_str());
@@ -1280,6 +1285,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 					const int clickedTopic = getDialogueMenuItemAt(*menuFont, topics.size(), _mousePos);
 					if (clickedTopic >= 0) {
 						selectedTopic = topics[(uint)clickedTopic];
+						selection.fromGenericBye = clickedTopic == (int)topics.size() - 1;
 						debugC(1, kDebugDialogue, "Harvester: keyword menu selected topic[%d]='%s'",
 							clickedTopic + 1, selectedTopic.c_str());
 						return Common::kNoError;
