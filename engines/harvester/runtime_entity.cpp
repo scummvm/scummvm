@@ -236,9 +236,17 @@ bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::St
 }
 
 void RuntimeEntity::setPosition(int x, int y, float z) {
+	const bool anchorChanged = _x != x || _y != y;
 	_x = x;
 	_y = y;
 	_z = z;
+	if (anchorChanged)
+		updateScreenBaseFromCurrentFrame();
+}
+
+void RuntimeEntity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
+	_anchorMode = anchorMode;
+	updateScreenBaseFromCurrentFrame();
 }
 
 void RuntimeEntity::setAnimationRate(int rate) {
@@ -262,6 +270,7 @@ void RuntimeEntity::setCurrentFrame(int frame) {
 		return;
 
 	advanceAnimationFrame(frame);
+	updateScreenBaseFromCurrentFrame();
 }
 
 void RuntimeEntity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping) {
@@ -316,6 +325,7 @@ void RuntimeEntity::configureHotspotBounds(int width, int height) {
 	_boundsHeight = MAX(height, 1);
 	_hitTestMode = kRuntimeEntityHitTestBounds;
 	_depthScale = 1.0f;
+	updateScreenBaseFromCurrentFrame();
 }
 
 bool RuntimeEntity::getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const {
@@ -359,24 +369,10 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 Common::Point RuntimeEntity::getDrawOrigin() const {
 	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
 		const AbmFrame &frame = _frames[(uint)_currentFrame];
-		int drawX = _x;
-		int drawY = _y;
-		if (_anchorMode == kRuntimeEntityAnchorCentered) {
-			drawX -= (int)frame.width / 2;
-			drawY -= (int)frame.height / 2;
-		}
-
-		return Common::Point(drawX + frame.xOffset, drawY + frame.yOffset);
+		return Common::Point(_screenBaseX + frame.xOffset, _screenBaseY + frame.yOffset);
 	}
 
-	int drawX = _x;
-	int drawY = _y;
-	if (_anchorMode == kRuntimeEntityAnchorCentered) {
-		drawX -= _boundsWidth / 2;
-		drawY -= _boundsHeight / 2;
-	}
-
-	return Common::Point(drawX, drawY);
+	return Common::Point(_screenBaseX, _screenBaseY);
 }
 
 Common::Rect RuntimeEntity::getScreenRect() const {
@@ -666,16 +662,31 @@ void RuntimeEntity::updateBoundsFromCurrentFrame() {
 	_boundsHeight = (int)_frames[(uint)frameIndex].height;
 }
 
+void RuntimeEntity::updateScreenBaseFromCurrentFrame() {
+	int baseX = _x;
+	int baseY = _y;
+
+	if (_anchorMode == kRuntimeEntityAnchorCentered) {
+		baseX -= _boundsWidth / 2;
+		baseY -= _boundsHeight / 2;
+	}
+
+	_screenBaseX = baseX;
+	_screenBaseY = baseY;
+}
+
 void RuntimeEntity::rebuildScaledFrames() {
 	if (_baseFrames.empty()) {
 		_frames.clear();
 		updateBoundsFromCurrentFrame();
+		updateScreenBaseFromCurrentFrame();
 		return;
 	}
 
 	if (fabsf(_depthScale - 1.0f) < 0.0001f) {
 		_frames = _baseFrames;
 		updateBoundsFromCurrentFrame();
+		updateScreenBaseFromCurrentFrame();
 		return;
 	}
 
@@ -692,6 +703,7 @@ void RuntimeEntity::rebuildScaledFrames() {
 	}
 
 	updateBoundsFromCurrentFrame();
+	updateScreenBaseFromCurrentFrame();
 }
 
 RuntimeEntityManager::RuntimeEntityManager(ResourceManager &resources) : _resources(resources) {
@@ -797,11 +809,13 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	if (!entity)
 		return nullptr;
 
-	// Native room ANIM entities are positioned around their record x/y pivot.
-	// The runtime centers the current decoded bitmap on that pivot, then applies
-	// the ABM frame header x/y offsets as a separate step.
+	// Native room ANIM entities center the initially shown frame on the record
+	// x/y pivot, lower the render-list depth anchor by half z_extent, and then
+	// keep that cached screen base while later frame ABM x/y offsets shift the
+	// final draw rect.
 	entity->setAnchorMode(kRuntimeEntityAnchorCentered);
 	entity->setZExtent(3.0f);
+	entity->setPosition(position.x, position.y, z - floorf(MAX<float>(entity->getZExtent(), 0.0f) * 0.5f));
 	entity->setVisible(visible);
 	entity->setPlayBackwards(playBackwards);
 	entity->setHitTestMode(kRuntimeEntityHitTestNone);
@@ -813,7 +827,6 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 
 	if (!active && !visible)
 		entity->setVisible(false);
-
 	insertSceneEntity(entity);
 	return entity;
 }
@@ -923,27 +936,6 @@ void RuntimeEntityManager::drawSceneEntities(Graphics::Screen &screen) const {
 		entity->draw(screen);
 }
 
-void RuntimeEntityManager::logSceneEntityOrder(const char *label) const {
-	for (uint i = 0; i < _sceneEntities.size(); ++i) {
-		const RuntimeEntity *entity = _sceneEntities[i];
-		const Common::Rect rect = entity->getScreenRect();
-		int width = 0;
-		int height = 0;
-		int xOffset = 0;
-		int yOffset = 0;
-		const bool hasMetrics = entity->getCurrentFrameMetrics(width, height, xOffset, yOffset);
-		debugC(1, kDebugScene,
-			"Harvester: scene render order label='%s' index=%u/%u name='%s' class=0x%x visible=%d pos=(%d,%d,z=%.2f) z_extent=%.2f depth_scale=%.3f frame=%d rect=(%d,%d)-(%d,%d) metrics=%s size=%dx%d offsets=(%d,%d)",
-			label ? label : "", i, (uint)_sceneEntities.size(),
-			entity->getName().c_str(), entity->getClassId(), entity->isVisible(),
-			entity->getX(), entity->getY(), (double)entity->getZ(), (double)entity->getZExtent(),
-			(double)entity->getDepthScale(), entity->getCurrentFrame(),
-			rect.left, rect.top, rect.right, rect.bottom,
-			hasMetrics ? "frame" : "none",
-			width, height, xOffset, yOffset);
-	}
-}
-
 const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Point &point, int classIdFilter) const {
 	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
 		const RuntimeEntity *entity = _sceneEntities[(uint)i];
@@ -954,6 +946,16 @@ const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Po
 	}
 
 	return nullptr;
+}
+
+int RuntimeEntityManager::findSceneEntityDrawIndexByName(const Common::String &name) const {
+	for (uint i = 0; i < _sceneEntities.size(); ++i) {
+		const RuntimeEntity *entity = _sceneEntities[i];
+		if (entity->getName().equalsIgnoreCase(name))
+			return (int)i;
+	}
+
+	return -1;
 }
 
 const RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) const {
