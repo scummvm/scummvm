@@ -1260,6 +1260,13 @@ void WaynesWorldEngine::openRoomLibrary(int roomNum) {
 	_roomGxl = new GxlArchive(_roomName);
 }
 
+void WaynesWorldEngine::openAlternateRoomLibrary(const char *name) {
+	_roomName = Common::String(name);
+	delete _roomGxl;
+
+	_roomGxl = new GxlArchive(_roomName);
+}
+
 void WaynesWorldEngine::loadRoomBackground() {
 	loadPalette(_roomGxl, "backg.pcx");
 	g_system->getPaletteManager()->setPalette(_palette2, 0, 256);

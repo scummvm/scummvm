@@ -400,6 +400,7 @@ public:
 	void setMouseBounds(int x1, int x2, int y1, int y2);
 	// Room
 	void openRoomLibrary(int roomNum);
+	void openAlternateRoomLibrary(const char *name);
 	void loadRoomBackground();
 	void changeRoom(int roomNum);
 	void refreshRoomBackground(int roomNum);

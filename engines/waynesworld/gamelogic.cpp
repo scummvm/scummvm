@@ -6854,13 +6854,13 @@ void GameLogic::r30_runLudwigCutscene() {
 	_vm->_garthSpriteX = -1;
 	_vm->_wayneSpriteY = -1;
 	_vm->_wayneSpriteX = -1;
-	_vm->_roomName = "m06"; // Change the active gxl file
+	_vm->openAlternateRoomLibrary("m06"); // Change the active gxl file
 	_vm->paletteFadeOut(0, 256, 64);
 	_vm->_screen->clear(0);
 	// TODO gxGetDisplayPalette(palette1);
-	// TODO pcxGetLibPalette(8, roomLib, "backg", palette2);
-	// TODO gxSetDisplayPalette(palette2);
-	warning("r30_runLudwigCutscene - STUB some initialization");
+
+	_vm->loadPalette(_vm->_roomGxl, "backg.pcx");
+
 	_vm->paletteFadeOut(0, 256, 64);
 	_vm->_screen->clear(0);
 	_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
