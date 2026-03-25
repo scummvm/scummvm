@@ -30,11 +30,13 @@ namespace Harvester {
 namespace {
 
 static const char *const kAuthorityNpc = "AUTHORITY";
+static const char *const kAuthority2Npc = "AUTHORITY2";
 
 } // End of namespace
 
 bool AuthorityDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kAuthorityNpc);
+	return npcName.equalsIgnoreCase(kAuthorityNpc) ||
+		npcName.equalsIgnoreCase(kAuthority2Npc);
 }
 
 Common::Error AuthorityDialogueHandler::handleDialogue(DialogueRuntime &runtime,

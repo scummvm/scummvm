@@ -57,7 +57,8 @@ static const DialogueLineEntry kHerrillGascanIntroLines[] = {
 } // End of namespace
 
 bool HerrillDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase("HERRILL");
+	return npcName.equalsIgnoreCase(kHerrillNpc) ||
+		npcName.equalsIgnoreCase(kHerrillLogNpc);
 }
 
 Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
