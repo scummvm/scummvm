@@ -209,6 +209,7 @@ public:
 	RuntimeEntity *findSceneEntityByName(const Common::String &name);
 	RuntimeEntity *detachSceneEntityByName(const Common::String &name);
 	void adoptSceneEntity(RuntimeEntity *entity);
+	void reinsertSceneEntity(RuntimeEntity *entity);
 
 private:
 	void insertSceneEntity(RuntimeEntity *entity);

@@ -994,6 +994,21 @@ void RuntimeEntityManager::adoptSceneEntity(RuntimeEntity *entity) {
 	insertSceneEntity(entity);
 }
 
+void RuntimeEntityManager::reinsertSceneEntity(RuntimeEntity *entity) {
+	if (!entity)
+		return;
+
+	for (uint i = 0; i < _sceneEntities.size(); ++i) {
+		if (_sceneEntities[i] != entity)
+			continue;
+
+		_sceneEntities.remove_at(i);
+		break;
+	}
+
+	insertSceneEntity(entity);
+}
+
 void RuntimeEntityManager::insertSceneEntity(RuntimeEntity *entity) {
 	uint insertIndex = 0;
 	while (insertIndex < _sceneEntities.size() && _sceneEntities[insertIndex]->getZ() >= entity->getZ())
