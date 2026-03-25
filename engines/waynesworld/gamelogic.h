@@ -49,6 +49,8 @@ public:
 	int getActorScaleFromY(int actorY);
 	void setPizzathonStatus(int flagNum);
 	void r38_atrap();
+	void handlePizzathon();
+
 public:
 	byte _r0_flags;
 	int _r0_pizzathonChoiceCtr;

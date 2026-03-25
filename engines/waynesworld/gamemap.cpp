@@ -19,6 +19,7 @@
  *
  */
 
+#include "gamelogic.h"
 #include "waynesworld/waynesworld.h"
 #include "waynesworld/graphics.h"
 
@@ -100,26 +101,26 @@ void WaynesWorldEngine::gameMapOpen() {
     _garthSpriteX = -1;
     _currentMapItemIndex = -1;
     _isTextVisible = false;
-    /* TODO
-    if (_byte_3070D & 0x08) {
+
+	if (_logic->_r38_flags & 0x08) {
         setWaynePosition(243, 103);
         setGarthPosition(239, 95);
         changeRoom(8);
         return;
     }
-    */
-    // sysMouseDriver(2);
+
+	// sysMouseDriver(2);
     paletteFadeOut(0, 256, 16);
-    /* TODO
-    if ((_byte_306F4 & 0x04) && !(_byte_306F4 & 0x08)) {
-        // TODO sub_305E0();
+
+	if ((_logic->_pizzathonListFlags2 & 0x04) && !(_logic->_pizzathonListFlags2 & 0x08)) {
+		_logic->handlePizzathon();
         _gameState = 0;
         // sysMouseDriver(1);
         drawInterface(_verbNumber);
         paletteFadeIn(0, 256, 4);
         return;
     }
-    */
+
     _musicIndex = 2;
     changeMusic();
     _screen->clear(0);
