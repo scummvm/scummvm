@@ -140,7 +140,7 @@ Common::KeymapArray DreamWebMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 
-	act = new Action("SKIP", _("Skip / advance text"));
+	act = new Action("LOCKMON", _("Pause monitor output"));
 	act->setCustomEngineActionEvent(DreamWeb::kDreamWebActionSkip);
 	act->addDefaultInputMapping("SPACE");
 	act->addDefaultInputMapping("JOY_A");

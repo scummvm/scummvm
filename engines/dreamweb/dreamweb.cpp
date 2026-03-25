@@ -328,7 +328,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 			case kDreamWebActionEscape:
 				_lastHardKey = Common::KEYCODE_ESCAPE;
 				break;
-			case kDreamWebActionSkip:
+			case kDreamWebActionLockMon:
 				_lastHardKey = Common::KEYCODE_SPACE;
 				break;
 			default:

@@ -49,7 +49,7 @@ namespace DreamWeb {
 
 enum DreamWebAction {
 	kDreamWebActionEscape,
-	kDreamWebActionSkip
+	kDreamWebActionLockMon
 };
 
 const unsigned int kNumReelRoutines = 57;
