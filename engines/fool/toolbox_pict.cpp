@@ -46,6 +46,7 @@ void Toolbox::ClosePicture() {
 			warning("Toolbox::ClosePicture: picture not open");
 			return;
 		}
+		_port->picSave->pushOp(kOpEndPic);
 		_port->picSave = nullptr;
 	}
 }
@@ -66,12 +67,12 @@ Common::Point readPoint(Common::SeekableReadStream &stream) {
 	return result;
 }
 
-Polygon readPolygon(Common::SeekableReadStream &stream) {
-	Polygon result;
-	result.polySize = stream.readUint16BE();
-	result.polyBBox = readRect(stream);
-	for (int i = 0; i < result.polySize - 10; i++) {
-		result.polyPoints.push_back(readPoint(stream));
+PolyHandle readPolygon(Common::SeekableReadStream &stream) {
+	PolyHandle result(new Polygon);
+	result->polySize = stream.readUint16BE();
+	result->polyBBox = readRect(stream);
+	for (int i = 10; i < result->polySize; i += 4) {
+		result->polyPoints.push_back(readPoint(stream));
 	}
 	return result;
 }
@@ -200,7 +201,7 @@ BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool
 	return result;
 }
 
-void Toolbox::_drawPackBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame) {
+void Toolbox::_drawBitsRect(Common::SeekableReadStream &stream, const Common::Rect &picFrame, bool compressed) {
 	PixMap pixMap = readPixMap(stream, false);
 
 	// these rectangles are using the pixmap coordinate system
@@ -214,7 +215,7 @@ void Toolbox::_drawPackBitsRect(Common::SeekableReadStream &stream, const Common
 	picFrame.debugPrintC(5, kDebugGraphics, "Toolbox::_drawPackBitsRect: picFrame");
 
 	if (pixMap._isBitMap) {
-		BitMap result = readBitsRectMono(stream, pixMap, true);
+		BitMap result = readBitsRectMono(stream, pixMap, compressed);
 
 		const BitMap intermediate(createRemappedSurface(result->surfacePtr(), nullptr, 0));
 		// source rect needs to be in bitmap coordinates
@@ -222,13 +223,13 @@ void Toolbox::_drawPackBitsRect(Common::SeekableReadStream &stream, const Common
 
 		// dest rect needs to be in graphics port coordinates
 		dstRect.translate(-picFrame.left, -picFrame.top);
-		byte fakePal[768];
-		Common::fill(fakePal, fakePal+3, 0xff);
-		Common::fill(fakePal+3, fakePal+768, 0x00);
-		result->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 128, fakePal);
+		//byte fakePal[768];
+		//Common::fill(fakePal, fakePal+3, 0xff);
+		//Common::fill(fakePal+3, fakePal+768, 0x00);
+		//result->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 128, fakePal);
 		CopyBits(intermediate, _port->portBits, srcRect, dstRect, mode, nullptr);
 	} else {
-		warning("Toolbox::_drawPackBitsRect: PixMaps unsupported");
+		warning("Toolbox::_drawBitsRect: PixMaps unsupported");
 	}
 }
 
@@ -281,16 +282,18 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 	GrafPtr origState = _port;
 	GrafPort temp;
 	OpenPort(&temp);
-	temp.portBits = origState->portBits;
 	temp.portRect = dstRect;
+	// various bits of the original graphics port get copied over
+	temp.portBits = origState->portBits;
 
 	Common::Point ovSize;
 	Common::Rect lastRect;
+	PolyHandle lastPoly;
 	int count = 0;
 
 	bool endPic = false;
 
-	while (!stream.eos() && !endPic) {
+	while (!(stream.eos() || endPic)) {
 		size_t pos = stream.pos();
 		uint16 op;
 		if (version == kOpVersion2)
@@ -547,9 +550,80 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			FillRoundRect(lastRect, ovSize.x, ovSize.y, _port->fillPat);
 			break;
 
+		case kOpFrameOval:
+			lastRect = readRect(stream);
+			FrameOval(lastRect);
+			break;
+		case kOpPaintOval:
+			lastRect = readRect(stream);
+			PaintOval(lastRect);
+			break;
+		case kOpEraseOval:
+			lastRect = readRect(stream);
+			EraseOval(lastRect);
+			break;
+		case kOpInvertOval:
+			lastRect = readRect(stream);
+			InvertOval(lastRect);
+			break;
+		case kOpFillOval:
+			lastRect = readRect(stream);
+			FillOval(lastRect, _port->fillPat);
+			break;
+		case kOpFrameSameOval:
+			FrameOval(lastRect);
+			break;
+		case kOpPaintSameOval:
+			PaintOval(lastRect);
+			break;
+		case kOpEraseSameOval:
+			EraseOval(lastRect);
+			break;
+		case kOpInvertSameOval:
+			InvertOval(lastRect);
+			break;
+		case kOpFillSameOval:
+			FillOval(lastRect, _port->fillPat);
+			break;
+
+		case kOpFramePoly:
+			lastPoly = readPolygon(stream);
+			FramePoly(lastPoly);
+			break;
+		case kOpPaintPoly:
+			lastPoly = readPolygon(stream);
+			PaintPoly(lastPoly);
+			break;
+		case kOpErasePoly:
+			lastPoly = readPolygon(stream);
+			ErasePoly(lastPoly);
+			break;
+		case kOpInvertPoly:
+			lastPoly = readPolygon(stream);
+			InvertPoly(lastPoly);
+			break;
+		case kOpFillPoly:
+			lastPoly = readPolygon(stream);
+			FillPoly(lastPoly, _port->fillPat);
+			break;
+		case kOpFrameSamePoly:
+			FramePoly(lastPoly);
+			break;
+		case kOpPaintSamePoly:
+			PaintPoly(lastPoly);
+			break;
+		case kOpEraseSamePoly:
+			ErasePoly(lastPoly);
+			break;
+		case kOpInvertSamePoly:
+			InvertPoly(lastPoly);
+			break;
+		case kOpFillSamePoly:
+			FillPoly(lastPoly, _port->fillPat);
+			break;
+
 		case kOpBitsRect:
-			warning("STUB: Toolbox::DrawPicture: bitsRect, aborting");
-			endPic = true;
+			_drawBitsRect(stream, myPicture->picFrame, false);
 			break;
 		case kOpBitsRgn:
 			warning("STUB: Toolbox::DrawPicture: bitsRgn, aborting");
@@ -557,7 +631,7 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 			break;
 
 		case kOpPackBitsRect:
-			_drawPackBitsRect(stream, myPicture->picFrame);
+			_drawBitsRect(stream, myPicture->picFrame, true);
 			break;
 		case kOpPackBitsRgn:
 			warning("STUB: Toolbox::DrawPicture: packBitsRgn, aborting");
@@ -619,9 +693,87 @@ void Toolbox::KillPicture(PicHandle &myPicture) {
 }
 
 
+void Picture::pushHeader() {
+	pushOp(kOpVersion2);
+	pushOp(kOpHeaderOp);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	stream.writeSint32BE(-1);
+	stream.writeSint32BE(picFrame.top << 16);
+	stream.writeSint32BE(picFrame.left << 16);
+	stream.writeSint32BE(picFrame.bottom << 16);
+	stream.writeSint32BE(picFrame.right << 16);
+	stream.writeSint32BE(0);
+	size_t offset = picData.size();
+	picData.resize(offset + 24);
+	Common::copy(stream.getData(), stream.getData()+24, picData.data()+offset);
+}
+
+void Picture::pushOpPat(PictureOpType op, const Pattern &pat) {
+	pushOp(op);
+	size_t offset = picData.size();
+	picData.resize(offset + 8);
+	Common::copy(pat.data, pat.data+8, picData.data()+offset);
+}
+
+void Picture::pushOpPoly(PictureOpType op, const PolyHandle &poly) {
+	if (!poly)
+		return;
+	pushOp(op);
+	size_t offset = picData.size();
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	stream.writeUint16BE(poly->polyPoints.size()*4 + 10);
+	stream.writeSint16BE(poly->polyBBox.top);
+	stream.writeSint16BE(poly->polyBBox.left);
+	stream.writeSint16BE(poly->polyBBox.bottom);
+	stream.writeSint16BE(poly->polyBBox.right);
+	for (Common::Point &p : poly->polyPoints) {
+		stream.writeSint16BE(p.y);
+		stream.writeSint16BE(p.x);
+	}
+	picData.resize(offset + stream.size());
+	Common::copy(stream.getData(), stream.getData()+stream.size(), picData.data()+offset);
+}
+
+void Picture::pushOpRect(PictureOpType op, const Common::Rect &rect) {
+	pushOp(op);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	stream.writeSint16BE(rect.top);
+	stream.writeSint16BE(rect.left);
+	stream.writeSint16BE(rect.bottom);
+	stream.writeSint16BE(rect.right);
+	size_t offset = picData.size();
+	picData.resize(offset + 8);
+	Common::copy(stream.getData(), stream.getData()+8, picData.data()+offset);
+}
+
+void Picture::pushOpPoint(PictureOpType op, const Common::Point &point) {
+	pushOp(op);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	stream.writeSint16BE(point.y);
+	stream.writeSint16BE(point.x);
+	size_t offset = picData.size();
+	picData.resize(offset + 4);
+	Common::copy(stream.getData(), stream.getData()+4, picData.data()+offset);
+}
+
+void Picture::pushOpPointStr(PictureOpType op, const Common::Point &point, const Common::String &str) {
+	pushOp(op);
+	Common::MemoryWriteStreamDynamic stream(DisposeAfterUse::YES);
+	stream.writeSint16BE(point.y);
+	stream.writeSint16BE(point.x);
+	stream.writeByte(str.size());
+	stream.writeString(str);
+	size_t offset = picData.size();
+	picData.resize(offset + stream.size());
+	Common::copy(stream.getData(), stream.getData()+stream.size(), picData.data()+offset);
+}
+
+
 PicHandle Toolbox::OpenPicture(const Common::Rect &picFrame) {
 	PicHandle result(new Picture);
 	result->picFrame = picFrame;
+	result->pushHeader();
+
 	if (_port) {
 		if (_port->picSave) {
 			warning("Toolbox::OpenPicture: last picture not closed, overwriting");

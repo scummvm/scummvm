@@ -47,11 +47,24 @@ void Toolbox::DrawString(const Common::U32String &s) {
 
 		BitMap mask(nullptr);
 
-		Common::Rect result = blitMono(buffer, _port->portBits, mask, Common::Point(_port->pnLoc.x, _port->pnLoc.y-font->getFontAscent()), _port->txMode);
+		Common::Point destPos(_port->pnLoc.x, _port->pnLoc.y-font->getFontAscent());
+		// move to port coordinate space
+		destPos.x += _port->portRect.left;
+		destPos.y += _port->portRect.top;
+
+		Common::Rect result = blitMono(buffer, _port->portBits, mask, destPos, _port->txMode);
 		_port->pnLoc.x += bbox.width();
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(result);
 			_defaultWindow->setDirty(true);
+		}
+
+		if (_port->picSave) {
+			_port->picSave->pushOpU16(kOpTxFace, _port->txFace);
+			_port->picSave->pushOpU16(kOpTxFont, _port->txFont);
+			_port->picSave->pushOpU16(kOpTxMode, _port->txMode);
+			_port->picSave->pushOpU16(kOpTxSize, _port->txSize);
+			_port->picSave->pushOpPointStr(kOpLongText, _port->pnLoc, macString);
 		}
 	}
 }
