@@ -289,26 +289,31 @@ void GraphicsManager::blankAllScreen() {
 
 // This function is very useful for scrolling credits, but very little else
 void GraphicsManager::hardScroll(int distance) {
+	// scroll more than backdrop height, screen stay blank
+	if (ABS(distance) >= (int)_sceneHeight) {
+		blankAllScreen();
+		return;
+	}
+
 	// scroll 0 distance, return
 	if (!distance)
 		return;
 
-	// blank screen
-	blankAllScreen();
-
-	// scroll more than backdrop height, screen stay blank
-	if (ABS(distance) >= (int)_sceneHeight) {
-		return;
-	}
+	Graphics::Surface tmp;
+	tmp.copyFrom(_backdropSurface);
 
 	// copy part of the backdrop to it
 	if (distance > 0) {
-		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, 0,
+		_backdropSurface.copyRectToSurface(tmp, 0, 0,
 				Common::Rect(0, distance, _backdropSurface.w, _backdropSurface.h));
+		_backdropSurface.fillRect(Common::Rect(0, _backdropSurface.h - distance, _backdropSurface.w, _backdropSurface.h), _currentBlankColour);
 	} else {
-		_backdropSurface.copyRectToSurface(_origBackdropSurface, 0, -distance,
+		_backdropSurface.copyRectToSurface(tmp, 0, -distance,
 				Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h + distance));
+		_backdropSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, -distance), _currentBlankColour);
 	}
+
+	tmp.free();
 }
 
 void GraphicsManager::drawLine(uint x1, uint y1, uint x2, uint y2) {
