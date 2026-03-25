@@ -33,6 +33,7 @@
 #endif
 
 #include "common/translation.h"
+#include "backends/audiocd/mds/mds-disc.h"
 
 namespace GUI {
 
@@ -165,17 +166,18 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_nodeContent[data].isDirectory()) {
 			_node = _nodeContent[data];
 			updateListing();
-		} else if (!_isDirBrowser) {
+		} else if (!_isDirBrowser || isDiscImageFile(_nodeContent[data].getName())) {
+			// Allow disc image files (.iso/.mds) to be chosen in directory browser mode
 			_choice = _nodeContent[data];
 			setResult(1);
 			close();
 		}
 		break;
 	case kListSelectionChangedCmd:
-		// We do not allow selecting directories in directory
-		// browser mode, thus we will invalidate the selection
-		// when the user selects a directory over here.
-		if (data != (uint32)-1 && _isDirBrowser && !_nodeContent[data].isDirectory())
+		// We do not allow selecting plain files in directory browser mode, but
+		// we do allow selecting disc image files (.iso/.mds).
+		if (data != (uint32)-1 && _isDirBrowser && !_nodeContent[data].isDirectory()
+		    && !isDiscImageFile(_nodeContent[data].getName()))
 			_fileList->setSelected(-1);
 		break;
 	case kHiddenCmd:

@@ -8,6 +8,7 @@
 TESTS        := $(srcdir)/test/common/*.h \
 	$(srcdir)/test/common/compression/*.h \
 	$(srcdir)/test/common/formats/*.h \
+	$(srcdir)/test/backends/*.h \
 	$(srcdir)/test/audio/*.h \
 	$(srcdir)/test/math/*.h \
 	$(srcdir)/test/image/*.h
@@ -36,6 +37,10 @@ endif
 ifdef USE_TINYGL
 TESTS += $(srcdir)/test/graphics/tinygl*.h
 endif
+
+# MDS backend tests require the MDS disc parser and its disc-image dependencies
+TEST_LIBS += backends/audiocd/mds/mds-disc.o \
+	backends/fs/iso/iso-abstract-fs.o
 
 # libcommon needs libformats and libformats needs libcommon: so libcommon is put twice
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a

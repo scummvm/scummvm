@@ -68,6 +68,7 @@
 #endif
 #include "graphics/scalerplugin.h"
 
+#include "backends/audiocd/mds/mds-disc.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/keymapper.h"
@@ -283,6 +284,10 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 			SearchMan.addDirectory(dir);
 		}
 	}
+
+	// If the game was added from a disc image, mount it via ISO9660Archive so
+	// that game engines can read files from inside the image through SearchMan.
+	mountDiscImageInSearchMan();
 
 #ifdef USE_TRANSLATION
 	Common::String previousLanguage = TransMan.getCurrentLanguage();

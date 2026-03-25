@@ -21,6 +21,7 @@
 
 #include "base/version.h"
 
+#include "backends/audiocd/mds/mds-disc.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/fs.h"
@@ -428,7 +429,8 @@ void LauncherDialog::massAddGame() {
 						  "This could potentially add a huge number of games."), _("Yes"), _("No"));
 	if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 		ADCacheMan.clear();
-		MassAddDialog massAddDlg(_browser->getResult());
+		Common::FSNode startNode = resolveDiscImageNode(_browser->getResult());
+		MassAddDialog massAddDlg(startNode);
 
 		massAddDlg.runModal();
 
@@ -687,7 +689,14 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 	//    dialog.
 
 	// User made his choice...
-	Common::FSNode dir(path);
+	Common::FSNode rawNode(path);
+
+	// If the path points to a disc image file, open it as a virtual ISO
+	// filesystem so that game detection sees the image contents as regular
+	// directory entries.
+	Common::String isoImagePath;
+	Common::FSNode dir = resolveDiscImageNode(rawNode, &isoImagePath);
+
 	Common::FSList files;
 	if (!dir.getChildren(files, Common::FSNode::kListAll)) {
 		Common::U32String msg(_("ScummVM couldn't open the specified directory!"));
@@ -767,6 +776,7 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 		}
 
 		Common::String domain = EngineMan.createTargetForGame(result);
+		saveDiscImageConfig(isoImagePath, dir, domain);
 
 		// Display edit dialog for the new entry
 		EditGameDialog editDialog(domain);

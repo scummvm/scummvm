@@ -37,6 +37,7 @@
 #include "common/compression/installshieldv3_archive.h"
 #include "gui/EventRecorder.h"
 #include "gui/gui-manager.h"
+#include "backends/audiocd/mds/mds-disc.h"
 #include "gui/message.h"
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
@@ -367,6 +368,11 @@ Common::Error AdvancedMetaEngineDetectionBase::identifyGame(DetectedGame &game, 
 		warning("No path was provided. Assuming the data files are in the current directory");
 	}
 	Common::FSNode dir(path);
+
+	// If an iso_path is set, resolve the disc image so detection sees
+	// the image contents instead of the plain directory.
+	resolveDiscImageDir(dir);
+
 	Common::FSList files;
 	if (!dir.isDirectory() || !dir.getChildren(files, Common::FSNode::kListAll)) {
 		warning("Game data path does not exist or is not a directory (%s)", path.toString(Common::Path::kNativeSeparator).c_str());
