@@ -256,6 +256,24 @@ void WageEngine::processEvents() {
 			continue;
 
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kWageActionConfirm) {
+				_inputText = Common::convertFromU32String(_gui->_consoleWindow->getInput());
+				Common::String inp = _inputText + '\n';
+
+				sayText(_gui->_consoleWindow->getInput(), Common::TextToSpeechManager::INTERRUPT);
+
+				_gui->appendText(inp.c_str());
+				_gui->_consoleWindow->clearInput();
+
+				if (!_inputText.empty()) {
+					processTurn(&_inputText, NULL);
+					_gui->disableUndo();
+					_gui->enableRevert();
+				}
+			}
+			break;
+
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {

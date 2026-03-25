@@ -21,6 +21,10 @@
 
 #include "base/plugins.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
+
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/translation.h"
@@ -78,7 +82,26 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	int getMaximumSaveSlot() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
+
+Common::KeymapArray WageMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "wage", "WAGE");
+
+	Action *act;
+
+	act = new Action(kStandardActionConfirm, _("Submit command"));
+	act->setCustomEngineActionEvent(Wage::kWageActionConfirm);
+	act->addDefaultInputMapping("RETURN");
+	act->addDefaultInputMapping("KP_ENTER");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
+}
 
 bool WageMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||

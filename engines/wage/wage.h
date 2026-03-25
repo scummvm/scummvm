@@ -75,6 +75,10 @@ class PCSpeaker;
 
 namespace Wage {
 
+enum WageAction {
+	kWageActionConfirm
+};
+
 class Console;
 class Chr;
 class Designed;
