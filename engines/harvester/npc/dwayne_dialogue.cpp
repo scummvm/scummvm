@@ -32,6 +32,8 @@ namespace Harvester {
 namespace {
 
 static const char *const kDwayneNpc = "DWAYNE";
+static const char *const kDwayneDnaLeftNpc = "DWAYNE_DNALFT";
+static const char *const kDwayneStBedroomNpc = "DWAYNE_ST_BEDRM";
 static const char *const kEdnaNpc = "EDNA";
 static const char *const kPcSpeaker = "PC";
 static const char *const kInventoryOwnerName = "INVENTORY";
@@ -43,7 +45,9 @@ static const int kDwayneLoomisTopicResponseLines[] = { 0x8c, 0x8d };
 } // End of namespace
 
 bool DwayneDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kDwayneNpc);
+	return npcName.equalsIgnoreCase(kDwayneNpc) ||
+		npcName.equalsIgnoreCase(kDwayneDnaLeftNpc) ||
+		npcName.equalsIgnoreCase(kDwayneStBedroomNpc);
 }
 
 Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
