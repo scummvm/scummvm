@@ -30,6 +30,7 @@ namespace Harvester {
 namespace {
 
 static const char *const kKarinNpc = "KARIN";
+static const char *const kKarinStandingNpc = "KARIN_STANDING";
 static const char *const kKarinCem10Npc = "KARIN_CEM10";
 static const char *const kPcSpeaker = "PC";
 static const char *const kEdnaNpc = "EDNA";
@@ -68,6 +69,7 @@ static const DialogueLineEntry kKarinInvMagLines[] = {
 
 bool KarinDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase(kKarinNpc) ||
+		npcName.equalsIgnoreCase(kKarinStandingNpc) ||
 		npcName.equalsIgnoreCase(kKarinCem10Npc);
 }
 
