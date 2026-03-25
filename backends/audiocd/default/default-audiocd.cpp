@@ -22,7 +22,9 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "audio/audiostream.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/file.h"
+#include "common/path.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/formats/cue.h"
@@ -37,6 +39,7 @@ DefaultAudioCDManager::DefaultAudioCDManager() {
 	_cd.balance = 0;
 	_mixer = g_system->getMixer();
 	_emulating = false;
+	_mdsLoaded = false;
 	assert(_mixer);
 }
 
@@ -48,12 +51,28 @@ DefaultAudioCDManager::~DefaultAudioCDManager() {
 bool DefaultAudioCDManager::open() {
 	// For emulation, opening is always valid
 	close();
+
+	// Try to load MDS/MDF disc image for audio track fallback.
+	// MDSDisc::open() handles .mdf → .mds redirection internally.
+	if (!_mdsLoaded && ConfMan.hasKey("iso_path")) {
+		const Common::String isoStr = ConfMan.get("iso_path");
+		if (isoStr.hasSuffixIgnoreCase(".mds") || isoStr.hasSuffixIgnoreCase(".mdf")) {
+			if (_mdsDisc.open(ConfMan.getPath("iso_path"))) {
+				_mdsLoaded = true;
+				debug(1, "DefaultAudioCDManager: opened MDS with %d track(s)", _mdsDisc.getTrackCount());
+			}
+		}
+	}
+
 	return true;
 }
 
 void DefaultAudioCDManager::close() {
-	// Only need to stop for emulation
 	stop();
+	if (_mdsLoaded) {
+		_mdsDisc.close();
+		_mdsLoaded = false;
+	}
 }
 
 void DefaultAudioCDManager::fillPotentialTrackNames(Common::Array<Common::String> &trackNames, int track) const {
@@ -132,6 +151,29 @@ bool DefaultAudioCDManager::play(int track, int numLoops, int startFrame, int du
 			                        Audio::makeLoopingAudioStream(stream, start, end, (numLoops < 1) ? numLoops + 1 : numLoops), -1, _cd.volume, _cd.balance);
 			return true;
 		}
+
+		// Try MDS/MDF disc image audio as a fallback
+		if (_mdsLoaded) {
+			// Audio track numbers in the API are 0-based (data track excluded),
+			// but MDS track numbers are 1-based disc track numbers.
+			// Track 0 in the API = disc track 2 (first audio track after data).
+			const int discTrack = track + 1;
+			debug(2, "DefaultAudioCDManager: MDS fallback: API track %d -> disc track %d, startFrame=%d duration=%d",
+			      track, discTrack, startFrame, duration);
+			Audio::SeekableAudioStream *mdsStream = _mdsDisc.openAudioStream(discTrack);
+			if (mdsStream) {
+				Audio::Timestamp start = Audio::Timestamp(0, startFrame, 75);
+				Audio::Timestamp end = duration ? Audio::Timestamp(0, startFrame + duration, 75) : mdsStream->getLength();
+				debug(2, "DefaultAudioCDManager: playing MDS audio track %d, start=%dms end=%dms",
+				      discTrack, start.msecs(), end.msecs());
+				_emulating = true;
+				_mixer->playStream(soundType, &_handle,
+				    Audio::makeLoopingAudioStream(mdsStream, start, end,
+				        (numLoops < 1) ? numLoops + 1 : numLoops),
+				    -1, _cd.volume, _cd.balance);
+				return true;
+			}
+		}
 	}
 
 	return false;
@@ -144,7 +186,7 @@ bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int durat
 	if (!cuefile.open(cuesheet)) {
 		return false;
 	}
-	Common::String cuestring = cuefile.readString(0, cuefile.size());
+	const Common::String cuestring = cuefile.readString(0, cuefile.size());
 	Common::CueSheet cue(cuestring.c_str());
 
 	Common::CueSheet::CueTrack *track = cue.getTrackAtFrame(startFrame);
@@ -154,7 +196,7 @@ bool DefaultAudioCDManager::playAbsolute(int startFrame, int numLoops, int durat
 	} else {
 		warning("Playing from frame %i", startFrame);
 	}
-	int firstFrame = track->indices[0] == -1 ? track->indices[1] : track->indices[0];
+	const int firstFrame = track->indices[0] == -1 ? track->indices[1] : track->indices[0];
 
 	return play(track->number, numLoops, startFrame - firstFrame, duration, onlyEmulate);
 }

@@ -23,6 +23,7 @@
 #define BACKENDS_AUDIOCD_DEFAULT_H
 
 #include "backends/audiocd/audiocd.h"
+#include "backends/audiocd/mds/mds-disc.h"
 #include "audio/mixer.h"
 
 namespace Common {
@@ -80,6 +81,8 @@ protected:
 
 	Status _cd;
 	Audio::Mixer *_mixer;
+	MDSDisc _mdsDisc;
+	bool    _mdsLoaded;
 };
 
 #endif

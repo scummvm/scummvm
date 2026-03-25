@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	modular-backend.o \
 	audiocd/audiocd-stream.o \
 	audiocd/default/default-audiocd.o \
+	audiocd/mds/mds-disc.o \
+	fs/iso/iso-abstract-fs.o \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
