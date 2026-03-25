@@ -276,8 +276,11 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 		return false;
 
 	for (uint i = 0; i < config.optionItems.size(); ++i) {
+		const Common::String key = Common::String::format("options_menu_%u", i + 1);
 		Common::String value;
-		if (menu.getKey(Common::String::format("options_menu_%u", i + 1), kMenuSectionName, value) && !value.empty())
+		if (loadRawMenuValue(data, key.c_str(), value) && !value.empty())
+			config.optionItems[i] = value;
+		else if (menu.getKey(key, kMenuSectionName, value) && !value.empty())
 			config.optionItems[i] = value;
 	}
 
