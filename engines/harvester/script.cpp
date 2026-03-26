@@ -613,6 +613,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 	_heads.clear();
 	_useItems.clear();
 
+	uint32 anonymousObjectId = 0;
 	auto parseLine = [&](const Common::String &rawLine) {
 		const Common::String line = trimAsciiLine(rawLine);
 		if (line.empty() || line[0] == '{')
@@ -1010,7 +1011,11 @@ void Script::parseTownRecords(ResourceManager &resources) {
 		object.currentOwnerOrRoom = object.initialOwnerOrRoom;
 		object.runtimeVisible = object.visible;
 		object.identShown = object.identTextKey.empty();
-		if (!object.initialOwnerOrRoom.empty() && !object.objectName.empty())
+		if (object.objectName.empty()) {
+			// Native room scripts use unnamed OBJECT entries as blocker rectangles.
+			object.objectName = Common::String::format("__ANON_OBJECT_%u", anonymousObjectId++);
+		}
+		if (!object.initialOwnerOrRoom.empty())
 			_objects.push_back(object);
 		};
 

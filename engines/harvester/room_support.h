@@ -107,6 +107,7 @@ bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
 void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
+Common::Rect getRoomObjectHotspotBounds(const StartupObjectRecord &object);
 bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene);
 bool shouldRunStartupRoomProbe();
 void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
