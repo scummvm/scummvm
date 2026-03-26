@@ -298,6 +298,7 @@ struct StartupInteractionResult {
 	int playerGotoX = 0;
 	int playerGotoZ = 0;
 	bool requestPlayerGotoXZ = false;
+	bool requestRoomRestart = false;
 	bool requestMainMenu = false;
 	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;

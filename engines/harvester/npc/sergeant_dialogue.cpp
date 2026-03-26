@@ -177,7 +177,15 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		lineError = runtime.playDialogueFst(kDialogueC076FstPath);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
-		return runtime.showCdChangePrompt(3);
+		lineError = runtime.showCdChangePrompt(3);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+
+		// Native prompt_for_cdrom_disc_change(3, 0) latches a main-loop room rebuild.
+		StartupInteractionResult interaction;
+		interaction.requestRoomRestart = true;
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+		return Common::kNoError;
 	};
 	auto handleInviteBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;

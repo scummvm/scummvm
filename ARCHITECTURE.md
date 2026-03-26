@@ -114,6 +114,8 @@
   - `get_mscdex_version_bcd` uses `int 2Fh AX=150Ch` and returns the MSCDEX version number from `g_dpmi_real_mode_call_structure.ebx`.
 - `prompt_for_cdrom_disc_change` at `0x488a0` is the user-facing disc-swap / drive-not-ready path reached from menus and scripted transitions.
   - It stops the active music stream, frees dialogue/XFILE cache state, shows the `CD-ROM DRIVE NOT READY!` / `PLEASE TRY AGAIN...` prompt, then reruns `shutdown_extended_file_system`, `initialize_extended_file_system`, and the `dialogue.idx` reopen path once the requested disc becomes available.
+  - It also updates the active-disc dword at `0xc0fa8`. On disc `3`, it sets `0xd607c = 1`, and when the second parameter is `0` it additionally sets the one-shot latch at `0xc7e49 = 1`.
+  - `run_harvester_main_loop` checks that `0xc7e49` latch after interactions; when set, it clears the byte, calls `reload_town_world_from_script`, and immediately reruns `room_setup` on the pending room target. `dispatch_room_event_actions` case `CHANGE_CD` mirrors the same disc-3 path inline by calling `reload_town_world_from_script`, clearing `0xc7e49`, and then calling `room_setup`.
 
 ### Town Script Runtime
 
