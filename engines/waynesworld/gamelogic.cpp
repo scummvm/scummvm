@@ -8474,7 +8474,7 @@ void GameLogic::r38_updateRoomAnimations() {
 
 void GameLogic::r38_refreshRoomBackground() {
 	_r38_flags |= 0x01;
-	if (!_vm->_hasRoomAnimationCallback || !(_r38_flags & 0x08)) {
+	if (!_vm->_hasRoomAnimationCallback && !(_r38_flags & 0x08)) {
 		r38_initRoomAnimations();
 	}
 	if ((_r38_flags & 0x08)) {
