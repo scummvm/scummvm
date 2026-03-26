@@ -118,6 +118,7 @@ static const int kDialogueTopicEndX = 482;
 static const int kDialogueOtherStartY = 170;
 static const int kDialogueOtherEndY = 193;
 static const int kDialogueGenericByeResponseIndex = 13;
+static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const char *const kDialogueKeywordBitmapPath = "1:/GRAPHIC/OTHER/KEYWORD.BM";
 static const char *const kDialogueGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
 static const char *const kDialogueGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
@@ -870,6 +871,96 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 		return Common::kNoError;
 	};
+	auto clearScreenToBlack = [&]() -> Common::Error {
+		Graphics::Screen *screen = _engine.getScreen();
+		if (!screen)
+			return Common::kReadingFailed;
+
+		byte blackPalette[256 * 3];
+		memset(blackPalette, 0, sizeof(blackPalette));
+		screen->fillRect(screen->getBounds(), 0);
+		setScaledPalette(*screen, blackPalette, 1.0f);
+		screen->makeAllDirty();
+		screen->update();
+		return Common::kNoError;
+	};
+	auto showCdChangePrompt = [&](int discNumber) -> Common::Error {
+		if (discNumber <= 0 || !_engine.shouldShowCdChangePrompts())
+			return Common::kNoError;
+
+		ResourceManager *resources = _engine.getResources();
+		Graphics::Screen *screen = _engine.getScreen();
+		if (!resources || !screen)
+			return Common::kReadingFailed;
+
+		const Common::String bitmapPath =
+			Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
+		IndexedBitmap promptBitmap;
+		byte promptPalette[256 * 3];
+		if (!loadBitmapResource(*resources, bitmapPath, promptBitmap) ||
+				!loadPaletteResource(*resources, kCdChangePromptPalettePath, promptPalette)) {
+			warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
+			return Common::kReadingFailed;
+		}
+
+		_engine.stopStartupMusic();
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+			if (event.type == Common::EVENT_MOUSEMOVE)
+				_mousePos = event.mouse;
+		}
+
+		bool waitingForRelease = false;
+		bool needsRedraw = true;
+		Graphics::FrameLimiter limiter(g_system, 60);
+
+		while (!_engine.shouldQuit()) {
+			if (needsRedraw) {
+				screen->fillRect(screen->getBounds(), 0);
+				blitBitmap(*screen, promptBitmap, 0, 0);
+				setScaledPalette(*screen, promptPalette, 1.0f);
+				if (runtimeEntities)
+					runtimeEntities->drawCursor(*screen);
+				screen->makeAllDirty();
+				screen->update();
+				needsRedraw = false;
+			}
+
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+
+				switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					_mousePos = event.mouse;
+					needsRedraw = true;
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+					waitingForRelease = true;
+					break;
+				case Common::EVENT_LBUTTONUP:
+					if (waitingForRelease)
+						return Common::kNoError;
+					break;
+				default:
+					break;
+				}
+			}
+
+			if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+				needsRedraw = true;
+
+			limiter.delayBeforeSwap();
+			limiter.startFrame();
+		}
+
+		return Common::kNoError;
+	};
 	auto runGameOverScreen = [&]() -> Common::Error {
 		Graphics::Screen *screen = _engine.getScreen();
 		ResourceManager *resources = _engine.getResources();
@@ -1340,7 +1431,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	DialogueRuntime runtime(
 		_engine, *startupScript, *startupText, startupFlow, npc.roomName, genericByeTopic,
 		playDialogueLineWithVariant, playDialogueLine, playDialogueEntrySequence,
-		playDialogueFst, runKeywordMenu, runResponseMenu,
+		playDialogueFst, clearScreenToBlack, showCdChangePrompt, runKeywordMenu, runResponseMenu,
 		[&](const Common::String &responseLine, int &selectedIndex) {
 			return runResponseMenuText(responseLine, -1, selectedIndex);
 		},

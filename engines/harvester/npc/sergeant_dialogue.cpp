@@ -137,7 +137,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			{ 0x433f, "SERGEANT", 0 },
 			{ 0x4344, "PC", 2 },
 			{ 0x4348, "SERGEANT", 0 },
-			{ 0x434f, "SERGEANT", 0 },
+			{ 0x434f, "PC", 0 },
 			{ 0x4353, "SERGEANT", 1 }
 		};
 		lineError = playSequence(remainsIntroLines, ARRAYSIZE(remainsIntroLines));
@@ -171,8 +171,13 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		// Native blacks the screen and then prompts for the next disc after this FST chain.
-		return runtime.playDialogueFst(kDialogueC076FstPath);
+		lineError = runtime.clearScreenToBlack();
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		lineError = runtime.playDialogueFst(kDialogueC076FstPath);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+		return runtime.showCdChangePrompt(3);
 	};
 	auto handleInviteBranch = [&]() -> Common::Error {
 		sharedState.dialogueStateD2f08 = true;
