@@ -192,7 +192,7 @@ public:
 	 *
 	 * @return True if the sound is active.
 	 */
-	virtual bool isSoundIDActive(int id) = 0;
+	virtual bool isSoundIDActive(int id) const = 0;
 
 	/**
 	 * Get the sound ID for the given handle.
@@ -201,7 +201,7 @@ public:
 	 *
 	 * @return Sound ID if the sound is active.
 	 */
-	virtual int getSoundID(SoundHandle handle) = 0;
+	virtual int getSoundID(SoundHandle handle) const = 0;
 
 	/**
 	 * Check whether a sound with the given handle is active.
@@ -210,7 +210,7 @@ public:
 	 *
 	 * @return True if the sound is active.
 	 */
-	virtual bool isSoundHandleActive(SoundHandle handle) = 0;
+	virtual bool isSoundHandleActive(SoundHandle handle) const = 0;
 
 
 	/**
@@ -243,7 +243,7 @@ public:
 	 *
 	 * @return The channel volume.
 	 */
-	virtual byte getChannelVolume(SoundHandle handle) = 0;
+	virtual byte getChannelVolume(SoundHandle handle) const = 0;
 
 	/**
 	 * Set the channel balance for the given handle.
@@ -261,7 +261,7 @@ public:
 	 *
 	 * @return The channel balance.
 	 */
-	virtual int8 getChannelBalance(SoundHandle handle) = 0;
+	virtual int8 getChannelBalance(SoundHandle handle) const = 0;
 
 	/**
 	 * Set the channel's left fader level for the given handle.
@@ -278,7 +278,7 @@ public:
 	 *
 	 * @return The channel's left fader level.
 	 */
-	virtual uint8 getChannelFaderL(SoundHandle handle) = 0;
+	virtual uint8 getChannelFaderL(SoundHandle handle) const = 0;
 
 	/**
 	 * Set the channel's right fader level for the given handle.
@@ -295,7 +295,7 @@ public:
 	 *
 	 * @return The channel's right fader level.
 	 */
-	virtual uint8 getChannelFaderR(SoundHandle handle) = 0;
+	virtual uint8 getChannelFaderR(SoundHandle handle) const = 0;
 
 	/**
 	 * Set the sample rate for the given handle.
@@ -312,7 +312,7 @@ public:
 	 *
 	 * @return The current sample rate of the channel.
 	*/
-	virtual uint32 getChannelRate(SoundHandle handle) = 0;
+	virtual uint32 getChannelRate(SoundHandle handle) const = 0;
 
 	/**
 	 * Reset the sample rate of the channel back to its
@@ -325,12 +325,12 @@ public:
 	/**
 	 * Get an approximation of for how long the channel has been playing.
 	 */
-	virtual uint32 getSoundElapsedTime(SoundHandle handle) = 0;
+	virtual uint32 getSoundElapsedTime(SoundHandle handle) const = 0;
 
 	/**
 	 * Get an approximation of for how long the channel has been playing.
 	 */
-	virtual Timestamp getElapsedTime(SoundHandle handle) = 0;
+	virtual Timestamp getElapsedTime(SoundHandle handle) const = 0;
 
 	/**
 	 * Replace the channel's stream with a version that loops indefinitely.
@@ -347,7 +347,7 @@ public:
 	 *
 	 * @return True if any channels of the specified type are active.
 	 */
-	virtual bool hasActiveChannelOfType(SoundType type) = 0;
+	virtual bool hasActiveChannelOfType(SoundType type) const = 0;
 
 	/**
 	 * Set the volume for the given sound type.
