@@ -1,10 +1,23 @@
-# HARVEST.LE Reverse Engineering Notes
+# HARVEST.LE Architecture
 
-## Scope
+## Summary
 
-This file captures preliminary reverse-engineering findings for `HARVEST.LE` from the entry point through the main startup path and into room/event transitions. Names below reflect what has already been applied in Ghidra when confidence was high.
+- This file records confirmed architecture and stable symbol recovery for `HARVEST.LE`.
+- The emphasis is subsystem shape, trusted names, and engine relationships already justified in Ghidra.
+- Detailed branch notes remain where they materially explain shared engine behavior, save/load semantics, or subsystem boundaries.
 
-## Startup Chain
+## At A Glance
+
+- Startup flow is now bounded from the LE loader through Watcom CRT setup, `startup_main`, XFILE initialization, town-script bootstrap, and `run_harvester_main_loop`.
+- Resource loading is split cleanly between numbered archive sets (`*.DAT` + `INDEX.00N`) and direct CD-ROM file paths under the shared XFILE abstraction.
+- The main loop owns room handoff consumption, player/world interaction dispatch, startup presentation, timer expiry, and shutdown.
+- World data is script-driven: rooms, entrances, commands, text, timers, NPCs, monsters, objects, and regions all parse into stable linked-list registries.
+- Dialogue, inventory, map travel, room menus, and save/load now read as one coherent UI layer rather than isolated helper clusters.
+- Platform/runtime coverage includes DPMI helpers, VESA/VGA backends, IRQ1 keyboard handling, `int 33h` mouse integration, joystick polling, and MSCDEX/CD checks.
+
+## Runtime And Gameplay
+
+### Startup Chain
 
 - `_entry` at `0x810e8` is only an LE loader thunk.
 - `watcom_le_crt_startup` at `0x81160` is Watcom DOS-extender CRT setup. It captures the command tail and environment block, counts `NO87=` overrides, clears startup/BSS state, runs init callbacks, and hands off to C startup.
@@ -21,7 +34,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `run_quick_tips_screen` at `0x6c890` is the startup quick-tips overlay shown on top of the already loaded `START -> PCROOM` room state.
   - It spawns the bottom action labels through `spawn_text_entity`, renders all three actions in color `0xc3`, and resolves the toggle through the `TEXT` records so `Show_Tips_ON` / `Show_Tips_OFF` display their text values rather than the raw keys.
 
-## Resource Layer
+### Resource Layer
 
 - `initialize_extended_file_system` at `0x1c640` performs one-time setup for the game's extended/XFILE resource system.
 - The routine copies startup/config path strings, resolves the configured `CD_ROM` root, and builds in-memory entry lists for numbered resource sets.
@@ -102,7 +115,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `prompt_for_cdrom_disc_change` at `0x488a0` is the user-facing disc-swap / drive-not-ready path reached from menus and scripted transitions.
   - It stops the active music stream, frees dialogue/XFILE cache state, shows the `CD-ROM DRIVE NOT READY!` / `PLEASE TRY AGAIN...` prompt, then reruns `shutdown_extended_file_system`, `initialize_extended_file_system`, and the `dialogue.idx` reopen path once the requested disc becomes available.
 
-## Town Script Runtime
+### Town Script Runtime
 
 - `initialize_town_script_runtime` at `0x42fc0` bootstraps the game's town script system.
 - It builds a `cold(%s)` startup expression from the configured `TOWN` value.
@@ -125,7 +138,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `g_town_script_runtime_state` at `0xd3050` is the 0x20-byte base state block zeroed by `reset_town_script_runtime_state` at `0x48000`.
   - The mixed Borland runtime descriptor block still binds a no-op paired callback above it, but the owning state object itself is now explicit from the `initialize_town_script_runtime` and `run_town_script_interpreter` xrefs.
 
-## Confirmed Cold-Start Resource Order
+### Confirmed Cold-Start Resource Order
 
 - `startup_main` at `0x10010` enters the normal game boot path in this order:
   - `initialize_extended_file_system`
@@ -153,7 +166,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `1:\graphic\other\harvlogo.bm`
 - Only after the FST playback does the main-loop startup open direct-path dialogue/font assets such as `dialogue.idx`, `graphic\font\harvfont.cft`, `graphic\font\harvfnt2.cft`, `graphic\font\textfont.cft`, `graphic\font\textfnt2.cft`, `graphic\font\medfont1.cft`, and `graphic\font\medfont2.cft`.
 
-## Main Loop
+### Main Loop
 
 - `run_harvester_main_loop` at `0x6dc70` is the primary Harvester boot and gameplay loop.
 - It prints the `Running Harvester v1.0` banner.
@@ -208,44 +221,18 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `blit_vesa_banked_rect` is the shared rectangle blitter used by the VESA mode records.
   - `select_vesa_bank_for_scanline` adjusts the active bank/window based on a scanline index.
 
-## Render Entity Runtime
+### Render Entity Runtime
 
-**Confidence:** High
+- `Confidence:` High.
+- `Evidence:` `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, and `update_actor_runtime_state` all operate on the same `0x11bc` runtime record.
+- `Evidence:` recovered helper types line up with the entity materialization path: `BitmapBuffer` is the 12-byte `{ width, height, pixels }` bitmap header, `AbmFrameHeader` is the packed per-frame ABM prefix, `DirtyRectNode` is the 20-byte dirty-rect node, and `ActorWaypoint[10]` is the fixed array at `RenderEntityRuntime + 0x10ac`.
+- `Evidence:` switching the simple entity helpers to Borland `__fastcall` confirms that `tick_entity_visual_state` writes the current opaque overlap blocker at `+0x109c`, `update_actor_runtime_state` uses directional blocker-history slots at `+0x108c`, `+0x1090`, `+0x1094`, and `+0x1098`, and `attach_abm_resource_to_entity` builds a `1024`-entry frame-header table at `+0x5c`.
+- `Key Functions:` `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, `update_actor_runtime_state`.
+- `Key Data:` `RenderEntityRuntime`, `BitmapBuffer`, `AbmFrameHeader`, `DirtyRectNode`, `ActorWaypoint[10]`, `g_render_entity_list`.
+- `Notes:` the current typed runtime record cleanly covers render placement, animation timing, waypoint storage, and blocker-history detours.
+- `Notes:` the actor-only tail from `+0x1134` through `+0x118e` is still only partially typed, but it now clearly contains combat/use-state sound slots and facing-bank flags rather than generic render state.
 
-**Evidence**
-- `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, and `update_actor_runtime_state` all operate on the same `0x11bc` runtime record.
-- Recovered helper types now line up with the code paths that materialize and animate those entities:
-  - `BitmapBuffer` is the 12-byte `{ width, height, pixels }` bitmap header allocated by `attach_abm_resource_to_entity` and reused by `show_entity_visual` / `rescale_entity_sprite_for_depth`.
-  - `AbmFrameHeader` matches the packed per-frame ABM prefix consumed by `attach_abm_resource_to_entity` and `show_entity_visual`.
-  - `DirtyRectNode` is the 20-byte linked-list node used by the render-list dirty-rect merge path.
-  - `ActorWaypoint[10]` is the fixed 10-entry waypoint array starting at `RenderEntityRuntime + 0x10ac`.
-- Switching the simple entity helpers to Borland `__fastcall` makes the shared entity pointer recover cleanly in decompilation, which confirms that:
-  - `tick_entity_visual_state` writes the current opaque overlap blocker at `+0x109c`
-  - `update_actor_runtime_state` uses four directional blocker-history slots at `+0x108c`, `+0x1090`, `+0x1094`, and `+0x1098`
-  - `attach_abm_resource_to_entity` builds a `1024`-entry frame-header table at `+0x5c`
-
-**Key Functions**
-- `spawn_scaled_abm_entity_from_resource`
-- `attach_abm_resource_to_entity`
-- `show_entity_visual`
-- `hide_entity_visual`
-- `rescale_entity_sprite_for_depth`
-- `tick_entity_visual_state`
-- `update_actor_runtime_state`
-
-**Key Data**
-- `RenderEntityRuntime`
-- `BitmapBuffer`
-- `AbmFrameHeader`
-- `DirtyRectNode`
-- `ActorWaypoint[10]`
-- `g_render_entity_list`
-
-**Notes**
-- The current typed runtime record cleanly covers render placement, animation timing, waypoint storage, and blocker-history detours.
-- The actor-only tail from `+0x1134` through `+0x118e` is still only partially typed, but it now clearly contains combat/use-state sound slots and facing-bank flags rather than generic render state.
-
-## Room And Event Flow
+### Room And Event Flow
 
 - `room_setup` at `0x73540` is confirmed by in-binary debug strings:
   - `room_setup(): no START entrance`
@@ -295,7 +282,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Combat/stat side effects such as damage-type selection and player stat increments
   - Save-game handoff through the `SAVE_GAME` marker
 
-## World Record Parsers
+### World Record Parsers
 
 - `register_world_record_parsers` at `0x60350` registers parser callbacks for the script/world record tags:
   - `ANIM`
@@ -342,7 +329,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `parse_useitem_record` at `0x602c0`
 - This parser registry is the clearest anchor for the global linked-list heads used by `room_setup`, `dispatch_room_event_actions`, inventory handling, and dialogue.
 
-## Record Lists
+### Record Lists
 
 - `g_command_records` at `0xd5a94` is the `COMMAND` list consumed by `dispatch_room_event_actions`.
 - `g_room_entrances` at `0xd5a98` is the `ENTRANCE` list. Each record carries at least:
@@ -379,7 +366,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `run_load_game_menu` sets it before applying a slot.
   - `run_game_over_screen` clears it until the main menu starts or loads a new session again.
 
-## Menus And UI States
+## Interface And Input
+
+### Menus And UI States
 
 - `run_main_menu` at `0x67390` is the main-title/menu state.
   - It loads `main_menu_1` through `main_menu_6` strings from the text system.
@@ -407,7 +396,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Callers pass the target text-entry entity and CFT font explicitly; the initial string and maximum length arrive through hidden register arguments in this build.
   - Input polling uses `g_buffered_console_char` plus DOS console-status queries through `is_console_char_available`.
 
-## Map And Dialogue Helpers
+### Map And Dialogue Helpers
 
 - `resolve_room_entrance` at `0x62d80` first searches `g_room_entrances` by entrance tag, then falls back to `g_town_map_entrypoints`.
   - On direct entrance matches it updates `g_pending_room_name`.
@@ -707,7 +696,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Immediately before `spawn_text_entity`, it loads `EBX` from `g_textfont_cft @ 0xd5bc4`, so IDENT overlays use `TEXTFONT.CFT` atlas pixels rather than a generic single-color font path.
   - The text spawn is padded relative to that panel anchor: native adds `+10` on X and `+5` on Y before creating the IDENT entity, and passes `panel_width - 2` as the wrap-width argument.
 
-## Keyboard Input
+### Keyboard Input
 
 - `keyboard_irq1_handler` at `0x48460` is the custom IRQ1 keyboard handler.
   - It reads scan codes from port `0x60`, updates `g_last_keyboard_scancode` plus the `g_keyboard_scancode_pressed` table, clears key-release events by masking bit `0x80`, and acknowledges the PIC with `out 0x20, 0x20`.
@@ -721,7 +710,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `g_player_attack_pressed` at `0xd5929` is the scan-code `0x1d` slot consumed by the player-combat attack path.
   - With `g_player_attack_pressed` held, `update_player_combat_avatar_state` uses the directional scan-code slots as a keyboard-only attack selector: right picks state `0x1a` / frames `0x78..0x81`, left picks `0x17` / `0x5a..0x63`, and up/down only choose the upper/lower side-attack banks (`0x1b` / `0x6e..0x77`, `0x18` / `0x50..0x59`, `0x19` / `0x82..0x8b`, `0x16` / `0x64..0x6d`) when the current facing family is already right or left.
 
-## Pointer / Cursor Input
+### Pointer / Cursor Input
 
 - `g_mouse_driver_present` at `0xd5971` gates all observed `int 33h` mouse-service calls.
   - `run_harvester_main_loop`, `select_town_map_destination`, `run_save_game_menu`, `run_load_game_menu`, `run_main_menu`, and `FUN_00072550` all test it before setting mouse bounds or pushing a new cursor position through `int 33h`.
@@ -754,7 +743,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - For the normal sprite classes, palette index `0` fails that hitmask test and therefore behaves as transparent.
   - Class `3` bypasses the cursor bounds/mask checks and acts as the room-background fallback entity when nothing higher in the render list matches.
 
-## Joystick Input
+### Joystick Input
 
 - `initialize_joystick_input_state` at `0x14490` is the startup callback for the joystick/game-port path.
   - It registers a runtime-module record, then probes BIOS joystick support through `probe_joystick_presence_via_bios`.
@@ -768,7 +757,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `current_x`, `current_y`
   - `x_min_raw`, `x_max_raw`, `y_min_raw`, `y_max_raw`
 
-## Idle Animation Timing
+### Idle Animation Timing
 
 - `g_idle_animation_activity_timestamp` at `0xd5968` is one side of the main-loop idle timer input.
   - `keyboard_irq1_handler` updates it from the shared tick source on IRQ1 activity.
@@ -782,7 +771,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
 - `show_pause_message` at `0x797c0` renders the `HARVESTER IS PAUSED` overlay and backdates both idle timestamps by `0xc1c`, allowing the idle-animation gate to become eligible again immediately after pause dismissal.
   - It reuses `g_box3_panel_entity`, while `show_target_ident_text` selects among `g_box1_panel_entity` .. `g_box4_panel_entity` by matching `TextRecord.panel_id` against the `BOX1` / `BOX2` / `BOX3` / `BOX4` strings.
 
-## CD-ROM Media Check
+### CD-ROM Media Check
 
 - `startup_main` now verifies MSCDEX directly before the rest of game startup:
   - `probe_mscdex_installation_status` is the initial install-state probe.
@@ -792,7 +781,9 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - When it is nonzero, the function raises the `CD-ROM DRIVE NOT READY!` and `PLEASE TRY AGAIN...` messages.
   - The callback registered at `0x48890` is the only recovered producer-side writer so far.
 
-## Struct Recovery
+## Data Types And Helper Layer
+
+### Struct Recovery
 
 - The startup/menu configuration state is now bounded:
   - `g_config_environment` at `0xe2438` is the global linked-list store used by `startup_main`, the main menu toggles, and the quick-tips path.
@@ -803,6 +794,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `initialize_entity_common_fields` at `0x4ab70` seeds the common runtime entity header from register/stack arguments for `name`, `x`, `y`, `z`, a class/type argument, and one extra init argument.
   - `spawn_abm_entity_base` at `0x4b890` calls `initialize_entity_common_fields`, loads an ABM/bitmap resource through XFILE, decodes its frames, and seeds common animation state.
   - `spawn_monster_entity_base` at `0x4d140` layers monster-specific blood/effect and combat/AI state on top of `spawn_abm_entity_base`.
+  - Both `spawn_monster_entity_base` and `spawn_npc_entity_from_record` allocate a hidden `"blood.abm"` helper into runtime actor field `+0x11a8` through `spawn_abm_entity_from_resource`, with `EBX = 0x0a` seeding animation rate `10`.
   - `advance_entity_animation_frame` at `0x4c8a0` advances or forces the active frame/sequence, applies loop/ping-pong behavior, updates motion, and clamps X movement to the current active bounds.
 - The constructor helpers called by `room_setup` are now named:
   - `spawn_object_entity_from_record` at `0x4aee0`
@@ -953,7 +945,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - parser order is now explicit: after `room_name` and `music_path`, the parser reads three additional strings into `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40`, then reads the separately validated `palette_path`, then the `dimmable` token, then `on_enter_tag` / `on_exit_tag`.
   - `free_loaded_world_data` frees `palette_path`, `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40` as room-owned strings, which confirms that the old `runtime_40` interpretation was wrong. In the sampled shipping `HARVEST.SCR` data all three reserved strings are empty.
 
-## Helper Functions
+### Helper Functions
 
 - `strcmp_ascii` at `0x86430` is a fast `strcmp`-style helper that returns `0` on equality.
 - `atoi_decimal` at `0x869d4` is a small decimal parser used heavily by the room event system.
@@ -1054,6 +1046,7 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
   - It is called from `run_harvester_main_loop`, the dialogue/response/keyword modal loops, and the player-combat wrapper, so actor motion/combat continues advancing while blocking UI is active.
   - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
+  - The close-range hit-resolution block reuses the hidden helper at live actor field `+0x11a8`: it links attacker/target runtime pointers, forces the helper back to frame `0`, repositions it over the struck actor, and shows it when the helper was still hidden.
   - For class-6 monsters specifically, pursuit is not a free-running room-script heuristic: the native state machine first closes base Z to within `g_player_combat_avatar->z +/- 2.0`, then compares center-to-center X against `engage_distance`, and only arms the close-range attack picker after that spacing gate is satisfied.
   - The same class-6 path derives its horizontal chase waypoint from the player's live left edge plus the current player/monster frame widths and treats that waypoint as satisfied within `50.0 * depth_scale` pixels, so native monster pursuit does not require exact center equality before it can stop walking and attack.
   - Once that close-range gate is satisfied and the per-attack cooldown allows it, the class-6 branch stores `g_player_combat_avatar` into live actor field `+0x11a4` before entering the close-range attack family; the later contact block resolves against that linked target instead of re-running the coarse engage-distance spacing test.
@@ -1182,6 +1175,21 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
         - representative entries pair `set_vesa_video_mode_3` / `reset_video_surface_context` with `g_video_surface_context` and size `0x10`, `FUN_00047ff0` / `reset_town_script_runtime_state` with `g_town_script_runtime_state` and size `0x20`, and `remove_keyboard_irq1_handler_state` / `install_keyboard_irq1_handler_state` with `g_keyboard_irq1_handler_state` and size `0x8`
       - the first music-facing entry at `0xc0c90` is an extended variant of that same packed format: it binds `release_selected_sound_bank_resources` to `g_sound_driver_callback_context` and `release_music_stream_buffers` at `0x1a440` to `g_music_stream_state`, but the remaining packed size/order fields still do not type cleanly enough to formalize as a struct
     - `release_sound_bank_resources` at `0x84873` is the shared bank teardown helper beneath that callback layer; it frees the bank's transient DOS buffer when present, clears per-bank tables, and may trigger the additional DPMI unlock/free path depending on the hidden caller flag.
+    - `initialize_sound_bank_resources` at `0x83fb3` is the matching per-bank setup path used by `initialize_sound_driver_from_sound_cfg_or_autodetect`.
+      - It scans five allocator-visible bank slots (`idx < 5`) for a free slot, loads or reuses the HMIDRV386 flag-`0x80` and optional flag-`0x40` records for that slot, allocates the transient DOS buffer through `allocate_sound_bank_temp_dos_buffer` when the selected config requests one, captures the callback-provided control-entry far pointers, runs the HMI callback init sequence, and then copies the selected driver config into the per-slot runtime tables.
+      - Those runtime tables are now partially typed in Ghidra: the live flag-`0x80` and flag-`0x40` selector pairs resolve as `g_sound_bank_flag80_primary_far_ptrs`, `g_sound_bank_flag80_secondary_far_ptrs`, `g_sound_bank_flag40_primary_far_ptrs`, and `g_sound_bank_flag40_secondary_far_ptrs`; the transient DOS buffer far pointers resolve as `g_sound_bank_temp_dos_buffer_far_ptrs`; the refreshed `0x6a` callback payload sits in `g_sound_bank_hmi_callback_records`; and the caller-provided config snapshot copied after successful init sits in `g_sound_bank_config_snapshots`.
+      - Within `g_sound_bank_hmi_callback_records`, `temp_buffer_fill_mode_code` controls the transient DOS-buffer fill pattern used during setup, `callback_flags` bit `0x02` triggers the extra op11->op12 handshake, and `flag40_record_id` supplies the fallback record ID for `load_hmidrv386_flag40_record_into_selector_pair` when the caller record leaves its explicit override dword at zero.
+      - The upstream `g_sound_bank_setup_source_record` at `0xc2d2c` is the static bank-setup source block passed into `initialize_sound_bank_resources`. Within `g_sound_bank_config_snapshots`, `requested_mix_rate_hz` is now confirmed from the caller side: `initialize_sound_driver_from_sound_cfg_or_autodetect` seeds that source record with `0x5622` (`22050`) immediately before bank setup, and `initialize_sound_bank_resources` forwards the same dword into `call_hmi_driver_callback_op2` as the only payload register on that path.
+      - The source-record dwords at `+0x14` and `+0x18` remain unresolved. In the shipped image both are zero-initialized, `+0x18` is preserved into `g_sound_bank_config_snapshots.reserved_setup_dword`, and no independent producer or consumer was confirmed beyond the opaque `call_hmi_driver_callback_op0` setup path.
+      - There is no confirmed reserved sixth bank slot behind these slabs. The flag-`0x80`, flag-`0x40`, and temp-buffer tables are packed as five 6-byte entries each, and the only normal producer of a bank index is `initialize_sound_bank_resources`, which scans `idx = 0..4`; the looser `< 6` checks in lower helpers are therefore not evidence of a live slot `5`.
+      - `refresh_hmidrv386_flag80_record_from_callback` at `0x8aa3a` is the small guard/helper immediately above that path; it verifies the per-bank flag-`0x80` selector pair exists and then refreshes the live `0x6a`-byte callback record through `copy_hmi_driver_record_from_callback_op8`.
+    - The HMI detection/bootstrap layer beneath that callback object is now partially explicit:
+      - `initialize_hmidet386_context` opens `hmidet.386`, allocates a DPMI-backed transfer block plus a cloned selector pair, locks the mapped linear region, and reuses that setup across later detection passes.
+      - `find_first_detected_hmidet_driver_record`, `find_next_detected_hmidet_driver_record`, and `load_hmidet_driver_record_by_device_id` walk the `hmidet.386` record table, read candidate records through the DPMI transfer buffer, and cache the selected file offset for later initialization.
+      - When the candidate record advertises callback-driven environment setup, the bootstrap path pulls the callback-supplied environment-variable name/value tables, resolves those names against the process environment, writes the resolved far pointers back into the callback table, and only then runs the detect callback.
+      - The staging block at `0xca2d8` is now typed as `g_sound_selected_hardware_config`: `device_port`, `device_irq`, and `device_dma` are shared between the manual `SOUND.CFG` parse path and the HMIDET auto-detect path. The fourth dword currently remains only as `callback_op1_dx_word`, because it is populated from the detect callback's `DX` result and no higher-level meaning is yet confirmed.
+      - The helpers `copy_hmi_driver_record_from_callback_op8[_raw]`, `call_hmi_driver_callback_op0`, `call_hmi_driver_callback_op1[_capture_result]`, `call_hmi_driver_callback_op2`, `call_hmi_driver_callback_op3_*`, `call_hmi_driver_callback_op4`, `call_hmi_driver_callback_op5`, `call_hmi_driver_callback_op10_capture_ptr_triplet`, and `chain_hmi_driver_callback_op11_into_op12` are now bounded as thin numeric-opcode wrappers around that far HMI callback interface rather than independent leaf algorithms.
+      - `query_windows_enhanced_mode_status` and `query_windows_enhanced_mode_signature_raw` are the paired `int 2F, AX=1600` probes used to gate the Windows 386 / `int 4B` compatibility path during HMI driver setup and teardown.
     - The special teardown branch inside `release_sound_bank_resources` is now bounded as an `int 0x4B` service path:
       - `call_int4b_service_8108_with_temp_dos_block` at `0x84c87` frees an existing LDT selector, allocates a temporary 32-paragraph DOS block via DPMI `int 31h, ax=0100`, copies the 16-byte `g_int4b_service_8108_request_template` into that block, simulates interrupt `0x4B` with `AX=0x8108` through `g_int4b_real_mode_registers`, and then frees the DOS block again
       - `simulate_int4b_service_8107_and_test_status_flag` at `0x874f0` and `simulate_int4b_service_8108` at `0x8755c` are the paired simulated-real-mode wrappers for services `0x8107` and `0x8108`; the exact driver semantics behind those services are still unresolved
@@ -1260,207 +1268,110 @@ This file captures preliminary reverse-engineering findings for `HARVEST.LE` fro
   - Choosing a visible keyword copies that literal on-screen topic text into `g_dialogue_selected_topic_text`; the `Other` path copies the typed text there as well. There is no separate hidden topic-id remap layer behind `dialog.rsp`.
   - ESC does not silently cancel the keyword menu; it writes that default topic into `g_dialogue_selected_topic_text` and returns through the normal handler path.
 
-## Room Menu Options UI
+## UI And Inventory Details
 
-**Confidence:** High
+### Room Menu Options UI
 
-**Evidence**
-- `run_main_menu` handles the `OPTIONS` row inline as case `3` and loads `options_menu_1` through `options_menu_7` from `MENU.INI`.
-- It spawns three `VOLUME.BM` bars and three `INDICATR.BM` sliders, with the active positions driven by `g_fx_volume_level_index`, `g_music_volume_level_index`, and `g_gamma_level_index`.
-- Moving the FX slider previews `1:\SOUND\EFFECTS\WHIP2.WAV`; moving the music slider updates `g_music_stream_state`; moving the gamma slider calls `update_gamma_brightness_scale` and reuploads `g_current_palette_buffer`.
-- The text / gore / password rows append inline ` - ...` suffixes through `format_main_menu_option_status_suffix`.
-- The `QUICK TIPS` row opens the same `TIPS.BM` overlay used by the startup quick-tips path, fed by lines from `ADJHEAD.RCS`.
-- The password row calls `prompt_for_password`, which in turn uses the shared `run_text_entry_dialog`; the stored string lives in `g_parental_password_buffer`.
+- `Confidence:` High.
+- `Evidence:` `run_main_menu` handles the `OPTIONS` row inline as case `3` and loads `options_menu_1` through `options_menu_7` from `MENU.INI`.
+- `Evidence:` the shipped `MENU.INI` preserves trailing spaces in `options_menu_1..3` (`SOUND FX           `, `MUSIC         `, `GAMMA         `), and `run_main_menu` copies those raw bytes into the centered text buffers before measuring them, so the visible glyphs sit left of the mathematical center to leave room for the slider art.
+- `Evidence:` it spawns three `VOLUME.BM` bars and three `INDICATR.BM` sliders, with positions driven by `g_fx_volume_level_index`, `g_music_volume_level_index`, and `g_gamma_level_index`.
+- `Evidence:` moving the FX slider previews `1:\SOUND\EFFECTS\WHIP2.WAV`, moving the music slider updates `g_music_stream_state`, and moving the gamma slider calls `update_gamma_brightness_scale` and reuploads `g_current_palette_buffer`.
+- `Evidence:` the text, gore, and password rows append inline ` - ...` suffixes through `format_main_menu_option_status_suffix`; `QUICK TIPS` opens the same `TIPS.BM` overlay used by startup; the password row calls `prompt_for_password` and stores the result in `g_parental_password_buffer`.
+- `Key Functions:` `run_main_menu`, `format_main_menu_option_status_suffix`, `update_gamma_brightness_scale`, `prompt_for_password`, `run_text_entry_dialog`.
+- `Key Data:` `g_fx_volume_level_index`, `g_music_volume_level_index`, `g_gamma_level_index`, `g_text_option_mode`, `g_gore_enabled`, `g_parental_password_buffer`.
+- `Notes:` the native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while active.
+- `Notes:` the options text entities are spawned before the `VOLUME.BM` bars and `INDICATR.BM` sliders, so the first three labels sit underneath the bar art where their trailing edge overlaps.
+- `Notes:` `prompt_for_password` overlays the current options menu with centered `ENTER PASSWORD` text, spawns `TEXT_ENTRY` at `(0xdc, 0xdc)` using `g_harvfnt2_cft`, hides the cursor entity while typing, and calls `run_text_entry_dialog` with hidden max length `8`.
 
-**Key Functions**
-- `run_main_menu`
-- `format_main_menu_option_status_suffix`
-- `update_gamma_brightness_scale`
-- `prompt_for_password`
-- `run_text_entry_dialog`
+### Room Menu Help Screen
 
-**Key Data**
-- `g_fx_volume_level_index`
-- `g_music_volume_level_index`
-- `g_gamma_level_index`
-- `g_text_option_mode`
-- `g_gore_enabled`
-- `g_parental_password_buffer`
+- `Confidence:` High.
+- `Evidence:` `run_controls_help_screen` at `0x6c3e0` is the dedicated two-page controls help viewer, and `run_main_menu` also contains the same behavior inline for the `HELP` row.
+- `Evidence:` page `0` loads `graphic\other\moushelp.bm` with `1:\graphic\pal\moushelp.pal`; page `1` loads `graphic\other\keyshelp.bm` with `1:\graphic\pal\keyshelp.pal`.
+- `Evidence:` each page is a fullscreen bitmap entity shown at `(0, 0)` after clearing the screen and uploading the page palette; the loop exits on `ESC` or secondary mouse and toggles pages on primary mouse or any other key.
+- `Evidence:` on exit it reuploads `g_current_palette_buffer`, clears the screen, reuploads the room palette again, and resumes paused timer countdowns.
+- `Key Functions:` `run_controls_help_screen`, `run_main_menu`.
+- `Key Data:` `g_current_palette_buffer`.
+- `Notes:` the help viewer is palette-driven and does not reuse the room backdrop while active; the room/menu image only returns after the fullscreen help page is dismissed.
 
-**Notes**
-- The native submenu persists `GAMMA`, `FX_VOLUME`, and `MUSIC_VOLUME` on exit and updates the string-backed `TEXT`, `GORE`, `QUICK_TIPS`, and password state inline while the submenu is active.
-- The options text entities are spawned before the `VOLUME.BM` bars and `INDICATR.BM` sliders are added to the render list, so the first three labels sit underneath the bar art where their trailing edge overlaps that UI.
-- `prompt_for_password` does not open a separate boxed dialog. It overlays the current options menu with centered `ENTER PASSWORD` text rendered in `g_harvfont_cft`, spawns a `TEXT_ENTRY` entity at `(0xdc, 0xdc)` using `g_harvfnt2_cft`, hides the cursor entity while typing, and calls `run_text_entry_dialog` with hidden max length `8`.
+### Room Menu Quit Confirmation
 
-## Room Menu Help Screen
+- `Confidence:` High.
+- `Evidence:` `run_main_menu` handles the `QUIT GAME` row inline by spawning `textbox4.bm` at `(167, 200)` over the current room/menu backdrop and reusing the live room palette.
+- `Evidence:` the prompt text comes from the `quitgame` key in `MENU.INI`, and the native string parser treats `/` as an inline line break for the confirmation message.
+- `Evidence:` the YES/NO actions use fixed hit regions: YES at `x=0xd2..0x104`, `y=0xee..0x108`; NO at `x=0x172..0x19a`, `y=0xee..0x108`.
+- `Evidence:` the loop confirms quit on `Y` and cancels on `N`, `ESC`, or secondary mouse; a confirmed quit returns the menu sentinel that unwinds the room loop into shutdown.
+- `Key Functions:` `run_main_menu`.
+- `Key Data:` `MENU.INI:quitgame`, `textbox4.bm`.
+- `Notes:` unlike the fullscreen help viewer or save UI, the quit confirm is an inline modal layered over the current room/menu frame.
+- `Notes:` the native branch is fully self-contained inside `run_main_menu`; no separate helper crossed the rename-confidence threshold during this pass.
 
-**Confidence:** High
+### Player Health And Inventory Status Portrait
 
-**Evidence**
-- `run_controls_help_screen` at `0x6c3e0` is the dedicated two-page controls help viewer, and `run_main_menu` also contains the same behavior inline for the `HELP` row.
-- Page `0` loads `graphic\other\moushelp.bm` with `1:\graphic\pal\moushelp.pal`; page `1` loads `graphic\other\keyshelp.bm` with `1:\graphic\pal\keyshelp.pal`.
-- Each page is a fullscreen bitmap entity shown at `(0, 0)` after clearing the screen and uploading the page palette.
-- The loop waits for input, exits on `ESC` or secondary mouse, and toggles pages on primary mouse or any other key.
-- On exit it reuploads `g_current_palette_buffer`, clears the screen, reuploads the room palette again, and resumes the paused timer countdowns.
+- `Confidence:` High.
+- `Evidence:` `run_inventory_screen` reads `RenderEntityRuntime.current_hit_points` from the live player combat-avatar runtime and selects `INV_STAT1`, `INV_STAT2`, `INV_STAT3`, or `INV_STAT4` for the lower-left portrait.
+- `Evidence:` the thresholds are explicit: `23..30 -> INV_STAT1`, `15..22 -> INV_STAT2`, `8..14 -> INV_STAT3`, `0..7 -> INV_STAT4`.
+- `Evidence:` `run_harvester_main_loop` initializes `g_player_current_hit_points` to `30`, `spawn_player_combat_avatar` copies that global into `RenderEntityRuntime.current_hit_points`, and `teardown_player_combat_avatar` writes the runtime value back.
+- `Evidence:` `dispatch_room_event_actions` handles `HEAL_PC`, `ADJ_HP`, and `KILL_PC` against the same HP state, and `run_save_game_menu` / `run_load_game_menu` persist it.
+- `Key Functions:` `run_inventory_screen`, `dispatch_room_event_actions`, `spawn_player_combat_avatar`, `teardown_player_combat_avatar`, `run_save_game_menu`, `run_load_game_menu`.
+- `Key Data:` `g_player_current_hit_points`, `RenderEntityRuntime.current_hit_points`.
+- `Notes:` the inventory status portrait is a presentation of persistent player HP, not a separate UI-only counter.
+- `Notes:` the portrait is recalculated inside the inventory loop, so healing or damage that lands while inventory is open updates the selected `INV_STAT*` image immediately.
+- `Notes:` the portrait is materialized through `spawn_object_entity_from_record` and the shared render-entity path, so the rotated photo depends on palette-index-0 transparency rather than an opaque rectangular blit.
 
-**Key Functions**
-- `run_controls_help_screen`
-- `run_main_menu`
+### Inventory Item Carry / Use Handoff
 
-**Key Data**
-- `g_current_palette_buffer`
+- `Confidence:` High.
+- `Evidence:` `run_inventory_screen` sets the active-item latch when a carryable inventory object is selected, clears the previous interaction-text overlay, and rebuilds the centered `USING_ON_ID` prompt from `Use %s on ...`.
+- `Evidence:` while that latch is set, `run_inventory_screen` treats the selected inventory object as the live dragged entity, probes overlap for `USEITEM` or dialogue routing, and returns the entity to the caller if it leaves the inventory panel rect `x=0x49..0x234`, `y=0x73..0x19b`.
+- `Evidence:` `run_harvester_main_loop` consumes that returned entity as the active selected item, repositions it under the mouse, rebuilds the same centered `USING_ON_ID` overlay with `g_medfont1_cft`, and routes left-click use through `handle_target_interaction`.
+- `Evidence:` `spawn_player_combat_avatar` seeds the live player entity with class `5` and label `"your inventory"`, and `handle_target_interaction` special-cases overlap with that target to move a non-inventory carried room item into `INVENTORY`.
+- `Evidence:` `run_harvester_main_loop` branches pickup handling on the room-player presence flag at `0xd596c`: player-present pickup enters the same cursor-follow carry state, while player-absent pickup moves the object straight into `INVENTORY`, removes its live render entity, and only then considers its action tag.
+- `Key Functions:` `run_inventory_screen`, `run_harvester_main_loop`, `handle_target_interaction`.
+- `Key Data:` `g_useitem_records`, `ObjectRecord.current_owner_or_room`, the active-item latch at `0xd60b8`.
+- `Notes:` the standalone inventory UI does not use room-region exits while an item is active; the active item must first return to the room loop.
+- `Notes:` native bottom-of-screen carry prompts are materialized as the `USING_ON_ID` text-entry overlay using `MEDFONT1.CFT` at y `0x1ce`, not the fallback GUI font path.
+- `Notes:` plain pickup does not rerun full room materialization; native mutates the live scene in place, and only action-driven runtime mutations or room transitions trigger the heavier refresh paths.
 
-**Notes**
-- The help viewer is palette-driven and does not reuse the room backdrop while active; the room/menu image only returns after the fullscreen help page is dismissed.
+### Inventory Secondary-Click Actions
 
-## Room Menu Quit Confirmation
+- `Confidence:` High.
+- `Evidence:` in `run_inventory_screen`, the right-click branch first maps the weapon subset (`CLEAVER` through `POOLSTICK`) to fixed combat-loadout ids `1..20`, then calls `set_player_combat_loadout` and refreshes the inventory status state without leaving the inventory loop.
+- `Evidence:` the same branch maps a separate hardcoded document/photo subset to fixed action tags rather than object-record metadata: `NOTE_PHOTOCOPY -> GO_BOYLCOPYCU`, `NOTE -> GO_BOYLNOTECU`, `CHECKBOOK -> GO_REGISTERCU`, `CHECKBOOK_PHOTOCOPY -> GO_RGSTRCPYCU`, `TV_DEED -> GO_TVDEED1CU`, `TV_DEED_PHOTOCOPY -> GO_TVDEED2CU`, `CLUE -> GOTO_CLUE_CU`, `AUTOGRAPH -> GO_AUTOGRPHCU`, plus the corresponding Whaley photo, casket photo, permit, lodge-application, safebook, patrol-schedule, and invite entries.
+- `Evidence:` after dispatching one of those hardcoded closeup tags, `run_inventory_screen` tears down the inventory render state and returns to the caller instead of staying in the loop.
+- `Evidence:` only the six consumable or self-use items `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN` fall back to the clicked object's own `action_tag`; that branch stays inside the inventory loop so HP and status changes remain visible.
+- `Key Functions:` `run_inventory_screen`, `dispatch_room_event_actions`, `set_player_combat_loadout`.
+- `Key Data:` the weapon-name to loadout-id mapping inside `run_inventory_screen`, the document/photo action-tag table at `0xc40c8`, `ObjectRecord.action_tag`.
+- `Notes:` native inventory secondary-click is not a generic inspect path; it is a hardcoded dispatcher with three distinct behaviors: weapon loadout toggle, document/photo closeup, and object-defined consumable self-use.
+- `Notes:` the document/photo closeups are driven by global action tags rather than per-object metadata, which is why the ScummVM inventory overlay needs its own recovered mapping table for parity.
 
-**Confidence:** High
+### Inventory Hover Tooltip
 
-**Evidence**
-- `run_main_menu` handles the `QUIT GAME` row inline by spawning `textbox4.bm` at `(167, 200)` over the current room/menu backdrop and reusing the live room palette.
-- The prompt text comes from the `quitgame` key in `MENU.INI`, and the native string parser treats `/` as an inline line break for the confirmation message.
-- The YES/NO actions use fixed hit regions: YES at `x=0xd2..0x104`, `y=0xee..0x108`; NO at `x=0x172..0x19a`, `y=0xee..0x108`.
-- The loop confirms quit on the `Y` key path and cancels on `N`, `ESC`, or secondary mouse.
-- A confirmed quit returns the menu sentinel that unwinds the room loop into shutdown rather than restoring gameplay.
+- `Confidence:` High.
+- `Evidence:` in `run_inventory_screen`, the plain hover branch only runs when no inventory item is actively selected and neither mouse button is pressed; it walks `g_text_records`, matches the hovered inventory object's `inventory_text_key`, and rebuilds the hover label only when the resolved text changes.
+- `Evidence:` the rebuilt label is created through `spawn_text_entity(..., "INV_TEXT", 0xbc, 0x19e, 0xfffffff4, 0)`, which confirms a fixed left-aligned tooltip anchor at `(188, 414)` with color `-12` rather than the centered bottom-of-screen interaction prompt path.
+- `Evidence:` the callsite loads `EBX` from `g_textfont_cft @ 0xd5bc4` immediately before `spawn_text_entity`, so the inventory hover label uses `TEXTFONT.CFT`, not `MEDFONT1.CFT`.
+- `Evidence:` the separate carry or use branch still measures text with `g_medfont1_cft` and spawns the centered `USING_ON_ID` overlay at y `0x1ce`, so the inventory tooltip and carry prompt are distinct native UI elements.
+- `Key Functions:` `run_inventory_screen`, `spawn_text_entity`, `spawn_text_entry_entity`.
+- `Key Data:` `ObjectRecord.inventory_text_key`, `g_textfont_cft`, `g_medfont1_cft`.
+- `Notes:` native inventory hover text is not centered and does not reuse the room hover prompt renderer.
+- `Notes:` the inventory exit entity is handled separately; the fixed `INV_TEXT` hover path applies to inventory objects and the `INV_STAT*` status entities that resolve through `inventory_text_key`.
 
-**Key Functions**
-- `run_main_menu`
+### Inventory Weekday Label
 
-**Key Data**
-- `MENU.INI:quitgame`
-- `textbox4.bm`
+- `Confidence:` High.
+- `Evidence:` early in `run_inventory_screen`, the setup branch calls `is_object_in_inventory("HARVEST_BLADE")` and only spawns the weekday label when that check is false.
+- `Evidence:` the same branch calls `get_current_story_day_index`, indexes the pointer table at `0xc4110`, and resolves the visible strings `Monday` through `Saturday` from that table.
+- `Evidence:` the resulting text entity is spawned through the inventory text-font path with text id `DAYS_TEXT` at `(0x1e0, 0x18c)` and color `0xfffffff4`, which matches the recovered `TEXTFONT.CFT` inventory-label styling rather than the centered bottom prompt path.
+- `Key Functions:` `run_inventory_screen`, `get_current_story_day_index`, `is_object_in_inventory`.
+- `Key Data:` the weekday string table at `0xc4110`, `g_textfont_cft`, `DAYS_TEXT`.
+- `Notes:` native inventory weekday display is a persistent overlay element, not part of the hover-tooltip or carry-prompt branches.
+- `Notes:` the visible label is explicitly suppressed once `HARVEST_BLADE` has entered inventory.
 
-**Notes**
-- Unlike the fullscreen help viewer or save UI, the quit confirm is an inline modal layered over the current room/menu frame.
-- The native branch is fully self-contained inside `run_main_menu`; no separate helper crossed the rename-confidence threshold during this pass.
+## Open Questions
 
-## Player Health And Inventory Status Portrait
-
-**Confidence:** High
-
-**Evidence**
-- `run_inventory_screen` reads `RenderEntityRuntime.current_hit_points` from the live player combat-avatar runtime and selects `INV_STAT1`, `INV_STAT2`, `INV_STAT3`, or `INV_STAT4` for the portrait in the lower-left of the inventory panel.
-- The thresholds are explicit in the inventory screen logic: `23..30 -> INV_STAT1`, `15..22 -> INV_STAT2`, `8..14 -> INV_STAT3`, `0..7 -> INV_STAT4`.
-- `run_harvester_main_loop` initializes `g_player_current_hit_points` to `30`, `spawn_player_combat_avatar` copies that global into `RenderEntityRuntime.current_hit_points`, and `teardown_player_combat_avatar` writes the runtime value back to the same global.
-- `dispatch_room_event_actions` handles `HEAL_PC`, `ADJ_HP`, and `KILL_PC` against that player HP state; `HEAL_PC` and `ADJ_HP` add to the current value and clamp to `30`, while `KILL_PC` zeros it.
-- `run_save_game_menu` and `run_load_game_menu` persist the same player combat-avatar HP field.
-
-**Key Functions**
-- `run_inventory_screen`
-- `dispatch_room_event_actions`
-- `spawn_player_combat_avatar`
-- `teardown_player_combat_avatar`
-- `run_save_game_menu`
-- `run_load_game_menu`
-
-**Key Data**
-- `g_player_current_hit_points`
-- `RenderEntityRuntime.current_hit_points`
-
-**Notes**
-- The inventory status portrait is a presentation of the persistent player HP state, not a separate UI-only counter.
-- The portrait is recalculated inside the inventory loop, so native healing or damage that lands while the inventory is open updates the selected `INV_STAT*` image immediately.
-- The portrait is materialized through `spawn_object_entity_from_record` and the shared render-entity path, so the rotated photo depends on palette-index-0 transparency rather than an opaque rectangular bitmap blit.
-
-## Inventory Item Carry / Use Handoff
-
-**Confidence:** High
-
-**Evidence**
-- `run_inventory_screen` sets the active-item latch when a carryable inventory object is selected, clears the previous interaction-text overlay, and rebuilds the centered `USING_ON_ID` prompt from `Use %s on ...`.
-- While that latch is set, `run_inventory_screen` treats the selected inventory object as the live dragged entity: it probes overlap against other inventory entities for `USEITEM` / dialogue routing, and if the dragged item leaves the inventory panel rect (`x=0x49..0x234`, `y=0x73..0x19b`) it reassigns the object's owner/room to the current room and returns that entity to the caller.
-- `run_harvester_main_loop` consumes that returned entity as the active selected item. Each frame it repositions the entity under the mouse, rebuilds the same centered `USING_ON_ID` overlay with `g_medfont1_cft`, and routes left-click use through `handle_target_interaction`.
-- `spawn_player_combat_avatar` seeds the live player entity with class `5` and the label string `"your inventory"`, and `handle_target_interaction` special-cases overlap with that target to move a non-inventory carried room item into `INVENTORY`.
-- `run_harvester_main_loop` branches pickup handling on the room-player presence flag at `0xd596c`: when the player is present, selecting a carryable room object enters the same cursor-follow carry state; when the player is absent, the loop moves the object straight into `INVENTORY`, removes its live render entity, and only then considers its action tag.
-
-**Key Functions**
-- `run_inventory_screen`
-- `run_harvester_main_loop`
-- `handle_target_interaction`
-
-**Key Data**
-- `g_useitem_records`
-- `ObjectRecord.current_owner_or_room`
-- the active-item latch at `0xd60b8`
-
-**Notes**
-- The standalone inventory UI does not use room-region exits while an item is active; the active item must first return to the room loop.
-- Native bottom-of-screen carry prompts are not drawn with the fallback GUI font path; they are materialized as the `USING_ON_ID` text-entry overlay using `MEDFONT1.CFT` at y `0x1ce`.
-- Plain pickup does not rerun full room materialization. Native mutates the live scene in place for both carry-start and direct-to-inventory pickup, and only action-driven runtime mutations or room transitions trigger the heavier refresh paths.
-
-## Inventory Secondary-Click Actions
-
-**Confidence:** High
-
-**Evidence**
-- In `run_inventory_screen`, the right-click branch first maps the weapon subset (`CLEAVER` through `POOLSTICK`) to fixed combat-loadout ids `1..20`, then calls `set_player_combat_loadout` and refreshes the inventory status state without leaving the inventory loop.
-- The same branch maps a separate hardcoded document/photo subset to fixed action tags rather than object-record metadata: `NOTE_PHOTOCOPY -> GO_BOYLCOPYCU`, `NOTE -> GO_BOYLNOTECU`, `CHECKBOOK -> GO_REGISTERCU`, `CHECKBOOK_PHOTOCOPY -> GO_RGSTRCPYCU`, `TV_DEED -> GO_TVDEED1CU`, `TV_DEED_PHOTOCOPY -> GO_TVDEED2CU`, `CLUE -> GOTO_CLUE_CU`, `AUTOGRAPH -> GO_AUTOGRPHCU`, plus the corresponding Whaley photo, casket photo, permit, lodge-application, safebook, patrol-schedule, and invite entries.
-- After dispatching one of those hardcoded closeup action tags, `run_inventory_screen` tears down the inventory render state and returns to the caller instead of remaining inside the inventory loop.
-- Only the six consumable/self-use items `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN` fall back to the clicked object's own `action_tag`; that branch stays inside the inventory loop so HP/status changes are visible immediately.
-
-**Key Functions**
-- `run_inventory_screen`
-- `dispatch_room_event_actions`
-- `set_player_combat_loadout`
-
-**Key Data**
-- the weapon-name to loadout-id mapping inside `run_inventory_screen`
-- the document/photo action-tag table at `0xc40c8`
-- `ObjectRecord.action_tag`
-
-**Notes**
-- Native inventory secondary-click is not a generic inspect path. It is a hardcoded dispatcher with three distinct behaviors: weapon loadout toggle, document/photo closeup, and object-defined consumable self-use.
-- The document/photo closeups are driven by global action tags rather than per-object metadata, which is why the ScummVM inventory overlay needs its own recovered mapping table for parity.
-
-## Inventory Hover Tooltip
-
-**Confidence:** High
-
-**Evidence**
-- In `run_inventory_screen`, the plain hover branch only runs when no inventory item is actively selected and neither mouse button is pressed. It walks `g_text_records`, matches the hovered inventory object's `inventory_text_key`, and rebuilds the hover label only when the resolved text changes.
-- The rebuilt label is created through `spawn_text_entity(..., "INV_TEXT", 0xbc, 0x19e, 0xfffffff4, 0)`, which confirms a fixed left-aligned tooltip anchor at `(188, 414)` with color `-12` rather than the centered bottom-of-screen interaction prompt path.
-- The callsite loads `EBX` from `g_textfont_cft @ 0xd5bc4` immediately before `spawn_text_entity`, so the inventory hover label uses `TEXTFONT.CFT`, not `MEDFONT1.CFT`.
-- The separate carry/use branch still measures text with `g_medfont1_cft` and spawns the centered `USING_ON_ID` overlay at y `0x1ce`, so the inventory tooltip and the carry prompt are distinct native UI elements.
-
-**Key Functions**
-- `run_inventory_screen`
-- `spawn_text_entity`
-- `spawn_text_entry_entity`
-
-**Key Data**
-- `ObjectRecord.inventory_text_key`
-- `g_textfont_cft`
-- `g_medfont1_cft`
-
-**Notes**
-- Native inventory hover text is not centered and does not reuse the room hover prompt renderer.
-- The inventory exit entity is handled separately; the fixed `INV_TEXT` hover path applies to inventory objects and the `INV_STAT*` status entities that resolve through `inventory_text_key`.
-
-## Inventory Weekday Label
-
-**Confidence:** High
-
-**Evidence**
-- Early in `run_inventory_screen`, the setup branch calls `is_object_in_inventory("HARVEST_BLADE")` and only spawns the weekday label when that check is false.
-- The same branch calls `get_current_story_day_index`, indexes the pointer table at `0xc4110`, and resolves the visible strings `Monday` through `Saturday` from that table.
-- The resulting text entity is spawned through the inventory text-font path with text id `DAYS_TEXT` at `(0x1e0, 0x18c)` and color `0xfffffff4`, which matches the recovered `TEXTFONT.CFT` inventory-label styling rather than the centered bottom prompt path.
-
-**Key Functions**
-- `run_inventory_screen`
-- `get_current_story_day_index`
-- `is_object_in_inventory`
-
-**Key Data**
-- the weekday string table at `0xc4110`
-- `g_textfont_cft`
-- `DAYS_TEXT`
-
-**Notes**
-- Native inventory weekday display is a persistent overlay element, not part of the hover-tooltip or carry-prompt branches.
-- The visible label is explicitly suppressed once `HARVEST_BLADE` has entered inventory.
-
-## Current Blockers
+### Current Blockers
 
 - The remaining work is no longer list recovery. The blocker is semantic naming for fields whose shape is clear but whose gameplay meaning is still ambiguous.
 - The main unresolved clusters are:
