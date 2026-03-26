@@ -192,12 +192,6 @@ Common::Error KyraEngine_HoF::init() {
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	// Korean fan translation: kyra.dat was loaded with EN_ANY, now switch to KO_KOR
-	// so that file extensions and text handling all use Korean paths.
-	// Font loading must happen before initStaticData() which calls getFontHeight().
-	if (_flags.fanLang == Common::KO_KOR)
-		_flags.lang = Common::KO_KOR;
-
 	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->loadFont(_screen->FID_8_FNT, "FONT9P.FNT");
 	} else if (_flags.lang == Common::ZH_TWN) {
@@ -1958,18 +1952,10 @@ void KyraEngine_HoF::writeSettings() {
 		_flags.lang = _langIntern ? Common::ZH_TWN : Common::EN_ANY;
 	}
 
-	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG
-	        && _flags.fanLang != Common::KO_KOR)
+	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
 		_flags.lang = _flags.fanLang;
 
-	// Korean fan translation: the detection entry now uses KO_KOR as the
-	// detection language with ADGF_DROPLANGUAGE, so we must write "ko" to
-	// config.  Writing "en" would cause the Advanced Detector to prefer the
-	// base EN_ANY CD entry on next launch, reverting to English.
-	if (_flags.fanLang == Common::KO_KOR)
-		ConfMan.set("language", Common::getLanguageCode(Common::KO_KOR));
-	else
-		ConfMan.set("language", Common::getLanguageCode(_flags.lang));
+	ConfMan.set("language", Common::getLanguageCode(_flags.lang));
 
 	KyraEngine_v1::writeSettings();
 }
