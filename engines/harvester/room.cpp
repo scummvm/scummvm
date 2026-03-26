@@ -120,11 +120,6 @@ static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 		!roomName.equalsIgnoreCase("BOWLSNTRY1");
 }
 
-static bool isPrimaryMouseDown() {
-	return g_system && g_system->getEventManager() &&
-		((g_system->getEventManager()->getButtonState() & 1) != 0);
-}
-
 static bool isOutsideNativeInventoryDragCloseBounds(const Common::Point &point) {
 	return point.x < kNativeInventoryDragCloseLeft ||
 		point.x >= kNativeInventoryDragCloseRight ||
@@ -2436,8 +2431,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
-				if (_inventory.isOpen() && _inventory.hasSelection() && isPrimaryMouseDown()) {
+				if (_inventory.isOpen() && _inventory.hasSelection()) {
 					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					// Native inventory handoff is driven by the latched selected item, not by
+					// a second click after the selection has already been made.
 					if (!inventoryHover && isOutsideNativeInventoryDragCloseBounds(_mousePos)) {
 						if (_inventory.close())
 							needsRedraw = true;
