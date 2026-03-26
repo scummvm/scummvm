@@ -198,7 +198,8 @@ static Common::Error playDialogueSequence(DialogueRuntime &runtime,
 } // End of namespace
 
 bool MoynahanDialogueHandler::matchesNpc(const Common::String &npcName) const {
-	return npcName.equalsIgnoreCase(kMoynahanNpc);
+	return npcName.equalsIgnoreCase(kMoynahanNpc) ||
+		npcName.equalsIgnoreCase(kMoynahanEmbalmingPortrait);
 }
 
 Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
