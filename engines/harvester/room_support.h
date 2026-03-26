@@ -73,7 +73,7 @@ struct StartupRoomPlayerState {
 	int attackContactFrame = -1;
 	int attackResumeFacing = -1;
 	bool attackSoundPlayed = false;
-	int attackSoundFrame = -1;
+	int attackSoundPlaybackFrame = -1;
 	bool attackContactResolved = false;
 	Common::String attackTargetName;
 	int attackTargetClassId = -1;

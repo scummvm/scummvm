@@ -170,8 +170,8 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncString(record.deathSound);
 	syncBool(s, record.savedVisible);
 	syncBool(s, record.runtimeSpawned);
-	s.syncAsSint32LE(record.minXBound);
-	s.syncAsSint32LE(record.maxXBound);
+	s.syncAsSint32LE(record.screenMinXBound);
+	s.syncAsSint32LE(record.screenMaxXBound);
 	s.syncAsSint32LE(record.attackSoundTriggerFrame);
 	s.syncAsSint32LE(record.hitSoundTriggerFrame);
 	s.syncAsSint32LE(record.footstepSoundTriggerFrame);
@@ -896,9 +896,9 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			monster.visible = tokens[tagIndex + 20].equalsIgnoreCase("T");
 			monster.onDeathActionTag = tokens[tagIndex + 21];
 			if (tokens.size() > tagIndex + 22 && !tokens[tagIndex + 22].empty())
-				monster.minXBound = parseAsciiIntOrZero(tokens[tagIndex + 22]);
+				monster.screenMinXBound = parseAsciiIntOrZero(tokens[tagIndex + 22]);
 			if (tokens.size() > tagIndex + 23 && !tokens[tagIndex + 23].empty())
-				monster.maxXBound = parseAsciiIntOrZero(tokens[tagIndex + 23]);
+				monster.screenMaxXBound = parseAsciiIntOrZero(tokens[tagIndex + 23]);
 			monster.currentHitPoints = monster.initialHitPoints;
 			monster.savedVisible = monster.visible;
 			if (monster.active)
@@ -1228,25 +1228,25 @@ void Script::logRuntimeSaveState(const char *operation) const {
 			: (monster.active ? true : monster.visible);
 		const bool defaultSavedVisible = defaultVisible;
 		const int defaultCurrentHitPoints = baseMonster ? baseMonster->initialHitPoints : monster.initialHitPoints;
-		const int defaultMinXBound = baseMonster ? baseMonster->minXBound : monster.minXBound;
-		const int defaultMaxXBound = baseMonster ? baseMonster->maxXBound : monster.maxXBound;
+		const int defaultScreenMinXBound = baseMonster ? baseMonster->screenMinXBound : monster.screenMinXBound;
+		const int defaultScreenMaxXBound = baseMonster ? baseMonster->screenMaxXBound : monster.screenMaxXBound;
 		if (!baseMonster ||
 				monster.active != defaultActive ||
 				monster.visible != defaultVisible ||
 				monster.savedVisible != defaultSavedVisible ||
 				monster.currentHitPoints != defaultCurrentHitPoints ||
 				monster.runtimeSpawned ||
-				monster.minXBound != defaultMinXBound ||
-				monster.maxXBound != defaultMaxXBound) {
+				monster.screenMinXBound != defaultScreenMinXBound ||
+				monster.screenMaxXBound != defaultScreenMaxXBound) {
 			debugC(1, kDebugGeneral,
-				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d hp=%d/%d bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_hp=%d/%d base_bounds=[%d,%d]",
+				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d hp=%d/%d screen_bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_hp=%d/%d base_screen_bounds=[%d,%d]",
 				operation, monster.monsterName.c_str(), monster.active, monster.visible,
 				monster.savedVisible, monster.runtimeSpawned,
 				monster.currentHitPoints, monster.initialHitPoints,
-				monster.minXBound, monster.maxXBound,
+				monster.screenMinXBound, monster.screenMaxXBound,
 				defaultActive, defaultVisible, defaultSavedVisible,
 				defaultCurrentHitPoints, baseMonster ? baseMonster->initialHitPoints : monster.initialHitPoints,
-				defaultMinXBound, defaultMaxXBound);
+				defaultScreenMinXBound, defaultScreenMaxXBound);
 		}
 	}
 
@@ -1331,8 +1331,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				runtimeMonster.deathSound = baseMonster->deathSound;
 				runtimeMonster.savedVisible = runtimeMonster.visible;
 				runtimeMonster.runtimeSpawned = false;
-				runtimeMonster.minXBound = baseMonster->minXBound;
-				runtimeMonster.maxXBound = baseMonster->maxXBound;
+				runtimeMonster.screenMinXBound = baseMonster->screenMinXBound;
+				runtimeMonster.screenMaxXBound = baseMonster->screenMaxXBound;
 				runtimeMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
 				runtimeMonster.hitSoundTriggerFrame = baseMonster->hitSoundTriggerFrame;
 				runtimeMonster.footstepSoundTriggerFrame = baseMonster->footstepSoundTriggerFrame;

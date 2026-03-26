@@ -326,7 +326,7 @@ static bool startResolvedAttackAnimation(StartupRoomPlayerState &playerState,
 		range.firstFrame + Player::resolveCombatLoadoutContactFrameOffset(playerState.combatLoadout);
 	playerState.attackResumeFacing = range.resumeFacing;
 	playerState.attackSoundPlayed = resolvePlayerAttackSoundSet(playerState.combatLoadout) == nullptr;
-	playerState.attackSoundFrame = playerState.attackSoundPlayed
+	playerState.attackSoundPlaybackFrame = playerState.attackSoundPlayed
 		? -1
 		: (range.firstFrame + kPlayerAttackSoundTriggerFrameOffset);
 	playerState.attackContactResolved = false;
@@ -769,7 +769,7 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	playerState.attackContactFrame = -1;
 	playerState.attackResumeFacing = -1;
 	playerState.attackSoundPlayed = false;
-	playerState.attackSoundFrame = -1;
+	playerState.attackSoundPlaybackFrame = -1;
 	playerState.attackContactResolved = false;
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
@@ -838,8 +838,8 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	if (!playerState.attackActive || !playerState.entity)
 		return false;
 	if (!playerState.attackSoundPlayed &&
-			playerState.attackSoundFrame >= 0 &&
-			playerState.entity->getCurrentFrame() >= playerState.attackSoundFrame) {
+			playerState.attackSoundPlaybackFrame >= 0 &&
+			playerState.entity->getCurrentFrame() >= playerState.attackSoundPlaybackFrame) {
 		(void)playPlayerAttackSound(engine, playerState.combatLoadout);
 		playerState.attackSoundPlayed = true;
 	}
@@ -855,7 +855,7 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	playerState.attackContactFrame = -1;
 	playerState.attackResumeFacing = -1;
 	playerState.attackSoundPlayed = false;
-	playerState.attackSoundFrame = -1;
+	playerState.attackSoundPlaybackFrame = -1;
 	playerState.attackContactResolved = false;
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;

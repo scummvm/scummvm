@@ -59,8 +59,8 @@ struct StartupMonsterRecord {
 	bool visible = false;
 	bool savedVisible = false;
 	bool runtimeSpawned = false;
-	int minXBound = 0x14;
-	int maxXBound = 0x26b;
+	int screenMinXBound = 0x14;
+	int screenMaxXBound = 0x26b;
 	int attackSoundTriggerFrame = 0;
 	int hitSoundTriggerFrame = 0;
 	int footstepSoundTriggerFrame = 0;
