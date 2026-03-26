@@ -66,9 +66,9 @@ static const float kNativeMonsterPursuitZTolerance = 2.0f;
 static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
 static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
 static const int kNativeKeyboardAttackSideWindow = 30;
-static const char *const kNativeCombatDamageEffectResourcePath = "blood.abm";
-static const int kNativeCombatDamageEffectAnimationRate = 10;
-static const float kNativeCombatDamageEffectRenderZBias = 0.01f;
+static const char *const kNativeHitEffectResourcePath = "blood.abm";
+static const int kNativeHitEffectAnimationRate = 10;
+static const float kNativeHitEffectRenderZBias = 0.01f;
 
 static int roundRoomCombatFloat(float value);
 
@@ -118,7 +118,7 @@ struct RoomMonsterCombatState {
 	uint32 nextAttackAllowedTick = 0;
 };
 
-struct RoomCombatEffectState {
+struct RoomHitEffectState {
 	Common::String entityName;
 	Common::String followTargetName;
 	Common::Point anchorPoint;
@@ -673,7 +673,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		playerState.turnTargetFacing = -1;
 		Common::Array<RoomMonsterCombatState> monsterCombatStates;
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
-		Common::Array<RoomCombatEffectState> combatEffectStates;
+		Common::Array<RoomHitEffectState> hitEffectStates;
 		uint nextCombatEffectId = 0;
 		StartupResolvedText inspectText;
 		bool showingInspectText = false;
@@ -738,7 +738,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			if (!playerState.entity)
 				return false;
 			playerState.attackSoundPlayed = false;
-			playerState.attackSoundFrame = -1;
+			playerState.attackSoundPlaybackFrame = -1;
 			playerState.attackContactResolved = false;
 			playerState.attackTargetName.clear();
 			playerState.attackTargetClassId = -1;
@@ -979,39 +979,39 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			runtimeEntities->reinsertSceneEntity(entity);
 			return entity;
 		};
-		auto resolveCombatEffectAnchor = [&](const RuntimeEntity &targetEntity,
+		auto resolveHitEffectAnchor = [&](const RuntimeEntity &targetEntity,
 				Common::Point &anchorPoint, float &renderZ) {
 			const Common::Rect targetRect = targetEntity.getScreenRect();
 			anchorPoint.x = targetRect.left + targetRect.width() / 2;
 			anchorPoint.y = targetRect.top + targetRect.height() / 3;
-			renderZ = targetEntity.getZ() - kNativeCombatDamageEffectRenderZBias;
+			renderZ = targetEntity.getZ() - kNativeHitEffectRenderZBias;
 		};
-		auto spawnCombatDamageEffect = [&](RuntimeEntity &sourceEntity,
+		auto spawnCombatHitEffect = [&](RuntimeEntity &sourceEntity,
 				const Common::String &followTargetName) {
 			if (!runtimeEntities)
 				return false;
 
-			RoomCombatEffectState effectState;
+			RoomHitEffectState effectState;
 			effectState.entityName = Common::String::format("__combat_blood_%u", nextCombatEffectId++);
 			effectState.followTargetName = followTargetName;
-			resolveCombatEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
+			resolveHitEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
 
 			RuntimeEntity *effectEntity = runtimeEntities->spawnSceneAnimationEntity(
-				effectState.entityName, kNativeCombatDamageEffectResourcePath, effectState.anchorPoint,
-				effectState.renderZ, kNativeCombatDamageEffectAnimationRate, true, true, false,
+				effectState.entityName, kNativeHitEffectResourcePath, effectState.anchorPoint,
+				effectState.renderZ, kNativeHitEffectAnimationRate, true, true, false,
 				false, false, 0);
 			if (!effectEntity)
 				return false;
 
-			combatEffectStates.push_back(effectState);
+			hitEffectStates.push_back(effectState);
 			return true;
 		};
-		auto syncCombatDamageEffects = [&]() {
+		auto syncCombatHitEffects = [&]() {
 			if (!runtimeEntities)
 				return false;
 
 			bool changed = false;
-			for (RoomCombatEffectState &effectState : combatEffectStates) {
+			for (RoomHitEffectState &effectState : hitEffectStates) {
 				RuntimeEntity *effectEntity = runtimeEntities->findSceneEntityByName(effectState.entityName);
 				if (!effectEntity)
 					continue;
@@ -1020,7 +1020,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					RuntimeEntity *targetEntity =
 						runtimeEntities->findSceneEntityByName(effectState.followTargetName);
 					if (targetEntity && targetEntity->isVisible()) {
-						resolveCombatEffectAnchor(*targetEntity, effectState.anchorPoint, effectState.renderZ);
+						resolveHitEffectAnchor(*targetEntity, effectState.anchorPoint, effectState.renderZ);
 					}
 				}
 
@@ -1036,29 +1036,29 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			return changed;
 		};
-		auto pruneCombatDamageEffects = [&]() {
+		auto pruneCombatHitEffects = [&]() {
 			bool removedAny = false;
-			for (uint i = 0; i < combatEffectStates.size();) {
-				const Common::String effectName = combatEffectStates[i].entityName;
+			for (uint i = 0; i < hitEffectStates.size();) {
+				const Common::String effectName = hitEffectStates[i].entityName;
 				RuntimeEntity *effectEntity = runtimeEntities
 					? runtimeEntities->findSceneEntityByName(effectName)
 					: nullptr;
 				if (!effectEntity) {
-					combatEffectStates.remove_at(i);
+					hitEffectStates.remove_at(i);
 					continue;
 				}
 
 				const bool finished =
 					!effectEntity->isAnimationEnabled() &&
 					effectEntity->getCurrentFrame() == effectEntity->getLastFrame();
-				if (finished && combatEffectStates[i].finished) {
+				if (finished && hitEffectStates[i].finished) {
 					removeSceneEntityByName(effectName);
-					combatEffectStates.remove_at(i);
+					hitEffectStates.remove_at(i);
 					removedAny = true;
 					continue;
 				}
 
-				combatEffectStates[i].finished = finished;
+				hitEffectStates[i].finished = finished;
 				++i;
 			}
 
@@ -1325,7 +1325,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			refreshedState.audioCommands = entryAudioCommands;
 			if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
 				return false;
-			combatEffectStates.clear();
+			hitEffectStates.clear();
 			nextCombatEffectId = 0;
 			if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 				return false;
@@ -1361,7 +1361,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			playerState.attackContactFrame = -1;
 			playerState.attackResumeFacing = -1;
 			playerState.attackSoundPlayed = false;
-			playerState.attackSoundFrame = -1;
+			playerState.attackSoundPlaybackFrame = -1;
 			playerState.attackContactResolved = false;
 			playerState.attackTargetName.clear();
 			playerState.attackTargetClassId = -1;
@@ -2104,7 +2104,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				return Common::kNoError;
 			if (runtimeChanged && npcEntity) {
 				const Common::String followTargetName = npc->monsterfyTargetName;
-				if (spawnCombatDamageEffect(*npcEntity, followTargetName))
+				if (spawnCombatHitEffect(*npcEntity, followTargetName))
 					needsRedraw = true;
 			}
 
@@ -2356,7 +2356,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
 					const int desiredLogicalCenterX = desiredLiveCenterX - monsterLiveCenterOffset;
 					monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredLogicalCenterX, step);
-					monster.posX = CLIP<int>(monster.posX, monster.minXBound, monster.maxXBound);
+					monster.posX = CLIP<int>(monster.posX, monster.screenMinXBound, monster.screenMaxXBound);
 				}
 			}
 
@@ -3383,7 +3383,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		combatError = updateRoomMonsterCombat();
 		if (combatError.getCode() != Common::kNoError)
 			return combatError;
-		if (syncCombatDamageEffects())
+		if (syncCombatHitEffects())
 			needsRedraw = true;
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
@@ -3419,7 +3419,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;
-		if (pruneCombatDamageEffects())
+		if (pruneCombatHitEffects())
 			needsRedraw = true;
 		if (runtimeEntities) {
 			Common::Array<Common::String> expiredTimerNames;
