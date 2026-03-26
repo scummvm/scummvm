@@ -2681,6 +2681,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						pickupInteraction.modalText.value.c_str());
 					return restoreDeniedPickup(*startupScript, savedRuntimeObject, true);
 				}
+				if (!didTransition &&
+						!pickupInteraction.dialogueNpcName.empty() &&
+						!startupScript->isObjectInInventory(object.objectName)) {
+					debugC(1, kDebugRoom,
+						"Harvester: restoring carried pickup after dialogue object='%s' action='%s' npc='%s'",
+						object.objectName.c_str(), object.actionTag.c_str(),
+						pickupInteraction.dialogueNpcName.c_str());
+					return restoreDeniedPickup(*startupScript, savedRuntimeObject, true);
+				}
 			}
 		}
 
