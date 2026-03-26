@@ -1164,7 +1164,7 @@ void GameLogic::displayExtremeCloseupOfPizzathonList() {
 		_vm->drawImageToScreen(lib, "magline.pcx", 61, 164);
     }
     if (_pizzathonListFlags1 & 0x20) {
-		_vm->drawImageToScreen(lib, "comline.pcx", 68, 100);
+		_vm->drawImageToScreen(lib, "comline.pcx", 68, 180);
     }
     _vm->paletteFadeIn(0, 256, 16);
     // sysMouseDriver(1);
