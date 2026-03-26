@@ -2334,6 +2334,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
 			const int liveCenterDx = playerCenterX - monsterCenterX;
 			const int absLiveCenterDx = ABS(liveCenterDx);
+			const int horizontalGap = computeRuntimeEntityHorizontalGap(*entity, *playerState.entity);
 			const int monsterLiveCenterOffset = monsterCenterX - monster.posX;
 			const int playerTargetZ = roundRoomCombatFloat(playerState.z);
 			const float zDelta = playerState.z - (float)monster.posZ;
@@ -2391,14 +2392,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
-			const bool closeEnoughForAttack =
-				absZDelta <= kNativeMonsterPursuitZTolerance &&
-				absLiveCenterDx <= engageDistance;
+			const bool closeEnoughForAttack = areCombatantsWithinNativeCloseRange(scene.state,
+				*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
 			const bool attackCooldownExpired =
 				combatState.nextAttackAllowedTick == 0 || (int32)(now - combatState.nextAttackAllowedTick) >= 0;
 			if (!closeEnoughForAttack)
 				continue;
-			if (!attackCooldownExpired && absLiveCenterDx > MAX(1, engageDistance / 3))
+			if (!attackCooldownExpired && horizontalGap > MAX(1, engageDistance / 3))
 				continue;
 
 			RoomAttackAnimationRange range;
