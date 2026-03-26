@@ -26,9 +26,12 @@
 
 const DebugChannelDef HarvesterMetaEngineDetection::debugFlagList[] = {
 	{ Harvester::kDebugGeneral, "general", "General debug level" },
+	{ Harvester::kDebugCursor, "cursor", "Cursor animation, hover, and placement debug" },
+	{ Harvester::kDebugRoom, "room", "Room setup, scene population, and interaction debug" },
+	{ Harvester::kDebugPlayer, "player", "Player animation, movement, and spawn debug" },
 	{ Harvester::kDebugCombat, "combat", "Room combat pursuit, attack, and damage debug" },
 	{ Harvester::kDebugResources, "resources", "Resource loading" },
-	{ Harvester::kDebugScene, "scene", "Startup room, hotspot, and actor debug" },
+	{ Harvester::kDebugScene, "scene", "Scene object selection and startup script debug" },
 	{ Harvester::kDebugDialogue, "dialogue", "Startup dialogue and NPC interaction debug" },
 	{ Harvester::kDebugInventory, "inventory", "Inventory hover, click, and secondary-action debug" },
 	DEBUG_CHANNEL_END

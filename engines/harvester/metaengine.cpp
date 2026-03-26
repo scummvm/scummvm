@@ -38,6 +38,17 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SHOW_CD_CHANGE_PROMPTS,
+		{
+			_s("Show CD change prompts"),
+			_s("Display the original CD swap image and wait for a left click when the script requests disc 2 or 3."),
+			"show_cd_change_prompts",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

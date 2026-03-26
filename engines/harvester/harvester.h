@@ -86,6 +86,7 @@ public:
 	Text *getStartupText() const;
 	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
+	bool shouldShowCdChangePrompts() const;
 	int getStartupFxVolumeLevel() const;
 	int getStartupMusicVolumeLevel() const;
 	int getStartupGammaLevel() const;

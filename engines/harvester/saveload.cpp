@@ -42,7 +42,7 @@ static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
 static const uint32 kHarvesterSaveVersion = 13;
 
 static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: %s startup save room state valid=%d entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
 		operation, state.valid, state.entranceName.c_str(), state.roomName.c_str(),
 		state.playerX, state.playerY, state.playerZ, state.playerFacing, state.musicPath.c_str());

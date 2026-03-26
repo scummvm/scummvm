@@ -69,6 +69,7 @@ static const int kNativeKeyboardAttackSideWindow = 30;
 static const char *const kNativeHitEffectResourcePath = "blood.abm";
 static const int kNativeHitEffectAnimationRate = 10;
 static const float kNativeHitEffectRenderZBias = 0.01f;
+static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 
 static int roundRoomCombatFloat(float value);
 
@@ -246,6 +247,38 @@ static bool loadBitmapResource(ResourceManager &resources, const Common::String 
 	bitmap.pixels.resize(pixelCount);
 	memcpy(bitmap.pixels.data(), data.data() + 12, pixelCount);
 	return true;
+}
+
+static bool loadPaletteResource(ResourceManager &resources, const Common::String &path, byte *palette) {
+	Common::Array<byte> data;
+	if (!resources.loadFile(path, data) || data.size() < 256 * 3)
+		return false;
+
+	memcpy(palette, data.data(), 256 * 3);
+	return true;
+}
+
+static void applyRoomPalette(Graphics::Screen &screen, const HarvesterEngine &engine,
+		const byte *palette, float brightness) {
+	byte scaledPalette[256 * 3];
+	buildHarvesterDisplayPalette(palette, brightness * engine.getStartupGammaBrightnessScale(), scaledPalette);
+	screen.setPalette(scaledPalette);
+}
+
+static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBitmap &bitmap,
+		const byte *palette) {
+	Graphics::Screen *screen = engine.getScreen();
+	if (!screen)
+		return;
+
+	applyRoomPalette(*screen, engine, palette, 1.0f);
+	screen->fillRect(screen->getBounds(), 0);
+	if (bitmap.isValid())
+		screen->copyRectToSurface(bitmap.pixels.data(), bitmap.width, 0, 0, bitmap.width, bitmap.height);
+	if (engine.getRuntimeEntities())
+		engine.getRuntimeEntities()->drawCursor(*screen);
+	screen->makeAllDirty();
+	screen->update();
 }
 
 static bool shouldDispatchPickupActionOnCarryStart(const StartupObjectRecord &object) {
@@ -566,7 +599,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				_engine.clearPendingLoadedDialogueStateBlob();
 			}
 			const StartupSaveRoomState &loadedState = _engine.getPendingLoadedStartupSaveRoomState();
-			debugC(1, kDebugGeneral,
+			debugC(1, kDebugRoom,
 				"Harvester: applying pending loaded room state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
 				loadedState.entranceName.c_str(), loadedState.roomName.c_str(),
 				loadedState.playerX, loadedState.playerY, loadedState.playerZ,
@@ -1433,6 +1466,78 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 			return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
 		};
+		auto showCdChangePrompt = [&](int discNumber) -> Common::Error {
+			if (discNumber <= 0 || !_engine.shouldShowCdChangePrompts())
+				return Common::kNoError;
+
+			ResourceManager *resources = _engine.getResources();
+			Graphics::Screen *screen = _engine.getScreen();
+			if (!resources || !screen)
+				return Common::kReadingFailed;
+
+			const Common::String bitmapPath = Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
+			IndexedBitmap promptBitmap;
+			byte promptPalette[256 * 3];
+			if (!loadBitmapResource(*resources, bitmapPath, promptBitmap) ||
+					!loadPaletteResource(*resources, kCdChangePromptPalettePath, promptPalette)) {
+				warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
+				return Common::kReadingFailed;
+			}
+
+			debugC(1, kDebugScene, "Harvester: showing CD change prompt for disc %d", discNumber);
+			_engine.stopStartupMusic();
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				Common::Error result = Common::kNoError;
+				if (startupFlow.handleSystemEvent(event, result))
+					return result;
+				if (event.type == Common::EVENT_MOUSEMOVE)
+					_mousePos = event.mouse;
+			}
+
+			bool waitingForRelease = false;
+			bool needsRedraw = true;
+			Graphics::FrameLimiter limiter(g_system, 60);
+
+			while (!_engine.shouldQuit()) {
+				if (needsRedraw) {
+					renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
+					needsRedraw = false;
+				}
+
+				while (g_system->getEventManager()->pollEvent(event)) {
+					Common::Error result = Common::kNoError;
+					if (startupFlow.handleSystemEvent(event, result))
+						return result;
+
+					switch (event.type) {
+					case Common::EVENT_MOUSEMOVE:
+						_mousePos = event.mouse;
+						needsRedraw = true;
+						break;
+					case Common::EVENT_LBUTTONDOWN:
+						waitingForRelease = true;
+						break;
+					case Common::EVENT_LBUTTONUP:
+						if (waitingForRelease)
+							return Common::kNoError;
+						break;
+					default:
+						break;
+					}
+				}
+
+				RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+				if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+					needsRedraw = true;
+
+				limiter.delayBeforeSwap();
+				limiter.startFrame();
+			}
+
+			return Common::kNoError;
+		};
 		auto runRoomExitCommands = [&]() -> Common::Error {
 			StartupInteractionResult exitInteraction;
 			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitInteraction))
@@ -1442,6 +1547,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (!exitInteraction.musicPath.empty())
 					(void)_engine.playStartupMusic(exitInteraction.musicPath);
 				startupFlow.executeStartupAudioCommands(exitInteraction.audioCommands);
+				if (exitInteraction.cdChangeDisc > 0) {
+					Common::Error cdPromptError = showCdChangePrompt(exitInteraction.cdChangeDisc);
+					if (cdPromptError.getCode() != Common::kNoError)
+						return cdPromptError;
+				}
 
 				if (!exitInteraction.cutscenePath.empty()) {
 					FstPlayer fstPlayer(_engine);
@@ -1454,7 +1564,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						!exitInteraction.modalText.value.empty() ||
 						exitInteraction.lightingCommand != kStartupLightingCommandNone ||
 						exitInteraction.requestPlayerGotoXZ) {
-					debugC(1, kDebugScene,
+					debugC(1, kDebugRoom,
 						"Harvester: room exit command for '%s' produced unsupported deferred output; preserving accumulated state",
 						scene.state.roomName.c_str());
 				}
@@ -1504,7 +1614,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				return Common::kNoError;
 			}
 			case kStartupLightingCommandFadeIn:
-				debugC(1, kDebugScene,
+				debugC(1, kDebugRoom,
 					"Harvester: CHANGE_LIGHTING FADE_IN has no direct room-side equivalent yet; preserving control flow");
 				return Common::kNoError;
 			}
@@ -1605,6 +1715,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
 			decltype(applyCurrentRoomRuntimeMutationsInPlace) &applyCurrentRoomRuntimeMutationsInPlaceFn;
 			decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
+			decltype(showCdChangePrompt) &showCdChangePromptFn;
 			decltype(runRoomExitCommands) &runRoomExitCommandsFn;
 			decltype(applyLightingCommand) &applyLightingCommandFn;
 			decltype(applyPlayerGotoXZ) &applyPlayerGotoXZFn;
@@ -1642,6 +1753,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					restoreMusicPath = engine.getStartupMusicPath();
 				}
 				startupFlow.executeStartupAudioCommands(interaction.audioCommands);
+				if (interaction.cdChangeDisc > 0) {
+					Common::Error cdPromptError = showCdChangePromptFn(interaction.cdChangeDisc);
+					if (cdPromptError.getCode() != Common::kNoError)
+						return cdPromptError;
+				}
 
 				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
 				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
@@ -1793,6 +1909,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		InteractionProcessor interactionProcessor = {
 			_engine, startupFlow, scene, playerState, pendingRegionName, pendingRoomChange,
 			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace, captureDialogueBackdrop,
+			showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			resetIdleState
 		};
@@ -2513,7 +2630,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (startupFlow.hasPendingMainMenuReturn())
 					return Common::kNoError;
 				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
-					debugC(1, kDebugScene,
+					debugC(1, kDebugRoom,
 						"Harvester: cancelling denied direct pickup object='%s' action='%s' text='%s'",
 						object.objectName.c_str(), object.actionTag.c_str(),
 						pickupInteraction.modalText.value.c_str());
@@ -2558,7 +2675,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (startupFlow.hasPendingMainMenuReturn())
 					return Common::kNoError;
 				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
-					debugC(1, kDebugScene,
+					debugC(1, kDebugRoom,
 						"Harvester: cancelling denied carried pickup object='%s' action='%s' text='%s'",
 						object.objectName.c_str(), object.actionTag.c_str(),
 						pickupInteraction.modalText.value.c_str());
@@ -3040,7 +3157,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
 					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
-				debugC(1, kDebugScene,
+				debugC(1, kDebugRoom,
 					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
 					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
 					hoverState.object ? hoverState.object->objectName.c_str() : "",
