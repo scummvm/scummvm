@@ -28,6 +28,90 @@
 
 namespace Harvester {
 
+namespace {
+
+struct ArchiveSpec {
+	char archiveSetId;
+	const char *indexPath;
+	const char *dataPath;
+	int priority;
+};
+
+static const ArchiveSpec kArchiveSpecs[] = {
+	{ '1', "INDEX.001", "HARVEST.DAT", 30 },
+	{ '2', "INDEX.002", "SOUND.DAT", 29 },
+	{ '3', "INDEX.003", "HARVEST2.DAT", 28 }
+};
+
+static const int kFirstDiscNumber = 1;
+static const int kLastDiscNumber = 3;
+
+static bool hasArchiveSetPrefix(const Common::String &path) {
+	return path.size() >= 3 &&
+		path[0] >= '0' && path[0] <= '9' &&
+		path[1] == ':' && path[2] == '/';
+}
+
+static const ArchiveSpec *findArchiveSpec(char archiveSetId) {
+	for (const ArchiveSpec &spec : kArchiveSpecs) {
+		if (spec.archiveSetId == archiveSetId)
+			return &spec;
+	}
+
+	return nullptr;
+}
+
+static Common::String stripLeadingSlashes(const Common::String &path) {
+	Common::String normalized = path;
+	while (!normalized.empty() && normalized[0] == '/')
+		normalized.erase(0, 1);
+	return normalized;
+}
+
+static Common::String buildDiscArchiveName(int discNumber, char archiveSetId) {
+	return Common::String::format("harvester-disc-%d-xfile-%c", discNumber, archiveSetId);
+}
+
+static Common::String buildDiscPrefixedFilePath(int discNumber, const char *path) {
+	return Common::String::format("%d%s", discNumber, path);
+}
+
+static Common::String resolveDiscArchiveStoragePath(int discNumber, const char *path) {
+	const Common::String prefixedPath = buildDiscPrefixedFilePath(discNumber, path);
+	if (SearchMan.hasFile(Common::Path(prefixedPath, '/')))
+		return prefixedPath;
+	if (discNumber == kFirstDiscNumber && SearchMan.hasFile(Common::Path(path, '/')))
+		return path;
+	return Common::String();
+}
+
+static Common::String normalizeHarvesterLookupPath(const Common::String &path) {
+	Common::String normalized(path);
+
+	for (uint i = 0; i < normalized.size(); ++i) {
+		if (normalized[i] == '\\')
+			normalized.setChar('/', i);
+	}
+
+	while (normalized.hasPrefix("./"))
+		normalized.erase(0, 2);
+
+	if (hasArchiveSetPrefix(normalized)) {
+		const char archiveSetId = normalized[0];
+		Common::String memberPath = stripLeadingSlashes(normalized.substr(3));
+		return memberPath.empty()
+			? Common::String::format("%c:/", archiveSetId)
+			: Common::String::format("%c:/%s", archiveSetId, memberPath.c_str());
+	}
+
+	if (normalized.size() >= 3 && normalized[1] == ':' && normalized[2] == '/')
+		normalized.erase(0, 3);
+
+	return stripLeadingSlashes(normalized);
+}
+
+} // End of anonymous namespace
+
 Common::String normalizeHarvesterResourcePath(const Common::String &path) {
 	Common::String normalized(path);
 
@@ -58,45 +142,137 @@ ResourceManager::~ResourceManager() {
 
 void ResourceManager::reset() {
 	_search.clear();
+	_currentDisc = 1;
 	_search.add("harvester-loose-files", &SearchMan, 0, false);
 }
 
 Common::String ResourceManager::normalizeResourcePath(const Common::String &path) const {
-	return normalizeHarvesterResourcePath(path);
+	return normalizeHarvesterLookupPath(path);
 }
 
 bool ResourceManager::mountStartupArchives() {
-	static const struct {
-		const char *archiveName;
-		const char *indexPath;
-		const char *dataPath;
-		int priority;
-	} kArchiveSpecs[] = {
-		{ "harvester-xfile-1", "INDEX.001", "HARVEST.DAT", 30 },
-		{ "harvester-xfile-2", "INDEX.002", "SOUND.DAT", 29 },
-		{ "harvester-xfile-3", "INDEX.003", "HARVEST2.DAT", 28 }
-	};
+	bool mountedAny = false;
+	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
+		if (ensureDiscMounted(discNumber))
+			mountedAny = true;
+	}
+
+	return mountedAny;
+}
+
+bool ResourceManager::setCurrentDisc(int discNumber) {
+	if (discNumber <= 0)
+		return false;
+	if (!ensureDiscMounted(discNumber))
+		return false;
+
+	_currentDisc = discNumber;
+	debugC(1, kDebugResources, "Harvester: switched active disc to %d", discNumber);
+	return true;
+}
+
+bool ResourceManager::ensureDiscMounted(int discNumber) {
+	if (discNumber <= 0)
+		return false;
 
 	bool mountedAny = false;
-	for (const auto &spec : kArchiveSpecs) {
+	for (const ArchiveSpec &spec : kArchiveSpecs) {
+		if (getMountedDiscArchive(discNumber, spec.archiveSetId)) {
+			mountedAny = true;
+			continue;
+		}
+
+		const Common::String indexPath = resolveDiscArchiveStoragePath(discNumber, spec.indexPath);
+		const Common::String dataPath = resolveDiscArchiveStoragePath(discNumber, spec.dataPath);
+		if (indexPath.empty() || dataPath.empty()) {
+			debugC(1, kDebugResources,
+				"Harvester: missing archive files for disc %d set %c (%s + %s)",
+				discNumber, spec.archiveSetId, spec.indexPath, spec.dataPath);
+			continue;
+		}
+
 		XFileArchive *archive = new XFileArchive();
-		if (!archive->open(spec.indexPath, spec.dataPath)) {
-			debugC(1, kDebugResources, "Harvester: failed to mount %s + %s", spec.indexPath, spec.dataPath);
+		if (!archive->open(indexPath, dataPath)) {
+			debugC(1, kDebugResources,
+				"Harvester: failed to mount disc %d set %c from %s + %s",
+				discNumber, spec.archiveSetId, indexPath.c_str(), dataPath.c_str());
 			delete archive;
 			continue;
 		}
 
-		mountArchive(spec.archiveName, archive, spec.priority, true);
-		debugC(1, kDebugResources, "Harvester: mounted %s + %s", spec.indexPath, spec.dataPath);
+		mountArchive(buildDiscArchiveName(discNumber, spec.archiveSetId), archive, spec.priority, true);
+		debugC(1, kDebugResources,
+			"Harvester: mounted disc %d set %c from %s + %s",
+			discNumber, spec.archiveSetId, indexPath.c_str(), dataPath.c_str());
 		mountedAny = true;
 	}
 
 	return mountedAny;
 }
 
+Common::Archive *ResourceManager::getMountedDiscArchive(int discNumber, char archiveSetId) const {
+	return _search.getArchive(buildDiscArchiveName(discNumber, archiveSetId));
+}
+
+Common::Archive *ResourceManager::findArchiveForMember(char archiveSetId, const Common::Path &memberPath) const {
+	Common::Archive *archive = getMountedDiscArchive(_currentDisc, archiveSetId);
+	if (archive && archive->hasFile(memberPath))
+		return archive;
+
+	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
+		if (discNumber == _currentDisc)
+			continue;
+
+		archive = getMountedDiscArchive(discNumber, archiveSetId);
+		if (archive && archive->hasFile(memberPath))
+			return archive;
+	}
+
+	return nullptr;
+}
+
+bool ResourceManager::hasInMountedArchives(const Common::Path &memberPath) const {
+	for (const ArchiveSpec &spec : kArchiveSpecs) {
+		if (findArchiveForMember(spec.archiveSetId, memberPath))
+			return true;
+	}
+
+	return false;
+}
+
+Common::SeekableReadStream *ResourceManager::openFromMountedArchives(const Common::Path &memberPath) const {
+	for (const ArchiveSpec &spec : kArchiveSpecs) {
+		Common::Archive *archive = findArchiveForMember(spec.archiveSetId, memberPath);
+		if (!archive)
+			continue;
+
+		Common::SeekableReadStream *stream = archive->createReadStreamForMember(memberPath);
+		if (stream)
+			return stream;
+	}
+
+	return nullptr;
+}
+
 bool ResourceManager::hasFile(const Common::String &path) const {
 	const Common::String normalized = normalizeResourcePath(path);
-	return !normalized.empty() && _search.hasFile(Common::Path(normalized, '/'));
+	if (normalized.empty())
+		return false;
+
+	if (hasArchiveSetPrefix(normalized)) {
+		const ArchiveSpec *spec = findArchiveSpec(normalized[0]);
+		const Common::String memberPath = stripLeadingSlashes(normalized.substr(3));
+		if (!spec || memberPath.empty())
+			return false;
+
+		return findArchiveForMember(spec->archiveSetId, Common::Path(memberPath, '/')) != nullptr;
+	}
+
+	const Common::Path memberPath(normalized, '/');
+	if (hasInMountedArchives(memberPath))
+		return true;
+
+	return SearchMan.hasFile(memberPath);
 }
 
 Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path) const {
@@ -104,7 +280,20 @@ Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path
 	if (normalized.empty())
 		return nullptr;
 
-	Common::SeekableReadStream *stream = _search.createReadStreamForMember(Common::Path(normalized, '/'));
+	Common::SeekableReadStream *stream = nullptr;
+	if (hasArchiveSetPrefix(normalized)) {
+		const ArchiveSpec *spec = findArchiveSpec(normalized[0]);
+		const Common::String memberPath = stripLeadingSlashes(normalized.substr(3));
+		Common::Archive *archive = spec ? findArchiveForMember(spec->archiveSetId, Common::Path(memberPath, '/')) : nullptr;
+		if (archive && !memberPath.empty())
+			stream = archive->createReadStreamForMember(Common::Path(memberPath, '/'));
+	} else {
+		const Common::Path memberPath(normalized, '/');
+		stream = openFromMountedArchives(memberPath);
+		if (!stream)
+			stream = SearchMan.createReadStreamForMember(memberPath);
+	}
+
 	debugC(3, kDebugResources, "Harvester: openFile('%s' -> '%s') %s", path.c_str(), normalized.c_str(), stream ? "hit" : "miss");
 	return stream;
 }

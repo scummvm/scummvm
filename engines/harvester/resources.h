@@ -36,6 +36,8 @@ public:
 
 	void reset();
 	bool mountStartupArchives();
+	bool setCurrentDisc(int discNumber);
+	int getCurrentDisc() const { return _currentDisc; }
 
 	bool hasFile(const Common::String &path) const;
 	Common::SeekableReadStream *openFile(const Common::String &path) const;
@@ -45,7 +47,13 @@ public:
 	void mountArchive(const Common::String &name, Common::Archive *archive, int priority = 10, bool autoFree = true);
 
 private:
+	bool ensureDiscMounted(int discNumber);
+	Common::Archive *getMountedDiscArchive(int discNumber, char archiveSetId) const;
+	Common::Archive *findArchiveForMember(char archiveSetId, const Common::Path &memberPath) const;
+	bool hasInMountedArchives(const Common::Path &memberPath) const;
+	Common::SeekableReadStream *openFromMountedArchives(const Common::Path &memberPath) const;
 	Common::SearchSet _search;
+	int _currentDisc = 1;
 };
 
 } // End of namespace Harvester
