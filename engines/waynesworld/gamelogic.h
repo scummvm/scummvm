@@ -51,6 +51,7 @@ public:
 	void r38_atrap();
 	void handlePizzathon();
 	void handleHypnosisCutscene();
+	void showEnding();
 
 public:
 	byte _r0_flags;

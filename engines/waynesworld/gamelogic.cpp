@@ -3954,7 +3954,6 @@ void GameLogic::r8_handleRoomEvent1() {
 	if (_r38_flags & 0x08) {
 		_vm->displayTextLines("c04r", 349, 200, 30, 9);
 		_r8_flags |= 0x20;
-		_vm->quitGame();
 	} else {
 		if (_pizzathonListFlags2 & 0x08) {
 			if (_r8_flags & 0x40) {
@@ -8613,6 +8612,66 @@ void GameLogic::handleHypnosisCutscene() {
 		_vm->drawCurrentText(164, 0, nullptr);
 		_vm->playAnimation("spiral", 0, 15, 77, 38, 0, 100);
 	}
+}
+
+void GameLogic::showEnding() {
+	// sysMouseDriver(2);
+
+	GxlArchive *e01Gxl = new GxlArchive("e01");
+	_vm->paletteFadeOut(0, 256, 64);
+    _vm->_screen->clear(0);
+	_vm->drawImageToScreen(e01Gxl, "backg.pcx", 0, 0);
+	_vm->drawImageToScreen(e01Gxl, "tv01.pcx", 180, 74);
+	_vm->_musicIndex = 1;
+	_vm->changeMusic();
+	_vm->paletteFadeIn(0, 256, 3);
+
+	// Wayne and Garth animation on TV
+	for (int i = 1; i < 39; ++i) {
+		Common::String filename = Common::String::format("tv%02d.pcx", i);
+		_vm->drawImageToScreen(e01Gxl, filename.c_str(), 180, 74);
+		_vm->waitMillis(100);
+	}
+
+	// Random effect on TV to display the Wayne's World logo
+	_vm->waitSeconds(1);
+	WWSurface *tv40Image = e01Gxl->loadSurface("tv40.pcx");
+	_vm->drawRandomEffect(tv40Image, 180, 74, 1, 1);
+	delete tv40Image;
+	tv40Image = nullptr;
+
+	_vm->waitSeconds(3);
+	_vm->_screen->saveScreenshot();
+	WWSurface *leftBackground = new WWSurface(_vm->_screen->_screenCopy);
+	WWSurface *rightBackground = e01Gxl->loadSurface("backgv.pcx");
+	WWSurface *scrollSurface = new WWSurface(320, 200);
+	for (int i = 3; i < 319; ++i) {
+		scrollSurface->copyRectToSurface((Graphics::Surface)*leftBackground, 0, 0, Common::Rect(i, 0, 319, 200));
+		scrollSurface->copyRectToSurface((Graphics::Surface)*rightBackground, 319 - i, 0, Common::Rect(0, 0, i, 200));
+		_vm->_screen->drawSurface(scrollSurface, 0, 0);
+	}
+	_vm->_screen->drawSurface(rightBackground, 0, 0);	
+	delete scrollSurface;
+	scrollSurface = nullptr;
+	WWSurface *zoomSurface = e01Gxl->loadSurface("zoom1.pcx");
+	_vm->drawRandomEffect(zoomSurface, 0, 0, 4, 4);
+	delete zoomSurface;
+	_vm->waitSeconds(2);
+	zoomSurface = e01Gxl->loadSurface("zoomt.pcx");
+	_vm->drawRandomEffect(zoomSurface, 0, 0, 2, 2);
+	delete zoomSurface;
+	zoomSurface = nullptr;
+
+	_vm->playSound("sv42.snd", 1);
+	_vm->waitMillis(100);
+	_vm->playSound("sv34.snd", 1);
+	_vm->waitSeconds(5);
+
+	_vm->paletteFadeOut(0, 256, 4);
+
+	delete rightBackground;
+	delete leftBackground;
+	delete e01Gxl;
 }
 
 void GameLogic::r38_useCassandra() {

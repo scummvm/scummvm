@@ -259,7 +259,7 @@ Common::Error WaynesWorldEngine::run() {
 	changeMusic();
 	_isSaveAllowed = true;
 
-	while (!shouldQuit()) {
+	while (!shouldQuit() && !(_logic->_r8_flags & 0x20)) {
 		_mouseClickButtons = 0;
 		// _keyInput = 0;
 		updateEvents();
@@ -277,6 +277,10 @@ Common::Error WaynesWorldEngine::run() {
 		g_system->updateScreen();
 	}
 
+	if (_logic->_r8_flags & 0x20) {
+		_logic->showEnding();	
+	}
+	
 	unloadStaticRoomObjects();
 	unloadMainActorSprites();
 
