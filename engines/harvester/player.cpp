@@ -101,6 +101,7 @@ struct PlayerAttackSoundSet {
 };
 
 struct PlayerCombatLoadoutTuning {
+	const char *label;
 	int damageType;
 	int damageAmount;
 	int contactFrameOffset;
@@ -134,27 +135,27 @@ static const PlayerAttackSoundSet kPlayerAttackSoundSets[] = {
 };
 
 static const PlayerCombatLoadoutTuning kPlayerCombatLoadoutTunings[] = {
-	{ 1, 1, 5 },
-	{ 2, 4, 2 },
-	{ 4, 2, 2 },
-	{ 4, 7, 2 },
-	{ 4, 6, 2 },
-	{ 4, 6, 2 },
-	{ 2, 3, 2 },
-	{ 2, 3, 2 },
-	{ 2, 3, 2 },
-	{ 2, 3, 2 },
-	{ 1, 3, 2 },
-	{ 2, 3, 2 },
-	{ 2, 4, 2 },
-	{ 2, 5, 2 },
-	{ 2, 4, 2 },
-	{ 2, 8, 2 },
-	{ 1, 3, 2 },
-	{ 2, 3, 2 },
-	{ 1, 3, 2 },
-	{ 2, 3, 2 },
-	{ 1, 2, 2 }
+	{ "FISTS", 1, 1, 5 },
+	{ "CLEAVER", 2, 4, 2 },
+	{ "NAILGUN", 4, 2, 2 },
+	{ "SHOTGUN", 4, 7, 2 },
+	{ "9GUN", 4, 6, 2 },
+	{ "38GUN", 4, 6, 2 },
+	{ "TOMAHAWK", 2, 3, 2 },
+	{ "KNIFE", 2, 3, 2 },
+	{ "FLAIL", 2, 3, 2 },
+	{ "HANDAXE", 2, 3, 2 },
+	{ "WRENCH", 1, 3, 2 },
+	{ "PITCHFORK", 2, 3, 2 },
+	{ "SCYTHE", 2, 4, 2 },
+	{ "SWORD", 2, 5, 2 },
+	{ "CHAINSAW", 2, 8, 2 },
+	{ "HARVEST_BLADE", 2, 3, 2 },
+	{ "SHOVEL", 1, 3, 2 },
+	{ "FIREAXE", 2, 3, 2 },
+	{ "BAT", 1, 3, 2 },
+	{ "RAZOR", 2, 3, 2 },
+	{ "POOLSTICK", 1, 2, 2 }
 };
 
 static int roundToInt(float value) {
@@ -225,7 +226,7 @@ static const PlayerAttackSoundSet *resolvePlayerAttackSoundSet(int loadout) {
 }
 
 static const PlayerCombatLoadoutTuning &resolvePlayerCombatLoadoutTuning(int loadout) {
-	static const PlayerCombatLoadoutTuning kDefaultTuning = { 1, 1, 2 };
+	static const PlayerCombatLoadoutTuning kDefaultTuning = { "FISTS", 1, 1, 5 };
 
 	if (loadout < 0 || loadout >= (int)ARRAYSIZE(kPlayerCombatLoadoutTunings))
 		return kDefaultTuning;
@@ -759,12 +760,29 @@ Common::String Player::resolveCombatLoadoutResourcePath(int loadout) {
 	return Common::String::format("1:/GRAPHIC/MONSTERS/PC/PC%02d.ABM", loadout);
 }
 
+const char *Player::describeCombatLoadout(int loadout) {
+	return resolvePlayerCombatLoadoutTuning(loadout).label;
+}
+
 int Player::resolveCombatLoadoutDamageAmount(int loadout) {
 	return resolvePlayerCombatLoadoutTuning(loadout).damageAmount;
 }
 
 int Player::resolveCombatLoadoutDamageType(int loadout) {
 	return resolvePlayerCombatLoadoutTuning(loadout).damageType;
+}
+
+const char *Player::describeCombatDamageType(int damageType) {
+	switch (damageType) {
+	case 1:
+		return "BLUDGE";
+	case 2:
+		return "SLASH";
+	case 4:
+		return "PROJ";
+	default:
+		return "UNKNOWN";
+	}
 }
 
 int Player::resolveCombatLoadoutContactFrameOffset(int loadout) {
@@ -876,8 +894,11 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	(void)applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
 	debugC(1, kDebugPlayer,
-		"Harvester: player combat loadout visual loadout=%d resource='%s' facing=%d pos=(%d,%d,z=%.2f)",
-		playerState.combatLoadout, resourcePath.c_str(), playerState.facing,
+		"Harvester: player combat loadout visual loadout=%d weapon='%s' damage=%d damage_type='%s' contact=%d resource='%s' facing=%d pos=(%d,%d,z=%.2f)",
+		playerState.combatLoadout, describeCombatLoadout(playerState.combatLoadout),
+		resolveCombatLoadoutDamageAmount(playerState.combatLoadout),
+		describeCombatDamageType(resolveCombatLoadoutDamageType(playerState.combatLoadout)),
+		resolveCombatLoadoutContactFrameOffset(playerState.combatLoadout), resourcePath.c_str(), playerState.facing,
 		playerState.centerX, playerState.bottomY, (double)playerState.z);
 	return true;
 }

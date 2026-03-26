@@ -28,6 +28,7 @@
 #include "graphics/screen.h"
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
+#include "harvester/player.h"
 #include "harvester/resources.h"
 #include "harvester/art.h"
 
@@ -459,11 +460,18 @@ bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, int
 	const int activeLoadout = currentLoadout >= 0 ? currentLoadout : savedLoadout;
 	const int nextLoadout = activeLoadout == loadoutId ? 0 : loadoutId;
 	const bool scriptChanged = startupScript->setPlayerCombatLoadout(nextLoadout);
+	const int resultingLoadout = startupScript->getPlayerCombatLoadout();
 	changed = activeLoadout != nextLoadout;
 	debugC(1, kDebugInventory,
-		"Harvester: inventory combat toggle object='%s' active_loadout=%d saved_loadout=%d requested_loadout=%d changed=%d script_changed=%d resulting_loadout=%d",
-		object.objectName.c_str(), activeLoadout, savedLoadout, nextLoadout, changed,
-		scriptChanged, startupScript->getPlayerCombatLoadout());
+		"Harvester: inventory combat toggle object='%s' active_loadout=%d('%s') saved_loadout=%d('%s') requested_loadout=%d('%s') changed=%d script_changed=%d resulting_loadout=%d('%s') damage=%d damage_type='%s'",
+		object.objectName.c_str(),
+		activeLoadout, Player::describeCombatLoadout(activeLoadout),
+		savedLoadout, Player::describeCombatLoadout(savedLoadout),
+		nextLoadout, Player::describeCombatLoadout(nextLoadout),
+		changed, scriptChanged,
+		resultingLoadout, Player::describeCombatLoadout(resultingLoadout),
+		Player::resolveCombatLoadoutDamageAmount(resultingLoadout),
+		Player::describeCombatDamageType(Player::resolveCombatLoadoutDamageType(resultingLoadout)));
 	return true;
 }
 
