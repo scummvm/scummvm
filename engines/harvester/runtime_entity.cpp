@@ -534,8 +534,6 @@ bool RuntimeEntity::hitTest(const Common::Point &point) const {
 bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
 	if (this == &other || !_visible || !other._visible)
 		return false;
-	if (!hasOpaqueFrame() || !other.hasOpaqueFrame())
-		return false;
 	if (_classId == kRuntimeEntityClassCursor || _classId == kRuntimeEntityClassBackground ||
 		_classId == kRuntimeEntityClassRectHotspot || _classId == kRuntimeEntityClassRectHotspot19 ||
 		other._classId == kRuntimeEntityClassCursor || other._classId == kRuntimeEntityClassBackground ||
@@ -555,6 +553,12 @@ bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
 	const int right = MIN(thisRect.right, otherRect.right);
 	const int bottom = MIN(thisRect.bottom, otherRect.bottom);
 	if (left >= right || top >= bottom)
+		return false;
+	if (_classId == kRuntimeEntityClassDisabledHotspot ||
+			other._classId == kRuntimeEntityClassDisabledHotspot) {
+		return true;
+	}
+	if (!hasOpaqueFrame() || !other.hasOpaqueFrame())
 		return false;
 
 	for (int y = top; y < bottom; ++y) {

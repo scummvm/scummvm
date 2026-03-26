@@ -539,7 +539,7 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	return true;
 }
 
-Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
+Common::Rect getRoomObjectHotspotBounds(const StartupObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 
@@ -583,7 +583,7 @@ bool loadBitmapResource(ResourceManager &resources, const Common::String &path, 
 
 static void logSceneObjectSelection(const char *decision, const char *source, const StartupObjectRecord &object,
 		const Common::String &detail = Common::String()) {
-	const Common::Rect hotspotBounds = getHotspotBounds(object);
+	const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
 	const Common::String resolvedSpritePath = resolveSceneObjectSpritePath(object);
 	debugC(1, kDebugScene,
 		"Harvester: scene object %s source='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' resolved='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s' detail='%s'",
@@ -622,10 +622,20 @@ static int resolveSceneObjectClass(const StartupObjectRecord &object, const Runt
 		: kRuntimeEntityClassDisabledHotspot;
 }
 
-static void queueVisibleSceneObject(const char *source, const StartupObjectRecord &object,
+static bool shouldQueueSceneObject(const StartupObjectRecord &object) {
+	if (object.visible)
+		return true;
+
+	// Hidden no-sprite hotspots still drive room actions in the authored script data.
+	return resolveSceneObjectSpritePath(object).empty() &&
+		!getRoomObjectHotspotBounds(object).isEmpty() &&
+		(object.operatable || !object.actionTag.empty());
+}
+
+static void queueSceneObject(const char *source, const StartupObjectRecord &object,
 		Common::Array<StartupObjectRecord> &sceneObjects) {
-	if (!object.visible) {
-		logSceneObjectSelection("skipped", source, object, "visible=0");
+	if (!shouldQueueSceneObject(object)) {
+		logSceneObjectSelection("skipped", source, object, object.visible ? "inactive" : "visible=0");
 		return;
 	}
 
@@ -651,9 +661,9 @@ bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager 
 
 	Common::Array<StartupObjectRecord> sceneObjects;
 	for (const StartupObjectRecord &object : state.roomObjects)
-		queueVisibleSceneObject("room", object, sceneObjects);
+		queueSceneObject("room", object, sceneObjects);
 	for (const StartupObjectRecord &object : state.activeObjects)
-		queueVisibleSceneObject("active", object, sceneObjects);
+		queueSceneObject("active", object, sceneObjects);
 
 	scene.sceneObjects = sceneObjects;
 	for (const StartupAnimRecord &anim : state.roomAnimations) {
@@ -986,7 +996,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 
 static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Array<StartupObjectRecord> &sceneObjects,
 		const StartupObjectRecord &object, Common::Point &probePoint) {
-	const Common::Rect bounds = getHotspotBounds(object);
+	const Common::Rect bounds = getRoomObjectHotspotBounds(object);
 	if (bounds.isEmpty())
 		return false;
 
@@ -1055,7 +1065,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 	}
 
 	for (const StartupObjectRecord &object : scene.sceneObjects) {
-		if (getHotspotBounds(object).isEmpty())
+		if (getRoomObjectHotspotBounds(object).isEmpty())
 			continue;
 
 		Common::Point probePoint;
@@ -1741,7 +1751,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 	for (const StartupObjectRecord &object : drawableObjects) {
 		RuntimeEntity *entity = nullptr;
 		const Common::String spritePath = resolveSceneObjectSpritePath(object);
-		const Common::Rect hotspotBounds = getHotspotBounds(object);
+		const Common::Rect hotspotBounds = getRoomObjectHotspotBounds(object);
 		if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
 			entity = runtimeEntities->spawnSceneBitmapEntity(object.objectName, spritePath,
 				Common::Point(object.currentX, object.currentY), (float)object.currentZ);
