@@ -39,7 +39,7 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-static const uint32 kHarvesterSaveVersion = 13;
+static const uint32 kHarvesterSaveVersion = 14;
 
 static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
 	debugC(1, kDebugRoom,
@@ -95,6 +95,9 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!s.syncVersion(kHarvesterSaveVersion))
 		return Common::kReadingFailed;
 
+	int32 currentDisc = (_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1;
+	s.syncAsSint32LE(currentDisc, 14);
+
 	StartupSaveRoomState roomState = s.isLoading()
 		? StartupSaveRoomState()
 		: _currentStartupSaveRoomState;
@@ -128,6 +131,8 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 			return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 
 	if (s.isLoading()) {
+		if (_resources && !(_resources->setCurrentDisc(currentDisc > 0 ? currentDisc : 1)))
+			return Common::kReadingFailed;
 		if (!roomState.valid || roomState.roomName.empty())
 			return Common::kReadingFailed;
 		_currentStartupSaveRoomState = roomState;

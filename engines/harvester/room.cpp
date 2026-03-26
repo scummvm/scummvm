@@ -1584,73 +1584,84 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return captureScreenBackdrop(*activeScreen, dialogueBackdrop);
 		};
 		auto showCdChangePrompt = [&](int discNumber) -> Common::Error {
-			if (discNumber <= 0 || !_engine.shouldShowCdChangePrompts())
+			if (discNumber <= 0)
 				return Common::kNoError;
 
 			ResourceManager *resources = _engine.getResources();
-			Graphics::Screen *screen = _engine.getScreen();
-			if (!resources || !screen)
+			if (!resources)
 				return Common::kReadingFailed;
 
-			const Common::String bitmapPath = Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
-			IndexedBitmap promptBitmap;
-			byte promptPalette[256 * 3];
-			if (!loadBitmapResource(*resources, bitmapPath, promptBitmap) ||
-					!loadPaletteResource(*resources, kCdChangePromptPalettePath, promptPalette)) {
-				warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
-				return Common::kReadingFailed;
-			}
+			if (_engine.shouldShowCdChangePrompts()) {
+				Graphics::Screen *screen = _engine.getScreen();
+				if (!screen)
+					return Common::kReadingFailed;
 
-			debugC(1, kDebugScene, "Harvester: showing CD change prompt for disc %d", discNumber);
-			_engine.stopStartupMusic();
-
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
-					return result;
-				if (event.type == Common::EVENT_MOUSEMOVE)
-					_mousePos = event.mouse;
-			}
-
-			bool waitingForRelease = false;
-			bool needsRedraw = true;
-			Graphics::FrameLimiter limiter(g_system, 60);
-
-			while (!_engine.shouldQuit()) {
-				if (needsRedraw) {
-					renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
-					needsRedraw = false;
+				const Common::String bitmapPath = Common::String::format("1:/GRAPHIC/OTHER/CD%d.BM", discNumber);
+				IndexedBitmap promptBitmap;
+				byte promptPalette[256 * 3];
+				if (!loadBitmapResource(*resources, bitmapPath, promptBitmap) ||
+						!loadPaletteResource(*resources, kCdChangePromptPalettePath, promptPalette)) {
+					warning("Harvester: unable to load CD change prompt assets for disc %d", discNumber);
+					return Common::kReadingFailed;
 				}
 
+				debugC(1, kDebugScene, "Harvester: showing CD change prompt for disc %d", discNumber);
+				_engine.stopStartupMusic();
+
+				Common::Event event;
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
 					if (startupFlow.handleSystemEvent(event, result))
 						return result;
-
-					switch (event.type) {
-					case Common::EVENT_MOUSEMOVE:
+					if (event.type == Common::EVENT_MOUSEMOVE)
 						_mousePos = event.mouse;
-						needsRedraw = true;
-						break;
-					case Common::EVENT_LBUTTONDOWN:
-						waitingForRelease = true;
-						break;
-					case Common::EVENT_LBUTTONUP:
-						if (waitingForRelease)
-							return Common::kNoError;
-						break;
-					default:
-						break;
-					}
 				}
 
-				RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
-				if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
-					needsRedraw = true;
+				bool waitingForRelease = false;
+				bool needsRedraw = true;
+				bool activateRequestedDisc = false;
+				Graphics::FrameLimiter limiter(g_system, 60);
 
-				limiter.delayBeforeSwap();
-				limiter.startFrame();
+				while (!_engine.shouldQuit() && !activateRequestedDisc) {
+					if (needsRedraw) {
+						renderCdChangePromptScreen(_engine, promptBitmap, promptPalette);
+						needsRedraw = false;
+					}
+
+					while (g_system->getEventManager()->pollEvent(event)) {
+						Common::Error result = Common::kNoError;
+						if (startupFlow.handleSystemEvent(event, result))
+							return result;
+
+						switch (event.type) {
+						case Common::EVENT_MOUSEMOVE:
+							_mousePos = event.mouse;
+							needsRedraw = true;
+							break;
+						case Common::EVENT_LBUTTONDOWN:
+							waitingForRelease = true;
+							break;
+						case Common::EVENT_LBUTTONUP:
+							if (waitingForRelease)
+								activateRequestedDisc = true;
+							break;
+						default:
+							break;
+						}
+					}
+
+					RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+					if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+						needsRedraw = true;
+
+					limiter.delayBeforeSwap();
+					limiter.startFrame();
+				}
+			}
+
+			if (!resources->setCurrentDisc(discNumber)) {
+				warning("Harvester: unable to activate disc %d resources", discNumber);
+				return Common::kReadingFailed;
 			}
 
 			return Common::kNoError;
