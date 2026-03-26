@@ -623,11 +623,13 @@ RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
 	: _engine(engine), _mousePos(mousePos), _inventory(inventory) {
 }
 
-Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &entranceName) {
+Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &targetName,
+		bool targetIsRoomName) {
 	if (startupFlow.hasPendingMainMenuReturn())
 		return Common::kNoError;
 
-	Common::String currentRoomTarget = entranceName;
+	Common::String currentRoomTarget = targetName;
+	bool currentTargetIsRoomName = targetIsRoomName;
 	while (!currentRoomTarget.empty()) {
 		StartupRoomSetupState state;
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
@@ -657,8 +659,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			state.musicPath = loadedState.musicPath;
 			currentRoomTarget = !loadedState.entranceName.empty() ? loadedState.entranceName : loadedState.roomName;
 			_engine.clearPendingLoadedStartupSaveRoomState();
-		} else if (!_engine.getStartupScript()->resolveRoomSetupState(
-				currentRoomTarget, state, *_engine.getResources())) {
+			currentTargetIsRoomName = false;
+		} else if ((currentTargetIsRoomName
+				? !_engine.getStartupScript()->resolveRoomSetupStateByRoomName(
+					currentRoomTarget, state, *_engine.getResources())
+				: !_engine.getStartupScript()->resolveRoomSetupState(
+					currentRoomTarget, state, *_engine.getResources()))) {
 			return Common::kReadingFailed;
 		}
 
@@ -1906,6 +1912,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					Common::Error roomError = startupFlow.runRoomLoop(interaction.nextRoomName);
 					if (startupFlow.hasPendingMainMenuReturn())
 						return Common::kNoError;
+					if (startupFlow.hasPendingDebugRoomChange()) {
+						didTransition = true;
+						return Common::kNoError;
+					}
 					if (roomError.getCode() != Common::kReadingFailed &&
 						roomError.getCode() != Common::kNoError) {
 						return roomError;
@@ -3091,6 +3101,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				return Common::kReadingFailed;
 			break;
 		}
+		if (startupFlow.hasPendingDebugRoomChange()) {
+			if (!stowCarriedRoomItemToInventory())
+				return Common::kReadingFailed;
+			return Common::kNoError;
+		}
 		if (!pendingRoomChange.empty()) {
 			if (!stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
@@ -3934,6 +3949,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		return Common::kNoError;
 
 	currentRoomTarget = pendingRoomChange;
+	currentTargetIsRoomName = false;
 	}
 
 	return Common::kNoError;

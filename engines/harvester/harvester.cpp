@@ -231,6 +231,12 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 	return _roomDebugEnabled;
 }
 
+bool HarvesterEngine::requestDebugRoomChange(const Common::String &roomName) {
+	return _activeFlow &&
+		_currentStartupSaveRoomState.valid &&
+		_activeFlow->requestDebugRoomChange(roomName);
+}
+
 void HarvesterEngine::setDisplayMode(int width, int height) {
 	initGraphics(width, height);
 	if (_media)

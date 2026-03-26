@@ -1621,6 +1621,7 @@ void Flow::prepareForNewGame() {
 	clearPendingMainMenuReturn();
 	clearPendingGameOverReturn();
 	clearPendingNewGameRestart();
+	_pendingDebugRoomName.clear();
 	_engine.clearPendingLoadedStartupSaveRoomState();
 	_engine.clearPendingLoadedDialogueStateBlob();
 	_engine.clearCurrentStartupSaveRoomState();
@@ -1685,8 +1686,44 @@ void Flow::clearPendingMainMenuReturn() {
 	_pendingMainMenuReturn = false;
 }
 
+bool Flow::requestDebugRoomChange(const Common::String &roomName) {
+	if (roomName.empty())
+		return false;
+
+	_pendingDebugRoomName = roomName;
+	return true;
+}
+
+Common::String Flow::takePendingDebugRoomChange() {
+	const Common::String roomName = _pendingDebugRoomName;
+	_pendingDebugRoomName.clear();
+	return roomName;
+}
+
 Common::Error Flow::runRoomLoop(const Common::String &entranceName) {
-	return _room.runRoomLoop(*this, entranceName);
+	const bool nestedRoomLoop = _roomLoopDepth != 0;
+	Common::String targetName = entranceName;
+	bool targetIsRoomName = false;
+
+	++_roomLoopDepth;
+	while (true) {
+		const Common::Error error = _room.runRoomLoop(*this, targetName, targetIsRoomName);
+		if (error.getCode() != Common::kNoError) {
+			--_roomLoopDepth;
+			return error;
+		}
+		if (!hasPendingDebugRoomChange()) {
+			--_roomLoopDepth;
+			return Common::kNoError;
+		}
+		if (nestedRoomLoop) {
+			--_roomLoopDepth;
+			return Common::kNoError;
+		}
+
+		targetName = takePendingDebugRoomChange();
+		targetIsRoomName = true;
+	}
 }
 
 bool Flow::ensureCursorEntity() {

@@ -51,6 +51,7 @@ public:
 	Common::Error run();
 
 private:
+	friend class HarvesterEngine;
 	friend class DialogueSystem;
 	friend class InventorySystem;
 	friend class MenuSystem;
@@ -90,6 +91,9 @@ private:
 	bool hasPendingMainMenuReturn() const;
 	bool takePendingMainMenuReturn();
 	void clearPendingMainMenuReturn();
+	bool requestDebugRoomChange(const Common::String &roomName);
+	bool hasPendingDebugRoomChange() const { return !_pendingDebugRoomName.empty(); }
+	Common::String takePendingDebugRoomChange();
 	void resetRoomNpcDialogueState();
 	void resetCursorAnimationSequence();
 	bool tickRuntimeEntities();
@@ -108,6 +112,8 @@ private:
 	bool _pendingNewGameRestart = false;
 	bool _pendingGameOverReturn = false;
 	bool _pendingMainMenuReturn = false;
+	Common::String _pendingDebugRoomName;
+	uint _roomLoopDepth = 0;
 	uint32 _roomSetupTransitionShownTick = 0;
 };
 
