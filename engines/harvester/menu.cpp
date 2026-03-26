@@ -302,15 +302,15 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 	return true;
 }
 
-static void buildVisibleMainMenuItems(const Common::Array<Common::String> &source,
-		bool showSessionActions, Common::Array<Common::String> &dest) {
-	dest.clear();
-	for (const Common::String &item : source) {
-		if (!showSessionActions &&
-				(item.equalsIgnoreCase("SAVE GAME") || item.equalsIgnoreCase("LOAD GAME")))
-			continue;
-		dest.push_back(item);
-	}
+static void buildDisplayMainMenuItems(const Common::Array<Common::String> &source,
+		bool canSaveGame, bool canLoadGame, Common::Array<Common::String> &dest) {
+	static const char *const kBlankMenuSlot = " ";
+
+	dest = source;
+	if (dest.size() > 1 && !canSaveGame)
+		dest[1] = kBlankMenuSlot;
+	if (dest.size() > 2 && !canLoadGame)
+		dest[2] = kBlankMenuSlot;
 }
 
 static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
@@ -669,8 +669,10 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	ScopedSceneTimerPause pausedTimers(_engine);
 
 	Common::Array<Common::String> mainMenuItems;
-	const bool showSessionActions = _engine.hasCurrentStartupSaveRoomState();
-	buildVisibleMainMenuItems(_menuItems, showSessionActions, mainMenuItems);
+	buildDisplayMainMenuItems(_menuItems,
+		_engine.canSaveGameStateCurrently(),
+		_engine.canLoadGameStateCurrently(),
+		mainMenuItems);
 	if (startupFlow.takePendingGameOverReturn()) {
 		Common::Error gameOverError = showGameOverBackdrop(startupFlow);
 		if (gameOverError.getCode() != Common::kNoError)
