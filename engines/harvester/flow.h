@@ -82,14 +82,18 @@ private:
 	bool hasPendingNewGameRestart() const;
 	bool takePendingNewGameRestart();
 	void clearPendingNewGameRestart();
+	void requestGameOverReturn();
+	bool hasPendingGameOverReturn() const;
+	bool takePendingGameOverReturn();
+	void clearPendingGameOverReturn();
 	void requestMainMenuReturn();
 	bool hasPendingMainMenuReturn() const;
 	bool takePendingMainMenuReturn();
 	void clearPendingMainMenuReturn();
 	void resetRoomNpcDialogueState();
-		void resetCursorAnimationSequence();
-		bool tickRuntimeEntities();
-		bool handleSystemEvent(const Common::Event &event, Common::Error &result);
+	void resetCursorAnimationSequence();
+	bool tickRuntimeEntities();
+	bool handleSystemEvent(const Common::Event &event, Common::Error &result);
 
 	HarvesterEngine &_engine;
 	Common::Array<Common::String> _quickTips;
@@ -102,6 +106,7 @@ private:
 	StartupInteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
 	bool _pendingNewGameRestart = false;
+	bool _pendingGameOverReturn = false;
 	bool _pendingMainMenuReturn = false;
 	uint32 _roomSetupTransitionShownTick = 0;
 };
