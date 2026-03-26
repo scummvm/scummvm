@@ -305,6 +305,8 @@ struct StartupInteractionResult {
 
 class Script {
 public:
+	static const int kDefaultPlayerHitPoints = 30;
+
 	bool load(ResourceManager &resources);
 
 	const Common::String &getPath() const { return _path; }

@@ -111,6 +111,8 @@ public:
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);
 	void stopStartupSound();
+	bool isCombatDebugEnabled() const { return _combatDebugEnabled; }
+	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
 	bool toggleRoomDebugEnabled();
 	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
@@ -144,6 +146,7 @@ private:
 	Common::Array<byte> _pendingLoadedDialogueStateBlob;
 	uint32 _pendingLoadedDialogueStateBlobVersion = 0;
 	Flow *_activeFlow = nullptr;
+	bool _combatDebugEnabled = false;
 	bool _roomDebugEnabled = false;
 };
 
