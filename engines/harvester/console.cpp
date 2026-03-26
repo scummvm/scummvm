@@ -23,13 +23,250 @@
 
 #include "common/algorithm.h"
 #include "harvester/harvester.h"
+#include "harvester/resources.h"
 
 namespace Harvester {
 
 namespace {
 
+static const uint kMaxDebugActionChainSteps = 128;
+static const uint kMaxDebugActionChainLines = 256;
+static const uint kMaxDebugActionBranchDepth = 16;
+
 static Script *getActiveStartupScript() {
 	return g_engine ? g_engine->getStartupScript() : nullptr;
+}
+
+static const StartupCommandRecord *findCommandRecord(const Script &script, const Common::String &tag) {
+	if (tag.empty())
+		return nullptr;
+
+	for (const StartupCommandRecord &command : script.getCommands()) {
+		if (command.triggerTag.equalsIgnoreCase(tag))
+			return &command;
+	}
+
+	return nullptr;
+}
+
+static const StartupExecListRecord *findExecListRecord(const Script &script, const Common::String &listName) {
+	if (listName.empty())
+		return nullptr;
+
+	for (const StartupExecListRecord &execList : script.getExecLists()) {
+		if (execList.listName.equalsIgnoreCase(listName))
+			return &execList;
+	}
+
+	return nullptr;
+}
+
+static bool appendStartupAudioCommandLabel(const StartupCommandRecord &command, Common::String &label) {
+	if (command.opcodeName.equalsIgnoreCase("START_WAV")) {
+		label = Common::String::format("path='%s'", command.arg1.c_str());
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
+		label = Common::String::format("path='%s'", command.arg1.c_str());
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("LOAD_WAV")) {
+		label = Common::String::format("path='%s' slot='%s'", command.arg1.c_str(), command.arg2.c_str());
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("PLAY_WAV")) {
+		label = Common::String::format("slot='%s'", command.arg1.c_str());
+		return true;
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("DELETE_WAV")) {
+		label = Common::String::format("slot='%s'", command.arg1.c_str());
+		return true;
+	}
+
+	return false;
+}
+
+static Common::String makeIndent(uint depth) {
+	Common::String indent;
+	for (uint i = 0; i < depth; ++i)
+		indent += "  ";
+
+	return indent;
+}
+
+static void appendDebugActionLine(Common::Array<Common::String> &lines, bool &truncated,
+		uint depth, const Common::String &line) {
+	if (truncated)
+		return;
+
+	if (lines.size() >= kMaxDebugActionChainLines) {
+		lines.push_back(makeIndent(depth) + "... command chain truncated ...");
+		truncated = true;
+		return;
+	}
+
+	lines.push_back(makeIndent(depth) + line);
+}
+
+static bool containsTagIgnoreCase(const Common::Array<Common::String> &tags, const Common::String &tag) {
+	for (const Common::String &candidate : tags) {
+		if (candidate.equalsIgnoreCase(tag))
+			return true;
+	}
+
+	return false;
+}
+
+static Common::String buildCommandDetail(const StartupCommandRecord &command) {
+	if (command.opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+		return Common::String::format("flag='%s' true='%s' false='%s'",
+			command.arg1.c_str(), command.arg2.c_str(), command.arg3.c_str());
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("CHECK_PERC")) {
+		return Common::String::format("threshold='%s' success='%s' failure='%s'",
+			command.arg1.c_str(), command.arg2.c_str(), command.arg3.c_str());
+	}
+
+	if (command.opcodeName.equalsIgnoreCase("EXEC_LIST"))
+		return Common::String::format("list='%s' next='%s'", command.arg1.c_str(), command.arg4.c_str());
+
+	Common::String audioDetail;
+	if (appendStartupAudioCommandLabel(command, audioDetail))
+		return audioDetail + Common::String::format(" next='%s'", command.arg4.c_str());
+
+	if (!command.arg1.empty() || !command.arg2.empty() || !command.arg3.empty() || !command.arg4.empty()) {
+		return Common::String::format("args=['%s','%s','%s','%s']",
+			command.arg1.c_str(), command.arg2.c_str(), command.arg3.c_str(), command.arg4.c_str());
+	}
+
+	return Common::String();
+}
+
+static bool isTerminalDebugCommand(const StartupCommandRecord &command) {
+	return command.opcodeName.equalsIgnoreCase("START_DIALOG") ||
+		command.opcodeName.equalsIgnoreCase("GOFLIC") ||
+		command.opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
+		command.opcodeName.equalsIgnoreCase("SHOW_TEXT") ||
+		command.opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
+		command.opcodeName.equalsIgnoreCase("CHANGE_LIGHTING");
+}
+
+static void appendCommandChain(Common::Array<Common::String> &lines, bool &truncated,
+		const Script &script, const Common::String &tag, uint depth,
+		Common::Array<Common::String> &activeTags, uint &remainingSteps) {
+	if (truncated || tag.empty())
+		return;
+
+	if (remainingSteps == 0) {
+		appendDebugActionLine(lines, truncated, depth,
+			Common::String::format("tag '%s': step limit reached", tag.c_str()));
+		return;
+	}
+
+	if (depth > kMaxDebugActionBranchDepth) {
+		appendDebugActionLine(lines, truncated, depth,
+			Common::String::format("tag '%s': branch depth limit reached", tag.c_str()));
+		return;
+	}
+
+	if (containsTagIgnoreCase(activeTags, tag)) {
+		appendDebugActionLine(lines, truncated, depth,
+			Common::String::format("tag '%s': loop detected", tag.c_str()));
+		return;
+	}
+
+	activeTags.push_back(tag);
+	--remainingSteps;
+
+	const StartupCommandRecord *command = findCommandRecord(script, tag);
+	if (!command) {
+		appendDebugActionLine(lines, truncated, depth,
+			Common::String::format("tag '%s': unresolved", tag.c_str()));
+		activeTags.pop_back();
+		return;
+	}
+
+	Common::String line = Common::String::format("tag '%s': %s", tag.c_str(), command->opcodeName.c_str());
+	const Common::String detail = buildCommandDetail(*command);
+	if (!detail.empty())
+		line += " " + detail;
+	if (isTerminalDebugCommand(*command))
+		line += " [terminal]";
+	appendDebugActionLine(lines, truncated, depth, line);
+
+	if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+		const bool flagValue = script.getFlagValue(command->arg1);
+		const Common::String &nextTag = flagValue ? command->arg2 : command->arg3;
+		appendDebugActionLine(lines, truncated, depth + 1,
+			Common::String::format("resolved flag '%s'=%d -> '%s'",
+				command->arg1.c_str(), flagValue, nextTag.c_str()));
+		appendCommandChain(lines, truncated, script, nextTag, depth + 1, activeTags, remainingSteps);
+		activeTags.pop_back();
+		return;
+	}
+
+	if (command->opcodeName.equalsIgnoreCase("CHECK_PERC")) {
+		if (!command->arg2.empty()) {
+			appendDebugActionLine(lines, truncated, depth + 1,
+				Common::String::format("success branch -> '%s'", command->arg2.c_str()));
+			appendCommandChain(lines, truncated, script, command->arg2, depth + 2, activeTags, remainingSteps);
+		}
+		if (!command->arg3.empty()) {
+			appendDebugActionLine(lines, truncated, depth + 1,
+				Common::String::format("failure branch -> '%s'", command->arg3.c_str()));
+			appendCommandChain(lines, truncated, script, command->arg3, depth + 2, activeTags, remainingSteps);
+		}
+		activeTags.pop_back();
+		return;
+	}
+
+	if (command->opcodeName.equalsIgnoreCase("EXEC_LIST")) {
+		const StartupExecListRecord *execList = findExecListRecord(script, command->arg1);
+		if (!execList) {
+			appendDebugActionLine(lines, truncated, depth + 1,
+				Common::String::format("exec list '%s': unresolved", command->arg1.c_str()));
+		} else if (execList->entries.empty()) {
+			appendDebugActionLine(lines, truncated, depth + 1,
+				Common::String::format("exec list '%s': empty", execList->listName.c_str()));
+		} else {
+			for (uint i = 0; i < execList->entries.size(); ++i) {
+				const Common::String &entry = execList->entries[i];
+				appendDebugActionLine(lines, truncated, depth + 1,
+					Common::String::format("entry[%u] -> '%s'", i, entry.c_str()));
+				appendCommandChain(lines, truncated, script, entry, depth + 2, activeTags, remainingSteps);
+			}
+		}
+
+		if (!command->arg4.empty())
+			appendCommandChain(lines, truncated, script, command->arg4, depth, activeTags, remainingSteps);
+		activeTags.pop_back();
+		return;
+	}
+
+	if (!isTerminalDebugCommand(*command) && !command->arg4.empty())
+		appendCommandChain(lines, truncated, script, command->arg4, depth, activeTags, remainingSteps);
+
+	activeTags.pop_back();
+}
+
+static void buildActionChainLines(const Script &script, const Common::String &tag,
+		Common::Array<Common::String> &lines) {
+	lines.clear();
+
+	if (tag.empty()) {
+		lines.push_back("  <no action tag>");
+		return;
+	}
+
+	bool truncated = false;
+	uint remainingSteps = kMaxDebugActionChainSteps;
+	Common::Array<Common::String> activeTags;
+	appendCommandChain(lines, truncated, script, tag, 1, activeTags, remainingSteps);
 }
 
 static void collectSortedRoomNames(const Script &script, Common::Array<Common::String> &roomNames) {
@@ -73,6 +310,7 @@ static bool findRoomName(const Script &script, const Common::String &candidate, 
 Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
 	registerCmd("DEBUG_COMBAT", WRAP_METHOD(Console, Cmd_debugCombat));
+	registerCmd("DEBUG_ACTIONS", WRAP_METHOD(Console, Cmd_debugActions));
 	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
 	registerCmd("GOTO_ROOM", WRAP_METHOD(Console, Cmd_gotoRoom));
 }
@@ -114,6 +352,72 @@ bool Console::Cmd_debugRoom(int argc, const char **argv) {
 
 	const bool enabled = g_engine->toggleRoomDebugEnabled();
 	debugPrintf("Room debug overlay %s\n", enabled ? "enabled" : "disabled");
+	return true;
+}
+
+bool Console::Cmd_debugActions(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: DEBUG_ACTIONS\n");
+		return true;
+	}
+
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	Script *startupScript = g_engine->getStartupScript();
+	if (!startupScript || !g_engine->hasCurrentStartupSaveRoomState()) {
+		debugPrintf("DEBUG_ACTIONS is only available while a room is active\n");
+		return true;
+	}
+
+	ResourceManager *resources = g_engine->getResources();
+	if (!resources) {
+		debugPrintf("Harvester resources are not available\n");
+		return true;
+	}
+
+	const StartupSaveRoomState &roomState = g_engine->getCurrentStartupSaveRoomState();
+	StartupRoomSetupState materializedState;
+	if (!startupScript->materializeRoomState(roomState.entranceName, roomState.roomName,
+			materializedState, *resources)) {
+		debugPrintf("Unable to materialize room state for '%s'\n", roomState.roomName.c_str());
+		return true;
+	}
+
+	uint actionObjectCount = 0;
+	for (const StartupObjectRecord &object : materializedState.roomObjects) {
+		if (!object.actionTag.empty())
+			++actionObjectCount;
+	}
+
+	debugPrintf("Room '%s' action tags on %u/%u objects\n",
+		materializedState.roomName.c_str(), actionObjectCount, (uint)materializedState.roomObjects.size());
+	if (actionObjectCount == 0) {
+		debugPrintf("No room objects in '%s' have action tags\n", materializedState.roomName.c_str());
+		return true;
+	}
+
+	for (const StartupObjectRecord &object : materializedState.roomObjects) {
+		if (object.actionTag.empty())
+			continue;
+
+		const Common::String label = startupScript->resolveObjectLabel(object);
+		Common::String objectLine = Common::String::format(
+			"Object '%s' owner='%s' visible=%d runtimeVisible=%d operatable=%d action='%s'",
+			object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
+			object.visible, object.runtimeVisible, object.operatable, object.actionTag.c_str());
+		if (!label.empty())
+			objectLine += Common::String::format(" label='%s'", label.c_str());
+		debugPrintf("%s\n", objectLine.c_str());
+
+		Common::Array<Common::String> chainLines;
+		buildActionChainLines(*startupScript, object.actionTag, chainLines);
+		for (const Common::String &line : chainLines)
+			debugPrintf("%s\n", line.c_str());
+	}
+
 	return true;
 }
 
