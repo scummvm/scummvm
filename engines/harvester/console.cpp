@@ -26,6 +26,7 @@ namespace Harvester {
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
+	registerCmd("DEBUG_COMBAT", WRAP_METHOD(Console, Cmd_debugCombat));
 	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
 }
 
@@ -34,6 +35,22 @@ Console::~Console() {
 
 bool Console::Cmd_about(int argc, const char **argv) {
 	debugPrintf("Harvester engine scaffold\n");
+	return true;
+}
+
+bool Console::Cmd_debugCombat(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: DEBUG_COMBAT\n");
+		return true;
+	}
+
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	const bool enabled = g_engine->toggleCombatDebugEnabled();
+	debugPrintf("Combat debug overlay %s\n", enabled ? "enabled" : "disabled");
 	return true;
 }
 

@@ -160,6 +160,16 @@ static Common::String resolveRoomDebugNpcLabel(const StartupNpcRecord &npc) {
 	return label;
 }
 
+static Common::String resolveCombatDebugLabel(const Common::String &name, int currentHitPoints, int maxHitPoints) {
+	Common::String label = name;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return Common::String::format("%s (%d/%d)", label.c_str(), currentHitPoints, maxHitPoints);
+}
+
 static void drawRoomDebugLabel(Graphics::Screen &screen, const Graphics::Font &font,
 		const Common::String &text, int x, int y, byte textColor, byte backgroundColor) {
 	if (text.empty())
@@ -225,6 +235,47 @@ static void drawRoomDebugOverlay(HarvesterEngine &engine, Graphics::Screen &scre
 		const Common::Rect npcRect = entity->getScreenRect();
 		drawRoomDebugLabel(screen, *font, resolveRoomDebugNpcLabel(npc),
 			npcRect.left, npcRect.top, white, red);
+	}
+}
+
+static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const StartupRoomSceneResources &scene) {
+	if (!engine.isCombatDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	Script *startupScript = engine.getStartupScript();
+	if (!font || !runtimeEntities)
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+	const byte red = findNearestPaletteColor(displayPalette, 0xff, 0x00, 0x00);
+
+	const RuntimeEntity *playerEntity = runtimeEntities->findSceneEntityByName(kPlayerActorEntityName);
+	if (startupScript && playerEntity &&
+			playerEntity->getClassId() == kRuntimeEntityClassPlayer &&
+			playerEntity->isVisible()) {
+		const Common::Rect playerRect = playerEntity->getScreenRect();
+		drawRoomDebugLabel(screen, *font,
+			resolveCombatDebugLabel(playerEntity->getName(),
+				startupScript->getPlayerCurrentHitPoints(), Script::kDefaultPlayerHitPoints),
+			playerRect.left, playerRect.top, white, red);
+	}
+
+	for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
+		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+		if (!entity || entity->getClassId() != kRuntimeEntityClassMonster || !entity->isVisible())
+			continue;
+
+		const Common::Rect monsterRect = entity->getScreenRect();
+		drawRoomDebugLabel(screen, *font,
+			resolveCombatDebugLabel(monster.monsterName,
+				monster.currentHitPoints, monster.initialHitPoints),
+			monsterRect.left, monsterRect.top, white, black);
 	}
 }
 
@@ -633,6 +684,7 @@ void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const Star
 	if (engine.getRuntimeEntities())
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
 	drawRoomDebugOverlay(engine, screen, scene);
+	drawCombatDebugOverlay(engine, screen, scene);
 }
 
 const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,
@@ -1778,10 +1830,11 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		}
 		runtimeEntities->reinsertSceneEntity(entity);
 		debugC(1, kDebugRoom,
-			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d model='%s' active=%d visible=%d",
+			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' active=%d visible=%d",
 			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
 			entity->getX(), entity->getY(), (double)entity->getZ(), monster.facing,
 			monster.currentHitPoints, monster.initialHitPoints,
+			monster.damageAmount, monster.engageDistance, Player::describeCombatDamageType(monster.damageType),
 			monster.modelPath.c_str(), monster.active, monster.visible);
 	}
 	if (state.hasEntrance) {

@@ -31,6 +31,7 @@
 #include "harvester/detection.h"
 #include "harvester/harvester.h"
 #include "harvester/parse_utils.h"
+#include "harvester/player.h"
 #include "harvester/resources.h"
 
 namespace Harvester {
@@ -43,7 +44,6 @@ static const char *const kDefaultVoicePath = "SOUND/VOICE/";
 static const byte kTownScriptXorKey = 0xaa;
 static const float kDefaultPaletteBrightness = 1.0f;
 static const float kDimmedPaletteBrightness = 0.6f;
-static const int kDefaultPlayerHitPoints = 30;
 static const int kDefaultPlayerCombatLoadout = 0;
 static const int kMaxPlayerCombatLoadout = 0x14;
 static const int kMaxStartupOptionLevel = 9;
@@ -217,8 +217,8 @@ static int clampStartupOptionLevel(int level) {
 static int clampPlayerHitPoints(int hitPoints) {
 	if (hitPoints < 0)
 		return 0;
-	if (hitPoints > kDefaultPlayerHitPoints)
-		return kDefaultPlayerHitPoints;
+	if (hitPoints > Script::kDefaultPlayerHitPoints)
+		return Script::kDefaultPlayerHitPoints;
 
 	return hitPoints;
 }
@@ -431,7 +431,7 @@ bool Script::load(ResourceManager &resources) {
 	_runtimeMonsters.clear();
 	_runtimeTimers.clear();
 	_runtimeRegions.clear();
-	_playerCurrentHitPoints = kDefaultPlayerHitPoints;
+	_playerCurrentHitPoints = Script::kDefaultPlayerHitPoints;
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
 	_fxVolumeLevel = 9;
@@ -1103,7 +1103,7 @@ void Script::resetRuntimeState() {
 	_runtimeNpcs = _npcs;
 	_runtimeMonsters = _monsters;
 	_runtimeTimers = _timers;
-	_playerCurrentHitPoints = kDefaultPlayerHitPoints;
+	_playerCurrentHitPoints = Script::kDefaultPlayerHitPoints;
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
 
@@ -2111,10 +2111,11 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 	}
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
 		debugC(1, kDebugRoom,
-			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d hp=%d/%d model='%s' on_death='%s'",
+			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
 			monster.posX, monster.posY, monster.posZ, monster.facing,
 			monster.currentHitPoints, monster.initialHitPoints,
+			monster.damageAmount, monster.engageDistance, Player::describeCombatDamageType(monster.damageType),
 			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
 	}
 	for (const StartupTimerRecord &timer : state.roomTimers) {

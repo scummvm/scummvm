@@ -69,6 +69,9 @@ static const int kNativeKeyboardAttackSideWindow = 30;
 static const char *const kNativeHitEffectResourcePath = "blood.abm";
 static const int kNativeHitEffectAnimationRate = 10;
 static const float kNativeHitEffectRenderZBias = 0.01f;
+static const uint32 kCombatDebugDamagePopupDurationMs = 750;
+static const int kCombatDebugDamagePopupRisePixels = 18;
+static const int kCombatDebugDamagePopupVerticalGap = 6;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 
 static int roundRoomCombatFloat(float value);
@@ -125,6 +128,13 @@ struct RoomHitEffectState {
 	Common::Point anchorPoint;
 	float renderZ = 0.0f;
 	bool finished = false;
+};
+
+struct RoomCombatDamagePopupState {
+	Common::String followTargetName;
+	Common::Point anchorPoint;
+	uint32 startTick = 0;
+	int damageAmount = 0;
 };
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
@@ -329,6 +339,37 @@ static void drawInventoryWeekday(Graphics::Screen &screen, const Graphics::Font 
 
 	font.drawString(&screen, weekdayText, kNativeInventoryWeekdayX, kNativeInventoryWeekdayY,
 		font.getStringWidth(weekdayText), kNativeInventoryTooltipColor);
+}
+
+static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
+	if (!palette)
+		return 0;
+
+	byte bestIndex = 0;
+	uint32 bestDistance = 0xffffffffu;
+	for (int i = 0; i < 256; ++i) {
+		const int paletteOffset = i * 3;
+		const int dr = (int)palette[paletteOffset] - red;
+		const int dg = (int)palette[paletteOffset + 1] - green;
+		const int db = (int)palette[paletteOffset + 2] - blue;
+		const uint32 distance = (uint32)(dr * dr + dg * dg + db * db);
+		if (distance < bestDistance) {
+			bestDistance = distance;
+			bestIndex = (byte)i;
+		}
+	}
+
+	return bestIndex;
+}
+
+static void drawShadowedRoomText(Graphics::Screen &screen, const Graphics::Font &font,
+		const Common::String &text, int x, int y, byte textColor, byte shadowColor) {
+	if (text.empty())
+		return;
+
+	const int width = font.getStringWidth(text);
+	font.drawString(&screen, text, x + 1, y + 1, width, shadowColor);
+	font.drawString(&screen, text, x, y, width, textColor);
 }
 
 static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
@@ -707,6 +748,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		Common::Array<RoomMonsterCombatState> monsterCombatStates;
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
 		Common::Array<RoomHitEffectState> hitEffectStates;
+		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
 		uint nextCombatEffectId = 0;
 		StartupResolvedText inspectText;
 		bool showingInspectText = false;
@@ -1019,6 +1061,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			anchorPoint.y = targetRect.top + targetRect.height() / 3;
 			renderZ = targetEntity.getZ() - kNativeHitEffectRenderZBias;
 		};
+		auto resolveCombatDamagePopupAnchor = [&](const RuntimeEntity &targetEntity,
+				Common::Point &anchorPoint) {
+			const Common::Rect targetRect = targetEntity.getScreenRect();
+			anchorPoint.x = targetRect.left + targetRect.width() / 2;
+			anchorPoint.y = targetRect.top - kCombatDebugDamagePopupVerticalGap;
+		};
 		auto spawnCombatHitEffect = [&](RuntimeEntity &sourceEntity,
 				const Common::String &followTargetName) {
 			if (!runtimeEntities)
@@ -1038,6 +1086,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			hitEffectStates.push_back(effectState);
 			return true;
+		};
+		auto spawnCombatDamagePopup = [&](RuntimeEntity &targetEntity,
+				const Common::String &followTargetName, int damageAmount) {
+			if (damageAmount <= 0)
+				return;
+
+			RoomCombatDamagePopupState popupState;
+			popupState.followTargetName = followTargetName;
+			popupState.startTick = Player::getRuntimeClockTicks();
+			popupState.damageAmount = damageAmount;
+			resolveCombatDamagePopupAnchor(targetEntity, popupState.anchorPoint);
+			damagePopupStates.push_back(popupState);
 		};
 		auto syncCombatHitEffects = [&]() {
 			if (!runtimeEntities)
@@ -1069,6 +1129,42 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 			return changed;
 		};
+		auto drawCombatDamagePopups = [&](Graphics::Screen &screen) {
+			if (!_engine.isCombatDebugEnabled() || damagePopupStates.empty())
+				return;
+
+			const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+			if (!font)
+				return;
+
+			byte displayPalette[256 * 3];
+			screen.getPalette(displayPalette);
+			const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+			const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+			const uint32 now = Player::getRuntimeClockTicks();
+			for (RoomCombatDamagePopupState &popupState : damagePopupStates) {
+				if (runtimeEntities && !popupState.followTargetName.empty()) {
+					RuntimeEntity *targetEntity =
+						runtimeEntities->findSceneEntityByName(popupState.followTargetName);
+					if (targetEntity && targetEntity->isVisible())
+						resolveCombatDamagePopupAnchor(*targetEntity, popupState.anchorPoint);
+				}
+
+				const uint32 elapsed = now - popupState.startTick;
+				const uint32 clampedElapsed = MIN<uint32>(elapsed, kCombatDebugDamagePopupDurationMs);
+				const int rise = (int)(
+					clampedElapsed * (uint32)kCombatDebugDamagePopupRisePixels /
+					kCombatDebugDamagePopupDurationMs);
+				const Common::String popupText = Common::String::format("+%d", popupState.damageAmount);
+				const int textWidth = font->getStringWidth(popupText);
+				const int drawX = CLIP<int>(popupState.anchorPoint.x - textWidth / 2,
+					0, MAX(0, screen.w - textWidth));
+				const int drawY = CLIP<int>(
+					popupState.anchorPoint.y - font->getFontHeight() - rise,
+					0, MAX(0, screen.h - font->getFontHeight()));
+				drawShadowedRoomText(screen, *font, popupText, drawX, drawY, white, black);
+			}
+		};
 		auto pruneCombatHitEffects = [&]() {
 			bool removedAny = false;
 			for (uint i = 0; i < hitEffectStates.size();) {
@@ -1093,6 +1189,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 				hitEffectStates[i].finished = finished;
 				++i;
+			}
+
+			return removedAny;
+		};
+		auto pruneCombatDamagePopups = [&]() {
+			const uint32 now = Player::getRuntimeClockTicks();
+			bool removedAny = false;
+			for (uint i = 0; i < damagePopupStates.size();) {
+				if (now - damagePopupStates[i].startTick < kCombatDebugDamagePopupDurationMs) {
+					++i;
+					continue;
+				}
+
+				damagePopupStates.remove_at(i);
+				removedAny = true;
 			}
 
 			return removedAny;
@@ -2236,15 +2347,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		playerState.attackContactResolved = true;
+		const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
+		const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
 		debugC(1, kDebugCombat,
-			"Harvester: combat player attack contact frame=%d loadout=%d target_class='%s' target='%s'",
+			"Harvester: combat player attack contact frame=%d loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s'",
 			playerState.entity->getCurrentFrame(), playerState.combatLoadout,
+			Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
+			Player::describeCombatDamageType(damageType),
 			describeCombatTargetClass(playerState.attackTargetClassId), playerState.attackTargetName.c_str());
 		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)
 			return Common::kNoError;
 
-		const int damageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
 		if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
 			if (StartupNpcRecord *fallbackNpc = findOverlappingNpcTarget()) {
 				playerState.attackTargetName = fallbackNpc->npcName;
@@ -2311,13 +2425,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return Common::kNoError;
 		}
 
-		const int damageAmount = Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout);
 		const int hitPointsBefore = monster->currentHitPoints;
 		monster->currentHitPoints = MAX(0,
 			monster->currentHitPoints - damageAmount);
+		const int damageLanded = hitPointsBefore - monster->currentHitPoints;
 		debugC(1, kDebugCombat,
-			"Harvester: combat player monster hit target='%s' damage=%d hp=%d->%d reachable=1",
-			monster->monsterName.c_str(), damageAmount, hitPointsBefore, monster->currentHitPoints);
+			"Harvester: combat player monster hit target='%s' loadout=%d weapon='%s' damage=%d damage_type='%s' hp=%d->%d reachable=1",
+			monster->monsterName.c_str(), playerState.combatLoadout,
+			Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
+			Player::describeCombatDamageType(damageType), hitPointsBefore, monster->currentHitPoints);
+		if (damageLanded > 0)
+			spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
 		if (monster->currentHitPoints > 0) {
 			(void)startupScript->syncRuntimeMonsterRecord(*monster);
 			needsRedraw = true;
@@ -2464,10 +2582,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						const int playerHitPointsBefore = startupScript->getPlayerCurrentHitPoints();
 						const bool changed = startupScript->adjustPlayerCurrentHitPoints(-monster.damageAmount);
 						const int playerHitPointsAfter = startupScript->getPlayerCurrentHitPoints();
+						const int damageLanded = playerHitPointsBefore - playerHitPointsAfter;
 						debugC(1, kDebugCombat,
-							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d player_hp=%d->%d changed=%d",
+							"Harvester: combat monster attack hit monster='%s' frame=%d damage=%d damage_type='%s' player_hp=%d->%d changed=%d",
 							monster.monsterName.c_str(), currentFrame, monster.damageAmount,
+							Player::describeCombatDamageType(monster.damageType),
 							playerHitPointsBefore, playerHitPointsAfter, changed);
+						if (damageLanded > 0 && playerState.entity)
+							spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
 						if (changed && playerHitPointsAfter <= 0) {
 							playerAlive = false;
 							stopPlayerRegionInteraction();
@@ -2903,6 +3025,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+			drawCombatDamagePopups(*activeScreen);
 			if (_inventory.isOpen()) {
 				_inventory.drawOverlay(*activeScreen);
 				drawInventoryWeekday(*activeScreen, *inventoryTooltipFont, _inventory.resolveWeekdayLabel());
@@ -3613,6 +3736,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return Common::kNoError;
 		if (pruneCombatHitEffects())
 			needsRedraw = true;
+		if (pruneCombatDamagePopups())
+			needsRedraw = true;
 		if (runtimeEntities) {
 			Common::Array<Common::String> expiredTimerNames;
 			if (runtimeEntities->takeExpiredTimerNames(expiredTimerNames)) {
@@ -3637,6 +3762,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 		}
 		if (Player::updateIdleAnimation(scene.state, playerState, idleState))
+			needsRedraw = true;
+		if (_engine.isCombatDebugEnabled() && !damagePopupStates.empty())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();

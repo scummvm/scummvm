@@ -221,6 +221,11 @@ void HarvesterEngine::stopStartupSound() {
 		_media->stopSound();
 }
 
+bool HarvesterEngine::toggleCombatDebugEnabled() {
+	_combatDebugEnabled = !_combatDebugEnabled;
+	return _combatDebugEnabled;
+}
+
 bool HarvesterEngine::toggleRoomDebugEnabled() {
 	_roomDebugEnabled = !_roomDebugEnabled;
 	return _roomDebugEnabled;
