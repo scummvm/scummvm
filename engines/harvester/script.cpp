@@ -1819,6 +1819,25 @@ bool Script::addRuntimeObjectToInventory(const Common::String &objectName) {
 	return changed;
 }
 
+bool Script::syncRuntimeObjectRecord(const StartupObjectRecord &object) {
+	if (object.objectName.empty())
+		return false;
+
+	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), object.objectName);
+	if (!runtimeObject)
+		return false;
+
+	const bool changed = runtimeObject->currentX != object.currentX ||
+		runtimeObject->currentY != object.currentY ||
+		runtimeObject->currentZ != object.currentZ ||
+		!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) ||
+		runtimeObject->visible != object.visible ||
+		runtimeObject->runtimeVisible != object.runtimeVisible ||
+		runtimeObject->identShown != object.identShown;
+	*runtimeObject = object;
+	return changed;
+}
+
 bool Script::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 		const Common::String &objectName, bool visible) {
 	if (objectName.empty())
