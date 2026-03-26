@@ -1055,9 +1055,24 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 	Common::String musicPath;
 	Common::Array<StartupAudioCommand> audioCommands;
 	bool mutatedRuntimeState = false;
-	executeCommandChain(room->onEnterCommand, "room setup command", room->roomName, false,
-		&musicPath, &audioCommands, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+	executeCommandChain(
+		room->onEnterCommand, "room setup command", room->roomName, false,
+		&musicPath,
+		&audioCommands,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
 		&mutatedRuntimeState);
 
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
@@ -1067,7 +1082,7 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 	if (!musicPath.empty())
 		state.musicPath = musicPath;
 
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
@@ -1376,7 +1391,7 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 
 	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
 		&result.musicPath, &result.audioCommands, nullptr, nullptr, &result.cutscenePath,
-		nullptr, nullptr, &result.dialogueNpcName, &result.dialogueContinuationTag,
+		nullptr, nullptr, &result.cdChangeDisc, &result.dialogueNpcName, &result.dialogueContinuationTag,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
 		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState);
@@ -1400,7 +1415,7 @@ bool Script::resolveObjectInteraction(const StartupObjectRecord &object, Startup
 
 	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
@@ -1408,7 +1423,7 @@ bool Script::resolveObjectInteraction(const StartupObjectRecord &object, Startup
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		!result.continuationTag.empty() || !result.modalText.value.empty() ||
+		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
@@ -1420,14 +1435,14 @@ bool Script::resolveRegionInteraction(const StartupRegionRecord &region, Startup
 
 	executeCommandChain(region.actionTag, "region command", region.regionName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		!result.continuationTag.empty() || !result.modalText.value.empty() ||
+		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
 		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
@@ -1443,7 +1458,7 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Sta
 	executeCommandChain(useItem->actionTag, "useitem command",
 		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()), true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
@@ -1458,7 +1473,7 @@ bool Script::executeActionTag(const Common::String &tag, StartupInteractionResul
 
 	executeCommandChain(tag, "action tag", tag, allowTransitions,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
@@ -1466,7 +1481,7 @@ bool Script::executeActionTag(const Common::String &tag, StartupInteractionResul
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		!result.continuationTag.empty() || !result.modalText.value.empty() ||
+		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
 		result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
@@ -1489,7 +1504,7 @@ bool Script::executeTimerAction(const Common::String &timerName, StartupInteract
 
 	executeCommandChain(timer->arg2, "timer command", timer->timerName, allowTransitions,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
-		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
@@ -1497,7 +1512,7 @@ bool Script::executeTimerAction(const Common::String &timerName, StartupInteract
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
-		!result.continuationTag.empty() || !result.modalText.value.empty() ||
+		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
 		result.mutatedRuntimeState || hasActionableCommandChain(timer->arg2);
 }
@@ -2048,7 +2063,7 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 		if (!npc.roomName.equalsIgnoreCase(room.roomName) || !npc.visible)
 			continue;
 		if (npc.deathOrMonsterfyFlag) {
-			debugC(1, kDebugScene,
+			debugC(1, kDebugRoom,
 				"Harvester: suppressed room npc room='%s' npc='%s' death_or_monsterfy=%d damage_type=%d model='%s' monsterfy_target='%s'",
 				room.roomName.c_str(), npc.npcName.c_str(), npc.deathOrMonsterfyFlag, npc.deathDamageType,
 				npc.modelPath.c_str(), npc.monsterfyTargetName.c_str());
@@ -2080,7 +2095,7 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 		: kDefaultPaletteBrightness;
 
 	for (const StartupObjectRecord &object : state.roomObjects) {
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: materialized room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
 			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
 			object.visible, object.runtimeVisible, object.spritePath.c_str(), object.altSpritePath.c_str(),
@@ -2088,14 +2103,14 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
 	}
 	for (const StartupNpcRecord &npc : state.roomNpcs) {
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
 			state.roomName.c_str(), npc.npcName.c_str(), npc.visible, npc.active,
 			npc.posX, npc.posY, npc.posZ, npc.frameDelay,
 			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
 	}
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d hp=%d/%d model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
 			monster.posX, monster.posY, monster.posZ, monster.facing,
@@ -2103,13 +2118,13 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
 	}
 	for (const StartupTimerRecord &timer : state.roomTimers) {
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: materialized room timer room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
 			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
 			timer.enabled, timer.looping, timer.global);
 	}
 
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: materializeRoomState room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		state.roomName.c_str(), state.entranceName.c_str(), state.playerSpawnX, state.playerSpawnY,
 		state.playerSpawnZ, state.playerFacing, state.palettePath.c_str(), state.backgroundPath.c_str(),
@@ -2126,6 +2141,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
+		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, StartupResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
@@ -2365,7 +2381,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			for (const Common::String &entry : execList->entries) {
 				executeCommandChain(entry, "exec list entry", execList->listName, allowTransitions,
 					musicPath, audioCommands, nextRoomName, roomTransition, cutscenePath,
-					deathFlicPath, requestMainMenu, dialogueNpcName, dialogueContinuationTag,
+					deathFlicPath, requestMainMenu, cdChangeDisc, dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, requestPlayerGotoXZ,
 					playerGotoX, playerGotoZ, mutatedRuntimeState);
 				if (hasDeferredInteractionOutputs())
@@ -2544,6 +2560,24 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			return;
 		}
 
+		if (command->opcodeName.equalsIgnoreCase("CHANGE_CD")) {
+			if (!cdChangeDisc) {
+				debug(1, "Harvester: deferred startup command '%s' for %s '%s' has no CD-change context",
+					command->opcodeName.c_str(), contextLabel, contextName.c_str());
+				currentTag = command->arg4;
+				continue;
+			}
+
+			const int requestedDisc = parseAsciiIntOrZero(command->arg1);
+			if (requestedDisc > 0)
+				*cdChangeDisc = requestedDisc;
+			else
+				debug(1, "Harvester: invalid CHANGE_CD target '%s' for %s '%s'",
+					command->arg1.c_str(), contextLabel, contextName.c_str());
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
 			if (allowTransitions && nextRoomName) {
@@ -2557,7 +2591,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				debugC(1, kDebugScene, "Harvester: skipped transition opcode '%s' while processing %s '%s'",
 					command->opcodeName.c_str(), contextLabel, contextName.c_str());
 			}
-			return;
+			currentTag = command->arg4;
+			continue;
 		}
 
 		debug(1, "Harvester: unsupported startup command '%s' for %s '%s', continuing",
@@ -2633,6 +2668,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 			command->opcodeName.equalsIgnoreCase("KILL_PC") ||
 			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
 			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_CD") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
@@ -2689,6 +2725,7 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("KILL_PC") ||
 			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
 			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_CD") ||
 			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
 			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
 			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||

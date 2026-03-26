@@ -294,6 +294,7 @@ struct StartupInteractionResult {
 	Common::Array<StartupAudioCommand> audioCommands;
 	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
 	StartupLightingCommand lightingCommand = kStartupLightingCommandNone;
+	int cdChangeDisc = 0;
 	int playerGotoX = 0;
 	int playerGotoZ = 0;
 	bool requestPlayerGotoXZ = false;
@@ -424,6 +425,7 @@ private:
 		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
+		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
 		Common::String *continuationTag, StartupResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,

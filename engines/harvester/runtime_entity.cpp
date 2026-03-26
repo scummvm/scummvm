@@ -307,7 +307,7 @@ void RuntimeEntity::setAnimationSequence(int sequence) {
 	advanceAnimationFrame(_firstFrame);
 
 	if (_classId == kRuntimeEntityClassCursor) {
-		debugC(1, kDebugGeneral,
+		debugC(1, kDebugCursor,
 			"Harvester: cursor animation sequence=%d frames=%d..%d current=%d",
 			_animationSequence, _firstFrame, _lastFrame, _currentFrame);
 	}
@@ -774,7 +774,7 @@ RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &posi
 	if (_cursorEntity) {
 		const uint32 animationInterval = _cursorEntity->getAnimationRate() == 0 ? 0 :
 			(100U / (uint32)_cursorEntity->getAnimationRate());
-		debugC(1, kDebugGeneral,
+		debugC(1, kDebugCursor,
 			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock=centiseconds frame=%d..%d pos=(%d,%d)",
 			_cursorEntity->getAnimationRate(), animationInterval, _cursorEntity->getCurrentFrame(),
 			_cursorEntity->getLastFrame(), position.x, position.y);

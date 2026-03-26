@@ -653,7 +653,7 @@ static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int faci
 	playerState.facing = facing;
 	playerState.entity->setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
 	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player walk animation facing=%d frames=%d..%d rate=%d",
 		facing, range.walkFirstFrame, range.walkLastFrame, kRoomPlayerWalkAnimationRate);
 	return true;
@@ -690,7 +690,7 @@ static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
 
 	positionPlayerIdleAnimationEntity(state, playerState, *idleState.entity);
 	idleState.entity->setVisible(false);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: spawned player idle animation '%s' room='%s' frames=0..%d",
 		kPlayerIdleAnimationResourcePath, state.roomName.c_str(), idleState.entity->getLastFrame());
 	return idleState.entity;
@@ -718,7 +718,7 @@ static bool finishPlayerIdleAnimation(const StartupRoomSetupState &state, Startu
 	idleState.exiting = false;
 	idleState.restoreFacing = -1;
 	notePlayerIdleReset(idleState);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player idle animation finished room='%s' facing=%d",
 		state.roomName.c_str(), playerState.facing);
 	return true;
@@ -814,7 +814,7 @@ void Player::setMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayer
 	playerState.nextMovementTick = 0;
 	playerState.targetX = clampPlayerCenterXToNativeBounds(playerState, targetX);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
 		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
 		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ);
@@ -875,7 +875,7 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	(void)setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	(void)applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player combat loadout visual loadout=%d resource='%s' facing=%d pos=(%d,%d,z=%.2f)",
 		playerState.combatLoadout, resourcePath.c_str(), playerState.facing,
 		playerState.centerX, playerState.bottomY, (double)playerState.z);
@@ -896,7 +896,7 @@ bool Player::setIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 	playerState.entity->setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
 	playerState.entity->setCurrentFrame(range.idleFrame);
 	if (changed) {
-		debugC(1, kDebugScene,
+		debugC(1, kDebugPlayer,
 			"Harvester: player idle animation facing=%d frame=%d",
 			facing, range.idleFrame);
 	}
@@ -910,7 +910,7 @@ bool Player::startAttackAnimation(const StartupRoomSetupState &state,
 		return false;
 	if (!startResolvedAttackAnimation(playerState, range))
 		return false;
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player attack animation frames=%d..%d resume_facing=%d cursor=(%d,%d)",
 		range.firstFrame, range.lastFrame, range.resumeFacing, mousePos.x, mousePos.y);
 	return true;
@@ -925,7 +925,7 @@ bool Player::startKeyboardAttackAnimation(const StartupRoomSetupState &state,
 		return false;
 	if (!startResolvedAttackAnimation(playerState, range))
 		return false;
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player keyboard attack animation frames=%d..%d resume_facing=%d input=(L=%d R=%d U=%d D=%d) facing=%d",
 		range.firstFrame, range.lastFrame, range.resumeFacing,
 		attackLeft, attackRight, attackUp, attackDown, playerState.facing);
@@ -1033,7 +1033,7 @@ bool Player::startTurnAnimation(StartupRoomPlayerState &playerState, int targetF
 	playerState.entity->setPlayBackwards(range.playBackwards);
 	playerState.entity->setAnimationRate(kRoomPlayerWalkAnimationRate);
 	playerState.entity->setCurrentFrame(range.playBackwards ? range.lastFrame : range.firstFrame);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player turn animation from=%d to=%d frames=%d..%d backwards=%d rate=%d",
 		playerState.facing, targetFacing, range.firstFrame, range.lastFrame,
 		range.playBackwards, kRoomPlayerWalkAnimationRate);
@@ -1054,7 +1054,7 @@ bool Player::updateTurnAnimationState(StartupRoomPlayerState &playerState) {
 	playerState.turnEndFrame = -1;
 	playerState.turnPlayBackwards = false;
 	playerState.entity->setAnimationRate(0);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player turn complete facing=%d frame=%d",
 		playerState.facing, playerState.entity->getCurrentFrame());
 	return true;
@@ -1110,7 +1110,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState
 		playerState.hasMoveTarget = false;
 		(void)setIdleAnimation(playerState, actualFacing);
 	}
-	debugC(playerState.hasMoveTarget ? 2 : 1, kDebugScene,
+	debugC(playerState.hasMoveTarget ? 2 : 1, kDebugPlayer,
 		"Harvester: player move step room='%s' pos=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) facing=%d frame=%d active=%d moved=%d",
 		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
 		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ,
@@ -1186,7 +1186,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetu
 	const int actualFacing = resolveFacingFromRoomMovement(
 		state, previousCenterX, previousZ, playerState.centerX, playerState.z);
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
-	debugC(2, kDebugScene,
+	debugC(2, kDebugPlayer,
 		"Harvester: player keyboard move room='%s' input=(%d,%d) pos=(%d,%d,z=%.2f) facing=%d frame=%d moved=%d",
 		state.roomName.c_str(), horizontalInput, verticalInput,
 		playerState.centerX, playerState.bottomY, (double)playerState.z,
@@ -1210,7 +1210,7 @@ bool Player::requestIdleAnimationExit(const StartupRoomSetupState &state,
 	idleState.entity->setAnimationFrameRange(exitStartFrame, exitLastFrame, false);
 	idleState.entity->setCurrentFrame(exitStartFrame);
 	idleState.entity->setAnimationRate(kRoomPlayerIdleAnimationRate);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player idle animation exit room='%s' frames=%d..%d rate=%d",
 		state.roomName.c_str(), exitStartFrame, exitLastFrame, kRoomPlayerIdleAnimationRate);
 	return true;
@@ -1240,7 +1240,7 @@ bool Player::startIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupS
 	playerState.turnActive = false;
 	playerState.turnTargetFacing = -1;
 	playerState.entity->setVisible(false);
-	debugC(1, kDebugScene,
+	debugC(1, kDebugPlayer,
 		"Harvester: player idle animation start room='%s' facing=%d frames=%d..%d rate=%d trigger_tick=%u",
 		state.roomName.c_str(), idleState.restoreFacing, 0, loopLastFrame,
 		kRoomPlayerIdleAnimationRate, idleState.triggerTick);
@@ -1263,7 +1263,7 @@ bool Player::updateIdleAnimation(const StartupRoomSetupState &state,
 			idleState.entity->setCurrentFrame(loopStartFrame);
 			idleState.entity->setAnimationRate(kRoomPlayerIdleAnimationRate);
 		}
-		debugC(1, kDebugScene,
+		debugC(1, kDebugPlayer,
 			"Harvester: player idle animation loop room='%s' frames=%d..%d rate=%d",
 			state.roomName.c_str(), loopStartFrame, loopLastFrame, kRoomPlayerIdleAnimationRate);
 		return true;

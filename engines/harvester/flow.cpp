@@ -386,7 +386,7 @@ void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &
 	byte maxValue = 0;
 	getPaletteByteRange(palette, minValue, maxValue);
 
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: %s room='%s' palette='%s' bytes=%u range=[%u,%u] brightness=%.2f hash=%08x idx0=(%u,%u,%u) idx1=(%u,%u,%u) idx127=(%u,%u,%u) idx255=(%u,%u,%u)",
 		label, scene.state.roomName.c_str(), scene.state.palettePath.c_str(), 256U * 3U, minValue, maxValue,
 		(double)brightness, hashPalette(palette),
@@ -479,7 +479,7 @@ static bool loadPaletteResource(ResourceManager &resources, const Common::String
 	byte minValue = 0;
 	byte maxValue = 0;
 	getPaletteByteRange(dest, minValue, maxValue);
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: decoded room palette '%s' bytes=%u range=[%u,%u] idx0=(%u,%u,%u) idx255=(%u,%u,%u)",
 		path.c_str(), (uint)data.size(), minValue, maxValue,
 		dest[0], dest[1], dest[2],
@@ -611,7 +611,7 @@ bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager 
 	}
 	scene.sceneRegions = state.roomRegions;
 
-	debugC(1, kDebugGeneral,
+	debugC(1, kDebugRoom,
 		"Harvester: loadRoomSceneResources room='%s' palette='%s' background='%s' brightness=%.2f objects=%u activeObjects=%u sceneObjects=%u anims=%u visibleAnims=%u npcs=%u monsters=%u regions=%u",
 		state.roomName.c_str(), state.palettePath.c_str(), state.backgroundPath.c_str(), (double)state.paletteBrightness,
 		(uint)state.roomObjects.size(), (uint)state.activeObjects.size(), (uint)scene.sceneObjects.size(),
@@ -982,7 +982,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 		uint32 transparentPixels = 0;
 		uint32 preservedPixels = 0;
 		if (cursor->measureCurrentFrameTransparency(framePixels, transparentPixels, preservedPixels)) {
-			debugC(1, kDebugGeneral,
+			debugC(1, kDebugCursor,
 				"Harvester: startup probe cursor sequence=%d frame=%d pixels=%u transparent_pixels=%u preserved_pixels=%u",
 				cursor->getAnimationSequence(), cursor->getCurrentFrame(), framePixels, transparentPixels, preservedPixels);
 		}
@@ -995,7 +995,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 		(void)player->measureCurrentFrameTransparency(framePixels, transparentPixels, preservedPixels);
 		const Common::Rect playerRect = player->getScreenRect();
 		const Common::Rect screenRect(0, 0, 640, 480);
-		debugC(1, kDebugGeneral,
+		debugC(1, kDebugPlayer,
 			"Harvester: startup probe player room='%s' entrance='%s' frame=%d rect=(%d,%d)-(%d,%d) visible=%d intersects_screen=%d opaque_pixels=%u",
 			scene.state.roomName.c_str(), entranceName.c_str(), player->getCurrentFrame(),
 			playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
@@ -1021,7 +1021,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 			engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, probePoint);
 		const bool hasInteraction = startupScript->hasObjectInteraction(*hoveredObject);
 		const bool hasInspectText = startupScript->resolveObjectInspectText(*hoveredObject, inspectText);
-		debugC(1, kDebugGeneral,
+		debugC(1, kDebugRoom,
 			"Harvester: startup probe hotspot room='%s' object='%s' point=(%d,%d) label='%s' prompt='%s' cursor_sequence=%d action_tag='%s' interaction=%d next_room='%s' inspect=%d",
 			scene.state.roomName.c_str(), hoveredObject->objectName.c_str(), probePoint.x, probePoint.y,
 			objectLabel.c_str(), hoverState.promptText.c_str(), hoverState.cursorSequence,
@@ -1048,7 +1048,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 				? resolveRoomHoverState(engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, floorProbe)
 				: StartupRoomHoverState();
-			debugC(1, kDebugGeneral,
+			debugC(1, kDebugRoom,
 				"Harvester: startup probe floor room='%s' point=(%d,%d) found=%d cursor_sequence=%d prompt='%s'",
 				scene.state.roomName.c_str(), floorProbe.x, floorProbe.y, foundFloorProbe,
 				floorHover.cursorSequence, floorHover.promptText.c_str());
@@ -1067,7 +1067,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 						engine, scene.state, scene.sceneObjects, scene.sceneAnimations, probePlayer);
 
 				const Common::Rect movedRect = player->getScreenRect();
-				debugC(1, kDebugGeneral,
+				debugC(1, kDebugPlayer,
 					"Harvester: startup probe movement room='%s' target=(%d,%d) final_rect=(%d,%d)-(%d,%d) z=%.2f",
 					scene.state.roomName.c_str(), floorProbe.x, floorProbe.y,
 					movedRect.left, movedRect.top, movedRect.right, movedRect.bottom, (double)probePlayer.z);
@@ -1080,7 +1080,7 @@ void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResource
 		return;
 	}
 
-	debugC(1, kDebugGeneral, "Harvester: startup probe found no interactive hotspot in room '%s'",
+	debugC(1, kDebugRoom, "Harvester: startup probe found no interactive hotspot in room '%s'",
 		scene.state.roomName.c_str());
 }
 
@@ -1654,7 +1654,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		RuntimeEntity *entity = runtimeEntities->spawnSceneHotspotEntity(
 			region.regionName, regionBounds, (float)region.minZ);
 		if (!entity) {
-			debugC(1, kDebugScene,
+			debugC(1, kDebugRoom,
 				"Harvester: scene region skipped room='%s' region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d]",
 				state.roomName.c_str(), region.regionName.c_str(),
 				regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
@@ -1667,7 +1667,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
 		if (!region.cursorEnabled)
 			entity->setHitTestMode(kRuntimeEntityHitTestNone);
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
 			state.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
 			regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
@@ -1681,7 +1681,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 			continue;
 		}
 
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: scene timer spawned room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
 			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
 			timer.enabled, timer.looping, timer.global);
@@ -1699,7 +1699,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		}
 
 		if (!entity) {
-			debugC(1, kDebugScene,
+			debugC(1, kDebugRoom,
 				"Harvester: scene entity skipped room='%s' object='%s' resolved='%s' bounds=(%d,%d)-(%d,%d) reason='%s'",
 				state.roomName.c_str(), object.objectName.c_str(), spritePath.c_str(),
 				hotspotBounds.left, hotspotBounds.top, hotspotBounds.right, hotspotBounds.bottom,
@@ -1715,7 +1715,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 		entity->setZExtent((float)object.zExtent);
 		const Common::Rect entityRect = entity->getScreenRect();
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: scene entity spawned room='%s' object='%s' type='%s' class=0x%x pos=(%d,%d,z=%.2f) rect=(%d,%d)-(%d,%d) sprite='%s' action='%s' operatable=%d ident='%s'",
 			state.roomName.c_str(), object.objectName.c_str(),
 			entity->hasFrames() ? "bitmap" : "hotspot", entity->getClassId(),
@@ -1753,7 +1753,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				npc.npcName.c_str());
 		}
 		runtimeEntities->reinsertSceneEntity(entity);
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: scene npc spawned room='%s' npc='%s' class=0x%x pos=(%d,%d,z=%.2f) frame_delay=%d model='%s' active=%d visible=%d",
 			state.roomName.c_str(), npc.npcName.c_str(), entity->getClassId(),
 			entity->getX(), entity->getY(), (double)entity->getZ(),
@@ -1777,7 +1777,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				monster.monsterName.c_str());
 		}
 		runtimeEntities->reinsertSceneEntity(entity);
-		debugC(1, kDebugScene,
+		debugC(1, kDebugRoom,
 			"Harvester: scene monster spawned room='%s' monster='%s' class=0x%x pos=(%d,%d,z=%.2f) facing=%d hp=%d/%d model='%s' active=%d visible=%d",
 			state.roomName.c_str(), monster.monsterName.c_str(), entity->getClassId(),
 			entity->getX(), entity->getY(), (double)entity->getZ(), monster.facing,
@@ -1825,7 +1825,7 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				runtimeEntities->adoptSceneEntity(player);
 			else
 				runtimeEntities->reinsertSceneEntity(player);
-			debugC(1, kDebugGeneral,
+			debugC(1, kDebugPlayer,
 				"Harvester: %s startup player actor '%s' entrance='%s' pos=(%d,%d,%d) facing=%d frame=%d",
 				reusedPlayer ? "reused" : "spawned", playerResourcePath.c_str(), state.entranceName.c_str(),
 				state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ,

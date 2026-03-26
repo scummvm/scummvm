@@ -942,6 +942,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				!interaction.musicPath.empty() || !interaction.nextRoomName.empty() ||
 				!interaction.cutscenePath.empty() ||
 				!interaction.deathFlicPath.empty() || interaction.requestMainMenu ||
+				interaction.cdChangeDisc > 0 ||
 				!interaction.dialogueNpcName.empty() ||
 				!interaction.dialogueContinuationTag.empty() ||
 				!interaction.continuationTag.empty() ||

@@ -25,6 +25,7 @@
 #include "engines/advancedDetector.h"
 
 #define GAMEOPTION_GORE GUIO_GAMEOPTIONS1
+#define GAMEOPTION_SHOW_CD_CHANGE_PROMPTS GUIO_GAMEOPTIONS2
 
 namespace Harvester {
 
@@ -34,7 +35,10 @@ enum HarvesterDebugChannels {
 	kDebugResources = 1 << 2,
 	kDebugScene     = 1 << 3,
 	kDebugDialogue  = 1 << 4,
-	kDebugInventory = 1 << 5
+	kDebugInventory = 1 << 5,
+	kDebugCursor    = 1 << 6,
+	kDebugRoom      = 1 << 7,
+	kDebugPlayer    = 1 << 8
 };
 
 extern const PlainGameDescriptor harvesterGames[];

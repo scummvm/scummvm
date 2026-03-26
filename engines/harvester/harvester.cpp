@@ -99,6 +99,10 @@ bool HarvesterEngine::isGoreEnabled() const {
 	return !ConfMan.hasKey("gore") || ConfMan.getBool("gore");
 }
 
+bool HarvesterEngine::shouldShowCdChangePrompts() const {
+	return ConfMan.hasKey("show_cd_change_prompts") && ConfMan.getBool("show_cd_change_prompts");
+}
+
 int HarvesterEngine::getStartupFxVolumeLevel() const {
 	return _startupScript ? _startupScript->getFxVolumeLevel() : 9;
 }
