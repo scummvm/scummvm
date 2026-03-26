@@ -227,12 +227,6 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_themeArchive = nullptr;
 	_initOk = false;
 
-	_cursorHotspotX = _cursorHotspotY = 0;
-	_cursorWidth = _cursorHeight = 0;
-	_cursorTransparent = 255;
-	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_cursorPalSize = 0;
-
 	// We prefer files in archive bundles over the common search paths.
 	_themeFiles.add("default", &SearchMan, 0, false);
 }
@@ -258,7 +252,9 @@ ThemeEngine::~ThemeEngine() {
 
 	delete _parser;
 	delete _themeEval;
-	delete[] _cursor;
+	for (int i = 0; i < kCursorMax; i++) {
+        delete[] _cursors[i].data;
+    }
 }
 
 
@@ -401,9 +397,10 @@ void ThemeEngine::refresh() {
 		_system->showOverlay();
 
 		if (_useCursor) {
-			if (_cursorPalSize)
-				CursorMan.replaceCursorPalette(_cursorPal, 0, _cursorPalSize);
-			CursorMan.replaceCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
+			CursorData &cur = _cursors[_activeCursorType];
+			if (cur.palSize)
+				CursorMan.replaceCursorPalette(cur.pal, 0, cur.palSize);
+			CursorMan.replaceCursor(cur.data, cur.width, cur.height, cur.hotspotX, cur.hotspotY, cur.transparent, true, &cur.format);
 		}
 	}
 }
@@ -1583,34 +1580,37 @@ void ThemeEngine::applyScreenShading(ShadingStyle style) {
 	}
 }
 
-bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY) {
+bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, CursorType type) {
 	// Try to locate the specified file among all loaded bitmaps
 	const Graphics::ManagedSurface *cursor = _bitmaps[filename];
 	if (!cursor)
+	    //warning("createCursor: Bitmap '%s' not found in _bitmaps! (type=%d)", filename.c_str(), type);
 		return false;
 
+	CursorData &cur = _cursors[type];
+
 	// Set up the cursor parameters
-	_cursorHotspotX = hotspotX;
-	_cursorHotspotY = hotspotY;
+	cur.hotspotX = hotspotX;
+	cur.hotspotY = hotspotY;
 
-	_cursorWidth = cursor->w;
-	_cursorHeight = cursor->h;
+	cur.width = cursor->w;
+	cur.height = cursor->h;
 
-	_cursorTransparent = 255;
-	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_cursorPalSize = 0;
+	cur.transparent = 255;
+	cur.format = Graphics::PixelFormat::createFormatCLUT8();
+	cur.palSize = 0;
 
 	if (_system->hasFeature(OSystem::kFeatureCursorAlpha)) {
-		_cursorFormat = cursor->format;
-		_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
+		cur.format = cursor->format;
+		cur.transparent = cur.format.RGBToColor(0xFF, 0, 0xFF);
 
 		// Allocate a new buffer for the cursor
-		delete[] _cursor;
-		_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
-		assert(_cursor);
-		Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
-		                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
-		                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
+		delete[] cur.data;
+		cur.data = new byte[cur.width * cur.height * cur.format.bytesPerPixel];
+		assert(cur.data);
+		Graphics::copyBlit(cur.data, (const byte *)cursor->getPixels(),
+		                   cur.width * cur.format.bytesPerPixel, cursor->pitch,
+		                   cur.width, cur.height, cur.format.bytesPerPixel);
 
 		_useCursor = true;
 		return true;
@@ -1620,10 +1620,10 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 		return true;
 
 	// Allocate a new buffer for the cursor
-	delete[] _cursor;
-	_cursor = new byte[_cursorWidth * _cursorHeight];
-	assert(_cursor);
-	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
+	delete[] cur.data;
+	cur.data = new byte[cur.width * cur.height];
+	assert(cur.data);
+	memset(cur.data, 0xFF, sizeof(byte) * cur.width * cur.height);
 
 	// the transparent color is 0xFF00FF
 	const uint32 colTransparent = cursor->format.RGBToColor(0xFF, 0, 0xFF);
@@ -1634,8 +1634,8 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	uint colorsFound = 0;
 	Common::HashMap<int, int> colorToIndex;
 	const byte *src = (const byte *)cursor->getPixels();
-	for (uint y = 0; y < _cursorHeight; ++y) {
-		for (uint x = 0; x < _cursorWidth; ++x) {
+	for (uint y = 0; y < cur.height; ++y) {
+		for (uint x = 0; x < cur.width; ++x) {
 			uint32 color = colTransparent;
 			byte r, g, b;
 
@@ -1666,25 +1666,44 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
-				_cursorPal[index * 3 + 0] = r;
-				_cursorPal[index * 3 + 1] = g;
-				_cursorPal[index * 3 + 2] = b;
+				cur.pal[index * 3 + 0] = r;
+				cur.pal[index * 3 + 1] = g;
+				cur.pal[index * 3 + 2] = b;
 			}
 
 			// Copy pixel from the 16 bit source surface to the 8bit target surface
 			const int index = colorToIndex[col];
-			_cursor[y * _cursorWidth + x] = index;
+			cur.data[y * cur.width + x] = index;
 		}
 
 		src += cursor->pitch - cursor->w * cursor->format.bytesPerPixel;
 	}
 
 	_useCursor = true;
-	_cursorPalSize = colorsFound;
+	cur.palSize = colorsFound;
 
 	return true;
 }
 
+void ThemeEngine::setActiveCursor(CursorType type) {
+    if (type < 0 || type >= kCursorMax || !_cursors[type].data) {
+        warning("setActiveCursor: Failed to switch - type=%d, data=%p", type, _cursors[type].data);
+        return;
+    }
+
+    _activeCursorType = type;
+    
+    if (_useCursor) {
+        CursorData &cur = _cursors[_activeCursorType];
+		if (cur.palSize) {
+			CursorMan.replaceCursorPalette(cur.pal, 0, cur.palSize);
+		}
+
+        CursorMan.replaceCursor(cur.data, cur.width, cur.height, 
+                                cur.hotspotX, cur.hotspotY, 
+                                cur.transparent, true, &cur.format);
+    }
+}
 
 /**********************************************************
  * Legacy GUI::Theme support functions
@@ -2246,17 +2265,24 @@ Common::String ThemeEngine::getThemeId(const Common::Path &filename) {
 }
 
 void ThemeEngine::showCursor() {
-	if (_useCursor) {
-		if (_cursorPalSize)
-			CursorMan.pushCursorPalette(_cursorPal, 0, _cursorPalSize);
-		CursorMan.pushCursor(_cursor, _cursorWidth, _cursorHeight, _cursorHotspotX, _cursorHotspotY, _cursorTransparent, true, &_cursorFormat);
-		CursorMan.showMouse(true);
-	}
+    if (!_useCursor)
+        return;
+
+    CursorData &cur = _cursors[_activeCursorType];
+
+	if (cur.palSize)
+        CursorMan.pushCursorPalette(cur.pal, 0, cur.palSize);
+
+    CursorMan.pushCursor(cur.data, cur.width, cur.height, 
+                         cur.hotspotX, cur.hotspotY, 
+                         cur.transparent, true, &cur.format);
+    CursorMan.showMouse(true);
 }
 
 void ThemeEngine::hideCursor() {
 	if (_useCursor) {
-		if (_cursorPalSize)
+		CursorData &cur = _cursors[_activeCursorType];
+		if (cur.palSize)
 			CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}
