@@ -374,13 +374,14 @@ public:
 	bool getFlagValue(const Common::String &flagName) const;
 	const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 	bool setRuntimeFlagValue(const Common::String &flagName, bool value);
-		bool resetRuntimeObjectToInitialState(const Common::String &objectName);
-		bool addRuntimeObjectToInventory(const Common::String &objectName);
-		bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
-			bool visible);
-		bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
-		bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
-		bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
+	bool resetRuntimeObjectToInitialState(const Common::String &objectName);
+	bool addRuntimeObjectToInventory(const Common::String &objectName);
+	bool syncRuntimeObjectRecord(const StartupObjectRecord &object);
+	bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
+		bool visible);
+	bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
+	bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
+	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
 	int getPlayerCombatLoadout() const { return _playerCombatLoadout; }

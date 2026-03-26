@@ -59,12 +59,16 @@ static const int kNativeInventoryWeekdayX = 0x1e0;
 static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
 static const int kRoomMonsterAnimationRate = 17;
+static const int kRoomNpcAmbientLastFrame = 0x3b;
 static const int kDefaultMonsterAttackContactFrameOffset = 2;
 static const int kMuckeyAttackContactFrameOffset = 7;
 static const float kNativeMonsterPursuitZTolerance = 2.0f;
 static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
 static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
 static const int kNativeKeyboardAttackSideWindow = 30;
+static const char *const kNativeCombatDamageEffectResourcePath = "blood.abm";
+static const int kNativeCombatDamageEffectAnimationRate = 10;
+static const float kNativeCombatDamageEffectRenderZBias = 0.01f;
 
 static int roundRoomCombatFloat(float value);
 
@@ -112,6 +116,14 @@ struct RoomMonsterCombatState {
 	int deathDamageType = 0;
 	uint32 nextMovementTick = 0;
 	uint32 nextAttackAllowedTick = 0;
+};
+
+struct RoomCombatEffectState {
+	Common::String entityName;
+	Common::String followTargetName;
+	Common::Point anchorPoint;
+	float renderZ = 0.0f;
+	bool finished = false;
 };
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
@@ -661,6 +673,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		playerState.turnTargetFacing = -1;
 		Common::Array<RoomMonsterCombatState> monsterCombatStates;
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
+		Common::Array<RoomCombatEffectState> combatEffectStates;
+		uint nextCombatEffectId = 0;
 		StartupResolvedText inspectText;
 		bool showingInspectText = false;
 		bool inspectCanDismiss = false;
@@ -867,6 +881,189 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 			return nullptr;
 		};
+		auto findRoomNpcByNameConst = [](const Common::Array<StartupNpcRecord> &npcs,
+				const Common::String &npcName) -> const StartupNpcRecord * {
+			for (const StartupNpcRecord &npc : npcs) {
+				if (npc.npcName.equalsIgnoreCase(npcName))
+					return &npc;
+			}
+			return nullptr;
+		};
+		auto findRoomMonsterByNameConst = [](const Common::Array<StartupMonsterRecord> &monsters,
+				const Common::String &monsterName) -> const StartupMonsterRecord * {
+			for (const StartupMonsterRecord &monster : monsters) {
+				if (monster.monsterName.equalsIgnoreCase(monsterName))
+					return &monster;
+			}
+			return nullptr;
+		};
+		auto shouldSpawnRoomNpcEntity = [](const StartupNpcRecord &npc) {
+			return npc.visible && !npc.deathOrMonsterfyFlag;
+		};
+		auto shouldSpawnRoomMonsterEntity = [](const StartupMonsterRecord &monster) {
+			return monster.visible;
+		};
+		auto sameNpcEntityState = [&](const StartupNpcRecord &lhs, const StartupNpcRecord &rhs) {
+			return lhs.posX == rhs.posX &&
+				lhs.posY == rhs.posY &&
+				lhs.posZ == rhs.posZ &&
+				lhs.frameDelay == rhs.frameDelay &&
+				lhs.visible == rhs.visible &&
+				lhs.deathOrMonsterfyFlag == rhs.deathOrMonsterfyFlag &&
+				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+		};
+		auto sameMonsterEntityState = [&](const StartupMonsterRecord &lhs, const StartupMonsterRecord &rhs) {
+			return lhs.posX == rhs.posX &&
+				lhs.posY == rhs.posY &&
+				lhs.posZ == rhs.posZ &&
+				lhs.facing == rhs.facing &&
+				lhs.active == rhs.active &&
+				lhs.visible == rhs.visible &&
+				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+		};
+		auto applyRoomNpcPlacement = [&](RuntimeEntity &entity, const StartupNpcRecord &npc) {
+			int width = 0;
+			int height = 0;
+			int xOffset = 0;
+			int yOffset = 0;
+			if (!entity.getCurrentFrameMetrics(width, height, xOffset, yOffset))
+				return false;
+
+			const float renderZ =
+				(float)npc.posZ - floorf(MAX<float>(entity.getZExtent(), 0.0f) * 0.5f);
+			entity.setAnchorMode(kRuntimeEntityAnchorTopLeft);
+			entity.setPosition(npc.posX - xOffset - width / 2, npc.posY - height - yOffset, renderZ);
+			return true;
+		};
+		auto spawnSceneNpcEntityFromRecord = [&](const StartupNpcRecord &npc) -> RuntimeEntity * {
+			if (!runtimeEntities || !shouldSpawnRoomNpcEntity(npc))
+				return nullptr;
+
+			RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(
+				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
+			if (!entity)
+				return nullptr;
+
+			entity->setClassId(kRuntimeEntityClassNpc);
+			entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
+			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
+			entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
+			entity->setVisible(true);
+			if (!applyRoomNpcPlacement(*entity, npc)) {
+				removeSceneEntityByName(npc.npcName);
+				return nullptr;
+			}
+			runtimeEntities->reinsertSceneEntity(entity);
+			return entity;
+		};
+		auto spawnSceneMonsterEntityFromRecord = [&](const StartupRoomSetupState &roomState,
+				const StartupMonsterRecord &monster) -> RuntimeEntity * {
+			if (!runtimeEntities || !shouldSpawnRoomMonsterEntity(monster))
+				return nullptr;
+
+			RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(
+				monster.monsterName, monster.modelPath,
+				Common::Point(monster.posX, monster.posY), (float)monster.posZ,
+				Monster::resolveFacingFrame(monster.facing));
+			if (!entity)
+				return nullptr;
+
+			entity->setClassId(kRuntimeEntityClassMonster);
+			entity->setHitTestMode(kRuntimeEntityHitTestNone);
+			entity->setVisible(monster.visible);
+			Monster::applyAnimation(*entity, monster);
+			if (!applyRoomActorPlacement(roomState, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
+				removeSceneEntityByName(monster.monsterName);
+				return nullptr;
+			}
+			runtimeEntities->reinsertSceneEntity(entity);
+			return entity;
+		};
+		auto resolveCombatEffectAnchor = [&](const RuntimeEntity &targetEntity,
+				Common::Point &anchorPoint, float &renderZ) {
+			const Common::Rect targetRect = targetEntity.getScreenRect();
+			anchorPoint.x = targetRect.left + targetRect.width() / 2;
+			anchorPoint.y = targetRect.top + targetRect.height() / 3;
+			renderZ = targetEntity.getZ() - kNativeCombatDamageEffectRenderZBias;
+		};
+		auto spawnCombatDamageEffect = [&](RuntimeEntity &sourceEntity,
+				const Common::String &followTargetName) {
+			if (!runtimeEntities)
+				return false;
+
+			RoomCombatEffectState effectState;
+			effectState.entityName = Common::String::format("__combat_blood_%u", nextCombatEffectId++);
+			effectState.followTargetName = followTargetName;
+			resolveCombatEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
+
+			RuntimeEntity *effectEntity = runtimeEntities->spawnSceneAnimationEntity(
+				effectState.entityName, kNativeCombatDamageEffectResourcePath, effectState.anchorPoint,
+				effectState.renderZ, kNativeCombatDamageEffectAnimationRate, true, true, false,
+				false, false, 0);
+			if (!effectEntity)
+				return false;
+
+			combatEffectStates.push_back(effectState);
+			return true;
+		};
+		auto syncCombatDamageEffects = [&]() {
+			if (!runtimeEntities)
+				return false;
+
+			bool changed = false;
+			for (RoomCombatEffectState &effectState : combatEffectStates) {
+				RuntimeEntity *effectEntity = runtimeEntities->findSceneEntityByName(effectState.entityName);
+				if (!effectEntity)
+					continue;
+
+				if (!effectState.followTargetName.empty()) {
+					RuntimeEntity *targetEntity =
+						runtimeEntities->findSceneEntityByName(effectState.followTargetName);
+					if (targetEntity && targetEntity->isVisible()) {
+						resolveCombatEffectAnchor(*targetEntity, effectState.anchorPoint, effectState.renderZ);
+					}
+				}
+
+				if (effectEntity->getX() != effectState.anchorPoint.x ||
+						effectEntity->getY() != effectState.anchorPoint.y ||
+						fabsf(effectEntity->getZ() - effectState.renderZ) > 0.0001f) {
+					effectEntity->setPosition(
+						effectState.anchorPoint.x, effectState.anchorPoint.y, effectState.renderZ);
+					runtimeEntities->reinsertSceneEntity(effectEntity);
+					changed = true;
+				}
+			}
+
+			return changed;
+		};
+		auto pruneCombatDamageEffects = [&]() {
+			bool removedAny = false;
+			for (uint i = 0; i < combatEffectStates.size();) {
+				const Common::String effectName = combatEffectStates[i].entityName;
+				RuntimeEntity *effectEntity = runtimeEntities
+					? runtimeEntities->findSceneEntityByName(effectName)
+					: nullptr;
+				if (!effectEntity) {
+					combatEffectStates.remove_at(i);
+					continue;
+				}
+
+				const bool finished =
+					!effectEntity->isAnimationEnabled() &&
+					effectEntity->getCurrentFrame() == effectEntity->getLastFrame();
+				if (finished && combatEffectStates[i].finished) {
+					removeSceneEntityByName(effectName);
+					combatEffectStates.remove_at(i);
+					removedAny = true;
+					continue;
+				}
+
+				combatEffectStates[i].finished = finished;
+				++i;
+			}
+
+			return removedAny;
+		};
 		auto applyCurrentRoomRuntimeMutationsInPlace = [&]() {
 			Script *startupScript = _engine.getStartupScript();
 			ResourceManager *resources = _engine.getResources();
@@ -881,18 +1078,23 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			}
 			updatedState.audioCommands = entryAudioCommands;
 
-			// Keep the live patch narrowly scoped to the current same-room cases we
-			// understand well: room objects, regions, timers, and room ANIM entities.
-			// Native NPC/monster live mutation semantics are more involved, so those
-			// interactions still fall back to the existing full refresh path.
-			if (!scene.state.roomNpcs.empty() || !scene.state.roomMonsters.empty() ||
-					!updatedState.roomNpcs.empty() || !updatedState.roomMonsters.empty()) {
-				return false;
-			}
-
 			StartupRoomSceneResources updatedScene;
 			if (!loadRoomSceneResources(updatedState, *resources, updatedScene))
 				return false;
+			Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
+			updatedMonsterCombatStates.resize(updatedState.roomMonsters.size());
+			for (uint i = 0; i < updatedState.roomMonsters.size(); ++i) {
+				const StartupMonsterRecord &updatedMonster = updatedState.roomMonsters[i];
+				for (uint j = 0; j < scene.state.roomMonsters.size() &&
+						j < monsterCombatStates.size(); ++j) {
+					const StartupMonsterRecord &previousMonster = scene.state.roomMonsters[j];
+					if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
+						continue;
+					if (sameMonsterEntityState(previousMonster, updatedMonster))
+						updatedMonsterCombatStates[i] = monsterCombatStates[j];
+					break;
+				}
+			}
 
 			for (const StartupObjectRecord &object : scene.sceneObjects) {
 				if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
@@ -1030,7 +1232,66 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					removeSceneEntityByName(anim.animName);
 			}
 
+			for (const StartupNpcRecord &npc : scene.state.roomNpcs) {
+				const StartupNpcRecord *updatedNpc =
+					findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
+				const bool keepEntity =
+					updatedNpc &&
+					shouldSpawnRoomNpcEntity(*updatedNpc) &&
+					sameNpcEntityState(npc, *updatedNpc);
+				if (!keepEntity)
+					removeSceneEntityByName(npc.npcName);
+			}
+			for (const StartupNpcRecord &npc : updatedState.roomNpcs) {
+				if (!shouldSpawnRoomNpcEntity(npc))
+					continue;
+
+				RuntimeEntity *entity = runtimeEntities
+					? runtimeEntities->findSceneEntityByName(npc.npcName)
+					: nullptr;
+				const StartupNpcRecord *previousNpc =
+					findRoomNpcByNameConst(scene.state.roomNpcs, npc.npcName);
+				const bool needsRespawn =
+					!entity || !previousNpc || !sameNpcEntityState(*previousNpc, npc);
+				if (!needsRespawn)
+					continue;
+
+				removeSceneEntityByName(npc.npcName);
+				if (!spawnSceneNpcEntityFromRecord(npc))
+					return false;
+			}
+
+			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				const StartupMonsterRecord *updatedMonster =
+					findRoomMonsterByNameConst(updatedState.roomMonsters, monster.monsterName);
+				const bool keepEntity =
+					updatedMonster &&
+					shouldSpawnRoomMonsterEntity(*updatedMonster) &&
+					sameMonsterEntityState(monster, *updatedMonster);
+				if (!keepEntity)
+					removeSceneEntityByName(monster.monsterName);
+			}
+			for (const StartupMonsterRecord &monster : updatedState.roomMonsters) {
+				if (!shouldSpawnRoomMonsterEntity(monster))
+					continue;
+
+				RuntimeEntity *entity = runtimeEntities
+					? runtimeEntities->findSceneEntityByName(monster.monsterName)
+					: nullptr;
+				const StartupMonsterRecord *previousMonster =
+					findRoomMonsterByNameConst(scene.state.roomMonsters, monster.monsterName);
+				const bool needsRespawn =
+					!entity || !previousMonster || !sameMonsterEntityState(*previousMonster, monster);
+				if (!needsRespawn)
+					continue;
+
+				removeSceneEntityByName(monster.monsterName);
+				if (!spawnSceneMonsterEntityFromRecord(updatedState, monster))
+					return false;
+			}
+
 			scene.state = updatedState;
+			monsterCombatStates = updatedMonsterCombatStates;
 			scene.sceneObjects = updatedScene.sceneObjects;
 			scene.sceneAnimations = updatedScene.sceneAnimations;
 			scene.sceneRegions = updatedScene.sceneRegions;
@@ -1064,6 +1325,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			refreshedState.audioCommands = entryAudioCommands;
 			if (!loadRoomSceneResources(refreshedState, *_engine.getResources(), scene))
 				return false;
+			combatEffectStates.clear();
+			nextCombatEffectId = 0;
 			if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 				return false;
 			if (runtimeEntities) {
@@ -1119,6 +1382,34 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			_engine.getStartupScript()->addRuntimeObjectToInventory(carriedRoomItemName);
 			clearCarriedRoomItem();
 			return _inventory.refresh();
+		};
+		auto shouldCancelDeniedPickup = [&](const StartupInteractionResult &interaction,
+				bool didTransition) {
+			return !didTransition &&
+				!interaction.mutatedRuntimeState &&
+				!interaction.requestPlayerGotoXZ &&
+				interaction.lightingCommand == kStartupLightingCommandNone &&
+				!interaction.requestMainMenu &&
+				interaction.dialogueNpcName.empty() &&
+				interaction.dialogueContinuationTag.empty() &&
+				interaction.continuationTag.empty() &&
+				interaction.nextRoomName.empty() &&
+				interaction.cutscenePath.empty() &&
+				!interaction.modalText.value.empty();
+		};
+		auto restoreDeniedPickup = [&](Script &startupScript,
+				const StartupObjectRecord &savedRuntimeObject, bool clearCarryState) -> Common::Error {
+			if (!startupScript.syncRuntimeObjectRecord(savedRuntimeObject))
+				return Common::kReadingFailed;
+			if (clearCarryState)
+				clearCarriedRoomItem();
+
+			if (!applyCurrentRoomRuntimeMutationsInPlace() && !refreshCurrentScene(true))
+				return Common::kReadingFailed;
+			if (!_inventory.refresh())
+				return Common::kReadingFailed;
+			needsRedraw = true;
+			return Common::kNoError;
 		};
 		auto openInventoryOverlay = [&]() {
 			moveLeft = false;
@@ -1793,6 +2084,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			RuntimeEntity *npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
 			if (!npc || !npcEntity || !playerAttackCanReachTarget(npcEntity))
 				npc = Player::isProjectileCombatLoadout(playerState.combatLoadout) ? nullptr : findOverlappingNpcTarget();
+			npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
 			if (!npc) {
 				debugC(1, kDebugCombat,
 					"Harvester: combat player attack missed class='npc' target='%s' reason='no reachable npc'",
@@ -1810,6 +2102,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				npc->npcName.c_str(), damageType, runtimeChanged, jimmyFlagChanged);
 			if (!runtimeChanged && !jimmyFlagChanged)
 				return Common::kNoError;
+			if (runtimeChanged && npcEntity) {
+				const Common::String followTargetName = npc->monsterfyTargetName;
+				if (spawnCombatDamageEffect(*npcEntity, followTargetName))
+					needsRedraw = true;
+			}
 
 			StartupInteractionResult interaction;
 			interaction.mutatedRuntimeState = runtimeChanged;
@@ -2131,6 +2428,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (!startupScript)
 			return Common::kReadingFailed;
 
+		const StartupObjectRecord savedRuntimeObject = object;
+
 		startupScript->addRuntimeObjectToInventory(object.objectName);
 		const Common::String inventoryOwner(kInventoryOwnerName);
 		hideSceneObject(object.objectName, &inventoryOwner);
@@ -2147,6 +2446,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					return interactionError;
 				if (startupFlow.hasPendingMainMenuReturn())
 					return Common::kNoError;
+				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
+					debugC(1, kDebugScene,
+						"Harvester: cancelling denied direct pickup object='%s' action='%s' text='%s'",
+						object.objectName.c_str(), object.actionTag.c_str(),
+						pickupInteraction.modalText.value.c_str());
+					return restoreDeniedPickup(*startupScript, savedRuntimeObject, false);
+				}
 			}
 		}
 
@@ -2160,6 +2466,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		ResourceManager *resources = _engine.getResources();
 		if (!startupScript || !resources)
 			return Common::kReadingFailed;
+
+		const StartupObjectRecord savedRuntimeObject = object;
 
 		clearCarriedRoomItem();
 		carriedRoomItemName = object.objectName;
@@ -2183,6 +2491,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					return interactionError;
 				if (startupFlow.hasPendingMainMenuReturn())
 					return Common::kNoError;
+				if (shouldCancelDeniedPickup(pickupInteraction, didTransition)) {
+					debugC(1, kDebugScene,
+						"Harvester: cancelling denied carried pickup object='%s' action='%s' text='%s'",
+						object.objectName.c_str(), object.actionTag.c_str(),
+						pickupInteraction.modalText.value.c_str());
+					return restoreDeniedPickup(*startupScript, savedRuntimeObject, true);
+				}
 			}
 		}
 
@@ -3036,6 +3351,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		combatError = updateRoomMonsterCombat();
 		if (combatError.getCode() != Common::kNoError)
 			return combatError;
+		if (syncCombatDamageEffects())
+			needsRedraw = true;
 		if (startupFlow.hasPendingMainMenuReturn())
 			return Common::kNoError;
 		if (!pendingRoomChange.empty()) {
@@ -3069,6 +3386,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 
 		if (startupFlow.tickRuntimeEntities())
+			needsRedraw = true;
+		if (pruneCombatDamageEffects())
 			needsRedraw = true;
 		if (runtimeEntities) {
 			Common::Array<Common::String> expiredTimerNames;
