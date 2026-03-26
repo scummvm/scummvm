@@ -71,6 +71,9 @@ static const char *const kLoadGameBitmapPath = "1:/GRAPHIC/OTHER/LOADGAME.BM";
 static const char *const kLoadGamePalettePath = "1:/GRAPHIC/PAL/LOADGAME.PAL";
 static const char *const kSaveGameBitmapPath = "1:/GRAPHIC/OTHER/SAVEGAME.BM";
 static const char *const kSaveGamePalettePath = "1:/GRAPHIC/PAL/SAVEGAME.PAL";
+static const char *const kGameOverBitmapPath = "1:/GRAPHIC/OTHER/GAMEOVER.BM";
+static const char *const kGameOverPalettePath = "1:/GRAPHIC/PAL/GAMEOVER.PAL";
+static const char *const kGameOverMusicPath = "SOUND/MUSIC/ANXIETY.CMP";
 
 static const int kOptionsSliderMinX = 0x16f;
 static const int kOptionsSliderMaxX = 0x22b;
@@ -297,6 +300,17 @@ static bool loadMenuTextConfig(HarvesterEngine &engine, RoomMenuTextConfig &conf
 		config.quitGamePrompt = value;
 
 	return true;
+}
+
+static void buildVisibleMainMenuItems(const Common::Array<Common::String> &source,
+		bool showSessionActions, Common::Array<Common::String> &dest) {
+	dest.clear();
+	for (const Common::String &item : source) {
+		if (!showSessionActions &&
+				(item.equalsIgnoreCase("SAVE GAME") || item.equalsIgnoreCase("LOAD GAME")))
+			continue;
+		dest.push_back(item);
+	}
 }
 
 static bool loadBitmapResource(ResourceManager &resources, const Common::String &path, IndexedBitmap &bitmap) {
@@ -656,11 +670,13 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 	Common::Array<Common::String> mainMenuItems;
 	const bool showSessionActions = _engine.hasCurrentStartupSaveRoomState();
-	for (const Common::String &item : _menuItems) {
-		if (!showSessionActions &&
-				(item.equalsIgnoreCase("SAVE GAME") || item.equalsIgnoreCase("LOAD GAME")))
-			continue;
-		mainMenuItems.push_back(item);
+	buildVisibleMainMenuItems(_menuItems, showSessionActions, mainMenuItems);
+	if (startupFlow.takePendingGameOverReturn()) {
+		Common::Error gameOverError = showGameOverBackdrop(startupFlow);
+		if (gameOverError.getCode() != Common::kNoError)
+			return gameOverError;
+	} else {
+		clearMainMenuBackdrop();
 	}
 
 	Graphics::FrameLimiter limiter(g_system, 60);
@@ -669,7 +685,12 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	bool needsRedraw = true;
 
 	auto captureMenuBackdrop = [&](IndexedBitmap &backdrop) -> bool {
-		renderMainMenuScreen(selectedItem, statusMessage, false, mainMenuItems);
+		if (_hasMainMenuBackdrop) {
+			renderBackdropMenuScreen(_mainMenuBackdrop, _mainMenuBackdropPalette, 1.0f,
+				mainMenuItems, selectedItem);
+		} else {
+			renderMainMenuScreen(selectedItem, statusMessage, false, mainMenuItems);
+		}
 		Graphics::Screen *screen = _engine.getScreen();
 		return screen && captureScreenBackdrop(*screen, backdrop);
 	};
@@ -691,6 +712,13 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		statusMessage.clear();
 		needsRedraw = true;
 		(void)startupFlow.takePendingMainMenuReturn();
+		if (startupFlow.takePendingGameOverReturn()) {
+			Common::Error gameOverError = showGameOverBackdrop(startupFlow);
+			if (gameOverError.getCode() != Common::kNoError)
+				return gameOverError;
+		} else {
+			clearMainMenuBackdrop();
+		}
 		return Common::kNoError;
 	};
 	auto activateSelectedItem = [&]() -> Common::Error {
@@ -698,7 +726,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 			return Common::kNoError;
 
 		const Common::String &item = mainMenuItems[selectedItem];
-		const byte *menuPalette = art->getWaitPalette();
+		const byte *menuPalette = _hasMainMenuBackdrop ? _mainMenuBackdropPalette : art->getWaitPalette();
 		statusMessage.clear();
 
 		if (item.equalsIgnoreCase("NEW GAME")) {
@@ -777,7 +805,10 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderMainMenuStub(mainMenuItems, selectedItem, statusMessage);
+			if (_hasMainMenuBackdrop)
+				renderBackdropMenuScreen(_mainMenuBackdrop, _mainMenuBackdropPalette, 1.0f, mainMenuItems, selectedItem);
+			else
+				renderMainMenuStub(mainMenuItems, selectedItem, statusMessage);
 			needsRedraw = false;
 		}
 
@@ -789,7 +820,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredItem = getMenuItemAt(_mousePos, mainMenuItems);
+				const int hoveredItem = _hasMainMenuBackdrop
+					? getBackdropMenuItemAt(_mousePos, mainMenuItems)
+					: getMenuItemAt(_mousePos, mainMenuItems);
 				if (hoveredItem != -1 && hoveredItem != selectedItem) {
 					selectedItem = hoveredItem;
 					needsRedraw = true;
@@ -820,7 +853,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 				if (mainMenuItems.empty())
 					break;
 
-				selectedItem = getMenuItemAt(_mousePos, mainMenuItems);
+				selectedItem = _hasMainMenuBackdrop
+					? getBackdropMenuItemAt(_mousePos, mainMenuItems)
+					: getMenuItemAt(_mousePos, mainMenuItems);
 				if (selectedItem == -1)
 					break;
 
@@ -842,6 +877,76 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	}
 
 	return Common::kNoError;
+}
+
+Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
+	ResourceManager *resources = _engine.getResources();
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!resources || !screen)
+		return Common::kReadingFailed;
+
+	IndexedBitmap backdrop;
+	byte palette[256 * 3];
+	if (!loadBitmapResource(*resources, kGameOverBitmapPath, backdrop) ||
+			!loadPaletteResource(*resources, kGameOverPalettePath, palette)) {
+		return Common::kReadingFailed;
+	}
+
+	_mainMenuBackdrop = backdrop;
+	memcpy(_mainMenuBackdropPalette, palette, sizeof(_mainMenuBackdropPalette));
+	_hasMainMenuBackdrop = true;
+	startupFlow.resetCursorAnimationSequence();
+	(void)_engine.playStartupMusic(kGameOverMusicPath);
+
+	bool needsRedraw = true;
+	Graphics::FrameLimiter limiter(g_system, 60);
+	while (!_engine.shouldQuit()) {
+		if (needsRedraw) {
+			applyMenuPalette(*screen, _engine, _mainMenuBackdropPalette, 1.0f);
+			screen->fillRect(screen->getBounds(), 0);
+			blitBitmap(*screen, _mainMenuBackdrop, 0, 0);
+			if (_engine.getRuntimeEntities())
+				_engine.getRuntimeEntities()->drawCursor(*screen);
+			screen->makeAllDirty();
+			screen->update();
+			needsRedraw = false;
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			Common::Error result = Common::kNoError;
+			if (startupFlow.handleSystemEvent(event, result))
+				return result;
+
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				needsRedraw = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+			case Common::EVENT_RBUTTONDOWN:
+			case Common::EVENT_KEYDOWN:
+				return Common::kNoError;
+			default:
+				break;
+			}
+		}
+
+		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
+			if (runtimeEntities->syncCursorEntityPosition(_mousePos))
+				needsRedraw = true;
+		}
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	return Common::kNoError;
+}
+
+void MenuSystem::clearMainMenuBackdrop() {
+	_mainMenuBackdrop = IndexedBitmap();
+	memset(_mainMenuBackdropPalette, 0, sizeof(_mainMenuBackdropPalette));
+	_hasMainMenuBackdrop = false;
 }
 
 Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
@@ -923,7 +1028,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderRoomMenuStub(backdrop, palette, paletteBrightness, selectedItem);
+			renderBackdropMenuScreen(backdrop, palette, paletteBrightness, _menuItems, selectedItem);
 			needsRedraw = false;
 		}
 
@@ -935,7 +1040,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredItem = getRoomMenuItemAt(_mousePos);
+				const int hoveredItem = getBackdropMenuItemAt(_mousePos, _menuItems);
 				if (hoveredItem != -1 && hoveredItem != selectedItem) {
 					selectedItem = hoveredItem;
 					needsRedraw = true;
@@ -969,7 +1074,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 				if (_menuItems.empty())
 					break;
 
-				selectedItem = getRoomMenuItemAt(_mousePos);
+				selectedItem = getBackdropMenuItemAt(_mousePos, _menuItems);
 				if (selectedItem == -1)
 					break;
 
@@ -1985,8 +2090,9 @@ void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &st
 	screen->update();
 }
 
-void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, int selectedItem) const {
+void MenuSystem::renderBackdropMenuScreen(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const Common::Array<Common::String> &menuItems,
+		int selectedItem) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	const Art *art = _engine.getStartupArt();
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
@@ -2004,14 +2110,14 @@ void MenuSystem::renderRoomMenuStub(const IndexedBitmap &backdrop, const byte *p
 	blitTransparentBitmap(*screen, art->getLogoBitmap(), kLogoX, kLogoY);
 
 	const int lineSpacing = getNativeRoomMenuLineHeight(selectedFont);
-	for (uint i = 0; i < _menuItems.size(); ++i) {
+	for (uint i = 0; i < menuItems.size(); ++i) {
 		const Graphics::Font *font = ((int)i == selectedItem)
 			? static_cast<const Graphics::Font *>(&selectedFont)
 			: static_cast<const Graphics::Font *>(&unselectedFont);
-		const int width = font->getStringWidth(_menuItems[i]);
+		const int width = font->getStringWidth(menuItems[i]);
 		const int x = (screen->w - width) / 2;
 		const int y = kMenuStartY + (int)i * lineSpacing;
-		font->drawString(screen, _menuItems[i], x, y, width, 0);
+		font->drawString(screen, menuItems[i], x, y, width, 0);
 	}
 
 	if (_engine.getRuntimeEntities())
@@ -2038,16 +2144,17 @@ int MenuSystem::getMenuItemAt(const Common::Point &mousePos,
 	return -1;
 }
 
-int MenuSystem::getRoomMenuItemAt(const Common::Point &mousePos) const {
+int MenuSystem::getBackdropMenuItemAt(const Common::Point &mousePos,
+		const Common::Array<Common::String> &menuItems) const {
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
 	if (!selectedFontResource)
-		return getMenuItemAt(mousePos, _menuItems);
+		return getMenuItemAt(mousePos, menuItems);
 
 	HarvesterCftFont selectedFont(*selectedFontResource);
 	if (!selectedFont.isValid())
-		return getMenuItemAt(mousePos, _menuItems);
+		return getMenuItemAt(mousePos, menuItems);
 
-	return getNativeRoomMenuSelectionFromMouse(selectedFont, _menuItems.size(), mousePos);
+	return getNativeRoomMenuSelectionFromMouse(selectedFont, menuItems.size(), mousePos);
 }
 
 } // End of namespace Harvester

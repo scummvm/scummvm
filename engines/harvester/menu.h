@@ -26,6 +26,7 @@
 #include "common/error.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "harvester/art.h"
 
 namespace Graphics {
 class Font;
@@ -35,7 +36,6 @@ namespace Harvester {
 
 class HarvesterEngine;
 class Flow;
-struct IndexedBitmap;
 
 class MenuSystem {
 public:
@@ -58,18 +58,25 @@ private:
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow);
+	Common::Error showGameOverBackdrop(Flow &startupFlow);
+	void clearMainMenuBackdrop();
 	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
 		const Common::String &statusMessage) const;
 	void renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
 		bool drawCursor, const Common::Array<Common::String> &menuItems) const;
-	void renderRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, int selectedItem) const;
+	void renderBackdropMenuScreen(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, const Common::Array<Common::String> &menuItems,
+		int selectedItem) const;
 	int getMenuItemAt(const Common::Point &mousePos, const Common::Array<Common::String> &menuItems) const;
-	int getRoomMenuItemAt(const Common::Point &mousePos) const;
+	int getBackdropMenuItemAt(const Common::Point &mousePos,
+		const Common::Array<Common::String> &menuItems) const;
 
 	HarvesterEngine &_engine;
 	Common::Point &_mousePos;
 	const Common::Array<Common::String> &_menuItems;
+	IndexedBitmap _mainMenuBackdrop;
+	byte _mainMenuBackdropPalette[256 * 3] = { 0 };
+	bool _hasMainMenuBackdrop = false;
 };
 
 } // End of namespace Harvester

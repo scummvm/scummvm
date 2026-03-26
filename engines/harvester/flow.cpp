@@ -1175,6 +1175,7 @@ Common::Error Flow::run() {
 		return Common::kReadingFailed;
 
 	clearPendingMainMenuReturn();
+	clearPendingGameOverReturn();
 	clearPendingNewGameRestart();
 	resetRoomNpcDialogueState();
 	Common::Error error = Common::kNoError;
@@ -1556,6 +1557,7 @@ bool Flow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) 
 
 void Flow::prepareForNewGame() {
 	clearPendingMainMenuReturn();
+	clearPendingGameOverReturn();
 	clearPendingNewGameRestart();
 	_engine.clearPendingLoadedStartupSaveRoomState();
 	_engine.clearPendingLoadedDialogueStateBlob();
@@ -1581,6 +1583,25 @@ bool Flow::takePendingNewGameRestart() {
 
 void Flow::clearPendingNewGameRestart() {
 	_pendingNewGameRestart = false;
+}
+
+void Flow::requestGameOverReturn() {
+	requestMainMenuReturn();
+	_pendingGameOverReturn = true;
+}
+
+bool Flow::hasPendingGameOverReturn() const {
+	return _pendingGameOverReturn;
+}
+
+bool Flow::takePendingGameOverReturn() {
+	const bool requested = _pendingGameOverReturn;
+	_pendingGameOverReturn = false;
+	return requested;
+}
+
+void Flow::clearPendingGameOverReturn() {
+	_pendingGameOverReturn = false;
 }
 
 void Flow::requestMainMenuReturn() {

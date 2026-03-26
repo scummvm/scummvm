@@ -1629,7 +1629,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 							return Common::kReadingFailed;
 					}
 
-					startupFlow.requestMainMenuReturn();
+					if (!interaction.deathFlicPath.empty())
+						startupFlow.requestGameOverReturn();
+					else
+						startupFlow.requestMainMenuReturn();
 					return Common::kNoError;
 				}
 
