@@ -100,6 +100,7 @@ protected:
 				XML_PROP(file, true)
 				XML_PROP(hotspot, true)
 				XML_PROP(resolution, false)
+				XML_PROP(type, false)
 			KEY_END()
 
 			XML_KEY(defaults)

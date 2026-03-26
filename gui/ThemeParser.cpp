@@ -78,6 +78,11 @@ static const TextColorDataInfo kTextColorDefaults[] = {
 	{ kTextColorButtonDisabled,			"color_button_disabled" }
 };
 
+enum CursorType {
+	kCursorNormal,
+	kCursorIndex
+};
+
 static TextColor parseTextColorId(const Common::String &name) {
 	for (int i = 0; i < kTextColorMAX; ++i)
 		if (name.compareToIgnoreCase(kTextColorDefaults[i].name) == 0)
@@ -346,7 +351,18 @@ bool ThemeParser::parserCallback_cursor(ParserNode *node) {
 	if (!parseList(node->values["hotspot"], 2, &spotx, &spoty))
 		return parserError("Error parsing cursor Hot Spot coordinates.");
 
-	if (!_theme->createCursor(node->values["file"], spotx, spoty))
+	ThemeEngine::CursorType cursorType = ThemeEngine::kCursorNormal;
+	if (node->values.contains("type")) {
+		Common::String t = node->values["type"];
+		t.toLowercase();
+		if (t == "index") {
+			cursorType = ThemeEngine::kCursorIndex;
+		} else if (t != "normal") {
+			return parserError(Common::String::format("Invalid cursor type '%s'", t.c_str()));
+		}
+	}
+
+	if (!_theme->createCursor(node->values["file"], spotx, spoty, cursorType))
 		return parserError("Error creating Bitmap Cursor.");
 
 	return true;
