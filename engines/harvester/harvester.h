@@ -121,6 +121,9 @@ public:
 		const Common::String &musicPath);
 	void clearCurrentStartupSaveRoomState();
 	bool hasCurrentStartupSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
+	const StartupSaveRoomState &getCurrentStartupSaveRoomState() const {
+		return _currentStartupSaveRoomState;
+	}
 	bool hasPendingLoadedStartupSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
 	const StartupSaveRoomState &getPendingLoadedStartupSaveRoomState() const {
 		return _pendingLoadedStartupSaveRoomState;
