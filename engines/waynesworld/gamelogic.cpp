@@ -533,7 +533,7 @@ void GameLogic::handleDialogReply(int index, int x, int y) {
     if (index < 537) {
         _vm->displayText("c04r", index, 0, x, y, 0);
     } else {
-        _vm->displayText("c04r2", index, 0, x, y, 0);
+        _vm->displayText("c04r2", index - 537, 0, x, y, 0);
     }
 
     switch (_vm->_currentRoomNumber) {
