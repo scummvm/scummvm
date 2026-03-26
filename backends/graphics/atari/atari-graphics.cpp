@@ -1149,7 +1149,9 @@ void AtariGraphicsManager::copyRectToAtariSurface(AtariSurface &dstSurface,
 	const Common::Rect rect = AtariSurface::alignRect(x, y, x + w, y + h);
 
 	// TODO: mask the unaligned parts and copy the rest
-	buf -= (x - rect.left);	// HACK: this assumes pointer to a complete buffer
+	// HACK: this assumes pointer to a complete buffer
+	// NOTE: unfortunately this shows the ScummVM logo shifted in 16 colours
+	buf -= (x - rect.left);
 
 	dstSurface.copyRectToSurface(buf, pitch, rect.left, rect.top, rect.width(), rect.height());
 }
