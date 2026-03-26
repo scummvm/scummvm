@@ -709,6 +709,10 @@ Common::String WaynesWorldEngine::loadString(const char *filename, int index, in
 		if (textBuffer[i] == 0x2b)
 			break;
 	}
+
+	// Safeguard in case the string takes 60 characters, overwrite the last character instead of writing out of boundaries
+	if (i >= kMaxStringLen)
+		i = kMaxStringLen - 1;
 	textBuffer[i] = 0;
 	return Common::String(textBuffer);
 }
