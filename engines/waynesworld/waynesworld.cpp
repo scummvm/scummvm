@@ -362,6 +362,7 @@ void WaynesWorldEngine::updateEvents() {
 			//_mouseClickButtons &= ~kRightButtonDown;
   			break;
 		case Common::EVENT_QUIT:
+			_escPressed = true;
 			quitGame();
 			break;
 		default:
