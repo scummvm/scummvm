@@ -40,6 +40,7 @@ static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
 static const int kRoomPlayerAttackAnimationRate = kRoomPlayerWalkAnimationRate;
+static const int kRoomPlayerDeathAnimationRate = 4;
 static const int kRoomPlayerMinOpaqueLeftX = 4;
 static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
 static const float kRoomPlayerAttackUpperYOffset = 144.44f;
@@ -83,6 +84,15 @@ struct PlayerAttackAnimationRange {
 	int firstFrame = 0;
 	int lastFrame = 0;
 	int resumeFacing = 0;
+};
+
+struct PlayerDeathAnimationRange {
+	PlayerDeathAnimationRange() {}
+	PlayerDeathAnimationRange(int firstFrame, int lastFrame)
+		: firstFrame(firstFrame), lastFrame(lastFrame) {}
+
+	int firstFrame = -1;
+	int lastFrame = -1;
 };
 
 struct PlayerAttackSoundSet {
@@ -234,6 +244,95 @@ static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
 
 	const char *soundPath = soundSet->soundPaths[soundIndex];
 	return soundPath && engine.playStartupSound(soundPath);
+}
+
+static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
+	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
+		return false;
+
+	return (uint)lastFrame < entity.getFrameCount();
+}
+
+static bool choosePlayerDeathAnimationRange(const RuntimeEntity &entity, int firstFrame, int lastFrame,
+		PlayerDeathAnimationRange &range) {
+	if (!runtimeEntityHasFrameRange(entity, firstFrame, lastFrame))
+		return false;
+
+	range = PlayerDeathAnimationRange(firstFrame, lastFrame);
+	return true;
+}
+
+static bool resolvePlayerDeathAnimationRange(const StartupRoomPlayerState &playerState,
+		int damageType, bool goreEnabled, PlayerDeathAnimationRange &range) {
+	if (!playerState.entity)
+		return false;
+
+	// Native update_actor_runtime_state selects the player death bank from the
+	// live combat state family before the terminal 0x38 game-over handoff.
+	enum PlayerDeathBankFamily {
+		kPlayerDeathBankHorizontalRight,
+		kPlayerDeathBankHorizontalLeft,
+		kPlayerDeathBankVerticalDown,
+		kPlayerDeathBankVerticalUp
+	};
+
+	PlayerDeathBankFamily family = kPlayerDeathBankHorizontalLeft;
+	if (playerState.attackActive) {
+		if (playerState.attackFirstFrame >= 0x6e && playerState.attackFirstFrame <= 0x8b)
+			family = kPlayerDeathBankHorizontalRight;
+		else
+			family = kPlayerDeathBankHorizontalLeft;
+	} else if (playerState.turnActive) {
+		if (playerState.turnFirstFrame >= 0x28)
+			family = kPlayerDeathBankHorizontalRight;
+		else
+			family = kPlayerDeathBankHorizontalLeft;
+	} else {
+		switch (playerState.facing) {
+		case 0:
+			family = kPlayerDeathBankVerticalDown;
+			break;
+		case 2:
+			family = kPlayerDeathBankHorizontalRight;
+			break;
+		case 3:
+			family = kPlayerDeathBankVerticalUp;
+			break;
+		case 1:
+		default:
+			family = kPlayerDeathBankHorizontalLeft;
+			break;
+		}
+	}
+
+	const auto selectByFamily = [&](int bludgeFirst, int bludgeLast, int slashFirst, int slashLast,
+			int projectileFirst, int projectileLast) {
+		if ((!goreEnabled || damageType == 1) &&
+				choosePlayerDeathAnimationRange(*playerState.entity, bludgeFirst, bludgeLast, range))
+			return true;
+		if (damageType == 4 &&
+				choosePlayerDeathAnimationRange(*playerState.entity, projectileFirst, projectileLast, range))
+			return true;
+		if (damageType == 2 &&
+				choosePlayerDeathAnimationRange(*playerState.entity, slashFirst, slashLast, range))
+			return true;
+
+		return choosePlayerDeathAnimationRange(*playerState.entity, bludgeFirst, bludgeLast, range) ||
+			choosePlayerDeathAnimationRange(*playerState.entity, slashFirst, slashLast, range) ||
+			choosePlayerDeathAnimationRange(*playerState.entity, projectileFirst, projectileLast, range);
+	};
+
+	switch (family) {
+	case kPlayerDeathBankHorizontalRight:
+		return selectByFamily(0xb0, 0xb9, 0x100, 0x109, 0x114, 0x11d);
+	case kPlayerDeathBankVerticalDown:
+		return selectByFamily(0xc4, 0xcd, 0xd8, 0xe1, 0xec, 0xf5);
+	case kPlayerDeathBankVerticalUp:
+		return selectByFamily(0xce, 0xd7, 0xe2, 0xeb, 0xf6, 0xff);
+	case kPlayerDeathBankHorizontalLeft:
+	default:
+		return selectByFamily(0xba, 0xc3, 0x10a, 0x113, 0x11e, 0x127);
+	}
 }
 
 static bool resolvePlayerAttackAnimationRange(const StartupRoomSetupState &state,
@@ -860,6 +959,59 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
 	return setIdleAnimation(playerState, resumeFacing);
+}
+
+bool Player::startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled) {
+	if (!playerState.entity || playerState.deathActive)
+		return false;
+
+	PlayerDeathAnimationRange range;
+	if (!resolvePlayerDeathAnimationRange(playerState, damageType, goreEnabled, range))
+		return false;
+
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.turnFirstFrame = -1;
+	playerState.turnLastFrame = -1;
+	playerState.turnEndFrame = -1;
+	playerState.turnPlayBackwards = false;
+	playerState.attackActive = false;
+	playerState.attackFirstFrame = -1;
+	playerState.attackLastFrame = -1;
+	playerState.attackContactFrame = -1;
+	playerState.attackResumeFacing = -1;
+	playerState.attackSoundPlayed = false;
+	playerState.attackSoundPlaybackFrame = -1;
+	playerState.attackContactResolved = false;
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
+	playerState.nextMovementTick = 0;
+	playerState.deathActive = true;
+	playerState.deathFirstFrame = range.firstFrame;
+	playerState.deathLastFrame = range.lastFrame;
+	playerState.deathDamageType = damageType;
+	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+	playerState.entity->setAnimationRate(kRoomPlayerDeathAnimationRate);
+	playerState.entity->setCurrentFrame(range.firstFrame);
+	playerState.entity->setVisible(true);
+	debugC(1, kDebugCombat,
+		"Harvester: player death animation start damage_type=%d gore=%d facing=%d frames=%d..%d",
+		damageType, goreEnabled, playerState.facing, range.firstFrame, range.lastFrame);
+	return true;
+}
+
+bool Player::updateDeathAnimationState(StartupRoomPlayerState &playerState) {
+	if (!playerState.deathActive || !playerState.entity)
+		return false;
+	if (playerState.entity->getCurrentFrame() < playerState.deathLastFrame)
+		return false;
+
+	playerState.deathActive = false;
+	debugC(1, kDebugCombat,
+		"Harvester: player death animation complete damage_type=%d frame=%d",
+		playerState.deathDamageType, playerState.entity->getCurrentFrame());
+	return true;
 }
 
 bool Player::startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
