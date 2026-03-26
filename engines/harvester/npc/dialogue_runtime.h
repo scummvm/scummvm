@@ -35,6 +35,8 @@ public:
 	typedef std::function<Common::Error(int, const Common::String &)> PlayDialogueLineFn;
 	typedef std::function<Common::Error(const DialogueLineEntry *, uint)> PlayDialogueEntrySequenceFn;
 	typedef std::function<Common::Error(const Common::String &)> PlayDialogueFstFn;
+	typedef std::function<Common::Error()> ClearScreenToBlackFn;
+	typedef std::function<Common::Error(int)> ShowCdChangePromptFn;
 	typedef std::function<Common::Error(const Common::String &, int, Common::String &,
 			KeywordMenuSelectionState &)> RunKeywordMenuFn;
 	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
@@ -55,6 +57,8 @@ public:
 			const PlayDialogueLineFn &playDialogueLine,
 			const PlayDialogueEntrySequenceFn &playDialogueEntrySequence,
 			const PlayDialogueFstFn &playDialogueFst,
+			const ClearScreenToBlackFn &clearScreenToBlack,
+			const ShowCdChangePromptFn &showCdChangePrompt,
 			const RunKeywordMenuFn &runKeywordMenu,
 			const RunResponseMenuFn &runResponseMenu,
 			const RunResponseMenuTextFn &runResponseMenuText,
@@ -71,7 +75,8 @@ public:
 		  _genericByeTopic(genericByeTopic),
 		  _playDialogueLineWithVariant(playDialogueLineWithVariant),
 		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
-		  _playDialogueFst(playDialogueFst), _runKeywordMenu(runKeywordMenu),
+		  _playDialogueFst(playDialogueFst), _clearScreenToBlack(clearScreenToBlack),
+		  _showCdChangePrompt(showCdChangePrompt), _runKeywordMenu(runKeywordMenu),
 		  _runResponseMenu(runResponseMenu), _runResponseMenuText(runResponseMenuText),
 		  _runGameOverScreen(runGameOverScreen),
 		  _assignTopicBuffer(assignTopicBuffer),
@@ -101,6 +106,8 @@ public:
 		return _playDialogueEntrySequence(lines, count);
 	}
 	Common::Error playDialogueFst(const Common::String &path) const { return _playDialogueFst(path); }
+	Common::Error clearScreenToBlack() const { return _clearScreenToBlack(); }
+	Common::Error showCdChangePrompt(int discNumber) const { return _showCdChangePrompt(discNumber); }
 	Common::Error runKeywordMenu(const Common::String &topicBuffer, int topicBufferLineIndex,
 			Common::String &selectedTopic) const {
 		_lastKeywordSelection = KeywordMenuSelectionState();
@@ -148,6 +155,8 @@ private:
 	PlayDialogueLineFn _playDialogueLine;
 	PlayDialogueEntrySequenceFn _playDialogueEntrySequence;
 	PlayDialogueFstFn _playDialogueFst;
+	ClearScreenToBlackFn _clearScreenToBlack;
+	ShowCdChangePromptFn _showCdChangePrompt;
 	RunKeywordMenuFn _runKeywordMenu;
 	RunResponseMenuFn _runResponseMenu;
 	RunResponseMenuTextFn _runResponseMenuText;
