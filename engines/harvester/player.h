@@ -54,6 +54,8 @@ public:
 	static bool startKeyboardAttackAnimation(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown);
 	static bool updateAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
+	static bool startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled);
+	static bool updateDeathAnimationState(StartupRoomPlayerState &playerState);
 	static bool startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
 	static bool updateTurnAnimationState(StartupRoomPlayerState &playerState);
 	static bool stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,

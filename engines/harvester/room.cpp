@@ -1907,12 +1907,46 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return;
 
 		debugC(1, kDebugCombat,
-			"Harvester: player defeat queued reason='%s' source='%s' hp=%d",
+			"Harvester: player game over queued reason='%s' source='%s' hp=%d",
 			reason ? reason : "", sourceName.c_str(),
 			_engine.getStartupScript()
 				? _engine.getStartupScript()->getPlayerCurrentHitPoints()
 				: 0);
 		startupFlow.requestGameOverReturn();
+	};
+	auto startPlayerDefeatSequence = [&](const char *reason, const Common::String &sourceName,
+			int damageType) {
+		if (startupFlow.hasPendingMainMenuReturn() || playerState.deathActive)
+			return;
+
+		if (idleState.entity) {
+			idleState.entity->setVisible(false);
+			idleState.entity->setAnimationRate(0);
+		}
+		idleState.active = false;
+		idleState.loopStarted = false;
+		idleState.exiting = false;
+		idleState.restoreFacing = -1;
+		if (playerState.entity)
+			playerState.entity->setVisible(true);
+
+		if (!Player::startDeathAnimation(playerState, damageType, _engine.isGoreEnabled())) {
+			debugC(1, kDebugCombat,
+				"Harvester: player defeat fallback reason='%s' source='%s' damage_type=%d hp=%d",
+				reason ? reason : "", sourceName.c_str(), damageType,
+				_engine.getStartupScript()
+					? _engine.getStartupScript()->getPlayerCurrentHitPoints()
+					: 0);
+			requestPlayerGameOver(reason, sourceName);
+			return;
+		}
+
+		debugC(1, kDebugCombat,
+			"Harvester: player defeat started reason='%s' source='%s' damage_type=%d hp=%d",
+			reason ? reason : "", sourceName.c_str(), damageType,
+			_engine.getStartupScript()
+				? _engine.getStartupScript()->getPlayerCurrentHitPoints()
+				: 0);
 	};
 	auto handleCombatInteraction = [&](StartupInteractionResult interaction) -> Common::Error {
 		bool didTransition = false;
@@ -1923,7 +1957,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		if (!startupFlow.hasPendingMainMenuReturn() &&
 				_engine.getStartupScript() &&
 				_engine.getStartupScript()->getPlayerCurrentHitPoints() <= 0) {
-			requestPlayerGameOver("combat_interaction", Common::String());
+			stopPlayerRegionInteraction();
+			startPlayerDefeatSequence("combat_interaction", Common::String(), 1);
 		}
 
 		needsRedraw = true;
@@ -2319,7 +2354,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						if (changed && playerHitPointsAfter <= 0) {
 							playerAlive = false;
 							stopPlayerRegionInteraction();
-							requestPlayerGameOver("combat_monster_hit", monster.monsterName);
+							startPlayerDefeatSequence(
+								"combat_monster_hit", monster.monsterName, monster.damageType);
 							return Common::kNoError;
 						}
 					}
@@ -3415,7 +3451,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			break;
 		}
 		Common::Error pendingRegionError =
-			playerState.attackActive ? Common::kNoError : tryActivatePendingRegion();
+			(playerState.attackActive || playerState.deathActive)
+				? Common::kNoError
+				: tryActivatePendingRegion();
 		if (pendingRegionError.getCode() != Common::kNoError)
 			return pendingRegionError;
 		if (startupFlow.hasPendingMainMenuReturn())
@@ -3426,7 +3464,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			break;
 		}
 		pendingRegionError =
-			(playerAdvancedThisFrame && !playerState.attackActive)
+			(playerAdvancedThisFrame && !playerState.attackActive && !playerState.deathActive)
 				? tryActivateOverlappedRegion()
 				: Common::kNoError;
 		if (pendingRegionError.getCode() != Common::kNoError)
@@ -3441,6 +3479,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 
 		if (startupFlow.tickRuntimeEntities())
 			needsRedraw = true;
+		if (Player::updateDeathAnimationState(playerState)) {
+			requestPlayerGameOver("combat_player_death_complete", Common::String());
+			needsRedraw = true;
+		}
+		if (startupFlow.hasPendingMainMenuReturn())
+			return Common::kNoError;
 		if (pruneCombatHitEffects())
 			needsRedraw = true;
 		if (runtimeEntities) {

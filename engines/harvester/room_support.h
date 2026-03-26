@@ -77,6 +77,10 @@ struct StartupRoomPlayerState {
 	bool attackContactResolved = false;
 	Common::String attackTargetName;
 	int attackTargetClassId = -1;
+	bool deathActive = false;
+	int deathFirstFrame = -1;
+	int deathLastFrame = -1;
+	int deathDamageType = 0;
 };
 
 struct StartupRoomHoverState {
