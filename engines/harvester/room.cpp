@@ -3113,6 +3113,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					break;
 				}
 				if (_engine.getStartupScript()->isPickupObject(*clickedObject)) {
+					StartupInteractionResult blockedPickupInteraction;
+					if (_engine.getStartupScript()->isPickupBlockedByAction(
+							*clickedObject, &blockedPickupInteraction)) {
+						bool didTransition = false;
+						Common::Error interactionError =
+							interactionProcessor.handleInteractionResult(
+								blockedPickupInteraction, didTransition, Common::String());
+						if (interactionError.getCode() != Common::kNoError)
+							return interactionError;
+						needsRedraw = true;
+						break;
+					}
+
 					Common::Error pickupError = playerState.entity
 						? beginRoomItemCarry(*clickedObject)
 						: moveRoomItemDirectlyToInventory(*clickedObject);
