@@ -36,7 +36,7 @@ class RoomSystem {
 public:
 	RoomSystem(HarvesterEngine &engine, Common::Point &mousePos, InventorySystem &inventory);
 
-	Common::Error runRoomLoop(Flow &startupFlow, const Common::String &entranceName);
+	Common::Error runRoomLoop(Flow &startupFlow, const Common::String &targetName, bool targetIsRoomName);
 
 private:
 	HarvesterEngine &_engine;

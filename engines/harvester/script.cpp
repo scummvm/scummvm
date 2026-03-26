@@ -1100,6 +1100,68 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 	return true;
 }
 
+bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
+		ResourceManager &resources) {
+	state = StartupRoomSetupState();
+
+	const StartupRoomRecord *room = findRoomRecord(roomName);
+	if (!room) {
+		warning("Harvester: unresolved room setup room '%s'", roomName.c_str());
+		return false;
+	}
+
+	const StartupEntranceRecord *entrance = nullptr;
+	for (const StartupEntranceRecord &candidate : _entrances) {
+		if (!candidate.roomName.equalsIgnoreCase(room->roomName))
+			continue;
+
+		entrance = &candidate;
+		break;
+	}
+
+	Common::String musicPath;
+	Common::Array<StartupAudioCommand> audioCommands;
+	bool mutatedRuntimeState = false;
+	executeCommandChain(
+		room->onEnterCommand, "room setup command", room->roomName, false,
+		&musicPath,
+		&audioCommands,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		&mutatedRuntimeState);
+
+	if (!buildRuntimeRoomState(*room, entrance, resources, state))
+		return false;
+
+	state.audioCommands = audioCommands;
+	if (!musicPath.empty())
+		state.musicPath = musicPath;
+
+	debugC(1, kDebugRoom,
+		"Harvester: resolveRoomSetupStateByRoomName('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
+		roomName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
+		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
+		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
+		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
+		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
+		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
+		(uint)state.roomRegions.size(), mutatedRuntimeState);
+
+	return true;
+}
+
 void Script::resetRuntimeState() {
 	_runtimeFlags = _flags;
 	_runtimeObjects = _objects;
