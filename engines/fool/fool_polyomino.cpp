@@ -89,7 +89,9 @@ void FoolGame::polyominoRun() {
 	g_toolbox->SetPort(this->var_i32_f24);
 	g_zbasic->text(0xfb, 0x18, 0, kSrcOr);
 
+	// for each polyomino
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {
+		// read number of coordinate parts
 		this->var_i16_103a = this->puzzlesReadShort();
 		for (int i = 0; i <= 4; i++) {
 			this->arr_i16_47d8[j*8 + i] = this->puzzlesReadShort();
@@ -109,17 +111,22 @@ void FoolGame::polyominoRun() {
 			}
 		}
 		// 133:0356
+		// read coordinates. these are unsigned bytes in pixel units
 		for (int i = 0; i <= this->var_i16_103a; i++) {
 			this->arr_i16_4338[i] = this->puzzlesReadByte();
 		}
+
 		// 133:0388
+		// create polyomino polygons from coordinates
 		this->var_poly_1aac = g_toolbox->OpenPoly();
 		g_toolbox->MoveTo(this->arr_i16_4338[1], this->arr_i16_4338[0]);
 		for (int i = 2; i <= this->var_i16_103a; i += 2) {
 			g_toolbox->LineTo(this->arr_i16_4338[i+1], this->arr_i16_4338[i]);
 		}
 		g_toolbox->ClosePoly();
+
 		// 133:0408
+		// load in letter placement information
 		this->var_i16_103a = this->puzzlesReadShort();
 		if (this->var_i16_103a >= 3) {
 			for (int i = 1; i <= this->var_i16_103a; i++) {
@@ -127,10 +134,12 @@ void FoolGame::polyominoRun() {
 			}
 		}
 		// 133:044a
-		this->arr_i16_1eb8[0x1a] = this->puzzlesReadShort();
-		this->arr_i16_1eb8[0x1b] = this->puzzlesReadShort();
+		this->arr_i16_1eb8[0x1a] = this->puzzlesReadShort(); // polygon fill pattern index
+		this->arr_i16_1eb8[0x1b] = this->puzzlesReadShort(); // text source mode
 		g_toolbox->PenNormal();
+
 		// 133:0476: JSR - "PICTURE_ON"
+		// picture handle 0: XOR text + polyomino
 		PicHandle handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_toolbox->PenMode(kPatXor);
 		if (this->var_i16_103a >= 3) {
@@ -146,7 +155,9 @@ void FoolGame::polyominoRun() {
 		g_toolbox->ClosePicture();
 		this->arr_pic_49d8[j*4] = handle;
 		g_toolbox->PenNormal();
+
 		// 133:0530: JSR - "PICTURE_ON"
+		// picture handle 1:
 		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_toolbox->FillPoly(this->var_poly_1aac, this->arr_pat_58f4[this->arr_i16_1eb8[0x1a]]);
 		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xd]]);
@@ -166,13 +177,17 @@ void FoolGame::polyominoRun() {
 		// 133:0622
 		this->arr_pic_49d8[j*4 + 1] = handle;
 		g_toolbox->PenNormal();
+
 		// 133:0642: JSR - "PICTURE_ON"
+		// picture handle 2: draw the shape without letters
 		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xf]]);
 		g_toolbox->FramePoly(this->var_poly_1aac);
 		g_toolbox->PaintPoly(this->var_poly_1aac);
 		g_toolbox->ClosePicture();
 		this->arr_pic_49d8[j*4 + 2] = handle;
+
+		// clear polygon data
 		g_toolbox->KillPoly(this->var_poly_1aac);
 		// 133:0698
 	}
@@ -194,7 +209,7 @@ void FoolGame::polyominoRun() {
 		this->sub_133_f04();
 	}
 	this->var_i16_1ab0 = 1;
-	this->sub_133_12d4();
+	this->polyominoDrawFrame();
 	this->sub_133_12f2();
 	this->var_i16_7c6 = 0;
 	do {
@@ -248,7 +263,7 @@ void FoolGame::polyominoOnClick() {
 	}
 	// 133:0950
 	if (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] <= this->arr_i16_1eb8[0x11]) {
-		this->sub_133_10a0();
+		this->polyominoBadMove();
 		return;
 	}
 	// 133:0990
@@ -333,7 +348,7 @@ void FoolGame::polyominoOnClick() {
 		this->sub_133_f04();
 	}
 	// 133:0ea2
-	this->sub_133_12d4();
+	this->polyominoDrawFrame();
 	this->sub_133_12f2();
 	this->sub_128_4da(1);
 }
@@ -375,18 +390,20 @@ void FoolGame::sub_133_f04() {
 
 }
 
-void FoolGame::sub_133_10a0() {
+void FoolGame::polyominoBadMove() {
 	// 133:10a0
 	this->var_i16_484 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].left;
 	this->var_i16_7e4 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].top;
+	// play bass tone
 	this->sub_128_50e(0x14, 0x64, 0);
 	// why do this???
+	// best guess: flashing the shape a few times before knocking it back
 	// 133:1188
 	for (int i = 0; i <= 9; i++) {
 		g_zbasic->picture(this->var_i16_484, this->var_i16_7e4, this->arr_pic_49d8[this->var_i16_7cc*4]);
 	}
 	// 133:11c2
-	this->sub_133_12d4();
+	this->polyominoDrawFrame();
 	this->sub_128_6186();
 }
 
@@ -407,11 +424,11 @@ void FoolGame::sub_133_11cc() {
 	}
 	// 133:12c2
 	this->var_i16_1ab0 = 1;
-	this->sub_133_12d4();
+	this->polyominoDrawFrame();
 	this->var_i16_7c6 = 0;
 }
 
-void FoolGame::sub_133_12d4() {
+void FoolGame::polyominoDrawFrame() {
 	// 133:12d4
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);

@@ -50,7 +50,7 @@ public:
 	int32 puzzlesReadLong(); // sub_128_462
 	Common::U32String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
-	void sub_128_50e(int16 unk3, int16 unk2, int16 unk1);
+	void sub_128_50e(int16 freq, int16 duration, int16 wait);
 	void sub_128_55c(Common::U32String &unk1);
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
@@ -146,9 +146,9 @@ public:
 	void polyominoOnClick(); // sub_133_87c
 	void sub_133_eb2();
 	void sub_133_f04();
-	void sub_133_10a0();
+	void polyominoBadMove(); // sub_133_10a0
 	void sub_133_11cc();
-	void sub_133_12d4();
+	void polyominoDrawFrame(); // sub_133_12d4
 	void sub_133_12f2();
 	void sub_133_13e2();
 	void polyominoStoreState(); // sub_133_1452
