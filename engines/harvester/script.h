@@ -358,6 +358,8 @@ public:
 	bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions = true);
 	bool isPickupObject(const StartupObjectRecord &object) const;
+	bool isPickupBlockedByAction(const StartupObjectRecord &object,
+		StartupInteractionResult *result = nullptr) const;
 	bool hasObjectInteraction(const StartupObjectRecord &object) const;
 	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
 	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
@@ -427,6 +429,8 @@ private:
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState);
+	bool probePickupBlockingCommandChain(const Common::String &initialTag,
+		const Common::String &contextName, StartupInteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 	bool setPlayerCurrentHitPoints(int hitPoints);
 	void logRuntimeSaveState(const char *operation) const;

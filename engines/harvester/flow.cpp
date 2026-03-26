@@ -810,10 +810,13 @@ static int resolveRoomObjectCursorSequence(const StartupObjectRecord &object, Sc
 
 	StartupResolvedText inspectText;
 	const bool pickupObject = startupScript.isPickupObject(object);
+	const bool pickupBlocked = pickupObject && startupScript.isPickupBlockedByAction(object);
 	if (!object.identShown && unlocksRoomObjectInteractionAfterInitialExamine(object, startupScript))
 		return kCursorSequenceExamine;
-	if (pickupObject)
+	if (pickupObject && !pickupBlocked)
 		return kCursorSequencePickup;
+	if (pickupBlocked)
+		return kCursorSequenceExamine;
 	if (object.operatable)
 		return kCursorSequenceOperate;
 	if (startupScript.resolveObjectInspectText(object, inspectText))

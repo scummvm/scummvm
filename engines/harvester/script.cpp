@@ -1516,6 +1516,20 @@ bool Script::isPickupObject(const StartupObjectRecord &object) const {
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
 }
 
+bool Script::isPickupBlockedByAction(const StartupObjectRecord &object,
+		StartupInteractionResult *result) const {
+	if (result)
+		*result = StartupInteractionResult();
+	if (!isPickupObject(object) || object.actionTag.empty())
+		return false;
+	if (!result) {
+		StartupInteractionResult ignoredResult;
+		return probePickupBlockingCommandChain(object.actionTag, object.objectName, ignoredResult, 0);
+	}
+
+	return probePickupBlockingCommandChain(object.actionTag, object.objectName, *result, 0);
+}
+
 bool Script::hasObjectInteraction(const StartupObjectRecord &object) const {
 	if (isPickupObject(object))
 		return true;
@@ -2550,6 +2564,86 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			command->opcodeName.c_str(), contextLabel, contextName.c_str());
 		currentTag = command->arg4;
 	}
+}
+
+bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
+		const Common::String &contextName, StartupInteractionResult &result, uint recursionDepth) const {
+	if (initialTag.empty() || recursionDepth > 8)
+		return false;
+
+	Common::String currentTag = initialTag;
+	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
+		const StartupCommandRecord *command = findCommandRecord(currentTag);
+		if (!command) {
+			debug(1, "Harvester: unresolved pickup preflight tag '%s' for '%s'",
+				currentTag.c_str(), contextName.c_str());
+			return false;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
+			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			currentTag = (flag && flag->value) ? command->arg2 : command->arg3;
+			continue;
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("CHECK_PERC"))
+			return false;
+
+		if (command->opcodeName.equalsIgnoreCase("SHOW_TEXT")) {
+			if (!resolveTextRecord(command->arg1, result.modalText))
+				return false;
+			result.continuationTag = command->arg4;
+			return !result.modalText.value.empty();
+		}
+
+		if (command->opcodeName.equalsIgnoreCase("EXEC_LIST")) {
+			const StartupExecListRecord *execList = findExecListRecord(command->arg1);
+			if (!execList)
+				return false;
+
+			for (const Common::String &entry : execList->entries) {
+				if (probePickupBlockingCommandChain(entry, contextName, result, recursionDepth + 1))
+					return true;
+			}
+			return false;
+		}
+
+		Common::Array<StartupAudioCommand> audioCommands;
+		if (appendStartupAudioCommand(*command, audioCommands))
+			return false;
+
+		if (command->opcodeName.equalsIgnoreCase("SET_FLAG") ||
+			command->opcodeName.equalsIgnoreCase("SPOOL_MUSIC") ||
+			command->opcodeName.equalsIgnoreCase("ADD") ||
+			command->opcodeName.equalsIgnoreCase("DELETE") ||
+			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
+			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
+			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
+			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
+			command->opcodeName.equalsIgnoreCase("SET_MONSTER") ||
+			command->opcodeName.equalsIgnoreCase("SET_TIMER") ||
+			command->opcodeName.equalsIgnoreCase("KILL_TIMER") ||
+			command->opcodeName.equalsIgnoreCase("START_DIALOG") ||
+			command->opcodeName.equalsIgnoreCase("GOFLIC") ||
+			command->opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
+			command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
+			command->opcodeName.equalsIgnoreCase("MONSTERFY") ||
+			command->opcodeName.equalsIgnoreCase("HEAL_PC") ||
+			command->opcodeName.equalsIgnoreCase("ADJ_HP") ||
+			command->opcodeName.equalsIgnoreCase("KILL_PC") ||
+			command->opcodeName.equalsIgnoreCase("PAUSE_PC") ||
+			command->opcodeName.equalsIgnoreCase("RESUME_PC") ||
+			command->opcodeName.equalsIgnoreCase("PC_GOTO_XZ") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING") ||
+			command->opcodeName.equalsIgnoreCase("CLOSEUP") ||
+			command->opcodeName.equalsIgnoreCase("CHANGE_ROOM")) {
+			return false;
+		}
+
+		currentTag = command->arg4;
+	}
+
+	return false;
 }
 
 bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
