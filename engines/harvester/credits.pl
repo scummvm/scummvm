@@ -1,3 +1,3 @@
 begin_section("Harvester");
-	# TODO: add engine maintainers here once the scaffold has an owner.
+	add_person("Alex Bevilacqua", "alexbevi", "");
 end_section();
