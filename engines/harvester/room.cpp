@@ -2192,6 +2192,145 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		needsRedraw = true;
 		return Common::kNoError;
 	};
+	auto killDebugActiveMonster = [&]() -> Common::Error {
+		if (!_engine.isCombatDebugEnabled())
+			return Common::kNoError;
+
+		auto isKillableMonster = [&](const StartupMonsterRecord *monster) {
+			return monster && monster->active && monster->visible && monster->currentHitPoints > 0;
+		};
+		auto selectMonsterEntity = [&](StartupMonsterRecord *monster) -> RuntimeEntity * {
+			RuntimeEntity *entity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+			return (entity && entity->isVisible()) ? entity : nullptr;
+		};
+		auto resolveKillTarget = [&]() -> StartupMonsterRecord * {
+			if (playerState.attackTargetClassId == kRuntimeEntityClassMonster) {
+				StartupMonsterRecord *monster = findRoomMonsterRecordByName(playerState.attackTargetName);
+				if (isKillableMonster(monster) && selectMonsterEntity(monster))
+					return monster;
+			}
+
+			if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
+				if (isKillableMonster(monster) && selectMonsterEntity(monster))
+					return monster;
+			}
+
+			if (playerState.entity) {
+				for (uint i = 0; i < scene.state.roomMonsters.size() && i < monsterCombatStates.size(); ++i) {
+					StartupMonsterRecord &monster = scene.state.roomMonsters[i];
+					const RoomMonsterCombatState &combatState = monsterCombatStates[i];
+					if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(&monster))
+						continue;
+					if (!combatState.attackTargetName.empty() &&
+							playerState.entity->getName().equalsIgnoreCase(combatState.attackTargetName)) {
+						return &monster;
+					}
+				}
+			}
+
+			if (!playerState.entity)
+				return nullptr;
+
+			const Common::Rect playerRect = playerState.entity->getScreenRect();
+			const int playerCenterX = playerRect.left + playerRect.width() / 2;
+			StartupMonsterRecord *bestMonster = nullptr;
+			int bestScore = 0x7fffffff;
+			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				if (!isKillableMonster(&monster))
+					continue;
+
+				RuntimeEntity *entity = selectMonsterEntity(&monster);
+				if (!entity)
+					continue;
+
+				const Common::Rect monsterRect = entity->getScreenRect();
+				const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
+				const int score = ABS(monsterCenterX - playerCenterX) +
+					ABS(monster.posZ - roundRoomCombatFloat(playerState.z)) * 8;
+				if (!bestMonster || score < bestScore) {
+					bestMonster = &monster;
+					bestScore = score;
+				}
+			}
+
+			return bestMonster;
+		};
+
+		StartupMonsterRecord *monster = resolveKillTarget();
+		RuntimeEntity *monsterEntity = selectMonsterEntity(monster);
+		if (!monster || !monsterEntity) {
+			debugC(1, kDebugCombat,
+				"Harvester: debug combat kill skipped reason='no active monster' cursor=(%d,%d)",
+				_mousePos.x, _mousePos.y);
+			return Common::kNoError;
+		}
+
+		Script *startupScript = _engine.getStartupScript();
+		if (!startupScript) {
+			debugC(1, kDebugCombat,
+				"Harvester: debug combat kill skipped target='%s' reason='no startup script'",
+				monster->monsterName.c_str());
+			return Common::kNoError;
+		}
+
+		const int debugDamageType = Player::resolveCombatLoadoutDamageType(playerState.combatLoadout);
+		const int damageLanded = monster->currentHitPoints;
+		monster->currentHitPoints = 0;
+		if (damageLanded > 0)
+			spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
+
+		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster &&
+				playerState.attackTargetName.equalsIgnoreCase(monster->monsterName)) {
+			playerState.attackTargetName.clear();
+			playerState.attackTargetClassId = -1;
+		}
+
+		debugC(1, kDebugCombat,
+			"Harvester: debug combat kill target='%s' damage=%d damage_type=%d cursor=(%d,%d)",
+			monster->monsterName.c_str(), damageLanded, debugDamageType, _mousePos.x, _mousePos.y);
+
+		const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
+		RoomMonsterCombatState *combatState =
+			monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size()
+				? &monsterCombatStates[(uint)monsterIndex]
+				: nullptr;
+		if (combatState)
+			clearRoomMonsterCombatState(*combatState);
+		(void)startupScript->syncRuntimeMonsterRecord(*monster);
+
+		RoomDeathAnimationRange deathRange;
+		if (combatState && resolveMonsterDeathAnimationRange(*monsterEntity, monster->facing,
+				debugDamageType, _engine.isGoreEnabled(), deathRange)) {
+			combatState->deathActive = true;
+			combatState->deathFirstFrame = deathRange.firstFrame;
+			combatState->deathLastFrame = deathRange.lastFrame;
+			combatState->deathDamageType = debugDamageType;
+			combatState->nextMovementTick = 0;
+			combatState->nextAttackAllowedTick = 0;
+			monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
+			monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
+			monsterEntity->setAnimationEnabled(true);
+			monsterEntity->setCurrentFrame(deathRange.firstFrame);
+			if (!monster->deathSound.empty())
+				(void)_engine.playStartupSound(monster->deathSound);
+			needsRedraw = true;
+			return Common::kNoError;
+		}
+
+		monster->active = false;
+		monster->visible = false;
+		StartupInteractionResult interaction;
+		interaction.mutatedRuntimeState = true;
+		if (!monster->onDeathActionTag.empty()) {
+			StartupInteractionResult deathInteraction;
+			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
+				interaction = deathInteraction;
+				interaction.mutatedRuntimeState = true;
+			}
+		}
+
+		return handleCombatInteraction(interaction);
+	};
 	auto capturePlayerAttackTarget = [&]() {
 		playerState.attackTargetName.clear();
 		playerState.attackTargetClassId = -1;
@@ -3530,6 +3669,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
 						event.kbd.keycode == Common::KEYCODE_RCTRL) {
 					attackModifierHeld = true;
+				} else if (event.kbd.keycode == Common::KEYCODE_k && _engine.isCombatDebugEnabled()) {
+					Common::Error debugKillError = killDebugActiveMonster();
+					if (debugKillError.getCode() != Common::kNoError)
+						return debugKillError;
+					break;
 				} else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					moveLeft = true;
 				else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
