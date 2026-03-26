@@ -193,8 +193,11 @@ static void soundTimer(void *refCon) {
 		int nextRun = engine->_soundQueue.front();
 		engine->_soundQueue.pop_front();
 
-		g_system->getTimerManager()->installTimerProc(&soundTimer, (nextRun - g_system->getMillis()) * 1000, scene, "WageEngine::soundTimer");
+int interval = nextRun - g_system->getMillis();
+if (interval <= 0)
+    interval = 1;
 
+g_system->getTimerManager()->installTimerProc(&soundTimer,interval * 1000,scene,"WageEngine::soundTimer");
 		engine->_soundToPlay = scene->_soundName; // We cannot play sound here because that goes recursively
 
 		debugC(1, kDebugSound, "soundTimer: preparing next sound in %d ms (%s)", nextRun - g_system->getMillis(), scene->_soundName.c_str());
