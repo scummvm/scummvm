@@ -30,6 +30,8 @@ class Player {
 public:
 	static float computeDepthScale(const StartupRoomSetupState &state, float z);
 	static int resolveFacingFrame(int facing);
+	static const char *describeCombatLoadout(int loadout);
+	static const char *describeCombatDamageType(int damageType);
 	static Common::String resolveCombatLoadoutResourcePath(int loadout);
 	static int resolveCombatLoadoutDamageAmount(int loadout);
 	static int resolveCombatLoadoutDamageType(int loadout);

@@ -1026,6 +1026,7 @@
   - It is called by the inventory UI when the player changes weapons and by save/load restoration when the saved selection differs from the current live one.
   - It tears down the current attack sound bank, loads the new weapon-dependent attack sounds, reloads the `pc*.abm` actor art, and refreshes the player combat avatar's attack tuning.
   - The tuning it refreshes matches the spawn path exactly: `+0x1134` attack sample count, `+0x1148/+0x114c/+0x1150` attack sample slots, `+0x116c` attack-sound trigger frame offset, `+0x113c` attack contact frame offset, and `+0x1180` per-hit damage amount.
+  - The confirmed native per-hit damage table is `0:1`, `1:4`, `2:2`, `3:7`, `4:6`, `5:6`, `6:3`, `7:3`, `8:3`, `9:3`, `10:3`, `11:3`, `12:4`, `13:5`, `14:8`, `15:3`, `16:3`, `17:3`, `18:3`, `19:3`, `20:2`; in particular, `CHAINSAW` is the high `8`-damage loadout while `HARVEST_BLADE` stays at `3`.
   - The ABM path table it indexes is now labeled `g_player_combat_loadout_abm_paths` at `0xc3eb4`.
   - That table is now bounded as a direct 21-entry loadout map from ids `0..0x14` to `1:\\graphic\\monsters\\pc\\pc0.abm` through `1:\\graphic\\monsters\\pc\\pc20.abm`.
 - `sync_player_combat_weapon_resource_icons` at `0x792c0` updates the HUD resource-icon strip/count pair for the current player combat loadout.
@@ -1059,6 +1060,7 @@
     - it plays the selected attack sample when `current_frame == anim_base + +0x116c`
     - it waits until `current_frame >= anim_base + +0x113c` before resolving contact
     - on a confirmed hit it subtracts attacker `+0x1180` from victim HP
+    - no additional post-hit multiplier is present in the recovered native path; both player and monster hits use the per-loadout or per-record value that was already seeded into `+0x1180`
     - for keyboard-driven player attacks, the same contact path picks the nearest live target on the chosen side; upper/lower side attacks also require the target center to stay within a `30`-pixel horizontal side window and to overlap the attacker's live Z/depth span
   - Runtime dword `+0x118c` is now bounded as a mixed combat/capability mask rather than as a pure damage-type field.
     - its low bits carry the attack damage type (`1 = BLUDGE`, `2 = SLASH`, `4 = PROJ`)

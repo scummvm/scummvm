@@ -3196,8 +3196,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					capturePlayerAttackTarget();
 					if (Player::startAttackAnimation(scene.state, playerState, _mousePos)) {
 						debugC(1, kDebugCombat,
-							"Harvester: combat player attack start loadout=%d target_class='%s' target='%s' cursor=(%d,%d)",
+							"Harvester: combat player attack start loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s' cursor=(%d,%d)",
 							playerState.combatLoadout,
+							Player::describeCombatLoadout(playerState.combatLoadout),
+							Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout),
+							Player::describeCombatDamageType(Player::resolveCombatLoadoutDamageType(playerState.combatLoadout)),
 							describeCombatTargetClass(playerState.attackTargetClassId),
 							playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
 						needsRedraw = true;
@@ -3640,8 +3643,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					nextKeyboardAttackAllowedTick = now + kNativeKeyboardAttackRepeatTicks;
 					notePlayerActivity();
 					debugC(1, kDebugCombat,
-						"Harvester: combat player keyboard attack start loadout=%d target_class='%s' target='%s' input=(L=%d R=%d U=%d D=%d) facing=%d",
+						"Harvester: combat player keyboard attack start loadout=%d weapon='%s' damage=%d damage_type='%s' target_class='%s' target='%s' input=(L=%d R=%d U=%d D=%d) facing=%d",
 						playerState.combatLoadout,
+						Player::describeCombatLoadout(playerState.combatLoadout),
+						Player::resolveCombatLoadoutDamageAmount(playerState.combatLoadout),
+						Player::describeCombatDamageType(Player::resolveCombatLoadoutDamageType(playerState.combatLoadout)),
 						describeCombatTargetClass(playerState.attackTargetClassId),
 						playerState.attackTargetName.c_str(),
 						moveLeft, moveRight, moveUp, moveDown, playerState.facing);
