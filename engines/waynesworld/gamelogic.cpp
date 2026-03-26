@@ -3939,7 +3939,7 @@ void GameLogic::r8_refreshRoomBackground() {
 	if (!(_r8_flags & 0x01)) {
 		_vm->drawRoomImageToBackground("opendoor.pcx", 259, 51);
 	}
-	if (!(_r8_flags & 0x08) && ((_r8_flags & 0x80) || (_r38_flags & 0x08))) {
+	if (!(_r8_flags & 0x08) && (!(_r8_flags & 0x80) || (_r38_flags & 0x08))) {
 		_vm->_roomEventNum = 1;
 	}
 	if (!_vm->_hasRoomAnimationCallback) {
