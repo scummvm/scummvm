@@ -362,6 +362,7 @@ Common::U32String FoolGame::puzzlesReadString() {
 }
 
 void FoolGame::sub_128_4da(int16 unk1) {
+	// toggle the mouse cursor off or on
 	// 128:04da
 	if (unk1 == 0) {
 		if (this->var_i16_7a0 == 1) {
@@ -375,12 +376,12 @@ void FoolGame::sub_128_4da(int16 unk1) {
 	this->var_i16_7a0 = unk1;
 }
 
-void FoolGame::sub_128_50e(int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::sub_128_50e(int16 freq, int16 duration, int16 wait) {
 	// 128:050e
 	// audio tone
-	this->var_i16_34 = unk1;
-	this->var_i16_32 = unk2;
-	this->var_i16_30 = unk3;
+	this->var_i16_34 = wait;
+	this->var_i16_32 = duration;
+	this->var_i16_30 = freq;
 	if (this->var_i16_378 == 1) {
 		g_zbasic->sound(this->var_i16_30, this->var_i16_32, 0x96, 0);
 		if (this->var_i16_34 == 1) {
@@ -2130,6 +2131,7 @@ void FoolGame::sub_128_6154() {
 
 void FoolGame::sub_128_6186() {
 	// 128:6186
+	// wait until mouse button is up
 	do {
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(6, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
