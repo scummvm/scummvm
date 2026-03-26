@@ -1869,6 +1869,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 					if (cdPromptError.getCode() != Common::kNoError)
 						return cdPromptError;
 				}
+				if (interaction.requestRoomRestart) {
+					pendingRoomChange = !scene.state.entranceName.empty()
+						? scene.state.entranceName
+						: scene.state.roomName;
+					didTransition = !pendingRoomChange.empty();
+					return didTransition ? Common::kNoError : Common::kReadingFailed;
+				}
 
 				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
 				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
