@@ -328,6 +328,13 @@ public:
 	bool backendInitialized() const { return _backendInitialized; }
 
 	/**
+	 * Allow the backend to perform creation of engine's dependencies.
+	 *
+	 * Called just before the engine is created.
+	 */
+	virtual void engineBeforeCreate() { }
+
+	/**
 	 * Allow the backend to perform engine-specific initialization.
 	 *
 	 * Called just before the engine is run.
@@ -340,6 +347,13 @@ public:
 	 * Called after the engine finishes.
 	 */
 	virtual void engineDone() { }
+
+	/**
+	 * Allow the backend to perform deletion of engine's dependencies.
+	 *
+	 * Called after the engine is deleted.
+	 */
+	virtual void engineAfterDelete() { }
 
 	/**
 	 * Identify a task that ScummVM can perform.
