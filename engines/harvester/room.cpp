@@ -2310,9 +2310,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 				continue;
 			}
 
-			if (combatState.nextMovementTick != 0 && (int32)(now - combatState.nextMovementTick) < 0)
-				continue;
-			combatState.nextMovementTick = now + moveInterval;
+			const bool animationDrivesMovement =
+				entity->isAnimationEnabled() && entity->getAnimationRate() != 0;
+			if (animationDrivesMovement) {
+				combatState.nextMovementTick = 0;
+				if (!entity->didAnimationAdvanceLastTick())
+					continue;
+			} else {
+				if (combatState.nextMovementTick != 0 && (int32)(now - combatState.nextMovementTick) < 0)
+					continue;
+				combatState.nextMovementTick = now + moveInterval;
+			}
 
 			const int previousX = monster.posX;
 			const int previousY = monster.posY;
@@ -3289,6 +3297,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			break;
 		}
 
+		const bool playerCanAct =
+			_engine.getStartupScript() &&
+			_engine.getStartupScript()->getPlayerCurrentHitPoints() > 0;
+		if (!playerCanAct && (moveLeft || moveRight || moveUp || moveDown ||
+				playerState.hasMoveTarget || playerState.turnActive || playerState.attackActive)) {
+			attackModifierHeld = false;
+			stopPlayerRegionInteraction();
+		}
+
 		bool playerAdvancedThisFrame = false;
 		Common::Error combatError = resolvePlayerAttackContact();
 		if (combatError.getCode() != Common::kNoError)
@@ -3305,7 +3322,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 		}
 		const bool keyboardAttackRequested =
 			attackModifierHeld && (moveLeft || moveRight || moveUp || moveDown);
-		if (!playerState.attackActive && keyboardAttackRequested &&
+		if (playerCanAct &&
+				!playerState.attackActive && keyboardAttackRequested &&
 				!idleState.active && !idleState.exiting) {
 			const uint32 now = Player::getRuntimeClockTicks();
 			if (nextKeyboardAttackAllowedTick == 0 || (int32)(now - nextKeyboardAttackAllowedTick) >= 0) {
@@ -3332,7 +3350,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			needsRedraw = true;
 		}
 
-		if (!playerState.attackActive && !keyboardAttackRequested && !idleState.active && !idleState.exiting) {
+		if (playerCanAct &&
+				!playerState.attackActive && !keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				playerAdvancedThisFrame = true;
