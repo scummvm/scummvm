@@ -124,6 +124,18 @@ void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void RichTextWidget::handleMouseMoved(int x, int y, int button) {
+	if (_txtWnd) {
+		Common::U32String link = _txtWnd->getMouseLink (
+			x - _innerMargin + _scrolledX, 
+			y - _innerMargin + _scrolledY
+		);
+
+		if (!link.empty())
+			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorIndex);
+		else
+			g_gui.theme()->setActiveCursor(GUI::ThemeEngine::kCursorNormal);
+	}	
+	
 	if (_mouseDownStartY == 0 || _mouseDownY == y || !_txtWnd)
 		return;
 
