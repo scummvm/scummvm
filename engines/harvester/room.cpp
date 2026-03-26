@@ -1902,12 +1902,29 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 			return "none";
 		}
 	};
+	auto requestPlayerGameOver = [&](const char *reason, const Common::String &sourceName) {
+		if (startupFlow.hasPendingMainMenuReturn())
+			return;
+
+		debugC(1, kDebugCombat,
+			"Harvester: player defeat queued reason='%s' source='%s' hp=%d",
+			reason ? reason : "", sourceName.c_str(),
+			_engine.getStartupScript()
+				? _engine.getStartupScript()->getPlayerCurrentHitPoints()
+				: 0);
+		startupFlow.requestGameOverReturn();
+	};
 	auto handleCombatInteraction = [&](StartupInteractionResult interaction) -> Common::Error {
 		bool didTransition = false;
 		Common::Error interactionError =
 			interactionProcessor.handleInteractionResult(interaction, didTransition, Common::String());
 		if (interactionError.getCode() != Common::kNoError)
 			return interactionError;
+		if (!startupFlow.hasPendingMainMenuReturn() &&
+				_engine.getStartupScript() &&
+				_engine.getStartupScript()->getPlayerCurrentHitPoints() <= 0) {
+			requestPlayerGameOver("combat_interaction", Common::String());
+		}
 
 		needsRedraw = true;
 		return Common::kNoError;
@@ -2302,6 +2319,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &e
 						if (changed && playerHitPointsAfter <= 0) {
 							playerAlive = false;
 							stopPlayerRegionInteraction();
+							requestPlayerGameOver("combat_monster_hit", monster.monsterName);
+							return Common::kNoError;
 						}
 					}
 					needsRedraw = true;

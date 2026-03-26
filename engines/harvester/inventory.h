@@ -23,6 +23,8 @@
 #define HARVESTER_INVENTORY_H
 
 #include "common/array.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/str.h"
 #include "harvester/art.h"
@@ -77,7 +79,11 @@ public:
 	static bool isStatusObject(const StartupObjectRecord &object);
 
 private:
+	bool loadBitmap(const Common::String &path, IndexedBitmap &bitmap);
+
 	Common::Array<StartupInventoryVisual> _items;
+	Common::HashMap<Common::String, IndexedBitmap,
+		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _bitmapCache;
 	bool _open = false;
 	int _lastPlayerHitPoints = -1;
 	int _lastStoryDayIndex = -1;

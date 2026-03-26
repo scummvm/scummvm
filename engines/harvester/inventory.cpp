@@ -268,6 +268,24 @@ static void debugLogInventoryVisual(const StartupInventoryVisual &visual, const 
 InventorySystem::InventorySystem(HarvesterEngine &engine) : _engine(engine) {
 }
 
+bool InventorySystem::loadBitmap(const Common::String &path, IndexedBitmap &bitmap) {
+	bitmap = IndexedBitmap();
+	if (path.empty())
+		return false;
+
+	if (_bitmapCache.contains(path)) {
+		bitmap = _bitmapCache[path];
+		return bitmap.isValid();
+	}
+
+	ResourceManager *resources = _engine.getResources();
+	if (!resources || !loadBitmapResource(*resources, path, bitmap))
+		return false;
+
+	_bitmapCache[path] = bitmap;
+	return true;
+}
+
 bool InventorySystem::refresh() {
 	_items.clear();
 
@@ -297,7 +315,7 @@ bool InventorySystem::refresh() {
 		}
 
 		const Common::String spritePath = resolveSceneObjectSpritePath(inventoryObject);
-		if (!spritePath.empty() && loadBitmapResource(*resources, spritePath, visual.bitmap)) {
+		if (!spritePath.empty() && loadBitmap(spritePath, visual.bitmap)) {
 			visual.hasBitmap = true;
 			if (isStatusObject(inventoryObject)) {
 				visual.bounds = Common::Rect(visual.object.currentX, visual.object.currentY,
