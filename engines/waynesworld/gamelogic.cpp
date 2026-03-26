@@ -8577,7 +8577,7 @@ void GameLogic::handlePizzathon() {
 	_vm->playAnimation("board", 13, 1, 13, 127, 0, 150);
 	_vm->waitSeconds(2);
 
-	warning("TODO sub_51875();");
+	handleHypnosisCutscene();
 
 	_vm->paletteFadeOut(0, 256, 4);
 	_vm->_screen->clear(0);
@@ -8591,6 +8591,28 @@ void GameLogic::handlePizzathon() {
 	_vm->_isTextVisible = false;
 
 	_vm->changeRoom(13);	
+}
+
+void GameLogic::handleHypnosisCutscene() {
+	WWSurface *sprite = new WWSurface(320, 200);
+	_vm->drawImageToSurface(_vm->_roomGxl, "spstart.pcx", sprite, 0, 0);
+	_vm->drawRandomEffect(sprite, 0, 0, 4, 4);
+	delete sprite;
+
+	for (int i = 0; i < 17; ++i) {
+		_vm->_screen->fillRect(0, 0, 319, 37, 0);
+		_vm->displayText("e00", i, 0, 156, 0, 0);
+		_vm->playAnimation("spiral", 0, 14, 77, 38, 0, 200);
+	}
+
+	for (int i = 0; i < 3; ++i) {
+		_vm->_screen->fillRect(0, 0, 319, 37, 0);
+		_vm->drawCurrentText(164, 170, nullptr);
+		_vm->playAnimation("spiral", 0, 15, 77, 38, 0, 100);
+		_vm->_screen->fillRect(0, 140, 319, 199, 0);
+		_vm->drawCurrentText(164, 0, nullptr);
+		_vm->playAnimation("spiral", 0, 15, 77, 38, 0, 100);
+	}
 }
 
 void GameLogic::r38_useCassandra() {
