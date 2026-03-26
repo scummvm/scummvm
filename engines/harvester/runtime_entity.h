@@ -94,6 +94,7 @@ public:
 	int getCurrentFrame() const { return _currentFrame; }
 	int getLastFrame() const { return _lastFrame; }
 	uint getFrameCount() const { return _frames.size(); }
+	bool didAnimationAdvanceLastTick() const { return _animationAdvancedLastTick; }
 	void setAnimationFrameRange(int firstFrame, int lastFrame, bool looping);
 	void setAnimationSequence(int sequence);
 	int getAnimationSequence() const { return _animationSequence; }
@@ -155,6 +156,7 @@ private:
 	bool _pingPong = false;
 	bool _playBackwards = false;
 	bool _animationEnabled = true;
+	bool _animationAdvancedLastTick = false;
 	bool _visible = true;
 	bool _drawEnabled = true;
 	int _boundsWidth = 0;

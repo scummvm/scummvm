@@ -356,6 +356,7 @@ void RuntimeEntity::setDepthScale(float scale) {
 }
 
 bool RuntimeEntity::tickVisualState(uint32 now) {
+	_animationAdvancedLastTick = false;
 	if (!_animationEnabled || _currentFrame < 0 || _animationTickInterval == 0)
 		return false;
 	if (now < _nextAnimationTick)
@@ -363,6 +364,7 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 
 	advanceAnimationFrame(_playBackwards ? -1 : -2);
 	_nextAnimationTick = now + _animationTickInterval;
+	_animationAdvancedLastTick = true;
 	return true;
 }
 

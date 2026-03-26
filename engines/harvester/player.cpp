@@ -426,6 +426,13 @@ static uint32 computeAnimationTickInterval(int rate) {
 }
 
 static bool consumePlayerMovementTick(StartupRoomPlayerState &playerState) {
+	if (playerState.entity &&
+			playerState.entity->isAnimationEnabled() &&
+			playerState.entity->getAnimationRate() != 0) {
+		playerState.nextMovementTick = 0;
+		return playerState.entity->didAnimationAdvanceLastTick();
+	}
+
 	const uint32 interval = computeAnimationTickInterval(kRoomPlayerWalkAnimationRate);
 	if (interval == 0) {
 		playerState.nextMovementTick = 0;
