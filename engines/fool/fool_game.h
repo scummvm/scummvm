@@ -128,25 +128,32 @@ public:
 	void sub_129_123a();
 
 	void sub_130_004();
+
+	// fool_wordsearch.cpp
 	void sub_131_004();
+	void sub_131_8aa();
+	void sub_131_cbe();
+	void sub_131_d22();
+	void sub_131_d66();
+	void sub_131_f42();
 
 	// fool_jigsaw.cpp
-	void sub_132_004();
-	void sub_132_518();
-	void sub_132_67a();
-	void sub_132_962();
-	void sub_132_e5a();
-	void sub_132_ed8();
-	void sub_132_1384();
-	void sub_132_13ea();
-	void sub_132_1444();
+	void jigsawRun(); // sub_132_004
+	void jigsawOnClick(); // sub_132_518
+	void jigsawDragSelect(); // sub_132_67a
+	void jigsawMoveSelected(); // sub_132_962
+	void jigsawCancelSelect(); // sub_132_e5a
+	void jigsawDropSelected(); // sub_132_ed8
+	void jigsawStoreState(); // sub_132_1384
+	void jigsawCheckIfSolved(); // sub_132_13ea
+	void jigsawSuccess(); // sub_132_1444
 
 	// fool_polyomino.cpp
 	void polyominoRun(); // sub_133_004
 	void polyominoOnClick(); // sub_133_87c
 	void sub_133_eb2();
 	void sub_133_f04();
-	void polyominoBadMove(); // sub_133_10a0
+	void polyominoOnClickFixed(); // sub_133_10a0
 	void sub_133_11cc();
 	void polyominoDrawFrame(); // sub_133_12d4
 	void sub_133_12f2();
@@ -308,8 +315,21 @@ private:
 	Common::U32String var_str_1272;
 	int16 var_i16_1372;
 
+	int16 var_i16_1574;
+
+	Common::U32String var_str_188e;
+
+	int16 var_i16_198e;
+	int16 var_i16_1990;
+	int16 var_i16_1992;
+	Common::U32String var_str_1994;
+
+	int16 var_i16_19ae;
+
+	int16 var_i16_1a94;
 	int16 var_i16_1a96;
 	int16 var_i16_1a98;
+	int16 var_i16_1a9a;
 	uint16 var_i16_1a9c;
 	int16 var_i16_1a9e;
 	int16 var_i16_1aa0;
