@@ -387,6 +387,21 @@ static void copyRect555To5551(byte *dst, const byte *src, const uint dstPitch, c
 	}
 }
 
+void OSystem_3DS::fillScreen(uint32 col) {
+	fillScreen(Common::Rect(getWidth(), getHeight()), col);
+}
+
+void OSystem_3DS::fillScreen(const Common::Rect &r, uint32 col) {
+	if (_pfGame == _gameTopTexture.format) {
+		_gameTopTexture.fillRect(r, col);
+		_gameTopTexture.markDirty();
+		return;
+	}
+
+	_gameScreen.fillRect(r, col);
+	_dirtyRects.push_back(r);
+}
+
 void OSystem_3DS::copyRectToScreen(const void *buf, int pitch, int x,
 								   int y, int w, int h) {
 	if (_pfGame == _gameTopTexture.format) {
