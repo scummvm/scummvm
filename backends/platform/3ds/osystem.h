@@ -160,6 +160,8 @@ public:
 	                      int h);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
+	void fillScreen(uint32 col);
+	void fillScreen(const Common::Rect &r, uint32 col);
 	void updateScreen();
 	void setShakePos(int shakeXOffset, int shakeYOffset);
 	void setFocusRectangle(const Common::Rect &rect);
