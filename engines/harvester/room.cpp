@@ -632,6 +632,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 	bool currentTargetIsRoomName = targetIsRoomName;
 	while (!currentRoomTarget.empty()) {
 		StartupRoomSetupState state;
+		StartupInteractionResult roomEntryInteraction;
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
 			startupFlow.resetRoomNpcDialogueState();
 			if (_engine.hasPendingLoadedDialogueStateBlob()) {
@@ -662,9 +663,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			currentTargetIsRoomName = false;
 		} else if ((currentTargetIsRoomName
 				? !_engine.getStartupScript()->resolveRoomSetupStateByRoomName(
-					currentRoomTarget, state, *_engine.getResources())
+					currentRoomTarget, state, *_engine.getResources(), &roomEntryInteraction)
 				: !_engine.getStartupScript()->resolveRoomSetupState(
-					currentRoomTarget, state, *_engine.getResources()))) {
+					currentRoomTarget, state, *_engine.getResources(), &roomEntryInteraction))) {
 			return Common::kReadingFailed;
 		}
 
@@ -2052,101 +2053,130 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			resetIdleState
 		};
-	auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> StartupNpcRecord * {
-		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
-			if (npc.npcName.equalsIgnoreCase(npcName))
-				return &npc;
+		auto hasDeferredRoomEntryInteraction = [](const StartupInteractionResult &interaction) {
+			return interaction.cdChangeDisc > 0 ||
+				!interaction.cutscenePath.empty() ||
+				!interaction.deathFlicPath.empty() ||
+				!interaction.dialogueNpcName.empty() ||
+				!interaction.dialogueContinuationTag.empty() ||
+				!interaction.continuationTag.empty() ||
+				!interaction.modalText.value.empty() ||
+				interaction.lightingCommand != kStartupLightingCommandNone ||
+				interaction.requestPlayerGotoXZ ||
+				interaction.requestMainMenu;
+		};
+		if (hasDeferredRoomEntryInteraction(roomEntryInteraction)) {
+			StartupInteractionResult deferredRoomEntryInteraction = roomEntryInteraction;
+			deferredRoomEntryInteraction.musicPath.clear();
+			deferredRoomEntryInteraction.audioCommands.clear();
+			deferredRoomEntryInteraction.mutatedRuntimeState = false;
+
+			bool didEntryTransition = false;
+			Common::Error entryInteractionError = interactionProcessor.handleInteractionResult(
+				deferredRoomEntryInteraction, didEntryTransition, Common::String());
+			if (entryInteractionError.getCode() != Common::kNoError)
+				return entryInteractionError;
+			if (startupFlow.hasPendingMainMenuReturn() || didEntryTransition)
+				return Common::kNoError;
+
+			startupFlow.resetCursorAnimationSequence();
+			resetIdleState();
 		}
-
-		return nullptr;
-	};
-	auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> StartupMonsterRecord * {
-		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
-			if (monster.monsterName.equalsIgnoreCase(monsterName))
-				return &monster;
-		}
-
-		return nullptr;
-	};
-	auto findRoomMonsterIndexByName = [&](const Common::String &monsterName) -> int {
-		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
-			if (scene.state.roomMonsters[i].monsterName.equalsIgnoreCase(monsterName))
-				return (int)i;
-		}
-
-		return -1;
-	};
-	auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> RuntimeEntity * {
-		return runtimeEntities ? runtimeEntities->findSceneEntityByName(entityName) : nullptr;
-	};
-	auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> StartupMonsterRecord * {
-		StartupMonsterRecord *bestMonster = nullptr;
-		int bestZ = -0x7fffffff;
-		int bestTop = -0x7fffffff;
-		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
-			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
-				continue;
-
-			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
-			if (!entity || !entity->isVisible())
-				continue;
-
-			const Common::Rect entityRect = entity->getScreenRect();
-			if (!entityRect.contains(point))
-				continue;
-
-			if (!bestMonster || monster.posZ > bestZ ||
-					(monster.posZ == bestZ && entityRect.top > bestTop)) {
-				bestMonster = &monster;
-				bestZ = monster.posZ;
-				bestTop = entityRect.top;
+		auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> StartupNpcRecord * {
+			for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+				if (npc.npcName.equalsIgnoreCase(npcName))
+					return &npc;
 			}
-		}
 
-		return bestMonster;
-	};
-	auto findOverlappingMonsterTarget = [&]() -> StartupMonsterRecord * {
-		if (!playerState.entity)
 			return nullptr;
+		};
+		auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> StartupMonsterRecord * {
+			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				if (monster.monsterName.equalsIgnoreCase(monsterName))
+					return &monster;
+			}
 
-		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
-			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
-				continue;
-
-			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
-			if (entity && areCombatantsWithinNativeCloseRange(scene.state,
-					*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
-				return &monster;
-		}
-
-		return nullptr;
-	};
-	auto findOverlappingNpcTarget = [&]() -> StartupNpcRecord * {
-		if (!playerState.entity)
 			return nullptr;
+		};
+		auto findRoomMonsterIndexByName = [&](const Common::String &monsterName) -> int {
+			for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
+				if (scene.state.roomMonsters[i].monsterName.equalsIgnoreCase(monsterName))
+					return (int)i;
+			}
 
-		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
-			if (!npc.visible || npc.deathOrMonsterfyFlag)
-				continue;
+			return -1;
+		};
+		auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> RuntimeEntity * {
+			return runtimeEntities ? runtimeEntities->findSceneEntityByName(entityName) : nullptr;
+		};
+		auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> StartupMonsterRecord * {
+			StartupMonsterRecord *bestMonster = nullptr;
+			int bestZ = -0x7fffffff;
+			int bestTop = -0x7fffffff;
+			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+					continue;
 
-			RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
-			if (entity && areCombatantsWithinNativeCloseRange(scene.state,
-					*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
-				return &npc;
-		}
+				RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+				if (!entity || !entity->isVisible())
+					continue;
 
-		return nullptr;
-	};
-	auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity, int engageDistance = 0) {
-		if (!playerState.entity || !targetEntity)
-			return false;
-		if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
-			return true;
+				const Common::Rect entityRect = entity->getScreenRect();
+				if (!entityRect.contains(point))
+					continue;
 
-		return areCombatantsWithinNativeCloseRange(scene.state,
-			*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
-	};
-	auto describeCombatTargetClass = [](int classId) -> const char * {
+				if (!bestMonster || monster.posZ > bestZ ||
+						(monster.posZ == bestZ && entityRect.top > bestTop)) {
+					bestMonster = &monster;
+					bestZ = monster.posZ;
+					bestTop = entityRect.top;
+				}
+			}
+
+			return bestMonster;
+		};
+		auto findOverlappingMonsterTarget = [&]() -> StartupMonsterRecord * {
+			if (!playerState.entity)
+				return nullptr;
+
+			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+				if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+					continue;
+
+				RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+				if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+						*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
+					return &monster;
+			}
+
+			return nullptr;
+		};
+		auto findOverlappingNpcTarget = [&]() -> StartupNpcRecord * {
+			if (!playerState.entity)
+				return nullptr;
+
+			for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+				if (!npc.visible || npc.deathOrMonsterfyFlag)
+					continue;
+
+				RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
+				if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+						*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
+					return &npc;
+			}
+
+			return nullptr;
+		};
+		auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity, int engageDistance = 0) {
+			if (!playerState.entity || !targetEntity)
+				return false;
+			if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
+				return true;
+
+			return areCombatantsWithinNativeCloseRange(scene.state,
+				*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
+		};
+		auto describeCombatTargetClass = [](int classId) -> const char * {
 		switch (classId) {
 		case kRuntimeEntityClassNpc:
 			return "npc";
