@@ -53,7 +53,6 @@ void Toolbox::DrawString(const Common::U32String &s) {
 		destPos.y += _port->portRect.top;
 
 		Common::Rect result = blitMono(buffer, _port->portBits, mask, destPos, _port->txMode);
-		_port->pnLoc.x += bbox.width();
 		if (_port->portBits == _defaultBits) {
 			_defaultWindow->addDirtyRect(result);
 			_defaultWindow->setDirty(true);
@@ -66,6 +65,8 @@ void Toolbox::DrawString(const Common::U32String &s) {
 			_port->picSave->pushOpU16(kOpTxSize, _port->txSize);
 			_port->picSave->pushOpPointStr(kOpLongText, _port->pnLoc, macString);
 		}
+
+		_port->pnLoc.x += bbox.width();
 	}
 }
 

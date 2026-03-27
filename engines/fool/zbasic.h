@@ -248,6 +248,7 @@ public:
 	void loadProgram(const Common::Path &path);
 	void loadSCOT();
 
+	int16 asc(const Common::U32String &str);
 	void bufferFlush(const Common::U32String &str);
 	void blockMove(void *srcptr, void *destptr, uint16 size);
 	Common::U32String chr(uint16 code);
@@ -261,6 +262,8 @@ public:
 	bool maybe();
 	uint32 mem(int16 index);
 	void menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title);
+	Common::U32String leftStr(const Common::U32String &str, int16 expression);
+	Common::U32String rightStr(const Common::U32String &str, int16 expression);
 	Common::U32String midStr(const Common::U32String &str, int16 expr1, int16 expr2);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);

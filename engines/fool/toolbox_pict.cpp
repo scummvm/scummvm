@@ -257,6 +257,8 @@ void Toolbox::DrawPicture(PicHandle &myPicture, const Common::Rect &dstRect) {
 
 	Common::MemoryReadStream stream(myPicture->picData.data(), myPicture->picData.size(), DisposeAfterUse::NO);
 
+	dstRect.debugPrintC(5, kDebugGraphics, "Toolbox::DrawPicture: drawing at ");
+
 	if (debugChannelSet(8, kDebugGraphics)) {
 		debugC(8, kDebugGraphics, "Toolbox::DrawPicture: image contents");
 		stream.hexdump(stream.size());
