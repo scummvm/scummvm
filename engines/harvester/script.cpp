@@ -1045,7 +1045,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 }
 
 bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources) {
+		ResourceManager &resources, StartupInteractionResult *entryInteraction) {
 	state = StartupRoomSetupState();
 
 	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
@@ -1057,35 +1057,35 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 		return false;
 	}
 
-	Common::String musicPath;
-	Common::Array<StartupAudioCommand> audioCommands;
-	bool mutatedRuntimeState = false;
+	StartupInteractionResult onEnterInteraction;
 	executeCommandChain(
 		room->onEnterCommand, "room setup command", room->roomName, false,
-		&musicPath,
-		&audioCommands,
+		&onEnterInteraction.musicPath,
+		&onEnterInteraction.audioCommands,
 		nullptr,
 		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		&mutatedRuntimeState);
+		entryInteraction ? &onEnterInteraction.cutscenePath : nullptr,
+		entryInteraction ? &onEnterInteraction.deathFlicPath : nullptr,
+		entryInteraction ? &onEnterInteraction.requestMainMenu : nullptr,
+		entryInteraction ? &onEnterInteraction.cdChangeDisc : nullptr,
+		entryInteraction ? &onEnterInteraction.dialogueNpcName : nullptr,
+		entryInteraction ? &onEnterInteraction.dialogueContinuationTag : nullptr,
+		entryInteraction ? &onEnterInteraction.continuationTag : nullptr,
+		entryInteraction ? &onEnterInteraction.modalText : nullptr,
+		entryInteraction ? &onEnterInteraction.lightingCommand : nullptr,
+		entryInteraction ? &onEnterInteraction.requestPlayerGotoXZ : nullptr,
+		entryInteraction ? &onEnterInteraction.playerGotoX : nullptr,
+		entryInteraction ? &onEnterInteraction.playerGotoZ : nullptr,
+		&onEnterInteraction.mutatedRuntimeState);
 
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	state.audioCommands = audioCommands;
-	if (!musicPath.empty())
-		state.musicPath = musicPath;
+	state.audioCommands = onEnterInteraction.audioCommands;
+	if (!onEnterInteraction.musicPath.empty())
+		state.musicPath = onEnterInteraction.musicPath;
+	if (entryInteraction)
+		*entryInteraction = onEnterInteraction;
 
 	debugC(1, kDebugRoom,
 		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
@@ -1095,13 +1095,13 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
 		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
-		(uint)state.roomRegions.size(), mutatedRuntimeState);
+		(uint)state.roomRegions.size(), onEnterInteraction.mutatedRuntimeState);
 
 	return true;
 }
 
 bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
-		ResourceManager &resources) {
+		ResourceManager &resources, StartupInteractionResult *entryInteraction) {
 	state = StartupRoomSetupState();
 
 	const StartupRoomRecord *room = findRoomRecord(roomName);
@@ -1119,35 +1119,35 @@ bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, Sta
 		break;
 	}
 
-	Common::String musicPath;
-	Common::Array<StartupAudioCommand> audioCommands;
-	bool mutatedRuntimeState = false;
+	StartupInteractionResult onEnterInteraction;
 	executeCommandChain(
 		room->onEnterCommand, "room setup command", room->roomName, false,
-		&musicPath,
-		&audioCommands,
+		&onEnterInteraction.musicPath,
+		&onEnterInteraction.audioCommands,
 		nullptr,
 		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		&mutatedRuntimeState);
+		entryInteraction ? &onEnterInteraction.cutscenePath : nullptr,
+		entryInteraction ? &onEnterInteraction.deathFlicPath : nullptr,
+		entryInteraction ? &onEnterInteraction.requestMainMenu : nullptr,
+		entryInteraction ? &onEnterInteraction.cdChangeDisc : nullptr,
+		entryInteraction ? &onEnterInteraction.dialogueNpcName : nullptr,
+		entryInteraction ? &onEnterInteraction.dialogueContinuationTag : nullptr,
+		entryInteraction ? &onEnterInteraction.continuationTag : nullptr,
+		entryInteraction ? &onEnterInteraction.modalText : nullptr,
+		entryInteraction ? &onEnterInteraction.lightingCommand : nullptr,
+		entryInteraction ? &onEnterInteraction.requestPlayerGotoXZ : nullptr,
+		entryInteraction ? &onEnterInteraction.playerGotoX : nullptr,
+		entryInteraction ? &onEnterInteraction.playerGotoZ : nullptr,
+		&onEnterInteraction.mutatedRuntimeState);
 
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	state.audioCommands = audioCommands;
-	if (!musicPath.empty())
-		state.musicPath = musicPath;
+	state.audioCommands = onEnterInteraction.audioCommands;
+	if (!onEnterInteraction.musicPath.empty())
+		state.musicPath = onEnterInteraction.musicPath;
+	if (entryInteraction)
+		*entryInteraction = onEnterInteraction;
 
 	debugC(1, kDebugRoom,
 		"Harvester: resolveRoomSetupStateByRoomName('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
@@ -1157,7 +1157,7 @@ bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, Sta
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
 		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
-		(uint)state.roomRegions.size(), mutatedRuntimeState);
+		(uint)state.roomRegions.size(), onEnterInteraction.mutatedRuntimeState);
 
 	return true;
 }

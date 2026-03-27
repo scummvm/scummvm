@@ -347,9 +347,9 @@ public:
 	void resetRuntimeState();
 	void syncRuntimeSaveState(Common::Serializer &s);
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources);
+		ResourceManager &resources, StartupInteractionResult *entryInteraction = nullptr);
 	bool resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
-		ResourceManager &resources);
+		ResourceManager &resources, StartupInteractionResult *entryInteraction = nullptr);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		StartupRoomSetupState &state, ResourceManager &resources) const;
 	bool executeRoomExitCommands(const Common::String &roomName, StartupInteractionResult &result);
