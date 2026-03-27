@@ -101,7 +101,7 @@ bool BoltEngine::initFred() {
 		_fredLevelIndex++;
 	}
 
-	// Flush timer events...
+	// Flush non-timer events...
 	uint32 dummy;
 	while (_xp->getEvent(etTimer, &dummy) != etTimer);
 
@@ -381,7 +381,7 @@ int16 BoltEngine::playFred() {
 		// Process events...
 		int16 eventType;
 		uint32 eventData;
-		while ((eventType = _xp->getEvent(0, &eventData)) != 0) {
+		while ((eventType = _xp->getEvent(etEmpty, &eventData)) != etEmpty) {
 			switch (eventType) {
 			case etJoystick:
 				joystickX = (int16)(eventData >> 16);
@@ -790,7 +790,7 @@ int16 BoltEngine::helpFred() {
 
 		// Process events...
 		uint32 eventData;
-		int16 eventType = _xp->getEvent(0, &eventData);
+		int16 eventType = _xp->getEvent(etEmpty, &eventData);
 
 		switch (eventType) {
 		case etTimer: {

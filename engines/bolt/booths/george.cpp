@@ -85,7 +85,7 @@ bool BoltEngine::initGeorge() {
 		_georgeCollectedSatellitesNum++;
 	}
 
-	// Drain timer events...
+	// Drain non-timer events...
 	uint32 dummy;
 	while (_xp->getEvent(etTimer, &dummy) != etTimer);
 
@@ -855,8 +855,8 @@ int16 BoltEngine::helpGeorge() {
 
 			_georgeHelpTimer = _xp->startTimer(500);
 			
-				bool lit = !(READ_UINT32(_georgePrevActiveHelpObject + 0x08) & 1u);
-				hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, lit ? 1 : 0);
+			bool lit = !(READ_UINT32(_georgePrevActiveHelpObject + 0x08) & 1u);
+			hiliteGeorgeHelpObject(_georgePrevActiveHelpObject, lit ? 1 : 0);
 			
 			break;
 		}

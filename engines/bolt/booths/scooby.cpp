@@ -274,7 +274,7 @@ void BoltEngine::initScoobyLevelGraphics() {
 	_scoobyBgPic = memberAddr(_scoobyBoltLib, picMember);
 	clearPictMSb(_scoobyBgPic);
 
-	// Drain timer events
+	// Drain non-timer events
 	uint32 dummy;
 	while (_xp->getEvent(etTimer, &dummy) != etTimer);
 
@@ -1666,7 +1666,7 @@ int16 BoltEngine::helpScooby() {
 		}
 
 		uint32 eventData;
-		int16 eventType = _xp->getEvent(0, &eventData);
+		int16 eventType = _xp->getEvent(etEmpty, &eventData);
 
 		switch (eventType) {
 		case etTimer: {

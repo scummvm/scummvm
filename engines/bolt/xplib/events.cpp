@@ -58,7 +58,7 @@ int16 XpLib::getEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 
 	// Search event queue for matching event type...
 	XPEvent *node = _eventQueueHead;
-	if (filter != 0) {
+	if (filter != etEmpty) {
 		while (node) {
 			if (node->type == filter)
 				break;
@@ -89,7 +89,7 @@ int16 XpLib::peekEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	pumpMessages();
 
 	XPEvent *node = _eventQueueHead;
-	if (filter != 0) {
+	if (filter != etEmpty) {
 		while (node) {
 			if (node->type == filter)
 				break;
@@ -99,7 +99,7 @@ int16 XpLib::peekEvent(int16 filter, uint32 *outData, byte **outPtrData) {
 	}
 
 	if (!node)
-		return 0;
+		return etEmpty;
 
 	// Copy data but don't remove from queue...
 	*outData = node->payload;
