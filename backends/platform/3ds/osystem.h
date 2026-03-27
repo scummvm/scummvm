@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
+#include "graphics/dirtyrects.h"
 #include "graphics/paletteman.h"
 #include "base/main.h"
 #include "audio/mixer_intern.h"
@@ -236,7 +237,7 @@ private:
 	uint32 _paletteMap[256];
 
 	Graphics::Surface _gameScreen;
-	bool _gameTextureDirty;
+	Graphics::DirtyRectList _dirtyRects;
 	Sprite _gameTopTexture;
 	Sprite _gameBottomTexture;
 	Sprite _overlay;
