@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	blit/blit-scale.o \
 	color_quantizer.o \
 	cursorman.o \
+	dirtyrects.o \
 	font.o \
 	fontman.o \
 	fonts/amigafont.o \

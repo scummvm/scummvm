@@ -19,45 +19,37 @@
  *
  */
 
-#ifndef PETKA_SCREEN_H
-#define PETKA_SCREEN_H
-
 #include "graphics/dirtyrects.h"
-#include "graphics/screen.h"
 
-namespace Petka {
+namespace Graphics {
 
-class FlicDecoder;
+void DirtyRectList::merge() {
+	Common::List<Common::Rect>::iterator rOuter, rInner;
 
-class PetkaEngine;
+	// Process the dirty rect list to find any rects to merge
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
 
-class VideoSystem : public Graphics::Screen {
-public:
-	explicit VideoSystem(PetkaEngine &vm);
+			if ((*rOuter).intersects(*rInner)) {
+				// These two rectangles overlap, so merge them
+				unionRectangle(*rOuter, *rOuter, *rInner);
 
-	void updateTime();
-	void update() override;
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
 
-	void addDirtyRect(const Common::Rect &rect) override;
-	void addDirtyRect(Common::Point pos, Common::Rect rect);
-	void addDirtyRect(Common::Point pos, FlicDecoder &flc);
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
 
-	void addDirtyMskRects(Common::Point pos, FlicDecoder &flc);
-	void addDirtyMskRects(FlicDecoder &flc);
+bool DirtyRectList::unionRectangle(Common::Rect &destRect, const Common::Rect &src1, const Common::Rect &src2) {
+	destRect = src1;
+	destRect.extend(src2);
 
-	void setShake(bool shake);
+	return !destRect.isEmpty();
+}
 
-	const Graphics::DirtyRectList &rects() const;
-
-private:
-	PetkaEngine &_vm;
-	uint32 _shakeTime;
-	uint32 _time;
-	bool _shake;
-	bool _shift;
-	bool _allowAddingRects;
-};
-
-} // End of namespace Petka
-
-#endif
+} // End of namespace Graphics
