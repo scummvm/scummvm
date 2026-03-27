@@ -18,6 +18,7 @@ MODULE_OBJS = \
 	mainmenu.o \
 	metaengine.o \
 	nim.o \
+	outro.o \
 	parser.o \
 	sequence.o \
 	shootemup.o \
