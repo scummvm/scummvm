@@ -281,6 +281,7 @@ void FoolGame::sub_128_1e4(const Common::U32String &unk1) {
 }
 
 void FoolGame::sub_128_2be(int16 unk2, int16 unk1) {
+	// convert mouse coordinates to grid coordinates
 	this->var_i16_68c = unk1;
 	this->var_i16_68a = unk2;
 	this->var_i16_68a = (this->var_ev_46.where.x - this->arr_i16_1eb8[4]) / (this->arr_i16_1eb8[6]);
@@ -1096,13 +1097,22 @@ void FoolGame::sub_128_26f6() {
 }
 
 void FoolGame::sub_128_271a() {
+	int position = this->arr_i32_19454[this->var_i16_7e2] - 1;
 	// record index
-	this->var_i16_484 = (this->arr_i32_19454[this->var_i16_7e2] - 1) / 1000;
+	this->var_i16_484 = (int16)(position / 1000);
 	// offset at record
-	this->var_i16_7e4 = (this->arr_i32_19454[this->var_i16_7e2] - 1) % 1000;
+	this->var_i16_7e4 = (int16)(position % 1000);
 	g_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
 	this->var_ptr_696 = 0;
-	this->arr_bytes_109dc = g_zbasic->readFile(1, this->arr_i32_19454[this->var_i16_7e2 + 1] - this->arr_i32_19454[this->var_i16_7e2]);
+	int length = this->arr_i32_19454[this->var_i16_7e2 + 1] - this->arr_i32_19454[this->var_i16_7e2];
+	debugC(8, kDebugLoading, "sub_128_271a: seek puzzles to puzzle %d at position %x (rec: %d, offset: %d), length %x",
+			this->var_i16_7e2,
+			position,
+			this->var_i16_484,
+			this->var_i16_7e4,
+			length
+	);
+	this->arr_bytes_109dc = g_zbasic->readFile(1, length);
 	this->var_bytes_696 = this->arr_bytes_109dc;
 
 }
@@ -1599,7 +1609,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_131_004();
 		break;
 	case 5:
-		this->sub_132_004();
+		this->jigsawRun();
 		break;
 	case 6:
 		this->polyominoRun();
@@ -1870,7 +1880,7 @@ void FoolGame::sub_128_4472() {
 		this->arr_i16_4758[2] = 0x8;
 	}
 	if (this->arr_i16_4758[0] == 0) {
-		// user clicked the puzzle button, zoom-fill with checkerboard
+		// user clicked the puzzle button, zoom-fill with pattern
 		sub_128_962(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, this->arr_i16_4758[1], (PatternMode)this->arr_i16_4758[2], 0x19);
 		return;
 	}
@@ -2760,11 +2770,6 @@ void FoolGame::sub_130_004() {
 	// 130:047e
 
 	// 130:0c64
-	warning("STUB: %s", __func__);
-}
-
-// word search game
-void FoolGame::sub_131_004() {
 	warning("STUB: %s", __func__);
 }
 

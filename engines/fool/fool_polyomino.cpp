@@ -19,8 +19,6 @@
  *
  */
 
-#include "graphics/managed_surface.h"
-
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
@@ -77,7 +75,9 @@ void FoolGame::polyominoRun() {
 		for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 			// 133:0184
 			this->var_i16_484++;
+			// collision map: 2D grid where element is occupying polyomino ID
 			this->arr_i16_2f38[i*32 + j] = 0;
+
 			this->arr_i16_3b38[i*32 + j] = this->var_i16_484;
 		}
 	}
@@ -100,13 +100,29 @@ void FoolGame::polyominoRun() {
 		for (int i = 5; i <= 6; i++) {
 			this->arr_i16_47d8[j*8 + i] = this->arr_i16_47d8[j*8 + i - 2];
 		}
+		debug(5,"FoolGame::polyominoRun: adding polyomino %d:", j);
+		for (int i = 0; i < 4; i++) {
+			uint16 data =(this->arr_i16_47d8[j*8] >> (i*4)) & 0xf;
+			debug(5, "%s%s%s%s",
+				data & 0x1 ? "#" : " ",
+				data & 0x2 ? "#" : " ",
+				data & 0x4 ? "#" : " ",
+				data & 0x8 ? "#" : " "
+			);
+		}
+		debug(5, "%d, %d, start position %d, %d",
+				this->arr_i16_47d8[j*8 + 1],
+				this->arr_i16_47d8[j*8 + 2],
+				this->arr_i16_47d8[j*8 + 3],
+				this->arr_i16_47d8[j*8 + 4]
+				);
 		// 133:02de
 		if (this->var_str_c06 != g_zbasic->str(211)) {
-			if (j != 1)  {
+			if (j == 1)  {
 				this->var_i16_1aa8 = 1;
 			}
 			for (int i = 3; i <= 4; i++) {
-				this->arr_i16_47d8[j*8 + i] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, i, 2));
+				this->arr_i16_47d8[j*8 + i] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, this->var_i16_1aa8, 2));
 				this->var_i16_1aa8 += 2;
 			}
 		}
@@ -220,7 +236,7 @@ void FoolGame::polyominoRun() {
 			}
 			// yield to renderer
 			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
+				g_toolbox->Delay(1);
 			}
 			// 133:0800
 		} while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0));
@@ -251,29 +267,37 @@ void FoolGame::polyominoRun() {
 void FoolGame::polyominoOnClick() {
 	// 133:087c
 	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
+	debug(5, "FoolGame::polyominoOnClick: grid pos: (%d, %d)", this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) || (this->var_i16_68c < 1) || (this->var_i16_68c > this->arr_i16_1eb8[1])) {
 		this->sub_128_6186();
 		return;
 	}
 	// 133:0904
+	// get polyomino from collision map
 	this->var_i16_7cc = this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c];
+	debug(5, "FoolGame::polyominoOnClick: selected polyomino: %d", this->var_i16_7cc);
+	// if no polyomino, ignore
 	if (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] == 0) {
 		this->sub_128_6186();
 		return;
 	}
 	// 133:0950
+	// if polyomino is part of the fixed list, act as if it were an invalid move
 	if (this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c] <= this->arr_i16_1eb8[0x11]) {
-		this->polyominoBadMove();
+		this->polyominoOnClickFixed();
 		return;
 	}
 	// 133:0990
 	this->var_i16_106a = 0;
 	this->var_i16_1a96 = this->arr_i16_47d8[this->var_i16_7cc*8 + 3];
 	this->var_i16_1a98 = this->arr_i16_47d8[this->var_i16_7cc*8 + 4];
+	debug(5, "FoolGame::polyominoOnClick: 1a96: %d, 1a98: %d", this->var_i16_1a96, this->var_i16_1a98);
+
 	for (int j = this->var_i16_1a98; j <= this->var_i16_1a98 + 3; j++) {
 		// 133:09dc
 		for (int i = this->var_i16_1a96; i <= this->var_i16_1a96 + 3; i++) {
 			if (this->arr_i16_47d8[this->var_i16_7cc*8] & this->bitLUT[this->var_i16_106a]) {
+				// erase grabbed polyomino from collision map
 				this->arr_i16_2f38[i*32 + j] = 0;
 			}
 			// 133:0a36
@@ -285,15 +309,26 @@ void FoolGame::polyominoOnClick() {
 	this->var_i16_1ab4 = this->var_i16_1a98 - this->var_i16_68c;
 	this->var_i16_1062 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].left;
 	this->var_i16_1064 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].top;
+	debug(5, "FoolGame::polyominoOnClick: Draw pic 2 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 2]);
+	// 133:0b1c
+	this->polyominoDrawFrame();
+	this->sub_128_4da(0);
+	this->var_i16_1ab6 = this->var_i16_1062;
+	this->var_i16_1ab8 = this->var_i16_1064;
+	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+
 	// 133:0b5a: JMP - [0xde0]
 	while (this->var_ev_46.what != 2) {
+		// 133:0b5e
 		// 133:0d3a
 		while ((this->var_i16_1ab6 == this->var_i16_1062) && (this->var_i16_1ab8 == this->var_i16_1064) && (this->var_ev_46.what != 2)) {
 			// 133:0b62
 			this->sub_128_c6a(4);
-			this->var_i16_68a = (this->arr_i16_1eb8[6] / (this->var_ev_46.where.x - this->arr_i16_1eb8[4])) + this->var_i16_1ab2;
-			this->var_i16_68c = (this->arr_i16_1eb8[7] / (this->var_ev_46.where.y  - this->arr_i16_1eb8[5])) + this->var_i16_1ab4;
+
+			this->var_i16_68a = this->var_i16_1ab2 + ((this->var_ev_46.where.x - this->arr_i16_1eb8[4]) / this->arr_i16_1eb8[6]);
+			this->var_i16_68c = this->var_i16_1ab4 + ((this->var_ev_46.where.y - this->arr_i16_1eb8[5]) / this->arr_i16_1eb8[7]);
+
 			if (this->var_i16_68a < 1) {
 				this->var_i16_68a = 1;
 			}
@@ -312,6 +347,7 @@ void FoolGame::polyominoOnClick() {
 			// 133:0cc8
 			this->var_i16_1ab6 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
 			this->var_i16_1ab8 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
+			//debug(5, "FoolGame::polyominoOnClick: Move to (%d, %d) -> (%d, %d)", this->var_i16_68a, this->var_i16_68c, this->var_i16_1ab6, this->var_i16_1ab8);
 
 			// yield to renderer
 			if (this->var_ev_46.what == kNullEvent) {
@@ -320,9 +356,14 @@ void FoolGame::polyominoOnClick() {
 		}
 		// 133:0d78
 		if (this->var_ev_46.what != 2) {
+			debug(5, "FoolGame::polyominoOnClick: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
+			// XOR out original position
 			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
+			// drag to cursor position
 			this->var_i16_1062 = this->var_i16_1ab6;
 			this->var_i16_1064 = this->var_i16_1ab8;
+			// XOR out new position
+			debug(5, "FoolGame::polyominoOnClick: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 		}
 		// 133:0de0
@@ -331,6 +372,7 @@ void FoolGame::polyominoOnClick() {
 	// 133:0dea
 	this->var_i16_106a = 0;
 	this->var_i16_1a9c = 0;
+	// store polyomino as bitfield.
 	for (int j = this->var_i16_68c; j <= this->var_i16_68c + 3; j++) {
 		for (int i = this->var_i16_68a; i <= this->var_i16_68a + 3; i++) {
 			if (this->arr_i16_2f38[i*32 + j] > 0) {
@@ -365,10 +407,11 @@ void FoolGame::sub_133_eb2() {
 void FoolGame::sub_133_f04() {
 	// 133:0f04
 	this->var_i16_106a = 0;
+	// polyominos are max 4x4
+	// add the polyomino to the collision map
 	for (int j = this->var_i16_68c; j <= this->var_i16_68c + 3; j++) {
 		for (int i = this->var_i16_68a; i <= this->var_i16_68a + 3; i++) {
-			this->var_i16_1a96 = this->var_i16_68a;
-			if ((this->arr_i16_47d8[this->var_i16_7cc*8 + 1] & this->bitLUT[this->var_i16_106a]) != 0) {
+			if ((this->arr_i16_47d8[this->var_i16_7cc*8] & this->bitLUT[this->var_i16_106a]) != 0) {
 				this->arr_i16_2f38[i*32 + j] = this->var_i16_7cc;
 			}
 			// 133:0f6c
@@ -376,21 +419,24 @@ void FoolGame::sub_133_f04() {
 		}
 	}
 	// 133:0f96
+	// set the polyomino position
 	this->arr_i16_47d8[this->var_i16_7cc*8 + 3] = this->var_i16_68a;
 	this->arr_i16_47d8[this->var_i16_7cc*8 + 4] = this->var_i16_68c;
 
 	// 133:0fce
 	if (this->var_i16_1ab0 != 0) {
+		debug(5, "FoolGame::sub_133_f04: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 		g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 	}
 	// 133:1002
 	this->var_i16_1062 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
 	this->var_i16_1064 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
+	debug(5, "FoolGame::sub_133_f04: Draw pic 1 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 1]);
 
 }
 
-void FoolGame::polyominoBadMove() {
+void FoolGame::polyominoOnClickFixed() {
 	// 133:10a0
 	this->var_i16_484 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].left;
 	this->var_i16_7e4 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].top;
@@ -399,8 +445,10 @@ void FoolGame::polyominoBadMove() {
 	// why do this???
 	// best guess: flashing the shape a few times before knocking it back
 	// 133:1188
+	debug(5, "FoolGame::polyominoOnClickFixed: Draw pic 0 (%d, %d)", this->var_i16_484, this->var_i16_7e4);
 	for (int i = 0; i <= 9; i++) {
 		g_zbasic->picture(this->var_i16_484, this->var_i16_7e4, this->arr_pic_49d8[this->var_i16_7cc*4]);
+		g_toolbox->Delay(0);
 	}
 	// 133:11c2
 	this->polyominoDrawFrame();
@@ -409,6 +457,7 @@ void FoolGame::polyominoBadMove() {
 
 void FoolGame::sub_133_11cc() {
 	// 133:11cc
+	// zero out collision grid
 	for (int j = 1; j <= this->arr_i16_1eb8[1] + 1; j++) {
 		for (int i = 1; i <= this->arr_i16_1eb8[0] + 1; i++) {
 			this->arr_i16_2f38[i*32 + j] = 0;
@@ -433,10 +482,10 @@ void FoolGame::polyominoDrawFrame() {
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);
 	Common::Rect temp;
-	temp.top = this->arr_i16_1eb8[12];
-	temp.left = this->arr_i16_1eb8[13];
-	temp.bottom = this->arr_i16_1eb8[14];
-	temp.right = this->arr_i16_1eb8[15];
+	temp.top = this->arr_i16_1eb8[0x12];
+	temp.left = this->arr_i16_1eb8[0x13];
+	temp.bottom = this->arr_i16_1eb8[0x14];
+	temp.right = this->arr_i16_1eb8[0x15];
 	g_toolbox->FrameRect(temp);
 	g_toolbox->PenNormal();
 }

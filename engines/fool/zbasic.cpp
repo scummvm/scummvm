@@ -177,6 +177,12 @@ void ZBasic::loadProgram(const Common::Path &path) {
 
 }
 
+int16 ZBasic::asc(const Common::U32String &str) {
+	if (str.empty())
+		return 0;
+	return str.encode(Common::kMacRoman)[0];
+}
+
 void ZBasic::blockMove(void *srcptr, void *destptr, uint16 size) {
 	memmove(destptr, srcptr, size);
 }
@@ -514,6 +520,14 @@ void ZBasic::record(int16 fileNo, int16 recordNo, int16 location) {
 		error("ZBasic::record: unknown fileNo %d", fileNo);
 	}
 	_fileStreams[fileNo]->seek(_fileLineSize[fileNo]*recordNo + location);
+}
+
+Common::U32String ZBasic::leftStr(const Common::U32String &str, int16 expression) {
+	return str.substr(0, expression);
+}
+
+Common::U32String ZBasic::rightStr(const Common::U32String &str, int16 expression) {
+	return str.substr(str.size() - 1 - expression, expression);
 }
 
 int16 ZBasic::rndInt(int16 max) {

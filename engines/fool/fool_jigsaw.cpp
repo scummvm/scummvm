@@ -32,7 +32,7 @@ extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
 // jigsaw puzzle game
-void FoolGame::sub_132_004() {
+void FoolGame::jigsawRun() {
 	// 132:0004
 	this->var_i16_c00 = 1;
 	this->sub_128_271a();
@@ -113,7 +113,7 @@ void FoolGame::sub_132_004() {
 	this->var_i16_7c6 = 0;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
-	this->sub_132_13ea();
+	this->jigsawCheckIfSolved();
 	// JMP 0x4d8
 
 	// 132:04d8
@@ -125,30 +125,29 @@ void FoolGame::sub_132_004() {
 			// 132:0488
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseDown) {
-				this->sub_132_518();
+				this->jigsawOnClick();
 			}
 			g_toolbox->Delay(0);
 		}
 		// 132:04b8
 		if (this->var_i16_7c6 == 2) {
-			this->sub_132_e5a();
+			this->jigsawCancelSelect();
 		}
 		if (this->var_i16_7c6 == 4) {
-			this->sub_132_1384();
+			this->jigsawStoreState();
 			this->sub_128_3536();
 		}
 	}
 	// 132:0500
 	if (this->var_i16_d0c != 0) {
-		this->sub_132_1444();
+		this->jigsawSuccess();
 	}
-	this->sub_132_1384();
+	this->jigsawStoreState();
 	// JMP 0x14a6
 	// 132:14a6
 }
 
-void FoolGame::sub_132_518() {
-	warning("call: %s", __func__);
+void FoolGame::jigsawOnClick() {
 	// 132:0518
 	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || ((this->var_i16_68a - (this->arr_i16_1eb8[0])) > 0) || (this->var_i16_68c < 1) || ((this->var_i16_68c - (this->arr_i16_1eb8[1])) > 0)) {
@@ -165,7 +164,7 @@ void FoolGame::sub_132_518() {
 	this->arr_i16_4758[1] = this->var_i16_68c;
 
 	// change select area while mouse button held down
-	this->sub_132_67a();
+	this->jigsawDragSelect();
 	// leave an XOR outline on the page for the selected block
 	Common::Rect temp(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
 	g_toolbox->FrameRect(temp);
@@ -174,21 +173,21 @@ void FoolGame::sub_132_518() {
 
 	// 132:0642
 	// move select area to new target
-	this->sub_132_962();
+	this->jigsawMoveSelected();
 	// remove XOR outline
 	temp = Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]);
 	g_toolbox->FrameRect(temp);
 
-	this->sub_132_ed8();
-	this->sub_132_13ea();
+	this->jigsawDropSelected();
+	this->jigsawCheckIfSolved();
 	this->sub_128_6186();
 	g_zbasic->menu(8, 3, 1, Common::U32String());
 	this->var_i16_e12 = 0;
 }
 
-void FoolGame::sub_132_67a() {
+void FoolGame::jigsawDragSelect() {
+	// 132:067a
 	// change select area while mouse button held down
-	warning("call: %s", __func__);
 	do {
 		this->sub_128_c6a(4);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
@@ -224,7 +223,8 @@ void FoolGame::sub_132_67a() {
 	} while (this->var_ev_46.what != kMouseUp);
 }
 
-void FoolGame::sub_132_962() {
+void FoolGame::jigsawMoveSelected() {
+	// 132:0962
 	// move select area to new target
 	warning("call: %s", __func__);
 	do {
@@ -283,19 +283,17 @@ void FoolGame::sub_132_962() {
 	while (!((this->var_ev_46.what == kMouseDown) && (this->var_ev_46.where.y > 0x14)));
 }
 
-void FoolGame::sub_132_e5a() {
-	warning("call: %s", __func__);
+void FoolGame::jigsawCancelSelect() {
 	// 132:0e5a
 	this->var_i16_7c6 = 0;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
 	g_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
-	sub_132_ed8();
+	jigsawDropSelected();
 }
 
-void FoolGame::sub_132_ed8() {
-	warning("call: %s", __func__);
+void FoolGame::jigsawDropSelected() {
 	// 132:0ed8
 	// skip the tile pointer to past the end of the list
 	this->var_i16_1aa4 = this->var_i16_1a9e;
@@ -376,9 +374,8 @@ void FoolGame::sub_132_ed8() {
 	}
 }
 
-void FoolGame::sub_132_1384() {
+void FoolGame::jigsawStoreState() {
 	// convert jigsaw positions to string
-	warning("call: %s", __func__);
 	// 132:1384
 	this->var_str_c06 = g_zbasic->str(208);
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
@@ -388,9 +385,8 @@ void FoolGame::sub_132_1384() {
 }
 
 
-void FoolGame::sub_132_13ea() {
+void FoolGame::jigsawCheckIfSolved() {
 	// check if puzzle is solved
-	warning("call: %s", __func__);
 	// 132:13ea
 	this->var_i16_d0c = 1;
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
@@ -406,7 +402,7 @@ void FoolGame::sub_132_13ea() {
 	}
 }
 
-void FoolGame::sub_132_1444() {
+void FoolGame::jigsawSuccess() {
 	// strobe puzzle pieces once on victory
 	if (this->var_i16_c04 < 0x64) {
 		this->var_i16_c04 = 0x64;
