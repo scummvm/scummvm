@@ -144,6 +144,11 @@ public:
 	uint8 getFaderR() const;
 
 	/**
+	 * Queries whether the channel is silent, i.e. will produce no audio output.
+	 */
+	bool isSilent() const { return _volL == 0 && _volR == 0; }
+
+	/**
 	 * Set the channel's sample rate.
 	 *
 	 * @param rate	The new sample rate. Must be less than 131072
@@ -346,15 +351,13 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 	// Since the mixer callback has been called, the mixer must be ready...
 	_mixerReady = true;
 
-	// zero the sample buffer
-	memset(samples, 0, len);
-
 	// we store samples of size defined by the backend
 	const uint bytesPerFrame = _outBytesPerSample * (_stereo ? 2 : 1);
 	assert(len % bytesPerFrame == 0);
-	len /= bytesPerFrame;
+	const uint numFrames = len / bytesPerFrame;
 
-	// mix all channels
+	// mix all channels, zeroing the buffer lazily on first non-silent channel
+	bool zeroed = false;
 	int res = 0, tmp;
 	for (int i = 0; i != NUM_CHANNELS; i++)
 		if (_channels[i]) {
@@ -362,14 +365,19 @@ int MixerImpl::mixCallback(byte *samples, uint len) {
 				delete _channels[i];
 				_channels[i] = nullptr;
 			} else if (!_channels[i]->isPaused()) {
-				tmp = _channels[i]->mix(samples, len);
+				if (!_channels[i]->isSilent() && !zeroed) {
+					memset(samples, 0, len);
+					zeroed = true;
+				}
+				tmp = _channels[i]->mix(samples, numFrames);
 
 				if (tmp > res)
 					res = tmp;
 			}
 		}
 
-	return res;
+	// optimisation: let the caller know that there's nothing to clamp
+	return (!_clamp && !zeroed) ? 0 : res;
 }
 
 void MixerImpl::stopAll() {
