@@ -222,8 +222,8 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 }
 
 uint32 EventsManager::getDoubleClickTime() const {
-    uint32 timeout = g_system->getDoubleClickTime();
-    return timeout > 0 ? timeout : 400;
+	uint32 timeout = g_system->getDoubleClickTime();
+	return timeout > 0 ? timeout : 400;
 }
 
 void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown) {
@@ -236,7 +236,7 @@ void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown
 		}
 		return;
 	}
-	
+
 	if (_interfaceOff)
 		return;
 

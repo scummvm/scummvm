@@ -246,7 +246,7 @@ void Animation::anim10() {
 }
 
 void Animation::anim11() {
-     // Actor idle
+	// Actor idle
 	const AnimationFrame *frame = calcFrame();
 	_countdownTicks += frame->_frameDelay;
 	_scaling = _vm->_scale;

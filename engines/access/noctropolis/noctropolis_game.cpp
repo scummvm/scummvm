@@ -49,6 +49,7 @@ void NoctropolisEngine::initObjects() {
 	_scripts = new NoctropolisScripts(this);
 	_invScript = new NoctropolisScripts(this);
 	_inventory = new NoctropolisInventory(this);
+	_video = new VideoPlayer_v2(this);
 	_stil = new Player(this);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));

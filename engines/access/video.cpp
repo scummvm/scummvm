@@ -19,38 +19,62 @@
  *
  */
 
+#include "audio/decoders/raw.h"
+
 #include "access/video.h"
 #include "access/access.h"
 
 namespace Access {
 
-VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm) {
-	_vidSurface = nullptr;
-	_videoData = nullptr;
-	_startCoord = nullptr;
-
-	_frameCount = 0;
-	_xCount = 0;
-	_scanCount = 0;
-	_frameSize = 0;
-	_videoFrame = 0;
-	_soundFlag = false;
-	_soundFrame = 0;
-	_videoEnd = false;
-
-	_header._frameCount = 0;
-	_header._width = _header._height = 0;
-	_header._flags = VIDEOFLAG_NONE;
+VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm), _videoData(nullptr),
+_videoFrame(0), _soundFrame(0), _videoEnd(false), _soundFlag(false), _vidSurface(nullptr) {
 }
 
 VideoPlayer::~VideoPlayer() {
 	closeVideo();
 }
 
-void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int rate) {
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::Path &filename, int rate) {
+	// Open up video stream
+	_videoData = _vm->_files->loadRawFile(filename);
+
 	_vidSurface = vidSurface;
-	vidSurface->_orgX1 = pt.x;
-	vidSurface->_orgY1 = pt.y;
+	setVideo(pt, rate);
+}
+
+void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
+	// Open up video stream
+	_videoData = _vm->_files->loadFile(videoFile);
+
+	_vidSurface = vidSurface;
+	setVideo(pt, rate);
+}
+
+void VideoPlayer::closeVideo() {
+	delete _videoData;
+	_videoData = nullptr;
+}
+
+////////////////////////////////////
+
+VideoPlayer_v1::VideoPlayer_v1(AccessEngine *vm) : VideoPlayer(vm) {
+	_vidSurface = nullptr;
+	_startCoord = nullptr;
+
+	_frameCount = 0;
+	_xCount = 0;
+	_scanCount = 0;
+	_frameSize = 0;
+
+	_header._frameCount = 0;
+	_header._width = _header._height = 0;
+	_header._flags = VIDEOFLAG_NONE;
+}
+
+
+void VideoPlayer_v1::setVideo(const Common::Point &pt, int rate) {
+	_vidSurface->_orgX1 = pt.x;
+	_vidSurface->_orgY1 = pt.y;
 	_vm->_timers[31]._timer = rate;
 	_vm->_timers[31]._initTm = rate;
 
@@ -61,7 +85,7 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 	_videoData->_stream->skip(1);
 	_header._flags = (VideoFlags)_videoData->_stream->readByte();
 
-	_startCoord = (byte *)vidSurface->getBasePtr(pt.x, pt.y);
+	_startCoord = (byte *)_vidSurface->getBasePtr(pt.x, pt.y);
 	_frameCount = _header._frameCount - 2;
 	_xCount = _header._width;
 	_scanCount = _header._height;
@@ -73,11 +97,11 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 	if (_header._flags == VIDEOFLAG_BG) {
 		// Draw the background
 		for (int y = 0; y < _scanCount; ++y) {
-			byte *pDest = (byte *)vidSurface->getBasePtr(pt.x, pt.y + y);
+			byte *pDest = (byte *)_vidSurface->getBasePtr(pt.x, pt.y + y);
 			_videoData->_stream->read(pDest, _xCount);
 		}
 
-		if (vidSurface == _vm->_screen) {
+		if (_vidSurface == _vm->_screen) {
 			assert(pt.x >= 0 && pt.y >= 0 && pt.x < _vm->_screen->w && pt.y < _vm->_screen->h &&
 				_xCount > 0 && _xCount <= _vm->_screen->w && _scanCount > 0 && _scanCount <= _vm->_screen->h);
 			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
@@ -89,30 +113,12 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 	_videoEnd = false;
 }
 
-void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const Common::Path &filename, int rate) {
-	// Open up video stream
-	_videoData = _vm->_files->loadRawFile(filename);
 
-	setVideo(vidSurface, pt, rate);
-}
-
-void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
-	// Open up video stream
-	_videoData = _vm->_files->loadFile(videoFile);
-
-	setVideo(vidSurface, pt, rate);
-}
-
-void VideoPlayer::closeVideo() {
-	delete _videoData;
-	_videoData = nullptr;
-}
-
-void VideoPlayer::getFrame() {
+void VideoPlayer_v1::getFrame() {
 	_frameSize = _videoData->_stream->readUint16LE();
 }
 
-void VideoPlayer::playVideo() {
+void VideoPlayer_v1::playVideo() {
 	if (_vm->_timers[31]._flag)
 		return;
 	_vm->_timers[31]._flag = 1;
@@ -173,7 +179,7 @@ void VideoPlayer::playVideo() {
 	}
 }
 
-void VideoPlayer::copyVideo() {
+void VideoPlayer_v1::copyVideo() {
 	// aka drawTalkVideoFrame
 	_vm->_player->calcPlayer();
 
@@ -205,5 +211,167 @@ void VideoPlayer::copyVideo() {
 		destP += _vm->_buffer2.pitch;
 	}
 }
+
+//////////////////////////////////////////////////
+
+VideoPlayer_v2::VideoPlayer_v2(AccessEngine *vm) : VideoPlayer(vm), _audioStream(nullptr), _frame(nullptr) {
+}
+
+void VideoPlayer_v2::setVideo(const Common::Point &pt, int rate) {
+	_header._id = _videoData->_stream->readUint32LE();
+	_header._version = _videoData->_stream->readByte();
+	_header._frameCount = _videoData->_stream->readUint16LE();
+	_header._width = _videoData->_stream->readUint16LE();
+	_header._height = _videoData->_stream->readUint16LE();
+	_header._frameIncr = _videoData->_stream->readUint16LE();
+	_header._unk = _videoData->_stream->readUint16LE();
+
+	_videoFrame = 0;
+	_audioStream = NULL;
+	_videoEnd = false;
+	_vidSurface->_orgX1 = pt.x;
+	_vidSurface->_orgY1 = pt.y;
+
+	_frame = new BaseSurface();
+	_frame->create(_header._width, _header._height, Graphics::PixelFormat::createFormatCLUT8());
+
+	debugC(kDebugGraphics, "Load video V2: id = %d, version = %d, frameCount = %d, width = %d, height = %d, frameIncr = %d, unk = %d",
+	  _header._id, _header._version, _header._frameCount, _header._width, _header._height, _header._frameIncr, _header._unk);
+
+	playVideo();
+}
+
+void VideoPlayer_v2::playVideo() {
+	debugC(kDebugGraphics, "VideoPlayer_v2::handleChunk() %08X", (int)_videoData->_stream->pos());
+
+	byte type = _videoData->_stream->readByte();
+
+	debugC(kDebugGraphics, "VideoPlayer_v2::handleChunk() type = %d; _currFrame = %d; frameCount = %d", type, _videoFrame, _header._frameCount);
+
+	switch (type) {
+		case 1:
+			handleFrameChunk(true, false);
+			break;
+		case 2:
+			handlePaletteChunk();
+			break;
+		case 3:
+			handleFrameChunk(false, false);
+			break;
+		case 4:
+			handleFrameChunk(true, true);
+			break;
+		case 0x7C:
+			handleSoundChunk(true);
+			break;
+		case 0x7D:
+			handleSoundChunk(false);
+			break;
+		case 0x14:
+			closeVideo();
+			break;
+		default:
+			warning("VideoPlayer_v2::handleChunk() Unknown chunk type %d at %08X", type, (int)_videoData->_stream->pos() - 1);
+			closeVideo();
+	}
+
+}
+
+void VideoPlayer_v2::handlePaletteChunk() {
+	debugC(kDebugGraphics, "VideoPlayer_v2::handlePaletteChunk()");
+	_videoData->_stream->read(_palette, 768);
+}
+
+void VideoPlayer_v2::handleFrameChunk(bool delta, bool skipLines) {
+	debugC(kDebugGraphics, "VideoPlayer_v2::handleFrameChunk(%d, %d)", delta, skipLines);
+
+	uint32 frameDelay;
+	uint32 frameSize = _header._width * _header._height;
+	byte *dest;
+
+	frameDelay = _videoData->_stream->readUint16LE();
+	debugC(kDebugGraphics, "frameDelay = %d", frameDelay);
+
+	const Common::Rect frameBounds(Common::Point(_vidSurface->_orgX1, _vidSurface->_orgY1), _frame->w, _frame->h);
+	if (_videoFrame == 0 && delta) {
+		// If it's the first frame, grab the background
+		// (in case the first video frame happens to be a delta frame)
+		_frame->copyBlock(_vidSurface, frameBounds);
+	}
+
+	if (skipLines) {
+		uint16 lineStart = _videoData->_stream->readUint16LE();
+		debugC(kDebugGraphics, "lineStart = %d", lineStart);
+		dest = (byte*)_frame->getBasePtr(0, lineStart);
+		frameSize -= lineStart * _frame->pitch;
+	} else {
+		dest = (byte*)_frame->getBasePtr(0, 0);
+	}
+
+	while (frameSize > 0) {
+		byte count = _videoData->_stream->readByte();
+		if (delta && count == 0)
+			break;
+		if (count & 0x80) {
+			count &= 0x7F;
+			if (!delta) {
+				// repeat next byte 'count & 0x7F' times
+				byte value = _videoData->_stream->readByte();
+				memset(dest, value, count);
+			} // else skip 'count & 0x7F' bytes in output buffer
+		} else {
+			// copy next 'count' bytes
+			_videoData->_stream->read(dest, count);
+		}
+		dest += count;
+		frameSize -= count;
+	}
+
+	// Draw the video frame
+	_vidSurface->copyBlock(_frame, frameBounds);
+
+	_videoFrame++;
+	if (_videoFrame >= _header._frameCount)
+		closeVideo();
+}
+
+void VideoPlayer_v2::handleSoundChunk(bool init) {
+	debugC(kDebugGraphics, "VideoPlayer_v2::handleSoundChunk(%d)", init);
+
+	if (init) {
+		uint16 time = _videoData->_stream->readUint16LE();
+		byte frequencyDivisor = _videoData->_stream->readByte();
+		int frequency = 1000000 / (256 - frequencyDivisor);
+		debugC(kDebugGraphics, "time = %d; freqencyDivisor = %d; freqency = %d", time, frequencyDivisor, frequency);
+
+		_audioStream = Audio::makeQueuingAudioStream(frequency, false);
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+
+	}
+
+	uint16 soundSize = _videoData->_stream->readUint16LE();
+	byte *soundData = new byte[soundSize];
+
+	_videoData->_stream->read(soundData, soundSize);
+
+	_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+
+	debugC(kDebugGraphics, "soundSize = %d", soundSize);
+
+}
+
+
+void VideoPlayer_v2::closeVideo() {
+	if (_audioStream) {
+		_audioStream->finish();
+		_vm->_mixer->stopHandle(_audioStreamHandle);
+	}
+	delete _frame;
+	_frame = nullptr;
+	VideoPlayer::closeVideo();
+}
+
+
+
 
 } // End of namespace Access

@@ -116,6 +116,8 @@ public:
 public:
 	InventoryManager(AccessEngine *vm);
 
+	virtual ~InventoryManager() {};
+
 	int &operator[](int idx);
 
 	int useItem() const;
