@@ -1990,6 +1990,16 @@ bool Script::syncRuntimeTimerRecord(const StartupTimerRecord &timer) {
 	return true;
 }
 
+bool Script::setRuntimeRegionEnabled(const Common::String &regionName, bool enabled) {
+	StartupRegionRecord *runtimeRegion = findRuntimeRegion(regionName);
+	if (!runtimeRegion)
+		return false;
+
+	const bool changed = runtimeRegion->startEnabled != enabled;
+	runtimeRegion->startEnabled = enabled;
+	return changed;
+}
+
 bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enabled) {
 	StartupTimerRecord *runtimeTimer = findRuntimeTimer(timerName);
 	if (!runtimeTimer)

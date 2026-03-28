@@ -838,6 +838,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!startupScript)
 				return;
 
+			// Region enable state is a persistent script mutation; keep the runtime record in lockstep
+			// with the currently materialized scene so one-shot regions do not resurrect on revisit.
+			for (const StartupRegionRecord &baseRegion : startupScript->getRegions()) {
+				if (!baseRegion.roomName.equalsIgnoreCase(scene.state.roomName))
+					continue;
+
+				const bool enabled =
+					findSceneRegionByName(scene.sceneRegions, baseRegion.regionName) != nullptr;
+				(void)startupScript->setRuntimeRegionEnabled(baseRegion.regionName, enabled);
+			}
+
 			if (runtimeEntities) {
 				for (StartupAnimRecord &anim : scene.state.roomAnimations) {
 					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
@@ -3039,8 +3050,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		StartupInteractionResult interaction;
 		const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
 			selectedItemName, target, interaction);
-		if (!handled)
+		if (!handled) {
+			debugC(1, kDebugInventory,
+				"Harvester: inventory target miss selected='%s' target='%s' owner='%s' action='%s'",
+				selectedItemName.c_str(), target.objectName.c_str(),
+				target.currentOwnerOrRoom.c_str(), target.actionTag.c_str());
 			return Common::kNoError;
+		}
 
 		bool didTransition = false;
 		Common::Error interactionError =
@@ -3055,6 +3071,44 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		needsRedraw = true;
 		return Common::kNoError;
+	};
+	auto findSelectedInventoryRoomTarget = [&](const Common::Point &point) -> StartupObjectRecord * {
+		if (!_inventory.hasSelection())
+			return nullptr;
+
+		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		Script *startupScript = _engine.getStartupScript();
+		if (!runtimeEntities || !startupScript)
+			return nullptr;
+
+		const Common::String selectedItemName = _inventory.getSelectedItemName();
+		StartupObjectRecord *bestTarget = nullptr;
+		int bestDrawIndex = -1;
+		for (StartupObjectRecord &candidate : scene.sceneObjects) {
+			if (candidate.objectName.empty() ||
+					!startupScript->hasUseItemInteraction(selectedItemName, candidate)) {
+				continue;
+			}
+
+			const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(candidate.objectName);
+			if (!entity || !entity->hitTest(point))
+				continue;
+			if (entity->getClassId() == kRuntimeEntityClassBackground ||
+					entity->getClassId() == kRuntimeEntityClassPlayer ||
+					entity->getClassId() == kRuntimeEntityClassRectHotspot19) {
+				continue;
+			}
+
+			const int drawIndex = runtimeEntities->findSceneEntityDrawIndexByName(entity->getName());
+			if (drawIndex < 0)
+				continue;
+			if (!bestTarget || drawIndex > bestDrawIndex) {
+				bestTarget = &candidate;
+				bestDrawIndex = drawIndex;
+			}
+		}
+
+		return bestTarget;
 	};
 	auto queueRegionInteraction = [&](const StartupRegionRecord &region) {
 		pendingRegionName = region.regionName;
@@ -3182,6 +3236,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				? StartupRoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos);
+			if (!suppressHover && inventorySelectionActive && !hoverState.npc) {
+				if (StartupObjectRecord *selectedTarget = findSelectedInventoryRoomTarget(_mousePos))
+					hoverState.object = selectedTarget;
+			}
 			Common::String promptText;
 			Common::String inventoryTooltipText;
 			auto resolveCarryTargetLabel = [&]() {
@@ -3503,16 +3561,31 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
 					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
+				StartupObjectRecord *selectedRoomTarget = nullptr;
+				if (_inventory.hasSelection() && !hoverState.npc)
+					selectedRoomTarget = findSelectedInventoryRoomTarget(_mousePos);
+				if (selectedRoomTarget &&
+						(!hoverState.object ||
+						 !selectedRoomTarget->objectName.equalsIgnoreCase(hoverState.object->objectName))) {
+					debugC(1, kDebugInventory,
+						"Harvester: inventory target remap selected='%s' hovered='%s' remapped='%s'",
+						_inventory.getSelectedItemName().c_str(),
+						hoverState.object ? hoverState.object->objectName.c_str() : "",
+						selectedRoomTarget->objectName.c_str());
+				}
+				StartupRoomHoverState clickHoverState = hoverState;
+				if (selectedRoomTarget)
+					clickHoverState.object = selectedRoomTarget;
 				debugC(1, kDebugRoom,
 					"Harvester: room click room='%s' mouse=(%d,%d) object='%s' npc='%s' region='%s' cursor_sequence=%d prompt='%s'",
 					scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
-					hoverState.object ? hoverState.object->objectName.c_str() : "",
-					hoverState.npc ? hoverState.npc->npcName.c_str() : "",
-					hoverState.region ? hoverState.region->regionName.c_str() : "",
-					hoverState.cursorSequence, hoverState.promptText.c_str());
+					clickHoverState.object ? clickHoverState.object->objectName.c_str() : "",
+					clickHoverState.npc ? clickHoverState.npc->npcName.c_str() : "",
+					clickHoverState.region ? clickHoverState.region->regionName.c_str() : "",
+					clickHoverState.cursorSequence, clickHoverState.promptText.c_str());
 					if (hasCarriedRoomItem()) {
-					if (hoverState.playerEntity && playerState.entity &&
-							hoverState.playerEntity == playerState.entity) {
+					if (clickHoverState.playerEntity && playerState.entity &&
+							clickHoverState.playerEntity == playerState.entity) {
 						if (!stowCarriedRoomItemToInventory())
 							return Common::kReadingFailed;
 						needsRedraw = true;
@@ -3521,10 +3594,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 				if (_inventory.hasSelection()) {
 					const Common::String selectedItemName = _inventory.getSelectedItemName();
-					if (hoverState.npc) {
+					if (clickHoverState.npc) {
 						bool didTransition = false;
 						Common::Error dialogueError = interactionProcessor.runScriptedDialogue(
-							hoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
+							clickHoverState.npc->npcName, selectedItemName, Common::String(), didTransition);
 						if (dialogueError.getCode() != Common::kNoError)
 							return dialogueError;
 						if (startupFlow.hasPendingMainMenuReturn())
@@ -3534,8 +3607,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						break;
 					}
 
-					StartupObjectRecord *roomTarget = hoverState.object
-						? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
+					StartupObjectRecord *roomTarget = clickHoverState.object
+						? findSceneObjectByName(scene.sceneObjects, clickHoverState.object->objectName)
 						: nullptr;
 					if (roomTarget) {
 						Common::Error interactionError =
