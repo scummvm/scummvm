@@ -347,11 +347,12 @@ public:
 	void resetRuntimeState();
 	void syncRuntimeSaveState(Common::Serializer &s);
 	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources, StartupInteractionResult *entryInteraction = nullptr);
+		ResourceManager &resources);
 	bool resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
-		ResourceManager &resources, StartupInteractionResult *entryInteraction = nullptr);
+		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		StartupRoomSetupState &state, ResourceManager &resources) const;
+	bool executeRoomEnterCommands(const Common::String &roomName, StartupInteractionResult &result);
 	bool executeRoomExitCommands(const Common::String &roomName, StartupInteractionResult &result);
 	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
 	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);

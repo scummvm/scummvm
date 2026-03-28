@@ -1045,7 +1045,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 }
 
 bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
-		ResourceManager &resources, StartupInteractionResult *entryInteraction) {
+		ResourceManager &resources) {
 	state = StartupRoomSetupState();
 
 	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
@@ -1057,51 +1057,24 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 		return false;
 	}
 
-	StartupInteractionResult onEnterInteraction;
-	executeCommandChain(
-		room->onEnterCommand, "room setup command", room->roomName, false,
-		&onEnterInteraction.musicPath,
-		&onEnterInteraction.audioCommands,
-		nullptr,
-		nullptr,
-		entryInteraction ? &onEnterInteraction.cutscenePath : nullptr,
-		entryInteraction ? &onEnterInteraction.deathFlicPath : nullptr,
-		entryInteraction ? &onEnterInteraction.requestMainMenu : nullptr,
-		entryInteraction ? &onEnterInteraction.cdChangeDisc : nullptr,
-		entryInteraction ? &onEnterInteraction.dialogueNpcName : nullptr,
-		entryInteraction ? &onEnterInteraction.dialogueContinuationTag : nullptr,
-		entryInteraction ? &onEnterInteraction.continuationTag : nullptr,
-		entryInteraction ? &onEnterInteraction.modalText : nullptr,
-		entryInteraction ? &onEnterInteraction.lightingCommand : nullptr,
-		entryInteraction ? &onEnterInteraction.requestPlayerGotoXZ : nullptr,
-		entryInteraction ? &onEnterInteraction.playerGotoX : nullptr,
-		entryInteraction ? &onEnterInteraction.playerGotoZ : nullptr,
-		&onEnterInteraction.mutatedRuntimeState);
-
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	state.audioCommands = onEnterInteraction.audioCommands;
-	if (!onEnterInteraction.musicPath.empty())
-		state.musicPath = onEnterInteraction.musicPath;
-	if (entryInteraction)
-		*entryInteraction = onEnterInteraction;
-
 	debugC(1, kDebugRoom,
-		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
+		"Harvester: resolveRoomSetupState('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		entranceName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
 		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
-		(uint)state.roomRegions.size(), onEnterInteraction.mutatedRuntimeState);
+		(uint)state.roomRegions.size());
 
 	return true;
 }
 
 bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
-		ResourceManager &resources, StartupInteractionResult *entryInteraction) {
+		ResourceManager &resources) {
 	state = StartupRoomSetupState();
 
 	const StartupRoomRecord *room = findRoomRecord(roomName);
@@ -1119,45 +1092,18 @@ bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, Sta
 		break;
 	}
 
-	StartupInteractionResult onEnterInteraction;
-	executeCommandChain(
-		room->onEnterCommand, "room setup command", room->roomName, false,
-		&onEnterInteraction.musicPath,
-		&onEnterInteraction.audioCommands,
-		nullptr,
-		nullptr,
-		entryInteraction ? &onEnterInteraction.cutscenePath : nullptr,
-		entryInteraction ? &onEnterInteraction.deathFlicPath : nullptr,
-		entryInteraction ? &onEnterInteraction.requestMainMenu : nullptr,
-		entryInteraction ? &onEnterInteraction.cdChangeDisc : nullptr,
-		entryInteraction ? &onEnterInteraction.dialogueNpcName : nullptr,
-		entryInteraction ? &onEnterInteraction.dialogueContinuationTag : nullptr,
-		entryInteraction ? &onEnterInteraction.continuationTag : nullptr,
-		entryInteraction ? &onEnterInteraction.modalText : nullptr,
-		entryInteraction ? &onEnterInteraction.lightingCommand : nullptr,
-		entryInteraction ? &onEnterInteraction.requestPlayerGotoXZ : nullptr,
-		entryInteraction ? &onEnterInteraction.playerGotoX : nullptr,
-		entryInteraction ? &onEnterInteraction.playerGotoZ : nullptr,
-		&onEnterInteraction.mutatedRuntimeState);
-
 	if (!buildRuntimeRoomState(*room, entrance, resources, state))
 		return false;
 
-	state.audioCommands = onEnterInteraction.audioCommands;
-	if (!onEnterInteraction.musicPath.empty())
-		state.musicPath = onEnterInteraction.musicPath;
-	if (entryInteraction)
-		*entryInteraction = onEnterInteraction;
-
 	debugC(1, kDebugRoom,
-		"Harvester: resolveRoomSetupStateByRoomName('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u mutated=%d",
+		"Harvester: resolveRoomSetupStateByRoomName('%s') -> room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d palette='%s' background='%s' music='%s' brightness=%.2f roomObjects=%u activeObjects=%u roomAnims=%u roomNpcs=%u roomMonsters=%u roomTimers=%u roomRegions=%u",
 		roomName.c_str(), state.roomName.c_str(), state.entranceName.c_str(),
 		state.playerSpawnX, state.playerSpawnY, state.playerSpawnZ, state.playerFacing,
 		state.palettePath.c_str(), state.backgroundPath.c_str(), state.musicPath.c_str(),
 		(double)state.paletteBrightness, (uint)state.roomObjects.size(),
 		(uint)state.activeObjects.size(), (uint)state.roomAnimations.size(), (uint)state.roomNpcs.size(),
 		(uint)state.roomMonsters.size(), (uint)state.roomTimers.size(),
-		(uint)state.roomRegions.size(), onEnterInteraction.mutatedRuntimeState);
+		(uint)state.roomRegions.size());
 
 	return true;
 }
@@ -1446,6 +1392,23 @@ bool Script::materializeRoomState(const Common::String &entranceName, const Comm
 	}
 
 	return buildRuntimeRoomState(*room, entrance, resources, state);
+}
+
+bool Script::executeRoomEnterCommands(const Common::String &roomName,
+		StartupInteractionResult &result) {
+	result = StartupInteractionResult();
+
+	const StartupRoomRecord *room = findRoomRecord(roomName);
+	if (!room)
+		return false;
+
+	executeCommandChain(room->onEnterCommand, "room entry command", room->roomName, true,
+		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
+		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
+		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
+		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
+		&result.playerGotoX, &result.playerGotoZ, &result.mutatedRuntimeState);
+	return true;
 }
 
 bool Script::executeRoomExitCommands(const Common::String &roomName,
