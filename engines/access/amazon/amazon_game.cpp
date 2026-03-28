@@ -101,6 +101,7 @@ void AmazonEngine::initObjects() {
 	_inventory = new AmazonInventory(this);
 	_room = new AmazonRoom(this);
 	_scripts = new AmazonScripts(this);
+	_video = new VideoPlayer_v1(this);
 
 	_ant = new Ant(this);
 	_cast = new Cast(this);

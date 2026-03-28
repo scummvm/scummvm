@@ -29,8 +29,8 @@
 namespace Access {
 
 struct Polygon {
-    Common::Array<Common::Point> points;
-    bool pointInside(int16 x, int16 y) const;
+	Common::Array<Common::Point> points;
+	bool pointInside(int16 x, int16 y) const;
 };
 
 typedef Common::Array<Polygon> PolygonArray;

@@ -358,7 +358,7 @@ void Scripts::cmdEndObject_v3() {
 
 		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctCenter);
 		if (_vm->_player->_roomNumber <= 4)
-          _vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
+			_vm->_bubbleBox->_type = (BoxType)(_vm->_bubbleBox->_type | kTextBoxNoctPlain);
 
 		printString(msg);
 	}
@@ -886,8 +886,10 @@ void Scripts::cmdSetVideo_v3() {
 		pt.x = rawx;
 
 	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
-	warning("TODO: cmdSetVideo_v3: Use loop flag");
-	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
+	warning("TODO: cmdSetVideo_v3: Use flag");
+	// Hack: Skip the "DARK/"
+	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename.substr(5));
+	_vm->_video->setVideo(_vm->_screen, pt, vidpath, rate);
 
 	if (cellIndex == 1 && roomNum == 0x36)
 		_vm->_screen->setIconPalette();
@@ -1185,7 +1187,7 @@ void Scripts::cmdPlayerChoice() {
 	debugC(1, kDebugScripts, "cmdPlayerChoice(%d, %d, ..(%d choices)..)", x, startY, choiceStrs.size());
 
 	_vm->_events->setCursor(CURSOR_ARROW);
-	const char *respTitle = ((Noctropolis::NoctropolisResources *)_resource)->getResponseTitle();
+	const char *respTitle = ((Noctropolis::NoctropolisResources *)_vm->_res)->getResponseTitle();
 	Common::Array<Common::Rect> responseCoords;
 
 	for (uint i = 0; i < choiceStrs.size(); i++) {
@@ -1656,11 +1658,19 @@ void Scripts::cmdPlayerScale() {
 }
 
 void Scripts::cmdRestoreBlock() {
+	int16 x = _data->readSint16LE();
+	int16 y = _data->readSint16LE();
+	int16 w = _data->readSint16LE();
+	int16 h = _data->readSint16LE();
+	debugCN(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
+	_vm->clearPlotImagesIn(x, y, w, h);
+	_vm->clearPlotVidsIn(x, y, w, h);
 	error("TODO: Implement Scripts::cmdRestoreBlock");
 }
 
 void Scripts::cmdCopyScnBuf() {
-	error("TODO: Implement Scripts::cmdCopyScnBuf");
+	debugCN(1, kDebugScripts, "cmdCopyScnBuf()");
+	_vm->_screen->update();
 }
 
 void Scripts::cmdStilWalkTo() {

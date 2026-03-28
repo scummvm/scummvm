@@ -46,6 +46,7 @@ void MartianEngine::initObjects() {
 	_inventory = new MartianInventory(this);
 	_room = new MartianRoom(this);
 	_scripts = new MartianScripts(this);
+	_video = new VideoPlayer_v1(this);
 }
 
 void MartianEngine::configSelect() {

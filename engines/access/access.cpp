@@ -56,7 +56,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_video = nullptr;
 
 	_destIn = nullptr;
-	_current = nullptr;
+	_current = &_buffer2;
 	_mouseMode = 0;
 	_playerDataCount = 0;
 	_currentMan = 0;
@@ -190,7 +190,6 @@ void AccessEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 	_midi = new MusicManager(this);
-	_video = new VideoPlayer(this);
 
 	syncSoundSettings();
 	setTotalPlayTime(0);
@@ -422,6 +421,23 @@ void AccessEngine::plotList1() {
 
 		ie._flags |= IMGFLAG_DRAWN;
 	}
+}
+
+void AccessEngine::clearPlotImagesIn(int16 x, int16 y, int16 w, int16 h) {
+	const Common::Rect toClear = Common::Rect(Common::Point(x, y), w, h);
+	for (uint idx = 0; idx < _images.size(); idx++) {
+		const SpriteFrame *frame = _images[idx]._spritesPtr->getFrame(_images[idx]._frameNumber);
+		Common::Point topLeft = _images[idx]._position;
+		Common::Rect imgRect(topLeft, frame->w, frame->h);
+		if (toClear.intersects(imgRect)) {
+			_images.remove_at(idx);
+			idx--;
+		}
+	}
+}
+
+void AccessEngine::clearPlotVidsIn(int16 x, int16 y, int16 w, int16 h) {
+	warning("TODO: Implement AccessEngine::clearPlotVidsIn");
 }
 
 void AccessEngine::copyBlocks() {
