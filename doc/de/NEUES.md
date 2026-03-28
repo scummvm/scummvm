@@ -72,6 +72,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Anzahl der Übertragung der Bild-Daten optimiert, wodurch Gobliiins und Ween
      auf schwächeren Plattformen deutlich besser laufen. Andere Gob-Spiele sind
      ebenfalls positiv davon betroffen.
+   - Flackernder Cursor während einiger Videos in Gob3 und Lost in Time behoben.
+   - Blount ist im Gob3-Gehirnlevel nicht mehr inaktiv.
 
  M4:
    - Musik-Unterstützung in Ripley hinzugefügt.
