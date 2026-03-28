@@ -163,6 +163,19 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 
 }
 
+static void drawString(const char *str, const Font *font, Screen *screen, int x, int y) {
+	Common::Point pt(x, y);
+	bool lastLine = false;
+	Common::String remainder = str;
+	while (!lastLine) {
+		Common::String line;
+		int width = 640;
+		lastLine = font->getLine(remainder, 640, line, width, Font::kWidthInPixels);
+		font->drawString(screen, line, pt);
+		pt.y += font->stringHeight(line);
+	}
+}
+
 void ComicViewer::drawBubble(const ComicBox &bubble) {
 
 	static const struct {
@@ -203,7 +216,7 @@ void ComicViewer::drawBubble(const ComicBox &bubble) {
 		_vm->_screen->frameRect(Common::Rect(bubble.x - 4, bubble.y - 4, bubble.x + 4 + textWidth, bubble.y + 4 + textHeight), 244);
 		// TODO: is this color the one to set?
 		Font::_fontColors[0] = bubble.textColor;
-		font->drawString(_vm->_screen, text, Common::Point(bubble.x, bubble.y));
+		drawString(text, font, _vm->_screen, bubble.x, bubble.y);
 	} else {
 
 		int spriteIndex1, spriteIndex2, style, defIndex;
@@ -245,8 +258,7 @@ void ComicViewer::drawBubble(const ComicBox &bubble) {
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex2, Common::Point(bubble.x, bubble.y));
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex1, Common::Point(bubbleX, bubbleY));
 		Font::_fontColors[0] = textColor;
-		font->drawString(_vm->_screen, text, Common::Point(bubble.x + 7, bubble.y + 10));
-
+		drawString(text, font, _vm->_screen, bubble.x + 7, bubble.y + 10);
 	}
 
 }
