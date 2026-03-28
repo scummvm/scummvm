@@ -632,7 +632,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 	bool currentTargetIsRoomName = targetIsRoomName;
 	while (!currentRoomTarget.empty()) {
 		StartupRoomSetupState state;
-		StartupInteractionResult roomEntryInteraction;
+		bool shouldRunRoomEntryCommands = false;
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
 			startupFlow.resetRoomNpcDialogueState();
 			if (_engine.hasPendingLoadedDialogueStateBlob()) {
@@ -661,12 +661,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			currentRoomTarget = !loadedState.entranceName.empty() ? loadedState.entranceName : loadedState.roomName;
 			_engine.clearPendingLoadedStartupSaveRoomState();
 			currentTargetIsRoomName = false;
+			shouldRunRoomEntryCommands = false;
 		} else if ((currentTargetIsRoomName
 				? !_engine.getStartupScript()->resolveRoomSetupStateByRoomName(
-					currentRoomTarget, state, *_engine.getResources(), &roomEntryInteraction)
+					currentRoomTarget, state, *_engine.getResources())
 				: !_engine.getStartupScript()->resolveRoomSetupState(
-					currentRoomTarget, state, *_engine.getResources(), &roomEntryInteraction))) {
+					currentRoomTarget, state, *_engine.getResources()))) {
 			return Common::kReadingFailed;
+		} else {
+			shouldRunRoomEntryCommands = true;
 		}
 
 		Common::Error transitionError = startupFlow.beginRoomSetupTransition();
@@ -2053,31 +2056,37 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			resetIdleState
 		};
-		auto hasDeferredRoomEntryInteraction = [](const StartupInteractionResult &interaction) {
-			return interaction.cdChangeDisc > 0 ||
+		auto hasRoomEntryInteraction = [](const StartupInteractionResult &interaction) {
+			return !interaction.nextRoomName.empty() ||
+				!interaction.musicPath.empty() ||
+				!interaction.audioCommands.empty() ||
+				interaction.cdChangeDisc > 0 ||
 				!interaction.cutscenePath.empty() ||
 				!interaction.deathFlicPath.empty() ||
+				interaction.requestMainMenu ||
 				!interaction.dialogueNpcName.empty() ||
 				!interaction.dialogueContinuationTag.empty() ||
 				!interaction.continuationTag.empty() ||
 				!interaction.modalText.value.empty() ||
 				interaction.lightingCommand != kStartupLightingCommandNone ||
 				interaction.requestPlayerGotoXZ ||
-				interaction.requestMainMenu;
+				interaction.mutatedRuntimeState;
 		};
-		if (hasDeferredRoomEntryInteraction(roomEntryInteraction)) {
-			StartupInteractionResult deferredRoomEntryInteraction = roomEntryInteraction;
-			deferredRoomEntryInteraction.musicPath.clear();
-			deferredRoomEntryInteraction.audioCommands.clear();
-			deferredRoomEntryInteraction.mutatedRuntimeState = false;
-
-			bool didEntryTransition = false;
-			Common::Error entryInteractionError = interactionProcessor.handleInteractionResult(
-				deferredRoomEntryInteraction, didEntryTransition, Common::String());
-			if (entryInteractionError.getCode() != Common::kNoError)
-				return entryInteractionError;
-			if (startupFlow.hasPendingMainMenuReturn() || didEntryTransition)
-				return Common::kNoError;
+		if (shouldRunRoomEntryCommands) {
+			StartupInteractionResult roomEntryInteraction;
+			if (!_engine.getStartupScript()->executeRoomEnterCommands(
+					scene.state.roomName, roomEntryInteraction)) {
+				return Common::kReadingFailed;
+			}
+			if (hasRoomEntryInteraction(roomEntryInteraction)) {
+				bool didEntryTransition = false;
+				Common::Error entryInteractionError = interactionProcessor.handleInteractionResult(
+					roomEntryInteraction, didEntryTransition, Common::String());
+				if (entryInteractionError.getCode() != Common::kNoError)
+					return entryInteractionError;
+				if (startupFlow.hasPendingMainMenuReturn() || didEntryTransition)
+					return Common::kNoError;
+			}
 
 			startupFlow.resetCursorAnimationSequence();
 			resetIdleState();
