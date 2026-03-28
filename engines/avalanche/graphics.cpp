@@ -371,6 +371,24 @@ void GraphicManager::drawBigText(Graphics::Surface &surface, const Common::Strin
 	}
 }
 
+// Draws bigger text for the outro
+void GraphicManager::drawBigTextOutro(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
+	int scaleX = 8; // Horizontal stretch
+	for (uint i = 0; i < text.size(); i++) {
+		for (int j = 0; j < fontHeight; j++) {
+			byte pixel = font[(byte)text[i]][j];
+			byte pixelBit = 0;
+			for (int bit = 0; bit < 8*scaleX; bit++) {
+				if ((bit % scaleX) == 0)
+					pixelBit = (pixel >> (bit / scaleX)) & 1;
+				for (int k = 0; k < 3; k++)
+					if (pixelBit)
+						*(byte *)surface.getBasePtr(x + i * (8*scaleX) + (8*scaleX) - bit, y + j * 3 + k) = color;
+			}
+		}
+	}
+}
+
 void GraphicManager::drawScrollText(const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color) {
 	drawText(_scrolls, text, font, fontHeight, x, y, color);
 }
@@ -699,6 +717,11 @@ void GraphicManager::helpDrawHighlight(byte which, Color color) {
 void GraphicManager::helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color) {
 	drawBigText(_surface, text, _vm->_font, 8, x, y, color);
 }
+
+void GraphicManager::helpDrawBigTextOutro(const Common::String &text, int16 x, int16 y, Color color) {
+	drawBigTextOutro(_surface, text, _vm->_font, 16, x, y, color);
+}
+
 
 /**
  * @remarks	Originally called 'titles'

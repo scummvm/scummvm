@@ -105,6 +105,7 @@ public:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
 	void helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color);
+	void helpDrawBigTextOutro(const Common::String &text, int16 x, int16 y, Color color);
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -199,6 +200,7 @@ private:
 
 	void drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
+	void drawBigTextOutro(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
