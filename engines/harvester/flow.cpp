@@ -744,6 +744,7 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		return nullptr;
 
 	const RuntimeEntity *topEntity = nullptr;
+	const StartupObjectRecord *topObject = nullptr;
 	int topDrawIndex = -1;
 	for (const StartupObjectRecord &object : sceneObjects) {
 		if (object.objectName.empty())
@@ -760,15 +761,20 @@ static const StartupObjectRecord *findRoomObjectAtPoint(HarvesterEngine &engine,
 		const int drawIndex = runtimeEntities->findSceneEntityDrawIndexByName(entity->getName());
 		if (drawIndex < 0)
 			continue;
-		if (!topEntity || drawIndex > topDrawIndex) {
+		const bool objectVisible = object.visible && object.runtimeVisible;
+		const bool topObjectVisible = topObject && topObject->visible && topObject->runtimeVisible;
+		if (!topEntity ||
+			(objectVisible && !topObjectVisible) ||
+			(objectVisible == topObjectVisible && drawIndex > topDrawIndex)) {
 			topEntity = entity;
+			topObject = &object;
 			topDrawIndex = drawIndex;
 		}
 	}
 	if (!topEntity)
 		return nullptr;
 
-	return findSceneObjectByName(sceneObjects, topEntity->getName());
+	return topObject;
 }
 
 static const StartupRegionRecord *findRoomRegionAtPoint(HarvesterEngine &engine,
