@@ -401,6 +401,7 @@ public:
 	bool syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame);
 	bool syncRuntimeMonsterRecord(const StartupMonsterRecord &monster);
 	bool syncRuntimeTimerRecord(const StartupTimerRecord &timer);
+	bool setRuntimeRegionEnabled(const Common::String &regionName, bool enabled);
 	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);
 
 private:
