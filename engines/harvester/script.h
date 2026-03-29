@@ -358,6 +358,8 @@ public:
 	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
 	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
 		StartupInteractionResult &result);
+	bool executeDebugCommand(const StartupCommandRecord &command, StartupInteractionResult &result,
+		bool allowTransitions = true);
 	bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions = true);
 	bool executeTimerAction(const Common::String &timerName, StartupInteractionResult &result,

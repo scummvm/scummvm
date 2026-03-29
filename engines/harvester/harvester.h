@@ -116,6 +116,7 @@ public:
 	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
 	bool toggleRoomDebugEnabled();
+	bool requestDebugCommand(const StartupCommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
 	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,

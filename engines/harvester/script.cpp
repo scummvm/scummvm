@@ -1495,6 +1495,29 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Sta
 	return true;
 }
 
+bool Script::executeDebugCommand(const StartupCommandRecord &command,
+		StartupInteractionResult &result, bool allowTransitions) {
+	result = StartupInteractionResult();
+	if (command.opcodeName.empty())
+		return false;
+
+	// Reuse the normal action-tag executor by injecting a one-off command node and
+	// then removing it once the synthetic debug command has been evaluated.
+	Common::String debugTag;
+	for (uint suffix = 0;; ++suffix) {
+		debugTag = Common::String::format("__DEBUG_COMMAND_%u", suffix);
+		if (!findCommandRecord(debugTag))
+			break;
+	}
+
+	StartupCommandRecord debugCommand = command;
+	debugCommand.triggerTag = debugTag;
+	_commands.push_back(debugCommand);
+	const bool handled = executeActionTag(debugTag, result, allowTransitions);
+	_commands.pop_back();
+	return handled;
+}
+
 bool Script::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
 		bool allowTransitions) {
 	result = StartupInteractionResult();

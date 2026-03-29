@@ -3247,6 +3247,24 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return Common::kReadingFailed;
 			break;
 		}
+		StartupInteractionResult queuedDebugInteraction;
+		if (startupFlow.takeQueuedDebugInteraction(queuedDebugInteraction)) {
+			// Run console-injected commands through the normal room interaction handler so
+			// CHANGE_ROOM, modal text, dialogue, and chained tags behave exactly like script-driven actions.
+			bool didDebugTransition = false;
+			Common::Error debugInteractionError = interactionProcessor.handleInteractionResult(
+				queuedDebugInteraction, didDebugTransition, Common::String());
+			if (debugInteractionError.getCode() != Common::kNoError)
+				return debugInteractionError;
+			if (startupFlow.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (!pendingRoomChange.empty()) {
+				if (!stowCarriedRoomItemToInventory())
+					return Common::kReadingFailed;
+				break;
+			}
+			needsRedraw = true;
+		}
 		captureCurrentSaveState();
 		if (_inventory.isOpen() && _inventory.refreshIfRuntimeStateChanged())
 			needsRedraw = true;

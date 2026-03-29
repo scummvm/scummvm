@@ -78,6 +78,9 @@ private:
 	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
 	void queueDialogueInteraction(const StartupInteractionResult &interaction);
 	bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
+	bool hasQueuedDebugInteraction() const { return _hasQueuedDebugInteraction; }
+	bool queueDebugInteraction(const StartupInteractionResult &interaction);
+	bool takeQueuedDebugInteraction(StartupInteractionResult &interaction);
 	void prepareForNewGame();
 	void requestNewGameRestart();
 	bool hasPendingNewGameRestart() const;
@@ -109,6 +112,8 @@ private:
 	RoomSystem _room;
 	StartupInteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
+	StartupInteractionResult _queuedDebugInteraction;
+	bool _hasQueuedDebugInteraction = false;
 	bool _pendingNewGameRestart = false;
 	bool _pendingGameOverReturn = false;
 	bool _pendingMainMenuReturn = false;
