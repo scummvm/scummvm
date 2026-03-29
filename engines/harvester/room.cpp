@@ -725,22 +725,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runtimeEntities->pauseTimerCountdowns();
 		}
 
-		transitionError = startupFlow.waitForRoomSetupTransitionHold();
-		if (transitionError.getCode() != Common::kNoError)
-			return transitionError;
-
-		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
-		drawRoomScene(_engine, *screen, scene, 0.0f);
-		screen->makeAllDirty();
-		screen->update();
-
-		logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
-		transitionError = startupFlow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
-		if (transitionError.getCode() != Common::kNoError)
-			return transitionError;
-		if (runtimeEntities)
-			runtimeEntities->resumeTimerCountdowns();
-
 		startupFlow.resetCursorAnimationSequence();
 		startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
@@ -2083,13 +2067,43 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				interaction.requestPlayerGotoXZ ||
 				interaction.mutatedRuntimeState;
 		};
+		StartupInteractionResult roomEntryInteraction;
+		bool hasPendingRoomEntryInteraction = false;
 		if (shouldRunRoomEntryCommands) {
-			StartupInteractionResult roomEntryInteraction;
 			if (!_engine.getStartupScript()->executeRoomEnterCommands(
 					scene.state.roomName, roomEntryInteraction)) {
 				return Common::kReadingFailed;
 			}
-			if (hasRoomEntryInteraction(roomEntryInteraction)) {
+
+			// Native room_setup applies entry-time state changes before the first visible room frame.
+			if (roomEntryInteraction.mutatedRuntimeState) {
+				if (!applyCurrentRoomRuntimeMutationsInPlace() &&
+						!refreshCurrentScene(true)) {
+					return Common::kReadingFailed;
+				}
+				roomEntryInteraction.mutatedRuntimeState = false;
+			}
+			hasPendingRoomEntryInteraction = hasRoomEntryInteraction(roomEntryInteraction);
+		}
+
+		transitionError = startupFlow.waitForRoomSetupTransitionHold();
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+
+		logScenePaletteSummary("room setup stub palette", scene, 0.0f);
+		drawRoomScene(_engine, *screen, scene, 0.0f);
+		screen->makeAllDirty();
+		screen->update();
+
+		logScenePaletteSummary("room setup fade target", scene, scene.targetPaletteBrightness);
+		transitionError = startupFlow.fadeInRoomScene(scene.palette, scene.targetPaletteBrightness);
+		if (transitionError.getCode() != Common::kNoError)
+			return transitionError;
+		if (runtimeEntities)
+			runtimeEntities->resumeTimerCountdowns();
+
+		if (shouldRunRoomEntryCommands) {
+			if (hasPendingRoomEntryInteraction) {
 				bool didEntryTransition = false;
 				Common::Error entryInteractionError = interactionProcessor.handleInteractionResult(
 					roomEntryInteraction, didEntryTransition, Common::String());
