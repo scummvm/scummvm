@@ -413,7 +413,9 @@ void cMesh::CreateJointsAndBodies(Common::Array<iPhysicsBody *> *apBodyVec, cMes
 	// If the mesh has a skeleton, attach the bodies to the bones
 	// in the skeleton.
 	if (mpSkeleton) {
-		// TODO: Set root node to identity matrix
+		// Set root node to identity matrix
+		cMatrixf mtxOldRoot = apEntity->GetWorldMatrix();
+        apEntity->SetMatrix(cMatrixf::Identity);
 
 		for (int bone = 0; bone < apEntity->GetBoneStateNum(); ++bone) {
 			cBoneState *pBoneState = apEntity->GetBoneState(bone);
@@ -504,7 +506,8 @@ void cMesh::CreateJointsAndBodies(Common::Array<iPhysicsBody *> *apBodyVec, cMes
 			}
 		}
 
-		// TODO: Reset root node matrix
+		// Reset root node matrix
+		apEntity->SetMatrix(mtxOldRoot);
 	}
 	///////////////////////////////////
 	// Create bodies for the sub meshes.
