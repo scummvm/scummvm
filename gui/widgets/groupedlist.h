@@ -56,7 +56,6 @@ public:
 	void saveClosedGroups(const Common::U32String &groupName);
 
 	int getSelected() const { return (_selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
-
 	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleMouseDown(int x, int y, int button, int clickCount) override;

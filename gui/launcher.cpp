@@ -461,6 +461,10 @@ void LauncherDialog::removeGame(int item) {
 		// This will be used to select the next item.
 		// If grouping method is None then updateListing() will
 		// ignore selPos and use the current selection instead.
+		int selPos = -1;
+		if (_groupBy != kGroupByNone) {
+			selPos = getItemPos(item);
+		}
 
 		// Remove the currently selected game from the list
 		assert(item >= 0);
@@ -478,7 +482,7 @@ void LauncherDialog::removeGame(int item) {
 		ConfMan.flushToDisk();
 
 		// Update the ListWidget/GridWidget and force a redraw
-		updateListing();
+		updateListing(selPos);
 		g_gui.scheduleTopDialogRedraw();
 	}
 }
@@ -1241,11 +1245,17 @@ void LauncherSimple::updateListing(int selPos) {
 	}
 
 	const int oldSel = _list->getSelected();
+
+	// Preserve the current collapsed groups before rebuilding the grouped list
+	if (_groupBy != kGroupByNone) {
+		_list->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
+	}
+
 	_list->setList(l);
 
 	groupEntries(domainList);
 
-	// Close groups that the user closed earlier
+	// Restore collapsed groups after rebuilding
 	_list->loadClosedGroups(Common::U32String(groupingModes[_groupBy].name));
 
 	// Update the filter settings, those are lost when "setList"
@@ -1839,14 +1849,9 @@ void LauncherDialog::confirmRemoveGames(const Common::Array<bool> &selectedItems
 
 	// Use standard message box if only one item is selected
 	if (selectedCount == 1) {
-		for (int i = 0; i < (int)selectedItems.size(); ++i) {
-			if (selectedItems[i]) {
-				removeGame(i);
-				return;
-			}
-		}
+		removeGame(getSelected());
+		return;
 	}
-
 	// Build the confirmation message with count
 	Common::U32String message = Common::U32String::format(
 		_("Do you really want to remove the following %d game configurations?\n\n"),
