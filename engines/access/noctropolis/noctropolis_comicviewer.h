@@ -102,7 +102,7 @@ protected:
 	SpriteResource *_bubbleSprites;
 	int _currPage;
 	PageResult runPage(const ComicPage *page);
-	void drawBubble(const ComicBox &bubble);
+	bool drawBubble(const ComicBox &bubble);
 };
 
 } // end namespace Noctropolis
