@@ -669,9 +669,7 @@ Common::Error AGOSEngine::init() {
 		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 		memset(_backBuf->getPixels(), 0, _backBuf->pitch * _backBuf->h);
 		_scaleBuf = new Graphics::Surface();
-		const uint16 scaleWidth = isPnAmiga() ? 640 : _internalWidth;
-		const uint16 scaleHeight = isPnAmiga() ? _screenHeight : _internalHeight;
-		_scaleBuf->create(scaleWidth, scaleHeight, Graphics::PixelFormat::createFormatCLUT8());
+		_scaleBuf->create(_internalWidth, isPnAmiga() ? _screenHeight : _internalHeight, Graphics::PixelFormat::createFormatCLUT8());
 		memset(_scaleBuf->getPixels(), 0, _scaleBuf->pitch * _scaleBuf->h);
 	}
 
