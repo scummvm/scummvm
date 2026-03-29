@@ -29,7 +29,7 @@ For the impatient among you, here is how to get ScummVM running in five simple s
 >
 > Hint:
 >
-> To add multiple games in one go, press and hold the shift key, then click 'Add game' -- the label will change to 'Mass Add' and if you press it, you are again asked to select a directory, only this time ScummVM will search through all subdirectories for supported games.
+> To add multiple games in one go, click the small arrow on the 'Add game' button and choose 'Mass Add'. You are again asked to select a directory, only this time ScummVM will search through all subdirectories for supported games.
 
 
 
