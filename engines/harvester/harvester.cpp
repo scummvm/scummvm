@@ -250,6 +250,20 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 	return _roomDebugEnabled;
 }
 
+bool HarvesterEngine::requestDebugCommand(const StartupCommandRecord &command) {
+	if (!_activeFlow || !_startupScript || !_currentStartupSaveRoomState.valid)
+		return false;
+	if (_activeFlow->hasQueuedDebugInteraction())
+		return false;
+
+	StartupInteractionResult interaction;
+	if (!_startupScript->executeDebugCommand(command, interaction))
+		return false;
+
+	// Defer application to the active room loop instead of mutating state from the console thread.
+	return _activeFlow->queueDebugInteraction(interaction);
+}
+
 bool HarvesterEngine::requestDebugRoomChange(const Common::String &roomName) {
 	return _activeFlow &&
 		_currentStartupSaveRoomState.valid &&

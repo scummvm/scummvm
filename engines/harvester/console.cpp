@@ -305,12 +305,73 @@ static bool findRoomName(const Script &script, const Common::String &candidate, 
 	return false;
 }
 
+static void printDebugCommandUsage(Console &console) {
+	console.debugPrintf("Usage: DEBUG_COMMAND <opcode> [arg1] [arg2] [arg3] [arg4]\n");
+	console.debugPrintf("   or: DEBUG_COMMAND <opcode> [arg1] [arg2] [arg3] CHAIN <action_tag>\n");
+}
+
+static bool parseDebugCommandArgs(int argc, const char **argv, StartupCommandRecord &command,
+		Common::String &errorMessage) {
+	command = StartupCommandRecord();
+	if (argc < 2) {
+		errorMessage = "Missing opcode";
+		return false;
+	}
+
+	command.opcodeName = argv[1];
+	uint positionalArgIndex = 0;
+	bool sawChain = false;
+	for (int i = 2; i < argc; ++i) {
+		const Common::String token = argv[i];
+		if (token.equalsIgnoreCase("CHAIN")) {
+			if (sawChain) {
+				errorMessage = "CHAIN may only be specified once";
+				return false;
+			}
+			if (i + 1 >= argc) {
+				errorMessage = "CHAIN requires an action tag";
+				return false;
+			}
+			if (i + 2 != argc) {
+				errorMessage = "CHAIN must be the final option";
+				return false;
+			}
+			command.arg4 = argv[i + 1];
+			sawChain = true;
+			break;
+		}
+
+		// Positional args map directly onto the startup command fields, with arg4 also
+		// serving as the optional continuation tag when CHAIN is not used explicitly.
+		switch (positionalArgIndex++) {
+		case 0:
+			command.arg1 = token;
+			break;
+		case 1:
+			command.arg2 = token;
+			break;
+		case 2:
+			command.arg3 = token;
+			break;
+		case 3:
+			command.arg4 = token;
+			break;
+		default:
+			errorMessage = "Too many command arguments";
+			return false;
+		}
+	}
+
+	return true;
+}
+
 } // End of anonymous namespace
 
 Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
 	registerCmd("DEBUG_COMBAT", WRAP_METHOD(Console, Cmd_debugCombat));
 	registerCmd("DEBUG_ACTIONS", WRAP_METHOD(Console, Cmd_debugActions));
+	registerCmd("DEBUG_COMMAND", WRAP_METHOD(Console, Cmd_debugCommand));
 	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
 	registerCmd("GOTO_ROOM", WRAP_METHOD(Console, Cmd_gotoRoom));
 }
@@ -418,6 +479,40 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 			debugPrintf("%s\n", line.c_str());
 	}
 
+	return true;
+}
+
+bool Console::Cmd_debugCommand(int argc, const char **argv) {
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	if (!g_engine->getStartupScript() || !g_engine->hasCurrentStartupSaveRoomState()) {
+		debugPrintf("DEBUG_COMMAND is only available while a room is active\n");
+		return true;
+	}
+
+	StartupCommandRecord command;
+	Common::String errorMessage;
+	if (!parseDebugCommandArgs(argc, argv, command, errorMessage)) {
+		if (!errorMessage.empty())
+			debugPrintf("%s\n", errorMessage.c_str());
+		printDebugCommandUsage(*this);
+		return true;
+	}
+
+	if (!g_engine->requestDebugCommand(command)) {
+		debugPrintf("Unable to queue debug command '%s'\n", command.opcodeName.c_str());
+		return true;
+	}
+
+	// The command only queues work here; the active room loop applies the interaction on its next tick.
+	Common::String commandLine = Common::String::format("Queued debug command %s", command.opcodeName.c_str());
+	const Common::String detail = buildCommandDetail(command);
+	if (!detail.empty())
+		commandLine += Common::String::format(" %s", detail.c_str());
+	debugPrintf("%s\n", commandLine.c_str());
 	return true;
 }
 

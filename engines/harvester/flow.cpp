@@ -1623,11 +1623,34 @@ bool Flow::takeQueuedDialogueInteraction(StartupInteractionResult &interaction) 
 	return true;
 }
 
+bool Flow::queueDebugInteraction(const StartupInteractionResult &interaction) {
+	if (_hasQueuedDebugInteraction)
+		return false;
+
+	// Console-triggered commands are consumed by the room loop so they follow the same
+	// transition, dialogue, and continuation handling as in-world interactions.
+	_queuedDebugInteraction = interaction;
+	_hasQueuedDebugInteraction = true;
+	return true;
+}
+
+bool Flow::takeQueuedDebugInteraction(StartupInteractionResult &interaction) {
+	if (!_hasQueuedDebugInteraction)
+		return false;
+
+	interaction = _queuedDebugInteraction;
+	_queuedDebugInteraction = StartupInteractionResult();
+	_hasQueuedDebugInteraction = false;
+	return true;
+}
+
 void Flow::prepareForNewGame() {
 	clearPendingMainMenuReturn();
 	clearPendingGameOverReturn();
 	clearPendingNewGameRestart();
 	_pendingDebugRoomName.clear();
+	_queuedDebugInteraction = StartupInteractionResult();
+	_hasQueuedDebugInteraction = false;
 	_engine.clearPendingLoadedStartupSaveRoomState();
 	_engine.clearPendingLoadedDialogueStateBlob();
 	_engine.clearCurrentStartupSaveRoomState();
