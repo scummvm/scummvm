@@ -61,6 +61,7 @@ class SeekableReadStream;
 namespace Graphics {
 struct Surface;
 class FontSJIS;
+class AmigaFont;
 }
 
 namespace Audio {
@@ -536,6 +537,20 @@ protected:
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
+	struct PnAmigaTextPlane {
+		byte *pixels;
+		uint16 width, height;
+		PnAmigaTextPlane() : pixels(nullptr), width(0), height(0) {}
+	};
+
+	enum {
+		kPnAmigaTextStartX = 2,
+		kPnAmigaLowresWidth = 320,
+		kPnAmigaMainTextTop = 136,
+		kPnAmigaInputTop = 224,
+		kPnAmigaTextPlaneWidth = 552
+	};
+
 	uint8 _opcode177Var1, _opcode177Var2;
 	uint8 _opcode178Var1, _opcode178Var2;
 
@@ -557,6 +572,10 @@ protected:
 
 	WindowBlock *_dummyWindow;
 	WindowBlock *_windowArray[80];
+	Graphics::AmigaFont *_pnAmigaFont;
+	bool _pnAmigaUiVisible;
+	PnAmigaTextPlane _pnAmigaMainTextPlane;
+	PnAmigaTextPlane _pnAmigaInputTextPlane;
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -696,6 +715,27 @@ protected:
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr);
+	bool isPnAmiga() const;
+	bool isPnAmigaMainTextWindow(const WindowBlock *window) const;
+	bool isPnAmigaInputWindow(const WindowBlock *window) const;
+	bool isPnAmigaTextWindow(const WindowBlock *window) const;
+	const Graphics::AmigaFont *getPnAmigaFont() const;
+	uint16 getPnAmigaWindowInteriorHeight(const WindowBlock *window) const;
+	uint16 getPnAmigaTextPlaneWidth(const WindowBlock *window) const;
+	uint16 getPnAmigaTextLineStep() const;
+	uint16 getPnAmigaGlyphAdvance(byte chr) const;
+	uint16 getPnAmigaGlyphRenderWidth(byte chr) const;
+	uint16 getPnAmigaGlyphHeight() const;
+	bool usePnAmigaDoubleHeightTopaz() const;
+	void ensurePnAmigaTextPlanes();
+	PnAmigaTextPlane *getPnAmigaTextPlane(const WindowBlock *window);
+	const PnAmigaTextPlane *getPnAmigaTextPlane(const WindowBlock *window) const;
+	void clearPnAmigaTextPlane(WindowBlock *window);
+	void compositePnAmigaTextPlane(WindowBlock *window);
+	void scrollPnAmigaTextPlane(WindowBlock *window);
+	void drawPnAmigaTopazChar(WindowBlock *window, byte chr);
+	void drawPnAmigaTextWindowBorders();
+
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
 	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly = false, bool midiOnly = false);
@@ -1395,6 +1435,7 @@ public:
 	void setupGame() override;
 	void setupOpcodes() override;
 	void setupVideoOpcodes(VgaOpcodeProc *op) override;
+	void quickLoadOrSave() override;
 	void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) override;
 	void saveInventoryPalette();
 	void applyInventoryPalette();

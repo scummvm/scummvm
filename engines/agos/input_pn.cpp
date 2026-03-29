@@ -22,6 +22,9 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
+#include "graphics/fonts/amigafont.h"
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 void AGOSEngine_PN::clearInputLine() {
@@ -70,7 +73,9 @@ void AGOSEngine_PN::handleKeyboard() {
 		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_RETURN) {
 			chr = _keyPressed.keycode;
 			addChar(chr);
-		} else if (!(_videoLockOut & 0x10)) {
+		} else if (!(_videoLockOut & 0x10) &&
+				   !_keyPressed.hasFlags(Common::KBD_CTRL) &&
+				   !_keyPressed.hasFlags(Common::KBD_ALT)) {
 			chr = _keyPressed.ascii;
 			if (chr >= 32)
 				addChar(chr);
@@ -97,8 +102,13 @@ void AGOSEngine_PN::interact(char *buffer, uint8 size) {
 		_intputCounter = 0;
 		_inputMax = size;
 		_inputWindow = _windowArray[_curWindow];
-		windowPutChar(_inputWindow, 128);
-		windowPutChar(_inputWindow, 8);
+		if (isPnAmigaInputWindow(_inputWindow)) {
+			drawPnAmigaTopazChar(_inputWindow, 128);
+			compositePnAmigaTextPlane(_inputWindow);
+		} else {
+			windowPutChar(_inputWindow, 128);
+			windowPutChar(_inputWindow, 8);
+		}
 		_inputting = true;
 		_inputReady = true;
 	}
@@ -125,9 +135,41 @@ void AGOSEngine_PN::addChar(uint8 chr) {
 		windowPutChar(_inputWindow, 13);
 	} else if (chr == 8 && _intputCounter) {
 		clearCursor(_inputWindow);
-		windowPutChar(_inputWindow, 8);
-		windowPutChar(_inputWindow, 128);
-		windowPutChar(_inputWindow, 8);
+		if (isPnAmigaInputWindow(_inputWindow)) {
+			const byte deletedChar = _keyboardBuffer[_intputCounter - 1];
+			const Graphics::AmigaFont *font = getPnAmigaFont();
+			const uint16 advance = getPnAmigaGlyphAdvance(deletedChar);
+			byte metricChar = deletedChar;
+			int16 drawOffset = 0;
+			uint16 inkWidth = 0;
+
+			if (metricChar == 128)
+				metricChar = '_';
+			if (metricChar == 128 || metricChar == 129) {
+				inkWidth = getPnAmigaGlyphAdvance(' ');
+			} else if (font != nullptr && metricChar >= font->getLoChar() && metricChar <= font->getHiChar()) {
+				drawOffset = font->getCharDrawOffset(metricChar);
+				inkWidth = font->getCharInkWidth(metricChar);
+			}
+
+			_inputWindow->textColumn = MAX<int16>(kPnAmigaTextStartX, _inputWindow->textColumn - (int16)advance);
+
+			PnAmigaTextPlane *plane = getPnAmigaTextPlane(_inputWindow);
+			if (plane != nullptr && plane->pixels != nullptr) {
+				Graphics::Surface surface;
+				surface.init(plane->width, plane->height, plane->width, plane->pixels, Graphics::PixelFormat::createFormatCLUT8());
+				const int16 clearLeft = CLIP<int16>(_inputWindow->textColumn + drawOffset, 0, plane->width);
+				const int16 clearRight = CLIP<int16>(clearLeft + (int16)inkWidth, 0, plane->width);
+				surface.fillRect(Common::Rect(clearLeft, _inputWindow->textRow,
+					clearRight, _inputWindow->textRow + getPnAmigaGlyphHeight()), _inputWindow->fillColor);
+				drawPnAmigaTopazChar(_inputWindow, 128);
+				compositePnAmigaTextPlane(_inputWindow);
+			}
+		} else {
+			windowPutChar(_inputWindow, 8);
+			windowPutChar(_inputWindow, 128);
+			windowPutChar(_inputWindow, 8);
+		}
 
 		_keyboardBuffer[--_intputCounter] = 0;
 	} else if (chr >= 32 && _intputCounter < _inputMax) {
@@ -135,12 +177,38 @@ void AGOSEngine_PN::addChar(uint8 chr) {
 
 		clearCursor(_inputWindow);
 		windowPutChar(_inputWindow, chr);
-		windowPutChar(_inputWindow, 128);
-		windowPutChar(_inputWindow, 8);
+		if (isPnAmigaInputWindow(_inputWindow)) {
+			drawPnAmigaTopazChar(_inputWindow, 128);
+			compositePnAmigaTextPlane(_inputWindow);
+		} else {
+			windowPutChar(_inputWindow, 128);
+			windowPutChar(_inputWindow, 8);
+		}
 	}
 }
 
 void AGOSEngine_PN::clearCursor(WindowBlock *window) {
+	if (isPnAmigaInputWindow(window)) {
+		const Graphics::AmigaFont *font = getPnAmigaFont();
+		PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+		if (plane != nullptr && plane->pixels != nullptr) {
+			Graphics::Surface surface;
+			surface.init(plane->width, plane->height, plane->width, plane->pixels, Graphics::PixelFormat::createFormatCLUT8());
+			int16 drawOffset = 0;
+			uint16 inkWidth = getPnAmigaGlyphAdvance(' ');
+			if (font != nullptr && '_' >= font->getLoChar() && '_' <= font->getHiChar()) {
+				drawOffset = font->getCharDrawOffset('_');
+				inkWidth = font->getCharInkWidth('_');
+			}
+			const int16 cursorLeft = CLIP<int16>(window->textColumn + drawOffset, 0, plane->width);
+			const int16 cursorRight = CLIP<int16>(cursorLeft + (int16)inkWidth, 0, plane->width);
+			surface.fillRect(Common::Rect(cursorLeft, window->textRow,
+				cursorRight, window->textRow + getPnAmigaGlyphHeight()), window->fillColor);
+			compositePnAmigaTextPlane(window);
+		}
+		return;
+	}
+
 	byte oldTextColor = window->textColor;
 
 	window->textColor = window->fillColor;

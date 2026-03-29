@@ -37,6 +37,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/amigafont.h"
 
 #include "audio/mididrv.h"
 
@@ -306,6 +307,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_curWindow = 0;
 	_textWindow = nullptr;
+	_pnAmigaFont = nullptr;
 
 	_subjectItem = nullptr;
 	_objectItem = nullptr;
@@ -406,6 +408,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_vgaFrozenBase = nullptr;
 	_vgaRealBase = nullptr;
 	_zoneBuffers = nullptr;
+	_pnAmigaUiVisible = false;
 
 	_curVgaFile1 = nullptr;
 	_curVgaFile2 = nullptr;
@@ -604,11 +607,15 @@ Common::Error AGOSEngine::init() {
 		_screenHeight = 480;
 	} else {
 		_screenWidth = 320;
-		_screenHeight = 200;
+		_screenHeight = isPnAmiga() ? 240 : 200;
 	}
 
 	_internalWidth = _screenWidth;
 	_internalHeight = _screenHeight;
+	if (isPnAmiga()) {
+		_internalWidth = 640;
+		_internalHeight = 480;
+	}
 
 	if (getPlatform() == Common::kPlatformPC98) {
 		_internalWidth <<= 1;
@@ -656,11 +663,16 @@ Common::Error AGOSEngine::init() {
 	_backGroundBuf = new Graphics::Surface();
 	_backGroundBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
 
-	if (getGameType() == GType_FF || getGameType() == GType_PP || (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98)) {
+	if (getGameType() == GType_FF || getGameType() == GType_PP ||
+			(getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98) || isPnAmiga()) {
 		_backBuf = new Graphics::Surface();
 		_backBuf->create(_screenWidth, _screenHeight, Graphics::PixelFormat::createFormatCLUT8());
+		memset(_backBuf->getPixels(), 0, _backBuf->pitch * _backBuf->h);
 		_scaleBuf = new Graphics::Surface();
-		_scaleBuf->create(_internalWidth, _internalHeight, Graphics::PixelFormat::createFormatCLUT8());
+		const uint16 scaleWidth = isPnAmiga() ? 640 : _internalWidth;
+		const uint16 scaleHeight = isPnAmiga() ? _screenHeight : _internalHeight;
+		_scaleBuf->create(scaleWidth, scaleHeight, Graphics::PixelFormat::createFormatCLUT8());
+		memset(_scaleBuf->getPixels(), 0, _scaleBuf->pitch * _scaleBuf->h);
 	}
 
 	if (getGameType() == GType_SIMON2) {
@@ -952,10 +964,111 @@ void AGOSEngine::setupGame() {
 	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
 		_videoWindows[9] = 75;
 	}
+	if (isPnAmiga()) {
+		_videoWindows[3] = 134;
+		_videoWindows[7] = 134;
+		_videoWindows[11] = 134;
+		_videoWindows[15] = 240;
+		if (_pnAmigaFont == nullptr)
+			_pnAmigaFont = new Graphics::AmigaFont(Graphics::AmigaFont::kTopaz9Builtin);
+	}
 }
+
+
+bool AGOSEngine::isPnAmiga() const {
+	return getGameType() == GType_PN && getPlatform() == Common::kPlatformAmiga;
+}
+
+bool AGOSEngine::usePnAmigaDoubleHeightTopaz() const {
+	return ConfMan.hasKey("pn_amiga_doubleheight_font") && ConfMan.getBool("pn_amiga_doubleheight_font");
+}
+
+const Graphics::AmigaFont *AGOSEngine::getPnAmigaFont() const {
+	return _pnAmigaFont;
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphAdvance(byte chr) const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return 0;
+	if (chr == 128 || chr == 129)
+		return font->getCharAdvanceWidth(' ');
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return 0;
+
+	return font->getCharAdvanceWidth(chr);
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphRenderWidth(byte chr) const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return 0;
+	if (chr == 128 && isPnAmiga())
+		chr = '_';
+	if (chr == 128 || chr == 129)
+		return getPnAmigaGlyphAdvance(' ');
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return 0;
+
+	return font->getCharRenderWidth(chr);
+}
+
+uint16 AGOSEngine::getPnAmigaGlyphHeight() const {
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	const uint16 rawHeight = font ? font->getFontHeight() : 9;
+	return usePnAmigaDoubleHeightTopaz() ? rawHeight * 2 : rawHeight;
+}
+
+void AGOSEngine::ensurePnAmigaTextPlanes() {
+	if (!isPnAmiga())
+		return;
+	const WindowBlock *mainWindow = _windowArray[0];
+	const WindowBlock *inputWindow = _windowArray[2];
+	if (mainWindow == nullptr || inputWindow == nullptr)
+		return;
+
+	const uint16 mainWidth = getPnAmigaTextPlaneWidth(mainWindow);
+	const uint16 mainHeight = getPnAmigaWindowInteriorHeight(mainWindow);
+	const uint16 inputWidth = getPnAmigaTextPlaneWidth(inputWindow);
+	const uint16 inputHeight = getPnAmigaWindowInteriorHeight(inputWindow);
+
+	if (_pnAmigaMainTextPlane.pixels == nullptr || _pnAmigaMainTextPlane.width != mainWidth || _pnAmigaMainTextPlane.height != mainHeight) {
+		delete[] _pnAmigaMainTextPlane.pixels;
+		_pnAmigaMainTextPlane.width = mainWidth;
+		_pnAmigaMainTextPlane.height = mainHeight;
+		_pnAmigaMainTextPlane.pixels = new byte[mainWidth * mainHeight];
+		memset(_pnAmigaMainTextPlane.pixels, 0, mainWidth * mainHeight);
+	}
+
+	if (_pnAmigaInputTextPlane.pixels == nullptr || _pnAmigaInputTextPlane.width != inputWidth || _pnAmigaInputTextPlane.height != inputHeight) {
+		delete[] _pnAmigaInputTextPlane.pixels;
+		_pnAmigaInputTextPlane.width = inputWidth;
+		_pnAmigaInputTextPlane.height = inputHeight;
+		_pnAmigaInputTextPlane.pixels = new byte[inputWidth * inputHeight];
+		memset(_pnAmigaInputTextPlane.pixels, 0, inputWidth * inputHeight);
+	}
+}
+
+AGOSEngine::PnAmigaTextPlane *AGOSEngine::getPnAmigaTextPlane(const WindowBlock *window) {
+	if (isPnAmigaMainTextWindow(window))
+		return &_pnAmigaMainTextPlane;
+	if (isPnAmigaInputWindow(window))
+		return &_pnAmigaInputTextPlane;
+	return nullptr;
+}
+
+const AGOSEngine::PnAmigaTextPlane *AGOSEngine::getPnAmigaTextPlane(const WindowBlock *window) const {
+	if (isPnAmigaMainTextWindow(window))
+		return &_pnAmigaMainTextPlane;
+	if (isPnAmigaInputWindow(window))
+		return &_pnAmigaInputTextPlane;
+	return nullptr;
+}
+
 
 AGOSEngine::~AGOSEngine() {
 	_system->getAudioCDManager()->stop();
+	delete _pnAmigaFont;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];
@@ -973,6 +1086,8 @@ AGOSEngine::~AGOSEngine() {
 	free(_roomsList);
 	free(_roomStates);
 	free(_stringTabPtr);
+	delete[] _pnAmigaMainTextPlane.pixels;
+	delete[] _pnAmigaInputTextPlane.pixels;
 	free(_strippedTxtMem);
 	free(_tblList);
 	free(_textMem);

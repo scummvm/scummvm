@@ -1035,7 +1035,9 @@ void AGOSEngine::verticalScroll(VC10_state *state) {
 }
 
 Graphics::Surface *AGOSEngine::getBackendSurface() const {
-	return (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) ? _backBuf : _system->lockScreen();
+	if ((getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) || isPnAmiga())
+		return _backBuf;
+	return _system->lockScreen();
 }
 
 void AGOSEngine::updateBackendSurface(Common::Rect *area) const {
@@ -1083,6 +1085,42 @@ void AGOSEngine::updateBackendSurface(Common::Rect *area) const {
 			src11 += src1Pitch;
 			dst10 += dst1Pitch;
 			dst11 += dst1Pitch;
+		}
+	} else if (isPnAmiga()) {
+		int x = 0;
+		int y = 0;
+		int w = _screenWidth;
+		int h = _screenHeight;
+
+		if (area) {
+			x = area->left;
+			y = area->top;
+			w = area->width();
+			h = area->height();
+		}
+
+		Graphics::Surface *screen = _system->lockScreen();
+		for (int row = y; row < y + h; ++row) {
+			const int dstRow = row << 1;
+			const bool usePnAmigaTextPane = _pnAmigaUiVisible && row >= 136;
+			if (!usePnAmigaTextPane) {
+				const byte *src = (const byte *)_backBuf->getBasePtr(x, row);
+				byte *dst0 = (byte *)screen->getBasePtr(x << 1, dstRow);
+				byte *dst1 = (byte *)screen->getBasePtr(x << 1, dstRow + 1);
+				for (int i = 0; i < w; ++i) {
+					const uint8 v = *src++;
+					*dst0++ = v;
+					*dst0++ = v;
+					*dst1++ = v;
+					*dst1++ = v;
+				}
+			} else {
+				const byte *src = (const byte *)_scaleBuf->getBasePtr(x << 1, row);
+				byte *dst0 = (byte *)screen->getBasePtr(x << 1, dstRow);
+				byte *dst1 = (byte *)screen->getBasePtr(x << 1, dstRow + 1);
+				memcpy(dst0, src, w << 1);
+				memcpy(dst1, src, w << 1);
+			}
 		}
 	}
 
@@ -1553,7 +1591,41 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 }
 
 // Personal Nightmare specific
+void AGOSEngine::drawPnAmigaTextWindowBorders() {
+	if (_scaleBuf == nullptr)
+		return;
+
+	Graphics::Surface *screen = _scaleBuf;
+	const byte color = 14;
+	byte *dst = (byte *)screen->getBasePtr(0, 136);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 223);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 136);
+	for (int y = 136; y <= 223; ++y) {
+		dst[0] = color;
+		dst[screen->w - 1] = color;
+		dst += screen->pitch;
+	}
+	dst = (byte *)screen->getBasePtr(0, 224);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 239);
+	memset(dst, color, screen->w);
+	dst = (byte *)screen->getBasePtr(0, 224);
+	for (int y = 224; y <= 239; ++y) {
+		dst[0] = color;
+		dst[screen->w - 1] = color;
+		dst += screen->pitch;
+	}
+	Common::Rect dirtyRect(0, 136, 320, _screenHeight);
+	updateBackendSurface(&dirtyRect);
+}
+
 void AGOSEngine::drawEdging() {
+	if (isPnAmiga()) {
+		drawPnAmigaTextWindowBorders();
+		return;
+	}
 	byte *dst;
 	uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 

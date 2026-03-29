@@ -130,13 +130,21 @@ Common::Error AGOSEngine_PN::go() {
 		_paletteFlag = 1;
 	}
 
-	_inputWindow = _windowArray[2] = openWindow(0, 192, 40, 1, 1, 0, 15);
-	_textWindow = _windowArray[0] = openWindow(1, 136, 38, 6, 1, 0, 15);
+	if (isPnAmiga())
+		_pnAmigaUiVisible = false;
+
+	_inputWindow = _windowArray[2] = openWindow(0, isPnAmiga() ? 224 : 192, 40, 1, 1, 0, isPnAmiga() ? 14 : 15);
+	_textWindow = _windowArray[0] = openWindow(isPnAmiga() ? 0 : 1, 136, isPnAmiga() ? 40 : 38, isPnAmiga() ? 5 : 6, 1, 0, isPnAmiga() ? 14 : 15);
 
 	if (getFeatures() & GF_DEMO) {
 		demoSeq();
 	} else {
 		introSeq();
+		if (isPnAmiga()) {
+			_pnAmigaUiVisible = true;
+			clearWindow(_windowArray[0]);
+			clearWindow(_windowArray[2]);
+		}
 		processor();
 	}
 

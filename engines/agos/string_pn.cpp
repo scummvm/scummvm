@@ -124,6 +124,8 @@ void AGOSEngine_PN::pcl(const char *s) {
 }
 
 void AGOSEngine_PN::pcf(uint8 ch) {
+	WindowBlock *window = _windowArray[_curWindow];
+	const bool usePnAmigaWrap = isPnAmigaTextWindow(window);
 	int ct = 0;
 	if (ch == '[')
 		ch = '\n';
@@ -131,9 +133,62 @@ void AGOSEngine_PN::pcf(uint8 ch) {
 		return;	/* Trap any C EOS chrs */
 	if (ch == 255) {
 		_bp = 0;
-		_xofs = 0;
+		_xofs = usePnAmigaWrap ? window->textColumn : 0;
 		return;		/* pcf(255) initializes the routine */
 	}			/* pcf(254) flushes its working _buffer */
+
+	if (usePnAmigaWrap) {
+		const int wrapLimit = (int)getPnAmigaTextPlaneWidth(window);
+		int pendingWidth = 0;
+
+		_xofs = window->textColumn;
+		if (ch != 254) {
+			pendingWidth = 0;
+			for (int i = 0; i < _bp; ++i) {
+				const byte bufferedChar = (byte)_buffer[i];
+				if (bufferedChar >= 32)
+					pendingWidth += getPnAmigaGlyphAdvance(bufferedChar);
+			}
+			if ((ch != 32) || (pendingWidth + _xofs != wrapLimit))
+				_buffer[_bp++] = ch;
+		}
+		if ((ch != 254) && (!Common::isSpace(ch)) && (_bp < 60))
+			return;
+
+		pendingWidth = 0;
+		for (int i = 0; i < _bp; ++i) {
+			const byte bufferedChar = (byte)_buffer[i];
+			if (bufferedChar >= 32)
+				pendingWidth += getPnAmigaGlyphAdvance(bufferedChar);
+		}
+		if (pendingWidth + _xofs > wrapLimit && _bp > 0 && _buffer[_bp - 1] == ' ') {
+			const int trimmedWidth = pendingWidth - getPnAmigaGlyphAdvance(' ');
+			if (trimmedWidth + _xofs <= wrapLimit) {
+				_buffer[_bp - 1] = 0;
+				pcl(_buffer);
+				windowPutChar(window, '\n');
+				_sb[0] = '\0';
+				_bp = 0;
+				_xofs = kPnAmigaTextStartX;
+				return;
+			}
+		}
+		if (pendingWidth + _xofs > wrapLimit) {
+			pcl("\n");
+			if (_buffer[0] == ' ')
+				ct = 1;
+			_xofs = kPnAmigaTextStartX;
+		}
+		_buffer[_bp] = 0;
+		pcl(_buffer + ct);
+		if (ch == '\n')
+			_xofs = kPnAmigaTextStartX;
+		else
+			_xofs = window->textColumn;
+		_bp = 0;
+		return;
+	}
+
 	if (ch != 254) {
 		if ((ch != 32) || (_bp + _xofs != 50))
 			_buffer[_bp++] = ch;

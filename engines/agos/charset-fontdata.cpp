@@ -28,6 +28,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/amigafont.h"
 
 namespace AGOS {
 
@@ -3057,6 +3058,80 @@ static inline void pnSqueezeGlyph8Rows(const byte *src8, byte *dst8) {
 		dst8[i] = pnSqueezeRow(src8[i], anyBit1SetAcrossGlyph);
 }
 
+static void drawPnAmigaDoubleHeightTopazChar(const Graphics::AmigaFont *font, Graphics::Surface *dst, byte chr, int x, int y, byte color) {
+	enum {
+		kPnAmigaTopazScratchWidth = 16,
+		kPnAmigaTopazScratchHeight = 16
+	};
+
+	const int glyphWidth = font->getCharRenderWidth(chr);
+	const int rawHeight = font->getFontHeight();
+	const int drawOffset = font->getCharDrawOffset(chr);
+	const int glyphLeft = MIN<int>(0, drawOffset);
+	const int glyphOriginX = drawOffset - glyphLeft;
+	if (glyphWidth <= 0 || rawHeight <= 0)
+		return;
+	assert(glyphWidth <= kPnAmigaTopazScratchWidth);
+	assert(rawHeight <= kPnAmigaTopazScratchHeight);
+
+	byte glyphPixels[kPnAmigaTopazScratchWidth * kPnAmigaTopazScratchHeight];
+	memset(glyphPixels, 0, sizeof(glyphPixels));
+
+	Graphics::Surface glyphSurface;
+	glyphSurface.init(glyphWidth, rawHeight, glyphWidth, glyphPixels, Graphics::PixelFormat::createFormatCLUT8());
+	font->drawChar(&glyphSurface, chr, glyphOriginX, 0, 1);
+
+	for (int srcY = 0; srcY < rawHeight; ++srcY) {
+		for (int srcX = 0; srcX < glyphWidth; ++srcX) {
+			if (glyphPixels[srcY * glyphWidth + srcX] == 0)
+				continue;
+
+			const int dstX = x + glyphLeft + srcX;
+			if (dstX < 0 || dstX >= dst->w)
+				continue;
+
+			for (int repeat = 0; repeat < 2; ++repeat) {
+				const int dstY = y + srcY * 2 + repeat;
+				if (dstY >= 0 && dstY < dst->h)
+					*(byte *)dst->getBasePtr(dstX, dstY) = color;
+			}
+		}
+	}
+}
+
+void AGOSEngine::drawPnAmigaTopazChar(WindowBlock *window, byte chr) {
+	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr)
+		return;
+
+	Graphics::Surface surface;
+	surface.init(plane->width, plane->height, plane->width, plane->pixels, Graphics::PixelFormat::createFormatCLUT8());
+
+	const int x = window->textColumn;
+	const int y = window->textRow;
+	const int glyphWidth = getPnAmigaGlyphAdvance(' ');
+	const int fontHeight = getPnAmigaGlyphHeight();
+	if (chr == 128 && isPnAmigaInputWindow(window)) {
+		chr = '_';
+	}
+
+	if (chr == 128 || chr == 129) {
+		surface.fillRect(Common::Rect(x, y, x + glyphWidth, y + fontHeight), window->textColor);
+		return;
+	}
+
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return;
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return;
+
+	if (usePnAmigaDoubleHeightTopaz())
+		drawPnAmigaDoubleHeightTopazChar(font, &surface, chr, x, y, window->textColor);
+	else
+		font->drawChar(&surface, chr, x + font->getCharDrawOffset(chr), y, window->textColor);
+}
+
 void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
@@ -3100,6 +3175,15 @@ void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte ch
 }
 
 void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	if (isPnAmigaTextWindow(window)) {
+		(void)x;
+		(void)y;
+		_videoLockOut |= 0x8000;
+		drawPnAmigaTopazChar(window, chr);
+		compositePnAmigaTextPlane(window);
+		_videoLockOut &= ~0x8000;
+		return;
+	}
 	_videoLockOut |= 0x8000;
 	drawPnSqueezedChar(window, x, y, chr);
 	_videoLockOut &= ~0x8000;
