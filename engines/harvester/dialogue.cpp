@@ -965,7 +965,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			}
 		}
 
-		if (!resources->setCurrentDisc(discNumber)) {
+		if (!_engine.activateStartupDisc(discNumber)) {
 			warning("Harvester: unable to activate disc %d resources", discNumber);
 			return Common::kReadingFailed;
 		}

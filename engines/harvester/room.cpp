@@ -1658,7 +1658,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 			}
 
-			if (!resources->setCurrentDisc(discNumber)) {
+			if (!_engine.activateStartupDisc(discNumber)) {
 				warning("Harvester: unable to activate disc %d resources", discNumber);
 				return Common::kReadingFailed;
 			}
@@ -1671,14 +1671,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return Common::kReadingFailed;
 
 			for (uint exitStep = 0; exitStep < 128; ++exitStep) {
-				if (!exitInteraction.musicPath.empty())
-					(void)_engine.playStartupMusic(exitInteraction.musicPath);
-				startupFlow.executeStartupAudioCommands(exitInteraction.audioCommands);
 				if (exitInteraction.cdChangeDisc > 0) {
 					Common::Error cdPromptError = showCdChangePrompt(exitInteraction.cdChangeDisc);
 					if (cdPromptError.getCode() != Common::kNoError)
 						return cdPromptError;
 				}
+				if (!exitInteraction.musicPath.empty())
+					(void)_engine.playStartupMusic(exitInteraction.musicPath);
+				startupFlow.executeStartupAudioCommands(exitInteraction.audioCommands);
 
 				if (!exitInteraction.cutscenePath.empty()) {
 					FstPlayer fstPlayer(_engine);
@@ -1875,16 +1875,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 
 				Common::String restoreMusicPath = engine.getStartupMusicPath();
+				bool discChanged = false;
+				if (interaction.cdChangeDisc > 0) {
+					ResourceManager *resources = engine.getResources();
+					const int previousDisc = resources ? resources->getCurrentDisc() : 0;
+					Common::Error cdPromptError = showCdChangePromptFn(interaction.cdChangeDisc);
+					if (cdPromptError.getCode() != Common::kNoError)
+						return cdPromptError;
+					discChanged = resources && previousDisc > 0 &&
+						previousDisc != resources->getCurrentDisc();
+				}
 				if (!interaction.musicPath.empty()) {
 					(void)engine.playStartupMusic(interaction.musicPath);
 					restoreMusicPath = engine.getStartupMusicPath();
 				}
 				startupFlow.executeStartupAudioCommands(interaction.audioCommands);
-				if (interaction.cdChangeDisc > 0) {
-					Common::Error cdPromptError = showCdChangePromptFn(interaction.cdChangeDisc);
-					if (cdPromptError.getCode() != Common::kNoError)
-						return cdPromptError;
-				}
 				if (interaction.requestRoomRestart) {
 					pendingRoomChange = !scene.state.entranceName.empty()
 						? scene.state.entranceName
@@ -1896,6 +1901,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
 				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
 					roomTransition = kStartupRoomTransitionCloseup;
+
+				const bool needsCurrentRoomReload =
+					discChanged &&
+					!interaction.requestRoomRestart &&
+					interaction.nextRoomName.empty() &&
+					!interaction.mutatedRuntimeState;
+				if (needsCurrentRoomReload) {
+					if (!refreshCurrentSceneFn(true))
+						return Common::kReadingFailed;
+					startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
+					if (!restoreMusicPath.empty())
+						(void)engine.playStartupMusic(restoreMusicPath);
+				}
 
 				if (!interaction.nextRoomName.empty() &&
 						roomTransition == kStartupRoomTransitionChangeRoom) {

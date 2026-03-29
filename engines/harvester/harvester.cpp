@@ -221,6 +221,25 @@ void HarvesterEngine::stopStartupSound() {
 		_media->stopSound();
 }
 
+bool HarvesterEngine::activateStartupDisc(int discNumber) {
+	if (!_resources || discNumber <= 0)
+		return false;
+
+	const int previousDisc = _resources->getCurrentDisc();
+	if (!_resources->setCurrentDisc(discNumber))
+		return false;
+
+	if (_media && previousDisc != discNumber) {
+		_media->stopMusic();
+		_media->stopSound();
+		debugC(1, kDebugResources,
+			"Harvester: flushed transient startup media state after disc switch %d -> %d",
+			previousDisc, discNumber);
+	}
+
+	return true;
+}
+
 bool HarvesterEngine::toggleCombatDebugEnabled() {
 	_combatDebugEnabled = !_combatDebugEnabled;
 	return _combatDebugEnabled;

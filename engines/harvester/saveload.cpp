@@ -131,7 +131,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 			return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 
 	if (s.isLoading()) {
-		if (_resources && !(_resources->setCurrentDisc(currentDisc > 0 ? currentDisc : 1)))
+		if (!activateStartupDisc(currentDisc > 0 ? currentDisc : 1))
 			return Common::kReadingFailed;
 		if (!roomState.valid || roomState.roomName.empty())
 			return Common::kReadingFailed;
