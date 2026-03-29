@@ -384,18 +384,9 @@ void AGOSEngine_PN::opn_opcode31() {
 
 	switch (a) {
 		case 0:
-			if (_saveLoadType == 2) {
-				memset(_saveFile, 0, sizeof(_saveFile));
-				for (uint i = 0; i < 8 && _saveLoadName[i] != 0; ++i)
-					_saveFile[i] = _saveLoadName[i];
-				slot = _saveLoadSlot;
-				bf = genSaveName(slot);
-				_saveLoadType = 0;
-			} else {
-				getFilename();
-				slot = matchSaveGame(_saveFile, countSaveGames());
-				bf = genSaveName(slot);
-			}
+			getFilename();
+			slot = matchSaveGame(_saveFile, countSaveGames());
+			bf = genSaveName(slot);
 			break;
 		case 1:
 			bf = "pn.sav";
@@ -432,20 +423,12 @@ void AGOSEngine_PN::opn_opcode32() {
 	uint16 curSlot = countSaveGames();
 	switch (a) {
 		case 0:
-			if (_saveLoadType == 1) {
-				memset(_saveFile, 0, sizeof(_saveFile));
-				for (uint i = 0; i < 8 && _saveLoadName[i] != 0; ++i)
-					_saveFile[i] = _saveLoadName[i];
-				bf = genSaveName(_saveLoadSlot);
-				_saveLoadType = 0;
-			} else {
-				getFilename();
-				slot = matchSaveGame(_saveFile, curSlot);
-				if (slot != -1)
-					bf = genSaveName(slot);
-				else
-					bf = genSaveName(curSlot);
-			}
+			getFilename();
+			slot = matchSaveGame(_saveFile, curSlot);
+			if (slot != -1)
+				bf = genSaveName(slot);
+			else
+				bf = genSaveName(curSlot);
 			break;
 		case 1:
 			bf = "pn.sav";

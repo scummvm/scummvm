@@ -117,55 +117,6 @@ void AGOSEngine_Feeble::quickLoadOrSave() {
 }
 #endif
 
-void AGOSEngine_PN::quickLoadOrSave() {
-	Common::U32String buf;
-	const Common::String filename = genSaveName(_saveLoadSlot);
-	const byte requestedType = _saveLoadType;
-	bool success = false;
-
-	if (requestedType == 2) {
-		Common::InSaveFile *in = _saveFileMan->openForLoading(filename);
-		if (in == nullptr) {
-			buf = Common::U32String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
-		} else {
-			delete in;
-			const int numParams = _dataBase[getlong(_quickptr[6] + 3 * 267)];
-			if (numParams == 0) {
-				addstack(-1);
-				for (int i = 24; i < 32; ++i)
-					_variableArray[i] = 0;
-
-				setposition(267, 0);
-				success = (doline(1) != 0);
-			}
-			if (!success)
-				buf = Common::U32String::format(_("Failed to load saved game from file:\n\n%s"), filename.c_str());
-		}
-	} else if (requestedType == 1) {
-		memset(_saveFile, 0, sizeof(_saveFile));
-		for (uint i = 0; i < 8 && _saveLoadName[i] != 0; ++i)
-			_saveFile[i] = _saveLoadName[i];
-
-		success = (saveFile(filename) != 0);
-		if (!success)
-			buf = Common::U32String::format(_("Failed to save game to file:\n\n%s"), filename.c_str());
-	} else {
-		_saveLoadType = 0;
-		return;
-	}
-
-	if (!success) {
-		GUI::MessageDialog dialog(buf);
-		dialog.runModal();
-	} else if (requestedType == 1) {
-		buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
-		GUI::TimedMessageDialog dialog(buf, 1500);
-		dialog.runModal();
-	}
-
-	_saveLoadType = 0;
-}
-
 // The function uses segments of code from the original game scripts
 // to allow quick loading and saving, but isn't perfect.
 //

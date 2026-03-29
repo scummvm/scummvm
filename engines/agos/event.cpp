@@ -490,6 +490,9 @@ void AGOSEngine::delay(uint amount) {
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.hasFlags(Common::KBD_ALT) ||
 						event.kbd.hasFlags(Common::KBD_CTRL))) {
+					if (getGameType() == GType_PN)
+						break;
+
 					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0
