@@ -140,9 +140,16 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 				// TODO: Play hotspot sound
 				for (int bubbleIndex = 0; bubbleIndex < hotspot.numBoxes; bubbleIndex++) {
 					const ComicBox &bubble = hotspot.boxes[bubbleIndex];
-					drawBubble(bubble);
+					// Slightly lazy, just save/restore whole screen when
+					// drawing the comic bubble rather than trying to
+					// calculate the size here.
+					_vm->_screen->saveBlock(Common::Rect(640, 400));
+					if (!drawBubble(bubble))
+						continue;
+					_vm->_events->setCursor(CURSOR_NONE);
 					_vm->_events->waitKeyActionMouse();
-					//_vm->drawScreen(pagePicture, 640, 400);
+					_vm->_events->setCursor(CURSOR_CROSSHAIRS);
+					_vm->_screen->restoreBlock();
 				}
 			}
 		} else {
@@ -176,8 +183,7 @@ static void drawString(const char *str, const Font *font, Screen *screen, int x,
 	}
 }
 
-void ComicViewer::drawBubble(const ComicBox &bubble) {
-
+bool ComicViewer::drawBubble(const ComicBox &bubble) {
 	static const struct {
 		struct { int16 px, py; } positions[4];
 		int16 sprites[3];
@@ -208,6 +214,10 @@ void ComicViewer::drawBubble(const ComicBox &bubble) {
 	default: error("Unsupported language in drawBubble");
 	}
 
+	// Some translations have more bubbles to fit the text.
+	if (text == nullptr)
+		return false;
+
 	textWidth = font->stringWidth(text);
 	textHeight = font->stringHeight(text);
 
@@ -215,7 +225,7 @@ void ComicViewer::drawBubble(const ComicBox &bubble) {
 		_vm->_screen->fillRect(Common::Rect(bubble.x - 4, bubble.y - 4, bubble.x + 4 + textWidth, bubble.y + 4 + textHeight), 243);
 		_vm->_screen->frameRect(Common::Rect(bubble.x - 4, bubble.y - 4, bubble.x + 4 + textWidth, bubble.y + 4 + textHeight), 244);
 		// TODO: is this color the one to set?
-		Font::_fontColors[0] = bubble.textColor;
+		Font::_fontColors[1] = bubble.textColor;
 		drawString(text, font, _vm->_screen, bubble.x, bubble.y);
 	} else {
 
@@ -257,12 +267,13 @@ void ComicViewer::drawBubble(const ComicBox &bubble) {
 
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex2, Common::Point(bubble.x, bubble.y));
 		_vm->_screen->plotImage(_bubbleSprites, spriteIndex1, Common::Point(bubbleX, bubbleY));
-		Font::_fontColors[0] = textColor;
+		Font::_fontColors[1] = textColor;
 		drawString(text, font, _vm->_screen, bubble.x + 7, bubble.y + 10);
 	}
 
+	return true;
 }
 
-}
+} // end namespace Noctropolis
 
-}
+} // end namespace Access
