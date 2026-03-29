@@ -111,6 +111,7 @@ public:
 	bool playStartupLoadedSound(int slot);
 	bool deleteStartupLoadedSound(int slot);
 	void stopStartupSound();
+	bool activateStartupDisc(int discNumber);
 	bool isCombatDebugEnabled() const { return _combatDebugEnabled; }
 	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
