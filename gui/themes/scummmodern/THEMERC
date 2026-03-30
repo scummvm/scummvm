@@ -1,2 +1,3 @@
 [SCUMMVM_STX0.9.21:ScummVM Modern Theme:No Author]
 %using ../common
+%using ../common-svg
