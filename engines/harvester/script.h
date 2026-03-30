@@ -309,6 +309,7 @@ public:
 	static const int kDefaultPlayerHitPoints = 30;
 
 	bool load(ResourceManager &resources);
+	bool reloadTownWorld(ResourceManager &resources);
 
 	const Common::String &getPath() const { return _path; }
 	const Common::Array<byte> &getData() const { return _data; }

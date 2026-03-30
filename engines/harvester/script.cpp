@@ -463,6 +463,128 @@ bool Script::load(ResourceManager &resources) {
 	return true;
 }
 
+bool Script::reloadTownWorld(ResourceManager &resources) {
+	Common::Array<byte> reloadedData;
+	if (!resources.loadFile(_path, reloadedData)) {
+		warning("Harvester: unable to reload town script '%s'", _path.c_str());
+		return false;
+	}
+
+	const Common::Array<StartupFlagRecord> runtimeFlags = _runtimeFlags;
+	const Common::Array<StartupObjectRecord> runtimeObjects = _runtimeObjects;
+	const Common::Array<StartupAnimRecord> runtimeAnimations = _runtimeAnimations;
+	const Common::Array<StartupRegionRecord> runtimeRegions = _runtimeRegions;
+	const Common::Array<StartupNpcRecord> runtimeNpcs = _runtimeNpcs;
+	const Common::Array<StartupMonsterRecord> runtimeMonsters = _runtimeMonsters;
+	const Common::Array<StartupTimerRecord> runtimeTimers = _runtimeTimers;
+	const int playerCurrentHitPoints = _playerCurrentHitPoints;
+	const int playerCombatLoadout = _playerCombatLoadout;
+	const bool playerControlPaused = _playerControlPaused;
+
+	_data = reloadedData;
+	decode();
+	parseTownRecords(resources);
+	resetRuntimeState();
+
+	for (const StartupFlagRecord &flag : runtimeFlags) {
+		StartupFlagRecord *runtimeFlag = findRuntimeFlag(flag.name);
+		if (runtimeFlag) {
+			runtimeFlag->value = flag.value;
+			continue;
+		}
+
+		_runtimeFlags.push_back(flag);
+	}
+
+	for (const StartupObjectRecord &object : runtimeObjects) {
+		StartupObjectRecord *runtimeObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
+		if (!runtimeObject)
+			runtimeObject = findRuntimeObject(Common::String(), object.objectName);
+		if (!runtimeObject)
+			continue;
+
+		runtimeObject->currentX = object.currentX;
+		runtimeObject->currentY = object.currentY;
+		runtimeObject->currentZ = object.currentZ;
+		runtimeObject->currentOwnerOrRoom = object.currentOwnerOrRoom;
+		runtimeObject->visible = object.visible;
+		runtimeObject->runtimeVisible = object.runtimeVisible;
+		runtimeObject->identShown = object.identShown;
+	}
+
+	for (const StartupAnimRecord &anim : runtimeAnimations) {
+		StartupAnimRecord *runtimeAnim = findRuntimeAnim(anim.animName);
+		if (!runtimeAnim)
+			continue;
+
+		runtimeAnim->active = anim.active;
+		runtimeAnim->visible = anim.visible;
+		runtimeAnim->runtimeActive = anim.runtimeActive;
+		runtimeAnim->runtimeVisible = anim.runtimeVisible;
+		runtimeAnim->runtimeState = anim.runtimeState;
+	}
+
+	for (const StartupRegionRecord &region : runtimeRegions) {
+		StartupRegionRecord *runtimeRegion = findRuntimeRegion(region.regionName);
+		if (!runtimeRegion)
+			continue;
+
+		runtimeRegion->startEnabled = region.startEnabled;
+	}
+
+	for (const StartupNpcRecord &npc : runtimeNpcs) {
+		StartupNpcRecord *runtimeNpc = findRuntimeNpc(npc.npcName);
+		if (!runtimeNpc)
+			continue;
+
+		runtimeNpc->active = npc.active;
+		runtimeNpc->visible = npc.visible;
+		runtimeNpc->savedVisible = npc.savedVisible;
+		runtimeNpc->runtimeSpawned = npc.runtimeSpawned;
+		runtimeNpc->deathOrMonsterfyFlag = npc.deathOrMonsterfyFlag;
+		runtimeNpc->deathDamageType = npc.deathDamageType;
+	}
+
+	for (const StartupMonsterRecord &monster : runtimeMonsters) {
+		StartupMonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
+		if (!runtimeMonster)
+			continue;
+
+		runtimeMonster->posX = monster.posX;
+		runtimeMonster->posY = monster.posY;
+		runtimeMonster->posZ = monster.posZ;
+		runtimeMonster->facing = monster.facing;
+		runtimeMonster->active = monster.active;
+		runtimeMonster->visible = monster.visible;
+		runtimeMonster->savedVisible = monster.savedVisible;
+		runtimeMonster->runtimeSpawned = monster.runtimeSpawned;
+		runtimeMonster->currentHitPoints = monster.currentHitPoints;
+		runtimeMonster->screenMinXBound = monster.screenMinXBound;
+		runtimeMonster->screenMaxXBound = monster.screenMaxXBound;
+	}
+
+	for (const StartupTimerRecord &timer : runtimeTimers) {
+		StartupTimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
+		if (!runtimeTimer)
+			continue;
+
+		runtimeTimer->initialValue = timer.initialValue;
+		runtimeTimer->currentValue = timer.currentValue;
+		runtimeTimer->enabled = timer.enabled;
+		runtimeTimer->looping = timer.looping;
+		runtimeTimer->global = timer.global;
+	}
+
+	_playerCurrentHitPoints = clampPlayerHitPoints(playerCurrentHitPoints);
+	_playerCombatLoadout = clampPlayerCombatLoadout(playerCombatLoadout);
+	_playerControlPaused = playerControlPaused;
+
+	debugC(1, kDebugGeneral,
+		"Harvester: reloaded town script '%s' for disc %d while preserving runtime state",
+		_path.c_str(), resources.getCurrentDisc());
+	return true;
+}
+
 bool Script::loadConfig(ResourceManager &resources) {
 	Common::Array<byte> configData;
 	if (!resources.loadFile(kStartupConfigPath, configData)) {

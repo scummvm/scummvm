@@ -891,6 +891,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		ResourceManager *resources = _engine.getResources();
 		if (!resources)
 			return Common::kReadingFailed;
+		const int previousDisc = resources->getCurrentDisc();
 
 		if (_engine.shouldShowCdChangePrompts()) {
 			Graphics::Screen *screen = _engine.getScreen();
@@ -968,6 +969,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		if (!_engine.activateStartupDisc(discNumber)) {
 			warning("Harvester: unable to activate disc %d resources", discNumber);
 			return Common::kReadingFailed;
+		}
+		if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
+			Script *startupScript = _engine.getStartupScript();
+			if (!startupScript || !startupScript->reloadTownWorld(*resources)) {
+				warning("Harvester: unable to reload town script after disc prompt %d -> %d",
+					previousDisc, discNumber);
+				return Common::kReadingFailed;
+			}
 		}
 
 		return Common::kNoError;
