@@ -48,7 +48,7 @@ void Toolbox::_pumpEvents() {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			_mouse = event.mouse;
-			_modifiers &= !0x80;
+			_modifiers &= ~kModMouseButtonUp;
 			newRecord.what = kMouseDown;
 			newRecord.where = _mouse;
 			newRecord.modifiers = _modifiers;
@@ -57,7 +57,7 @@ void Toolbox::_pumpEvents() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
 			_mouse = event.mouse;
-			_modifiers |= 0x80;
+			_modifiers |= kModMouseButtonUp;
 			newRecord.what = kMouseUp;
 			newRecord.where = _mouse;
 			newRecord.modifiers = _modifiers;
@@ -106,7 +106,7 @@ uint32 Toolbox::Delay(uint32 numTicks) {
 void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
 	if ((eventMask == 0xffffffff) && (stopMask == 0)) {
 		_events.clear();
-		_modifiers = kModMouseButtonUp;
+		//_modifiers = kModMouseButtonUp;
 		return;
 	}
 	for (auto it = _events.begin(); it != _events.end(); ) {
@@ -118,9 +118,9 @@ void Toolbox::FlushEvents(uint32 eventMask, uint32 stopMask) {
 			++it;
 		}
 	}
-	if (eventMask & 0x6) {
-		_modifiers = kModMouseButtonUp;
-	}
+	//if (eventMask & 0x6) {
+	//	  _modifiers = kModMouseButtonUp;
+	//}
 }
 
 bool Toolbox::GetNextEvent(uint32 eventMask, EventRecord &theEvent) {
