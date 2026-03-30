@@ -172,6 +172,8 @@ uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
 				}
 				_updateScreen();
 			}
+			// must have released the mouse button to exit the menu
+			_modifiers |= kModMouseButtonUp;
 			int menuItem = _defaultMenu->getLastSelectedMenuItem();
 			int menuSubItem = _defaultMenu->getLastSelectedSubmenuItem();
 			if ((menuItem != -1) && (menuSubItem != -1)) {

@@ -925,6 +925,7 @@ void FoolGame::sub_128_1f76() {
 
 
 void FoolGame::sub_128_2078() {
+	// clicking the story button
 	// 128:2078
 	g_toolbox->InvertRoundRect(this->arr_rect_1910c, 0x8, 0x7);
 	this->sub_128_6186();
@@ -943,7 +944,7 @@ void FoolGame::sub_128_20d0() {
 			this->storyNextPage = 1;
 			return;
 		}
-		if (this->storyNextPage >= this->storyPageCount) {
+		if (this->storyNextPage > this->storyPageCount) {
 			this->storyNextPage = this->storyPageCount;
 			return;
 		}
@@ -1606,7 +1607,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_130_004();
 		break;
 	case 4:
-		this->sub_131_004();
+		this->wordSearchRun();
 		break;
 	case 5:
 		this->jigsawRun();
@@ -1789,8 +1790,11 @@ void FoolGame::sub_128_3fb6() {
 	// 128:4056
 	if (this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2] <= this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2 + 1]) {
 		g_zbasic->menu(8, 2, 0, g_zbasic->str(75)); // line
+		// 128:40c6
+		this->var_i16_484 = 2;
 		for (int i = this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2]; i <= this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2 + 1]; i++) {
 			// 128:40f6
+			this->var_i16_484++;
 			this->var_str_384 = g_zbasic->index(0, i) + g_zbasic->str(76);
 			g_zbasic->menu(8, this->var_i16_484, 1, this->var_str_384);
 		}
@@ -2574,7 +2578,7 @@ void FoolGame::sub_129_068() {
 				this->var_i16_1040++;
 			}
 			// 129:0ef4
-			if (this->pageToChapter[i] < j) {
+			if (this->pageToChapter[i] > j) {
 				i = this->storyPageCount;
 			}
 			// 129:0f16
@@ -2584,10 +2588,11 @@ void FoolGame::sub_129_068() {
 			for (int i = 1; i <= this->storyPageCount; i++) {
 				if (this->pageToChapter[i] == j) {
 					this->var_i16_484++;
-					this->arr_str_1a288[i] = Common::U32String::format("%s %d %s %d", g_zbasic->str(141).encode().c_str(), this->var_i16_484, g_zbasic->str(142).encode().c_str(), this->var_i16_1040);
+					// - X of N
+					this->arr_str_1a288[i] = Common::U32String::format("%s %d%s %d", g_zbasic->str(141).encode().c_str(), this->var_i16_484, g_zbasic->str(142).encode().c_str(), this->var_i16_1040);
 				}
 				// 129:0fb6
-				if (this->pageToChapter[i] < j) {
+				if (this->pageToChapter[i] > j) {
 					i = this->storyPageCount;
 				}
 				// 129:0fd8
@@ -2777,6 +2782,7 @@ void FoolGame::sub_135_004() {
 	warning("STUB: %s", __func__);
 }
 
+// maze game
 void FoolGame::sub_136_004() {
 	warning("STUB: %s", __func__);
 }
