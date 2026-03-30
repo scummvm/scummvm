@@ -1593,6 +1593,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			ResourceManager *resources = _engine.getResources();
 			if (!resources)
 				return Common::kReadingFailed;
+			const int previousDisc = resources->getCurrentDisc();
 
 			if (_engine.shouldShowCdChangePrompts()) {
 				Graphics::Screen *screen = _engine.getScreen();
@@ -1665,6 +1666,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!_engine.activateStartupDisc(discNumber)) {
 				warning("Harvester: unable to activate disc %d resources", discNumber);
 				return Common::kReadingFailed;
+			}
+			if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
+				Script *startupScript = _engine.getStartupScript();
+				if (!startupScript || !startupScript->reloadTownWorld(*resources)) {
+					warning("Harvester: unable to reload town script after disc prompt %d -> %d",
+						previousDisc, discNumber);
+					return Common::kReadingFailed;
+				}
 			}
 
 			return Common::kNoError;
@@ -1913,11 +1922,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					interaction.nextRoomName.empty() &&
 					!interaction.mutatedRuntimeState;
 				if (needsDisc3RoomReload) {
-					if (!refreshCurrentSceneFn(true))
-						return Common::kReadingFailed;
-					startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
-					if (!restoreMusicPath.empty())
-						(void)engine.playStartupMusic(restoreMusicPath);
+					pendingRoomChange = !scene.state.entranceName.empty()
+						? scene.state.entranceName
+						: scene.state.roomName;
+					didTransition = !pendingRoomChange.empty();
+					return didTransition ? Common::kNoError : Common::kReadingFailed;
 				}
 
 				if (!interaction.nextRoomName.empty() &&
