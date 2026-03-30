@@ -48,6 +48,7 @@ public:
 
 private:
 	bool ensureDiscMounted(int discNumber);
+	void unmountOtherDiscArchives(int keepDiscNumber);
 	Common::Archive *getMountedDiscArchive(int discNumber, char archiveSetId) const;
 	Common::Archive *findArchiveForMember(char archiveSetId, const Common::Path &memberPath) const;
 	bool hasInMountedArchives(const Common::Path &memberPath) const;

@@ -226,14 +226,26 @@ bool HarvesterEngine::activateStartupDisc(int discNumber) {
 		return false;
 
 	const int previousDisc = _resources->getCurrentDisc();
+	const bool discChanged = previousDisc > 0 && previousDisc != discNumber;
+	if (_media && discChanged) {
+		// Loaded audio streams can still be backed by the currently mounted archive.
+		// Stop them before the resource manager swaps the active disc out.
+		_media->stopMusic();
+		_media->stopSound();
+	}
+
 	if (!_resources->setCurrentDisc(discNumber))
 		return false;
 
-	if (_media && previousDisc != discNumber) {
-		_media->stopMusic();
-		_media->stopSound();
+	if (_media && discChanged) {
+		if (!_media->loadText()) {
+			warning("Harvester: unable to reload text resources after disc switch %d -> %d",
+				previousDisc, discNumber);
+			return false;
+		}
+
 		debugC(1, kDebugResources,
-			"Harvester: flushed transient startup media state after disc switch %d -> %d",
+			"Harvester: flushed transient startup media state and reloaded text after disc switch %d -> %d",
 			previousDisc, discNumber);
 	}
 

@@ -151,13 +151,7 @@ Common::String ResourceManager::normalizeResourcePath(const Common::String &path
 }
 
 bool ResourceManager::mountStartupArchives() {
-	bool mountedAny = false;
-	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
-		if (ensureDiscMounted(discNumber))
-			mountedAny = true;
-	}
-
-	return mountedAny;
+	return setCurrentDisc(_currentDisc);
 }
 
 bool ResourceManager::setCurrentDisc(int discNumber) {
@@ -166,6 +160,7 @@ bool ResourceManager::setCurrentDisc(int discNumber) {
 	if (!ensureDiscMounted(discNumber))
 		return false;
 
+	unmountOtherDiscArchives(discNumber);
 	_currentDisc = discNumber;
 	debugC(1, kDebugResources, "Harvester: switched active disc to %d", discNumber);
 	return true;
@@ -210,6 +205,23 @@ bool ResourceManager::ensureDiscMounted(int discNumber) {
 	return mountedAny;
 }
 
+void ResourceManager::unmountOtherDiscArchives(int keepDiscNumber) {
+	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
+		if (discNumber == keepDiscNumber)
+			continue;
+
+		for (const ArchiveSpec &spec : kArchiveSpecs) {
+			const Common::String archiveName = buildDiscArchiveName(discNumber, spec.archiveSetId);
+			if (_search.hasArchive(archiveName)) {
+				debugC(1, kDebugResources,
+					"Harvester: unmounted disc %d set %c",
+					discNumber, spec.archiveSetId);
+				_search.remove(archiveName);
+			}
+		}
+	}
+}
+
 Common::Archive *ResourceManager::getMountedDiscArchive(int discNumber, char archiveSetId) const {
 	return _search.getArchive(buildDiscArchiveName(discNumber, archiveSetId));
 }
@@ -218,15 +230,6 @@ Common::Archive *ResourceManager::findArchiveForMember(char archiveSetId, const 
 	Common::Archive *archive = getMountedDiscArchive(_currentDisc, archiveSetId);
 	if (archive && archive->hasFile(memberPath))
 		return archive;
-
-	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
-		if (discNumber == _currentDisc)
-			continue;
-
-		archive = getMountedDiscArchive(discNumber, archiveSetId);
-		if (archive && archive->hasFile(memberPath))
-			return archive;
-	}
 
 	return nullptr;
 }
@@ -294,7 +297,8 @@ Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path
 			stream = SearchMan.createReadStreamForMember(memberPath);
 	}
 
-	debugC(3, kDebugResources, "Harvester: openFile('%s' -> '%s') %s", path.c_str(), normalized.c_str(), stream ? "hit" : "miss");
+	debugC(3, kDebugResources, "Harvester: openFile(disc=%d, '%s' -> '%s') %s",
+		_currentDisc, path.c_str(), normalized.c_str(), stream ? "hit" : "miss");
 	return stream;
 }
 
