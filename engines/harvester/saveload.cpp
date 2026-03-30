@@ -81,13 +81,16 @@ void HarvesterEngine::clearCurrentStartupSaveRoomState() {
 
 void HarvesterEngine::clearPendingLoadedStartupSaveRoomState() {
 	_pendingLoadedStartupSaveRoomState.clear();
+	_pendingLoadedStartupDisc = 0;
 }
 
 Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!_startupScript)
 		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
-	if (s.isLoading())
+	if (s.isLoading()) {
+		clearPendingLoadedStartupSaveRoomState();
 		clearPendingLoadedDialogueStateBlob();
+	}
 	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
 		return Common::kWritingFailed;
 	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
@@ -95,8 +98,9 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!s.syncVersion(kHarvesterSaveVersion))
 		return Common::kReadingFailed;
 
-	int32 currentDisc = (_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1;
-	s.syncAsSint32LE(currentDisc, 14);
+	int32 serializedDisc = (_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1;
+	s.syncAsSint32LE(serializedDisc, 14);
+	const int restoredDisc = serializedDisc > 0 ? serializedDisc : 1;
 
 	StartupSaveRoomState roomState = s.isLoading()
 		? StartupSaveRoomState()
@@ -131,12 +135,13 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 			return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 
 	if (s.isLoading()) {
-		if (!activateStartupDisc(currentDisc > 0 ? currentDisc : 1))
-			return Common::kReadingFailed;
 		if (!roomState.valid || roomState.roomName.empty())
+			return Common::kReadingFailed;
+		if (!activateStartupDisc(restoredDisc))
 			return Common::kReadingFailed;
 		_currentStartupSaveRoomState = roomState;
 		_pendingLoadedStartupSaveRoomState = roomState;
+		_pendingLoadedStartupDisc = restoredDisc;
 		logStartupSaveRoomState("loaded", roomState);
 	}
 	return Common::kNoError;

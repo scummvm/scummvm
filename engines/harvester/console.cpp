@@ -273,6 +273,9 @@ static void collectSortedRoomNames(const Script &script, Common::Array<Common::S
 	roomNames.clear();
 
 	for (const StartupRoomRecord &room : script.getRooms()) {
+		if (room.roomName.empty())
+			continue;
+
 		bool alreadyPresent = false;
 		for (const Common::String &existingName : roomNames) {
 			if (existingName.equalsIgnoreCase(room.roomName)) {
@@ -531,12 +534,12 @@ bool Console::Cmd_gotoRoom(int argc, const char **argv) {
 	Common::Array<Common::String> roomNames;
 	collectSortedRoomNames(*startupScript, roomNames);
 	if (roomNames.empty()) {
-		debugPrintf("No room targets are available\n");
+		debugPrintf("No rooms were found in HARVEST.SCR\n");
 		return true;
 	}
 
 	if (argc == 1) {
-		debugPrintf("Available room targets:\n");
+		debugPrintf("Rooms from HARVEST.SCR (%u):\n", (uint)roomNames.size());
 		for (const Common::String &roomName : roomNames)
 			debugPrintf("  %s\n", roomName.c_str());
 		return true;

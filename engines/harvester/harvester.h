@@ -130,6 +130,7 @@ public:
 	const StartupSaveRoomState &getPendingLoadedStartupSaveRoomState() const {
 		return _pendingLoadedStartupSaveRoomState;
 	}
+	int getPendingLoadedStartupDisc() const { return _pendingLoadedStartupDisc; }
 	void clearPendingLoadedStartupSaveRoomState();
 	bool hasPendingLoadedDialogueStateBlob() const { return !_pendingLoadedDialogueStateBlob.empty(); }
 	const Common::Array<byte> &getPendingLoadedDialogueStateBlob() const { return _pendingLoadedDialogueStateBlob; }
@@ -149,6 +150,7 @@ private:
 	Script *_startupScript = nullptr;
 	StartupSaveRoomState _currentStartupSaveRoomState;
 	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
+	int _pendingLoadedStartupDisc = 0;
 	Common::Array<byte> _pendingLoadedDialogueStateBlob;
 	uint32 _pendingLoadedDialogueStateBlobVersion = 0;
 	Flow *_activeFlow = nullptr;
