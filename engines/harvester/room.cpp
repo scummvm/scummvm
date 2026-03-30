@@ -642,6 +642,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					return Common::kReadingFailed;
 				_engine.clearPendingLoadedDialogueStateBlob();
 			}
+			if (_engine.getPendingLoadedStartupDisc() > 0 &&
+					!_engine.activateStartupDisc(_engine.getPendingLoadedStartupDisc())) {
+				return Common::kReadingFailed;
+			}
 			const StartupSaveRoomState &loadedState = _engine.getPendingLoadedStartupSaveRoomState();
 			debugC(1, kDebugRoom,
 				"Harvester: applying pending loaded room state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
