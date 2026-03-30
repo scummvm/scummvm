@@ -211,7 +211,7 @@ python3 -c 'import sys,pathlib,signal; signal.signal(signal.SIGPIPE, signal.SIG_
 | `OBJECT` | `initialX initialY boundsX2 boundsY2 initialZ zExtent` | `initialOwnerOrRoom objectName spritePath altSpritePath reservedString40 inventoryTextKey reservedXFlag identTextKey operatable visible actionTag interactionLabel` |
 | `ANIM` | `x y z frameDelay` | `roomName resourcePath animName active visible looping backward pingPong remove` |
 | `NPC` | `x y z frameDelay` | `roomName modelPath npcName monsterfyTargetName active visible onDeathActionTag audioPath entityInitArg` |
-| `MONSTER` | `x y z ...` | Sample data and native analysis confirm sound-trigger timing columns for attack, hit, footstep, and death. The intermediate string columns at offsets `0x38`, `0x3c`, `0x44`, and `0x48` remain reserved in current data and have no recovered read-side consumers. |
+| `MONSTER` | `x y z engageDistance initialHitPoints damageAmount attackSoundTriggerFrame hitSoundTriggerFrame footstepSoundTriggerFrame deathSoundTriggerFrame` | Sample data and native analysis confirm those first six combat columns map to `MonsterRecord.engage_distance`, `initial_hit_points`, and `damage_amount`, followed by the four sound-trigger timing columns. The intermediate string columns at offsets `0x38`, `0x3c`, `0x44`, and `0x48` remain reserved in current data and have no recovered read-side consumers. |
 | `REGION` | `left top right bottom minZ maxZ` | `regionName direction roomName actionTag startEnabled cursorEnabled` |
 | `FLAG` | none | `name value` |
 | `COMMAND` | none | `triggerTag opcodeName arg1 arg2 arg3 [arg4]` |

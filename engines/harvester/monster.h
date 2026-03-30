@@ -32,10 +32,11 @@ struct StartupMonsterRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
+	// Native MONSTER numeric fields after z are engage distance, initial HP, and damage.
+	int engageDistance = 0;
 	int initialHitPoints = 0;
 	int currentHitPoints = 0;
 	int damageAmount = 0;
-	int engageDistance = 0;
 	int damageType = 0;
 	int facing = -1;
 	Common::String roomName;

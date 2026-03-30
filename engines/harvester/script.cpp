@@ -178,6 +178,18 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncAsSint32LE(record.deathSoundTriggerFrame);
 }
 
+static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMonster,
+		StartupMonsterRecord &runtimeMonster) {
+	const int legacyInitialHitPoints = MAX(0, runtimeMonster.initialHitPoints);
+	const int legacyCurrentHitPoints = CLIP<int>(runtimeMonster.currentHitPoints, 0, legacyInitialHitPoints);
+	const int damageTaken = legacyInitialHitPoints - legacyCurrentHitPoints;
+
+	runtimeMonster.engageDistance = baseMonster.engageDistance;
+	runtimeMonster.initialHitPoints = baseMonster.initialHitPoints;
+	runtimeMonster.currentHitPoints = MAX(0, baseMonster.initialHitPoints - damageTaken);
+	runtimeMonster.damageAmount = baseMonster.damageAmount;
+}
+
 static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &record) {
 	s.syncAsSint32LE(record.initialValue);
 	s.syncAsSint32LE(record.currentValue);
@@ -987,9 +999,10 @@ void Script::parseTownRecords(ResourceManager &resources) {
 				monster.posX = parseAsciiIntOrZero(tokens[0]);
 				monster.posY = parseAsciiIntOrZero(tokens[1]);
 				monster.posZ = parseAsciiIntOrZero(tokens[2]);
-				monster.initialHitPoints = parseAsciiIntOrZero(tokens[3]);
-				monster.damageAmount = parseAsciiIntOrZero(tokens[4]);
-				monster.engageDistance = parseAsciiIntOrZero(tokens[5]);
+				// Native MonsterRecord numeric order is engage distance, initial HP, then damage.
+				monster.engageDistance = parseAsciiIntOrZero(tokens[3]);
+				monster.initialHitPoints = parseAsciiIntOrZero(tokens[4]);
+				monster.damageAmount = parseAsciiIntOrZero(tokens[5]);
 			}
 			if (tagIndex >= 10) {
 				monster.attackSoundTriggerFrame = parseAsciiIntOrZero(tokens[6]);
@@ -1448,6 +1461,21 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
+		if (s.getVersion() >= 2 && s.getVersion() < 15) {
+			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
+				const StartupMonsterRecord *baseMonster = nullptr;
+				for (const StartupMonsterRecord &monster : _monsters) {
+					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
+						baseMonster = &monster;
+						break;
+					}
+				}
+				if (!baseMonster)
+					continue;
+
+				migrateLegacyMonsterCombatFields(*baseMonster, runtimeMonster);
+			}
+		}
 		if (s.getVersion() < 2) {
 			_runtimeTimers = _timers;
 			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
