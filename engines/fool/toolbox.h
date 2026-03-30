@@ -1132,6 +1132,12 @@ public:
 	// new pen dimensions.
 	void PenSize(uint16 width, uint16 height);
 
+	// PROCEDURE PlotIcon (theRect: Rect; theIcon: Handle);
+	// Plotlcon draws the icon whose handle is thelcon in the rectangle theRect, which is in the local
+	// coordinates of the current grafPort. It calls the QuickDraw procedure CopyBits and uses the
+	// srcCopy transfer mode.
+	void PlotIcon(const Common::Rect &theRect, const Handle &theIcon);
+
 	// PROCEDURE PortSize (width,height: INTEGER);
 	// PortSize changes the size of the current grafPort's portRect. This does not affect the screen; it
 	// merely changes the size of the "active area" of the grafPort.

@@ -738,6 +738,23 @@ void Toolbox::PenSize(uint16 width, uint16 height) {
 	}
 }
 
+void Toolbox::PlotIcon(const Common::Rect &theRect, const Handle &theIcon) {
+	if (!theIcon) {
+		warning("Toolbox::PlotIcon: empty handle");
+		return;
+	}
+	if (_port) {
+		PixMap pm;
+		pm.bounds = Common::Rect(0, 0, 32, 32);
+		pm.rowBytes = 4;
+		pm._isBitMap = true;
+		Common::MemoryReadStream stream(theIcon->data(), theIcon->size());
+		BitMap result = readBitsRectMono(stream, pm, false);
+		const BitMap intermediate(createRemappedSurface(result->surfacePtr(), nullptr, 0));
+		CopyBits(intermediate, _port->portBits, result->getBounds(), theRect, kSrcCopy, nullptr);
+	}
+}
+
 void Toolbox::PortSize(uint16 width, uint16 height) {
 	if (_port) {
 		_port->portRect.setWidth(width);
