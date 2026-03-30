@@ -1903,12 +1903,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					restoreMusicPath = engine.getStartupMusicPath();
 				}
 				startupFlow.executeStartupAudioCommands(interaction.audioCommands);
-				if (interaction.requestRoomRestart) {
-					pendingRoomChange = !scene.state.entranceName.empty()
-						? scene.state.entranceName
-						: scene.state.roomName;
+				auto queueImplicitRoomRestart = [&]() -> Common::Error {
+					// Native disc-3 prompt reloads re-enter room_setup through the startup target
+					// buffer, which remains "START" during ordinary play and resolves to CD3 RECEPTION.
+					pendingRoomChange =
+						discChanged && interaction.cdChangeDisc == 3
+							? Common::String("START")
+							: (!scene.state.entranceName.empty()
+								? scene.state.entranceName
+								: scene.state.roomName);
 					didTransition = !pendingRoomChange.empty();
 					return didTransition ? Common::kNoError : Common::kReadingFailed;
+				};
+				if (interaction.requestRoomRestart) {
+					return queueImplicitRoomRestart();
 				}
 
 				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
@@ -1922,11 +1930,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					interaction.nextRoomName.empty() &&
 					!interaction.mutatedRuntimeState;
 				if (needsDisc3RoomReload) {
-					pendingRoomChange = !scene.state.entranceName.empty()
-						? scene.state.entranceName
-						: scene.state.roomName;
-					didTransition = !pendingRoomChange.empty();
-					return didTransition ? Common::kNoError : Common::kReadingFailed;
+					return queueImplicitRoomRestart();
 				}
 
 				if (!interaction.nextRoomName.empty() &&
