@@ -29,6 +29,14 @@
 
 namespace Fool {
 
+Common::Rect readRect(Common::SeekableReadStream &stream);
+Common::Point readPoint(Common::SeekableReadStream &stream);
+PolyHandle readPolygon(Common::SeekableReadStream &stream);
+Region readRegion(Common::SeekableReadStream &stream);
+Pattern readPattern(Common::SeekableReadStream &stream);
+PixMap readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr);
+BitMap readBitsRectMono(Common::SeekableReadStream &stream, PixMap &pixMap, bool compressed);
+
 Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, SourceMode mode);
 Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const Common::Point &dstPos, PatternMode mode);
 
