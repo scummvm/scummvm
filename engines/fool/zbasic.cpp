@@ -527,7 +527,7 @@ Common::U32String ZBasic::leftStr(const Common::U32String &str, int16 expression
 }
 
 Common::U32String ZBasic::rightStr(const Common::U32String &str, int16 expression) {
-	return str.substr(str.size() - 1 - expression, expression);
+	return str.substr(str.size() - expression, expression);
 }
 
 int16 ZBasic::rndInt(int16 max) {
@@ -685,7 +685,7 @@ Common::U32String ZBasic::index(int16 table, int16 index) {
 		warning("ZBasic::index: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
 		return Common::U32String();
 	}
-	debugC(5, kDebugLoading, "ZBasic::indexSet: [%d][%d] = %s", table, index, _index[table][index].encode().c_str());
+	debugC(5, kDebugLoading, "ZBasic::index: [%d][%d] = %s", table, index, _index[table][index].encode().c_str());
 	return _index[table][index];
 }
 
