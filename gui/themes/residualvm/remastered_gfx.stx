@@ -112,6 +112,8 @@
 		<bitmap filename = 'logo.bmp' scalable_file = 'logo.svg' width = '287' height = '80'/>
 		<bitmap filename = 'cursor.bmp' scalable_file = 'cursor.svg' width = '24' height = '24'/>
 		<bitmap filename = 'cursor_small.bmp' scalable_file = 'cursor.svg' width = '16' height = '16'/>
+		<bitmap filename = 'cursor-index.bmp' scalable_file = 'cursor-index.svg' width = '24' height = '24'/>
+		<bitmap filename = 'cursor-index_small.bmp' scalable_file = 'cursor-index.svg' width = '16' height = '16'/>
 		<bitmap filename = 'checkbox.bmp' scalable_file = 'checkbox.svg' width = '15' height = '15'/>
 		<bitmap filename = 'checkbox_empty.bmp' scalable_file = 'checkbox_empty.svg' width = '15' height = '15'/>
 		<bitmap filename = 'checkbox_disabled.bmp' scalable_file = 'checkbox_disabled.svg' width = '15' height = '15'/>
@@ -313,6 +315,8 @@
 
 	<cursor file = 'cursor.bmp' hotspot = '0, 0'/>
 	<cursor resolution = 'y<H' file = 'cursor_small.bmp' hotspot = '0, 0'/>
+	<cursor file = 'cursor-index.bmp' hotspot = '0, 0' type = 'index'/>
+	<cursor resolution = 'y<H' file = 'cursor-index_small.bmp' hotspot = '0, 0' type = 'index'/>
 
 	<!-- Selection (text or list items) -->
 	<drawdata id = 'text_selection' cache = 'false'>
