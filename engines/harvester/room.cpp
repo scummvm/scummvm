@@ -1906,12 +1906,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
 					roomTransition = kStartupRoomTransitionCloseup;
 
-				const bool needsCurrentRoomReload =
+				const bool needsDisc3RoomReload =
 					discChanged &&
+					interaction.cdChangeDisc == 3 &&
 					!interaction.requestRoomRestart &&
 					interaction.nextRoomName.empty() &&
 					!interaction.mutatedRuntimeState;
-				if (needsCurrentRoomReload) {
+				if (needsDisc3RoomReload) {
 					if (!refreshCurrentSceneFn(true))
 						return Common::kReadingFailed;
 					startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
