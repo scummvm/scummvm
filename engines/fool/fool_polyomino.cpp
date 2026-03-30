@@ -222,11 +222,11 @@ void FoolGame::polyominoRun() {
 	for (this->var_i16_7cc = 1; this->var_i16_7cc <= this->arr_i16_1eb8[0x10]; this->var_i16_7cc++) {
 		this->var_i16_68a = this->arr_i16_47d8[this->var_i16_7cc*8 + 3];
 		this->var_i16_68c = this->arr_i16_47d8[this->var_i16_7cc*8 + 4];
-		this->sub_133_f04();
+		this->polyominoMove();
 	}
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
-	this->sub_133_12f2();
+	this->polyominoCheckIfSolved();
 	this->var_i16_7c6 = 0;
 	do {
 		do {
@@ -242,7 +242,7 @@ void FoolGame::polyominoRun() {
 		} while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0));
 		// 133:081c
 		if (this->var_i16_7c6 == 2) {
-			this->sub_133_11cc();
+			this->polyominoReset();
 		}
 		if (this->var_i16_7c6 == 4) {
 			this->polyominoStoreState();
@@ -251,7 +251,7 @@ void FoolGame::polyominoRun() {
 	} while (((this->var_i16_7c6 & 1) == 0) && (this->var_i16_d0c == 0));
 	// 133:0864
 	if (this->var_i16_d0c != 0) {
-		this->sub_133_13e2();
+		this->polyominoSuccess();
 	}
 	this->polyominoStoreState();
 
@@ -385,26 +385,26 @@ void FoolGame::polyominoOnClick() {
 	}
 	// 133:0e6c
 	if ((this->var_i16_1a9c & this->arr_i16_47d8[this->var_i16_7cc*8]) != 0) {
-		this->sub_133_eb2();
+		this->polyominoCancelMove();
 	} else {
-		this->sub_133_f04();
+		this->polyominoMove();
 	}
 	// 133:0ea2
 	this->polyominoDrawFrame();
-	this->sub_133_12f2();
+	this->polyominoCheckIfSolved();
 	this->sub_128_4da(1);
 }
 
-void FoolGame::sub_133_eb2() {
+void FoolGame::polyominoCancelMove() {
 	// 133:0eb2
 	this->sub_128_50e(0x14, 0x64, 0);
 	this->var_i16_68a = this->arr_i16_47d8[this->var_i16_7cc*8 + 3];
 	this->var_i16_68c = this->arr_i16_47d8[this->var_i16_7cc*8 + 4];
 
-	sub_133_f04();
+	polyominoMove();
 }
 
-void FoolGame::sub_133_f04() {
+void FoolGame::polyominoMove() {
 	// 133:0f04
 	this->var_i16_106a = 0;
 	// polyominos are max 4x4
@@ -425,13 +425,13 @@ void FoolGame::sub_133_f04() {
 
 	// 133:0fce
 	if (this->var_i16_1ab0 != 0) {
-		debug(5, "FoolGame::sub_133_f04: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
+		debug(5, "FoolGame::polyominoMove: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 		g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 	}
 	// 133:1002
 	this->var_i16_1062 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
 	this->var_i16_1064 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
-	debug(5, "FoolGame::sub_133_f04: Draw pic 1 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
+	debug(5, "FoolGame::polyominoMove: Draw pic 1 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 1]);
 
 }
@@ -455,7 +455,7 @@ void FoolGame::polyominoOnClickFixed() {
 	this->sub_128_6186();
 }
 
-void FoolGame::sub_133_11cc() {
+void FoolGame::polyominoReset() {
 	// 133:11cc
 	// zero out collision grid
 	for (int j = 1; j <= this->arr_i16_1eb8[1] + 1; j++) {
@@ -469,7 +469,7 @@ void FoolGame::sub_133_11cc() {
 	for (this->var_i16_7cc = 1; this->var_i16_7cc <= this->arr_i16_1eb8[0x10]; this->var_i16_7cc++) {
 		this->var_i16_68a = this->arr_i16_47d8[this->var_i16_7cc*8 + 5];
 		this->var_i16_68c = this->arr_i16_47d8[this->var_i16_7cc*8 + 6];
-		this->sub_133_f04();
+		this->polyominoMove();
 	}
 	// 133:12c2
 	this->var_i16_1ab0 = 1;
@@ -490,7 +490,7 @@ void FoolGame::polyominoDrawFrame() {
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_133_12f2() {
+void FoolGame::polyominoCheckIfSolved() {
 	// 133:12f2
 	this->var_i16_d0c = 1;
 	this->var_i16_484 = 0;
@@ -512,7 +512,7 @@ void FoolGame::sub_133_12f2() {
 	}
 }
 
-void FoolGame::sub_133_13e2() {
+void FoolGame::polyominoSuccess() {
 	// 133:13e2
 	if (this->var_i16_c04 < 0x64) {
 		this->var_i16_c04 = 0x64;

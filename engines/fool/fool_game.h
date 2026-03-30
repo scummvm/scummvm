@@ -130,12 +130,12 @@ public:
 	void sub_130_004();
 
 	// fool_wordsearch.cpp
-	void sub_131_004();
-	void sub_131_8aa();
-	void sub_131_cbe();
-	void sub_131_d22();
-	void sub_131_d66();
-	void sub_131_f42();
+	void wordSearchRun(); // sub_131_004
+	void wordSearchOnClick(); // sub_131_8aa
+	void wordSearchBadSelect(); // sub_131_cbe
+	void wordSearchDrawFooter(); // sub_131_d22
+	void wordSearchStoreState(); // sub_131_d66
+	void wordSearchSuccess(); // sub_131_f42
 
 	// fool_jigsaw.cpp
 	void jigsawRun(); // sub_132_004
@@ -151,13 +151,13 @@ public:
 	// fool_polyomino.cpp
 	void polyominoRun(); // sub_133_004
 	void polyominoOnClick(); // sub_133_87c
-	void sub_133_eb2();
-	void sub_133_f04();
+	void polyominoCancelMove(); // sub_133_eb2
+	void polyominoMove(); // sub_133_f04
 	void polyominoOnClickFixed(); // sub_133_10a0
-	void sub_133_11cc();
+	void polyominoReset(); // sub_133_11cc
 	void polyominoDrawFrame(); // sub_133_12d4
-	void sub_133_12f2();
-	void sub_133_13e2();
+	void polyominoCheckIfSolved(); // sub_133_12f2
+	void polyominoSuccess(); // sub_133_13e2
 	void polyominoStoreState(); // sub_133_1452
 
 	// fool_reveal.cpp
