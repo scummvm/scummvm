@@ -59,6 +59,7 @@ static const int kNativeInventoryWeekdayX = 0x1e0;
 static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
 static const int kRoomMonsterAnimationRate = 17;
+static const int kNativeMonsterAttackAnimationRate = 4;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
 static const int kDefaultMonsterAttackContactFrameOffset = 2;
 static const int kMuckeyAttackContactFrameOffset = 7;
@@ -119,7 +120,6 @@ struct RoomMonsterCombatState {
 	int deathLastFrame = -1;
 	int deathDamageType = 0;
 	uint32 nextMovementTick = 0;
-	uint32 nextAttackAllowedTick = 0;
 };
 
 struct RoomHitEffectState {
@@ -426,14 +426,14 @@ static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 		const RuntimeEntity &entity, int actorCenterX, int targetCenterX,
 		RoomAttackAnimationRange &range) {
 	static const RoomAttackAnimationRange kLeftAttackRanges[3] = {
-		RoomAttackAnimationRange(0x50, 0x59, 1),
-		RoomAttackAnimationRange(0x5a, 0x63, 1),
-		RoomAttackAnimationRange(0x64, 0x6d, 1)
+		RoomAttackAnimationRange(0x95, 0x97, 1),
+		RoomAttackAnimationRange(0x98, 0x9a, 1),
+		RoomAttackAnimationRange(0x9b, 0x9d, 1)
 	};
 	static const RoomAttackAnimationRange kRightAttackRanges[3] = {
-		RoomAttackAnimationRange(0x6e, 0x77, 2),
-		RoomAttackAnimationRange(0x78, 0x81, 2),
-		RoomAttackAnimationRange(0x82, 0x8b, 2)
+		RoomAttackAnimationRange(0x8c, 0x8e, 2),
+		RoomAttackAnimationRange(0x8f, 0x91, 2),
+		RoomAttackAnimationRange(0x92, 0x94, 2)
 	};
 
 	const RoomAttackAnimationRange *candidates =
@@ -542,6 +542,8 @@ static bool areCombatantsWithinRoomCombatReach(const StartupRoomSetupState &stat
 
 // Native class-6 melee only arms after the chase path has already collapsed the
 // wider waypoint band down to a direct center-to-center engage-distance check.
+// The DOS runtime does not add a separate randomized monster attack cooldown;
+// cadence comes from the short attack banks themselves.
 static bool isWithinNativeMonsterAttackEntryRange(const RuntimeEntity &monster, float monsterZ,
 		const RuntimeEntity &player, float playerZ, int engageDistance) {
 	const float zDelta = monsterZ >= playerZ ? monsterZ - playerZ : playerZ - monsterZ;
@@ -2457,7 +2459,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			combatState->deathLastFrame = deathRange.lastFrame;
 			combatState->deathDamageType = debugDamageType;
 			combatState->nextMovementTick = 0;
-			combatState->nextAttackAllowedTick = 0;
 			monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
 			monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
 			monsterEntity->setAnimationEnabled(true);
@@ -2749,7 +2750,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			combatState->deathLastFrame = deathRange.lastFrame;
 			combatState->deathDamageType = damageType;
 			combatState->nextMovementTick = 0;
-			combatState->nextAttackAllowedTick = 0;
 			monsterEntity->setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
 			monsterEntity->setAnimationRate(kRoomMonsterAnimationRate);
 			monsterEntity->setAnimationEnabled(true);
@@ -2918,7 +2918,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
 			const int liveCenterDx = playerCenterX - monsterCenterX;
 			const int absLiveCenterDx = ABS(liveCenterDx);
-			const int horizontalGap = computeRuntimeEntityHorizontalGap(*entity, *playerState.entity);
 			const int monsterLiveCenterOffset = monsterCenterX - monster.posX;
 			const int playerTargetZ = roundRoomCombatFloat(playerState.z);
 			const float zDelta = playerState.z - (float)monster.posZ;
@@ -2978,11 +2977,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 			const bool closeEnoughForAttack = isWithinNativeMonsterAttackEntryRange(
 				*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
-			const bool attackCooldownExpired =
-				combatState.nextAttackAllowedTick == 0 || (int32)(now - combatState.nextAttackAllowedTick) >= 0;
 			if (!closeEnoughForAttack)
-				continue;
-			if (!attackCooldownExpired && horizontalGap > MAX(1, engageDistance / 3))
 				continue;
 
 			RoomAttackAnimationRange range;
@@ -3002,17 +2997,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				monster.attackSound1.empty() && monster.attackSound2.empty() && monster.attackSound3.empty();
 			combatState.attackContactResolved = false;
 			combatState.attackTargetName = playerState.entity->getName();
-			combatState.nextAttackAllowedTick = now + 50 + _engine.getRandomNumber(99);
 			monster.facing = range.resumeFacing;
 			entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
-			entity->setAnimationRate(kRoomMonsterAnimationRate);
+			entity->setAnimationRate(kNativeMonsterAttackAnimationRate);
 			entity->setAnimationEnabled(true);
 			entity->setCurrentFrame(range.firstFrame);
 			debugC(1, kDebugCombat,
-				"Harvester: combat monster attack start monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d next_attack_tick=%u",
+				"Harvester: combat monster attack start monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d",
 				monster.monsterName.c_str(), combatState.attackTargetName.c_str(), range.firstFrame, range.lastFrame,
 				combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
-				engageDistance, combatState.nextAttackAllowedTick);
+				engageDistance, kNativeMonsterAttackAnimationRate);
 			needsRedraw = true;
 		}
 
