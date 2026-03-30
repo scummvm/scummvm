@@ -57,7 +57,7 @@ public:
 	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_712(int16 unk3, int16 unk2, int16 unk1);
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
-	void sub_128_918(Common::U32String &unk1);
+	void sub_128_918(const Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_c6a(int16 unk1);
@@ -274,6 +274,7 @@ private:
 	int16 var_i16_c04;
 	Common::U32String var_str_c06;
 
+	int16 var_i16_d06;
 	int16 var_i16_d0c;
 	int16 var_i16_e12;
 	int16 var_i16_e14;

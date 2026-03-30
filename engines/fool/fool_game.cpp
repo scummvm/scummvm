@@ -466,7 +466,7 @@ void FoolGame::fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 
 	g_toolbox->FillRect(this->arr_rect_5b7c, this->arr_pat_58f4[patternID]);
 }
 
-void FoolGame::sub_128_918(Common::U32String &unk1) {
+void FoolGame::sub_128_918(const Common::U32String &unk1) {
 	// 128:0918
 	g_zbasic->stringCopy(this->var_str_172, unk1);
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
@@ -602,7 +602,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	this->var_i16_7b4 = this->var_i16_7ae*0x46;
 	this->var_i16_7b6 = 0;
 	this->var_i16_7b8 = 0;
-	for (int i = 0; i < this->var_i16_7ac; i++) {
+	for (int i = 0; i <= this->var_i16_7ac; i++) {
 	// 128:0e86
 		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_str_1a8d8[this->var_i16_7ba]);
 		if (this->var_i16_7ba > this->var_i16_7b4) {
@@ -638,9 +638,8 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	g_toolbox->PenNormal();
 	this->var_i16_7a2 = 0xbe - this->var_i16_7b6;
 	// 128:1056
-	for (int i = 0; i < this->var_i16_7ac; i++) {
-		this->var_i16_7b8 = 0;
-		this->var_str_384 = this->arr_str_1a8d8[this->var_i16_7b8];
+	for (int i = 0; i <= this->var_i16_7ac; i++) {
+		this->var_str_384 = this->arr_str_1a8d8[i];
 		this->sub_128_918(this->var_str_384);
 		// 128:1086
 		// 128:1086: CLR.W - -0x772(A5)
@@ -1223,7 +1222,15 @@ void FoolGame::sub_128_2a92() {
 
 // quit
 void FoolGame::sub_128_2ab6() {
-	warning("STUB: %s", __func__);
+	this->sub_128_32fa();
+	if (this->var_i16_7be == 3) {
+		return;
+	}
+	if ((this->var_i16_7ce & 1) != 0) {
+		this->sub_128_1c2c(0x21);
+	} else {
+		this->sub_128_1c2c(0x20);
+	}
 }
 
 // print story
@@ -1981,7 +1988,159 @@ void FoolGame::sub_128_4472() {
 
 // about screen
 void FoolGame::sub_128_4a92() {
-	warning("STUB: %s", __func__);
+	// 128:4a92
+	if (this->var_str_8ec == g_zbasic->str(77)) {
+		// untitled game in progress
+		this->arr_str_1a8d8[0] = g_zbasic->chr(0x22) + g_zbasic->str(78) + g_zbasic->chr(0x22) + g_zbasic->str(79);
+	} else {
+		// 128:4aee
+		this->arr_str_1a8d8[0] = g_zbasic->chr(0x22) + this->var_str_8ec + g_zbasic->chr(0x22) + g_zbasic->str(80);
+	}
+	// 128:4b28
+	this->arr_str_1a8d8[1] = g_zbasic->str(81);
+	if (this->var_i16_7d2 == 0) {
+
+		this->var_i16_68c = 0x51;
+		this->var_i16_68a = 1;
+		for (int i = 1; i <= 0x51; i++) {
+			if ((this->arr_i16_1d24[i] & 3) != 0) {
+				this->var_i16_68c--;
+			}
+		}
+		// 128:4b88
+		if (this->var_i16_68c >= 0) {
+			// sun's map is incomplete
+			this->arr_str_1a8d8[2] = g_zbasic->str(82);
+			if (this->var_i16_68c == 1) {
+				// there is 1 missing piece
+				this->arr_str_1a8d8[3] = g_zbasic->str(83);
+			} else {
+				// 128:4bde
+				// there are N missing pieces
+				this->arr_str_1a8d8[3] = Common::U32String::format("%s %d%s", g_zbasic->str(84).encode().c_str(), this->var_i16_68c, g_zbasic->str(85).encode().c_str());
+			}
+			// 128:4c1a
+			this->var_i16_68c = 0;
+			for (int i = 2; i <= 0x50; i++) {
+				this->var_i16_68a = 2;
+				if ((this->arr_i16_1c5a[i] < 0x63) && (this->arr_i16_18b2[i] > 0)) {
+					this->var_i16_68c++;
+				}
+			}
+			// 128:4c74
+			// blank
+			this->arr_str_1a8d8[4] = g_zbasic->str(86);
+			if (this->var_i16_68c == 1) {
+				// There is 1 unsolved puzzle.
+				this->arr_str_1a8d8[5] = g_zbasic->str(87);
+			} else {
+				// 128:4cc0
+				// There are X unsolved puzzles.
+				this->arr_str_1a8d8[5] = Common::U32String::format("%s %d%s", g_zbasic->str(88).encode().c_str(), this->var_i16_68c, g_zbasic->str(89).encode().c_str());
+			}
+			// 128:4cfc
+			this->var_i16_d06 = 5;
+
+		} else {
+			// 128:4d06
+			// You have all the map pieces, but they are not arranged in the correct order.
+			this->arr_str_1a8d8[2] = g_zbasic->str(90);
+			this->arr_str_1a8d8[3] = g_zbasic->str(91);
+			this->arr_str_1a8d8[4] = g_zbasic->str(92);
+			this->arr_str_1a8d8[5] = g_zbasic->str(93);
+			// Only the Book of Thoth remains unsolved.
+			this->arr_str_1a8d8[6] = g_zbasic->str(94);
+			this->arr_str_1a8d8[7] = g_zbasic->str(95);
+			this->var_i16_d06 = 7;
+		}
+		// 128:4dc0
+	} else {
+		// 128:4dc4
+		// The sun's map is restored.
+		this->arr_str_1a8d8[2] = g_zbasic->str(96);
+		this->arr_str_1a8d8[3] = g_zbasic->str(97);
+		// Only the Book of Thoth remains unsolved.
+		this->arr_str_1a8d8[4] = g_zbasic->str(98);
+		this->arr_str_1a8d8[5] = g_zbasic->str(99);
+		this->var_i16_d06 = 5;
+	}
+	// 128:4e42
+	g_toolbox->SetPort(this->var_i32_4);
+	this->var_i16_7b2 = 0xa;
+	g_toolbox->InitCursor();
+	this->sub_128_4da(1);
+	this->sub_128_0a2(0, 0x6d60);
+	g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	this->var_i16_7b4 = 0;
+	this->var_i16_7b6 = 0;
+	this->var_i16_7b8 = 0;
+	for (int i = 0; i <= this->var_i16_d06 ; i++) {
+		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_str_1a8d8[i]);
+		if (this->var_i16_7ba > this->var_i16_7b4) {
+			this->var_i16_7b4 = this->var_i16_7ba;
+		}
+		// 128:4ec4
+		this->var_i16_7b6 += 0x11;
+	}
+	// 128:4eda
+	this->var_i16_7b6 += 0xd;
+	this->var_i16_7b4 = (this->var_i16_7b4/2) + 0xf;
+	this->var_i16_7b6 = (this->var_i16_7b6/2);
+	g_toolbox->SetRect(
+		this->arr_rect_5b7c,
+		0xf5 - this->var_i16_7b4,
+		0x6e - this->var_i16_7b6,
+		0x10b + this->var_i16_7b4,
+		0xcf + this->var_i16_7b6
+	);
+	g_toolbox->PenNormal();
+	g_toolbox->PenPat(this->arr_pat_58f4[0]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	// 128:4f6a
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 1, 1);
+	g_toolbox->PenSize(5, 5);
+	g_toolbox->PenPat(this->arr_pat_58f4[2]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 5, 5);
+	g_toolbox->PenSize(5, 5);
+	g_toolbox->PenPat(this->arr_pat_58f4[1]);
+	g_toolbox->FrameRect(this->arr_rect_5b7c);
+	// 128:4fe2
+	g_toolbox->InsetRect(this->arr_rect_5b7c, 5, 5);
+	g_toolbox->FillRect(this->arr_rect_5b7c, this->arr_pat_58f4[0]);
+	g_toolbox->PenNormal();
+	// 128:5014
+	g_toolbox->SetRect(
+		this->arr_rect_5b7c,
+		0xb5,
+		0x82 - this->var_i16_7b6,
+		0xd5,
+		0x82 - this->var_i16_7b6 + 0x20
+	);
+	g_toolbox->PlotIcon(this->arr_rect_5b7c, this->var_i32_c);
+	// the fool's errand
+	g_toolbox->MoveTo(0xde, 0x8c - this->var_i16_7b6);
+	g_toolbox->DrawString(g_zbasic->str(100));
+	// by Cliff Johnson
+	g_toolbox->MoveTo(0xee, 0x9b - this->var_i16_7b6);
+	g_toolbox->DrawString(g_zbasic->str(101));
+
+	// 128:509a
+	this->var_i16_7a2 = 0xbe - this->var_i16_7b6;
+	for (int i = 0; i <= this->var_i16_d06; i++) {
+		this->var_str_384 = this->arr_str_1a8d8[i];
+		this->sub_128_918(this->var_str_384);
+		this->var_i16_7a2 += 0x11;
+	}
+	// 128:50f4
+	g_zbasic->text(0xfc, 0x9, 0, kSrcOr);
+	this->var_i16_7a2 += 0xe;
+	this->sub_128_918(g_zbasic->str(102)); // version string
+	this->sub_128_2664();
+	this->sub_128_61c2();
+	g_toolbox->DrawMenuBar();
+	this->sub_128_0a2(0x1, 0x6d60);
+	g_toolbox->SetPort(this->var_i32_0);
 }
 
 void FoolGame::sub_128_5140() {
