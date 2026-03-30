@@ -524,7 +524,7 @@ static bool doRuntimeEntityDepthExtentsOverlap(const RuntimeEntity &first, const
 	return !(firstZMax < secondZMin || secondZMax < firstZMin);
 }
 
-static bool areCombatantsWithinNativeCloseRange(const StartupRoomSetupState &state,
+static bool areCombatantsWithinRoomCombatReach(const StartupRoomSetupState &state,
 		const RuntimeEntity &attacker, float attackerZ,
 		const RuntimeEntity &target, float targetZ, int engageDistance) {
 	if (attacker.overlapsEntity(target))
@@ -538,6 +538,21 @@ static bool areCombatantsWithinNativeCloseRange(const StartupRoomSetupState &sta
 	const int nativeTolerance = roundRoomCombatFloat(
 		Player::computeDepthScale(state, nearZ) * kNativeMonsterHorizontalWaypointTolerance);
 	return computeRuntimeEntityHorizontalGap(attacker, target) <= MAX(MAX(0, engageDistance), nativeTolerance);
+}
+
+// Native class-6 melee only arms after the chase path has already collapsed the
+// wider waypoint band down to a direct center-to-center engage-distance check.
+static bool isWithinNativeMonsterAttackEntryRange(const RuntimeEntity &monster, float monsterZ,
+		const RuntimeEntity &player, float playerZ, int engageDistance) {
+	const float zDelta = monsterZ >= playerZ ? monsterZ - playerZ : playerZ - monsterZ;
+	if (zDelta > kNativeMonsterPursuitZTolerance)
+		return false;
+
+	const Common::Rect monsterRect = monster.getScreenRect();
+	const Common::Rect playerRect = player.getScreenRect();
+	const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
+	const int playerCenterX = playerRect.left + playerRect.width() / 2;
+	return ABS(playerCenterX - monsterCenterX) <= MAX(0, engageDistance);
 }
 
 static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &sound1,
@@ -2222,7 +2237,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					continue;
 
 				RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
-				if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+				if (entity && areCombatantsWithinRoomCombatReach(scene.state,
 						*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
 					return &monster;
 			}
@@ -2238,7 +2253,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					continue;
 
 				RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
-				if (entity && areCombatantsWithinNativeCloseRange(scene.state,
+				if (entity && areCombatantsWithinRoomCombatReach(scene.state,
 						*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
 					return &npc;
 			}
@@ -2251,7 +2266,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
 				return true;
 
-			return areCombatantsWithinNativeCloseRange(scene.state,
+			return areCombatantsWithinRoomCombatReach(scene.state,
 				*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
 		};
 		auto describeCombatTargetClass = [](int classId) -> const char * {
@@ -2961,7 +2976,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			}
 
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
-			const bool closeEnoughForAttack = areCombatantsWithinNativeCloseRange(scene.state,
+			const bool closeEnoughForAttack = isWithinNativeMonsterAttackEntryRange(
 				*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
 			const bool attackCooldownExpired =
 				combatState.nextAttackAllowedTick == 0 || (int32)(now - combatState.nextAttackAllowedTick) >= 0;
