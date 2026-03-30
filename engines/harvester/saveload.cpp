@@ -137,8 +137,22 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		if (!roomState.valid || roomState.roomName.empty())
 			return Common::kReadingFailed;
+		const int previousDisc = (_resources && _resources->getCurrentDisc() > 0)
+			? _resources->getCurrentDisc()
+			: 0;
 		if (!activateStartupDisc(restoredDisc))
 			return Common::kReadingFailed;
+		if (previousDisc > 0 && previousDisc != restoredDisc) {
+			if (!_startupScript->reloadTownWorld(*_resources)) {
+				warning("Harvester: unable to reload town script after save restore disc switch %d -> %d",
+					previousDisc, restoredDisc);
+				return Common::kReadingFailed;
+			}
+
+			debugC(1, kDebugResources,
+				"Harvester: reloaded town script after save restore disc switch %d -> %d",
+				previousDisc, restoredDisc);
+		}
 		_currentStartupSaveRoomState = roomState;
 		_pendingLoadedStartupSaveRoomState = roomState;
 		_pendingLoadedStartupDisc = restoredDisc;
