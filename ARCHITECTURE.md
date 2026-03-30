@@ -746,6 +746,7 @@
   - `+0x1068` stores the caller-facing animation rate value
   - `+0x106c` / `+0x1078` store the active sequence end/start frame indices
   - `+0x112c` stores the active sequence index
+  - `update_player_combat_avatar_state` and `tick_monster_entity_runtime` both gate locomotion/combat on that same animation path: when `animation_advanced_this_tick` is clear they only call `tick_entity_visual_state`, and only an animation-advance tick falls through into `update_actor_runtime_state`. Native player walk and monster chase therefore use the shared centisecond `100 / rate` cadence rather than a separate faster movement timer.
 - `is_cursor_within_entity_bounds` at `0x4b670` is the rectangle-only cursor test for runtime entities.
 - `is_cursor_over_entity_hitmask` at `0x4b5b0` adds the per-pixel transparency test used by the main loop before interaction dispatch.
   - Class `0x16` skips the cursor gate entirely.
@@ -950,7 +951,7 @@
   - `max_z_screen_y` / `min_z_screen_y` define the screen-Y band that maps cursor position to room depth between `max_z` and `min_z`
   - `full_scale_z` is the room Z depth where entities remain at 100% sprite scale.
   - `max_z_scale_percent` is the sprite scale percentage at `max_z`; the parser derives `perspective_scale` from `(100 - max_z_scale_percent) / (max_z - full_scale_z)`, and the runtime applies it with the additional `0.01` factor stored at `0xbed80`.
-  - `z_velocity_step` is the room-specific vertical movement increment used by the main actor state machine
+  - `parse_room_record` initializes `z_velocity_step` to `1.0` after parsing; it is a live runtime field, but it is not currently derived from an additional room-script token.
   - the trailing `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40` slots are confirmed `char *` fields.
   - parser order is now explicit: after `room_name` and `music_path`, the parser reads three additional strings into `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40`, then reads the separately validated `palette_path`, then the `dimmable` token, then `on_enter_tag` / `on_exit_tag`.
   - `free_loaded_world_data` frees `palette_path`, `reserved_string_38`, `reserved_string_3c`, and `reserved_string_40` as room-owned strings, which confirms that the old `runtime_40` interpretation was wrong. In the sampled shipping `HARVEST.SCR` data all three reserved strings are empty.
@@ -1020,6 +1021,7 @@
   - `destroy_entity_list` and `dispatch_room_event_actions` use it only on class-6 monster removal flows.
 - `tick_monster_entity_runtime` at `0x54140` is the class-6 monster wrapper around `update_actor_runtime_state`.
   - `run_harvester_main_loop` uses it for live monster entities, and the wrapper tears down the runtime object when the shared actor state machine reports removal.
+  - When `animation_advanced_this_tick` is still clear, the wrapper only refreshes the entity through `tick_entity_visual_state` and does not run the locomotion/combat state machine yet.
 - `spawn_player_combat_avatar` at `0x54220` reuses the monster runtime entity base for the player during combat / weapon-view mode.
   - It seeds player HP/state and installs the weapon-dependent attack / hit / footstep / death sounds.
   - The same setup now bounds four live actor runtime fields tightly enough to treat them as confirmed:
@@ -1054,10 +1056,11 @@
   - On success it returns the matching `RegionRecord *` so the main loop can dispatch the region's `action_tag`.
 - `reset_player_combat_avatar` at `0x56a40` is the player-avatar reset helper used on teardown / restart paths.
   - It zeroes transient combat/runtime state, restores the default health/state baseline, and if the current loadout is non-default it rebuilds the player combat avatar back through loadout `0`.
-  - `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
+- `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
   - It is called from `run_harvester_main_loop`, the dialogue/response/keyword modal loops, and the player-combat wrapper, so actor motion/combat continues advancing while blocking UI is active.
   - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
   - The close-range hit-resolution block reuses the hidden helper at live actor field `+0x11a8`: it links attacker/target runtime pointers, forces the helper back to frame `0`, repositions it over the struck actor, and shows it when the helper was still hidden.
+  - The native locomotion constants now read cleanly out of the state machine: left/right walk uses `depth_scale * 8.0`, the reverse-step families use `depth_scale * 16.0`, the class-6 monster pursue band is `g_player_combat_avatar->z +/- 2.0`, and the horizontal chase waypoint slack is `depth_scale * 50.0`.
   - For class-6 monsters specifically, pursuit is not a free-running room-script heuristic: the native state machine first closes base Z to within `g_player_combat_avatar->z +/- 2.0`, then compares center-to-center X against `engage_distance`, and only arms the close-range attack picker after that spacing gate is satisfied.
   - The same class-6 path derives its horizontal chase waypoint from the player's live left edge plus the current player/monster frame widths and treats that waypoint as satisfied within `50.0 * depth_scale` pixels, so native monster pursuit does not require exact center equality before it can stop walking and attack.
   - Once that close-range gate is satisfied and the per-attack cooldown allows it, the class-6 branch stores `g_player_combat_avatar` into live actor field `+0x11a4` before entering the close-range attack family; the later contact block resolves against that linked target instead of re-running the coarse engage-distance spacing test.
@@ -1119,6 +1122,7 @@
   - The helper copies that pending value into the live shove slot at `+0x1088` when idle, then decays the pending value toward zero.
 - `update_player_combat_avatar_state` at `0x553a0` is the player-side wrapper around `update_actor_runtime_state`.
   - It reads combat input globals, translates them into desired player actor states, updates the player combat avatar, and then delegates the shared animation/combat resolution to `update_actor_runtime_state`.
+  - It timestamps live activity with `get_elapsed_milliseconds`, and like the monster wrapper it only falls through into `update_actor_runtime_state` after the shared animation path has reported `animation_advanced_this_tick`; otherwise it only calls `tick_entity_visual_state`.
   - Shared input globals recovered from both the town-map UI and player-combat wrapper are now named:
     - `g_input_up_pressed` at `0xd5954`
     - `g_input_left_pressed` at `0xd5957`
