@@ -114,8 +114,8 @@
   - `get_mscdex_version_bcd` uses `int 2Fh AX=150Ch` and returns the MSCDEX version number from `g_dpmi_real_mode_call_structure.ebx`.
 - `prompt_for_cdrom_disc_change` at `0x488a0` is the user-facing disc-swap / drive-not-ready path reached from menus and scripted transitions.
   - It stops the active music stream, frees dialogue/XFILE cache state, shows the `CD-ROM DRIVE NOT READY!` / `PLEASE TRY AGAIN...` prompt, then reruns `shutdown_extended_file_system`, `initialize_extended_file_system`, and the `dialogue.idx` reopen path once the requested disc becomes available.
-  - It also updates the active-disc dword at `0xc0fa8`. On disc `3`, it sets `0xd607c = 1`, and when the second parameter is `0` it additionally sets the one-shot latch at `0xc7e49 = 1`.
-  - `run_harvester_main_loop` checks that `0xc7e49` latch after interactions; when set, it clears the byte, calls `reload_town_world_from_script`, and immediately reruns `room_setup` on the pending room target. `dispatch_room_event_actions` case `CHANGE_CD` mirrors the same disc-3 path inline by calling `reload_town_world_from_script`, clearing `0xc7e49`, and then calling `room_setup`.
+  - It also updates `g_active_game_disc` at `0xc0fa8`. On disc `3`, it sets `g_disc3_mode_flag` at `0xd607c`, and when the second parameter is `0` it additionally sets the one-shot latch `g_pending_disc3_room_restart` at `0xc7e49`.
+  - `run_harvester_main_loop` checks `g_pending_disc3_room_restart` after interactions; when set, it clears the byte, calls `reload_town_world_from_script`, and immediately reruns `room_setup` on the name stored in `g_room_setup_target_name_buffer` at `0xd5b80`. `dispatch_room_event_actions` case `CHANGE_CD` mirrors the same disc-3 path inline by calling `reload_town_world_from_script`, clearing `g_pending_disc3_room_restart`, and then calling `room_setup`.
 
 ### Town Script Runtime
 
@@ -155,6 +155,7 @@
 - `xfile_read` and `xfile_size` use two distinct path modes:
   - `<digit>:\...` paths are archive-backed lookups through the numbered sets mounted by `initialize_extended_file_system`
   - bare relative paths are opened directly from the configured `CD_ROM` root
+- Spot-checking the Sergeant room resource cluster across the disc-prefixed `INDEX.001` files shows the current-disc archive contents are not identical. `1INDEX.001` and `2INDEX.001` both carry `1:\GRAPHIC\ROOMS\NTRYHALL.BM`, `1:\GRAPHIC\PAL\NTRYHALL.PAL`, `1:\GRAPHIC\MASKS\NTRYDORS.BM`, `1:\GRAPHIC\ROOMANIM\LDGEYES.ABM`, `1:\GRAPHIC\ROOMANIM\LDGEDRIP.ABM`, and `1:\GRAPHIC\CHAR\SERGENT.ABM`, while `3INDEX.001` only carries `1:\GRAPHIC\ROOMANIM\LDGEDRIP.ABM` and `1:\GRAPHIC\CHAR\SERGENT.ABM`. No alternate `NTRYHALL.BM` entry has been recovered on disc 3.
 - `initialize_town_script_runtime` next opens `HARVEST.SCR`, loads the full script blob through XFILE, and XOR-deobfuscates it in memory before registering the script vocabulary.
 - `run_harvester_main_loop` begins its presentation bootstrap by playing three direct-path FST sequences in this exact order:
   - `GRAPHIC\FST\VIRGLOGO.FST`
@@ -248,6 +249,7 @@
   - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
   - Decoding `HARVEST.SCR` confirms that room `OBJECT` records are not all named sprites. The data uses unnamed `OBJECT` records as blocker rectangles in many rooms, and it also uses hidden no-sprite `OBJECT` records with action tags as live hotspots. Concrete examples include the four anonymous `SERGEANTRM` `{// BLOCKS }` entries plus hidden action hotspots such as `PCHOUSE / PC_WINDOW` and `MR_JOHNS / MANHOLE`.
   - The same decoded script confirms the Sergeant remains CD3 handoff is data-authored to rebuild `SERGEANTRM` itself. `WARP_TO_LODGE -> WARP_TO_LODGE_A -> WARP_TO_LODGE_B` ends at `CHANGE_CD 3`, and `SERGEANTRM` only defines the hidden `LODGE_DOOR` mask plus region `LOD_X1 -> EXIT_LODGE`; there is no second script-side lodge-room transition chained after the CD prompt.
+  - Rechecking the live script against the ScummVM room/map resolver narrows the next authored step after that rebuild: `EXIT_LODGE_2` issues `CHANGE_ROOM "LODGE_2_MAP"`, and `LODGE_2_MAP` is a `MAP_ENTRANCE`, so the authored follow-up is the town-map selector handoff rather than an automatic jump into a deeper lodge interior.
   - On the player-present branch it then re-adds the stored live player actor from `DAT_000d5bd4`, places it from `g_current_room_entrance`, and seeds exact facing frames `0x3b`, `0x0e`, `0x2c`, and `0x28` for entrance-facing values `0`, `1`, `2`, and `3`.
   - Before the live room flush it explicitly resets the cursor entity to animation sequence `7`.
   - The final room palette/upload order is now explicit: after optional room-enter handlers, `room_setup` uploads `g_current_palette_buffer` and then calls `flush_dirty_rects_to_screen`.
@@ -370,6 +372,9 @@
   - `run_save_game_menu` returns immediately when it is clear.
   - `run_load_game_menu` sets it before applying a slot.
   - `run_game_over_screen` clears it until the main menu starts or loads a new session again.
+- `g_loading_saved_game` at `0xd607d` is the one-shot load-restore guard.
+  - `run_load_game_menu` sets it before returning to the room loop.
+  - `room_setup` consumes it to skip outgoing room-animation state capture, suppress room `on_enter` handlers, preserve the restored music path, and then clears the byte before returning.
 
 ## Interface And Input
 
@@ -1138,6 +1143,7 @@
 - `run_game_over_screen` at `0x7c540` is the death/game-over UI branch reached from the main loop after the player combat avatar enters its terminal failure path.
 - The low-level PCM/sample helpers are now bounded:
   - `load_sound_sample` at `0x18470` loads a one-shot sample through XFILE, accepting raw `WAVE` data or `FCMP`-compressed audio, and seeds the sample format/rate metadata used by the audio backend.
+    - On `FCMP` inputs it decodes the full payload but queues playback from `decoded_pcm + 0x1f4`, so the first `500` decoded bytes are discarded before the ring buffer fill.
   - `start_sound_state_playback` at `0x197b0` allocates a backend voice slot for an initialized `PcmSoundState` and records the active playback token in that state.
   - `is_sound_state_playing` at `0x198e0` polls whether the recorded voice/token pair for a `PcmSoundState` is still active.
   - `stop_sound_state_playback` at `0x19840` stops the active backend voice for a `PcmSoundState` without freeing the sample data.
@@ -1212,6 +1218,7 @@
       - The recovered fields are the source/destination far pointers, compressed and decoded byte counts, nibble index, predictor, delta, cached source byte, current nibble, step size, step index, and output bits per sample.
   - The stream-layer helpers are now named:
     - `start_music_stream` at `0x1bfc0` swaps to a new room/menu music file, opens the backing XFILE stream, primes the first audio chunk, and allocates a backend voice slot.
+      - On `FCMP` music it zeroes the first `0x64` decoded bytes of the primed chunk before queuing it, matching a `50`-sample warmup mute on the common 16-bit streams.
     - `update_music_stream` at `0x1b9a0` is the per-frame pump used by menus, dialogue waits, room logic, and the main loop; it refills stream buffers and applies pending volume ramps.
     - `release_music_stream_buffers` at `0x1a440` frees the stream's decode/ring buffers, unlocks their linear regions, and stops the active voice slot if that slot/token still belongs to the stream.
     - `pause_music_stream` at `0x1a620` stops the active voice without closing the underlying stream.
@@ -1232,6 +1239,7 @@
       - the separate driver callback object at `0xca194` reuses that same low-level `set_driver_control_entry_value` helper through `set_selected_sound_driver_control_value`
       - the exact gameplay meaning of that control value is still unresolved, but the indirection itself is confirmed
   - `load_dialogue_voice_sample` at `0x191d0` is the `play_dialogue_line`-specific loader that accepts either `WAVE` or `FCMP` voice assets and prepares them for one-shot playback through the shared sample backend.
+    - Its `FCMP` path matches `load_sound_sample`: after full decode it queues from `decoded_pcm + 0x1f4`, discarding the first `500` decoded bytes before playback begins.
   - `stop_sound_state_and_close_stream_file` at `0x1c4e0` is the shared cleanup path that stops active backend playback for a sound state and closes its backing stream/file handle at offset `+0x88`.
   - `run_fst_sequence_player` at `0x12b00` is the inner FST decoder/player reached from `play_fst_sequence`.
     - `FstFileHeader` is now a confirmed 0x20-byte header with fields `magic`, `width`, `height`, `max_frame_size`, `frame_count`, `frame_rate`, `sample_rate`, and `bits_per_sample`.

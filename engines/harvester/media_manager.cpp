@@ -41,6 +41,11 @@ namespace Harvester {
 
 namespace {
 
+enum class FcmpWarmupMode {
+	kMusic,
+	kSample
+};
+
 static const int8 kHarvesterImaIndexAdjustTable[16] = {
 	-1, -1, -1, -1, 2, 4, 6, 8,
 	-1, -1, -1, -1, 2, 4, 6, 8
@@ -119,7 +124,29 @@ static uint32 decodeHarvesterFcmp(byte *dest, const byte *src, uint32 srcSize, u
 	return decodedSize;
 }
 
-static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableReadStream *stream) {
+static void applyStartupFcmpWarmup(byte *decodedPcm, uint32 &decodedSize, FcmpWarmupMode warmupMode) {
+	if (!decodedPcm || decodedSize == 0)
+		return;
+
+	if (warmupMode == FcmpWarmupMode::kMusic) {
+		// Native start_music_stream zeros the first 0x64 decoded bytes of the first FCMP chunk.
+		memset(decodedPcm, 0, MIN<uint32>(decodedSize, 100));
+		return;
+	}
+
+	// Native load_sound_sample/load_dialogue_voice_sample queue from decoded_pcm + 0x1f4.
+	const uint32 trimBytes = MIN<uint32>(decodedSize, 500);
+	if (trimBytes == decodedSize) {
+		memset(decodedPcm, 0, decodedSize);
+		return;
+	}
+
+	memmove(decodedPcm, decodedPcm + trimBytes, decodedSize - trimBytes);
+	decodedSize -= trimBytes;
+}
+
+static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableReadStream *stream,
+		FcmpWarmupMode warmupMode) {
 	if (!stream)
 		return nullptr;
 
@@ -156,7 +183,7 @@ static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableRead
 				return nullptr;
 			}
 
-			const uint32 decodedSize = payloadSize * (bitsPerSample >> 2);
+			uint32 decodedSize = payloadSize * (bitsPerSample >> 2);
 			byte *decodedPcm = (byte *)malloc(decodedSize);
 			if (!decodedPcm) {
 				free(compressedPayload);
@@ -165,6 +192,7 @@ static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableRead
 			}
 
 			decodeHarvesterFcmp(decodedPcm, compressedPayload, payloadSize, bitsPerSample);
+			applyStartupFcmpWarmup(decodedPcm, decodedSize, warmupMode);
 			free(compressedPayload);
 			delete stream;
 			return Audio::makeRawStream(decodedPcm, decodedSize, sampleRate,
@@ -177,8 +205,9 @@ static Audio::SeekableAudioStream *decodeStartupAudioStream(Common::SeekableRead
 	return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 }
 
-static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources, const Common::String &path) {
-	return decodeStartupAudioStream(resources.openFile(path));
+static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resources,
+		const Common::String &path, FcmpWarmupMode warmupMode) {
+	return decodeStartupAudioStream(resources.openFile(path), warmupMode);
 }
 
 } // End of anonymous namespace
@@ -268,7 +297,8 @@ bool MediaManager::playMusic(const Common::String &path) {
 		return true;
 	}
 
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(_resources, path);
+	Audio::SeekableAudioStream *audioStream =
+		openStartupAudioStream(_resources, path, FcmpWarmupMode::kMusic);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup music '%s'", path.c_str());
 		return false;
@@ -323,7 +353,8 @@ bool MediaManager::playSound(const Common::String &path) {
 	_soundSlotIndex = (_soundSlotIndex + 1) % ARRAYSIZE(_soundHandles);
 	stopSoundHandle(_soundHandles[_soundSlotIndex]);
 
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(_resources, path);
+	Audio::SeekableAudioStream *audioStream =
+		openStartupAudioStream(_resources, path, FcmpWarmupMode::kSample);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
 		return false;
@@ -340,7 +371,8 @@ bool MediaManager::playSingleSound(const Common::String &path) {
 		return false;
 
 	stopSoundHandle(_singleSoundHandle);
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(_resources, path);
+	Audio::SeekableAudioStream *audioStream =
+		openStartupAudioStream(_resources, path, FcmpWarmupMode::kSample);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup sound '%s'", path.c_str());
 		return false;
@@ -364,7 +396,8 @@ bool MediaManager::playSpeech(const Common::String &path) {
 		return false;
 
 	stopSoundHandle(_speechHandle);
-	Audio::SeekableAudioStream *audioStream = openStartupAudioStream(_resources, path);
+	Audio::SeekableAudioStream *audioStream =
+		openStartupAudioStream(_resources, path, FcmpWarmupMode::kSample);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup speech '%s'", path.c_str());
 		return false;
@@ -410,7 +443,7 @@ bool MediaManager::playLoadedSound(int slot) {
 
 	Common::SeekableReadStream *stream = new Common::MemoryReadStream(
 		_loadedSoundData[slot].data(), _loadedSoundData[slot].size(), DisposeAfterUse::NO);
-	Audio::SeekableAudioStream *audioStream = decodeStartupAudioStream(stream);
+	Audio::SeekableAudioStream *audioStream = decodeStartupAudioStream(stream, FcmpWarmupMode::kSample);
 	if (!audioStream) {
 		warning("Harvester: unable to decode startup sound slot %d ('%s')",
 			slot, _loadedSoundPaths[slot].c_str());
