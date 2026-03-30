@@ -1687,8 +1687,11 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 
 void ThemeEngine::setActiveCursor(CursorType type) {
     if (type < 0 || type >= kCursorMax || !_cursors[type].data) {
-        warning("setActiveCursor: Failed to switch - type=%d, data=%p", type, _cursors[type].data);
-        return;
+        if (type == kCursorIndex && _cursors[kCursorNormal].data) {
+        	type = kCursorNormal;  // Fallback to normal cursor
+        } else {
+            return;
+        }
     }
 
     _activeCursorType = type;
