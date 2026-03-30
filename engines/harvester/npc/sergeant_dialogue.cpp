@@ -184,6 +184,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		// Native prompt_for_cdrom_disc_change(3, 0) latches a main-loop room rebuild.
 		StartupInteractionResult interaction;
 		interaction.requestRoomRestart = true;
+		interaction.roomRestartTargetName = "START";
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 		return Common::kNoError;
 	};

@@ -1904,15 +1904,23 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 				startupFlow.executeStartupAudioCommands(interaction.audioCommands);
 				auto queueImplicitRoomRestart = [&]() -> Common::Error {
-					// Native disc-3 prompt reloads re-enter room_setup through the startup target
-					// buffer, which remains "START" during ordinary play and resolves to CD3 RECEPTION.
-					pendingRoomChange =
-						discChanged && interaction.cdChangeDisc == 3
-							? Common::String("START")
-							: (!scene.state.entranceName.empty()
-								? scene.state.entranceName
-								: scene.state.roomName);
+					if (!interaction.roomRestartTargetName.empty()) {
+						pendingRoomChange = interaction.roomRestartTargetName;
+					} else if (discChanged && interaction.cdChangeDisc == 3) {
+						// Native disc-3 prompt reloads re-enter room_setup through the startup target
+						// buffer, which remains "START" during ordinary play and resolves to CD3 RECEPTION.
+						pendingRoomChange = "START";
+					} else if (!scene.state.entranceName.empty()) {
+						pendingRoomChange = scene.state.entranceName;
+					} else {
+						pendingRoomChange = scene.state.roomName;
+					}
 					didTransition = !pendingRoomChange.empty();
+					debugC(1, kDebugRoom,
+						"Harvester: implicit room restart target='%s' explicit='%s' discChanged=%d cdChangeDisc=%d sceneEntrance='%s' sceneRoom='%s'",
+						pendingRoomChange.c_str(), interaction.roomRestartTargetName.c_str(),
+						discChanged ? 1 : 0, interaction.cdChangeDisc,
+						scene.state.entranceName.c_str(), scene.state.roomName.c_str());
 					return didTransition ? Common::kNoError : Common::kReadingFailed;
 				};
 				if (interaction.requestRoomRestart) {
