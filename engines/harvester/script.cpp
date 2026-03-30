@@ -190,6 +190,13 @@ static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMon
 	runtimeMonster.damageAmount = baseMonster.damageAmount;
 }
 
+static bool hasLegacyMonsterCombatFieldLayout(const StartupMonsterRecord &baseMonster,
+		const StartupMonsterRecord &runtimeMonster) {
+	return runtimeMonster.initialHitPoints != baseMonster.initialHitPoints ||
+		runtimeMonster.damageAmount != baseMonster.damageAmount ||
+		runtimeMonster.engageDistance != baseMonster.engageDistance;
+}
+
 static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &record) {
 	s.syncAsSint32LE(record.initialValue);
 	s.syncAsSint32LE(record.currentValue);
@@ -1461,7 +1468,7 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
-		if (s.getVersion() >= 2 && s.getVersion() < 15) {
+		if (s.getVersion() >= 2) {
 			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
 				const StartupMonsterRecord *baseMonster = nullptr;
 				for (const StartupMonsterRecord &monster : _monsters) {
@@ -1471,6 +1478,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 					}
 				}
 				if (!baseMonster)
+					continue;
+				if (!hasLegacyMonsterCombatFieldLayout(*baseMonster, runtimeMonster))
 					continue;
 
 				migrateLegacyMonsterCombatFields(*baseMonster, runtimeMonster);
