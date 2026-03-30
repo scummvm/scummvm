@@ -108,6 +108,10 @@ private:
 	uint _graphicsScale;
 	bool _gotResize;
 
+	bool _fixedResolutionMultipliers = true;
+	uint _fixedResolutionMultipliersWidth = 0;
+	uint _fixedResolutionMultipliersHeight = 0;
+
 	bool _vsync;
 	bool _wantsFullScreen;
 	uint _ignoreResizeEvents;

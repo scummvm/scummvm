@@ -409,7 +409,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	// for a fullscreen window that doesn't have the SDL_WINDOW_FULLSCREEN_DESKTOP flag
 	// causes a SDL_WINDOWEVENT_RESIZED event with the old resolution to be sent, and this
 	// event is processed after recreating the window at the new resolution.
-	int currentWidth, currentHeight;
+	int currentWidth = width, currentHeight = height;
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
 	float dpiScale = _window->getSdlDpiScalingFactor();
 
@@ -428,9 +428,12 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	if (ConfMan.getBool("dumper_force_resize", Common::ConfigManager::kApplicationDomain)) {
 		createOrUpdateWindow(currentWidth, currentHeight, 0);
 	}
+	// Logic to lock screen size when in fixedResolutionMultipliers mode
+	if (_fixedResolutionMultipliers) {
+		SDL_SetWindowSize(_window->getSDLWindow(), _fixedResolutionMultipliersWidth, _fixedResolutionMultipliersHeight);
+	}
 
-	handleResize(currentWidth, currentHeight);
-
+	handleResize(width, height);
 	// Remember window size in windowed mode
 	if (!_wantsFullScreen) {
 		currentWidth = (int)(currentWidth / dpiScale + 0.5f);
@@ -544,7 +547,7 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedWidth = _lastRequestedWidth;
 		requestedHeight = _lastRequestedHeight;
 	}
-
+		
 	_requestedAntialiasing = antialiasing;
 	_resizable = resizable;
 
@@ -635,6 +638,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 				_desiredFullscreenHeight = height;
 			}
 		}
+		
 
 		// Remember our choice.
 		ConfMan.setInt("last_fullscreen_mode_width", _desiredFullscreenWidth, Common::ConfigManager::kApplicationDomain);
@@ -928,7 +932,8 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				warning("OpenGLSdlGraphicsManager::notifyEvent: Fullscreen resize failed ('%s')", SDL_GetError());
 				g_system->quit();
 			}
-		} else {
+		}
+		else {
 			// Calculate the next scaling setting. We approximate the
 			// current scale setting in case the user resized the
 			// window. Then we apply the direction change.
@@ -953,10 +958,31 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			// Try to setup the mode.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 			unlockWindowSize();
-#endif
-			if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
-				warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
-				g_system->quit();
+#endif		// Logic for fixedResolutionMultipliers Mode
+			// when down scaleing it lowers both
+			// there wssn't any mention on updateing x
+			// i decided to do one just because.
+			// if you wanted x not updated then replace _fixedResolutionMultipliersWidth
+			// with _lastRequestedWidth. 
+			
+			if (_fixedResolutionMultipliers)
+			{
+				if (_lastRequestedHeight * _graphicsScale <= 480 ) {
+					_fixedResolutionMultipliersHeight = _lastRequestedHeight * _graphicsScale;
+				}
+
+				_fixedResolutionMultipliersWidth = _lastRequestedWidth * _graphicsScale;
+
+				if (!setupMode(_fixedResolutionMultipliersWidth, _fixedResolutionMultipliersHeight)) {
+					warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
+					g_system->quit();
+				}
+			} else {
+				
+				if (!setupMode(_lastRequestedWidth * _graphicsScale, _lastRequestedHeight * _graphicsScale)) {
+					warning("OpenGLSdlGraphicsManager::notifyEvent: Window resize failed ('%s')", SDL_GetError());
+					g_system->quit();
+				}
 			}
 		}
 
