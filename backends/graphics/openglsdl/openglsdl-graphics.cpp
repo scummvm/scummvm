@@ -409,7 +409,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 	// for a fullscreen window that doesn't have the SDL_WINDOW_FULLSCREEN_DESKTOP flag
 	// causes a SDL_WINDOWEVENT_RESIZED event with the old resolution to be sent, and this
 	// event is processed after recreating the window at the new resolution.
-	int currentWidth = width, currentHeight = height;
+	int currentWidth, currentHeight;
 	getWindowSizeFromSdl(&currentWidth, &currentHeight);
 	float dpiScale = _window->getSdlDpiScalingFactor();
 
@@ -433,7 +433,7 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		SDL_SetWindowSize(_window->getSDLWindow(), _fixedResolutionMultipliersWidth, _fixedResolutionMultipliersHeight);
 	}
 
-	handleResize(width, height);
+	handleResize(currentWidth, currentHeight);
 	// Remember window size in windowed mode
 	if (!_wantsFullScreen) {
 		currentWidth = (int)(currentWidth / dpiScale + 0.5f);
@@ -932,8 +932,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 				warning("OpenGLSdlGraphicsManager::notifyEvent: Fullscreen resize failed ('%s')", SDL_GetError());
 				g_system->quit();
 			}
-		}
-		else {
+		}else {
 			// Calculate the next scaling setting. We approximate the
 			// current scale setting in case the user resized the
 			// window. Then we apply the direction change.
