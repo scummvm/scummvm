@@ -72,16 +72,37 @@ static Common::String buildDiscArchiveName(int discNumber, char archiveSetId) {
 	return Common::String::format("harvester-disc-%d-xfile-%c", discNumber, archiveSetId);
 }
 
-static Common::String buildDiscPrefixedFilePath(int discNumber, const char *path) {
-	return Common::String::format("%d%s", discNumber, path);
+static Common::String buildDiscDirectoryFilePath(int discNumber, const Common::String &path) {
+	return Common::String::format("CD%d/%s", discNumber, stripLeadingSlashes(path).c_str());
 }
 
-static Common::String resolveDiscArchiveStoragePath(int discNumber, const char *path) {
-	const Common::String prefixedPath = buildDiscPrefixedFilePath(discNumber, path);
-	if (SearchMan.hasFile(Common::Path(prefixedPath, '/')))
-		return prefixedPath;
-	if (discNumber == kFirstDiscNumber && SearchMan.hasFile(Common::Path(path, '/')))
-		return path;
+static Common::String resolveDiscArchiveStoragePath(int discNumber, const Common::String &path) {
+	const Common::String normalized = stripLeadingSlashes(path);
+	if (normalized.empty())
+		return Common::String();
+
+	const Common::String discPath = buildDiscDirectoryFilePath(discNumber, normalized);
+	if (SearchMan.hasFile(Common::Path(discPath, '/')))
+		return discPath;
+
+	if (discNumber == kFirstDiscNumber && SearchMan.hasFile(Common::Path(normalized, '/')))
+		return normalized;
+
+	return Common::String();
+}
+
+static Common::String resolveDiscLooseResourcePath(int discNumber, const Common::String &path) {
+	const Common::String normalized = stripLeadingSlashes(path);
+	if (normalized.empty())
+		return Common::String();
+
+	const Common::String discPath = buildDiscDirectoryFilePath(discNumber, normalized);
+	if (SearchMan.hasFile(Common::Path(discPath, '/')))
+		return discPath;
+
+	if (SearchMan.hasFile(Common::Path(normalized, '/')))
+		return normalized;
+
 	return Common::String();
 }
 
@@ -268,14 +289,17 @@ bool ResourceManager::hasFile(const Common::String &path) const {
 		if (!spec || memberPath.empty())
 			return false;
 
-		return findArchiveForMember(spec->archiveSetId, Common::Path(memberPath, '/')) != nullptr;
+		if (findArchiveForMember(spec->archiveSetId, Common::Path(memberPath, '/')) != nullptr)
+			return true;
+
+		return !resolveDiscArchiveStoragePath(_currentDisc, memberPath).empty();
 	}
 
 	const Common::Path memberPath(normalized, '/');
 	if (hasInMountedArchives(memberPath))
 		return true;
 
-	return SearchMan.hasFile(memberPath);
+	return !resolveDiscLooseResourcePath(_currentDisc, normalized).empty();
 }
 
 Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path) const {
@@ -290,11 +314,19 @@ Common::SeekableReadStream *ResourceManager::openFile(const Common::String &path
 		Common::Archive *archive = spec ? findArchiveForMember(spec->archiveSetId, Common::Path(memberPath, '/')) : nullptr;
 		if (archive && !memberPath.empty())
 			stream = archive->createReadStreamForMember(Common::Path(memberPath, '/'));
+		if (!stream && !memberPath.empty()) {
+			const Common::String loosePath = resolveDiscArchiveStoragePath(_currentDisc, memberPath);
+			if (!loosePath.empty())
+				stream = SearchMan.createReadStreamForMember(Common::Path(loosePath, '/'));
+		}
 	} else {
 		const Common::Path memberPath(normalized, '/');
 		stream = openFromMountedArchives(memberPath);
-		if (!stream)
-			stream = SearchMan.createReadStreamForMember(memberPath);
+		if (!stream) {
+			const Common::String loosePath = resolveDiscLooseResourcePath(_currentDisc, normalized);
+			if (!loosePath.empty())
+				stream = SearchMan.createReadStreamForMember(Common::Path(loosePath, '/'));
+		}
 	}
 
 	debugC(3, kDebugResources, "Harvester: openFile(disc=%d, '%s' -> '%s') %s",
