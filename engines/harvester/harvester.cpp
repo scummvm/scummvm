@@ -35,7 +35,7 @@ namespace Harvester {
 
 namespace {
 
-static bool shouldSkipStartupMoviesForDebug() {
+static bool shouldSkipIntroMoviesForDebug() {
 	return ConfMan.hasKey("harvester_debug_skip_startup_movies") &&
 		ConfMan.getBool("harvester_debug_skip_startup_movies");
 }
@@ -84,11 +84,11 @@ int HarvesterEngine::getDisplayHeight() const {
 	return _media ? _media->getDisplayHeight() : 0;
 }
 
-Art *HarvesterEngine::getStartupArt() const {
+Art *HarvesterEngine::getArt() const {
 	return _media ? _media->getArt() : nullptr;
 }
 
-Text *HarvesterEngine::getStartupText() const {
+Text *HarvesterEngine::getText() const {
 	return _media ? _media->getText() : nullptr;
 }
 
@@ -103,125 +103,125 @@ bool HarvesterEngine::shouldShowCdChangePrompts() const {
 	return ConfMan.hasKey("show_cd_change_prompts") && ConfMan.getBool("show_cd_change_prompts");
 }
 
-int HarvesterEngine::getStartupFxVolumeLevel() const {
+int HarvesterEngine::getFxVolumeLevel() const {
 	return _startupScript ? _startupScript->getFxVolumeLevel() : 9;
 }
 
-int HarvesterEngine::getStartupMusicVolumeLevel() const {
+int HarvesterEngine::getMusicVolumeLevel() const {
 	return _startupScript ? _startupScript->getMusicVolumeLevel() : 9;
 }
 
-int HarvesterEngine::getStartupGammaLevel() const {
+int HarvesterEngine::getGammaLevel() const {
 	return _startupScript ? _startupScript->getGammaLevel() : 0;
 }
 
-float HarvesterEngine::getStartupGammaBrightnessScale() const {
-	return MediaManager::mapGammaLevelToBrightnessScale(getStartupGammaLevel());
+float HarvesterEngine::getGammaBrightnessScale() const {
+	return MediaManager::mapGammaLevelToBrightnessScale(getGammaLevel());
 }
 
-void HarvesterEngine::applyStartupMixerLevels() {
+void HarvesterEngine::applyMixerLevels() {
 	if (_media)
-		_media->applyMixerLevels(getStartupFxVolumeLevel(), getStartupMusicVolumeLevel());
+		_media->applyMixerLevels(getFxVolumeLevel(), getMusicVolumeLevel());
 }
 
-void HarvesterEngine::setStartupFxVolumeLevel(int level) {
+void HarvesterEngine::setFxVolumeLevel(int level) {
 	if (_startupScript)
 		_startupScript->setFxVolumeLevel(level);
-	applyStartupMixerLevels();
+	applyMixerLevels();
 }
 
-void HarvesterEngine::setStartupMusicVolumeLevel(int level) {
+void HarvesterEngine::setMusicVolumeLevel(int level) {
 	if (_startupScript)
 		_startupScript->setMusicVolumeLevel(level);
-	applyStartupMixerLevels();
+	applyMixerLevels();
 }
 
-void HarvesterEngine::setStartupGammaLevel(int level) {
+void HarvesterEngine::setGammaLevel(int level) {
 	if (_startupScript)
 		_startupScript->setGammaLevel(level);
 }
 
-const Common::String &HarvesterEngine::getStartupMusicPath() const {
+const Common::String &HarvesterEngine::getMusicPath() const {
 	static const Common::String kEmptyMusicPath;
 	return _media ? _media->getMusicPath() : kEmptyMusicPath;
 }
 
-bool HarvesterEngine::isStartupMusicPlaying() const {
+bool HarvesterEngine::isMusicPlaying() const {
 	return _media && _media->isMusicPlaying();
 }
 
-bool HarvesterEngine::playStartupMusic(const Common::String &path) {
+bool HarvesterEngine::playMusic(const Common::String &path) {
 	if (!_media)
 		return false;
 
 	const bool started = _media->playMusic(path);
 	if (started)
-		applyStartupMixerLevels();
+		applyMixerLevels();
 	return started;
 }
 
-void HarvesterEngine::pauseStartupMusic(bool paused) {
+void HarvesterEngine::pauseMusic(bool paused) {
 	if (_media)
 		_media->pauseMusic(paused);
 }
 
-void HarvesterEngine::stopStartupMusic() {
+void HarvesterEngine::stopMusic() {
 	if (_media)
 		_media->stopMusic();
 }
 
-bool HarvesterEngine::executeStartupAudioCommand(const AudioCommand &command) {
+bool HarvesterEngine::executeAudioCommand(const AudioCommand &command) {
 	return _media && _media->executeAudioCommand(command);
 }
 
-bool HarvesterEngine::playStartupSound(const Common::String &path) {
+bool HarvesterEngine::playSound(const Common::String &path) {
 	return _media && _media->playSound(path);
 }
 
-bool HarvesterEngine::playStartupSingleSound(const Common::String &path) {
+bool HarvesterEngine::playSingleSound(const Common::String &path) {
 	return _media && _media->playSingleSound(path);
 }
 
-void HarvesterEngine::stopStartupSingleSound() {
+void HarvesterEngine::stopSingleSound() {
 	if (_media)
 		_media->stopSingleSound();
 }
 
-bool HarvesterEngine::isStartupSingleSoundPlaying() const {
+bool HarvesterEngine::isSingleSoundPlaying() const {
 	return _media && _media->isSingleSoundPlaying();
 }
 
-bool HarvesterEngine::playStartupSpeech(const Common::String &path) {
+bool HarvesterEngine::playSpeech(const Common::String &path) {
 	return _media && _media->playSpeech(path);
 }
 
-void HarvesterEngine::stopStartupSpeech() {
+void HarvesterEngine::stopSpeech() {
 	if (_media)
 		_media->stopSpeech();
 }
 
-bool HarvesterEngine::isStartupSpeechPlaying() const {
+bool HarvesterEngine::isSpeechPlaying() const {
 	return _media && _media->isSpeechPlaying();
 }
 
-bool HarvesterEngine::loadStartupSound(int slot, const Common::String &path) {
+bool HarvesterEngine::loadSound(int slot, const Common::String &path) {
 	return _media && _media->loadSound(slot, path);
 }
 
-bool HarvesterEngine::playStartupLoadedSound(int slot) {
+bool HarvesterEngine::playLoadedSound(int slot) {
 	return _media && _media->playLoadedSound(slot);
 }
 
-bool HarvesterEngine::deleteStartupLoadedSound(int slot) {
+bool HarvesterEngine::deleteLoadedSound(int slot) {
 	return _media && _media->deleteLoadedSound(slot);
 }
 
-void HarvesterEngine::stopStartupSound() {
+void HarvesterEngine::stopSound() {
 	if (_media)
 		_media->stopSound();
 }
 
-bool HarvesterEngine::activateStartupDisc(int discNumber) {
+bool HarvesterEngine::activateDisc(int discNumber) {
 	if (!_resources || discNumber <= 0)
 		return false;
 
@@ -306,7 +306,7 @@ Common::Error HarvesterEngine::run() {
 	_startupScript = new Script();
 	if (!_startupScript->load(*_resources))
 		return Common::kReadingFailed;
-	applyStartupMixerLevels();
+	applyMixerLevels();
 
 	// The intro FST files play on the narrower startup movie surface.
 	setDisplayMode(320, 200);
@@ -314,7 +314,7 @@ Common::Error HarvesterEngine::run() {
 	// Set the engine's debugger console
 	setDebugger(new Console());
 
-	if (shouldSkipStartupMoviesForDebug()) {
+	if (shouldSkipIntroMoviesForDebug()) {
 		debugC(1, kDebugGeneral, "Harvester: debug skip enabled for startup intro FST playback");
 	} else {
 		FstPlayer fstPlayer(*this);

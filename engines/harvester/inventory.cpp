@@ -290,7 +290,7 @@ bool InventorySystem::loadBitmap(const Common::String &path, IndexedBitmap &bitm
 bool InventorySystem::refresh() {
 	_items.clear();
 
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	if (!startupScript || !resources)
 		return false;
@@ -388,7 +388,7 @@ bool InventorySystem::clearSelection() {
 }
 
 bool InventorySystem::refreshIfRuntimeStateChanged() {
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	if (!startupScript)
 		return false;
 
@@ -416,7 +416,7 @@ const Common::String &InventorySystem::getSelectedItemName() const {
 }
 
 Common::String InventorySystem::resolveSelectedLabel() const {
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	if (!startupScript || _selectedItemName.empty())
 		return Common::String();
 
@@ -451,7 +451,7 @@ bool InventorySystem::toggleCombatLoadout(const ObjectRecord &object, int curren
 	if (!resolveInventoryCombatLoadoutId(object.objectName, loadoutId))
 		return false;
 
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	if (!startupScript)
 		return false;
 
@@ -509,7 +509,7 @@ const Common::String &InventorySystem::getPromptText() const {
 }
 
 Common::String InventorySystem::resolveWeekdayLabel() const {
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	if (!startupScript || startupScript->isObjectInInventory(kHarvestBladeObjectName))
 		return Common::String();
 
@@ -526,7 +526,7 @@ const InventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &poi
 }
 
 Common::Rect InventorySystem::getPanelBounds() const {
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	if (!art)
 		return Common::Rect();
 
@@ -553,7 +553,7 @@ void InventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Commo
 }
 
 void InventorySystem::drawOverlay(Graphics::Screen &screen) const {
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	if (!art)
 		return;
 

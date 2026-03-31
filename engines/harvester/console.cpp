@@ -34,7 +34,7 @@ static const uint kMaxDebugActionChainLines = 256;
 static const uint kMaxDebugActionBranchDepth = 16;
 
 static Script *getActiveStartupScript() {
-	return g_engine ? g_engine->getStartupScript() : nullptr;
+	return g_engine ? g_engine->getScript() : nullptr;
 }
 
 static const CommandRecord *findCommandRecord(const Script &script, const Common::String &tag) {
@@ -430,8 +430,8 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		return true;
 	}
 
-	Script *startupScript = g_engine->getStartupScript();
-	if (!startupScript || !g_engine->hasCurrentStartupSaveRoomState()) {
+	Script *startupScript = g_engine->getScript();
+	if (!startupScript || !g_engine->hasCurrentSaveRoomState()) {
 		debugPrintf("DEBUG_ACTIONS is only available while a room is active\n");
 		return true;
 	}
@@ -442,7 +442,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		return true;
 	}
 
-	const SaveRoomState &roomState = g_engine->getCurrentStartupSaveRoomState();
+	const SaveRoomState &roomState = g_engine->getCurrentSaveRoomState();
 	RoomSetupState materializedState;
 	if (!startupScript->materializeRoomState(roomState.entranceName, roomState.roomName,
 			materializedState, *resources)) {
@@ -491,7 +491,7 @@ bool Console::Cmd_debugCommand(int argc, const char **argv) {
 		return true;
 	}
 
-	if (!g_engine->getStartupScript() || !g_engine->hasCurrentStartupSaveRoomState()) {
+	if (!g_engine->getScript() || !g_engine->hasCurrentSaveRoomState()) {
 		debugPrintf("DEBUG_COMMAND is only available while a room is active\n");
 		return true;
 	}
@@ -545,7 +545,7 @@ bool Console::Cmd_gotoRoom(int argc, const char **argv) {
 		return true;
 	}
 
-	if (!g_engine || !g_engine->hasCurrentStartupSaveRoomState()) {
+	if (!g_engine || !g_engine->hasCurrentSaveRoomState()) {
 		debugPrintf("GOTO_ROOM is only available while a room is active\n");
 		return true;
 	}

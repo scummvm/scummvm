@@ -63,7 +63,7 @@ static void syncStartupSaveRoomState(Common::Serializer &s, SaveRoomState &state
 
 } // End of anonymous namespace
 
-void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &entranceName,
+void HarvesterEngine::captureCurrentSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath) {
 	_currentStartupSaveRoomState.entranceName = entranceName;
@@ -77,11 +77,11 @@ void HarvesterEngine::captureCurrentStartupSaveRoomState(const Common::String &e
 	_currentStartupSaveRoomState.valid = !roomName.empty();
 }
 
-void HarvesterEngine::clearCurrentStartupSaveRoomState() {
+void HarvesterEngine::clearCurrentSaveRoomState() {
 	_currentStartupSaveRoomState.clear();
 }
 
-void HarvesterEngine::clearPendingLoadedStartupSaveRoomState() {
+void HarvesterEngine::clearPendingLoadedSaveRoomState() {
 	_pendingLoadedStartupSaveRoomState.clear();
 	_pendingLoadedStartupDisc = 0;
 }
@@ -90,7 +90,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!_startupScript)
 		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 	if (s.isLoading()) {
-		clearPendingLoadedStartupSaveRoomState();
+		clearPendingLoadedSaveRoomState();
 		clearPendingLoadedDialogueStateBlob();
 	}
 	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
@@ -146,7 +146,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		const int previousDisc = (_resources && _resources->getCurrentDisc() > 0)
 			? _resources->getCurrentDisc()
 			: 0;
-		if (!activateStartupDisc(restoredDisc))
+		if (!activateDisc(restoredDisc))
 			return Common::kReadingFailed;
 		if (previousDisc > 0 && previousDisc != restoredDisc) {
 			if (!_startupScript->reloadTownWorld(*_resources)) {

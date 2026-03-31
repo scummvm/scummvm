@@ -173,7 +173,7 @@ static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &
 }
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *startupText = engine.getStartupText();
+	const Text *startupText = engine.getText();
 	if (!startupText || !fontName)
 		return nullptr;
 
@@ -235,7 +235,7 @@ static void drawShadowedString(Graphics::Screen &screen, const Graphics::Font &f
 
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
+	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
@@ -424,7 +424,7 @@ static Common::String buildDialogueHeadId(const Common::String &speakerId, int h
 
 static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId, int headVariant,
 		IndexedBitmap &bitmap) {
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	ResourceManager *resources = engine.getResources();
 	if (!startupScript || !resources || speakerId.empty())
 		return false;
@@ -563,9 +563,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 
 	Graphics::Screen *screen = _engine.getScreen();
-	Script *startupScript = _engine.getStartupScript();
-	Text *startupText = _engine.getStartupText();
-	Art *startupArt = _engine.getStartupArt();
+	Script *startupScript = _engine.getScript();
+	Text *startupText = _engine.getText();
+	Art *startupArt = _engine.getArt();
 	EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
@@ -768,14 +768,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		}
 
 		const Common::String voicePath = buildDialogueVoicePath(*startupScript, wavId);
-		const bool voiceStarted = !voicePath.empty() && _engine.playStartupSpeech(voicePath);
+		const bool voiceStarted = !voicePath.empty() && _engine.playSpeech(voicePath);
 		debugC(2, kDebugDialogue,
 			"Harvester: dialogue line wav=0x%x speaker='%s' headVariant=%d voice='%s' subtitle='%s'",
 			wavId, speakerId.c_str(), headVariant, voicePath.c_str(),
 			textEnabled ? subtitleText.c_str() : "");
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError) {
-			_engine.stopStartupSpeech();
+			_engine.stopSpeech();
 			return releaseError;
 		}
 
@@ -788,7 +788,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
 				if (startupFlow.handleSystemEvent(event, result)) {
-					_engine.stopStartupSpeech();
+					_engine.stopSpeech();
 					return result;
 				}
 
@@ -812,14 +812,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 			if (runtimeEntities)
 				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
-			if (interrupted || (!voiceStarted || !_engine.isStartupSpeechPlaying()))
+			if (interrupted || (!voiceStarted || !_engine.isSpeechPlaying()))
 				break;
 
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
 
-		_engine.stopStartupSpeech();
+		_engine.stopSpeech();
 		if (interrupted) {
 			Common::Error releaseResult = waitForPointerRelease();
 			if (releaseResult.getCode() != Common::kNoError)
@@ -930,7 +930,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				return Common::kReadingFailed;
 			}
 
-			_engine.stopStartupMusic();
+			_engine.stopMusic();
 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
@@ -988,12 +988,12 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			}
 		}
 
-		if (!_engine.activateStartupDisc(discNumber)) {
+		if (!_engine.activateDisc(discNumber)) {
 			warning("Harvester: unable to activate disc %d resources", discNumber);
 			return Common::kReadingFailed;
 		}
 		if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
-			Script *startupScript = _engine.getStartupScript();
+			Script *startupScript = _engine.getScript();
 			if (!startupScript || !startupScript->reloadTownWorld(*resources)) {
 				warning("Harvester: unable to reload town script after disc prompt %d -> %d",
 					previousDisc, discNumber);
@@ -1016,9 +1016,9 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			return Common::kReadingFailed;
 		}
 
-		_engine.stopStartupSpeech();
-		_engine.stopStartupMusic();
-		_engine.stopStartupSound();
+		_engine.stopSpeech();
+		_engine.stopMusic();
+		_engine.stopSound();
 
 		screen->fillRect(screen->getBounds(), 0);
 		blitBitmap(*screen, gameOverBitmap, 0, 0);
@@ -1026,7 +1026,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		screen->makeAllDirty();
 		screen->update();
 
-		(void)_engine.playStartupMusic(kDialogueGameOverMusicPath);
+		(void)_engine.playMusic(kDialogueGameOverMusicPath);
 
 		bool dismissed = false;
 		Graphics::FrameLimiter limiter(g_system, 60);
@@ -1035,7 +1035,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
 				if (startupFlow.handleSystemEvent(event, result)) {
-					_engine.stopStartupMusic();
+					_engine.stopMusic();
 					return result;
 				}
 
@@ -1059,7 +1059,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			limiter.startFrame();
 		}
 
-		_engine.stopStartupMusic();
+		_engine.stopMusic();
 		if (dismissed) {
 			Common::Error releaseError = waitForPointerRelease();
 			if (releaseError.getCode() != Common::kNoError)
@@ -1089,7 +1089,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 	auto applyImmediateDialogueInteractionEffects = [&](InteractionResult &interaction) {
 		if (!interaction.musicPath.empty())
-			(void)_engine.playStartupMusic(interaction.musicPath);
+			(void)_engine.playMusic(interaction.musicPath);
 		if (!interaction.audioCommands.empty())
 			startupFlow.executeStartupAudioCommands(interaction.audioCommands);
 		interaction.musicPath.clear();
