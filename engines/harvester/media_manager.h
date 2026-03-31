@@ -43,7 +43,7 @@ public:
 	explicit MediaManager(ResourceManager &resources);
 	~MediaManager();
 
-	EntityManager *getRuntimeEntities() const { return _runtimeEntities; }
+	EntityManager *getRuntimeEntities() const { return _entityManager; }
 	Graphics::Screen *getScreen() const { return _screen; }
 	int getDisplayWidth() const { return _displayWidth; }
 	int getDisplayHeight() const { return _displayHeight; }
@@ -81,7 +81,7 @@ private:
 	bool validateLoadedSoundSlot(int slot) const;
 
 	ResourceManager &_resources;
-	EntityManager *_runtimeEntities = nullptr;
+	EntityManager *_entityManager = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	int _displayWidth = 0;
 	int _displayHeight = 0;

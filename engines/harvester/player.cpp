@@ -630,18 +630,18 @@ static float stepTowardsFloat(float current, float target, float step) {
 static bool doesPlayerOverlapRoomBlocker(HarvesterEngine &engine,
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations, const Entity &playerEntity) {
-	EntityManager *runtimeEntities = engine.getRuntimeEntities();
-	if (!runtimeEntities)
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
 		return false;
 
 	for (const ObjectRecord &object : sceneObjects) {
-		const Entity *entity = runtimeEntities->findSceneEntityByName(object.objectName);
+		const Entity *entity = entityManager->findSceneEntityByName(object.objectName);
 		if (entity && playerEntity.overlapsEntity(*entity))
 			return true;
 	}
 
 	for (const AnimRecord &anim : sceneAnimations) {
-		const Entity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
+		const Entity *entity = entityManager->findSceneEntityByName(anim.animName);
 		if (entity && playerEntity.overlapsEntity(*entity))
 			return true;
 	}
@@ -739,11 +739,11 @@ static Entity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
 	if (idleState.entity || !playerState.entity)
 		return idleState.entity;
 
-	EntityManager *runtimeEntities = engine.getRuntimeEntities();
-	if (!runtimeEntities)
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
 		return nullptr;
 
-	idleState.entity = runtimeEntities->spawnSceneAnimationEntity(
+	idleState.entity = entityManager->spawnSceneAnimationEntity(
 		kPlayerIdleAnimationEntityName, kPlayerIdleAnimationResourcePath,
 		Common::Point(playerState.entity->getX(),
 			playerState.entity->getY() + kRoomPlayerIdleYOffset),

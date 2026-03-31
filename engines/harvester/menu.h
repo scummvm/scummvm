@@ -42,26 +42,26 @@ public:
 	MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 		const Common::Array<Common::String> &menuItems);
 
-	Common::Error runMainMenuStub(Flow &startupFlow);
+	Common::Error runMainMenuStub(Flow &flow);
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow);
+		float paletteBrightness, Flow &flow);
 
 private:
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,
-		Flow &startupFlow, bool &loadedGame);
+		Flow &flow, bool &loadedGame);
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow);
-	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &startupFlow);
+		float paletteBrightness, Flow &flow);
+	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &flow);
 	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness,
-		Flow &startupFlow, bool &savedGame);
+		Flow &flow, bool &savedGame);
 	Common::Error restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow) const;
+		float paletteBrightness, Flow &flow) const;
 	Common::Error runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
+		float paletteBrightness, Flow &flow, const Common::String &promptText,
 		bool &confirmed);
 	Common::Error runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow);
-	Common::Error showGameOverBackdrop(Flow &startupFlow);
+		float paletteBrightness, Flow &flow);
+	Common::Error showGameOverBackdrop(Flow &flow);
 	void clearMainMenuBackdrop();
 	void renderMainMenuStub(const Common::Array<Common::String> &menuItems, int selectedItem,
 		const Common::String &statusMessage) const;

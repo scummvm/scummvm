@@ -213,7 +213,7 @@ static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resou
 } // End of anonymous namespace
 
 MediaManager::MediaManager(ResourceManager &resources) : _resources(resources) {
-	_runtimeEntities = new EntityManager(_resources);
+	_entityManager = new EntityManager(_resources);
 }
 
 MediaManager::~MediaManager() {
@@ -222,7 +222,7 @@ MediaManager::~MediaManager() {
 	delete _text;
 	delete _art;
 	delete _screen;
-	delete _runtimeEntities;
+	delete _entityManager;
 }
 
 float MediaManager::mapGammaLevelToBrightnessScale(int level) {

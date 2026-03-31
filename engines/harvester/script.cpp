@@ -215,22 +215,22 @@ static void syncStartupMonsterRecord(Common::Serializer &s, MonsterRecord &recor
 // FIXME: Remove this pre-release monster combat migration after Harvester ships and
 // only clean release-era saves remain.
 static void migrateLegacyMonsterCombatFields(const MonsterRecord &baseMonster,
-		MonsterRecord &runtimeMonster) {
-	const int legacyInitialHitPoints = MAX(0, runtimeMonster.initialHitPoints);
-	const int legacyCurrentHitPoints = CLIP<int>(runtimeMonster.currentHitPoints, 0, legacyInitialHitPoints);
+		MonsterRecord &currentMonster) {
+	const int legacyInitialHitPoints = MAX(0, currentMonster.initialHitPoints);
+	const int legacyCurrentHitPoints = CLIP<int>(currentMonster.currentHitPoints, 0, legacyInitialHitPoints);
 	const int damageTaken = legacyInitialHitPoints - legacyCurrentHitPoints;
 
-	runtimeMonster.engageDistance = baseMonster.engageDistance;
-	runtimeMonster.initialHitPoints = baseMonster.initialHitPoints;
-	runtimeMonster.currentHitPoints = MAX(0, baseMonster.initialHitPoints - damageTaken);
-	runtimeMonster.damageAmount = baseMonster.damageAmount;
+	currentMonster.engageDistance = baseMonster.engageDistance;
+	currentMonster.initialHitPoints = baseMonster.initialHitPoints;
+	currentMonster.currentHitPoints = MAX(0, baseMonster.initialHitPoints - damageTaken);
+	currentMonster.damageAmount = baseMonster.damageAmount;
 }
 
 static bool hasLegacyMonsterCombatFieldLayout(const MonsterRecord &baseMonster,
-		const MonsterRecord &runtimeMonster) {
-	return runtimeMonster.initialHitPoints != baseMonster.initialHitPoints ||
-		runtimeMonster.damageAmount != baseMonster.damageAmount ||
-		runtimeMonster.engageDistance != baseMonster.engageDistance;
+		const MonsterRecord &currentMonster) {
+	return currentMonster.initialHitPoints != baseMonster.initialHitPoints ||
+		currentMonster.damageAmount != baseMonster.damageAmount ||
+		currentMonster.engageDistance != baseMonster.engageDistance;
 }
 
 static void syncStartupTimerRecord(Common::Serializer &s, TimerRecord &record) {
@@ -291,7 +291,7 @@ static const char *resolveCombatLoadoutInventoryObjectName(int loadout) {
 	return nullptr;
 }
 
-static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<ObjectRecord> &runtimeObjects,
+static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<ObjectRecord> &currentObjects,
 		int loadout, const char *contextLabel) {
 	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
 	if (clampedLoadout == kDefaultPlayerCombatLoadout)
@@ -301,7 +301,7 @@ static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<Objec
 	if (!requiredObjectName)
 		return clampedLoadout;
 
-	for (const ObjectRecord &object : runtimeObjects) {
+	for (const ObjectRecord &object : currentObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
 				object.objectName.equalsIgnoreCase(requiredObjectName))
 			return clampedLoadout;
@@ -519,13 +519,13 @@ bool Script::load(ResourceManager &resources) {
 	_texts.clear();
 	_heads.clear();
 	_useItems.clear();
-	_runtimeFlags.clear();
-	_runtimeObjects.clear();
-	_runtimeAnimations.clear();
-	_runtimeNpcs.clear();
-	_runtimeMonsters.clear();
-	_runtimeTimers.clear();
-	_runtimeRegions.clear();
+	_currentFlags.clear();
+	_currentObjects.clear();
+	_currentAnimations.clear();
+	_currentNpcs.clear();
+	_currentMonsters.clear();
+	_currentTimers.clear();
+	_currentRegions.clear();
 	_playerCurrentHitPoints = Script::kDefaultPlayerHitPoints;
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
@@ -565,13 +565,13 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		return false;
 	}
 
-	const Common::Array<FlagRecord> runtimeFlags = _runtimeFlags;
-	const Common::Array<ObjectRecord> runtimeObjects = _runtimeObjects;
-	const Common::Array<AnimRecord> runtimeAnimations = _runtimeAnimations;
-	const Common::Array<RegionRecord> runtimeRegions = _runtimeRegions;
-	const Common::Array<NpcRecord> runtimeNpcs = _runtimeNpcs;
-	const Common::Array<MonsterRecord> runtimeMonsters = _runtimeMonsters;
-	const Common::Array<TimerRecord> runtimeTimers = _runtimeTimers;
+	const Common::Array<FlagRecord> currentFlags = _currentFlags;
+	const Common::Array<ObjectRecord> currentObjects = _currentObjects;
+	const Common::Array<AnimRecord> currentAnimations = _currentAnimations;
+	const Common::Array<RegionRecord> currentRegions = _currentRegions;
+	const Common::Array<NpcRecord> currentNpcs = _currentNpcs;
+	const Common::Array<MonsterRecord> currentMonsters = _currentMonsters;
+	const Common::Array<TimerRecord> currentTimers = _currentTimers;
 	const int playerCurrentHitPoints = _playerCurrentHitPoints;
 	const int playerCombatLoadout = _playerCombatLoadout;
 	const bool playerControlPaused = _playerControlPaused;
@@ -581,99 +581,99 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	parseTownRecords(resources);
 	resetRuntimeState();
 
-	for (const FlagRecord &flag : runtimeFlags) {
-		FlagRecord *runtimeFlag = findRuntimeFlag(flag.name);
-		if (runtimeFlag) {
-			runtimeFlag->value = flag.value;
+	for (const FlagRecord &flag : currentFlags) {
+		FlagRecord *currentFlag = findRuntimeFlag(flag.name);
+		if (currentFlag) {
+			currentFlag->value = flag.value;
 			continue;
 		}
 
-		_runtimeFlags.push_back(flag);
+		_currentFlags.push_back(flag);
 	}
 
-	for (const ObjectRecord &object : runtimeObjects) {
-		ObjectRecord *runtimeObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
-		if (!runtimeObject)
-			runtimeObject = findRuntimeObject(Common::String(), object.objectName);
-		if (!runtimeObject)
+	for (const ObjectRecord &object : currentObjects) {
+		ObjectRecord *currentObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
+		if (!currentObject)
+			currentObject = findRuntimeObject(Common::String(), object.objectName);
+		if (!currentObject)
 			continue;
 
-		runtimeObject->currentX = object.currentX;
-		runtimeObject->currentY = object.currentY;
-		runtimeObject->currentZ = object.currentZ;
-		runtimeObject->currentOwnerOrRoom = object.currentOwnerOrRoom;
-		runtimeObject->visible = object.visible;
-		runtimeObject->runtimeVisible = object.runtimeVisible;
-		runtimeObject->identShown = object.identShown;
+		currentObject->currentX = object.currentX;
+		currentObject->currentY = object.currentY;
+		currentObject->currentZ = object.currentZ;
+		currentObject->currentOwnerOrRoom = object.currentOwnerOrRoom;
+		currentObject->visible = object.visible;
+		currentObject->runtimeVisible = object.runtimeVisible;
+		currentObject->identShown = object.identShown;
 	}
 
-	for (const AnimRecord &anim : runtimeAnimations) {
-		AnimRecord *runtimeAnim = findRuntimeAnim(anim.animName);
-		if (!runtimeAnim)
+	for (const AnimRecord &anim : currentAnimations) {
+		AnimRecord *currentAnimation = findRuntimeAnim(anim.animName);
+		if (!currentAnimation)
 			continue;
 
-		runtimeAnim->active = anim.active;
-		runtimeAnim->visible = anim.visible;
-		runtimeAnim->runtimeActive = anim.runtimeActive;
-		runtimeAnim->runtimeVisible = anim.runtimeVisible;
-		runtimeAnim->runtimeState = anim.runtimeState;
+		currentAnimation->active = anim.active;
+		currentAnimation->visible = anim.visible;
+		currentAnimation->runtimeActive = anim.runtimeActive;
+		currentAnimation->runtimeVisible = anim.runtimeVisible;
+		currentAnimation->runtimeState = anim.runtimeState;
 	}
 
-	for (const RegionRecord &region : runtimeRegions) {
-		RegionRecord *runtimeRegion = findRuntimeRegion(region.regionName);
-		if (!runtimeRegion)
+	for (const RegionRecord &region : currentRegions) {
+		RegionRecord *currentRegion = findRuntimeRegion(region.regionName);
+		if (!currentRegion)
 			continue;
 
-		runtimeRegion->startEnabled = region.startEnabled;
+		currentRegion->startEnabled = region.startEnabled;
 	}
 
-	for (const NpcRecord &npc : runtimeNpcs) {
-		NpcRecord *runtimeNpc = findRuntimeNpc(npc.npcName);
-		if (!runtimeNpc)
+	for (const NpcRecord &npc : currentNpcs) {
+		NpcRecord *currentNpc = findRuntimeNpc(npc.npcName);
+		if (!currentNpc)
 			continue;
 
-		runtimeNpc->active = npc.active;
-		runtimeNpc->visible = npc.visible;
-		runtimeNpc->savedVisible = npc.savedVisible;
-		runtimeNpc->runtimeSpawned = npc.runtimeSpawned;
-		runtimeNpc->deathOrMonsterfyFlag = npc.deathOrMonsterfyFlag;
-		runtimeNpc->deathDamageType = npc.deathDamageType;
+		currentNpc->active = npc.active;
+		currentNpc->visible = npc.visible;
+		currentNpc->savedVisible = npc.savedVisible;
+		currentNpc->runtimeSpawned = npc.runtimeSpawned;
+		currentNpc->deathOrMonsterfyFlag = npc.deathOrMonsterfyFlag;
+		currentNpc->deathDamageType = npc.deathDamageType;
 	}
 
-	for (const MonsterRecord &monster : runtimeMonsters) {
-		MonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
-		if (!runtimeMonster)
+	for (const MonsterRecord &monster : currentMonsters) {
+		MonsterRecord *currentMonster = findRuntimeMonster(monster.monsterName);
+		if (!currentMonster)
 			continue;
 
-		runtimeMonster->posX = monster.posX;
-		runtimeMonster->posY = monster.posY;
-		runtimeMonster->posZ = monster.posZ;
-		runtimeMonster->facing = monster.facing;
-		runtimeMonster->active = monster.active;
-		runtimeMonster->visible = monster.visible;
-		runtimeMonster->savedVisible = monster.savedVisible;
-		runtimeMonster->runtimeSpawned = monster.runtimeSpawned;
-		runtimeMonster->runtimeState = monster.runtimeState;
-		runtimeMonster->currentHitPoints = monster.currentHitPoints;
-		runtimeMonster->screenMinXBound = monster.screenMinXBound;
-		runtimeMonster->screenMaxXBound = monster.screenMaxXBound;
+		currentMonster->posX = monster.posX;
+		currentMonster->posY = monster.posY;
+		currentMonster->posZ = monster.posZ;
+		currentMonster->facing = monster.facing;
+		currentMonster->active = monster.active;
+		currentMonster->visible = monster.visible;
+		currentMonster->savedVisible = monster.savedVisible;
+		currentMonster->runtimeSpawned = monster.runtimeSpawned;
+		currentMonster->runtimeState = monster.runtimeState;
+		currentMonster->currentHitPoints = monster.currentHitPoints;
+		currentMonster->screenMinXBound = monster.screenMinXBound;
+		currentMonster->screenMaxXBound = monster.screenMaxXBound;
 	}
 
-	for (const TimerRecord &timer : runtimeTimers) {
-		TimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
-		if (!runtimeTimer)
+	for (const TimerRecord &timer : currentTimers) {
+		TimerRecord *currentTimer = findRuntimeTimer(timer.timerName);
+		if (!currentTimer)
 			continue;
 
-		runtimeTimer->initialValue = timer.initialValue;
-		runtimeTimer->currentValue = timer.currentValue;
-		runtimeTimer->enabled = timer.enabled;
-		runtimeTimer->looping = timer.looping;
-		runtimeTimer->global = timer.global;
+		currentTimer->initialValue = timer.initialValue;
+		currentTimer->currentValue = timer.currentValue;
+		currentTimer->enabled = timer.enabled;
+		currentTimer->looping = timer.looping;
+		currentTimer->global = timer.global;
 	}
 
 	_playerCurrentHitPoints = clampPlayerHitPoints(playerCurrentHitPoints);
 	_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
-		_runtimeObjects, playerCombatLoadout, "town reload");
+		_currentObjects, playerCombatLoadout, "town reload");
 	_playerControlPaused = playerControlPaused;
 
 	debugC(1, kDebugGeneral,
@@ -1329,18 +1329,18 @@ bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, Roo
 }
 
 void Script::resetRuntimeState() {
-	_runtimeFlags = _flags;
-	_runtimeObjects = _objects;
-	_runtimeAnimations = _animations;
-	_runtimeRegions = _regions;
-	_runtimeNpcs = _npcs;
-	_runtimeMonsters = _monsters;
-	_runtimeTimers = _timers;
+	_currentFlags = _flags;
+	_currentObjects = _objects;
+	_currentAnimations = _animations;
+	_currentRegions = _regions;
+	_currentNpcs = _npcs;
+	_currentMonsters = _monsters;
+	_currentTimers = _timers;
 	_playerCurrentHitPoints = Script::kDefaultPlayerHitPoints;
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
 
-	for (ObjectRecord &object : _runtimeObjects) {
+	for (ObjectRecord &object : _currentObjects) {
 		object.currentX = object.initialX;
 		object.currentY = object.initialY;
 		object.currentZ = object.initialZ;
@@ -1349,18 +1349,18 @@ void Script::resetRuntimeState() {
 		object.identShown = object.identTextKey.empty();
 	}
 
-	for (AnimRecord &anim : _runtimeAnimations) {
+	for (AnimRecord &anim : _currentAnimations) {
 		anim.runtimeActive = anim.active;
 		anim.runtimeVisible = anim.visible;
 		anim.runtimeState = -1;
 	}
 
-	for (NpcRecord &npc : _runtimeNpcs) {
+	for (NpcRecord &npc : _currentNpcs) {
 		npc.runtimeSpawned = false;
 		npc.savedVisible = npc.visible;
 	}
 
-	for (MonsterRecord &monster : _runtimeMonsters) {
+	for (MonsterRecord &monster : _currentMonsters) {
 		monster.currentHitPoints = monster.initialHitPoints;
 		monster.runtimeSpawned = false;
 		monster.runtimeState = -1;
@@ -1369,20 +1369,20 @@ void Script::resetRuntimeState() {
 			monster.visible = true;
 	}
 
-	for (TimerRecord &timer : _runtimeTimers)
+	for (TimerRecord &timer : _currentTimers)
 		timer.currentValue = timer.initialValue;
 }
 
 void Script::logRuntimeSaveState(const char *operation) const {
 	debugC(1, kDebugGeneral,
 		"Harvester: %s runtime save state flags=%u objects=%u anims=%u regions=%u npcs=%u monsters=%u timers=%u hp=%d loadout=%d paused=%d",
-		operation, (uint)_runtimeFlags.size(), (uint)_runtimeObjects.size(),
-		(uint)_runtimeAnimations.size(), (uint)_runtimeRegions.size(),
-		(uint)_runtimeNpcs.size(), (uint)_runtimeMonsters.size(),
-		(uint)_runtimeTimers.size(), _playerCurrentHitPoints, _playerCombatLoadout,
+		operation, (uint)_currentFlags.size(), (uint)_currentObjects.size(),
+		(uint)_currentAnimations.size(), (uint)_currentRegions.size(),
+		(uint)_currentNpcs.size(), (uint)_currentMonsters.size(),
+		(uint)_currentTimers.size(), _playerCurrentHitPoints, _playerCombatLoadout,
 		_playerControlPaused);
 
-	for (const FlagRecord &flag : _runtimeFlags) {
+	for (const FlagRecord &flag : _currentFlags) {
 		const FlagRecord *baseFlag = nullptr;
 		for (const FlagRecord &candidate : _flags) {
 			if (candidate.name.equalsIgnoreCase(flag.name)) {
@@ -1398,7 +1398,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const ObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _currentObjects) {
 		const ObjectRecord *baseObject = nullptr;
 		for (const ObjectRecord &candidate : _objects) {
 			if (candidate.objectName.equalsIgnoreCase(object.objectName)) {
@@ -1432,7 +1432,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const NpcRecord &npc : _runtimeNpcs) {
+	for (const NpcRecord &npc : _currentNpcs) {
 		const NpcRecord *baseNpc = nullptr;
 		for (const NpcRecord &candidate : _npcs) {
 			if (candidate.npcName.equalsIgnoreCase(npc.npcName)) {
@@ -1462,7 +1462,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const MonsterRecord &monster : _runtimeMonsters) {
+	for (const MonsterRecord &monster : _currentMonsters) {
 		const MonsterRecord *baseMonster = nullptr;
 		for (const MonsterRecord &candidate : _monsters) {
 			if (candidate.monsterName.equalsIgnoreCase(monster.monsterName)) {
@@ -1500,7 +1500,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const TimerRecord &timer : _runtimeTimers) {
+	for (const TimerRecord &timer : _currentTimers) {
 		const TimerRecord *baseTimer = nullptr;
 		for (const TimerRecord &candidate : _timers) {
 			if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
@@ -1533,17 +1533,17 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	if (s.isSaving())
 		logRuntimeSaveState("saving");
 
-	syncRecordArray(s, _runtimeFlags, syncStartupFlagRecord);
-	syncRecordArray(s, _runtimeObjects, syncStartupObjectRecord);
-	syncRecordArray(s, _runtimeAnimations, syncStartupAnimRecord);
-	syncRecordArray(s, _runtimeRegions, syncStartupRegionRecord);
-	syncRecordArray(s, _runtimeNpcs, syncStartupNpcRecord);
-	syncRecordArray(s, _runtimeMonsters, syncStartupMonsterRecord);
+	syncRecordArray(s, _currentFlags, syncStartupFlagRecord);
+	syncRecordArray(s, _currentObjects, syncStartupObjectRecord);
+	syncRecordArray(s, _currentAnimations, syncStartupAnimRecord);
+	syncRecordArray(s, _currentRegions, syncStartupRegionRecord);
+	syncRecordArray(s, _currentNpcs, syncStartupNpcRecord);
+	syncRecordArray(s, _currentMonsters, syncStartupMonsterRecord);
 	s.syncAsSint32LE(_playerCurrentHitPoints);
 	// FIXME: Remove this pre-v2 save-layout gate after release; clean Harvester
 	// saves always carry timer state, combat loadout, and paused-state fields.
 	if (s.getVersion() >= 2) {
-		syncRecordArray(s, _runtimeTimers, syncStartupTimerRecord);
+		syncRecordArray(s, _currentTimers, syncStartupTimerRecord);
 		s.syncAsSint32LE(_playerCombatLoadout);
 		syncBool(s, _playerControlPaused);
 	}
@@ -1553,30 +1553,30 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		// FIXME: Drop this compatibility pass after release; it exists only to repair
 		// pre-release saves written before the monster combat field layout stabilized.
 		if (s.getVersion() >= 2) {
-			for (MonsterRecord &runtimeMonster : _runtimeMonsters) {
+			for (MonsterRecord &currentMonster : _currentMonsters) {
 				const MonsterRecord *baseMonster = nullptr;
 				for (const MonsterRecord &monster : _monsters) {
-					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
+					if (monster.monsterName.equalsIgnoreCase(currentMonster.monsterName)) {
 						baseMonster = &monster;
 						break;
 					}
 				}
 				if (!baseMonster)
 					continue;
-				if (!hasLegacyMonsterCombatFieldLayout(*baseMonster, runtimeMonster))
+				if (!hasLegacyMonsterCombatFieldLayout(*baseMonster, currentMonster))
 					continue;
 
-				migrateLegacyMonsterCombatFields(*baseMonster, runtimeMonster);
+				migrateLegacyMonsterCombatFields(*baseMonster, currentMonster);
 			}
 		}
 		// FIXME: Remove the pre-v2 save fallback after release; clean Harvester saves will
 		// always serialize timer state and the full monster combat payload.
 		if (s.getVersion() < 2) {
-			_runtimeTimers = _timers;
-			for (MonsterRecord &runtimeMonster : _runtimeMonsters) {
+			_currentTimers = _timers;
+			for (MonsterRecord &currentMonster : _currentMonsters) {
 				const MonsterRecord *baseMonster = nullptr;
 				for (const MonsterRecord &monster : _monsters) {
-					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
+					if (monster.monsterName.equalsIgnoreCase(currentMonster.monsterName)) {
 						baseMonster = &monster;
 						break;
 					}
@@ -1584,39 +1584,39 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				if (!baseMonster)
 					continue;
 
-				runtimeMonster.initialHitPoints = baseMonster->initialHitPoints;
-				runtimeMonster.currentHitPoints = runtimeMonster.initialHitPoints;
-				runtimeMonster.damageAmount = baseMonster->damageAmount;
-				runtimeMonster.engageDistance = baseMonster->engageDistance;
-				runtimeMonster.damageType = baseMonster->damageType;
-				runtimeMonster.reservedString38 = baseMonster->reservedString38;
-				runtimeMonster.reservedString3c = baseMonster->reservedString3c;
-				runtimeMonster.reservedString44 = baseMonster->reservedString44;
-				runtimeMonster.reservedString48 = baseMonster->reservedString48;
-				runtimeMonster.attackSound1 = baseMonster->attackSound1;
-				runtimeMonster.attackSound2 = baseMonster->attackSound2;
-				runtimeMonster.attackSound3 = baseMonster->attackSound3;
-				runtimeMonster.hitSound1 = baseMonster->hitSound1;
-				runtimeMonster.hitSound2 = baseMonster->hitSound2;
-				runtimeMonster.hitSound3 = baseMonster->hitSound3;
-				runtimeMonster.footstepSoundLeft = baseMonster->footstepSoundLeft;
-				runtimeMonster.footstepSoundRight = baseMonster->footstepSoundRight;
-				runtimeMonster.deathSound = baseMonster->deathSound;
-				runtimeMonster.savedVisible = runtimeMonster.visible;
-				runtimeMonster.runtimeSpawned = false;
-				runtimeMonster.runtimeState = -1;
-				runtimeMonster.screenMinXBound = baseMonster->screenMinXBound;
-				runtimeMonster.screenMaxXBound = baseMonster->screenMaxXBound;
-				runtimeMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
-				runtimeMonster.hitSoundTriggerFrame = baseMonster->hitSoundTriggerFrame;
-				runtimeMonster.footstepSoundTriggerFrame = baseMonster->footstepSoundTriggerFrame;
-				runtimeMonster.deathSoundTriggerFrame = baseMonster->deathSoundTriggerFrame;
+				currentMonster.initialHitPoints = baseMonster->initialHitPoints;
+				currentMonster.currentHitPoints = currentMonster.initialHitPoints;
+				currentMonster.damageAmount = baseMonster->damageAmount;
+				currentMonster.engageDistance = baseMonster->engageDistance;
+				currentMonster.damageType = baseMonster->damageType;
+				currentMonster.reservedString38 = baseMonster->reservedString38;
+				currentMonster.reservedString3c = baseMonster->reservedString3c;
+				currentMonster.reservedString44 = baseMonster->reservedString44;
+				currentMonster.reservedString48 = baseMonster->reservedString48;
+				currentMonster.attackSound1 = baseMonster->attackSound1;
+				currentMonster.attackSound2 = baseMonster->attackSound2;
+				currentMonster.attackSound3 = baseMonster->attackSound3;
+				currentMonster.hitSound1 = baseMonster->hitSound1;
+				currentMonster.hitSound2 = baseMonster->hitSound2;
+				currentMonster.hitSound3 = baseMonster->hitSound3;
+				currentMonster.footstepSoundLeft = baseMonster->footstepSoundLeft;
+				currentMonster.footstepSoundRight = baseMonster->footstepSoundRight;
+				currentMonster.deathSound = baseMonster->deathSound;
+				currentMonster.savedVisible = currentMonster.visible;
+				currentMonster.runtimeSpawned = false;
+				currentMonster.runtimeState = -1;
+				currentMonster.screenMinXBound = baseMonster->screenMinXBound;
+				currentMonster.screenMaxXBound = baseMonster->screenMaxXBound;
+				currentMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
+				currentMonster.hitSoundTriggerFrame = baseMonster->hitSoundTriggerFrame;
+				currentMonster.footstepSoundTriggerFrame = baseMonster->footstepSoundTriggerFrame;
+				currentMonster.deathSoundTriggerFrame = baseMonster->deathSoundTriggerFrame;
 			}
 			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 			_playerControlPaused = false;
 		}
 		_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
-			_runtimeObjects, _playerCombatLoadout, "save load");
+			_currentObjects, _playerCombatLoadout, "save load");
 		logRuntimeSaveState("loaded");
 	}
 }
@@ -1680,10 +1680,10 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 	result = InteractionResult();
 
 	if (isPickupObject(object)) {
-		if (ObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
-			if (!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
-				runtimeObject->currentOwnerOrRoom = kInventoryOwnerName;
-				runtimeObject->identShown = true;
+		if (ObjectRecord *currentObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
+			if (!currentObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+				currentObject->currentOwnerOrRoom = kInventoryOwnerName;
+				currentObject->identShown = true;
 				result.mutatedRuntimeState = true;
 			}
 		}
@@ -1864,7 +1864,7 @@ void Script::getVisibleInventoryObjects(Common::Array<ObjectRecord> &objects) co
 	const char *const statusObjectName = resolveInventoryStatusObjectName(_playerCurrentHitPoints);
 	const ObjectRecord *statusObject = nullptr;
 
-	for (const ObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _currentObjects) {
 		if (object.objectName.hasPrefixIgnoreCase("INV_STAT")) {
 			if (object.objectName.equalsIgnoreCase(statusObjectName))
 				statusObject = &object;
@@ -1890,7 +1890,7 @@ bool Script::isObjectInInventory(const Common::String &objectName) const {
 	if (objectName.empty())
 		return false;
 
-	for (const ObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _currentObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
 				object.objectName.equalsIgnoreCase(objectName))
 			return true;
@@ -1900,8 +1900,8 @@ bool Script::isObjectInInventory(const Common::String &objectName) const {
 }
 
 void Script::markObjectIdentShown(const ObjectRecord &object) {
-	if (ObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
-		runtimeObject->identShown = true;
+	if (ObjectRecord *currentObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
+		currentObject->identShown = true;
 }
 
 const EntranceRecord *Script::findEntranceRecord(const Common::String &entranceName) const {
@@ -1990,7 +1990,7 @@ const FlagRecord *Script::findRuntimeFlag(const Common::String &flagName) const 
 	if (flagName.empty())
 		return nullptr;
 
-	for (const FlagRecord &flag : _runtimeFlags) {
+	for (const FlagRecord &flag : _currentFlags) {
 		if (flag.name.equalsIgnoreCase(flagName))
 			return &flag;
 	}
@@ -2002,7 +2002,7 @@ FlagRecord *Script::findRuntimeFlag(const Common::String &flagName) {
 	if (flagName.empty())
 		return nullptr;
 
-	for (FlagRecord &flag : _runtimeFlags) {
+	for (FlagRecord &flag : _currentFlags) {
 		if (flag.name.equalsIgnoreCase(flagName))
 			return &flag;
 	}
@@ -2016,7 +2016,7 @@ ObjectRecord *Script::findRuntimeObject(const Common::String &ownerOrRoom,
 		return nullptr;
 
 	ObjectRecord *fallback = nullptr;
-	for (ObjectRecord &object : _runtimeObjects) {
+	for (ObjectRecord &object : _currentObjects) {
 		if (!object.objectName.equalsIgnoreCase(objectName))
 			continue;
 
@@ -2039,7 +2039,7 @@ AnimRecord *Script::findRuntimeAnim(const Common::String &animName) {
 	if (animName.empty())
 		return nullptr;
 
-	for (AnimRecord &anim : _runtimeAnimations) {
+	for (AnimRecord &anim : _currentAnimations) {
 		if (anim.animName.equalsIgnoreCase(animName))
 			return &anim;
 	}
@@ -2051,7 +2051,7 @@ RegionRecord *Script::findRuntimeRegion(const Common::String &regionName) {
 	if (regionName.empty())
 		return nullptr;
 
-	for (RegionRecord &region : _runtimeRegions) {
+	for (RegionRecord &region : _currentRegions) {
 		if (region.regionName.equalsIgnoreCase(regionName))
 			return &region;
 	}
@@ -2063,7 +2063,7 @@ NpcRecord *Script::findRuntimeNpc(const Common::String &npcName) {
 	if (npcName.empty())
 		return nullptr;
 
-	for (NpcRecord &npc : _runtimeNpcs) {
+	for (NpcRecord &npc : _currentNpcs) {
 		if (npc.npcName.equalsIgnoreCase(npcName))
 			return &npc;
 	}
@@ -2075,7 +2075,7 @@ MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) {
 	if (monsterName.empty())
 		return nullptr;
 
-	for (MonsterRecord &monster : _runtimeMonsters) {
+	for (MonsterRecord &monster : _currentMonsters) {
 		if (monster.monsterName.equalsIgnoreCase(monsterName))
 			return &monster;
 	}
@@ -2087,7 +2087,7 @@ TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
 	if (timerName.empty())
 		return nullptr;
 
-	for (TimerRecord &timer : _runtimeTimers) {
+	for (TimerRecord &timer : _currentTimers) {
 		if (timer.timerName.equalsIgnoreCase(timerName))
 			return &timer;
 	}
@@ -2099,7 +2099,7 @@ const NpcRecord *Script::findRuntimeNpc(const Common::String &npcName) const {
 	if (npcName.empty())
 		return nullptr;
 
-	for (const NpcRecord &npc : _runtimeNpcs) {
+	for (const NpcRecord &npc : _currentNpcs) {
 		if (npc.npcName.equalsIgnoreCase(npcName))
 			return &npc;
 	}
@@ -2111,7 +2111,7 @@ const MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterNam
 	if (monsterName.empty())
 		return nullptr;
 
-	for (const MonsterRecord &monster : _runtimeMonsters) {
+	for (const MonsterRecord &monster : _currentMonsters) {
 		if (monster.monsterName.equalsIgnoreCase(monsterName))
 			return &monster;
 	}
@@ -2123,7 +2123,7 @@ const TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) con
 	if (timerName.empty())
 		return nullptr;
 
-	for (const TimerRecord &timer : _runtimeTimers) {
+	for (const TimerRecord &timer : _currentTimers) {
 		if (timer.timerName.equalsIgnoreCase(timerName))
 			return &timer;
 	}
@@ -2136,16 +2136,16 @@ const NpcRecord *Script::findRuntimeNpcRecord(const Common::String &npcName) con
 }
 
 bool Script::addRuntimeObjectToInventory(const Common::String &objectName) {
-	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
-	if (!runtimeObject)
+	ObjectRecord *currentObject = findRuntimeObject(Common::String(), objectName);
+	if (!currentObject)
 		return false;
 
-	const bool changed = !runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) ||
-		!runtimeObject->visible || !runtimeObject->runtimeVisible || !runtimeObject->identShown;
-	runtimeObject->currentOwnerOrRoom = kInventoryOwnerName;
-	runtimeObject->visible = true;
-	runtimeObject->runtimeVisible = true;
-	runtimeObject->identShown = true;
+	const bool changed = !currentObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) ||
+		!currentObject->visible || !currentObject->runtimeVisible || !currentObject->identShown;
+	currentObject->currentOwnerOrRoom = kInventoryOwnerName;
+	currentObject->visible = true;
+	currentObject->runtimeVisible = true;
+	currentObject->identShown = true;
 	return changed;
 }
 
@@ -2153,18 +2153,18 @@ bool Script::syncRuntimeObjectRecord(const ObjectRecord &object) {
 	if (object.objectName.empty())
 		return false;
 
-	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), object.objectName);
-	if (!runtimeObject)
+	ObjectRecord *currentObject = findRuntimeObject(Common::String(), object.objectName);
+	if (!currentObject)
 		return false;
 
-	const bool changed = runtimeObject->currentX != object.currentX ||
-		runtimeObject->currentY != object.currentY ||
-		runtimeObject->currentZ != object.currentZ ||
-		!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) ||
-		runtimeObject->visible != object.visible ||
-		runtimeObject->runtimeVisible != object.runtimeVisible ||
-		runtimeObject->identShown != object.identShown;
-	*runtimeObject = object;
+	const bool changed = currentObject->currentX != object.currentX ||
+		currentObject->currentY != object.currentY ||
+		currentObject->currentZ != object.currentZ ||
+		!currentObject->currentOwnerOrRoom.equalsIgnoreCase(object.currentOwnerOrRoom) ||
+		currentObject->visible != object.visible ||
+		currentObject->runtimeVisible != object.runtimeVisible ||
+		currentObject->identShown != object.identShown;
+	*currentObject = object;
 	return changed;
 }
 
@@ -2173,16 +2173,16 @@ bool Script::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 	if (objectName.empty())
 		return false;
 
-	ObjectRecord *runtimeObject = findRuntimeObject(ownerOrRoom, objectName);
-	if (!runtimeObject)
+	ObjectRecord *currentObject = findRuntimeObject(ownerOrRoom, objectName);
+	if (!currentObject)
 		return false;
 
-	const bool changed = runtimeObject->visible != visible ||
-		runtimeObject->runtimeVisible != visible;
-	runtimeObject->visible = visible;
-	runtimeObject->runtimeVisible = visible;
-	if (visible && runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName))
-		runtimeObject->identShown = true;
+	const bool changed = currentObject->visible != visible ||
+		currentObject->runtimeVisible != visible;
+	currentObject->visible = visible;
+	currentObject->runtimeVisible = visible;
+	if (visible && currentObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName))
+		currentObject->identShown = true;
 
 	return changed;
 }
@@ -2191,13 +2191,13 @@ bool Script::setRuntimeNpcState(const Common::String &npcName, bool active, bool
 	if (npcName.empty())
 		return false;
 
-	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
-	if (!runtimeNpc)
+	NpcRecord *currentNpc = findRuntimeNpc(npcName);
+	if (!currentNpc)
 		return false;
 
-	const bool changed = runtimeNpc->active != active || runtimeNpc->visible != visible;
-	runtimeNpc->active = active;
-	runtimeNpc->visible = visible;
+	const bool changed = currentNpc->active != active || currentNpc->visible != visible;
+	currentNpc->active = active;
+	currentNpc->visible = visible;
 	return changed;
 }
 
@@ -2226,61 +2226,61 @@ bool Script::setPlayerControlPaused(bool paused) {
 }
 
 bool Script::syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame) {
-	AnimRecord *runtimeAnim = findRuntimeAnim(animName);
-	if (!runtimeAnim)
+	AnimRecord *currentAnimation = findRuntimeAnim(animName);
+	if (!currentAnimation)
 		return false;
 
-	const bool changed = runtimeAnim->active != active ||
-		runtimeAnim->visible != visible ||
-		runtimeAnim->runtimeActive != active ||
-		runtimeAnim->runtimeVisible != visible ||
-		runtimeAnim->runtimeState != currentFrame;
-	runtimeAnim->active = active;
-	runtimeAnim->visible = visible;
-	runtimeAnim->runtimeActive = active;
-	runtimeAnim->runtimeVisible = visible;
-	runtimeAnim->runtimeState = currentFrame;
+	const bool changed = currentAnimation->active != active ||
+		currentAnimation->visible != visible ||
+		currentAnimation->runtimeActive != active ||
+		currentAnimation->runtimeVisible != visible ||
+		currentAnimation->runtimeState != currentFrame;
+	currentAnimation->active = active;
+	currentAnimation->visible = visible;
+	currentAnimation->runtimeActive = active;
+	currentAnimation->runtimeVisible = visible;
+	currentAnimation->runtimeState = currentFrame;
 	return changed;
 }
 
 bool Script::syncRuntimeMonsterRecord(const MonsterRecord &monster) {
-	MonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
-	if (!runtimeMonster)
+	MonsterRecord *currentMonster = findRuntimeMonster(monster.monsterName);
+	if (!currentMonster)
 		return false;
 
-	*runtimeMonster = monster;
+	*currentMonster = monster;
 	return true;
 }
 
 bool Script::syncRuntimeTimerRecord(const TimerRecord &timer) {
-	TimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
-	if (!runtimeTimer)
+	TimerRecord *currentTimer = findRuntimeTimer(timer.timerName);
+	if (!currentTimer)
 		return false;
 
-	*runtimeTimer = timer;
+	*currentTimer = timer;
 	return true;
 }
 
 bool Script::setRuntimeRegionEnabled(const Common::String &regionName, bool enabled) {
-	RegionRecord *runtimeRegion = findRuntimeRegion(regionName);
-	if (!runtimeRegion)
+	RegionRecord *currentRegion = findRuntimeRegion(regionName);
+	if (!currentRegion)
 		return false;
 
-	const bool changed = runtimeRegion->startEnabled != enabled;
-	runtimeRegion->startEnabled = enabled;
+	const bool changed = currentRegion->startEnabled != enabled;
+	currentRegion->startEnabled = enabled;
 	return changed;
 }
 
 bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enabled) {
-	TimerRecord *runtimeTimer = findRuntimeTimer(timerName);
-	if (!runtimeTimer)
+	TimerRecord *currentTimer = findRuntimeTimer(timerName);
+	if (!currentTimer)
 		return false;
 
-	const bool changed = runtimeTimer->enabled != enabled ||
-		(enabled && runtimeTimer->currentValue != runtimeTimer->initialValue);
-	runtimeTimer->enabled = enabled;
+	const bool changed = currentTimer->enabled != enabled ||
+		(enabled && currentTimer->currentValue != currentTimer->initialValue);
+	currentTimer->enabled = enabled;
 	if (enabled)
-		runtimeTimer->currentValue = runtimeTimer->initialValue;
+		currentTimer->currentValue = currentTimer->initialValue;
 	return changed;
 }
 
@@ -2288,14 +2288,14 @@ bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int 
 	if (npcName.empty())
 		return false;
 
-	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
-	if (!runtimeNpc || runtimeNpc->deathOrMonsterfyFlag)
+	NpcRecord *currentNpc = findRuntimeNpc(npcName);
+	if (!currentNpc || currentNpc->deathOrMonsterfyFlag)
 		return false;
 
-	if (deathDamageType == 0 || runtimeNpc->deathDamageType == deathDamageType)
+	if (deathDamageType == 0 || currentNpc->deathDamageType == deathDamageType)
 		return false;
 
-	runtimeNpc->deathDamageType = deathDamageType;
+	currentNpc->deathDamageType = deathDamageType;
 	return true;
 }
 
@@ -2303,37 +2303,37 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	if (npcName.empty())
 		return false;
 
-	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
-	if (!runtimeNpc)
+	NpcRecord *currentNpc = findRuntimeNpc(npcName);
+	if (!currentNpc)
 		return false;
 
 	bool monsterChanged = false;
-	if (!runtimeNpc->monsterfyTargetName.empty()) {
-		MonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
-		if (runtimeMonster) {
-			monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
-			runtimeMonster->active = true;
-			runtimeMonster->visible = true;
-			runtimeMonster->runtimeSpawned = false;
-			runtimeMonster->runtimeState = -1;
-			if (runtimeMonster->currentHitPoints <= 0)
-				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
+	if (!currentNpc->monsterfyTargetName.empty()) {
+		MonsterRecord *currentMonster = findRuntimeMonster(currentNpc->monsterfyTargetName);
+		if (currentMonster) {
+			monsterChanged = !currentMonster->active || !currentMonster->visible;
+			currentMonster->active = true;
+			currentMonster->visible = true;
+			currentMonster->runtimeSpawned = false;
+			currentMonster->runtimeState = -1;
+			if (currentMonster->currentHitPoints <= 0)
+				currentMonster->currentHitPoints = currentMonster->initialHitPoints;
 		} else {
 			debug(1, "Harvester: unresolved monsterfy target for dialogue npc='%s' target='%s'",
-				runtimeNpc->npcName.c_str(), runtimeNpc->monsterfyTargetName.c_str());
+				currentNpc->npcName.c_str(), currentNpc->monsterfyTargetName.c_str());
 		}
 	}
 
-	const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
-		runtimeNpc->active ||
-		runtimeNpc->visible ||
-		(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
-	runtimeNpc->active = false;
-	runtimeNpc->visible = false;
-	runtimeNpc->savedVisible = false;
-	runtimeNpc->deathOrMonsterfyFlag = true;
+	const bool changed = !currentNpc->deathOrMonsterfyFlag ||
+		currentNpc->active ||
+		currentNpc->visible ||
+		(deathDamageType != 0 && currentNpc->deathDamageType != deathDamageType);
+	currentNpc->active = false;
+	currentNpc->visible = false;
+	currentNpc->savedVisible = false;
+	currentNpc->deathOrMonsterfyFlag = true;
 	if (deathDamageType != 0)
-		runtimeNpc->deathDamageType = deathDamageType;
+		currentNpc->deathDamageType = deathDamageType;
 	return changed || monsterChanged;
 }
 
@@ -2344,7 +2344,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 	const ObjectRecord *background = nullptr;
 	const ObjectRecord *backgroundFallback = nullptr;
 	bool usedBackgroundFallback = false;
-	for (const ObjectRecord &candidate : _runtimeObjects) {
+	for (const ObjectRecord &candidate : _currentObjects) {
 		if (!isRoomBackgroundSpriteCandidate(candidate, room))
 			continue;
 
@@ -2390,14 +2390,14 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 		state.playerSpawnZ = entrance->posZ;
 		state.playerFacing = entrance->facing;
 	}
-	for (const ObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _currentObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
 			state.roomObjects.push_back(object);
 	}
 	if (!state.hasEntrance) {
 		static const char *const kCloseupExitObjects[] = { "EXIT_BM", "EXIT_HS" };
 		for (const char *name : kCloseupExitObjects) {
-			for (const ObjectRecord &object : _runtimeObjects) {
+			for (const ObjectRecord &object : _currentObjects) {
 				if (object.objectName.equalsIgnoreCase(name)) {
 					state.roomObjects.push_back(object);
 					break;
@@ -2405,11 +2405,11 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 			}
 		}
 	}
-	for (const AnimRecord &anim : _runtimeAnimations) {
+	for (const AnimRecord &anim : _currentAnimations) {
 		if (anim.roomName.equalsIgnoreCase(room.roomName))
 			state.roomAnimations.push_back(anim);
 	}
-	for (const NpcRecord &npc : _runtimeNpcs) {
+	for (const NpcRecord &npc : _currentNpcs) {
 		if (!npc.roomName.equalsIgnoreCase(room.roomName) || !npc.visible)
 			continue;
 		if (npc.deathOrMonsterfyFlag) {
@@ -2422,7 +2422,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 
 		state.roomNpcs.push_back(npc);
 	}
-	for (const MonsterRecord &monster : _runtimeMonsters) {
+	for (const MonsterRecord &monster : _currentMonsters) {
 		if (!monster.roomName.equalsIgnoreCase(room.roomName))
 			continue;
 		if (!monster.active && !monster.visible)
@@ -2430,11 +2430,11 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 
 		state.roomMonsters.push_back(monster);
 	}
-	for (const TimerRecord &timer : _runtimeTimers) {
+	for (const TimerRecord &timer : _currentTimers) {
 		if (timer.arg1.equalsIgnoreCase(room.roomName))
 			state.roomTimers.push_back(timer);
 	}
-	for (const RegionRecord &region : _runtimeRegions) {
+	for (const RegionRecord &region : _currentRegions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
 	}
@@ -2562,7 +2562,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				FlagRecord newFlag;
 				newFlag.name = command->arg1;
 				newFlag.value = flagValue;
-				_runtimeFlags.push_back(newFlag);
+				_currentFlags.push_back(newFlag);
 				changed = true;
 			}
 			debugC(1, kDebugGeneral,
@@ -2596,8 +2596,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("ADD") ||
 			command->opcodeName.equalsIgnoreCase("DELETE")) {
-			ObjectRecord *runtimeObject = findRuntimeObject(command->arg1, command->arg2);
-			if (!runtimeObject) {
+			ObjectRecord *currentObject = findRuntimeObject(command->arg1, command->arg2);
+			if (!currentObject) {
 				debug(1, "Harvester: unresolved object for %s '%s' owner='%s' object='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str(), command->arg2.c_str());
 				currentTag = command->arg4;
@@ -2605,12 +2605,12 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			const bool visible = command->opcodeName.equalsIgnoreCase("ADD");
-			const bool changed = runtimeObject->visible != visible ||
-				runtimeObject->runtimeVisible != visible;
-			runtimeObject->visible = visible;
-			runtimeObject->runtimeVisible = visible;
-			if (visible && runtimeObject->currentOwnerOrRoom.equalsIgnoreCase("INVENTORY"))
-				runtimeObject->identShown = true;
+			const bool changed = currentObject->visible != visible ||
+				currentObject->runtimeVisible != visible;
+			currentObject->visible = visible;
+			currentObject->runtimeVisible = visible;
+			if (visible && currentObject->currentOwnerOrRoom.equalsIgnoreCase("INVENTORY"))
+				currentObject->identShown = true;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
@@ -2623,38 +2623,38 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_ANIM")) {
-			AnimRecord *runtimeAnim = findRuntimeAnim(command->arg1);
-			if (!runtimeAnim) {
+			AnimRecord *currentAnimation = findRuntimeAnim(command->arg1);
+			if (!currentAnimation) {
 				debug(1, "Harvester: unresolved anim for %s '%s' anim='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
 				currentTag = command->arg4;
 				continue;
 			}
 
-			const bool wasVisible = runtimeAnim->visible;
+			const bool wasVisible = currentAnimation->visible;
 			const bool active = isTruthy(command->arg2);
 			const bool visible = isTruthy(command->arg3);
-			int runtimeState = runtimeAnim->runtimeState;
+			int runtimeState = currentAnimation->runtimeState;
 			if (!wasVisible && visible)
 				runtimeState = 0;
-			const bool changed = runtimeAnim->active != active ||
-				runtimeAnim->visible != visible ||
-				runtimeAnim->runtimeActive != active ||
-				runtimeAnim->runtimeVisible != visible ||
-				runtimeAnim->runtimeState != runtimeState;
-			runtimeAnim->active = active;
-			runtimeAnim->visible = visible;
-			runtimeAnim->runtimeActive = active;
-			runtimeAnim->runtimeVisible = visible;
-			runtimeAnim->runtimeState = runtimeState;
+			const bool changed = currentAnimation->active != active ||
+				currentAnimation->visible != visible ||
+				currentAnimation->runtimeActive != active ||
+				currentAnimation->runtimeVisible != visible ||
+				currentAnimation->runtimeState != runtimeState;
+			currentAnimation->active = active;
+			currentAnimation->visible = visible;
+			currentAnimation->runtimeActive = active;
+			currentAnimation->runtimeVisible = visible;
+			currentAnimation->runtimeState = runtimeState;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_REGION")) {
-			RegionRecord *runtimeRegion = findRuntimeRegion(command->arg1);
-			if (!runtimeRegion) {
+			RegionRecord *currentRegion = findRuntimeRegion(command->arg1);
+			if (!currentRegion) {
 				debug(1, "Harvester: unresolved region for %s '%s' region='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
 				currentTag = command->arg4;
@@ -2662,16 +2662,16 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			const bool enabled = !command->arg2.equalsIgnoreCase("F");
-			const bool changed = runtimeRegion->startEnabled != enabled;
-			runtimeRegion->startEnabled = enabled;
+			const bool changed = currentRegion->startEnabled != enabled;
+			currentRegion->startEnabled = enabled;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_NPC")) {
-			NpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
-			if (!runtimeNpc) {
+			NpcRecord *currentNpc = findRuntimeNpc(command->arg1);
+			if (!currentNpc) {
 				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
 				currentTag = command->arg4;
@@ -2680,17 +2680,17 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 			const bool active = isTruthy(command->arg2);
 			const bool visible = isTruthy(command->arg3);
-			const bool changed = runtimeNpc->active != active || runtimeNpc->visible != visible;
-			runtimeNpc->active = active;
-			runtimeNpc->visible = visible;
+			const bool changed = currentNpc->active != active || currentNpc->visible != visible;
+			currentNpc->active = active;
+			currentNpc->visible = visible;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_MONSTER")) {
-			MonsterRecord *runtimeMonster = findRuntimeMonster(command->arg1);
-			if (!runtimeMonster) {
+			MonsterRecord *currentMonster = findRuntimeMonster(command->arg1);
+			if (!currentMonster) {
 				debug(1, "Harvester: unresolved monster for %s '%s' monster='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
 				currentTag = command->arg4;
@@ -2699,19 +2699,19 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 			const bool active = isTruthy(command->arg2);
 			const bool visible = isTruthy(command->arg3);
-			const bool changed = runtimeMonster->active != active || runtimeMonster->visible != visible;
-			runtimeMonster->active = active;
-			runtimeMonster->visible = active ? true : visible;
+			const bool changed = currentMonster->active != active || currentMonster->visible != visible;
+			currentMonster->active = active;
+			currentMonster->visible = active ? true : visible;
 			if (active) {
-				runtimeMonster->runtimeSpawned = false;
-				runtimeMonster->runtimeState = -1;
+				currentMonster->runtimeSpawned = false;
+				currentMonster->runtimeState = -1;
 			}
-			if (!runtimeMonster->visible) {
-				runtimeMonster->runtimeSpawned = false;
-				runtimeMonster->runtimeState = -1;
+			if (!currentMonster->visible) {
+				currentMonster->runtimeSpawned = false;
+				currentMonster->runtimeState = -1;
 			}
-			if (active && runtimeMonster->currentHitPoints <= 0)
-				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
+			if (active && currentMonster->currentHitPoints <= 0)
+				currentMonster->currentHitPoints = currentMonster->initialHitPoints;
 			noteMutation(changed);
 			currentTag = command->arg4;
 			continue;
@@ -2800,8 +2800,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
 				command->opcodeName.equalsIgnoreCase("MONSTERFY")) {
-			NpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
-			if (!runtimeNpc) {
+			NpcRecord *currentNpc = findRuntimeNpc(command->arg1);
+			if (!currentNpc) {
 				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
 				currentTag = command->arg4;
@@ -3192,7 +3192,7 @@ bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 	FlagRecord newFlag;
 	newFlag.name = flagName;
 	newFlag.value = value;
-	_runtimeFlags.push_back(newFlag);
+	_currentFlags.push_back(newFlag);
 	debugC(1, kDebugGeneral,
 		"Harvester: direct runtime flag '%s' %d -> %d existed=0 changed=1",
 		flagName.c_str(), 0, value);
@@ -3203,8 +3203,8 @@ bool Script::resetRuntimeObjectToInitialState(const Common::String &objectName) 
 	if (objectName.empty())
 		return false;
 
-	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
-	if (!runtimeObject)
+	ObjectRecord *currentObject = findRuntimeObject(Common::String(), objectName);
+	if (!currentObject)
 		return false;
 
 	const ObjectRecord *baseObject = nullptr;
@@ -3217,21 +3217,21 @@ bool Script::resetRuntimeObjectToInitialState(const Common::String &objectName) 
 	if (!baseObject)
 		return false;
 
-	const bool changed = runtimeObject->currentX != runtimeObject->initialX ||
-		runtimeObject->currentY != runtimeObject->initialY ||
-		runtimeObject->currentZ != runtimeObject->initialZ ||
-		!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(runtimeObject->initialOwnerOrRoom) ||
-		runtimeObject->visible != baseObject->visible ||
-		runtimeObject->runtimeVisible != baseObject->visible ||
-		runtimeObject->identShown != baseObject->identShown;
+	const bool changed = currentObject->currentX != currentObject->initialX ||
+		currentObject->currentY != currentObject->initialY ||
+		currentObject->currentZ != currentObject->initialZ ||
+		!currentObject->currentOwnerOrRoom.equalsIgnoreCase(currentObject->initialOwnerOrRoom) ||
+		currentObject->visible != baseObject->visible ||
+		currentObject->runtimeVisible != baseObject->visible ||
+		currentObject->identShown != baseObject->identShown;
 
-	runtimeObject->currentX = runtimeObject->initialX;
-	runtimeObject->currentY = runtimeObject->initialY;
-	runtimeObject->currentZ = runtimeObject->initialZ;
-	runtimeObject->currentOwnerOrRoom = runtimeObject->initialOwnerOrRoom;
-	runtimeObject->visible = baseObject->visible;
-	runtimeObject->runtimeVisible = baseObject->visible;
-	runtimeObject->identShown = baseObject->identShown;
+	currentObject->currentX = currentObject->initialX;
+	currentObject->currentY = currentObject->initialY;
+	currentObject->currentZ = currentObject->initialZ;
+	currentObject->currentOwnerOrRoom = currentObject->initialOwnerOrRoom;
+	currentObject->visible = baseObject->visible;
+	currentObject->runtimeVisible = baseObject->visible;
+	currentObject->identShown = baseObject->identShown;
 	return changed;
 }
 
