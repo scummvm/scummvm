@@ -60,6 +60,7 @@ static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
 static const int kRoomMonsterAnimationRate = 17;
 static const int kNativeMonsterAttackAnimationRate = 4;
+static const int kNativeMonsterHitAnimationRate = 5;
 static const uint32 kNativeMonsterAttackCooldownBaseTicks = 50;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
 static const int kDefaultMonsterAttackContactFrameOffset = 2;
@@ -68,6 +69,8 @@ static const float kNativeMonsterPursuitZTolerance = 2.0f;
 static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
 static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
 static const int kNativeKeyboardAttackSideWindow = 30;
+static const int kNativeCombatHitKnockbackDistance = 18;
+static const int kNativeCombatHitKnockbackDecayStep = 3;
 static const char *const kNativeHitEffectResourcePath = "blood.abm";
 static const int kNativeHitEffectAnimationRate = 10;
 static const float kNativeHitEffectRenderZBias = 0.01f;
@@ -107,6 +110,18 @@ struct RoomDeathAnimationRange {
 	int lastFrame = -1;
 };
 
+struct RoomHitAnimationRange {
+	RoomHitAnimationRange() {}
+	RoomHitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
+		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing),
+		  knockbackX(knockbackX) {}
+
+	int firstFrame = -1;
+	int lastFrame = -1;
+	int resumeFacing = -1;
+	int knockbackX = 0;
+};
+
 struct RoomMonsterCombatState {
 	bool attackActive = false;
 	int attackFirstFrame = -1;
@@ -116,6 +131,13 @@ struct RoomMonsterCombatState {
 	bool attackSoundPlayed = false;
 	bool attackContactResolved = false;
 	Common::String attackTargetName;
+	bool hitActive = false;
+	int hitFirstFrame = -1;
+	int hitLastFrame = -1;
+	int hitResumeFacing = -1;
+	int hitKnockbackRemainingX = 0;
+	int hitKnockbackDecayStep = 0;
+	bool hitSoundPlayed = false;
 	bool deathActive = false;
 	int deathFirstFrame = -1;
 	int deathLastFrame = -1;
@@ -608,6 +630,39 @@ static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::Str
 	return engine.playStartupSound(*availableSounds[soundIndex]);
 }
 
+static bool resolveRoomMonsterHitAnimationRange(const RuntimeEntity &entity,
+		int attackerAttackFirstFrame, RoomHitAnimationRange &range) {
+	RoomHitAnimationRange candidate;
+	switch (attackerAttackFirstFrame) {
+	case 0x64:
+		candidate = RoomHitAnimationRange(0x92, 0x94, 2, -kNativeCombatHitKnockbackDistance);
+		break;
+	case 0x5a:
+		candidate = RoomHitAnimationRange(0x8f, 0x91, 2, -kNativeCombatHitKnockbackDistance);
+		break;
+	case 0x50:
+		candidate = RoomHitAnimationRange(0x8c, 0x8e, 2, -kNativeCombatHitKnockbackDistance);
+		break;
+	case 0x82:
+		candidate = RoomHitAnimationRange(0x9b, 0x9d, 1, kNativeCombatHitKnockbackDistance);
+		break;
+	case 0x78:
+		candidate = RoomHitAnimationRange(0x98, 0x9a, 1, kNativeCombatHitKnockbackDistance);
+		break;
+	case 0x6e:
+		candidate = RoomHitAnimationRange(0x95, 0x97, 1, kNativeCombatHitKnockbackDistance);
+		break;
+	default:
+		return false;
+	}
+
+	if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+		return false;
+
+	range = candidate;
+	return true;
+}
+
 static float clampRoomDepthForEvent(const StartupRoomSetupState &state, float z) {
 	return CLIP<float>(z,
 		(float)MIN(state.roomMinZ, state.roomMaxZ),
@@ -669,6 +724,16 @@ static void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState) {
 	combatState.attackSoundPlayed = false;
 	combatState.attackContactResolved = false;
 	combatState.attackTargetName.clear();
+}
+
+static void clearRoomMonsterHitState(RoomMonsterCombatState &combatState) {
+	combatState.hitActive = false;
+	combatState.hitFirstFrame = -1;
+	combatState.hitLastFrame = -1;
+	combatState.hitResumeFacing = -1;
+	combatState.hitKnockbackRemainingX = 0;
+	combatState.hitKnockbackDecayStep = 0;
+	combatState.hitSoundPlayed = false;
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -2756,8 +2821,56 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			attackLeft, attackRight, attackUp, attackDown, playerState.facing,
 			bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
 			bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
-	};
-	auto resolvePlayerAttackContact = [&]() -> Common::Error {
+		};
+		auto startMonsterHitReaction = [&](StartupMonsterRecord &monster, RuntimeEntity &monsterEntity,
+				RoomMonsterCombatState *combatState, int attackerAttackFirstFrame) {
+			if (spawnCombatHitEffect(monsterEntity, monster.monsterName))
+				needsRedraw = true;
+
+			if (!combatState) {
+				(void)playRandomRoomAttackSound(_engine,
+					monster.hitSound1, monster.hitSound2, monster.hitSound3);
+				return;
+			}
+
+			RoomHitAnimationRange range;
+			if (!resolveRoomMonsterHitAnimationRange(monsterEntity, attackerAttackFirstFrame, range)) {
+				(void)playRandomRoomAttackSound(_engine,
+					monster.hitSound1, monster.hitSound2, monster.hitSound3);
+				debugC(1, kDebugCombat,
+					"Harvester: combat monster hit reaction skipped target='%s' attack_frame=%d reason='no native hit bank'",
+					monster.monsterName.c_str(), attackerAttackFirstFrame);
+				return;
+			}
+
+			clearRoomMonsterAttackState(*combatState);
+			clearRoomMonsterHitState(*combatState);
+			combatState->hitActive = true;
+			combatState->hitFirstFrame = range.firstFrame;
+			combatState->hitLastFrame = range.lastFrame;
+			combatState->hitResumeFacing = range.resumeFacing;
+			combatState->hitKnockbackRemainingX = range.knockbackX;
+			combatState->hitKnockbackDecayStep = kNativeCombatHitKnockbackDecayStep;
+			combatState->hitSoundPlayed =
+				monster.hitSound1.empty() && monster.hitSound2.empty() && monster.hitSound3.empty();
+			combatState->nextMovementTick = 0;
+			monster.facing = range.resumeFacing;
+			monsterEntity.setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+			monsterEntity.setAnimationRate(kNativeMonsterHitAnimationRate);
+			monsterEntity.setAnimationEnabled(true);
+			monsterEntity.setCurrentFrame(range.firstFrame);
+			if (!combatState->hitSoundPlayed && monster.hitSoundTriggerFrame <= 0) {
+				(void)playRandomRoomAttackSound(_engine,
+					monster.hitSound1, monster.hitSound2, monster.hitSound3);
+				combatState->hitSoundPlayed = true;
+			}
+			debugC(1, kDebugCombat,
+				"Harvester: combat monster hit reaction target='%s' attack_frame=%d frames=%d..%d resume_facing=%d knockback=%d rate=%d",
+				monster.monsterName.c_str(), attackerAttackFirstFrame, range.firstFrame, range.lastFrame,
+				range.resumeFacing, range.knockbackX, kNativeMonsterHitAnimationRate);
+			needsRedraw = true;
+		};
+		auto resolvePlayerAttackContact = [&]() -> Common::Error {
 		if (!playerState.attackActive || playerState.attackContactResolved || !playerState.entity ||
 				playerState.attackContactFrame < 0 ||
 				playerState.entity->getCurrentFrame() < playerState.attackContactFrame) {
@@ -2854,30 +2967,31 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return Common::kNoError;
 		}
 
-		const int hitPointsBefore = monster->currentHitPoints;
-		monster->currentHitPoints = MAX(0,
-			monster->currentHitPoints - damageAmount);
-		const int damageLanded = hitPointsBefore - monster->currentHitPoints;
-		debugC(1, kDebugCombat,
-			"Harvester: combat player monster hit target='%s' loadout=%d weapon='%s' damage=%d damage_type='%s' hp=%d->%d reachable=1",
-			monster->monsterName.c_str(), playerState.combatLoadout,
-			Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
-			Player::describeCombatDamageType(damageType), hitPointsBefore, monster->currentHitPoints);
-		if (damageLanded > 0)
-			spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
-		if (monster->currentHitPoints > 0) {
-			(void)startupScript->syncRuntimeMonsterRecord(*monster);
-			needsRedraw = true;
-			return Common::kNoError;
-		}
-
-		const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
-		RoomMonsterCombatState *combatState =
-			monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size()
-				? &monsterCombatStates[(uint)monsterIndex]
-				: nullptr;
-		if (combatState)
-			clearRoomMonsterCombatState(*combatState);
+			const int hitPointsBefore = monster->currentHitPoints;
+			monster->currentHitPoints = MAX(0,
+				monster->currentHitPoints - damageAmount);
+			const int damageLanded = hitPointsBefore - monster->currentHitPoints;
+			const int monsterIndex = findRoomMonsterIndexByName(monster->monsterName);
+			RoomMonsterCombatState *combatState =
+				monsterIndex >= 0 && monsterIndex < (int)monsterCombatStates.size()
+					? &monsterCombatStates[(uint)monsterIndex]
+					: nullptr;
+			debugC(1, kDebugCombat,
+				"Harvester: combat player monster hit target='%s' loadout=%d weapon='%s' damage=%d damage_type='%s' hp=%d->%d reachable=1",
+				monster->monsterName.c_str(), playerState.combatLoadout,
+				Player::describeCombatLoadout(playerState.combatLoadout), damageAmount,
+				Player::describeCombatDamageType(damageType), hitPointsBefore, monster->currentHitPoints);
+			if (damageLanded > 0) {
+				spawnCombatDamagePopup(*monsterEntity, monster->monsterName, damageLanded);
+				startMonsterHitReaction(*monster, *monsterEntity, combatState, playerState.attackFirstFrame);
+			}
+			if (monster->currentHitPoints > 0) {
+				(void)startupScript->syncRuntimeMonsterRecord(*monster);
+				needsRedraw = true;
+				return Common::kNoError;
+			}
+			if (combatState)
+				clearRoomMonsterCombatState(*combatState);
 		(void)startupScript->syncRuntimeMonsterRecord(*monster);
 
 		RoomDeathAnimationRange deathRange;
@@ -3008,11 +3122,49 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 				continue;
 			}
-			if (combatState.nextAttackAllowedTick == 0)
-				combatState.nextAttackAllowedTick = now + kNativeMonsterAttackCooldownBaseTicks;
+				if (combatState.nextAttackAllowedTick == 0)
+					combatState.nextAttackAllowedTick = now + kNativeMonsterAttackCooldownBaseTicks;
 
-			if (combatState.attackActive) {
-				const int currentFrame = entity->getCurrentFrame();
+				if (combatState.hitActive) {
+					const int currentFrame = entity->getCurrentFrame();
+					if (!combatState.hitSoundPlayed &&
+							monster.hitSoundTriggerFrame >= 0 &&
+							currentFrame >= combatState.hitFirstFrame + monster.hitSoundTriggerFrame) {
+						(void)playRandomRoomAttackSound(_engine,
+							monster.hitSound1, monster.hitSound2, monster.hitSound3);
+						combatState.hitSoundPlayed = true;
+					}
+					if (combatState.hitKnockbackRemainingX != 0) {
+						const int step = MAX(1, ABS(combatState.hitKnockbackDecayStep));
+						const int knockbackStep = combatState.hitKnockbackRemainingX > 0
+							? MIN(combatState.hitKnockbackRemainingX, step)
+							: MAX(combatState.hitKnockbackRemainingX, -step);
+						const int previousX = monster.posX;
+						monster.posX = CLIP<int>(
+							monster.posX + knockbackStep, monster.screenMinXBound, monster.screenMaxXBound);
+						if (monster.posX != previousX) {
+							(void)applyRoomActorPlacement(
+								scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+							(void)startupScript->syncRuntimeMonsterRecord(monster);
+							debugC(1, kDebugCombat,
+								"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
+								monster.monsterName.c_str(), previousX, monster.posX,
+								combatState.hitKnockbackRemainingX - (monster.posX - previousX));
+							needsRedraw = true;
+							combatState.hitKnockbackRemainingX -= monster.posX - previousX;
+						} else {
+							combatState.hitKnockbackRemainingX = 0;
+						}
+					}
+					if (currentFrame == combatState.hitLastFrame) {
+						clearRoomMonsterHitState(combatState);
+						needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+					}
+					continue;
+				}
+
+				if (combatState.attackActive) {
+					const int currentFrame = entity->getCurrentFrame();
 				if (!combatState.attackSoundPlayed &&
 						monster.attackSoundTriggerFrame >= 0 &&
 						currentFrame >= combatState.attackFirstFrame + monster.attackSoundTriggerFrame) {
