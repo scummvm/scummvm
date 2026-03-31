@@ -158,7 +158,7 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *startupText = engine.getStartupText();
+	const Text *startupText = engine.getText();
 	if (!startupText || !fontName)
 		return nullptr;
 
@@ -347,7 +347,7 @@ static void applyMenuPalette(Graphics::Screen &screen, const HarvesterEngine &en
 		return;
 
 	byte displayPalette[256 * 3];
-	buildHarvesterDisplayPalette(palette, brightness * engine.getStartupGammaBrightnessScale(), displayPalette);
+	buildHarvesterDisplayPalette(palette, brightness * engine.getGammaBrightnessScale(), displayPalette);
 	screen.setPalette(displayPalette);
 }
 
@@ -500,7 +500,7 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem,
 		bool drawCursor = true) {
 	Graphics::Screen *screen = engine.getScreen();
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!screen || !startupScript)
 		return;
 
@@ -544,9 +544,9 @@ static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap 
 		const byte *palette, float paletteBrightness,
 		const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getStartupArt();
+	const Art *art = engine.getArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!screen || !art || !font || !startupScript)
 		return;
 
@@ -615,7 +615,7 @@ static void renderConfirmPromptScreen(HarvesterEngine &engine, const IndexedBitm
 		const IndexedBitmap &textbox, const Common::String &promptText,
 		const RoomMenuTextConfig &config) {
 	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getStartupArt();
+	const Art *art = engine.getArt();
 	if (!screen || !art)
 		return;
 
@@ -666,7 +666,7 @@ MenuSystem::MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 }
 
 Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	if (!art)
 		return Common::kReadingFailed;
 	ScopedSceneTimerPause pausedTimers(_engine);
@@ -703,8 +703,8 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		pausedTimers.resume();
 		Common::Error roomError = startupFlow.runRoomLoop(targetName);
 		pausedTimers.pause();
-		_engine.stopStartupMusic();
-		_engine.stopStartupSound();
+		_engine.stopMusic();
+		_engine.stopSound();
 		if (roomError.getCode() == Common::kReadingFailed) {
 			statusMessage = Common::String::format(
 				"Unable to resolve %s room setup from HARVEST.SCR.", targetName.c_str());
@@ -764,9 +764,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 			if (!loadedGame)
 				return Common::kNoError;
 
-			Common::String targetName = _engine.getPendingLoadedStartupSaveRoomState().entranceName;
+			Common::String targetName = _engine.getPendingLoadedSaveRoomState().entranceName;
 			if (targetName.empty())
-				targetName = _engine.getPendingLoadedStartupSaveRoomState().roomName;
+				targetName = _engine.getPendingLoadedSaveRoomState().roomName;
 			if (targetName.empty()) {
 				statusMessage = "Loaded save is missing its room target.";
 				return Common::kNoError;
@@ -903,7 +903,7 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
 	memcpy(_mainMenuBackdropPalette, palette, sizeof(_mainMenuBackdropPalette));
 	_hasMainMenuBackdrop = true;
 	startupFlow.resetCursorAnimationSequence();
-	(void)_engine.playStartupMusic(kGameOverMusicPath);
+	(void)_engine.playMusic(kGameOverMusicPath);
 
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
@@ -1567,7 +1567,7 @@ Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &back
 Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
 		bool &confirmed) {
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
 	const CftFontResource *choiceFontResource = findStartupFontByName(_engine, "MEDFONT2");
 	if (!art || !promptFontResource || !choiceFontResource)
@@ -1660,16 +1660,16 @@ Common::Error MenuSystem::runQuitGameConfirm(const IndexedBitmap &backdrop, cons
 	if (!confirmed)
 		return Common::kNoError;
 
-	_engine.stopStartupMusic();
-	_engine.stopStartupSound();
+	_engine.stopMusic();
+	_engine.stopSound();
 	_engine.quitGame();
 	return Common::kNoError;
 }
 
 Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow) {
-	const Art *art = _engine.getStartupArt();
-	Script *startupScript = _engine.getStartupScript();
+	const Art *art = _engine.getArt();
+	Script *startupScript = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
 	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
@@ -1707,22 +1707,22 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 		switch (sliderIndex) {
 		case 0:
 			if (newLevel != startupScript->getFxVolumeLevel()) {
-				_engine.setStartupFxVolumeLevel(newLevel);
-				_engine.playStartupSingleSound(kOptionsPreviewSoundPath);
+				_engine.setFxVolumeLevel(newLevel);
+				_engine.playSingleSound(kOptionsPreviewSoundPath);
 				persistConfig();
 				needsRedraw = true;
 			}
 			break;
 		case 1:
 			if (newLevel != startupScript->getMusicVolumeLevel()) {
-				_engine.setStartupMusicVolumeLevel(newLevel);
+				_engine.setMusicVolumeLevel(newLevel);
 				persistConfig();
 				needsRedraw = true;
 			}
 			break;
 		case 2:
 			if (newLevel != startupScript->getGammaLevel()) {
-				_engine.setStartupGammaLevel(newLevel);
+				_engine.setGammaLevel(newLevel);
 				persistConfig();
 				needsRedraw = true;
 			}
@@ -2128,7 +2128,7 @@ void MenuSystem::renderMainMenuStub(const Common::Array<Common::String> &menuIte
 void MenuSystem::renderMainMenuScreen(int selectedItem, const Common::String &statusMessage,
 		bool drawCursor, const Common::Array<Common::String> &menuItems) const {
 	Graphics::Screen *screen = _engine.getScreen();
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	const Graphics::Font *titleFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	const Graphics::Font *bodyFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !art || !titleFont || !bodyFont)
@@ -2171,7 +2171,7 @@ void MenuSystem::renderBackdropMenuScreen(const IndexedBitmap &backdrop, const b
 		float paletteBrightness, const Common::Array<Common::String> &menuItems,
 		int selectedItem) const {
 	Graphics::Screen *screen = _engine.getScreen();
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
 	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
 	if (!screen || !art || !selectedFontResource || !unselectedFontResource || !backdrop.isValid())

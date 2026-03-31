@@ -81,57 +81,57 @@ public:
 	Graphics::Screen *getScreen() const;
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
-	Script *getStartupScript() const { return _startupScript; }
-	Art *getStartupArt() const;
-	Text *getStartupText() const;
+	Script *getScript() const { return _startupScript; }
+	Art *getArt() const;
+	Text *getText() const;
 	void setDisplayMode(int width, int height);
 	bool isGoreEnabled() const;
 	bool shouldShowCdChangePrompts() const;
-	int getStartupFxVolumeLevel() const;
-	int getStartupMusicVolumeLevel() const;
-	int getStartupGammaLevel() const;
-	float getStartupGammaBrightnessScale() const;
-	void setStartupFxVolumeLevel(int level);
-	void setStartupMusicVolumeLevel(int level);
-	void setStartupGammaLevel(int level);
-	const Common::String &getStartupMusicPath() const;
-	bool isStartupMusicPlaying() const;
-	bool playStartupMusic(const Common::String &path);
-	void pauseStartupMusic(bool paused);
-	void stopStartupMusic();
-	bool executeStartupAudioCommand(const AudioCommand &command);
-	bool playStartupSound(const Common::String &path);
-	bool playStartupSingleSound(const Common::String &path);
-	void stopStartupSingleSound();
-	bool isStartupSingleSoundPlaying() const;
-	bool playStartupSpeech(const Common::String &path);
-	void stopStartupSpeech();
-	bool isStartupSpeechPlaying() const;
-	bool loadStartupSound(int slot, const Common::String &path);
-	bool playStartupLoadedSound(int slot);
-	bool deleteStartupLoadedSound(int slot);
-	void stopStartupSound();
-	bool activateStartupDisc(int discNumber);
+	int getFxVolumeLevel() const;
+	int getMusicVolumeLevel() const;
+	int getGammaLevel() const;
+	float getGammaBrightnessScale() const;
+	void setFxVolumeLevel(int level);
+	void setMusicVolumeLevel(int level);
+	void setGammaLevel(int level);
+	const Common::String &getMusicPath() const;
+	bool isMusicPlaying() const;
+	bool playMusic(const Common::String &path);
+	void pauseMusic(bool paused);
+	void stopMusic();
+	bool executeAudioCommand(const AudioCommand &command);
+	bool playSound(const Common::String &path);
+	bool playSingleSound(const Common::String &path);
+	void stopSingleSound();
+	bool isSingleSoundPlaying() const;
+	bool playSpeech(const Common::String &path);
+	void stopSpeech();
+	bool isSpeechPlaying() const;
+	bool loadSound(int slot, const Common::String &path);
+	bool playLoadedSound(int slot);
+	bool deleteLoadedSound(int slot);
+	void stopSound();
+	bool activateDisc(int discNumber);
 	bool isCombatDebugEnabled() const { return _combatDebugEnabled; }
 	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
 	bool toggleRoomDebugEnabled();
 	bool requestDebugCommand(const CommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
-	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
+	void captureCurrentSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath);
-	void clearCurrentStartupSaveRoomState();
-	bool hasCurrentStartupSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
-	const SaveRoomState &getCurrentStartupSaveRoomState() const {
+	void clearCurrentSaveRoomState();
+	bool hasCurrentSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
+	const SaveRoomState &getCurrentSaveRoomState() const {
 		return _currentStartupSaveRoomState;
 	}
-	bool hasPendingLoadedStartupSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
-	const SaveRoomState &getPendingLoadedStartupSaveRoomState() const {
+	bool hasPendingLoadedSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
+	const SaveRoomState &getPendingLoadedSaveRoomState() const {
 		return _pendingLoadedStartupSaveRoomState;
 	}
-	int getPendingLoadedStartupDisc() const { return _pendingLoadedStartupDisc; }
-	void clearPendingLoadedStartupSaveRoomState();
+	int getPendingLoadedDisc() const { return _pendingLoadedStartupDisc; }
+	void clearPendingLoadedSaveRoomState();
 	bool hasPendingLoadedDialogueStateBlob() const { return !_pendingLoadedDialogueStateBlob.empty(); }
 	const Common::Array<byte> &getPendingLoadedDialogueStateBlob() const { return _pendingLoadedDialogueStateBlob; }
 	uint32 getPendingLoadedDialogueStateBlobVersion() const { return _pendingLoadedDialogueStateBlobVersion; }
@@ -141,7 +141,7 @@ public:
 	}
 
 private:
-	void applyStartupMixerLevels();
+	void applyMixerLevels();
 
 	const ADGameDescription *const _gameDescription;
 	Common::RandomSource _randomSource;

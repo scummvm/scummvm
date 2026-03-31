@@ -107,7 +107,7 @@ static const int kCursorSequenceNeutral = 7;
 } // End of anonymous namespace
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *startupText = engine.getStartupText();
+	const Text *startupText = engine.getText();
 	if (!startupText || !fontName)
 		return nullptr;
 
@@ -141,7 +141,7 @@ static byte findNearestPaletteColor(const byte *palette, byte red, byte green, b
 }
 
 static Common::String resolveRoomDebugObjectLabel(HarvesterEngine &engine, const ObjectRecord &object) {
-	if (Script *startupScript = engine.getStartupScript()) {
+	if (Script *startupScript = engine.getScript()) {
 		const Common::String resolvedLabel = startupScript->resolveObjectLabel(object);
 		if (!resolvedLabel.empty())
 			return resolvedLabel;
@@ -245,7 +245,7 @@ static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &sc
 
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	EntityManager *runtimeEntities = engine.getRuntimeEntities();
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!font || !runtimeEntities)
 		return;
 
@@ -507,7 +507,7 @@ static void drawWrappedText(Graphics::Screen &screen, const Graphics::Font &font
 
 static void setScaledPalette(Graphics::Screen &screen, const byte *palette, float brightness) {
 	byte scaledPalette[256 * 3];
-	const float gammaBrightness = g_engine ? g_engine->getStartupGammaBrightnessScale() : 1.0f;
+	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
 }
@@ -737,7 +737,7 @@ static const NpcRecord *findSceneNpcByName(const Common::Array<NpcRecord> &npcs,
 
 static bool canTalkToRoomNpc(HarvesterEngine &engine, const NpcRecord &npc,
 		const DialogueSystem *dialogue) {
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!startupScript || !startupScript->isNamedNpcDeathTypeClear(npc.npcName))
 		return false;
 
@@ -987,7 +987,7 @@ RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupSta
 		return hoverState;
 	}
 
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!startupScript)
 		return hoverState;
 	hoverState.object = findRoomObjectAtPoint(engine, sceneObjects, mousePos);
@@ -1064,7 +1064,7 @@ static bool findRoomObjectProbePoint(HarvesterEngine &engine, const Common::Arra
 void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
 		const Common::String &entranceName, Common::Point &mousePos) {
 	EntityManager *runtimeEntities = engine.getRuntimeEntities();
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!runtimeEntities || !startupScript)
 		return;
 
@@ -1190,7 +1190,7 @@ static Common::String trimAsciiLine(const Common::String &value) {
 static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scene) {
 	RoomSetupState state;
 	// The original startup path enters the START room first and overlays quick tips on top of it.
-	if (!engine.getStartupScript()->resolveRoomSetupState("START", state, *engine.getResources()))
+	if (!engine.getScript()->resolveRoomSetupState("START", state, *engine.getResources()))
 		return false;
 
 	return loadRoomSceneResources(state, *engine.getResources(), scene);
@@ -1199,9 +1199,9 @@ static bool loadQuickTipsScene(HarvesterEngine &engine, RoomSceneResources &scen
 static void renderQuickTipsScreen(HarvesterEngine &engine, const RoomSceneResources &scene,
 		const Common::Point &mousePos, const Common::String &tipText) {
 	Graphics::Screen *screen = engine.getScreen();
-	const Art *art = engine.getStartupArt();
+	const Art *art = engine.getArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Script *startupScript = engine.getStartupScript();
+	Script *startupScript = engine.getScript();
 	if (!screen || !art || !font || !startupScript)
 		return;
 
@@ -1270,21 +1270,21 @@ Common::Error Flow::run() {
 	clearPendingNewGameRestart();
 	resetRoomNpcDialogueState();
 	Common::Error error = Common::kNoError;
-	if (_engine.hasPendingLoadedStartupSaveRoomState()) {
-		Common::String initialTarget = _engine.getPendingLoadedStartupSaveRoomState().entranceName;
+	if (_engine.hasPendingLoadedSaveRoomState()) {
+		Common::String initialTarget = _engine.getPendingLoadedSaveRoomState().entranceName;
 		if (initialTarget.empty())
-			initialTarget = _engine.getPendingLoadedStartupSaveRoomState().roomName;
+			initialTarget = _engine.getPendingLoadedSaveRoomState().roomName;
 		error = runRoomLoop(initialTarget);
 	} else {
-		_engine.clearCurrentStartupSaveRoomState();
+		_engine.clearCurrentSaveRoomState();
 		_engine.clearPendingLoadedDialogueStateBlob();
-		_engine.getStartupScript()->resetRuntimeState();
+		_engine.getScript()->resetRuntimeState();
 		error = runQuickTips();
 		if (error.getCode() != Common::kNoError)
 			return error;
 
 		clearPendingMainMenuReturn();
-		_engine.getStartupScript()->resetRuntimeState();
+		_engine.getScript()->resetRuntimeState();
 		error = runRoomLoop("START");
 	}
 	if (error.getCode() != Common::kNoError)
@@ -1292,8 +1292,8 @@ Common::Error Flow::run() {
 	if (!takePendingMainMenuReturn())
 		return Common::kNoError;
 
-	_engine.stopStartupMusic();
-	_engine.stopStartupSound();
+	_engine.stopMusic();
+	_engine.stopSound();
 	return runMainMenuStub();
 }
 
@@ -1361,7 +1361,7 @@ bool Flow::loadMenuItems() {
 }
 
 Common::Error Flow::runQuickTips() {
-	if (!_engine.getStartupScript()->isQuickTipsEnabled() || _quickTips.empty())
+	if (!_engine.getScript()->isQuickTipsEnabled() || _quickTips.empty())
 		return Common::kNoError;
 
 	Common::Error transitionError = beginRoomSetupTransition();
@@ -1396,8 +1396,8 @@ Common::Error Flow::runQuickTips() {
 
 	debugC(1, kDebugGeneral,
 		"Harvester: quick tips labels exit='Exit' next='Next' toggle='%s'",
-		_engine.getStartupScript()->resolveTextValue(
-			_engine.getStartupScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF").c_str());
+		_engine.getScript()->resolveTextValue(
+			_engine.getScript()->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF").c_str());
 
 	uint tipIndex = _engine.getRandomNumber(_quickTips.size() - 1);
 	bool needsRedraw = true;
@@ -1427,7 +1427,7 @@ Common::Error Flow::runQuickTips() {
 					tipIndex = (tipIndex + 1) % _quickTips.size();
 					needsRedraw = true;
 				} else if (quickTipsToggleRect().contains(_mousePos)) {
-					_engine.getStartupScript()->setQuickTipsEnabled(!_engine.getStartupScript()->isQuickTipsEnabled());
+					_engine.getScript()->setQuickTipsEnabled(!_engine.getScript()->isQuickTipsEnabled());
 					needsRedraw = true;
 				}
 				break;
@@ -1469,7 +1469,7 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		Common::String &destinationEntranceName) {
 	destinationEntranceName.clear();
 
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	Graphics::Screen *screen = _engine.getScreen();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
@@ -1504,8 +1504,8 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 			return Common::kReadingFailed;
 	}
 
-	const Common::String previousMusicPath = _engine.getStartupMusicPath();
-	(void)_engine.playStartupMusic(kTownMapMusicPath);
+	const Common::String previousMusicPath = _engine.getMusicPath();
+	(void)_engine.playMusic(kTownMapMusicPath);
 
 	if (!ensureCursorEntity())
 		return Common::kReadingFailed;
@@ -1529,9 +1529,9 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 		if (!destinationEntranceName.empty())
 			return;
 		if (!previousMusicPath.empty())
-			(void)_engine.playStartupMusic(previousMusicPath);
+			(void)_engine.playMusic(previousMusicPath);
 		else
-			_engine.stopStartupMusic();
+			_engine.stopMusic();
 	};
 
 	while (!_engine.shouldQuit()) {
@@ -1621,7 +1621,7 @@ Common::Error Flow::resolveRoomTransitionTarget(const Common::String &targetName
 		Common::String &resolvedTargetName) {
 	resolvedTargetName = targetName;
 
-	Script *startupScript = _engine.getStartupScript();
+	Script *startupScript = _engine.getScript();
 	if (!startupScript || targetName.empty())
 		return Common::kNoError;
 
@@ -1674,11 +1674,11 @@ void Flow::prepareForNewGame() {
 	_pendingDebugRoomName.clear();
 	_queuedDebugInteraction = InteractionResult();
 	_hasQueuedDebugInteraction = false;
-	_engine.clearPendingLoadedStartupSaveRoomState();
+	_engine.clearPendingLoadedSaveRoomState();
 	_engine.clearPendingLoadedDialogueStateBlob();
-	_engine.clearCurrentStartupSaveRoomState();
-	if (_engine.getStartupScript())
-		_engine.getStartupScript()->resetRuntimeState();
+	_engine.clearCurrentSaveRoomState();
+	if (_engine.getScript())
+		_engine.getScript()->resetRuntimeState();
 	resetRoomNpcDialogueState();
 }
 
@@ -1721,7 +1721,7 @@ void Flow::clearPendingGameOverReturn() {
 
 void Flow::requestMainMenuReturn() {
 	_pendingMainMenuReturn = true;
-	_engine.clearCurrentStartupSaveRoomState();
+	_engine.clearCurrentSaveRoomState();
 }
 
 bool Flow::hasPendingMainMenuReturn() const {
@@ -1863,7 +1863,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 		}
 
 		entity->setClassId(resolveSceneObjectClass(
-			state, object, entity->hasFrames() ? entity : nullptr, _engine.getStartupScript()));
+			state, object, entity->hasFrames() ? entity : nullptr, _engine.getScript()));
 		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 		entity->setZExtent((float)object.zExtent);
 		const Common::Rect entityRect = entity->getScreenRect();
@@ -1939,7 +1939,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 	}
 	if (state.hasEntrance) {
 		const int playerFrame = Player::resolveFacingFrame(state.playerFacing);
-		Script *startupScript = _engine.getStartupScript();
+		Script *startupScript = _engine.getScript();
 		const int playerCombatLoadout = startupScript ? startupScript->getPlayerCombatLoadout() : 0;
 		const Common::String playerResourcePath =
 			Player::resolveCombatLoadoutResourcePath(playerCombatLoadout);
@@ -2042,7 +2042,7 @@ Common::Error Flow::beginRoomSetupTransition() {
 	if (_engine.getRuntimeEntities())
 		_engine.getRuntimeEntities()->hideCursor();
 
-	const Art *art = _engine.getStartupArt();
+	const Art *art = _engine.getArt();
 	if (art && screen)
 		art->drawWaitFrame(*screen);
 	_roomSetupTransitionShownTick = g_system ? g_system->getMillis() : 0;
@@ -2107,7 +2107,7 @@ bool Flow::pumpTransitionEvents(Common::Error &result) {
 
 void Flow::executeStartupAudioCommands(const Common::Array<AudioCommand> &commands) {
 	for (const AudioCommand &command : commands)
-		(void)_engine.executeStartupAudioCommand(command);
+		(void)_engine.executeAudioCommand(command);
 }
 
 void Flow::resetRoomNpcDialogueState() {

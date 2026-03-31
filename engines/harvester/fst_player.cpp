@@ -434,9 +434,9 @@ bool FstPlayer::play(const Common::String &path) {
 	if (shouldSwitchToMovieDisplay)
 		_vm.setDisplayMode(320, 200);
 
-	const bool resumeMusicAfterPlayback = _vm.isStartupMusicPlaying();
+	const bool resumeMusicAfterPlayback = _vm.isMusicPlaying();
 	if (resumeMusicAfterPlayback)
-		_vm.pauseStartupMusic(true);
+		_vm.pauseMusic(true);
 
 	const bool censorshipEnabled = !_vm.isGoreEnabled();
 	const FstCensorshipToggleEntry *censorshipEntry = censorshipEnabled ? findCensorshipToggleEntry(path) : nullptr;
@@ -579,7 +579,7 @@ bool FstPlayer::play(const Common::String &path) {
 		mixer->stopHandle(audioHandle);
 	delete audioStream;
 	if (resumeMusicAfterPlayback)
-		_vm.pauseStartupMusic(false);
+		_vm.pauseMusic(false);
 	if (shouldSwitchToMovieDisplay)
 		_vm.setDisplayMode(previousDisplayWidth, previousDisplayHeight);
 

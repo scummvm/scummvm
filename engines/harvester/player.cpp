@@ -266,14 +266,14 @@ static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
 		soundIndex = engine.getRandomNumber(soundSet->soundCount - 1);
 
 	const char *soundPath = soundSet->soundPaths[soundIndex];
-	return soundPath && engine.playStartupSound(soundPath);
+	return soundPath && engine.playSound(soundPath);
 }
 
 static bool playPlayerHitSound(HarvesterEngine &engine) {
 	const uint soundIndex = ARRAYSIZE(kPlayerHitSoundPaths) > 1
 		? engine.getRandomNumber(ARRAYSIZE(kPlayerHitSoundPaths) - 1)
 		: 0;
-	return engine.playStartupSound(kPlayerHitSoundPaths[soundIndex]);
+	return engine.playSound(kPlayerHitSoundPaths[soundIndex]);
 }
 
 static bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
