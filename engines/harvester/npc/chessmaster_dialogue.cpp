@@ -439,7 +439,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 		return lineError;
 
 	StartupInteractionResult interaction;
-	if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(
+	if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 			kChessmasterNpc, kChessmasterSlashDamageType)) {
 		interaction.mutatedRuntimeState = true;
 	}

@@ -58,7 +58,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto queueHookerDeathOrMonsterfyTransition = [&]() {
 		StartupInteractionResult interaction;
-		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(kHookerNpc))
+		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kHookerNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};

@@ -727,6 +727,15 @@ static const StartupNpcRecord *findSceneNpcByName(const Common::Array<StartupNpc
 	return nullptr;
 }
 
+static bool canTalkToRoomNpc(HarvesterEngine &engine, const StartupNpcRecord &npc,
+		const DialogueSystem *dialogue) {
+	Script *startupScript = engine.getStartupScript();
+	if (!startupScript || !startupScript->isNamedNpcDeathTypeClear(npc.npcName))
+		return false;
+
+	return dialogue && dialogue->hasRoomNpcHandler(npc.npcName);
+}
+
 StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
 		const Common::String &objectName) {
 	for (StartupObjectRecord &object : objects) {
@@ -818,7 +827,8 @@ static const RuntimeEntity *findRoomPlayerAtPoint(HarvesterEngine &engine, const
 }
 
 static const StartupNpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
-		const Common::Array<StartupNpcRecord> &sceneNpcs, const Common::Point &point) {
+		const Common::Array<StartupNpcRecord> &sceneNpcs, const Common::Point &point,
+		const DialogueSystem *dialogue) {
 	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return nullptr;
@@ -827,7 +837,11 @@ static const StartupNpcRecord *findRoomNpcAtPoint(HarvesterEngine &engine,
 	if (!entity || entity->getClassId() != kRuntimeEntityClassNpc)
 		return nullptr;
 
-	return findSceneNpcByName(sceneNpcs, entity->getName());
+	const StartupNpcRecord *npc = findSceneNpcByName(sceneNpcs, entity->getName());
+	if (!npc || !canTalkToRoomNpc(engine, *npc, dialogue))
+		return nullptr;
+
+	return npc;
 }
 
 const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupResolvedText &text) {
@@ -949,7 +963,8 @@ bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupReg
 StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &sceneObjects,
 		const Common::Array<StartupNpcRecord> &sceneNpcs,
-		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos) {
+		const Common::Array<StartupRegionRecord> &sceneRegions, const Common::Point &mousePos,
+		const DialogueSystem *dialogue) {
 	StartupRoomHoverState hoverState;
 	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
 	if (const RuntimeEntity *playerEntity = findRoomPlayerAtPoint(engine, mousePos)) {
@@ -957,7 +972,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 		hoverState.cursorSequence = kCursorSequenceExamine;
 		return hoverState;
 	}
-	if (const StartupNpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos)) {
+	if (const StartupNpcRecord *npc = findRoomNpcAtPoint(engine, sceneNpcs, mousePos, dialogue)) {
 		hoverState.npc = npc;
 		hoverState.cursorSequence = kCursorSequenceTalk;
 		hoverState.promptText = buildRoomNpcPrompt(*npc);

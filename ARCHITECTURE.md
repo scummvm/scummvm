@@ -437,6 +437,7 @@
 - `get_flag_value` at `0x7c790` and `set_flag_value` at `0x7c7e0` are the core `FLAG` accessors used throughout startup, room setup, and event dispatch.
 - `run_npc_dialogue` at `0x79e50` is the conversation/head UI for named NPCs.
   - It validates the NPC through `g_npc_records`.
+  - It refuses NPC records whose persisted `death_damage_type` is already non-zero, so a `KILL_NPC` / `MONSTERFY` transition removes that NPC from the talk path as soon as the pending death type is latched, even before the live class-4 death bank finishes.
   - It uses `g_head_records` to resolve portrait variants and keyword/head assets.
   - It drives the textbox / keyword / voice interaction loop until the exchange completes or is interrupted.
   - Before dispatching the per-NPC talk handler, it clears `g_dialogue_keyword_list_spec` and `g_dialogue_selected_topic_text`, spawns `g_dialogue_keyword_panel_entity` plus `g_dialogue_textbox1_entity` through `g_dialogue_textbox8_entity`, preloads the right PC portrait from the first matching `PC0`..`PC5` `HEAD` record, and preloads the left NPC portrait from `<NPC>0`.
@@ -870,6 +871,7 @@
     - It writes the matching record's `active` / `visible` bytes, removes the current-room render entity when visibility clears, respawns it through `spawn_npc_entity_from_record` when visibility becomes set, and mirrors the `active` byte onto the live entity state at `+0x52`.
   - `queue_named_npc_death_or_monsterfy_transition` at `0x7c940` is the name-based `KILL_NPC` / `MONSTERFY` helper.
     - It resolves the live NPC render entity when present, translates `BLUDGE` / `SLASH` / `PROJ` into the pending damage-type values `1` / `2` / `4`, queues `queue_npc_death_or_monsterfy_transition`, and preserves the pending damage-type selection on the record when no live entity exists yet.
+    - With a live class-4 actor present it does not immediately suppress the `NpcRecord` or dispatch `on_death_action_tag`; it only latches `death_damage_type` and desired state `0x35`, leaving `update_actor_runtime_state` to play the death bank first.
   - `queue_live_named_npc_death_or_monsterfy_transition` at `0x7ca90` is the live-entity-only wrapper used by the Beggar talk path.
     - It resolves the named live NPC render entity and forwards to `queue_npc_death_or_monsterfy_transition` only when that render entity exists, without touching the persisted `NpcRecord`.
   - `is_named_npc_death_type_clear` at `0x7c840` is the talk-handler predicate shared by `handle_talk_to_mom` and `handle_talk_to_dwayne`.
@@ -1017,6 +1019,7 @@
   - `parse_command_record` now confirms the room-event callers are `KILL_NPC` and `MONSTERFY`.
   - It is also shared by the close-range NPC hit path inside `update_actor_runtime_state`.
   - It clears live byte `+0x50`, preserves the current animation bank, and reseeds the current animation frame after forcing state `0x35`.
+  - It does not set `NpcRecord.death_or_monsterfy_flag` on its own; that record-level suppression is deferred until the class-4 death bank reaches its last frame inside `update_actor_runtime_state`.
 - `teardown_monster_entity_runtime_state` at `0x541c0` is the monster-specific wrapper over the shared runtime-entity teardown path.
   - `destroy_entity_list` and `dispatch_room_event_actions` use it only on class-6 monster removal flows.
 - `tick_monster_entity_runtime` at `0x54140` is the class-6 monster wrapper around `update_actor_runtime_state`.
@@ -1090,6 +1093,10 @@
     - bit `0x01` is the third hit-reaction gate used by states `0x1e/0x21`
     - bits `0x02`, `0x04`, and `0x08` gate the death-state families `0x28/0x29/0x2e/0x2f`, `0x2a/0x2b/0x30/0x31`, and `0x2c/0x2d/0x32/0x33`
   - Once `current_hit_points < 1`, native class-6 monsters do not disappear immediately. `update_actor_runtime_state` pushes them into facing-specific death states `0x28/0x29`, `0x2a/0x2b`, or `0x2c/0x2d` according to gore/damage-type availability, then leaves desired state `0x38` latched until the last death frame dispatches the monster record's `on_death_action_tag`.
+  - The same state machine also owns the terminal class-4 NPC death flow after desired state `0x35` has been queued.
+    - If the NPC has a monsterfy target, or if gore is enabled and the latched damage type is not `BLUDGE`, it picks death bank `0x3c..0x45`; otherwise it picks `0x46..0x4f`.
+    - The NPC remains live and untalkable during that bank because `death_damage_type` has already been latched while `death_or_monsterfy_flag` is still clear.
+    - Only after the last class-4 death frame does it set `NpcRecord.death_or_monsterfy_flag`, optionally activate the replacement monster, and dispatch the NPC record's `on_death_action_tag`.
   - Runtime byte `+0x11b4` is now bounded for the player-combat path:
     - `parse_command_record` maps room-event commands `PAUSE_PC` / `RESUME_PC` to action cases `0x25` / `0x26`, and those cases set and clear `g_player + 0x11b4`
     - `update_actor_runtime_state` consults that byte only for class-5 player combat-avatar updates and returns early while it is set

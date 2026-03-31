@@ -2276,7 +2276,22 @@ bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enable
 	return changed;
 }
 
-bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType) {
+bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType) {
+	if (npcName.empty())
+		return false;
+
+	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	if (!runtimeNpc || runtimeNpc->deathOrMonsterfyFlag)
+		return false;
+
+	if (deathDamageType == 0 || runtimeNpc->deathDamageType == deathDamageType)
+		return false;
+
+	runtimeNpc->deathDamageType = deathDamageType;
+	return true;
+}
+
+bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType) {
 	if (npcName.empty())
 		return false;
 
@@ -2764,30 +2779,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			const int deathDamageType = parseNpcDeathDamageType(command->arg2);
-			bool monsterChanged = false;
-			if (command->opcodeName.equalsIgnoreCase("MONSTERFY") && !runtimeNpc->monsterfyTargetName.empty()) {
-				StartupMonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
-				if (runtimeMonster) {
-					monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
-					runtimeMonster->active = true;
-					runtimeMonster->visible = true;
-					runtimeMonster->runtimeSpawned = false;
-					runtimeMonster->runtimeState = -1;
-					if (runtimeMonster->currentHitPoints <= 0)
-						runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
-				} else {
-					debug(1, "Harvester: unresolved monsterfy target for %s '%s' npc='%s' target='%s'",
-						contextLabel, contextName.c_str(), command->arg1.c_str(),
-						runtimeNpc->monsterfyTargetName.c_str());
-				}
-			}
-
-			const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
-				(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
-			runtimeNpc->deathOrMonsterfyFlag = true;
-			if (deathDamageType != 0)
-				runtimeNpc->deathDamageType = deathDamageType;
-			noteMutation(changed || monsterChanged);
+			noteMutation(finalizeRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType));
 			currentTag = command->arg4;
 			continue;
 		}

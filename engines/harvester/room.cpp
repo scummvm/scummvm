@@ -124,6 +124,13 @@ struct RoomMonsterCombatState {
 	uint32 nextAttackAllowedTick = 0;
 };
 
+struct RoomNpcCombatState {
+	bool deathActive = false;
+	int deathFirstFrame = -1;
+	int deathLastFrame = -1;
+	int deathDamageType = 0;
+};
+
 struct RoomHitEffectState {
 	Common::String entityName;
 	Common::String followTargetName;
@@ -496,6 +503,27 @@ static bool resolveMonsterDeathAnimationRange(const RuntimeEntity &entity, int f
 		chooseIfAvailable(fallbackSlash) || chooseIfAvailable(fallbackProjectile);
 }
 
+static bool resolveNpcDeathAnimationRange(const RuntimeEntity &entity, bool hasMonsterfyTarget,
+		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
+	const RoomDeathAnimationRange goreBank(0x3c, 0x45);
+	const RoomDeathAnimationRange bludgeBank(0x46, 0x4f);
+	const bool preferGoreBank = hasMonsterfyTarget || (goreEnabled && deathDamageType != 1);
+
+	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
+		if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+			return false;
+		range = candidate;
+		return true;
+	};
+
+	if (preferGoreBank && chooseIfAvailable(goreBank))
+		return true;
+	if (chooseIfAvailable(bludgeBank))
+		return true;
+
+	return chooseIfAvailable(goreBank);
+}
+
 static int stepTowardsRoomCombatInt(int current, int target, int step) {
 	if (step <= 0 || current == target)
 		return current;
@@ -624,6 +652,10 @@ static int resolveMonsterAttackContactFrameOffset(const StartupMonsterRecord &mo
 
 static void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState) {
 	combatState = RoomMonsterCombatState();
+}
+
+static void clearRoomNpcCombatState(RoomNpcCombatState &combatState) {
+	combatState = RoomNpcCombatState();
 }
 
 static void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState) {
@@ -764,6 +796,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		playerState.turnTargetFacing = -1;
 		Common::Array<RoomMonsterCombatState> monsterCombatStates;
 		monsterCombatStates.resize(scene.state.roomMonsters.size());
+		Common::Array<RoomNpcCombatState> npcCombatStates;
+		npcCombatStates.resize(scene.state.roomNpcs.size());
 		Common::Array<RoomHitEffectState> hitEffectStates;
 		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
 		uint nextCombatEffectId = 0;
@@ -2203,6 +2237,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return nullptr;
 		};
+		auto findRoomNpcIndexByName = [&](const Common::String &npcName) -> int {
+			for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
+				if (scene.state.roomNpcs[i].npcName.equalsIgnoreCase(npcName))
+					return (int)i;
+			}
+
+			return -1;
+		};
 		auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> StartupMonsterRecord * {
 			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
 				if (monster.monsterName.equalsIgnoreCase(monsterName))
@@ -2269,7 +2311,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return nullptr;
 
 			for (StartupNpcRecord &npc : scene.state.roomNpcs) {
-				if (!npc.visible || npc.deathOrMonsterfyFlag)
+				if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
 					continue;
 
 				RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
@@ -2362,6 +2404,58 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		needsRedraw = true;
 		return Common::kNoError;
+	};
+	auto beginNpcDeathTransition = [&](StartupNpcRecord &npc, RuntimeEntity &npcEntity,
+			RoomNpcCombatState &combatState, int deathDamageType) {
+		RoomDeathAnimationRange deathRange;
+		if (!resolveNpcDeathAnimationRange(npcEntity, !npc.monsterfyTargetName.empty(),
+				deathDamageType, _engine.isGoreEnabled(), deathRange))
+			return false;
+
+		combatState.deathActive = true;
+		combatState.deathFirstFrame = deathRange.firstFrame;
+		combatState.deathLastFrame = deathRange.lastFrame;
+		combatState.deathDamageType = deathDamageType;
+		npc.deathDamageType = deathDamageType;
+		npcEntity.setAnimationFrameRange(deathRange.firstFrame, deathRange.lastFrame, false);
+		npcEntity.setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
+		npcEntity.setAnimationEnabled(true);
+		npcEntity.setCurrentFrame(deathRange.firstFrame);
+		if (!npc.audioPath.empty())
+			(void)_engine.playStartupSound(npc.audioPath);
+		debugC(1, kDebugCombat,
+			"Harvester: combat npc death start target='%s' damage_type=%d frames=%d..%d monsterfy='%s' on_death='%s'",
+			npc.npcName.c_str(), deathDamageType, deathRange.firstFrame, deathRange.lastFrame,
+			npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
+		needsRedraw = true;
+		return true;
+	};
+	auto finalizeNpcDeathTransition = [&](StartupNpcRecord &npc,
+			RoomNpcCombatState &combatState) -> Common::Error {
+		Script *runtimeScript = _engine.getStartupScript();
+		npc.deathOrMonsterfyFlag = true;
+		if (combatState.deathDamageType != 0)
+			npc.deathDamageType = combatState.deathDamageType;
+		const bool runtimeChanged = runtimeScript
+			? runtimeScript->finalizeRuntimeNpcDeathOrMonsterfy(npc.npcName, npc.deathDamageType)
+			: false;
+		debugC(1, kDebugCombat,
+			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d monsterfy='%s' on_death='%s'",
+			npc.npcName.c_str(), combatState.deathDamageType, combatState.deathLastFrame,
+			npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
+		clearRoomNpcCombatState(combatState);
+
+		StartupInteractionResult interaction;
+		interaction.mutatedRuntimeState = runtimeChanged;
+		if (runtimeScript && !npc.onDeathActionTag.empty()) {
+			StartupInteractionResult deathInteraction;
+			if (runtimeScript->executeActionTag(npc.onDeathActionTag, deathInteraction)) {
+				interaction = deathInteraction;
+				interaction.mutatedRuntimeState = true;
+			}
+		}
+
+		return handleCombatInteraction(interaction);
 	};
 	auto killDebugActiveMonster = [&]() -> Common::Error {
 		if (!_engine.isCombatDebugEnabled())
@@ -2502,19 +2596,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		return handleCombatInteraction(interaction);
 	};
 	auto capturePlayerAttackTarget = [&]() {
-		playerState.attackTargetName.clear();
-		playerState.attackTargetClassId = -1;
+			playerState.attackTargetName.clear();
+			playerState.attackTargetClassId = -1;
 
-		const StartupRoomHoverState hoverState = resolveRoomHoverState(
-			_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
-		if (hoverState.npc) {
-			playerState.attackTargetName = hoverState.npc->npcName;
-			playerState.attackTargetClassId = kRuntimeEntityClassNpc;
-			debugC(1, kDebugCombat,
-				"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
-				playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
-			return;
-		}
+			const StartupRoomHoverState hoverState = resolveRoomHoverState(
+				_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+				_mousePos, &startupFlow._dialogue);
+			if (hoverState.npc) {
+				playerState.attackTargetName = hoverState.npc->npcName;
+				playerState.attackTargetClassId = kRuntimeEntityClassNpc;
+				debugC(1, kDebugCombat,
+					"Harvester: combat player target capture class='npc' name='%s' cursor=(%d,%d)",
+					playerState.attackTargetName.c_str(), _mousePos.x, _mousePos.y);
+				return;
+			}
 
 		if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
 			playerState.attackTargetName = monster->monsterName;
@@ -2622,7 +2717,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		};
 
 		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
-			if (!npc.visible || npc.deathOrMonsterfyFlag)
+			if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
 				continue;
 			considerTarget(findSceneRuntimeEntity(npc.npcName), npc.npcName, kRuntimeEntityClassNpc);
 		}
@@ -2688,10 +2783,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			}
 
 			const bool runtimeChanged =
-				startupScript->triggerRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
+				startupScript->queueRuntimeNpcDeathOrMonsterfy(npc->npcName, damageType);
 			const bool jimmyFlagChanged = npc->npcName.equalsIgnoreCase("JIMMY")
 				? startupScript->setRuntimeFlagValue("JIMMY_ATTACKED", true)
 				: false;
+			const int npcIndex = findRoomNpcIndexByName(npc->npcName);
+			RoomNpcCombatState *combatState =
+				npcIndex >= 0 && npcIndex < (int)npcCombatStates.size()
+					? &npcCombatStates[(uint)npcIndex]
+					: nullptr;
+			if (runtimeChanged) {
+				npc->deathDamageType = damageType;
+				if (combatState)
+					clearRoomNpcCombatState(*combatState);
+			}
 			debugC(1, kDebugCombat,
 				"Harvester: combat player npc hit target='%s' damage_type=%d runtime_changed=%d jimmy_flag=%d",
 				npc->npcName.c_str(), damageType, runtimeChanged, jimmyFlagChanged);
@@ -2702,18 +2807,19 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (spawnCombatHitEffect(*npcEntity, followTargetName))
 					needsRedraw = true;
 			}
-
-			StartupInteractionResult interaction;
-			interaction.mutatedRuntimeState = runtimeChanged;
-			if (npc->monsterfyTargetName.empty() && !npc->onDeathActionTag.empty()) {
-				StartupInteractionResult deathInteraction;
-				if (startupScript->executeActionTag(npc->onDeathActionTag, deathInteraction)) {
-					interaction = deathInteraction;
-					interaction.mutatedRuntimeState = true;
-				}
+			if (runtimeChanged && combatState && npcEntity &&
+					beginNpcDeathTransition(*npc, *npcEntity, *combatState, damageType))
+				return Common::kNoError;
+			if (runtimeChanged) {
+				debugC(1, kDebugCombat,
+					"Harvester: combat npc defeated target='%s' damage_type=%d on_death='%s' fallback='no death bank'",
+					npc->npcName.c_str(), damageType, npc->onDeathActionTag.c_str());
+				RoomNpcCombatState fallbackState;
+				fallbackState.deathDamageType = damageType;
+				return finalizeNpcDeathTransition(*npc, combatState ? *combatState : fallbackState);
 			}
 
-			return handleCombatInteraction(interaction);
+			return Common::kNoError;
 		}
 
 		StartupMonsterRecord *monster = nullptr;
@@ -2812,8 +2918,30 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			scene.state.roomZVelocityStep > 0.0f ? scene.state.roomZVelocityStep : 1.0f));
 		bool playerAlive = startupScript && startupScript->getPlayerCurrentHitPoints() > 0;
 
+		if (npcCombatStates.size() != scene.state.roomNpcs.size())
+			npcCombatStates.resize(scene.state.roomNpcs.size());
 		if (monsterCombatStates.size() != scene.state.roomMonsters.size())
 			monsterCombatStates.resize(scene.state.roomMonsters.size());
+
+		for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
+			StartupNpcRecord &npc = scene.state.roomNpcs[i];
+			RoomNpcCombatState &combatState = npcCombatStates[i];
+			RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
+			if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
+				clearRoomNpcCombatState(combatState);
+				continue;
+			}
+			if (!combatState.deathActive)
+				continue;
+			if (entity->getCurrentFrame() != combatState.deathLastFrame)
+				continue;
+
+			entity->setAnimationRate(0);
+			entity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
+			entity->setCurrentFrame(combatState.deathLastFrame);
+			entity->setAnimationEnabled(false);
+			return finalizeNpcDeathTransition(npc, combatState);
+		}
 
 		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
 			StartupMonsterRecord &monster = scene.state.roomMonsters[i];
@@ -3354,7 +3482,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
-					scene.sceneRegions, _mousePos);
+					scene.sceneRegions, _mousePos, &startupFlow._dialogue);
 			if (!suppressHover && inventorySelectionActive && !hoverState.npc) {
 				if (StartupObjectRecord *selectedTarget = findSelectedInventoryRoomTarget(_mousePos))
 					hoverState.object = selectedTarget;
@@ -3679,7 +3807,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 
 				const StartupRoomHoverState hoverState = resolveRoomHoverState(
-					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions, _mousePos);
+					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
+					_mousePos, &startupFlow._dialogue);
 				StartupObjectRecord *selectedRoomTarget = nullptr;
 				if (_inventory.hasSelection() && !hoverState.npc)
 					selectedRoomTarget = findSelectedInventoryRoomTarget(_mousePos);

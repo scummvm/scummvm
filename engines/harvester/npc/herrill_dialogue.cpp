@@ -85,7 +85,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto queueNpcSlashTransition = [&](const char *npcName) {
 		StartupInteractionResult interaction;
-		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(
+		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 				npcName, kSlashDeathDamageType)) {
 			interaction.mutatedRuntimeState = true;
 		}

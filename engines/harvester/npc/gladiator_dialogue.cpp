@@ -49,7 +49,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto queueGladiatorDeathOrMonsterfyTransition = [&]() {
 		StartupInteractionResult interaction;
-		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(kGladiatorNpc))
+		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kGladiatorNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
