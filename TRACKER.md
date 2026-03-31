@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On March 31, 2026, confirmed via Ghidra that native class-`4` room NPCs queue a live death state first, play a death bank (`0x3c..0x45` for gore/monsterfy or `0x46..0x4f` for bludge), and only then finalize suppression and run the NPC `onDeathActionTag`. Patched ScummVM so BIG_EYE and other class-`4` NPCs now use that queued death flow, and gated room-NPC talk hover/dialogue on both `deathDamageType == 0` and an installed dialogue handler. Verified with `make -j4 engines/harvester/flow.o engines/harvester/room.o engines/harvester/dialogue.o engines/harvester/script.o` and `git diff --check`.
+- On March 31, 2026, patched Harvester’s class-`4` NPC death finalization so a completed NPC kill now clears the authoritative runtime NPC record (`active=0`, `visible=0`, `savedVisible=0`, `deathOrMonsterfy=1`) and immediately removes the live scene actor before the `onDeathActionTag` refresh path runs. This closes the gap where BIG_EYE could finish its death bank yet remain eligible for redisplay during the post-death room update. Verified with `make -j4 scummvm`.
 
 ## Next Suggested Action
 
-- Re-run the in-engine `EYEHALL` repro against DOSBox and confirm the live BIG_EYE kill now shows the native death bank before `EYEDOOR`, that the hover falls back to the `BIGEYE` examine hotspot instead of `Talk to big eye`, and that no other class-`4` NPCs regress under the new handler/death-type talk gate.
+- Re-run the in-engine `EYEHALL` repro and confirm the BIG_EYE death bank ends with the actor removed, `EYEDOOR` still enables `EYE_MAIN`, and no other class-`4` NPC deaths regress by disappearing too early or failing monsterfy transitions.

@@ -2433,6 +2433,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 	auto finalizeNpcDeathTransition = [&](StartupNpcRecord &npc,
 			RoomNpcCombatState &combatState) -> Common::Error {
 		Script *runtimeScript = _engine.getStartupScript();
+		removeSceneEntityByName(npc.npcName);
+		npc.active = false;
+		npc.visible = false;
 		npc.deathOrMonsterfyFlag = true;
 		if (combatState.deathDamageType != 0)
 			npc.deathDamageType = combatState.deathDamageType;
