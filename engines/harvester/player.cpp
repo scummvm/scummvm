@@ -844,6 +844,57 @@ void Player::setMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
 		mapRoomScreenYToDepth(state, clampRoomMovementY(state, targetBottomY)));
 }
 
+bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState) {
+	if (!playerState.entity)
+		return false;
+
+	if (!isPlayerMovementBlocked(engine, state, sceneObjects, sceneAnimations,
+			playerState, playerState.centerX, playerState.z)) {
+		return false;
+	}
+
+	const int originalCenterX = playerState.centerX;
+	const int preferredDirection = playerState.facing == 1 ? -1 : 1;
+	for (int distance = 1; distance < 640; ++distance) {
+		int previousCandidateX = originalCenterX;
+		for (int pass = 0; pass < 2; ++pass) {
+			const int direction = pass == 0 ? preferredDirection : -preferredDirection;
+			const int candidateX = clampPlayerCenterXToNativeBounds(
+				playerState, originalCenterX + direction * distance);
+			if (candidateX == originalCenterX || candidateX == previousCandidateX)
+				continue;
+			previousCandidateX = candidateX;
+			if (isPlayerMovementBlocked(engine, state, sceneObjects, sceneAnimations,
+					playerState, candidateX, playerState.z)) {
+				continue;
+			}
+
+			playerState.centerX = candidateX;
+			playerState.bottomY = mapRoomDepthToScreenY(state, playerState.z);
+			if (!applyRoomActorPlacement(state, *playerState.entity,
+					playerState.centerX, playerState.bottomY, playerState.z)) {
+				return false;
+			}
+
+			debugC(1, kDebugPlayer,
+				"Harvester: adjusted blocked startup spawn room='%s' facing=%d from=(%d,%d,z=%.2f) to=(%d,%d,z=%.2f)",
+				state.roomName.c_str(), playerState.facing,
+				originalCenterX, mapRoomDepthToScreenY(state, playerState.z), (double)playerState.z,
+				playerState.centerX, playerState.bottomY, (double)playerState.z);
+			return true;
+		}
+	}
+
+	debugC(1, kDebugPlayer,
+		"Harvester: startup spawn remains blocked room='%s' pos=(%d,%d,z=%.2f)",
+		state.roomName.c_str(), playerState.centerX, mapRoomDepthToScreenY(state, playerState.z),
+		(double)playerState.z);
+	return false;
+}
+
 int Player::resolveRegionTargetX(const StartupRegionRecord &region,
 		const StartupRoomPlayerState &playerState) {
 	const Common::Rect bounds(region.left, region.top, region.right + 1, region.bottom + 1);

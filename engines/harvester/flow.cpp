@@ -1765,7 +1765,7 @@ bool Flow::ensureCursorEntity() {
 	return runtimeEntities->spawnCursorEntity(_mousePos) != nullptr;
 }
 
-bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
+bool Flow::populateRoomSceneEntities(StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations) {
 	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
@@ -1949,6 +1949,18 @@ bool Flow::populateRoomSceneEntities(const StartupRoomSetupState &state,
 				playerState.facing = state.playerFacing;
 				playerState.combatLoadout = -1;
 				(void)Player::syncCombatLoadoutVisual(_engine, state, playerState, playerCombatLoadout);
+			}
+			StartupRoomPlayerState startupPlayerState;
+			startupPlayerState.entity = player;
+			startupPlayerState.centerX = state.playerSpawnX;
+			startupPlayerState.bottomY = state.playerSpawnY;
+			startupPlayerState.z = (float)state.playerSpawnZ;
+			startupPlayerState.facing = state.playerFacing;
+			if (Player::resolveBlockedStartupSpawn(
+					_engine, state, drawableObjects, drawableAnimations, startupPlayerState)) {
+				state.playerSpawnX = startupPlayerState.centerX;
+				state.playerSpawnY = startupPlayerState.bottomY;
+				state.playerSpawnZ = (int)startupPlayerState.z;
 			}
 			if (reusedPlayer)
 				runtimeEntities->adoptSceneEntity(player);
