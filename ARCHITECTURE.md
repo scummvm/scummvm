@@ -227,13 +227,14 @@
 ### Render Entity Runtime
 
 - `Confidence:` High.
-- `Evidence:` `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, and `update_actor_runtime_state` all operate on the same `0x11bc` runtime record.
+- `Evidence:` `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, and `update_actor_runtime_state` all operate on the same `0x11d0` runtime record.
 - `Evidence:` recovered helper types line up with the entity materialization path: `BitmapBuffer` is the 12-byte `{ width, height, pixels }` bitmap header, `AbmFrameHeader` is the packed per-frame ABM prefix, `DirtyRectNode` is the 20-byte dirty-rect node, and `ActorWaypoint[10]` is the fixed array at `RenderEntityRuntime + 0x10ac`.
 - `Evidence:` switching the simple entity helpers to Borland `__fastcall` confirms that `tick_entity_visual_state` writes the current opaque overlap blocker at `+0x109c`, `update_actor_runtime_state` uses directional blocker-history slots at `+0x108c`, `+0x1090`, `+0x1094`, and `+0x1098`, and `attach_abm_resource_to_entity` builds a `1024`-entry frame-header table at `+0x5c`.
 - `Key Functions:` `spawn_scaled_abm_entity_from_resource`, `attach_abm_resource_to_entity`, `show_entity_visual`, `hide_entity_visual`, `rescale_entity_sprite_for_depth`, `tick_entity_visual_state`, `update_actor_runtime_state`.
 - `Key Data:` `RenderEntityRuntime`, `BitmapBuffer`, `AbmFrameHeader`, `DirtyRectNode`, `ActorWaypoint[10]`, `g_render_entity_list`.
 - `Notes:` the current typed runtime record cleanly covers render placement, animation timing, waypoint storage, and blocker-history detours.
 - `Notes:` the actor-only tail from `+0x1134` through `+0x118e` is still only partially typed, but it now clearly contains combat/use-state sound slots and facing-bank flags rather than generic render state.
+- `Notes:` confirmed actor-tail roles now include `+0x112c = engage_distance`, `+0x113c = attack_contact_frame_offset`, `+0x1180 = attack_damage_amount`, `+0x1188 = last_hit_combat_flags`, `+0x118c = combat_capability_flags`, `+0x11a4 = combat_target_entity`, `+0x11b8 = collision_partner_entity`, and `+0x11bc = player_combat_loadout_id`.
 
 ### Room And Event Flow
 

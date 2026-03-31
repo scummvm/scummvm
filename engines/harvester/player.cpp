@@ -107,6 +107,8 @@ struct PlayerCombatLoadoutTuning {
 	int contactFrameOffset;
 };
 
+// The live player avatar seeds these from RenderEntityRuntime.player_combat_loadout_id (+0x11bc)
+// into attack_damage_amount (+0x1180) and attack_contact_frame_offset (+0x113c).
 // Recovered from spawn_player_combat_avatar and update_actor_runtime_state:
 // the native room-combat path commits player attack audio on first_frame + 1.
 static const int kPlayerAttackSoundTriggerFrameOffset = 1;

@@ -57,6 +57,7 @@ struct StartupRoomPlayerState {
 	int bottomY = 0;
 	float z = 0.0f;
 	int facing = -1;
+	// Mirrors native RenderEntityRuntime.player_combat_loadout_id (+0x11bc).
 	int combatLoadout = 0;
 	uint32 nextMovementTick = 0;
 	bool hasMoveTarget = false;
@@ -76,6 +77,8 @@ struct StartupRoomPlayerState {
 	bool attackSoundPlayed = false;
 	int attackSoundPlaybackFrame = -1;
 	bool attackContactResolved = false;
+	// Native room combat tracks the live chase/attack focus through
+	// RenderEntityRuntime.combat_target_entity (+0x11a4).
 	Common::String attackTargetName;
 	int attackTargetClassId = -1;
 	bool deathActive = false;
