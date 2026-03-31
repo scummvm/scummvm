@@ -175,6 +175,8 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncString(record.onDeathActionTag);
 	syncBool(s, record.active);
 	syncBool(s, record.visible);
+	// FIXME: Remove the pre-v2 monster save-layout fallback after release; clean
+	// Harvester saves will always serialize the full combat payload.
 	if (s.getVersion() < 2)
 		return;
 
@@ -204,10 +206,14 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncAsSint32LE(record.hitSoundTriggerFrame);
 	s.syncAsSint32LE(record.footstepSoundTriggerFrame);
 	s.syncAsSint32LE(record.deathSoundTriggerFrame);
+	// FIXME: Remove this version-16 gate before release; clean Harvester saves
+	// should always serialize monster runtimeState.
 	if (s.getVersion() >= 16)
 		s.syncAsSint32LE(record.runtimeState);
 }
 
+// FIXME: Remove this pre-release monster combat migration after Harvester ships and
+// only clean release-era saves remain.
 static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMonster,
 		StartupMonsterRecord &runtimeMonster) {
 	const int legacyInitialHitPoints = MAX(0, runtimeMonster.initialHitPoints);
@@ -1526,6 +1532,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	syncRecordArray(s, _runtimeNpcs, syncStartupNpcRecord);
 	syncRecordArray(s, _runtimeMonsters, syncStartupMonsterRecord);
 	s.syncAsSint32LE(_playerCurrentHitPoints);
+	// FIXME: Remove this pre-v2 save-layout gate after release; clean Harvester
+	// saves always carry timer state, combat loadout, and paused-state fields.
 	if (s.getVersion() >= 2) {
 		syncRecordArray(s, _runtimeTimers, syncStartupTimerRecord);
 		s.syncAsSint32LE(_playerCombatLoadout);
@@ -1534,6 +1542,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
+		// FIXME: Drop this compatibility pass after release; it exists only to repair
+		// pre-release saves written before the monster combat field layout stabilized.
 		if (s.getVersion() >= 2) {
 			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
 				const StartupMonsterRecord *baseMonster = nullptr;
@@ -1551,6 +1561,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				migrateLegacyMonsterCombatFields(*baseMonster, runtimeMonster);
 			}
 		}
+		// FIXME: Remove the pre-v2 save fallback after release; clean Harvester saves will
+		// always serialize timer state and the full monster combat payload.
 		if (s.getVersion() < 2) {
 			_runtimeTimers = _timers;
 			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
