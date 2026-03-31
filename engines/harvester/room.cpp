@@ -434,15 +434,17 @@ static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFra
 static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 		const RuntimeEntity &entity, int actorCenterX, int targetCenterX,
 		RoomAttackAnimationRange &range) {
+	// Native class-6 attackers pick one of the 0x16..0x1b attack states, which map to
+	// the 0x50..0x8b strike banks. The 0x8c..0x9d banks are hit reactions, not attacks.
 	static const RoomAttackAnimationRange kLeftAttackRanges[3] = {
-		RoomAttackAnimationRange(0x95, 0x97, 1),
-		RoomAttackAnimationRange(0x98, 0x9a, 1),
-		RoomAttackAnimationRange(0x9b, 0x9d, 1)
+		RoomAttackAnimationRange(0x64, 0x6d, 1),
+		RoomAttackAnimationRange(0x5a, 0x63, 1),
+		RoomAttackAnimationRange(0x50, 0x59, 1)
 	};
 	static const RoomAttackAnimationRange kRightAttackRanges[3] = {
-		RoomAttackAnimationRange(0x8c, 0x8e, 2),
-		RoomAttackAnimationRange(0x8f, 0x91, 2),
-		RoomAttackAnimationRange(0x92, 0x94, 2)
+		RoomAttackAnimationRange(0x82, 0x8b, 2),
+		RoomAttackAnimationRange(0x78, 0x81, 2),
+		RoomAttackAnimationRange(0x6e, 0x77, 2)
 	};
 
 	const RoomAttackAnimationRange *candidates =
@@ -852,6 +854,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		auto notePlayerActivity = [&]() {
 			idleState.activityTick = Player::getRuntimeClockTicks();
 			Player::updateIdleTrigger(idleState);
+		};
+		auto isPlayerCombatLocked = [&]() {
+			return playerState.attackActive || playerState.hitActive || playerState.deathActive;
 		};
 		auto cancelPlayerAttackAnimation = [&]() {
 			if (!playerState.attackActive)
@@ -1587,6 +1592,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			playerState.attackContactResolved = false;
 			playerState.attackTargetName.clear();
 			playerState.attackTargetClassId = -1;
+			playerState.hitActive = false;
+			playerState.hitFirstFrame = -1;
+			playerState.hitLastFrame = -1;
+			playerState.hitResumeFacing = -1;
+			playerState.hitKnockbackRemainingX = 0;
+			playerState.hitKnockbackDecayStep = 0;
 			playerState.combatLoadout =
 				_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
 			monsterCombatStates.clear();
@@ -3036,8 +3047,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 							monster.monsterName.c_str(), currentFrame, monster.damageAmount,
 							Player::describeCombatDamageType(monster.damageType),
 							playerHitPointsBefore, playerHitPointsAfter, changed);
-						if (damageLanded > 0 && playerState.entity)
+						if (damageLanded > 0 && playerState.entity) {
 							spawnCombatDamagePopup(*playerState.entity, playerState.entity->getName(), damageLanded);
+							if (idleState.entity) {
+								idleState.entity->setVisible(false);
+								idleState.entity->setAnimationRate(0);
+							}
+							idleState.active = false;
+							idleState.loopStarted = false;
+							idleState.exiting = false;
+							idleState.restoreFacing = -1;
+							playerState.entity->setVisible(true);
+							if (playerHitPointsAfter > 0 &&
+									Player::startHitAnimation(_engine, playerState, combatState.attackFirstFrame)) {
+								notePlayerActivity();
+							}
+						}
 						if (changed && playerHitPointsAfter <= 0) {
 							playerAlive = false;
 							stopPlayerRegionInteraction();
@@ -3480,7 +3505,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			const bool activeCarry = inventorySelectionActive || roomCarryActive;
 			const bool inventoryPanelContainsMouse = _inventory.isOpen() && inventoryPanelBounds.contains(_mousePos);
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
-				playerState.attackActive ||
+				isPlayerCombatLocked() ||
 				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
 			StartupRoomHoverState hoverState = suppressHover
 				? StartupRoomHoverState()
@@ -3537,7 +3562,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
-						playerState.attackActive ||
+						isPlayerCombatLocked() ||
 						_inventory.isOpen() || activeCarry)
 						? 7
 						: hoverState.cursorSequence);
@@ -3598,7 +3623,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						needsRedraw = true;
 					break;
 				}
-				if (playerState.attackActive)
+				if (isPlayerCombatLocked())
 					break;
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
@@ -3701,7 +3726,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					break;
 				}
 				Script *startupScript = _engine.getStartupScript();
-				if (!showingInspectText && startupScript && playerState.entity &&
+				if (!showingInspectText && !isPlayerCombatLocked() && startupScript && playerState.entity &&
 						startupScript->getPlayerCurrentHitPoints() > 0) {
 					playerState.hasMoveTarget = false;
 					playerState.turnActive = false;
@@ -3756,7 +3781,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					}
 					break;
 				}
-				if (playerState.attackActive)
+				if (isPlayerCombatLocked())
 					break;
 
 				const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
@@ -4061,6 +4086,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						break;
 					}
 				}
+				if (isPlayerCombatLocked())
+					break;
 
 				if (event.kbd.keycode == Common::KEYCODE_LCTRL ||
 						event.kbd.keycode == Common::KEYCODE_RCTRL) {
@@ -4151,7 +4178,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			_engine.getStartupScript() &&
 			_engine.getStartupScript()->getPlayerCurrentHitPoints() > 0;
 		if (!playerCanAct && (moveLeft || moveRight || moveUp || moveDown ||
-				playerState.hasMoveTarget || playerState.turnActive || playerState.attackActive)) {
+				playerState.hasMoveTarget || playerState.turnActive ||
+				playerState.attackActive || playerState.hitActive)) {
 			attackModifierHeld = false;
 			stopPlayerRegionInteraction();
 		}
@@ -4170,10 +4198,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		if (Player::updateAttackAnimationState(_engine, playerState)) {
 			needsRedraw = true;
 		}
+		if (Player::updateHitAnimationState(
+				_engine, scene.state, scene.sceneObjects, scene.sceneAnimations, playerState)) {
+			playerAdvancedThisFrame = true;
+			needsRedraw = true;
+		}
 		const bool keyboardAttackRequested =
 			attackModifierHeld && (moveLeft || moveRight || moveUp || moveDown);
 		if (playerCanAct &&
-				!playerState.attackActive && keyboardAttackRequested &&
+				!playerState.attackActive && !playerState.hitActive && keyboardAttackRequested &&
 				!idleState.active && !idleState.exiting) {
 			const uint32 now = Player::getRuntimeClockTicks();
 			if (nextKeyboardAttackAllowedTick == 0 || (int32)(now - nextKeyboardAttackAllowedTick) >= 0) {
@@ -4198,13 +4231,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 			}
 		}
-		if (!playerState.attackActive && Player::updateTurnAnimationState(playerState)) {
+		if (!playerState.attackActive && !playerState.hitActive &&
+				Player::updateTurnAnimationState(playerState)) {
 			playerAdvancedThisFrame = true;
 			needsRedraw = true;
 		}
 
 		if (playerCanAct &&
-				!playerState.attackActive && !keyboardAttackRequested && !idleState.active && !idleState.exiting) {
+				!playerState.attackActive && !playerState.hitActive &&
+				!keyboardAttackRequested && !idleState.active && !idleState.exiting) {
 			if (Player::stepKeyboardMovement(_engine, scene.state, scene.sceneObjects, scene.sceneAnimations,
 					playerState, moveLeft, moveRight, moveUp, moveDown)) {
 				playerAdvancedThisFrame = true;
@@ -4217,7 +4252,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				notePlayerActivity();
 				needsRedraw = true;
 			} else if (!moveLeft && !moveRight && !moveUp && !moveDown && !playerState.hasMoveTarget &&
-					!playerState.turnActive &&
+					!playerState.turnActive && !playerState.hitActive &&
 					playerState.entity && playerState.facing >= 0 &&
 					Player::setIdleAnimation(playerState, playerState.facing)) {
 				needsRedraw = true;
@@ -4225,7 +4260,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			if (!showingInspectText && !keyboardAttackRequested &&
 					!moveLeft && !moveRight && !moveUp && !moveDown &&
-					!playerState.hasMoveTarget && !playerState.turnActive &&
+					!playerState.hasMoveTarget && !playerState.turnActive && !playerState.hitActive &&
 					playerState.entity && playerState.facing >= 0 &&
 					!Player::isIdleAnimationExcludedRoom(scene.state.roomName) &&
 					Player::getRuntimeClockTicks() > idleState.triggerTick &&
@@ -4246,7 +4281,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			break;
 		}
 		Common::Error pendingRegionError =
-			(playerState.attackActive || playerState.deathActive)
+			isPlayerCombatLocked()
 				? Common::kNoError
 				: tryActivatePendingRegion();
 		if (pendingRegionError.getCode() != Common::kNoError)
@@ -4259,7 +4294,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			break;
 		}
 		pendingRegionError =
-			(playerAdvancedThisFrame && !playerState.attackActive && !playerState.deathActive)
+			(playerAdvancedThisFrame && !isPlayerCombatLocked())
 				? tryActivateOverlappedRegion()
 				: Common::kNoError;
 		if (pendingRegionError.getCode() != Common::kNoError)

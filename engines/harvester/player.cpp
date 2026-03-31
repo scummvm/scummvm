@@ -40,6 +40,7 @@ static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
 static const int kRoomPlayerAttackAnimationRate = kRoomPlayerWalkAnimationRate;
+static const int kRoomPlayerHitAnimationRate = 4;
 static const int kRoomPlayerDeathAnimationRate = 4;
 static const int kRoomPlayerMinOpaqueLeftX = 4;
 static const int kRoomPlayerMaxOpaqueRightX = 0x27c;
@@ -49,6 +50,8 @@ static const char *const kPlayerIdleAnimationEntityName = "IDLE_ANIM";
 static const char *const kPlayerIdleAnimationResourcePath = "1:/GRAPHIC/ROOMANIM/PCLOUN02.ABM";
 static const uint32 kRuntimeClockDivisorMs = 10;
 static const uint32 kRoomPlayerIdleDelayTicks = 3000;
+static const int kPlayerHitKnockbackDistance = 18;
+static const int kPlayerHitKnockbackDecayStep = 3;
 // Native run_harvester_main_loop sets EBX=0x0e before spawning PCLOUN02.ABM.
 static const int kRoomPlayerIdleAnimationRate = 14;
 static const int kRoomPlayerIdleLoopStartFrame = 0x0f;
@@ -95,6 +98,17 @@ struct PlayerDeathAnimationRange {
 	int lastFrame = -1;
 };
 
+struct PlayerHitAnimationRange {
+	PlayerHitAnimationRange() {}
+	PlayerHitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
+		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing), knockbackX(knockbackX) {}
+
+	int firstFrame = -1;
+	int lastFrame = -1;
+	int resumeFacing = -1;
+	int knockbackX = 0;
+};
+
 struct PlayerAttackSoundSet {
 	uint soundCount;
 	const char *soundPaths[3];
@@ -134,6 +148,12 @@ static const PlayerAttackSoundSet kPlayerAttackSoundSets[] = {
 	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
 	{ 3, { "2:/SOUND/EFFECTS/swoosh1.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } },
 	{ 3, { "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh2.wav", "2:/SOUND/EFFECTS/swoosh3.wav" } }
+};
+
+static const char *const kPlayerHitSoundPaths[] = {
+	"1:/sound/effects/PC0_hit0.wav",
+	"1:/sound/effects/PC0_hit1.wav",
+	"1:/sound/effects/PC0_hit2.wav"
 };
 
 static const PlayerCombatLoadoutTuning kPlayerCombatLoadoutTunings[] = {
@@ -247,6 +267,13 @@ static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
 
 	const char *soundPath = soundSet->soundPaths[soundIndex];
 	return soundPath && engine.playStartupSound(soundPath);
+}
+
+static bool playPlayerHitSound(HarvesterEngine &engine) {
+	const uint soundIndex = ARRAYSIZE(kPlayerHitSoundPaths) > 1
+		? engine.getRandomNumber(ARRAYSIZE(kPlayerHitSoundPaths) - 1)
+		: 0;
+	return engine.playStartupSound(kPlayerHitSoundPaths[soundIndex]);
 }
 
 static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
@@ -409,9 +436,42 @@ static bool resolveKeyboardAttackAnimationRange(const StartupRoomPlayerState &pl
 	return false;
 }
 
+static bool resolvePlayerHitAnimationRange(const RuntimeEntity &entity,
+		int monsterAttackFirstFrame, PlayerHitAnimationRange &range) {
+	PlayerHitAnimationRange candidate;
+	switch (monsterAttackFirstFrame) {
+	case 0x64:
+		candidate = PlayerHitAnimationRange(0x92, 0x94, 2, -kPlayerHitKnockbackDistance);
+		break;
+	case 0x5a:
+		candidate = PlayerHitAnimationRange(0x8f, 0x91, 2, -kPlayerHitKnockbackDistance);
+		break;
+	case 0x50:
+		candidate = PlayerHitAnimationRange(0x8c, 0x8e, 2, -kPlayerHitKnockbackDistance);
+		break;
+	case 0x82:
+		candidate = PlayerHitAnimationRange(0x9b, 0x9d, 1, kPlayerHitKnockbackDistance);
+		break;
+	case 0x78:
+		candidate = PlayerHitAnimationRange(0x98, 0x9a, 1, kPlayerHitKnockbackDistance);
+		break;
+	case 0x6e:
+		candidate = PlayerHitAnimationRange(0x95, 0x97, 1, kPlayerHitKnockbackDistance);
+		break;
+	default:
+		return false;
+	}
+
+	if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+		return false;
+
+	range = candidate;
+	return true;
+}
+
 static bool startResolvedAttackAnimation(StartupRoomPlayerState &playerState,
 		const PlayerAttackAnimationRange &range) {
-	if (!playerState.entity || playerState.attackActive)
+	if (!playerState.entity || playerState.attackActive || playerState.hitActive)
 		return false;
 
 	playerState.hasMoveTarget = false;
@@ -943,6 +1003,12 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	playerState.attackContactResolved = false;
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
+	playerState.hitActive = false;
+	playerState.hitFirstFrame = -1;
+	playerState.hitLastFrame = -1;
+	playerState.hitResumeFacing = -1;
+	playerState.hitKnockbackRemainingX = 0;
+	playerState.hitKnockbackDecayStep = 0;
 	(void)setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	(void)applyRoomActorPlacement(state, *playerState.entity,
 		playerState.centerX, playerState.bottomY, playerState.z);
@@ -1035,6 +1101,91 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	return setIdleAnimation(playerState, resumeFacing);
 }
 
+bool Player::startHitAnimation(HarvesterEngine &engine, StartupRoomPlayerState &playerState,
+		int monsterAttackFirstFrame) {
+	if (!playerState.entity || playerState.deathActive)
+		return false;
+
+	PlayerHitAnimationRange range;
+	if (!resolvePlayerHitAnimationRange(*playerState.entity, monsterAttackFirstFrame, range))
+		return false;
+
+	playerState.hasMoveTarget = false;
+	playerState.turnActive = false;
+	playerState.turnTargetFacing = -1;
+	playerState.turnFirstFrame = -1;
+	playerState.turnLastFrame = -1;
+	playerState.turnEndFrame = -1;
+	playerState.turnPlayBackwards = false;
+	playerState.attackActive = false;
+	playerState.attackFirstFrame = -1;
+	playerState.attackLastFrame = -1;
+	playerState.attackContactFrame = -1;
+	playerState.attackResumeFacing = -1;
+	playerState.attackSoundPlayed = false;
+	playerState.attackSoundPlaybackFrame = -1;
+	playerState.attackContactResolved = false;
+	playerState.attackTargetName.clear();
+	playerState.attackTargetClassId = -1;
+	playerState.nextMovementTick = 0;
+	playerState.hitActive = true;
+	playerState.hitFirstFrame = range.firstFrame;
+	playerState.hitLastFrame = range.lastFrame;
+	playerState.hitResumeFacing = range.resumeFacing;
+	playerState.hitKnockbackRemainingX = range.knockbackX;
+	playerState.hitKnockbackDecayStep = kPlayerHitKnockbackDecayStep;
+	playerState.entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
+	playerState.entity->setAnimationRate(kRoomPlayerHitAnimationRate);
+	playerState.entity->setCurrentFrame(range.firstFrame);
+	playerState.entity->setAnimationEnabled(true);
+	playerState.entity->setVisible(true);
+	(void)playPlayerHitSound(engine);
+	debugC(1, kDebugCombat,
+		"Harvester: player hit animation attack_frame=%d frames=%d..%d resume_facing=%d knockback=%d rate=%d",
+		monsterAttackFirstFrame, range.firstFrame, range.lastFrame, range.resumeFacing,
+		range.knockbackX, kRoomPlayerHitAnimationRate);
+	return true;
+}
+
+bool Player::updateHitAnimationState(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState) {
+	if (!playerState.hitActive || !playerState.entity)
+		return false;
+
+	bool changed = false;
+	if (playerState.hitKnockbackRemainingX != 0) {
+		const int step = MAX(1, ABS(playerState.hitKnockbackDecayStep));
+		const int knockbackStep = playerState.hitKnockbackRemainingX > 0
+			? MIN(playerState.hitKnockbackRemainingX, step)
+			: MAX(playerState.hitKnockbackRemainingX, -step);
+		if (knockbackStep != 0) {
+			if (!tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+					playerState, playerState.centerX + knockbackStep, playerState.z)) {
+				playerState.hitKnockbackRemainingX = 0;
+			} else {
+				changed = true;
+				playerState.hitKnockbackRemainingX -= knockbackStep;
+			}
+		}
+	}
+
+	if (playerState.entity->getCurrentFrame() != playerState.hitLastFrame)
+		return changed;
+
+	const int resumeFacing = playerState.hitResumeFacing >= 0
+		? playerState.hitResumeFacing
+		: (playerState.facing >= 0 ? playerState.facing : 0);
+	playerState.hitActive = false;
+	playerState.hitFirstFrame = -1;
+	playerState.hitLastFrame = -1;
+	playerState.hitResumeFacing = -1;
+	playerState.hitKnockbackRemainingX = 0;
+	playerState.hitKnockbackDecayStep = 0;
+	return setIdleAnimation(playerState, resumeFacing) || changed;
+}
+
 bool Player::startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled) {
 	if (!playerState.entity || playerState.deathActive)
 		return false;
@@ -1060,6 +1211,12 @@ bool Player::startDeathAnimation(StartupRoomPlayerState &playerState, int damage
 	playerState.attackContactResolved = false;
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
+	playerState.hitActive = false;
+	playerState.hitFirstFrame = -1;
+	playerState.hitLastFrame = -1;
+	playerState.hitResumeFacing = -1;
+	playerState.hitKnockbackRemainingX = 0;
+	playerState.hitKnockbackDecayStep = 0;
 	playerState.nextMovementTick = 0;
 	playerState.deathActive = true;
 	playerState.deathFirstFrame = range.firstFrame;
@@ -1089,7 +1246,8 @@ bool Player::updateDeathAnimationState(StartupRoomPlayerState &playerState) {
 }
 
 bool Player::startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
-	if (!playerState.entity || playerState.facing < 0 || playerState.facing == targetFacing)
+	if (!playerState.entity || playerState.hitActive ||
+			playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
 
 	PlayerTurnAnimationRange range;
@@ -1138,7 +1296,7 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState
 		const Common::Array<StartupObjectRecord> &sceneObjects,
 		const Common::Array<StartupAnimRecord> &sceneAnimations,
 		StartupRoomPlayerState &playerState) {
-	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive)
+	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive || playerState.hitActive)
 		return false;
 
 	if (playerState.centerX == playerState.targetX &&
@@ -1203,7 +1361,7 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetu
 	const int verticalInput = (moveDown ? 1 : 0) - (moveUp ? 1 : 0);
 	if (horizontalInput == 0 && verticalInput == 0)
 		return false;
-	if (playerState.turnActive)
+	if (playerState.turnActive || playerState.hitActive)
 		return false;
 
 	const int previousCenterX = playerState.centerX;

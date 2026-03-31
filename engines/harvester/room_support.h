@@ -81,6 +81,12 @@ struct StartupRoomPlayerState {
 	// RenderEntityRuntime.combat_target_entity (+0x11a4).
 	Common::String attackTargetName;
 	int attackTargetClassId = -1;
+	bool hitActive = false;
+	int hitFirstFrame = -1;
+	int hitLastFrame = -1;
+	int hitResumeFacing = -1;
+	int hitKnockbackRemainingX = 0;
+	int hitKnockbackDecayStep = 0;
 	bool deathActive = false;
 	int deathFirstFrame = -1;
 	int deathLastFrame = -1;
