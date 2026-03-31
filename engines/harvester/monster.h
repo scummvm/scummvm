@@ -32,7 +32,8 @@ struct StartupMonsterRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
-	// Native MONSTER numeric fields after z are engage distance, initial HP, and damage.
+	// Native MONSTER numeric fields after z seed the combat-runtime engage distance,
+	// initial HP, and attack damage fields.
 	int engageDistance = 0;
 	int initialHitPoints = 0;
 	int currentHitPoints = 0;

@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On March 31, 2026, patched Harvester’s class-`4` NPC death finalization so a completed NPC kill now clears the authoritative runtime NPC record (`active=0`, `visible=0`, `savedVisible=0`, `deathOrMonsterfy=1`) and immediately removes the live scene actor before the `onDeathActionTag` refresh path runs. This closes the gap where BIG_EYE could finish its death bank yet remain eligible for redisplay during the post-death room update. Verified with `make -j4 scummvm`.
+- On March 31, 2026, rechecked `RenderEntityRuntime` against `spawn_monster_entity_from_record`, `spawn_player_combat_avatar`, `set_player_combat_loadout`, `spawn_npc_entity_from_record`, and `update_actor_runtime_state`; confirmed `+0x11b8` is the reciprocal shove/collision partner pointer and renamed it to `collision_partner_entity`, renamed `+0x11bc` to `player_combat_loadout_id`, and documented the additional confirmed actor-tail roles (`+0x112c engage_distance`, `+0x113c attack_contact_frame_offset`, `+0x1180 attack_damage_amount`, `+0x1188 last_hit_combat_flags`, `+0x118c combat_capability_flags`, `+0x11a4 combat_target_entity`) in ScummVM comments and `ARCHITECTURE.md`. Verified with `git diff --check`.
 
 ## Next Suggested Action
 
-- Re-run the in-engine `EYEHALL` repro and confirm the BIG_EYE death bank ends with the actor removed, `EYEDOOR` still enables `EYE_MAIN`, and no other class-`4` NPC deaths regress by disappearing too early or failing monsterfy transitions.
+- Isolate the remaining unresolved `RenderEntityRuntime` tail/shared-header slots around `+0x119c`, `+0x11cc`, and `+0x4f/+0x50/+0x51/+0x53/+0x54` with save/load or DOSBox combat traces before renaming them, because the current evidence is still strong enough to classify behavior but not to assign stable semantic names.
