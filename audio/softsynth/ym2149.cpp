@@ -534,9 +534,9 @@ uint16 YM2149Emu::envPer(uint8 rHigh, uint8 rLow) {
 }
 
 uint32 YM2149Emu::rndCompute() {
-	uint32 b = (((_rndRack >> 16) ^ (_rndRack >> 13)) & 1);
-	_rndRack = (_rndRack >> 1) | (b << 16);
-	return (_rndRack & 1) ? 0xffff : 0;
+	uint32 b = _rndRack & 1;
+	_rndRack = (_rndRack >> 1) ^ (b ? 0x12000 : 0);
+	return b ? 0xffff : 0;
 }
 
 
