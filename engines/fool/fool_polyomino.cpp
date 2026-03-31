@@ -87,7 +87,7 @@ void FoolGame::polyominoRun() {
 	}
 	// 133:0228
 	g_toolbox->SetPort(this->var_i32_f24);
-	g_zbasic->text(0xfb, 0x18, 0, kSrcOr);
+	g_zbasic->text(0xfb, 0x18, Graphics::kMacFontRegular, kSrcOr);
 
 	// for each polyomino
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {

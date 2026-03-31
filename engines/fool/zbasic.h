@@ -122,17 +122,6 @@ enum ZBasicTextFont {
 	kFontLosAngeles = 12
 };
 
-enum ZBasicTextFace {
-	kFacePlain = 0,
-	kFaceBold = 1,
-	kFaceItalic = 2,
-	kFaceUnderlined = 4,
-	kFaceOutlined = 8,
-	kFaceShadow = 16,
-	kFaceCondensed = 32,
-	kFaceExtended = 64
-};
-
 enum ZBasicDatumType {
 	kDatumNULL = 0,
 	kDatumINT = 1,

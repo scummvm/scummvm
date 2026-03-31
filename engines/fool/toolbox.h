@@ -32,6 +32,7 @@
 #include "graphics/cursor.h"
 #include "image/pict.h"
 #include "graphics/framelimiter.h"
+#include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macwindow.h"
 #include "graphics/macgui/macwindowmanager.h"
 
