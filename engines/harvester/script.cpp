@@ -204,6 +204,8 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 	s.syncAsSint32LE(record.hitSoundTriggerFrame);
 	s.syncAsSint32LE(record.footstepSoundTriggerFrame);
 	s.syncAsSint32LE(record.deathSoundTriggerFrame);
+	if (s.getVersion() >= 16)
+		s.syncAsSint32LE(record.runtimeState);
 }
 
 static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMonster,
@@ -637,6 +639,7 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		runtimeMonster->visible = monster.visible;
 		runtimeMonster->savedVisible = monster.savedVisible;
 		runtimeMonster->runtimeSpawned = monster.runtimeSpawned;
+		runtimeMonster->runtimeState = monster.runtimeState;
 		runtimeMonster->currentHitPoints = monster.currentHitPoints;
 		runtimeMonster->screenMinXBound = monster.screenMinXBound;
 		runtimeMonster->screenMaxXBound = monster.screenMaxXBound;
@@ -1346,6 +1349,7 @@ void Script::resetRuntimeState() {
 	for (StartupMonsterRecord &monster : _runtimeMonsters) {
 		monster.currentHitPoints = monster.initialHitPoints;
 		monster.runtimeSpawned = false;
+		monster.runtimeState = -1;
 		monster.savedVisible = monster.visible;
 		if (monster.active)
 			monster.visible = true;
@@ -1467,15 +1471,16 @@ void Script::logRuntimeSaveState(const char *operation) const {
 				monster.savedVisible != defaultSavedVisible ||
 				monster.currentHitPoints != defaultCurrentHitPoints ||
 				monster.runtimeSpawned ||
+				monster.runtimeState != -1 ||
 				monster.screenMinXBound != defaultScreenMinXBound ||
 				monster.screenMaxXBound != defaultScreenMaxXBound) {
 			debugC(1, kDebugGeneral,
-				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d hp=%d/%d screen_bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_hp=%d/%d base_screen_bounds=[%d,%d]",
+				"Harvester: %s runtime monster '%s' active=%d visible=%d savedVisible=%d spawned=%d runtimeState=%d hp=%d/%d screen_bounds=[%d,%d] base_active=%d base_visible=%d base_savedVisible=%d base_runtimeState=%d base_hp=%d/%d base_screen_bounds=[%d,%d]",
 				operation, monster.monsterName.c_str(), monster.active, monster.visible,
-				monster.savedVisible, monster.runtimeSpawned,
+				monster.savedVisible, monster.runtimeSpawned, monster.runtimeState,
 				monster.currentHitPoints, monster.initialHitPoints,
 				monster.screenMinXBound, monster.screenMaxXBound,
-				defaultActive, defaultVisible, defaultSavedVisible,
+				defaultActive, defaultVisible, defaultSavedVisible, -1,
 				defaultCurrentHitPoints, baseMonster ? baseMonster->initialHitPoints : monster.initialHitPoints,
 				defaultScreenMinXBound, defaultScreenMaxXBound);
 		}
@@ -1579,6 +1584,7 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 				runtimeMonster.deathSound = baseMonster->deathSound;
 				runtimeMonster.savedVisible = runtimeMonster.visible;
 				runtimeMonster.runtimeSpawned = false;
+				runtimeMonster.runtimeState = -1;
 				runtimeMonster.screenMinXBound = baseMonster->screenMinXBound;
 				runtimeMonster.screenMaxXBound = baseMonster->screenMaxXBound;
 				runtimeMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
@@ -2273,6 +2279,8 @@ bool Script::triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, in
 			monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
 			runtimeMonster->active = true;
 			runtimeMonster->visible = true;
+			runtimeMonster->runtimeSpawned = false;
+			runtimeMonster->runtimeState = -1;
 			if (runtimeMonster->currentHitPoints <= 0)
 				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 		} else {
@@ -2396,8 +2404,9 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 	}
 	for (const StartupMonsterRecord &monster : state.roomMonsters) {
 		debugC(1, kDebugRoom,
-			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d pos=(%d,%d,%d) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' on_death='%s'",
+			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d spawned=%d runtimeState=%d pos=(%d,%d,%d) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
+			monster.runtimeSpawned, monster.runtimeState,
 			monster.posX, monster.posY, monster.posZ, monster.facing,
 			monster.currentHitPoints, monster.initialHitPoints,
 			monster.damageAmount, monster.engageDistance, Player::describeCombatDamageType(monster.damageType),
@@ -2636,6 +2645,14 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool changed = runtimeMonster->active != active || runtimeMonster->visible != visible;
 			runtimeMonster->active = active;
 			runtimeMonster->visible = active ? true : visible;
+			if (active) {
+				runtimeMonster->runtimeSpawned = false;
+				runtimeMonster->runtimeState = -1;
+			}
+			if (!runtimeMonster->visible) {
+				runtimeMonster->runtimeSpawned = false;
+				runtimeMonster->runtimeState = -1;
+			}
 			if (active && runtimeMonster->currentHitPoints <= 0)
 				runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 			noteMutation(changed);
@@ -2742,6 +2759,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
 					runtimeMonster->active = true;
 					runtimeMonster->visible = true;
+					runtimeMonster->runtimeSpawned = false;
+					runtimeMonster->runtimeState = -1;
 					if (runtimeMonster->currentHitPoints <= 0)
 						runtimeMonster->currentHitPoints = runtimeMonster->initialHitPoints;
 				} else {
