@@ -1026,6 +1026,33 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				lhs.runtimeState == rhs.runtimeState &&
 				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 		};
+		auto sameSceneObjectState = [&](const StartupObjectRecord &lhs, const StartupObjectRecord &rhs) {
+			return lhs.currentX == rhs.currentX &&
+				lhs.currentY == rhs.currentY &&
+				lhs.currentZ == rhs.currentZ &&
+				lhs.zExtent == rhs.zExtent &&
+				lhs.operatable == rhs.operatable &&
+				lhs.visible == rhs.visible &&
+				lhs.runtimeVisible == rhs.runtimeVisible &&
+				lhs.actionTag.equalsIgnoreCase(rhs.actionTag) &&
+				lhs.identTextKey.equalsIgnoreCase(rhs.identTextKey) &&
+				lhs.interactionLabel.equalsIgnoreCase(rhs.interactionLabel) &&
+				lhs.currentOwnerOrRoom.equalsIgnoreCase(rhs.currentOwnerOrRoom) &&
+				resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(resolveSceneObjectSpritePathLocal(rhs)) &&
+				sameRect(getSceneObjectBounds(lhs), getSceneObjectBounds(rhs));
+		};
+		auto sameSceneRegionState = [&](const StartupRegionRecord &lhs, const StartupRegionRecord &rhs) {
+			return lhs.left == rhs.left &&
+				lhs.top == rhs.top &&
+				lhs.right == rhs.right &&
+				lhs.bottom == rhs.bottom &&
+				lhs.minZ == rhs.minZ &&
+				lhs.maxZ == rhs.maxZ &&
+				lhs.startEnabled == rhs.startEnabled &&
+				lhs.cursorEnabled == rhs.cursorEnabled &&
+				lhs.desiredFacing == rhs.desiredFacing &&
+				lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
+		};
 		auto applyRoomNpcPlacement = [&](RuntimeEntity &entity, const StartupNpcRecord &npc) {
 			int width = 0;
 			int height = 0;
@@ -1276,18 +1303,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			}
 			for (const StartupObjectRecord &object : updatedScene.sceneObjects) {
 				const StartupObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
-				const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
-				const Common::Rect bounds = getSceneObjectBounds(object);
-				const bool changed = !previous ||
-					previous->currentX != object.currentX ||
-					previous->currentY != object.currentY ||
-					previous->currentZ != object.currentZ ||
-					previous->zExtent != object.zExtent ||
-					previous->operatable != object.operatable ||
-					!previous->actionTag.equalsIgnoreCase(object.actionTag) ||
-					!previous->identTextKey.equalsIgnoreCase(object.identTextKey) ||
-					!resolveSceneObjectSpritePathLocal(*previous).equalsIgnoreCase(spritePath) ||
-					!sameRect(getSceneObjectBounds(*previous), bounds);
+				const bool changed = !previous || !sameSceneObjectState(*previous, object);
 				if (!changed)
 					continue;
 
@@ -1302,14 +1318,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			for (const StartupRegionRecord &region : updatedScene.sceneRegions) {
 				const StartupRegionRecord *previous =
 					findSceneRegionByName(scene.sceneRegions, region.regionName);
-				const bool changed = !previous ||
-					previous->left != region.left ||
-					previous->top != region.top ||
-					previous->right != region.right ||
-					previous->bottom != region.bottom ||
-					previous->minZ != region.minZ ||
-					previous->maxZ != region.maxZ ||
-					previous->cursorEnabled != region.cursorEnabled;
+				const bool changed = !previous || !sameSceneRegionState(*previous, region);
 				if (!changed)
 					continue;
 
