@@ -474,6 +474,15 @@ DialogueSystem::~DialogueSystem() {
 		delete _npcHandlers[i];
 }
 
+bool DialogueSystem::hasRoomNpcHandler(const Common::String &npcName) const {
+	for (uint i = 0; i < _npcHandlers.size(); ++i) {
+		if (_npcHandlers[i]->matchesNpc(npcName))
+			return true;
+	}
+
+	return false;
+}
+
 void DialogueSystem::registerNpcHandlers() {
 	_npcHandlers.push_back(new AuthorityDialogueHandler());
 	_npcHandlers.push_back(new BeggarDialogueHandler());
@@ -561,6 +570,19 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
 		return Common::kReadingFailed;
+	if (!hasRoomNpcHandler(npc.npcName)) {
+		debugC(1, kDebugDialogue,
+			"Harvester: blocked room NPC dialogue npc='%s' reason='no handler'",
+			npc.npcName.c_str());
+		return Common::kNoError;
+	}
+	if (!startupScript->isNamedNpcDeathTypeClear(npc.npcName)) {
+		const StartupNpcRecord *runtimeNpc = startupScript->findRuntimeNpcRecord(npc.npcName);
+		debugC(1, kDebugDialogue,
+			"Harvester: blocked room NPC dialogue npc='%s' reason='death queued' damage_type=%d",
+			npc.npcName.c_str(), runtimeNpc ? runtimeNpc->deathDamageType : -1);
+		return Common::kNoError;
+	}
 
 	const CftFontResource *subtitleFontResource = findStartupFontByName(_engine, "TEXTFONT");
 	const CftFontResource *menuFontResource = findStartupFontByName(_engine, "TEXTFNT2");

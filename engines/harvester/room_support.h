@@ -39,6 +39,7 @@ class HarvesterEngine;
 class ResourceManager;
 class RuntimeEntity;
 class Art;
+class DialogueSystem;
 struct IndexedBitmap;
 
 struct StartupRoomSceneResources {
@@ -129,7 +130,7 @@ StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const Start
 	const Common::Array<StartupObjectRecord> &sceneObjects,
 	const Common::Array<StartupNpcRecord> &npcs,
 	const Common::Array<StartupRegionRecord> &regions,
-	const Common::Point &mousePos);
+	const Common::Point &mousePos, const DialogueSystem *dialogue = nullptr);
 void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
 	const Common::String &entranceName, Common::Point &mousePos);
 

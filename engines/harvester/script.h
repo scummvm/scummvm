@@ -393,7 +393,8 @@ public:
 	bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
 		bool visible);
 	bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
-	bool triggerRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
+	bool queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
+	bool finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
 	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }

@@ -46,6 +46,7 @@ public:
 	DialogueSystem(HarvesterEngine &engine, Common::Point &mousePos);
 	~DialogueSystem();
 
+	bool hasRoomNpcHandler(const Common::String &npcName) const;
 	void resetRoomNpcDialogueState();
 	void syncRuntimeSaveState(Common::Serializer &s);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

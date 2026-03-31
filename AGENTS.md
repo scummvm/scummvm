@@ -511,6 +511,7 @@ Track data flow carefully.
 Rename only with high confidence.
 Record only confirmed architecture.
 Record the last confirmed action we completed, and the next suggested action in TRACKER.md
-Record high level progress indicator that summarizes how many total functions are in Ghidra, and how want are still not renamed (ex: FUN_*) in TRACKER.md
+Record high level progress indicator that summarizes how many total functions are in Ghidra, and how many are still not renamed (ex: FUN_*) in TRACKER.md
+Ensure TRACKER.md only contains the *last* action take and the *next suggested* action
 
 Never guess.

@@ -313,7 +313,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto queueNpcDeathOrMonsterfyTransition = [&](const char *npcName) {
 		StartupInteractionResult interaction;
-		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(npcName))
+		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(npcName))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};

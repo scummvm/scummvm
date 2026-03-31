@@ -53,7 +53,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto queueDarkWomanDeathOrMonsterfyTransition = [&]() {
 		StartupInteractionResult interaction;
-		if (runtime.startupScript().triggerRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc))
+		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
