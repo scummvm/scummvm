@@ -45,6 +45,10 @@ public:
 		int targetX, float targetZ);
 	static void setMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, int targetX, int targetBottomY);
+	static bool resolveBlockedStartupSpawn(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState);
 	static int resolveRegionTargetX(const StartupRegionRecord &region,
 		const StartupRoomPlayerState &playerState);
 	static float resolveRegionTargetZ(const StartupRegionRecord &region);

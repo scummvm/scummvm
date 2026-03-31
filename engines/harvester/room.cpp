@@ -754,10 +754,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			(void)_engine.playStartupMusic(scene.state.musicPath);
 		StartupRoomPlayerState playerState;
 		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
-		playerState.centerX = state.playerSpawnX;
-		playerState.bottomY = state.playerSpawnY;
-		playerState.z = (float)state.playerSpawnZ;
-		playerState.facing = state.playerFacing;
+		playerState.centerX = scene.state.playerSpawnX;
+		playerState.bottomY = scene.state.playerSpawnY;
+		playerState.z = (float)scene.state.playerSpawnZ;
+		playerState.facing = scene.state.playerFacing;
 		playerState.combatLoadout =
 			_engine.getStartupScript() ? _engine.getStartupScript()->getPlayerCombatLoadout() : 0;
 		playerState.turnActive = false;

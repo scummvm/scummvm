@@ -68,7 +68,7 @@ private:
 	Common::Error runRoomLoop(const Common::String &entranceName);
 	Common::Error resolveRoomTransitionTarget(const Common::String &targetName, Common::String &resolvedTargetName);
 	bool ensureCursorEntity();
-	bool populateRoomSceneEntities(const StartupRoomSetupState &state,
+	bool populateRoomSceneEntities(StartupRoomSetupState &state,
 		const Common::Array<StartupObjectRecord> &drawableObjects,
 		const Common::Array<StartupAnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
