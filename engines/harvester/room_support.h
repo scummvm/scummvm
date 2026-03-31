@@ -37,22 +37,22 @@ namespace Harvester {
 
 class HarvesterEngine;
 class ResourceManager;
-class RuntimeEntity;
+class Entity;
 class Art;
 class DialogueSystem;
 struct IndexedBitmap;
 
-struct StartupRoomSceneResources {
-	StartupRoomSetupState state;
+struct RoomSceneResources {
+	RoomSetupState state;
 	byte palette[256 * 3] = { 0 };
-	Common::Array<StartupObjectRecord> sceneObjects;
-	Common::Array<StartupAnimRecord> sceneAnimations;
-	Common::Array<StartupRegionRecord> sceneRegions;
+	Common::Array<ObjectRecord> sceneObjects;
+	Common::Array<AnimRecord> sceneAnimations;
+	Common::Array<RegionRecord> sceneRegions;
 	float targetPaletteBrightness = 1.0f;
 };
 
-struct StartupRoomPlayerState {
-	RuntimeEntity *entity = nullptr;
+struct RoomPlayerState {
+	Entity *entity = nullptr;
 	int centerX = 0;
 	int bottomY = 0;
 	float z = 0.0f;
@@ -93,17 +93,17 @@ struct StartupRoomPlayerState {
 	int deathDamageType = 0;
 };
 
-struct StartupRoomHoverState {
-	const StartupObjectRecord *object = nullptr;
-	const StartupNpcRecord *npc = nullptr;
-	const StartupRegionRecord *region = nullptr;
-	const RuntimeEntity *playerEntity = nullptr;
+struct RoomHoverState {
+	const ObjectRecord *object = nullptr;
+	const NpcRecord *npc = nullptr;
+	const RegionRecord *region = nullptr;
+	const Entity *playerEntity = nullptr;
 	Common::String promptText;
 	int cursorSequence = 7;
 };
 
-struct StartupRoomIdleAnimationState {
-	RuntimeEntity *entity = nullptr;
+struct RoomIdleAnimationState {
+	Entity *entity = nullptr;
 	int restoreFacing = -1;
 	uint32 activityTick = 0;
 	uint32 resetTick = 0;
@@ -113,34 +113,34 @@ struct StartupRoomIdleAnimationState {
 	bool exiting = false;
 };
 
-bool applyRoomActorPlacement(const StartupRoomSetupState &state, RuntimeEntity &entity,
+bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
 	int centerX, int bottomY, float z, const Common::String *entranceName = nullptr);
-void logScenePaletteSummary(const char *label, const StartupRoomSceneResources &scene, float brightness);
+void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
-Common::Rect getRoomObjectHotspotBounds(const StartupObjectRecord &object);
-bool loadRoomSceneResources(const StartupRoomSetupState &state, ResourceManager &resources, StartupRoomSceneResources &scene);
+Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
+bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, RoomSceneResources &scene);
 bool shouldRunStartupRoomProbe();
-void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const StartupRoomSceneResources &scene,
+void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const RoomSceneResources &scene,
 	float brightness);
-const StartupObjectRecord *findSceneObjectByName(const Common::Array<StartupObjectRecord> &objects,
+const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,
 	const Common::String &objectName);
-const StartupRegionRecord *findSceneRegionByName(const Common::Array<StartupRegionRecord> &regions,
+const RegionRecord *findSceneRegionByName(const Common::Array<RegionRecord> &regions,
 	const Common::String &regionName);
-StartupObjectRecord *findSceneObjectByName(Common::Array<StartupObjectRecord> &objects,
+ObjectRecord *findSceneObjectByName(Common::Array<ObjectRecord> &objects,
 	const Common::String &objectName);
-const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const StartupResolvedText &text);
+const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const ResolvedText &text);
 void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
-	const StartupResolvedText &inspectText, bool useNativeFont);
-bool unlocksRoomObjectInteractionAfterInitialExamine(const StartupObjectRecord &object,
+	const ResolvedText &inspectText, bool useNativeFont);
+bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
 	Script &startupScript);
-bool doesPlayerFacingMatchRegion(int playerFacing, const StartupRegionRecord &region);
-bool doesPlayerOverlapRegion(const RuntimeEntity &playerEntity, const StartupRegionRecord &region);
-StartupRoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const StartupRoomSetupState &state,
-	const Common::Array<StartupObjectRecord> &sceneObjects,
-	const Common::Array<StartupNpcRecord> &npcs,
-	const Common::Array<StartupRegionRecord> &regions,
+bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region);
+bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &region);
+RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,
+	const Common::Array<ObjectRecord> &sceneObjects,
+	const Common::Array<NpcRecord> &npcs,
+	const Common::Array<RegionRecord> &regions,
 	const Common::Point &mousePos, const DialogueSystem *dialogue = nullptr);
-void logStartupRoomProbe(HarvesterEngine &engine, const StartupRoomSceneResources &scene,
+void logStartupRoomProbe(HarvesterEngine &engine, const RoomSceneResources &scene,
 	const Common::String &entranceName, Common::Point &mousePos);
 
 } // End of namespace Harvester

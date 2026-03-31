@@ -45,8 +45,8 @@ public:
 	typedef std::function<void(Common::String &, int &, int, const char *)> AssignTopicBufferFn;
 	typedef std::function<bool(const Common::String &, int)> MatchesResponseLineFn;
 	typedef std::function<bool(const Common::String &, const int *, uint)> MatchesAnyResponseLineFn;
-	typedef std::function<void(const StartupInteractionResult &)> QueueDialogueInteractionIfNeededFn;
-	typedef std::function<void(StartupInteractionResult &)> ApplyImmediateDialogueInteractionEffectsFn;
+	typedef std::function<void(const InteractionResult &)> QueueDialogueInteractionIfNeededFn;
+	typedef std::function<void(InteractionResult &)> ApplyImmediateDialogueInteractionEffectsFn;
 	typedef std::function<int(int)> GetRandomNumberFn;
 	typedef std::function<void(const Common::String &, int)> SetActiveSpeakerPortraitFn;
 
@@ -133,10 +133,10 @@ public:
 	}
 	bool lastKeywordSelectionWasTypedInput() const { return _lastKeywordSelection.fromTypedInput; }
 	bool lastKeywordSelectionWasGenericBye() const { return _lastKeywordSelection.fromGenericBye; }
-	void queueDialogueInteractionIfNeeded(const StartupInteractionResult &interaction) const {
+	void queueDialogueInteractionIfNeeded(const InteractionResult &interaction) const {
 		_queueDialogueInteractionIfNeeded(interaction);
 	}
-	void applyImmediateDialogueInteractionEffects(StartupInteractionResult &interaction) const {
+	void applyImmediateDialogueInteractionEffects(InteractionResult &interaction) const {
 		_applyImmediateDialogueInteractionEffects(interaction);
 	}
 	int getRandomNumber(int maxValue) const { return _getRandomNumber(maxValue); }

@@ -85,7 +85,7 @@ Common::Error KarinDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueEntrySequence(lines, count);
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!runtime.startupScript().executeActionTag(tag, interaction))
 			return;
 

@@ -73,9 +73,9 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueEntrySequence(lines, count);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
+		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+		for (const ObjectRecord &inventoryObject : inventoryObjects) {
 			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
 				return true;
 		}
@@ -90,7 +90,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		resetAndSetObjectVisible(kRahRoomName, objectName, visible);
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag) -> Common::Error {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!runtime.startupScript().executeActionTag(actionTag, interaction))
 			return Common::kNoError;
 
@@ -99,7 +99,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 	};
 	auto queueNpcSlashTransition = [&](const char *npcName) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 				npcName, kSlashDeathDamageType)) {
 			interaction.mutatedRuntimeState = true;
@@ -182,7 +182,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return lineError;
 
 		// Native prompt_for_cdrom_disc_change(3, 0) latches a main-loop room rebuild.
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		interaction.requestRoomRestart = true;
 		interaction.roomRestartTargetName = "START";
 		runtime.queueDialogueInteractionIfNeeded(interaction);

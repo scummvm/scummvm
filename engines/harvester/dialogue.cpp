@@ -430,7 +430,7 @@ static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String
 		return false;
 
 	const Common::String headId = buildDialogueHeadId(speakerId, headVariant);
-	const StartupHeadRecord *head = startupScript->findHeadRecord(headId);
+	const HeadRecord *head = startupScript->findHeadRecord(headId);
 	if (!head)
 		return false;
 
@@ -553,7 +553,7 @@ void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 }
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName,
+		float paletteBrightness, const NpcRecord &npc, const Common::String &usedItemName,
 		Flow &startupFlow) {
 	struct DialogueResponseOptionLayout {
 		Common::String text;
@@ -566,7 +566,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	Script *startupScript = _engine.getStartupScript();
 	Text *startupText = _engine.getStartupText();
 	Art *startupArt = _engine.getStartupArt();
-	RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
 		return Common::kReadingFailed;
@@ -577,7 +577,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		return Common::kNoError;
 	}
 	if (!startupScript->isNamedNpcDeathTypeClear(npc.npcName)) {
-		const StartupNpcRecord *runtimeNpc = startupScript->findRuntimeNpcRecord(npc.npcName);
+		const NpcRecord *runtimeNpc = startupScript->findRuntimeNpcRecord(npc.npcName);
 		debugC(1, kDebugDialogue,
 			"Harvester: blocked room NPC dialogue npc='%s' reason='death queued' damage_type=%d",
 			npc.npcName.c_str(), runtimeNpc ? runtimeNpc->deathDamageType : -1);
@@ -1070,7 +1070,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		return Common::kNoError;
 	};
 
-	auto queueDialogueInteractionIfNeeded = [&](const StartupInteractionResult &interaction) {
+	auto queueDialogueInteractionIfNeeded = [&](const InteractionResult &interaction) {
 		if (interaction.abortRemainingCommandChain || interaction.mutatedRuntimeState ||
 				!interaction.musicPath.empty() || !interaction.nextRoomName.empty() ||
 				!interaction.cutscenePath.empty() ||
@@ -1087,7 +1087,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			startupFlow.queueDialogueInteraction(interaction);
 		}
 	};
-	auto applyImmediateDialogueInteractionEffects = [&](StartupInteractionResult &interaction) {
+	auto applyImmediateDialogueInteractionEffects = [&](InteractionResult &interaction) {
 		if (!interaction.musicPath.empty())
 			(void)_engine.playStartupMusic(interaction.musicPath);
 		if (!interaction.audioCommands.empty())

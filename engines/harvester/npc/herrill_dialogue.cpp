@@ -84,7 +84,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, kGrandMuckNpc, headVariant);
 	};
 	auto queueNpcSlashTransition = [&](const char *npcName) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 				npcName, kSlashDeathDamageType)) {
 			interaction.mutatedRuntimeState = true;
@@ -92,9 +92,9 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
+		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+		for (const ObjectRecord &inventoryObject : inventoryObjects) {
 			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
 				return true;
 		}

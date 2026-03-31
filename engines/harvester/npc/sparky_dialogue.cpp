@@ -58,7 +58,7 @@ Common::Error SparkyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, "PC", headVariant);
 	};
 	auto executeDialogueActionTag = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(tag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);

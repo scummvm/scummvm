@@ -86,7 +86,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		(void)startupScript.setRuntimeFlagValue("PC_HAS_GOOJF_CARD", true);
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!startupScript.executeActionTag(tag, interaction))
 			return;
 

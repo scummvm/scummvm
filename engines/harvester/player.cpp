@@ -276,14 +276,14 @@ static bool playPlayerHitSound(HarvesterEngine &engine) {
 	return engine.playStartupSound(kPlayerHitSoundPaths[soundIndex]);
 }
 
-static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
+static bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
 	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
 		return false;
 
 	return (uint)lastFrame < entity.getFrameCount();
 }
 
-static bool choosePlayerDeathAnimationRange(const RuntimeEntity &entity, int firstFrame, int lastFrame,
+static bool choosePlayerDeathAnimationRange(const Entity &entity, int firstFrame, int lastFrame,
 		PlayerDeathAnimationRange &range) {
 	if (!runtimeEntityHasFrameRange(entity, firstFrame, lastFrame))
 		return false;
@@ -292,7 +292,7 @@ static bool choosePlayerDeathAnimationRange(const RuntimeEntity &entity, int fir
 	return true;
 }
 
-static bool resolvePlayerDeathAnimationRange(const StartupRoomPlayerState &playerState,
+static bool resolvePlayerDeathAnimationRange(const RoomPlayerState &playerState,
 		int damageType, bool goreEnabled, PlayerDeathAnimationRange &range) {
 	if (!playerState.entity)
 		return false;
@@ -365,8 +365,8 @@ static bool resolvePlayerDeathAnimationRange(const StartupRoomPlayerState &playe
 	}
 }
 
-static bool resolvePlayerAttackAnimationRange(const StartupRoomSetupState &state,
-		const StartupRoomPlayerState &playerState, const Common::Point &mousePos,
+static bool resolvePlayerAttackAnimationRange(const RoomSetupState &state,
+		const RoomPlayerState &playerState, const Common::Point &mousePos,
 		PlayerAttackAnimationRange &range) {
 	if (!playerState.entity)
 		return false;
@@ -396,7 +396,7 @@ static bool resolvePlayerAttackAnimationRange(const StartupRoomSetupState &state
 	return true;
 }
 
-static bool resolveKeyboardAttackAnimationRange(const StartupRoomPlayerState &playerState,
+static bool resolveKeyboardAttackAnimationRange(const RoomPlayerState &playerState,
 		bool attackLeft, bool attackRight, bool attackUp, bool attackDown,
 		PlayerAttackAnimationRange &range) {
 	// Native update_player_combat_avatar_state uses scan-code 0x1d as the attack modifier:
@@ -436,7 +436,7 @@ static bool resolveKeyboardAttackAnimationRange(const StartupRoomPlayerState &pl
 	return false;
 }
 
-static bool resolvePlayerHitAnimationRange(const RuntimeEntity &entity,
+static bool resolvePlayerHitAnimationRange(const Entity &entity,
 		int monsterAttackFirstFrame, PlayerHitAnimationRange &range) {
 	PlayerHitAnimationRange candidate;
 	switch (monsterAttackFirstFrame) {
@@ -469,7 +469,7 @@ static bool resolvePlayerHitAnimationRange(const RuntimeEntity &entity,
 	return true;
 }
 
-static bool startResolvedAttackAnimation(StartupRoomPlayerState &playerState,
+static bool startResolvedAttackAnimation(RoomPlayerState &playerState,
 		const PlayerAttackAnimationRange &range) {
 	if (!playerState.entity || playerState.attackActive || playerState.hitActive)
 		return false;
@@ -499,14 +499,14 @@ static bool startResolvedAttackAnimation(StartupRoomPlayerState &playerState,
 	return true;
 }
 
-static int clampRoomMovementY(const StartupRoomSetupState &state, int screenY) {
+static int clampRoomMovementY(const RoomSetupState &state, int screenY) {
 	if (!Player::supportsMovementBand(state))
 		return screenY;
 
 	return CLIP<int>(screenY, state.roomMaxZScreenY, state.roomMinZScreenY);
 }
 
-static float mapRoomScreenYToDepth(const StartupRoomSetupState &state, int screenY) {
+static float mapRoomScreenYToDepth(const RoomSetupState &state, int screenY) {
 	if (!Player::supportsMovementBand(state))
 		return (float)state.playerSpawnZ;
 
@@ -520,7 +520,7 @@ static float mapRoomScreenYToDepth(const StartupRoomSetupState &state, int scree
 		(state.roomMinZScreenY - state.roomMaxZScreenY));
 }
 
-static float clampRoomDepth(const StartupRoomSetupState &state, float z) {
+static float clampRoomDepth(const RoomSetupState &state, float z) {
 	if (!Player::supportsMovementBand(state))
 		return z;
 
@@ -529,7 +529,7 @@ static float clampRoomDepth(const StartupRoomSetupState &state, float z) {
 		(float)MAX(state.roomMinZ, state.roomMaxZ));
 }
 
-static int mapRoomDepthToScreenY(const StartupRoomSetupState &state, float z) {
+static int mapRoomDepthToScreenY(const RoomSetupState &state, float z) {
 	if (!Player::supportsMovementBand(state))
 		return state.playerSpawnY;
 
@@ -551,22 +551,22 @@ static int resolveFacingFromMovementDelta(int dx, int dy) {
 	return 0;
 }
 
-static int resolveFacingFromRoomMovement(const StartupRoomSetupState &state,
+static int resolveFacingFromRoomMovement(const RoomSetupState &state,
 		int fromCenterX, float fromZ, int toCenterX, float toZ) {
 	return resolveFacingFromMovementDelta(
 		toCenterX - fromCenterX,
 		mapRoomDepthToScreenY(state, toZ) - mapRoomDepthToScreenY(state, fromZ));
 }
 
-static int computeRoomPlayerHorizontalStep(const StartupRoomSetupState &state, float z) {
+static int computeRoomPlayerHorizontalStep(const RoomSetupState &state, float z) {
 	return MAX<int>(1, roundToInt(Player::computeDepthScale(state, z) * kRoomPlayerHorizontalMoveBase));
 }
 
-static float computeRoomPlayerDepthStep(const StartupRoomSetupState &state) {
+static float computeRoomPlayerDepthStep(const RoomSetupState &state) {
 	return state.roomZVelocityStep > 0.0f ? state.roomZVelocityStep : 1.0f;
 }
 
-static int clampPlayerCenterXToNativeBounds(const StartupRoomPlayerState &playerState, int centerX) {
+static int clampPlayerCenterXToNativeBounds(const RoomPlayerState &playerState, int centerX) {
 	if (!playerState.entity)
 		return CLIP<int>(centerX, 0, 639);
 
@@ -587,7 +587,7 @@ static uint32 computeAnimationTickInterval(int rate) {
 	return rate > 0 ? MAX<uint32>(1, 100U / (uint32)rate) : 0;
 }
 
-static bool consumePlayerMovementTick(StartupRoomPlayerState &playerState) {
+static bool consumePlayerMovementTick(RoomPlayerState &playerState) {
 	if (playerState.entity &&
 			playerState.entity->isAnimationEnabled() &&
 			playerState.entity->getAnimationRate() != 0) {
@@ -628,20 +628,20 @@ static float stepTowardsFloat(float current, float target, float step) {
 }
 
 static bool doesPlayerOverlapRoomBlocker(HarvesterEngine &engine,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations, const RuntimeEntity &playerEntity) {
-	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations, const Entity &playerEntity) {
+	EntityManager *runtimeEntities = engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return false;
 
-	for (const StartupObjectRecord &object : sceneObjects) {
-		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(object.objectName);
+	for (const ObjectRecord &object : sceneObjects) {
+		const Entity *entity = runtimeEntities->findSceneEntityByName(object.objectName);
 		if (entity && playerEntity.overlapsEntity(*entity))
 			return true;
 	}
 
-	for (const StartupAnimRecord &anim : sceneAnimations) {
-		const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
+	for (const AnimRecord &anim : sceneAnimations) {
+		const Entity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
 		if (entity && playerEntity.overlapsEntity(*entity))
 			return true;
 	}
@@ -649,10 +649,10 @@ static bool doesPlayerOverlapRoomBlocker(HarvesterEngine &engine,
 	return false;
 }
 
-static bool isPlayerMovementBlocked(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
+static bool isPlayerMovementBlocked(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
 	if (!playerState.entity)
 		return true;
 
@@ -671,10 +671,10 @@ static bool isPlayerMovementBlocked(HarvesterEngine &engine, const StartupRoomSe
 	return blocked;
 }
 
-static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
+static bool tryApplyPlayerMovement(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState, int candidateCenterX, float candidateZ) {
 	if (!playerState.entity)
 		return false;
 
@@ -696,12 +696,12 @@ static bool tryApplyPlayerMovement(HarvesterEngine &engine, const StartupRoomSet
 		playerState.centerX, playerState.bottomY, playerState.z);
 }
 
-static void notePlayerIdleReset(StartupRoomIdleAnimationState &idleState) {
+static void notePlayerIdleReset(RoomIdleAnimationState &idleState) {
 	idleState.resetTick = Player::getRuntimeClockTicks();
 	Player::updateIdleTrigger(idleState);
 }
 
-static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int facing) {
+static bool setPlayerWalkAnimation(RoomPlayerState &playerState, int facing) {
 	if (!playerState.entity)
 		return false;
 
@@ -722,8 +722,8 @@ static bool setPlayerWalkAnimation(StartupRoomPlayerState &playerState, int faci
 	return true;
 }
 
-static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state,
-		const StartupRoomPlayerState &playerState, RuntimeEntity &idleEntity) {
+static void positionPlayerIdleAnimationEntity(const RoomSetupState &state,
+		const RoomPlayerState &playerState, Entity &idleEntity) {
 	if (!playerState.entity)
 		return;
 
@@ -733,13 +733,13 @@ static void positionPlayerIdleAnimationEntity(const StartupRoomSetupState &state
 		playerState.entity->getY() + kRoomPlayerIdleYOffset, playerState.z);
 }
 
-static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
-		const StartupRoomSetupState &state, const StartupRoomPlayerState &playerState,
-		StartupRoomIdleAnimationState &idleState) {
+static Entity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
+		const RoomSetupState &state, const RoomPlayerState &playerState,
+		RoomIdleAnimationState &idleState) {
 	if (idleState.entity || !playerState.entity)
 		return idleState.entity;
 
-	RuntimeEntityManager *runtimeEntities = engine.getRuntimeEntities();
+	EntityManager *runtimeEntities = engine.getRuntimeEntities();
 	if (!runtimeEntities)
 		return nullptr;
 
@@ -759,8 +759,8 @@ static RuntimeEntity *ensurePlayerIdleAnimationEntity(HarvesterEngine &engine,
 	return idleState.entity;
 }
 
-static bool finishPlayerIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-		StartupRoomIdleAnimationState &idleState) {
+static bool finishPlayerIdleAnimation(const RoomSetupState &state, RoomPlayerState &playerState,
+		RoomIdleAnimationState &idleState) {
 	if (!idleState.active)
 		return false;
 
@@ -789,7 +789,7 @@ static bool finishPlayerIdleAnimation(const StartupRoomSetupState &state, Startu
 
 } // End of anonymous namespace
 
-float Player::computeDepthScale(const StartupRoomSetupState &state, float z) {
+float Player::computeDepthScale(const RoomSetupState &state, float z) {
 	float scale = 1.0f;
 	if (state.roomPerspectiveScale != 0.0f) {
 		scale -= (z - (float)state.roomFullScaleZ) * state.roomPerspectiveScale;
@@ -855,7 +855,7 @@ bool Player::isProjectileCombatLoadout(int loadout) {
 	return resolveCombatLoadoutDamageType(loadout) == 4;
 }
 
-bool Player::supportsMovementBand(const StartupRoomSetupState &state) {
+bool Player::supportsMovementBand(const RoomSetupState &state) {
 	return state.roomMaxZScreenY >= 0 &&
 		state.roomMinZScreenY >= state.roomMaxZScreenY;
 }
@@ -884,11 +884,11 @@ bool Player::isIdleAnimationExcludedRoom(const Common::String &roomName) {
 	return false;
 }
 
-void Player::updateIdleTrigger(StartupRoomIdleAnimationState &idleState) {
+void Player::updateIdleTrigger(RoomIdleAnimationState &idleState) {
 	idleState.triggerTick = MAX(idleState.activityTick, idleState.resetTick) + kRoomPlayerIdleDelayTicks;
 }
 
-void Player::setMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+void Player::setMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	playerState.hasMoveTarget = true;
 	playerState.nextMovementTick = 0;
@@ -900,16 +900,16 @@ void Player::setMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayer
 		playerState.targetX, mapRoomDepthToScreenY(state, playerState.targetZ), (double)playerState.targetZ);
 }
 
-void Player::setMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, int targetX, int targetBottomY) {
+void Player::setMoveTargetFromScreenPoint(const RoomSetupState &state,
+		RoomPlayerState &playerState, int targetX, int targetBottomY) {
 	setMoveTarget(state, playerState, targetX,
 		mapRoomScreenYToDepth(state, clampRoomMovementY(state, targetBottomY)));
 }
 
-bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState) {
+bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState) {
 	if (!playerState.entity)
 		return false;
 
@@ -957,8 +957,8 @@ bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const StartupRo
 	return false;
 }
 
-int Player::resolveRegionTargetX(const StartupRegionRecord &region,
-		const StartupRoomPlayerState &playerState) {
+int Player::resolveRegionTargetX(const RegionRecord &region,
+		const RoomPlayerState &playerState) {
 	const Common::Rect bounds(region.left, region.top, region.right + 1, region.bottom + 1);
 	int targetX = bounds.left + bounds.width() / 2;
 	if (playerState.entity && targetX + kRoomRegionTargetXBias < playerState.entity->getScreenRect().right)
@@ -966,7 +966,7 @@ int Player::resolveRegionTargetX(const StartupRegionRecord &region,
 	return CLIP<int>(targetX, 0, 639);
 }
 
-float Player::resolveRegionTargetZ(const StartupRegionRecord &region) {
+float Player::resolveRegionTargetZ(const RegionRecord &region) {
 	if (region.desiredFacing == 0)
 		return (float)region.maxZ;
 	if (region.desiredFacing == 3)
@@ -975,8 +975,8 @@ float Player::resolveRegionTargetZ(const StartupRegionRecord &region) {
 	return (float)(region.minZ + (region.maxZ - region.minZ) / 2);
 }
 
-bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, int loadout) {
+bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const RoomSetupState &state,
+		RoomPlayerState &playerState, int loadout) {
 	if (!playerState.entity)
 		return false;
 
@@ -1022,7 +1022,7 @@ bool Player::syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomS
 	return true;
 }
 
-bool Player::setIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
+bool Player::setIdleAnimation(RoomPlayerState &playerState, int facing) {
 	if (!playerState.entity)
 		return false;
 
@@ -1043,8 +1043,8 @@ bool Player::setIdleAnimation(StartupRoomPlayerState &playerState, int facing) {
 	return changed;
 }
 
-bool Player::startAttackAnimation(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, const Common::Point &mousePos) {
+bool Player::startAttackAnimation(const RoomSetupState &state,
+		RoomPlayerState &playerState, const Common::Point &mousePos) {
 	PlayerAttackAnimationRange range;
 	if (!resolvePlayerAttackAnimationRange(state, playerState, mousePos, range))
 		return false;
@@ -1056,8 +1056,8 @@ bool Player::startAttackAnimation(const StartupRoomSetupState &state,
 	return true;
 }
 
-bool Player::startKeyboardAttackAnimation(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) {
+bool Player::startKeyboardAttackAnimation(const RoomSetupState &state,
+		RoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown) {
 	(void)state;
 
 	PlayerAttackAnimationRange range;
@@ -1073,7 +1073,7 @@ bool Player::startKeyboardAttackAnimation(const StartupRoomSetupState &state,
 }
 
 bool Player::updateAttackAnimationState(HarvesterEngine &engine,
-		StartupRoomPlayerState &playerState) {
+		RoomPlayerState &playerState) {
 	if (!playerState.attackActive || !playerState.entity)
 		return false;
 	if (!playerState.attackSoundPlayed &&
@@ -1101,7 +1101,7 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	return setIdleAnimation(playerState, resumeFacing);
 }
 
-bool Player::startHitAnimation(HarvesterEngine &engine, StartupRoomPlayerState &playerState,
+bool Player::startHitAnimation(HarvesterEngine &engine, RoomPlayerState &playerState,
 		int monsterAttackFirstFrame) {
 	if (!playerState.entity || playerState.deathActive)
 		return false;
@@ -1147,10 +1147,10 @@ bool Player::startHitAnimation(HarvesterEngine &engine, StartupRoomPlayerState &
 	return true;
 }
 
-bool Player::updateHitAnimationState(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState) {
+bool Player::updateHitAnimationState(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState) {
 	if (!playerState.hitActive || !playerState.entity)
 		return false;
 
@@ -1186,7 +1186,7 @@ bool Player::updateHitAnimationState(HarvesterEngine &engine, const StartupRoomS
 	return setIdleAnimation(playerState, resumeFacing) || changed;
 }
 
-bool Player::startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled) {
+bool Player::startDeathAnimation(RoomPlayerState &playerState, int damageType, bool goreEnabled) {
 	if (!playerState.entity || playerState.deathActive)
 		return false;
 
@@ -1232,7 +1232,7 @@ bool Player::startDeathAnimation(StartupRoomPlayerState &playerState, int damage
 	return true;
 }
 
-bool Player::updateDeathAnimationState(StartupRoomPlayerState &playerState) {
+bool Player::updateDeathAnimationState(RoomPlayerState &playerState) {
 	if (!playerState.deathActive || !playerState.entity)
 		return false;
 	if (playerState.entity->getCurrentFrame() < playerState.deathLastFrame)
@@ -1245,7 +1245,7 @@ bool Player::updateDeathAnimationState(StartupRoomPlayerState &playerState) {
 	return true;
 }
 
-bool Player::startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing) {
+bool Player::startTurnAnimation(RoomPlayerState &playerState, int targetFacing) {
 	if (!playerState.entity || playerState.hitActive ||
 			playerState.facing < 0 || playerState.facing == targetFacing)
 		return false;
@@ -1272,7 +1272,7 @@ bool Player::startTurnAnimation(StartupRoomPlayerState &playerState, int targetF
 	return true;
 }
 
-bool Player::updateTurnAnimationState(StartupRoomPlayerState &playerState) {
+bool Player::updateTurnAnimationState(RoomPlayerState &playerState) {
 	if (!playerState.turnActive || !playerState.entity)
 		return false;
 	if (playerState.entity->getCurrentFrame() != playerState.turnEndFrame)
@@ -1292,10 +1292,10 @@ bool Player::updateTurnAnimationState(StartupRoomPlayerState &playerState) {
 	return true;
 }
 
-bool Player::stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState) {
+bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState) {
 	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive || playerState.hitActive)
 		return false;
 
@@ -1350,10 +1350,10 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState
 	return true;
 }
 
-bool Player::stepKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
+bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown) {
 	if (!playerState.entity || !supportsMovementBand(state))
 		return false;
 
@@ -1426,8 +1426,8 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetu
 	return true;
 }
 
-bool Player::requestIdleAnimationExit(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
+bool Player::requestIdleAnimationExit(const RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState) {
 	if (!idleState.active || idleState.exiting || !idleState.entity)
 		return false;
 
@@ -1448,12 +1448,12 @@ bool Player::requestIdleAnimationExit(const StartupRoomSetupState &state,
 	return true;
 }
 
-bool Player::startIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
+bool Player::startIdleAnimation(HarvesterEngine &engine, const RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState) {
 	if (!playerState.entity || idleState.active || isIdleAnimationExcludedRoom(state.roomName))
 		return false;
 
-	RuntimeEntity *idleEntity = ensurePlayerIdleAnimationEntity(engine, state, playerState, idleState);
+	Entity *idleEntity = ensurePlayerIdleAnimationEntity(engine, state, playerState, idleState);
 	if (!idleEntity)
 		return false;
 
@@ -1479,8 +1479,8 @@ bool Player::startIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupS
 	return true;
 }
 
-bool Player::updateIdleAnimation(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState) {
+bool Player::updateIdleAnimation(const RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState) {
 	if (!idleState.active || !idleState.entity)
 		return false;
 

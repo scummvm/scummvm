@@ -52,7 +52,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, kDarkWomanNpc, headVariant);
 	};
 	auto queueDarkWomanDeathOrMonsterfyTransition = [&]() {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
@@ -80,7 +80,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 		const bool changed = runtime.startupScript().setRuntimeObjectVisible(
 			kInventoryOwnerName, kHandMirrorItemName, false);
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(kSetDarkWomanFlagActionTag, interaction)) {
 			interaction.mutatedRuntimeState |= changed;
 			runtime.applyImmediateDialogueInteractionEffects(interaction);

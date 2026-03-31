@@ -37,7 +37,7 @@ struct ADGameDescription;
 namespace Harvester {
 
 class ResourceManager;
-class RuntimeEntityManager;
+class EntityManager;
 class MediaManager;
 class Script;
 class Art;
@@ -77,7 +77,7 @@ public:
 
 	ResourceManager *getResources() const { return _resources; }
 	MediaManager *getMedia() const { return _media; }
-	RuntimeEntityManager *getRuntimeEntities() const;
+	EntityManager *getRuntimeEntities() const;
 	Graphics::Screen *getScreen() const;
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
@@ -99,7 +99,7 @@ public:
 	bool playStartupMusic(const Common::String &path);
 	void pauseStartupMusic(bool paused);
 	void stopStartupMusic();
-	bool executeStartupAudioCommand(const StartupAudioCommand &command);
+	bool executeStartupAudioCommand(const AudioCommand &command);
 	bool playStartupSound(const Common::String &path);
 	bool playStartupSingleSound(const Common::String &path);
 	void stopStartupSingleSound();
@@ -116,18 +116,18 @@ public:
 	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
 	bool toggleRoomDebugEnabled();
-	bool requestDebugCommand(const StartupCommandRecord &command);
+	bool requestDebugCommand(const CommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
 	void captureCurrentStartupSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath);
 	void clearCurrentStartupSaveRoomState();
 	bool hasCurrentStartupSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
-	const StartupSaveRoomState &getCurrentStartupSaveRoomState() const {
+	const SaveRoomState &getCurrentStartupSaveRoomState() const {
 		return _currentStartupSaveRoomState;
 	}
 	bool hasPendingLoadedStartupSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
-	const StartupSaveRoomState &getPendingLoadedStartupSaveRoomState() const {
+	const SaveRoomState &getPendingLoadedStartupSaveRoomState() const {
 		return _pendingLoadedStartupSaveRoomState;
 	}
 	int getPendingLoadedStartupDisc() const { return _pendingLoadedStartupDisc; }
@@ -148,8 +148,8 @@ private:
 	ResourceManager *_resources = nullptr;
 	MediaManager *_media = nullptr;
 	Script *_startupScript = nullptr;
-	StartupSaveRoomState _currentStartupSaveRoomState;
-	StartupSaveRoomState _pendingLoadedStartupSaveRoomState;
+	SaveRoomState _currentStartupSaveRoomState;
+	SaveRoomState _pendingLoadedStartupSaveRoomState;
 	int _pendingLoadedStartupDisc = 0;
 	Common::Array<byte> _pendingLoadedDialogueStateBlob;
 	uint32 _pendingLoadedDialogueStateBlobVersion = 0;

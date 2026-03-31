@@ -48,7 +48,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, kGladiatorNpc, headVariant);
 	};
 	auto queueGladiatorDeathOrMonsterfyTransition = [&]() {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kGladiatorNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
@@ -117,7 +117,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	StartupInteractionResult interaction;
+	InteractionResult interaction;
 	if (runtime.startupScript().executeActionTag(kStartMercyTimerActionTag, interaction)) {
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);

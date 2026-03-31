@@ -213,7 +213,7 @@ static Audio::SeekableAudioStream *openStartupAudioStream(ResourceManager &resou
 } // End of anonymous namespace
 
 MediaManager::MediaManager(ResourceManager &resources) : _resources(resources) {
-	_runtimeEntities = new RuntimeEntityManager(_resources);
+	_runtimeEntities = new EntityManager(_resources);
 }
 
 MediaManager::~MediaManager() {
@@ -321,7 +321,7 @@ void MediaManager::stopMusic() {
 	_musicPath.clear();
 }
 
-bool MediaManager::executeAudioCommand(const StartupAudioCommand &command) {
+bool MediaManager::executeAudioCommand(const AudioCommand &command) {
 	switch (command.type) {
 	case kStartupAudioCommandStartWav:
 		return playSound(command.path);

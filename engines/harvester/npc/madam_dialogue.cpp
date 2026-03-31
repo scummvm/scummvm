@@ -57,13 +57,13 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
 	};
 	auto queueHookerDeathOrMonsterfyTransition = [&]() {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kHookerNpc))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag, bool mutatedRuntimeState = false) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		interaction.mutatedRuntimeState = mutatedRuntimeState;
 		if (runtime.startupScript().executeActionTag(actionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);

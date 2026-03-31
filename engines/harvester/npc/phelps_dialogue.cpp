@@ -88,7 +88,7 @@ Common::Error PhelpsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	PhelpsRoomDialogueState &state = _state;
 
 	auto executeDialogueActionTag = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(tag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);

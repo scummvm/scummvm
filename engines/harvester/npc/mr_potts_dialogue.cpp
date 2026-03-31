@@ -304,7 +304,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.startupScript().isObjectInInventory(objectName);
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!runtime.startupScript().executeActionTag(tag, interaction))
 			return;
 
@@ -312,7 +312,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto queueNpcDeathOrMonsterfyTransition = [&](const char *npcName) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(npcName))
 			interaction.mutatedRuntimeState = true;
 		runtime.queueDialogueInteractionIfNeeded(interaction);

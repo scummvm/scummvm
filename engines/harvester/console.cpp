@@ -37,11 +37,11 @@ static Script *getActiveStartupScript() {
 	return g_engine ? g_engine->getStartupScript() : nullptr;
 }
 
-static const StartupCommandRecord *findCommandRecord(const Script &script, const Common::String &tag) {
+static const CommandRecord *findCommandRecord(const Script &script, const Common::String &tag) {
 	if (tag.empty())
 		return nullptr;
 
-	for (const StartupCommandRecord &command : script.getCommands()) {
+	for (const CommandRecord &command : script.getCommands()) {
 		if (command.triggerTag.equalsIgnoreCase(tag))
 			return &command;
 	}
@@ -49,11 +49,11 @@ static const StartupCommandRecord *findCommandRecord(const Script &script, const
 	return nullptr;
 }
 
-static const StartupExecListRecord *findExecListRecord(const Script &script, const Common::String &listName) {
+static const ExecListRecord *findExecListRecord(const Script &script, const Common::String &listName) {
 	if (listName.empty())
 		return nullptr;
 
-	for (const StartupExecListRecord &execList : script.getExecLists()) {
+	for (const ExecListRecord &execList : script.getExecLists()) {
 		if (execList.listName.equalsIgnoreCase(listName))
 			return &execList;
 	}
@@ -61,7 +61,7 @@ static const StartupExecListRecord *findExecListRecord(const Script &script, con
 	return nullptr;
 }
 
-static bool appendStartupAudioCommandLabel(const StartupCommandRecord &command, Common::String &label) {
+static bool appendStartupAudioCommandLabel(const CommandRecord &command, Common::String &label) {
 	if (command.opcodeName.equalsIgnoreCase("START_WAV")) {
 		label = Common::String::format("path='%s'", command.arg1.c_str());
 		return true;
@@ -121,7 +121,7 @@ static bool containsTagIgnoreCase(const Common::Array<Common::String> &tags, con
 	return false;
 }
 
-static Common::String buildCommandDetail(const StartupCommandRecord &command) {
+static Common::String buildCommandDetail(const CommandRecord &command) {
 	if (command.opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
 		return Common::String::format("flag='%s' true='%s' false='%s'",
 			command.arg1.c_str(), command.arg2.c_str(), command.arg3.c_str());
@@ -147,7 +147,7 @@ static Common::String buildCommandDetail(const StartupCommandRecord &command) {
 	return Common::String();
 }
 
-static bool isTerminalDebugCommand(const StartupCommandRecord &command) {
+static bool isTerminalDebugCommand(const CommandRecord &command) {
 	return command.opcodeName.equalsIgnoreCase("START_DIALOG") ||
 		command.opcodeName.equalsIgnoreCase("GOFLIC") ||
 		command.opcodeName.equalsIgnoreCase("GODEATHFLIC") ||
@@ -183,7 +183,7 @@ static void appendCommandChain(Common::Array<Common::String> &lines, bool &trunc
 	activeTags.push_back(tag);
 	--remainingSteps;
 
-	const StartupCommandRecord *command = findCommandRecord(script, tag);
+	const CommandRecord *command = findCommandRecord(script, tag);
 	if (!command) {
 		appendDebugActionLine(lines, truncated, depth,
 			Common::String::format("tag '%s': unresolved", tag.c_str()));
@@ -226,7 +226,7 @@ static void appendCommandChain(Common::Array<Common::String> &lines, bool &trunc
 	}
 
 	if (command->opcodeName.equalsIgnoreCase("EXEC_LIST")) {
-		const StartupExecListRecord *execList = findExecListRecord(script, command->arg1);
+		const ExecListRecord *execList = findExecListRecord(script, command->arg1);
 		if (!execList) {
 			appendDebugActionLine(lines, truncated, depth + 1,
 				Common::String::format("exec list '%s': unresolved", command->arg1.c_str()));
@@ -272,7 +272,7 @@ static void buildActionChainLines(const Script &script, const Common::String &ta
 static void collectSortedRoomNames(const Script &script, Common::Array<Common::String> &roomNames) {
 	roomNames.clear();
 
-	for (const StartupRoomRecord &room : script.getRooms()) {
+	for (const RoomRecord &room : script.getRooms()) {
 		if (room.roomName.empty())
 			continue;
 
@@ -297,7 +297,7 @@ static void collectSortedRoomNames(const Script &script, Common::Array<Common::S
 }
 
 static bool findRoomName(const Script &script, const Common::String &candidate, Common::String &roomName) {
-	for (const StartupRoomRecord &room : script.getRooms()) {
+	for (const RoomRecord &room : script.getRooms()) {
 		if (!room.roomName.equalsIgnoreCase(candidate))
 			continue;
 
@@ -313,9 +313,9 @@ static void printDebugCommandUsage(Console &console) {
 	console.debugPrintf("   or: DEBUG_COMMAND <opcode> [arg1] [arg2] [arg3] CHAIN <action_tag>\n");
 }
 
-static bool parseDebugCommandArgs(int argc, const char **argv, StartupCommandRecord &command,
+static bool parseDebugCommandArgs(int argc, const char **argv, CommandRecord &command,
 		Common::String &errorMessage) {
-	command = StartupCommandRecord();
+	command = CommandRecord();
 	if (argc < 2) {
 		errorMessage = "Missing opcode";
 		return false;
@@ -442,8 +442,8 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		return true;
 	}
 
-	const StartupSaveRoomState &roomState = g_engine->getCurrentStartupSaveRoomState();
-	StartupRoomSetupState materializedState;
+	const SaveRoomState &roomState = g_engine->getCurrentStartupSaveRoomState();
+	RoomSetupState materializedState;
 	if (!startupScript->materializeRoomState(roomState.entranceName, roomState.roomName,
 			materializedState, *resources)) {
 		debugPrintf("Unable to materialize room state for '%s'\n", roomState.roomName.c_str());
@@ -451,7 +451,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 	}
 
 	uint actionObjectCount = 0;
-	for (const StartupObjectRecord &object : materializedState.roomObjects) {
+	for (const ObjectRecord &object : materializedState.roomObjects) {
 		if (!object.actionTag.empty())
 			++actionObjectCount;
 	}
@@ -463,7 +463,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		return true;
 	}
 
-	for (const StartupObjectRecord &object : materializedState.roomObjects) {
+	for (const ObjectRecord &object : materializedState.roomObjects) {
 		if (object.actionTag.empty())
 			continue;
 
@@ -496,7 +496,7 @@ bool Console::Cmd_debugCommand(int argc, const char **argv) {
 		return true;
 	}
 
-	StartupCommandRecord command;
+	CommandRecord command;
 	Common::String errorMessage;
 	if (!parseDebugCommandArgs(argc, argv, command, errorMessage)) {
 		if (!errorMessage.empty())

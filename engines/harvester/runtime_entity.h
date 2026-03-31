@@ -61,7 +61,7 @@ enum RuntimeEntityAnchorMode {
 	kRuntimeEntityAnchorCentered = 1
 };
 
-class RuntimeEntity {
+class Entity {
 public:
 	bool loadBitmapResource(ResourceManager &resources, const Common::String &path);
 	bool loadAbmResource(ResourceManager &resources, const Common::String &path);
@@ -121,7 +121,7 @@ public:
 	bool tickVisualState(uint32 now);
 	void draw(Graphics::Screen &screen) const;
 	bool hitTest(const Common::Point &point) const;
-	bool overlapsEntity(const RuntimeEntity &other) const;
+	bool overlapsEntity(const Entity &other) const;
 	bool measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
 		uint32 &preservedPixels) const;
 
@@ -176,29 +176,29 @@ private:
 	bool _timerPaused = false;
 };
 
-class RuntimeEntityManager {
+class EntityManager {
 public:
-	explicit RuntimeEntityManager(ResourceManager &resources);
-	~RuntimeEntityManager();
+	explicit EntityManager(ResourceManager &resources);
+	~EntityManager();
 
 	void clear();
 	void clearSceneEntities();
-	RuntimeEntity *spawnAbmEntityFromResource(const Common::String &name, const Common::String &resourcePath,
+	Entity *spawnAbmEntityFromResource(const Common::String &name, const Common::String &resourcePath,
 		int classId, const Common::Point &position, float z, int animationRate, bool looping, bool pingPong);
-	RuntimeEntity *spawnBitmapEntityFromResource(const Common::String &name, const Common::String &resourcePath,
+	Entity *spawnBitmapEntityFromResource(const Common::String &name, const Common::String &resourcePath,
 		int classId, const Common::Point &position, float z);
-	RuntimeEntity *spawnCursorEntity(const Common::Point &position);
-	RuntimeEntity *spawnSceneBitmapEntity(const Common::String &name, const Common::String &resourcePath,
+	Entity *spawnCursorEntity(const Common::Point &position);
+	Entity *spawnSceneBitmapEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z);
-	RuntimeEntity *spawnSceneHotspotEntity(const Common::String &name, const Common::Rect &bounds, float z);
-	RuntimeEntity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
+	Entity *spawnSceneHotspotEntity(const Common::String &name, const Common::Rect &bounds, float z);
+	Entity *spawnSceneAnimationEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int animationRate, bool active, bool visible, bool looping,
 		bool playBackwards, bool pingPong, int initialFrame = -1);
-	RuntimeEntity *spawnSceneActorEntity(const Common::String &name, const Common::String &resourcePath,
+	Entity *spawnSceneActorEntity(const Common::String &name, const Common::String &resourcePath,
 		const Common::Point &position, float z, int initialFrame);
-	RuntimeEntity *spawnSceneTimerEntity(const Common::String &name, int initialValue, int currentValue,
+	Entity *spawnSceneTimerEntity(const Common::String &name, int initialValue, int currentValue,
 		bool enabled, bool looping, bool global);
-	RuntimeEntity *getCursorEntity() const { return _cursorEntity; }
+	Entity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();
 	void pauseTimerCountdowns();
@@ -208,21 +208,21 @@ public:
 	bool syncCursorEntityPosition(const Common::Point &position);
 	void drawSceneEntities(Graphics::Screen &screen) const;
 	void drawCursor(Graphics::Screen &screen) const;
-	const RuntimeEntity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
+	const Entity *findTopSceneEntityAt(const Common::Point &point, int classIdFilter = -1) const;
 	int findSceneEntityDrawIndexByName(const Common::String &name) const;
-	const RuntimeEntity *findSceneEntityByName(const Common::String &name) const;
-	RuntimeEntity *findSceneEntityByName(const Common::String &name);
-	RuntimeEntity *detachSceneEntityByName(const Common::String &name);
-	void adoptSceneEntity(RuntimeEntity *entity);
-	void reinsertSceneEntity(RuntimeEntity *entity);
+	const Entity *findSceneEntityByName(const Common::String &name) const;
+	Entity *findSceneEntityByName(const Common::String &name);
+	Entity *detachSceneEntityByName(const Common::String &name);
+	void adoptSceneEntity(Entity *entity);
+	void reinsertSceneEntity(Entity *entity);
 
 private:
-	void insertSceneEntity(RuntimeEntity *entity);
+	void insertSceneEntity(Entity *entity);
 
 	ResourceManager &_resources;
-	Common::Array<RuntimeEntity *> _sceneEntities;
+	Common::Array<Entity *> _sceneEntities;
 	Common::Array<Common::String> _expiredTimerNames;
-	RuntimeEntity *_cursorEntity = nullptr;
+	Entity *_cursorEntity = nullptr;
 	int _timerPauseDepth = 0;
 };
 

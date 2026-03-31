@@ -26,9 +26,9 @@
 
 namespace Harvester {
 
-class RuntimeEntity;
+class Entity;
 
-struct StartupMonsterRecord {
+struct MonsterRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
@@ -73,7 +73,7 @@ struct StartupMonsterRecord {
 class Monster {
 public:
 	static int resolveFacingFrame(int facing);
-	static void applyAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster);
+	static void applyAnimation(Entity &entity, const MonsterRecord &monster);
 };
 
 } // End of namespace Harvester
