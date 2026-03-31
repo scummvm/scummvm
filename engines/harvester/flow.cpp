@@ -595,7 +595,13 @@ static void logSceneObjectSelection(const char *decision, const char *source, co
 		object.actionTag.c_str(), detail.c_str());
 }
 
-static bool isBackgroundSceneObject(const StartupObjectRecord &object, const RuntimeEntity &entity) {
+static bool isBackgroundSceneObject(const StartupRoomSetupState &state,
+		const StartupObjectRecord &object, const RuntimeEntity &entity) {
+	if (!state.backgroundObjectName.empty() &&
+			object.objectName.equalsIgnoreCase(state.backgroundObjectName)) {
+		return true;
+	}
+
 	return object.initialX == 0 && object.initialY == 0 &&
 		entity.getBoundsWidth() == 640 && entity.getBoundsHeight() == 480;
 }
@@ -612,10 +618,12 @@ static bool isInteractiveSceneHotspot(const StartupObjectRecord &object, Script 
 	return startupScript->resolveObjectInspectText(object, inspectText);
 }
 
-static int resolveSceneObjectClass(const StartupObjectRecord &object, const RuntimeEntity *entity,
-		Script *startupScript) {
+static int resolveSceneObjectClass(const StartupRoomSetupState &state,
+		const StartupObjectRecord &object, const RuntimeEntity *entity, Script *startupScript) {
 	if (entity)
-		return isBackgroundSceneObject(object, *entity) ? kRuntimeEntityClassBackground : kRuntimeEntityClassObject;
+		return isBackgroundSceneObject(state, object, *entity)
+			? kRuntimeEntityClassBackground
+			: kRuntimeEntityClassObject;
 
 	return isInteractiveSceneHotspot(object, startupScript)
 		? kRuntimeEntityClassRectHotspot
@@ -1854,7 +1862,8 @@ bool Flow::populateRoomSceneEntities(StartupRoomSetupState &state,
 			continue;
 		}
 
-		entity->setClassId(resolveSceneObjectClass(object, entity->hasFrames() ? entity : nullptr, _engine.getStartupScript()));
+		entity->setClassId(resolveSceneObjectClass(
+			state, object, entity->hasFrames() ? entity : nullptr, _engine.getStartupScript()));
 		entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 		entity->setZExtent((float)object.zExtent);
 		const Common::Rect entityRect = entity->getScreenRect();

@@ -449,13 +449,21 @@ static bool loadBitmapDimensions(ResourceManager &resources, const Common::Strin
 	return true;
 }
 
-static bool isRoomBackgroundObject(const StartupObjectRecord &candidate, const StartupRoomRecord &room,
-		ResourceManager &resources) {
+static bool isRoomBackgroundSpriteCandidate(const StartupObjectRecord &candidate,
+		const StartupRoomRecord &room) {
 	if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room.roomName) ||
 			candidate.spritePath.empty() ||
 			candidate.initialX != 0 || candidate.initialY != 0) {
 		return false;
 	}
+
+	return true;
+}
+
+static bool isFullscreenRoomBackgroundObject(const StartupObjectRecord &candidate,
+		ResourceManager &resources) {
+	if (candidate.spritePath.empty())
+		return false;
 
 	uint32 width = 0;
 	uint32 height = 0;
@@ -2334,18 +2342,35 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 	state = StartupRoomSetupState();
 
 	const StartupObjectRecord *background = nullptr;
+	const StartupObjectRecord *backgroundFallback = nullptr;
+	bool usedBackgroundFallback = false;
 	for (const StartupObjectRecord &candidate : _runtimeObjects) {
-		if (isRoomBackgroundObject(candidate, room, resources)) {
+		if (!isRoomBackgroundSpriteCandidate(candidate, room))
+			continue;
+
+		if (!backgroundFallback)
+			backgroundFallback = &candidate;
+		if (isFullscreenRoomBackgroundObject(candidate, resources)) {
 			background = &candidate;
 			break;
 		}
 	}
+	if (!background && backgroundFallback) {
+		background = backgroundFallback;
+		usedBackgroundFallback = true;
+	}
 	if (!background) {
-		warning("Harvester: no fullscreen background object found for room '%s'", room.roomName.c_str());
+		warning("Harvester: no room background object found for room '%s'", room.roomName.c_str());
 		return false;
+	}
+	if (usedBackgroundFallback) {
+		debugC(1, kDebugRoom,
+			"Harvester: using origin room sprite as background room='%s' object='%s' sprite='%s'",
+			room.roomName.c_str(), background->objectName.c_str(), background->spritePath.c_str());
 	}
 
 	state.roomName = room.roomName;
+	state.backgroundObjectName = background->objectName;
 	state.palettePath = room.palettePath;
 	state.backgroundPath = background->spritePath;
 	state.roomMinZ = room.minZ;

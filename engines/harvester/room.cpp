@@ -1020,8 +1020,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		auto resolveSceneObjectClassLocal = [&](const StartupObjectRecord &object,
 				const RuntimeEntity *entity) {
 			if (entity) {
-				return object.initialX == 0 && object.initialY == 0 &&
-					entity->getBoundsWidth() == 640 && entity->getBoundsHeight() == 480
+				return ((!scene.state.backgroundObjectName.empty() &&
+						object.objectName.equalsIgnoreCase(scene.state.backgroundObjectName)) ||
+					(object.initialX == 0 && object.initialY == 0 &&
+						entity->getBoundsWidth() == 640 && entity->getBoundsHeight() == 480))
 					? kRuntimeEntityClassBackground
 					: kRuntimeEntityClassObject;
 			}
