@@ -975,6 +975,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			entity->setZExtent((float)MAX(0, region.maxZ - region.minZ));
 			if (!region.cursorEnabled)
 				entity->setHitTestMode(kRuntimeEntityHitTestNone);
+			debugC(1, kDebugRoom,
+				"Harvester: scene region spawned room='%s' region='%s' class=0x%x bounds=(%d,%d)-(%d,%d) z=[%d,%d] facing=%d cursor=%d action='%s'",
+				region.roomName.c_str(), region.regionName.c_str(), entity->getClassId(),
+				bounds.left, bounds.top, bounds.right, bounds.bottom,
+				region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 		};
 		auto findRoomAnimByNameConst = [](const Common::Array<StartupAnimRecord> &anims,
 				const Common::String &animName) -> const StartupAnimRecord * {
