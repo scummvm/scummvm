@@ -132,7 +132,7 @@ const IndexedBitmap *resolveInspectTextboxBitmap(const Art &art, const ResolvedT
 void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphics::Font &font,
 	const ResolvedText &inspectText, bool useNativeFont);
 bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
-	Script &startupScript);
+	Script &script);
 bool doesPlayerFacingMatchRegion(int playerFacing, const RegionRecord &region);
 bool doesPlayerOverlapRegion(const Entity &playerEntity, const RegionRecord &region);
 RoomHoverState resolveRoomHoverState(HarvesterEngine &engine, const RoomSetupState &state,

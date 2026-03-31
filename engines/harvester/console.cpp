@@ -430,8 +430,8 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		return true;
 	}
 
-	Script *startupScript = g_engine->getScript();
-	if (!startupScript || !g_engine->hasCurrentSaveRoomState()) {
+	Script *script = g_engine->getScript();
+	if (!script || !g_engine->hasCurrentSaveRoomState()) {
 		debugPrintf("DEBUG_ACTIONS is only available while a room is active\n");
 		return true;
 	}
@@ -444,7 +444,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 
 	const SaveRoomState &roomState = g_engine->getCurrentSaveRoomState();
 	RoomSetupState materializedState;
-	if (!startupScript->materializeRoomState(roomState.entranceName, roomState.roomName,
+	if (!script->materializeRoomState(roomState.entranceName, roomState.roomName,
 			materializedState, *resources)) {
 		debugPrintf("Unable to materialize room state for '%s'\n", roomState.roomName.c_str());
 		return true;
@@ -467,7 +467,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		if (object.actionTag.empty())
 			continue;
 
-		const Common::String label = startupScript->resolveObjectLabel(object);
+		const Common::String label = script->resolveObjectLabel(object);
 		Common::String objectLine = Common::String::format(
 			"Object '%s' owner='%s' visible=%d runtimeVisible=%d operatable=%d action='%s'",
 			object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
@@ -477,7 +477,7 @@ bool Console::Cmd_debugActions(int argc, const char **argv) {
 		debugPrintf("%s\n", objectLine.c_str());
 
 		Common::Array<Common::String> chainLines;
-		buildActionChainLines(*startupScript, object.actionTag, chainLines);
+		buildActionChainLines(*script, object.actionTag, chainLines);
 		for (const Common::String &line : chainLines)
 			debugPrintf("%s\n", line.c_str());
 	}
@@ -525,14 +525,14 @@ bool Console::Cmd_gotoRoom(int argc, const char **argv) {
 		return true;
 	}
 
-	Script *startupScript = getActiveStartupScript();
-	if (!startupScript) {
+	Script *script = getActiveStartupScript();
+	if (!script) {
 		debugPrintf("Harvester engine is not active\n");
 		return true;
 	}
 
 	Common::Array<Common::String> roomNames;
-	collectSortedRoomNames(*startupScript, roomNames);
+	collectSortedRoomNames(*script, roomNames);
 	if (roomNames.empty()) {
 		debugPrintf("No rooms were found in HARVEST.SCR\n");
 		return true;
@@ -551,7 +551,7 @@ bool Console::Cmd_gotoRoom(int argc, const char **argv) {
 	}
 
 	Common::String roomName;
-	if (!findRoomName(*startupScript, argv[1], roomName)) {
+	if (!findRoomName(*script, argv[1], roomName)) {
 		debugPrintf("Unknown room target '%s'\n", argv[1]);
 		return true;
 	}

@@ -173,11 +173,11 @@ static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &
 }
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *startupText = engine.getText();
-	if (!startupText || !fontName)
+	const Text *text = engine.getText();
+	if (!text || !fontName)
 		return nullptr;
 
-	for (const CftFontResource &font : startupText->getFonts()) {
+	for (const CftFontResource &font : text->getFonts()) {
 		if (font.name.equalsIgnoreCase(fontName))
 			return &font;
 	}
@@ -424,24 +424,24 @@ static Common::String buildDialogueHeadId(const Common::String &speakerId, int h
 
 static bool loadDialogueHeadBitmap(HarvesterEngine &engine, const Common::String &speakerId, int headVariant,
 		IndexedBitmap &bitmap) {
-	Script *startupScript = engine.getScript();
+	Script *script = engine.getScript();
 	ResourceManager *resources = engine.getResources();
-	if (!startupScript || !resources || speakerId.empty())
+	if (!script || !resources || speakerId.empty())
 		return false;
 
 	const Common::String headId = buildDialogueHeadId(speakerId, headVariant);
-	const HeadRecord *head = startupScript->findHeadRecord(headId);
+	const HeadRecord *head = script->findHeadRecord(headId);
 	if (!head)
 		return false;
 
 	return loadBitmapResource(*resources, head->portraitPath + ".BM", bitmap);
 }
 
-static Common::String buildDialogueVoicePath(const Script &startupScript, int wavId) {
+static Common::String buildDialogueVoicePath(const Script &script, int wavId) {
 	if (wavId <= 0)
 		return Common::String();
 
-	return Common::String::format("%s%d.CMP", startupScript.getVoicePath().c_str(), wavId);
+	return Common::String::format("%s%d.CMP", script.getVoicePath().c_str(), wavId);
 }
 
 static int getDialogueMenuItemAt(const Graphics::Font &font, uint itemCount, const Common::Point &mousePos) {
@@ -554,7 +554,7 @@ void DialogueSystem::syncRuntimeSaveState(Common::Serializer &s) {
 
 Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, const NpcRecord &npc, const Common::String &usedItemName,
-		Flow &startupFlow) {
+		Flow &flow) {
 	struct DialogueResponseOptionLayout {
 		Common::String text;
 		Common::Array<Common::String> wrappedLines;
@@ -563,12 +563,12 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 
 	Graphics::Screen *screen = _engine.getScreen();
-	Script *startupScript = _engine.getScript();
-	Text *startupText = _engine.getText();
-	Art *startupArt = _engine.getArt();
-	EntityManager *runtimeEntities = _engine.getRuntimeEntities();
+	Script *script = _engine.getScript();
+	Text *text = _engine.getText();
+	Art *art = _engine.getArt();
+	EntityManager *entityManager = _engine.getRuntimeEntities();
 	const Graphics::Font *fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	if (!screen || !startupScript || !startupText || !startupArt || !fallbackFont || !backdrop.isValid())
+	if (!screen || !script || !text || !art || !fallbackFont || !backdrop.isValid())
 		return Common::kReadingFailed;
 	if (!hasRoomNpcHandler(npc.npcName)) {
 		debugC(1, kDebugDialogue,
@@ -576,8 +576,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			npc.npcName.c_str());
 		return Common::kNoError;
 	}
-	if (!startupScript->isNamedNpcDeathTypeClear(npc.npcName)) {
-		const NpcRecord *runtimeNpc = startupScript->findRuntimeNpcRecord(npc.npcName);
+	if (!script->isNamedNpcDeathTypeClear(npc.npcName)) {
+		const NpcRecord *runtimeNpc = script->findRuntimeNpcRecord(npc.npcName);
 		debugC(1, kDebugDialogue,
 			"Harvester: blocked room NPC dialogue npc='%s' reason='death queued' damage_type=%d",
 			npc.npcName.c_str(), runtimeNpc ? runtimeNpc->deathDamageType : -1);
@@ -610,7 +610,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	if (!loadBitmapResource(*_engine.getResources(), kDialogueKeywordBitmapPath, keywordBitmap))
 		return Common::kReadingFailed;
 
-	Common::String genericByeTopic = startupText->getDialogueResponseLine(kDialogueGenericByeResponseIndex);
+	Common::String genericByeTopic = text->getDialogueResponseLine(kDialogueGenericByeResponseIndex);
 	if (genericByeTopic.empty())
 		genericByeTopic = "BYE";
 
@@ -635,12 +635,12 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return result;
 			}
 
-			if (runtimeEntities)
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (entityManager)
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
@@ -747,8 +747,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				kDialogueKeywordTextWidth - 30, kTextColorNormal);
 		}
 
-		if (runtimeEntities)
-			runtimeEntities->drawCursor(*activeScreen);
+		if (entityManager)
+			entityManager->drawCursor(*activeScreen);
 		activeScreen->makeAllDirty();
 		activeScreen->update();
 	};
@@ -757,17 +757,17 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 		setActiveSpeakerPortrait(speakerId, headVariant);
 
 		Common::String subtitleText;
-		const bool textEnabled = startupScript->getDialogueTextMode() != kStartupDialogueTextNone &&
-			startupText->resolveDialogueSubtitle(wavId, subtitleText);
+		const bool textEnabled = script->getDialogueTextMode() != kStartupDialogueTextNone &&
+			text->resolveDialogueSubtitle(wavId, subtitleText);
 		Common::Array<Common::String> subtitleLines;
 		const IndexedBitmap *textboxBitmap = nullptr;
 		if (textEnabled) {
 			wrapDialogueTextLikeNative(*subtitleFont, subtitleFontUsesCft,
 				subtitleText, kDialogueSubtitleTextWidth, subtitleLines);
-			textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueTextboxIndex(subtitleLines.size()));
+			textboxBitmap = art->getTextboxBitmap(resolveDialogueTextboxIndex(subtitleLines.size()));
 		}
 
-		const Common::String voicePath = buildDialogueVoicePath(*startupScript, wavId);
+		const Common::String voicePath = buildDialogueVoicePath(*script, wavId);
 		const bool voiceStarted = !voicePath.empty() && _engine.playSpeech(voicePath);
 		debugC(2, kDebugDialogue,
 			"Harvester: dialogue line wav=0x%x speaker='%s' headVariant=%d voice='%s' subtitle='%s'",
@@ -787,7 +787,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result)) {
+				if (flow.handleSystemEvent(event, result)) {
 					_engine.stopSpeech();
 					return result;
 				}
@@ -810,8 +810,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				}
 			}
 
-			if (runtimeEntities)
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (entityManager)
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 			if (interrupted || (!voiceStarted || !_engine.isSpeechPlaying()))
 				break;
 
@@ -824,7 +824,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Error releaseResult = waitForPointerRelease();
 			if (releaseResult.getCode() != Common::kNoError)
 				return releaseResult;
-		} else if (textEnabled && startupScript->getDialogueTextMode() == kStartupDialogueTextClick) {
+		} else if (textEnabled && script->getDialogueTextMode() == kStartupDialogueTextClick) {
 			Graphics::FrameLimiter clickLimiter(g_system, 60);
 			for (;;) {
 				drawDialogueOverlay(textboxBitmap, &subtitleLines, nullptr, -1, false, nullptr);
@@ -833,7 +833,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				Common::Event event;
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
-					if (startupFlow.handleSystemEvent(event, result))
+					if (flow.handleSystemEvent(event, result))
 						return result;
 
 					switch (event.type) {
@@ -854,8 +854,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 					}
 				}
 
-				if (runtimeEntities)
-					(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+				if (entityManager)
+					(void)entityManager->syncCursorEntityPosition(_mousePos);
 				if (continuePressed)
 					break;
 
@@ -935,7 +935,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return result;
 				if (event.type == Common::EVENT_MOUSEMOVE)
 					_mousePos = event.mouse;
@@ -951,8 +951,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 					screen->fillRect(screen->getBounds(), 0);
 					blitBitmap(*screen, promptBitmap, 0, 0);
 					setScaledPalette(*screen, promptPalette, 1.0f);
-					if (runtimeEntities)
-						runtimeEntities->drawCursor(*screen);
+					if (entityManager)
+						entityManager->drawCursor(*screen);
 					screen->makeAllDirty();
 					screen->update();
 					needsRedraw = false;
@@ -960,7 +960,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
-					if (startupFlow.handleSystemEvent(event, result))
+					if (flow.handleSystemEvent(event, result))
 						return result;
 
 					switch (event.type) {
@@ -980,7 +980,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 					}
 				}
 
-				if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+				if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
 					needsRedraw = true;
 
 				limiter.delayBeforeSwap();
@@ -993,8 +993,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			return Common::kReadingFailed;
 		}
 		if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
-			Script *startupScript = _engine.getScript();
-			if (!startupScript || !startupScript->reloadTownWorld(*resources)) {
+			Script *script = _engine.getScript();
+			if (!script || !script->reloadTownWorld(*resources)) {
 				warning("Harvester: unable to reload town script after disc prompt %d -> %d",
 					previousDisc, discNumber);
 				return Common::kReadingFailed;
@@ -1034,7 +1034,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result)) {
+				if (flow.handleSystemEvent(event, result)) {
 					_engine.stopMusic();
 					return result;
 				}
@@ -1050,8 +1050,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				}
 			}
 
-			if (runtimeEntities)
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (entityManager)
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 			if (dismissed)
 				break;
 
@@ -1066,7 +1066,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				return releaseError;
 		}
 
-		startupFlow.requestMainMenuReturn();
+		flow.requestMainMenuReturn();
 		return Common::kNoError;
 	};
 
@@ -1084,14 +1084,14 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				interaction.lightingCommand != kStartupLightingCommandNone ||
 				interaction.requestPlayerGotoXZ ||
 				!interaction.audioCommands.empty()) {
-			startupFlow.queueDialogueInteraction(interaction);
+			flow.queueDialogueInteraction(interaction);
 		}
 	};
 	auto applyImmediateDialogueInteractionEffects = [&](InteractionResult &interaction) {
 		if (!interaction.musicPath.empty())
 			(void)_engine.playMusic(interaction.musicPath);
 		if (!interaction.audioCommands.empty())
-			startupFlow.executeStartupAudioCommands(interaction.audioCommands);
+			flow.executeStartupAudioCommands(interaction.audioCommands);
 		interaction.musicPath.clear();
 		interaction.audioCommands.clear();
 	};
@@ -1236,8 +1236,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			}
 		}
 
-		if (runtimeEntities)
-			runtimeEntities->drawCursor(*activeScreen);
+		if (entityManager)
+			entityManager->drawCursor(*activeScreen);
 		activeScreen->makeAllDirty();
 		activeScreen->update();
 	};
@@ -1274,7 +1274,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			optionTexts.push_back(option.text);
 		logDialogueMenuItems("Response menu", responseLineIndex, responseLine, optionTexts);
 
-		const IndexedBitmap *textboxBitmap = startupArt->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
+		const IndexedBitmap *textboxBitmap = art->getTextboxBitmap(resolveDialogueResponseTextboxIndex(totalRows));
 		Common::Error releaseError = waitForPointerRelease();
 		if (releaseError.getCode() != Common::kNoError)
 			return releaseError;
@@ -1287,7 +1287,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return result;
 
 				if (event.type == Common::EVENT_KEYDOWN) {
@@ -1333,15 +1333,15 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				}
 			}
 
-			if (runtimeEntities)
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (entityManager)
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
 	};
 
 	auto runResponseMenu = [&](int responseLineIndex, int &selectedIndex) -> Common::Error {
-		const Common::String responseLine = startupText->getDialogueResponseLine(responseLineIndex);
+		const Common::String responseLine = text->getDialogueResponseLine(responseLineIndex);
 		return runResponseMenuText(responseLine, responseLineIndex, selectedIndex);
 	};
 
@@ -1371,7 +1371,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return result;
 
 				if (editingOther) {
@@ -1380,8 +1380,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 							typedTopic.clear();
 							editingOther = false;
 							debugC(1, kDebugDialogue, "Harvester: keyword menu cancelled Other input");
-							if (runtimeEntities)
-								runtimeEntities->showCursor();
+							if (entityManager)
+								entityManager->showCursor();
 						} else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 							if (!typedTopic.empty())
 								typedTopic.deleteLastChar();
@@ -1392,8 +1392,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 								selection.fromTypedInput = true;
 								debugC(1, kDebugDialogue, "Harvester: keyword menu typed topic='%s'",
 									selectedTopic.c_str());
-								if (runtimeEntities)
-									runtimeEntities->showCursor();
+								if (entityManager)
+									entityManager->showCursor();
 								return Common::kNoError;
 							}
 						} else if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7e &&
@@ -1429,8 +1429,8 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 						typedTopic.clear();
 						editingOther = true;
 						debugC(1, kDebugDialogue, "Harvester: keyword menu entered Other input");
-						if (runtimeEntities)
-							runtimeEntities->hideCursor();
+						if (entityManager)
+							entityManager->hideCursor();
 					}
 					break;
 				}
@@ -1439,15 +1439,15 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 				}
 			}
 
-			if (runtimeEntities)
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (entityManager)
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 			limiter.delayBeforeSwap();
 			limiter.startFrame();
 		}
 	};
 
 	auto matchesResponseLine = [&](const Common::String &selectedTopic, int responseLineIndex) {
-		const Common::String topicText = startupText->getDialogueResponseLine(responseLineIndex);
+		const Common::String topicText = text->getDialogueResponseLine(responseLineIndex);
 		return !topicText.empty() && selectedTopic.equalsIgnoreCase(topicText);
 	};
 
@@ -1463,7 +1463,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 
 	auto assignTopicBuffer = [&](Common::String &topicBuffer, int &topicBufferLineIndex,
 			int responseLineIndex, const char *label) {
-		topicBuffer = startupText->getDialogueResponseLine(responseLineIndex);
+		topicBuffer = text->getDialogueResponseLine(responseLineIndex);
 		topicBufferLineIndex = responseLineIndex;
 
 		Common::Array<Common::String> topics;
@@ -1472,7 +1472,7 @@ Common::Error DialogueSystem::runRoomNpcDialogue(const IndexedBitmap &backdrop, 
 	};
 
 	DialogueRuntime runtime(
-		_engine, *startupScript, *startupText, startupFlow, npc.roomName, genericByeTopic,
+		_engine, *script, *text, flow, npc.roomName, genericByeTopic,
 		playDialogueLineWithVariant, playDialogueLine, playDialogueEntrySequence,
 		playDialogueFst, clearScreenToBlack, showCdChangePrompt, runKeywordMenu, runResponseMenu,
 		[&](const Common::String &responseLine, int &selectedIndex) {

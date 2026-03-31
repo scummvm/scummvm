@@ -51,7 +51,7 @@ HarvesterEngine::HarvesterEngine(OSystem *syst, const ADGameDescription *gameDes
 
 HarvesterEngine::~HarvesterEngine() {
 	delete _media;
-	delete _startupScript;
+	delete _script;
 	delete _resources;
 	g_engine = nullptr;
 }
@@ -61,11 +61,11 @@ Common::String HarvesterEngine::getGameId() const {
 }
 
 bool HarvesterEngine::canLoadGameStateCurrently(Common::U32String *) {
-	return _startupScript != nullptr;
+	return _script != nullptr;
 }
 
 bool HarvesterEngine::canSaveGameStateCurrently(Common::U32String *) {
-	return _startupScript != nullptr && _currentStartupSaveRoomState.valid;
+	return _script != nullptr && _currentSaveRoomState.valid;
 }
 
 EntityManager *HarvesterEngine::getRuntimeEntities() const {
@@ -93,8 +93,8 @@ Text *HarvesterEngine::getText() const {
 }
 
 bool HarvesterEngine::isGoreEnabled() const {
-	if (_startupScript)
-		return _startupScript->isGoreEnabled();
+	if (_script)
+		return _script->isGoreEnabled();
 
 	return !ConfMan.hasKey("gore") || ConfMan.getBool("gore");
 }
@@ -104,15 +104,15 @@ bool HarvesterEngine::shouldShowCdChangePrompts() const {
 }
 
 int HarvesterEngine::getFxVolumeLevel() const {
-	return _startupScript ? _startupScript->getFxVolumeLevel() : 9;
+	return _script ? _script->getFxVolumeLevel() : 9;
 }
 
 int HarvesterEngine::getMusicVolumeLevel() const {
-	return _startupScript ? _startupScript->getMusicVolumeLevel() : 9;
+	return _script ? _script->getMusicVolumeLevel() : 9;
 }
 
 int HarvesterEngine::getGammaLevel() const {
-	return _startupScript ? _startupScript->getGammaLevel() : 0;
+	return _script ? _script->getGammaLevel() : 0;
 }
 
 float HarvesterEngine::getGammaBrightnessScale() const {
@@ -125,20 +125,20 @@ void HarvesterEngine::applyMixerLevels() {
 }
 
 void HarvesterEngine::setFxVolumeLevel(int level) {
-	if (_startupScript)
-		_startupScript->setFxVolumeLevel(level);
+	if (_script)
+		_script->setFxVolumeLevel(level);
 	applyMixerLevels();
 }
 
 void HarvesterEngine::setMusicVolumeLevel(int level) {
-	if (_startupScript)
-		_startupScript->setMusicVolumeLevel(level);
+	if (_script)
+		_script->setMusicVolumeLevel(level);
 	applyMixerLevels();
 }
 
 void HarvesterEngine::setGammaLevel(int level) {
-	if (_startupScript)
-		_startupScript->setGammaLevel(level);
+	if (_script)
+		_script->setGammaLevel(level);
 }
 
 const Common::String &HarvesterEngine::getMusicPath() const {
@@ -263,13 +263,13 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 }
 
 bool HarvesterEngine::requestDebugCommand(const CommandRecord &command) {
-	if (!_activeFlow || !_startupScript || !_currentStartupSaveRoomState.valid)
+	if (!_activeFlow || !_script || !_currentSaveRoomState.valid)
 		return false;
 	if (_activeFlow->hasQueuedDebugInteraction())
 		return false;
 
 	InteractionResult interaction;
-	if (!_startupScript->executeDebugCommand(command, interaction))
+	if (!_script->executeDebugCommand(command, interaction))
 		return false;
 
 	// Defer application to the active room loop instead of mutating state from the console thread.
@@ -278,7 +278,7 @@ bool HarvesterEngine::requestDebugCommand(const CommandRecord &command) {
 
 bool HarvesterEngine::requestDebugRoomChange(const Common::String &roomName) {
 	return _activeFlow &&
-		_currentStartupSaveRoomState.valid &&
+		_currentSaveRoomState.valid &&
 		_activeFlow->requestDebugRoomChange(roomName);
 }
 
@@ -303,8 +303,8 @@ Common::Error HarvesterEngine::run() {
 	_resources = new ResourceManager();
 	_resources->mountStartupArchives();
 	_media = new MediaManager(*_resources);
-	_startupScript = new Script();
-	if (!_startupScript->load(*_resources))
+	_script = new Script();
+	if (!_script->load(*_resources))
 		return Common::kReadingFailed;
 	applyMixerLevels();
 
@@ -342,14 +342,14 @@ Common::Error HarvesterEngine::run() {
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
 
-	Flow startupFlow(*this);
-	_activeFlow = &startupFlow;
-	if (!startupFlow.load()) {
+	Flow flow(*this);
+	_activeFlow = &flow;
+	if (!flow.load()) {
 		_activeFlow = nullptr;
 		return Common::kReadingFailed;
 	}
 
-	const Common::Error error = startupFlow.run();
+	const Common::Error error = flow.run();
 	_activeFlow = nullptr;
 	return error;
 }

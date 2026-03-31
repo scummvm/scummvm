@@ -135,8 +135,8 @@ public:
 	void pause() {
 		if (_paused)
 			return;
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
-			runtimeEntities->pauseTimerCountdowns();
+		if (EntityManager *entityManager = _engine.getRuntimeEntities()) {
+			entityManager->pauseTimerCountdowns();
 			_paused = true;
 		}
 	}
@@ -144,8 +144,8 @@ public:
 	void resume() {
 		if (!_paused)
 			return;
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
-			runtimeEntities->resumeTimerCountdowns();
+		if (EntityManager *entityManager = _engine.getRuntimeEntities())
+			entityManager->resumeTimerCountdowns();
 		_paused = false;
 	}
 
@@ -158,11 +158,11 @@ static void blitBitmap(Graphics::Screen &screen, const IndexedBitmap &bitmap, in
 static int getNativeRoomMenuLineHeight(const Graphics::Font &selectedFont);
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {
-	const Text *startupText = engine.getText();
-	if (!startupText || !fontName)
+	const Text *text = engine.getText();
+	if (!text || !fontName)
 		return nullptr;
 
-	for (const CftFontResource &font : startupText->getFonts()) {
+	for (const CftFontResource &font : text->getFonts()) {
 		if (font.name.equalsIgnoreCase(fontName))
 			return &font;
 	}
@@ -365,8 +365,8 @@ static void renderHelpScreen(HarvesterEngine &engine, const IndexedBitmap &bitma
 	screen->update();
 }
 
-static Common::String buildTextModeSuffix(const Script &startupScript, const RoomMenuTextConfig &config) {
-	switch (startupScript.getDialogueTextMode()) {
+static Common::String buildTextModeSuffix(const Script &script, const RoomMenuTextConfig &config) {
+	switch (script.getDialogueTextMode()) {
 	case kStartupDialogueTextNone:
 		return Common::String::format(" - %s", config.noLabel.c_str());
 	case kStartupDialogueTextClick:
@@ -377,18 +377,18 @@ static Common::String buildTextModeSuffix(const Script &startupScript, const Roo
 	}
 }
 
-static Common::String buildOptionsMenuItemLabel(const Script &startupScript,
+static Common::String buildOptionsMenuItemLabel(const Script &script,
 		const RoomMenuTextConfig &config, int index) {
 	if (index < 0 || index >= (int)config.optionItems.size())
 		return Common::String();
 
 	switch (index) {
 	case 3:
-		return config.optionItems[index] + buildTextModeSuffix(startupScript, config);
+		return config.optionItems[index] + buildTextModeSuffix(script, config);
 	case 4:
-		return config.optionItems[index] + (startupScript.isGoreEnabled() ? " - On" : " - Off");
+		return config.optionItems[index] + (script.isGoreEnabled() ? " - On" : " - Off");
 	case 6:
-		return config.optionItems[index] + (startupScript.getParentalPassword().empty() ? " - Off" : " - On");
+		return config.optionItems[index] + (script.getParentalPassword().empty() ? " - Off" : " - On");
 	default:
 		return config.optionItems[index];
 	}
@@ -500,8 +500,8 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 		const IndexedBitmap &volumeBar, const IndexedBitmap &indicator, int selectedItem,
 		bool drawCursor = true) {
 	Graphics::Screen *screen = engine.getScreen();
-	Script *startupScript = engine.getScript();
-	if (!screen || !startupScript)
+	Script *script = engine.getScript();
+	if (!screen || !script)
 		return;
 
 	applyMenuPalette(*screen, engine, palette, paletteBrightness);
@@ -510,7 +510,7 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 
 	const int lineHeight = getNativeRoomMenuLineHeight(selectedFont);
 	for (int i = 0; i < (int)config.optionItems.size(); ++i) {
-		const Common::String label = buildOptionsMenuItemLabel(*startupScript, config, i);
+		const Common::String label = buildOptionsMenuItemLabel(*script, config, i);
 		const Graphics::Font &font = (i == selectedItem) ? selectedFont : unselectedFont;
 		const int width = font.getStringWidth(label);
 		const int x = (screen->w - width) / 2;
@@ -525,9 +525,9 @@ static void renderOptionsMenuScreen(HarvesterEngine &engine, const IndexedBitmap
 		blitTransparentBitmap(*screen, volumeBar, kOptionsVolumeBitmapX, kOptionsVolumeBitmapY + i * lineHeight);
 
 	const int levels[3] = {
-		startupScript->getFxVolumeLevel(),
-		startupScript->getMusicVolumeLevel(),
-		startupScript->getGammaLevel()
+		script->getFxVolumeLevel(),
+		script->getMusicVolumeLevel(),
+		script->getGammaLevel()
 	};
 	for (int i = 0; i < 3; ++i) {
 		blitTransparentBitmap(*screen, indicator, kOptionsSliderMinX + levels[i] * kOptionsSliderStep,
@@ -546,8 +546,8 @@ static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap 
 	Graphics::Screen *screen = engine.getScreen();
 	const Art *art = engine.getArt();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	Script *startupScript = engine.getScript();
-	if (!screen || !art || !font || !startupScript)
+	Script *script = engine.getScript();
+	if (!screen || !art || !font || !script)
 		return;
 
 	applyMenuPalette(*screen, engine, palette, paletteBrightness);
@@ -557,8 +557,8 @@ static void renderQuickTipsOverlay(HarvesterEngine &engine, const IndexedBitmap 
 
 	drawWrappedShadowedText(*screen, *font, tipText, kQuickTipTextX, kQuickTipTextY, kQuickTipTextWidth,
 		kTextColorNormal);
-	const Common::String toggleLabel = startupScript->resolveTextValue(
-		startupScript->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
+	const Common::String toggleLabel = script->resolveTextValue(
+		script->isQuickTipsEnabled() ? "Show_Tips_ON" : "Show_Tips_OFF");
 	drawShadowedString(*screen, *font, "Exit", quickTipsExitRect().left, quickTipsExitRect().top,
 		quickTipsExitRect().width(), kQuickTipActionColor);
 	drawShadowedString(*screen, *font, "Next", quickTipsNextRect().left, quickTipsNextRect().top,
@@ -665,7 +665,7 @@ MenuSystem::MenuSystem(HarvesterEngine &engine, Common::Point &mousePos,
 	: _engine(engine), _mousePos(mousePos), _menuItems(menuItems) {
 }
 
-Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
+Common::Error MenuSystem::runMainMenuStub(Flow &flow) {
 	const Art *art = _engine.getArt();
 	if (!art)
 		return Common::kReadingFailed;
@@ -676,8 +676,8 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		_engine.canSaveGameStateCurrently(),
 		_engine.canLoadGameStateCurrently(),
 		mainMenuItems);
-	if (startupFlow.takePendingGameOverReturn()) {
-		Common::Error gameOverError = showGameOverBackdrop(startupFlow);
+	if (flow.takePendingGameOverReturn()) {
+		Common::Error gameOverError = showGameOverBackdrop(flow);
 		if (gameOverError.getCode() != Common::kNoError)
 			return gameOverError;
 	} else {
@@ -701,7 +701,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	};
 	auto runSelectedRoomLoop = [&](const Common::String &targetName) -> Common::Error {
 		pausedTimers.resume();
-		Common::Error roomError = startupFlow.runRoomLoop(targetName);
+		Common::Error roomError = flow.runRoomLoop(targetName);
 		pausedTimers.pause();
 		_engine.stopMusic();
 		_engine.stopSound();
@@ -716,9 +716,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 		statusMessage.clear();
 		needsRedraw = true;
-		(void)startupFlow.takePendingMainMenuReturn();
-		if (startupFlow.takePendingGameOverReturn()) {
-			Common::Error gameOverError = showGameOverBackdrop(startupFlow);
+		(void)flow.takePendingMainMenuReturn();
+		if (flow.takePendingGameOverReturn()) {
+			Common::Error gameOverError = showGameOverBackdrop(flow);
 			if (gameOverError.getCode() != Common::kNoError)
 				return gameOverError;
 		} else {
@@ -744,20 +744,20 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 			bool confirmed = false;
 			Common::Error confirmError = runConfirmPrompt(
-				menuBackdrop, menuPalette, 1.0f, startupFlow, config.newGamePrompt, confirmed);
+				menuBackdrop, menuPalette, 1.0f, flow, config.newGamePrompt, confirmed);
 			if (confirmError.getCode() != Common::kNoError)
 				return confirmError;
 			needsRedraw = true;
 			if (!confirmed)
 				return Common::kNoError;
 
-			startupFlow.prepareForNewGame();
+			flow.prepareForNewGame();
 			return runSelectedRoomLoop("START");
 		}
 
 		if (item.equalsIgnoreCase("LOAD GAME")) {
 			bool loadedGame = false;
-			Common::Error loadError = runLoadGameMenu(menuPalette, 1.0f, startupFlow, loadedGame);
+			Common::Error loadError = runLoadGameMenu(menuPalette, 1.0f, flow, loadedGame);
 			if (loadError.getCode() != Common::kNoError)
 				return loadError;
 			needsRedraw = true;
@@ -777,7 +777,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 
 		if (item.equalsIgnoreCase("SAVE GAME")) {
 			bool savedGame = false;
-			Common::Error saveError = runSaveGameMenu(menuPalette, 1.0f, startupFlow, savedGame);
+			Common::Error saveError = runSaveGameMenu(menuPalette, 1.0f, flow, savedGame);
 			(void)savedGame;
 			needsRedraw = true;
 			return saveError;
@@ -787,13 +787,13 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 			IndexedBitmap menuBackdrop;
 			if (!captureMenuBackdrop(menuBackdrop))
 				return Common::kReadingFailed;
-			Common::Error optionsError = runOptionsMenu(menuBackdrop, menuPalette, 1.0f, startupFlow);
+			Common::Error optionsError = runOptionsMenu(menuBackdrop, menuPalette, 1.0f, flow);
 			needsRedraw = true;
 			return optionsError;
 		}
 
 		if (item.equalsIgnoreCase("HELP")) {
-			Common::Error helpError = runHelpScreen(menuPalette, 1.0f, startupFlow);
+			Common::Error helpError = runHelpScreen(menuPalette, 1.0f, flow);
 			needsRedraw = true;
 			return helpError;
 		}
@@ -802,7 +802,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 			IndexedBitmap menuBackdrop;
 			if (!captureMenuBackdrop(menuBackdrop))
 				return Common::kReadingFailed;
-			Common::Error quitError = runQuitGameConfirm(menuBackdrop, menuPalette, 1.0f, startupFlow);
+			Common::Error quitError = runQuitGameConfirm(menuBackdrop, menuPalette, 1.0f, flow);
 			needsRedraw = true;
 			return quitError;
 		}
@@ -822,7 +822,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -876,7 +876,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 			}
 		}
 
-		if (startupFlow.tickRuntimeEntities())
+		if (flow.tickRuntimeEntities())
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -886,7 +886,7 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 	return Common::kNoError;
 }
 
-Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
+Common::Error MenuSystem::showGameOverBackdrop(Flow &flow) {
 	ResourceManager *resources = _engine.getResources();
 	Graphics::Screen *screen = _engine.getScreen();
 	if (!resources || !screen)
@@ -902,7 +902,7 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
 	_mainMenuBackdrop = backdrop;
 	memcpy(_mainMenuBackdropPalette, palette, sizeof(_mainMenuBackdropPalette));
 	_hasMainMenuBackdrop = true;
-	startupFlow.resetCursorAnimationSequence();
+	flow.resetCursorAnimationSequence();
 	(void)_engine.playMusic(kGameOverMusicPath);
 
 	bool needsRedraw = true;
@@ -922,7 +922,7 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -938,8 +938,8 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
 			}
 		}
 
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
-			if (runtimeEntities->syncCursorEntityPosition(_mousePos))
+		if (EntityManager *entityManager = _engine.getRuntimeEntities()) {
+			if (entityManager->syncCursorEntityPosition(_mousePos))
 				needsRedraw = true;
 		}
 
@@ -957,12 +957,12 @@ void MenuSystem::clearMainMenuBackdrop() {
 }
 
 Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow) {
+		float paletteBrightness, Flow &flow) {
 	Graphics::FrameLimiter limiter(g_system, 60);
 	int selectedItem = _menuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
 	bool shouldCloseMenu = false;
-	startupFlow.resetCursorAnimationSequence();
+	flow.resetCursorAnimationSequence();
 
 	auto activateSelectedItem = [&]() -> Common::Error {
 		if (selectedItem < 0 || selectedItem >= (int)_menuItems.size())
@@ -975,12 +975,12 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 			bool confirmed = false;
 			Common::Error confirmError = runConfirmPrompt(
-				backdrop, palette, paletteBrightness, startupFlow, config.newGamePrompt, confirmed);
+				backdrop, palette, paletteBrightness, flow, config.newGamePrompt, confirmed);
 			if (confirmError.getCode() != Common::kNoError)
 				return confirmError;
 			needsRedraw = true;
 			if (confirmed) {
-				startupFlow.requestNewGameRestart();
+				flow.requestNewGameRestart();
 				shouldCloseMenu = true;
 			}
 			return Common::kNoError;
@@ -988,7 +988,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 		if (item.equalsIgnoreCase("LOAD GAME")) {
 			bool loadedGame = false;
-			Common::Error loadError = runLoadGameMenu(palette, paletteBrightness, startupFlow, loadedGame);
+			Common::Error loadError = runLoadGameMenu(palette, paletteBrightness, flow, loadedGame);
 			if (loadError.getCode() != Common::kNoError)
 				return loadError;
 			needsRedraw = true;
@@ -998,7 +998,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		}
 
 		if (item.equalsIgnoreCase("OPTIONS")) {
-			Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, startupFlow);
+			Common::Error optionsError = runOptionsMenu(backdrop, palette, paletteBrightness, flow);
 			if (optionsError.getCode() != Common::kNoError)
 				return optionsError;
 			needsRedraw = true;
@@ -1006,7 +1006,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		}
 
 		if (item.equalsIgnoreCase("HELP")) {
-			Common::Error helpError = runHelpScreen(palette, paletteBrightness, startupFlow);
+			Common::Error helpError = runHelpScreen(palette, paletteBrightness, flow);
 			if (helpError.getCode() != Common::kNoError)
 				return helpError;
 			needsRedraw = true;
@@ -1015,13 +1015,13 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 		if (item.equalsIgnoreCase("SAVE GAME")) {
 			bool savedGame = false;
-			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow, savedGame);
+			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, flow, savedGame);
 			if (saveError.getCode() != Common::kNoError)
 				return saveError;
 			if (savedGame) {
 				// Native exits the in-room ESC menu after a successful save and restores the room view.
 				Common::Error restoreError = restoreRoomBackdropAfterSave(
-					backdrop, palette, paletteBrightness, startupFlow);
+					backdrop, palette, paletteBrightness, flow);
 				if (restoreError.getCode() != Common::kNoError)
 					return restoreError;
 				shouldCloseMenu = true;
@@ -1032,7 +1032,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		}
 
 		if (item.equalsIgnoreCase("QUIT GAME")) {
-			Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, startupFlow);
+			Common::Error quitError = runQuitGameConfirm(backdrop, palette, paletteBrightness, flow);
 			if (quitError.getCode() != Common::kNoError)
 				return quitError;
 			needsRedraw = true;
@@ -1052,7 +1052,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -1108,8 +1108,8 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			}
 		}
 
-		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
-		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+		if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -1120,7 +1120,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 }
 
 Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrightness,
-		Flow &startupFlow, bool &loadedGame) {
+		Flow &flow, bool &loadedGame) {
 	(void)palette;
 	(void)paletteBrightness;
 	loadedGame = false;
@@ -1177,7 +1177,7 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 
 	Common::String statusMessage;
 	bool needsRedraw = true;
-	startupFlow.resetCursorAnimationSequence();
+	flow.resetCursorAnimationSequence();
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	auto activateSelectedSlot = [&]() -> Common::Error {
@@ -1205,7 +1205,7 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -1268,8 +1268,8 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 			}
 		}
 
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
-			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+		if (EntityManager *entityManager = _engine.getRuntimeEntities())
+			(void)entityManager->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
@@ -1279,7 +1279,7 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 }
 
 Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrightness,
-		Flow &startupFlow, bool &savedGame) {
+		Flow &flow, bool &savedGame) {
 	(void)palette;
 	(void)paletteBrightness;
 	savedGame = false;
@@ -1331,7 +1331,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			bool &confirmed) -> Common::Error {
 		confirmed = false;
 		bool needsRedraw = true;
-		startupFlow.resetCursorAnimationSequence();
+		flow.resetCursorAnimationSequence();
 		Graphics::FrameLimiter entryLimiter(g_system, 60);
 
 		while (!_engine.shouldQuit()) {
@@ -1345,7 +1345,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return result;
 
 				switch (event.type) {
@@ -1383,8 +1383,8 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 				}
 			}
 
-			if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
-				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+			if (EntityManager *entityManager = _engine.getRuntimeEntities())
+				(void)entityManager->syncCursorEntityPosition(_mousePos);
 
 			entryLimiter.delayBeforeSwap();
 			entryLimiter.startFrame();
@@ -1396,7 +1396,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 	int activeSlot = 0;
 	Common::String statusMessage;
 	bool needsRedraw = true;
-	startupFlow.resetCursorAnimationSequence();
+	flow.resetCursorAnimationSequence();
 	Graphics::FrameLimiter limiter(g_system, 60);
 
 	auto activateSelectedSlot = [&](bool &saved) -> Common::Error {
@@ -1431,7 +1431,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -1501,8 +1501,8 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			}
 		}
 
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
-			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+		if (EntityManager *entityManager = _engine.getRuntimeEntities())
+			(void)entityManager->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
@@ -1512,7 +1512,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 }
 
 Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow) const {
+		float paletteBrightness, Flow &flow) const {
 	Graphics::Screen *screen = _engine.getScreen();
 	if (!screen || !backdrop.isValid())
 		return Common::kNoError;
@@ -1542,7 +1542,7 @@ Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &back
 				Common::Event event;
 				while (g_system->getEventManager()->pollEvent(event)) {
 					Common::Error result = Common::kNoError;
-					if (startupFlow.handleSystemEvent(event, result))
+					if (flow.handleSystemEvent(event, result))
 						return result;
 				}
 				g_system->delayMillis(1);
@@ -1561,11 +1561,11 @@ Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &back
 	screen->makeAllDirty();
 	screen->update();
 
-	return startupFlow.fadeInRoomScene(palette, paletteBrightness);
+	return flow.fadeInRoomScene(palette, paletteBrightness);
 }
 
 Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
+		float paletteBrightness, Flow &flow, const Common::String &promptText,
 		bool &confirmed) {
 	const Art *art = _engine.getArt();
 	const CftFontResource *promptFontResource = findStartupFontByName(_engine, "MEDFONT1");
@@ -1585,7 +1585,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 		return Common::kReadingFailed;
 
 	confirmed = false;
-	startupFlow.resetCursorAnimationSequence();
+	flow.resetCursorAnimationSequence();
 	bool needsRedraw = true;
 	Graphics::FrameLimiter limiter(g_system, 60);
 
@@ -1605,7 +1605,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -1637,8 +1637,8 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 			}
 		}
 
-		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
-			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
+		if (EntityManager *entityManager = _engine.getRuntimeEntities())
+			(void)entityManager->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
 		limiter.startFrame();
@@ -1648,13 +1648,13 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 }
 
 Common::Error MenuSystem::runQuitGameConfirm(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow) {
+		float paletteBrightness, Flow &flow) {
 	RoomMenuTextConfig config;
 	(void)loadMenuTextConfig(_engine, config);
 
 	bool confirmed = false;
 	Common::Error confirmError = runConfirmPrompt(
-		backdrop, palette, paletteBrightness, startupFlow, config.quitGamePrompt, confirmed);
+		backdrop, palette, paletteBrightness, flow, config.quitGamePrompt, confirmed);
 	if (confirmError.getCode() != Common::kNoError)
 		return confirmError;
 	if (!confirmed)
@@ -1667,13 +1667,13 @@ Common::Error MenuSystem::runQuitGameConfirm(const IndexedBitmap &backdrop, cons
 }
 
 Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &startupFlow) {
+		float paletteBrightness, Flow &flow) {
 	const Art *art = _engine.getArt();
-	Script *startupScript = _engine.getScript();
+	Script *script = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
 	const CftFontResource *selectedFontResource = findStartupFontByName(_engine, "HARVFONT");
 	const CftFontResource *unselectedFontResource = findStartupFontByName(_engine, "HARVFNT2");
-	if (!art || !startupScript || !resources || !selectedFontResource || !unselectedFontResource)
+	if (!art || !script || !resources || !selectedFontResource || !unselectedFontResource)
 		return Common::kReadingFailed;
 
 	HarvesterCftFont selectedFont(*selectedFontResource);
@@ -1696,17 +1696,17 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	int capturedSlider = -1;
 	bool showingQuickTips = false;
 	bool needsRedraw = true;
-	uint quickTipIndex = startupFlow._quickTips.empty() ? 0 : _engine.getRandomNumber(startupFlow._quickTips.size() - 1);
+	uint quickTipIndex = flow._quickTips.empty() ? 0 : _engine.getRandomNumber(flow._quickTips.size() - 1);
 
 	auto persistConfig = [&]() {
-		(void)startupScript->saveConfig();
+		(void)script->saveConfig();
 	};
 
 	auto updateSlider = [&](int sliderIndex) {
 		const int newLevel = resolveOptionsSliderIndexFromMouseX(_mousePos.x);
 		switch (sliderIndex) {
 		case 0:
-			if (newLevel != startupScript->getFxVolumeLevel()) {
+			if (newLevel != script->getFxVolumeLevel()) {
 				_engine.setFxVolumeLevel(newLevel);
 				_engine.playSingleSound(kOptionsPreviewSoundPath);
 				persistConfig();
@@ -1714,14 +1714,14 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			}
 			break;
 		case 1:
-			if (newLevel != startupScript->getMusicVolumeLevel()) {
+			if (newLevel != script->getMusicVolumeLevel()) {
 				_engine.setMusicVolumeLevel(newLevel);
 				persistConfig();
 				needsRedraw = true;
 			}
 			break;
 		case 2:
-			if (newLevel != startupScript->getGammaLevel()) {
+			if (newLevel != script->getGammaLevel()) {
 				_engine.setGammaLevel(newLevel);
 				persistConfig();
 				needsRedraw = true;
@@ -1733,16 +1733,16 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	};
 
 	auto cycleTextMode = [&]() {
-		switch (startupScript->getDialogueTextMode()) {
+		switch (script->getDialogueTextMode()) {
 		case kStartupDialogueTextNone:
-			startupScript->setDialogueTextMode(kStartupDialogueTextYes);
+			script->setDialogueTextMode(kStartupDialogueTextYes);
 			break;
 		case kStartupDialogueTextYes:
-			startupScript->setDialogueTextMode(kStartupDialogueTextClick);
+			script->setDialogueTextMode(kStartupDialogueTextClick);
 			break;
 		case kStartupDialogueTextClick:
 		default:
-			startupScript->setDialogueTextMode(kStartupDialogueTextNone);
+			script->setDialogueTextMode(kStartupDialogueTextNone);
 			break;
 		}
 		persistConfig();
@@ -1750,8 +1750,8 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	};
 
 	auto toggleGore = [&]() {
-		startupScript->setGoreEnabled(!startupScript->isGoreEnabled());
-		ConfMan.setBool("gore", startupScript->isGoreEnabled());
+		script->setGoreEnabled(!script->isGoreEnabled());
+		ConfMan.setBool("gore", script->isGoreEnabled());
 		persistConfig();
 		needsRedraw = true;
 	};
@@ -1789,7 +1789,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			Common::Event event;
 			while (g_system->getEventManager()->pollEvent(event)) {
 				Common::Error result = Common::kNoError;
-				if (startupFlow.handleSystemEvent(event, result))
+				if (flow.handleSystemEvent(event, result))
 					return Common::String();
 
 				switch (event.type) {
@@ -1833,15 +1833,15 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	};
 
 	auto togglePassword = [&]() {
-		if (startupScript->getParentalPassword().empty()) {
+		if (script->getParentalPassword().empty()) {
 			const Common::String password = runPasswordPrompt();
 			if (!password.empty()) {
-				startupScript->setParentalPassword(password);
+				script->setParentalPassword(password);
 				persistConfig();
 				needsRedraw = true;
 			}
 		} else {
-			startupScript->setParentalPassword(Common::String());
+			script->setParentalPassword(Common::String());
 			persistConfig();
 			needsRedraw = true;
 		}
@@ -1856,7 +1856,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			toggleGore();
 			break;
 		case 5:
-			if (!startupFlow._quickTips.empty()) {
+			if (!flow._quickTips.empty()) {
 				showingQuickTips = true;
 				needsRedraw = true;
 			}
@@ -1876,7 +1876,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 		if (needsRedraw) {
 			if (showingQuickTips) {
 				renderQuickTipsOverlay(_engine, backdrop, palette, paletteBrightness,
-					startupFlow._quickTips[quickTipIndex]);
+					flow._quickTips[quickTipIndex]);
 			} else {
 				renderOptionsMenuScreen(_engine, backdrop, palette, paletteBrightness,
 					selectedFont, unselectedFont, *art, config, volumeBar, indicator, selectedItem);
@@ -1887,7 +1887,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			if (showingQuickTips) {
@@ -1900,10 +1900,10 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 						showingQuickTips = false;
 						needsRedraw = true;
 					} else if (quickTipsNextRect().contains(_mousePos)) {
-						quickTipIndex = (quickTipIndex + 1) % startupFlow._quickTips.size();
+						quickTipIndex = (quickTipIndex + 1) % flow._quickTips.size();
 						needsRedraw = true;
 					} else if (quickTipsToggleRect().contains(_mousePos)) {
-						startupScript->setQuickTipsEnabled(!startupScript->isQuickTipsEnabled());
+						script->setQuickTipsEnabled(!script->isQuickTipsEnabled());
 						persistConfig();
 						needsRedraw = true;
 					}
@@ -2017,7 +2017,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 					break;
 				case Common::KEYCODE_q:
 					selectedItem = 5;
-					if (!startupFlow._quickTips.empty()) {
+					if (!flow._quickTips.empty()) {
 						showingQuickTips = true;
 						needsRedraw = true;
 					}
@@ -2035,8 +2035,8 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			}
 		}
 
-		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
-		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+		if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();
@@ -2046,7 +2046,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 	return Common::kNoError;
 }
 
-Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBrightness, Flow &startupFlow) {
+Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBrightness, Flow &flow) {
 	ResourceManager *resources = _engine.getResources();
 	if (!resources)
 		return Common::kReadingFailed;
@@ -2076,7 +2076,7 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Error result = Common::kNoError;
-			if (startupFlow.handleSystemEvent(event, result))
+			if (flow.handleSystemEvent(event, result))
 				return result;
 
 			switch (event.type) {
@@ -2109,8 +2109,8 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 			}
 		}
 
-		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
-		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
+		EntityManager *entityManager = _engine.getRuntimeEntities();
+		if (entityManager && entityManager->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 
 		limiter.delayBeforeSwap();

@@ -50,8 +50,8 @@ public:
 	typedef std::function<int(int)> GetRandomNumberFn;
 	typedef std::function<void(const Common::String &, int)> SetActiveSpeakerPortraitFn;
 
-	DialogueRuntime(HarvesterEngine &engine, Script &startupScript, Text &startupText,
-			Flow &startupFlow, const Common::String &currentRoomName,
+	DialogueRuntime(HarvesterEngine &engine, Script &script, Text &text,
+			Flow &flow, const Common::String &currentRoomName,
 			const Common::String &genericByeTopic,
 			const PlayDialogueLineWithVariantFn &playDialogueLineWithVariant,
 			const PlayDialogueLineFn &playDialogueLine,
@@ -70,8 +70,8 @@ public:
 			const ApplyImmediateDialogueInteractionEffectsFn &applyImmediateDialogueInteractionEffects,
 			const GetRandomNumberFn &getRandomNumber,
 			const SetActiveSpeakerPortraitFn &setActiveSpeakerPortrait)
-		: _engine(engine), _startupScript(startupScript), _startupText(startupText),
-		  _startupFlow(startupFlow), _currentRoomName(currentRoomName),
+		: _engine(engine), _script(script), _text(text),
+		  _flow(flow), _currentRoomName(currentRoomName),
 		  _genericByeTopic(genericByeTopic),
 		  _playDialogueLineWithVariant(playDialogueLineWithVariant),
 		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
@@ -89,9 +89,9 @@ public:
 	}
 
 	HarvesterEngine &engine() const { return _engine; }
-	Script &startupScript() const { return _startupScript; }
-	Text &startupText() const { return _startupText; }
-	Flow &startupFlow() const { return _startupFlow; }
+	Script &startupScript() const { return _script; }
+	Text &startupText() const { return _text; }
+	Flow &startupFlow() const { return _flow; }
 	const Common::String &currentRoomName() const { return _currentRoomName; }
 	const Common::String &genericByeTopic() const { return _genericByeTopic; }
 
@@ -146,9 +146,9 @@ public:
 
 private:
 	HarvesterEngine &_engine;
-	Script &_startupScript;
-	Text &_startupText;
-	Flow &_startupFlow;
+	Script &_script;
+	Text &_text;
+	Flow &_flow;
 	const Common::String &_currentRoomName;
 	const Common::String &_genericByeTopic;
 	PlayDialogueLineWithVariantFn _playDialogueLineWithVariant;

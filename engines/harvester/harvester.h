@@ -81,7 +81,7 @@ public:
 	Graphics::Screen *getScreen() const;
 	int getDisplayWidth() const;
 	int getDisplayHeight() const;
-	Script *getScript() const { return _startupScript; }
+	Script *getScript() const { return _script; }
 	Art *getArt() const;
 	Text *getText() const;
 	void setDisplayMode(int width, int height);
@@ -122,15 +122,15 @@ public:
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath);
 	void clearCurrentSaveRoomState();
-	bool hasCurrentSaveRoomState() const { return _currentStartupSaveRoomState.valid; }
+	bool hasCurrentSaveRoomState() const { return _currentSaveRoomState.valid; }
 	const SaveRoomState &getCurrentSaveRoomState() const {
-		return _currentStartupSaveRoomState;
+		return _currentSaveRoomState;
 	}
-	bool hasPendingLoadedSaveRoomState() const { return _pendingLoadedStartupSaveRoomState.valid; }
+	bool hasPendingLoadedSaveRoomState() const { return _pendingLoadedSaveRoomState.valid; }
 	const SaveRoomState &getPendingLoadedSaveRoomState() const {
-		return _pendingLoadedStartupSaveRoomState;
+		return _pendingLoadedSaveRoomState;
 	}
-	int getPendingLoadedDisc() const { return _pendingLoadedStartupDisc; }
+	int getPendingLoadedDisc() const { return _pendingLoadedDisc; }
 	void clearPendingLoadedSaveRoomState();
 	bool hasPendingLoadedDialogueStateBlob() const { return !_pendingLoadedDialogueStateBlob.empty(); }
 	const Common::Array<byte> &getPendingLoadedDialogueStateBlob() const { return _pendingLoadedDialogueStateBlob; }
@@ -147,10 +147,10 @@ private:
 	Common::RandomSource _randomSource;
 	ResourceManager *_resources = nullptr;
 	MediaManager *_media = nullptr;
-	Script *_startupScript = nullptr;
-	SaveRoomState _currentStartupSaveRoomState;
-	SaveRoomState _pendingLoadedStartupSaveRoomState;
-	int _pendingLoadedStartupDisc = 0;
+	Script *_script = nullptr;
+	SaveRoomState _currentSaveRoomState;
+	SaveRoomState _pendingLoadedSaveRoomState;
+	int _pendingLoadedDisc = 0;
 	Common::Array<byte> _pendingLoadedDialogueStateBlob;
 	uint32 _pendingLoadedDialogueStateBlobVersion = 0;
 	Flow *_activeFlow = nullptr;

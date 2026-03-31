@@ -290,17 +290,17 @@ bool InventorySystem::loadBitmap(const Common::String &path, IndexedBitmap &bitm
 bool InventorySystem::refresh() {
 	_items.clear();
 
-	Script *startupScript = _engine.getScript();
+	Script *script = _engine.getScript();
 	ResourceManager *resources = _engine.getResources();
-	if (!startupScript || !resources)
+	if (!script || !resources)
 		return false;
 
-	_lastPlayerHitPoints = startupScript->getPlayerCurrentHitPoints();
-	_lastStoryDayIndex = startupScript->getCurrentStoryDayIndex();
-	_lastHasHarvestBlade = startupScript->isObjectInInventory(kHarvestBladeObjectName);
+	_lastPlayerHitPoints = script->getPlayerCurrentHitPoints();
+	_lastStoryDayIndex = script->getCurrentStoryDayIndex();
+	_lastHasHarvestBlade = script->isObjectInInventory(kHarvestBladeObjectName);
 
 	Common::Array<ObjectRecord> inventoryObjects;
-	startupScript->getVisibleInventoryObjects(inventoryObjects);
+	script->getVisibleInventoryObjects(inventoryObjects);
 	int nextX = kInventoryItemStartX;
 	int nextY = kInventoryItemStartY;
 	int rowHeight = 0;
@@ -388,13 +388,13 @@ bool InventorySystem::clearSelection() {
 }
 
 bool InventorySystem::refreshIfRuntimeStateChanged() {
-	Script *startupScript = _engine.getScript();
-	if (!startupScript)
+	Script *script = _engine.getScript();
+	if (!script)
 		return false;
 
-	const int currentHitPoints = startupScript->getPlayerCurrentHitPoints();
-	const int currentStoryDayIndex = startupScript->getCurrentStoryDayIndex();
-	const bool hasHarvestBlade = startupScript->isObjectInInventory(kHarvestBladeObjectName);
+	const int currentHitPoints = script->getPlayerCurrentHitPoints();
+	const int currentStoryDayIndex = script->getCurrentStoryDayIndex();
+	const bool hasHarvestBlade = script->isObjectInInventory(kHarvestBladeObjectName);
 	if (currentHitPoints == _lastPlayerHitPoints &&
 			currentStoryDayIndex == _lastStoryDayIndex &&
 			hasHarvestBlade == _lastHasHarvestBlade)
@@ -416,20 +416,20 @@ const Common::String &InventorySystem::getSelectedItemName() const {
 }
 
 Common::String InventorySystem::resolveSelectedLabel() const {
-	Script *startupScript = _engine.getScript();
-	if (!startupScript || _selectedItemName.empty())
+	Script *script = _engine.getScript();
+	if (!script || _selectedItemName.empty())
 		return Common::String();
 
 	for (const InventoryVisual &item : _items) {
 		if (item.object.objectName.equalsIgnoreCase(_selectedItemName))
-			return startupScript->resolveObjectLabel(item.object);
+			return script->resolveObjectLabel(item.object);
 	}
 
 	Common::Array<ObjectRecord> inventoryObjects;
-	startupScript->getVisibleInventoryObjects(inventoryObjects);
+	script->getVisibleInventoryObjects(inventoryObjects);
 	for (const ObjectRecord &item : inventoryObjects) {
 		if (item.objectName.equalsIgnoreCase(_selectedItemName))
-			return startupScript->resolveObjectLabel(item);
+			return script->resolveObjectLabel(item);
 	}
 
 	return normalizeHarvesterResourcePath(_selectedItemName);
@@ -451,16 +451,16 @@ bool InventorySystem::toggleCombatLoadout(const ObjectRecord &object, int curren
 	if (!resolveInventoryCombatLoadoutId(object.objectName, loadoutId))
 		return false;
 
-	Script *startupScript = _engine.getScript();
-	if (!startupScript)
+	Script *script = _engine.getScript();
+	if (!script)
 		return false;
 
 	// Native run_inventory_screen compares the clicked weapon against the live combat avatar loadout.
-	const int savedLoadout = startupScript->getPlayerCombatLoadout();
+	const int savedLoadout = script->getPlayerCombatLoadout();
 	const int activeLoadout = currentLoadout >= 0 ? currentLoadout : savedLoadout;
 	const int nextLoadout = activeLoadout == loadoutId ? 0 : loadoutId;
-	const bool scriptChanged = startupScript->setPlayerCombatLoadout(nextLoadout);
-	const int resultingLoadout = startupScript->getPlayerCombatLoadout();
+	const bool scriptChanged = script->setPlayerCombatLoadout(nextLoadout);
+	const int resultingLoadout = script->getPlayerCombatLoadout();
 	changed = activeLoadout != nextLoadout;
 	debugC(1, kDebugInventory,
 		"Harvester: inventory combat toggle object='%s' active_loadout=%d('%s') saved_loadout=%d('%s') requested_loadout=%d('%s') changed=%d script_changed=%d resulting_loadout=%d('%s') damage=%d damage_type='%s'",
@@ -509,11 +509,11 @@ const Common::String &InventorySystem::getPromptText() const {
 }
 
 Common::String InventorySystem::resolveWeekdayLabel() const {
-	Script *startupScript = _engine.getScript();
-	if (!startupScript || startupScript->isObjectInInventory(kHarvestBladeObjectName))
+	Script *script = _engine.getScript();
+	if (!script || script->isObjectInInventory(kHarvestBladeObjectName))
 		return Common::String();
 
-	return resolveInventoryWeekdayLabel(startupScript->getCurrentStoryDayIndex());
+	return resolveInventoryWeekdayLabel(script->getCurrentStoryDayIndex());
 }
 
 const InventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {

@@ -66,34 +66,34 @@ static void syncStartupSaveRoomState(Common::Serializer &s, SaveRoomState &state
 void HarvesterEngine::captureCurrentSaveRoomState(const Common::String &entranceName,
 		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
 		const Common::String &musicPath) {
-	_currentStartupSaveRoomState.entranceName = entranceName;
-	_currentStartupSaveRoomState.roomName = roomName;
-	_currentStartupSaveRoomState.musicPath =
+	_currentSaveRoomState.entranceName = entranceName;
+	_currentSaveRoomState.roomName = roomName;
+	_currentSaveRoomState.musicPath =
 		(_resources && !musicPath.empty()) ? _resources->normalizeResourcePath(musicPath) : musicPath;
-	_currentStartupSaveRoomState.playerX = playerX;
-	_currentStartupSaveRoomState.playerY = playerY;
-	_currentStartupSaveRoomState.playerZ = playerZ;
-	_currentStartupSaveRoomState.playerFacing = playerFacing;
-	_currentStartupSaveRoomState.valid = !roomName.empty();
+	_currentSaveRoomState.playerX = playerX;
+	_currentSaveRoomState.playerY = playerY;
+	_currentSaveRoomState.playerZ = playerZ;
+	_currentSaveRoomState.playerFacing = playerFacing;
+	_currentSaveRoomState.valid = !roomName.empty();
 }
 
 void HarvesterEngine::clearCurrentSaveRoomState() {
-	_currentStartupSaveRoomState.clear();
+	_currentSaveRoomState.clear();
 }
 
 void HarvesterEngine::clearPendingLoadedSaveRoomState() {
-	_pendingLoadedStartupSaveRoomState.clear();
-	_pendingLoadedStartupDisc = 0;
+	_pendingLoadedSaveRoomState.clear();
+	_pendingLoadedDisc = 0;
 }
 
 Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
-	if (!_startupScript)
+	if (!_script)
 		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 	if (s.isLoading()) {
 		clearPendingLoadedSaveRoomState();
 		clearPendingLoadedDialogueStateBlob();
 	}
-	if (s.isSaving() && !_currentStartupSaveRoomState.valid)
+	if (s.isSaving() && !_currentSaveRoomState.valid)
 		return Common::kWritingFailed;
 	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
 		return Common::kReadingFailed;
@@ -108,11 +108,11 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 
 	SaveRoomState roomState = s.isLoading()
 		? SaveRoomState()
-		: _currentStartupSaveRoomState;
+		: _currentSaveRoomState;
 	if (s.isSaving())
 		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
-	_startupScript->syncRuntimeSaveState(s);
+	_script->syncRuntimeSaveState(s);
 	// FIXME: Drop the pre-release version-3 dialogue blob fallback after release; clean
 	// Harvester saves will always carry dialogue state.
 	if (s.getVersion() >= 3) {
@@ -149,7 +149,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		if (!activateDisc(restoredDisc))
 			return Common::kReadingFailed;
 		if (previousDisc > 0 && previousDisc != restoredDisc) {
-			if (!_startupScript->reloadTownWorld(*_resources)) {
+			if (!_script->reloadTownWorld(*_resources)) {
 				warning("Harvester: unable to reload town script after save restore disc switch %d -> %d",
 					previousDisc, restoredDisc);
 				return Common::kReadingFailed;
@@ -159,9 +159,9 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 				"Harvester: reloaded town script after save restore disc switch %d -> %d",
 				previousDisc, restoredDisc);
 		}
-		_currentStartupSaveRoomState = roomState;
-		_pendingLoadedStartupSaveRoomState = roomState;
-		_pendingLoadedStartupDisc = restoredDisc;
+		_currentSaveRoomState = roomState;
+		_pendingLoadedSaveRoomState = roomState;
+		_pendingLoadedDisc = restoredDisc;
 		logStartupSaveRoomState("loaded", roomState);
 	}
 	return Common::kNoError;
