@@ -140,7 +140,7 @@ void FoolGame::wordSearchRun() {
 	g_toolbox->PenNormal();
 	this->var_str_384 = this->var_str_188e;
 	this->wordSearchDrawFooter();
-	g_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], 0, kSrcOr);
+	g_zbasic->text(0xfb, this->arr_i16_1eb8[0xe], Graphics::kMacFontRegular, kSrcOr);
 	g_toolbox->PenPat(this->arr_pat_58f4[1]);
 	g_toolbox->PenMode(kPatBic);
 	g_zbasic->unk_20();
