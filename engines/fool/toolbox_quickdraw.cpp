@@ -195,7 +195,7 @@ void Toolbox::EndUpdate(WindowRecord &theWindow) {
 }
 
 void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
-	if (!r.isValidRect()) {
+	if ((!r.isValidRect()) || r.isEmpty()) {
 		warning("Toolbox::_drawOval: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
@@ -296,7 +296,7 @@ void Toolbox::_drawPoly(const PolyHandle &poly, const Pattern &pat, PatternMode 
 
 
 void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor) {
-	if (!r.isValidRect()) {
+	if ((!r.isValidRect()) || r.isEmpty()) {
 		warning("Toolbox::_drawRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
@@ -341,7 +341,7 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 }
 
 void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternMode mode, bool frame, uint32 fgColor, uint32 bkColor, uint16 ovalWidth, uint16 ovalHeight) {
-	if (!r.isValidRect()) {
+	if ((!r.isValidRect()) || r.isEmpty()) {
 		warning("Toolbox::_drawRoundRect: invalid rect %d %d %d %d", r.left, r.top, r.right, r.bottom);
 		return;
 	}
