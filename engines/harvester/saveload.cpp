@@ -39,6 +39,8 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
+// FIXME: This pre-release version-16 bump exists only to carry monster corpse
+// runtimeState. Fold it into the final Harvester save layout before release.
 static const uint32 kHarvesterSaveVersion = 16;
 
 static void logStartupSaveRoomState(const char *operation, const StartupSaveRoomState &state) {
@@ -99,6 +101,8 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		return Common::kReadingFailed;
 
 	int32 serializedDisc = (_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1;
+	// FIXME: Remove the pre-release version-14 fallback once Harvester ships and only
+	// clean release-era saves remain.
 	s.syncAsSint32LE(serializedDisc, 14);
 	const int restoredDisc = serializedDisc > 0 ? serializedDisc : 1;
 
@@ -109,15 +113,17 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
 	_startupScript->syncRuntimeSaveState(s);
-		if (s.getVersion() >= 3) {
-			Common::Array<byte> dialogueStateBlob;
-			uint32 dialogueStateSize = 0;
-			if (s.isSaving()) {
-				if (!_activeFlow || !_activeFlow->buildDialogueSaveStateBlob(dialogueStateBlob, s.getVersion()))
-					return Common::kWritingFailed;
-				dialogueStateSize = dialogueStateBlob.size();
-				if (dialogueStateSize == 0)
-					return Common::kWritingFailed;
+	// FIXME: Drop the pre-release version-3 dialogue blob fallback after release; clean
+	// Harvester saves will always carry dialogue state.
+	if (s.getVersion() >= 3) {
+		Common::Array<byte> dialogueStateBlob;
+		uint32 dialogueStateSize = 0;
+		if (s.isSaving()) {
+			if (!_activeFlow || !_activeFlow->buildDialogueSaveStateBlob(dialogueStateBlob, s.getVersion()))
+				return Common::kWritingFailed;
+			dialogueStateSize = dialogueStateBlob.size();
+			if (dialogueStateSize == 0)
+				return Common::kWritingFailed;
 		}
 		s.syncAsUint32LE(dialogueStateSize);
 		if (s.isLoading()) {
