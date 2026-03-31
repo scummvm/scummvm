@@ -65,6 +65,22 @@ void Monster::applyAnimation(RuntimeEntity &entity, const StartupMonsterRecord &
 	if (!monster.visible)
 		return;
 
+	// Native monsters keep the last death frame on screen after the death bank
+	// completes instead of snapping back to an idle facing frame.
+	if (!monster.active &&
+			monster.currentHitPoints <= 0 &&
+			monster.runtimeSpawned &&
+			monster.runtimeState >= 0) {
+		int corpseFrame = monster.runtimeState;
+		if (corpseFrame > entity.getLastFrame())
+			corpseFrame = entity.getLastFrame();
+		entity.setAnimationRate(0);
+		entity.setAnimationFrameRange(corpseFrame, corpseFrame, false);
+		entity.setCurrentFrame(corpseFrame);
+		entity.setAnimationEnabled(false);
+		return;
+	}
+
 	const MonsterAnimationRange range = resolveAnimationRange(monster.facing);
 	if (monster.active) {
 		entity.setAnimationRate(kRoomMonsterAnimationRate);

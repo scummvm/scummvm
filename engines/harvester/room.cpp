@@ -1022,6 +1022,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				lhs.facing == rhs.facing &&
 				lhs.active == rhs.active &&
 				lhs.visible == rhs.visible &&
+				lhs.runtimeSpawned == rhs.runtimeSpawned &&
+				lhs.runtimeState == rhs.runtimeState &&
 				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 		};
 		auto applyRoomNpcPlacement = [&](RuntimeEntity &entity, const StartupNpcRecord &npc) {
@@ -2811,11 +2813,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (entity->getCurrentFrame() == combatState.deathLastFrame) {
 					combatState.deathActive = false;
 					monster.active = false;
-					monster.visible = false;
+					monster.visible = true;
+					monster.runtimeSpawned = true;
+					monster.runtimeState = entity->getCurrentFrame();
+					entity->setAnimationRate(0);
+					entity->setAnimationFrameRange(monster.runtimeState, monster.runtimeState, false);
+					entity->setCurrentFrame(monster.runtimeState);
+					entity->setAnimationEnabled(false);
 					(void)startupScript->syncRuntimeMonsterRecord(monster);
 					debugC(1, kDebugCombat,
-						"Harvester: combat monster death complete target='%s' damage_type=%d on_death='%s'",
+						"Harvester: combat monster death complete target='%s' damage_type=%d corpse_frame=%d on_death='%s'",
 						monster.monsterName.c_str(), combatState.deathDamageType,
+						monster.runtimeState,
 						monster.onDeathActionTag.c_str());
 					clearRoomMonsterCombatState(combatState);
 
