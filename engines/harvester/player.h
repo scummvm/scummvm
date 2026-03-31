@@ -60,6 +60,12 @@ public:
 	static bool startKeyboardAttackAnimation(const StartupRoomSetupState &state,
 		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown);
 	static bool updateAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
+	static bool startHitAnimation(HarvesterEngine &engine, StartupRoomPlayerState &playerState,
+		int monsterAttackFirstFrame);
+	static bool updateHitAnimationState(HarvesterEngine &engine, const StartupRoomSetupState &state,
+		const Common::Array<StartupObjectRecord> &sceneObjects,
+		const Common::Array<StartupAnimRecord> &sceneAnimations,
+		StartupRoomPlayerState &playerState);
 	static bool startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled);
 	static bool updateDeathAnimationState(StartupRoomPlayerState &playerState);
 	static bool startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
