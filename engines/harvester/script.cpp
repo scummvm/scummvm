@@ -2317,7 +2317,12 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	}
 
 	const bool changed = !runtimeNpc->deathOrMonsterfyFlag ||
+		runtimeNpc->active ||
+		runtimeNpc->visible ||
 		(deathDamageType != 0 && runtimeNpc->deathDamageType != deathDamageType);
+	runtimeNpc->active = false;
+	runtimeNpc->visible = false;
+	runtimeNpc->savedVisible = false;
 	runtimeNpc->deathOrMonsterfyFlag = true;
 	if (deathDamageType != 0)
 		runtimeNpc->deathDamageType = deathDamageType;
