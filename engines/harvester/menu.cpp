@@ -109,6 +109,9 @@ static const int kPasswordEntryX = 0xdc;
 static const int kPasswordEntryY = 0xdc;
 static const int kPasswordEntryWidth = 0x226;
 static const int kPasswordMaxCharacters = 8;
+static const uint32 kPaletteFadeTickMs = 4;
+static const float kPaletteFadeStep = 0.1f;
+static const float kPaletteBrightnessBlack = 0.0f;
 
 struct RoomMenuTextConfig {
 	Common::Array<Common::String> optionItems;
@@ -773,7 +776,9 @@ Common::Error MenuSystem::runMainMenuStub(Flow &startupFlow) {
 		}
 
 		if (item.equalsIgnoreCase("SAVE GAME")) {
-			Common::Error saveError = runSaveGameMenu(menuPalette, 1.0f, startupFlow);
+			bool savedGame = false;
+			Common::Error saveError = runSaveGameMenu(menuPalette, 1.0f, startupFlow, savedGame);
+			(void)savedGame;
 			needsRedraw = true;
 			return saveError;
 		}
@@ -1009,9 +1014,19 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 		}
 
 		if (item.equalsIgnoreCase("SAVE GAME")) {
-			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow);
+			bool savedGame = false;
+			Common::Error saveError = runSaveGameMenu(palette, paletteBrightness, startupFlow, savedGame);
 			if (saveError.getCode() != Common::kNoError)
 				return saveError;
+			if (savedGame) {
+				// Native exits the in-room ESC menu after a successful save and restores the room view.
+				Common::Error restoreError = restoreRoomBackdropAfterSave(
+					backdrop, palette, paletteBrightness, startupFlow);
+				if (restoreError.getCode() != Common::kNoError)
+					return restoreError;
+				shouldCloseMenu = true;
+				return Common::kNoError;
+			}
 			needsRedraw = true;
 			return Common::kNoError;
 		}
@@ -1264,9 +1279,10 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 }
 
 Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrightness,
-		Flow &startupFlow) {
+		Flow &startupFlow, bool &savedGame) {
 	(void)palette;
 	(void)paletteBrightness;
+	savedGame = false;
 	ResourceManager *resources = _engine.getResources();
 	MetaEngine *metaEngine = _engine.getMetaEngine();
 	const CftFontResource *slotNameFontResource = findStartupFontByName(_engine, "MEDFONT1");
@@ -1435,16 +1451,20 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 					Common::Error saveError = activateSelectedSlot(saved);
 					if (saveError.getCode() != Common::kNoError)
 						return saveError;
-					if (saved)
+					if (saved) {
+						savedGame = true;
 						return Common::kNoError;
+					}
 					break;
 				}
 				if (saveConfirmRect().contains(_mousePos)) {
 					Common::Error saveError = activateSelectedSlot(saved);
 					if (saveError.getCode() != Common::kNoError)
 						return saveError;
-					if (saved)
+					if (saved) {
+						savedGame = true;
 						return Common::kNoError;
+					}
 				} else if (saveCancelRect().contains(_mousePos)) {
 					return Common::kNoError;
 				}
@@ -1469,8 +1489,10 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 					Common::Error saveError = activateSelectedSlot(saved);
 					if (saveError.getCode() != Common::kNoError)
 						return saveError;
-					if (saved)
+					if (saved) {
+						savedGame = true;
 						return Common::kNoError;
+					}
 					needsRedraw = true;
 				}
 				break;
@@ -1487,6 +1509,59 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 	}
 
 	return Common::kNoError;
+}
+
+Common::Error MenuSystem::restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &startupFlow) const {
+	Graphics::Screen *screen = _engine.getScreen();
+	if (!screen || !backdrop.isValid())
+		return Common::kNoError;
+
+	byte displayPalette[256 * 3];
+	screen->getPalette(displayPalette);
+
+	bool hasVisiblePalette = false;
+	for (byte value : displayPalette) {
+		if (value != 0) {
+			hasVisiblePalette = true;
+			break;
+		}
+	}
+
+	if (hasVisiblePalette) {
+		for (float brightness = 1.0f - kPaletteFadeStep;
+				brightness > kPaletteBrightnessBlack; brightness -= kPaletteFadeStep) {
+			byte fadedPalette[256 * 3];
+			buildHarvesterDisplayPalette(displayPalette, brightness, fadedPalette);
+			screen->setPalette(fadedPalette);
+			screen->makeAllDirty();
+			screen->update();
+
+			const uint32 nextTick = g_system->getMillis() + kPaletteFadeTickMs;
+			while ((int32)(nextTick - g_system->getMillis()) > 0) {
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					Common::Error result = Common::kNoError;
+					if (startupFlow.handleSystemEvent(event, result))
+						return result;
+				}
+				g_system->delayMillis(1);
+			}
+		}
+
+		byte blackPalette[256 * 3] = { 0 };
+		screen->setPalette(blackPalette);
+		screen->makeAllDirty();
+		screen->update();
+	}
+
+	screen->fillRect(screen->getBounds(), 0);
+	blitBitmap(*screen, backdrop, 0, 0);
+	applyMenuPalette(*screen, _engine, palette, kPaletteBrightnessBlack);
+	screen->makeAllDirty();
+	screen->update();
+
+	return startupFlow.fadeInRoomScene(palette, paletteBrightness);
 }
 
 Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
