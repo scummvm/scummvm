@@ -44,11 +44,23 @@ GroupedListWidget::GroupedListWidget(Dialog *boss, const Common::String &name, c
 }
 
 void GroupedListWidget::setList(const Common::U32StringArray &list) {
+	// Save selected data indices before ListWidget::setList() wipes them
+	Common::Array<int> savedSelections;
+	for (int i = 0; i < (int)_selectedItems.size(); ++i) {
+		if (_selectedItems[i])
+			savedSelections.push_back(i);
+	}
 	ListWidget::setList(list);
 
 	_attributeValues.clear();	// Regenerate attributes for the new list
 	groupByAttribute();
 	scrollBarRecalc();
+
+	_selectedItems.resize(_dataList.size(), false);
+	for (int idx : savedSelections) {
+		if (idx < (int)_selectedItems.size())
+			_selectedItems[idx] = true;
+	}
 }
 
 void GroupedListWidget::setAttributeValues(const Common::U32StringArray &attrValues) {
@@ -140,8 +152,42 @@ void GroupedListWidget::sortGroups() {
 			}
 		}
 	}
+
+	// Restore _selectedItem to topmost selected visual position,
+	// and compute smart scroll position.
+	_selectedItem = -1;
+	int topMostSel = -1;
+	int bottomMostSel = -1;
+
+	for (int i = 0; i < (int)_listIndex.size(); ++i) {
+		int dataIndex = _listIndex[i];
+		if (dataIndex >= 0 && dataIndex < (int)_selectedItems.size() && _selectedItems[dataIndex]) {
+			if (topMostSel == -1) {
+				topMostSel = i;
+				_selectedItem = i;
+			}
+			bottomMostSel = i;
+		}
+	}
+
+	if (topMostSel != -1 && _entriesPerPage > 0) {
+		int span = bottomMostSel - topMostSel + 1;
+
+		if (topMostSel == bottomMostSel) {
+			_currentPos = topMostSel - _entriesPerPage / 2;
+		} else if (span <= _entriesPerPage) {
+			int spanCenter = (topMostSel + bottomMostSel) / 2;
+			_currentPos = spanCenter - _entriesPerPage / 2;
+		} else {
+			_currentPos = topMostSel;
+		}
+	}
 	checkBounds();
 	scrollBarRecalc();
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
+
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
@@ -484,7 +530,7 @@ void GroupedListWidget::setFilter(const Common::U32String &filter, bool redraw) 
 	// Try to preserve the previous selection
 	if (selectedItem != -1)
 		setSelected(selectedItem);
-
+	
 	if (redraw) {
 		scrollBarRecalc();
 		// Redraw the whole dialog. This is annoying, as this might be rather
