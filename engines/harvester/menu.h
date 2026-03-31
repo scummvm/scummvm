@@ -52,7 +52,10 @@ private:
 	Common::Error runOptionsMenu(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow);
 	Common::Error runHelpScreen(const byte *palette, float paletteBrightness, Flow &startupFlow);
-	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness, Flow &startupFlow);
+	Common::Error runSaveGameMenu(const byte *palette, float paletteBrightness,
+		Flow &startupFlow, bool &savedGame);
+	Common::Error restoreRoomBackdropAfterSave(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, Flow &startupFlow) const;
 	Common::Error runConfirmPrompt(const IndexedBitmap &backdrop, const byte *palette,
 		float paletteBrightness, Flow &startupFlow, const Common::String &promptText,
 		bool &confirmed);
