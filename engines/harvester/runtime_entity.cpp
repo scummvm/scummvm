@@ -615,7 +615,8 @@ void RuntimeEntity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _firstFrame;
-			_animationEnabled = false;
+			if (_classId == kRuntimeEntityClassAnimation)
+				_animationEnabled = false;
 			goto done;
 		}
 
@@ -636,7 +637,8 @@ void RuntimeEntity::advanceAnimationFrame(int directive) {
 
 		if (!_looping) {
 			_currentFrame = _lastFrame;
-			_animationEnabled = false;
+			if (_classId == kRuntimeEntityClassAnimation)
+				_animationEnabled = false;
 			goto done;
 		}
 
