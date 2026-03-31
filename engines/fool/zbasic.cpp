@@ -556,6 +556,13 @@ void ZBasic::swapInt(int16 &a, int16 &b) {
 	b = tmp;
 }
 
+void ZBasic::swapStr(Common::U32String &a, Common::U32String &b) {
+	Common::U32String tmp = a;
+	a = b;
+	b = tmp;
+}
+
+
 void ZBasic::text(uint16 font, uint16 size, uint16 face, SourceMode mode) {
 	_toolbox->TextFont(font);
 	_toolbox->TextSize(size);

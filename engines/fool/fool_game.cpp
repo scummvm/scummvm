@@ -431,31 +431,31 @@ void FoolGame::sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3,
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_128_712(int16 unk3, int16 unk2, int16 unk1) {
+void FoolGame::sub_128_712(int16 rectID, int16 deckPos, int16 unk1) {
 	// 128:0712
 	g_toolbox->PenNormal();
 	if (unk1 == 0) {
 		g_toolbox->PenSize(0x3, 0x3);
 		g_toolbox->PenPat(this->arr_pat_58f4[0]);
-		g_toolbox->FrameRoundRect(this->arr_rect_1f38[unk3], 0xf, 0xf);
+		g_toolbox->FrameRoundRect(this->arr_rect_1f38[rectID], 0xf, 0xf);
 		g_toolbox->PenSize(1, 1);
 		g_toolbox->PenPat(this->arr_pat_58f4[2]);
-		g_toolbox->FrameRoundRect(this->arr_rect_1f38[unk3], 0xf, 0xf);
+		g_toolbox->FrameRoundRect(this->arr_rect_1f38[rectID], 0xf, 0xf);
 		// 128:079e
-		g_zbasic->picture(this->arr_rect_1f38[unk3].left + 3, this->arr_rect_1f38[unk3].top + 3, this->arr_i32_192c0[this->arr_i16_5cbc[unk2/2]]);
+		g_zbasic->picture(this->arr_rect_1f38[rectID].left + 3, this->arr_rect_1f38[rectID].top + 3, this->arr_i32_192c0[this->arr_i16_5cbc[deckPos]]);
 	}
 	// 128:0806
 	if (unk1 == 1) {
 		g_toolbox->PenPat(this->arr_pat_58f4[1]);
-		g_toolbox->PaintRoundRect(this->arr_rect_1f38[unk3], 0xc, 0xc);
+		g_toolbox->PaintRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
 	if (unk1 == 2) {
 		g_toolbox->PenMode(kPatOr);
 		g_toolbox->PenPat(this->arr_pat_58f4[1]);
-		g_toolbox->PaintRoundRect(this->arr_rect_1f38[unk3], 0xc, 0xc);
+		g_toolbox->PaintRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
 	if (unk1 == 3) {
-		g_toolbox->InvertRoundRect(this->arr_rect_1f38[unk3], 0xc, 0xc);
+		g_toolbox->InvertRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
 	g_toolbox->PenNormal();
 }
@@ -601,10 +601,9 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	g_zbasic->text(this->var_i16_7aa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7b4 = this->var_i16_7ae*0x46;
 	this->var_i16_7b6 = 0;
-	this->var_i16_7b8 = 0;
 	for (int i = 0; i <= this->var_i16_7ac; i++) {
 	// 128:0e86
-		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_str_1a8d8[this->var_i16_7ba]);
+		this->var_i16_7ba = g_toolbox->StringWidth(this->arr_str_1a8d8[i]);
 		if (this->var_i16_7ba > this->var_i16_7b4) {
 			this->var_i16_7b4 = this->var_i16_7ba;
 		}
@@ -721,15 +720,15 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 				// 128:154a
 				this->var_i16_7be = 0;
 				Common::Rect target;
-				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b7c) != 0) {
+				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b7c)) {
 					this->var_i16_7be = 1;
 					target = this->arr_rect_5b7c;
 				}
-				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b84) != 0) {
+				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b84)) {
 					this->var_i16_7be = 2;
 					target = this->arr_rect_5b84;
 				}
-				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b8c) != 0) {
+				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b8c)) {
 					this->var_i16_7be = 3;
 					target = this->arr_rect_5b8c;
 				}
@@ -741,22 +740,28 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 
 						// 128:1624
-						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target) != 0)) {
+						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target))) {
 
 							this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
+							if (this->var_ev_46.what == kNullEvent) {
+								g_toolbox->Delay(0);
+							}
 						}
 
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 						// 128:1686
-						while ((this->var_ev_46.what != kMouseUp) && (g_toolbox->PtInRect(this->var_ev_46.where, target))) {
+						while ((this->var_ev_46.what != kMouseUp) && (!g_toolbox->PtInRect(this->var_ev_46.where, target))) {
 							this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 							g_toolbox->GlobalToLocal(this->var_ev_46.where);
+							if (this->var_ev_46.what == kNullEvent) {
+								g_toolbox->Delay(0);
+							}
 						}
 						// 128:16ea
 					} while (this->var_ev_46.what != kMouseUp);
 
-					if (g_toolbox->PtInRect(this->var_ev_46.where, target) == 0) {
+					if (!g_toolbox->PtInRect(this->var_ev_46.where, target)) {
 						this->var_i16_7be = 0;
 					}
 					this->sub_128_61ec();
@@ -1638,7 +1643,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_137_004();
 		break;
 	case 12:
-		this->sub_139_004();
+		this->cardsRun();
 		break;
 	case 13:
 		this->sub_140_004();
@@ -2952,11 +2957,6 @@ void FoolGame::sub_137_004() {
 }
 
 void FoolGame::sub_138_004() {
-	warning("STUB: %s", __func__);
-}
-
-// wheel of fortune game
-void FoolGame::sub_139_004() {
 	warning("STUB: %s", __func__);
 }
 
