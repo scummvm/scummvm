@@ -236,6 +236,7 @@ struct StartupAudioCommand {
 struct StartupRoomSetupState {
 	Common::String entranceName;
 	Common::String roomName;
+	Common::String backgroundObjectName;
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
