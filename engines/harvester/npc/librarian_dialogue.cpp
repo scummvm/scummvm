@@ -69,9 +69,9 @@ bool LibrarianDialogueHandler::matchesNpc(const Common::String &npcName) const {
 Common::Error LibrarianDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &) {
 	auto hasVisibleInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
+		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+		for (const ObjectRecord &inventoryObject : inventoryObjects) {
 			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
 				return true;
 		}

@@ -156,14 +156,14 @@ static Common::String buildUseItemPrompt(const Common::String &itemLabel, const 
 	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
 }
 
-static Common::Rect getHotspotBounds(const StartupObjectRecord &object) {
+static Common::Rect getHotspotBounds(const ObjectRecord &object) {
 	if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 		return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 
 	return Common::Rect();
 }
 
-static Common::String resolveSceneObjectSpritePath(const StartupObjectRecord &object) {
+static Common::String resolveSceneObjectSpritePath(const ObjectRecord &object) {
 	const bool atInitialPlacement = object.currentX == object.initialX &&
 		object.currentY == object.initialY &&
 		object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
@@ -255,7 +255,7 @@ static Common::String resolveInventoryWeekdayLabel(int storyDayIndex) {
 	}
 }
 
-static void debugLogInventoryVisual(const StartupInventoryVisual &visual, const Common::String &spritePath) {
+static void debugLogInventoryVisual(const InventoryVisual &visual, const Common::String &spritePath) {
 	debugC(1, kDebugInventory,
 		"Harvester: inventory visual object='%s' sprite='%s' alt='%s' chosen='%s' bounds=(%d,%d)-(%d,%d) action='%s' owner='%s' text='%s'",
 		visual.object.objectName.c_str(), visual.object.spritePath.c_str(), visual.object.altSpritePath.c_str(),
@@ -299,14 +299,14 @@ bool InventorySystem::refresh() {
 	_lastStoryDayIndex = startupScript->getCurrentStoryDayIndex();
 	_lastHasHarvestBlade = startupScript->isObjectInInventory(kHarvestBladeObjectName);
 
-	Common::Array<StartupObjectRecord> inventoryObjects;
+	Common::Array<ObjectRecord> inventoryObjects;
 	startupScript->getVisibleInventoryObjects(inventoryObjects);
 	int nextX = kInventoryItemStartX;
 	int nextY = kInventoryItemStartY;
 	int rowHeight = 0;
 
-	for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
-		StartupInventoryVisual visual;
+	for (const ObjectRecord &inventoryObject : inventoryObjects) {
+		InventoryVisual visual;
 		visual.object = inventoryObject;
 
 		if (isExitObject(inventoryObject)) {
@@ -353,7 +353,7 @@ bool InventorySystem::refresh() {
 	if (_selectedItemName.empty())
 		return true;
 
-	for (const StartupInventoryVisual &item : _items) {
+	for (const InventoryVisual &item : _items) {
 		if (item.object.objectName.equalsIgnoreCase(_selectedItemName))
 			return true;
 	}
@@ -420,14 +420,14 @@ Common::String InventorySystem::resolveSelectedLabel() const {
 	if (!startupScript || _selectedItemName.empty())
 		return Common::String();
 
-	for (const StartupInventoryVisual &item : _items) {
+	for (const InventoryVisual &item : _items) {
 		if (item.object.objectName.equalsIgnoreCase(_selectedItemName))
 			return startupScript->resolveObjectLabel(item.object);
 	}
 
-	Common::Array<StartupObjectRecord> inventoryObjects;
+	Common::Array<ObjectRecord> inventoryObjects;
 	startupScript->getVisibleInventoryObjects(inventoryObjects);
-	for (const StartupObjectRecord &item : inventoryObjects) {
+	for (const ObjectRecord &item : inventoryObjects) {
 		if (item.objectName.equalsIgnoreCase(_selectedItemName))
 			return startupScript->resolveObjectLabel(item);
 	}
@@ -443,7 +443,7 @@ void InventorySystem::selectItem(const Common::String &objectName) {
 	_selectedItemName = objectName;
 }
 
-bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, int currentLoadout,
+bool InventorySystem::toggleCombatLoadout(const ObjectRecord &object, int currentLoadout,
 		bool &changed) {
 	changed = false;
 
@@ -475,7 +475,7 @@ bool InventorySystem::toggleCombatLoadout(const StartupObjectRecord &object, int
 	return true;
 }
 
-bool InventorySystem::resolveSecondaryAction(const StartupObjectRecord &object,
+bool InventorySystem::resolveSecondaryAction(const ObjectRecord &object,
 		InventorySecondaryAction &action) const {
 	if (resolveInventorySecondaryActionEntry(object.objectName, action)) {
 		debugC(1, kDebugInventory,
@@ -516,7 +516,7 @@ Common::String InventorySystem::resolveWeekdayLabel() const {
 	return resolveInventoryWeekdayLabel(startupScript->getCurrentStoryDayIndex());
 }
 
-const StartupInventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {
+const InventoryVisual *InventorySystem::findItemAtPoint(const Common::Point &point) const {
 	for (int i = (int)_items.size() - 1; i >= 0; --i) {
 		if (_items[i].bounds.contains(point))
 			return &_items[i];
@@ -539,7 +539,7 @@ void InventorySystem::drawSelectedDragItem(Graphics::Screen &screen, const Commo
 	if (_selectedItemName.empty())
 		return;
 
-	for (const StartupInventoryVisual &item : _items) {
+	for (const InventoryVisual &item : _items) {
 		if (!item.object.objectName.equalsIgnoreCase(_selectedItemName))
 			continue;
 		if (!item.hasBitmap || !item.bitmap.isValid())
@@ -559,7 +559,7 @@ void InventorySystem::drawOverlay(Graphics::Screen &screen) const {
 
 	blitBitmap(screen, art->getInventoryBitmap(), kInventoryX, kInventoryY);
 
-	for (const StartupInventoryVisual &item : _items) {
+	for (const InventoryVisual &item : _items) {
 		if (!_selectedItemName.empty() && item.object.objectName.equalsIgnoreCase(_selectedItemName))
 			continue;
 		if (item.hasBitmap && item.bitmap.isValid())
@@ -567,11 +567,11 @@ void InventorySystem::drawOverlay(Graphics::Screen &screen) const {
 	}
 }
 
-bool InventorySystem::isExitObject(const StartupObjectRecord &object) {
+bool InventorySystem::isExitObject(const ObjectRecord &object) {
 	return object.objectName.equalsIgnoreCase("INV_EXIT");
 }
 
-bool InventorySystem::isStatusObject(const StartupObjectRecord &object) {
+bool InventorySystem::isStatusObject(const ObjectRecord &object) {
 	return object.objectName.hasPrefixIgnoreCase("INV_STAT");
 }
 

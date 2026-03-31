@@ -34,8 +34,8 @@ namespace Harvester {
 
 class Art;
 class ResourceManager;
-class RuntimeEntityManager;
-struct StartupAudioCommand;
+class EntityManager;
+struct AudioCommand;
 class Text;
 
 class MediaManager {
@@ -43,7 +43,7 @@ public:
 	explicit MediaManager(ResourceManager &resources);
 	~MediaManager();
 
-	RuntimeEntityManager *getRuntimeEntities() const { return _runtimeEntities; }
+	EntityManager *getRuntimeEntities() const { return _runtimeEntities; }
 	Graphics::Screen *getScreen() const { return _screen; }
 	int getDisplayWidth() const { return _displayWidth; }
 	int getDisplayHeight() const { return _displayHeight; }
@@ -63,7 +63,7 @@ public:
 	bool playMusic(const Common::String &path);
 	void pauseMusic(bool paused);
 	void stopMusic();
-	bool executeAudioCommand(const StartupAudioCommand &command);
+	bool executeAudioCommand(const AudioCommand &command);
 	bool playSound(const Common::String &path);
 	bool playSingleSound(const Common::String &path);
 	void stopSingleSound();
@@ -81,7 +81,7 @@ private:
 	bool validateLoadedSoundSlot(int slot) const;
 
 	ResourceManager &_resources;
-	RuntimeEntityManager *_runtimeEntities = nullptr;
+	EntityManager *_runtimeEntities = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	int _displayWidth = 0;
 	int _displayHeight = 0;

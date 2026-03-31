@@ -26,7 +26,7 @@
 
 namespace Harvester {
 
-struct StartupSaveRoomState {
+struct SaveRoomState {
 	Common::String entranceName;
 	Common::String roomName;
 	Common::String musicPath;

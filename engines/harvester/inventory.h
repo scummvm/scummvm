@@ -38,8 +38,8 @@ namespace Harvester {
 
 class HarvesterEngine;
 
-struct StartupInventoryVisual {
-	StartupObjectRecord object;
+struct InventoryVisual {
+	ObjectRecord object;
 	IndexedBitmap bitmap;
 	Common::Rect bounds;
 	bool hasBitmap = false;
@@ -65,23 +65,23 @@ public:
 	Common::String resolveSelectedLabel() const;
 	Common::String buildSelectedPrompt(const Common::String &targetLabel) const;
 	void selectItem(const Common::String &objectName);
-	bool toggleCombatLoadout(const StartupObjectRecord &object, int currentLoadout, bool &changed);
-	bool resolveSecondaryAction(const StartupObjectRecord &object, InventorySecondaryAction &action) const;
+	bool toggleCombatLoadout(const ObjectRecord &object, int currentLoadout, bool &changed);
+	bool resolveSecondaryAction(const ObjectRecord &object, InventorySecondaryAction &action) const;
 	void setPromptText(const Common::String &promptText);
 	const Common::String &getPromptText() const;
 	Common::String resolveWeekdayLabel() const;
-	const StartupInventoryVisual *findItemAtPoint(const Common::Point &point) const;
+	const InventoryVisual *findItemAtPoint(const Common::Point &point) const;
 	Common::Rect getPanelBounds() const;
 	void drawOverlay(Graphics::Screen &screen) const;
 	void drawSelectedDragItem(Graphics::Screen &screen, const Common::Point &point) const;
 
-	static bool isExitObject(const StartupObjectRecord &object);
-	static bool isStatusObject(const StartupObjectRecord &object);
+	static bool isExitObject(const ObjectRecord &object);
+	static bool isStatusObject(const ObjectRecord &object);
 
 private:
 	bool loadBitmap(const Common::String &path, IndexedBitmap &bitmap);
 
-	Common::Array<StartupInventoryVisual> _items;
+	Common::Array<InventoryVisual> _items;
 	Common::HashMap<Common::String, IndexedBitmap,
 		Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _bitmapCache;
 	bool _open = false;

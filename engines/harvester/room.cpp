@@ -182,7 +182,7 @@ static bool isOutsideNativeInventoryDragCloseBounds(const Common::Point &point) 
 }
 
 static void debugLogInventoryClick(const char *buttonLabel, const Common::Point &point,
-		const StartupInventoryVisual *inventoryHover) {
+		const InventoryVisual *inventoryHover) {
 	if (!inventoryHover) {
 		debugC(1, kDebugInventory,
 			"Harvester: inventory %s click at (%d,%d) hit no item", buttonLabel, point.x, point.y);
@@ -257,7 +257,7 @@ static Common::String buildUseItemPrompt(const Common::String &itemLabel, const 
 	return Common::String::format("Use %s on %s", itemLabel.c_str(), targetLabel.c_str());
 }
 
-static Common::String resolveStartupNpcLabel(const StartupNpcRecord &npc) {
+static Common::String resolveStartupNpcLabel(const NpcRecord &npc) {
 	Common::String label = !npc.entityInitArg.empty() ? npc.entityInitArg : npc.npcName;
 	for (uint i = 0; i < label.size(); ++i) {
 		if (label[i] == '_')
@@ -267,7 +267,7 @@ static Common::String resolveStartupNpcLabel(const StartupNpcRecord &npc) {
 	return label;
 }
 
-static Common::String resolveCarriedObjectSpritePath(const StartupObjectRecord &object) {
+static Common::String resolveCarriedObjectSpritePath(const ObjectRecord &object) {
 	if (!object.altSpritePath.empty())
 		return object.altSpritePath;
 	return object.spritePath;
@@ -322,7 +322,7 @@ static void renderCdChangePromptScreen(HarvesterEngine &engine, const IndexedBit
 	screen->update();
 }
 
-static bool shouldDispatchPickupActionOnCarryStart(const StartupObjectRecord &object) {
+static bool shouldDispatchPickupActionOnCarryStart(const ObjectRecord &object) {
 	if (object.actionTag.empty())
 		return false;
 
@@ -331,7 +331,7 @@ static bool shouldDispatchPickupActionOnCarryStart(const StartupObjectRecord &ob
 		!object.objectName.equalsIgnoreCase("SYRINGE");
 }
 
-static bool shouldDispatchPickupActionOnDirectInventoryTransfer(const StartupObjectRecord &object) {
+static bool shouldDispatchPickupActionOnDirectInventoryTransfer(const ObjectRecord &object) {
 	if (object.actionTag.empty())
 		return false;
 
@@ -425,7 +425,7 @@ static RoomMonsterFacingAnimationRange resolveRoomMonsterFacingAnimationRange(in
 	}
 }
 
-static bool setRoomMonsterAnimation(RuntimeEntity &entity, int facing, bool walking) {
+static bool setRoomMonsterAnimation(Entity &entity, int facing, bool walking) {
 	const RoomMonsterFacingAnimationRange range = resolveRoomMonsterFacingAnimationRange(facing);
 	if (walking) {
 		const bool changed = entity.getAnimationRate() != kRoomMonsterAnimationRate ||
@@ -446,7 +446,7 @@ static bool setRoomMonsterAnimation(RuntimeEntity &entity, int facing, bool walk
 	return changed;
 }
 
-static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFrame, int lastFrame) {
+static bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
 	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
 		return false;
 
@@ -454,7 +454,7 @@ static bool runtimeEntityHasFrameRange(const RuntimeEntity &entity, int firstFra
 }
 
 static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
-		const RuntimeEntity &entity, int actorCenterX, int targetCenterX,
+		const Entity &entity, int actorCenterX, int targetCenterX,
 		RoomAttackAnimationRange &range) {
 	// Native class-6 attackers pick one of the 0x16..0x1b attack states, which map to
 	// the 0x50..0x8b strike banks. The 0x8c..0x9d banks are hit reactions, not attacks.
@@ -488,7 +488,7 @@ static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 	return true;
 }
 
-static bool resolveMonsterDeathAnimationRange(const RuntimeEntity &entity, int facing,
+static bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
 		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
 	const bool preferLeftBank = facing == 1;
 	const RoomDeathAnimationRange rightBludge(0xb0, 0xb9);
@@ -527,7 +527,7 @@ static bool resolveMonsterDeathAnimationRange(const RuntimeEntity &entity, int f
 		chooseIfAvailable(fallbackSlash) || chooseIfAvailable(fallbackProjectile);
 }
 
-static bool resolveNpcDeathAnimationRange(const RuntimeEntity &entity, bool hasMonsterfyTarget,
+static bool resolveNpcDeathAnimationRange(const Entity &entity, bool hasMonsterfyTarget,
 		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
 	const RoomDeathAnimationRange goreBank(0x3c, 0x45);
 	const RoomDeathAnimationRange bludgeBank(0x46, 0x4f);
@@ -564,13 +564,13 @@ static int computeRectAxisGap(int minA, int maxA, int minB, int maxB) {
 	return 0;
 }
 
-static int computeRuntimeEntityHorizontalGap(const RuntimeEntity &left, const RuntimeEntity &right) {
+static int computeRuntimeEntityHorizontalGap(const Entity &left, const Entity &right) {
 	const Common::Rect leftRect = left.getScreenRect();
 	const Common::Rect rightRect = right.getScreenRect();
 	return computeRectAxisGap(leftRect.left, leftRect.right, rightRect.left, rightRect.right);
 }
 
-static bool doRuntimeEntityDepthExtentsOverlap(const RuntimeEntity &first, const RuntimeEntity &second) {
+static bool doRuntimeEntityDepthExtentsOverlap(const Entity &first, const Entity &second) {
 	const float firstZMin = first.getZ();
 	const float firstZMax = firstZMin + first.getZExtent();
 	const float secondZMin = second.getZ();
@@ -578,9 +578,9 @@ static bool doRuntimeEntityDepthExtentsOverlap(const RuntimeEntity &first, const
 	return !(firstZMax < secondZMin || secondZMax < firstZMin);
 }
 
-static bool areCombatantsWithinRoomCombatReach(const StartupRoomSetupState &state,
-		const RuntimeEntity &attacker, float attackerZ,
-		const RuntimeEntity &target, float targetZ, int engageDistance) {
+static bool areCombatantsWithinRoomCombatReach(const RoomSetupState &state,
+		const Entity &attacker, float attackerZ,
+		const Entity &target, float targetZ, int engageDistance) {
 	if (attacker.overlapsEntity(target))
 		return true;
 
@@ -598,8 +598,8 @@ static bool areCombatantsWithinRoomCombatReach(const StartupRoomSetupState &stat
 // wider waypoint band down to a direct center-to-center engage-distance check.
 // The DOS runtime does not add a separate randomized monster attack cooldown;
 // cadence comes from the short attack banks themselves.
-static bool isWithinNativeMonsterAttackEntryRange(const RuntimeEntity &monster, float monsterZ,
-		const RuntimeEntity &player, float playerZ, int engageDistance) {
+static bool isWithinNativeMonsterAttackEntryRange(const Entity &monster, float monsterZ,
+		const Entity &player, float playerZ, int engageDistance) {
 	const float zDelta = monsterZ >= playerZ ? monsterZ - playerZ : playerZ - monsterZ;
 	if (zDelta > kNativeMonsterPursuitZTolerance)
 		return false;
@@ -630,7 +630,7 @@ static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::Str
 	return engine.playStartupSound(*availableSounds[soundIndex]);
 }
 
-static bool resolveRoomMonsterHitAnimationRange(const RuntimeEntity &entity,
+static bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
 		int attackerAttackFirstFrame, RoomHitAnimationRange &range) {
 	RoomHitAnimationRange candidate;
 	switch (attackerAttackFirstFrame) {
@@ -663,13 +663,13 @@ static bool resolveRoomMonsterHitAnimationRange(const RuntimeEntity &entity,
 	return true;
 }
 
-static float clampRoomDepthForEvent(const StartupRoomSetupState &state, float z) {
+static float clampRoomDepthForEvent(const RoomSetupState &state, float z) {
 	return CLIP<float>(z,
 		(float)MIN(state.roomMinZ, state.roomMaxZ),
 		(float)MAX(state.roomMinZ, state.roomMaxZ));
 }
 
-static int mapRoomDepthToScreenYForEvent(const StartupRoomSetupState &state, float z, int fallbackY) {
+static int mapRoomDepthToScreenYForEvent(const RoomSetupState &state, float z, int fallbackY) {
 	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
 		return fallbackY;
 	if (state.roomMaxZ == state.roomMinZ)
@@ -687,7 +687,7 @@ static int roundRoomCombatFloat(float value) {
 	return value >= 0.0f ? (int)(value + 0.5f) : (int)(value - 0.5f);
 }
 
-static int mapRoomDepthToScreenYForCombat(const StartupRoomSetupState &state, float z, int fallbackY) {
+static int mapRoomDepthToScreenYForCombat(const RoomSetupState &state, float z, int fallbackY) {
 	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
 		return fallbackY;
 	if (state.roomMaxZ == state.roomMinZ)
@@ -701,7 +701,7 @@ static int mapRoomDepthToScreenYForCombat(const StartupRoomSetupState &state, fl
 		state.roomMaxZScreenY, state.roomMinZScreenY);
 }
 
-static int resolveMonsterAttackContactFrameOffset(const StartupMonsterRecord &monster) {
+static int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
 	return monster.monsterName.equalsIgnoreCase("MUCKEY")
 		? kMuckeyAttackContactFrameOffset
 		: kDefaultMonsterAttackContactFrameOffset;
@@ -749,7 +749,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 	Common::String currentRoomTarget = targetName;
 	bool currentTargetIsRoomName = targetIsRoomName;
 	while (!currentRoomTarget.empty()) {
-		StartupRoomSetupState state;
+		RoomSetupState state;
 		bool shouldRunRoomEntryCommands = false;
 		if (_engine.hasPendingLoadedStartupSaveRoomState()) {
 			startupFlow.resetRoomNpcDialogueState();
@@ -764,7 +764,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					!_engine.activateStartupDisc(_engine.getPendingLoadedStartupDisc())) {
 				return Common::kReadingFailed;
 			}
-			const StartupSaveRoomState &loadedState = _engine.getPendingLoadedStartupSaveRoomState();
+			const SaveRoomState &loadedState = _engine.getPendingLoadedStartupSaveRoomState();
 			debugC(1, kDebugRoom,
 				"Harvester: applying pending loaded room state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
 				loadedState.entranceName.c_str(), loadedState.roomName.c_str(),
@@ -798,7 +798,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		if (transitionError.getCode() != Common::kNoError)
 			return transitionError;
 
-		StartupRoomSceneResources scene;
+		RoomSceneResources scene;
 		if (!loadRoomSceneResources(state, *_engine.getResources(), scene))
 			return Common::kReadingFailed;
 
@@ -834,13 +834,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		}
 		if (!screen || !art || !bodyFont || !promptFont || !inventoryTooltipFont || !inspectFont)
 			return Common::kNoError;
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 
 		if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 			return Common::kReadingFailed;
 		if (runtimeEntities) {
-			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
-				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+			for (const MonsterRecord &monster : scene.state.roomMonsters) {
+				Entity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
 				if (entity)
 					Monster::applyAnimation(*entity, monster);
 			}
@@ -851,7 +851,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		startupFlow.executeStartupAudioCommands(scene.state.audioCommands);
 		if (!scene.state.musicPath.empty())
 			(void)_engine.playStartupMusic(scene.state.musicPath);
-		StartupRoomPlayerState playerState;
+		RoomPlayerState playerState;
 		playerState.entity = runtimeEntities ? runtimeEntities->findSceneEntityByName("PLAYER") : nullptr;
 		playerState.centerX = scene.state.playerSpawnX;
 		playerState.bottomY = scene.state.playerSpawnY;
@@ -868,7 +868,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		Common::Array<RoomHitEffectState> hitEffectStates;
 		Common::Array<RoomCombatDamagePopupState> damagePopupStates;
 		uint nextCombatEffectId = 0;
-		StartupResolvedText inspectText;
+		ResolvedText inspectText;
 		bool showingInspectText = false;
 		bool inspectCanDismiss = false;
 		bool moveLeft = false;
@@ -880,7 +880,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		Common::String pendingRoomChange;
 		uint32 lastLeftButtonReleaseTick = 0;
 		uint32 nextKeyboardAttackAllowedTick = 0;
-		StartupRoomIdleAnimationState idleState;
+		RoomIdleAnimationState idleState;
 		bool needsRedraw = true;
 		Common::String carriedRoomItemName;
 		Common::String carriedRoomItemLabel;
@@ -894,7 +894,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			carriedRoomItemBitmap = IndexedBitmap();
 		};
 		auto hideSceneObject = [&](const Common::String &objectName, const Common::String *ownerOrRoom) {
-			StartupObjectRecord *sceneObject = findSceneObjectByName(scene.sceneObjects, objectName);
+			ObjectRecord *sceneObject = findSceneObjectByName(scene.sceneObjects, objectName);
 			if (!sceneObject)
 				return;
 
@@ -907,11 +907,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!runtimeEntities)
 				return;
 
-			RuntimeEntity *entity = runtimeEntities->detachSceneEntityByName(entityName);
+			Entity *entity = runtimeEntities->detachSceneEntityByName(entityName);
 			delete entity;
 		};
 		auto resetIdleState = [&]() {
-			idleState = StartupRoomIdleAnimationState();
+			idleState = RoomIdleAnimationState();
 			idleState.activityTick = Player::getRuntimeClockTicks();
 			idleState.resetTick = idleState.activityTick;
 			Player::updateIdleTrigger(idleState);
@@ -951,7 +951,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			// Region enable state is a persistent script mutation; keep the runtime record in lockstep
 			// with the currently materialized scene so one-shot regions do not resurrect on revisit.
-			for (const StartupRegionRecord &baseRegion : startupScript->getRegions()) {
+			for (const RegionRecord &baseRegion : startupScript->getRegions()) {
 				if (!baseRegion.roomName.equalsIgnoreCase(scene.state.roomName))
 					continue;
 
@@ -961,21 +961,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			}
 
 			if (runtimeEntities) {
-				for (StartupAnimRecord &anim : scene.state.roomAnimations) {
-					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
+				for (AnimRecord &anim : scene.state.roomAnimations) {
+					Entity *entity = runtimeEntities->findSceneEntityByName(anim.animName);
 					if (!entity)
 						continue;
 					(void)startupScript->syncRuntimeAnimState(anim.animName,
 						entity->isAnimationEnabled(), entity->isVisible(), entity->getCurrentFrame());
 				}
 			}
-			for (const StartupMonsterRecord &monster : scene.state.roomMonsters)
+			for (const MonsterRecord &monster : scene.state.roomMonsters)
 				(void)startupScript->syncRuntimeMonsterRecord(monster);
 			if (!runtimeEntities)
 				return;
 
-			for (StartupTimerRecord &timer : scene.state.roomTimers) {
-				RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(timer.timerName);
+			for (TimerRecord &timer : scene.state.roomTimers) {
+				Entity *entity = runtimeEntities->findSceneEntityByName(timer.timerName);
 				if (!entity)
 					continue;
 				timer.currentValue = entity->getTimerCurrentValue();
@@ -990,12 +990,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				playerState.centerX, playerState.bottomY, (int)playerState.z, facing,
 				_engine.getStartupMusicPath());
 		};
-		auto getSceneObjectBounds = [&](const StartupObjectRecord &object) {
+		auto getSceneObjectBounds = [&](const ObjectRecord &object) {
 			if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
 				return Common::Rect(object.currentX, object.currentY, object.boundsX2 + 1, object.boundsY2 + 1);
 			return Common::Rect();
 		};
-		auto resolveSceneObjectSpritePathLocal = [&](const StartupObjectRecord &object) {
+		auto resolveSceneObjectSpritePathLocal = [&](const ObjectRecord &object) {
 			const bool atInitialPlacement = object.currentX == object.initialX &&
 				object.currentY == object.initialY &&
 				object.currentOwnerOrRoom.equalsIgnoreCase(object.initialOwnerOrRoom);
@@ -1004,7 +1004,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return object.altSpritePath;
 			return object.spritePath;
 		};
-		auto isInteractiveSceneHotspot = [&](const StartupObjectRecord &object) {
+		auto isInteractiveSceneHotspot = [&](const ObjectRecord &object) {
 			if (object.operatable || !object.actionTag.empty())
 				return true;
 
@@ -1014,11 +1014,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (startupScript->isPickupObject(object))
 				return true;
 
-			StartupResolvedText inspectText;
+			ResolvedText inspectText;
 			return startupScript->resolveObjectInspectText(object, inspectText);
 		};
-		auto resolveSceneObjectClassLocal = [&](const StartupObjectRecord &object,
-				const RuntimeEntity *entity) {
+		auto resolveSceneObjectClassLocal = [&](const ObjectRecord &object,
+				const Entity *entity) {
 			if (entity) {
 				return ((!scene.state.backgroundObjectName.empty() &&
 						object.objectName.equalsIgnoreCase(scene.state.backgroundObjectName)) ||
@@ -1036,13 +1036,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return lhs.left == rhs.left && lhs.top == rhs.top &&
 				lhs.right == rhs.right && lhs.bottom == rhs.bottom;
 		};
-		auto spawnSceneObjectEntityFromRecord = [&](const StartupObjectRecord &object) {
+		auto spawnSceneObjectEntityFromRecord = [&](const ObjectRecord &object) {
 			if (!runtimeEntities)
 				return;
 
 			const Common::String spritePath = resolveSceneObjectSpritePathLocal(object);
 			const Common::Rect hotspotBounds = getSceneObjectBounds(object);
-			RuntimeEntity *entity = nullptr;
+			Entity *entity = nullptr;
 			if (!spritePath.empty() && spritePath.hasSuffixIgnoreCase(".BM")) {
 				entity = runtimeEntities->spawnSceneBitmapEntity(object.objectName, spritePath,
 					Common::Point(object.currentX, object.currentY), (float)object.currentZ);
@@ -1058,12 +1058,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
 			entity->setZExtent((float)object.zExtent);
 		};
-		auto getSceneRegionBounds = [](const StartupRegionRecord &region) {
+		auto getSceneRegionBounds = [](const RegionRecord &region) {
 			if (region.right > region.left && region.bottom > region.top)
 				return Common::Rect(region.left, region.top, region.right + 1, region.bottom + 1);
 			return Common::Rect();
 		};
-		auto spawnSceneRegionEntityFromRecord = [&](const StartupRegionRecord &region) {
+		auto spawnSceneRegionEntityFromRecord = [&](const RegionRecord &region) {
 			if (!runtimeEntities)
 				return;
 
@@ -1071,7 +1071,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (bounds.isEmpty())
 				return;
 
-			RuntimeEntity *entity = runtimeEntities->spawnSceneHotspotEntity(
+			Entity *entity = runtimeEntities->spawnSceneHotspotEntity(
 				region.regionName, bounds, (float)region.minZ);
 			if (!entity)
 				return;
@@ -1087,37 +1087,37 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				bounds.left, bounds.top, bounds.right, bounds.bottom,
 				region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 		};
-		auto findRoomAnimByNameConst = [](const Common::Array<StartupAnimRecord> &anims,
-				const Common::String &animName) -> const StartupAnimRecord * {
-			for (const StartupAnimRecord &anim : anims) {
+		auto findRoomAnimByNameConst = [](const Common::Array<AnimRecord> &anims,
+				const Common::String &animName) -> const AnimRecord * {
+			for (const AnimRecord &anim : anims) {
 				if (anim.animName.equalsIgnoreCase(animName))
 					return &anim;
 			}
 			return nullptr;
 		};
-		auto findRoomNpcByNameConst = [](const Common::Array<StartupNpcRecord> &npcs,
-				const Common::String &npcName) -> const StartupNpcRecord * {
-			for (const StartupNpcRecord &npc : npcs) {
+		auto findRoomNpcByNameConst = [](const Common::Array<NpcRecord> &npcs,
+				const Common::String &npcName) -> const NpcRecord * {
+			for (const NpcRecord &npc : npcs) {
 				if (npc.npcName.equalsIgnoreCase(npcName))
 					return &npc;
 			}
 			return nullptr;
 		};
-		auto findRoomMonsterByNameConst = [](const Common::Array<StartupMonsterRecord> &monsters,
-				const Common::String &monsterName) -> const StartupMonsterRecord * {
-			for (const StartupMonsterRecord &monster : monsters) {
+		auto findRoomMonsterByNameConst = [](const Common::Array<MonsterRecord> &monsters,
+				const Common::String &monsterName) -> const MonsterRecord * {
+			for (const MonsterRecord &monster : monsters) {
 				if (monster.monsterName.equalsIgnoreCase(monsterName))
 					return &monster;
 			}
 			return nullptr;
 		};
-		auto shouldSpawnRoomNpcEntity = [](const StartupNpcRecord &npc) {
+		auto shouldSpawnRoomNpcEntity = [](const NpcRecord &npc) {
 			return npc.visible && !npc.deathOrMonsterfyFlag;
 		};
-		auto shouldSpawnRoomMonsterEntity = [](const StartupMonsterRecord &monster) {
+		auto shouldSpawnRoomMonsterEntity = [](const MonsterRecord &monster) {
 			return monster.visible;
 		};
-		auto sameNpcEntityState = [&](const StartupNpcRecord &lhs, const StartupNpcRecord &rhs) {
+		auto sameNpcEntityState = [&](const NpcRecord &lhs, const NpcRecord &rhs) {
 			return lhs.posX == rhs.posX &&
 				lhs.posY == rhs.posY &&
 				lhs.posZ == rhs.posZ &&
@@ -1126,7 +1126,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				lhs.deathOrMonsterfyFlag == rhs.deathOrMonsterfyFlag &&
 				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 		};
-		auto sameMonsterEntityState = [&](const StartupMonsterRecord &lhs, const StartupMonsterRecord &rhs) {
+		auto sameMonsterEntityState = [&](const MonsterRecord &lhs, const MonsterRecord &rhs) {
 			return lhs.posX == rhs.posX &&
 				lhs.posY == rhs.posY &&
 				lhs.posZ == rhs.posZ &&
@@ -1137,7 +1137,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				lhs.runtimeState == rhs.runtimeState &&
 				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 		};
-		auto sameSceneObjectState = [&](const StartupObjectRecord &lhs, const StartupObjectRecord &rhs) {
+		auto sameSceneObjectState = [&](const ObjectRecord &lhs, const ObjectRecord &rhs) {
 			return lhs.currentX == rhs.currentX &&
 				lhs.currentY == rhs.currentY &&
 				lhs.currentZ == rhs.currentZ &&
@@ -1152,7 +1152,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				resolveSceneObjectSpritePathLocal(lhs).equalsIgnoreCase(resolveSceneObjectSpritePathLocal(rhs)) &&
 				sameRect(getSceneObjectBounds(lhs), getSceneObjectBounds(rhs));
 		};
-		auto sameSceneRegionState = [&](const StartupRegionRecord &lhs, const StartupRegionRecord &rhs) {
+		auto sameSceneRegionState = [&](const RegionRecord &lhs, const RegionRecord &rhs) {
 			return lhs.left == rhs.left &&
 				lhs.top == rhs.top &&
 				lhs.right == rhs.right &&
@@ -1164,7 +1164,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				lhs.desiredFacing == rhs.desiredFacing &&
 				lhs.actionTag.equalsIgnoreCase(rhs.actionTag);
 		};
-		auto applyRoomNpcPlacement = [&](RuntimeEntity &entity, const StartupNpcRecord &npc) {
+		auto applyRoomNpcPlacement = [&](Entity &entity, const NpcRecord &npc) {
 			int width = 0;
 			int height = 0;
 			int xOffset = 0;
@@ -1178,11 +1178,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			entity.setPosition(npc.posX - xOffset - width / 2, npc.posY - height - yOffset, renderZ);
 			return true;
 		};
-		auto spawnSceneNpcEntityFromRecord = [&](const StartupNpcRecord &npc) -> RuntimeEntity * {
+		auto spawnSceneNpcEntityFromRecord = [&](const NpcRecord &npc) -> Entity * {
 			if (!runtimeEntities || !shouldSpawnRoomNpcEntity(npc))
 				return nullptr;
 
-			RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(
+			Entity *entity = runtimeEntities->spawnSceneActorEntity(
 				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
 			if (!entity)
 				return nullptr;
@@ -1199,12 +1199,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runtimeEntities->reinsertSceneEntity(entity);
 			return entity;
 		};
-		auto spawnSceneMonsterEntityFromRecord = [&](const StartupRoomSetupState &roomState,
-				const StartupMonsterRecord &monster) -> RuntimeEntity * {
+		auto spawnSceneMonsterEntityFromRecord = [&](const RoomSetupState &roomState,
+				const MonsterRecord &monster) -> Entity * {
 			if (!runtimeEntities || !shouldSpawnRoomMonsterEntity(monster))
 				return nullptr;
 
-			RuntimeEntity *entity = runtimeEntities->spawnSceneActorEntity(
+			Entity *entity = runtimeEntities->spawnSceneActorEntity(
 				monster.monsterName, monster.modelPath,
 				Common::Point(monster.posX, monster.posY), (float)monster.posZ,
 				Monster::resolveFacingFrame(monster.facing));
@@ -1222,20 +1222,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runtimeEntities->reinsertSceneEntity(entity);
 			return entity;
 		};
-		auto resolveHitEffectAnchor = [&](const RuntimeEntity &targetEntity,
+		auto resolveHitEffectAnchor = [&](const Entity &targetEntity,
 				Common::Point &anchorPoint, float &renderZ) {
 			const Common::Rect targetRect = targetEntity.getScreenRect();
 			anchorPoint.x = targetRect.left + targetRect.width() / 2;
 			anchorPoint.y = targetRect.top + targetRect.height() / 3;
 			renderZ = targetEntity.getZ() - kNativeHitEffectRenderZBias;
 		};
-		auto resolveCombatDamagePopupAnchor = [&](const RuntimeEntity &targetEntity,
+		auto resolveCombatDamagePopupAnchor = [&](const Entity &targetEntity,
 				Common::Point &anchorPoint) {
 			const Common::Rect targetRect = targetEntity.getScreenRect();
 			anchorPoint.x = targetRect.left + targetRect.width() / 2;
 			anchorPoint.y = targetRect.top - kCombatDebugDamagePopupVerticalGap;
 		};
-		auto spawnCombatHitEffect = [&](RuntimeEntity &sourceEntity,
+		auto spawnCombatHitEffect = [&](Entity &sourceEntity,
 				const Common::String &followTargetName) {
 			if (!runtimeEntities)
 				return false;
@@ -1245,7 +1245,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			effectState.followTargetName = followTargetName;
 			resolveHitEffectAnchor(sourceEntity, effectState.anchorPoint, effectState.renderZ);
 
-			RuntimeEntity *effectEntity = runtimeEntities->spawnSceneAnimationEntity(
+			Entity *effectEntity = runtimeEntities->spawnSceneAnimationEntity(
 				effectState.entityName, kNativeHitEffectResourcePath, effectState.anchorPoint,
 				effectState.renderZ, kNativeHitEffectAnimationRate, true, true, false,
 				false, false, 0);
@@ -1255,7 +1255,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			hitEffectStates.push_back(effectState);
 			return true;
 		};
-		auto spawnCombatDamagePopup = [&](RuntimeEntity &targetEntity,
+		auto spawnCombatDamagePopup = [&](Entity &targetEntity,
 				const Common::String &followTargetName, int damageAmount) {
 			if (damageAmount <= 0)
 				return;
@@ -1273,12 +1273,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			bool changed = false;
 			for (RoomHitEffectState &effectState : hitEffectStates) {
-				RuntimeEntity *effectEntity = runtimeEntities->findSceneEntityByName(effectState.entityName);
+				Entity *effectEntity = runtimeEntities->findSceneEntityByName(effectState.entityName);
 				if (!effectEntity)
 					continue;
 
 				if (!effectState.followTargetName.empty()) {
-					RuntimeEntity *targetEntity =
+					Entity *targetEntity =
 						runtimeEntities->findSceneEntityByName(effectState.followTargetName);
 					if (targetEntity && targetEntity->isVisible()) {
 						resolveHitEffectAnchor(*targetEntity, effectState.anchorPoint, effectState.renderZ);
@@ -1312,7 +1312,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			const uint32 now = Player::getRuntimeClockTicks();
 			for (RoomCombatDamagePopupState &popupState : damagePopupStates) {
 				if (runtimeEntities && !popupState.followTargetName.empty()) {
-					RuntimeEntity *targetEntity =
+					Entity *targetEntity =
 						runtimeEntities->findSceneEntityByName(popupState.followTargetName);
 					if (targetEntity && targetEntity->isVisible())
 						resolveCombatDamagePopupAnchor(*targetEntity, popupState.anchorPoint);
@@ -1337,7 +1337,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			bool removedAny = false;
 			for (uint i = 0; i < hitEffectStates.size();) {
 				const Common::String effectName = hitEffectStates[i].entityName;
-				RuntimeEntity *effectEntity = runtimeEntities
+				Entity *effectEntity = runtimeEntities
 					? runtimeEntities->findSceneEntityByName(effectName)
 					: nullptr;
 				if (!effectEntity) {
@@ -1382,24 +1382,24 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!startupScript || !resources)
 				return false;
 
-			const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
-			StartupRoomSetupState updatedState;
+			const Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
+			RoomSetupState updatedState;
 			if (!startupScript->materializeRoomState(
 					scene.state.entranceName, scene.state.roomName, updatedState, *resources)) {
 				return false;
 			}
 			updatedState.audioCommands = entryAudioCommands;
 
-			StartupRoomSceneResources updatedScene;
+			RoomSceneResources updatedScene;
 			if (!loadRoomSceneResources(updatedState, *resources, updatedScene))
 				return false;
 			Common::Array<RoomMonsterCombatState> updatedMonsterCombatStates;
 			updatedMonsterCombatStates.resize(updatedState.roomMonsters.size());
 			for (uint i = 0; i < updatedState.roomMonsters.size(); ++i) {
-				const StartupMonsterRecord &updatedMonster = updatedState.roomMonsters[i];
+				const MonsterRecord &updatedMonster = updatedState.roomMonsters[i];
 				for (uint j = 0; j < scene.state.roomMonsters.size() &&
 						j < monsterCombatStates.size(); ++j) {
-					const StartupMonsterRecord &previousMonster = scene.state.roomMonsters[j];
+					const MonsterRecord &previousMonster = scene.state.roomMonsters[j];
 					if (!previousMonster.monsterName.equalsIgnoreCase(updatedMonster.monsterName))
 						continue;
 					if (sameMonsterEntityState(previousMonster, updatedMonster))
@@ -1408,12 +1408,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 			}
 
-			for (const StartupObjectRecord &object : scene.sceneObjects) {
+			for (const ObjectRecord &object : scene.sceneObjects) {
 				if (!findSceneObjectByName(updatedScene.sceneObjects, object.objectName))
 					removeSceneEntityByName(object.objectName);
 			}
-			for (const StartupObjectRecord &object : updatedScene.sceneObjects) {
-				const StartupObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
+			for (const ObjectRecord &object : updatedScene.sceneObjects) {
+				const ObjectRecord *previous = findSceneObjectByName(scene.sceneObjects, object.objectName);
 				const bool changed = !previous || !sameSceneObjectState(*previous, object);
 				if (!changed)
 					continue;
@@ -1422,12 +1422,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				spawnSceneObjectEntityFromRecord(object);
 			}
 
-			for (const StartupRegionRecord &region : scene.sceneRegions) {
+			for (const RegionRecord &region : scene.sceneRegions) {
 				if (!findSceneRegionByName(updatedScene.sceneRegions, region.regionName))
 					removeSceneEntityByName(region.regionName);
 			}
-			for (const StartupRegionRecord &region : updatedScene.sceneRegions) {
-				const StartupRegionRecord *previous =
+			for (const RegionRecord &region : updatedScene.sceneRegions) {
+				const RegionRecord *previous =
 					findSceneRegionByName(scene.sceneRegions, region.regionName);
 				const bool changed = !previous || !sameSceneRegionState(*previous, region);
 				if (!changed)
@@ -1437,9 +1437,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				spawnSceneRegionEntityFromRecord(region);
 			}
 
-			for (const StartupTimerRecord &timer : scene.state.roomTimers) {
+			for (const TimerRecord &timer : scene.state.roomTimers) {
 				bool found = false;
-				for (const StartupTimerRecord &updatedTimer : updatedState.roomTimers) {
+				for (const TimerRecord &updatedTimer : updatedState.roomTimers) {
 					if (updatedTimer.timerName.equalsIgnoreCase(timer.timerName)) {
 						found = true;
 						break;
@@ -1448,9 +1448,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (!found)
 					removeSceneEntityByName(timer.timerName);
 			}
-			for (const StartupTimerRecord &timer : updatedState.roomTimers) {
-				const StartupTimerRecord *previous = nullptr;
-				for (const StartupTimerRecord &candidate : scene.state.roomTimers) {
+			for (const TimerRecord &timer : updatedState.roomTimers) {
+				const TimerRecord *previous = nullptr;
+				for (const TimerRecord &candidate : scene.state.roomTimers) {
 					if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
 						previous = &candidate;
 						break;
@@ -1473,14 +1473,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 			}
 
-			for (StartupAnimRecord &anim : updatedState.roomAnimations) {
-				const StartupAnimRecord *previous =
+			for (AnimRecord &anim : updatedState.roomAnimations) {
+				const AnimRecord *previous =
 					findRoomAnimByNameConst(scene.state.roomAnimations, anim.animName);
 				const bool becameVisible = (!previous || !previous->visible) && anim.visible;
 				if (becameVisible)
 					anim.runtimeState = 0;
 
-				RuntimeEntity *entity = runtimeEntities
+				Entity *entity = runtimeEntities
 					? runtimeEntities->findSceneEntityByName(anim.animName)
 					: nullptr;
 				if (!anim.visible) {
@@ -1521,13 +1521,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 			}
 
-			for (const StartupAnimRecord &anim : scene.state.roomAnimations) {
+			for (const AnimRecord &anim : scene.state.roomAnimations) {
 				if (!findRoomAnimByNameConst(updatedState.roomAnimations, anim.animName))
 					removeSceneEntityByName(anim.animName);
 			}
 
-			for (const StartupNpcRecord &npc : scene.state.roomNpcs) {
-				const StartupNpcRecord *updatedNpc =
+			for (const NpcRecord &npc : scene.state.roomNpcs) {
+				const NpcRecord *updatedNpc =
 					findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
 				const bool keepEntity =
 					updatedNpc &&
@@ -1536,14 +1536,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (!keepEntity)
 					removeSceneEntityByName(npc.npcName);
 			}
-			for (const StartupNpcRecord &npc : updatedState.roomNpcs) {
+			for (const NpcRecord &npc : updatedState.roomNpcs) {
 				if (!shouldSpawnRoomNpcEntity(npc))
 					continue;
 
-				RuntimeEntity *entity = runtimeEntities
+				Entity *entity = runtimeEntities
 					? runtimeEntities->findSceneEntityByName(npc.npcName)
 					: nullptr;
-				const StartupNpcRecord *previousNpc =
+				const NpcRecord *previousNpc =
 					findRoomNpcByNameConst(scene.state.roomNpcs, npc.npcName);
 				const bool needsRespawn =
 					!entity || !previousNpc || !sameNpcEntityState(*previousNpc, npc);
@@ -1555,8 +1555,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					return false;
 			}
 
-			for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
-				const StartupMonsterRecord *updatedMonster =
+			for (const MonsterRecord &monster : scene.state.roomMonsters) {
+				const MonsterRecord *updatedMonster =
 					findRoomMonsterByNameConst(updatedState.roomMonsters, monster.monsterName);
 				const bool keepEntity =
 					updatedMonster &&
@@ -1565,14 +1565,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (!keepEntity)
 					removeSceneEntityByName(monster.monsterName);
 			}
-			for (const StartupMonsterRecord &monster : updatedState.roomMonsters) {
+			for (const MonsterRecord &monster : updatedState.roomMonsters) {
 				if (!shouldSpawnRoomMonsterEntity(monster))
 					continue;
 
-				RuntimeEntity *entity = runtimeEntities
+				Entity *entity = runtimeEntities
 					? runtimeEntities->findSceneEntityByName(monster.monsterName)
 					: nullptr;
-				const StartupMonsterRecord *previousMonster =
+				const MonsterRecord *previousMonster =
 					findRoomMonsterByNameConst(scene.state.roomMonsters, monster.monsterName);
 				const bool needsRespawn =
 					!entity || !previousMonster || !sameMonsterEntityState(*previousMonster, monster);
@@ -1609,8 +1609,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				(void)Player::setIdleAnimation(playerState, playerState.facing);
 		};
 		auto refreshCurrentScene = [&](bool preservePlayerPlacement) {
-			const Common::Array<StartupAudioCommand> entryAudioCommands = scene.state.audioCommands;
-			StartupRoomSetupState refreshedState;
+			const Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
+			RoomSetupState refreshedState;
 			if (!_engine.getStartupScript()->materializeRoomState(
 					scene.state.entranceName, scene.state.roomName, refreshedState, *_engine.getResources())) {
 				return false;
@@ -1624,8 +1624,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!startupFlow.populateRoomSceneEntities(scene.state, scene.sceneObjects, scene.sceneAnimations))
 				return false;
 			if (runtimeEntities) {
-				for (const StartupMonsterRecord &monster : scene.state.roomMonsters) {
-					RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
+				for (const MonsterRecord &monster : scene.state.roomMonsters) {
+					Entity *entity = runtimeEntities->findSceneEntityByName(monster.monsterName);
 					if (entity)
 						Monster::applyAnimation(*entity, monster);
 				}
@@ -1683,7 +1683,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			clearCarriedRoomItem();
 			return _inventory.refresh();
 		};
-		auto shouldCancelDeniedPickup = [&](const StartupInteractionResult &interaction,
+		auto shouldCancelDeniedPickup = [&](const InteractionResult &interaction,
 				bool didTransition) {
 			return !didTransition &&
 				!interaction.mutatedRuntimeState &&
@@ -1698,7 +1698,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				!interaction.modalText.value.empty();
 		};
 		auto restoreDeniedPickup = [&](Script &startupScript,
-				const StartupObjectRecord &savedRuntimeObject, bool clearCarryState) -> Common::Error {
+				const ObjectRecord &savedRuntimeObject, bool clearCarryState) -> Common::Error {
 			if (!startupScript.syncRuntimeObjectRecord(savedRuntimeObject))
 				return Common::kReadingFailed;
 			if (clearCarryState)
@@ -1801,7 +1801,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						}
 					}
 
-					RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+					EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 					if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
 						needsRedraw = true;
 
@@ -1826,7 +1826,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return Common::kNoError;
 		};
 		auto runRoomExitCommands = [&]() -> Common::Error {
-			StartupInteractionResult exitInteraction;
+			InteractionResult exitInteraction;
 			if (!_engine.getStartupScript()->executeRoomExitCommands(scene.state.roomName, exitInteraction))
 				return Common::kReadingFailed;
 
@@ -1859,7 +1859,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				if (exitInteraction.continuationTag.empty())
 					return Common::kNoError;
 
-				StartupInteractionResult continuationInteraction;
+				InteractionResult continuationInteraction;
 				if (!_engine.getStartupScript()->executeActionTag(
 						exitInteraction.continuationTag, continuationInteraction, false)) {
 					return Common::kNoError;
@@ -1926,7 +1926,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			resetIdleState();
 			captureCurrentSaveState();
 		};
-		auto runModalShowText = [&](const StartupResolvedText &modalText) -> Common::Error {
+		auto runModalShowText = [&](const ResolvedText &modalText) -> Common::Error {
 			Graphics::Screen *activeScreen = getActiveScreen();
 			if (!activeScreen || !art || !inspectFont)
 				return Common::kNoError;
@@ -1995,8 +1995,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		struct InteractionProcessor {
 			HarvesterEngine &engine;
 			Flow &startupFlow;
-			StartupRoomSceneResources &scene;
-			StartupRoomPlayerState &playerState;
+			RoomSceneResources &scene;
+			RoomPlayerState &playerState;
 			Common::String &pendingRegionName;
 			Common::String &pendingRoomChange;
 			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
@@ -2009,7 +2009,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			decltype(runModalShowText) &runModalShowTextFn;
 			decltype(resetIdleState) &resetIdleStateFn;
 
-			Common::Error handleInteractionResult(const StartupInteractionResult &interaction,
+			Common::Error handleInteractionResult(const InteractionResult &interaction,
 					bool &didTransition, const Common::String &usedItemName) {
 				didTransition = false;
 
@@ -2174,7 +2174,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					return Common::kNoError;
 
 				if (!interaction.continuationTag.empty()) {
-					StartupInteractionResult continuationInteraction;
+					InteractionResult continuationInteraction;
 					if (engine.getStartupScript()->executeActionTag(
 							interaction.continuationTag, continuationInteraction)) {
 						Common::Error interactionError =
@@ -2191,7 +2191,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					const Common::String &continuationTag, bool &didTransition) {
 				didTransition = false;
 
-				const StartupNpcRecord *dialogueNpc = engine.getStartupScript()->findRuntimeNpcRecord(npcName);
+				const NpcRecord *dialogueNpc = engine.getStartupScript()->findRuntimeNpcRecord(npcName);
 				if (dialogueNpc) {
 					IndexedBitmap dialogueBackdrop;
 					if (!captureDialogueBackdropFn(dialogueBackdrop))
@@ -2207,7 +2207,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						npcName.c_str());
 				}
 
-				StartupInteractionResult dialogueInteraction;
+				InteractionResult dialogueInteraction;
 				bool abortRemainingCommandChain = false;
 				if (startupFlow.takeQueuedDialogueInteraction(dialogueInteraction)) {
 					abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
@@ -2219,7 +2219,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						return Common::kNoError;
 				}
 				if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
-					StartupInteractionResult continuationInteraction;
+					InteractionResult continuationInteraction;
 					if (engine.getStartupScript()->executeActionTag(continuationTag, continuationInteraction)) {
 						Common::Error interactionError =
 							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
@@ -2242,7 +2242,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
 			resetIdleState
 		};
-		auto hasRoomEntryInteraction = [](const StartupInteractionResult &interaction) {
+		auto hasRoomEntryInteraction = [](const InteractionResult &interaction) {
 			return !interaction.nextRoomName.empty() ||
 				!interaction.musicPath.empty() ||
 				!interaction.audioCommands.empty() ||
@@ -2258,7 +2258,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				interaction.requestPlayerGotoXZ ||
 				interaction.mutatedRuntimeState;
 		};
-		StartupInteractionResult roomEntryInteraction;
+		InteractionResult roomEntryInteraction;
 		bool hasPendingRoomEntryInteraction = false;
 		if (shouldRunRoomEntryCommands) {
 			if (!_engine.getStartupScript()->executeRoomEnterCommands(
@@ -2307,8 +2307,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			startupFlow.resetCursorAnimationSequence();
 			resetIdleState();
 		}
-		auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> StartupNpcRecord * {
-			for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+		auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> NpcRecord * {
+			for (NpcRecord &npc : scene.state.roomNpcs) {
 				if (npc.npcName.equalsIgnoreCase(npcName))
 					return &npc;
 			}
@@ -2323,8 +2323,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return -1;
 		};
-		auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> StartupMonsterRecord * {
-			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+		auto findRoomMonsterRecordByName = [&](const Common::String &monsterName) -> MonsterRecord * {
+			for (MonsterRecord &monster : scene.state.roomMonsters) {
 				if (monster.monsterName.equalsIgnoreCase(monsterName))
 					return &monster;
 			}
@@ -2339,18 +2339,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return -1;
 		};
-		auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> RuntimeEntity * {
+		auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> Entity * {
 			return runtimeEntities ? runtimeEntities->findSceneEntityByName(entityName) : nullptr;
 		};
-		auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> StartupMonsterRecord * {
-			StartupMonsterRecord *bestMonster = nullptr;
+		auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> MonsterRecord * {
+			MonsterRecord *bestMonster = nullptr;
 			int bestZ = -0x7fffffff;
 			int bestTop = -0x7fffffff;
-			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			for (MonsterRecord &monster : scene.state.roomMonsters) {
 				if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
 					continue;
 
-				RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+				Entity *entity = findSceneRuntimeEntity(monster.monsterName);
 				if (!entity || !entity->isVisible())
 					continue;
 
@@ -2368,15 +2368,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return bestMonster;
 		};
-		auto findOverlappingMonsterTarget = [&]() -> StartupMonsterRecord * {
+		auto findOverlappingMonsterTarget = [&]() -> MonsterRecord * {
 			if (!playerState.entity)
 				return nullptr;
 
-			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			for (MonsterRecord &monster : scene.state.roomMonsters) {
 				if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
 					continue;
 
-				RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+				Entity *entity = findSceneRuntimeEntity(monster.monsterName);
 				if (entity && areCombatantsWithinRoomCombatReach(scene.state,
 						*playerState.entity, playerState.z, *entity, (float)monster.posZ, monster.engageDistance))
 					return &monster;
@@ -2384,15 +2384,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return nullptr;
 		};
-		auto findOverlappingNpcTarget = [&]() -> StartupNpcRecord * {
+		auto findOverlappingNpcTarget = [&]() -> NpcRecord * {
 			if (!playerState.entity)
 				return nullptr;
 
-			for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+			for (NpcRecord &npc : scene.state.roomNpcs) {
 				if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
 					continue;
 
-				RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
+				Entity *entity = findSceneRuntimeEntity(npc.npcName);
 				if (entity && areCombatantsWithinRoomCombatReach(scene.state,
 						*playerState.entity, playerState.z, *entity, entity->getZ(), 0))
 					return &npc;
@@ -2400,7 +2400,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			return nullptr;
 		};
-		auto playerAttackCanReachTarget = [&](RuntimeEntity *targetEntity, int engageDistance = 0) {
+		auto playerAttackCanReachTarget = [&](Entity *targetEntity, int engageDistance = 0) {
 			if (!playerState.entity || !targetEntity)
 				return false;
 			if (Player::isProjectileCombatLoadout(playerState.combatLoadout))
@@ -2467,7 +2467,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				? _engine.getStartupScript()->getPlayerCurrentHitPoints()
 				: 0);
 	};
-	auto handleCombatInteraction = [&](StartupInteractionResult interaction) -> Common::Error {
+	auto handleCombatInteraction = [&](InteractionResult interaction) -> Common::Error {
 		bool didTransition = false;
 		Common::Error interactionError =
 			interactionProcessor.handleInteractionResult(interaction, didTransition, Common::String());
@@ -2483,7 +2483,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		needsRedraw = true;
 		return Common::kNoError;
 	};
-	auto beginNpcDeathTransition = [&](StartupNpcRecord &npc, RuntimeEntity &npcEntity,
+	auto beginNpcDeathTransition = [&](NpcRecord &npc, Entity &npcEntity,
 			RoomNpcCombatState &combatState, int deathDamageType) {
 		RoomDeathAnimationRange deathRange;
 		if (!resolveNpcDeathAnimationRange(npcEntity, !npc.monsterfyTargetName.empty(),
@@ -2508,7 +2508,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		needsRedraw = true;
 		return true;
 	};
-	auto finalizeNpcDeathTransition = [&](StartupNpcRecord &npc,
+	auto finalizeNpcDeathTransition = [&](NpcRecord &npc,
 			RoomNpcCombatState &combatState) -> Common::Error {
 		Script *runtimeScript = _engine.getStartupScript();
 		removeSceneEntityByName(npc.npcName);
@@ -2526,10 +2526,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
 		clearRoomNpcCombatState(combatState);
 
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		interaction.mutatedRuntimeState = runtimeChanged;
 		if (runtimeScript && !npc.onDeathActionTag.empty()) {
-			StartupInteractionResult deathInteraction;
+			InteractionResult deathInteraction;
 			if (runtimeScript->executeActionTag(npc.onDeathActionTag, deathInteraction)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
@@ -2542,28 +2542,28 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		if (!_engine.isCombatDebugEnabled())
 			return Common::kNoError;
 
-		auto isKillableMonster = [&](const StartupMonsterRecord *monster) {
+		auto isKillableMonster = [&](const MonsterRecord *monster) {
 			return monster && monster->active && monster->visible && monster->currentHitPoints > 0;
 		};
-		auto selectMonsterEntity = [&](StartupMonsterRecord *monster) -> RuntimeEntity * {
-			RuntimeEntity *entity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+		auto selectMonsterEntity = [&](MonsterRecord *monster) -> Entity * {
+			Entity *entity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
 			return (entity && entity->isVisible()) ? entity : nullptr;
 		};
-		auto resolveKillTarget = [&]() -> StartupMonsterRecord * {
+		auto resolveKillTarget = [&]() -> MonsterRecord * {
 			if (playerState.attackTargetClassId == kRuntimeEntityClassMonster) {
-				StartupMonsterRecord *monster = findRoomMonsterRecordByName(playerState.attackTargetName);
+				MonsterRecord *monster = findRoomMonsterRecordByName(playerState.attackTargetName);
 				if (isKillableMonster(monster) && selectMonsterEntity(monster))
 					return monster;
 			}
 
-			if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
+			if (MonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
 				if (isKillableMonster(monster) && selectMonsterEntity(monster))
 					return monster;
 			}
 
 			if (playerState.entity) {
 				for (uint i = 0; i < scene.state.roomMonsters.size() && i < monsterCombatStates.size(); ++i) {
-					StartupMonsterRecord &monster = scene.state.roomMonsters[i];
+					MonsterRecord &monster = scene.state.roomMonsters[i];
 					const RoomMonsterCombatState &combatState = monsterCombatStates[i];
 					if (!combatState.attackActive || !isKillableMonster(&monster) || !selectMonsterEntity(&monster))
 						continue;
@@ -2579,13 +2579,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 			const Common::Rect playerRect = playerState.entity->getScreenRect();
 			const int playerCenterX = playerRect.left + playerRect.width() / 2;
-			StartupMonsterRecord *bestMonster = nullptr;
+			MonsterRecord *bestMonster = nullptr;
 			int bestScore = 0x7fffffff;
-			for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+			for (MonsterRecord &monster : scene.state.roomMonsters) {
 				if (!isKillableMonster(&monster))
 					continue;
 
-				RuntimeEntity *entity = selectMonsterEntity(&monster);
+				Entity *entity = selectMonsterEntity(&monster);
 				if (!entity)
 					continue;
 
@@ -2602,8 +2602,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return bestMonster;
 		};
 
-		StartupMonsterRecord *monster = resolveKillTarget();
-		RuntimeEntity *monsterEntity = selectMonsterEntity(monster);
+		MonsterRecord *monster = resolveKillTarget();
+		Entity *monsterEntity = selectMonsterEntity(monster);
 		if (!monster || !monsterEntity) {
 			debugC(1, kDebugCombat,
 				"Harvester: debug combat kill skipped reason='no active monster' cursor=(%d,%d)",
@@ -2664,10 +2664,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		monster->active = false;
 		monster->visible = false;
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
 		if (!monster->onDeathActionTag.empty()) {
-			StartupInteractionResult deathInteraction;
+			InteractionResult deathInteraction;
 			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
@@ -2680,7 +2680,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			playerState.attackTargetName.clear();
 			playerState.attackTargetClassId = -1;
 
-			const StartupRoomHoverState hoverState = resolveRoomHoverState(
+			const RoomHoverState hoverState = resolveRoomHoverState(
 				_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
 				_mousePos, &startupFlow._dialogue);
 			if (hoverState.npc) {
@@ -2692,7 +2692,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return;
 			}
 
-		if (StartupMonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
+		if (MonsterRecord *monster = findMonsterTargetAtPoint(_mousePos)) {
 			playerState.attackTargetName = monster->monsterName;
 			playerState.attackTargetClassId = kRuntimeEntityClassMonster;
 			debugC(1, kDebugCombat,
@@ -2758,12 +2758,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		const int playerLeft = playerRect.left;
 		const int playerRight = playerRect.right;
 		const int playerCenterX = playerState.centerX;
-		RuntimeEntity *bestEntity = nullptr;
+		Entity *bestEntity = nullptr;
 		Common::String bestName;
 		int bestClassId = -1;
 		int bestLeadingEdge = attackSide == kKeyboardAttackSideLeft ? -0x7fffffff : 0x7fffffff;
 
-		auto considerTarget = [&](RuntimeEntity *targetEntity, const Common::String &targetName, int classId) {
+		auto considerTarget = [&](Entity *targetEntity, const Common::String &targetName, int classId) {
 			if (!targetEntity || !targetEntity->isVisible() ||
 					!doRuntimeEntityDepthExtentsOverlap(*playerState.entity, *targetEntity)) {
 				return;
@@ -2797,12 +2797,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			bestLeadingEdge = targetLeft;
 		};
 
-		for (StartupNpcRecord &npc : scene.state.roomNpcs) {
+		for (NpcRecord &npc : scene.state.roomNpcs) {
 			if (!npc.visible || npc.deathOrMonsterfyFlag || npc.deathDamageType != 0)
 				continue;
 			considerTarget(findSceneRuntimeEntity(npc.npcName), npc.npcName, kRuntimeEntityClassNpc);
 		}
-		for (StartupMonsterRecord &monster : scene.state.roomMonsters) {
+		for (MonsterRecord &monster : scene.state.roomMonsters) {
 			if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
 				continue;
 			considerTarget(findSceneRuntimeEntity(monster.monsterName), monster.monsterName, kRuntimeEntityClassMonster);
@@ -2824,7 +2824,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
 			bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
 		};
-		auto startMonsterHitReaction = [&](StartupMonsterRecord &monster, RuntimeEntity &monsterEntity,
+		auto startMonsterHitReaction = [&](MonsterRecord &monster, Entity &monsterEntity,
 				RoomMonsterCombatState *combatState, int attackerAttackFirstFrame) {
 			if (spawnCombatHitEffect(monsterEntity, monster.monsterName))
 				needsRedraw = true;
@@ -2893,14 +2893,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return Common::kNoError;
 
 		if (playerState.attackTargetClassId < 0 && !Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
-			if (StartupNpcRecord *fallbackNpc = findOverlappingNpcTarget()) {
+			if (NpcRecord *fallbackNpc = findOverlappingNpcTarget()) {
 				playerState.attackTargetName = fallbackNpc->npcName;
 				playerState.attackTargetClassId = kRuntimeEntityClassNpc;
 			}
 		}
 		if (playerState.attackTargetClassId == kRuntimeEntityClassNpc) {
-			StartupNpcRecord *npc = findRoomNpcRecordByName(playerState.attackTargetName);
-			RuntimeEntity *npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
+			NpcRecord *npc = findRoomNpcRecordByName(playerState.attackTargetName);
+			Entity *npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
 			if (!npc || !npcEntity || !playerAttackCanReachTarget(npcEntity))
 				npc = Player::isProjectileCombatLoadout(playerState.combatLoadout) ? nullptr : findOverlappingNpcTarget();
 			npcEntity = npc ? findSceneRuntimeEntity(npc->npcName) : nullptr;
@@ -2951,10 +2951,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			return Common::kNoError;
 		}
 
-		StartupMonsterRecord *monster = nullptr;
+		MonsterRecord *monster = nullptr;
 		if (playerState.attackTargetClassId == kRuntimeEntityClassMonster)
 			monster = findRoomMonsterRecordByName(playerState.attackTargetName);
-		RuntimeEntity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
+		Entity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
 		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity, monster ? monster->engageDistance : 0)) {
 			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout))
 				monster = findOverlappingMonsterTarget();
@@ -3024,10 +3024,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		debugC(1, kDebugCombat,
 			"Harvester: combat monster defeated target='%s' on_death='%s' fallback='no death bank'",
 			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
 		if (!monster->onDeathActionTag.empty()) {
-			StartupInteractionResult deathInteraction;
+			InteractionResult deathInteraction;
 			if (startupScript->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
@@ -3054,9 +3054,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			monsterCombatStates.resize(scene.state.roomMonsters.size());
 
 		for (uint i = 0; i < scene.state.roomNpcs.size(); ++i) {
-			StartupNpcRecord &npc = scene.state.roomNpcs[i];
+			NpcRecord &npc = scene.state.roomNpcs[i];
 			RoomNpcCombatState &combatState = npcCombatStates[i];
-			RuntimeEntity *entity = findSceneRuntimeEntity(npc.npcName);
+			Entity *entity = findSceneRuntimeEntity(npc.npcName);
 			if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
 				clearRoomNpcCombatState(combatState);
 				continue;
@@ -3074,9 +3074,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		}
 
 		for (uint i = 0; i < scene.state.roomMonsters.size(); ++i) {
-			StartupMonsterRecord &monster = scene.state.roomMonsters[i];
+			MonsterRecord &monster = scene.state.roomMonsters[i];
 			RoomMonsterCombatState &combatState = monsterCombatStates[i];
-			RuntimeEntity *entity = findSceneRuntimeEntity(monster.monsterName);
+			Entity *entity = findSceneRuntimeEntity(monster.monsterName);
 			if (!entity || !monster.visible) {
 				clearRoomMonsterCombatState(combatState);
 				continue;
@@ -3100,10 +3100,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						monster.onDeathActionTag.c_str());
 					clearRoomMonsterCombatState(combatState);
 
-					StartupInteractionResult interaction;
+					InteractionResult interaction;
 					interaction.mutatedRuntimeState = true;
 					if (startupScript && !monster.onDeathActionTag.empty()) {
-						StartupInteractionResult deathInteraction;
+						InteractionResult deathInteraction;
 						if (startupScript->executeActionTag(monster.onDeathActionTag, deathInteraction)) {
 							interaction = deathInteraction;
 							interaction.mutatedRuntimeState = true;
@@ -3356,12 +3356,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		return Common::kNoError;
 	};
-	auto moveRoomItemDirectlyToInventory = [&](const StartupObjectRecord &object) -> Common::Error {
+	auto moveRoomItemDirectlyToInventory = [&](const ObjectRecord &object) -> Common::Error {
 		Script *startupScript = _engine.getStartupScript();
 		if (!startupScript)
 			return Common::kReadingFailed;
 
-		const StartupObjectRecord savedRuntimeObject = object;
+		const ObjectRecord savedRuntimeObject = object;
 
 		startupScript->addRuntimeObjectToInventory(object.objectName);
 		const Common::String inventoryOwner(kInventoryOwnerName);
@@ -3370,7 +3370,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
-			StartupInteractionResult pickupInteraction;
+			InteractionResult pickupInteraction;
 			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
 				Common::Error interactionError =
 					interactionProcessor.handleInteractionResult(
@@ -3394,13 +3394,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		needsRedraw = true;
 		return Common::kNoError;
 	};
-	auto beginRoomItemCarry = [&](const StartupObjectRecord &object) -> Common::Error {
+	auto beginRoomItemCarry = [&](const ObjectRecord &object) -> Common::Error {
 		Script *startupScript = _engine.getStartupScript();
 		ResourceManager *resources = _engine.getResources();
 		if (!startupScript || !resources)
 			return Common::kReadingFailed;
 
-		const StartupObjectRecord savedRuntimeObject = object;
+		const ObjectRecord savedRuntimeObject = object;
 
 		clearCarriedRoomItem();
 		carriedRoomItemName = object.objectName;
@@ -3415,7 +3415,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
-			StartupInteractionResult pickupInteraction;
+			InteractionResult pickupInteraction;
 			if (startupScript->executeActionTag(object.actionTag, pickupInteraction)) {
 				Common::Error interactionError =
 					interactionProcessor.handleInteractionResult(
@@ -3453,12 +3453,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		needsRedraw = true;
 		return Common::kNoError;
 	};
-	auto handleInventoryTargetInteraction = [&](const StartupObjectRecord &target) -> Common::Error {
+	auto handleInventoryTargetInteraction = [&](const ObjectRecord &target) -> Common::Error {
 		if (!_inventory.hasSelection())
 			return Common::kNoError;
 
 		const Common::String selectedItemName = _inventory.getSelectedItemName();
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		const bool handled = _engine.getStartupScript()->resolveUseItemInteraction(
 			selectedItemName, target, interaction);
 		if (!handled) {
@@ -3483,25 +3483,25 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		needsRedraw = true;
 		return Common::kNoError;
 	};
-	auto findSelectedInventoryRoomTarget = [&](const Common::Point &point) -> StartupObjectRecord * {
+	auto findSelectedInventoryRoomTarget = [&](const Common::Point &point) -> ObjectRecord * {
 		if (!_inventory.hasSelection())
 			return nullptr;
 
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		Script *startupScript = _engine.getStartupScript();
 		if (!runtimeEntities || !startupScript)
 			return nullptr;
 
 		const Common::String selectedItemName = _inventory.getSelectedItemName();
-		StartupObjectRecord *bestTarget = nullptr;
+		ObjectRecord *bestTarget = nullptr;
 		int bestDrawIndex = -1;
-		for (StartupObjectRecord &candidate : scene.sceneObjects) {
+		for (ObjectRecord &candidate : scene.sceneObjects) {
 			if (candidate.objectName.empty() ||
 					!startupScript->hasUseItemInteraction(selectedItemName, candidate)) {
 				continue;
 			}
 
-			const RuntimeEntity *entity = runtimeEntities->findSceneEntityByName(candidate.objectName);
+			const Entity *entity = runtimeEntities->findSceneEntityByName(candidate.objectName);
 			if (!entity || !entity->hitTest(point))
 				continue;
 			if (entity->getClassId() == kRuntimeEntityClassBackground ||
@@ -3521,7 +3521,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 		return bestTarget;
 	};
-	auto queueRegionInteraction = [&](const StartupRegionRecord &region) {
+	auto queueRegionInteraction = [&](const RegionRecord &region) {
 		pendingRegionName = region.regionName;
 		if (!playerState.entity)
 			return;
@@ -3533,8 +3533,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			Player::resolveRegionTargetX(region, playerState),
 			Player::resolveRegionTargetZ(region));
 	};
-	auto runRegionInteraction = [&](const StartupRegionRecord &region) -> Common::Error {
-		StartupInteractionResult interaction;
+	auto runRegionInteraction = [&](const RegionRecord &region) -> Common::Error {
+		InteractionResult interaction;
 		if (!_engine.getStartupScript()->resolveRegionInteraction(region, interaction))
 			return Common::kNoError;
 
@@ -3556,7 +3556,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 		if (pendingRegionName.empty() || !playerState.entity)
 			return Common::kNoError;
 
-		const StartupRegionRecord *region = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
+		const RegionRecord *region = findSceneRegionByName(scene.sceneRegions, pendingRegionName);
 		if (!region || !region->startEnabled) {
 			pendingRegionName.clear();
 			return Common::kNoError;
@@ -3576,7 +3576,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (!playerState.entity)
 				return Common::kNoError;
 
-		for (const StartupRegionRecord &region : scene.sceneRegions) {
+		for (const RegionRecord &region : scene.sceneRegions) {
 			if (!region.startEnabled)
 				continue;
 			if (!doesPlayerOverlapRegion(*playerState.entity, region))
@@ -3626,7 +3626,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				return Common::kReadingFailed;
 			break;
 		}
-		StartupInteractionResult queuedDebugInteraction;
+		InteractionResult queuedDebugInteraction;
 		if (startupFlow.takeQueuedDebugInteraction(queuedDebugInteraction)) {
 			// Run console-injected commands through the normal room interaction handler so
 			// CHANGE_ROOM, modal text, dialogue, and chained tags behave exactly like script-driven actions.
@@ -3661,12 +3661,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			const bool suppressHover = showingInspectText || idleState.active || idleState.exiting ||
 				isPlayerCombatLocked() ||
 				(_inventory.isOpen() && (inventoryPanelContainsMouse || !inventorySelectionActive));
-			StartupRoomHoverState hoverState = suppressHover
-				? StartupRoomHoverState()
+			RoomHoverState hoverState = suppressHover
+				? RoomHoverState()
 				: resolveRoomHoverState(_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
 					scene.sceneRegions, _mousePos, &startupFlow._dialogue);
 			if (!suppressHover && inventorySelectionActive && !hoverState.npc) {
-				if (StartupObjectRecord *selectedTarget = findSelectedInventoryRoomTarget(_mousePos))
+				if (ObjectRecord *selectedTarget = findSelectedInventoryRoomTarget(_mousePos))
 					hoverState.object = selectedTarget;
 			}
 			Common::String promptText;
@@ -3682,7 +3682,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			};
 			if (activeCarry) {
 				Common::String targetLabel;
-				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+				const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (_inventory.isOpen()) {
 					if (inventoryHover && !InventorySystem::isExitObject(inventoryHover->object) &&
 							!InventorySystem::isStatusObject(inventoryHover->object) &&
@@ -3702,7 +3702,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 				}
 				hoverState.cursorSequence = 7;
 			} else if (_inventory.isOpen()) {
-				const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+				const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 				if (inventoryHover &&
 						!InventorySystem::isExitObject(inventoryHover->object)) {
 					inventoryTooltipText =
@@ -3713,7 +3713,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			} else {
 				promptText = hoverState.promptText;
 			}
-			if (RuntimeEntity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
+			if (Entity *cursor = runtimeEntities ? runtimeEntities->getCursorEntity() : nullptr) {
 				cursor->setAnimationSequence(
 					(showingInspectText || idleState.active || idleState.exiting ||
 						isPlayerCombatLocked() ||
@@ -3760,7 +3760,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				if (_inventory.isOpen() && _inventory.hasSelection()) {
-					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 					// Native inventory handoff is driven by the latched selected item, not by
 					// a second click after the selection has already been made.
 					if (!inventoryHover && isOutsideNativeInventoryDragCloseBounds(_mousePos)) {
@@ -3781,7 +3781,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					break;
 				pendingRegionName.clear();
 				if (_inventory.isOpen()) {
-					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 					debugLogInventoryClick("right", _mousePos, inventoryHover);
 					if (_inventory.hasSelection()) {
 						debugC(1, kDebugInventory,
@@ -3825,7 +3825,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 							if (secondaryAction.closeInventory)
 								(void)_inventory.close();
 
-							StartupInteractionResult interaction;
+							InteractionResult interaction;
 							bool didTransition = false;
 							const bool executedActionTag = _engine.getStartupScript()->executeActionTag(
 									secondaryAction.actionTag, interaction);
@@ -3930,7 +3930,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					if (inspectCanDismiss) {
 						showingInspectText = false;
 						inspectCanDismiss = false;
-						inspectText = StartupResolvedText();
+						inspectText = ResolvedText();
 						needsRedraw = true;
 					}
 					break;
@@ -3940,7 +3940,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 
 				const Common::Rect inventoryPanelBounds = _inventory.getPanelBounds();
 				if (_inventory.isOpen()) {
-					const StartupInventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
+					const InventoryVisual *inventoryHover = _inventory.findItemAtPoint(_mousePos);
 					debugLogInventoryClick("left", _mousePos, inventoryHover);
 					if (inventoryHover) {
 						if (InventorySystem::isExitObject(inventoryHover->object)) {
@@ -3988,10 +3988,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					break;
 				}
 
-				const StartupRoomHoverState hoverState = resolveRoomHoverState(
+				const RoomHoverState hoverState = resolveRoomHoverState(
 					_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs, scene.sceneRegions,
 					_mousePos, &startupFlow._dialogue);
-				StartupObjectRecord *selectedRoomTarget = nullptr;
+				ObjectRecord *selectedRoomTarget = nullptr;
 				if (_inventory.hasSelection() && !hoverState.npc)
 					selectedRoomTarget = findSelectedInventoryRoomTarget(_mousePos);
 				if (selectedRoomTarget &&
@@ -4003,7 +4003,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						hoverState.object ? hoverState.object->objectName.c_str() : "",
 						selectedRoomTarget->objectName.c_str());
 				}
-				StartupRoomHoverState clickHoverState = hoverState;
+				RoomHoverState clickHoverState = hoverState;
 				if (selectedRoomTarget)
 					clickHoverState.object = selectedRoomTarget;
 				debugC(1, kDebugRoom,
@@ -4037,7 +4037,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 						break;
 					}
 
-					StartupObjectRecord *roomTarget = clickHoverState.object
+					ObjectRecord *roomTarget = clickHoverState.object
 						? findSceneObjectByName(scene.sceneObjects, clickHoverState.object->objectName)
 						: nullptr;
 					if (roomTarget) {
@@ -4100,7 +4100,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					needsRedraw = true;
 					break;
 				}
-				StartupObjectRecord *clickedObject = hoverState.object
+				ObjectRecord *clickedObject = hoverState.object
 					? findSceneObjectByName(scene.sceneObjects, hoverState.object->objectName)
 					: nullptr;
 				if (!clickedObject) {
@@ -4120,7 +4120,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					return Common::kNoError;
 				}
 
-				StartupResolvedText resolvedInspectText;
+				ResolvedText resolvedInspectText;
 				const bool hasInspectText =
 					_engine.getStartupScript()->resolveObjectInspectText(*clickedObject, resolvedInspectText);
 				const bool unlocksAfterInitialExamine =
@@ -4145,7 +4145,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					break;
 				}
 				if (_engine.getStartupScript()->isPickupObject(*clickedObject)) {
-					StartupInteractionResult blockedPickupInteraction;
+					InteractionResult blockedPickupInteraction;
 					if (_engine.getStartupScript()->isPickupBlockedByAction(
 							*clickedObject, &blockedPickupInteraction)) {
 						bool didTransition = false;
@@ -4166,7 +4166,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					break;
 				}
 
-				StartupInteractionResult interaction;
+				InteractionResult interaction;
 				if (!_engine.getStartupScript()->resolveObjectInteraction(*clickedObject, interaction)) {
 					if (canShowInspectText) {
 						inspectText = resolvedInspectText;
@@ -4196,7 +4196,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						showingInspectText = false;
 						inspectCanDismiss = false;
-						inspectText = StartupResolvedText();
+						inspectText = ResolvedText();
 						needsRedraw = true;
 					}
 					break;
@@ -4478,7 +4478,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &startupFlow, const Common::String &t
 			if (runtimeEntities->takeExpiredTimerNames(expiredTimerNames)) {
 				syncCurrentRoomRuntimeState();
 				for (const Common::String &timerName : expiredTimerNames) {
-					StartupInteractionResult timerInteraction;
+					InteractionResult timerInteraction;
 					if (!_engine.getStartupScript()->executeTimerAction(timerName, timerInteraction))
 						continue;
 

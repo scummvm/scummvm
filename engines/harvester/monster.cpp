@@ -60,7 +60,7 @@ int Monster::resolveFacingFrame(int facing) {
 	return resolveAnimationRange(facing).idleFrame;
 }
 
-void Monster::applyAnimation(RuntimeEntity &entity, const StartupMonsterRecord &monster) {
+void Monster::applyAnimation(Entity &entity, const MonsterRecord &monster) {
 	entity.setVisible(monster.visible);
 	if (!monster.visible)
 		return;

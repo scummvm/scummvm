@@ -135,7 +135,7 @@ public:
 	void pause() {
 		if (_paused)
 			return;
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
 			runtimeEntities->pauseTimerCountdowns();
 			_paused = true;
 		}
@@ -144,7 +144,7 @@ public:
 	void resume() {
 		if (!_paused)
 			return;
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
 			runtimeEntities->resumeTimerCountdowns();
 		_paused = false;
 	}
@@ -938,7 +938,7 @@ Common::Error MenuSystem::showGameOverBackdrop(Flow &startupFlow) {
 			}
 		}
 
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities()) {
 			if (runtimeEntities->syncCursorEntityPosition(_mousePos))
 				needsRedraw = true;
 		}
@@ -1108,7 +1108,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 			}
 		}
 
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 
@@ -1268,7 +1268,7 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 			}
 		}
 
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
 			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
@@ -1383,7 +1383,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 				}
 			}
 
-			if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+			if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
 				(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
 
 			entryLimiter.delayBeforeSwap();
@@ -1501,7 +1501,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			}
 		}
 
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
 			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
@@ -1637,7 +1637,7 @@ Common::Error MenuSystem::runConfirmPrompt(const IndexedBitmap &backdrop, const 
 			}
 		}
 
-		if (RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities())
+		if (EntityManager *runtimeEntities = _engine.getRuntimeEntities())
 			(void)runtimeEntities->syncCursorEntityPosition(_mousePos);
 
 		limiter.delayBeforeSwap();
@@ -2035,7 +2035,7 @@ Common::Error MenuSystem::runOptionsMenu(const IndexedBitmap &backdrop, const by
 			}
 		}
 
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 
@@ -2109,7 +2109,7 @@ Common::Error MenuSystem::runHelpScreen(const byte *palette, float paletteBright
 			}
 		}
 
-		RuntimeEntityManager *runtimeEntities = _engine.getRuntimeEntities();
+		EntityManager *runtimeEntities = _engine.getRuntimeEntities();
 		if (runtimeEntities && runtimeEntities->syncCursorEntityPosition(_mousePos))
 			needsRedraw = true;
 

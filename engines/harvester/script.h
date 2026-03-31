@@ -34,7 +34,7 @@ namespace Harvester {
 
 class ResourceManager;
 
-struct StartupEntranceRecord {
+struct EntranceRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
@@ -44,14 +44,14 @@ struct StartupEntranceRecord {
 	Common::String entranceName;
 };
 
-struct StartupMapEntranceRecord {
+struct MapEntranceRecord {
 	int mapX = 0;
 	int mapY = 0;
 	int initialPanelIndex = 0;
 	Common::String entryName;
 };
 
-struct StartupMapLocationRecord {
+struct MapLocationRecord {
 	int minX = 0;
 	int minY = 0;
 	int maxX = 0;
@@ -63,7 +63,7 @@ struct StartupMapLocationRecord {
 	Common::String destinationEntranceName;
 };
 
-struct StartupRoomRecord {
+struct RoomRecord {
 	int minZ = 0;
 	int maxZ = 0;
 	int maxZScreenY = 0;
@@ -83,7 +83,7 @@ struct StartupRoomRecord {
 	bool dimmable = false;
 };
 
-struct StartupObjectRecord {
+struct ObjectRecord {
 	int initialX = 0;
 	int initialY = 0;
 	int initialZ = 0;
@@ -110,7 +110,7 @@ struct StartupObjectRecord {
 	bool identShown = false;
 };
 
-struct StartupAnimRecord {
+struct AnimRecord {
 	int x = 0;
 	int y = 0;
 	int z = 0;
@@ -129,7 +129,7 @@ struct StartupAnimRecord {
 	int runtimeState = -1;
 };
 
-struct StartupNpcRecord {
+struct NpcRecord {
 	int posX = 0;
 	int posY = 0;
 	int posZ = 0;
@@ -149,7 +149,7 @@ struct StartupNpcRecord {
 	Common::String entityInitArg;
 };
 
-struct StartupTimerRecord {
+struct TimerRecord {
 	int initialValue = 0;
 	int currentValue = 0;
 	Common::String timerName;
@@ -160,7 +160,7 @@ struct StartupTimerRecord {
 	bool global = false;
 };
 
-struct StartupRegionRecord {
+struct RegionRecord {
 	int left = 0;
 	int top = 0;
 	int right = 0;
@@ -176,12 +176,12 @@ struct StartupRegionRecord {
 	bool cursorEnabled = false;
 };
 
-struct StartupFlagRecord {
+struct FlagRecord {
 	Common::String name;
 	bool value = false;
 };
 
-struct StartupCommandRecord {
+struct CommandRecord {
 	Common::String triggerTag;
 	Common::String opcodeName;
 	Common::String arg1;
@@ -190,23 +190,23 @@ struct StartupCommandRecord {
 	Common::String arg4;
 };
 
-struct StartupExecListRecord {
+struct ExecListRecord {
 	Common::String listName;
 	Common::Array<Common::String> entries;
 };
 
-struct StartupTextRecord {
+struct TextRecord {
 	Common::String key;
 	Common::String boxName;
 	Common::String value;
 };
 
-struct StartupHeadRecord {
+struct HeadRecord {
 	Common::String headId;
 	Common::String portraitPath;
 };
 
-struct StartupUseItemRecord {
+struct UseItemRecord {
 	Common::String itemName;
 	Common::String ownerOrRoom;
 	Common::String targetName;
@@ -227,13 +227,13 @@ enum StartupAudioCommandType {
 	kStartupAudioCommandDeleteWav
 };
 
-struct StartupAudioCommand {
+struct AudioCommand {
 	StartupAudioCommandType type = kStartupAudioCommandStartWav;
 	Common::String path;
 	int slot = -1;
 };
 
-struct StartupRoomSetupState {
+struct RoomSetupState {
 	Common::String entranceName;
 	Common::String roomName;
 	Common::String backgroundObjectName;
@@ -254,14 +254,14 @@ struct StartupRoomSetupState {
 	int playerSpawnZ = 0;
 	int playerFacing = -1;
 	float paletteBrightness = 1.0f;
-	Common::Array<StartupObjectRecord> activeObjects;
-	Common::Array<StartupObjectRecord> roomObjects;
-	Common::Array<StartupAnimRecord> roomAnimations;
-	Common::Array<StartupNpcRecord> roomNpcs;
-	Common::Array<StartupMonsterRecord> roomMonsters;
-	Common::Array<StartupTimerRecord> roomTimers;
-	Common::Array<StartupRegionRecord> roomRegions;
-	Common::Array<StartupAudioCommand> audioCommands;
+	Common::Array<ObjectRecord> activeObjects;
+	Common::Array<ObjectRecord> roomObjects;
+	Common::Array<AnimRecord> roomAnimations;
+	Common::Array<NpcRecord> roomNpcs;
+	Common::Array<MonsterRecord> roomMonsters;
+	Common::Array<TimerRecord> roomTimers;
+	Common::Array<RegionRecord> roomRegions;
+	Common::Array<AudioCommand> audioCommands;
 };
 
 enum StartupRoomTransitionKind {
@@ -278,12 +278,12 @@ enum StartupLightingCommand {
 	kStartupLightingCommandFadeIn
 };
 
-struct StartupResolvedText {
+struct ResolvedText {
 	Common::String boxName;
 	Common::String value;
 };
 
-struct StartupInteractionResult {
+struct InteractionResult {
 	Common::String musicPath;
 	Common::String nextRoomName;
 	Common::String cutscenePath;
@@ -291,8 +291,8 @@ struct StartupInteractionResult {
 	Common::String dialogueNpcName;
 	Common::String dialogueContinuationTag;
 	Common::String continuationTag;
-	StartupResolvedText modalText;
-	Common::Array<StartupAudioCommand> audioCommands;
+	ResolvedText modalText;
+	Common::Array<AudioCommand> audioCommands;
 	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
 	StartupLightingCommand lightingCommand = kStartupLightingCommandNone;
 	int cdChangeDisc = 0;
@@ -315,22 +315,22 @@ public:
 
 	const Common::String &getPath() const { return _path; }
 	const Common::Array<byte> &getData() const { return _data; }
-	const Common::Array<StartupEntranceRecord> &getEntrances() const { return _entrances; }
-	const Common::Array<StartupMapEntranceRecord> &getMapEntrances() const { return _mapEntrances; }
-	const Common::Array<StartupMapLocationRecord> &getMapLocations() const { return _mapLocations; }
-	const Common::Array<StartupRoomRecord> &getRooms() const { return _rooms; }
-	const Common::Array<StartupObjectRecord> &getObjects() const { return _objects; }
-	const Common::Array<StartupAnimRecord> &getAnimations() const { return _animations; }
-	const Common::Array<StartupNpcRecord> &getNpcs() const { return _npcs; }
-	const Common::Array<StartupMonsterRecord> &getMonsters() const { return _monsters; }
-	const Common::Array<StartupTimerRecord> &getTimers() const { return _timers; }
-	const Common::Array<StartupRegionRecord> &getRegions() const { return _regions; }
-	const Common::Array<StartupFlagRecord> &getFlags() const { return _flags; }
-	const Common::Array<StartupCommandRecord> &getCommands() const { return _commands; }
-	const Common::Array<StartupExecListRecord> &getExecLists() const { return _execLists; }
-	const Common::Array<StartupTextRecord> &getTexts() const { return _texts; }
-	const Common::Array<StartupHeadRecord> &getHeads() const { return _heads; }
-	const Common::Array<StartupUseItemRecord> &getUseItems() const { return _useItems; }
+	const Common::Array<EntranceRecord> &getEntrances() const { return _entrances; }
+	const Common::Array<MapEntranceRecord> &getMapEntrances() const { return _mapEntrances; }
+	const Common::Array<MapLocationRecord> &getMapLocations() const { return _mapLocations; }
+	const Common::Array<RoomRecord> &getRooms() const { return _rooms; }
+	const Common::Array<ObjectRecord> &getObjects() const { return _objects; }
+	const Common::Array<AnimRecord> &getAnimations() const { return _animations; }
+	const Common::Array<NpcRecord> &getNpcs() const { return _npcs; }
+	const Common::Array<MonsterRecord> &getMonsters() const { return _monsters; }
+	const Common::Array<TimerRecord> &getTimers() const { return _timers; }
+	const Common::Array<RegionRecord> &getRegions() const { return _regions; }
+	const Common::Array<FlagRecord> &getFlags() const { return _flags; }
+	const Common::Array<CommandRecord> &getCommands() const { return _commands; }
+	const Common::Array<ExecListRecord> &getExecLists() const { return _execLists; }
+	const Common::Array<TextRecord> &getTexts() const { return _texts; }
+	const Common::Array<HeadRecord> &getHeads() const { return _heads; }
+	const Common::Array<UseItemRecord> &getUseItems() const { return _useItems; }
 	bool isQuickTipsEnabled() const { return _quickTipsEnabled; }
 	void setQuickTipsEnabled(bool enabled) { _quickTipsEnabled = enabled; }
 	const Common::String &getVoicePath() const { return _voicePath; }
@@ -349,48 +349,48 @@ public:
 	bool saveConfig() const;
 	void resetRuntimeState();
 	void syncRuntimeSaveState(Common::Serializer &s);
-	bool resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
+	bool resolveRoomSetupState(const Common::String &entranceName, RoomSetupState &state,
 		ResourceManager &resources);
-	bool resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
+	bool resolveRoomSetupStateByRoomName(const Common::String &roomName, RoomSetupState &state,
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
-		StartupRoomSetupState &state, ResourceManager &resources) const;
-	bool executeRoomEnterCommands(const Common::String &roomName, StartupInteractionResult &result);
-	bool executeRoomExitCommands(const Common::String &roomName, StartupInteractionResult &result);
-	bool resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result);
-	bool resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result);
-	bool resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
-		StartupInteractionResult &result);
-	bool executeDebugCommand(const StartupCommandRecord &command, StartupInteractionResult &result,
+		RoomSetupState &state, ResourceManager &resources) const;
+	bool executeRoomEnterCommands(const Common::String &roomName, InteractionResult &result);
+	bool executeRoomExitCommands(const Common::String &roomName, InteractionResult &result);
+	bool resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result);
+	bool resolveRegionInteraction(const RegionRecord &region, InteractionResult &result);
+	bool resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
+		InteractionResult &result);
+	bool executeDebugCommand(const CommandRecord &command, InteractionResult &result,
 		bool allowTransitions = true);
-	bool executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+	bool executeActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions = true);
-	bool executeTimerAction(const Common::String &timerName, StartupInteractionResult &result,
+	bool executeTimerAction(const Common::String &timerName, InteractionResult &result,
 		bool allowTransitions = true);
-	bool executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
+	bool executeNestedActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions = true);
-	bool isPickupObject(const StartupObjectRecord &object) const;
-	bool isPickupBlockedByAction(const StartupObjectRecord &object,
-		StartupInteractionResult *result = nullptr) const;
-	bool hasObjectInteraction(const StartupObjectRecord &object) const;
-	bool hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const;
-	void getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const;
+	bool isPickupObject(const ObjectRecord &object) const;
+	bool isPickupBlockedByAction(const ObjectRecord &object,
+		InteractionResult *result = nullptr) const;
+	bool hasObjectInteraction(const ObjectRecord &object) const;
+	bool hasUseItemInteraction(const Common::String &itemName, const ObjectRecord &target) const;
+	void getVisibleInventoryObjects(Common::Array<ObjectRecord> &objects) const;
 	bool isObjectInInventory(const Common::String &objectName) const;
-	void markObjectIdentShown(const StartupObjectRecord &object);
-	bool resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const;
-	bool resolveTextRecord(const Common::String &key, StartupResolvedText &text) const;
-	Common::String resolveInventoryTooltipText(const StartupObjectRecord &object) const;
-	Common::String resolveObjectLabel(const StartupObjectRecord &object) const;
+	void markObjectIdentShown(const ObjectRecord &object);
+	bool resolveObjectInspectText(const ObjectRecord &object, ResolvedText &text) const;
+	bool resolveTextRecord(const Common::String &key, ResolvedText &text) const;
+	Common::String resolveInventoryTooltipText(const ObjectRecord &object) const;
+	Common::String resolveObjectLabel(const ObjectRecord &object) const;
 	Common::String resolveTextValue(const Common::String &key) const;
-	const StartupHeadRecord *findHeadRecord(const Common::String &headId) const;
-	const StartupEntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
-	const StartupMapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
+	const HeadRecord *findHeadRecord(const Common::String &headId) const;
+	const EntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
+	const MapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
 	bool getFlagValue(const Common::String &flagName) const;
-	const StartupNpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
+	const NpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 	bool setRuntimeFlagValue(const Common::String &flagName, bool value);
 	bool resetRuntimeObjectToInitialState(const Common::String &objectName);
 	bool addRuntimeObjectToInventory(const Common::String &objectName);
-	bool syncRuntimeObjectRecord(const StartupObjectRecord &object);
+	bool syncRuntimeObjectRecord(const ObjectRecord &object);
 	bool setRuntimeObjectVisible(const Common::String &ownerOrRoom, const Common::String &objectName,
 		bool visible);
 	bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
@@ -405,8 +405,8 @@ public:
 	bool setPlayerCombatLoadout(int loadout);
 	bool setPlayerControlPaused(bool paused);
 	bool syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame);
-	bool syncRuntimeMonsterRecord(const StartupMonsterRecord &monster);
-	bool syncRuntimeTimerRecord(const StartupTimerRecord &timer);
+	bool syncRuntimeMonsterRecord(const MonsterRecord &monster);
+	bool syncRuntimeTimerRecord(const TimerRecord &timer);
 	bool setRuntimeRegionEnabled(const Common::String &regionName, bool enabled);
 	bool setRuntimeTimerEnabled(const Common::String &timerName, bool enabled);
 
@@ -414,67 +414,67 @@ private:
 	bool loadConfig(ResourceManager &resources);
 	void decode();
 	void parseTownRecords(ResourceManager &resources);
-	const StartupRoomRecord *findRoomRecord(const Common::String &roomName) const;
-	const StartupCommandRecord *findCommandRecord(const Common::String &tag) const;
-	const StartupExecListRecord *findExecListRecord(const Common::String &name) const;
-	const StartupTextRecord *findTextRecord(const Common::String &key) const;
-	const StartupUseItemRecord *findUseItemRecord(const Common::String &itemName,
-		const StartupObjectRecord &target) const;
-	const StartupFlagRecord *findRuntimeFlag(const Common::String &flagName) const;
-	StartupFlagRecord *findRuntimeFlag(const Common::String &flagName);
-	StartupObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
-	StartupAnimRecord *findRuntimeAnim(const Common::String &animName);
-	StartupRegionRecord *findRuntimeRegion(const Common::String &regionName);
-	StartupNpcRecord *findRuntimeNpc(const Common::String &npcName);
-	const StartupNpcRecord *findRuntimeNpc(const Common::String &npcName) const;
-	StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName);
-	const StartupMonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
-	StartupTimerRecord *findRuntimeTimer(const Common::String &timerName);
-	const StartupTimerRecord *findRuntimeTimer(const Common::String &timerName) const;
-	bool buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
-		ResourceManager &resources, StartupRoomSetupState &state) const;
+	const RoomRecord *findRoomRecord(const Common::String &roomName) const;
+	const CommandRecord *findCommandRecord(const Common::String &tag) const;
+	const ExecListRecord *findExecListRecord(const Common::String &name) const;
+	const TextRecord *findTextRecord(const Common::String &key) const;
+	const UseItemRecord *findUseItemRecord(const Common::String &itemName,
+		const ObjectRecord &target) const;
+	const FlagRecord *findRuntimeFlag(const Common::String &flagName) const;
+	FlagRecord *findRuntimeFlag(const Common::String &flagName);
+	ObjectRecord *findRuntimeObject(const Common::String &ownerOrRoom, const Common::String &objectName);
+	AnimRecord *findRuntimeAnim(const Common::String &animName);
+	RegionRecord *findRuntimeRegion(const Common::String &regionName);
+	NpcRecord *findRuntimeNpc(const Common::String &npcName);
+	const NpcRecord *findRuntimeNpc(const Common::String &npcName) const;
+	MonsterRecord *findRuntimeMonster(const Common::String &monsterName);
+	const MonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
+	TimerRecord *findRuntimeTimer(const Common::String &timerName);
+	const TimerRecord *findRuntimeTimer(const Common::String &timerName) const;
+	bool buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
+		ResourceManager &resources, RoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
-		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
 		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
-		Common::String *continuationTag, StartupResolvedText *modalText,
+		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
-		const Common::String &contextName, StartupInteractionResult &result, uint recursionDepth) const;
+		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 	bool setPlayerCurrentHitPoints(int hitPoints);
 	void logRuntimeSaveState(const char *operation) const;
 
 	Common::String _path;
 	Common::Array<byte> _data;
-	Common::Array<StartupEntranceRecord> _entrances;
-	Common::Array<StartupMapEntranceRecord> _mapEntrances;
-	Common::Array<StartupMapLocationRecord> _mapLocations;
-	Common::Array<StartupRoomRecord> _rooms;
-	Common::Array<StartupObjectRecord> _objects;
-	Common::Array<StartupAnimRecord> _animations;
-	Common::Array<StartupNpcRecord> _npcs;
-	Common::Array<StartupMonsterRecord> _monsters;
-	Common::Array<StartupTimerRecord> _timers;
-	Common::Array<StartupRegionRecord> _regions;
-	Common::Array<StartupFlagRecord> _flags;
-	Common::Array<StartupCommandRecord> _commands;
-	Common::Array<StartupExecListRecord> _execLists;
-	Common::Array<StartupTextRecord> _texts;
-	Common::Array<StartupHeadRecord> _heads;
-	Common::Array<StartupUseItemRecord> _useItems;
-	Common::Array<StartupFlagRecord> _runtimeFlags;
-	Common::Array<StartupObjectRecord> _runtimeObjects;
-	Common::Array<StartupAnimRecord> _runtimeAnimations;
-	Common::Array<StartupRegionRecord> _runtimeRegions;
-	Common::Array<StartupNpcRecord> _runtimeNpcs;
-	Common::Array<StartupMonsterRecord> _runtimeMonsters;
-	Common::Array<StartupTimerRecord> _runtimeTimers;
+	Common::Array<EntranceRecord> _entrances;
+	Common::Array<MapEntranceRecord> _mapEntrances;
+	Common::Array<MapLocationRecord> _mapLocations;
+	Common::Array<RoomRecord> _rooms;
+	Common::Array<ObjectRecord> _objects;
+	Common::Array<AnimRecord> _animations;
+	Common::Array<NpcRecord> _npcs;
+	Common::Array<MonsterRecord> _monsters;
+	Common::Array<TimerRecord> _timers;
+	Common::Array<RegionRecord> _regions;
+	Common::Array<FlagRecord> _flags;
+	Common::Array<CommandRecord> _commands;
+	Common::Array<ExecListRecord> _execLists;
+	Common::Array<TextRecord> _texts;
+	Common::Array<HeadRecord> _heads;
+	Common::Array<UseItemRecord> _useItems;
+	Common::Array<FlagRecord> _runtimeFlags;
+	Common::Array<ObjectRecord> _runtimeObjects;
+	Common::Array<AnimRecord> _runtimeAnimations;
+	Common::Array<RegionRecord> _runtimeRegions;
+	Common::Array<NpcRecord> _runtimeNpcs;
+	Common::Array<MonsterRecord> _runtimeMonsters;
+	Common::Array<TimerRecord> _runtimeTimers;
 	int _playerCurrentHitPoints = 30;
 	int _playerCombatLoadout = 0;
 	bool _playerControlPaused = false;

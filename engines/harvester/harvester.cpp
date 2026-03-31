@@ -68,7 +68,7 @@ bool HarvesterEngine::canSaveGameStateCurrently(Common::U32String *) {
 	return _startupScript != nullptr && _currentStartupSaveRoomState.valid;
 }
 
-RuntimeEntityManager *HarvesterEngine::getRuntimeEntities() const {
+EntityManager *HarvesterEngine::getRuntimeEntities() const {
 	return _media ? _media->getRuntimeEntities() : nullptr;
 }
 
@@ -170,7 +170,7 @@ void HarvesterEngine::stopStartupMusic() {
 		_media->stopMusic();
 }
 
-bool HarvesterEngine::executeStartupAudioCommand(const StartupAudioCommand &command) {
+bool HarvesterEngine::executeStartupAudioCommand(const AudioCommand &command) {
 	return _media && _media->executeAudioCommand(command);
 }
 
@@ -262,13 +262,13 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 	return _roomDebugEnabled;
 }
 
-bool HarvesterEngine::requestDebugCommand(const StartupCommandRecord &command) {
+bool HarvesterEngine::requestDebugCommand(const CommandRecord &command) {
 	if (!_activeFlow || !_startupScript || !_currentStartupSaveRoomState.valid)
 		return false;
 	if (_activeFlow->hasQueuedDebugInteraction())
 		return false;
 
-	StartupInteractionResult interaction;
+	InteractionResult interaction;
 	if (!_startupScript->executeDebugCommand(command, interaction))
 		return false;
 

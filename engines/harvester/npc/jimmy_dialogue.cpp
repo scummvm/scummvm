@@ -102,7 +102,7 @@ Common::Error JimmyDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.startupScript().isObjectInInventory(objectName);
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!runtime.startupScript().executeActionTag(tag, interaction))
 			return;
 

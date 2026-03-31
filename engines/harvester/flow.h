@@ -63,24 +63,24 @@ private:
 	Common::Error runMainMenuStub();
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness);
 	Common::Error runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, const StartupNpcRecord &npc, const Common::String &usedItemName);
+		float paletteBrightness, const NpcRecord &npc, const Common::String &usedItemName);
 	Common::Error runTownMapSelector(const Common::String &mapEntryName, Common::String &destinationEntranceName);
 	Common::Error runRoomLoop(const Common::String &entranceName);
 	Common::Error resolveRoomTransitionTarget(const Common::String &targetName, Common::String &resolvedTargetName);
 	bool ensureCursorEntity();
-	bool populateRoomSceneEntities(StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &drawableObjects,
-		const Common::Array<StartupAnimRecord> &drawableAnimations);
+	bool populateRoomSceneEntities(RoomSetupState &state,
+		const Common::Array<ObjectRecord> &drawableObjects,
+		const Common::Array<AnimRecord> &drawableAnimations);
 	Common::Error beginRoomSetupTransition();
 	Common::Error waitForRoomSetupTransitionHold();
 	Common::Error fadeInRoomScene(const byte *palette, float targetBrightness);
 	bool pumpTransitionEvents(Common::Error &result);
-	void executeStartupAudioCommands(const Common::Array<StartupAudioCommand> &commands);
-	void queueDialogueInteraction(const StartupInteractionResult &interaction);
-	bool takeQueuedDialogueInteraction(StartupInteractionResult &interaction);
+	void executeStartupAudioCommands(const Common::Array<AudioCommand> &commands);
+	void queueDialogueInteraction(const InteractionResult &interaction);
+	bool takeQueuedDialogueInteraction(InteractionResult &interaction);
 	bool hasQueuedDebugInteraction() const { return _hasQueuedDebugInteraction; }
-	bool queueDebugInteraction(const StartupInteractionResult &interaction);
-	bool takeQueuedDebugInteraction(StartupInteractionResult &interaction);
+	bool queueDebugInteraction(const InteractionResult &interaction);
+	bool takeQueuedDebugInteraction(InteractionResult &interaction);
 	void prepareForNewGame();
 	void requestNewGameRestart();
 	bool hasPendingNewGameRestart() const;
@@ -110,9 +110,9 @@ private:
 	InventorySystem _inventory;
 	MenuSystem _menu;
 	RoomSystem _room;
-	StartupInteractionResult _queuedDialogueInteraction;
+	InteractionResult _queuedDialogueInteraction;
 	bool _hasQueuedDialogueInteraction = false;
-	StartupInteractionResult _queuedDebugInteraction;
+	InteractionResult _queuedDebugInteraction;
 	bool _hasQueuedDebugInteraction = false;
 	bool _pendingNewGameRestart = false;
 	bool _pendingGameOverReturn = false;

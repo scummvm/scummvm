@@ -39,7 +39,7 @@ bool PastorelliDialogueHandler::matchesNpc(const Common::String &npcName) const 
 
 Common::Error PastorelliDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const Common::String &, DialogueSharedState &) {
-	StartupInteractionResult interaction;
+	InteractionResult interaction;
 	if (runtime.startupScript().executeActionTag(kPastorelliTalkActionTag, interaction)) {
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);

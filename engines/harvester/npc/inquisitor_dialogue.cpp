@@ -71,7 +71,7 @@ Common::Error InquisitorDialogueHandler::handleDialogue(DialogueRuntime &runtime
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	StartupInteractionResult interaction;
+	InteractionResult interaction;
 	if (runtime.startupScript().executeActionTag(kStartInquisitorTimerActionTag, interaction)) {
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);

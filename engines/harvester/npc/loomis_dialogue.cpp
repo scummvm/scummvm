@@ -88,7 +88,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return runtime.playDialogueLineWithVariant(wavId, speakerId, headVariant);
 	};
 	auto executeLoomisActionTag = [&](const char *tag) {
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (!runtime.startupScript().executeActionTag(tag, interaction))
 			return;
 
@@ -308,7 +308,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			if (lineError.getCode() != Common::kNoError)
 				return lineError;
 
-			StartupInteractionResult interaction;
+			InteractionResult interaction;
 			interaction.mutatedRuntimeState = changed;
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 			return Common::kNoError;

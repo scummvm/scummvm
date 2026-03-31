@@ -149,7 +149,7 @@ static bool isRectangleOnlyHitClass(int classId) {
 		classId == kRuntimeEntityClassRectHotspot19;
 }
 
-bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common::String &path) {
+bool Entity::loadBitmapResource(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 12) {
 		warning("Harvester: unable to load runtime entity bitmap '%s'", path.c_str());
@@ -183,7 +183,7 @@ bool RuntimeEntity::loadBitmapResource(ResourceManager &resources, const Common:
 	return true;
 }
 
-bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::String &path) {
+bool Entity::loadAbmResource(ResourceManager &resources, const Common::String &path) {
 	Common::Array<byte> data;
 	if (!resources.loadFile(path, data) || data.size() < 8) {
 		warning("Harvester: unable to load runtime entity animation '%s'", path.c_str());
@@ -235,7 +235,7 @@ bool RuntimeEntity::loadAbmResource(ResourceManager &resources, const Common::St
 	return true;
 }
 
-void RuntimeEntity::setPosition(int x, int y, float z) {
+void Entity::setPosition(int x, int y, float z) {
 	const bool anchorChanged = _x != x || _y != y;
 	_x = x;
 	_y = y;
@@ -244,12 +244,12 @@ void RuntimeEntity::setPosition(int x, int y, float z) {
 		updateScreenBaseFromCurrentFrame();
 }
 
-void RuntimeEntity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
+void Entity::setAnchorMode(RuntimeEntityAnchorMode anchorMode) {
 	_anchorMode = anchorMode;
 	updateScreenBaseFromCurrentFrame();
 }
 
-void RuntimeEntity::setAnimationRate(int rate) {
+void Entity::setAnimationRate(int rate) {
 	if (rate == 0)
 		_animationTickInterval = 0;
 	else
@@ -261,11 +261,11 @@ void RuntimeEntity::setAnimationRate(int rate) {
 	}
 }
 
-void RuntimeEntity::setAnimationEnabled(bool enabled) {
+void Entity::setAnimationEnabled(bool enabled) {
 	_animationEnabled = enabled && !_frames.empty() && _currentFrame >= 0;
 }
 
-void RuntimeEntity::setCurrentFrame(int frame) {
+void Entity::setCurrentFrame(int frame) {
 	if (_frames.empty())
 		return;
 
@@ -273,7 +273,7 @@ void RuntimeEntity::setCurrentFrame(int frame) {
 	updateScreenBaseFromCurrentFrame();
 }
 
-void RuntimeEntity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping) {
+void Entity::setAnimationFrameRange(int firstFrame, int lastFrame, bool looping) {
 	if (_frames.empty())
 		return;
 
@@ -294,7 +294,7 @@ void RuntimeEntity::setAnimationFrameRange(int firstFrame, int lastFrame, bool l
 		updateBoundsFromCurrentFrame();
 }
 
-void RuntimeEntity::setAnimationSequence(int sequence) {
+void Entity::setAnimationSequence(int sequence) {
 	if (_frames.empty() || sequence == _animationSequence)
 		return;
 
@@ -313,7 +313,7 @@ void RuntimeEntity::setAnimationSequence(int sequence) {
 	}
 }
 
-void RuntimeEntity::configureHotspotBounds(int width, int height) {
+void Entity::configureHotspotBounds(int width, int height) {
 	_frames.clear();
 	_baseFrames.clear();
 	_currentFrame = -1;
@@ -328,7 +328,7 @@ void RuntimeEntity::configureHotspotBounds(int width, int height) {
 	updateScreenBaseFromCurrentFrame();
 }
 
-bool RuntimeEntity::getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const {
+bool Entity::getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const {
 	if (_frames.empty() || _currentFrame < 0 || (uint)_currentFrame >= _frames.size())
 		return false;
 
@@ -340,7 +340,7 @@ bool RuntimeEntity::getCurrentFrameMetrics(int &width, int &height, int &xOffset
 	return true;
 }
 
-void RuntimeEntity::setDepthScale(float scale) {
+void Entity::setDepthScale(float scale) {
 	if (_frames.empty())
 		return;
 
@@ -355,7 +355,7 @@ void RuntimeEntity::setDepthScale(float scale) {
 	rebuildScaledFrames();
 }
 
-bool RuntimeEntity::tickVisualState(uint32 now) {
+bool Entity::tickVisualState(uint32 now) {
 	_animationAdvancedLastTick = false;
 	if (!_animationEnabled || _currentFrame < 0 || _animationTickInterval == 0)
 		return false;
@@ -368,7 +368,7 @@ bool RuntimeEntity::tickVisualState(uint32 now) {
 	return true;
 }
 
-Common::Point RuntimeEntity::getDrawOrigin() const {
+Common::Point Entity::getDrawOrigin() const {
 	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
 		const AbmFrame &frame = _frames[(uint)_currentFrame];
 		return Common::Point(_screenBaseX + frame.xOffset, _screenBaseY + frame.yOffset);
@@ -377,11 +377,11 @@ Common::Point RuntimeEntity::getDrawOrigin() const {
 	return Common::Point(_screenBaseX, _screenBaseY);
 }
 
-Common::Rect RuntimeEntity::getScreenRect() const {
+Common::Rect Entity::getScreenRect() const {
 	return getFrameRect();
 }
 
-void RuntimeEntity::configureTimerCountdown(int initialValue, int currentValue,
+void Entity::configureTimerCountdown(int initialValue, int currentValue,
 		bool enabled, bool looping, bool global) {
 	_timerInitialValue = MAX(initialValue, 0);
 	_timerCurrentValue = MAX(currentValue, 0);
@@ -399,7 +399,7 @@ void RuntimeEntity::configureTimerCountdown(int initialValue, int currentValue,
 	setTimerEnabled(enabled);
 }
 
-void RuntimeEntity::setTimerEnabled(bool enabled) {
+void Entity::setTimerEnabled(bool enabled) {
 	if (_classId != kRuntimeEntityClassTimer)
 		return;
 
@@ -422,7 +422,7 @@ void RuntimeEntity::setTimerEnabled(bool enabled) {
 	_timerNextFireTick = now + (uint32)_timerCurrentValue * 100U;
 }
 
-bool RuntimeEntity::tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames) {
+bool Entity::tickTimerState(uint32 now, Common::Array<Common::String> &expiredTimerNames) {
 	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
 		return false;
 
@@ -447,7 +447,7 @@ bool RuntimeEntity::tickTimerState(uint32 now, Common::Array<Common::String> &ex
 	return false;
 }
 
-void RuntimeEntity::pauseTimerCountdown(uint32 now) {
+void Entity::pauseTimerCountdown(uint32 now) {
 	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || _timerPaused)
 		return;
 
@@ -462,7 +462,7 @@ void RuntimeEntity::pauseTimerCountdown(uint32 now) {
 	_timerPauseTick = now;
 }
 
-void RuntimeEntity::resumeTimerCountdown(uint32 now) {
+void Entity::resumeTimerCountdown(uint32 now) {
 	if (_classId != kRuntimeEntityClassTimer || !_timerEnabled || !_timerPaused)
 		return;
 
@@ -472,7 +472,7 @@ void RuntimeEntity::resumeTimerCountdown(uint32 now) {
 	_timerPauseTick = 0;
 }
 
-void RuntimeEntity::draw(Graphics::Screen &screen) const {
+void Entity::draw(Graphics::Screen &screen) const {
 	if (!_visible || !_drawEnabled || _currentFrame < 0)
 		return;
 
@@ -480,7 +480,7 @@ void RuntimeEntity::draw(Graphics::Screen &screen) const {
 	blitAnimationFrame(screen, _frames, _currentFrame, drawOrigin.x, drawOrigin.y);
 }
 
-Common::Rect RuntimeEntity::getFrameRect() const {
+Common::Rect Entity::getFrameRect() const {
 	const Common::Point drawOrigin = getDrawOrigin();
 	if (!_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size()) {
 		const AbmFrame &frame = _frames[(uint)_currentFrame];
@@ -491,11 +491,11 @@ Common::Rect RuntimeEntity::getFrameRect() const {
 	return Common::Rect(drawOrigin.x, drawOrigin.y, drawOrigin.x + _boundsWidth, drawOrigin.y + _boundsHeight);
 }
 
-bool RuntimeEntity::hasOpaqueFrame() const {
+bool Entity::hasOpaqueFrame() const {
 	return !_frames.empty() && _currentFrame >= 0 && (uint)_currentFrame < _frames.size();
 }
 
-bool RuntimeEntity::isOpaqueAt(const Common::Point &point) const {
+bool Entity::isOpaqueAt(const Common::Point &point) const {
 	if (!hasOpaqueFrame())
 		return false;
 
@@ -512,7 +512,7 @@ bool RuntimeEntity::isOpaqueAt(const Common::Point &point) const {
 	return frame.pixels[(uint)relativeY * frame.width + (uint)relativeX] != 0;
 }
 
-bool RuntimeEntity::hitTest(const Common::Point &point) const {
+bool Entity::hitTest(const Common::Point &point) const {
 	if (!_visible)
 		return false;
 	if (_classId == kRuntimeEntityClassDisabledHotspot)
@@ -531,7 +531,7 @@ bool RuntimeEntity::hitTest(const Common::Point &point) const {
 	return isOpaqueAt(point);
 }
 
-bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
+bool Entity::overlapsEntity(const Entity &other) const {
 	if (this == &other || !_visible || !other._visible)
 		return false;
 	if (_classId == kRuntimeEntityClassCursor || _classId == kRuntimeEntityClassBackground ||
@@ -572,7 +572,7 @@ bool RuntimeEntity::overlapsEntity(const RuntimeEntity &other) const {
 	return false;
 }
 
-bool RuntimeEntity::measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
+bool Entity::measureCurrentFrameTransparency(uint32 &framePixels, uint32 &transparentPixels,
 		uint32 &preservedPixels) const {
 	framePixels = 0;
 	transparentPixels = 0;
@@ -604,7 +604,7 @@ bool RuntimeEntity::measureCurrentFrameTransparency(uint32 &framePixels, uint32 
 	return true;
 }
 
-void RuntimeEntity::advanceAnimationFrame(int directive) {
+void Entity::advanceAnimationFrame(int directive) {
 	if (_frames.empty())
 		return;
 
@@ -658,7 +658,7 @@ done:
 	updateBoundsFromCurrentFrame();
 }
 
-void RuntimeEntity::updateBoundsFromCurrentFrame() {
+void Entity::updateBoundsFromCurrentFrame() {
 	if (_frames.empty()) {
 		_boundsWidth = 0;
 		_boundsHeight = 0;
@@ -670,7 +670,7 @@ void RuntimeEntity::updateBoundsFromCurrentFrame() {
 	_boundsHeight = (int)_frames[(uint)frameIndex].height;
 }
 
-void RuntimeEntity::updateScreenBaseFromCurrentFrame() {
+void Entity::updateScreenBaseFromCurrentFrame() {
 	int baseX = _x;
 	int baseY = _y;
 
@@ -683,7 +683,7 @@ void RuntimeEntity::updateScreenBaseFromCurrentFrame() {
 	_screenBaseY = baseY;
 }
 
-void RuntimeEntity::rebuildScaledFrames() {
+void Entity::rebuildScaledFrames() {
 	if (_baseFrames.empty()) {
 		_frames.clear();
 		updateBoundsFromCurrentFrame();
@@ -714,31 +714,31 @@ void RuntimeEntity::rebuildScaledFrames() {
 	updateScreenBaseFromCurrentFrame();
 }
 
-RuntimeEntityManager::RuntimeEntityManager(ResourceManager &resources) : _resources(resources) {
+EntityManager::EntityManager(ResourceManager &resources) : _resources(resources) {
 }
 
-RuntimeEntityManager::~RuntimeEntityManager() {
+EntityManager::~EntityManager() {
 	clear();
 }
 
-void RuntimeEntityManager::clear() {
+void EntityManager::clear() {
 	clearSceneEntities();
 	delete _cursorEntity;
 	_cursorEntity = nullptr;
 }
 
-void RuntimeEntityManager::clearSceneEntities() {
-	for (RuntimeEntity *entity : _sceneEntities)
+void EntityManager::clearSceneEntities() {
+	for (Entity *entity : _sceneEntities)
 		delete entity;
 	_sceneEntities.clear();
 	_expiredTimerNames.clear();
 	_timerPauseDepth = 0;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::String &name,
+Entity *EntityManager::spawnAbmEntityFromResource(const Common::String &name,
 		const Common::String &resourcePath, int classId, const Common::Point &position, float z,
 		int animationRate, bool looping, bool pingPong) {
-	RuntimeEntity *entity = new RuntimeEntity();
+	Entity *entity = new Entity();
 	if (!entity->loadAbmResource(_resources, resourcePath)) {
 		delete entity;
 		return nullptr;
@@ -753,9 +753,9 @@ RuntimeEntity *RuntimeEntityManager::spawnAbmEntityFromResource(const Common::St
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnBitmapEntityFromResource(const Common::String &name,
+Entity *EntityManager::spawnBitmapEntityFromResource(const Common::String &name,
 		const Common::String &resourcePath, int classId, const Common::Point &position, float z) {
-	RuntimeEntity *entity = new RuntimeEntity();
+	Entity *entity = new Entity();
 	if (!entity->loadBitmapResource(_resources, resourcePath)) {
 		delete entity;
 		return nullptr;
@@ -767,7 +767,7 @@ RuntimeEntity *RuntimeEntityManager::spawnBitmapEntityFromResource(const Common:
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &position) {
+Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {
 	if (_cursorEntity)
 		return _cursorEntity;
 
@@ -789,18 +789,18 @@ RuntimeEntity *RuntimeEntityManager::spawnCursorEntity(const Common::Point &posi
 	return _cursorEntity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnSceneBitmapEntity(const Common::String &name,
+Entity *EntityManager::spawnSceneBitmapEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z) {
-	RuntimeEntity *entity = spawnBitmapEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+	Entity *entity = spawnBitmapEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
 		position, z);
 	if (entity)
 		insertSceneEntity(entity);
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnSceneHotspotEntity(const Common::String &name,
+Entity *EntityManager::spawnSceneHotspotEntity(const Common::String &name,
 		const Common::Rect &bounds, float z) {
-	RuntimeEntity *entity = new RuntimeEntity();
+	Entity *entity = new Entity();
 	entity->setName(name);
 	entity->setClassId(kRuntimeEntityClassObject);
 	entity->setPosition(bounds.left, bounds.top, z);
@@ -809,10 +809,10 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneHotspotEntity(const Common::Strin
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::String &name,
+Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int animationRate,
 		bool active, bool visible, bool looping, bool playBackwards, bool pingPong, int initialFrame) {
-	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
+	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassAnimation,
 		position, z, animationRate, looping, pingPong);
 	if (!entity)
 		return nullptr;
@@ -839,9 +839,9 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneAnimationEntity(const Common::Str
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String &name,
+Entity *EntityManager::spawnSceneActorEntity(const Common::String &name,
 		const Common::String &resourcePath, const Common::Point &position, float z, int initialFrame) {
-	RuntimeEntity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
+	Entity *entity = spawnAbmEntityFromResource(name, resourcePath, kRuntimeEntityClassObject,
 		position, z, 0, false, false);
 	if (!entity)
 		return nullptr;
@@ -859,9 +859,9 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneActorEntity(const Common::String 
 	return entity;
 }
 
-RuntimeEntity *RuntimeEntityManager::spawnSceneTimerEntity(const Common::String &name,
+Entity *EntityManager::spawnSceneTimerEntity(const Common::String &name,
 		int initialValue, int currentValue, bool enabled, bool looping, bool global) {
-	RuntimeEntity *entity = new RuntimeEntity();
+	Entity *entity = new Entity();
 	entity->setName(name);
 	entity->setClassId(kRuntimeEntityClassTimer);
 	entity->configureTimerCountdown(initialValue, currentValue, enabled, looping, global);
@@ -869,37 +869,37 @@ RuntimeEntity *RuntimeEntityManager::spawnSceneTimerEntity(const Common::String 
 	return entity;
 }
 
-void RuntimeEntityManager::hideCursor() {
+void EntityManager::hideCursor() {
 	if (_cursorEntity)
 		_cursorEntity->setVisible(false);
 }
 
-void RuntimeEntityManager::showCursor() {
+void EntityManager::showCursor() {
 	if (_cursorEntity)
 		_cursorEntity->setVisible(true);
 }
 
-void RuntimeEntityManager::pauseTimerCountdowns() {
+void EntityManager::pauseTimerCountdowns() {
 	if (_timerPauseDepth++ > 0)
 		return;
 
 	const uint32 now = getAnimationClockTicks();
-	for (RuntimeEntity *entity : _sceneEntities)
+	for (Entity *entity : _sceneEntities)
 		entity->pauseTimerCountdown(now);
 }
 
-void RuntimeEntityManager::resumeTimerCountdowns() {
+void EntityManager::resumeTimerCountdowns() {
 	if (_timerPauseDepth == 0)
 		return;
 	if (--_timerPauseDepth > 0)
 		return;
 
 	const uint32 now = getAnimationClockTicks();
-	for (RuntimeEntity *entity : _sceneEntities)
+	for (Entity *entity : _sceneEntities)
 		entity->resumeTimerCountdown(now);
 }
 
-bool RuntimeEntityManager::takeExpiredTimerNames(Common::Array<Common::String> &expiredTimerNames) {
+bool EntityManager::takeExpiredTimerNames(Common::Array<Common::String> &expiredTimerNames) {
 	if (_expiredTimerNames.empty())
 		return false;
 
@@ -908,11 +908,11 @@ bool RuntimeEntityManager::takeExpiredTimerNames(Common::Array<Common::String> &
 	return true;
 }
 
-bool RuntimeEntityManager::tickSceneEntities() {
+bool EntityManager::tickSceneEntities() {
 	const uint32 now = getAnimationClockTicks();
 	bool changed = false;
 
-	for (RuntimeEntity *entity : _sceneEntities) {
+	for (Entity *entity : _sceneEntities) {
 		if (entity->getClassId() == kRuntimeEntityClassTimer) {
 			if (_timerPauseDepth == 0)
 				(void)entity->tickTimerState(now, _expiredTimerNames);
@@ -925,7 +925,7 @@ bool RuntimeEntityManager::tickSceneEntities() {
 	return changed;
 }
 
-bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &position) {
+bool EntityManager::syncCursorEntityPosition(const Common::Point &position) {
 	if (!_cursorEntity)
 		return false;
 
@@ -934,19 +934,19 @@ bool RuntimeEntityManager::syncCursorEntityPosition(const Common::Point &positio
 	return _cursorEntity->tickVisualState(getAnimationClockTicks()) || moved;
 }
 
-void RuntimeEntityManager::drawCursor(Graphics::Screen &screen) const {
+void EntityManager::drawCursor(Graphics::Screen &screen) const {
 	if (_cursorEntity)
 		_cursorEntity->draw(screen);
 }
 
-void RuntimeEntityManager::drawSceneEntities(Graphics::Screen &screen) const {
-	for (RuntimeEntity *entity : _sceneEntities)
+void EntityManager::drawSceneEntities(Graphics::Screen &screen) const {
+	for (Entity *entity : _sceneEntities)
 		entity->draw(screen);
 }
 
-const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Point &point, int classIdFilter) const {
+const Entity *EntityManager::findTopSceneEntityAt(const Common::Point &point, int classIdFilter) const {
 	for (int i = (int)_sceneEntities.size() - 1; i >= 0; --i) {
-		const RuntimeEntity *entity = _sceneEntities[(uint)i];
+		const Entity *entity = _sceneEntities[(uint)i];
 		if (classIdFilter >= 0 && entity->getClassId() != classIdFilter)
 			continue;
 		if (entity->hitTest(point))
@@ -956,9 +956,9 @@ const RuntimeEntity *RuntimeEntityManager::findTopSceneEntityAt(const Common::Po
 	return nullptr;
 }
 
-int RuntimeEntityManager::findSceneEntityDrawIndexByName(const Common::String &name) const {
+int EntityManager::findSceneEntityDrawIndexByName(const Common::String &name) const {
 	for (uint i = 0; i < _sceneEntities.size(); ++i) {
-		const RuntimeEntity *entity = _sceneEntities[i];
+		const Entity *entity = _sceneEntities[i];
 		if (entity->getName().equalsIgnoreCase(name))
 			return (int)i;
 	}
@@ -966,8 +966,8 @@ int RuntimeEntityManager::findSceneEntityDrawIndexByName(const Common::String &n
 	return -1;
 }
 
-const RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) const {
-	for (const RuntimeEntity *entity : _sceneEntities) {
+const Entity *EntityManager::findSceneEntityByName(const Common::String &name) const {
+	for (const Entity *entity : _sceneEntities) {
 		if (entity->getName().equalsIgnoreCase(name))
 			return entity;
 	}
@@ -975,8 +975,8 @@ const RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::S
 	return nullptr;
 }
 
-RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String &name) {
-	for (RuntimeEntity *entity : _sceneEntities) {
+Entity *EntityManager::findSceneEntityByName(const Common::String &name) {
+	for (Entity *entity : _sceneEntities) {
 		if (entity->getName().equalsIgnoreCase(name))
 			return entity;
 	}
@@ -984,9 +984,9 @@ RuntimeEntity *RuntimeEntityManager::findSceneEntityByName(const Common::String 
 	return nullptr;
 }
 
-RuntimeEntity *RuntimeEntityManager::detachSceneEntityByName(const Common::String &name) {
+Entity *EntityManager::detachSceneEntityByName(const Common::String &name) {
 	for (uint i = 0; i < _sceneEntities.size(); ++i) {
-		RuntimeEntity *entity = _sceneEntities[i];
+		Entity *entity = _sceneEntities[i];
 		if (!entity->getName().equalsIgnoreCase(name))
 			continue;
 
@@ -997,14 +997,14 @@ RuntimeEntity *RuntimeEntityManager::detachSceneEntityByName(const Common::Strin
 	return nullptr;
 }
 
-void RuntimeEntityManager::adoptSceneEntity(RuntimeEntity *entity) {
+void EntityManager::adoptSceneEntity(Entity *entity) {
 	if (!entity)
 		return;
 
 	insertSceneEntity(entity);
 }
 
-void RuntimeEntityManager::reinsertSceneEntity(RuntimeEntity *entity) {
+void EntityManager::reinsertSceneEntity(Entity *entity) {
 	if (!entity)
 		return;
 
@@ -1019,7 +1019,7 @@ void RuntimeEntityManager::reinsertSceneEntity(RuntimeEntity *entity) {
 	insertSceneEntity(entity);
 }
 
-void RuntimeEntityManager::insertSceneEntity(RuntimeEntity *entity) {
+void EntityManager::insertSceneEntity(Entity *entity) {
 	uint insertIndex = 0;
 	while (insertIndex < _sceneEntities.size() && _sceneEntities[insertIndex]->getZ() >= entity->getZ())
 		++insertIndex;

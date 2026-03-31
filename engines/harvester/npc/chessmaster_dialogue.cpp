@@ -424,7 +424,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(kChessKingMonsterActionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
@@ -438,7 +438,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 	if (lineError.getCode() != Common::kNoError)
 		return lineError;
 
-	StartupInteractionResult interaction;
+	InteractionResult interaction;
 	if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 			kChessmasterNpc, kChessmasterSlashDamageType)) {
 		interaction.mutatedRuntimeState = true;

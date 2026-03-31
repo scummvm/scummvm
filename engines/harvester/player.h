@@ -28,7 +28,7 @@ namespace Harvester {
 
 class Player {
 public:
-	static float computeDepthScale(const StartupRoomSetupState &state, float z);
+	static float computeDepthScale(const RoomSetupState &state, float z);
 	static int resolveFacingFrame(int facing);
 	static const char *describeCombatLoadout(int loadout);
 	static const char *describeCombatDamageType(int damageType);
@@ -37,53 +37,53 @@ public:
 	static int resolveCombatLoadoutDamageType(int loadout);
 	static int resolveCombatLoadoutContactFrameOffset(int loadout);
 	static bool isProjectileCombatLoadout(int loadout);
-	static bool supportsMovementBand(const StartupRoomSetupState &state);
+	static bool supportsMovementBand(const RoomSetupState &state);
 	static uint32 getRuntimeClockTicks();
 	static bool isIdleAnimationExcludedRoom(const Common::String &roomName);
-	static void updateIdleTrigger(StartupRoomIdleAnimationState &idleState);
-	static void setMoveTarget(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
+	static void updateIdleTrigger(RoomIdleAnimationState &idleState);
+	static void setMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ);
-	static void setMoveTargetFromScreenPoint(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, int targetX, int targetBottomY);
-	static bool resolveBlockedStartupSpawn(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState);
-	static int resolveRegionTargetX(const StartupRegionRecord &region,
-		const StartupRoomPlayerState &playerState);
-	static float resolveRegionTargetZ(const StartupRegionRecord &region);
-	static bool syncCombatLoadoutVisual(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, int loadout);
-	static bool setIdleAnimation(StartupRoomPlayerState &playerState, int facing);
-	static bool startAttackAnimation(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, const Common::Point &mousePos);
-	static bool startKeyboardAttackAnimation(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown);
-	static bool updateAttackAnimationState(HarvesterEngine &engine, StartupRoomPlayerState &playerState);
-	static bool startHitAnimation(HarvesterEngine &engine, StartupRoomPlayerState &playerState,
+	static void setMoveTargetFromScreenPoint(const RoomSetupState &state,
+		RoomPlayerState &playerState, int targetX, int targetBottomY);
+	static bool resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState);
+	static int resolveRegionTargetX(const RegionRecord &region,
+		const RoomPlayerState &playerState);
+	static float resolveRegionTargetZ(const RegionRecord &region);
+	static bool syncCombatLoadoutVisual(HarvesterEngine &engine, const RoomSetupState &state,
+		RoomPlayerState &playerState, int loadout);
+	static bool setIdleAnimation(RoomPlayerState &playerState, int facing);
+	static bool startAttackAnimation(const RoomSetupState &state,
+		RoomPlayerState &playerState, const Common::Point &mousePos);
+	static bool startKeyboardAttackAnimation(const RoomSetupState &state,
+		RoomPlayerState &playerState, bool attackLeft, bool attackRight, bool attackUp, bool attackDown);
+	static bool updateAttackAnimationState(HarvesterEngine &engine, RoomPlayerState &playerState);
+	static bool startHitAnimation(HarvesterEngine &engine, RoomPlayerState &playerState,
 		int monsterAttackFirstFrame);
-	static bool updateHitAnimationState(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState);
-	static bool startDeathAnimation(StartupRoomPlayerState &playerState, int damageType, bool goreEnabled);
-	static bool updateDeathAnimationState(StartupRoomPlayerState &playerState);
-	static bool startTurnAnimation(StartupRoomPlayerState &playerState, int targetFacing);
-	static bool updateTurnAnimationState(StartupRoomPlayerState &playerState);
-	static bool stepMoveTarget(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState);
-	static bool stepKeyboardMovement(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		const Common::Array<StartupObjectRecord> &sceneObjects,
-		const Common::Array<StartupAnimRecord> &sceneAnimations,
-		StartupRoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown);
-	static bool requestIdleAnimationExit(const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState);
-	static bool startIdleAnimation(HarvesterEngine &engine, const StartupRoomSetupState &state,
-		StartupRoomPlayerState &playerState, StartupRoomIdleAnimationState &idleState);
-	static bool updateIdleAnimation(const StartupRoomSetupState &state, StartupRoomPlayerState &playerState,
-		StartupRoomIdleAnimationState &idleState);
+	static bool updateHitAnimationState(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState);
+	static bool startDeathAnimation(RoomPlayerState &playerState, int damageType, bool goreEnabled);
+	static bool updateDeathAnimationState(RoomPlayerState &playerState);
+	static bool startTurnAnimation(RoomPlayerState &playerState, int targetFacing);
+	static bool updateTurnAnimationState(RoomPlayerState &playerState);
+	static bool stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState);
+	static bool stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState &state,
+		const Common::Array<ObjectRecord> &sceneObjects,
+		const Common::Array<AnimRecord> &sceneAnimations,
+		RoomPlayerState &playerState, bool moveLeft, bool moveRight, bool moveUp, bool moveDown);
+	static bool requestIdleAnimationExit(const RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState);
+	static bool startIdleAnimation(HarvesterEngine &engine, const RoomSetupState &state,
+		RoomPlayerState &playerState, RoomIdleAnimationState &idleState);
+	static bool updateIdleAnimation(const RoomSetupState &state, RoomPlayerState &playerState,
+		RoomIdleAnimationState &idleState);
 };
 
 } // End of namespace Harvester

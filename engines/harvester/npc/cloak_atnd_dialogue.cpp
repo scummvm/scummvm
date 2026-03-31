@@ -47,7 +47,7 @@ Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (!usedItemName.equalsIgnoreCase(kPaymentItemName))
 			return Common::kNoError;
 
-		StartupInteractionResult interaction;
+		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(kCleanClothesActionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);

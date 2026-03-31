@@ -93,12 +93,12 @@ static void syncRecordArray(Common::Serializer &s, Common::Array<RecordType> &re
 		syncFn(s, records[i]);
 }
 
-static void syncStartupFlagRecord(Common::Serializer &s, StartupFlagRecord &record) {
+static void syncStartupFlagRecord(Common::Serializer &s, FlagRecord &record) {
 	s.syncString(record.name);
 	syncBool(s, record.value);
 }
 
-static void syncStartupObjectRecord(Common::Serializer &s, StartupObjectRecord &record) {
+static void syncStartupObjectRecord(Common::Serializer &s, ObjectRecord &record) {
 	s.syncAsSint32LE(record.initialX);
 	s.syncAsSint32LE(record.initialY);
 	s.syncAsSint32LE(record.initialZ);
@@ -125,7 +125,7 @@ static void syncStartupObjectRecord(Common::Serializer &s, StartupObjectRecord &
 	syncBool(s, record.identShown);
 }
 
-static void syncStartupAnimRecord(Common::Serializer &s, StartupAnimRecord &record) {
+static void syncStartupAnimRecord(Common::Serializer &s, AnimRecord &record) {
 	s.syncAsSint32LE(record.x);
 	s.syncAsSint32LE(record.y);
 	s.syncAsSint32LE(record.z);
@@ -144,7 +144,7 @@ static void syncStartupAnimRecord(Common::Serializer &s, StartupAnimRecord &reco
 	s.syncAsSint32LE(record.runtimeState);
 }
 
-static void syncStartupNpcRecord(Common::Serializer &s, StartupNpcRecord &record) {
+static void syncStartupNpcRecord(Common::Serializer &s, NpcRecord &record) {
 	s.syncAsSint32LE(record.posX);
 	s.syncAsSint32LE(record.posY);
 	s.syncAsSint32LE(record.posZ);
@@ -164,7 +164,7 @@ static void syncStartupNpcRecord(Common::Serializer &s, StartupNpcRecord &record
 	s.syncString(record.entityInitArg);
 }
 
-static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord &record) {
+static void syncStartupMonsterRecord(Common::Serializer &s, MonsterRecord &record) {
 	s.syncAsSint32LE(record.posX);
 	s.syncAsSint32LE(record.posY);
 	s.syncAsSint32LE(record.posZ);
@@ -214,8 +214,8 @@ static void syncStartupMonsterRecord(Common::Serializer &s, StartupMonsterRecord
 
 // FIXME: Remove this pre-release monster combat migration after Harvester ships and
 // only clean release-era saves remain.
-static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMonster,
-		StartupMonsterRecord &runtimeMonster) {
+static void migrateLegacyMonsterCombatFields(const MonsterRecord &baseMonster,
+		MonsterRecord &runtimeMonster) {
 	const int legacyInitialHitPoints = MAX(0, runtimeMonster.initialHitPoints);
 	const int legacyCurrentHitPoints = CLIP<int>(runtimeMonster.currentHitPoints, 0, legacyInitialHitPoints);
 	const int damageTaken = legacyInitialHitPoints - legacyCurrentHitPoints;
@@ -226,14 +226,14 @@ static void migrateLegacyMonsterCombatFields(const StartupMonsterRecord &baseMon
 	runtimeMonster.damageAmount = baseMonster.damageAmount;
 }
 
-static bool hasLegacyMonsterCombatFieldLayout(const StartupMonsterRecord &baseMonster,
-		const StartupMonsterRecord &runtimeMonster) {
+static bool hasLegacyMonsterCombatFieldLayout(const MonsterRecord &baseMonster,
+		const MonsterRecord &runtimeMonster) {
 	return runtimeMonster.initialHitPoints != baseMonster.initialHitPoints ||
 		runtimeMonster.damageAmount != baseMonster.damageAmount ||
 		runtimeMonster.engageDistance != baseMonster.engageDistance;
 }
 
-static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &record) {
+static void syncStartupTimerRecord(Common::Serializer &s, TimerRecord &record) {
 	s.syncAsSint32LE(record.initialValue);
 	s.syncAsSint32LE(record.currentValue);
 	s.syncString(record.timerName);
@@ -244,7 +244,7 @@ static void syncStartupTimerRecord(Common::Serializer &s, StartupTimerRecord &re
 	syncBool(s, record.global);
 }
 
-static void syncStartupRegionRecord(Common::Serializer &s, StartupRegionRecord &record) {
+static void syncStartupRegionRecord(Common::Serializer &s, RegionRecord &record) {
 	s.syncAsSint32LE(record.left);
 	s.syncAsSint32LE(record.top);
 	s.syncAsSint32LE(record.right);
@@ -291,7 +291,7 @@ static const char *resolveCombatLoadoutInventoryObjectName(int loadout) {
 	return nullptr;
 }
 
-static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<StartupObjectRecord> &runtimeObjects,
+static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<ObjectRecord> &runtimeObjects,
 		int loadout, const char *contextLabel) {
 	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
 	if (clampedLoadout == kDefaultPlayerCombatLoadout)
@@ -301,7 +301,7 @@ static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<Start
 	if (!requiredObjectName)
 		return clampedLoadout;
 
-	for (const StartupObjectRecord &object : runtimeObjects) {
+	for (const ObjectRecord &object : runtimeObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
 				object.objectName.equalsIgnoreCase(requiredObjectName))
 			return clampedLoadout;
@@ -393,9 +393,9 @@ static int parseNpcDeathDamageType(const Common::String &value) {
 	return 0;
 }
 
-static bool appendStartupAudioCommand(const StartupCommandRecord &command, Common::Array<StartupAudioCommand> &commands) {
+static bool appendStartupAudioCommand(const CommandRecord &command, Common::Array<AudioCommand> &commands) {
 	if (command.opcodeName.equalsIgnoreCase("START_WAV")) {
-		StartupAudioCommand audioCommand;
+		AudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandStartWav;
 		audioCommand.path = command.arg1;
 		commands.push_back(audioCommand);
@@ -403,7 +403,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	}
 
 	if (command.opcodeName.equalsIgnoreCase("START_SINGLE_WAV")) {
-		StartupAudioCommand audioCommand;
+		AudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandStartSingleWav;
 		audioCommand.path = command.arg1;
 		commands.push_back(audioCommand);
@@ -411,7 +411,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	}
 
 	if (command.opcodeName.equalsIgnoreCase("LOAD_WAV")) {
-		StartupAudioCommand audioCommand;
+		AudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandLoadWav;
 		audioCommand.path = command.arg1;
 		audioCommand.slot = command.arg2.empty() ? -1 : parseAsciiIntOrZero(command.arg2);
@@ -420,7 +420,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	}
 
 	if (command.opcodeName.equalsIgnoreCase("PLAY_WAV")) {
-		StartupAudioCommand audioCommand;
+		AudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandPlayWav;
 		audioCommand.slot = command.arg1.empty() ? -1 : parseAsciiIntOrZero(command.arg1);
 		commands.push_back(audioCommand);
@@ -428,7 +428,7 @@ static bool appendStartupAudioCommand(const StartupCommandRecord &command, Commo
 	}
 
 	if (command.opcodeName.equalsIgnoreCase("DELETE_WAV")) {
-		StartupAudioCommand audioCommand;
+		AudioCommand audioCommand;
 		audioCommand.type = kStartupAudioCommandDeleteWav;
 		audioCommand.slot = command.arg1.empty() ? -1 : parseAsciiIntOrZero(command.arg1);
 		commands.push_back(audioCommand);
@@ -449,8 +449,8 @@ static bool loadBitmapDimensions(ResourceManager &resources, const Common::Strin
 	return true;
 }
 
-static bool isRoomBackgroundSpriteCandidate(const StartupObjectRecord &candidate,
-		const StartupRoomRecord &room) {
+static bool isRoomBackgroundSpriteCandidate(const ObjectRecord &candidate,
+		const RoomRecord &room) {
 	if (!candidate.currentOwnerOrRoom.equalsIgnoreCase(room.roomName) ||
 			candidate.spritePath.empty() ||
 			candidate.initialX != 0 || candidate.initialY != 0) {
@@ -460,7 +460,7 @@ static bool isRoomBackgroundSpriteCandidate(const StartupObjectRecord &candidate
 	return true;
 }
 
-static bool isFullscreenRoomBackgroundObject(const StartupObjectRecord &candidate,
+static bool isFullscreenRoomBackgroundObject(const ObjectRecord &candidate,
 		ResourceManager &resources) {
 	if (candidate.spritePath.empty())
 		return false;
@@ -565,13 +565,13 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		return false;
 	}
 
-	const Common::Array<StartupFlagRecord> runtimeFlags = _runtimeFlags;
-	const Common::Array<StartupObjectRecord> runtimeObjects = _runtimeObjects;
-	const Common::Array<StartupAnimRecord> runtimeAnimations = _runtimeAnimations;
-	const Common::Array<StartupRegionRecord> runtimeRegions = _runtimeRegions;
-	const Common::Array<StartupNpcRecord> runtimeNpcs = _runtimeNpcs;
-	const Common::Array<StartupMonsterRecord> runtimeMonsters = _runtimeMonsters;
-	const Common::Array<StartupTimerRecord> runtimeTimers = _runtimeTimers;
+	const Common::Array<FlagRecord> runtimeFlags = _runtimeFlags;
+	const Common::Array<ObjectRecord> runtimeObjects = _runtimeObjects;
+	const Common::Array<AnimRecord> runtimeAnimations = _runtimeAnimations;
+	const Common::Array<RegionRecord> runtimeRegions = _runtimeRegions;
+	const Common::Array<NpcRecord> runtimeNpcs = _runtimeNpcs;
+	const Common::Array<MonsterRecord> runtimeMonsters = _runtimeMonsters;
+	const Common::Array<TimerRecord> runtimeTimers = _runtimeTimers;
 	const int playerCurrentHitPoints = _playerCurrentHitPoints;
 	const int playerCombatLoadout = _playerCombatLoadout;
 	const bool playerControlPaused = _playerControlPaused;
@@ -581,8 +581,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	parseTownRecords(resources);
 	resetRuntimeState();
 
-	for (const StartupFlagRecord &flag : runtimeFlags) {
-		StartupFlagRecord *runtimeFlag = findRuntimeFlag(flag.name);
+	for (const FlagRecord &flag : runtimeFlags) {
+		FlagRecord *runtimeFlag = findRuntimeFlag(flag.name);
 		if (runtimeFlag) {
 			runtimeFlag->value = flag.value;
 			continue;
@@ -591,8 +591,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		_runtimeFlags.push_back(flag);
 	}
 
-	for (const StartupObjectRecord &object : runtimeObjects) {
-		StartupObjectRecord *runtimeObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
+	for (const ObjectRecord &object : runtimeObjects) {
+		ObjectRecord *runtimeObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
 		if (!runtimeObject)
 			runtimeObject = findRuntimeObject(Common::String(), object.objectName);
 		if (!runtimeObject)
@@ -607,8 +607,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		runtimeObject->identShown = object.identShown;
 	}
 
-	for (const StartupAnimRecord &anim : runtimeAnimations) {
-		StartupAnimRecord *runtimeAnim = findRuntimeAnim(anim.animName);
+	for (const AnimRecord &anim : runtimeAnimations) {
+		AnimRecord *runtimeAnim = findRuntimeAnim(anim.animName);
 		if (!runtimeAnim)
 			continue;
 
@@ -619,16 +619,16 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		runtimeAnim->runtimeState = anim.runtimeState;
 	}
 
-	for (const StartupRegionRecord &region : runtimeRegions) {
-		StartupRegionRecord *runtimeRegion = findRuntimeRegion(region.regionName);
+	for (const RegionRecord &region : runtimeRegions) {
+		RegionRecord *runtimeRegion = findRuntimeRegion(region.regionName);
 		if (!runtimeRegion)
 			continue;
 
 		runtimeRegion->startEnabled = region.startEnabled;
 	}
 
-	for (const StartupNpcRecord &npc : runtimeNpcs) {
-		StartupNpcRecord *runtimeNpc = findRuntimeNpc(npc.npcName);
+	for (const NpcRecord &npc : runtimeNpcs) {
+		NpcRecord *runtimeNpc = findRuntimeNpc(npc.npcName);
 		if (!runtimeNpc)
 			continue;
 
@@ -640,8 +640,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		runtimeNpc->deathDamageType = npc.deathDamageType;
 	}
 
-	for (const StartupMonsterRecord &monster : runtimeMonsters) {
-		StartupMonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
+	for (const MonsterRecord &monster : runtimeMonsters) {
+		MonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
 		if (!runtimeMonster)
 			continue;
 
@@ -659,8 +659,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		runtimeMonster->screenMaxXBound = monster.screenMaxXBound;
 	}
 
-	for (const StartupTimerRecord &timer : runtimeTimers) {
-		StartupTimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
+	for (const TimerRecord &timer : runtimeTimers) {
+		TimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
 		if (!runtimeTimer)
 			continue;
 
@@ -863,7 +863,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 3)
 				return;
 
-			StartupFlagRecord flag;
+			FlagRecord flag;
 			flag.name = tokens[tagIndex + 1];
 			flag.value = tokens[tagIndex + 2].equalsIgnoreCase("T");
 			if (!flag.name.empty())
@@ -875,7 +875,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 6)
 				return;
 
-			StartupCommandRecord command;
+			CommandRecord command;
 			command.triggerTag = tokens[tagIndex + 1];
 			command.opcodeName = tokens[tagIndex + 2];
 			command.arg1 = resources.normalizeResourcePath(tokens[tagIndex + 3]);
@@ -901,7 +901,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 2)
 				return;
 
-			StartupExecListRecord execList;
+			ExecListRecord execList;
 			execList.listName = tokens[tagIndex + 1];
 			for (uint i = tagIndex + 2; i < tokens.size(); ++i) {
 				if (tokens[i].empty())
@@ -917,7 +917,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 4)
 				return;
 
-			StartupTextRecord textRecord;
+			TextRecord textRecord;
 			textRecord.key = tokens[tagIndex + 1];
 			textRecord.boxName = tokens[tagIndex + 2];
 			textRecord.value = tokens[tagIndex + 3];
@@ -934,7 +934,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 3)
 				return;
 
-			StartupHeadRecord head;
+			HeadRecord head;
 			head.headId = tokens[tagIndex + 1];
 			head.portraitPath = resources.normalizeResourcePath(tokens[tagIndex + 2]);
 			if (!head.headId.empty() && !head.portraitPath.empty())
@@ -946,7 +946,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 5)
 				return;
 
-			StartupUseItemRecord useItem;
+			UseItemRecord useItem;
 			useItem.itemName = tokens[tagIndex + 1];
 			useItem.ownerOrRoom = tokens[tagIndex + 2];
 			useItem.targetName = tokens[tagIndex + 3];
@@ -960,7 +960,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 4)
 				return;
 
-			StartupEntranceRecord entrance;
+			EntranceRecord entrance;
 			if (tagIndex >= 3) {
 				entrance.posX = parseAsciiIntOrZero(tokens[0]);
 				entrance.posY = parseAsciiIntOrZero(tokens[1]);
@@ -979,7 +979,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 2)
 				return;
 
-			StartupMapEntranceRecord mapEntrance;
+			MapEntranceRecord mapEntrance;
 			if (tagIndex >= 3) {
 				mapEntrance.mapX = parseAsciiIntOrZero(tokens[0]);
 				mapEntrance.mapY = parseAsciiIntOrZero(tokens[1]);
@@ -995,7 +995,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 3)
 				return;
 
-			StartupMapLocationRecord mapLocation;
+			MapLocationRecord mapLocation;
 			if (tagIndex >= 7) {
 				mapLocation.minX = parseAsciiIntOrZero(tokens[0]);
 				mapLocation.minY = parseAsciiIntOrZero(tokens[1]);
@@ -1020,7 +1020,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 10)
 				return;
 
-			StartupRoomRecord room;
+			RoomRecord room;
 			if (tagIndex >= 6) {
 				room.minZ = parseAsciiIntOrZero(tokens[0]);
 				room.maxZ = parseAsciiIntOrZero(tokens[1]);
@@ -1051,7 +1051,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 10)
 				return;
 
-			StartupNpcRecord npc;
+			NpcRecord npc;
 			if (tagIndex >= 4) {
 				npc.posX = parseAsciiIntOrZero(tokens[0]);
 				npc.posY = parseAsciiIntOrZero(tokens[1]);
@@ -1079,7 +1079,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 24)
 				return;
 
-			StartupMonsterRecord monster;
+			MonsterRecord monster;
 			if (tagIndex >= 6) {
 				monster.posX = parseAsciiIntOrZero(tokens[0]);
 				monster.posY = parseAsciiIntOrZero(tokens[1]);
@@ -1133,7 +1133,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 7)
 				return;
 
-			StartupTimerRecord timer;
+			TimerRecord timer;
 			if (tagIndex >= 1) {
 				timer.initialValue = parseAsciiIntOrZero(tokens[0]);
 				timer.currentValue = timer.initialValue;
@@ -1153,7 +1153,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 7)
 				return;
 
-			StartupRegionRecord region;
+			RegionRecord region;
 			if (tagIndex >= 6) {
 				region.left = parseAsciiIntOrZero(tokens[0]);
 				region.top = parseAsciiIntOrZero(tokens[1]);
@@ -1178,7 +1178,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			if (tokens.size() < tagIndex + 10)
 				return;
 
-			StartupAnimRecord anim;
+			AnimRecord anim;
 			if (tagIndex >= 4) {
 				anim.x = parseAsciiIntOrZero(tokens[0]);
 				anim.y = parseAsciiIntOrZero(tokens[1]);
@@ -1204,7 +1204,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 		if (tokens.size() < tagIndex + 13)
 			return;
 
-		StartupObjectRecord object;
+		ObjectRecord object;
 		if (tagIndex >= 6) {
 			object.initialX = parseAsciiIntOrZero(tokens[0]);
 			object.initialY = parseAsciiIntOrZero(tokens[1]);
@@ -1264,13 +1264,13 @@ void Script::parseTownRecords(ResourceManager &resources) {
 		(uint)_useItems.size(), _path.c_str());
 }
 
-bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRoomSetupState &state,
+bool Script::resolveRoomSetupState(const Common::String &entranceName, RoomSetupState &state,
 		ResourceManager &resources) {
-	state = StartupRoomSetupState();
+	state = RoomSetupState();
 
-	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
+	const EntranceRecord *entrance = findEntranceRecord(entranceName);
 	const Common::String resolvedRoomName = entrance ? entrance->roomName : entranceName;
-	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
+	const RoomRecord *room = findRoomRecord(resolvedRoomName);
 	if (!room) {
 		warning("Harvester: unresolved room setup target '%s' (resolved room '%s')",
 			entranceName.c_str(), resolvedRoomName.c_str());
@@ -1293,18 +1293,18 @@ bool Script::resolveRoomSetupState(const Common::String &entranceName, StartupRo
 	return true;
 }
 
-bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, StartupRoomSetupState &state,
+bool Script::resolveRoomSetupStateByRoomName(const Common::String &roomName, RoomSetupState &state,
 		ResourceManager &resources) {
-	state = StartupRoomSetupState();
+	state = RoomSetupState();
 
-	const StartupRoomRecord *room = findRoomRecord(roomName);
+	const RoomRecord *room = findRoomRecord(roomName);
 	if (!room) {
 		warning("Harvester: unresolved room setup room '%s'", roomName.c_str());
 		return false;
 	}
 
-	const StartupEntranceRecord *entrance = nullptr;
-	for (const StartupEntranceRecord &candidate : _entrances) {
+	const EntranceRecord *entrance = nullptr;
+	for (const EntranceRecord &candidate : _entrances) {
 		if (!candidate.roomName.equalsIgnoreCase(room->roomName))
 			continue;
 
@@ -1340,7 +1340,7 @@ void Script::resetRuntimeState() {
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
 
-	for (StartupObjectRecord &object : _runtimeObjects) {
+	for (ObjectRecord &object : _runtimeObjects) {
 		object.currentX = object.initialX;
 		object.currentY = object.initialY;
 		object.currentZ = object.initialZ;
@@ -1349,18 +1349,18 @@ void Script::resetRuntimeState() {
 		object.identShown = object.identTextKey.empty();
 	}
 
-	for (StartupAnimRecord &anim : _runtimeAnimations) {
+	for (AnimRecord &anim : _runtimeAnimations) {
 		anim.runtimeActive = anim.active;
 		anim.runtimeVisible = anim.visible;
 		anim.runtimeState = -1;
 	}
 
-	for (StartupNpcRecord &npc : _runtimeNpcs) {
+	for (NpcRecord &npc : _runtimeNpcs) {
 		npc.runtimeSpawned = false;
 		npc.savedVisible = npc.visible;
 	}
 
-	for (StartupMonsterRecord &monster : _runtimeMonsters) {
+	for (MonsterRecord &monster : _runtimeMonsters) {
 		monster.currentHitPoints = monster.initialHitPoints;
 		monster.runtimeSpawned = false;
 		monster.runtimeState = -1;
@@ -1369,7 +1369,7 @@ void Script::resetRuntimeState() {
 			monster.visible = true;
 	}
 
-	for (StartupTimerRecord &timer : _runtimeTimers)
+	for (TimerRecord &timer : _runtimeTimers)
 		timer.currentValue = timer.initialValue;
 }
 
@@ -1382,9 +1382,9 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		(uint)_runtimeTimers.size(), _playerCurrentHitPoints, _playerCombatLoadout,
 		_playerControlPaused);
 
-	for (const StartupFlagRecord &flag : _runtimeFlags) {
-		const StartupFlagRecord *baseFlag = nullptr;
-		for (const StartupFlagRecord &candidate : _flags) {
+	for (const FlagRecord &flag : _runtimeFlags) {
+		const FlagRecord *baseFlag = nullptr;
+		for (const FlagRecord &candidate : _flags) {
 			if (candidate.name.equalsIgnoreCase(flag.name)) {
 				baseFlag = &candidate;
 				break;
@@ -1398,9 +1398,9 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const StartupObjectRecord &object : _runtimeObjects) {
-		const StartupObjectRecord *baseObject = nullptr;
-		for (const StartupObjectRecord &candidate : _objects) {
+	for (const ObjectRecord &object : _runtimeObjects) {
+		const ObjectRecord *baseObject = nullptr;
+		for (const ObjectRecord &candidate : _objects) {
 			if (candidate.objectName.equalsIgnoreCase(object.objectName)) {
 				baseObject = &candidate;
 				break;
@@ -1432,9 +1432,9 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const StartupNpcRecord &npc : _runtimeNpcs) {
-		const StartupNpcRecord *baseNpc = nullptr;
-		for (const StartupNpcRecord &candidate : _npcs) {
+	for (const NpcRecord &npc : _runtimeNpcs) {
+		const NpcRecord *baseNpc = nullptr;
+		for (const NpcRecord &candidate : _npcs) {
 			if (candidate.npcName.equalsIgnoreCase(npc.npcName)) {
 				baseNpc = &candidate;
 				break;
@@ -1462,9 +1462,9 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
-		const StartupMonsterRecord *baseMonster = nullptr;
-		for (const StartupMonsterRecord &candidate : _monsters) {
+	for (const MonsterRecord &monster : _runtimeMonsters) {
+		const MonsterRecord *baseMonster = nullptr;
+		for (const MonsterRecord &candidate : _monsters) {
 			if (candidate.monsterName.equalsIgnoreCase(monster.monsterName)) {
 				baseMonster = &candidate;
 				break;
@@ -1500,9 +1500,9 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		}
 	}
 
-	for (const StartupTimerRecord &timer : _runtimeTimers) {
-		const StartupTimerRecord *baseTimer = nullptr;
-		for (const StartupTimerRecord &candidate : _timers) {
+	for (const TimerRecord &timer : _runtimeTimers) {
+		const TimerRecord *baseTimer = nullptr;
+		for (const TimerRecord &candidate : _timers) {
 			if (candidate.timerName.equalsIgnoreCase(timer.timerName)) {
 				baseTimer = &candidate;
 				break;
@@ -1553,9 +1553,9 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		// FIXME: Drop this compatibility pass after release; it exists only to repair
 		// pre-release saves written before the monster combat field layout stabilized.
 		if (s.getVersion() >= 2) {
-			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
-				const StartupMonsterRecord *baseMonster = nullptr;
-				for (const StartupMonsterRecord &monster : _monsters) {
+			for (MonsterRecord &runtimeMonster : _runtimeMonsters) {
+				const MonsterRecord *baseMonster = nullptr;
+				for (const MonsterRecord &monster : _monsters) {
 					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
 						baseMonster = &monster;
 						break;
@@ -1573,9 +1573,9 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		// always serialize timer state and the full monster combat payload.
 		if (s.getVersion() < 2) {
 			_runtimeTimers = _timers;
-			for (StartupMonsterRecord &runtimeMonster : _runtimeMonsters) {
-				const StartupMonsterRecord *baseMonster = nullptr;
-				for (const StartupMonsterRecord &monster : _monsters) {
+			for (MonsterRecord &runtimeMonster : _runtimeMonsters) {
+				const MonsterRecord *baseMonster = nullptr;
+				for (const MonsterRecord &monster : _monsters) {
 					if (monster.monsterName.equalsIgnoreCase(runtimeMonster.monsterName)) {
 						baseMonster = &monster;
 						break;
@@ -1622,17 +1622,17 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 }
 
 bool Script::materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
-		StartupRoomSetupState &state, ResourceManager &resources) const {
-	state = StartupRoomSetupState();
+		RoomSetupState &state, ResourceManager &resources) const {
+	state = RoomSetupState();
 
-	const StartupEntranceRecord *entrance = findEntranceRecord(entranceName);
+	const EntranceRecord *entrance = findEntranceRecord(entranceName);
 	const Common::String resolvedRoomName = !roomName.empty()
 		? roomName
 		: (entrance ? entrance->roomName : Common::String());
 	if (resolvedRoomName.empty())
 		return false;
 
-	const StartupRoomRecord *room = findRoomRecord(resolvedRoomName);
+	const RoomRecord *room = findRoomRecord(resolvedRoomName);
 	if (!room) {
 		warning("Harvester: unresolved materialized room target entrance='%s' room='%s'",
 			entranceName.c_str(), resolvedRoomName.c_str());
@@ -1643,10 +1643,10 @@ bool Script::materializeRoomState(const Common::String &entranceName, const Comm
 }
 
 bool Script::executeRoomEnterCommands(const Common::String &roomName,
-		StartupInteractionResult &result) {
-	result = StartupInteractionResult();
+		InteractionResult &result) {
+	result = InteractionResult();
 
-	const StartupRoomRecord *room = findRoomRecord(roomName);
+	const RoomRecord *room = findRoomRecord(roomName);
 	if (!room)
 		return false;
 
@@ -1660,10 +1660,10 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 }
 
 bool Script::executeRoomExitCommands(const Common::String &roomName,
-		StartupInteractionResult &result) {
-	result = StartupInteractionResult();
+		InteractionResult &result) {
+	result = InteractionResult();
 
-	const StartupRoomRecord *room = findRoomRecord(roomName);
+	const RoomRecord *room = findRoomRecord(roomName);
 	if (!room)
 		return false;
 
@@ -1676,11 +1676,11 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 	return true;
 }
 
-bool Script::resolveObjectInteraction(const StartupObjectRecord &object, StartupInteractionResult &result) {
-	result = StartupInteractionResult();
+bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result) {
+	result = InteractionResult();
 
 	if (isPickupObject(object)) {
-		if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
+		if (ObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
 			if (!runtimeObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
 				runtimeObject->currentOwnerOrRoom = kInventoryOwnerName;
 				runtimeObject->identShown = true;
@@ -1706,8 +1706,8 @@ bool Script::resolveObjectInteraction(const StartupObjectRecord &object, Startup
 		result.mutatedRuntimeState || hasActionableCommandChain(object.actionTag);
 }
 
-bool Script::resolveRegionInteraction(const StartupRegionRecord &region, StartupInteractionResult &result) {
-	result = StartupInteractionResult();
+bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionResult &result) {
+	result = InteractionResult();
 	if (region.actionTag.empty())
 		return false;
 
@@ -1725,11 +1725,11 @@ bool Script::resolveRegionInteraction(const StartupRegionRecord &region, Startup
 		result.mutatedRuntimeState || hasActionableCommandChain(region.actionTag);
 }
 
-bool Script::resolveUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target,
-		StartupInteractionResult &result) {
-	result = StartupInteractionResult();
+bool Script::resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
+		InteractionResult &result) {
+	result = InteractionResult();
 
-	const StartupUseItemRecord *useItem = findUseItemRecord(itemName, target);
+	const UseItemRecord *useItem = findUseItemRecord(itemName, target);
 	if (!useItem)
 		return false;
 
@@ -1743,9 +1743,9 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Sta
 	return true;
 }
 
-bool Script::executeDebugCommand(const StartupCommandRecord &command,
-		StartupInteractionResult &result, bool allowTransitions) {
-	result = StartupInteractionResult();
+bool Script::executeDebugCommand(const CommandRecord &command,
+		InteractionResult &result, bool allowTransitions) {
+	result = InteractionResult();
 	if (command.opcodeName.empty())
 		return false;
 
@@ -1758,7 +1758,7 @@ bool Script::executeDebugCommand(const StartupCommandRecord &command,
 			break;
 	}
 
-	StartupCommandRecord debugCommand = command;
+	CommandRecord debugCommand = command;
 	debugCommand.triggerTag = debugTag;
 	_commands.push_back(debugCommand);
 	const bool handled = executeActionTag(debugTag, result, allowTransitions);
@@ -1766,9 +1766,9 @@ bool Script::executeDebugCommand(const StartupCommandRecord &command,
 	return handled;
 }
 
-bool Script::executeActionTag(const Common::String &tag, StartupInteractionResult &result,
+bool Script::executeActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions) {
-	result = StartupInteractionResult();
+	result = InteractionResult();
 	if (tag.empty())
 		return false;
 
@@ -1787,13 +1787,13 @@ bool Script::executeActionTag(const Common::String &tag, StartupInteractionResul
 		result.mutatedRuntimeState || hasActionableCommandChain(tag);
 }
 
-bool Script::executeTimerAction(const Common::String &timerName, StartupInteractionResult &result,
+bool Script::executeTimerAction(const Common::String &timerName, InteractionResult &result,
 		bool allowTransitions) {
-	result = StartupInteractionResult();
+	result = InteractionResult();
 	if (timerName.empty())
 		return false;
 
-	const StartupTimerRecord *timer = findRuntimeTimer(timerName);
+	const TimerRecord *timer = findRuntimeTimer(timerName);
 	if (!timer) {
 		debug(1, "Harvester: unresolved timer record '%s'", timerName.c_str());
 		return false;
@@ -1818,7 +1818,7 @@ bool Script::executeTimerAction(const Common::String &timerName, StartupInteract
 		result.mutatedRuntimeState || hasActionableCommandChain(timer->arg2);
 }
 
-bool Script::executeNestedActionTag(const Common::String &tag, StartupInteractionResult &result,
+bool Script::executeNestedActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions) {
 	const bool handled = executeActionTag(tag, result, allowTransitions);
 	if (handled)
@@ -1827,26 +1827,26 @@ bool Script::executeNestedActionTag(const Common::String &tag, StartupInteractio
 	return handled;
 }
 
-bool Script::isPickupObject(const StartupObjectRecord &object) const {
+bool Script::isPickupObject(const ObjectRecord &object) const {
 	return !object.altSpritePath.empty() &&
 		!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName);
 }
 
-bool Script::isPickupBlockedByAction(const StartupObjectRecord &object,
-		StartupInteractionResult *result) const {
+bool Script::isPickupBlockedByAction(const ObjectRecord &object,
+		InteractionResult *result) const {
 	if (result)
-		*result = StartupInteractionResult();
+		*result = InteractionResult();
 	if (!isPickupObject(object) || object.actionTag.empty())
 		return false;
 	if (!result) {
-		StartupInteractionResult ignoredResult;
+		InteractionResult ignoredResult;
 		return probePickupBlockingCommandChain(object.actionTag, object.objectName, ignoredResult, 0);
 	}
 
 	return probePickupBlockingCommandChain(object.actionTag, object.objectName, *result, 0);
 }
 
-bool Script::hasObjectInteraction(const StartupObjectRecord &object) const {
+bool Script::hasObjectInteraction(const ObjectRecord &object) const {
 	if (isPickupObject(object))
 		return true;
 	if (object.actionTag.empty())
@@ -1855,16 +1855,16 @@ bool Script::hasObjectInteraction(const StartupObjectRecord &object) const {
 	return hasActionableCommandChain(object.actionTag);
 }
 
-bool Script::hasUseItemInteraction(const Common::String &itemName, const StartupObjectRecord &target) const {
+bool Script::hasUseItemInteraction(const Common::String &itemName, const ObjectRecord &target) const {
 	return findUseItemRecord(itemName, target) != nullptr;
 }
 
-void Script::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &objects) const {
+void Script::getVisibleInventoryObjects(Common::Array<ObjectRecord> &objects) const {
 	objects.clear();
 	const char *const statusObjectName = resolveInventoryStatusObjectName(_playerCurrentHitPoints);
-	const StartupObjectRecord *statusObject = nullptr;
+	const ObjectRecord *statusObject = nullptr;
 
-	for (const StartupObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _runtimeObjects) {
 		if (object.objectName.hasPrefixIgnoreCase("INV_STAT")) {
 			if (object.objectName.equalsIgnoreCase(statusObjectName))
 				statusObject = &object;
@@ -1878,7 +1878,7 @@ void Script::getVisibleInventoryObjects(Common::Array<StartupObjectRecord> &obje
 	if (!statusObject)
 		return;
 
-	StartupObjectRecord activeStatusObject = *statusObject;
+	ObjectRecord activeStatusObject = *statusObject;
 	activeStatusObject.currentOwnerOrRoom = kInventoryOwnerName;
 	activeStatusObject.visible = true;
 	activeStatusObject.runtimeVisible = true;
@@ -1890,7 +1890,7 @@ bool Script::isObjectInInventory(const Common::String &objectName) const {
 	if (objectName.empty())
 		return false;
 
-	for (const StartupObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _runtimeObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
 				object.objectName.equalsIgnoreCase(objectName))
 			return true;
@@ -1899,16 +1899,16 @@ bool Script::isObjectInInventory(const Common::String &objectName) const {
 	return false;
 }
 
-void Script::markObjectIdentShown(const StartupObjectRecord &object) {
-	if (StartupObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
+void Script::markObjectIdentShown(const ObjectRecord &object) {
+	if (ObjectRecord *runtimeObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName))
 		runtimeObject->identShown = true;
 }
 
-const StartupEntranceRecord *Script::findEntranceRecord(const Common::String &entranceName) const {
+const EntranceRecord *Script::findEntranceRecord(const Common::String &entranceName) const {
 	if (entranceName.empty())
 		return nullptr;
 
-	for (const StartupEntranceRecord &entrance : _entrances) {
+	for (const EntranceRecord &entrance : _entrances) {
 		if (entrance.entranceName.equalsIgnoreCase(entranceName))
 			return &entrance;
 	}
@@ -1916,11 +1916,11 @@ const StartupEntranceRecord *Script::findEntranceRecord(const Common::String &en
 	return nullptr;
 }
 
-const StartupMapEntranceRecord *Script::findMapEntranceRecord(const Common::String &entryName) const {
+const MapEntranceRecord *Script::findMapEntranceRecord(const Common::String &entryName) const {
 	if (entryName.empty())
 		return nullptr;
 
-	for (const StartupMapEntranceRecord &mapEntrance : _mapEntrances) {
+	for (const MapEntranceRecord &mapEntrance : _mapEntrances) {
 		if (mapEntrance.entryName.equalsIgnoreCase(entryName))
 			return &mapEntrance;
 	}
@@ -1928,12 +1928,12 @@ const StartupMapEntranceRecord *Script::findMapEntranceRecord(const Common::Stri
 	return nullptr;
 }
 
-const StartupUseItemRecord *Script::findUseItemRecord(const Common::String &itemName,
-		const StartupObjectRecord &target) const {
+const UseItemRecord *Script::findUseItemRecord(const Common::String &itemName,
+		const ObjectRecord &target) const {
 	if (itemName.empty() || target.objectName.empty())
 		return nullptr;
 
-	for (const StartupUseItemRecord &useItem : _useItems) {
+	for (const UseItemRecord &useItem : _useItems) {
 		if (!useItem.itemName.equalsIgnoreCase(itemName) ||
 			!useItem.targetName.equalsIgnoreCase(target.objectName)) {
 			continue;
@@ -1950,11 +1950,11 @@ const StartupUseItemRecord *Script::findUseItemRecord(const Common::String &item
 	return nullptr;
 }
 
-const StartupRoomRecord *Script::findRoomRecord(const Common::String &roomName) const {
+const RoomRecord *Script::findRoomRecord(const Common::String &roomName) const {
 	if (roomName.empty())
 		return nullptr;
 
-	for (const StartupRoomRecord &room : _rooms) {
+	for (const RoomRecord &room : _rooms) {
 		if (room.roomName.equalsIgnoreCase(roomName))
 			return &room;
 	}
@@ -1962,11 +1962,11 @@ const StartupRoomRecord *Script::findRoomRecord(const Common::String &roomName) 
 	return nullptr;
 }
 
-const StartupCommandRecord *Script::findCommandRecord(const Common::String &tag) const {
+const CommandRecord *Script::findCommandRecord(const Common::String &tag) const {
 	if (tag.empty())
 		return nullptr;
 
-	for (const StartupCommandRecord &command : _commands) {
+	for (const CommandRecord &command : _commands) {
 		if (command.triggerTag.equalsIgnoreCase(tag))
 			return &command;
 	}
@@ -1974,11 +1974,11 @@ const StartupCommandRecord *Script::findCommandRecord(const Common::String &tag)
 	return nullptr;
 }
 
-const StartupExecListRecord *Script::findExecListRecord(const Common::String &name) const {
+const ExecListRecord *Script::findExecListRecord(const Common::String &name) const {
 	if (name.empty())
 		return nullptr;
 
-	for (const StartupExecListRecord &execList : _execLists) {
+	for (const ExecListRecord &execList : _execLists) {
 		if (execList.listName.equalsIgnoreCase(name))
 			return &execList;
 	}
@@ -1986,11 +1986,11 @@ const StartupExecListRecord *Script::findExecListRecord(const Common::String &na
 	return nullptr;
 }
 
-const StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName) const {
+const FlagRecord *Script::findRuntimeFlag(const Common::String &flagName) const {
 	if (flagName.empty())
 		return nullptr;
 
-	for (const StartupFlagRecord &flag : _runtimeFlags) {
+	for (const FlagRecord &flag : _runtimeFlags) {
 		if (flag.name.equalsIgnoreCase(flagName))
 			return &flag;
 	}
@@ -1998,11 +1998,11 @@ const StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName)
 	return nullptr;
 }
 
-StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName) {
+FlagRecord *Script::findRuntimeFlag(const Common::String &flagName) {
 	if (flagName.empty())
 		return nullptr;
 
-	for (StartupFlagRecord &flag : _runtimeFlags) {
+	for (FlagRecord &flag : _runtimeFlags) {
 		if (flag.name.equalsIgnoreCase(flagName))
 			return &flag;
 	}
@@ -2010,13 +2010,13 @@ StartupFlagRecord *Script::findRuntimeFlag(const Common::String &flagName) {
 	return nullptr;
 }
 
-StartupObjectRecord *Script::findRuntimeObject(const Common::String &ownerOrRoom,
+ObjectRecord *Script::findRuntimeObject(const Common::String &ownerOrRoom,
 		const Common::String &objectName) {
 	if (objectName.empty())
 		return nullptr;
 
-	StartupObjectRecord *fallback = nullptr;
-	for (StartupObjectRecord &object : _runtimeObjects) {
+	ObjectRecord *fallback = nullptr;
+	for (ObjectRecord &object : _runtimeObjects) {
 		if (!object.objectName.equalsIgnoreCase(objectName))
 			continue;
 
@@ -2035,11 +2035,11 @@ StartupObjectRecord *Script::findRuntimeObject(const Common::String &ownerOrRoom
 	return fallback;
 }
 
-StartupAnimRecord *Script::findRuntimeAnim(const Common::String &animName) {
+AnimRecord *Script::findRuntimeAnim(const Common::String &animName) {
 	if (animName.empty())
 		return nullptr;
 
-	for (StartupAnimRecord &anim : _runtimeAnimations) {
+	for (AnimRecord &anim : _runtimeAnimations) {
 		if (anim.animName.equalsIgnoreCase(animName))
 			return &anim;
 	}
@@ -2047,11 +2047,11 @@ StartupAnimRecord *Script::findRuntimeAnim(const Common::String &animName) {
 	return nullptr;
 }
 
-StartupRegionRecord *Script::findRuntimeRegion(const Common::String &regionName) {
+RegionRecord *Script::findRuntimeRegion(const Common::String &regionName) {
 	if (regionName.empty())
 		return nullptr;
 
-	for (StartupRegionRecord &region : _runtimeRegions) {
+	for (RegionRecord &region : _runtimeRegions) {
 		if (region.regionName.equalsIgnoreCase(regionName))
 			return &region;
 	}
@@ -2059,11 +2059,11 @@ StartupRegionRecord *Script::findRuntimeRegion(const Common::String &regionName)
 	return nullptr;
 }
 
-StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) {
+NpcRecord *Script::findRuntimeNpc(const Common::String &npcName) {
 	if (npcName.empty())
 		return nullptr;
 
-	for (StartupNpcRecord &npc : _runtimeNpcs) {
+	for (NpcRecord &npc : _runtimeNpcs) {
 		if (npc.npcName.equalsIgnoreCase(npcName))
 			return &npc;
 	}
@@ -2071,11 +2071,11 @@ StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) {
 	return nullptr;
 }
 
-StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) {
+MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) {
 	if (monsterName.empty())
 		return nullptr;
 
-	for (StartupMonsterRecord &monster : _runtimeMonsters) {
+	for (MonsterRecord &monster : _runtimeMonsters) {
 		if (monster.monsterName.equalsIgnoreCase(monsterName))
 			return &monster;
 	}
@@ -2083,11 +2083,11 @@ StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterNa
 	return nullptr;
 }
 
-StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
+TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
 	if (timerName.empty())
 		return nullptr;
 
-	for (StartupTimerRecord &timer : _runtimeTimers) {
+	for (TimerRecord &timer : _runtimeTimers) {
 		if (timer.timerName.equalsIgnoreCase(timerName))
 			return &timer;
 	}
@@ -2095,11 +2095,11 @@ StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
 	return nullptr;
 }
 
-const StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) const {
+const NpcRecord *Script::findRuntimeNpc(const Common::String &npcName) const {
 	if (npcName.empty())
 		return nullptr;
 
-	for (const StartupNpcRecord &npc : _runtimeNpcs) {
+	for (const NpcRecord &npc : _runtimeNpcs) {
 		if (npc.npcName.equalsIgnoreCase(npcName))
 			return &npc;
 	}
@@ -2107,11 +2107,11 @@ const StartupNpcRecord *Script::findRuntimeNpc(const Common::String &npcName) co
 	return nullptr;
 }
 
-const StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) const {
+const MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) const {
 	if (monsterName.empty())
 		return nullptr;
 
-	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
+	for (const MonsterRecord &monster : _runtimeMonsters) {
 		if (monster.monsterName.equalsIgnoreCase(monsterName))
 			return &monster;
 	}
@@ -2119,11 +2119,11 @@ const StartupMonsterRecord *Script::findRuntimeMonster(const Common::String &mon
 	return nullptr;
 }
 
-const StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerName) const {
+const TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) const {
 	if (timerName.empty())
 		return nullptr;
 
-	for (const StartupTimerRecord &timer : _runtimeTimers) {
+	for (const TimerRecord &timer : _runtimeTimers) {
 		if (timer.timerName.equalsIgnoreCase(timerName))
 			return &timer;
 	}
@@ -2131,12 +2131,12 @@ const StartupTimerRecord *Script::findRuntimeTimer(const Common::String &timerNa
 	return nullptr;
 }
 
-const StartupNpcRecord *Script::findRuntimeNpcRecord(const Common::String &npcName) const {
+const NpcRecord *Script::findRuntimeNpcRecord(const Common::String &npcName) const {
 	return findRuntimeNpc(npcName);
 }
 
 bool Script::addRuntimeObjectToInventory(const Common::String &objectName) {
-	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
+	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
 	if (!runtimeObject)
 		return false;
 
@@ -2149,11 +2149,11 @@ bool Script::addRuntimeObjectToInventory(const Common::String &objectName) {
 	return changed;
 }
 
-bool Script::syncRuntimeObjectRecord(const StartupObjectRecord &object) {
+bool Script::syncRuntimeObjectRecord(const ObjectRecord &object) {
 	if (object.objectName.empty())
 		return false;
 
-	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), object.objectName);
+	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), object.objectName);
 	if (!runtimeObject)
 		return false;
 
@@ -2173,7 +2173,7 @@ bool Script::setRuntimeObjectVisible(const Common::String &ownerOrRoom,
 	if (objectName.empty())
 		return false;
 
-	StartupObjectRecord *runtimeObject = findRuntimeObject(ownerOrRoom, objectName);
+	ObjectRecord *runtimeObject = findRuntimeObject(ownerOrRoom, objectName);
 	if (!runtimeObject)
 		return false;
 
@@ -2191,7 +2191,7 @@ bool Script::setRuntimeNpcState(const Common::String &npcName, bool active, bool
 	if (npcName.empty())
 		return false;
 
-	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
 	if (!runtimeNpc)
 		return false;
 
@@ -2226,7 +2226,7 @@ bool Script::setPlayerControlPaused(bool paused) {
 }
 
 bool Script::syncRuntimeAnimState(const Common::String &animName, bool active, bool visible, int currentFrame) {
-	StartupAnimRecord *runtimeAnim = findRuntimeAnim(animName);
+	AnimRecord *runtimeAnim = findRuntimeAnim(animName);
 	if (!runtimeAnim)
 		return false;
 
@@ -2243,8 +2243,8 @@ bool Script::syncRuntimeAnimState(const Common::String &animName, bool active, b
 	return changed;
 }
 
-bool Script::syncRuntimeMonsterRecord(const StartupMonsterRecord &monster) {
-	StartupMonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
+bool Script::syncRuntimeMonsterRecord(const MonsterRecord &monster) {
+	MonsterRecord *runtimeMonster = findRuntimeMonster(monster.monsterName);
 	if (!runtimeMonster)
 		return false;
 
@@ -2252,8 +2252,8 @@ bool Script::syncRuntimeMonsterRecord(const StartupMonsterRecord &monster) {
 	return true;
 }
 
-bool Script::syncRuntimeTimerRecord(const StartupTimerRecord &timer) {
-	StartupTimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
+bool Script::syncRuntimeTimerRecord(const TimerRecord &timer) {
+	TimerRecord *runtimeTimer = findRuntimeTimer(timer.timerName);
 	if (!runtimeTimer)
 		return false;
 
@@ -2262,7 +2262,7 @@ bool Script::syncRuntimeTimerRecord(const StartupTimerRecord &timer) {
 }
 
 bool Script::setRuntimeRegionEnabled(const Common::String &regionName, bool enabled) {
-	StartupRegionRecord *runtimeRegion = findRuntimeRegion(regionName);
+	RegionRecord *runtimeRegion = findRuntimeRegion(regionName);
 	if (!runtimeRegion)
 		return false;
 
@@ -2272,7 +2272,7 @@ bool Script::setRuntimeRegionEnabled(const Common::String &regionName, bool enab
 }
 
 bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enabled) {
-	StartupTimerRecord *runtimeTimer = findRuntimeTimer(timerName);
+	TimerRecord *runtimeTimer = findRuntimeTimer(timerName);
 	if (!runtimeTimer)
 		return false;
 
@@ -2288,7 +2288,7 @@ bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int 
 	if (npcName.empty())
 		return false;
 
-	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
 	if (!runtimeNpc || runtimeNpc->deathOrMonsterfyFlag)
 		return false;
 
@@ -2303,13 +2303,13 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	if (npcName.empty())
 		return false;
 
-	StartupNpcRecord *runtimeNpc = findRuntimeNpc(npcName);
+	NpcRecord *runtimeNpc = findRuntimeNpc(npcName);
 	if (!runtimeNpc)
 		return false;
 
 	bool monsterChanged = false;
 	if (!runtimeNpc->monsterfyTargetName.empty()) {
-		StartupMonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
+		MonsterRecord *runtimeMonster = findRuntimeMonster(runtimeNpc->monsterfyTargetName);
 		if (runtimeMonster) {
 			monsterChanged = !runtimeMonster->active || !runtimeMonster->visible;
 			runtimeMonster->active = true;
@@ -2337,14 +2337,14 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	return changed || monsterChanged;
 }
 
-bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupEntranceRecord *entrance,
-		ResourceManager &resources, StartupRoomSetupState &state) const {
-	state = StartupRoomSetupState();
+bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
+		ResourceManager &resources, RoomSetupState &state) const {
+	state = RoomSetupState();
 
-	const StartupObjectRecord *background = nullptr;
-	const StartupObjectRecord *backgroundFallback = nullptr;
+	const ObjectRecord *background = nullptr;
+	const ObjectRecord *backgroundFallback = nullptr;
 	bool usedBackgroundFallback = false;
-	for (const StartupObjectRecord &candidate : _runtimeObjects) {
+	for (const ObjectRecord &candidate : _runtimeObjects) {
 		if (!isRoomBackgroundSpriteCandidate(candidate, room))
 			continue;
 
@@ -2390,14 +2390,14 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 		state.playerSpawnZ = entrance->posZ;
 		state.playerFacing = entrance->facing;
 	}
-	for (const StartupObjectRecord &object : _runtimeObjects) {
+	for (const ObjectRecord &object : _runtimeObjects) {
 		if (object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
 			state.roomObjects.push_back(object);
 	}
 	if (!state.hasEntrance) {
 		static const char *const kCloseupExitObjects[] = { "EXIT_BM", "EXIT_HS" };
 		for (const char *name : kCloseupExitObjects) {
-			for (const StartupObjectRecord &object : _runtimeObjects) {
+			for (const ObjectRecord &object : _runtimeObjects) {
 				if (object.objectName.equalsIgnoreCase(name)) {
 					state.roomObjects.push_back(object);
 					break;
@@ -2405,11 +2405,11 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 			}
 		}
 	}
-	for (const StartupAnimRecord &anim : _runtimeAnimations) {
+	for (const AnimRecord &anim : _runtimeAnimations) {
 		if (anim.roomName.equalsIgnoreCase(room.roomName))
 			state.roomAnimations.push_back(anim);
 	}
-	for (const StartupNpcRecord &npc : _runtimeNpcs) {
+	for (const NpcRecord &npc : _runtimeNpcs) {
 		if (!npc.roomName.equalsIgnoreCase(room.roomName) || !npc.visible)
 			continue;
 		if (npc.deathOrMonsterfyFlag) {
@@ -2422,7 +2422,7 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 
 		state.roomNpcs.push_back(npc);
 	}
-	for (const StartupMonsterRecord &monster : _runtimeMonsters) {
+	for (const MonsterRecord &monster : _runtimeMonsters) {
 		if (!monster.roomName.equalsIgnoreCase(room.roomName))
 			continue;
 		if (!monster.active && !monster.visible)
@@ -2430,21 +2430,21 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 
 		state.roomMonsters.push_back(monster);
 	}
-	for (const StartupTimerRecord &timer : _runtimeTimers) {
+	for (const TimerRecord &timer : _runtimeTimers) {
 		if (timer.arg1.equalsIgnoreCase(room.roomName))
 			state.roomTimers.push_back(timer);
 	}
-	for (const StartupRegionRecord &region : _runtimeRegions) {
+	for (const RegionRecord &region : _runtimeRegions) {
 		if (region.roomName.equalsIgnoreCase(room.roomName) && region.startEnabled)
 			state.roomRegions.push_back(region);
 	}
 
-	const StartupFlagRecord *dayFlag = findRuntimeFlag("DAY_FLAG");
+	const FlagRecord *dayFlag = findRuntimeFlag("DAY_FLAG");
 	state.paletteBrightness = (room.dimmable && (!dayFlag || !dayFlag->value))
 		? kDimmedPaletteBrightness
 		: kDefaultPaletteBrightness;
 
-	for (const StartupObjectRecord &object : state.roomObjects) {
+	for (const ObjectRecord &object : state.roomObjects) {
 		debugC(1, kDebugRoom,
 			"Harvester: materialized room object room='%s' object='%s' owner='%s' visible=%d runtimeVisible=%d sprite='%s' alt='%s' pos=(%d,%d,%d) bounds=(%d,%d)-(%d,%d) action='%s'",
 			state.roomName.c_str(), object.objectName.c_str(), object.currentOwnerOrRoom.c_str(),
@@ -2452,14 +2452,14 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 			object.currentX, object.currentY, object.currentZ,
 			object.currentX, object.currentY, object.boundsX2, object.boundsY2, object.actionTag.c_str());
 	}
-	for (const StartupNpcRecord &npc : state.roomNpcs) {
+	for (const NpcRecord &npc : state.roomNpcs) {
 		debugC(1, kDebugRoom,
 			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
 			state.roomName.c_str(), npc.npcName.c_str(), npc.visible, npc.active,
 			npc.posX, npc.posY, npc.posZ, npc.frameDelay,
 			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
 	}
-	for (const StartupMonsterRecord &monster : state.roomMonsters) {
+	for (const MonsterRecord &monster : state.roomMonsters) {
 		debugC(1, kDebugRoom,
 			"Harvester: materialized room monster room='%s' monster='%s' visible=%d active=%d spawned=%d runtimeState=%d pos=(%d,%d,%d) facing=%d hp=%d/%d damage=%d engage=%d damage_type='%s' model='%s' on_death='%s'",
 			state.roomName.c_str(), monster.monsterName.c_str(), monster.visible, monster.active,
@@ -2469,7 +2469,7 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 			monster.damageAmount, monster.engageDistance, Player::describeCombatDamageType(monster.damageType),
 			monster.modelPath.c_str(), monster.onDeathActionTag.c_str());
 	}
-	for (const StartupTimerRecord &timer : state.roomTimers) {
+	for (const TimerRecord &timer : state.roomTimers) {
 		debugC(1, kDebugRoom,
 			"Harvester: materialized room timer room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
 			state.roomName.c_str(), timer.timerName.c_str(), timer.currentValue, timer.initialValue,
@@ -2490,12 +2490,12 @@ bool Script::buildRuntimeRoomState(const StartupRoomRecord &room, const StartupE
 
 void Script::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
 		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
-		Common::Array<StartupAudioCommand> *audioCommands, Common::String *nextRoomName,
+		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
 		int *cdChangeDisc,
 		Common::String *dialogueNpcName, Common::String *dialogueContinuationTag,
-		Common::String *continuationTag, StartupResolvedText *modalText,
+		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState) {
@@ -2520,7 +2520,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 	Common::String currentTag = initialTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommandRecord(currentTag);
+		const CommandRecord *command = findCommandRecord(currentTag);
 		if (!command) {
 			debug(1, "Harvester: unresolved %s tag '%s' for '%s'",
 				contextLabel, currentTag.c_str(), contextName.c_str());
@@ -2533,7 +2533,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			command->arg1.c_str(), command->arg2.c_str(), command->arg3.c_str(), command->arg4.c_str());
 
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			const FlagRecord *flag = findRuntimeFlag(command->arg1);
 			const bool flagValue = flag && flag->value;
 			debugC(1, kDebugScene, "Harvester: %s '%s' flag '%s' -> %d",
 				contextLabel, contextName.c_str(), command->arg1.c_str(), flagValue);
@@ -2550,7 +2550,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("SET_FLAG")) {
 			const bool flagValue = isTruthy(command->arg2);
-			StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			FlagRecord *flag = findRuntimeFlag(command->arg1);
 			bool changed = false;
 			bool oldValue = false;
 			const bool existed = flag != nullptr;
@@ -2559,7 +2559,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				changed = flag->value != flagValue;
 				flag->value = flagValue;
 			} else {
-				StartupFlagRecord newFlag;
+				FlagRecord newFlag;
 				newFlag.name = command->arg1;
 				newFlag.value = flagValue;
 				_runtimeFlags.push_back(newFlag);
@@ -2587,7 +2587,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				continue;
 			}
 		} else {
-			Common::Array<StartupAudioCommand> ignoredAudioCommands;
+			Common::Array<AudioCommand> ignoredAudioCommands;
 			if (appendStartupAudioCommand(*command, ignoredAudioCommands)) {
 				currentTag = command->arg4;
 				continue;
@@ -2596,7 +2596,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("ADD") ||
 			command->opcodeName.equalsIgnoreCase("DELETE")) {
-			StartupObjectRecord *runtimeObject = findRuntimeObject(command->arg1, command->arg2);
+			ObjectRecord *runtimeObject = findRuntimeObject(command->arg1, command->arg2);
 			if (!runtimeObject) {
 				debug(1, "Harvester: unresolved object for %s '%s' owner='%s' object='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str(), command->arg2.c_str());
@@ -2623,7 +2623,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_ANIM")) {
-			StartupAnimRecord *runtimeAnim = findRuntimeAnim(command->arg1);
+			AnimRecord *runtimeAnim = findRuntimeAnim(command->arg1);
 			if (!runtimeAnim) {
 				debug(1, "Harvester: unresolved anim for %s '%s' anim='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2653,7 +2653,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_REGION")) {
-			StartupRegionRecord *runtimeRegion = findRuntimeRegion(command->arg1);
+			RegionRecord *runtimeRegion = findRuntimeRegion(command->arg1);
 			if (!runtimeRegion) {
 				debug(1, "Harvester: unresolved region for %s '%s' region='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2670,7 +2670,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_NPC")) {
-			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
+			NpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
 			if (!runtimeNpc) {
 				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2689,7 +2689,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_MONSTER")) {
-			StartupMonsterRecord *runtimeMonster = findRuntimeMonster(command->arg1);
+			MonsterRecord *runtimeMonster = findRuntimeMonster(command->arg1);
 			if (!runtimeMonster) {
 				debug(1, "Harvester: unresolved monster for %s '%s' monster='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2730,7 +2730,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("EXEC_LIST")) {
-			const StartupExecListRecord *execList = findExecListRecord(command->arg1);
+			const ExecListRecord *execList = findExecListRecord(command->arg1);
 			if (!execList) {
 				debug(1, "Harvester: unresolved exec list for %s '%s' list='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2800,7 +2800,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_NPC") ||
 				command->opcodeName.equalsIgnoreCase("MONSTERFY")) {
-			StartupNpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
+			NpcRecord *runtimeNpc = findRuntimeNpc(command->arg1);
 			if (!runtimeNpc) {
 				debug(1, "Harvester: unresolved npc for %s '%s' npc='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2941,13 +2941,13 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 }
 
 bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
-		const Common::String &contextName, StartupInteractionResult &result, uint recursionDepth) const {
+		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const {
 	if (initialTag.empty() || recursionDepth > 8)
 		return false;
 
 	Common::String currentTag = initialTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommandRecord(currentTag);
+		const CommandRecord *command = findCommandRecord(currentTag);
 		if (!command) {
 			debug(1, "Harvester: unresolved pickup preflight tag '%s' for '%s'",
 				currentTag.c_str(), contextName.c_str());
@@ -2955,7 +2955,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			const FlagRecord *flag = findRuntimeFlag(command->arg1);
 			currentTag = (flag && flag->value) ? command->arg2 : command->arg3;
 			continue;
 		}
@@ -2971,7 +2971,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("EXEC_LIST")) {
-			const StartupExecListRecord *execList = findExecListRecord(command->arg1);
+			const ExecListRecord *execList = findExecListRecord(command->arg1);
 			if (!execList)
 				return false;
 
@@ -2982,7 +2982,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 			return false;
 		}
 
-		Common::Array<StartupAudioCommand> audioCommands;
+		Common::Array<AudioCommand> audioCommands;
 		if (appendStartupAudioCommand(*command, audioCommands))
 			return false;
 
@@ -3024,14 +3024,14 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 	Common::String currentTag = initialTag;
 	for (uint step = 0; step < 128 && !currentTag.empty(); ++step) {
-		const StartupCommandRecord *command = findCommandRecord(currentTag);
+		const CommandRecord *command = findCommandRecord(currentTag);
 		if (!command) {
 			debug(1, "Harvester: unresolved interaction probe tag '%s'", currentTag.c_str());
 			break;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("CHECK_FLAG")) {
-			const StartupFlagRecord *flag = findRuntimeFlag(command->arg1);
+			const FlagRecord *flag = findRuntimeFlag(command->arg1);
 			currentTag = (flag && flag->value) ? command->arg2 : command->arg3;
 			continue;
 		}
@@ -3072,7 +3072,7 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			return true;
 		}
 
-		Common::Array<StartupAudioCommand> audioCommands;
+		Common::Array<AudioCommand> audioCommands;
 		if (appendStartupAudioCommand(*command, audioCommands))
 			return true;
 
@@ -3082,11 +3082,11 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 	return false;
 }
 
-const StartupTextRecord *Script::findTextRecord(const Common::String &key) const {
+const TextRecord *Script::findTextRecord(const Common::String &key) const {
 	if (key.empty())
 		return nullptr;
 
-	for (const StartupTextRecord &textRecord : _texts) {
+	for (const TextRecord &textRecord : _texts) {
 		if (textRecord.key.equalsIgnoreCase(key))
 			return &textRecord;
 	}
@@ -3094,10 +3094,10 @@ const StartupTextRecord *Script::findTextRecord(const Common::String &key) const
 	return nullptr;
 }
 
-bool Script::resolveObjectInspectText(const StartupObjectRecord &object, StartupResolvedText &text) const {
-	text = StartupResolvedText();
+bool Script::resolveObjectInspectText(const ObjectRecord &object, ResolvedText &text) const {
+	text = ResolvedText();
 
-	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
+	const TextRecord *textRecord = findTextRecord(object.identTextKey);
 	if (!textRecord)
 		return false;
 
@@ -3106,10 +3106,10 @@ bool Script::resolveObjectInspectText(const StartupObjectRecord &object, Startup
 	return !text.value.empty();
 }
 
-bool Script::resolveTextRecord(const Common::String &key, StartupResolvedText &text) const {
-	text = StartupResolvedText();
+bool Script::resolveTextRecord(const Common::String &key, ResolvedText &text) const {
+	text = ResolvedText();
 
-	const StartupTextRecord *textRecord = findTextRecord(key);
+	const TextRecord *textRecord = findTextRecord(key);
 	if (!textRecord)
 		return false;
 
@@ -3118,15 +3118,15 @@ bool Script::resolveTextRecord(const Common::String &key, StartupResolvedText &t
 	return !text.value.empty();
 }
 
-Common::String Script::resolveInventoryTooltipText(const StartupObjectRecord &object) const {
-	const StartupTextRecord *textRecord = findTextRecord(object.inventoryTextKey);
+Common::String Script::resolveInventoryTooltipText(const ObjectRecord &object) const {
+	const TextRecord *textRecord = findTextRecord(object.inventoryTextKey);
 	if (textRecord && !textRecord->value.empty())
 		return textRecord->value;
 
 	return Common::String();
 }
 
-Common::String Script::resolveObjectLabel(const StartupObjectRecord &object) const {
+Common::String Script::resolveObjectLabel(const ObjectRecord &object) const {
 	if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
 		const Common::String inventoryLabel = resolveInventoryTooltipText(object);
 		if (!inventoryLabel.empty())
@@ -3138,7 +3138,7 @@ Common::String Script::resolveObjectLabel(const StartupObjectRecord &object) con
 	if (object.interactionLabel.equalsIgnoreCase("NULL_ID"))
 		return Common::String();
 
-	const StartupTextRecord *textRecord = findTextRecord(object.identTextKey);
+	const TextRecord *textRecord = findTextRecord(object.identTextKey);
 	if (textRecord && !textRecord->value.empty())
 		return textRecord->value;
 
@@ -3150,18 +3150,18 @@ Common::String Script::resolveObjectLabel(const StartupObjectRecord &object) con
 }
 
 Common::String Script::resolveTextValue(const Common::String &key) const {
-	const StartupTextRecord *textRecord = findTextRecord(key);
+	const TextRecord *textRecord = findTextRecord(key);
 	if (textRecord && !textRecord->value.empty())
 		return textRecord->value;
 
 	return normalizeInteractionLabel(key);
 }
 
-const StartupHeadRecord *Script::findHeadRecord(const Common::String &headId) const {
+const HeadRecord *Script::findHeadRecord(const Common::String &headId) const {
 	if (headId.empty())
 		return nullptr;
 
-	for (const StartupHeadRecord &head : _heads) {
+	for (const HeadRecord &head : _heads) {
 		if (head.headId.equalsIgnoreCase(headId))
 			return &head;
 	}
@@ -3170,7 +3170,7 @@ const StartupHeadRecord *Script::findHeadRecord(const Common::String &headId) co
 }
 
 bool Script::getFlagValue(const Common::String &flagName) const {
-	const StartupFlagRecord *flag = findRuntimeFlag(flagName);
+	const FlagRecord *flag = findRuntimeFlag(flagName);
 	return flag && flag->value;
 }
 
@@ -3178,7 +3178,7 @@ bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 	if (flagName.empty())
 		return false;
 
-	StartupFlagRecord *flag = findRuntimeFlag(flagName);
+	FlagRecord *flag = findRuntimeFlag(flagName);
 	if (flag) {
 		const bool changed = flag->value != value;
 		const bool oldValue = flag->value;
@@ -3189,7 +3189,7 @@ bool Script::setRuntimeFlagValue(const Common::String &flagName, bool value) {
 		return changed;
 	}
 
-	StartupFlagRecord newFlag;
+	FlagRecord newFlag;
 	newFlag.name = flagName;
 	newFlag.value = value;
 	_runtimeFlags.push_back(newFlag);
@@ -3203,12 +3203,12 @@ bool Script::resetRuntimeObjectToInitialState(const Common::String &objectName) 
 	if (objectName.empty())
 		return false;
 
-	StartupObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
+	ObjectRecord *runtimeObject = findRuntimeObject(Common::String(), objectName);
 	if (!runtimeObject)
 		return false;
 
-	const StartupObjectRecord *baseObject = nullptr;
-	for (const StartupObjectRecord &object : _objects) {
+	const ObjectRecord *baseObject = nullptr;
+	for (const ObjectRecord &object : _objects) {
 		if (object.objectName.equalsIgnoreCase(objectName)) {
 			baseObject = &object;
 			break;
@@ -3236,7 +3236,7 @@ bool Script::resetRuntimeObjectToInitialState(const Common::String &objectName) 
 }
 
 bool Script::isNamedNpcDeathTypeClear(const Common::String &npcName) const {
-	const StartupNpcRecord *npc = findRuntimeNpc(npcName);
+	const NpcRecord *npc = findRuntimeNpc(npcName);
 	return npc && npc->deathDamageType == 0;
 }
 

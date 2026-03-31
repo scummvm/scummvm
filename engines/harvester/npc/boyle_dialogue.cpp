@@ -165,9 +165,9 @@ Common::Error BoyleDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			kInventoryOwnerName, objectName, false);
 	};
 	auto hasInventoryItem = [&](const char *objectName) {
-		Common::Array<StartupObjectRecord> inventoryObjects;
+		Common::Array<ObjectRecord> inventoryObjects;
 		runtime.startupScript().getVisibleInventoryObjects(inventoryObjects);
-		for (const StartupObjectRecord &inventoryObject : inventoryObjects) {
+		for (const ObjectRecord &inventoryObject : inventoryObjects) {
 			if (inventoryObject.objectName.equalsIgnoreCase(objectName))
 				return true;
 		}
