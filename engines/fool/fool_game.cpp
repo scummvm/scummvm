@@ -1048,7 +1048,7 @@ void FoolGame::storyRenderPage() {
 		// 128:252a
 		// y-position where the story text should start
 		this->var_i16_7a2 = 0x11d - (this->arr_i16_1dee[this->storyNextPage] * 0xf);
-		if (this->arr_i16_1dee[this->storyPageCount] < 0xf) {
+		if (this->arr_i16_1dee[this->storyNextPage] < 0xf) {
 			g_toolbox->MoveTo(0xfa, this->var_i16_7a2-0xf);
 			g_toolbox->DrawString(g_zbasic->str(14)); // infinity symbol
 			this->var_i16_7de = this->var_i16_7a2 - 0x1e;
