@@ -388,14 +388,14 @@ void FoolPrologue::shuffleScanlines() {
 
 void FoolPrologue::sub_128_de2() {
 	// 128:0de2
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
+	g_zbasic->text(0xfb, 0x9, Graphics::kMacFontRegular, kSrcXor);
 	this->var_str_76 = g_zbasic->str(3);
 	this->drawText(0x151, 0x5);
 }
 
 void FoolPrologue::sub_128_e1c() {
 	// 128:0e1c
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcXor);
+	g_zbasic->text(0xfb, 0x9, Graphics::kMacFontRegular, kSrcXor);
 	this->var_str_76 = g_zbasic->str(4);
 	this->drawTextRightAlign(0x154, 0x1fb);
 }
@@ -570,7 +570,7 @@ void FoolPrologue::sub_129_004() {
 
 		// 129:0386
 		this->fillRect(2, 0x50, 0x6e, 0xd2, 0x192);
-		g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
+		g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcBic);
 		// "not enough memory" message
 		this->var_str_76 = g_zbasic->str(6);
 		this->drawTextCenterAlign(0x64, 0x100);
@@ -641,7 +641,7 @@ void FoolPrologue::sub_129_004() {
 			this->fillRect(1, 0x69, 0x87, 0xd7, 0x179);
 			this->fillRect(2, 0x6e, 0x8c, 0xd2, 0x174);
 			// 129:0662
-			g_zbasic->text(0, 0xc, kFacePlain, kSrcBic);
+			g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcBic);
 			// "set your monitor to black and white" message"
 			this->var_str_76 = g_zbasic->str(13);
 			this->drawTextCenterAlign(0x82, 0x100);
@@ -710,7 +710,7 @@ void FoolPrologue::prologueRun() {
 	g_toolbox->ReleaseResource(this->glob_i32_2ce);
 
 	// 130:007a
-	g_zbasic->text(0xfb, 0x9, kFacePlain, kSrcBic);
+	g_zbasic->text(0xfb, 0x9, Graphics::kMacFontRegular, kSrcBic);
 	this->var_str_76 = g_zbasic->str(18);
 	this->drawTextCenterAlign(0x10d, 0x103);
 	g_toolbox->SetPortBits(this->var_i32_32);
@@ -1113,7 +1113,7 @@ void FoolPrologue::prologueBufferNextPicture() {
 void FoolPrologue::prologueDrawLoadingMsg() {
 	// 130:0d28
 	g_toolbox->SetPort(this->var_i32_c);
-	g_zbasic->text(0, 0xc, kFacePlain, kSrcOr);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// "loading prologue" message
 	this->var_str_76 = g_zbasic->str(19);
 	this->var_str_76 += Common::U32String::format(" %d", this->var_i16_3ce);
@@ -1176,7 +1176,7 @@ void FoolPrologue::prologueRenderNextText() {
 			}
 		}
 		// 130:0fc8
-		g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
+		g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		this->drawText(this->var_i16_180, this->var_i16_176);
 	}
 }
@@ -1298,7 +1298,7 @@ void FoolPrologue::sub_131_004() {
 
 	// 131:03c0
 	this->delay(0x1e);
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(22));
 	g_zbasic->bufferFlush(this->var_str_76);
 
@@ -1494,7 +1494,7 @@ void FoolPrologue::sub_131_004() {
 	this->delay(0x3c);
 
 	// 131:0e08
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(23));
 	g_zbasic->bufferFlush(this->var_str_76);
 	this->drawText(0x1f4 - g_toolbox->StringWidth(this->var_str_76), 0xd2);
@@ -1571,7 +1571,7 @@ void FoolPrologue::sub_131_004() {
 		g_toolbox->MoveTo(0x172, 0x33);
 		g_toolbox->LineTo(i, 0x14a);
 		if (i == 0x43) {
-			g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
+			g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 			this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(24).encode().c_str());
 			g_zbasic->bufferFlush(this->var_str_76);
 			this->drawTextRightAlign(0x1f4, 0xd2);
@@ -1680,7 +1680,7 @@ void FoolPrologue::sub_131_004() {
 	}
 
 	this->delayFromMarker(0x3c);
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcBic);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_str_76 = Common::U32String::format("\"%s\"", g_zbasic->str(25).c_str());
 	g_zbasic->bufferFlush(this->var_str_76);
 	this->drawTextRightAlign(0x181, 0x3c);
@@ -1692,7 +1692,7 @@ void FoolPrologue::sub_131_004() {
 void FoolPrologue::sub_131_4dc0() {
 	// 131:4dc0
 	g_toolbox->SetPort(this->var_i32_c);
-	g_zbasic->text(0, 0xc, kFacePlain, kSrcOr);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// Loading Finale
 	this->var_str_76 += g_zbasic->str(78);
 	this->var_str_76 += Common::U32String::format("%d%%", this->var_i16_3ce);
@@ -1706,7 +1706,7 @@ void FoolPrologue::sub_131_4dc0() {
 
 void FoolPrologue::sub_131_4e48() {
 	// 131:4e48
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcOr);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 
 	// Uh oh . . .
 	this->var_str_76 += Common::U32String::format("\"%s\"", g_zbasic->str(80).c_str());
@@ -1717,7 +1717,7 @@ void FoolPrologue::sub_131_4e48() {
 
 void FoolPrologue::sub_131_4e98() {
 	// 131:4e98
-	g_zbasic->text(0xfa, 0xc, kFacePlain, kSrcXor);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcXor);
 	this->var_i16_3fc = 0xa0;
 	// "And so the fool heeded the advice of the magician..."
 	this->var_str_76 += g_zbasic->str(81);

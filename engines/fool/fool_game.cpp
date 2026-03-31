@@ -400,7 +400,7 @@ void FoolGame::sub_128_55c(Common::U32String &unk1) {
 	g_toolbox->SetRect(this->arr_rect_1910c, 0x6c, 0x127, 0x84, 0x137);
 	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 0x8, 0x7);
 	g_toolbox->FrameRoundRect(this->arr_rect_1910c, 0x8, 0x7);
-	g_zbasic->text(0, 0xc, 0, kSrcOr);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo(0x78 - (this->var_i16_30 / 2), 0x133);
 	g_toolbox->DrawString(this->var_str_172);
@@ -598,7 +598,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	}
 	// 128:0e46
 	this->sub_128_0a2(0, 0x6060);
-	g_zbasic->text(this->var_i16_7aa, 0xc, 0, kSrcBic);
+	g_zbasic->text(this->var_i16_7aa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7b4 = this->var_i16_7ae*0x46;
 	this->var_i16_7b6 = 0;
 	this->var_i16_7b8 = 0;
@@ -648,7 +648,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 	// 128:10a0
 	if (this->var_i16_7ae != 0) {
 		g_toolbox->PenNormal();
-		g_zbasic->text(0, 0xc, 0, kSrcOr);
+		g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 
 		// 128:10c0
 		// loop to zero out three rectangles??
@@ -797,7 +797,7 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 	// 128:188a
 	this->sub_128_4da(0);
 	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
-	g_zbasic->text(0xfa, 0x18, 0x18, kSrcBic);
+	g_zbasic->text(0xfa, 0x18, Graphics::kMacFontShadow | Graphics::kMacFontOutline, kSrcBic);
 	for (int j = 0; j <= 1; j++) {
 		// 128:18c4
 		for (int i = 0; i <= 0x64; i += 4) {
@@ -1022,24 +1022,24 @@ void FoolGame::storyRenderPage() {
 		this->sub_128_55c(this->var_str_384);
 		// 128:23f0: CLR.W - -0x772(A5)
 		this->var_i16_7d6 = 1;
-		g_zbasic->text(0, 0xc, 0, kSrcOr);
+		g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		g_toolbox->MoveTo(0x8a, 0x133);
 		g_toolbox->DrawString(this->arr_str_195e8[this->var_i16_7d0]);
 	} else {
 		// 128:2430
 		this->var_i16_7d6 = 0;
-		g_zbasic->text(0, 0xc, 0, kSrcOr);
+		g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		g_toolbox->MoveTo(0x70, 0x133);
 		g_toolbox->DrawString(this->arr_str_195e8[this->var_i16_7d0]);
 	}
 	// 128:2468
 	if (this->arr_str_1a288[this->storyNextPage] != g_zbasic->str(13)) { // blank
-		g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+		g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		g_toolbox->DrawString(this->arr_str_1a288[this->storyNextPage]);
 	}
 	// 128:24be
 	if (this->storyNextPage != this->storyCurrentPage) {
-		g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+		g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 		this->fillRect(0x2f, 0x37, 0x11f, 0x1db, 0);
 		if (this->var_i16_7e0 != 0) {
 			// Paste the previous lines of text, if we copied them
@@ -1081,7 +1081,7 @@ void FoolGame::sub_128_2664() {
 	// hide menu and replace with "click mouse to continue" message
 	g_toolbox->SetPort(this->var_i32_8);
 	this->fillRect(0, 7, 0x13, this->var_i16_5a-7, 0);
-	g_zbasic->text(0, 0xc, 0, kSrcOr);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_str_172 = g_zbasic->str(15); // click mouse to continue
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xf);
@@ -1395,7 +1395,7 @@ void FoolGame::sub_128_3032() {
 	// 128:318e
 	this->fillRect(0x1e, 0x37, 0x32, 0xc8, 0);
 	this->fillRect(0x2f, 0x37, 0x11f, 0x1db, 0x0);
-	g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7a2 = 0x3c;
 	this->var_i16_7de = 0x2d;
 	// draw the first page of text
@@ -2070,7 +2070,7 @@ void FoolGame::sub_128_4a92() {
 	g_toolbox->InitCursor();
 	this->sub_128_4da(1);
 	this->sub_128_0a2(0, 0x6d60);
-	g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7b4 = 0;
 	this->var_i16_7b6 = 0;
 	this->var_i16_7b8 = 0;
@@ -2133,7 +2133,7 @@ void FoolGame::sub_128_4a92() {
 		this->var_i16_7a2 += 0x11;
 	}
 	// 128:50f4
-	g_zbasic->text(0xfc, 0x9, 0, kSrcOr);
+	g_zbasic->text(0xfc, 0x9, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7a2 += 0xe;
 	this->sub_128_918(g_zbasic->str(102)); // version string
 	this->sub_128_2664();
@@ -2524,7 +2524,7 @@ void FoolGame::sub_129_068() {
 	// 129:0636
 	if (this->var_str_e22 == g_zbasic->str(135)) {
 		do {
-			g_zbasic->text(0, 0xc, 0, kSrcBic);
+			g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcBic);
 			this->fillRect(0x17, 0x92, 0x31, 0x16e, 2);
 			this->var_i16_7a2 = 0x28;
 			// prompt to locate the fool's puzzles file
@@ -2703,18 +2703,18 @@ void FoolGame::sub_129_068() {
 		// 0x4 == newline
 		// 0x1 == normal formatting
 		if ((this->var_i16_103e == 1) || (this->var_i16_103e == 4)) {
-			this->pageLineFace[i] = 0;
+			this->pageLineFace[i] = Graphics::kMacFontRegular;
 		}
 
 		// 129:0dea
 		// 0x2 = bold formatting
 		if ((this->var_i16_103e == 2) || (this->var_i16_103e == 5)) {
-			this->pageLineFace[i] = 1;
+			this->pageLineFace[i] = Graphics::kMacFontBold;
 		}
 		// 129:0e1e
 		// 0x3 = outlined
 		if ((this->var_i16_103e == 3) || (this->var_i16_103e == 6)) {
-			this->pageLineFace[i] = 0x19;
+			this->pageLineFace[i] = Graphics::kMacFontBold | Graphics::kMacFontOutline | Graphics::kMacFontShadow;
 		}
 		// 129:0e52
 		if (this->var_i16_103e > 3) {
@@ -2815,7 +2815,7 @@ void FoolGame::sub_129_068() {
 void FoolGame::sub_129_123a() {
 	g_toolbox->SetPort(this->var_i32_8);
 	this->fillRect(0, 7, 0x13, this->var_i16_5a - 7, 0);
-	g_zbasic->text(0, 0xc, 0, kSrcOr);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	// Loading Game text during initial puzzle load
 	this->var_str_172 = Common::U32String::format("%s %d%s", g_zbasic->str(158).encode().c_str(), this->var_i16_68a, g_zbasic->str(159).encode().c_str());
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);

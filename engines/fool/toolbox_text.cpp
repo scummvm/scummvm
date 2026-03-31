@@ -40,10 +40,15 @@ void Toolbox::DrawString(const Common::U32String &s) {
 		debugN(5, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		const Graphics::Font *font = fontRun.getFont();
-		Common::Rect bbox = font->getBoundingBox(s);
+		Common::Rect bbox = font->getBoundingBox(macString);
 		BitMap buffer(new Graphics::ManagedSurface(bbox.width(), bbox.height(), Graphics::PixelFormat::createFormatCLUT8()));
 		buffer->fillRect(buffer->getBounds(), _port->bkColor);
 		font->drawString(buffer->surfacePtr(), macString, 0, 0, bbox.width(), _port->fgColor);
+
+		//byte fakePal[768];
+		//Common::fill(fakePal, fakePal+3, 0xff);
+		//Common::fill(fakePal+3, fakePal+768, 0x00);
+		//buffer->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
 		BitMap mask(nullptr);
 
