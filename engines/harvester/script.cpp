@@ -48,6 +48,34 @@ static const int kDefaultPlayerCombatLoadout = 0;
 static const int kMaxPlayerCombatLoadout = 0x14;
 static const int kMaxStartupOptionLevel = 9;
 
+struct InventoryCombatLoadoutEntry {
+	int loadoutId;
+	const char *objectName;
+};
+
+static const InventoryCombatLoadoutEntry kInventoryCombatLoadoutMap[] = {
+	{ 1, "CLEAVER" },
+	{ 2, "NAILGUN" },
+	{ 3, "SHOTGUN" },
+	{ 4, "9GUN" },
+	{ 5, "38GUN" },
+	{ 6, "TOMAHAWK" },
+	{ 7, "KNIFE" },
+	{ 8, "FLAIL" },
+	{ 9, "HANDAXE" },
+	{ 10, "WRENCH" },
+	{ 11, "PITCHFORK" },
+	{ 12, "SCYTHE" },
+	{ 13, "SWORD" },
+	{ 14, "CHAINSAW" },
+	{ 15, "HARVEST_BLADE" },
+	{ 16, "SHOVEL" },
+	{ 17, "FIREAXE" },
+	{ 18, "BAT" },
+	{ 19, "RAZOR" },
+	{ 20, "POOLSTICK" }
+};
+
 static void syncBool(Common::Serializer &s, bool &value) {
 	byte serialized = value ? 1 : 0;
 	s.syncAsByte(serialized);
@@ -244,6 +272,38 @@ static int clampPlayerHitPoints(int hitPoints) {
 
 static int clampPlayerCombatLoadout(int loadout) {
 	return CLIP<int>(loadout, 0, kMaxPlayerCombatLoadout);
+}
+
+static const char *resolveCombatLoadoutInventoryObjectName(int loadout) {
+	for (const InventoryCombatLoadoutEntry &entry : kInventoryCombatLoadoutMap) {
+		if (entry.loadoutId == loadout)
+			return entry.objectName;
+	}
+
+	return nullptr;
+}
+
+static int validatePlayerCombatLoadoutAgainstInventory(const Common::Array<StartupObjectRecord> &runtimeObjects,
+		int loadout, const char *contextLabel) {
+	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
+	if (clampedLoadout == kDefaultPlayerCombatLoadout)
+		return clampedLoadout;
+
+	const char *requiredObjectName = resolveCombatLoadoutInventoryObjectName(clampedLoadout);
+	if (!requiredObjectName)
+		return clampedLoadout;
+
+	for (const StartupObjectRecord &object : runtimeObjects) {
+		if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName) &&
+				object.objectName.equalsIgnoreCase(requiredObjectName))
+			return clampedLoadout;
+	}
+
+	debugC(1, kDebugGeneral,
+		"Harvester: cleared player combat loadout %d('%s') after %s because inventory object '%s' is absent",
+		clampedLoadout, Player::describeCombatLoadout(clampedLoadout),
+		contextLabel ? contextLabel : "runtime restore", requiredObjectName);
+	return kDefaultPlayerCombatLoadout;
 }
 
 static const char *resolveInventoryStatusObjectName(int hitPoints) {
@@ -595,7 +655,8 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	}
 
 	_playerCurrentHitPoints = clampPlayerHitPoints(playerCurrentHitPoints);
-	_playerCombatLoadout = clampPlayerCombatLoadout(playerCombatLoadout);
+	_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
+		_runtimeObjects, playerCombatLoadout, "town reload");
 	_playerControlPaused = playerControlPaused;
 
 	debugC(1, kDebugGeneral,
@@ -1528,6 +1589,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 			_playerControlPaused = false;
 		}
+		_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
+			_runtimeObjects, _playerCombatLoadout, "save load");
 		logRuntimeSaveState("loaded");
 	}
 }
