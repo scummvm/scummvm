@@ -1,0 +1,676 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/scummsys.h"
+#include "fool/fool.h"
+#include "fool/fool_game.h"
+#include "fool/toolbox.h"
+#include "fool/zbasic.h"
+#include "graphics/macgui/macfontmanager.h"
+
+namespace Fool {
+
+extern ZBasic *g_zbasic;
+extern Toolbox *g_toolbox;
+
+// wheel of fortune card game
+void FoolGame::cardsRun() {
+	// 139:0004
+	this->sub_128_271a();
+	this->var_i16_c00 = 1;
+	g_toolbox->SetRect(this->arr_rect_1f38[1], 0x78, 0x19, 0xd1, 0xae);
+	g_toolbox->SetRect(this->arr_rect_1f38[2], 0xd3, 0x19, 0x12c, 0xae);
+	g_toolbox->SetRect(this->arr_rect_1f38[3], 0x12e, 0x19, 0x187, 0xae);
+	g_toolbox->SetRect(this->arr_rect_1f38[4],1, 0x2a, 0x5a, 0xbf);
+	g_toolbox->SetRect(this->arr_rect_1f38[5],0x1a6, 0x2a, 0x1ff, 0xbf);
+	g_toolbox->SetRect(this->arr_rect_1f38[6], 0x1, 0xc0, 0x5a, 0x155);
+	g_toolbox->SetRect(this->arr_rect_1f38[7],0x1a6, 0xc0, 0x1ff, 0x155);
+	g_toolbox->SetRect(this->arr_rect_1f38[8],0x5b, 0xc0, 0xb4, 0x155);
+	g_toolbox->SetRect(this->arr_rect_1f38[9],0x14c, 0xc0, 0x1a5, 0x155);
+
+	// 139:011c
+	for (int i = 0; i <= 0x25; i++) {
+		g_zbasic->indexSet(this->puzzlesReadString(), 1, this->var_i16_68a);
+	}
+
+	this->var_i16_484 = 0x5e;
+	for (int i = 0x17; i >= 0; i--) {
+		this->var_i16_484++;
+		this->arr_i32_192c0[i] = g_toolbox->GetPicture(this->var_i16_484);
+	}
+	// 139:0184
+	this->sub_128_bde(1, 1, 0, 1, 1, 1);
+	this->fillRect(0xb4, 0xb5, 0x156, 0x14b, 2);
+	g_zbasic->picture(0xc3, 0xf3, this->arr_i32_192c0[0x17]);
+	if (this->var_str_c06 == g_zbasic->str(278)) { // blank
+		// 139:01fa
+		this->var_str_c06 = g_zbasic->unk_88(0) + g_zbasic->unk_88(0) + g_zbasic->unk_88(0);
+		// card IDs
+		for (int16 i = 0; i <= 0x15; i++) {
+			this->arr_i16_5cbc[i] = i;
+		}
+		// 139:0244
+		for (int i = 0; i <= 0x15; i++) {
+			this->var_i16_484 = g_zbasic->rndInt(0x16) - 1;
+			this->var_i16_7e4 = g_zbasic->rndInt(0x16) - 1;
+			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[this->var_i16_484]);
+		}
+		// 139:029c
+		for (int i = 0; i <= 0x15; i++) {
+			this->var_str_c06 += g_zbasic->unk_88(this->arr_i16_5cbc[i]);
+		}
+	}
+	// 139:02d8
+	// player scores
+	this->arr_i16_1eb8[5] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, 1, 2));
+	this->arr_i16_1eb8[6] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, 3, 2));
+	// 139:0320
+	this->var_i16_2010 = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, 5, 2));
+	if ((this->arr_i16_1eb8[5] > 0x2bc) || (this->arr_i16_1eb8[6] > 0x2bc)) {
+		this->arr_i16_1eb8[5] = 0;
+		this->arr_i16_1eb8[6] = 0;
+		this->var_i16_2010 = 0;
+	}
+	// 139:039e
+
+	for (int i = 0; i <= 0x15; i++) {
+		this->arr_i16_5cbc[i] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, i*2 + 7, 2));
+	}
+	// 139:03ea
+	this->arr_i16_5cbc[0x16] = 0x16;
+	this->arr_rect_4338.top = 0xdb;
+	this->arr_rect_4338.left = 0xe2;
+	this->arr_rect_4338.bottom = 0xee;
+	this->arr_rect_4338.right = 0x11e;
+	this->var_i16_2012 = 0;
+	this->var_i16_7c6 = 0;
+	this->sub_139_1b12();
+	if (this->var_i16_2010 == 0) {
+		this->sub_139_51e();
+	}
+	// 139:0456
+	this->sub_139_582();
+	while ((this->var_i16_7c6 & 1) == 0) {
+		// 139:045e
+		this->var_i16_2014 = 0;
+		this->var_i16_7c6 = 0;
+		while (this->var_i16_7c6 == 0) {
+			// 139:046e
+			this->sub_128_c6a(-1);
+			if ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) {
+				this->sub_139_6b0();
+			}
+			if (this->var_i16_2014 != 0) {
+				this->sub_139_50e();
+			}
+			if (this->var_ev_46.what == kNullEvent) {
+				g_toolbox->Delay(0);
+			}
+		}
+		// 139:04a4
+		if (this->var_i16_7c6 == 2) {
+			this->sub_139_4de();
+		}
+		if (this->var_i16_7c6 == 4) {
+			this->sub_139_1cba();
+			this->sub_128_3536();
+		}
+		// 139:04c4
+	}
+	// 139:04d6
+	this->sub_139_1cba();
+	// JMP 1d7e
+	// 139:1d7e
+	for (int i = 0; i <= 0x17; i++) {
+		g_toolbox->ReleaseResource(this->arr_i32_192c0[i]);
+	}
+}
+
+void FoolGame::sub_139_4de() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_139_50e() {
+	this->var_i16_2014 = 0;
+	this->sub_139_51e();
+	this->sub_139_582();
+}
+
+void FoolGame::sub_139_51e() {
+	g_zbasic->unk_20();
+	for (int j = 0; j <= 2; j++) {
+		for (int i = 0; i <= 0x15; i++) {
+			this->var_i16_484 = g_zbasic->rndInt(0x16)-1;
+			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[i]);
+		}
+	}
+}
+
+void FoolGame::sub_139_582() {
+	this->sub_139_17fc();
+	this->sub_128_712(5, 0, 0);
+	this->sub_128_712(4, 1, 0);
+	this->sub_128_712(7, 2, 0);
+	this->sub_128_712(6, 0x16, 0);
+	this->sub_128_712(1, 4, 0);
+	this->sub_128_712(2, 5, 0);
+	this->sub_128_712(3, 6, 0);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	this->var_i16_7a2 = 0xc3;
+	// 139:061a
+	this->sub_128_918(g_zbasic->str(279)); // Select a card above
+	this->var_i16_7a2 = 0xd4;
+	this->sub_128_918(g_zbasic->str(280)); // or
+	g_toolbox->FillRoundRect(this->arr_rect_4338, 0xa, 0xa, this->arr_pat_58f4[0]);
+	g_toolbox->FrameRoundRect(this->arr_rect_4338, 0xa, 0xa);
+	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
+	this->var_i16_7a2 = 0xe9;
+	this->sub_128_918(g_zbasic->str(281)); // Yield
+	this->var_i16_2016 = 1;
+	this->var_i16_2010 = 1;
+	this->sub_128_6186();
+}
+
+void FoolGame::sub_139_6b0() {
+	this->var_i16_1e00 = 0;
+	if (!((this->var_ev_46.where.x >= 0x78) && (this->var_ev_46.where.y >= 0x19) && (this->var_ev_46.where.x <= 0x187) && (this->var_ev_46.where.y <= 0xae))) {
+		// 139:06fc
+		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_4338)) {
+			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
+			if (!g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_4338))
+				return;
+			// 139:0778
+			this->sub_128_50e(0x19, 0x64, 0x0);
+			this->var_i16_2012 = -0x1b;
+			this->sub_139_1b12();
+			this->var_i16_2014 = 1;
+		} else {
+			// 139:079e
+			this->sub_128_50e(0xf, 0x64, 0x1);
+			for (int j = 0; j <= 1; j++) {
+				for (int16 i = 0; i <= 0x3; i++) {
+					this->sub_128_712(i, 0, 3);
+				}
+			}
+
+		}
+		// 139:07e6
+	} else {
+		// 139:07ea
+		this->fillRect(0xb4, 0xb5, 0xf3, 0x14b, 2);
+		if (this->var_ev_46.where.y < 0xd2) {
+			// 139:0818
+			this->var_i16_1e00 = 4;
+			this->sub_128_712(1, 0, 1);
+		}
+		// 139:082e
+		if ((this->var_ev_46.where.y >= 0xd2) && (this->var_ev_46.where.y <= 0x12d)) {
+			this->var_i16_1e00 = 5;
+			this->sub_128_712(2, 0, 1);
+		}
+		// 139:0868
+		if (this->var_ev_46.where.y > 0x12d) {
+			this->var_i16_1e00 = 6;
+			this->sub_128_712(3, 0, 1);
+		}
+		// 139:088a
+		this->sub_128_712(9, this->var_i16_1e00, 0);
+		g_zbasic->indexSet(
+			g_zbasic->chr(this->arr_i16_5cbc[0]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[2]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00]+0x41),
+			1,
+			0x26
+		);
+		this->sub_139_19da();
+		this->sub_139_191c();
+		this->sub_139_a22();
+		if (this->var_i16_2018 == 0) {
+			// 139:0920
+			this->sub_139_dee();
+			this->var_i16_7a2 = 0xc3;
+
+		} else {
+			// 139:092e
+			this->sub_139_da8();
+			this->var_i16_7a2 = 0xd7;
+		}
+		// 139:0938
+		this->var_i16_2010 = 0;
+		if (this->arr_i16_1eb8[5] > 0x2bc) {
+			this->sub_139_1d3e();
+			return;
+		}
+		// 139:095e
+		this->sub_128_61ec();
+		g_zbasic->text(1, 9, Graphics::kMacFontRegular, kSrcBic);
+		this->sub_128_918(g_zbasic->str(282)); // (click mouse to continue)
+		this->var_i16_2014 = 0;
+		this->var_i16_7c6 = 0;
+		while ((this->var_i16_7c6 == 0) && (this->var_i16_2014 == 0)) {
+			this->sub_128_c6a(-1);
+			if (this->var_ev_46.what == kMouseUp) {
+				this->var_i16_2014 = 1;
+			}
+			if (this->var_i16_7c6 == 4) {
+				this->sub_139_1cba();
+				this->sub_128_3536();
+			}
+			if (this->var_ev_46.what == kNullEvent) {
+				g_toolbox->Delay(0);
+			}
+		}
+		// 139:09d8
+		if (((this->var_i16_7c6 & 1) == 0) && (this->arr_i16_1eb8[6] > 0x2bc)) {
+			this->var_i16_7c6 = 2;
+			this->var_i16_2014 = 0;
+		}
+	}
+	// 139:0a20
+	return;
+}
+
+void FoolGame::sub_139_a22() {
+	// 139:0a22
+	this->var_str_201a = g_zbasic->chr(this->arr_i16_5cbc[0] + 0x41) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41);
+	this->var_i16_211a = this->var_i16_1e00;
+	g_zbasic->indexSet(g_zbasic->chr(this->arr_i16_5cbc[1] + 0x41) + g_zbasic->chr(this->arr_i16_5cbc[3] + 0x41), 1, 0x27);
+	this->var_str_211c = g_zbasic->index(1, 0x27);
+	this->var_i16_2016 = 0x2;
+	this->var_i16_221c = 0;
+	this->var_i16_221e = 0;
+	for (int16 i = 4; i <= 6; i++) {
+		// 139:0ae8
+		if (i  != this->var_i16_211a) {
+			g_zbasic->indexSet(this->var_str_211c + g_zbasic->chr(this->arr_i16_5cbc[i] + 0x41), 1, 0x27);
+			this->sub_139_19da();
+			if (this->arr_i16_1eb8[2] >= this->var_i16_221c) {
+				// 139:0b52
+				this->var_i16_221c = this->arr_i16_1eb8[2];
+				this->var_i16_1e00 = i;
+			} else {
+				// 139:0b70
+				if (this->arr_i16_1eb8[2] == this->var_i16_221c) {
+					this->sub_139_191c();
+					if (this->arr_i16_1eb8[4] > this->var_i16_221e) {
+						this->var_i16_221e = this->arr_i16_1eb8[4];
+						this->var_i16_1e00 = i;
+					}
+				}
+			}
+		}
+		// 139:0bc4
+	}
+	g_zbasic->indexSet(this->var_str_211c + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
+	// 139:0c0a
+	this->arr_i16_1eb8[2] = this->var_i16_221c;
+	this->sub_139_191c();
+	this->var_i16_221c = 0;
+	for (int16 j = 8; j >= 1; j--) {
+		this->var_i16_7a8 = 0;
+		for (int16 i = 1; i <= (int16)g_zbasic->index(1, j + 0x15).size(); i++) {
+			if (g_zbasic->instr(1, this->var_str_201a, g_zbasic->midStr(g_zbasic->index(1, j + 0x15), i, 1))) {
+				this->var_i16_7a8++;
+			}
+			// 139:0c72
+		}
+		// 139:0c90
+		if (this->var_i16_7a8 == 2) {
+			this->var_i16_221c = j;
+			j = 1;
+		}
+		// 139:0ca6
+	}
+	// 139:0cb6
+	this->var_i16_2018 = 0;
+	if (this->var_i16_221c > this->arr_i16_1eb8[2]) {
+		this->var_i16_2018 = 1;
+	}
+	// 139:0ce2
+	if (this->var_i16_221c == this->arr_i16_1eb8[2]) {
+		for (int16 i = 1; i <= (int16)this->var_str_201a.size(); i++) {
+			this->var_i16_484 = 0x15 - (g_zbasic->asc(g_zbasic->midStr(this->var_str_201a, i, 1)) - 0x41);
+			if (this->var_i16_484 > this->arr_i16_1eb8[4]) {
+				this->var_i16_2018 = 1;
+			}
+			// 139:0d5c
+		}
+	}
+	// 139:0d6e
+	if ((this->var_i16_2018 == 1) && ((this->var_i16_221c + 1)*9 <= 0x1b)) {
+		this->var_i16_2018 = 0;
+	}
+
+	// 139:0da6
+}
+
+void FoolGame::sub_139_da8() {
+	// 139:0da8
+	this->sub_128_50e(0x19, 0x64, 0x1);
+	this->var_i16_2012 = -0x1b;
+	this->sub_139_1b12();
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	this->var_i16_7a2 = 0xc4;
+	this->sub_128_918(g_zbasic->str(283)); // The Old Man yields
+}
+
+void FoolGame::sub_139_dee() {
+	// 139:0dee
+	// remove the three cards from the top row
+	this->sub_128_712(1, 0, 1);
+	this->sub_128_712(2, 0, 1);
+	this->sub_128_712(3, 0, 1);
+
+	// draw ol' mate's pick from the pile
+	this->sub_128_712(8, this->var_i16_1e00, 0);
+
+	g_zbasic->indexSet(g_zbasic->index(1, 0x27) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
+	// 139:0e70
+	for (int16 i = 1; i <= 2; i++) {
+		g_zbasic->indexSet(g_zbasic->str(284), 1, i + 0x27);
+		if ((this->arr_i16_1eb8[i] > 0) && (this->arr_i16_1eb8[i] < 9)) {
+			// 139:0ed6
+			g_zbasic->indexSet(
+				g_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i]) + g_zbasic->str(285), // X pair
+				1,
+				i + 0x27
+			);
+		}
+		// 139:0f1e
+		if (this->arr_i16_1eb8[i] > 8) {
+			g_zbasic->indexSet(
+				g_zbasic->index(1, 0x1d + this->arr_i16_1eb8[i] - 8) + g_zbasic->str(286), // X triplet
+				1,
+				0x27 + i
+			);
+		}
+		// 139:0f84
+		g_zbasic->indexSet(
+			g_zbasic->index(1,0x15 - this->arr_i16_1eb8[i + 2]),
+			i + 0x29,
+			1
+		);
+		// 139:0fca
+		if (g_zbasic->index(1, i + 0x27) == g_zbasic->str(287)) { // blank
+			// 139:0ff0
+			g_zbasic->indexSet(
+				g_zbasic->index(1, 0x29 + i),
+				1,
+				i + 0x27
+			);
+
+		}
+		// 139:101a
+	}
+	// 139:1028
+	// determine winner
+	this->var_i16_2016 = 0;
+	if (this->arr_i16_1eb8[1] > this->arr_i16_1eb8[2]) {
+		this->var_i16_2016 = 1; // fool wins
+	}
+	// 139:105e
+	if (this->arr_i16_1eb8[1] < this->arr_i16_1eb8[2]) {
+		this->var_i16_2016 = 2; // ol' mate wins
+	}
+	if (this->var_i16_2016 == 0) {
+		if (this->arr_i16_1eb8[3] > this->arr_i16_1eb8[4]) {
+			this->var_i16_2016 = 1; // fool wins
+		}
+		// 139:10c8
+		if (this->arr_i16_1eb8[3] < this->arr_i16_1eb8[4]) {
+			this->var_i16_2016 = 2; // ol' mate wins
+		}
+		// 139:10f8
+		if (this->arr_i16_1eb8[1] != 0) {
+			for (int i = 1; i <= 2; i++) {
+				g_zbasic->indexSet(
+					g_zbasic->index(1, 0x27 + i) + g_zbasic->str(288) + g_zbasic->index(1, 0x29 + i) + g_zbasic->str(289),
+					1,
+					0x27 + i
+				);
+			}
+		}
+	}
+	// 139:1174
+	this->sub_128_712(6, 3, 0);
+	// calculate number of points gained by the winner
+	this->var_i16_2012 = 9*(this->arr_i16_1eb8[this->var_i16_2016] + 1);
+
+	this->sub_139_1b12();
+	if (this->var_i16_2016 == 1) {
+		this->var_str_384 = g_zbasic->str(290); // The fool
+	} else {
+		// 139:11ce
+		this->var_str_384 = g_zbasic->str(291); // The Old Man
+	}
+	// 139:11e2
+	if ((this->arr_i16_1eb8[5] > 0x2bc) || (this->arr_i16_1eb8[6] > 0x2bc)) {
+		this->var_str_9f4 = g_zbasic->str(292); // the game!
+	} else {
+		// 139:123e
+		this->var_str_9f4 = Common::U32String::format(" %d", this->var_i16_2012) + g_zbasic->str(293); // X points
+	}
+	// 139:1264
+	this->var_str_384 += g_zbasic->str(294) + this->var_str_9f4; // X wins Y
+	this->var_str_167c = g_zbasic->index(1, 0x28);
+	this->var_str_2222 = g_zbasic->index(1, 0x29);
+	if (this->var_i16_2016 == 2) {
+		g_zbasic->swapStr(this->var_str_167c, this->var_str_2222);
+	}
+	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
+	this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_167c);
+	this->var_i16_9f2 = g_toolbox->StringWidth(this->var_str_2222);
+	this->var_i16_2322 = 0;
+	if (this->var_i16_484 > this->var_i16_2322) {
+		this->var_i16_2322 = this->var_i16_484;
+	}
+	// 139:1318
+	if (this->var_i16_7e4 > this->var_i16_2322) {
+		this->var_i16_2322 = this->var_i16_7e4;
+	}
+	if (this->var_i16_9f2 > this->var_i16_2322) {
+		this->var_i16_2322 = this->var_i16_9f2;
+	}
+	// 139:1344
+	this->var_i16_2322 = (this->var_i16_2322 / 2) + 0x14;
+	this->fillRect(0x23, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	this->var_i16_7a2 = 0x46;
+	this->sub_128_918(this->var_str_384);
+	this->var_i16_7a2 = 0x64;
+	this->sub_128_918(this->var_str_167c);
+	this->var_i16_7a2 = 0x78;
+	this->sub_128_918(g_zbasic->str(295));
+	this->var_i16_7a2 = 0x8c;
+	this->sub_128_918(this->var_str_2222);
+	if (this->arr_i16_1eb8[1] != 0) {
+		this->var_i16_68a = this->arr_i16_1eb8[1];
+		if (this->var_i16_68a > 8) {
+			this->var_i16_68a -= 8;
+		}
+		// 139:1420
+		if (g_zbasic->instr(
+			1,
+			g_zbasic->index(1, 0x15 + this->var_i16_68a),
+			g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1)
+		) == 0) {
+			this->sub_128_712(5, 0, 2);
+		}
+		// 139:1470
+		if (g_zbasic->instr(
+				1,
+				g_zbasic->index(1, 0x15 + this->var_i16_68a),
+				g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1)
+			) == 0) {
+			this->sub_128_712(7, 0, 2);
+		}
+		// 139:14c0
+		if (g_zbasic->instr(
+				1,
+				g_zbasic->index(1, 0x15 + this->var_i16_68a),
+				g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1)
+			) == 0) {
+			this->sub_128_712(9, 0, 2);
+		}
+	} else {
+		// 139:1514
+		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[3]) + 0x41);
+		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1) != this->var_str_384) {
+			this->sub_128_712(5, 0, 2);
+		}
+		// 139:157e
+		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1) != this->var_str_384) {
+			this->sub_128_712(7, 0, 2);
+		}
+		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1) != this->var_str_384) {
+			this->sub_128_712(9, 0, 2);
+		}
+	}
+	// 139:15f2
+	if (this->arr_i16_1eb8[2] != 0) {
+		this->var_i16_68a = this->arr_i16_1eb8[2];
+		if (this->var_i16_68a > 8) {
+			this->var_i16_68a -= 8;
+		}
+		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) == 0) {
+			this->sub_128_712(4, 0, 2);
+		}
+		// 139:1678
+		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) == 0) {
+			this->sub_128_712(6, 0, 2);
+		}
+		// 139:16c8
+		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) == 0) {
+			this->sub_128_712(8, 0, 2);
+		}
+	} else {
+		// 139:171c
+		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[4]) + 0x41);
+		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) {
+			this->sub_128_712(4, 0, 2);
+		}
+		// 139:1786
+		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) {
+			this->sub_128_712(6, 0, 2);
+		}
+		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) {
+			this->sub_128_712(8, 0, 2);
+		}
+	}
+	// 139:17fa
+}
+
+void FoolGame::sub_139_17fc() {
+	// 139:17fc
+	this->fillRect(0xb4, 0xb5, 0xf3, 0x14b, 2);
+	this->fillRect(0x14, 0x5f, 0xaf, 0x1a4, 1);
+	this->fillRect(0x2a, 0, 0x156, 0xb4, 1);
+	this->fillRect(0x2a, 0x14c, 0x156, 0x200, 1);
+	// 139:1878
+	for (int i = 1; i <= 2; i++) {
+		this->arr_i16_1eb8[i + 2] = 0;
+		this->arr_i16_1eb8[i] = 0;
+		g_zbasic->indexSet(g_zbasic->str(296), 1, 0x25 + i); // blank
+		g_zbasic->indexSet(g_zbasic->str(297), 1, 0x27 + i); // blank
+		g_zbasic->indexSet(g_zbasic->str(298), 1, 0x29 + i); // blank
+	}
+}
+
+void FoolGame::sub_139_191c() {
+	// 139:191c
+	this->arr_i16_1eb8[this->var_i16_2016 + 2] = 0;
+	for (int i = 1; i <= (int)g_zbasic->index(1, this->var_i16_2016 + 0x25).size(); i++) {
+		this->var_i16_484 = 0x15 - (g_zbasic->asc(g_zbasic->midStr(g_zbasic->index(1, 0x25 + this->var_i16_2016), i, 1)) - 0x41);
+		// 139:1974
+		if (this->var_i16_484 > this->arr_i16_1eb8[2 + this->var_i16_2016]) {
+			this->arr_i16_1eb8[2 + this->var_i16_2016] = this->var_i16_484;
+		}
+		// 139:19b8
+	}
+}
+
+void FoolGame::sub_139_19da() {
+	// 139:19da
+	this->arr_i16_1eb8[this->var_i16_2016] = 0;
+	for (int k = 1; k <= 2; k++) {
+		for (int j = 8; j >= 1; j--) {
+			this->var_i16_7a8 = 0;
+			for (int i = 1; i <= (int)g_zbasic->index(1, j + 0x15).size(); i++) {
+				if (g_zbasic->instr(
+					1,
+					g_zbasic->index(1, this->var_i16_2016 + 0x25),
+					g_zbasic->midStr(g_zbasic->index(1, 0x15 + j), i, 1)
+				) != 0) {
+					this->var_i16_7a8++;
+				}
+				// 139:1a4c
+			}
+			// 139:1a6a
+			if ((k == 2) && (this->var_i16_7a8 == 2)) {
+				this->sub_139_1ad6();
+			}
+			if ((k == 1) && (this->var_i16_7a8 == 3)) {
+				this->sub_139_1ad6();
+			}
+		}
+		// 139:1ac6
+	}
+}
+
+void FoolGame::sub_139_1ad6() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_139_1b12() {
+	// 139:1b12
+	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
+	this->arr_i16_1eb8[this->var_i16_2016 + 4] += this->var_i16_2012;
+	if (this->arr_i16_1eb8[5] < -999) {
+		this->arr_i16_1eb8[5] = -999;
+	}
+	// 139:1b88
+	if (this->arr_i16_1eb8[6] < -999) {
+		this->arr_i16_1eb8[6] = -999;
+	}
+	// 139:1bb2
+	this->fillRect(0x14, 0, 0x29, 0x5a, 2);
+	// Old Man
+	this->var_str_384 = g_zbasic->str(299) + Common::U32String::format(" %d", this->arr_i16_1eb8[6]);
+	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
+	g_toolbox->MoveTo(0x2d - (this->var_i16_484 / 2), 0x23);
+	g_toolbox->DrawString(this->var_str_384);
+
+	// 139:1c30
+	this->fillRect(0x14, 0x1a6, 0x29, 0x200, 2);
+	this->var_str_384 = g_zbasic->str(300) + Common::U32String::format(" %d", this->arr_i16_1eb8[5]);
+	this->var_i16_484 = g_toolbox->StringWidth(this->var_str_384);
+	g_toolbox->MoveTo(0x1d3 - (this->var_i16_484 / 2), 0x23);
+	g_toolbox->DrawString(this->var_str_384);
+}
+
+void FoolGame::sub_139_1cba() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_139_1d3e() {
+	warning("STUB: %s", __func__);
+}
+
+
+};

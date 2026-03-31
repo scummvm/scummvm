@@ -272,6 +272,7 @@ public:
 	int16 rndInt(int16 max);
 	Common::U32String space(int16 count);
 	void swapInt(int16 &a, int16 &b);
+	void swapStr(Common::U32String &a, Common::U32String &b);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
 	void writeFileStr(int16 fileNo, const Common::U32String &str);
