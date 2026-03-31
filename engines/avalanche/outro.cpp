@@ -1,3 +1,29 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * This code is based on the original source code of Lord Avalot d'Argent version 1.3.
+ * Copyright (c) 1994-1995 Mike: Mark and Thomas Thurman.
+ */
+ 
 #include "graphics/cursorman.h"
 #include "common/system.h"
 
@@ -13,48 +39,8 @@ Outro::Outro(AvalancheEngine *vm) : _vm(vm) {
 
 void Outro::run() {
     CursorMan.showMouse(false);
-
-    Common::File file;
-	if (!file.open("avalot.fnt"))
-		error("AVALANCHE: Scrolls: File not found: avalot.fnt");
-	for (int16 i = 0; i < 256; i++)
-		file.read(_vm->_font[i], 16);
-	file.close();
-
-    // Black background
     _vm->_graphics->blackOutScreen();
-
-    // Copyright line - top right, small gray text
-    _vm->_graphics->drawNormalText("(c) 1995, Mike, Mark and Thomas Thurman.",
-        _vm->_font, 16, 300, 5, kColorLightgray);
-
-    // "hanks" - large dark red
-    _vm->_graphics->helpDrawBigTextOutro("Thanks", 80, 20, kColorRed);
-
-    // "for" - large brown/orange
-    _vm->_graphics->helpDrawBigTextOutro("for", 150, 55, kColorBrown);
-
-    // "playing" - large brown/orange
-    _vm->_graphics->helpDrawBigTextOutro("playing", 50, 85, kColorBrown);
-
-    // "Avalot." - large yellow
-    _vm->_graphics->helpDrawBigTextOutro("Avalot.", 80, 125, kColorYellow);
-
-    // "* Goodbye! *" - small cyan, middle right
-    _vm->_graphics->drawNormalText("* Goodbye! *",
-        _vm->_font, 16, 400, 75, kColorLightcyan);
-
-    // Bottom text - small red
-    _vm->_graphics->drawNormalText(
-        "If you'd like to see yet more of these games, then don't forget to",
-        _vm->_font, 16, 80, 160, kColorRed);
-    _vm->_graphics->drawNormalText(
-        "register, or your abacus will tickle you",
-        _vm->_font, 16, 80, 170, kColorRed);
-    _vm->_graphics->drawNormalText(
-        "for the rest of your life!             (Only joking!)",
-        _vm->_font, 16, 80, 180, kColorRed);
-
+    _vm->_graphics->drawQuittingPic();
     _vm->_graphics->refreshScreen();
 
     // Wait 5 seconds or keypress/click
@@ -79,4 +65,4 @@ void Outro::run() {
     CursorMan.showMouse(true);
 }
 
-} // End of namespace Avalanche
+}

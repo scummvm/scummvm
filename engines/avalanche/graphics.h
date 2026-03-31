@@ -95,6 +95,13 @@ public:
 	// Used in winning()
 	void drawWinningPic();
 
+	/* 
+	* Used in quitting(), the parameter is to accept different numbers (representing different scenarios). I put it here to 
+	* preserve some of the multi-purpose functionality of the original function.
+	*/
+
+	void drawQuittingPic();
+
 	// Ghostroom's functions:
 	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);
@@ -105,7 +112,6 @@ public:
 	void helpDrawButton(int y, byte which);
 	void helpDrawHighlight(byte which, Color color);
 	void helpDrawBigText(const Common::String &text, int16 x, int16 y, Color color);
-	void helpDrawBigTextOutro(const Common::String &text, int16 x, int16 y, Color color);
 
 	// Shoot em' up's functions:
 	void seuDrawTitle();
@@ -200,7 +206,6 @@ private:
 
 	void drawText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawBigText(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
-	void drawBigTextOutro(Graphics::Surface &surface, const Common::String &text, FontType font, byte fontHeight, int16 x, int16 y, Color color);
 	void drawPicture(Graphics::Surface &target, const Graphics::Surface &picture, uint16 destX, uint16 destY);
 
 	// Taken from Free Pascal's Procedure InternalEllipseDefault. Used to replace Pascal's procedure arc.
