@@ -656,7 +656,7 @@ protected:
 		uint32 transparent = 255;
 		Graphics::PixelFormat format;
 		byte palSize = 0;
-		byte pal[3 * 255];
+		byte pal[3 * 256];
 	};
 
 	CursorData _cursors[kCursorMax];
