@@ -19,7 +19,6 @@
  *
  */
 
-#include <functional>
 
 #include "harvester/npc/herrill_dialogue.h"
 

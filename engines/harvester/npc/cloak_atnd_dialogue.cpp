@@ -19,7 +19,6 @@
  *
  */
 
-#include <functional>
 
 #include "harvester/npc/cloak_atnd_dialogue.h"
 

@@ -20,7 +20,6 @@
  */
 
 #include <math.h>
-#include <memory>
 
 #include "harvester/flow.h"
 
@@ -30,6 +29,7 @@
 #include "common/events.h"
 #include "common/formats/ini-file.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/serializer.h"
 #include "common/system.h"
 #include "graphics/blit.h"
@@ -1473,7 +1473,7 @@ Common::Error Flow::runTownMapSelector(const Common::String &mapEntryName,
 	ResourceManager *resources = _engine.getResources();
 	Graphics::Screen *screen = _engine.getScreen();
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
-	std::unique_ptr<HarvesterCftFont> townMapFont;
+	Common::ScopedPtr<HarvesterCftFont> townMapFont;
 	if (const CftFontResource *townMapFontResource = findStartupFontByName(_engine, "TEXTFONT")) {
 		townMapFont.reset(new HarvesterCftFont(*townMapFontResource));
 		if (townMapFont->isValid())

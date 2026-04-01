@@ -19,7 +19,6 @@
  *
  */
 
-#include <functional>
 
 #include "harvester/npc/dark_woman_dialogue.h"
 

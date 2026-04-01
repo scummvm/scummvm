@@ -156,8 +156,12 @@ private:
 	Flow *_activeFlow = nullptr;
 	bool _combatDebugEnabled = false;
 	bool _roomDebugEnabled = false;
+	Common::String _emptyMusicPath;
 };
 
+// Global engine hook used by existing Harvester helpers and macros.
+// It is assigned in HarvesterEngine::HarvesterEngine() and cleared in
+// HarvesterEngine::~HarvesterEngine() so restart-to-launcher resets it.
 extern HarvesterEngine *g_engine;
 #define SHOULD_QUIT ::Harvester::g_engine->shouldQuit()
 

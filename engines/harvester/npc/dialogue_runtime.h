@@ -1,8 +1,6 @@
 #ifndef HARVESTER_NPC_DIALOGUE_RUNTIME_H
 #define HARVESTER_NPC_DIALOGUE_RUNTIME_H
 
-#include <functional>
-
 #include "common/error.h"
 #include "common/str.h"
 #include "harvester/script.h"
@@ -19,73 +17,55 @@ struct DialogueLineEntry {
 	int headVariant;
 };
 
+struct DialogueKeywordMenuSelectionState {
+	DialogueKeywordMenuSelectionState()
+		: fromTypedInput(false), fromEscape(false), fromGenericBye(false) {
+	}
+
+	bool fromTypedInput;
+	bool fromEscape;
+	bool fromGenericBye;
+};
+
+class DialogueRuntimeCallbacks {
+public:
+	virtual ~DialogueRuntimeCallbacks() {}
+
+	virtual Common::Error playDialogueLineWithVariant(int wavId, const Common::String &speakerId,
+		int headVariant) = 0;
+	virtual Common::Error playDialogueLine(int wavId, const Common::String &speakerId) = 0;
+	virtual Common::Error playDialogueEntrySequence(const DialogueLineEntry *lines, uint count) = 0;
+	virtual Common::Error playDialogueFst(const Common::String &path) = 0;
+	virtual Common::Error clearScreenToBlack() = 0;
+	virtual Common::Error showCdChangePrompt(int discNumber) = 0;
+	virtual Common::Error runKeywordMenu(const Common::String &topicBuffer, int topicBufferLineIndex,
+		Common::String &selectedTopic, DialogueKeywordMenuSelectionState &selection) = 0;
+	virtual Common::Error runResponseMenu(int responseLineIndex, int &responseIndex) = 0;
+	virtual Common::Error runResponseMenuText(const Common::String &responseLine, int &responseIndex) = 0;
+	virtual Common::Error runGameOverScreen() = 0;
+	virtual void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
+		int responseLineIndex, const char *label) = 0;
+	virtual bool matchesResponseLine(const Common::String &selectedTopic, int responseLineIndex) = 0;
+	virtual bool matchesAnyResponseLine(const Common::String &selectedTopic,
+		const int *responseLineIndices, uint responseLineCount) = 0;
+	virtual void queueDialogueInteractionIfNeeded(const InteractionResult &interaction) = 0;
+	virtual void applyImmediateDialogueInteractionEffects(InteractionResult &interaction) = 0;
+	virtual int getRandomNumber(int maxValue) = 0;
+	virtual void setActiveSpeakerPortrait(const Common::String &speakerId, int headVariant) = 0;
+};
+
 class DialogueRuntime {
 public:
-	struct KeywordMenuSelectionState {
-		KeywordMenuSelectionState()
-			: fromTypedInput(false), fromEscape(false), fromGenericBye(false) {
-		}
-
-		bool fromTypedInput;
-		bool fromEscape;
-		bool fromGenericBye;
-	};
-
-	typedef std::function<Common::Error(int, const Common::String &, int)> PlayDialogueLineWithVariantFn;
-	typedef std::function<Common::Error(int, const Common::String &)> PlayDialogueLineFn;
-	typedef std::function<Common::Error(const DialogueLineEntry *, uint)> PlayDialogueEntrySequenceFn;
-	typedef std::function<Common::Error(const Common::String &)> PlayDialogueFstFn;
-	typedef std::function<Common::Error()> ClearScreenToBlackFn;
-	typedef std::function<Common::Error(int)> ShowCdChangePromptFn;
-	typedef std::function<Common::Error(const Common::String &, int, Common::String &,
-			KeywordMenuSelectionState &)> RunKeywordMenuFn;
-	typedef std::function<Common::Error(int, int &)> RunResponseMenuFn;
-	typedef std::function<Common::Error(const Common::String &, int &)> RunResponseMenuTextFn;
-	typedef std::function<Common::Error()> RunGameOverScreenFn;
-	typedef std::function<void(Common::String &, int &, int, const char *)> AssignTopicBufferFn;
-	typedef std::function<bool(const Common::String &, int)> MatchesResponseLineFn;
-	typedef std::function<bool(const Common::String &, const int *, uint)> MatchesAnyResponseLineFn;
-	typedef std::function<void(const InteractionResult &)> QueueDialogueInteractionIfNeededFn;
-	typedef std::function<void(InteractionResult &)> ApplyImmediateDialogueInteractionEffectsFn;
-	typedef std::function<int(int)> GetRandomNumberFn;
-	typedef std::function<void(const Common::String &, int)> SetActiveSpeakerPortraitFn;
+	typedef DialogueKeywordMenuSelectionState KeywordMenuSelectionState;
 
 	DialogueRuntime(HarvesterEngine &engine, Script &script, Text &text,
 			Flow &flow, const Common::String &currentRoomName,
 			const Common::String &genericByeTopic,
-			const PlayDialogueLineWithVariantFn &playDialogueLineWithVariant,
-			const PlayDialogueLineFn &playDialogueLine,
-			const PlayDialogueEntrySequenceFn &playDialogueEntrySequence,
-			const PlayDialogueFstFn &playDialogueFst,
-			const ClearScreenToBlackFn &clearScreenToBlack,
-			const ShowCdChangePromptFn &showCdChangePrompt,
-			const RunKeywordMenuFn &runKeywordMenu,
-			const RunResponseMenuFn &runResponseMenu,
-			const RunResponseMenuTextFn &runResponseMenuText,
-			const RunGameOverScreenFn &runGameOverScreen,
-			const AssignTopicBufferFn &assignTopicBuffer,
-			const MatchesResponseLineFn &matchesResponseLine,
-			const MatchesAnyResponseLineFn &matchesAnyResponseLine,
-			const QueueDialogueInteractionIfNeededFn &queueDialogueInteractionIfNeeded,
-			const ApplyImmediateDialogueInteractionEffectsFn &applyImmediateDialogueInteractionEffects,
-			const GetRandomNumberFn &getRandomNumber,
-			const SetActiveSpeakerPortraitFn &setActiveSpeakerPortrait)
+			DialogueRuntimeCallbacks &callbacks)
 		: _engine(engine), _script(script), _text(text),
 		  _flow(flow), _currentRoomName(currentRoomName),
 		  _genericByeTopic(genericByeTopic),
-		  _playDialogueLineWithVariant(playDialogueLineWithVariant),
-		  _playDialogueLine(playDialogueLine), _playDialogueEntrySequence(playDialogueEntrySequence),
-		  _playDialogueFst(playDialogueFst), _clearScreenToBlack(clearScreenToBlack),
-		  _showCdChangePrompt(showCdChangePrompt), _runKeywordMenu(runKeywordMenu),
-		  _runResponseMenu(runResponseMenu), _runResponseMenuText(runResponseMenuText),
-		  _runGameOverScreen(runGameOverScreen),
-		  _assignTopicBuffer(assignTopicBuffer),
-		  _matchesResponseLine(matchesResponseLine),
-		  _matchesAnyResponseLine(matchesAnyResponseLine),
-		  _queueDialogueInteractionIfNeeded(queueDialogueInteractionIfNeeded),
-		  _applyImmediateDialogueInteractionEffects(applyImmediateDialogueInteractionEffects),
-		  _getRandomNumber(getRandomNumber),
-		  _setActiveSpeakerPortrait(setActiveSpeakerPortrait) {
+		  _callbacks(callbacks) {
 	}
 
 	HarvesterEngine &engine() const { return _engine; }
@@ -97,51 +77,51 @@ public:
 
 	Common::Error playDialogueLineWithVariant(int wavId, const Common::String &speakerId,
 			int headVariant) const {
-		return _playDialogueLineWithVariant(wavId, speakerId, headVariant);
+		return _callbacks.playDialogueLineWithVariant(wavId, speakerId, headVariant);
 	}
 	Common::Error playDialogueLine(int wavId, const Common::String &speakerId) const {
-		return _playDialogueLine(wavId, speakerId);
+		return _callbacks.playDialogueLine(wavId, speakerId);
 	}
 	Common::Error playDialogueEntrySequence(const DialogueLineEntry *lines, uint count) const {
-		return _playDialogueEntrySequence(lines, count);
+		return _callbacks.playDialogueEntrySequence(lines, count);
 	}
-	Common::Error playDialogueFst(const Common::String &path) const { return _playDialogueFst(path); }
-	Common::Error clearScreenToBlack() const { return _clearScreenToBlack(); }
-	Common::Error showCdChangePrompt(int discNumber) const { return _showCdChangePrompt(discNumber); }
+	Common::Error playDialogueFst(const Common::String &path) const { return _callbacks.playDialogueFst(path); }
+	Common::Error clearScreenToBlack() const { return _callbacks.clearScreenToBlack(); }
+	Common::Error showCdChangePrompt(int discNumber) const { return _callbacks.showCdChangePrompt(discNumber); }
 	Common::Error runKeywordMenu(const Common::String &topicBuffer, int topicBufferLineIndex,
 			Common::String &selectedTopic) const {
 		_lastKeywordSelection = KeywordMenuSelectionState();
-		return _runKeywordMenu(topicBuffer, topicBufferLineIndex, selectedTopic, _lastKeywordSelection);
+		return _callbacks.runKeywordMenu(topicBuffer, topicBufferLineIndex, selectedTopic, _lastKeywordSelection);
 	}
 	Common::Error runResponseMenu(int responseLineIndex, int &responseIndex) const {
-		return _runResponseMenu(responseLineIndex, responseIndex);
+		return _callbacks.runResponseMenu(responseLineIndex, responseIndex);
 	}
 	Common::Error runResponseMenuText(const Common::String &responseLine, int &responseIndex) const {
-		return _runResponseMenuText(responseLine, responseIndex);
+		return _callbacks.runResponseMenuText(responseLine, responseIndex);
 	}
-	Common::Error runGameOverScreen() const { return _runGameOverScreen(); }
+	Common::Error runGameOverScreen() const { return _callbacks.runGameOverScreen(); }
 	void assignTopicBuffer(Common::String &topicBuffer, int &topicBufferLineIndex,
 			int responseLineIndex, const char *label) const {
-		_assignTopicBuffer(topicBuffer, topicBufferLineIndex, responseLineIndex, label);
+		_callbacks.assignTopicBuffer(topicBuffer, topicBufferLineIndex, responseLineIndex, label);
 	}
 	bool matchesResponseLine(const Common::String &selectedTopic, int responseLineIndex) const {
-		return _matchesResponseLine(selectedTopic, responseLineIndex);
+		return _callbacks.matchesResponseLine(selectedTopic, responseLineIndex);
 	}
 	bool matchesAnyResponseLine(const Common::String &selectedTopic,
 			const int *responseLineIndices, uint responseLineCount) const {
-		return _matchesAnyResponseLine(selectedTopic, responseLineIndices, responseLineCount);
+		return _callbacks.matchesAnyResponseLine(selectedTopic, responseLineIndices, responseLineCount);
 	}
 	bool lastKeywordSelectionWasTypedInput() const { return _lastKeywordSelection.fromTypedInput; }
 	bool lastKeywordSelectionWasGenericBye() const { return _lastKeywordSelection.fromGenericBye; }
 	void queueDialogueInteractionIfNeeded(const InteractionResult &interaction) const {
-		_queueDialogueInteractionIfNeeded(interaction);
+		_callbacks.queueDialogueInteractionIfNeeded(interaction);
 	}
 	void applyImmediateDialogueInteractionEffects(InteractionResult &interaction) const {
-		_applyImmediateDialogueInteractionEffects(interaction);
+		_callbacks.applyImmediateDialogueInteractionEffects(interaction);
 	}
-	int getRandomNumber(int maxValue) const { return _getRandomNumber(maxValue); }
+	int getRandomNumber(int maxValue) const { return _callbacks.getRandomNumber(maxValue); }
 	void setActiveSpeakerPortrait(const Common::String &speakerId, int headVariant) const {
-		_setActiveSpeakerPortrait(speakerId, headVariant);
+		_callbacks.setActiveSpeakerPortrait(speakerId, headVariant);
 	}
 
 private:
@@ -151,24 +131,8 @@ private:
 	Flow &_flow;
 	const Common::String &_currentRoomName;
 	const Common::String &_genericByeTopic;
-	PlayDialogueLineWithVariantFn _playDialogueLineWithVariant;
-	PlayDialogueLineFn _playDialogueLine;
-	PlayDialogueEntrySequenceFn _playDialogueEntrySequence;
-	PlayDialogueFstFn _playDialogueFst;
-	ClearScreenToBlackFn _clearScreenToBlack;
-	ShowCdChangePromptFn _showCdChangePrompt;
-	RunKeywordMenuFn _runKeywordMenu;
-	RunResponseMenuFn _runResponseMenu;
-	RunResponseMenuTextFn _runResponseMenuText;
-	RunGameOverScreenFn _runGameOverScreen;
-	AssignTopicBufferFn _assignTopicBuffer;
-	MatchesResponseLineFn _matchesResponseLine;
-	MatchesAnyResponseLineFn _matchesAnyResponseLine;
+	DialogueRuntimeCallbacks &_callbacks;
 	mutable KeywordMenuSelectionState _lastKeywordSelection;
-	QueueDialogueInteractionIfNeededFn _queueDialogueInteractionIfNeeded;
-	ApplyImmediateDialogueInteractionEffectsFn _applyImmediateDialogueInteractionEffects;
-	GetRandomNumberFn _getRandomNumber;
-	SetActiveSpeakerPortraitFn _setActiveSpeakerPortrait;
 };
 
 } // End of namespace Harvester

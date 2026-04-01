@@ -19,7 +19,6 @@
  *
  */
 
-#include <functional>
 
 #include "harvester/npc/mrs_potts_dialogue.h"
 

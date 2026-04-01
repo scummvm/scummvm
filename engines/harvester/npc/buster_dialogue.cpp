@@ -19,7 +19,6 @@
  *
  */
 
-#include <functional>
 
 #include "graphics/screen.h"
 #include "harvester/harvester.h"

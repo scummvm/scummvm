@@ -515,3 +515,56 @@ Record high level progress indicator that summarizes how many total functions ar
 Ensure TRACKER.md only contains the *last* action take and the *next suggested* action
 
 Never guess.
+
+---
+
+## ScummVM Engine Conventions
+
+When editing ScummVM engine code in this repository, including `engines/harvester`, follow these rules in addition to the reverse-engineering workflow above.
+
+### Portability and language subset
+
+- Use ScummVM/common types and utilities in engine code instead of `std::` library types.
+- Prefer `Common::String`, `Common::Array`, `Common::HashMap`, `Common::ScopedPtr`, `Common::SharedPtr`, and other `common/` facilities.
+- If code is being ported from an external codebase and genuinely needs an STL-style wrapper, include the relevant `common/std/...` header and use `Std::`, never `std::`.
+- Do not use C++ exceptions.
+- Do not add global or function-local static objects that require constructors.
+- Non-const static locals inside function bodies are forbidden.
+- If a non-const global is unavoidable, document why it exists and where it is reset when the engine starts or shuts down.
+
+### Endianness, serialization, and struct layout
+
+- Never rely on host endianness for persisted data, imported assets, or binary parsing.
+- Use `Common::Serializer`, stream endian helpers, or `READ_/WRITE_` macros from `common/endian.h`.
+- Do not serialize raw structs directly.
+- Do not assume native struct packing or layout.
+- If packed structs are unavoidable, use `common/pack-start.h`, `PACKED_STRUCT`, and `common/pack-end.h`.
+
+### File access
+
+- Do not use `fopen`, `fread`, `fwrite`, `open`, `close`, or other raw C/POSIX file APIs in engine code.
+- Use ScummVM file APIs such as `Common::File`, `Common::DumpFile`, `Common::FSNode`, `SearchMan`, and archive streams.
+- Use `File::open("relative/name")` only for SearchMan-relative lookups.
+- Do not pass absolute paths to `File::open()`.
+- If a path comes from config or another filesystem source, first build a `Common::FSNode`, then open via `File::open(node)`, `DumpFile::open(node)`, `node.createReadStream()`, or `node.createWriteStream()`.
+- When traversing directories or handling platform-native filesystem locations, prefer `Common::FSNode` operations such as `getChild()`, `getParent()`, and `getPath()`.
+
+### Formatting and naming
+
+- Apply common sense, but default to ScummVM formatting conventions.
+- Use tabs for indentation with a tab width of 4.
+- Use hugging braces: `if (...) {` / `} else {`.
+- Avoid composite one-liners; prefer one statement per line.
+- Use braces for nested conditionals and for `if`/`else` chains when omission would reduce clarity.
+- Put spaces around operators, after commas, after comment markers, and between reserved words and `(`.
+- Use `char *ptr` and `int &ref` style spacing.
+- Keep namespace contents unindented.
+- Keep preprocessor directives starting in column 1.
+- For intentional `switch` fallthrough, use the exact comment `// fall through`.
+- Add vertical space between logical blocks when it improves readability.
+- Use ScummVM naming conventions: types in `UpperCamelCase`, methods/functions/locals in `lowerCamelCase`, member variables in `_lowerCamelCase`, globals with `g_` prefix, and constants either as `kCamelCase` or `ALL_CAPS_WITH_UNDERSCORES`.
+
+### Comments and documentation
+
+- Use `FIXME`, `TODO`, `WORKAROUND`, and `I18N:` comments only with specific explanatory text.
+- Prefer JavaDoc-style Doxygen comments for public APIs when new documentation is warranted.
