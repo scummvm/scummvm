@@ -180,6 +180,20 @@ struct CombatLoadoutHudInfo {
 	const char *unitLabel = nullptr;
 };
 
+struct ScopedDeferredLiveNpcDeathTransitions {
+	ScopedDeferredLiveNpcDeathTransitions(Script *script) : _script(script) {
+		if (_script)
+			_script->pushDeferredLiveNpcDeathTransitions();
+	}
+
+	~ScopedDeferredLiveNpcDeathTransitions() {
+		if (_script)
+			_script->popDeferredLiveNpcDeathTransitions();
+	}
+
+	Script *_script;
+};
+
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
 		!roomName.equalsIgnoreCase("RMNBATH") &&
@@ -1287,6 +1301,25 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				lhs.deathOrMonsterfyFlag == rhs.deathOrMonsterfyFlag &&
 				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
 		};
+		auto isQueuedLiveNpcDeathMutation = [&](const NpcRecord &lhs, const NpcRecord &rhs) {
+			return lhs.posX == rhs.posX &&
+				lhs.posY == rhs.posY &&
+				lhs.posZ == rhs.posZ &&
+				lhs.frameDelay == rhs.frameDelay &&
+				lhs.active &&
+				rhs.active &&
+				lhs.visible &&
+				rhs.visible &&
+				!lhs.runtimeSpawned &&
+				!rhs.runtimeSpawned &&
+				lhs.runtimeState < 0 &&
+				rhs.runtimeState < 0 &&
+				!lhs.deathOrMonsterfyFlag &&
+				!rhs.deathOrMonsterfyFlag &&
+				lhs.deathDamageType == 0 &&
+				rhs.deathDamageType != 0 &&
+				lhs.modelPath.equalsIgnoreCase(rhs.modelPath);
+		};
 		auto sameMonsterEntityState = [&](const MonsterRecord &lhs, const MonsterRecord &rhs) {
 			return lhs.posX == rhs.posX &&
 				lhs.posY == rhs.posY &&
@@ -1707,7 +1740,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				const bool keepEntity =
 					updatedNpc &&
 					shouldSpawnRoomNpcEntity(*updatedNpc) &&
-					sameNpcEntityState(npc, *updatedNpc);
+					(sameNpcEntityState(npc, *updatedNpc) ||
+						isQueuedLiveNpcDeathMutation(npc, *updatedNpc));
 				if (!keepEntity)
 					removeSceneEntityByName(npc.npcName);
 			}
@@ -1720,6 +1754,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					: nullptr;
 				const NpcRecord *previousNpc =
 					findRoomNpcByNameConst(scene.state.roomNpcs, npc.npcName);
+				const bool keepQueuedDeathEntity =
+					entity &&
+					previousNpc &&
+					isQueuedLiveNpcDeathMutation(*previousNpc, npc);
+				if (keepQueuedDeathEntity)
+					continue;
 				const bool needsRespawn =
 					!entity || !previousNpc || !sameNpcEntityState(*previousNpc, npc);
 				if (!needsRespawn)
@@ -1849,6 +1889,28 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			flow.resetCursorAnimationSequence();
 			captureCurrentSaveState();
 			return _inventory.refresh();
+		};
+		auto syncAnimatedRoomActorPlacement = [&]() {
+			if (playerState.entity) {
+				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+					playerState.centerX, playerState.bottomY, playerState.z);
+			}
+			if (!entityManager)
+				return;
+
+			for (const NpcRecord &npc : scene.state.roomNpcs) {
+				Entity *entity = entityManager->findSceneEntityByName(npc.npcName);
+				if (!entity)
+					continue;
+				(void)applyRoomNpcPlacement(*entity, npc);
+			}
+			for (const MonsterRecord &monster : scene.state.roomMonsters) {
+				Entity *entity = entityManager->findSceneEntityByName(monster.monsterName);
+				if (!entity)
+					continue;
+				(void)applyRoomActorPlacement(scene.state, *entity,
+					monster.posX, monster.posY, (float)monster.posZ);
+			}
 		};
 		auto stowCarriedRoomItemToInventory = [&]() {
 			if (!hasCarriedRoomItem())
@@ -2537,6 +2599,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			flow.resetCursorAnimationSequence();
 			resetIdleState();
 		}
+		ScopedDeferredLiveNpcDeathTransitions deferredLiveNpcDeathTransitions(
+			_engine.getScript());
 		auto findRoomNpcRecordByName = [&](const Common::String &npcName) -> NpcRecord * {
 			for (NpcRecord &npc : scene.state.roomNpcs) {
 				if (npc.npcName.equalsIgnoreCase(npcName))
@@ -3300,6 +3364,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!entity || !npc.visible || npc.deathOrMonsterfyFlag) {
 				clearRoomNpcCombatState(combatState);
 				continue;
+			}
+			if (!combatState.deathActive && npc.active && npc.deathDamageType != 0) {
+				if (beginNpcDeathTransition(npc, *entity, combatState, npc.deathDamageType))
+					continue;
+
+				debugC(1, kDebugCombat,
+					"Harvester: room npc death fallback target='%s' damage_type=%d on_death='%s' reason='no death bank'",
+					npc.npcName.c_str(), npc.deathDamageType, npc.onDeathActionTag.c_str());
+				combatState.deathDamageType = npc.deathDamageType;
+				combatState.deathLastFrame = entity->getCurrentFrame();
+				return finalizeNpcDeathTransition(npc, combatState);
 			}
 			if (!combatState.deathActive)
 				continue;
@@ -4764,6 +4839,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		if (flow.tickRuntimeEntities())
 			needsRedraw = true;
+		syncAnimatedRoomActorPlacement();
 		if (Player::updateDeathAnimationState(playerState)) {
 			requestPlayerGameOver("combat_player_death_complete", Common::String());
 			needsRedraw = true;
