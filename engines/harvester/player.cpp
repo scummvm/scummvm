@@ -270,6 +270,19 @@ static bool playPlayerAttackSound(HarvesterEngine &engine, int loadout) {
 	return soundPath && engine.playSound(soundPath);
 }
 
+static bool loadoutUsesConsumableCombatResource(int loadout) {
+	switch (loadout) {
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 14:
+		return true;
+	default:
+		return false;
+	}
+}
+
 static bool playPlayerHitSound(HarvesterEngine &engine) {
 	const uint soundIndex = ARRAYSIZE(kPlayerHitSoundPaths) > 1
 		? engine.getRandomNumber(ARRAYSIZE(kPlayerHitSoundPaths) - 1)
@@ -1128,14 +1141,30 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 		RoomPlayerState &playerState) {
 	if (!playerState.attackActive || !playerState.entity)
 		return false;
+	bool changed = false;
 	if (!playerState.attackSoundPlayed &&
 			playerState.attackSoundPlaybackFrame >= 0 &&
 			playerState.entity->getCurrentFrame() >= playerState.attackSoundPlaybackFrame) {
-		(void)playPlayerAttackSound(engine, playerState.combatLoadout);
+		if (loadoutUsesConsumableCombatResource(playerState.combatLoadout)) {
+			Script *script = engine.getScript();
+			if (!script || !script->consumePlayerCombatResourceUnit(playerState.combatLoadout)) {
+				debugC(1, kDebugCombat,
+					"Harvester: combat player attack dry fire loadout=%d weapon='%s'",
+					playerState.combatLoadout,
+					describeCombatLoadout(playerState.combatLoadout));
+				playerState.attackTargetName.clear();
+				playerState.attackTargetClassId = -1;
+			} else {
+				changed = true;
+				(void)playPlayerAttackSound(engine, playerState.combatLoadout);
+			}
+		} else {
+			(void)playPlayerAttackSound(engine, playerState.combatLoadout);
+		}
 		playerState.attackSoundPlayed = true;
 	}
 	if (playerState.entity->getCurrentFrame() != playerState.attackLastFrame)
-		return false;
+		return changed;
 
 	const int resumeFacing = playerState.attackResumeFacing >= 0
 		? playerState.attackResumeFacing
@@ -1150,7 +1179,7 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 	playerState.attackContactResolved = false;
 	playerState.attackTargetName.clear();
 	playerState.attackTargetClassId = -1;
-	return setIdleAnimation(playerState, resumeFacing);
+	return setIdleAnimation(playerState, resumeFacing) || changed;
 }
 
 bool Player::startHitAnimation(HarvesterEngine &engine, RoomPlayerState &playerState,

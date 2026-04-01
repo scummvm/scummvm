@@ -1065,6 +1065,7 @@
 - `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
   - It is called from `run_harvester_main_loop`, the dialogue/response/keyword modal loops, and the player-combat wrapper, so actor motion/combat continues advancing while blocking UI is active.
   - It handles class-4/5/6 actor entities, advances animation/state transitions, maintains pursuit spacing against the player using `engage_distance`, applies room Z bounds and vertical motion, fires frame-timed sound hooks, resolves hit damage through `damage_amount`, and returns `0` when the caller should remove the actor entity from the world list.
+  - For player resource-backed loadouts `2`, `3`, `4`, `5`, and `0xe`, the player-attack branch calls `consume_weapon_ammo_and_play_fire_or_empty_sound` on the first-frame-plus-one attack commit. That helper decrements the corresponding HUD/resource count before the later contact frame and falls back to the empty-click sample when the count is already `0`.
   - The close-range hit-resolution block reuses the hidden helper at live actor field `+0x11a8`: it links attacker/target runtime pointers, forces the helper back to frame `0`, repositions it over the struck actor, and shows it when the helper was still hidden.
   - The native locomotion constants now read cleanly out of the state machine: left/right walk uses `depth_scale * 8.0`, the reverse-step families use `depth_scale * 16.0`, the class-6 monster pursue band is `g_player_combat_avatar->z +/- 2.0`, and the horizontal chase waypoint slack is `depth_scale * 50.0`.
   - Native player room walking keeps screen-space Y separate from depth:
@@ -1161,6 +1162,7 @@
 - `run_inventory_screen` at `0x7df10` is the inventory UI loop.
   - It lays out carried objects, shows `inventory_text_key` strings from `TEXT` records, handles use-on-target dispatch, and swaps the status panel object based on current health.
   - The weapon right-click branch maps the weapon subset (`CLEAVER` through `POOLSTICK`) to loadout ids `1..20`, removes any visible weapon-resource strip, formats `Disarming %s...` or `Arming %s, %i ...` inside `BOX1`, then calls `set_player_combat_loadout`.
+  - After that `BOX1` weapon-toggle path, native clears the temporary text/panel state, sets the inventory-loop exit flag, and returns to the caller instead of remaining in the inventory loop.
   - The formatted `%s` weapon label is not the full `_STEXT` tooltip payload. Decoded town-script data shows entries like `SHOTGUN_STEXT = "shotgun,_right_click_to_arm/disarm"` and `NAILGUN_STEXT = "nailgun;_right_click_to_arm/disarm"`, so the native inventory message path is using the base label up to the first comma or semicolon.
   - The same native right-click branch does not expose a generic shell-box use path: after the hardcoded document/photo table it falls through only for `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN`. `SHOTSHELL` ammunition therefore has to be granted by the pickup action, not by later inventory use.
 - `run_game_over_screen` at `0x7c540` is the death/game-over UI branch reached from the main loop after the player combat avatar enters its terminal failure path.
@@ -1375,7 +1377,7 @@
 ### Inventory Secondary-Click Actions
 
 - `Confidence:` High.
-- `Evidence:` in `run_inventory_screen`, the right-click branch first maps the weapon subset (`CLEAVER` through `POOLSTICK`) to fixed combat-loadout ids `1..20`, then calls `set_player_combat_loadout` and refreshes the inventory status state without leaving the inventory loop.
+- `Evidence:` in `run_inventory_screen`, the right-click branch first maps the weapon subset (`CLEAVER` through `POOLSTICK`) to fixed combat-loadout ids `1..20`, shows the `BOX1` arming/disarming message, then calls `set_player_combat_loadout`, tears down the temporary `BOX1` state, and exits the inventory loop.
 - `Evidence:` the same branch maps a separate hardcoded document/photo subset to fixed action tags rather than object-record metadata: `NOTE_PHOTOCOPY -> GO_BOYLCOPYCU`, `NOTE -> GO_BOYLNOTECU`, `CHECKBOOK -> GO_REGISTERCU`, `CHECKBOOK_PHOTOCOPY -> GO_RGSTRCPYCU`, `TV_DEED -> GO_TVDEED1CU`, `TV_DEED_PHOTOCOPY -> GO_TVDEED2CU`, `CLUE -> GOTO_CLUE_CU`, `AUTOGRAPH -> GO_AUTOGRPHCU`, plus the corresponding Whaley photo, casket photo, permit, lodge-application, safebook, patrol-schedule, and invite entries.
 - `Evidence:` after dispatching one of those hardcoded closeup tags, `run_inventory_screen` tears down the inventory render state and returns to the caller instead of staying in the loop.
 - `Evidence:` only the six consumable or self-use items `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN` fall back to the clicked object's own `action_tag`; that branch stays inside the inventory loop so HP and status changes remain visible.

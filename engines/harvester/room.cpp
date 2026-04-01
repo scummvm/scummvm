@@ -1007,6 +1007,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		bool inspectCanDismiss = false;
 		ResolvedText combatLoadoutStatusText;
 		uint32 combatLoadoutStatusHideTick = 0;
+		bool closeInventoryAfterCombatLoadoutStatus = false;
 		bool moveLeft = false;
 		bool moveRight = false;
 		bool moveUp = false;
@@ -3921,6 +3922,11 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				(int32)(Player::getRuntimeClockTicks() - combatLoadoutStatusHideTick) >= 0) {
 			combatLoadoutStatusText = ResolvedText();
 			combatLoadoutStatusHideTick = 0;
+			if (closeInventoryAfterCombatLoadoutStatus) {
+				closeInventoryAfterCombatLoadoutStatus = false;
+				if (_inventory.close())
+					needsRedraw = true;
+			}
 			needsRedraw = true;
 		}
 
@@ -4093,6 +4099,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 										*script, inventoryHover->object, previousLoadout,
 										script->getPlayerCombatLoadout());
 									queueCombatLoadoutStatusMessage(statusMessage);
+									closeInventoryAfterCombatLoadoutStatus = true;
 								}
 								captureCurrentSaveState();
 								if (playerState.entity) {

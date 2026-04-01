@@ -406,6 +406,7 @@ public:
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
 	int getPlayerCombatLoadout() const { return _playerCombatLoadout; }
 	int getPlayerCombatResourceCount(int loadout) const;
+	bool consumePlayerCombatResourceUnit(int loadout);
 	bool isPlayerControlPaused() const { return _playerControlPaused; }
 	bool adjustPlayerCurrentHitPoints(int delta);
 	bool setPlayerCombatLoadout(int loadout);
