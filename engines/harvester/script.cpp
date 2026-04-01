@@ -1664,6 +1664,23 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 			_nineGunBulletCount = 0;
 			_thirtyEightGunBulletCount = 0;
 			_chainsawFuelCount = 0;
+
+			// Native HARVEST.SCR couples the cloak-room shotgun pickup to
+			// CLOAK_ADD -> ADD2INV SHOTGUN -> ADD_SHOTGUN_SHELLS 2, and the
+			// shell-box pickup to ADD12SHELLS -> ADD_SHOTGUN_SHELLS 14 with a
+			// native cap of 15. Pre-v18 ScummVM saves had no serialized combat
+			// resource counts, so infer the confirmed shotgun baseline from the
+			// persisted inventory objects rather than dropping legacy saves to 0.
+			if (isObjectInInventory("SHOTGUN"))
+				_shotgunShellCount = 2;
+			if (isObjectInInventory("SHOTSHELL")) {
+				_shotgunShellCount = CLIP<int>(_shotgunShellCount + 14, 0,
+					resolveCombatResourcePickupMax(3));
+			}
+			debugC(1, kDebugGeneral,
+				"Harvester: inferred legacy pre-v18 combat resources shells=%d shotgun=%d shell_box=%d",
+				_shotgunShellCount, isObjectInInventory("SHOTGUN"),
+				isObjectInInventory("SHOTSHELL"));
 		}
 		// FIXME: Drop this compatibility pass after release; it exists only to repair
 		// pre-release saves written before the monster combat field layout stabilized.
