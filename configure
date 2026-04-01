@@ -5273,8 +5273,16 @@ fi
 define_in_config_if_yes "$_dynamic_modules" 'DYNAMIC_MODULES'
 
 if test "$_dynamic_modules" = yes ; then
-	add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
-	add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
+	if test ! -z "$_plugin_prefix" ; then
+		add_line_to_config_h "#define PLUGIN_PREFIX	\"$_plugin_prefix\""
+	else
+		add_line_to_config_h "#undef PLUGIN_PREFIX"
+	fi
+	if test ! -z "$_plugin_suffix" ; then
+		add_line_to_config_h "#define PLUGIN_SUFFIX	\"$_plugin_suffix\""
+	else
+		add_line_to_config_h "#undef PLUGIN_SUFFIX"
+	fi
 	add_line_to_config_mk "PLUGIN_PREFIX := $_plugin_prefix"
 	add_line_to_config_mk "PLUGIN_SUFFIX := $_plugin_suffix"
 fi
