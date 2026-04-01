@@ -401,6 +401,8 @@ public:
 	bool queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
 	bool finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0,
 		bool preserveCorpse = false, int corpseFrame = -1);
+	void pushDeferredLiveNpcDeathTransitions();
+	void popDeferredLiveNpcDeathTransitions();
 	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
@@ -512,6 +514,7 @@ private:
 	Common::String _drive2Path;
 	Common::String _drive3Path;
 	StartupDialogueTextMode _dialogueTextMode = kStartupDialogueTextYes;
+	int _deferredLiveNpcDeathTransitionDepth = 0;
 };
 
 } // End of namespace Harvester

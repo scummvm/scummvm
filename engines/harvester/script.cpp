@@ -2618,6 +2618,15 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	return changed || monsterChanged;
 }
 
+void Script::pushDeferredLiveNpcDeathTransitions() {
+	++_deferredLiveNpcDeathTransitionDepth;
+}
+
+void Script::popDeferredLiveNpcDeathTransitions() {
+	if (_deferredLiveNpcDeathTransitionDepth > 0)
+		--_deferredLiveNpcDeathTransitionDepth;
+}
+
 bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
 		ResourceManager &resources, RoomSetupState &state) const {
 	state = RoomSetupState();
@@ -3097,7 +3106,17 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			const int deathDamageType = parseNpcDeathDamageType(command->arg2);
-			noteMutation(finalizeRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType));
+			const bool deferLiveNpcDeathTransition =
+				_deferredLiveNpcDeathTransitionDepth > 0 &&
+				!contextRoomName.empty() &&
+				currentNpc->roomName.equalsIgnoreCase(contextRoomName) &&
+				currentNpc->active &&
+				currentNpc->visible &&
+				!currentNpc->deathOrMonsterfyFlag &&
+				currentNpc->runtimeState < 0;
+			noteMutation(deferLiveNpcDeathTransition
+				? queueRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType)
+				: finalizeRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType));
 			currentTag = command->arg4;
 			continue;
 		}

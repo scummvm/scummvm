@@ -1457,21 +1457,9 @@ bool Player::stepKeyboardMovement(HarvesterEngine &engine, const RoomSetupState 
 	if (verticalInput != 0) {
 		candidateBottomY = clampRoomMovementY(state,
 			playerState.bottomY + verticalInput * verticalStep);
-		const float positiveZ = clampRoomDepth(state, playerState.z + depthStep);
-		const float negativeZ = clampRoomDepth(state, playerState.z - depthStep);
-		const int positiveY = mapRoomDepthToScreenY(state, positiveZ);
-		const int negativeY = mapRoomDepthToScreenY(state, negativeZ);
-		if (candidateBottomY < playerState.bottomY) {
-			if (positiveY < playerState.bottomY)
-				candidateZ = positiveZ;
-			else if (negativeY < playerState.bottomY)
-				candidateZ = negativeZ;
-		} else if (candidateBottomY > playerState.bottomY) {
-			if (positiveY > playerState.bottomY)
-				candidateZ = positiveZ;
-			else if (negativeY > playerState.bottomY)
-				candidateZ = negativeZ;
-		}
+		// Native room-combat movement advances screen Y and room depth independently:
+		// down-walk states apply -z_velocity_step while up-walk states apply +z_velocity_step.
+		candidateZ = clampRoomDepth(state, playerState.z - verticalInput * depthStep);
 	}
 	if (candidateCenterX == playerState.centerX &&
 			candidateBottomY == playerState.bottomY &&
