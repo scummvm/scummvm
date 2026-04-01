@@ -966,7 +966,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (!entity)
 						continue;
 					(void)script->syncRuntimeAnimState(anim.animName,
-						entity->isAnimationEnabled(), entity->isVisible(), entity->getCurrentFrame());
+						entity->isAnimationEnabled(), anim.visible, entity->getCurrentFrame());
 				}
 			}
 			for (const MonsterRecord &monster : scene.state.roomMonsters)
@@ -1492,14 +1492,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			for (AnimRecord &anim : updatedState.roomAnimations) {
 				const AnimRecord *previous =
 					findRoomAnimByNameConst(scene.state.roomAnimations, anim.animName);
-				const bool becameVisible = (!previous || !previous->visible) && anim.visible;
+				const bool wasDisplayed = previous && shouldDisplaySceneAnimation(*previous);
+				const bool isDisplayed = shouldDisplaySceneAnimation(anim);
+				const bool becameVisible = !wasDisplayed && isDisplayed;
 				if (becameVisible)
 					anim.runtimeState = 0;
 
 				Entity *entity = entityManager
 					? entityManager->findSceneEntityByName(anim.animName)
 					: nullptr;
-				if (!anim.visible) {
+				if (!isDisplayed) {
 					removeSceneEntityByName(anim.animName);
 					continue;
 				}
@@ -1518,7 +1520,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (entityManager) {
 						entity = entityManager->spawnSceneAnimationEntity(
 							anim.animName, anim.resourcePath, Common::Point(anim.x, anim.y),
-							(float)anim.z, anim.frameDelay, anim.active, anim.visible, anim.looping,
+							(float)anim.z, anim.frameDelay, anim.active, isDisplayed, anim.looping,
 							anim.backward, anim.pingPong, anim.runtimeState);
 					}
 				} else if (entity) {
@@ -1530,7 +1532,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					entity->setPingPong(anim.pingPong);
 					entity->setPlayBackwards(anim.backward);
 					entity->setAnimationRate(anim.frameDelay);
-					entity->setVisible(anim.visible);
+					entity->setVisible(isDisplayed);
 					entity->setAnimationEnabled(anim.active);
 					if (zChanged)
 						entityManager->reinsertSceneEntity(entity);

@@ -640,6 +640,10 @@ static bool shouldQueueSceneObject(const ObjectRecord &object) {
 		(object.operatable || !object.actionTag.empty());
 }
 
+bool shouldDisplaySceneAnimation(const AnimRecord &anim) {
+	return anim.active || anim.visible;
+}
+
 static void queueSceneObject(const char *source, const ObjectRecord &object,
 		Common::Array<ObjectRecord> &sceneObjects) {
 	if (!shouldQueueSceneObject(object)) {
@@ -675,7 +679,7 @@ bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resour
 
 	scene.sceneObjects = sceneObjects;
 	for (const AnimRecord &anim : state.roomAnimations) {
-		if (anim.active || anim.visible)
+		if (shouldDisplaySceneAnimation(anim))
 			scene.sceneAnimations.push_back(anim);
 	}
 	scene.sceneRegions = state.roomRegions;
@@ -1876,8 +1880,9 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			spritePath.c_str(), object.actionTag.c_str(), object.operatable, object.identTextKey.c_str());
 	}
 	for (const AnimRecord &anim : drawableAnimations) {
+		const bool displayVisible = shouldDisplaySceneAnimation(anim);
 		if (!entityManager->spawnSceneAnimationEntity(anim.animName, anim.resourcePath,
-				Common::Point(anim.x, anim.y), (float)anim.z, anim.frameDelay, anim.active, anim.visible,
+				Common::Point(anim.x, anim.y), (float)anim.z, anim.frameDelay, anim.active, displayVisible,
 				anim.looping, anim.backward, anim.pingPong, anim.runtimeState)) {
 			debug(1, "Harvester: unable to spawn room anim entity '%s' from '%s'",
 				anim.animName.c_str(), anim.resourcePath.c_str());

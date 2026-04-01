@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On March 31, 2026, aligned the Harvester engine with the documented ScummVM portability and formatting conventions by replacing remaining `std::function`/`std::unique_ptr` usage with ScummVM-native patterns, removing hidden function-local static object state, documenting the `g_engine` global reset behavior, switching startup-config writes to `FSNode`-based file opening, removing leftover `<functional>` includes from the NPC dialogue sources, and codifying the ScummVM engine rules in `AGENTS.md`. Verified with `git diff --check` and a successful `make -C build-vscode-harvester-debug -j4 engines/harvester/libharvester.a`.
+- On April 1, 2026, corrected room-animation spawning so active Harvester room animations are displayed even when the authored script leaves their raw visibility flag cleared, which restores the missing `DRAWFIRE` fireplace animation on entry to `DRAWROOM` without rewriting script state. Verified with a successful `make -C build-vscode-harvester-debug -j4 engines/harvester/flow.o engines/harvester/room.o`.
 
 ## Next Suggested Action
 
-- Do a runtime smoke test that exercises room-NPC dialogue, response menus, keyword entry, and startup config persistence to confirm the refactored dialogue session plumbing and `FSNode`-based config writes behave identically in-game.
+- Do a runtime smoke test that enters `DRAWROOM` from `MAINHALL`, confirms `DRAWFIRE` is visible before interaction, and checks a few other authored active-only room animations to make sure the renderer now matches the original script semantics.
