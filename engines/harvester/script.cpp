@@ -2420,6 +2420,21 @@ int Script::getPlayerCombatResourceCount(int loadout) const {
 	return count ? *count : 0;
 }
 
+bool Script::consumePlayerCombatResourceUnit(int loadout) {
+	const int maxCount = resolveCombatResourcePickupMax(loadout);
+	if (maxCount <= 0)
+		return true;
+
+	if (getPlayerCombatResourceCount(loadout) < 1) {
+		debugC(1, kDebugGeneral,
+			"Harvester: PLAYER_ATTACK player combat resource loadout=%d('%s') delta=0 count=0->0 max=%d changed=0",
+			loadout, Player::describeCombatLoadout(loadout), maxCount);
+		return false;
+	}
+
+	return adjustPlayerCombatResourceCount(loadout, -1, maxCount, "PLAYER_ATTACK");
+}
+
 int *Script::getPlayerCombatResourceCountPtr(int loadout) {
 	switch (loadout) {
 	case 2:
