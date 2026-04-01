@@ -3570,6 +3570,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return Common::kNoError;
 		}
 
+		StartupRoomTransitionKind roomTransition = interaction.roomTransition;
+		if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
+			roomTransition = kStartupRoomTransitionCloseup;
+
+		// Flow shares one inventory system across nested room loops. Clear the held item
+		// before entering a closeup so it is not still carried while the child room loop
+		// is active.
+		if (!interaction.nextRoomName.empty() &&
+				roomTransition != kStartupRoomTransitionChangeRoom)
+			_inventory.clearSelection();
+
 		bool didTransition = false;
 		Common::Error interactionError =
 			interactionProcessor.handleInteractionResult(interaction, didTransition, selectedItemName);
