@@ -156,6 +156,10 @@ static void syncStartupNpcRecord(Common::Serializer &s, NpcRecord &record) {
 	s.syncString(record.roomName);
 	syncBool(s, record.deathOrMonsterfyFlag);
 	syncBool(s, record.runtimeSpawned);
+	// FIXME: Remove this pre-release version-17 gate once Harvester ships and all
+	// saves carry room-NPC corpse frame state.
+	if (s.getVersion() >= 17)
+		s.syncAsSint32LE(record.runtimeState);
 	syncBool(s, record.active);
 	syncBool(s, record.visible);
 	syncBool(s, record.savedVisible);
@@ -595,8 +599,10 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 		ObjectRecord *currentObject = findRuntimeObject(object.initialOwnerOrRoom, object.objectName);
 		if (!currentObject)
 			currentObject = findRuntimeObject(Common::String(), object.objectName);
-		if (!currentObject)
+		if (!currentObject) {
+			_currentObjects.push_back(object);
 			continue;
+		}
 
 		currentObject->currentX = object.currentX;
 		currentObject->currentY = object.currentY;
@@ -609,8 +615,10 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 
 	for (const AnimRecord &anim : currentAnimations) {
 		AnimRecord *currentAnimation = findRuntimeAnim(anim.animName);
-		if (!currentAnimation)
+		if (!currentAnimation) {
+			_currentAnimations.push_back(anim);
 			continue;
+		}
 
 		currentAnimation->active = anim.active;
 		currentAnimation->visible = anim.visible;
@@ -621,29 +629,36 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 
 	for (const RegionRecord &region : currentRegions) {
 		RegionRecord *currentRegion = findRuntimeRegion(region.regionName);
-		if (!currentRegion)
+		if (!currentRegion) {
+			_currentRegions.push_back(region);
 			continue;
+		}
 
 		currentRegion->startEnabled = region.startEnabled;
 	}
 
 	for (const NpcRecord &npc : currentNpcs) {
 		NpcRecord *currentNpc = findRuntimeNpc(npc.npcName);
-		if (!currentNpc)
+		if (!currentNpc) {
+			_currentNpcs.push_back(npc);
 			continue;
+		}
 
 		currentNpc->active = npc.active;
 		currentNpc->visible = npc.visible;
 		currentNpc->savedVisible = npc.savedVisible;
 		currentNpc->runtimeSpawned = npc.runtimeSpawned;
+		currentNpc->runtimeState = npc.runtimeState;
 		currentNpc->deathOrMonsterfyFlag = npc.deathOrMonsterfyFlag;
 		currentNpc->deathDamageType = npc.deathDamageType;
 	}
 
 	for (const MonsterRecord &monster : currentMonsters) {
 		MonsterRecord *currentMonster = findRuntimeMonster(monster.monsterName);
-		if (!currentMonster)
+		if (!currentMonster) {
+			_currentMonsters.push_back(monster);
 			continue;
+		}
 
 		currentMonster->posX = monster.posX;
 		currentMonster->posY = monster.posY;
@@ -661,8 +676,10 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 
 	for (const TimerRecord &timer : currentTimers) {
 		TimerRecord *currentTimer = findRuntimeTimer(timer.timerName);
-		if (!currentTimer)
+		if (!currentTimer) {
+			_currentTimers.push_back(timer);
 			continue;
+		}
 
 		currentTimer->initialValue = timer.initialValue;
 		currentTimer->currentValue = timer.currentValue;
@@ -1357,6 +1374,7 @@ void Script::resetRuntimeState() {
 
 	for (NpcRecord &npc : _currentNpcs) {
 		npc.runtimeSpawned = false;
+		npc.runtimeState = -1;
 		npc.savedVisible = npc.visible;
 	}
 
@@ -1446,19 +1464,21 @@ void Script::logRuntimeSaveState(const char *operation) const {
 		const bool defaultSavedVisible = baseNpc ? baseNpc->visible : npc.visible;
 		const bool defaultDeathOrMonsterfy = baseNpc ? baseNpc->deathOrMonsterfyFlag : npc.deathOrMonsterfyFlag;
 		const int defaultDeathDamageType = baseNpc ? baseNpc->deathDamageType : npc.deathDamageType;
+		const int defaultRuntimeState = -1;
 		if (!baseNpc ||
 				npc.active != defaultActive ||
 				npc.visible != defaultVisible ||
 				npc.savedVisible != defaultSavedVisible ||
 				npc.deathOrMonsterfyFlag != defaultDeathOrMonsterfy ||
 				npc.deathDamageType != defaultDeathDamageType ||
-				npc.runtimeSpawned) {
+				npc.runtimeSpawned ||
+				npc.runtimeState != defaultRuntimeState) {
 			debugC(1, kDebugGeneral,
-				"Harvester: %s runtime npc '%s' active=%d visible=%d savedVisible=%d spawned=%d deathOrMonsterfy=%d damageType=%d base_active=%d base_visible=%d base_savedVisible=%d base_deathOrMonsterfy=%d base_damageType=%d",
+				"Harvester: %s runtime npc '%s' active=%d visible=%d savedVisible=%d spawned=%d runtimeState=%d deathOrMonsterfy=%d damageType=%d base_active=%d base_visible=%d base_savedVisible=%d base_spawned=%d base_runtimeState=%d base_deathOrMonsterfy=%d base_damageType=%d",
 				operation, npc.npcName.c_str(), npc.active, npc.visible, npc.savedVisible,
-				npc.runtimeSpawned, npc.deathOrMonsterfyFlag, npc.deathDamageType,
+				npc.runtimeSpawned, npc.runtimeState, npc.deathOrMonsterfyFlag, npc.deathDamageType,
 				defaultActive, defaultVisible, defaultSavedVisible,
-				defaultDeathOrMonsterfy, defaultDeathDamageType);
+				0, defaultRuntimeState, defaultDeathOrMonsterfy, defaultDeathDamageType);
 		}
 	}
 
@@ -2299,7 +2319,8 @@ bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int 
 	return true;
 }
 
-bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType) {
+bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType,
+		bool preserveCorpse, int corpseFrame) {
 	if (npcName.empty())
 		return false;
 
@@ -2327,11 +2348,15 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 	const bool changed = !currentNpc->deathOrMonsterfyFlag ||
 		currentNpc->active ||
 		currentNpc->visible ||
+		currentNpc->runtimeSpawned ||
+		currentNpc->runtimeState != (preserveCorpse && corpseFrame >= 0 ? corpseFrame : -1) ||
 		(deathDamageType != 0 && currentNpc->deathDamageType != deathDamageType);
 	currentNpc->active = false;
-	currentNpc->visible = false;
-	currentNpc->savedVisible = false;
-	currentNpc->deathOrMonsterfyFlag = true;
+	currentNpc->visible = preserveCorpse && corpseFrame >= 0 && currentNpc->monsterfyTargetName.empty();
+	currentNpc->savedVisible = currentNpc->visible;
+	currentNpc->deathOrMonsterfyFlag = !currentNpc->visible;
+	currentNpc->runtimeSpawned = currentNpc->visible;
+	currentNpc->runtimeState = currentNpc->visible ? corpseFrame : -1;
 	if (deathDamageType != 0)
 		currentNpc->deathDamageType = deathDamageType;
 	return changed || monsterChanged;
@@ -2454,8 +2479,9 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 	}
 	for (const NpcRecord &npc : state.roomNpcs) {
 		debugC(1, kDebugRoom,
-			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
+			"Harvester: materialized room npc room='%s' npc='%s' visible=%d active=%d spawned=%d runtimeState=%d damage_type=%d pos=(%d,%d,%d) frame_delay=%d model='%s' on_death='%s' audio='%s'",
 			state.roomName.c_str(), npc.npcName.c_str(), npc.visible, npc.active,
+			npc.runtimeSpawned, npc.runtimeState, npc.deathDamageType,
 			npc.posX, npc.posY, npc.posZ, npc.frameDelay,
 			npc.modelPath.c_str(), npc.onDeathActionTag.c_str(), npc.audioPath.c_str());
 	}
