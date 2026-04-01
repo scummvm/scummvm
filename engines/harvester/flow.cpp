@@ -1893,11 +1893,23 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 		}
 
 		entity->setClassId(kRuntimeEntityClassNpc);
-		entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
-		// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
-		entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
-		if (npc.frameDelay > 0)
-			entity->setAnimationRate(npc.frameDelay);
+		const bool isCorpse = !npc.active &&
+			npc.runtimeSpawned &&
+			npc.deathDamageType != 0 &&
+			npc.runtimeState >= 0;
+		entity->setHitTestMode(isCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
+		if (isCorpse) {
+			const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
+			entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
+			entity->setAnimationRate(0);
+			entity->setCurrentFrame(corpseFrame);
+			entity->setAnimationEnabled(false);
+		} else {
+			// Native spawn_npc_entity_from_record seeds the passive room-NPC loop as frames 0..0x3b.
+			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
+			if (npc.frameDelay > 0)
+				entity->setAnimationRate(npc.frameDelay);
+		}
 		// Native room NPCs come from spawn_abm_entity_base, which leaves the depth-scale flag cleared.
 		if (!applyRoomActorPlacementInternal(state, *entity,
 				npc.posX, npc.posY, (float)npc.posZ, nullptr, false)) {

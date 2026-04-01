@@ -141,6 +141,7 @@ struct NpcRecord {
 	Common::String roomName;
 	bool deathOrMonsterfyFlag = false;
 	bool runtimeSpawned = false;
+	int runtimeState = -1;
 	bool active = false;
 	bool visible = false;
 	bool savedVisible = false;
@@ -395,7 +396,8 @@ public:
 		bool visible);
 	bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
 	bool queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
-	bool finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
+	bool finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0,
+		bool preserveCorpse = false, int corpseFrame = -1);
 	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }

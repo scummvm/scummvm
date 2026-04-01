@@ -39,9 +39,10 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-// FIXME: This pre-release version-16 bump exists only to carry monster corpse
-// runtimeState. Fold it into the final Harvester save layout before release.
-static const uint32 kHarvesterSaveVersion = 16;
+// FIXME: This pre-release version-17 bump exists only to carry room-NPC corpse
+// runtimeState alongside the earlier monster corpse state. Fold it into the
+// final Harvester save layout before release.
+static const uint32 kHarvesterSaveVersion = 17;
 
 static void logStartupSaveRoomState(const char *operation, const SaveRoomState &state) {
 	debugC(1, kDebugRoom,
