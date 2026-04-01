@@ -62,6 +62,7 @@ struct RoomPlayerState {
 	uint32 nextMovementTick = 0;
 	bool hasMoveTarget = false;
 	int targetX = 0;
+	int targetBottomY = 0;
 	float targetZ = 0.0f;
 	bool turnActive = false;
 	int turnTargetFacing = -1;
