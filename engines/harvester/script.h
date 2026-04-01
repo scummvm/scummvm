@@ -405,6 +405,7 @@ public:
 	int getCurrentStoryDayIndex() const;
 	int getPlayerCurrentHitPoints() const { return _playerCurrentHitPoints; }
 	int getPlayerCombatLoadout() const { return _playerCombatLoadout; }
+	int getPlayerCombatResourceCount(int loadout) const;
 	bool isPlayerControlPaused() const { return _playerControlPaused; }
 	bool adjustPlayerCurrentHitPoints(int delta);
 	bool setPlayerCombatLoadout(int loadout);
@@ -457,6 +458,10 @@ private:
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;
 	bool setPlayerCurrentHitPoints(int hitPoints);
+	int *getPlayerCombatResourceCountPtr(int loadout);
+	const int *getPlayerCombatResourceCountPtr(int loadout) const;
+	bool adjustPlayerCombatResourceCount(int loadout, int delta, int maxCount,
+		const Common::String &reason);
 	void logRuntimeSaveState(const char *operation) const;
 
 	Common::String _path;
@@ -484,6 +489,11 @@ private:
 	Common::Array<NpcRecord> _currentNpcs;
 	Common::Array<MonsterRecord> _currentMonsters;
 	Common::Array<TimerRecord> _currentTimers;
+	int _nailgunAmmoCount = 0;
+	int _shotgunShellCount = 0;
+	int _nineGunBulletCount = 0;
+	int _thirtyEightGunBulletCount = 0;
+	int _chainsawFuelCount = 0;
 	int _playerCurrentHitPoints = 30;
 	int _playerCombatLoadout = 0;
 	bool _playerControlPaused = false;
