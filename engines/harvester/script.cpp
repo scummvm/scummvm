@@ -237,6 +237,13 @@ static bool hasLegacyMonsterCombatFieldLayout(const MonsterRecord &baseMonster,
 		currentMonster.engageDistance != baseMonster.engageDistance;
 }
 
+static bool matchesMonsterIdentity(const MonsterRecord &candidate, const MonsterRecord &monster) {
+	if (!candidate.monsterName.equalsIgnoreCase(monster.monsterName))
+		return false;
+
+	return monster.roomName.empty() || candidate.roomName.equalsIgnoreCase(monster.roomName);
+}
+
 static void syncStartupTimerRecord(Common::Serializer &s, TimerRecord &record) {
 	s.syncAsSint32LE(record.initialValue);
 	s.syncAsSint32LE(record.currentValue);
@@ -654,7 +661,7 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	}
 
 	for (const MonsterRecord &monster : currentMonsters) {
-		MonsterRecord *currentMonster = findRuntimeMonster(monster.monsterName);
+		MonsterRecord *currentMonster = findRuntimeMonster(monster);
 		if (!currentMonster) {
 			_currentMonsters.push_back(monster);
 			continue;
@@ -1485,13 +1492,7 @@ void Script::logRuntimeSaveState(const char *operation) const {
 	}
 
 	for (const MonsterRecord &monster : _currentMonsters) {
-		const MonsterRecord *baseMonster = nullptr;
-		for (const MonsterRecord &candidate : _monsters) {
-			if (candidate.monsterName.equalsIgnoreCase(monster.monsterName)) {
-				baseMonster = &candidate;
-				break;
-			}
-		}
+		const MonsterRecord *baseMonster = findBaseMonster(monster);
 
 		const bool defaultActive = baseMonster ? baseMonster->active : monster.active;
 		const bool defaultVisible = baseMonster
@@ -1576,13 +1577,7 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		// pre-release saves written before the monster combat field layout stabilized.
 		if (s.getVersion() >= 2) {
 			for (MonsterRecord &currentMonster : _currentMonsters) {
-				const MonsterRecord *baseMonster = nullptr;
-				for (const MonsterRecord &monster : _monsters) {
-					if (monster.monsterName.equalsIgnoreCase(currentMonster.monsterName)) {
-						baseMonster = &monster;
-						break;
-					}
-				}
+				const MonsterRecord *baseMonster = findBaseMonster(currentMonster);
 				if (!baseMonster)
 					continue;
 				if (!hasLegacyMonsterCombatFieldLayout(*baseMonster, currentMonster))
@@ -1596,13 +1591,7 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		if (s.getVersion() < 2) {
 			_currentTimers = _timers;
 			for (MonsterRecord &currentMonster : _currentMonsters) {
-				const MonsterRecord *baseMonster = nullptr;
-				for (const MonsterRecord &monster : _monsters) {
-					if (monster.monsterName.equalsIgnoreCase(currentMonster.monsterName)) {
-						baseMonster = &monster;
-						break;
-					}
-				}
+				const MonsterRecord *baseMonster = findBaseMonster(currentMonster);
 				if (!baseMonster)
 					continue;
 
@@ -2115,6 +2104,23 @@ MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterName) {
 	return nullptr;
 }
 
+MonsterRecord *Script::findRuntimeMonster(const MonsterRecord &monster) {
+	if (monster.monsterName.empty())
+		return nullptr;
+
+	MonsterRecord *fallback = nullptr;
+	for (MonsterRecord &candidate : _currentMonsters) {
+		if (!candidate.monsterName.equalsIgnoreCase(monster.monsterName))
+			continue;
+		if (matchesMonsterIdentity(candidate, monster))
+			return &candidate;
+		if (!fallback)
+			fallback = &candidate;
+	}
+
+	return fallback;
+}
+
 TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) {
 	if (timerName.empty())
 		return nullptr;
@@ -2149,6 +2155,40 @@ const MonsterRecord *Script::findRuntimeMonster(const Common::String &monsterNam
 	}
 
 	return nullptr;
+}
+
+const MonsterRecord *Script::findRuntimeMonster(const MonsterRecord &monster) const {
+	if (monster.monsterName.empty())
+		return nullptr;
+
+	const MonsterRecord *fallback = nullptr;
+	for (const MonsterRecord &candidate : _currentMonsters) {
+		if (!candidate.monsterName.equalsIgnoreCase(monster.monsterName))
+			continue;
+		if (matchesMonsterIdentity(candidate, monster))
+			return &candidate;
+		if (!fallback)
+			fallback = &candidate;
+	}
+
+	return fallback;
+}
+
+const MonsterRecord *Script::findBaseMonster(const MonsterRecord &monster) const {
+	if (monster.monsterName.empty())
+		return nullptr;
+
+	const MonsterRecord *fallback = nullptr;
+	for (const MonsterRecord &candidate : _monsters) {
+		if (!candidate.monsterName.equalsIgnoreCase(monster.monsterName))
+			continue;
+		if (matchesMonsterIdentity(candidate, monster))
+			return &candidate;
+		if (!fallback)
+			fallback = &candidate;
+	}
+
+	return fallback;
 }
 
 const TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) const {
@@ -2276,7 +2316,7 @@ bool Script::syncRuntimeAnimState(const Common::String &animName, bool active, b
 }
 
 bool Script::syncRuntimeMonsterRecord(const MonsterRecord &monster) {
-	MonsterRecord *currentMonster = findRuntimeMonster(monster.monsterName);
+	MonsterRecord *currentMonster = findRuntimeMonster(monster);
 	if (!currentMonster)
 		return false;
 
@@ -2342,7 +2382,10 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 
 	bool monsterChanged = false;
 	if (!currentNpc->monsterfyTargetName.empty()) {
-		MonsterRecord *currentMonster = findRuntimeMonster(currentNpc->monsterfyTargetName);
+		MonsterRecord monsterLookup;
+		monsterLookup.roomName = currentNpc->roomName;
+		monsterLookup.monsterName = currentNpc->monsterfyTargetName;
+		MonsterRecord *currentMonster = findRuntimeMonster(monsterLookup);
 		if (currentMonster) {
 			monsterChanged = !currentMonster->active || !currentMonster->visible;
 			currentMonster->active = true;

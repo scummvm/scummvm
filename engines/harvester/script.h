@@ -432,6 +432,9 @@ private:
 	const NpcRecord *findRuntimeNpc(const Common::String &npcName) const;
 	MonsterRecord *findRuntimeMonster(const Common::String &monsterName);
 	const MonsterRecord *findRuntimeMonster(const Common::String &monsterName) const;
+	MonsterRecord *findRuntimeMonster(const MonsterRecord &monster);
+	const MonsterRecord *findRuntimeMonster(const MonsterRecord &monster) const;
+	const MonsterRecord *findBaseMonster(const MonsterRecord &monster) const;
 	TimerRecord *findRuntimeTimer(const Common::String &timerName);
 	const TimerRecord *findRuntimeTimer(const Common::String &timerName) const;
 	bool buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
