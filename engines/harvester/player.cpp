@@ -1152,6 +1152,8 @@ bool Player::updateAttackAnimationState(HarvesterEngine &engine,
 					"Harvester: combat player attack dry fire loadout=%d weapon='%s'",
 					playerState.combatLoadout,
 					describeCombatLoadout(playerState.combatLoadout));
+				playerState.attackContactResolved = true;
+				playerState.attackContactFrame = -1;
 				playerState.attackTargetName.clear();
 				playerState.attackTargetClassId = -1;
 			} else {
