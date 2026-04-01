@@ -19,23 +19,26 @@
  *
  */
 
-#include "common/scummsys.h"
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
 #include "fool/zbasic.h"
-#include "graphics/macgui/macfontmanager.h"
 
 namespace Fool {
 
 extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
+#define CARDS_MAX_SCORE 700
+#define CARDS_MIN_SCORE (-999)
+#define CARDS_YIELD_PENALTY 27
+
 // wheel of fortune card game
 void FoolGame::cardsRun() {
 	// 139:0004
 	this->sub_128_271a();
 	this->var_i16_c00 = 1;
+	// set up card bounding boxes
 	g_toolbox->SetRect(this->arr_rect_1f38[1], 0x78, 0x19, 0xd1, 0xae);
 	g_toolbox->SetRect(this->arr_rect_1f38[2], 0xd3, 0x19, 0x12c, 0xae);
 	g_toolbox->SetRect(this->arr_rect_1f38[3], 0x12e, 0x19, 0x187, 0xae);
@@ -48,7 +51,7 @@ void FoolGame::cardsRun() {
 
 	// 139:011c
 	for (int i = 0; i <= 0x25; i++) {
-		g_zbasic->indexSet(this->puzzlesReadString(), 1, this->var_i16_68a);
+		g_zbasic->indexSet(this->puzzlesReadString(), 1, i);
 	}
 
 	this->var_i16_484 = 0x5e;
@@ -59,6 +62,7 @@ void FoolGame::cardsRun() {
 	// 139:0184
 	this->sub_128_bde(1, 1, 0, 1, 1, 1);
 	this->fillRect(0xb4, 0xb5, 0x156, 0x14b, 2);
+	// illustration of the card game
 	g_zbasic->picture(0xc3, 0xf3, this->arr_i32_192c0[0x17]);
 	if (this->var_str_c06 == g_zbasic->str(278)) { // blank
 		// 139:01fa
@@ -84,7 +88,7 @@ void FoolGame::cardsRun() {
 	this->arr_i16_1eb8[6] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, 3, 2));
 	// 139:0320
 	this->var_i16_2010 = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, 5, 2));
-	if ((this->arr_i16_1eb8[5] > 0x2bc) || (this->arr_i16_1eb8[6] > 0x2bc)) {
+	if ((this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
 		this->arr_i16_1eb8[5] = 0;
 		this->arr_i16_1eb8[6] = 0;
 		this->var_i16_2010 = 0;
@@ -102,9 +106,9 @@ void FoolGame::cardsRun() {
 	this->arr_rect_4338.right = 0x11e;
 	this->var_i16_2012 = 0;
 	this->var_i16_7c6 = 0;
-	this->sub_139_1b12();
+	this->cardsDrawScores();
 	if (this->var_i16_2010 == 0) {
-		this->sub_139_51e();
+		this->cardsShuffleDeck();
 	}
 	// 139:0456
 	this->sub_139_582();
@@ -116,7 +120,7 @@ void FoolGame::cardsRun() {
 			// 139:046e
 			this->sub_128_c6a(-1);
 			if ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) {
-				this->sub_139_6b0();
+				this->cardsOnClick();
 			}
 			if (this->var_i16_2014 != 0) {
 				this->sub_139_50e();
@@ -130,13 +134,13 @@ void FoolGame::cardsRun() {
 			this->sub_139_4de();
 		}
 		if (this->var_i16_7c6 == 4) {
-			this->sub_139_1cba();
+			this->cardsStoreState();
 			this->sub_128_3536();
 		}
 		// 139:04c4
 	}
 	// 139:04d6
-	this->sub_139_1cba();
+	this->cardsStoreState();
 	// JMP 1d7e
 	// 139:1d7e
 	for (int i = 0; i <= 0x17; i++) {
@@ -145,16 +149,22 @@ void FoolGame::cardsRun() {
 }
 
 void FoolGame::sub_139_4de() {
-	warning("STUB: %s", __func__);
+	this->arr_i16_1eb8[5] = 0;
+	this->arr_i16_1eb8[6] = 0;
+	this->var_i16_2012 = 0;
+	this->cardsDrawScores();
+	this->cardsShuffleDeck();
+	this->sub_139_582();
 }
 
 void FoolGame::sub_139_50e() {
 	this->var_i16_2014 = 0;
-	this->sub_139_51e();
+	this->cardsShuffleDeck();
 	this->sub_139_582();
 }
 
-void FoolGame::sub_139_51e() {
+void FoolGame::cardsShuffleDeck() {
+	// 139:051e
 	g_zbasic->unk_20();
 	for (int j = 0; j <= 2; j++) {
 		for (int i = 0; i <= 0x15; i++) {
@@ -166,13 +176,13 @@ void FoolGame::sub_139_51e() {
 
 void FoolGame::sub_139_582() {
 	this->sub_139_17fc();
-	this->sub_128_712(5, 0, 0);
-	this->sub_128_712(4, 1, 0);
-	this->sub_128_712(7, 2, 0);
-	this->sub_128_712(6, 0x16, 0);
-	this->sub_128_712(1, 4, 0);
-	this->sub_128_712(2, 5, 0);
-	this->sub_128_712(3, 6, 0);
+	this->drawTarotCard(5, 0, 0);
+	this->drawTarotCard(4, 1, 0);
+	this->drawTarotCard(7, 2, 0);
+	this->drawTarotCard(6, 0x16, 0);
+	this->drawTarotCard(1, 4, 0);
+	this->drawTarotCard(2, 5, 0);
+	this->drawTarotCard(3, 6, 0);
 	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0xc3;
 	// 139:061a
@@ -189,25 +199,30 @@ void FoolGame::sub_139_582() {
 	this->sub_128_6186();
 }
 
-void FoolGame::sub_139_6b0() {
+void FoolGame::cardsOnClick() {
+	// 139:06b0
 	this->var_i16_1e00 = 0;
 	if (!((this->var_ev_46.where.x >= 0x78) && (this->var_ev_46.where.y >= 0x19) && (this->var_ev_46.where.x <= 0x187) && (this->var_ev_46.where.y <= 0xae))) {
 		// 139:06fc
+		// didn't click in the three cards area
 		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_4338)) {
+			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
+			this->sub_128_6186();
 			g_toolbox->InvertRoundRect(this->arr_rect_4338, 0xa, 0xa);
 			if (!g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_4338))
 				return;
 			// 139:0778
+			// player clicked the yield button (bad choice)
 			this->sub_128_50e(0x19, 0x64, 0x0);
-			this->var_i16_2012 = -0x1b;
-			this->sub_139_1b12();
+			this->var_i16_2012 = -CARDS_YIELD_PENALTY;
+			this->cardsDrawScores();
 			this->var_i16_2014 = 1;
 		} else {
 			// 139:079e
 			this->sub_128_50e(0xf, 0x64, 0x1);
 			for (int j = 0; j <= 1; j++) {
 				for (int16 i = 0; i <= 0x3; i++) {
-					this->sub_128_712(i, 0, 3);
+					this->drawTarotCard(i, 0, 3);
 				}
 			}
 
@@ -215,24 +230,25 @@ void FoolGame::sub_139_6b0() {
 		// 139:07e6
 	} else {
 		// 139:07ea
+		// player picked a card
 		this->fillRect(0xb4, 0xb5, 0xf3, 0x14b, 2);
-		if (this->var_ev_46.where.y < 0xd2) {
+		if (this->var_ev_46.where.x < 0xd2) {
 			// 139:0818
 			this->var_i16_1e00 = 4;
-			this->sub_128_712(1, 0, 1);
+			this->drawTarotCard(1, 0, 1);
 		}
 		// 139:082e
-		if ((this->var_ev_46.where.y >= 0xd2) && (this->var_ev_46.where.y <= 0x12d)) {
+		if ((this->var_ev_46.where.x >= 0xd2) && (this->var_ev_46.where.x <= 0x12d)) {
 			this->var_i16_1e00 = 5;
-			this->sub_128_712(2, 0, 1);
+			this->drawTarotCard(2, 0, 1);
 		}
 		// 139:0868
-		if (this->var_ev_46.where.y > 0x12d) {
+		if (this->var_ev_46.where.x > 0x12d) {
 			this->var_i16_1e00 = 6;
-			this->sub_128_712(3, 0, 1);
+			this->drawTarotCard(3, 0, 1);
 		}
 		// 139:088a
-		this->sub_128_712(9, this->var_i16_1e00, 0);
+		this->drawTarotCard(9, this->var_i16_1e00, 0);
 		g_zbasic->indexSet(
 			g_zbasic->chr(this->arr_i16_5cbc[0]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[2]+0x41) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00]+0x41),
 			1,
@@ -243,23 +259,25 @@ void FoolGame::sub_139_6b0() {
 		this->sub_139_a22();
 		if (this->var_i16_2018 == 0) {
 			// 139:0920
-			this->sub_139_dee();
+			this->cardsRevealHands();
 			this->var_i16_7a2 = 0xc3;
 
 		} else {
 			// 139:092e
-			this->sub_139_da8();
+			this->cardsOpponentYields();
 			this->var_i16_7a2 = 0xd7;
 		}
 		// 139:0938
 		this->var_i16_2010 = 0;
-		if (this->arr_i16_1eb8[5] > 0x2bc) {
+		if (this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) {
 			this->sub_139_1d3e();
 			return;
 		}
 		// 139:095e
 		this->sub_128_61ec();
-		g_zbasic->text(1, 9, Graphics::kMacFontRegular, kSrcBic);
+		// original code has the font ID as 1... maybe there's a fallback?
+		// this was intended to be Small
+		g_zbasic->text(0xfc, 9, Graphics::kMacFontRegular, kSrcBic);
 		this->sub_128_918(g_zbasic->str(282)); // (click mouse to continue)
 		this->var_i16_2014 = 0;
 		this->var_i16_7c6 = 0;
@@ -269,7 +287,7 @@ void FoolGame::sub_139_6b0() {
 				this->var_i16_2014 = 1;
 			}
 			if (this->var_i16_7c6 == 4) {
-				this->sub_139_1cba();
+				this->cardsStoreState();
 				this->sub_128_3536();
 			}
 			if (this->var_ev_46.what == kNullEvent) {
@@ -277,7 +295,7 @@ void FoolGame::sub_139_6b0() {
 			}
 		}
 		// 139:09d8
-		if (((this->var_i16_7c6 & 1) == 0) && (this->arr_i16_1eb8[6] > 0x2bc)) {
+		if (((this->var_i16_7c6 & 1) == 0) && (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
 			this->var_i16_7c6 = 2;
 			this->var_i16_2014 = 0;
 		}
@@ -322,10 +340,16 @@ void FoolGame::sub_139_a22() {
 	this->arr_i16_1eb8[2] = this->var_i16_221c;
 	this->sub_139_191c();
 	this->var_i16_221c = 0;
+	// cycle backwards through the scoring combinations
 	for (int16 j = 8; j >= 1; j--) {
 		this->var_i16_7a8 = 0;
+		// count the number of combination cards in the hand
 		for (int16 i = 1; i <= (int16)g_zbasic->index(1, j + 0x15).size(); i++) {
-			if (g_zbasic->instr(1, this->var_str_201a, g_zbasic->midStr(g_zbasic->index(1, j + 0x15), i, 1))) {
+			if (g_zbasic->instr(
+					1,
+					this->var_str_201a,
+					g_zbasic->midStr(g_zbasic->index(1, j + 0x15), i, 1))
+				) {
 				this->var_i16_7a8++;
 			}
 			// 139:0c72
@@ -353,32 +377,33 @@ void FoolGame::sub_139_a22() {
 		}
 	}
 	// 139:0d6e
-	if ((this->var_i16_2018 == 1) && ((this->var_i16_221c + 1)*9 <= 0x1b)) {
+	if ((this->var_i16_2018 == 1) && ((this->var_i16_221c + 1)*9 <= CARDS_YIELD_PENALTY)) {
 		this->var_i16_2018 = 0;
 	}
 
 	// 139:0da6
 }
 
-void FoolGame::sub_139_da8() {
+void FoolGame::cardsOpponentYields() {
 	// 139:0da8
+	// ol' mate gives up
 	this->sub_128_50e(0x19, 0x64, 0x1);
-	this->var_i16_2012 = -0x1b;
-	this->sub_139_1b12();
+	this->var_i16_2012 = -CARDS_YIELD_PENALTY;
+	this->cardsDrawScores();
 	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0xc4;
 	this->sub_128_918(g_zbasic->str(283)); // The Old Man yields
 }
 
-void FoolGame::sub_139_dee() {
+void FoolGame::cardsRevealHands() {
 	// 139:0dee
 	// remove the three cards from the top row
-	this->sub_128_712(1, 0, 1);
-	this->sub_128_712(2, 0, 1);
-	this->sub_128_712(3, 0, 1);
+	this->drawTarotCard(1, 0, 1);
+	this->drawTarotCard(2, 0, 1);
+	this->drawTarotCard(3, 0, 1);
 
-	// draw ol' mate's pick from the pile
-	this->sub_128_712(8, this->var_i16_1e00, 0);
+	// show ol' mate's draw from the pile
+	this->drawTarotCard(8, this->var_i16_1e00, 0);
 
 	g_zbasic->indexSet(g_zbasic->index(1, 0x27) + g_zbasic->chr(this->arr_i16_5cbc[this->var_i16_1e00] + 0x41), 1, 0x27);
 	// 139:0e70
@@ -403,8 +428,8 @@ void FoolGame::sub_139_dee() {
 		// 139:0f84
 		g_zbasic->indexSet(
 			g_zbasic->index(1,0x15 - this->arr_i16_1eb8[i + 2]),
-			i + 0x29,
-			1
+			1,
+			i + 0x29
 		);
 		// 139:0fca
 		if (g_zbasic->index(1, i + 0x27) == g_zbasic->str(287)) { // blank
@@ -448,11 +473,11 @@ void FoolGame::sub_139_dee() {
 		}
 	}
 	// 139:1174
-	this->sub_128_712(6, 3, 0);
+	this->drawTarotCard(6, 3, 0);
 	// calculate number of points gained by the winner
 	this->var_i16_2012 = 9*(this->arr_i16_1eb8[this->var_i16_2016] + 1);
 
-	this->sub_139_1b12();
+	this->cardsDrawScores();
 	if (this->var_i16_2016 == 1) {
 		this->var_str_384 = g_zbasic->str(290); // The fool
 	} else {
@@ -460,7 +485,7 @@ void FoolGame::sub_139_dee() {
 		this->var_str_384 = g_zbasic->str(291); // The Old Man
 	}
 	// 139:11e2
-	if ((this->arr_i16_1eb8[5] > 0x2bc) || (this->arr_i16_1eb8[6] > 0x2bc)) {
+	if ((this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
 		this->var_str_9f4 = g_zbasic->str(292); // the game!
 	} else {
 		// 139:123e
@@ -468,7 +493,9 @@ void FoolGame::sub_139_dee() {
 	}
 	// 139:1264
 	this->var_str_384 += g_zbasic->str(294) + this->var_str_9f4; // X wins Y
+	// winning hand
 	this->var_str_167c = g_zbasic->index(1, 0x28);
+	// losing hand
 	this->var_str_2222 = g_zbasic->index(1, 0x29);
 	if (this->var_i16_2016 == 2) {
 		g_zbasic->swapStr(this->var_str_167c, this->var_str_2222);
@@ -489,14 +516,14 @@ void FoolGame::sub_139_dee() {
 	}
 	// 139:1344
 	this->var_i16_2322 = (this->var_i16_2322 / 2) + 0x14;
-	this->fillRect(0x23, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
+	this->fillRect(0x2e, 0x100 - this->var_i16_2322, 0x9a, 0x100 + this->var_i16_2322, 2);
 	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7a2 = 0x46;
 	this->sub_128_918(this->var_str_384);
 	this->var_i16_7a2 = 0x64;
 	this->sub_128_918(this->var_str_167c);
 	this->var_i16_7a2 = 0x78;
-	this->sub_128_918(g_zbasic->str(295));
+	this->sub_128_918(g_zbasic->str(295)); // beats
 	this->var_i16_7a2 = 0x8c;
 	this->sub_128_918(this->var_str_2222);
 	if (this->arr_i16_1eb8[1] != 0) {
@@ -510,7 +537,7 @@ void FoolGame::sub_139_dee() {
 			g_zbasic->index(1, 0x15 + this->var_i16_68a),
 			g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1)
 		) == 0) {
-			this->sub_128_712(5, 0, 2);
+			this->drawTarotCard(5, 0, 2);
 		}
 		// 139:1470
 		if (g_zbasic->instr(
@@ -518,7 +545,7 @@ void FoolGame::sub_139_dee() {
 				g_zbasic->index(1, 0x15 + this->var_i16_68a),
 				g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1)
 			) == 0) {
-			this->sub_128_712(7, 0, 2);
+			this->drawTarotCard(7, 0, 2);
 		}
 		// 139:14c0
 		if (g_zbasic->instr(
@@ -526,20 +553,20 @@ void FoolGame::sub_139_dee() {
 				g_zbasic->index(1, 0x15 + this->var_i16_68a),
 				g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1)
 			) == 0) {
-			this->sub_128_712(9, 0, 2);
+			this->drawTarotCard(9, 0, 2);
 		}
 	} else {
 		// 139:1514
 		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[3]) + 0x41);
 		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 1, 1) != this->var_str_384) {
-			this->sub_128_712(5, 0, 2);
+			this->drawTarotCard(5, 0, 2);
 		}
 		// 139:157e
 		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 2, 1) != this->var_str_384) {
-			this->sub_128_712(7, 0, 2);
+			this->drawTarotCard(7, 0, 2);
 		}
 		if (g_zbasic->midStr(g_zbasic->index(1, 0x26), 3, 1) != this->var_str_384) {
-			this->sub_128_712(9, 0, 2);
+			this->drawTarotCard(9, 0, 2);
 		}
 	}
 	// 139:15f2
@@ -549,28 +576,28 @@ void FoolGame::sub_139_dee() {
 			this->var_i16_68a -= 8;
 		}
 		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) == 0) {
-			this->sub_128_712(4, 0, 2);
+			this->drawTarotCard(4, 0, 2);
 		}
 		// 139:1678
 		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) == 0) {
-			this->sub_128_712(6, 0, 2);
+			this->drawTarotCard(6, 0, 2);
 		}
 		// 139:16c8
 		if (g_zbasic->instr(1, g_zbasic->index(1, 0x15 + this->var_i16_68a), g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) == 0) {
-			this->sub_128_712(8, 0, 2);
+			this->drawTarotCard(8, 0, 2);
 		}
 	} else {
 		// 139:171c
 		this->var_str_384 = g_zbasic->chr((0x15 - this->arr_i16_1eb8[4]) + 0x41);
 		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 1, 1)) {
-			this->sub_128_712(4, 0, 2);
+			this->drawTarotCard(4, 0, 2);
 		}
 		// 139:1786
 		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 2, 1)) {
-			this->sub_128_712(6, 0, 2);
+			this->drawTarotCard(6, 0, 2);
 		}
 		if (this->var_str_384 != g_zbasic->midStr(g_zbasic->index(1, 0x27), 3, 1)) {
-			this->sub_128_712(8, 0, 2);
+			this->drawTarotCard(8, 0, 2);
 		}
 	}
 	// 139:17fa
@@ -609,6 +636,7 @@ void FoolGame::sub_139_19da() {
 	// 139:19da
 	this->arr_i16_1eb8[this->var_i16_2016] = 0;
 	for (int k = 1; k <= 2; k++) {
+		// cycle backward through the scoring combinations
 		for (int j = 8; j >= 1; j--) {
 			this->var_i16_7a8 = 0;
 			for (int i = 1; i <= (int)g_zbasic->index(1, j + 0x15).size(); i++) {
@@ -622,31 +650,28 @@ void FoolGame::sub_139_19da() {
 				// 139:1a4c
 			}
 			// 139:1a6a
-			if ((k == 2) && (this->var_i16_7a8 == 2)) {
-				this->sub_139_1ad6();
-			}
-			if ((k == 1) && (this->var_i16_7a8 == 3)) {
-				this->sub_139_1ad6();
+			if (((k == 2) && (this->var_i16_7a8 == 2)) ||
+				((k == 1) && (this->var_i16_7a8 == 3)))	{
+				// 139:1ad6
+				this->arr_i16_1eb8[this->var_i16_2016] = (this->var_i16_7a8 - 2)*8 + j;
+				j = 1;
+				k = 2;
 			}
 		}
 		// 139:1ac6
 	}
 }
 
-void FoolGame::sub_139_1ad6() {
-	warning("STUB: %s", __func__);
-}
-
-void FoolGame::sub_139_1b12() {
+void FoolGame::cardsDrawScores() {
 	// 139:1b12
 	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->arr_i16_1eb8[this->var_i16_2016 + 4] += this->var_i16_2012;
-	if (this->arr_i16_1eb8[5] < -999) {
-		this->arr_i16_1eb8[5] = -999;
+	if (this->arr_i16_1eb8[5] < CARDS_MIN_SCORE) {
+		this->arr_i16_1eb8[5] = CARDS_MIN_SCORE;
 	}
 	// 139:1b88
-	if (this->arr_i16_1eb8[6] < -999) {
-		this->arr_i16_1eb8[6] = -999;
+	if (this->arr_i16_1eb8[6] < CARDS_MIN_SCORE) {
+		this->arr_i16_1eb8[6] = CARDS_MIN_SCORE;
 	}
 	// 139:1bb2
 	this->fillRect(0x14, 0, 0x29, 0x5a, 2);
@@ -664,12 +689,26 @@ void FoolGame::sub_139_1b12() {
 	g_toolbox->DrawString(this->var_str_384);
 }
 
-void FoolGame::sub_139_1cba() {
-	warning("STUB: %s", __func__);
+void FoolGame::cardsStoreState() {
+	// 139:1cba
+	this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[5]) +
+		g_zbasic->unk_88(this->arr_i16_1eb8[6]) +
+		g_zbasic->unk_88(this->var_i16_2010);
+	// 139:1d00
+	for (int i = 0; i <= 0x15; i++) {
+		this->var_str_c06 += g_zbasic->unk_88(this->arr_i16_5cbc[i]);
+	}
 }
 
 void FoolGame::sub_139_1d3e() {
-	warning("STUB: %s", __func__);
+	// 139:1d3e
+	this->var_i16_7c6 = 1;
+	if (this->var_i16_c04 >= 0x64) {
+		this->var_i16_c04 = 0x64;
+	}
+	this->sub_128_6186();
+	this->sub_128_2664();
+	this->sub_128_d34(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xc8);
 }
 
 
