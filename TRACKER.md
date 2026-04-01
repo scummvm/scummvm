@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 1, 2026, corrected room-animation spawning so active Harvester room animations are displayed even when the authored script leaves their raw visibility flag cleared, which restores the missing `DRAWFIRE` fireplace animation on entry to `DRAWROOM` without rewriting script state. Verified with a successful `make -C build-vscode-harvester-debug -j4 engines/harvester/flow.o engines/harvester/room.o`.
+- On April 1, 2026, aligned the Harvester close-up unwind path with the original binary by preserving the parent room save snapshot before nested close-ups and reapplying that parent state on `EXIT_CLOSEUP`, instead of restarting from the nested close-up save state. Verified with a successful `make -j4 engines/harvester/script.o engines/harvester/dialogue.o engines/harvester/flow.o engines/harvester/room.o`. Also decoded CD3 `HARVEST.SCR` and confirmed the BAR strong-beer chain: `DEATV_BAR_DOORS` disables `BAR_DINING`/`BAR_FOUNT`, sets `BARANIM_FLAG`, and exits the close-up; on BAR re-entry, room on-enter tag `CHECK_MONST` checks `BARANIM_FLAG`, arms `BAR_MONSTZ_T` and `BAR_TIMER`, starts `EVIL_PC_ANIM` plus `magic2.wav` after 3 ticks, and spawns monster `EVILPC` after 8 ticks.
 
 ## Next Suggested Action
 
-- Do a runtime smoke test that enters `DRAWROOM` from `MAINHALL`, confirms `DRAWFIRE` is visible before interaction, and checks a few other authored active-only room animations to make sure the renderer now matches the original script semantics.
+- Do a runtime smoke test for the CD3 strong-beer path: enter `BAR`, open `BARCU`, operate `BARCUXXBEER`, confirm the close-up exits back to `BAR`, BAR room-entry runs `CHECK_MONST`, `BAR_MONSTZ_T` starts `EVIL_PC_ANIM` with `magic2.wav`, and `BAR_TIMER` then spawns `EVILPC`.

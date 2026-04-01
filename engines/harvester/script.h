@@ -302,6 +302,7 @@ struct InteractionResult {
 	bool requestPlayerGotoXZ = false;
 	bool requestRoomRestart = false;
 	Common::String roomRestartTargetName;
+	bool requestCloseupExit = false;
 	bool requestMainMenu = false;
 	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;
@@ -445,7 +446,7 @@ private:
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
-		bool *mutatedRuntimeState);
+		bool *mutatedRuntimeState, bool *requestCloseupExit);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;

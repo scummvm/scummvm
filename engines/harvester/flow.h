@@ -96,6 +96,10 @@ private:
 	bool hasPendingMainMenuReturn() const;
 	bool takePendingMainMenuReturn();
 	void clearPendingMainMenuReturn();
+	void requestCloseupParentRestart();
+	bool hasPendingCloseupParentRestart() const;
+	bool takePendingCloseupParentRestart();
+	void clearPendingCloseupParentRestart();
 	bool requestDebugRoomChange(const Common::String &roomName);
 	bool hasPendingDebugRoomChange() const { return !_pendingDebugRoomName.empty(); }
 	Common::String takePendingDebugRoomChange();
@@ -119,6 +123,7 @@ private:
 	bool _pendingNewGameRestart = false;
 	bool _pendingGameOverReturn = false;
 	bool _pendingMainMenuReturn = false;
+	bool _pendingCloseupParentRestart = false;
 	Common::String _pendingDebugRoomName;
 	uint _roomLoopDepth = 0;
 	uint32 _roomSetupTransitionShownTick = 0;
