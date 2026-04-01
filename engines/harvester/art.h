@@ -58,6 +58,7 @@ public:
 	const IndexedBitmap &getInventoryBitmap() const { return _inventoryBitmap; }
 	const IndexedBitmap &getLogoBitmap() const { return _logoBitmap; }
 	const IndexedBitmap &getTipsBitmap() const { return _tipsBitmap; }
+	const Common::Array<IndexedBitmap> &getAmmoIcons() const { return _ammoIcons; }
 	const IndexedBitmap *getTextboxBitmap(uint index) const {
 		return index < _textboxes.size() ? &_textboxes[index] : nullptr;
 	}

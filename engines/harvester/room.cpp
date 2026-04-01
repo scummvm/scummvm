@@ -58,6 +58,10 @@ static const int kNativeInventoryTooltipY = 0x19e;
 static const int kNativeInventoryWeekdayX = 0x1e0;
 static const int kNativeInventoryWeekdayY = 0x18c;
 static const byte kNativeInventoryTooltipColor = 0xf4;
+static const uint32 kCombatLoadoutStatusDisplayTicks = 75;
+static const int kNativeCombatResourceIconsX = 10;
+static const int kNativeCombatResourceIconsY = 30;
+static const int kNativeCombatResourceIconSpacing = 15;
 static const int kRoomMonsterAnimationRate = 17;
 static const int kNativeMonsterAttackAnimationRate = 4;
 static const int kNativeMonsterHitAnimationRate = 5;
@@ -168,6 +172,12 @@ struct RoomCombatDamagePopupState {
 	Common::Point anchorPoint;
 	uint32 startTick = 0;
 	int damageAmount = 0;
+};
+
+struct CombatLoadoutHudInfo {
+	uint iconIndex = 0;
+	int maxVisibleCount = 0;
+	const char *unitLabel = nullptr;
 };
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
@@ -372,6 +382,89 @@ static void drawInventoryWeekday(Graphics::Screen &screen, const Graphics::Font 
 
 	font.drawString(&screen, weekdayText, kNativeInventoryWeekdayX, kNativeInventoryWeekdayY,
 		font.getStringWidth(weekdayText), kNativeInventoryTooltipColor);
+}
+
+static bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info) {
+	switch (loadout) {
+	case 2:
+		info.iconIndex = 2;
+		info.maxVisibleCount = 16;
+		info.unitLabel = "nails";
+		return true;
+	case 3:
+		info.iconIndex = 1;
+		info.maxVisibleCount = 16;
+		info.unitLabel = "shells";
+		return true;
+	case 4:
+		info.iconIndex = 0;
+		info.maxVisibleCount = 8;
+		info.unitLabel = "bullets";
+		return true;
+	case 5:
+		info.iconIndex = 0;
+		info.maxVisibleCount = 6;
+		info.unitLabel = "bullets";
+		return true;
+	case 14:
+		info.iconIndex = 3;
+		info.maxVisibleCount = 16;
+		info.unitLabel = "gas";
+		return true;
+	default:
+		return false;
+	}
+}
+
+static Common::String resolveCombatLoadoutStatusLabel(Script &script, const ObjectRecord &object) {
+	Common::String label = script.resolveObjectLabel(object);
+	if (!label.empty())
+		return label;
+
+	label = object.objectName;
+	for (uint i = 0; i < label.size(); ++i) {
+		if (label[i] == '_')
+			label.setChar(' ', i);
+	}
+
+	return label;
+}
+
+static Common::String buildCombatLoadoutStatusMessage(Script &script, const ObjectRecord &object,
+		int previousLoadout, int currentLoadout) {
+	const Common::String label = resolveCombatLoadoutStatusLabel(script, object);
+	if (label.empty())
+		return Common::String();
+
+	if (currentLoadout == 0 && previousLoadout != 0)
+		return Common::String::format("Disarming %s...", label.c_str());
+
+	CombatLoadoutHudInfo info;
+	if (resolveCombatLoadoutHudInfo(currentLoadout, info))
+		return Common::String::format("Arming %s, %d %s...", label.c_str(),
+			script.getPlayerCombatResourceCount(currentLoadout), info.unitLabel);
+
+	return Common::String::format("Arming %s...", label.c_str());
+}
+
+static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &art,
+		const Script &script, int loadout) {
+	CombatLoadoutHudInfo info;
+	if (!resolveCombatLoadoutHudInfo(loadout, info))
+		return;
+
+	const Common::Array<IndexedBitmap> &ammoIcons = art.getAmmoIcons();
+	if (info.iconIndex >= ammoIcons.size())
+		return;
+
+	const IndexedBitmap &icon = ammoIcons[info.iconIndex];
+	if (!icon.isValid())
+		return;
+
+	const int iconCount = CLIP<int>(script.getPlayerCombatResourceCount(loadout), 0, info.maxVisibleCount);
+	for (int i = 0; i < iconCount; ++i)
+		blitBitmap(screen, icon, kNativeCombatResourceIconsX + i * kNativeCombatResourceIconSpacing,
+			kNativeCombatResourceIconsY);
 }
 
 static byte findNearestPaletteColor(const byte *palette, byte red, byte green, byte blue) {
@@ -891,6 +984,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		ResolvedText inspectText;
 		bool showingInspectText = false;
 		bool inspectCanDismiss = false;
+		ResolvedText combatLoadoutStatusText;
+		uint32 combatLoadoutStatusHideTick = 0;
 		bool moveLeft = false;
 		bool moveRight = false;
 		bool moveUp = false;
@@ -916,6 +1011,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			carriedRoomItemName.clear();
 			carriedRoomItemLabel.clear();
 			carriedRoomItemBitmap = IndexedBitmap();
+		};
+		auto queueCombatLoadoutStatusMessage = [&](const Common::String &message) {
+			if (message.empty()) {
+				const bool hadMessage = !combatLoadoutStatusText.value.empty();
+				combatLoadoutStatusText = ResolvedText();
+				combatLoadoutStatusHideTick = 0;
+				if (hadMessage)
+					needsRedraw = true;
+				return;
+			}
+
+			combatLoadoutStatusText.boxName = "BOX1";
+			combatLoadoutStatusText.value = message;
+			combatLoadoutStatusHideTick =
+				Player::getRuntimeClockTicks() + kCombatLoadoutStatusDisplayTicks;
+			needsRedraw = true;
 		};
 		auto hideSceneObject = [&](const Common::String &objectName, const Common::String *ownerOrRoom) {
 			ObjectRecord *sceneObject = findSceneObjectByName(scene.sceneObjects, objectName);
@@ -3784,6 +3895,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		captureCurrentSaveState();
 		if (_inventory.isOpen() && _inventory.refreshIfRuntimeStateChanged())
 			needsRedraw = true;
+		if (!combatLoadoutStatusText.value.empty() &&
+				combatLoadoutStatusHideTick != 0 &&
+				(int32)(Player::getRuntimeClockTicks() - combatLoadoutStatusHideTick) >= 0) {
+			combatLoadoutStatusText = ResolvedText();
+			combatLoadoutStatusHideTick = 0;
+			needsRedraw = true;
+		}
 
 		if (needsRedraw) {
 			Graphics::Screen *activeScreen = getActiveScreen();
@@ -3861,6 +3979,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 			drawCombatDamagePopups(*activeScreen);
+			if (_engine.getScript() && playerState.entity) {
+				drawCombatLoadoutResourceIcons(*activeScreen, *art, *_engine.getScript(),
+					_engine.getScript()->getPlayerCombatLoadout());
+			}
 			if (_inventory.isOpen()) {
 				_inventory.drawOverlay(*activeScreen);
 				drawInventoryWeekday(*activeScreen, *inventoryTooltipFont, _inventory.resolveWeekdayLabel());
@@ -3875,6 +3997,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			if (showingInspectText) {
 				drawRoomInspectText(*activeScreen, *art, *inspectFont, inspectText, useNativeInspectFont);
+			} else if (!combatLoadoutStatusText.value.empty()) {
+				drawRoomInspectText(*activeScreen, *art, *inspectFont, combatLoadoutStatusText,
+					useNativeInspectFont);
 			} else if (!inventoryTooltipText.empty()) {
 				drawInventoryTooltip(*activeScreen, *inventoryTooltipFont, inventoryTooltipText);
 			} else if (!promptText.empty()) {
@@ -3931,6 +4056,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (inventoryHover &&
 							!InventorySystem::isExitObject(inventoryHover->object) &&
 							!InventorySystem::isStatusObject(inventoryHover->object)) {
+						Script *script = _engine.getScript();
+						const int previousLoadout = playerState.combatLoadout >= 0
+							? playerState.combatLoadout
+							: (script ? script->getPlayerCombatLoadout() : 0);
 						bool loadoutChanged = false;
 						if (_inventory.toggleCombatLoadout(inventoryHover->object,
 								playerState.combatLoadout, loadoutChanged)) {
@@ -3938,6 +4067,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 								"Harvester: inventory right click handled as combat toggle object='%s' changed=%d",
 								inventoryHover->object.objectName.c_str(), loadoutChanged);
 							if (loadoutChanged) {
+								if (script) {
+									const Common::String statusMessage = buildCombatLoadoutStatusMessage(
+										*script, inventoryHover->object, previousLoadout,
+										script->getPlayerCombatLoadout());
+									queueCombatLoadoutStatusMessage(statusMessage);
+								}
 								captureCurrentSaveState();
 								if (playerState.entity) {
 									(void)Player::syncCombatLoadoutVisual(_engine, scene.state, playerState,

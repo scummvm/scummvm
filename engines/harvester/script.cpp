@@ -293,6 +293,60 @@ static int clampPlayerCombatLoadout(int loadout) {
 	return CLIP<int>(loadout, 0, kMaxPlayerCombatLoadout);
 }
 
+static int resolveCombatResourceDisplayMax(int loadout) {
+	switch (loadout) {
+	case 2:
+	case 3:
+	case 14:
+		return 16;
+	case 4:
+		return 8;
+	case 5:
+		return 6;
+	default:
+		return 0;
+	}
+}
+
+static int clampCombatResourceCount(int loadout, int count) {
+	const int maxCount = resolveCombatResourceDisplayMax(loadout);
+	if (maxCount <= 0)
+		return 0;
+
+	return CLIP<int>(count, 0, maxCount);
+}
+
+static int resolveCombatResourcePickupMax(int loadout) {
+	switch (loadout) {
+	case 2:
+	case 3:
+	case 14:
+		return 15;
+	case 4:
+		return 7;
+	case 5:
+		return 5;
+	default:
+		return 0;
+	}
+}
+
+static int resolveCombatResourceLoadoutForOpcode(const Common::String &opcodeName) {
+	// Confirmed from dispatch_room_event_actions and HARVEST.SCR.
+	if (opcodeName.equalsIgnoreCase("ADD_NAILS"))
+		return 2;
+	if (opcodeName.equalsIgnoreCase("ADD_SHOTGUN_SHELLS"))
+		return 3;
+	if (opcodeName.equalsIgnoreCase("ADD_GASCANS"))
+		return 14;
+
+	return 0;
+}
+
+static bool isCombatResourceOpcode(const Common::String &opcodeName) {
+	return resolveCombatResourceLoadoutForOpcode(opcodeName) != 0;
+}
+
 static const char *resolveCombatLoadoutInventoryObjectName(int loadout) {
 	for (const InventoryCombatLoadoutEntry &entry : kInventoryCombatLoadoutMap) {
 		if (entry.loadoutId == loadout)
@@ -583,6 +637,11 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	const Common::Array<NpcRecord> currentNpcs = _currentNpcs;
 	const Common::Array<MonsterRecord> currentMonsters = _currentMonsters;
 	const Common::Array<TimerRecord> currentTimers = _currentTimers;
+	const int nailgunAmmoCount = _nailgunAmmoCount;
+	const int shotgunShellCount = _shotgunShellCount;
+	const int nineGunBulletCount = _nineGunBulletCount;
+	const int thirtyEightGunBulletCount = _thirtyEightGunBulletCount;
+	const int chainsawFuelCount = _chainsawFuelCount;
 	const int playerCurrentHitPoints = _playerCurrentHitPoints;
 	const int playerCombatLoadout = _playerCombatLoadout;
 	const bool playerControlPaused = _playerControlPaused;
@@ -696,6 +755,11 @@ bool Script::reloadTownWorld(ResourceManager &resources) {
 	}
 
 	_playerCurrentHitPoints = clampPlayerHitPoints(playerCurrentHitPoints);
+	_nailgunAmmoCount = clampCombatResourceCount(2, nailgunAmmoCount);
+	_shotgunShellCount = clampCombatResourceCount(3, shotgunShellCount);
+	_nineGunBulletCount = clampCombatResourceCount(4, nineGunBulletCount);
+	_thirtyEightGunBulletCount = clampCombatResourceCount(5, thirtyEightGunBulletCount);
+	_chainsawFuelCount = clampCombatResourceCount(14, chainsawFuelCount);
 	_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
 		_currentObjects, playerCombatLoadout, "town reload");
 	_playerControlPaused = playerControlPaused;
@@ -1362,6 +1426,11 @@ void Script::resetRuntimeState() {
 	_currentNpcs = _npcs;
 	_currentMonsters = _monsters;
 	_currentTimers = _timers;
+	_nailgunAmmoCount = 0;
+	_shotgunShellCount = 0;
+	_nineGunBulletCount = 0;
+	_thirtyEightGunBulletCount = 0;
+	_chainsawFuelCount = 0;
 	_playerCurrentHitPoints = Script::kDefaultPlayerHitPoints;
 	_playerCombatLoadout = kDefaultPlayerCombatLoadout;
 	_playerControlPaused = false;
@@ -1402,12 +1471,13 @@ void Script::resetRuntimeState() {
 
 void Script::logRuntimeSaveState(const char *operation) const {
 	debugC(1, kDebugGeneral,
-		"Harvester: %s runtime save state flags=%u objects=%u anims=%u regions=%u npcs=%u monsters=%u timers=%u hp=%d loadout=%d paused=%d",
+		"Harvester: %s runtime save state flags=%u objects=%u anims=%u regions=%u npcs=%u monsters=%u timers=%u hp=%d loadout=%d paused=%d ammo=[nails:%d shells:%d bullets9:%d bullets38:%d gas:%d]",
 		operation, (uint)_currentFlags.size(), (uint)_currentObjects.size(),
 		(uint)_currentAnimations.size(), (uint)_currentRegions.size(),
 		(uint)_currentNpcs.size(), (uint)_currentMonsters.size(),
 		(uint)_currentTimers.size(), _playerCurrentHitPoints, _playerCombatLoadout,
-		_playerControlPaused);
+		_playerControlPaused, _nailgunAmmoCount, _shotgunShellCount,
+		_nineGunBulletCount, _thirtyEightGunBulletCount, _chainsawFuelCount);
 
 	for (const FlagRecord &flag : _currentFlags) {
 		const FlagRecord *baseFlag = nullptr;
@@ -1569,10 +1639,32 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 		syncRecordArray(s, _currentTimers, syncStartupTimerRecord);
 		s.syncAsSint32LE(_playerCombatLoadout);
 		syncBool(s, _playerControlPaused);
+		// FIXME: Remove this pre-release version-18 gate once Harvester ships and all
+		// saves carry combat resource counts for the room HUD and ranged weapons.
+		if (s.getVersion() >= 18) {
+			s.syncAsSint32LE(_nailgunAmmoCount);
+			s.syncAsSint32LE(_shotgunShellCount);
+			s.syncAsSint32LE(_nineGunBulletCount);
+			s.syncAsSint32LE(_thirtyEightGunBulletCount);
+			s.syncAsSint32LE(_chainsawFuelCount);
+		}
 	}
 	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
+		if (s.getVersion() >= 18) {
+			_nailgunAmmoCount = clampCombatResourceCount(2, _nailgunAmmoCount);
+			_shotgunShellCount = clampCombatResourceCount(3, _shotgunShellCount);
+			_nineGunBulletCount = clampCombatResourceCount(4, _nineGunBulletCount);
+			_thirtyEightGunBulletCount = clampCombatResourceCount(5, _thirtyEightGunBulletCount);
+			_chainsawFuelCount = clampCombatResourceCount(14, _chainsawFuelCount);
+		} else {
+			_nailgunAmmoCount = 0;
+			_shotgunShellCount = 0;
+			_nineGunBulletCount = 0;
+			_thirtyEightGunBulletCount = 0;
+			_chainsawFuelCount = 0;
+		}
 		// FIXME: Drop this compatibility pass after release; it exists only to repair
 		// pre-release saves written before the monster combat field layout stabilized.
 		if (s.getVersion() >= 2) {
@@ -2306,6 +2398,61 @@ bool Script::adjustPlayerCurrentHitPoints(int delta) {
 	return setPlayerCurrentHitPoints(_playerCurrentHitPoints + delta);
 }
 
+int Script::getPlayerCombatResourceCount(int loadout) const {
+	const int *count = getPlayerCombatResourceCountPtr(loadout);
+	return count ? *count : 0;
+}
+
+int *Script::getPlayerCombatResourceCountPtr(int loadout) {
+	switch (loadout) {
+	case 2:
+		return &_nailgunAmmoCount;
+	case 3:
+		return &_shotgunShellCount;
+	case 4:
+		return &_nineGunBulletCount;
+	case 5:
+		return &_thirtyEightGunBulletCount;
+	case 14:
+		return &_chainsawFuelCount;
+	default:
+		return nullptr;
+	}
+}
+
+const int *Script::getPlayerCombatResourceCountPtr(int loadout) const {
+	switch (loadout) {
+	case 2:
+		return &_nailgunAmmoCount;
+	case 3:
+		return &_shotgunShellCount;
+	case 4:
+		return &_nineGunBulletCount;
+	case 5:
+		return &_thirtyEightGunBulletCount;
+	case 14:
+		return &_chainsawFuelCount;
+	default:
+		return nullptr;
+	}
+}
+
+bool Script::adjustPlayerCombatResourceCount(int loadout, int delta, int maxCount,
+		const Common::String &reason) {
+	int *count = getPlayerCombatResourceCountPtr(loadout);
+	if (!count || maxCount <= 0)
+		return false;
+
+	const int oldCount = *count;
+	const int newCount = CLIP<int>(oldCount + delta, 0, maxCount);
+	*count = newCount;
+	debugC(1, kDebugGeneral,
+		"Harvester: %s player combat resource loadout=%d('%s') delta=%d count=%d->%d max=%d changed=%d",
+		reason.c_str(), loadout, Player::describeCombatLoadout(loadout),
+		delta, oldCount, newCount, maxCount, oldCount != newCount);
+	return oldCount != newCount;
+}
+
 bool Script::setPlayerCombatLoadout(int loadout) {
 	const int clampedLoadout = clampPlayerCombatLoadout(loadout);
 	const bool changed = _playerCombatLoadout != clampedLoadout;
@@ -2950,6 +3097,16 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			continue;
 		}
 
+		const int combatResourceLoadout = resolveCombatResourceLoadoutForOpcode(command->opcodeName);
+		if (combatResourceLoadout != 0) {
+			noteMutation(adjustPlayerCombatResourceCount(combatResourceLoadout,
+				parseAsciiIntOrZero(command->arg1),
+				resolveCombatResourcePickupMax(combatResourceLoadout),
+				command->opcodeName));
+			currentTag = command->arg4;
+			continue;
+		}
+
 		if (command->opcodeName.equalsIgnoreCase("KILL_PC")) {
 			noteMutation(setPlayerCurrentHitPoints(0));
 			currentTag = command->arg4;
@@ -3111,6 +3268,7 @@ bool Script::probePickupBlockingCommandChain(const Common::String &initialTag,
 			command->opcodeName.equalsIgnoreCase("ADD") ||
 			command->opcodeName.equalsIgnoreCase("DELETE") ||
 			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
+			isCombatResourceOpcode(command->opcodeName) ||
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
 			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
@@ -3167,6 +3325,7 @@ bool Script::hasActionableCommandChain(const Common::String &initialTag) const {
 			command->opcodeName.equalsIgnoreCase("ADD") ||
 			command->opcodeName.equalsIgnoreCase("DELETE") ||
 			command->opcodeName.equalsIgnoreCase("ADD2INV") ||
+			isCombatResourceOpcode(command->opcodeName) ||
 			command->opcodeName.equalsIgnoreCase("SET_ANIM") ||
 			command->opcodeName.equalsIgnoreCase("SET_REGION") ||
 			command->opcodeName.equalsIgnoreCase("SET_NPC") ||
