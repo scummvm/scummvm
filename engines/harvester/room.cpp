@@ -78,6 +78,7 @@ static const uint32 kCombatDebugDamagePopupDurationMs = 750;
 static const int kCombatDebugDamagePopupRisePixels = 18;
 static const int kCombatDebugDamagePopupVerticalGap = 6;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
+static const char *const kExitCloseupPendingRoomChange = "__EXIT_CLOSEUP__";
 
 static int roundRoomCombatFloat(float value);
 
@@ -748,6 +749,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 	Common::String currentRoomTarget = targetName;
 	bool currentTargetIsRoomName = targetIsRoomName;
+	bool currentTargetUsesSavedRoomState = false;
+	SaveRoomState currentTargetSavedRoomState;
 	while (!currentRoomTarget.empty()) {
 		RoomSetupState state;
 		bool shouldRunRoomEntryCommands = false;
@@ -792,6 +795,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return Common::kReadingFailed;
 		} else {
 			shouldRunRoomEntryCommands = true;
+		}
+		if (shouldRunRoomEntryCommands && currentTargetUsesSavedRoomState &&
+				currentTargetSavedRoomState.valid) {
+			const SaveRoomState &savedState = currentTargetSavedRoomState;
+			state.entranceName = savedState.entranceName;
+			state.playerSpawnX = savedState.playerX;
+			state.playerSpawnY = savedState.playerY;
+			state.playerSpawnZ = savedState.playerZ;
+			state.playerFacing = savedState.playerFacing;
+			if (!savedState.musicPath.empty())
+				state.musicPath = savedState.musicPath;
+			debugC(1, kDebugRoom,
+				"Harvester: applying saved room restart state entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+				savedState.entranceName.c_str(), savedState.roomName.c_str(),
+				savedState.playerX, savedState.playerY, savedState.playerZ,
+				savedState.playerFacing, savedState.musicPath.c_str());
 		}
 
 		Common::Error transitionError = flow.beginRoomSetupTransition();
@@ -878,6 +897,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		bool attackModifierHeld = false;
 		Common::String pendingRegionName;
 		Common::String pendingRoomChange;
+		bool pendingRoomChangeIsRoomName = false;
+		bool pendingRoomChangeUsesSavedRoomState = false;
+		SaveRoomState pendingRoomChangeSavedRoomState;
+		const bool canExitCloseupToParent = flow._roomLoopDepth > 1;
 		uint32 lastLeftButtonReleaseTick = 0;
 		uint32 nextKeyboardAttackAllowedTick = 0;
 		RoomIdleAnimationState idleState;
@@ -2017,6 +2040,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			RoomPlayerState &playerState;
 			Common::String &pendingRegionName;
 			Common::String &pendingRoomChange;
+			bool &pendingRoomChangeIsRoomName;
+			bool &pendingRoomChangeUsesSavedRoomState;
+			SaveRoomState &pendingRoomChangeSavedRoomState;
+			const bool canExitCloseupToParent;
 			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
 			decltype(applyCurrentRoomRuntimeMutationsInPlace) &applyCurrentRoomRuntimeMutationsInPlaceFn;
 			decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
@@ -2069,6 +2096,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 				flow.executeStartupAudioCommands(interaction.audioCommands);
 				auto queueImplicitRoomRestart = [&]() -> Common::Error {
+					pendingRoomChangeIsRoomName = false;
+					pendingRoomChangeUsesSavedRoomState = false;
+					pendingRoomChangeSavedRoomState.clear();
 					if (!interaction.roomRestartTargetName.empty()) {
 						pendingRoomChange = interaction.roomRestartTargetName;
 					} else if (discChanged && interaction.cdChangeDisc == 3) {
@@ -2079,6 +2109,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						pendingRoomChange = scene.state.entranceName;
 					} else {
 						pendingRoomChange = scene.state.roomName;
+						pendingRoomChangeIsRoomName = true;
 					}
 					didTransition = !pendingRoomChange.empty();
 					debugC(1, kDebugRoom,
@@ -2088,8 +2119,39 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						scene.state.entranceName.c_str(), scene.state.roomName.c_str());
 					return didTransition ? Common::kNoError : Common::kReadingFailed;
 				};
+				auto queueSavedRoomRestart = [&](const SaveRoomState &savedState) -> Common::Error {
+					pendingRoomChange.clear();
+					pendingRoomChangeIsRoomName = false;
+					pendingRoomChangeUsesSavedRoomState = false;
+					pendingRoomChangeSavedRoomState.clear();
+					pendingRoomChange = !savedState.entranceName.empty()
+						? savedState.entranceName
+						: savedState.roomName;
+					pendingRoomChangeIsRoomName = savedState.entranceName.empty();
+					pendingRoomChangeUsesSavedRoomState = !pendingRoomChange.empty();
+					pendingRoomChangeSavedRoomState = savedState;
+					debugC(1, kDebugRoom,
+						"Harvester: queued saved room restart target='%s' room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+						pendingRoomChange.c_str(), savedState.roomName.c_str(),
+						savedState.entranceName.c_str(), savedState.playerX, savedState.playerY,
+						savedState.playerZ, savedState.playerFacing, savedState.musicPath.c_str());
+					didTransition = !pendingRoomChange.empty();
+					return didTransition ? Common::kNoError : Common::kReadingFailed;
+				};
 				if (interaction.requestRoomRestart) {
 					return queueImplicitRoomRestart();
+				}
+				if (interaction.requestCloseupExit) {
+					if (!canExitCloseupToParent) {
+						debugC(1, kDebugRoom,
+							"Harvester: EXIT_CLOSEUP ignored for room='%s' without parent room loop",
+							scene.state.roomName.c_str());
+						return Common::kNoError;
+					}
+
+					pendingRoomChange = kExitCloseupPendingRoomChange;
+					didTransition = true;
+					return Common::kNoError;
 				}
 
 				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
@@ -2128,9 +2190,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (exitError.getCode() != Common::kNoError)
 						return exitError;
 
+					SaveRoomState parentRoomState;
+					const bool hasParentRoomState = engine.hasCurrentSaveRoomState();
+					if (hasParentRoomState)
+						parentRoomState = engine.getCurrentSaveRoomState();
 					Common::Error roomError = flow.runRoomLoop(interaction.nextRoomName);
 					if (flow.hasPendingMainMenuReturn())
 						return Common::kNoError;
+					if (flow.takePendingCloseupParentRestart()) {
+						if (hasParentRoomState && parentRoomState.valid)
+							return queueSavedRoomRestart(parentRoomState);
+						return queueImplicitRoomRestart();
+					}
 					if (flow.hasPendingDebugRoomChange()) {
 						didTransition = true;
 						return Common::kNoError;
@@ -2255,6 +2326,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		};
 		InteractionProcessor interactionProcessor = {
 			_engine, flow, scene, playerState, pendingRegionName, pendingRoomChange,
+			pendingRoomChangeIsRoomName, pendingRoomChangeUsesSavedRoomState,
+			pendingRoomChangeSavedRoomState,
+			canExitCloseupToParent,
 			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace, captureDialogueBackdrop,
 			showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
@@ -2274,6 +2348,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				!interaction.modalText.value.empty() ||
 				interaction.lightingCommand != kStartupLightingCommandNone ||
 				interaction.requestPlayerGotoXZ ||
+				interaction.requestCloseupExit ||
 				interaction.mutatedRuntimeState;
 		};
 		InteractionResult roomEntryInteraction;
@@ -3630,14 +3705,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (flow.takePendingNewGameRestart()) {
 			flow.prepareForNewGame();
 			pendingRoomChange = "START";
+			pendingRoomChangeIsRoomName = false;
+			pendingRoomChangeUsesSavedRoomState = false;
+			pendingRoomChangeSavedRoomState.clear();
 			if (!stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
 		}
 		if (_engine.hasPendingLoadedSaveRoomState()) {
 			pendingRoomChange = _engine.getPendingLoadedSaveRoomState().entranceName;
-			if (pendingRoomChange.empty())
+			pendingRoomChangeIsRoomName = false;
+			pendingRoomChangeUsesSavedRoomState = false;
+			pendingRoomChangeSavedRoomState.clear();
+			if (pendingRoomChange.empty()) {
 				pendingRoomChange = _engine.getPendingLoadedSaveRoomState().roomName;
+				pendingRoomChangeIsRoomName = true;
+			}
 			if (!stowCarriedRoomItemToInventory())
 				return Common::kReadingFailed;
 			break;
@@ -4536,9 +4619,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		return Common::kNoError;
 	if (pendingRoomChange.empty())
 		return Common::kNoError;
+	if (pendingRoomChange.equals(kExitCloseupPendingRoomChange)) {
+		flow.requestCloseupParentRestart();
+		return Common::kNoError;
+	}
 
 	currentRoomTarget = pendingRoomChange;
-	currentTargetIsRoomName = false;
+	currentTargetIsRoomName = pendingRoomChangeIsRoomName;
+	currentTargetUsesSavedRoomState = pendingRoomChangeUsesSavedRoomState;
+	currentTargetSavedRoomState = pendingRoomChangeSavedRoomState;
 	}
 
 	return Common::kNoError;

@@ -1272,6 +1272,7 @@ Common::Error Flow::run() {
 	clearPendingMainMenuReturn();
 	clearPendingGameOverReturn();
 	clearPendingNewGameRestart();
+	clearPendingCloseupParentRestart();
 	resetRoomNpcDialogueState();
 	Common::Error error = Common::kNoError;
 	if (_engine.hasPendingLoadedSaveRoomState()) {
@@ -1740,6 +1741,24 @@ bool Flow::takePendingMainMenuReturn() {
 
 void Flow::clearPendingMainMenuReturn() {
 	_pendingMainMenuReturn = false;
+}
+
+void Flow::requestCloseupParentRestart() {
+	_pendingCloseupParentRestart = true;
+}
+
+bool Flow::hasPendingCloseupParentRestart() const {
+	return _pendingCloseupParentRestart;
+}
+
+bool Flow::takePendingCloseupParentRestart() {
+	const bool requested = _pendingCloseupParentRestart;
+	_pendingCloseupParentRestart = false;
+	return requested;
+}
+
+void Flow::clearPendingCloseupParentRestart() {
+	_pendingCloseupParentRestart = false;
 }
 
 bool Flow::requestDebugRoomChange(const Common::String &roomName) {

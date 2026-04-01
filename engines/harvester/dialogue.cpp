@@ -1014,6 +1014,7 @@ public:
 				!interaction.cutscenePath.empty() ||
 				!interaction.deathFlicPath.empty() || interaction.requestMainMenu ||
 				interaction.requestRoomRestart ||
+				interaction.requestCloseupExit ||
 				interaction.cdChangeDisc > 0 ||
 				!interaction.dialogueNpcName.empty() ||
 				!interaction.dialogueContinuationTag.empty() ||
