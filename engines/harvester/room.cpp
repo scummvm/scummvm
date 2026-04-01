@@ -1902,7 +1902,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 				InteractionResult continuationInteraction;
 				if (!_engine.getScript()->executeActionTag(
-						exitInteraction.continuationTag, continuationInteraction, false)) {
+						exitInteraction.continuationTag, continuationInteraction, false,
+						scene.state.roomName)) {
 					return Common::kNoError;
 				}
 
@@ -2265,7 +2266,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!interaction.continuationTag.empty()) {
 					InteractionResult continuationInteraction;
 					if (engine.getScript()->executeActionTag(
-							interaction.continuationTag, continuationInteraction)) {
+							interaction.continuationTag, continuationInteraction, true,
+							scene.state.roomName)) {
 						Common::Error interactionError =
 							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
 						if (interactionError.getCode() != Common::kNoError)
@@ -2309,7 +2311,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 				if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
 					InteractionResult continuationInteraction;
-					if (engine.getScript()->executeActionTag(continuationTag, continuationInteraction)) {
+					if (engine.getScript()->executeActionTag(
+							continuationTag, continuationInteraction, true, scene.state.roomName)) {
 						Common::Error interactionError =
 							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
 						if (interactionError.getCode() != Common::kNoError)
@@ -2631,7 +2634,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		interaction.mutatedRuntimeState = runtimeChanged;
 		if (script && !npc.onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
-			if (script->executeActionTag(npc.onDeathActionTag, deathInteraction)) {
+			if (script->executeActionTag(npc.onDeathActionTag, deathInteraction, true, npc.roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
 			}
@@ -2769,7 +2772,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		interaction.mutatedRuntimeState = true;
 		if (!monster->onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
-			if (script->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
+			if (script->executeActionTag(
+					monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
 			}
@@ -3129,7 +3133,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		interaction.mutatedRuntimeState = true;
 		if (!monster->onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
-			if (script->executeActionTag(monster->onDeathActionTag, deathInteraction)) {
+			if (script->executeActionTag(
+					monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
 			}
@@ -3205,7 +3210,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					interaction.mutatedRuntimeState = true;
 					if (script && !monster.onDeathActionTag.empty()) {
 						InteractionResult deathInteraction;
-						if (script->executeActionTag(monster.onDeathActionTag, deathInteraction)) {
+						if (script->executeActionTag(
+								monster.onDeathActionTag, deathInteraction, true, monster.roomName)) {
 							interaction = deathInteraction;
 							interaction.mutatedRuntimeState = true;
 						}
@@ -3472,7 +3478,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnDirectInventoryTransfer(object)) {
 			InteractionResult pickupInteraction;
-			if (script->executeActionTag(object.actionTag, pickupInteraction)) {
+			if (script->executeActionTag(
+					object.actionTag, pickupInteraction, true, scene.state.roomName)) {
 				Common::Error interactionError =
 					interactionProcessor.handleInteractionResult(
 						pickupInteraction, didTransition, Common::String());
@@ -3517,7 +3524,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		bool didTransition = false;
 		if (shouldDispatchPickupActionOnCarryStart(object)) {
 			InteractionResult pickupInteraction;
-			if (script->executeActionTag(object.actionTag, pickupInteraction)) {
+			if (script->executeActionTag(
+					object.actionTag, pickupInteraction, true, scene.state.roomName)) {
 				Common::Error interactionError =
 					interactionProcessor.handleInteractionResult(
 						pickupInteraction, didTransition, Common::String());
@@ -3561,7 +3569,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		const Common::String selectedItemName = _inventory.getSelectedItemName();
 		InteractionResult interaction;
 		const bool handled = _engine.getScript()->resolveUseItemInteraction(
-			selectedItemName, target, interaction);
+			selectedItemName, target, interaction, scene.state.roomName);
 		if (!handled) {
 			debugC(1, kDebugInventory,
 				"Harvester: inventory target miss selected='%s' target='%s' owner='%s' action='%s'",
@@ -3647,7 +3655,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 	};
 	auto runRegionInteraction = [&](const RegionRecord &region) -> Common::Error {
 		InteractionResult interaction;
-		if (!_engine.getScript()->resolveRegionInteraction(region, interaction))
+		if (!_engine.getScript()->resolveRegionInteraction(region, interaction, scene.state.roomName))
 			return Common::kNoError;
 
 		bool didTransition = false;
@@ -3948,7 +3956,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 							InteractionResult interaction;
 							bool didTransition = false;
 							const bool executedActionTag = _engine.getScript()->executeActionTag(
-									secondaryAction.actionTag, interaction);
+									secondaryAction.actionTag, interaction, true, scene.state.roomName);
 							debugC(1, kDebugInventory,
 								"Harvester: inventory right click executeActionTag('%s') -> %d music='%s' cutscene='%s' nextRoom='%s'",
 								secondaryAction.actionTag.c_str(), executedActionTag,
@@ -4287,7 +4295,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 
 				InteractionResult interaction;
-				if (!_engine.getScript()->resolveObjectInteraction(*clickedObject, interaction)) {
+				if (!_engine.getScript()->resolveObjectInteraction(
+						*clickedObject, interaction, scene.state.roomName)) {
 					if (canShowInspectText) {
 						inspectText = resolvedInspectText;
 						showingInspectText = true;
@@ -4599,7 +4608,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				syncCurrentRoomRuntimeState();
 				for (const Common::String &timerName : expiredTimerNames) {
 					InteractionResult timerInteraction;
-					if (!_engine.getScript()->executeTimerAction(timerName, timerInteraction))
+					if (!_engine.getScript()->executeTimerAction(
+							timerName, timerInteraction, true, scene.state.roomName))
 						continue;
 
 					bool didTransition = false;

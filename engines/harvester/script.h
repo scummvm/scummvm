@@ -359,16 +359,18 @@ public:
 		RoomSetupState &state, ResourceManager &resources) const;
 	bool executeRoomEnterCommands(const Common::String &roomName, InteractionResult &result);
 	bool executeRoomExitCommands(const Common::String &roomName, InteractionResult &result);
-	bool resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result);
-	bool resolveRegionInteraction(const RegionRecord &region, InteractionResult &result);
+	bool resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,
+		const Common::String &roomName = Common::String());
+	bool resolveRegionInteraction(const RegionRecord &region, InteractionResult &result,
+		const Common::String &roomName = Common::String());
 	bool resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
-		InteractionResult &result);
+		InteractionResult &result, const Common::String &roomName = Common::String());
 	bool executeDebugCommand(const CommandRecord &command, InteractionResult &result,
 		bool allowTransitions = true);
 	bool executeActionTag(const Common::String &tag, InteractionResult &result,
-		bool allowTransitions = true);
+		bool allowTransitions = true, const Common::String &roomName = Common::String());
 	bool executeTimerAction(const Common::String &timerName, InteractionResult &result,
-		bool allowTransitions = true);
+		bool allowTransitions = true, const Common::String &roomName = Common::String());
 	bool executeNestedActionTag(const Common::String &tag, InteractionResult &result,
 		bool allowTransitions = true);
 	bool isPickupObject(const ObjectRecord &object) const;
@@ -440,7 +442,8 @@ private:
 	bool buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord *entrance,
 		ResourceManager &resources, RoomSetupState &state) const;
 	void executeCommandChain(const Common::String &initialTag, const char *contextLabel,
-		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
+		const Common::String &contextName, const Common::String &contextRoomName,
+		bool allowTransitions, Common::String *musicPath,
 		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,

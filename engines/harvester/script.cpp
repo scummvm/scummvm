@@ -1661,7 +1661,8 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 	if (!room)
 		return false;
 
-	executeCommandChain(room->onEnterCommand, "room entry command", room->roomName, true,
+	executeCommandChain(room->onEnterCommand, "room entry command", room->roomName,
+		room->roomName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -1679,7 +1680,8 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 	if (!room)
 		return false;
 
-	executeCommandChain(room->onExitCommand, "room exit command", room->roomName, false,
+	executeCommandChain(room->onExitCommand, "room exit command", room->roomName,
+		room->roomName, false,
 		&result.musicPath, &result.audioCommands, nullptr, nullptr, &result.cutscenePath,
 		nullptr, nullptr, &result.cdChangeDisc, &result.dialogueNpcName, &result.dialogueContinuationTag,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
@@ -1688,8 +1690,15 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 	return true;
 }
 
-bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result) {
+bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,
+		const Common::String &roomName) {
 	result = InteractionResult();
+	Common::String commandRoomName = roomName;
+	if (commandRoomName.empty() &&
+			!object.currentOwnerOrRoom.empty() &&
+			!object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+		commandRoomName = object.currentOwnerOrRoom;
+	}
 
 	if (isPickupObject(object)) {
 		if (ObjectRecord *currentObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
@@ -1703,7 +1712,8 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 	if (object.actionTag.empty())
 		return result.mutatedRuntimeState;
 
-	executeCommandChain(object.actionTag, "interaction command", object.objectName, true,
+	executeCommandChain(object.actionTag, "interaction command", object.objectName,
+		commandRoomName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -1720,12 +1730,15 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		hasActionableCommandChain(object.actionTag);
 }
 
-bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionResult &result) {
+bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionResult &result,
+		const Common::String &roomName) {
 	result = InteractionResult();
 	if (region.actionTag.empty())
 		return false;
+	const Common::String &commandRoomName = roomName.empty() ? region.roomName : roomName;
 
-	executeCommandChain(region.actionTag, "region command", region.regionName, true,
+	executeCommandChain(region.actionTag, "region command", region.regionName,
+		commandRoomName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -1742,15 +1755,22 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 }
 
 bool Script::resolveUseItemInteraction(const Common::String &itemName, const ObjectRecord &target,
-		InteractionResult &result) {
+		InteractionResult &result, const Common::String &roomName) {
 	result = InteractionResult();
 
 	const UseItemRecord *useItem = findUseItemRecord(itemName, target);
 	if (!useItem)
 		return false;
+	Common::String commandRoomName = roomName;
+	if (commandRoomName.empty() &&
+			!target.currentOwnerOrRoom.empty() &&
+			!target.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+		commandRoomName = target.currentOwnerOrRoom;
+	}
 
 	executeCommandChain(useItem->actionTag, "useitem command",
-		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()), true,
+		Common::String::format("%s -> %s", itemName.c_str(), target.objectName.c_str()),
+		commandRoomName, true,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -1784,12 +1804,12 @@ bool Script::executeDebugCommand(const CommandRecord &command,
 }
 
 bool Script::executeActionTag(const Common::String &tag, InteractionResult &result,
-		bool allowTransitions) {
+		bool allowTransitions, const Common::String &roomName) {
 	result = InteractionResult();
 	if (tag.empty())
 		return false;
 
-	executeCommandChain(tag, "action tag", tag, allowTransitions,
+	executeCommandChain(tag, "action tag", tag, roomName, allowTransitions,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -1807,7 +1827,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 }
 
 bool Script::executeTimerAction(const Common::String &timerName, InteractionResult &result,
-		bool allowTransitions) {
+		bool allowTransitions, const Common::String &roomName) {
 	result = InteractionResult();
 	if (timerName.empty())
 		return false;
@@ -1821,8 +1841,10 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		debug(1, "Harvester: timer '%s' has no action tag", timerName.c_str());
 		return false;
 	}
+	const Common::String &commandRoomName = roomName.empty() ? timer->arg1 : roomName;
 
-	executeCommandChain(timer->arg2, "timer command", timer->timerName, allowTransitions,
+	executeCommandChain(timer->arg2, "timer command", timer->timerName, commandRoomName,
+		allowTransitions,
 		&result.musicPath, &result.audioCommands, &result.nextRoomName, &result.roomTransition,
 		&result.cutscenePath, &result.deathFlicPath, &result.requestMainMenu, &result.cdChangeDisc,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
@@ -2570,7 +2592,8 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 }
 
 void Script::executeCommandChain(const Common::String &initialTag, const char *contextLabel,
-		const Common::String &contextName, bool allowTransitions, Common::String *musicPath,
+		const Common::String &contextName, const Common::String &contextRoomName,
+		bool allowTransitions, Common::String *musicPath,
 		Common::Array<AudioCommand> *audioCommands, Common::String *nextRoomName,
 		StartupRoomTransitionKind *roomTransition,
 		Common::String *cutscenePath, Common::String *deathFlicPath, bool *requestMainMenu,
@@ -2771,7 +2794,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_MONSTER")) {
-			MonsterRecord *currentMonster = findRuntimeMonster(command->arg1);
+			MonsterRecord monsterLookup;
+			monsterLookup.roomName = contextRoomName;
+			monsterLookup.monsterName = command->arg1;
+			MonsterRecord *currentMonster = findRuntimeMonster(monsterLookup);
 			if (!currentMonster) {
 				debug(1, "Harvester: unresolved monster for %s '%s' monster='%s'",
 					contextLabel, contextName.c_str(), command->arg1.c_str());
@@ -2821,7 +2847,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			for (const Common::String &entry : execList->entries) {
-				executeCommandChain(entry, "exec list entry", execList->listName, allowTransitions,
+				executeCommandChain(entry, "exec list entry", execList->listName,
+					contextRoomName, allowTransitions,
 					musicPath, audioCommands, nextRoomName, roomTransition, cutscenePath,
 					deathFlicPath, requestMainMenu, cdChangeDisc, dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, requestPlayerGotoXZ,
