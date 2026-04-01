@@ -775,9 +775,11 @@ bool Script::loadConfig(ResourceManager &resources) {
 
 bool Script::saveConfig() const {
 	Common::DumpFile file;
-	const Common::Path configPath = ConfMan.getPath("path").join(kStartupConfigPath, Common::Path::kNoSeparator);
-	if (!file.open(configPath)) {
-		warning("Harvester: unable to save startup config '%s'", configPath.toString(Common::Path::kNativeSeparator).c_str());
+	const Common::FSNode gamePathNode(ConfMan.getPath("path"));
+	const Common::FSNode configNode = gamePathNode.getChild(kStartupConfigPath);
+	if (!file.open(configNode)) {
+		warning("Harvester: unable to save startup config '%s'",
+			configNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 		return false;
 	}
 

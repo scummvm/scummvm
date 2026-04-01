@@ -142,8 +142,7 @@ void HarvesterEngine::setGammaLevel(int level) {
 }
 
 const Common::String &HarvesterEngine::getMusicPath() const {
-	static const Common::String kEmptyMusicPath;
-	return _media ? _media->getMusicPath() : kEmptyMusicPath;
+	return _media ? _media->getMusicPath() : _emptyMusicPath;
 }
 
 bool HarvesterEngine::isMusicPlaying() const {

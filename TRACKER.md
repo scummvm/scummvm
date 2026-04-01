@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On March 31, 2026, traced Harvester room-combat NPC death handling around the `CLOAK_ATND` regression and confirmed combat deaths always finalized through the same removal path used by scripted `KILL_NPC` / `MONSTERFY`, so dead room NPCs were dropped from room materialization instead of persisting as corpses. Added persisted room-NPC corpse runtime state, preserved the last death frame for non-monsterfy combat deaths, and taught room-scene spawning to restore those corpses as non-interactive actors while leaving scripted removals unchanged. Verified with `git diff --check` and a successful `make -C build-vscode-harvester-debug -j4 engines/harvester/libharvester.a`.
+- On March 31, 2026, aligned the Harvester engine with the documented ScummVM portability and formatting conventions by replacing remaining `std::function`/`std::unique_ptr` usage with ScummVM-native patterns, removing hidden function-local static object state, documenting the `g_engine` global reset behavior, switching startup-config writes to `FSNode`-based file opening, removing leftover `<functional>` includes from the NPC dialogue sources, and codifying the ScummVM engine rules in `AGENTS.md`. Verified with `git diff --check` and a successful `make -C build-vscode-harvester-debug -j4 engines/harvester/libharvester.a`.
 
 ## Next Suggested Action
 
-- Reproduce both the `CLOAKROOM` and `EYEHALL` kill-flows across immediate room refresh, room re-entry, disc reload, and save/load to confirm `CLOAK_ATND` now stays behind as a corpse while `BIG_EYE` still remains in the correct defeated state.
+- Do a runtime smoke test that exercises room-NPC dialogue, response menus, keyword entry, and startup config persistence to confirm the refactored dialogue session plumbing and `FSNode`-based config writes behave identically in-game.

@@ -39,6 +39,7 @@ struct Event;
 namespace Harvester {
 
 class HarvesterEngine;
+class DialogueFlowAccess;
 struct IndexedBitmap;
 
 class Flow {
@@ -52,6 +53,7 @@ public:
 
 private:
 	friend class HarvesterEngine;
+	friend class DialogueFlowAccess;
 	friend class DialogueSystem;
 	friend class InventorySystem;
 	friend class MenuSystem;
