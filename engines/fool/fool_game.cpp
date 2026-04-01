@@ -431,10 +431,10 @@ void FoolGame::sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3,
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_128_712(int16 rectID, int16 deckPos, int16 unk1) {
+void FoolGame::drawTarotCard(int16 rectID, int16 deckPos, int16 type) {
 	// 128:0712
 	g_toolbox->PenNormal();
-	if (unk1 == 0) {
+	if (type == 0) {
 		g_toolbox->PenSize(0x3, 0x3);
 		g_toolbox->PenPat(this->arr_pat_58f4[0]);
 		g_toolbox->FrameRoundRect(this->arr_rect_1f38[rectID], 0xf, 0xf);
@@ -445,16 +445,16 @@ void FoolGame::sub_128_712(int16 rectID, int16 deckPos, int16 unk1) {
 		g_zbasic->picture(this->arr_rect_1f38[rectID].left + 3, this->arr_rect_1f38[rectID].top + 3, this->arr_i32_192c0[this->arr_i16_5cbc[deckPos]]);
 	}
 	// 128:0806
-	if (unk1 == 1) {
+	if (type == 1) {
 		g_toolbox->PenPat(this->arr_pat_58f4[1]);
 		g_toolbox->PaintRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
-	if (unk1 == 2) {
+	if (type == 2) {
 		g_toolbox->PenMode(kPatOr);
 		g_toolbox->PenPat(this->arr_pat_58f4[1]);
 		g_toolbox->PaintRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
-	if (unk1 == 3) {
+	if (type == 3) {
 		g_toolbox->InvertRoundRect(this->arr_rect_1f38[rectID], 0xc, 0xc);
 	}
 	g_toolbox->PenNormal();
@@ -2313,7 +2313,8 @@ void FoolGame::sub_128_6186() {
 	do {
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(6, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
-		g_toolbox->Delay(0);
+		if (this->var_ev_46.what == kNullEvent)
+			g_toolbox->Delay(0);
 	} while ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0);
 }
 
@@ -2323,7 +2324,8 @@ void FoolGame::sub_128_61c2() {
 		this->sub_128_6186();
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(2, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
-		g_toolbox->Delay(0);
+		if (this->var_ev_46.what == kNullEvent)
+			g_toolbox->Delay(0);
 	} while ((this->var_ev_46.what != 1));
 	this->sub_128_6186();
 }
