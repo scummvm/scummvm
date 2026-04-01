@@ -143,8 +143,9 @@ struct RoomMonsterCombatState {
 	int deathFirstFrame = -1;
 	int deathLastFrame = -1;
 	int deathDamageType = 0;
+	bool allowInitialPursuitStep = true;
 	uint32 nextMovementTick = 0;
-	uint32 nextAttackAllowedTick = 0;
+	uint32 attackCooldownSeedTick = 0;
 };
 
 struct RoomNpcCombatState {
@@ -3231,49 +3232,47 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 				continue;
 			}
-				if (combatState.nextAttackAllowedTick == 0)
-					combatState.nextAttackAllowedTick = now + kNativeMonsterAttackCooldownBaseTicks;
 
-				if (combatState.hitActive) {
-					const int currentFrame = entity->getCurrentFrame();
-					if (!combatState.hitSoundPlayed &&
-							monster.hitSoundTriggerFrame >= 0 &&
-							currentFrame >= combatState.hitFirstFrame + monster.hitSoundTriggerFrame) {
-						(void)playRandomRoomAttackSound(_engine,
-							monster.hitSound1, monster.hitSound2, monster.hitSound3);
-						combatState.hitSoundPlayed = true;
-					}
-					if (combatState.hitKnockbackRemainingX != 0) {
-						const int step = MAX(1, ABS(combatState.hitKnockbackDecayStep));
-						const int knockbackStep = combatState.hitKnockbackRemainingX > 0
-							? MIN(combatState.hitKnockbackRemainingX, step)
-							: MAX(combatState.hitKnockbackRemainingX, -step);
-						const int previousX = monster.posX;
-						monster.posX = CLIP<int>(
-							monster.posX + knockbackStep, monster.screenMinXBound, monster.screenMaxXBound);
-						if (monster.posX != previousX) {
-							(void)applyRoomActorPlacement(
-								scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
-							(void)script->syncRuntimeMonsterRecord(monster);
-							debugC(1, kDebugCombat,
-								"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
-								monster.monsterName.c_str(), previousX, monster.posX,
-								combatState.hitKnockbackRemainingX - (monster.posX - previousX));
-							needsRedraw = true;
-							combatState.hitKnockbackRemainingX -= monster.posX - previousX;
-						} else {
-							combatState.hitKnockbackRemainingX = 0;
-						}
-					}
-					if (currentFrame == combatState.hitLastFrame) {
-						clearRoomMonsterHitState(combatState);
-						needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
-					}
-					continue;
+			if (combatState.hitActive) {
+				const int currentFrame = entity->getCurrentFrame();
+				if (!combatState.hitSoundPlayed &&
+						monster.hitSoundTriggerFrame >= 0 &&
+						currentFrame >= combatState.hitFirstFrame + monster.hitSoundTriggerFrame) {
+					(void)playRandomRoomAttackSound(_engine,
+						monster.hitSound1, monster.hitSound2, monster.hitSound3);
+					combatState.hitSoundPlayed = true;
 				}
+				if (combatState.hitKnockbackRemainingX != 0) {
+					const int step = MAX(1, ABS(combatState.hitKnockbackDecayStep));
+					const int knockbackStep = combatState.hitKnockbackRemainingX > 0
+						? MIN(combatState.hitKnockbackRemainingX, step)
+						: MAX(combatState.hitKnockbackRemainingX, -step);
+					const int previousX = monster.posX;
+					monster.posX = CLIP<int>(
+						monster.posX + knockbackStep, monster.screenMinXBound, monster.screenMaxXBound);
+					if (monster.posX != previousX) {
+						(void)applyRoomActorPlacement(
+							scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+						(void)script->syncRuntimeMonsterRecord(monster);
+						debugC(1, kDebugCombat,
+							"Harvester: combat monster hit knockback target='%s' from_x=%d to_x=%d remaining=%d",
+							monster.monsterName.c_str(), previousX, monster.posX,
+							combatState.hitKnockbackRemainingX - (monster.posX - previousX));
+						needsRedraw = true;
+						combatState.hitKnockbackRemainingX -= monster.posX - previousX;
+					} else {
+						combatState.hitKnockbackRemainingX = 0;
+					}
+				}
+				if (currentFrame == combatState.hitLastFrame) {
+					clearRoomMonsterHitState(combatState);
+					needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
+				}
+				continue;
+			}
 
-				if (combatState.attackActive) {
-					const int currentFrame = entity->getCurrentFrame();
+			if (combatState.attackActive) {
+				const int currentFrame = entity->getCurrentFrame();
 				if (!combatState.attackSoundPlayed &&
 						monster.attackSoundTriggerFrame >= 0 &&
 						currentFrame >= combatState.attackFirstFrame + monster.attackSoundTriggerFrame) {
@@ -3345,13 +3344,18 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				entity->isAnimationEnabled() && entity->getAnimationRate() != 0;
 			if (animationDrivesMovement) {
 				combatState.nextMovementTick = 0;
-				if (!entity->didAnimationAdvanceLastTick())
+				// Native room-entry monster spawns seed a left/right pursue state immediately
+				// from the player's relative X position. Our room-combat shim does not model
+				// those actor-state bytes directly, so allow one immediate pursue evaluation
+				// before the first animation-driven movement tick lands.
+				if (!combatState.allowInitialPursuitStep && !entity->didAnimationAdvanceLastTick())
 					continue;
 			} else {
 				if (combatState.nextMovementTick != 0 && (int32)(now - combatState.nextMovementTick) < 0)
 					continue;
 				combatState.nextMovementTick = now + moveInterval;
 			}
+			combatState.allowInitialPursuitStep = false;
 
 			const int previousX = monster.posX;
 			const int previousY = monster.posY;
@@ -3421,7 +3425,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			needsRedraw = setRoomMonsterAnimation(*entity, monster.facing, false) || needsRedraw;
 			const bool closeEnoughForAttack = isWithinNativeMonsterAttackEntryRange(
 				*entity, (float)monster.posZ, *playerState.entity, playerState.z, engageDistance);
-			const bool attackCooldownExpired = (int32)(now - combatState.nextAttackAllowedTick) > 0;
+			// Native class-6 monsters store `now + random(99)` when they arm an attack, then
+			// apply the fixed 0x32-tick gate when deciding whether a later strike may start.
+			// A fresh zeroed spawn therefore attacks immediately once it reaches engage range.
+			const uint32 attackCooldownDeadline =
+				combatState.attackCooldownSeedTick + kNativeMonsterAttackCooldownBaseTicks;
+			const bool attackCooldownExpired = combatState.attackCooldownSeedTick == 0 ||
+				(int32)(now - attackCooldownDeadline) > 0;
 			const int closeRangeBypassDistance = MAX(1, engageDistance / 3);
 			if (!closeEnoughForAttack)
 				continue;
@@ -3445,18 +3455,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				monster.attackSound1.empty() && monster.attackSound2.empty() && monster.attackSound3.empty();
 			combatState.attackContactResolved = false;
 			combatState.attackTargetName = playerState.entity->getName();
-			combatState.nextAttackAllowedTick = now + kNativeMonsterAttackCooldownBaseTicks +
-				_engine.getRandomNumber(99);
+			combatState.attackCooldownSeedTick = now + _engine.getRandomNumber(99);
 			monster.facing = range.resumeFacing;
 			entity->setAnimationFrameRange(range.firstFrame, range.lastFrame, false);
 			entity->setAnimationRate(kNativeMonsterAttackAnimationRate);
 			entity->setAnimationEnabled(true);
 			entity->setCurrentFrame(range.firstFrame);
 			debugC(1, kDebugCombat,
-				"Harvester: combat monster attack start monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d next_attack_tick=%u close_bypass=%d",
+				"Harvester: combat monster attack start monster='%s' target='%s' frames=%d..%d contact=%d resume_facing=%d live_center_dx=%d z_delta=%.2f engage=%d rate=%d attack_seed_tick=%u close_bypass=%d",
 				monster.monsterName.c_str(), combatState.attackTargetName.c_str(), range.firstFrame, range.lastFrame,
 				combatState.attackContactFrame, range.resumeFacing, liveCenterDx, (double)zDelta,
-				engageDistance, kNativeMonsterAttackAnimationRate, combatState.nextAttackAllowedTick,
+				engageDistance, kNativeMonsterAttackAnimationRate, combatState.attackCooldownSeedTick,
 				closeRangeBypassDistance);
 			needsRedraw = true;
 		}
