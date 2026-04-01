@@ -55,7 +55,7 @@ public:
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
 	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_712(int16 rectID, int16 deckPos, int16 unk1);
+	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
 	void sub_128_918(const Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
@@ -176,18 +176,17 @@ public:
 	void cardsRun(); // sub_139_004
 	void sub_139_4de();
 	void sub_139_50e();
-	void sub_139_51e();
+	void cardsShuffleDeck(); // sub_139_51e
 	void sub_139_582();
-	void sub_139_6b0();
+	void cardsOnClick(); // sub_139_6b0
 	void sub_139_a22();
-	void sub_139_da8();
-	void sub_139_dee();
+	void cardsOpponentYields(); // sub_139_da8
+	void cardsRevealHands(); // sub_139_dee
 	void sub_139_17fc();
 	void sub_139_191c();
 	void sub_139_19da();
-	void sub_139_1ad6();
-	void sub_139_1b12();
-	void sub_139_1cba();
+	void cardsDrawScores(); // sub_139_1b12
+	void cardsStoreState(); // sub_139_1cba
 	void sub_139_1d3e();
 
 	void sub_140_004();
