@@ -417,7 +417,28 @@ static bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info)
 }
 
 static Common::String resolveCombatLoadoutStatusLabel(Script &script, const ObjectRecord &object) {
-	Common::String label = script.resolveObjectLabel(object);
+	Common::String label = script.resolveInventoryTooltipText(object);
+	if (!label.empty()) {
+		for (uint i = 0; i < label.size(); ++i) {
+			if (label[i] == '_')
+				label.setChar(' ', i);
+		}
+
+		uint trimAt = label.size();
+		for (uint i = 0; i < label.size(); ++i) {
+			if (label[i] == ',' || label[i] == ';') {
+				trimAt = i;
+				break;
+			}
+		}
+		label = label.substr(0, trimAt);
+		while (!label.empty() && label.lastChar() == ' ')
+			label.deleteLastChar();
+		if (!label.empty())
+			return label;
+	}
+
+	label = script.resolveObjectLabel(object);
 	if (!label.empty())
 		return label;
 

@@ -1054,6 +1054,7 @@
     - `0xe`: chainsaw fuel
   - The corresponding globals are now named `g_nailgun_ammo_icon_strip`, `g_shotgun_shell_icon_strip`, `g_9gun_bullet_icon_strip`, `g_38gun_shotshell_icon_strip`, `g_chainsaw_fuel_icon_strip`, their matching count fields, and `g_visible_weapon_resource_icon_count`.
   - `run_harvester_main_loop` pre-spawns those icon-strip entities at `x = 10 + 15 * i`, `y = 30` with capacities `16` nails, `16` shotgun shells, `8` `9GUN` bullets, `6` `.38` bullets, and `16` gas cans.
+  - Decoded `HARVEST.SCR` confirms the story-script shell progression: `CLOAK_ADD -> ADD2INV SHOTGUN -> ADD_SHOTGUN_SHELLS 2`, while the `SHOTSHELL` pickup object in `SECRETROOM` uses `ADD12SHELLS -> ADD_SHOTGUN_SHELLS 14`. Combined with the native `dispatch_room_event_actions` clamp at `15`, that yields the expected `2` shells on shotgun pickup and `15` after the box.
 - `teardown_player_combat_avatar` at `0x55010` removes the live player combat avatar and frees its weapon-dependent runtime resources before a rebuild or shutdown path.
 - `teardown_entity_runtime_state` at `0x55030` is the shared runtime-entity cleanup layer under the combat-avatar teardown/rebuild paths.
   - It clears the linked spawned actor at `+0x11a8`, frees the runtime sound/sample fields from `+0x1148` through `+0x1168`, resets the entity to a hidden offscreen idle state, and frees the current bitmap buffers without freeing the outer runtime-entity allocation.
@@ -1160,6 +1161,8 @@
 - `run_inventory_screen` at `0x7df10` is the inventory UI loop.
   - It lays out carried objects, shows `inventory_text_key` strings from `TEXT` records, handles use-on-target dispatch, and swaps the status panel object based on current health.
   - The weapon right-click branch maps the weapon subset (`CLEAVER` through `POOLSTICK`) to loadout ids `1..20`, removes any visible weapon-resource strip, formats `Disarming %s...` or `Arming %s, %i ...` inside `BOX1`, then calls `set_player_combat_loadout`.
+  - The formatted `%s` weapon label is not the full `_STEXT` tooltip payload. Decoded town-script data shows entries like `SHOTGUN_STEXT = "shotgun,_right_click_to_arm/disarm"` and `NAILGUN_STEXT = "nailgun;_right_click_to_arm/disarm"`, so the native inventory message path is using the base label up to the first comma or semicolon.
+  - The same native right-click branch does not expose a generic shell-box use path: after the hardcoded document/photo table it falls through only for `SANDWICH`, `SANDWICH2`, `SYRINGE`, `ST_ASPRIN`, `ST_COUGHM`, and `ST_VITAMN`. `SHOTSHELL` ammunition therefore has to be granted by the pickup action, not by later inventory use.
 - `run_game_over_screen` at `0x7c540` is the death/game-over UI branch reached from the main loop after the player combat avatar enters its terminal failure path.
 - The low-level PCM/sample helpers are now bounded:
   - `load_sound_sample` at `0x18470` loads a one-shot sample through XFILE, accepting raw `WAVE` data or `FCMP`-compressed audio, and seeds the sample format/rate metadata used by the audio backend.
