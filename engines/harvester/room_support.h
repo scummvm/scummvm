@@ -118,6 +118,7 @@ bool applyRoomActorPlacement(const RoomSetupState &state, Entity &entity,
 void logScenePaletteSummary(const char *label, const RoomSceneResources &scene, float brightness);
 bool captureScreenBackdrop(const Graphics::Screen &screen, IndexedBitmap &bitmap);
 Common::Rect getRoomObjectHotspotBounds(const ObjectRecord &object);
+bool shouldDisplaySceneAnimation(const AnimRecord &anim);
 bool loadRoomSceneResources(const RoomSetupState &state, ResourceManager &resources, RoomSceneResources &scene);
 bool shouldRunStartupRoomProbe();
 void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const RoomSceneResources &scene,
