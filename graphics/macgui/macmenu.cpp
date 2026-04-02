@@ -951,7 +951,7 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 			}
 		}
 	}
-	return maxWidth > 225 ? 225 : maxWidth;
+	return MIN(maxWidth, _bbox.width() - _menuLeftDropdownPadding - _menuRightDropdownPadding);
 }
 
 void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
@@ -965,6 +965,12 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	int x2 = x1 + maxWidth + _menuLeftDropdownPadding + _menuRightDropdownPadding - 4;
 	int y2 = y1 + submenu->items.size() * _menuDropdownItemHeight + 2;
 	y2 = MIN(y2, y1 + ((_screen.h - y1) / _menuDropdownItemHeight) * _menuDropdownItemHeight + 2);
+
+	if (x2 > (_bbox.width()-_menuRightDropdownPadding)) {
+		int dx = x2 - (_bbox.width()-_menuRightDropdownPadding);
+		x1 -= dx;
+		x2 -= dx;
+	}
 
 	submenu->bbox.left = x1;
 	submenu->bbox.top = y1;
