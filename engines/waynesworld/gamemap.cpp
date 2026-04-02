@@ -26,148 +26,148 @@
 namespace WaynesWorld {
 
 struct MapItem9 {
-    int roomNumber;
-    int x0, y0;
-    int x1, y1;
+	int roomNumber;
+	int x0, y0;
+	int x1, y1;
 };
 
 struct MapItem13 {
-    int roomNumber;
-    const char *name;
-    int animX, animY;
-    int tagX, tagY;
+	int roomNumber;
+	const char *name;
+	int animX, animY;
+	int tagX, tagY;
 };
 
 struct MapItem17 {
-    const char *name;
-    int tagX, tagY;
-    int roomNumber;
-    int wayneX, wayneY;
-    int garthX, garthY;
+	const char *name;
+	int tagX, tagY;
+	int roomNumber;
+	int wayneX, wayneY;
+	int garthX, garthY;
 };
 
 static const MapItem9 kMapItem9s[] = {
-    { 102, 40, 94, 112, 89 },
-    { 102, 40, 94, 69, 47 },
-    { 102, 40, 94, 157, 66 },
-    { 101, 84, 28, 84, 44 },
-    { 101, 84, 28, 154, 54 },
-    { 101, 84, 28, 85, 72 },
-    { 103, 230, 35, 188, 41 },
-    { 103, 230, 35, 231, 64 },
-    { 104, 224, 80, 223, 70 },
-    { 104, 224, 80, 230, 97 },
-    { 105, 139, 113, 86, 80 },
-    { 105, 139, 113, 126, 118 },
-    { 105, 139, 113, 180, 129 },
-    { 106, 256, 130, 177, 90 },
-    { 106, 256, 130, 265, 98 }
+	{ 102, 40, 94, 112, 89 },
+	{ 102, 40, 94, 69, 47 },
+	{ 102, 40, 94, 157, 66 },
+	{ 101, 84, 28, 84, 44 },
+	{ 101, 84, 28, 154, 54 },
+	{ 101, 84, 28, 85, 72 },
+	{ 103, 230, 35, 188, 41 },
+	{ 103, 230, 35, 231, 64 },
+	{ 104, 224, 80, 223, 70 },
+	{ 104, 224, 80, 230, 97 },
+	{ 105, 139, 113, 86, 80 },
+	{ 105, 139, 113, 126, 118 },
+	{ 105, 139, 113, 180, 129 },
+	{ 106, 256, 130, 177, 90 },
+	{ 106, 256, 130, 265, 98 }
 };
 
 static const MapItem13 kMapItem13s[] = {
-    { 101, "na", 53, 6, 84, 49 },
-    { 102, "wa", 34, 32, 56, 87 },
-    { 103, "but", 127, 11, 247, 38 },
-    { 104, "stn", 173, 13, 173, 90 },
-    { 105, "dt", 70, 69, 125, 135 },
-    { 106, "sea", 139, 57, 218, 142 }
+	{ 101, "na", 53, 6, 84, 49 },
+	{ 102, "wa", 34, 32, 56, 87 },
+	{ 103, "but", 127, 11, 247, 38 },
+	{ 104, "stn", 173, 13, 173, 90 },
+	{ 105, "dt", 70, 69, 125, 135 },
+	{ 106, "sea", 139, 57, 218, 142 }
 };
 
 static const MapItem17 kMapItem17s[] = {
-    { "cab", 61, 18, 3, 58, 108, 44, 102 },
-    { "ad", 141, 31, 4, 51, 70, 40, 67 },
-    { "cas", 69, 80, 5, 291, 105, 312, 102 },
-    { "inv", 49, 52, 1, 23, 111, 15, 102 },
-    { "way", 73, 86, 0, 168, 92, 184, 95 },
-    { "don", 120, 47, 2, 126, 90, 117, 88 },
-    { "cin", 147, 27, 6, 185, 137, 151, 139 },
-    { "c35", 208, 72, 7, 157, 122, 180, 122 },
-    { "may", 193, 40, 8, 243, 103, 239, 95 },
-    { "eug", 241, 82, 9, 250, 96, 263, 93 },
-    { "jun", 78, 87, 10, -1, -1, -1, -1 },
-    { "cih", 134, 102, 11, 130, 140, 160, 131 },
-    { "uno", 142, 137, 12, 289, 114, 294, 110 },
-    { "pep", 151, 101, 13, 61, 77, 65, 75 },
-    { "gil", 224, 106, 14, 195, 141, 229, 138 }
+	{ "cab", 61, 18, 3, 58, 108, 44, 102 },
+	{ "ad", 141, 31, 4, 51, 70, 40, 67 },
+	{ "cas", 69, 80, 5, 291, 105, 312, 102 },
+	{ "inv", 49, 52, 1, 23, 111, 15, 102 },
+	{ "way", 73, 86, 0, 168, 92, 184, 95 },
+	{ "don", 120, 47, 2, 126, 90, 117, 88 },
+	{ "cin", 147, 27, 6, 185, 137, 151, 139 },
+	{ "c35", 208, 72, 7, 157, 122, 180, 122 },
+	{ "may", 193, 40, 8, 243, 103, 239, 95 },
+	{ "eug", 241, 82, 9, 250, 96, 263, 93 },
+	{ "jun", 78, 87, 10, -1, -1, -1, -1 },
+	{ "cih", 134, 102, 11, 130, 140, 160, 131 },
+	{ "uno", 142, 137, 12, 289, 114, 294, 110 },
+	{ "pep", 151, 101, 13, 61, 77, 65, 75 },
+	{ "gil", 224, 106, 14, 195, 141, 229, 138 }
 };
 
 void WaynesWorldEngine::gameMapOpen() {
-    _gameMapRoomNumber = _currentRoomNumber;
-    _gameMapWayneSpriteX = _wayneSpriteX;
-    _gameMapGarthSpriteX = _garthSpriteX;
-    unloadStaticRoomObjects();
-    _currentRoomNumber = 100;
-    _wayneSpriteX = -1;
-    _garthSpriteX = -1;
-    _currentMapItemIndex = -1;
-    _isTextVisible = false;
+	_gameMapRoomNumber = _currentRoomNumber;
+	_gameMapWayneSpriteX = _wayneSpriteX;
+	_gameMapGarthSpriteX = _garthSpriteX;
+	unloadStaticRoomObjects();
+	_currentRoomNumber = 100;
+	_wayneSpriteX = -1;
+	_garthSpriteX = -1;
+	_currentMapItemIndex = -1;
+	_isTextVisible = false;
 
 	if (_logic->_r38_flags & 0x08) {
-        setWaynePosition(243, 103);
-        setGarthPosition(239, 95);
-        changeRoom(8);
-        return;
-    }
+		setWaynePosition(243, 103);
+		setGarthPosition(239, 95);
+		changeRoom(8);
+		return;
+	}
 
 	// sysMouseDriver(2);
-    paletteFadeOut(0, 256, 16);
+	paletteFadeOut(0, 256, 16);
 
 	if ((_logic->_pizzathonListFlags2 & 0x04) && !(_logic->_pizzathonListFlags2 & 0x08)) {
 		_logic->handlePizzathon();
-        _gameState = 0;
-        // sysMouseDriver(1);
-        drawInterface(_verbNumber);
-        paletteFadeIn(0, 256, 4);
-        return;
-    }
+		_gameState = 0;
+		// sysMouseDriver(1);
+		drawInterface(_verbNumber);
+		paletteFadeIn(0, 256, 4);
+		return;
+	}
 
-    _musicIndex = 2;
-    changeMusic();
-    _screen->clear(0);
-    drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
-    _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
-    paletteFadeIn(0, 256, 16);
-    gameMapPaletteHandlerStart();
-    // sysMouseDriver(1);
+	_musicIndex = 2;
+	changeMusic();
+	_screen->clear(0);
+	drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
+	_screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
+	paletteFadeIn(0, 256, 16);
+	gameMapPaletteHandlerStart();
+	// sysMouseDriver(1);
 }
 
 void WaynesWorldEngine::gameMapFinish() {
-    _gameState = 0;
-    gameMapPaletteHandlerStop();
-    paletteFadeOut(0, 256, 16);
-    _musicIndex = 0;
-    changeMusic();
-    _screen->clear(0);
-    drawInterface(_verbNumber);
-    changeRoom(_gameMapDestinationRoomNum);
-    paletteFadeIn(0, 256, 16);
+	_gameState = 0;
+	gameMapPaletteHandlerStop();
+	paletteFadeOut(0, 256, 16);
+	_musicIndex = 0;
+	changeMusic();
+	_screen->clear(0);
+	drawInterface(_verbNumber);
+	changeRoom(_gameMapDestinationRoomNum);
+	paletteFadeIn(0, 256, 16);
 }
 
 void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
-    if (_hoverObjectNumber == objectNumber)
-        return;
+	if (_hoverObjectNumber == objectNumber)
+		return;
 
 	_hoverObjectNumber = objectNumber;
 	GxlArchive *lib = _m02Gxl;
-    Common::String tagFilename;
-    int tagX = -1, tagY = -1;
+	Common::String tagFilename;
+	int tagX = -1, tagY = -1;
 
-    if (_hoverObjectNumber == -1) {
-        if (_currentMapItemIndex == 6) {
-            gameMapPaletteHandlerStop();
-            paletteFadeColor(36, 4, 21, 2, 64);
-            gameMapPaletteHandlerStart();
-            _currentMapItemIndex = -1;
-        } else if (_currentMapItemIndex >= 0 && _currentMapItemIndex <= 5) {
-            const MapItem13 &item = kMapItem13s[_currentMapItemIndex];
-            tagFilename = Common::String::format("%s_xtag.pcx", item.name);
-            tagX = item.tagX;
-            tagY = item.tagY;
-        } else if (_currentMapItemIndex >= 7 && _currentMapItemIndex <= 21) {
-            const MapItem17 &item = kMapItem17s[_currentMapItemIndex - 7];
-            tagFilename = Common::String::format("%s_xtag.pcx", item.name);
-            tagX = item.tagX;
-            tagY = item.tagY;
+	if (_hoverObjectNumber == -1) {
+		if (_currentMapItemIndex == 6) {
+			gameMapPaletteHandlerStop();
+			paletteFadeColor(36, 4, 21, 2, 64);
+			gameMapPaletteHandlerStart();
+			_currentMapItemIndex = -1;
+		} else if (_currentMapItemIndex >= 0 && _currentMapItemIndex <= 5) {
+			const MapItem13 &item = kMapItem13s[_currentMapItemIndex];
+			tagFilename = Common::String::format("%s_xtag.pcx", item.name);
+			tagX = item.tagX;
+			tagY = item.tagY;
+		} else if (_currentMapItemIndex >= 7 && _currentMapItemIndex <= 21) {
+			const MapItem17 &item = kMapItem17s[_currentMapItemIndex - 7];
+			tagFilename = Common::String::format("%s_xtag.pcx", item.name);
+			tagX = item.tagX;
+			tagY = item.tagY;
 		}
 	} else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
 		const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
@@ -193,52 +193,52 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
 }
 
 void WaynesWorldEngine::gameMapHandleMouseClick() {
-    bool isDone = false;
+	bool isDone = false;
 
-    if (_hoverObjectNumber == 6) {
-        _gameMapDestinationRoomNum = _gameMapRoomNumber;
-        _wayneSpriteX = _gameMapWayneSpriteX;
-        _garthSpriteX = _gameMapGarthSpriteX;
-        isDone = true;
-    } else if (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27) {
-        _gameMapFlag = false;
-        _currentRoomNumber = 100;
-        drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
-        _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
-    } else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
-        const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
-        _currentRoomNumber = item.roomNumber;
-        _currentMapItemIndex = -1;
-        gameMapSelectItem(item.name, item.animX, item.animY);
-    } else if (_hoverObjectNumber >= 7 && _hoverObjectNumber <= 21) {
-        const MapItem17 &item = kMapItem17s[_hoverObjectNumber - 7];
-        _gameMapDestinationRoomNum = item.roomNumber;
-        _wayneSpriteX = item.wayneX;
-        _wayneSpriteY = item.wayneY;
-        _garthSpriteX = item.garthX;
-        _garthSpriteY = item.garthY;
-        isDone = true;
-    }
+	if (_hoverObjectNumber == 6) {
+		_gameMapDestinationRoomNum = _gameMapRoomNumber;
+		_wayneSpriteX = _gameMapWayneSpriteX;
+		_garthSpriteX = _gameMapGarthSpriteX;
+		isDone = true;
+	} else if (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27) {
+		_gameMapFlag = false;
+		_currentRoomNumber = 100;
+		drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
+		_screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
+	} else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
+		const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
+		_currentRoomNumber = item.roomNumber;
+		_currentMapItemIndex = -1;
+		gameMapSelectItem(item.name, item.animX, item.animY);
+	} else if (_hoverObjectNumber >= 7 && _hoverObjectNumber <= 21) {
+		const MapItem17 &item = kMapItem17s[_hoverObjectNumber - 7];
+		_gameMapDestinationRoomNum = item.roomNumber;
+		_wayneSpriteX = item.wayneX;
+		_wayneSpriteY = item.wayneY;
+		_garthSpriteX = item.garthX;
+		_garthSpriteY = item.garthY;
+		isDone = true;
+	}
 
-    if (isDone) {
-        gameMapFinish();
-        loadPalette(_m01Gxl, "wstand0.pcx");
-    }
+	if (isDone) {
+		gameMapFinish();
+		loadPalette(_m01Gxl, "wstand0.pcx");
+	}
 }
 
 void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int animY) {
-    // sysMouseDriver(2);
-    for (int frameNum = 0; frameNum < 12; frameNum++) {
-        Common::String filename = Common::String::format("%s_zm%d.pcx", prefix, frameNum);
-        drawImageToScreen(_m02Gxl, filename.c_str(), animX, animY);
-        waitMillis(50);
-    }
+	// sysMouseDriver(2);
+	for (int frameNum = 0; frameNum < 12; frameNum++) {
+		Common::String filename = Common::String::format("%s_zm%d.pcx", prefix, frameNum);
+		drawImageToScreen(_m02Gxl, filename.c_str(), animX, animY);
+		waitMillis(50);
+	}
 	drawImageToScreen(_m02Gxl, "zmbtn.pcx", 125, 188);
-    if (kMapItem9s[_gameMapRoomNumber].roomNumber == _currentRoomNumber) {
-        _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x1, kMapItem9s[_gameMapRoomNumber].y1, 3, 109);
-    }
-    // sysMouseDriver(1);
-    _gameMapFlag = true;
+	if (kMapItem9s[_gameMapRoomNumber].roomNumber == _currentRoomNumber) {
+		_screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x1, kMapItem9s[_gameMapRoomNumber].y1, 3, 109);
+	}
+	// sysMouseDriver(1);
+	_gameMapFlag = true;
 }
 
 void WaynesWorldEngine::gameMapPaletteHandlerStart() {

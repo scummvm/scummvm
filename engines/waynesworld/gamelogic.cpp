@@ -199,518 +199,518 @@ void GameLogic::initVariables() {
 }
 
 int GameLogic::handleVerbPickUp() {
-    switch (_vm->_currentRoomNumber) {
-    case 0:
-        return r0_handleVerbPickUp();
-    case 1:
-        return r1_handleVerbPickUp();
-    case 2:
-        return r2_handleVerbPickUp();
-    case 3:
-    case 23:
-        return r3_handleVerbPickUp();
-    case 4:
-        return r4_handleVerbPickUp();
-    case 5:
-        return r5_handleVerbPickUp();
-    case 6:
-        return r6_handleVerbPickUp();
-    case 7:
-    case 15:
-    case 16:
-        return r7_handleVerbPickUp();
-    case 8:
-    case 21:
-    case 22:
-        return r8_handleVerbPickUp();
-    case 9:
-        return r9_handleVerbPickUp();
-    case 10:
-        return r10_handleVerbPickUp();
-    case 11:
-        return r11_handleVerbPickUp();
-    case 12:
-        return r12_handleVerbPickUp();
-    case 13:
-    case 18:
-        return r13_handleVerbPickUp();
-    case 14:
-    case 19:
-    case 20:
-        return r14_handleVerbPickUp();
-    case 30:
-        return r30_handleVerbPickUp();
-    case 32:
-    case 33:
-        return r32_handleVerbPickUp();
-    case 29:
-        return r29_handleVerbPickUp();
-    case 34:
-        return r34_handleVerbPickUp();
-    case 36:
-        return r36_handleVerbPickUp();
-    case 37:
-        return r37_handleVerbPickUp();
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		return r0_handleVerbPickUp();
+	case 1:
+		return r1_handleVerbPickUp();
+	case 2:
+		return r2_handleVerbPickUp();
+	case 3:
+	case 23:
+		return r3_handleVerbPickUp();
+	case 4:
+		return r4_handleVerbPickUp();
+	case 5:
+		return r5_handleVerbPickUp();
+	case 6:
+		return r6_handleVerbPickUp();
+	case 7:
+	case 15:
+	case 16:
+		return r7_handleVerbPickUp();
+	case 8:
+	case 21:
+	case 22:
+		return r8_handleVerbPickUp();
+	case 9:
+		return r9_handleVerbPickUp();
+	case 10:
+		return r10_handleVerbPickUp();
+	case 11:
+		return r11_handleVerbPickUp();
+	case 12:
+		return r12_handleVerbPickUp();
+	case 13:
+	case 18:
+		return r13_handleVerbPickUp();
+	case 14:
+	case 19:
+	case 20:
+		return r14_handleVerbPickUp();
+	case 30:
+		return r30_handleVerbPickUp();
+	case 32:
+	case 33:
+		return r32_handleVerbPickUp();
+	case 29:
+		return r29_handleVerbPickUp();
+	case 34:
+		return r34_handleVerbPickUp();
+	case 36:
+		return r36_handleVerbPickUp();
+	case 37:
+		return r37_handleVerbPickUp();
 	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 int GameLogic::handleVerbUse() {
-    switch (_vm->_currentRoomNumber) {
-    case 0:
-        return r0_handleVerbUse();
-    case 1:
-        return r1_handleVerbUse();
-    case 2:
-        return r2_handleVerbUse();
-    case 3:
-    case 23:
-        return r3_handleVerbUse();
-    case 4:
-        return r4_handleVerbUse();
-    case 5:
-        return r5_handleVerbUse();
-    case 6:
-        return r6_handleVerbUse();
-    case 7:
-    case 15:
-    case 16:
-        return r7_handleVerbUse();
-    case 8:
-    case 21:
-    case 22:
-        return r8_handleVerbUse();
-    case 10:
-        return r10_handleVerbUse();
-    case 11:
-        return r11_handleVerbUse();
-    case 12:
-        return r12_handleVerbUse();
-    case 9:
-        return r9_handleVerbUse();
-    case 13:
-    case 18:
-        return r13_handleVerbUse();
-    case 14:
-    case 19:
-    case 20:
-        return r14_handleVerbUse();
-    case 24:
-        return r24_handleVerbUse();
-    case 25:
-    case 26:
-    case 27:
-        return r25_handleVerbUse();
-    case 28:
-        return r28_handleVerbUse();
-    case 29:
-        return r29_handleVerbUse();
-    case 30:
-        return r30_handleVerbUse();
-    case 31:
-        return r31_handleVerbUse();
-    case 32:
-        return r32_handleVerbUse();
-    case 34:
-        return r34_handleVerbUse();
-    case 35:
-        return r35_handleVerbUse();
-    case 36:
-        return r36_handleVerbUse();
-    case 37:
-        return r37_handleVerbUse();
-    case 17:
-        return r17_handleVerbUse();
-    case 38:
-        return r38_handleVerbUse();
-    case 39:
-        return r39_handleVerbUse();
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		return r0_handleVerbUse();
+	case 1:
+		return r1_handleVerbUse();
+	case 2:
+		return r2_handleVerbUse();
+	case 3:
+	case 23:
+		return r3_handleVerbUse();
+	case 4:
+		return r4_handleVerbUse();
+	case 5:
+		return r5_handleVerbUse();
+	case 6:
+		return r6_handleVerbUse();
+	case 7:
+	case 15:
+	case 16:
+		return r7_handleVerbUse();
+	case 8:
+	case 21:
+	case 22:
+		return r8_handleVerbUse();
+	case 10:
+		return r10_handleVerbUse();
+	case 11:
+		return r11_handleVerbUse();
+	case 12:
+		return r12_handleVerbUse();
+	case 9:
+		return r9_handleVerbUse();
+	case 13:
+	case 18:
+		return r13_handleVerbUse();
+	case 14:
+	case 19:
+	case 20:
+		return r14_handleVerbUse();
+	case 24:
+		return r24_handleVerbUse();
+	case 25:
+	case 26:
+	case 27:
+		return r25_handleVerbUse();
+	case 28:
+		return r28_handleVerbUse();
+	case 29:
+		return r29_handleVerbUse();
+	case 30:
+		return r30_handleVerbUse();
+	case 31:
+		return r31_handleVerbUse();
+	case 32:
+		return r32_handleVerbUse();
+	case 34:
+		return r34_handleVerbUse();
+	case 35:
+		return r35_handleVerbUse();
+	case 36:
+		return r36_handleVerbUse();
+	case 37:
+		return r37_handleVerbUse();
+	case 17:
+		return r17_handleVerbUse();
+	case 38:
+		return r38_handleVerbUse();
+	case 39:
+		return r39_handleVerbUse();
 	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 void GameLogic::handleVerbTalkTo() {
-    switch (_vm->_currentRoomNumber) {
-    case 1:
-        r1_handleVerbTalkTo();
-        break;
-    case 2:
-        r2_handleVerbTalkTo();
-        break;
-    case 4:
-        r4_handleVerbTalkTo();
-        break;
-    case 13:
-        r13_handleVerbTalkTo();
-        break;
-    case 9:
-        r9_handleVerbTalkTo();
-        break;
+	switch (_vm->_currentRoomNumber) {
+	case 1:
+		r1_handleVerbTalkTo();
+		break;
+	case 2:
+		r2_handleVerbTalkTo();
+		break;
+	case 4:
+		r4_handleVerbTalkTo();
+		break;
+	case 13:
+		r13_handleVerbTalkTo();
+		break;
+	case 9:
+		r9_handleVerbTalkTo();
+		break;
 	case 10:
 		r10_handleVerbTalkTo();
-        break;
-    case 19:
-    case 20:
-        r19_handleVerbTalkTo();
-        break;
-    case 12:
-        r12_handleVerbTalkTo();
-        break;
-    case 7:
-    case 15:
-        r7_handleVerbTalkTo();
-        break;
-    case 3:
-    case 23:
-        r3_handleVerbTalkTo();
-        break;
-    case 32:
-        r32_handleVerbTalkTo();
-        break;
-    case 34:
-        r34_handleVerbTalkTo();
-        break;
-    case 35:
-        r35_handleVerbTalkTo();
-        break;
-    case 17:
-        r17_handleVerbTalkTo();
-        break;
+		break;
+	case 19:
+	case 20:
+		r19_handleVerbTalkTo();
+		break;
+	case 12:
+		r12_handleVerbTalkTo();
+		break;
+	case 7:
+	case 15:
+		r7_handleVerbTalkTo();
+		break;
+	case 3:
+	case 23:
+		r3_handleVerbTalkTo();
+		break;
+	case 32:
+		r32_handleVerbTalkTo();
+		break;
+	case 34:
+		r34_handleVerbTalkTo();
+		break;
+	case 35:
+		r35_handleVerbTalkTo();
+		break;
+	case 17:
+		r17_handleVerbTalkTo();
+		break;
 	default:
 		break;
-    }
+	}
 }
 
 int GameLogic::handleVerbPush() {
-    switch (_vm->_currentRoomNumber) {
-    case 1:
-        return r1_handleVerbPush();
-    case 10:
-        return r10_handleVerbPush();
-    case 9:
-        return r9_handleVerbPush();
-    case 5:
-        return r5_handleVerbPush();
-    case 11:
-        return r11_handleVerbPush();
-    case 7:
-    case 15:
-    case 16:
-        return r7_handleVerbPush();
-    case 37:
-        return r37_handleVerbPush();
-    default:
+	switch (_vm->_currentRoomNumber) {
+	case 1:
+		return r1_handleVerbPush();
+	case 10:
+		return r10_handleVerbPush();
+	case 9:
+		return r9_handleVerbPush();
+	case 5:
+		return r5_handleVerbPush();
+	case 11:
+		return r11_handleVerbPush();
+	case 7:
+	case 15:
+	case 16:
+		return r7_handleVerbPush();
+	case 37:
+		return r37_handleVerbPush();
+	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 int GameLogic::handleVerbPull() {
-    switch (_vm->_currentRoomNumber) {
-    case 1:
-        return r1_handleVerbPull();
-    case 6:
-        return r6_handleVerbPull();
-    case 37:
-        return r37_handleVerbPull();
-    case 38:
-        return r38_handleVerbPull();
-    default:
+	switch (_vm->_currentRoomNumber) {
+	case 1:
+		return r1_handleVerbPull();
+	case 6:
+		return r6_handleVerbPull();
+	case 37:
+		return r37_handleVerbPull();
+	case 38:
+		return r38_handleVerbPull();
+	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 int GameLogic::handleVerbOpen() {
-    switch (_vm->_currentRoomNumber) {
-    case 0:
-        return r0_handleVerbOpen();
-    case 1:
-        return r1_handleVerbOpen();
-    case 5:
-        return r5_handleVerbOpen();
-    case 4:
-        return r4_handleVerbOpen();
-    case 10:
-        return r10_handleVerbOpen();
-    case 6:
-        return r6_handleVerbOpen();
-    case 7:
-    case 15:
-    case 16:
-        return r7_handleVerbOpen();
-    case 8:
-    case 22:
-        return r8_handleVerbOpen();
-    case 32:
-        return r32_handleVerbOpen();
-    case 34:
-        return r34_handleVerbOpen();
-    case 39:
-        return r39_handleVerbOpen();
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		return r0_handleVerbOpen();
+	case 1:
+		return r1_handleVerbOpen();
+	case 5:
+		return r5_handleVerbOpen();
+	case 4:
+		return r4_handleVerbOpen();
+	case 10:
+		return r10_handleVerbOpen();
+	case 6:
+		return r6_handleVerbOpen();
+	case 7:
+	case 15:
+	case 16:
+		return r7_handleVerbOpen();
+	case 8:
+	case 22:
+		return r8_handleVerbOpen();
+	case 32:
+		return r32_handleVerbOpen();
+	case 34:
+		return r34_handleVerbOpen();
+	case 39:
+		return r39_handleVerbOpen();
 	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 int GameLogic::handleVerbClose() {
-    switch (_vm->_currentRoomNumber) {
-    case 1:
-        return r1_handleVerbClose();
-    case 8:
-    case 22:
-        return r8_handleVerbClose();
-    case 34:
-        return r34_handleVerbClose();
+	switch (_vm->_currentRoomNumber) {
+	case 1:
+		return r1_handleVerbClose();
+	case 8:
+	case 22:
+		return r8_handleVerbClose();
+	case 34:
+		return r34_handleVerbClose();
 	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 void GameLogic::handleVerbExtremeCloseupOf() {
-    switch (_vm->_objectNumber) {
-    case kObjectIdInventoryPizzathonList:
-        displayExtremeCloseupOfPizzathonList();
-        break;
-    case kObjectIdSign15_1:
-        displayExtremeCloseupOfSign15();
-        break;
-    case kObjectIdInventorySewerMap:
-    case kObjectIdMap:
-        displayExtremeCloseupOfSewerMap();
-        break;
-    case kObjectIdPictures22:
-        displayExtremeCloseupOfObjectPictures22();
-        break;
-    case kObjectIdInventoryMemo:
-    case kObjectIdMemo:
-        displayExtremeCloseupOfMemo();
-        break;
-    case kObjectIdBillboard7:
-    case kObjectIdBillboard14:
-    case kObjectIdBillboard19:
-        displayExtremeCloseupOfBillboard1();
-        break;
-    case kObjectIdBillboard_0:
-    case kObjectIdBillboard_1:
-    case kObjectIdBillboard_2:
-        displayExtremeCloseupOfBillboard2();
-        break;
-    default:
-        _vm->displayText("c00", 3, 0, -1, -1, 0);
-        break;
-    }
+	switch (_vm->_objectNumber) {
+	case kObjectIdInventoryPizzathonList:
+		displayExtremeCloseupOfPizzathonList();
+		break;
+	case kObjectIdSign15_1:
+		displayExtremeCloseupOfSign15();
+		break;
+	case kObjectIdInventorySewerMap:
+	case kObjectIdMap:
+		displayExtremeCloseupOfSewerMap();
+		break;
+	case kObjectIdPictures22:
+		displayExtremeCloseupOfObjectPictures22();
+		break;
+	case kObjectIdInventoryMemo:
+	case kObjectIdMemo:
+		displayExtremeCloseupOfMemo();
+		break;
+	case kObjectIdBillboard7:
+	case kObjectIdBillboard14:
+	case kObjectIdBillboard19:
+		displayExtremeCloseupOfBillboard1();
+		break;
+	case kObjectIdBillboard_0:
+	case kObjectIdBillboard_1:
+	case kObjectIdBillboard_2:
+		displayExtremeCloseupOfBillboard2();
+		break;
+	default:
+		_vm->displayText("c00", 3, 0, -1, -1, 0);
+		break;
+	}
 }
 
 int GameLogic::handleVerbGive() {
-    switch (_vm->_currentRoomNumber) {
-    case 2:
-        return r2_handleVerbGive();
-    case 6:
-        return r6_handleVerbGive();
+	switch (_vm->_currentRoomNumber) {
+	case 2:
+		return r2_handleVerbGive();
+	case 6:
+		return r6_handleVerbGive();
 	case 9:
 		return r9_handleVerbGive();
 	case 10:
-        return r10_handleVerbGive();
-    case 13:
-        return r13_handleVerbGive();
-    case 12:
-        return r12_handleVerbGive();
+		return r10_handleVerbGive();
+	case 13:
+		return r13_handleVerbGive();
+	case 12:
+		return r12_handleVerbGive();
 	default:
 		break;
-    }
+	}
 	return 0;
 }
 
 void GameLogic::handleDialogReply(int index, int x, int y) {
 
-    if (index < 537) {
-        _vm->displayText("c04r", index, 0, x, y, 0);
-    } else {
-        _vm->displayText("c04r2", index - 537, 0, x, y, 0);
-    }
+	if (index < 537) {
+		_vm->displayText("c04r", index, 0, x, y, 0);
+	} else {
+		_vm->displayText("c04r2", index - 537, 0, x, y, 0);
+	}
 
-    switch (_vm->_currentRoomNumber) {
-    case 2:
-        if (index < 300) {
-            _vm->playAnimationLoops("btalk", 0, 2, 95, 72, 0, 100, 4);
-        } else {
-            _vm->playAnimationLoops("wait", 0, 2, 237, 69, 0, 100, 4);
-        }
-        break;
-    case 4:
-        _vm->playAnimationLoops("btalk", 1, -2, 146, 45, 0, 100, 4);
-        break;
-    case 6:
-        if (index < 154) {
-            _vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 4);
-        }
-        break;
-    case 13:
-        if (index > 400) {
-            _vm->playAnimationLoops("ctalk", 0, 2, 85, 73, 0, 100, 4);
-        } else {
-            _vm->playAnimationLoops("ptalk", 0, 2, 72, 60, 0, 100, 4);
-        }
-        break;
-    case 9:
-        if (index < 192) {
-            _vm->playAnimationLoops("talk", 0, 2, 92, 60, 0, 100, 4);
-        } else {
-            _vm->playAnimationLoops("mtalk", 0, 2, 215, 60, 0, 100, 4);
-        }
-        break;
-    case 10:
-        _vm->playAnimationLoops("talk", 0, 8, 153, 30, 1, 100, 4);
-        break;
-    case 23:
-        _vm->playAnimationLoops("talk", 0, 2, 75, 63, 0, 100, 4);
-        break;
-    case 19:
-        _vm->playAnimationLoops("gill", 1, -2, 273, 84, 0, 100, 4);
-        break;
-    case 20:
-        _vm->playAnimationLoops("mtalk", 0, 2, 184, 68, 0, 100, 4);
-        break;
-    case 12:
-        if (index < 236) {
-            _vm->playAnimationLoops("lawyer", 6, -2, 55, 84, 0, 100, 4);
-        } else if (index < 238) {
-            _vm->playAnimationLoops("man1", 0, 2, 108, 83, 0, 100, 4);
-        } else if (index < 240) {
-            _vm->playAnimationLoops("man3", 0, 2, 168, 84, 0, 100, 4);
-        } else if (index < 242) {
-            _vm->playAnimationLoops("man4", 0, 2, 190, 84, 0, 100, 4);
-        }
-        break;
-    case 8:
-        _vm->playAnimationLoops("mtalk", 0, 2, 195, 69, 0, 100, 4);
-        break;
-    case 32:
-        _vm->playAnimationLoops("jtalk", 0, 2, 262, 84, 0, 100, 4);
-        break;
-    case 30:
-        _vm->playAnimationLoops("ctalk", 0, 2, 183, 107, 0, 100, 4);
-        break;
-    case 28:
-        _vm->playAnimationLoops("reptalk", 0, 6, 26, 51, 1, 100, 4);
-        break;
-    case 34:
-        _vm->playAnimationLoops("talk", 0, 2, 203, 73, 0, 100, 4);
-        break;
-    case 35:
-        _vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
-        break;
-    case 17:
+	switch (_vm->_currentRoomNumber) {
+	case 2:
+		if (index < 300) {
+			_vm->playAnimationLoops("btalk", 0, 2, 95, 72, 0, 100, 4);
+		} else {
+			_vm->playAnimationLoops("wait", 0, 2, 237, 69, 0, 100, 4);
+		}
+		break;
+	case 4:
+		_vm->playAnimationLoops("btalk", 1, -2, 146, 45, 0, 100, 4);
+		break;
+	case 6:
+		if (index < 154) {
+			_vm->playAnimationLoops("cindi", 4, 2, 143, 55, 0, 100, 4);
+		}
+		break;
+	case 13:
+		if (index > 400) {
+			_vm->playAnimationLoops("ctalk", 0, 2, 85, 73, 0, 100, 4);
+		} else {
+			_vm->playAnimationLoops("ptalk", 0, 2, 72, 60, 0, 100, 4);
+		}
+		break;
+	case 9:
+		if (index < 192) {
+			_vm->playAnimationLoops("talk", 0, 2, 92, 60, 0, 100, 4);
+		} else {
+			_vm->playAnimationLoops("mtalk", 0, 2, 215, 60, 0, 100, 4);
+		}
+		break;
+	case 10:
+		_vm->playAnimationLoops("talk", 0, 8, 153, 30, 1, 100, 4);
+		break;
+	case 23:
+		_vm->playAnimationLoops("talk", 0, 2, 75, 63, 0, 100, 4);
+		break;
+	case 19:
+		_vm->playAnimationLoops("gill", 1, -2, 273, 84, 0, 100, 4);
+		break;
+	case 20:
+		_vm->playAnimationLoops("mtalk", 0, 2, 184, 68, 0, 100, 4);
+		break;
+	case 12:
+		if (index < 236) {
+			_vm->playAnimationLoops("lawyer", 6, -2, 55, 84, 0, 100, 4);
+		} else if (index < 238) {
+			_vm->playAnimationLoops("man1", 0, 2, 108, 83, 0, 100, 4);
+		} else if (index < 240) {
+			_vm->playAnimationLoops("man3", 0, 2, 168, 84, 0, 100, 4);
+		} else if (index < 242) {
+			_vm->playAnimationLoops("man4", 0, 2, 190, 84, 0, 100, 4);
+		}
+		break;
+	case 8:
+		_vm->playAnimationLoops("mtalk", 0, 2, 195, 69, 0, 100, 4);
+		break;
+	case 32:
+		_vm->playAnimationLoops("jtalk", 0, 2, 262, 84, 0, 100, 4);
+		break;
+	case 30:
+		_vm->playAnimationLoops("ctalk", 0, 2, 183, 107, 0, 100, 4);
+		break;
+	case 28:
+		_vm->playAnimationLoops("reptalk", 0, 6, 26, 51, 1, 100, 4);
+		break;
+	case 34:
+		_vm->playAnimationLoops("talk", 0, 2, 203, 73, 0, 100, 4);
+		break;
+	case 35:
+		_vm->playAnimationLoops("cass", 0, 2, 179, 68, 0, 100, 4);
+		break;
+	case 17:
 		_vm->playAnimationLoops("g1talk", 0, 2, 54, 81, 0, 100, 4);
-        break;
-    default:
- //       _vm->waitSeconds(2);
-        break;
-    }
-    _vm->waitSeconds(2);
-    _vm->_isTextVisible = false;
-    _vm->refreshActors();
+		break;
+	default:
+ //	   _vm->waitSeconds(2);
+		break;
+	}
+	_vm->waitSeconds(2);
+	_vm->_isTextVisible = false;
+	_vm->refreshActors();
 }
 
 bool GameLogic::handleDialogSelect(int &replyTextX, int &replyTextY, int &replyTextIndex1, int &replyTextIndex2, int &replyTextIndex3) {
-    switch (_vm->_currentRoomNumber) {
-    case 0:
-        return r0_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 1:
-        return r1_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 2:
-        return r2_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 4:
-        return r4_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 5:
-        return r5_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 6:
-        return r6_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		return r0_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 1:
+		return r1_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 2:
+		return r2_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 4:
+		return r4_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 5:
+		return r5_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 6:
+		return r6_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 8:
 		return r8_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 9:
-        return r9_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 10:
-        return r10_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 13:
-        return r13_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 12:
-        return r12_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 15:
-        return r15_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+		return r9_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 10:
+		return r10_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 13:
+		return r13_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 12:
+		return r12_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 15:
+		return r15_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 17:
 		return r17_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 19:
 	case 20:
 		return r19_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 23:
-        return r3_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+		return r3_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 28:
 		return r28_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 30:
-        return r30_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 31:
-        return r31_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+		return r30_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 31:
+		return r31_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 32:
 		return r32_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	case 34:
-        return r34_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
-    case 35:
-        return r35_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+		return r34_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
+	case 35:
+		return r35_handleDialogSelect(replyTextX, replyTextY, replyTextIndex1, replyTextIndex2, replyTextIndex3);
 	default:
 		break;
-    }
+	}
 	return false;
 }
 
 void GameLogic::refreshRoomBackground(int roomNum) {
-    switch (roomNum) {
-    case 0:
-        r0_refreshRoomBackground();
-        break;
-    case 1:
-        r1_refreshRoomBackground();
-        break;
-    case 2:
-        r2_refreshRoomBackground();
-        break;
-    case 3:
-        r3_refreshRoomBackground();
-        break;
-    case 5:
-        r5_refreshRoomBackground();
-        break;
-    case 6:
-        r6_refreshRoomBackground();
-        break;
-    case 4:
-        r4_refreshRoomBackground();
-        break;
-    case 7:
-        r7_refreshRoomBackground();
-        break;
-    case 8:
-        r8_refreshRoomBackground();
-        break;
+	switch (roomNum) {
+	case 0:
+		r0_refreshRoomBackground();
+		break;
+	case 1:
+		r1_refreshRoomBackground();
+		break;
+	case 2:
+		r2_refreshRoomBackground();
+		break;
+	case 3:
+		r3_refreshRoomBackground();
+		break;
+	case 5:
+		r5_refreshRoomBackground();
+		break;
+	case 6:
+		r6_refreshRoomBackground();
+		break;
+	case 4:
+		r4_refreshRoomBackground();
+		break;
+	case 7:
+		r7_refreshRoomBackground();
+		break;
+	case 8:
+		r8_refreshRoomBackground();
+		break;
 	case 9:
 		r9_refreshRoomBackground();
 		break;
 	case 10:
-        r10_refreshRoomBackground();
-        break;
-    case 11:
-        r11_refreshRoomBackground();
-        break;
-    case 12:
-        r12_refreshRoomBackground();
-        break;
+		r10_refreshRoomBackground();
+		break;
+	case 11:
+		r11_refreshRoomBackground();
+		break;
+	case 12:
+		r12_refreshRoomBackground();
+		break;
 	case 13:
 		r13_refreshRoomBackground();
 		break;
@@ -718,8 +718,8 @@ void GameLogic::refreshRoomBackground(int roomNum) {
 		r14_refreshRoomBackground();
 		break;
 	case 16:
-        r16_refreshRoomBackground();
-        break;
+		r16_refreshRoomBackground();
+		break;
 	case 17:
 		r17_refreshRoomBackground();
 		break;
@@ -727,65 +727,65 @@ void GameLogic::refreshRoomBackground(int roomNum) {
 		r18_refreshRoomBackground();
 		break;
 	case 19:
-        r19_refreshRoomBackground();
-        break;
-    case 20:
-        r20_refreshRoomBackground();
-        break;
-    case 22:
-        r22_refreshRoomBackground();
-        break;
-    case 24:
-        r24_refreshRoomBackground();
-        break;
-    case 25:
-    case 26:
-    case 27:
-        r25_refreshRoomBackground();
-        break;
-    case 28:
-        r28_refreshRoomBackground();
-        break;
-    case 29:
-        r29_refreshRoomBackground();
-        break;
-    case 30:
-        r30_refreshRoomBackground();
-        break;
-    case 31:
-        r31_refreshRoomBackground();
-        break;
-    case 32:
-        r32_refreshRoomBackground();
-        break;
-    case 33:
-        r33_refreshRoomBackground();
-        break;
-    case 34:
-        r34_refreshRoomBackground();
-        break;
-    case 35:
-        r35_refreshRoomBackground();
-        break;
-    case 36:
-        r36_refreshRoomBackground();
-        break;
-    case 37:
-        r37_refreshRoomBackground();
-        break;
-    case 38:
-        r38_refreshRoomBackground();
-        break;
-    case 39:
-        r39_refreshRoomBackground();
-        break;
+		r19_refreshRoomBackground();
+		break;
+	case 20:
+		r20_refreshRoomBackground();
+		break;
+	case 22:
+		r22_refreshRoomBackground();
+		break;
+	case 24:
+		r24_refreshRoomBackground();
+		break;
+	case 25:
+	case 26:
+	case 27:
+		r25_refreshRoomBackground();
+		break;
+	case 28:
+		r28_refreshRoomBackground();
+		break;
+	case 29:
+		r29_refreshRoomBackground();
+		break;
+	case 30:
+		r30_refreshRoomBackground();
+		break;
+	case 31:
+		r31_refreshRoomBackground();
+		break;
+	case 32:
+		r32_refreshRoomBackground();
+		break;
+	case 33:
+		r33_refreshRoomBackground();
+		break;
+	case 34:
+		r34_refreshRoomBackground();
+		break;
+	case 35:
+		r35_refreshRoomBackground();
+		break;
+	case 36:
+		r36_refreshRoomBackground();
+		break;
+	case 37:
+		r37_refreshRoomBackground();
+		break;
+	case 38:
+		r38_refreshRoomBackground();
+		break;
+	case 39:
+		r39_refreshRoomBackground();
+		break;
 	default:
 		break;
-    }
+	}
 }
 
 void GameLogic::updateRoomAnimations() {
-    switch (_vm->_currentRoomNumber) {
+	switch (_vm->_currentRoomNumber) {
 	case 1:
 		r1_updateRoomAnimations();
 		break;
@@ -831,47 +831,47 @@ void GameLogic::updateRoomAnimations() {
 }
 
 void GameLogic::handleRoomEvent(int eventNum) {
-    switch (_vm->_currentRoomNumber) {
-    case 0:
-        switch (eventNum) {
-        case 1:
-            r0_handleRoomEvent1();
-            break;
-        case 2:
-            r0_handleRoomEvent2();
-            break;
-        default:
-            r0_handleRoomEvent3();
-            break;
-        }
-        break;
-    case 1:
-        r1_handleRoomEvent(false);
-        break;
+	switch (_vm->_currentRoomNumber) {
+	case 0:
+		switch (eventNum) {
+		case 1:
+			r0_handleRoomEvent1();
+			break;
+		case 2:
+			r0_handleRoomEvent2();
+			break;
+		default:
+			r0_handleRoomEvent3();
+			break;
+		}
+		break;
+	case 1:
+		r1_handleRoomEvent(false);
+		break;
 	case 4:
 		r4_handleRoomEvent();
 		break;
 	case 5:
-        r5_handleRoomEvent();
-        break;
-    case 6:
-        switch (eventNum) {
-        case 1:
-            r6_handleRoomEvent1();
-            break;
-        case 2:
-            r6_handleRoomEvent2();
-            break;
-        case 3:
-            r6_handleRoomEvent3();
-            break;
-        case 4:
-            r6_handleRoomEvent4();
-            break;
-        default:
+		r5_handleRoomEvent();
+		break;
+	case 6:
+		switch (eventNum) {
+		case 1:
+			r6_handleRoomEvent1();
 			break;
-        }
-        break;
+		case 2:
+			r6_handleRoomEvent2();
+			break;
+		case 3:
+			r6_handleRoomEvent3();
+			break;
+		case 4:
+			r6_handleRoomEvent4();
+			break;
+		default:
+			break;
+		}
+		break;
 	case 8:
 		switch (eventNum) {
 		case 1:
@@ -909,11 +909,11 @@ void GameLogic::handleRoomEvent(int eventNum) {
 		}
 		break;
 	case 19:
-        r19_handleRoomEvent();
-        break;
-    case 20:
-        r20_handleRoomEvent();
-        break;
+		r19_handleRoomEvent();
+		break;
+	case 20:
+		r20_handleRoomEvent();
+		break;
 	case 24:
 		if (eventNum == 1) {
 			r24_handleRoomEvent(92, 72, -43, 90, 38, 0);
@@ -925,61 +925,61 @@ void GameLogic::handleRoomEvent(int eventNum) {
 		break;
 	case 28:
 		if (eventNum == 1)
-            r28_handleRoomEvent1();
+			r28_handleRoomEvent1();
 		else
-    		r28_handleRoomEvent2();
-        break;
-    case 29:
-        r29_handleRoomEvent();
-        break;
-    case 30:
-        switch (eventNum) {
-        case 1:
-            r30_handleRoomEvent1();
-            break;
-        case 2:
-            r30_handleRoomEvent2();
-            break;
-        default:
+			r28_handleRoomEvent2();
+		break;
+	case 29:
+		r29_handleRoomEvent();
+		break;
+	case 30:
+		switch (eventNum) {
+		case 1:
+			r30_handleRoomEvent1();
 			break;
-        }
-        break;
-    case 31:
-        switch (eventNum) {
-        case 1:
-            r31_handleRoomEvent1();
-            break;
-        case 2:
-            r31_handleRoomEvent2();
-            break;
-        case 3:
-            r31_handleRoomEvent3();
-            break;
-        case 4:
-            r31_handleRoomEvent4();
-            break;
-        case 5:
-            r31_handleRoomEvent5();
-            break;
+		case 2:
+			r30_handleRoomEvent2();
+			break;
 		default:
 			break;
-        }
-        break;
+		}
+		break;
+	case 31:
+		switch (eventNum) {
+		case 1:
+			r31_handleRoomEvent1();
+			break;
+		case 2:
+			r31_handleRoomEvent2();
+			break;
+		case 3:
+			r31_handleRoomEvent3();
+			break;
+		case 4:
+			r31_handleRoomEvent4();
+			break;
+		case 5:
+			r31_handleRoomEvent5();
+			break;
+		default:
+			break;
+		}
+		break;
 	case 32:
 		r32_handleRoomEvent();
 		break;
 	case 35:
-        r35_talkToCassandra();
-        break;
+		r35_talkToCassandra();
+		break;
 	case 36:
 		r36_handleRoomEvent();
 		break;
 	case 37:
-        r37_climbEnterLadderDown();
-        break;
+		r37_climbEnterLadderDown();
+		break;
 	default:
 		break;
-    }
+	}
 }
 
 int GameLogic::getActorScaleFromY(int actorY) {
@@ -1080,162 +1080,162 @@ int GameLogic::getActorScaleFromY(int actorY) {
 	default:
 		break;
 	}
-    return CLIP(scale, 20, 100);
+	return CLIP(scale, 20, 100);
 }
 
 void GameLogic::setPizzathonStatus(int flagNum) {
-    switch (flagNum) {
-    case 1:
-        _pizzathonListFlags1 |= 0x08;
-        break;
-    case 2:
-        _pizzathonListFlags1 |= 0x40;
-        break;
-    case 3:
-        _pizzathonListFlags1 |= 0x80;
-        break;
-    case 4:
-        _pizzathonListFlags2 |= 0x01;
-        break;
-    case 5:
-        _pizzathonListFlags2 |= 0x02;
-        break;
-    case 6:
-        _pizzathonListFlags1 |= 0x02;
-        break;
-    case 7:
-        _pizzathonListFlags1 |= 0x04;
-        break;
-    case 8:
-        _pizzathonListFlags1 |= 0x10;
-        break;
-    case 9:
-        _pizzathonListFlags1 |= 0x01;
-        break;
-    case 10:
-        _pizzathonListFlags1 |= 0x20;
-        break;
+	switch (flagNum) {
+	case 1:
+		_pizzathonListFlags1 |= 0x08;
+		break;
+	case 2:
+		_pizzathonListFlags1 |= 0x40;
+		break;
+	case 3:
+		_pizzathonListFlags1 |= 0x80;
+		break;
+	case 4:
+		_pizzathonListFlags2 |= 0x01;
+		break;
+	case 5:
+		_pizzathonListFlags2 |= 0x02;
+		break;
+	case 6:
+		_pizzathonListFlags1 |= 0x02;
+		break;
+	case 7:
+		_pizzathonListFlags1 |= 0x04;
+		break;
+	case 8:
+		_pizzathonListFlags1 |= 0x10;
+		break;
+	case 9:
+		_pizzathonListFlags1 |= 0x01;
+		break;
+	case 10:
+		_pizzathonListFlags1 |= 0x20;
+		break;
 	default:
 		break;
-    }
-    // _byte_306C8++; Never used but present in savegames
-    if ((_pizzathonListFlags1 & 0x08) && (_pizzathonListFlags1 & 0x40) && (_pizzathonListFlags1 & 0x80) &&
-        (_pizzathonListFlags2 & 0x01) && (_pizzathonListFlags2 & 0x02) && (_pizzathonListFlags1 & 0x02) &&
-        (_pizzathonListFlags1 & 0x04) && (_pizzathonListFlags1 & 0x10) && (_pizzathonListFlags1 & 0x01) &&
-        (_pizzathonListFlags1 & 0x20)) {
-        _pizzathonListFlags2 |= 0x04;
-    }
+	}
+	// _byte_306C8++; Never used but present in savegames
+	if ((_pizzathonListFlags1 & 0x08) && (_pizzathonListFlags1 & 0x40) && (_pizzathonListFlags1 & 0x80) &&
+		(_pizzathonListFlags2 & 0x01) && (_pizzathonListFlags2 & 0x02) && (_pizzathonListFlags1 & 0x02) &&
+		(_pizzathonListFlags1 & 0x04) && (_pizzathonListFlags1 & 0x10) && (_pizzathonListFlags1 & 0x01) &&
+		(_pizzathonListFlags1 & 0x20)) {
+		_pizzathonListFlags2 |= 0x04;
+	}
 }
 
 void GameLogic::displayExtremeCloseupOfPizzathonList() {
 	GxlArchive *lib = _vm->_m05Gxl;
 
 	_vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    _vm->paletteFadeOut(0, 256, 16);
-    // sysMouseDriver(2);
+	_vm->_gameState = 5;
+	_vm->paletteFadeOut(0, 256, 16);
+	// sysMouseDriver(2);
 	_vm->drawImageToScreen(lib, "list.pcx", 0, 0);
-    _vm->playSound("sv14.snd", 1);
-    if (_pizzathonListFlags1 & 0x08) {
+	_vm->playSound("sv14.snd", 1);
+	if (_pizzathonListFlags1 & 0x08) {
 		_vm->drawImageToScreen(lib, "adline.pcx", 72, 22);
-    }
-    if (_pizzathonListFlags1 & 0x40) {
+	}
+	if (_pizzathonListFlags1 & 0x40) {
 		_vm->drawImageToScreen(lib, "locline.pcx", 72, 42);
-    }
-    if (_pizzathonListFlags1 & 0x80) {
+	}
+	if (_pizzathonListFlags1 & 0x80) {
 		_vm->drawImageToScreen(lib, "volline.pcx", 74, 59);
-    }
-    if (_pizzathonListFlags2 & 0x01) {
+	}
+	if (_pizzathonListFlags2 & 0x01) {
 		_vm->drawImageToScreen(lib, "timeline.pcx", 66, 76);
-    }
-    if (_pizzathonListFlags2 & 0x02) {
+	}
+	if (_pizzathonListFlags2 & 0x02) {
 		_vm->drawImageToScreen(lib, "totline.pcx", 73, 94);
-    }
-    if (_pizzathonListFlags1 & 0x02) {
+	}
+	if (_pizzathonListFlags1 & 0x02) {
 		_vm->drawImageToScreen(lib, "vidline.pcx", 80, 111);
-    }
-    if (_pizzathonListFlags1 & 0x04) {
+	}
+	if (_pizzathonListFlags1 & 0x04) {
 		_vm->drawImageToScreen(lib, "ingline.pcx", 72, 129);
-    }
-    if (_pizzathonListFlags1 & 0x10) {
+	}
+	if (_pizzathonListFlags1 & 0x10) {
 		_vm->drawImageToScreen(lib, "musline.pcx", 78, 148);
-    }
-    if (_pizzathonListFlags1 & 0x01) {
+	}
+	if (_pizzathonListFlags1 & 0x01) {
 		_vm->drawImageToScreen(lib, "magline.pcx", 61, 164);
-    }
-    if (_pizzathonListFlags1 & 0x20) {
+	}
+	if (_pizzathonListFlags1 & 0x20) {
 		_vm->drawImageToScreen(lib, "comline.pcx", 68, 180);
-    }
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	}
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfSign15() {
-    _vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
-    _vm->drawRoomImageToScreen("sign.pcx", 0, 0);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->stopRoomAnimations();
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
+	_vm->drawRoomImageToScreen("sign.pcx", 0, 0);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfObjectPictures22() {
-    _vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
+	_vm->stopRoomAnimations();
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "oldmap.pcx", 0, 0);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfMemo() {
 	_vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "memo.pcx", 0, 0);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfSewerMap() {
 	_vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "sewermap.pcx", 0, 0);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfBillboard1() {
 	_vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
-    _vm->_screen->clear(0);
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
+	_vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "fboard.pcx", 51, 18);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 void GameLogic::displayExtremeCloseupOfBillboard2() {
 	_vm->stopRoomAnimations();
-    _vm->_gameState = 5;
-    // sysMouseDriver(2);
-    _vm->paletteFadeOut(0, 256, 16);
-    _vm->playSound("sv14.snd", 1);
-    _vm->_screen->clear(0);
+	_vm->_gameState = 5;
+	// sysMouseDriver(2);
+	_vm->paletteFadeOut(0, 256, 16);
+	_vm->playSound("sv14.snd", 1);
+	_vm->_screen->clear(0);
 	_vm->drawImageToScreen(_vm->_m05Gxl, "pboard.pcx", 51, 18);
-    _vm->paletteFadeIn(0, 256, 16);
-    // sysMouseDriver(1);
+	_vm->paletteFadeIn(0, 256, 16);
+	// sysMouseDriver(1);
 }
 
 int GameLogic::r0_handleVerbPickUp() {
@@ -8014,7 +8014,7 @@ void GameLogic::r37_climbExitLadderUp() {
 		wclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-    for (int index = 0; index < 3; index++) {
+	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldr%d", index);
 		getldrSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
@@ -8202,7 +8202,7 @@ void GameLogic::r37_climbLadderUp() {
 		gclimbSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 	}
 
-    for (int index = 0; index < 3; index++) {
+	for (int index = 0; index < 3; index++) {
 		tempFilename = Common::String::format("wgetldl%d", index);
 		wgetldlSprites[index] = roomLib->loadRoomSurface(tempFilename.c_str());
 		tempFilename = Common::String::format("ggetldl%d", index);
@@ -8626,7 +8626,7 @@ void GameLogic::showEnding() {
 
 	GxlArchive *e01Gxl = new GxlArchive("e01");
 	_vm->paletteFadeOut(0, 256, 64);
-    _vm->_screen->clear(0);
+	_vm->_screen->clear(0);
 	_vm->drawImageToScreen(e01Gxl, "backg.pcx", 0, 0);
 	_vm->drawImageToScreen(e01Gxl, "tv01.pcx", 180, 74);
 	_vm->_musicIndex = 1;

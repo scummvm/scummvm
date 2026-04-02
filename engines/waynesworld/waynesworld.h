@@ -42,7 +42,7 @@ namespace WaynesWorld {
 class GxlArchive;
 
 enum {
-	GF_GUILANGSWITCH =    (1 << 0) // If GUI language switch is required for menus
+	GF_GUILANGSWITCH =	(1 << 0) // If GUI language switch is required for menus
 };
 
 class Screen;
@@ -60,11 +60,11 @@ struct SavegameHeader {
 };
 
 struct RoomObject {
-    int roomNumber;
-    const char *name;
-    int x1, y1, x2, y2;
-    int direction;
-    int walkX, walkY;
+	int roomNumber;
+	const char *name;
+	int x1, y1, x2, y2;
+	int direction;
+	int walkX, walkY;
 };
 
 struct StaticRoomObjectMapEntry {
@@ -77,7 +77,7 @@ struct StaticRoomObject {
 };
 
 struct WalkPoint {
-    int x, y, direction;
+	int x, y, direction;
 };
 
 struct AnimationTimer {

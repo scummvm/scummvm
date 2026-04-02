@@ -173,16 +173,16 @@ void GFTFont::loadFromFile(const char *filename) {
 		_charTable[i] = fd.readUint16LE();
 	fd.seek(charDataOfs);
 	_fontData = new byte[_formWidth * 8 * _formHeight];
-    for (int y = 0; y < _formHeight; y++) {
-        int x = 0;
-        for (int formPos = 0; formPos < _formWidth; formPos++) {
-	        const byte charByte = fd.readByte();
-            for (int bitNum = 0; bitNum < 8; bitNum++) {
-                _fontData[x + y * _formWidth * 8] = ((charByte & (1 << (7 - bitNum))) != 0) ? 1 : 0;
-                x++;
-            }
-        }
-    }
+	for (int y = 0; y < _formHeight; y++) {
+		int x = 0;
+		for (int formPos = 0; formPos < _formWidth; formPos++) {
+			const byte charByte = fd.readByte();
+			for (int bitNum = 0; bitNum < 8; bitNum++) {
+				_fontData[x + y * _formWidth * 8] = ((charByte & (1 << (7 - bitNum))) != 0) ? 1 : 0;
+				x++;
+			}
+		}
+	}
 }
 
 void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int y, byte color) {
@@ -193,35 +193,35 @@ void GFTFont::drawText(Graphics::Surface *surface, const char *text, int x, int 
 }
 
 void GFTFont::drawWrappedText(Graphics::Surface *surface, const char *text, int x, int y, int maxWidth, byte color) {
-    const char *textP = text;
-    const char *lineStartP = text, *lastSpaceP = nullptr;
-    const int textX = x;
-    int lineWidth = 0;
-    while (*textP) {
-        if (textP > text && textP[-1] == 32)
-            lastSpaceP = textP - 1;
-        const int charWidth = getCharWidth(*textP);
-        if (lineWidth + charWidth > maxWidth) {
+	const char *textP = text;
+	const char *lineStartP = text, *lastSpaceP = nullptr;
+	const int textX = x;
+	int lineWidth = 0;
+	while (*textP) {
+		if (textP > text && textP[-1] == 32)
+			lastSpaceP = textP - 1;
+		const int charWidth = getCharWidth(*textP);
+		if (lineWidth + charWidth > maxWidth) {
 			const char *lineEndP = lastSpaceP ? lastSpaceP : textP + 1;
 			for (const char *p = lineStartP; p < lineEndP; p++) {
 				x += drawChar(surface, (byte)*p, x, y, color);
 			}
-            lineStartP = lastSpaceP + 1;
-            textP = lastSpaceP + 1;
-            lineWidth = 0;
+			lineStartP = lastSpaceP + 1;
+			textP = lastSpaceP + 1;
+			lineWidth = 0;
 			x = textX;
-            y += _formHeight;
-        } else if (textP[1] == 0) {
+			y += _formHeight;
+		} else if (textP[1] == 0) {
 			const char *lineEndP = textP + 1;
 			for (const char *p = lineStartP; p < lineEndP; p++) {
 				x += drawChar(surface, (byte)*p, x, y, color);
 			}
 			break;
 		} else {
-            lineWidth += charWidth;
-            textP++;
-        }
-    }
+			lineWidth += charWidth;
+			textP++;
+		}
+	}
 }
 
 int GFTFont::drawChar(Graphics::Surface *surface, byte ch, int x, int y, byte color) {
@@ -354,10 +354,10 @@ void Screen::saveScreenshot() {
 
 ScreenEffect::ScreenEffect(WaynesWorldEngine *vm, Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight)
 	: _vm(vm), _surface(surface), _x(x), _y(y), _grainWidth(grainWidth), _grainHeight(grainHeight), _blockCtr(0) {
-    _blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
+	_blockCountW = _surface->w / _grainWidth + (_surface->w % _grainWidth > 0 ? 1 : 0);
 	_blockCountH = _surface->h / _grainHeight + (_surface->h % _grainHeight > 0 ? 1 : 0);
-    const int blockCount = _blockCountW * _blockCountH;
-    const int duration = blockCount / 5; // Approximate time this effect should take in ms
+	const int blockCount = _blockCountW * _blockCountH;
+	const int duration = blockCount / 5; // Approximate time this effect should take in ms
 	_timePerSlice = 50; // Time after which the screen should be updated
 	_blocksPerSlice = blockCount / (duration / _timePerSlice);
 }
