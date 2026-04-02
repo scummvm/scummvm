@@ -2940,7 +2940,6 @@ void GameLogic::r5_handleCassandra(const char *filename, int startFrame, int max
 	const int deltaY = abs(targetY - startY);
 
 	int velX, velY;
-
 	if (deltaX == 0) {
 		velX = 0;
 		velY = totalSpeed * stepY;
@@ -2955,7 +2954,11 @@ void GameLogic::r5_handleCassandra(const char *filename, int startFrame, int max
 		velX = ((totalSpeed * deltaX) / deltaY) * stepX;
 	}
 
-	const int stepNumb = abs(deltaX / velX);
+	if (velX == 0 && velY == 0)
+		error("Unexpected lack of velocity");
+
+	const int stepNumb = (velX == 0) ? abs(deltaY / velY) : abs(deltaX / velX);
+
 	WWSurface *workBackground = new WWSurface(320, 150);
 	workBackground->drawSurface(_vm->_backgroundSurface, 0, 0);
 	// sysMouseDriver(2)
@@ -2964,16 +2967,18 @@ void GameLogic::r5_handleCassandra(const char *filename, int startFrame, int max
 	int curY = startY;
 
 	// The original has a lot of scaling code and a bunch of code to handle how to position Garth and Wayne as if Cassandra was walking by them
-	// As she stop before them, and as the scaling computed was 1:1, the code has been significantly simplified
+	// As she stops before them, and as the scaling computed was 1:1, the code has been significantly simplified
 	
 	WWSurface *cassSurface = new WWSurface(width, height);
-	for (int i = 0; i < stepNumb; ++i) {
+	for (int i = 0; i <= stepNumb; ++i) {
 		updateRoomAnimations();
-		if (i > 0) {
+		if (curX - velX >= 0) {
+			// Restore previous surface
 			_vm->_backgroundSurface->copyRectToSurface((Graphics::Surface)*workBackground, curX - velX, curY - velY - height, Common::Rect(curX - velX, curY - velY - height, curX - velX + width, curY - velY));
 		}
 		const int key = (i % maxFrame) + startFrame;
 		Common::String curFile = Common::String::format("%s%d.pcx", filename, key);
+		// Draw new sprite
 		_vm->drawImageToSurface(_vm->_roomGxl, curFile.c_str(), cassSurface, 0, 0);
 
 		_vm->_backgroundSurface->drawSurfaceTransparent(cassSurface, curX, curY - height);
@@ -2984,15 +2989,17 @@ void GameLogic::r5_handleCassandra(const char *filename, int startFrame, int max
 		// Add delay for better visual result
 		_vm->waitMillis(45);
 	}
-	
+
+	if (refreshBackground) {
+		_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
+		r5_refreshRoomBackground();
+	}
+
+
 	delete cassSurface;
 	delete workBackground;
 
 	// sysMouseDriver(1);
-	// if (refreshBackground) {
-	//		_vm->drawRoomImageToBackground("backg.pcx", 0, 0);
-	//		r5_refreshRoomBackground();
-	// }
 }
 
 void GameLogic::r5_handleRoomEvent() {
@@ -8893,7 +8900,8 @@ void GameLogic::synchronize(Common::Serializer &s) {
 	s.syncAsSint16LE(_r24_mazeRoomNumber);
 	s.syncAsSint16LE(_r24_mazeHoleNumber);
 	byte byte_306C8 = 0;
-	s.syncAsByte(byte_306C8); // set but not used in pizzathon
+	// In the original, this byte is set but not used in setPizzathonStatus() to count the number of items found
+	s.syncAsByte(byte_306C8);
 
 	for (int i = 0; i < 5; ++i)
 		s.syncAsSint16LE(_vm->_dialogChoices[i]);
@@ -8904,9 +8912,12 @@ void GameLogic::synchronize(Common::Serializer &s) {
 		s.syncAsSint16LE(_vm->_garthInventory[i]);
 	}
 
-	for (int i = 0; i < 404; ++i)
-		s.syncAsSint16LE(_vm->_roomObjects[i].roomNumber);
-
+	byte dummy = 0;
+	for (int i = 0; i < 404; ++i) {
+		s.syncAsByte(_vm->_roomObjects[i].roomNumber);
+		// For some mysterious reason, the original reads the first letter of the object name as well and overwrite it... 404 bytes wasted per savegame :/
+		s.syncAsByte(dummy);
+	}
 	s.syncAsByte(_pizzathonListFlags1);
 	s.syncAsByte(_pizzathonListFlags2);
 	s.syncAsByte(_r31_flags);
@@ -8938,7 +8949,6 @@ void GameLogic::synchronize(Common::Serializer &s) {
 }
 
 bool GameLogic::saveSavegame(int slot, const Common::String *desc) {
-	// TODO: we could put the extra ScummVM info after the 1135 bytes of a standard savegame or modify loadSavegame to skip it when it's not a RST file
 	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(Common::String::format("ww%02d.sav", slot), true);
 
 	if (saveFile == nullptr) {
