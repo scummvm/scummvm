@@ -33,6 +33,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOASPECT)
 	},
 
+	// Provided by gabberhead, ticket #16627
+	{
+		"waynesworld",
+		 "",
+		 AD_ENTRY2s("R00.GXL", "197ae9fb74a79a6dad4e3336f94c7545", 36272,
+					"e00.txt", "b5042542d0df2fcd8c8e617ee0900ce8", 1447),
+		 Common::DE_DEU,
+		 Common::kPlatformDOS,
+		 ADGF_UNSTABLE,
+		 GUIO1(GUIO_NOASPECT)
+	},
+
 	{
 		"waynesworld",
 		"Demo",
@@ -54,7 +66,8 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	
-	AD_TABLE_END_MARKER};
+
+	AD_TABLE_END_MARKER
+};
 
 } // End of namespace WaynesWorld
