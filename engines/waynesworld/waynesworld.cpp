@@ -260,6 +260,8 @@ Common::Error WaynesWorldEngine::run() {
 	_isSaveAllowed = true;
 
 	while (!shouldQuit() && !(_logic->_r8_flags & 0x20)) {
+		handleMapPalette();
+		
 		_mouseClickButtons = 0;
 		// _keyInput = 0;
 		updateEvents();
@@ -502,6 +504,21 @@ void WaynesWorldEngine::updateMouseMove() {
 
 }
 
+void WaynesWorldEngine::handleMapPalette() {
+	if (_gameMapHasPaletteHandler) {
+		const uint32 curTicks = _system->getMillis();
+		if (curTicks - _gameMapLastTicks > 55) {
+			_gameMapLastTicks = curTicks;
+			_gameMapCtr = (_gameMapCtr + 1) % 16;
+			if (_gameMapCtr == 0) {
+				paletteFadeColor(109, 1, 1, 1, 64);
+			} else if (_gameMapCtr == 8) {
+				paletteFadeColor(109, 56, 8, 5, 64);
+			}
+		}
+	}
+}
+
 void WaynesWorldEngine::handleMouseClick() {
     if (_mouseClickButtons & kLeftButtonClicked) {
         handleMouseLeftClick();
@@ -635,6 +652,30 @@ void WaynesWorldEngine::paletteFadeOut(int index, int count, int stepsSize) {
 		g_system->updateScreen();
 		g_system->delayMillis(20);
 	}
+}
+
+void WaynesWorldEngine::paletteFadeColor(int index, byte r, byte g, byte b, int steps) {
+	byte fadePalette[768];
+	g_system->getPaletteManager()->grabPalette(fadePalette, 0, 256);
+
+	const int destR = r << 2;
+	const int destG = g << 2;
+	const int destB = b << 2;
+	
+	const int deltaR = fadePalette[index * 3] >= destR ? 1 : -1;
+	const int deltaG = fadePalette[(index * 3) + 1] >= destG ? 1 : -1;
+	const int deltaB = fadePalette[(index * 3) + 2] >= destB ? 1 : -1;
+	
+	while (fadePalette[index * 3] != destR && fadePalette[(index * 3) + 1] != destG && fadePalette[(index * 3) + 2] != destB) {
+		fadePalette[index * 3] = ABS(fadePalette[index * 3] - destR) < steps ? destR : fadePalette[index * 3] - (steps * deltaR);
+		fadePalette[(index * 3) + 1] = ABS(fadePalette[(index * 3) + 1] - destG) < steps ? destG : fadePalette[(index * 3) + 1] - (steps * deltaG);
+		fadePalette[(index * 3) + 2] = ABS(fadePalette[(index * 3) + 2] - destB) < steps ? destB : fadePalette[(index * 3) + 2] - (steps * deltaB);
+
+		g_system->getPaletteManager()->setPalette(fadePalette, 0, 256);
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	}
+	
 }
 
 void WaynesWorldEngine::drawImageToSurfaceIntern(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y, bool transparent) {

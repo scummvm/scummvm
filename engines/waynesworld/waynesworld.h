@@ -300,6 +300,9 @@ public:
 	int _currentMapItemIndex;
 	int _gameMapDestinationRoomNum;
 	bool _gameMapFlag;
+	bool _gameMapHasPaletteHandler = false;
+	int _gameMapCtr = 0;
+	uint32 _gameMapLastTicks = 0;
 
 	void runIntro();
 
@@ -322,6 +325,8 @@ public:
 
 	void paletteFadeIn(int index, int count, int stepsSize);
 	void paletteFadeOut(int index, int count, int stepsSize);
+	void paletteFadeColor(int index, byte r, byte g, byte b, int steps);
+	void handleMapPalette();
 
 	// Image drawing
 	void drawImageToSurfaceIntern(GxlArchive *lib, const char *filename, WWSurface *destSurface, int x, int y, bool transparent);
@@ -472,6 +477,9 @@ public:
 	void gameMapHandleMouseMove(int objectNumber);
 	void gameMapHandleMouseClick();
 	void gameMapSelectItem(const char *prefix, int animX, int animY);
+
+	void gameMapPaletteHandlerStart();
+	void gameMapPaletteHandlerStop();
 
 	// Savegame API
 

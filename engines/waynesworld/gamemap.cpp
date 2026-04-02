@@ -127,13 +127,13 @@ void WaynesWorldEngine::gameMapOpen() {
     drawImageToScreen(_m02Gxl, "main_map.pcx", 0, 0);
     _screen->fillSquare(kMapItem9s[_gameMapRoomNumber].x0, kMapItem9s[_gameMapRoomNumber].y0, 3, 109);
     paletteFadeIn(0, 256, 16);
-    // TODO gameMapPaletteHandlerStart();
+    gameMapPaletteHandlerStart();
     // sysMouseDriver(1);
 }
 
 void WaynesWorldEngine::gameMapFinish() {
     _gameState = 0;
-    // TODO gameMapPaletteHandlerStop();
+    gameMapPaletteHandlerStop();
     paletteFadeOut(0, 256, 16);
     _musicIndex = 0;
     changeMusic();
@@ -146,17 +146,17 @@ void WaynesWorldEngine::gameMapFinish() {
 void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
     if (_hoverObjectNumber == objectNumber)
         return;
-    _hoverObjectNumber = objectNumber;
+
+	_hoverObjectNumber = objectNumber;
 	GxlArchive *lib = _m02Gxl;
     Common::String tagFilename;
     int tagX = -1, tagY = -1;
 
     if (_hoverObjectNumber == -1) {
         if (_currentMapItemIndex == 6) {
-			warning("STUB gameMapHandleMouseMove - _currentMapItemIndex == 6");
-            // TODO gameMapPaletteHandlerStop();
-            // TODO paletteFadeColor(36, 4, 21, 2, 64);
-            // TODO gameMapPaletteHandlerStart();
+            gameMapPaletteHandlerStop();
+            paletteFadeColor(36, 4, 21, 2, 64);
+            gameMapPaletteHandlerStart();
             _currentMapItemIndex = -1;
         } else if (_currentMapItemIndex >= 0 && _currentMapItemIndex <= 5) {
             const MapItem13 &item = kMapItem13s[_currentMapItemIndex];
@@ -168,29 +168,28 @@ void WaynesWorldEngine::gameMapHandleMouseMove(int objectNumber) {
             tagFilename = Common::String::format("%s_xtag.pcx", item.name);
             tagX = item.tagX;
             tagY = item.tagY;
-        }
-    } else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
-        const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
-        tagFilename = Common::String::format("%s_tag.pcx", item.name);
-        tagX = item.tagX;
-        tagY = item.tagY;
-    } else if (_hoverObjectNumber >= 7 && _hoverObjectNumber <= 21) {
-        const MapItem17 &item = kMapItem17s[_hoverObjectNumber - 7];
-        tagFilename = Common::String::format("%s_tag.pcx", item.name);
-        tagX = item.tagX;
-        tagY = item.tagY;
-    } else if (_hoverObjectNumber == 6 || (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27)) {
-		warning("STUB gameMapHandleMouseMove - _hoverObjectNumber == 6");
-		// TODO gameMapPaletteHandlerStop();
-        // TODO paletteFadeColor(36, 63, 0, 0, 64);
-        // TODO gameMapPaletteHandlerStart();
-        _currentMapItemIndex = 6;
-    }
+		}
+	} else if (_hoverObjectNumber >= 0 && _hoverObjectNumber <= 5) {
+		const MapItem13 &item = kMapItem13s[_hoverObjectNumber];
+		tagFilename = Common::String::format("%s_tag.pcx", item.name);
+		tagX = item.tagX;
+		tagY = item.tagY;
+	} else if (_hoverObjectNumber >= 7 && _hoverObjectNumber <= 21) {
+		const MapItem17 &item = kMapItem17s[_hoverObjectNumber - 7];
+		tagFilename = Common::String::format("%s_tag.pcx", item.name);
+		tagX = item.tagX;
+		tagY = item.tagY;
+	} else if (_hoverObjectNumber == 6 || (_hoverObjectNumber >= 22 && _hoverObjectNumber <= 27)) {
+		gameMapPaletteHandlerStop();
+		paletteFadeColor(36, 63, 0, 0, 64);
+		gameMapPaletteHandlerStart();
+		_currentMapItemIndex = 6;
+	}
 
-    if (tagX != -1 && tagY != -1) {
-        _currentMapItemIndex = _hoverObjectNumber;
-        drawImageToScreen(lib, tagFilename.c_str(), tagX, tagY);
-    }
+	if (tagX != -1 && tagY != -1) {
+		_currentMapItemIndex = _hoverObjectNumber;
+		drawImageToScreen(lib, tagFilename.c_str(), tagX, tagY);
+	}
 }
 
 void WaynesWorldEngine::gameMapHandleMouseClick() {
@@ -240,6 +239,18 @@ void WaynesWorldEngine::gameMapSelectItem(const char *prefix, int animX, int ani
     }
     // sysMouseDriver(1);
     _gameMapFlag = true;
+}
+
+void WaynesWorldEngine::gameMapPaletteHandlerStart() {
+	_gameMapHasPaletteHandler = true;
+	_gameMapCtr = 0;
+	// Original also sets a hook on INT 1Ch for a check 18.2 times a second
+}
+
+void WaynesWorldEngine::gameMapPaletteHandlerStop() {
+	_gameMapHasPaletteHandler = false;
+	_gameMapCtr = 0;
+	// Original also restored the original INT 1Ch
 }
 
 } // End of namespace WaynesWorld
