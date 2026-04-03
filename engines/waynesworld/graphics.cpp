@@ -450,7 +450,7 @@ void ScreenEffect::drawBlock(int blockX, int blockY) {
 	}
 }
 
-uint ScreenEffect::getBitCount(int value) const {
+uint ScreenEffect::getBitCount(int value) {
 	int bitCount = 0;
 	while ((value >> bitCount) != 0) {
 		bitCount++;

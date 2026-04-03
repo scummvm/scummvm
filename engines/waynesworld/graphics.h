@@ -54,11 +54,12 @@ public:
 	int getTextWidth(const char *text) const;
 	int getCharWidth(byte ch) const;
 protected:
-	byte _firstChar;
-	byte _lastChar;
-	uint16 *_charTable;
-	byte *_fontData;
-	int16 _formWidth, _formHeight;
+	byte _firstChar = 0;
+	byte _lastChar = 0;
+	uint16 *_charTable = nullptr;
+	byte *_fontData = nullptr;
+	int16 _formWidth = 0;
+	int16 _formHeight = 0;
 };
 
 class Screen {
@@ -99,10 +100,10 @@ protected:
 	int _blockCountW, _blockCountH;
 	int _blockCtr;
 	uint32 _timePerSlice;
-	uint32 _totalSliceTicks;
+	uint32 _totalSliceTicks = 0;
 	int _blocksPerSlice;
 	void drawBlock(int blockX, int blockY);
-	uint getBitCount(int value) const;
+	static uint getBitCount(int value);
 	uint getSeed(uint bitCount) const;
 };
 

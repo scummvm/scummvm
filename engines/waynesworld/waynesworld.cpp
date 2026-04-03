@@ -2040,11 +2040,11 @@ void WaynesWorldEngine::handleVerbUse() {
 }
 
 void WaynesWorldEngine::handleVerbTalkTo() {
-	int actionTextIndex;
 	_dialogChoices[0] = -1;
 
 	if (_objectNumber == -3 || _objectNumber == -2) {
 		const bool room1Special = !(_logic->_r1_flags1 & 0x10) && isActorWayne() && _currentRoomNumber == 1 && (_logic->_r1_flags2 & 0x01);
+		int actionTextIndex;
 		if (room1Special) {
 			actionTextIndex = 14;
 		} else {

@@ -192,8 +192,8 @@ private:
 	GxlArchive *_oanGxl = nullptr;
 
 public:
-	Common::RandomSource *_random;
-	GameLogic *_logic;
+	Common::RandomSource *_random = nullptr;
+	GameLogic *_logic = nullptr;
 
 	void updateEvents();
 
@@ -215,8 +215,8 @@ public:
 	GxlArchive *_r10Gxl = nullptr;
 
 	// Sound and Music
-	SoundManager *_sound;
-	MusicManager *_midi;
+	SoundManager *_sound = nullptr;
+	MusicManager *_midi = nullptr;
 
 	// Room
 	Common::String _roomName;
@@ -234,18 +234,18 @@ public:
 
 	// Input
 	int _mouseX = 0, _mouseY = 0;
-	int _mouseClickY, _mouseClickX;
+	int _mouseClickY = 0, _mouseClickX = 0;
 	Common::Rect _mouseZone = {0, 0, 319, 199};
-	uint _mouseClickButtons;
-	Common::KeyCode _keyCode;
+	uint _mouseClickButtons = 0;
+	Common::KeyCode _keyCode = Common::KEYCODE_INVALID;
 
 	// Text
 	Common::String _currentText;
-	int _currentTextX, _currentTextY;
-	bool _isTextVisible;
+	int _currentTextX = 0, _currentTextY = 0;
+	bool _isTextVisible = false;
 
 	// Audio
-	int _musicIndex;
+	int _musicIndex = 0;
 
 	// Game
 	int _gameState; // TODO Use enum

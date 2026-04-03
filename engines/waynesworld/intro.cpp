@@ -411,9 +411,6 @@ void WaynesWorldEngine::introPt6() {
 			scrollSurface->copyRectToSurface((Graphics::Surface)*introPt6Surface[4], 0, 0, Common::Rect(0, 200 - i, 319, 200));
 			scrollSurface->copyRectToSurface((Graphics::Surface)*signBottomSurface, 0, i, Common::Rect(0, 0, 319, 200 - i));
 			_screen->drawSurface(scrollSurface, 0, 0);
-			if (_escPressed) {
-				break;
-			}
 		}
 	}
 

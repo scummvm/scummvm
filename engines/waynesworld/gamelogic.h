@@ -109,7 +109,7 @@ public:
 	int _r37_safeCombinationLockIndex;
 	byte _r38_flags;
 	byte _r39_flags;
-	bool _didScratchTicket;
+	bool _didScratchTicket = false;
 	byte _pizzathonListFlags1;
 	byte _pizzathonListFlags2;
 
