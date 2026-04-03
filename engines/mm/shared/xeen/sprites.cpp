@@ -66,8 +66,11 @@ void SpriteResource::copy(const SpriteResource &src) {
 	Common::copy(src._data, src._data + _filesize, _data);
 
 	_index.resize(src._index.size());
-	for (uint i = 0; i < src._index.size(); ++i)
-		_index[i] = src._index[i];
+	for (uint i = 0; i < src._index.size(); ++i) {
+		_index[i]._offset1 = src._index[i]._offset1;
+		_index[i]._offset2 = src._index[i]._offset2;
+		_index[i]._override.copyFrom(src._index[i]._override);
+	}
 }
 
 SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
