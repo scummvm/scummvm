@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WAYNESWORLD_WAYNESWORLD_H
-#define WAYNESWORLD_WAYNESWORLD_H
+#ifndef WAYNESWORLD_H
+#define WAYNESWORLD_H
 
 #include "common/events.h"
 #include "common/file.h"
@@ -508,4 +508,4 @@ public:
 
 } // End of namespace WaynesWorld
 
-#endif // WAYNESWORLD_WAYNESWORLD_H
+#endif // WAYNESWORLD_H
