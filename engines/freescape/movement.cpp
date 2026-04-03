@@ -214,7 +214,7 @@ void FreescapeEngine::activate() {
 	float ndcY = 1.0f - (2.0f * (_crossairPosition.y - _viewArea.top) / _viewArea.height());
 
 	float fovHorizontalRad = (float)(75.0f * M_PI / 180.0f);
-	float aspectRatio = 1.6;
+	float aspectRatio = 1.6f;
 	float fovVerticalRad = 2.0f * atan(tan(fovHorizontalRad / 2.0f) / aspectRatio);
 
 	float angleOffsetX = atan(ndcX * tan(fovHorizontalRad / 2.0f)) * 180.0f / M_PI;
