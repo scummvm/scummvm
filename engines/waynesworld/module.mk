@@ -1,7 +1,6 @@
 MODULE := engines/waynesworld
 
 MODULE_OBJS := \
-	waynesworld.o \
 	detection.o \
 	gamelogic.o \
 	gamemap.o \
@@ -11,7 +10,8 @@ MODULE_OBJS := \
 	metaengine.o \
 	pathfinding.o \
 	sound.o \
-	staticdata.o
+	staticdata.o \
+	waynesworld.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_WAYNESWORLD), DYNAMIC_PLUGIN)
