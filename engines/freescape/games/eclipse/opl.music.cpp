@@ -448,7 +448,7 @@ byte EclipseOPLMusicPlayer::readPatternByte(int channel) {
 }
 
 byte EclipseOPLMusicPlayer::clampNote(byte note) const {
-	return note > kMaxNote ? kMaxNote : note;
+	return note > kMaxNote ? static_cast<byte>(kMaxNote) : note;
 }
 
 // ============================================================================
