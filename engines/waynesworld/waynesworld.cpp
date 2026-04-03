@@ -1152,7 +1152,7 @@ int WaynesWorldEngine::drawActors(int direction, int wayneKind, int garthKind, i
 	WWSurface *tempBackground = new WWSurface(320, 150);
 	tempBackground->drawSurface(_backgroundSurface, 0, 0);
 
-#if 0 // DEBUG Draw room mask to background
+#ifdef DEBUG_PATHFIND // DEBUG Draw room mask to background
 	for (int yc = 0; yc < 150; yc++) {
 		for (int xc = 0; xc < 320; xc++) {
 			 *(byte*)tempBackground->getBasePtr(xc, yc) = walkIsPixelWalkable(xc, yc) ? 15 : 0;
