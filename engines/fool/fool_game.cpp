@@ -42,6 +42,8 @@ void FoolGame::sub_128_004() {
 	// Define the bitmap surfaces (normally pointers to raw memory)
 	this->arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_15fcc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 
@@ -1649,7 +1651,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_140_004();
 		break;
 	case 14:
-		this->sub_141_004();
+		this->deathRun();
 		break;
 	case 15:
 		this->sub_128_5140();
@@ -2974,11 +2976,6 @@ void FoolGame::sub_138_004() {
 
 // high priestess challenge
 void FoolGame::sub_140_004() {
-	warning("STUB: %s", __func__);
-}
-
-// death
-void FoolGame::sub_141_004() {
 	warning("STUB: %s", __func__);
 }
 
