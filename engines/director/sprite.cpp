@@ -45,7 +45,7 @@ Sprite::Sprite(Frame *frame) {
 }
 
 void Sprite::reset() {
-	_copyBackMask = kSCBNoMask;
+	_copyBackMask = static_cast<uint32>(kSCBNoMask);
 	_scriptId = CastMemberID(0, 0);
 	_colorcode = 0;
 	_blendAmount = 0;

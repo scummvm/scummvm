@@ -996,7 +996,7 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 	// We've updated the channels from the frame, reset the copyback mask so that e.g.
 	// disabling the puppet flag copies all the data as expected.
 	for (auto &it : _currentFrame->_sprites) {
-		it->_copyBackMask = kSCBNoMask;
+		it->_copyBackMask = static_cast<uint32>(kSCBNoMask);
 	}
 }
 
@@ -2143,7 +2143,7 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 	for (auto &it : _currentFrame->_sprites) {
 		if (frameNum <= (int)_curFrameNumber) {
 			// starting from rewind, copy back everything
-			it->_copyBackMask = -1;
+			it->_copyBackMask = static_cast<uint32>(-1);
 		} else {
 			// starting at delta, only copy back changes
 			it->_copyBackMask = 0;
