@@ -36,7 +36,7 @@ namespace WaynesWorld {
 struct GxlHeader {
 	int32 offset;
 	int32 size;
-	char  filename[GXL_FILENAME_MAX];
+	char filename[GXL_FILENAME_MAX];
 };
 
 typedef Common::HashMap<Common::Path, Common::ScopedPtr<GxlHeader>, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> GxlHeadersMap;

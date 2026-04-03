@@ -1631,7 +1631,7 @@ int WaynesWorldEngine::getAnimationTimerCounter(uint index) {
 }
 
 void WaynesWorldEngine::initStaticRoomObjects() {
-	for  (uint i = 0; i < kStaticRoomObjectsCount; i++)
+	for (uint i = 0; i < kStaticRoomObjectsCount; i++)
 		_staticRoomObjects[i] = kStaticRoomObjects[i];
 }
 
@@ -1684,7 +1684,7 @@ void WaynesWorldEngine::drawStaticRoomObjects(int roomNum, int x, int y, int act
 }
 
 void WaynesWorldEngine::initRoomObjects() {
-	for  (int i = 0; i < kRoomObjectsCount; i++)
+	for (int i = 0; i < kRoomObjectsCount; i++)
 		_roomObjects[i] = kRoomObjects[i];
 }
 

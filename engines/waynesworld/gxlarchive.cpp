@@ -71,7 +71,7 @@ GxlArchive::GxlArchive(const Common::String name) : _gxlFile(new Common::File())
 
 		_gxlFile->readUint32LE(); // date and time of the file
 
-		// warning("file: %s offset: %d  size: %d", header.filename, header.offset, header.size);
+		// warning("file: %s offset: %d size: %d", header.filename, header.offset, header.size);
 
 		_headers[header.filename].reset(new GxlHeader(header));
 	}
