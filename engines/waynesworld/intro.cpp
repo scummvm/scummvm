@@ -586,6 +586,7 @@ bool WaynesWorldEngine::introPt4_intro() {
 
 	return true;
 }
+
 bool WaynesWorldEngine::introPt4_displayCallInTime() {
 	WWSurface *pt4Sub3Surface1 = new WWSurface(178, 21);
 	WWSurface *pt4Sub3Surface2 = new WWSurface(178, 21);
@@ -614,6 +615,7 @@ bool WaynesWorldEngine::introPt4_displayCallInTime() {
 
 	return true;
 }
+
 bool WaynesWorldEngine::introPt4_caller1() {
 	for (int i = 0; i < 3; ++i) {
 		for (int j = 0; j < 15; ++j) {
@@ -753,6 +755,7 @@ bool WaynesWorldEngine::introPt4_caller1() {
 	}
 	return true;
 }
+
 bool WaynesWorldEngine::introPt4_caller2() {
 	for (int i = 0; i < 4; ++i) {
 		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
@@ -859,6 +862,7 @@ bool WaynesWorldEngine::introPt4_caller2() {
 	}
 	return true;
 }
+
 bool WaynesWorldEngine::introPt4_caller3() {
 	for (int i = 0; i < 5; ++i) {
 		sub2FEFB(1, 0, 1, getRandom(3), getRandom(11), 2);
