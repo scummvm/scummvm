@@ -29,14 +29,15 @@ namespace Fool {
 extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
-void FoolGame::sub_141_004() {
+// Death challenge
+void FoolGame::deathRun() {
 	// 141:0004
 	g_zbasic->get(0x6c, 0x127, 0x84, 0x127, this->arr_bmp_c38c);
 	this->sub_128_55c(g_zbasic->str(334));
 	g_toolbox->InvertRect(this->arr_rect_1910c);
 	g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	g_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kPutCopy);
-	this->sub_141_934();
+	this->deathDrawZoom();
 	this->fillRect(0x14f, 0, 0x156, 0x7, 0x2);
 	this->fillRect(0x14f, 0x1f9, 0x156, 0x200, 2);
 	this->arr_rect_1eb8.top = 0x1e;
@@ -54,10 +55,12 @@ void FoolGame::sub_141_004() {
 		while (this->var_ev_46.where.y >= 0x14) {
 			// 141:01cc
 			this->sub_128_c6a(-1);
-			this->sub_141_3ca();
+			this->deathMoveBlackEye();
 			if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1eb8)) {
-				this->sub_141_8b8();
-				this->sub_141_9f6();
+				this->deathCaught();
+				// 141:09f6
+				this->deathDrawWhiteEye();
+				return;
 			}
 			// 141:0200
 			if (this->var_i16_7c6 == 2) {
@@ -68,7 +71,7 @@ void FoolGame::sub_141_004() {
 			}
 			if ((this->var_i16_7c6 & 1)) {
 				// 141:09f6
-				this->sub_141_882();
+				this->deathDrawWhiteEye();
 				return;
 			}
 			if (this->var_ev_46.what == kNullEvent)
@@ -80,8 +83,9 @@ void FoolGame::sub_141_004() {
 		this->var_i16_233a = 1;
 		// JMP 0x2be
 		while (this->var_ev_46.where.y < 0x14) {
+			// cursor is over the top menu, safe
 			// 141:0282
-			this->sub_141_3ca();
+			this->deathMoveBlackEye();
 			this->sub_128_c6a(-1);
 			if (this->var_i16_7c6 == 2) {
 				this->var_i16_7c6 = 0;
@@ -89,33 +93,37 @@ void FoolGame::sub_141_004() {
 			if (this->var_i16_7c6 == 4) {
 				this->sub_128_3536();
 			}
-
+			if (this->var_ev_46.what == kNullEvent)
+				g_toolbox->Delay(0);
 		}
 		// 141:02c6
 		this->sub_128_c6a(0);
-		if (!g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
-			this->sub_141_35a();
-		}
-		this->var_i32_692 = g_toolbox->TickCount();
-		// 141:02fa
-		do {
-			this->sub_128_c6a(0);
-			if (((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) &&
-				g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
-				// JMP 0x9a2
-				// 141:09a2
-				this->sub_141_882();
-				g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kPutCopy);
-				this->sub_141_934();
-				if (this->var_i16_c04 < 0x64) {
-					this->var_i16_c04 = 0x64;
+		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
+			this->var_i32_692 = g_toolbox->TickCount();
+			// 141:02fa
+			do {
+				this->sub_128_c6a(0);
+				if (((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) &&
+					g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
+					// JMP 0x9a2
+					// 141:09a2
+					this->deathDrawWhiteEye();
+					g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kPutCopy);
+					this->deathDrawZoom();
+					if (this->var_i16_c04 < 0x64) {
+						this->var_i16_c04 = 0x64;
+					}
+					this->deathDrawWhiteEye();
+					return;
 				}
-				this->sub_141_882();
-				return;
-			}
-			// 141:0342
-		} while (g_toolbox->TickCount() <= (this->var_i32_692 + 0x2d));
+				if (this->var_ev_46.what == kNullEvent) {
+					g_toolbox->Delay(0);
+				}
+				// 141:0342
+			} while (g_toolbox->TickCount() <= (this->var_i32_692 + 0x2d));
+		}
 		// 141:035a
+		// mouse moved out from menu, zap the white eye
 		g_toolbox->PenNormal();
 		g_toolbox->PenMode(kNotPatXor);
 		g_toolbox->PenPat(this->arr_pat_58f4[1]);
@@ -123,17 +131,19 @@ void FoolGame::sub_141_004() {
 		for (int i = 0; i <= 5; i++) {
 			g_toolbox->MoveTo(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top);
 			g_toolbox->LineTo(0x6c, 0x127);
+			g_toolbox->Delay(0);
 		}
 		// 141:03bc
-		this->sub_141_882();
+		this->deathDrawWhiteEye();
 		g_toolbox->PenNormal();
 	}
 	// 141:03c2
-	this->sub_141_3ca();
+	this->deathMoveBlackEye();
 }
 
-void FoolGame::sub_141_3ca() {
-	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.left, this->arr_bmp_b3ec, kPutCopy);
+void FoolGame::deathMoveBlackEye() {
+	// 141:03ca
+	g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kPutCopy);
 	this->var_i16_68a = this->var_ev_46.where.x - 0xc - this->arr_rect_1eb8.left;
 	this->var_i16_68c = this->var_ev_46.where.y - 8 - this->arr_rect_1eb8.top;
 	// 141:0452
@@ -180,28 +190,40 @@ void FoolGame::sub_141_3ca() {
 	// 141:06bc
 	if (!((this->arr_rect_1eb8.top == this->arr_rect_1ec0.top) &&
 		((this->arr_rect_1eb8.left == this->arr_rect_1ec0.left)))) {
+		// 141:0722
 		g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_bbbc, kPutCopy);
 		this->arr_rect_1eb8 = this->arr_rect_1ec0;
-
+		g_zbasic->get(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_rect_1eb8.right, this->arr_rect_1eb8.bottom, this->arr_bmp_bbbc);
+		g_zbasic->put(this->arr_rect_1eb8.left, this->arr_rect_1eb8.top, this->arr_bmp_b3ec, kPutCopy);
+		this->sub_128_3da(1);
 	}
 	// 141:0880
-	warning("STUB: %s", __func__);
 }
 
-void FoolGame::sub_141_882() {
-	warning("STUB: %s", __func__);
+void FoolGame::deathDrawWhiteEye() {
+	// 141:0882
+	if (this->var_i16_233a != 0) {
+		g_zbasic->put(0x6c, 0x127, this->arr_bmp_c38c, kPutCopy);
+	}
+	// 141:08b0
+	this->var_i16_233a = 0;
 }
 
-void FoolGame::sub_141_8b8() {
-	warning("STUB: %s", __func__);
+void FoolGame::deathCaught() {
+	// 141:08b8
+	this->deathDrawWhiteEye();
+	this->sub_128_4da(0);
+	this->sub_128_962(this->arr_rect_1eb8.top, this->arr_rect_1eb8.left, this->arr_rect_1eb8.bottom, this->arr_rect_1eb8.right, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
+	this->sub_128_4da(1);
 }
 
-void FoolGame::sub_141_934() {
-	warning("STUB: %s", __func__);
+void FoolGame::deathDrawZoom() {
+	// 141:0934
+	for (int i = 1; i <= 2; i++) {
+		this->sub_128_962(0x130, 0x76, 0x130, 0x76, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x1a);
+	}
+	this->sub_128_69c(1, kNotPatXor, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
 }
 
-void FoolGame::sub_141_9f6() {
-	warning("STUB: %s", __func__);
-}
 
 }
