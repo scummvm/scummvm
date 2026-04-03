@@ -254,11 +254,6 @@ struct ResourceActorProtoExtension {
 		baseEffectFlags = 0;
 	}
 
-	//  Copy constructor
-	ResourceActorProtoExtension(ResourceActorProtoExtension &ext) {
-		memcpy(this, &ext, sizeof(ResourceActorProtoExtension));
-	}
-
 	void load(Common::SeekableReadStream *stream) {
 		baseStats.read(stream);
 		combatBehavior = stream->readByte();
