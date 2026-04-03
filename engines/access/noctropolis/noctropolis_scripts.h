@@ -34,7 +34,7 @@ class NoctropolisScripts : public Scripts {
 public:
 	NoctropolisScripts(NoctropolisEngine *vm);
 
-	void executeSpecial(int commandIndex, int param1, int param2) override;
+	bool executeSpecial(int commandIndex, int param1, int param2) override;
 
 	void searchForSequence() override;
 

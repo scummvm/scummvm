@@ -341,7 +341,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_events->pollEvents();
 }
 
-void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
+bool MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 0:
 		cmdSpecial0();
@@ -370,6 +370,7 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	default:
 		warning("Unexpected Special code %d - Skipped", commandIndex);
 	}
+	return false;
 }
 
 typedef void(MartianScripts::*MartianScriptMethodPtr)();

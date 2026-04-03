@@ -266,6 +266,13 @@ void Screen::forceFadeIn() {
 	} while (repeatFlag);
 }
 
+void Screen::fadeOutThenClearAndSetPal() {
+	fadeOut();
+	clearScreen();
+	setPalette();
+}
+
+
 void Screen::copyBuffer(const byte *data) {
 	byte *destP = (byte *)getPixels();
 	Common::copy(data, data + (h * w), destP);

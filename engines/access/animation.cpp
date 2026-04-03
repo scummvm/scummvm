@@ -250,7 +250,7 @@ void Animation::anim11() {
 	const AnimationFrame *frame = calcFrame();
 	_countdownTicks += frame->_frameDelay;
 	_scaling = _vm->_scale;
-	setFrame1(frame, _vm->_player->_rawPlayer.x, _vm->_player->_rawPlayer.y - _vm->_player->_playerOffset.y);
+	setFrame1(frame, _vm->_player->_playerX, _vm->_player->_playerY - _vm->_player->_playerOffset.y);
 }
 
 void Animation::anim12() {
@@ -302,8 +302,8 @@ void Animation::setFrame(const AnimationFrame *frame) {
 }
 
 void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
-	_vm->_animation->_base.x = frame->_baseX + xoff;
-	_vm->_animation->_base.y = frame->_baseY + yoff;
+	_vm->_animation->_base.x = frame->_baseX;
+	_vm->_animation->_base.y = frame->_baseY;
 
 	// Loop to add image draw requests for the parts of the frame
 	for (const AnimationFramePart &part: frame->_parts) {
@@ -321,8 +321,8 @@ void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
 		ie._position.y = yoff ? yoff : (part._position.y + _vm->_animation->_base.y);
 		if (xoff && _scaling != -1) {
 			// If xoff is set, the animation is for an actor so we need to apply scale factor
-			// to frame height
-			ie._offsetY = part._offsetY * _scaling / 256 - ie._position.y;
+			// to frame height for priority.
+			ie._offsetY = (part._offsetY - frame->_baseY - part._position.y) * _scaling / 256;
 		} else {
 			ie._offsetY = part._offsetY - ie._position.y;
 		}

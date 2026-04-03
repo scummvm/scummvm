@@ -97,11 +97,24 @@ void NoctropolisScripts::searchForSequence() {
 }
 
 
-void NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2) {
+bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	NoctropolisEngine *vm = ((NoctropolisEngine *)_vm);
+	bool result = false;
 	switch (commandIndex) {
 	case 1:
-		vm->_screen->fadeOut();
+		// Clear screen and restore pal here??
+		vm->_screen->fadeOutThenClearAndSetPal();
+		result = true;
+		if (_vm->_player->_roomNumber == 0x36) {
+			error("TODO: Implement special pal hack for fade in room 0x36?");
+			/*
+			NoctPal_ClearRawPalette();
+			pbVar4 = GetRawPalette();
+			uVar3 = GetRawPaletteHash();
+			RB_GetPlayfieldTexture(pbVar4,uVar3);
+			NoctRoomEngine::clearPlotVids(&_gNoctRoomEngine);
+			*/
+		}
 		break;
 	case 3:
 		vm->displayPegsTick();
@@ -154,13 +167,16 @@ void NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		_vm->_screen->flashPalette(20);
 	case 20:
 		vm->doLastComic();
+		result = true;
 		break;
 	case 21:
 		vm->doSpecialComic();
+		result = true;
 		break;
 	default:
 		error("TODO: Unknown special %d in NoctropolisScripts::executeSpecial", commandIndex);
 	}
+	return result;
 }
 
 
