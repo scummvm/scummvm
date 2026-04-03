@@ -38,6 +38,8 @@ public:
 	AssemblyPuzzle() : RenderActionRecord(7) {}
 	virtual ~AssemblyPuzzle() {}
 
+	AssemblyPuzzle(AssemblyPuzzle &&) = default;
+
 	void init() override;
 	void registerGraphics() override;
 

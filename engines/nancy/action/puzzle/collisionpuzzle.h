@@ -58,6 +58,8 @@ protected:
 		Piece() : RenderObject(9) {}
 		virtual ~Piece() {}
 
+		Piece(Piece &&) = default;
+
 		Common::Point _gridPos;
 		uint _w = 1;
 		uint _h = 1;

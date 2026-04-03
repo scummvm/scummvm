@@ -41,6 +41,8 @@ public:
 
 	virtual ~RenderObject();
 
+	RenderObject(RenderObject &&) = default;
+
 	virtual void init(); // Does not get called automatically
 	virtual void registerGraphics(); // Does not get called automatically
 	virtual void updateGraphics() {}

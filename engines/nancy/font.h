@@ -39,6 +39,8 @@ public:
 	Font() = default;
 	~Font() = default;
 
+	Font(Font &&) = default;
+
 	void read(Common::SeekableReadStream &stream);
 
 	int getFontHeight() const override { return _fontHeight - 1; }

@@ -44,6 +44,8 @@ public:
 	MouseFollowObject();
 	virtual ~MouseFollowObject() {}
 
+	MouseFollowObject(MouseFollowObject &&) = default;
+
 	virtual void pickUp() { _isPickedUp = true; }
 	virtual void putDown() { _isPickedUp = false; }
 
