@@ -160,7 +160,7 @@ class ImageEntry {
 public:
 	int _frameNumber;
 	SpriteResource *_spritesPtr;
-	int _offsetY;
+	int _offsetY; // offset to apply to y position when sorting draw order
 	Common::Point _position;
 	int _flags;
 public:

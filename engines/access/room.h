@@ -71,6 +71,9 @@ enum RoomFlag {
 class Room : public Manager {
 private:
 	void roomLoop();
+	
+	void cmdExitContinuance();
+	void roomLoopContinuance();
 
 	void commandOff();
 
@@ -140,7 +143,7 @@ public:
 	int _playFieldHeight;
 	byte *_tile;
 	int _selectCommand;
-	bool _conFlag; // aka _continuenceFlag
+	bool _conFlag; // not the same as script->_continuenceFlag which is used in Noctropolis
 	int _rMouse[10][2];
 public:
 	Room(AccessEngine *vm);

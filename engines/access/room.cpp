@@ -161,6 +161,7 @@ void Room::takePicture() {
 }
 
 void Room::doRoom() {
+	// In noctropolis the main loop here is called NoctRoomEngine::roomMainLoop()
 	bool reloadFlag = false;
 
 	// Noctropolis doesn't have an icon bar at the bottom, so never set arrow cursor
@@ -182,6 +183,7 @@ void Room::doRoom() {
 		_vm->_screen->_fadeIn = false;
 
 		while (!_vm->shouldQuit()) {
+			// NoctRoomEngine::ticker in Noctropolis
 			_vm->_images.clear();
 			if (_vm->_screen->_fadeIn) {
 				_vm->_events->showCursor();
@@ -194,59 +196,83 @@ void Room::doRoom() {
 			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
 
-			if ((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
-				takePicture();
-			} else {
-				_vm->_player->walk();
-				_vm->_midi->midiRepeat();
-				_vm->_player->checkScroll();
-			}
-
-			_vm->_canSaveLoad = true;
-			doCommands();
-			_vm->_canSaveLoad = false;
-			if (_vm->shouldQuitOrRestart())
-				return;
-
-			// DOROOMFLASHBACK jump point in Amazon
-			// afterDoCommandsTick in Noctropolis
-			if (_vm->getGameID() == kGameNoctropolis) {
-				// TODO: Need to check the
-				if (_vm->_flags[200] && !_vm->_timers[0x12]._flag) {
-					warning("TODO: Work out when to call DeadMeat1");
+			// FIXME: cont flag usage..
+			/*if (_vm->_scripts->_continuenceFlag) {
+				if (_vm->_scripts->_continuenceType == 3)
+					cmdExitContinuance();
+				else if (_vm->_scripts->_continuenceType == 1)
+					roomLoopContinuance();
+				else if (_vm->_scripts->_continuenceType != 2)
+					error("Room state error: unhandled script continuance type");
+				_vm->_scripts->_continuenceFlag = false;
+			} else*/
+			{
+				if ((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+					takePicture();
+				} else {
+					_vm->_player->walk();
+					if (_vm->getGameID() == kGameNoctropolis)
+						((Noctropolis::NoctropolisEngine *)_vm)->_stil->walk();
+					_vm->_midi->midiRepeat();
+					_vm->_player->checkScroll();
 				}
-			}
 
-			if (_function == FN_CLEAR1) {
-				if (_vm->getGameID() == kGameNoctropolis)
-					_vm->_screen->fadeOut();
-				clearRoom();
-				break;
-			} else if (_function == FN_CLEAR2) {
-				clearRoom();
-				if (_vm->getGameID() == kGameNoctropolis)
-					((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
-				return;
-			} else if (_function == FN_RELOAD) {
-				reloadRoom1();
-				// WORKAROUND: This doesn't seem to restore the palette
-				// correctly in MM abduction scene (special 0)
-				if (_vm->getGameID() == kGameMartianMemorandum)
-					_vm->_screen->setPalette();
-				reloadFlag = true;
-				break;
-			} else if (_function == FN_BREAK) {
-				break;
+				_vm->_canSaveLoad = true;
+				doCommands();
+				_vm->_canSaveLoad = false;
+				if (_vm->shouldQuitOrRestart())
+					return;
+
+				// The code after this point is:
+				// DOROOMFLASHBACK jump point in Amazon
+				// NoctRoomEngine::afterDoCommandsTick in Noctropolis
+
+				if (_vm->getGameID() == kGameNoctropolis) {
+					// TODO: Need to check the
+					if (_vm->_flags[200] && !_vm->_timers[0x12]._flag) {
+						warning("TODO: Work out when to call DeadMeat1");
+					}
+				}
+
+				if (_function == FN_CLEAR1) {
+					if (_vm->getGameID() == kGameNoctropolis)
+						_vm->_screen->fadeOut();
+					clearRoom();
+					break;
+				} else if (_function == FN_CLEAR2) {
+					clearRoom();
+					if (_vm->getGameID() == kGameNoctropolis)
+						((Noctropolis::NoctropolisEngine *)_vm)->doTravel();
+					return;
+				} else if (_function == FN_RELOAD) {
+					reloadRoom1();
+					// WORKAROUND: This doesn't seem to restore the palette
+					// correctly in MM abduction scene (special 0)
+					if (_vm->getGameID() == kGameMartianMemorandum)
+						_vm->_screen->setPalette();
+					reloadFlag = true;
+					break;
+				} else if (_function == FN_BREAK) {
+					break;
+				}
+
+
+				_vm->copyBF1BF2();
+				_vm->_newRects.clear();
+				_function = FN_NONE;
+				roomLoop();
 			}
+			
+			// Back to NoctRoomEngine::roomMainLoop in Noctropolis..
+			//if (_vm->_scripts->_continuenceFlag)
+			//	continue;
+				
+			_vm->_scripts->_continuenceType = 0;
 
 			if (_vm->_player->_scrollFlag) {
 				// TODO: Refactor a bit - the first 8 lines here are identical
 				// in both branches, but for now maintain original logic for
 				// ease of RE comparison
-				_vm->copyBF1BF2();
-				_vm->_newRects.clear();
-				_function = FN_NONE;
-				roomLoop();
 
 				if (_function == FN_CLEAR1) {
 					clearRoom();
@@ -263,10 +289,6 @@ void Room::doRoom() {
 					_vm->copyBF2Vid();
 				}
 			} else {
-				_vm->copyBF1BF2();
-				_vm->_newRects.clear();
-				_function = FN_NONE;
-				roomLoop();
 				if (_vm->shouldQuitOrRestart())
 					return;
 
@@ -290,7 +312,7 @@ void Room::doRoom() {
 
 void Room::roomInit() {
 	_vm->_animation->clearTimers();
-	_conFlag = false;
+	_vm->_scripts->_continuenceFlag = false;
 	_vm->_scripts->_continuenceType = 0;
 	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
@@ -402,10 +424,36 @@ void Room::loadRoomData(const byte *roomData) {
 
 void Room::roomLoop() {
 	_vm->_scripts->_continuenceType = 1;
-	_conFlag = false;
+	_vm->_scripts->_continuenceFlag = false;
 	_vm->_scripts->_sequence = ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
+}
+
+void Room::cmdExitContinuance() {
+	_vm->_scripts->_continuenceType = 3;
+	_vm->_scripts->_continuenceFlag = false;
+	_vm->_scripts->executeScript();
+	if (!_vm->_scripts->_continuenceFlag) {
+		_vm->_boxSelect = -1;
+		warning("TODO: Room::cmdExitContinuance: check and clear double click.");
+		/*
+		if (DidDblClick) {
+			if (PrevSelectCommand != 0xff)
+				_SelectCommand = PrevSelectCommand;
+			DidDblClick = false;
+		}
+		*/
+		_vm->_scripts->_continuenceType = 2;
+		_vm->_scripts->_continuenceFlag = true;
+	}
+}
+
+void Room::roomLoopContinuance() {
+	_vm->_scripts->_continuenceType = 1;
+	_vm->_scripts->_continuenceFlag = false;
+	if (!_vm->_scripts->_endFlag)
+		_vm->_scripts->executeScript();
 }
 
 void Room::setupRoom() {
@@ -818,7 +866,7 @@ void Room::executeCommand(int commandId) {
 		}
 	} else {
 		assert(_vm->getGameID() == kGameNoctropolis);
-		// See the code in NoctRoomEngine::afterDoCommandsTick
+		// See the code in NoctRoomEngine::afterDoCommandsTick / CheckCommand
 		if (commandId == Noctropolis::kNoctCmdInventory) {
 			while (!_vm->shouldQuitOrRestart()) {
 				Noctropolis::NoctropolisEngine *vm = (Noctropolis::NoctropolisEngine *)_vm;
@@ -833,7 +881,8 @@ void Room::executeCommand(int commandId) {
 				} else
 					break;
 			}
-			warning("TODO: Implement Noctropolis inventory");
+			_conFlag = false;
+			_vm->_scripts->_continuenceType = 0;
 		} else {
 			if (_vm->_exitBox)
 				_vm->_events->setCursor(CURSOR_NOCT_EXIT);
@@ -842,26 +891,32 @@ void Room::executeCommand(int commandId) {
 			else
 				_vm->_events->setCursor(CURSOR_ARROW);
 
+			_vm->_scripts->_continuenceFlag = false;
+			_vm->_scripts->_continuenceType = 0;
+
 			if (_selectCommand == Noctropolis::kNoctCmdTravel) {
 				_selectCommand = Noctropolis::kNoctCmdLook;
 				_vm->_scripts->_sequence = 5000;
 				_vm->_scripts->searchForSequence();
+				_vm->_scripts->_endFlag = false;
+				_vm->_scripts->_returnCode = 0;
 
-				_conFlag = true;
-				while (_conFlag && !_vm->shouldQuitOrRestart()) {
-					_conFlag = false;
+				while (!_vm->_scripts->_continuenceFlag && !_vm->_scripts->_endFlag && !_vm->shouldQuitOrRestart()) {
 					_vm->_scripts->executeScript();
 				}
 			} else if (_selectCommand == Noctropolis::kNoctCmdUse) {
 				_selectCommand = Noctropolis::kNoctCmdLook;
 				_vm->_scripts->_sequence = 10000;
 				_vm->_scripts->searchForSequence();
+				_vm->_scripts->_endFlag = false;
+				_vm->_scripts->_returnCode = 0;
 
-				_conFlag = true;
-				while (_conFlag && !_vm->shouldQuitOrRestart()) {
-					_conFlag = false;
+				while (!_vm->_scripts->_continuenceFlag && !_vm->_scripts->_endFlag && !_vm->shouldQuitOrRestart()) {
 					_vm->_scripts->executeScript();
 				}
+			} else {
+				_conFlag = false;
+				_vm->_scripts->_continuenceType = 0;
 			}
 		}
 	}

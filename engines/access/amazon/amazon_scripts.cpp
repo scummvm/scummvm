@@ -318,7 +318,7 @@ void AmazonScripts::plotInactive() {
 	_vm->_images.addToList(_game->_inactive);
 }
 
-void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
+bool AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	switch (commandIndex) {
 	case 0:
 		warning("TODO: DEMO - RESETAN");
@@ -374,6 +374,7 @@ void AmazonScripts::executeSpecial(int commandIndex, int param1, int param2) {
 	default:
 		warning("Unexpected Special code %d - Skipped", commandIndex);
 	}
+	return false;
 }
 
 typedef void(AmazonScripts::*AmazonScriptMethodPtr)();

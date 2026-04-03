@@ -615,7 +615,7 @@ void NoctropolisEngine::playStilMorph() {
 	_screen->fadeOut();
 	_screen->clearScreen();
 	warning("TODO: Implement Noctropolis type video player");
-	//playVideo("VID1\\DRLM00.VID", 118, 118, true, true, true);
+	//playVideo("VID1/DRLM00.VID", 118, 118, true, true, true);
 }
 
 void NoctropolisEngine::flashPaletteEffect() {
@@ -646,15 +646,15 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_bubbleBox->_bubbleTitle = ((NoctropolisResources *)_res)->getShotoTitle();
 	_bubbleBox->placeBubble(((NoctropolisResources *)_res)->getShotoText());
 	_events->waitKeyActionMouse();
-	warning("TODO: Implement Noctropolis type video player");
-	//playVideo("VID1\\B126MEAN.VID", 120, 30, false, true, true);
+	warning("TODO: Implement Noctropolis type video player (shotoMeanwhile)");
+	//_video->setVideo(_screen, Common::Point(120, 30), "VID1/B126MEAN.VID", 10); //, , false, true, true);
 	_midi->stopSong();
 	_screen->fadeOut();
 	_system->showMouse(true);
 }
 
 void NoctropolisEngine::makeVidPaletteCurrent() {
-	warning("TODO: Implement Noctropolis type video player");
+	warning("TODO: Implement Noctropolis type video player (makeVidPaletteCurrent)");
 	//copyPaletteRange(_video->getPalette(), 0, 256);
 	_screen->setPalette();
 }
@@ -668,8 +668,7 @@ void NoctropolisEngine::showComicCover() {
 	_system->updateScreen();
 	_system->delayMillis(300 * 17);
 	_midi->stopSong();
-	_screen->fadeOut();
-	_screen->clearScreen();
+	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::playSuccubusSplit() {
@@ -677,10 +676,10 @@ void NoctropolisEngine::playSuccubusSplit() {
 	_midi->loadMusic(98, 25);
 	_midi->midiPlay();
 	_screen->clearScreen();
-	warning("TODO: Implement Noctropolis type video player");
-	//playVideo("VID1\\SUCSPLT1.VID", 116, 2, false, true);
+	warning("TODO: Implement Noctropolis type video player (playSuccubusSplit)");
+	//playVideo("VID1/SUCSPLT1.VID", 116, 2, false, true);
 	_midi->stopSong();
-	_screen->fadeOut();
+	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::playSuccubusAttack() {
@@ -688,18 +687,24 @@ void NoctropolisEngine::playSuccubusAttack() {
 	_midi->loadMusic(98, 4);
 	_midi->midiPlay();
 	_screen->fadeOut();
-	_files->loadScreen(Common::Path("scene06.scn")); // "\\DARK\\SCENE06.SCN"
+	_files->loadScreen(Common::Path("scene06.scn")); // "DARK/SCENE06.SCN"
 	_screen->fadeIn();
 	_system->updateScreen();
 	_system->delayMillis(60 * 17);
-	warning("TODO: Implement Noctropolis type video player");
-	//playVideo("VID1\\SUCATT1.VID", 118, 118, false, false);
+	VideoPlayer_v2 vidPlayer(this);
+
+	warning("FIXME: NoctropolisEngine::playSuccubusAttack - fix video playback speed.");
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/SUCATT1.VID"), 15);
+	vidPlayer.playToEnd();
+
 	_screen->clearScreen();
-	warning("TODO: Implement Noctropolis type video player");
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(196, 96), Common::Path ("VID1/SUCATT2.VID"), 15);
+	vidPlayer.playToEnd();
+
 	//playVideo("VID1\\SUCATT2.VID", 196, 96, false, false);
 	_sound->playSound(1);
 	_midi->stopSong();
-	_screen->fadeOut();
+	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::doLastComic() {
@@ -709,7 +714,7 @@ void NoctropolisEngine::doLastComic() {
 	viewer->run(comic);
 	delete viewer;
 	delete comic;
-	_screen->fadeOut();
+	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::doSpecialComic() {
@@ -719,7 +724,7 @@ void NoctropolisEngine::doSpecialComic() {
 	viewer->run(comic);
 	delete viewer;
 	delete comic;
-	_screen->fadeOut();
+	_screen->fadeOutThenClearAndSetPal();
 }
 
 

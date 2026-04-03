@@ -105,10 +105,12 @@ void NoctropolisRoom::reloadRoom1() {
 	buildScreen();
 	_vm->copyBF2Vid();
 
-	if (_roomFlag) {
+	// TODO: Work out if this is right - the second room has roomflag 0 so maybe not??
+	if (_roomFlag >= 0) {
 		if (_roomFlag & kRoomFlagStiletto)
 			_vm->_screen->setStilPalette();
 		_vm->_screen->setManPalette();
+		_vm->_screen->setPalette();
 	}
 	_vm->_player->_frame = 0;
 	_vm->_oldRects.clear();
@@ -207,7 +209,7 @@ void NoctropolisRoom::doCommands() {
 		}
 
 		if (_vm->_player->_roomNumber == 59 && _selectCommand == kNoctCmdGetTake && hotspotIndex == 3) {
-			_conFlag = true;
+			_vm->_scripts->_continuenceFlag = true;
 			_vm->_scripts->_continuenceType = 3;
 			error("TODO: Implement room 59 hack from original?");
 		}
@@ -242,7 +244,6 @@ void NoctropolisRoom::doCommands() {
 					_selectCommand = kNoctCmdGoto;
 				_vm->_events->debounceLeft();
 				if (_selectCommand != -1) {
-					_conFlag = true;
 					_vm->_scripts->executeScript();
 				}
 			}
@@ -259,24 +260,23 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 	if (!_vm->_player->_playerOff) {
 		_vm->_player->calcManScale();
 		if (_vm->_player->_rawPlayer.x <= pt.x) {
-			byte bVar1 = _roomFlag >> 2 & 1;
-			long lVar3 = 200;
-			if (bVar1 != 0) {
-				lVar3 = 6;
-			}
-			long lVar2 = 0x3c;
-			if (bVar1 != 0) {
-				lVar2 = 6;
-			}
-			if (((pt.y <= _vm->_player->_rawPlayer.y) && ((_vm->_player->_rawPlayer.y - _vm->_screen->_scaleTable1[lVar3]) <= pt.y)) &&
-				(pt.x <= (_vm->_player->_rawPlayer.x + _vm->_screen->_scaleTable1[lVar2]))) {
+			int scaleY = 200;
+			if (_roomFlag & kRoomFlagTopView)
+				scaleY = 6;
+
+			int scaleX = 60;
+			if (_roomFlag & kRoomFlagTopView)
+				scaleX = 6;
+
+			if (((pt.y <= _vm->_player->_rawPlayer.y) && ((_vm->_player->_rawPlayer.y - _vm->_screen->_scaleTable1[scaleY]) <= pt.y)) &&
+				(pt.x <= (_vm->_player->_rawPlayer.x + _vm->_screen->_scaleTable1[scaleX]))) {
 				_plotter._blockIn = 99;
 				return 0;
 			}
 		}
 	}
 
-	if (_vm->_flags[0xcd] == 1 || (_roomFlag & 2) == 0 || _vm->_flags[0xea] != 2)
+	if (_vm->_flags[0xcd] == 1 || (_roomFlag & kRoomFlagStiletto) == 0 || _vm->_flags[0xea] != 2)
 		return 1;
 
 	Player *stil = ((NoctropolisEngine *)_vm)->_stil;
@@ -331,6 +331,9 @@ void NoctropolisRoom::mainAreaLClick() {
 }
 
 int NoctropolisRoom::validateBox(int boxId) {
+	_vm->_scripts->_continuenceFlag = false;
+	_vm->_scripts->_continuenceType = 0;
+
 	int result = Room::validateBox(boxId);
 
 	//debug("NoctRoom::validateBox(%d) -> %d", boxId, result);

@@ -32,8 +32,8 @@ class AccessEngine;
 class Scripts;
 
 #define SCRIPT_START_BYTE 0xE0
-#define ROOM_SCRIPT 2000
 #define INIT_ROOM_SCRIPT 1000
+#define ROOM_SCRIPT 2000
 
 typedef void(Scripts::*ScriptMethodPtr)();
 
@@ -51,7 +51,7 @@ protected:
 	Common::SeekableReadStream *_data;
 	ScriptMethodPtr COMMAND_LIST[100];
 
-	virtual void executeSpecial(int commandIndex, int param1, int param2) = 0;
+	virtual bool executeSpecial(int commandIndex, int param1, int param2) = 0;
 	virtual void executeCommand(int commandIndex);
 
 	void charLoop();
@@ -140,6 +140,7 @@ protected:
 	void cmdPlayerOn();
 	void cmdDead();
 	void cmdFadeOut();
+	void cmdFadeOut_v3();
 	void cmdEndVideo();
 	void cmdHelp_v1();
 	//void cmdHelp_v2(); // only in AmazonScripts
@@ -185,7 +186,8 @@ public:
 	int32 _choiceStart;
 	Common::Point _charsOrg, _texsOrg;
 
-	int _continuenceType;  // only used in Noctropolis
+	int _continuenceType;  // Only used in Noctropolis
+	bool _continuenceFlag; // Only set in Noctropolis (always false otherwise). See also room->_conFlag which is used in earlier games.
 
 public:
 	Scripts(AccessEngine *vm);

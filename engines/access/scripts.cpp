@@ -157,6 +157,7 @@ void Scripts::setOpcodes_v3() {
 	COMMAND_LIST[61] = &Scripts::cmdBD;
 	COMMAND_LIST[62] = &Scripts::cmdPlayVid1;
 	COMMAND_LIST[63] = &Scripts::cmdNull; // empty function CmdPRINTWITHOUT
+	COMMAND_LIST[71] = &Scripts::cmdFadeOut_v3;
 	COMMAND_LIST[74] = &Scripts::cmdCharWait;
 	COMMAND_LIST[75] = &Scripts::cmdUndoText;
 	COMMAND_LIST[76] = &Scripts::cmdResetAnim;
@@ -207,9 +208,11 @@ void Scripts::searchForSequence() {
 
 void Scripts::charLoop() {
 	bool endFlag = _endFlag;
+	_continuenceFlag = false;
+
 	int64 pos = _data->pos();
 
-	_sequence = 2000;
+	_sequence = ROOM_SCRIPT;
 	searchForSequence();
 	_vm->_images.clear();
 	_vm->_buffer2.copyBlock(&_vm->_buffer1, Common::Rect(0, 0, _vm->_buffer2.w, _vm->_buffer2.h));
@@ -294,7 +297,8 @@ int Scripts::executeScript() {
 		debugCN(1, kDebugScripts, "%04X %02X ", (int)_data->pos(), _scriptCommand - 0x80);
 
 		executeCommand(_scriptCommand - 0x80);
-	} while (!_endFlag && !_vm->shouldQuitOrRestart());
+		// FIXME: _continuenceFlag not being used correctly in callers yet..
+	} while (!_endFlag /*&& !_continuenceFlag */&& !_vm->shouldQuitOrRestart());
 
 	if (_data)
 		debugC(1, kDebugScripts, "** End script execution (return %d, at %d/%d bytes) **", _returnCode, (int)_data->pos(), (int)_data->size());
@@ -362,7 +366,7 @@ void Scripts::cmdEndObject_v3() {
 
 		printString(msg);
 	}
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 	_endFlag = true;
 	_returnCode = 0;
 }
@@ -477,6 +481,8 @@ void Scripts::cmdPrint_v2() {
 	Common::String msg = _data->readString();
 	debugC(1, kDebugScripts, "cmdPrint_v2(msg=\"%s\")", msg.c_str());
 	printString(msg);
+	//if (_vm->getGameID() == kGameNoctropolis) ??
+	//	_continuenceFlag = true;
 }
 
 void Scripts::doCmdPrint_v1(const Common::String &msg) {
@@ -756,6 +762,9 @@ void Scripts::cmdSetAnim() {
 void Scripts::cmdDispInv_v1() {
 	debugC(1, kDebugScripts, "cmdDispInv_v1()");
 	_vm->_inventory->displayInv();
+
+	if (_vm->getGameID() == kGameNoctropolis)
+		_continuenceFlag = true;
 }
 
 void Scripts::cmdDispInv_v2() {
@@ -898,6 +907,8 @@ void Scripts::cmdSetVideo_v3() {
 void Scripts::cmdPlayVideo() {
 	debugC(1, kDebugScripts, "cmdPlayVideo()");
 	_vm->_video->playVideo();
+	if (_vm->getGameID() == kGameNoctropolis)
+		_continuenceFlag = true;
 }
 
 void Scripts::cmdPlotImage() {
@@ -1087,17 +1098,19 @@ void Scripts::cmdSpecial() {
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();
 	debugC(1, kDebugScripts, "cmdSpecial(specialFunction=%d, p1=%d, p2=%d)", _specialFunction, p1, p2);
+	
+	AccessGameType game = _vm->getGameID();
 
-	if (_specialFunction == 1 || _vm->getGameID() == kGameMartianMemorandum) {
+	if ((game == kGameAmazon && _specialFunction == 1) || game == kGameMartianMemorandum) {
 		if (_vm->getGameID() == kGameAmazon && _vm->_establishTable[p2])
 			return;
 
 		_vm->_screen->savePalette();
 	}
 
-	executeSpecial(_specialFunction, p1, p2);
+	_continuenceFlag = executeSpecial(_specialFunction, p1, p2);
 
-	if (_specialFunction == 1 || _vm->getGameID() == kGameMartianMemorandum) {
+	if ((game == kGameAmazon && _specialFunction == 1) || game == kGameMartianMemorandum) {
 		_vm->_screen->restorePalette();
 		_vm->_room->_function = FN_RELOAD;
 
@@ -1163,7 +1176,7 @@ void Scripts::cmdPlayerSpeak() {
 	_vm->_bubbleBox->_bubbleTitle = title;
 
 	_vm->_bubbleBox->placeBubble(str);
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 	findNull();
 	warning("TODO: Check rendering for cmdPlayerSpeak() box");
 }
@@ -1223,7 +1236,7 @@ void Scripts::cmdPlayerChoice() {
 	_choice = choice + 1;
 	_vm->_bubbleBox->clearBubbles();
 
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdTexSpeak() {
@@ -1343,6 +1356,8 @@ void Scripts::cmdWait() {
 
 	_vm->_events->debounceLeft();
 	_vm->_events->zeroKeysActions();
+	if (_vm->getGameID() == kGameNoctropolis)
+		_continuenceFlag = true;
 }
 
 void Scripts::cmdSetConPos() {
@@ -1448,7 +1463,10 @@ void Scripts::cmdPrintWatch() {
 
 void Scripts::cmdDispAbout() {
 	debugC(1, kDebugScripts, "cmdDispAbout()");
-	_vm->_aboutBox->getList(Martian::ASK_TBL, _vm->_ask);
+	if (_vm->getGameID() != kGameMartianMemorandum)
+		error("TODO: Implement cmdDispAbout for Noctropolis - need ask tbl.");
+	const char *const *askTbl = Martian::ASK_TBL;
+	_vm->_aboutBox->getList(askTbl, _vm->_ask);
 	int btnSelected = 0;
 	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
 	_vm->_startAboutItem = _vm->_boxDataStart;
@@ -1459,6 +1477,9 @@ void Scripts::cmdDispAbout() {
 		_vm->_useItem = -1;
 	else
 		_vm->_useItem = _vm->_aboutBox->_tempListIdx[boxX];
+
+	if (_vm->getGameID() == kGameNoctropolis)
+		_continuenceFlag = true;
 }
 
 void Scripts::cmdPushLocation_v1() {
@@ -1527,6 +1548,16 @@ void Scripts::cmdFadeOut() {
 	_vm->_screen->forceFadeOut();
 }
 
+void Scripts::cmdFadeOut_v3() {
+	byte flag = _data->readByte();
+	debugC(1, kDebugScripts, "cmdFadeOut_v3(%d)", flag);
+	if (flag)
+		_vm->_screen->forceFadeIn();
+	else
+		_vm->_screen->forceFadeOut();
+	_continuenceFlag = true;
+}
+
 void Scripts::cmdEndVideo() {
 	debugC(1, kDebugScripts, "cmdEndVideo()");
 	_vm->_video->closeVideo();
@@ -1536,7 +1567,7 @@ void Scripts::cmdEndVideo() {
 void Scripts::cmdDigitalPlay() {
 	// Wait until the current sound has finished playing, then
 	// if subtitles are enabled wait for input
-	debugCN(1, kDebugScripts, "cmdDigitalPlay()");
+	debugC(1, kDebugScripts, "cmdDigitalPlay()");
 	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
 		_vm->_events->pollEventsAndWait();
 	}
@@ -1544,11 +1575,11 @@ void Scripts::cmdDigitalPlay() {
 	if (!_vm->_sound->isSFXPlaying() && !_vm->shouldQuit() && _vm->_textFlag)
 		_vm->_events->waitKeyActionMouse();
 
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdFillSound() {
-	debugCN(1, kDebugScripts, "cmdFillSound()");
+	debugC(1, kDebugScripts, "cmdFillSound()");
 	while (_vm->_sound->isSFXPlaying() && !_vm->shouldQuit()) {
 		_vm->_events->pollEventsAndWait();
 		Common::CustomEventType action;
@@ -1558,27 +1589,26 @@ void Scripts::cmdFillSound() {
 			break;
 		}
 	}
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdPlayVid1() {
 	error("TODO: Implement Scripts::cmdPlayVid1");
-	_vm->_room->_conFlag = true;
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdCharWait() {
 	int x = _data->readSint16LE();
 	int y = _data->readUint16LE();
 	Common::String msg = _data->readString();
-	debugCN(1, kDebugScripts, "cmdCharWait(%d, %d, '%s')", x, y, msg.c_str());
+	debugC(1, kDebugScripts, "cmdCharWait(%d, %d, '%s')", x, y, msg.c_str());
 
 	printString(msg);
-	_vm->_room->_conFlag = true;
-	error("TODO: Implement Scripts::cmdCharWait");
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdUndoText() {
-	debugCN(1, kDebugScripts, "cmdUndoText()");
+	debugC(1, kDebugScripts, "cmdUndoText()");
 
 	// TODO: Restore music volume to 100%
 
@@ -1588,7 +1618,7 @@ void Scripts::cmdUndoText() {
 
 void Scripts::cmdResetAnim() {
 	byte animNum = _data->readByte();
-	debugCN(1, kDebugScripts, "cmdResetAnim(%d)", animNum);
+	debugC(1, kDebugScripts, "cmdResetAnim(%d)", animNum);
 	Animation *anim = _vm->_animation->findAnimation(animNum);
 	if (!anim)
 		error("cmdResetAnim: Invalid anim num %d", animNum);
@@ -1606,7 +1636,7 @@ void Scripts::cmdWalkTo() {
 	int16 x = _data->readSint16LE();
 	int16 y = _data->readSint16LE();
 	int16 dir = _data->readSint16LE();
-	debugCN(1, kDebugScripts, "cmdWalkTo(%d, %d, %d)", x, y, dir);
+	debugC(1, kDebugScripts, "cmdWalkTo(%d, %d, %d)", x, y, dir);
 
 	_vm->_player->_moveTo.x = x;
 	_vm->_player->_moveTo.y = y;
@@ -1640,12 +1670,13 @@ void Scripts::cmdSoundEnd() {
 
 void Scripts::cmdFadeWhite() {
 	error("TODO: Implement Scripts::cmdFadeWhite");
+	_continuenceFlag = true;
 }
 
 void Scripts::cmdGotoFrame() {
 	uint16 animNum = _data->readUint16LE();
 	uint16 frameNum = _data->readUint16LE();
-	debugCN(1, kDebugScripts, "cmdGotoFrame(%d, %d)", animNum, frameNum);
+	debugC(1, kDebugScripts, "cmdGotoFrame(%d, %d)", animNum, frameNum);
 	Animation *anim = _vm->_animation->findAnimation(animNum);
 	if (!anim)
 		error("cmdGotoFrame: Invalid anim num %d", animNum);
@@ -1654,7 +1685,7 @@ void Scripts::cmdGotoFrame() {
 
 void Scripts::cmdPlayerScale() {
 	_vm->_manScaleOff = _data->readUint16LE();
-	debugCN(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_manScaleOff);
+	debugC(1, kDebugScripts, "cmdPlayerScale(%d)", _vm->_manScaleOff);
 }
 
 void Scripts::cmdRestoreBlock() {
@@ -1662,14 +1693,14 @@ void Scripts::cmdRestoreBlock() {
 	int16 y = _data->readSint16LE();
 	int16 w = _data->readSint16LE();
 	int16 h = _data->readSint16LE();
-	debugCN(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
+	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
 	_vm->clearPlotImagesIn(x, y, w, h);
 	_vm->clearPlotVidsIn(x, y, w, h);
 	error("TODO: Implement Scripts::cmdRestoreBlock");
 }
 
 void Scripts::cmdCopyScnBuf() {
-	debugCN(1, kDebugScripts, "cmdCopyScnBuf()");
+	debugC(1, kDebugScripts, "cmdCopyScnBuf()");
 	_vm->_screen->update();
 }
 
@@ -1677,7 +1708,7 @@ void Scripts::cmdStilWalkTo() {
 	int16 x = _data->readSint16LE();
 	int16 y = _data->readSint16LE();
 	int16 dir = _data->readSint16LE();
-	debugCN(1, kDebugScripts, "cmdStilWalkTo(%d, %d, %d)", x, y, dir);
+	debugC(1, kDebugScripts, "cmdStilWalkTo(%d, %d, %d)", x, y, dir);
 
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.x = x;
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.y = y;
@@ -1697,17 +1728,17 @@ void Scripts::cmdStilWalkCheck() {
 }
 
 void Scripts::cmdStilOff() {
-	debugCN(1, kDebugScripts, "cmdStilOff()");
+	debugC(1, kDebugScripts, "cmdStilOff()");
 	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = true;
 }
 
 void Scripts::cmdStilOn() {
-	debugCN(1, kDebugScripts, "cmdStilOn()");
+	debugC(1, kDebugScripts, "cmdStilOn()");
 	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerOff = false;
 }
 
 void Scripts::cmdReturnExit() {
-	debugCN(1, kDebugScripts, "cmdReturnExit()");
+	debugC(1, kDebugScripts, "cmdReturnExit()");
 	_vm->_exitBox = true;
 	_endFlag = true;
 	_returnCode = 0;
@@ -1733,28 +1764,28 @@ void Scripts::cmdSetStilCoords() {
 }
 
 void Scripts::cmdSetPlayerDir() {
-	debugCN(1, kDebugScripts, "cmdSetPlayerDir()");
+	debugC(1, kDebugScripts, "cmdSetPlayerDir()");
 	_vm->_player->_playerDirection = (Direction)_data->readByte();
 }
 
 void Scripts::cmdSetStilDir() {
-	debugCN(1, kDebugScripts, "cmdSetStilDir()");
+	debugC(1, kDebugScripts, "cmdSetStilDir()");
 	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerDirection = (Direction)_data->readByte();
 }
 
 void Scripts::cmdStilScale() {
-	debugCN(1, kDebugScripts, "cmdStilScale()");
+	debugC(1, kDebugScripts, "cmdStilScale()");
 	_vm->_stilScale = _data->readUint16LE();
 }
 
 void Scripts::cmdLockInterface() {
-	debugCN(1, kDebugScripts, "cmdLockInterface()");
+	debugC(1, kDebugScripts, "cmdLockInterface()");
 	_vm->_events->_interfaceOff = true;
 	_vm->_events->setCursor(CURSOR_DARK_ANKH);
 }
 
 void Scripts::cmdUnlockInterface() {
-	debugCN(1, kDebugScripts, "cmdUnlockInterface()");
+	debugC(1, kDebugScripts, "cmdUnlockInterface()");
 	_vm->_events->_interfaceOff = false;
 	warning("TODO: cmdUnlockInterface - restore cursor");
 	_vm->_events->setCursor(CURSOR_ARROW);

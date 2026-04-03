@@ -57,8 +57,10 @@ public:
 	 */
 	virtual void closeVideo();
 
+	void playToEnd();
+
 protected:
-	virtual void setVideo(const Common::Point &pt, int rate) = 0;
+	virtual void setVideo(const Common::Point &pt) = 0;
 
 	Resource *_videoData;
 	BaseSurface *_vidSurface;
@@ -68,7 +70,7 @@ public:
 	bool _soundFlag;
 	int _soundFrame;
 	bool _videoEnd;
-
+	int _rate;
 };
 
 
@@ -89,7 +91,7 @@ private:
 
 	void getFrame();
 protected:
-	void setVideo(const Common::Point &pt, int rate) override;
+	void setVideo(const Common::Point &pt) override;
 
 public:
 	VideoPlayer_v1(AccessEngine *vm);
@@ -113,16 +115,20 @@ private:
 	VideoHeader _header;
 	BaseSurface *_frame;
 	byte _palette[768];
+	uint32 _nextFrameTime;
 
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
 
+	void handleStraitChunk();
 	void handlePaletteChunk();
 	void handleFrameChunk(bool delta, bool skipLines);
 	void handleSoundChunk(bool init);
 
+	void calcNextFrameTime(int delay);
+
 protected:
-	void setVideo(const Common::Point &pt, int rate) override;
+	void setVideo(const Common::Point &pt) override;
 
 public:
 	VideoPlayer_v2(AccessEngine *vm);

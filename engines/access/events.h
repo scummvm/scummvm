@@ -177,6 +177,8 @@ public:
 
 	/* get ms delay before considering something a double-click */
 	uint32 getDoubleClickTime() const;
+
+	uint32 getPriorFrameTime() const { return _priorFrameTime; }
 };
 
 } // End of namespace Access
