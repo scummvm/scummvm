@@ -53,6 +53,8 @@ protected:
 		Tile();
 		virtual ~Tile();
 
+		Tile(Tile &&) = default;
+
 		void drawMask();
 		void setHighlighted(bool highlighted);
 

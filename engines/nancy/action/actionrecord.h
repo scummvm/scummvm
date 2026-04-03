@@ -151,6 +151,8 @@ public:
 	RenderActionRecord(uint zOrder) : RenderObject(zOrder) {}
 	virtual ~RenderActionRecord() {}
 
+	RenderActionRecord(RenderActionRecord &&) = default;
+
 	// This makes sure the AR is re-added to the render system
 	// when returning from a different state (e.g. the Help screen)
 	void onPause(bool pause) override { if (!pause) registerGraphics(); }
