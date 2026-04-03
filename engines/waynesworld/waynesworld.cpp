@@ -728,13 +728,10 @@ void WaynesWorldEngine::drawSpiralEffect(Graphics::Surface *surface, int x, int 
 }
 
 void WaynesWorldEngine::drawRandomEffect(Graphics::Surface *surface, int x, int y, int grainWidth, int grainHeight) {
-	if (surface)
-	{
+	if (surface) {
 		ScreenEffect screenEffect(this, surface, x, y, grainWidth, grainHeight);
 		screenEffect.drawRandomEffect();
-	}
-	else
-	{
+	} else {
 		warning("%s() x:%d y:%d missing surface!", __func__, x, y);
 	}
 }
@@ -751,7 +748,7 @@ Common::String WaynesWorldEngine::loadString(const char *filename, int index, in
 	// Decrypt the string
 	uint i = 0;
 	for (; i < kMaxStringLen; i++) {
-		textBuffer[i] += 0x80;
+		textBuffer[i] ^= 0x80;
 		if (textBuffer[i] == 0x2b)
 			break;
 	}
