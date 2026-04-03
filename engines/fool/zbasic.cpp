@@ -54,6 +54,9 @@ ZBasic::ZBasic(Toolbox *toolbox) : _toolbox(toolbox) {
 	_toolbox->_defaultBits = BitMap(new Graphics::ManagedSurface());
 	_toolbox->_defaultBits->copyFrom(*_window->getWindowSurface());
 	_window->setSurface(_toolbox->_defaultBits.get(), DisposeAfterUse::NO);
+	_toolbox->_defaultMenuBits = BitMap(new Graphics::ManagedSurface());
+	_toolbox->_defaultMenuBits->copyFrom(*_menu->getWindowSurface());
+	_menu->setSurface(_toolbox->_defaultMenuBits.get(), DisposeAfterUse::NO);
 	GrafPtr port(new GrafPort);
 	_toolbox->OpenPort(port);
 	_toolbox->SetPort(port);
