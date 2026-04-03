@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	siphash/halfsip.o \
 	fool.o \
 	fool_cards.o \
+	fool_death.o \
 	fool_game.o \
 	fool_jigsaw.o \
 	fool_polyomino.o \

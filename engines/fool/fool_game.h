@@ -51,7 +51,7 @@ public:
 	Common::U32String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
 	void sub_128_50e(int16 freq, int16 duration, int16 wait);
-	void sub_128_55c(Common::U32String &unk1);
+	void sub_128_55c(const Common::U32String &unk1);
 	int16 sub_128_5fe();
 	OSErr sub_128_64c(int16 unk1);
 	void sub_128_69c(int16 unk6, PatternMode unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
@@ -190,7 +190,15 @@ public:
 	void sub_139_1d3e();
 
 	void sub_140_004();
+
+	// fool_death.cpp
 	void sub_141_004();
+	void sub_141_35a();
+	void sub_141_3ca();
+	void sub_141_882();
+	void sub_141_8b8();
+	void sub_141_934();
+	void sub_141_9f6();
 
 	void sub_142_004();
 	void sub_142_852();
@@ -382,6 +390,8 @@ private:
 	Common::U32String var_str_2222;
 	int16 var_i16_2322;
 
+	int16 var_i16_233a;
+
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 pageLineRanges[202]; // arr_i16_0
 	int16 pageLineFace[1301]; // arr_i16_194
@@ -401,6 +411,9 @@ private:
 	int16 arr_i16_1d24[202];
 	int16 arr_i16_1dee[202];
 	int16 arr_i16_1eb8[0x29];
+	// used just for death?
+	Common::Rect arr_rect_1eb8;
+	Common::Rect arr_rect_1ec0;
 	Common::Rect arr_rect_1f38[0x200];
 	int16 arr_i16_2f38[0xc00]; // 96x32?
 	int16 arr_i16_3738[0x400];
@@ -428,6 +441,8 @@ private:
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap arr_jigsaw_5dfc[128];
 	BitMap arr_bmp_b3ec;
+	BitMap arr_bmp_bbbc;
+	BitMap arr_bmp_c38c;
 	Handle arr_bytes_109dc; // used for data buffering
 	BitMap arr_bmp_109dc;
 	BitMap arr_bmp_15fcc;

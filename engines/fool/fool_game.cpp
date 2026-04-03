@@ -393,7 +393,7 @@ void FoolGame::sub_128_50e(int16 freq, int16 duration, int16 wait) {
 	}
 }
 
-void FoolGame::sub_128_55c(Common::U32String &unk1) {
+void FoolGame::sub_128_55c(const Common::U32String &unk1) {
 	// 128:055c
 	g_zbasic->stringCopy(this->var_str_172, unk1);
 	g_toolbox->PenNormal();
@@ -2445,6 +2445,14 @@ void FoolGame::sub_129_068() {
 
 	this->var_i32_8 = &this->arr_grafport_19042;
 	g_toolbox->OpenPort(this->var_i32_8);
+	// this grafport is used for drawing on the menu bar area;
+	// on normal hardware this isn't a problem, as the changes are
+	// made directly to the screen framebuffer.
+	// in ScummVM, the window and the menu bar are widgets, with surfaces
+	// that are composed to the screen framebuffer.
+	// as such, to avoid a clash, we need to draw onto the menu bar widget.
+	this->var_i32_8->portBits = g_toolbox->_defaultMenuBits;
+	this->var_i32_8->portRect = g_toolbox->_defaultMenuBits->getBounds();
 
 	this->var_i32_4 = &this->arr_grafport_18f78;
 	g_toolbox->OpenPort(this->var_i32_4);
@@ -2820,6 +2828,7 @@ void FoolGame::sub_129_068() {
 }
 
 void FoolGame::sub_129_123a() {
+	// draw the loading text on the menu bar
 	g_toolbox->SetPort(this->var_i32_8);
 	this->fillRect(0, 7, 0x13, this->var_i16_5a - 7, 0);
 	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
@@ -2829,6 +2838,7 @@ void FoolGame::sub_129_123a() {
 	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xe);
 	g_toolbox->DrawString(this->var_str_172);
 	g_toolbox->SetPort(this->var_i32_0);
+	g_toolbox->Delay(0);
 }
 
 // word jumble/substitute puzzle
