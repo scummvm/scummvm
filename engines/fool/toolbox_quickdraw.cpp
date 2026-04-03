@@ -581,7 +581,10 @@ void Toolbox::LineTo(int16 h, int16 v) {
 
 		BitMap intermediate(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
 		BitMap mask(new Graphics::ManagedSurface(interRect.width(), interRect.height()));
-		Common::Point destPos(dirVec.x < 0 ? h + dirVec.x : h - dirVec.x, dirVec.y < 0 ? v + dirVec.y : v - dirVec.y);
+		Common::Point destPos(
+			dirVec.x < 0 ? (_port->pnLoc.x + dirVec.x) : _port->pnLoc.x,
+			dirVec.y < 0 ? (_port->pnLoc.y + dirVec.y) : _port->pnLoc.y
+		);
 		// move to port coordinate space
 		destPos.x += _port->portRect.left;
 		destPos.y += _port->portRect.top;

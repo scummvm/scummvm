@@ -192,13 +192,11 @@ public:
 	void sub_140_004();
 
 	// fool_death.cpp
-	void sub_141_004();
-	void sub_141_35a();
-	void sub_141_3ca();
-	void sub_141_882();
-	void sub_141_8b8();
-	void sub_141_934();
-	void sub_141_9f6();
+	void deathRun(); // sub_141_004
+	void deathMoveBlackEye(); // sub_141_3ca
+	void deathDrawWhiteEye(); // sub_141_882
+	void deathCaught(); // sub_141_8b8
+	void deathDrawZoom(); // sub_141_934
 
 	void sub_142_004();
 	void sub_142_852();
