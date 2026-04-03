@@ -134,7 +134,7 @@ void MemoryPuzzle::initCards() {
 			for (int i = 0; i < kCardsPerTab; ++i) {
 				if (_cards[base + i].typeId != -1)
 					continue;
-				if (nextType >= _numPairs)
+				if (static_cast<uint32>(nextType) >= _numPairs)
 					break; // all types used up for this tab
 
 				_cards[base + i].typeId = nextType;
@@ -154,7 +154,7 @@ void MemoryPuzzle::initCards() {
 		for (int i = 0; i < totalCards; ++i) {
 			if (_cards[i].typeId != -1)
 				continue;
-			if (nextType >= _numPairs)
+			if (static_cast<uint32>(nextType) >= _numPairs)
 				break;
 
 			_cards[i].typeId = nextType;
@@ -329,7 +329,7 @@ void MemoryPuzzle::handleInput(NancyInput &input) {
 }
 
 void MemoryPuzzle::checkIfSolved() {
-	if (_matchedPairs >= _requiredPairs)
+	if (static_cast<uint32>(_matchedPairs) >= _requiredPairs)
 		_isSolved = true;
 }
 
