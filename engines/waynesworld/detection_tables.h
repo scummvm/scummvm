@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 					"CAPSPIN.GXL", "b9d2cd46b4ebe49fcf634b221f11f8df", 281089),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 					"CAP.GXL", "4823b4ae534716b8ea115ab34b7eac6b", 87864),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+	 ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
 
