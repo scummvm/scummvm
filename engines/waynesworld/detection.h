@@ -25,7 +25,7 @@
 namespace WaynesWorld {
 
 enum WaynesWorldDebugChannels {
-	kDebugScripts = 1 << 0,
+	kDebugLogic = 1,
 	kDebugMessages,
 	kDebugCore
 };

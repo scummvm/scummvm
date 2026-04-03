@@ -22,6 +22,7 @@
 #include "waynesworld/gamelogic.h"
 
 #include "common/memstream.h"
+#include "waynesworld/detection.h"
 #include "waynesworld/graphics.h"
 #include "waynesworld/gxlarchive.h"
 #include "waynesworld/objectids.h"
@@ -474,6 +475,8 @@ int GameLogic::handleVerbClose() {
 }
 
 void GameLogic::handleVerbExtremeCloseupOf() {
+	debugC(5, kDebugLogic, "handleVerbExtremeCloseupOf() - %d", _vm->_objectNumber);
+
 	switch (_vm->_objectNumber) {
 	case kObjectIdInventoryPizzathonList:
 		displayExtremeCloseupOfPizzathonList();
@@ -529,6 +532,7 @@ int GameLogic::handleVerbGive() {
 }
 
 void GameLogic::handleDialogReply(int index, int x, int y) {
+	debugC(5, kDebugLogic, "handleDialogReply(%d, %d, %d)", index, x, y);
 
 	if (index < 537) {
 		_vm->displayText("c04r", index, 0, x, y, 0);
@@ -1035,7 +1039,8 @@ int GameLogic::getActorScaleFromY(int actorY) {
 		scale = actorY * 2 - 100;
 		break;
 	case 17:
-		scale = actorY * 1.5 - 100;
+	case 27:
+		scale = actorY * 3 / 2 - 100;
 		break;
 	case 18:
 		scale = actorY - 15;
@@ -1045,9 +1050,6 @@ int GameLogic::getActorScaleFromY(int actorY) {
 		break;
 	case 26:
 		scale = actorY * 3 / 2 - 95;
-		break;
-	case 27:
-		scale = actorY * 3 / 2 - 100;
 		break;
 	case 28:
 		scale = actorY - 25;
@@ -1060,13 +1062,13 @@ int GameLogic::getActorScaleFromY(int actorY) {
 		break;
 	case 32:
 	case 33:
-		scale = actorY * 1.5 - 97;
+		scale = actorY * 3 / 2 - 97;
 		break;
 	case 34:
 		scale = actorY * 2 - 127;
 		break;
 	case 35:
-		scale = actorY * 1.5 - 98;
+		scale = actorY * 3 / 2 - 98;
 		break;
 	case 36:
 		scale = actorY * 1.4 - 83;
@@ -1084,6 +1086,8 @@ int GameLogic::getActorScaleFromY(int actorY) {
 }
 
 void GameLogic::setPizzathonStatus(int flagNum) {
+	debugC(5, kDebugLogic, "setPizzathonStatus(%d)", flagNum);
+
 	switch (flagNum) {
 	case 1:
 		_pizzathonListFlags1 |= 0x08;

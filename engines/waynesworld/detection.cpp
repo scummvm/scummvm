@@ -32,7 +32,7 @@ static const PlainGameDescriptor waynesworldGames[] = {
 #include "waynesworld/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
-	{ WaynesWorld::kDebugScripts, "scripts", "Script debug level" },
+	{ WaynesWorld::kDebugLogic, "logic", "Logic debug level" },
 	{ WaynesWorld::kDebugMessages, "messages", "Messages debug level" },
 	{ WaynesWorld::kDebugCore, "core", "Core debug level" },
 	DEBUG_CHANNEL_END
