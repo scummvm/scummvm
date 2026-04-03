@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef WAYNESWORLD_GXLARCHIVE
-#define WAYNESWORLD_GXLARCHIVE
+#ifndef WAYNESWORLD_GXLARCHIVE_H
+#define WAYNESWORLD_GXLARCHIVE_H
 
 #include "common/archive.h"
 #include "waynesworld/gamelogic.h"
