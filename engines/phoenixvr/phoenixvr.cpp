@@ -66,17 +66,6 @@ PhoenixVREngine::PhoenixVREngine(OSystem *syst, const ADGameDescription *gameDes
 																					 _angleY(-kPi2),
 																					 _mixer(syst->getMixer()) {
 	g_engine = this;
-	bool pixelFormatFound = false;
-	for (auto format : g_system->getSupportedFormats()) {
-		debug("supported format: %s", format.toString().c_str());
-		if (format.bytesPerPixel >= 2) {
-			pixelFormatFound = true;
-			_pixelFormat = format;
-			break;
-		}
-	}
-	if (!pixelFormatFound)
-		error("Couldn't find 16/32-bit pixel format");
 
 	if (gameIdMatches("amerzone")) {
 		_levels.push_back("01VR_PHARE");
@@ -986,8 +975,13 @@ void PhoenixVREngine::tick(float dt) {
 }
 
 Common::Error PhoenixVREngine::run() {
+	initGraphics(640, 480, nullptr);
+
+	_pixelFormat = g_system->getScreenFormat();
+	if (_pixelFormat.isCLUT8())
+		return Common::kUnsupportedColorMode;
+
 	_arn.reset(ARN::create());
-	initGraphics(640, 480, &_pixelFormat);
 #ifdef USE_FREETYPE2
 	static const Common::String family("NotoSerif-Bold.ttf");
 	_font12.reset(Graphics::loadTTFFontFromArchive(family, 12));
