@@ -22,8 +22,13 @@
 #include "audio/fmopl.h"
 
 #ifdef USE_RETROWAVE
-#include "audio/rwopl3.h"
+	#include "audio/rwopl3.h"
 #endif
+
+#ifdef USE_NFM
+	#include "audio/nfmopl.h"
+#endif
+
 #include "audio/softsynth/opl/dosbox.h"
 #include "audio/softsynth/opl/mame.h"
 #include "audio/softsynth/opl/nuked.h"
@@ -38,21 +43,33 @@ namespace OPL {
 
 #ifdef USE_ALSA
 namespace ALSA {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace ALSA
 #endif // USE_ALSA
 
 #ifdef ENABLE_OPL2LPT
 namespace OPL2LPT {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace OPL2LPT
 #endif // ENABLE_OPL2LPT
 
 #ifdef USE_RETROWAVE
 namespace RetroWaveOPL3 {
-	OPL *create(Config::OplType type);
+OPL *create(Config::OplType type);
 } // End of namespace RetroWaveOPL3
 #endif // ENABLE_RETROWAVE_OPL3
+
+#ifdef USE_NFM
+namespace NfmOPL {
+namespace RealChip {
+OPL *create(Config::OplType type, enum NfmOPL::OplDevice dt);
+} // End of namespace RealChip
+
+namespace EmulatedChip {
+OPL *create(Config::OplType type, enum NfmOPL::OplDevice dt);
+} // End of namespace EmulatedChip
+} // End of namespace NfmOPL
+#endif
 
 // Config implementation
 
@@ -64,7 +81,18 @@ enum OplEmulator {
 	kNuked = 4,
 	kOPL2LPT = 5,
 	kOPL3LPT = 6,
-	kRWOPL3 = 7
+	kRWOPL3 = 7,
+#ifdef USE_NFM
+	kNfmNokturnFM2 = 8,
+	kNfmNokturnFM3 = 9,
+	kNfmRWOpl3Express = 10,
+	kNfmOPL2LPT = 11,
+	kNfmOPL3LPT = 12,
+	kNfmCeOPL2AudioBoard = 13,
+	kNfmCeOPL3Duo = 14,
+	kNfmNatfeatsNull = 15,
+	kNfmNukedOpl3 = 16,
+#endif
 };
 
 OPL::OPL() {
@@ -95,6 +123,17 @@ const Config::EmulatorDescription Config::_drivers[] = {
 #endif
 #ifdef USE_RETROWAVE
 	{"rwopl3", _s("RetroWave OPL3"), kRWOPL3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+#endif
+#ifdef USE_NFM
+	{"nfm_nokturnfm2", _s("[nFM] NokturnFM2 (OPL2)"), kNfmNokturnFM2, kFlagOpl2 },
+	{"nfm_nokturnfm3", _s("[nFM] NokturnFM3 (OPL3)"), kNfmNokturnFM3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_rwopl3", _s("[nFM] RetroWave USB OPL3 Express (OPL3)"), kNfmRWOpl3Express, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_opl2lpt", _s("[nFM] Serdaco OPL2LPT (OPL2)"), kNfmOPL2LPT, kFlagOpl2 },
+	{"nfm_opl3lpt", _s("[nFM] Serdaco OPL3LPT (OPL3)"), kNfmOPL3LPT, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_ce_opl2ab", _s("[nFM] Cheerful Electronics OPL2 Audio Board (OPL2)"), kNfmCeOPL2AudioBoard, kFlagOpl2 },
+	{"nfm_ce_opl3duo", _s("[nFM] Cheerful Electronics OPL3 Duo! (2xOPL3)"), kNfmCeOPL3Duo, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_natfeats_null", _s("[nFM] NatFeats / NULL"), kNfmNatfeatsNull, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
+	{"nfm_nuked_opl3", _s("[nFM] Nuked-OPL3 softsynth (OPL3)"), kNfmNukedOpl3, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3},
 #endif
 	{ nullptr, nullptr, 0, 0 }
 };
@@ -228,7 +267,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 		}
 
 		warning("OPL2LPT only supprts OPL2");
-		return 0;
+		return nullptr;
 	case kOPL3LPT:
 		return OPL2LPT::create(type);
 #endif
@@ -236,6 +275,49 @@ OPL *Config::create(DriverId driver, OplType type) {
 #ifdef USE_RETROWAVE
 	case kRWOPL3:
 		return RetroWaveOPL3::create(type);
+#endif
+
+#ifdef USE_NFM
+	case kNfmNokturnFM2: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtNokturnFM2);
+		}
+		warning("NokturnFM2 supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmNokturnFM3:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtNokturnFM3);
+
+	case kNfmRWOpl3Express:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtRWOpl3Express);
+
+	case kNfmOPL2LPT: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtOPL2LPT);
+		}
+		warning("OPL2LPT supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmOPL3LPT:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtOPL3LPT);
+
+	case kNfmCeOPL2AudioBoard: {
+		if (type == kOpl2) {
+			return NfmOPL::RealChip::create(type, NfmOPL::dtOPL2AudioBoard);
+		}
+
+		warning("OPL2 Audio Board supports only OPL2");
+		return nullptr;
+	};
+
+	case kNfmCeOPL3Duo:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtOPL3Duo);
+	case kNfmNatfeatsNull:
+		return NfmOPL::RealChip::create(type, NfmOPL::dtNatfeatsOpl);
+	case kNfmNukedOpl3:
+		return NfmOPL::EmulatedChip::create(type, NfmOPL::dtNukedOpl3);
 #endif
 
 	default:
@@ -268,9 +350,9 @@ bool OPL::emulateDualOpl2OnOpl3(int r, int v, Config::OplType oplType) {
 	// Prevent writes to the following registers of the second set:
 	// - 01 - Test register. Setting any bit here will disable output.
 	// - 04 - Connection select. This is used to enable 4 operator instruments,
-	//		  which are not used for dual OPL2.
+	//        which are not used for dual OPL2.
 	// - 05 - New. Only allow writes which set bit 0 to 1, which enables OPL3
-	//		  features.
+	//        features.
 	if (r == 0x101 || r == 0x104 || (r == 0x105 && ((v & 1) == 0)))
 		return false;
 
