@@ -30,7 +30,7 @@ extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
 // The Sun's map
-void FoolGame::sub_137_004() {
+void FoolGame::sunMapRun() {
 	// 137:0004
 	this->var_i16_c00 = 1;
 	this->sub_128_69c(1, kPatOr, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
@@ -84,19 +84,19 @@ void FoolGame::sub_137_004() {
 	this->var_i16_7c6 = 0;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
-	this->sub_137_124e();
+	this->sunMapCheckIfSolved();
 	while (((this->var_i16_7c6 & 1) == 0) && (this->var_i16_d0c == 0)) {
 		while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0)) {
 			this->sub_128_c6a(-1);
-			if (this->var_ev_46.what == 1) {
-				this->sub_137_3e2();
+			if (this->var_ev_46.what == kMouseDown) {
+				this->sunMapOnClick();
 			}
 			if (this->var_ev_46.what == kNullEvent)
 				g_toolbox->Delay(0);
 		}
 		// 137:038a
 		if (this->var_i16_7c6 == 2) {
-			this->sub_137_d60();
+			this->sunMapUndoMove();
 		}
 		if (this->var_i16_7c6 == 4) {
 			this->sub_128_3536();
@@ -128,7 +128,7 @@ void FoolGame::sub_137_004() {
 	}
 }
 
-void FoolGame::sub_137_3e2() {
+void FoolGame::sunMapOnClick() {
 	// 137:03e2
 	this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 	if ((this->var_i16_68a < 1) || (this->var_i16_68a > this->arr_i16_1eb8[0]) ||
@@ -144,24 +144,24 @@ void FoolGame::sub_137_3e2() {
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
 	if (this->arr_i16_1d24[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & 8) {
-		this->sub_137_131a();
+		this->sunMapRevealPiece();
 		return;
 	}
-	this->sub_137_598();
+	this->sunMapDragSelect();
 	// 137:0506
 	g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 	this->arr_i16_4758[0] -= this->var_i16_68a;
 	this->arr_i16_4758[1] -= this->var_i16_68c;
-	this->sub_137_880();
+	this->sunMapMoveSelected();
 	g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
-	this->sub_137_dde();
-	this->sub_137_124e();
+	this->sunMapDropSelected();
+	this->sunMapCheckIfSolved();
 	this->sub_128_6186();
 	g_zbasic->menu(8, 3, 1, Common::U32String());
 	this->var_i16_e12 = 0;
 }
 
-void FoolGame::sub_137_598() {
+void FoolGame::sunMapDragSelect() {
 	// 137:0598
 	do {
 		this->sub_128_c6a(4);
@@ -187,18 +187,18 @@ void FoolGame::sub_137_598() {
 		// 137:06ce
 		this->arr_i16_4758[11] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].top;
 		this->arr_i16_4758[12] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].left;
-		this->arr_i16_4758[13] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].bottom;
-		this->arr_i16_4758[14] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].right;
+		this->arr_i16_4758[13] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
+		this->arr_i16_4758[14] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
 		// 137:084c
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->sub_128_3da(2);
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->sub_128_3da(1);
-	} while (this->var_ev_46.what != 2);
+	} while (this->var_ev_46.what != kMouseUp);
 	// 137:087e
 }
 
-void FoolGame::sub_137_880() {
+void FoolGame::sunMapMoveSelected() {
 	// 137:0880
 	do {
 		this->sub_128_c6a(2);
@@ -242,28 +242,30 @@ void FoolGame::sub_137_880() {
 			this->arr_i16_4758[9] = this->arr_i16_1eb8[1];
 		}
 		// 137:0bae
-		this->arr_rect_4776 = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]];
+		this->arr_rect_4776.top = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].top;
+		this->arr_rect_4776.left = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].left;
+		this->arr_rect_4776.bottom = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
+		this->arr_rect_4776.right = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
 		g_toolbox->FrameRect(this->arr_rect_4776);
 		this->sub_128_3da(2);
 		g_toolbox->FrameRect(this->arr_rect_4776);
 		this->sub_128_3da(1);
-	} while (this->var_ev_46.what != 1);
-	warning("STUB: %s", __func__);
+	} while (this->var_ev_46.what != kMouseDown);
 }
 
-void FoolGame::sub_137_d60() {
+void FoolGame::sunMapUndoMove() {
 	// 137:0d60
 	this->var_i16_7c6 = 0;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
 	g_zbasic->swapInt(this->arr_i16_4758[7], this->arr_i16_4758[9]);
-	this->var_i16_1aa4 = 0x51;
-	this->sub_137_dde();
+	this->sunMapDropSelected();
 }
 
-void FoolGame::sub_137_dde() {
+void FoolGame::sunMapDropSelected() {
 	// 137:0dde
+	this->var_i16_1aa4 = 0x51;
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
 			this->var_i16_1aa4++;
@@ -312,10 +314,10 @@ void FoolGame::sub_137_dde() {
 	// 137:124c
 }
 
-void FoolGame::sub_137_124e() {
+void FoolGame::sunMapCheckIfSolved() {
 	// 137:124e
 	this->var_i16_d0c = 1;
-	for (int i = 1; i < 0x51; i++) {
+	for (int i = 1; i <= 0x51; i++) {
 		if (this->arr_i16_4bd8[i] != i) {
 			this->var_i16_d0c = 0;
 			i = 0x51;
@@ -338,7 +340,7 @@ void FoolGame::sub_137_124e() {
 	}
 }
 
-void FoolGame::sub_137_131a() {
+void FoolGame::sunMapRevealPiece() {
 	// 137:131a
 	this->arr_i16_1d24[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= 8;
 	this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = this->arr_i32_1912c[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
@@ -369,7 +371,7 @@ void FoolGame::sub_137_131a() {
 		this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
 	);
 	this->sub_128_6186();
-	this->sub_137_124e();
+	this->sunMapCheckIfSolved();
 	this->var_i16_e12 = 0;
 }
 
