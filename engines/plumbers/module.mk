@@ -1,14 +1,11 @@
 MODULE := engines/plumbers
 
 MODULE_OBJS = \
-	plumbers.o \
+	3do.o \
 	console.o \
 	metaengine.o \
+	plumbers.o \
 	windows.o
-
-ifdef USE_RGB_COLOR
-MODULE_OBJS += 3do.o
-endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_PLUMBERS), DYNAMIC_PLUGIN)

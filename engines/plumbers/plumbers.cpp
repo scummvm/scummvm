@@ -134,7 +134,9 @@ void PlumbersGame::handleEvent(const Common::Event &event) {
 }
 
 Common::Error PlumbersGame::run() {
-	startGraphics();
+	Common::Error err = startGraphics();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	_console = new Console();
 	setDebugger(_console);

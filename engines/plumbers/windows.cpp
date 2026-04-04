@@ -59,7 +59,7 @@ void PlumbersGameWindows::loadImage(const Common::String &name) {
 	}
 }
 
-void PlumbersGameWindows::startGraphics() {
+Common::Error PlumbersGameWindows::startGraphics() {
 	_image = new Image::BitmapDecoder();
 
 	Graphics::ModeWithFormatList modes = {
@@ -79,6 +79,8 @@ void PlumbersGameWindows::startGraphics() {
 		_screenW = 320;
 		_screenH = 240;
 	}
+
+	return Common::kNoError;
 }
 
 void PlumbersGameWindows::readTables() {
