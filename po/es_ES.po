@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-04-03 16:26+0000\n"
-"PO-Revision-Date: 2026-04-02 17:51+0000\n"
+"PO-Revision-Date: 2026-04-04 20:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8310,28 +8310,20 @@ msgid "Rotate right"
 msgstr "Rotar a la derecha"
 
 #: engines/colony/metaengine.cpp:148
-#, fuzzy
-#| msgid "Look down"
 msgid "Look behind"
-msgstr "Mirar abajo"
+msgstr "Mirar atrás"
 
 #: engines/colony/metaengine.cpp:153
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle mouselook"
-msgstr "Silenciar/Desilenciar audio"
+msgstr "Alternar vista con el ratón"
 
 #: engines/colony/metaengine.cpp:159
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle dashboard"
-msgstr "Activar/Desactivar sonido"
+msgstr "Mostrar/Ocultar panel de instrumentos"
 
 #: engines/colony/metaengine.cpp:164
-#, fuzzy
-#| msgid "Toggle frame by frame"
 msgid "Toggle wireframe"
-msgstr "Alternar modo fotograma a fotograma"
+msgstr "Mostrar/Ocultar mallas de polígonos"
 
 #: engines/colony/metaengine.cpp:174 engines/hypno/metaengine.cpp:146
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
@@ -8346,11 +8338,11 @@ msgstr "Disparar arma"
 
 #: engines/colony/savegame.cpp:290
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Solo se puede guardar en la vista en primera persona."
 
 #: engines/colony/savegame.cpp:299
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Solo se puede cargar en la vista en primera persona."
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
