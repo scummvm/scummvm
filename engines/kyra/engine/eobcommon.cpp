@@ -403,7 +403,10 @@ Common::Error EoBCoreEngine::init() {
 
 	_screen = new Screen_EoB(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	_res = new Resource(this);
 	assert(_res);
@@ -491,7 +494,7 @@ Common::Error EoBCoreEngine::init() {
 
 	loadFonts();
 
-	Common::Error err = KyraRpgEngine::init();
+	err = KyraRpgEngine::init();
 	if (err.getCode() != Common::kNoError)
 		return err;
 

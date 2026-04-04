@@ -30,6 +30,7 @@
 #include "common/rendermode.h"
 #include "common/stream.h"
 #include "common/ptr.h"
+#include "common/error.h"
 
 class OSystem;
 
@@ -640,7 +641,7 @@ public:
 
 	// init
 	virtual bool init();
-	virtual void setResolution();
+	virtual Common::Error setResolution();
 	virtual void enableHiColorMode(bool enabled);
 
 	// refresh

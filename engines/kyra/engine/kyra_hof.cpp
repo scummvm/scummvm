@@ -185,7 +185,10 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 Common::Error KyraEngine_HoF::init() {
 	_screen = new Screen_HoF(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_HoF(this));
 

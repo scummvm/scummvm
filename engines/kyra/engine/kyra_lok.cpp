@@ -197,7 +197,10 @@ Common::Error KyraEngine_LoK::init() {
 	else
 		_screen = new Screen_LoK(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_LoK(this));
 
