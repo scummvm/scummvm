@@ -220,7 +220,9 @@ bool Debugger::cmdSetVideoMode(int argc, const char **argv) {
 		debugPrintf("Usage: %s <width> <height>\n", argv[0]);
 		return true;
 	} else {
-		Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1], 0, 0), strtol(argv[2], 0, 0));
+		Common::Error err = Ultima8Engine::get_instance()->changeVideoMode(strtol(argv[1], 0, 0), strtol(argv[2], 0, 0));
+		if (err.getCode() != Common::kNoError)
+			debugPrintf("Failed to set video mode: %s", err.getDesc().c_str());
 		return false;
 	}
 }
