@@ -745,14 +745,7 @@ Common::Error Ultima8Engine::changeVideoMode(int width, int height) {
 	// Set Screen Resolution
 	debug(1, "Setting Video Mode %dx%d...", width, height);
 
-	auto tryModes = g_system->getSupportedFormats();
-	for (auto g = tryModes.begin(); g != tryModes.end(); ++g) {
-		if (g->bytesPerPixel != 2 && g->bytesPerPixel != 4) {
-			g = tryModes.reverse_erase(g);
-		}
-	}
-
-	initGraphics(width, height, tryModes);
+	initGraphics(width, height, nullptr);
 
 	Graphics::PixelFormat format = g_system->getScreenFormat();
 	if (format.bytesPerPixel != 2 && format.bytesPerPixel != 4) {
