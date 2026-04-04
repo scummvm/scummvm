@@ -218,7 +218,10 @@ KyraEngine_MR::~KyraEngine_MR() {
 Common::Error KyraEngine_MR::init() {
 	_screen = new Screen_MR(this, _system);
 	assert(_screen);
-	_screen->setResolution();
+
+	Common::Error err = _screen->setResolution();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	setDebugger(new Debugger_v2(this));
 

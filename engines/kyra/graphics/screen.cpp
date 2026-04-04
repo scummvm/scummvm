@@ -287,15 +287,20 @@ bool Screen::enableScreenDebug(bool enable) {
 
 	if (_debugEnabled != enable) {
 		_debugEnabled = enable;
-		setResolution();
-		_forceFullUpdate = true;
-		updateScreen();
+
+		Common::Error err = setResolution();
+		if (err.getCode() != Common::kNoError){
+			_debugEnabled = enable;
+		} else {
+			_forceFullUpdate = true;
+			updateScreen();
+		}
 	}
 
 	return temp;
 }
 
-void Screen::setResolution() {
+Common::Error Screen::setResolution() {
 	byte palette[3 * 256];
 	if (!_useHiColorScreen)
 		_system->getPaletteManager()->grabPalette(palette, 0, 256);
@@ -333,12 +338,14 @@ void Screen::setResolution() {
 		}
 		initGraphics(width, height, tryModes);
 		if (_system->getScreenFormat().bytesPerPixel != 2)
-			error("Required graphics mode not supported by platform.");
+			return Common::kUnsupportedColorMode;
 
 	} else {
 		initGraphics(width, height);
 		_system->getPaletteManager()->setPalette(palette, 0, 256);
 	}
+
+	return Common::kNoError;
 }
 
 void Screen::enableHiColorMode(bool enabled) {
