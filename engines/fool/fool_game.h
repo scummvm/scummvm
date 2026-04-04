@@ -169,7 +169,17 @@ public:
 
 	void sub_135_004();
 	void sub_136_004();
+
+	// fool_sun.cpp
 	void sub_137_004();
+	void sub_137_3e2();
+	void sub_137_598();
+	void sub_137_880();
+	void sub_137_d60();
+	void sub_137_dde();
+	void sub_137_124e();
+	void sub_137_131a();
+
 	void sub_138_004();
 
 	// fool_cards.cpp
@@ -450,8 +460,8 @@ private:
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
 	PicHandle arr_i32_1912c[0x54];
-	PicHandle arr_i32_192c0[0x18];
-	PolyHandle arr_poly_192c0[0x18];
+	PicHandle arr_i32_192c0[101];
+	PolyHandle arr_poly_192c0[101];
 	int32 arr_i32_19454[0x65];
 	Common::U32String arr_str_195e8[101]; // 0x20 each
 
