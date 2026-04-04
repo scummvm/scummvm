@@ -1126,7 +1126,15 @@ void FoolGame::sub_128_271a() {
 
 // new game
 void FoolGame::sub_128_27d6() {
-	warning("STUB: %s", __func__);
+	// 128:27d6
+	this->sub_128_32fa();
+	if (this->var_i16_7be == 3)
+		return;
+	if (this->var_i16_7ce & 1) {
+		this->sub_128_1c2c(9);
+	} else {
+		this->sub_128_1c2c(8);
+	}
 }
 
 
@@ -1229,6 +1237,7 @@ void FoolGame::sub_128_2a92() {
 
 // quit
 void FoolGame::sub_128_2ab6() {
+	// 128:2ab6
 	this->sub_128_32fa();
 	if (this->var_i16_7be == 3) {
 		return;
@@ -1242,7 +1251,12 @@ void FoolGame::sub_128_2ab6() {
 
 // print story
 void FoolGame::sub_128_2ae8() {
-	warning("STUB: %s", __func__);
+	// 128:2ae8
+	if (this->var_i16_7ce & 1) {
+		this->var_i16_7c6 = 0x401;
+	} else {
+		this->var_i16_7c6 = 0x400;
+	}
 }
 
 
@@ -2962,11 +2976,6 @@ void FoolGame::sub_135_004() {
 
 // maze game
 void FoolGame::sub_136_004() {
-	warning("STUB: %s", __func__);
-}
-
-// the sun's map
-void FoolGame::sub_137_004() {
 	warning("STUB: %s", __func__);
 }
 
