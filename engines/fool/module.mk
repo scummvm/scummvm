@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	fool_polyomino.o \
 	fool_prologue.o \
 	fool_reveal.o \
+	fool_sun.o \
 	fool_wordsearch.o \
 	toolbox.o \
 	toolbox_fileman.o \
