@@ -32,6 +32,8 @@
 
 		<def var = 'Layout.Spacing' value = '8' scalable = 'yes'/>
 
+		<def var = 'GlkOptionsDialog.HeadingMinGap' value = '2'/>
+
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
