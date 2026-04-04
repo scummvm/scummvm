@@ -324,7 +324,7 @@ struct ScriptTask final : public Task {
 							break;
 						}
 					}
-					debug("");
+					debug("%s", "");
 				}
 			}
 
