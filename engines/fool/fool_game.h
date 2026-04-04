@@ -171,14 +171,14 @@ public:
 	void sub_136_004();
 
 	// fool_sun.cpp
-	void sub_137_004();
-	void sub_137_3e2();
-	void sub_137_598();
-	void sub_137_880();
-	void sub_137_d60();
-	void sub_137_dde();
-	void sub_137_124e();
-	void sub_137_131a();
+	void sunMapRun(); // sub_137_004
+	void sunMapOnClick(); // sub_137_3e2
+	void sunMapDragSelect(); // sub_137_598
+	void sunMapMoveSelected(); // sub_137_880
+	void sunMapUndoMove(); // sub_137_d60
+	void sunMapDropSelected(); // sub_137_dde
+	void sunMapCheckIfSolved(); // sub_137_124e
+	void sunMapRevealPiece(); // sub_137_131a
 
 	void sub_138_004();
 

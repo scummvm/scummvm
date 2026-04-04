@@ -1656,7 +1656,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_130_004();
 		break;
 	case 11:
-		this->sub_137_004();
+		this->sunMapRun();
 		break;
 	case 12:
 		this->cardsRun();
