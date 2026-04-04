@@ -53,20 +53,9 @@ WaynesWorldEngine::WaynesWorldEngine(OSystem *syst, const ADGameDescription *gd)
 
 	Engine::syncSoundSettings();
 
-#ifdef USE_TRANSLATION
-	_oldGUILanguage	= TransMan.getCurrentLanguage();
-
-	if (gd->flags & GF_GUILANGSWITCH)
-		TransMan.setLanguage(getLanguageLocale(gd->language));
-#endif
 }
 
 WaynesWorldEngine::~WaynesWorldEngine() {
-#ifdef USE_TRANSLATION
-	if (TransMan.getCurrentLanguage() != _oldGUILanguage)
-		TransMan.setLanguage(_oldGUILanguage);
-#endif
-
 	delete _random;
 }
 

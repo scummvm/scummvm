@@ -141,9 +141,6 @@ public:
 private:
 	Graphics::PixelFormat _pixelFormat;
 
-#ifdef USE_TRANSLATION
-	Common::String _oldGUILanguage;
-#endif
 	void wwEffect(int arg0, int arg1, bool flag);
 	void cleanPt3();
 
