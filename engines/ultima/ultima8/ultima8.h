@@ -179,7 +179,7 @@ public:
 	bool setupGame();
 	Common::Error startupGame();
 
-	void changeVideoMode(int width, int height);
+	Common::Error changeVideoMode(int width, int height);
 
 	//! Get current GameInfo struct
 	const GameInfo *getGameInfo() const {
