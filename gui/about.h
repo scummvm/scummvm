@@ -32,6 +32,7 @@ namespace GUI {
 
 class EEHandler;
 class ScrollBarWidget;
+class ButtonWidget;
 
 class AboutDialog : public Dialog {
 protected:
@@ -46,6 +47,7 @@ protected:
 	bool _inGame;
 
 	ScrollBarWidget *_scrollbar;
+	ButtonWidget *_closeButton;
 
 	void addLine(const Common::U32String &str);
 	void buildLines();

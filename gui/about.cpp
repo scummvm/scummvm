@@ -32,6 +32,7 @@
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/scrollbar.h"
+#include "gui/widget.h"
 
 namespace GUI {
 
@@ -90,6 +91,7 @@ AboutDialog::AboutDialog(bool inGame)
 	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame) {
 
 	_scrollbar = nullptr;
+	_closeButton = nullptr;
 	reflowLayout();
 }
 
@@ -214,7 +216,8 @@ void AboutDialog::buildLines() {
 
 	if (_scrollbar) {
 		_scrollbar->_numEntries = _lines.size() * _lineHeight;
-		_scrollbar->_entriesPerPage = _h;
+		int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+		_scrollbar->_entriesPerPage = _h - buttonHeight - 8 - 3 * _yOff;
 		_scrollbar->_singleStep = _lineHeight;
 		_scrollbar->recalc();
 	}
@@ -255,7 +258,8 @@ void AboutDialog::close() {
 void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h - buttonHeight - 20));
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -263,7 +267,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	//       and then simply compose that over the screen surface
 	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
+	const int lastLine = MIN((_scrollPos + (_h - buttonHeight - 20 - _yOff)) / _lineHeight + 1, (uint32)_lines.size());
 	int y = _y + _yOff - (_scrollPos % _lineHeight);
 
 	int scrollbarWidth = _scrollbar ? _scrollbar->getWidth() : 0;
@@ -357,8 +361,7 @@ void AboutDialog::handleTickle() {
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	// Close upon any mouse click
-	close();
+	Dialog::handleMouseUp(x, y, button, clickCount);
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
@@ -390,6 +393,8 @@ void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) 
 		_scrollPos = data;
 		_autoScroll = false;
 		drawDialog(kDrawLayerForeground);
+	} else if (cmd == kCloseCmd) {
+		close();
 	}
 }
 
@@ -426,23 +431,35 @@ void AboutDialog::reflowLayout() {
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
-	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
-	_w = 0;
-		for (i = 0; i < ARRAYSIZE(credits); i++) {
-			int tmp = g_gui.getStringWidth(credits[i]) + 5;
-			if (_w < tmp && tmp <= maxW) {
-				_w = tmp;
-			}
-		}
-	_w += 2*_xOff;
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 15);
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 80);
 
-	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 16);
+	// Heuristic to compute 'optimal' dialog width
+	int maxW = _w - 2 * _xOff - scrollbarWidth - 10;
+	int optimalW = 0;
+	for (i = 0; i < ARRAYSIZE(credits); i++) {
+			int tmp = g_gui.getStringWidth(credits[i]) + 5;
+			if (optimalW < tmp && tmp <= maxW)
+				optimalW = tmp;
+	}
+	_w = optimalW + 2 * _xOff + scrollbarWidth + 20;
+
+	// Make sure it's not wider than max width
+	_w = MIN<uint16>(_w, screenArea.width() - 2 * outerBorder);
+
 	if (!_scrollbar)
-		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth, 0, scrollbarWidth, _h);
+		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth - _xOff, _yOff, scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
 	else {
-		_scrollbar->setPos(_w - scrollbarWidth, 0);
-		_scrollbar->setSize(scrollbarWidth, _h);
+		_scrollbar->setPos(_w - scrollbarWidth - _xOff, _yOff);
+		_scrollbar->setSize(scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);
+	}
+
+	if (!_closeButton)
+		_closeButton = new ButtonWidget(this, _w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff, buttonWidth, buttonHeight, _("Close"), Common::U32String(), kCloseCmd);
+	else {
+		_closeButton->setPos(_w - buttonWidth - 16 - _xOff, _h - buttonHeight - 2 * _yOff);
+		_closeButton->setSize(buttonWidth, buttonHeight);
 	}
 
 	// Center the dialog in the screen
