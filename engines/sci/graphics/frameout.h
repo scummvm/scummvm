@@ -275,12 +275,10 @@ public:
 	 */
 	void redrawGameScreen(const Common::Rect &skipRect) const;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Sends the entire internal screen buffer and palette to hardware.
 	 */
 	void resetHardware();
-#endif
 
 	/**
 	 * Modifies the raw pixel data for the next frame with new palette indexes

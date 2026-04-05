@@ -70,7 +70,6 @@ void VideoPlayer::showUnsupportedFormatDialog() {
 }
 
 bool VideoPlayer::startHQVideo(const Graphics::PixelFormat &format) {
-#ifdef USE_RGB_COLOR
 	// Optimize rendering performance for unscaled videos, and allow
 	// better-than-NN interpolation for videos that are scaled
 	if (shouldStartHQVideo()) {
@@ -83,13 +82,11 @@ bool VideoPlayer::startHQVideo(const Graphics::PixelFormat &format) {
 	} else {
 		_hqVideoMode = false;
 	}
-#endif
 
 	return false;
 }
 
 bool VideoPlayer::endHQVideo() {
-#ifdef USE_RGB_COLOR
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 		bool success = g_sci->_gfxFrameout->setPixelFormat(&format);
@@ -97,7 +94,6 @@ bool VideoPlayer::endHQVideo() {
 		_hqVideoMode = false;
 		return true;
 	}
-#endif
 
 	return false;
 }
@@ -220,11 +216,9 @@ VideoPlayer::EventFlags VideoPlayer::checkForEvent(const EventFlags flags) {
 }
 
 void VideoPlayer::submitPalette(const uint8 palette[256 * 3]) const {
-#ifdef USE_RGB_COLOR
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		return;
 	}
-#endif
 
 	assert(palette);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -258,15 +252,9 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	if (_decoder->getWidth() != _drawRect.width() || _decoder->getHeight() != _drawRect.height()) {
 		Graphics::Surface *const unscaledFrame(convertedFrame);
-#ifdef USE_RGB_COLOR
 		if (_hqVideoMode) {
 			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), true);
 		} else {
-#elif 1
-		{
-#else
-		}
-#endif
 			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), false);
 		}
 		assert(convertedFrame);
@@ -904,7 +892,6 @@ void VMDPlayer::initOverlay() {
 	// enabled in Shivers.)
 	g_sci->_gfxFrameout->frameOut(true);
 
-#ifdef USE_RGB_COLOR
 	// TODO: Allow interpolation for videos where the cursor is drawn, either by
 	// writing to an intermediate 4bpp surface and using that surface during
 	// cursor drawing, or by promoting the cursor code to use CursorMan, if
@@ -912,10 +899,8 @@ void VMDPlayer::initOverlay() {
 	if (startHQVideo(_decoder->getPixelFormat())) {
 		redrawGameScreen();
 	}
-#endif
 }
 
-#ifdef USE_RGB_COLOR
 void VMDPlayer::redrawGameScreen() const {
 	if (!_hqVideoMode) {
 		return;
@@ -923,15 +908,12 @@ void VMDPlayer::redrawGameScreen() const {
 
 	g_sci->_gfxFrameout->redrawGameScreen(_drawRect);
 }
-#endif
 
 void VMDPlayer::renderOverlay(const Graphics::Surface &nextFrame) const {
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		VideoPlayer::renderFrame(nextFrame);
 		return;
 	}
-#endif
 
 	Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
 	renderLQToSurface(out, nextFrame, _doublePixels, _blackLines);
@@ -986,12 +968,10 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 	}
 #endif
 
-#ifdef USE_RGB_COLOR
 	// Changes to the palette may affect areas outside of the video; when the
 	// engine is rendering video in high color, palette changes will only take
 	// effect once the entire screen is redrawn to the high color surface
 	redrawGameScreen();
-#endif
 }
 
 void VMDPlayer::closeOverlay() {
@@ -1000,14 +980,12 @@ void VMDPlayer::closeOverlay() {
 		_plane = nullptr;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		if (endHQVideo()) {
 			g_sci->_gfxFrameout->resetHardware();
 		}
 		return;
 	}
-#endif
 
 	if (!_leaveLastFrame && _leaveScreenBlack) {
 		g_sci->_gfxFrameout->frameOut(true, _drawRect);
@@ -1276,12 +1254,10 @@ void DuckPlayer::close() {
 }
 
 void DuckPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		VideoPlayer::renderFrame(nextFrame);
 		return;
 	}
-#endif
 
 	Graphics::Surface out;
 	out.create(_drawRect.width(), _drawRect.height(), nextFrame.format);

@@ -22,9 +22,7 @@
 #ifndef SCI_GRAPHICS_VIDEO32_H
 #define SCI_GRAPHICS_VIDEO32_H
 
-#ifdef USE_RGB_COLOR
 #include "common/config-manager.h" // for ConfMan
-#endif
 #include "common/path.h"          // for Path
 #include "common/ptr.h"
 #include "common/rect.h"          // for Rect
@@ -71,11 +69,8 @@ public:
 		_eventMan(eventMan),
 		_decoder(decoder),
 		_needsUpdate(false),
-		_currentFrame(nullptr)
-#ifdef USE_RGB_COLOR
-		,
+		_currentFrame(nullptr),
 		_hqVideoMode(false)
-#endif
 		{}
 
 	virtual ~VideoPlayer() {}
@@ -110,7 +105,6 @@ protected:
 	 * for high-quality scaled output.
 	 */
 	virtual bool shouldStartHQVideo() const {
-#ifdef USE_RGB_COLOR
 		if (!ConfMan.getBool("enable_hq_video")) {
 			return false;
 		}
@@ -121,9 +115,6 @@ protected:
 		}
 
 		return true;
-#else
-		return false;
-#endif
 	}
 
 	/**
@@ -208,13 +199,11 @@ protected:
 	 */
 	mutable Video::Subtitles _subtitles;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Whether or not the player is currently in high-quality video rendering
 	 * mode.
 	 */
 	bool _hqVideoMode;
-#endif
 };
 
 #pragma mark SEQPlayer
@@ -524,7 +513,6 @@ private:
 	 */
 	void fillPalette(const uint8 rawPalette[256 * 3], Palette &outPalette) const;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Redraws areas of the screen outside of the video to the system buffer.
 	 * This is used whenever palette changes occur and the video is rendering in
@@ -551,18 +539,13 @@ private:
 
 		return true;
 	}
-#endif
 
 	/**
 	 * Determines whether or not the video should use the compositing renderer
 	 * instead of the overlay renderer.
 	 */
 	bool shouldUseCompositing() const {
-#ifdef USE_RGB_COLOR
 		return isNormallyComposited() && !shouldStartHQVideo();
-#else
-		return isNormallyComposited();
-#endif
 	}
 
 	bool isNormallyComposited() const {

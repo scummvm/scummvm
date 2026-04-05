@@ -642,7 +642,6 @@ void GfxFrameout::directFrameOut(const Common::Rect &showRect) {
 	showBits();
 }
 
-#ifdef USE_RGB_COLOR
 void GfxFrameout::redrawGameScreen(const Common::Rect &skipRect) const {
 	Common::ScopedPtr<Graphics::Surface> game(_currentBuffer.convertTo(g_system->getScreenFormat(), _palette->getHardwarePalette()));
 	assert(game);
@@ -665,7 +664,6 @@ void GfxFrameout::resetHardware() {
 	g_system->getPaletteManager()->setPalette(_palette->getHardwarePalette(), 0, 256);
 	showBits();
 }
-#endif
 
 /**
  * Determines the parts of `middleRect` that aren't overlapped by `showRect`,
@@ -1111,7 +1109,6 @@ void GfxFrameout::showBits() {
 			continue;
 		}
 
-#ifdef USE_RGB_COLOR
 		if (g_system->getScreenFormat() != _currentBuffer.format) {
 			// This happens (at least) when playing a video in Shivers with
 			// HQ video on & subtitles on
@@ -1121,9 +1118,6 @@ void GfxFrameout::showBits() {
 			screenSurface->free();
 			delete screenSurface;
 		} else {
-#else
-		{
-#endif
 			g_system->copyRectToScreen(sourceBuffer, _currentBuffer.w, rounded.left, rounded.top, rounded.width(), rounded.height());
 		}
 	}
