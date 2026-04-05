@@ -5,6 +5,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Highlight clickable links in the GUI with a cursor change.
    - Fixed window size when switching out of fullscreen mode on 3D engines.
+   - Implemented NULL OPL driver for lower-base systems.
 
  AGOS:
    - Added support for language files used by Amiga and Macintosh
