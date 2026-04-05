@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 22:25+0000\n"
+"POT-Creation-Date: 2026-04-05 22:37+0000\n"
 "PO-Revision-Date: 2026-04-01 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2396,7 +2396,7 @@ msgid "Debug level:"
 msgstr "디버그 수준:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2749 gui/options.cpp:2886
+#: gui/options.cpp:2749 gui/options.cpp:2886 audio/fmopl.cpp:83
 msgid "None"
 msgstr "없음"
 
@@ -4000,31 +4000,31 @@ msgstr "셰이더를 사용한 OpenGL"
 msgid "AdLib emulator"
 msgstr "애드립 에뮬레이터"
 
-#: audio/fmopl.cpp:82
+#: audio/fmopl.cpp:84
 msgid "MAME OPL emulator"
 msgstr "마메 OPL 에뮬레이터"
 
-#: audio/fmopl.cpp:84
+#: audio/fmopl.cpp:86
 msgid "DOSBox OPL emulator"
 msgstr "도스박스 OPL 에뮬레이터"
 
-#: audio/fmopl.cpp:87
+#: audio/fmopl.cpp:89
 msgid "Nuked OPL emulator"
 msgstr "누크드 OPL 에뮬레이터"
 
-#: audio/fmopl.cpp:90
+#: audio/fmopl.cpp:92
 msgid "ALSA Direct FM"
 msgstr "ALSA 다이렉트 FM"
 
-#: audio/fmopl.cpp:93
+#: audio/fmopl.cpp:95
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
 
-#: audio/fmopl.cpp:94
+#: audio/fmopl.cpp:96
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/fmopl.cpp:97
+#: audio/fmopl.cpp:99
 msgid "RetroWave OPL3"
 msgstr "레트로웨이브 OPL3"
 
@@ -4069,7 +4069,7 @@ msgstr ""
 "선호하는 오디오 장치 '%s'를 사용할 수 없습니다. 자세한 내용은 로그 파일을 참"
 "조하세요."
 
-#: audio/mididrv.cpp:469
+#: audio/mididrv.cpp:474
 msgid "Starting MIDI dump"
 msgstr "미디 덤프 시작"
 

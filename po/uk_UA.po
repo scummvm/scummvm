@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 22:25+0000\n"
+"POT-Creation-Date: 2026-04-05 22:37+0000\n"
 "PO-Revision-Date: 2026-03-28 17:49+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2423,7 +2423,7 @@ msgid "Debug level:"
 msgstr "Рівень відладки:"
 
 #. I18N: Debug level -1, no messages
-#: gui/options.cpp:2749 gui/options.cpp:2886
+#: gui/options.cpp:2749 gui/options.cpp:2886 audio/fmopl.cpp:83
 msgid "None"
 msgstr "Не завдано"
 
@@ -4057,31 +4057,31 @@ msgstr "OpenGL з шейдерами"
 msgid "AdLib emulator"
 msgstr "Емулятор AdLib"
 
-#: audio/fmopl.cpp:82
+#: audio/fmopl.cpp:84
 msgid "MAME OPL emulator"
 msgstr "Емулятор MAME OPL"
 
-#: audio/fmopl.cpp:84
+#: audio/fmopl.cpp:86
 msgid "DOSBox OPL emulator"
 msgstr "Емулятор DOSBox OPL"
 
-#: audio/fmopl.cpp:87
+#: audio/fmopl.cpp:89
 msgid "Nuked OPL emulator"
 msgstr "Емулятор Nuked OPL"
 
-#: audio/fmopl.cpp:90
+#: audio/fmopl.cpp:92
 msgid "ALSA Direct FM"
 msgstr "Безпосередній ALSA FM"
 
-#: audio/fmopl.cpp:93
+#: audio/fmopl.cpp:95
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
 
-#: audio/fmopl.cpp:94
+#: audio/fmopl.cpp:96
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/fmopl.cpp:97
+#: audio/fmopl.cpp:99
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
@@ -4126,7 +4126,7 @@ msgstr ""
 "Уподобаний звуковий пристрій '%s' не може бути використано. Дивіться файл "
 "протоколу для додаткової інформації."
 
-#: audio/mididrv.cpp:469
+#: audio/mididrv.cpp:474
 msgid "Starting MIDI dump"
 msgstr "Починаю створення дампу MIDI"
 
