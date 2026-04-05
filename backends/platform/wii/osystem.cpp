@@ -50,6 +50,7 @@ OSystem_Wii::OSystem_Wii() :
 	_gameWidth(0),
 	_gameHeight(0),
 	_gamePixels(NULL),
+	_gamePixelsTexture(NULL),
 	_gameDirty(false),
 
 	_overlayVisible(true),
@@ -59,6 +60,7 @@ OSystem_Wii::OSystem_Wii() :
 	_overlayPixels(NULL),
 	_overlayDirty(false),
 
+	_blitFunc(NULL),
 	_lastScreenUpdate(0),
 	_currentWidth(0),
 	_currentHeight(0),

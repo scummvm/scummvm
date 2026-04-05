@@ -111,6 +111,9 @@ void OSystem_Wii::deinitGfx() {
 	free(_gamePixels);
 	_gamePixels = NULL;
 
+	free(_gamePixelsTexture);
+	_gamePixelsTexture = NULL;
+
 	free(_overlayPixels);
 	_overlayPixels = NULL;
 }
@@ -235,9 +238,6 @@ void OSystem_Wii::initSize(uint width, uint height,
 	else
 		newFormat = Graphics::PixelFormat::createFormatCLUT8();
 
-	if (newFormat.bytesPerPixel > 2)
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
-
 	if (_pfGame != newFormat) {
 		_pfGame = newFormat;
 		update = true;
@@ -254,6 +254,7 @@ void OSystem_Wii::initSize(uint width, uint height,
 	}
 
 	if (_gameWidth != newWidth || _gameHeight != newHeight) {
+		// TODO: Return an error code in endGFXTransaction()
 		assert((newWidth <= 640) && (newHeight <= 480));
 
 		if (width != newWidth || height != newHeight)
@@ -275,25 +276,39 @@ void OSystem_Wii::initSize(uint width, uint height,
 	}
 
 	if (update) {
-		free(_gamePixels);
+		if (_gamePixels != _gamePixelsTexture)
+			free(_gamePixels);
+		free(_gamePixelsTexture);
 
 		tex_format = GFX_TF_PALETTE_RGB565;
 
 		if (_pfGame.bytesPerPixel > 1) {
+			// TODO: Support other texture formats?
 			tex_format = GFX_TF_RGB565;
 			_pfGameTexture = _pfRGB565;
 		}
 
-		printf("initSize %u*%u*%u (%u%u%u -> %u%u%u match: %d)\n",
-				_gameWidth, _gameHeight, _pfGame.bytesPerPixel * 8,
-				8 - _pfGame.rLoss, 8 - _pfGame.gLoss, 8 - _pfGame.bLoss,
-				8 - _pfGameTexture.rLoss, 8 - _pfGameTexture.gLoss,
-				8 - _pfGameTexture.bLoss, _pfGame == _pfGameTexture);
+		printf("initSize %u*%u*%u (%s -> %s match: %d)\n",
+				_gameWidth, _gameHeight, _pfGame.bytesPerPixel,
+				_pfGame.toString().c_str(),
+				_pfGameTexture.toString().c_str(),
+				_pfGame == _pfGameTexture);
 
 		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight *
 										_pfGame.bytesPerPixel);
 		memset(_gamePixels, 0, _gameWidth * _gameHeight *
 				_pfGame.bytesPerPixel);
+
+		if (_pfGame != _pfGameTexture) {
+			_gamePixelsTexture = (u8 *) memalign(32, _gameWidth * _gameHeight *
+											_pfGameTexture.bytesPerPixel);
+			memset(_gamePixelsTexture, 0, _gameWidth * _gameHeight *
+					_pfGameTexture.bytesPerPixel);
+		} else {
+			_gamePixelsTexture = _gamePixels;
+		}
+
+		_blitFunc = Graphics::getFastBlitFunc(_pfGameTexture, _pfGame);
 
 		if (!gfx_tex_init(&_texGame, tex_format, TLUT_GAME,
 					_gameWidth, _gameHeight)) {
@@ -405,27 +420,11 @@ void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 	assert(w > 0 && x + w <= _gameWidth);
 	assert(h > 0 && y + h <= _gameHeight);
 
-	if (_pfGame.bytesPerPixel > 1) {
-		if (!Graphics::crossBlit(_gamePixels +
-									y * _gameWidth * _pfGame.bytesPerPixel +
-									x * _pfGame.bytesPerPixel,
-									(const byte *)buf, _gameWidth * _pfGame.bytesPerPixel,
-									pitch, w, h, _pfGameTexture, _pfGame)) {
-			printf("crossBlit failed\n");
-			::abort();
-		}
-	} else {
-		byte *dst = _gamePixels + y * _gameWidth + x;
-		if (_gameWidth == pitch && pitch == w) {
-			memcpy(dst, buf, h * w);
-		} else {
-			const byte *src = (const byte *)buf;
-			do {
-				memcpy(dst, src, w);
-				src += pitch;
-				dst += _gameWidth;
-			} while (--h);
-		}
+	Graphics::copyBlit(_gamePixels +
+	                   y * _gameWidth * _pfGame.bytesPerPixel +
+	                   x * _pfGame.bytesPerPixel,
+	                   (const byte *)buf, _gameWidth * _pfGame.bytesPerPixel,
+	                   pitch, w, h, _pfGame.bytesPerPixel);
 
 	_gameDirty = true;
 }
@@ -471,7 +470,22 @@ void OSystem_Wii::updateScreen() {
 
 	if (_gameRunning) {
 		if (_gameDirty) {
-			gfx_tex_convert(&_texGame, _gamePixels);
+			if (_gamePixels != _gamePixelsTexture) {
+				// TODO: Track dirty regions of the screen?
+				if (_blitFunc) {
+					_blitFunc(_gamePixelsTexture, _gamePixels,
+					          _gameWidth * _pfGameTexture.bytesPerPixel,
+					          _gameWidth * _pfGame.bytesPerPixel,
+					          _gameWidth, _gameHeight);
+				} else {
+					Graphics::crossBlit(_gamePixelsTexture, _gamePixels,
+					                    _gameWidth * _pfGameTexture.bytesPerPixel,
+					                    _gameWidth * _pfGame.bytesPerPixel,
+					                    _gameWidth, _gameHeight, _pfGameTexture, _pfGame);
+				}
+
+			}
+			gfx_tex_convert(&_texGame, _gamePixelsTexture);
 			_gameDirty = false;
 		}
 
