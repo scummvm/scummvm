@@ -1199,17 +1199,20 @@ void Scripts::cmdPlayerChoice() {
 
 	debugC(1, kDebugScripts, "cmdPlayerChoice(%d, %d, ..(%d choices)..)", x, startY, choiceStrs.size());
 
+	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point(x, startY);
+
 	_vm->_events->setCursor(CURSOR_ARROW);
 	const char *respTitle = ((Noctropolis::NoctropolisResources *)_vm->_res)->getResponseTitle();
 	Common::Array<Common::Rect> responseCoords;
 
 	for (uint i = 0; i < choiceStrs.size(); i++) {
 		_vm->_bubbleBox->_bubbleDisplStr = Common::String::format(respTitle, i + 1);
+		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
 		_vm->_bubbleBox->calcBubble(choiceStrs[i]);
 		_vm->_bubbleBox->printBubble(choiceStrs[i]);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + startY;
-		startY = _vm->_bubbleBox->_bounds.bottom + 10;
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + 10;
+		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	}
 
 	int choice = -1;
@@ -1217,8 +1220,6 @@ void Scripts::cmdPlayerChoice() {
 		_vm->_events->pollEvents();
 		if (_vm->shouldQuit())
 			return;
-
-		charLoop();
 
 		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
@@ -1696,7 +1697,6 @@ void Scripts::cmdRestoreBlock() {
 	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
 	_vm->clearPlotImagesIn(x, y, w, h);
 	_vm->clearPlotVidsIn(x, y, w, h);
-	error("TODO: Implement Scripts::cmdRestoreBlock");
 }
 
 void Scripts::cmdCopyScnBuf() {

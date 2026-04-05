@@ -683,6 +683,9 @@ void NoctropolisEngine::playSuccubusSplit() {
 }
 
 void NoctropolisEngine::playSuccubusAttack() {
+	//warning("FIXME: NoctropolisEngine::playSuccubusAttack - skipping for testing.");
+	//return;
+
 	_midi->stopSong();
 	_midi->loadMusic(98, 4);
 	_midi->midiPlay();
