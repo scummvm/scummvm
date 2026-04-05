@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-03 16:26+0000\n"
+"POT-Creation-Date: 2026-04-05 03:30+0000\n"
 "PO-Revision-Date: 2026-03-29 10:38+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -9300,12 +9300,12 @@ msgid "Save file created by different version."
 msgstr "Sparad fil skapad av annan version."
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:285
-#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:591
+#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:588
 msgid "Failed to load saved game from file."
 msgstr "Kunde inte läsa spardata från filen."
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_playtoons.cpp:426
-#: engines/gob/inter_v2.cpp:1591 engines/tinsel/saveload.cpp:604
+#: engines/gob/inter_v2.cpp:1591 engines/tinsel/saveload.cpp:601
 msgid "Failed to save game to file."
 msgstr "Kunde inte spara spelet till fil."
 
@@ -14210,7 +14210,7 @@ msgstr "Gå till början av spara/läs in-meny"
 msgid "Go to end of save / load menu"
 msgstr "Gå till slutet av spara/läs in-meny"
 
-#: engines/tinsel/tinsel.cpp:1059
+#: engines/tinsel/tinsel.cpp:1058
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir kräver ScummVM med TinyGL aktiverat"
 
