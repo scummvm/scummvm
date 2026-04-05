@@ -992,46 +992,45 @@ void GraphicManager::drawWinningPic() {
 }
 
 void GraphicManager::drawQuittingPic() {
-
-    // Nag screen text "joke".
+	// Nag screen text "joke".
     static const char *nouns[] = {
-    "sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
-    "abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
-    };
+		"sackbut", "harpsichord", "camel", "conscience", "ice-cream", "serf",
+		"abacus", "castle", "carrots", "megaphone", "manticore", "drawbridge"
+	};
 
-    static const char *verbs[] = {
-        "haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
-        "ignore", "stare at", "shriek at", "frighten", "quieten"
-    };
+	static const char *verbs[] = {
+		"haunt", "daunt", "tickle", "gobble", "erase", "provoke", "surprise",
+		"ignore", "stare at", "shriek at", "frighten", "quieten"
+	};
 
-    Common::String result = Common::String(nouns[_vm->_rnd->getRandomNumber(11)]) + " will " + Common::String(verbs[_vm->_rnd->getRandomNumber(11)]) + " you.";
-    
+	Common::String result = Common::String(nouns[_vm->_rnd->getRandomNumber(11)]) + " will " + Common::String(verbs[_vm->_rnd->getRandomNumber(11)]) + " you.";
+
 	Common::File file;
 	Common::Path filename("text3.scr");
-    
+
 	if (!file.open(filename))
 		error("AVALANCHE: Timer: File not found: %s", filename.toString(Common::Path::kNativeSeparator).c_str());
-	
+
 	uint32 fileSize = file.size();
 	byte *buffer = new byte[fileSize];
 	file.read(buffer, fileSize);
 	file.close();
-	
+
 	// Write the joke string at position 1628 (from source code)
 	// Side note: I added 2 because there was no space between the first word of the joke and last letter of the original file
-    // Each cell is 2 bytes: char, attribute 
-    for (uint i = 0; i < result.size(); i++) {
-        buffer[1628 * 2 + i * 2 + 2] = (byte)result[i];
-        // skip attribute byte
-    }
-	
+	// Each cell is 2 bytes: char, attribute 
+	for (uint i = 0; i < result.size(); i++) {
+		buffer[1628 * 2 + i * 2 + 2] = (byte)result[i];
+		// skip attribute byte
+	}
+
 	// The text3.scr file is DOS text-mode screen dump, 80 x 24
-	for (int i = 0; i < 24; i ++){
-		for (int j = 0; j < 80; j ++){
+	for (int i = 0; i < 24; i++) {
+		for (int j = 0; j < 80; j++) {
 			byte pixel = buffer[(i * 80 + j) * 2];
 			byte colorByte = buffer[(i * 80 + j) * 2 + 1];
-			
-			for (int row = 0; row < 8; row ++){
+
+			for (int row = 0; row < 8; row++) {
 				byte rowPixel = _vm->_font[pixel][row];
 				drawChar(rowPixel, 8 * j, 8 * i + row, (Color)colorByte);
 			}

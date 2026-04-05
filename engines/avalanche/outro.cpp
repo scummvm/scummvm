@@ -34,35 +34,34 @@
 
 namespace Avalanche {
 
-Outro::Outro(AvalancheEngine *vm) : _vm(vm) {
-}
-
-void Outro::run() {
-    CursorMan.showMouse(false);
-    _vm->_graphics->blackOutScreen();
-    _vm->_graphics->drawQuittingPic();
-    _vm->_graphics->refreshScreen();
-
-    // Wait 5 seconds or keypress/click
-    uint32 startTime = g_system->getMillis();
-    Common::Event event;
-    while (!_vm->shouldQuit()) {
-        if (g_system->getMillis() - startTime >= 5000)
-            return;
-        while (_vm->getEvent(event)) {
-            switch (event.type) {
-            case Common::EVENT_KEYDOWN:
-            case Common::EVENT_LBUTTONDOWN:
-                CursorMan.showMouse(true);
-                return;
-            default:
-                break;
-            }
-        }
-        g_system->delayMillis(10);
+    Outro::Outro(AvalancheEngine *vm) : _vm(vm) {
     }
 
-    CursorMan.showMouse(true);
-}
+    void Outro::run() {
+        CursorMan.showMouse(false);
+        _vm->_graphics->blackOutScreen();
+        _vm->_graphics->drawQuittingPic();
+        _vm->_graphics->refreshScreen();
 
+        // Wait 5 seconds or keypress/click
+        uint32 startTime = g_system->getMillis();
+        Common::Event event;
+        while (!_vm->shouldQuit()) {
+            if (g_system->getMillis() - startTime >= 5000)
+                return;
+            while (_vm->getEvent(event)) {
+                switch (event.type) {
+                case Common::EVENT_KEYDOWN:
+                case Common::EVENT_LBUTTONDOWN:
+                    CursorMan.showMouse(true);
+                    return;
+                default:
+                    break;
+                }
+            }
+            g_system->delayMillis(10);
+        }
+
+        CursorMan.showMouse(true);
+    }
 }
