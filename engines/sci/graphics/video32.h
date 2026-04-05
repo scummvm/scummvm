@@ -103,7 +103,7 @@ protected:
 	 * @returns whether or not the system surface was reinitialized for
 	 * high-quality scaled video.
 	 */
-	bool startHQVideo();
+	bool startHQVideo(const Graphics::PixelFormat &format);
 
 	/**
 	 * Determines whether or not the currently loaded video meets the criteria
@@ -179,6 +179,12 @@ protected:
 	 *
 	 */
 	void setSubtitlePosition() const;
+
+	/**
+	 * Displays a message if the backend doesn't support the video format used
+	 * by the video.
+	 */
+	void showUnsupportedFormatDialog();
 
 	/**
 	 * The rectangle where the video will be drawn, in screen coordinates.
