@@ -80,6 +80,29 @@ static void fastBlit_XRGB1555_RGB565(byte *dst, const byte *src,
 	}
 }
 
+static void fastBlit_XRGB1555_RGBA5551(byte *dst, const byte *src,
+                                       const uint dstPitch, const uint srcPitch,
+                                       const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint16));
+	const uint dstDelta = (dstPitch - w * sizeof(uint16));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint16 col = *(const uint16 *)src;
+
+			col = (col << 1) | 1;
+
+			*(uint16 *)dst = col;
+
+			src += sizeof(uint16);
+			dst += sizeof(uint16);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
 } // End of anonymous namespace
 
 // TODO: Add fast 24<->32bpp conversion
@@ -119,6 +142,9 @@ static const FastBlitLookup fastBlitFuncs_2to2[] = {
 	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // XBGR1555 -> BGR565
 	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // ARGB1555 -> RGB565
 	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1,  0,  5, 10, 15), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // ABGR1555 -> BGR565
+
+	{ fastBlit_XRGB1555_RGBA5551, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11,  6,  1,  0) }, // XRGB1555 -> RGBA5551
+	{ fastBlit_XRGB1555_RGBA5551, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 5, 5, 1,  1,  6, 11,  0) }, // XBGR1555 -> BGRA5551
 };
 
 #ifdef SCUMMVM_NEON

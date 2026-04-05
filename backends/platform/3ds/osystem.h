@@ -25,6 +25,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 
 #include "backends/base-backend.h"
+#include "graphics/blit.h"
 #include "graphics/dirtyrects.h"
 #include "graphics/paletteman.h"
 #include "base/main.h"
@@ -231,6 +232,7 @@ private:
 	TransactionDetails _transactionDetails;
 
 	GfxState _gfxState, _oldGfxState;
+	Graphics::FastBlitFunc _blitFunc;
 	Graphics::PixelFormat _pfDefaultTexture;
 	Graphics::PixelFormat _pfGame, _oldPfGame;
 	Graphics::PixelFormat _pfCursor;

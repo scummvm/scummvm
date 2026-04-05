@@ -88,7 +88,8 @@ OSystem_3DS::OSystem_3DS():
 	_showCursor(true),
 	_snapToBorder(true),
 	_stretchToFit(false),
-	_screen(kScreenBoth)
+	_screen(kScreenBoth),
+	_blitFunc(nullptr)
 {
 	chdir("sdmc:/");
 
