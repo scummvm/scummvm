@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 03:30+0000\n"
+"POT-Creation-Date: 2026-04-05 11:13+0000\n"
 "PO-Revision-Date: 2026-03-27 06:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -3638,7 +3638,7 @@ msgstr "ნაგულისხმევი თამაშების ღი�
 #: engines/draci/metaengine.cpp:200 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
 #: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
@@ -3671,7 +3671,7 @@ msgstr "შუა წკაპი"
 #: engines/draci/metaengine.cpp:206 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
-#: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
+#: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
@@ -6302,7 +6302,7 @@ msgid "Turn backward"
 msgstr "უკან მიბრუნება"
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:186
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:517
 #: engines/lab/metaengine.cpp:257 engines/mm/mm1/metaengine.cpp:97
 #: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/ultima/ultima0/metaengine.cpp:80
@@ -6316,7 +6316,7 @@ msgid "Turn left"
 msgstr "მარცხნივ შეუხვიეთ"
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:206
-#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:518
 #: engines/lab/metaengine.cpp:271 engines/mm/mm1/metaengine.cpp:98
 #: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/ultima/ultima0/metaengine.cpp:81
@@ -7145,7 +7145,7 @@ msgstr "გახედვა მარჯვნივ"
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:100
 #: engines/dm/metaengine.cpp:196 engines/kyra/engine/eobcommon.cpp:371
-#: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
+#: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
 #: engines/twine/metaengine.cpp:332 engines/ultima/ultima0/metaengine.cpp:78
 #: engines/ultima/ultima8/metaengine.cpp:50
@@ -7783,7 +7783,7 @@ msgid "Toggle champion 4 inventory"
 msgstr "ჩემპიონი 4 ინვენტარის გადართვა"
 
 #: engines/dm/metaengine.cpp:226 engines/kyra/engine/eobcommon.cpp:372
-#: engines/kyra/engine/lol.cpp:511 engines/mohawk/riven.cpp:895
+#: engines/kyra/engine/lol.cpp:514 engines/mohawk/riven.cpp:895
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
 #: engines/twine/metaengine.cpp:339 engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -8443,7 +8443,7 @@ msgstr "სიმაღლის გადართვა"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:361
-#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:519 engines/mm/mm1/metaengine.cpp:109
 #: engines/ultima/nuvie/metaengine.cpp:195
 #: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
@@ -9248,17 +9248,11 @@ msgid ""
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:279
+#: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:289
-msgid ""
-"EOB II FM-TOWNS requires support of 16bit color modes which has not been "
-"activated in your ScummVM build"
-msgstr ""
-
-#: engines/kyra/metaengine.cpp:295
 msgid "Eye of Beholder support is not compiled in"
 msgstr ""
 
@@ -9302,19 +9296,19 @@ msgstr "შელოცვის დონე 5"
 msgid "Spell level 6"
 msgstr "შელოცვის დონე 6"
 
-#: engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/lol.cpp:509
 msgid "Attack 1"
 msgstr "შეტევა 1"
 
-#: engines/kyra/engine/lol.cpp:507
+#: engines/kyra/engine/lol.cpp:510
 msgid "Attack 2"
 msgstr "შეტევა 2"
 
-#: engines/kyra/engine/lol.cpp:508
+#: engines/kyra/engine/lol.cpp:511
 msgid "Attack 3"
 msgstr "შეტევა 3"
 
-#: engines/kyra/engine/lol.cpp:509 engines/lab/metaengine.cpp:278
+#: engines/kyra/engine/lol.cpp:512 engines/lab/metaengine.cpp:278
 #: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/myst.cpp:606
 #: engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -9325,19 +9319,19 @@ msgstr "შეტევა 3"
 msgid "Show map"
 msgstr "რუკის ჩვენება"
 
-#: engines/kyra/engine/lol.cpp:512
+#: engines/kyra/engine/lol.cpp:515
 msgid "Slide left"
 msgstr "გასრიალება მარცხნივ"
 
-#: engines/kyra/engine/lol.cpp:513
+#: engines/kyra/engine/lol.cpp:516
 msgid "Slide right"
 msgstr "გასრიალება მარჯვნივ"
 
-#: engines/kyra/engine/lol.cpp:517
+#: engines/kyra/engine/lol.cpp:520
 msgid "Options"
 msgstr "პარამეტრები"
 
-#: engines/kyra/engine/lol.cpp:518
+#: engines/kyra/engine/lol.cpp:521
 msgid "Choose spell"
 msgstr "აირჩიეთ შელოცვა"
 

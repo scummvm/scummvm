@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 03:30+0000\n"
+"POT-Creation-Date: 2026-04-05 11:13+0000\n"
 "PO-Revision-Date: 2026-03-27 15:22+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -3828,7 +3828,7 @@ msgstr "Assignació de tecles per defecte del joc"
 #: engines/draci/metaengine.cpp:200 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
 #: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
@@ -3861,7 +3861,7 @@ msgstr "Clic central"
 #: engines/draci/metaengine.cpp:206 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
-#: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
+#: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
@@ -6553,7 +6553,7 @@ msgid "Turn backward"
 msgstr "Gira cap enrere"
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:186
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:517
 #: engines/lab/metaengine.cpp:257 engines/mm/mm1/metaengine.cpp:97
 #: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/ultima/ultima0/metaengine.cpp:80
@@ -6567,7 +6567,7 @@ msgid "Turn left"
 msgstr "Gira a l'esquerra"
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:206
-#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:518
 #: engines/lab/metaengine.cpp:271 engines/mm/mm1/metaengine.cpp:98
 #: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/ultima/ultima0/metaengine.cpp:81
@@ -7459,7 +7459,7 @@ msgstr "Mira a la dreta"
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:100
 #: engines/dm/metaengine.cpp:196 engines/kyra/engine/eobcommon.cpp:371
-#: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
+#: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
 #: engines/twine/metaengine.cpp:332 engines/ultima/ultima0/metaengine.cpp:78
 #: engines/ultima/ultima8/metaengine.cpp:50
@@ -8123,7 +8123,7 @@ msgid "Toggle champion 4 inventory"
 msgstr "Commuta l'inventari del campió 4"
 
 #: engines/dm/metaengine.cpp:226 engines/kyra/engine/eobcommon.cpp:372
-#: engines/kyra/engine/lol.cpp:511 engines/mohawk/riven.cpp:895
+#: engines/kyra/engine/lol.cpp:514 engines/mohawk/riven.cpp:895
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
 #: engines/twine/metaengine.cpp:339 engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -8803,7 +8803,7 @@ msgstr "Commuta l'alçada"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:361
-#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:519 engines/mm/mm1/metaengine.cpp:109
 #: engines/ultima/nuvie/metaengine.cpp:195
 #: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
@@ -9659,19 +9659,11 @@ msgid ""
 "backpack inventory slots, with thrown weapons only"
 msgstr ""
 
-#: engines/kyra/metaengine.cpp:279
+#: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
 msgstr "No s'ha compilat el suport per a Lands of Lore"
 
 #: engines/kyra/metaengine.cpp:289
-msgid ""
-"EOB II FM-TOWNS requires support of 16bit color modes which has not been "
-"activated in your ScummVM build"
-msgstr ""
-"EOB II FM-TOWNS requereix suport de modes de color de 16 bits que no s'ha "
-"activat en la vostra compilació d'ScummVM"
-
-#: engines/kyra/metaengine.cpp:295
 msgid "Eye of Beholder support is not compiled in"
 msgstr "No s'ha compilat el suport per a Eye of Beholder"
 
@@ -9715,19 +9707,19 @@ msgstr "Encanteri nivell 5"
 msgid "Spell level 6"
 msgstr "Encanteri nivell 6"
 
-#: engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/lol.cpp:509
 msgid "Attack 1"
 msgstr "Atac 1"
 
-#: engines/kyra/engine/lol.cpp:507
+#: engines/kyra/engine/lol.cpp:510
 msgid "Attack 2"
 msgstr "Atac 2"
 
-#: engines/kyra/engine/lol.cpp:508
+#: engines/kyra/engine/lol.cpp:511
 msgid "Attack 3"
 msgstr "Atac 3"
 
-#: engines/kyra/engine/lol.cpp:509 engines/lab/metaengine.cpp:278
+#: engines/kyra/engine/lol.cpp:512 engines/lab/metaengine.cpp:278
 #: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/myst.cpp:606
 #: engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -9738,19 +9730,19 @@ msgstr "Atac 3"
 msgid "Show map"
 msgstr "Mostra el mapa"
 
-#: engines/kyra/engine/lol.cpp:512
+#: engines/kyra/engine/lol.cpp:515
 msgid "Slide left"
 msgstr "Llisca cap a l'esquerra"
 
-#: engines/kyra/engine/lol.cpp:513
+#: engines/kyra/engine/lol.cpp:516
 msgid "Slide right"
 msgstr "Llisca cap a la dreta"
 
-#: engines/kyra/engine/lol.cpp:517
+#: engines/kyra/engine/lol.cpp:520
 msgid "Options"
 msgstr "Opcions"
 
-#: engines/kyra/engine/lol.cpp:518
+#: engines/kyra/engine/lol.cpp:521
 msgid "Choose spell"
 msgstr "Escull l'encanteri"
 
@@ -16029,6 +16021,13 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+
+#~ msgid ""
+#~ "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
+#~ "activated in your ScummVM build"
+#~ msgstr ""
+#~ "EOB II FM-TOWNS requereix suport de modes de color de 16 bits que no s'ha "
+#~ "activat en la vostra compilació d'ScummVM"
 
 #, fuzzy
 #~| msgid "Center"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 03:30+0000\n"
+"POT-Creation-Date: 2026-04-05 11:13+0000\n"
 "PO-Revision-Date: 2026-04-01 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3865,7 +3865,7 @@ msgstr "기본 게임 키설정"
 #: engines/draci/metaengine.cpp:200 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:502
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
 #: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
@@ -3898,7 +3898,7 @@ msgstr "중간 클릭"
 #: engines/draci/metaengine.cpp:206 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
-#: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
+#: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
 #: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
@@ -6872,7 +6872,7 @@ msgid "Turn backward"
 msgstr "뒤로 돌아가기"
 
 #: engines/agos/metaengine.cpp:228 engines/dm/metaengine.cpp:186
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:514
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:517
 #: engines/lab/metaengine.cpp:257 engines/mm/mm1/metaengine.cpp:97
 #: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
 #: engines/twine/metaengine.cpp:353 engines/ultima/ultima0/metaengine.cpp:80
@@ -6886,7 +6886,7 @@ msgid "Turn left"
 msgstr "왼쪽으로"
 
 #: engines/agos/metaengine.cpp:234 engines/dm/metaengine.cpp:206
-#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:515
+#: engines/kyra/engine/eobcommon.cpp:376 engines/kyra/engine/lol.cpp:518
 #: engines/lab/metaengine.cpp:271 engines/mm/mm1/metaengine.cpp:98
 #: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
 #: engines/twine/metaengine.cpp:346 engines/ultima/ultima0/metaengine.cpp:81
@@ -7757,7 +7757,7 @@ msgstr "오른쪽 보기"
 
 #: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:100
 #: engines/dm/metaengine.cpp:196 engines/kyra/engine/eobcommon.cpp:371
-#: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
+#: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
 #: engines/twine/metaengine.cpp:332 engines/ultima/ultima0/metaengine.cpp:78
 #: engines/ultima/ultima8/metaengine.cpp:50
@@ -8414,7 +8414,7 @@ msgid "Toggle champion 4 inventory"
 msgstr "챔피언 4 인벤토리 전환"
 
 #: engines/dm/metaengine.cpp:226 engines/kyra/engine/eobcommon.cpp:372
-#: engines/kyra/engine/lol.cpp:511 engines/mohawk/riven.cpp:895
+#: engines/kyra/engine/lol.cpp:514 engines/mohawk/riven.cpp:895
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
 #: engines/twine/metaengine.cpp:339 engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
@@ -9091,7 +9091,7 @@ msgstr "높이 전환"
 
 #. I18N: Action of hero party in Might & Magic 1
 #: engines/freescape/games/eclipse/eclipse.cpp:361
-#: engines/kyra/engine/lol.cpp:516 engines/mm/mm1/metaengine.cpp:109
+#: engines/kyra/engine/lol.cpp:519 engines/mm/mm1/metaengine.cpp:109
 #: engines/ultima/nuvie/metaengine.cpp:195
 #: engines/ultima/nuvie/metaengine.cpp:200
 msgid "Rest"
@@ -9937,19 +9937,11 @@ msgstr ""
 "(단검, 다트, 창과 같은) 투척 무기는 허리띠와 배낭 슬롯에서 투척 무기만으로 대"
 "체됨"
 
-#: engines/kyra/metaengine.cpp:279
+#: engines/kyra/metaengine.cpp:275
 msgid "Lands of Lore support is not compiled in"
 msgstr "Lands of Lore 지원은 컴파일되지 않았음"
 
 #: engines/kyra/metaengine.cpp:289
-msgid ""
-"EOB II FM-TOWNS requires support of 16bit color modes which has not been "
-"activated in your ScummVM build"
-msgstr ""
-"EOB II FM-TOWNS는 ScummVM 빌드에서 활성화되지 않은 16 비트 색상 모드 지원이 "
-"필요함"
-
-#: engines/kyra/metaengine.cpp:295
 msgid "Eye of Beholder support is not compiled in"
 msgstr "주시자의 눈 지원이 컴파일되지 않았음"
 
@@ -9993,19 +9985,19 @@ msgstr "주문 수준 5"
 msgid "Spell level 6"
 msgstr "주문 수준 6"
 
-#: engines/kyra/engine/lol.cpp:506
+#: engines/kyra/engine/lol.cpp:509
 msgid "Attack 1"
 msgstr "공격 1"
 
-#: engines/kyra/engine/lol.cpp:507
+#: engines/kyra/engine/lol.cpp:510
 msgid "Attack 2"
 msgstr "공격 2"
 
-#: engines/kyra/engine/lol.cpp:508
+#: engines/kyra/engine/lol.cpp:511
 msgid "Attack 3"
 msgstr "공격 3"
 
-#: engines/kyra/engine/lol.cpp:509 engines/lab/metaengine.cpp:278
+#: engines/kyra/engine/lol.cpp:512 engines/lab/metaengine.cpp:278
 #: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/myst.cpp:606
 #: engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
@@ -10016,19 +10008,19 @@ msgstr "공격 3"
 msgid "Show map"
 msgstr "지도 표시"
 
-#: engines/kyra/engine/lol.cpp:512
+#: engines/kyra/engine/lol.cpp:515
 msgid "Slide left"
 msgstr "왼쪽으로 슬라이드"
 
-#: engines/kyra/engine/lol.cpp:513
+#: engines/kyra/engine/lol.cpp:516
 msgid "Slide right"
 msgstr "오른쪽 슬라이드"
 
-#: engines/kyra/engine/lol.cpp:517
+#: engines/kyra/engine/lol.cpp:520
 msgid "Options"
 msgstr "옵션"
 
-#: engines/kyra/engine/lol.cpp:518
+#: engines/kyra/engine/lol.cpp:521
 msgid "Choose spell"
 msgstr "주문 선택"
 
@@ -16438,6 +16430,13 @@ msgstr ""
 "MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
 "MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 지원"
 "되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
+
+#~ msgid ""
+#~ "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
+#~ "activated in your ScummVM build"
+#~ msgstr ""
+#~ "EOB II FM-TOWNS는 ScummVM 빌드에서 활성화되지 않은 16 비트 색상 모드 지원"
+#~ "이 필요함"
 
 #, fuzzy
 #~| msgid "Center"
