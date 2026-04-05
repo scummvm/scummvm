@@ -1,6 +1,10 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2026.3.0 (XX.06.2026)
+ Allgemein:
+   - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
+
 #### 2026.2.0 "Railmonicon" (28.03.2026)
 
  Neue Spiele:
