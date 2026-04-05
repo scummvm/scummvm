@@ -160,8 +160,14 @@ protected:
 	 * Renders a video frame to an intermediate surface using low-quality
 	 * scaling, black-lining, or direct copy, depending upon the passed flags.
 	 */
-	template <typename PixelType>
 	void renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const;
+
+	/**
+	 * Renders a video frame to an intermediate surface using low-quality
+	 * scaling.
+	 */
+	template <typename PixelType>
+	void renderLQToSurfaceDouble(Graphics::Surface &out, const Graphics::Surface &nextFrame, int lineCount) const;
 
 	/**
 	 * Sets the draw rect, clipping it to the screen's dimensions if necessary.

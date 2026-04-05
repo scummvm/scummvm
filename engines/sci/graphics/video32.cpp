@@ -310,23 +310,35 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 }
 
 template <typename PixelType>
+void VideoPlayer::renderLQToSurfaceDouble(Graphics::Surface &out, const Graphics::Surface &nextFrame, const int lineCount) const {
+	for (int16 y = 0; y < nextFrame.h * 2; y += lineCount) {
+		const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y >> 1);
+		PixelType *target = (PixelType *)out.getBasePtr(0, y);
+		for (int16 x = 0; x < nextFrame.w; ++x) {
+			*target++ = *source;
+			*target++ = *source++;
+		}
+	}
+}
+
 void VideoPlayer::renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const {
 
 	const int lineCount = blackLines ? 2 : 1;
 	if (doublePixels) {
-		for (int16 y = 0; y < nextFrame.h * 2; y += lineCount) {
-			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y >> 1);
-			PixelType *target = (PixelType *)out.getBasePtr(0, y);
-			for (int16 x = 0; x < nextFrame.w; ++x) {
-				*target++ = *source;
-				*target++ = *source++;
-			}
+		if (out.format.bytesPerPixel == 1) {
+			renderLQToSurfaceDouble<uint8>(out, nextFrame, lineCount);
+		} else if (out.format.bytesPerPixel == 2) {
+			renderLQToSurfaceDouble<uint16>(out, nextFrame, lineCount);
+		} else if (out.format.bytesPerPixel == 4) {
+			renderLQToSurfaceDouble<uint32>(out, nextFrame, lineCount);
+		} else {
+			error("renderLQToSurface: Unsupported pixel format: %s", out.format.toString().c_str());
 		}
 	} else if (blackLines) {
 		for (int16 y = 0; y < nextFrame.h; y += lineCount) {
-			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y);
-			PixelType *target = (PixelType *)out.getBasePtr(0, y);
-			memcpy(target, source, out.w * sizeof(PixelType));
+			const void *source = nextFrame.getBasePtr(0, y);
+			void *target = out.getBasePtr(0, y);
+			memcpy(target, source, out.w * out.format.bytesPerPixel);
 		}
 	} else {
 		out.copyRectToSurface(nextFrame.getPixels(), nextFrame.pitch, 0, 0, nextFrame.w, nextFrame.h);
@@ -938,7 +950,7 @@ void VMDPlayer::renderOverlay(const Graphics::Surface &nextFrame) const {
 #endif
 
 	Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
-	renderLQToSurface<uint8>(out, nextFrame, _doublePixels, _blackLines);
+	renderLQToSurface(out, nextFrame, _doublePixels, _blackLines);
 	g_sci->_gfxFrameout->directFrameOut(_drawRect);
 }
 
@@ -1282,7 +1294,7 @@ void DuckPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	Graphics::Surface out;
 	out.create(_drawRect.width(), _drawRect.height(), nextFrame.format);
-	renderLQToSurface<uint16>(out, nextFrame, _doublePixels, _blackLines);
+	renderLQToSurface(out, nextFrame, _doublePixels, _blackLines);
 	if (out.format != g_system->getScreenFormat()) {
 		out.convertToInPlace(g_system->getScreenFormat());
 	}
