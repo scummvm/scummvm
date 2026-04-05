@@ -245,9 +245,7 @@ protected:
 		bool needTextureUpdate;
 		bool needDisplayResize;
 #endif
-#ifdef USE_RGB_COLOR
 		bool formatChanged;
-#endif
 
 		TransactionDetails() {
 			sizeChanged = false;
@@ -258,9 +256,7 @@ protected:
 			needTextureUpdate = false;
 			needDisplayResize = false;
 #endif
-#ifdef USE_RGB_COLOR
 			formatChanged = false;
-#endif
 		}
 	};
 	TransactionDetails _transactionDetails;
@@ -285,9 +281,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
-#ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
-#endif
 
 		VideoState() {
 			setup = false;
@@ -311,9 +305,7 @@ protected:
 			overlayHeight = 0;
 			hardwareWidth = 0;
 			hardwareHeight = 0;
-#ifdef USE_RGB_COLOR
 			// format set to 0 values by Graphics::PixelFormat constructor
-#endif
 		}
 	};
 	VideoState _videoMode, _oldVideoMode;
@@ -389,11 +381,7 @@ protected:
 
 	SDL_Rect _mouseLastRect, _mouseNextRect;
 	MousePos _mouseCurState;
-#ifdef USE_RGB_COLOR
 	uint32 _mouseKeyColor;
-#else
-	byte _mouseKeyColor;
-#endif
 	bool _disableMouseKeyColor;
 	byte _mappedMouseKeyColor;
 	bool _cursorDontScale;
