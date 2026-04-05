@@ -2411,7 +2411,7 @@ if test "$have_gcc" = yes; then
 	add_line_to_config_mk 'HAVE_GCC = 1'
 	_cxx_major=`gcc_get_define __GNUC__`
 	_cxx_minor=`gcc_get_define __GNUC_MINOR__`
-	cxx_version="`( $CXX -dumpversion ) 2>&1`"
+	cxx_version="`$CXX -dumpversion 2>&1`"
 
 	if test "$have_clang" = yes; then
 		# Clang sets a gcc version number for compatibility.
@@ -2459,13 +2459,13 @@ if test "$have_gcc" = yes; then
 		fi
 	fi
 elif test "$have_icc" = yes; then
-	cxx_version="`( $CXX -dumpversion ) 2>/dev/null`"
+	cxx_version="`$CXX -dumpversion 2>/dev/null`"
 	_cxx_major="`echo "${cxx_version}" | sed -ne 's/\([0-9][0-9]*\)\..*/\1/gp'`"
 	_cxx_minor="`echo "${cxx_version}" | sed -ne 's/[0-9][0-9]*\.\([0-9][0-9]*\)/\1/gp'`"
 	cxx_version="ICC $cxx_version, ok"
 else
 	# TODO: Big scary warning about unsupported compilers
-	cxx_version=`( $CXX -version ) 2>&1`
+	cxx_version=`$CXX -version 2>&1`
 	if test "$?" -eq 0; then
 		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
 		if test -z "${cxx_version}"; then
