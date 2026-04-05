@@ -1024,8 +1024,6 @@ Common::Error ColonyEngine::run() {
 					mouseDY += event.relMouse.y;
 					mouseMoved = true;
 				}
-			} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
-				_gfx->computeScreenViewport();
 			}
 		}
 
