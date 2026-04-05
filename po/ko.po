@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-05 11:13+0000\n"
+"POT-Creation-Date: 2026-04-05 22:25+0000\n"
 "PO-Revision-Date: 2026-04-01 20:22+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4271,37 +4271,37 @@ msgstr "창에 맞게 늘리기"
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:966
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:971
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1010
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1015
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2882
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1031
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1036
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2916
 msgid "Enabled aspect ratio correction"
 msgstr "화면비 교정 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1033
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1038
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2922
 msgid "Disabled aspect ratio correction"
 msgstr "화면비 교정 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1046
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1051
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2938
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1048
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1053
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2940
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1074
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:1079
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2967
 msgid "Stretch mode"
 msgstr "늘리기 모드"
