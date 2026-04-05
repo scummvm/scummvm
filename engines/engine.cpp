@@ -376,14 +376,12 @@ static void warnTransactionFailures(OSystem::TransactionError gfxError, int widt
 	}
 
 	// Just show warnings then these occur:
-#ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
 		Common::U32String message = _("Could not initialize color format.");
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();
 	}
-#endif
 
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::U32String message;
@@ -434,16 +432,12 @@ int initGraphicsAny(const Graphics::ModeWithFormatList &modes, int start) {
 	for (candidate = start; candidate < (int)modes.size(); candidate++) {
 		g_system->beginGFXTransaction();
 		initCommonGFX(false);
-#ifdef USE_RGB_COLOR
 		if (modes[candidate].hasFormat)
 			g_system->initSize(modes[candidate].width, modes[candidate].height, &modes[candidate].format);
 		else {
 			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
 			g_system->initSize(modes[candidate].width, modes[candidate].height, &bestFormat);
 		}
-#else
-		g_system->initSize(modes[candidate].width, modes[candidate].height);
-#endif
 		last_width = modes[candidate].width;
 		last_height = modes[candidate].height;
 
@@ -482,14 +476,12 @@ void initGraphics(int width, int height, const Graphics::PixelFormat *format) {
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
 inline Graphics::PixelFormat findCompatibleFormat(const Common::List<Graphics::PixelFormat> &backend, const Common::List<Graphics::PixelFormat> &frontend) {
-#ifdef USE_RGB_COLOR
 	for (const auto &back : backend) {
 		for (auto &front : frontend) {
 			if (back == front)
 				return back;
 		}
 	}
-#endif
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
 

@@ -387,9 +387,7 @@ void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.needDisplayResize = false;
 	_transactionDetails.needTextureUpdate = false;
 #endif
-#ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
-#endif
 
 	_oldVideoMode = _videoMode;
 }
@@ -443,14 +441,13 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 
 			_videoMode.filtering = _oldVideoMode.filtering;
 		}
-#ifdef USE_RGB_COLOR
+
 		if (_videoMode.format != _oldVideoMode.format) {
 			errors |= OSystem::kTransactionFormatNotSupported;
 
 			_videoMode.format = _oldVideoMode.format;
 			_screenFormat = _videoMode.format;
 		}
-#endif
 
 		if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= OSystem::kTransactionSizeChangeFailed;
@@ -468,11 +465,7 @@ OSystem::TransactionError SurfaceSdlGraphicsManager::endGFXTransaction() {
 		_oldVideoMode.setup = false;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
-#else
-	if (_transactionDetails.sizeChanged) {
-#endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {
 			if (_oldVideoMode.setup) {
@@ -709,10 +702,7 @@ void SurfaceSdlGraphicsManager::setGraphicsModeIntern() {
 
 	// If the scalerIndex has changed, change scaler plugins
 	if (&_scalerPlugins[_videoMode.scalerIndex]->get<ScalerPluginObject>() != _scalerPlugin
-#ifdef USE_RGB_COLOR
-		|| _transactionDetails.formatChanged
-#endif
-		) {
+		|| _transactionDetails.formatChanged) {
 		Graphics::PixelFormat format = convertSDLPixelFormat(_hwScreen->format);
 		delete _scaler;
 
@@ -812,7 +802,6 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 		getDefaultResolution(w, h);
 	}
 
-#ifdef USE_RGB_COLOR
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -827,7 +816,6 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 		_transactionDetails.formatChanged = true;
 		_screenFormat = newFormat;
 	}
-#endif
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
 	// Avoid redundant res changes, only in SDL1. In SDL2, redundancies may not
@@ -997,10 +985,8 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	if (_screen == nullptr)
 		error("allocating _screen failed");
 
-#ifdef USE_RGB_COLOR
 	// Avoid having SDL_SRCALPHA set even if we supplied an alpha-channel in the format.
 	SDL_SetAlpha(_screen, 0, 255);
-#endif
 
 	// SDL 1.2 palettes default to all black,
 	// SDL 1.3 palettes default to all white,
@@ -1086,6 +1072,9 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 		error("allocating _tmpscreen2 failed");
 
 	if (_isHwPalette) {
+		if (!_screenFormat.isCLUT8())
+			return false;
+
 		SDL_SetColors(_tmpscreen2, _overlayPalette, 0, 256);
 		SDL_SetColors(_overlayscreen, _overlayPalette, 0, 256);
 	}
@@ -2170,7 +2159,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		return;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (mask && format && format->bytesPerPixel > 1 && !_isHwPalette) {
 		const uint numPixels = w * h;
 		const uint inBPP = format->bytesPerPixel;
@@ -2221,7 +2209,6 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		setMouseCursor(&maskedImage[0], w, h, hotspotX, hotspotY, 0, dontScale, &formatWithAlpha, nullptr, true);
 		return;
 	}
-#endif
 
 	bool formatChanged = false;
 
