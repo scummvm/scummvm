@@ -4,6 +4,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 #### 2026.3.0 (2026-06-XX)
  General:
    - Highlight clickable links in the GUI with a cursor change.
+   - Fixed window size when switching out of fullscreen mode on 3D engines.
 
  AGOS:
    - Added support for language files used by Amiga and Macintosh
