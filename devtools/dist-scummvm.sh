@@ -88,6 +88,15 @@ fi
 
 cd $tmpdir/$fullname
 
+echo_n "Create GIT bundle for $tag..."
+git reset $tag --hard --quiet
+if git bundle create $tag.bundle --all --quiet 2>/dev/null; then
+    mv $tag.bundle $tmpdir/$fullname.bundle && echo done
+else
+    echo "creating bundle for $tag failed."
+    exit 1
+fi
+
 echo_n "Checking out tag $tag..."
 if git checkout $tag --quiet 2>/dev/null; then
     echo done
@@ -98,7 +107,7 @@ fi
 
 cd $tmpdir
 
-echo "Cleaning up .git directory"
+echo "Cleaning up .git temporary bundle directories..."
 rm -rf $fullname/.git
 
 ### roll the tarball
@@ -147,12 +156,12 @@ fi
 
 echo ""
 echo "The following release tarball archives have been created:"
-ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+ls -l $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 echo ""
 echo "SHA256 checksums (recommended):"
-shasum -a 256 $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+shasum -a 256 $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 echo ""
 echo "MD5 checksums (deprecated):"
-md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip
+md5sum $fullname.tar.gz $fullname.tar.bz2 $fullname.tar.xz $fullname.tar.lz $fullname.zip $fullname.bundle
 
 exit 0
