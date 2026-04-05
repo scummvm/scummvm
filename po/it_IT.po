@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-04-05 11:13+0000\n"
-"PO-Revision-Date: 2026-03-26 19:35+0000\n"
+"PO-Revision-Date: 2026-04-05 16:27+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -8286,28 +8286,20 @@ msgid "Rotate right"
 msgstr "Ruota verso destra"
 
 #: engines/colony/metaengine.cpp:148
-#, fuzzy
-#| msgid "Look down"
 msgid "Look behind"
-msgstr "Guarda giù"
+msgstr "Guarda indietro"
 
 #: engines/colony/metaengine.cpp:153
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle mouselook"
-msgstr "Audio muto"
+msgstr "Attiva/disattiva controllo vista con il mouse"
 
 #: engines/colony/metaengine.cpp:159
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle dashboard"
-msgstr "Attiva/disattiva sonoro"
+msgstr "Mostra / nascondi strumentazione"
 
 #: engines/colony/metaengine.cpp:164
-#, fuzzy
-#| msgid "Toggle frame by frame"
 msgid "Toggle wireframe"
-msgstr "Attiva / disattiva frame by frame"
+msgstr "Attiva / disattiva wireframe"
 
 #: engines/colony/metaengine.cpp:174 engines/hypno/metaengine.cpp:146
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
@@ -8322,11 +8314,11 @@ msgstr "Spara con l'arma"
 
 #: engines/colony/savegame.cpp:290
 msgid "Saving is only available in first-person view."
-msgstr ""
+msgstr "Il salvataggio è possibile solo nella visuale in prima persona."
 
 #: engines/colony/savegame.cpp:299
 msgid "Loading is only available in first-person view."
-msgstr ""
+msgstr "Il caricamento è possibile solo nella visuale in prima persona."
 
 #: engines/crab/input/input.cpp:119
 msgid "Talk / Interact"
@@ -9133,21 +9125,23 @@ msgstr "Usa i tasti WASD per il movimento e Shift per correre"
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
 #: engines/freescape/metaengine.cpp:165
 msgid "Backported music from C64 releases (AdLib)"
-msgstr ""
+msgstr "Usa musica della versione C64 (convertita AdLib)"
 
 #: engines/freescape/metaengine.cpp:166
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
+"Riproduce la musica della versione per Commodore 64, attraverso la sintesi "
+"FM AdLib"
 
 #. I18N: Enable background music using AY chip emulation
 #: engines/freescape/metaengine.cpp:177
 msgid "Backported music from C64 releases"
-msgstr ""
+msgstr "Usa musica della versione C64"
 
 #: engines/freescape/metaengine.cpp:178
 msgid "Enable background music ported from the C64 version"
-msgstr ""
+msgstr "Riproduce la musica della versione per Commodore 64"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/freescape/movement.cpp:69 engines/mm/mm1/metaengine.cpp:79
