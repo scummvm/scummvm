@@ -228,7 +228,6 @@ void OSystem_Wii::initSize(uint width, uint height,
 	bool update = false;
 	gfx_tex_format_t tex_format;
 
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat newFormat;
 
 	if (format)
@@ -243,21 +242,16 @@ void OSystem_Wii::initSize(uint width, uint height,
 		_pfGame = newFormat;
 		update = true;
 	}
-#endif
 
 	uint newWidth, newHeight;
 
-#ifdef USE_RGB_COLOR
 	if (_pfGame.bytesPerPixel > 1) {
 		newWidth = ROUNDUP(width, 4);
 		newHeight = ROUNDUP(height, 4);
 	} else {
-#endif
 		newWidth = ROUNDUP(width, 8);
 		newHeight = ROUNDUP(height, 4);
-#ifdef USE_RGB_COLOR
 	}
-#endif
 
 	if (_gameWidth != newWidth || _gameHeight != newHeight) {
 		assert((newWidth <= 640) && (newHeight <= 480));
@@ -285,7 +279,6 @@ void OSystem_Wii::initSize(uint width, uint height,
 
 		tex_format = GFX_TF_PALETTE_RGB565;
 
-#ifdef USE_RGB_COLOR
 		if (_pfGame.bytesPerPixel > 1) {
 			tex_format = GFX_TF_RGB565;
 			_pfGameTexture = _pfRGB565;
@@ -301,12 +294,6 @@ void OSystem_Wii::initSize(uint width, uint height,
 										_pfGame.bytesPerPixel);
 		memset(_gamePixels, 0, _gameWidth * _gameHeight *
 				_pfGame.bytesPerPixel);
-#else
-		printf("initSize %u*%u\n", _gameWidth, _gameHeight);
-
-		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight);
-		memset(_gamePixels, 0, _gameWidth * _gameHeight);
-#endif
 
 		if (!gfx_tex_init(&_texGame, tex_format, TLUT_GAME,
 					_gameWidth, _gameHeight)) {
@@ -337,12 +324,10 @@ void OSystem_Wii::updateMousePalette() {
 	if (_texMouse.palette) {
 		if (!_cursorPaletteDisabled) {
 			memcpy(_texMouse.palette, _cursorPalette, 256 * 2);
-#ifdef USE_RGB_COLOR
 		} else if (_pfGame.bytesPerPixel != 1) {
 			// When restoring the palette, there may be cases where game doesn't have any palette
 			// In this case, clear the palette
 			memset(_texMouse.palette, 0, 256 * 2);
-#endif
 		} else {
 			memcpy(_texMouse.palette, _texGame.palette, 256 * 2);
 		}
@@ -356,9 +341,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 	printf("%s(%p, %d, %d) _cursorPaletteDisabled:%d\n", __func__, colors, start, num, _cursorPaletteDisabled);
 #endif
 
-#ifdef USE_RGB_COLOR
 	assert(_pfGame.bytesPerPixel == 1);
-#endif
 
 	const byte *s = colors;
 	u16 *d = _texGame.palette;
@@ -372,9 +355,7 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) const {
-#ifdef USE_RGB_COLOR
 	assert(_pfGame.bytesPerPixel == 1);
-#endif
 
 	u16 *s = _texGame.palette;
 	byte *d = colors;
@@ -424,7 +405,6 @@ void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 	assert(w > 0 && x + w <= _gameWidth);
 	assert(h > 0 && y + h <= _gameHeight);
 
-#ifdef USE_RGB_COLOR
 	if (_pfGame.bytesPerPixel > 1) {
 		if (!Graphics::crossBlit(_gamePixels +
 									y * _gameWidth * _pfGame.bytesPerPixel +
@@ -435,7 +415,6 @@ void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 			::abort();
 		}
 	} else {
-#endif
 		byte *dst = _gamePixels + y * _gameWidth + x;
 		if (_gameWidth == pitch && pitch == w) {
 			memcpy(dst, buf, h * w);
@@ -447,9 +426,6 @@ void OSystem_Wii::copyRectToScreen(const void *buf, int pitch, int x, int y,
 				dst += _gameWidth;
 			} while (--h);
 		}
-#ifdef USE_RGB_COLOR
-	}
-#endif
 
 	_gameDirty = true;
 }
@@ -555,11 +531,7 @@ void OSystem_Wii::updateScreen() {
 
 Graphics::Surface *OSystem_Wii::lockScreen() {
 	_surface.init(_gameWidth, _gameHeight,
-#ifdef USE_RGB_COLOR
 	              _gameWidth * _pfGame.bytesPerPixel, _gamePixels, _pfGame
-#else
-	              _gameWidth, _gamePixels, Graphics::PixelFormat::createFormatCLUT8()
-#endif
 	             );
 
 	return &_surface;
@@ -696,7 +668,6 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	uint tw, th;
 	uint32 oldKeycolor = _mouseKeyColor;
 
-#ifdef USE_RGB_COLOR
 	if (!format)
 		_pfCursor = Graphics::PixelFormat::createFormatCLUT8();
 	else
@@ -709,14 +680,11 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 		th = ROUNDUP(h, 4);
 
 	} else {
-#endif
 		_mouseKeyColor = keycolor & 0xff;
 		tw = ROUNDUP(w, 8);
 		th = ROUNDUP(h, 4);
 
-#ifdef USE_RGB_COLOR
 	}
-#endif
 
 	if (!gfx_tex_init(&_texMouse, tex_format, TLUT_MOUSE, tw, th)) {
 		printf("could not init the mouse texture\n");
@@ -738,7 +706,6 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	else
 		memset(tmp, _mouseKeyColor, tw * th);
 
-#ifdef USE_RGB_COLOR
 	if (bpp > 1) {
 
 		if (!Graphics::crossBlit(tmp, (const byte *)buf,
@@ -763,7 +730,6 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 			d += tw - w;
 		}
 	} else {
-#endif
 		const byte *s = (const byte *)buf;
 		byte *d = (byte *) tmp;
 		for (u16 y = 0; y < h; ++y) {
@@ -773,9 +739,7 @@ void OSystem_Wii::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 			d += tw - w;
 		}
 
-#ifdef USE_RGB_COLOR
 	}
-#endif
 
 	gfx_tex_convert(&_texMouse, tmp);
 	free(tmp);

@@ -86,11 +86,9 @@ private:
 	bool _bilinearFilter;
 	const Graphics::PixelFormat _pfRGB565;
 	const Graphics::PixelFormat _pfRGB3444;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _pfGame;
 	Graphics::PixelFormat _pfGameTexture;
 	Graphics::PixelFormat _pfCursor;
-#endif
 
 	bool _consoleVisible;
 	bool _optionsDlgActive;
