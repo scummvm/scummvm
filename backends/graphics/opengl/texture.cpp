@@ -335,43 +335,6 @@ void FakeTextureSurface::applyPaletteAndMask(byte *dst, const byte *src, uint ds
 	}
 }
 
-TextureSurfaceRGB555::TextureSurfaceRGB555()
-	: FakeTextureSurface(GL_RGB, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
-}
-
-void TextureSurfaceRGB555::updateGLTexture() {
-	if (!isDirty()) {
-		return;
-	}
-
-	// Convert color space.
-	Graphics::Surface *outSurf = TextureSurface::getSurface();
-
-	const Common::Rect dirtyArea = getDirtyArea();
-
-	uint16 *dst = (uint16 *)outSurf->getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint dstAdd = outSurf->pitch - 2 * dirtyArea.width();
-
-	const uint16 *src = (const uint16 *)_rgbData.getBasePtr(dirtyArea.left, dirtyArea.top);
-	const uint srcAdd = _rgbData.pitch - 2 * dirtyArea.width();
-
-	for (int height = dirtyArea.height(); height > 0; --height) {
-		for (int width = dirtyArea.width(); width > 0; --width) {
-			const uint16 color = *src++;
-
-			*dst++ =   ((color & 0x7C00) << 1)                             // R
-			         | (((color & 0x03E0) << 1) | ((color & 0x0200) >> 4)) // G
-			         | (color & 0x001F);                                   // B
-		}
-
-		src = (const uint16 *)((const byte *)src + srcAdd);
-		dst = (uint16 *)((byte *)dst + dstAdd);
-	}
-
-	// Do generic handling of updating the texture.
-	TextureSurface::updateGLTexture();
-}
-
 #ifdef USE_SCALERS
 
 ScaledTextureSurface::ScaledTextureSurface(GLenum glIntFormat, GLenum glFormat, GLenum glType, const Graphics::PixelFormat &format, const Graphics::PixelFormat &fakeFormat)
