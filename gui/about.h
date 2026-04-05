@@ -31,6 +31,7 @@
 namespace GUI {
 
 class EEHandler;
+class ScrollBarWidget;
 
 class AboutDialog : public Dialog {
 protected:
@@ -42,8 +43,12 @@ protected:
 	bool _autoScroll;
 
 	int _xOff, _yOff;
+	bool _inGame;
+
+	ScrollBarWidget *_scrollbar;
 
 	void addLine(const Common::U32String &str);
+	void buildLines();
 
 	EEHandler	*_eeHandler;
 
@@ -54,10 +59,12 @@ public:
 	void close() override;
 	void drawDialog(DrawLayer layerToDraw) override;
 	void handleTickle() override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	void reflowLayout() override;
 };

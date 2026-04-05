@@ -31,6 +31,7 @@
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
+#include "gui/widgets/scrollbar.h"
 
 namespace GUI {
 
@@ -86,9 +87,14 @@ static const char *const gpl_text[] = {
 
 AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
-	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true) {
+	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame) {
 
+	_scrollbar = nullptr;
 	reflowLayout();
+}
+
+void AboutDialog::buildLines() {
+	_lines.clear();
 
 	int i;
 
@@ -160,9 +166,9 @@ AboutDialog::AboutDialog(bool inGame)
 	uint32 beginTime = g_system->getMillis(true);
 #if defined(UNCACHED_PLUGINS) && defined(DYNAMIC_MODULES) && !defined(DETECTION_STATIC)
 	// Unload all MetaEnginesDetection if we're using uncached plugins to save extra memory.
-	if (!inGame) PluginMan.unloadDetectionPlugin();
+	if (!_inGame) PluginMan.unloadDetectionPlugin();
 #endif
-	if (!inGame) PluginMan.loadFirstPlugin();
+	if (!_inGame) PluginMan.loadFirstPlugin();
 	do {
 		uint32 currentTime = g_system->getMillis(true);
 		if (currentTime - beginTime > 1500) {
@@ -174,9 +180,9 @@ AboutDialog::AboutDialog(bool inGame)
 		for (const auto &plugin : plugins) {
 			enginesDetected.push_back(plugin->getName());
 		}
-	} while (!inGame && PluginMan.loadNextPlugin());
+	} while (!_inGame && PluginMan.loadNextPlugin());
 
-	if (!inGame) PluginMan.loadDetectionPlugin();
+	if (!_inGame) PluginMan.loadDetectionPlugin();
 
 	for (auto &engine : enginesDetected) {
 		Common::String str;
@@ -184,7 +190,7 @@ AboutDialog::AboutDialog(bool inGame)
 		const Plugin *p = EngineMan.findDetectionPlugin(engine);
 
 		if (!p) {
-			if (!inGame) warning("Cannot find plugin for %s", engine.c_str());
+			if (!_inGame) warning("Cannot find plugin for %s", engine.c_str());
 			continue;
 		}
 
@@ -205,6 +211,13 @@ AboutDialog::AboutDialog(bool inGame)
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(Common::U32String(credits[i], Common::kUtf8));
+
+	if (_scrollbar) {
+		_scrollbar->_numEntries = _lines.size() * _lineHeight;
+		_scrollbar->_entriesPerPage = _h;
+		_scrollbar->_singleStep = _lineHeight;
+		_scrollbar->recalc();
+	}
 }
 
 void AboutDialog::addLine(const Common::U32String &str) {
@@ -217,7 +230,8 @@ void AboutDialog::addLine(const Common::U32String &str) {
 		Common::U32String renderStr(strBeginItr, str.end());
 
 		Common::U32StringArray wrappedLines;
-		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff, wrappedLines);
+		int scrollbarWidth = _scrollbar ? _scrollbar->getWidth() : 0;
+		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff - scrollbarWidth, wrappedLines);
 
 		for (const auto &line : wrappedLines) {
 			_lines.push_back(format + line);
@@ -251,6 +265,8 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	const int firstLine = _scrollPos / _lineHeight;
 	const int lastLine = MIN((_scrollPos + _h) / _lineHeight + 1, (uint32)_lines.size());
 	int y = _y + _yOff - (_scrollPos % _lineHeight);
+
+	int scrollbarWidth = _scrollbar ? _scrollbar->getWidth() : 0;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		Common::U32String str = _lines[line];
@@ -304,7 +320,7 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()),
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff - scrollbarWidth, y + g_gui.theme()->getFontHeight()),
 			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
 			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
@@ -332,6 +348,10 @@ void AboutDialog::handleTickle() {
 			_scrollPos = 0;
 			_scrollTime += kScrollStartDelay;
 		}
+		if (_scrollbar) {
+			_scrollbar->_currentPos = _scrollPos;
+			_scrollbar->recalc();
+		}
 		drawDialog(kDrawLayerForeground);
 	}
 }
@@ -356,7 +376,21 @@ void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
 		_scrollPos = newScrollPos;
 	}
+
+	if (_scrollbar) {
+		_scrollbar->_currentPos = _scrollPos;
+		_scrollbar->recalc();
+	}
+
 	drawDialog(kDrawLayerForeground);
+}
+
+void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	if (cmd == kSetPositionCmd) {
+		_scrollPos = data;
+		_autoScroll = false;
+		drawDialog(kDrawLayerForeground);
+	}
 }
 
 void AboutDialog::handleKeyDown(Common::KeyState state) {
@@ -395,13 +429,21 @@ void AboutDialog::reflowLayout() {
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*_xOff;
 	_w = 0;
-	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i]) + 5;
-		if (_w < tmp && tmp <= maxW) {
-			_w = tmp;
+		for (i = 0; i < ARRAYSIZE(credits); i++) {
+			int tmp = g_gui.getStringWidth(credits[i]) + 5;
+			if (_w < tmp && tmp <= maxW) {
+				_w = tmp;
+			}
 		}
-	}
 	_w += 2*_xOff;
+
+	int scrollbarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 16);
+	if (!_scrollbar)
+		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth, 0, scrollbarWidth, _h);
+	else {
+		_scrollbar->setPos(_w - scrollbarWidth, 0);
+		_scrollbar->setSize(scrollbarWidth, _h);
+	}
 
 	// Center the dialog in the screen
 	_x = (screenW - _w) / 2;
@@ -409,6 +451,8 @@ void AboutDialog::reflowLayout() {
 
 	// Make it fit in the safe area
 	screenArea.constrain(_x, _y, _w, _h);
+
+	buildLines();
 }
 
 
