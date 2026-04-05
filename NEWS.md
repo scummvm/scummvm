@@ -3,7 +3,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2026.3.0 (2026-06-XX)
  General:
-   - Highlight clickable links in the URL with cursor change.
+   - Highlight clickable links in the GUI with a cursor change.
 
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)
