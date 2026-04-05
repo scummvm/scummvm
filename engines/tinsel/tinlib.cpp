@@ -99,7 +99,6 @@ extern int NewestSavedGame();
 
 // in SCENE.CPP
 extern void setshowpos();
-extern void ResetDw1Intro();
 
 // in TINSEL.CPP
 extern void SetCdChangeScene(SCNHANDLE hScene);

@@ -41,9 +41,6 @@ namespace Tinsel {
 
 extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pic, RESUME_STATE *pResumeState);
 
-// in SCENE.CPP
-extern bool InDw1Intro();
-
 //----------------- LOCAL DEFINES --------------------
 
 #define	GLOBALS_FILENAME	"gdata"		// name of globals file

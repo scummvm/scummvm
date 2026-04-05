@@ -81,7 +81,6 @@ extern void InventoryProcess(CORO_PARAM, const void *);
 
 // In SCENE.CPP
 extern SCNHANDLE GetSceneHandle();
-extern bool WasDw1IntroSkipped();
 
 extern void ResetVarsDrives();
 extern void ResetVarsEvents();

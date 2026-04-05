@@ -67,9 +67,6 @@ extern void syncGlobInfo(Common::Serializer &s);
 // in POLYGONS.C
 extern void syncPolyInfo(Common::Serializer &s);
 
-// in SCENE.CPP
-extern void EndDw1Intro();
-
 extern bool g_ASceneIsSaved;
 
 //----------------- LOCAL DEFINES --------------------
