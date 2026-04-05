@@ -57,10 +57,17 @@ public:
 	 */
 	virtual void closeVideo();
 
+	/**
+	 * Play to the end of the video, handling events.
+	 */
 	void playToEnd();
 
 protected:
 	virtual void setVideo(const Common::Point &pt) = 0;
+
+	virtual void setRate(int rate) = 0;
+
+	virtual void delayToNextFrame() = 0;
 
 	Resource *_videoData;
 	BaseSurface *_vidSurface;
@@ -70,7 +77,6 @@ public:
 	bool _soundFlag;
 	int _soundFrame;
 	bool _videoEnd;
-	int _rate;
 };
 
 
@@ -88,10 +94,15 @@ private:
 	int _scanCount;
 	int _frameSize;
 	Common::Rect _videoBounds;
+	int _rate;
 
 	void getFrame();
 protected:
 	void setVideo(const Common::Point &pt) override;
+
+	void setRate(int rate) override { _rate = rate; }
+
+	void delayToNextFrame() override;
 
 public:
 	VideoPlayer_v1(AccessEngine *vm);
@@ -130,6 +141,9 @@ private:
 protected:
 	void setVideo(const Common::Point &pt) override;
 
+	void setRate(int rate) override { };
+
+	void delayToNextFrame() override;
 public:
 	VideoPlayer_v2(AccessEngine *vm);
 

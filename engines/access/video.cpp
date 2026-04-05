@@ -27,8 +27,7 @@
 namespace Access {
 
 VideoPlayer::VideoPlayer(AccessEngine *vm) : Manager(vm), _videoData(nullptr),
-_videoFrame(0), _soundFrame(0), _videoEnd(false), _soundFlag(false), _vidSurface(nullptr),
-_rate(0) {
+_videoFrame(0), _soundFrame(0), _videoEnd(false), _soundFlag(false), _vidSurface(nullptr) {
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -40,8 +39,8 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, con
 	_videoData = _vm->_files->loadRawFile(filename);
 
 	_vidSurface = vidSurface;
-	_rate = rate;
 	setVideo(pt);
+	setRate(rate);
 }
 
 void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, const FileIdent &videoFile, int rate) {
@@ -49,8 +48,8 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, con
 	_videoData = _vm->_files->loadFile(videoFile);
 
 	_vidSurface = vidSurface;
-	_rate = rate;
 	setVideo(pt);
+	setRate(rate);
 }
 
 void VideoPlayer::closeVideo() {
@@ -63,7 +62,7 @@ void VideoPlayer::playToEnd() {
 		playVideo();
 		_vm->_events->pollEvents();
 		// TODO: This is not very exact, should calculate expected frame time etc.
-		_vm->_events->delay(1000 / _rate - 20);
+		delayToNextFrame();
 	}
 }
 
@@ -77,6 +76,7 @@ VideoPlayer_v1::VideoPlayer_v1(AccessEngine *vm) : VideoPlayer(vm) {
 	_xCount = 0;
 	_scanCount = 0;
 	_frameSize = 0;
+	_rate = 0;
 
 	_header._frameCount = 0;
 	_header._width = _header._height = 0;
@@ -189,6 +189,10 @@ void VideoPlayer_v1::playVideo() {
 		closeVideo();
 		_videoEnd = true;
 	}
+}
+
+void VideoPlayer_v1::delayToNextFrame() {
+	_vm->_events->delay(1000 / _rate - 20);
 }
 
 void VideoPlayer_v1::copyVideo() {
@@ -319,6 +323,8 @@ void VideoPlayer_v2::handleFrameChunk(bool delta, bool skipLines) {
 	uint32 frameSize = _header._width * _header._height;
 	byte *dest;
 
+	delayToNextFrame();
+
 	uint32 frameDelay = _videoData->_stream->readUint16LE();
 	debugC(kDebugGraphics, "frameDelay = %d", frameDelay);
 	calcNextFrameTime(frameDelay);
@@ -416,7 +422,6 @@ void VideoPlayer_v2::handleSoundChunk(bool init) {
 	_audioStream->queueBuffer(soundData, soundSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 
 	debugC(kDebugGraphics, "soundSize = %d", soundSize);
-
 }
 
 
@@ -430,5 +435,14 @@ void VideoPlayer_v2::closeVideo() {
 	VideoPlayer::closeVideo();
 }
 
+
+void VideoPlayer_v2::delayToNextFrame() {
+	if (!_nextFrameTime)
+		return;
+
+	while (_nextFrameTime > g_system->getMillis() && !_vm->shouldQuit()) {
+		_vm->_events->pollEventsAndWait();
+	}
+}
 
 } // End of namespace Access

@@ -413,12 +413,9 @@ void BubbleBox::doBox_v3(int item, int box) {
 		font->drawString(&screen, _bubbleDisplStr, Common::Point(boxX + 14, boxY + 10));
 	}
 
-	/*if (boxDimensions) {
-		boxDimensions->x = boxX;
-		boxDimensions->y = boxY;
-		boxDimensions->width = boxWidth;
-		boxDimensions->height = boxHeight;
-	}*/
+	// Update the bounds now they are fully calculated.
+	_bubbles.back() = _bounds;
+
 	_vm->_screen->restoreScreen();
 }
 
