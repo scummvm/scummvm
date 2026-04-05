@@ -345,7 +345,11 @@ bool SkyEngine::loadChineseTraditional() {
 }
 
 Common::Error SkyEngine::init() {
-	initGraphics(320, 200);
+	if (ConfMan.get("gameid") == "ibass") {
+		Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		initGraphics(640, 480, &format);
+	} else
+		initGraphics(320, 200);
 
 	_skyDisk = new Disk();
 	_skySound = new Sound(_mixer, _skyDisk, Audio::Mixer::kMaxChannelVolume);
@@ -559,6 +563,7 @@ bool SkyEngine::isDemo() {
 	case 348:
 	case 368:
 	case 372:
+	case 400:
 		return false;
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
@@ -578,6 +583,7 @@ bool SkyEngine::isCDVersion() {
 	case 365:
 	case 368:
 	case 372:
+	case 400:
 		return true;
 	default:
 		error("Unknown game version %d", _systemVars->gameVersion);
