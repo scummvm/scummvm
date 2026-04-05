@@ -516,6 +516,8 @@ void Text::initHuffTree() {
 	case 372:
 		_huffTree = _huffTree_00372;
 		break;
+	case 400:
+		break;
 	default:
 		error("Unknown game version %d", SkyEngine::_systemVars->gameVersion);
 	}
