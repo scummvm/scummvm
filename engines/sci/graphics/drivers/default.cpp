@@ -97,10 +97,23 @@ template <typename T> void colorConvertMod(byte *dst, const byte *src, int pitch
 }
 #undef applyMod
 
-void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
+bool GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 	Graphics::PixelFormat format8bt(Graphics::PixelFormat::createFormatCLUT8());
-	initGraphics(_screenW, _screenH, srcRGBFormat ? srcRGBFormat : (_requestRGBMode ? nullptr : &format8bt));
-	_format = g_system->getScreenFormat();
+
+	if (srcRGBFormat && !srcRGBFormat->isCLUT8()) {
+		// Also try CLUT8 as a fallback to prevent error dialogs
+		Common::List<Graphics::PixelFormat> formatList;
+		formatList.push_back(*srcRGBFormat);
+		formatList.push_back(format8bt);
+		initGraphics(_screenW, _screenH, formatList);
+	} else {
+		initGraphics(_screenW, _screenH, srcRGBFormat ? srcRGBFormat : (_requestRGBMode ? nullptr : &format8bt));
+	}
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	if (srcRGBFormat && *srcRGBFormat != format)
+		return false;
+	_format = format;
 
 	int srcPixelSize = srcRGBFormat ? _format.bytesPerPixel : 1;
 	if (srcPixelSize != _srcPixelSize || _pixelSize != _format.bytesPerPixel) {
@@ -158,6 +171,8 @@ void GfxDefaultDriver::initScreen(const Graphics::PixelFormat *srcRGBFormat) {
 	_colorConvMod = colorConvModProcs[_pixelSize >> 1];
 
 	_ready = true;
+
+	return true;
 }
 
 void GfxDefaultDriver::setPalette(const byte *colors, uint start, uint num, bool update, const PaletteMod *palMods, const byte *palModMapping) {

@@ -31,7 +31,7 @@ class SCI1_PC98Gfx8ColorsDriver final : public UpscaledGfxDriver {
 public:
 	SCI1_PC98Gfx8ColorsDriver(bool rgbRendering);
 	~SCI1_PC98Gfx8ColorsDriver() override;
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
@@ -149,13 +149,16 @@ void renderPlanarMatrix(byte *dst, const byte *src, int pitch, int w, int h, con
 	}
 }
 
-void SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
-	UpscaledGfxDriver::initScreen(format);
+bool SCI1_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!UpscaledGfxDriver::initScreen(format))
+		return false;
 
 	_renderGlyph = &SciGfxDrvInternal::renderPC98GlyphFat;
 
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
+
+	return true;
 }
 
 void SCI1_PC98Gfx8ColorsDriver::copyRectToScreen(const byte *src, int srcX, int srcY, int pitch, int destX, int destY, int w, int h, const PaletteMod *palMods, const byte *palModMapping) {

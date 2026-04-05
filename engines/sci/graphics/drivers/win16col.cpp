@@ -33,7 +33,7 @@ public:
 	// two pixels of the checkerbox pattern appear in the wrong order. I have implemented a fix for this which can be activated with the fixDithering parameter.
 	WindowsGfx16ColorsDriver(bool fixDithering, bool rgbRendering);
 	~WindowsGfx16ColorsDriver() override {}
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	Common::Point getRealCoords(Common::Point &pos) const override;
 	static bool validateMode(Common::Platform p) { return (p == Common::kPlatformWindows && checkDriver(&_driverFile, 1)); }
@@ -88,8 +88,9 @@ template <typename T, bool extScale> void win16ColRenderLine(byte *&dst, const b
 	dst = reinterpret_cast<byte*>(extScale ? d3 : (swap ? d1 : d2));
 }
 
-void WindowsGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
-	SCI1_EGADriver::initScreen(format);
+bool WindowsGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!SCI1_EGADriver::initScreen(format))
+		return false;
 
 	static const LineProc lineProcs[] = {
 		&win16ColRenderLine<byte, false>,
@@ -103,6 +104,8 @@ void WindowsGfx16ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
 	assert((_pixelSize | 1) < ARRAYSIZE(lineProcs));
 	_renderLine = lineProcs[_pixelSize & ~1];
 	_renderLine2 = lineProcs[_pixelSize | 1];
+
+	return true;
 }
 
 void WindowsGfx16ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {

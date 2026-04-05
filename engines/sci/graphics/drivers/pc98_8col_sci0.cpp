@@ -30,7 +30,7 @@ class SCI0_PC98Gfx8ColorsDriver final : public UpscaledGfxDriver {
 public:
 	SCI0_PC98Gfx8ColorsDriver(bool cursorScaleHeight, bool useTextModeForSJISChars, bool rgbRendering);
 	~SCI0_PC98Gfx8ColorsDriver() override;
-	void initScreen(const Graphics::PixelFormat *format) override;
+	bool initScreen(const Graphics::PixelFormat *format) override;
 	void setPalette(const byte*, uint, uint, bool, const PaletteMod*, const byte*) override {}
 	void replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) override;
 	byte remapTextColor(byte color) const override;
@@ -79,13 +79,17 @@ void pc98SimpleDither(byte *dst, const byte *src, int pitch, int w, int h) {
 	}
 }
 
-void SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
-	UpscaledGfxDriver::initScreen(format);
+bool SCI0_PC98Gfx8ColorsDriver::initScreen(const Graphics::PixelFormat *format) {
+	if (!UpscaledGfxDriver::initScreen(format))
+		return false;
+
 	_renderScaled = &pc98SimpleDither;
 	if (_useTextMode)
 		_renderGlyph = &SciGfxDrvInternal::renderPC98GlyphFat;
 	assert(_convPalette);
 	GfxDefaultDriver::setPalette(_convPalette, 0, 8, true, nullptr, nullptr);
+
+	return true;
 }
 
 void SCI0_PC98Gfx8ColorsDriver::replaceCursor(const void *cursor, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor) {

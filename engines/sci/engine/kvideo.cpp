@@ -137,31 +137,19 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 			}
 
-			Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+			// Try and select an optimal pixel format
+			videoDecoder->setOutputPixelFormats(g_system->getSupportedFormats());
+			Graphics::PixelFormat format = videoDecoder->getPixelFormat();
 
-			if (videoDecoder->getPixelFormat() != screenFormat) {
-				// Attempt to switch to a screen format with higher bpp
-				const Common::List<Graphics::PixelFormat> supportedFormats = g_system->getSupportedFormats();
-				Common::List<Graphics::PixelFormat>::const_iterator it;
-				for (it = supportedFormats.begin(); it != supportedFormats.end(); ++it) {
-					if (it->bytesPerPixel >= videoDecoder->getPixelFormat().bytesPerPixel) {
-						screenFormat = *it;
-						break;
-					}
-				}
-			}
-
-			if (screenFormat.isCLUT8()) {
+			// Init the screen again with an RGB source format.
+			// This is needed so that the GFX driver is aware that we'll be
+			// sending RGB instead of paletted graphics.
+			if (!format.isCLUT8() && !g_sci->_gfxScreen->gfxDriver()->initScreen(&format)) {
 				// We got an indexed screen format, so dither the QuickTime video.
+				// TODO: Allow dithering to be configured separately
 				uint8 palette[256 * 3];
 				g_sci->_gfxScreen->grabPalette(palette, 0, 256);
 				videoDecoder->setDitheringPalette(palette);
-			} else {
-				// Init the screen again with an RGB source format.
-				// This is needed so that the GFX driver is aware that we'll be
-				// sending RGB instead of paletted graphics.
-				g_sci->_gfxScreen->gfxDriver()->initScreen(&screenFormat);
-				videoDecoder->setOutputPixelFormat(g_system->getScreenFormat());
 			}
 
 			// Switch back to the normal screen format, once the QT video is done playing.
