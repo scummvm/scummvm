@@ -68,6 +68,9 @@ const char gScummVMCompiler[] = ""
 #elif defined(__INTEL_COMPILER)
 	"ICC " STR(__INTEL_COMPILER) "." STR(__INTEL_COMPILER_UPDATE)
 #elif defined(__clang__)
+#  if defined(__apple_build_version__)
+	"Apple "
+#  endif
 	"Clang " STR(__clang_major__) "." STR(__clang_minor__) "." STR(__clang_patchlevel__)
 #elif defined(__GNUC__)
 	"GCC " STR(__GNUC__) "." STR(__GNUC_MINOR__) "." STR(__GNUC_PATCHLEVEL__)
