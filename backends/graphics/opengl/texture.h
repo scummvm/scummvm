@@ -237,14 +237,6 @@ protected:
 	uint8 *_mask;
 };
 
-class TextureSurfaceRGB555 : public FakeTextureSurface {
-public:
-	TextureSurfaceRGB555();
-	~TextureSurfaceRGB555() override {}
-
-	void updateGLTexture() override;
-};
-
 #ifdef USE_SCALERS
 class ScaledTextureSurface : public FakeTextureSurface {
 public:

@@ -55,10 +55,35 @@ static void swapBlit(byte *dst, const byte *src,
 	}
 }
 
+static void fastBlit_XRGB1555_RGB565(byte *dst, const byte *src,
+                                     const uint dstPitch, const uint srcPitch,
+                                     const uint w, const uint h) {
+	// Faster, but larger, to provide optimized handling for each case.
+	const uint srcDelta = (srcPitch - w * sizeof(uint16));
+	const uint dstDelta = (dstPitch - w * sizeof(uint16));
+
+	for (uint y = 0; y < h; ++y) {
+		for (uint x = 0; x < w; ++x) {
+			uint16 col = *(const uint16 *)src;
+
+			col =   ((col & 0x7C00) << 1)                           // R
+			      | (((col & 0x03E0) << 1) | ((col & 0x0200) >> 4)) // G
+			      | (col & 0x001F);                                 // B
+
+			*(uint16 *)dst = col;
+
+			src += sizeof(uint16);
+			dst += sizeof(uint16);
+		}
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
 } // End of anonymous namespace
 
 // TODO: Add fast 24<->32bpp conversion
-// TODO: Add fast 16<->16bpp conversion
+// TODO: Add fast 16bpp RGB <-> 16bpp BGR conversion
 struct FastBlitLookup {
 	FastBlitFunc func;
 	Graphics::PixelFormat srcFmt, dstFmt;
@@ -89,10 +114,20 @@ static const FastBlitLookup fastBlitFuncs_4to4[] = {
 
 };
 
+static const FastBlitLookup fastBlitFuncs_2to2[] = {
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // XRGB1555 -> RGB565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // XBGR1555 -> BGR565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // ARGB1555 -> RGB565
+	{ fastBlit_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1,  0,  5, 10, 15), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // ABGR1555 -> BGR565
+};
+
 #ifdef SCUMMVM_NEON
 static const FastBlitLookup fastBlitFuncs_NEON[] = {
 	// 16-bit with NEON
-	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) }, // XRGB1555 -> RGB565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // XRGB1555 -> RGB565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0,  0,  5, 10,  0), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // XBGR1555 -> BGR565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15), Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0) }, // ARGB1555 -> RGB565
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 1,  0,  5, 10, 15), Graphics::PixelFormat(2, 5, 6, 5, 0,  0,  5, 11,  0) }, // ABGR1555 -> BGR565
 };
 #endif
 
@@ -131,6 +166,20 @@ FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFm
 		}
 	}
 #endif
+
+	if (srcBpp == 2 && dstBpp == 2) {
+		table = fastBlitFuncs_2to2;
+		length = ARRAYSIZE(fastBlitFuncs_2to2);
+
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
+	}
 
 	return nullptr;
 }
