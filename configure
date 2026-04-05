@@ -2387,6 +2387,8 @@ have_icc=no
 cc_check_define __INTEL_COMPILER && have_icc=yes
 have_clang=no
 cc_check_define __clang__ && have_clang=yes
+have_apple_clang=no
+test "$have_clang" = yes && cc_check_define __apple_build_version__ && have_apple_clang=yes
 
 if test "$have_icc" = yes; then
 	add_line_to_config_mk 'HAVE_ICC = 1'
@@ -2419,10 +2421,15 @@ if test "$have_gcc" = yes; then
 		# compiler version checks.
 
 		# For the version reported in the configure log (cxx_version),
-		# we get the actual clang version.
+		# we get the actual Clang version. Apple Clang also has its
+		# own version numbers, so differentiate it.
 		cxx_version=`gcc_get_define __clang_version__`
 		cxx_version="`echo "${cxx_version}" | sed -e 's/"\([^ ]*\) .*/\1/'`"
-		cxx_version="clang $cxx_version, ok"
+		if test "$have_apple_clang" = yes; then
+			cxx_version="Apple Clang $cxx_version, ok"
+		else
+			cxx_version="Clang $cxx_version, ok"
+		fi
 
 		_clang_major=`gcc_get_define __clang_major__`
 		_clang_minor=`gcc_get_define __clang_minor__`
