@@ -220,6 +220,8 @@ void OSystem_3DS::initSize(uint width, uint height,
 	else
 		_gameScreen.create(width, height, _pfGame);
 
+	_blitFunc = Graphics::getFastBlitFunc(_gameTopTexture.format, _pfGame);
+
 	_focusDirty = true;
 	_focusRect = Common::Rect(_gameWidth, _gameHeight);
 
@@ -365,28 +367,6 @@ void OSystem_3DS::grabPalette(byte *colors, uint start, uint num) const {
 	memcpy(colors, _palette + 3 * start, 3 * num);
 }
 
-// TODO: Move this into common code
-// TODO: Convert two pixels at once using 32-bit loads and stores
-static void copyRect555To5551(byte *dst, const byte *src, const uint dstPitch, const uint srcPitch,
-							const uint w, const uint h) {
-	// Faster, but larger, to provide optimized handling for each case.
-	const uint srcDelta = (srcPitch - w * sizeof(uint16));
-	const uint dstDelta = (dstPitch - w * sizeof(uint16));
-
-	for (uint y = 0; y < h; ++y) {
-		for (uint x = 0; x < w; ++x) {
-			uint16 col = *(const uint16 *)src;
-			col = (col << 1) | 1;
-			*(uint16 *)dst = col;
-
-			src += sizeof(uint16);
-			dst += sizeof(uint16);
-		}
-		src += srcDelta;
-		dst += dstDelta;
-	}
-}
-
 void OSystem_3DS::fillScreen(uint32 col) {
 	fillScreen(Common::Rect(getWidth(), getHeight()), col);
 }
@@ -424,8 +404,8 @@ void OSystem_3DS::flushGameScreen() {
 		const byte *src = (const byte *)_gameScreen.getBasePtr(r.left, r.top);
 		byte *dst = (byte *)_gameTopTexture.getBasePtr(r.left, r.top);
 
-		if (_pfGame == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {
-			copyRect555To5551(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
+		if (_blitFunc) {
+			_blitFunc(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
 				r.width(), r.height());
 		} else if (_gfxState.gfxMode == &_modeCLUT8) {
 			Graphics::crossBlitMap(dst, src, _gameTopTexture.pitch, _gameScreen.pitch,
