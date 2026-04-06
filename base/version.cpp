@@ -247,4 +247,9 @@ const char gScummVMFeatures[] = ""
 #ifdef USE_RETROWAVE
 	"RetroWave "
 #endif
+
+#ifdef USE_NFM
+	"Nokturnal nFM "
+#endif
+
 	;

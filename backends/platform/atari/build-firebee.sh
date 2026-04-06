@@ -39,7 +39,8 @@ then
 	--with-freetype2-prefix="$(${PLATFORM}-gcc -print-sysroot)/usr/bin/${CPU_DIR}" \
 	--with-mikmod-prefix="$(${PLATFORM}-gcc -print-sysroot)/usr/bin/${CPU_DIR}" \
 	--enable-release \
-	--enable-verbose-build
+	--enable-verbose-build \
+	--disable-nfm
 fi
 
 make -j$(getconf _NPROCESSORS_CONF) fbdist
