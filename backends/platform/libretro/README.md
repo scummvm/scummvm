@@ -59,7 +59,7 @@ Operation status will be shown in the same dialog, while details will be given i
 
 ## Core options
 ### Cursor Movement
-  - **Exclusive cursor control with RetroPad**: allows the use of RetroPad only to control mouse cursor, excluding the other inputs (e.g. physical mouse, touch screen).
+  - **Pointer Device**: allows switching which device to use to move the cursor.
   - **Gamepad Cursor Speed**: sets the mouse cursor speed multiplier when moving the cursor with the RetroPad left analog stick or D-Pad. The default value of '1.0' is optimised for games that have a native resolution of '320x200' or '320x240'. When running 'high definition' games with a resolution of '640x400' or '640x480', a Gamepad Cursor Speed of '2.0' is recommended.
   - **Gamepad Cursor Acceleration**: the amount of time (In seconds) it takes for the cursor to reach full speed
   - **Analog Cursor Response**: determines how the speed of the cursor varies when tilting the RetroPad left analog stick. 'Linear': Speed is directly proportional to analog stick displacement. This is standard behaviour with which most users will be familiar. 'Quadratic': Speed increases quadratically with analog stick displacement. This allows for greater precision when making small movements without sacrificing maximum speed at full analog range. This mode may require practice for effective use.

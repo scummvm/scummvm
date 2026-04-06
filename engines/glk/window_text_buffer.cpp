@@ -119,6 +119,13 @@ void TextBufferWindow::rearrange(const Rect &box) {
 	}
 }
 
+void TextBufferWindow::refreshStyles() {
+	// copy updated engine styles/font info into the window's private copy
+	Common::copy(&g_conf->_tStyles[0], &g_conf->_tStyles[style_NUMSTYLES], _styles);
+	_font = g_conf->_propInfo;
+	rearrange(_bbox);
+}
+
 void TextBufferWindow::reflow() {
 	int inputbyte = -1;
 	Attributes curattr, oldattr;

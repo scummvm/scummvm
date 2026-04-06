@@ -520,7 +520,11 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	// If it's the launcher or a 3D game supporting arbitrary resolutions, leave it as is
 	// as there is no downscale
 	const bool engineSupportsArbitraryResolutions = !g_engine ||
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 		(_renderer3d && g_engine->hasFeature(Engine::kSupportsArbitraryResolutions));
+#else
+		false;
+#endif
 	if (!engineSupportsArbitraryResolutions) {
 		requestedWidth  = MAX<uint>(requestedWidth, _lastRequestedWidth  * _graphicsScale);
 		requestedHeight = MAX<uint>(requestedHeight, _lastRequestedHeight * _graphicsScale);

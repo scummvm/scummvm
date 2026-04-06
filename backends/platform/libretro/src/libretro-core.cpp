@@ -65,16 +65,19 @@ static retro_environment_t environ_cb = NULL;
 static retro_input_poll_t poll_cb = NULL;
 static int retro_input_device = RETRO_DEVICE_JOYPAD;
 
+// MIDI interface
+struct retro_midi_interface *retro_midi_interface = nullptr;
+
 // Default deadzone: 15%
 static int analog_deadzone = (int)(0.15f * ANALOG_RANGE);
 
 static float gamepad_cursor_speed = 1.0f;
 static bool analog_response_is_quadratic = false;
-static bool gamepad_cursor_only = false;
 
 static float mouse_speed = 1.0f;
 static float gamepad_acceleration_time = 0.2f;
 static int mouse_fine_control_speed_reduction = 4;
+static int pointer_device = RETRO_DEVICE_JOYPAD; // default pointer/mouse device
 
 char cmd_params[20][200];
 char cmd_params_num;
@@ -131,6 +134,10 @@ static void retro_gui_res_reset() {
 	}
 }
 #endif
+
+static retro_midi_event_t midi_queue[MIDI_QUEUE_SIZE];
+static volatile uint32 midi_head = 0; /* producer writes */
+static volatile uint32 midi_tail = 0; /* consumer writes */
 
 static void setup_hw_rendering(void) {
 
@@ -260,12 +267,16 @@ static void update_variables(void) {
 	struct retro_variable var;
 	updating_variables = true;
 
-	var.key = "scummvm_gamepad_cursor_only";
+	var.key = "scummvm_pointer_device";
 	var.value = NULL;
-	gamepad_cursor_only = false;
+	pointer_device = RETRO_DEVICE_JOYPAD;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value) {
-		if (strcmp(var.value, "enabled") == 0)
-			gamepad_cursor_only = true;
+		if (strcmp(var.value, "mouse") == 0)
+			pointer_device = RETRO_DEVICE_MOUSE;
+		else if (strcmp(var.value, "pointer") == 0)
+			pointer_device = RETRO_DEVICE_POINTER;
+		/* else if (strcmp(var.value, "retropad") == 0)
+			pointer_device = RETRO_DEVICE_JOYPAD; */
 	}
 
 	var.key = "scummvm_gamepad_cursor_speed";
@@ -565,10 +576,6 @@ static bool retro_update_options_display(void) {
 	return updated;
 }
 
-bool retro_setting_get_gamepad_cursor_only(void) {
-	return gamepad_cursor_only;
-}
-
 int retro_setting_get_analog_deadzone(void) {
 	return analog_deadzone;
 }
@@ -591,6 +598,10 @@ int retro_setting_get_mouse_fine_control_speed_reduction(void) {
 
 float retro_setting_get_gamepad_acceleration_time(void) {
 	return gamepad_acceleration_time;
+}
+
+int retro_setting_get_pointer_device(void) {
+	return pointer_device;
 }
 
 float retro_setting_get_frame_rate(void) {
@@ -851,6 +862,41 @@ const char *retro_get_playlist_dir(void) {
 	return playlistdir;
 }
 
+void retro_midi_queue_push(uint8 byte, uint32 delta_us) {
+	uint32 next = (midi_head + 1) & (MIDI_QUEUE_SIZE - 1);
+
+	if (next == midi_tail) {
+		/* Queue full → drop event (acceptable for MIDI) */
+		return;
+	}
+
+	midi_queue[midi_head].byte     = byte;
+	midi_queue[midi_head].delta_us = delta_us;
+	midi_head = next;
+}
+
+static void retro_midi_queue_drain(void) {
+	if (!retro_midi_interface)
+		return;
+	if (!retro_midi_interface->output_enabled)
+		return;
+	if (!retro_midi_interface->output_enabled())
+		return;
+
+	bool did_write = false;
+
+	while (midi_tail != midi_head) {
+		retro_midi_event_t ev = midi_queue[midi_tail];
+		midi_tail = (midi_tail + 1) & (MIDI_QUEUE_SIZE - 1);
+
+		retro_midi_interface->write(ev.byte, ev.delta_us);
+		did_write = true;
+	}
+
+	if (did_write)
+		retro_midi_interface->flush();
+}
+
 void retro_init(void) {
 	struct retro_log_callback log;
 	if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
@@ -858,7 +904,8 @@ void retro_init(void) {
 	else
 		retro_log_cb = NULL;
 
-	retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
+	if (retro_log_cb)
+		retro_log_cb(RETRO_LOG_DEBUG, "ScummVM core version: %s\n", __GIT_VERSION);
 
 	update_variables();
 	max_width = gui_width > max_width ? gui_width : max_width;
@@ -879,6 +926,18 @@ void retro_init(void) {
 
 	if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
 		input_bitmask_supported = true;
+
+	// Initialize MIDI interface
+	static struct retro_midi_interface midi_interface;
+	if (environ_cb(RETRO_ENVIRONMENT_GET_MIDI_INTERFACE, &midi_interface)) {
+		retro_midi_interface = &midi_interface;
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_INFO, "MIDI interface initialized\n");
+	} else {
+		retro_midi_interface = nullptr;
+		if (retro_log_cb)
+			retro_log_cb(RETRO_LOG_INFO, "MIDI interface unavailable\n");
+	}
 
 	g_system = new OSystem_libretro();
 }
@@ -1097,6 +1156,8 @@ void retro_run(void) {
 		poll_cb();
 		LIBRETRO_G_SYSTEM->processInputs();
 	}
+
+	retro_midi_queue_drain();
 }
 
 void retro_unload_game(void) {

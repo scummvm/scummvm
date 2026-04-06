@@ -101,6 +101,9 @@ public:
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
+		#if defined(__LIBRETRO__)
+		LINK_PLUGIN(LIBRETRO_MIDI)
+		#else
 		#if defined(WIN32)
 		LINK_PLUGIN(WINDOWS)
 		#endif
@@ -130,6 +133,7 @@ public:
 		#endif
 		#if defined(MACOSX) || defined(IPHONE) && !defined(IPHONE_TVOS)
 		LINK_PLUGIN(COREMIDI)
+		#endif
 		#endif
 		#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)

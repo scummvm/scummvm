@@ -162,6 +162,11 @@ public:
 	void rearrange(const Rect &box) override;
 
 	/**
+	* Use graphics styles and mono font for grid windows
+    */
+	void refreshStyles();
+
+	/**
 	 * Get window split size within parent pair window
 	 */
 	uint getSplit(uint size, bool vertical) const override;

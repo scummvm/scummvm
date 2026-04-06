@@ -53,6 +53,8 @@
 #define TEST_GAME_KO_NOT_FOUND           3
 #define TEST_GAME_KO_MULTIPLE_RESULTS    4
 
+#define MIDI_QUEUE_SIZE 2048  /* MUST be power of two */
+
 #ifndef F_OK
 #define F_OK 0
 #endif

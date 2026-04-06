@@ -210,106 +210,193 @@ void OSystem_libretro::processInputs(void) {
 		}
 	}
 
-	if (retro_setting_get_gamepad_cursor_only())
-		return;
+	if (retro_setting_get_pointer_device() == RETRO_DEVICE_POINTER) {
+		int p_x     = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
+		int p_y     = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
+		int p_press = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
 
-#if defined(WIIU) || defined(__SWITCH__)
-	int p_x = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_X);
-	int p_y = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_Y);
-	int p_press = retro_input_cb(0, RETRO_DEVICE_POINTER, 0, RETRO_DEVICE_ID_POINTER_PRESSED);
-	int px = (int)((p_x + 0x7fff) * getScreenWidth() / 0xffff);
-	int py = (int)((p_y + 0x7fff) * getScreenHeight() / 0xffff);
+		int px = (int)((p_x + 0x7fff) * getScreenWidth()  / 0xffff);
+		int py = (int)((p_y + 0x7fff) * getScreenHeight() / 0xffff);
 
-	static int ptrhold = 0;
+		// Thresholds (frame-based)
+		static const int TAP_MAX_FRAMES    = (20 * retro_setting_get_frame_rate()) / 60;
+		static const int LONG_MIN_FRAMES   = (40 * retro_setting_get_frame_rate()) / 60;
+		static const int MOVE_THRESHOLD_PX = 8;
 
-	if (p_press)
-		ptrhold++;
-	else
-		ptrhold = 0;
+		// Gesture state
+		static bool wasPressed      = false;
+		static int  holdFrames      = 0;
+		static bool dragging    = false;
+		static bool longClickFired  = false;
+		static int  startX          = 0;
+		static int  startY          = 0;
+		static int  lastX           = 0;
+		static int  lastY           = 0;
+		static int pendingButton = 0;  // 0 none, 1 left, 2 right
+		static int pendingX = 0, pendingY = 0;
+		static int pendingDelay = 0;   // frame countdown until UP
 
-	if (ptrhold > 0) {
-		_mouseX = px;
-		_mouseY = py;
-
-		Common::Event ev;
-		ev.type = Common::EVENT_MOUSEMOVE;
-		ev.mouse.x = _mouseX;
-		ev.mouse.y = _mouseY;
-		_events.push_back(ev);
-		setMousePosition(_mouseX, _mouseY);
-	}
-
-	if (ptrhold > 10 && _ptrmouseButton == 0) {
-		_ptrmouseButton = 1;
-		Common::Event ev;
-		ev.type = eventID[0][_ptrmouseButton ? 0 : 1];
-		ev.mouse.x = _mouseX;
-		ev.mouse.y = _mouseY;
-		_events.push_back(ev);
-	} else if (ptrhold == 0 && _ptrmouseButton == 1) {
-		_ptrmouseButton = 0;
-		Common::Event ev;
-		ev.type = eventID[0][_ptrmouseButton ? 0 : 1];
-		ev.mouse.x = _mouseX;
-		ev.mouse.y = _mouseY;
-		_events.push_back(ev);
-	}
-
-#endif
-
-	// Process input from physical mouse
-	x = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
-	y = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
-
-	// > X Axis
-	if (x != 0) {
-		_cursorStatus |= (CURSOR_STATUS_DOING_MOUSE | CURSOR_STATUS_DOING_X);
-		if (x > 0) {
-			// Reset accumulator when changing direction
-			_mouseXAcc = (_mouseXAcc < 0.0) ? 0.0 : _mouseXAcc;
+		// check if UP is pending
+		if (pendingButton != 0) {
+			if (pendingDelay > 0) {
+				pendingDelay--;
+			} else {
+				Common::Event ev;
+				ev.type = eventID[pendingButton - 1][1];
+				ev.mouse.x = pendingX;
+				ev.mouse.y = pendingY;
+				_events.push_back(ev);
+				pendingButton = 0;
+			}
 		}
-		if (x < 0) {
-			// Reset accumulator when changing direction
-			_mouseXAcc = (_mouseXAcc > 0.0) ? 0.0 : _mouseXAcc;
-		}
-		deltaAcc = (float)x * retro_setting_get_mouse_speed();
-		updateMouseXY(deltaAcc, &_mouseXAcc, 1);
-	}
-	// > Y Axis
-	if (y != 0) {
-		_cursorStatus |= (CURSOR_STATUS_DOING_MOUSE | CURSOR_STATUS_DOING_Y);
-		if (y > 0) {
-			// Reset accumulator when changing direction
-			_mouseYAcc = (_mouseYAcc < 0.0) ? 0.0 : _mouseYAcc;
-		}
-		if (y < 0) {
-			// Reset accumulator when changing direction
-			_mouseYAcc = (_mouseYAcc > 0.0) ? 0.0 : _mouseYAcc;
-		}
-		deltaAcc = (float)y * retro_setting_get_mouse_speed();
-		updateMouseXY(deltaAcc, &_mouseYAcc, 0);
-	}
 
-	if (_cursorStatus & CURSOR_STATUS_DOING_MOUSE) {
-		Common::Event ev;
-		ev.type = Common::EVENT_MOUSEMOVE;
-		ev.mouse.x = _mouseX;
-		ev.mouse.y = _mouseY;
-		ev.relMouse.x = _cursorStatus & CURSOR_STATUS_DOING_X ? _relMouseX : 0;
-		ev.relMouse.y = _cursorStatus & CURSOR_STATUS_DOING_Y ? _relMouseY : 0;
-		_events.push_back(ev);
-		setMousePosition(_mouseX, _mouseY);
-	}
+		// DOWN edge: start tracking
+		if (p_press && !wasPressed) {
+			wasPressed     = true;
+			holdFrames     = 0;
+			dragging   = false;
+			longClickFired = false;
 
-	for (int i = 0; i < 2; i++) {
-		Common::Event ev;
-		bool down = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, retroButtons[i]);
-		if (down != _mouseButtons[i]) {
-			_mouseButtons[i] = down;
-			ev.type = eventID[i][down ? 0 : 1];
+			startX = lastX = px;
+			startY = lastY = py;
+
+			// Move cursor immediately to touch point
+			_mouseX = px;
+			_mouseY = py;
+
+			Common::Event ev;
+			ev.type = Common::EVENT_MOUSEMOVE;
 			ev.mouse.x = _mouseX;
 			ev.mouse.y = _mouseY;
+			ev.relMouse.x = 0;
+			ev.relMouse.y = 0;
 			_events.push_back(ev);
+			setMousePosition(_mouseX, _mouseY);
+		}
+
+		// PRESSED: track move + possibly long click
+		if (p_press && wasPressed) {
+			holdFrames++;
+
+			// Determine if we've moved too much (drag)
+			if (!dragging && (abs(px - startX) > MOVE_THRESHOLD_PX || abs(py - startY) > MOVE_THRESHOLD_PX))
+				dragging = true;
+
+			// Always move cursor while pressed
+			if (px != lastX || py != lastY) {
+				_mouseX = px;
+				_mouseY = py;
+
+				Common::Event ev;
+				ev.type = Common::EVENT_MOUSEMOVE;
+				ev.mouse.x = _mouseX;
+				ev.mouse.y = _mouseY;
+				ev.relMouse.x = px - lastX;
+				ev.relMouse.y = py - lastY;
+				_events.push_back(ev);
+				setMousePosition(_mouseX, _mouseY);
+
+				lastX = px;
+				lastY = py;
+			}
+
+			// Long press triggers RIGHT click automatically BEFORE release
+			if (!longClickFired && !dragging && holdFrames >= LONG_MIN_FRAMES) {
+				Common::Event ev;
+				ev.type = eventID[1][0];
+				ev.mouse.x = startX;
+				ev.mouse.y = startY;
+				_events.push_back(ev);
+
+				pendingButton = 2;
+				pendingX = startX;
+				pendingY = startY;
+				pendingDelay = 1;
+
+				longClickFired = true;
+
+				// After long click, remain pressed behaves like drag/move (no more clicks)
+				dragging = true;
+			}
+		}
+
+		// UP edge: decide tap click (LEFT) only if long didn't fire and no drag
+		if (!p_press && wasPressed) {
+			wasPressed = false;
+			if (!longClickFired && !dragging) {
+				if ((abs(px - startX) <= MOVE_THRESHOLD_PX && abs(py - startY) <= MOVE_THRESHOLD_PX) && holdFrames <= TAP_MAX_FRAMES) {
+					Common::Event ev;
+					ev.type = eventID[0][0];
+					ev.mouse.x = startX;
+					ev.mouse.y = startY;
+					_events.push_back(ev);
+
+					pendingButton = 1;
+					pendingX = startX;
+					pendingY = startY;
+					pendingDelay = 1;
+				}
+			}
+
+			holdFrames     = 0;
+			dragging   = false;
+			longClickFired = false;
+		}
+	} else if (retro_setting_get_pointer_device() == RETRO_DEVICE_MOUSE) {
+		// Process input from physical mouse
+		x = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_X);
+		y = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, RETRO_DEVICE_ID_MOUSE_Y);
+
+		// > X Axis
+		if (x != 0) {
+			_cursorStatus |= (CURSOR_STATUS_DOING_MOUSE | CURSOR_STATUS_DOING_X);
+			if (x > 0) {
+				// Reset accumulator when changing direction
+				_mouseXAcc = (_mouseXAcc < 0.0) ? 0.0 : _mouseXAcc;
+			}
+			if (x < 0) {
+				// Reset accumulator when changing direction
+				_mouseXAcc = (_mouseXAcc > 0.0) ? 0.0 : _mouseXAcc;
+			}
+			deltaAcc = (float)x * retro_setting_get_mouse_speed();
+			updateMouseXY(deltaAcc, &_mouseXAcc, 1);
+		}
+		// > Y Axis
+		if (y != 0) {
+			_cursorStatus |= (CURSOR_STATUS_DOING_MOUSE | CURSOR_STATUS_DOING_Y);
+			if (y > 0) {
+				// Reset accumulator when changing direction
+				_mouseYAcc = (_mouseYAcc < 0.0) ? 0.0 : _mouseYAcc;
+			}
+			if (y < 0) {
+				// Reset accumulator when changing direction
+				_mouseYAcc = (_mouseYAcc > 0.0) ? 0.0 : _mouseYAcc;
+			}
+			deltaAcc = (float)y * retro_setting_get_mouse_speed();
+			updateMouseXY(deltaAcc, &_mouseYAcc, 0);
+		}
+
+		if (_cursorStatus & CURSOR_STATUS_DOING_MOUSE) {
+			Common::Event ev;
+			ev.type = Common::EVENT_MOUSEMOVE;
+			ev.mouse.x = _mouseX;
+			ev.mouse.y = _mouseY;
+			ev.relMouse.x = _cursorStatus & CURSOR_STATUS_DOING_X ? _relMouseX : 0;
+			ev.relMouse.y = _cursorStatus & CURSOR_STATUS_DOING_Y ? _relMouseY : 0;
+			_events.push_back(ev);
+			setMousePosition(_mouseX, _mouseY);
+		}
+
+		for (int i = 0; i < 2; i++) {
+			Common::Event ev;
+			bool down = retro_input_cb(0, RETRO_DEVICE_MOUSE, 0, retroButtons[i]);
+			if (down != _mouseButtons[i]) {
+				_mouseButtons[i] = down;
+				ev.type = eventID[i][down ? 0 : 1];
+				ev.mouse.x = _mouseX;
+				ev.mouse.y = _mouseY;
+				_events.push_back(ev);
+			}
 		}
 	}
 }

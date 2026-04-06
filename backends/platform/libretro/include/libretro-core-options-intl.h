@@ -95,18 +95,17 @@ struct retro_core_option_v2_category option_cats_it[] = {
 
 struct retro_core_option_v2_definition option_defs_it[] = {
 	{
-		"scummvm_gamepad_cursor_only",
-		"Cursore > Controllo esclusivo del cursore con RetroPad",
-		"Controllo esclusivo del cursore con RetroPad",
-		"Consente di usare solo RetroPad per il controllo del cursore del mouse, escludento gli altri input (es. mouse fisico, touch screen).",
+		"scummvm_pointer_device",
+		"Cursore > Dispositivo di Puntamento",
+		"Dispositivo di Puntamento",
+		"Selezione del dispositivo che controlla il cursore.",
 		NULL,
-		"cursor",
+		NULL,
 		{
-			{"disabled", NULL},
-			{"enabled", NULL},
+			{"retropad", "solo RetroPad"},
 			{NULL, NULL},
 		},
-		"disabled"
+		NULL
 	},
 	{
 		"scummvm_gamepad_cursor_speed",

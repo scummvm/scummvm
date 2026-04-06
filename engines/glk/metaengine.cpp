@@ -20,6 +20,7 @@
  */
 
 #include "glk/glk.h"
+#include "glk/dialogs.h"
 #include "glk/detection.h"
 #include "glk/quetzal.h"
 #include "glk/adrift/detection.h"
@@ -79,6 +80,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine,
 	                             const DetectedGame &gameDescriptor, const void *metaEngineDescriptor) override;
 
@@ -105,7 +107,8 @@ bool Glk::GlkEngine::hasFeature(EngineFeature f) const {
 	return
 	    (f == kSupportsReturnToLauncher) ||
 	    (f == kSupportsLoadingDuringRuntime) ||
-	    (f == kSupportsSavingDuringRuntime);
+	    (f == kSupportsSavingDuringRuntime) ||
+	    (f == kSupportsChangingOptionsDuringRuntime);
 }
 
 bool isGameAllowed(GameSupportLevel supportLevel) {
@@ -184,6 +187,15 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine,
 	// gameDesc is copied in Glk
 	delete gameDesc;
 	return *engine ? Common::kNoError : Common::kUserCanceled;
+}
+
+GUI::OptionsContainerWidget *GlkMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss,
+				const Common::String &name,
+				const Common::String &target) const {
+	if (target.empty())
+		return nullptr;
+
+	return new Glk::GlkOptionsWidget(boss, name, target);
 }
 
 const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
