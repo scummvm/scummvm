@@ -32,7 +32,7 @@ toolsrepo='https://github.com/scummvm/scummvm-tools.git'
 ### init
 
 if [ $# -lt 2 ]; then
-  echo "Usage: $0 <scummvm | scummvm-tools> <version-number> [<temporary-directory> [<tag>]]"
+  echo "Usage: $0 <scummvm | scummvm-tools> <version-number> [<absolute-path-to-temporary-directory>] [<tag>]"
   exit 1
 fi
 
