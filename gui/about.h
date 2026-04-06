@@ -45,6 +45,8 @@ protected:
 
 	int _xOff, _yOff;
 	bool _inGame;
+	bool _isDragging;
+	int _dragLastY;
 
 	ScrollBarWidget *_scrollbar;
 	ButtonWidget *_closeButton;
@@ -63,6 +65,7 @@ public:
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
 	void handleKeyUp(Common::KeyState state) override;

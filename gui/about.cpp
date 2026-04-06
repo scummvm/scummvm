@@ -88,7 +88,8 @@ static const char *const gpl_text[] = {
 
 AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
-	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame) {
+	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame),
+	  _isDragging(false), _dragLastY(0) {
 
 	_scrollbar = nullptr;
 	_closeButton = nullptr;
@@ -361,7 +362,46 @@ void AboutDialog::handleTickle() {
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
+	_isDragging = false;
 	Dialog::handleMouseUp(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (button == 1 && !findWidget(x, y)) {
+		_isDragging = true;
+		_dragLastY = y;
+	}
+	Dialog::handleMouseDown(x, y, button, clickCount);
+}
+
+void AboutDialog::handleMouseMoved(int x, int y, int button) {
+	if (_isDragging) {
+		int deltaY = _dragLastY - y;
+		_dragLastY = y;
+
+		if (deltaY != 0) {
+			_autoScroll = false;
+			int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+			int visibleHeight = _scrollbar ? _scrollbar->_entriesPerPage : (_h - buttonHeight - 20 - _yOff);
+			int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - visibleHeight);
+
+			_scrollPos += deltaY;
+
+			if (_scrollPos < 0)
+				_scrollPos = 0;
+			else if (_scrollPos > maxScroll)
+				_scrollPos = maxScroll;
+
+			if (_scrollbar) {
+				_scrollbar->_currentPos = _scrollPos;
+				_scrollbar->recalc();
+			}
+
+			drawDialog(kDrawLayerForeground);
+		}
+	}
+
+	Dialog::handleMouseMoved(x, y, button);
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
@@ -372,13 +412,15 @@ void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 
 	_autoScroll = false;
 
-	int newScrollPos = _scrollPos + stepping;
+	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
+	int visibleHeight = _scrollbar ? _scrollbar->_entriesPerPage : (_h - buttonHeight - 20 - _yOff);
+	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - visibleHeight);
 
-	if (newScrollPos < 0) {
+	_scrollPos += stepping;
+	if (_scrollPos < 0)
 		_scrollPos = 0;
-	} else if ((uint32)newScrollPos < _lines.size() * _lineHeight) {
-		_scrollPos = newScrollPos;
-	}
+	else if (_scrollPos > maxScroll)
+		_scrollPos = maxScroll;
 
 	if (_scrollbar) {
 		_scrollbar->_currentPos = _scrollPos;
