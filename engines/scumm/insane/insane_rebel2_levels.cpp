@@ -46,6 +46,82 @@ Common::String InsaneRebel2::getLevelPrefix(int levelId) {
 }
 
 //
+// runGame -- Main game entry point (FUN_004142BD)
+//
+// Full game loop: intro, main menu, pilot select, chapter select, level
+// progression. Called from ScummEngine::go().
+//
+void InsaneRebel2::runGame() {
+	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
+
+	// Demo: just play the demo video and return
+	if (_vm->_game.features & GF_DEMO) {
+		splayer->play("OPEN/O_DEMO.SAN", 12);
+		return;
+	}
+
+	// Case 0: Play intro sequence (Fox logo, LucasArts logo, O_OPEN_A, O_OPEN_B)
+	playIntroSequence();
+
+	// Cases 1-4: Main menu -> pilot select -> chapter select -> gameplay loop
+	while (!_vm->shouldQuit()) {
+		int menuResult = runMainMenu();
+
+		if (menuResult == 0 || _vm->shouldQuit())
+			break;
+
+		if (menuResult == kMenuNewGame || menuResult == kMenuContinue) {
+			int pilotResult = runLevelSelect();
+
+			if (pilotResult == kLevelSelectQuit || _vm->shouldQuit())
+				break;
+
+			if (pilotResult == kLevelSelectBack)
+				continue;
+
+			int chapterResult = runChapterSelect();
+
+			if (chapterResult == kChapterSelectQuit || _vm->shouldQuit())
+				break;
+
+			if (chapterResult == kChapterSelectPlay) {
+				// _selectedChapter is 0-based, runLevel expects 1-based
+				int selectedLevel = _selectedChapter + 1;
+				debug("InsaneRebel2: Starting chapter %d (level %d)", _selectedChapter + 1, selectedLevel);
+
+				// Ending selected directly from chapter select (FUN_0041bbe8, case 0xf)
+				if (selectedLevel == 16) {
+					playEndingSequence();
+				}
+
+				// Level progression loop: on success, advance to next level
+				while (!_vm->shouldQuit() && selectedLevel >= 1 && selectedLevel <= 15) {
+					int result = runLevel(selectedLevel);
+
+					if (result == kLevelNextLevel) {
+						updatePilotProgress(selectedLevel - 1,
+							_playerScore, _playerLives, _playerDamage);
+						selectedLevel++;
+						if (selectedLevel > 15) {
+							playEndingSequence();
+							break;
+						}
+					} else {
+						if (_vm->shouldQuit() || result == kLevelQuit)
+							break;
+						break;
+					}
+				}
+
+				if (_vm->shouldQuit())
+					break;
+			}
+			// If kChapterSelectBack, loop back to main menu
+		}
+	}
+}
+
+//
 // playIntroSequence -- Intro sequence (FUN_004142BD case 0)
 //
 // Original flow:
