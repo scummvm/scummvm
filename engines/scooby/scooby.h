@@ -22,21 +22,25 @@
 #ifndef SCOOBY_H
 #define SCOOBY_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
 #include "common/random.h"
+#include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/system.h"
 #include "common/util.h"
 #include "engines/engine.h"
 #include "engines/savestate.h"
+#include "graphics/framelimiter.h"
 #include "graphics/screen.h"
 
 #include "scooby/detection.h"
 
 namespace Scooby {
+class Gfx;
+class VDP;
+class File;
 
 struct ScoobyGameDescription;
 
@@ -44,6 +48,18 @@ class ScoobyEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+
+	File *_file;
+	Gfx *_gfx;
+	VDP *_vdp;
+	Graphics::FrameLimiter *_limiter;
+
+	uint32 _nextUpdatetime;
+
+	uint16 _DAT_00ff07f8;
+	int16 _SHORT_00ff07fa;
+	uint8 _DAT_00ff09eb_flags;
+	uint8 DAT_00ff09ed_flags;
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -95,6 +111,22 @@ public:
 		Common::Serializer s(stream, nullptr);
 		return syncGame(s);
 	}
+
+	void waitForFrames(uint16 numFrames);
+
+	void fadeFromBlack(const uint16 *palette);
+	void fadeToBlack();
+
+	void introSequence();
+	void mainMenu();
+	void loadPalette(uint32 offset, uint16 *palette);
+
+private:
+	void setupInitialVdpRegisters();
+	// void FUN_00009c64(uint8 *src,uint8 *dest);
+
+	void unpackRLE(uint8 *src,uint8 *dest);
+
 };
 
 extern ScoobyEngine *g_engine;
