@@ -1008,7 +1008,7 @@ bool Engine::loadGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 
 	int slotNum;
 	{
@@ -1037,7 +1037,7 @@ bool Engine::saveGameDialog() {
 		return false;
 	}
 
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 	int slotNum;
 	{
 		PauseToken pt = pauseEngine();

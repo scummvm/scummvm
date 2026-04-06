@@ -832,7 +832,7 @@ void Script::o_videofromref() {			// 0x09
 
 	case 0x2420:	// load from the main menu
 		if (_version == kGroovieT7G && !ConfMan.getBool("originalsaveload") && _currentInstruction == 381) {
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -855,7 +855,7 @@ void Script::o_videofromref() {			// 0x09
 			int choice = saveOrLoad.runModal();
 			if (choice == GUI::kMessageOK) {
 				// Save
-				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 				int slot = dialog->runModalWithCurrentTarget();
 				Common::String saveName = dialog->getResultString();
 				delete dialog;
@@ -867,7 +867,7 @@ void Script::o_videofromref() {			// 0x09
 				_currentInstruction = 0x17C8; // back to game menu
 			} else {
 				// Restore
-				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+				GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 				int slot = dialog->runModalWithCurrentTarget();
 				delete dialog;
 
@@ -2240,7 +2240,7 @@ void Script::o2_videofromref() {
 	if (_version == kGroovieT11H && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
 		if (_currentInstruction == 0xE50A && _scriptFile == "script.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -2253,7 +2253,7 @@ void Script::o2_videofromref() {
 			}
 		} else if (_currentInstruction == 0xE955 && _scriptFile == "script.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2267,7 +2267,7 @@ void Script::o2_videofromref() {
 		// T11H Souped Up
 		else if (_currentInstruction == 0x10 && _scriptFile == "suscript.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 
@@ -2280,7 +2280,7 @@ void Script::o2_videofromref() {
 			}
 		} else if (_currentInstruction == 0x1E && _scriptFile == "suscript.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2321,7 +2321,7 @@ void Script::o2_vdxtransition() {
 	if (_version == kGroovieCDY && fileref != _videoRef && !ConfMan.getBool("originalsaveload")) {
 		if (_currentInstruction == 0x59 && _scriptFile == "save_cam.grv") {
 			// Save from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 			int slot = dialog->runModalWithCurrentTarget();
 			Common::String saveName = dialog->getResultString();
 			delete dialog;
@@ -2337,7 +2337,7 @@ void Script::o2_vdxtransition() {
 #if 0
 		else if (_currentInstruction == 0xA12C && _scriptFile == "clanmain.grv") {
 			// Load from the main menu
-			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 			int slot = dialog->runModalWithCurrentTarget();
 			delete dialog;
 

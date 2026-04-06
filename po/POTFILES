@@ -26,6 +26,7 @@ gui/predictivedialog.cpp
 gui/printing-dialog.cpp
 gui/recorderdialog.cpp
 gui/remotebrowser.cpp
+gui/saveload.cpp
 gui/saveload-dialog.cpp
 gui/shaderbrowser-dialog.cpp
 gui/textviewer.cpp

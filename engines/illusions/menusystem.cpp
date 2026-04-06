@@ -28,7 +28,6 @@
 #include "illusions/thread.h"
 #include "illusions/time.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "gui/saveload.h"
 
 namespace Illusions {
@@ -676,7 +675,7 @@ void MenuActionLoadGame::execute() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	dialog = new GUI::SaveLoadChooser(false);
 	slot = dialog->runModalWithCurrentTarget();
 
 	delete dialog;
@@ -699,7 +698,7 @@ void MenuActionSaveGame::execute() {
 	Common::String desc;
 	int slot;
 
-	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	dialog = new GUI::SaveLoadChooser(true);
 	slot = dialog->runModalWithCurrentTarget();
 	desc = dialog->getResultString();
 

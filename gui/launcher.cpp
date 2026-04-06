@@ -321,7 +321,7 @@ void LauncherDialog::build() {
 	_browser = new BrowserDialog(_("Select directory with game data"), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"), false);
+	_loadDialog = new SaveLoadChooser(false);
 }
 
 void LauncherDialog::clean() {

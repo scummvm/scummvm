@@ -39,6 +39,7 @@ protected:
 
 	void selectChooser(const MetaEngine *engine);
 public:
+	SaveLoadChooser(bool saveMode);
 	SaveLoadChooser(const Common::U32String &title, const Common::U32String &buttonLabel, bool saveMode);
 	~SaveLoadChooser();
 

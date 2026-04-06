@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/translation.h"
 #include "gui/saveload.h"
 #include "sherlock/tattoo/widget_files.h"
 #include "sherlock/tattoo/tattoo.h"
@@ -78,7 +77,7 @@ void WidgetFiles::show(SaveMode mode) {
 }
 
 void WidgetFiles::showScummVMSaveDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -97,7 +96,7 @@ void WidgetFiles::showScummVMSaveDialog() {
 }
 
 void WidgetFiles::showScummVMRestoreDialog() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 	int slot = dialog->runModalWithCurrentTarget();
 	close();
 	delete dialog;

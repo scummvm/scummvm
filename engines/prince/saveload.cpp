@@ -29,7 +29,6 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
-#include "common/translation.h"
 
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
@@ -51,7 +50,7 @@ bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -60,7 +59,7 @@ bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 

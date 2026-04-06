@@ -28,7 +28,6 @@
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -763,7 +762,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 	int slot;
 
 	if (isSave) {
-		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		dialog = new GUI::SaveLoadChooser(true);
 
 		slot = dialog->runModalWithCurrentTarget();
 		desc = dialog->getResultString();
@@ -776,7 +775,7 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		if (desc.size() > 28)
 			desc = Common::String(desc.c_str(), 28);
 	} else {
-		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		dialog = new GUI::SaveLoadChooser(false);
 		slot = dialog->runModalWithCurrentTarget();
 	}
 

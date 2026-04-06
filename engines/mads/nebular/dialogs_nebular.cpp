@@ -22,7 +22,6 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -355,7 +354,7 @@ void DialogsNebular::showDialog() {
 void DialogsNebular::showScummVMSaveDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
 	Scene &scene = game._scene;
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
@@ -382,7 +381,7 @@ void DialogsNebular::showScummVMSaveDialog() {
 
 void DialogsNebular::showScummVMRestoreDialog() {
 	Nebular::GameNebular &game = *(Nebular::GameNebular *)_vm->_game;
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 	Scene &scene = game._scene;
 
 	int slot = dialog->runModalWithCurrentTarget();

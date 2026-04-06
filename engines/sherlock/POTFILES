@@ -1,4 +1,2 @@
 engines/sherlock/detection_tables.h
 engines/sherlock/metaengine.cpp
-engines/sherlock/scalpel/scalpel.cpp
-engines/sherlock/tattoo/widget_files.cpp

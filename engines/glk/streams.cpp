@@ -27,7 +27,6 @@
 #include "gui/saveload.h"
 #include "common/file.h"
 #include "common/savefile.h"
-#include "common/translation.h"
 
 namespace Glk {
 
@@ -1438,7 +1437,7 @@ frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 	case fileusage_SavedGame: {
 		if (fmode == filemode_Write) {
 			// Select a savegame slot
-			GUI::SaveLoadChooser dialog(_("Save game:"), _("Save"), true);
+			GUI::SaveLoadChooser dialog(true);
 
 			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {
@@ -1447,7 +1446,7 @@ frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 			}
 		} else if (fmode == filemode_Read) {
 			// Load a savegame slot
-			GUI::SaveLoadChooser dialog(_("Restore game:"), _("Restore"), false);
+			GUI::SaveLoadChooser dialog(false);
 
 			int slot = dialog.runModalWithCurrentTarget();
 			if (slot >= 0) {

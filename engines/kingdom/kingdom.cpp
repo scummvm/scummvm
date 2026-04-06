@@ -20,7 +20,6 @@
  */
 
 #include "common/scummsys.h"
-#include "common/translation.h"
 
 #include "common/savefile.h"
 #include "graphics/thumbnail.h"
@@ -728,7 +727,7 @@ Common::String KingdomGame::getSavegameFilename(int slot) {
 }
 
 void KingdomGame::saveGame() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 	int16 savegameId = dialog->runModalWithCurrentTarget();
 	Common::String savegameDescription = dialog->getResultString();
 	delete dialog;
@@ -738,7 +737,7 @@ void KingdomGame::saveGame() {
 }
 
 void KingdomGame::restoreGame() {
-	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 	int16 savegameId = dialog->runModalWithCurrentTarget();
 	delete dialog;
 

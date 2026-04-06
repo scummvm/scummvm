@@ -1,4 +1,3 @@
 engines/agi/detection_tables.h
 engines/agi/font.cpp
 engines/agi/metaengine.cpp
-engines/agi/saveload.cpp

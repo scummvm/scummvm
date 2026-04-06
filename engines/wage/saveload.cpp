@@ -51,7 +51,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 #include "gui/saveload.h"
 
@@ -750,7 +749,7 @@ Common::Error WageEngine::saveGameState(int slot, const Common::String &descript
 bool WageEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (!isSave) {
 		// do loading
-		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(_("Load game:"), _("Load"), false);
+		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(false);
 		int slot = dialog.runModalWithCurrentTarget();
 
 		if (slot < 0)
@@ -760,7 +759,7 @@ bool WageEngine::scummVMSaveLoadDialog(bool isSave) {
 	}
 
 	// do saving
-	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(true);
 	int slot = dialog.runModalWithCurrentTarget();
 	Common::String desc = dialog.getResultString();
 

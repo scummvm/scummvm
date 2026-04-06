@@ -239,7 +239,7 @@ bool LabEngine::saveRestoreGame() {
 	int choice = saveOrLoad.runModal();
 	if (choice == GUI::kMessageOK) {
 		// Save
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(true);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
 			Common::String desc = dialog->getResultString();
@@ -254,7 +254,7 @@ bool LabEngine::saveRestoreGame() {
 		delete dialog;
 	} else {
 		// Restore
-		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(false);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
 			isOK = loadGame(slot);

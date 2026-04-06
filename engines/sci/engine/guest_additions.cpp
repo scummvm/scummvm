@@ -31,7 +31,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #ifdef ENABLE_SCI32
-#include "common/translation.h"
 #include "gui/saveload.h"
 #include "sci/graphics/frameout.h"
 #endif
@@ -740,17 +739,7 @@ int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescrip
 	if (!isSave && forcedSaveId != -1) {
 		saveId = forcedSaveId;
 	} else {
-		Common::U32String title;
-		Common::U32String action;
-		if (isSave) {
-			title = _("Save game:");
-			action = _("Save");
-		} else {
-			title = _("Restore game:");
-			action = _("Restore");
-		}
-
-		GUI::SaveLoadChooser dialog(title, action, isSave);
+		GUI::SaveLoadChooser dialog(isSave);
 		saveId = dialog.runModalWithCurrentTarget();
 		if (saveId != -1) {
 			outDescription = dialog.getResultString();
