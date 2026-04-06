@@ -568,14 +568,14 @@ void Processor::handleAbbreviations() {
 	Common::U32String word((const char32_t *)_decoded, wordSize);
 
 	// Check for standard abbreviations
-	if (word == "g")
-		word = "again";
-	else if (word == "o")
-		word = "oops";
-	else if (word == "x")
-		word = "examine";
-	else if (word == "z")
-		word = "wait";
+	if (word == Common::U32String('g'))
+		word = U"again";
+	else if (word == Common::U32String('o'))
+		word = U"oops";
+	else if (word == Common::U32String('x'))
+		word = U"examine";
+	else if (word == Common::U32String('z'))
+		word = U"wait";
 	else
 		return;
 

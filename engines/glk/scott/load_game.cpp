@@ -115,7 +115,7 @@ void loadGameFile(Common::SeekableReadStream *f) {
 	const GlkDetectionEntry *p = SCOTT_GAMES;
 
 	while (p->_md5) {
-		if (md5.equalsC(p->_md5)) {
+		if (md5 == p->_md5) {
 			if (!scumm_stricmp(p->_extra, "")) {
 				_G(_fallbackGame)._gameID = SCOTTFREE;
 				break;

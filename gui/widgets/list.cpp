@@ -1075,10 +1075,10 @@ Common::U32String ListWidget::getThemeColor(ThemeEngine::FontColor color) {
 }
 
 ThemeEngine::FontColor ListWidget::getThemeColor(const Common::U32String &color) {
-	if (color == "normal")
+	if (color == U"normal")
 		return ThemeEngine::kFontColorNormal;
 
-	if (color == "alternate")
+	if (color == U"alternate")
 		return ThemeEngine::kFontColorAlternate;
 
 	warning("ListWidget::getThemeColor(): Malformed color (\"%s\")", color.encode().c_str());

@@ -105,21 +105,6 @@ public:
 	/** @overload */
 	DBCSString &operator+=(value_type c);
 
-	using BaseString<value_type>::operator==;
-	using BaseString<value_type>::operator!=;
-
-	/** Check whether this string is identical to string @p x. */
-	bool operator==(const String &x) const;
-
-	/** @overload */
-	bool operator==(const char *x) const;
-
-	/** Check whether this string is different than string @p x. */
-	bool operator!=(const String &x) const;
-
-	/** @overload */
-	bool operator!=(const char *x) const;
-
 	/** Convert the string to the standard String represantation. */
 	String convertToString() const;
 

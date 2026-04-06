@@ -125,10 +125,8 @@ public:
 	 */
 	bool equals(const BaseString &x) const;
 	bool equals(const value_type *x) const;
-	bool equalsC(const char *x) const;
 	int compareTo(const BaseString &x) const;           // strcmp clone
 	int compareTo(const value_type *x) const;             // strcmp clone
-	int compareToC(const char *x) const;             // strcmp clone
 
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(value_type c, uint32 p);

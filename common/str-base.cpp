@@ -321,21 +321,6 @@ TEMPLATE bool BASESTRING::equals(const value_type *ptr) const {
 	return false;
 }
 
-TEMPLATE bool BASESTRING::equalsC(const char *ptr) const {
-	uint i = 0;
-
-	for (; i < _size && *ptr; i++, ptr++) {
-		if (_str[i] != (T)*ptr)
-			return false;
-	}
-
-	if (i == _size && *ptr == 0) {
-		return true;
-	}
-
-	return false;
-}
-
 TEMPLATE bool BASESTRING::operator==(const BaseString &x) const {
 	return equals(x);
 }
@@ -370,23 +355,6 @@ TEMPLATE int BASESTRING::compareTo(const BaseString &x) const {
 }
 
 TEMPLATE int BASESTRING::compareTo(const value_type *ptr) const {
-	uint32 i = 0;
-	for (; i < _size && *ptr; ++i, ptr++) {
-		uint32 sc = _str[i];
-		uint32 xc = *ptr;
-		if (sc < xc)
-			return -1;
-		else if (sc > xc)
-			return +1;
-	}
-	if (i == _size && *ptr == 0)
-		return 0;
-	if (*ptr == 0)
-		return +1;
-	return -1;
-}
-
-TEMPLATE int BASESTRING::compareToC(const char *ptr) const {
 	uint32 i = 0;
 	for (; i < _size && *ptr; ++i, ptr++) {
 		uint32 sc = _str[i];

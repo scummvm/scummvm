@@ -121,21 +121,6 @@ public:
 	/** @overload */
 	U32String &operator+=(value_type c);
 
-	using BaseString<value_type>::operator==;
-	using BaseString<value_type>::operator!=;
-
-	/** Check whether this string is identical to string @p x. */
-	bool operator==(const String &x) const;
-
-	/** @overload */
-	bool operator==(const char *x) const;
-
-	/** Check whether this string is different than string @p x. */
-	bool operator!=(const String &x) const;
-
-	/** @overload */
-	bool operator!=(const char *x) const;
-
 	/** Convert the string to the given @p page encoding and return the result as a new String. */
 	String encode(CodePage page = kUtf8) const;
 

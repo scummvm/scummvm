@@ -95,22 +95,6 @@ U32String &U32String::operator+=(value_type c) {
 	return *this;
 }
 
-bool U32String::operator==(const String &x) const {
-	return equalsC(x.c_str());
-}
-
-bool U32String::operator==(const char *x) const {
-	return equalsC(x);
-}
-
-bool U32String::operator!=(const String &x) const {
-	return !equalsC(x.c_str());
-}
-
-bool U32String::operator!=(const char *x) const {
-	return !equalsC(x);
-}
-
 U32String operator+(const U32String &x, const U32String &y) {
 	U32String temp(x);
 	temp += y;

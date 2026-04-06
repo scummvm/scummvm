@@ -226,12 +226,12 @@ void GridWidget::loadClosedGroups(const Common::U32String &groupName) {
 	// Recalls what groups were closed from the config
 	if (ConfMan.hasKey("group_" + groupName, ConfMan.kApplicationDomain)) {
 		const Common::String &val = ConfMan.get("group_" + groupName, ConfMan.kApplicationDomain);
-		Common::StringTokenizer hiddenGroups(val);
+		Common::U32StringTokenizer hiddenGroups(val.decode());
 
-		for (Common::String tok = hiddenGroups.nextToken(); tok.size(); tok = hiddenGroups.nextToken()) {
+		for (Common::U32String tok = hiddenGroups.nextToken(); tok.size(); tok = hiddenGroups.nextToken()) {
 			// See if the hidden group is in our group headers still, if so, hide it
 			for (Common::U32StringArray::size_type i = 0; i < _groupHeaders.size(); ++i) {
-				if (_groupHeaders[i] == tok || (tok == "unnamed" && _groupHeaders[i].size() == 0)) {
+				if (_groupHeaders[i] == tok || (tok == U"unnamed" && _groupHeaders[i].size() == 0)) {
 					_groupExpanded[i] = false;
 					break;
 				}

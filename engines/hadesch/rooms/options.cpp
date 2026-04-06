@@ -515,8 +515,8 @@ private:
 		bool selectedIsShown = false;
 		for (int i = 0; i < 6 && _showPos + i < (int) _userNames.size(); i++) {
 			Common::U32String name = _userNames[_showPos + i];
-			if (name == "")
-				name = "No name";
+			if (name.empty())
+				name = U"No name";
 			room->renderString("largeascii", name,
 					   Common::Point(150, 134 + 36 * i), 4000, 0,
 					   Common::String::format("username%d", i));

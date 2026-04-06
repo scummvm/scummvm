@@ -3686,7 +3686,7 @@ void GlobalOptionsDialog::setupCloudTab() {
 	if (_storageLastSyncDesc) _storageLastSyncDesc->setVisible(shownConnectedInfo);
 	if (_storageLastSync) {
 		Common::U32String sync = CloudMan.getStorageLastSync(_selectedStorageIndex);
-		if (sync == "") {
+		if (sync.empty()) {
 			if (_selectedStorageIndex == CloudMan.getStorageIndex() && CloudMan.isSyncing())
 				sync = _("<right now>");
 			else
