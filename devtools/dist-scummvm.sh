@@ -37,6 +37,7 @@ if [ $# -lt 2 ]; then
 fi
 
 echo_n() {
+	# shellcheck disable=SC2059
 	printf "$@"
 }
 
