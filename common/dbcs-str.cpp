@@ -105,22 +105,6 @@ DBCSString &DBCSString::operator+=(value_type c) {
 	return *this;
 }
 
-bool DBCSString::operator==(const String &x) const {
-	return equalsC(x.c_str());
-}
-
-bool DBCSString::operator==(const char *x) const {
-	return equalsC(x);
-}
-
-bool DBCSString::operator!=(const String &x) const {
-	return !equalsC(x.c_str());
-}
-
-bool DBCSString::operator!=(const char *x) const {
-	return !equalsC(x);
-}
-
 DBCSString operator+(const DBCSString &x, const DBCSString &y) {
 	DBCSString temp(x);
 	temp += y;

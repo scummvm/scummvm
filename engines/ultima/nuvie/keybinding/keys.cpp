@@ -501,8 +501,8 @@ Common::Array<Common::U32String> KeyBinder::buildKeyHelp() const {
 			if (inputs.size() > 0) {
 				Common::U32String desc;
 				// The * can't be bolded easily in markdown..
-				if (inputs[0].description == "*")
-					desc = "*";
+				if (inputs[0].description == Common::U32String('*'))
+					desc = Common::U32String('*');
 				else
 					desc = Common::U32String("**") + inputs[0].description + Common::U32String("**");
 				desc += Common::U32String(" - ") + action->description;
