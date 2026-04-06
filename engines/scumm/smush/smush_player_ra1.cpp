@@ -237,4 +237,115 @@ bool SmushPlayerRebel1::handleGameAnimHeader(byte *headerContent) {
 	return true;
 }
 
+void SmushPlayerRebel1::handleGameParseNextFrame() {
+	processDispatches(_smushAudioSampleRate / _speed);
+}
+
+// Forward declarations for RA1 codec functions (defined in smush_player.cpp and codec1.cpp)
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
+	int pitch, int bufWidth, int bufHeight, uint8 param);
+void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize);
+void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2, int codec);
+
+bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int height) {
+	// RA1 sub-fullscreen frames render into _specialBuffer at their (left, top) offset position.
+	int bufSize = 384 * 242;
+	if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
+		free(_specialBuffer);
+		_specialBuffer = (byte *)calloc(bufSize, 1);
+		_specialBufferSize = bufSize;
+	}
+	_dst = _specialBuffer;
+	return true;
+}
+
+bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int height) {
+	if (_dst == _specialBuffer) {
+		// RA1: sub-fullscreen FOBJs should not override the 384x242 dimensions.
+		if (_width == 0 || _height == 0) {
+			_width = 384;
+			_height = 242;
+		}
+		return true;
+	}
+	return false;
+}
+
+bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
+	// RA1 additive codec (SKIP_RLE) uses original coords, not adjusted
+	if (codec == SMUSH_CODEC_SKIP_RLE)
+		return false;
+	ra2AdjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	return true;
+}
+
+bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) {
+	// The base class passes clipped coords. For additive codec and scatter, we need original coords
+	// which are stored in the origLeft/origTop locals of decodeFrameObject. Since we can't access those
+	// from the override, the additive codec and scatter draw are special-cased.
+	// For now, handle the codecs that have RA1-specific behavior.
+	switch (codec) {
+	case SMUSH_CODEC_RLE:
+		smushDecodeRA1Transparent(_dst, src, left, top, width, height, pitch);
+		return true;
+	case SMUSH_CODEC_RLE_ALT:
+		smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch);
+		return true;
+	case SMUSH_CODEC_RA1_SCATTER:
+		smushDecodeRA1Scatter(_dst, src, left, top, _width, _height, pitch, dataSize);
+		return true;
+	case SMUSH_CODEC_RA1_DELTA:
+	case SMUSH_CODEC_RA1_BLOCK:
+		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, 0, 0, codec);
+		return true;
+	case SMUSH_CODEC_LINE_UPDATE:
+		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch);
+		return true;
+	case SMUSH_CODEC_SKIP_RLE: {
+		const int bufWidth = pitch;
+		const int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
+		smushDecodeRA1AdditiveLineUpdate(_dst, src, left, top, width, height,
+			pitch, bufWidth, bufHeight, 0);
+		return true;
+	}
+	default:
+		debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
+			codec, left, top, width, height);
+		return true;
+	}
+}
+
+bool SmushPlayerRebel1::handleGameStoreFrame() {
+	// RA1 handles STOR via handleGameFrameObjectPost
+	return true;
+}
+
+void SmushPlayerRebel1::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
+	debug("RA1 FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
+		_frame, codec, left, top, width, height, dataSize, _storeFrame);
+}
+
+void SmushPlayerRebel1::handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {
+	ra2RememberLastFobj(codec, data, dataSize, left, top, width, height);
+	// RA1 STOR handling remains in handleFrameObject (needs ra1Param/rawLeft/rawTop)
+}
+
+void SmushPlayerRebel1::handleGameFrameStart() {
+	_hasFrameFobjForGost = false;
+}
+
+void SmushPlayerRebel1::handleGameGost(int32 subSize, Common::SeekableReadStream &b) {
+	ra1HandleGost(subSize, b);
+}
+
+void SmushPlayerRebel1::handleGameProcessAudio(int16 feedSize) {
+	if (_insane) {
+		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		rebel1->processAudioFrame(feedSize);
+	}
+}
+
 } // End of namespace Scumm

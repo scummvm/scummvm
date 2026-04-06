@@ -1846,7 +1846,7 @@ void ScummEngine_v7::setupScumm(const Common::Path &macResourceFile) {
 		// Rebel Assault 2 doesn't use iMUSE for audio - audio is handled directly by INSANE
 		_musicEngine = _imuseDigital = nullptr;
 		_insane = new InsaneRebel2(this);
-		_splayer = new SmushPlayer(this, nullptr, _insane);
+		_splayer = new SmushPlayerRebel2(this, nullptr, _insane);
 
 		// Initialize cursor
 		_macGui = nullptr; // Ensure this is null as we don't want MacGui behavior

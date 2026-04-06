@@ -19,11 +19,10 @@
  *
  */
 
-// Rebel Assault 2 specific SmushPlayer methods
+// SmushPlayerRebel2 — RA2-specific SmushPlayer subclass
 //
-// These are methods of the SmushPlayer class that contain RA2-specific logic.
-// Keeping them in a separate file minimizes the diff on smush_player.cpp and
-// reduces the risk of regressions in Full Throttle / The Dig / CMI.
+// Overrides the virtual hooks defined in SmushPlayer to provide
+// Rebel Assault 2 specific video, font, text and codec handling.
 
 #include "common/endian.h"
 #include "common/rect.h"
@@ -53,10 +52,24 @@ void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int wi
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 
-/**
- * Initialize RA2-specific fields in the SmushPlayer constructor.
- */
-void SmushPlayer::ra2InitFields() {
+// ---------------------------------------------------------------------------
+// SmushPlayerRebel2 — construction / destruction
+// ---------------------------------------------------------------------------
+
+SmushPlayerRebel2::SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane)
+	: SmushPlayer(scumm, imuseDigital, insane) {
+	initGamePlayerFields();
+}
+
+SmushPlayerRebel2::~SmushPlayerRebel2() {
+	destroyGamePlayerFields();
+}
+
+// ---------------------------------------------------------------------------
+// Virtual hook overrides
+// ---------------------------------------------------------------------------
+
+void SmushPlayerRebel2::initGamePlayerFields() {
 	_multiFont = nullptr;
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
@@ -98,10 +111,7 @@ void SmushPlayer::ra2InitFields() {
 	_scrollY = 0;
 }
 
-/**
- * Free RA2-specific resources in the SmushPlayer destructor.
- */
-void SmushPlayer::ra2DestroyFields() {
+void SmushPlayerRebel2::destroyGamePlayerFields() {
 	delete _multiFont;
 	_multiFont = nullptr;
 	free(_storedFobjData);
@@ -119,7 +129,7 @@ void SmushPlayer::ra2DestroyFields() {
  * Re-pushes the SMUSH palette (videos without NPAL inherit from previous),
  * and handles background preservation between cinematic and gameplay videos.
  */
-void SmushPlayer::ra2InitVideo() {
+void SmushPlayerRebel2::initGameVideoState() {
 	// Re-push the SMUSH palette to the system. Videos like O_LEVEL.SAN
 	// have no NPAL chunk and inherit the palette from the previous video.
 	// Since play() resets _palDirtyMin/Max, the palette would never be pushed otherwise.
@@ -149,7 +159,7 @@ void SmushPlayer::ra2InitVideo() {
  * RA2-specific cleanup in SmushPlayer::release().
  * Frees stored FOBJ data but preserves _frameBuffer across videos.
  */
-void SmushPlayer::ra2ReleaseVideo() {
+void SmushPlayerRebel2::releaseGameVideoState() {
 	free(_storedFobjData);
 	_storedFobjData = nullptr;
 	_storedFobjDataSize = 0;
@@ -170,7 +180,7 @@ void SmushPlayer::ra2ReleaseVideo() {
  * For Handler 25, skips FTCH to preserve overlays.
  * For other handlers, re-decodes stored FOBJ with current offsets.
  */
-void SmushPlayer::ra2HandleFetch(Common::SeekableReadStream &b) {
+bool SmushPlayerRebel2::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
 	int16 ftchUnknown = b.readSint16LE();
 	int16 ftchX = b.readSint16LE();
 	int16 ftchY = b.readSint16LE();
@@ -186,7 +196,7 @@ void SmushPlayer::ra2HandleFetch(Common::SeekableReadStream &b) {
 		int handler = rebel2->getHandler();
 		if (handler == 25) {
 			debug("SmushPlayer::handleFetch: Skipping FTCH for Handler 25 - preserving overlays");
-			return;
+			return true;
 		}
 	}
 
@@ -202,7 +212,76 @@ void SmushPlayer::ra2HandleFetch(Common::SeekableReadStream &b) {
 	} else {
 		debug("SmushPlayer FTCH: No stored FOBJ data! (frame=%d)", _frame);
 	}
+
+	return true;
 }
+
+/**
+ * RA2-specific text rendering using SmushMultiFont for inline font switching.
+ */
+bool SmushPlayerRebel2::handleGameTextRendering(const char *str, int fontId, int color,
+												int pos_x, int pos_y, int left, int top,
+												int width, int height, TextStyleFlags flg) {
+	ra2HandleTextResource(str, fontId, color, pos_x, pos_y, left, top, width, height, flg);
+	return true;
+}
+
+SmushFont *SmushPlayerRebel2::getGameFont(int font) {
+	// Font table for low-res mode (320x200). Original exe uses pointer
+	// arithmetic to select hi/lo font pairs (e.g. TKHIFONT+0x14=TALKFONT).
+	// Font 0: TALKFONT (TKHIFONT hi-res)
+	// Font 1: SMALFONT (SMHIFONT hi-res)
+	// Font 2: TITLFONT (TIHIFONT hi-res)
+	// Font 3: POVFONT  (POHIFONT hi-res)
+	const char *ra2_fonts[] = {
+		"SYSTM/TALKFONT.NUT",
+		"SYSTM/SMALFONT.NUT",
+		"SYSTM/TITLFONT.NUT",
+		"SYSTM/POVFONT.NUT"
+	};
+	int numFonts = ARRAYSIZE(ra2_fonts);
+	if (font >= 0 && font < numFonts) {
+		_sf[font] = new SmushFont(_vm, ra2_fonts[font], true);
+	} else {
+		debugC(DEBUG_SMUSH, "SmushPlayer::getFont: RA2 unknown font %d, using TALKFONT", font);
+		_sf[font] = new SmushFont(_vm, ra2_fonts[0], true);
+	}
+	return _sf[font];
+}
+
+/**
+ * Reset XPAL delta palette from the current base palette.
+ * Prevents stale delta values from a previous video corrupting the palette.
+ */
+void SmushPlayerRebel2::adjustGamePalette() {
+	for (int j = 0; j < 768; ++j) {
+		_shiftedDeltaPal[j] = _pal[j] << 7;
+	}
+	memset(_deltaPal, 0, sizeof(_deltaPal));
+}
+
+/**
+ * RA2-specific handleAnimHeader fixup: when AHDR reports 0x0 dimensions,
+ * use screen dimensions instead.
+ */
+bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
+	int width = READ_LE_UINT16(&headerContent[4]);
+	int height = READ_LE_UINT16(&headerContent[6]);
+
+	if (width == 0 && height == 0) {
+		_width = _vm->_screenWidth;
+		_height = _vm->_screenHeight;
+		debug("SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
+	} else {
+		_width = width;
+		_height = height;
+	}
+	return true;
+}
+
+// ---------------------------------------------------------------------------
+// RA2 helper methods (still on SmushPlayer for now, used by base class)
+// ---------------------------------------------------------------------------
 
 /**
  * Handle LOAD chunk for Rebel Assault 2.
@@ -492,60 +571,84 @@ void SmushPlayer::ra2HandleGost(int32 subSize, Common::SeekableReadStream &b) {
 }
 
 /**
- * Reset XPAL delta palette from the current base palette.
- * Prevents stale delta values from a previous video corrupting the palette.
+ * RA2 per-frame audio processing.
  */
-void SmushPlayer::ra2ResetDeltaPalette() {
-	for (int j = 0; j < 768; ++j) {
-		_shiftedDeltaPal[j] = _pal[j] << 7;
-	}
-	memset(_deltaPal, 0, sizeof(_deltaPal));
-}
-
-/**
- * RA2 font path table.
- */
-SmushFont *SmushPlayer::ra2GetFont(int font) {
-	// Font table for low-res mode (320x200). Original exe uses pointer
-	// arithmetic to select hi/lo font pairs (e.g. TKHIFONT+0x14=TALKFONT).
-	// Font 0: TALKFONT (TKHIFONT hi-res)
-	// Font 1: SMALFONT (SMHIFONT hi-res)
-	// Font 2: TITLFONT (TIHIFONT hi-res)
-	// Font 3: POVFONT  (POHIFONT hi-res)
-	const char *ra2_fonts[] = {
-		"SYSTM/TALKFONT.NUT",
-		"SYSTM/SMALFONT.NUT",
-		"SYSTM/TITLFONT.NUT",
-		"SYSTM/POVFONT.NUT"
-	};
-	int numFonts = ARRAYSIZE(ra2_fonts);
-	if (font >= 0 && font < numFonts) {
-		_sf[font] = new SmushFont(_vm, ra2_fonts[font], true);
-	} else {
-		debugC(DEBUG_SMUSH, "SmushPlayer::getFont: RA2 unknown font %d, using TALKFONT", font);
-		_sf[font] = new SmushFont(_vm, ra2_fonts[0], true);
-	}
-	return _sf[font];
-}
-
-/**
- * RA2 per-frame audio processing (called from parseNextFrame).
- */
-void SmushPlayer::ra2ParseNextFrame() {
+void SmushPlayerRebel2::handleGameParseNextFrame() {
 	// Call processDispatches directly since RA2 has no iMUSE
 	// 11025 Hz / 12 fps = ~918 samples per frame
 	processDispatches(_smushAudioSampleRate / 12);
 }
 
-/**
- * RA2-specific handleAnimHeader fixup: when AHDR reports 0x0 dimensions,
- * use screen dimensions instead.
- */
-void SmushPlayer::ra2FixupAnimHeader() {
-	if (_width == 0 && _height == 0) {
-		_width = _vm->_screenWidth;   // 320
-		_height = _vm->_screenHeight; // 200
-		debug("SmushPlayer::handleAnimHeader: RA2 AHDR has 0x0 dims - using screen size %dx%d", _width, _height);
+// ---------------------------------------------------------------------------
+// Frame decode pipeline overrides
+// ---------------------------------------------------------------------------
+
+bool SmushPlayerRebel2::handleGameFrameBufferSelect(int codec, int width, int height) {
+	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
+		ra2SelectFrameBuffer(width, height);
+		return true;
+	}
+	return false;
+}
+
+bool SmushPlayerRebel2::handleGameDimensionOverride(int codec, int width, int height) {
+	if ((height != _vm->_screenHeight) || (width != _vm->_screenWidth)) {
+		// RA2: preserve _width/_height set during buffer allocation
+		return true;
+	}
+	return false;
+}
+
+bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
+	ra2AdjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	return true;
+}
+
+bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) {
+	// Handle RA2-specific codecs (21, 23, 44, 45); return false for standard
+	// codecs (RLE, uncompressed, codec 37/47) so the base class decodes them.
+	return ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize);
+}
+
+bool SmushPlayerRebel2::handleGameStoreFrame() {
+	// RA2 handles STOR via ra2StoreFobjData in handleGameFrameObjectPost
+	return true;
+}
+
+void SmushPlayerRebel2::handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {
+	debug("SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
+		_frame, codec, left, top, width, height, dataSize, _storeFrame, _width, _height);
+}
+
+void SmushPlayerRebel2::handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {
+	ra2RememberLastFobj(codec, data, dataSize, left, top, width, height);
+
+	if (_storeFrame) {
+		ra2StoreFobjData(codec, data, dataSize, left, top, width, height);
+	}
+}
+
+void SmushPlayerRebel2::handleGameFrameStart() {
+	_hasFrameFobjForGost = false;
+}
+
+bool SmushPlayerRebel2::handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) {
+	if (_skipNext) {
+		_skipNext = false;
+		debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
+		return true;
+	}
+	return false;
+}
+
+void SmushPlayerRebel2::handleGameGost(int32 subSize, Common::SeekableReadStream &b) {
+	ra2HandleGost(subSize, b);
+}
+
+void SmushPlayerRebel2::handleGameProcessAudio(int16 feedSize) {
+	if (_insane) {
+		InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
+		rebel2->processAudioFrame(feedSize);
 	}
 }
 

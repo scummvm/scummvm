@@ -288,7 +288,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_fastForwardToFrame = 0;
 	_preserveVideoStateOnNextPlay = false;
 
-	ra2InitFields();
 	_IACTpos = 0;
 	_speed = -1;
 	_insanity = false;
@@ -327,7 +326,6 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 SmushPlayer::~SmushPlayer() {
 	delete _IACTchannel;
 	delete _compressedFileSoundHandle;
-	ra2DestroyFields();
 	terminateAudio();
 
 	free(_frameBuffer);
@@ -368,8 +366,9 @@ void SmushPlayer::init(int32 speed) {
 	_vm->setDirtyColors(0, 255);
 	_dst = vs->getPixels(0, 0);
 
-	if (isRA2())
-		ra2InitVideo();
+	// Game-specific per-video init that needs _dst to be set
+	// (e.g. RA2 palette re-push + buffer clear/preserve).
+	initGameVideoState();
 
 	// HACK HACK HACK: This is an *evil* trick, beware!
 	// We do this to fix bug #1792. A proper solution would change all the
@@ -414,13 +413,11 @@ void SmushPlayer::release() {
 	_ra1CleanFrameSize = 0;
 	_ra1HasCleanFrame = false;
 
-	if (isRA2()) {
-		ra2ReleaseVideo();
-	} else {
+	releaseGameVideoState();
+	if (!shouldPreserveFrameBuffer()) {
 		free(_frameBuffer);
 		_frameBuffer = nullptr;
 	}
-	releaseGameVideoState();
 
 	_IACTstream = nullptr;
 
@@ -439,27 +436,15 @@ void SmushPlayer::release() {
 }
 
 void SmushPlayer::handleStore(int32 subSize, Common::SeekableReadStream &b) {
-	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore()");
+	debugC(DEBUG_SMUSH, "SmushPlayer::handleStore() frame=%d", _frame);
 	assert(subSize >= 4);
 	_storeFrame = true;
-	if (isRA2()) {
-		debug("SmushPlayer STOR: frame=%d - will store next FOBJ", _frame);
-	}
-	if (isRA1()) {
-		debug("RA1 STOR: frame=%d", _frame);
-	}
 }
 
 void SmushPlayer::handleFetch(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFetch()");
-	assert(subSize >= (isRA1() ? 4 : 6));
 
-	if (isRA2()) {
-		ra2HandleFetch(b);
-		return;
-	}
-
-	// RA1 FTCH re-decodes the raw FOBJ captured by STOR (not a framebuffer memcpy).
+	// Game-specific FTCH handling (RA1 re-decodes stored FOBJ, RA2 does offset-aware re-decode)
 	if (handleGameFetch(subSize, b))
 		return;
 
@@ -484,7 +469,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	// (RA2 audio uses PSAD chunks, not IACT)
 	bool isAudioIACT = (code == 8) && (flags == 46);
 
-	if (!isAudioIACT || isRA2()) {
+	if (!isAudioIACT || shouldRouteAllIACTs()) {
 		_vm->_insane->procIACT(_dst, 0, 0, 0, b, subSize - 8, 0, code, flags, unknown, userId);
 		return;
 	}
@@ -712,7 +697,7 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// RA2: The original game always shows subtitle text during cinematics
 	// (there is no subtitle toggle in the retail options menu). Skip
 	// this check so TRES text is always rendered.
-	if (!isRA2() && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
+	if (!shouldAlwaysShowSubtitles() && (!ConfMan.getBool("subtitles")) && ((flags & 8) == 8))
 		return;
 
 	bool isCJKComi = (_vm->_game.id == GID_CMI && _vm->_useCJKMode);
@@ -780,8 +765,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
 	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
 
-	if (isRA2()) {
-		ra2HandleTextResource(str, fontId, color, pos_x, pos_y, left, top, width, height, flg);
+	if (handleGameTextRendering(str, fontId, color, pos_x, pos_y, left, top, width, height, flg)) {
+		// Handled by game-specific renderer
 	} else {
 		SmushFont *sf = getFont(fontId);
 		assert(sf != nullptr);
@@ -905,7 +890,7 @@ void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int widt
  * followed by (copyLen+1) literal bytes. Destination advances by pitch
  * per line, source advances by lineSize+2 per line.
  */
-static void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
 	dst += top * pitch + left;
 
 	for (int row = 0; row < height; row++) {
@@ -960,7 +945,7 @@ static void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top
  * `(paletteBase - 0x30)` to the destination pixels already present in the
  * framebuffer.
  */
-static void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
+void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
 		int pitch, int bufWidth, int bufHeight, uint8 paletteBase) {
 	const uint8 colorDelta = (uint8)(paletteBase - 0x30);
 
@@ -1006,7 +991,7 @@ static void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int lef
  * Position starts at (left, top) and accumulates (dx, dy) per entry.
  * Pixel is drawn if position is within buffer bounds.
  */
-static void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize) {
+void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize) {
 	int curX = left;
 	int curY = top;
 
@@ -1187,19 +1172,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 			_specialBufferSize = bufSize;
 		}
 		_dst = _specialBuffer;
-	} else if (isRA1()) {
-		// RA1 sub-fullscreen frames (e.g. O1OPTION.ANM uses ~319x196 codec 2
-		// frames for the starfield animation). Render into _specialBuffer at
-		// their (left, top) offset position.
-		int bufSize = 384 * 242;
-		if (_specialBuffer == nullptr || bufSize > _specialBufferSize) {
-			free(_specialBuffer);
-			_specialBuffer = (byte *)calloc(bufSize, 1);
-			_specialBufferSize = bufSize;
-		}
-		_dst = _specialBuffer;
-	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		ra2SelectFrameBuffer(width, height);
+	} else if (handleGameFrameBufferSelect(codec, width, height)) {
+		// Game-specific buffer selection handled
 	} else if ((height > _vm->_screenHeight) || (width > _vm->_screenWidth))
 		return;
 	// FT Insane uses smaller frames to draw overlays with moving objects
@@ -1211,15 +1185,8 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	if ((height == 242) && (width == 384)) {
 		_width = width;
 		_height = height;
-	} else if (isRA1() && _dst == _specialBuffer) {
-		// RA1: sub-fullscreen FOBJs should not override the 384x242 dimensions.
-		// Set dimensions on first use if not yet established.
-		if (_width == 0 || _height == 0) {
-			_width = 384;
-			_height = 242;
-		}
-	} else if (isRA2() && ((height != _vm->_screenHeight) || (width != _vm->_screenWidth))) {
-		// RA2: preserve _width/_height set during buffer allocation
+	} else if (handleGameDimensionOverride(codec, width, height)) {
+		// Game-specific dimension handling
 	} else {
 		_width = _vm->_screenWidth;
 		_height = _vm->_screenHeight;
@@ -1232,15 +1199,11 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	// Save original FOBJ position and dimensions before clipping. Codec 37/47
 	// (delta block/glyph) decode the full frame starting at (0,0). Codec 2
 	// (scatter draw) needs the original start position for accumulation.
-	int origLeft = left;
-	int origTop = top;
 	int origWidth = width;
 	int origHeight = height;
 
 	int srcSkipY = 0;
-	const bool ra1AdditiveCodec = isRA1() && (codec == SMUSH_CODEC_SKIP_RLE);
-	if ((isRA1() || isRA2()) && !ra1AdditiveCodec) {
-		ra2AdjustFrameCoords(left, top, width, height, pitch, &srcSkipY);
+	if (handleGameAdjustCoords(codec, left, top, width, height, pitch, &srcSkipY)) {
 		if (width <= 0 || height <= 0)
 			return;
 	}
@@ -1248,103 +1211,46 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	// For RLE codecs, skip source rows that were clipped from the top.
 	// Each RLE row has a 2-byte size prefix, so we can advance past them.
 	const uint8 *adjustedSrc = src;
-	if (isRA1() && srcSkipY > 0 && (codec == SMUSH_CODEC_RLE || codec == SMUSH_CODEC_RLE_ALT || codec == SMUSH_CODEC_LINE_UPDATE)) {
-		for (int i = 0; i < srcSkipY; i++) {
-			adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
-		}
+	for (int i = 0; i < srcSkipY; i++) {
+		adjustedSrc += READ_LE_UINT16(adjustedSrc) + 2;
 	}
 
-	switch (codec) {
-	case SMUSH_CODEC_RLE:
-		if (isRA1()) {
-			// RA1 codec 1: pixel 0 is transparent (background shows through)
-			smushDecodeRA1Transparent(_dst, adjustedSrc, left, top, width, height, pitch);
-		} else {
+	// Try game-specific codec handler first (pass adjustedSrc for row-skip-aware codecs)
+	if (!handleGameCodecDecode(codec, adjustedSrc, left, top, width, height, pitch, dataSize)) {
+		// Standard SCUMM codec dispatch
+		switch (codec) {
+		case SMUSH_CODEC_RLE:
 			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
-		}
-		break;
-	case SMUSH_CODEC_RLE_ALT:
-		// Codec 3: all pixels opaque (pixel 0 is written).
-		// Original FUN_00010916 writes every byte including value 0.
-		if (isRA1()) {
-			smushDecodeRLEOpaque(_dst, adjustedSrc, left, top, width, height, pitch);
-		} else {
+			break;
+		case SMUSH_CODEC_RLE_ALT:
 			smushDecodeRLE(_dst, adjustedSrc, left, top, width, height, pitch);
-		}
-		break;
-	case SMUSH_CODEC_RA1_SCATTER:
-		// Codec 2: Scatter draw uses absolute buffer coords, not clipped FOBJ coords.
-		// Pass full buffer dimensions for clipping (not the FOBJ width/height).
-		smushDecodeRA1Scatter(_dst, src, origLeft, origTop, _width, _height, pitch, dataSize);
-		break;
-	case SMUSH_CODEC_DELTA_BLOCKS:
-		// Codec 37 writes the full frame to dst via memcpy — always uses original
-		// FOBJ dimensions, not position-clipped dimensions.
-		if (!_deltaBlocksCodec)
-			_deltaBlocksCodec = new SmushDeltaBlocksDecoder(origWidth, origHeight);
-		if (_deltaBlocksCodec)
-			_deltaBlocksCodec->decode(_dst, src);
-		break;
-	case SMUSH_CODEC_DELTA_GLYPHS:
-		// Codec 47 also writes the full frame — use original dimensions.
-		if (!_deltaGlyphsCodec)
-			_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(origWidth, origHeight);
-		if (_deltaGlyphsCodec)
-			_deltaGlyphsCodec->decode(_dst, src);
-		break;
-	case SMUSH_CODEC_RA1_DELTA:
-	case SMUSH_CODEC_RA1_BLOCK:
-		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, ra1Param, ra1Parm2, codec);
-		break;
-	case SMUSH_CODEC_UNCOMPRESSED:
-		smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
-		break;
-	case SMUSH_CODEC_LINE_UPDATE:
-		if (isRA1()) {
-			smushDecodeRA1SkipCopy(_dst, adjustedSrc, left, top, width, height, pitch);
 			break;
-		}
-		// Fall through for RA2
-	case SMUSH_CODEC_SKIP_RLE:
-		if (isRA1()) {
-			const int bufWidth = pitch;
-			const int bufHeight = (_dst == _specialBuffer) ? _height : _vm->_screenHeight;
-			smushDecodeRA1AdditiveLineUpdate(_dst, src, origLeft, origTop, origWidth, origHeight,
-				pitch, bufWidth, bufHeight, ra1Param);
+		case SMUSH_CODEC_DELTA_BLOCKS:
+			if (!_deltaBlocksCodec)
+				_deltaBlocksCodec = new SmushDeltaBlocksDecoder(origWidth, origHeight);
+			if (_deltaBlocksCodec)
+				_deltaBlocksCodec->decode(_dst, src);
 			break;
-		}
-		// Fall through for RA2
-	default:
-		if (isRA2() && ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize))
+		case SMUSH_CODEC_DELTA_GLYPHS:
+			if (!_deltaGlyphsCodec)
+				_deltaGlyphsCodec = new SmushDeltaGlyphsDecoder(origWidth, origHeight);
+			if (_deltaGlyphsCodec)
+				_deltaGlyphsCodec->decode(_dst, src);
 			break;
-		if (isRA1() || isRA2()) {
-			debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
-				codec, left, top, width, height);
+		case SMUSH_CODEC_UNCOMPRESSED:
+			smushDecodeUncompressed(_dst, src, left, top, width, height, pitch);
 			break;
+		default:
+			if (isInsaneGame()) {
+				debugC(DEBUG_SMUSH, "SmushPlayer::decodeFrameObject: Skipping unknown codec %d (left=%d, top=%d, %dx%d)",
+					codec, left, top, width, height);
+			} else {
+				error("Invalid codec for frame object : %d", codec);
+			}
 		}
-		error("Invalid codec for frame object : %d", codec);
 	}
 
-	// RA2 debug: check buffer fill after decode
-	if (isRA2() && _dst == _specialBuffer && _frame < 3) {
-		int nonZero = 0;
-		int total = _width * _height;
-		for (int i = 0; i < total; i++) {
-			if (_dst[i] != 0) nonZero++;
-		}
-		// Sample bottom half
-		int bottomNonZero = 0;
-		int bottomStart = (_height / 2) * _width;
-		int bottomTotal = total - bottomStart;
-		for (int i = bottomStart; i < total; i++) {
-			if (_dst[i] != 0) bottomNonZero++;
-		}
-		debug("SmushPlayer FOBJ decode done: frame=%d codec=%d buf=%dx%d total=%d nonzero=%d (%d%%) bottomHalf=%d/%d (%d%%)",
-			_frame, codec, _width, _height, total, nonZero, (nonZero * 100) / total,
-			bottomNonZero, bottomTotal, bottomTotal > 0 ? (bottomNonZero * 100) / bottomTotal : 0);
-	}
-
-	if (_storeFrame && !isRA1() && !isRA2()) {
+	if (_storeFrame && !handleGameStoreFrame()) {
 		if (_frameBuffer == nullptr) {
 			_frameBuffer = (byte *)malloc(_width * _height);
 		}
@@ -1412,27 +1318,16 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 		_frame, codec, left, top, width, height, subSize - 14);
 
-	if (isRA2()) {
-		debug("SmushPlayer FOBJ: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d _width=%d _height=%d",
-			_frame, codec, left, top, width, height, subSize - 14, _storeFrame, _width, _height);
-	}
-	if (isRA1()) {
-		debug("RA1 FOBJ: frame=%d codec=%d object=%d pos=(%d,%d) size=%dx%d dataSize=%d storeFrame=%d",
-			_frame, codec, ra1ObjectId, left, top, width, height, subSize - 14, _storeFrame);
-	}
+	handleGameFrameObjectPre(codec, left, top, width, height, subSize - 14);
 
 	int32 chunk_size = subSize - 14;
 	byte *chunk_buffer = (byte *)malloc(chunk_size);
 	assert(chunk_buffer);
 	b.read(chunk_buffer, chunk_size);
 
-	if (isRA1() || isRA2()) {
-		ra2RememberLastFobj(codec, chunk_buffer, chunk_size, left, top, width, height);
-	}
+	handleGameFrameObjectPost(codec, chunk_buffer, chunk_size, left, top, width, height);
 
-	if (_storeFrame && isRA2()) {
-		ra2StoreFobjData(codec, chunk_buffer, chunk_size, left, top, width, height);
-	}
+	// RA1 STOR needs ra1Param/rawLeft/rawTop which aren't available through the virtual hook
 	if (_storeFrame && isRA1()) {
 		free(_storedFobjData);
 		_storedFobjData = (byte *)malloc(chunk_size);
@@ -1505,8 +1400,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame(%d)", _frame);
 	uint8 *audioChunk = nullptr;
 	_skipNext = false;
-	if (isRA2() || isRA1())
-		_hasFrameFobjForGost = false;
+	handleGameFrameStart();
 
 	bool interactiveRA1 = false;
 	bool forceInteractiveClearRA1 = false;
@@ -1591,10 +1485,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			break;
 		}
 
-		// RA2: When _skipNext is set, skip the NEXT chunk of ANY type
-		if (isRA2() && _skipNext) {
-			_skipNext = false;
-			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: SKIP consumed chunk %s frame=%d", tag2str(subType), _frame);
+		if (handleGameSkipChunk(subType, subSize, b)) {
 			frameSize -= subSize + 8;
 			b.seek(subOffset + subSize, SEEK_SET);
 			if (subSize & 1) {
@@ -1650,10 +1541,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleLoad(subSize, b);
 			break;
 		case MKTAG('G','O','S','T'):
-			if (isRA1())
-				ra1HandleGost(subSize, b);
-			else if (isRA2())
-				ra2HandleGost(subSize, b);
+			handleGameGost(subSize, b);
 			break;
 		// RA1-specific chunk types: skip gracefully
 		case MKTAG('G','A','M','E'):
@@ -1846,10 +1734,6 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			byte *palettePtr = &headerContent[6];
 			memcpy(_pal, palettePtr, sizeof(_pal));
 			adjustGamePalette();
-
-			if (isRA2())
-				ra2ResetDeltaPalette();
-
 			setDirtyColors(0, 255);
 		}
 
@@ -1858,17 +1742,15 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 			_height = READ_LE_UINT16(&headerContent[6]);
 		}
 
-		if (isRA2())
-			ra2FixupAnimHeader();
-
 		free(headerContent);
 	}
 }
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		if (isRA2()) {
-			_strings = getStrings(_vm, "SYSTM/GAME.TRS", true);
+		const char *gameStringResource = getGameStringResource();
+		if (gameStringResource) {
+			_strings = getStrings(_vm, gameStringResource, true);
 		} else if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			readString("mineroad.trs");
 		}
@@ -1902,8 +1784,6 @@ SmushFont *SmushPlayer::getFont(int font) {
 
 			_sf[font] = new SmushFont(_vm, ft_fonts[font], true);
 		}
-	} else if (isRA2()) {
-		return ra2GetFont(font);
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
@@ -2086,11 +1966,8 @@ void SmushPlayer::parseNextFrame() {
 	if (_vm->_imuseDigital)
 		_vm->_imuseDigital->flushTracks();
 
-	if (!_imuseDigital && isRA2())
-		ra2ParseNextFrame();
-
-	if (!_imuseDigital && isRA1())
-		processDispatches(_smushAudioSampleRate / _speed);
+	if (!_imuseDigital)
+		handleGameParseNextFrame();
 }
 
 void SmushPlayer::setPalette(const byte *palette) {
@@ -2207,7 +2084,7 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	// Hide mouse
 	bool oldMouseState = CursorMan.showMouse(false);
-	if (isRA1() || isRA2())
+	if (isInsaneGame())
 		insanity(true);
 
 	// Load the video
@@ -2716,13 +2593,7 @@ void SmushPlayer::processDispatches(int16 feedSize) {
 	bool speechIsPlaying = false;
 
 	if (!_imuseDigital) {
-		if (isRA2() && _insane) {
-			InsaneRebel2 *rebel2 = static_cast<InsaneRebel2 *>(_insane);
-			rebel2->processAudioFrame(feedSize);
-		} else if (isRA1() && _insane) {
-			InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-			rebel1->processAudioFrame(feedSize);
-		}
+		handleGameProcessAudio(feedSize);
 		return;
 	}
 
