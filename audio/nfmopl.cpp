@@ -35,9 +35,9 @@
 
 extern "C"
 {
-#include "hwinfo.h"
-#include "sc_gmemalloc.h"
-#include "nfmoplshadowregs.h"
+#include <hwinfo.h>
+#include <sc_gmemalloc.h>
+#include <nfmoplshadowregs.h>
 }
 
 #ifndef RELEASE_BUILD

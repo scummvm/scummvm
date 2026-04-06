@@ -36,8 +36,8 @@
 
 extern "C"
 {
-#include "nfmcore.h"
-#include "nfmutil.h"
+#include <nfmcore.h>
+#include <nfmutil.h>
 }
 
 namespace OPL {
