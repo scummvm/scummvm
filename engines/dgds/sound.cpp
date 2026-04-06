@@ -430,7 +430,7 @@ void Sound::loadSNGSoundData(const Common::String &filename, Common::Array<Sound
 
 void Sound::patchSoundData(const Common::String& filename, uint16 soundNumber, byte* data, uint32 size) {
 	// TODO Can we check here if the game that's currently playing is Heart of China?
-	if (filename.equalsC("SOUNDS1.SNG") && soundNumber == 59) {
+	if (filename == "SOUNDS1.SNG" && soundNumber == 59) {
 		// Heart of China running water sound effect. This is broken on MT-32.
 		// This is an original game bug.
 		//

@@ -666,18 +666,18 @@ class StringTestSuite : public CxxTest::TestSuite
 		// Makes a deep copy without changing the length of the original
 		Common::U32String s1 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
 		Common::U32String s2(s1);
-		TS_ASSERT_EQUALS(s1, "TestTestTestTestTestTestTestTestTestTestTest");
-		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s1, U"TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, U"TestTestTestTestTestTestTestTestTestTestTest");
 		s1.replace(0, 4, Common::U32String("TEST"));
-		TS_ASSERT_EQUALS(s1, "TESTTestTestTestTestTestTestTestTestTestTest");
-		TS_ASSERT_EQUALS(s2, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s1, U"TESTTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s2, U"TestTestTestTestTestTestTestTestTestTestTest");
 
 		// Makes a deep copy when we shorten the string
 		Common::U32String s3 = Common::U32String("TestTestTestTestTestTestTestTestTestTestTest");
 		Common::U32String s4(s3);
 		s3.replace(0, 32, Common::U32String());
-		TS_ASSERT_EQUALS(s3, "TestTestTest");
-		TS_ASSERT_EQUALS(s4, "TestTestTestTestTestTestTestTestTestTestTest");
+		TS_ASSERT_EQUALS(s3, U"TestTestTest");
+		TS_ASSERT_EQUALS(s4, U"TestTestTestTestTestTestTestTestTestTestTest");
 	}
 
 	void test_find() {
