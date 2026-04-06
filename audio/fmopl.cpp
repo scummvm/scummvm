@@ -84,7 +84,7 @@ enum OplEmulator {
 	kOPL3LPT = 7,
 	kRWOPL3 = 8
 #ifdef USE_NFM
-	kNfmNokturnFM2 = 9,
+	,kNfmNokturnFM2 = 9,
 	kNfmNokturnFM3 = 10,
 	kNfmRWOpl3Express = 11,
 	kNfmOPL2LPT = 12,
