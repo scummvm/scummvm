@@ -335,6 +335,10 @@ public:
 		kLevelReturnToMenu = 4    // Return to main menu
 	};
 
+	// Main game entry point — full game loop (intro, menu, pilot, chapter, levels)
+	// Emulates the retail game flow from FUN_004142BD
+	void runGame();
+
 	// Play the intro sequence (CREDITS/O_OPEN_C, O_OPEN_D, OPEN/O_OPEN_A, O_OPEN_B)
 	// Emulates case 0 in FUN_004142BD
 	void playIntroSequence();
