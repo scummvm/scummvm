@@ -99,12 +99,14 @@ class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
 class Insane;
 class SmushPlayerRebel1;
+class SmushPlayerRebel2;
 
 class SmushPlayer {
 	friend class Insane;
 	friend class InsaneRebel1;
 	friend class InsaneRebel2;
 	friend class SmushPlayerRebel1;
+	friend class SmushPlayerRebel2;
 	friend class SmushMultiFont;
 private:
 	struct SmushAudioDispatch {
@@ -316,12 +318,31 @@ protected:
 	virtual void initGamePlayerFields() {}
 	virtual void destroyGamePlayerFields() {}
 	virtual void resetGameVideoState() {}
+	virtual void initGameVideoState() {}
 	virtual void releaseGameVideoState() {}
+	virtual bool shouldPreserveFrameBuffer() const { return false; }
 	virtual bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) { return false; }
 	virtual bool handleGameTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual bool handleGameTextRendering(const char *str, int fontId, int color, int pos_x, int pos_y, int left, int top, int width, int height, TextStyleFlags flg) { return false; }
+	virtual bool shouldAlwaysShowSubtitles() const { return false; }
 	virtual SmushFont *getGameFont(int font) { return nullptr; }
 	virtual void adjustGamePalette() {}
 	virtual bool handleGameAnimHeader(byte *headerContent) { return false; }
+	virtual const char *getGameStringResource() const { return nullptr; }
+	virtual void handleGameParseNextFrame() {}
+	virtual bool shouldRouteAllIACTs() const { return false; }
+	virtual bool handleGameFrameBufferSelect(int codec, int width, int height) { return false; }
+	virtual bool handleGameDimensionOverride(int codec, int width, int height) { return false; }
+	virtual bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) { return false; }
+	virtual bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) { return false; }
+	virtual bool handleGameStoreFrame() { return false; }
+	virtual void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {}
+	virtual void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {}
+	virtual void handleGameFrameStart() {}
+	virtual bool handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) { return false; }
+	virtual void handleGameGost(int32 subSize, Common::SeekableReadStream &b) {}
+	virtual void handleGameProcessAudio(int16 feedSize) {}
+	virtual bool isInsaneGame() const { return false; }
 
 private:
 	SmushFont *getFont(int font);
@@ -347,14 +368,10 @@ private:
 	void handleLoad(int32 subSize, Common::SeekableReadStream &);  // RA2 only (impl in smush_player_ra2.cpp)
 	void readPalette(byte *, Common::SeekableReadStream &);
 
-	// RA1/RA2 identification
+	// RA1/RA2 identification (isRA1 still used in handleFrameObject/handleFrame RA1 paths)
 	bool isRA1() const;
 	bool isRA2() const;
-	void ra2InitFields();
-	void ra2DestroyFields();
-	void ra2InitVideo();
-	void ra2ReleaseVideo();
-	void ra2HandleFetch(Common::SeekableReadStream &b);
+	// RA2 helper methods called from SmushPlayerRebel2 overrides
 	void ra2HandleTextResource(const char *str, int fontId, int color,
 							   int pos_x, int pos_y, int left, int top,
 							   int width, int height, TextStyleFlags flg);
@@ -368,12 +385,8 @@ private:
 							 int left, int top, int width, int height);
 	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
 	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
-	void ra2ResetDeltaPalette();
 	SmushFont *ra1GetFont(int font);
 	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
-	SmushFont *ra2GetFont(int font);
-	void ra2ParseNextFrame();
-	void ra2FixupAnimHeader();
 
 	// LOAD chunk streaming buffer (RA2 - embedded resource data)
 	byte *_loadBuffer;        // Accumulated LOAD data
@@ -412,6 +425,52 @@ protected:
 	SmushFont *getGameFont(int font) override;
 	void adjustGamePalette() override;
 	bool handleGameAnimHeader(byte *headerContent) override;
+	void handleGameParseNextFrame() override;
+	bool handleGameFrameBufferSelect(int codec, int width, int height) override;
+	bool handleGameDimensionOverride(int codec, int width, int height) override;
+	bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) override;
+	bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) override;
+	bool handleGameStoreFrame() override;
+	void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) override;
+	void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) override;
+	void handleGameFrameStart() override;
+	void handleGameGost(int32 subSize, Common::SeekableReadStream &b) override;
+	void handleGameProcessAudio(int16 feedSize) override;
+	bool isInsaneGame() const override { return true; }
+};
+
+class SmushPlayerRebel2 : public SmushPlayer {
+public:
+	SmushPlayerRebel2(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
+	~SmushPlayerRebel2() override;
+
+protected:
+	void initGamePlayerFields() override;
+	void destroyGamePlayerFields() override;
+	void initGameVideoState() override;
+	void releaseGameVideoState() override;
+	bool shouldPreserveFrameBuffer() const override { return true; }
+	bool handleGameFetch(int32 subSize, Common::SeekableReadStream &b) override;
+	bool handleGameTextRendering(const char *str, int fontId, int color, int pos_x, int pos_y, int left, int top, int width, int height, TextStyleFlags flg) override;
+	bool shouldAlwaysShowSubtitles() const override { return true; }
+	SmushFont *getGameFont(int font) override;
+	void adjustGamePalette() override;
+	bool handleGameAnimHeader(byte *headerContent) override;
+	const char *getGameStringResource() const override { return "SYSTM/GAME.TRS"; }
+	void handleGameParseNextFrame() override;
+	bool shouldRouteAllIACTs() const override { return true; }
+	bool handleGameFrameBufferSelect(int codec, int width, int height) override;
+	bool handleGameDimensionOverride(int codec, int width, int height) override;
+	bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) override;
+	bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) override;
+	bool handleGameStoreFrame() override;
+	void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) override;
+	void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) override;
+	void handleGameFrameStart() override;
+	bool handleGameSkipChunk(uint32 subType, int32 subSize, Common::SeekableReadStream &b) override;
+	void handleGameGost(int32 subSize, Common::SeekableReadStream &b) override;
+	void handleGameProcessAudio(int16 feedSize) override;
+	bool isInsaneGame() const override { return true; }
 };
 
 } // End of namespace Scumm
