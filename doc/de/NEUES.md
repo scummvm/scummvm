@@ -4,6 +4,13 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 #### 2026.3.0 (XX.06.2026)
  Allgemein:
    - Klickbare Links in der Benutzeroberfläche werden jetzt durch einen veränderten Cursor hervorgehoben.
+   - Die Fenstergröße wird jetzt korrekt wiederhergestellt, wenn in 3D-Engines von Vollbild zurück zum Fenster-Modus gewechselt wird.
+   - "Leerer" NULL OPL-Treiber für schwächere Systeme implementiert.
+
+ AGOS:
+   - Unterstützung für die von der Amiga- und Macintosh-Versionen von Simon2 verwendeten
+     Sprachdateien hinzugefügt.
+
 
 #### 2026.2.0 "Railmonicon" (28.03.2026)
 
