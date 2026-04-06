@@ -40,6 +40,7 @@ then
 	--with-freetype2-prefix="$(${PLATFORM}-gcc -print-sysroot)/usr/bin/${CPU_DIR}" \
 	--with-mikmod-prefix="$(${PLATFORM}-gcc -print-sysroot)/usr/bin/${CPU_DIR}" \
 	--enable-release \
+	--disable-nfm \
 	--enable-verbose-build \
 	${PLUGINS_FLAGS}
 fi
