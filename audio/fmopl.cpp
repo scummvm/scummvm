@@ -92,7 +92,7 @@ enum OplEmulator {
 	kNfmCeOPL2AudioBoard = 14,
 	kNfmCeOPL3Duo = 15,
 	kNfmNatfeatsNull = 16,
-	kNfmNukedOpl3 = 17,
+	kNfmNukedOpl3 = 17
 #endif
 };
 
