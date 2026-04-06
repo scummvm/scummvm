@@ -992,7 +992,7 @@ void TextBufferWindow::redraw() {
 				link = ln._attrs[a].hyper;
 				font = ln._attrs[a].attrFont(_styles);
 				color = ln._attrs[a].attrBg(_styles);
-				w = screen.stringWidthUni(font, Common::U32String(ln._chars + a, b - a), spw);
+				w = screen.stringWidthUni(font, Common::U32String((const char32_t *)ln._chars + a, b - a), spw);
 				screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading),
 								color);
 				if (link) {
@@ -1009,7 +1009,7 @@ void TextBufferWindow::redraw() {
 		link = ln._attrs[a].hyper;
 		font = ln._attrs[a].attrFont(_styles);
 		color = ln._attrs[a].attrBg(_styles);
-		w = screen.stringWidthUni(font, Common::U32String(ln._chars + a, b - a), spw);
+		w = screen.stringWidthUni(font, Common::U32String((const char32_t *)ln._chars + a, b - a), spw);
 		screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX, y, w / GLI_SUBPIX, _font._leading), color);
 		if (link) {
 			screen.fillRect(Rect::fromXYWH(x / GLI_SUBPIX + 1, y + _font._baseLine + 1,
@@ -1045,14 +1045,14 @@ void TextBufferWindow::redraw() {
 				font = ln._attrs[a].attrFont(_styles);
 				color = link ? _font._linkColor : ln._attrs[a].attrFg(_styles);
 				x = screen.drawStringUni(Point(x, y + _font._baseLine),
-										 font, color, Common::U32String(ln._chars + a, b - a), spw);
+										 font, color, Common::U32String((const char32_t *)ln._chars + a, b - a), spw);
 				a = b;
 			}
 		}
 		link = ln._attrs[a].hyper;
 		font = ln._attrs[a].attrFont(_styles);
 		color = link ? _font._linkColor : ln._attrs[a].attrFg(_styles);
-		screen.drawStringUni(Point(x, y + _font._baseLine), font, color, Common::U32String(ln._chars + a, linelen - a), spw);
+		screen.drawStringUni(Point(x, y + _font._baseLine), font, color, Common::U32String((const char32_t *)ln._chars + a, linelen - a), spw);
 	}
 
 	/*
@@ -1173,7 +1173,7 @@ void TextBufferWindow::redraw() {
 	if (selBuf && _copyPos) {
 		Windows::_claimSelect = true;
 
-		g_vm->_clipboard->clipboardStore(Common::U32String(_copyBuf, _copyPos));
+		g_vm->_clipboard->clipboardStore(Common::U32String((const char32_t *)_copyBuf, _copyPos));
 		for (i = 0; i < _copyPos; i++)
 			_copyBuf[i] = 0;
 		_copyPos = 0;
@@ -1302,7 +1302,7 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 			len = _numChars - _inFence;
 
 			if (len > 0)
-				s = Common::U32String(&(_chars[_inFence]), len);
+				s = Common::U32String((const char32_t *)&(_chars[_inFence]), len);
 			_history[_historyPos] = s;
 		}
 
@@ -1310,7 +1310,7 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 		if (_historyPos < 0)
 			_historyPos += HISTORYLEN;
 		s = _history[_historyPos];
-		putTextUni(s.u32_str(), s.size(), _inFence, _numChars - _inFence);
+		putTextUni((const uint32 *)s.c_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	case keycode_Down:
@@ -1320,7 +1320,7 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 		if (_historyPos >= HISTORYLEN)
 			_historyPos -= HISTORYLEN;
 		s = _history[_historyPos];
-		putTextUni(s.u32_str(), s.size(), _inFence, _numChars - _inFence);
+		putTextUni((const uint32 *)s.c_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	// Cursor movement keys, during line input.
@@ -1432,7 +1432,7 @@ void TextBufferWindow::acceptLine(uint32 keycode) {
 	* A history entry should not repeat the string from the entry before it.
 	*/
 	if (len) {
-		s = Common::U32String(_chars + _inFence, len);
+		s = Common::U32String((const char32_t *)_chars + _inFence, len);
 		_history[_historyPresent].clear();
 
 		o = _history[(_historyPresent == 0 ? HISTORYLEN : _historyPresent) - 1];
@@ -1627,12 +1627,12 @@ int TextBufferWindow::calcWidth(const uint32 *chars, const Attributes *attrs, in
 	for (b = startchar; b < numChars; b++) {
 		if (attrs[a] != attrs[b]) {
 			w += screen.stringWidthUni(attrs[a].attrFont(_styles),
-									   Common::U32String(chars + a, b - a), spw);
+									   Common::U32String((const char32_t *)chars + a, b - a), spw);
 			a = b;
 		}
 	}
 
-	w += screen.stringWidthUni(attrs[a].attrFont(_styles), Common::U32String(chars + a, b - a), spw);
+	w += screen.stringWidthUni(attrs[a].attrFont(_styles), Common::U32String((const char32_t *)chars + a, b - a), spw);
 
 	return w;
 }

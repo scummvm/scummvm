@@ -565,7 +565,7 @@ void Processor::handleAbbreviations() {
 	int wordSize = 0;
 	while (wordSize < (_resolution * 3) && _decoded[wordSize])
 		++wordSize;
-	Common::U32String word(_decoded, _decoded + wordSize);
+	Common::U32String word((const char32_t *)_decoded, wordSize);
 
 	// Check for standard abbreviations
 	if (word == "g")

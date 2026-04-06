@@ -59,7 +59,7 @@ GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
 }
 
 void GlkAPI::glk_exit(void) {
-	glk_put_string_uni(_("[ press any key to exit ]").u32_str());
+	glk_put_string_uni(_("[ press any key to exit ]"));
 	_events->waitForPress();
 
 	// Trigger a ScumMVM shutdown of game
@@ -798,6 +798,10 @@ void GlkAPI::glk_put_string_uni(const uint32 *s) {
 	_streams->getCurrent()->putBufferUni(s, strlen_uni(s));
 }
 
+void GlkAPI::glk_put_string_uni(const Common::U32String &s) {
+	_streams->getCurrent()->putBufferUni((const uint32 *)s.c_str(), s.size());
+}
+
 void GlkAPI::glk_put_buffer_uni(const uint32 *buf, uint len) {
 	_streams->getCurrent()->putBufferUni(buf, len);
 }
@@ -813,6 +817,14 @@ void GlkAPI::glk_put_char_stream_uni(strid_t str, uint32 ch) {
 void GlkAPI::glk_put_string_stream_uni(strid_t str, const uint32 *s) {
 	if (str) {
 		str->putBufferUni(s, strlen_uni(s));
+	} else {
+		warning("put_string_stream_uni: invalid ref");
+	}
+}
+
+void GlkAPI::glk_put_string_stream_uni(strid_t str, const Common::U32String &s) {
+	if (str) {
+		str->putBufferUni((const uint32 *)s.c_str(), s.size());
 	} else {
 		warning("put_string_stream_uni: invalid ref");
 	}

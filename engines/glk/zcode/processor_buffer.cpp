@@ -131,7 +131,8 @@ void Processor::print_string(const char *s) {
 	}
 }
 
-void Processor::print_string_uni(const uint32 *s) {
+void Processor::print_string_uni(const Common::U32String &str) {
+	const uint32 *s = (const uint32 *)str.c_str();
 	uint32 c;
 	while ((c = *s++) != 0) {
 		if (c == '\n')

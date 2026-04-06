@@ -664,7 +664,7 @@ void TextGridWindow::redraw() {
 
 					for (k = a, o = x; k < b; k++, o += _font._cellW) {
 						screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-											 fgcolor, Common::U32String(&ln->_chars[k], 1), -1);
+											 fgcolor, Common::U32String(ln->_chars[k]), -1);
 					}
 					if (link) {
 						screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w,
@@ -693,7 +693,7 @@ void TextGridWindow::redraw() {
 			// Write out the text
 			for (k = a, o = x; k < b; k++, o += _font._cellW) {
 				screen.drawStringUni(Point(o * GLI_SUBPIX, y + _font._baseLine), font,
-									 fgcolor, Common::U32String(&ln->_chars[k], 1));
+									 fgcolor, Common::U32String(ln->_chars[k]));
 			}
 			if (link) {
 				screen.fillRect(Rect::fromXYWH(x, y + _font._baseLine + 1, w, _font._linkStyle), _font._linkColor);
