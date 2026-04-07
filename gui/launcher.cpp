@@ -1107,6 +1107,8 @@ int LauncherChooser::runModal() {
 
 #pragma mark -
 
+static const int kSelPosGroupingChange = -2;
+
 LauncherSimple::LauncherSimple(const Common::String &title)
 	: LauncherDialog(title),
 	_list(nullptr) {
@@ -1246,6 +1248,13 @@ void LauncherSimple::updateListing(int selPos) {
 
 	const int oldSel = _list->getSelected();
 
+	Common::Array<bool> savedSelection;
+	const bool restoringGroupedSelection = (selPos == kSelPosGroupingChange);
+
+	if (restoringGroupedSelection) {
+		savedSelection = _list->saveSelection();
+	}
+
 	// Preserve the current collapsed groups before rebuilding the grouped list
 	if (_groupBy != kGroupByNone) {
 		_list->saveClosedGroups(Common::U32String(groupingModes[_groupBy].name));
@@ -1262,13 +1271,16 @@ void LauncherSimple::updateListing(int selPos) {
 	// is called.
 	_list->setFilter(_searchWidget->getEditString());
 
-	if (_groupBy != kGroupByNone && selPos != -1) {
+	if (restoringGroupedSelection) {
+		_list->loadSelection(savedSelection);
+	} else if (_groupBy != kGroupByNone && selPos != -1) {
 		_list->setSelected(_list->getNewSel(selPos));
-	} else if (oldSel < (int)l.size() && oldSel >= 0)
+	} else if (oldSel < (int)l.size() && oldSel >= 0) {
 		_list->setSelected(oldSel);	// Restore the old selection
-	else if (oldSel != -1)
+	} else if (oldSel != -1) {
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
+	}
 	updateButtons();
 }
 
@@ -1446,7 +1458,7 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				}
 				++mode;
 			}
-			updateListing();
+			updateListing(kSelPosGroupingChange);
 		}
 		break;
 	}

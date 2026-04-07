@@ -140,8 +140,13 @@ void GroupedListWidget::sortGroups() {
 			}
 		}
 	}
+
+	_selectedItem = -1;
 	checkBounds();
 	scrollBarRecalc();
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
 	// but not doing so the background of scrollbar isn't cleared.
@@ -187,6 +192,66 @@ void GroupedListWidget::saveClosedGroups(const Common::U32String &groupName) {
 	}
 	ConfMan.set("group_" + groupName, hiddenGroups, ConfMan.kApplicationDomain);
 	ConfMan.flushToDisk();
+}
+
+Common::Array<bool> GroupedListWidget::saveSelection() const {
+	return _selectedItems;
+}
+
+void GroupedListWidget::loadSelection(const Common::Array<bool> &savedSelection) {
+	_selectedItems.clear();
+	_selectedItems.resize(_dataList.size(), false);
+
+	int count = MIN((int)savedSelection.size(), (int)_selectedItems.size());
+	for (int i = 0; i < count; ++i) {
+		_selectedItems[i] = savedSelection[i];
+	}
+
+	_selectedItem = -1;
+	_lastSelectionStartItem = -1;
+
+	int topMostSel = -1;
+	int bottomMostSel = -1;
+
+	for (int visualRow = 0; visualRow < (int)_listIndex.size(); ++visualRow) {
+		int dataIndex = _listIndex[visualRow];
+
+		if (dataIndex >= 0 &&
+			dataIndex < (int)_selectedItems.size() &&
+			_selectedItems[dataIndex]) {
+
+			if (topMostSel == -1) {
+				topMostSel = visualRow;
+				_selectedItem = visualRow;
+				_lastSelectionStartItem = visualRow;
+			}
+
+			bottomMostSel = visualRow;
+		}
+	}
+
+	if (topMostSel != -1 && _entriesPerPage > 0) {
+		int span = bottomMostSel - topMostSel + 1;
+
+		if (topMostSel == bottomMostSel) {
+			_currentPos = topMostSel - _entriesPerPage / 2;
+		} else if (span <= _entriesPerPage) {
+			int spanCenter = (topMostSel + bottomMostSel) / 2;
+			_currentPos = spanCenter - _entriesPerPage / 2;
+		} else {
+			_currentPos = topMostSel;
+		}
+	} else {
+		_currentPos = 0;
+	}
+
+	checkBounds();
+	scrollBarRecalc();
+
+	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->recalc();
+
+	markAsDirty();
 }
 
 void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
