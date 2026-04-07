@@ -346,22 +346,10 @@ private:
 	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
 	void readPalette(byte *, Common::SeekableReadStream &);
 
-	// RA2 helper methods called from SmushPlayerRebel2 overrides
-	void ra2HandleTextResource(const char *str, int fontId, int color,
-							   int pos_x, int pos_y, int left, int top,
-							   int width, int height, TextStyleFlags flg);
-	void ra2SelectFrameBuffer(int width, int height);
-	void ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY = nullptr);
-	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
-						int width, int height, int pitch, int dataSize);
-	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
+	// Shared RA1/RA2 helpers (access _storedFobj*/_lastFobj* on base)
+	void adjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY = nullptr);
+	void rememberLastFobj(int codec, const byte *data, int32 dataSize,
 						  int left, int top, int width, int height);
-	void ra2RememberLastFobj(int codec, const byte *data, int32 dataSize,
-							 int left, int top, int width, int height);
-	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
-	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
-	SmushFont *ra1GetFont(int font);
-	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
 
 	void initAudio(int samplerate, int32 maxChunkSize);
 	void terminateAudio();
@@ -408,6 +396,11 @@ protected:
 	void handleFrameObject(int32 subSize, Common::SeekableReadStream &b) override;
 	void handleFrame(int32 frameSize, Common::SeekableReadStream &b) override;
 	void handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) override;
+
+private:
+	void ra1HandleGost(int32 subSize, Common::SeekableReadStream &b);
+	SmushFont *ra1GetFont(int font);
+	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
 
 	// RA1 clean frame buffer for delta source restoration
 	byte *_ra1CleanFrame;
@@ -464,6 +457,15 @@ protected:
 
 private:
 	void handleLoad(int32 subSize, Common::SeekableReadStream &b);
+	void ra2HandleTextResource(const char *str, int fontId, int color,
+							   int pos_x, int pos_y, int left, int top,
+							   int width, int height, TextStyleFlags flg);
+	void ra2SelectFrameBuffer(int width, int height);
+	bool ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
+						int width, int height, int pitch, int dataSize);
+	void ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
+						  int left, int top, int width, int height);
+	void ra2HandleGost(int32 subSize, Common::SeekableReadStream &b);
 
 	// LOAD chunk streaming buffer (embedded resource data)
 	byte *_loadBuffer;

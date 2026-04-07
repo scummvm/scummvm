@@ -346,7 +346,7 @@ void SmushPlayer::ensureMultiFont() {
 /**
  * RA2-specific text rendering using SmushMultiFont for inline font switching.
  */
-void SmushPlayer::ra2HandleTextResource(const char *str, int fontId, int color,
+void SmushPlayerRebel2::ra2HandleTextResource(const char *str, int fontId, int color,
 										int pos_x, int pos_y, int left, int top,
 										int width, int height, TextStyleFlags flg) {
 	ensureMultiFont();
@@ -368,7 +368,7 @@ void SmushPlayer::ra2HandleTextResource(const char *str, int fontId, int color,
  * RA2-specific buffer selection for non-standard FOBJ dimensions.
  * Returns the destination buffer to use and updates _dst, _width, _height.
  */
-void SmushPlayer::ra2SelectFrameBuffer(int width, int height) {
+void SmushPlayerRebel2::ra2SelectFrameBuffer(int width, int height) {
 	// Rebel2 uses a special buffer for all non-matching frames.
 	// Level 1: First frame is 424x260 (background), small sprites reuse same buffer
 	// Level 2: Uses virtual screen directly (handled below when _specialBuffer stays null)
@@ -412,7 +412,7 @@ void SmushPlayer::ra2SelectFrameBuffer(int width, int height) {
  * When srcSkipY is non-null, outputs the number of source rows to skip
  * when top is clipped from negative (for codecs with row-size prefixes).
  */
-void SmushPlayer::ra2AdjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
+void SmushPlayer::adjustFrameCoords(int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
 	left += _fobjOffsetX;
 	top += _fobjOffsetY;
 
@@ -439,7 +439,7 @@ void SmushPlayer::ra2AdjustFrameCoords(int &left, int &top, int &width, int &hei
  * Dispatch to RA2-specific codec functions.
  * Returns true if the codec was handled, false for standard codecs.
  */
-bool SmushPlayer::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
+bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 								 int width, int height, int pitch, int dataSize) {
 	switch (codec) {
 	case SMUSH_CODEC_LINE_UPDATE:
@@ -460,7 +460,7 @@ bool SmushPlayer::ra2DecodeCodec(int codec, const uint8 *src, int left, int top,
 /**
  * Save raw FOBJ data when STOR is pending (for later re-decoding by FTCH).
  */
-void SmushPlayer::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
+void SmushPlayerRebel2::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 								   int left, int top, int width, int height) {
 	free(_storedFobjData);
 	_storedFobjData = (byte *)malloc(dataSize);
@@ -478,7 +478,7 @@ void SmushPlayer::ra2StoreFobjData(int codec, const byte *data, int32 dataSize,
 /**
  * Cache the most recent frame FOBJ for GOST re-rendering.
  */
-void SmushPlayer::ra2RememberLastFobj(int codec, const byte *data, int32 dataSize,
+void SmushPlayer::rememberLastFobj(int codec, const byte *data, int32 dataSize,
 									  int left, int top, int width, int height) {
 	if (dataSize <= 0) {
 		_hasFrameFobjForGost = false;
@@ -487,7 +487,7 @@ void SmushPlayer::ra2RememberLastFobj(int codec, const byte *data, int32 dataSiz
 
 	byte *newData = (byte *)realloc(_lastFobjData, dataSize);
 	if (newData == nullptr) {
-		warning("SmushPlayer::ra2RememberLastFobj: Failed to allocate %d bytes", dataSize);
+		warning("SmushPlayer::rememberLastFobj: Failed to allocate %d bytes", dataSize);
 		free(_lastFobjData);
 		_lastFobjData = nullptr;
 		_lastFobjDataSize = 0;
@@ -510,9 +510,9 @@ void SmushPlayer::ra2RememberLastFobj(int codec, const byte *data, int32 dataSiz
  * RA2 GOST chunk handler.
  * Re-renders the most recent frame FOBJ at the supplied ghost position.
  */
-void SmushPlayer::ra2HandleGost(int32 subSize, Common::SeekableReadStream &b) {
+void SmushPlayerRebel2::ra2HandleGost(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 6) {
-		warning("SmushPlayer::ra2HandleGost: chunk too small (%d bytes)", subSize);
+		warning("SmushPlayerRebel2::ra2HandleGost: chunk too small (%d bytes)", subSize);
 		return;
 	}
 
@@ -581,7 +581,7 @@ bool SmushPlayerRebel2::handleGameDimensionOverride(int codec, int width, int he
 }
 
 bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
-	ra2AdjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	adjustFrameCoords(left, top, width, height, pitch, srcSkipY);
 	return true;
 }
 
@@ -602,7 +602,7 @@ void SmushPlayerRebel2::handleGameFrameObjectPre(int codec, int left, int top, i
 }
 
 void SmushPlayerRebel2::handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {
-	ra2RememberLastFobj(codec, data, dataSize, left, top, width, height);
+	rememberLastFobj(codec, data, dataSize, left, top, width, height);
 
 	if (_storeFrame) {
 		ra2StoreFobjData(codec, data, dataSize, left, top, width, height);
