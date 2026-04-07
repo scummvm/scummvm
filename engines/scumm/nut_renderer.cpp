@@ -47,30 +47,8 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 		memset(_2byteColorTable, 0, _2byteSteps);
 		_2byteMainColor = &_2byteColorTable[_2byteSteps - 1];
 		memset(_chars, 0, sizeof(_chars));
-		loadFont(filename);
-}
-
-NutRenderer::NutRenderer(ScummEngine *vm, const byte *data, int32 dataSize) :
-	_vm(vm),
-	_numChars(0),
-	_fontHeight(0),
-	_decodedData(0),
-	_2byteColorTable(0),
-	_2byteShadowXOffsetTable(0),
-	_2byteShadowYOffsetTable(0),
-	_2byteMainColor(0),
-	_spacing(vm->_useCJKMode && vm->_language != Common::JA_JPN ? 1 : 0),
-	_2byteSteps(vm->_game.version == 8 ? 4 : 2),
-	_direction(vm->_language == Common::HE_ISR ? -1 : 1) {
-		static const int8 cjkShadowOffsetsX[4] = { -1, 0, 1, 0 };
-		static const int8 cjkShadowOffsetsY[4] = { 0, 1, 0, 0 };
-		_2byteShadowXOffsetTable = &cjkShadowOffsetsX[ARRAYSIZE(cjkShadowOffsetsX) - _2byteSteps];
-		_2byteShadowYOffsetTable = &cjkShadowOffsetsY[ARRAYSIZE(cjkShadowOffsetsY) - _2byteSteps];
-		_2byteColorTable = new uint8[_2byteSteps];
-		memset(_2byteColorTable, 0, _2byteSteps);
-		_2byteMainColor = &_2byteColorTable[_2byteSteps - 1];
-		memset(_chars, 0, sizeof(_chars));
-		loadFontFromData(data, dataSize);
+		if (filename)
+			loadFont(filename);
 }
 
 NutRenderer::~NutRenderer() {
