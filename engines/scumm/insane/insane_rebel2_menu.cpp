@@ -235,122 +235,20 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	const int itemBaseY = numItems * -5 + 0x68;
 	const int itemSpacing = 10;
 
-	// -------------------------------------------------------------------
-	// Font system - Emulates linked list from FUN_00403bd0
-	// -------------------------------------------------------------------
-	//   Font 0 (^f00): TALKFONT.NUT
-	//   Font 1 (^f01): SMALFONT.NUT (menu items)
-	//   Font 2 (^f02): TITLFONT.NUT (title)
-	NutRenderer *fonts[3] = {
-		_smush_talkfontNut,
-		_smush_smalfontNut,
-		_smush_titlefontNut
-	};
-
+	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
-	if (!defaultFont) {
-		debug(1, "drawMenuItems: no fonts available!");
+	if (!defaultFont)
 		return;
-	}
 
 	Common::Rect clipRect(0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	int actualPitch = _vm->_screenWidth;
 
-	// -------------------------------------------------------------------
-	// Format code parser - Emulates FUN_00434d10 / FUN_00433da0
-	// -------------------------------------------------------------------
-	//   ^^ = literal ^, ^fNN = font switch, ^cNNN = color code, ^l = newline
-	// Fixed-width format codes: ^fNN (2-digit font), ^cNNN (3-digit color)
-	auto parseFormatCode = [&](const char *&str, int &outColor) -> int {
-		if (*str != '^')
-			return -1;
-
-		const char *p = str + 1;
-		if (*p == '^') {
-			str = p;
-			return -1;
-		}
-		if (*p == 'f') {
-			p++;
-			int fontIdx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
-			fontIdx = fontIdx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
-			str = p;
-			return (fontIdx >= 0 && fontIdx < 3) ? fontIdx : 0;
-		}
-		if (*p == 'c') {
-			p++;
-			int color = 0;
-			for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++)
-				color = color * 10 + (*p++ - '0');
-			str = p;
-			outColor = color;
-			return -2;
-		}
-		if (*p == 'l') {
-			str = p + 1;
-			return -2;
-		}
-		return -1;
-	};
-
-	// String width calculation - Emulates FUN_00433da0
 	auto getStringWidth = [&](const char *str) -> int {
-		int w = 0;
-		NutRenderer *curFont = defaultFont;
-		int curColor = -1;
-
-		while (*str) {
-			int fontChange = parseFormatCode(str, curColor);
-			if (fontChange >= 0) {
-				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
-				continue;
-			}
-			if (fontChange == -2)
-				continue;
-
-			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z')
-				c = c - 'a' + 'A';
-			if (curFont && c < curFont->getNumChars()) {
-				w += curFont->getCharWidth(c);
-			}
-		}
-		return w;
+		return getMenuStringWidth(str);
 	};
 
-	// String rendering - Emulates FUN_00434d10
-	// Codec 44 color substitution: font pixels with value 1 → ^cNNN color
 	auto drawString = [&](const char *str, int x, int y) {
-		NutRenderer *curFont = defaultFont;
-		int curColor = 1;
-
-		while (*str) {
-			int fontChange = parseFormatCode(str, curColor);
-			if (fontChange >= 0) {
-				curFont = fonts[fontChange] ? fonts[fontChange] : defaultFont;
-				continue;
-			}
-			if (fontChange == -2)
-				continue;
-
-			byte c = (byte)*str++;
-			if (c >= 'a' && c <= 'z')
-				c = c - 'a' + 'A';
-
-			if (!curFont)
-				continue;
-			int numChars = curFont->getNumChars();
-			if (c >= numChars)
-				continue;
-
-			int charW = curFont->getCharWidth(c);
-
-			if (x >= 0 && y >= 0 && charW > 0) {
-				curFont->drawCharV7(renderBitmap, clipRect, x, y, actualPitch, curColor,
-				                    kStyleAlignLeft, c, false, false);
-			}
-			x += charW;
-		}
+		drawMenuString(renderBitmap, str, x, y, 1);
 	};
 
 	// -------------------------------------------------------------------
@@ -424,7 +322,33 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 	}
 }
 
-// getMenuStringWidth -- Format-code-aware string width (^fNN, ^cNNN, ^^).
+// parseFormatCode -- Shared ^fNN/^cNNN/^^/^l parser.
+// Returns: fontIdx (>=0) on font change, -2 on color/newline, -1 on no match.
+int InsaneRebel2::parseFormatCode(const char *&str, int &outColor) {
+	if (*str != '^')
+		return -1;
+	const char *p = str + 1;
+	if (*p == '^') { str = p; return -1; }
+	if (*p == 'f') {
+		p++;
+		int idx = 0;
+		while (*p >= '0' && *p <= '9') { idx = idx * 10 + (*p - '0'); p++; }
+		str = p;
+		return (idx >= 0 && idx < 3) ? idx : 0;
+	}
+	if (*p == 'c') {
+		p++;
+		int color = 0;
+		while (*p >= '0' && *p <= '9') { color = color * 10 + (*p - '0'); p++; }
+		str = p;
+		outColor = color;
+		return -2;
+	}
+	if (*p == 'l') { str = p + 1; return -2; }
+	return -1;
+}
+
+// getMenuStringWidth -- Format-code-aware string width.
 int InsaneRebel2::getMenuStringWidth(const char *str) const {
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -433,36 +357,20 @@ int InsaneRebel2::getMenuStringWidth(const char *str) const {
 
 	int w = 0;
 	NutRenderer *curFont = defaultFont;
+	int dummyColor = 0;
 	while (*str) {
-		if (*str == '^') {
-			const char *p = str + 1;
-			if (*p == '^') { str = p + 1; continue; }
-			if (*p == 'f') {
-				p++;
-				int idx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
-				idx = idx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
-				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
-				str = p;
-				continue;
-			}
-			if (*p == 'c') {
-				p++;
-				for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++) p++;
-				str = p;
-				continue;
-			}
-			if (*p == 'l') { str = p + 1; continue; }
-		}
+		int fc = parseFormatCode(str, dummyColor);
+		if (fc >= 0) { curFont = (fonts[fc] ? fonts[fc] : defaultFont); continue; }
+		if (fc == -2) continue;
 		byte c = (byte)*str++;
-		if (c >= 'a' && c <= 'z')
-			c = c - 'a' + 'A';
+		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
 		if (curFont && c < curFont->getNumChars())
 			w += curFont->getCharWidth(c);
 	}
 	return w;
 }
 
-// Format-code-aware string rendering at (x, y)
+// Format-code-aware string rendering at (x, y).
 void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, int y, int defaultColor) {
 	NutRenderer *fonts[3] = { _smush_talkfontNut, _smush_smalfontNut, _smush_titlefontNut };
 	NutRenderer *defaultFont = fonts[0] ? fonts[0] : _smush_smalfontNut;
@@ -475,35 +383,12 @@ void InsaneRebel2::drawMenuString(byte *renderBitmap, const char *str, int x, in
 	NutRenderer *curFont = defaultFont;
 	int curColor = defaultColor;
 	while (*str) {
-		if (*str == '^') {
-			const char *p = str + 1;
-			if (*p == '^') { str = p + 1; continue; }
-			if (*p == 'f') {
-				p++;
-				int idx = (*p >= '0' && *p <= '9') ? (*p++ - '0') : 0;
-				idx = idx * 10 + ((*p >= '0' && *p <= '9') ? (*p++ - '0') : 0);
-				curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
-				str = p;
-				continue;
-			}
-			if (*p == 'c') {
-				p++;
-				int color = 0;
-				for (int d = 0; d < 3 && *p >= '0' && *p <= '9'; d++)
-					color = color * 10 + (*p++ - '0');
-				curColor = color;
-				str = p;
-				continue;
-			}
-			if (*p == 'l') { str = p + 1; continue; }
-		}
+		int fc = parseFormatCode(str, curColor);
+		if (fc >= 0) { curFont = (fonts[fc] ? fonts[fc] : defaultFont); continue; }
+		if (fc == -2) continue;
 		byte c = (byte)*str++;
-		if (c >= 'a' && c <= 'z')
-			c = c - 'a' + 'A';
-		if (!curFont)
-			continue;
-		if (c >= curFont->getNumChars())
-			continue;
+		if (c >= 'a' && c <= 'z') c = c - 'a' + 'A';
+		if (!curFont || c >= curFont->getNumChars()) continue;
 		int charW = curFont->getCharWidth(c);
 		if (x >= 0 && y >= 0 && charW > 0)
 			curFont->drawCharV7(renderBitmap, clipRect, x, y, pitch, curColor,
