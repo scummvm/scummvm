@@ -255,13 +255,155 @@ void SmushPlayerRebel1::handleGameParseNextFrame() {
 }
 
 // Forward declarations for RA1 codec functions (defined in smush_player.cpp and codec1.cpp)
-void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+/**
+ * RA1 codec 1: RLE with transparency on pixel 0.
+ * Same BOMP encoding as smushDecodeRLE but pixel value 0 is not written,
+ * allowing the background (restored via FTCH) to show through.
+ */
+void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+	dst += top * pitch;
+	do {
+		byte *rowDst = dst + left;
+		const byte *lineData = src + 2;
+		int remaining = width;
+
+		while (remaining > 0) {
+			byte code = *lineData++;
+			byte num = (code >> 1) + 1;
+			if (num > remaining)
+				num = remaining;
+			if (code & 1) {
+				byte color = *lineData++;
+				if (color != 0)
+					memset(rowDst, color, num);
+			} else {
+				for (int j = 0; j < num; j++) {
+					byte c = lineData[j];
+					if (c != 0)
+						rowDst[j] = c;
+				}
+				lineData += num;
+			}
+			rowDst += num;
+			remaining -= num;
+		}
+
+		src += READ_LE_UINT16(src) + 2;
+		dst += pitch;
+	} while (--height);
+}
 void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
 	int pitch, int bufWidth, int bufHeight, uint8 param);
 void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize);
-void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2, int codec);
+// RA1 codec 4/5: block-based dithered codec with 4x4 tile lookup tables
+static uint8 s_ra1C4Tbl[2][256][16];
+static uint16 s_ra1C4Param = 0xFFFF;
+
+static void ra1Codec4GenTiles(uint16 param1) {
+	uint8 *dst = &s_ra1C4Tbl[0][0][0];
+	for (int i = 1; i < 16; i += 2) {
+		for (int k = 0; k < 16; k++) {
+			int j = i + param1, l = k + param1;
+			int m = (j + l) / 2, n = (j + m) / 2, o = (l + m) / 2;
+			if (j == m || l == m) {
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = j; *dst++ = l; *dst++ = j; *dst++ = j;
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = l; *dst++ = l; *dst++ = j; *dst++ = l;
+			} else {
+				*dst++ = m; *dst++ = m; *dst++ = n; *dst++ = j;
+				*dst++ = m; *dst++ = m; *dst++ = n; *dst++ = j;
+				*dst++ = o; *dst++ = o; *dst++ = m; *dst++ = n;
+				*dst++ = l; *dst++ = l; *dst++ = o; *dst++ = m;
+			}
+		}
+	}
+	for (int i = 0; i < 16; i += 2) {
+		for (int k = 0; k < 16; k++) {
+			int j = i + param1, l = k + param1;
+			int m = (j + l) / 2, n = (j + m) / 2, o = (l + m) / 2;
+			if (m == j || m == l) {
+				*dst++ = j; *dst++ = j; *dst++ = l; *dst++ = j;
+				*dst++ = j; *dst++ = j; *dst++ = j; *dst++ = l;
+				*dst++ = l; *dst++ = j; *dst++ = l; *dst++ = l;
+				*dst++ = j; *dst++ = l; *dst++ = j; *dst++ = l;
+			} else {
+				*dst++ = j; *dst++ = j; *dst++ = n; *dst++ = m;
+				*dst++ = j; *dst++ = j; *dst++ = n; *dst++ = m;
+				*dst++ = n; *dst++ = n; *dst++ = m; *dst++ = o;
+				*dst++ = m; *dst++ = m; *dst++ = o; *dst++ = l;
+			}
+		}
+	}
+}
+
+static bool ra1Codec4LoadTiles(const byte *&src, int &remaining, uint16 param2, uint8 clr) {
+	uint8 *dst = &s_ra1C4Tbl[1][0][0];
+	int loop = param2 * 8;
+	if (param2 > 256 || remaining < loop)
+		return false;
+	for (int i = 0; i < loop; i++) {
+		byte c = *src++;
+		remaining--;
+		*dst++ = (c >> 4) + clr;
+		*dst++ = (c & 0xF) + clr;
+	}
+	return true;
+}
+
+void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height,
+						 int pitch, int dataSize, uint8 param, uint16 parm2, int codec) {
+	const int mx = pitch;
+	const int my = height;
+	if (s_ra1C4Param != param) {
+		ra1Codec4GenTiles(param);
+		s_ra1C4Param = param;
+	}
+	int remaining = dataSize;
+	const byte *data = src;
+	if (parm2 > 0) {
+		if (!ra1Codec4LoadTiles(data, remaining, parm2, param)) {
+			warning("smushDecodeRA1Block: not enough data for tile load (parm2=%d)", parm2);
+			return;
+		}
+	}
+	for (int j = 0; j < width; j += 4) {
+		byte mask = 0, bits = 0;
+		int x = left + j;
+		for (int i = 0; i < height; i += 4) {
+			int y = top + i;
+			int bit = 0;
+			if (parm2 > 0) {
+				if (bits == 0) {
+					if (remaining < 1) return;
+					mask = *data++; remaining--; bits = 8;
+				}
+				bit = !!(mask & 0x80);
+				mask <<= 1; bits--;
+			}
+			if (remaining < 1) return;
+			byte idx = *data++; remaining--;
+			if (bit == 0 && idx == 0x80 && codec != 5)
+				continue;
+			if (y >= my || (y + 4) < 0 || (x + 4) < 0 || x >= mx)
+				continue;
+			const byte *gs = &s_ra1C4Tbl[bit][idx][0];
+			if (y >= 0 && x >= 0 && (y + 4) <= my && (x + 4) <= mx) {
+				for (int k = 0; k < 4; k++, gs += 4)
+					memcpy(dst + x + (y + k) * pitch, gs, 4);
+			} else {
+				for (int k = 0; k < 4; k++)
+					for (int l = 0; l < 4; l++, gs++) {
+						int yo = y + k, xo = x + l;
+						if (yo >= 0 && yo < my && xo >= 0 && xo < mx)
+							*(dst + yo * pitch + xo) = *gs;
+					}
+			}
+		}
+	}
+}
 
 bool SmushPlayerRebel1::handleGameFrameBufferSelect(int codec, int width, int height) {
 	// RA1 sub-fullscreen frames render into _specialBuffer at their (left, top) offset position.

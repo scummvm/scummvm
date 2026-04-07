@@ -36,48 +36,4 @@ void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, in
 	} while (--height);
 }
 
-
-/**
- * RA1 codec 1: RLE with transparency on pixel 0.
- * Same BOMP encoding as smushDecodeRLE but pixel value 0 is not written,
- * allowing the background (restored via FTCH) to show through.
- * Matches FFmpeg's old_codec1() with opaque=0.
- */
-void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
-	dst += top * pitch;
-	do {
-		byte *rowDst = dst + left;
-		const byte *lineData = src + 2;
-		int remaining = width;
-
-		while (remaining > 0) {
-			byte code = *lineData++;
-			byte num = (code >> 1) + 1;
-			if (num > remaining)
-				num = remaining;
-			if (code & 1) {
-				// Fill: repeat single byte
-				byte color = *lineData++;
-				if (color != 0) {
-					memset(rowDst, color, num);
-				}
-				// If color == 0: skip (transparent)
-			} else {
-				// Copy: write each byte, skipping 0
-				for (int j = 0; j < num; j++) {
-					byte c = lineData[j];
-					if (c != 0)
-						rowDst[j] = c;
-				}
-				lineData += num;
-			}
-			rowDst += num;
-			remaining -= num;
-		}
-
-		src += READ_LE_UINT16(src) + 2;
-		dst += pitch;
-	} while (--height);
-}
-
 } // End of namespace Scumm
