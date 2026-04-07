@@ -287,6 +287,20 @@
 	0, 0, 0
 },
 
+{
+	{
+		"adibou1read67",
+		"", // Lectura 6-7 años"
+		AD_ENTRY1s("l61.stk", "e9130e83563c96d02db066c7df99fa76", 336736),
+		ES_ESP,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
 // -- Add-ons : Count 6-7 years --
 {
 	{
