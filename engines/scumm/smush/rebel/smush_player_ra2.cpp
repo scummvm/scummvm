@@ -31,11 +31,11 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_font.h"
-#include "scumm/smush/smush_multi_font.h"
-#include "scumm/smush/smush_player_ra2.h"
+#include "scumm/smush/rebel/smush_multi_font.h"
+#include "scumm/smush/rebel/smush_player_ra2.h"
 
 #include "scumm/insane/insane.h"
-#include "scumm/insane/insane_rebel2.h"
+#include "scumm/insane/rebel2/rebel.h"
 
 namespace Scumm {
 

@@ -133,29 +133,29 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
-	insane/insane_rebel1.o \
-	insane/insane_rebel1_audio.o \
-	insane/insane_rebel1_iact.o \
-	insane/insane_rebel1_levels.o \
-	insane/insane_rebel1_menu.o \
-	insane/insane_rebel1_render.o \
-	insane/insane_rebel1_runlevels.o \
-	insane/insane_rebel2.o \
-	insane/insane_rebel2_audio.o \
-	insane/insane_rebel2_iact.o \
-	insane/insane_rebel2_levels.o \
-	insane/insane_rebel2_menu.o \
-	insane/insane_rebel2_render.o \
-	insane/insane_rebel2_runlevels.o \
+	insane/rebel1/rebel.o \
+	insane/rebel1/audio.o \
+	insane/rebel1/iact.o \
+	insane/rebel1/levels.o \
+	insane/rebel1/menu.o \
+	insane/rebel1/render.o \
+	insane/rebel1/runlevels.o \
+	insane/rebel2/rebel.o \
+	insane/rebel2/audio.o \
+	insane/rebel2/iact.o \
+	insane/rebel2/levels.o \
+	insane/rebel2/menu.o \
+	insane/rebel2/render.o \
+	insane/rebel2/runlevels.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
-	smush/codec_ra2.o \
-	smush/smush_multi_font.o \
 	smush/smush_player.o \
-	smush/smush_player_ra1.o \
-	smush/smush_player_ra2.o
+	smush/rebel/codec_ra2.o \
+	smush/rebel/smush_multi_font.o \
+	smush/rebel/smush_player_ra1.o \
+	smush/rebel/smush_player_ra2.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \

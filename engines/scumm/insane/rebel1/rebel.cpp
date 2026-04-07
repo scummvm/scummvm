@@ -32,7 +32,7 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/scumm.h"
 #include "scumm/smush/smush_player.h"
-#include "scumm/insane/insane_rebel1.h"
+#include "scumm/insane/rebel1/rebel.h"
 
 namespace Scumm {
 
