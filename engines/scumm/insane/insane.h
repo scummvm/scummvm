@@ -26,9 +26,6 @@
 
 #include "scumm/smush/smush_player.h"
 
-#include "common/list.h"
-#include "common/rect.h"
-
 namespace Scumm {
 
 #define INV_CHAIN    0
@@ -53,8 +50,8 @@ namespace Scumm {
 
 class Insane {
 public:
-	Insane() {};
-    Insane(ScummEngine_v7 *scumm);
+	Insane() {}
+	Insane(ScummEngine_v7 *scumm);
 	virtual ~Insane();
 
 	void setSmushParams(int speed);
@@ -62,9 +59,9 @@ public:
 	void runScene(int arraynum);
 
 	virtual void procPreRendering(byte *renderBitmap);
-	void virtual procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	virtual void procPostRendering(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 						   int32 setupsan13, int32 curFrame, int32 maxFrame);
-	void virtual procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
+	virtual void procIACT(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags, int16 par1,
 				  int16 par2, int16 par3, int16 par4);
 	virtual void procSKIP(int32 subSize, Common::SeekableReadStream &b);
@@ -425,7 +422,7 @@ public:
 	void actor10Reaction(int32 buttons);
 	int32 actionEnemy();
 	int32 processKeyboard();
-	int32 virtual processMouse();
+	virtual int32 processMouse();
 	void setEnemyAnimation(int32 actornum, int anim);
 	void chooseEnemyWeaponAnim(int32 buttons);
 	void switchEnemyWeapon();
@@ -451,8 +448,8 @@ public:
 	void iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 				  int32 setupsan13, Common::SeekableReadStream &b, int32 size, int32 flags,
 				  int16 par1, int16 par2, int16 par3, int16 par4);
-	bool virtual isBitSet(int n);
-	void virtual setBit(int n);
+	virtual bool isBitSet(int n);
+	virtual void setBit(int n);
 	void clearBit(int n);
 	void chooseEnemy();
 	void removeEmptyEnemies();
@@ -460,7 +457,7 @@ public:
 
  public:
 
-	void virtual loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
+	virtual void loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 		// Nothing by default
 	};
 };
