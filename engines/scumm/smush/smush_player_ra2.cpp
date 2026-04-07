@@ -226,6 +226,160 @@ SmushFont *SmushPlayerRebel2::getGameFont(int font) {
 	return _sf[font];
 }
 
+// ---------------------------------------------------------------------------
+// RA2 string resource loading — separate from shared StringResource
+// ---------------------------------------------------------------------------
+
+// RA2 TRS format differences from standard SCUMM:
+//   - Up to ~658 entries (standard only supports 200)
+//   - Entries can be empty (no content between header and next #)
+//   - Content lines prefixed with //
+//   - Multi-line entries preserve newlines (credits, cast lists)
+
+static const int RA2_MAX_STRINGS = 800;
+static const int RA2_ETRS_HEADER_LENGTH = 16;
+
+struct RA2StringEntry {
+	int id;
+	char *string;
+};
+
+class StringResourceRA2 : public StringResource {
+	RA2StringEntry _ra2Strings[RA2_MAX_STRINGS];
+	int _ra2NbStrings;
+	int _ra2LastId;
+	const char *_ra2LastString;
+
+public:
+	StringResourceRA2() : _ra2NbStrings(0), _ra2LastId(-1), _ra2LastString(nullptr) {
+		for (int i = 0; i < RA2_MAX_STRINGS; i++) {
+			_ra2Strings[i].id = 0;
+			_ra2Strings[i].string = nullptr;
+		}
+	}
+
+	~StringResourceRA2() override {
+		for (int i = 0; i < _ra2NbStrings; i++)
+			delete[] _ra2Strings[i].string;
+	}
+
+	bool init(char *buffer, int32 length) {
+		char *def_start = strchr(buffer, '#');
+		while (def_start != nullptr) {
+			char *def_end = strchr(def_start, '\n');
+			if (!def_end) break;
+
+			char *id_end = def_end;
+			while (id_end >= def_start && !Common::isDigit(*(id_end-1)))
+				id_end--;
+			if (id_end <= def_start) { def_start = strchr(def_end + 1, '#'); continue; }
+
+			char *id_start = id_end;
+			while (Common::isDigit(*(id_start - 1)))
+				id_start--;
+
+			char idstring[32];
+			memcpy(idstring, id_start, id_end - id_start);
+			idstring[id_end - id_start] = 0;
+			int32 id = atoi(idstring);
+
+			char *data_start = def_end;
+			while (*data_start == '\n' || *data_start == '\r')
+				data_start++;
+
+			char *data_end = data_start;
+			while (1) {
+				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '\r' && data_end[1] == '\n') break;
+				if (data_end[-2] == '\n' && data_end[-1] == '\n') break;
+				if (data_end[-2] == '\r' && data_end[-1] == '\n' && data_end[0] == '#') break;
+				data_end++;
+				if (data_end >= buffer + length) { data_end = buffer + length; break; }
+			}
+			data_end -= 2;
+
+			// Skip empty entries
+			if (data_end <= data_start) { def_start = strchr(def_end + 1, '#'); continue; }
+
+			// Strip leading // prefix
+			if (data_start[0] == '/' && data_start[1] == '/')
+				data_start += 2;
+			if (data_end <= data_start) { def_start = strchr(def_end + 1, '#'); continue; }
+
+			char *value = new char[data_end - data_start + 1];
+			memcpy(value, data_start, data_end - data_start);
+			value[data_end - data_start] = 0;
+
+			// Preserve newlines for multi-line TRES text (credits, cast lists)
+			char *line_start = value;
+			char *line_end;
+			while ((line_end = strchr(line_start, '\n'))) {
+				line_start = line_end + 1;
+				if (line_start[0] == '/' && line_start[1] == '/') {
+					line_start += 2;
+					if (line_end[-1] == '\r')
+						line_end[-1] = '\n';
+					memmove(line_end + 1, line_start, strlen(line_start) + 1);
+				}
+			}
+
+			if (_ra2NbStrings < RA2_MAX_STRINGS) {
+				_ra2Strings[_ra2NbStrings].id = id;
+				_ra2Strings[_ra2NbStrings].string = value;
+				_ra2NbStrings++;
+			} else {
+				delete[] value;
+			}
+			def_start = strchr(data_end + 2, '#');
+		}
+		return true;
+	}
+
+	const char *get(int id) override {
+		if (id == _ra2LastId)
+			return _ra2LastString;
+		for (int i = 0; i < _ra2NbStrings; i++) {
+			if (_ra2Strings[i].id == id) {
+				_ra2LastId = id;
+				_ra2LastString = _ra2Strings[i].string;
+				return _ra2LastString;
+			}
+		}
+		warning("StringResourceRA2: invalid string id : %d", id);
+		_ra2LastId = -1;
+		_ra2LastString = "unknown string";
+		return _ra2LastString;
+	}
+};
+
+bool SmushPlayerRebel2::handleGameSetupStrings() {
+	ScummFile *theFile = _vm->instantiateScummFile();
+	_vm->openFile(*theFile, "SYSTM/GAME.TRS");
+	if (!theFile->isOpen()) {
+		delete theFile;
+		return true; // handled (no strings available)
+	}
+	int32 length = theFile->size();
+	char *filebuffer = new char[length + 1];
+	theFile->read(filebuffer, length);
+	filebuffer[length] = 0;
+	theFile->close();
+	delete theFile;
+
+	if (READ_BE_UINT32(filebuffer) == MKTAG('E','T','R','S')) {
+		assert(length > RA2_ETRS_HEADER_LENGTH);
+		length -= RA2_ETRS_HEADER_LENGTH;
+		for (int i = 0; i < length; ++i)
+			filebuffer[i] = filebuffer[i + RA2_ETRS_HEADER_LENGTH] ^ 0xCC;
+		filebuffer[length] = '\0';
+	}
+
+	StringResourceRA2 *sr = new StringResourceRA2;
+	sr->init(filebuffer, length);
+	delete[] filebuffer;
+	_strings = sr;
+	return true;
+}
+
 /**
  * Reset XPAL delta palette from the current base palette.
  * Prevents stale delta values from a previous video corrupting the palette.

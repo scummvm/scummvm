@@ -56,10 +56,10 @@
 
 namespace Scumm {
 
-static const int MAX_STRINGS = 800;  // RA2 has ~658 strings
+static const int MAX_STRINGS = 200;
 static const int ETRS_HEADER_LENGTH = 16;
 
-class StringResource {
+class StringResourceImpl : public StringResource {
 private:
 
 	struct {
@@ -70,27 +70,23 @@ private:
 	int _nbStrings;
 	int _lastId;
 	const char *_lastString;
-	bool _preserveNewlines;
 
 public:
 
-	StringResource() :
+	StringResourceImpl() :
 		_nbStrings(0),
 		_lastId(-1),
-		_lastString(nullptr),
-		_preserveNewlines(false) {
+		_lastString(nullptr) {
 		for (int i = 0; i < MAX_STRINGS; i++) {
 			_strings[i].id = 0;
 			_strings[i].string = nullptr;
 		}
 	}
-	~StringResource() {
+	~StringResourceImpl() override {
 		for (int32 i = 0; i < _nbStrings; i++) {
 			delete[] _strings[i].string;
 		}
 	}
-
-	void setPreserveNewlines(bool preserve) { _preserveNewlines = preserve; }
 
 	bool init(char *buffer, int32 length) {
 		char *def_start = strchr(buffer, '#');
@@ -142,24 +138,7 @@ public:
 			}
 
 			data_end -= 2;
-			// Handle empty entries (e.g., RA2 TRS files have entries with no content)
-			if (data_end <= data_start) {
-				// Skip this entry - no content
-				def_start = strchr(def_end + 1, '#');
-				continue;
-			}
-
-			// Strip leading // from first line (RA2 format uses // prefix for content)
-			if (data_start[0] == '/' && data_start[1] == '/') {
-				data_start += 2;
-			}
-
-			// Recalculate length after stripping
-			if (data_end <= data_start) {
-				def_start = strchr(def_end + 1, '#');
-				continue;
-			}
-
+			assert(data_end > data_start);
 			char *value = new char[data_end - data_start + 1];
 			assert(value);
 			memcpy(value, data_start, data_end - data_start);
@@ -171,20 +150,11 @@ public:
 				line_start = line_end+1;
 				if (line_start[0] == '/' && line_start[1] == '/') {
 					line_start += 2;
-					// RA2: preserve newlines for multi-line TRES text
-					// (credits, cast lists). Other games join with spaces.
-					if (_preserveNewlines) {
-						if (line_end[-1] == '\r')
-							line_end[-1] = '\n';
-						// else line_end already points to '\n'
-						memmove(line_end + 1, line_start, strlen(line_start)+1);
-					} else {
-						if	(line_end[-1] == '\r')
-							line_end[-1] = ' ';
-						else
-							*line_end++ = ' ';
-						memmove(line_end, line_start, strlen(line_start)+1);
-					}
+					if	(line_end[-1] == '\r')
+						line_end[-1] = ' ';
+					else
+						*line_end++ = ' ';
+					memmove(line_end, line_start, strlen(line_start)+1);
 				}
 			}
 			_strings[_nbStrings].id = id;
@@ -195,7 +165,7 @@ public:
 		return true;
 	}
 
-	const char *get(int id) {
+	const char *get(int id) override {
 		if (id == _lastId) {
 			return _lastString;
 		}
@@ -215,16 +185,14 @@ public:
 };
 
 static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_encoded) {
-	debugC(DEBUG_SMUSH, "getStrings: trying to read text resources from %s", file);
+	debugC(DEBUG_SMUSH, "trying to read text resources from %s", file);
 	ScummFile *theFile = vm->instantiateScummFile();
 
 	vm->openFile(*theFile, file);
 	if (!theFile->isOpen()) {
-		debugC(DEBUG_SMUSH, "getStrings: Failed to open %s", file);
 		delete theFile;
 		return 0;
 	}
-	debugC(DEBUG_SMUSH, "getStrings: Successfully opened %s", file);
 	int32 length = theFile->size();
 	char *filebuffer = new char [length + 1];
 	assert(filebuffer);
@@ -241,9 +209,8 @@ static StringResource *getStrings(ScummEngine *vm, const char *file, bool is_enc
 		}
 		filebuffer[length] = '\0';
 	}
-	StringResource *sr = new StringResource;
+	StringResourceImpl *sr = new StringResourceImpl;
 	assert(sr);
-	sr->setPreserveNewlines(vm->_game.id == GID_REBEL2);
 	sr->init(filebuffer, length);
 	delete[] filebuffer;
 	return sr;
@@ -1202,11 +1169,9 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		const char *gameStringResource = getGameStringResource();
-		if (gameStringResource) {
-			_strings = getStrings(_vm, gameStringResource, true);
-		} else if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
-			readString("mineroad.trs");
+		if (!handleGameSetupStrings()) {
+			if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
+				readString("mineroad.trs");
 		}
 	} else
 		readString(file);
