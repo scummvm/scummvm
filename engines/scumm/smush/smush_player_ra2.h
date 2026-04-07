@@ -43,7 +43,7 @@ protected:
 	SmushFont *getGameFont(int font) override;
 	void adjustGamePalette() override;
 	bool handleGameAnimHeader(byte *headerContent) override;
-	const char *getGameStringResource() const override { return "SYSTM/GAME.TRS"; }
+	bool handleGameSetupStrings() override;
 	void handleGameParseNextFrame() override;
 	bool shouldRouteAllIACTs() const override { return true; }
 	bool handleGameFrameBufferSelect(int codec, int width, int height) override;

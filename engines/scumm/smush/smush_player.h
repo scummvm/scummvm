@@ -93,7 +93,11 @@ class ScummEngine_v7;
 class SmushFont;
 class SmushMultiFont;
 class SmushMixer;
-class StringResource;
+class StringResource {
+public:
+	virtual ~StringResource() {}
+	virtual const char *get(int id) = 0;
+};
 class SmushDeltaBlocksDecoder;
 class SmushDeltaGlyphsDecoder;
 class IMuseDigital;
@@ -304,7 +308,7 @@ protected:
 	virtual SmushFont *getGameFont(int font) { return nullptr; }
 	virtual void adjustGamePalette() {}
 	virtual bool handleGameAnimHeader(byte *headerContent) { return false; }
-	virtual const char *getGameStringResource() const { return nullptr; }
+	virtual bool handleGameSetupStrings() { return false; }
 	virtual void handleGameParseNextFrame() {}
 	virtual bool shouldRouteAllIACTs() const { return false; }
 	virtual bool handleGameFrameBufferSelect(int codec, int width, int height) { return false; }

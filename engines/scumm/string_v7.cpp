@@ -129,10 +129,7 @@ int TextRenderer_v7::getStringHeight(const char *str, uint numBytesMax) {
 		}
 
 		if (*str == '\n') {
-			int lh = lineHeight ? lineHeight : _gr->getFontHeight();
-			// RA2: add extra inter-line spacing for larger fonts (credits text)
-			int gap = (_gameId == GID_REBEL2 && lh > 8) ? lh / 2 : 1;
-			totalHeight += lh + gap;
+			totalHeight += (lineHeight ? lineHeight : _gr->getFontHeight()) + 1;
 			lineHeight = 0;
 		} else if (*str != '\r' && *str != _lineBreakMarker) {
 			lineHeight = MAX<int>(lineHeight, _gr->getCharHeight(*str));
