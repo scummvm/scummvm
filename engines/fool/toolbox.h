@@ -334,8 +334,42 @@ private:
 }; // 0x44
 
 typedef uint32 OSType;
-typedef uint16 OSErr;
+typedef int16 OSErr;
 typedef uint32 ProcPtr;
+
+// source: Inside Macintosh II-138
+enum OSErrCode : int16 {
+	kNoErr = 0,
+	kBadMDBErr = -60,
+	kBdNamErr = -37,
+	kDirFulErr = -33,
+	kDskFulErr = -34,
+	kDupFNErr = -48,
+	kEOFErr = -39,
+	kExtFSErr = -58,
+	kFBsyErr = -47,
+	kFLckdErr = -45,
+	kFnfErr = -43,
+	kFnOpnErr = -38,
+	kFsRnErr = -59,
+	kGfpErr = -52,
+	kIoErr = -36,
+	kMemFullErr = -108,
+	kNoMacDskErr = -57,
+	kNsDrvErr = -56,
+	kNsvErr = -35,
+	kOpWrErr = -49,
+	kParamErr = -50,
+	kPermErr = -54,
+	kPosErr = -40,
+	kRfNumErr = -51,
+	kTmfoErr = -42,
+	kVolOffLinErr = -53,
+	kVolOnLinErr = -55,
+	kVLckdErr = -46,
+	kWrPermErr = -61,
+	kWPrErr = -44,
+};
 
 enum EventCode : uint16 {
 	kNullEvent = 0,
@@ -561,6 +595,8 @@ public:
 	uint32 TickCount();
 
 	// toolbox_fileman.cpp
+	OSErr GetFInfo(const Common::U32String &fileName, int16 vRefNum, Common::MacFinderInfo &fndrInfo);
+
 	OSErr PBGetVol(ParamBlockRec &paramBlock);
 
 	OSErr PBSetVol(ParamBlockRec &paramBlock);

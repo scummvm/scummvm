@@ -32,7 +32,14 @@ Toolbox *g_toolbox;
 void FoolGame::run() {
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
-	g_zbasic->loadProgram(Common::Path("The Fool's Errand"));
+	Common::MacFinderInfo finfo;
+	if (g_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == kNoErr) {
+		g_zbasic->loadProgram(Common::Path("The Fool's Errand", ':'));
+	} else if (g_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == kNoErr) {
+		g_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
+	} else {
+		error("FoolGame::run: Fool's Errand program not found");
+	}
 	this->sub_128_004();
 	delete g_zbasic;
 	delete g_toolbox;
@@ -2855,119 +2862,6 @@ void FoolGame::sub_129_123a() {
 	g_toolbox->DrawString(this->var_str_172);
 	g_toolbox->SetPort(this->var_i32_0);
 	g_toolbox->Delay(0);
-}
-
-// word jumble/substitute puzzle
-void FoolGame::sub_130_004() {
-	// 130:0004
-	this->var_i16_d0c = 0;
-	this->sub_128_271a();
-	this->var_i16_1056 = this->puzzlesReadShort();
-	this->var_i16_1058 = 1;
-	this->var_i16_105a = this->puzzlesReadShort();
-	if ((this->var_i16_105a & 0x1) == 1) {
-		for (int i = 0; i <= 0xe; i++) {
-			this->arr_i16_1eb8[i] = this->puzzlesReadShort();
-		}
-	}
-	// 130:0066
-	this->var_i16_484 = 0;
-	this->var_i16_68c = this->arr_i16_1eb8[8];
-	do {
-		this->var_i16_68a = this->arr_i16_1eb8[10];
-		do {
-			this->var_i16_484++;
-			g_toolbox->SetRect(
-				this->arr_rect_1f38[this->var_i16_484],
-				this->var_i16_68a,
-				this->var_i16_68c,
-				this->var_i16_68a + this->arr_i16_1eb8[13],
-				this->var_i16_68c + this->arr_i16_1eb8[12]
-			);
-			// 130:00f6
-		} while (g_zbasic->incrAndCheck(this->var_i16_68a, this->arr_i16_1eb8[11], this->arr_i16_1eb8[6]));
-	// 130:0126
-	} while (g_zbasic->incrAndCheck(this->var_i16_68c, this->arr_i16_1eb8[9], this->arr_i16_1eb8[7]));
-	// 130:0156
-	if ((this->var_i16_105a & 0x2) == this->var_i16_105a) {
-		this->var_i16_105c = this->puzzlesReadShort();
-		this->var_i16_105e = this->puzzlesReadShort();
-		this->var_i16_1060 = this->puzzlesReadShort();
-		this->var_i16_1062 = this->puzzlesReadShort();
-		this->var_i16_1064 = this->puzzlesReadShort();
-		this->var_i16_1066 = this->puzzlesReadShort();
-		if (this->var_i16_1066 > 0) {
-			this->arr_i32_192c0[0] = g_toolbox->GetPicture(this->var_i16_1066);
-			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_i32_192c0[0]);
-			g_toolbox->ReleaseResource(this->arr_i32_192c0[0]);
-		}
-	}
-	// 130:01f0
-	this->var_i16_1068 = this->puzzlesReadShort();
-	if (this->var_i16_1068 == 6) {
-		for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-			for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-				this->arr_i16_2f38[i*32 + j] = this->puzzlesReadByte();
-				this->arr_i16_3b38[i*32 + j] = 0;
-			}
-		}
-	} else {
-	// 130:028a
-		for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-			for (int i = 1; i <= this->arr_i16_1eb8[0]; i++) {
-				this->arr_i16_2f38[i*32 + j] = 0;
-				this->arr_i16_3b38[i*32 + j] = 0;
-			}
-		}
-	}
-	// 130:0306
-	this->var_i16_103a = this->puzzlesReadShort();
-	if (this->var_i16_103a > 0) {
-		g_toolbox->PenNormal();
-		g_toolbox->PenPat(this->arr_pat_58f4[this->var_i16_1060]);
-		this->var_i16_484 = 0;
-		for (int j = 1; j <= this->var_i16_103a; j++) {
-			this->var_i16_106a = this->puzzlesReadShort();
-			if (this->var_i16_106a == 0) {
-				this->var_i16_484 += 10;
-			} else {
-			// 130:035a
-				for (int i = 0; i <= 0xc; i++) {
-					this->var_i16_484++;
-					if (this->var_i16_106a & this->bitLUT[i]) {
-						g_toolbox->PaintRect(this->arr_rect_1f38[this->var_i16_484]);
-					}
-				}
-				// 130:039e
-
-			}
-			// 103:03aa
-		}
-	}
-	// 130:03ba
-	if (this->var_i16_105e == 2) {
-		this->var_i16_106c = 3;
-	} else {
-		this->var_i16_106c = 1;
-	}
-	// 130:03d4
-	if (this->var_i16_1068 == 4) {
-		this->fillRect(0x63, 0xae, 0x108, 0x153, 2);
-	}
-	// 130:03fe
-	//if (this->var_i16_c04 <= this->var_i16_1058)
-	this->var_i16_106e = 0;
-	this->var_str_1070 = g_zbasic->str(168); // empty
-	this->var_str_1170 = g_zbasic->str(169); // empty
-	this->var_i16_1270 = this->puzzlesReadShort();
-	this->var_i16_103a = 1;
-	this->var_str_1272 = this->puzzlesReadString();
-	this->var_i16_1372 = this->var_str_1272.size();
-	this->var_str_1170 = this->var_str_1170 + this->var_str_1272;
-	// 130:047e
-
-	// 130:0c64
-	warning("STUB: %s", __func__);
 }
 
 void FoolGame::sub_135_004() {

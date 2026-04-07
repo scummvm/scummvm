@@ -127,7 +127,32 @@ public:
 	void sub_129_068();
 	void sub_129_123a();
 
+	// fool_jumble.cpp:
 	void sub_130_004();
+	void sub_130_c56();
+	void sub_130_c66();
+	void sub_130_d2e();
+	void sub_130_d90();
+	void sub_130_1004();
+	void sub_130_10a6();
+	void sub_130_1282();
+	void sub_130_1426();
+	void sub_130_1476();
+	void sub_130_15da();
+	void sub_130_1c1a();
+	void sub_130_1c52();
+	void sub_130_1c6c();
+	void sub_130_1dcc();
+	void sub_130_1e5c();
+	void sub_130_1e76();
+	void sub_130_2078();
+	void sub_130_2094();
+	void sub_130_201a();
+	void sub_130_20d2();
+	void sub_130_20fe();
+	void sub_130_2226();
+	void sub_130_25d8();
+	void sub_130_2790();
 
 	// fool_wordsearch.cpp
 	void wordSearchRun(); // sub_131_004
@@ -299,6 +324,7 @@ private:
 
 	Common::U32String var_str_af4;
 
+	int16 var_i16_bfc;
 	// Used as both a pointer and a bitstore
 	uint32 var_i32_bf8;
 	MenuHandle var_menu_bf8;
@@ -309,6 +335,7 @@ private:
 
 	int16 var_i16_d06;
 	int16 var_i16_d0c;
+	Common::U32String var_str_d12;
 	int16 var_i16_e12;
 	int16 var_i16_e14;
 	int16 selectedMenuID; // var_i16_e16
@@ -341,7 +368,7 @@ private:
 	int16 var_i16_1066;
 	int16 var_i16_1068;
 	int16 var_i16_106a;
-	int16 var_i16_106c;
+	SourceMode var_i16_106c;
 	int16 var_i16_106e;
 	Common::U32String var_str_1070;
 	Common::U32String var_str_1170;
@@ -349,9 +376,22 @@ private:
 	Common::U32String var_str_1272;
 	int16 var_i16_1372;
 
+	Common::U32String var_str_1374;
+	Common::U32String var_str_1474;
 	int16 var_i16_1574;
+	int16 var_i16_1576;
 
+	Common::U32String var_str_1578;
+
+	int16 var_i16_1678;
+	int16 var_i16_167a;
 	Common::U32String var_str_167c;
+	Common::U32String var_str_177c;
+
+	int16 var_i16_187c;
+	int16 var_i16_187e;
+	int16 var_i16_1880;
+	int16 var_i16_1882;
 
 	Common::U32String var_str_188e;
 

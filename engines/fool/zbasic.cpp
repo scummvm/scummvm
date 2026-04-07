@@ -353,6 +353,14 @@ Common::U32String ZBasic::midStr(const Common::U32String &str, int16 expr1, int1
 	return result;
 }
 
+void ZBasic::midStrSet(Common::U32String &target, int16 expr1, int16 expr2, const Common::U32String &src) {
+	for (int i = 0; i < expr2; i++) {
+		if (((expr1 + i) >= target.size()) || (i >= src.size()))
+			break;
+		target[expr1 + i] = src[i];
+	}
+}
+
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	if (_fileStreams.contains(fileNo)) {
@@ -571,6 +579,12 @@ void ZBasic::text(uint16 font, uint16 size, uint16 face, SourceMode mode) {
 	_toolbox->TextSize(size);
 	_toolbox->TextFace(face);
 	_toolbox->TextMode(mode);
+}
+
+Common::U32String ZBasic::ucase(const Common::U32String &str) {
+	Common::U32String result = str;
+	result.toUppercase();
+	return result;
 }
 
 void ZBasic::window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type) {
