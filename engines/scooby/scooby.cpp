@@ -107,6 +107,11 @@ Common::Error ScoobyEngine::run() {
 		_limiter->startFrame();
 	}
 
+	delete _limiter;
+	delete _gfx;
+	delete _vdp;
+	delete _file;
+
 	return Common::kNoError;
 }
 
@@ -332,6 +337,10 @@ void ScoobyEngine::mainMenu() {
 	byte buf[0x10000];
 	uint16 palette[0x40];
 
+	// fadeToBlack();
+	// DAT_00ff09ed = DAT_00ff09ed & 235;
+	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 127;
+
 	/* VDP: Window Plane Horizontal Position
 	   Draw window from HP to left edge of screen.
 	   Position: 0x0 (in units of 8 pixels). */
@@ -341,7 +350,36 @@ void ScoobyEngine::mainMenu() {
 	   Position: 0x0 (in units of 8 pixels). */
 	_vdp->control_port_w(0x9200);
 
-//TODO
+	// DAT_00ff0016 = 0;
+	// DAT_00ff001c = 0;
+	// DAT_00ff001a = 0;
+	// DAT_00ff000a = currentRoomId;
+	// _DAT_00ff0010 = 224;
+	// DAT_00ff0012 = 224;
+	_vdp->writeVRAMWord(0xdc00,0);
+	_vdp->writeVRAMWord(0xdc02,0);
+
+	// _vdp->control_port_w(0x4000);
+	// _vdp->control_port_w(0x0010);
+	// _vdp->data_port_w16(0);
+	// _vdp->data_port_w16(0);
+	uint32 b = 0;
+	_vdp->writeVSRAM(0, reinterpret_cast<byte *>(&b), 4);
+
+	// DAT_00ff000c = 0;
+	// DAT_00ff000e = 3;
+	// DAT_00ff09eb_flags = DAT_00ff09eb_flags & 247;
+	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 16;
+
+	_vdp->zeroVRAM(0xdc00, 0x1c0);
+	_vdp->zeroVRAM(0, 0x8000);
+	// DAT_00ff09eb_flags = DAT_00ff09eb_flags | 2;
+	_vdp->control_port_w(0x7c00);
+	_vdp->control_port_w(0x0003);
+	/* VDP: Sprite Table
+   Location - 0xfc00 */
+	_vdp->control_port_w(0x857e);
+	_vdp->data_port_w16(0);
 
 	_vdp->control_port_w(0x857e);
 //	write_volatile_4(0xc00000,0);
