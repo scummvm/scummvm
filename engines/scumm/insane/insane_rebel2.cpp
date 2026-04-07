@@ -98,10 +98,6 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_rebelDetailMode = 1;
 	_smush_cockpitNut = new NutRenderer(_vm, "SYSTM/DISPFONT.NUT");
 
-	// Load SMALFONT.NUT for HUD score/lives rendering (DAT_00482200 equivalent)
-	// This is used by FUN_0041c012 to render the score in the status bar
-	_smush_dispfontNut = new NutRenderer(_vm, "SYSTM/SMALFONT.NUT");
-
 	// Load DIHIFONT.NUT for in-video messages/subtitles (Opcode 9)
 	_rebelMsgFont = new SmushFont(_vm, "SYSTM/DIHIFONT.NUT", true);
 
@@ -115,15 +111,8 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_smush_smalfontNut = new NutRenderer(_vm, "SYSTM/SMALFONT.NUT");
 	_smush_titlefontNut = new NutRenderer(_vm, "SYSTM/TITLFONT.NUT");
 
-	// SmushFont for menu text rendering - uses SMALFONT with proper drawString support
-	_menuFont = new SmushFont(_vm, "SYSTM/SMALFONT.NUT", true);
 	_pauseOverlayActive = false;
 	memset(_savedPausePalette, 0, sizeof(_savedPausePalette));
-
-	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
-	// This is loaded into DAT_0047aba8 and used as a background overlay via FUN_004236e0
-	// The original game uses the standard Windows arrow cursor (IDC_ARROW via LoadCursorA)
-	_smush_mouseoverNut = new NutRenderer(_vm, "SYSTM/MSTOVER.NUT");
 
 	_enemies.clear();
 	_rebelHandler = 0;  // Not set yet - will be set by IACT opcode 6
@@ -503,12 +492,9 @@ InsaneRebel2::~InsaneRebel2() {
 	terminateAudio();
 	freeSfx();
 	delete _rebelMsgFont;
-	delete _menuFont;
-	delete _smush_dispfontNut;
 	delete _smush_talkfontNut;
 	delete _smush_smalfontNut;
 	delete _smush_titlefontNut;
-	delete _smush_mouseoverNut;
 
 	// Clean up Handler 8 ship sprites
 	delete _shipSprite;

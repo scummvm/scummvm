@@ -102,6 +102,10 @@ public:
 	int processMenuInput();
 
 	// Format-code-aware string rendering (^fNN=font, ^cNNN=color)
+	// parseFormatCode: advances str past ^fNN/^cNNN/^^/^l codes.
+	// Returns: fontIdx (>=0) on font change, -2 on color/newline, -1 on no match.
+	static int parseFormatCode(const char *&str, int &outColor);
+
 	int getMenuStringWidth(const char *str) const;
 	void drawMenuString(byte *renderBitmap, const char *str, int x, int y, int defaultColor = 1);
 	void drawMenuStringCentered(byte *renderBitmap, const char *str, int cx, int y, int defaultColor = 1);
@@ -455,10 +459,6 @@ public:
 
 	NutRenderer *_smush_cockpitNut;
 
-	// Font used for HUD score/lives/damage display (SMALFONT.NUT)
-	// DAT_00482200 equivalent - used by FUN_0041c012 for status bar rendering
-	NutRenderer *_smush_dispfontNut;
-
 	// Font used for opcode 9 text/subtitle rendering (DIHIFONT / TALKFONT)
 	SmushFont *_rebelMsgFont;
 
@@ -472,16 +472,9 @@ public:
 	NutRenderer *_smush_smalfontNut;   // Font 1 - small font for ^f01 switching
 	NutRenderer *_smush_titlefontNut;  // Font 2 - title font
 
-	// SmushFont for menu text rendering (uses SMALFONT.NUT with proper string drawing)
-	SmushFont *_menuFont;
-
 	// Saved palette for pause overlay restoration (FUN_405A21)
 	byte _savedPausePalette[768];
 	bool _pauseOverlayActive;
-
-	// MSTOVER.NUT - Mouse Over background overlay (NOT a cursor!)
-	// Loaded into DAT_0047aba8 and rendered via FUN_004236e0 as background
-	NutRenderer *_smush_mouseoverNut;
 
 	bool _introCursorPushed; // true when we've pushed an invisible cursor for intro
 	

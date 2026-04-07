@@ -2700,29 +2700,11 @@ void InsaneRebel2::renderTextOverlay(byte *renderBitmap, int pitch, int width, i
 
 	Common::Rect clipRect(0, 0, width, height);
 
-	// Format code parser (same as drawMenuItems / FUN_00434d10)
+	// Wrapper around shared parseFormatCode that also updates curFont
 	auto parseFormat = [&](const char *&s, NutRenderer *&curFont, int &curColor) {
-		if (*s != '^')
-			return false;
-		const char *p = s + 1;
-		if (*p == '^') { s = p; return false; }
-		if (*p == 'f') {
-			p++;
-			int idx = 0;
-			while (*p >= '0' && *p <= '9') { idx = idx * 10 + (*p - '0'); p++; }
-			s = p;
-			curFont = (idx >= 0 && idx < 3 && fonts[idx]) ? fonts[idx] : defaultFont;
-			return true;
-		}
-		if (*p == 'c') {
-			p++;
-			int col = 0;
-			while (*p >= '0' && *p <= '9') { col = col * 10 + (*p - '0'); p++; }
-			s = p;
-			curColor = col;
-			return true;
-		}
-		return false;
+		int fc = parseFormatCode(s, curColor);
+		if (fc >= 0) { curFont = (fonts[fc] ? fonts[fc] : defaultFont); return true; }
+		return fc == -2;
 	};
 
 	// The TRS parser joins multi-line strings with spaces (stripping \n//),
