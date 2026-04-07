@@ -911,7 +911,7 @@ void SmushPlayer::decodeFrameObject(int codec, const uint8 *src, int left, int t
 	}
 
 	// Try game-specific codec handler first (pass adjustedSrc for row-skip-aware codecs)
-	if (!handleGameCodecDecode(codec, adjustedSrc, left, top, width, height, pitch, dataSize)) {
+	if (!handleGameCodecDecode(codec, adjustedSrc, left, top, width, height, pitch, dataSize, ra1Param, ra1Parm2)) {
 		// Standard SCUMM codec dispatch
 		switch (codec) {
 		case SMUSH_CODEC_RLE:

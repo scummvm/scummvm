@@ -49,7 +49,7 @@ protected:
 	bool handleGameFrameBufferSelect(int codec, int width, int height) override;
 	bool handleGameDimensionOverride(int codec, int width, int height) override;
 	bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) override;
-	bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) override;
+	bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param = 0, uint16 parm2 = 0) override;
 	bool handleGameStoreFrame() override;
 	void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) override;
 	void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) override;

@@ -314,7 +314,7 @@ protected:
 	virtual bool handleGameFrameBufferSelect(int codec, int width, int height) { return false; }
 	virtual bool handleGameDimensionOverride(int codec, int width, int height) { return false; }
 	virtual bool handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) { return false; }
-	virtual bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) { return false; }
+	virtual bool handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param = 0, uint16 parm2 = 0) { return false; }
 	virtual bool handleGameStoreFrame() { return false; }
 	virtual void handleGameFrameObjectPre(int codec, int left, int top, int width, int height, int dataSize) {}
 	virtual void handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {}

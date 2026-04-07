@@ -739,7 +739,7 @@ bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, i
 	return true;
 }
 
-bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) {
+bool SmushPlayerRebel2::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2) {
 	// Handle RA2-specific codecs (21, 23, 44, 45); return false for standard
 	// codecs (RLE, uncompressed, codec 37/47) so the base class decodes them.
 	return ra2DecodeCodec(codec, src, left, top, width, height, pitch, dataSize);

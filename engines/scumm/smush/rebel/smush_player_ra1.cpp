@@ -512,11 +512,7 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 	return true;
 }
 
-bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize) {
-	// The base class passes clipped coords. For additive codec and scatter, we need original coords
-	// which are stored in the origLeft/origTop locals of decodeFrameObject. Since we can't access those
-	// from the override, the additive codec and scatter draw are special-cased.
-	// For now, handle the codecs that have RA1-specific behavior.
+bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int left, int top, int width, int height, int pitch, int dataSize, uint8 param, uint16 parm2) {
 	switch (codec) {
 	case SMUSH_CODEC_RLE:
 		smushDecodeRA1Transparent(_dst, src, left, top, width, height, pitch);
@@ -529,7 +525,7 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 		return true;
 	case SMUSH_CODEC_RA1_DELTA:
 	case SMUSH_CODEC_RA1_BLOCK:
-		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, 0, 0, codec);
+		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, param, parm2, codec);
 		return true;
 	case SMUSH_CODEC_LINE_UPDATE:
 		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch);
