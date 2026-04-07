@@ -254,6 +254,7 @@ public:
 	Common::U32String leftStr(const Common::U32String &str, int16 expression);
 	Common::U32String rightStr(const Common::U32String &str, int16 expression);
 	Common::U32String midStr(const Common::U32String &str, int16 expr1, int16 expr2);
+	void midStrSet(Common::U32String &target, int16 expr1, int16 expr2, const Common::U32String &src);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
@@ -278,6 +279,7 @@ public:
 	void writeFileStr(int16 fileNo, const Common::U32String &str);
 	void writeFileInt(int16 fileNo, int16 data);
 	void writeFileDblInt(int16 fileNo, int32 data);
+	Common::U32String ucase(const Common::U32String &str);
 
 	const Common::U32String &str(size_t index);
 

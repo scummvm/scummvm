@@ -42,6 +42,15 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 	return result;
 }
 
+OSErr Toolbox::GetFInfo(const Common::U32String &fileName, int16 vRefNum, Common::MacFinderInfo &fndrInfo) {
+	Common::MacResManager resMan;
+	Common::Path path(fileName, ':');
+	// testing resource fork, load from the filesystem
+	if (!resMan.getFileFinderInfo(path, fndrInfo))
+		return kFnfErr;
+	return kNoErr;
+}
+
 OSErr Toolbox::PBGetVol(ParamBlockRec &paramBlock) {
 	warning("STUB: Toolbox::PBGetVol");
 	return 0;
