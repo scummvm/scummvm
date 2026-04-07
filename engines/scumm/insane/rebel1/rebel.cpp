@@ -39,7 +39,7 @@ namespace Scumm {
 // Per-difficulty tuning tables from assault_data_3.bin (also loadable from C:\rebltune.txt)
 // 21 sub-levels x 3 difficulties x 13 fields
 // Fields: roll, lift, slide, drift, snap, miss, wham, shot, kill, time, levelPts, bonus, flags
-static const int16 kTuningTable[21][3][13] = {
+const int16 kTuningTable[21][3][13] = {
 	// Sub-level 0: "1A" (Flight Training - canyon flight)
 	{
 		{ 100, 100,  60, 110,   0,   0,  15,   0,   0,   5,  500,  100, 2048 },  // Easy
@@ -167,7 +167,7 @@ static const int16 kTuningTable[21][3][13] = {
 		{   0,   0,   0,   0,   2,  22,  35,   4,  75,  10, 1500,  500, 2050 },  // Hard
 	},
 };
-static const int kNumTunedLevels = 21;
+const int kNumTunedLevels = 21;
 
 
 void InsaneRebel1::loadTuningForLevel(int level) {
@@ -319,7 +319,7 @@ InsaneRebel1::InsaneRebel1(ScummEngine_v7 *scumm) : Insane(), _vm(scumm) {
 	_optVolume = _vm->_mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType) * 127 / Audio::Mixer::kMaxChannelVolume;
 
 	// Default high scores — from DS:0x1D0/0x298/0x2C0
-	static const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
+	const struct { const char *name; int32 score; byte difficulty; } kDefaultScores[kHighScoreCount] = {
 		{"Vince",   10000, 2}, {"Tamlynn",  9000, 2}, {"Chip",    8000, 2},
 		{"Brett",    7000, 1}, {"Casey",    6000, 1}, {"Justin",  5000, 1},
 		{"Bill",     4000, 0}, {"Aaron",    3000, 0}, {"Mary",    2000, 0},

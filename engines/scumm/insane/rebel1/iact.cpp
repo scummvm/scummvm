@@ -28,12 +28,12 @@
 
 namespace Scumm {
 
-static inline int16 applyRebel1AnalogDeadzone(int16 axisValue) {
+inline int16 applyRebel1AnalogDeadzone(int16 axisValue) {
 	const int deadZone = MAX(0, ConfMan.getInt("joystick_deadzone")) * 1000;
 	return (ABS(axisValue) <= deadZone) ? 0 : axisValue;
 }
 
-static inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue, int16 axisMax) {
+inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filteredValue, int16 axisMax) {
 	const int delta = (int)inputValue - (int)filteredValue;
 	int step = delta / 10;
 
@@ -44,13 +44,13 @@ static inline int16 smoothRebel1Op0BAnalogInput(int16 inputValue, int16 &filtere
 	return filteredValue;
 }
 
-static const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
-static const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
+const int16 kRA1Op09AimXScale[5] = { 0, 44, 88, 128, 165 };
+const int16 kRA1Op09AimYScale[5] = { 256, 252, 240, 221, 196 };
 
 // LVL1 stage-2 0x5D damage/event codes. The gameplay stream exposes low record ids
 // (6..18), while the recovered outer loop compares the post-latch state against the
 // later translated values seen in the executable. Accept both representations.
-static inline bool isL1Stage2DamageLatch(uint16 code) {
+inline bool isL1Stage2DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0006:
 	case 0x0007:
@@ -81,7 +81,7 @@ static inline bool isL1Stage2DamageLatch(uint16 code) {
 	}
 }
 
-static inline bool isL1Stage2SweepDamage(uint16 frameCounter, int16 perspectiveX) {
+inline bool isL1Stage2SweepDamage(uint16 frameCounter, int16 perspectiveX) {
 	switch (frameCounter) {
 	case 0x0034:
 	case 0x00ED:
@@ -96,7 +96,7 @@ static inline bool isL1Stage2SweepDamage(uint16 frameCounter, int16 perspectiveX
 	}
 }
 
-static const int16 kLevel7BranchFrames[6][6] = {
+const int16 kLevel7BranchFrames[6][6] = {
 	{ -1,  78, 267, 398, 556, 630 },
 	{ -1, 187, 376, 507, 665, 739 },
 	{ -1, 187, 376, 507, 665, 739 },
@@ -105,21 +105,21 @@ static const int16 kLevel7BranchFrames[6][6] = {
 	{ -1, 112, 301, 432, 590, 664 }
 };
 
-static const int16 kLevel7BranchDir[6] = {
+const int16 kLevel7BranchDir[6] = {
 	0, 1, 1, -1, 1, 1
 };
 
-static const int16 kLevel7BranchThreshold[6] = {
+const int16 kLevel7BranchThreshold[6] = {
 	0, 170, 170, 160, 160, 160
 };
 
-static const int16 kLevel8BranchFrames[3][3] = {
+const int16 kLevel8BranchFrames[3][3] = {
 	{ 2588, 1709,  262 },
 	{ 2323, 1444,   -2 },
 	{  877,   -2,   -2 }
 };
 
-static inline bool isLevel4DamageLatch(uint16 code) {
+inline bool isLevel4DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0008:
 	case 0x000A:
@@ -138,7 +138,7 @@ static inline bool isLevel4DamageLatch(uint16 code) {
 	}
 }
 
-static inline bool isLevel6DamageLatch(uint16 code) {
+inline bool isLevel6DamageLatch(uint16 code) {
 	switch (code) {
 	case 0x0003:
 	case 0x0008:
@@ -152,7 +152,7 @@ static inline bool isLevel6DamageLatch(uint16 code) {
 	}
 }
 
-static inline bool isLevel10DamageLatch(uint16 code) {
+inline bool isLevel10DamageLatch(uint16 code) {
 	if (code < 0x7F) {
 		if (code > 0x3D) {
 			if (code > 0x3E) {
@@ -283,7 +283,7 @@ static inline bool isLevel10DamageLatch(uint16 code) {
 	return true;
 }
 
-static inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x006A:
 	case 0x00FD:
@@ -321,7 +321,7 @@ static inline bool hasLevel6PerspectiveHazard(uint16 frame, int16 perspectiveX, 
 	}
 }
 
-static inline bool hasLevel8PerspectiveHazardRoute0(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel8PerspectiveHazardRoute0(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x00CD:
 		return perspectiveX < 0x29;
@@ -342,7 +342,7 @@ static inline bool hasLevel8PerspectiveHazardRoute0(uint16 frame, int16 perspect
 	}
 }
 
-static inline bool hasLevel8PerspectiveHazardRoute1(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel8PerspectiveHazardRoute1(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x0189:
 		return perspectiveY < 0x0F;
@@ -360,7 +360,7 @@ static inline bool hasLevel8PerspectiveHazardRoute1(uint16 frame, int16 perspect
 	}
 }
 
-static inline bool hasLevel8PerspectiveHazardRoute2(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
+inline bool hasLevel8PerspectiveHazardRoute2(uint16 frame, int16 perspectiveX, int16 perspectiveY) {
 	switch (frame) {
 	case 0x00BB:
 		return perspectiveX < 0x29 && perspectiveY < 0x20;
@@ -1431,8 +1431,8 @@ void InsaneRebel1::updateAsteroidPhysics() {
 //   g_perspectiveX/Y  = crosshair center (on-foot targeting)
 // Our _perspectiveX/_perspectiveY maps to the camera offset (DAT_000041a0/41a2).
 // The crosshair center (0xA3, 0x82) is a separate constant for on-foot mode.
-static const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
-static const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
+const int16 kOnFootCenterX = 0xA3;  // g_perspectiveX in HandleGameOp19
+const int16 kOnFootCenterY = 0x82;  // g_perspectiveY in HandleGameOp19
 
 void InsaneRebel1::updateOnFootPhysics() {
 	// --- First-frame initialization (0x19 counter==0) ---

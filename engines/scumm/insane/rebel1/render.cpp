@@ -27,7 +27,7 @@
 
 namespace Scumm {
 
-static inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
+inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
@@ -37,14 +37,14 @@ static inline int ra1OverlayViewOffsetX(const InsaneRebel1 *rebel1) {
 	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveX() : 0;
 }
 
-static inline int ra1OverlayViewOffsetY(const InsaneRebel1 *rebel1) {
+inline int ra1OverlayViewOffsetY(const InsaneRebel1 *rebel1) {
 	if (!rebel1 || !rebel1->isInteractiveVideoActive())
 		return 0;
 
 	return (rebel1->getEffectiveGameOpcode() == 0x0B) ? rebel1->getPerspectiveY() : 0;
 }
 
-static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
+void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
 	int x, int y, const char *text) {
 	if (!dst || !text || bank.numSprites <= 0)
 		return;
@@ -107,7 +107,7 @@ static void drawBankString(const RA1SpriteBank &bank, byte *dst, int pitch, int 
 	}
 }
 
-static const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
+const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
 	if (bank.numSprites <= 0)
 		return nullptr;
 	if ((byte)ch < 0x21)
@@ -127,7 +127,7 @@ static const RA1Sprite *lookupBankGlyph(const RA1SpriteBank &bank, char ch) {
 // Glyph markers in FUN_1C940/FUN_1CB22 go through DrawStringEx(..., flags=3),
 // which centers the glyph and ignores the NUT x/y offsets. Use the same anchor
 // rules here instead of the generic left-anchored text path.
-static void drawCenteredBankGlyph(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
+void drawCenteredBankGlyph(const RA1SpriteBank &bank, byte *dst, int pitch, int width, int height,
 	int centerX, int centerY, char ch) {
 	char glyphStr[2] = { ch, '\0' };
 	const RA1Sprite *glyph = lookupBankGlyph(bank, ch);
@@ -141,7 +141,7 @@ static void drawCenteredBankGlyph(const RA1SpriteBank &bank, byte *dst, int pitc
 	drawBankString(bank, dst, pitch, width, height, drawX, drawY, glyphStr);
 }
 
-static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
+int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 	if (!text || bank.numSprites <= 0)
 		return 0;
 
@@ -169,14 +169,14 @@ static int getBankStringWidth(const RA1SpriteBank &bank, const char *text) {
 
 // Approximate FUN_221B7/FUN_20BD3 space-advance behavior from available NUT glyphs.
 // The original reads per-font space width from metadata tables and caps it to 8.
-static int getBankSpaceAdvance(const RA1SpriteBank &bank) {
+int getBankSpaceAdvance(const RA1SpriteBank &bank) {
 	const int exclWidth = getBankStringWidth(bank, "!");
 	if (exclWidth <= 0)
 		return 6;
 	return MIN(exclWidth, 8);
 }
 
-static const RA1SpriteBank &selectLayerBank(const RA1SpriteBank &titleBank,
+const RA1SpriteBank &selectLayerBank(const RA1SpriteBank &titleBank,
 		const RA1SpriteBank &hudBank, const RA1SpriteBank &techBank, int layer) {
 	const bool techLayer = (layer >= 2);
 	const bool talkLayer = (layer == 1);
@@ -187,7 +187,7 @@ static const RA1SpriteBank &selectLayerBank(const RA1SpriteBank &titleBank,
 	return (titleBank.numSprites > 0) ? titleBank : hudBank;
 }
 
-static int getBankSpaceHeight(const RA1SpriteBank &bank) {
+int getBankSpaceHeight(const RA1SpriteBank &bank) {
 	// In FUN_221B7 line advance is derived from the layer's space-glyph height (+4).
 	// With current NUT decoding we approximate that using the '!' glyph (index 0).
 	if (bank.numSprites > 0) {
@@ -199,7 +199,7 @@ static int getBankSpaceHeight(const RA1SpriteBank &bank) {
 }
 
 // FUN_1C794: direction bucket in range -4..4 from two points.
-static int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
+int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 	int dx = x2 - x1;
 	int dy = y1 - y2;
 	if (dy < 0) {
@@ -232,7 +232,7 @@ static int ra1ShotDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 }
 
 // FUN_1CDA7 maps abs(FUN_1C794) to sprite base index: <=1 -> 0, ==2 -> 5, else -> 10.
-static int ra1ShotDirectionBucket(int dir) {
+int ra1ShotDirectionBucket(int dir) {
 	const int absDir = ABS(dir);
 	if (absDir <= 1)
 		return 0;
@@ -249,7 +249,7 @@ struct RA1ShotEmitterPair {
 };
 
 // DAT_244A and DAT_251A in ASSAULT.EXE data section, used by FUN_1D79C.
-static const RA1ShotEmitterPair kRA1ShotEmitters244A[27] = {
+const RA1ShotEmitterPair kRA1ShotEmitters244A[27] = {
 	{ 11, -11, -11, 0 }, { 16, -9, -16, -1 }, { 20, -6, -19, -3 }, { 20, -5, -21, -4 }, { -20, -6, 20, -5 },
 	{ -18, -9, 16, -1 }, { -13, -11, 13, 0 }, { -7, -13, 8, 2 }, { 1, -10, 3, 2 }, { 11, -16, -11, 4 },
 	{ 16, -14, -15, 1 }, { 19, -10, -19, -2 }, { 20, -5, -20, -4 }, { -20, -8, 19, -2 }, { -17, -11, 17, 1 },
@@ -258,7 +258,7 @@ static const RA1ShotEmitterPair kRA1ShotEmitters244A[27] = {
 	{ -5, -18, 9, 6 }, { -1, -11, -3, -6 }
 };
 
-static const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
+const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
 	{ -1, -11, -3, -6 }, { 7, -12, -8, 1 }, { 14, -11, -12, 0 }, { 18, -9, -17, -1 }, { 21, -7, -19, -4 },
 	{ -20, -6, 21, -5 }, { -18, -8, 19, -2 }, { -16, -10, 16, -1 }, { -11, -12, 11, 0 }, { 1, -18, -2, -1 },
 	{ 8, -17, -5, 1 }, { 13, -15, -12, 2 }, { 17, -13, -15, 0 }, { 21, -8, -19, -2 }, { -19, -6, 21, -4 },
@@ -269,7 +269,7 @@ static const RA1ShotEmitterPair kRA1ShotEmitters251A[27] = {
 
 // DAT_25EC/DAT_25F0 and DAT_28BC in ASSAULT.EXE. GAME opcode 0x09 uses these
 // emitter offsets instead of the generic edge-beam fallback.
-static const RA1ShotEmitterPair kRA1FlightShotEmitters25EC[45] = {
+const RA1ShotEmitterPair kRA1FlightShotEmitters25EC[45] = {
 	{ -38, -14, 37, 6 }, { 37, -14, 37, 7 }, { 42, -11, -40, 11 }, { -37, -6, 38, 14 }, { -37, -5, 38, 15 },
 	{ -35, -19, 36, 11 }, { -35, -18, 35, 12 }, { -37, -15, 36, 16 }, { -37, -11, 34, 19 }, { -37, -10, 34, 20 },
 	{ -31, -24, 33, 16 }, { -31, -23, 33, 17 }, { -32, -19, 33, 22 }, { -34, -17, 29, 24 }, { -35, -15, 28, 25 },
@@ -281,7 +281,7 @@ static const RA1ShotEmitterPair kRA1FlightShotEmitters25EC[45] = {
 	{ 18, -32, -26, 25 }, { 19, -31, -25, 26 }, { 22, -28, -22, 29 }, { 25, -24, -19, 31 }, { 25, -24, -17, 31 }
 };
 
-static const RA1ShotEmitterPair kRA1FlightShotEmitters25F0[45] = {
+const RA1ShotEmitterPair kRA1FlightShotEmitters25F0[45] = {
 	{ 37, -14, -37, 6 }, { -38, -12, -36, 7 }, { -41, -10, 41, 10 }, { 39, -6, -36, 13 }, { 38, -5, -36, 15 },
 	{ 41, -8, -39, 1 }, { 40, -7, -38, 1 }, { 41, -4, -40, 5 }, { 39, -1, -40, 9 }, { 39, 1, -40, 10 },
 	{ -38, -5, 42, -3 }, { -39, -4, 42, -1 }, { -43, 0, 40, 2 }, { -41, 2, 39, 5 }, { -42, 4, 37, 6 },
@@ -293,7 +293,7 @@ static const RA1ShotEmitterPair kRA1FlightShotEmitters25F0[45] = {
 	{ 32, -15, -42, 10 }, { 34, -14, -40, 11 }, { 36, -12, -38, 13 }, { 39, -10, -35, 17 }, { 41, -9, -33, 17 }
 };
 
-static const RA1ShotEmitterPair kRA1FlightShotEmitters28BC[45] = {
+const RA1ShotEmitterPair kRA1FlightShotEmitters28BC[45] = {
 	{ -18, 0, 18, 0 }, { -18, -1, 18, 0 }, { -18, 0, 18, 0 }, { -18, 0, 17, 0 }, { -18, -1, 18, -1 },
 	{ -14, -3, 19, 3 }, { -15, -5, 20, 0 }, { -17, -4, 18, 1 }, { -15, -4, 18, 1 }, { -19, -4, 19, 2 },
 	{ -13, -9, 20, 2 }, { -16, -8, 19, 3 }, { -15, -9, 21, 3 }, { -14, -4, 18, 5 }, { -14, -2, 17, 6 },
@@ -306,7 +306,7 @@ static const RA1ShotEmitterPair kRA1FlightShotEmitters28BC[45] = {
 };
 
 // Small subset of FUN_20D43 draw flags used by RA1 shot sprites.
-static void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
+void renderSpriteWithFlags(byte *dst, int pitch, int width, int height,
 	int x, int y, const RA1Sprite &spr, uint32 flags) {
 	if (!spr.data || spr.width <= 0 || spr.height <= 0)
 		return;
@@ -604,7 +604,7 @@ void InsaneRebel1::renderTargetBoxes(byte *dst, int pitch, int width, int height
 // The original does not draw a hardcoded pixel cross; it renders glyph markers
 // whose state depends on _targetProximity.
 void InsaneRebel1::renderTargeting(byte *dst, int pitch, int width, int height) {
-	static const char kRA1TorpedoIndicator[] = "<d";
+	const char kRA1TorpedoIndicator[] = "<d";
 	const RA1SpriteBank &markerBank = (_techFontBank.numSprites > 0) ? _techFontBank : _hudFontBank;
 	const int overlayX = ra1OverlayViewOffsetX(this);
 	const int overlayY = ra1OverlayViewOffsetY(this);
@@ -725,8 +725,8 @@ void InsaneRebel1::renderGostSlots(byte *dst, int pitch, int width, int height) 
 
 // renderLaserShots — FUN_1CDA7/FUN_1D79C/HandleGameOp1A shot visual path.
 void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height) {
-	static const char kRA1TorpedoTrailLeft[] = "<<&";
-	static const char kRA1TorpedoTrailRight[] = "<<'";
+	const char kRA1TorpedoTrailLeft[] = "<<&";
+	const char kRA1TorpedoTrailRight[] = "<<'";
 	const bool torpedoMode = (_gameplayFlags75ff & 0x2) != 0;
 
 	if (_laserBank.numSprites <= 0 && !torpedoMode)
@@ -734,16 +734,16 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 
 	// DAT_2407 lookup used by FUN_1CDA7/FUN_1D79C for timer 1..5 interpolation.
 	// Entry 0 unused.
-	static const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
+	const int kShotLerpByTimer[6] = { 0, 8, 7, 6, 4, 0 };
 	// DAT_2413: on-foot lerp table (timer 5 = 1, not 0 like flight mode).
-	static const int kOnFootShotLerp[6] = { 0, 8, 7, 6, 4, 1 };
+	const int kOnFootShotLerp[6] = { 0, 8, 7, 6, 4, 1 };
 	// DAT_240e: gun barrel X offset indexed by shipDirIndex (for timer==5 first frame).
-	static const int16 kOnFootGunBarrelX[20] = {
+	const int16 kOnFootGunBarrelX[20] = {
 		4, 0, 8, 8, 7, 6, 4, 1, 0, 0,
 		0, -56, -47, -23, -13, 0, 13, 30, 54, 59
 	};
 	// DAT_2420: gun barrel Y offset indexed by shipDirIndex (for timer==5 first frame).
-	static const int16 kOnFootGunBarrelY[20] = {
+	const int16 kOnFootGunBarrelY[20] = {
 		0, 0, -56, -47, -23, -13, 0, 13, 30, 54,
 		59, -3, -19, -24, -30, -28, -30, -29, -20, -5
 	};
@@ -947,7 +947,7 @@ void InsaneRebel1::renderLaserShots(byte *dst, int pitch, int width, int height)
 // Level intro title data (from RunTwoLineTextSplash calls in original binary).
 // titleText is drawn at y=10, subtitleText at y=25 (matching original DrawUiString positions).
 // revealStartFrame/revealEndFrame control the frame range during which text is visible.
-static const struct {
+const struct {
 	const char *titleText;      // Top line (chapter number)
 	const char *subtitleText;   // Bottom line (level name)
 	int16 revealStartFrame;     // Frame at which text begins appearing

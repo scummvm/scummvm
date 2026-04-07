@@ -275,7 +275,7 @@ void InsaneRebel2::processAudioFrame(int16 feedSize) {
 // Standalone SAUD files from SYSTM/ loaded at init for one-shot SFX.
 // Original: FUN_0042a3b0 loads into DAT_00456888[0..7].
 
-static const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
+const char *const kRA2SfxFiles[InsaneRebel2::kRA2NumSfx] = {
 	"SYSTM/BLAST.SAD",    // 0 - Player laser fire
 	"SYSTM/CRASH.SAD",    // 1 - Corridor/wall collision
 	"SYSTM/EXPLODE.SAD",  // 2 - Enemy explosion

@@ -728,7 +728,7 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 }
 
 // drawTexturedSegment -- Textured segment between two points (FUN_00429360 port).
-static void drawTexturedSegment(byte *dst, int pitch, int width, int height,
+void drawTexturedSegment(byte *dst, int pitch, int width, int height,
                          int param_3, int param_4, int param_5, int param_6, int param_7, const byte *param_8,
                          int clipLeft, int clipTop, int clipRight, int clipBottom) {
 	// Near-direct port of FUN_00429360.
@@ -2093,7 +2093,7 @@ void InsaneRebel2::renderNutSprite(byte *dst, int pitch, int width, int height, 
 }
 
 // renderNutSpriteClipped -- Draw a NUT sprite with explicit clip rectangle.
-static void renderNutSpriteClipped(byte *dst, int pitch, int dstH,
+void renderNutSpriteClipped(byte *dst, int pitch, int dstH,
 		int clipLeft, int clipTop, int clipRight, int clipBottom,
 		int x, int y, NutRenderer *nut, int spriteIdx) {
 	if (!nut || spriteIdx < 0 || spriteIdx >= nut->getNumChars())
@@ -4234,10 +4234,7 @@ void InsaneRebel2::renderCrosshair(byte *renderBitmap, int pitch, int width, int
 		reticleIndex = 47;  // 0x2F
 		break;
 	case 0x26: { // Turret/Cockpit - animated crosshair
-		static int turretAnimCounter = 0;
-		turretAnimCounter++;
-
-		int animOffset = (_targetLockTimer == 0) ? 0 : 3 - (turretAnimCounter & 3);
+		int animOffset = (_targetLockTimer == 0) ? 0 : 3 - ((_vm->_system->getMillis() / 33) & 3);
 
 		if (_rebelLevelType == 5) {
 			reticleIndex = 0x30 + animOffset;

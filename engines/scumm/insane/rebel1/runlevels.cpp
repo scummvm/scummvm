@@ -37,7 +37,7 @@ struct RA1Level7ResumeSegment {
 	int16 localStart;
 };
 
-static const RA1Level7ResumeSegment kLevel7ResumeSegments[6][4] = {
+const RA1Level7ResumeSegment kLevel7ResumeSegments[6][4] = {
 	{
 		{    0,  638,   0 },
 		{ 1416, 1468, 639 },
@@ -76,7 +76,7 @@ static const RA1Level7ResumeSegment kLevel7ResumeSegments[6][4] = {
 	}
 };
 
-static int32 mapLevel7TimelineFrameToLocal(int route, int32 timelineFrame) {
+int32 mapLevel7TimelineFrameToLocal(int route, int32 timelineFrame) {
 	if (timelineFrame <= 0)
 		return 0;
 
@@ -102,7 +102,7 @@ static int32 mapLevel7TimelineFrameToLocal(int route, int32 timelineFrame) {
 	return 0;
 }
 
-static int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 targetFrame) {
+int32 findAnimFrameChunkOffset(ScummEngine_v7 *vm, const char *filename, int32 targetFrame) {
 	if (targetFrame <= 0)
 		return 0;
 
@@ -734,7 +734,7 @@ bool InsaneRebel1::runLevel6() {
 bool InsaneRebel1::runLevel7() {
 	debug(1, "InsaneRebel1: Running level 7");
 
-	static const char *const kLevel7Segments[] = {
+	const char *const kLevel7Segments[] = {
 		"LVL7/L7PLAY1.ANM",
 		"LVL7/L7PLAY2.ANM",
 		"LVL7/L7PLAY3.ANM",
@@ -842,7 +842,7 @@ bool InsaneRebel1::runLevel7() {
 bool InsaneRebel1::runLevel8() {
 	debug(1, "InsaneRebel1: Running level 8");
 
-	static const char *const kLevel8Routes[] = {
+	const char *const kLevel8Routes[] = {
 		"LVL8/L8PLAY.ANM",
 		"LVL8/L8PLAY2.ANM",
 		"LVL8/L8PLAY3.ANM"
@@ -1655,7 +1655,7 @@ bool InsaneRebel1::runLevel15() {
 // Matches original flow at 0x15597: intro → menu → level.
 void InsaneRebel1::runGame() {
 	typedef bool (InsaneRebel1::*RunLevelMethod)();
-	static const RunLevelMethod kLevelRunners[] = {
+	const RunLevelMethod kLevelRunners[] = {
 		&InsaneRebel1::runLevel1,
 		&InsaneRebel1::runLevel2,
 		&InsaneRebel1::runLevel3,

@@ -951,8 +951,8 @@ void InsaneRebel2::renderScoreHUD(byte *renderBitmap, int pitch, int width, int 
 // Save/load pilot profiles using ScummVM's save file system.
 // Original: FUN_00411980 (load) / FUN_00411A5D (save).
 
-static const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
-static const uint16 kPilotSaveVersion = 2;
+const uint32 kPilotSaveMagic = MKTAG('R', 'A', '2', 'P');
+const uint16 kPilotSaveVersion = 2;
 
 // loadPilots -- Load all pilot profiles from save files (FUN_00411980).
 bool InsaneRebel2::loadPilots() {
