@@ -293,10 +293,85 @@ void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, in
 	} while (--height);
 }
 void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+
+/**
+ * RA1 codec 21: Skip/copy line codec (FUN_10D41).
+ */
+void smushDecodeRA1SkipCopy(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+	dst += top * pitch + left;
+	for (int row = 0; row < height; row++) {
+		uint16 lineSize = READ_LE_UINT16(src);
+		const byte *lineData = src + 2;
+		const byte *lineEnd = lineData + lineSize;
+		byte *dstRow = dst;
+		int remaining = width;
+		while (remaining > 0 && lineData < lineEnd) {
+			if (lineData + 2 > lineEnd) break;
+			uint16 skip = READ_LE_UINT16(lineData); lineData += 2;
+			dstRow += skip; remaining -= skip;
+			if (remaining <= 0) break;
+			if (lineData + 2 > lineEnd) break;
+			uint16 copyLen = READ_LE_UINT16(lineData) + 1; lineData += 2;
+			int toCopy = MIN<int>(copyLen, remaining);
+			if (lineData + toCopy > lineEnd) toCopy = (int)(lineEnd - lineData);
+			if (toCopy > 0) { memcpy(dstRow, lineData, toCopy); lineData += toCopy; dstRow += toCopy; remaining -= toCopy; }
+			if (copyLen > toCopy) lineData += (copyLen - toCopy);
+		}
+		src += lineSize + 2;
+		dst += pitch;
+	}
+}
+
+/**
+ * RA1 codec 23: Additive line-update overlay (FUN_10B40).
+ */
 void smushDecodeRA1AdditiveLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height,
-	int pitch, int bufWidth, int bufHeight, uint8 param);
-void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize);
+		int pitch, int bufWidth, int bufHeight, uint8 paletteBase) {
+	const uint8 colorDelta = (uint8)(paletteBase - 0x30);
+	for (int row = 0; row < height; row++) {
+		const uint16 lineSize = READ_LE_UINT16(src);
+		const byte *lineData = src + 2;
+		const byte *lineEnd = lineData + lineSize;
+		const int dstY = top + row;
+		int srcX = 0;
+		while (srcX < width && lineData < lineEnd) {
+			const int skip = *lineData++; srcX += skip;
+			if (srcX >= width || lineData >= lineEnd) break;
+			const int runLength = (int)(*lineData++);
+			const int dstStartX = left + srcX;
+			const int dstEndX = dstStartX + runLength;
+			if (dstY >= 0 && dstY < bufHeight) {
+				const int clippedStartX = MAX(dstStartX, 0);
+				const int clippedEndX = MIN(dstEndX, bufWidth);
+				if (clippedStartX < clippedEndX) {
+					byte *dstPixel = dst + dstY * pitch + clippedStartX;
+					for (int x = clippedStartX; x < clippedEndX; x++, dstPixel++)
+						*dstPixel = (byte)(*dstPixel + colorDelta);
+				}
+			}
+			srcX += runLength;
+		}
+		src += lineSize + 2;
+	}
+}
+
+/**
+ * RA1 codec 2: Scatter/point draw (FUN_110D7).
+ */
+void smushDecodeRA1Scatter(byte *dst, const byte *src, int left, int top, int bufWidth, int bufHeight, int pitch, int dataSize) {
+	int curX = left;
+	int curY = top;
+	while (dataSize >= 4) {
+		int16 dx = (int16)READ_LE_UINT16(src);
+		uint8 dy = src[2];
+		uint8 pixel = src[3];
+		src += 4; dataSize -= 4;
+		curX += dx; curY += dy;
+		if (curX >= 0 && curY >= 0 && curX < bufWidth && curY < bufHeight)
+			dst[curY * pitch + curX] = pixel;
+	}
+}
+
 // RA1 codec 4/5: block-based dithered codec with 4x4 tile lookup tables
 static uint8 s_ra1C4Tbl[2][256][16];
 static uint16 s_ra1C4Param = 0xFFFF;
