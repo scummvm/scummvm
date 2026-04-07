@@ -25,8 +25,8 @@ namespace Fool {
 
 const PlainGameDescriptor foolGames[] = {
 	{ "foolserrand", "The Fool's Errand" },
-	{ "atc", "At The Carnival" },
-	{ "3inthree", "3 in Three" },
+	//{ "atc", "At The Carnival" },
+	//{ "3inthree", "3 in Three" },
 	{ 0, 0 }
 };
 
@@ -35,7 +35,7 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"foolserrand",
 		"v1.1",
-		AD_ENTRY1s("The Fool's Errand", "rt:00000000000000000000000000000000", 0),
+		AD_ENTRY1s("xn--The Fool's Errand-306j", "rt:44749119459beb47f37a02bd629ed9e9", 175275),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
@@ -57,7 +57,7 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"foolserrand",
 		"v3.0",
-		AD_ENTRY1s("The Fool's Errand", "rt:00000000000000000000000000000000", 0),
+		AD_ENTRY1s("The Fool's Errand", "rt:b36443d20490fa45c6a58fd2d7be5ffb", 186482),
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
