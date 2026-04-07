@@ -30,9 +30,9 @@
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_font.h"
-#include "scumm/smush/smush_player_ra1.h"
+#include "scumm/smush/rebel/smush_player_ra1.h"
 
-#include "scumm/insane/insane_rebel1.h"
+#include "scumm/insane/rebel1/rebel.h"
 
 namespace Scumm {
 

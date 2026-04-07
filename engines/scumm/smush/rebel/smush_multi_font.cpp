@@ -19,7 +19,7 @@
  *
  */
 
-#include "scumm/smush/smush_multi_font.h"
+#include "scumm/smush/rebel/smush_multi_font.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/scumm.h"

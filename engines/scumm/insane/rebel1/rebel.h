@@ -26,7 +26,7 @@
 #include "audio/mixer.h"
 #include "common/events.h"
 #include "scumm/insane/insane.h"
-#include "scumm/smush/smush_player_ra1.h"
+#include "scumm/smush/rebel/smush_player_ra1.h"
 
 namespace Scumm {
 

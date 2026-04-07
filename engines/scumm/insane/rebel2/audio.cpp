@@ -26,7 +26,7 @@
 
 #include "scumm/smush/smush_player.h"
 
-#include "scumm/insane/insane_rebel2.h"
+#include "scumm/insane/rebel2/rebel.h"
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
