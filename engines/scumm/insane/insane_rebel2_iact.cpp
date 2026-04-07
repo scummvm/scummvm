@@ -1895,8 +1895,9 @@ bool InsaneRebel2::loadHandler7FlySprites(Common::SeekableReadStream &b, int64 r
 	}
 
 	// Load as NUT
-	NutRenderer *newNut = new NutRenderer(_vm, nutData, bytesRead);
-	if (!newNut || newNut->getNumChars() <= 0) {
+	NutRenderer *newNut = new NutRenderer(_vm);
+	newNut->loadFontFromData(nutData, bytesRead);
+	if (newNut->getNumChars() <= 0) {
 		debug("Rebel2 loadHandler7FlySprites: NUT load failed for par4=%d", par4);
 		delete newNut;
 		free(nutData);
@@ -1959,7 +1960,8 @@ bool InsaneRebel2::loadTurretHudOverlay(byte *animData, int32 size, int16 par3) 
 		return false;  // Not a turret HUD slot
 	}
 
-	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	NutRenderer *newNut = new NutRenderer(_vm);
+	newNut->loadFontFromData(animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
 		debug("Rebel2 loadTurretHudOverlay: NUT load failed for par3=%d", par3);
 		delete newNut;
@@ -2000,7 +2002,8 @@ bool InsaneRebel2::loadHandler8ShipSprites(byte *animData, int32 size, int16 par
 		return false;
 	}
 
-	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	NutRenderer *newNut = new NutRenderer(_vm);
+	newNut->loadFontFromData(animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
 		debug("Rebel2 loadHandler8ShipSprites: NUT load failed for par4=%d", par4);
 		delete newNut;
@@ -2051,7 +2054,8 @@ bool InsaneRebel2::loadHandler25GrdSprites(byte *animData, int32 size, int16 par
 		return false;
 	}
 
-	NutRenderer *newNut = new NutRenderer(_vm, animData, size);
+	NutRenderer *newNut = new NutRenderer(_vm);
+	newNut->loadFontFromData(animData, size);
 	if (!newNut || newNut->getNumChars() <= 0) {
 		debug("Rebel2 loadHandler25GrdSprites: NUT load failed for par4=%d", par4);
 		delete newNut;
