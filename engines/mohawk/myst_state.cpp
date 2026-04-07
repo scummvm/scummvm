@@ -268,7 +268,7 @@ bool MystGameState::saveMetadata(int slot, const Graphics::Surface *thumbnail) {
 }
 
 SaveStateDescriptor MystGameState::querySaveMetaInfos(const MetaEngine *metaEngine, int slot) {
-	SaveStateDescriptor desc(metaEngine, slot, Common::U32String());
+	SaveStateDescriptor desc(metaEngine, slot);
 
 	// Open the save file
 	Common::String filename = buildSaveFilename(slot);

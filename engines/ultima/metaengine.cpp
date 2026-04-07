@@ -244,7 +244,7 @@ SaveStateDescriptor UltimaMetaEngine::querySaveMetaInfos(const char *target, int
 		Common::String gameId = getGameId(target);
 		if (gameId == "ultima8") {
 			Common::String filename = getSavegameFile(slot, target);
-			desc = SaveStateDescriptor(this, slot, Common::U32String());
+			desc = SaveStateDescriptor(this, slot);
 			if (!Ultima::Ultima8::MetaEngine::querySaveMetaInfos(filename, desc))
 				return SaveStateDescriptor();
 		}

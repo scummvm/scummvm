@@ -688,7 +688,7 @@ bool LoadSaveMenu_V1::save() {
 					}
 
 					SaveStateDescriptor desc = g_nancy->getMetaEngine()->querySaveMetaInfos(ConfMan.getActiveDomainName().c_str(), i);
-					if (desc.getDescription().substr(0, _loadSaveData->_defaultSaveNamePrefix.size()).equals(Common::U32String(_loadSaveData->_defaultSaveNamePrefix))) {
+					if (desc.getDescription().substr(0, _loadSaveData->_defaultSaveNamePrefix.size()).equals(_loadSaveData->_defaultSaveNamePrefix)) {
 						if (desc.getDescription().substr(_loadSaveData->_defaultSaveNamePrefix.size(), 1).asUint64() == suffixNum) {
 							++suffixNum;
 						} else {

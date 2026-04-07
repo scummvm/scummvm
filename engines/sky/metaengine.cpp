@@ -214,8 +214,10 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(ext.c_str());
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
-			saveList.push_back(SaveStateDescriptor(this, slotNum,
-				(slotNum == 0) ? _("Autosave") : Common::U32String(savenames[slotNum - 1])));
+			if (slotNum == 0)
+				saveList.push_back(SaveStateDescriptor(this, slotNum, _("Autosave")));
+			else
+				saveList.push_back(SaveStateDescriptor(this, slotNum, savenames[slotNum - 1]));
 			delete in;
 		}
 	}

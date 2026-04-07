@@ -221,7 +221,7 @@ SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	if (f) {
 		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot);
 
 		ExtendedSavegameHeader header;
 		if (readSavegameHeader(f.get(), &header, false)) {

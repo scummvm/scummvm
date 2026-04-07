@@ -2959,7 +2959,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 				  "will be prompted when autosave is about to overwrite a save).\n"
 				  "List of games:\n");
 		for (ExistingSaveList::const_iterator it = saveList.begin(), end = saveList.end(); it != end; ++it)
-			message += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+			message += Common::U32String(it->target + ": " + it->desc.getDescription() + "\n");
 		message.deleteLastChar();
 		if (hasMore)
 			message += _("\nAnd more...");
@@ -2984,7 +2984,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 			if (!failedSaves.empty()) {
 				Common::U32String failMessage = _("ERROR: Failed to move the following saved games:\n");
 				for (ExistingSaveList::const_iterator it = failedSaves.begin(), end = failedSaves.end(); it != end; ++it)
-					failMessage += Common::U32String(it->target) + Common::U32String(": ") + it->desc.getDescription() + "\n";
+					failMessage += Common::U32String(it->target + ": " + it->desc.getDescription() + "\n");
 				failMessage.deleteLastChar();
 				GUI::MessageDialog(failMessage).runModal();
 			}

@@ -34,8 +34,6 @@
 #include "common/system.h"
 #include "common/util.h"
 
-#include "gui/saveload-dialog.h"
-
 #include "engines/engine.h"
 
 #include "math/cosinetables.h"

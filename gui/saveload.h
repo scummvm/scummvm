@@ -52,7 +52,7 @@ public:
 	int runModalWithCurrentTarget();
 	int runModalWithMetaEngineAndTarget(const MetaEngine *engine, const Common::String &target);
 
-	const Common::U32String getResultString() const;
+	const Common::String getResultString() const;
 
 	/**
 	 * Creates a default save description for the specified slot. Depending

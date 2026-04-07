@@ -483,7 +483,7 @@ SaveStateDescriptor MetaEngine::querySaveMetaInfos(const char *target, int slot)
 		}
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, Common::U32String());
+		SaveStateDescriptor desc(this, slot);
 		parseSavegameHeader(&header, &desc);
 		desc.setThumbnail(header.thumbnail);
 		desc.setAutosave(header.isAutosave);

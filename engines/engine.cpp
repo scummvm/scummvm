@@ -641,7 +641,7 @@ bool Engine::warnBeforeOverwritingAutosave() {
 	altButtons.push_back(_("Delete"));
 	altButtons.push_back(_("Skip autosave"));
 	const Common::U32String message = Common::U32String::format(
-				_("WARNING: The autosave slot contains a saved game named %S, and an autosave is pending.\n"
+				_("WARNING: The autosave slot contains a saved game named %s, and an autosave is pending.\n"
 				  "Please move this saved game to a new slot, or delete it if it's no longer needed.\n"
 				  "Alternatively, you can skip the autosave (will prompt again in 5 minutes)."), desc.getDescription().c_str());
 	GUI::MessageDialog warn(message, _("Move"), altButtons);
