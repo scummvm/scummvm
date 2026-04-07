@@ -215,7 +215,7 @@ int InsaneRebel2::runLevel2() {
 	// Each phase gets a budget = tableBase + random(3). processWaveEnd() uses
 	// this budget to randomly redistribute kill credits, creating non-deterministic
 	// wave progression. Using calibrated defaults until exact table values extracted.
-	static const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };  // Phase 1, 2, 3
+	const int16 kLevel2BudgetBase[3] = { 3, 3, 3 };  // Phase 1, 2, 3
 
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 	int bonusCount = 0;     // local_1c: tracks bonus events (DAT_0047ab9c & 0x10)
@@ -1218,7 +1218,7 @@ int InsaneRebel2::runLevel11() {
 	int prevPhaseState = 0;
 
 	// Kill credit budget bases per phase (from level data table DAT_0047e0e8)
-	static const int16 kLevel11BudgetBase[4] = { 3, 3, 3, 3 };
+	const int16 kLevel11BudgetBase[4] = { 3, 3, 3, 3 };
 
 	// Play cutscene (11CUT.SAN)
 	playCinematic("LEV11/11CUT.SAN");
@@ -1607,7 +1607,7 @@ int InsaneRebel2::runLevel12() {
 	SmushPlayer *splayer = ((ScummEngine_v7 *)_vm)->_splayer;
 
 	// Kill credit budget bases per phase
-	static const int16 kLevel12BudgetBase[4] = { 3, 4, 4, 4 };
+	const int16 kLevel12BudgetBase[4] = { 3, 4, 4, 4 };
 
 	// Play cutscene (12CUT.SAN)
 	playCinematic("LEV12/12CUT.SAN");

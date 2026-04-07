@@ -32,9 +32,9 @@
 
 namespace Scumm {
 
-static const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
-static const int kRA1LevelSelectRowsPerCol = 8;
-static const int kRA1NumLevels = 15;
+const int kRA1LevelSelectItemCount = 16;  // 15 levels + BACK
+const int kRA1LevelSelectRowsPerCol = 8;
+const int kRA1NumLevels = 15;
 
 bool InsaneRebel1::notifyEvent(const Common::Event &event) {
 	if (event.type == Common::EVENT_MOUSEMOVE && !_mouseRecentering) {
@@ -400,7 +400,7 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 
 	if (_optionsActive) {
 		// --- Options submenu (matching original RunGameOptionsMenu) ---
-		static const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
+		const char *kDiffNames[3] = { "EASY", "NORMAL", "HARD" };
 
 		const int titleW = getTalkTextWidth("GAME OPTIONS");
 		drawTalkText((width - titleW) / 2, 30, "GAME OPTIONS");
@@ -456,7 +456,7 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 		const int titleW = getTalkTextWidth("LEVEL SELECT");
 		drawTalkText((width - titleW) / 2, 30, "LEVEL SELECT");
 
-		static const char *kLevelItems[kRA1LevelSelectItemCount] = {
+		const char *kLevelItems[kRA1LevelSelectItemCount] = {
 			" 1 TRAINING",
 			" 2 ASTEROIDS",
 			" 3 KOLAADOR",
@@ -510,7 +510,7 @@ void InsaneRebel1::renderMainMenuOverlay(byte *dst, int pitch, int width, int he
 	}
 
 	// --- Main menu ---
-	static const char *kMenuItems[5] = {
+	const char *kMenuItems[5] = {
 		"START NEW GAME",
 		"GAME OPTIONS",
 		"LEVEL SELECT",

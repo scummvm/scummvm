@@ -32,7 +32,7 @@
 
 namespace Scumm {
 
-static const char *const kRA1SfxFiles[8] = {
+const char *const kRA1SfxFiles[8] = {
 	"SYS/LASRSHOT.SAD",
 	"SYS/EXPLODE.SAD",
 	"SYS/BOOM.SAD",

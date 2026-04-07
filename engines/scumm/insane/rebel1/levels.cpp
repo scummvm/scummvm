@@ -31,7 +31,7 @@ namespace Scumm {
 // From smush/codec1.cpp
 void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
-static void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
+void decodeBomp(byte *dst, const byte *src, int width, int height, int pitch) {
 	while (height--) {
 		byte *dstNext = dst + pitch;
 		const byte *srcNext = src + 2 + READ_LE_UINT16(src);
@@ -57,7 +57,7 @@ static void decodeBomp(byte *dst, const byte *src, int width, int height, int pi
 	}
 }
 
-static void resetSpriteBank(RA1SpriteBank &bank) {
+void resetSpriteBank(RA1SpriteBank &bank) {
 	delete[] bank.sprites;
 	bank.sprites = nullptr;
 	free(bank.decodedData);

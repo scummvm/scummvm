@@ -284,9 +284,7 @@ void InsaneRebel2::drawMenuItems(byte *renderBitmap, int pitch, int width, int h
 
 			// Flash color: (-((DAT_0047a7e4 & 1) == 0) & 8U) - 0x10
 			// bit0==0: 8-16=248(0xF8), bit0==1: 0-16=240(0xF0)
-			static int frameCounter = 0;
-			frameCounter++;
-			byte highlightColor = ((frameCounter / 8) & 1) ? 248 : 240;
+			byte highlightColor = ((_vm->_system->getMillis() / 133) & 1) ? 248 : 240;
 
 			// Box position: Y = itemY - 1 (0x67 vs 0x68)
 			int leftX = leftAligned ? 20 : (centerX - bracketWidth / 2);
@@ -447,7 +445,7 @@ void InsaneRebel2::drawMenuOverlay(byte *renderBitmap, int pitch, int width, int
 // ---------------------------------------------------------------------------
 
 // pauseFillRect -- Helper to fill a rectangle in the frame buffer with bounds checking.
-static void pauseFillRect(byte *buf, int bufW, int bufH, int x, int y, int w, int h, byte color) {
+void pauseFillRect(byte *buf, int bufW, int bufH, int x, int y, int w, int h, byte color) {
 	if (x < 0) { w += x; x = 0; }
 	if (y < 0) { h += y; y = 0; }
 	if (x + w > bufW) w = bufW - x;
@@ -1128,7 +1126,7 @@ Common::String InsaneRebel2::getRankString(int rating) {
 // Password table lookup - emulates FUN_0041BCE0
 // 90 entries: 15 levels × 6 difficulty slots, extracted from RA2WIN95.EXE at 0x481AF0
 // Index formula: difficulty + (level * 3 - 3) * 2, level is 1-based (1-15), difficulty 0-5
-static const char *const kPasswordTable[90] = {
+const char *const kPasswordTable[90] = {
 	// Level 1:  diff 0-5
 	"JABBA",    "EWOKS",    "BANTHA",   "ANAKIN",   "WOOKIEE",  "WOOKIEE",
 	// Level 2:  diff 0-5
@@ -1205,9 +1203,7 @@ void InsaneRebel2::drawChapterInfoLine(byte *renderBitmap, int pitch, int width,
 		if (!lockStr || !lockStr[0])
 			lockStr = "^f01^c248UNREGISTERED - PASSCODE REQUIRED";
 
-		static int cursorCounter = 0;
-		cursorCounter++;
-		char cursor = ((cursorCounter / 8) & 1) ? '_' : ' ';
+		char cursor = ((_vm->_system->getMillis() / 133) & 1) ? '_' : ' ';
 
 		Common::String displayStr = Common::String::format("%s ^c005%s%c",
 			lockStr, _passwordInput.c_str(), cursor);
@@ -1985,7 +1981,7 @@ void InsaneRebel2::drawOptionsOverlay(byte *renderBitmap, int pitch, int width, 
 		items[6] = _optRapidFire ? "^f01^c005Rapid Fire On" : "^f01^c005Rapid Fire Off";
 
 	// [7] Volume Level (slider) — TRS 103 = "^f01^c005Volume Level: %hd%%"
-	static char volumeBuf[64];
+	char volumeBuf[64];
 	const char *volFmt = splayer->getString(103);
 	if (volFmt && volFmt[0])
 		Common::sprintf_s(volumeBuf, volFmt, (short)(_optVolumeLevel * 100 / 127));

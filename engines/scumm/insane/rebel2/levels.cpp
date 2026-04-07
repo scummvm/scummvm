@@ -218,7 +218,7 @@ void InsaneRebel2::playLevelBegin(int levelId) {
 	// Table of per-level text overlay parameters
 	// All levels use FUN_004171c5 (verified against decompiled level handlers)
 	// Text IDs are sequential: 0xAA (level 1) through 0xB8 (level 15)
-	static const TextOverlayParams levelTextParams[16] = {
+	const TextOverlayParams levelTextParams[16] = {
 		{ -1,   0,  0,   0,    0},    // Level 0 (unused)
 		{0xAA, 0xA0, 10,   5, 0x4B},  // Level 1:  FUN_00417E53
 		{0xAB, 0xA0, 10,   2, 0x46},  // Level 2:  FUN_00418063
@@ -605,7 +605,7 @@ int InsaneRebel2::runLevel(int levelId) {
 	// Levels 1-6 use types 0-5, but Level 6 also uses type 6 mid-level.
 	// Levels 7-15 use types 7-15 (gap at type 6 which is Level 6 phase 2).
 	// Level 15 also switches to type 16 mid-level at frame 0x21e.
-	static const int kLevelTypeMap[16] = {
+	const int kLevelTypeMap[16] = {
 		-1, 0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	};
 	_rebelLevelType = kLevelTypeMap[levelId];
