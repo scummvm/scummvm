@@ -174,9 +174,9 @@ bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStrea
 	return true;
 }
 
-void SmushPlayer::ra1HandleGost(int32 subSize, Common::SeekableReadStream &b) {
+void SmushPlayerRebel1::ra1HandleGost(int32 subSize, Common::SeekableReadStream &b) {
 	if (subSize < 12) {
-		warning("SmushPlayer::ra1HandleGost: chunk too small (%d bytes)", subSize);
+		warning("SmushPlayerRebel1::ra1HandleGost: chunk too small (%d bytes)", subSize);
 		return;
 	}
 
@@ -291,7 +291,7 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 	// RA1 additive codec (SKIP_RLE) uses original coords, not adjusted
 	if (codec == SMUSH_CODEC_SKIP_RLE)
 		return false;
-	ra2AdjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	adjustFrameCoords(left, top, width, height, pitch, srcSkipY);
 	return true;
 }
 
@@ -342,7 +342,7 @@ void SmushPlayerRebel1::handleGameFrameObjectPre(int codec, int left, int top, i
 }
 
 void SmushPlayerRebel1::handleGameFrameObjectPost(int codec, const byte *data, int32 dataSize, int left, int top, int width, int height) {
-	ra2RememberLastFobj(codec, data, dataSize, left, top, width, height);
+	rememberLastFobj(codec, data, dataSize, left, top, width, height);
 	// RA1 STOR handling remains in handleFrameObject (needs ra1Param/rawLeft/rawTop)
 }
 
@@ -727,6 +727,99 @@ void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, in
 	const byte *dst = _dst + srcY * _width + srcX;
 
 	SmushPlayer::handleGameUpdateScreen(dst, _width, frameWidth, frameHeight);
+}
+
+SmushFont *SmushPlayerRebel1::ra1GetFont(int font) {
+	const char *ra1Fonts[] = {
+		"SYS/TALKFONT.NUT",
+		"SYS/TECHFONT.NUT",
+		"SYS/TITLFONT.NUT",
+		"SYS/DISPLAY.NUT"
+	};
+	const char *ra2FallbackFonts[] = {
+		"SYSTM/TALKFONT.NUT",
+		"SYSTM/SMALFONT.NUT",
+		"SYSTM/TITLFONT.NUT",
+		"SYSTM/SMALFONT.NUT"
+	};
+
+	int numFonts = ARRAYSIZE(ra1Fonts);
+	if (font < 0 || font >= numFonts) {
+		debugC(DEBUG_SMUSH, "SmushPlayerRebel1::ra1GetFont: unknown font %d, using TALKFONT", font);
+		font = 0;
+	}
+
+	if (_sf[font])
+		return _sf[font];
+
+	const char *fontPath = ra1Fonts[font];
+	ScummFile *testFile = _vm->instantiateScummFile();
+	bool ok = _vm->openFile(*testFile, Common::Path(fontPath));
+	if (ok)
+		testFile->close();
+	delete testFile;
+
+	if (!ok)
+		fontPath = ra2FallbackFonts[font];
+
+	_sf[font] = new SmushFont(_vm, fontPath, true);
+	return _sf[font];
+}
+
+void SmushPlayerRebel1::ra1HandleText(int32 subSize, Common::SeekableReadStream &b) {
+	if (subSize < 8 || !_dst || _width <= 0 || _height <= 0)
+		return;
+
+	InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+	if (!rebel1)
+		return;
+
+	const int textAnchorX = b.readSint32BE();
+	int cursorY = b.readSint32BE();
+
+	int textLen = subSize - 8;
+	if (textLen <= 0)
+		return;
+
+	byte *textBuf = (byte *)malloc(textLen);
+	if (!textBuf)
+		return;
+	b.read(textBuf, textLen);
+
+	int start = 0;
+	if (textLen > 0 && textBuf[0] == '.')
+		start = 1;
+
+	int remaining = textLen - start;
+	while (remaining > 0) {
+		int lineLen = 0;
+		while (lineLen < remaining && textBuf[start + lineLen] != 0)
+			lineLen++;
+
+		if (lineLen > 0) {
+			char *line = (char *)malloc(lineLen + 1);
+			if (!line) {
+				cursorY += 12;
+			} else {
+				memcpy(line, textBuf + start, lineLen);
+				line[lineLen] = '\0';
+				const int drawX = textAnchorX - (rebel1->getFontBankStringWidth(line) / 2);
+				rebel1->drawFontBankString(_dst, _width, _width, _height, drawX, cursorY, line);
+				cursorY += rebel1->getFontBankLineAdvance(line);
+				free(line);
+			}
+		} else {
+			cursorY += rebel1->getFontBankLineAdvance(nullptr);
+		}
+
+		int consumed = lineLen;
+		if (consumed < remaining && textBuf[start + consumed] == 0)
+			consumed++;
+		start += consumed;
+		remaining -= consumed;
+	}
+
+	free(textBuf);
 }
 
 } // End of namespace Scumm
