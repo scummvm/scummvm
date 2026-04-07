@@ -448,12 +448,12 @@ void AboutDialog::handleKeyDown(Common::KeyState state) {
 		return;
 	}
 
-	if (state.ascii)
+	if (state.keycode == Common::KEYCODE_ESCAPE)
 		_willClose = true;
 }
 
 void AboutDialog::handleKeyUp(Common::KeyState state) {
-	if (state.ascii && _willClose)
+	if (state.keycode == Common::KEYCODE_ESCAPE && _willClose)
 		close();
 }
 
