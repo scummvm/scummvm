@@ -971,9 +971,9 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 		SearchMan.addDirectory(dir);
 	}
 
-	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMMode32bpp | Graphics::kWMModeNoCursorOverride;
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeNoCursorOverride;
 
-	_wm = new Graphics::MacWindowManager(wmMode);
+	_wm = new Graphics::MacWindowManager(wmMode, nullptr, Common::UNK_LANG, theme()->getPixelFormat());
 
 	return _wm;
 }

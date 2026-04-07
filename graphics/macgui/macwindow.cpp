@@ -230,7 +230,7 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 
 	g->blitFrom(*_composeSurface, Common::Rect(0, 0, _composeSurface->w, _composeSurface->h), Common::Point(_innerDims.left, _innerDims.top));
 
-	uint32 transcolor = (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen : 0;
+	uint32 transcolor = _wm->_pixelformat.isCLUT8() ? _wm->_colorGreen : 0;
 
 	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), transcolor);
 
@@ -239,7 +239,7 @@ bool MacWindow::draw(ManagedSurface *g, bool forceRedraw) {
 
 void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	// Only the inner surface is blitted here
-	uint32 transcolor = (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen2 : 0;
+	uint32 transcolor = _wm->_pixelformat.isCLUT8() ? _wm->_colorGreen2 : 0;
 
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, transcolor);
 }
@@ -337,7 +337,7 @@ void MacWindow::drawBorder() {
 }
 
 void MacWindow::drawBorderFromSurface(ManagedSurface *g, uint32 flags) {
-	if (_wm->_pixelformat.bytesPerPixel == 1) {
+	if (_wm->_pixelformat.isCLUT8()) {
 		g->clear(_wm->_colorGreen);
 	}
 
@@ -376,19 +376,10 @@ void MacWindow::drawPattern() {
 	const byte *pat = _wm->getPatterns()[_pattern - 1];
 	for (int y = 0; y < _composeSurface->h; y++) {
 		for (int x = 0; x < _composeSurface->w; x++) {
-			if (_wm->_pixelformat.bytesPerPixel == 1) {
-				byte *dst = (byte *)_composeSurface->getBasePtr(x, y);
-				if (pat[y % 8] & (1 << (7 - (x % 8))))
-					*dst = _wm->_colorBlack;
-				else
-					*dst = _wm->_colorWhite;
-			} else {
-				uint32 *dst = (uint32 *)_composeSurface->getBasePtr(x, y);
-				if (pat[y % 8] & (1 << (7 - (x % 8))))
-					*dst = _wm->_colorBlack;
-				else
-					*dst = _wm->_colorWhite;
-			}
+			if (pat[y % 8] & (1 << (7 - (x % 8))))
+				_composeSurface->setPixel(x, y, _wm->_colorBlack);
+			else
+				_composeSurface->setPixel(x, y, _wm->_colorWhite);
 		}
 	}
 }

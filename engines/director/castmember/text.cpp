@@ -251,6 +251,12 @@ void TextCastMember::setForeColor(uint32 fgCol) {
 void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
 	Graphics::MacText *target = getWidget();
 	if (target) {
+		if (target->_wm->_pixelformat.isCLUT8()) {
+			byte r, g, b;
+			target->_wm->getPaletteEntry(fgCol, r, g, b);
+			fgCol = target->_wm->findBestColor(r, g, b);
+		}
+
 		return target->setTextColor(fgCol, start, end);
 	}
 	_modified = true;

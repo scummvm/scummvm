@@ -277,7 +277,7 @@ bool MacTextWindow::draw(ManagedSurface *g, bool forceRedraw) {
 		return false;
 
 	g->blitFrom(*_composeSurface, Common::Rect(0, 0, _composeSurface->w, _composeSurface->h), Common::Point(_innerDims.left, _innerDims.top));
-	uint32 transcolor = (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen : 0;
+	uint32 transcolor = _wm->_pixelformat.isCLUT8() ? _wm->_colorGreen : 0;
 	g->transBlitFrom(_borderSurface, Common::Rect(0, 0, _borderSurface.w, _borderSurface.h), Common::Point(_dims.left, _dims.top), transcolor);
 
 	return true;

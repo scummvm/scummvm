@@ -186,7 +186,7 @@ public:
 	void drawPoint(int x, int y, uint32 color, void *data) override;
 };
 
-MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::Language language) {
+MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::Language language, const Graphics::PixelFormat &pixelformat) {
 	_screen = nullptr;
 	_screenCopy = nullptr;
 	_desktopBmp = nullptr;
@@ -228,15 +228,23 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns, Common::L
 
 	_hilitingWidget = false;
 
-	if (mode & kWMMode32bpp) {
-		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_macDrawPrimitives = new MacDrawPrimitives<uint32>();
+	_pixelformat = pixelformat;
+
+	if (_pixelformat.isCLUT8()) {
+		_macDrawPrimitives = new MacDrawPrimitives<byte>();
+		_macDrawInvertPrimitives = new MacDrawInvertPrimitives<byte>();
+	} else if (_pixelformat.bytesPerPixel == 1) {
+		_macDrawPrimitives = new MacDrawPrimitives<byte>();
+		// No implementation yet
+		_macDrawInvertPrimitives = nullptr;
+	} else if (_pixelformat.bytesPerPixel == 2) {
+		_macDrawPrimitives = new MacDrawPrimitives<uint16>();
 		// No implementation yet
 		_macDrawInvertPrimitives = nullptr;
 	} else {
-		_pixelformat = PixelFormat::createFormatCLUT8();
-		_macDrawPrimitives = new MacDrawPrimitives<byte>();
-		_macDrawInvertPrimitives = new MacDrawInvertPrimitives<byte>();
+		_macDrawPrimitives = new MacDrawPrimitives<uint32>();
+		// No implementation yet
+		_macDrawInvertPrimitives = nullptr;
 	}
 
 	if (patterns) {
@@ -891,8 +899,11 @@ void MacWindowManager::loadDesktop() {
 	Image::BitmapDecoder bmpDecoder;
 	bmpDecoder.loadStream(*file);
 
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_desktopBmp = bmpDecoder.getSurface()->convertTo(requiredFormat_4byte, bmpDecoder.getPalette().data(), bmpDecoder.getPalette().size());
+	if (_pixelformat.isCLUT8()) {
+		_desktopBmp = bmpDecoder.getSurface()->convertTo(Graphics::PixelFormat::createFormatRGBA32(), bmpDecoder.getPalette().data(), bmpDecoder.getPalette().size());
+	} else {
+		_desktopBmp = bmpDecoder.getSurface()->convertTo(_pixelformat, bmpDecoder.getPalette().data(), bmpDecoder.getPalette().size());
+	}
 
 	delete file;
 }
@@ -900,27 +911,32 @@ void MacWindowManager::loadDesktop() {
 void MacWindowManager::setDesktopColor(byte r, byte g, byte b) {
 	cleanupDesktopBmp();
 
-	const Graphics::PixelFormat requiredFormat_4byte(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	uint32 color = requiredFormat_4byte.RGBToColor(r, g, b);
-
 	_desktopBmp = new Graphics::Surface();
-	_desktopBmp->create(10, 10, requiredFormat_4byte);
-	_desktopBmp->fillRect(Common::Rect(10, 10), color);
+	if (_pixelformat.isCLUT8()) {
+		_desktopBmp->create(10, 10, Graphics::PixelFormat::createFormatRGBA32());
+	} else {
+		_desktopBmp->create(10, 10, _pixelformat);
+	}
+	_desktopBmp->fillRect(Common::Rect(10, 10), findBestColor(r, g, b));
 }
 
 void MacWindowManager::drawDesktop() {
 	if (_desktopBmp) {
-		for (int i = 0; i < _desktop->w; ++i) {
-			for (int j = 0; j < _desktop->h; ++j) {
-				uint32 color = *(uint32 *)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
-				if (_pixelformat.bytesPerPixel == 1) {
+		if (_pixelformat.isCLUT8()) {
+			for (int i = 0; i < _desktop->w; ++i) {
+				for (int j = 0; j < _desktop->h; ++j) {
+					uint32 color = *(uint32 *)_desktopBmp->getBasePtr(i % _desktopBmp->w, j % _desktopBmp->h);
 					byte r, g, b;
 					_desktopBmp->format.colorToRGB(color, r, g, b);
 					if (color > 0) {
 						*((byte *)_desktop->getBasePtr(i, j)) = findBestColor(r, g, b);
 					}
-				} else {
-					*((uint32 *)_desktop->getBasePtr(i, j)) = color;
+				}
+			}
+		} else {
+			for (int i = 0; i < _desktop->w; i += _desktopBmp->w) {
+				for (int j = 0; j < _desktop->h; j += _desktopBmp->h) {
+					_desktop->simpleBlitFrom(*_desktopBmp, Common::Point(i, j));
 				}
 			}
 		}
@@ -1002,7 +1018,7 @@ void MacWindowManager::draw() {
 
 					adjustDimensions(clip, outerDims, adjWidth, adjHeight);
 
-					if (_pixelformat.bytesPerPixel == 1) {
+					if (_pixelformat.isCLUT8()) {
 						Surface *surface = g_system->lockScreen();
 						ManagedSurface *border = w->getBorderSurface();
 
@@ -1488,47 +1504,33 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 }
 
 uint32 MacWindowManager::findBestColor(byte cr, byte cg, byte cb) {
-	if (_pixelformat.bytesPerPixel == 4)
+	if (!_pixelformat.isCLUT8())
 		return _pixelformat.RGBToColor(cr, cg, cb);
 
 	return _paletteLookup.findBestColor(cr, cg, cb);
 }
 
-template <>
-void MacWindowManager::decomposeColor<uint32>(uint32 color, byte &r, byte &g, byte &b) {
-	_pixelformat.colorToRGB(color, r, g, b);
-}
-
-template <>
-void MacWindowManager::decomposeColor<byte>(uint32 color, byte& r, byte& g, byte& b) {
+void MacWindowManager::getPaletteEntry(uint32 color, byte& r, byte& g, byte& b) {
 	r = *(_palette + 3 * (byte)color + 0);
 	g = *(_palette + 3 * (byte)color + 1);
 	b = *(_palette + 3 * (byte)color + 2);
-}
-
-uint32 MacWindowManager::findBestColor(uint32 color) {
-	if (_pixelformat.bytesPerPixel == 4)
-		return color;
-
-	byte r, g, b;
-	decomposeColor<byte>(color, r, g, b);
-	return _paletteLookup.findBestColor(r, g, b);
 }
 
 byte MacWindowManager::inverter(byte src) {
 	if (_invertColorHash.contains(src))
 		return _invertColorHash[src];
 
-	if (_pixelformat.bytesPerPixel == 1) {
+	if (_pixelformat.isCLUT8()) {
 		byte r, g, b;
-		decomposeColor<byte>(src, r, g, b);
+		getPaletteEntry(src, r, g, b);
 		r = ~r;
 		g = ~g;
 		b = ~b;
 		_invertColorHash[src] = findBestColor(r, g, b);
 	} else {
-		uint32 alpha = _pixelformat.ARGBToColor(255, 0, 0, 0);
-		_invertColorHash[src] = ~(src & ~alpha) | alpha;
+		uint32 rgbMask = _pixelformat.ARGBToColor(0, 255, 255, 255);
+		uint32 aMask = _pixelformat.ARGBToColor(255, 0, 0, 0);
+		_invertColorHash[src] = (~src & rgbMask) | aMask;
 	}
 	return _invertColorHash[src];
 }
@@ -1581,11 +1583,6 @@ void MacWindowManager::printWMMode(int debuglevel) {
 
 	if (_mode & kWMModeButtonDialogStyle)
 		out += " kWMModeButtonDialogStyle";
-
-	if (_mode & kWMMode32bpp)
-		out += " kWMMode32bpp";
-	else
-		out += " !kWMMode32bpp";
 
 	if (_mode & kWMNoScummVMWallpaper)
 		out += " kWMNoScummVMWallpaper";

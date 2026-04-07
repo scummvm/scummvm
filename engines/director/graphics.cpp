@@ -289,6 +289,14 @@ class InkPrimitives final : public Graphics::Primitives {
 public:
 	constexpr InkPrimitives() {}
 	void drawPoint(int x, int y, uint32 src, void *data) override;
+private:
+	inline void decomposeColor(Graphics::MacWindowManager *wm, uint32 color, byte &r, byte &g, byte &b) {
+		if (sizeof(T) == sizeof(byte)) {
+			wm->getPaletteEntry(color, r, g, b);
+		} else {
+			wm->_pixelformat.colorToRGB(color, r, g, b);
+		}
+	}
 };
 
 template <typename T>
@@ -344,8 +352,8 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+		decomposeColor(wm, src, rSrc, gSrc, bSrc);
+		decomposeColor(wm, *dst, rDst, gDst, bDst);
 
 		rDst = lerpByte(rSrc, rDst, p->alpha, 255);
 		gDst = lerpByte(gSrc, gDst, p->alpha, 255);
@@ -396,7 +404,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		} else {
 			// Find the inverse of the colour and match it back to the palette if required
 			byte rSrc, gSrc, bSrc;
-			wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+			decomposeColor(wm, src, rSrc, gSrc, bSrc);
 
 			*dst = wm->findBestColor(~rSrc, ~gSrc, ~bSrc);
 		}
@@ -484,8 +492,8 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+		decomposeColor(wm, src, rSrc, gSrc, bSrc);
+		decomposeColor(wm, *dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
 		case kInkTypeAddPin:

@@ -136,10 +136,10 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 		_defaultFormatting = MacFontRun(_wm);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 		byte r, g, b;
-		if (_wm->_pixelformat.bytesPerPixel == 4) {
-			_wm->decomposeColor<uint32>(fgcolor, r, g, b);
+		if (_wm->_pixelformat.isCLUT8()) {
+			_wm->getPaletteEntry(fgcolor, r, g, b);
 		} else {
-			_wm->decomposeColor<byte>(fgcolor, r, g, b);
+			_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
 		}
 		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
@@ -166,7 +166,11 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
 		_defaultFormatting.font = wm->_fontMan->getFont(*macFont);
 		byte r, g, b;
-		_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
+		if (_wm->_pixelformat.isCLUT8()) {
+			_wm->getPaletteEntry(fgcolor, r, g, b);
+		} else {
+			_wm->_pixelformat.colorToRGB(fgcolor, r, g, b);
+		}
 		_defaultFormatting.setValues(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), r, g, b);
 	} else {
 		_defaultFormatting.font = NULL;
@@ -341,7 +345,7 @@ void MacText::setScrollBar(bool enable) {
 void MacText::resizeScrollBar(int w, int h) {
 	_borderSurface.free();
 	_borderSurface.create(w, h, _wm->_pixelformat);
-	if (_wm->_pixelformat.bytesPerPixel == 1) {
+	if (_wm->_pixelformat.isCLUT8()) {
 		_borderSurface.clear(_wm->_colorGreen);
 	}
 	_scrollBorder.blitBorderInto(_borderSurface, kWindowBorderScrollbar | kWindowBorderActive);
@@ -472,9 +476,8 @@ void MacText::setTextColor(uint32 color, uint32 line) {
 		return;
 	}
 
-	uint32 fgcol = _wm->findBestColor(color);
 	for (uint j = 0; j < _canvas._text[line].chunks.size(); j++) {
-		_canvas._text[line].chunks[j].fgcolor = fgcol;
+		_canvas._text[line].chunks[j].fgcolor = color;
 	}
 
 	// if we are calling this func separately, then here need a refresh
@@ -506,8 +509,7 @@ void setTextColorCallback(MacFontRun &macFontRun, int color) {
 }
 
 void MacText::setTextColor(uint32 color, uint32 start, uint32 end) {
-	uint32 col = _wm->findBestColor(color);
-	setTextChunks(start, end, col, setTextColorCallback);
+	setTextChunks(start, end, color, setTextColorCallback);
 }
 
 void setTextSizeCallback(MacFontRun &macFontRun, int textSize) {
@@ -939,7 +941,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 
 	render();
 
-	drawStep(g, _canvas._surface, &_borderSurface, x, y, w, h, xoff, yoff, _canvas._tbgcolor, (_wm->_pixelformat.bytesPerPixel == 1) ? _wm->_colorGreen : 0);
+	drawStep(g, _canvas._surface, &_borderSurface, x, y, w, h, xoff, yoff, _canvas._tbgcolor, _wm->_pixelformat.isCLUT8() ? _wm->_colorGreen : 0);
 
 	drawStep(_glyphMaskSurface, _canvas._glyphMask, &_borderMaskSurface, x, y, w, h, xoff, yoff, 0, 0);
 	drawStep(_charBoxMaskSurface, _canvas._charBoxMask, &_borderMaskSurface, x, y, w, h, xoff, yoff, 0, 0);

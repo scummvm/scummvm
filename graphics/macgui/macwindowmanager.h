@@ -87,14 +87,13 @@ enum {
 	kWMModeManualDrawWidgets	= (1 << 5),
 	kWMModeFullscreen			= (1 << 6),
 	kWMModeButtonDialogStyle	= (1 << 7),
-	kWMMode32bpp				= (1 << 8),
-	kWMNoScummVMWallpaper		= (1 << 9),
-	kWMModeWin95				= (1 << 10),
-	kWMModeForceMacFontsInWin95 = (1 << 11), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
-	kWMModeNoCursorOverride     = (1 << 12),
-	kWMModeForceMacBorder       = (1 << 13),
-	kWMModeForceMacFonts        = (1 << 14), // Enforce Mac fonts even when there are viable TTF substitutions
-	kWMModeNoSystemRedraw       = (1 << 15), // Skip g_system->copyRectToScreen (for 3D game backends)
+	kWMNoScummVMWallpaper		= (1 << 8),
+	kWMModeWin95				= (1 << 9),
+	kWMModeForceMacFontsInWin95 = (1 << 10), // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
+	kWMModeNoCursorOverride     = (1 << 11),
+	kWMModeForceMacBorder       = (1 << 12),
+	kWMModeForceMacFonts        = (1 << 13), // Enforce Mac fonts even when there are viable TTF substitutions
+	kWMModeNoSystemRedraw       = (1 << 14), // Skip g_system->copyRectToScreen (for 3D game backends)
 };
 
 }
@@ -147,7 +146,8 @@ struct ZoomBox {
  */
 class MacWindowManager {
 public:
-	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr, Common::Language language = Common::UNK_LANG);
+	MacWindowManager(uint32 mode = 0, MacPatterns *patterns = nullptr, Common::Language language = Common::UNK_LANG,
+	                 const Graphics::PixelFormat &pixelFormat = Graphics::PixelFormat::createFormatCLUT8());
 	~MacWindowManager();
 
 	Primitives &getDrawPrimitives() const { return *_macDrawPrimitives; }
@@ -353,9 +353,8 @@ public:
 	void setEngineActivateMenuCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	void getPaletteEntry(uint32 color, byte &r, byte &g, byte &b);
 	uint32 findBestColor(byte cr, byte cg, byte cb);
-	uint32 findBestColor(uint32 color);
 	void setDesktopColor(byte, byte, byte);
 
 	byte inverter(byte src);

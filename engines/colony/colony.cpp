@@ -566,7 +566,7 @@ void ColonyEngine::initMacMenus() {
 	Graphics::PixelFormat rgba(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	_menuSurface = new Graphics::ManagedSurface(_width, _height, rgba);
 
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMNoScummVMWallpaper | Graphics::kWMMode32bpp | Graphics::kWMModeNoSystemRedraw);
+	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMNoScummVMWallpaper | Graphics::kWMModeNoSystemRedraw, nullptr, Common::UNK_LANG, rgba);
 
 	// Override WM color values for 32bpp RGBA rendering.
 	// The defaults are palette indices (0-6) which are meaningless in 32bpp mode.
