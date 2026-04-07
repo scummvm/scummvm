@@ -176,13 +176,38 @@ SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slo
 }
 
 Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+
+	KeymapArray keymaps;
+
+	Keymap *mainKeymap = new Keymap(Keymap::kKeymapTypeGame, "mm-main", _("Might and Magic"));
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Left click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	mainKeymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	mainKeymap->addAction(act);
+
+	keymaps.push_back(mainKeymap);
+
 #ifdef ENABLE_MM1
 	const Common::String gameId = getGameId(target);
-	if (gameId == "mm1" || gameId == "mm1_enh")
-		return MM::MM1::MetaEngine::initKeymaps();
+	if (gameId == "mm1" || gameId == "mm1_enh") {
+		KeymapArray mm1Keymaps = MM::MM1::MetaEngine::initKeymaps();
+
+		for (KeymapArray::iterator it = mm1Keymaps.begin(); it != mm1Keymaps.end(); ++it)
+			keymaps.push_back(*it);
+	}
 #endif
 
-	return Common::KeymapArray();
+	return keymaps;
 }
 
 Common::String MMMetaEngine::getGameId(const Common::String &target) {

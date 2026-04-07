@@ -22,6 +22,7 @@
 #include "mm/mm1/metaengine.h"
 #include "mm/mm1/mm1.h"
 #include "common/translation.h"
+#include "backends/keymapper/keymap.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/standard-actions.h"
 
@@ -123,60 +124,63 @@ static const KeybindingRecord CHEAT_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const char *const kMenuKeymapId = "mm1_menu";
+static const char *const kMinimalKeymapId = "mm1_minimal";
+static const char *const kPartyKeymapId = "mm1_party";
+static const char *const kNormalKeymapId = "mm1_normal";
+static const char *const kCombatKeymapId = "mm1_combat";
+static const char *const kCheatsKeymapId = "mm1_cheats";
+
+static Common::Keymap *g_menuKeymap = nullptr;
+static Common::Keymap *g_minimalKeymap = nullptr;
+static Common::Keymap *g_partyKeymap = nullptr;
+static Common::Keymap *g_normalKeymap = nullptr;
+static Common::Keymap *g_combatKeymap = nullptr;
+static Common::Keymap *g_cheatsKeymap = nullptr;
+
 struct KeysRecord {
 	const char *_id;
 	const char *_desc;
 	const KeybindingRecord *_keys;
 };
 
-static const KeysRecord MENU_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
+static const KeysRecord ALL_RECORDS[] = {
+	{ kMenuKeymapId,    _s("Might and Magic 1 - Menus"), MENU_KEYS },
+	{ kMinimalKeymapId, _s("Might and Magic 1 - Minimal Keys"), MINIMAL_KEYS },
+	{ kNormalKeymapId,  _s("Might and Magic 1 - Main"), NORMAL_KEYS },
+	{ kPartyKeymapId,   _s("Might and Magic 1 - Party"), PARTY_KEYS },
+	{ kCombatKeymapId,  _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
+//	{ kCheatsKeymapId,  _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord MINIMAL_RECORDS[] = {
-	{ "mm1_minimal", _s("Might and Magic 1 - Minimal Keys"), MINIMAL_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
+static void initKeymapPointers() {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
 
-static const KeysRecord PARTY_MENU_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1 - Menus"), MENU_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
+	if (!g_menuKeymap)
+		g_menuKeymap = mapper->getKeymap(kMenuKeymapId);
+	if (!g_minimalKeymap)
+		g_minimalKeymap = mapper->getKeymap(kMinimalKeymapId);
+	if (!g_partyKeymap)
+		g_partyKeymap = mapper->getKeymap(kPartyKeymapId);
+	if (!g_normalKeymap)
+		g_normalKeymap = mapper->getKeymap(kNormalKeymapId);
+	if (!g_combatKeymap)
+		g_combatKeymap = mapper->getKeymap(kCombatKeymapId);
+	if (!g_cheatsKeymap)
+		g_cheatsKeymap = mapper->getKeymap(kCheatsKeymapId);
+}
 
-static const KeysRecord COMBAT_MENU_RECORDS[] = {
-	{ "mm1_combat", _s("Might and Magic 1 - Combat"), COMBAT_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord NORMAL_RECORDS[] = {
-	{ "mm1", _s("Might and Magic 1"), NORMAL_KEYS },
-	{ "mm1_party", _s("Might and Magic 1 - Party"), PARTY_KEYS },
-	{ "mm1_cheats", _s("Might and Magic 1 - Cheats"), CHEAT_KEYS },
-	{ nullptr, nullptr, nullptr }
-};
-
-static const KeysRecord *MODE_RECORDS[6] = {
-	MENU_RECORDS,
-	MINIMAL_RECORDS,
-	PARTY_MENU_RECORDS,
-	NORMAL_RECORDS,
-	COMBAT_MENU_RECORDS,
-	nullptr		// TODO: combat keybindings
-};
-
-Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
+Common::KeymapArray MetaEngine::initKeymaps() {
 	Common::KeymapArray keymapArray;
 	Common::Keymap *keyMap;
 	Common::Action *act;
-	const KeysRecord *recPtr = MODE_RECORDS[mode];
 
-	for (int kCtr = 0; recPtr->_id; ++recPtr, ++kCtr) {
+	for (const KeysRecord *recPtr = ALL_RECORDS; recPtr->_id; ++recPtr) {
 		// Core keymaps
 		keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame,
 			recPtr->_id, recPtr->_desc);
+		keyMap->setEnabled(false);
 		keymapArray.push_back(keyMap);
 
 		for (const KeybindingRecord *r = recPtr->_keys; r->_id; ++r) {
@@ -201,14 +205,39 @@ Common::KeymapArray MetaEngine::initKeymaps(KeybindingMode mode) {
 	return keymapArray;
 }
 
+static bool isKeymapEnabledForMode(const Common::Keymap *keymap, KeybindingMode mode) {
+	if (keymap == g_menuKeymap)
+		return mode == KBMODE_MENUS || mode == KBMODE_PARTY_MENUS;
+	if (keymap == g_minimalKeymap)
+		return mode == KBMODE_MINIMAL;
+	if (keymap == g_partyKeymap)
+		return mode == KBMODE_PARTY_MENUS || mode == KBMODE_NORMAL || mode == KBMODE_COMBAT;
+	if (keymap == g_normalKeymap)
+		return mode == KBMODE_NORMAL;
+	if (keymap == g_combatKeymap)
+		return mode == KBMODE_COMBAT;
+	if (keymap == g_cheatsKeymap)
+		return mode == KBMODE_NORMAL;
+
+	return false;
+}
+
 void MetaEngine::setKeybindingMode(KeybindingMode mode) {
-	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
-	mapper->cleanupGameKeymaps();
+	initKeymapPointers();
 
-	Common::KeymapArray arr = initKeymaps(mode);
+	Common::Keymap *allKeymaps[] = {
+		g_menuKeymap,
+		g_minimalKeymap,
+		g_partyKeymap,
+		g_normalKeymap,
+		g_combatKeymap,
+		g_cheatsKeymap
+	};
 
-	for (uint idx = 0; idx < arr.size(); ++idx)
-		mapper->addGameKeymap(arr[idx]);
+	for (Common::Keymap *keymap : allKeymaps) {
+		if (keymap)
+			keymap->setEnabled(isKeymapEnabledForMode(keymap, mode));
+	}
 }
 
 void MetaEngine::executeAction(KeybindingAction keyAction) {

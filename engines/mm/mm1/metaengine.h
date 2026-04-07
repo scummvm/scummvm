@@ -99,7 +99,7 @@ public:
 	/**
 	 * Initialize keymaps
 	 */
-	static Common::KeymapArray initKeymaps(KeybindingMode mode = KBMODE_MENUS);
+	static Common::KeymapArray initKeymaps();
 
 	/**
 	 * Execute an engine keymap action

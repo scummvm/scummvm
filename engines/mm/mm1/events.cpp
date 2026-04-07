@@ -48,6 +48,8 @@ void Events::runGame() {
 	uint currTime, nextFrameTime = 0;
 	_screen = new Graphics::Screen();
 
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+
 	// Run the game
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot == -1 ||
