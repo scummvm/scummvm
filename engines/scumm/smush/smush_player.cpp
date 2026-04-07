@@ -40,6 +40,7 @@
 #include "scumm/smush/codec37.h"
 #include "scumm/smush/codec47.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/smush_multi_font.h"
 #include "scumm/smush/smush_player.h"
 
 #include "scumm/insane/insane.h"
@@ -272,9 +273,26 @@ SmushPlayer::SmushPlayer(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insa
 	_frameBuffer = nullptr;
 	_specialBuffer = nullptr;
 	_specialBufferSize = 0;
-	_ra1CleanFrame = nullptr;
-	_ra1CleanFrameSize = 0;
-	_ra1HasCleanFrame = false;
+	_storedFobjData = nullptr;
+	_storedFobjDataSize = 0;
+	_storedFobjCodec = 0;
+	_storedFobjParm2 = 0;
+	_storedFobjLeft = 0;
+	_storedFobjTop = 0;
+	_storedFobjWidth = 0;
+	_storedFobjHeight = 0;
+	_lastFobjData = nullptr;
+	_lastFobjDataSize = 0;
+	_lastFobjCodec = 0;
+	_lastFobjLeft = 0;
+	_lastFobjTop = 0;
+	_lastFobjWidth = 0;
+	_lastFobjHeight = 0;
+	_hasFrameFobjForGost = false;
+	_fobjOffsetX = 0;
+	_fobjOffsetY = 0;
+	_skipNext = false;
+	_storeFrame = false;
 
 	_seekPos = -1;
 
@@ -332,10 +350,12 @@ SmushPlayer::~SmushPlayer() {
 	_frameBuffer = nullptr;
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
-	free(_ra1CleanFrame);
-	_ra1CleanFrame = nullptr;
-	_ra1CleanFrameSize = 0;
-	_ra1HasCleanFrame = false;
+	free(_storedFobjData);
+	_storedFobjData = nullptr;
+	free(_lastFobjData);
+	_lastFobjData = nullptr;
+	delete _multiFont;
+	_multiFont = nullptr;
 }
 
 void SmushPlayer::init(int32 speed) {
@@ -354,9 +374,6 @@ void SmushPlayer::init(int32 speed) {
 	const bool preserveVideoState = _preserveVideoStateOnNextPlay;
 	_preserveVideoStateOnNextPlay = false;
 	if (!preserveVideoState) {
-		_ra1HasCleanFrame = false;
-		// RA1 OBJ overlay chunks are video-local. Reset cached overlay state for each
-		// new ANM unless the original route-switch path requested state preservation.
 		resetGameVideoState();
 	}
 
@@ -408,10 +425,6 @@ void SmushPlayer::release() {
 
 	free(_specialBuffer);
 	_specialBuffer = nullptr;
-	free(_ra1CleanFrame);
-	_ra1CleanFrame = nullptr;
-	_ra1CleanFrameSize = 0;
-	_ra1HasCleanFrame = false;
 
 	releaseGameVideoState();
 	if (!shouldPreserveFrameBuffer()) {
@@ -1298,22 +1311,13 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 	}
 
 	int codec = b.readUint16LE();
-	uint8 ra1Param = 0;   // RA1: palette base byte (FOBJ byte[1])
-	uint16 ra1ObjectId = 0; // RA1: object id / event target id (FOBJ bytes[10-11])
-	uint16 ra1Parm2 = 0;  // RA1: tile count (FOBJ bytes[12-13])
-	if (isRA1()) {
-		ra1Param = (codec >> 8) & 0xFF; // byte[1] = palette base (e.g. 0xF0)
-		codec &= 0xFF;                  // byte[0] = actual codec number
-	}
 	int left = (int)b.readSint16LE();
 	int top = (int)b.readSint16LE();
-	const int rawLeft = left;
-	const int rawTop = top;
 	int width = b.readUint16LE();
 	int height = b.readUint16LE();
 
-	ra1ObjectId = b.readUint16LE();
-	ra1Parm2 = b.readUint16LE();
+	b.readUint16LE(); // objectId (RA1 uses this)
+	b.readUint16LE(); // parm2 (RA1 uses this)
 
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleFrameObject: frame=%d codec=%d pos=(%d,%d) size=%dx%d dataSize=%d",
 		_frame, codec, left, top, width, height, subSize - 14);
@@ -1327,73 +1331,9 @@ void SmushPlayer::handleFrameObject(int32 subSize, Common::SeekableReadStream &b
 
 	handleGameFrameObjectPost(codec, chunk_buffer, chunk_size, left, top, width, height);
 
-	// RA1 STOR needs ra1Param/rawLeft/rawTop which aren't available through the virtual hook
-	if (_storeFrame && isRA1()) {
-		free(_storedFobjData);
-		_storedFobjData = (byte *)malloc(chunk_size);
-		if (_storedFobjData != nullptr) {
-			memcpy(_storedFobjData, chunk_buffer, chunk_size);
-			_storedFobjDataSize = chunk_size;
-			_storedFobjCodec = codec | ((int)ra1Param << 8);
-			_storedFobjParm2 = ra1Parm2;
-			_storedFobjLeft = rawLeft;
-			_storedFobjTop = rawTop;
-			_storedFobjWidth = width;
-			_storedFobjHeight = height;
-		} else {
-			_storedFobjDataSize = 0;
-		}
-		_storeFrame = false;
-	}
-
-	if (isRA1() && _insane) {
-		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-		if (!rebel1->handleFrameObjectTarget((int16)ra1ObjectId, (int16)rawLeft, (int16)rawTop,
-				(int16)width, (int16)height, codec, ra1Param)) {
-			free(chunk_buffer);
-			return;
-		}
-	}
-
-	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size);
 
 	free(chunk_buffer);
-}
-
-static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize) {
-	const int64 frameStart = b.pos();
-	int32 remaining = frameSize;
-
-	while (remaining > 1) {
-		if ((b.pos() & 1) && remaining > 0) {
-			const byte pad = b.readByte();
-			if (pad == 0) {
-				remaining--;
-			} else {
-				b.seek(-1, SEEK_CUR);
-			}
-		}
-
-		if (remaining < 8)
-			break;
-
-		const uint32 subType = b.readUint32BE();
-		const int32 subSize = b.readUint32BE();
-		const int64 subDataPos = b.pos();
-
-		if (subType == MKTAG('F', 'R', 'M', 'E'))
-			break;
-		if (subType == MKTAG('G', 'A', 'M', 'E')) {
-			b.seek(frameStart, SEEK_SET);
-			return true;
-		}
-
-		remaining -= subSize + 8;
-		b.seek(subDataPos + subSize, SEEK_SET);
-	}
-
-	b.seek(frameStart, SEEK_SET);
-	return false;
 }
 
 void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
@@ -1402,74 +1342,11 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 	_skipNext = false;
 	handleGameFrameStart();
 
-	bool interactiveRA1 = false;
-	bool forceInteractiveClearRA1 = false;
-	bool preserveFrameHistoryRA1 = false;
-	if (isRA1() && _insane) {
-		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
-		interactiveRA1 = rebel1->isInteractiveVideoActive();
-		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
-		// Opcode 0x0B path (FUN_1CDA7) uses heavy partial-layer composition
-		// (codec1/2 + FTCH). Force clear there to avoid stale-trail ghosting.
-		// Keep a conservative fallback for the early L2 frames before first 0x0B
-		// arrives.
-		forceInteractiveClearRA1 = interactiveRA1 &&
-			(activeOpcode == 0x0B ||
-			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
-
-		// The clean-frame cache only exists to strip gameplay overlays back out of
-		// the previous decoded frame before the next gameplay frame is composed.
-		// Transitional interactive clips like LVL4/L4PLAY2 have no GAME chunks in
-		// their FRME stream, so restoring the prior clean frame there just smears
-		// stale gameplay pixels into the cutscene.
-		preserveFrameHistoryRA1 = interactiveRA1 &&
-			!forceInteractiveClearRA1 &&
-			ra1FrameHasGameChunk(b, frameSize);
-	}
-
-	// Keep the previous decoded frame (without post-render overlays) as delta source.
-	// FUN_1FDBC (0x1FDBC) decodes frame data first; gameplay overlays from
-	// FUN_1BBCB/FUN_1CB22/FUN_1CDA7 are presentation-stage effects.
-	if (isRA1() && preserveFrameHistoryRA1 &&
-		_ra1HasCleanFrame && _ra1CleanFrame &&
-		_dst && _width > 0 && _height > 0) {
-		const int frameBytes = _width * _height;
-		if (_ra1CleanFrameSize >= frameBytes)
-			memcpy(_dst, _ra1CleanFrame, frameBytes);
-	}
-
 	if (_insanity) {
 		_vm->_insane->procPreRendering(_dst);
 	}
 
-	// RA1: gameplay/interactivity relies on previous-frame history (delta codecs),
-	// but passive cinematics in current implementation need a per-frame clear to
-	// avoid trails in intro/text sequences.
-	if (isRA1() && _dst && _width > 0 && _height > 0) {
-		if (!preserveFrameHistoryRA1)
-			memset(_dst, 0, _width * _height);
-	}
-
 	while (frameSize > 0) {
-		// RA1 parser exits when <=1 byte remains in a frame (FUN_1FDBC).
-		// Treat any tiny tail as frame trailer/padding and stop cleanly.
-		if (isRA1() && frameSize <= 1) {
-			if (frameSize == 1)
-				b.skip(1);
-			break;
-		}
-
-		// RA1: Top-of-loop alignment check matching original assembly FUN_1FDBC:
-		// if ((ptr & 1) && (*ptr == 0)) { ptr++; remaining--; }
-		if (isRA1() && (b.pos() & 1) && frameSize > 0) {
-			byte peek = b.readByte();
-			if (peek == 0) {
-				frameSize--;
-			} else {
-				b.seek(-1, SEEK_CUR);
-			}
-		}
-
 		if (frameSize < 8) {
 			b.skip(frameSize);
 			break;
@@ -1478,12 +1355,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		uint32 subType = b.readUint32BE();
 		int32 subSize = b.readUint32BE();
 		int32 subOffset = b.pos();
-
-		// Guard against consuming the next frame marker as an in-frame chunk.
-		if (isRA1() && subType == MKTAG('F','R','M','E')) {
-			b.seek(-8, SEEK_CUR);
-			break;
-		}
 
 		if (handleGameSkipChunk(subType, subSize, b)) {
 			frameSize -= subSize + 8;
@@ -1514,7 +1385,6 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 				free(audioChunk);
 				audioChunk = nullptr;
 			}
-
 			break;
 		case MKTAG('T','R','E','S'):
 			handleTextResource(subType, subSize, b);
@@ -1538,157 +1408,26 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 			handleTextResource(subType, subSize, b);
 			break;
 		case MKTAG('L','O','A','D'):
-			handleLoad(subSize, b);
+			handleGameLoad(subSize, b);
 			break;
 		case MKTAG('G','O','S','T'):
 			handleGameGost(subSize, b);
 			break;
-		// RA1-specific chunk types: skip gracefully
-		case MKTAG('G','A','M','E'):
-			if (isRA1()) {
-				InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
-				rebel1->handleGameChunk(subSize, b);
-			}
-			break;
-		case MKTAG('P','V','O','C'):
-			// RA1 voice-over audio: same 12-byte header format as PSAD
-			// (3 × BE32: trackId, seqNum, param) followed by SAUD data.
-			// Feed to audio system identically to PSAD.
-			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
-				audioChunk = (uint8 *)malloc(subSize + 8);
-				b.seek(-8, SEEK_CUR);
-				b.read(audioChunk, subSize + 8);
-				feedAudio(audioChunk, 0, 127, 0, 0);
-				free(audioChunk);
-				audioChunk = nullptr;
-			}
-			break;
-		case MKTAG('G','A','M','2'):
-		case MKTAG('F','A','D','E'):
-		case MKTAG('S','E','G','A'):
-		case MKTAG('A','D','L',' '):
-		case MKTAG('A','D','L','2'):
-		case MKTAG('S','B','L',' '):
-		case MKTAG('S','B','L','2'):
-		case MKTAG('P','S','D','2'):
-			debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping RA1 chunk %s (%d bytes)", tag2str(subType), subSize);
-			break;
-		case MKTAG('O','B','J','\0'):
-			// RA1 object overlay chunk: variable-size header + embedded FOBJ
-			// sprites (including the cockpit overlay), GAME, and PSAD chunks.
-			// The reported size field is unreliable — remaining FRME data after
-			// OBJ\0 contains unstructured data between the reported end and
-			// subsequent sub-chunks. Read ALL remaining FRME data and scan for
-			// embedded sub-chunks, then stop frame parsing.
-			if (isRA1()) {
-				int32 objDataSize = frameSize - 8;
-				if (objDataSize > 0) {
-					byte *objBuf = (byte *)malloc(objDataSize);
-					b.read(objBuf, objDataSize);
-
-					int32 objPos = 0;
-					while (objPos + 8 < objDataSize) {
-						uint32 embTag = READ_BE_UINT32(objBuf + objPos);
-						uint32 embSize = READ_BE_UINT32(objBuf + objPos + 4);
-						int32 embRemaining = objDataSize - objPos - 8;
-
-						bool recognized = (embTag == MKTAG('F','O','B','J') ||
-						                   embTag == MKTAG('G','A','M','E') ||
-						                   embTag == MKTAG('P','S','A','D'));
-
-						if (!recognized || embSize > (uint32)embRemaining) {
-							// Not a recognized tag or size exceeds remaining data.
-							// Advance byte-by-byte through the OBJ header.
-							objPos++;
-							continue;
-						}
-
-						if (embTag == MKTAG('F','O','B','J') && embSize >= 14) {
-							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
-							handleFrameObject(embSize, embStream);
-
-							// Save the largest OBJ embedded FOBJ as the cockpit overlay
-							// to re-render every subsequent frame.
-							if (_ra1ObjOverlayData == nullptr ||
-							    (int32)embSize > _ra1ObjOverlayDataSize) {
-								free(_ra1ObjOverlayData);
-								_ra1ObjOverlayDataSize = embSize;
-								_ra1ObjOverlayData = (byte *)malloc(embSize);
-								memcpy(_ra1ObjOverlayData, objBuf + objPos + 8, embSize);
-								// Parse FOBJ header for codec/position/size
-								_ra1ObjOverlayCodec = objBuf[objPos + 8] & 0xFF;
-								_ra1ObjOverlayLeft = (int16)READ_LE_UINT16(objBuf + objPos + 10);
-								_ra1ObjOverlayTop = (int16)READ_LE_UINT16(objBuf + objPos + 12);
-								_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
-								_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
-							}
-						} else if (embTag == MKTAG('G','A','M','E')) {
-							Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
-							InsaneRebel1 *rebel1 = (InsaneRebel1 *)_vm->_insane;
-							rebel1->handleGameChunk(embSize, embStream);
-						} else if (embTag == MKTAG('P','S','A','D')) {
-							if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
-								uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
-								memcpy(audioBuf, objBuf + objPos, embSize + 8);
-								feedAudio(audioBuf, 0, 127, 0, 0);
-								free(audioBuf);
-							}
-						}
-
-						objPos += 8 + embSize;
-						if (embSize & 1)
-							objPos++;
-					}
-					free(objBuf);
-				}
-				frameSize = 0;
-				continue;
-			}
-			break;
 		default:
-			if (isRA1()) {
-				// Original FUN_1FDBC lines 163-168: unknown tag with all uppercase
-				// letters (A-Z) → silently return. Otherwise error.
-				byte tb0 = (subType >> 24) & 0xFF, tb1 = (subType >> 16) & 0xFF;
-				byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
-				if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
-				    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
-					debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
-					frameSize = 0;
-					continue;
-				}
+			if (isInsaneGame()) {
+				debugC(DEBUG_SMUSH, "SmushPlayer::handleFrame: skipping unknown chunk %s (%d bytes) frame=%d",
+					tag2str(subType), subSize, _frame);
+			} else {
+				error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 			}
-			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
 		}
 
 		frameSize -= subSize + 8;
 		b.seek(subOffset + subSize, SEEK_SET);
-		// RA1 uses top-of-loop alignment (matching FUN_1FDBC), not bottom-of-loop padding.
-		if (!isRA1() && (subSize & 1)) {
+		if (subSize & 1) {
 			b.skip(1);
 			frameSize--;
 		}
-	}
-
-	if (isRA1() && _ra1ObjOverlayData != nullptr && _frame > 0) {
-		Common::MemoryReadStream overlayStream(_ra1ObjOverlayData, _ra1ObjOverlayDataSize);
-		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
-	}
-
-	if (isRA1() && preserveFrameHistoryRA1 &&
-		_dst && _width > 0 && _height > 0) {
-		const int frameBytes = _width * _height;
-		byte *newClean = (byte *)realloc(_ra1CleanFrame, frameBytes);
-		if (newClean != nullptr) {
-			_ra1CleanFrame = newClean;
-			_ra1CleanFrameSize = frameBytes;
-			memcpy(_ra1CleanFrame, _dst, frameBytes);
-			_ra1HasCleanFrame = true;
-		} else {
-			_ra1HasCleanFrame = false;
-		}
-	} else if (isRA1()) {
-		_ra1HasCleanFrame = false;
 	}
 
 	if (_insanity) {
@@ -2003,6 +1742,14 @@ void SmushPlayer::updateScreen() {
 	debugC(DEBUG_SMUSH, "Smush stats: updateScreen( %03d )", end_time - start_time);
 }
 
+void SmushPlayer::handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) {
+	if (_vm->_macScreen) {
+		_vm->mac_drawBufferToScreen(src, srcPitch, 0, 0, width, height);
+	} else {
+		_vm->_system->copyRectToScreen(src, srcPitch, 0, 0, width, height);
+	}
+}
+
 void SmushPlayer::insanity(bool flag) {
 	_insanity = flag;
 }
@@ -2223,38 +1970,11 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 					int frameHeight;
 					const byte *dst;
 
-					if (isRA1()) {
-						if (_dst == nullptr || _width <= 0 || _height <= 0) {
-							_updateNeeded = false;
-							continue;
-						}
+					frameWidth = MIN(_width, _vm->_screenWidth);
+					frameHeight = MIN(_height, _vm->_screenHeight);
+					dst = _dst + _scrollY * _width + _scrollX;
 
-						int ra1ViewX = _ra1ViewportOffsetX;
-						int ra1ViewY = _ra1ViewportOffsetY;
-
-						const int srcX = CLIP(_scrollX + ra1ViewX, 0, _width - 1);
-						const int srcY = CLIP(_scrollY + ra1ViewY, 0, _height - 1);
-
-						frameWidth = MIN(_width - srcX, _vm->_screenWidth);
-						frameHeight = MIN(_height - srcY, _vm->_screenHeight);
-						if (frameWidth <= 0 || frameHeight <= 0) {
-							_updateNeeded = false;
-							continue;
-						}
-
-						dst = _dst + srcY * _width + srcX;
-					} else {
-						frameWidth = MIN(_width, _vm->_screenWidth);
-						frameHeight = MIN(_height, _vm->_screenHeight);
-						dst = _dst + _scrollY * _width + _scrollX;
-					}
-
-					if (_vm->_macScreen) {
-						int srcPitch = isRA1() ? _width : frameWidth;
-						_vm->mac_drawBufferToScreen(dst, srcPitch, 0, 0, frameWidth, frameHeight);
-					} else {
-						_vm->_system->copyRectToScreen(dst, _width, 0, 0, frameWidth, frameHeight);
-					}
+					handleGameUpdateScreen(dst, _width, frameWidth, frameHeight);
 
 					_vm->_system->updateScreen();
 					_updateNeeded = false;

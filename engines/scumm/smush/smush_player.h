@@ -160,38 +160,16 @@ private:
 	byte *_frameBuffer;
 	byte *_specialBuffer;
 	int _specialBufferSize;
-	byte *_ra1CleanFrame;
-	int32 _ra1CleanFrameSize;
-	bool _ra1HasCleanFrame;
 
-	// RA2: Raw FOBJ data stored by STOR chunk (matching original DAT_00482c04).
-	// The original stores raw FOBJ chunk data and re-decodes it on FTCH with
-	// current FOBJ offsets. This is essential for O_LEVEL.SAN where the stored
-	// FOBJ is the 80x800 preview strip at X=320, and FTCH must re-render it
-	// at the current scroll offset each frame.
+	// RA1/RA2: Raw FOBJ data stored by STOR chunk for later re-decoding by FTCH.
 	byte *_storedFobjData;
 	int32 _storedFobjDataSize;
 	int _storedFobjCodec;
-	uint16 _storedFobjParm2; // RA1: FOBJ bytes[12..13] needed by codec 4/5
+	uint16 _storedFobjParm2;
 	int _storedFobjLeft;
 	int _storedFobjTop;
 	int _storedFobjWidth;
 	int _storedFobjHeight;
-
-	// RA1: OBJ\0 embedded cockpit overlay FOBJ — drawn once in frame 0,
-	// saved here and re-rendered every subsequent frame after scene FOBJs.
-	byte *_ra1ObjOverlayData;
-	int32 _ra1ObjOverlayDataSize;
-	int _ra1ObjOverlayCodec;
-	int _ra1ObjOverlayLeft;
-	int _ra1ObjOverlayTop;
-	int _ra1ObjOverlayWidth;
-	int _ra1ObjOverlayHeight;
-
-	// RA1: Viewport scroll offset for interactive gameplay (FUN_224FD at 0x224FD).
-	// Set by InsaneRebel1::procPreRendering(), applied to FOBJ decode positions.
-	int _ra1ViewportOffsetX;
-	int _ra1ViewportOffsetY;
 
 	// RA1/RA2: Most recently decoded FOBJ in the current frame, used by GOST
 	// chunks to re-render the same sprite payload at a different position.
@@ -204,6 +182,11 @@ private:
 	int _lastFobjHeight;
 	bool _hasFrameFobjForGost;
 
+	// RA2: Global FOBJ position offsets.
+	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
+	int16 _fobjOffsetX;
+	int16 _fobjOffsetY;
+
 	Common::String _seekFile;
 	uint32 _startFrame;
 	uint32 _startTime;
@@ -211,17 +194,10 @@ private:
 	uint32 _seekFrame;
 
 	bool _skipNext;
-	bool _ra2FastForwarding;  // Fast-forwarding RA2 BEG video to establish background
 	uint32 _frame;
-	uint32 _fastForwardFromFrame;  // First frame hidden by fast-forward (0 = hide from frame 0)
-	uint32 _fastForwardToFrame;  // RA1: skip display/audio until this frame (0 = disabled)
+	uint32 _fastForwardFromFrame;
+	uint32 _fastForwardToFrame;
 	bool _preserveVideoStateOnNextPlay;
-
-	// RA2: Global FOBJ position offsets (DAT_00482c1c / DAT_00482c20 in original)
-	// Set by InsaneRebel2 during IACT opcode 6 processing, reset in procPostRendering.
-	// Applied to all FOBJ left/top positions during decoding.
-	int16 _fobjOffsetX;
-	int16 _fobjOffsetY;
 
 	Audio::SoundHandle *_IACTchannel;
 	Audio::QueuingAudioStream *_IACTstream;
@@ -343,6 +319,11 @@ protected:
 	virtual void handleGameGost(int32 subSize, Common::SeekableReadStream &b) {}
 	virtual void handleGameProcessAudio(int16 feedSize) {}
 	virtual bool isInsaneGame() const { return false; }
+	virtual void handleGameLoad(int32 subSize, Common::SeekableReadStream &b) {}
+	virtual void handleFrameObject(int32 subSize, Common::SeekableReadStream &b);
+	virtual void handleFrame(int32 frameSize, Common::SeekableReadStream &b);
+	virtual void handleGameUpdateScreen(const byte *
+		src, int srcPitch, int width, int height);
 
 private:
 	SmushFont *getFont(int font);
@@ -355,22 +336,16 @@ private:
 	bool readString(const char *file);
 	void decodeFrameObject(int codec, const uint8 *src, int left, int top, int width, int height, int dataSize = 0, uint8 ra1Param = 0, uint16 ra1Parm2 = 0);
 	void handleAnimHeader(int32 subSize, Common::SeekableReadStream &);
-	void handleFrame(int32 frameSize, Common::SeekableReadStream &);
 	void handleNewPalette(int32 subSize, Common::SeekableReadStream &);
 	void handleZlibFrameObject(int32 subSize, Common::SeekableReadStream &b);
-	void handleFrameObject(int32 subSize, Common::SeekableReadStream &);
 	void handleSAUDChunk(uint8 *srcBuf, uint32 size, int groupId, int vol, int pan, int16 flags, int trkId, int index, int maxFrames);
 	void handleStore(int32 subSize, Common::SeekableReadStream &);
 	void handleFetch(int32 subSize, Common::SeekableReadStream &);
 	void handleIACT(int32 subSize, Common::SeekableReadStream &);
 	void handleTextResource(uint32 subType, int32 subSize, Common::SeekableReadStream &);
 	void handleDeltaPalette(int32 subSize, Common::SeekableReadStream &);
-	void handleLoad(int32 subSize, Common::SeekableReadStream &);  // RA2 only (impl in smush_player_ra2.cpp)
 	void readPalette(byte *, Common::SeekableReadStream &);
 
-	// RA1/RA2 identification (isRA1 still used in handleFrameObject/handleFrame RA1 paths)
-	bool isRA1() const;
-	bool isRA2() const;
 	// RA2 helper methods called from SmushPlayerRebel2 overrides
 	void ra2HandleTextResource(const char *str, int fontId, int color,
 							   int pos_x, int pos_y, int left, int top,
@@ -388,14 +363,6 @@ private:
 	SmushFont *ra1GetFont(int font);
 	void ra1HandleText(int32 subSize, Common::SeekableReadStream &b);
 
-	// LOAD chunk streaming buffer (RA2 - embedded resource data)
-	byte *_loadBuffer;        // Accumulated LOAD data
-	int32 _loadBufferSize;    // Allocated buffer size
-	int32 _loadBufferOffset;  // Current write position (how much data accumulated)
-	int32 _loadReadOffset;    // Current read position (for streaming consumption)
-	int16 _lastLoadChunkIdx;  // Last processed chunk index (-1 = none)
-	int16 _totalLoadChunks;   // Total chunks expected in current sequence
-
 	void initAudio(int samplerate, int32 maxChunkSize);
 	void terminateAudio();
 	int isChanActive(int flagId);
@@ -411,6 +378,7 @@ private:
 };
 
 class SmushPlayerRebel1 : public SmushPlayer {
+	friend class InsaneRebel1;
 public:
 	SmushPlayerRebel1(ScummEngine_v7 *scumm, IMuseDigital *imuseDigital, Insane *insane);
 	~SmushPlayerRebel1() override;
@@ -437,6 +405,27 @@ protected:
 	void handleGameGost(int32 subSize, Common::SeekableReadStream &b) override;
 	void handleGameProcessAudio(int16 feedSize) override;
 	bool isInsaneGame() const override { return true; }
+	void handleFrameObject(int32 subSize, Common::SeekableReadStream &b) override;
+	void handleFrame(int32 frameSize, Common::SeekableReadStream &b) override;
+	void handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) override;
+
+	// RA1 clean frame buffer for delta source restoration
+	byte *_ra1CleanFrame;
+	int32 _ra1CleanFrameSize;
+	bool _ra1HasCleanFrame;
+
+	// RA1 OBJ overlay FOBJ — cockpit drawn once frame 0, re-rendered every frame
+	byte *_ra1ObjOverlayData;
+	int32 _ra1ObjOverlayDataSize;
+	int _ra1ObjOverlayCodec;
+	int _ra1ObjOverlayLeft;
+	int _ra1ObjOverlayTop;
+	int _ra1ObjOverlayWidth;
+	int _ra1ObjOverlayHeight;
+
+	// RA1 viewport scroll offset for interactive gameplay
+	int _ra1ViewportOffsetX;
+	int _ra1ViewportOffsetY;
 };
 
 class SmushPlayerRebel2 : public SmushPlayer {
@@ -471,6 +460,18 @@ protected:
 	void handleGameGost(int32 subSize, Common::SeekableReadStream &b) override;
 	void handleGameProcessAudio(int16 feedSize) override;
 	bool isInsaneGame() const override { return true; }
+	void handleGameLoad(int32 subSize, Common::SeekableReadStream &b) override;
+
+private:
+	void handleLoad(int32 subSize, Common::SeekableReadStream &b);
+
+	// LOAD chunk streaming buffer (embedded resource data)
+	byte *_loadBuffer;
+	int32 _loadBufferSize;
+	int32 _loadBufferOffset;
+	int32 _loadReadOffset;
+	int16 _lastLoadChunkIdx;
+	int16 _totalLoadChunks;
 };
 
 } // End of namespace Scumm
