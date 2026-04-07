@@ -429,9 +429,9 @@ static bool ra1Codec4LoadTiles(const byte *&src, int &remaining, uint16 param2, 
 }
 
 void smushDecodeRA1Block(byte *dst, const byte *src, int left, int top, int width, int height,
-						 int pitch, int dataSize, uint8 param, uint16 parm2, int codec) {
+						 int pitch, int bufHeight, int dataSize, uint8 param, uint16 parm2, int codec) {
 	const int mx = pitch;
-	const int my = height;
+	const int my = bufHeight;
 	if (s_ra1C4Param != param) {
 		ra1Codec4GenTiles(param);
 		s_ra1C4Param = param;
@@ -505,8 +505,9 @@ bool SmushPlayerRebel1::handleGameDimensionOverride(int codec, int width, int he
 }
 
 bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
-	// RA1 additive codec (SKIP_RLE) uses original coords, not adjusted
-	if (codec == SMUSH_CODEC_SKIP_RLE)
+	// RA1 additive codec (SKIP_RLE) and scatter (RA1_SCATTER) use absolute
+	// positions — they must NOT be clipped/adjusted.
+	if (codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA1_SCATTER)
 		return false;
 	adjustFrameCoords(left, top, width, height, pitch, srcSkipY);
 	return true;
@@ -525,7 +526,9 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 		return true;
 	case SMUSH_CODEC_RA1_DELTA:
 	case SMUSH_CODEC_RA1_BLOCK:
-		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch, dataSize, param, parm2, codec);
+		smushDecodeRA1Block(_dst, src, left, top, width, height, pitch,
+			(_dst == _specialBuffer) ? _height : _vm->_screenHeight,
+			dataSize, param, parm2, codec);
 		return true;
 	case SMUSH_CODEC_LINE_UPDATE:
 		smushDecodeRA1SkipCopy(_dst, src, left, top, width, height, pitch);
