@@ -39,14 +39,6 @@
 
 namespace Scumm {
 
-bool SmushPlayer::isRA1() const {
-	return _vm->_game.id == GID_REBEL1;
-}
-
-bool SmushPlayer::isRA2() const {
-	return _vm->_game.id == GID_REBEL2;
-}
-
 // Forward declarations for RA2 codec functions (defined in codec_ra2.cpp)
 void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
@@ -87,17 +79,7 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_lastFobjWidth = 0;
 	_lastFobjHeight = 0;
 	_hasFrameFobjForGost = false;
-	_ra1ObjOverlayData = nullptr;
-	_ra1ObjOverlayDataSize = 0;
-	_ra1ObjOverlayCodec = 0;
-	_ra1ObjOverlayLeft = 0;
-	_ra1ObjOverlayTop = 0;
-	_ra1ObjOverlayWidth = 0;
-	_ra1ObjOverlayHeight = 0;
-	_ra1ViewportOffsetX = 0;
-	_ra1ViewportOffsetY = 0;
 	_skipNext = false;
-	_ra2FastForwarding = false;
 	_fobjOffsetX = 0;
 	_fobjOffsetY = 0;
 	_storeFrame = false;
@@ -120,8 +102,6 @@ void SmushPlayerRebel2::destroyGamePlayerFields() {
 	_lastFobjData = nullptr;
 	free(_loadBuffer);
 	_loadBuffer = nullptr;
-	free(_ra1ObjOverlayData);
-	_ra1ObjOverlayData = nullptr;
 }
 
 /**
@@ -167,9 +147,6 @@ void SmushPlayerRebel2::releaseGameVideoState() {
 	free(_lastFobjData);
 	_lastFobjData = nullptr;
 	_lastFobjDataSize = 0;
-	free(_ra1ObjOverlayData);
-	_ra1ObjOverlayData = nullptr;
-	_ra1ObjOverlayDataSize = 0;
 	_hasFrameFobjForGost = false;
 	// Preserve _frameBuffer across videos so that gameplay videos (which have no
 	// background FOBJ) can use the stored background from the previous BEG video.
@@ -283,13 +260,17 @@ bool SmushPlayerRebel2::handleGameAnimHeader(byte *headerContent) {
 // RA2 helper methods (still on SmushPlayer for now, used by base class)
 // ---------------------------------------------------------------------------
 
+void SmushPlayerRebel2::handleGameLoad(int32 subSize, Common::SeekableReadStream &b) {
+	handleLoad(subSize, b);
+}
+
 /**
  * Handle LOAD chunk for Rebel Assault 2.
  *
  * LOAD chunks stream embedded resource data across multiple frames.
  * The data is accumulated in a buffer and consumed by the audio system.
  */
-void SmushPlayer::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
+void SmushPlayerRebel2::handleLoad(int32 subSize, Common::SeekableReadStream &b) {
 	debugC(DEBUG_SMUSH, "SmushPlayer::handleLoad()");
 
 	if (subSize < 10) {

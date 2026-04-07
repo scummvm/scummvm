@@ -375,15 +375,15 @@ void InsaneRebel1::procPreRendering(byte *renderBitmap) {
 		// 320x200 window inside the 384x242 buffer. Interactive movies with no
 		// GAME stream (for example LVL4/L4PLAY2.ANM) keep a static camera.
 		if (usePerspectiveViewport) {
-			_player->_ra1ViewportOffsetX = _perspectiveX;
-			_player->_ra1ViewportOffsetY = _perspectiveY;
+			ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
+			ra1Player()->_ra1ViewportOffsetY = _perspectiveY;
 		} else {
-			_player->_ra1ViewportOffsetX = 0;
-			_player->_ra1ViewportOffsetY = 0;
+			ra1Player()->_ra1ViewportOffsetX = 0;
+			ra1Player()->_ra1ViewportOffsetY = 0;
 		}
 	} else if (_player) {
-		_player->_ra1ViewportOffsetX = 0;
-		_player->_ra1ViewportOffsetY = 0;
+		ra1Player()->_ra1ViewportOffsetX = 0;
+		ra1Player()->_ra1ViewportOffsetY = 0;
 	}
 }
 
@@ -491,18 +491,18 @@ void InsaneRebel1::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// On-foot mode uses SetCameraOffset(0,0) — no viewport crop.
 	if (_player) {
 		if (onFootMode || (!asteroidMode && !turretMode && !flightMode)) {
-			_player->_ra1ViewportOffsetX = 0;
-			_player->_ra1ViewportOffsetY = 0;
+			ra1Player()->_ra1ViewportOffsetX = 0;
+			ra1Player()->_ra1ViewportOffsetY = 0;
 		} else {
-			_player->_ra1ViewportOffsetX = _perspectiveX;
-			_player->_ra1ViewportOffsetY = _perspectiveY;
+			ra1Player()->_ra1ViewportOffsetX = _perspectiveX;
+			ra1Player()->_ra1ViewportOffsetY = _perspectiveY;
 		}
 
 		// Screen shake — SetCameraOffset (0x224FD): random [-2,+2] jitter when
 		// _screenFlash > 0. Original uses RandScaleByte(5) - 2 for each axis.
 		if (_screenFlash > 0) {
-			_player->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
-			_player->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+			ra1Player()->_ra1ViewportOffsetX += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
+			ra1Player()->_ra1ViewportOffsetY += (int16)(_vm->_rnd.getRandomNumber(4) - 2);
 		}
 	}
 
@@ -1228,8 +1228,8 @@ void InsaneRebel1::renderHUD(byte *dst, int pitch, int width, int height) {
 	int hudOriginX = 0;
 	int hudOriginY = 0;
 	if (_interactiveVideoActive && _player) {
-		hudOriginX = _player->_ra1ViewportOffsetX;
-		hudOriginY = _player->_ra1ViewportOffsetY;
+		hudOriginX = ra1Player()->_ra1ViewportOffsetX;
+		hudOriginY = ra1Player()->_ra1ViewportOffsetY;
 	}
 
 	int hudX = hudOriginX + bar.xoffs;
@@ -1489,8 +1489,8 @@ void InsaneRebel1::renderLevel8Overlay(byte *dst, int pitch, int width, int heig
 		return;
 
 	// Viewport offset: screen-space → buffer-space (same approach as renderHUD)
-	int viewX = _player ? _player->_ra1ViewportOffsetX : _perspectiveX;
-	int viewY = _player ? _player->_ra1ViewportOffsetY : _perspectiveY;
+	int viewX = _player ? ra1Player()->_ra1ViewportOffsetX : _perspectiveX;
+	int viewY = _player ? ra1Player()->_ra1ViewportOffsetY : _perspectiveY;
 
 	// Walker health display — "<<WALKER %d%%" at projected (0x61, 0x8D)
 	// Blinks when health < 16: only drawn when (frameCounter & 2) != 0

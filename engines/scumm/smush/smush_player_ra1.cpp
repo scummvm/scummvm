@@ -25,6 +25,7 @@
 // to upstream while RA1 behavior is isolated in one place.
 
 #include "common/endian.h"
+#include "common/memstream.h"
 
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
@@ -61,6 +62,9 @@ SmushPlayerRebel1::~SmushPlayerRebel1() {
 }
 
 void SmushPlayerRebel1::initGamePlayerFields() {
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
+	_ra1HasCleanFrame = false;
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
 	_ra1ObjOverlayCodec = 0;
@@ -76,9 +80,13 @@ void SmushPlayerRebel1::destroyGamePlayerFields() {
 	free(_ra1ObjOverlayData);
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
+	free(_ra1CleanFrame);
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
 }
 
 void SmushPlayerRebel1::resetGameVideoState() {
+	_ra1HasCleanFrame = false;
 	free(_ra1ObjOverlayData);
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
@@ -105,6 +113,11 @@ void SmushPlayerRebel1::releaseGameVideoState() {
 	free(_ra1ObjOverlayData);
 	_ra1ObjOverlayData = nullptr;
 	_ra1ObjOverlayDataSize = 0;
+
+	free(_ra1CleanFrame);
+	_ra1CleanFrame = nullptr;
+	_ra1CleanFrameSize = 0;
+	_ra1HasCleanFrame = false;
 }
 
 bool SmushPlayerRebel1::handleGameFetch(int32 subSize, Common::SeekableReadStream &b) {
@@ -346,6 +359,374 @@ void SmushPlayerRebel1::handleGameProcessAudio(int16 feedSize) {
 		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
 		rebel1->processAudioFrame(feedSize);
 	}
+}
+
+// ---------------------------------------------------------------------------
+// handleFrameObject override — RA1 FOBJ has extra fields in the codec word
+// ---------------------------------------------------------------------------
+
+void SmushPlayerRebel1::handleFrameObject(int32 subSize, Common::SeekableReadStream &b) {
+	assert(subSize >= 14);
+	if (_skipNext) {
+		_skipNext = false;
+		return;
+	}
+
+	int codec = b.readUint16LE();
+	uint8 ra1Param = (codec >> 8) & 0xFF;
+	codec &= 0xFF;
+
+	int left = (int)b.readSint16LE();
+	int top = (int)b.readSint16LE();
+	const int rawLeft = left;
+	const int rawTop = top;
+	int width = b.readUint16LE();
+	int height = b.readUint16LE();
+
+	uint16 ra1ObjectId = b.readUint16LE();
+	uint16 ra1Parm2 = b.readUint16LE();
+
+	handleGameFrameObjectPre(codec, left, top, width, height, subSize - 14);
+
+	int32 chunk_size = subSize - 14;
+	byte *chunk_buffer = (byte *)malloc(chunk_size);
+	assert(chunk_buffer);
+	b.read(chunk_buffer, chunk_size);
+
+	handleGameFrameObjectPost(codec, chunk_buffer, chunk_size, left, top, width, height);
+
+	// RA1 STOR: save raw FOBJ with original (pre-clipped) coords and full codec byte
+	if (_storeFrame) {
+		free(_storedFobjData);
+		_storedFobjData = (byte *)malloc(chunk_size);
+		if (_storedFobjData != nullptr) {
+			memcpy(_storedFobjData, chunk_buffer, chunk_size);
+			_storedFobjDataSize = chunk_size;
+			_storedFobjCodec = codec | ((int)ra1Param << 8);
+			_storedFobjParm2 = ra1Parm2;
+			_storedFobjLeft = rawLeft;
+			_storedFobjTop = rawTop;
+			_storedFobjWidth = width;
+			_storedFobjHeight = height;
+		} else {
+			_storedFobjDataSize = 0;
+		}
+		_storeFrame = false;
+	}
+
+	// RA1 target check — Insane can reject certain FOBJs
+	if (_insane) {
+		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		if (!rebel1->handleFrameObjectTarget((int16)ra1ObjectId, (int16)rawLeft, (int16)rawTop,
+				(int16)width, (int16)height, codec, ra1Param)) {
+			free(chunk_buffer);
+			return;
+		}
+	}
+
+	decodeFrameObject(codec, chunk_buffer, left, top, width, height, chunk_size, ra1Param, ra1Parm2);
+	free(chunk_buffer);
+}
+
+// ---------------------------------------------------------------------------
+// handleFrame override — RA1 frame parsing with alignment, OBJ chunks, clean frame
+// ---------------------------------------------------------------------------
+
+static bool ra1FrameHasGameChunk(Common::SeekableReadStream &b, int32 frameSize) {
+	const int64 frameStart = b.pos();
+	int32 remaining = frameSize;
+
+	while (remaining > 1) {
+		if ((b.pos() & 1) && remaining > 0) {
+			const byte pad = b.readByte();
+			if (pad == 0) {
+				remaining--;
+			} else {
+				b.seek(-1, SEEK_CUR);
+			}
+		}
+		if (remaining < 8)
+			break;
+
+		const uint32 subType = b.readUint32BE();
+		const int32 subSize = b.readUint32BE();
+		const int64 subDataPos = b.pos();
+
+		if (subType == MKTAG('F', 'R', 'M', 'E'))
+			break;
+		if (subType == MKTAG('G', 'A', 'M', 'E')) {
+			b.seek(frameStart, SEEK_SET);
+			return true;
+		}
+
+		remaining -= subSize + 8;
+		b.seek(subDataPos + subSize, SEEK_SET);
+	}
+
+	b.seek(frameStart, SEEK_SET);
+	return false;
+}
+
+void SmushPlayerRebel1::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
+	debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame(%d)", _frame);
+	uint8 *audioChunk = nullptr;
+	_skipNext = false;
+	handleGameFrameStart();
+
+	bool preserveFrameHistory = false;
+	if (_insane) {
+		InsaneRebel1 *rebel1 = static_cast<InsaneRebel1 *>(_insane);
+		bool interactive = rebel1->isInteractiveVideoActive();
+		const uint16 activeOpcode = rebel1->getActiveGameOpcode();
+		bool forceClear = interactive &&
+			(activeOpcode == 0x0B ||
+			 (activeOpcode == 0 && rebel1->getCurrentLevel() == 1));
+
+		preserveFrameHistory = interactive && !forceClear &&
+			ra1FrameHasGameChunk(b, frameSize);
+	}
+
+	// Restore clean frame for delta source
+	if (preserveFrameHistory &&
+		_ra1HasCleanFrame && _ra1CleanFrame &&
+		_dst && _width > 0 && _height > 0) {
+		const int frameBytes = _width * _height;
+		if (_ra1CleanFrameSize >= frameBytes)
+			memcpy(_dst, _ra1CleanFrame, frameBytes);
+	}
+
+	if (_insanity)
+		_insane->procPreRendering(_dst);
+
+	// Clear buffer for non-interactive frames to avoid trails
+	if (_dst && _width > 0 && _height > 0) {
+		if (!preserveFrameHistory)
+			memset(_dst, 0, _width * _height);
+	}
+
+	while (frameSize > 0) {
+		// RA1 exits when <=1 byte remains
+		if (frameSize <= 1) {
+			if (frameSize == 1)
+				b.skip(1);
+			break;
+		}
+
+		// RA1 top-of-loop alignment (FUN_1FDBC)
+		if ((b.pos() & 1) && frameSize > 0) {
+			byte peek = b.readByte();
+			if (peek == 0) {
+				frameSize--;
+			} else {
+				b.seek(-1, SEEK_CUR);
+			}
+		}
+
+		if (frameSize < 8) {
+			b.skip(frameSize);
+			break;
+		}
+
+		uint32 subType = b.readUint32BE();
+		int32 subSize = b.readUint32BE();
+		int32 subOffset = b.pos();
+
+		// Guard against consuming next frame marker
+		if (subType == MKTAG('F','R','M','E')) {
+			b.seek(-8, SEEK_CUR);
+			break;
+		}
+
+		switch (subType) {
+		case MKTAG('N','P','A','L'):
+			handleNewPalette(subSize, b);
+			break;
+		case MKTAG('F','O','B','J'):
+			handleFrameObject(subSize, b);
+			break;
+		case MKTAG('Z','F','O','B'):
+			handleZlibFrameObject(subSize, b);
+			break;
+		case MKTAG('P','S','A','D'):
+		case MKTAG('P','V','O','C'):
+			if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
+				audioChunk = (uint8 *)malloc(subSize + 8);
+				b.seek(-8, SEEK_CUR);
+				b.read(audioChunk, subSize + 8);
+				feedAudio(audioChunk, 0, 127, 0, 0);
+				free(audioChunk);
+				audioChunk = nullptr;
+			}
+			break;
+		case MKTAG('T','R','E','S'):
+		case MKTAG('T','E','X','T'):
+			handleTextResource(subType, subSize, b);
+			break;
+		case MKTAG('X','P','A','L'):
+			handleDeltaPalette(subSize, b);
+			break;
+		case MKTAG('I','A','C','T'):
+			handleIACT(subSize, b);
+			break;
+		case MKTAG('S','T','O','R'):
+			handleStore(subSize, b);
+			break;
+		case MKTAG('F','T','C','H'):
+			handleFetch(subSize, b);
+			break;
+		case MKTAG('S','K','I','P'):
+			_insane->procSKIP(subSize, b);
+			break;
+		case MKTAG('G','O','S','T'):
+			handleGameGost(subSize, b);
+			break;
+		case MKTAG('G','A','M','E'): {
+			InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
+			rebel1->handleGameChunk(subSize, b);
+			break;
+		}
+		case MKTAG('O','B','J','\0'): {
+			// RA1 object overlay chunk: variable-size header + embedded FOBJ/GAME/PSAD.
+			int32 objDataSize = frameSize - 8;
+			if (objDataSize > 0) {
+				byte *objBuf = (byte *)malloc(objDataSize);
+				b.read(objBuf, objDataSize);
+
+				int32 objPos = 0;
+				while (objPos + 8 < objDataSize) {
+					uint32 embTag = READ_BE_UINT32(objBuf + objPos);
+					uint32 embSize = READ_BE_UINT32(objBuf + objPos + 4);
+					int32 embRemaining = objDataSize - objPos - 8;
+
+					bool recognized = (embTag == MKTAG('F','O','B','J') ||
+					                   embTag == MKTAG('G','A','M','E') ||
+					                   embTag == MKTAG('P','S','A','D'));
+
+					if (!recognized || embSize > (uint32)embRemaining) {
+						objPos++;
+						continue;
+					}
+
+					if (embTag == MKTAG('F','O','B','J') && embSize >= 14) {
+						Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+						handleFrameObject(embSize, embStream);
+
+						if (_ra1ObjOverlayData == nullptr ||
+						    (int32)embSize > _ra1ObjOverlayDataSize) {
+							free(_ra1ObjOverlayData);
+							_ra1ObjOverlayDataSize = embSize;
+							_ra1ObjOverlayData = (byte *)malloc(embSize);
+							memcpy(_ra1ObjOverlayData, objBuf + objPos + 8, embSize);
+							_ra1ObjOverlayCodec = objBuf[objPos + 8] & 0xFF;
+							_ra1ObjOverlayLeft = (int16)READ_LE_UINT16(objBuf + objPos + 10);
+							_ra1ObjOverlayTop = (int16)READ_LE_UINT16(objBuf + objPos + 12);
+							_ra1ObjOverlayWidth = READ_LE_UINT16(objBuf + objPos + 14);
+							_ra1ObjOverlayHeight = READ_LE_UINT16(objBuf + objPos + 16);
+						}
+					} else if (embTag == MKTAG('G','A','M','E')) {
+						Common::MemoryReadStream embStream(objBuf + objPos + 8, embSize);
+						InsaneRebel1 *rebel1 = (InsaneRebel1 *)_insane;
+						rebel1->handleGameChunk(embSize, embStream);
+					} else if (embTag == MKTAG('P','S','A','D')) {
+						if (!_compressedFileMode && !isFastForwardingCurrentFrame()) {
+							uint8 *audioBuf = (uint8 *)malloc(embSize + 8);
+							memcpy(audioBuf, objBuf + objPos, embSize + 8);
+							feedAudio(audioBuf, 0, 127, 0, 0);
+							free(audioBuf);
+						}
+					}
+
+					objPos += 8 + embSize;
+					if (embSize & 1)
+						objPos++;
+				}
+				free(objBuf);
+			}
+			frameSize = 0;
+			continue;
+		}
+		case MKTAG('G','A','M','2'):
+		case MKTAG('F','A','D','E'):
+		case MKTAG('S','E','G','A'):
+		case MKTAG('A','D','L',' '):
+		case MKTAG('A','D','L','2'):
+		case MKTAG('S','B','L',' '):
+		case MKTAG('S','B','L','2'):
+		case MKTAG('P','S','D','2'):
+			debugC(DEBUG_SMUSH, "SmushPlayerRebel1::handleFrame: skipping chunk %s (%d bytes)", tag2str(subType), subSize);
+			break;
+		default: {
+			// Original FUN_1FDBC: unknown uppercase tag → silently stop
+			byte tb0 = (subType >> 24) & 0xFF, tb1 = (subType >> 16) & 0xFF;
+			byte tb2 = (subType >> 8) & 0xFF, tb3 = subType & 0xFF;
+			if (tb0 > 0x40 && tb0 < 0x5B && tb1 > 0x40 && tb1 < 0x5B &&
+			    tb2 > 0x40 && tb2 < 0x5B && tb3 > 0x40 && tb3 < 0x5B) {
+				debug(5, "RA1: unknown uppercase tag %s at frame %d, stopping frame parse", tag2str(subType), _frame);
+				frameSize = 0;
+				continue;
+			}
+			error("Unknown frame subChunk found : %s, %d", tag2str(subType), subSize);
+		}
+		}
+
+		frameSize -= subSize + 8;
+		b.seek(subOffset + subSize, SEEK_SET);
+		// RA1 uses top-of-loop alignment, not bottom-of-loop padding
+	}
+
+	// Re-render cockpit overlay
+	if (_ra1ObjOverlayData != nullptr && _frame > 0) {
+		Common::MemoryReadStream overlayStream(_ra1ObjOverlayData, _ra1ObjOverlayDataSize);
+		handleFrameObject(_ra1ObjOverlayDataSize, overlayStream);
+	}
+
+	// Save clean frame for next delta
+	if (preserveFrameHistory && _dst && _width > 0 && _height > 0) {
+		const int frameBytes = _width * _height;
+		byte *newClean = (byte *)realloc(_ra1CleanFrame, frameBytes);
+		if (newClean != nullptr) {
+			_ra1CleanFrame = newClean;
+			_ra1CleanFrameSize = frameBytes;
+			memcpy(_ra1CleanFrame, _dst, frameBytes);
+			_ra1HasCleanFrame = true;
+		} else {
+			_ra1HasCleanFrame = false;
+		}
+	} else {
+		_ra1HasCleanFrame = false;
+	}
+
+	if (_insanity)
+		_insane->procPostRendering(_dst, 0, 0, 0, _frame, _nbframes-1);
+
+	if (_width != 0 && _height != 0)
+		updateScreen();
+
+	_frame++;
+}
+
+// ---------------------------------------------------------------------------
+// handleGameUpdateScreen — RA1 viewport-aware screen blit
+// ---------------------------------------------------------------------------
+
+void SmushPlayerRebel1::handleGameUpdateScreen(const byte *src, int srcPitch, int width, int height) {
+	if (_dst == nullptr || _width <= 0 || _height <= 0)
+		return;
+
+	int ra1ViewX = _ra1ViewportOffsetX;
+	int ra1ViewY = _ra1ViewportOffsetY;
+
+	const int srcX = CLIP(_scrollX + ra1ViewX, 0, _width - 1);
+	const int srcY = CLIP(_scrollY + ra1ViewY, 0, _height - 1);
+
+	int frameWidth = MIN(_width - srcX, _vm->_screenWidth);
+	int frameHeight = MIN(_height - srcY, _vm->_screenHeight);
+	if (frameWidth <= 0 || frameHeight <= 0)
+		return;
+
+	const byte *dst = _dst + srcY * _width + srcX;
+
+	SmushPlayer::handleGameUpdateScreen(dst, _width, frameWidth, frameHeight);
 }
 
 } // End of namespace Scumm

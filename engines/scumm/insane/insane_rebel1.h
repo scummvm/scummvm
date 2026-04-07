@@ -67,10 +67,14 @@ static const int16 kRA1FocalY = 25;
  * Star Wars: Rebel Assault (RA1) game logic.
  * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.
  */
+class SmushPlayerRebel1;
+
 class InsaneRebel1 : public Insane, public Common::EventObserver {
 public:
 	InsaneRebel1(ScummEngine_v7 *scumm);
 	~InsaneRebel1() override;
+
+	SmushPlayerRebel1 *ra1Player() const { return static_cast<SmushPlayerRebel1 *>(_player); }
 
 	bool notifyEvent(const Common::Event &event) override;
 
