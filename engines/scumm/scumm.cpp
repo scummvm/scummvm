@@ -50,6 +50,8 @@
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
 #include "scumm/smush/smush_player.h"
+#include "scumm/smush/smush_player_ra1.h"
+#include "scumm/smush/smush_player_ra2.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
 #include "scumm/insane/insane_rebel2.h"

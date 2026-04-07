@@ -26,11 +26,11 @@
 #include "audio/mixer.h"
 #include "common/events.h"
 #include "scumm/insane/insane.h"
+#include "scumm/smush/smush_player_ra1.h"
 
 namespace Scumm {
 
 class ScummEngine_v7;
-class SmushPlayer;
 class SmushFont;
 
 // Simple sprite bank for RA1 NUT files (ANIM v1 with odd-alignment padding).
@@ -67,8 +67,6 @@ static const int16 kRA1FocalY = 25;
  * Star Wars: Rebel Assault (RA1) game logic.
  * Adapts RA2 Handler 7 (ship flight) physics for RA1's 384x242 resolution.
  */
-class SmushPlayerRebel1;
-
 class InsaneRebel1 : public Insane, public Common::EventObserver {
 public:
 	InsaneRebel1(ScummEngine_v7 *scumm);
