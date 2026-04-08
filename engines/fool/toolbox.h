@@ -1280,6 +1280,7 @@ private:
 	Common::HashMap<Handle, ToolboxResInfo> _resInfo;
 	Common::HashMap<PicHandle, Handle> _resPicts;
 	Graphics::FrameLimiter *_frameLimiter = nullptr;
+	Common::HashMap<int, int> _keyMap;
 	Common::SharedPtr<Cursor> _cursor;
 	int _cursorLevel = 0;
 	Common::Point _mouse;

@@ -355,9 +355,9 @@ Common::U32String ZBasic::midStr(const Common::U32String &str, int16 expr1, int1
 
 void ZBasic::midStrSet(Common::U32String &target, int16 expr1, int16 expr2, const Common::U32String &src) {
 	for (int i = 0; i < expr2; i++) {
-		if (((expr1 + i) >= target.size()) || (i >= src.size()))
+		if (((expr1 + i - 1) >= (int)target.size()) || (i >= (int)src.size()))
 			break;
-		target[expr1 + i] = src[i];
+		target[expr1 + i - 1] = src[i];
 	}
 }
 

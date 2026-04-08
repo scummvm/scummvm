@@ -128,7 +128,7 @@ public:
 	void sub_129_123a();
 
 	// fool_jumble.cpp:
-	void sub_130_004();
+	void jumbleRun();
 	void sub_130_c56();
 	void sub_130_c66();
 	void sub_130_d2e();
@@ -139,18 +139,28 @@ public:
 	void sub_130_1426();
 	void sub_130_1476();
 	void sub_130_15da();
+	void sub_130_172c();
+	void sub_130_19ac();
+	void sub_130_19da();
+	void sub_130_1a16();
 	void sub_130_1c1a();
 	void sub_130_1c52();
 	void sub_130_1c6c();
 	void sub_130_1dcc();
 	void sub_130_1e5c();
 	void sub_130_1e76();
+	void sub_130_201a();
 	void sub_130_2078();
 	void sub_130_2094();
-	void sub_130_201a();
+	void sub_130_20aa();
 	void sub_130_20d2();
 	void sub_130_20fe();
+	void sub_130_2178();
 	void sub_130_2226();
+	void sub_130_22ee();
+	void sub_130_23cc();
+	void sub_130_24aa();
+	void sub_130_2548();
 	void sub_130_25d8();
 	void sub_130_2790();
 
@@ -297,7 +307,7 @@ private:
 	int16 var_i16_7ba;
 	int16 var_i16_7bc;
 	int16 var_i16_7be;
-	int16 var_i16_7c0;
+	int16 keyLastPressed; // var_i16_7c0
 	PicHandle var_pic_7c2;
 	int16 var_i16_7c6;
 	uint32 var_i32_7c8;
@@ -357,8 +367,8 @@ private:
 	int16 var_i16_103c;
 	int16 var_i16_103e;
 	int16 var_i16_1040;
-	int16 var_i16_1056;
-	int16 var_i16_1058;
+	int16 jumbleSubPuzzleCount; // var_i16_1056
+	int16 jumbleCurrentSubPuzzle; // var_i16_1058
 	int16 var_i16_105a;
 	int16 var_i16_105c;
 	int16 var_i16_105e;
@@ -366,7 +376,7 @@ private:
 	int16 var_i16_1062;
 	int16 var_i16_1064;
 	int16 var_i16_1066;
-	int16 var_i16_1068;
+	int16 jumbleGameType; // var_i16_1068
 	int16 var_i16_106a;
 	SourceMode var_i16_106c;
 	int16 var_i16_106e;
@@ -392,6 +402,11 @@ private:
 	int16 var_i16_187e;
 	int16 var_i16_1880;
 	int16 var_i16_1882;
+	int16 var_i16_1884;
+	int16 var_i16_1886;
+	int16 var_i16_1888;
+	int16 var_i16_188a;
+	int16 var_i16_188c;
 
 	Common::U32String var_str_188e;
 
@@ -483,6 +498,7 @@ private:
 	Common::Rect arr_rect_5b84;
 	Common::Rect arr_rect_5b8c;
 	Common::Rect arr_rect_5b92;
+	int16 arr_i16_5bbc[0x1b];
 	int16 arr_i16_5cbc[26];
 	float arr_bcd_5dbc[8];
 	Handle arr_bytes_5dfc; // used for data buffering
