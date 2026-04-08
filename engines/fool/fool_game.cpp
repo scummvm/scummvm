@@ -162,10 +162,9 @@ void FoolGame::sub_128_004() {
 				this->sub_128_1c2c(0x80);
 			}
 			// 128:1de0
-			if (this->var_i16_7d2 && (this->var_i16_7c0 == 0x20)) {
+			if (this->var_i16_7d2 && (this->keyLastPressed == 0x20)) {
 				this->sub_128_1c2c(0x100);
 			}
-			g_toolbox->Delay(0);
 		// 128:1e06
 		} while (this->var_i16_7c6 == 0);
 
@@ -541,6 +540,12 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 
 void FoolGame::sub_128_c6a(int16 unk1) {
 	// 128:0c6a
+
+	// This function is usually called at the start of an event processing loop,
+	// so yield to the event pump/display update when necessary.
+	if (this->var_ev_46.what == kNullEvent)
+		g_toolbox->Delay(0);
+
 	this->var_i16_78a = g_toolbox->GetNextEvent(unk1, this->var_ev_46);
 	if ((this->var_ev_46.what == kMouseDown) && (this->var_ev_46.where.y < 0x14)) {
 		this->sub_128_5b30();
@@ -585,8 +590,6 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 			do {
 				this->sub_128_c6a(0);
 				this->var_i16_3a += 1;
-				if (this->var_ev_46.what == kNullEvent)
-					g_toolbox->Delay(0);
 			} while (!((unk1 == this->var_i16_3a) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
 		} while ((this->var_ev_46.modifiers & kModMouseButtonUp) != 0);
 	}
@@ -778,8 +781,8 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 			}
 			// 128:172c
 			if (this->var_ev_46.what == kKeyDown) {
-				this->var_i16_7c0 = this->var_ev_46.message & 0xff;
-				if (this->var_i16_7c0 == 0xd) {
+				this->keyLastPressed = this->var_ev_46.message & 0xff;
+				if (this->keyLastPressed == 0xd) {
 					this->var_i16_7be = 1;
 				}
 			}
@@ -1368,7 +1371,7 @@ void FoolGame::sub_128_2e3e() {
 		this->arr_i16_1b90[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
 		this->var_str_384 = g_zbasic->readFileStr(2, this->var_i16_484);
-		g_zbasic->indexSet(this->var_str_384, i, 2);
+		g_zbasic->indexSet(this->var_str_384, 2, i);
 	}
 	// 128:2f54
 	for (int i = 1; i <= 0x51; i++) {
@@ -1634,12 +1637,13 @@ void FoolGame::sub_128_39a0() {
 	this->sub_128_4168();
 	// 128:3a22
 	// 128:3a38: JSR - "ZBASIC_115"
+	debugC(5, kDebugLoading, "sub_128_39a0: chapter 0x%x, puzzle module %d", this->var_i16_7d0, this->arr_i16_18b2[this->var_i16_7d0]-1);
 	switch (this->arr_i16_18b2[this->var_i16_7d0]-1) {
 	case 0:
 	case 1:
 	case 2:
 	case 3:
-		this->sub_130_004();
+		this->jumbleRun();
 		break;
 	case 4:
 		this->wordSearchRun();
@@ -1660,7 +1664,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_136_004();
 		break;
 	case 10:
-		this->sub_130_004();
+		this->jumbleRun();
 		break;
 	case 11:
 		this->sunMapRun();
@@ -2199,6 +2203,8 @@ void FoolGame::sub_128_5b30() {
 }
 
 void FoolGame::sub_128_5baa() {
+	if (this->var_i16_e12 != 0)
+		return;
 	warning("STUB: %s", __func__);
 }
 
@@ -2286,19 +2292,41 @@ void FoolGame::sub_128_5c20() {
 }
 
 void FoolGame::sub_128_5ef0() {
-	warning("STUB: %s", __func__);
+	// 128:5ef0
+	this->sub_128_0a2(0, 0x2af8);
+	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
 }
 
 void FoolGame::sub_128_5f16() {
-	warning("STUB: %s", __func__);
+	// 128:5f16
+	if (this->var_i16_7c6 == 4) {
+		if (this->arr_i16_1eb8[0] < 1) {
+			this->arr_i16_1eb8[0] = 1;
+		}
+		// 128:5f4c
+		this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
+	}
+	// 128:5f70
+	if ((this->var_i16_7c6 & 1) != 0) {
+		this->sub_128_6186();
+		this->sub_128_0a2(1, 0x2af8);
+	}
 }
 
 void FoolGame::sub_128_5f9e() {
-	warning("STUB: %s", __func__);
+	// 128:5f9e
+	this->keyLastPressed = this->var_ev_46.message & 0xff;
 }
 
 void FoolGame::sub_128_5fb4() {
-	warning("STUB: %s", __func__);
+	// 128:5fb4
+	g_toolbox->BeginUpdate(*this->var_ev_46.windowPtr);
+	g_toolbox->EndUpdate(*this->var_ev_46.windowPtr);
+	if ((this->var_i16_7ce & 1) != 0) {
+		this->sub_128_1c2c(0x201);
+	} else {
+		this->sub_128_1c2c(0x200);
+	}
 }
 
 void FoolGame::sub_128_5fea() {
@@ -2367,7 +2395,7 @@ void FoolGame::sub_128_61ec() {
 		if (this->var_ev_46.what == kNullEvent)
 			g_toolbox->Delay(1);
 	} while (!((this->var_ev_46.what == kNullEvent) && (this->var_ev_46.modifiers & kModMouseButtonUp)));
-	this->var_i16_7c0 = 0;
+	this->keyLastPressed = 0;
 }
 
 void FoolGame::sub_128_6244() {
