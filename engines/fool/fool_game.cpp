@@ -1076,6 +1076,7 @@ void FoolGame::storyRenderPage() {
 		// 128:252a
 		// y-position where the story text should start
 		this->var_i16_7a2 = 0x11d - (this->arr_i16_1dee[this->storyNextPage] * 0xf);
+		debugC(5, kDebugLoading, "FoolGame::storyRenderPage: storyNextPage %d, lines %d", this->storyNextPage, this->arr_i16_1dee[this->storyNextPage]);
 		if (this->arr_i16_1dee[this->storyNextPage] < 0xf) {
 			g_toolbox->MoveTo(0xfa, this->var_i16_7a2-0xf);
 			g_toolbox->DrawString(g_zbasic->str(14)); // infinity symbol
@@ -2781,6 +2782,8 @@ void FoolGame::sub_129_068() {
 	// story text
 	this->var_i16_103c = this->puzzlesReadShort();
 	this->var_i16_68a = 1;
+	Common::fill(this->pageLineFace, this->pageLineFace + 1301, 0);
+	Common::fill(this->pageLineBreak, this->pageLineBreak + 1301, 0);
 	for (int i = 1; i <= this->var_i16_103c; i++) {
 		this->var_i16_103e = this->puzzlesReadByte();
 		// indent at start of story paragraph
