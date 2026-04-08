@@ -91,11 +91,11 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_type = MacWindowConstants::kWindowMenu;
 
-	_screen.create(bounds.width(), bounds.height(), _wm->_pixelformat);
+	_composeSurface->create(bounds.width(), bounds.height(), _wm->_pixelformat);
 
 	_bbox.left = 0;
 	_bbox.top = 0;
-	_bbox.right = _screen.w;
+	_bbox.right = _composeSurface->w;
 	_bbox.bottom = kMenuHeight;
 
 	_dimensionsDirty = true;
@@ -130,7 +130,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 
 	_isModal = false;
 
-	_tempSurface.create(_screen.w, _font->getFontHeight(), _wm->_pixelformat);
+	_tempSurface.create(_composeSurface->w, _font->getFontHeight(), _wm->_pixelformat);
 }
 
 MacMenu::~MacMenu() {
@@ -964,7 +964,7 @@ void MacMenu::calcSubMenuBounds(MacMenuSubMenu *submenu, int x, int y) {
 	int y1 = y;
 	int x2 = x1 + maxWidth + _menuLeftDropdownPadding + _menuRightDropdownPadding - 4;
 	int y2 = y1 + submenu->items.size() * _menuDropdownItemHeight + 2;
-	y2 = MIN(y2, y1 + ((_screen.h - y1) / _menuDropdownItemHeight) * _menuDropdownItemHeight + 2);
+	y2 = MIN(y2, y1 + ((_composeSurface->h - y1) / _menuDropdownItemHeight) * _menuDropdownItemHeight + 2);
 
 	if (x2 > (_bbox.width()-_menuRightDropdownPadding)) {
 		int dx = x2 - (_bbox.width()-_menuRightDropdownPadding);
@@ -1049,21 +1049,21 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	_screen.clear(_wm->_colorGreen);
+	_composeSurface->clear(_wm->_colorGreen);
 
 	bool shouldUseDesktopArc = !(_wm->_mode & kWMModeWin95) || (_wm->_mode & kWMModeForceMacBorder);
 
 	// Fill in the corners with black
-	_screen.fillRect(r, _wm->_colorBlack);
-	_screen.drawRoundRect(r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite, true);
+	_composeSurface->fillRect(r, _wm->_colorBlack);
+	_composeSurface->drawRoundRect(r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite, true);
 
 	r.top = 7;
-	_screen.fillRect(r, _wm->_colorWhite);
+	_composeSurface->fillRect(r, _wm->_colorWhite);
 	r.top = kMenuHeight - 1;
 	r.bottom++;
-	_screen.fillRect(r, _wm->_colorGreen);
+	_composeSurface->fillRect(r, _wm->_colorGreen);
 	r.bottom--;
-	_screen.fillRect(r, _wm->_colorBlack);
+	_composeSurface->fillRect(r, _wm->_colorBlack);
 
 	for (uint i = 0; i < _items.size(); i++) {
 		int color = _wm->_colorBlack;
@@ -1081,7 +1081,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 				hbox.right -= 2;
 			}
 
-			_screen.fillRect(hbox, _wm->_colorBlack);
+			_composeSurface->fillRect(hbox, _wm->_colorBlack);
 			color = _wm->_colorWhite;
 		}
 
@@ -1089,7 +1089,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		int x = _align == kTextAlignRight ? -kMenuLeftMargin : kMenuLeftMargin;
 		x += it->bbox.left;
 
-		ManagedSurface *s = &_screen;
+		ManagedSurface *s = _composeSurface;
 		int tx = x, ty = y;
 
 		if (!it->enabled) {
@@ -1124,18 +1124,18 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 		if (!it->enabled) {
 			if (_wm->_pixelformat.bytesPerPixel == 1) {
-				drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				drawMenuPattern<byte>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
 			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
-				drawMenuPattern<uint16>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				drawMenuPattern<uint16>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
 			} else {
-				drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				drawMenuPattern<uint32>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
 			}
 		}
 	}
 
 	if (!(_wm->_mode & kWMModeNoSystemRedraw)) {
 		if ((_wm->_mode & kWMModalMenuMode) || !_wm->_screen)
-			g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
+			g_system->copyRectToScreen(_composeSurface->getBasePtr(_bbox.left, _bbox.top), _composeSurface->pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 	}
 
 	for (uint i = 0; i < _menustack.size(); i++) {
@@ -1143,7 +1143,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 	}
 
 	if (g)
-		g->transBlitFrom(_screen, _wm->_colorGreen);
+		g->transBlitFrom(*_composeSurface, _wm->_colorGreen);
 
 	if (!(_wm->_mode & kWMModeNoSystemRedraw) && !(_wm->_mode & kWMModalMenuMode) && g)
 		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
@@ -1159,12 +1159,12 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 	bool topMenuEnabled = _activeItem == -1 || _items[_activeItem]->enabled;
 
-	_screen.fillRect(*r, _wm->_colorWhite);
-	_screen.frameRect(*r, _wm->_colorBlack);
-	_screen.vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-	_screen.vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
-	_screen.hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
-	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
+	_composeSurface->fillRect(*r, _wm->_colorWhite);
+	_composeSurface->frameRect(*r, _wm->_colorBlack);
+	_composeSurface->vLine(r->right, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_composeSurface->vLine(r->right + 1, r->top + 3, r->bottom + 1, _wm->_colorBlack);
+	_composeSurface->hLine(r->left + 3, r->bottom, r->right + 1, _wm->_colorBlack);
+	_composeSurface->hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
 	int y = r->top + 1;
 	int x = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
@@ -1213,7 +1213,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 			color = _wm->_colorWhite;
 			Common::Rect trect(r->left, y - (_wm->_fontMan->hasBuiltInFonts() ? 1 : 0), r->right, y + _font->getFontHeight());
 
-			_screen.fillRect(trect, _wm->_colorBlack);
+			_composeSurface->fillRect(trect, _wm->_colorBlack);
 
 			if (_selectedItem != i) {
 				if (menu->items[i]->unicode) {
@@ -1225,7 +1225,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 		}
 
 		if (!text.empty() || !unicodeText.empty()) {
-			ManagedSurface *s = &_screen;
+			ManagedSurface *s = _composeSurface;
 			int tx = x, ty = y;
 
 			if (!topMenuEnabled || !menu->items[i]->enabled) {
@@ -1267,21 +1267,21 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 
 			if (!topMenuEnabled || !menu->items[i]->enabled) {
 				if (_wm->_pixelformat.bytesPerPixel == 1) {
-					drawMenuPattern<byte>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+					drawMenuPattern<byte>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else if (_wm->_pixelformat.bytesPerPixel == 2) {
-					drawMenuPattern<uint16>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+					drawMenuPattern<uint16>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				} else {
-					drawMenuPattern<uint32>(_tempSurface, _screen, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
+					drawMenuPattern<uint32>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, r->width(), _wm->_colorGreen);
 				}
 			}
 
 		} else { // Delimiter
 			if (_wm->_pixelformat.bytesPerPixel == 1) {
-				drawMenuDelimiter<byte>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+				drawMenuDelimiter<byte>(*_composeSurface, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
-				drawMenuDelimiter<uint16>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+				drawMenuDelimiter<uint16>(*_composeSurface, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			} else {
-				drawMenuDelimiter<uint32>(_screen, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
+				drawMenuDelimiter<uint32>(*_composeSurface, r, y + _menuDropdownItemHeight / 2, _wm->_colorBlack, _wm->_colorWhite);
 			}
 		}
 
@@ -1296,16 +1296,16 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	if (_wm->_mode & kWMModalMenuMode) {
 		// TODO: Instead of cropping, reposition the submenu
 		int w = r->width() + 2;
-		if (r->left + w >= _screen.w)
-			w = _screen.w - 1 - r->left;
+		if (r->left + w >= _composeSurface->w)
+			w = _composeSurface->w - 1 - r->left;
 
 		int h = r->height() + 2;
-		if (r->top + h >= _screen.h)
-			h = _screen.h - 1 - r->top;
+		if (r->top + h >= _composeSurface->h)
+			h = _composeSurface->h - 1 - r->top;
 
 		Graphics::ManagedSurface g;
 		g.copyFrom(*_wm->_screenCopy);
-		g.transBlitFrom(_screen, _wm->_colorGreen);
+		g.transBlitFrom(*_composeSurface, _wm->_colorGreen);
 		g_system->copyRectToScreen(g.getBasePtr(r->left, r->top), g.pitch, r->left, r->top, w, h);
 	}
 }
@@ -1564,7 +1564,7 @@ void MacMenu::drawScrollArrow(int arrowX, int arrowY, int direction) {
 	int arrowHeight = getMenuFont()->getFontHeight() / 2;
 
 	for (int j = 0; j <= arrowHeight / 2; j++)
-		_screen.hLine(arrowX - j, arrowY + j * direction, arrowX + j, _wm->_colorBlack);
+		_composeSurface->hLine(arrowX - j, arrowY + j * direction, arrowX + j, _wm->_colorBlack);
 }
 
 bool MacMenu::mouseMove(int x, int y) {
