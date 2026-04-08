@@ -99,6 +99,7 @@ MacMenu::MacMenu(int id, const Common::Rect &bounds, MacWindowManager *wm)
 	_bbox.bottom = kMenuHeight;
 
 	_dimensionsDirty = true;
+	_overlayDirty = false;
 
 	if (_wm->_mode & kWMModeWin95 && !(_wm->_mode & kWMModeForceMacFontsInWin95)) {
 		_menuDropdownItemHeight = kMenuWin95DropdownItemHeight;
@@ -1049,86 +1050,92 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_contentIsDirty = false;
 
-	_composeSurface->clear(_wm->_colorGreen);
+	if (_overlayDirty) {
+		// Signal that the menu surface has been drawn on by another process;
+		// update the screen without redrawing the menu content.
+		_overlayDirty = false;
+	} else {
+		_composeSurface->clear(_wm->_colorGreen);
 
-	bool shouldUseDesktopArc = !(_wm->_mode & kWMModeWin95) || (_wm->_mode & kWMModeForceMacBorder);
+		bool shouldUseDesktopArc = !(_wm->_mode & kWMModeWin95) || (_wm->_mode & kWMModeForceMacBorder);
 
-	// Fill in the corners with black
-	_composeSurface->fillRect(r, _wm->_colorBlack);
-	_composeSurface->drawRoundRect(r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite, true);
+		// Fill in the corners with black
+		_composeSurface->fillRect(r, _wm->_colorBlack);
+		_composeSurface->drawRoundRect(r, shouldUseDesktopArc ? kDesktopArc : 0, _wm->_colorWhite, true);
 
-	r.top = 7;
-	_composeSurface->fillRect(r, _wm->_colorWhite);
-	r.top = kMenuHeight - 1;
-	r.bottom++;
-	_composeSurface->fillRect(r, _wm->_colorGreen);
-	r.bottom--;
-	_composeSurface->fillRect(r, _wm->_colorBlack);
+		r.top = 7;
+		_composeSurface->fillRect(r, _wm->_colorWhite);
+		r.top = kMenuHeight - 1;
+		r.bottom++;
+		_composeSurface->fillRect(r, _wm->_colorGreen);
+		r.bottom--;
+		_composeSurface->fillRect(r, _wm->_colorBlack);
 
-	for (uint i = 0; i < _items.size(); i++) {
-		int color = _wm->_colorBlack;
-		MacMenuItem *it = _items[i];
+		for (uint i = 0; i < _items.size(); i++) {
+			int color = _wm->_colorBlack;
+			MacMenuItem *it = _items[i];
 
-		if ((uint)_activeItem == i) {
-			Common::Rect hbox = it->bbox;
+			if ((uint)_activeItem == i) {
+				Common::Rect hbox = it->bbox;
 
-			hbox.left -= 1;
-			hbox.right += 3;
-			hbox.bottom += 1;
+				hbox.left -= 1;
+				hbox.right += 3;
+				hbox.bottom += 1;
 
-			if (_align == kTextAlignRight) {
-				hbox.left -= 2;
-				hbox.right -= 2;
+				if (_align == kTextAlignRight) {
+					hbox.left -= 2;
+					hbox.right -= 2;
+				}
+
+				_composeSurface->fillRect(hbox, _wm->_colorBlack);
+				color = _wm->_colorWhite;
 			}
 
-			_composeSurface->fillRect(hbox, _wm->_colorBlack);
-			color = _wm->_colorWhite;
-		}
+			int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
+			int x = _align == kTextAlignRight ? -kMenuLeftMargin : kMenuLeftMargin;
+			x += it->bbox.left;
 
-		int y = it->bbox.top + (_wm->_fontMan->hasBuiltInFonts() ? 2 : 1);
-		int x = _align == kTextAlignRight ? -kMenuLeftMargin : kMenuLeftMargin;
-		x += it->bbox.left;
+			ManagedSurface *s = _composeSurface;
+			int tx = x, ty = y;
 
-		ManagedSurface *s = _composeSurface;
-		int tx = x, ty = y;
+			if (!it->enabled) {
+				s = &_tempSurface;
+				tx = 0;
+				ty = 0;
+				_tempSurface.clear(_wm->_colorGreen);
+			}
 
-		if (!it->enabled) {
-			s = &_tempSurface;
-			tx = 0;
-			ty = 0;
-			_tempSurface.clear(_wm->_colorGreen);
-		}
+			if (it->unicode) {
+				int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
+				Common::UnicodeBiDiText utxt(it->unicodeText);
 
-		if (it->unicode) {
-			int accOff = _align == kTextAlignRight ? it->bbox.width() - _font->getStringWidth(it->unicodeText) : 0;
-			Common::UnicodeBiDiText utxt(it->unicodeText);
-
-			_font->drawString(s, utxt.visual, tx, ty, it->bbox.width(), color, _align, 0, true);
-			underlineAccelerator(s, _font, utxt, tx + accOff, ty, it->shortcutPos, color);
-		} else {
-            const Font *font = nullptr;
-            Common::String text = it->text;
-
-            if (text == "\xf0") {
-                font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSymbol, 12, 0));
-
-                if (_wm->_fontMan->hasBuiltInFonts()) // Replace with (c) symbol if we have built-in fonts
-                    text = "\xa9";
-
-            } else {
-                font = getMenuFont(it->style);
-            }
-
-           font->drawString(s, text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
-		}
-
-		if (!it->enabled) {
-			if (_wm->_pixelformat.bytesPerPixel == 1) {
-				drawMenuPattern<byte>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
-			} else if (_wm->_pixelformat.bytesPerPixel == 2) {
-				drawMenuPattern<uint16>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				_font->drawString(s, utxt.visual, tx, ty, it->bbox.width(), color, _align, 0, true);
+				underlineAccelerator(s, _font, utxt, tx + accOff, ty, it->shortcutPos, color);
 			} else {
-				drawMenuPattern<uint32>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				const Font *font = nullptr;
+				Common::String text = it->text;
+
+				if (text == "\xf0") {
+					font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSymbol, 12, 0));
+
+					if (_wm->_fontMan->hasBuiltInFonts()) // Replace with (c) symbol if we have built-in fonts
+						text = "\xa9";
+
+				} else {
+					font = getMenuFont(it->style);
+				}
+
+				font->drawString(s, text, tx, ty, it->bbox.width(), color, Graphics::kTextAlignLeft, 0, true);
+			}
+
+			if (!it->enabled) {
+				if (_wm->_pixelformat.bytesPerPixel == 1) {
+					drawMenuPattern<byte>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				} else if (_wm->_pixelformat.bytesPerPixel == 2) {
+					drawMenuPattern<uint16>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				} else {
+					drawMenuPattern<uint32>(_tempSurface, *_composeSurface, _wm->getBuiltinPatterns()[kPatternCheckers2 - 1], x, y, it->bbox.width(), _wm->_colorGreen);
+				}
 			}
 		}
 	}
