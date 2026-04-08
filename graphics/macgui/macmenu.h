@@ -180,6 +180,8 @@ public:
 
 	int getDropdownItemHeight() { return _menuDropdownItemHeight; }
 
+	void setOverlayDirty(bool dirty) { _overlayDirty = dirty; _contentIsDirty |= dirty; }
+
 	Common::Array<MacMenuSubMenu *> _menustack;
 
 protected:
@@ -187,6 +189,7 @@ protected:
 	ItemArray _items;
 	bool _isVisible;
 	bool _dimensionsDirty;
+	bool _overlayDirty;
 	int _menuDropdownItemHeight;
 
 	int _activeItem;
