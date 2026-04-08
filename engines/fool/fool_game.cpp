@@ -206,6 +206,7 @@ void FoolGame::sub_128_004() {
 	g_zbasic->unk_4();
 	g_toolbox->SetPort(this->var_i32_8);
 	this->fillRect(0, 0, 0x14, this->var_i16_5a, 2);
+	g_toolbox->_defaultMenu->setOverlayDirty(true);
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
@@ -1103,6 +1104,7 @@ void FoolGame::sub_128_2664() {
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xf);
 	g_toolbox->DrawString(this->var_str_172);
+	g_toolbox->_defaultMenu->setOverlayDirty(true);
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
@@ -2343,6 +2345,7 @@ void FoolGame::sub_128_5fea() {
 		g_toolbox->SetRect(this->arr_rect_5b7c, this->var_i16_56-1, this->var_i16_58+0x13, this->var_i16_56+0x201, this->var_i16_58+0x157);
 		g_toolbox->PenPat(this->arr_pat_58f4[2]);
 		g_toolbox->FrameRect(this->arr_rect_5b7c);
+		g_toolbox->_defaultMenu->setOverlayDirty(true);
 		g_toolbox->SetPort(this->var_i32_0);
 	}
 	// 128:6152
@@ -2888,6 +2891,7 @@ void FoolGame::sub_129_123a() {
 	this->var_i16_30 = g_toolbox->StringWidth(this->var_str_172);
 	g_toolbox->MoveTo((this->var_i16_5a / 2) - (this->var_i16_30 / 2), 0xe);
 	g_toolbox->DrawString(this->var_str_172);
+	g_toolbox->_defaultMenu->setOverlayDirty(true);
 	g_toolbox->SetPort(this->var_i32_0);
 	g_toolbox->Delay(0);
 }
