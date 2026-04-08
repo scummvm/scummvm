@@ -23,6 +23,7 @@
 #define HDB_GFX_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 
 namespace Math {
 	class SineTable;
@@ -74,7 +75,7 @@ public:
 	Gfx();
 	~Gfx();
 
-	Graphics::ManagedSurface _globalSurface;
+	Graphics::Screen _globalSurface;
 
 	void init();
 	void save(Common::OutSaveFile *out);

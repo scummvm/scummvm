@@ -36,11 +36,10 @@
 
 namespace HDB {
 
-Gfx::Gfx() {
+Gfx::Gfx() : _globalSurface(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_screenFormat) {
 	_tLookupArray = nullptr;
 	_starsInfo.active = false;
 	_gfxCache = new Common::Array<GfxCache *>;
-	_globalSurface.create(g_hdb->_screenWidth, g_hdb->_screenHeight, g_hdb->_screenFormat);
 	_pointerDisplayable = 1;
 	_sines = new Math::SineTable(360);
 	_cosines = new Math::CosineTable(360);
@@ -112,7 +111,6 @@ Gfx::~Gfx() {
 	delete _cosines;
 	for (int i = 0; i < _fontHeader.numChars; i++)
 		_fontSurfaces[i].free();
-	_globalSurface.free();
 	for (int i = 0; i < _numTiles; i++) {
 		delete _tLookupArray[i].tData;
 		_tLookupArray[i].tData = nullptr;
@@ -354,7 +352,6 @@ double Gfx::getCos(int index) {
 void Gfx::fillScreen() {
 	uint32 color = _globalSurface.format.RGBToColor(0, 0, 0);
 	_globalSurface.fillRect(Common::Rect(g_hdb->_screenWidth, g_hdb->_screenHeight), color);
-	g_system->fillScreen(color);
 }
 
 void Gfx::updateVideo() {
@@ -365,15 +362,7 @@ void Gfx::updateVideo() {
 
 	g_hdb->checkProgress();
 
-	int left = g_hdb->_screenWidth / 2 - g_hdb->_progressGfx->_width / 2;
-
-	Common::Rect clip(g_hdb->_progressGfx->getSurface()->getBounds());
-	clip.moveTo(left, g_hdb->_progressY);
-	clip.clip(_globalSurface.getBounds());
-	if (!clip.isEmpty())
-		g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
-
-	g_system->updateScreen();
+	_globalSurface.update();
 }
 
 void Gfx::drawPointer() {
@@ -521,7 +510,6 @@ void Gfx::updateFade() {
 			}
 
 			_globalSurface.simpleBlitFrom(_fadeBuffer1);
-			g_system->copyRectToScreen(_globalSurface.getBasePtr(0, 0), _globalSurface.pitch, 0, 0, _globalSurface.w, _globalSurface.h);
 
 			// step the fading values to the next one and
 			// see if we're done yet
@@ -552,7 +540,7 @@ void Gfx::updateFade() {
 				return;
 			}
 
-			g_system->updateScreen();
+			_globalSurface.update();
 			if (g_hdb->getDebug()) {
 				g_hdb->_frames.push_back(g_system->getMillis());
 				while (g_hdb->_frames[0] < g_system->getMillis() - 1000)
@@ -614,7 +602,7 @@ void Gfx::setPixel(int x, int y, uint32 color) {
 		return;
 
 	_globalSurface.setPixel(x, y, color);
-	g_system->copyRectToScreen(_globalSurface.getBasePtr(x, y), _globalSurface.pitch, x, y, 1, 1);
+	_globalSurface.addDirtyRect(Common::Rect(x, y, x + 1, y + 1));
 }
 
 Tile *Gfx::getTile(int index) {
@@ -1088,13 +1076,6 @@ void Gfx::drawText(const char *string) {
 		// Blit the character
 		_globalSurface.simpleBlitFrom(_fontSurfaces[c], Common::Point(_cursorX, _cursorY));
 
-		Common::Rect clip(0, 0, width, _fontHeader.height);
-		clip.moveTo(_cursorX, _cursorY);
-		clip.clip(_globalSurface.getBounds());
-		if (!clip.isEmpty()) {
-			g_system->copyRectToScreen(_globalSurface.getBasePtr(clip.left, clip.top), _globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
-		}
-
 		// Advance the cursor
 		_cursorX += width + _fontHeader.kerning + kFontIncrement;
 		if (_cursorX > g_hdb->_screenWidth) {
@@ -1379,7 +1360,6 @@ int Picture::draw(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
@@ -1394,7 +1374,6 @@ int Picture::drawMasked(int x, int y, uint8 alpha) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
@@ -1444,7 +1423,6 @@ int Tile::draw(int x, int y) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
@@ -1459,7 +1437,6 @@ int Tile::drawMasked(int x, int y, uint8 alpha) {
 	clip.moveTo(x, y);
 	clip.clip(g_hdb->_gfx->_globalSurface.getBounds());
 	if (!clip.isEmpty()) {
-		g_system->copyRectToScreen(g_hdb->_gfx->_globalSurface.getBasePtr(clip.left, clip.top), g_hdb->_gfx->_globalSurface.pitch, clip.left, clip.top, clip.width(), clip.height());
 		return 1;
 	}
 	return 0;
