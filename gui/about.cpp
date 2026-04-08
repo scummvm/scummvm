@@ -234,8 +234,8 @@ void AboutDialog::addLine(const Common::U32String &str) {
 		Common::U32String renderStr(strBeginItr, str.end());
 
 		Common::U32StringArray wrappedLines;
-		int scrollbarWidth = _scrollbar ? _scrollbar->getWidth() : 0;
-		g_gui.getFont().wordWrapText(renderStr, _w - 2 * _xOff - scrollbarWidth, wrappedLines);
+		// Leave some margin inside the rectangle
+		g_gui.getFont().wordWrapText(renderStr, _textRect.width() - 2 * _xOff, wrappedLines);
 
 		for (const auto &line : wrappedLines) {
 			_lines.push_back(format + line);
@@ -259,8 +259,11 @@ void AboutDialog::close() {
 void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	Dialog::drawDialog(layerToDraw);
 
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
-	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h - buttonHeight - 20));
+	// Draw text inside this rectangle to mimic a viewport
+	Common::Rect r = _textRect;
+	r.translate(_x, _y);
+	g_gui.theme()->drawWidgetBackground(r, ThemeEngine::kWidgetBackgroundBorder);
+	setTextDrawableArea(r);
 
 	// Draw text
 	// TODO: Add a "fade" effect for the top/bottom text lines
@@ -268,10 +271,8 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	//       and then simply compose that over the screen surface
 	//       in the right way. Should be even faster...
 	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + (_h - buttonHeight - 20 - _yOff)) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + _yOff - (_scrollPos % _lineHeight);
-
-	int scrollbarWidth = _scrollbar ? _scrollbar->getWidth() : 0;
+	const int lastLine = MIN((_scrollPos + (_textRect.height())) / _lineHeight + 1, (uint32)_lines.size());
+	int y = _y + _textRect.top - (_scrollPos % _lineHeight);
 
 	for (int line = firstLine; line < lastLine; line++) {
 		Common::U32String str = _lines[line];
@@ -325,9 +326,10 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff - scrollbarWidth, y + g_gui.theme()->getFontHeight()),
-			                        renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
-			                        ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
+			// Center the text line within the _textRect
+			g_gui.theme()->drawText(Common::Rect(_x + _textRect.left + _xOff, y, _x + _textRect.right - _xOff, y + g_gui.theme()->getFontHeight()), 
+									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false, 
+									ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
 }
@@ -489,6 +491,9 @@ void AboutDialog::reflowLayout() {
 
 	// Make sure it's not wider than max width
 	_w = MIN<uint16>(_w, screenArea.width() - 2 * outerBorder);
+
+	// Calculate the rectangle for the text area
+	_textRect = Common::Rect(_xOff, _yOff, _w - scrollbarWidth - 3 * _xOff, _h - buttonHeight - 8 - 3 * _yOff);
 
 	if (!_scrollbar)
 		_scrollbar = new ScrollBarWidget(this, _w - scrollbarWidth - _xOff, _yOff, scrollbarWidth, _h - buttonHeight - 8 - 3 * _yOff);

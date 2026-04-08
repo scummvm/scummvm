@@ -50,6 +50,7 @@ protected:
 
 	ScrollBarWidget *_scrollbar;
 	ButtonWidget *_closeButton;
+	Common::Rect _textRect;
 
 	void addLine(const Common::U32String &str);
 	void buildLines();
