@@ -511,8 +511,12 @@ void FoolPrologue::sub_129_004() {
 	}
 
 	// 129:00ee
+	// used for drawing on the menu bar
 	this->var_i32_c = &this->arr_grafport_a8a;
 	g_toolbox->OpenPort(this->var_i32_c);
+	this->var_i32_c->portBits = g_toolbox->_defaultMenuBits;
+	this->var_i32_c->portRect = g_toolbox->_defaultMenuBits->getBounds();
+
 	this->var_i32_8 = &this->arr_grafport_9c0;
 	g_toolbox->OpenPort(this->var_i32_8);
 
@@ -804,6 +808,7 @@ void FoolPrologue::prologueRun() {
 	} else {
 		g_toolbox->SetPort(this->var_i32_c);
 		this->fillRect(2, 0, 0, 0x14, this->var_i16_10);
+		g_toolbox->_defaultMenu->setOverlayDirty(true);
 		g_toolbox->SetPort(this->var_i32_8);
 	}
 
@@ -1123,6 +1128,7 @@ void FoolPrologue::prologueDrawLoadingMsg() {
 	// the 7px offset on either side seems to be to avoid hitting the rounded screen corners?
 	this->fillRect(0, 0, 0x7, 0x13, this->var_i16_10 - 7);
 	this->drawTextCenterAlign(0xe, this->var_i16_10/2);
+	g_toolbox->_defaultMenu->setOverlayDirty(true);
 	g_toolbox->SetPort(this->var_i32_8);
 	g_toolbox->Delay(0);
 }
@@ -1261,6 +1267,7 @@ void FoolPrologue::sub_131_004() {
 	} else {
 		g_toolbox->SetPort(this->var_i32_c);
 		this->fillRect(0x2, 0, 0, 0x14, this->var_i16_10);
+		g_toolbox->_defaultMenu->setOverlayDirty(true);
 		g_toolbox->SetPort(this->var_i32_8);
 	}
 	// 131:02ec
@@ -1701,6 +1708,7 @@ void FoolPrologue::sub_131_4dc0() {
 	this->fillRect(0, 0, 7, 0x13, this->var_i16_10 - 7);
 
 	this->drawTextCenterAlign(this->var_i16_10 / 2, 0xe);
+	g_toolbox->_defaultMenu->setOverlayDirty(true);
 	g_toolbox->SetPort(this->var_i32_8);
 }
 
