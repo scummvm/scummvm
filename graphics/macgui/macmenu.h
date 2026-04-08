@@ -184,7 +184,6 @@ public:
 
 protected:
 	Common::Rect _bbox;
-	ManagedSurface _screen;
 	ItemArray _items;
 	bool _isVisible;
 	bool _dimensionsDirty;
