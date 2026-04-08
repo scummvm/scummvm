@@ -27,8 +27,9 @@
 
 namespace Graphics {
 
+// Topaz 8
 // For the data source and license look into gui/themes/fonts/topaz in ScummVM distribution
-static const byte amigaTopazFont[2600] = {
+static const byte amigaTopaz8Font[2600] = {
 	0x00, 0x00, 0x03, 0xf3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x79, 0x00, 0x00, 0x03, 0xe9, 0x00, 0x00, 0x02, 0x79,
 	0x70, 0xff, 0x4e, 0x75, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00,
@@ -298,7 +299,7 @@ static const byte amigaTopaz9Font[] = {
 AmigaFont::AmigaFont(Common::SeekableReadStream *stream) {
 	Common::SeekableReadStream *tmp;
 	if (!stream) {
-		tmp = new Common::MemoryReadStream(amigaTopazFont, sizeof(amigaTopazFont), DisposeAfterUse::NO);
+		tmp = new Common::MemoryReadStream(amigaTopaz8Font, sizeof(amigaTopaz8Font), DisposeAfterUse::NO);
 	} else {
 		tmp = stream;
 	}
@@ -494,6 +495,47 @@ void drawCharIntern(byte *ptr, uint32 pitch, int num, int bitOffset, byte *charD
 
 		s += modulo;
 		d = (PixelType *)((byte *)d + pitch) - num;
+	}
+}
+
+void AmigaFont::drawCharDoubleHeight(Surface *dst, uint32 chr, int x, int y, uint32 color) const {
+	enum {
+		kAmigaFontScratchWidth = 16,
+		kAmigaFontScratchHeight = 16
+	};
+
+	const int glyphWidth = getCharRenderWidth(chr);
+	const int rawHeight = getFontHeight();
+	const int drawOffset = getCharDrawOffset(chr);
+	const int glyphLeft = MIN<int>(0, drawOffset);
+	const int glyphOriginX = drawOffset - glyphLeft;
+	if (glyphWidth <= 0 || rawHeight <= 0)
+		return;
+	assert(glyphWidth <= kAmigaFontScratchWidth);
+	assert(rawHeight <= kAmigaFontScratchHeight);
+
+	byte glyphPixels[kAmigaFontScratchWidth * kAmigaFontScratchHeight];
+	memset(glyphPixels, 0, sizeof(glyphPixels));
+
+	Surface glyphSurface;
+	glyphSurface.init(glyphWidth, rawHeight, glyphWidth, glyphPixels, PixelFormat::createFormatCLUT8());
+	drawChar(&glyphSurface, chr, glyphOriginX, 0, 1);
+
+	for (int srcY = 0; srcY < rawHeight; ++srcY) {
+		for (int srcX = 0; srcX < glyphWidth; ++srcX) {
+			if (glyphPixels[srcY * glyphWidth + srcX] == 0)
+				continue;
+
+			const int dstX = x + glyphLeft + srcX;
+			if (dstX < 0 || dstX >= dst->w)
+				continue;
+
+			for (int repeat = 0; repeat < 2; ++repeat) {
+				const int dstY = y + srcY * 2 + repeat;
+				if (dstY >= 0 && dstY < dst->h)
+					*(byte *)dst->getBasePtr(dstX, dstY) = color;
+			}
+		}
 	}
 }
 

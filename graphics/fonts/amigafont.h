@@ -88,7 +88,7 @@ public:
 	 * Create font in Amiga format.
 	 *
 	 * @param stream  Stream with the font data. If NULL, then the built-in
-	 *				  Topaz font is used.
+	 *				  Topaz 8 font is used.
 	 */
 	AmigaFont(Common::SeekableReadStream *stream = NULL);
 	AmigaFont(Topaz9Builtin);
@@ -102,6 +102,7 @@ public:
 	int getCharDrawOffset(uint32 chr) const;
 	int getCharInkWidth(uint32 chr) const;
 	int getCharRenderWidth(uint32 chr) const;
+	void drawCharDoubleHeight(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
 
 	int getLoChar() const { return _font->_loChar; }

@@ -3058,47 +3058,6 @@ static inline void pnSqueezeGlyph8Rows(const byte *src8, byte *dst8) {
 		dst8[i] = pnSqueezeRow(src8[i], anyBit1SetAcrossGlyph);
 }
 
-static void drawPnAmigaDoubleHeightTopazChar(const Graphics::AmigaFont *font, Graphics::Surface *dst, byte chr, int x, int y, byte color) {
-	enum {
-		kPnAmigaTopazScratchWidth = 16,
-		kPnAmigaTopazScratchHeight = 16
-	};
-
-	const int glyphWidth = font->getCharRenderWidth(chr);
-	const int rawHeight = font->getFontHeight();
-	const int drawOffset = font->getCharDrawOffset(chr);
-	const int glyphLeft = MIN<int>(0, drawOffset);
-	const int glyphOriginX = drawOffset - glyphLeft;
-	if (glyphWidth <= 0 || rawHeight <= 0)
-		return;
-	assert(glyphWidth <= kPnAmigaTopazScratchWidth);
-	assert(rawHeight <= kPnAmigaTopazScratchHeight);
-
-	byte glyphPixels[kPnAmigaTopazScratchWidth * kPnAmigaTopazScratchHeight];
-	memset(glyphPixels, 0, sizeof(glyphPixels));
-
-	Graphics::Surface glyphSurface;
-	glyphSurface.init(glyphWidth, rawHeight, glyphWidth, glyphPixels, Graphics::PixelFormat::createFormatCLUT8());
-	font->drawChar(&glyphSurface, chr, glyphOriginX, 0, 1);
-
-	for (int srcY = 0; srcY < rawHeight; ++srcY) {
-		for (int srcX = 0; srcX < glyphWidth; ++srcX) {
-			if (glyphPixels[srcY * glyphWidth + srcX] == 0)
-				continue;
-
-			const int dstX = x + glyphLeft + srcX;
-			if (dstX < 0 || dstX >= dst->w)
-				continue;
-
-			for (int repeat = 0; repeat < 2; ++repeat) {
-				const int dstY = y + srcY * 2 + repeat;
-				if (dstY >= 0 && dstY < dst->h)
-					*(byte *)dst->getBasePtr(dstX, dstY) = color;
-			}
-		}
-	}
-}
-
 void AGOSEngine::drawPnAmigaTopazChar(WindowBlock *window, byte chr) {
 	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
 	if (plane == nullptr || plane->pixels == nullptr)
@@ -3127,7 +3086,7 @@ void AGOSEngine::drawPnAmigaTopazChar(WindowBlock *window, byte chr) {
 		return;
 
 	if (usePnAmigaDoubleHeightTopaz())
-		drawPnAmigaDoubleHeightTopazChar(font, &surface, chr, x, y, window->textColor);
+		font->drawCharDoubleHeight(&surface, chr, x, y, window->textColor);
 	else
 		font->drawChar(&surface, chr, x + font->getCharDrawOffset(chr), y, window->textColor);
 }
