@@ -593,6 +593,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "y2lsnoopy",			"Yearn2Learn: Snoopy" },
 	{ "y2lspelling",		"Yearn2Learn: Master Snoopy's Spelling" },
 	{ "ybr1",				"Yellow Brick Road" },
+	{ "zerocritical",		"Zero Critical" },
 	{ "zerozero",			"Zero Zero" },
 
 	// Multimedia or reference products
@@ -9371,6 +9372,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is 妖怪図鑑2
 	MACGAME1_l("yokai400", "", "xn--2-we0by4fq4jlr4e", "r:d14bf1f7a413df29a04b8fbc7a0fe81f", 1033295, Common::JA_JPN, 601),
 	WINGAME1_l("yokai400", "", "YOUKAI2.EXE",		   "t:f43e37dd62ff37b9ac4734f45e105c93", 1512615, Common::JA_JPN, 601),
+
+	MACGAME1f("zerocritical", "", "Zero Critical Folder/Zero Critical", "rt:aafa56b07820caeb33fe5329088eb7b5", 1031489, 650, GF_32BPP),
+	WINGAME1f("zerocritical", "", "Zero Critical.exe", "t:8fa5dacb308c5db71db0abc91e8e2ba7", 24238200, 602, GF_32BPP),
 
 //////////////////////////////////////////////////
 //
