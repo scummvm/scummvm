@@ -186,7 +186,7 @@ Common::Rect blitMono(const BitMap &src, BitMap &dst, const BitMap &mask, const 
 	uint32 white = g_engine->_wm._colorWhite;
 	if (mode == kSrcCopy && !mask) {
 		// fast blit
-		dst->blitFrom(*src, srcRect, dstPos);
+		dst->blitFrom(*src, srcRect, Common::Point(srcRect.left + dstPos.x, srcRect.top + dstPos.y));
 	} else {
 		// per-pixel blit
 		for (int y = srcRect.top; y < srcRect.bottom; y++) {

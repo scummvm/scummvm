@@ -127,7 +127,6 @@ void FoolGame::jigsawRun() {
 			if (this->var_ev_46.what == kMouseDown) {
 				this->jigsawOnClick();
 			}
-			g_toolbox->Delay(0);
 		}
 		// 132:04b8
 		if (this->var_i16_7c6 == 2) {
