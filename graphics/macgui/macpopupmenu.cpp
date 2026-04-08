@@ -43,11 +43,11 @@ bool MacPopUp::draw(ManagedSurface *g, bool forceRedraw) {
 		return false;
 	_contentIsDirty = false;
 
-	_screen.clear(_wm->_colorGreen);
+	_composeSurface->clear(_wm->_colorGreen);
 	renderSubmenu(_items[0]->submenu, false);
 
 	if (g)
-		g->transBlitFrom(_screen, _wm->_colorGreen);
+		g->transBlitFrom(*_composeSurface, _wm->_colorGreen);
 
 	if (!(_wm->_mode & kWMModeNoSystemRedraw) && !(_wm->_mode & kWMModalMenuMode) && g)
 		g_system->copyRectToScreen(g->getPixels(), g->pitch, 0, 0, g->w, g->h);
@@ -133,7 +133,7 @@ uint32 MacPopUp::drawAndSelectMenu(int x, int y, int item) {
 		}
 
 		int itemsLeft = _items[0]->submenu->items.size() - _items[0]->submenu->visStart;
-		int spaceLeft = _screen.h - MIN(_mouseY + _offsetY, _mouseY);
+		int spaceLeft = _composeSurface->h - MIN(_mouseY + _offsetY, _mouseY);
 		_items[0]->submenu->visEnd = MAX(0, itemsLeft - spaceLeft / _menuDropdownItemHeight);
 	}
 
