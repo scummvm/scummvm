@@ -51,13 +51,9 @@ void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 }
 
 void GridItemWidget::updateThumb() {
-	const Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
-	_thumbGfx.free();
-	if (gfx) {
-		// TODO: Use a reference instead of copying the surface
-		_thumbGfx.copyFrom(*gfx);
-		_thumbAlpha = _thumbGfx.detectAlpha();
-	}
+	_thumbGfx = _grid->filenameToSurface(_activeEntry->thumbPath);
+	if (_thumbGfx)
+		_thumbAlpha = _thumbGfx->detectAlpha();
 }
 
 void GridItemWidget::update() {
@@ -117,7 +113,7 @@ void GridItemWidget::drawWidget() {
 										ThemeEngine::kThumbnailBackground);
 
 	// Draw Thumbnail
-	if (_thumbGfx.empty()) {
+	if (!_thumbGfx) {
 		// Draw Title when thumbnail is missing
 		int linesInThumb = MIN(thumbHeight / kLineHeight, (int)titleLines.size());
 		Common::Rect r(_x, _y + (thumbHeight - linesInThumb * kLineHeight) / 2,
@@ -130,20 +126,20 @@ void GridItemWidget::drawWidget() {
 			r.translate(0, kLineHeight);
 		}
 	} else {
-		g_gui.theme()->drawManagedSurface(Common::Point(_x + _grid->_thumbnailMargin, _y + _grid->_thumbnailMargin), _thumbGfx, _thumbAlpha);
+		g_gui.theme()->drawManagedSurface(Common::Point(_x + _grid->_thumbnailMargin, _y + _grid->_thumbnailMargin), *_thumbGfx, _thumbAlpha);
 	}
 
 	Graphics::AlphaType alphaType;
 
 	// Draw Platform Icon
-	const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform, alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> platGfx = _grid->platformToSurface(_activeEntry->platform, alphaType);
 	if (platGfx) {
 		Common::Point p(_x + thumbWidth - platGfx->w, _y + thumbHeight - platGfx->h);
 		g_gui.theme()->drawManagedSurface(p, *platGfx, alphaType);
 	}
 
 	// Draw Flag
-	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language, alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> flagGfx = _grid->languageToSurface(_activeEntry->language, alphaType);
 	if (flagGfx) {
 		// SVG and PNG can resize differently so it's better to use thumbWidth as reference to
 		// ensure all flags are aligned
@@ -152,7 +148,7 @@ void GridItemWidget::drawWidget() {
 	}
 
 	// Draw Demo Overlay
-	const Graphics::ManagedSurface *demoGfx = _grid->demoToSurface(_activeEntry->extra, alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> demoGfx = _grid->demoToSurface(_activeEntry->extra, alphaType);
 	if (demoGfx) {
 		Common::Point p(_x, _y);
 		g_gui.theme()->drawManagedSurface(p, *demoGfx, alphaType);
@@ -162,7 +158,7 @@ void GridItemWidget::drawWidget() {
 
 	// Darken thumbnail if path is unreachable
 	if (!validEntry) {
-		const Graphics::ManagedSurface *darkenGfx = _grid->disabledThumbnail();
+		Common::SharedPtr<Graphics::ManagedSurface> darkenGfx = _grid->disabledThumbnail();
 		if (darkenGfx) {
 			Common::Point p(_x, _y);
 			g_gui.theme()->drawManagedSurface(p, *darkenGfx, Graphics::ALPHA_FULL);
@@ -341,9 +337,9 @@ GridItemTray::GridItemTray(GuiObject *boss, int x, int y, int w, int h, int entr
 }
 
 void GridItemTray::reflowLayout() {
-	_playButton->setGfxFromTheme("button_play.bmp", 0, false);
-	_loadButton->setGfxFromTheme("button_load.bmp", 0, false);
-	_editButton->setGfxFromTheme("button_options.bmp", 0, false);
+	_playButton->setGfxFromTheme("button_play.bmp");
+	_loadButton->setGfxFromTheme("button_load.bmp");
+	_editButton->setGfxFromTheme("button_options.bmp");
 }
 
 void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -402,9 +398,9 @@ void GridItemTray::handleMouseMoved(int x, int y, int button) {
 
 // Load an image file by String name, provide additional render dimensions for SVG images.
 // TODO: Add BMP support, and add scaling of non-vector images.
-Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
+Common::SharedPtr<Graphics::ManagedSurface> loadSurfaceFromFile(const Common::String &name, int renderWidth = 0, int renderHeight = 0) {
 	Common::Path path(name);
-	Graphics::ManagedSurface *surf = nullptr;
+	Common::SharedPtr<Graphics::ManagedSurface> surf;
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		const Graphics::Surface *srcSurface = nullptr;
@@ -423,7 +419,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 			if (!srcSurface) {
 				warning("Failed to load surface : %s", name.c_str());
 			} else if (srcSurface->format.bytesPerPixel != 1) {
-				surf = new Graphics::ManagedSurface();
+				surf.reset(new Graphics::ManagedSurface());
 				surf->copyFrom(*srcSurface);
 			}
 		} else {
@@ -437,7 +433,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		g_gui.lockIconsSet();
 		if (g_gui.getIconsSet().hasFile(path)) {
 			Common::SeekableReadStream *stream = g_gui.getIconsSet().createReadStreamForMember(path);
-			surf = new Graphics::SVGBitmap(stream, renderWidth, renderHeight);
+			surf.reset(new Graphics::SVGBitmap(stream, renderWidth, renderHeight));
 			delete stream;
 		} else {
 			debug(5, "GridWidget: Cannot read file '%s'", name.c_str());
@@ -445,6 +441,27 @@ Graphics::ManagedSurface *loadSurfaceFromFile(const Common::String &name, int re
 		g_gui.unlockIconsSet();
 	}
 	return surf;
+}
+
+Common::SharedPtr<Graphics::ManagedSurface> scaleGfx(Common::SharedPtr<Graphics::ManagedSurface> &gfx, int w, int h, bool filtering) {
+	int nw = w, nh = h;
+
+	// Maintain aspect ratio
+	float xRatio = 1.0f * w / gfx->w;
+	float yRatio = 1.0f * h / gfx->h;
+
+	if (xRatio < yRatio)
+		nh = gfx->h * xRatio;
+	else
+		nw = gfx->w * yRatio;
+
+	if (nw == gfx->w && nh == gfx->h)
+		return gfx;
+
+	w = nw;
+	h = nh;
+
+	return Common::SharedPtr<Graphics::ManagedSurface>(gfx->scale(w, h, filtering));
 }
 
 #pragma mark -
@@ -460,7 +477,6 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_platformIconWidth = 0;
 	_extraIconHeight = 0;
 	_extraIconWidth = 0;
-	_disabledIconOverlay = nullptr;
 
 	_minGridXSpacing = 0;
 	_minGridYSpacing = 0;
@@ -503,11 +519,11 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 }
 
 GridWidget::~GridWidget() {
-	unloadSurfaces(_platformIcons);
-	unloadSurfaces(_languageIcons);
-	unloadSurfaces(_extraIcons);
-	unloadSurfaces(_loadedSurfaces);
-	delete _disabledIconOverlay;
+	_platformIcons.clear();
+	_languageIcons.clear();
+	_extraIcons.clear();
+	_loadedSurfaces.clear();
+	_disabledIconOverlay.reset();
 	_gridItems.clear();
 	_dataEntryList.clear();
 	_headerEntryList.clear();
@@ -518,42 +534,34 @@ GridWidget::~GridWidget() {
 	_extraIconsAlpha.clear();
 }
 
-template<typename T>
-void GridWidget::unloadSurfaces(Common::HashMap<T, const Graphics::ManagedSurface *> &surfaces) {
-	for (typename Common::HashMap<T, const Graphics::ManagedSurface *>::iterator i = surfaces.begin(); i != surfaces.end(); ++i) {
-		delete i->_value;
-	}
-	surfaces.clear();
-}
-
-const Graphics::ManagedSurface *GridWidget::filenameToSurface(const Common::String &name) {
+Common::SharedPtr<Graphics::ManagedSurface> GridWidget::filenameToSurface(const Common::String &name) {
 	if (name.empty())
 		return nullptr;
 	return _loadedSurfaces[name];
 }
 
-const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::Language languageCode, Graphics::AlphaType &alphaType) {
+Common::SharedPtr<Graphics::ManagedSurface> GridWidget::languageToSurface(Common::Language languageCode, Graphics::AlphaType &alphaType) {
 	if (languageCode == Common::UNK_LANG)
 		return nullptr;
 	alphaType = _languageIconsAlpha[languageCode];
 	return _languageIcons[languageCode];
 }
 
-const Graphics::ManagedSurface *GridWidget::platformToSurface(Common::Platform platformCode, Graphics::AlphaType &alphaType) {
+Common::SharedPtr<Graphics::ManagedSurface> GridWidget::platformToSurface(Common::Platform platformCode, Graphics::AlphaType &alphaType) {
 	if (platformCode == Common::kPlatformUnknown)
 		return nullptr;
 	alphaType = _platformIconsAlpha[platformCode];
 	return _platformIcons[platformCode];
 }
 
-const Graphics::ManagedSurface *GridWidget::demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType) {
+Common::SharedPtr<Graphics::ManagedSurface> GridWidget::demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType) {
 	if (! extraString.contains("Demo") )
 		return nullptr;
 	alphaType = _extraIconsAlpha[0];
 	return _extraIcons[0];
 }
 
-const Graphics::ManagedSurface *GridWidget::disabledThumbnail() {
+Common::SharedPtr<Graphics::ManagedSurface> GridWidget::disabledThumbnail() {
 	return _disabledIconOverlay;
 }
 
@@ -763,36 +771,24 @@ void GridWidget::reloadThumbnails() {
 			continue;
 
 		if (!_loadedSurfaces.contains(entry->thumbPath)) {
-			_loadedSurfaces[entry->thumbPath] = nullptr;
+			_loadedSurfaces[entry->thumbPath].reset();
 			Common::String path = Common::String::format("icons/%s-%s.png", entry->engineid.c_str(), entry->gameid.c_str());
-			Graphics::ManagedSurface *surf = loadSurfaceFromFile(path);
+			Common::SharedPtr<Graphics::ManagedSurface> surf = loadSurfaceFromFile(path);
 			if (!surf) {
 				path = Common::String::format("icons/%s.png", entry->engineid.c_str());
 				if (!_loadedSurfaces.contains(path)) {
 					surf = loadSurfaceFromFile(path);
 				} else {
-					const Graphics::ManagedSurface *scSurf = _loadedSurfaces[path];
-					// TODO: Use SharedPtr instead of duplicating the surface
-					Graphics::ManagedSurface *thSurf = new Graphics::ManagedSurface();
-					thSurf->copyFrom(*scSurf);
-					_loadedSurfaces[entry->thumbPath] = thSurf;
+					_loadedSurfaces[entry->thumbPath] = _loadedSurfaces[path];
 				}
 			}
 
 			if (surf) {
-				const Graphics::ManagedSurface *scSurf(scaleGfx(surf, thumbnailWidth, thumbnailHeight, true));
+				Common::SharedPtr<Graphics::ManagedSurface> scSurf = scaleGfx(surf, thumbnailWidth, thumbnailHeight, true);
 				_loadedSurfaces[entry->thumbPath] = scSurf;
 
 				if (path != entry->thumbPath) {
-					// TODO: Use SharedPtr instead of duplicating the surface
-					Graphics::ManagedSurface *thSurf = new Graphics::ManagedSurface();
-					thSurf->copyFrom(*scSurf);
-					_loadedSurfaces[path] = thSurf;
-				}
-
-				if (surf != scSurf) {
-					surf->free();
-					delete surf;
+					_loadedSurfaces[path] = scSurf;
 				}
 			}
 		}
@@ -803,7 +799,7 @@ void GridWidget::loadFlagIcons() {
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
 		Common::String path = Common::String::format("icons/flags/%s.svg", l->code);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
+		Common::SharedPtr<Graphics::ManagedSurface> gfx = loadSurfaceFromFile(path, _flagIconWidth, _flagIconHeight);
 		if (gfx) {
 			_languageIcons[l->id] = gfx;
 			_languageIconsAlpha[l->id] = gfx->detectAlpha();
@@ -812,15 +808,11 @@ void GridWidget::loadFlagIcons() {
 		path = Common::String::format("icons/flags/%s.png", l->code);
 		gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _flagIconWidth, _flagIconHeight, true);
-			_languageIcons[l->id] = scGfx;
-			_languageIconsAlpha[l->id] = gfx->detectAlpha();
-			if (gfx != scGfx) {
-				gfx->free();
-				delete gfx;
-			}
+			Common::SharedPtr<Graphics::ManagedSurface> scSurf = scaleGfx(gfx, _flagIconWidth, _flagIconHeight, true);
+			_languageIcons[l->id] = scSurf;
+			_languageIconsAlpha[l->id] = scSurf->detectAlpha();
 		} else {
-			_languageIcons[l->id] = nullptr; // nothing found, set to nullptr
+			_languageIcons[l->id].reset(); // nothing found
 		}
 	}
 }
@@ -829,39 +821,31 @@ void GridWidget::loadPlatformIcons() {
 	const Common::PlatformDescription *l = Common::g_platforms;
 	for (; l->code; ++l) {
 		Common::String path = Common::String::format("icons/platforms/%s.png", l->code);
-		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(path);
+		Common::SharedPtr<Graphics::ManagedSurface> gfx = loadSurfaceFromFile(path);
 		if (gfx) {
-			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight, true);
+			Common::SharedPtr<Graphics::ManagedSurface> scGfx = scaleGfx(gfx, _platformIconWidth, _platformIconHeight, true);
 			_platformIcons[l->id] = scGfx;
 			_platformIconsAlpha[l->id] = scGfx->detectAlpha();
-			if (gfx != scGfx) {
-				gfx->free();
-				delete gfx;
-			}
 		} else {
-			_platformIcons[l->id] = nullptr;
+			_platformIcons[l->id].reset();
 		}
 	}
 }
 
 void GridWidget::loadExtraIcons() {  // for now only the demo icon is available
-	Graphics::ManagedSurface *gfx = loadSurfaceFromFile("icons/extra/demo.svg", _extraIconWidth, _extraIconHeight);
+	Common::SharedPtr<Graphics::ManagedSurface> gfx = loadSurfaceFromFile("icons/extra/demo.svg", _extraIconWidth, _extraIconHeight);
 	if (gfx) {
-		_extraIcons[0] = gfx;
+		_extraIcons[0].reset(gfx);
 		_extraIconsAlpha[0] = gfx->detectAlpha();
 		return;
 	} // if no .svg file is available, search for a .png
 	gfx = loadSurfaceFromFile("icons/extra/demo.png");
 	if (gfx) {
-		const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, _extraIconWidth, _extraIconHeight, true);
+		Common::SharedPtr<Graphics::ManagedSurface> scGfx = scaleGfx(gfx, _extraIconWidth, _extraIconHeight, true);
 		_extraIcons[0] = scGfx;
 		_extraIconsAlpha[0] = scGfx->detectAlpha();
-		if (gfx != scGfx) {
-			gfx->free();
-			delete gfx;
-		}
 	} else {
-		_extraIcons[0] = nullptr;
+		_extraIcons[0].reset();
 	}
 }
 
@@ -1166,20 +1150,20 @@ void GridWidget::reflowLayout() {
 	if ((oldThumbnailHeight != _thumbnailHeight) ||
 		(oldThumbnailWidth != _thumbnailWidth) ||
 		(oldThumbnailMargin != _thumbnailMargin)) {
-		unloadSurfaces(_extraIcons);
-		unloadSurfaces(_platformIcons);
-		unloadSurfaces(_languageIcons);
-		unloadSurfaces(_loadedSurfaces);
+		_extraIcons.clear();
+		_platformIcons.clear();
+		_languageIcons.clear();
+		_loadedSurfaces.clear();
 		_platformIconsAlpha.clear();
 		_languageIconsAlpha.clear();
 		_extraIconsAlpha.clear();
-		delete _disabledIconOverlay;
+		_disabledIconOverlay.reset();
 		reloadThumbnails();
 		loadFlagIcons();
 		loadPlatformIcons();
 		loadExtraIcons();
 
-		Graphics::ManagedSurface *gfx = new Graphics::ManagedSurface(_thumbnailWidth, _thumbnailHeight, g_system->getOverlayFormat());
+		Common::SharedPtr<Graphics::ManagedSurface> gfx(new Graphics::ManagedSurface(_thumbnailWidth, _thumbnailHeight, g_system->getOverlayFormat()));
 		uint32 disabledThumbnailColor = gfx->format.ARGBToColor(153, 0, 0, 0);  // 60% opacity black
 		gfx->fillRect(Common::Rect(0, 0, _thumbnailWidth, _thumbnailHeight), disabledThumbnailColor);
 		_disabledIconOverlay = gfx;

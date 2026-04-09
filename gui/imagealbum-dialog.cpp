@@ -211,10 +211,10 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 			if (scaledHeight < 1)
 				scaledHeight = 1;
 
-			Graphics::ManagedSurface rescaledGraphic;
-			rescaledGraphic.create(scaledWidth, scaledHeight, surf->format);
+			Common::SharedPtr<Graphics::ManagedSurface> rescaledGraphic(new Graphics::ManagedSurface());
+			rescaledGraphic->create(scaledWidth, scaledHeight, surf->format);
 			if (hasPalette)
-				rescaledGraphic.setPalette(palette.data(), 0, 256);
+				rescaledGraphic->setPalette(palette.data(), 0, 256);
 
 			if (needs90Rotate) {
 				bool isClockwise = metadata._viewTransformation == kImageAlbumViewTransformationRotate90CW;
@@ -230,7 +230,7 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 						if (!isClockwise)
 							srcX = imageWidth - 1 - srcX;
 
-						rescaledGraphic.setPixel(destX, destY, surf->getPixel(srcX, srcY));
+						rescaledGraphic->setPixel(destX, destY, surf->getPixel(srcX, srcY));
 					}
 				}
 			} else if (metadata._viewTransformation == kImageAlbumViewTransformationRotate180) {
@@ -240,11 +240,11 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 					for (uint32 destY = 0; destY < scaledHeight; destY++) {
 						uint32 srcY = (imageHeight - 1 - (destY * imageHeight / scaledHeight));
 
-						rescaledGraphic.setPixel(destX, destY, surf->getPixel(srcX, srcY));
+						rescaledGraphic->setPixel(destX, destY, surf->getPixel(srcX, srcY));
 					}
 				}
 			} else {
-				rescaledGraphic.blitFrom(*surf, Common::Rect(0, 0, imageWidth, imageHeight), Common::Rect(0, 0, scaledWidth, scaledHeight));
+				rescaledGraphic->blitFrom(*surf, Common::Rect(0, 0, imageWidth, imageHeight), Common::Rect(0, 0, scaledWidth, scaledHeight));
 			}
 
 			_imageSupplier->releaseImageSlot(slot);
@@ -254,7 +254,7 @@ void ImageAlbumDialog::changeToSlot(uint slot) {
 
 			_imageGraphic = new GraphicsWidget(_imageContainer, xCoord, yCoord, xCoord + static_cast<int32>(scaledWidth), yCoord + static_cast<int32>(scaledHeight));
 
-			_imageGraphic->setGfx(&rescaledGraphic, false);
+			_imageGraphic->setGfx(rescaledGraphic);
 
 			if (_numSlots > 1) {
 				_imageNumberLabel->setLabel(Common::U32String::format(_("%u of %u"), static_cast<uint>(slot + 1u), _numSlots));

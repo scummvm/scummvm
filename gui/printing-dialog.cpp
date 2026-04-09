@@ -149,14 +149,14 @@ void PrintingDialog::updatePreview() {
 		// In this mode, there is no "page", just fit the image exactly in the preview area
 		Common::Rect destRect = computePlacementInContainer(_surface.w, _surface.h, previewW, previewH, true, false);
 
-		Graphics::ManagedSurface fittedImage(destRect.width(), destRect.height(), g_gui.theme()->getPixelFormat());
-		fittedImage.blitFrom(_surface, _surface.getBounds(), destRect);
+		Common::SharedPtr<Graphics::ManagedSurface> fittedImage(new Graphics::ManagedSurface(destRect.width(), destRect.height(), g_gui.theme()->getPixelFormat()));
+		fittedImage->blitFrom(_surface, _surface.getBounds(), destRect);
 
 		int16 deltaX = (previewW - destRect.width()) / 2;
 		int16 deltaY = (previewH - destRect.height()) / 2;
 
 		_preview->resize(previewX + deltaX, destRect.top + deltaY, destRect.width(), destRect.height(), false);
-		_preview->setGfx(&fittedImage, false);
+		_preview->setGfx(fittedImage);
 		g_gui.scheduleTopDialogRedraw();
 		return;
 	}
@@ -182,8 +182,8 @@ void PrintingDialog::updatePreview() {
 
 	// Draw a white rectangle representing the page
 	Common::Rect pageInPreviewDims = computePlacementInContainer(paperDim.width(), paperDim.height(), previewW, previewH, true, true);
-	Graphics::ManagedSurface page(pageInPreviewDims.width(), pageInPreviewDims.height(), g_gui.theme()->getPixelFormat());
-	page.fillRect(page.getBounds(), page.format.RGBToColor(255, 255, 255));
+	Common::SharedPtr<Graphics::ManagedSurface> page(new Graphics::ManagedSurface(pageInPreviewDims.width(), pageInPreviewDims.height(), g_gui.theme()->getPixelFormat()));
+	page->fillRect(page->getBounds(), page->format.RGBToColor(255, 255, 255));
 
 	// Blit the image to the page surface, taking into account the printable area offset and the "fit to page" and "center" options.
 	double pageToPreviewScale = (double)pageInPreviewDims.width() / paperDim.width();
@@ -198,14 +198,14 @@ void PrintingDialog::updatePreview() {
 	imageInPagePreview.bottom = (int16)round(imageOnPageDims.bottom * pageToPreviewScale);
 
 	if (!imageInPagePreview.isEmpty())
-		page.blitFrom(_surface, _surface.getBounds(), imageInPagePreview);
+		page->blitFrom(_surface, _surface.getBounds(), imageInPagePreview);
 
 	// Update the preview widget
 	int16 deltaX = (previewW - pageInPreviewDims.width()) / 2;
 	int16 deltaY = (previewH - pageInPreviewDims.height()) / 2;
 
 	_preview->resize(previewX + deltaX, previewY + deltaY, pageInPreviewDims.width(), pageInPreviewDims.height(), false);
-	_preview->setGfx(&page, false);
+	_preview->setGfx(page);
 	g_gui.scheduleTopDialogRedraw();
 }
 

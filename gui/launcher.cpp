@@ -1001,7 +1001,7 @@ ButtonWidget *LauncherDialog::createSwitchButton(const Common::String &name, con
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->setGfxFromTheme(image, kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(image);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);

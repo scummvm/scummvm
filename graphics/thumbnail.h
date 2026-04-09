@@ -41,6 +41,7 @@ namespace Graphics {
  */
 
 struct Surface;
+class ManagedSurface;
 
 /**
  * Checks for presence of the thumbnail save header.
@@ -61,6 +62,11 @@ bool skipThumbnail(Common::SeekableReadStream &in);
  * Loads a thumbnail from the given input stream.
  */
 bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail = false);
+
+/**
+ * Loads a thumbnail from the given input stream.
+ */
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::ManagedSurface *&thumbnail, bool skipThumbnail = false);
 
 /**
  * Creates a thumbnail from screen contents.

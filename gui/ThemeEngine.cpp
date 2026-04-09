@@ -241,20 +241,10 @@ ThemeEngine::~ThemeEngine() {
 	unloadExtraFont();
 
 	// Release all graphics surfaces
-	for (auto &bitmap : _bitmaps) {
-		Graphics::ManagedSurface *surf = bitmap._value;
-		if (surf) {
-			surf->free();
-			delete surf;
-		}
-	}
 	_bitmaps.clear();
 
 	delete _parser;
 	delete _themeEval;
-	for (int i = 0; i < kCursorMax; i++) {
-        delete[] _cursors[i].data;
-    }
 }
 
 
@@ -379,15 +369,11 @@ void ThemeEngine::refresh() {
 
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat() || _needScaleRefresh) {
-		for (auto &bitmap : _bitmaps) {
-			Graphics::ManagedSurface *surf = bitmap._value;
-			if (surf) {
-				surf->free();
-				delete surf;
-			}
-		}
 		_bitmaps.clear();
-
+		for (int i = 0; i < kCursorMax; i++) {
+			_cursors[i].surface.reset();
+		}
+		_useCursor = false;
 		_needScaleRefresh = false;
 	}
 
@@ -398,9 +384,12 @@ void ThemeEngine::refresh() {
 
 		if (_useCursor) {
 			CursorData &cur = _cursors[_activeCursorType];
-			if (cur.palSize)
-				CursorMan.replaceCursorPalette(cur.pal, 0, cur.palSize);
-			CursorMan.replaceCursor(cur.data, cur.width, cur.height, cur.hotspotX, cur.hotspotY, cur.transparent, true, &cur.format);
+			if (cur.surface->hasPalette()) {
+				const Graphics::Palette *pal = cur.surface->grabPalette();
+				CursorMan.replaceCursorPalette(pal->data(), 0, pal->size());
+			}
+			CursorMan.replaceCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
+			                        cur.surface->getTransparentColor(), true);
 		}
 	}
 }
@@ -645,7 +634,7 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 
 bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String &scalablefile, int width, int height) {
 	// Nothing has to be done if the bitmap already has been loaded.
-	Graphics::ManagedSurface *surf = _bitmaps[filename];
+	Common::SharedPtr<Graphics::ManagedSurface> surf = _bitmaps[filename];
 	if (surf) {
 		return true;
 	}
@@ -656,7 +645,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
 			Common::SeekableReadStream *stream = (*i)->createReadStream();
 			if (stream) {
-				_bitmaps[filename] = new Graphics::SVGBitmap(stream, width * _scaleFactor, height * _scaleFactor);
+				_bitmaps[filename].reset(new Graphics::SVGBitmap(stream, width * _scaleFactor, height * _scaleFactor));
 				delete stream;
 				return true;
 			}
@@ -687,7 +676,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
-			surf = new Graphics::ManagedSurface();
+			surf.reset(new Graphics::ManagedSurface());
 			surf->convertFrom(*srcSurface, _overlayFormat);
 		}
 #else
@@ -710,7 +699,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
-			surf = new Graphics::ManagedSurface();
+			surf.reset(new Graphics::ManagedSurface());
 			surf->convertFrom(*srcSurface, _overlayFormat);
 		}
 
@@ -719,16 +708,9 @@ bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String
 	}
 
 	if (_scaleFactor != 1.0 && surf) {
-		Graphics::ManagedSurface *surf2 = surf->scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
-
-		if (surf->hasTransparentColor())
-			surf2->setTransparentColor(surf->getTransparentColor());
-
-		surf->free();
-		delete surf;
-
-		surf = surf2;
+		surf.reset(surf->scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false));
 	}
+
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
 
@@ -1582,7 +1564,7 @@ void ThemeEngine::applyScreenShading(ShadingStyle style) {
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY, CursorType type) {
 	// Try to locate the specified file among all loaded bitmaps
-	const Graphics::ManagedSurface *cursor = _bitmaps[filename];
+	Common::SharedPtr<Graphics::ManagedSurface> cursor = _bitmaps[filename];
 	if (!cursor)
 	    //warning("createCursor: Bitmap '%s' not found in _bitmaps! (type=%d)", filename.c_str(), type);
 		return false;
@@ -1593,25 +1575,9 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	cur.hotspotX = hotspotX;
 	cur.hotspotY = hotspotY;
 
-	cur.width = cursor->w;
-	cur.height = cursor->h;
-
-	cur.transparent = 255;
-	cur.format = Graphics::PixelFormat::createFormatCLUT8();
-	cur.palSize = 0;
-
 	if (_system->hasFeature(OSystem::kFeatureCursorAlpha)) {
-		cur.format = cursor->format;
-		cur.transparent = cur.format.RGBToColor(0xFF, 0, 0xFF);
-
-		// Allocate a new buffer for the cursor
-		delete[] cur.data;
-		cur.data = new byte[cur.width * cur.height * cur.format.bytesPerPixel];
-		assert(cur.data);
-		Graphics::copyBlit(cur.data, (const byte *)cursor->getPixels(),
-		                   cur.width * cur.format.bytesPerPixel, cursor->pitch,
-		                   cur.width, cur.height, cur.format.bytesPerPixel);
-
+		// Use the bitmap as-is
+		cur.surface.reset(cursor);
 		_useCursor = true;
 		return true;
 	}
@@ -1620,35 +1586,27 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 		return true;
 
 	// Allocate a new buffer for the cursor
-	delete[] cur.data;
-	cur.data = new byte[cur.width * cur.height];
-	assert(cur.data);
-	memset(cur.data, 0xFF, sizeof(byte) * cur.width * cur.height);
+	Common::SharedPtr<Graphics::ManagedSurface> cursor8(new Graphics::ManagedSurface());
+	cursor8->create(cursor->w, cursor->h, Graphics::PixelFormat::createFormatCLUT8());
+	cursor8->setTransparentColor(0xFF);
+	cursor8->clear(0xFF);
 
 	// the transparent color is 0xFF00FF
-	const uint32 colTransparent = cursor->format.RGBToColor(0xFF, 0, 0xFF);
+	const bool hasTransparent = cursor->hasTransparentColor();
+	const uint32 colTransparent = cursor->getTransparentColor();
 	const uint32 alphaMask = cursor->format.ARGBToColor(0x80, 0, 0, 0);
 
 	// Now, scan the bitmap. We have to convert it from 16 bit color mode
 	// to 8 bit mode, and have to create a suitable palette on the fly.
 	uint colorsFound = 0;
 	Common::HashMap<int, int> colorToIndex;
-	const byte *src = (const byte *)cursor->getPixels();
-	for (uint y = 0; y < cur.height; ++y) {
-		for (uint x = 0; x < cur.width; ++x) {
-			uint32 color = colTransparent;
+	for (int y = 0; y < cursor->h; ++y) {
+		for (int x = 0; x < cursor->w; ++x) {
+			uint32 color = cursor->getPixel(x, y);
 			byte r, g, b;
 
-			if (cursor->format.bytesPerPixel == 2) {
-				color = READ_UINT16(src);
-			} else if (cursor->format.bytesPerPixel == 4) {
-				color = READ_UINT32(src);
-			}
-
-			src += cursor->format.bytesPerPixel;
-
 			// Skip transparency
-			if (color == colTransparent
+			if ((hasTransparent && color == colTransparent)
 			    // Replace with transparent is alpha is present and < 50%
 			    || (alphaMask != 0 && (color & alphaMask) == 0))
 				continue;
@@ -1666,28 +1624,25 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 				const int index = colorsFound++;
 				colorToIndex[col] = index;
 
-				cur.pal[index * 3 + 0] = r;
-				cur.pal[index * 3 + 1] = g;
-				cur.pal[index * 3 + 2] = b;
+				byte pal[3] = { r, g, b };
+				cursor8->setPalette(pal, index, 1);
 			}
 
 			// Copy pixel from the 16 bit source surface to the 8bit target surface
 			const int index = colorToIndex[col];
-			cur.data[y * cur.width + x] = index;
+			cursor8->setPixel(x, y, index);
 		}
-
-		src += cursor->pitch - cursor->w * cursor->format.bytesPerPixel;
 	}
 
+	cur.surface.reset(cursor8);
 	_useCursor = true;
-	cur.palSize = colorsFound;
 
 	return true;
 }
 
 void ThemeEngine::setActiveCursor(CursorType type) {
-    if (type < 0 || type >= kCursorMax || !_cursors[type].data) {
-        if (type == kCursorIndex && _cursors[kCursorNormal].data) {
+    if (type < 0 || type >= kCursorMax || !_cursors[type].surface) {
+        if (type == kCursorIndex && _cursors[kCursorNormal].surface) {
         	type = kCursorNormal;  // Fallback to normal cursor
         } else {
             return;
@@ -1698,13 +1653,12 @@ void ThemeEngine::setActiveCursor(CursorType type) {
     
     if (_useCursor) {
         CursorData &cur = _cursors[_activeCursorType];
-		if (cur.palSize) {
-			CursorMan.replaceCursorPalette(cur.pal, 0, cur.palSize);
-		}
-
-        CursorMan.replaceCursor(cur.data, cur.width, cur.height, 
-                                cur.hotspotX, cur.hotspotY, 
-                                cur.transparent, true, &cur.format);
+        if (cur.surface->hasPalette()) {
+            const Graphics::Palette *pal = cur.surface->grabPalette();
+            CursorMan.replaceCursorPalette(pal->data(), 0, pal->size());
+        }
+        CursorMan.replaceCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
+                                cur.surface->getTransparentColor(), true);
     }
 }
 
@@ -2273,19 +2227,20 @@ void ThemeEngine::showCursor() {
 
     CursorData &cur = _cursors[_activeCursorType];
 
-	if (cur.palSize)
-        CursorMan.pushCursorPalette(cur.pal, 0, cur.palSize);
+    if (cur.surface->hasPalette()) {
+        const Graphics::Palette *pal = cur.surface->grabPalette();
+        CursorMan.pushCursorPalette(pal->data(), 0, pal->size());
+    }
 
-    CursorMan.pushCursor(cur.data, cur.width, cur.height, 
-                         cur.hotspotX, cur.hotspotY, 
-                         cur.transparent, true, &cur.format);
+    CursorMan.pushCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
+                         cur.surface->getTransparentColor(), true);
     CursorMan.showMouse(true);
 }
 
 void ThemeEngine::hideCursor() {
 	if (_useCursor) {
 		CursorData &cur = _cursors[_activeCursorType];
-		if (cur.palSize)
+		if (cur.surface->hasPalette())
 			CursorMan.popCursorPalette();
 		CursorMan.popCursor();
 	}

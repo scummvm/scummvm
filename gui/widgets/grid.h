@@ -104,15 +104,15 @@ public:
 	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, const Common::U32String &token);
 
 protected:
-	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
-	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
-	Common::HashMap<int, const Graphics::ManagedSurface *> _extraIcons;
+	Common::HashMap<int, Common::SharedPtr<Graphics::ManagedSurface> > _platformIcons;
+	Common::HashMap<int, Common::SharedPtr<Graphics::ManagedSurface> > _languageIcons;
+	Common::HashMap<int, Common::SharedPtr<Graphics::ManagedSurface> > _extraIcons;
 	Common::HashMap<int, Graphics::AlphaType> _platformIconsAlpha;
 	Common::HashMap<int, Graphics::AlphaType> _languageIconsAlpha;
 	Common::HashMap<int, Graphics::AlphaType> _extraIconsAlpha;
-	Graphics::ManagedSurface *_disabledIconOverlay;
+	Common::SharedPtr<Graphics::ManagedSurface> _disabledIconOverlay;
 	// Images are mapped by filename -> surface.
-	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
+	Common::HashMap<Common::String, Common::SharedPtr<Graphics::ManagedSurface> > _loadedSurfaces;
 
 	Common::Array<GridItemInfo>			_dataEntryList;
 	Common::Array<GridItemInfo>			_headerEntryList;
@@ -182,14 +182,11 @@ public:
 	GridWidget(GuiObject *boss, const Common::String &name);
 	~GridWidget();
 
-	template<typename T>
-	void unloadSurfaces(Common::HashMap<T, const Graphics::ManagedSurface *> &surfaces);
-
-	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
-	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode, Graphics::AlphaType &alphaType);
-	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode, Graphics::AlphaType &alphaType);
-	const Graphics::ManagedSurface *demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType);
-	const Graphics::ManagedSurface *disabledThumbnail();
+	Common::SharedPtr<Graphics::ManagedSurface> filenameToSurface(const Common::String &name);
+	Common::SharedPtr<Graphics::ManagedSurface> languageToSurface(Common::Language languageCode, Graphics::AlphaType &alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> platformToSurface(Common::Platform platformCode, Graphics::AlphaType &alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> demoToSurface(const Common::String &extraString, Graphics::AlphaType &alphaType);
+	Common::SharedPtr<Graphics::ManagedSurface> disabledThumbnail();
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
@@ -258,7 +255,7 @@ public:
 /* GridItemWidget */
 class GridItemWidget : public ContainerWidget, public CommandSender {
 protected:
-	Graphics::ManagedSurface _thumbGfx;
+	Common::SharedPtr<Graphics::ManagedSurface> _thumbGfx;
 	Graphics::AlphaType _thumbAlpha;
 
 	GridItemInfo	*_activeEntry;

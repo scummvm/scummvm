@@ -56,7 +56,7 @@ TestExitStatus PrintingTests::printTestPage() {
 	}
 
 	// Print ScummVM logo
-	const Graphics::ManagedSurface *logo = g_gui.theme()->getImageSurface("logo.bmp");
+	Common::SharedPtr<Graphics::ManagedSurface> logo = g_gui.theme()->getImageSurface("logo.bmp");
 	if (!logo) {
 		warning("Failed to load the ScummVM logo.");
 		return kTestFailed;

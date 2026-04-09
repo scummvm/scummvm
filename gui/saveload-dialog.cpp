@@ -392,7 +392,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 #ifndef DISABLE_FANCY_THEMES
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
-		((PicButtonWidget *)button)->setGfxFromTheme(image, kPicButtonStateEnabled, false);
+		((PicButtonWidget *)button)->setGfxFromTheme(image);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);
@@ -478,7 +478,7 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
+		_gfxWidget->clearGfx();
 
 	_resultString.clear();
 	reflowLayout();
@@ -1156,7 +1156,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx((Graphics::ManagedSurface *)nullptr);
+		i->button->clearGfx();
 		i->setVisible(false);
 	}
 }

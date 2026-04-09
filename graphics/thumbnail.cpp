@@ -22,6 +22,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
 #include "graphics/pixelformat.h"
+#include "graphics/managed_surface.h"
 #include "common/endian.h"
 #include "common/algorithm.h"
 #include "common/system.h"
@@ -146,7 +147,8 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	return true;
 }
 
-bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
+template<class T>
+bool loadThumbnailImpl(Common::SeekableReadStream &in, T *&thumbnail, bool skipThumbnail) {
 	if (skipThumbnail) {
 		thumbnail = nullptr;
 		return Graphics::skipThumbnail(in);
@@ -175,7 +177,7 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 		return false;
 	}
 
-	thumbnail = new Graphics::Surface();
+	thumbnail = new T();
 	thumbnail->create(header.width, header.height, header.format);
 
 	for (int y = 0; y < thumbnail->h; ++y) {
@@ -199,6 +201,14 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 		}
 	}
 	return true;
+}
+
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail, bool skipThumbnail) {
+	return loadThumbnailImpl(in, thumbnail, skipThumbnail);
+}
+
+bool loadThumbnail(Common::SeekableReadStream &in, Graphics::ManagedSurface *&thumbnail, bool skipThumbnail) {
+	return loadThumbnailImpl(in, thumbnail, skipThumbnail);
 }
 
 bool createThumbnail(Graphics::Surface &thumb) {

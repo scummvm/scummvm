@@ -26,7 +26,7 @@
 #include "common/savefile.h"
 #include "common/bufferedstream.h"
 #include "graphics/thumbnail.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 
 #define RECORD_VERSION 1
@@ -455,7 +455,11 @@ void PlaybackFile::readEventsToBuffer(uint32 size) {
 	_eventsSize = size;
 }
 
-void PlaybackFile::saveScreenShot(Graphics::Surface &screen, byte md5[16]) {
+void PlaybackFile::saveScreenShot(const Graphics::ManagedSurface &screen, const byte md5[16]) {
+	saveScreenShot(screen.rawSurface(), md5);
+}
+
+void PlaybackFile::saveScreenShot(const Graphics::Surface &screen, const byte md5[16]) {
 	dumpRecordsToFile();
 	_writeStream->writeUint32BE(kMD5Tag);
 	_writeStream->writeUint32BE(16);
@@ -689,7 +693,7 @@ bool PlaybackFile::skipToNextScreenshot() {
 	return false;
 }
 
-Graphics::Surface *PlaybackFile::getScreenShot(int number) {
+Graphics::ManagedSurface *PlaybackFile::getScreenShot(int number) {
 	if (_mode != kRead) {
 		return NULL;
 	}
@@ -699,7 +703,7 @@ Graphics::Surface *PlaybackFile::getScreenShot(int number) {
 		if (screenCount == number) {
 			screenCount++;
 			_readStream->seek(-4, SEEK_CUR);
-			Graphics::Surface *thumbnail = nullptr;
+			Graphics::ManagedSurface *thumbnail = nullptr;
 			return Graphics::loadThumbnail(*_readStream, thumbnail) ? thumbnail : NULL;
 		} else {
 			uint32 size = _readStream->readUint32BE();
