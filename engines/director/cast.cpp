@@ -1838,6 +1838,7 @@ void Cast::loadScriptV2(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		dumpScript(script.c_str(), kMovieScript, id);
 
 	_lingoArchive->addCode(script.decode(Common::kMacRoman), kMovieScript, id, nullptr, kLPPForceD2|kLPPTrimGarbage);
+	_lingoArchive->patchScriptHandler(kMovieScript, CastMemberID(id, _castLibID));
 }
 
 void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {

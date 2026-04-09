@@ -522,6 +522,20 @@ on checkFiles\r\
 end\r\
 ";
 
+/*
+ * Journeyman Project has inventory scroll buttons which repeat while the mouse button
+ * is held down. On fast systems (i.e. us) this is quite unpleasant to use.
+ */
+const char *const jmanInventory = "\
+macro InventoryArrowsClicked\r\
+  if the castnum of sprite 9 = the number of cast \"MsgBoxGraphic\" then\r\
+    CloseMessageBox\r\
+  end if\r\
+  ScrollIt\r\
+  set the castnum of sprite 13 to the number of cast \"InventoryArrows\"\r\
+  updateStage\r\
+";
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -570,6 +584,7 @@ struct ScriptHandlerPatch {
 	{"mcmillennium", nullptr, kPlatformWindows, "PC\\SHARED.DXR", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:SHARED.Dxr", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"gordak", nullptr, kPlatformWindows, "GORDAKCD.EXE", kMovieScript, 2, DEFAULT_CAST_LIB, &gordakDetectionFix},
+	{"jman", nullptr, kPlatformMacintosh, "Support Files:Mars ESG Upper 03", kMovieScript, 322, DEFAULT_CAST_LIB, &jmanInventory},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
