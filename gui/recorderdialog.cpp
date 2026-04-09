@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "common/translation.h"
 #include "gui/widgets/list.h"
 #include "gui/editrecorddialog.h"
@@ -349,7 +348,7 @@ void RecorderDialog::updateScreenshot() {
 	Graphics::Surface *srcsf = _playbackFile.getScreenShot(_currentScreenshot);
 	Common::SharedPtr<Graphics::Surface> srcsfSptr = Common::SharedPtr<Graphics::Surface>(srcsf, Graphics::SurfaceDeleter());
 	if (srcsfSptr) {
-		Graphics::Surface *destsf = Graphics::scale(*srcsfSptr, _gfxWidget->getWidth(), _gfxWidget->getHeight());
+		Graphics::Surface *destsf = srcsfSptr->scale(_gfxWidget->getWidth(), _gfxWidget->getHeight());
 		Common::SharedPtr<Graphics::Surface> destsfSptr = Common::SharedPtr<Graphics::Surface>(destsf, Graphics::SurfaceDeleter());
 		if (destsfSptr && _gfxWidget->isVisible())
 			_gfxWidget->setGfx(destsf, false);

@@ -23,7 +23,6 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
-#include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
 
 
@@ -235,7 +234,7 @@ Common::KeymapArray FreescapeMetaEngine::initKeymaps(const char *target) const {
 void FreescapeMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	Freescape::FreescapeEngine *engine = (Freescape::FreescapeEngine *)g_engine;
 	assert(engine->_savedScreen);
-	Graphics::Surface *scaledSavedScreen = scale(*engine->_savedScreen, kThumbnailWidth, kThumbnailHeight2);
+	Graphics::Surface *scaledSavedScreen = engine->_savedScreen->scale(kThumbnailWidth, kThumbnailHeight2);
 	assert(scaledSavedScreen);
 	thumb.copyFrom(*scaledSavedScreen);
 

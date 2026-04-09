@@ -32,7 +32,6 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 
 #include "colony/colony.h"
 #include "colony/detection.h"
@@ -84,7 +83,7 @@ void ColonyMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	if (!engine || !engine->getSavedScreen())
 		return;
 
-	Graphics::Surface *scaledSavedScreen = scale(*engine->getSavedScreen(), kThumbnailWidth, kThumbnailHeight2);
+	Graphics::Surface *scaledSavedScreen = engine->getSavedScreen()->scale(kThumbnailWidth, kThumbnailHeight2);
 	if (!scaledSavedScreen)
 		return;
 
