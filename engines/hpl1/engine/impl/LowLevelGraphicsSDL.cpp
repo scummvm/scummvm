@@ -48,25 +48,6 @@
 
 namespace hpl {
 
-GLenum ColorFormatToGL(eColorDataFormat format) {
-	switch (format) {
-	case eColorDataFormat_RGB:
-		return GL_RGB;
-	case eColorDataFormat_RGBA:
-		return GL_RGBA;
-	case eColorDataFormat_ALPHA:
-		return GL_ALPHA;
-	case eColorDataFormat_BGR:
-		return GL_BGR;
-	case eColorDataFormat_BGRA:
-		return GL_BGRA;
-	default:
-		break;
-	}
-	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)\n", format);
-	return GL_RGB;
-}
-
 GLenum TextureTargetToGL(eTextureTarget target) {
 	switch (target) {
 	case eTextureTarget_1D:

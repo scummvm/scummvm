@@ -41,8 +41,6 @@ namespace hpl {
 
 //-------------------------------------------------
 
-GLenum ColorFormatToGL(eColorDataFormat format);
-
 GLenum TextureTargetToGL(eTextureTarget target);
 
 //-------------------------------------------------
