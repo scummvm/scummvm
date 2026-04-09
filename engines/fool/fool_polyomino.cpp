@@ -176,7 +176,7 @@ void FoolGame::polyominoRun() {
 		// picture handle 1:
 		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_toolbox->FillPoly(this->var_poly_1aac, this->arr_pat_58f4[this->arr_i16_1eb8[0x1a]]);
-		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xd]]);
+		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xf]]);
 		g_toolbox->FramePoly(this->var_poly_1aac);
 		// 133:0582
 		if (this->var_i16_103a >= 3) {
@@ -227,7 +227,7 @@ void FoolGame::polyominoRun() {
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
 	this->polyominoCheckIfSolved();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = kStateNull;
 	do {
 		do {
 			this->sub_128_c6a(-1);
@@ -239,16 +239,16 @@ void FoolGame::polyominoRun() {
 				g_toolbox->Delay(1);
 			}
 			// 133:0800
-		} while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0));
+		} while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0));
 		// 133:081c
-		if (this->var_i16_7c6 == 2) {
+		if (this->stateFlags == kStateUndo) {
 			this->polyominoReset();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->polyominoStoreState();
 			this->sub_128_3536();
 		}
-	} while (((this->var_i16_7c6 & 1) == 0) && (this->var_i16_d0c == 0));
+	} while (((this->stateFlags & 1) == 0) && (this->var_i16_d0c == 0));
 	// 133:0864
 	if (this->var_i16_d0c != 0) {
 		this->polyominoSuccess();
@@ -474,7 +474,7 @@ void FoolGame::polyominoReset() {
 	// 133:12c2
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 }
 
 void FoolGame::polyominoDrawFrame() {
@@ -508,7 +508,7 @@ void FoolGame::polyominoCheckIfSolved() {
 	}
 	// 133:13ce
 	if (this->var_i16_d0c != 0) {
-		this->var_i16_7c6 = 1;
+		this->stateFlags = kStateReturn;
 	}
 }
 

@@ -111,7 +111,7 @@ void FoolGame::sub_128_004() {
 	this->sub_129_068();
 	this->var_i32_7c8 = g_zbasic->mem(-1);
 	// 128:1c88: JMP - [0x1ee2]
-	while (this->var_i16_7c6 != 0x20) {
+	while (this->stateFlags != kStateQuit) {
 		do {
 			this->sub_128_c6a(-1);
 			if (_quit)
@@ -166,36 +166,36 @@ void FoolGame::sub_128_004() {
 				this->sub_128_1c2c(0x100);
 			}
 		// 128:1e06
-		} while (this->var_i16_7c6 == 0);
+		} while (this->stateFlags == 0);
 
-		if (this->var_i16_7c6 & 0x1) {
+		if (this->stateFlags & kStateReturn) {
 			this->sub_128_1c4a(1);
 		}
-		if (this->var_i16_7c6 & 0x4) {
+		if (this->stateFlags & 0x4) {
 			this->sub_128_3536();
 		}
-		if (this->var_i16_7c6 & 0x8) {
+		if (this->stateFlags & 0x8) {
 			this->sub_128_2bc6();
 		}
-		if (this->var_i16_7c6 & 0x10) {
+		if (this->stateFlags & 0x10) {
 			this->sub_128_2e3e();
 		}
-		if (this->var_i16_7c6 & 0x40) {
+		if (this->stateFlags & 0x40) {
 			this->menuChapterSelect();
 		}
-		if (this->var_i16_7c6 & 0x200) {
+		if (this->stateFlags & 0x200) {
 			this->sub_128_1f44();
 		}
-		if (this->var_i16_7c6 & 0x80) {
+		if (this->stateFlags & 0x80) {
 			this->sub_128_39a0();
 		}
-		if (this->var_i16_7c6 & 0x100) {
+		if (this->stateFlags & 0x100) {
 			this->sub_138_004();
 		}
-		if (this->var_i16_7c6 & 0x400) {
+		if (this->stateFlags & 0x400) {
 			this->sub_128_2b0a();
 		}
-		if (this->var_i16_7c6 & 0x800) {
+		if (this->stateFlags & 0x800) {
 			this->sub_144_004();
 		}
 	// 128:1ee2
@@ -539,7 +539,7 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 	this->sub_128_4472();
 }
 
-void FoolGame::sub_128_c6a(int16 unk1) {
+void FoolGame::sub_128_c6a(uint16 unk1) {
 	// 128:0c6a
 
 	// This function is usually called at the start of an event processing loop,
@@ -554,14 +554,16 @@ void FoolGame::sub_128_c6a(int16 unk1) {
 	// 128:0caa
 	g_toolbox->GlobalToLocal(this->var_ev_46.where);
 	if (this->var_ev_46.what == kKeyDown) {
-		if ((this->var_ev_46.modifiers & kModCommandKeyDown) == 0) {
+		// the original just checked the command key,
+		// non-mac PCs expect the control key to work
+		if ((this->var_ev_46.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0) {
 			this->sub_128_5f9e();
 		} else {
 			this->sub_128_5baa();
 		}
 	}
 	// 128:0ce0
-	if ((this->var_ev_46.what == kAutoKey) && ((this->var_ev_46.modifiers & kModCommandKeyDown) == 0)) {
+	if ((this->var_ev_46.what == kAutoKey) && ((this->var_ev_46.modifiers & (kModCommandKeyDown | kModLControlKeyDown)) == 0)) {
 		this->sub_128_5f9e();
 	}
 	if (this->var_ev_46.what == kUpdateEvt) {
@@ -589,9 +591,17 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 			g_toolbox->InvertRect(this->arr_rect_5b7c);
 			this->var_i16_3a = 0;
 			do {
-				this->sub_128_c6a(0);
-				this->var_i16_3a += 1;
-			} while (!((unk1 == this->var_i16_3a) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
+				// originally this used sub_128_c6a, but we avoid that here
+				// so that menu events don't get intercepted.
+				// originally this mask was 0, but we change it here to
+				// intercept all events, and fall back to NullEvent +
+				// wait for vsync if no events were received.
+				this->var_i16_78a = g_toolbox->GetNextEvent(-1, this->var_ev_46);
+				if (this->var_ev_46.what == kNullEvent) {
+					g_toolbox->Delay(1);
+					this->var_i16_3a += 1;
+				}
+			} while (!((this->var_i16_3a >= (unk1*60/1000)) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
 		} while ((this->var_ev_46.modifiers & kModMouseButtonUp) != 0);
 	}
 }
@@ -880,14 +890,14 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 
 void FoolGame::sub_128_1c2c(int16 unk1) {
 	this->var_i16_30 = unk1;
-	this->var_i16_7c6 |= this->var_i16_30;
+	this->stateFlags |= this->var_i16_30;
 }
 
 void FoolGame::sub_128_1c4a(int16 unk1) {
 	// 128:1c4a
 	this->var_i16_30 = unk1;
-	if (this->var_i16_7c6 & this->var_i16_30) {
-		this->var_i16_7c6 ^= this->var_i16_30;
+	if (this->stateFlags & this->var_i16_30) {
+		this->stateFlags ^= this->var_i16_30;
 	}
 	// 128:1c78
 }
@@ -1143,7 +1153,7 @@ void FoolGame::sub_128_27d6() {
 	if (this->var_i16_7be == 3)
 		return;
 	if (this->var_i16_7ce & 1) {
-		this->sub_128_1c2c(9);
+		this->sub_128_1c2c(8 | kStateReturn);
 	} else {
 		this->sub_128_1c2c(8);
 	}
@@ -1255,9 +1265,9 @@ void FoolGame::sub_128_2ab6() {
 		return;
 	}
 	if ((this->var_i16_7ce & 1) != 0) {
-		this->sub_128_1c2c(0x21);
+		this->sub_128_1c2c(kStateQuit | kStateReturn);
 	} else {
-		this->sub_128_1c2c(0x20);
+		this->sub_128_1c2c(kStateQuit);
 	}
 }
 
@@ -1265,15 +1275,18 @@ void FoolGame::sub_128_2ab6() {
 void FoolGame::sub_128_2ae8() {
 	// 128:2ae8
 	if (this->var_i16_7ce & 1) {
-		this->var_i16_7c6 = 0x401;
+		this->stateFlags = 0x401;
 	} else {
-		this->var_i16_7c6 = 0x400;
+		this->stateFlags = 0x400;
 	}
 }
 
 
 
 void FoolGame::sub_128_2b0a() {
+	// 128:2b0a
+	this->stateFlags = 0;
+	// printing the story
 	warning("STUB: %s", __func__);
 }
 
@@ -1399,7 +1412,7 @@ void FoolGame::sub_128_2e3e() {
 
 void FoolGame::sub_128_3032() {
 	this->var_i16_7d0 = 0;
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->var_i16_484 = 0;
 	this->var_i16_68c = 3;
 	// render chapter menu headings
@@ -1559,7 +1572,7 @@ void FoolGame::sub_128_3536() {
 	// 128:372a
 	// 128:372a: LEA - [0x3818],A0
 	// 128:372e: MOVE.L - A0,-0x8ee(A5)
-	if (this->var_i16_7c6 == 0) {
+	if (this->stateFlags == 0) {
 		this->sub_128_37ce();
 		g_toolbox->InitCursor();
 	}
@@ -1620,7 +1633,7 @@ void FoolGame::sub_128_388a() {
 void FoolGame::sub_128_39a0() {
 	// 128:39a0
 	this->fillRect(0x127, 0x69, 0x138, 0x190, 0);
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->var_i16_c00 = 0;
 	this->var_i16_7d6 = 0;
 	this->var_i16_7b2 = 0xa;
@@ -1704,7 +1717,7 @@ void FoolGame::sub_128_39a0() {
 	}
 	// 128:3aa4
 	this->sub_128_41aa();
-	if ((this->var_i16_7c6 & 0x20) == 0) {
+	if ((this->stateFlags & kStateQuit) == 0) {
 		g_toolbox->PenNormal();
 		this->sub_128_0a2(1, 0);
 		this->var_menu_bf8 = g_toolbox->GetMHandle(8);
@@ -1767,11 +1780,11 @@ void FoolGame::sub_128_39a0() {
 	this->var_i16_c02 = 0;
 	this->var_i16_c00 = 0;
 	g_toolbox->SetPort(this->var_i32_0);
-	if ((this->var_i16_7c6 & 0x38) == 0) {
+	if ((this->stateFlags & 0x38) == 0) {
 		if ((this->var_i16_7ce & 1) == 0) {
 			this->var_i16_7ce ^= 1;
 		}
-		if ((this->var_i16_7c6 & 0x40) == 0) {
+		if ((this->stateFlags & 0x40) == 0) {
 			this->storyRenderPage();
 		}
 	}
@@ -1850,12 +1863,22 @@ void FoolGame::sub_128_4168() {
 		this->var_i16_c04 = 0x65;
 	}
 	this->var_str_c06 = g_zbasic->index(2, this->var_i16_7e2);
+	if (debugChannelSet(5, kDebugLoading)) {
+		Common::String inter = this->var_str_c06.encode(Common::kMacRoman);
+		debugC(5, kDebugLoading, "sub_128_4168: loading puzzle %d context, state %d", this->var_i16_7e2, this->var_i16_c04);
+		Common::hexdump((const byte *)inter.c_str(), inter.size());
+	}
 }
 
 void FoolGame::sub_128_41aa() {
 	// 128:41aa
 	this->arr_i16_1c5a[this->var_i16_7e2] = this->var_i16_c04;
 	g_zbasic->indexSet(this->var_str_c06, 2, this->var_i16_7e2);
+	if (debugChannelSet(5, kDebugLoading)) {
+		Common::String inter = this->var_str_c06.encode(Common::kMacRoman);
+		debugC(5, kDebugLoading, "sub_128_41aa: saving puzzle %d context, state %d", this->var_i16_7e2, this->var_i16_c04);
+		Common::hexdump((const byte *)inter.c_str(), inter.size());
+	}
 }
 
 void FoolGame::sub_128_41d8() {
@@ -2211,7 +2234,7 @@ void FoolGame::sub_128_5baa() {
 }
 
 void FoolGame::sub_128_5c20() {
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	if (this->selectedMenuID == 1) { // Eye menu
 		this->sub_128_4a92();
 	}
@@ -2272,18 +2295,18 @@ void FoolGame::sub_128_5c20() {
 		}
 		// 128:5e38
 		if (((this->var_i16_7ce & 1) != 0) && (this->var_i16_e1a == 0)) {
-			this->sub_128_1c2c(0x41);
+			this->sub_128_1c2c(0x40 | kStateReturn);
 		}
 		// 128:5e5e
 		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1) && (this->var_i16_7d0 != this->selectedMenuChapter)) {
-			this->sub_128_1c2c(0x41);
+			this->sub_128_1c2c(0x40 | kStateReturn);
 			this->var_i16_7ce |= 0x4;
 		}
 	}
 	// 128:5eaa
 	if (this->selectedMenuID == 8) { // Puzzle menu
 		if (this->selectedMenuItem == 1) {
-			this->sub_128_1c2c(1);
+			this->sub_128_1c2c(kStateReturn);
 		}
 		// 128:5ec6
 		if ((this->selectedMenuItem == 3) && (this->var_i16_c00 == 1)) {
@@ -2301,7 +2324,7 @@ void FoolGame::sub_128_5ef0() {
 
 void FoolGame::sub_128_5f16() {
 	// 128:5f16
-	if (this->var_i16_7c6 == 4) {
+	if (this->stateFlags == 4) {
 		if (this->arr_i16_1eb8[0] < 1) {
 			this->arr_i16_1eb8[0] = 1;
 		}
@@ -2309,7 +2332,7 @@ void FoolGame::sub_128_5f16() {
 		this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
 	}
 	// 128:5f70
-	if ((this->var_i16_7c6 & 1) != 0) {
+	if ((this->stateFlags & 1) != 0) {
 		this->sub_128_6186();
 		this->sub_128_0a2(1, 0x2af8);
 	}
@@ -2365,22 +2388,24 @@ void FoolGame::sub_128_6186() {
 	// 128:6186
 	// wait until mouse button is up
 	do {
-		this->var_i16_7a8 = g_toolbox->GetNextEvent(6, this->var_ev_46);
+		// was originally a mask of 6
+		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
 		if (this->var_ev_46.what == kNullEvent)
-			g_toolbox->Delay(0);
+			g_toolbox->Delay(1);
 	} while ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0);
 }
 
 void FoolGame::sub_128_61c2() {
 	// 128:61c2
+	this->sub_128_6186();
 	do {
-		this->sub_128_6186();
-		this->var_i16_7a8 = g_toolbox->GetNextEvent(2, this->var_ev_46);
+		// was originally a mask of 2
+		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
 		if (this->var_ev_46.what == kNullEvent)
-			g_toolbox->Delay(0);
-	} while ((this->var_ev_46.what != 1));
+			g_toolbox->Delay(1);
+	} while ((this->var_ev_46.what != kMouseDown));
 	this->sub_128_6186();
 }
 
@@ -2869,10 +2894,10 @@ void FoolGame::sub_129_068() {
 	// 129:11f6
 	if (g_zbasic->str(157) == this->var_str_8ec) { // empty
 		// cold start
-		this->var_i16_7c6 = 8;
+		this->stateFlags = 8;
 	} else {
 		// loading a save game
-		this->var_i16_7c6 = 0x10;
+		this->stateFlags = 0x10;
 		this->var_str_588 = this->var_str_8ec;
 		this->var_i16_688 = this->var_i16_9ec;
 	}
