@@ -81,12 +81,12 @@ void FoolGame::sunMapRun() {
 		g_zbasic->picture(this->arr_rect_1f38[i].left, this->arr_rect_1f38[i].top, this->arr_i32_192c0[this->arr_i16_4bd8[i]]);
 	}
 	// 137:0336
-	this->var_i16_7c6 = 0;
+	this->stateFlags = kStateNull;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
 	this->sunMapCheckIfSolved();
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_i16_d0c == 0)) {
-		while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0)) {
+	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
+		while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0)) {
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseDown) {
 				this->sunMapOnClick();
@@ -95,10 +95,10 @@ void FoolGame::sunMapRun() {
 				g_toolbox->Delay(0);
 		}
 		// 137:038a
-		if (this->var_i16_7c6 == 2) {
+		if (this->stateFlags == 2) {
 			this->sunMapUndoMove();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_128_3536();
 		}
 	}
@@ -255,7 +255,7 @@ void FoolGame::sunMapMoveSelected() {
 
 void FoolGame::sunMapUndoMove() {
 	// 137:0d60
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
@@ -336,7 +336,7 @@ void FoolGame::sunMapCheckIfSolved() {
 	}
 	// 137:1306
 	if (this->var_i16_d0c != 0) {
-		this->var_i16_7c6 = 1;
+		this->stateFlags = kStateReturn;
 	}
 }
 

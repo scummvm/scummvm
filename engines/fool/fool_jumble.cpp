@@ -288,7 +288,7 @@ void FoolGame::jumbleRun() {
 			default:
 				break;
 			}
-			if ((this->var_i16_7c6 & 1) != 0) {
+			if ((this->stateFlags & 1) != 0) {
 				this->sub_130_c66();
 				this->jumbleCurrentSubPuzzle = this->jumbleSubPuzzleCount;
 			} else {
@@ -317,7 +317,7 @@ void FoolGame::jumbleRun() {
 		}
 		// 130:0a5c
 	}
-	if ((this->var_i16_7c6 & 1) != 0) {
+	if ((this->stateFlags & 1) != 0) {
 		// JMP 0x2962
 		return;
 	}
@@ -332,21 +332,28 @@ void FoolGame::jumbleRun() {
 		while ((this->var_ev_46.modifiers & kModMouseButtonUp) != 0) {
 			// 130:0aa0
 			if (this->arr_i16_4338[0] > 0) {
+				// strobe the squares in the victory list
 				if (this->arr_i16_4338[0] == 1) {
-					this->var_i16_7e4 = 0x64;
+					// originally was 0x64, lock to 200ms
+					this->var_i16_7e4 = 0xc8;
 				} else {
-					this->var_i16_7e4 = 0xd;
+					// originally was 0xd, lock to 2 frames
+					this->var_i16_7e4 = 0x22;
 				}
 				this->var_i16_68a = 0;
 				do {
-					g_toolbox->Delay(this->var_i16_7e4*60/1000);
+					int ticks = (int)g_toolbox->TickCount();
 					this->var_i16_68a++;
 					g_toolbox->InvertRect(this->arr_rect_1f38[this->arr_i16_4338[this->var_i16_68a]]);
-					this->sub_128_c6a(0);
+					// mask was originally 0
+					this->sub_128_c6a(-1);
+					int delta = MAX(0, this->var_i16_7e4*60/1000 - ((int)g_toolbox->TickCount() - ticks));
+					g_toolbox->Delay(delta);
 				} while (!((this->var_i16_68a == this->arr_i16_4338[0]) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
 			} else {
 			// 130:0b62
-				this->sub_128_c6a(0);
+				// mask was originally 0
+				this->sub_128_c6a(-1);
 			}
 		}
 	// 130:0b7a
@@ -380,7 +387,7 @@ void FoolGame::sub_130_c56() {
 	// 130:0c56
 	this->sub_130_c66();
 	this->sub_128_3536();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 }
 
 void FoolGame::sub_130_c66() {
@@ -414,13 +421,13 @@ void FoolGame::sub_130_d2e() {
 	// 130:0d2e
 	this->sub_130_1426();
 	this->sub_128_61ec();
-	this->var_i16_7c6 = 0;
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	this->stateFlags = 0;
+	while (((this->stateFlags & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
 		this->sub_128_c6a(-1);
 		if (this->var_ev_46.what == 1) {
 			this->sub_130_1476();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_130_c56();
 		}
 	}
@@ -466,10 +473,10 @@ void FoolGame::sub_130_d90() {
 	this->var_i16_106e = 1;
 	this->sub_130_1c1a();
 	this->sub_128_61ec();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->keyLastPressed = 0;
 	// 130:0fa0
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	while (((this->stateFlags & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
 		// 130:0fa4
 		this->sub_128_c6a(-1);
 		if (this->keyLastPressed != 0) {
@@ -478,7 +485,7 @@ void FoolGame::sub_130_d90() {
 		if (this->var_ev_46.what == 1) {
 			this->sub_130_1476();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_130_c56();
 		}
 	}
@@ -494,10 +501,10 @@ void FoolGame::sub_130_1004() {
 	}
 	this->sub_130_20d2();
 	this->sub_128_61ec();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->keyLastPressed = 0;
 	// 130:1042
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	while (((this->stateFlags & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
 		this->sub_128_c6a(-1);
 		if (this->keyLastPressed != 0) {
 			this->sub_130_15da();
@@ -505,7 +512,7 @@ void FoolGame::sub_130_1004() {
 		if (this->var_ev_46.what == 1) {
 			this->sub_130_1476();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_130_c56();
 		}
 	}
@@ -526,14 +533,14 @@ void FoolGame::sub_130_10a6() {
 	}
 	// 130:1212
 	this->sub_128_61ec();
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	// 130:121c
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_str_1070 != this->var_str_1170) && (this->var_str_1070 != this->var_str_177c)) {
+	while (((this->stateFlags & 1) == 0) && (this->var_str_1070 != this->var_str_1170) && (this->var_str_1070 != this->var_str_177c)) {
 		this->sub_128_c6a(-1);
 		if (this->var_ev_46.what == 1) {
 			this->sub_130_1476();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_130_c56();
 		}
 	}
@@ -548,10 +555,10 @@ void FoolGame::sub_130_1282() {
 	this->sub_130_20d2();
 	this->sub_128_61ec();
 	this->var_i16_7b2 = 0;
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->keyLastPressed = 0;
 	g_toolbox->InitCursor();
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
+	while (((this->stateFlags & 1) == 0) && (this->var_str_1070 != this->var_str_1170)) {
 		// 130:12cc
 		this->sub_128_c6a(-1);
 		if (this->keyLastPressed != 0) {
@@ -578,7 +585,7 @@ void FoolGame::sub_130_1282() {
 		}
 		// 130:13e2
 		this->var_i16_7b2 = this->var_i16_187c;
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->sub_130_c56();
 		}
 	}

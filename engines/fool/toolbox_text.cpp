@@ -37,7 +37,7 @@ void Toolbox::DrawChar(Common::u32char_type_t ch) {
 void Toolbox::DrawString(const Common::U32String &s) {
 	if (_port) {
 		Common::String macString = s.encode(Common::kMacRoman);
-		debugN(5, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
+		debugC(5, kDebugGraphics, "Toolbox::DrawString: (%d, %d) %s\n", _port->pnLoc.x, _port->pnLoc.y, s.encode().c_str());
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		const Graphics::Font *font = fontRun.getFont();
 		Common::Rect bbox = font->getBoundingBox(macString);
@@ -80,7 +80,7 @@ uint16 Toolbox::StringWidth(const Common::U32String &s) {
 		Common::String macString = s.encode(Common::kMacRoman);
 		Graphics::MacFontRun fontRun(&g_engine->_wm, _port->txFont, _port->txFace, _port->txSize, 0, 0, 0);
 		uint16 result = fontRun.getFont()->getStringWidth(macString);
-		debug(5, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
+		debugC(5, kDebugGraphics, "Toolbox::StringWidth: %s -> %d", s.encode().c_str(), result);
 		return result;
 	}
 	return 0;
