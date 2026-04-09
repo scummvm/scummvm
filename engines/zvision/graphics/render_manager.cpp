@@ -74,7 +74,6 @@ RenderManager::RenderManager(ZVision *engine, const ScreenLayout layout, const G
 	_menuSurface.create(_menuArea.width(), _menuArea.height(), _pixelFormat);
 	_textSurface.create(_textArea.width(), _textArea.height(), _pixelFormat);
 	debugC(1, kDebugGraphics, "render manager created");
-	initialize(false);
 }
 
 RenderManager::~RenderManager() {
@@ -90,7 +89,7 @@ RenderManager::~RenderManager() {
 	_screen.free();
 }
 
-void RenderManager::initialize(bool hiRes) {
+Common::Error RenderManager::initialize(bool hiRes) {
 	debugC(1, kDebugGraphics, "Initializing render manager");
 	_hiRes = hiRes;
 
@@ -118,8 +117,14 @@ void RenderManager::initialize(bool hiRes) {
 	} else
 		debugC(1, kDebugGraphics, "Switching to standard resolution");
 #endif
-	_screen.create(_screenArea.width(), _screenArea.height(), _engine->_screenPixelFormat);
-	_screen.setTransparentColor((uint32)-1);
+
+	// Set hardware/window resolution
+	initGraphics(_screenArea.width(), _screenArea.height(), nullptr);
+
+	if (g_system->getScreenFormat().isCLUT8())
+		return Common::kUnsupportedColorMode;
+
+	_screen.create(_screenArea.width(), _screenArea.height(), g_system->getScreenFormat());
 	_screen.clear();
 
 	debugC(1, kDebugGraphics, "_workingAreaCenter = %d,%d", _workingAreaCenter.x, _workingAreaCenter.y);
@@ -154,11 +159,10 @@ void RenderManager::initialize(bool hiRes) {
 	clearTextSurface(true);
 	debugC(2, kDebugGraphics, "Backbuffers cleared");
 
-	// Set hardware/window resolution
-	debugC(1, kDebugGraphics, "_screen.w = %d, _screen.h = %d", _screen.w, _screen.h);
-	initGraphics(_screen.w, _screen.h, &_engine->_screenPixelFormat);
 	_frameLimiter.initialize();
 	debugC(1, kDebugGraphics, "Render manager initialized");
+
+	return Common::kNoError;
 }
 
 bool RenderManager::renderSceneToScreen(bool immediate, bool overlayOnly, bool preStream) {

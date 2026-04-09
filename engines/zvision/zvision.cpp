@@ -89,7 +89,6 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	: Engine(syst),
 	  _gameDescription(gameDesc),
 	  _resourcePixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), /* RGB 555 */
-	  _screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), /* RGB 565 */
 	  _clock(_system),
 	  _scriptManager(nullptr),
 	  _renderManager(nullptr),
@@ -180,7 +179,7 @@ void ZVision::saveSettings() {
 	ConfMan.flushToDisk();
 }
 
-void ZVision::initialize() {
+Common::Error ZVision::initialize() {
 	// Graphics
 	_widescreen = ConfMan.getBool("widescreen");
 	_doubleFPS = ConfMan.getBool("doublefps");
@@ -225,7 +224,9 @@ void ZVision::initialize() {
 
 
 	// Initialize the managers
-	_renderManager->initialize();
+	Common::Error err = _renderManager->initialize();
+	if (err.getCode() != Common::kNoError)
+		return err;
 	_cursorManager->initialize();
 	_scriptManager->initialize();
 	_stringManager->initialize(getGameId());
@@ -246,12 +247,16 @@ void ZVision::initialize() {
 	getTimerManager()->installTimerProc(&fpsTimerCallback, 1000000, this, "zvisionFPS");
 	// Ensure a new game is launched with correct panorama quality setting
 	_scriptManager->setStateValue(StateKey_HighQuality, ConfMan.getBool("highquality"));
+
+	return Common::kNoError;
 }
 
 extern const FontStyle getSystemFont(int fontIndex);
 
 Common::Error ZVision::run() {
-	initialize();
+	Common::Error err = initialize();
+	if (err.getCode() != Common::kNoError)
+		return err;
 
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
