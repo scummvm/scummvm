@@ -108,7 +108,23 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	}
 
 	// For some reason, DIB cast members have the palette indices reversed
-	if (_bitsPerPixel == 8) {
+	if (_bitsPerPixel == 2) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				// We're not su[pposed to modify the image that is coming from the decoder
+				// However, in this case, we know what we're doing.
+				*const_cast<byte *>((const byte *)_surface->getBasePtr(x, y)) = 3 - *(const byte *)_surface->getBasePtr(x, y);
+			}
+		}
+	} else if (_bitsPerPixel == 4) {
+		for (int y = 0; y < _surface->h; y++) {
+			for (int x = 0; x < _surface->w; x++) {
+				// We're not su[pposed to modify the image that is coming from the decoder
+				// However, in this case, we know what we're doing.
+				*const_cast<byte *>((const byte *)_surface->getBasePtr(x, y)) = 15 - *(const byte *)_surface->getBasePtr(x, y);
+			}
+		}
+	} else if (_bitsPerPixel == 8) {
 		for (int y = 0; y < _surface->h; y++) {
 			for (int x = 0; x < _surface->w; x++) {
 				// We're not su[pposed to modify the image that is coming from the decoder
