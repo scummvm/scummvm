@@ -1676,7 +1676,7 @@ int MacText::getMouseWord(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getLineCharacter(x, y, &dx, &dy, &row, &col);
+	getRowCol(x, y, &dx, &dy, &row, &col);
 
 	int index = 1;
 	bool inWhitespace = true;
@@ -1748,7 +1748,7 @@ int MacText::getMouseItem(int x, int y) {
 	y += _scrollPos;
 
 	int dx, dy, row, col;
-	getLineCharacter(x, y, &dx, &dy, &row, &col);
+	getRowCol(x, y, &dx, &dy, &row, &col);
 
 	// getMouseItem
 	// - starts from index 1
