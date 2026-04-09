@@ -30,6 +30,13 @@
 
 namespace Fool {
 
+enum FoolStateFlag : uint16 {
+	kStateNull = 0x00,
+	kStateReturn = 0x01,
+	kStateUndo = 0x02,
+	kStateQuit = 0x20,
+};
+
 class FoolGame {
 public:
 	FoolGame() {}
@@ -60,7 +67,7 @@ public:
 	void sub_128_918(const Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_c6a(int16 unk1);
+	void sub_128_c6a(uint16 unk1);
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
@@ -309,7 +316,7 @@ private:
 	int16 var_i16_7be;
 	int16 keyLastPressed; // var_i16_7c0
 	PicHandle var_pic_7c2;
-	int16 var_i16_7c6;
+	uint16 stateFlags; // var_i16_7c6
 	uint32 var_i32_7c8;
 	int16 var_i16_7cc;
 	int16 var_i16_7ce;

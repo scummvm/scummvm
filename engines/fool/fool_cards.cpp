@@ -105,18 +105,18 @@ void FoolGame::cardsRun() {
 	this->arr_rect_4338.bottom = 0xee;
 	this->arr_rect_4338.right = 0x11e;
 	this->var_i16_2012 = 0;
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	this->cardsDrawScores();
 	if (this->var_i16_2010 == 0) {
 		this->cardsShuffleDeck();
 	}
 	// 139:0456
 	this->sub_139_582();
-	while ((this->var_i16_7c6 & 1) == 0) {
+	while ((this->stateFlags & 1) == 0) {
 		// 139:045e
 		this->var_i16_2014 = 0;
-		this->var_i16_7c6 = 0;
-		while (this->var_i16_7c6 == 0) {
+		this->stateFlags = 0;
+		while (this->stateFlags == 0) {
 			// 139:046e
 			this->sub_128_c6a(-1);
 			if ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) {
@@ -130,10 +130,10 @@ void FoolGame::cardsRun() {
 			}
 		}
 		// 139:04a4
-		if (this->var_i16_7c6 == 2) {
+		if (this->stateFlags == 2) {
 			this->sub_139_4de();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->cardsStoreState();
 			this->sub_128_3536();
 		}
@@ -280,13 +280,13 @@ void FoolGame::cardsOnClick() {
 		g_zbasic->text(0xfc, 9, Graphics::kMacFontRegular, kSrcBic);
 		this->sub_128_918(g_zbasic->str(282)); // (click mouse to continue)
 		this->var_i16_2014 = 0;
-		this->var_i16_7c6 = 0;
-		while ((this->var_i16_7c6 == 0) && (this->var_i16_2014 == 0)) {
+		this->stateFlags = 0;
+		while ((this->stateFlags == 0) && (this->var_i16_2014 == 0)) {
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseUp) {
 				this->var_i16_2014 = 1;
 			}
-			if (this->var_i16_7c6 == 4) {
+			if (this->stateFlags == 4) {
 				this->cardsStoreState();
 				this->sub_128_3536();
 			}
@@ -295,8 +295,8 @@ void FoolGame::cardsOnClick() {
 			}
 		}
 		// 139:09d8
-		if (((this->var_i16_7c6 & 1) == 0) && (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
-			this->var_i16_7c6 = 2;
+		if (((this->stateFlags & 1) == 0) && (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
+			this->stateFlags = 2;
 			this->var_i16_2014 = 0;
 		}
 	}
@@ -702,7 +702,7 @@ void FoolGame::cardsStoreState() {
 
 void FoolGame::sub_139_1d3e() {
 	// 139:1d3e
-	this->var_i16_7c6 = 1;
+	this->stateFlags = 1;
 	if (this->var_i16_c04 >= 0x64) {
 		this->var_i16_c04 = 0x64;
 	}

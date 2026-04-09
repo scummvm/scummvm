@@ -81,7 +81,7 @@ void FoolGame::revealRun() {
 	this->arr_i16_1eb8[19] = g_zbasic->unk_310(this->var_str_c06);
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
 	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
-	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
+	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
 		// play a random tone and draw each of the letter buttons in sequence
 		this->sub_128_50e(
 			g_zbasic->rndInt(0x3e8) + 0x19,
@@ -89,30 +89,30 @@ void FoolGame::revealRun() {
 			1
 		);
 		// 134:0352
-		this->arr_rect_1f38[i].top = 0x10f;
-		this->arr_rect_1f38[i].left = this->var_i16_1aba;
-		this->arr_rect_1f38[i].bottom = 0x137;
-		this->arr_rect_1f38[i].right = this->var_i16_1aba + this->arr_i16_1eb8[17];
+		this->arr_rect_1f38[this->var_i16_7be].top = 0x10f;
+		this->arr_rect_1f38[this->var_i16_7be].left = this->var_i16_1aba;
+		this->arr_rect_1f38[this->var_i16_7be].bottom = 0x137;
+		this->arr_rect_1f38[this->var_i16_7be].right = this->var_i16_1aba + this->arr_i16_1eb8[17];
 
 		this->var_i16_1aba += this->arr_i16_1eb8[17];
 		// 134:03fc
-		g_toolbox->FillRoundRect(this->arr_rect_1f38[i], 0x19, 0x19, this->arr_pat_58f4[0]);
-		g_toolbox->FrameRoundRect(this->arr_rect_1f38[i], 0x19, 0x19);
+		g_toolbox->FillRoundRect(this->arr_rect_1f38[this->var_i16_7be], 0x19, 0x19, this->arr_pat_58f4[0]);
+		g_toolbox->FrameRoundRect(this->arr_rect_1f38[this->var_i16_7be], 0x19, 0x19);
 		// 134:0448
-		this->var_str_384 = g_zbasic->midStr(this->var_str_1272, i, 1);
+		this->var_str_384 = g_zbasic->midStr(this->var_str_1272, this->var_i16_7be, 1);
 		this->var_i16_7ba = g_toolbox->StringWidth(this->var_str_384);
 		g_toolbox->MoveTo(
-			this->arr_rect_1f38[i].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),
+			this->arr_rect_1f38[this->var_i16_7be].left + (this->arr_i16_1eb8[17] / 2) - (this->var_i16_7ba / 2),
 			0x127
 		);
 		g_toolbox->DrawString(this->var_str_384);
 		// 134:04d6
-		if (this->arr_i16_1eb8[19] & this->bitLUT[this->arr_i16_3738[i] - 1]) {
+		if (this->arr_i16_1eb8[19] & this->bitLUT[this->arr_i16_3738[this->var_i16_7be] - 1]) {
 			this->revealSelectButton();
 		}
 	}
 	// 134:0538
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 	if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
 		this->var_i16_d0c = 1;
 	} else {
@@ -123,9 +123,9 @@ void FoolGame::revealRun() {
 	// 134:057a
 	// 134:057a: JMP - [0x61e]
 	// main event loop
-	while (((this->var_i16_7c6 & 1) == 0) && (this->var_i16_d0c == 0)) {
+	while (((this->stateFlags & 1) == 0) && (this->var_i16_d0c == 0)) {
 		// 134:057e
-		while ((this->var_i16_7c6 == 0) && (this->var_i16_d0c == 0)) {
+		while ((this->stateFlags == 0) && (this->var_i16_d0c == 0)) {
 			// 134:0582
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseDown) {
@@ -140,10 +140,10 @@ void FoolGame::revealRun() {
 			}
 		}
 		// 134:05e2
-		if (this->var_i16_7c6 == 2) {
+		if (this->stateFlags == 2) {
 			this->revealReset();
 		}
-		if (this->var_i16_7c6 == 4) {
+		if (this->stateFlags == 4) {
 			this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
 			this->sub_128_3536();
 		}
@@ -201,7 +201,7 @@ void FoolGame::revealReset() {
 	}
 	// 134:085c
 	this->arr_i16_1eb8[19] = 0;
-	this->var_i16_7c6 = 0;
+	this->stateFlags = 0;
 }
 
 void FoolGame::revealSuccess() {

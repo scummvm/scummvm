@@ -63,13 +63,13 @@ void FoolGame::deathRun() {
 				return;
 			}
 			// 141:0200
-			if (this->var_i16_7c6 == 2) {
-				this->var_i16_7c6 = 0;
+			if (this->stateFlags == 2) {
+				this->stateFlags = 0;
 			}
-			if (this->var_i16_7c6 == 4) {
+			if (this->stateFlags == 4) {
 				this->sub_128_3536();
 			}
-			if ((this->var_i16_7c6 & 1)) {
+			if ((this->stateFlags & 1)) {
 				// 141:09f6
 				this->deathDrawWhiteEye();
 				return;
@@ -87,10 +87,10 @@ void FoolGame::deathRun() {
 			// 141:0282
 			this->deathMoveBlackEye();
 			this->sub_128_c6a(-1);
-			if (this->var_i16_7c6 == 2) {
-				this->var_i16_7c6 = 0;
+			if (this->stateFlags == 2) {
+				this->stateFlags = 0;
 			}
-			if (this->var_i16_7c6 == 4) {
+			if (this->stateFlags == 4) {
 				this->sub_128_3536();
 			}
 			if (this->var_ev_46.what == kNullEvent)
