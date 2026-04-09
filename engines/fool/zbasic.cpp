@@ -648,10 +648,14 @@ void ZBasic::writeFileDblInt(int16 fileNo, int32 data) {
 }
 
 Common::U32String ZBasic::unk_88(uint16 unk1) {
-	Common::U32String result;
-	result.push_back(unk1 >> 8);
-	result.push_back(unk1 & 0xff);
-	return result;
+	// convert uint16 data into string bytes.
+	// all of the toolbox APIs use U32String and convert when
+	// necessary to MacRoman, and unfortunately that's what
+	// we have to do there too.
+	Common::String inter;
+	inter.push_back((char)(unk1 >> 8));
+	inter.push_back((char)(unk1 & 0xff));
+	return inter.decode(Common::kMacRoman);
 }
 
 void ZBasic::unk_130(int16 unk1) {
@@ -663,13 +667,14 @@ void ZBasic::unk_158() {
 }
 
 uint16 ZBasic::unk_310(const Common::U32String &unk1) {
+	Common::String inter = unk1.encode(Common::kMacRoman);
 	uint16 result = 0;
-	if (unk1.size() == 0)
+	if (inter.size() == 0)
 		return result;
-	result |= unk1[0] << 8;
-	if (unk1.size() == 1)
+	result |= (byte)(inter[0]) << 8;
+	if (inter.size() == 1)
 		return result;
-	result |= unk1[1];
+	result |= (byte)(inter[1]);
 	return result;
 }
 
