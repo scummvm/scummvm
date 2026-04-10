@@ -794,6 +794,8 @@ public:
 	// simply unhighlights whichever menu title is highlighted (if any).
 	void HiliteMenu(uint16 menuID);
 
+	uint32 MenuKey(char ch);
+
 	// FUNCTION MenuSelect(startPt: Point): LONGINT;
 	// When there's a mouse-down event in the menu bar, the application should call MenuSelect with
 	// startPt equal to the point (in global coordinates) where the mouse button was pressed.
