@@ -23,10 +23,6 @@
 
 #include "graphics/scalerplugin.h"
 
-#ifndef DISABLE_DEFAULT_EVENT_MANAGER
-#include "backends/events/default/default-events.h"
-#endif
-
 #ifndef DISABLE_DEFAULT_AUDIOCD_MANAGER
 #include "backends/audiocd/default/default-audiocd.h"
 #endif
@@ -84,14 +80,4 @@ void BaseBackend::fillScreen(const Common::Rect &r, uint32 col) {
 	if (screen)
 		screen->fillRect(r, col);
 	unlockScreen();
-}
-
-void EventsBaseBackend::initBackend() {
-	// Init Event manager
-#ifndef DISABLE_DEFAULT_EVENT_MANAGER
-	if (!_eventManager)
-		_eventManager = new DefaultEventManager(this);
-#endif
-
-	BaseBackend::initBackend();
 }

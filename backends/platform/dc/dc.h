@@ -68,7 +68,7 @@ public:
 	void stop() override;
 };
 
-class OSystem_Dreamcast : private DCHardware, public EventsBaseBackend, public PaletteManager, public FilesystemFactory
+class OSystem_Dreamcast : virtual public BaseBackend, public Common::EventSource, private DCHardware, public PaletteManager, public FilesystemFactory
 #ifdef DYNAMIC_MODULES
   , public FilePluginProvider
 #endif
