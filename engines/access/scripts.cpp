@@ -509,7 +509,8 @@ void Scripts::printString(const Common::String &msg, Common::Point pt) {
 		_vm->_screen->_printOrg = _vm->_screen->_printStart = pt;
 		_vm->_timers[PRINT_TIMER]._timer = 50;
 		_vm->_timers[PRINT_TIMER]._initTm = 50;
-		++_vm->_timers[PRINT_TIMER]._flag;
+		// Don't enable the timer in Noctropolis, just wait for click?
+		// ++_vm->_timers[PRINT_TIMER]._flag;
 
 		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctCenter);
 		if (_vm->_player->_roomNumber <= 4)
