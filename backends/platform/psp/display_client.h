@@ -82,7 +82,7 @@ public:
 	bool allocate();
 	void deallocate();
 	void clear();
-	void setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType, bool swapRedBlue = false);
+	void setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::Type bufferType);
 	void setNumOfEntries(uint32 num) {	_numOfEntries = num; }
 	uint32 getNumOfEntries() const { return _numOfEntries; }
 	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_numOfEntries); }
@@ -124,7 +124,7 @@ public:
 	void setSize(uint32 width, uint32 height, HowToSize textureOrSource = kSizeByTextureSize);
 	void setBitsPerPixel(uint32 bits) { _pixelFormat.bitsPerPixel = bits; }
 	void setBytesPerPixel(uint32 bytes) { setBitsPerPixel(bytes << 3); }
-	void setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue = false);
+	void setPixelFormat(PSPPixelFormat::Type type);
 
 	// getters
 	uint32 getWidth() const { return _width; }

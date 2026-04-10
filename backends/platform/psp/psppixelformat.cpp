@@ -29,12 +29,11 @@
 
 // class PSPPixelFormat --------------------------------------
 
-void PSPPixelFormat::set(Type type, bool swap /* = false */) {
+void PSPPixelFormat::set(Type type) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("type = %d\n", type);
 
 	format = type;
-	swapRB = swap;
 
 	switch (type) {
 	case Type_4444:
@@ -43,7 +42,6 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 		bitsPerPixel = 16;
 		break;
 	case Type_8888:
-	case Type_8888_RGBA:
 		bitsPerPixel = 32;
 		break;
 	case Type_Palette_8bit:
@@ -68,9 +66,7 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 // For buffer and palette.
 void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
 		PSPPixelFormat::Type &bufferType,
-		PSPPixelFormat::Type &paletteType,
-		bool &swapRedBlue) {
-	swapRedBlue = false;	 // no red-blue swap by default
+		PSPPixelFormat::Type &paletteType) {
 	PSPPixelFormat::Type *target = nullptr;	// which one we'll be filling
 
 	if (!pf) {	// Default, pf is NULL
@@ -97,10 +93,8 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 				*target = Type_5650;
 		} else if (pf->rLoss == 4 && pf->gLoss == 4 && pf->bLoss == 4) {
 			*target = Type_4444;
-		} else if (pf->gLoss == 0 && pf->gShift == 8) {
+		} else if (pf->rLoss == 0 && pf->gLoss == 0 && pf->bLoss == 0) {
 			*target = Type_8888;
-		} else if (pf->gLoss == 0 && pf->gShift == 16) {
-			*target = Type_8888_RGBA;
 		} else if ((pf->gLoss == 0 && pf->gShift == 0) ||
 		           (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
 			*target = Type_5551;
@@ -110,11 +104,6 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 			          pf->rLoss, pf->gLoss, pf->bLoss, pf->aLoss,
 			          pf->rShift, pf->gShift, pf->bShift, pf->aShift);
 			*target = Type_Unknown;
-		}
-
-		if (pf->rShift != 0)	{// We allow backend swap of red and blue
-			swapRedBlue = true;
-			PSP_DEBUG_PRINT("detected red/blue swap\n");
 		}
 	}
 }
@@ -157,7 +146,6 @@ Graphics::PixelFormat PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat
 		pf.bShift = 11;
 		break;
 	case Type_8888:
-	case Type_8888_RGBA:
 		pf.bytesPerPixel = 4;
 		pf.aLoss = 0;
 		pf.rLoss = 0;

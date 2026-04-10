@@ -88,36 +88,3 @@ inline void *psp_memcpy(void *dst, const void *src, int32 bytes) {
 }
 
 #endif /* PSP_MEMORY_H */
-
-#if defined(PSP_INCLUDE_SWAP) && !defined(PSP_MEMORY_SWAP_H)
-#define PSP_MEMORY_SWAP_H
-
-//#include "backends/platform/psp/psppixelformat.h"
-
-class PspMemorySwap {
-private:
-	static void testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format);
-	static void swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
-	static void swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes, PSPPixelFormat &format);
-	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
-	// For swapping, we know that we have multiples of 16 bits
-	static void swap16(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format) {
-		PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
-		uint32 shorts = bytes >> 1;
-
-		while (shorts--) {
-			*dst16++ = format.swapRedBlue16(*src16++);
-		}
-	}
-
-public:
-	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
-		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY * 2) {
-			swap16((uint16 *)dst, (const uint16 *)src, bytes, format);
-		} else {	// go to more powerful copy
-			swap((uint16 *)dst, (const uint16 *)src, bytes, format);
-		}
-	}
-};
-
-#endif /* PSP_INCLUDE_SWAP */
