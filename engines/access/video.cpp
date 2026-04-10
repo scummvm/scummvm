@@ -58,9 +58,17 @@ void VideoPlayer::closeVideo() {
 }
 
 void VideoPlayer::playToEnd() {
+	Common::CustomEventType action = kActionNone;
 	while (!_vm->shouldQuit() && _videoData && !_videoEnd) {
 		playVideo();
 		_vm->_events->pollEvents();
+
+		_vm->_events->getAction(action);
+		if (action == kActionSkip) {
+			_videoEnd = true;
+			continue;
+		}
+
 		// TODO: This is not very exact, should calculate expected frame time etc.
 		delayToNextFrame();
 	}
