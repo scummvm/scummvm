@@ -166,9 +166,10 @@ systems without an external DSP clock, these frequencies are adjusted to
 the exact value; it will be rounded automatically to the nearest suitable
 value.
 
-"output_channels" in scummvm.ini: mono (1) or stereo (2) mixing. Please note
-that Falcon doesn't allow mixing in 16-bit mono, so this will have no effect on
-this machine.
+"output_channels" in scummvm.ini: mono (1) or stereo (2) mixing. Falcon always
+outputs 16-bit stereo however when set to mono, a fast mono-to-stereo
+conversion takes place (so I encourage everyone to use mono when music playback
+is too demanding).
 
 "audio_buffer_size" in scummvm.ini: number of samples to preload. Default is
 2048 which equals to about 83ms of audio lag and seems to be about right for

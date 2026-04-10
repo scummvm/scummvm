@@ -186,10 +186,11 @@ void copyBlit(byte *dst, const byte *src,
 			"	move.b	(%0)+,(%1)+\n"
 			"	move.b	(%0)+,(%1)+\n"
 			"4:\n"
-				: // outputs
-				: "a"(src), "a"(dst), "g"(dstPitch * h) // inputs
+				: "+a"(src), "+a"(dst) // outputs
+				: "g"(dstPitch * h) // inputs
 				: "d0", "d1", "cc" AND_MEMORY
 			);
+			// WARNING: src and dst are modified by the asm code
 		} else {
 #else
 		{
@@ -199,8 +200,9 @@ void copyBlit(byte *dst, const byte *src,
 	} else {
 #ifdef USE_MOVE16
 		if (hasMove16() && isAligned(src) && isAligned(dst) && isAligned(srcPitch) && isAligned(dstPitch)) {
+			int loopCount = h - 1;
 			__asm__ volatile(
-			"	move.l	%2,%%d0\n"
+			"	move.l	%3,%%d0\n"
 
 			"	moveq	#0x0f,%%d1\n"
 			"	and.l	%%d0,%%d1\n"
@@ -261,12 +263,13 @@ void copyBlit(byte *dst, const byte *src,
 			"4:\n"
 			"	add.l	%4,%1\n"
 			"	add.l	%5,%0\n"
-			"	dbra	%3,0b\n"
-				: // outputs
-				: "a"(src), "a"(dst), "g"(w * bytesPerPixel), "d"(h - 1),
+			"	dbra	%2,0b\n"
+				: "+a"(src), "+a"(dst), "+d"(loopCount) // outputs
+				: "g"(w * bytesPerPixel),
 				  "g"(dstPitch - w * bytesPerPixel), "g"(srcPitch - w * bytesPerPixel) // inputs
 				: "d0", "d1", "a0", "a1", "cc" AND_MEMORY
 			);
+			// WARNING: src and dst are modified by the asm code
 		} else {
 #else
 		{
