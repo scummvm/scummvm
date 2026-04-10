@@ -161,6 +161,21 @@ void Toolbox::HiliteMenu(uint16 menuID) {
 	warning("STUB: Toolbox::HiliteMenu");
 }
 
+uint32 Toolbox::MenuKey(char ch) {
+	uint32 result = 0;
+	if (_defaultMenu) {
+		int menuItem;
+		int menuSubItem;
+		_defaultMenu->getMenuShortCut((uint8)ch, menuItem, menuSubItem);
+		if ((menuItem >= 0) && (menuSubItem >= 0)) {
+			result |= ((menuItem + 1) & 0xffff) << 16;
+			result |= ((menuSubItem + 1) & 0xffff);
+			HiliteMenu(menuItem + 1);
+		}
+	}
+	return result;
+}
+
 uint32 Toolbox::MenuSelect(const Common::Point &startPt) {
 	uint32 result = 0;
 	if (_defaultMenu) {
