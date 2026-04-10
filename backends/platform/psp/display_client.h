@@ -196,7 +196,7 @@ public:
 	void setOffsetOnScreen(int x, int y) { _offsetOnScreen.x = x; _offsetOnScreen.y = y; }
 	void setOffsetInBuffer(uint32 x, uint32 y) { _offsetInBuffer.x = x; _offsetInBuffer.y = y; }
 	void setColorTest(bool value) { _colorTest = value; }
-	void setKeyColor(uint32 value) { _keyColor = _buffer->_pixelFormat.convertTo32BitColor(value); }
+	void setKeyColor(uint32 value) { _keyColor = value; }
 	void setAlphaBlending(bool value) { _blending = value; }
 	void setAlphaReverse(bool value) { _alphaReverse = value; }
 	void setFullScreen(bool value) { _fullScreen = value; }		// Shortcut for rendering

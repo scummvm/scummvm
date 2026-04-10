@@ -182,8 +182,9 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	}
 
 	PSPPixelFormat::Type bufferFormat, paletteFormat;
+	bool fakeAlpha = false;
 
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, fakeAlpha);
 	_buffer.setPixelFormat(bufferFormat);
 	_palette.setPixelFormats(paletteFormat, bufferFormat);
 }
