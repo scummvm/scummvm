@@ -463,9 +463,16 @@ Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() c
 	Common::List<Graphics::PixelFormat> list;
 
 	// In order of preference
+	// Note that the OSystem documentation suggests that the format with the highest
+	// depth should come first, but for PSP BGR565 is listed first instead to reduce
+	// memory usage
 	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5650));
-	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5551));
-	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_4444));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5551, false));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5551, true));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_4444, false));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_4444, true));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_8888, false));
+	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_8888, true));
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 
 	return list;
