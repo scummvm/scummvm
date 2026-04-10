@@ -50,9 +50,9 @@ struct PSPPixelFormat {
 	void set(Type type);
 	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
 	        PSPPixelFormat::Type &bufferType,
-	        PSPPixelFormat::Type &paletteType);
-	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type);
-	uint32 convertTo32BitColor(uint32 color) const;
+	        PSPPixelFormat::Type &paletteType,
+		bool &fakeAlpha);
+	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type, bool fakeAlpha = false);
 
 	inline uint32 rgbaToColor(uint32 r, uint32 g, uint32 b, uint32 a) const {
 		uint32 color;
