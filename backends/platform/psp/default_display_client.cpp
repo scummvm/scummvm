@@ -182,11 +182,10 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	}
 
 	PSPPixelFormat::Type bufferFormat, paletteFormat;
-	bool swapRedBlue = false;
 
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, swapRedBlue);
-	_buffer.setPixelFormat(bufferFormat, swapRedBlue);
-	_palette.setPixelFormats(paletteFormat, bufferFormat, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat);
+	_buffer.setPixelFormat(bufferFormat);
+	_palette.setPixelFormats(paletteFormat, bufferFormat);
 }
 
 Graphics::Surface *Screen::lockAndGetForEditing() {

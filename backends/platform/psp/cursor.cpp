@@ -221,10 +221,9 @@ void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *for
 
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
 	PSPPixelFormat::Type paletteType = PSPPixelFormat::Type_Unknown;
-	bool swapRedBlue = false;
 
 	// Convert Scummvm Pixel Format to PSPPixelFormat
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType);
 
 	if (paletteType == PSPPixelFormat::Type_None) {
 		//_screenPalette.deallocate();		// leave palette for default CLUT8
@@ -251,9 +250,8 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 
 	PSPPixelFormat::Type bufferType = PSPPixelFormat::Type_Unknown;
 	PSPPixelFormat::Type paletteType = PSPPixelFormat::Type_Unknown;
-	bool swapRedBlue = false;
 
-	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType, swapRedBlue);
+	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferType, paletteType);
 	PSP_DEBUG_PRINT("bufferType[%u], paletteType[%u]\n", bufferType, paletteType);
 
 	// Check if we need to set new pixel format
