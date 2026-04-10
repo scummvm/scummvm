@@ -140,6 +140,8 @@ public:
 	uint32 getBytesPerPixel() const { return getBitsPerPixel() >> 3; } /* won't work for 4-bit */
 	const byte *getPixels() const { return _pixels; }
 	byte *getPixels() { return _pixels; }
+	const byte *getBasePtr(int x, int y) const { return _pixels + _pixelFormat.pixelsToBytes((y * _width) + x); }
+	byte *getBasePtr(int x, int y) { return _pixels + _pixelFormat.pixelsToBytes((y * _width) + x); }
 	uint32 getSizeInBytes() const { return _pixelFormat.pixelsToBytes(_width * _height); }
 
 	bool hasPalette();
