@@ -54,6 +54,9 @@ void NoctropolisEngine::initObjects() {
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
+
+	// Current defaults to screen in Noctropolis.
+	_current = _screen;
 }
 
 void NoctropolisEngine::setupGame() {
@@ -676,8 +679,9 @@ void NoctropolisEngine::playSuccubusSplit() {
 	_midi->loadMusic(98, 25);
 	_midi->midiPlay();
 	_screen->clearScreen();
-	warning("TODO: Implement Noctropolis type video player (playSuccubusSplit)");
-	//playVideo("VID1/SUCSPLT1.VID", 116, 2, false, true);
+	VideoPlayer_v2 vidPlayer(this);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(116, 2), Common::Path("VID1/SUCATT1.VID"), 0);
+	vidPlayer.playToEnd();
 	_midi->stopSong();
 	_screen->fadeOutThenClearAndSetPal();
 }
@@ -696,12 +700,11 @@ void NoctropolisEngine::playSuccubusAttack() {
 	_system->delayMillis(60 * 17);
 	VideoPlayer_v2 vidPlayer(this);
 
-	warning("FIXME: NoctropolisEngine::playSuccubusAttack - fix video playback speed.");
-	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/SUCATT1.VID"), 15);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/SUCATT1.VID"), 0);
 	vidPlayer.playToEnd();
 
 	_screen->clearScreen();
-	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(196, 96), Common::Path ("VID1/SUCATT2.VID"), 15);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(196, 96), Common::Path ("VID1/SUCATT2.VID"), 0);
 	vidPlayer.playToEnd();
 
 	//playVideo("VID1\\SUCATT2.VID", 196, 96, false, false);
