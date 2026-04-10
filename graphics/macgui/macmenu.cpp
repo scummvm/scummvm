@@ -1666,24 +1666,36 @@ bool MacMenu::mouseRelease(int x, int y) {
 	return true;
 }
 
-bool MacMenu::processMenuShortCut(uint16 ascii) {
-	ascii = tolower(ascii);
-
+void MacMenu::getMenuShortCut(uint16 key, int &menuItem, int &submenuItem) {
+	menuItem = -1;
+	submenuItem = -1;
+	uint16 ascii = tolower(key);
 	for (uint i = 0; i < _items.size(); i++) {
 		if (_items[i]->enabled && _items[i]->submenu != nullptr) {
 			for (uint j = 0; j < _items[i]->submenu->items.size(); j++) {
 				if (_items[i]->submenu->items[j]->enabled && tolower(_items[i]->submenu->items[j]->shortcut) == ascii) {
-					if (_items[i]->submenu->items[j]->unicode) {
-						if (checkCallback(true))
-							(*_unicodeccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->unicodeText, _cdata);
-					} else {
-						if (checkCallback())
-							(*_ccallback)(_items[i]->submenu->items[j]->action, _items[i]->submenu->items[j]->text, _cdata);
-					}
-					return true;
+					menuItem = (int)i;
+					submenuItem = (int)j;
 				}
 			}
 		}
+	}
+}
+
+bool MacMenu::processMenuShortCut(uint16 ascii) {
+	int menuItem;
+	int submenuItem;
+	getMenuShortCut(ascii, menuItem, submenuItem);
+
+	if ((menuItem >= 0) && (submenuItem >= 0)) {
+		if (_items[menuItem]->submenu->items[submenuItem]->unicode) {
+			if (checkCallback(true))
+				(*_unicodeccallback)(_items[menuItem]->submenu->items[submenuItem]->action, _items[menuItem]->submenu->items[submenuItem]->unicodeText, _cdata);
+		} else {
+			if (checkCallback())
+				(*_ccallback)(_items[menuItem]->submenu->items[submenuItem]->action, _items[menuItem]->submenu->items[submenuItem]->text, _cdata);
+		}
+		return true;
 	}
 
 	return false;

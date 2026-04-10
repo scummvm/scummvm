@@ -173,6 +173,7 @@ public:
 
 	int getLastSelectedMenuItem() { return _lastActiveItem; };
 	int getLastSelectedSubmenuItem() { return _lastActiveSubItem; };
+	void getMenuShortCut(uint16 key, int &menuItem, int &submenuItem);
 
 	void renderSubmenu(MacMenuSubMenu *menu, bool recursive = true);
 
