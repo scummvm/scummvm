@@ -30,3 +30,4 @@ Default shortcuts are shown in the table.
         :kbd:`Alt+s` ,Takes a :ref:`screenshot <screenshotpath>`
         :kbd:`Ctrl+F7`,"Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel."
 		:kbd:`Ctrl+Alt+d`,"Opens the ScummVM debugger"
+		:kbd:`Ctrl+p` or :kbd:`Pause`,"Pauses the engine without a dialog"

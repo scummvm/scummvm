@@ -68,6 +68,11 @@ Quit
 Open Debugger
 	*keymap_global_DEBUGGER*
 
+.. _keymap_spause:
+
+Pause (no dialog)
+	*keymap_global_SPAUSE*
+
 .. _vmouseup:
 
 Virtual mouse up
