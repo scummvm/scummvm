@@ -117,6 +117,8 @@ enum EventType {
 	EVENT_FOCUS_GAINED = 36,
 	EVENT_FOCUS_LOST = 37,
 
+	EVENT_SCREEN_PAUSE = 38,
+
 	/**
 	 * We reserve some event ids for custom events.
 	 * 

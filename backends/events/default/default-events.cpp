@@ -203,6 +203,15 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			g_engine->flipMute();
 		break;
 
+	case Common::EVENT_SCREEN_PAUSE:
+		if (g_engine) {
+			if (_screenPauseToken.isActive())
+				_screenPauseToken.clear();
+			else
+				_screenPauseToken = g_engine->pauseEngine();
+		}
+		break;
+
 	case Common::EVENT_QUIT:
 		if (g_engine && !g_engine->hasFeature(Engine::kSupportsQuitDialogOverride) && ConfMan.getBool("confirm_exit")) {
 			if (_confirmExitDialogActive) {
@@ -352,6 +361,12 @@ Common::Keymap *DefaultEventManager::getGlobalKeymap() {
 	act = new Action("MUTE", _("Toggle mute"));
 	act->addDefaultInputMapping("C+u");
 	act->setEvent(EVENT_MUTE);
+	globalKeymap->addAction(act);
+
+	act = new Action("SPAUSE", _("Pause (no dialog)"));
+	act->addDefaultInputMapping("PAUSE");
+	act->addDefaultInputMapping("C+p");
+	act->setEvent(EVENT_SCREEN_PAUSE);
 	globalKeymap->addAction(act);
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
