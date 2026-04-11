@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/util.h"
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
@@ -539,7 +540,7 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 	this->sub_128_4472();
 }
 
-void FoolGame::sub_128_c6a(uint16 unk1) {
+void FoolGame::sub_128_c6a(uint32 unk1) {
 	// 128:0c6a
 
 	// This function is usually called at the start of an event processing loop,
@@ -573,7 +574,7 @@ void FoolGame::sub_128_c6a(uint16 unk1) {
 		this->sub_128_6154();
 	}
 	if ((this->var_ev_46.what == kScummVMQuitEvt) || (this->var_ev_46.what == kScummVMReturnToLauncherEvt)) {
-		_quit = true;
+		this->sub_128_2ab6();
 	}
 }
 
@@ -1127,16 +1128,16 @@ void FoolGame::sub_128_26f6() {
 }
 
 void FoolGame::sub_128_271a() {
-	int position = this->arr_i32_19454[this->var_i16_7e2] - 1;
+	int position = this->arr_i32_19454[this->activePuzzle] - 1;
 	// record index
 	this->var_i16_484 = (int16)(position / 1000);
 	// offset at record
 	this->var_i16_7e4 = (int16)(position % 1000);
 	g_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
 	this->var_ptr_696 = 0;
-	int length = this->arr_i32_19454[this->var_i16_7e2 + 1] - this->arr_i32_19454[this->var_i16_7e2];
+	int length = this->arr_i32_19454[this->activePuzzle + 1] - this->arr_i32_19454[this->activePuzzle];
 	debugC(8, kDebugLoading, "sub_128_271a: seek puzzles to puzzle %d at position %x (rec: %d, offset: %d), length %x",
-			this->var_i16_7e2,
+			this->activePuzzle,
 			position,
 			this->var_i16_484,
 			this->var_i16_7e4,
@@ -1168,7 +1169,7 @@ void FoolGame::sub_128_2808() {
 	// 128:2812: MOVE.L - A0,-0x8ee(A5)
 	g_zbasic->openR(2, this->var_str_588, 0x400, this->var_i16_688);
 	this->var_str_7e8 = g_zbasic->readFileStr(2, 0x11);
-	if (this->var_str_7e8 == g_zbasic->str(16)) {
+	if (this->var_str_7e8 == g_zbasic->str(16)) { // The Fool's Errand
 		this->var_i16_8e8 = g_zbasic->readFileInt(2);
 		this->var_i16_8e8 = g_zbasic->readFileInt(2);
 		this->var_i16_8e8 = g_zbasic->readFileInt(2);
@@ -1320,14 +1321,14 @@ void FoolGame::sub_128_2bc6() {
 	}
 	// 128:2cce
 	for (int16 i = 1; i <= 0x51; i++) {
-		this->arr_i16_4bd8[i] = i;
+		this->sunMapTileID[i] = i;
 	}
 	g_zbasic->unk_20();
 	// 128:2cf6
 	for (int i = 1; i <= 0x64; i++) {
 		this->var_i16_484 = g_zbasic->rndInt(0x51);
 		this->var_i16_7e4 = g_zbasic->rndInt(0x51);
-		g_zbasic->swapInt(this->arr_i16_4bd8[this->var_i16_484], this->arr_i16_4bd8[this->var_i16_7e4]);
+		g_zbasic->swapInt(this->sunMapTileID[this->var_i16_484], this->sunMapTileID[this->var_i16_7e4]);
 		this->arr_i16_1c5a[i] = 0;
 		this->arr_i16_1d24[i] = 0;
 	}
@@ -1354,7 +1355,7 @@ void FoolGame::sub_128_2bc6() {
 	g_zbasic->unk_333(0x2);
 	this->storyNextPage = 1;
 	this->var_i16_7ce = 0;
-	this->var_i16_7e2 = 0;
+	this->activePuzzle = 0;
 	this->var_i16_7d2 = 0;
 	this->var_i16_7b2 = 0;
 	this->sub_128_3032();
@@ -1378,7 +1379,7 @@ void FoolGame::sub_128_2e3e() {
 
 	this->var_str_384 = g_zbasic->readFileStr(2, 0x11);
 	this->storyNextPage = g_zbasic->readFileInt(2);
-	this->var_i16_7e2 = g_zbasic->readFileInt(2);
+	this->activePuzzle = g_zbasic->readFileInt(2);
 	this->var_i16_7ce = g_zbasic->readFileInt(2);
 	this->var_i16_7d2 = g_zbasic->readFileInt(2);
 	for (int i = 1; i <= 0x64; i++) {
@@ -1386,13 +1387,20 @@ void FoolGame::sub_128_2e3e() {
 		this->arr_i16_1c5a[i] = g_zbasic->readFileInt(2);
 		this->arr_i16_1b90[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
-		this->var_str_384 = g_zbasic->readFileStr(2, this->var_i16_484);
-		g_zbasic->indexSet(this->var_str_384, 2, i);
+		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, arr_i16_1c5a: %d, arr_i16_1b90: %d, payload size: %d", i, this->arr_i16_1d24[i], this->arr_i16_1c5a[i], this->arr_i16_1b90[i], this->var_i16_484);
+		Common::String state = g_zbasic->readFileStr(2, this->var_i16_484);
+		if (debugChannelSet(5, kDebugLoading)) {
+			Common::hexdump((const byte *)state.c_str(), this->var_i16_484);
+		}
+		g_zbasic->indexRawSet(state, 2, i);
 	}
 	// 128:2f54
+	debugCN(5, kDebugLoading, "sub_128_2e3e: sun map tile IDs: ");
 	for (int i = 1; i <= 0x51; i++) {
-		this->arr_i16_4bd8[i] = g_zbasic->readFileInt(2);
+		this->sunMapTileID[i] = g_zbasic->readFileInt(2);
+		debugCN(5, kDebugLoading, "%d, ", this->sunMapTileID[i]);
 	}
+	debugC(5, kDebugLoading, "");
 	// 128:2f84
 	g_zbasic->close(2);
 	if (this->var_i16_7e6 != 0) {
@@ -1460,7 +1468,7 @@ void FoolGame::sub_128_3032() {
 	if ((this->var_i16_7ce & 1) == 0) {
 		this->sub_128_378a();
 	} else {
-		if ((this->var_i16_7e2 > 0) && (this->var_i16_7e2 <= 0x50)) {
+		if ((this->activePuzzle > 0) && (this->activePuzzle <= 0x50)) {
 			this->sub_128_1c2c(0x80);
 		} else {
 			this->sub_128_1c2c(0x100);
@@ -1540,20 +1548,20 @@ void FoolGame::sub_128_3536() {
 			this->var_str_af4 = g_zbasic->str(60); // The Fool's Errand
 			g_zbasic->writeFileStr(2, this->var_str_af4.encode(Common::kMacRoman));
 			g_zbasic->writeFileInt(2, this->storyNextPage);
-			g_zbasic->writeFileInt(2, this->var_i16_7e2);
+			g_zbasic->writeFileInt(2, this->activePuzzle);
 			g_zbasic->writeFileInt(2, this->var_i16_7ce);
 			g_zbasic->writeFileInt(2, this->var_i16_7d2);
 			for (int i = 1; i <= 0x64; i++) {
 				g_zbasic->writeFileInt(2, this->arr_i16_1d24[i]);
 				g_zbasic->writeFileInt(2, this->arr_i16_1c5a[i]);
 				g_zbasic->writeFileInt(2, this->arr_i16_1b90[i]);
-				this->var_str_af4 = g_zbasic->index(2, i);
-				g_zbasic->writeFileInt(2, (int16)this->var_str_af4.size());
-				g_zbasic->writeFileStr(2, this->var_str_af4);
+				Common::String state = g_zbasic->indexRaw(2, i);
+				g_zbasic->writeFileInt(2, (int16)state.size());
+				g_zbasic->writeFileStr(2, state);
 			}
 			// 128:36ba
 			for (int i = 1; i <= 0x51; i++) {
-				g_zbasic->writeFileInt(2, this->arr_i16_4bd8[i]);
+				g_zbasic->writeFileInt(2, this->sunMapTileID[i]);
 			}
 			g_zbasic->close(2);
 		}
@@ -1638,7 +1646,7 @@ void FoolGame::sub_128_39a0() {
 	this->var_i16_c00 = 0;
 	this->var_i16_7d6 = 0;
 	this->var_i16_7b2 = 0xa;
-	this->var_i16_7e2 = this->var_i16_7d0;
+	this->activePuzzle = this->var_i16_7d0;
 	this->var_i16_7ce |= 1;
 	g_toolbox->InitCursor();
 	this->sub_128_0a2(0, 0);
@@ -1832,22 +1840,22 @@ void FoolGame::sub_128_3de6() {
 
 void FoolGame::sub_128_3fb6() {
 	// 128:3fb6
-	g_zbasic->menu(8, 0, 1, this->arr_str_195e8[this->var_i16_7e2]);
+	g_zbasic->menu(8, 0, 1, this->arr_str_195e8[this->activePuzzle]);
 	this->var_str_384 = g_zbasic->str(72); // return to scroll
-	if ((this->var_i16_7e2 == 0x34) || (this->var_i16_7e2 == 0x35)) {
+	if ((this->activePuzzle == 0x34) || (this->activePuzzle == 0x35)) {
 		this->var_str_384 = g_zbasic->str(73); // run for your life
 	}
 	// 128:4024
-	if (this->var_i16_7e2 > 0x50) {
+	if (this->activePuzzle > 0x50) {
 		this->var_str_384 = g_zbasic->str(74); // return to map
 	}
 	g_zbasic->menu(8, 1, 1, this->var_str_384);
 	// 128:4056
-	if (this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2] <= this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2 + 1]) {
+	if (this->arr_i16_1b10[this->arr_i16_18b2[this->activePuzzle]*2] <= this->arr_i16_1b10[this->arr_i16_18b2[this->activePuzzle]*2 + 1]) {
 		g_zbasic->menu(8, 2, 0, g_zbasic->str(75)); // line
 		// 128:40c6
 		this->var_i16_484 = 2;
-		for (int i = this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2]; i <= this->arr_i16_1b10[this->arr_i16_18b2[this->var_i16_7e2]*2 + 1]; i++) {
+		for (int i = this->arr_i16_1b10[this->arr_i16_18b2[this->activePuzzle]*2]; i <= this->arr_i16_1b10[this->arr_i16_18b2[this->activePuzzle]*2 + 1]; i++) {
 			// 128:40f6
 			this->var_i16_484++;
 			this->var_str_384 = g_zbasic->index(0, i) + g_zbasic->str(76);
@@ -1859,25 +1867,25 @@ void FoolGame::sub_128_3fb6() {
 
 void FoolGame::sub_128_4168() {
 	// 128:4168
-	this->var_i16_c04 = this->arr_i16_1c5a[this->var_i16_7e2];
+	this->var_i16_c04 = this->arr_i16_1c5a[this->activePuzzle];
 	if (this->var_i16_c04 == 0x64) {
 		this->var_i16_c04 = 0x65;
 	}
-	this->var_str_c06 = g_zbasic->index(2, this->var_i16_7e2);
+	this->activePuzzleBuffer = g_zbasic->indexRaw(2, this->activePuzzle);
 	if (debugChannelSet(5, kDebugLoading)) {
-		Common::String inter = this->var_str_c06.encode(Common::kMacRoman);
-		debugC(5, kDebugLoading, "sub_128_4168: loading puzzle %d context, state %d", this->var_i16_7e2, this->var_i16_c04);
+		Common::String inter = this->activePuzzleBuffer;
+		debugC(5, kDebugLoading, "sub_128_4168: loading puzzle %d context, state %d", this->activePuzzle, this->var_i16_c04);
 		Common::hexdump((const byte *)inter.c_str(), inter.size());
 	}
 }
 
 void FoolGame::sub_128_41aa() {
 	// 128:41aa
-	this->arr_i16_1c5a[this->var_i16_7e2] = this->var_i16_c04;
-	g_zbasic->indexSet(this->var_str_c06, 2, this->var_i16_7e2);
+	this->arr_i16_1c5a[this->activePuzzle] = this->var_i16_c04;
+	g_zbasic->indexRawSet(this->activePuzzleBuffer, 2, this->activePuzzle);
 	if (debugChannelSet(5, kDebugLoading)) {
-		Common::String inter = this->var_str_c06.encode(Common::kMacRoman);
-		debugC(5, kDebugLoading, "sub_128_41aa: saving puzzle %d context, state %d", this->var_i16_7e2, this->var_i16_c04);
+		Common::String inter = this->activePuzzleBuffer;
+		debugC(5, kDebugLoading, "sub_128_41aa: saving puzzle %d context, state %d", this->activePuzzle, this->var_i16_c04);
 		Common::hexdump((const byte *)inter.c_str(), inter.size());
 	}
 }
@@ -1885,10 +1893,10 @@ void FoolGame::sub_128_41aa() {
 void FoolGame::sub_128_41d8() {
 	// 128:41d8
 	for (int i = 0; i <= 5; i++) {
-		this->arr_i16_4758[i] = this->arr_i16_16b2[i + (this->arr_i16_15e8[this->var_i16_7e2]*8)];
+		this->arr_i16_4758[i] = this->arr_i16_16b2[i + (this->arr_i16_15e8[this->activePuzzle]*8)];
 	}
 	// 128:422e
-	if ((this->var_i16_7e2 == 0x34) && (this->arr_i16_1cc2 > 1)) {
+	if ((this->activePuzzle == 0x34) && (this->arr_i16_1cc2 > 1)) {
 		// 128:4262
 		if (this->arr_i16_1cc2 == 2) {
 			this->arr_i16_4758[0] = 0;
@@ -1915,19 +1923,19 @@ void FoolGame::sub_128_41d8() {
 		// 128:4348
 	}
 	// 128:4348
-	if ((this->var_i16_7e2 == 0x17) && (this->arr_i16_1c7a[15] == 0x63)) {
+	if ((this->activePuzzle == 0x17) && (this->arr_i16_1c7a[15] == 0x63)) {
 		this->arr_i16_4758[0] = 0;
 		this->arr_i16_4758[1] = 2;
 		this->arr_i16_4758[1] = 0xa;
 	}
 	// 128:43aa
-	if ((this->var_i16_7e2 == 0x3f) && (this->arr_i16_1cd8 == 0x63)) {
+	if ((this->activePuzzle == 0x3f) && (this->arr_i16_1cd8 == 0x63)) {
 		this->arr_i16_4758[0] = 0;
 		this->arr_i16_4758[1] = 3;
 		this->arr_i16_4758[2] = 0;
 	}
 	// 128:440a
-	if (this->var_i16_7e2 == 0x48) {
+	if (this->activePuzzle == 0x48) {
 		if (this->arr_i16_1cea == 0x63) {
 			this->arr_i16_4758[0] = 0;
 			this->arr_i16_4758[1] = 0x47;
@@ -1943,7 +1951,7 @@ void FoolGame::sub_128_41d8() {
 void FoolGame::sub_128_4472() {
 	// 128:4472
 	if (this->arr_i16_4758[1] == 0) {
-		this->arr_i16_4758[1] = this->var_i16_7e2;
+		this->arr_i16_4758[1] = this->activePuzzle;
 	}
 	if (this->arr_i16_4758[2] == 0) {
 		this->arr_i16_4758[2] = 0x8;
@@ -2004,7 +2012,7 @@ void FoolGame::sub_128_4472() {
 		this->arr_i16_4758[11] = 0x207;
 	}
 	// 128:4850
-	if ((this->arr_i16_15e8[this->var_i16_7e2] == 0xd) || (this->arr_i16_15e8[this->var_i16_7e2] == 0xe)) {
+	if ((this->arr_i16_15e8[this->activePuzzle] == 0xd) || (this->arr_i16_15e8[this->activePuzzle] == 0xe)) {
 		this->fillRect(0x14f, 0, 0x156, 0x7, 1);
 		this->fillRect(0x14f, 0x1f9, 0x156, 0x200, 1);
 	}
@@ -2231,7 +2239,22 @@ void FoolGame::sub_128_5b30() {
 void FoolGame::sub_128_5baa() {
 	if (this->var_i16_e12 != 0)
 		return;
-	warning("STUB: %s", __func__);
+	this->var_i32_bf8 = g_toolbox->MenuKey((char)(this->var_ev_46.message & 0xff));
+	g_toolbox->Delay(0);
+	this->selectedMenuID = this->var_i32_bf8 >> 16;
+	this->selectedMenuItem = this->var_i32_bf8 & 0xffff;
+	if (this->selectedMenuID > 0) {
+		if (this->var_i16_e14 != 0) {
+			this->sub_128_5ef0();
+		}
+		this->sub_128_5c20();
+		if (this->var_i16_e14 != 0) {
+			this->sub_128_5f16();
+		}
+		g_toolbox->HiliteMenu(0);
+	}
+	// 128:5c1a
+	this->sub_128_61ec();
 }
 
 void FoolGame::sub_128_5c20() {
@@ -2330,7 +2353,7 @@ void FoolGame::sub_128_5f16() {
 			this->arr_i16_1eb8[0] = 1;
 		}
 		// 128:5f4c
-		this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
+		this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
 	}
 	// 128:5f70
 	if ((this->stateFlags & 1) != 0) {

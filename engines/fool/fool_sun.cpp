@@ -78,7 +78,7 @@ void FoolGame::sunMapRun() {
 	// 137:02a2
 	this->fillRect(0x14, 0x67, 0x156, 0x1b1, 2);
 	for (int i = 1; i <= 0x51; i++) {
-		g_zbasic->picture(this->arr_rect_1f38[i].left, this->arr_rect_1f38[i].top, this->arr_i32_192c0[this->arr_i16_4bd8[i]]);
+		g_zbasic->picture(this->arr_rect_1f38[i].left, this->arr_rect_1f38[i].top, this->arr_i32_192c0[this->sunMapTileID[i]]);
 	}
 	// 137:0336
 	this->stateFlags = kStateNull;
@@ -114,7 +114,7 @@ void FoolGame::sunMapRun() {
 		}
 	}
 	// 137:1654
-	this->var_i16_7e2 = 0;
+	this->activePuzzle = 0;
 	this->var_i16_c04 = 0x64;
 	this->var_i16_7d2 = 1;
 	g_zbasic->menu(2, 7, 1, Common::U32String());
@@ -143,7 +143,7 @@ void FoolGame::sunMapOnClick() {
 	g_toolbox->PenMode(kPatXor);
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
-	if (this->arr_i16_1d24[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & 8) {
+	if (this->arr_i16_1d24[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & 8) {
 		this->sunMapRevealPiece();
 		return;
 	}
@@ -269,9 +269,9 @@ void FoolGame::sunMapDropSelected() {
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
 			this->var_i16_1aa4++;
-			this->arr_i16_3738[this->var_i16_1aa4] = this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]];
+			this->arr_i16_3738[this->var_i16_1aa4] = this->sunMapTileID[this->arr_i16_2f38[i*32 + j]];
 			// 137:0e5a
-			this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]] = 0;
+			this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = 0;
 		}
 	}
 
@@ -281,30 +281,30 @@ void FoolGame::sunMapDropSelected() {
 	for (int j = this->arr_i16_4758[8]; j <= this->arr_i16_4758[9]; j++) {
 		for (int i = this->arr_i16_4758[4]; i <= this->arr_i16_4758[5]; i++) {
 			this->var_i16_1aa4++;
-			if (this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]] > 0) {
+			if (this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] > 0) {
 				this->var_i16_1aa6++;
-				this->arr_i16_3738[this->var_i16_1aa6] = this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]];
+				this->arr_i16_3738[this->var_i16_1aa6] = this->sunMapTileID[this->arr_i16_2f38[i*32 + j]];
 			}
 			// 137:0f7c
-			this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
+			this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
 			g_zbasic->picture(
 				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].left,
 				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].top,
-				this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]]]
+				this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
 			);
 		}
 	}
 	this->var_i16_1aa6 = this->var_i16_1aa4;
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
-			if (this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]] == 0) {
+			if (this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] == 0) {
 				// 137:1114
 				this->var_i16_1aa6++;
-				this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa6];
+				this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa6];
 				g_zbasic->picture(
 					this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].left,
 					this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].top,
-					this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[i*32 + j]]]
+					this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
 				);
 			}
 			// 137:1214
@@ -318,7 +318,7 @@ void FoolGame::sunMapCheckIfSolved() {
 	// 137:124e
 	this->var_i16_d0c = 1;
 	for (int i = 1; i <= 0x51; i++) {
-		if (this->arr_i16_4bd8[i] != i) {
+		if (this->sunMapTileID[i] != i) {
 			this->var_i16_d0c = 0;
 			i = 0x51;
 		}
@@ -342,8 +342,8 @@ void FoolGame::sunMapCheckIfSolved() {
 
 void FoolGame::sunMapRevealPiece() {
 	// 137:131a
-	this->arr_i16_1d24[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= 8;
-	this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = this->arr_i32_1912c[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
+	this->arr_i16_1d24[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= 8;
+	this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = this->arr_i32_1912c[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
 	// 137:142c
 	// unrolled loop
 	this->arr_i16_4758[0] = this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top;
@@ -368,7 +368,7 @@ void FoolGame::sunMapRevealPiece() {
 	g_zbasic->picture(
 		this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left,
 		this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top,
-		this->arr_i32_192c0[this->arr_i16_4bd8[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
+		this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
 	);
 	this->sub_128_6186();
 	this->sunMapCheckIfSolved();

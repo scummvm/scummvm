@@ -1669,6 +1669,8 @@ bool MacMenu::mouseRelease(int x, int y) {
 void MacMenu::getMenuShortCut(uint16 key, int &menuItem, int &submenuItem) {
 	menuItem = -1;
 	submenuItem = -1;
+	if (!key)
+		return;
 	uint16 ascii = tolower(key);
 	for (uint i = 0; i < _items.size(); i++) {
 		if (_items[i]->enabled && _items[i]->submenu != nullptr) {
@@ -1676,6 +1678,7 @@ void MacMenu::getMenuShortCut(uint16 key, int &menuItem, int &submenuItem) {
 				if (_items[i]->submenu->items[j]->enabled && tolower(_items[i]->submenu->items[j]->shortcut) == ascii) {
 					menuItem = (int)i;
 					submenuItem = (int)j;
+					return;
 				}
 			}
 		}

@@ -224,7 +224,7 @@ private:
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableReadStream>> _fileStreams;
 	Common::HashMap<int16, Common::SharedPtr<Common::SeekableWriteStream>> _fileWriteStreams;
 	Common::HashMap<int16, uint32> _fileLineSize;
-	Common::HashMap<int16, Common::Array<Common::U32String>> _index;
+	Common::HashMap<int16, Common::Array<Common::String>> _index;
 
 	Common::String _fileType;
 	Common::String _fileCreator;
@@ -255,6 +255,8 @@ public:
 	Common::U32String rightStr(const Common::U32String &str, int16 expression);
 	Common::U32String midStr(const Common::U32String &str, int16 expr1, int16 expr2);
 	void midStrSet(Common::U32String &target, int16 expr1, int16 expr2, const Common::U32String &src);
+	Common::String midStr(const Common::String &str, int16 expr1, int16 expr2);
+	void midStrSet(Common::String &target, int16 expr1, int16 expr2, const Common::String &src);
 	void openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void openW(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo);
 	void picture(int16 x, int16 y, PicHandle &src);
@@ -268,7 +270,7 @@ public:
 	uint32 readFile(int16 fileNo, byte *dest, uint32 length);
 	int32 readFileDblInt(int16 fileNo);
 	int16 readFileInt(int16 fileNo);
-	Common::U32String readFileStr(int16 fileNo, int16 length);
+	Common::String readFileStr(int16 fileNo, int16 length);
 	void record(int16 fileNo, int16 recordNo, int16 location);
 	int16 rndInt(int16 max);
 	Common::U32String space(int16 count);
@@ -276,7 +278,7 @@ public:
 	void swapStr(Common::U32String &a, Common::U32String &b);
 	void text(uint16 font, uint16 size, uint16 face, SourceMode mode);
 	void window(int16 windowNumber, const Common::String &title, int16 x1, int16 y1, int16 x2, int16 y2, ZBasicWindowType type);
-	void writeFileStr(int16 fileNo, const Common::U32String &str);
+	void writeFileStr(int16 fileNo, const Common::String &str);
 	void writeFileInt(int16 fileNo, int16 data);
 	void writeFileDblInt(int16 fileNo, int32 data);
 	Common::U32String ucase(const Common::U32String &str);
@@ -292,15 +294,17 @@ public:
 	void unk_20();
 	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);
 	void unk_44(int16 unk1);
-	Common::U32String unk_88(uint16 unk1);
+	Common::String unk_88(uint16 unk1);
 	void stringCopy(Common::U32String &dest, const Common::U32String &src);
 	void unk_130(int16 unk1);
 	void unk_158();
-	uint16 unk_310(const Common::U32String &unk1);
+	uint16 unk_310(const Common::String &unk1);
 	void unk_331(uint16 unk1, int16 unk2);
 	void unk_333(uint16 unk1);
 	void indexSet(const Common::U32String &value, int16 table, int16 index);
+	void indexRawSet(const Common::String &value, int16 table, int16 index);
 	Common::U32String index(int16 table, int16 index);
+	Common::String indexRaw(int16 table, int16 index);
 };
 
 } // namespace Fool
