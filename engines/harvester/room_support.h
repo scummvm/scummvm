@@ -51,6 +51,15 @@ struct RoomSceneResources {
 	float targetPaletteBrightness = 1.0f;
 };
 
+struct RoomMoveWaypoint {
+	int targetX = 0;
+	int targetBottomY = 0;
+	float targetZ = 0.0f;
+	bool hasTargetX = false;
+	bool hasTargetZ = false;
+	Common::String ignoredBlockerName;
+};
+
 struct RoomPlayerState {
 	Entity *entity = nullptr;
 	int centerX = 0;
@@ -66,6 +75,7 @@ struct RoomPlayerState {
 	float targetZ = 0.0f;
 	bool moveTargetXReached = false;
 	bool moveTargetZReached = false;
+	Common::Array<RoomMoveWaypoint> moveWaypoints;
 	bool turnActive = false;
 	int turnTargetFacing = -1;
 	int turnFirstFrame = -1;
