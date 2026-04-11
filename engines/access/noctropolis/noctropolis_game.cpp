@@ -736,16 +736,17 @@ void NoctropolisEngine::doSpecialComic() {
 void NoctropolisEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
-	for (int i = 0; i < ARRAYSIZE(_travel); i++) {
+	for (int i = 0; i < ARRAYSIZE(_travel); i++)
 		s.syncAsByte(_travel[i]);
-	}
 
-	for (int i = 0; i < ARRAYSIZE(_ask); i++) {
+	for (int i = 0; i < ARRAYSIZE(_ask); i++)
 		s.syncAsByte(_ask[i]);
-	}
+
+	for (int i = 0; i < ARRAYSIZE(_asked); i++)
+		s.syncAsByte(_asked[i]);
 
 	// This game uses a longer establish table. first 100 bytes were already handled in the common engine sync
-	for (int i = 100; i < 128; ++i)
+	for (int i = 100; i < 128; i++)
 		s.syncAsByte(_establishTable[i]);
 
 	_stil->synchronize(s);
