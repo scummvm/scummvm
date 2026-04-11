@@ -1679,6 +1679,13 @@ void GrimEngine::pauseEngineIntern(bool pause) {
 		_pauseStartTime = _system->getMillis();
 	} else {
 		_frameStart += _system->getMillis() - _pauseStartTime;
+
+		// This "clear event queue" call is added to clear any keys registered as pressed
+		// when the pause occured and their KEYUP event was not handled by the engine
+		// (because it was paused) but it was consumed externally and is no longer pending in the event queue.
+		// The call also clears any pending (at the time of the pause) keyboard or mouse events.
+		// It addresses bug #16667.
+		clearEventQueue();
 	}
 }
 
