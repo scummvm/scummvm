@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 11, 2026, verified native blocked click-path handling in Ghidra. `update_actor_runtime_state` pushes perpendicular waypoints around the current blocker: horizontal blockers create a Z detour from the blocker depth span, vertical/depth blockers create an X detour from the blocker screen span, and directional blocker-history slots let the detour proceed past the same blocker. Updated ScummVM click walking to queue those detours instead of clearing the target on the first blocked step.
+- On April 11, 2026, verified native `MONSTERFY` handling in Ghidra. `dispatch_room_event_actions` case `0x0e` queues live NPC actor state `0x35` through `queue_npc_death_or_monsterfy_transition` without requiring a damage argument. Updated ScummVM's deferred live NPC death/monsterfy queue so blank scripted damage arguments still queue the transition using the bludge animation selector.
 
 ## Next Suggested Action
 
-- In-engine, click the empty floor in `CHESSROOM` around `(494,415)` from the `FOYER7_2_CHESS` spawn and confirm the player walks right, queues a depth detour around the room blocker, then resumes toward the clicked floor position.
+- In-engine, trigger the `BALLROM1` maintenance man fourth warning and confirm that after `"All right, buddy... you axed for it!"`, the `MONSTERFY MAINT_MAN` action starts the NPC death/monsterfy animation and spawns the configured monster target.

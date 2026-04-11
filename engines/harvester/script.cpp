@@ -2565,10 +2565,13 @@ bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int 
 	if (!currentNpc || currentNpc->deathOrMonsterfyFlag)
 		return false;
 
-	if (deathDamageType == 0 || currentNpc->deathDamageType == deathDamageType)
+	// Native live MONSTERFY queues actor state 0x35 without a damage argument.
+	// Use bludge as the queued animation selector when scripts leave it blank.
+	const int queuedDeathDamageType = deathDamageType != 0 ? deathDamageType : 1;
+	if (currentNpc->deathDamageType == queuedDeathDamageType)
 		return false;
 
-	currentNpc->deathDamageType = deathDamageType;
+	currentNpc->deathDamageType = queuedDeathDamageType;
 	return true;
 }
 
