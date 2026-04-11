@@ -1961,6 +1961,8 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 		entity->setClassId(kRuntimeEntityClassMonster);
 		entity->setHitTestMode(kRuntimeEntityHitTestNone);
 		entity->setVisible(monster.visible);
+		// Native restores a saved monster corpse frame before set_entity_screen_position().
+		Monster::applyAnimation(*entity, monster);
 		if (!applyRoomActorPlacement(state, *entity, monster.posX, monster.posY, (float)monster.posZ)) {
 			debug(1, "Harvester: unable to apply room monster placement for '%s'",
 				monster.monsterName.c_str());
