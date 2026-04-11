@@ -54,8 +54,8 @@ public:
 	void establish(int esatabIndex, int sub) override {};
 	Common::Error loadGameState(int slot) override;
 
-	virtual int16 getScreenWidth() const override { return 640; }
-	virtual int16 getScreenHeight() const override { return 400; }
+	int16 getScreenWidth() const override { return 640; }
+	int16 getScreenHeight() const override { return 400; }
 
 	Player *_stil;
 	int _travScrollRow;

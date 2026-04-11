@@ -111,8 +111,7 @@ public:
 	bool _invChangeFlag;
 	bool _invRefreshFlag;
 	bool _invModeFlag;
-	int _startAboutItem;
-	int _startTravelItem;
+
 public:
 	InventoryManager(AccessEngine *vm);
 

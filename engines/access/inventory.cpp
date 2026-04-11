@@ -72,8 +72,6 @@ InventoryManager::InventoryManager(AccessEngine *vm) : Manager(vm) {
 	_invChangeFlag = true;
 	_invRefreshFlag = false;
 	_invModeFlag = false;
-	_startAboutItem = 0;
-	_startTravelItem = 0;
 	_iconDisplayFlag = true;
 	_boxNum = 0;
 

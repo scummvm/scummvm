@@ -1495,7 +1495,8 @@ void Scripts::cmdDispAbout_v3() {
 		{18, 102, 40, 120},
 		{186, 102, 208, 120}
 	};
-	bool menuUpArrow = false, menuDownArrow = false;
+	bool menuUpArrow = false;
+	bool menuDownArrow = false;
 	int hoveredItem = -1, slotIndex;
 	byte slotItems[20];
 	Common::Array<byte> items;
@@ -1508,7 +1509,7 @@ void Scripts::cmdDispAbout_v3() {
 
 	if (!_vm->_keepAskPosition) {
 		for (int i = 0; i < 40; i++)
-			_vm->_ask[i] = false;
+			_vm->_asked[i] = false;
 
 		int16 warpMouseX, warpMouseY;
 		_vm->_askBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 226, 640, warpMouseX);
@@ -1556,7 +1557,7 @@ void Scripts::cmdDispAbout_v3() {
 				for (uint i = 0; i < 8 && _vm->_startAboutItem + i < items.size(); i++) {
 					slotItems[slotIndex] = items[_vm->_startAboutItem + i];
 					_vm->_screen->plotImage(askSprites, slotItems[slotIndex] + 6, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
-					if (_vm->_ask[slotItems[slotIndex]]) {
+					if (_vm->_asked[slotItems[slotIndex]]) {
 						_vm->_screen->plotImage(askSprites, 5, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
 					}
 					slotIndex++;
@@ -1616,7 +1617,7 @@ void Scripts::cmdDispAbout_v3() {
 					selectedItem = -1;
 				} else {
 					selectedItem = slotItems[hoveredItem];
-					_vm->_ask[selectedItem] = true;
+					_vm->_asked[selectedItem] = true;
 				}
 			}
 		} else if (_vm->_events->_rightButton) {

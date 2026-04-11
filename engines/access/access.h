@@ -271,6 +271,7 @@ public:
 	// TODO: Refactor
 	byte _travel[60]; // only first ~15 used in MM
 	byte _ask[40];
+	byte _asked[40]; // Noctropolis only
 	int _startTravelItem;
 	int _startTravelBox;
 	int _startAboutItem;
