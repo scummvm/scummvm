@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
@@ -189,7 +191,8 @@ bool debugChannelSet(int level, uint32 debugChannel) {
 }
 
 
-#ifndef DISABLE_TEXT_CONSOLE
+// Intentionally always compiled to support FORCE_TEXT_CONSOLE
+//#ifndef DISABLE_TEXT_CONSOLE
 
 static void debugHelper(const char *s, va_list va, int level, uint32 debugChannel, bool caret = true) {
 	Common::String buf = Common::String::vformat(s, va);
@@ -304,4 +307,4 @@ void debugCN(uint32 debugChannel, const char *s, ...) {
 	va_end(va);
 }
 
-#endif
+//#endif
