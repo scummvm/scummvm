@@ -66,6 +66,8 @@ public:
 	const char *getShotoText() const;
 	const char *getStilEndMessage() const;
 	const char *getResponseTitle() const;
+	const char *getAskItem(int num) const;
+	const char *getMoreItemsText() const;
 
 	const ComicResource *getLastComicResource() const;
 	const ComicResource *getSpecialComicResource() const;

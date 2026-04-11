@@ -90,6 +90,11 @@ protected:
 	void setupGame() override;
 	void initObjects() override;
 
+	/**
+	* Synchronize savegame data
+	*/
+	void synchronize(Common::Serializer &s) override;
+
 private:
 	void doIntro();
 	void doFlashLogo();

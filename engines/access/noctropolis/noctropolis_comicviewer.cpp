@@ -105,6 +105,16 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 
 		_vm->_events->pollEvents();
 		_vm->_events->delayUntilNextFrame();
+		Common::CustomEventType action = kActionNone;
+		_vm->_events->getAction(action);
+
+		if (action == kActionMoveLeft) {
+			result = kPageResultPrevPage;
+			continue;
+		} else if (action == kActionMoveRight) {
+			result = kPageResultNextPage;
+			continue;
+		}
 
 		if (_vm->_events->_mousePos.y >= 389) {
 			PageResult naviResult = kPageResultNone;
@@ -122,6 +132,7 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 				continue;
 			}
 		}
+
 
 		int hotspotIndex = -1;
 		for (int i = 0; i < page->numBlocks; i++) {
@@ -156,12 +167,10 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 			_vm->_events->setCursor(CURSOR_ARROW);
 		}
 
-		if (_vm->_events->_rightButton) {
+		if (_vm->_events->_rightButton || action == kActionSkip) {
 			result = kPageResultExit;
 			_vm->_events->debounceRight();
 		}
-
-		_vm->_events->delay();
 	}
 
 	delete _bubbleSprites;

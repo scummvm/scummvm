@@ -70,8 +70,8 @@ public:
 	BoxType _type;
 	Common::Rect _bounds;
 	Common::StringArray _nameIndex;
-	Common::String _bubbleTitle;
-	Common::String _bubbleDisplStr;
+	Common::String _bubbleTitle; // the active default "script" title
+	Common::String _bubbleDisplStr; // the title that will be drawn on the next bubble
 	Common::String _tempList[60];
 	int _tempListIdx[60];
 	int _btnId1;
