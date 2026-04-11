@@ -170,7 +170,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		int textWidth = _vm->_fonts.getFont(4)->stringWidth(msg);
 
 		if (_type & kTextBoxNoctCaption)
-			textHeight += _vm->_fonts.getFont(4)->stringHeight(_bubbleTitle) - 4;
+			textHeight += _vm->_fonts.getFont(4)->stringHeight(_bubbleDisplStr) - 4;
 
 		if (_type & kTextBoxNoctCenter) {
 			// Center the box
@@ -401,9 +401,9 @@ void BubbleBox::doBox_v3(int item, int box) {
 
 	font->_fontColors[0] = 0;
 	if (_type & kTextBoxNoctCaption) {
-		int captionWidth = font->stringWidth(_bubbleTitle);
+		int captionWidth = font->stringWidth(_bubbleDisplStr);
 		font->_fontColors[1] = 238;
-		font->drawString(&screen, _bubbleTitle, Common::Point(boxX + 14 + (boxWidth * 8) - (captionWidth / 2), boxY + 6));
+		font->drawString(&screen, _bubbleDisplStr, Common::Point(boxX + 14 + (boxWidth * 8) - (captionWidth / 2), boxY + 6));
 		_vm->_screen->_printOrg.x = boxX + 14;
 		_vm->_screen->_printOrg.y = boxY + 6 + fontHeight;
 		//font->_fontColors[1] = 255;

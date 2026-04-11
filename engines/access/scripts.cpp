@@ -157,6 +157,7 @@ void Scripts::setOpcodes_v3() {
 	COMMAND_LIST[61] = &Scripts::cmdBD;
 	COMMAND_LIST[62] = &Scripts::cmdPlayVid1;
 	COMMAND_LIST[63] = &Scripts::cmdNull; // empty function CmdPRINTWITHOUT
+	COMMAND_LIST[64] = &Scripts::cmdDispAbout_v3;
 	COMMAND_LIST[71] = &Scripts::cmdFadeOut_v3;
 	COMMAND_LIST[74] = &Scripts::cmdCharWait;
 	COMMAND_LIST[75] = &Scripts::cmdUndoText;
@@ -179,7 +180,7 @@ void Scripts::setOpcodes_v3() {
 	COMMAND_LIST[92] = &Scripts::cmdSetStilDir;
 	COMMAND_LIST[93] = &Scripts::cmdStilScale;
 	COMMAND_LIST[94] = &Scripts::cmdLockInterface;
-	COMMAND_LIST[94] = &Scripts::cmdUnlockInterface;
+	COMMAND_LIST[95] = &Scripts::cmdUnlockInterface;
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -313,8 +314,8 @@ void Scripts::executeCommand(int commandIndex) {
 }
 
 void Scripts::cmdObject() {
-	debugC(1, kDebugScripts, "cmdObject()");
 	_vm->_bubbleBox->load(_data);
+	debugC(1, kDebugScripts, "cmdObject(%s)", _vm->_bubbleBox->_bubbleTitle.c_str());
 }
 
 void Scripts::cmdEndObject() {
@@ -882,13 +883,13 @@ void Scripts::cmdSetVideo_v3() {
 	if (cellIndex > 0x3f)
 		error("Invalid room video number %d", cellIndex);
 
-	bool loop;
+	bool flag;
 	const int roomNum = _vm->_player->_roomNumber;
 
 	if ((roomNum == 0x1e && cellIndex == 0) || roomNum == 0x21 || (roomNum == 0x36 && cellIndex < 32))
-		loop = true;
+		flag = true;
 	else
-		loop = false;
+		flag = false;
 
 	if (roomNum == 0x1b || roomNum == 0x1e)
 		pt.x = rawx + -5;
@@ -896,7 +897,7 @@ void Scripts::cmdSetVideo_v3() {
 		pt.x = rawx;
 
 	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
-	warning("TODO: cmdSetVideo_v3: Use flag");
+	warning("TODO: cmdSetVideo_v3: Use flag value (%d)", flag);
 	// Hack: Skip the "DARK/"
 	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename.substr(5));
 	_vm->_video->setVideo(_vm->_screen, pt, vidpath, rate);
@@ -1099,7 +1100,7 @@ void Scripts::cmdSpecial() {
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();
 	debugC(1, kDebugScripts, "cmdSpecial(specialFunction=%d, p1=%d, p2=%d)", _specialFunction, p1, p2);
-	
+
 	AccessGameType game = _vm->getGameID();
 
 	if ((game == kGameAmazon && _specialFunction == 1) || game == kGameMartianMemorandum) {
@@ -1157,8 +1158,10 @@ void Scripts::cmdCharSpeak_v3() {
 
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdCharSpeak(%d, %d, str=\"%s\")", x, y, str.c_str());
-	if (_vm->_textFlag)
+	if (_vm->_textFlag) {
+		_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
 		_vm->_bubbleBox->placeBubble(str);
+	}
 	findNull();
 }
 
@@ -1174,6 +1177,7 @@ void Scripts::cmdPlayerSpeak() {
 	_charsOrg = Common::Point(x, y);
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
+	_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
 	_vm->_bubbleBox->_bubbleTitle = title;
 
 	_vm->_bubbleBox->placeBubble(str);
@@ -1216,22 +1220,17 @@ void Scripts::cmdPlayerChoice() {
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 	}
 
+	_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
+
 	int choice = -1;
 	do {
 		_vm->_events->pollEvents();
 		if (_vm->shouldQuit())
 			return;
 
-		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
-			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == kGameMartianMemorandum) ? 23 : 22)) {
-				_vm->_events->debounceLeft();
-				int mouseX = _vm->_events->_mousePos.x;
-				choice = _vm->_res->inButtonXRange(mouseX);
-			} else {
-				_vm->_events->debounceLeft();
-				choice = _vm->_events->checkMouseBox1(responseCoords);
-			}
+			_vm->_events->debounceLeft();
+			choice = _vm->_events->checkMouseBox1(responseCoords);
 		}
 	} while (choice == -1);
 
@@ -1465,8 +1464,6 @@ void Scripts::cmdPrintWatch() {
 
 void Scripts::cmdDispAbout() {
 	debugC(1, kDebugScripts, "cmdDispAbout()");
-	if (_vm->getGameID() != kGameMartianMemorandum)
-		error("TODO: Implement cmdDispAbout for Noctropolis - need ask tbl.");
 	const char *const *askTbl = Martian::ASK_TBL;
 	_vm->_aboutBox->getList(askTbl, _vm->_ask);
 	int btnSelected = 0;
@@ -1480,9 +1477,165 @@ void Scripts::cmdDispAbout() {
 	else
 		_vm->_useItem = _vm->_aboutBox->_tempListIdx[boxX];
 
-	if (_vm->getGameID() == kGameNoctropolis)
-		_continuenceFlag = true;
 }
+
+void Scripts::cmdDispAbout_v3() {
+	// Graphical ask box for Noctropolis
+	debugC(1, kDebugScripts, "cmdDispAbout_v3()");
+
+	static const struct { int16 x1, y1, x2, y2; } askItemPos[] = {
+		{84, 0, 126, 48},
+		{42, 24, 84, 72},
+		{126, 24, 168, 72},
+		{0, 48, 42, 96},
+		{84, 48, 126, 96},
+		{168, 48, 210, 96},
+		{42, 72, 84, 120},
+		{126, 72, 168, 120},
+		{18, 102, 40, 120},
+		{186, 102, 208, 120}
+	};
+	bool menuUpArrow = false, menuDownArrow = false;
+	int hoveredItem = -1, slotIndex;
+	byte slotItems[20];
+	Common::Array<byte> items;
+	int selectedItem = -2;
+	bool needRedraw = true;
+
+	Resource *spriteData = _vm->_files->loadRawFile("ASK.AP");
+	SpriteResource *askSprites = new SpriteResource(_vm, spriteData);
+	delete spriteData;
+
+	if (!_vm->_keepAskPosition) {
+		for (int i = 0; i < 40; i++)
+			_vm->_ask[i] = false;
+
+		int16 warpMouseX, warpMouseY;
+		_vm->_askBase.x = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.x, 226, 640, warpMouseX);
+		_vm->_askBase.y = _vm->_events->clipMouseCenter(_vm->_events->_mousePos.y, 145, 400, warpMouseY);
+
+		_vm->_keepAskPosition = true;
+		if (warpMouseX != _vm->_events->_mousePos.x || warpMouseY != _vm->_events->_mousePos.y)
+			g_system->warpMouse(warpMouseX, warpMouseY);
+	}
+
+	const Common::Point base = _vm->_askBase;
+
+	// Build the list of available ask items
+	for (int i = 0; i < 40; i++) {
+		if (_vm->_ask[i] == 1)
+			items.push_back(i);
+	}
+
+	// Grab screen background
+	_vm->_screen->saveBlock(Common::Rect(base, 226, 145));
+	// Draw ask panel
+	_vm->_screen->plotImage(askSprites, 0, Common::Point(base.x, base.y + 96));
+
+	_vm->_events->setCursor(CURSOR_ARROW);
+
+	const Font *font = _vm->_fonts.getFont(1);
+	Font::_fontColors[0] = 246;
+	Font::_fontColors[1] = 238;
+
+	Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
+
+	while (selectedItem == -2 && !_vm->shouldQuitOrRestart()) {
+		int item = -1;
+
+		if (needRedraw) {
+			hoveredItem = -1;
+			menuUpArrow = false;
+			menuDownArrow = false;
+			slotIndex = 0;
+			if (items.size() > 0) {
+				// Draw "Up" arrow if required
+				menuUpArrow = _vm->_startAboutItem > 0;
+				_vm->_screen->plotImage(askSprites, menuUpArrow ? 1 : 3, Common::Point(base.x + 18, base.y + 102));
+				// Draw ask items
+				for (uint i = 0; i < 8 && _vm->_startAboutItem + i < items.size(); i++) {
+					slotItems[slotIndex] = items[_vm->_startAboutItem + i];
+					_vm->_screen->plotImage(askSprites, slotItems[slotIndex] + 6, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
+					if (_vm->_ask[slotItems[slotIndex]]) {
+						_vm->_screen->plotImage(askSprites, 5, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
+					}
+					slotIndex++;
+				}
+				// Draw "Down" arrow if required
+				menuDownArrow = (int)items.size() > _vm->_startAboutItem + 8;
+				_vm->_screen->plotImage(askSprites, menuDownArrow ? 2 : 3, Common::Point(base.x + 186, base.y + 102));
+			}
+			// Draw remaining empty slots if any
+			while (slotIndex < 8) {
+				slotItems[slotIndex] = 0;
+				_vm->_screen->plotImage(askSprites, 4, Common::Point(base.x + askItemPos[slotIndex].x1, base.y + askItemPos[slotIndex].y1));
+				slotIndex++;
+			}
+			needRedraw = false;
+		}
+
+		// Find at which slot the mouse is
+		for (int i = 0; i < 10; i++) {
+			if (_vm->_events->_mousePos.x >= base.x + askItemPos[i].x1 && _vm->_events->_mousePos.x <= base.x + askItemPos[i].x2 &&
+				_vm->_events->_mousePos.y >= base.y + askItemPos[i].y1 && _vm->_events->_mousePos.y <= base.y + askItemPos[i].y2) {
+				item = i;
+				break;
+			}
+		}
+
+		if (hoveredItem != item) {
+			_vm->_screen->fillRect(Common::Rect(Common::Point(base.x + 41, base.y + 128), 150, 8), 246);
+			if ((item == 8 && menuUpArrow) || (item == 9 && menuDownArrow)) {
+				font->drawString(_vm->_screen, res->getMoreItemsText(), Common::Point(base.x + 41, base.y + 128));
+			} else if (item >= 0 && item < 8) {
+				font->drawString(_vm->_screen, res->getAskItem(slotItems[item]), Common::Point(base.x + 41, base.y + 128));
+			}
+			hoveredItem = item;
+		}
+
+		// Support the mouse wheel for scrolling through the ask items
+		if (menuUpArrow && _vm->_events->_wheelUp) {
+			_vm->_startAboutItem--;
+			needRedraw = true;
+		} else if (menuDownArrow && _vm->_events->_wheelDown) {
+			_vm->_startAboutItem++;
+			needRedraw = true;
+		}
+
+		if (_vm->_events->_leftButton) {
+			_vm->_events->debounceLeft();
+			if (hoveredItem == 8 && menuUpArrow) {
+				_vm->_startAboutItem--;
+				needRedraw = true;
+			} else if (hoveredItem == 9 && menuDownArrow) {
+				_vm->_startAboutItem++;
+				needRedraw = true;
+			} else if (hoveredItem >= 0 && hoveredItem < 8) {
+				if (_vm->_startAboutItem + hoveredItem > (int)items.size()) {
+					// An empty slot was clicked
+					selectedItem = -1;
+				} else {
+					selectedItem = slotItems[hoveredItem];
+					_vm->_ask[selectedItem] = true;
+				}
+			}
+		} else if (_vm->_events->_rightButton) {
+			_vm->_events->debounceRight();
+			selectedItem = 255;
+			_vm->_keepAskPosition = false;
+		}
+
+		_vm->_events->pollEventsAndWait();
+	}
+
+	_vm->_flags[99] = selectedItem;
+
+	// Restore screen background
+	_vm->_screen->restoreBlock();
+
+	_continuenceFlag = true;
+}
+
 
 void Scripts::cmdPushLocation_v1() {
 	// MM only
@@ -1595,7 +1748,8 @@ void Scripts::cmdFillSound() {
 }
 
 void Scripts::cmdPlayVid1() {
-	error("TODO: Implement Scripts::cmdPlayVid1");
+	// TODO: should this mark the video finished if it's not loaded?
+	_vm->_video->playVideo();
 	_continuenceFlag = true;
 }
 
@@ -1696,13 +1850,17 @@ void Scripts::cmdRestoreBlock() {
 	int16 w = _data->readSint16LE();
 	int16 h = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
-	_vm->clearPlotImagesIn(x, y, w, h);
-	_vm->clearPlotVidsIn(x, y, w, h);
+	Common::Rect r(Common::Point(x, y), w, h);
+	_vm->_screen->blitFrom(_vm->_buffer1, r, r);
+
+	// Remake does this, but it doesn't use same buffer setup..
+	//_vm->clearPlotImagesIn(x, y, w, h);
+	//_vm->clearPlotVidsIn(x, y, w, h);
 }
 
 void Scripts::cmdCopyScnBuf() {
 	debugC(1, kDebugScripts, "cmdCopyScnBuf()");
-	_vm->_screen->update();
+	_vm->_buffer1.blitFrom(*_vm->_screen);
 }
 
 void Scripts::cmdStilWalkTo() {

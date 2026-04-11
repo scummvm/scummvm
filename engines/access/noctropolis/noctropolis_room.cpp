@@ -42,7 +42,9 @@ void NoctropolisRoom::reloadRoom() {
 	int numSubFiles = -1;
 	int objBase = -1;
 	int fileNum = -1;
+	int palOffset = 6;
 	if (!(_roomFlag & kRoomFlagTopView)) {
+		palOffset = 6;
 		if ((int8)_roomFlag > -1) {
 			if ((_vm->_flags[1] & 1) == 0) {
 				// Peter
@@ -62,10 +64,11 @@ void NoctropolisRoom::reloadRoom() {
 		numSubFiles = 1;
 		objBase = 115;
 		fileNum = 0xfc;
+		palOffset = 2;
 	}
 
 	if (fileNum > 0) {
-		_vm->_player->loadNoctPalette(fileNum, _palIntensity + 6);
+		_vm->_player->loadNoctPalette(fileNum, _palIntensity + palOffset);
 		((NoctropolisPlayer *)_vm->_player)->loadAnimation(fileNum, 0);
 
 		for (int i = subFileBase; i <= numSubFiles; i++) {

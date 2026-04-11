@@ -132,6 +132,7 @@ protected:
 	void cmdPlayVideoSound();
 	void cmdPrintWatch();
 	void cmdDispAbout();
+	void cmdDispAbout_v3();
 	void cmdPushLocation();
 	void cmdPushLocation_v1();
 	void cmdCheckTravel();

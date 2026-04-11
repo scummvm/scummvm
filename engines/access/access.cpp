@@ -104,6 +104,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_startTravelItem = _startTravelBox = 0;
 	ARRAYCLEAR(_ask);
 	_startAboutItem = _startAboutBox = 0;
+	_keepAskPosition = false;
 	_bcnt = 0;
 	_boxDataStart = 0;
 	_boxDataEnd = false;
@@ -113,7 +114,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_pictureTaken = 0;
 
 	_vidEnd = false;
-	_textFlag = false;
+	_textFlag = true;
 	_exitBox = false;
 
 	_icons = nullptr;
@@ -431,6 +432,7 @@ void AccessEngine::clearPlotImagesIn(int16 x, int16 y, int16 w, int16 h) {
 		Common::Rect imgRect(topLeft, frame->w, frame->h);
 		if (toClear.intersects(imgRect)) {
 			_images.remove_at(idx);
+			_screen->addDirtyRect(imgRect);
 			idx--;
 		}
 	}

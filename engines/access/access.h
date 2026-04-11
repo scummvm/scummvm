@@ -275,6 +275,9 @@ public:
 	int _startTravelBox;
 	int _startAboutItem;
 	int _startAboutBox;
+
+	Common::Point _askBase; // Noctropolis only
+	bool _keepAskPosition;  // Noctropolis only
 	int _boxDataStart;
 	bool _boxDataEnd;
 	int _boxSelectY;

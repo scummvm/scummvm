@@ -153,7 +153,7 @@ void NoctropolisEngine::playGame() {
 
 Common::Error NoctropolisEngine::loadGameState(int slot) {
 	_loadFlag = true;
-	return AccessEngine::Engine::loadGameState(slot);
+	return AccessEngine::loadGameState(slot);
 }
 
 
@@ -733,6 +733,23 @@ void NoctropolisEngine::doSpecialComic() {
 	_screen->fadeOutThenClearAndSetPal();
 }
 
+void NoctropolisEngine::synchronize(Common::Serializer &s) {
+	AccessEngine::synchronize(s);
+
+	for (int i = 0; i < ARRAYSIZE(_travel); i++) {
+		s.syncAsByte(_travel[i]);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_ask); i++) {
+		s.syncAsByte(_ask[i]);
+	}
+
+	// This game uses a longer establish table. first 100 bytes were already handled in the common engine sync
+	for (int i = 100; i < 128; ++i)
+		s.syncAsByte(_establishTable[i]);
+
+	_stil->synchronize(s);
+}
 
 } // end namespace Noctropolis
 

@@ -1788,8 +1788,12 @@ static const char *INVNAMES[4][76] = {
 {" ", "  WEITERE GEGENST\x8E""NDE", "  WEITERE GEGENST\x8E""NDE", "      ZAUNSTREBE", "   SILBERNES SYMBOL", "   GOLDENES SYMBOL", "       MAHNUNGEN", "     LOSABSCHNITT", "  SCHEIDUNGSPAPIERE", "      POSTKARTE", "     KONTOAUSZUG", "   WETTBEWERBSBRIEF", "       ZEITUNG", "    BUTTERMESSER", "        KABEL", "       Z\x9A""NDER", "STATUE AUS PLASTIKSPRENGSTOFF", "       KELCH", "   SARGSCHL\x9A""SSEL", "     RECHNUNGEN", "       SPITZE", "       ZETTEL", "      TAGEBUCH", "   DUSTER\x99""L-GRANATE", "      ZEITUNG", "DIE GESCHICHTE VON DARKSHEER", "   GLASSCHNEIDER", "      SCHERBE", "     KLEMMBRETT", "     MAGNETKARTE", "       WECKER", "  WUCHSBESCHLEUNIGER", "       KNOCHEN", "     SAMENBEUTEL", "      WURFMESSER", "      ZAUBERSTAB", "   SCHRAUBENDREHER", "       LOGBUCH", "      \x99""LK\x8E""NNCHEN", "        LINSE", "     SCHMINKSET", "        SCHMUCK", "        HAMMER", "        MEISSEL", "        MESSER", "    FLEISCHERHAKEN", "       MESSBECHER", "        S\x8E""URE", "    VENTILSTELLRAD", "         SEIL", "     MONIEREISEN", "         NETZ", "        RATTE", "        GABEL", "     STREICHHOLZ", "         LACK", "        PINSEL", "        PFEFFER", "      ZAHNSTOCHER", "         SPEER", "       EIERSACK", "        DIAMANT", "        COMIC", "         NETZ", "  SCHMIEDEEISERNE STANGE", "    KELCH MIT WASSER", "      STUHLTR\x9A""MMER", "       W\x9A""RSTCHEN", "        PLAKAT", "        ZIEGEL", "      NOCTROGLYPH", "      ISOLIERBAND", "         BESEN", "        \x99""LLAMPE", "     STIEL MIT HAKEN", "    SEIL MIT W\x9A""RSTCHEN"},
 };
 
-
-
+static const char *ASKITEMS[4][33] = {
+{"      NOCTROPOLIS", "       DARKSHEER", "       STILETTO", "    FATHER DESMOND", "       SUCCUBUS", "        CYGNUS", "      SAM JENKINS", "       MS. SHOTO", "      GREENTHUMB", "        TOPHAT", "        BUTCHER", "    MASTER MACABRE", "       DREALMER", "         FLUX", "    SUNSPIRE TOWER", "      LIQUIDARK", "      SHADESKIN", "      SHADOWLAIR", "     OBSERVATORY", "      CATHEDRAL", "     BEN HUTCHINS", "      MAUSOLEUM", "CENTRAL PARK GREENHOUSE", "      WHISPERMAN", "      OPERA- NEX", "      OPERAHOUSE", "     SUBTERRAINIA", "       CREATURE", "        WARDS", "    PETER BORNICK", "  INCARNATE/DYNATEK", "      JIM DRAKE", "      DISASTERS"},
+{"      NOCTROPOLIS", "       DARKSHEER", "       STILETTO", "    PERE DESMOND", "       SUCCUBE", "        CYGNE", "      SAM JENKINS", "       MME SHOTO", "      MAINVERTE", "        TOPHAT", "        BOUCHER", "    MAITRE MACABRE", "       DREALMER", "         FLUX", "    TOUR SUNSPIRE", "      LIQUIDARK", "    PEAU D'OMBRE", "    ANTRE D'OMBRE", "     OBSERVATOIRE", "      CATHEDRALE", "     BEN HUTCHINS", "      MAUSOLEE", " SERRE DE CENTRAL PARK", "      CHUCHOTEUR", "      OPERA-NEX", "         OPERA", "     SUBTERRAINIA", "       CREATURE", "      PUPILLES", "    PETER BORNICK", "  INCARNATE/DYNATEK", "      JIM DRAKE", "     CATASTROPHES"},
+{"      NOCTROPOLIS", "       TENEBROSO", "       STILETTO", "     PADRE DESMOND", "       SUCCUBUS", "        CYGNUS", "      SAM JENKINS", "      SRA. SHOTO", "       DEDOVERDE", "          DIVA", "      CARNICERO", "   MAESTRO MACABRO", "       MORFEICO", "         FLUX", "       TORRE SOLAR", "    LIQUIOSCURO", "   PIEL SOMBRIA", "   CUEVA SOMBRIA", "    OBSERVATORIO", "       CATEDRAL", "     BEN HUTCHINS", "       MAUSOLEO", "        INVERNADERO", "      WHISPERMAN", "      OPERA- NEX", "           OPERA", "      SUBTERRANIA", "       CRIATURA", "   GUARDIANES", "    PETER BORNICK", " ENCARNADAS/DYNATEK", "      JIM DRAKE", "      DESASTRES"},
+{"      NOCTROPOLIS", "       DARKSHEER", "       STILETTO", "    VATER DESMOND", "       SUCCUBUS", "        CYGNUS", "      SAM JENKINS", "      MISS SHOTO", "     GR\x9A""ND\x8E""UMLING", "  MISS ZYLINDERCHEN", "        METZGER", "    DOKTOR MAKABER", "       TR\x8E""UMLER", "         FLUX", "     SONNENNADEL", "       DUSTER\x99""L", "     FINSTERHAUT", "    SCHATTENHORT", "    OBSERVATORIUM", "         DOM", "    BEN HUTCHINS", "     MAUSOLEUM", "CENTRAL PARK TREIBHAUS", "     FL\x9A""STERMANN", "      OPER-NEX", "      OPERNHAUS", "    SUBTERRAINIA", "      GESCH\x99""PF", "      DIE WEHR", "    PETER BORNICK", "  INCARNATE/DYNATEK", "      JIM DRAKE", "    KATASTROPHEN"},
+};
 
 
 
@@ -2143,6 +2147,28 @@ const char *NoctropolisResources::getResponseTitle() const {
 	case Common::ES_ESP: return "RESPUESA %d";
 	case Common::DE_DEU: return "ANTWORT %d";
 	default: error("Unsupported language for response title");
+	}
+}
+
+const char *NoctropolisResources::getAskItem(int num) const {
+	assert(num >= 0 && num < 33);
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return ASKITEMS[0][num];
+	case Common::FR_FRA: return ASKITEMS[1][num];
+	case Common::ES_ESP: return ASKITEMS[2][num];
+	case Common::DE_DEU: return ASKITEMS[3][num];
+	default: error("Unsupported language for ask item");
+	}
+
+}
+
+const char *NoctropolisResources::getMoreItemsText() const {
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return "       MORE ITEMS       ";
+	case Common::FR_FRA: return "    PLUS D'ARTICLES     ";
+	case Common::ES_ESP: return "       MAS OBJETOS      ";
+	case Common::DE_DEU: return "       MEHR INFO        ";
+	default: error("Unsupported language for more items text");
 	}
 }
 
