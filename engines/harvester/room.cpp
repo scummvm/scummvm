@@ -1376,27 +1376,25 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!entityManager || !shouldSpawnRoomNpcEntity(npc))
 				return nullptr;
 
+			// Native state 0x35 suppresses class-4 NPC corpses after the terminal death frame.
+			// If an older runtime/save preserved one, skip respawning it and let the room object
+			// or on-death action own the post-death presentation.
+			const bool hasSuppressedCorpseState = !npc.active &&
+				npc.runtimeSpawned &&
+				npc.deathDamageType != 0 &&
+				npc.runtimeState >= 0;
+			if (hasSuppressedCorpseState)
+				return nullptr;
+
 			Entity *entity = entityManager->spawnSceneActorEntity(
 				npc.npcName, npc.modelPath, Common::Point(npc.posX, npc.posY), (float)npc.posZ, 0);
 			if (!entity)
 				return nullptr;
 
 			entity->setClassId(kRuntimeEntityClassNpc);
-			const bool isCorpse = !npc.active &&
-				npc.runtimeSpawned &&
-				npc.deathDamageType != 0 &&
-				npc.runtimeState >= 0;
-			entity->setHitTestMode(isCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
-			if (isCorpse) {
-				const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
-				entity->setAnimationFrameRange(corpseFrame, corpseFrame, false);
-				entity->setAnimationRate(0);
-				entity->setCurrentFrame(corpseFrame);
-				entity->setAnimationEnabled(false);
-			} else {
-				entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
-				entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
-			}
+			entity->setHitTestMode(kRuntimeEntityHitTestOpaquePixels);
+			entity->setAnimationFrameRange(0, MIN(entity->getLastFrame(), kRoomNpcAmbientLastFrame), true);
+			entity->setAnimationRate(npc.frameDelay > 0 ? npc.frameDelay : 0);
 			entity->setVisible(true);
 			if (!applyRoomNpcPlacement(*entity, npc)) {
 				removeSceneEntityByName(npc.npcName);
@@ -2805,26 +2803,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 	auto finalizeNpcDeathTransition = [&](NpcRecord &npc,
 			RoomNpcCombatState &combatState) -> Common::Error {
 		Script *script = _engine.getScript();
-		const bool preserveCorpse =
-			npc.monsterfyTargetName.empty() && combatState.deathLastFrame >= 0;
-		const int corpseFrame = preserveCorpse ? combatState.deathLastFrame : -1;
 		removeSceneEntityByName(npc.npcName);
 		npc.active = false;
-		npc.visible = preserveCorpse;
-		npc.savedVisible = preserveCorpse;
-		npc.runtimeSpawned = preserveCorpse;
-		npc.runtimeState = corpseFrame;
-		npc.deathOrMonsterfyFlag = !preserveCorpse;
+		npc.visible = false;
+		npc.savedVisible = false;
+		npc.runtimeSpawned = false;
+		npc.runtimeState = -1;
+		npc.deathOrMonsterfyFlag = true;
 		if (combatState.deathDamageType != 0)
 			npc.deathDamageType = combatState.deathDamageType;
 		const bool runtimeChanged = script
 			? script->finalizeRuntimeNpcDeathOrMonsterfy(
-				npc.npcName, npc.deathDamageType, preserveCorpse, corpseFrame)
+				npc.npcName, npc.deathDamageType, false, -1)
 			: false;
 		debugC(1, kDebugCombat,
-			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d preserve_corpse=%d monsterfy='%s' on_death='%s'",
+			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d suppress_runtime_actor=1 monsterfy='%s' on_death='%s'",
 			npc.npcName.c_str(), combatState.deathDamageType, combatState.deathLastFrame,
-			preserveCorpse,
 			npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
 		clearRoomNpcCombatState(combatState);
 
