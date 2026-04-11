@@ -78,7 +78,7 @@ void FoolGame::revealRun() {
 	this->sub_128_962(0xb4, 0xff, 0xb6, 0x101, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
 	this->sub_128_962(0x9a, 0xff, 0x9c, 0x101, 0x37, 0x13, 0xff, 0x1ee, 0, kPatCopy, 0x19);
 	// 134:02f0
-	this->arr_i16_1eb8[19] = g_zbasic->unk_310(this->var_str_c06);
+	this->arr_i16_1eb8[19] = g_zbasic->unk_310(this->activePuzzleBuffer);
 	this->var_i16_1aba = this->arr_i16_1eb8[18];
 	g_zbasic->text(0, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	for (this->var_i16_7be = 1; this->var_i16_7be <= this->arr_i16_1eb8[15]; this->var_i16_7be++) {
@@ -144,7 +144,7 @@ void FoolGame::revealRun() {
 			this->revealReset();
 		}
 		if (this->stateFlags == 4) {
-			this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
+			this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
 			this->sub_128_3536();
 		}
 		// 134:061e
@@ -153,7 +153,7 @@ void FoolGame::revealRun() {
 	if (this->var_i16_d0c != 0) {
 		this->revealSuccess();
 	}
-	this->var_str_c06 = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
+	this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
 	// 134:0678: JMP - [0x8ae]
 	for (int i = 1; i <= this->arr_i16_1eb8[15]; i++) {
 		g_toolbox->KillPoly(this->arr_poly_192c0[i]);

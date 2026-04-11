@@ -97,9 +97,9 @@ void FoolGame::jigsawRun() {
 	}
 	// 132:0376
 	// rearrange picture tiles to match state
-	if (this->var_str_c06 != g_zbasic->str(207)) { // empty
+	if (!this->activePuzzleBuffer.empty()) { // was: str(207)
 		for (int i = 1; i <= this->var_i16_1a9e; i++) {
-			this->arr_i16_3738[i] = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_c06, i*2 - 1, 2));
+			this->arr_i16_3738[i] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, i*2 - 1, 2));
 			g_zbasic->put(
 				this->arr_rect_1f38[i].left,
 				this->arr_rect_1f38[i].top,
@@ -376,10 +376,10 @@ void FoolGame::jigsawDropSelected() {
 void FoolGame::jigsawStoreState() {
 	// convert jigsaw positions to string
 	// 132:1384
-	this->var_str_c06 = g_zbasic->str(208);
+	this->activePuzzleBuffer = g_zbasic->str(208);
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
 		this->var_str_384 = g_zbasic->unk_88(this->arr_i16_3738[i]);
-		this->var_str_c06 += this->var_str_384;
+		this->activePuzzleBuffer += this->var_str_384;
 	}
 }
 
