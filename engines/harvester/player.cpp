@@ -36,6 +36,8 @@ namespace {
 
 static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.ABM";
 static const float kRoomPlayerHorizontalMoveBase = 8.0f;
+static const float kRoomPlayerHorizontalTargetSlackBase = 50.0f;
+static const float kRoomPlayerDepthTargetSlack = 8.0f;
 static const int kRoomRegionTargetXBias = 10;
 static const float kRoomDepthCompareEpsilon = 0.01f;
 static const int kRoomPlayerWalkAnimationRate = 17;
@@ -587,6 +589,58 @@ static int computeRoomPlayerVerticalScreenStep() {
 	return kRoomPlayerVerticalScreenStep;
 }
 
+static int computePlayerFrameLeftX(const RoomPlayerState &playerState) {
+	if (!playerState.entity)
+		return playerState.centerX;
+
+	int width = 0;
+	int height = 0;
+	int xOffset = 0;
+	int yOffset = 0;
+	if (!playerState.entity->getCurrentFrameMetrics(width, height, xOffset, yOffset))
+		return playerState.centerX;
+
+	return playerState.centerX - width / 2;
+}
+
+static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
+		const RoomPlayerState &playerState) {
+	const float slack = Player::computeDepthScale(state, playerState.z) *
+		kRoomPlayerHorizontalTargetSlackBase;
+	const float frameLeftX = (float)computePlayerFrameLeftX(playerState);
+	if (frameLeftX < (float)playerState.targetX - slack)
+		return 1;
+	if ((float)playerState.targetX + slack < frameLeftX)
+		return -1;
+
+	return 0;
+}
+
+static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState) {
+	if (playerState.targetZ < playerState.z - kRoomPlayerDepthTargetSlack)
+		return 1;
+	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ)
+		return -1;
+
+	return 0;
+}
+
+static bool hasPlayerReachedMoveTarget(const RoomPlayerState &playerState) {
+	return playerState.moveTargetXReached && playerState.moveTargetZReached;
+}
+
+static void updatePlayerMoveTargetProgress(const RoomSetupState &state,
+		RoomPlayerState &playerState) {
+	if (!playerState.moveTargetXReached &&
+			resolveMoveTargetHorizontalDirection(state, playerState) == 0) {
+		playerState.moveTargetXReached = true;
+	}
+	if (!playerState.moveTargetZReached &&
+			resolveMoveTargetDepthDirection(playerState) == 0) {
+		playerState.moveTargetZReached = true;
+	}
+}
+
 static int clampPlayerCenterXToNativeBounds(const RoomPlayerState &playerState, int centerX) {
 	if (!playerState.entity)
 		return CLIP<int>(centerX, 0, 639);
@@ -630,14 +684,6 @@ static bool consumePlayerMovementTick(RoomPlayerState &playerState) {
 
 	playerState.nextMovementTick = now + interval;
 	return true;
-}
-
-static int stepTowardsInt(int current, int target, int step) {
-	if (step <= 0 || current == target)
-		return current;
-	if (current < target)
-		return MIN(current + step, target);
-	return MAX(current - step, target);
 }
 
 static float stepTowardsFloat(float current, float target, float step) {
@@ -757,9 +803,11 @@ static void setMoveTargetInternal(const RoomSetupState &state, RoomPlayerState &
 		int targetX, float targetZ, int targetBottomY) {
 	playerState.hasMoveTarget = true;
 	playerState.nextMovementTick = 0;
-	playerState.targetX = clampPlayerCenterXToNativeBounds(playerState, targetX);
+	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetBottomY = clampRoomMovementY(state, targetBottomY);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
+	playerState.moveTargetXReached = false;
+	playerState.moveTargetZReached = false;
 	debugC(1, kDebugPlayer,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
 		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
@@ -1382,43 +1430,57 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	if (!playerState.entity || !playerState.hasMoveTarget || playerState.turnActive || playerState.hitActive)
 		return false;
 
-	if (playerState.centerX == playerState.targetX &&
-			playerState.bottomY == playerState.targetBottomY &&
-			fabsf(playerState.z - playerState.targetZ) <= kRoomDepthCompareEpsilon) {
+	updatePlayerMoveTargetProgress(state, playerState);
+	if (hasPlayerReachedMoveTarget(playerState)) {
 		playerState.hasMoveTarget = false;
 		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : 0);
 	}
 
 	const int previousCenterX = playerState.centerX;
 	const int previousBottomY = playerState.bottomY;
-	const float previousZ = playerState.z;
-	const int moveFacing = resolveFacingFromMovementDelta(
-		playerState.targetX - playerState.centerX, playerState.targetBottomY - playerState.bottomY);
+	const int horizontalDirection = playerState.moveTargetXReached
+		? 0
+		: resolveMoveTargetHorizontalDirection(state, playerState);
+	const int depthDirection = horizontalDirection == 0 && !playerState.moveTargetZReached
+		? resolveMoveTargetDepthDirection(playerState)
+		: 0;
 	if (!consumePlayerMovementTick(playerState))
 		return false;
-	const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
-	const int verticalStep = computeRoomPlayerVerticalScreenStep();
-	const float depthStep = computeRoomPlayerDepthStep(state);
-	const int candidateCenterX = stepTowardsInt(playerState.centerX, playerState.targetX, horizontalStep);
-	const int candidateBottomY = stepTowardsInt(playerState.bottomY, playerState.targetBottomY, verticalStep);
-	const float candidateZ = stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
 
-	bool moved = tryApplyPlayerMovementWithFallbacks(engine, state, sceneObjects, sceneAnimations,
-		playerState, previousCenterX, previousBottomY, previousZ,
-		candidateCenterX, candidateBottomY, candidateZ);
+	int candidateCenterX = playerState.centerX;
+	int candidateBottomY = playerState.bottomY;
+	float candidateZ = playerState.z;
+	if (horizontalDirection != 0) {
+		const int horizontalStep = computeRoomPlayerHorizontalStep(state, playerState.z);
+		candidateCenterX = clampPlayerCenterXToNativeBounds(
+			playerState, playerState.centerX + horizontalDirection * horizontalStep);
+	} else if (depthDirection != 0) {
+		const int verticalStep = computeRoomPlayerVerticalScreenStep();
+		const float depthStep = computeRoomPlayerDepthStep(state);
+		candidateBottomY = clampRoomMovementY(state,
+			playerState.bottomY + depthDirection * verticalStep);
+		candidateZ = stepTowardsFloat(playerState.z, playerState.targetZ, depthStep);
+	}
+
+	bool moved = tryApplyPlayerMovement(engine, state, sceneObjects, sceneAnimations,
+		playerState, candidateCenterX, candidateBottomY, candidateZ);
 	if (!moved) {
 		playerState.hasMoveTarget = false;
-		return setIdleAnimation(playerState, playerState.facing >= 0 ? playerState.facing : moveFacing);
+		int idleFacing = playerState.facing;
+		if (idleFacing < 0) {
+			if (horizontalDirection != 0)
+				idleFacing = horizontalDirection < 0 ? 1 : 2;
+			else
+				idleFacing = depthDirection < 0 ? 3 : 0;
+		}
+		return setIdleAnimation(playerState, idleFacing);
 	}
 
 	const int actualFacing = resolveFacingFromRoomMovement(
 		previousCenterX, previousBottomY, playerState.centerX, playerState.bottomY);
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
-	if (playerState.centerX == playerState.targetX &&
-			playerState.bottomY == playerState.targetBottomY &&
-			fabsf(playerState.z - playerState.targetZ) <= kRoomDepthCompareEpsilon) {
-		playerState.bottomY = playerState.targetBottomY;
-		playerState.z = playerState.targetZ;
+	updatePlayerMoveTargetProgress(state, playerState);
+	if (hasPlayerReachedMoveTarget(playerState)) {
 		playerState.hasMoveTarget = false;
 		(void)setIdleAnimation(playerState, actualFacing);
 	}

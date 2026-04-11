@@ -1073,6 +1073,11 @@
     - the vertical walk states copy `abs(+0x1140)` into `frame_y_step`
     - they apply `+/- g_current_room_def->z_velocity_step` separately through `frame_z_step`
     - the later `set_entity_screen_position` handoff commits `screen_y` and `z` independently, so native walk updates do not derive screen Y from depth each tick
+  - Empty-floor click targets are also component-based rather than diagonal:
+    - `run_harvester_main_loop` stores cursor `x` in live actor `+0x10ac`, stores the mapped target depth in `+0x10b4`, and seeds the target/waypoint sentinel at `waypoints[8].target_z`
+    - `update_actor_runtime_state` treats horizontal target satisfaction as `frame_left_x` within `depth_scale * 50.0` of the stored target `x`, then clears that component
+    - depth target satisfaction uses the native `+/- 8.0` Z band; vertical walk advances screen Y by the `+0x1140` step and depth by `g_current_room_def->z_velocity_step`
+    - because the horizontal branch is evaluated after the depth branch and can override the desired state while X is still pending, a click that needs both rightward and downward movement walks right first, then switches to the vertical/down walk once X is satisfied
   - For class-6 monsters specifically, pursuit is not a free-running room-script heuristic: the native state machine first closes base Z to within `g_player_combat_avatar->z +/- 2.0`, then compares center-to-center X against `engage_distance`, and only arms the close-range attack picker after that spacing gate is satisfied.
   - The same class-6 path derives its horizontal chase waypoint from the player's live left edge plus the current player/monster frame widths and treats that waypoint as satisfied within `50.0 * depth_scale` pixels, so native monster pursuit does not require exact center equality before it can stop walking and attack.
   - Once that close-range gate is satisfied and the per-attack cooldown allows it, the class-6 branch stores `g_player_combat_avatar` into live actor field `+0x11a4` before entering the close-range attack family; the later contact block resolves against that linked target instead of re-running the coarse engage-distance spacing test.

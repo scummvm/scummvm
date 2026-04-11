@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 11, 2026, verified native ESC menu filtering in Ghidra. `run_main_menu` loads `main_menu_2` into the Save slot, then replaces that slot with a single blank string when `g_player_present_in_room == 0`; `room_setup` uses that no-player path for closeup rooms that spawn `EXIT_BM` and `EXIT_HS` instead of the player. Updated the ScummVM in-room ESC menu to build a displayed item list and blank Save when the current `RoomSetupState` has no entrance/player, matching the closeup behavior without changing the raw `MENU.INI` item list.
+- On April 11, 2026, verified native empty-floor click movement in Ghidra. `run_harvester_main_loop` stores cursor `x` and mapped target depth separately, while `update_actor_runtime_state` satisfies horizontal movement within `depth_scale * 50.0`, satisfies depth within `+/- 8.0`, and lets pending horizontal movement override pending vertical/depth movement. Updated ScummVM target walking to move horizontally first, then vertical/depth, with per-component target latches so frame-width changes do not restart horizontal chasing after it has been satisfied.
 
 ## Next Suggested Action
 
-- In-engine, enter the `CHESSHEAD` closeup from `CHESSM`, press Escape, and confirm the Save row is blank/unselectable while Load, Options, Help, and Quit still behave normally. Then exit the closeup and confirm Save reappears in the ordinary `CHESSROOM` ESC menu.
+- In-engine, click the empty floor in `CHESSROOM` around `(514,422)` from the logged start position and confirm the player walks right first, then switches to the down-walk/depth movement instead of stopping after the horizontal segment.
