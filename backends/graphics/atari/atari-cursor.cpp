@@ -19,11 +19,13 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "atari-cursor.h"
 
 #include "atari-supervidel.h"
 #include "atari-surface.h"
-//#include "backends/platform/atari/atari-debug.h"
+//#include "common/debug.h"
 
 bool Cursor::_globalSurfaceChanged;
 
@@ -94,7 +96,7 @@ void Cursor::update() {
 }
 
 void Cursor::updatePosition(int deltaX, int deltaY) {
-	//atari_debug("Cursor::updatePosition: %d, %d", deltaX, deltaX);
+	//debug("Cursor::updatePosition: %d, %d", deltaX, deltaX);
 
 	if (deltaX == 0 && deltaY == 0)
 		return;
@@ -251,7 +253,7 @@ void Cursor::saveBackground() {
 	// having different dimensions than the source surface
 	const Graphics::Surface &dstSurface = *_screenSurf;
 
-	//atari_debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+	//debug("Cursor::saveBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
 	// save native bitplanes or pixels, so it must be a Graphics::Surface to copy from
 	if (_savedBackground.w != _savedRect.width()
@@ -267,7 +269,7 @@ void Cursor::draw() {
 	AtariSurface &dstSurface  = *_screenSurf;
 	const int dstBitsPerPixel = dstSurface.getBitsPerPixel();
 
-	//atari_debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
+	//debug("Cursor::draw: %d %d %d %d", _dstRect.left, _dstRect.top, _dstRect.width(), _dstRect.height());
 
 	if (_globalSurfaceChanged) {
 		convertSurfaceTo(dstSurface.format);
@@ -304,7 +306,7 @@ void Cursor::restoreBackground() {
 
 	assert(_savedBackground.getPixels());
 
-	//atari_debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
+	//debug("Cursor::restoreBackground: %d %d %d %d", _savedRect.left, _savedRect.top, _savedRect.width(), _savedRect.height());
 
 	// as this is used only for direct rendering, we don't need to worry about offsettedSurf
 	// having different dimensions than the source surface

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "backends/mixer/atari/atari-mixer.h"
 
 #include <math.h>
@@ -27,8 +29,9 @@
 #include <mint/ostruct.h>
 #include <usound.h>	// https://github.com/mikrosk/usound
 
-#include "backends/platform/atari/atari-debug.h"
 #include "common/config-manager.h"
+#include "common/debug.h"
+#include "common/textconsole.h"
 
 #ifdef DISABLE_FANCY_THEMES
 #define DEFAULT_OUTPUT_RATE 11025
@@ -59,7 +62,7 @@ static void __attribute__((interrupt)) timerA(void)
 }
 
 AtariMixerManager::AtariMixerManager() : MixerManager() {
-	atari_debug("AtariMixerManager()");
+	debug("AtariMixerManager()");
 
 	suspendAudio();
 
@@ -82,7 +85,7 @@ AtariMixerManager::AtariMixerManager() : MixerManager() {
 }
 
 AtariMixerManager::~AtariMixerManager() {
-	atari_debug("~AtariMixerManager()");
+	debug("~AtariMixerManager()");
 
 	g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
@@ -124,9 +127,9 @@ void AtariMixerManager::init() {
 	ConfMan.setInt("output_channels", _outputChannels, Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt("audio_buffer_size", _samples, Common::ConfigManager::kApplicationDomain);
 
-	atari_debug("setting %d Hz mixing frequency (%d-bit, %s)",
+	debug("setting %d Hz mixing frequency (%d-bit, %s)",
 		  _outputRate, obtained.format == AudioFormatSigned8 ? 8 : 16, _outputChannels == 1 ? "mono" : "stereo");
-	atari_debug("sample buffer size: %d", _samples);
+	debug("sample buffer size: %d", _samples);
 
 	ConfMan.flushToDisk();
 
@@ -150,7 +153,7 @@ void AtariMixerManager::init() {
 }
 
 void AtariMixerManager::suspendAudio() {
-	atari_debug("suspendAudio");
+	debug("suspendAudio");
 
 	Buffoper(0x00);
 	muted = true;
@@ -158,7 +161,7 @@ void AtariMixerManager::suspendAudio() {
 }
 
 int AtariMixerManager::resumeAudio() {
-	atari_debug("resumeAudio");
+	debug("resumeAudio");
 
 	_audioSuspended = false;
 	update();
@@ -172,7 +175,7 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 		if (!muted) {
 			Buffoper(0x00);
 			muted = true;
-			atari_debug("silencing the mixer");
+			debug("silencing the mixer");
 		}
 		return false;
 	default:
@@ -253,6 +256,6 @@ void AtariMixerManager::update() {
 	}
 
 	if (processed > 0 && processed != _samples) {
-		atari_warning("processed: %d, _samples: %d", processed, _samples);
+		warning("processed: %d, _samples: %d", processed, _samples);
 	}
 }
