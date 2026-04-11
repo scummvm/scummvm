@@ -1459,8 +1459,9 @@ Common::Error Flow::runMainMenuStub() {
 	return _menu.runMainMenuStub(*this);
 }
 
-Common::Error Flow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette, float paletteBrightness) {
-	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this);
+Common::Error Flow::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
+		float paletteBrightness, bool canSaveGame) {
+	return _menu.runRoomMenuStub(backdrop, palette, paletteBrightness, *this, canSaveGame);
 }
 
 Common::Error Flow::runRoomNpcDialogue(const IndexedBitmap &backdrop, const byte *palette,

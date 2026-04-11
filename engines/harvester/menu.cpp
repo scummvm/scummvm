@@ -957,18 +957,23 @@ void MenuSystem::clearMainMenuBackdrop() {
 }
 
 Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &flow) {
+		float paletteBrightness, Flow &flow, bool canSaveGame) {
 	Graphics::FrameLimiter limiter(g_system, 60);
-	int selectedItem = _menuItems.empty() ? -1 : 0;
+	Common::Array<Common::String> roomMenuItems;
+	buildDisplayMainMenuItems(_menuItems,
+		canSaveGame && _engine.canSaveGameStateCurrently(),
+		_engine.canLoadGameStateCurrently(),
+		roomMenuItems);
+	int selectedItem = roomMenuItems.empty() ? -1 : 0;
 	bool needsRedraw = true;
 	bool shouldCloseMenu = false;
 	flow.resetCursorAnimationSequence();
 
 	auto activateSelectedItem = [&]() -> Common::Error {
-		if (selectedItem < 0 || selectedItem >= (int)_menuItems.size())
+		if (selectedItem < 0 || selectedItem >= (int)roomMenuItems.size())
 			return Common::kNoError;
 
-		const Common::String &item = _menuItems[selectedItem];
+		const Common::String &item = roomMenuItems[selectedItem];
 		if (item.equalsIgnoreCase("NEW GAME")) {
 			RoomMenuTextConfig config;
 			(void)loadMenuTextConfig(_engine, config);
@@ -1045,7 +1050,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 	while (!_engine.shouldQuit()) {
 		if (needsRedraw) {
-			renderBackdropMenuScreen(backdrop, palette, paletteBrightness, _menuItems, selectedItem);
+			renderBackdropMenuScreen(backdrop, palette, paletteBrightness, roomMenuItems, selectedItem);
 			needsRedraw = false;
 		}
 
@@ -1057,7 +1062,7 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE: {
-				const int hoveredItem = getBackdropMenuItemAt(_mousePos, _menuItems);
+				const int hoveredItem = getBackdropMenuItemAt(_mousePos, roomMenuItems);
 				if (hoveredItem != -1 && hoveredItem != selectedItem) {
 					selectedItem = hoveredItem;
 					needsRedraw = true;
@@ -1068,14 +1073,14 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 					return Common::kNoError;
 
-				if (_menuItems.empty())
+				if (roomMenuItems.empty())
 					break;
 
 				if (event.kbd.keycode == Common::KEYCODE_UP) {
-					selectedItem = (selectedItem + _menuItems.size() - 1) % _menuItems.size();
+					selectedItem = (selectedItem + roomMenuItems.size() - 1) % roomMenuItems.size();
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_DOWN) {
-					selectedItem = (selectedItem + 1) % _menuItems.size();
+					selectedItem = (selectedItem + 1) % roomMenuItems.size();
 					needsRedraw = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ||
 						event.kbd.keycode == Common::KEYCODE_KP_ENTER) {
@@ -1088,10 +1093,10 @@ Common::Error MenuSystem::runRoomMenuStub(const IndexedBitmap &backdrop, const b
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN: {
-				if (_menuItems.empty())
+				if (roomMenuItems.empty())
 					break;
 
-				selectedItem = getBackdropMenuItemAt(_mousePos, _menuItems);
+				selectedItem = getBackdropMenuItemAt(_mousePos, roomMenuItems);
 				if (selectedItem == -1)
 					break;
 
