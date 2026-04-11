@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 11, 2026, verified the solved Chessmaster dialogue branch in Ghidra. Native `handle_talk_to_chessmaster` sets `CHESS_SOLVED`, plays `graphic\fst\c125.fst`, then calls `queue_named_npc_death_or_monsterfy_transition("CHESSMASTER", "SLASH")`; it does not immediately finalize or hide the NPC record. The decoded `HARVEST.SCR` confirms `CHESSMASTER` has `on_death='ADD_CHESS_CU'`, and that action reveals `CHESSM` before skipping king growth when `CHESS_SOLVED` is true. Updated the ScummVM solved-puzzle shortcut to queue the live NPC death transition instead of finalizing it immediately, so the room loop can play the death animation and dispatch `ADD_CHESS_CU` at the terminal frame.
+- On April 11, 2026, verified native ESC menu filtering in Ghidra. `run_main_menu` loads `main_menu_2` into the Save slot, then replaces that slot with a single blank string when `g_player_present_in_room == 0`; `room_setup` uses that no-player path for closeup rooms that spawn `EXIT_BM` and `EXIT_HS` instead of the player. Updated the ScummVM in-room ESC menu to build a displayed item list and blank Save when the current `RoomSetupState` has no entrance/player, matching the closeup behavior without changing the raw `MENU.INI` item list.
 
 ## Next Suggested Action
 
-- In-engine, replay the solved Chessmaster dialogue path from `CHESS_SOLVED` through `C125.FST` and the queued NPC death transition. Confirm that `combat npc death start`/`complete` logs appear for `CHESSMASTER`, `ADD_CHESS_CU` reveals the `CHESSM` body/hotspot, the live `CHESSMASTER` actor does not respawn, and examining the body reaches the `CHESSHEAD` closeup/key interaction.
+- In-engine, enter the `CHESSHEAD` closeup from `CHESSM`, press Escape, and confirm the Save row is blank/unselectable while Load, Options, Help, and Quit still behave normally. Then exit the closeup and confirm Save reappears in the ordinary `CHESSROOM` ESC menu.

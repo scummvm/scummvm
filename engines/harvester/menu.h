@@ -44,7 +44,7 @@ public:
 
 	Common::Error runMainMenuStub(Flow &flow);
 	Common::Error runRoomMenuStub(const IndexedBitmap &backdrop, const byte *palette,
-		float paletteBrightness, Flow &flow);
+		float paletteBrightness, Flow &flow, bool canSaveGame);
 
 private:
 	Common::Error runLoadGameMenu(const byte *palette, float paletteBrightness,

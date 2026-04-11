@@ -4656,7 +4656,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (!captureScreenBackdrop(*activeScreen, roomMenuBackdrop))
 						return Common::kReadingFailed;
 					Common::Error menuError = flow.runRoomMenuStub(
-						roomMenuBackdrop, scene.palette, scene.targetPaletteBrightness);
+						roomMenuBackdrop, scene.palette, scene.targetPaletteBrightness,
+						scene.state.hasEntrance);
 					if (menuError.getCode() != Common::kNoError)
 						return menuError;
 					flow.resetCursorAnimationSequence();
