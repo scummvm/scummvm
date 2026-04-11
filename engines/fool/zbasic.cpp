@@ -361,6 +361,20 @@ void ZBasic::midStrSet(Common::U32String &target, int16 expr1, int16 expr2, cons
 	}
 }
 
+Common::String ZBasic::midStr(const Common::String &str, int16 expr1, int16 expr2) {
+	Common::String result = str.substr(expr1-1, expr2);
+	return result;
+}
+
+void ZBasic::midStrSet(Common::String &target, int16 expr1, int16 expr2, const Common::String &src) {
+	for (int i = 0; i < expr2; i++) {
+		if (((expr1 + i - 1) >= (int)target.size()) || (i >= (int)src.size()))
+			break;
+		target[expr1 + i - 1] = src[i];
+	}
+}
+
+
 
 void ZBasic::openR(int16 fileNo, const Common::U32String &fileName, uint32 lineSize, int16 volNo) {
 	if (_fileStreams.contains(fileNo)) {
@@ -519,11 +533,16 @@ int16 ZBasic::readFileInt(int16 fileNo) {
 	return _fileStreams[fileNo]->readSint16BE();
 }
 
-Common::U32String ZBasic::readFileStr(int16 fileNo, int16 length) {
+Common::String ZBasic::readFileStr(int16 fileNo, int16 length) {
 	if (!_fileStreams.contains(fileNo)) {
 		error("ZBasic::readFileStr: unknown fileNo %d", fileNo);
 	}
-	return _fileStreams[fileNo]->readString(0, length).decode(Common::kMacRoman);
+	Common::String intermediate;
+	while ((length > 0) && !_fileStreams[fileNo]->eos()) {
+		intermediate.push_back((char)_fileStreams[fileNo]->readByte());
+		length--;
+	}
+	return intermediate;
 }
 
 void ZBasic::record(int16 fileNo, int16 recordNo, int16 location) {
@@ -626,11 +645,21 @@ void ZBasic::stringCopy(Common::U32String &target, const Common::U32String &src)
 	target = src;
 }
 
-void ZBasic::writeFileStr(int16 fileNo, const Common::U32String &str) {
+void ZBasic::writeFileStr(int16 fileNo, const Common::String &str) {
 	if (!_fileWriteStreams.contains(fileNo)) {
 		error("ZBasic::writeFileStr: unknown fileNo %d", fileNo);
 	}
-	_fileWriteStreams[fileNo]->writeString(str.encode(Common::kMacRoman));
+
+	if (str.empty())
+		return;
+
+	if (debugChannelSet(5, kDebugLoading)) {
+		debugC(5, kDebugLoading, "ZBasic::writeFileStr:");
+		Common::hexdump((const byte *)str.c_str(), (int)str.size());
+	}
+	for (uint i = 0; i < str.size(); i++) {
+		_fileWriteStreams[fileNo]->writeByte(str[i]);
+	}
 }
 
 void ZBasic::writeFileInt(int16 fileNo, int16 data) {
@@ -647,7 +676,7 @@ void ZBasic::writeFileDblInt(int16 fileNo, int32 data) {
 	_fileWriteStreams[fileNo]->writeSint32BE(data);
 }
 
-Common::U32String ZBasic::unk_88(uint16 unk1) {
+Common::String ZBasic::unk_88(uint16 unk1) {
 	// convert uint16 data into string bytes.
 	// all of the toolbox APIs use U32String and convert when
 	// necessary to MacRoman, and unfortunately that's what
@@ -655,7 +684,7 @@ Common::U32String ZBasic::unk_88(uint16 unk1) {
 	Common::String inter;
 	inter.push_back((char)(unk1 >> 8));
 	inter.push_back((char)(unk1 & 0xff));
-	return inter.decode(Common::kMacRoman);
+	return inter;
 }
 
 void ZBasic::unk_130(int16 unk1) {
@@ -666,15 +695,14 @@ void ZBasic::unk_158() {
 	warning("STUB: ZBasic::unk_158");
 }
 
-uint16 ZBasic::unk_310(const Common::U32String &unk1) {
-	Common::String inter = unk1.encode(Common::kMacRoman);
+uint16 ZBasic::unk_310(const Common::String &unk1) {
 	uint16 result = 0;
-	if (inter.size() == 0)
+	if (unk1.size() == 0)
 		return result;
-	result |= (byte)(inter[0]) << 8;
-	if (inter.size() == 1)
+	result |= (byte)(unk1[0]) << 8;
+	if (unk1.size() == 1)
 		return result;
-	result |= (byte)(inter[1]);
+	result |= (byte)(unk1[1]);
 	return result;
 }
 
@@ -692,12 +720,27 @@ void ZBasic::indexSet(const Common::U32String &value, int16 table, int16 index) 
 		return;
 	}
 	if (!_index.contains(table)) {
-		_index[table] = Common::Array<Common::U32String>();
+		_index[table] = Common::Array<Common::String>();
 	}
 	if (_index[table].size() <= (uint)index) {
 		_index[table].resize(index+1);
 	}
-	debugC(5, kDebugLoading, "ZBasic::indexSet: [%d][%d] = %s", table, index, value.encode().c_str());
+	debugC(5, kDebugLoading, "ZBasic::indexSet: [%d][%d] = %s", table, index, value.encode(Common::kMacRoman).c_str());
+	_index[table][index] = value.encode(Common::kMacRoman);
+}
+
+void ZBasic::indexRawSet(const Common::String &value, int16 table, int16 index) {
+	if (index < 0) {
+		warning("ZBasic::indexRawSet: index must be positive, not %d", index);
+		return;
+	}
+	if (!_index.contains(table)) {
+		_index[table] = Common::Array<Common::String>();
+	}
+	if (_index[table].size() <= (uint)index) {
+		_index[table].resize(index+1);
+	}
+	debugC(5, kDebugLoading, "ZBasic::indexRawSet: [%d][%d] = %s", table, index, value.c_str());
 	_index[table][index] = value;
 }
 
@@ -714,7 +757,24 @@ Common::U32String ZBasic::index(int16 table, int16 index) {
 		warning("ZBasic::index: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
 		return Common::U32String();
 	}
-	debugC(5, kDebugLoading, "ZBasic::index: [%d][%d] = %s", table, index, _index[table][index].encode().c_str());
+	debugC(5, kDebugLoading, "ZBasic::index: [%d][%d] = %s", table, index, _index[table][index].c_str());
+	return _index[table][index].decode(Common::kMacRoman);
+}
+
+Common::String ZBasic::indexRaw(int16 table, int16 index) {
+	if (index < 0) {
+		warning("ZBasic::indexRaw: index must be positive, not %d", index);
+		return Common::String();
+	}
+	if (!_index.contains(table)) {
+		warning("ZBasic::indexRaw: table %d not found", table);
+		return Common::String();
+	}
+	if (_index[table].size() <= (uint)index) {
+		warning("ZBasic::indexRaw: asked for index %d but only %d entries in table %d", index, _index[table].size(), table);
+		return Common::String();
+	}
+	debugC(5, kDebugLoading, "ZBasic::indexRaw: [%d][%d] = %s", table, index, _index[table][index].c_str());
 	return _index[table][index];
 }
 

@@ -158,7 +158,23 @@ MenuHandle Toolbox::GetMHandle(uint16 menuID) {
 
 void Toolbox::HiliteMenu(uint16 menuID) {
 	// FIXME: this is coupled to the mouse click code
-	warning("STUB: Toolbox::HiliteMenu");
+	if (_defaultMenu) {
+		if (menuID == 0) {
+			for (int i = 0; i < _defaultMenu->numberOfMenus(); i++) {
+				Graphics::MacMenuSubMenu *item = _defaultMenu->getSubmenu(nullptr, i);
+				if (item) {
+					item->highlight = false;
+				}
+			}
+		} else {
+			Graphics::MacMenuSubMenu *item = _defaultMenu->getSubmenu(nullptr, menuID - 1);
+			if (item) {
+				item->highlight = true;
+			}
+		}
+		_defaultMenu->setDirty(true);
+	}
+	warning("STUB: Toolbox::HiliteMenu %d", menuID);
 }
 
 uint32 Toolbox::MenuKey(char ch) {

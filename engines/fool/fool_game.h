@@ -67,7 +67,7 @@ public:
 	void sub_128_918(const Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_c6a(uint16 unk1);
+	void sub_128_c6a(uint32 unk1);
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
@@ -329,7 +329,7 @@ private:
 	int16 selectedMenuChapter; // var_i16_7dc
 	int16 var_i16_7de;
 	int16 var_i16_7e0;
-	int16 var_i16_7e2;
+	int16 activePuzzle; // var_i16_7e2
 	int16 var_i16_7e4;
 	int16 var_i16_7e6;
 	Common::U32String var_str_7e8;
@@ -348,7 +348,7 @@ private:
 	int16 var_i16_c00;
 	int16 var_i16_c02;
 	int16 var_i16_c04;
-	Common::U32String var_str_c06;
+	Common::String activePuzzleBuffer; // var_str_c06
 
 	int16 var_i16_d06;
 	int16 var_i16_d0c;
@@ -496,7 +496,7 @@ private:
 	Common::Rect arr_rect_4776;
 	int16 arr_i16_47d8[0x100];
 	PicHandle arr_pic_49d8[0x80];
-	int16 arr_i16_4bd8[0x52];
+	int16 sunMapTileID[0x52]; // arr_i16_4bd8
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[48];
 	Common::SharedPtr<Cursor> arr_curs_4d88[0x2b]; // 0x44
