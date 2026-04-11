@@ -169,6 +169,7 @@ enum GlobalDebugLevels {
 	kDebugLevelMacGUI,
 	kDebugLevelGGraphics,
 	kDebugLevelGVideo,
+	kDebugLevelGAudio,
 };
 
 /** @} */

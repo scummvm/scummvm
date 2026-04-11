@@ -23,7 +23,6 @@ fi
 
 if [ ! -f ../backends/platform/atari/.patched ]
 then
-	cd .. && cat backends/platform/atari/patches/print_rate.patch | patch -p1 && cd -
 	cd .. && cat backends/platform/atari/patches/tooltips.patch | patch -p1 && cd -
 	touch ../backends/platform/atari/.patched
 fi

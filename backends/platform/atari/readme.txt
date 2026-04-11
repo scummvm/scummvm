@@ -463,8 +463,6 @@ Changes to upstream
 There are a few features that have been disabled or changed and are not possible
 / plausible to merge into upstream:
 
-- The aforementioned "print_rate" feature, too invasive for other platforms
-
 - This port contains an implementation of much faster tooltips in the overlay.
   However, there is a minor rendering bug which sometimes corrupts the
   background. But since its impact is huge, I left it in.
