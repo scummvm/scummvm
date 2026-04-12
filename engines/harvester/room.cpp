@@ -3933,12 +3933,29 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		stopPlayerRegionInteraction();
 		return runRegionInteraction(*region);
 	};
-		auto tryActivateOverlappedRegion = [&]() -> Common::Error {
-			if (!playerState.entity)
-				return Common::kNoError;
+	auto tryActivateHoveredRegion = [&]() -> Common::Error {
+		if (!playerState.entity)
+			return Common::kNoError;
+
+		const RoomHoverState hoverState = resolveRoomHoverState(
+			_engine, scene.state, scene.sceneObjects, scene.state.roomNpcs,
+			scene.sceneRegions, _mousePos, &flow._dialogue);
+		if (!hoverState.region || !hoverState.region->startEnabled)
+			return Common::kNoError;
+		if (!doesPlayerOverlapRegion(*playerState.entity, *hoverState.region))
+			return Common::kNoError;
+		if (!doesPlayerFacingMatchRegion(playerState.facing, *hoverState.region))
+			return Common::kNoError;
+
+		stopPlayerRegionInteraction();
+		return runRegionInteraction(*hoverState.region);
+	};
+	auto tryActivatePassiveRegion = [&]() -> Common::Error {
+		if (!playerState.entity)
+			return Common::kNoError;
 
 		for (const RegionRecord &region : scene.sceneRegions) {
-			if (!region.startEnabled)
+			if (!region.startEnabled || region.cursorEnabled)
 				continue;
 			if (!doesPlayerOverlapRegion(*playerState.entity, region))
 				continue;
@@ -3949,12 +3966,12 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return runRegionInteraction(region);
 		}
 
-			return Common::kNoError;
-		};
-		if (!_inventory.refresh())
-			return Common::kReadingFailed;
-		Graphics::FrameLimiter limiter(g_system, 60);
-		captureCurrentSaveState();
+		return Common::kNoError;
+	};
+	if (!_inventory.refresh())
+		return Common::kReadingFailed;
+	Graphics::FrameLimiter limiter(g_system, 60);
+	captureCurrentSaveState();
 
 	if (shouldRunStartupRoomProbe())
 		logStartupRoomProbe(_engine, scene, currentRoomTarget, _mousePos);
@@ -4864,18 +4881,28 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return Common::kReadingFailed;
 			break;
 		}
-		pendingRegionError =
-			(playerAdvancedThisFrame && !isPlayerCombatLocked())
-				? tryActivateOverlappedRegion()
-				: Common::kNoError;
-		if (pendingRegionError.getCode() != Common::kNoError)
-			return pendingRegionError;
-		if (flow.hasPendingMainMenuReturn())
-			return Common::kNoError;
-		if (!pendingRoomChange.empty()) {
-			if (!stowCarriedRoomItemToInventory())
-				return Common::kReadingFailed;
-			break;
+		if (playerAdvancedThisFrame && !isPlayerCombatLocked()) {
+			pendingRegionError = tryActivatePassiveRegion();
+			if (pendingRegionError.getCode() != Common::kNoError)
+				return pendingRegionError;
+			if (flow.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (!pendingRoomChange.empty()) {
+				if (!stowCarriedRoomItemToInventory())
+					return Common::kReadingFailed;
+				break;
+			}
+
+			pendingRegionError = tryActivateHoveredRegion();
+			if (pendingRegionError.getCode() != Common::kNoError)
+				return pendingRegionError;
+			if (flow.hasPendingMainMenuReturn())
+				return Common::kNoError;
+			if (!pendingRoomChange.empty()) {
+				if (!stowCarriedRoomItemToInventory())
+					return Common::kReadingFailed;
+				break;
+			}
 		}
 
 		if (flow.tickRuntimeEntities())

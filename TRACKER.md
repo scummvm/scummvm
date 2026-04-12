@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, confirmed in Ghidra that native `update_render_entity_screen_position` removes and reinserts actors in `g_render_entity_list` when their z anchor changes, saved that note on `update_actor_runtime_state`, and updated ScummVM player placement to reinsert the player scene entity after accepted movement or combat-loadout placement changes.
+- On April 12, 2026, refined the Ghidra note for `check_player_region_interaction`: cursor-enabled regions are candidate-selected by cursor/click handling, while cursor-disabled region entities can still act as passive screen/Z overlap triggers. Updated ScummVM post-move activation to sweep only cursor-disabled passive regions and separately test the current hovered region.
 
 ## Next Suggested Action
 
-- Re-test `CHESSROOM` movement and keyboard movement through the chessmaster area, confirming the player draws in front at low z/depth while blocker-history logs still avoid repeated synthetic detours before mapping the separate desired-state 0x39/0x3a target-field behavior.
+- Re-test `BALLROM1` maintenance warning regions, then `FOYER6_SMOKIN` and `FOYER6_FOYER5`, confirming cursor-disabled passive warnings still fire while cursor-enabled exit regions no longer trigger from unrelated sprite overlap.
