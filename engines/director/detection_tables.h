@@ -3787,14 +3787,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Both Mac and Win english versions require installation to extract executable
 	// Russian version appears to be identical with only assets replaced
 	// Original Japanese Mac filename is バッドデイ(Power PC)
-	MACGAME1("badday", "",	 "BadDay (Universal)", "r:b7e69c37b7355022d400c14aa97c5d54", 483525, 404),
-	MACGAME1_l("badday", "", "xn--HDD-u63b4bubm7e8b7bw9c7lkr/xn--(Power PC)-jx4ilmwb1a7h", "r:c5f8c31feb5c3d4596b63455c520fc46", 60096, Common::JA_JPN, 404),
-	WINGAME2("badday", "",   "BAD_DAY.EXE",		  "t:30b577ecf8bc2083f52760341a62bc6b", 742342,
-							 "BADDAY/BADDAY.DXR", "d:b4b6fa644f64555f9f7af51454c40909", 288810, 404),
-	WINGAME2_l("badday", "", "BAD_DAY.EXE",		  "4ad339db5379a860b33cbb0fa64f18e2", 742342,
-							 "BADDAY/BADDAY.DXR", "b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404),
-	WINGAME2_l("badday", "", "BDM/BAD_DAY.EXE",	  "t:3023f944e8d494393bf08c0cb7a61ba0", 768773,
-							 "BADDAY/BADDAY.DXR", "d:26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404),
+	MACGAME1f("badday", "",	 "BadDay (Universal)", "r:b7e69c37b7355022d400c14aa97c5d54", 483525, 404, GF_32BPP),
+	MACGAME1f_l("badday", "", "xn--HDD-u63b4bubm7e8b7bw9c7lkr/xn--(Power PC)-jx4ilmwb1a7h", "r:c5f8c31feb5c3d4596b63455c520fc46", 60096, Common::JA_JPN, 404, GF_32BPP),
+	WINGAME2f("badday", "",   "BAD_DAY.EXE",		  "t:30b577ecf8bc2083f52760341a62bc6b", 742342,
+							 "BADDAY/BADDAY.DXR", "d:b4b6fa644f64555f9f7af51454c40909", 288810, 404, GF_32BPP),
+	WINGAME2f_l("badday", "", "BAD_DAY.EXE",		  "4ad339db5379a860b33cbb0fa64f18e2", 742342,
+							 "BADDAY/BADDAY.DXR", "b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404, GF_32BPP),
+	WINGAME2f_l("badday", "", "BDM/BAD_DAY.EXE",	  "t:3023f944e8d494393bf08c0cb7a61ba0", 768773,
+							 "BADDAY/BADDAY.DXR", "d:26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404, GF_32BPP),
 
 	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
 			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
