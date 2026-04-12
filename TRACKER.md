@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 11, 2026, verified native monster room-spawn ordering in Ghidra. `spawn_monster_entity_from_record` restores a saved monster corpse frame from the record and advances the entity frame before calling `set_entity_screen_position`. Updated ScummVM room population to apply monster animation state before calculating actor placement, so re-entered monster corpses start in the correct screen position.
+- On April 12, 2026, verified native `PC_GOTO_XZ` handling in Ghidra. `dispatch_room_event_actions` opcode `0x1e` removes the player combat avatar, parses arg2 as Z and arg1 as X, calls `set_entity_screen_position`, and reinserts the avatar; this changes X/Z while preserving the current screen Y and sprite scale. Updated ScummVM `PC_GOTO_XZ` handling to match that behavior for the CHESSKING battle setup.
 
 ## Next Suggested Action
 
-- In-engine, re-enter `BALLROM1` from `BALLROM3_2_BALLROM1` after killing `MAINT_MAN_MNST` and confirm the corpse is drawn at its final location immediately, without a first-frame shift.
+- In-engine, replay the CHESSMASTER refusal path into `ADD_CHESS_KING_MONSTER` and confirm `PC_GOTO_XZ 30,20` leaves Steve at the native screen Y while CHESSKING starts at logical Z 20 and can be targeted/hit with the shotgun.
