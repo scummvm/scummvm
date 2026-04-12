@@ -177,6 +177,9 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			y < 136 && (_windowNum == 1 || _windowNum == 2 || y >= 132))
+		color = (color & 0x0F) | 208;
 	uint16 h2 = h;
 
 	do {

@@ -935,6 +935,11 @@ static const uint8 iconPalette[64] = {
 	0x77, 0x55, 0x00,
 };
 
+static inline uint8 atariSTColorNibbleToComponent(uint8 v) {
+	v &= 0x07;
+	return v * 32;
+}
+
 void AGOSEngine::vc22_setPalette() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
@@ -983,9 +988,9 @@ void AGOSEngine::vc22_setPalette() {
 		// Custom palette used for icon area
 		palptr = &_displayPalette[13 * 3 * 16];
 		for (uint8 c = 0; c < 16; c++) {
-			palptr[0] = iconPalette[c * 3 + 0] * 2;
-			palptr[1] = iconPalette[c * 3 + 1] * 2;
-			palptr[2] = iconPalette[c * 3 + 2] * 2;
+			palptr[0] = atariSTColorNibbleToComponent(iconPalette[c * 3 + 0] >> 4);
+			palptr[1] = atariSTColorNibbleToComponent(iconPalette[c * 3 + 1] >> 4);
+			palptr[2] = atariSTColorNibbleToComponent(iconPalette[c * 3 + 2] >> 4);
 
 			palptr += 3;
 		};
@@ -997,9 +1002,15 @@ void AGOSEngine::vc22_setPalette() {
 
 	do {
 		uint16 color = READ_BE_UINT16(src);
-		palptr[0] = ((color & 0xf00) >> 8) * 32;
-		palptr[1] = ((color & 0x0f0) >> 4) * 32;
-		palptr[2] = ((color & 0x00f) >> 0) * 32;
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+			palptr[0] = atariSTColorNibbleToComponent((color & 0xf00) >> 8);
+			palptr[1] = atariSTColorNibbleToComponent((color & 0x0f0) >> 4);
+			palptr[2] = atariSTColorNibbleToComponent((color & 0x00f) >> 0);
+		} else {
+			palptr[0] = ((color & 0xf00) >> 8) * 32;
+			palptr[1] = ((color & 0x0f0) >> 4) * 32;
+			palptr[2] = ((color & 0x00f) >> 0) * 32;
+		}
 
 		palptr += 3;
 		src += 2;
@@ -1351,9 +1362,15 @@ void AGOSEngine::vc37_pokePalette() {
 		return;
 
 	byte *palptr = _displayPalette + offs * 3;
-	palptr[0] = ((color & 0xf00) >> 8) * 32;
-	palptr[1] = ((color & 0x0f0) >> 4) * 32;
-	palptr[2] = ((color & 0x00f) >> 0) * 32;
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		palptr[0] = atariSTColorNibbleToComponent((color & 0xf00) >> 8);
+		palptr[1] = atariSTColorNibbleToComponent((color & 0x0f0) >> 4);
+		palptr[2] = atariSTColorNibbleToComponent((color & 0x00f) >> 0);
+	} else {
+		palptr[0] = ((color & 0xf00) >> 8) * 32;
+		palptr[1] = ((color & 0x0f0) >> 4) * 32;
+		palptr[2] = ((color & 0x00f) >> 0) * 32;
+	}
 
 	if (!(_videoLockOut & 0x20)) {
 		_paletteFlag = 1;

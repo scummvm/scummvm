@@ -1237,7 +1237,7 @@ protected:
 	void drawVertImage(VC10_state *state);
 	void drawVertImageCompressed(VC10_state *state);
 	void drawVertImageUncompressed(VC10_state *state);
-
+	void remapElvira2AtariSTUIRegions(Graphics::Surface *screen);
 	void setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void horizontalScroll(VC10_state *state);

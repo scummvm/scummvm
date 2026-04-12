@@ -32,6 +32,29 @@
 
 namespace AGOS {
 
+static void remapElvira2AtariSTUIPaletteRect(Graphics::Surface *screen, uint16 x, uint16 y, uint16 w, uint16 h) {
+	byte *dst = (byte *)screen->getBasePtr(x, y);
+	while (h--) {
+		for (uint16 i = 0; i < w; i++)
+			dst[i] = (dst[i] & 0x0F) | 0xD0;
+		dst += screen->pitch;
+	}
+}
+
+static inline uint8 atariSTColorNibbleToComponent(uint8 v) {
+	v &= 0x07;
+	return v * 32;
+}
+
+void AGOSEngine::remapElvira2AtariSTUIRegions(Graphics::Surface *screen) {
+	if (getGameType() != GType_ELVIRA2 || getPlatform() != Common::kPlatformAtariST)
+		return;
+
+	remapElvira2AtariSTUIPaletteRect(screen, 0, 0, 48, 136);
+	remapElvira2AtariSTUIPaletteRect(screen, 272, 0, 48, 136);
+	remapElvira2AtariSTUIPaletteRect(screen, 0, 132, 320, 68);
+}
+
 byte *vc10_depackColumn(VC10_state * vs) {
 	int8 a = vs->depack_cont;
 	const byte *src = vs->srcPtr;
@@ -952,13 +975,43 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		state->palette = state->surf_addr[0] & 0xF0;
 
-	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && yoffs > 133)
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && _windowNum == 4) {
+		_displayPalette[0 * 3 + 0] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[0 * 3 + 1] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[0 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[1 * 3 + 0] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[1 * 3 + 1] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[1 * 3 + 2] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[2 * 3 + 0] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[2 * 3 + 1] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[2 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_displayPalette[15 * 3 + 0] = atariSTColorNibbleToComponent(0x7);
+		_displayPalette[15 * 3 + 1] = atariSTColorNibbleToComponent(0x5);
+		_displayPalette[15 * 3 + 2] = atariSTColorNibbleToComponent(0x0);
+		_paletteFlag = 1;
+	}
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			_windowNum == 3 && yoffs < 136 && xoffs < 48 && xmax > 48) {
+		state->palette = 0;
+		state->paletteMod = 0;
+	}
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			((yoffs >= 132 && _windowNum != 3) || ((_windowNum == 1 || _windowNum == 2) && yoffs < 136))) {
 		state->palette = 208;
+		if (_backFlag || (state->flags & kDFNonTrans))
+			state->paletteMod = 208;
+	}
 
 	if (_backFlag) {
 		drawBackGroundImage(state);
 	} else {
 		drawVertImage(state);
+	}
+
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+		if (_windowNum == 1 || _windowNum == 2)
+			remapElvira2AtariSTUIRegions(screen);
 	}
 
 	Common::Rect dirtyRect(xoffs, yoffs, xmax, ymax);

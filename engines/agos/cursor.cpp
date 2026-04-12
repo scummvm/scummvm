@@ -128,6 +128,11 @@ static const uint16 _common_moveLeft[32] = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
+static const byte elvira2AtariSTCursorPalette[] = {
+	0x00, 0x00, 0x00,
+	0xE0, 0xA0, 0x00
+};
+
 static const byte _amiga_mousePalettePN[] = {
 	0x00, 0x00, 0x00,
 	0xDE, 0x20, 0x21,
@@ -941,6 +946,9 @@ void AGOSEngine::drawMousePointer() {
 			}
 			src += 2;
 		}
+
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST)
+			CursorMan.replaceCursorPalette(elvira2AtariSTCursorPalette, 0, ARRAYSIZE(elvira2AtariSTCursorPalette) / 3);
 
 		if (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
 			// Simple 2x upscaling for the cursor in dual layer hi-res mode.
