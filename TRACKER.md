@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, rechecked native `update_actor_runtime_state` and `run_harvester_main_loop` in Ghidra, then removed non-native route sampling, alternate detour candidates, clamped avoidance targets, and tighter avoidance-only waypoint slack from the ScummVM player pathfinding code.
+- On April 12, 2026, confirmed in Ghidra that native `update_render_entity_screen_position` removes and reinserts actors in `g_render_entity_list` when their z anchor changes, saved that note on `update_actor_runtime_state`, and updated ScummVM player placement to reinsert the player scene entity after accepted movement or combat-loadout placement changes.
 
 ## Next Suggested Action
 
-- Re-test `CHESSROOM` movement with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, comparing each emitted detour against Ghidra's native rule: horizontal blocks insert one depth waypoint from the blocker z span, and depth blocks insert one horizontal waypoint beside the blocker.
+- Re-test `CHESSROOM` movement and keyboard movement through the chessmaster area, confirming the player draws in front at low z/depth while blocker-history logs still avoid repeated synthetic detours before mapping the separate desired-state 0x39/0x3a target-field behavior.
