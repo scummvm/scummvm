@@ -37,9 +37,7 @@ namespace {
 static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.ABM";
 static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const float kRoomPlayerHorizontalTargetSlackBase = 50.0f;
-static const float kRoomPlayerAvoidanceHorizontalTargetSlackBase = 8.0f;
 static const float kRoomPlayerDepthTargetSlack = 8.0f;
-static const float kRoomPlayerAvoidanceDepthTargetSlack = 0.5f;
 static const int kRoomPlayerMaxMoveWaypoints = 8;
 static const int kRoomPlayerBlockerHorizontalPad = 0x28;
 static const float kRoomPlayerBlockerDepthPad = 1.0f;
@@ -632,10 +630,8 @@ static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
 	if (!target.hasTargetX)
 		return 0;
 
-	const float slackBase = target.ignoredBlockerName.empty()
-		? kRoomPlayerHorizontalTargetSlackBase
-		: kRoomPlayerAvoidanceHorizontalTargetSlackBase;
-	const float slack = Player::computeDepthScale(state, playerState.z) * slackBase;
+	const float slack = Player::computeDepthScale(state, playerState.z) *
+		kRoomPlayerHorizontalTargetSlackBase;
 	const float frameLeftX = (float)computePlayerFrameLeftX(playerState);
 	if (frameLeftX < (float)target.targetX - slack)
 		return 1;
@@ -650,12 +646,9 @@ static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState,
 	if (!target.hasTargetZ)
 		return 0;
 
-	const float slack = target.ignoredBlockerName.empty()
-		? kRoomPlayerDepthTargetSlack
-		: kRoomPlayerAvoidanceDepthTargetSlack;
-	if (target.targetZ < playerState.z - slack)
+	if (target.targetZ < playerState.z - kRoomPlayerDepthTargetSlack)
 		return 1;
-	if (playerState.z + slack < target.targetZ)
+	if (playerState.z + kRoomPlayerDepthTargetSlack < target.targetZ)
 		return -1;
 
 	return 0;
@@ -873,94 +866,6 @@ static float getPlayerZExtent(const RoomPlayerState &playerState) {
 		: 0.0f;
 }
 
-static bool doesPlayerDepthClearBlockerAt(const RoomPlayerState &playerState,
-		float targetZ, const Entity &blocker) {
-	const float playerZMax = targetZ + getPlayerZExtent(playerState);
-	const float blockerZ = blocker.getZ();
-	const float blockerZMax = blockerZ + blocker.getZExtent();
-
-	return playerZMax < blockerZ || blockerZMax < targetZ;
-}
-
-static bool doesPlayerFrameClearBlockerHorizontallyAt(const RoomPlayerState &playerState,
-		int targetFrameLeftX, const Entity &blocker) {
-	int playerWidth = 0;
-	if (!getPlayerFrameWidth(playerState, playerWidth))
-		return false;
-
-	const Common::Rect blockerRect = blocker.getScreenRect();
-	return targetFrameLeftX + playerWidth <= blockerRect.left ||
-		blockerRect.right <= targetFrameLeftX;
-}
-
-static bool isPathToMoveWaypointClear(HarvesterEngine &engine, const RoomSetupState &state,
-		const Common::Array<ObjectRecord> &sceneObjects,
-		const Common::Array<AnimRecord> &sceneAnimations,
-		RoomPlayerState &playerState, const RoomMoveWaypoint &waypoint,
-		const Common::String &ignoredBlockerName, const Entity **blockerOut = nullptr) {
-	if (blockerOut)
-		*blockerOut = nullptr;
-	if (!playerState.entity)
-		return false;
-
-	const Common::String *ignoredBlockerNamePtr = ignoredBlockerName.empty()
-		? nullptr
-		: &ignoredBlockerName;
-	int sampleCenterX = playerState.centerX;
-	int sampleBottomY = playerState.bottomY;
-	float sampleZ = playerState.z;
-
-	for (int i = 0; i < 1024; ++i) {
-		bool changed = false;
-		if (waypoint.hasTargetX) {
-			const float slack = Player::computeDepthScale(state, sampleZ) *
-				kRoomPlayerAvoidanceHorizontalTargetSlackBase;
-			const float frameLeftX = (float)(sampleCenterX -
-				(playerState.centerX - computePlayerFrameLeftX(playerState)));
-			int horizontalDirection = 0;
-			if (frameLeftX < (float)waypoint.targetX - slack) {
-				horizontalDirection = 1;
-			} else if ((float)waypoint.targetX + slack < frameLeftX) {
-				horizontalDirection = -1;
-			}
-			if (horizontalDirection != 0) {
-				sampleCenterX = clampPlayerCenterXToNativeBounds(playerState,
-					sampleCenterX + horizontalDirection * computeRoomPlayerHorizontalStep(state, sampleZ));
-				changed = true;
-			}
-		}
-		if (!changed && waypoint.hasTargetZ) {
-			const float slack = kRoomPlayerAvoidanceDepthTargetSlack;
-			int depthDirection = 0;
-			if (waypoint.targetZ < sampleZ - slack) {
-				depthDirection = 1;
-			} else if (sampleZ + slack < waypoint.targetZ) {
-				depthDirection = -1;
-			}
-			if (depthDirection != 0) {
-				sampleBottomY = clampRoomMovementY(state,
-					sampleBottomY + depthDirection * computeRoomPlayerVerticalScreenStep());
-				sampleZ = stepTowardsFloat(sampleZ, waypoint.targetZ,
-					computeRoomPlayerDepthStep(state));
-				changed = true;
-			}
-		}
-		if (!changed)
-			return true;
-
-		const Entity *blocker = nullptr;
-		if (isPlayerMovementBlocked(engine, state, sceneObjects, sceneAnimations,
-				playerState, sampleCenterX, sampleBottomY, sampleZ,
-				ignoredBlockerNamePtr, &blocker)) {
-			if (blockerOut)
-				*blockerOut = blocker;
-			return false;
-		}
-	}
-
-	return false;
-}
-
 static bool isSameMoveWaypoint(const RoomMoveWaypoint &lhs, const RoomMoveWaypoint &rhs) {
 	if (lhs.hasTargetX != rhs.hasTargetX || lhs.hasTargetZ != rhs.hasTargetZ)
 		return false;
@@ -994,59 +899,30 @@ static bool isPathfindingDebugEnabled() {
 }
 
 static bool queueDepthAvoidanceWaypoint(const RoomSetupState &state, RoomPlayerState &playerState,
-		HarvesterEngine &engine, const Common::Array<ObjectRecord> &sceneObjects,
-		const Common::Array<AnimRecord> &sceneAnimations,
 		const RoomMoveWaypoint &activeTarget, const Entity &blocker) {
 	const float blockerZ = blocker.getZ();
-	const float blockerZMax = blockerZ + blocker.getZExtent();
 	const float blockerMidZ = blockerZ + blocker.getZExtent() * 0.5f;
 	const float referenceTargetZ = activeTarget.hasTargetZ
 		? activeTarget.targetZ
 		: playerState.targetZ;
 	const float playerZExtent = getPlayerZExtent(playerState);
 
-	float candidates[2];
+	float targetZ = 0.0f;
 	if (referenceTargetZ < blockerMidZ) {
-		candidates[0] = blockerZ - playerZExtent - kRoomPlayerBlockerDepthPad;
-		candidates[1] = blockerZMax + kRoomPlayerBlockerDepthPad;
+		targetZ = blockerZ - playerZExtent - kRoomPlayerBlockerDepthPad;
 	} else {
-		candidates[0] = blockerZMax + kRoomPlayerBlockerDepthPad;
-		candidates[1] = blockerZ - playerZExtent - kRoomPlayerBlockerDepthPad;
+		targetZ = blockerZ + blocker.getZExtent() + kRoomPlayerBlockerDepthPad;
 	}
 
-	for (uint i = 0; i < ARRAYSIZE(candidates); ++i) {
-		const float targetZ = clampRoomDepth(state, candidates[i]);
-		if (fabsf(targetZ - playerState.z) <= kRoomPlayerAvoidanceDepthTargetSlack)
-			continue;
-		if (!doesPlayerDepthClearBlockerAt(playerState, targetZ, blocker))
-			continue;
-
-		RoomMoveWaypoint waypoint;
-		waypoint.targetZ = targetZ;
-		waypoint.targetBottomY = mapRoomDepthToScreenY(state, targetZ);
-		waypoint.hasTargetZ = true;
-		waypoint.ignoredBlockerName = blocker.getName();
-		const Entity *pathBlocker = nullptr;
-		if (!isPathToMoveWaypointClear(engine, state, sceneObjects, sceneAnimations,
-				playerState, waypoint, waypoint.ignoredBlockerName, &pathBlocker)) {
-			if (isPathfindingDebugEnabled()) {
-				debugC(1, kDebugPathfinding,
-					"Harvester: pathfinding detour candidate blocked room='%s' blocker='%s' axis='depth' waypoint=(z=%.2f) path_blocker='%s'",
-					state.roomName.c_str(), blocker.getName().c_str(), (double)waypoint.targetZ,
-					pathBlocker ? pathBlocker->getName().c_str() : "");
-			}
-			continue;
-		}
-		if (prependMoveWaypoint(playerState, waypoint))
-			return true;
-	}
-
-	return false;
+	RoomMoveWaypoint waypoint;
+	waypoint.targetZ = targetZ;
+	waypoint.targetBottomY = mapRoomDepthToScreenY(state, targetZ);
+	waypoint.hasTargetZ = true;
+	waypoint.ignoredBlockerName = blocker.getName();
+	return prependMoveWaypoint(playerState, waypoint);
 }
 
 static bool queueHorizontalAvoidanceWaypoint(const RoomSetupState &state, RoomPlayerState &playerState,
-		HarvesterEngine &engine, const Common::Array<ObjectRecord> &sceneObjects,
-		const Common::Array<AnimRecord> &sceneAnimations,
 		const RoomMoveWaypoint &activeTarget, const Entity &blocker) {
 	int playerWidth = 0;
 	if (!getPlayerFrameWidth(playerState, playerWidth))
@@ -1058,62 +934,31 @@ static bool queueHorizontalAvoidanceWaypoint(const RoomSetupState &state, RoomPl
 		? activeTarget.targetX
 		: playerState.targetX;
 
-	int candidates[2];
+	int targetX = 0;
 	if (referenceTargetX < blockerMidX) {
-		candidates[0] = blockerRect.left - playerWidth - kRoomPlayerBlockerHorizontalPad;
-		candidates[1] = blockerRect.right + kRoomPlayerBlockerHorizontalPad;
+		targetX = blockerRect.left - playerWidth - kRoomPlayerBlockerHorizontalPad;
 	} else {
-		candidates[0] = blockerRect.right + kRoomPlayerBlockerHorizontalPad;
-		candidates[1] = blockerRect.left - playerWidth - kRoomPlayerBlockerHorizontalPad;
+		targetX = blockerRect.right + kRoomPlayerBlockerHorizontalPad;
 	}
 
-	for (uint i = 0; i < ARRAYSIZE(candidates); ++i) {
-		RoomMoveWaypoint waypoint;
-		waypoint.targetX = CLIP<int>(candidates[i], 0, 639);
-		waypoint.hasTargetX = true;
-		waypoint.ignoredBlockerName = blocker.getName();
-		if (!doesPlayerFrameClearBlockerHorizontallyAt(playerState, waypoint.targetX, blocker))
-			continue;
-		if (resolveMoveTargetHorizontalDirection(state, playerState, waypoint) == 0)
-			continue;
-		const Entity *pathBlocker = nullptr;
-		if (!isPathToMoveWaypointClear(engine, state, sceneObjects, sceneAnimations,
-				playerState, waypoint, waypoint.ignoredBlockerName, &pathBlocker)) {
-			if (isPathfindingDebugEnabled()) {
-				debugC(1, kDebugPathfinding,
-					"Harvester: pathfinding detour candidate blocked room='%s' blocker='%s' axis='horizontal' waypoint=(x=%d) path_blocker='%s'",
-					state.roomName.c_str(), blocker.getName().c_str(), waypoint.targetX,
-					pathBlocker ? pathBlocker->getName().c_str() : "");
-			}
-			continue;
-		}
-		if (prependMoveWaypoint(playerState, waypoint))
-			return true;
-	}
-
-	return false;
+	RoomMoveWaypoint waypoint;
+	waypoint.targetX = targetX;
+	waypoint.hasTargetX = true;
+	waypoint.ignoredBlockerName = blocker.getName();
+	return prependMoveWaypoint(playerState, waypoint);
 }
 
 static bool queueBlockedMoveAvoidanceWaypoint(const RoomSetupState &state,
-		HarvesterEngine &engine, const Common::Array<ObjectRecord> &sceneObjects,
-		const Common::Array<AnimRecord> &sceneAnimations,
 		RoomPlayerState &playerState, const RoomMoveWaypoint &activeTarget,
 		int horizontalDirection, int depthDirection, const Entity &blocker) {
 	bool queued = false;
 	const char *axis = nullptr;
 	if (horizontalDirection != 0) {
+		queued = queueDepthAvoidanceWaypoint(state, playerState, activeTarget, blocker);
 		axis = "depth";
-		queued = queueDepthAvoidanceWaypoint(state, playerState, engine, sceneObjects,
-			sceneAnimations, activeTarget, blocker);
-		if (!queued) {
-			axis = "horizontal";
-			queued = queueHorizontalAvoidanceWaypoint(state, playerState, engine, sceneObjects,
-				sceneAnimations, activeTarget, blocker);
-		}
 	} else if (depthDirection != 0) {
+		queued = queueHorizontalAvoidanceWaypoint(state, playerState, activeTarget, blocker);
 		axis = "horizontal";
-		queued = queueHorizontalAvoidanceWaypoint(state, playerState, engine, sceneObjects,
-			sceneAnimations, activeTarget, blocker);
 	}
 
 	if (queued) {
@@ -1845,9 +1690,8 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 				blocker ? (double)blocker->getZExtent() : 0.0,
 				ignoredBlockerName ? ignoredBlockerName->c_str() : "");
 		}
-		if (blocker && queueBlockedMoveAvoidanceWaypoint(state, engine, sceneObjects,
-				sceneAnimations, playerState, activeTarget, horizontalDirection,
-				depthDirection, *blocker)) {
+		if (blocker && queueBlockedMoveAvoidanceWaypoint(state, playerState, activeTarget,
+				horizontalDirection, depthDirection, *blocker)) {
 			return true;
 		}
 
