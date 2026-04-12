@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, used the `CHESSROOM` pathfinding logs to refine blocker avoidance again: detour waypoints now sample their route against other room blockers before being accepted, and horizontal movement can fall back to a side waypoint when a depth detour would immediately collide with another blocker.
+- On April 12, 2026, rechecked native `update_actor_runtime_state` and `run_harvester_main_loop` in Ghidra, then removed non-native route sampling, alternate detour candidates, clamped avoidance targets, and tighter avoidance-only waypoint slack from the ScummVM player pathfinding code.
 
 ## Next Suggested Action
 
-- Re-test the `CHESSROOM` click toward `(464,422)` with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, checking for `detour candidate blocked` lines and confirming the player routes around `__ANON_OBJECT_35` without being sent back into `__ANON_OBJECT_33`.
+- Re-test `CHESSROOM` movement with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, comparing each emitted detour against Ghidra's native rule: horizontal blocks insert one depth waypoint from the blocker z span, and depth blocks insert one horizontal waypoint beside the blocker.
