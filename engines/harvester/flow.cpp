@@ -279,6 +279,87 @@ static void drawCombatDebugOverlay(HarvesterEngine &engine, Graphics::Screen &sc
 	}
 }
 
+static Common::Rect getPathfindingMovementBounds(const Graphics::Screen &screen,
+		const RoomSetupState &state) {
+	if (!Player::supportsMovementBand(state))
+		return Common::Rect();
+
+	return Common::Rect(0, state.roomMaxZScreenY, screen.w, state.roomMinZScreenY + 1);
+}
+
+static void drawClippedDebugFrame(Graphics::Screen &screen, Common::Rect rect, byte color) {
+	rect.clip(screen.getBounds());
+	if (rect.isEmpty())
+		return;
+
+	screen.frameRect(rect, color);
+}
+
+static bool canEntityAffectPlayerPathfinding(const Entity &entity) {
+	if (!entity.isVisible())
+		return false;
+
+	switch (entity.getClassId()) {
+	case kRuntimeEntityClassCursor:
+	case kRuntimeEntityClassBackground:
+	case kRuntimeEntityClassPlayer:
+	case kRuntimeEntityClassRectHotspot:
+	case kRuntimeEntityClassRectHotspot19:
+	case kRuntimeEntityClassTimer:
+		return false;
+	default:
+		break;
+	}
+
+	return entity.getClassId() == kRuntimeEntityClassDisabledHotspot || entity.hasFrames();
+}
+
+static void drawPathfindingBlockerOutline(Graphics::Screen &screen, EntityManager &entityManager,
+		const Common::String &entityName, const Common::Rect &movementBounds, byte color) {
+	const Entity *entity = entityManager.findSceneEntityByName(entityName);
+	if (!entity || !canEntityAffectPlayerPathfinding(*entity))
+		return;
+
+	Common::Rect rect = entity->getScreenRect();
+	if (rect.isEmpty())
+		return;
+
+	Common::Rect overlap = rect;
+	overlap.clip(movementBounds);
+	if (overlap.isEmpty())
+		return;
+
+	drawClippedDebugFrame(screen, rect, color);
+}
+
+static void drawPathfindingDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const RoomSceneResources &scene) {
+	if (!engine.isPathfindingDebugEnabled())
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte blue = findNearestPaletteColor(displayPalette, 0x00, 0x40, 0xff);
+	const byte green = findNearestPaletteColor(displayPalette, 0x00, 0xff, 0x00);
+	const Common::Rect movementBounds = getPathfindingMovementBounds(screen, scene.state);
+	if (movementBounds.isEmpty())
+		return;
+
+	drawClippedDebugFrame(screen, movementBounds, blue);
+
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!entityManager)
+		return;
+
+	for (const ObjectRecord &object : scene.sceneObjects)
+		drawPathfindingBlockerOutline(screen, *entityManager,
+			object.objectName, movementBounds, green);
+
+	for (const AnimRecord &anim : scene.sceneAnimations)
+		drawPathfindingBlockerOutline(screen, *entityManager,
+			anim.animName, movementBounds, green);
+}
+
 static int clampTownMapPanelIndex(int panelIndex) {
 	return CLIP<int>(panelIndex, 0, ARRAYSIZE(kTownMapBitmapPaths) - 1);
 }
@@ -707,6 +788,7 @@ void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const Room
 		engine.getRuntimeEntities()->drawSceneEntities(screen);
 	drawRoomDebugOverlay(engine, screen, scene);
 	drawCombatDebugOverlay(engine, screen, scene);
+	drawPathfindingDebugOverlay(engine, screen, scene);
 }
 
 const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,

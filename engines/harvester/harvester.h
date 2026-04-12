@@ -116,6 +116,8 @@ public:
 	bool toggleCombatDebugEnabled();
 	bool isRoomDebugEnabled() const { return _roomDebugEnabled; }
 	bool toggleRoomDebugEnabled();
+	bool isPathfindingDebugEnabled() const { return _pathfindingDebugEnabled; }
+	bool togglePathfindingDebugEnabled();
 	bool requestDebugCommand(const CommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
 	void captureCurrentSaveRoomState(const Common::String &entranceName,
@@ -156,6 +158,7 @@ private:
 	Flow *_activeFlow = nullptr;
 	bool _combatDebugEnabled = false;
 	bool _roomDebugEnabled = false;
+	bool _pathfindingDebugEnabled = false;
 	Common::String _emptyMusicPath;
 };
 

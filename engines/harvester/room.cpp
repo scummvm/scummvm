@@ -3866,12 +3866,33 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (!playerState.entity)
 			return;
 
-		if (doesPlayerOverlapRegion(*playerState.entity, region))
+		const bool playerOverlapsRegion = doesPlayerOverlapRegion(*playerState.entity, region);
+		if (_engine.isPathfindingDebugEnabled()) {
+			const Common::Rect playerRect = playerState.entity->getScreenRect();
+			const Common::Rect regionBounds(region.left, region.top, region.right + 1, region.bottom + 1);
+			debugC(1, kDebugPathfinding,
+				"Harvester: pathfinding region click room='%s' mouse=(%d,%d) region='%s' bounds=(%d,%d)-(%d,%d) z=[%d,%d] start=%d cursor=%d desired_facing=%d player=(%d,%d,z=%.2f) player_rect=(%d,%d)-(%d,%d) overlaps=%d action='%s'",
+				scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
+				region.regionName.c_str(),
+				regionBounds.left, regionBounds.top, regionBounds.right, regionBounds.bottom,
+				region.minZ, region.maxZ, region.startEnabled, region.cursorEnabled,
+				region.desiredFacing,
+				playerState.centerX, playerState.bottomY, (double)playerState.z,
+				playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
+				playerOverlapsRegion, region.actionTag.c_str());
+		}
+		if (playerOverlapsRegion)
 			return;
 
 		Player::setMoveTarget(scene.state, playerState,
 			Player::resolveRegionTargetX(region, playerState),
 			Player::resolveRegionTargetZ(region));
+		if (_engine.isPathfindingDebugEnabled()) {
+			debugC(1, kDebugPathfinding,
+				"Harvester: pathfinding region target room='%s' region='%s' target=(%d,%d,z=%.2f)",
+				scene.state.roomName.c_str(), region.regionName.c_str(),
+				playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
+		}
 	};
 	auto runRegionInteraction = [&](const RegionRecord &region) -> Common::Error {
 		InteractionResult interaction;
@@ -4484,7 +4505,23 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (!clickedObject) {
 					pendingRegionName.clear();
 					if (hoverState.cursorSequence == 0 && playerState.entity) {
+						if (_engine.isPathfindingDebugEnabled()) {
+							const Common::Rect playerRect = playerState.entity->getScreenRect();
+							debugC(1, kDebugPathfinding,
+								"Harvester: pathfinding click accepted room='%s' mouse=(%d,%d) movement_band=(y=%d..%d,z=%d..%d) player=(%d,%d,z=%.2f) player_rect=(%d,%d)-(%d,%d)",
+								scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
+								scene.state.roomMaxZScreenY, scene.state.roomMinZScreenY,
+								scene.state.roomMinZ, scene.state.roomMaxZ,
+								playerState.centerX, playerState.bottomY, (double)playerState.z,
+								playerRect.left, playerRect.top, playerRect.right, playerRect.bottom);
+						}
 						Player::setMoveTargetFromScreenPoint(scene.state, playerState, _mousePos.x, _mousePos.y);
+						if (_engine.isPathfindingDebugEnabled()) {
+							debugC(1, kDebugPathfinding,
+								"Harvester: pathfinding click target room='%s' mouse=(%d,%d) target=(%d,%d,z=%.2f)",
+								scene.state.roomName.c_str(), _mousePos.x, _mousePos.y,
+								playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
+						}
 						needsRedraw = true;
 					}
 					break;

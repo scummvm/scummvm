@@ -38,7 +38,8 @@ enum HarvesterDebugChannels {
 	kDebugInventory = 1 << 5,
 	kDebugCursor    = 1 << 6,
 	kDebugRoom      = 1 << 7,
-	kDebugPlayer    = 1 << 8
+	kDebugPlayer      = 1 << 8,
+	kDebugPathfinding = 1 << 9
 };
 
 extern const PlainGameDescriptor harvesterGames[];

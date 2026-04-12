@@ -888,6 +888,10 @@ static bool prependMoveWaypoint(RoomPlayerState &playerState, const RoomMoveWayp
 	return true;
 }
 
+static bool isPathfindingDebugEnabled() {
+	return g_engine && g_engine->isPathfindingDebugEnabled();
+}
+
 static bool queueDepthAvoidanceWaypoint(const RoomSetupState &state, RoomPlayerState &playerState,
 		const RoomMoveWaypoint &activeTarget, const Entity &blocker) {
 	const float blockerZ = blocker.getZ();
@@ -999,6 +1003,15 @@ static void setMoveTargetInternal(const RoomSetupState &state, RoomPlayerState &
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
 		state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
 		playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ);
+	if (isPathfindingDebugEnabled()) {
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding target set room='%s' movement_band=(y=%d..%d,z=%d..%d) current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f) waypoints=%u",
+			state.roomName.c_str(), state.roomMaxZScreenY, state.roomMinZScreenY,
+			state.roomMinZ, state.roomMaxZ,
+			playerState.centerX, playerState.bottomY, (double)playerState.z,
+			playerState.targetX, playerState.targetBottomY, (double)playerState.targetZ,
+			playerState.moveWaypoints.size());
+	}
 }
 
 static void notePlayerIdleReset(RoomIdleAnimationState &idleState) {
@@ -1657,6 +1670,19 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		candidateZ = stepTowardsFloat(playerState.z, activeTarget.targetZ, depthStep);
 	}
 
+	if (engine.isPathfindingDebugEnabled()) {
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding step room='%s' current=(%d,%d,z=%.2f) active_target=(x=%d,y=%d,z=%.2f,hasX=%d,hasZ=%d,ignore='%s') progress=(x=%d,z=%d) direction=(x=%d,z=%d) candidate=(%d,%d,z=%.2f) waypoints=%u",
+			state.roomName.c_str(), playerState.centerX, playerState.bottomY, (double)playerState.z,
+			activeTarget.targetX, activeTarget.targetBottomY, (double)activeTarget.targetZ,
+			activeTarget.hasTargetX, activeTarget.hasTargetZ,
+			activeTarget.ignoredBlockerName.c_str(),
+			playerState.moveTargetXReached, playerState.moveTargetZReached,
+			horizontalDirection, depthDirection,
+			candidateCenterX, candidateBottomY, (double)candidateZ,
+			playerState.moveWaypoints.size());
+	}
+
 	const Common::String *ignoredBlockerName = activeTarget.ignoredBlockerName.empty()
 		? nullptr
 		: &activeTarget.ignoredBlockerName;
@@ -1665,6 +1691,18 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 		playerState, candidateCenterX, candidateBottomY, candidateZ,
 		ignoredBlockerName, &blocker);
 	if (!moved) {
+		if (engine.isPathfindingDebugEnabled()) {
+			const Common::Rect blockerRect = blocker ? blocker->getScreenRect() : Common::Rect();
+			debugC(1, kDebugPathfinding,
+				"Harvester: pathfinding blocked room='%s' candidate=(%d,%d,z=%.2f) blocker='%s' class=0x%x rect=(%d,%d)-(%d,%d) z=%.2f z_extent=%.2f ignored='%s'",
+				state.roomName.c_str(), candidateCenterX, candidateBottomY, (double)candidateZ,
+				blocker ? blocker->getName().c_str() : "",
+				blocker ? blocker->getClassId() : -1,
+				blockerRect.left, blockerRect.top, blockerRect.right, blockerRect.bottom,
+				blocker ? (double)blocker->getZ() : 0.0,
+				blocker ? (double)blocker->getZExtent() : 0.0,
+				ignoredBlockerName ? ignoredBlockerName->c_str() : "");
+		}
 		if (blocker && queueBlockedMoveAvoidanceWaypoint(state, playerState, activeTarget,
 				horizontalDirection, depthDirection, *blocker)) {
 			return true;
@@ -1684,6 +1722,13 @@ bool Player::stepMoveTarget(HarvesterEngine &engine, const RoomSetupState &state
 	const int actualFacing = resolveFacingFromRoomMovement(
 		previousCenterX, previousBottomY, playerState.centerX, playerState.bottomY);
 	(void)setPlayerWalkAnimation(playerState, actualFacing);
+	if (engine.isPathfindingDebugEnabled()) {
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding applied room='%s' previous=(%d,%d) current=(%d,%d,z=%.2f) facing=%d",
+			state.roomName.c_str(), previousCenterX, previousBottomY,
+			playerState.centerX, playerState.bottomY, (double)playerState.z,
+			actualFacing);
+	}
 	activeTarget = getActiveMoveTarget(playerState);
 	updatePlayerMoveTargetProgress(state, playerState, activeTarget);
 	while (hasPlayerReachedMoveTarget(playerState)) {

@@ -32,6 +32,7 @@ private:
 	bool Cmd_about(int argc, const char **argv);
 	bool Cmd_debugCombat(int argc, const char **argv);
 	bool Cmd_debugRoom(int argc, const char **argv);
+	bool Cmd_debugPathfinding(int argc, const char **argv);
 	bool Cmd_debugActions(int argc, const char **argv);
 	bool Cmd_debugCommand(int argc, const char **argv);
 	bool Cmd_gotoRoom(int argc, const char **argv);

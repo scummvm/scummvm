@@ -261,6 +261,11 @@ bool HarvesterEngine::toggleRoomDebugEnabled() {
 	return _roomDebugEnabled;
 }
 
+bool HarvesterEngine::togglePathfindingDebugEnabled() {
+	_pathfindingDebugEnabled = !_pathfindingDebugEnabled;
+	return _pathfindingDebugEnabled;
+}
+
 bool HarvesterEngine::requestDebugCommand(const CommandRecord &command) {
 	if (!_activeFlow || !_script || !_currentSaveRoomState.valid)
 		return false;
