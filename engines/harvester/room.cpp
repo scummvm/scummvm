@@ -799,20 +799,6 @@ static float clampRoomDepthForEvent(const RoomSetupState &state, float z) {
 		(float)MAX(state.roomMinZ, state.roomMaxZ));
 }
 
-static int mapRoomDepthToScreenYForEvent(const RoomSetupState &state, float z, int fallbackY) {
-	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
-		return fallbackY;
-	if (state.roomMaxZ == state.roomMinZ)
-		return CLIP<int>(fallbackY, state.roomMaxZScreenY, state.roomMinZScreenY);
-
-	const float clampedZ = clampRoomDepthForEvent(state, z);
-	const float offset = ((float)state.roomMaxZ - clampedZ) *
-		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
-		(float)(state.roomMaxZ - state.roomMinZ);
-	return CLIP<int>(state.roomMaxZScreenY + (int)(offset >= 0.0f ? offset + 0.5f : offset - 0.5f),
-		state.roomMaxZScreenY, state.roomMinZScreenY);
-}
-
 static int roundRoomCombatFloat(float value) {
 	return value >= 0.0f ? (int)(value + 0.5f) : (int)(value - 0.5f);
 }
@@ -2145,20 +2131,34 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return Common::kNoError;
 		};
 		auto applyPlayerGotoXZ = [&](int x, int z) {
-			(void)cancelPlayerAttackAnimation();
 			playerState.hasMoveTarget = false;
 			playerState.turnActive = false;
 			playerState.turnTargetFacing = -1;
 			playerState.centerX = x;
-			playerState.z = clampRoomDepthForEvent(scene.state, (float)z);
-			playerState.bottomY = mapRoomDepthToScreenYForEvent(scene.state, playerState.z, playerState.bottomY);
+			playerState.z = (float)z;
 			if (playerState.entity) {
-				const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
-				if (facing >= 0)
-					(void)Player::setIdleAnimation(playerState, facing);
-				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-					playerState.centerX, playerState.bottomY, playerState.z);
+				int width = 0;
+				int height = 0;
+				int xOffset = 0;
+				int yOffset = 0;
+				if (playerState.entity->getCurrentFrameMetrics(width, height, xOffset, yOffset)) {
+					const int preservedScreenY = playerState.entity->getY();
+					// Native PC_GOTO_XZ calls set_entity_screen_position directly:
+					// update X and Z, but preserve screen Y and the current scale.
+					playerState.entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
+					playerState.entity->setPosition(
+						x - xOffset - width / 2, preservedScreenY, playerState.z);
+					playerState.bottomY = preservedScreenY + height + yOffset;
+					if (entityManager)
+						entityManager->reinsertSceneEntity(playerState.entity);
+				} else {
+					(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+						playerState.centerX, playerState.bottomY, playerState.z);
+				}
 			}
+			debugC(1, kDebugPlayer,
+				"Harvester: PC_GOTO_XZ applied x=%d z=%d pos=(%d,%d,z=%.2f)",
+				x, z, playerState.centerX, playerState.bottomY, (double)playerState.z);
 			resetIdleState();
 			captureCurrentSaveState();
 		};
