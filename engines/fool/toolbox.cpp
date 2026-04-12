@@ -158,7 +158,7 @@ static const struct MacKeyCodeMapping {
 
 
 Toolbox::Toolbox() {
-	_frameLimiter = new Graphics::FrameLimiter(g_system, 60);
+	_frameLimiter = new Graphics::FrameLimiter(g_system, 60, false);
 	for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
 		_keyMap[k->scummvm] = k->mac;
 }
@@ -274,10 +274,13 @@ void Toolbox::_updateScreen() {
 
 uint32 Toolbox::Delay(uint32 numTicks) {
 	uint32 target = g_system->getMillis() + (numTicks * 1000 / 60);
+	int updateCount = 0;
 	do  {
 		_pumpEvents();
 		_updateScreen();
+		updateCount++;
 	} while (g_system->getMillis() < target);
+	//debugC(8, kDebugGraphics, "Toolbox::Delay: %d screen updates in %d ticks", updateCount, numTicks);
 	return (uint32)(g_system->getMillis() * 60 / 1000);
 }
 
