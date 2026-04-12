@@ -652,6 +652,14 @@ void Score::update() {
 		_activeFade = _soundManager->fadeChannels();
 	}
 
+	// Process timeout events independently of the frame delay
+	if (_haveInteractivity && !_vm->_playbackPaused) {
+		if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
+			_movie->processEvent(kEventTimeout);
+			_movie->_lastTimeOut = _vm->getMacTicks();
+		}
+	}
+
 	if (!debugChannelSet(-1, kDebugFast)) {
 		// end update cycle if we're still waiting for the next frame
 		if (isWaitingForNextFrame()) {
@@ -664,17 +672,6 @@ void Score::update() {
 			// like "go to frame", or open a new movie.
 			if (!_nextFrame && _window->_nextMovie.movie.empty()) {
 				processFrozenScripts();
-			}
-
-			// In the original Director runtime, timeout events fire based on
-			// elapsed time since the last user interaction, independently of
-			// the frame cycle. Process them here so they are not blocked by
-			// frame-rate limiting.
-			if (_haveInteractivity && !_vm->_playbackPaused) {
-				if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
-					_movie->processEvent(kEventTimeout);
-					_movie->_lastTimeOut = _vm->getMacTicks();
-				}
 			}
 			return;
 		}
@@ -703,15 +700,6 @@ void Score::update() {
 		// like "go to frame", or open a new movie.
 		if ((!_nextFrame && _window->_nextMovie.movie.empty()) || _nextFrame == _curFrameNumber) {
 			processFrozenScripts();
-		}
-
-		// Process timeout events independently of the frame delay,
-		// matching original Director runtime behavior.
-		if (_haveInteractivity && !_vm->_playbackPaused) {
-			if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
-				_movie->processEvent(kEventTimeout);
-				_movie->_lastTimeOut = _vm->getMacTicks();
-			}
 		}
 
 		return;
@@ -872,13 +860,6 @@ void Score::update() {
 	}
 
 	// TODO Director 6 - another order
-
-	// TODO: Figure out when exactly timeout events are processed
-	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
-		_movie->processEvent(kEventTimeout);
-		_movie->_lastTimeOut = _vm->getMacTicks();
-	}
-
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, bool sound2Changed) {
