@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, checked native `update_actor_runtime_state` waypoint handling in Ghidra and refined ScummVM player blocker avoidance so detour waypoints must clear the blocker span and use tighter completion slack than ordinary click targets.
+- On April 12, 2026, used the `CHESSROOM` pathfinding logs to refine blocker avoidance again: detour waypoints now sample their route against other room blockers before being accepted, and horizontal movement can fall back to a side waypoint when a depth detour would immediately collide with another blocker.
 
 ## Next Suggested Action
 
-- Re-test the `CHESSROOM` click toward `(457,410)` with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, confirming the player reaches the front-side z detour instead of alternating between blocker-depth waypoints.
+- Re-test the `CHESSROOM` click toward `(464,422)` with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, checking for `detour candidate blocked` lines and confirming the player routes around `__ANON_OBJECT_35` without being sent back into `__ANON_OBJECT_33`.
