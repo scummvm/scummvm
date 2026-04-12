@@ -2810,7 +2810,6 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			(continuationTag && !continuationTag->empty()) ||
 			(modalText && !modalText->value.empty()) ||
 			(lightingCommand && *lightingCommand != kStartupLightingCommandNone) ||
-			(requestPlayerGotoXZ && *requestPlayerGotoXZ) ||
 			(requestCloseupExit && *requestCloseupExit);
 	};
 
@@ -3190,9 +3189,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			*requestPlayerGotoXZ = true;
 			*playerGotoX = parseAsciiIntOrZero(command->arg1);
 			*playerGotoZ = parseAsciiIntOrZero(command->arg2);
-			if (continuationTag)
-				*continuationTag = command->arg4;
-			return;
+			currentTag = command->arg4;
+			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("CHANGE_LIGHTING")) {

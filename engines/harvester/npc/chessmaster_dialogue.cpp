@@ -425,8 +425,10 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 
 		InteractionResult interaction;
 		if (runtime.startupScript().executeActionTag(kChessKingMonsterActionTag, interaction)) {
+			interaction.cutscenePath = "GRAPHIC/FST/KINGGROW.FST";
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
+			return Common::kNoError;
 		}
 
 		return runtime.playDialogueFst("GRAPHIC/FST/KINGGROW.FST");

@@ -2136,6 +2136,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			playerState.turnTargetFacing = -1;
 			playerState.centerX = x;
 			playerState.z = (float)z;
+			Common::Rect screenRect;
+			bool hasScreenRect = false;
+			float depthScale = 0.0f;
 			if (playerState.entity) {
 				int width = 0;
 				int height = 0;
@@ -2155,10 +2158,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					(void)applyRoomActorPlacement(scene.state, *playerState.entity,
 						playerState.centerX, playerState.bottomY, playerState.z);
 				}
+				screenRect = playerState.entity->getScreenRect();
+				hasScreenRect = true;
+				depthScale = playerState.entity->getDepthScale();
 			}
 			debugC(1, kDebugPlayer,
-				"Harvester: PC_GOTO_XZ applied x=%d z=%d pos=(%d,%d,z=%.2f)",
-				x, z, playerState.centerX, playerState.bottomY, (double)playerState.z);
+				"Harvester: PC_GOTO_XZ applied x=%d z=%d pos=(%d,%d,z=%.2f) screen_rect=(%d,%d)-(%d,%d) depth_scale=%.3f",
+				x, z, playerState.centerX, playerState.bottomY, (double)playerState.z,
+				hasScreenRect ? screenRect.left : 0, hasScreenRect ? screenRect.top : 0,
+				hasScreenRect ? screenRect.right : 0, hasScreenRect ? screenRect.bottom : 0,
+				(double)depthScale);
 			resetIdleState();
 			captureCurrentSaveState();
 		};
