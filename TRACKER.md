@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, verified native CHESSMASTER refusal sequencing in Ghidra: `handle_talk_to_chessmaster` dispatches `ADD_CHESS_KING_MONSTER` before playing `graphic\\fst\\kinggrow.fst`, and native `PC_GOTO_XZ` continues to arg4 instead of ending the command chain. Updated ScummVM script/dialogue handling so `SET_MONSTER`, `PC_GOTO_XZ 30,20`, and `CHESS_MOVE_PC2` resolve before `KINGGROW.FST`.
+- On April 12, 2026, added the in-engine `DEBUG_PATHFINDING` toggle. When enabled, it overlays the room movement band, outlines scene entities that can affect player pathfinding, and gates verbose click/target/blocker movement logging behind the `pathfinding` debug channel.
 
 ## Next Suggested Action
 
-- In-engine, replay the CHESSMASTER refusal path and confirm the trace now applies `PC_GOTO_XZ 30,20` and `CHESS_MOVE_PC2` before `KINGGROW.FST`, then verify CHESSKING can be targeted/hit with the shotgun at logical Z 20.
+- Run Harvester with `--debugflags=pathfinding`, toggle `DEBUG_PATHFINDING` in the debugger console, then click through rooms with suspicious placement to compare the blue movement band, green blocker outlines, and emitted click/step/blocker logs.
