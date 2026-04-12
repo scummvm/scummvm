@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, added the in-engine `DEBUG_PATHFINDING` toggle. When enabled, it overlays the room movement band, outlines scene entities that can affect player pathfinding, and gates verbose click/target/blocker movement logging behind the `pathfinding` debug channel.
+- On April 12, 2026, checked native `update_actor_runtime_state` waypoint handling in Ghidra and refined ScummVM player blocker avoidance so detour waypoints must clear the blocker span and use tighter completion slack than ordinary click targets.
 
 ## Next Suggested Action
 
-- Run Harvester with `--debugflags=pathfinding`, toggle `DEBUG_PATHFINDING` in the debugger console, then click through rooms with suspicious placement to compare the blue movement band, green blocker outlines, and emitted click/step/blocker logs.
+- Re-test the `CHESSROOM` click toward `(457,410)` with `--debugflags=pathfinding` and `DEBUG_PATHFINDING` enabled, confirming the player reaches the front-side z detour instead of alternating between blocker-depth waypoints.

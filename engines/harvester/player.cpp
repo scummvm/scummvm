@@ -37,7 +37,9 @@ namespace {
 static const char *const kPlayerActorResourcePath = "1:/GRAPHIC/MONSTERS/PC/PC0.ABM";
 static const float kRoomPlayerHorizontalMoveBase = 8.0f;
 static const float kRoomPlayerHorizontalTargetSlackBase = 50.0f;
+static const float kRoomPlayerAvoidanceHorizontalTargetSlackBase = 8.0f;
 static const float kRoomPlayerDepthTargetSlack = 8.0f;
+static const float kRoomPlayerAvoidanceDepthTargetSlack = 0.5f;
 static const int kRoomPlayerMaxMoveWaypoints = 8;
 static const int kRoomPlayerBlockerHorizontalPad = 0x28;
 static const float kRoomPlayerBlockerDepthPad = 1.0f;
@@ -630,8 +632,10 @@ static int resolveMoveTargetHorizontalDirection(const RoomSetupState &state,
 	if (!target.hasTargetX)
 		return 0;
 
-	const float slack = Player::computeDepthScale(state, playerState.z) *
-		kRoomPlayerHorizontalTargetSlackBase;
+	const float slackBase = target.ignoredBlockerName.empty()
+		? kRoomPlayerHorizontalTargetSlackBase
+		: kRoomPlayerAvoidanceHorizontalTargetSlackBase;
+	const float slack = Player::computeDepthScale(state, playerState.z) * slackBase;
 	const float frameLeftX = (float)computePlayerFrameLeftX(playerState);
 	if (frameLeftX < (float)target.targetX - slack)
 		return 1;
@@ -646,9 +650,12 @@ static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState,
 	if (!target.hasTargetZ)
 		return 0;
 
-	if (target.targetZ < playerState.z - kRoomPlayerDepthTargetSlack)
+	const float slack = target.ignoredBlockerName.empty()
+		? kRoomPlayerDepthTargetSlack
+		: kRoomPlayerAvoidanceDepthTargetSlack;
+	if (target.targetZ < playerState.z - slack)
 		return 1;
-	if (playerState.z + kRoomPlayerDepthTargetSlack < target.targetZ)
+	if (playerState.z + slack < target.targetZ)
 		return -1;
 
 	return 0;
@@ -860,6 +867,32 @@ static bool getPlayerFrameWidth(const RoomPlayerState &playerState, int &width) 
 	return playerState.entity->getCurrentFrameMetrics(width, height, xOffset, yOffset);
 }
 
+static float getPlayerZExtent(const RoomPlayerState &playerState) {
+	return playerState.entity
+		? MAX<float>(0.0f, playerState.entity->getZExtent())
+		: 0.0f;
+}
+
+static bool doesPlayerDepthClearBlockerAt(const RoomPlayerState &playerState,
+		float targetZ, const Entity &blocker) {
+	const float playerZMax = targetZ + getPlayerZExtent(playerState);
+	const float blockerZ = blocker.getZ();
+	const float blockerZMax = blockerZ + blocker.getZExtent();
+
+	return playerZMax < blockerZ || blockerZMax < targetZ;
+}
+
+static bool doesPlayerFrameClearBlockerHorizontallyAt(const RoomPlayerState &playerState,
+		int targetFrameLeftX, const Entity &blocker) {
+	int playerWidth = 0;
+	if (!getPlayerFrameWidth(playerState, playerWidth))
+		return false;
+
+	const Common::Rect blockerRect = blocker.getScreenRect();
+	return targetFrameLeftX + playerWidth <= blockerRect.left ||
+		blockerRect.right <= targetFrameLeftX;
+}
+
 static bool isSameMoveWaypoint(const RoomMoveWaypoint &lhs, const RoomMoveWaypoint &rhs) {
 	if (lhs.hasTargetX != rhs.hasTargetX || lhs.hasTargetZ != rhs.hasTargetZ)
 		return false;
@@ -900,9 +933,7 @@ static bool queueDepthAvoidanceWaypoint(const RoomSetupState &state, RoomPlayerS
 	const float referenceTargetZ = activeTarget.hasTargetZ
 		? activeTarget.targetZ
 		: playerState.targetZ;
-	const float playerZExtent = playerState.entity
-		? MAX<float>(0.0f, playerState.entity->getZExtent())
-		: 0.0f;
+	const float playerZExtent = getPlayerZExtent(playerState);
 
 	float candidates[2];
 	if (referenceTargetZ < blockerMidZ) {
@@ -915,7 +946,9 @@ static bool queueDepthAvoidanceWaypoint(const RoomSetupState &state, RoomPlayerS
 
 	for (uint i = 0; i < ARRAYSIZE(candidates); ++i) {
 		const float targetZ = clampRoomDepth(state, candidates[i]);
-		if (fabsf(targetZ - playerState.z) <= kRoomPlayerDepthTargetSlack)
+		if (fabsf(targetZ - playerState.z) <= kRoomPlayerAvoidanceDepthTargetSlack)
+			continue;
+		if (!doesPlayerDepthClearBlockerAt(playerState, targetZ, blocker))
 			continue;
 
 		RoomMoveWaypoint waypoint;
@@ -956,6 +989,8 @@ static bool queueHorizontalAvoidanceWaypoint(const RoomSetupState &state, RoomPl
 		waypoint.targetX = CLIP<int>(candidates[i], 0, 639);
 		waypoint.hasTargetX = true;
 		waypoint.ignoredBlockerName = blocker.getName();
+		if (!doesPlayerFrameClearBlockerHorizontallyAt(playerState, waypoint.targetX, blocker))
+			continue;
 		if (resolveMoveTargetHorizontalDirection(state, playerState, waypoint) == 0)
 			continue;
 		if (prependMoveWaypoint(playerState, waypoint))
@@ -985,6 +1020,10 @@ static bool queueBlockedMoveAvoidanceWaypoint(const RoomSetupState &state,
 			state.roomName.c_str(), blocker.getName().c_str(), axis,
 			waypoint.targetX, (double)waypoint.targetZ,
 			waypoint.hasTargetX, waypoint.hasTargetZ);
+	} else if (isPathfindingDebugEnabled()) {
+		debugC(1, kDebugPathfinding,
+			"Harvester: pathfinding detour rejected room='%s' blocker='%s' axis='%s'",
+			state.roomName.c_str(), blocker.getName().c_str(), axis ? axis : "");
 	}
 
 	return queued;
