@@ -413,7 +413,8 @@ void FoolPrologue::sub_128_e58() {
 			return;
 		}
 		// wait until next redraw
-		g_toolbox->Delay(1);
+		if (this->var_ev_22.what == kNullEvent)
+			g_toolbox->Delay(0);
 	}
 	this->sub_128_e80();
 }
@@ -438,7 +439,8 @@ void FoolPrologue::sub_128_e80() {
 			break;
 		}
 		// wait until next redraw
-		g_toolbox->Delay(1);
+		if (this->var_ev_22.what == kNullEvent)
+			g_toolbox->Delay(0);
 	}
 }
 

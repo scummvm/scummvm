@@ -236,7 +236,7 @@ void FoolGame::polyominoRun() {
 			}
 			// yield to renderer
 			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(1);
+				g_toolbox->Delay(0);
 			}
 			// 133:0800
 		} while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0));

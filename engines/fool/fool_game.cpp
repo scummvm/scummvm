@@ -323,14 +323,14 @@ void FoolGame::sub_128_3da(int16 unk1) {
 	this->var_i32_68e = g_toolbox->TickCount();
 
 	do {
-		g_toolbox->Delay(1);
+		g_toolbox->Delay(0);
 	} while (g_toolbox->TickCount() < (this->var_i32_68e + unk1));
 }
 
 void FoolGame::sub_128_406(int16 unk1) {
 	// 128:0402
 	do {
-		g_toolbox->Delay(1);
+		g_toolbox->Delay(0);
 	} while (g_toolbox->TickCount() < (this->var_i32_692 + unk1));
 }
 
@@ -397,7 +397,7 @@ void FoolGame::sub_128_50e(int16 freq, int16 duration, int16 wait) {
 		g_zbasic->sound(this->var_i16_30, this->var_i16_32, 0x96, 0);
 		if (this->var_i16_34 == 1) {
 			while (g_zbasic->unk_5()) {
-				g_toolbox->Delay(1);
+				g_toolbox->Delay(0);
 			}
 		}
 	}
@@ -599,7 +599,7 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 				// wait for vsync if no events were received.
 				this->var_i16_78a = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 				if (this->var_ev_46.what == kNullEvent) {
-					g_toolbox->Delay(1);
+					g_toolbox->Delay(0);
 					this->var_i16_3a += 1;
 				}
 			} while (!((this->var_i16_3a >= (unk1*60/1000)) || ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0)));
@@ -738,7 +738,6 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 		// 128:1522
 		do {
 			this->var_i16_7a8 = g_toolbox->GetNextEvent(0xa, this->var_ev_46);
-			g_toolbox->Delay(0);
 			g_toolbox->GlobalToLocal(this->var_ev_46.where);
 			if (this->var_ev_46.what == kMouseDown) {
 				// 128:154a
@@ -798,6 +797,8 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 					this->var_i16_7be = 1;
 				}
 			}
+			if (this->var_ev_46.what == kNullEvent)
+				g_toolbox->Delay(0);
 		// 128:175c
 		} while (this->var_i16_7be == 0);
 
@@ -1400,7 +1401,7 @@ void FoolGame::sub_128_2e3e() {
 		this->sunMapTileID[i] = g_zbasic->readFileInt(2);
 		debugCN(5, kDebugLoading, "%d, ", this->sunMapTileID[i]);
 	}
-	debugC(5, kDebugLoading, "");
+	debugCN(5, kDebugLoading, "\n");
 	// 128:2f84
 	g_zbasic->close(2);
 	if (this->var_i16_7e6 != 0) {
@@ -2416,7 +2417,7 @@ void FoolGame::sub_128_6186() {
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
 		if (this->var_ev_46.what == kNullEvent)
-			g_toolbox->Delay(1);
+			g_toolbox->Delay(0);
 	} while ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0);
 }
 
@@ -2428,7 +2429,7 @@ void FoolGame::sub_128_61c2() {
 		this->var_i16_7a8 = g_toolbox->GetNextEvent(-1, this->var_ev_46);
 		g_toolbox->GlobalToLocal(this->var_ev_46.where);
 		if (this->var_ev_46.what == kNullEvent)
-			g_toolbox->Delay(1);
+			g_toolbox->Delay(0);
 	} while ((this->var_ev_46.what != kMouseDown));
 	this->sub_128_6186();
 }
@@ -2445,7 +2446,7 @@ void FoolGame::sub_128_61ec() {
 			this->sub_128_6154();
 		}
 		if (this->var_ev_46.what == kNullEvent)
-			g_toolbox->Delay(1);
+			g_toolbox->Delay(0);
 	} while (!((this->var_ev_46.what == kNullEvent) && (this->var_ev_46.modifiers & kModMouseButtonUp)));
 	this->keyLastPressed = 0;
 }
@@ -2461,7 +2462,7 @@ void FoolGame::sub_128_6244() {
 		if (this->var_ev_46.what == kDiskEvt) {
 			this->sub_128_6154();
 		}
-		g_toolbox->Delay(1);
+		g_toolbox->Delay(0);
 	} while ((this->var_ev_46.what == kNullEvent) && ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0));
 	// SEGMENT_RETURN
 }
