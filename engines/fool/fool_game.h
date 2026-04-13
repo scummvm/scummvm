@@ -473,11 +473,7 @@ private:
 	int16 pageToChapter[101]; // arr_i16_1a46
 	int16 arr_i16_1b10[6969];
 	int16 arr_i16_1b90[101];
-	int16 arr_i16_1c5a[16];
-	int16 arr_i16_1c7a[16];
-	int16 arr_i16_1cc2;
-	int16 arr_i16_1cd8;
-	int16 arr_i16_1cea;
+	int16 puzzleCompletionStatus[101]; // arr_i16_1c5a
 	int16 arr_i16_1d24[101];
 	int16 arr_i16_1dee[202];
 	int16 arr_i16_1eb8[0x29];
