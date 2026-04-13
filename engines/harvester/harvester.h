@@ -118,6 +118,8 @@ public:
 	bool toggleRoomDebugEnabled();
 	bool isPathfindingDebugEnabled() const { return _pathfindingDebugEnabled; }
 	bool togglePathfindingDebugEnabled();
+	bool isTimerDebugEnabled() const { return _timerDebugEnabled; }
+	bool toggleTimerDebugEnabled();
 	bool requestDebugCommand(const CommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
 	void captureCurrentSaveRoomState(const Common::String &entranceName,
@@ -159,6 +161,7 @@ private:
 	bool _combatDebugEnabled = false;
 	bool _roomDebugEnabled = false;
 	bool _pathfindingDebugEnabled = false;
+	bool _timerDebugEnabled = false;
 	Common::String _emptyMusicPath;
 };
 

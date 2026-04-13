@@ -96,6 +96,8 @@ static const int kRoomDebugLabelPaddingX = 3;
 static const int kRoomDebugLabelPaddingY = 2;
 static const int kRoomDebugRoomNameX = 4;
 static const int kRoomDebugRoomNameY = 4;
+static const int kTimerDebugOverlayXDivisor = 8;
+static const int kTimerDebugOverlayLineSpacing = 1;
 
 static const int kCursorSequenceWalk = 0;
 static const int kCursorSequenceExamine = 1;
@@ -358,6 +360,51 @@ static void drawPathfindingDebugOverlay(HarvesterEngine &engine, Graphics::Scree
 	for (const AnimRecord &anim : scene.sceneAnimations)
 		drawPathfindingBlockerOutline(screen, *entityManager,
 			anim.animName, movementBounds, green);
+}
+
+static Common::String resolveTimerDebugLabel(const TimerRecord &timer, const Entity &entity) {
+	const Common::String actionTag = timer.arg2.empty() ? Common::String("<none>") : timer.arg2;
+
+	return Common::String::format("%s start=%d current=%d action=%s",
+		timer.timerName.c_str(), entity.getTimerInitialValue(),
+		entity.getTimerCurrentValue(), actionTag.c_str());
+}
+
+static void drawTimerDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
+		const RoomSceneResources &scene) {
+	if (!engine.isTimerDebugEnabled())
+		return;
+
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	EntityManager *entityManager = engine.getRuntimeEntities();
+	if (!font || !entityManager)
+		return;
+
+	Common::Array<Common::String> labels;
+	for (const TimerRecord &timer : scene.state.roomTimers) {
+		const Entity *entity = entityManager->findSceneEntityByName(timer.timerName);
+		if (!entity || entity->getClassId() != kRuntimeEntityClassTimer || !entity->isTimerEnabled())
+			continue;
+
+		labels.push_back(resolveTimerDebugLabel(timer, *entity));
+	}
+	if (labels.empty())
+		return;
+
+	byte displayPalette[256 * 3];
+	screen.getPalette(displayPalette);
+	const byte black = findNearestPaletteColor(displayPalette, 0x00, 0x00, 0x00);
+	const byte white = findNearestPaletteColor(displayPalette, 0xff, 0xff, 0xff);
+
+	const int labelHeight = font->getFontHeight() + kRoomDebugLabelPaddingY * 2;
+	const int lineHeight = labelHeight + kTimerDebugOverlayLineSpacing;
+	const int totalHeight = (int)labels.size() * labelHeight +
+		(int)(labels.size() - 1) * kTimerDebugOverlayLineSpacing;
+	const int x = screen.w / kTimerDebugOverlayXDivisor;
+	const int y = CLIP<int>((screen.h - totalHeight) / 2, 0, MAX(0, screen.h - totalHeight));
+
+	for (uint i = 0; i < labels.size(); ++i)
+		drawRoomDebugLabel(screen, *font, labels[i], x, y + (int)i * lineHeight, white, black);
 }
 
 static int clampTownMapPanelIndex(int panelIndex) {
@@ -789,6 +836,7 @@ void drawRoomScene(HarvesterEngine &engine, Graphics::Screen &screen, const Room
 	drawRoomDebugOverlay(engine, screen, scene);
 	drawCombatDebugOverlay(engine, screen, scene);
 	drawPathfindingDebugOverlay(engine, screen, scene);
+	drawTimerDebugOverlay(engine, screen, scene);
 }
 
 const ObjectRecord *findSceneObjectByName(const Common::Array<ObjectRecord> &objects,

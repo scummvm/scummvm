@@ -374,6 +374,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("about", WRAP_METHOD(Console, Cmd_about));
 	registerCmd("DEBUG_COMBAT", WRAP_METHOD(Console, Cmd_debugCombat));
 	registerCmd("DEBUG_PATHFINDING", WRAP_METHOD(Console, Cmd_debugPathfinding));
+	registerCmd("DEBUG_TIMERS", WRAP_METHOD(Console, Cmd_debugTimers));
 	registerCmd("DEBUG_ACTIONS", WRAP_METHOD(Console, Cmd_debugActions));
 	registerCmd("DEBUG_COMMAND", WRAP_METHOD(Console, Cmd_debugCommand));
 	registerCmd("DEBUG_ROOM", WRAP_METHOD(Console, Cmd_debugRoom));
@@ -433,6 +434,22 @@ bool Console::Cmd_debugPathfinding(int argc, const char **argv) {
 
 	const bool enabled = g_engine->togglePathfindingDebugEnabled();
 	debugPrintf("Pathfinding debug overlay %s\n", enabled ? "enabled" : "disabled");
+	return true;
+}
+
+bool Console::Cmd_debugTimers(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: DEBUG_TIMERS\n");
+		return true;
+	}
+
+	if (!g_engine) {
+		debugPrintf("Harvester engine is not active\n");
+		return true;
+	}
+
+	const bool enabled = g_engine->toggleTimerDebugEnabled();
+	debugPrintf("Timer debug overlay %s\n", enabled ? "enabled" : "disabled");
 	return true;
 }
 
