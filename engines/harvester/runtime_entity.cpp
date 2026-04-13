@@ -750,10 +750,19 @@ void EntityManager::clear() {
 	_cursorEntity = nullptr;
 }
 
-void EntityManager::clearSceneEntities() {
-	for (Entity *entity : _sceneEntities)
+void EntityManager::clearSceneEntities(bool preserveGlobalTimers) {
+	Common::Array<Entity *> preservedEntities;
+	for (Entity *entity : _sceneEntities) {
+		if (preserveGlobalTimers &&
+				entity->getClassId() == kRuntimeEntityClassTimer &&
+				entity->isTimerGlobal()) {
+			preservedEntities.push_back(entity);
+			continue;
+		}
+
 		delete entity;
-	_sceneEntities.clear();
+	}
+	_sceneEntities = preservedEntities;
 	_expiredTimerNames.clear();
 	_timerPauseDepth = 0;
 }

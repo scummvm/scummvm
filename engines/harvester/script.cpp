@@ -2331,6 +2331,10 @@ const TimerRecord *Script::findRuntimeTimer(const Common::String &timerName) con
 	return nullptr;
 }
 
+const TimerRecord *Script::findRuntimeTimerRecord(const Common::String &timerName) const {
+	return findRuntimeTimer(timerName);
+}
+
 const NpcRecord *Script::findRuntimeNpcRecord(const Common::String &npcName) const {
 	return findRuntimeNpc(npcName);
 }

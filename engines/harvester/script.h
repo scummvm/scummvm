@@ -390,6 +390,7 @@ public:
 	const EntranceRecord *findEntranceRecord(const Common::String &entranceName) const;
 	const MapEntranceRecord *findMapEntranceRecord(const Common::String &entryName) const;
 	bool getFlagValue(const Common::String &flagName) const;
+	const TimerRecord *findRuntimeTimerRecord(const Common::String &timerName) const;
 	const NpcRecord *findRuntimeNpcRecord(const Common::String &npcName) const;
 	bool setRuntimeFlagValue(const Common::String &flagName, bool value);
 	bool resetRuntimeObjectToInitialState(const Common::String &objectName);

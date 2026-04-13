@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, verified native `ADD` / `DELETE` object visibility behavior in `HARVEST.LE` via Ghidra (`dispatch_room_event_actions`, `set_object_visibility_for_owner_or_room`, and `room_setup`) and patched ScummVM room materialization so hidden/deleted room objects remain in script runtime state but do not re-enter `RoomSetupState` or the live scene until an `ADD` makes them visible again.
+- On April 13, 2026, verified native `SET_TIMER` / `KILL_TIMER` and class `0x17` timer persistence behavior in `HARVEST.LE`: `g_timer_records` is the global timer record list, `room_setup` only spawns timers whose `arg1` matches the resolved room, and global timer persistence is implemented by `destroy_entity_list` preserving live timer entities whose copied global flag is set. Patched ScummVM to preserve live global timer entities across room scene clears, avoid duplicate timer spawns on return to the owning room, and make timer debug/runtime sync paths include preserved live timers.
 
 ## Next Suggested Action
 
-- Re-run the `EYEHALL` combat case, kill `BIG_EYE`, and confirm `EYEDOOR2 DELETE EYEHALL BIGEYE` leaves `BIGEYE` out of the materialized room object list and scene after the runtime refresh while `EYE_MAIN` remains enabled.
+- Re-run a script path that starts a global timer, leave its owning room, enable `DEBUG_TIMERS`, and confirm the live timer remains visible/counting across the transition and still fires its `TimerRecord.arg2` action.

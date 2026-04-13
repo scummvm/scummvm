@@ -371,22 +371,24 @@ static Common::String resolveTimerDebugLabel(const TimerRecord &timer, const Ent
 }
 
 static void drawTimerDebugOverlay(HarvesterEngine &engine, Graphics::Screen &screen,
-		const RoomSceneResources &scene) {
+		const RoomSceneResources &) {
 	if (!engine.isTimerDebugEnabled())
 		return;
 
 	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
 	EntityManager *entityManager = engine.getRuntimeEntities();
-	if (!font || !entityManager)
+	Script *script = engine.getScript();
+	if (!font || !entityManager || !script)
 		return;
 
 	Common::Array<Common::String> labels;
-	for (const TimerRecord &timer : scene.state.roomTimers) {
+	for (const TimerRecord &timer : script->getTimers()) {
 		const Entity *entity = entityManager->findSceneEntityByName(timer.timerName);
 		if (!entity || entity->getClassId() != kRuntimeEntityClassTimer || !entity->isTimerEnabled())
 			continue;
 
-		labels.push_back(resolveTimerDebugLabel(timer, *entity));
+		const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(timer.timerName);
+		labels.push_back(resolveTimerDebugLabel(runtimeTimer ? *runtimeTimer : timer, *entity));
 	}
 	if (labels.empty())
 		return;
@@ -1944,7 +1946,7 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 		return false;
 
 	Entity *preservedPlayer = entityManager->detachSceneEntityByName(kPlayerActorEntityName);
-	entityManager->clearSceneEntities();
+	entityManager->clearSceneEntities(true);
 	for (const RegionRecord &region : state.roomRegions) {
 		const Common::Rect regionBounds = getRegionBounds(region);
 		if (regionBounds.isEmpty())
@@ -1973,6 +1975,16 @@ bool Flow::populateRoomSceneEntities(RoomSetupState &state,
 			region.minZ, region.maxZ, region.desiredFacing, region.cursorEnabled, region.actionTag.c_str());
 	}
 	for (const TimerRecord &timer : state.roomTimers) {
+		Entity *existingTimer = entityManager->findSceneEntityByName(timer.timerName);
+		if (existingTimer && existingTimer->getClassId() == kRuntimeEntityClassTimer) {
+			debugC(1, kDebugRoom,
+				"Harvester: scene timer reused room='%s' timer='%s' current=%d initial=%d enabled=%d loop=%d global=%d",
+				state.roomName.c_str(), timer.timerName.c_str(), existingTimer->getTimerCurrentValue(),
+				existingTimer->getTimerInitialValue(), existingTimer->isTimerEnabled(),
+				existingTimer->isTimerLooping(), existingTimer->isTimerGlobal());
+			continue;
+		}
+
 		if (!entityManager->spawnSceneTimerEntity(timer.timerName,
 				timer.initialValue, timer.currentValue, timer.enabled, timer.looping, timer.global)) {
 			debug(1, "Harvester: unable to spawn room timer entity '%s'",

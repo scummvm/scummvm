@@ -248,6 +248,8 @@
   - Before rebuilding the wait transition, `room_setup` uses `ramp_palette_brightness` to fade the outgoing palette down to black when a current room palette is active; only the no-current-room startup case skips directly to a black palette upload.
   - It then reloads `WAIT.PAL` and `WAIT.ABM`, hides the cursor entity, flushes the wait transition while the cursor is hidden, re-shows the cursor, uploads the wait palette, builds the room entities, and only after that uploads the room palette from `g_current_palette_buffer`.
   - Once the wait transition is flushed, `room_setup` rebuilds the room render list in this order: matching enabled regions, room timers, visible object records whose `current_owner_or_room` matches the room, then room `ANIM` records whose `active` or `visible` state is set.
+  - Timer setup walks the global `g_timer_records` list but only materializes a class `0x17` timer entity when `TimerRecord.arg1` matches the resolved room name. It also skips spawning when a live entity with the same timer name already exists.
+  - Cross-room timer persistence is carried by live class `0x17` entities, not by `room_setup` selecting global timers in every room. `destroy_entity_list` at `0x5c9e0` preserves a timer entity instead of removing/freeing it when the entity global byte copied from `TimerRecord.global` is set.
   - Decoding `HARVEST.SCR` confirms that room `OBJECT` records are not all named sprites. The data uses unnamed visible `OBJECT` records as blocker rectangles in many rooms, and visible no-sprite `OBJECT` records as live hotspots. Hidden no-sprite action hotspots such as `PCHOUSE / PC_WINDOW` and `MR_JOHNS / MANHOLE` are not materialized until an `ADD` opcode sets their `visible` byte.
   - Rechecking the live CD3 handoff against `handle_talk_to_sergeant`, `prompt_for_cdrom_disc_change`, `run_harvester_main_loop`, and the decoded disc-specific `HARVEST.SCR` changed the earlier conclusion about the Sergeant remains rebuild target. Native Sergeant dialogue still ends with `C076.FST` plus `prompt_for_cdrom_disc_change(3, 0)` and no explicit `CHANGE_ROOM`, but the disc-3 branch in `run_harvester_main_loop` then calls `reload_town_world_from_script(); room_setup(g_room_setup_target_name_buffer);`. The same Ghidra xrefs show `g_room_setup_target_name_buffer` is initialized to `START` at boot and is not rewritten by ordinary room transitions, so the post-prompt CD3 rebuild re-enters the disc-3 `START` entrance rather than the pre-swap Sergeant entrance. Decoding `CD3/HARVEST.SCR` then shows that `START` resolves to `RECEPTION`, whose room-enter chain owns the lodge fall / reception sequence.
   - Rechecking the live script against the ScummVM room/map resolver narrows the next authored step after that rebuild: `EXIT_LODGE_2` issues `CHANGE_ROOM "LODGE_2_MAP"`, and `LODGE_2_MAP` is a `MAP_ENTRANCE`, so the authored follow-up is the town-map selector handoff rather than an automatic jump into a deeper lodge interior.
@@ -276,6 +278,7 @@
   - At the top of each gameplay iteration it checks for a queued handoff, clears any selected carried object / interaction text state that would leak across the boundary, and then calls `room_setup(g_pending_room_name)`.
   - The same loop also owns the live room right-click attack selector when no carried item is active and the player is alive.
   - When a live class `0x17` timer entity expires, the same loop resolves the backing `TimerRecord` by `timer_name` and dispatches `dispatch_room_event_actions(timer->arg2)`; the timer name is only the lookup key, not the action tag.
+  - On expiry, one-shot timer entities clear their live enabled byte and mirror that disabled state back into the matching `TimerRecord`; looping timers reseed their next-fire tick from the current centisecond clock.
   - It sets `DAT_000d61d0 = 3`, compares cursor X against the player midpoint, and then compares cursor Y against `player_bottom - depth_scale * 144.44` and `player_bottom - depth_scale * 75.36`.
   - Those thresholds choose the six directional attack states `0x18/0x17/0x16` on the left side and `0x1b/0x1a/0x19` on the right side.
   - `update_actor_runtime_state` maps those states to frame banks `0x50..0x59`, `0x5a..0x63`, `0x64..0x6d`, `0x6e..0x77`, `0x78..0x81`, and `0x82..0x8b`.
@@ -289,6 +292,8 @@
   - Object, hotspot, overlay, and room actor visibility or active-state changes
   - Combat/stat side effects such as damage-type selection and player stat increments
   - Save-game handoff through the `SAVE_GAME` marker
+- `SET_TIMER` and `KILL_TIMER` first resolve a live class `0x17` timer entity by name. If no live timer entity is present, native prints `WARNING: Timer %s not in list` and does not update `g_timer_records`.
+  - When the live entity is present, the dispatcher toggles the entity enabled byte and mirrors that enabled state into the matching `TimerRecord`.
 
 ### World Record Parsers
 
@@ -332,6 +337,8 @@
   - `KILL_NPC -> 0x0c`
   - `KILL_PC -> 0x0d`
   - `MONSTERFY -> 0x0e`
+  - `SET_TIMER -> 0x17`
+  - `KILL_TIMER -> 0x24`
   - `PAUSE_PC -> 0x25`
   - `RESUME_PC -> 0x26`
 - `parse_useitem_record` at `0x602c0`
@@ -947,6 +954,7 @@
   - `initial_value`, `current_value`, `timer_name`, `arg1`, `arg2`, `enabled`, `next`
   - parser booleans are `loop` and `global`
   - `room_setup` treats `arg1` as the room/scope key for room-local timers and only materializes timer entities when it matches the resolved room name.
+  - `global` is copied into the live timer entity and controls whether `destroy_entity_list` preserves that entity across room transitions. It does not make `room_setup` spawn the timer in unrelated rooms.
   - `arg2` is the action-tag target executed when the timer expires; native main-loop expiry first resolves the record by `timer_name`, then dispatches `dispatch_room_event_actions(arg2)`.
   - `initialize_timer_entity_common_fields` at `0x4ab10` zeroes the lightweight timer-entity header before `spawn_timer_entity_from_record` installs the countdown fields and adds the entity to `g_render_entity_list`.
 - `UseItemRecord` is stable:
