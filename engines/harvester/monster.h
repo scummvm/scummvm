@@ -57,6 +57,7 @@ struct MonsterRecord {
 	Common::String footstepSoundRight;
 	Common::String deathSound;
 	Common::String onDeathActionTag;
+	int recordIndex = -1;
 	bool active = false;
 	bool visible = false;
 	bool savedVisible = false;

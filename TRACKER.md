@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, verified native repeated `SET_TIMER ... ON` behavior in `HARVEST.LE` and patched ScummVM so an already-enabled global timer keeps its live countdown when a room-entry command enables it again; preserved live global timers are no longer reconfigured only because the script record's saved `currentValue` is stale.
+- On April 13, 2026, checked `HARVEST.LE` monster record handling in Ghidra and updated ScummVM Harvester monster runtime matching so parsed monster records keep a stable `recordIndex`; room-qualified monster sync no longer falls back to the first same-name record, preventing a dead duplicate like `WOLFIE` from contaminating another room's monster state.
 
 ## Next Suggested Action
 
-- Re-run the Dining/Mainhall acid timer path with `DEBUG_TIMERS`: start the global acid timers, leave and re-enter Mainhall, and confirm `ACID_TIMER2` / `ACID_TIMER3` keep counting instead of resetting.
+- Re-run the duplicate `WOLFIE` path with `--debugflags=room,combat` from a clean pre-kill state and confirm the DINING monster materializes with its own `hp=20/20`, `spawned=0`, and `runtimeState=-1` unless the DINING record itself has been killed.
