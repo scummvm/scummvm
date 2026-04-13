@@ -583,6 +583,11 @@ static bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int
 	return (uint)lastFrame < entity.getFrameCount();
 }
 
+static bool runtimeEntityHasDrawableFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
+	return runtimeEntityHasFrameRange(entity, firstFrame, lastFrame) &&
+		entity.hasOpaqueFramesInRange(firstFrame, lastFrame);
+}
+
 static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 		const Entity &entity, int actorCenterX, int targetCenterX,
 		RoomAttackAnimationRange &range) {
@@ -604,7 +609,7 @@ static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
 	int availableCandidateIndices[3];
 	int availableCandidateCount = 0;
 	for (int i = 0; i < 3; ++i) {
-		if (!runtimeEntityHasFrameRange(entity, candidates[i].firstFrame, candidates[i].lastFrame))
+		if (!runtimeEntityHasDrawableFrameRange(entity, candidates[i].firstFrame, candidates[i].lastFrame))
 			continue;
 		availableCandidateIndices[availableCandidateCount++] = i;
 	}
@@ -636,7 +641,7 @@ static bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
 	const RoomDeathAnimationRange fallbackProjectile = preferLeftBank ? rightProjectile : leftProjectile;
 
 	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
-		if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+		if (!runtimeEntityHasDrawableFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
 			return false;
 		range = candidate;
 		return true;
@@ -786,7 +791,7 @@ static bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
 		return false;
 	}
 
-	if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
+	if (!runtimeEntityHasDrawableFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
 		return false;
 
 	range = candidate;
@@ -2136,28 +2141,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			playerState.turnTargetFacing = -1;
 			playerState.centerX = x;
 			playerState.z = (float)z;
+			playerState.bottomY = mapRoomDepthToScreenYForCombat(
+				scene.state, playerState.z, playerState.bottomY);
 			Common::Rect screenRect;
 			bool hasScreenRect = false;
 			float depthScale = 0.0f;
 			if (playerState.entity) {
-				int width = 0;
-				int height = 0;
-				int xOffset = 0;
-				int yOffset = 0;
-				if (playerState.entity->getCurrentFrameMetrics(width, height, xOffset, yOffset)) {
-					const int preservedScreenY = playerState.entity->getY();
-					// Native PC_GOTO_XZ calls set_entity_screen_position directly:
-					// update X and Z, but preserve screen Y and the current scale.
-					playerState.entity->setAnchorMode(kRuntimeEntityAnchorTopLeft);
-					playerState.entity->setPosition(
-						x - xOffset - width / 2, preservedScreenY, playerState.z);
-					playerState.bottomY = preservedScreenY + height + yOffset;
-					if (entityManager)
-						entityManager->reinsertSceneEntity(playerState.entity);
-				} else {
-					(void)applyRoomActorPlacement(scene.state, *playerState.entity,
-						playerState.centerX, playerState.bottomY, playerState.z);
-				}
+				(void)applyRoomActorPlacement(scene.state, *playerState.entity,
+					playerState.centerX, playerState.bottomY, playerState.z);
+				if (entityManager)
+					entityManager->reinsertSceneEntity(playerState.entity);
 				screenRect = playerState.entity->getScreenRect();
 				hasScreenRect = true;
 				depthScale = playerState.entity->getDepthScale();

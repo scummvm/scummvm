@@ -103,6 +103,7 @@ public:
 	int getBoundsWidth() const { return _boundsWidth; }
 	int getBoundsHeight() const { return _boundsHeight; }
 	bool getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &yOffset) const;
+	bool hasOpaqueFramesInRange(int firstFrame, int lastFrame) const;
 	void setDepthScale(float scale);
 	float getDepthScale() const { return _depthScale; }
 	Common::Rect getScreenRect() const;
