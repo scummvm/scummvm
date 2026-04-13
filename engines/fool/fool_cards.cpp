@@ -135,7 +135,7 @@ void FoolGame::cardsRun() {
 		}
 		if (this->stateFlags == 4) {
 			this->cardsStoreState();
-			this->sub_128_3536();
+			this->saveGame();
 		}
 		// 139:04c4
 	}
@@ -288,7 +288,7 @@ void FoolGame::cardsOnClick() {
 			}
 			if (this->stateFlags == 4) {
 				this->cardsStoreState();
-				this->sub_128_3536();
+				this->saveGame();
 			}
 			if (this->var_ev_46.what == kNullEvent) {
 				g_toolbox->Delay(0);

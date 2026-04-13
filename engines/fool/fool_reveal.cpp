@@ -112,7 +112,7 @@ void FoolGame::revealRun() {
 		}
 	}
 	// 134:0538
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 	if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
 		this->var_i16_d0c = 1;
 	} else {
@@ -123,7 +123,7 @@ void FoolGame::revealRun() {
 	// 134:057a
 	// 134:057a: JMP - [0x61e]
 	// main event loop
-	while (((this->stateFlags & 1) == 0) && (this->var_i16_d0c == 0)) {
+	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
 		// 134:057e
 		while ((this->stateFlags == 0) && (this->var_i16_d0c == 0)) {
 			// 134:0582
@@ -140,12 +140,12 @@ void FoolGame::revealRun() {
 			}
 		}
 		// 134:05e2
-		if (this->stateFlags == 2) {
+		if (this->stateFlags == kStateUndo) {
 			this->revealReset();
 		}
-		if (this->stateFlags == 4) {
+		if (this->stateFlags == kStateSaveGame) {
 			this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[19]);
-			this->sub_128_3536();
+			this->saveGame();
 		}
 		// 134:061e
 	}
@@ -201,7 +201,7 @@ void FoolGame::revealReset() {
 	}
 	// 134:085c
 	this->arr_i16_1eb8[19] = 0;
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 }
 
 void FoolGame::revealSuccess() {
