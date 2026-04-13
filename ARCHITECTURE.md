@@ -294,6 +294,7 @@
   - Save-game handoff through the `SAVE_GAME` marker
 - `SET_TIMER` and `KILL_TIMER` first resolve a live class `0x17` timer entity by name. If no live timer entity is present, native prints `WARNING: Timer %s not in list` and does not update `g_timer_records`.
   - When the live entity is present, the dispatcher toggles the entity enabled byte and mirrors that enabled state into the matching `TimerRecord`.
+  - The `SET_TIMER ... ON` branch only reseeds the live countdown when the live timer entity was disabled. Repeating `SET_TIMER ... ON` for an already-enabled global timer does not restart its countdown.
 
 ### World Record Parsers
 

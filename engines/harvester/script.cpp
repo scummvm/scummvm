@@ -2550,10 +2550,11 @@ bool Script::setRuntimeTimerEnabled(const Common::String &timerName, bool enable
 	if (!currentTimer)
 		return false;
 
-	const bool changed = currentTimer->enabled != enabled ||
-		(enabled && currentTimer->currentValue != currentTimer->initialValue);
+	const bool wasEnabled = currentTimer->enabled;
+	const bool changed = wasEnabled != enabled ||
+		(enabled && !wasEnabled && currentTimer->currentValue != currentTimer->initialValue);
 	currentTimer->enabled = enabled;
-	if (enabled)
+	if (enabled && !wasEnabled)
 		currentTimer->currentValue = currentTimer->initialValue;
 	return changed;
 }
