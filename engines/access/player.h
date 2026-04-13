@@ -47,6 +47,9 @@ class AccessEngine;
 
 class Player : public ImageEntry, public Manager {
 protected:
+	// should be constructed via ::init().
+	Player(AccessEngine *vm);
+
 	int _leftDelta, _rightDelta;
 	int _upDelta, _downDelta;
 	int _scrollConst;
@@ -120,7 +123,6 @@ public:
 	Common::Point _rawPlayerLow;
 	Common::Point _rawPlayer;
 public:
-	Player(AccessEngine *vm);
 	virtual ~Player();
 	static Player *init(AccessEngine *vm);
 

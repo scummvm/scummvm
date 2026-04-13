@@ -284,7 +284,7 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 
 	Player *stil = ((NoctropolisEngine *)_vm)->_stil;
 
-	if (stil->_playerOff != 0)
+	if (stil->_playerOff)
 		return 1;
 
 	_vm->_scale = _vm->_stilScale;
