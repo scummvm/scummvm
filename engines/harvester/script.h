@@ -306,6 +306,7 @@ struct InteractionResult {
 	bool requestMainMenu = false;
 	bool abortRemainingCommandChain = false;
 	bool mutatedRuntimeState = false;
+	bool visualRuntimeStateChanged = false;
 };
 
 class Script {
@@ -457,7 +458,8 @@ private:
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
-		bool *mutatedRuntimeState, bool *requestCloseupExit);
+		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
+		bool *requestCloseupExit);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;

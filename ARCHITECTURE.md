@@ -292,6 +292,10 @@
   - Object, hotspot, overlay, and room actor visibility or active-state changes
   - Combat/stat side effects such as damage-type selection and player stat increments
   - Save-game handoff through the `SAVE_GAME` marker
+- Action dispatch ordering is confirmed for deferred text/movie chains:
+  - `SET_FLAG` mutates only the matching `FlagRecord.value`; it does not reread the current room palette, rebuild the room, or call a palette ramp by itself.
+  - `SHOW_TEXT` creates a text entity over the existing render list and repeatedly calls `flush_dirty_rects_to_screen` / `update_music_stream` until input dismissal.
+  - `CHANGE_LIGHTING NONE` clears the palette/screen before a following `GOFLIC`, and `GOFLIC` immediately calls `play_fst_sequence` without an intermediate same-room `room_setup`.
 - `SET_TIMER` and `KILL_TIMER` first resolve a live class `0x17` timer entity by name. If no live timer entity is present, native prints `WARNING: Timer %s not in list` and does not update `g_timer_records`.
   - When the live entity is present, the dispatcher toggles the entity enabled byte and mirrors that enabled state into the matching `TimerRecord`.
   - The `SET_TIMER ... ON` branch only reseeds the live countdown when the live timer entity was disabled. Repeating `SET_TIMER ... ON` for an already-enabled global timer does not restart its countdown.
