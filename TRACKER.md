@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, verified native `SET_TIMER` / `KILL_TIMER` and class `0x17` timer persistence behavior in `HARVEST.LE`: `g_timer_records` is the global timer record list, `room_setup` only spawns timers whose `arg1` matches the resolved room, and global timer persistence is implemented by `destroy_entity_list` preserving live timer entities whose copied global flag is set. Patched ScummVM to preserve live global timer entities across room scene clears, avoid duplicate timer spawns on return to the owning room, and make timer debug/runtime sync paths include preserved live timers.
+- On April 13, 2026, verified native repeated `SET_TIMER ... ON` behavior in `HARVEST.LE` and patched ScummVM so an already-enabled global timer keeps its live countdown when a room-entry command enables it again; preserved live global timers are no longer reconfigured only because the script record's saved `currentValue` is stale.
 
 ## Next Suggested Action
 
-- Re-run a script path that starts a global timer, leave its owning room, enable `DEBUG_TIMERS`, and confirm the live timer remains visible/counting across the transition and still fires its `TimerRecord.arg2` action.
+- Re-run the Dining/Mainhall acid timer path with `DEBUG_TIMERS`: start the global acid timers, leave and re-enter Mainhall, and confirm `ACID_TIMER2` / `ACID_TIMER3` keep counting instead of resetting.

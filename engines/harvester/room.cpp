@@ -1610,7 +1610,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					if (!runtimeTimer || !runtimeTimer->global)
 						continue;
 					if (entity->getTimerInitialValue() == runtimeTimer->initialValue &&
-							entity->getTimerCurrentValue() == runtimeTimer->currentValue &&
 							entity->isTimerEnabled() == runtimeTimer->enabled &&
 							entity->isTimerLooping() == runtimeTimer->looping &&
 							entity->isTimerGlobal() == runtimeTimer->global) {
