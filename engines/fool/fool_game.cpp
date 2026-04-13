@@ -53,7 +53,7 @@ void FoolGame::sub_128_004() {
 	this->arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
-	this->arr_bmp_15fcc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_138bc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 
 	// 128:0004
 	g_zbasic->unk_331(0xdac0, 0);
@@ -211,20 +211,20 @@ void FoolGame::sub_128_004() {
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
-void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
-	warning("sub_128_0a2: unk2 %d, unk1 0x%04x", unk2, unk1);
+void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 	// 128:00a2
-	this->var_i16_32 = unk1;
-	this->var_i16_30 = unk2;
-	if (this->var_i16_30 == 0) {
+	// the original code would use the memory at 5dfc + 2*arg2.
+	// to make this less bad, our version passes a BitMap pointer
+	warning("copyScreen: put %d, bmp %p", put, (void *)&bmp);
+	if (put == 0) {
 		// FIXME: use var_i16_32 to choose start offset??
-		g_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, this->arr_bmp_5dfc);
+		g_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bmp);
 	}
 
 	// 128:00e6
-	if (this->var_i16_30 == 1) {
+	if (put == 1) {
 		// FIXME: use var_i16_32 to choose start offset??
-		g_zbasic->put(0, 0, this->arr_bmp_5dfc, kPutCopy);
+		g_zbasic->put(0, 0, bmp, kPutCopy);
 
 	}
 }
@@ -237,7 +237,7 @@ void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32Strin
 
 	this->var_i16_586 = 0;
 
-	this->sub_128_0a2(0, 0x6260);
+	this->copyScreen(0, this->arr_bmp_138bc);
 
 	// 128:015a
 	this->var_ev_46.where.y = this->var_i16_58 + 0x3d;
@@ -249,7 +249,7 @@ void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32Strin
 	g_toolbox->SFPutFile(this->var_ev_46.where, this->var_str_172, this->var_str_272, this->var_i32_16e, this->var_sfr_5e);
 	this->sub_128_6244();
 
-	this->sub_128_0a2(1, 0x6d60);
+	this->copyScreen(1, this->arr_bmp_138bc);
 
 	// 128:01b0
 	if (this->var_sfr_5e.good == 1) {
@@ -265,7 +265,7 @@ void FoolGame::sub_128_1e4(const Common::U32String &unk1) {
 	this->var_str_588 = g_zbasic->str(4);
 	this->var_i16_688 = 0;
 
-	this->sub_128_0a2(0, 0x6260);
+	this->copyScreen(0, this->arr_bmp_138bc);
 	// 128:0218
 	this->var_ev_46.where.y = this->var_i16_58 + 0x3d;
 	this->var_ev_46.where.x = this->var_i16_56 + 0x53;
@@ -282,7 +282,7 @@ void FoolGame::sub_128_1e4(const Common::U32String &unk1) {
 
 	g_toolbox->SFGetFile(this->var_ev_46.where, g_zbasic->str(5), this->var_i32_16e, this->var_i16_16c, typeList, this->var_i32_16e, this->var_sfr_5e);
 	this->sub_128_6244();
-	this->sub_128_0a2(1, 0x6d60);
+	this->copyScreen(1, this->arr_bmp_138bc);
 
 	if (this->var_sfr_5e.good == 1) {
 		// 128:02a2
@@ -622,7 +622,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 		this->sub_128_50e(0x19, 0x64, 0);
 	}
 	// 128:0e46
-	this->sub_128_0a2(0, 0x6060);
+	this->copyScreen(0, this->arr_bmp_138bc);
 	g_zbasic->text(this->var_i16_7aa, 0xc, Graphics::kMacFontRegular, kSrcBic);
 	this->var_i16_7b4 = this->var_i16_7ae*0x46;
 	this->var_i16_7b6 = 0;
@@ -804,7 +804,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 		} while (this->var_i16_7be == 0);
 
 		this->sub_128_61ec();
-		this->sub_128_0a2(1, 0x6d60);
+		this->copyScreen(1, this->arr_bmp_138bc);
 		g_toolbox->SetPort(this->var_i32_0);
 	}
 	// 128:1784
@@ -920,7 +920,7 @@ void FoolGame::sub_128_1f44() {
 	this->storyCurrentPage = 0;
 	this->clearStateBits(0x200);
 	this->sub_128_5fea();
-	this->sub_128_0a2(1, 0);
+	this->copyScreen(1, this->arr_bmp_5dfc);
 	this->storyRenderPage();
 	g_toolbox->SetPort(this->var_i32_0);
 }
@@ -1466,7 +1466,7 @@ void FoolGame::sub_128_3032() {
 		this->var_i16_7a2 += 0xf;
 	}
 	// 128:3228
-	this->sub_128_0a2(0, 0);
+	this->copyScreen(0, this->arr_bmp_5dfc);
 	this->storyCurrentPage = 1;
 	this->storyRenderPage();
 	if ((this->var_i16_7ce & 1) == 0) {
@@ -1653,7 +1653,7 @@ void FoolGame::sub_128_39a0() {
 	this->activePuzzle = this->var_i16_7d0;
 	this->var_i16_7ce |= 1;
 	g_toolbox->InitCursor();
-	this->sub_128_0a2(0, 0);
+	this->copyScreen(0, this->arr_bmp_5dfc);
 	// 128:39fa
 	if (this->arr_i16_15e8[this->var_i16_7d0] > 0) {
 		this->sub_128_41d8();
@@ -1732,7 +1732,7 @@ void FoolGame::sub_128_39a0() {
 	this->sub_128_41aa();
 	if ((this->stateFlags & kStateQuit) == 0) {
 		g_toolbox->PenNormal();
-		this->sub_128_0a2(1, 0);
+		this->copyScreen(1, this->arr_bmp_5dfc);
 		this->var_menu_bf8 = g_toolbox->GetMHandle(8);
 		g_toolbox->DeleteMenu(8);
 		g_toolbox->DisposeMenu(this->var_menu_bf8);
@@ -2140,7 +2140,7 @@ void FoolGame::sub_128_4a92() {
 	this->var_i16_7b2 = 0xa;
 	g_toolbox->InitCursor();
 	this->sub_128_4da(1);
-	this->sub_128_0a2(0, 0x6d60);
+	this->copyScreen(0, this->arr_bmp_138bc);
 	g_zbasic->text(0xfa, 0xc, Graphics::kMacFontRegular, kSrcOr);
 	this->var_i16_7b4 = 0;
 	this->var_i16_7b6 = 0;
@@ -2210,7 +2210,7 @@ void FoolGame::sub_128_4a92() {
 	this->sub_128_2664();
 	this->sub_128_61c2();
 	g_toolbox->DrawMenuBar();
-	this->sub_128_0a2(0x1, 0x6d60);
+	this->copyScreen(0x1, this->arr_bmp_138bc);
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
@@ -2348,7 +2348,7 @@ void FoolGame::sub_128_5c20() {
 
 void FoolGame::sub_128_5ef0() {
 	// 128:5ef0
-	this->sub_128_0a2(0, 0x2af8);
+	this->copyScreen(0, this->arr_bmp_b3ec);
 	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
 }
 
@@ -2364,7 +2364,7 @@ void FoolGame::sub_128_5f16() {
 	// 128:5f70
 	if ((this->stateFlags & 1) != 0) {
 		this->sub_128_6186();
-		this->sub_128_0a2(1, 0x2af8);
+		this->copyScreen(1, this->arr_bmp_b3ec);
 	}
 }
 
