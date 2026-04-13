@@ -114,7 +114,7 @@ void FoolGame::sub_128_004() {
 	// 128:1c88: JMP - [0x1ee2]
 	while (this->stateFlags != kStateQuit) {
 		do {
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (_quit)
 				return;
 
@@ -541,7 +541,7 @@ void FoolGame::sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16
 	this->sub_128_4472();
 }
 
-void FoolGame::sub_128_c6a(uint32 unk1) {
+void FoolGame::getNextEvent(uint32 unk1) {
 	// 128:0c6a
 
 	// This function is usually called at the start of an event processing loop,
@@ -593,7 +593,7 @@ void FoolGame::sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16
 			g_toolbox->InvertRect(this->arr_rect_5b7c);
 			this->var_i16_3a = 0;
 			do {
-				// originally this used sub_128_c6a, but we avoid that here
+				// originally this used getNextEvent, but we avoid that here
 				// so that menu events don't get intercepted.
 				// originally this mask was 0, but we change it here to
 				// intercept all events, and fall back to NullEvent +

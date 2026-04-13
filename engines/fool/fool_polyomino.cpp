@@ -230,13 +230,9 @@ void FoolGame::polyominoRun() {
 	this->stateFlags = kStateNull;
 	do {
 		do {
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->var_ev_46.what == 1) {
 				this->polyominoOnClick();
-			}
-			// yield to renderer
-			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
 			}
 			// 133:0800
 		} while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0));
@@ -324,7 +320,7 @@ void FoolGame::polyominoOnClick() {
 		// 133:0d3a
 		while ((this->var_i16_1ab6 == this->var_i16_1062) && (this->var_i16_1ab8 == this->var_i16_1064) && (this->var_ev_46.what != 2)) {
 			// 133:0b62
-			this->sub_128_c6a(4);
+			this->getNextEvent(4);
 
 			this->var_i16_68a = this->var_i16_1ab2 + ((this->var_ev_46.where.x - this->arr_i16_1eb8[4]) / this->arr_i16_1eb8[6]);
 			this->var_i16_68c = this->var_i16_1ab4 + ((this->var_ev_46.where.y - this->arr_i16_1eb8[5]) / this->arr_i16_1eb8[7]);
@@ -349,10 +345,6 @@ void FoolGame::polyominoOnClick() {
 			this->var_i16_1ab8 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
 			//debug(5, "FoolGame::polyominoOnClick: Move to (%d, %d) -> (%d, %d)", this->var_i16_68a, this->var_i16_68c, this->var_i16_1ab6, this->var_i16_1ab8);
 
-			// yield to renderer
-			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
-			}
 		}
 		// 133:0d78
 		if (this->var_ev_46.what != 2) {

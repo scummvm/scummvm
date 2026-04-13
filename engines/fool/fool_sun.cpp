@@ -87,12 +87,10 @@ void FoolGame::sunMapRun() {
 	this->sunMapCheckIfSolved();
 	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
 		while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0)) {
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->var_ev_46.what == kMouseDown) {
 				this->sunMapOnClick();
 			}
-			if (this->var_ev_46.what == kNullEvent)
-				g_toolbox->Delay(0);
 		}
 		// 137:038a
 		if (this->stateFlags == kStateUndo) {
@@ -164,7 +162,7 @@ void FoolGame::sunMapOnClick() {
 void FoolGame::sunMapDragSelect() {
 	// 137:0598
 	do {
-		this->sub_128_c6a(4);
+		this->getNextEvent(4);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->var_i16_68a >= this->arr_i16_4758[0]) {
@@ -201,7 +199,7 @@ void FoolGame::sunMapDragSelect() {
 void FoolGame::sunMapMoveSelected() {
 	// 137:0880
 	do {
-		this->sub_128_c6a(2);
+		this->getNextEvent(2);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->arr_i16_4758[0] >= 0) {
