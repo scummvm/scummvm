@@ -66,10 +66,10 @@ void FoolGame::deathRun() {
 			if (this->stateFlags == 2) {
 				this->stateFlags = 0;
 			}
-			if (this->stateFlags == 4) {
-				this->sub_128_3536();
+			if (this->stateFlags == kStateSaveGame) {
+				this->saveGame();
 			}
-			if ((this->stateFlags & 1)) {
+			if ((this->stateFlags & kStateReturn)) {
 				// 141:09f6
 				this->deathDrawWhiteEye();
 				return;
@@ -90,8 +90,8 @@ void FoolGame::deathRun() {
 			if (this->stateFlags == 2) {
 				this->stateFlags = 0;
 			}
-			if (this->stateFlags == 4) {
-				this->sub_128_3536();
+			if (this->stateFlags == kStateSaveGame) {
+				this->saveGame();
 			}
 			if (this->var_ev_46.what == kNullEvent)
 				g_toolbox->Delay(0);

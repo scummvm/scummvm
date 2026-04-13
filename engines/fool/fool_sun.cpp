@@ -95,11 +95,11 @@ void FoolGame::sunMapRun() {
 				g_toolbox->Delay(0);
 		}
 		// 137:038a
-		if (this->stateFlags == 2) {
+		if (this->stateFlags == kStateUndo) {
 			this->sunMapUndoMove();
 		}
-		if (this->stateFlags == 4) {
-			this->sub_128_3536();
+		if (this->stateFlags == kStateSaveGame) {
+			this->saveGame();
 		}
 	}
 	// 137:03ce
@@ -255,7 +255,7 @@ void FoolGame::sunMapMoveSelected() {
 
 void FoolGame::sunMapUndoMove() {
 	// 137:0d60
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
