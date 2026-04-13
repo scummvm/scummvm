@@ -759,13 +759,7 @@ static int resolveSceneObjectClass(const RoomSetupState &state,
 }
 
 static bool shouldQueueSceneObject(const ObjectRecord &object) {
-	if (object.visible)
-		return true;
-
-	// Hidden no-sprite hotspots still drive room actions in the authored script data.
-	return resolveSceneObjectSpritePath(object).empty() &&
-		!getRoomObjectHotspotBounds(object).isEmpty() &&
-		(object.operatable || !object.actionTag.empty());
+	return object.visible;
 }
 
 bool shouldDisplaySceneAnimation(const AnimRecord &anim) {
