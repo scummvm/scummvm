@@ -49,7 +49,7 @@ public:
 	void run();
 
 	void sub_128_004();
-	void sub_128_0a2(int16 unk2, int16 unk1);
+	void copyScreen(int16 put, BitMap &bmp); // sub_128_0a2
 	void sub_128_11c(const Common::U32String &unk2, const Common::U32String &unk1);
 	void sub_128_1e4(const Common::U32String &unk1);
 	void sub_128_2be(int16 unk2, int16 unk1);
@@ -512,11 +512,11 @@ private:
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap arr_jigsaw_5dfc[128];
 	BitMap arr_bmp_b3ec;
-	BitMap arr_bmp_bbbc;
-	BitMap arr_bmp_c38c;
+	BitMap arr_bmp_bbbc; // used by death
+	BitMap arr_bmp_c38c; // used by death
 	Handle arr_bytes_109dc; // used for data buffering
 	BitMap arr_bmp_109dc;
-	BitMap arr_bmp_15fcc;
+	BitMap arr_bmp_138bc;
 	GrafPort arr_grafport_18eae;
 	GrafPort arr_grafport_18f78;
 	GrafPort arr_grafport_19042;
