@@ -72,7 +72,7 @@ static const int kMuckeyAttackContactFrameOffset = 7;
 static const float kNativeMonsterPursuitZTolerance = 2.0f;
 static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
 static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
-static const int kNativeKeyboardAttackSideWindow = 30;
+static const int kNativeAttackSideWindow = 30;
 static const int kNativeCombatHitKnockbackDistance = 18;
 static const int kNativeCombatHitKnockbackDecayStep = 3;
 static const char *const kNativeHitEffectResourcePath = "blood.abm";
@@ -2710,6 +2710,115 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return areCombatantsWithinRoomCombatReach(scene.state,
 				*playerState.entity, playerState.z, *targetEntity, targetEntity->getZ(), engageDistance);
 		};
+		enum NativeAttackSide {
+			kNativeAttackSideNone,
+			kNativeAttackSideLeft,
+			kNativeAttackSideRight
+		};
+		enum NativeAttackBand {
+			kNativeAttackBandMid,
+			kNativeAttackBandUpper,
+			kNativeAttackBandLower
+		};
+		auto resolveNativePlayerAttackGeometry = [](int attackFirstFrame,
+				NativeAttackSide &attackSide, NativeAttackBand &attackBand) {
+			attackSide = kNativeAttackSideNone;
+			attackBand = kNativeAttackBandMid;
+
+			switch (attackFirstFrame) {
+			case 0x50:
+				attackSide = kNativeAttackSideLeft;
+				attackBand = kNativeAttackBandUpper;
+				return true;
+			case 0x5a:
+				attackSide = kNativeAttackSideLeft;
+				attackBand = kNativeAttackBandMid;
+				return true;
+			case 0x64:
+				attackSide = kNativeAttackSideLeft;
+				attackBand = kNativeAttackBandLower;
+				return true;
+			case 0x6e:
+				attackSide = kNativeAttackSideRight;
+				attackBand = kNativeAttackBandUpper;
+				return true;
+			case 0x78:
+				attackSide = kNativeAttackSideRight;
+				attackBand = kNativeAttackBandMid;
+				return true;
+			case 0x82:
+				attackSide = kNativeAttackSideRight;
+				attackBand = kNativeAttackBandLower;
+				return true;
+			default:
+				return false;
+			}
+		};
+		auto findProjectileContactMonsterTarget = [&]() -> MonsterRecord * {
+			if (!playerState.entity)
+				return nullptr;
+
+			NativeAttackSide attackSide = kNativeAttackSideNone;
+			NativeAttackBand attackBand = kNativeAttackBandMid;
+			if (!resolveNativePlayerAttackGeometry(playerState.attackFirstFrame, attackSide, attackBand))
+				return nullptr;
+
+			const Common::Rect playerRect = playerState.entity->getScreenRect();
+			const int playerLeft = playerRect.left;
+			const int playerRight = playerRect.right;
+			const int playerCenterX = playerLeft + playerRect.width() / 2;
+			MonsterRecord *bestMonster = nullptr;
+			Entity *bestEntity = nullptr;
+			int bestLeadingEdge = attackSide == kNativeAttackSideLeft ? -0x7fffffff : 0x7fffffff;
+
+			for (MonsterRecord &monster : scene.state.roomMonsters) {
+				if (!monster.active || !monster.visible || monster.currentHitPoints <= 0)
+					continue;
+
+				Entity *entity = findSceneRuntimeEntity(monster.monsterName);
+				if (!entity || !entity->isVisible() ||
+						!doRuntimeEntityDepthExtentsOverlap(*playerState.entity, *entity)) {
+					continue;
+				}
+
+				const Common::Rect targetRect = entity->getScreenRect();
+				const int targetLeft = targetRect.left;
+				const int targetCenterX = targetLeft + targetRect.width() / 2;
+				bool matchesDirection = false;
+				if (attackSide == kNativeAttackSideLeft) {
+					if (attackBand == kNativeAttackBandMid)
+						matchesDirection = targetLeft < playerCenterX;
+					else
+						matchesDirection =
+							targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeAttackSideWindow;
+					if (!matchesDirection || targetLeft <= bestLeadingEdge)
+						continue;
+				} else {
+					if (attackBand == kNativeAttackBandMid)
+						matchesDirection = playerCenterX < targetLeft;
+					else
+						matchesDirection =
+							playerCenterX < targetLeft && targetCenterX < playerRight + kNativeAttackSideWindow;
+					if (!matchesDirection || targetLeft >= bestLeadingEdge)
+						continue;
+				}
+
+				bestMonster = &monster;
+				bestEntity = entity;
+				bestLeadingEdge = targetLeft;
+			}
+
+			if (bestMonster && bestEntity) {
+				debugC(1, kDebugCombat,
+					"Harvester: combat player projectile contact fallback target='%s' attack_frame=%d player_rect=(%d,%d)-(%d,%d) target_rect=(%d,%d)-(%d,%d)",
+					bestMonster->monsterName.c_str(), playerState.attackFirstFrame,
+					playerRect.left, playerRect.top, playerRect.right, playerRect.bottom,
+					bestEntity->getScreenRect().left, bestEntity->getScreenRect().top,
+					bestEntity->getScreenRect().right, bestEntity->getScreenRect().bottom);
+			}
+
+			return bestMonster;
+		};
 		auto describeCombatTargetClass = [](int classId) -> const char * {
 		switch (classId) {
 		case kRuntimeEntityClassNpc:
@@ -3017,43 +3126,32 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (!playerState.entity)
 			return;
 
-		enum KeyboardAttackSide {
-			kKeyboardAttackSideNone,
-			kKeyboardAttackSideLeft,
-			kKeyboardAttackSideRight
-		};
-		enum KeyboardAttackBand {
-			kKeyboardAttackBandMid,
-			kKeyboardAttackBandUpper,
-			kKeyboardAttackBandLower
-		};
-
-		KeyboardAttackSide attackSide = kKeyboardAttackSideNone;
-		KeyboardAttackBand attackBand = kKeyboardAttackBandMid;
+		NativeAttackSide attackSide = kNativeAttackSideNone;
+		NativeAttackBand attackBand = kNativeAttackBandMid;
 		if (attackRight) {
-			attackSide = kKeyboardAttackSideRight;
-			attackBand = kKeyboardAttackBandMid;
+			attackSide = kNativeAttackSideRight;
+			attackBand = kNativeAttackBandMid;
 		} else if (attackLeft) {
-			attackSide = kKeyboardAttackSideLeft;
-			attackBand = kKeyboardAttackBandMid;
+			attackSide = kNativeAttackSideLeft;
+			attackBand = kNativeAttackBandMid;
 		} else if (attackUp) {
 			if (playerState.facing == 2) {
-				attackSide = kKeyboardAttackSideRight;
-				attackBand = kKeyboardAttackBandUpper;
+				attackSide = kNativeAttackSideRight;
+				attackBand = kNativeAttackBandUpper;
 			} else if (playerState.facing == 1) {
-				attackSide = kKeyboardAttackSideLeft;
-				attackBand = kKeyboardAttackBandUpper;
+				attackSide = kNativeAttackSideLeft;
+				attackBand = kNativeAttackBandUpper;
 			}
 		} else if (attackDown) {
 			if (playerState.facing == 2) {
-				attackSide = kKeyboardAttackSideRight;
-				attackBand = kKeyboardAttackBandLower;
+				attackSide = kNativeAttackSideRight;
+				attackBand = kNativeAttackBandLower;
 			} else if (playerState.facing == 1) {
-				attackSide = kKeyboardAttackSideLeft;
-				attackBand = kKeyboardAttackBandLower;
+				attackSide = kNativeAttackSideLeft;
+				attackBand = kNativeAttackBandLower;
 			}
 		}
-		if (attackSide == kKeyboardAttackSideNone) {
+		if (attackSide == kNativeAttackSideNone) {
 			debugC(1, kDebugCombat,
 				"Harvester: combat player keyboard target capture class='none' input=(L=%d R=%d U=%d D=%d) facing=%d reason='no native attack family'",
 				attackLeft, attackRight, attackUp, attackDown, playerState.facing);
@@ -3067,7 +3165,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		Entity *bestEntity = nullptr;
 		Common::String bestName;
 		int bestClassId = -1;
-		int bestLeadingEdge = attackSide == kKeyboardAttackSideLeft ? -0x7fffffff : 0x7fffffff;
+		int bestLeadingEdge = attackSide == kNativeAttackSideLeft ? -0x7fffffff : 0x7fffffff;
 
 		auto considerTarget = [&](Entity *targetEntity, const Common::String &targetName, int classId) {
 			if (!targetEntity || !targetEntity->isVisible() ||
@@ -3079,20 +3177,20 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			const int targetLeft = targetRect.left;
 			const int targetCenterX = targetLeft + (targetRect.width() / 2);
 			bool matchesDirection = false;
-			if (attackSide == kKeyboardAttackSideLeft) {
-				if (attackBand == kKeyboardAttackBandMid)
+			if (attackSide == kNativeAttackSideLeft) {
+				if (attackBand == kNativeAttackBandMid)
 					matchesDirection = targetLeft < playerCenterX;
 				else
 					matchesDirection =
-						targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeKeyboardAttackSideWindow;
+						targetLeft < playerCenterX && targetCenterX > playerLeft - kNativeAttackSideWindow;
 				if (!matchesDirection || targetLeft <= bestLeadingEdge)
 					return;
 			} else {
-				if (attackBand == kKeyboardAttackBandMid)
+				if (attackBand == kNativeAttackBandMid)
 					matchesDirection = playerCenterX < targetLeft;
 				else
 					matchesDirection =
-						playerCenterX < targetLeft && targetCenterX < playerRight + kNativeKeyboardAttackSideWindow;
+						playerCenterX < targetLeft && targetCenterX < playerRight + kNativeAttackSideWindow;
 				if (!matchesDirection || targetLeft >= bestLeadingEdge)
 					return;
 			}
@@ -3262,10 +3360,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			monster = findRoomMonsterRecordByName(playerState.attackTargetName);
 		Entity *monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
 		if (!monster || !monsterEntity || !playerAttackCanReachTarget(monsterEntity, monster ? monster->engageDistance : 0)) {
-			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout))
+			if (!Player::isProjectileCombatLoadout(playerState.combatLoadout)) {
 				monster = findOverlappingMonsterTarget();
-			else
+			} else if (playerState.attackTargetClassId < 0) {
+				monster = findProjectileContactMonsterTarget();
+				if (monster) {
+					playerState.attackTargetName = monster->monsterName;
+					playerState.attackTargetClassId = kRuntimeEntityClassMonster;
+				}
+			} else {
 				monster = nullptr;
+			}
 			monsterEntity = monster ? findSceneRuntimeEntity(monster->monsterName) : nullptr;
 		}
 		if (!monster || !monsterEntity) {
