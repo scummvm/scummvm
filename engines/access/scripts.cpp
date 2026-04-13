@@ -148,6 +148,7 @@ void Scripts::setOpcodes_v3() {
 	COMMAND_LIST[18] = &Scripts::cmdSetCoords;
 	COMMAND_LIST[33] = &Scripts::cmdJumpGoto_v3;
 	COMMAND_LIST[34] = &Scripts::cmdSetVideo_v3;
+	COMMAND_LIST[45] = &Scripts::cmdDoTravel_Noct;
 	COMMAND_LIST[50] = &Scripts::cmdCharSpeak_v3;
 	COMMAND_LIST[51] = &Scripts::cmdPlayerSpeak;
 	COMMAND_LIST[52] = &Scripts::cmdPlayerChoice;
@@ -784,7 +785,10 @@ void Scripts::cmdSetAbout() {
 
 	debugC(1, kDebugScripts, "cmdSetAbout(idx=%d, val=%d)", idx, val);
 	_vm->_ask[idx] = val;
-	_vm->_startAboutBox = _vm->_startAboutItem = 0;
+
+	// Reset location of about items, except in Noctropolis
+	if (_vm->getGameID() != kGameNoctropolis)
+		_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
 
 void Scripts::cmdSetTimer() {
