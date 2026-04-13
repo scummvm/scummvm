@@ -241,7 +241,36 @@ static bool matchesMonsterIdentity(const MonsterRecord &candidate, const Monster
 	if (!candidate.monsterName.equalsIgnoreCase(monster.monsterName))
 		return false;
 
-	return monster.roomName.empty() || candidate.roomName.equalsIgnoreCase(monster.roomName);
+	if (candidate.recordIndex >= 0 && monster.recordIndex >= 0)
+		return candidate.recordIndex == monster.recordIndex;
+
+	if (!monster.roomName.empty())
+		return candidate.roomName.equalsIgnoreCase(monster.roomName);
+
+	return true;
+}
+
+static void restoreMonsterRecordIndices(const Common::Array<MonsterRecord> &baseMonsters,
+		Common::Array<MonsterRecord> &runtimeMonsters) {
+	for (uint i = 0; i < runtimeMonsters.size(); ++i) {
+		if (i < baseMonsters.size() &&
+				baseMonsters[i].monsterName.equalsIgnoreCase(runtimeMonsters[i].monsterName) &&
+				baseMonsters[i].roomName.equalsIgnoreCase(runtimeMonsters[i].roomName)) {
+			runtimeMonsters[i].recordIndex = baseMonsters[i].recordIndex;
+			continue;
+		}
+
+		runtimeMonsters[i].recordIndex = -1;
+		for (const MonsterRecord &baseMonster : baseMonsters) {
+			if (!baseMonster.monsterName.equalsIgnoreCase(runtimeMonsters[i].monsterName) ||
+					!baseMonster.roomName.equalsIgnoreCase(runtimeMonsters[i].roomName)) {
+				continue;
+			}
+
+			runtimeMonsters[i].recordIndex = baseMonster.recordIndex;
+			break;
+		}
+	}
 }
 
 static void syncStartupTimerRecord(Common::Serializer &s, TimerRecord &record) {
@@ -1214,8 +1243,10 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			monster.savedVisible = monster.visible;
 			if (monster.active)
 				monster.visible = true;
-			if (!monster.roomName.empty() && !monster.monsterName.empty() && !monster.modelPath.empty())
+			if (!monster.roomName.empty() && !monster.monsterName.empty() && !monster.modelPath.empty()) {
+				monster.recordIndex = (int)_monsters.size();
 				_monsters.push_back(monster);
+			}
 			return;
 		}
 
@@ -1632,6 +1663,8 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	syncRecordArray(s, _currentRegions, syncStartupRegionRecord);
 	syncRecordArray(s, _currentNpcs, syncStartupNpcRecord);
 	syncRecordArray(s, _currentMonsters, syncStartupMonsterRecord);
+	if (s.isLoading())
+		restoreMonsterRecordIndices(_monsters, _currentMonsters);
 	s.syncAsSint32LE(_playerCurrentHitPoints);
 	// FIXME: Remove this pre-v2 save-layout gate after release; clean Harvester
 	// saves always carry timer state, combat loadout, and paused-state fields.
@@ -2242,7 +2275,7 @@ MonsterRecord *Script::findRuntimeMonster(const MonsterRecord &monster) {
 			continue;
 		if (matchesMonsterIdentity(candidate, monster))
 			return &candidate;
-		if (!fallback)
+		if (monster.roomName.empty() && monster.recordIndex < 0 && !fallback)
 			fallback = &candidate;
 	}
 
@@ -2295,7 +2328,7 @@ const MonsterRecord *Script::findRuntimeMonster(const MonsterRecord &monster) co
 			continue;
 		if (matchesMonsterIdentity(candidate, monster))
 			return &candidate;
-		if (!fallback)
+		if (monster.roomName.empty() && monster.recordIndex < 0 && !fallback)
 			fallback = &candidate;
 	}
 
@@ -2312,7 +2345,7 @@ const MonsterRecord *Script::findBaseMonster(const MonsterRecord &monster) const
 			continue;
 		if (matchesMonsterIdentity(candidate, monster))
 			return &candidate;
-		if (!fallback)
+		if (monster.roomName.empty() && monster.recordIndex < 0 && !fallback)
 			fallback = &candidate;
 	}
 
