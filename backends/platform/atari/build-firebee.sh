@@ -23,13 +23,6 @@ then
 	LDFLAGS="$LDFLAGS -mfastcall"
 fi
 
-if [ -f ../backends/platform/atari/.patched ]
-then
-	echo "FireBee SDL target shouldn't contain any ATARI patches!"
-	exit 1
-fi
-
-
 if [ ! -f config.log ]
 then
 ../configure \
