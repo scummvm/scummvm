@@ -41,8 +41,8 @@ int NoctropolisInventory::displayInv() {
 
 	int hoveredItem = -1;
 	byte slotItems[20];
-	SpriteResource *inventorySprites;
-	bool upArrow, downArrow;
+	bool upArrow = false;
+	bool downArrow = false;
 	int prevTopItemIndex = -1;
 
 	Screen *screen = _vm->_screen;
@@ -60,7 +60,7 @@ int NoctropolisInventory::displayInv() {
 
 	// TODO: Maybe move/load these globally?
 	Resource *iconData = _vm->_files->loadRawFile("INV.AP");
-	inventorySprites = new SpriteResource(_vm, iconData);
+	SpriteResource *inventorySprites = new SpriteResource(_vm, iconData);
 	delete iconData;
 
 	// Build the list of available inventory items

@@ -1977,7 +1977,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	// Fill out the inventory
 	const Common::Language lang = _vm->getLanguage();
 	INVENTORY.resize(ARRAYSIZE(INVNAMES[0]));
-	for (int i = 0; i < ARRAYSIZE(INVNAMES[0]); i++) {
+	for (i = 0; i < ARRAYSIZE(INVNAMES[0]); i++) {
 		switch (lang) {
 		case Common::EN_ANY: INVENTORY[i]._desc = INVNAMES[0][i]; break;
 		case Common::FR_FRA: INVENTORY[i]._desc = INVNAMES[1][i]; break;
