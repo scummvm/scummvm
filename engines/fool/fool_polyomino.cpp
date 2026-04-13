@@ -244,11 +244,11 @@ void FoolGame::polyominoRun() {
 		if (this->stateFlags == kStateUndo) {
 			this->polyominoReset();
 		}
-		if (this->stateFlags == 4) {
+		if (this->stateFlags == kStateSaveGame) {
 			this->polyominoStoreState();
-			this->sub_128_3536();
+			this->saveGame();
 		}
-	} while (((this->stateFlags & 1) == 0) && (this->var_i16_d0c == 0));
+	} while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0));
 	// 133:0864
 	if (this->var_i16_d0c != 0) {
 		this->polyominoSuccess();
@@ -474,7 +474,7 @@ void FoolGame::polyominoReset() {
 	// 133:12c2
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 }
 
 void FoolGame::polyominoDrawFrame() {

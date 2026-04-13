@@ -30,11 +30,15 @@
 
 namespace Fool {
 
-enum FoolStateFlag : uint16 {
+enum FoolStateBits : uint16 {
 	kStateNull = 0x00,
 	kStateReturn = 0x01,
 	kStateUndo = 0x02,
+	kStateSaveGame = 0x04,
+	kStateNewGame = 0x08,
+	kStateOpenGame = 0x10,
 	kStateQuit = 0x20,
+	kStateChapterSelect = 0x40,
 };
 
 class FoolGame {
@@ -72,8 +76,8 @@ public:
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
 	void sub_128_178a(int16 unk2, int16 unk1);
-	void sub_128_1c2c(int16 unk1);
-	void sub_128_1c4a(int16 unk1);
+	void setStateBits(int16 unk1); // sub_128_1c2c
+	void clearStateBits(int16 unk1); // sub_128_1c4a
 	void sub_128_1f1e();
 	void sub_128_1f44();
 	void sub_128_1f76();
@@ -85,22 +89,22 @@ public:
 	void sub_128_2664();
 	void sub_128_26f6();
 	void sub_128_271a();
-	void sub_128_27d6();
+	void menuNewGame(); // sub_128_27d6
 	void sub_128_2808();
-	void sub_128_2988();
-	void sub_128_2a06();
+	void menuOpenGame(); // sub_128_2988
+	void menuSaveGame(); // sub_128_2a06
 	void sub_128_2a0e();
-	void sub_128_2a92();
-	void sub_128_2ab6();
-	void sub_128_2ae8();
+	void menuSaveGameAs(); // sub_128_2a92
+	void menuQuit(); // sub_128_2ab6
+	void menuPrintStory(); // sub_128_2ae8
 	void sub_128_2b0a();
-	void sub_128_2bc6();
-	void sub_128_2e3e();
+	void newGame(); // sub_128_2bc6
+	void openGame(); // sub_128_2e3e
 
 	void sub_128_3032();
 	void sub_128_32c8();
 	void sub_128_32fa();
-	void sub_128_3536();
+	void saveGame(); // sub_128_3536
 	void sub_128_3744();
 	void sub_128_3774();
 	void sub_128_378a();

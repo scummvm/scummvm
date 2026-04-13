@@ -160,28 +160,28 @@ void FoolGame::sub_128_004() {
 					(this->puzzleCompletionStatus[0x10] < 0x64) &&
 					(this->var_ev_46.where.y > 0x113) &&
 					(this->var_ev_46.where.x < 0x8c)) {
-				this->sub_128_1c2c(0x80);
+				this->setStateBits(0x80);
 			}
 			// 128:1de0
 			if (this->var_i16_7d2 && (this->keyLastPressed == 0x20)) {
-				this->sub_128_1c2c(0x100);
+				this->setStateBits(0x100);
 			}
 		// 128:1e06
 		} while (this->stateFlags == 0);
 
 		if (this->stateFlags & kStateReturn) {
-			this->sub_128_1c4a(1);
+			this->clearStateBits(kStateReturn);
 		}
-		if (this->stateFlags & 0x4) {
-			this->sub_128_3536();
+		if (this->stateFlags & kStateSaveGame) {
+			this->saveGame();
 		}
-		if (this->stateFlags & 0x8) {
-			this->sub_128_2bc6();
+		if (this->stateFlags & kStateNewGame) {
+			this->newGame();
 		}
-		if (this->stateFlags & 0x10) {
-			this->sub_128_2e3e();
+		if (this->stateFlags & kStateOpenGame) {
+			this->openGame();
 		}
-		if (this->stateFlags & 0x40) {
+		if (this->stateFlags & kStateChapterSelect) {
 			this->menuChapterSelect();
 		}
 		if (this->stateFlags & 0x200) {
@@ -212,6 +212,7 @@ void FoolGame::sub_128_004() {
 }
 
 void FoolGame::sub_128_0a2(int16 unk2, int16 unk1) {
+	warning("sub_128_0a2: unk2 %d, unk1 0x%04x", unk2, unk1);
 	// 128:00a2
 	this->var_i16_32 = unk1;
 	this->var_i16_30 = unk2;
@@ -574,7 +575,7 @@ void FoolGame::sub_128_c6a(uint32 unk1) {
 		this->sub_128_6154();
 	}
 	if ((this->var_ev_46.what == kScummVMQuitEvt) || (this->var_ev_46.what == kScummVMReturnToLauncherEvt)) {
-		this->sub_128_2ab6();
+		this->menuQuit();
 	}
 }
 
@@ -890,12 +891,12 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 	g_toolbox->PenNormal();
 }
 
-void FoolGame::sub_128_1c2c(int16 unk1) {
+void FoolGame::setStateBits(int16 unk1) {
 	this->var_i16_30 = unk1;
 	this->stateFlags |= this->var_i16_30;
 }
 
-void FoolGame::sub_128_1c4a(int16 unk1) {
+void FoolGame::clearStateBits(int16 unk1) {
 	// 128:1c4a
 	this->var_i16_30 = unk1;
 	if (this->stateFlags & this->var_i16_30) {
@@ -917,7 +918,7 @@ void FoolGame::sub_128_1f44() {
 	// 128:1f44
 	this->sub_128_61ec();
 	this->storyCurrentPage = 0;
-	this->sub_128_1c4a(0x200);
+	this->clearStateBits(0x200);
 	this->sub_128_5fea();
 	this->sub_128_0a2(1, 0);
 	this->storyRenderPage();
@@ -982,7 +983,7 @@ void FoolGame::sub_128_20d0() {
 }
 
 void FoolGame::menuChapterSelect() {
-	this->sub_128_1c4a(0x40);
+	this->clearStateBits(kStateChapterSelect);
 	// 128:2132
 	for (int i = this->selectedMenuChapter; i <= this->storyPageCount; i++) {
 		if (this->selectedMenuChapter == this->pageToChapter[i]) {
@@ -1008,9 +1009,9 @@ void FoolGame::menuChapterSelect() {
 void FoolGame::sub_128_21c8() {
 	// 128:21c8
 	if ((this->var_i16_7d0 == 1) && (this->var_i16_7d2 > 0)) {
-		this->sub_128_1c2c(0x100);
+		this->setStateBits(0x100);
 	} else {
-		this->sub_128_1c2c(0x80);
+		this->setStateBits(0x80);
 	}
 }
 
@@ -1150,15 +1151,15 @@ void FoolGame::sub_128_271a() {
 }
 
 // new game
-void FoolGame::sub_128_27d6() {
+void FoolGame::menuNewGame() {
 	// 128:27d6
 	this->sub_128_32fa();
 	if (this->var_i16_7be == 3)
 		return;
 	if (this->var_i16_7ce & 1) {
-		this->sub_128_1c2c(8 | kStateReturn);
+		this->setStateBits(kStateNewGame | kStateReturn);
 	} else {
-		this->sub_128_1c2c(8);
+		this->setStateBits(kStateNewGame);
 	}
 }
 
@@ -1203,7 +1204,7 @@ void FoolGame::sub_128_2808() {
 	}
 }
 
-void FoolGame::sub_128_2988() {
+void FoolGame::menuOpenGame() {
 	// 128:2988
 	// File -> Open
 	this->sub_128_1e4(g_zbasic->str(21)); // FOOL
@@ -1218,19 +1219,19 @@ void FoolGame::sub_128_2988() {
 	// 128:29d4
 	if (this->var_i16_7be != 3) {
 		if ((this->var_i16_7ce & 1) != 0) {
-			this->sub_128_1c2c(0x11);
+			this->setStateBits(kStateOpenGame | kStateReturn);
 		} else {
 			// 128:29fa
-			this->sub_128_1c2c(0x10);
+			this->setStateBits(kStateOpenGame);
 		}
 		this->sub_128_3774();
 	}
 }
 
-void FoolGame::sub_128_2a06() {
+void FoolGame::menuSaveGame() {
 	// 128:2a06
 	// File -> Save
-	this->sub_128_1c2c(4);
+	this->setStateBits(kStateSaveGame);
 }
 
 void FoolGame::sub_128_2a0e() {
@@ -1250,32 +1251,32 @@ void FoolGame::sub_128_2a0e() {
 	}
 }
 
-void FoolGame::sub_128_2a92() {
+void FoolGame::menuSaveGameAs() {
 	// 128:2a92
 	// File -> Save As
 	this->sub_128_2a0e();
 	if (this->var_str_486 != g_zbasic->str(29)) { // empty
-		this->sub_128_1c2c(4);
+		this->setStateBits(kStateSaveGame);
 	}
 
 }
 
 // quit
-void FoolGame::sub_128_2ab6() {
+void FoolGame::menuQuit() {
 	// 128:2ab6
 	this->sub_128_32fa();
 	if (this->var_i16_7be == 3) {
 		return;
 	}
 	if ((this->var_i16_7ce & 1) != 0) {
-		this->sub_128_1c2c(kStateQuit | kStateReturn);
+		this->setStateBits(kStateQuit | kStateReturn);
 	} else {
-		this->sub_128_1c2c(kStateQuit);
+		this->setStateBits(kStateQuit);
 	}
 }
 
 // print story
-void FoolGame::sub_128_2ae8() {
+void FoolGame::menuPrintStory() {
 	// 128:2ae8
 	if (this->var_i16_7ce & 1) {
 		this->stateFlags = 0x401;
@@ -1293,8 +1294,8 @@ void FoolGame::sub_128_2b0a() {
 	warning("STUB: %s", __func__);
 }
 
-void FoolGame::sub_128_2bc6() {
-	this->sub_128_1c4a(8);
+void FoolGame::newGame() {
+	this->clearStateBits(kStateNewGame);
 	this->sub_128_3774();
 	this->sub_128_3744();
 	this->var_str_8ec = g_zbasic->str(33);
@@ -1365,10 +1366,10 @@ void FoolGame::sub_128_2bc6() {
 	// 128:2e3c
 }
 
-void FoolGame::sub_128_2e3e() {
+void FoolGame::openGame() {
 	// 128:2e3e
 	// save game loading code?
-	this->sub_128_1c4a(0x10);
+	this->clearStateBits(kStateOpenGame);
 	this->sub_128_3774();
 	this->sub_128_3744();
 	this->var_str_8ec = this->var_str_588;
@@ -1390,7 +1391,7 @@ void FoolGame::sub_128_2e3e() {
 		this->puzzleCompletionStatus[i] = g_zbasic->readFileInt(2);
 		this->pageVisible[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
-		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, puzzleCompletionStatus: %d, pageVisible: %d, payload size: %d", i, this->arr_i16_1d24[i], this->puzzleCompletionStatus[i], this->pageVisible[i], this->var_i16_484);
+		debugC(5, kDebugLoading, "openGame: puzzle %d:, arr_i16_1d24: %d, puzzleCompletionStatus: %d, pageVisible: %d, payload size: %d", i, this->arr_i16_1d24[i], this->puzzleCompletionStatus[i], this->pageVisible[i], this->var_i16_484);
 		Common::String state = g_zbasic->readFileStr(2, this->var_i16_484);
 		if (debugChannelSet(5, kDebugLoading)) {
 			Common::hexdump((const byte *)state.c_str(), this->var_i16_484);
@@ -1398,7 +1399,7 @@ void FoolGame::sub_128_2e3e() {
 		g_zbasic->indexRawSet(state, 2, i);
 	}
 	// 128:2f54
-	debugCN(5, kDebugLoading, "sub_128_2e3e: sun map tile IDs: ");
+	debugCN(5, kDebugLoading, "openGame: sun map tile IDs: ");
 	for (int i = 1; i <= 0x51; i++) {
 		this->sunMapTileID[i] = g_zbasic->readFileInt(2);
 		debugCN(5, kDebugLoading, "%d, ", this->sunMapTileID[i]);
@@ -1411,9 +1412,9 @@ void FoolGame::sub_128_2e3e() {
 		this->arr_str_1a8d8[1] = g_zbasic->str(36);
 		this->var_i16_7e6 = 0;
 		if ((this->var_i16_7ce & 1) == 0) {
-			this->sub_128_1c2c(9);
+			this->setStateBits(kStateNewGame | kStateReturn);
 		} else {
-			this->sub_128_1c2c(8);
+			this->setStateBits(kStateNewGame);
 		}
 	} else {
 		// 128:302c
@@ -1472,9 +1473,9 @@ void FoolGame::sub_128_3032() {
 		this->sub_128_378a();
 	} else {
 		if ((this->activePuzzle > 0) && (this->activePuzzle <= 0x50)) {
-			this->sub_128_1c2c(0x80);
+			this->setStateBits(0x80);
 		} else {
-			this->sub_128_1c2c(0x100);
+			this->setStateBits(0x100);
 		}
 	}
 	// 128:3294
@@ -1517,13 +1518,13 @@ void FoolGame::sub_128_32fa() {
 		}
 	}
 	// 128:33e2
-	this->sub_128_1c2c(4);
+	this->setStateBits(kStateSaveGame);
 
 }
 
-void FoolGame::sub_128_3536() {
+void FoolGame::saveGame() {
 	// write save file
-	this->sub_128_1c4a(4);
+	this->clearStateBits(kStateSaveGame);
 	if (this->var_i16_7ce == 0x29a)
 		return;
 	// 128:3548
@@ -1724,7 +1725,7 @@ void FoolGame::sub_128_39a0() {
 	// 128:3a8a
 	this->sub_128_5fea();
 	if (this->var_i16_7d2 == 1) {
-		this->sub_128_1c2c(0x100);
+		this->setStateBits(0x100);
 		return;
 	}
 	// 128:3aa4
@@ -1797,7 +1798,7 @@ void FoolGame::sub_128_39a0() {
 		if ((this->var_i16_7ce & 1) == 0) {
 			this->var_i16_7ce ^= 1;
 		}
-		if ((this->stateFlags & 0x40) == 0) {
+		if ((this->stateFlags & kStateChapterSelect) == 0) {
 			this->storyRenderPage();
 		}
 	}
@@ -2268,15 +2269,15 @@ void FoolGame::sub_128_5c20() {
 	}
 	if (this->selectedMenuID == 2) { // File menu
 		if (this->selectedMenuItem == 1) {
-			this->sub_128_27d6();
+			this->menuNewGame();
 		} else if (this->selectedMenuItem == 2) {
 		// 128:5c5c
-			this->sub_128_2988();
+			this->menuOpenGame();
 		} else if (this->selectedMenuItem == 3) {
 		// 128:5c6c
-			this->sub_128_2a06();
+			this->menuSaveGame();
 		} else if (this->selectedMenuItem == 4) {
-			this->sub_128_2a92();
+			this->menuSaveGameAs();
 		} else if (this->selectedMenuItem == 6) {
 			if (this->var_i16_378 == 0) {
 				this->var_i16_378 = 1;
@@ -2287,9 +2288,9 @@ void FoolGame::sub_128_5c20() {
 			this->sub_128_32c8();
 		// 128:5cc4
 		} else if (this->selectedMenuItem == 7) {
-			this->sub_128_2ae8();
+			this->menuPrintStory();
 		} else if (this->selectedMenuItem == 9) {
-			this->sub_128_2ab6();
+			this->menuQuit();
 		}
 	}
 	// 128:5cea
@@ -2314,31 +2315,32 @@ void FoolGame::sub_128_5c20() {
 		}
 		// 128:5dae
 		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 0) && (this->var_i16_7d0 != this->selectedMenuChapter)) {
-			this->sub_128_1c2c(0x40);
+			this->setStateBits(kStateChapterSelect);
 		}
 		// 128:5df6
 		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1)) {
-			this->sub_128_1c2c(0x40);
+			this->setStateBits(kStateChapterSelect);
 
 		}
 		// 128:5e38
 		if (((this->var_i16_7ce & 1) != 0) && (this->var_i16_e1a == 0)) {
-			this->sub_128_1c2c(0x40 | kStateReturn);
+			this->setStateBits(kStateChapterSelect | kStateReturn);
 		}
 		// 128:5e5e
 		if (((this->var_i16_7ce & 1) == 0) && (this->var_i16_e1a == 1) && (this->var_i16_7d0 != this->selectedMenuChapter)) {
-			this->sub_128_1c2c(0x40 | kStateReturn);
+			this->setStateBits(kStateChapterSelect | kStateReturn);
 			this->var_i16_7ce |= 0x4;
 		}
 	}
 	// 128:5eaa
 	if (this->selectedMenuID == 8) { // Puzzle menu
 		if (this->selectedMenuItem == 1) {
-			this->sub_128_1c2c(kStateReturn);
+			// return to scroll / run for your life
+			this->setStateBits(kStateReturn);
 		}
 		// 128:5ec6
 		if ((this->selectedMenuItem == 3) && (this->var_i16_c00 == 1)) {
-			this->sub_128_1c2c(2);
+			this->setStateBits(kStateUndo);
 		}
 	}
 	// 128:5eee
@@ -2376,9 +2378,9 @@ void FoolGame::sub_128_5fb4() {
 	g_toolbox->BeginUpdate(*this->var_ev_46.windowPtr);
 	g_toolbox->EndUpdate(*this->var_ev_46.windowPtr);
 	if ((this->var_i16_7ce & 1) != 0) {
-		this->sub_128_1c2c(0x201);
+		this->setStateBits(0x200 | kStateReturn);
 	} else {
-		this->sub_128_1c2c(0x200);
+		this->setStateBits(0x200);
 	}
 }
 

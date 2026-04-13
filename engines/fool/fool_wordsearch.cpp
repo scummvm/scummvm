@@ -204,9 +204,9 @@ void FoolGame::wordSearchRun() {
 		if (this->var_i16_1990 == this->var_i16_198e) {
 			this->wordSearchSuccess();
 		}
-		if (this->stateFlags == 4) {
+		if (this->stateFlags == kStateSaveGame) {
 			this->wordSearchStoreState();
-			this->sub_128_3536();
+			this->saveGame();
 		}
 		if (this->var_ev_46.what == kNullEvent) {
 			g_toolbox->Delay(0);

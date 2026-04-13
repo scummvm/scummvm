@@ -110,7 +110,7 @@ void FoolGame::jigsawRun() {
 		}
 	}
 	// 132:0464
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
 	this->jigsawCheckIfSolved();
@@ -118,10 +118,10 @@ void FoolGame::jigsawRun() {
 
 	// 132:04d8
 	// input loop
-	while (((this->stateFlags & 1) == 0) && (this->var_i16_d0c == 0)) {
+	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
 		// 132:0484
 		// 132:049c
-		while ((this->stateFlags == 0) && (this->var_i16_d0c == 0)) {
+		while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0)) {
 			// 132:0488
 			this->sub_128_c6a(-1);
 			if (this->var_ev_46.what == kMouseDown) {
@@ -129,12 +129,12 @@ void FoolGame::jigsawRun() {
 			}
 		}
 		// 132:04b8
-		if (this->stateFlags == 2) {
+		if (this->stateFlags == kStateUndo) {
 			this->jigsawCancelSelect();
 		}
-		if (this->stateFlags == 4) {
+		if (this->stateFlags == kStateSaveGame) {
 			this->jigsawStoreState();
-			this->sub_128_3536();
+			this->saveGame();
 		}
 	}
 	// 132:0500
@@ -284,7 +284,7 @@ void FoolGame::jigsawMoveSelected() {
 
 void FoolGame::jigsawCancelSelect() {
 	// 132:0e5a
-	this->stateFlags = 0;
+	this->stateFlags = kStateNull;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
@@ -397,7 +397,7 @@ void FoolGame::jigsawCheckIfSolved() {
 	}
 	// 132:1430
 	if (this->var_i16_d0c != 0) {
-		this->stateFlags = 1;
+		this->stateFlags = kStateReturn;
 	}
 }
 
