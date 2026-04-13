@@ -284,7 +284,7 @@ void FoolGame::jumbleRun() {
 			case 4:	// word square
 				this->sub_130_10a6();
 				break;
-			case 5:
+			case 5: // hidden message
 				this->sub_130_1282();
 				break;
 			default:
@@ -551,6 +551,7 @@ void FoolGame::sub_130_10a6() {
 
 void FoolGame::sub_130_1282() {
 	// 130:1282
+	// hidden message, change the mouse cursor
 	this->var_i16_106e = g_zbasic->instr(1, this->var_str_1070, g_zbasic->str(182));
 	if (this->var_i16_106e == 0) {
 		this->var_i16_106e = 1;

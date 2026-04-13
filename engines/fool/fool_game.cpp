@@ -1686,7 +1686,7 @@ void FoolGame::sub_128_39a0() {
 		this->revealRun();
 		break;
 	case 8:
-		this->sub_135_004();
+		this->sentenceRun();
 		break;
 	case 9:
 		this->sub_136_004();
@@ -2953,9 +2953,7 @@ void FoolGame::sub_129_123a() {
 	g_toolbox->Delay(0);
 }
 
-void FoolGame::sub_135_004() {
-	warning("STUB: %s", __func__);
-}
+
 
 // maze game
 void FoolGame::sub_136_004() {
