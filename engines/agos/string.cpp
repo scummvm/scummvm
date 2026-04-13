@@ -553,7 +553,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	else
 		stopAnimateSimon2(2, vgaSpriteId);
 
-	if (getPlatform() == Common::kPlatformAmiga) {
+	if (getPlatform() == Common::kPlatformAmiga  && getGameType() != GType_SIMON2) {
 		color = color * 3 + 1;
 		renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
 	} else {
