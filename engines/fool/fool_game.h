@@ -472,7 +472,7 @@ private:
 	int16 arr_i16_197c[101];
 	int16 pageToChapter[101]; // arr_i16_1a46
 	int16 arr_i16_1b10[6969];
-	int16 arr_i16_1b90[101];
+	int16 pageVisible[101]; // arr_i16_1b90
 	int16 puzzleCompletionStatus[101]; // arr_i16_1c5a
 	int16 arr_i16_1d24[101];
 	int16 arr_i16_1dee[202];
