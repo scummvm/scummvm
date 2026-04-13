@@ -223,6 +223,11 @@ void Screen::getPalette(byte *pal) {
 	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
 }
 
+void Screen::copyRawPalToTempPal() {
+	Common::copy(&_rawPalette[0],
+		&_rawPalette[Graphics::PALETTE_SIZE], &_tempPalette[0]);
+}
+
 void Screen::forceFadeOut() {
 	const int FADE_AMOUNT = 2;
 	bool repeatFlag;

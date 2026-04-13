@@ -118,11 +118,16 @@ public:
 	void fadeOut() { forceFadeOut(); }
 	void fadeIn() { forceFadeIn(); }
 	void clearScreen();
-	
+
 	/**
 	 * Fade out, clear the screen, then restore the palette (Noctropolis)
 	 */
 	void fadeOutThenClearAndSetPal();
+
+	/**
+	 * Save the current "raw" palette into the effect (temp) palette
+	 */
+	void copyRawPalToTempPal();
 
 	/**
 	 * Set the initial palette

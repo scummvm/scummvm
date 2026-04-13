@@ -185,16 +185,18 @@ void Room::doRoom() {
 		while (!_vm->shouldQuit()) {
 			// NoctRoomEngine::ticker in Noctropolis
 			_vm->_images.clear();
+
+			// Poll for events - this can move the frame count forward thus
+			// trigger fade-in
+			_vm->_canSaveLoad = true;
+			_vm->_events->pollEventsAndWait();
+			_vm->_canSaveLoad = false;
+
 			if (_vm->_screen->_fadeIn) {
 				_vm->_events->showCursor();
 				_vm->_screen->fadeIn();
 				_vm->_screen->_fadeIn = false;
 			}
-
-			// Poll for events
-			_vm->_canSaveLoad = true;
-			_vm->_events->pollEventsAndWait();
-			_vm->_canSaveLoad = false;
 
 			// FIXME: cont flag usage..
 			/*if (_vm->_scripts->_continuenceFlag) {
