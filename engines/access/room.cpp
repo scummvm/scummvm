@@ -349,8 +349,7 @@ void Room::loadRoomData(const byte *roomData) {
 	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
 		// Load _vm->_screen->_stilPal
 		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
-		assert(stilPal->_size <= 99);
-		memcpy(stilPal->data(), _vm->_screen->_stilPal, stilPal->_size);
+		memcpy(stilPal->data(), _vm->_screen->_stilPal, 99);
 		error("TODO: Finish load of Stiletto data - see Noctropolis LoadRoom()");
 	}
 

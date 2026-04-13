@@ -352,49 +352,64 @@ void NoctropolisEngine::doTravel() {
 	_midi->midiRepeat();
 	_midi->midiPlay();
 
-	//loadPlayField(0, 0); //??
+	_buffer1.clear();
+	_buffer2.clear();
+	_screen->clearScreen();
+	_room->loadPlayField(0, 0); // MAP.AP
+	_buffer1.copyFrom(*_screen);
+	_buffer2.copyFrom(*_screen);
+	_screen->setPalette();
 	_screen->setIconPalette();
 	_scrollRow = _travScrollRow;
 	_scrollCol = _travScrollCol;
 	_scrollX = _travScrollX;
 	_scrollY = _travScrollY;
+	// Load MAP.AP
 	Resource *spriteData = _files->loadFile(0, 1);
 	_objectsTable[0] = new SpriteResource(this, spriteData);
 	delete spriteData;
 
 	// This section is "state 1" in NoctTravelEngine::ticker
+	((NoctropolisRoom *)_room)->buildScreenXScroll();
+	_buffer2.copyFrom(_buffer1);
+	copyBF2Vid();
 	_screen->setPaletteCycle(0xb5, 0xbe, 5);
 	_screen->fadeIn();
 
 	Common::Point rawMouse;
 	int locFlag = -1;
 	// Show the map and wait for clicks
-	while (!shouldQuitOrRestart()) {
+	while (!shouldQuitOrRestart() && locFlag == -1) {
 		_midi->midiRepeat();
 
 		// TODO: check me.. is buildScreen equivalent??
-		//NoctPF_RenderPlayfield();
-		_room->buildScreen();
+		((NoctropolisRoom *)_room)->buildScreenXScroll();
+		_buffer2.copyFrom(_buffer1);
 
 		_player->calcPlayer();
 
 		for (int i = 0; i < 15; i++) {
 			if (_travel[i]) {
-				int imgNum = TRAV_ICONS[i * 3];
-				int x = TRAV_ICONS[i * 3 + 1];
-				int y = TRAV_ICONS[i * 3 + 2];
+				int x = TRAV_ICONS[i * 3 + 0];
+				int y = TRAV_ICONS[i * 3 + 1];
+				int imgNum = TRAV_ICONS[i * 3 + 2];
 				Common::Point pt(x - _screen->_bufferStart.x, y - _screen->_bufferStart.y);
 				_buffer2.plotImage(_objectsTable[0], imgNum, pt);
 			}
 		}
+
 		copyBF2Vid();
 
 		_screen->cyclePaletteForward();
 		locFlag = -1;
 		rawMouse = _events->calcRawMouse();
-		int boxResult = _room->checkBoxes1(rawMouse);
-		if (boxResult != -1 && _travel[boxResult])
-			locFlag = boxResult;
+
+		if (_events->_leftButton) {
+			_events->debounceLeft();
+			int boxResult = _room->checkBoxes1(rawMouse);
+			if (boxResult != -1 && _travel[boxResult])
+				locFlag = boxResult;
+		}
 
 		if (!_events->_leftButton || locFlag == -1) {
 			int scrolly = _scrollY;
@@ -419,19 +434,24 @@ void NoctropolisEngine::doTravel() {
 		_events->pollEventsAndWait();
 	}
 
+	if (shouldQuitOrRestart())
+		return;
+
+	assert(locFlag > 0 && locFlag < 15);
+
 	// This is NoctTravelEngine::done
 	_screen->fadeOut();
 	_travScrollRow = _scrollRow;
 	_travScrollCol = _scrollCol;
 	_travScrollX = _scrollX;
 	_travScrollY = _scrollY;
-	assert(locFlag < 15);
 	_player->_roomNumber = TRAV_ROOMS[locFlag];
 	_player->_rawPlayer.x = TRAV_MAN_POS[locFlag * 2];
 	_player->_rawPlayer.y = TRAV_MAN_POS[locFlag * 2 + 1];
 	_player->_moveTo = _player->_rawPlayer;
 	setStilettoPos();
-	_room->clearRoom();
+	_room->_function = FN_CLEAR1;
+	_room->loadRoom(_player->_roomNumber);
 }
 
 static const short StilYDirOff[] = {
