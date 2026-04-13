@@ -157,7 +157,7 @@ void FoolGame::sub_128_004() {
 				this->sub_128_1f76();
 			}
 			if ((this->var_i16_7d0 == 0x10) &&
-					(this->arr_i16_1c7a[0] < 0x64) &&
+					(this->puzzleCompletionStatus[0x10] < 0x64) &&
 					(this->var_ev_46.where.y > 0x113) &&
 					(this->var_ev_46.where.x < 0x8c)) {
 				this->sub_128_1c2c(0x80);
@@ -939,7 +939,7 @@ void FoolGame::sub_128_1f76() {
 		} while ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0);
 	} else {
 		// 128:1fee
-		if ((this->var_i16_7d0 == 0x10) && (this->arr_i16_1c7a[0] < 0x64) && (this->var_ev_46.where.y > 0x113) && (this->var_ev_46.where.x < 0x8c)) {
+		if ((this->var_i16_7d0 == 0x10) && (this->puzzleCompletionStatus[0x10] < 0x64) && (this->var_ev_46.where.y > 0x113) && (this->var_ev_46.where.x < 0x8c)) {
 			return;
 		}
 		// 128:2042
@@ -1041,11 +1041,11 @@ void FoolGame::storyRenderPage() {
 	// 128:235e
 	if (this->arr_i16_18b2[this->var_i16_7d0] > 0) {
 		this->var_str_384 = g_zbasic->str(10); // ?
-		if (this->arr_i16_1c5a[this->var_i16_7d0] == 0x63) {
+		if (this->puzzleCompletionStatus[this->var_i16_7d0] == 0x63) {
 			this->var_str_384 = g_zbasic->str(11); // ~
 		}
 		// 128:23b8
-		if (this->arr_i16_1c5a[this->var_i16_7d0] >= 0x64) {
+		if (this->puzzleCompletionStatus[this->var_i16_7d0] >= 0x64) {
 			this->var_str_384 = g_zbasic->str(12); // *
 		}
 		// 128:23e8
@@ -1330,7 +1330,7 @@ void FoolGame::sub_128_2bc6() {
 		this->var_i16_484 = g_zbasic->rndInt(0x51);
 		this->var_i16_7e4 = g_zbasic->rndInt(0x51);
 		g_zbasic->swapInt(this->sunMapTileID[this->var_i16_484], this->sunMapTileID[this->var_i16_7e4]);
-		this->arr_i16_1c5a[i] = 0;
+		this->puzzleCompletionStatus[i] = 0;
 		this->arr_i16_1d24[i] = 0;
 	}
 	// 128:2d6a
@@ -1385,10 +1385,10 @@ void FoolGame::sub_128_2e3e() {
 	this->var_i16_7d2 = g_zbasic->readFileInt(2);
 	for (int i = 1; i <= 0x64; i++) {
 		this->arr_i16_1d24[i] = g_zbasic->readFileInt(2);
-		this->arr_i16_1c5a[i] = g_zbasic->readFileInt(2);
+		this->puzzleCompletionStatus[i] = g_zbasic->readFileInt(2);
 		this->arr_i16_1b90[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
-		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, arr_i16_1c5a: %d, arr_i16_1b90: %d, payload size: %d", i, this->arr_i16_1d24[i], this->arr_i16_1c5a[i], this->arr_i16_1b90[i], this->var_i16_484);
+		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, puzzleCompletionStatus: %d, arr_i16_1b90: %d, payload size: %d", i, this->arr_i16_1d24[i], this->puzzleCompletionStatus[i], this->arr_i16_1b90[i], this->var_i16_484);
 		Common::String state = g_zbasic->readFileStr(2, this->var_i16_484);
 		if (debugChannelSet(5, kDebugLoading)) {
 			Common::hexdump((const byte *)state.c_str(), this->var_i16_484);
@@ -1432,7 +1432,7 @@ void FoolGame::sub_128_3032() {
 		for (int i = 1; i <= 0x10; i++) {
 			this->var_i16_484++;
 			this->var_i16_9f2 = this->arr_i16_1d24[this->var_i16_484] & 3;
-			if (this->arr_i16_1c5a[this->var_i16_484] == 0x63) {
+			if (this->puzzleCompletionStatus[this->var_i16_484] == 0x63) {
 				this->var_str_384 = g_zbasic->str(39);
 			} else {
 			// 128:30e4
@@ -1554,7 +1554,7 @@ void FoolGame::sub_128_3536() {
 			g_zbasic->writeFileInt(2, this->var_i16_7d2);
 			for (int i = 1; i <= 0x64; i++) {
 				g_zbasic->writeFileInt(2, this->arr_i16_1d24[i]);
-				g_zbasic->writeFileInt(2, this->arr_i16_1c5a[i]);
+				g_zbasic->writeFileInt(2, this->puzzleCompletionStatus[i]);
 				g_zbasic->writeFileInt(2, this->arr_i16_1b90[i]);
 				Common::String state = g_zbasic->indexRaw(2, i);
 				g_zbasic->writeFileInt(2, (int16)state.size());
@@ -1737,10 +1737,10 @@ void FoolGame::sub_128_39a0() {
 	}
 	// 128:3aea
 	g_zbasic->unk_333(1);
-	if (this->arr_i16_1c5a[this->var_i16_7d0] == 0x63) {
+	if (this->puzzleCompletionStatus[this->var_i16_7d0] == 0x63) {
 		this->sub_128_3de6();
 	}
-	if (this->arr_i16_1c5a[this->var_i16_7d0] == 0x64) {
+	if (this->puzzleCompletionStatus[this->var_i16_7d0] == 0x64) {
 		if (this->var_i16_7d0 == 0x41) {
 			if ((this->arr_i16_1d24[0x41] & 2) != 0) {
 				this->arr_i16_1d24[0x41] ^= 2;
@@ -1828,7 +1828,7 @@ void FoolGame::sub_128_3de6() {
 		this->var_i16_7e4 = 1 + ((this->var_i16_7d0 - 1) % 0x10);
 		if (this->arr_i16_197c[this->var_i16_7d0] == 0) {
 			this->var_i16_9f2 = 1;
-			this->arr_i16_1c5a[this->var_i16_7d0] = 0x64;
+			this->puzzleCompletionStatus[this->var_i16_7d0] = 0x64;
 		} else {
 		// 128:3f66
 			this->var_i16_9f2 = 2;
@@ -1868,7 +1868,7 @@ void FoolGame::sub_128_3fb6() {
 
 void FoolGame::sub_128_4168() {
 	// 128:4168
-	this->var_i16_c04 = this->arr_i16_1c5a[this->activePuzzle];
+	this->var_i16_c04 = this->puzzleCompletionStatus[this->activePuzzle];
 	if (this->var_i16_c04 == 0x64) {
 		this->var_i16_c04 = 0x65;
 	}
@@ -1882,7 +1882,7 @@ void FoolGame::sub_128_4168() {
 
 void FoolGame::sub_128_41aa() {
 	// 128:41aa
-	this->arr_i16_1c5a[this->activePuzzle] = this->var_i16_c04;
+	this->puzzleCompletionStatus[this->activePuzzle] = this->var_i16_c04;
 	g_zbasic->indexRawSet(this->activePuzzleBuffer, 2, this->activePuzzle);
 	if (debugChannelSet(5, kDebugLoading)) {
 		Common::String inter = this->activePuzzleBuffer;
@@ -1897,21 +1897,21 @@ void FoolGame::sub_128_41d8() {
 		this->arr_i16_4758[i] = this->arr_i16_16b2[i + (this->arr_i16_15e8[this->activePuzzle]*8)];
 	}
 	// 128:422e
-	if ((this->activePuzzle == 0x34) && (this->arr_i16_1cc2 > 1)) {
+	if ((this->activePuzzle == 0x34) && (this->puzzleCompletionStatus[0x34] > 1)) {
 		// 128:4262
-		if (this->arr_i16_1cc2 == 2) {
+		if (this->puzzleCompletionStatus[0x34] == 2) {
 			this->arr_i16_4758[0] = 0;
 			this->arr_i16_4758[1] = 2;
 			this->arr_i16_4758[2] = 0xa;
 		}
 		// 128:42aa
-		if (this->arr_i16_1cc2 == 3) {
+		if (this->puzzleCompletionStatus[0x34] == 3) {
 			this->arr_i16_4758[0] = 0;
 			this->arr_i16_4758[1] = 3;
 			this->arr_i16_4758[2] = 0;
 		}
 		// 128:42f0
-		if (this->arr_i16_1cc2 >= 4) {
+		if (this->puzzleCompletionStatus[0x34] >= 4) {
 			if (this->var_i16_7d2 == 0) {
 				this->arr_i16_4758[0] = 0;
 				this->arr_i16_4758[1] = 0x47;
@@ -1924,20 +1924,20 @@ void FoolGame::sub_128_41d8() {
 		// 128:4348
 	}
 	// 128:4348
-	if ((this->activePuzzle == 0x17) && (this->arr_i16_1c7a[15] == 0x63)) {
+	if ((this->activePuzzle == 0x17) && (this->puzzleCompletionStatus[0x17] == 0x63)) {
 		this->arr_i16_4758[0] = 0;
 		this->arr_i16_4758[1] = 2;
 		this->arr_i16_4758[1] = 0xa;
 	}
 	// 128:43aa
-	if ((this->activePuzzle == 0x3f) && (this->arr_i16_1cd8 == 0x63)) {
+	if ((this->activePuzzle == 0x3f) && (this->puzzleCompletionStatus[0x3f] == 0x63)) {
 		this->arr_i16_4758[0] = 0;
 		this->arr_i16_4758[1] = 3;
 		this->arr_i16_4758[2] = 0;
 	}
 	// 128:440a
 	if (this->activePuzzle == 0x48) {
-		if (this->arr_i16_1cea == 0x63) {
+		if (this->puzzleCompletionStatus[0x48] == 0x63) {
 			this->arr_i16_4758[0] = 0;
 			this->arr_i16_4758[1] = 0x47;
 			this->arr_i16_4758[2] = 0;
@@ -2090,7 +2090,7 @@ void FoolGame::sub_128_4a92() {
 			this->var_i16_68c = 0;
 			for (int i = 2; i <= 0x50; i++) {
 				this->var_i16_68a = 2;
-				if ((this->arr_i16_1c5a[i] < 0x63) && (this->arr_i16_18b2[i] > 0)) {
+				if ((this->puzzleCompletionStatus[i] < 0x63) && (this->arr_i16_18b2[i] > 0)) {
 					this->var_i16_68c++;
 				}
 			}
