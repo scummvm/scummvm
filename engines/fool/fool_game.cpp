@@ -977,7 +977,7 @@ void FoolGame::sub_128_20d0() {
 			this->storyNextPage = this->storyPageCount;
 			return;
 		}
-	} while (this->arr_i16_1b90[this->storyNextPage] == 0);
+	} while (this->pageVisible[this->storyNextPage] == 0);
 	this->storyRenderPage();
 }
 
@@ -1300,6 +1300,7 @@ void FoolGame::sub_128_2bc6() {
 	this->var_str_8ec = g_zbasic->str(33);
 
 	this->var_i16_9ec = 0;
+	// set up the initially visible story chapters
 	this->arr_i16_4758[0] = 0x103;
 	this->arr_i16_4758[1] = 0;
 	this->arr_i16_4758[2] = 0x1e;
@@ -1312,10 +1313,10 @@ void FoolGame::sub_128_2bc6() {
 		for (int i = 0; i <= 0xf; i++) {
 			this->var_i16_484++;
 			if (this->arr_i16_4758[j] & this->bitLUT[i]) {
-				this->arr_i16_1b90[this->var_i16_484] = 1;
+				this->pageVisible[this->var_i16_484] = 1;
 			} else {
 				// 128:2ca6
-				this->arr_i16_1b90[this->var_i16_484] = 0;
+				this->pageVisible[this->var_i16_484] = 0;
 			}
 			// 128:2cb6
 		}
@@ -1326,6 +1327,7 @@ void FoolGame::sub_128_2bc6() {
 	}
 	g_zbasic->unk_20();
 	// 128:2cf6
+	// shuffle around the pieces of the sun's map
 	for (int i = 1; i <= 0x64; i++) {
 		this->var_i16_484 = g_zbasic->rndInt(0x51);
 		this->var_i16_7e4 = g_zbasic->rndInt(0x51);
@@ -1339,7 +1341,7 @@ void FoolGame::sub_128_2bc6() {
 		if (this->pageToChapter[i] == this->var_i16_484+1) {
 			// 128:2d9c
 			this->var_i16_484++;
-			if (this->arr_i16_1b90[i] == 1) {
+			if (this->pageVisible[i] == 1) {
 				if (this->arr_i16_197c[this->var_i16_484] != 0) {
 					this->var_i16_9f2 = 2;
 				} else {
@@ -1386,9 +1388,9 @@ void FoolGame::sub_128_2e3e() {
 	for (int i = 1; i <= 0x64; i++) {
 		this->arr_i16_1d24[i] = g_zbasic->readFileInt(2);
 		this->puzzleCompletionStatus[i] = g_zbasic->readFileInt(2);
-		this->arr_i16_1b90[i] = g_zbasic->readFileInt(2);
+		this->pageVisible[i] = g_zbasic->readFileInt(2);
 		this->var_i16_484 = g_zbasic->readFileInt(2);
-		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, puzzleCompletionStatus: %d, arr_i16_1b90: %d, payload size: %d", i, this->arr_i16_1d24[i], this->puzzleCompletionStatus[i], this->arr_i16_1b90[i], this->var_i16_484);
+		debugC(5, kDebugLoading, "sub_128_2e3e: puzzle %d:, arr_i16_1d24: %d, puzzleCompletionStatus: %d, pageVisible: %d, payload size: %d", i, this->arr_i16_1d24[i], this->puzzleCompletionStatus[i], this->pageVisible[i], this->var_i16_484);
 		Common::String state = g_zbasic->readFileStr(2, this->var_i16_484);
 		if (debugChannelSet(5, kDebugLoading)) {
 			Common::hexdump((const byte *)state.c_str(), this->var_i16_484);
@@ -1555,7 +1557,7 @@ void FoolGame::sub_128_3536() {
 			for (int i = 1; i <= 0x64; i++) {
 				g_zbasic->writeFileInt(2, this->arr_i16_1d24[i]);
 				g_zbasic->writeFileInt(2, this->puzzleCompletionStatus[i]);
-				g_zbasic->writeFileInt(2, this->arr_i16_1b90[i]);
+				g_zbasic->writeFileInt(2, this->pageVisible[i]);
 				Common::String state = g_zbasic->indexRaw(2, i);
 				g_zbasic->writeFileInt(2, (int16)state.size());
 				g_zbasic->writeFileStr(2, state);
@@ -1741,6 +1743,7 @@ void FoolGame::sub_128_39a0() {
 		this->sub_128_3de6();
 	}
 	if (this->puzzleCompletionStatus[this->var_i16_7d0] == 0x64) {
+		// bodge for completing The Chariot
 		if (this->var_i16_7d0 == 0x41) {
 			if ((this->arr_i16_1d24[0x41] & 2) != 0) {
 				this->arr_i16_1d24[0x41] ^= 2;
@@ -1755,17 +1758,17 @@ void FoolGame::sub_128_39a0() {
 			}
 			// 128:3c04
 			this->storyNextPage = 0;
-			this->var_i16_68c = 0x42;
+			// enable the four King Of ... chapters
 			for (int i = 0x42; i <= 0x45; i++) {
 				for (int j = 1; j <= this->storyPageCount; j++) {
 					if (this->pageToChapter[j] == i) {
-						this->arr_i16_1b90[j] = 1;
+						this->pageVisible[j] = 1;
 						if ((i == 0x42) && (this->storyNextPage == 0)) {
 							this->storyNextPage = j;
 						}
 					}
 					// 128:3c6c
-					if (this->pageToChapter[j] < i) {
+					if (this->pageToChapter[j] > i) {
 						j = this->storyPageCount;
 					}
 					// 128:3c8e
@@ -1811,7 +1814,7 @@ void FoolGame::sub_128_3de6() {
 		for (int i = 1; i <= this->storyPageCount; i++ ) {
 			// 128:3e56
 			if (this->pageToChapter[i] == this->arr_i16_197c[this->var_i16_7d0]) {
-				this->arr_i16_1b90[i] = 1;
+				this->pageVisible[i] = 1;
 				if (this->storyNextPage == 0) {
 					this->storyNextPage = i;
 				}
