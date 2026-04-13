@@ -2464,7 +2464,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					else
 						engine.stopMusic();
 					didTransition = true;
-				} else if (interaction.mutatedRuntimeState) {
+				} else if (interaction.visualRuntimeStateChanged) {
 					if (!applyCurrentRoomRuntimeMutationsInPlaceFn() &&
 							!refreshCurrentSceneFn(true)) {
 						return Common::kReadingFailed;
@@ -2612,6 +2612,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					return Common::kReadingFailed;
 				}
 				roomEntryInteraction.mutatedRuntimeState = false;
+				roomEntryInteraction.visualRuntimeStateChanged = false;
 			}
 			hasPendingRoomEntryInteraction = hasRoomEntryInteraction(roomEntryInteraction);
 		}
@@ -2994,11 +2995,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		InteractionResult interaction;
 		interaction.mutatedRuntimeState = runtimeChanged;
+		interaction.visualRuntimeStateChanged = runtimeChanged;
 		if (script && !npc.onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
 			if (script->executeActionTag(npc.onDeathActionTag, deathInteraction, true, npc.roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
+				interaction.visualRuntimeStateChanged = true;
 			}
 		}
 
@@ -3132,12 +3135,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		monster->visible = false;
 		InteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
+		interaction.visualRuntimeStateChanged = true;
 		if (!monster->onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
 			if (script->executeActionTag(
 					monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
+				interaction.visualRuntimeStateChanged = true;
 			}
 		}
 
@@ -3489,12 +3494,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
 		InteractionResult interaction;
 		interaction.mutatedRuntimeState = true;
+		interaction.visualRuntimeStateChanged = true;
 		if (!monster->onDeathActionTag.empty()) {
 			InteractionResult deathInteraction;
 			if (script->executeActionTag(
 					monster->onDeathActionTag, deathInteraction, true, monster->roomName)) {
 				interaction = deathInteraction;
 				interaction.mutatedRuntimeState = true;
+				interaction.visualRuntimeStateChanged = true;
 			}
 		}
 
@@ -3577,12 +3584,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 					InteractionResult interaction;
 					interaction.mutatedRuntimeState = true;
+					interaction.visualRuntimeStateChanged = true;
 					if (script && !monster.onDeathActionTag.empty()) {
 						InteractionResult deathInteraction;
 						if (script->executeActionTag(
 								monster.onDeathActionTag, deathInteraction, true, monster.roomName)) {
 							interaction = deathInteraction;
 							interaction.mutatedRuntimeState = true;
+							interaction.visualRuntimeStateChanged = true;
 						}
 					}
 

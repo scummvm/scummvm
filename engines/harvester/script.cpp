@@ -1810,7 +1810,8 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 	return true;
 }
 
@@ -1828,7 +1829,8 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 		nullptr, nullptr, &result.cdChangeDisc, &result.dialogueNpcName, &result.dialogueContinuationTag,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
 		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 	return true;
 }
 
@@ -1845,9 +1847,12 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 	if (isPickupObject(object)) {
 		if (ObjectRecord *currentObject = findRuntimeObject(object.currentOwnerOrRoom, object.objectName)) {
 			if (!currentObject->currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
+				const bool affectsCurrentRoom = !commandRoomName.empty() &&
+					currentObject->currentOwnerOrRoom.equalsIgnoreCase(commandRoomName);
 				currentObject->currentOwnerOrRoom = kInventoryOwnerName;
 				currentObject->identShown = true;
 				result.mutatedRuntimeState = true;
+				result.visualRuntimeStateChanged = affectsCurrentRoom;
 			}
 		}
 	}
@@ -1861,7 +1866,8 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -1886,7 +1892,8 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
@@ -1918,7 +1925,8 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Obj
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 	return true;
 }
 
@@ -1957,7 +1965,8 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -1992,7 +2001,8 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
-		&result.mutatedRuntimeState, &result.requestCloseupExit);
+		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
+		&result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -2828,13 +2838,22 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
-		bool *mutatedRuntimeState, bool *requestCloseupExit) {
+		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
+		bool *requestCloseupExit) {
 	auto isTruthy = [](const Common::String &value) {
 		return value.equalsIgnoreCase("T") || value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE");
 	};
 	auto noteMutation = [&](bool changed) {
 		if (changed && mutatedRuntimeState)
 			*mutatedRuntimeState = true;
+	};
+	auto noteCurrentRoomVisualMutation = [&](bool changed, bool affectsCurrentRoom) {
+		noteMutation(changed);
+		if (changed && affectsCurrentRoom && visualRuntimeStateChanged)
+			*visualRuntimeStateChanged = true;
+	};
+	auto belongsToContextRoom = [&](const Common::String &roomName) {
+		return !contextRoomName.empty() && roomName.equalsIgnoreCase(contextRoomName);
 	};
 	auto hasDeferredInteractionOutputs = [&]() {
 		return (nextRoomName && !nextRoomName->empty()) ||
@@ -2935,19 +2954,24 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 
 			const bool visible = command->opcodeName.equalsIgnoreCase("ADD");
+			const bool affectsCurrentRoom = belongsToContextRoom(currentObject->currentOwnerOrRoom);
 			const bool changed = currentObject->visible != visible ||
 				currentObject->runtimeVisible != visible;
 			currentObject->visible = visible;
 			currentObject->runtimeVisible = visible;
 			if (visible && currentObject->currentOwnerOrRoom.equalsIgnoreCase("INVENTORY"))
 				currentObject->identShown = true;
-			noteMutation(changed);
+			noteCurrentRoomVisualMutation(changed, affectsCurrentRoom);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("ADD2INV")) {
-			noteMutation(addRuntimeObjectToInventory(command->arg1));
+			const ObjectRecord *currentObject = findRuntimeObject(Common::String(), command->arg1);
+			const bool affectsCurrentRoom = currentObject &&
+				belongsToContextRoom(currentObject->currentOwnerOrRoom);
+			noteCurrentRoomVisualMutation(
+				addRuntimeObjectToInventory(command->arg1), affectsCurrentRoom);
 			currentTag = command->arg4;
 			continue;
 		}
@@ -2977,7 +3001,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			currentAnimation->runtimeActive = active;
 			currentAnimation->runtimeVisible = visible;
 			currentAnimation->runtimeState = runtimeState;
-			noteMutation(changed);
+			noteCurrentRoomVisualMutation(changed,
+				belongsToContextRoom(currentAnimation->roomName));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -2994,7 +3019,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool enabled = !command->arg2.equalsIgnoreCase("F");
 			const bool changed = currentRegion->startEnabled != enabled;
 			currentRegion->startEnabled = enabled;
-			noteMutation(changed);
+			noteCurrentRoomVisualMutation(changed,
+				belongsToContextRoom(currentRegion->roomName));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -3013,7 +3039,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool changed = currentNpc->active != active || currentNpc->visible != visible;
 			currentNpc->active = active;
 			currentNpc->visible = visible;
-			noteMutation(changed);
+			noteCurrentRoomVisualMutation(changed,
+				belongsToContextRoom(currentNpc->roomName));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -3045,19 +3072,26 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			}
 			if (active && currentMonster->currentHitPoints <= 0)
 				currentMonster->currentHitPoints = currentMonster->initialHitPoints;
-			noteMutation(changed);
+			noteCurrentRoomVisualMutation(changed,
+				belongsToContextRoom(currentMonster->roomName));
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("SET_TIMER")) {
-			noteMutation(setRuntimeTimerEnabled(command->arg1, command->arg2.equalsIgnoreCase("ON")));
+			const TimerRecord *currentTimer = findRuntimeTimer(command->arg1);
+			noteCurrentRoomVisualMutation(
+				setRuntimeTimerEnabled(command->arg1, command->arg2.equalsIgnoreCase("ON")),
+				currentTimer && belongsToContextRoom(currentTimer->arg1));
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_TIMER")) {
-			noteMutation(setRuntimeTimerEnabled(command->arg1, false));
+			const TimerRecord *currentTimer = findRuntimeTimer(command->arg1);
+			noteCurrentRoomVisualMutation(
+				setRuntimeTimerEnabled(command->arg1, false),
+				currentTimer && belongsToContextRoom(currentTimer->arg1));
 			currentTag = command->arg4;
 			continue;
 		}
@@ -3077,7 +3111,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					musicPath, audioCommands, nextRoomName, roomTransition, cutscenePath,
 					deathFlicPath, requestMainMenu, cdChangeDisc, dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, requestPlayerGotoXZ,
-					playerGotoX, playerGotoZ, mutatedRuntimeState, requestCloseupExit);
+					playerGotoX, playerGotoZ, mutatedRuntimeState, visualRuntimeStateChanged,
+					requestCloseupExit);
 				if (hasDeferredInteractionOutputs())
 					return;
 			}
@@ -3151,9 +3186,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				currentNpc->visible &&
 				!currentNpc->deathOrMonsterfyFlag &&
 				currentNpc->runtimeState < 0;
-			noteMutation(deferLiveNpcDeathTransition
+			noteCurrentRoomVisualMutation(deferLiveNpcDeathTransition
 				? queueRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType)
-				: finalizeRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType));
+				: finalizeRuntimeNpcDeathOrMonsterfy(command->arg1, deathDamageType),
+				belongsToContextRoom(currentNpc->roomName));
 			currentTag = command->arg4;
 			continue;
 		}
