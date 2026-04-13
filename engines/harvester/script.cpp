@@ -2091,11 +2091,8 @@ const UseItemRecord *Script::findUseItemRecord(const Common::String &itemName,
 			continue;
 		}
 
-		if (!useItem.ownerOrRoom.empty() &&
-			!useItem.ownerOrRoom.equalsIgnoreCase(target.currentOwnerOrRoom)) {
-			continue;
-		}
-
+		// Native dispatch ignores the parsed owner/group string and matches only
+		// the carried item name plus the overlapped target entity name.
 		return &useItem;
 	}
 
