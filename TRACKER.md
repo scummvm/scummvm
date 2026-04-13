@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, confirmed from CD3 `HARVEST.SCR` and Ghidra that native `USEITEM` dispatch ignores the parsed owner/group field and matches only carried item name plus overlapped target entity name. Annotated `UseItemRecord.owner_or_group` in Ghidra and updated ScummVM lookup so `KEWPIE_KEY` can trigger `UNLOCK_THEATRE_DOOR` on `THEATRE_DOOR` in `FOYER1` despite the script row using owner/group `FOYER`.
+- On April 13, 2026, rechecked Ghidra `update_actor_runtime_state` class-6 pursuit and confirmed native horizontal pursuit stores a target frame-left X derived from the player's edge, the MONSTER engage field, and monster frame width. Updated ScummVM `RoomSystem` monster chase logic to use that native frame-left waypoint instead of the previous center target, which could leave `BURNTCREATURE` stationary inside the 50-pixel waypoint tolerance while still outside engage range.
 
 ## Next Suggested Action
 
-- Re-test using `KEWPIE_KEY` on `FOYER1` `THEATRE_DOOR`: confirm the door hotspot is deleted, `FOYR1_THEATRE1` is enabled, `KEWPIE_KEY` is removed from inventory, `FOYRDOOR_ANIM` plays, and the left theatre entrance changes rooms.
+- Re-test entering `SMOKING` from `BAKSTAG2`: confirm `BURNTCREATURE` emits immediate `combat monster chase move` logs while outside `engage=100`, keeps advancing on animation ticks, and still starts attacks once `abs(live_center_dx) <= 100`.

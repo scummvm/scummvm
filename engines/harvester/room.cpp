@@ -3577,7 +3577,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
 			const int liveCenterDx = playerCenterX - monsterCenterX;
 			const int absLiveCenterDx = ABS(liveCenterDx);
-			const int monsterLiveCenterOffset = monsterCenterX - monster.posX;
 			const int playerTargetZ = roundRoomCombatFloat(playerState.z);
 			const float zDelta = playerState.z - (float)monster.posZ;
 			const float absZDelta = zDelta >= 0.0f ? zDelta : -zDelta;
@@ -3593,14 +3592,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				monster.posZ = (int)clampRoomDepthForEvent(scene.state, (float)monster.posZ);
 				monster.posY = mapRoomDepthToScreenYForCombat(scene.state, (float)monster.posZ, monster.posY);
 			} else if (absLiveCenterDx > engageDistance) {
-				const int desiredLiveCenterX = monsterCenterX < playerCenterX
-					? playerRect.left - engageDistance + monsterRect.width() / 2
-					: playerRect.right + engageDistance - monsterRect.width() / 2;
-				if (ABS(monsterCenterX - desiredLiveCenterX) > liveWaypointTolerance) {
+				// Native class-6 pursuit stores a target frame-left X, not a center X.
+				const int desiredFrameLeftX = monsterCenterX < playerCenterX
+					? playerRect.right + engageDistance - monsterRect.width() / 2
+					: playerRect.left - engageDistance + monsterRect.width() / 2;
+				if (ABS(monsterRect.left - desiredFrameLeftX) > liveWaypointTolerance) {
 					attemptedMoveX = true;
 					const int step = MAX<int>(1, roundRoomCombatFloat(
 						Player::computeDepthScale(scene.state, (float)monster.posZ) * (float)horizontalStepBase));
-					const int desiredLogicalCenterX = desiredLiveCenterX - monsterLiveCenterOffset;
+					const int monsterFrameLeftOffset = monsterRect.left - monster.posX;
+					const int desiredLogicalCenterX = desiredFrameLeftX - monsterFrameLeftOffset;
 					monster.posX = stepTowardsRoomCombatInt(monster.posX, desiredLogicalCenterX, step);
 					monster.posX = CLIP<int>(monster.posX, monster.screenMinXBound, monster.screenMaxXBound);
 				}
