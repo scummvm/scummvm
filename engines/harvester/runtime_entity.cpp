@@ -340,6 +340,29 @@ bool Entity::getCurrentFrameMetrics(int &width, int &height, int &xOffset, int &
 	return true;
 }
 
+bool Entity::hasOpaqueFramesInRange(int firstFrame, int lastFrame) const {
+	const Common::Array<AbmFrame> &frames = !_baseFrames.empty() ? _baseFrames : _frames;
+	if (frames.empty() || firstFrame < 0 || lastFrame < firstFrame ||
+			(uint)lastFrame >= frames.size()) {
+		return false;
+	}
+
+	for (int frameIndex = firstFrame; frameIndex <= lastFrame; ++frameIndex) {
+		const AbmFrame &frame = frames[(uint)frameIndex];
+		bool hasOpaquePixel = false;
+		for (uint i = 0; i < frame.pixels.size(); ++i) {
+			if (frame.pixels[i] != kTransparentPaletteIndex) {
+				hasOpaquePixel = true;
+				break;
+			}
+		}
+		if (!hasOpaquePixel)
+			return false;
+	}
+
+	return true;
+}
+
 void Entity::setDepthScale(float scale) {
 	if (_frames.empty())
 		return;
