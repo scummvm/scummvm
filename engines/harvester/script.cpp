@@ -2681,7 +2681,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 		state.playerFacing = entrance->facing;
 	}
 	for (const ObjectRecord &object : _currentObjects) {
-		if (object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
+		if (object.visible && object.currentOwnerOrRoom.equalsIgnoreCase(room.roomName))
 			state.roomObjects.push_back(object);
 	}
 	if (!state.hasEntrance) {

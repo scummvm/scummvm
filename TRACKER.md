@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, added the Harvester `DEBUG_TIMERS` console command. When enabled, the room scene overlay lists enabled timer entities near the middle-left of the screen with timer name, starting value, current value, and expiration action tag as white text on black backgrounds.
+- On April 13, 2026, verified native `ADD` / `DELETE` object visibility behavior in `HARVEST.LE` via Ghidra (`dispatch_room_event_actions`, `set_object_visibility_for_owner_or_room`, and `room_setup`) and patched ScummVM room materialization so hidden/deleted room objects remain in script runtime state but do not re-enter `RoomSetupState` or the live scene until an `ADD` makes them visible again.
 
 ## Next Suggested Action
 
-- Run Harvester, enter a room with active timers, toggle `DEBUG_TIMERS`, and verify multiple timers stack vertically with live countdown values and the expected action tags.
+- Re-run the `EYEHALL` combat case, kill `BIG_EYE`, and confirm `EYEDOOR2 DELETE EYEHALL BIGEYE` leaves `BIGEYE` out of the materialized room object list and scene after the runtime refresh while `EYE_MAIN` remains enabled.
