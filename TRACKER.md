@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, checked `HARVEST.LE` monster record handling in Ghidra and updated ScummVM Harvester monster runtime matching so parsed monster records keep a stable `recordIndex`; room-qualified monster sync no longer falls back to the first same-name record, preventing a dead duplicate like `WOLFIE` from contaminating another room's monster state.
+- On April 13, 2026, removed the temporary focused `BIGEYE` / `BIG_EYE` debug flag, lifecycle logging, and post-detach overlap audit while keeping the `BIG_EYE` / `EYEDOOR` terminal death-frame preservation fix.
 
 ## Next Suggested Action
 
-- Re-run the duplicate `WOLFIE` path with `--debugflags=room,combat` from a clean pre-kill state and confirm the DINING monster materializes with its own `hp=20/20`, `spawned=0`, and `runtimeState=-1` unless the DINING record itself has been killed.
+- Re-run the EYEHALL combat case with `--debugflags=room,scene,combat`, kill `BIG_EYE`, and confirm the death-complete line reports `preserve_runtime_actor=1` and that the final frame remains over the baked background while `BIGEYE` hotspot deletion still enables `EYE_MAIN`.
