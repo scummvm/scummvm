@@ -444,7 +444,7 @@ void Room::cmdExitContinuance() {
 	_vm->_scripts->_continuenceFlag = false;
 	_vm->_scripts->executeScript();
 	if (!_vm->_scripts->_continuenceFlag) {
-		_vm->_boxSelect = -1;
+		_vm->_boxSelect = false; // -1
 		warning("TODO: Room::cmdExitContinuance: check and clear double click.");
 		/*
 		if (DidDblClick) {
