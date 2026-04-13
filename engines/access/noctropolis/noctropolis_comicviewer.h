@@ -50,11 +50,6 @@ protected:
 	void internalLoad(Common::SeekableReadStream &source, uint32 size);
 };
 
-struct Comic {
-	short numPoints;
-	Common::Point points[];
-};
-
 struct ComicBlock {
 	struct Polygon *polygon;
 	int32 soundFileIndex, soundResIndex;

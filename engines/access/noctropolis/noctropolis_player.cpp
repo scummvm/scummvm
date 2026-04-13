@@ -187,13 +187,16 @@ void NoctropolisPlayer::walk() {
 		int dirAnimNum = _animNumForDir(_playerDirection);
 		if (_playerDirection != _lastDirection) {
 			_lastDirection = _playerDirection;
-			_animManager->popBackTimer();
-			Animation *anim = _animManager->setAnimation(dirAnimNum);
-			_animManager->setAnimTimer(anim);
+			if (_animManager) {
+				_animManager->popBackTimer();
+				Animation *anim = _animManager->setAnimation(dirAnimNum);
+				_animManager->setAnimTimer(anim);
+			}
 		}
 		_playerX = _rawPlayer.x;
 		_playerY = _rawPlayer.y;
-		/*local_30 =*/ _animManager->animate(dirAnimNum);
+		if (_animManager)
+			_animManager->animate(dirAnimNum);
 		_rawPlayer.x = _playerX;
 		_rawPlayer.y = _playerY;
 		

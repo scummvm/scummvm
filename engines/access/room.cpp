@@ -27,6 +27,7 @@
 #include "access/amazon/amazon_resources.h"
 #include "access/martian/martian_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
+#include "access/noctropolis/noctropolis_player.h"
 
 namespace Access {
 
@@ -264,11 +265,11 @@ void Room::doRoom() {
 				_function = FN_NONE;
 				roomLoop();
 			}
-			
+
 			// Back to NoctRoomEngine::roomMainLoop in Noctropolis..
 			//if (_vm->_scripts->_continuenceFlag)
 			//	continue;
-				
+
 			_vm->_scripts->_continuenceType = 0;
 
 			if (_vm->_player->_scrollFlag) {
@@ -349,8 +350,15 @@ void Room::loadRoomData(const byte *roomData) {
 	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
 		// Load _vm->_screen->_stilPal
 		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
-		memcpy(stilPal->data(), _vm->_screen->_stilPal, 99);
-		error("TODO: Finish load of Stiletto data - see Noctropolis LoadRoom()");
+		memcpy(stilPal->data() + 480, _vm->_screen->_stilPal, 99);
+
+		Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;
+		((Noctropolis::NoctropolisPlayer *)stil)->loadAnimation(0xfd, 0);
+
+		for (int subFileNum = 1; subFileNum < 6; subFileNum++) {
+			Resource *data = _vm->_files->loadFile(0xfd, subFileNum);
+			_vm->_objectsTable[0x6d + subFileNum] = new SpriteResource(_vm, data);
+		}
 	}
 
 	_vm->_establishFlag = false;

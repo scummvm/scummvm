@@ -21,6 +21,7 @@
 
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_room.h"
+#include "access/noctropolis/noctropolis_player.h"
 #include "access/noctropolis/noctropolis_scripts.h"
 #include "access/noctropolis/noctropolis_resources.h"
 #include "access/noctropolis/noctropolis_comicviewer.h"
@@ -50,7 +51,7 @@ void NoctropolisEngine::initObjects() {
 	_invScript = new NoctropolisScripts(this);
 	_inventory = new NoctropolisInventory(this);
 	_video = new VideoPlayer_v2(this);
-	_stil = new Player(this);
+	_stil = Player::init(this);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
