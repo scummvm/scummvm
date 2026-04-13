@@ -180,13 +180,15 @@ void FoolGame::jumbleRun() {
 						this->var_str_9f4 = g_zbasic->space(this->var_i16_1372);
 					}
 					// 130:0580
+					// word square
 					if (this->jumbleGameType == 4) {
 						this->var_str_384 = g_zbasic->leftStr(this->var_str_1272, 4);
 						this->sub_130_25d8();
 						this->var_str_1374 = this->var_str_9f4;
 						this->var_str_384 = g_zbasic->rightStr(this->var_str_1272, 4);
 						this->sub_130_25d8();
-						this->var_str_9f4 = this->var_str_9f4 + this->var_str_1474 + this->var_str_1374 + g_zbasic->midStr(this->var_str_1272, 5, 1) + this->var_str_1474;
+						this->var_str_1474 = this->var_str_9f4;
+						this->var_str_9f4 = this->var_str_1374 + g_zbasic->midStr(this->var_str_1272, 5, 1) + this->var_str_1474;
 					}
 					// 130:0610
 					this->var_str_1070 += this->var_str_9f4;
@@ -279,7 +281,7 @@ void FoolGame::jumbleRun() {
 				this->sub_130_1004();
 				break;
 			case 3:
-			case 4:
+			case 4:	// word square
 				this->sub_130_10a6();
 				break;
 			case 5:
@@ -521,6 +523,7 @@ void FoolGame::sub_130_1004() {
 
 void FoolGame::sub_130_10a6() {
 	// 130:10a6
+	// word square
 	this->sub_130_1426();
 	if (this->jumbleGameType != 5) {
 		this->var_str_177c = g_zbasic->midStr(this->var_str_1170, 1, 1) + g_zbasic->midStr(this->var_str_1170, 4, 1) + g_zbasic->midStr(this->var_str_1170, 7, 1);
@@ -637,7 +640,7 @@ void FoolGame::sub_130_1476() {
 		this->sub_130_20aa();
 		break;
 	case 3:
-	case 4:
+	case 4:	// word square
 		this->sub_130_172c();
 		break;
 	default:
@@ -700,6 +703,7 @@ void FoolGame::sub_130_15da() {
 
 void FoolGame::sub_130_172c() {
 	// 130:172c
+	// word square, disallow clicking the centre tile
 	if ((this->jumbleGameType == 4) && (this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c] == 5)) {
 		this->sub_130_19da();
 		return;
@@ -742,6 +746,7 @@ void FoolGame::sub_130_172c() {
 }
 
 void FoolGame::sub_130_19ac() {
+	// 130:19ac
 	if (this->var_i16_187e > 0) {
 		g_toolbox->InvertRect(this->arr_rect_1f38[this->var_i16_187e]);
 	}
@@ -750,10 +755,12 @@ void FoolGame::sub_130_19ac() {
 }
 
 void FoolGame::sub_130_19da() {
+	// 130:19da
+	// fixed tile
 	this->sub_130_19ac();
 	this->sub_128_50e(0x19, 0x64, 0);
 	for (int i = 0; i <= 0x19; i++) {
-		g_toolbox->InvertRect(this->arr_rect_1f38[9]);
+		g_toolbox->InvertRect(this->arr_rect_1f38[13]);
 		this->sub_128_3da(1);
 	}
 }
