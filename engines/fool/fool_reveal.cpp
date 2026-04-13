@@ -127,16 +127,12 @@ void FoolGame::revealRun() {
 		// 134:057e
 		while ((this->stateFlags == 0) && (this->var_i16_d0c == 0)) {
 			// 134:0582
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->var_ev_46.what == kMouseDown) {
 				this->revealOnClick();
 			}
 			if (this->arr_i16_1eb8[20] == this->arr_i16_1eb8[19]) {
 				this->var_i16_d0c = 1;
-			}
-			// render screen
-			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
 			}
 		}
 		// 134:05e2

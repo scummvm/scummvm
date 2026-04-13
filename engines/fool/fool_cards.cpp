@@ -118,15 +118,12 @@ void FoolGame::cardsRun() {
 		this->stateFlags = 0;
 		while (this->stateFlags == 0) {
 			// 139:046e
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if ((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) {
 				this->cardsOnClick();
 			}
 			if (this->var_i16_2014 != 0) {
 				this->sub_139_50e();
-			}
-			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
 			}
 		}
 		// 139:04a4
@@ -282,16 +279,13 @@ void FoolGame::cardsOnClick() {
 		this->var_i16_2014 = 0;
 		this->stateFlags = 0;
 		while ((this->stateFlags == 0) && (this->var_i16_2014 == 0)) {
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->var_ev_46.what == kMouseUp) {
 				this->var_i16_2014 = 1;
 			}
 			if (this->stateFlags == 4) {
 				this->cardsStoreState();
 				this->saveGame();
-			}
-			if (this->var_ev_46.what == kNullEvent) {
-				g_toolbox->Delay(0);
 			}
 		}
 		// 139:09d8

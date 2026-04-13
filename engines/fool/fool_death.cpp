@@ -54,7 +54,7 @@ void FoolGame::deathRun() {
 		// JMP 0x232
 		while (this->var_ev_46.where.y >= 0x14) {
 			// 141:01cc
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			this->deathMoveBlackEye();
 			if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1eb8)) {
 				this->deathCaught();
@@ -74,8 +74,6 @@ void FoolGame::deathRun() {
 				this->deathDrawWhiteEye();
 				return;
 			}
-			if (this->var_ev_46.what == kNullEvent)
-				g_toolbox->Delay(0);
 		}
 		// 141:023a
 		g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_c38c);
@@ -86,23 +84,21 @@ void FoolGame::deathRun() {
 			// cursor is over the top menu, safe
 			// 141:0282
 			this->deathMoveBlackEye();
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->stateFlags == 2) {
 				this->stateFlags = 0;
 			}
 			if (this->stateFlags == kStateSaveGame) {
 				this->saveGame();
 			}
-			if (this->var_ev_46.what == kNullEvent)
-				g_toolbox->Delay(0);
 		}
 		// 141:02c6
-		this->sub_128_c6a(0);
+		this->getNextEvent(0);
 		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
 			this->var_i32_692 = g_toolbox->TickCount();
 			// 141:02fa
 			do {
-				this->sub_128_c6a(0);
+				this->getNextEvent(0);
 				if (((this->var_ev_46.modifiers & kModMouseButtonUp) == 0) &&
 					g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
 					// JMP 0x9a2
@@ -115,9 +111,6 @@ void FoolGame::deathRun() {
 					}
 					this->deathDrawWhiteEye();
 					return;
-				}
-				if (this->var_ev_46.what == kNullEvent) {
-					g_toolbox->Delay(0);
 				}
 				// 141:0342
 			} while (g_toolbox->TickCount() <= (this->var_i32_692 + 0x2d));

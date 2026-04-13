@@ -123,7 +123,7 @@ void FoolGame::jigsawRun() {
 		// 132:049c
 		while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0)) {
 			// 132:0488
-			this->sub_128_c6a(-1);
+			this->getNextEvent(-1);
 			if (this->var_ev_46.what == kMouseDown) {
 				this->jigsawOnClick();
 			}
@@ -188,7 +188,7 @@ void FoolGame::jigsawDragSelect() {
 	// 132:067a
 	// change select area while mouse button held down
 	do {
-		this->sub_128_c6a(4);
+		this->getNextEvent(4);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->var_i16_68a >= this->arr_i16_4758[0]) {
@@ -227,7 +227,7 @@ void FoolGame::jigsawMoveSelected() {
 	// move select area to new target
 	warning("call: %s", __func__);
 	do {
-		this->sub_128_c6a(2);
+		this->getNextEvent(2);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (this->arr_i16_4758[0] >= 0) {
