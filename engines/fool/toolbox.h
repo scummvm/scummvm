@@ -308,8 +308,8 @@ public:
 	void render() {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				this->_surface[y*16+x] = (this->data[y] & (1 << x)) ? 1 : 0;
-				this->_mask[y*16+x] = (this->mask[y] & (1 << x)) ? kCursorMaskOpaque : kCursorMaskTransparent;
+				this->_surface[y*16+x] = (this->data[y] & (1 << (15 - x))) ? 1 : 0;
+				this->_mask[y*16+x] = (this->mask[y] & (1 << (15 - x))) ? kCursorMaskOpaque : kCursorMaskTransparent;
 			}
 		}
 	}

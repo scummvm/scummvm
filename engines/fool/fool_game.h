@@ -213,7 +213,20 @@ public:
 	void revealReset(); // sub_134_7bc
 	void revealSuccess(); // sub_134_872
 
-	void sub_135_004();
+	// fool_sentence.cpp
+	void sentenceRun(); // sub_135_004
+	void sub_135_5b6();
+	void sentenceAddLeft(); // sub_135_7d6
+	void sentenceAddRight(); // sub_135_7fa
+	void sub_135_81e();
+	void sub_135_86a();
+	void sub_135_94c();
+	void sub_135_9ba();
+	void sub_135_a34();
+	void sub_135_b16();
+	void sub_135_c1c();
+	void sub_135_cee();
+
 	void sub_136_004();
 
 	// fool_sun.cpp
@@ -446,6 +459,8 @@ private:
 	int16 var_i16_1ab6;
 	int16 var_i16_1ab8;
 	int16 var_i16_1aba;
+	int16 var_i16_1abc;
+	int16 var_i16_1abe;
 
 	int16 var_i16_1e00;
 
