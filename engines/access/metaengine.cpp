@@ -83,14 +83,15 @@ public:
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *desc) const override;
 
-	SaveStateList listSaves(const char *target) const override;
-	int getMaximumSaveSlot() const override;
-	bool removeSaveState(const char *target, int slot) const override;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	//SaveStateList listSaves(const char *target) const override;
+	//int getMaximumSaveSlot() const override;
+	//bool removeSaveState(const char *target, int slot) const override;
+	//SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
+<<<<<<< Updated upstream
 	return
 	    (f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
@@ -100,6 +101,10 @@ bool AccessMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportCreationDate) ||
 		(f == kSavesSupportPlayTime) ||
 		(f == kSimpleSavesNames);
+=======
+	return checkExtendedSaves(f) ||
+		   (f == kSupportsLoadingDuringStartup);
+>>>>>>> Stashed changes
 }
 
 bool Access::AccessEngine::hasFeature(EngineFeature f) const {
@@ -123,6 +128,7 @@ Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	return Common::kNoError;
 }
 
+/*
 SaveStateList AccessMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::String saveDesc;
@@ -190,6 +196,7 @@ SaveStateDescriptor AccessMetaEngine::querySaveMetaInfos(const char *target, int
 
 	return SaveStateDescriptor();
 }
+*/
 
 Common::KeymapArray AccessMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;

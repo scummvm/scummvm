@@ -63,7 +63,9 @@ protected:
 	/**
 	* Synchronize savegame data
 	*/
-	void synchronize(Common::Serializer &s) override;
+	//void synchronize(Common::Serializer &s) override;
+	Common::Error synchronize(Common::Serializer &s) override;
+
 public:
 	InactivePlayer _inactive;
 	bool _charSegSwitch;

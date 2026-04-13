@@ -471,6 +471,33 @@ void AccessEngine::syncSoundSettings() {
 	_sound->syncVolume();
 }
 
+Common::Error AccessEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	stream->writeByte(ACCESS_SAVEGAME_VERSION);
+	Common::Serializer s(nullptr, stream);
+	s.setVersion(ACCESS_SAVEGAME_VERSION);
+
+	return synchronize(s);
+}
+
+Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	byte version = stream->readByte();
+	if (version != ACCESS_SAVEGAME_VERSION)
+		error("Invalid savegame version");
+
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(version);
+
+	Common::Error result = synchronize(s);
+
+	// Set extra post-load state
+	_room->_function = FN_CLEAR1;
+	_timers._timersSavedFlag = false;
+	_events->clearEvents();
+
+	return result;
+}
+
+/*
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
 	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
 		getSaveStateName(slot));
@@ -517,6 +544,7 @@ Common::Error AccessEngine::loadGameState(int slot) {
 
 	return Common::kNoError;
 }
+*/
 
 bool AccessEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
@@ -526,7 +554,7 @@ bool AccessEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
 }
 
-void AccessEngine::synchronize(Common::Serializer &s) {
+Common::Error AccessEngine::synchronize(Common::Serializer &s) {
 	s.syncAsUint16LE(_conversation);
 	s.syncAsUint16LE(_currentMan);
 	s.syncAsUint32LE(_newTime);
@@ -541,11 +569,14 @@ void AccessEngine::synchronize(Common::Serializer &s) {
 	_timers.synchronize(s);
 	_inventory->synchronize(s);
 	_player->synchronize(s);
+
+	return Common::kNoError;
 }
 
 const char *const SAVEGAME_STR = "ACCESS";
 #define SAVEGAME_STR_SIZE 6
 
+/*
 WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 
@@ -615,6 +646,7 @@ void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameH
 	// Write the total PlayTime (ms)
 	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
 }
+*/
 
 bool AccessEngine::shouldQuitOrRestart() {
 	return shouldQuit() || _restartFl;

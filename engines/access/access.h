@@ -184,7 +184,9 @@ protected:
 	/**
 	* Synchronize savegame data
 	*/
-	virtual void synchronize(Common::Serializer &s);
+	//virtual void synchronize(Common::Serializer &s);
+	virtual Common::Error synchronize(Common::Serializer &s);
+
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
@@ -335,13 +337,15 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	Common::Error loadGameState(int slot) override;
+	//Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-
+	//Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
