@@ -470,10 +470,6 @@ Changes to upstream
 There are a few features that have been disabled or changed and are not
 possible / plausible to merge into upstream:
 
-- This port contains an implementation of much faster tooltips in the overlay.
-  However, there is a minor rendering bug which sometimes corrupts the
-  background. But since its impact is huge, I left it in.
-
 - This port contains an experimental / pending optimisations to the SCUMM
   engine and audio mixing. I'll try to get them merged in the next release.
 

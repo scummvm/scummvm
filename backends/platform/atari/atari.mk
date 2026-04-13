@@ -1,9 +1,6 @@
 .PHONY: atarilitedist atarifulldist fbdist
 
 DIST_FILES_PLATFORM := $(srcdir)/backends/platform/atari/readme.txt
-ifneq (${BACKEND},sdl)
-DIST_FILES_PLATFORM += $(srcdir)/backends/platform/atari/patches
-endif
 
 LITE_DIR	:= scummvm-${VERSION}-atari-lite
 LITE_DATA	:= ${LITE_DIR}/data
@@ -43,7 +40,7 @@ atarilitedist: $(EXECUTABLE)
 	! [ -f ${LITE_DATA}/teenagent.dat ] || mv ${LITE_DATA}/teenagent.dat ${LITE_DATA}/teenagen.dat
 
 	# readme.txt
-	$(CP) -r $(DIST_FILES_PLATFORM) ${LITE_DIR}
+	$(CP) $(DIST_FILES_PLATFORM) ${LITE_DIR}
 	unix2dos ${LITE_DIR}/readme.txt
 
 ifeq ($(CREATE_ZIP),y)
@@ -89,7 +86,7 @@ atarifulldist: $(EXECUTABLE)
 		done
 
 	# readme.txt
-	$(CP) -r $(DIST_FILES_PLATFORM) ${FULL_DIR}
+	$(CP) $(DIST_FILES_PLATFORM) ${FULL_DIR}
 	unix2dos ${FULL_DIR}/readme.txt
 
 ifeq ($(CREATE_ZIP),y)
@@ -128,7 +125,7 @@ fbdist: $(EXECUTABLE)
 		done
 
 	# readme.txt
-	$(CP) -r $(DIST_FILES_PLATFORM) ${FB_DIR}
+	$(CP) $(DIST_FILES_PLATFORM) ${FB_DIR}
 	unix2dos ${FB_DIR}/readme.txt
 
 ifeq ($(CREATE_ZIP),y)
