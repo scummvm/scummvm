@@ -720,7 +720,6 @@ void NoctropolisEngine::doLastComic() {
 	viewer->run(comic);
 	delete viewer;
 	delete comic;
-	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::doSpecialComic() {
@@ -730,7 +729,6 @@ void NoctropolisEngine::doSpecialComic() {
 	viewer->run(comic);
 	delete viewer;
 	delete comic;
-	_screen->fadeOutThenClearAndSetPal();
 }
 
 void NoctropolisEngine::synchronize(Common::Serializer &s) {

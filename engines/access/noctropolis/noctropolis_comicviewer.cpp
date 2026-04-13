@@ -73,6 +73,8 @@ void ComicViewer::run(const ComicResource *comic) {
 
 	debug("ComicViewer::run() getCount() = %d", comic->getCount());
 
+	_vm->_screen->savePalette();
+
 	while (result != kPageResultExit) {
 		result = runPage(comic->getPage(_currPage));
 		if (result == kPageResultNextPage && _currPage + 1 < comic->getCount()) {
@@ -82,24 +84,27 @@ void ComicViewer::run(const ComicResource *comic) {
 		}
 	}
 
+	// Fade out and then restore the screen
+	// First copy the comic palette or fade out will be wrong
+	_vm->_screen->copyRawPalToTempPal();
+	_vm->_screen->fadeOut();
+	// Now restore the original screen and pal.
+	_vm->_screen->restorePalette();
+	_vm->_screen->setPalette();
+	_vm->_screen->copyRawPalToTempPal();
+	_vm->copyBF2Vid();
 }
 
 PageResult ComicViewer::runPage(const ComicPage *page) {
 	PageResult result = kPageResultNone;
 
 	_vm->_files->loadScreen(Common::Path(page->filename.baseName()));
-	_vm->_buffer2.blitFrom(*_vm->_screen);
 
 	Resource *bubbleData = _vm->_files->loadRawFile("comic.ap");
 	_bubbleSprites = new SpriteResource(_vm, bubbleData);
 	delete bubbleData;
 
-	// TODO: Copy the palette else the fade out will be wrong?
-	//_vm->_screen->palPaletteRange(pagePicture->getPalette(), 0, 256);
-	//_vm->copySystemPalette();
-	//_vm->setMainPalette();
-
-	//vgaScreen->drawScreen(pagePicture, 640, 400);
+	bool playedSound = false;
 
 	while (result == kPageResultNone) {
 
@@ -148,6 +153,12 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 			if (_vm->_events->_leftButton) {
 				_vm->_events->debounceLeft();
 				const ComicBlock &hotspot = page->blocks[hotspotIndex];
+
+				if (hotspot.soundFileIndex >= 0) {
+					_vm->_sound->loadSoundTable(1, hotspot.soundFileIndex, hotspot.soundResIndex);
+					_vm->_sound->playSound(1);
+					playedSound = true;
+				}
 				// TODO: Play hotspot sound
 				for (int bubbleIndex = 0; bubbleIndex < hotspot.numBoxes; bubbleIndex++) {
 					const ComicBox &bubble = hotspot.boxes[bubbleIndex];
@@ -171,6 +182,12 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 			result = kPageResultExit;
 			_vm->_events->debounceRight();
 		}
+	}
+
+	if (playedSound) {
+		_vm->_sound->stopSound();
+		delete _vm->_sound->_soundTable[1]._res;
+		_vm->_sound->_soundTable[1]._res = nullptr;
 	}
 
 	delete _bubbleSprites;

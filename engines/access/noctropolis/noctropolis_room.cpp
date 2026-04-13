@@ -109,7 +109,7 @@ void NoctropolisRoom::reloadRoom1() {
 	_vm->copyBF2Vid();
 
 	// TODO: Work out if this is right - the second room has roomflag 0 so maybe not??
-	if (_roomFlag >= 0) {
+	if (_roomFlag >= 0 && !(kRoomFlagNoPlayer & _roomFlag)) {
 		if (_roomFlag & kRoomFlagStiletto)
 			_vm->_screen->setStilPalette();
 		_vm->_screen->setManPalette();
