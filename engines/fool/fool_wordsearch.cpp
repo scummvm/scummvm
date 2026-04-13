@@ -197,7 +197,7 @@ void FoolGame::wordSearchRun() {
 	// 131:084c
 	this->stateFlags = kStateNull;
 	while ((this->stateFlags & kStateReturn) == 0) {
-		this->sub_128_c6a(-1);
+		this->getNextEvent(-1);
 		if (this->var_ev_46.what == 1) {
 			this->wordSearchOnClick();
 		}
@@ -207,9 +207,6 @@ void FoolGame::wordSearchRun() {
 		if (this->stateFlags == kStateSaveGame) {
 			this->wordSearchStoreState();
 			this->saveGame();
-		}
-		if (this->var_ev_46.what == kNullEvent) {
-			g_toolbox->Delay(0);
 		}
 	}
 	this->wordSearchStoreState();
@@ -228,7 +225,7 @@ void FoolGame::wordSearchOnClick() {
 
 	while ((this->var_ev_46.modifiers & 0x80) == 0) {
 		// 131:08d4
-		this->sub_128_c6a(0);
+		this->getNextEvent(0);
 		this->sub_128_2be(this->var_i16_68a, this->var_i16_68c);
 		this->sub_128_342(this->var_i16_68a, this->var_i16_68c);
 		if (!((this->var_i16_68a == this->var_i16_1a96) && (this->var_i16_68c == this->var_i16_1a98))) {

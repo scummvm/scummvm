@@ -71,7 +71,7 @@ public:
 	void sub_128_918(const Common::U32String &unk1);
 	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
-	void sub_128_c6a(uint32 unk1);
+	void getNextEvent(uint32 mask); // sub_128_c6a
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
