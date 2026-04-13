@@ -1136,12 +1136,17 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (!entityManager)
 				return;
 
-			for (TimerRecord &timer : scene.state.roomTimers) {
-				Entity *entity = entityManager->findSceneEntityByName(timer.timerName);
-				if (!entity)
+			for (const TimerRecord &baseTimer : script->getTimers()) {
+				Entity *entity = entityManager->findSceneEntityByName(baseTimer.timerName);
+				if (!entity || entity->getClassId() != kRuntimeEntityClassTimer)
 					continue;
+
+				const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(baseTimer.timerName);
+				TimerRecord timer = runtimeTimer ? *runtimeTimer : baseTimer;
 				timer.currentValue = entity->getTimerCurrentValue();
 				timer.enabled = entity->isTimerEnabled();
+				timer.looping = entity->isTimerLooping();
+				timer.global = entity->isTimerGlobal();
 				(void)script->syncRuntimeTimerRecord(timer);
 			}
 		};
@@ -1584,6 +1589,39 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return false;
 			}
 			updatedState.audioCommands = entryAudioCommands;
+
+			if (entityManager) {
+				for (const TimerRecord &baseTimer : script->getTimers()) {
+					Entity *entity = entityManager->findSceneEntityByName(baseTimer.timerName);
+					if (!entity || entity->getClassId() != kRuntimeEntityClassTimer)
+						continue;
+
+					bool materializedInCurrentRoom = false;
+					for (const TimerRecord &updatedTimer : updatedState.roomTimers) {
+						if (updatedTimer.timerName.equalsIgnoreCase(baseTimer.timerName)) {
+							materializedInCurrentRoom = true;
+							break;
+						}
+					}
+					if (materializedInCurrentRoom)
+						continue;
+
+					const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(baseTimer.timerName);
+					if (!runtimeTimer || !runtimeTimer->global)
+						continue;
+					if (entity->getTimerInitialValue() == runtimeTimer->initialValue &&
+							entity->getTimerCurrentValue() == runtimeTimer->currentValue &&
+							entity->isTimerEnabled() == runtimeTimer->enabled &&
+							entity->isTimerLooping() == runtimeTimer->looping &&
+							entity->isTimerGlobal() == runtimeTimer->global) {
+						continue;
+					}
+
+					entity->configureTimerCountdown(runtimeTimer->initialValue,
+						runtimeTimer->currentValue, runtimeTimer->enabled,
+						runtimeTimer->looping, runtimeTimer->global);
+				}
+			}
 
 			RoomSceneResources updatedScene;
 			if (!loadRoomSceneResources(updatedState, *resources, updatedScene))

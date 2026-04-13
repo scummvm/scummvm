@@ -183,7 +183,7 @@ public:
 	~EntityManager();
 
 	void clear();
-	void clearSceneEntities();
+	void clearSceneEntities(bool preserveGlobalTimers = false);
 	Entity *spawnAbmEntityFromResource(const Common::String &name, const Common::String &resourcePath,
 		int classId, const Common::Point &position, float z, int animationRate, bool looping, bool pingPong);
 	Entity *spawnBitmapEntityFromResource(const Common::String &name, const Common::String &resourcePath,
