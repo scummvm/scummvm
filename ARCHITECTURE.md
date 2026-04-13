@@ -365,6 +365,8 @@
 - `g_text_records` at `0xd5acc` is the `TEXT` list.
 - `g_timer_records` at `0xd5ad0` is the `TIMER` list.
 - `g_useitem_records` at `0xd5ad4` is the `USEITEM` list.
+  - `UseItemRecord.owner_or_group` is the parsed second quoted field.
+  - Native dispatch stores the second quoted field, but `run_inventory_screen` and `handle_target_interaction` do not compare it when resolving a use action; they match the carried item name and overlapped target entity name, then dispatch the action tag. This is required for CD3 foyer script rows such as `KEWPIE_KEY` with owner/group `FOYER` targeting `THEATRE_DOOR` in room `FOYER1`.
   - The list is not limited to object hotspots. The decoded script contains three confirmed NPC-targeted entries: sheriff-office `INV_MAG -> LOOMIS -> GO_LOOMISA`, which sets `GAVE_MAG_TO_LOOMIS_TODAY` and immediately hides Loomis with `SET_NPC "LOOMIS" "F" "F"`, plus post-office Boyle entries for `BOYLES_BUTTON` and `GASCAN`.
   - Native handler comparison shows the two Boyle branches are already covered directly inside `handle_talk_to_boyle`, while Loomis was the one script-side room-state gap that ScummVM had to mirror explicitly.
 - `g_pending_room_name` at `0xd60a4` is the pending next-room string consumed by the main loop.

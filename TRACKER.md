@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 12, 2026, refined the Ghidra note for `check_player_region_interaction`: cursor-enabled regions are candidate-selected by cursor/click handling, while cursor-disabled region entities can still act as passive screen/Z overlap triggers. Updated ScummVM post-move activation to sweep only cursor-disabled passive regions and separately test the current hovered region.
+- On April 13, 2026, confirmed from CD3 `HARVEST.SCR` and Ghidra that native `USEITEM` dispatch ignores the parsed owner/group field and matches only carried item name plus overlapped target entity name. Annotated `UseItemRecord.owner_or_group` in Ghidra and updated ScummVM lookup so `KEWPIE_KEY` can trigger `UNLOCK_THEATRE_DOOR` on `THEATRE_DOOR` in `FOYER1` despite the script row using owner/group `FOYER`.
 
 ## Next Suggested Action
 
-- Re-test `BALLROM1` maintenance warning regions, then `FOYER6_SMOKIN` and `FOYER6_FOYER5`, confirming cursor-disabled passive warnings still fire while cursor-enabled exit regions no longer trigger from unrelated sprite overlap.
+- Re-test using `KEWPIE_KEY` on `FOYER1` `THEATRE_DOOR`: confirm the door hotspot is deleted, `FOYR1_THEATRE1` is enabled, `KEWPIE_KEY` is removed from inventory, `FOYRDOOR_ANIM` plays, and the left theatre entrance changes rooms.
