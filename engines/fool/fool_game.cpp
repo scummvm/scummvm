@@ -253,7 +253,7 @@ void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32Strin
 
 	// 128:01b0
 	if (this->var_sfr_5e.good == 1) {
-		this->var_str_486 += this->var_sfr_5e.fName;
+		this->var_str_486 = this->var_sfr_5e.fName;
 		this->var_i16_586 = this->var_sfr_5e.vRefNum;
 	}
 
