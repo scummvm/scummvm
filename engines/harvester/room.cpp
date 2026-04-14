@@ -881,6 +881,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		RoomSetupState state;
 		bool shouldRunRoomEntryCommands = false;
 		if (_engine.hasPendingLoadedSaveRoomState()) {
+			// Native load destroys live render entities and frees preserved global timers
+			// before room_setup rebuilds the loaded room from restored TIMER records.
+			if (EntityManager *entityManager = _engine.getRuntimeEntities())
+				entityManager->clearSceneEntities(false);
 			flow.resetRoomNpcDialogueState();
 			if (_engine.hasPendingLoadedDialogueStateBlob()) {
 				if (!flow.loadDialogueSaveStateBlob(
