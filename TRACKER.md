@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 14, 2026, confirmed in Ghidra that native load restore destroys live render entities, removes preserved global timer entities while freeing old `TimerRecord` nodes, restores saved timer records by name, and lets `room_setup` materialize only timers whose `TimerRecord.arg1` matches the loaded room. Updated ScummVM load-room handoff to clear live scene entities without preserving global timers before applying a pending loaded save.
+- On April 14, 2026, fixed ScummVM Harvester global timer runtime handling so offscreen global timers touched by `SET_TIMER`/`KILL_TIMER` are synchronized as hidden timer entities after non-visual script mutations, including command chains that immediately transition rooms. Timer reconfiguration now also honors the entity manager pause depth.
 
 ## Next Suggested Action
 
-- Run with `debug_timers` enabled, start an active global timer in one room, load a save targeting a different room, and confirm the overlay only shows timers materialized for the loaded room.
+- Re-run the EYEHALL acid path without depending on `debug_timers`: kill `BIG_EYE`, leave to `MAINHALL`, let `ACID_TRIG_TIMER` start `ACID_TIMER`, `ACID_TIMER2`, and `ACID_TIMER3`, then re-enter EYEHALL and confirm the global acid timers have already decremented instead of restarting from their maximum values.
