@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 13, 2026, confirmed in Ghidra that `dispatch_room_event_actions` applies `SET_FLAG` without rebuilding the room or rereading the palette; `SHOW_TEXT` draws over the existing room palette, `CHANGE_LIGHTING NONE` clears to black, and `GOFLIC` starts the FST without an intermediate same-room `room_setup`. Updated the engine to refresh the live room only for current-room visual mutations, not flag-only or off-room runtime mutations.
+- On April 14, 2026, confirmed in Ghidra that native load restore destroys live render entities, removes preserved global timer entities while freeing old `TimerRecord` nodes, restores saved timer records by name, and lets `room_setup` materialize only timers whose `TimerRecord.arg1` matches the loaded room. Updated ScummVM load-room handoff to clear live scene entities without preserving global timers before applying a pending loaded save.
 
 ## Next Suggested Action
 
-- Re-run the DNAEXT night-5 fire exit path with `--debugflags=room,scene,general` and confirm the `SET_FIRE_TEXT1` modal remains on the night/dim palette until `CHANGE_LIGHTING NONE` blacks out before `GRAPHIC/FST/OVERNITE.FST`.
+- Run with `debug_timers` enabled, start an active global timer in one room, load a save targeting a different room, and confirm the overlay only shows timers materialized for the loaded room.
