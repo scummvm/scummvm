@@ -151,6 +151,12 @@ namespace micropather
 	class PathNode
 	{
 	public:
+		PathNode() = default;
+		PathNode(const PathNode &) = delete;
+		PathNode(PathNode &&) = delete;
+		PathNode &operator=(const PathNode &) = delete;
+		PathNode &operator=(PathNode &&) = delete;
+
 		void Init(	unsigned _frame,
 					void* _state,
 					float _costFromStart,
@@ -209,10 +215,6 @@ namespace micropather
 			else
 				totalCost = FLT_MAX;
 		}
-
-	private:
-
-		void operator=( const PathNode& );
 	};
 
 
