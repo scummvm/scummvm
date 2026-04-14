@@ -474,7 +474,7 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) const {
 }
 
 void Subtitles::clearSubtitle() const {
-	if (!_loaded)
+	if (!_loaded && !_subtitleDev)
 		return;
 
 	g_system->hideOverlay();
@@ -483,7 +483,7 @@ void Subtitles::clearSubtitle() const {
 }
 
 void Subtitles::updateSubtitleOverlay() const {
-	if (!_loaded)
+	if (!_loaded && !_subtitleDev)
 		return;
 
 	if (!shouldShowSubtitle()) {

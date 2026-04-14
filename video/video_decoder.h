@@ -30,6 +30,7 @@
 #include "common/str.h"
 #include "graphics/pixelformat.h"
 #include "image/codec-options.h"
+#include "video/subtitles.h"
 
 namespace Audio {
 class AudioStream;
@@ -1044,6 +1045,8 @@ protected:
 	VideoTrack *_nextVideoTrack;
 
 	Image::CodecAccuracy _videoCodecAccuracy;
+
+	Subtitles _subtitles;
 
 private:
 	uint32 _pauseLevel;

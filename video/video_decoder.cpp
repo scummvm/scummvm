@@ -48,6 +48,12 @@ VideoDecoder::VideoDecoder() {
 	_canSetDither = true;
 	_canSetDefaultFormat = true;
 	_videoCodecAccuracy = Image::CodecAccuracy::Default;
+
+	int16 h = g_system->getOverlayHeight();
+
+	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
+	_subtitles.setColor(0xff, 0xff, 0xff);
+	_subtitles.setFont("LiberationSans-Regular.ttf");
 }
 
 void VideoDecoder::close() {
@@ -87,6 +93,10 @@ bool VideoDecoder::loadFile(const Common::Path &filename) {
 	bool result = loadStream(file);
 	if (!result)
 		delete file;
+
+	Common::String subtitlesName = Common::String::format("%s.srt", filename.toString().c_str());
+	_subtitles.loadSRTFile(subtitlesName.c_str());
+
 	return result;
 }
 
@@ -225,6 +235,7 @@ const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 		_palette = _nextVideoTrack->getPalette();
 		_dirtyPalette = true;
 	}
+	_subtitles.drawSubtitle(getTime());
 
 	// Look for the next video track here for the next decode.
 	findNextVideoTrack();
@@ -453,6 +464,7 @@ void VideoDecoder::start() {
 }
 
 void VideoDecoder::stop() {
+	_subtitles.clearSubtitle();
 	if (!isPlaying())
 		return;
 
