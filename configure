@@ -4251,6 +4251,7 @@ case $_backend in
 		_libmpcdec=no
 		_build_scalers=no
 		_build_aspect=no
+		_helpdialog=no
 		;;
 	dc)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/dc'

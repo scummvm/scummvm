@@ -35,7 +35,6 @@ atarilitedist: $(EXECUTABLE)
 	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${LITE_DATA}
 
 	# remove unused files
-	$(RM) ${LITE_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${LITE_DATA}/, achievements classicmacfonts encoding macgui))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
@@ -66,7 +65,6 @@ atarifulldist: $(EXECUTABLE)
 	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FULL_DATA}
 
 	# remove unused files
-	$(RM) ${FULL_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${FULL_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	# rename remaining files still not fitting into the 8+3 limit (this has to be supported by the backend, too)
@@ -111,7 +109,6 @@ fbdist: $(EXECUTABLE)
 	$(CP) $(DIST_FILES_ENGINEDATA) $(DIST_FILES_ENGINEDATA_BIG) ${FB_DATA}
 
 	# remove unused files
-	$(RM) ${FB_DATA}/helpdialog.zip
 	$(RM) $(addsuffix .dat, $(addprefix ${FB_DATA}/, achievements classicmacfonts encoding hadesch_translations macgui prince_translation))
 
 	$(MKDIR) ${FB_THEMES}
