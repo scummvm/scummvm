@@ -1827,10 +1827,6 @@ const uint8 TownsPC98_FmSynth::_percussionData[] = {
 };
 #endif // DISABLE_PC98_RHYTHM_CHANNEL
 
-TownsPC98_FmSynth::ChanInternal::ChanInternal() {
-	memset(this, 0, sizeof(ChanInternal));
-}
-
 TownsPC98_FmSynth::ChanInternal::~ChanInternal() {
 	for (uint i = 0; i < ARRAYSIZE(opr); ++i)
 		delete opr[i];
