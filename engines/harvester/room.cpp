@@ -1598,45 +1598,30 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			return false;
 		};
-		auto isTimerNameInList = [&](const Common::Array<Common::String> &timerNames,
-				const Common::String &timerName) {
-			for (const Common::String &candidate : timerNames) {
-				if (candidate.equalsIgnoreCase(timerName))
-					return true;
-			}
-
-			return false;
-		};
-		auto syncOffscreenGlobalTimerEntities = [&](const Common::Array<Common::String> &timerNames) {
+		auto syncOffscreenGlobalTimerEntities =
+				[&](const Common::Array<TimerRecord> &previousTimerRecords) {
 			Script *script = _engine.getScript();
-			if (!script || !entityManager || timerNames.empty())
+			if (!script || !entityManager || previousTimerRecords.empty())
 				return;
 
-			for (const TimerRecord &baseTimer : script->getTimers()) {
-				const TimerRecord *runtimeTimer = script->findRuntimeTimerRecord(baseTimer.timerName);
-				if (!isTimerNameInList(timerNames, baseTimer.timerName) ||
-						!runtimeTimer || !runtimeTimer->global ||
+			for (const TimerRecord &previousTimer : previousTimerRecords) {
+				const TimerRecord *runtimeTimer =
+					script->findRuntimeTimerRecord(previousTimer.timerName);
+				if (!runtimeTimer || !runtimeTimer->global ||
 						isTimerMaterializedInCurrentRoom(runtimeTimer->timerName)) {
 					continue;
 				}
 
 				Entity *entity = entityManager->findSceneEntityByName(runtimeTimer->timerName);
-				if (!runtimeTimer->enabled && !entity)
-					continue;
 				if (entity && entity->getClassId() != kRuntimeEntityClassTimer)
 					continue;
 
 				if (!entity) {
-					(void)entityManager->spawnSceneTimerEntity(
-						runtimeTimer->timerName, runtimeTimer->initialValue,
-						runtimeTimer->currentValue, runtimeTimer->enabled,
-						runtimeTimer->looping, runtimeTimer->global);
+					(void)script->syncRuntimeTimerRecord(previousTimer);
 					debugC(1, kDebugRoom,
-						"Harvester: offscreen global timer spawned current_room='%s' timer='%s' owner_room='%s' current=%d initial=%d enabled=%d loop=%d",
-						scene.state.roomName.c_str(), runtimeTimer->timerName.c_str(),
-						runtimeTimer->arg1.c_str(), runtimeTimer->currentValue,
-						runtimeTimer->initialValue, runtimeTimer->enabled,
-						runtimeTimer->looping);
+						"Harvester: offscreen global timer mutation ignored current_room='%s' timer='%s' owner_room='%s' reason='missing live timer entity'",
+						scene.state.roomName.c_str(), previousTimer.timerName.c_str(),
+						previousTimer.arg1.c_str());
 					continue;
 				}
 
@@ -2153,7 +2138,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					(void)_engine.playMusic(exitInteraction.musicPath);
 				flow.executeStartupAudioCommands(exitInteraction.audioCommands);
 				if (exitInteraction.mutatedRuntimeState)
-					syncOffscreenGlobalTimerEntities(exitInteraction.mutatedTimerNames);
+					syncOffscreenGlobalTimerEntities(exitInteraction.previousTimerRecords);
 
 				if (!exitInteraction.cutscenePath.empty()) {
 					FstPlayer fstPlayer(_engine);
@@ -2383,7 +2368,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				}
 				flow.executeStartupAudioCommands(interaction.audioCommands);
 				if (interaction.mutatedRuntimeState)
-					syncOffscreenGlobalTimerEntitiesFn(interaction.mutatedTimerNames);
+					syncOffscreenGlobalTimerEntitiesFn(interaction.previousTimerRecords);
 				auto queueImplicitRoomRestart = [&]() -> Common::Error {
 					pendingRoomChangeIsRoomName = false;
 					pendingRoomChangeUsesSavedRoomState = false;
@@ -2652,7 +2637,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			// Native room_setup applies entry-time state changes before the first visible room frame.
 			if (roomEntryInteraction.mutatedRuntimeState) {
-				syncOffscreenGlobalTimerEntities(roomEntryInteraction.mutatedTimerNames);
+				syncOffscreenGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
 				if (!applyCurrentRoomRuntimeMutationsInPlace() &&
 						!refreshCurrentScene(true)) {
 					return Common::kReadingFailed;

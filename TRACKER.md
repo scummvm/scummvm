@@ -10,7 +10,7 @@
 
 ## Last Confirmed Action
 
-- On April 14, 2026, fixed ScummVM Harvester global timer runtime handling so offscreen global timers touched by `SET_TIMER`/`KILL_TIMER` are synchronized as hidden timer entities after non-visual script mutations, including command chains that immediately transition rooms. Timer reconfiguration now also honors the entity manager pause depth.
+- On April 14, 2026, rechecked native timer handling in Ghidra: `dispatch_room_event_actions` resolves `SET_TIMER`/`KILL_TIMER` through a live class `0x17` timer entity first, mirrors enabled state into `TimerRecord` only when that entity exists, and otherwise only logs `WARNING: Timer %s not in list`; `room_setup` materializes timers only for the resolved room while `destroy_entity_list` preserves global live timer entities across room changes. Tightened the ScummVM fix so missing offscreen live timer entities restore the prior `TimerRecord` instead of being synthesized.
 
 ## Next Suggested Action
 
