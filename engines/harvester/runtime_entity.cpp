@@ -896,9 +896,16 @@ Entity *EntityManager::spawnSceneTimerEntity(const Common::String &name,
 	Entity *entity = new Entity();
 	entity->setName(name);
 	entity->setClassId(kRuntimeEntityClassTimer);
-	entity->configureTimerCountdown(initialValue, currentValue, enabled, looping, global);
+	configureSceneTimerEntity(*entity, initialValue, currentValue, enabled, looping, global);
 	insertSceneEntity(entity);
 	return entity;
+}
+
+void EntityManager::configureSceneTimerEntity(Entity &entity, int initialValue, int currentValue,
+		bool enabled, bool looping, bool global) {
+	entity.configureTimerCountdown(initialValue, currentValue, enabled, looping, global);
+	if (_timerPauseDepth > 0)
+		entity.pauseTimerCountdown(getAnimationClockTicks());
 }
 
 void EntityManager::hideCursor() {

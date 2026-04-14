@@ -199,6 +199,8 @@ public:
 		const Common::Point &position, float z, int initialFrame);
 	Entity *spawnSceneTimerEntity(const Common::String &name, int initialValue, int currentValue,
 		bool enabled, bool looping, bool global);
+	void configureSceneTimerEntity(Entity &entity, int initialValue, int currentValue,
+		bool enabled, bool looping, bool global);
 	Entity *getCursorEntity() const { return _cursorEntity; }
 	void hideCursor();
 	void showCursor();
