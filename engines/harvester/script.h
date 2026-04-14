@@ -294,7 +294,7 @@ struct InteractionResult {
 	Common::String continuationTag;
 	ResolvedText modalText;
 	Common::Array<AudioCommand> audioCommands;
-	Common::Array<Common::String> mutatedTimerNames;
+	Common::Array<TimerRecord> previousTimerRecords;
 	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
 	StartupLightingCommand lightingCommand = kStartupLightingCommandNone;
 	int cdChangeDisc = 0;
@@ -460,7 +460,7 @@ private:
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
-		Common::Array<Common::String> *mutatedTimerNames, bool *requestCloseupExit);
+		Common::Array<TimerRecord> *previousTimerRecords, bool *requestCloseupExit);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
 		const Common::String &contextName, InteractionResult &result, uint recursionDepth) const;
 	bool hasActionableCommandChain(const Common::String &initialTag) const;

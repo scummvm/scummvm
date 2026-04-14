@@ -1811,7 +1811,7 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
 }
 
@@ -1830,7 +1830,7 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
 		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
 }
 
@@ -1867,7 +1867,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -1893,7 +1893,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
@@ -1926,7 +1926,7 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Obj
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
 }
 
@@ -1966,7 +1966,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -2002,7 +2002,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
-		&result.mutatedTimerNames, &result.requestCloseupExit);
+		&result.previousTimerRecords, &result.requestCloseupExit);
 
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
 		!result.deathFlicPath.empty() || result.requestMainMenu ||
@@ -2839,7 +2839,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
-		Common::Array<Common::String> *mutatedTimerNames, bool *requestCloseupExit) {
+		Common::Array<TimerRecord> *previousTimerRecords, bool *requestCloseupExit) {
 	auto isTruthy = [](const Common::String &value) {
 		return value.equalsIgnoreCase("T") || value.equalsIgnoreCase("ON") || value.equalsIgnoreCase("TRUE");
 	};
@@ -2852,16 +2852,18 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		if (changed && affectsCurrentRoom && visualRuntimeStateChanged)
 			*visualRuntimeStateChanged = true;
 	};
-	auto noteTimerMutation = [&](const Common::String &timerName, bool changed) {
-		if (!changed || !mutatedTimerNames || timerName.empty())
+	auto noteTimerMutation = [&](const TimerRecord *previousTimer, bool changed) {
+		if (!changed || !previousTimerRecords || !previousTimer ||
+				previousTimer->timerName.empty()) {
 			return;
+		}
 
-		for (const Common::String &mutatedTimerName : *mutatedTimerNames) {
-			if (mutatedTimerName.equalsIgnoreCase(timerName))
+		for (const TimerRecord &record : *previousTimerRecords) {
+			if (record.timerName.equalsIgnoreCase(previousTimer->timerName))
 				return;
 		}
 
-		mutatedTimerNames->push_back(timerName);
+		previousTimerRecords->push_back(*previousTimer);
 	};
 	auto belongsToContextRoom = [&](const Common::String &roomName) {
 		return !contextRoomName.empty() && roomName.equalsIgnoreCase(contextRoomName);
@@ -3091,21 +3093,27 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 
 		if (command->opcodeName.equalsIgnoreCase("SET_TIMER")) {
 			const TimerRecord *currentTimer = findRuntimeTimer(command->arg1);
+			TimerRecord previousTimer;
+			if (currentTimer)
+				previousTimer = *currentTimer;
 			const bool changed =
 				setRuntimeTimerEnabled(command->arg1, command->arg2.equalsIgnoreCase("ON"));
 			noteCurrentRoomVisualMutation(changed,
 				currentTimer && belongsToContextRoom(currentTimer->arg1));
-			noteTimerMutation(command->arg1, changed);
+			noteTimerMutation(currentTimer ? &previousTimer : nullptr, changed);
 			currentTag = command->arg4;
 			continue;
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_TIMER")) {
 			const TimerRecord *currentTimer = findRuntimeTimer(command->arg1);
+			TimerRecord previousTimer;
+			if (currentTimer)
+				previousTimer = *currentTimer;
 			const bool changed = setRuntimeTimerEnabled(command->arg1, false);
 			noteCurrentRoomVisualMutation(changed,
 				currentTimer && belongsToContextRoom(currentTimer->arg1));
-			noteTimerMutation(command->arg1, changed);
+			noteTimerMutation(currentTimer ? &previousTimer : nullptr, changed);
 			currentTag = command->arg4;
 			continue;
 		}
@@ -3126,7 +3134,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					deathFlicPath, requestMainMenu, cdChangeDisc, dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, requestPlayerGotoXZ,
 					playerGotoX, playerGotoZ, mutatedRuntimeState, visualRuntimeStateChanged,
-					mutatedTimerNames, requestCloseupExit);
+					previousTimerRecords, requestCloseupExit);
 				if (hasDeferredInteractionOutputs())
 					return;
 			}
