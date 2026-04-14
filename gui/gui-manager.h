@@ -37,7 +37,9 @@ class OSystem;
 
 namespace Graphics {
 class Font;
+#ifdef USE_HELPDIALOG
 class MacWindowManager;
+#endif
 }
 
 namespace Common {
@@ -154,7 +156,9 @@ public:
 
 	void displayTopDialogOnly(bool mode);
 
+#ifdef USE_HELPDIALOG
 	Graphics::MacWindowManager *getWM();
+#endif
 
 	// Defined in printing-dialog.cpp
 	void printImage(const Graphics::ManagedSurface &surf, bool defaultFitToPage, bool defaultCenter, PageOrientation defaultOrientation);
@@ -192,7 +196,9 @@ protected:
 	Common::SearchSet _iconsSet;
 	bool _iconsSetChanged;
 
+#ifdef USE_HELPDIALOG
 	Graphics::MacWindowManager *_wm = nullptr;
+#endif
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {

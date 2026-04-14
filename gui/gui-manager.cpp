@@ -37,7 +37,9 @@
 #include "gui/widget.h"
 
 #include "graphics/cursorman.h"
+#ifdef USE_HELPDIALOG
 #include "graphics/macgui/macwindowmanager.h"
+#endif
 
 namespace Common {
 DECLARE_SINGLETON(GUI::GuiManager);
@@ -102,7 +104,9 @@ GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled
 
 GuiManager::~GuiManager() {
 	delete _theme;
+#ifdef USE_HELPDIALOG
 	delete _wm;
+#endif
 }
 
 void GuiManager::initIconsSet() {
@@ -962,6 +966,7 @@ void GuiManager::initTextToSpeech() {
 	ttsMan->setVoice(voice);
 }
 
+#ifdef USE_HELPDIALOG
 Graphics::MacWindowManager *GuiManager::getWM() {
 	if (_wm)
 		return _wm;
@@ -977,6 +982,7 @@ Graphics::MacWindowManager *GuiManager::getWM() {
 
 	return _wm;
 }
+#endif
 
 void GuiManager::emptyTrash(Dialog *const activeDialog) {
 	Common::List<GuiObjectTrashItem>::iterator it = _guiObjectTrash.begin();

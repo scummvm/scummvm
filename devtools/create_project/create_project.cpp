@@ -1225,6 +1225,7 @@ const Feature s_features[] = {
 	{               "http",                      "USE_HTTP", false, true,  "HTTP client support" },
 	{          "basic-net",                 "USE_BASIC_NET", false, true,  "Basic network support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
+	{         "helpdialog",                "USE_HELPDIALOG", false, true,  "Help dialog support" },
 	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
 	{             "vkeybd",                 "ENABLE_VKEYBD", false, false, "Virtual keyboard support"},

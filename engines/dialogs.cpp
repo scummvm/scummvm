@@ -29,7 +29,9 @@
 
 #include "gui/about.h"
 #include "gui/gui-manager.h"
+#ifdef USE_HELPDIALOG
 #include "gui/helpdialog.h"
+#endif
 #include "gui/message.h"
 #include "gui/options.h"
 #include "gui/saveload.h"
@@ -80,7 +82,9 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
 	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
 
+#ifdef USE_HELPDIALOG
 	new GUI::ButtonWidget(this, "GlobalMenu.MainHelp", _("~H~elp"), Common::U32String(), kMainHelpCmd);
+#endif
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
@@ -131,11 +135,13 @@ void MainMenuDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		dialog.runModal();
 		}
 		break;
+#ifdef USE_HELPDIALOG
 	case kMainHelpCmd: {
 		GUI::HelpDialog dlg;
 		dlg.runModal();
 		}
 		break;
+#endif
 	case kLauncherCmd: {
 		Common::Event eventReturnToLauncher;
 		eventReturnToLauncher.type = Common::EVENT_RETURN_TO_LAUNCHER;

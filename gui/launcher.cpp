@@ -33,7 +33,9 @@
 #include "gui/chooser.h"
 #include "gui/dlcsdialog.h"
 #include "gui/editgamedialog.h"
+#ifdef USE_HELPDIALOG
 #include "gui/helpdialog.h"
+#endif
 #include "gui/launcher.h"
 #include "gui/massadd.h"
 #include "gui/message.h"
@@ -262,7 +264,9 @@ void LauncherDialog::build() {
 #endif
 		new StaticTextWidget(this, _title + ".Version", Common::U32String(gScummVMFullVersion));
 
+#ifdef USE_HELPDIALOG
 	new ButtonWidget(this, _title + ".HelpButton", Common::U32String("?"), _("Click here to see Help"), kHelpCmd);
+#endif
 
 	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
 		// I18N: Button Quit ScummVM program. Q is the shortcut, Ctrl+Q, put it in parens for non-latin (~Q~)
@@ -272,9 +276,11 @@ void LauncherDialog::build() {
 	// I18N: Button About ScummVM program. b is the shortcut, Ctrl+b, put it in parens for non-latin (~b~)
 	new ButtonWidget(this, _title + ".AboutButton", _("A~b~out"), _("About ScummVM"), kAboutCmd);
 
+#ifdef USE_HELPDIALOG
 	_mainHelpButton = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.Launcher.ShowMainHelp") == 1)
 		_mainHelpButton = new ButtonWidget(this, _title + ".MainHelpButton", _("Help"), _("General help"), kHelpCmd);
+#endif
 
 	// I18N: Button caption. O is the shortcut, Ctrl+O, put it in parens for non-latin (~O~)
 	new ButtonWidget(this, _title + ".OptionsButton", _("Global ~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd, 0, _c("Global ~O~pts...", "lowres"));
@@ -855,11 +861,13 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		setResult(-1);
 		close();
 		break;
+#ifdef USE_HELPDIALOG
 	case kHelpCmd: {
 		HelpDialog dlg;
 		dlg.runModal();
 		}
 		break;
+#endif
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	case kGridSwitchCmd:
 		setResult(kSwitchLauncherDialog);
@@ -954,6 +962,7 @@ void LauncherDialog::reflowLayout() {
 	_searchClearButton = addClearButton(this, _title + ".SearchClearButton", kSearchClearCmd);
 #endif
 
+#ifdef USE_HELPDIALOG
 	if (g_gui.xmlEval()->getVar("Globals.Launcher.ShowMainHelp") == 1) {
 		if (!_mainHelpButton)
 			_mainHelpButton = new ButtonWidget(this, _title + ".MainHelpButton", _("Help"), _("General help"), kHelpCmd);
@@ -964,6 +973,7 @@ void LauncherDialog::reflowLayout() {
 			_mainHelpButton = nullptr;
 		}
 	}
+#endif
 
 #ifndef DISABLE_LAUNCHERDISPLAY_GRID
 	addLayoutChooserButtons();

@@ -13,7 +13,6 @@ MODULE_OBJS := \
 	EventRecorder.o \
 	filebrowser-dialog.o \
 	gui-manager.o \
-	helpdialog.o \
 	imagealbum-dialog.o \
 	launcher.o \
 	massadd.o \
@@ -44,10 +43,15 @@ MODULE_OBJS := \
 	widgets/groupedlist.o \
 	widgets/list.o \
 	widgets/popup.o \
-	widgets/richtext.o \
 	widgets/scrollbar.o \
 	widgets/scrollcontainer.o \
 	widgets/tab.o
+
+ifdef USE_HELPDIALOG
+MODULE_OBJS += \
+	helpdialog.o \
+	widgets/richtext.o
+endif
 
 ifdef USE_CLOUD
 MODULE_OBJS += \

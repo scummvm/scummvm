@@ -76,7 +76,9 @@ enum {
 	kGraphicsWidget		= 'GFXW',
 	kContainerWidget	= 'CTNR',
 	kScrollContainerWidget = 'SCTR',
+#ifdef USE_HELPDIALOG
 	kRichTextWidget		= 'RTXT',
+#endif
 	kEEWidget			= 'EEGG',
 };
 

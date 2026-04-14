@@ -217,6 +217,7 @@ _enable_asan=no
 _enable_tsan=no
 _enable_ubsan=no
 _bink=yes
+_helpdialog=yes
 _cloud=auto
 _dlc=no
 _scummvmdlc=no
@@ -320,6 +321,7 @@ add_feature 16bit "16bit color" "_16bit"
 add_feature 3d "3D rendering" "_3d"
 add_feature bink "Bink" "_bink"
 add_feature cloud "cloud" "_cloud"
+add_feature helpdialog "Help dialog" "_helpdialog"
 add_feature faad "libfaad" "_faad"
 add_feature flac "FLAC" "_flac"
 add_feature fribidi "FriBidi" "_fribidi"
@@ -1358,6 +1360,8 @@ for ac_option in $@; do
 	--disable-enet)               _enet=no               ;;
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
+	--enable-helpdialog)          _helpdialog=yes        ;;
+	--disable-helpdialog)         _helpdialog=no         ;;
 	--enable-dlc)                 _dlc=yes               ;;
 	--disable-dlc)                _dlc=no                ;;
 	--enable-scummvmdlc)          _scummvmdlc=yes        ;;
@@ -7393,6 +7397,8 @@ else
 	echo "no"
 fi
 define_in_config_if_yes $_cloud 'USE_CLOUD'
+
+define_in_config_if_yes $_helpdialog 'USE_HELPDIALOG'
 
 echo_n "Building local web server... "
 echo "$_sdlnet"

@@ -20,7 +20,9 @@
  */
 
 #include "gui/browser.h"
+#ifdef USE_HELPDIALOG
 #include "gui/helpdialog.h"
+#endif
 #include "gui/gui-manager.h"
 #include "gui/widgets/edittext.h"
 #include "gui/widgets/list.h"
@@ -61,7 +63,9 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 
 	// Headline - TODO: should be customizable during creation time
 	new StaticTextWidget(this, "Browser.Headline", title);
+#ifdef USE_HELPDIALOG
 	new ButtonWidget(this, "Browser.Help", _("Help"), Common::U32String(), kHelpCmd);
+#endif
 
 	// Current path - TODO: handle long paths ?
 	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(), Common::U32String(), 0, kPathEditedCmd);
@@ -125,11 +129,13 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_node = Common::FSNode(Common::Path(Common::convertFromU32String(_currentPath->getEditString()), Common::Path::kNativeSeparator));
 		updateListing();
 		break;
+#ifdef USE_HELPDIALOG
 	case kHelpCmd: {
 		GUI::HelpDialog dlg;
 		dlg.runModal();
 		}
 		break;
+#endif
 	//Search by text input
 	case kChooseCmd:
 		if (_isDirBrowser) {
