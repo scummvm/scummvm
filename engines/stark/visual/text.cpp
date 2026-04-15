@@ -262,7 +262,9 @@ void VisualText::createBitmap() {
 
 	// Make sure lines have approximately consistent height regardless of the characters they use
 	scaledRect.bottom = MAX<int16>(scaledRect.bottom, scaledLineHeight * lines.size());
-	scaledRect.right = MAX<int16>(scaledRect.right, maxScaledLineWidth);
+
+	if (_align != Graphics::kTextAlignCenter)
+		scaledRect.right = MAX<int16>(scaledRect.right, maxScaledLineWidth);
 
 	if (!isBlank()) {
 		_originalRect.right = StarkGfx->scaleWidthCurrentToOriginal(scaledRect.right);
