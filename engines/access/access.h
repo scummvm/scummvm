@@ -293,7 +293,7 @@ public:
 	bool _restartFl;
 	bool _textFlag; // whether subtitles are enabled
 	bool _exitBox; // whether the current hotspot is an exit (Noctropolis only)
-	uint16 _stilScale;
+	uint16 _stilScaleOff;
 
 	// Fields mapped into the flags array
 	int &_useItem;

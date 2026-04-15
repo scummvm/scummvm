@@ -52,6 +52,8 @@ protected:
 
 	int validateBox(int boxId) override;
 
+	void clearRoom() override;
+
 	void roomInit() override;
 private:
 	// Like buildColumn but can handle negative playX.
