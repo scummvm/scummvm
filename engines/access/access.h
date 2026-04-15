@@ -184,7 +184,6 @@ protected:
 	/**
 	* Synchronize savegame data
 	*/
-	//virtual void synchronize(Common::Serializer &s);
 	virtual Common::Error synchronize(Common::Serializer &s);
 
 public:
@@ -344,7 +343,6 @@ public:
 	 * Save the game
 	 */
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
