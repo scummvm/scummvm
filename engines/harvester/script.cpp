@@ -3002,8 +3002,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 			const bool active = isTruthy(command->arg2);
 			const bool visible = isTruthy(command->arg3);
 			int runtimeState = currentAnimation->runtimeState;
-			if (!wasVisible && visible)
+			if (active && visible &&
+					(!wasVisible || !currentAnimation->runtimeActive || runtimeState < 0)) {
 				runtimeState = 0;
+			}
 			const bool changed = currentAnimation->active != active ||
 				currentAnimation->visible != visible ||
 				currentAnimation->runtimeActive != active ||
