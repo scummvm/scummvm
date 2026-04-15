@@ -61,6 +61,8 @@ void BubbleBox::clearBubbles() {
 		_vm->_screen->_screenYOff = 0;
 		r.left -= 2;
 		r.right = MIN(r.right, (int16)_vm->_screen->w);
+		
+		r.translate(-_vm->_screen->_windowXAdd, -_vm->_screen->_windowYAdd);
 
 		_vm->_screen->copyBlock(&_vm->_buffer1, r);
 	}
@@ -127,7 +129,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
 		} else {
 			assert(gameType == kGameNoctropolis);
-			lastLine = _vm->_fonts.getFont(4)->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
+			lastLine = _vm->_fonts.getFont(4)->getLine(s, 200, line, width, Font::kWidthInChars);
 			width = _vm->_fonts.getFont(4)->stringWidth(line);
 		}
 
@@ -292,7 +294,8 @@ void BubbleBox::printBubble_v3(const Common::String &msg) {
 		// Get next line
 		const Font *font = _vm->_fonts.getFont(4);
 		_vm->_fonts._font1 = font;
-		lastLine = font->getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
+		// Note: don't use _vm->_screen->maxchars, never set in Noct.
+		lastLine = font->getLine(s, 200, line, width, Font::kWidthInChars);
 		// Draw the text
 		printString(line);
 

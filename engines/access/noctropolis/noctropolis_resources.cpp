@@ -136,7 +136,8 @@ static const char *NOCT_FILES_2[] = {
 	"DARK/PLAYER.AP", "DARK/DARKSHR.AP",
 };
 
-static const char *NOCT_PLACE_NAMES[] = {
+static const char *NOCT_PLACE_NAMES[4][14] = {
+{
 	"       Cathedral",
 	"    Sunspire Tower",
 	"      Main Street",
@@ -151,6 +152,8 @@ static const char *NOCT_PLACE_NAMES[] = {
 	"Central Park Greenhouse",
 	"      Shadowlair",
 	"      Neon Noose",
+},
+{
 	"      Cathedrale",
 	"    Tour Sunspire",
 	"    Rue Principale",
@@ -165,6 +168,8 @@ static const char *NOCT_PLACE_NAMES[] = {
 	"  Serre de Central Park",
 	"     Antre d'Ombre",
 	"      Neon Noose",
+},
+{
 	"       Catedral",
 	"      Torre Solar",
 	"      Calle Mayor",
@@ -179,6 +184,8 @@ static const char *NOCT_PLACE_NAMES[] = {
 	" Invernadero del Parque",
 	"     Guarida Sombria",
 	"      Lazo de Neon",
+},
+{
 	"          Dom",
 	"      Sonnennadel",
 	"     Hauptstrasse",
@@ -193,6 +200,7 @@ static const char *NOCT_PLACE_NAMES[] = {
 	"Central Park Gewaechshaus",
 	"     Schattenhort",
 	"      Neon Noose",
+}
 };
 
 static const byte ROOMDATA_02[] = {
@@ -2159,7 +2167,17 @@ const char *NoctropolisResources::getAskItem(int num) const {
 	case Common::DE_DEU: return ASKITEMS[3][num];
 	default: error("Unsupported language for ask item");
 	}
+}
 
+const char *NoctropolisResources::getPlaceName(int num) const {
+	assert(num >= 0 && num < 33);
+	switch (_vm->getLanguage()) {
+	case Common::EN_ANY: return NOCT_PLACE_NAMES[0][num];
+	case Common::FR_FRA: return NOCT_PLACE_NAMES[1][num];
+	case Common::ES_ESP: return NOCT_PLACE_NAMES[2][num];
+	case Common::DE_DEU: return NOCT_PLACE_NAMES[3][num];
+	default: error("Unsupported language for place name");
+	}
 }
 
 const char *NoctropolisResources::getMoreItemsText() const {
