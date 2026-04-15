@@ -65,10 +65,14 @@ public:
 	bool _loadFlag;
 	byte _minigameCurrentConfig[9];
 
+	int &_stilFlag1;
+	int &_stilFlag2;
+
 	Scripts *_invScript;
 
 	void doTravel();
 	void setStilettoPos();
+	void stilWalk();
 
 	void initMinigame();
 	void displayPegsTick();

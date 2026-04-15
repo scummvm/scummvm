@@ -36,6 +36,7 @@ private:
 	NoctropolisEngine *_game;
 	Direction _lastDirection;
 	AnimationManager *_animManager;
+	bool _isStil;
 
 	void updatePlayerDirection();
 
@@ -43,7 +44,7 @@ private:
 	void calcManScale1();
 
 public:
-	NoctropolisPlayer(AccessEngine *vm);
+	NoctropolisPlayer(AccessEngine *vm, bool isStil = false);
 	~NoctropolisPlayer();
 
 	void load() override;

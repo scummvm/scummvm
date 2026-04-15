@@ -108,7 +108,6 @@ void NoctropolisRoom::reloadRoom1() {
 	buildScreen();
 	_vm->copyBF2Vid();
 
-	// TODO: Work out if this is right - the second room has roomflag 0 so maybe not??
 	if (_roomFlag >= 0 && !(kRoomFlagNoPlayer & _roomFlag)) {
 		if (_roomFlag & kRoomFlagStiletto)
 			_vm->_screen->setStilPalette();
@@ -119,6 +118,13 @@ void NoctropolisRoom::reloadRoom1() {
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
 	_vm->_events->clearEvents();
+}
+
+void NoctropolisRoom::clearRoom() {
+	Room::clearRoom();
+
+	_vm->_manScaleOff = 0;
+	_vm->_stilScaleOff = 0;
 }
 
 void NoctropolisRoom::roomInit() {
@@ -287,8 +293,8 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 	if (stil->_playerOff)
 		return 1;
 
-	_vm->_scale = _vm->_stilScale;
-	if (_vm->_stilScale == 0) {
+	_vm->_scale = _vm->_stilScaleOff;
+	if (_vm->_stilScaleOff == 0) {
 		_vm->_scale = (_vm->_scaleI *
 						(((_vm->_scaleH2 << 8) +
 						  _vm->_scaleT1 *

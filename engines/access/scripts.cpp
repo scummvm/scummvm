@@ -1923,8 +1923,14 @@ void Scripts::cmdSetCoords() {
 }
 
 void Scripts::cmdSetStilCoords() {
-	error("TODO: Implement Scripts::cmdSetStilCoords");
-	// ((Noctropolis::NoctropolisEngine *)_vm)->_stil->
+	const int x = _data->readSint16LE();
+	const int y = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdSetStilCoords(x=%d, y=%d)", x, y);
+	Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;
+	stil->_rawPlayer.x = x;
+	stil->_moveTo.x = x;
+	stil->_rawPlayer.y = y;
+	stil->_moveTo.y = y;
 }
 
 void Scripts::cmdSetPlayerDir() {
@@ -1939,7 +1945,7 @@ void Scripts::cmdSetStilDir() {
 
 void Scripts::cmdStilScale() {
 	debugC(1, kDebugScripts, "cmdStilScale()");
-	_vm->_stilScale = _data->readUint16LE();
+	_vm->_stilScaleOff = _data->readUint16LE();
 }
 
 void Scripts::cmdLockInterface() {

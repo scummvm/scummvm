@@ -37,7 +37,8 @@ namespace Noctropolis {
 
 NoctropolisEngine::NoctropolisEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 AccessEngine(syst, gameDesc), _invScript(nullptr), _stil(nullptr), _loadFlag(false),
-_travScrollX(0), _travScrollY(0), _travScrollCol(0), _travScrollRow(0)
+_travScrollX(0), _travScrollY(0), _travScrollCol(0), _travScrollRow(0), _stilFlag1(_flags[205]),
+_stilFlag2(_flags[234])
 {
 }
 
@@ -51,7 +52,7 @@ void NoctropolisEngine::initObjects() {
 	_invScript = new NoctropolisScripts(this);
 	_inventory = new NoctropolisInventory(this);
 	_video = new VideoPlayer_v2(this);
-	_stil = new NoctropolisPlayer(this);
+	_stil = new NoctropolisPlayer(this, true);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
@@ -749,6 +750,14 @@ void NoctropolisEngine::doSpecialComic() {
 	viewer->run(comic);
 	delete viewer;
 	delete comic;
+}
+
+void NoctropolisEngine::stilWalk() {
+	if (!(_room->_roomFlag & kRoomFlagStiletto) || _stilFlag1 == 1)
+		return;
+	if ((_player->_roomNumber == 26 && _stilFlag2 == 1) || (_player->_roomNumber != 26 && _stilFlag2 != 2))
+		return;
+	_stil->walk();
 }
 
 void NoctropolisEngine::synchronize(Common::Serializer &s) {

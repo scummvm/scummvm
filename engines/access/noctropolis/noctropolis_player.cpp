@@ -30,7 +30,8 @@ namespace Access {
 
 namespace Noctropolis {
 
-NoctropolisPlayer::NoctropolisPlayer(AccessEngine *vm) : Player(vm), _lastDirection(DOWN), _animManager(nullptr) {
+NoctropolisPlayer::NoctropolisPlayer(AccessEngine *vm, bool isStil) : Player(vm), _lastDirection(DOWN),
+_animManager(nullptr), _isStil(isStil) {
 	_game = (NoctropolisEngine *)vm;
 }
 
@@ -139,16 +140,9 @@ void NoctropolisPlayer::calcManScale() {
 }
 
 void NoctropolisPlayer::calcManScale1() {
-	_vm->_scale = _vm->_manScaleOff;
+	_vm->_scale = (_isStil ? _vm->_stilScaleOff : _vm->_manScaleOff);
 	if (!(_vm->_room->_roomFlag & kRoomFlagTopView)) {
 		if (_vm->_scale == 0) {
-			/*
-			_vm->_scale = (_vm->_scaleI *
-						   ((_vm->_scaleH2 * 0x100 +
-							 _vm->_scaleT1 *
-							 (_vm->_scaleN1 + (_playerY - _vm->_scaleMaxY)) & 0xff00) /
-							_vm->_scaleH1) >> 8);
-							*/
 			_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
 				_vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
 		}

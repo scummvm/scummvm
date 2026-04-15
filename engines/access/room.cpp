@@ -214,8 +214,8 @@ void Room::doRoom() {
 					takePicture();
 				} else {
 					_vm->_player->walk();
-					if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto)
-						((Noctropolis::NoctropolisEngine *)_vm)->_stil->walk();
+					if (_vm->getGameID() == kGameNoctropolis)
+						((Noctropolis::NoctropolisEngine *)_vm)->stilWalk();
 					_vm->_midi->midiRepeat();
 					_vm->_player->checkScroll();
 				}
