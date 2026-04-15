@@ -443,12 +443,10 @@ void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 
 	_autoScroll = false;
 	_fluidScroller->stopAnimation();
-
-	_scrollPos += stepping;
-	_scrollPos = _fluidScroller->setPosition(_scrollPos, true);
+	_fluidScroller->feedWheel(g_system->getMillis(), (float)stepping);
 
 	if (_scrollbar) {
-		_scrollbar->_currentPos = (int)_scrollPos;
+		_scrollbar->_currentPos = (int)_fluidScroller->getVisualPosition();
 		_scrollbar->recalc();
 	}
 
