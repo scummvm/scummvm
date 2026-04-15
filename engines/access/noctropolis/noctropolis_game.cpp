@@ -51,7 +51,7 @@ void NoctropolisEngine::initObjects() {
 	_invScript = new NoctropolisScripts(this);
 	_inventory = new NoctropolisInventory(this);
 	_video = new VideoPlayer_v2(this);
-	_stil = Player::init(this);
+	_stil = new NoctropolisPlayer(this);
 
 	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "comdata");
@@ -714,7 +714,6 @@ void NoctropolisEngine::playSuccubusAttack() {
 	_midi->stopSong();
 	_midi->loadMusic(98, 4);
 	_midi->midiPlay();
-	_screen->fadeOut();
 	_files->loadScreen(Common::Path("scene06.scn")); // "DARK/SCENE06.SCN"
 	_screen->fadeIn();
 	_system->updateScreen();

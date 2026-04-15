@@ -47,9 +47,6 @@ class AccessEngine;
 
 class Player : public ImageEntry, public Manager {
 protected:
-	// should be constructed via ::init().
-	Player(AccessEngine *vm);
-
 	int _leftDelta, _rightDelta;
 	int _upDelta, _downDelta;
 	int _scrollConst;
@@ -84,6 +81,9 @@ protected:
 
 	void loadPalResource(Resource *pal);
 public:
+	// should be constructed via ::init().
+	Player(AccessEngine *vm);
+
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
 	// Fields in original Player structure
@@ -158,7 +158,7 @@ public:
 	/**
 	* Synchronize savegame data
 	*/
-	void synchronize(Common::Serializer &s);
+	virtual void synchronize(Common::Serializer &s);
 };
 
 } // End of namespace Access

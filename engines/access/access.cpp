@@ -47,6 +47,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_helpBox = nullptr;
 	_midi = nullptr;
 	_player = nullptr;
+	_curPlayer = nullptr;
 	_res = nullptr;
 	_room = nullptr;
 	_screen = nullptr;
@@ -191,6 +192,7 @@ void AccessEngine::initialize() {
 	_screen = new Screen(this);
 	_sound = new SoundManager(this, _mixer);
 	_midi = new MusicManager(this);
+	_curPlayer = _player;
 
 	syncSoundSettings();
 	setTotalPlayTime(0);

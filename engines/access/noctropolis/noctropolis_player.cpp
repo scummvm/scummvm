@@ -89,10 +89,10 @@ static int _animNumForDir(Direction dir) {
 void NoctropolisPlayer::updatePlayerDirection() {
 	if (_playerOff)
 		return;
-	
+
 	int16 absDeltaX = abs(_moveTo.x - _rawPlayer.x);
 	int16 absDeltaY = abs(_moveTo.y - _rawPlayer.y);
-	
+
 	int scaleEntry = (_vm->_room->_roomFlag & kRoomFlagTopView) ? 4 : 20;
 	int16 minMove = _vm->_screen->_scaleTable1[scaleEntry];
 	if (minMove < absDeltaX) {
@@ -152,7 +152,7 @@ void NoctropolisPlayer::calcManScale1() {
 			_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
 				_vm->_scaleT1 + (_vm->_scaleH2 << 8)) & 0xff00) / _vm->_scaleH1 * _vm->_scaleI) >> 8;
 		}
-		
+
 		_vm->_screen->setScaleTable(_vm->_scale);
 		_playerOffset.x = _vm->_screen->_scaleTable1[60];
 		_playerOffset.y = _vm->_screen->_scaleTable1[200];
@@ -172,6 +172,8 @@ void NoctropolisPlayer::walk() {
 	if (_playerOff)
 		return;
 
+	_vm->_curPlayer = this;
+
 	updatePlayerDirection();
 
 	calcManScale();
@@ -180,7 +182,8 @@ void NoctropolisPlayer::walk() {
 		// Idle animation (using last direction)
 		_playerX = _rawPlayer.x;
 		_playerY = _rawPlayer.y;
-		_animManager->animate(_animNumForDir(_lastDirection) + 8);
+		if (_animManager)
+			_animManager->animate(_animNumForDir(_lastDirection) + 8);
 		_playerMove = false;
 	} else {
 		// Move animation
@@ -199,9 +202,9 @@ void NoctropolisPlayer::walk() {
 			_animManager->animate(dirAnimNum);
 		_rawPlayer.x = _playerX;
 		_rawPlayer.y = _playerY;
-		
+
 		calcManScale1();
-		
+
 		/*
 		if (local_30 != (byte *)0x0) {
 			local_48.animNum = dirAnimNum;
@@ -212,6 +215,12 @@ void NoctropolisPlayer::walk() {
 	}
 }
 
+void NoctropolisPlayer::synchronize(Common::Serializer &s) {
+	Player::synchronize(s);
+	s.syncAsSint16LE(_moveTo.x);
+	s.syncAsSint16LE(_moveTo.x);
+	s.syncAsByte(_playerMove);
+}
 
 
 } // End of namespace Noctropolis

@@ -213,18 +213,18 @@ void Animation::anim7() {
 
 void Animation::anim8() {
 	const AnimationFrame *frame = calcFrame();
-	if (!_vm->_player->_playerOff) {
+	if (!_vm->_curPlayer->_playerOff) {
 		assert(frame->_parts.size() > 0);
 		const AnimationFramePart &part0 = frame->_parts[0];
 		const SpriteFrame *spriteFrame0 = _vm->_objectsTable[part0._spritesIndex]->_frames[part0._frameIndex];
 		_vm->_animation->_base.x = frame->_baseX;
 		_vm->_animation->_base.y = frame->_baseY;
-		int playerX = _vm->_player->_playerX;
-		int playerY = _vm->_player->_playerY;
+		int playerX = _vm->_curPlayer->_playerX;
+		int playerY = _vm->_curPlayer->_playerY;
 		int frameX = _vm->_animation->_base.x + part0._position.x;
 		int frameY = _vm->_animation->_base.y + part0._position.y;
-		int playerOffX = _vm->_player->_playerOffset.x;
-		int playerOffY = _vm->_player->_playerOffset.y;
+		int playerOffX = _vm->_curPlayer->_playerOffset.x;
+		int playerOffY = _vm->_curPlayer->_playerOffset.y;
 
 		if (playerX <= frameX + spriteFrame0->w &&
 			playerY - playerOffY <= frameY + spriteFrame0->h &&
@@ -250,7 +250,7 @@ void Animation::anim11() {
 	const AnimationFrame *frame = calcFrame();
 	_countdownTicks += frame->_frameDelay;
 	_scaling = _vm->_scale;
-	setFrame1(frame, _vm->_player->_playerX, _vm->_player->_playerY - _vm->_player->_playerOffset.y);
+	setFrame1(frame, _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY - _vm->_curPlayer->_playerOffset.y);
 }
 
 void Animation::anim12() {
@@ -272,18 +272,18 @@ void Animation::anim12() {
 		int16 xadd = ABS(deltaX) * _vm->_scale / 256;
 		int16 yadd = ABS(deltaY) * _vm->_scale / 256;
 		if (deltaX < 0)
-			_vm->_player->_playerX -= xadd;
+			_vm->_curPlayer->_playerX -= xadd;
 		else
-			_vm->_player->_playerX += xadd;
+			_vm->_curPlayer->_playerX += xadd;
 		if (deltaY < 0)
-			_vm->_player->_playerY -= yadd;
+			_vm->_curPlayer->_playerY -= yadd;
 		else
-			_vm->_player->_playerY += yadd;
+			_vm->_curPlayer->_playerY += yadd;
 		_countdownTicks += frame->_frameDelay;
-		debugC(kDebugGraphics, "anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_player->_playerX, _vm->_player->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
+		debugC(kDebugGraphics, "anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
 	}
 	_scaling = _vm->_scale;
-	setFrame1(frame, _vm->_player->_playerX, _vm->_player->_playerY - _vm->_player->_playerOffset.y);
+	setFrame1(frame, _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY - _vm->_curPlayer->_playerOffset.y);
 }
 
 

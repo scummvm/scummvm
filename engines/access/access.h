@@ -208,6 +208,7 @@ public:
 	FileManager *_files;
 	InventoryManager *_inventory;
 	Player *_player;
+	Player *_curPlayer; // current player being animated (only changes in Noctropolis)
 	Resources *_res;
 	Room *_room;
 	Screen *_screen;
