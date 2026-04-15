@@ -472,21 +472,12 @@ void AccessEngine::syncSoundSettings() {
 }
 
 Common::Error AccessEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
-	stream->writeByte(ACCESS_SAVEGAME_VERSION);
 	Common::Serializer s(nullptr, stream);
-	s.setVersion(ACCESS_SAVEGAME_VERSION);
-
 	return synchronize(s);
 }
 
-Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {
-	byte version = stream->readByte();
-	if (version != ACCESS_SAVEGAME_VERSION)
-		error("Invalid savegame version");
-
-	Common::Serializer s(stream, nullptr);
-	s.setVersion(version);
-
+Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {	
+	Common::Serializer s(stream, nullptr);	
 	Common::Error result = synchronize(s);
 
 	// Set extra post-load state
@@ -495,26 +486,6 @@ Common::Error AccessEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	_events->clearEvents();
 
 	return result;
-}
-
-/*
-Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::OutSaveFile *out = g_system->getSavefileManager()->openForSaving(
-		getSaveStateName(slot));
-	if (!out)
-		return Common::kCreatingFileFailed;
-
-	AccessSavegameHeader header;
-	header._saveName = desc;
-	writeSavegameHeader(out, header);
-
-	Common::Serializer s(nullptr, out);
-	synchronize(s);
-
-	out->finalize();
-	delete out;
-
-	return Common::kNoError;
 }
 
 Common::Error AccessEngine::loadGameState(int slot) {
@@ -527,9 +498,11 @@ Common::Error AccessEngine::loadGameState(int slot) {
 
 	// Load the savaegame header
 	AccessSavegameHeader header;
-	if (!readSavegameHeader(saveFile, header))
-		error("Invalid savegame");
-
+	if (!readSavegameHeader(saveFile, header)) {
+		delete saveFile;
+		return Engine::loadGameState(slot);
+	}
+		
 	// Load most of the savegame data
 	synchronize(s);
 	delete saveFile;
@@ -544,7 +517,7 @@ Common::Error AccessEngine::loadGameState(int slot) {
 
 	return Common::kNoError;
 }
-*/
+
 
 bool AccessEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return _canSaveLoad;
@@ -576,8 +549,8 @@ Common::Error AccessEngine::synchronize(Common::Serializer &s) {
 const char *const SAVEGAME_STR = "ACCESS";
 #define SAVEGAME_STR_SIZE 6
 
-/*
-WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail) {
+
+bool AccessEngine::readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail) {
 	char saveIdentBuffer[SAVEGAME_STR_SIZE + 1];
 
 	// Validate the header Id
@@ -613,40 +586,6 @@ WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in,
 	
 	return true;
 }
-
-void AccessEngine::writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header) {
-	// Write out a savegame header
-	out->write(SAVEGAME_STR, SAVEGAME_STR_SIZE + 1);
-
-	out->writeByte(ACCESS_SAVEGAME_VERSION);
-
-	// Write savegame name
-	out->writeString(header._saveName);
-	out->writeByte('\0');
-
-	// Write a thumbnail of the screen
-	uint8 thumbPalette[Graphics::PALETTE_SIZE];
-	_screen->getPalette(thumbPalette);
-	Graphics::Surface saveThumb;
-	::createThumbnail(&saveThumb, (const byte *)_screen->getPixels(),
-		_screen->w, _screen->h, thumbPalette);
-	Graphics::saveThumbnail(*out, saveThumb);
-	saveThumb.free();
-
-	// Write out the save date/time
-	TimeDate td;
-	g_system->getTimeAndDate(td);
-	out->writeSint16LE(td.tm_year + 1900);
-	out->writeSint16LE(td.tm_mon + 1);
-	out->writeSint16LE(td.tm_mday);
-	out->writeSint16LE(td.tm_hour);
-	out->writeSint16LE(td.tm_min);
-	out->writeUint32LE(_events->getFrameCounter());
-
-	// Write the total PlayTime (ms)
-	out->writeUint32LE(g_engine->getTotalPlayTime() / 1000);
-}
-*/
 
 bool AccessEngine::shouldQuitOrRestart() {
 	return shouldQuit() || _restartFl;

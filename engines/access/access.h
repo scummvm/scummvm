@@ -126,7 +126,7 @@ static const AccessActionCode MARTIAN_ACTION_CODES[] = {
 	{ kActionNone, -1 },
 };
 
-#define ACCESS_SAVEGAME_VERSION 2
+#define ACCESS_SAVEGAME_VERSION 1
 
 struct AccessSavegameHeader {
 	uint8 _version;
@@ -337,13 +337,12 @@ public:
 	/**
 	 * Load a savegame
 	 */
-	//Common::Error loadGameState(int slot) override;
+	Common::Error loadGameState(int slot) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save the game
 	 */
-	//Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	
 	/**
@@ -359,12 +358,7 @@ public:
 	/**
 	 * Read in a savegame header
 	 */
-	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail = true);
-
-	/**
-	 * Write out a savegame header
-	 */
-	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
+	static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail = true);
 
 	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 };
