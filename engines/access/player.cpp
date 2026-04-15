@@ -137,9 +137,9 @@ void Player::load() {
 	_playerSprites = _playerSprites1;
 	if (_manPal1) {
 		if (_vm->getGameID() == kGameNoctropolis) {
-			if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
-				Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
-			}
+			//if (_vm->_room->_roomFlag & kRoomFlagStiletto) {
+			//	Common::copy(_manPal1 + 0x1e0, _manPal1 + 0x1e0 + 99, _vm->_screen->_stilPal);
+			//}
 			Common::copy(_manPal1 + 0x240, _manPal1 + 0x240 + 0x84, _vm->_screen->_manPal);
 		} else {
 			// Those values are from MM as Amazon doesn't use it

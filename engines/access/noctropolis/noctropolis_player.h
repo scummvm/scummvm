@@ -53,6 +53,7 @@ public:
 
 	void updateTimers() override;
 
+	void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Noctropolis

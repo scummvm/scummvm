@@ -214,7 +214,7 @@ void Room::doRoom() {
 					takePicture();
 				} else {
 					_vm->_player->walk();
-					if (_vm->getGameID() == kGameNoctropolis)
+					if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto)
 						((Noctropolis::NoctropolisEngine *)_vm)->_stil->walk();
 					_vm->_midi->midiRepeat();
 					_vm->_player->checkScroll();
@@ -350,7 +350,8 @@ void Room::loadRoomData(const byte *roomData) {
 	if (_vm->getGameID() == kGameNoctropolis && _roomFlag & kRoomFlagStiletto) {
 		// Load _vm->_screen->_stilPal
 		Resource *stilPal = _vm->_files->loadFile(0xfd, _palIntensity + 6);
-		memcpy(stilPal->data() + 480, _vm->_screen->_stilPal, 99);
+		memcpy(_vm->_screen->_stilPal, stilPal->data() + 480, 99);
+		delete stilPal;
 
 		Player *stil = ((Noctropolis::NoctropolisEngine *)_vm)->_stil;
 		((Noctropolis::NoctropolisPlayer *)stil)->loadAnimation(0xfd, 0);
@@ -358,6 +359,7 @@ void Room::loadRoomData(const byte *roomData) {
 		for (int subFileNum = 1; subFileNum < 6; subFileNum++) {
 			Resource *data = _vm->_files->loadFile(0xfd, subFileNum);
 			_vm->_objectsTable[0x6d + subFileNum] = new SpriteResource(_vm, data);
+			delete data;
 		}
 	}
 

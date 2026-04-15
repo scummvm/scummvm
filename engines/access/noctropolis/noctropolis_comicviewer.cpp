@@ -89,6 +89,7 @@ void ComicViewer::run(const ComicResource *comic) {
 	_vm->_screen->copyRawPalToTempPal();
 	_vm->_screen->fadeOut();
 	// Now restore the original screen and pal.
+	_vm->_screen->clearScreen();
 	_vm->_screen->restorePalette();
 	_vm->_screen->setPalette();
 	_vm->_screen->copyRawPalToTempPal();
@@ -107,7 +108,6 @@ PageResult ComicViewer::runPage(const ComicPage *page) {
 	bool playedSound = false;
 
 	while (result == kPageResultNone) {
-
 		_vm->_events->pollEvents();
 		_vm->_events->delayUntilNextFrame();
 		Common::CustomEventType action = kActionNone;
