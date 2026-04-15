@@ -58,6 +58,12 @@ public:
 	// Start a fling using the recorded velocity
 	void startFling();
 
+	// Start a fling with a specific initial velocity
+	void startFling(float velocity);
+
+	// Record a wheel tick and start/update a fling
+	void feedWheel(uint32 time, float deltaY);
+
 	// Check if there is an active animation (fling or spring-back)
 	bool isAnimating() const { return _mode != kModeNone; }
 
@@ -102,6 +108,7 @@ private:
 	};
 
 	VelocityTracker _velocityTracker;
+	uint32 _lastWheelTime;
 
 	Mode _mode;
 	uint32 _startTime;
