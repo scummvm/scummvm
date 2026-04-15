@@ -863,7 +863,9 @@ Entity *EntityManager::spawnSceneAnimationEntity(const Common::String &name,
 	if (!playBackwards && initialFrame >= 0)
 		startFrame = CLIP<int>(initialFrame, 0, entity->getLastFrame());
 	entity->setCurrentFrame(startFrame);
-	entity->setAnimationEnabled(active);
+	// Non-looping room ANIM records can be authored visible but are started by SET_ANIM.
+	const bool shouldAdvance = active && (looping || initialFrame >= 0);
+	entity->setAnimationEnabled(shouldAdvance);
 
 	if (!active && !visible)
 		entity->setVisible(false);

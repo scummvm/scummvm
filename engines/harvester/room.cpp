@@ -1784,6 +1784,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					entity->setPlayBackwards(anim.backward);
 					entity->setAnimationRate(anim.frameDelay);
 					entity->setVisible(isDisplayed);
+					if (anim.active && anim.runtimeState >= 0 && !entity->isAnimationEnabled())
+						entity->setCurrentFrame(anim.runtimeState);
 					entity->setAnimationEnabled(anim.active);
 					if (zChanged)
 						entityManager->reinsertSceneEntity(entity);
