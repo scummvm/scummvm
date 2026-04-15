@@ -68,6 +68,7 @@ public:
 	const char *getResponseTitle() const;
 	const char *getAskItem(int num) const;
 	const char *getMoreItemsText() const;
+	const char *getPlaceName(int num) const;
 
 	const ComicResource *getLastComicResource() const;
 	const ComicResource *getSpecialComicResource() const;

@@ -472,7 +472,7 @@ void Room::setupRoom() {
 	screen.setScaleTable(_vm->_scale);
 	screen.setBufferScan();
 
-	if (_roomFlag != 2)
+	if (_roomFlag != 2 || _vm->getGameID() == kGameNoctropolis)
 		screen.setIconPalette();
 
 	if (screen._vWindowWidth == _playFieldWidth) {

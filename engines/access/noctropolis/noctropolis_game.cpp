@@ -378,14 +378,18 @@ void NoctropolisEngine::doTravel() {
 	_screen->setPaletteCycle(0xb5, 0xbe, 5);
 	_screen->fadeIn();
 
+	const Font *font = _fonts.getFont(3);
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 181;
+
 	Common::Point rawMouse;
-	int locFlag = -1;
+	int selectedLoc = -1;
+	int hoveredLoc = -1;
 	// Show the map and wait for clicks
-	while (!shouldQuitOrRestart() && locFlag == -1) {
+	while (!shouldQuitOrRestart() && selectedLoc == -1) {
 		_midi->midiRepeat();
 
-		// TODO: check me.. is buildScreen equivalent??
-		((NoctropolisRoom *)_room)->buildScreenXScroll();
+		_room->buildScreen();
 		_buffer2.copyFrom(_buffer1);
 
 		_player->calcPlayer();
@@ -403,33 +407,29 @@ void NoctropolisEngine::doTravel() {
 		copyBF2Vid();
 
 		_screen->cyclePaletteForward();
-		locFlag = -1;
+		selectedLoc = -1;
 		rawMouse = _events->calcRawMouse();
 
+		int boxResult = _room->checkBoxes1(rawMouse);
+		if (boxResult != hoveredLoc) {
+			_screen->fillRect(Common::Rect(Common::Point(220, 380), 300, 16), 246);
+			if (boxResult != -1) {
+				const char *name = ((NoctropolisResources *)_res)->getPlaceName(boxResult);
+				font->drawString(_screen, name, Common::Point(220, 380));
+			}
+			hoveredLoc = boxResult;
+		}
 		if (_events->_leftButton) {
 			_events->debounceLeft();
-			int boxResult = _room->checkBoxes1(rawMouse);
 			if (boxResult != -1 && _travel[boxResult])
-				locFlag = boxResult;
+				selectedLoc = boxResult;
 		}
 
-		if (!_events->_leftButton || locFlag == -1) {
-			int scrolly = _scrollY;
-
-			// TODO: Clean up these if()s a bit
-			if (rawMouse.y < 33) {
-				if (_scrollRow != 0 && (scrolly = _scrollY + -8, (_scrollY + -8) < 0)) {
-					int row = _scrollRow + -1;
-					scrolly = _scrollY + 8;
-					_scrollRow = 0;
-					if (-1 < row)
-						_scrollRow = row;
-				}
-			} else if (367 < rawMouse.y &&
-						(_screen->_vWindowHeight + _scrollRow != _room->_playFieldHeight) &&
-					   (scrolly = _scrollY + 8, 0xf < (_scrollY + 8))) {
-				scrolly = _scrollY + -8;
-				_scrollRow = _scrollRow + 1;
+		if (!_events->_leftButton || selectedLoc == -1) {
+			if (_events->_mousePos.y < 33 && _scrollRow > 0) {
+				_scrollRow--;
+			} else if (_events->_mousePos.y > 367 && _screen->_vWindowHeight + _scrollRow < _room->_playFieldHeight) {
+				_scrollRow++;
 			}
 		}
 
@@ -439,7 +439,7 @@ void NoctropolisEngine::doTravel() {
 	if (shouldQuitOrRestart())
 		return;
 
-	assert(locFlag > 0 && locFlag < 15);
+	assert(selectedLoc >= 0 && selectedLoc < 15);
 
 	// This is NoctTravelEngine::done
 	_screen->fadeOut();
@@ -447,9 +447,9 @@ void NoctropolisEngine::doTravel() {
 	_travScrollCol = _scrollCol;
 	_travScrollX = _scrollX;
 	_travScrollY = _scrollY;
-	_player->_roomNumber = TRAV_ROOMS[locFlag];
-	_player->_rawPlayer.x = TRAV_MAN_POS[locFlag * 2];
-	_player->_rawPlayer.y = TRAV_MAN_POS[locFlag * 2 + 1];
+	_player->_roomNumber = TRAV_ROOMS[selectedLoc];
+	_player->_rawPlayer.x = TRAV_MAN_POS[selectedLoc * 2];
+	_player->_rawPlayer.y = TRAV_MAN_POS[selectedLoc * 2 + 1];
 	_player->_moveTo = _player->_rawPlayer;
 	setStilettoPos();
 	_room->_function = FN_CLEAR1;
