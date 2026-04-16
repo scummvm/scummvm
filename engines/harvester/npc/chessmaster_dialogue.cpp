@@ -424,7 +424,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 			return lineError;
 
 		InteractionResult interaction;
-		if (runtime.startupScript().executeActionTag(kChessKingMonsterActionTag, interaction)) {
+		if (runtime.executeActionTag(kChessKingMonsterActionTag, interaction)) {
 			interaction.cutscenePath = "GRAPHIC/FST/KINGGROW.FST";
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);

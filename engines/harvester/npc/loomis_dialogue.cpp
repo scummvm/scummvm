@@ -88,7 +88,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeLoomisActionTag = [&](const char *tag) {
 		InteractionResult interaction;
-		if (!runtime.startupScript().executeActionTag(tag, interaction))
+		if (!runtime.executeActionTag(tag, interaction))
 			return;
 
 		runtime.applyImmediateDialogueInteractionEffects(interaction);

@@ -90,7 +90,7 @@ Common::Error SergeantDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag) -> Common::Error {
 		InteractionResult interaction;
-		if (!runtime.startupScript().executeActionTag(actionTag, interaction))
+		if (!runtime.executeActionTag(actionTag, interaction))
 			return Common::kNoError;
 
 		runtime.applyImmediateDialogueInteractionEffects(interaction);

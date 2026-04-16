@@ -47,7 +47,7 @@ Common::Error CloakAtndDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 			return Common::kNoError;
 
 		InteractionResult interaction;
-		if (runtime.startupScript().executeActionTag(kCleanClothesActionTag, interaction)) {
+		if (runtime.executeActionTag(kCleanClothesActionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 		}
