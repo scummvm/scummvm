@@ -165,11 +165,8 @@ Common::Error WaspWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (selectedTopic.empty())
 			return Common::kNoError;
 		if (selectedTopic.equalsIgnoreCase(runtime.genericByeTopic()) ||
-				runtime.matchesResponseLine(selectedTopic, kWaspWomanInitialExitResponseLine)) {
-			if (waspWomanTopicBufferLineIndex == kWaspWomanInitialTopicBufferResponseLine)
-				return Common::kNoError;
-			continue;
-		}
+				runtime.matchesResponseLine(selectedTopic, kWaspWomanInitialExitResponseLine))
+			return Common::kNoError;
 
 		if (runtime.matchesResponseLine(selectedTopic, kWaspWomanTopic302ResponseLine)) {
 			Common::Error lineError = runtime.playDialogueEntrySequence(
