@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, confirmed `HARVEST.SCR` room `NARCISSISM` spawns NPC `DARK_WOMAN` with monsterfy target `DARK_WOMAN_MONSTER`, and confirmed in Ghidra that `handle_talk_to_dark_woman` plays insult response line `0x4ce2` then calls `queue_live_named_npc_death_or_monsterfy_transition("DARK_WOMAN")`. Updated the Dark Woman insult branches to queue the live NPC monsterfy transition and mark the current room visual state dirty.
+- On April 16, 2026, checked Inquisitor, Gladiator, and Beggar monsterfy dialogue paths against `HARVEST.SCR` and Ghidra. Confirmed `handle_talk_to_gladiator` calls `queue_live_named_npc_death_or_monsterfy_transition("GLADIATOR")` after hostile branches, and `handle_talk_to_beggar` calls `queue_live_named_npc_death_or_monsterfy_transition("BEGGAR")` at dialogue completion. Updated both handlers to queue the live monsterfy transition and mark current room visual state dirty. Confirmed Inquisitor dialogue only dispatches `START_INQ_TIM`; its later `MONSTERFY "INQUISITOR"` remains script/timer-driven.
 
 ## Next Suggested Action
 
-- Re-test entering `NARCISSISM` from `C1_2_G2`, choose "Uh, you're not that hot...", and verify `DARK_WOMAN` begins the monsterfy animation, `DARK_WOMAN_MONSTER` appears active afterward, and the `SET_D_W_FLAG` death command opens exits `G_1` and `G_3` after the monster is defeated.
+- Re-test `MERCY` hostile Gladiator branches and `CHARITY` Beggar dialogue completion, and verify each live NPC begins the monsterfy animation before its monster record becomes active. Also re-test `PAIN` long enough for `INQUIST_ATTACK_TIMER` to fire and verify Inquisitor still monsterfies through the script timer path.

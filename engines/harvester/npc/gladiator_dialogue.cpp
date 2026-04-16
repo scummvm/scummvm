@@ -46,10 +46,12 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playGladiatorLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kGladiatorNpc, headVariant);
 	};
-	auto queueGladiatorDeathOrMonsterfyTransition = [&]() {
+	auto queueGladiatorMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kGladiatorNpc))
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kGladiatorNpc)) {
 			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
+		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto runGladiatorDeathBranch = [&](int leadWavId) -> Common::Error {
@@ -61,7 +63,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		queueGladiatorDeathOrMonsterfyTransition();
+		queueGladiatorMonsterfyTransition();
 		return Common::kNoError;
 	};
 

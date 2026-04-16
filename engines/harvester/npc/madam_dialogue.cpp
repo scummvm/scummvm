@@ -55,10 +55,12 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
 	};
-	auto queueHookerDeathOrMonsterfyTransition = [&]() {
+	auto queueHookerMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kHookerNpc))
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kHookerNpc)) {
 			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
+		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag, bool mutatedRuntimeState = false) {
@@ -95,7 +97,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		queueHookerDeathOrMonsterfyTransition();
+		queueHookerMonsterfyTransition();
 		return Common::kNoError;
 	}
 
@@ -116,7 +118,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		queueHookerDeathOrMonsterfyTransition();
+		queueHookerMonsterfyTransition();
 		return Common::kNoError;
 	}
 
@@ -134,7 +136,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		queueHookerDeathOrMonsterfyTransition();
+		queueHookerMonsterfyTransition();
 		return Common::kNoError;
 	}
 	if (responseIndex != 2)
