@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, fixed inventory use/carry prompt labels so `ObjectRecord.interactionLabel` is preferred over the inventory `*_STEXT` tooltip text, matching the Ghidra `run_inventory_screen` and `run_harvester_main_loop` label-field evidence and preventing `right_click_to_view` suffixes from leaking into `Use ... on ...` prompts. Verified `engines/harvester/script.o` builds.
+- On April 16, 2026, fixed Wasp Woman keyword `BYE` handling so the generic/default `BYE` exits even after later topic buffers such as zero-based `dialog.rsp[0x30b]`, matching the native `handle_talk_to_wasp_woman @ 0x2fde0` top-of-loop `dialog.rsp[0x301]` compare. Corrected the Ghidra plate comment and `ARCHITECTURE.md` note. Verified `engines/harvester/npc/wasp_woman_dialogue.o` builds.
 
 ## Next Suggested Action
 
-- Runtime-test selecting `COMPLETED_LODGE_APPLICATION` in inventory, then hovering inventory targets and room/NPC targets in `SERGEANTRM`; confirm the use prompt shows the clean interaction labels such as `completed Lodge application` and does not include the right-click tooltip suffix.
+- Runtime-test Wasp Woman after selecting `Pleasure`: when the keyword buffer is zero-based `dialog.rsp[0x30b]` (`Wasps/Sacrifice/Pleasure`), select the default `BYE` entry and confirm the dialogue closes without re-opening the keyword menu.
