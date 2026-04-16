@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, continued the `FUN_*` triage pass in Ghidra from the remaining 104 entries and reduced the counted `FUN_*` total to 59. Renamed 39 high-confidence functions across the Chessmaster FLC path, VESA banked blit helper, FST dialogue wrappers, IRQ0 timer chaining, NO87 extended-precision arithmetic/polynomial helpers, decimal conversion helpers, and exception-runtime throw/catch transfer path; one renamed function, `runtime_throw_or_rethrow_exception`, had been custom-marked and was not included in the 104-count query. Deleted 7 bogus function starts that were proven to be continuation blocks or data, including `FUN_000c55f8`, which is now labeled as the IRQ0 timer callback far-pointer slot. Updated `ARCHITECTURE.md` with confirmed NO87/exception-runtime and FLIC playback notes.
+- On April 16, 2026, updated ScummVM's Chessmaster three-move puzzle playback to match the newly confirmed native FLC sequencing. The engine now presents the decoded first `CHESMOV*.FLC` frame before advancing and limits the three move FLC runs to the native counts `0x1d`, `0x1d`, and `0xe` instead of always playing each file to EOF. Verified `engines/harvester/npc/chessmaster_dialogue.o` builds.
 
 ## Next Suggested Action
 
-- Continue with the 16 remaining real-space `FUN_*` entries, starting by proving the exact opcode contracts for the NO87 redispatch/conversion handlers (`FUN_0008c57a`, `FUN_0008c5cc`, `FUN_0008e0ab`, `FUN_0008e0b0`) before considering any rename. Treat the 43 zero-xref `.image` entries as a separate cleanup audit and delete them only after confirming each is raw-image duplicate/non-runtime code.
+- Runtime-test the Chessmaster dialogue path: choose the chess puzzle response, click the three correct hotspots, and verify `CHESMOV1.FLC`, `CHESMOV2.FLC`, and `CHESMOV3.FLC` transition at the same points as native before `C125.FST` and the Chessmaster death/monsterfy state. Also verify a wrong hotspot still branches to the `KINGGROW.FST` failure path.
