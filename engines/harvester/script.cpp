@@ -3576,16 +3576,16 @@ Common::String Script::resolveInventoryTooltipText(const ObjectRecord &object) c
 }
 
 Common::String Script::resolveObjectLabel(const ObjectRecord &object) const {
+	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
+		return normalizeInteractionLabel(object.interactionLabel);
+	if (object.interactionLabel.equalsIgnoreCase("NULL_ID"))
+		return Common::String();
+
 	if (object.currentOwnerOrRoom.equalsIgnoreCase(kInventoryOwnerName)) {
 		const Common::String inventoryLabel = resolveInventoryTooltipText(object);
 		if (!inventoryLabel.empty())
 			return inventoryLabel;
 	}
-
-	if (!object.interactionLabel.empty() && !object.interactionLabel.equalsIgnoreCase("NULL_ID"))
-		return normalizeInteractionLabel(object.interactionLabel);
-	if (object.interactionLabel.equalsIgnoreCase("NULL_ID"))
-		return Common::String();
 
 	const TextRecord *textRecord = findTextRecord(object.identTextKey);
 	if (textRecord && !textRecord->value.empty())

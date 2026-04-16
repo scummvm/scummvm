@@ -1406,6 +1406,7 @@
 
 - `Confidence:` High.
 - `Evidence:` `run_inventory_screen` sets the active-item latch when a carryable inventory object is selected, clears the previous interaction-text overlay, and rebuilds the centered `USING_ON_ID` prompt from `Use %s on ...`.
+- `Evidence:` the selected-item and target names used in the `USING_ON_ID` prompt come from `RenderEntityRuntime` label field `+0x14`, which `spawn_object_entity_from_record` copies from `ObjectRecord.interactionLabel`; this keeps inventory tooltip suffixes such as `; right_click_to_view` out of use/carry prompts.
 - `Evidence:` while that latch is set, `run_inventory_screen` treats the selected inventory object as the live dragged entity, probes overlap for `USEITEM` or dialogue routing, and returns the entity to the caller if it leaves the inventory panel rect `x=0x49..0x234`, `y=0x73..0x19b`.
 - `Evidence:` `run_harvester_main_loop` consumes that returned entity as the active selected item, repositions it under the mouse, rebuilds the same centered `USING_ON_ID` overlay with `g_medfont1_cft`, and routes left-click use through `handle_target_interaction`.
 - `Evidence:` `spawn_player_combat_avatar` seeds the live player entity with class `5` and label `"your inventory"`, and `handle_target_interaction` special-cases overlap with that target to move a non-inventory carried room item into `INVENTORY`.
