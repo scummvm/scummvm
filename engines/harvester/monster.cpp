@@ -27,8 +27,6 @@ namespace Harvester {
 
 namespace {
 
-static const int kRoomMonsterAnimationRate = 17;
-
 struct MonsterAnimationRange {
 	MonsterAnimationRange() {}
 	MonsterAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
@@ -52,6 +50,14 @@ static MonsterAnimationRange resolveAnimationRange(int facing) {
 	default:
 		return MonsterAnimationRange(0x00, 0x09, 0x3b);
 	}
+}
+
+static int resolveStandingFrame(const Entity &entity, const MonsterAnimationRange &range) {
+	if (entity.hasOpaqueFramesInRange(range.idleFrame, range.idleFrame))
+		return range.idleFrame;
+	if (entity.hasOpaqueFramesInRange(range.walkFirstFrame, range.walkFirstFrame))
+		return range.walkFirstFrame;
+	return CLIP<int>(range.idleFrame, 0, MAX(0, entity.getLastFrame()));
 }
 
 } // End of anonymous namespace
@@ -82,16 +88,12 @@ void Monster::applyAnimation(Entity &entity, const MonsterRecord &monster) {
 	}
 
 	const MonsterAnimationRange range = resolveAnimationRange(monster.facing);
-	if (monster.active) {
-		entity.setAnimationRate(kRoomMonsterAnimationRate);
-		entity.setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
-		entity.setAnimationEnabled(true);
-	} else {
-		entity.setAnimationRate(0);
-		entity.setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
-		entity.setCurrentFrame(range.idleFrame);
-		entity.setAnimationEnabled(false);
-	}
+	// Native active monster spawn starts on a standing facing frame; chase code switches to walking.
+	const int standingFrame = resolveStandingFrame(entity, range);
+	entity.setAnimationRate(0);
+	entity.setAnimationFrameRange(standingFrame, standingFrame, false);
+	entity.setCurrentFrame(standingFrame);
+	entity.setAnimationEnabled(false);
 }
 
 } // End of namespace Harvester

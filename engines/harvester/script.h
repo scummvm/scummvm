@@ -404,8 +404,10 @@ public:
 		bool visible);
 	bool setRuntimeNpcState(const Common::String &npcName, bool active, bool visible);
 	bool queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0);
+	enum { kNoMonsterfyPosZOverride = 0x7fffffff };
 	bool finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType = 0,
-		bool preserveCorpse = false, int corpseFrame = -1);
+		bool preserveCorpse = false, int corpseFrame = -1,
+		int monsterfyPosZ = kNoMonsterfyPosZOverride);
 	void pushDeferredLiveNpcDeathTransitions();
 	void popDeferredLiveNpcDeathTransitions();
 	bool isNamedNpcDeathTypeClear(const Common::String &npcName) const;
