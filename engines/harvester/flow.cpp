@@ -1020,8 +1020,21 @@ void drawRoomInspectText(Graphics::Screen &screen, const Art &art, const Graphic
 		kIdentTextColor);
 }
 
+static bool suppressesInitialObjectInspectGate(const ObjectRecord &object) {
+	// Native HARVEST.SCR uses ident key X as a no-text sentinel.
+	return object.identTextKey.equalsIgnoreCase("X");
+}
+
+static bool usesBareOperatePrompt(const ObjectRecord &object) {
+	return object.objectName.equalsIgnoreCase("HAPPLY_HS") ||
+		object.objectName.equalsIgnoreCase("KILL_STEPH_HS");
+}
+
 bool unlocksRoomObjectInteractionAfterInitialExamine(const ObjectRecord &object,
 		Script &script) {
+	if (suppressesInitialObjectInspectGate(object))
+		return false;
+
 	return object.operatable || script.isPickupObject(object);
 }
 
@@ -1060,8 +1073,11 @@ static Common::String buildRoomObjectPrompt(const ObjectRecord &object, Script &
 	if (label.empty())
 		return Common::String();
 
-	if (cursorSequence == kCursorSequenceOperate)
+	if (cursorSequence == kCursorSequenceOperate) {
+		if (usesBareOperatePrompt(object))
+			return label;
 		return Common::String::format("Operate the %s", label.c_str());
+	}
 	if (cursorSequence == kCursorSequencePickup)
 		return Common::String::format("Pick up the %s", label.c_str());
 	if (cursorSequence == kCursorSequenceTalk)
