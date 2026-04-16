@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, checked the Inner Sanctum Herrill/Grand Muck dialogue branch against Ghidra. Confirmed the native branch plays the logged dialogue, then calls `queue_live_named_npc_death_or_monsterfy_transition` with `GRAND_MUCK` before setting `PC_TALKED_TO_HERRILL`. Updated the Harvester dialogue shim to queue the live Grand Muck NPC transition instead of finalizing the runtime NPC immediately.
+- On April 16, 2026, checked native class-4 NPC death handling in `HARVEST.LE` against Ghidra. Confirmed `update_actor_runtime_state` keeps a completed non-monsterfied NPC death as current-room actor state `0x38` while setting `NpcRecord.death_or_monsterfy_flag` for later room setup suppression. Updated ScummVM room combat handling so MERCY old man/old woman death sprites remain in the current room after their on-death script refresh.
 
 ## Next Suggested Action
 
-- Re-test `INNERSANCTUM` from entrance `L2_2_M1`. Verify the Herrill intro dialogue ends by visibly transitioning Grand Muck in-place, and that `PC_TALKED_TO_HERRILL` prevents the intro from replaying on re-entry.
+- Re-test `MERCY` from entrance `K1_2_I2`. Kill `OLDMAN` and `OLDWOMAN`, verify both death sprites remain visible after `OLD_MAN_COM` / `OLD_WOMAN_COM` actions refresh the room, and verify leaving/re-entering still suppresses the killed NPCs.

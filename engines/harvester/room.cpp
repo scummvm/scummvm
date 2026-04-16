@@ -85,10 +85,15 @@ static const int kCombatDebugDamagePopupVerticalGap = 6;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const char *const kExitCloseupPendingRoomChange = "__EXIT_CLOSEUP__";
 
-static bool shouldPreserveBigEyeDeathFrame(const NpcRecord &npc) {
-	return npc.npcName.equalsIgnoreCase("BIG_EYE") &&
-		npc.onDeathActionTag.equalsIgnoreCase("EYEDOOR") &&
-		npc.monsterfyTargetName.empty();
+static bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc) {
+	return npc.monsterfyTargetName.empty();
+}
+
+static bool isRetainedCurrentRoomNpcDeathRecord(const NpcRecord &npc) {
+	return npc.deathOrMonsterfyFlag &&
+		npc.monsterfyTargetName.empty() &&
+		npc.deathDamageType != 0 &&
+		npc.runtimeState >= 0;
 }
 
 static int roundRoomCombatFloat(float value);
@@ -1806,11 +1811,22 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			for (const NpcRecord &npc : scene.state.roomNpcs) {
 				const NpcRecord *updatedNpc =
 					findRoomNpcByNameConst(updatedState.roomNpcs, npc.npcName);
+				const bool keepCurrentRoomDeathEntity =
+					!updatedNpc &&
+					isRetainedCurrentRoomNpcDeathRecord(npc) &&
+					entityManager &&
+					entityManager->findSceneEntityByName(npc.npcName);
 				const bool keepEntity =
 					updatedNpc &&
 					shouldSpawnRoomNpcEntity(*updatedNpc) &&
 					(sameNpcEntityState(npc, *updatedNpc) ||
 						isQueuedLiveNpcDeathMutation(npc, *updatedNpc));
+				if (keepCurrentRoomDeathEntity) {
+					debugC(1, kDebugCombat,
+						"Harvester: retained current-room npc death entity npc='%s' damage_type=%d frame=%d",
+						npc.npcName.c_str(), npc.deathDamageType, npc.runtimeState);
+					continue;
+				}
 				if (!keepEntity)
 					removeSceneEntityByName(npc.npcName);
 			}
@@ -3013,12 +3029,16 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			RoomNpcCombatState &combatState) -> Common::Error {
 		Script *script = _engine.getScript();
 		Entity *npcEntity = findSceneRuntimeEntity(npc.npcName);
-		const bool preserveDeathFrame =
-			shouldPreserveBigEyeDeathFrame(npc) && combatState.deathLastFrame >= 0 && npcEntity;
+		// Native state 0x35 leaves non-monsterfied NPCs as a dead state-0x38 actor
+		// in the current room, while the NpcRecord death flag suppresses later setup.
+		const bool retainDeathEntity =
+			shouldRetainNpcDeathEntityInCurrentRoom(npc) &&
+			combatState.deathLastFrame >= 0 &&
+			npcEntity;
 		const int monsterfyPosZ = (!npc.monsterfyTargetName.empty() && npcEntity)
 			? roundRoomCombatFloat(npcEntity->getZ())
 			: Script::kNoMonsterfyPosZOverride;
-		if (preserveDeathFrame) {
+		if (retainDeathEntity) {
 			npcEntity->setAnimationRate(0);
 			npcEntity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
 			npcEntity->setCurrentFrame(combatState.deathLastFrame);
@@ -3029,21 +3049,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			removeSceneEntityByName(npc.npcName);
 		}
 		npc.active = false;
-		npc.visible = preserveDeathFrame;
-		npc.savedVisible = preserveDeathFrame;
-		npc.runtimeSpawned = preserveDeathFrame;
-		npc.runtimeState = preserveDeathFrame ? combatState.deathLastFrame : -1;
-		npc.deathOrMonsterfyFlag = !preserveDeathFrame;
+		npc.visible = false;
+		npc.savedVisible = false;
+		npc.runtimeSpawned = retainDeathEntity;
+		npc.runtimeState = retainDeathEntity ? combatState.deathLastFrame : -1;
+		npc.deathOrMonsterfyFlag = true;
 		if (combatState.deathDamageType != 0)
 			npc.deathDamageType = combatState.deathDamageType;
 		const bool runtimeChanged = script
 			? script->finalizeRuntimeNpcDeathOrMonsterfy(
-				npc.npcName, npc.deathDamageType, preserveDeathFrame, npc.runtimeState, monsterfyPosZ)
+				npc.npcName, npc.deathDamageType, false, -1, monsterfyPosZ)
 			: false;
 		debugC(1, kDebugCombat,
 			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d preserve_runtime_actor=%d monsterfy='%s' on_death='%s'",
 			npc.npcName.c_str(), combatState.deathDamageType, combatState.deathLastFrame,
-			preserveDeathFrame, npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
+			retainDeathEntity, npc.monsterfyTargetName.c_str(), npc.onDeathActionTag.c_str());
 		clearRoomNpcCombatState(combatState);
 
 		InteractionResult interaction;
