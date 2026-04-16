@@ -163,12 +163,12 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		stream.readByte(); // null
 		if (pathSize > 1)
 			stream.readUint16();
-		stream.readUint16();
-		uint16 itemCount = stream.readUint16();
+		uint16 minMember = stream.readUint16();
+		uint16 maxMember = stream.readUint16();
 		stream.readUint16();
 		uint16 libResourceId = stream.readUint16();
 		uint16 libId = i + 1;
-		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, itemCount: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), itemCount, libResourceId, libId);
+		debugC(5, kDebugLoading, "Movie::loadCastLibMapping: name: %s, path: %s, minMember: %d, maxMember: %d, libResourceId: %d, libId: %d", utf8ToPrintable(name).c_str(), utf8ToPrintable(path).c_str(), minMember, maxMember, libResourceId, libId);
 		Archive *castArchive = _movieArchive;
 		bool isExternal = !path.empty();
 		if (isExternal) {
@@ -189,6 +189,12 @@ void Movie::loadCastLibMapping(Common::SeekableReadStreamEndian &stream) {
 		}
 		_castNames[name] = libId;
 		cast->setArchive(castArchive);
+		// For multiple internal casts, inject the cast array start and end indexes,
+		// as the single pair in the config chunk won't be correct.
+		if (!isExternal) {
+			cast->_castArrayStart = minMember;
+			cast->_castArrayEnd = maxMember;
+		}
 	}
 	return;
 }
