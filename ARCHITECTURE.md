@@ -34,6 +34,18 @@
 - `run_quick_tips_screen` at `0x6c890` is the startup quick-tips overlay shown on top of the already loaded `START -> PCROOM` room state.
   - It spawns the bottom action labels through `spawn_text_entity`, renders all three actions in color `0xc3`, and resolves the toggle through the `TEXT` records so `Show_Tips_ON` / `Show_Tips_OFF` display their text values rather than the raw keys.
 
+### Runtime Floating-Point And Exception Support
+
+- `dispatch_no87_x87_instruction` at `0x8c3d8` is the central NO87/x87 emulator dispatcher. It skips FWAIT and segment/operand/address prefixes, recognizes x87 opcode bytes `0xd8..0xdf`, uses ModRM-derived jump tables for memory/register forms, and restores the saved data selector before transferring into the selected emulator handler.
+- The software extended-precision arithmetic core is now bounded by the named helpers `add_extended_precision_values`, `divide_extended_precision_values`, and `multiply_extended_precision_values`.
+  - The wrapper layer loads 10-byte extended operands from memory or stack records, calls those cores, and stores results back through the destination pointer. Confirmed wrappers include `add_extended_memory_operands`, `subtract_extended_memory_operands`, `add_extended_pointer_and_stack_operands`, `divide_extended_memory_operands`, and `multiply_extended_memory_operands`.
+  - `evaluate_extended_polynomial_horner` and `evaluate_extended_odd_polynomial` are shared table-driven polynomial evaluators used by the NO87 logarithm, arctangent, and trig/range-reduction helpers. The exact opcode-level ownership of several transcendental entry points remains intentionally unnamed.
+  - `classify_extended_value_for_no87_status` classifies extended values as zero, denormal, infinity, NaN, or normal by exponent/mantissa/sign and updates the saved NO87 status/tag bits.
+- The Watcom/Borland-style exception runtime has a confirmed throw/catch dispatch path.
+  - `runtime_throw_or_rethrow_exception` validates the active throw context, handles both new throws and rethrows, scans active runtime handler records, allocates or reuses the thrown object, and routes no-handler / invalid-rethrow cases through the terminate or console-exit paths.
+  - `copy_thrown_object_to_catch_target` applies the selected catch descriptor: it can copy bytes, zero a target, store object references, or invoke a copy constructor before transferring to the selected handler.
+  - `g_exception_transfer_callback` defaults to `noop_exception_transfer_callback`; `install_exception_transfer_callback` replaces it with the real stack/context-transfer stub used by `transfer_to_selected_exception_handler`.
+
 ### Resource Layer
 
 - `initialize_extended_file_system` at `0x1c640` performs one-time setup for the game's extended/XFILE resource system.
@@ -1317,6 +1329,10 @@
       - While censorship is active, the player keeps advancing audio timing and still captures later movie palette chunks into the saved movie palette buffer, but it skips the normal frame decode/blit until a later toggle restores the movie view.
     - `upload_vga_palette` at `0x482c0` is the shared 256-entry VGA DAC upload helper used by the FST player when it restores or swaps palette pages.
     - `load_pcx_bitmap` at `0x4a230` is the direct-file `PCX` loader used by the FST censorship path; it reads the whole file through XFILE, RLE-decodes the `0x80`-byte-header payload into a `RawBitmap`, trims oversized stride bytes, and optionally uploads the trailing 256-color palette.
+  - The Chessmaster three-move puzzle uses a separate FLIC/FLC playback path rather than the FST movie decoder:
+    - `load_flic_animation_resource` opens `*.flc` through XFILE and validates the FLIC/FLC header/chunk stream.
+    - `decode_next_flic_frame`, `seek_flic_animation_frame`, `advance_flic_frame_if_due`, and `play_flic_animation_frames_to_surface` handle frame stepping and FLI/FLC chunk decoding for chunk types including color maps, line deltas, black frames, byte runs, and raw frame payloads.
+    - `update_flic_dirty_y_bounds` and `update_flic_dirty_x_bounds` maintain the dirty rectangle touched by the decoded frame, and `blit_nonzero_pixels_to_vesa_banked_surface` copies nonzero pixels through the existing banked VESA row tables.
 - `run_harvester_main_loop` maintains `g_current_interaction_text`, `g_pending_interaction_text`, and `g_interaction_text_entity` for hover / use prompts.
   - It allocates both 100-byte text buffers during startup, formats prompts such as `Examine %s`, `Talk to %s`, `Pick up the %s`, `Operate the %s`, and `Use %s on %s`, suppresses prompts when the active label is `NULL_ID`, and only rebuilds the rendered label when the pending text differs from the current text.
   - It also drives the room-loop cursor classification: sequence `0` for walkable floor-band movement, `1` for inspect / IDENT-first targets, `2` for talk, `4` for operate, `5` for pickup / use-item, `6` for region or room-transition targets, and `7` for neutral hover.
