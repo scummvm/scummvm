@@ -23,6 +23,8 @@ namespace Bolt {
 
 const PlainGameDescriptor boltGames[] = {
 	{ "carnival", "Cartoon Carnival" },
+	{ "crete", "Labyrinth of Crete" },
+	{ "merlin", "Merlin's Apprentice" },
 	{ 0, 0 }
 };
 
@@ -65,6 +67,30 @@ const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE | ADGF_DEMO,
 		GUIO1(GAMEOPTION_EXTEND_SCREEN)
+	},
+	
+	{
+		"crete",
+		 nullptr,
+		 AD_ENTRY1s("BOLTLIB.BLT", "65ca78c913539abe0db5c3e255c6727c", 11724174),
+		 Common::EN_ANY,
+		 // Games were released for Win and Mac on the same CD-ROM. There are no
+		 // notable differences between the Win and Mac versions.
+		 Common::kPlatformWindows,
+		 ADGF_UNSTABLE,
+		 GUIO0()
+	},
+
+	{
+		"merlin",
+		 nullptr,
+		 // FIXME: ScummVM will not detect BOLTLIB.BLT until you uncheck its
+		 // "Hidden" property with Explorer.
+		 AD_ENTRY1s("BOLTLIB.BLT", "58ef3e35e1f6369056272a30c67bb94d", 10452486),
+		 Common::EN_ANY,
+		 Common::kPlatformWindows,
+		 ADGF_UNSTABLE,
+		 GUIO0()
 	},
 
 	AD_TABLE_END_MARKER
