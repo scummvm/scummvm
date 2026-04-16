@@ -49,6 +49,14 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playPcLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kPcSpeaker, headVariant);
 	};
+	auto queueBeggarMonsterfyTransition = [&]() {
+		InteractionResult interaction;
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kBeggarNpc)) {
+			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
+		}
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+	};
 
 	if (!runtime.startupScript().getFlagValue(kBeggarInterruptFlag))
 		return Common::kNoError;
@@ -82,6 +90,7 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	} else if (responseIndex == 2) {
 		lineError = playBeggarLine(0x1291, 3);
 	} else {
+		queueBeggarMonsterfyTransition();
 		return Common::kNoError;
 	}
 	if (lineError.getCode() != Common::kNoError)
@@ -97,11 +106,17 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	if (responseError.getCode() != Common::kNoError)
 		return responseError;
 
-	if (responseIndex == 1)
-		return playBeggarLine(0x12ab, 2);
-	if (responseIndex == 2)
-		return playBeggarLine(0x12a5, 2);
+	if (responseIndex == 1) {
+		lineError = playBeggarLine(0x12ab, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	} else if (responseIndex == 2) {
+		lineError = playBeggarLine(0x12a5, 2);
+		if (lineError.getCode() != Common::kNoError)
+			return lineError;
+	}
 
+	queueBeggarMonsterfyTransition();
 	return Common::kNoError;
 }
 
