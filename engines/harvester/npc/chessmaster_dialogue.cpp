@@ -443,6 +443,7 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 	if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(
 			kChessmasterNpc, kChessmasterSlashDamageType)) {
 		interaction.mutatedRuntimeState = true;
+		interaction.visualRuntimeStateChanged = true;
 	}
 	runtime.queueDialogueInteractionIfNeeded(interaction);
 	return Common::kNoError;
