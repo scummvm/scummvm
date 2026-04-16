@@ -340,7 +340,7 @@ void Scripts::cmdEndObject_v3() {
 		if (_vm->_textFlag) {
 			const char *subtitle = res->getEndMessage();
 			if (_vm->_flags[91] == 2) {
-				subtitle = res->getStilEndMessage();
+				subtitle = res->getStilMessage();
 			}
 			//NoctRoomEngine::setBoxInfo(&_gNoctRoomEngine,0x46,0xcd,"STILETTO",subtitle,3);
 		}

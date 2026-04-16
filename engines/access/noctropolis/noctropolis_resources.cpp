@@ -1804,7 +1804,6 @@ static const char *ASKITEMS[4][33] = {
 };
 
 
-
 ///////////////////////////////////////////////////////////////
 
 NoctropolisResources::NoctropolisResources(AccessEngine *_vm) : Resources(_vm), _fontChaleteu(nullptr), _fontSystemeu(nullptr),
@@ -1822,10 +1821,20 @@ NoctropolisResources::~NoctropolisResources() {
 	delete _fontComicseu;
 }
 
-
 const char *NoctropolisResources::getEgoName() const {
 	return _vm->_flags[1] == 0 ? "PETER" :
 		_vm->getLanguage() == Common::ES_ESP ? "TENEBROSO" : "DARKSHEER";
+}
+
+static int _langOffset(Common::Language lang) {
+	switch (lang) {
+	case Common::EN_ANY: return 0;
+	case Common::FR_FRA: return 1;
+	case Common::ES_ESP: return 2;
+	case Common::DE_DEU: return 3;
+	default: error("Unsupported language %s for resource",
+		Common::getLanguageDescription(lang));
+	}
 }
 
 void NoctropolisResources::load(Common::SeekableReadStream &s) {
@@ -1986,13 +1995,7 @@ void NoctropolisResources::load(Common::SeekableReadStream &s) {
 	const Common::Language lang = _vm->getLanguage();
 	INVENTORY.resize(ARRAYSIZE(INVNAMES[0]));
 	for (i = 0; i < ARRAYSIZE(INVNAMES[0]); i++) {
-		switch (lang) {
-		case Common::EN_ANY: INVENTORY[i]._desc = INVNAMES[0][i]; break;
-		case Common::FR_FRA: INVENTORY[i]._desc = INVNAMES[1][i]; break;
-		case Common::ES_ESP: INVENTORY[i]._desc = INVNAMES[2][i]; break;
-		case Common::DE_DEU: INVENTORY[i]._desc = INVNAMES[3][i]; break;
-		default: error("Unsupported language for response title");
-		}
+		INVENTORY[i]._desc = INVNAMES[_langOffset(lang)][i];
 		memset(INVENTORY[i]._combo, 0, sizeof(INVENTORY[i]._combo));
 	}
 }
@@ -2012,7 +2015,7 @@ int NoctropolisResources::getCursorWidth(int num) const {
 }
 
 int NoctropolisResources::getCursorHeight(int num) const {
-	if (num < ARRAYSIZE(CURSOR_HEIGHTS))
+	if (num > 0 && num < ARRAYSIZE(CURSOR_HEIGHTS))
 		return CURSOR_HEIGHTS[num];
 	return 0;
 }
@@ -2034,7 +2037,8 @@ const byte *NoctropolisResources::getCursor(int num) const {
 	}
 }
 
-static const char *const NOCT_GENERAL_MESSAGES_EN[] = {
+static const char *const NOCT_GENERAL_MESSAGES[4][10] = {
+{
 	"Looking there reveals nothing of interest.",
 	"That doesn't open.",
 	"That won't move.",
@@ -2045,9 +2049,8 @@ static const char *const NOCT_GENERAL_MESSAGES_EN[] = {
 	"That doesn't seem to work.",
 	"That doesn't seem to work.",
 	"That doesn't seem to work.",
-};
-
-static const char *const NOCT_GENERAL_MESSAGES_FR[] = {
+},
+{
 	"Vous ne d\x82""couvrez rien d'int\x82""ressant.",
 	"\x80""a ne s'ouvre pas.",
 	"\x80""a ne bouge pas.",
@@ -2058,9 +2061,8 @@ static const char *const NOCT_GENERAL_MESSAGES_FR[] = {
 	"\x80""a ne marche pas.",
 	"\x80""a ne marche pas.",
 	"\x80""a ne marche pas.",
-};
-
-static const char *const NOCT_GENERAL_MESSAGES_ES[] = {
+},
+{
 	"No descubres nada de interes.",
 	"No se abre.",
 	"No se mueve.",
@@ -2071,9 +2073,8 @@ static const char *const NOCT_GENERAL_MESSAGES_ES[] = {
 	"Eso no funciona.",
 	"Eso no funciona.",
 	"Eso no funciona.",
-};
-
-static const char *const NOCT_GENERAL_MESSAGES_DE[] = {
+},
+{
 	"Dieser Anblick zeigt nichts Interessantes.",
 	"Das l\x84\xe1t sich nicht \x94""ffnen.",
 	"Bewegt sich keinen Millimeter.",
@@ -2084,110 +2085,101 @@ static const char *const NOCT_GENERAL_MESSAGES_DE[] = {
 	"Das scheint nicht zu funktionieren.",
 	"Das scheint nicht zu funktionieren.",
 	"Das scheint nicht zu funktionieren.",
+}
 };
 
+static const char *const END_MESSAGE[4] = {
+	"Don't look at me, you're the city's new champion.",
+	"Ne me regardez pas. C'est vous le nouveau\nchampion de la ville.",
+	"No me mires. Eres tu el nuevo campeon.",
+	"Schau mich nicht an, du bist der neue Held der Stadt.",
+};
+
+static const char *const MEANWHILE_MESSAGE[4] = {
+	"MEANWHILE...",
+	"PENDANT CE TEMPS...",
+	"MIENTRAS...",
+	"INZWISCHEN...",
+};
+
+static const char *const SHOTO_NAME[4] = {
+	"MS. SHOTO",
+	"Mme SHOTO",
+	"SRA. SHOTO",
+	"MS. SHOTO",
+};
+
+static const char *const SHOTO_TEXT[4] = {
+	"He was just here....\nHe's better than we thought.",
+	"Il sort d'ici ... l'instant...\nIl est meilleur que nous pensions.",
+	"Ha estado aqui...\nEsta mejor de lo que pensabamos.",
+	"Er war gerade hier...\nEr ist besser, als wir dachten.",
+};
+
+static const char *const STIL_MSG[4] = {
+	"Don't worry about me, Peter. You know I'll\nsupport whatever you've got planned.",
+	"Ne vous inqui\x82tez pas pour moi, Peter. Vous\nsavez que je supporterai tous vos plans.",
+	"No te preocupes por mi, Peter. Te ayudare\nen cualquier cosa que intentes.",
+	"K\x81mmer' dich nicht um mich, Peter. Du wei\xe1t, ich\nunterst\x81tze dich bei allem, was du vorhast.",
+};
+
+static const char *const RESPONSE_TITLE[4] = {
+	"RESPONSE %d",
+	"REPONSE %d",
+	"RESPUESA %d",
+	"ANTWORT %d",
+};
+
+static const char *const MORE_ITEMS_TITLE[4] = {
+	"       MORE ITEMS       ",
+	"    PLUS D'ARTICLES     ",
+	"       MAS OBJETOS      ",
+	"       MEHR INFO        ",
+};
+
+
 const char *NoctropolisResources::getGeneralMessage(int command) const {
-	if (command < 0 || command >= ARRAYSIZE(NOCT_GENERAL_MESSAGES_EN))
+	if (command < 0 || command >= ARRAYSIZE(NOCT_GENERAL_MESSAGES[0]))
 		error("No general message for command %d", command);
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return NOCT_GENERAL_MESSAGES_EN[command];
-	case Common::FR_FRA: return NOCT_GENERAL_MESSAGES_FR[command];
-	case Common::ES_ESP: return NOCT_GENERAL_MESSAGES_ES[command];
-	case Common::DE_DEU: return NOCT_GENERAL_MESSAGES_DE[command];
-	default: error("Unsupported language for general message");
-	}
+	return NOCT_GENERAL_MESSAGES[_langOffset(_vm->getLanguage())][command];
 }
 
 const char *NoctropolisResources::getEndMessage() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "Don't look at me, you're the city's new champion.";
-	case Common::FR_FRA: return "Ne me regardez pas. C'est vous le nouveau\nchampion de la ville.";
-	case Common::ES_ESP: return "No me mires. Eres tu el nuevo campeon.";
-	case Common::DE_DEU: return "Schau mich nicht an, du bist der neue Held der Stadt.";
-	default: error("Unsupported language for end message");
-	}
+	return END_MESSAGE[_langOffset(_vm->getLanguage())];
 }
 
 const char *NoctropolisResources::getMeanwhileMessage() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "MEANWHILE...";
-	case Common::FR_FRA: return "PENDANT CE TEMPS...";
-	case Common::ES_ESP: return "MIENTRAS...";
-	case Common::DE_DEU: return "INZWISCHEN...";
-	default: error("Unsupported language for meanwhile message");
-	}
+	return MEANWHILE_MESSAGE[_langOffset(_vm->getLanguage())];
 }
 
 const char *NoctropolisResources::getShotoTitle() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "MS. SHOTO";
-	case Common::FR_FRA: return "Mme SHOTO";
-	case Common::ES_ESP: return "SRA. SHOTO";
-	case Common::DE_DEU: return "MS. SHOTO";
-	default: error("Unsupported language for ms shoto title");
-	}
+	return SHOTO_NAME[_langOffset(_vm->getLanguage())];
 }
 
 const char *NoctropolisResources::getShotoText() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "He was just here....\nHe's better than we thought.";
-	case Common::FR_FRA: return "Il sort d'ici ... l'instant...\nIl est meilleur que nous pensions.";
-	case Common::ES_ESP: return "Ha estado aqui...\nEsta mejor de lo que pensabamos.";
-	case Common::DE_DEU: return "Er war gerade hier...\nEr ist besser, als wir dachten.";
-	default: error("Unsupported language for ms shoto text");
-	}
+	return SHOTO_TEXT[_langOffset(_vm->getLanguage())];
 }
 
-const char *NoctropolisResources::getStilEndMessage() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "Don't worry about me, Peter. You know I'll\nsupport whatever you've got planned.";
-	case Common::FR_FRA: return "Ne vous inqui\x82tez pas pour moi, Peter. Vous\nsavez que je supporterai tous vos plans.";
-	case Common::ES_ESP: return "No te preocupes por mi, Peter. Te ayudare\nen cualquier cosa que intentes.";
-	case Common::DE_DEU: return "K\x81mmer' dich nicht um mich, Peter. Du wei\xe1t, ich\nunterst\x81tze dich bei allem, was du vorhast.";
-	default: error("Unsupported language for stil end message");
-	}
+const char *NoctropolisResources::getStilMessage() const {
+	return STIL_MSG[_langOffset(_vm->getLanguage())];
 }
 
 const char *NoctropolisResources::getResponseTitle() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "RESPONSE %d";
-	case Common::FR_FRA: return "REPONSE %d";
-	case Common::ES_ESP: return "RESPUESA %d";
-	case Common::DE_DEU: return "ANTWORT %d";
-	default: error("Unsupported language for response title");
-	}
+	return RESPONSE_TITLE[_langOffset(_vm->getLanguage())];
 }
 
 const char *NoctropolisResources::getAskItem(int num) const {
-	assert(num >= 0 && num < 33);
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return ASKITEMS[0][num];
-	case Common::FR_FRA: return ASKITEMS[1][num];
-	case Common::ES_ESP: return ASKITEMS[2][num];
-	case Common::DE_DEU: return ASKITEMS[3][num];
-	default: error("Unsupported language for ask item");
-	}
+	assert(num >= 0 && num < ARRAYSIZE(ASKITEMS[0]));
+	return ASKITEMS[_langOffset(_vm->getLanguage())][num];
 }
 
 const char *NoctropolisResources::getPlaceName(int num) const {
-	assert(num >= 0 && num < 33);
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return NOCT_PLACE_NAMES[0][num];
-	case Common::FR_FRA: return NOCT_PLACE_NAMES[1][num];
-	case Common::ES_ESP: return NOCT_PLACE_NAMES[2][num];
-	case Common::DE_DEU: return NOCT_PLACE_NAMES[3][num];
-	default: error("Unsupported language for place name");
-	}
+	assert(num >= 0 && num < ARRAYSIZE(NOCT_PLACE_NAMES[0]));
+	return NOCT_PLACE_NAMES[_langOffset(_vm->getLanguage())][num];
 }
 
 const char *NoctropolisResources::getMoreItemsText() const {
-	switch (_vm->getLanguage()) {
-	case Common::EN_ANY: return "       MORE ITEMS       ";
-	case Common::FR_FRA: return "    PLUS D'ARTICLES     ";
-	case Common::ES_ESP: return "       MAS OBJETOS      ";
-	case Common::DE_DEU: return "       MEHR INFO        ";
-	default: error("Unsupported language for more items text");
-	}
+	return MORE_ITEMS_TITLE[_langOffset(_vm->getLanguage())];
 }
 
 const ComicResource *NoctropolisResources::getLastComicResource() const {

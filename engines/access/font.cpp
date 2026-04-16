@@ -37,7 +37,7 @@ int Font::charWidth(char c) const {
 	if (c < _firstCharIndex)
 		return 0;
 
-	return _chars[c - _firstCharIndex].w;
+	return _chars[(byte)c - _firstCharIndex].w;
 }
 
 int Font::stringWidth(const Common::String &msg) const {
@@ -117,7 +117,7 @@ void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::P
 }
 
 int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) const {
-	const Graphics::Surface &ch = _chars[c - _firstCharIndex];
+	const Graphics::Surface &ch = _chars[(byte)c - _firstCharIndex];
 	Graphics::Surface dest = s->getSubArea(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
 
 	// Loop through the lines of the character

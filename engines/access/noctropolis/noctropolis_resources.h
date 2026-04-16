@@ -64,7 +64,7 @@ public:
 	const char *getMeanwhileMessage() const;
 	const char *getShotoTitle() const;
 	const char *getShotoText() const;
-	const char *getStilEndMessage() const;
+	const char *getStilMessage() const;
 	const char *getResponseTitle() const;
 	const char *getAskItem(int num) const;
 	const char *getMoreItemsText() const;
