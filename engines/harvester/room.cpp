@@ -2306,6 +2306,52 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 			return Common::kNoError;
 		};
+		auto requestPlayerGameOver = [&](const char *reason, const Common::String &sourceName) {
+			if (flow.hasPendingMainMenuReturn())
+				return;
+
+			debugC(1, kDebugCombat,
+				"Harvester: player game over queued reason='%s' source='%s' hp=%d",
+				reason ? reason : "", sourceName.c_str(),
+				_engine.getScript()
+					? _engine.getScript()->getPlayerCurrentHitPoints()
+					: 0);
+			flow.requestGameOverReturn();
+		};
+		auto startPlayerDefeatSequence = [&](const char *reason, const Common::String &sourceName,
+				int damageType) {
+			if (flow.hasPendingMainMenuReturn() || playerState.deathActive)
+				return;
+
+			if (idleState.entity) {
+				idleState.entity->setVisible(false);
+				idleState.entity->setAnimationRate(0);
+			}
+			idleState.active = false;
+			idleState.loopStarted = false;
+			idleState.exiting = false;
+			idleState.restoreFacing = -1;
+			if (playerState.entity)
+				playerState.entity->setVisible(true);
+
+			if (!Player::startDeathAnimation(playerState, damageType, _engine.isGoreEnabled())) {
+				debugC(1, kDebugCombat,
+					"Harvester: player defeat fallback reason='%s' source='%s' damage_type=%d hp=%d",
+					reason ? reason : "", sourceName.c_str(), damageType,
+					_engine.getScript()
+						? _engine.getScript()->getPlayerCurrentHitPoints()
+						: 0);
+				requestPlayerGameOver(reason, sourceName);
+				return;
+			}
+
+			debugC(1, kDebugCombat,
+				"Harvester: player defeat started reason='%s' source='%s' damage_type=%d hp=%d",
+				reason ? reason : "", sourceName.c_str(), damageType,
+				_engine.getScript()
+					? _engine.getScript()->getPlayerCurrentHitPoints()
+					: 0);
+		};
 		struct InteractionProcessor {
 			HarvesterEngine &engine;
 			Flow &flow;
@@ -2327,6 +2373,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			decltype(applyPlayerGotoXZ) &applyPlayerGotoXZFn;
 			decltype(runModalShowText) &runModalShowTextFn;
 			decltype(resetIdleState) &resetIdleStateFn;
+			decltype(stopPlayerRegionInteraction) &stopPlayerRegionInteractionFn;
+			decltype(startPlayerDefeatSequence) &startPlayerDefeatSequenceFn;
 
 			Common::Error handleInteractionResult(const InteractionResult &interaction,
 					bool &didTransition, const Common::String &usedItemName) {
@@ -2506,6 +2554,14 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				if (didTransition)
 					return Common::kNoError;
 
+				if (interaction.requestPlayerDeath &&
+						engine.getScript() &&
+						engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
+					stopPlayerRegionInteractionFn();
+					startPlayerDefeatSequenceFn("script_kill_pc", Common::String(),
+						interaction.playerDeathDamageType);
+				}
+
 				if (interaction.requestPlayerGotoXZ)
 					applyPlayerGotoXZFn(interaction.playerGotoX, interaction.playerGotoZ);
 
@@ -2610,7 +2666,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace,
 			syncOffscreenGlobalTimerEntities, captureDialogueBackdrop, showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
-			resetIdleState
+			resetIdleState, stopPlayerRegionInteraction, startPlayerDefeatSequence
 		};
 		auto hasRoomEntryInteraction = [](const InteractionResult &interaction) {
 			return !interaction.nextRoomName.empty() ||
@@ -2626,6 +2682,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				!interaction.modalText.value.empty() ||
 				interaction.lightingCommand != kStartupLightingCommandNone ||
 				interaction.requestPlayerGotoXZ ||
+				interaction.requestPlayerDeath ||
 				interaction.requestCloseupExit ||
 				interaction.mutatedRuntimeState;
 		};
@@ -2904,52 +2961,6 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		default:
 			return "none";
 		}
-	};
-	auto requestPlayerGameOver = [&](const char *reason, const Common::String &sourceName) {
-		if (flow.hasPendingMainMenuReturn())
-			return;
-
-		debugC(1, kDebugCombat,
-			"Harvester: player game over queued reason='%s' source='%s' hp=%d",
-			reason ? reason : "", sourceName.c_str(),
-			_engine.getScript()
-				? _engine.getScript()->getPlayerCurrentHitPoints()
-				: 0);
-		flow.requestGameOverReturn();
-	};
-	auto startPlayerDefeatSequence = [&](const char *reason, const Common::String &sourceName,
-			int damageType) {
-		if (flow.hasPendingMainMenuReturn() || playerState.deathActive)
-			return;
-
-		if (idleState.entity) {
-			idleState.entity->setVisible(false);
-			idleState.entity->setAnimationRate(0);
-		}
-		idleState.active = false;
-		idleState.loopStarted = false;
-		idleState.exiting = false;
-		idleState.restoreFacing = -1;
-		if (playerState.entity)
-			playerState.entity->setVisible(true);
-
-		if (!Player::startDeathAnimation(playerState, damageType, _engine.isGoreEnabled())) {
-			debugC(1, kDebugCombat,
-				"Harvester: player defeat fallback reason='%s' source='%s' damage_type=%d hp=%d",
-				reason ? reason : "", sourceName.c_str(), damageType,
-				_engine.getScript()
-					? _engine.getScript()->getPlayerCurrentHitPoints()
-					: 0);
-			requestPlayerGameOver(reason, sourceName);
-			return;
-		}
-
-		debugC(1, kDebugCombat,
-			"Harvester: player defeat started reason='%s' source='%s' damage_type=%d hp=%d",
-			reason ? reason : "", sourceName.c_str(), damageType,
-			_engine.getScript()
-				? _engine.getScript()->getPlayerCurrentHitPoints()
-				: 0);
 	};
 	auto handleCombatInteraction = [&](InteractionResult interaction) -> Common::Error {
 		bool didTransition = false;

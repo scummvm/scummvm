@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 15, 2026, confirmed from `HARVEST.SCR` that `SUPLYDOOR_ANIM` is explicitly started by the `OPEN_SUP_DOOR1` use-item chain after `SUPLY2_BOILKEY` is used on `SUPPLY1_DOOR`. Adjusted room animation runtime handling so non-looping visible room animations do not auto-advance on room entry before a `SET_ANIM` command starts them.
+- On April 16, 2026, confirmed in Ghidra `dispatch_room_event_actions` that native `KILL_PC` maps arg1 damage strings such as `SLASH` onto the player actor death damage type, then sets player HP to zero. Updated script interaction results and room interaction handling so script-driven `KILL_PC` starts the player defeat sequence after timer/object runtime mutations are applied.
 
 ## Next Suggested Action
 
-- Re-test the supply-room boiler path: enter `SUPPLY1` from `SUPPLY2_2_SUPPLY1` before using `SUPLY2_BOILKEY` and verify `SUPLYDOOR_ANIM` remains on its first frame, then use the boiler key on `SUPPLY1_DOOR` and verify the door animation starts only from the `OPEN_SUP_DOOR1` command chain.
+- Re-test the PIT/JAWS roof timer chain through `JAWROOF10T` and verify `BODYCRSH.WAV` plays, `JAWROOF10` is materialized, the player uses the `SLASH` death animation bank, and the game-over return happens after the death animation completes.

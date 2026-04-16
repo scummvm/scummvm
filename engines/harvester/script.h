@@ -298,8 +298,10 @@ struct InteractionResult {
 	StartupRoomTransitionKind roomTransition = kStartupRoomTransitionNone;
 	StartupLightingCommand lightingCommand = kStartupLightingCommandNone;
 	int cdChangeDisc = 0;
+	int playerDeathDamageType = 0;
 	int playerGotoX = 0;
 	int playerGotoZ = 0;
+	bool requestPlayerDeath = false;
 	bool requestPlayerGotoXZ = false;
 	bool requestRoomRestart = false;
 	Common::String roomRestartTargetName;
@@ -459,6 +461,7 @@ private:
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
+		bool *requestPlayerDeath, int *playerDeathDamageType,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
 		Common::Array<TimerRecord> *previousTimerRecords, bool *requestCloseupExit);
 	bool probePickupBlockingCommandChain(const Common::String &initialTag,
