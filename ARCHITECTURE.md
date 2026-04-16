@@ -1317,6 +1317,8 @@
       - The first bit controls whether a 256-color VGA palette chunk is present.
       - Each 4x4 tile then consumes one changed/unchanged bit, and changed tiles consume one raw-vs-two-color-mask bit before reading either 16 raw pixels or 4 mask bytes.
       - The frame body then decodes 4x4 tiles either from raw 16-byte pixel blocks or from compact 4-byte two-color mask blocks before blitting through the active VESA backend.
+      - The native tile loop decodes `(height >> 2) - 1` four-scanline bands, so 320x200 FST movies decode 49 tile rows and leave the bottom 4 scanlines unchanged.
+      - In two-color mask blocks, `source[0]` is color 0, `source[1]` is color 1, and the 16-bit little-endian mask maps each row right-to-left within its nibble: row 0 uses high-byte bits `0x80,0x40,0x20,0x10`, row 1 uses `0x08,0x04,0x02,0x01`, row 2 uses low-byte bits `0x80,0x40,0x20,0x10`, and row 3 uses `0x08,0x04,0x02,0x01`.
       - On banked VESA surfaces, the decoder handles those same 4x4 tiles in 4-scanline bands:
         - if all four rows in the current band have `split_x == -1`, it writes directly into the mapped VESA window
         - otherwise it expands the 4-row band into a temporary scratch buffer and then flushes each row in one or two pieces across the bank boundary, advancing banks through `select_bank_for_scanline_callback`

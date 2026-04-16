@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, updated ScummVM's Chessmaster three-move puzzle playback to match the newly confirmed native FLC sequencing. The engine now presents the decoded first `CHESMOV*.FLC` frame before advancing and limits the three move FLC runs to the native counts `0x1d`, `0x1d`, and `0xe` instead of always playing each file to EOF. Verified `engines/harvester/npc/chessmaster_dialogue.o` builds.
+- On April 16, 2026, compared ScummVM's Harvester FST decoder against native `run_fst_sequence_player @ 0x12b00` and patched the engine to match two confirmed codec details: two-color mask blocks map mask bits right-to-left within each nibble, and native decodes only `(height >> 2) - 1` four-scanline tile bands. Updated `ARCHITECTURE.md` with the confirmed FST bitstream evidence and verified `engines/harvester/fst_player.o` builds.
 
 ## Next Suggested Action
 
-- Runtime-test the Chessmaster dialogue path: choose the chess puzzle response, click the three correct hotspots, and verify `CHESMOV1.FLC`, `CHESMOV2.FLC`, and `CHESMOV3.FLC` transition at the same points as native before `C125.FST` and the Chessmaster death/monsterfy state. Also verify a wrong hotspot still branches to the `KINGGROW.FST` failure path.
+- Runtime-test representative FST playback with mask-heavy and tail-sensitive files such as `GRAPHIC/FST/FVLOGO.FST`, `GRAPHIC/FST/INTROFIN.FST`, `GRAPHIC/FST/C001B.FST`, `GRAPHIC/FST/C086.FST`, and `GRAPHIC/FST/RANGSHOT.FST` to confirm the visual artifacts are gone.
