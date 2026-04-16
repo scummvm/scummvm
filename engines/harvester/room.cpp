@@ -84,6 +84,11 @@ static const int kCombatDebugDamagePopupRisePixels = 18;
 static const int kCombatDebugDamagePopupVerticalGap = 6;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
 static const char *const kExitCloseupPendingRoomChange = "__EXIT_CLOSEUP__";
+static const char *const kInnerSanctumRoomName = "INNERSANCTUM";
+static const char *const kHerrillLogNpcName = "HERRILL_LOG";
+static const char *const kMuckeyMonsterName = "MUCKEY";
+static const char *const kActivateInnerSanctumDoorActionTag = "ACTV_INNERSAN_DOOR";
+static const int kNativeDefaultNpcDeathDamageType = 1;
 
 static bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc) {
 	return npc.monsterfyTargetName.empty();
@@ -2796,6 +2801,34 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		auto findSceneRuntimeEntity = [&](const Common::String &entityName) -> Entity * {
 			return entityManager ? entityManager->findSceneEntityByName(entityName) : nullptr;
 		};
+		auto queueInnerSanctumHerrillDeathAfterMuck = [&](const MonsterRecord &monster) {
+			if (!monster.roomName.equalsIgnoreCase(kInnerSanctumRoomName) ||
+					!monster.monsterName.equalsIgnoreCase(kMuckeyMonsterName) ||
+					!monster.onDeathActionTag.equalsIgnoreCase(kActivateInnerSanctumDoorActionTag)) {
+				return false;
+			}
+
+			Script *script = _engine.getScript();
+			NpcRecord *herrill = findRoomNpcRecordByName(kHerrillLogNpcName);
+			if (!script || !herrill || !herrill->visible ||
+					herrill->deathOrMonsterfyFlag || herrill->deathDamageType != 0) {
+				return false;
+			}
+
+			// Native update_actor_runtime_state has a hard-coded HERRILL_LOG removal path
+			// while the Inner Sanctum Muckey combat state is active; queue the ordinary
+			// live NPC death so the room's timer delay can play Herrill's death bank.
+			if (!script->queueRuntimeNpcDeathOrMonsterfy(
+					kHerrillLogNpcName, kNativeDefaultNpcDeathDamageType)) {
+				return false;
+			}
+
+			herrill->deathDamageType = kNativeDefaultNpcDeathDamageType;
+			debugC(1, kDebugCombat,
+				"Harvester: queued Inner Sanctum Herrill death after monster='%s'",
+				monster.monsterName.c_str());
+			return true;
+		};
 		auto findMonsterTargetAtPoint = [&](const Common::Point &point) -> MonsterRecord * {
 			MonsterRecord *bestMonster = nullptr;
 			int bestZ = -0x7fffffff;
@@ -3562,6 +3595,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 
 		monster->active = false;
 		monster->visible = false;
+		const bool herrillDeathQueued = queueInnerSanctumHerrillDeathAfterMuck(*monster);
 		debugC(1, kDebugCombat,
 			"Harvester: combat monster defeated target='%s' on_death='%s' fallback='no death bank'",
 			monster->monsterName.c_str(), monster->onDeathActionTag.c_str());
@@ -3576,6 +3610,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				interaction.mutatedRuntimeState = true;
 				interaction.visualRuntimeStateChanged = true;
 			}
+		}
+		if (herrillDeathQueued) {
+			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
 		}
 
 		return handleCombatInteraction(interaction);
@@ -3654,6 +3692,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						monster.runtimeState,
 						monster.onDeathActionTag.c_str());
 					clearRoomMonsterCombatState(combatState);
+					const bool herrillDeathQueued = queueInnerSanctumHerrillDeathAfterMuck(monster);
 
 					InteractionResult interaction;
 					interaction.mutatedRuntimeState = true;
@@ -3666,6 +3705,10 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 							interaction.mutatedRuntimeState = true;
 							interaction.visualRuntimeStateChanged = true;
 						}
+					}
+					if (herrillDeathQueued) {
+						interaction.mutatedRuntimeState = true;
+						interaction.visualRuntimeStateChanged = true;
 					}
 
 					return handleCombatInteraction(interaction);
