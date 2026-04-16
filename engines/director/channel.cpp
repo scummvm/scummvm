@@ -371,6 +371,32 @@ bool Channel::isMatteIntersect(Channel *channel) {
 	return false;
 }
 
+bool Channel::isMatteBoxIntersect(Channel *channel) {
+	Common::Rect myBbox = getBbox();
+	Common::Rect yourBbox = channel->getBbox();
+	Common::Rect intersectRect = myBbox.findIntersectingRect(yourBbox);
+
+	if (intersectRect.isEmpty())
+		return false;
+	Graphics::Surface *myMatte = nullptr;
+
+	if (_sprite->_cast && _sprite->_cast->_type == kCastBitmap)
+		myMatte = ((BitmapCastMember *)_sprite->_cast)->getMatte(myBbox);
+
+	if (myMatte) {
+		for (int i = intersectRect.top; i < intersectRect.bottom; i++) {
+			const byte *my = (const byte *)myMatte->getBasePtr(intersectRect.left - myBbox.left, i - myBbox.top);
+
+			for (int j = intersectRect.left; j < intersectRect.right; j++, my++)
+				if (*my)
+					return true;
+		}
+	}
+
+	return false;
+}
+
+
 // this contains channel. i.e. myBox contain yourBox
 bool Channel::isMatteWithin(Channel *channel) {
 	Common::Rect myBbox = getBbox();

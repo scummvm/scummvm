@@ -60,6 +60,7 @@ public:
 	bool isActiveText();
 	CollisionTest isMouseIn(const Common::Point &pos);
 	bool isMatteIntersect(Channel *channel);
+	bool isMatteBoxIntersect(Channel *channel);
 	bool isMatteWithin(Channel *channel);
 	bool isActiveVideo();
 	bool isVideoDirectToStage();
