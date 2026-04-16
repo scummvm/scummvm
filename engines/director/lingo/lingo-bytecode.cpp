@@ -983,7 +983,14 @@ void LC::cb_v4theentityassign() {
 		break;
 	case kTEAChunk:
 		{
-			Datum fieldRef = g_lingo->pop().asMemberID();
+			Datum fieldRef;
+			if (g_director->getVersion() < 500) {
+				fieldRef = g_lingo->pop().asMemberID();
+			} else {
+				Datum castLib = g_lingo->pop();
+				Datum fieldID = g_lingo->pop();
+				fieldRef = Datum(CastMemberID(fieldID.asInt(), castLib.asInt()));
+			}
 			fieldRef.type = FIELDREF;
 			Datum chunkRef = readChunkRef(fieldRef);
 			g_lingo->setTheEntity(entity, chunkRef, field, value);
