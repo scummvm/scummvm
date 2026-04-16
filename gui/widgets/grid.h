@@ -100,6 +100,7 @@ public:
 
 /* GridWidget */
 class GridWidget : public ContainerWidget, public CommandSender {
+	friend class GridItemWidget;
 public:
 	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, const Common::U32String &token);
 
@@ -166,6 +167,14 @@ protected:
 	FilterMatcher _filterMatcher;
 	void *_filterMatcherArg;
 
+	// Drag to scroll
+	bool _isMouseDown;
+	bool _isDragging;
+	bool _selectionPending;
+	int _dragStartY, _dragLastY;
+	uint32 _mouseDownTime;
+	static const int kDragThreshold = 5;
+
 public:
 	int				_gridItemHeight;
 	int				_gridItemWidth;
@@ -227,6 +236,9 @@ public:
 	int getThumbnailWidth() const { return _thumbnailWidth; }
 
 	void handleMouseWheel(int x, int y, int direction) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
+	void handleMouseMoved(int x, int y, int button) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
 
@@ -276,7 +288,9 @@ public:
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
+	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseMoved(int x, int y, int button) override;
+	void doSelection();
 };
 
 } // End of namespace GUI

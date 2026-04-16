@@ -91,8 +91,8 @@ void GridItemWidget::drawWidget() {
 	// Check if this entry is in the selected entries list
 	bool isSelected = _grid->_selectedItems[_activeEntry->entryID];
 
-	// Draw selection highlight if this entry is selected or hovered
-	if (isSelected || _isHighlighted) {
+	// Draw selection highlight if this entry is selected or hovered (not while dragging)
+	if (isSelected || (_isHighlighted && !_grid->_isMouseDown)) {
 		Common::Rect r(_x - kMarginX, _y - kMarginY,
 					   _x + _w + kMarginX, _y + _h + kMarginY);
 		// Draw a highlighted BG on hover
@@ -209,6 +209,50 @@ void GridItemWidget::handleMouseMoved(int x, int y, int button) {
 	if (!_isHighlighted) {
 		handleMouseEntered(button);
 	}
+	_grid->handleMouseMoved(x + _x, y + _y, button);
+}
+
+void GridItemWidget::doSelection() {
+	if (_activeEntry->isHeader) {
+		_grid->_selectedEntry = nullptr;
+		_grid->toggleGroup(_activeEntry->entryID);
+	} else if (_isHighlighted && isVisible()) {
+		_grid->_selectedEntry = _activeEntry;
+
+		if (!_grid->isMultiSelectEnabled()) {
+			_grid->clearSelection();
+			_grid->markSelectedItem(_activeEntry->entryID, true);
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+			sendCommand(kItemClicked, _activeEntry->entryID);
+			return;
+		}
+
+		int32 keyState = g_system->getEventManager()->getModifierState();
+		bool ctrlPressed = (keyState & Common::KBD_CTRL) != 0;
+		bool shiftPressed = (keyState & Common::KBD_SHIFT) != 0;
+
+		if (ctrlPressed) {
+			if (_grid->isItemSelected(_activeEntry->entryID)) {
+				_grid->markSelectedItem(_activeEntry->entryID, false);
+			} else {
+				_grid->markSelectedItem(_activeEntry->entryID, true);
+				_grid->_lastSelectedEntryID = _activeEntry->entryID;
+			}
+		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
+			int startID = _grid->getVisualPos(_grid->_lastSelectedEntryID);
+			int endID = _grid->getVisualPos(_activeEntry->entryID);
+			if (startID >= 0 && endID >= 0) {
+				_grid->selectVisualRange(startID, endID);
+			}
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+		} else {
+			_grid->clearSelection();
+			_grid->markSelectedItem(_activeEntry->entryID, true);
+			_grid->_lastSelectedEntryID = _activeEntry->entryID;
+		}
+
+		sendCommand(kItemClicked, _activeEntry->entryID);
+	}
 }
 
 void GridWidget::toggleGroup(int groupID) {
@@ -257,54 +301,11 @@ void GridWidget::saveClosedGroups(const Common::U32String &groupName) {
 }
 
 void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (_activeEntry->isHeader) {
-		_grid->_selectedEntry = nullptr;
-		_grid->toggleGroup(_activeEntry->entryID);
-	} else if (_isHighlighted && isVisible()) {
-		_grid->_selectedEntry = _activeEntry;
+	_grid->handleMouseDown(x + _x, y + _y, button, clickCount);
+}
 
-		// If multi-select is not enabled, use simple single-selection
-		if (!_grid->isMultiSelectEnabled()) {
-			_grid->clearSelection();
-			_grid->markSelectedItem(_activeEntry->entryID, true);
-			_grid->_lastSelectedEntryID = _activeEntry->entryID;
-			sendCommand(kItemClicked, _activeEntry->entryID);
-			return;
-		}
-
-		// Get the current keyboard state
-		int32 keyState = g_system->getEventManager()->getModifierState();
-		bool ctrlPressed = (keyState & Common::KBD_CTRL) != 0;
-		bool shiftPressed = (keyState & Common::KBD_SHIFT) != 0;
-
-		if (ctrlPressed) {
-			// Ctrl+Click: Toggle selection of this item
-			if (_grid->isItemSelected(_activeEntry->entryID)) {
-				_grid->markSelectedItem(_activeEntry->entryID, false);
-			} else {
-				_grid->markSelectedItem(_activeEntry->entryID, true);
-				_grid->_lastSelectedEntryID = _activeEntry->entryID;
-			}
-		} else if (shiftPressed && _grid->_lastSelectedEntryID >= 0) {
-			// Shift+Click: Select range from last selected to current item
-			// Must select based on visual order, not by entryID range
-			int startID = _grid->getVisualPos(_grid->_lastSelectedEntryID);
-			int endID = _grid->getVisualPos(_activeEntry->entryID);
-
-			// If we found both positions, select all items between them (visually)
-			if (startID >= 0 && endID >= 0) {
-				_grid->selectVisualRange(startID, endID);
-			}
-			_grid->_lastSelectedEntryID = _activeEntry->entryID;
-		} else {
-			// Regular click: Select only this item
-			_grid->clearSelection();
-			_grid->markSelectedItem(_activeEntry->entryID, true);
-			_grid->_lastSelectedEntryID = _activeEntry->entryID;
-		}
-
-		sendCommand(kItemClicked, _activeEntry->entryID);
-	}
+void GridItemWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	_grid->handleMouseUp(x + _x, y + _y, button, clickCount);
 }
 
 #pragma mark -
@@ -514,8 +515,16 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_selectedItems.clear();
 	_lastSelectedEntryID = -1;
 
+	_isMouseDown = false;
+	_isDragging = false;
+	_selectionPending = false;
+	_dragStartY = 0;
+	_dragLastY = 0;
+
 	_filterMatcher = GridWidgetDefaultMatcher;
 	_filterMatcherArg = nullptr;
+
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 }
 
 GridWidget::~GridWidget() {
@@ -999,6 +1008,53 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	_scrollBar->handleMouseWheel(x, y, direction);
 	_scrollPos = _scrollBar->_currentPos;
+}
+
+void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	_isMouseDown = true;
+	_mouseDownTime = g_system->getMillis();
+	_isDragging = false;
+	_selectionPending = true;
+	_dragStartY = y;
+	_dragLastY = y;
+}
+
+void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	bool wasPending = _selectionPending;
+	bool wasDragging = _isDragging;
+
+	_isMouseDown = false;
+	_isDragging = false;
+	_selectionPending = false;
+
+	if (wasPending && !wasDragging) {
+		// Find which item was clicked and select it
+		Widget *w = findWidget(x, y);
+		if (w && w != this && w->getType() == kContainerWidget)
+			((GridItemWidget *)w)->doSelection();
+	}
+}
+
+void GridWidget::handleMouseMoved(int x, int y, int button) {
+	if (!_isMouseDown)
+		return;
+
+	if (!_isDragging && ABS(y - _dragStartY) > kDragThreshold) {
+		_isDragging = true;
+		_selectionPending = false;
+	}
+
+	if (_isDragging) {
+		int deltaY = _dragLastY - y;
+		_dragLastY = y;
+
+		int newPos = _scrollPos + deltaY;
+		int maxScroll = _scrollBar->_numEntries - _scrollBar->_entriesPerPage;
+		newPos = MAX(0, MIN(newPos, maxScroll));
+
+		if (_scrollPos != newPos)
+			handleCommand(this, kSetPositionCmd, newPos);
+	}
 }
 
 bool GridWidget::handleKeyDown(Common::KeyState state) {
