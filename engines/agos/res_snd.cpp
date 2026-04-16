@@ -356,7 +356,9 @@ static Common::SeekableReadStream *openElvira1AtariSTPrg() {
 		"ELVIRA.PRG",
 		"ELVIRA+.PRG",
 		"RUNENG.PRG",
-		"AUTO/RUNENG.PRG"
+		"AUTO/RUNENG.PRG",
+		"AUTO/ADEMO.PRG",
+		"ADEMO.PRG"
 	};
 
 	Common::File file;
