@@ -2632,7 +2632,7 @@ bool Script::queueRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int 
 }
 
 bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, int deathDamageType,
-		bool preserveCorpse, int corpseFrame) {
+		bool preserveCorpse, int corpseFrame, int monsterfyPosZ) {
 	if (npcName.empty())
 		return false;
 
@@ -2647,7 +2647,11 @@ bool Script::finalizeRuntimeNpcDeathOrMonsterfy(const Common::String &npcName, i
 		monsterLookup.monsterName = currentNpc->monsterfyTargetName;
 		MonsterRecord *currentMonster = findRuntimeMonster(monsterLookup);
 		if (currentMonster) {
-			monsterChanged = !currentMonster->active || !currentMonster->visible;
+			const bool overrideMonsterPosZ = monsterfyPosZ != kNoMonsterfyPosZOverride;
+			monsterChanged = !currentMonster->active || !currentMonster->visible ||
+				(overrideMonsterPosZ && currentMonster->posZ != monsterfyPosZ);
+			if (overrideMonsterPosZ)
+				currentMonster->posZ = monsterfyPosZ;
 			currentMonster->active = true;
 			currentMonster->visible = true;
 			currentMonster->runtimeSpawned = false;

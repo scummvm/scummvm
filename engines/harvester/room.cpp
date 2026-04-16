@@ -66,6 +66,7 @@ static const int kRoomMonsterAnimationRate = 17;
 static const int kNativeMonsterAttackAnimationRate = 4;
 static const int kNativeMonsterHitAnimationRate = 5;
 static const uint32 kNativeMonsterAttackCooldownBaseTicks = 50;
+static const float kNativeNpcMonsterZExtent = 5.0f;
 static const int kRoomNpcAmbientLastFrame = 0x3b;
 static const int kDefaultMonsterAttackContactFrameOffset = 2;
 static const int kMuckeyAttackContactFrameOffset = 7;
@@ -573,11 +574,14 @@ static bool setRoomMonsterAnimation(Entity &entity, int facing, bool walking) {
 		return changed;
 	}
 
+	const int standingFrame = entity.hasOpaqueFramesInRange(range.idleFrame, range.idleFrame)
+		? range.idleFrame
+		: range.walkFirstFrame;
 	const bool changed = entity.getAnimationRate() != 0 ||
-		entity.getCurrentFrame() != range.idleFrame;
+		entity.getCurrentFrame() != standingFrame;
 	entity.setAnimationRate(0);
-	entity.setAnimationFrameRange(range.idleFrame, range.idleFrame, false);
-	entity.setCurrentFrame(range.idleFrame);
+	entity.setAnimationFrameRange(standingFrame, standingFrame, false);
+	entity.setCurrentFrame(standingFrame);
 	entity.setAnimationEnabled(false);
 	return changed;
 }
@@ -1394,6 +1398,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return nullptr;
 
 			entity->setClassId(kRuntimeEntityClassNpc);
+			entity->setZExtent(kNativeNpcMonsterZExtent);
 			entity->setHitTestMode(preservedCorpse ? kRuntimeEntityHitTestNone : kRuntimeEntityHitTestOpaquePixels);
 			if (preservedCorpse) {
 				const int corpseFrame = MIN(entity->getLastFrame(), npc.runtimeState);
@@ -1426,6 +1431,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				return nullptr;
 
 			entity->setClassId(kRuntimeEntityClassMonster);
+			entity->setZExtent(kNativeNpcMonsterZExtent);
 			entity->setHitTestMode(kRuntimeEntityHitTestNone);
 			entity->setVisible(monster.visible);
 			Monster::applyAnimation(*entity, monster);
@@ -3009,6 +3015,9 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		Entity *npcEntity = findSceneRuntimeEntity(npc.npcName);
 		const bool preserveDeathFrame =
 			shouldPreserveBigEyeDeathFrame(npc) && combatState.deathLastFrame >= 0 && npcEntity;
+		const int monsterfyPosZ = (!npc.monsterfyTargetName.empty() && npcEntity)
+			? roundRoomCombatFloat(npcEntity->getZ())
+			: Script::kNoMonsterfyPosZOverride;
 		if (preserveDeathFrame) {
 			npcEntity->setAnimationRate(0);
 			npcEntity->setAnimationFrameRange(combatState.deathLastFrame, combatState.deathLastFrame, false);
@@ -3029,7 +3038,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			npc.deathDamageType = combatState.deathDamageType;
 		const bool runtimeChanged = script
 			? script->finalizeRuntimeNpcDeathOrMonsterfy(
-				npc.npcName, npc.deathDamageType, preserveDeathFrame, npc.runtimeState)
+				npc.npcName, npc.deathDamageType, preserveDeathFrame, npc.runtimeState, monsterfyPosZ)
 			: false;
 		debugC(1, kDebugCombat,
 			"Harvester: combat npc death complete target='%s' damage_type=%d last_frame=%d preserve_runtime_actor=%d monsterfy='%s' on_death='%s'",
