@@ -422,7 +422,7 @@ Common::String Lingo::formatStack() {
 
 	for (uint i = 0; i < _state->stack.size(); i++) {
 		Datum d = _state->stack[i];
-		stack += Common::String::format("<%s> ", d.asString(true).c_str());
+		stack += Common::String::format("<%s> ", formatStringForDump(d.asString(true)).c_str());
 	}
 	return stack;
 }
