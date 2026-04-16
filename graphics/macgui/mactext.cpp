@@ -487,7 +487,8 @@ void MacText::getChunkPosFromIndex(int index, uint &lineNum, uint &chunkNum, uin
 	}
 	for (uint i = 0; i < _canvas._text.size(); i++) {
 		if (_canvas.getLineCharWidth(i) <= index) {
-			index -= _canvas.getLineCharWidth(i);
+			// include carriage return
+			index -= _canvas.getLineCharWidth(i) + 1;
 		} else {
 			lineNum = i;
 			chunkNum = _canvas._text[i].getChunkNum(&index);
