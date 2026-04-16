@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, checked the Inquisitor live `MONSTERFY` spawn path against Ghidra. Confirmed native `update_actor_runtime_state` copies the dying NPC entity render Z into the target monster record before spawning it, native NPC/monster records spawn with z extent `5`, and native active monster spawn seeds a standing facing frame rather than a walking loop. Updated the Harvester shim to mirror those three behaviors.
+- On April 16, 2026, checked the Inner Sanctum Herrill/Grand Muck dialogue branch against Ghidra. Confirmed the native branch plays the logged dialogue, then calls `queue_live_named_npc_death_or_monsterfy_transition` with `GRAND_MUCK` before setting `PC_TALKED_TO_HERRILL`. Updated the Harvester dialogue shim to queue the live Grand Muck NPC transition instead of finalizing the runtime NPC immediately.
 
 ## Next Suggested Action
 
-- Re-test `PAIN` through `INQUIST_ATTACK_TIMER` and Inquisitor defeat. Verify the monster appears without a screen-depth jump, remains visually stable while standing, then uses the walking bank only while actually chasing.
+- Re-test `INNERSANCTUM` from entrance `L2_2_M1`. Verify the Herrill intro dialogue ends by visibly transitioning Grand Muck in-place, and that `PC_TALKED_TO_HERRILL` prevents the intro from replaying on re-entry.

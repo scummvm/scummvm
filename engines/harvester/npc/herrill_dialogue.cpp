@@ -34,7 +34,7 @@ static const char *const kHerrillNpc = "HERRILL";
 static const char *const kHerrillLogNpc = "HERRILL_LOG";
 static const char *const kPcSpeaker = "PC";
 static const char *const kGrandMuckNpc = "GRAND_MUCK";
-static const int kSlashDeathDamageType = 1;
+static const int kGrandMuckDeathDamageType = 1;
 
 static const int kHerrillGascanResponseLine = 0x280;
 static const int kHerrillTopicBufferResponseLine = 0x281;
@@ -82,11 +82,12 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playGrandMuckLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kGrandMuckNpc, headVariant);
 	};
-	auto queueNpcSlashTransition = [&](const char *npcName) {
+	auto queueLiveNpcDeathTransition = [&](const char *npcName) {
 		InteractionResult interaction;
-		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
-				npcName, kSlashDeathDamageType)) {
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(
+				npcName, kGrandMuckDeathDamageType)) {
 			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
 		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
@@ -138,7 +139,7 @@ Common::Error HerrillDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 					return lineError;
 			}
 
-			queueNpcSlashTransition(kGrandMuckNpc);
+			queueLiveNpcDeathTransition(kGrandMuckNpc);
 			(void)runtime.startupScript().setRuntimeFlagValue("PC_TALKED_TO_HERRILL", true);
 		}
 		return Common::kNoError;
