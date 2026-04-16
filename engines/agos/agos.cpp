@@ -1077,6 +1077,7 @@ const AGOSEngine::PnAmigaTextPlane *AGOSEngine::getPnAmigaTextPlane(const Window
 
 AGOSEngine::~AGOSEngine() {
 	_system->getAudioCDManager()->stop();
+	stopMusic();
 	delete _pnAmigaFont;
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {

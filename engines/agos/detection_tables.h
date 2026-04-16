@@ -246,6 +246,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
+	// Elvira 1 - German Atari ST Floppy
+	{
+		{
+			"elvira1",
+			"Floppy",
+
+			{
+				{ "gamest",		GAME_BASEFILE,	"8942859018fcfb2dbed13e83d974d1ab", 121266},
+				{ "icon.dat",	GAME_ICONFILE,	"2db931e84f1ca01f0816dddfae3f49e1", 36573},
+				{ "tbllist",	GAME_TBLFILE,	"5b6ff494bf7e24213758598ef4ac0a8b", 476},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_ELVIRA1,
+		GID_ELVIRA1,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
 	// Elvira 1 - English Atari ST Floppy alternative?
 	{
 		{

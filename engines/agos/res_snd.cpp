@@ -110,6 +110,291 @@ static Common::Array<byte> unsquashAcornDesktopTracker(const byte *data, uint32 
 	}
 }
 
+/*
+ * Pack-Ice depacker is based on a simplified version of IceDecompressor:
+ * https://github.com/temisu/ancient
+ *
+ * BSD 2-Clause License
+ *
+ * Copyright (c) 2017-2026, Teemu Suutari
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice,
+ *   this list of conditions and the following disclaimer.
+ *
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+static bool isElvira1PackIcePrg(const Common::Array<byte> &data) {
+	return data.size() >= 0x26 && !memcmp(data.begin() + 0x1E, "Pack-Ice", 8);
+}
+
+static uint32 makePackIceBitMask(uint8 bitCount) {
+	return bitCount == 32 ? 0xFFFFFFFF : ((1U << bitCount) - 1);
+}
+
+class PackIceBitReader {
+public:
+	PackIceBitReader(const Common::Array<byte> &data, uint32 startOffset, uint32 endOffset)
+		: _data(data), _pos(endOffset), _startOffset(startOffset) {
+	}
+
+	void reset(uint32 value, uint8 bitCount) {
+		_bitBuffer = value;
+		_bitsLeft = bitCount;
+	}
+
+	uint8 readByte() {
+		if (_pos <= _startOffset)
+			error("AGOS: Pack-Ice depacker byte underrun");
+		return _data[--_pos];
+	}
+
+	uint32 readBitsBE32(uint32 count) {
+		uint32 value = 0;
+		while (count) {
+			if (!_bitsLeft) {
+				if (_pos < _startOffset + 4)
+					error("AGOS: Pack-Ice depacker long underrun");
+				_pos -= 4;
+				_bitBuffer = READ_BE_UINT32(_data.begin() + _pos);
+				_bitsLeft = 32;
+			}
+			const uint8 bitsToRead = (count < _bitsLeft) ? (uint8)count : _bitsLeft;
+			_bitsLeft -= bitsToRead;
+			const uint32 nextBits = (_bitBuffer >> _bitsLeft) & makePackIceBitMask(bitsToRead);
+			value = bitsToRead == 32 ? nextBits : ((value << bitsToRead) | nextBits);
+			count -= bitsToRead;
+		}
+		return value;
+	}
+
+	bool eof() const {
+		return _pos == _startOffset;
+	}
+
+private:
+	const Common::Array<byte> &_data;
+	uint32 _pos;
+	uint32 _startOffset;
+	uint32 _bitBuffer = 0;
+	uint8 _bitsLeft = 0;
+};
+
+static uint32 decodePackIceVlc(PackIceBitReader &bits, const uint8 *bitLengths, const uint32 *offsets, uint32 count,
+		uint32 base) {
+	if (base >= count)
+		error("AGOS: Pack-Ice depacker invalid VLC base");
+
+	return offsets[base] + bits.readBitsBE32(bitLengths[base]);
+}
+
+static uint32 decodePackIceCascade(PackIceBitReader &bits, const uint8 *bitLengths, const uint32 *offsets,
+		uint32 count) {
+	for (uint32 i = 0; i < count; ++i) {
+		const uint8 bitLength = bitLengths[i];
+		const uint32 value = bits.readBitsBE32(bitLength);
+		if (i + 1 == count || value != makePackIceBitMask(bitLength))
+			return offsets[i] - i + value;
+	}
+
+	error("AGOS: Pack-Ice depacker invalid VLC cascade");
+}
+
+static bool depackElvira1PackIcePrg(const Common::Array<byte> &packedData, Common::Array<byte> &unpackedData) {
+	enum {
+		kPackedStreamStart = 0x021C,
+		kPackedStreamEnd = 0xAFE2,
+		kRawSize = 0x1694C
+	};
+	const uint8 literalBitLengths[] = {1, 2, 2, 3, 8, 15};
+	const uint32 literalOffsets[] = {0, 2, 6, 10, 18, 274};
+	const uint8 countBaseBitLengths[] = {1, 1, 1, 1};
+	const uint32 countBaseOffsets[] = {0, 2, 4, 6};
+	const uint8 countBitLengths[] = {0, 0, 1, 2, 10};
+	const uint32 countOffsets[] = {0, 1, 2, 4, 8};
+	const uint8 distanceBaseBitLengths[] = {1, 1};
+	const uint32 distanceBaseOffsets[] = {0, 2};
+	const uint8 distanceBitLengths[] = {5, 8, 12};
+	const uint32 distanceOffsets[] = {0, 32, 288};
+
+	if (!isElvira1PackIcePrg(packedData) || packedData.size() < kPackedStreamEnd)
+		return false;
+
+	PackIceBitReader bits(packedData, kPackedStreamStart, kPackedStreamEnd);
+	uint32 initialBits = bits.readBitsBE32(32);
+	uint32 shiftedBits = initialBits;
+	uint32 initialBitCount = 0;
+	while (shiftedBits) {
+		shiftedBits <<= 1;
+		++initialBitCount;
+	}
+	if (initialBitCount)
+		--initialBitCount;
+	if (initialBitCount)
+		bits.reset(initialBits >> (32 - initialBitCount), (uint8)initialBitCount);
+
+	unpackedData.resize(kRawSize);
+	uint32 outPos = kRawSize;
+
+	while (true) {
+		if (bits.readBitsBE32(1)) {
+			const uint32 literalLength = decodePackIceCascade(bits, literalBitLengths, literalOffsets,
+				ARRAYSIZE(literalBitLengths)) + 1;
+			for (uint32 i = 0; i < literalLength; ++i) {
+				if (!outPos)
+					return false;
+				unpackedData[--outPos] = bits.readByte();
+			}
+		}
+
+		if (!outPos)
+			break;
+
+		const uint32 countBase = decodePackIceCascade(bits, countBaseBitLengths, countBaseOffsets,
+			ARRAYSIZE(countBaseBitLengths));
+		const uint32 copyCount = decodePackIceVlc(bits, countBitLengths, countOffsets, ARRAYSIZE(countBitLengths),
+			countBase) + 2;
+
+		uint32 distance = 0;
+		if (copyCount == 2) {
+			if (bits.readBitsBE32(1))
+				distance = bits.readBitsBE32(9) + 0x40;
+			else
+				distance = bits.readBitsBE32(6);
+			distance += copyCount;
+		} else {
+			uint32 distanceBase = decodePackIceCascade(bits, distanceBaseBitLengths, distanceBaseOffsets,
+				ARRAYSIZE(distanceBaseBitLengths));
+			if (distanceBase < 2)
+				distanceBase ^= 1;
+			distance = decodePackIceVlc(bits, distanceBitLengths, distanceOffsets, ARRAYSIZE(distanceBitLengths), distanceBase);
+			distance += copyCount;
+		}
+
+		if (!distance || outPos < copyCount || outPos + distance > kRawSize)
+			return false;
+
+		for (uint32 i = 0; i < copyCount; ++i) {
+			--outPos;
+			unpackedData[outPos] = unpackedData[outPos + distance];
+		}
+	}
+
+	return bits.eof() && unpackedData.size() >= 28 && READ_BE_UINT16(unpackedData.begin()) == 0x601A;
+}
+
+static bool extractEmbeddedTosPrg(const Common::Array<byte> &containerPrg, Common::Array<byte> &innerPrg) {
+	if (containerPrg.size() < 28)
+		return false;
+
+	const byte *prg = containerPrg.begin();
+	if (READ_BE_UINT16(prg) != 0x601A)
+		return false;
+
+	const uint32 outerTextSize = READ_BE_UINT32(prg + 2);
+	const uint32 outerRelOffset = 28 + outerTextSize + READ_BE_UINT32(prg + 6) + READ_BE_UINT32(prg + 14);
+	if (containerPrg.size() < outerRelOffset + 4)
+		return false;
+
+	for (uint32 off = 30; off + 28 <= 28 + outerTextSize; off += 2) {
+		if (READ_BE_UINT16(prg + off) != 0x601A)
+			continue;
+
+		const uint32 textSize = READ_BE_UINT32(prg + off + 2);
+		const uint32 dataSize = READ_BE_UINT32(prg + off + 6);
+		const uint32 bssSize = READ_BE_UINT32(prg + off + 10);
+		const uint32 symSize = READ_BE_UINT32(prg + off + 14);
+		const uint32 innerOffText = off + 28;
+		const uint32 innerOffData = innerOffText + textSize;
+		const uint32 innerOffSym = innerOffData + dataSize;
+		const uint32 innerOffRel = innerOffSym + symSize;
+		if (innerOffText < off || innerOffData < innerOffText || innerOffSym < innerOffData || innerOffRel < innerOffSym)
+			continue;
+		if (innerOffRel + 4 > containerPrg.size())
+			continue;
+
+		const uint32 firstRel = READ_BE_UINT32(prg + innerOffRel);
+		if (firstRel >= textSize + dataSize + bssSize && firstRel != 0)
+			continue;
+
+		uint32 pos = innerOffRel + 4;
+		while (pos < containerPrg.size()) {
+			if (containerPrg[pos++] == 0)
+				break;
+		}
+		if (containerPrg[pos - 1] != 0)
+			continue;
+
+		innerPrg.resize(pos - off);
+		memcpy(innerPrg.begin(), prg + off, pos - off);
+		debug(1, "AGOS: Found embedded Atari ST PRG at 0x%X (text=0x%X, data=0x%X, bss=0x%X)",
+			off, textSize, dataSize, bssSize);
+		return true;
+	}
+
+	return false;
+}
+
+static Common::SeekableReadStream *openElvira1AtariSTPrg() {
+	const char *const prgNames[] = {
+		"ELVIRA.PRG",
+		"ELVIRA+.PRG",
+		"RUNENG.PRG",
+		"AUTO/RUNENG.PRG"
+	};
+
+	Common::File file;
+	for (uint i = 0; i < ARRAYSIZE(prgNames); ++i) {
+		const char *prgName = prgNames[i];
+		if (!file.open(Common::Path(prgName)))
+			continue;
+
+		Common::Array<byte> prgData;
+		prgData.resize((uint32)file.size());
+		if (!prgData.empty() && file.read(prgData.begin(), prgData.size()) != prgData.size()) {
+			warning("playMusic: Failed to read Atari ST Elvira 1 PRG '%s'", prgName);
+			return nullptr;
+		}
+
+		if (isElvira1PackIcePrg(prgData)) {
+			Common::Array<byte> unpackedOuterPrg;
+			if (!depackElvira1PackIcePrg(prgData, unpackedOuterPrg)) {
+				warning("playMusic: Failed to depack Atari ST Elvira 1 Pack-Ice PRG '%s'", prgName);
+				return nullptr;
+			}
+			if (!extractEmbeddedTosPrg(unpackedOuterPrg, prgData)) {
+				warning("playMusic: Failed to locate embedded Atari ST PRG inside depacked Elvira 1 wrapper '%s'", prgName);
+				return nullptr;
+			}
+		}
+
+		byte *buf = nullptr;
+		if (!prgData.empty()) {
+			buf = new byte[prgData.size()];
+			memcpy(buf, prgData.begin(), prgData.size());
+		}
+		return new Common::MemoryReadStream(buf, prgData.size(), DisposeAfterUse::YES);
+	}
+
+	return nullptr;
+}
+
 // This data is hardcoded in the executable.
 const int AGOSEngine_Simon1::SIMON1_GMF_SIZE[] = {
 	8900, 12166,  2848,  3442,  4034,  4508,  7064,  9730,  6014,  4742,
@@ -533,19 +818,18 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 				return;
 			}
 
-			Common::File *file = new Common::File();
-			if (!file->open(Common::Path("ELVIRA.PRG"))) {
-				warning("playMusic: Can't load Atari ST ELVIRA.PRG for music id %d", music);
-				delete file;
+			Common::SeekableReadStream *stream = openElvira1AtariSTPrg();
+			if (!stream) {
+				warning("playMusic: Can't load Atari ST Elvira 1 PRG for music id %d", music);
 				return;
 			}
 
 			delete _elviraAtariSTPlayer;
 			_elviraAtariSTPlayer = nullptr;
 
-			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(file, prgTune);
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(stream, prgTune);
 			if (!_elviraAtariSTPlayer->isValid()) {
-				warning("playMusic: Unsupported or unreadable Atari ST ELVIRA.PRG, skipping music id %d", music);
+				warning("playMusic: Unsupported or unreadable Atari ST Elvira 1 PRG, skipping music id %d", music);
 				delete _elviraAtariSTPlayer;
 				_elviraAtariSTPlayer = nullptr;
 				return;
