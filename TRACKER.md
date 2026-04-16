@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, fixed the Loomis dirty-magazine dialogue branch so its queued runtime mutation is also marked as a visual room-state change. This lets the current room refresh remove the hidden `LOOMIS` actor and update the inventory/drawer visuals after `GRAPHIC/FST/C048.FST`. Verified `engines/harvester/npc/loomis_dialogue.o` builds.
+- On April 16, 2026, fixed inventory use/carry prompt labels so `ObjectRecord.interactionLabel` is preferred over the inventory `*_STEXT` tooltip text, matching the Ghidra `run_inventory_screen` and `run_harvester_main_loop` label-field evidence and preventing `right_click_to_view` suffixes from leaking into `Use ... on ...` prompts. Verified `engines/harvester/script.o` builds.
 
 ## Next Suggested Action
 
-- Runtime-test giving `INV_MAG` to `LOOMIS` in `SHRFOFC`: after selecting `Sure!` and playing `GRAPHIC/FST/C048.FST`, confirm Loomis is no longer visible or clickable, the dirty magazine is gone from inventory, and the sheriff drawer visuals are refreshed.
+- Runtime-test selecting `COMPLETED_LODGE_APPLICATION` in inventory, then hovering inventory targets and room/NPC targets in `SERGEANTRM`; confirm the use prompt shows the clean interaction labels such as `completed Lodge application` and does not include the right-click tooltip suffix.
