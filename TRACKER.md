@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, confirmed in Ghidra `dispatch_room_event_actions` that native `KILL_PC` maps arg1 damage strings such as `SLASH` onto the player actor death damage type, then sets player HP to zero. Updated script interaction results and room interaction handling so script-driven `KILL_PC` starts the player defeat sequence after timer/object runtime mutations are applied.
+- On April 16, 2026, confirmed `HARVEST.SCR` room `FLESH` enters through `D2_2_F1`, enables `TALK_HERPOTT_T`, and issues `START_DIALOG "POTTS_FLESH"` when `PC_TALKED_TO_POTTS` is false. Confirmed in Ghidra that native dialogue dispatch table entry `POTTS_FLESH` points to `handle_talk_to_mr_potts` like the `MR_POTTS` variants, and patched `MrPottsDialogueHandler::matchesNpc()` to accept `POTTS_FLESH`.
 
 ## Next Suggested Action
 
-- Re-test the PIT/JAWS roof timer chain through `JAWROOF10T` and verify `BODYCRSH.WAV` plays, `JAWROOF10` is materialized, the player uses the `SLASH` death animation bank, and the game-over return happens after the death animation completes.
+- Re-test entering `FLESH` from `D2_2_F1` with `HARVEST_BLADE` in inventory and verify the `POTTS_FLESH` dialogue starts automatically, `PC_TALKED_TO_POTTS` is set, `MONSTERFY_POTTS` runs after the dialogue branch, and `POTTS_FLESH` can also be clicked/used as a talkable room NPC.
