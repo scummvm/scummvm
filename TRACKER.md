@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, compared ScummVM's Harvester FST decoder against native `run_fst_sequence_player @ 0x12b00` and patched the engine to match two confirmed codec details: two-color mask blocks map mask bits right-to-left within each nibble, and native decodes only `(height >> 2) - 1` four-scanline tile bands. Updated `ARCHITECTURE.md` with the confirmed FST bitstream evidence and verified `engines/harvester/fst_player.o` builds.
+- On April 16, 2026, fixed the Loomis dirty-magazine dialogue branch so its queued runtime mutation is also marked as a visual room-state change. This lets the current room refresh remove the hidden `LOOMIS` actor and update the inventory/drawer visuals after `GRAPHIC/FST/C048.FST`. Verified `engines/harvester/npc/loomis_dialogue.o` builds.
 
 ## Next Suggested Action
 
-- Runtime-test representative FST playback with mask-heavy and tail-sensitive files such as `GRAPHIC/FST/FVLOGO.FST`, `GRAPHIC/FST/INTROFIN.FST`, `GRAPHIC/FST/C001B.FST`, `GRAPHIC/FST/C086.FST`, and `GRAPHIC/FST/RANGSHOT.FST` to confirm the visual artifacts are gone.
+- Runtime-test giving `INV_MAG` to `LOOMIS` in `SHRFOFC`: after selecting `Sure!` and playing `GRAPHIC/FST/C048.FST`, confirm Loomis is no longer visible or clickable, the dirty magazine is gone from inventory, and the sheriff drawer visuals are refreshed.

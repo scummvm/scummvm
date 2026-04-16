@@ -309,6 +309,7 @@ Common::Error LoomisDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 
 			InteractionResult interaction;
 			interaction.mutatedRuntimeState = changed;
+			interaction.visualRuntimeStateChanged = changed;
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 			return Common::kNoError;
 		}
