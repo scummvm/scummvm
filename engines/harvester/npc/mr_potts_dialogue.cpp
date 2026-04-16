@@ -262,6 +262,7 @@ static const int kMrPottsPeepholeTopicResponseLines[] = {
 
 bool MrPottsDialogueHandler::matchesNpc(const Common::String &npcName) const {
 	return npcName.equalsIgnoreCase("MR_POTTS") ||
+		npcName.equalsIgnoreCase("POTTS_FLESH") ||
 		npcName.equalsIgnoreCase("MR_POTTS_CEM10") ||
 		npcName.equalsIgnoreCase("MR_POTTS_HALL");
 }
