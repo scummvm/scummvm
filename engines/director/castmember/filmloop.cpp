@@ -48,6 +48,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_crop = false;
 	_center = false;
 	_index = -1;
+	_score = nullptr;
 
 	if (cast->_version >= kFileVer400) {
 		_initialRect = Movie::readRect(stream);
@@ -200,7 +201,7 @@ Common::String FilmLoopCastMember::formatInfo() {
 		_initialRect.left, _initialRect.top,
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
-		_score->_scoreCache.size(), _subchannels.size(), _enableSound, _looping,
+		_score ? _score->_scoreCache.size() : -1, _score ? _subchannels.size() : -1, _enableSound, _looping,
 		_crop, _center
 	);
 }
