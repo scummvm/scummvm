@@ -295,18 +295,13 @@ static void decodeMaskBlock(byte *dest, int pitch, const byte *source) {
 	const byte color0 = source[0];
 	const byte color1 = source[1];
 	const uint16 mask = READ_LE_UINT16(source + 2);
-	const byte maskRows[4] = {
-		(byte)((mask >> 8) & 0xf0),
-		(byte)((mask >> 8) & 0x0f),
-		(byte)(mask & 0xf0),
-		(byte)(mask & 0x0f)
-	};
 
 	for (int y = 0; y < 4; ++y) {
 		byte *row = dest + y * pitch;
-		const byte rowMask = maskRows[y];
+		const byte rowMask = (y < 2) ? (byte)(mask >> 8) : (byte)mask;
+		const byte firstBit = (y & 1) ? 0x08 : 0x80;
 		for (int x = 0; x < 4; ++x) {
-			const byte bit = (y & 1) ? (1 << x) : (0x10 << x);
+			const byte bit = firstBit >> x;
 			row[x] = (rowMask & bit) ? color1 : color0;
 		}
 	}
@@ -335,7 +330,8 @@ static bool decodeFrame(const FstHeader &header, const byte *frameData, uint32 f
 	const int width = (int)header.width;
 	const int height = (int)header.height;
 	const int blocksX = width / 4;
-	const int blocksY = height / 4;
+	// Native playback leaves the last four scanlines unchanged.
+	const int blocksY = MAX(0, height / 4 - 1);
 	bool truncatedTail = false;
 
 	for (int blockY = 0; blockY < blocksY; ++blockY) {
