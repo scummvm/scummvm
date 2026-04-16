@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, checked native class-4 NPC death handling in `HARVEST.LE` against Ghidra. Confirmed `update_actor_runtime_state` keeps a completed non-monsterfied NPC death as current-room actor state `0x38` while setting `NpcRecord.death_or_monsterfy_flag` for later room setup suppression. Updated ScummVM room combat handling so MERCY old man/old woman death sprites remain in the current room after their on-death script refresh.
+- On April 16, 2026, checked the Inner Sanctum post-Muckey path against decoded `HARVEST.SCR` and Ghidra. Confirmed the `{COMMAND "KILL_HERR2" ...}` script line is commented out and skipped by the native parser, while `update_actor_runtime_state` has a hard-coded `HERRILL_LOG` removal path during Muckey combat state. Updated ScummVM room combat handling to queue Herrill's live NPC death when `MUCKEY` completes death and triggers `ACTV_INNERSAN_DOOR`.
 
 ## Next Suggested Action
 
-- Re-test `MERCY` from entrance `K1_2_I2`. Kill `OLDMAN` and `OLDWOMAN`, verify both death sprites remain visible after `OLD_MAN_COM` / `OLD_WOMAN_COM` actions refresh the room, and verify leaving/re-entering still suppresses the killed NPCs.
+- Re-test `INNERSANCTUM` from entrance `L2_2_M1`. Kill `GRAND_MUCK`/`MUCKEY`, verify `HERRILL_LOG` plays his death before `KILL_HERMUCK_T` starts the `C002A`/`C002B` flic chain, and verify re-entry no longer respawns Herrill.
