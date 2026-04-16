@@ -50,18 +50,20 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playDarkWomanLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kDarkWomanNpc, headVariant);
 	};
-	auto queueDarkWomanDeathOrMonsterfyTransition = [&]() {
+	auto queueDarkWomanMonsterfyTransition = [&]() {
 		InteractionResult interaction;
-		if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc))
+		if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(kDarkWomanNpc)) {
 			interaction.mutatedRuntimeState = true;
+			interaction.visualRuntimeStateChanged = true;
+		}
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	};
-	auto runDarkWomanDeathBranch = [&]() -> Common::Error {
+	auto runDarkWomanMonsterfyBranch = [&]() -> Common::Error {
 		Common::Error lineError = playDarkWomanLine(0x4ce2, 2);
 		if (lineError.getCode() != Common::kNoError)
 			return lineError;
 
-		queueDarkWomanDeathOrMonsterfyTransition();
+		queueDarkWomanMonsterfyTransition();
 		return Common::kNoError;
 	};
 	auto runMirrorRevealBranch = [&]() -> Common::Error {
@@ -109,7 +111,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1)
-		return runDarkWomanDeathBranch();
+		return runDarkWomanMonsterfyBranch();
 	if (responseIndex != 2)
 		return Common::kNoError;
 
@@ -124,7 +126,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1)
-		return runDarkWomanDeathBranch();
+		return runDarkWomanMonsterfyBranch();
 	if (responseIndex != 2)
 		return Common::kNoError;
 
@@ -139,7 +141,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1)
-		return runDarkWomanDeathBranch();
+		return runDarkWomanMonsterfyBranch();
 	if (responseIndex != 2)
 		return Common::kNoError;
 
@@ -156,7 +158,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return responseError;
 
 	if (responseIndex == 1)
-		return runDarkWomanDeathBranch();
+		return runDarkWomanMonsterfyBranch();
 	if (!hasHandMirror)
 		return playDarkWomanLine(0x4cfc, 2);
 

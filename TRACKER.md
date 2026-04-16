@@ -10,8 +10,8 @@
 
 ## Last Confirmed Action
 
-- On April 16, 2026, confirmed `HARVEST.SCR` room `FLESH` enters through `D2_2_F1`, enables `TALK_HERPOTT_T`, and issues `START_DIALOG "POTTS_FLESH"` when `PC_TALKED_TO_POTTS` is false. Confirmed in Ghidra that native dialogue dispatch table entry `POTTS_FLESH` points to `handle_talk_to_mr_potts` like the `MR_POTTS` variants, and patched `MrPottsDialogueHandler::matchesNpc()` to accept `POTTS_FLESH`.
+- On April 16, 2026, confirmed `HARVEST.SCR` room `NARCISSISM` spawns NPC `DARK_WOMAN` with monsterfy target `DARK_WOMAN_MONSTER`, and confirmed in Ghidra that `handle_talk_to_dark_woman` plays insult response line `0x4ce2` then calls `queue_live_named_npc_death_or_monsterfy_transition("DARK_WOMAN")`. Updated the Dark Woman insult branches to queue the live NPC monsterfy transition and mark the current room visual state dirty.
 
 ## Next Suggested Action
 
-- Re-test entering `FLESH` from `D2_2_F1` with `HARVEST_BLADE` in inventory and verify the `POTTS_FLESH` dialogue starts automatically, `PC_TALKED_TO_POTTS` is set, `MONSTERFY_POTTS` runs after the dialogue branch, and `POTTS_FLESH` can also be clicked/used as a talkable room NPC.
+- Re-test entering `NARCISSISM` from `C1_2_G2`, choose "Uh, you're not that hot...", and verify `DARK_WOMAN` begins the monsterfy animation, `DARK_WOMAN_MONSTER` appears active afterward, and the `SET_D_W_FLAG` death command opens exits `G_1` and `G_3` after the monster is defeated.
