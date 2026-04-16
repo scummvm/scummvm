@@ -476,7 +476,7 @@ static int parseEntranceFacing(const Common::String &direction) {
 	return -1;
 }
 
-static int parseNpcDeathDamageType(const Common::String &value) {
+static int parseDeathDamageType(const Common::String &value) {
 	if (value.equalsIgnoreCase("BLUDGE"))
 		return 1;
 	if (value.equalsIgnoreCase("SLASH"))
@@ -1222,7 +1222,7 @@ void Script::parseTownRecords(ResourceManager &resources) {
 			monster.reservedString38 = tokens[tagIndex + 6];
 			monster.reservedString3c = tokens[tagIndex + 7];
 			monster.facing = parseEntranceFacing(tokens[tagIndex + 8]);
-			monster.damageType = parseNpcDeathDamageType(tokens[tagIndex + 9]);
+			monster.damageType = parseDeathDamageType(tokens[tagIndex + 9]);
 			monster.attackSound1 = resources.normalizeResourcePath(tokens[tagIndex + 10]);
 			monster.attackSound2 = resources.normalizeResourcePath(tokens[tagIndex + 11]);
 			monster.attackSound3 = resources.normalizeResourcePath(tokens[tagIndex + 12]);
@@ -1810,6 +1810,7 @@ bool Script::executeRoomEnterCommands(const Common::String &roomName,
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
@@ -1829,6 +1830,7 @@ bool Script::executeRoomExitCommands(const Common::String &roomName,
 		nullptr, nullptr, &result.cdChangeDisc, &result.dialogueNpcName, &result.dialogueContinuationTag,
 		&result.continuationTag, &result.modalText, &result.lightingCommand,
 		&result.requestPlayerGotoXZ, &result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
@@ -1866,6 +1868,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 
@@ -1874,6 +1877,7 @@ bool Script::resolveObjectInteraction(const ObjectRecord &object, InteractionRes
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
+		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(object.actionTag);
 }
@@ -1892,6 +1896,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 	return !result.nextRoomName.empty() || !result.cutscenePath.empty() ||
@@ -1899,6 +1904,7 @@ bool Script::resolveRegionInteraction(const RegionRecord &region, InteractionRes
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
+		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(region.actionTag);
 }
@@ -1925,6 +1931,7 @@ bool Script::resolveUseItemInteraction(const Common::String &itemName, const Obj
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 	return true;
@@ -1965,6 +1972,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 
@@ -1973,6 +1981,7 @@ bool Script::executeActionTag(const Common::String &tag, InteractionResult &resu
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
+		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(tag);
 }
@@ -2001,6 +2010,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		&result.dialogueNpcName, &result.dialogueContinuationTag, &result.continuationTag,
 		&result.modalText, &result.lightingCommand, &result.requestPlayerGotoXZ,
 		&result.playerGotoX, &result.playerGotoZ,
+		&result.requestPlayerDeath, &result.playerDeathDamageType,
 		&result.mutatedRuntimeState, &result.visualRuntimeStateChanged,
 		&result.previousTimerRecords, &result.requestCloseupExit);
 
@@ -2009,6 +2019,7 @@ bool Script::executeTimerAction(const Common::String &timerName, InteractionResu
 		!result.dialogueNpcName.empty() || !result.musicPath.empty() || !result.audioCommands.empty() ||
 		result.cdChangeDisc > 0 || !result.continuationTag.empty() || !result.modalText.value.empty() ||
 		result.lightingCommand != kStartupLightingCommandNone || result.requestPlayerGotoXZ ||
+		result.requestPlayerDeath ||
 		result.requestCloseupExit || result.mutatedRuntimeState ||
 		hasActionableCommandChain(timer->arg2);
 }
@@ -2838,6 +2849,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		Common::String *continuationTag, ResolvedText *modalText,
 		StartupLightingCommand *lightingCommand, bool *requestPlayerGotoXZ,
 		int *playerGotoX, int *playerGotoZ,
+		bool *requestPlayerDeath, int *playerDeathDamageType,
 		bool *mutatedRuntimeState, bool *visualRuntimeStateChanged,
 		Common::Array<TimerRecord> *previousTimerRecords, bool *requestCloseupExit) {
 	auto isTruthy = [](const Common::String &value) {
@@ -3135,7 +3147,8 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 					musicPath, audioCommands, nextRoomName, roomTransition, cutscenePath,
 					deathFlicPath, requestMainMenu, cdChangeDisc, dialogueNpcName, dialogueContinuationTag,
 					continuationTag, modalText, lightingCommand, requestPlayerGotoXZ,
-					playerGotoX, playerGotoZ, mutatedRuntimeState, visualRuntimeStateChanged,
+					playerGotoX, playerGotoZ, requestPlayerDeath, playerDeathDamageType,
+					mutatedRuntimeState, visualRuntimeStateChanged,
 					previousTimerRecords, requestCloseupExit);
 				if (hasDeferredInteractionOutputs())
 					return;
@@ -3201,7 +3214,7 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 				continue;
 			}
 
-			const int deathDamageType = parseNpcDeathDamageType(command->arg2);
+			const int deathDamageType = parseDeathDamageType(command->arg2);
 			const bool deferLiveNpcDeathTransition =
 				_deferredLiveNpcDeathTransitionDepth > 0 &&
 				!contextRoomName.empty() &&
@@ -3256,6 +3269,10 @@ void Script::executeCommandChain(const Common::String &initialTag, const char *c
 		}
 
 		if (command->opcodeName.equalsIgnoreCase("KILL_PC")) {
+			if (requestPlayerDeath)
+				*requestPlayerDeath = true;
+			if (playerDeathDamageType)
+				*playerDeathDamageType = parseDeathDamageType(command->arg1);
 			noteMutation(setPlayerCurrentHitPoints(0));
 			currentTag = command->arg4;
 			continue;
