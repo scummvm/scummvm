@@ -74,6 +74,10 @@ public:
 	Flow &startupFlow() const { return _flow; }
 	const Common::String &currentRoomName() const { return _currentRoomName; }
 	const Common::String &genericByeTopic() const { return _genericByeTopic; }
+	bool executeActionTag(const Common::String &tag, InteractionResult &result,
+			bool allowTransitions = true) const {
+		return _script.executeActionTag(tag, result, allowTransitions, _currentRoomName);
+	}
 
 	Common::Error playDialogueLineWithVariant(int wavId, const Common::String &speakerId,
 			int headVariant) const {

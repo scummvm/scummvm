@@ -64,7 +64,7 @@ Common::Error MadamDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto executeActionTagIfSet = [&](const char *actionTag, bool mutatedRuntimeState = false) {
 		InteractionResult interaction;
 		interaction.mutatedRuntimeState = mutatedRuntimeState;
-		if (runtime.startupScript().executeActionTag(actionTag, interaction)) {
+		if (runtime.executeActionTag(actionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 		} else if (interaction.mutatedRuntimeState) {

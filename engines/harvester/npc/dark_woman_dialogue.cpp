@@ -80,7 +80,7 @@ Common::Error DarkWomanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		const bool changed = runtime.startupScript().setRuntimeObjectVisible(
 			kInventoryOwnerName, kHandMirrorItemName, false);
 		InteractionResult interaction;
-		if (runtime.startupScript().executeActionTag(kSetDarkWomanFlagActionTag, interaction)) {
+		if (runtime.executeActionTag(kSetDarkWomanFlagActionTag, interaction)) {
 			interaction.mutatedRuntimeState |= changed;
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 		} else {

@@ -304,7 +304,7 @@ Common::Error MrPottsDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
 		InteractionResult interaction;
-		if (!runtime.startupScript().executeActionTag(tag, interaction))
+		if (!runtime.executeActionTag(tag, interaction))
 			return;
 
 		runtime.applyImmediateDialogueInteractionEffects(interaction);

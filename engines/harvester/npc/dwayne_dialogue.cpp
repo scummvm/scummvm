@@ -86,7 +86,7 @@ Common::Error DwayneDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeActionTagIfSet = [&](const char *tag) {
 		InteractionResult interaction;
-		if (!startupScript.executeActionTag(tag, interaction))
+		if (!runtime.executeActionTag(tag, interaction))
 			return;
 
 		runtime.applyImmediateDialogueInteractionEffects(interaction);

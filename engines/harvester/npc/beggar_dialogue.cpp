@@ -54,7 +54,7 @@ Common::Error BeggarDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return Common::kNoError;
 
 	InteractionResult interaction;
-	if (runtime.startupScript().executeActionTag(kBeggarDialog3ActionTag, interaction)) {
+	if (runtime.executeActionTag(kBeggarDialog3ActionTag, interaction)) {
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	}

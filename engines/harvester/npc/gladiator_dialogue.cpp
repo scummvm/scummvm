@@ -117,7 +117,7 @@ Common::Error GladiatorDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		return lineError;
 
 	InteractionResult interaction;
-	if (runtime.startupScript().executeActionTag(kStartMercyTimerActionTag, interaction)) {
+	if (runtime.executeActionTag(kStartMercyTimerActionTag, interaction)) {
 		runtime.applyImmediateDialogueInteractionEffects(interaction);
 		runtime.queueDialogueInteractionIfNeeded(interaction);
 	}

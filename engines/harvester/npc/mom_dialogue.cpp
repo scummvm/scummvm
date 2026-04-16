@@ -494,7 +494,7 @@ Common::Error MomDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeActionTagIfSet = [&](const char *actionTag) {
 		InteractionResult interaction;
-		if (runtime.startupScript().executeActionTag(actionTag, interaction)) {
+		if (runtime.executeActionTag(actionTag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 		}

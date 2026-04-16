@@ -52,7 +52,7 @@ Common::Error PriestDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	};
 	auto executeDialogueActionTag = [&](const char *tag) {
 		InteractionResult interaction;
-		if (runtime.startupScript().executeActionTag(tag, interaction)) {
+		if (runtime.executeActionTag(tag, interaction)) {
 			runtime.applyImmediateDialogueInteractionEffects(interaction);
 			runtime.queueDialogueInteractionIfNeeded(interaction);
 		}
