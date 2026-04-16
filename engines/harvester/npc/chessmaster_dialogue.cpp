@@ -53,6 +53,8 @@ struct ChessmasterHotspot {
 struct ChessmasterPuzzleStage {
 	const char *choiceFlicPath;
 	const char *moveFlicPath;
+	// Native draws the decoded first frame, then advances through this count plus one.
+	uint moveFlicFrameAdvanceCount;
 	ChessmasterHotspot successHotspot;
 	const ChessmasterHotspot *failureHotspots;
 	uint failureHotspotCount;
@@ -85,9 +87,10 @@ static const ChessmasterHotspot kChessmasterStage3FailureHotspots[] = {
 };
 
 static const ChessmasterPuzzleStage kChessmasterPuzzleStages[] = {
-		{
+	{
 		"GRAPHIC/FST/CHOOSE1.FLC",
 		"GRAPHIC/FST/CHESMOV1.FLC",
+		0x1d,
 		{ 0x8b, 0xe0, 0xc0, 0x10d },
 		kChessmasterStage1FailureHotspots,
 		ARRAYSIZE(kChessmasterStage1FailureHotspots)
@@ -95,6 +98,7 @@ static const ChessmasterPuzzleStage kChessmasterPuzzleStages[] = {
 	{
 		"GRAPHIC/FST/CHOOSE2.FLC",
 		"GRAPHIC/FST/CHESMOV2.FLC",
+		0x1d,
 		{ 0x2a, 0xfa, 0x5f, 0x12e },
 		kChessmasterStage2FailureHotspots,
 		ARRAYSIZE(kChessmasterStage2FailureHotspots)
@@ -102,6 +106,7 @@ static const ChessmasterPuzzleStage kChessmasterPuzzleStages[] = {
 	{
 		"GRAPHIC/FST/CHOOSE3.FLC",
 		"GRAPHIC/FST/CHESMOV3.FLC",
+		0xe,
 		{ 0xee, 0xa7, 0x121, 0xcb },
 		kChessmasterStage3FailureHotspots,
 		ARRAYSIZE(kChessmasterStage3FailureHotspots)
@@ -181,7 +186,9 @@ static Common::Error decodeInitialFlicFrame(DialogueRuntime &runtime, const char
 	return Common::kNoError;
 }
 
-static Common::Error advanceFlicIfNeeded(ChessmasterFlicState &state, bool loop) {
+static Common::Error advanceFlicIfNeeded(ChessmasterFlicState &state, bool loop, bool *advanced = nullptr) {
+	if (advanced)
+		*advanced = false;
 	if (!g_system)
 		return Common::kNoError;
 	if (state.nextFrameTick != 0 && (int32)(state.nextFrameTick - g_system->getMillis()) > 0)
@@ -203,6 +210,8 @@ static Common::Error advanceFlicIfNeeded(ChessmasterFlicState &state, bool loop)
 	state.frame = nextFrame;
 	const int frameDelay = state.decoder.getCurFrameDelay();
 	state.nextFrameTick = frameDelay > 0 ? g_system->getMillis() + (uint32)frameDelay : 0;
+	if (advanced)
+		*advanced = true;
 	return Common::kNoError;
 }
 
@@ -252,7 +261,7 @@ static Common::Error runTimedDelay(uint32 durationMs) {
 	return Common::kNoError;
 }
 
-static Common::Error playOneShotFlic(DialogueRuntime &runtime, const char *path) {
+static Common::Error playMoveFlic(DialogueRuntime &runtime, const char *path, uint frameAdvanceCount) {
 	Graphics::Screen *screen = runtime.engine().getScreen();
 	if (!screen)
 		return Common::kReadingFailed;
@@ -262,17 +271,28 @@ static Common::Error playOneShotFlic(DialogueRuntime &runtime, const char *path)
 	if (loadError.getCode() != Common::kNoError)
 		return loadError;
 
+	drawFlicFrame(*screen, video);
+	screen->makeAllDirty();
+	screen->update();
+
 	Graphics::FrameLimiter limiter(g_system, 60);
+	uint advancedFrames = 0;
 	for (;;) {
-		Common::Error advanceError = advanceFlicIfNeeded(video, false);
+		if (advancedFrames > frameAdvanceCount || video.decoder.endOfVideo())
+			return Common::kNoError;
+
+		bool advanced = false;
+		Common::Error advanceError = advanceFlicIfNeeded(video, false, &advanced);
 		if (advanceError.getCode() != Common::kNoError)
 			return advanceError;
+		if (advanced)
+			++advancedFrames;
 
 		drawFlicFrame(*screen, video);
 		screen->makeAllDirty();
 		screen->update();
 
-		if (video.decoder.endOfVideo())
+		if (advancedFrames > frameAdvanceCount || video.decoder.endOfVideo())
 			return Common::kNoError;
 
 		Common::Event event;
@@ -373,7 +393,8 @@ static Common::Error runChessmasterThreeMovePuzzle(DialogueRuntime &runtime, boo
 		if (!selectedSuccessHotspot)
 			return Common::kNoError;
 
-		stageError = playOneShotFlic(runtime, kChessmasterPuzzleStages[i].moveFlicPath);
+		stageError = playMoveFlic(runtime, kChessmasterPuzzleStages[i].moveFlicPath,
+			kChessmasterPuzzleStages[i].moveFlicFrameAdvanceCount);
 		if (stageError.getCode() != Common::kNoError)
 			return stageError;
 		if (runtime.engine().shouldQuit())
