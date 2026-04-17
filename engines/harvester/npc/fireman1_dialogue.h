@@ -38,8 +38,8 @@ public:
 	void resetState() override { _state = Fireman1RoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);
-		syncDialogueBool(s, _state.stephMidgamePlayedShown, 11);
-		syncDialogueBool(s, _state.boltOfClothTakenShown, 11);
+		syncDialogueBool(s, _state.stephMidgamePlayedShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

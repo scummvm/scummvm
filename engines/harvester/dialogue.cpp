@@ -173,20 +173,20 @@ static void syncDialogueSharedState(Common::Serializer &s, DialogueSharedState &
 	syncDialogueBool(s, state.discussedMrPottsTuesdayNightAlibi);
 	syncDialogueBool(s, state.discussedMrsPottsTuesdayNightAlibi);
 	syncDialogueBool(s, state.confrontedMrPottsAboutSpyhole);
-	syncDialogueInt(s, state.serializedTalkStateFlagD2cd8, 4);
-	syncDialogueInt(s, state.dwaynePendingKarinAliveFollowupState, 4);
-	syncDialogueInt(s, state.dialogueStateD2eac, 4);
-	syncDialogueInt(s, state.dialogueStateD2eb4, 4);
-	syncDialogueInt(s, state.discussedNoteCheckbookEvidence, 4);
-	syncDialogueInt(s, state.discussedTvDeedEvidence, 4);
-	syncDialogueInt(s, state.discussedLedgerEvidence, 4);
-	syncDialogueInt(s, state.discussedCasketPhotoEvidence, 4);
-	syncDialogueInt(s, state.discussedWhaleyHerrillPhoto, 4);
-	syncDialogueInt(s, state.discussedKarinPurse, 4);
-	syncDialogueInt(s, state.momFatherTopicState, 4);
-	syncDialogueInt(s, state.dadMeatPermissionState, 4);
-	syncDialogueInt(s, state.sergeantCompletedFirstTaskState, 4);
-	syncDialogueInt(s, state.dialogueStateD2f30, 4);
+	syncDialogueInt(s, state.serializedTalkStateFlagD2cd8);
+	syncDialogueInt(s, state.dwaynePendingKarinAliveFollowupState);
+	syncDialogueInt(s, state.dialogueStateD2eac);
+	syncDialogueInt(s, state.dialogueStateD2eb4);
+	syncDialogueInt(s, state.discussedNoteCheckbookEvidence);
+	syncDialogueInt(s, state.discussedTvDeedEvidence);
+	syncDialogueInt(s, state.discussedLedgerEvidence);
+	syncDialogueInt(s, state.discussedCasketPhotoEvidence);
+	syncDialogueInt(s, state.discussedWhaleyHerrillPhoto);
+	syncDialogueInt(s, state.discussedKarinPurse);
+	syncDialogueInt(s, state.momFatherTopicState);
+	syncDialogueInt(s, state.dadMeatPermissionState);
+	syncDialogueInt(s, state.sergeantCompletedFirstTaskState);
+	syncDialogueInt(s, state.dialogueStateD2f30);
 }
 
 static const CftFontResource *findStartupFontByName(const HarvesterEngine &engine, const char *fontName) {

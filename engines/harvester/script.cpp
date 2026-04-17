@@ -156,10 +156,7 @@ static void syncStartupNpcRecord(Common::Serializer &s, NpcRecord &record) {
 	s.syncString(record.roomName);
 	syncBool(s, record.deathOrMonsterfyFlag);
 	syncBool(s, record.runtimeSpawned);
-	// FIXME: Remove this pre-release version-17 gate once Harvester ships and all
-	// saves carry room-NPC corpse frame state.
-	if (s.getVersion() >= 17)
-		s.syncAsSint32LE(record.runtimeState);
+	s.syncAsSint32LE(record.runtimeState);
 	syncBool(s, record.active);
 	syncBool(s, record.visible);
 	syncBool(s, record.savedVisible);
@@ -179,11 +176,6 @@ static void syncStartupMonsterRecord(Common::Serializer &s, MonsterRecord &recor
 	s.syncString(record.onDeathActionTag);
 	syncBool(s, record.active);
 	syncBool(s, record.visible);
-	// FIXME: Remove the pre-v2 monster save-layout fallback after release; clean
-	// Harvester saves will always serialize the full combat payload.
-	if (s.getVersion() < 2)
-		return;
-
 	s.syncAsSint32LE(record.initialHitPoints);
 	s.syncAsSint32LE(record.currentHitPoints);
 	s.syncAsSint32LE(record.damageAmount);
@@ -210,31 +202,7 @@ static void syncStartupMonsterRecord(Common::Serializer &s, MonsterRecord &recor
 	s.syncAsSint32LE(record.hitSoundTriggerFrame);
 	s.syncAsSint32LE(record.footstepSoundTriggerFrame);
 	s.syncAsSint32LE(record.deathSoundTriggerFrame);
-	// FIXME: Remove this version-16 gate before release; clean Harvester saves
-	// should always serialize monster runtimeState.
-	if (s.getVersion() >= 16)
-		s.syncAsSint32LE(record.runtimeState);
-}
-
-// FIXME: Remove this pre-release monster combat migration after Harvester ships and
-// only clean release-era saves remain.
-static void migrateLegacyMonsterCombatFields(const MonsterRecord &baseMonster,
-		MonsterRecord &currentMonster) {
-	const int legacyInitialHitPoints = MAX(0, currentMonster.initialHitPoints);
-	const int legacyCurrentHitPoints = CLIP<int>(currentMonster.currentHitPoints, 0, legacyInitialHitPoints);
-	const int damageTaken = legacyInitialHitPoints - legacyCurrentHitPoints;
-
-	currentMonster.engageDistance = baseMonster.engageDistance;
-	currentMonster.initialHitPoints = baseMonster.initialHitPoints;
-	currentMonster.currentHitPoints = MAX(0, baseMonster.initialHitPoints - damageTaken);
-	currentMonster.damageAmount = baseMonster.damageAmount;
-}
-
-static bool hasLegacyMonsterCombatFieldLayout(const MonsterRecord &baseMonster,
-		const MonsterRecord &currentMonster) {
-	return currentMonster.initialHitPoints != baseMonster.initialHitPoints ||
-		currentMonster.damageAmount != baseMonster.damageAmount ||
-		currentMonster.engageDistance != baseMonster.engageDistance;
+	s.syncAsSint32LE(record.runtimeState);
 }
 
 static bool matchesMonsterIdentity(const MonsterRecord &candidate, const MonsterRecord &monster) {
@@ -1666,108 +1634,22 @@ void Script::syncRuntimeSaveState(Common::Serializer &s) {
 	if (s.isLoading())
 		restoreMonsterRecordIndices(_monsters, _currentMonsters);
 	s.syncAsSint32LE(_playerCurrentHitPoints);
-	// FIXME: Remove this pre-v2 save-layout gate after release; clean Harvester
-	// saves always carry timer state, combat loadout, and paused-state fields.
-	if (s.getVersion() >= 2) {
-		syncRecordArray(s, _currentTimers, syncStartupTimerRecord);
-		s.syncAsSint32LE(_playerCombatLoadout);
-		syncBool(s, _playerControlPaused);
-		// FIXME: Remove this pre-release version-18 gate once Harvester ships and all
-		// saves carry combat resource counts for the room HUD and ranged weapons.
-		if (s.getVersion() >= 18) {
-			s.syncAsSint32LE(_nailgunAmmoCount);
-			s.syncAsSint32LE(_shotgunShellCount);
-			s.syncAsSint32LE(_nineGunBulletCount);
-			s.syncAsSint32LE(_thirtyEightGunBulletCount);
-			s.syncAsSint32LE(_chainsawFuelCount);
-		}
-	}
+	syncRecordArray(s, _currentTimers, syncStartupTimerRecord);
+	s.syncAsSint32LE(_playerCombatLoadout);
+	syncBool(s, _playerControlPaused);
+	s.syncAsSint32LE(_nailgunAmmoCount);
+	s.syncAsSint32LE(_shotgunShellCount);
+	s.syncAsSint32LE(_nineGunBulletCount);
+	s.syncAsSint32LE(_thirtyEightGunBulletCount);
+	s.syncAsSint32LE(_chainsawFuelCount);
 	if (s.isLoading()) {
 		_playerCurrentHitPoints = clampPlayerHitPoints(_playerCurrentHitPoints);
 		_playerCombatLoadout = clampPlayerCombatLoadout(_playerCombatLoadout);
-		if (s.getVersion() >= 18) {
-			_nailgunAmmoCount = clampCombatResourceCount(2, _nailgunAmmoCount);
-			_shotgunShellCount = clampCombatResourceCount(3, _shotgunShellCount);
-			_nineGunBulletCount = clampCombatResourceCount(4, _nineGunBulletCount);
-			_thirtyEightGunBulletCount = clampCombatResourceCount(5, _thirtyEightGunBulletCount);
-			_chainsawFuelCount = clampCombatResourceCount(14, _chainsawFuelCount);
-		} else {
-			_nailgunAmmoCount = 0;
-			_shotgunShellCount = 0;
-			_nineGunBulletCount = 0;
-			_thirtyEightGunBulletCount = 0;
-			_chainsawFuelCount = 0;
-
-			// Native HARVEST.SCR couples the cloak-room shotgun pickup to
-			// CLOAK_ADD -> ADD2INV SHOTGUN -> ADD_SHOTGUN_SHELLS 2, and the
-			// shell-box pickup to ADD12SHELLS -> ADD_SHOTGUN_SHELLS 14 with a
-			// native cap of 15. Pre-v18 ScummVM saves had no serialized combat
-			// resource counts, so infer the confirmed shotgun baseline from the
-			// persisted inventory objects rather than dropping legacy saves to 0.
-			if (isObjectInInventory("SHOTGUN"))
-				_shotgunShellCount = 2;
-			if (isObjectInInventory("SHOTSHELL")) {
-				_shotgunShellCount = CLIP<int>(_shotgunShellCount + 14, 0,
-					resolveCombatResourcePickupMax(3));
-			}
-			debugC(1, kDebugGeneral,
-				"Harvester: inferred legacy pre-v18 combat resources shells=%d shotgun=%d shell_box=%d",
-				_shotgunShellCount, isObjectInInventory("SHOTGUN"),
-				isObjectInInventory("SHOTSHELL"));
-		}
-		// FIXME: Drop this compatibility pass after release; it exists only to repair
-		// pre-release saves written before the monster combat field layout stabilized.
-		if (s.getVersion() >= 2) {
-			for (MonsterRecord &currentMonster : _currentMonsters) {
-				const MonsterRecord *baseMonster = findBaseMonster(currentMonster);
-				if (!baseMonster)
-					continue;
-				if (!hasLegacyMonsterCombatFieldLayout(*baseMonster, currentMonster))
-					continue;
-
-				migrateLegacyMonsterCombatFields(*baseMonster, currentMonster);
-			}
-		}
-		// FIXME: Remove the pre-v2 save fallback after release; clean Harvester saves will
-		// always serialize timer state and the full monster combat payload.
-		if (s.getVersion() < 2) {
-			_currentTimers = _timers;
-			for (MonsterRecord &currentMonster : _currentMonsters) {
-				const MonsterRecord *baseMonster = findBaseMonster(currentMonster);
-				if (!baseMonster)
-					continue;
-
-				currentMonster.initialHitPoints = baseMonster->initialHitPoints;
-				currentMonster.currentHitPoints = currentMonster.initialHitPoints;
-				currentMonster.damageAmount = baseMonster->damageAmount;
-				currentMonster.engageDistance = baseMonster->engageDistance;
-				currentMonster.damageType = baseMonster->damageType;
-				currentMonster.reservedString38 = baseMonster->reservedString38;
-				currentMonster.reservedString3c = baseMonster->reservedString3c;
-				currentMonster.reservedString44 = baseMonster->reservedString44;
-				currentMonster.reservedString48 = baseMonster->reservedString48;
-				currentMonster.attackSound1 = baseMonster->attackSound1;
-				currentMonster.attackSound2 = baseMonster->attackSound2;
-				currentMonster.attackSound3 = baseMonster->attackSound3;
-				currentMonster.hitSound1 = baseMonster->hitSound1;
-				currentMonster.hitSound2 = baseMonster->hitSound2;
-				currentMonster.hitSound3 = baseMonster->hitSound3;
-				currentMonster.footstepSoundLeft = baseMonster->footstepSoundLeft;
-				currentMonster.footstepSoundRight = baseMonster->footstepSoundRight;
-				currentMonster.deathSound = baseMonster->deathSound;
-				currentMonster.savedVisible = currentMonster.visible;
-				currentMonster.runtimeSpawned = false;
-				currentMonster.runtimeState = -1;
-				currentMonster.screenMinXBound = baseMonster->screenMinXBound;
-				currentMonster.screenMaxXBound = baseMonster->screenMaxXBound;
-				currentMonster.attackSoundTriggerFrame = baseMonster->attackSoundTriggerFrame;
-				currentMonster.hitSoundTriggerFrame = baseMonster->hitSoundTriggerFrame;
-				currentMonster.footstepSoundTriggerFrame = baseMonster->footstepSoundTriggerFrame;
-				currentMonster.deathSoundTriggerFrame = baseMonster->deathSoundTriggerFrame;
-			}
-			_playerCombatLoadout = kDefaultPlayerCombatLoadout;
-			_playerControlPaused = false;
-		}
+		_nailgunAmmoCount = clampCombatResourceCount(2, _nailgunAmmoCount);
+		_shotgunShellCount = clampCombatResourceCount(3, _shotgunShellCount);
+		_nineGunBulletCount = clampCombatResourceCount(4, _nineGunBulletCount);
+		_thirtyEightGunBulletCount = clampCombatResourceCount(5, _thirtyEightGunBulletCount);
+		_chainsawFuelCount = clampCombatResourceCount(14, _chainsawFuelCount);
 		_playerCombatLoadout = validatePlayerCombatLoadoutAgainstInventory(
 			_currentObjects, _playerCombatLoadout, "save load");
 		logRuntimeSaveState("loaded");

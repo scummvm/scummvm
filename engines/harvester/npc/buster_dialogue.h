@@ -41,7 +41,7 @@ public:
 		syncDialogueBool(s, _state.introPending);
 		syncDialogueBool(s, _state.secondIntroPending);
 		syncDialogueBool(s, _state.thirdIntroPending);
-		syncDialogueBool(s, _state.secondIntroResponseTwoSeen, 10);
+		syncDialogueBool(s, _state.secondIntroResponseTwoSeen);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

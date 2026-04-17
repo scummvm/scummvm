@@ -40,10 +40,10 @@ public:
 	void resetState() override { _state = ButcherRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);
-		syncDialogueBool(s, _state.stephMidgameShown, 7);
-		syncDialogueBool(s, _state.dayFiveShown, 7);
-		syncDialogueString(s, _state.currentTopicBuffer, 7);
-		syncDialogueInt(s, _state.currentTopicBufferLineIndex, 7);
+		syncDialogueBool(s, _state.stephMidgameShown);
+		syncDialogueBool(s, _state.dayFiveShown);
+		syncDialogueString(s, _state.currentTopicBuffer);
+		syncDialogueInt(s, _state.currentTopicBufferLineIndex);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;
