@@ -30,12 +30,19 @@ namespace Fool {
 ZBasic *g_zbasic;
 Toolbox *g_toolbox;
 
+// Based on m68k disassembly of the Fool's Errand v2.0, (c) 1988 Cliff Johnson.
+
+// v1.0 - original release, single-density disks
+// v2.0 - fixes full-screen rendering on higher-resolution displays
+// v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
+
 void FoolGame::run() {
 	g_toolbox = new Toolbox();
 	g_zbasic = new ZBasic(g_toolbox);
 	Common::MacFinderInfo finfo;
 	if (g_toolbox->GetFInfo(Common::U32String("The Fool's Errand"), 0, finfo) == kNoErr) {
 		g_zbasic->loadProgram(Common::Path("The Fool's Errand", ':'));
+	// v1.0 filename ends with "tm"
 	} else if (g_toolbox->GetFInfo(Common::U32String("xn--The Fool's Errand-306j"), 0, finfo) == kNoErr) {
 		g_zbasic->loadProgram(Common::Path("xn--The Fool's Errand-306j", ':'));
 	} else {
@@ -52,6 +59,7 @@ void FoolGame::sub_128_004() {
 	this->arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_bbbc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_c38c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
+	this->arr_bmp_fa3c = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_109dc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_138bc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 
@@ -217,15 +225,12 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 	// to make this less bad, our version passes a BitMap pointer
 	warning("copyScreen: put %d, bmp %p", put, (void *)&bmp);
 	if (put == 0) {
-		// FIXME: use var_i16_32 to choose start offset??
 		g_zbasic->get(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, bmp);
 	}
 
 	// 128:00e6
 	if (put == 1) {
-		// FIXME: use var_i16_32 to choose start offset??
 		g_zbasic->put(0, 0, bmp, kPutCopy);
-
 	}
 }
 
@@ -812,6 +817,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 }
 
 void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
+	// behold the first key of thoth animation
 	this->var_i16_32 = unk1;
 	this->var_i16_30 = unk2;
 	if (this->var_i16_30 > 0) {
@@ -835,10 +841,10 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 			this->var_i32_692 = g_toolbox->TickCount();
 			g_toolbox->SetRect(
 				this->arr_rect_4338,
-				((int)(i*2.2f) - 0x105),
+				(0x105 - (int)(i*2.2f)),
 				i + 0xa5,
-				((int)(i*2.2f) + 0x105),
-				((int)(i*1.6f) + 0xa6)
+				(0x105 + (int)(i*2.2f)),
+				(0xa6 + (int)(i*1.6f))
 			);
 			// 128:1982
 			g_toolbox->InvertRect(this->arr_rect_4338);
@@ -856,18 +862,20 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 	// 128:19ec
 	g_toolbox->MoveTo(0x105 - (this->var_i16_484/2), 0x12e);
 	g_toolbox->DrawString(this->var_str_384);
-	for (int i = 0; i <= 0x4d; i++) {
+	// loop count was 0x4d
+	for (int i = 0; i <= 0x24; i++) {
 		this->var_i32_692 = g_toolbox->TickCount();
 		g_toolbox->InvertRect(this->arr_rect_4338);
-		this->sub_128_406(0x1);
+		// this was 1, however the flashing was far too intense
+		this->sub_128_406(8);
 	}
 	for (int i = 1; i <= 0x24; i++) {
 		// 128:1a4c
 		this->var_i32_692 = g_toolbox->TickCount();
-		this->arr_rect_4338.top -= (int)(this->var_i16_68a*0.4f);
-		this->arr_rect_4338.left -= (int)(this->var_i16_68a*0.1f);
-		this->arr_rect_4338.bottom += (int)(this->var_i16_68a*0.05f);
-		this->arr_rect_4338.right += (int)(this->var_i16_68a*0.1f);
+		this->arr_rect_4338.top -= (int)(i*0.4f);
+		this->arr_rect_4338.left -= (int)(i*0.1f);
+		this->arr_rect_4338.bottom += (int)(i*0.05f);
+		this->arr_rect_4338.right += (int)(i*0.1f);
 		// 128:1b82
 		if (this->arr_rect_4338.top < 0x14) {
 			this->arr_rect_4338.top = 0x14;
@@ -885,13 +893,15 @@ void FoolGame::sub_128_178a(int16 unk2, int16 unk1) {
 			g_toolbox->FillRect(this->arr_rect_4338, this->arr_pat_58f4[0x47]);
 		}
 		// 128:1c0a
-		this->sub_128_406(1);
+		// was 1
+		this->sub_128_406(2);
 	}
 	this->sub_128_4da(1);
 	g_toolbox->PenNormal();
 }
 
 void FoolGame::setStateBits(int16 unk1) {
+	// 128:1c2c
 	this->var_i16_30 = unk1;
 	this->stateFlags |= this->var_i16_30;
 }
@@ -905,7 +915,12 @@ void FoolGame::clearStateBits(int16 unk1) {
 	// 128:1c78
 }
 
-
+void FoolGame::sub_128_1ef8() {
+	// 128:1ef8
+	g_toolbox->SetPort(this->var_i32_8);
+	this->fillRect(0, 0, 0x14, this->var_i16_5a, 2);
+	g_toolbox->SetPort(this->var_i32_0);
+}
 
 void FoolGame::sub_128_1f1e() {
 	// 128:1f1e
@@ -1130,14 +1145,14 @@ void FoolGame::sub_128_26f6() {
 }
 
 void FoolGame::sub_128_271a() {
-	int position = this->arr_i32_19454[this->activePuzzle] - 1;
+	int position = this->puzzleDataOffsets[this->activePuzzle] - 1;
 	// record index
 	this->var_i16_484 = (int16)(position / 1000);
 	// offset at record
 	this->var_i16_7e4 = (int16)(position % 1000);
 	g_zbasic->record(1, this->var_i16_484, this->var_i16_7e4);
 	this->var_ptr_696 = 0;
-	int length = this->arr_i32_19454[this->activePuzzle + 1] - this->arr_i32_19454[this->activePuzzle];
+	int length = this->puzzleDataOffsets[this->activePuzzle + 1] - this->puzzleDataOffsets[this->activePuzzle];
 	debugC(8, kDebugLoading, "sub_128_271a: seek puzzles to puzzle %d at position %x (rec: %d, offset: %d), length %x",
 			this->activePuzzle,
 			position,
@@ -1707,7 +1722,7 @@ void FoolGame::sub_128_39a0() {
 		this->deathRun();
 		break;
 	case 15:
-		this->sub_128_5140();
+		this->shipsRun();
 		break;
 	case 16:
 		this->sub_142_004();
@@ -2214,8 +2229,223 @@ void FoolGame::sub_128_4a92() {
 	g_toolbox->SetPort(this->var_i32_0);
 }
 
-void FoolGame::sub_128_5140() {
-	warning("STUB: %s", __func__);
+// three freakin' ships
+void FoolGame::shipsRun() {
+	// 128:5140
+	this->fillRect(0x127, 0x6c, 0x137, 0x84, 0);
+	this->sub_128_6186();
+	this->sub_128_55c(g_zbasic->str(103)); // "?"
+	g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
+	//warning("sub_128_5140: b3ec surface");
+	//byte fakePal[768];
+	//Common::fill(fakePal, fakePal+3, 0xff);
+	//Common::fill(fakePal+3, fakePal+768, 0x00);
+	//this->arr_bmp_b3ec->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 160, fakePal);
+
+	this->fillRect(0x127, 0x6c, 0x137, 0x84, 0);
+
+	g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_bbbc);
+	//warning("sub_128_5140: bbbc surface");
+	//this->arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 160, fakePal);
+	// 138:51f0
+	this->var_i16_d08 = g_zbasic->rndInt(5) + 5;
+	this->var_i16_d0a = g_zbasic->rndInt(5) - 0xa;
+	for (int16 i = 0; i <= 5; i++) {
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		this->sub_128_5a6c();
+	}
+	// 128:5274
+	this->arr_rect_19114.top = this->arr_rect_1910c.top - 0xa;
+	this->arr_rect_19114.left = this->arr_rect_1910c.left - 0xa;
+	this->arr_rect_19114.bottom = this->arr_rect_1910c.bottom + 0xa;
+	this->arr_rect_19114.right = this->arr_rect_1910c.right + 0xa;
+	// 128:530c
+	this->var_i16_d0c = 0;
+	this->keyLastPressed = 0;
+	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
+		this->getNextEvent(-1);
+		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_19114) != 0) {
+			this->sub_128_55ac();
+		}
+		// 128:5348
+		this->var_i16_d0e = this->var_ev_46.where.y;
+		this->var_i16_d10 = this->var_ev_46.where.x;
+		if (this->keyLastPressed > 0) {
+			this->sub_128_57a2();
+		}
+		if (this->stateFlags == kStateSaveGame) {
+			this->saveGame();
+		}
+	}
+	// 128:5396
+	if (this->var_i16_d0c != 0) {
+		this->sub_128_6186();
+		this->sub_128_50e(0x14, 0x64, 0);
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		this->var_ev_46.where.x += 5;
+		this->var_ev_46.where.y -= 5;
+		if (this->var_i16_c04 < 0x64) {
+			g_toolbox->SetCursor(this->arr_curs_4d88[0x10]);
+		}
+		for (int16 i = 1; i <= 1; i++) {
+			// 128:541c
+			this->arr_i16_4758[0] = this->var_ev_46.where.y;
+			this->arr_i16_4758[1] = this->var_ev_46.where.x;
+			this->arr_i16_4758[2] = this->var_ev_46.where.y;
+			this->arr_i16_4758[3] = this->var_ev_46.where.x;
+			for (int16 j = 1; j <= 0x19; j++) {
+				// 128:5462
+				this->arr_i16_4758[0]--;
+				this->arr_i16_4758[1]--;
+				this->arr_i16_4758[2]++;
+				this->arr_i16_4758[3]++;
+				Common::Rect temp;
+				temp.top = this->arr_i16_4758[0];
+				temp.left = this->arr_i16_4758[1];
+				temp.bottom = this->arr_i16_4758[2];
+				temp.right = this->arr_i16_4758[3];
+				g_toolbox->InvertOval(temp);
+			}
+		}
+		// 128:5514
+		this->sub_128_3da(0x3c);
+		if (this->var_i16_c04 < 0x64) {
+			// 128:5526
+			this->sub_128_6186();
+			this->var_i16_c04 = 0x64;
+			this->var_i16_7ce |= 2;
+			this->sub_128_962(
+				this->var_ev_46.where.y - 5,
+				this->var_ev_46.where.x - 5,
+				this->var_ev_46.where.y + 5,
+				this->var_ev_46.where.x + 5,
+				0x14,
+				0,
+				SCREEN_HEIGHT,
+				SCREEN_WIDTH,
+				2,
+				kPatCopy,
+				0x42
+			);
+			this->var_str_384 = g_zbasic->str(104); // behold the 1st key of thoth
+			this->sub_128_178a(0, 0);
+		}
+		// 128:55aa
+	}
+	// 128:55aa
+	return;
+}
+
+void FoolGame::sub_128_55ac() {
+	// 128:55ac
+	if ((this->var_i16_d10 == this->var_ev_46.where.x) && (this->var_i16_d0e == this->var_ev_46.where.y)) {
+		return;
+	}
+	this->var_i16_d08 = g_zbasic->rndInt(5) + 5;
+	this->var_i16_d0a = g_zbasic->rndInt(5) + 5;
+	if (g_zbasic->maybe()) {
+		this->var_i16_d08 *= -1;
+	}
+	// 128:560a
+	if (g_zbasic->maybe()) {
+		this->var_i16_d0a *= -1;
+	}
+	// 128:5620
+	if (this->arr_rect_1910c.top < 0x50) {
+		this->var_i16_d0a = 0xa;
+	}
+	// 128:5640
+	if (this->arr_rect_1910c.left < 0x3c) {
+		this->var_i16_d08 = 0xa;
+	}
+	if (this->arr_rect_1910c.bottom > 0x104) {
+		this->var_i16_d0a = -0xa;
+	}
+	if (this->arr_rect_1910c.right > 0x1a4) {
+		this->var_i16_d08 = -0xa;
+	}
+	// 128:56a0
+	for (this->var_i16_68a = 0; this->var_i16_68a <= 0x5; this->var_i16_68a++) {
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		this->sub_128_5a6c();
+	}
+	// 128:5708
+	this->arr_rect_19114.top = this->arr_rect_1910c.top - 0xa;
+	this->arr_rect_19114.left = this->arr_rect_1910c.left - 0xa;
+	this->arr_rect_19114.bottom = this->arr_rect_1910c.bottom + 0xa;
+	this->arr_rect_19114.right = this->arr_rect_1910c.right + 0xa;
+
+}
+
+void FoolGame::sub_128_57a2() {
+	// 128:57a2
+	this->var_str_d12 = g_zbasic->ucase(g_zbasic->chr(this->keyLastPressed));
+	if (g_zbasic->instr(1, g_zbasic->str(105), this->var_str_d12) > 0) { // NESW
+		// 128:57e0
+		g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_bbbc, kPutCopy);
+		this->var_i16_d08 = 0;
+		this->var_i16_d0a = 0;
+		if (this->var_str_d12 == g_zbasic->str(106)) { // N
+			this->var_i16_d0a = -0x10;
+		}
+		if (this->var_str_d12 == g_zbasic->str(107)) { // S
+			this->var_i16_d0a = 0x10;
+		}
+		if (this->var_str_d12 == g_zbasic->str(108)) { // W
+			this->var_i16_d08 = -0x18;
+		}
+		if (this->var_str_d12 == g_zbasic->str(109)) { // E
+			this->var_i16_d08 = 0x18;
+		}
+		g_toolbox->OffsetRect(this->arr_rect_1910c, this->var_i16_d08, this->var_i16_d0a);
+		this->var_i16_d08 = 0;
+		this->var_i16_d0a = 0;
+		// 128:58c2
+		if (this->arr_rect_1910c.top < 0x14) {
+			this->arr_rect_1910c.top = 0x146;
+			this->arr_rect_1910c.bottom = SCREEN_HEIGHT;
+		}
+		if (this->arr_rect_1910c.left < 0) {
+			this->arr_rect_1910c.left = 0x1e8;
+			this->arr_rect_1910c.right = SCREEN_WIDTH;
+		}
+		// 128:592e
+		if (this->arr_rect_1910c.bottom > SCREEN_HEIGHT) {
+			this->arr_rect_1910c.top = 0x14;
+			this->arr_rect_1910c.bottom = 0x24;
+		}
+		if (this->arr_rect_1910c.right > SCREEN_WIDTH) {
+			this->arr_rect_1910c.left = 0;
+			this->arr_rect_1910c.right = 0x18;
+		}
+		this->sub_128_5a6c();
+		if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_1910c)) {
+			this->var_i16_d0c = 1;
+		}
+	}
+	// 128:59cc
+	this->keyLastPressed = 0;
+	this->arr_rect_19114.top = this->arr_rect_1910c.top - 0xa;
+	this->arr_rect_19114.left = this->arr_rect_1910c.left - 0xa;
+	this->arr_rect_19114.bottom = this->arr_rect_1910c.bottom + 0xa;
+	this->arr_rect_19114.right = this->arr_rect_1910c.right + 0xa;
+
+}
+
+void FoolGame::sub_128_5a6c() {
+	// 128:5a6c
+	this->var_i32_692 = g_toolbox->TickCount();
+	g_zbasic->get(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_rect_1910c.right, this->arr_rect_1910c.bottom, this->arr_bmp_bbbc);
+	//warning("sub_128_5a6c: bbbc surface");
+	//byte fakePal[768];
+	//Common::fill(fakePal, fakePal+3, 0xff);
+	//Common::fill(fakePal+3, fakePal+768, 0x00);
+	//this->arr_bmp_bbbc->rawSurface().debugPrint(5, 0, 0,0, 0, -1, 160, fakePal);
+	g_toolbox->EraseRoundRect(this->arr_rect_1910c, 8, 7);
+	g_zbasic->put(this->arr_rect_1910c.left, this->arr_rect_1910c.top, this->arr_bmp_b3ec, kPutXOR);
+	this->sub_128_406(0);
 }
 
 void FoolGame::sub_128_5b30() {
@@ -2737,7 +2967,7 @@ void FoolGame::sub_129_068() {
 	this->var_i16_68a = 0x50;
 	this->sub_129_123a();
 	for (int i = 1; i <= 0x64; i++) {
-		this->arr_i32_19454[i] = this->puzzlesReadLong();
+		this->puzzleDataOffsets[i] = this->puzzlesReadLong();
 	}
 	// 129:0a4e
 	// quickdraw patterns
@@ -2964,23 +3194,65 @@ void FoolGame::sub_138_004() {
 	warning("STUB: %s", __func__);
 }
 
-// high priestess challenge
-void FoolGame::sub_140_004() {
-	warning("STUB: %s", __func__);
-}
-
+// the humbug
 void FoolGame::sub_142_004() {
 	warning("STUB: %s", __func__);
 }
 
-// lights on
+// justice - lights on
 void FoolGame::sub_142_852() {
 	warning("STUB: %s", __func__);
 }
 
 // hermit key trace
 void FoolGame::sub_142_12ac() {
-	warning("STUB: %s", __func__);
+	// 142:12ac
+	if (this->puzzleCompletionStatus[0x34] < 5) {
+		g_zbasic->menu(8, 3, 1, g_zbasic->str(362)); // to find a hidden secret
+		g_zbasic->menu(8, 4, 1, g_zbasic->str(363));
+	} else {
+		// 142:12fc
+		g_zbasic->menu(8, 3, 1, g_zbasic->str(364)); // to find the straight path
+		g_zbasic->menu(8, 4, 1, g_zbasic->str(365));
+	}
+	// 142:132c
+	if (this->var_i16_c04 == 0) {
+		this->var_i16_2324 = 1;
+	}
+	if ((this->var_i16_c04 > 0) && (this->var_i16_c04 < 0x63)) {
+		this->var_i16_2324 = this->var_i16_c04;
+	}
+	// 142:1360
+	if (this->var_i16_c04 == 0x63) {
+		this->var_i16_2324 = 6;
+	}
+	if (this->var_i16_c04 == 0x64) {
+		this->var_i16_2324 = 1;
+	}
+	if (this->var_i16_c04 > 0x64) {
+		this->var_i16_2324 = this->var_i16_c04 - 0x64;
+	}
+	this->sub_140_206a();
+	if (this->var_i16_2324 == 6) {
+		this->var_i16_c04 = 0x63;
+	} else {
+		if (this->var_i16_c04 < 0x63) {
+			// 142:13be
+			this->var_i16_c04 = this->var_i16_2324;
+			if (this->var_i16_d0c != 0) {
+				this->var_i16_c04 = 0x64;
+			}
+		} else {
+			// 142:13da
+			if (this->var_i16_c04 >= 0x64) {
+				this->var_i16_c04 = this->var_i16_2324 + 0x64;
+				if (this->var_i16_d0c != 0) {
+					this->var_i16_c04 = 0x65;
+				}
+			}
+		}
+	}
+	// 142:1404
 }
 
 void FoolGame::sub_144_004() {

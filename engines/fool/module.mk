@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	fool_reveal.o \
 	fool_sentence.o \
 	fool_sun.o \
+	fool_thoth.o \
 	fool_wordsearch.o \
 	toolbox.o \
 	toolbox_fileman.o \
