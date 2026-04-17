@@ -66,6 +66,8 @@ MODULE := engines/harvester
 	menu.o \
 	monster.o \
 	player.o \
+	room_combat.o \
+	room_interaction.o \
 	room.o \
 	script.o \
 	text.o \
