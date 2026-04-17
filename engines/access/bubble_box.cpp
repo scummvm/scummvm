@@ -428,8 +428,8 @@ void BubbleBox::doBox_v2(int item, int box) {
 	// Save state information
 	FontVal charSet = fonts._charSet;
 	FontVal charFor = fonts._charFor;
-	Common::Point printOrg = screen._printOrg;
-	Common::Point printStart = screen._printStart;
+	const Common::Point printOrg = screen._printOrg;
+	const Common::Point printStart = screen._printStart;
 	int charCol = _charCol;
 	int rowOff = _rowOff;
 
@@ -629,7 +629,7 @@ void BubbleBox::drawSelectBox() {
 }
 
 int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
-	static const int ICONW[] = { 0, 11, 28, 19, 19, 15 };
+	static constexpr int ICONW[] = { 0, 11, 28, 19, 19, 15 };
 
 	FontManager &fonts = _vm->_fonts;
 	int retval_ = -1;
@@ -637,8 +637,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_startItem = item;
 	_startBox = box;
 
-	Common::Point origPrintStart = _vm->_screen->_printStart;
-	Common::Point origPrintOrg = _vm->_screen->_printOrg;
+	const Common::Point origPrintStart = _vm->_screen->_printStart;
+	const Common::Point origPrintOrg = _vm->_screen->_printOrg;
 
 	_vm->_events->hideCursor();
 
