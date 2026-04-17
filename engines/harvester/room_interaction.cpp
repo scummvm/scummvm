@@ -154,13 +154,13 @@ Common::Error RoomInteractionProcessor::handleInteractionResult(const Interactio
 	if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
 		roomTransition = kStartupRoomTransitionCloseup;
 
-	const bool needsDisc3RoomReload =
+	const bool needsTownScriptDiscReload =
 		discChanged &&
-		interaction.cdChangeDisc == 3 &&
+		(interaction.cdChangeDisc == 1 || interaction.cdChangeDisc == 3) &&
 		!interaction.requestRoomRestart &&
 		interaction.nextRoomName.empty() &&
 		!interaction.mutatedRuntimeState;
-	if (needsDisc3RoomReload)
+	if (needsTownScriptDiscReload)
 		return queueImplicitRoomRestart();
 
 	if (!interaction.nextRoomName.empty() &&

@@ -241,6 +241,7 @@ struct RoomSetupState {
 	Common::String palettePath;
 	Common::String backgroundPath;
 	Common::String musicPath;
+	int discNumber = 0;
 	int roomMinZ = 0;
 	int roomMaxZ = 0;
 	int roomMaxZScreenY = 0;
@@ -361,6 +362,7 @@ public:
 		ResourceManager &resources);
 	bool materializeRoomState(const Common::String &entranceName, const Common::String &roomName,
 		RoomSetupState &state, ResourceManager &resources) const;
+	bool hasRoomSetupTarget(const Common::String &entranceName, const Common::String &roomName) const;
 	bool executeRoomEnterCommands(const Common::String &roomName, InteractionResult &result);
 	bool executeRoomExitCommands(const Common::String &roomName, InteractionResult &result);
 	bool resolveObjectInteraction(const ObjectRecord &object, InteractionResult &result,

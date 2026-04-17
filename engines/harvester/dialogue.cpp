@@ -794,7 +794,8 @@ public:
 			warning("Harvester: unable to activate disc %d resources", discNumber);
 			return Common::kReadingFailed;
 		}
-		if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
+		if ((discNumber == 1 || discNumber == 3) &&
+				previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
 			Script *script = _engine.getScript();
 			if (!script || !script->reloadTownWorld(*resources)) {
 				warning("Harvester: unable to reload town script after disc prompt %d -> %d",

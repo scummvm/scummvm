@@ -43,9 +43,6 @@ static const ArchiveSpec kArchiveSpecs[] = {
 	{ '3', "INDEX.003", "HARVEST2.DAT", 28 }
 };
 
-static const int kFirstDiscNumber = 1;
-static const int kLastDiscNumber = 3;
-
 static bool hasArchiveSetPrefix(const Common::String &path) {
 	return path.size() >= 3 &&
 		path[0] >= '0' && path[0] <= '9' &&
@@ -85,7 +82,7 @@ static Common::String resolveDiscArchiveStoragePath(int discNumber, const Common
 	if (SearchMan.hasFile(Common::Path(discPath, '/')))
 		return discPath;
 
-	if (discNumber == kFirstDiscNumber && SearchMan.hasFile(Common::Path(normalized, '/')))
+	if (discNumber == ResourceManager::kFirstDiscNumber && SearchMan.hasFile(Common::Path(normalized, '/')))
 		return normalized;
 
 	return Common::String();
@@ -227,7 +224,8 @@ bool ResourceManager::ensureDiscMounted(int discNumber) {
 }
 
 void ResourceManager::unmountOtherDiscArchives(int keepDiscNumber) {
-	for (int discNumber = kFirstDiscNumber; discNumber <= kLastDiscNumber; ++discNumber) {
+	for (int discNumber = ResourceManager::kFirstDiscNumber;
+			discNumber <= ResourceManager::kLastDiscNumber; ++discNumber) {
 		if (discNumber == keepDiscNumber)
 			continue;
 

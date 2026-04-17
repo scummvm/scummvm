@@ -31,6 +31,11 @@ Common::String normalizeHarvesterResourcePath(const Common::String &path);
 
 class ResourceManager {
 public:
+	enum {
+		kFirstDiscNumber = 1,
+		kLastDiscNumber = 3
+	};
+
 	ResourceManager();
 	~ResourceManager();
 
