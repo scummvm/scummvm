@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/array.h"
+#include "common/compression/packice.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -110,110 +111,8 @@ static Common::Array<byte> unsquashAcornDesktopTracker(const byte *data, uint32 
 	}
 }
 
-/*
- * Pack-Ice depacker is based on a simplified version of IceDecompressor:
- * https://github.com/temisu/ancient
- *
- * BSD 2-Clause License
- *
- * Copyright (c) 2017-2026, Teemu Suutari
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * * Redistributions of source code must retain the above copyright notice,
- *   this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 static bool isElvira1PackIcePrg(const Common::Array<byte> &data) {
 	return data.size() >= 0x26 && !memcmp(data.begin() + 0x1E, "Pack-Ice", 8);
-}
-
-static uint32 makePackIceBitMask(uint8 bitCount) {
-	return bitCount == 32 ? 0xFFFFFFFF : ((1U << bitCount) - 1);
-}
-
-class PackIceBitReader {
-public:
-	PackIceBitReader(const Common::Array<byte> &data, uint32 startOffset, uint32 endOffset)
-		: _data(data), _pos(endOffset), _startOffset(startOffset) {
-	}
-
-	void reset(uint32 value, uint8 bitCount) {
-		_bitBuffer = value;
-		_bitsLeft = bitCount;
-	}
-
-	uint8 readByte() {
-		if (_pos <= _startOffset)
-			error("AGOS: Pack-Ice depacker byte underrun");
-		return _data[--_pos];
-	}
-
-	uint32 readBitsBE32(uint32 count) {
-		uint32 value = 0;
-		while (count) {
-			if (!_bitsLeft) {
-				if (_pos < _startOffset + 4)
-					error("AGOS: Pack-Ice depacker long underrun");
-				_pos -= 4;
-				_bitBuffer = READ_BE_UINT32(_data.begin() + _pos);
-				_bitsLeft = 32;
-			}
-			const uint8 bitsToRead = (count < _bitsLeft) ? (uint8)count : _bitsLeft;
-			_bitsLeft -= bitsToRead;
-			const uint32 nextBits = (_bitBuffer >> _bitsLeft) & makePackIceBitMask(bitsToRead);
-			value = bitsToRead == 32 ? nextBits : ((value << bitsToRead) | nextBits);
-			count -= bitsToRead;
-		}
-		return value;
-	}
-
-	bool eof() const {
-		return _pos == _startOffset;
-	}
-
-private:
-	const Common::Array<byte> &_data;
-	uint32 _pos;
-	uint32 _startOffset;
-	uint32 _bitBuffer = 0;
-	uint8 _bitsLeft = 0;
-};
-
-static uint32 decodePackIceVlc(PackIceBitReader &bits, const uint8 *bitLengths, const uint32 *offsets, uint32 count,
-		uint32 base) {
-	if (base >= count)
-		error("AGOS: Pack-Ice depacker invalid VLC base");
-
-	return offsets[base] + bits.readBitsBE32(bitLengths[base]);
-}
-
-static uint32 decodePackIceCascade(PackIceBitReader &bits, const uint8 *bitLengths, const uint32 *offsets,
-		uint32 count) {
-	for (uint32 i = 0; i < count; ++i) {
-		const uint8 bitLength = bitLengths[i];
-		const uint32 value = bits.readBitsBE32(bitLength);
-		if (i + 1 == count || value != makePackIceBitMask(bitLength))
-			return offsets[i] - i + value;
-	}
-
-	error("AGOS: Pack-Ice depacker invalid VLC cascade");
 }
 
 static bool depackElvira1PackIcePrg(const Common::Array<byte> &packedData, Common::Array<byte> &unpackedData) {
@@ -222,81 +121,13 @@ static bool depackElvira1PackIcePrg(const Common::Array<byte> &packedData, Commo
 		kPackedStreamEnd = 0xAFE2,
 		kRawSize = 0x1694C
 	};
-	const uint8 literalBitLengths[] = {1, 2, 2, 3, 8, 15};
-	const uint32 literalOffsets[] = {0, 2, 6, 10, 18, 274};
-	const uint8 countBaseBitLengths[] = {1, 1, 1, 1};
-	const uint32 countBaseOffsets[] = {0, 2, 4, 6};
-	const uint8 countBitLengths[] = {0, 0, 1, 2, 10};
-	const uint32 countOffsets[] = {0, 1, 2, 4, 8};
-	const uint8 distanceBaseBitLengths[] = {1, 1};
-	const uint32 distanceBaseOffsets[] = {0, 2};
-	const uint8 distanceBitLengths[] = {5, 8, 12};
-	const uint32 distanceOffsets[] = {0, 32, 288};
 
 	if (!isElvira1PackIcePrg(packedData) || packedData.size() < kPackedStreamEnd)
 		return false;
 
-	PackIceBitReader bits(packedData, kPackedStreamStart, kPackedStreamEnd);
-	uint32 initialBits = bits.readBitsBE32(32);
-	uint32 shiftedBits = initialBits;
-	uint32 initialBitCount = 0;
-	while (shiftedBits) {
-		shiftedBits <<= 1;
-		++initialBitCount;
-	}
-	if (initialBitCount)
-		--initialBitCount;
-	if (initialBitCount)
-		bits.reset(initialBits >> (32 - initialBitCount), (uint8)initialBitCount);
-
-	unpackedData.resize(kRawSize);
-	uint32 outPos = kRawSize;
-
-	while (true) {
-		if (bits.readBitsBE32(1)) {
-			const uint32 literalLength = decodePackIceCascade(bits, literalBitLengths, literalOffsets,
-				ARRAYSIZE(literalBitLengths)) + 1;
-			for (uint32 i = 0; i < literalLength; ++i) {
-				if (!outPos)
-					return false;
-				unpackedData[--outPos] = bits.readByte();
-			}
-		}
-
-		if (!outPos)
-			break;
-
-		const uint32 countBase = decodePackIceCascade(bits, countBaseBitLengths, countBaseOffsets,
-			ARRAYSIZE(countBaseBitLengths));
-		const uint32 copyCount = decodePackIceVlc(bits, countBitLengths, countOffsets, ARRAYSIZE(countBitLengths),
-			countBase) + 2;
-
-		uint32 distance = 0;
-		if (copyCount == 2) {
-			if (bits.readBitsBE32(1))
-				distance = bits.readBitsBE32(9) + 0x40;
-			else
-				distance = bits.readBitsBE32(6);
-			distance += copyCount;
-		} else {
-			uint32 distanceBase = decodePackIceCascade(bits, distanceBaseBitLengths, distanceBaseOffsets,
-				ARRAYSIZE(distanceBaseBitLengths));
-			if (distanceBase < 2)
-				distanceBase ^= 1;
-			distance = decodePackIceVlc(bits, distanceBitLengths, distanceOffsets, ARRAYSIZE(distanceBitLengths), distanceBase);
-			distance += copyCount;
-		}
-
-		if (!distance || outPos < copyCount || outPos + distance > kRawSize)
-			return false;
-
-		for (uint32 i = 0; i < copyCount; ++i) {
-			--outPos;
-			unpackedData[outPos] = unpackedData[outPos + distance];
-		}
-	}
-
-	return bits.eof() && unpackedData.size() >= 28 && READ_BE_UINT16(unpackedData.begin()) == 0x601A;
+	return Common::decompressPackIceStream(packedData.begin(), packedData.size(), kPackedStreamStart,
+			kPackedStreamEnd, kRawSize, unpackedData, false) &&
+			unpackedData.size() >= 28 && READ_BE_UINT16(unpackedData.begin()) == 0x601A;
 }
 
 static bool extractEmbeddedTosPrg(const Common::Array<byte> &containerPrg, Common::Array<byte> &innerPrg) {
