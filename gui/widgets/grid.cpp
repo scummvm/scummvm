@@ -28,6 +28,7 @@
 
 #include "gui/gui-manager.h"
 #include "gui/widgets/grid.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -490,7 +491,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, _y, _scrollBarWidth, _y + _h);
 	_scrollBar->setTarget(this);
-	_scrollPos = 0;
+	_scrollPos = 0.0f;
 	_scrollSpeed = 1;
 	_firstVisibleItem = 0;
 	_lastVisibleItem = 0;
@@ -521,10 +522,12 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name)
 	_dragStartY = 0;
 	_dragLastY = 0;
 
+	_fluidScroller = new FluidScroller();
+
 	_filterMatcher = GridWidgetDefaultMatcher;
 	_filterMatcherArg = nullptr;
 
-	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
+	setFlags(getFlags() | WIDGET_TRACK_MOUSE | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
 }
 
 GridWidget::~GridWidget() {
@@ -541,6 +544,7 @@ GridWidget::~GridWidget() {
 	_platformIconsAlpha.clear();
 	_languageIconsAlpha.clear();
 	_extraIconsAlpha.clear();
+	delete _fluidScroller;
 }
 
 Common::SharedPtr<Graphics::ManagedSurface> GridWidget::filenameToSurface(const Common::String &name) {
@@ -876,7 +880,7 @@ void GridWidget::move(int x, int y) {
 // Scroll to entry id. Optional parameter to decide if the entry should be forced to be on the top, or merely
 // scrolled into view.
 void GridWidget::scrollToEntry(int id, bool forceToTop) {
-	int newScrollPos = _scrollPos;
+	float newScrollPos = _scrollPos;
 	for (uint i = 0; i < _sortedEntryList.size(); ++i) {
 		if ((!_sortedEntryList[i]->isHeader) && (_sortedEntryList[i]->entryID == id)) {
 			if (forceToTop) {
@@ -1006,17 +1010,24 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
-	_scrollPos = _scrollBar->_currentPos;
+	const float stepping = (float)_scrollBar->_singleStep * direction;
+	if (stepping == 0.0f)
+		return;
+
+	_fluidScroller->stopAnimation();
+	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
 }
 
 void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
-	_isMouseDown = true;
-	_mouseDownTime = g_system->getMillis();
-	_isDragging = false;
+	if (button == 1) {
+		_isMouseDown = true;
+		_mouseDownTime = g_system->getMillis();
+		_isDragging = false;
+		_dragStartY = y;
+		_dragLastY = y;
+	}
 	_selectionPending = true;
-	_dragStartY = y;
-	_dragLastY = y;
+	_fluidScroller->stopAnimation();
 }
 
 void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
@@ -1033,6 +1044,9 @@ void GridWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 		if (w && w != this && w->getType() == kContainerWidget)
 			((GridItemWidget *)w)->doSelection();
 	}
+
+	if (wasDragging)
+		_fluidScroller->startFling();
 }
 
 void GridWidget::handleMouseMoved(int x, int y, int button) {
@@ -1048,13 +1062,26 @@ void GridWidget::handleMouseMoved(int x, int y, int button) {
 		int deltaY = _dragLastY - y;
 		_dragLastY = y;
 
-		int newPos = _scrollPos + deltaY;
-		int maxScroll = _scrollBar->_numEntries - _scrollBar->_entriesPerPage;
-		newPos = MAX(0, MIN(newPos, maxScroll));
-
-		if (_scrollPos != newPos)
-			handleCommand(this, kSetPositionCmd, newPos);
+		if (deltaY != 0) {
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			_scrollPos = _fluidScroller->getVisualPosition();
+			applyScrollPos();
+		}
 	}
+}
+
+void GridWidget::applyScrollPos() {
+	if (calcVisibleEntries())
+		reloadThumbnails();
+
+	assignEntriesToItems();
+	scrollBarRecalc();	
+	g_gui.scheduleTopDialogRedraw();
+}
+
+void GridWidget::handleTickle() {
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+		applyScrollPos();
 }
 
 bool GridWidget::handleKeyDown(Common::KeyState state) {
@@ -1069,16 +1096,12 @@ void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// Work in progress
 	switch (cmd) {
 	case kSetPositionCmd:
-		if (_scrollPos != (int)data) {
-			_scrollPos = data;
+		if (_scrollPos != (float)data) {
+			_scrollPos = (float)data;
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 
-			if (calcVisibleEntries()) {
-				reloadThumbnails();
-			}
-
-			assignEntriesToItems();
-			scrollBarRecalc();
-			markAsDirty();
+			applyScrollPos();
 
 			((GUI::Dialog *)_boss)->setFocusWidget(this);
 		}
@@ -1245,6 +1268,8 @@ void GridWidget::reflowLayout() {
 		scrollToEntry(_selectedEntry->entryID, false);
 	}
 	scrollBarRecalc();
+	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
+	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage);
 	markAsDirty();
 }
 
@@ -1262,12 +1287,13 @@ void GridWidget::openTrayAtSelected() {
 void GridWidget::scrollBarRecalc() {
 	_scrollBar->_numEntries = _innerHeight;
 	_scrollBar->_entriesPerPage = _scrollWindowHeight - 2 * _scrollWindowPaddingY;
-	_scrollBar->_currentPos = _scrollPos;
+	_scrollBar->_currentPos = (int)_scrollPos;
 	_scrollBar->_singleStep = kLineHeight;
 
-	_scrollBar->checkBounds(_scrollBar->_currentPos);
-	_scrollPos = _scrollBar->_currentPos;
 	_scrollBar->recalc();
+
+	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
+	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage);
 }
 
 void GridWidget::setFilter(const Common::U32String &filter) {
