@@ -1292,12 +1292,24 @@ bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetup
 	return false;
 }
 
-int Player::resolveRegionTargetX(const RegionRecord &region,
+int Player::resolveRegionTargetX(const RoomSetupState &state, const RegionRecord &region,
 		const RoomPlayerState &playerState) {
 	const Common::Rect bounds(region.left, region.top, region.right + 1, region.bottom + 1);
 	int targetX = bounds.left + bounds.width() / 2;
-	if (playerState.entity && targetX + kRoomRegionTargetXBias < playerState.entity->getScreenRect().right)
+	if (!playerState.entity)
+		return CLIP<int>(targetX, 0, 639);
+
+	const int frameLeftX = computePlayerFrameLeftX(playerState);
+	if (targetX + kRoomRegionTargetXBias < frameLeftX)
 		targetX -= kRoomRegionTargetXBias;
+
+	const int targetSlack = MAX<int>(1,
+		roundToInt(Player::computeDepthScale(state, playerState.z) *
+			kRoomPlayerHorizontalTargetSlackBase));
+	if (region.desiredFacing == 1)
+		targetX = MIN<int>(targetX, region.right - targetSlack);
+	else if (region.desiredFacing == 2)
+		targetX = MAX<int>(targetX, region.left + targetSlack);
 	return CLIP<int>(targetX, 0, 639);
 }
 

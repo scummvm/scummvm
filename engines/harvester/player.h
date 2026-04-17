@@ -51,7 +51,7 @@ public:
 		const Common::Array<ObjectRecord> &sceneObjects,
 		const Common::Array<AnimRecord> &sceneAnimations,
 		RoomPlayerState &playerState);
-	static int resolveRegionTargetX(const RegionRecord &region,
+	static int resolveRegionTargetX(const RoomSetupState &state, const RegionRecord &region,
 		const RoomPlayerState &playerState);
 	static float resolveRegionTargetZ(const RegionRecord &region);
 	static bool syncCombatLoadoutVisual(HarvesterEngine &engine, const RoomSetupState &state,

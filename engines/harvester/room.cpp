@@ -215,7 +215,6 @@ struct ScopedDeferredLiveNpcDeathTransitions {
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
-		!roomName.equalsIgnoreCase("RMNBATH") &&
 		!roomName.equalsIgnoreCase("BOWLSNTRY1");
 }
 
@@ -4189,7 +4188,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			return;
 
 		Player::setRegionMoveTarget(scene.state, playerState,
-			Player::resolveRegionTargetX(region, playerState),
+			Player::resolveRegionTargetX(scene.state, region, playerState),
 			Player::resolveRegionTargetZ(region));
 		if (_engine.isPathfindingDebugEnabled()) {
 			debugC(1, kDebugPathfinding,

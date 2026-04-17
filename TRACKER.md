@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 17, 2026, fixed region-target movement completion so pending exits such as `BWLNT1_2_BWLNT2` keep walking until both target depth and target screen Y are reached, while ordinary floor clicks still use the native-style depth slack.
+- On April 17, 2026, verified native cursor-enabled region targeting and player-region collision in Ghidra, then fixed `RMNBATH` bath-exit handling by allowing fast exit clicks there and adjusting side-region X targets so the native-style horizontal slack cannot stop the player outside narrow side exits such as `RNMBTH_BATH`.
 
 ## Next Suggested Action
 
-- Runtime-test `BOWLSNTRY1` after entering from `RECEPTION_2_BOWLSNTRY1`: click or double-click the bottom exit region and confirm the player reaches the trigger and runs `BWLNTR1_2_BWLNTR2`.
+- Runtime-test `RMNBATH` after entering from `BATHROOM_2_RMNBATH`: double-click `RNMBTH_BATH` and confirm it immediately runs `RMNBATHM_BATHROOM`, then single-click the same region and confirm walking still reaches the trigger.
