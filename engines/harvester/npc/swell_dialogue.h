@@ -41,11 +41,11 @@ public:
 	void resetState() override { _state = SwellRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.talkStatePending);
-		syncDialogueBool(s, _state.stephMidgameShown, 13);
-		syncDialogueBool(s, _state.barberPoleStolenShown, 13);
-		syncDialogueBool(s, _state.boltOfClothTakenShown, 13);
-		syncDialogueBool(s, _state.burnedTvStationShown, 13);
-		syncDialogueBool(s, _state.karinKidnapedShown, 13);
+		syncDialogueBool(s, _state.stephMidgameShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.karinKidnapedShown);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

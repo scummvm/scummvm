@@ -42,12 +42,12 @@ public:
 	void resetState() override { _state = ParsonsRoomDialogueState(); }
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);
-		syncDialogueBool(s, _state.stephMidgameShown, 9);
-		syncDialogueBool(s, _state.scratchedTuckerShown, 9);
-		syncDialogueBool(s, _state.barberPoleStolenShown, 9);
-		syncDialogueBool(s, _state.dinerBurnedShown, 9);
-		syncDialogueBool(s, _state.burnedTvStationShown, 9);
-		syncDialogueBool(s, _state.karinKidnapedShown, 9);
+		syncDialogueBool(s, _state.stephMidgameShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.dinerBurnedShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.karinKidnapedShown);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

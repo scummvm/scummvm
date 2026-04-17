@@ -39,10 +39,9 @@ static void syncSerializedBool(Common::Serializer &s, bool &value) {
 }
 
 static const char kHarvesterSaveMagic[] = { 'H', 'S', 'A', 'V' };
-// FIXME: These pre-release save-version bumps exist only to stabilize the
-// Harvester room-runtime payload before release. Fold them into the final
-// shipped save layout once the engine lands.
-static const uint32 kHarvesterSaveVersion = 18;
+// Increment this if a future save layout change intentionally breaks
+// compatibility with existing Harvester saves.
+static const uint32 kHarvesterSaveVersion = 1;
 
 static void logStartupSaveRoomState(const char *operation, const SaveRoomState &state) {
 	debugC(1, kDebugRoom,
@@ -186,8 +185,13 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		return Common::kWritingFailed;
 	if (!s.matchBytes(kHarvesterSaveMagic, sizeof(kHarvesterSaveMagic)))
 		return Common::kReadingFailed;
-	if (!s.syncVersion(kHarvesterSaveVersion))
-		return Common::kReadingFailed;
+	if (!s.syncVersion(kHarvesterSaveVersion) || s.getVersion() != kHarvesterSaveVersion) {
+		if (s.isLoading()) {
+			warning("Harvester: unsupported save version %u, expected %u",
+				(uint)s.getVersion(), (uint)kHarvesterSaveVersion);
+		}
+		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
+	}
 
 	SaveRoomState roomState = s.isLoading()
 		? SaveRoomState()
@@ -198,9 +202,7 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		: ((_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1);
 	// Save the room's source disc rather than the transient active asset disc.
 	// CD prompts can leave CD3 resources active while a CD1 room is still current.
-	// FIXME: Remove the pre-release version-14 fallback once Harvester ships and only
-	// clean release-era saves remain.
-	s.syncAsSint32LE(serializedDisc, 14);
+	s.syncAsSint32LE(serializedDisc);
 	const int restoredDisc = normalizeDiscNumber(serializedDisc);
 	if (s.isLoading())
 		roomState.discNumber = restoredDisc;
@@ -209,32 +211,29 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
 	_script->syncRuntimeSaveState(s);
-	// FIXME: Drop the pre-release version-3 dialogue blob fallback after release; clean
-	// Harvester saves will always carry dialogue state.
-	if (s.getVersion() >= 3) {
-		Common::Array<byte> dialogueStateBlob;
-		uint32 dialogueStateSize = 0;
-		if (s.isSaving()) {
-			if (!_activeFlow || !_activeFlow->buildDialogueSaveStateBlob(dialogueStateBlob, s.getVersion()))
-				return Common::kWritingFailed;
-			dialogueStateSize = dialogueStateBlob.size();
-			if (dialogueStateSize == 0)
-				return Common::kWritingFailed;
-		}
-		s.syncAsUint32LE(dialogueStateSize);
-		if (s.isLoading()) {
-			if (dialogueStateSize == 0)
-				return Common::kReadingFailed;
-			dialogueStateBlob.resize(dialogueStateSize);
-			}
-			s.syncBytes(dialogueStateBlob.data(), dialogueStateSize);
-			if (s.isLoading()) {
-				_pendingLoadedDialogueStateBlob = dialogueStateBlob;
-				_pendingLoadedDialogueStateBlobVersion = s.getVersion();
-			}
-		}
-		if (s.err())
-			return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
+
+	Common::Array<byte> dialogueStateBlob;
+	uint32 dialogueStateSize = 0;
+	if (s.isSaving()) {
+		if (!_activeFlow || !_activeFlow->buildDialogueSaveStateBlob(dialogueStateBlob, s.getVersion()))
+			return Common::kWritingFailed;
+		dialogueStateSize = dialogueStateBlob.size();
+		if (dialogueStateSize == 0)
+			return Common::kWritingFailed;
+	}
+	s.syncAsUint32LE(dialogueStateSize);
+	if (s.isLoading()) {
+		if (dialogueStateSize == 0)
+			return Common::kReadingFailed;
+		dialogueStateBlob.resize(dialogueStateSize);
+	}
+	s.syncBytes(dialogueStateBlob.data(), dialogueStateSize);
+	if (s.isLoading()) {
+		_pendingLoadedDialogueStateBlob = dialogueStateBlob;
+		_pendingLoadedDialogueStateBlobVersion = s.getVersion();
+	}
+	if (s.err())
+		return s.isLoading() ? Common::kReadingFailed : Common::kWritingFailed;
 
 	if (s.isLoading()) {
 		if (!roomState.valid || roomState.roomName.empty())

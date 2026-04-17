@@ -45,13 +45,13 @@ public:
 	void syncState(Common::Serializer &s) override {
 		syncDialogueBool(s, _state.introPending);
 		syncDialogueBool(s, _state.karinPurseLinePlayed);
-		syncDialogueBool(s, _state.dayFiveShown, 6);
-		syncDialogueBool(s, _state.scratchedTuckerShown, 6);
-		syncDialogueBool(s, _state.barberPoleStolenShown, 6);
-		syncDialogueBool(s, _state.boltOfClothTakenShown, 6);
-		syncDialogueBool(s, _state.escapedJailShown, 6);
-		syncDialogueBool(s, _state.burnedTvStationShown, 6);
-		syncDialogueBool(s, _state.karinFoundDeadShown, 6);
+		syncDialogueBool(s, _state.dayFiveShown);
+		syncDialogueBool(s, _state.scratchedTuckerShown);
+		syncDialogueBool(s, _state.barberPoleStolenShown);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
+		syncDialogueBool(s, _state.escapedJailShown);
+		syncDialogueBool(s, _state.burnedTvStationShown);
+		syncDialogueBool(s, _state.karinFoundDeadShown);
 	}
 	Common::Error handleDialogue(DialogueRuntime &runtime,
 		const Common::String &usedItemName, DialogueSharedState &sharedState) override;

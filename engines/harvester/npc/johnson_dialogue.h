@@ -52,7 +52,7 @@ public:
 		syncDialogueBool(s, _state.tryToScratchTuckerShown);
 		syncDialogueBool(s, _state.scratchedTuckerReintroShown);
 		syncDialogueBool(s, _state.stephMidgamePlayedShown);
-		syncDialogueBool(s, _state.boltOfClothTakenShown, 5);
+		syncDialogueBool(s, _state.boltOfClothTakenShown);
 		syncDialogueBool(s, _state.karinKidnapedShown);
 		syncDialogueBool(s, _state.karinFoundAliveShown);
 		syncDialogueBool(s, _state.barberPoleStolenShown);
