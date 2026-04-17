@@ -634,6 +634,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
 	},
 
+	// Elvira 2 - German Atari ST Floppy
+	// Suppliedd by Eli0rZeR70 in bug report #16679
+	{
+		{
+			"elvira2",
+			"Floppy",
+
+			{
+				{"gamest", 			GAME_BASEFILE, 	"43cb10d38af2b4a0c707965c83431f4c", 137609},
+				{"icon.dat", 		GAME_ICONFILE, 	"9a4eaf4df0cdf5cc85a5134150f96589", 69538},
+				{"menus.dat",		GAME_MENUFILE, 	"a2fdc88a77c8bdffec6b36cbeda4d955", 108},
+				{"start", 			GAME_RESTFILE, 	"8cddf461f418ea12f711fda3d3dd62fe", 27752},
+				{"stripped.txt", 	GAME_STRFILE, 	"41c975a9c1106cb5298a0bc3df0a266e", 72},
+				{"tbllist", 		GAME_TBLFILE, 	"177f5f2640e80ef92d1421d32de06a5e", 272},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformAtariST,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_ELVIRA2,
+		GID_ELVIRA2,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_PLANAR
+	},
+
+
 
 	// Elvira 2 - English DOS Floppy
 	{
