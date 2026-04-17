@@ -1091,6 +1091,8 @@
   - It clears the linked spawned actor at `+0x11a8`, frees the runtime sound/sample fields from `+0x1148` through `+0x1168`, resets the entity to a hidden offscreen idle state, and frees the current bitmap buffers without freeing the outer runtime-entity allocation.
 - `check_player_region_interaction` at `0x559e0` scans `g_region_records` for the first enabled region whose bounds overlap the live player avatar and whose facing gate matches the player's orientation.
   - On success it returns the matching `RegionRecord *` so the main loop can dispatch the region's `action_tag`.
+  - The overlap test uses `do_entity_screen_bounds_overlap` at `0x4b700`, which compares entity draw bounds with edge-inclusive `<` rejection checks before the Z-range and facing checks.
+  - The cursor-enabled region click path in `run_harvester_main_loop` stores the region entity center X as the player's target, applies the native 10-pixel left-side bias only when that target is left of the player's current frame-left X, and stores region target Z from the required facing: `FRONT` uses max Z, `BACK` uses min Z, and side-facing exits use the region midpoint.
 - `reset_player_combat_avatar` at `0x56a40` is the player-avatar reset helper used on teardown / restart paths.
   - It zeroes transient combat/runtime state, restores the default health/state baseline, and if the current loadout is non-default it rebuilds the player combat avatar back through loadout `0`.
 - `update_actor_runtime_state` at `0x4d750` is the shared per-frame actor state machine for live actor entities.
