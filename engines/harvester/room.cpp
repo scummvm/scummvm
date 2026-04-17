@@ -41,6 +41,8 @@
 #include "harvester/inventory.h"
 #include "harvester/monster.h"
 #include "harvester/player.h"
+#include "harvester/room_combat.h"
+#include "harvester/room_interaction.h"
 #include "harvester/room_support.h"
 
 namespace Harvester {
@@ -64,154 +66,7 @@ static const uint32 kCombatLoadoutStatusDisplayTicks = 75;
 static const int kNativeCombatResourceIconsX = 10;
 static const int kNativeCombatResourceIconsY = 30;
 static const int kNativeCombatResourceIconSpacing = 15;
-static const int kRoomMonsterAnimationRate = 17;
-static const int kNativeMonsterAttackAnimationRate = 4;
-static const int kNativeMonsterHitAnimationRate = 5;
-static const uint32 kNativeMonsterAttackCooldownBaseTicks = 50;
-static const float kNativeNpcMonsterZExtent = 5.0f;
-static const int kRoomNpcAmbientLastFrame = 0x3b;
-static const int kDefaultMonsterAttackContactFrameOffset = 2;
-static const int kMuckeyAttackContactFrameOffset = 7;
-static const float kNativeMonsterPursuitZTolerance = 2.0f;
-static const float kNativeMonsterHorizontalWaypointTolerance = 50.0f;
-static const uint32 kNativeKeyboardAttackRepeatTicks = 25;
-static const int kNativeAttackSideWindow = 30;
-static const int kNativeCombatHitKnockbackDistance = 18;
-static const int kNativeCombatHitKnockbackDecayStep = 3;
-static const char *const kNativeHitEffectResourcePath = "blood.abm";
-static const int kNativeHitEffectAnimationRate = 10;
-static const float kNativeHitEffectRenderZBias = 0.01f;
-static const uint32 kCombatDebugDamagePopupDurationMs = 750;
-static const int kCombatDebugDamagePopupRisePixels = 18;
-static const int kCombatDebugDamagePopupVerticalGap = 6;
 static const char *const kCdChangePromptPalettePath = "1:/GRAPHIC/PAL/CD1.PAL";
-static const char *const kExitCloseupPendingRoomChange = "__EXIT_CLOSEUP__";
-static const char *const kInnerSanctumRoomName = "INNERSANCTUM";
-static const char *const kHerrillLogNpcName = "HERRILL_LOG";
-static const char *const kMuckeyMonsterName = "MUCKEY";
-static const char *const kActivateInnerSanctumDoorActionTag = "ACTV_INNERSAN_DOOR";
-static const int kNativeDefaultNpcDeathDamageType = 1;
-
-static bool shouldRetainNpcDeathEntityInCurrentRoom(const NpcRecord &npc) {
-	return npc.monsterfyTargetName.empty();
-}
-
-static bool isRetainedCurrentRoomNpcDeathRecord(const NpcRecord &npc) {
-	return npc.deathOrMonsterfyFlag &&
-		npc.monsterfyTargetName.empty() &&
-		npc.deathDamageType != 0 &&
-		npc.runtimeState >= 0;
-}
-
-static int roundRoomCombatFloat(float value);
-
-struct RoomMonsterFacingAnimationRange {
-	RoomMonsterFacingAnimationRange() {}
-	RoomMonsterFacingAnimationRange(int walkFirstFrame, int walkLastFrame, int idleFrame)
-		: walkFirstFrame(walkFirstFrame), walkLastFrame(walkLastFrame), idleFrame(idleFrame) {}
-
-	int walkFirstFrame = 0;
-	int walkLastFrame = 0;
-	int idleFrame = 0;
-};
-
-struct RoomAttackAnimationRange {
-	RoomAttackAnimationRange() {}
-	RoomAttackAnimationRange(int firstFrame, int lastFrame, int resumeFacing)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing) {}
-
-	int firstFrame = 0;
-	int lastFrame = 0;
-	int resumeFacing = 0;
-};
-
-struct RoomDeathAnimationRange {
-	RoomDeathAnimationRange() {}
-	RoomDeathAnimationRange(int firstFrame, int lastFrame)
-		: firstFrame(firstFrame), lastFrame(lastFrame) {}
-
-	int firstFrame = -1;
-	int lastFrame = -1;
-};
-
-struct RoomHitAnimationRange {
-	RoomHitAnimationRange() {}
-	RoomHitAnimationRange(int firstFrame, int lastFrame, int resumeFacing, int knockbackX)
-		: firstFrame(firstFrame), lastFrame(lastFrame), resumeFacing(resumeFacing),
-		  knockbackX(knockbackX) {}
-
-	int firstFrame = -1;
-	int lastFrame = -1;
-	int resumeFacing = -1;
-	int knockbackX = 0;
-};
-
-struct RoomMonsterCombatState {
-	bool attackActive = false;
-	int attackFirstFrame = -1;
-	int attackLastFrame = -1;
-	int attackContactFrame = -1;
-	int attackResumeFacing = -1;
-	bool attackSoundPlayed = false;
-	bool attackContactResolved = false;
-	Common::String attackTargetName;
-	bool hitActive = false;
-	int hitFirstFrame = -1;
-	int hitLastFrame = -1;
-	int hitResumeFacing = -1;
-	int hitKnockbackRemainingX = 0;
-	int hitKnockbackDecayStep = 0;
-	bool hitSoundPlayed = false;
-	bool deathActive = false;
-	int deathFirstFrame = -1;
-	int deathLastFrame = -1;
-	int deathDamageType = 0;
-	bool allowInitialPursuitStep = true;
-	uint32 nextMovementTick = 0;
-	uint32 attackCooldownSeedTick = 0;
-};
-
-struct RoomNpcCombatState {
-	bool deathActive = false;
-	int deathFirstFrame = -1;
-	int deathLastFrame = -1;
-	int deathDamageType = 0;
-};
-
-struct RoomHitEffectState {
-	Common::String entityName;
-	Common::String followTargetName;
-	Common::Point anchorPoint;
-	float renderZ = 0.0f;
-	bool finished = false;
-};
-
-struct RoomCombatDamagePopupState {
-	Common::String followTargetName;
-	Common::Point anchorPoint;
-	uint32 startTick = 0;
-	int damageAmount = 0;
-};
-
-struct CombatLoadoutHudInfo {
-	uint iconIndex = 0;
-	int maxVisibleCount = 0;
-	const char *unitLabel = nullptr;
-};
-
-struct ScopedDeferredLiveNpcDeathTransitions {
-	ScopedDeferredLiveNpcDeathTransitions(Script *script) : _script(script) {
-		if (_script)
-			_script->pushDeferredLiveNpcDeathTransitions();
-	}
-
-	~ScopedDeferredLiveNpcDeathTransitions() {
-		if (_script)
-			_script->popDeferredLiveNpcDeathTransitions();
-	}
-
-	Script *_script;
-};
 
 static bool roomAllowsImmediateExitClick(const Common::String &roomName) {
 	return !roomName.equalsIgnoreCase("LAVAPIT") &&
@@ -416,90 +271,6 @@ static void drawInventoryWeekday(Graphics::Screen &screen, const Graphics::Font 
 		font.getStringWidth(weekdayText), kNativeInventoryTooltipColor);
 }
 
-static bool resolveCombatLoadoutHudInfo(int loadout, CombatLoadoutHudInfo &info) {
-	switch (loadout) {
-	case 2:
-		info.iconIndex = 2;
-		info.maxVisibleCount = 16;
-		info.unitLabel = "nails";
-		return true;
-	case 3:
-		info.iconIndex = 1;
-		info.maxVisibleCount = 16;
-		info.unitLabel = "shells";
-		return true;
-	case 4:
-		info.iconIndex = 0;
-		info.maxVisibleCount = 8;
-		info.unitLabel = "bullets";
-		return true;
-	case 5:
-		info.iconIndex = 0;
-		info.maxVisibleCount = 6;
-		info.unitLabel = "bullets";
-		return true;
-	case 14:
-		info.iconIndex = 3;
-		info.maxVisibleCount = 16;
-		info.unitLabel = "gas";
-		return true;
-	default:
-		return false;
-	}
-}
-
-static Common::String resolveCombatLoadoutStatusLabel(Script &script, const ObjectRecord &object) {
-	Common::String label = script.resolveInventoryTooltipText(object);
-	if (!label.empty()) {
-		for (uint i = 0; i < label.size(); ++i) {
-			if (label[i] == '_')
-				label.setChar(' ', i);
-		}
-
-		uint trimAt = label.size();
-		for (uint i = 0; i < label.size(); ++i) {
-			if (label[i] == ',' || label[i] == ';') {
-				trimAt = i;
-				break;
-			}
-		}
-		label = label.substr(0, trimAt);
-		while (!label.empty() && label.lastChar() == ' ')
-			label.deleteLastChar();
-		if (!label.empty())
-			return label;
-	}
-
-	label = script.resolveObjectLabel(object);
-	if (!label.empty())
-		return label;
-
-	label = object.objectName;
-	for (uint i = 0; i < label.size(); ++i) {
-		if (label[i] == '_')
-			label.setChar(' ', i);
-	}
-
-	return label;
-}
-
-static Common::String buildCombatLoadoutStatusMessage(Script &script, const ObjectRecord &object,
-		int previousLoadout, int currentLoadout) {
-	const Common::String label = resolveCombatLoadoutStatusLabel(script, object);
-	if (label.empty())
-		return Common::String();
-
-	if (currentLoadout == 0 && previousLoadout != 0)
-		return Common::String::format("Disarming %s...", label.c_str());
-
-	CombatLoadoutHudInfo info;
-	if (resolveCombatLoadoutHudInfo(currentLoadout, info))
-		return Common::String::format("Arming %s, %d %s...", label.c_str(),
-			script.getPlayerCombatResourceCount(currentLoadout), info.unitLabel);
-
-	return Common::String::format("Arming %s...", label.c_str());
-}
-
 static void drawCombatLoadoutResourceIcons(Graphics::Screen &screen, const Art &art,
 		const Script &script, int loadout) {
 	CombatLoadoutHudInfo info;
@@ -556,326 +327,6 @@ static void setScaledRoomPalette(Graphics::Screen &screen, const byte *palette, 
 	const float gammaBrightness = g_engine ? g_engine->getGammaBrightnessScale() : 1.0f;
 	buildHarvesterDisplayPalette(palette, brightness * gammaBrightness, scaledPalette);
 	screen.setPalette(scaledPalette);
-}
-
-static RoomMonsterFacingAnimationRange resolveRoomMonsterFacingAnimationRange(int facing) {
-	switch (facing) {
-	case 0:
-		return RoomMonsterFacingAnimationRange(0x00, 0x09, 0x3b);
-	case 1:
-		return RoomMonsterFacingAnimationRange(0x0f, 0x18, 0x0e);
-	case 2:
-		return RoomMonsterFacingAnimationRange(0x2d, 0x36, 0x2c);
-	case 3:
-		return RoomMonsterFacingAnimationRange(0x1e, 0x27, 0x28);
-	default:
-		return RoomMonsterFacingAnimationRange(0x00, 0x09, 0x3b);
-	}
-}
-
-static bool setRoomMonsterAnimation(Entity &entity, int facing, bool walking) {
-	const RoomMonsterFacingAnimationRange range = resolveRoomMonsterFacingAnimationRange(facing);
-	if (walking) {
-		const bool changed = entity.getAnimationRate() != kRoomMonsterAnimationRate ||
-			entity.getCurrentFrame() < range.walkFirstFrame ||
-			entity.getCurrentFrame() > range.walkLastFrame;
-		entity.setAnimationRate(kRoomMonsterAnimationRate);
-		entity.setAnimationFrameRange(range.walkFirstFrame, range.walkLastFrame, true);
-		entity.setAnimationEnabled(true);
-		return changed;
-	}
-
-	const int standingFrame = entity.hasOpaqueFramesInRange(range.idleFrame, range.idleFrame)
-		? range.idleFrame
-		: range.walkFirstFrame;
-	const bool changed = entity.getAnimationRate() != 0 ||
-		entity.getCurrentFrame() != standingFrame;
-	entity.setAnimationRate(0);
-	entity.setAnimationFrameRange(standingFrame, standingFrame, false);
-	entity.setCurrentFrame(standingFrame);
-	entity.setAnimationEnabled(false);
-	return changed;
-}
-
-static bool runtimeEntityHasFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
-	if (!entity.hasFrames() || firstFrame < 0 || lastFrame < firstFrame)
-		return false;
-
-	return (uint)lastFrame < entity.getFrameCount();
-}
-
-static bool runtimeEntityHasDrawableFrameRange(const Entity &entity, int firstFrame, int lastFrame) {
-	return runtimeEntityHasFrameRange(entity, firstFrame, lastFrame) &&
-		entity.hasOpaqueFramesInRange(firstFrame, lastFrame);
-}
-
-static bool resolveMonsterAttackAnimationRange(HarvesterEngine &engine,
-		const Entity &entity, int actorCenterX, int targetCenterX,
-		RoomAttackAnimationRange &range) {
-	// Native class-6 attackers pick one of the 0x16..0x1b attack states, which map to
-	// the 0x50..0x8b strike banks. The 0x8c..0x9d banks are hit reactions, not attacks.
-	static const RoomAttackAnimationRange kLeftAttackRanges[3] = {
-		RoomAttackAnimationRange(0x64, 0x6d, 1),
-		RoomAttackAnimationRange(0x5a, 0x63, 1),
-		RoomAttackAnimationRange(0x50, 0x59, 1)
-	};
-	static const RoomAttackAnimationRange kRightAttackRanges[3] = {
-		RoomAttackAnimationRange(0x82, 0x8b, 2),
-		RoomAttackAnimationRange(0x78, 0x81, 2),
-		RoomAttackAnimationRange(0x6e, 0x77, 2)
-	};
-
-	const RoomAttackAnimationRange *candidates =
-		targetCenterX < actorCenterX ? kLeftAttackRanges : kRightAttackRanges;
-	int availableCandidateIndices[3];
-	int availableCandidateCount = 0;
-	for (int i = 0; i < 3; ++i) {
-		if (!runtimeEntityHasDrawableFrameRange(entity, candidates[i].firstFrame, candidates[i].lastFrame))
-			continue;
-		availableCandidateIndices[availableCandidateCount++] = i;
-	}
-
-	if (availableCandidateCount == 0)
-		return false;
-
-	const int selectedIndex = availableCandidateIndices[
-		availableCandidateCount > 1 ? engine.getRandomNumber(availableCandidateCount - 1) : 0];
-	range = candidates[selectedIndex];
-	return true;
-}
-
-static bool resolveMonsterDeathAnimationRange(const Entity &entity, int facing,
-		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
-	const bool preferLeftBank = facing == 1;
-	const RoomDeathAnimationRange rightBludge(0xb0, 0xb9);
-	const RoomDeathAnimationRange leftBludge(0xba, 0xc3);
-	const RoomDeathAnimationRange rightSlash(0x100, 0x109);
-	const RoomDeathAnimationRange leftSlash(0x10a, 0x113);
-	const RoomDeathAnimationRange rightProjectile(0x114, 0x11d);
-	const RoomDeathAnimationRange leftProjectile(0x11e, 0x127);
-
-	const RoomDeathAnimationRange primaryBludge = preferLeftBank ? leftBludge : rightBludge;
-	const RoomDeathAnimationRange primarySlash = preferLeftBank ? leftSlash : rightSlash;
-	const RoomDeathAnimationRange primaryProjectile = preferLeftBank ? leftProjectile : rightProjectile;
-	const RoomDeathAnimationRange fallbackBludge = preferLeftBank ? rightBludge : leftBludge;
-	const RoomDeathAnimationRange fallbackSlash = preferLeftBank ? rightSlash : leftSlash;
-	const RoomDeathAnimationRange fallbackProjectile = preferLeftBank ? rightProjectile : leftProjectile;
-
-	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
-		if (!runtimeEntityHasDrawableFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
-			return false;
-		range = candidate;
-		return true;
-	};
-
-	if ((!goreEnabled || deathDamageType == 1) &&
-			(chooseIfAvailable(primaryBludge) || chooseIfAvailable(fallbackBludge)))
-		return true;
-	if (deathDamageType == 2 &&
-			(chooseIfAvailable(primarySlash) || chooseIfAvailable(fallbackSlash)))
-		return true;
-	if (deathDamageType == 4 &&
-			(chooseIfAvailable(primaryProjectile) || chooseIfAvailable(fallbackProjectile)))
-		return true;
-
-	return chooseIfAvailable(primaryBludge) || chooseIfAvailable(primarySlash) ||
-		chooseIfAvailable(primaryProjectile) || chooseIfAvailable(fallbackBludge) ||
-		chooseIfAvailable(fallbackSlash) || chooseIfAvailable(fallbackProjectile);
-}
-
-static bool resolveNpcDeathAnimationRange(const Entity &entity, bool hasMonsterfyTarget,
-		int deathDamageType, bool goreEnabled, RoomDeathAnimationRange &range) {
-	const RoomDeathAnimationRange goreBank(0x3c, 0x45);
-	const RoomDeathAnimationRange bludgeBank(0x46, 0x4f);
-	const bool preferGoreBank = hasMonsterfyTarget || (goreEnabled && deathDamageType != 1);
-
-	auto chooseIfAvailable = [&](const RoomDeathAnimationRange &candidate) {
-		if (!runtimeEntityHasFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
-			return false;
-		range = candidate;
-		return true;
-	};
-
-	if (preferGoreBank && chooseIfAvailable(goreBank))
-		return true;
-	if (chooseIfAvailable(bludgeBank))
-		return true;
-
-	return chooseIfAvailable(goreBank);
-}
-
-static int stepTowardsRoomCombatInt(int current, int target, int step) {
-	if (step <= 0 || current == target)
-		return current;
-	if (current < target)
-		return MIN(current + step, target);
-	return MAX(current - step, target);
-}
-
-static int computeRectAxisGap(int minA, int maxA, int minB, int maxB) {
-	if (maxA <= minB)
-		return minB - maxA;
-	if (maxB <= minA)
-		return minA - maxB;
-	return 0;
-}
-
-static int computeRuntimeEntityHorizontalGap(const Entity &left, const Entity &right) {
-	const Common::Rect leftRect = left.getScreenRect();
-	const Common::Rect rightRect = right.getScreenRect();
-	return computeRectAxisGap(leftRect.left, leftRect.right, rightRect.left, rightRect.right);
-}
-
-static bool doRuntimeEntityDepthExtentsOverlap(const Entity &first, const Entity &second) {
-	const float firstZMin = first.getZ();
-	const float firstZMax = firstZMin + first.getZExtent();
-	const float secondZMin = second.getZ();
-	const float secondZMax = secondZMin + second.getZExtent();
-	return !(firstZMax < secondZMin || secondZMax < firstZMin);
-}
-
-static bool areCombatantsWithinRoomCombatReach(const RoomSetupState &state,
-		const Entity &attacker, float attackerZ,
-		const Entity &target, float targetZ, int engageDistance) {
-	if (attacker.overlapsEntity(target))
-		return true;
-
-	const float zDelta = attackerZ >= targetZ ? attackerZ - targetZ : targetZ - attackerZ;
-	if (zDelta > kNativeMonsterPursuitZTolerance)
-		return false;
-
-	const float nearZ = attackerZ < targetZ ? attackerZ : targetZ;
-	const int nativeTolerance = roundRoomCombatFloat(
-		Player::computeDepthScale(state, nearZ) * kNativeMonsterHorizontalWaypointTolerance);
-	return computeRuntimeEntityHorizontalGap(attacker, target) <= MAX(MAX(0, engageDistance), nativeTolerance);
-}
-
-// Native class-6 melee only arms after the chase path has already collapsed the
-// wider waypoint band down to a direct center-to-center engage-distance check.
-// The DOS runtime does not add a separate randomized monster attack cooldown;
-// cadence comes from the short attack banks themselves.
-static bool isWithinNativeMonsterAttackEntryRange(const Entity &monster, float monsterZ,
-		const Entity &player, float playerZ, int engageDistance) {
-	const float zDelta = monsterZ >= playerZ ? monsterZ - playerZ : playerZ - monsterZ;
-	if (zDelta > kNativeMonsterPursuitZTolerance)
-		return false;
-
-	const Common::Rect monsterRect = monster.getScreenRect();
-	const Common::Rect playerRect = player.getScreenRect();
-	const int monsterCenterX = monsterRect.left + monsterRect.width() / 2;
-	const int playerCenterX = playerRect.left + playerRect.width() / 2;
-	return ABS(playerCenterX - monsterCenterX) <= MAX(0, engageDistance);
-}
-
-static bool playRandomRoomAttackSound(HarvesterEngine &engine, const Common::String &sound1,
-		const Common::String &sound2, const Common::String &sound3) {
-	const Common::String *availableSounds[3];
-	uint availableCount = 0;
-	if (!sound1.empty())
-		availableSounds[availableCount++] = &sound1;
-	if (!sound2.empty())
-		availableSounds[availableCount++] = &sound2;
-	if (!sound3.empty())
-		availableSounds[availableCount++] = &sound3;
-	if (availableCount == 0)
-		return false;
-
-	const uint soundIndex = availableCount > 1
-		? engine.getRandomNumber(availableCount - 1)
-		: 0;
-	return engine.playSound(*availableSounds[soundIndex]);
-}
-
-static bool resolveRoomMonsterHitAnimationRange(const Entity &entity,
-		int attackerAttackFirstFrame, RoomHitAnimationRange &range) {
-	RoomHitAnimationRange candidate;
-	switch (attackerAttackFirstFrame) {
-	case 0x64:
-		candidate = RoomHitAnimationRange(0x92, 0x94, 2, -kNativeCombatHitKnockbackDistance);
-		break;
-	case 0x5a:
-		candidate = RoomHitAnimationRange(0x8f, 0x91, 2, -kNativeCombatHitKnockbackDistance);
-		break;
-	case 0x50:
-		candidate = RoomHitAnimationRange(0x8c, 0x8e, 2, -kNativeCombatHitKnockbackDistance);
-		break;
-	case 0x82:
-		candidate = RoomHitAnimationRange(0x9b, 0x9d, 1, kNativeCombatHitKnockbackDistance);
-		break;
-	case 0x78:
-		candidate = RoomHitAnimationRange(0x98, 0x9a, 1, kNativeCombatHitKnockbackDistance);
-		break;
-	case 0x6e:
-		candidate = RoomHitAnimationRange(0x95, 0x97, 1, kNativeCombatHitKnockbackDistance);
-		break;
-	default:
-		return false;
-	}
-
-	if (!runtimeEntityHasDrawableFrameRange(entity, candidate.firstFrame, candidate.lastFrame))
-		return false;
-
-	range = candidate;
-	return true;
-}
-
-static float clampRoomDepthForEvent(const RoomSetupState &state, float z) {
-	return CLIP<float>(z,
-		(float)MIN(state.roomMinZ, state.roomMaxZ),
-		(float)MAX(state.roomMinZ, state.roomMaxZ));
-}
-
-static int roundRoomCombatFloat(float value) {
-	return value >= 0.0f ? (int)(value + 0.5f) : (int)(value - 0.5f);
-}
-
-static int mapRoomDepthToScreenYForCombat(const RoomSetupState &state, float z, int fallbackY) {
-	if (state.roomMaxZScreenY < 0 || state.roomMinZScreenY < state.roomMaxZScreenY)
-		return fallbackY;
-	if (state.roomMaxZ == state.roomMinZ)
-		return CLIP<int>(fallbackY, state.roomMaxZScreenY, state.roomMinZScreenY);
-
-	const float clampedZ = clampRoomDepthForEvent(state, z);
-	const float offset = ((float)state.roomMaxZ - clampedZ) *
-		(float)(state.roomMinZScreenY - state.roomMaxZScreenY) /
-		(float)(state.roomMaxZ - state.roomMinZ);
-	return CLIP<int>(state.roomMaxZScreenY + roundRoomCombatFloat(offset),
-		state.roomMaxZScreenY, state.roomMinZScreenY);
-}
-
-static int resolveMonsterAttackContactFrameOffset(const MonsterRecord &monster) {
-	return monster.monsterName.equalsIgnoreCase("MUCKEY")
-		? kMuckeyAttackContactFrameOffset
-		: kDefaultMonsterAttackContactFrameOffset;
-}
-
-static void clearRoomMonsterCombatState(RoomMonsterCombatState &combatState) {
-	combatState = RoomMonsterCombatState();
-}
-
-static void clearRoomNpcCombatState(RoomNpcCombatState &combatState) {
-	combatState = RoomNpcCombatState();
-}
-
-static void clearRoomMonsterAttackState(RoomMonsterCombatState &combatState) {
-	combatState.attackActive = false;
-	combatState.attackFirstFrame = -1;
-	combatState.attackLastFrame = -1;
-	combatState.attackContactFrame = -1;
-	combatState.attackResumeFacing = -1;
-	combatState.attackSoundPlayed = false;
-	combatState.attackContactResolved = false;
-	combatState.attackTargetName.clear();
-}
-
-static void clearRoomMonsterHitState(RoomMonsterCombatState &combatState) {
-	combatState.hitActive = false;
-	combatState.hitFirstFrame = -1;
-	combatState.hitLastFrame = -1;
-	combatState.hitResumeFacing = -1;
-	combatState.hitKnockbackRemainingX = 0;
-	combatState.hitKnockbackDecayStep = 0;
-	combatState.hitSoundPlayed = false;
 }
 
 RoomSystem::RoomSystem(HarvesterEngine &engine, Common::Point &mousePos,
@@ -2399,340 +1850,118 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					? _engine.getScript()->getPlayerCurrentHitPoints()
 					: 0);
 		};
-		struct InteractionProcessor {
-			HarvesterEngine &engine;
-			Flow &flow;
-			RoomSceneResources &scene;
-			RoomPlayerState &playerState;
-			Common::String &pendingRegionName;
-			Common::String &pendingRoomChange;
-			bool &pendingRoomChangeIsRoomName;
-			bool &pendingRoomChangeUsesSavedRoomState;
-			SaveRoomState &pendingRoomChangeSavedRoomState;
-			const bool canExitCloseupToParent;
-			decltype(refreshCurrentScene) &refreshCurrentSceneFn;
-			decltype(applyCurrentRoomRuntimeMutationsInPlace) &applyCurrentRoomRuntimeMutationsInPlaceFn;
-			decltype(syncGlobalTimerEntities) &syncGlobalTimerEntitiesFn;
-			decltype(captureDialogueBackdrop) &captureDialogueBackdropFn;
-			decltype(showCdChangePrompt) &showCdChangePromptFn;
-			decltype(runRoomExitCommands) &runRoomExitCommandsFn;
-			decltype(applyLightingCommand) &applyLightingCommandFn;
-			decltype(applyPlayerGotoXZ) &applyPlayerGotoXZFn;
-			decltype(runModalShowText) &runModalShowTextFn;
-			decltype(resetIdleState) &resetIdleStateFn;
-			decltype(stopPlayerRegionInteraction) &stopPlayerRegionInteractionFn;
-			decltype(startPlayerDefeatSequence) &startPlayerDefeatSequenceFn;
+		typedef decltype(refreshCurrentScene) RefreshCurrentSceneFn;
+		typedef decltype(applyCurrentRoomRuntimeMutationsInPlace) ApplyCurrentRoomRuntimeMutationsInPlaceFn;
+		typedef decltype(syncGlobalTimerEntities) SyncGlobalTimerEntitiesFn;
+		typedef decltype(captureDialogueBackdrop) CaptureDialogueBackdropFn;
+		typedef decltype(showCdChangePrompt) ShowCdChangePromptFn;
+		typedef decltype(runRoomExitCommands) RunRoomExitCommandsFn;
+		typedef decltype(applyLightingCommand) ApplyLightingCommandFn;
+		typedef decltype(applyPlayerGotoXZ) ApplyPlayerGotoXZFn;
+		typedef decltype(runModalShowText) RunModalShowTextFn;
+		typedef decltype(resetIdleState) ResetIdleStateFn;
+		typedef decltype(stopPlayerRegionInteraction) StopPlayerRegionInteractionFn;
+		typedef decltype(startPlayerDefeatSequence) StartPlayerDefeatSequenceFn;
 
-			Common::Error handleInteractionResult(const InteractionResult &interaction,
-					bool &didTransition, const Common::String &usedItemName) {
-				didTransition = false;
-
-				playerState.hasMoveTarget = false;
-				playerState.turnActive = false;
-				playerState.turnTargetFacing = -1;
-				pendingRegionName.clear();
-
-				if (interaction.requestMainMenu) {
-					engine.stopMusic();
-					engine.stopSound();
-					if (!interaction.deathFlicPath.empty()) {
-						FstPlayer fstPlayer(engine);
-						if (!fstPlayer.play(interaction.deathFlicPath))
-							return Common::kReadingFailed;
-					}
-
-					if (!interaction.deathFlicPath.empty())
-						flow.requestGameOverReturn();
-					else
-						flow.requestMainMenuReturn();
-					return Common::kNoError;
-				}
-
-				Common::String restoreMusicPath = engine.getMusicPath();
-				bool discChanged = false;
-				if (interaction.cdChangeDisc > 0) {
-					ResourceManager *resources = engine.getResources();
-					const int previousDisc = resources ? resources->getCurrentDisc() : 0;
-					Common::Error cdPromptError = showCdChangePromptFn(interaction.cdChangeDisc);
-					if (cdPromptError.getCode() != Common::kNoError)
-						return cdPromptError;
-					discChanged = resources && previousDisc > 0 &&
-						previousDisc != resources->getCurrentDisc();
-				}
-				if (!interaction.musicPath.empty()) {
-					(void)engine.playMusic(interaction.musicPath);
-					restoreMusicPath = engine.getMusicPath();
-				}
-				flow.executeStartupAudioCommands(interaction.audioCommands);
-				if (interaction.mutatedRuntimeState)
-					syncGlobalTimerEntitiesFn(interaction.previousTimerRecords);
-				auto queueImplicitRoomRestart = [&]() -> Common::Error {
-					pendingRoomChangeIsRoomName = false;
-					pendingRoomChangeUsesSavedRoomState = false;
-					pendingRoomChangeSavedRoomState.clear();
-					if (!interaction.roomRestartTargetName.empty()) {
-						pendingRoomChange = interaction.roomRestartTargetName;
-					} else if (discChanged && interaction.cdChangeDisc == 3) {
-						// Native disc-3 prompt reloads re-enter room_setup through the startup target
-						// buffer, which remains "START" during ordinary play and resolves to CD3 RECEPTION.
-						pendingRoomChange = "START";
-					} else if (!scene.state.entranceName.empty()) {
-						pendingRoomChange = scene.state.entranceName;
-					} else {
-						pendingRoomChange = scene.state.roomName;
-						pendingRoomChangeIsRoomName = true;
-					}
-					didTransition = !pendingRoomChange.empty();
-					debugC(1, kDebugRoom,
-						"Harvester: implicit room restart target='%s' explicit='%s' discChanged=%d cdChangeDisc=%d sceneEntrance='%s' sceneRoom='%s'",
-						pendingRoomChange.c_str(), interaction.roomRestartTargetName.c_str(),
-						discChanged ? 1 : 0, interaction.cdChangeDisc,
-						scene.state.entranceName.c_str(), scene.state.roomName.c_str());
-					return didTransition ? Common::kNoError : Common::kReadingFailed;
-				};
-				auto queueSavedRoomRestart = [&](const SaveRoomState &savedState) -> Common::Error {
-					pendingRoomChange.clear();
-					pendingRoomChangeIsRoomName = false;
-					pendingRoomChangeUsesSavedRoomState = false;
-					pendingRoomChangeSavedRoomState.clear();
-					pendingRoomChange = !savedState.entranceName.empty()
-						? savedState.entranceName
-						: savedState.roomName;
-					pendingRoomChangeIsRoomName = savedState.entranceName.empty();
-					pendingRoomChangeUsesSavedRoomState = !pendingRoomChange.empty();
-					pendingRoomChangeSavedRoomState = savedState;
-					debugC(1, kDebugRoom,
-						"Harvester: queued saved room restart target='%s' room='%s' entrance='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
-						pendingRoomChange.c_str(), savedState.roomName.c_str(),
-						savedState.entranceName.c_str(), savedState.playerX, savedState.playerY,
-						savedState.playerZ, savedState.playerFacing, savedState.musicPath.c_str());
-					didTransition = !pendingRoomChange.empty();
-					return didTransition ? Common::kNoError : Common::kReadingFailed;
-				};
-				if (interaction.requestRoomRestart) {
-					return queueImplicitRoomRestart();
-				}
-				if (interaction.requestCloseupExit) {
-					if (!canExitCloseupToParent) {
-						debugC(1, kDebugRoom,
-							"Harvester: EXIT_CLOSEUP ignored for room='%s' without parent room loop",
-							scene.state.roomName.c_str());
-						return Common::kNoError;
-					}
-
-					pendingRoomChange = kExitCloseupPendingRoomChange;
-					didTransition = true;
-					return Common::kNoError;
-				}
-
-				StartupRoomTransitionKind roomTransition = interaction.roomTransition;
-				if (roomTransition == kStartupRoomTransitionNone && !interaction.nextRoomName.empty())
-					roomTransition = kStartupRoomTransitionCloseup;
-
-				const bool needsDisc3RoomReload =
-					discChanged &&
-					interaction.cdChangeDisc == 3 &&
-					!interaction.requestRoomRestart &&
-					interaction.nextRoomName.empty() &&
-					!interaction.mutatedRuntimeState;
-				if (needsDisc3RoomReload) {
-					return queueImplicitRoomRestart();
-				}
-
-				if (!interaction.nextRoomName.empty() &&
-						roomTransition == kStartupRoomTransitionChangeRoom) {
-					Common::String resolvedTransitionTarget = interaction.nextRoomName;
-					Common::Error resolveError = flow.resolveRoomTransitionTarget(
-						interaction.nextRoomName, resolvedTransitionTarget);
-					if (resolveError.getCode() != Common::kNoError)
-						return resolveError;
-					if (resolvedTransitionTarget.empty())
-						return Common::kNoError;
-
-					Common::Error exitError = runRoomExitCommandsFn();
-					if (exitError.getCode() != Common::kNoError)
-						return exitError;
-
-					// Native CHANGE_ROOM queues a room handoff for the live loop instead of nesting.
-					pendingRoomChange = resolvedTransitionTarget;
-					didTransition = true;
-				} else if (!interaction.nextRoomName.empty()) {
-					Common::Error exitError = runRoomExitCommandsFn();
-					if (exitError.getCode() != Common::kNoError)
-						return exitError;
-
-					SaveRoomState parentRoomState;
-					const bool hasParentRoomState = engine.hasCurrentSaveRoomState();
-					if (hasParentRoomState)
-						parentRoomState = engine.getCurrentSaveRoomState();
-					Common::Error roomError = flow.runRoomLoop(interaction.nextRoomName);
-					if (flow.hasPendingMainMenuReturn())
-						return Common::kNoError;
-					if (flow.takePendingCloseupParentRestart()) {
-						if (hasParentRoomState && parentRoomState.valid)
-							return queueSavedRoomRestart(parentRoomState);
-						return queueImplicitRoomRestart();
-					}
-					if (flow.hasPendingDebugRoomChange()) {
-						didTransition = true;
-						return Common::kNoError;
-					}
-					if (roomError.getCode() != Common::kReadingFailed &&
-						roomError.getCode() != Common::kNoError) {
-						return roomError;
-					}
-
-					if (!refreshCurrentSceneFn(true))
-						return Common::kReadingFailed;
-
-					flow.executeStartupAudioCommands(scene.state.audioCommands);
-					if (!restoreMusicPath.empty())
-						(void)engine.playMusic(restoreMusicPath);
-					else
-						engine.stopMusic();
-					didTransition = true;
-				} else if (interaction.visualRuntimeStateChanged) {
-					if (!applyCurrentRoomRuntimeMutationsInPlaceFn(true) &&
-							!refreshCurrentSceneFn(true)) {
-						return Common::kReadingFailed;
-					}
-				}
-
-				if (didTransition)
-					return Common::kNoError;
-
-				if (interaction.requestPlayerDeath &&
-						engine.getScript() &&
-						engine.getScript()->getPlayerCurrentHitPoints() <= 0) {
-					stopPlayerRegionInteractionFn();
-					startPlayerDefeatSequenceFn("script_kill_pc", Common::String(),
-						interaction.playerDeathDamageType);
-				}
-
-				if (interaction.requestPlayerGotoXZ)
-					applyPlayerGotoXZFn(interaction.playerGotoX, interaction.playerGotoZ);
-
-				if (interaction.lightingCommand != kStartupLightingCommandNone) {
-					Common::Error lightingError = applyLightingCommandFn(interaction.lightingCommand);
-					if (lightingError.getCode() != Common::kNoError)
-						return lightingError;
-				}
-
-				if (!interaction.cutscenePath.empty()) {
-					FstPlayer fstPlayer(engine);
-					if (!fstPlayer.play(interaction.cutscenePath))
-						return Common::kReadingFailed;
-				}
-
-				if (!interaction.modalText.value.empty()) {
-					Common::Error modalError = runModalShowTextFn(interaction.modalText);
-					if (modalError.getCode() != Common::kNoError)
-						return modalError;
-				}
-
-				if (!interaction.dialogueNpcName.empty()) {
-					Common::Error dialogueError = runScriptedDialogue(
-						interaction.dialogueNpcName, usedItemName, interaction.dialogueContinuationTag,
-						didTransition);
-					if (dialogueError.getCode() != Common::kNoError)
-						return dialogueError;
-				}
-
-				if (didTransition)
-					return Common::kNoError;
-
-				if (!interaction.continuationTag.empty()) {
-					InteractionResult continuationInteraction;
-					if (engine.getScript()->executeActionTag(
-							interaction.continuationTag, continuationInteraction, true,
-							scene.state.roomName)) {
-						Common::Error interactionError =
-							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
-						if (interactionError.getCode() != Common::kNoError)
-							return interactionError;
-					}
-				}
-
-				return Common::kNoError;
+		struct RoomInteractionCallbacksImpl : RoomInteractionCallbacks {
+			RoomInteractionCallbacksImpl(
+					RefreshCurrentSceneFn &refreshCurrentSceneFn_,
+					ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn_,
+					SyncGlobalTimerEntitiesFn &syncGlobalTimerEntitiesFn_,
+					CaptureDialogueBackdropFn &captureDialogueBackdropFn_,
+					ShowCdChangePromptFn &showCdChangePromptFn_,
+					RunRoomExitCommandsFn &runRoomExitCommandsFn_,
+					ApplyLightingCommandFn &applyLightingCommandFn_,
+					ApplyPlayerGotoXZFn &applyPlayerGotoXZFn_,
+					RunModalShowTextFn &runModalShowTextFn_,
+					ResetIdleStateFn &resetIdleStateFn_,
+					StopPlayerRegionInteractionFn &stopPlayerRegionInteractionFn_,
+					StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn_)
+				: refreshCurrentSceneFn(refreshCurrentSceneFn_),
+				  applyCurrentRoomRuntimeMutationsInPlaceFn(applyCurrentRoomRuntimeMutationsInPlaceFn_),
+				  syncGlobalTimerEntitiesFn(syncGlobalTimerEntitiesFn_),
+				  captureDialogueBackdropFn(captureDialogueBackdropFn_),
+				  showCdChangePromptFn(showCdChangePromptFn_),
+				  runRoomExitCommandsFn(runRoomExitCommandsFn_),
+				  applyLightingCommandFn(applyLightingCommandFn_),
+				  applyPlayerGotoXZFn(applyPlayerGotoXZFn_),
+				  runModalShowTextFn(runModalShowTextFn_),
+				  resetIdleStateFn(resetIdleStateFn_),
+				  stopPlayerRegionInteractionFn(stopPlayerRegionInteractionFn_),
+				  startPlayerDefeatSequenceFn(startPlayerDefeatSequenceFn_) {
 			}
 
-			Common::Error runScriptedDialogue(const Common::String &npcName, const Common::String &usedItemName,
-					const Common::String &continuationTag, bool &didTransition) {
-				didTransition = false;
+			bool refreshCurrentScene(bool preservePlayerPlacement) override {
+				return refreshCurrentSceneFn(preservePlayerPlacement);
+			}
 
-				const NpcRecord *dialogueNpc = engine.getScript()->findRuntimeNpcRecord(npcName);
-				if (dialogueNpc) {
-					IndexedBitmap dialogueBackdrop;
-					if (!captureDialogueBackdropFn(dialogueBackdrop))
-						return Common::kReadingFailed;
+			bool applyCurrentRoomRuntimeMutationsInPlace(bool preservePaletteState) override {
+				return applyCurrentRoomRuntimeMutationsInPlaceFn(preservePaletteState);
+			}
 
-					Common::Error dialogueError = flow.runRoomNpcDialogue(
-						dialogueBackdrop, scene.palette, scene.targetPaletteBrightness, *dialogueNpc,
-						usedItemName);
-					if (dialogueError.getCode() != Common::kNoError)
-						return dialogueError;
-				} else {
-					warning("Harvester: unresolved startup dialogue npc '%s' while processing room dialogue",
-						npcName.c_str());
-				}
+			void syncGlobalTimerEntities(const Common::Array<TimerRecord> &previousTimerRecords) override {
+				syncGlobalTimerEntitiesFn(previousTimerRecords);
+			}
 
-				InteractionResult dialogueInteraction;
-				bool abortRemainingCommandChain = false;
-				if (flow.takeQueuedDialogueInteraction(dialogueInteraction)) {
-					abortRemainingCommandChain = dialogueInteraction.abortRemainingCommandChain;
-					Common::Error interactionError =
-						handleInteractionResult(dialogueInteraction, didTransition, usedItemName);
-					if (interactionError.getCode() != Common::kNoError)
-						return interactionError;
-					if (flow.hasPendingMainMenuReturn())
-						return Common::kNoError;
-				}
-				if (!didTransition && !abortRemainingCommandChain && !continuationTag.empty()) {
-					InteractionResult continuationInteraction;
-					if (engine.getScript()->executeActionTag(
-							continuationTag, continuationInteraction, true, scene.state.roomName)) {
-						Common::Error interactionError =
-							handleInteractionResult(continuationInteraction, didTransition, usedItemName);
-						if (interactionError.getCode() != Common::kNoError)
-							return interactionError;
-						if (flow.hasPendingMainMenuReturn())
-							return Common::kNoError;
-					}
-				}
+			bool captureDialogueBackdrop(IndexedBitmap &dialogueBackdrop) override {
+				return captureDialogueBackdropFn(dialogueBackdrop);
+			}
 
-				flow.resetCursorAnimationSequence();
+			Common::Error showCdChangePrompt(int discNumber) override {
+				return showCdChangePromptFn(discNumber);
+			}
+
+			Common::Error runRoomExitCommands() override {
+				return runRoomExitCommandsFn();
+			}
+
+			Common::Error applyLightingCommand(StartupLightingCommand lightingCommand) override {
+				return applyLightingCommandFn(lightingCommand);
+			}
+
+			void applyPlayerGotoXZ(int x, int z) override {
+				applyPlayerGotoXZFn(x, z);
+			}
+
+			Common::Error runModalShowText(const ResolvedText &modalText) override {
+				return runModalShowTextFn(modalText);
+			}
+
+			void resetIdleState() override {
 				resetIdleStateFn();
-				return Common::kNoError;
 			}
+
+			void stopPlayerRegionInteraction() override {
+				stopPlayerRegionInteractionFn();
+			}
+
+			void startPlayerDefeatSequence(const char *reason, const Common::String &sourceName,
+					int damageType) override {
+				startPlayerDefeatSequenceFn(reason, sourceName, damageType);
+			}
+
+			RefreshCurrentSceneFn &refreshCurrentSceneFn;
+			ApplyCurrentRoomRuntimeMutationsInPlaceFn &applyCurrentRoomRuntimeMutationsInPlaceFn;
+			SyncGlobalTimerEntitiesFn &syncGlobalTimerEntitiesFn;
+			CaptureDialogueBackdropFn &captureDialogueBackdropFn;
+			ShowCdChangePromptFn &showCdChangePromptFn;
+			RunRoomExitCommandsFn &runRoomExitCommandsFn;
+			ApplyLightingCommandFn &applyLightingCommandFn;
+			ApplyPlayerGotoXZFn &applyPlayerGotoXZFn;
+			RunModalShowTextFn &runModalShowTextFn;
+			ResetIdleStateFn &resetIdleStateFn;
+			StopPlayerRegionInteractionFn &stopPlayerRegionInteractionFn;
+			StartPlayerDefeatSequenceFn &startPlayerDefeatSequenceFn;
 		};
-		InteractionProcessor interactionProcessor = {
-			_engine, flow, scene, playerState, pendingRegionName, pendingRoomChange,
-			pendingRoomChangeIsRoomName, pendingRoomChangeUsesSavedRoomState,
-			pendingRoomChangeSavedRoomState,
-			canExitCloseupToParent,
+		RoomInteractionCallbacksImpl interactionCallbacks(
 			refreshCurrentScene, applyCurrentRoomRuntimeMutationsInPlace,
 			syncGlobalTimerEntities, captureDialogueBackdrop, showCdChangePrompt,
 			runRoomExitCommands, applyLightingCommand, applyPlayerGotoXZ, runModalShowText,
-			resetIdleState, stopPlayerRegionInteraction, startPlayerDefeatSequence
-		};
-		auto hasRoomEntryInteraction = [](const InteractionResult &interaction) {
-			return !interaction.nextRoomName.empty() ||
-				!interaction.musicPath.empty() ||
-				!interaction.audioCommands.empty() ||
-				interaction.cdChangeDisc > 0 ||
-				!interaction.cutscenePath.empty() ||
-				!interaction.deathFlicPath.empty() ||
-				interaction.requestMainMenu ||
-				!interaction.dialogueNpcName.empty() ||
-				!interaction.dialogueContinuationTag.empty() ||
-				!interaction.continuationTag.empty() ||
-				!interaction.modalText.value.empty() ||
-				interaction.lightingCommand != kStartupLightingCommandNone ||
-				interaction.requestPlayerGotoXZ ||
-				interaction.requestPlayerDeath ||
-				interaction.requestCloseupExit ||
-				interaction.mutatedRuntimeState;
-		};
+			resetIdleState, stopPlayerRegionInteraction, startPlayerDefeatSequence);
+		RoomInteractionProcessor interactionProcessor(
+			_engine, flow, scene, playerState, pendingRegionName, pendingRoomChange,
+			pendingRoomChangeIsRoomName, pendingRoomChangeUsesSavedRoomState,
+			pendingRoomChangeSavedRoomState, canExitCloseupToParent, interactionCallbacks);
 		InteractionResult roomEntryInteraction;
 		bool hasPendingRoomEntryInteraction = false;
 		if (shouldRunRoomEntryCommands) {
