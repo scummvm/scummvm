@@ -64,6 +64,7 @@ struct RoomPlayerState {
 	int targetX = 0;
 	int targetBottomY = 0;
 	float targetZ = 0.0f;
+	bool moveTargetRequiresScreenY = false;
 	bool moveTargetXReached = false;
 	bool moveTargetZReached = false;
 	Common::String currentBlockerName;

@@ -4188,7 +4188,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 		if (playerOverlapsRegion)
 			return;
 
-		Player::setMoveTarget(scene.state, playerState,
+		Player::setRegionMoveTarget(scene.state, playerState,
 			Player::resolveRegionTargetX(region, playerState),
 			Player::resolveRegionTargetZ(region));
 		if (_engine.isPathfindingDebugEnabled()) {

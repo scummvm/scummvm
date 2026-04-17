@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 17, 2026, fixed the room-exit global timer sync path so `DNALFT` exit commands that run `SET_TIMER EDNA_BURNING_TIMER OFF` / `KILL_TIMER EDNA_BURNING_TIMER` also reconfigure the live preserved global timer entity before the next room setup carries it forward.
+- On April 17, 2026, fixed region-target movement completion so pending exits such as `BWLNT1_2_BWLNT2` keep walking until both target depth and target screen Y are reached, while ordinary floor clicks still use the native-style depth slack.
 
 ## Next Suggested Action
 
-- Runtime-test the DNA fire day transition: light Edna's diner, exit through `DNAEXT_X2` to Day 6, then remain in PC/Hank dialogue past the old countdown window and confirm `EDNA_BURNING_TIMER` no longer fires `GRAPHIC/FST/PCBURN.FST`.
+- Runtime-test `BOWLSNTRY1` after entering from `RECEPTION_2_BOWLSNTRY1`: click or double-click the bottom exit region and confirm the player reaches the trigger and runs `BWLNTR1_2_BWLNTR2`.
