@@ -26,6 +26,7 @@
 #include "chamber/dialog.h"
 #include "chamber/print.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
 #include "chamber/script.h"
 #include "chamber/cursor.h"
 #include "chamber/input.h"
@@ -187,6 +188,8 @@ void showPromptAnim(void) {
 }
 
 void promptWait(void) {
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		ega_blitToScreen(0, 0, 320, 200);
 	cursor_anim_phase = 0;
 
 	do {

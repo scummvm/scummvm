@@ -59,7 +59,7 @@ namespace Chamber {
 #define CGA_PIXELS_PER_BYTE (8 / CGA_BITS_PER_PIXEL)
 #define CGA_BYTES_PER_LINE (CGA_WIDTH / CGA_PIXELS_PER_BYTE)
 
-extern byte CGA_SCREENBUFFER[0xB800];
+extern byte CGA_SCREENBUFFER[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
 
 #define CGA_FONT_HEIGHT 6
 
@@ -67,9 +67,9 @@ extern byte CGA_SCREENBUFFER[0xB800];
 #define CGA_PREV_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) - (((offs) & CGA_ODD_LINES_OFS) ? CGA_BYTES_PER_LINE : 0))
 
 #define frontbuffer CGA_SCREENBUFFER
-extern byte backbuffer[0xB800]; ///< CGA: 0x4000, HGS: 0xB800
+extern byte backbuffer[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
 
-extern byte sprit_load_buffer[1290];
+extern byte sprit_load_buffer[8192];
 
 extern byte cga_pixel_flip[256];
 

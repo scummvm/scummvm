@@ -32,6 +32,10 @@ namespace Chamber {
 
 
 void animateGauss(byte *target) {
+	// In EGA mode, the gauss animation tiles are CGA format data.
+	// The EGA background (FOND.EGA) already includes the gauss area pre-rendered.
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		return;
 	byte *sprite;
 	byte phase = getRand() % 4;
 	if (phase == script_byte_vars.gauss_phase)
