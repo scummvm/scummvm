@@ -5,6 +5,8 @@ MODULE_OBJS := \
 	bkbuff.o \
 	cga.o \
 	chamber.o \
+	ega.o \
+	ega_resource.o \
 	cursor.o \
 	decompr.o \
 	dialog.o \
