@@ -171,6 +171,9 @@ void AGOSEngine_PN::demoSeq() {
 }
 
 void AGOSEngine_PN::introSeq() {
+	if (isPnAmiga())
+		_videoWindows[15] = 200;
+
 	loadZone(25); // Zone 'I'
 	setWindowImage(3, 0);
 
@@ -191,6 +194,9 @@ void AGOSEngine_PN::introSeq() {
 		processSpecialKeys();
 		delay(1);
 	}
+
+	if (isPnAmiga())
+		_videoWindows[15] = 240;
 }
 
 void AGOSEngine_PN::setupBoxes() {
