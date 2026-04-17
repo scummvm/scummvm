@@ -353,12 +353,12 @@ void drawBoxAroundSpot(void) {
 		w *= g_vm->_screenPPB;
 	}
 
-	cga_DrawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
-	cga_DrawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
-	cga_DrawVLine(x + w - 1, y, h - 1, 0, CGA_SCREENBUFFER);
-	cga_DrawHLine(x, y + h - 1, w - 1, 0, CGA_SCREENBUFFER);
+	g_vm->_renderer->drawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
+	g_vm->_renderer->drawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
+	g_vm->_renderer->drawVLine(x + w - 1, y, h - 1, 0, CGA_SCREENBUFFER);
+	g_vm->_renderer->drawHLine(x, y + h - 1, w - 1, 0, CGA_SCREENBUFFER);
 
-	cga_RefreshImageData(*spot_sprite);
+	g_vm->_renderer->refreshImageData(*spot_sprite);
 }
 
 /*Get on-screen image as specified by script to temp buffer and register it with dirty rect of kind 2
@@ -400,7 +400,7 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	*height = cur_image_size_h;
 
 	if (right_button) {
-		cga_BlitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
 		return 0;
 	}
 
@@ -415,7 +415,7 @@ void playHurtSound() {
 }
 
 void blinkWithSound(byte color) {
-	cga_ColorSelect(color);
+	g_vm->_renderer->colorSelect(color);
 	playHurtSound();
 	selectPalette();
 }
@@ -474,7 +474,7 @@ void animPortrait(byte layer, byte index, byte delay) {
 		}
 		getDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		waitVBlank();
-		cga_BlitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
 		waitVBlankTimer();
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/

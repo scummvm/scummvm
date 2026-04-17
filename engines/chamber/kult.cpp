@@ -274,7 +274,7 @@ Common::Error ChamberEngine::init() {
 
 	IFGM_Init();
 
-	switchToGraphicsMode();
+	g_vm->_renderer->switchToGraphicsMode();
 
 	/* Install timer callback */
 	initTimer();
@@ -284,9 +284,9 @@ Common::Error ChamberEngine::init() {
 	if (g_vm->_videoMode == Common::RenderMode::kRenderEGA) {
 		/* EGA title screen — load planar EGA splash (same format as FOND.EGA) */
 		splash = ega_loadFond("PRESEGA.EGA");
-		cga_ColorSelect(0x30); // sets EGA palette
+		g_vm->_renderer->colorSelect(0x30); // sets EGA palette
 		if (splash)
-			cga_BackBufferToRealFull();
+			g_vm->_renderer->backBufferToRealFull();
 	} else {
 		if (g_vm->getLanguage() == Common::EN_USA) {
 			/* Load title screen */
@@ -306,12 +306,12 @@ Common::Error ChamberEngine::init() {
 
 		if (!isCustomHerc) {
 			/* Select intense cyan-mageta palette */
-			cga_ColorSelect(0x30);
-			cga_BackBufferToRealFull();
+			g_vm->_renderer->colorSelect(0x30);
+			g_vm->_renderer->backBufferToRealFull();
 		} else {
 			/* Set authentic Hercules Green phosphor palette */
 			g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
-			cga_BackBufferToRealFull();
+			g_vm->_renderer->backBufferToRealFull();
 		}
 	}
 
@@ -321,12 +321,6 @@ Common::Error ChamberEngine::init() {
 		delete splash;
 	}
 
-<<<<<<< HEAD
-    splash->free();
-    delete splash;
-
-=======
->>>>>>> 6182990634e (chamber: Implement EGA rendering path)
 	/* Wait for a keypress */
 	clearKeyboard();
 	readKeyboardChar();
@@ -351,7 +345,7 @@ Common::Error ChamberEngine::init() {
 		if (_shouldQuit)
 			return Common::kNoError;
 
-		cga_BackBufferToRealFull();
+		g_vm->_renderer->backBufferToRealFull();
 		clearKeyboard();
 
 		/* Wait for a valid language choice */
@@ -372,7 +366,7 @@ Common::Error ChamberEngine::init() {
 	res_diali[0].name[4] = c;
 
 	if (g_vm->getLanguage() != Common::EN_USA)
-		cga_BackBufferToRealFull();
+		g_vm->_renderer->backBufferToRealFull();
 
 	/* Load script and other static resources */
 	/* Those are normally embedded in the executable, but here we load extracted ones*/
@@ -410,7 +404,7 @@ Common::Error ChamberEngine::init() {
 	}
 
 	/*TODO: is this necessary?*/
-	cga_BackBufferToRealFull();
+	g_vm->_renderer->backBufferToRealFull();
 
 	/* Create clean game state snapshot */
 	saveRestartGame();

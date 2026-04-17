@@ -42,7 +42,7 @@ void animateGauss(byte *target) {
 		phase = (phase + 1) % 4;
 	script_byte_vars.gauss_phase = phase;
 	sprite = gauss_data + 8 + phase * (8 * 30);
-	cga_Blit(sprite, 8, 8, 30, target, 80); /*draw to 0:4*/
+	g_vm->_renderer->blit(sprite, 8, 8, 30, target, 80); /*draw to 0:4*/
 }
 
 void timerCallback(void *refCon) {

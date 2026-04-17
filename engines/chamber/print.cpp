@@ -108,7 +108,7 @@ byte chars_color_wonc[] = {0x55, 0x57, 0x5D, 0x5F, 0x75, 0xF7, 0x7D, 0x7F, 0xD5,
 
 void printStringPad(uint16 w, byte *target) {
 	while (w--)
-		cga_PrintChar(0, target);
+		g_vm->_renderer->printChar(0, target);
 }
 
 byte *printWord(byte *str, byte *target) {
@@ -123,7 +123,7 @@ byte *printWord(byte *str, byte *target) {
 				str++;
 			return str;
 		}
-		cga_PrintChar(c, target);
+		g_vm->_renderer->printChar(c, target);
 
 skip_1st:
 		;
@@ -131,9 +131,9 @@ skip_1st:
 		str++;
 		if (f) {
 			if (f == 0x80)
-				cga_PrintChar(0x25, target);
+				g_vm->_renderer->printChar(0x25, target);
 			else if (f != 0x40)
-				cga_PrintChar(0x21, target);
+				g_vm->_renderer->printChar(0x21, target);
 			else
 				return str;
 		}
@@ -154,7 +154,7 @@ byte *printStringLine(byte *str, uint16 *left, byte *target) {
 		if (string_ended || (mw == 0))
 			break;
 		mw--;
-		cga_PrintChar(0, target);
+		g_vm->_renderer->printChar(0, target);
 	}
 	*left = mw;
 	return str;
@@ -210,31 +210,31 @@ void cga_DrawTextBox(byte *msg, byte *target) {
 	y = draw_y;
 	w = (char_draw_max_width + 2) * 4 - 2;
 
-	cga_DrawHLine(x + 2, y, w - 2, 0, target);          /*box top*/
+	g_vm->_renderer->drawHLine(x + 2, y, w - 2, 0, target);          /*box top*/
 	for (i = 0; i < 3; i++)
-		cga_DrawHLine(x + 1, y + 1 + i, w, 1, target);  /*top margin*/
-	cga_DrawVLine(x,     y + 2, 2, 0, target);          /*left top corner 1*/
-	cga_DrawVLine(x + 1, y + 1, 1, 0, target);          /*left top corner 2*/
-	cga_DrawVLine(x + w, y + 1, 1, 0, target);      /*right top corner 1*/
-	cga_DrawVLine(x + w + 1, y + 2, 2, 0, target);          /*right top corner 2*/
+		g_vm->_renderer->drawHLine(x + 1, y + 1 + i, w, 1, target);  /*top margin*/
+	g_vm->_renderer->drawVLine(x,     y + 2, 2, 0, target);          /*left top corner 1*/
+	g_vm->_renderer->drawVLine(x + 1, y + 1, 1, 0, target);          /*left top corner 2*/
+	g_vm->_renderer->drawVLine(x + w, y + 1, 1, 0, target);      /*right top corner 1*/
+	g_vm->_renderer->drawVLine(x + w + 1, y + 2, 2, 0, target);          /*right top corner 2*/
 
 	char_draw_coords_y = draw_y + 4;
 	string_ended = 0;
 	do {
 		char_draw_coords_x = draw_x;
-		cga_PrintChar(0x3B, target);
+		g_vm->_renderer->printChar(0x3B, target);
 		msg = printStringPadded(msg, target);
-		cga_PrintChar(0x3C, target);
+		g_vm->_renderer->printChar(0x3C, target);
 		char_draw_coords_y += 6;
 	} while (!string_ended);
 
 	x = draw_x * 4;
 	y = char_draw_coords_y;
-	cga_DrawHLine(x + 1, y, w, 1, target);              /*bottom margin*/
-	cga_DrawVLine(x + 1, y, 1, 0, target);              /*bottom left corner 1*/
-	cga_DrawHLine(x + 2, y + 1, w - 2, 0, target);      /*box bottom*/
-	cga_DrawVLine(x + 1, y, 1, 0, target);              /*TODO: duplicated?*/
-	cga_DrawVLine(x + w, y, 1, 0, target);              /*bottom right corner*/
+	g_vm->_renderer->drawHLine(x + 1, y, w, 1, target);              /*bottom margin*/
+	g_vm->_renderer->drawVLine(x + 1, y, 1, 0, target);              /*bottom left corner 1*/
+	g_vm->_renderer->drawHLine(x + 2, y + 1, w - 2, 0, target);      /*box bottom*/
+	g_vm->_renderer->drawVLine(x + 1, y, 1, 0, target);              /*TODO: duplicated?*/
+	g_vm->_renderer->drawVLine(x + w, y, 1, 0, target);              /*bottom right corner*/
 }
 
 void drawMessage(byte *msg, byte *target) {
@@ -260,7 +260,7 @@ void drawMessage(byte *msg, byte *target) {
 	cga_BackupImageReal(CalcXY_p(x, y), char_draw_max_width + 2, char_draw_max_height); /*backup orig. screen data*/
 	cga_DrawTextBox(msg, target);                   /*draw box with text*/
 	promptWait();                                   /*wait keypress*/
-	cga_RestoreBackupImage(target);                 /*restore screen data*/
+	g_vm->_renderer->restoreBackupImage(target);                 /*restore screen data*/
 }
 
 #if 1

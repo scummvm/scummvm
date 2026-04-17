@@ -33,6 +33,7 @@
 #include "engines/util.h"
 
 #include "chamber/chamber.h"
+#include "chamber/renderer.h"
 
 namespace Chamber {
 
@@ -64,12 +65,18 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 
 	_screenH = _screenW = _screenBits = _screenBPL = _screenPPB = 0;
 	_line_offset = _line_offset2 = _fontHeight = _fontWidth = 0;
+
+	if (_videoMode == Common::kRenderEGA)
+		_renderer = new EGARenderer();
+	else
+		_renderer = new CGARenderer();
 }
 
 ChamberEngine::~ChamberEngine() {
 	// Dispose your resources here
 	delete _rnd;
 	delete[] _pxiData;
+	delete _renderer;
 
 	deinitSound();
 }

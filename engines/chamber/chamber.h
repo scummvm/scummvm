@@ -28,6 +28,7 @@
 #include "common/rendermode.h"
 #include "engines/engine.h"
 #include "gui/debugger.h"
+#include "chamber/renderer.h"
 
 namespace Audio {
 class SoundHandle;
@@ -97,6 +98,8 @@ public:
 
 
 	Audio::PCSpeaker *_speaker;
+
+	Renderer *_renderer = nullptr;
 
 private:
 	const ADGameDescription *_gameDescription;

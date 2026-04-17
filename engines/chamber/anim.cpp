@@ -122,7 +122,7 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 
 	for (offs = 0; offs != cur_image_end;) {
 		byte mask = 0xC0 >> (((xx + offs % ww) % 4) * 2);
-		uint16 ofs = cga_CalcXY(xx + offs % ww, y + offs / ww);
+		uint16 ofs = g_vm->_renderer->calcXY(xx + offs % ww, y + offs / ww);
 
 		target[ofs] = (target[ofs] & ~mask) | (source[ofs] & mask);
 
@@ -141,13 +141,13 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = CalcXY_p(x, y);
-	cga_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
+	g_vm->_renderer->backupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
 	if (g_vm->_videoMode == Common::kRenderEGA) {
 		// In EGA mode, loadLutinSprite builds a CLUT8 flat buffer in lutin_mem+2.
 		// pitch here is sprw*4 (set in playAnimCore for EGA).
 		ega_BlitSprite(pixels, pitch, (uint16)sprw * 4, sprh, backbuffer, ofs);
 	} else {
-		cga_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
+		g_vm->_renderer->blitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	}
 	ex = x + sprw;
 	ey = y + sprh;
@@ -176,9 +176,9 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	if (anim_use_dot_effect)
 		copyScreenBlockWithDotEffect(backbuffer, updx, updy, updw, updh, frontbuffer);
 	else {
-		cga_CopyScreenBlock(backbuffer, updw, updh, frontbuffer, ofs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, updw, updh, frontbuffer, ofs);
 	}
-	cga_RestoreImage(sprit_load_buffer, backbuffer);
+	g_vm->_renderer->restoreImage(sprit_load_buffer, backbuffer);
 
 	last_anim_x = x;
 	last_anim_y = y;
@@ -189,7 +189,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 }
 
 void animUndrawSprite(void) {
-	cga_CopyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CalcXY_p(last_anim_x, last_anim_y));
+	g_vm->_renderer->copyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CalcXY_p(last_anim_x, last_anim_y));
 	last_anim_height = 0;
 }
 

@@ -173,7 +173,7 @@ void actionsMenu(byte **pinfo) {
 		drawSpriteN(25, act_dot_rects[choice].sx, act_dot_rects[choice].sy, CGA_SCREENBUFFER);
 		for (i = 0; i < 0xFFF; i++) ; /*TODO: weak delay*/
 	}
-	cga_RestoreBackupImage(CGA_SCREENBUFFER);
+	g_vm->_renderer->restoreBackupImage(CGA_SCREENBUFFER);
 
 	*pinfo += numchoices * 3;
 }

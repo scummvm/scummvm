@@ -79,7 +79,7 @@ void drawInventoryBox(uint16 filtermask, uint16 filtervalue) {
 			continue;
 		if (count == 0) {
 			/*once first valid item found, draw the box*/
-			cga_FillAndWait(inv_bgcolor, 64 / 4, 64, CGA_SCREENBUFFER, CalcXY_p(232 / 4, 56));
+			g_vm->_renderer->fillAndWait(inv_bgcolor, 64 / 4, 64, CGA_SCREENBUFFER, CalcXY_p(232 / 4, 56));
 			playSound(20);
 		}
 		inventory_spots[count].name = inventory_items[i].name;
@@ -125,7 +125,7 @@ void openInventory(uint16 filtermask, uint16 filtervalue) {
 		} while (buttons == 0);
 		undrawCursor(frontbuffer);
 	}
-	cga_RestoreImage(scratch_mem2, frontbuffer);
+	g_vm->_renderer->restoreImage(scratch_mem2, frontbuffer);
 	playSound(20);
 	switch (((item_t *)script_vars[kScrPool3_CurrentItem])->name) {
 	case 108:	/*DAGGER*/
