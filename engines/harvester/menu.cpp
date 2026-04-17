@@ -1161,7 +1161,7 @@ Common::Error MenuSystem::runLoadGameMenu(const byte *palette, float paletteBrig
 		const int slot = save.getSaveSlot();
 		if (slot < 0 || slot >= kSaveSlotCount)
 			continue;
-		slotTitles[slot] = save.getDescription().encode();
+		slotTitles[slot] = save.getDescription();
 	}
 
 	auto resolveHoveredSlot = [&]() -> int {
@@ -1320,7 +1320,7 @@ Common::Error MenuSystem::runSaveGameMenu(const byte *palette, float paletteBrig
 			const int slot = save.getSaveSlot();
 			if (slot < 0 || slot >= kSaveSlotCount)
 				continue;
-			slotTitles[slot] = save.getDescription().encode();
+			slotTitles[slot] = save.getDescription();
 		}
 	};
 	reloadSlotTitles();
