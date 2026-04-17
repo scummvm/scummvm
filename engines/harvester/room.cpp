@@ -49,6 +49,8 @@ static const uint32 kRoomExitFastClickWindowTicks = 20;
 static const char *const kPlayerInventoryLabel = "your inventory";
 static const char *const kInventoryOwnerName = "INVENTORY";
 static const byte kTransparentPaletteIndex = 0;
+static const float kNormalPaletteBrightness = 1.0f;
+static const float kDimPaletteBrightness = 0.6f;
 static const int kNativeInventoryDragCloseLeft = 0x45;
 static const int kNativeInventoryDragCloseTop = 0x4b;
 static const int kNativeInventoryDragCloseRight = 0x239;
@@ -1659,12 +1661,15 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 					runtimeTimer->looping);
 			}
 		};
-		auto applyCurrentRoomRuntimeMutationsInPlace = [&]() {
+		auto applyCurrentRoomRuntimeMutationsInPlace = [&](bool preservePaletteState) {
 			Script *script = _engine.getScript();
 			ResourceManager *resources = _engine.getResources();
 			if (!script || !resources)
 				return false;
 
+			byte previousPalette[256 * 3];
+			memcpy(previousPalette, scene.palette, sizeof(previousPalette));
+			const float previousPaletteBrightness = scene.targetPaletteBrightness;
 			const Common::Array<AudioCommand> entryAudioCommands = scene.state.audioCommands;
 			RoomSetupState updatedState;
 			if (!script->materializeRoomState(
@@ -1894,8 +1899,13 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			scene.sceneObjects = updatedScene.sceneObjects;
 			scene.sceneAnimations = updatedScene.sceneAnimations;
 			scene.sceneRegions = updatedScene.sceneRegions;
-			memcpy(scene.palette, updatedScene.palette, sizeof(scene.palette));
-			scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
+			if (preservePaletteState) {
+				memcpy(scene.palette, previousPalette, sizeof(scene.palette));
+				scene.targetPaletteBrightness = previousPaletteBrightness;
+			} else {
+				memcpy(scene.palette, updatedScene.palette, sizeof(scene.palette));
+				scene.targetPaletteBrightness = updatedScene.targetPaletteBrightness;
+			}
 			captureCurrentSaveState();
 			return _inventory.refresh();
 		};
@@ -2031,7 +2041,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			if (clearCarryState)
 				clearCarriedRoomItem();
 
-			if (!applyCurrentRoomRuntimeMutationsInPlace() && !refreshCurrentScene(true))
+			if (!applyCurrentRoomRuntimeMutationsInPlace(true) && !refreshCurrentScene(true))
 				return Common::kReadingFailed;
 			if (!_inventory.refresh())
 				return Common::kReadingFailed;
@@ -2211,12 +2221,21 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			case kStartupLightingCommandNone:
 				return Common::kNoError;
 			case kStartupLightingCommandDim:
-				drawRoomScene(_engine, *activeScreen, scene, 0.6f);
-				setScaledRoomPalette(*activeScreen, scene.palette, 0.6f);
+				scene.targetPaletteBrightness = kDimPaletteBrightness;
+				drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
+				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
 				activeScreen->makeAllDirty();
 				activeScreen->update();
 				return Common::kNoError;
 			case kStartupLightingCommandNormal:
+				if (ResourceManager *resources = _engine.getResources()) {
+					if (!scene.state.palettePath.empty() &&
+							!loadPaletteResource(*resources, scene.state.palettePath, scene.palette)) {
+						warning("Harvester: unable to reload room palette '%s' for CHANGE_LIGHTING NORMAL",
+							scene.state.palettePath.c_str());
+					}
+				}
+				scene.targetPaletteBrightness = kNormalPaletteBrightness;
 				drawRoomScene(_engine, *activeScreen, scene, scene.targetPaletteBrightness);
 				setScaledRoomPalette(*activeScreen, scene.palette, scene.targetPaletteBrightness);
 				activeScreen->makeAllDirty();
@@ -2572,7 +2591,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 						engine.stopMusic();
 					didTransition = true;
 				} else if (interaction.visualRuntimeStateChanged) {
-					if (!applyCurrentRoomRuntimeMutationsInPlaceFn() &&
+					if (!applyCurrentRoomRuntimeMutationsInPlaceFn(true) &&
 							!refreshCurrentSceneFn(true)) {
 						return Common::kReadingFailed;
 					}
@@ -2724,7 +2743,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			// Native room_setup applies entry-time state changes before the first visible room frame.
 			if (roomEntryInteraction.mutatedRuntimeState) {
 				syncOffscreenGlobalTimerEntities(roomEntryInteraction.previousTimerRecords);
-				if (!applyCurrentRoomRuntimeMutationsInPlace() &&
+				if (!applyCurrentRoomRuntimeMutationsInPlace(false) &&
 						!refreshCurrentScene(true)) {
 					return Common::kReadingFailed;
 				}

@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 17, 2026, verified the Dad meat-permission handoff against `HARVEST.SCR` and native `handle_talk_to_dad @ 0x2b020`: the script defines separate `MEAT_PERMISSION0` unsigned and `MEAT_PERMISSION` signed inventory objects, and the native Dad branch adds `MEAT_PERMISSION` then hides `MEAT_PERMISSION0` for owner `INVENTORY`. Updated the port to hide the unsigned slip after awarding the signed slip, and renamed the confirmed native helpers `get_set_shared_dialogue_state_d2eb4` and `play_c112s4_fst_sequence`.
+- On April 17, 2026, checked the day/night palette handoff against native `dispatch_room_event_actions @ 0x60ee0`, `room_setup @ 0x73540`, and decoded CD1/CD2 `HARVEST.SCR`: `SET_FLAG DAY_FLAG` does not alter the active palette, live `SET_REGION` mutates region entities in place, and only `CHANGE_LIGHTING` changes the live palette (`DIM` to `0.6`, `NORMAL` to `1.0`, `NONE` to black). Updated the port so live same-room mutations preserve the current palette state while room-entry mutations can still set the initial room fade target.
 
 ## Next Suggested Action
 
-- Runtime-test the Dad permission-slip handoff: obtain `MEAT_PERMISSION0` from the Butcher, show it to Dad after the permission state is armed, then confirm the inventory contains `MEAT_PERMISSION` and no longer shows `MEAT_PERMISSION0`.
+- Runtime-test the fire-station cloth day-4 transition and a normal nightfall transition: the text box should remain on the preexisting dim/night palette until the following `CHANGE_LIGHTING NONE` clears to black, with the next loaded room fading to the brightness implied by its room setup and `DAY_FLAG`.
