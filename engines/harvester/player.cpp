@@ -626,6 +626,10 @@ static int resolveMoveTargetDepthDirection(const RoomPlayerState &playerState) {
 		return 1;
 	if (playerState.z + kRoomPlayerDepthTargetSlack < playerState.targetZ)
 		return -1;
+	if (playerState.moveTargetRequiresScreenY && playerState.bottomY < playerState.targetBottomY)
+		return 1;
+	if (playerState.moveTargetRequiresScreenY && playerState.bottomY > playerState.targetBottomY)
+		return -1;
 
 	return 0;
 }
@@ -1003,12 +1007,13 @@ static bool recordNativePrimaryWalkBlockerHistory(const RoomSetupState &state,
 }
 
 static void setMoveTargetInternal(const RoomSetupState &state, RoomPlayerState &playerState,
-		int targetX, float targetZ, int targetBottomY) {
+		int targetX, float targetZ, int targetBottomY, bool requireScreenY) {
 	playerState.hasMoveTarget = true;
 	playerState.nextMovementTick = 0;
 	playerState.targetX = CLIP<int>(targetX, 0, 639);
 	playerState.targetBottomY = clampRoomMovementY(state, targetBottomY);
 	playerState.targetZ = clampRoomDepth(state, targetZ);
+	playerState.moveTargetRequiresScreenY = requireScreenY;
 	resetPlayerMoveTargetProgress(playerState);
 	debugC(1, kDebugPlayer,
 		"Harvester: player move target room='%s' current=(%d,%d,z=%.2f) target=(%d,%d,z=%.2f)",
@@ -1219,14 +1224,20 @@ void Player::updateIdleTrigger(RoomIdleAnimationState &idleState) {
 void Player::setMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ) {
 	setMoveTargetInternal(state, playerState, targetX, targetZ,
-		mapRoomDepthToScreenY(state, targetZ));
+		mapRoomDepthToScreenY(state, targetZ), false);
+}
+
+void Player::setRegionMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
+		int targetX, float targetZ) {
+	setMoveTargetInternal(state, playerState, targetX, targetZ,
+		mapRoomDepthToScreenY(state, targetZ), true);
 }
 
 void Player::setMoveTargetFromScreenPoint(const RoomSetupState &state,
 		RoomPlayerState &playerState, int targetX, int targetBottomY) {
 	const int clampedTargetBottomY = clampRoomMovementY(state, targetBottomY);
 	setMoveTargetInternal(state, playerState, targetX,
-		mapRoomScreenYToDepth(state, clampedTargetBottomY), clampedTargetBottomY);
+		mapRoomScreenYToDepth(state, clampedTargetBottomY), clampedTargetBottomY, false);
 }
 
 bool Player::resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetupState &state,

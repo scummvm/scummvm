@@ -43,6 +43,8 @@ public:
 	static void updateIdleTrigger(RoomIdleAnimationState &idleState);
 	static void setMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
 		int targetX, float targetZ);
+	static void setRegionMoveTarget(const RoomSetupState &state, RoomPlayerState &playerState,
+		int targetX, float targetZ);
 	static void setMoveTargetFromScreenPoint(const RoomSetupState &state,
 		RoomPlayerState &playerState, int targetX, int targetBottomY);
 	static bool resolveBlockedStartupSpawn(HarvesterEngine &engine, const RoomSetupState &state,
