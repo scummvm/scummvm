@@ -26,7 +26,7 @@
 #include "access/asurface.h"
 
 // for frame contents debugging
-#define DEBUG_FRAME_DUMP 1
+//#define DEBUG_FRAME_DUMP 1
 
 #ifdef DEBUG_FRAME_DUMP
 #include "graphics/paletteman.h"
@@ -38,7 +38,7 @@
 
 namespace Access {
 
-const int TRANSPARENCY = 0;
+static constexpr int TRANSPARENCY = 0;
 
 SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
@@ -224,10 +224,14 @@ void BaseSurface::drawLine() {
 }
 
 void BaseSurface::drawBox() {
-	Graphics::ManagedSurface::hLine(_orgX1, _orgY1, _orgX2, _lColor);
-	Graphics::ManagedSurface::hLine(_orgX1, _orgY2, _orgX2, _lColor);
-	Graphics::ManagedSurface::vLine(_orgX1, _orgY1, _orgY2, _lColor);
-	Graphics::ManagedSurface::vLine(_orgX2, _orgY1, _orgY2, _lColor);
+	drawBox(_orgX1, _orgY1, _orgX2, _orgY2, _lColor);
+}
+
+void BaseSurface::drawBox(int x1, int y1, int x2, int y2, int color) {
+	Graphics::ManagedSurface::hLine(x1, y1, x2, color);
+	Graphics::ManagedSurface::hLine(x1, y2, x2, color);
+	Graphics::ManagedSurface::vLine(x1, y1, y2, color);
+	Graphics::ManagedSurface::vLine(x2, y1, y2, color);
 }
 
 void BaseSurface::flipHorizontal(BaseSurface &dest) {

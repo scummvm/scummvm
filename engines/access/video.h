@@ -62,6 +62,10 @@ public:
 	 */
 	void playToEnd();
 
+	virtual int getWidth() = 0;
+
+	virtual int getHeight() = 0;
+
 protected:
 	virtual void setVideo(const Common::Point &pt) = 0;
 
@@ -110,6 +114,11 @@ public:
 	void playVideo() override;
 
 	void copyVideo() override;
+
+	int getWidth() override { return _header._width; }
+
+	int getHeight() override { return _header._height; }
+
 };
 
 class VideoPlayer_v2 : public VideoPlayer {
@@ -152,6 +161,11 @@ public:
 	void copyVideo() override {};
 
 	void closeVideo() override;
+
+	int getWidth() override { return _header._width; }
+
+	int getHeight() override { return _header._height; }
+
 };
 
 

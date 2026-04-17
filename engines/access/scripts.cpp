@@ -891,7 +891,7 @@ void Scripts::cmdSetVideo_v3() {
 	short rawx = _data->readSint16LE();
 	pt.y = _data->readSint16LE();
 	int cellIndex = _data->readUint16LE();
-	int rate = _data->readUint16LE();
+	int noFrame = _data->readUint16LE();
 
 	if (cellIndex > 0x3f)
 		error("Invalid room video number %d", cellIndex);
@@ -909,11 +909,17 @@ void Scripts::cmdSetVideo_v3() {
 	else
 		pt.x = rawx;
 
-	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
-	warning("TODO: cmdSetVideo_v3: Use flag value (%d)", flag);
+	debugC(1, kDebugScripts, "cmdSetVideo_v3(x=%d, y=%d, cellIndex=%d, noFrame=%d)", pt.x, pt.y, cellIndex, noFrame);
+
 	// Hack: Skip the "DARK/"
 	Common::Path vidpath(_vm->_extraCells[cellIndex]._vidFilename.substr(5));
-	_vm->_video->setVideo(_vm->_screen, pt, vidpath, rate);
+	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
+
+	if (noFrame == 0) {
+		_vm->_screen->ASurface::drawBox(pt.x - 1, pt.y - 1, pt.x + _vm->_video->getWidth(), pt.y + _vm->_video->getHeight(), 249);
+		_vm->_screen->ASurface::drawBox(pt.x - 2, pt.y - 2, pt.x + _vm->_video->getWidth() + 1, pt.y + _vm->_video->getHeight() + 1, 248);
+		_vm->_screen->ASurface::drawBox(pt.x - 3, pt.y - 3, pt.x + _vm->_video->getWidth() + 2, pt.y + _vm->_video->getHeight() + 2, 247);
+	}
 
 	if (cellIndex == 1 && roomNum == 0x36)
 		_vm->_screen->setIconPalette();
