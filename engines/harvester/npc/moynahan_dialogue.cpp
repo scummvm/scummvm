@@ -227,10 +227,22 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 	auto playMoynahanLine = [&](int wavId, int headVariant = 0) -> Common::Error {
 		return runtime.playDialogueLineWithVariant(wavId, kMoynahanNpc, headVariant);
 	};
+	auto queueRoomVisualMutation = [&](bool changed) {
+		if (!changed)
+			return;
+
+		InteractionResult interaction;
+		interaction.mutatedRuntimeState = true;
+		interaction.visualRuntimeStateChanged = true;
+		runtime.queueDialogueInteractionIfNeeded(interaction);
+	};
 	auto giveGlue = [&]() {
-		(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoom, kGlueObject, true);
-		(void)runtime.startupScript().addRuntimeObjectToInventory(kGlueObject);
-		(void)runtime.startupScript().setRuntimeFlagValue(kJustGotGlueFlag, true);
+		bool changed = false;
+		changed |= runtime.startupScript().setRuntimeObjectVisible(kRahRoom, kGlueObject, false);
+		changed |= runtime.startupScript().addRuntimeObjectToInventory(kGlueObject);
+		changed |= runtime.startupScript().setRuntimeFlagValue(kJustGotGlueFlag, true);
+		state.gotGlue = true;
+		return changed;
 	};
 	auto isCasketPhoto = [&](const Common::String &itemName) {
 		return itemName.equalsIgnoreCase("CASKET_PHOTO") ||
@@ -313,10 +325,10 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 				if (lineError.getCode() != Common::kNoError)
 					return lineError;
 
-				(void)runtime.startupScript().resetRuntimeObjectToInitialState(usedItemName);
-				(void)runtime.startupScript().setRuntimeObjectVisible(kRahRoom, usedItemName, true);
-				giveGlue();
-				state.gotGlue = true;
+				bool changed = false;
+				changed |= runtime.startupScript().setRuntimeObjectVisible(kRahRoom, usedItemName, false);
+				changed |= giveGlue();
+				queueRoomVisualMutation(changed);
 				return Common::kNoError;
 			}
 
@@ -709,7 +721,7 @@ Common::Error MoynahanDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 						lineError = playMoynahanLine(0x4108, 2);
 						if (lineError.getCode() != Common::kNoError)
 							return lineError;
-						giveGlue();
+						queueRoomVisualMutation(giveGlue());
 					} else if (responseIndex == 2) {
 						lineError = playMoynahanLine(0x410d, 2);
 						if (lineError.getCode() != Common::kNoError)

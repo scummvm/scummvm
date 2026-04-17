@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 17, 2026, checked the day/night palette handoff against native `dispatch_room_event_actions @ 0x60ee0`, `room_setup @ 0x73540`, and decoded CD1/CD2 `HARVEST.SCR`: `SET_FLAG DAY_FLAG` does not alter the active palette, live `SET_REGION` mutates region entities in place, and only `CHANGE_LIGHTING` changes the live palette (`DIM` to `0.6`, `NORMAL` to `1.0`, `NONE` to black). Updated the port so live same-room mutations preserve the current palette state while room-entry mutations can still set the initial room fade target.
+- On April 17, 2026, checked Moynahan's accepted casket-photo trade against native `handle_talk_to_moynahan @ 0x24a20`: after `dialog.rsp[0x18d]` response 1, native hides the presented photo and `GLUE`, adds `GLUE` to inventory, and sets `JUST_GOT_GLUE`. Updated the port so the direct dialogue mutation queues a live room visual refresh, removing the stale embalming-room glue entity after the trade.
 
 ## Next Suggested Action
 
-- Runtime-test the fire-station cloth day-4 transition and a normal nightfall transition: the text box should remain on the preexisting dim/night palette until the following `CHANGE_LIGHTING NONE` clears to black, with the next loaded room fading to the brightness implied by its room setup and `DAY_FLAG`.
+- Runtime-test the MBLM glue trade: give Moynahan `CASKET_PHOTO`, accept the glue response, confirm `GLUE` appears in inventory, `CASKET_PHOTO` is no longer visible in inventory, and clicking the former room glue spot no longer starts the "can't have that" interruption dialogue.
