@@ -29,6 +29,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -265,6 +266,7 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (button == 1) {
 		_dragStartY = y;
 		_dragLastY = y;
+		_fluidScroller->stopAnimation();
 	}
 
 	// TODO: Determine where inside the string the user clicked and place the
@@ -276,6 +278,9 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 
 void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (button == 1 || button == 2) {
+		if (_isMouseDown && button == 1 && _isDragging)
+			_fluidScroller->startFling();
+
 		if (_isMouseDown && !_isDragging) {
 			int newSelectedItem = findItem(x, y);
 			if (newSelectedItem != -1) {
@@ -351,7 +356,13 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
+	const float stepping = (float)_scrollBar->_singleStep * direction;
+
+	if (stepping == 0.0f)
+		return;
+
+	_fluidScroller->stopAnimation();
+	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -359,6 +370,8 @@ void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
 			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
@@ -423,8 +436,8 @@ void GroupedListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
-	const int firstItem = (int)(_scrollPos / lineHeight);
-	const int offset = (int)_scrollPos % lineHeight;
+	const int firstItem = MAX(0, (int)(_scrollPos / lineHeight));
+	const int offset = _scrollPos < 0 ? (int)_scrollPos : (int)_scrollPos % lineHeight;
 	const int indentSpacing = g_gui.getFontHeight();
 
 	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);

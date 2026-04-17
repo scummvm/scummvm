@@ -30,6 +30,7 @@
 namespace GUI {
 
 class ScrollBarWidget;
+class FluidScroller;
 
 enum NumberingMode {
 	kListNumberingOff	= -1,
@@ -60,6 +61,7 @@ public:
 	};
 
 	typedef Common::Array<ListData> ListDataArray;
+	~ListWidget() override;
 
 protected:
 	Common::U32StringArray	_list;
@@ -78,6 +80,7 @@ protected:
 	int				_currentKeyDown;
 
 	float			_scrollPos;
+	FluidScroller	*_fluidScroller;
 	bool			_isMouseDown;
 	bool			_isDragging;
 	int				_dragStartY;

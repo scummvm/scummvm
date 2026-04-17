@@ -27,6 +27,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -81,6 +82,7 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_itemSpacing = 0;
 
 	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
 	_isMouseDown = false;
 	_isDragging = false;
 	_dragStartY = _dragLastY = 0;
@@ -133,9 +135,14 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_scrollBarWidth = 0;
 
 	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
 	_isMouseDown = false;
 	_isDragging = false;
 	_dragStartY = _dragLastY = 0;
+}
+
+ListWidget::~ListWidget() {
+	delete _fluidScroller;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
@@ -337,29 +344,32 @@ void ListWidget::scrollTo(int item) {
 }
 
 void ListWidget::scrollBarRecalc() {
+	const int lineHeight = kLineHeight + _itemSpacing;
 	_scrollBar->_numEntries = _list.size();
 	_scrollBar->_entriesPerPage = _entriesPerPage;
 	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->_singleStep = lineHeight;
 	_scrollBar->recalc();
+
+	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
+	_fluidScroller->setBounds((float)maxScroll, _h - _topPadding - _bottomPadding);
 }
 
 void ListWidget::handleTickle() {
 	if (_editMode)
 		EditableWidget::handleTickle();
 	_scrollBar->handleTickle();
+
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos)) {
+		applyScrollPos();
+	}
 }
 
 void ListWidget::applyScrollPos() {
 	const int lineHeight = kLineHeight + _itemSpacing;
-	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
-	if (_scrollPos < 0)
-		_scrollPos = 0;
-	if (_scrollPos > maxScroll)
-		_scrollPos = (float)maxScroll;
-
 	_currentPos = (int)(_scrollPos / lineHeight);
 	scrollBarRecalc();
-	markAsDirty();
+	g_gui.scheduleTopDialogRedraw();
 }
 
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -369,6 +379,7 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_isMouseDown = true;
 	_isDragging = false;
 	_dragLastY = 0;
+	_fluidScroller->stopAnimation();
 
 	if (button == 1) {
 		_dragStartY = y;
@@ -381,6 +392,9 @@ void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 
 void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (button == 1 || button == 2) {
+		if (_isMouseDown && button == 1 && _isDragging)
+			_fluidScroller->startFling();
+
 		if (_isMouseDown && !_isDragging) {
 			// Perform selection
 			int newSelectedItem = findItem(x, y);
@@ -442,7 +456,13 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
+	const float stepping = (float)_scrollBar->_singleStep * direction;
+
+	if (stepping == 0.0f)
+		return;
+
+	_fluidScroller->stopAnimation();
+	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {
@@ -458,7 +478,9 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 			_dragLastY = y;
 
 			if (deltaY != 0) {
-				_scrollPos += deltaY;
+				_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+				_scrollPos = _fluidScroller->getVisualPosition();
+
 				applyScrollPos();
 			}
 			return;
@@ -821,6 +843,8 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
 			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
@@ -843,8 +867,8 @@ void ListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
-	const int firstItem = (int)(_scrollPos / lineHeight);
-	const int offset = (int)_scrollPos % lineHeight;
+	const int firstItem = MAX(0, (int)(_scrollPos / lineHeight));
+	const int offset = _scrollPos < 0 ? (int)_scrollPos : (int)_scrollPos % lineHeight;
 
 	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
 	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
