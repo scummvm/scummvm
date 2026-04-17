@@ -599,6 +599,15 @@ void Scripts::cmdSetInventory() {
 	_vm->_inventory->_startInvItem = 0;
 	_vm->_inventory->_startInvBox = 0;
 	_vm->_inventory->_invChangeFlag = true;
+
+	if (itemVal == 1 && _vm->getGameID() == kGameNoctropolis) {
+		// Slight hack - add a new sound to play the stinger.  This won't be freed
+		// until we leave the room, but there are only a few inv items in each room
+		// so the total leak is tiny.
+		Resource *sound = _vm->_sound->loadSound(99, 64);
+		_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
+		_vm->_sound->playSound(_vm->_sound->_soundTable.size() - 1);
+	}
 }
 
 void Scripts::cmdCheckInventory() {
@@ -1177,7 +1186,6 @@ void Scripts::cmdPlayerSpeak() {
 	Common::String str = _data->readString();
 	debugC(1, kDebugScripts, "cmdPlayerSpeak(%d, %d, \"%s\", \"%s\")", x, y, title, str.c_str());
 
-	// TODO: Check that this gives correct placement
 	_charsOrg = Common::Point(x, y);
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
@@ -1187,7 +1195,14 @@ void Scripts::cmdPlayerSpeak() {
 	_vm->_bubbleBox->placeBubble(str);
 	_continuenceFlag = true;
 	findNull();
-	warning("TODO: Check rendering for cmdPlayerSpeak() box");
+
+	while (!_vm->shouldQuitOrRestart() && !_vm->_events->isKeyActionMousePressed()) {
+		_vm->_events->pollEventsAndWait();
+	}
+
+	_vm->_events->debounceLeft();
+	_vm->_events->zeroKeysActions();
+	_vm->_bubbleBox->clearBubbles();
 }
 
 

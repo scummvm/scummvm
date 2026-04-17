@@ -117,6 +117,11 @@ public:
 	void moveBufferDown();
 
 	bool clip(Common::Rect &r);
+
+	/**
+	 * dump to png for debugging
+	 */
+	void dump(const char *fname) const;
 };
 
 class ASurface : public BaseSurface {

@@ -61,10 +61,8 @@ void BubbleBox::clearBubbles() {
 		_vm->_screen->_screenYOff = 0;
 		r.left -= 2;
 		r.right = MIN(r.right, (int16)_vm->_screen->w);
-		
-		r.translate(-_vm->_screen->_windowXAdd, -_vm->_screen->_windowYAdd);
 
-		_vm->_screen->copyBlock(&_vm->_buffer1, r);
+		_vm->_screen->blitFrom(_vm->_buffer1, r, r);
 	}
 
 	// Clear the list
@@ -277,8 +275,6 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble_v3(const Common::String &msg) {
-	Font::_fontColors[1] = 255;
-
 	drawBubble(_bubbles.size() - 1);
 
 	Font::_fontColors[1] = 255;

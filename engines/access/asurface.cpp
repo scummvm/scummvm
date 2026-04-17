@@ -25,6 +25,17 @@
 #include "access/access.h"
 #include "access/asurface.h"
 
+// for frame contents debugging
+#define DEBUG_FRAME_DUMP 1
+
+#ifdef DEBUG_FRAME_DUMP
+#include "graphics/paletteman.h"
+#include "image/png.h"
+#include "common/path.h"
+#include "common/file.h"
+#endif
+
+
 namespace Access {
 
 const int TRANSPARENCY = 0;
@@ -296,6 +307,19 @@ bool BaseSurface::clip(Common::Rect &r) {
 	}
 
 	return false;
+}
+
+void BaseSurface::dump(const char *fname) const {
+#ifdef DEBUG_FRAME_DUMP
+	// For debugging, dump the frame contents.
+	::Common::DumpFile outf;
+	uint32 now = g_system->getMillis();
+	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));
+	byte pal[768];
+	((AccessEngine *)g_engine)->_screen->getPalette(pal);
+	::Image::writePNG(outf, *this, pal);
+	outf.close();
+#endif
 }
 
 } // End of namespace Access

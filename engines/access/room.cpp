@@ -1161,7 +1161,7 @@ bool Room::checkCode(int v1, int v2) {
 /*------------------------------------------------------------------------*/
 
 RoomInfo::RoomInfo(const byte *data, AccessGameType gameType, bool isCD, bool isDemo) {
-	Common::MemoryReadStream stream(data, 999);
+	Common::MemoryReadStream stream(data, 2048);
 
 	_roomFlag = stream.readByte();
 
