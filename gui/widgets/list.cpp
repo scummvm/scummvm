@@ -79,6 +79,11 @@ ListWidget::ListWidget(Dialog *boss, const Common::String &name, const Common::U
 	_leftPadding = _rightPadding = 0;
 	_topPadding = _bottomPadding = 0;
 	_itemSpacing = 0;
+
+	_scrollPos = 0.0f;
+	_isMouseDown = false;
+	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip, uint32 cmd)
@@ -90,7 +95,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
 
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE | WIDGET_TRACK_MOUSE);
 	_type = kListWidget;
 	_editMode = false;
 	_numberingMode = kListNumberingOne;
@@ -126,6 +131,11 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, con
 	_itemSpacing = 0;
 
 	_scrollBarWidth = 0;
+
+	_scrollPos = 0.0f;
+	_isMouseDown = false;
+	_isDragging = false;
+	_dragStartY = _dragLastY = 0;
 }
 
 ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd)
@@ -339,63 +349,90 @@ void ListWidget::handleTickle() {
 	_scrollBar->handleTickle();
 }
 
+void ListWidget::applyScrollPos() {
+	const int lineHeight = kLineHeight + _itemSpacing;
+	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
+	if (_scrollPos < 0)
+		_scrollPos = 0;
+	if (_scrollPos > maxScroll)
+		_scrollPos = (float)maxScroll;
+
+	_currentPos = (int)(_scrollPos / lineHeight);
+	scrollBarRecalc();
+	markAsDirty();
+}
+
 void ListWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (!isEnabled())
 		return;
 
-	// First check whether the selection changed
-	int newSelectedItem = findItem(x, y);
+	_isMouseDown = true;
+	_isDragging = false;
+	_dragLastY = 0;
 
-	if (newSelectedItem == -1)
-		return;
+	if (button == 1) {
+		_dragStartY = y;
+		_dragLastY = y;
+	}
 
 	if (_editMode)
 		abortEditMode();
+}
 
-	// Get modifier keys
-	int modifiers = g_system->getEventManager()->getModifierState();
-	bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
-	bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
+void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (button == 1 || button == 2) {
+		if (_isMouseDown && !_isDragging) {
+			// Perform selection
+			int newSelectedItem = findItem(x, y);
+			if (newSelectedItem != -1) {
+				// Get modifier keys
+				int modifiers = g_system->getEventManager()->getModifierState();
+				bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
+				bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
 
-	// Only handle multi-select if it's enabled
-	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
-		if (shiftClick && _lastSelectionStartItem != -1) {
-			// Shift+Click: Select range from last selection start to current item
-			_selectedItem = newSelectedItem;
-			selectItemRange(_lastSelectionStartItem, newSelectedItem);
-			_lastSelectionStartItem = newSelectedItem;
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		} else if (ctrlClick) {
-			// Ctrl+Click: Add/remove from selection
-			if (isItemSelected(newSelectedItem)) {
-				markSelectedItem(newSelectedItem, false);
-			} else {
-				markSelectedItem(newSelectedItem, true);
-				_selectedItem = newSelectedItem;
-				_lastSelectionStartItem = newSelectedItem;
-			}
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		}
-	} else {
-		// Regular click: Clear previous selection and select only this item
-		clearSelection();
-		_selectedItem = newSelectedItem;
-		markSelectedItem(newSelectedItem, true);
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-	}
+				// Only handle multi-select if it's enabled
+				if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+					if (shiftClick && _lastSelectionStartItem != -1) {
+						// Shift+Click: Select range from last selection start to current item
+						_selectedItem = newSelectedItem;
+						selectItemRange(_lastSelectionStartItem, newSelectedItem);
+						_lastSelectionStartItem = newSelectedItem;
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					} else if (ctrlClick) {
+						// Ctrl+Click: Add/remove from selection
+						if (isItemSelected(newSelectedItem)) {
+							markSelectedItem(newSelectedItem, false);
+						} else {
+							markSelectedItem(newSelectedItem, true);
+							_selectedItem = newSelectedItem;
+							_lastSelectionStartItem = newSelectedItem;
+						}
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					}
+				} else {
+					// Regular click: Clear previous selection and select only this item
+					clearSelection();
+					_selectedItem = newSelectedItem;
+					markSelectedItem(newSelectedItem, true);
+					sendCommand(kListSelectionChangedCmd, _selectedItem);
+				}
 
-	// Notify clients if an item was clicked
-	if (newSelectedItem >= 0) {
-		sendCommand(kListItemSingleClickedCmd, _selectedItem);
-	}
+				// Notify clients if an item was clicked
+				if (newSelectedItem >= 0) {
+					sendCommand(kListItemSingleClickedCmd, _selectedItem);
+				}
 
 	// TODO: Determine where inside the string the user clicked and place the
 	// caret accordingly.
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
-	markAsDirty();
-}
+				markAsDirty();
+			}
+		}
 
-void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+		_isMouseDown = false;
+		_isDragging = false;
+	}
+
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y)) &&
@@ -411,6 +448,22 @@ void ListWidget::handleMouseWheel(int x, int y, int direction) {
 void ListWidget::handleMouseMoved(int x, int y, int button) {
 	if (!isEnabled())
 		return;
+
+	if (_isMouseDown && _dragLastY != 0) {
+		if (!_isDragging && ABS(y - _dragStartY) > kDragThreshold)
+			_isDragging = true;
+
+		if (_isDragging) {
+			int deltaY = _dragLastY - y;
+			_dragLastY = y;
+
+			if (deltaY != 0) {
+				_scrollPos += deltaY;
+				applyScrollPos();
+			}
+			return;
+		}
+	}
 
 	// Determine if we are inside the widget
 	if (x < 0 || x > _w)
@@ -435,9 +488,12 @@ void ListWidget::handleMouseLeft(int button) {
 
 
 int ListWidget::findItem(int x, int y) const {
-	if (y < _topPadding) return -1;
-	int item = (y - _topPadding) / (kLineHeight + _itemSpacing) + _currentPos;
-	if (isItemVisible(item) && item < (int)_list.size())
+	if (y < _topPadding || y >= _h - _bottomPadding)
+		return -1;
+
+	int item = (y - _topPadding + (int)_scrollPos) / (kLineHeight + _itemSpacing);
+
+	if (item >= 0 && item < (int)_list.size())
 		return item;
 	else
 		return -1;
@@ -764,9 +820,8 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
-			_currentPos = data;
-			checkBounds();
-			markAsDirty();
+			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
 			// NOTE: ListWidget's boss is always GUI::Dialog
@@ -788,8 +843,14 @@ void ListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
-	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + lineHeight * i;
+	const int firstItem = (int)(_scrollPos / lineHeight);
+	const int offset = (int)_scrollPos % lineHeight;
+
+	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
+	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
+
+	for (i = 0, pos = firstItem; i <= _entriesPerPage && pos < len; i++, pos++) {
+		const int y = _y + _topPadding + lineHeight * i - offset;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
@@ -847,6 +908,8 @@ void ListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
+
+	g_gui.theme()->swapClipRect(oldClip);
 
 	if (_editMode) {
 		EditableWidget::drawWidget();
