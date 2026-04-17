@@ -11,8 +11,8 @@
 
 ## Last Confirmed Action
 
-- On April 17, 2026, checked Moynahan's accepted casket-photo trade against native `handle_talk_to_moynahan @ 0x24a20`: after `dialog.rsp[0x18d]` response 1, native hides the presented photo and `GLUE`, adds `GLUE` to inventory, and sets `JUST_GOT_GLUE`. Updated the port so the direct dialogue mutation queues a live room visual refresh, removing the stale embalming-room glue entity after the trade.
+- On April 17, 2026, fixed the room-exit global timer sync path so `DNALFT` exit commands that run `SET_TIMER EDNA_BURNING_TIMER OFF` / `KILL_TIMER EDNA_BURNING_TIMER` also reconfigure the live preserved global timer entity before the next room setup carries it forward.
 
 ## Next Suggested Action
 
-- Runtime-test the MBLM glue trade: give Moynahan `CASKET_PHOTO`, accept the glue response, confirm `GLUE` appears in inventory, `CASKET_PHOTO` is no longer visible in inventory, and clicking the former room glue spot no longer starts the "can't have that" interruption dialogue.
+- Runtime-test the DNA fire day transition: light Edna's diner, exit through `DNAEXT_X2` to Day 6, then remain in PC/Hank dialogue past the old countdown window and confirm `EDNA_BURNING_TIMER` no longer fires `GRAPHIC/FST/PCBURN.FST`.
