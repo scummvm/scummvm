@@ -306,7 +306,9 @@
   - Save-game handoff through the `SAVE_GAME` marker
 - Action dispatch ordering is confirmed for deferred text/movie chains:
   - `SET_FLAG` mutates only the matching `FlagRecord.value`; it does not reread the current room palette, rebuild the room, or call a palette ramp by itself.
+  - `SET_REGION` mutates the matching `RegionRecord` and live region entity in place; enabling spawns a region entity and disabling removes the live entity. It does not rebuild the room or recompute the active palette.
   - `SHOW_TEXT` creates a text entity over the existing render list and repeatedly calls `flush_dirty_rects_to_screen` / `update_music_stream` until input dismissal.
+  - `CHANGE_LIGHTING` opcode `0x22` owns live palette changes: `DIM` ramps the current room palette to `0.6`, `NORMAL` reloads the current room palette and ramps to `1.0`, `NONE` frees the current palette buffer and uploads black, and `FADE_IN` sets the deferred fade flag.
   - `CHANGE_LIGHTING NONE` clears the palette/screen before a following `GOFLIC`, and `GOFLIC` immediately calls `play_fst_sequence` without an intermediate same-room `room_setup`.
 - `SET_TIMER` and `KILL_TIMER` first resolve a live class `0x17` timer entity by name. If no live timer entity is present, native prints `WARNING: Timer %s not in list` and does not update `g_timer_records`.
   - When the live entity is present, the dispatcher toggles the entity enabled byte and mirrors that enabled state into the matching `TimerRecord`.
