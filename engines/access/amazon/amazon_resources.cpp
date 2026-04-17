@@ -158,7 +158,7 @@ const int DEATH_CELLS[13][3] = {
 	{ 0, 94, 14 }
 };
 
-const int CHAPTER_CELLS[17][3] = {
+constexpr int CHAPTER_CELLS[17][3] = {
 	{ 1, 96, 18 },
 	{ 2, 96, 19 },
 	{ 3, 96, 20 },

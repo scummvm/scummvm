@@ -100,7 +100,7 @@ bool AccessVIDMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	//warning("width %d, height %d", videoWidth, videoHeight);
 
 	// Look through the first few packets
-	static const int maxPacketCheckCount = 10;
+	static constexpr int maxPacketCheckCount = 10;
 
 	for (int i = 0; i < maxPacketCheckCount; i++) {
 		byte chunkId = _stream->readByte();

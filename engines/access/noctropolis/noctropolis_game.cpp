@@ -227,9 +227,9 @@ void NoctropolisEngine::doPublisherLogo() {
 }
 
 void NoctropolisEngine::doIntro() {
-	static const int lettersX[] = {106, 153, 197, 229, 271, 309, 357, 394, 443, 476, 504};
-	static const int titlesSpriteX[] = {238, 237, 237, 200, 200, 216, 231, 207, 198, 201, 234, 200, 220, 235, 214};
-	static const int titlesSpriteY[] = {108, 112, 125, 128, 128, 124, 128, 115, 131, 130, 102, 112, 112, 102, 112};
+	static constexpr int lettersX[] = {106, 153, 197, 229, 271, 309, 357, 394, 443, 476, 504};
+	static constexpr int titlesSpriteX[] = {238, 237, 237, 200, 200, 216, 231, 207, 198, 201, 234, 200, 220, 235, 214};
+	static constexpr int titlesSpriteY[] = {108, 112, 125, 128, 128, 124, 128, 115, 131, 130, 102, 112, 112, 102, 112};
 
 	int16 skylineSpriteOfsX1 = 740;
 	int16 skylineSpriteOfsX2 = 1050;
@@ -456,7 +456,7 @@ void NoctropolisEngine::doTravel() {
 	_room->loadRoom(_player->_roomNumber);
 }
 
-static const short StilYDirOff[] = {
+static constexpr short StilYDirOff[] = {
 	10, 10, 10, 10, 5, 5, 10, 10, 10,
 };
 
@@ -539,16 +539,16 @@ void NoctropolisEngine::dead(int deathType) {
 }
 
 void NoctropolisEngine::initMinigame() {
-	static const byte minigameInitialConfig[9] = {2, 8, 9, 5, 6, 4, 1, 7, 3};
+	static constexpr byte minigameInitialConfig[9] = {2, 8, 9, 5, 6, 4, 1, 7, 3};
 	memcpy(_minigameCurrentConfig, minigameInitialConfig, 9);
 	_flags[91] = 0;
 }
 
 void NoctropolisEngine::displayPegsTick() {
-	static const byte redSol[3] = {9, 6, 3};
-	static const byte greenSol[3] = {2, 5, 8};
-	static const byte blueSol[3] = {1, 4, 7};
-	static const struct { int16 x, y; } pegPos[10] = {
+	static constexpr byte redSol[3] = {9, 6, 3};
+	static constexpr byte greenSol[3] = {2, 5, 8};
+	static constexpr byte blueSol[3] = {1, 4, 7};
+	static constexpr struct { int16 x, y; } pegPos[10] = {
 		{255, 201}, {143, 211},
 		{27, 57}, {249, 56},
 		{141, 174}, {67, 75},
@@ -582,7 +582,7 @@ void NoctropolisEngine::displayPegsTick() {
 }
 
 void NoctropolisEngine::movePeg(int16 slot) {
-	static const struct { int16 a, b; } pegPath[] = {
+	static constexpr struct { int16 a, b; } pegPath[] = {
 		{0, 1}, {1, 2}, {1, 5}, {1, 3}, {2, 3},
 		{2, 6}, {3, 4}, {4, 5}, {4, 8}, {4, 6},
 		{5, 6}, {5, 9}, {6, 7}, {7, 8}, {8, 9},
