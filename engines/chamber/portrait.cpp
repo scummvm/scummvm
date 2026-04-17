@@ -19,12 +19,17 @@
  *
  */
 
+#include "common/system.h"
+#include "common/rendermode.h"
+#include "graphics/surface.h"
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/portrait.h"
 #include "chamber/resdata.h"
 #include "chamber/room.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/ega_resource.h"
 #include "chamber/script.h"
 #include "chamber/dialog.h"
 #include "chamber/input.h"
@@ -154,9 +159,111 @@ byte *loadPortrait(byte **pinfo, byte *end) {
 	return sprit_load_buffer + 2;
 }
 
+/* Expand a CGA 2bpp packed byte into 4 CLUT8 EGA pixels */
+static void ega_expandCgaByte(byte cgaByte, byte *dst) {
+	for (int p = 3; p >= 0; p--)
+		*dst++ = cga_to_ega_color[(cgaByte >> (p * 2)) & 0x03];
+}
+
+/*
+Build portrait frame in CLUT8 format for EGA mode.
+Pixel width = pframe->width * 4, stored row by row.
+Header bytes: [height][width_cga] to stay compatible with existing callers.
+*/
+static void ega_makePortraitFrame(byte index, byte *target) {
+	persframe_t *pf = &pers_frames[index];
+	uint16 pw = pf->width * 4; // pixel width
+	byte fillCol = cga_to_ega_color[(pf->fill >> 6) & 0x03];
+	debug(1, "ega_makePortraitFrame: frame=%d h=%d w=%d fillEGA=%d", index, pf->height, pf->width, fillCol);
+
+	*target++ = pf->height;
+	*target++ = pf->width; // CGA-unit width for compatibility
+	cur_frame_width = pf->width;
+
+	// Top border row
+	for (uint16 x = 0; x < pf->width; x++)
+		ega_expandCgaByte(pf->topbot, target + x * 4);
+	target += pw;
+
+	// Middle rows
+	for (uint16 i = 0; i < pf->height - 2; i++) {
+		ega_expandCgaByte(pf->left, target);
+		// Fill middle with solid color from fill byte
+		byte fillCol2 = cga_to_ega_color[(pf->fill >> 6) & 0x03];
+		memset(target + 4, fillCol2, (pf->width - 2) * 4);
+		ega_expandCgaByte(pf->right, target + (pf->width - 1) * 4);
+		target += pw;
+	}
+
+	// Bottom border row
+	for (uint16 x = 0; x < pf->width; x++)
+		ega_expandCgaByte(pf->topbot, target + x * 4);
+}
+
+/*
+Composite CLUT8 pers sprites onto EGA portrait frame.
+Sprites from ega_perso_res are already decoded CLUT8 Graphics::Surface.
+*/
+static byte *ega_loadPortrait(byte **pinfo, byte *end) {
+	uint16 frame_pw = cur_frame_width * 4; // pixel width of frame
+
+	while (*pinfo != end) {
+		byte index;
+		uint16 flags;
+
+		index = *((*pinfo)++);
+		flags = *((*pinfo)++);
+		flags |= (*((*pinfo)++)) << 8;
+
+		Graphics::Surface *surf = ega_perso_res->getSprite(index);
+		byte *src = (byte *)surf->getPixels();
+		uint16 sw = surf->w;
+		uint16 sh = surf->h;
+		int16 spitch = surf->pitch;
+
+		// Decode CGA byte offset to row/col in the frame
+		uint16 cga_ofs = flags & 0x3FFF;
+		uint16 row = cga_ofs / cur_frame_width;
+		uint16 col_cga = cga_ofs % cur_frame_width;
+		byte *dst = sprit_load_buffer + 2 + 2 + row * frame_pw + col_cga * 4;
+
+		if (flags & 0x8000) { // vertical flip
+			src += spitch * (sh - 1);
+			spitch = -spitch;
+		}
+
+		if (flags & 0x4000) { // horizontal flip
+			for (uint16 y = 0; y < sh; y++) {
+				for (uint16 x = 0; x < sw; x++) {
+					byte p = src[sw - 1 - x];
+					if (p != 0)
+						dst[x] = p;
+				}
+				src += spitch;
+				dst += frame_pw;
+			}
+		} else {
+			for (uint16 y = 0; y < sh; y++) {
+				for (uint16 x = 0; x < sw; x++) {
+					byte p = src[x];
+					if (p != 0)
+						dst[x] = p;
+				}
+				src += spitch;
+				dst += frame_pw;
+			}
+		}
+	}
+	return sprit_load_buffer + 2;
+}
+
 byte *loadPortraitWithFrame(byte index) {
 	byte *pinfo, *end;
 	pinfo = seekToEntry(icone_data, index, &end);
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		ega_makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
+		return ega_loadPortrait(&pinfo, end);
+	}
 	makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
 	return loadPortrait(&pinfo, end);
 }
@@ -233,12 +340,18 @@ void drawBoxAroundSpot(void) {
 	ofs = *(uint16 *)(buffer + 2);
 
 	/*decode ofs back to x:y*/
-	/*TODO: this is CGA-only!*/
-	y = (ofs & g_vm->_line_offset) ? 1 : 0;
-	ofs &= ~g_vm->_line_offset;
-	x = (ofs % g_vm->_screenBPL) * g_vm->_screenPPB;
-	y += (ofs / g_vm->_screenBPL) * 2;
-	w *= g_vm->_screenPPB;   /*TODO: this will overflow on large sprite*/
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/* EGA: linear layout, offset = y * 320 + x */
+		y = ofs / EGA_BYTES_PER_LINE;
+		x = ofs % EGA_BYTES_PER_LINE;
+		w *= 4; /* w was stored in CGA byte units */
+	} else {
+		y = (ofs & g_vm->_line_offset) ? 1 : 0;
+		ofs &= ~g_vm->_line_offset;
+		x = (ofs % g_vm->_screenBPL) * g_vm->_screenPPB;
+		y += (ofs / g_vm->_screenBPL) * 2;
+		w *= g_vm->_screenPPB;
+	}
 
 	cga_DrawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
 	cga_DrawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
@@ -258,8 +371,9 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 
 	index = *((*desc)++);
 	if (index == 0xFF) {
-		if (script_byte_vars.dirty_rect_kind != 0)
+		if (script_byte_vars.dirty_rect_kind != 0) {
 			return 0;
+		}
 		drawBoxAroundSpot();
 		if (!selectCurrentAnim(&xx, &yy, &index))
 			return 0;
@@ -270,6 +384,7 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_coords_x = xx;
 	cur_image_coords_y = yy;
 	cur_image_idx = index;
+	debug(1, "drawPortrait: index=%d x=%d y=%d (pixel x=%d y=%d)", index, xx, yy, xx * 4, yy);
 
 	image = loadPortraitWithFrame(index - 1);
 	cur_image_size_h = *image++;
@@ -320,9 +435,8 @@ volatile byte vblank_ticks;
 
 void waitVBlankTimer(void) {
 	if (g_vm->getLanguage() == Common::EN_USA) {
-		/*A crude attempt to fix the animation speed...*/
-		while (vblank_ticks < 3) ;
-		vblank_ticks = 0;
+		/*Simulate 3 vblank ticks (~50ms) since vblank_ticks is never incremented by the timer*/
+		g_system->delayMillis(50);
 	}
 	waitVBlank();
 }
@@ -353,7 +467,10 @@ void animPortrait(byte layer, byte index, byte delay) {
 		loadPortraitWithFrame(portrait - 1);
 		if (*ani == 0xFF) {
 			ani++;
-			loadPortrait(&ani, ani + 3);
+			if (g_vm->_videoMode == Common::kRenderEGA)
+				ega_loadPortrait(&ani, ani + 3);
+			else
+				loadPortrait(&ani, ani + 3);
 		}
 		getDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		waitVBlank();

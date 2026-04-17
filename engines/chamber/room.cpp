@@ -25,6 +25,8 @@
 #include "chamber/enums.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/ega_resource.h"
 #include "chamber/print.h"
 #include "chamber/anim.h"
 #include "chamber/cursor.h"
@@ -188,7 +190,7 @@ int16 isInRect(byte x, byte y, rect_t *rect) {
 Check if cursor is in rect
 */
 int16 isCursorInRect(rect_t *rect) {
-	return isInRect(cursor_x / g_vm->_screenPPB, cursor_y, rect);
+	return isInRect(cursor_x / 4, cursor_y, rect);
 }
 
 /*
@@ -245,7 +247,10 @@ void selectSpotCursor(void) {
 				curs = CURSOR_CROSSHAIR;
 		}
 	}
-	cursor_shape = souri_data + curs * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / g_vm->_screenPPB;
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		cursor_shape = souri_data + curs * (CURSOR_WIDTH * CURSOR_HEIGHT / 4);
+	else
+		cursor_shape = souri_data + curs * CURSOR_WIDTH * CURSOR_HEIGHT * 2 / 4;
 }
 
 #define kBgW 8
@@ -287,6 +292,10 @@ static const int16 background_draw_steps_hga[] = {
 Draw main backgound pattern, in spiral-like order
 */
 void drawBackground(byte *target, byte vblank) {
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		ega_drawBackground(target);
+		return;
+	}
 	int16 i;
 	uint16 offs = (2 / 2) * CGA_BYTES_PER_LINE + 8;   /*TODO: calcxy?*/
 	byte *pixels = gauss_data + 0x3C8; /*TODO: better const*/
@@ -436,48 +445,82 @@ Fill in sliding door animation information
 void initRoomDoorInfo(byte index) {
 	int16 i;
 	byte *aptr;
-	byte *sprbuf;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
 	rect_t bounds = {0xFF, 0, 0xFF, 0};
 
 	aptr = doors_list[index - 1];
 	info->flipped = (aptr[1] & 0x80) ? ~0 : 0;
-	sprbuf = info->sprites;
-	for (i = 0; i < kNumDoorSprites; i++) {
-		byte x, y, w, h, ox;
-		byte *sprite = sprbuf;
-		sprbuf = loadPuzzl(aptr[0], sprbuf);
 
-		x = aptr[1];
-		y = aptr[2];
-		w = sprite[0];
-		h = sprite[1];
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		for (i = 0; i < kNumDoorSprites; i++) {
+			byte x, y, w, h, ox;
+			Graphics::Surface *surf = ega_puzzl_res->getSprite(aptr[0]);
 
-		ox = x;
-		if (x & 0x80) {
-			/*horizontal flip*/
-			x = (x + w - 1) & 0x7F;
-			ox &= 0x7F;
+			x = aptr[1];
+			y = aptr[2];
+			w = surf->w / 4; /* CGA byte width */
+			h = surf->h;
+
+			ox = x & 0x7F;
+			// EGA: ega_BlitSpriteFlip writes left-to-right, so use original ox for offset.
+			// (CGA convention shifts x to rightmost byte; EGA does not need that.)
+
+			y = (y * 2) & 0xFF;
+
+			if (ox < bounds.sx)
+				bounds.sx = ox;
+			if (ox + w >= bounds.ex)
+				bounds.ex = ox + w;
+
+			if (y < bounds.sy)
+				bounds.sy = y;
+			if (y + h >= bounds.ey)
+				bounds.ey = y + h;
+
+			info->layer[i].width = w;
+			info->layer[i].height = h;
+			info->layer[i].pixels = (byte *)surf->getPixels();
+			info->layer[i].offs = CalcXY_p(ox, y);
+
+			aptr += 3;
 		}
+	} else {
+		byte *sprbuf = info->sprites;
+		for (i = 0; i < kNumDoorSprites; i++) {
+			byte x, y, w, h, ox;
+			byte *sprite = sprbuf;
+			sprbuf = loadPuzzl(aptr[0], sprbuf);
 
-		y = (y * 2) & 0xFF; /*TODO: disregard vertical flip?*/
+			x = aptr[1];
+			y = aptr[2];
+			w = sprite[0];
+			h = sprite[1];
 
-		if (ox < bounds.sx)
-			bounds.sx = ox;
-		if (ox + w >= bounds.ex)
-			bounds.ex = ox + w;
+			ox = x;
+			if (x & 0x80) {
+				x = (x + w - 1) & 0x7F;
+				ox &= 0x7F;
+			}
 
-		if (y < bounds.sy)
-			bounds.sy = y;
-		if (y + h >= bounds.ey)
-			bounds.ey = y + h;
+			y = (y * 2) & 0xFF;
 
-		info->layer[i].width = w;
-		info->layer[i].height = h;
-		info->layer[i].pixels = sprite + 2;
-		info->layer[i].offs = CalcXY_p(x, y);
+			if (ox < bounds.sx)
+				bounds.sx = ox;
+			if (ox + w >= bounds.ex)
+				bounds.ex = ox + w;
 
-		aptr += 3;
+			if (y < bounds.sy)
+				bounds.sy = y;
+			if (y + h >= bounds.ey)
+				bounds.ey = y + h;
+
+			info->layer[i].width = w;
+			info->layer[i].height = h;
+			info->layer[i].pixels = sprite + 2;
+			info->layer[i].offs = CalcXY_p(x, y);
+
+			aptr += 3;
+		}
 	}
 
 	info->width = bounds.ex - bounds.sx;
@@ -491,6 +534,23 @@ Draw sliding door
 void drawRoomDoor(void) {
 	int16 i;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		for (i = 0; i < kNumDoorSprites; i++) {
+			uint16 w = info->layer[i].width * 4;
+			byte h = info->layer[i].height;
+			byte *pixels = info->layer[i].pixels;
+			uint16 offs = info->layer[i].offs;
+
+			if (!info->flipped)
+				ega_BlitSprite(pixels, w, w, h, backbuffer, offs);
+			else
+				ega_BlitSpriteFlip(pixels, w, w, h, backbuffer, offs);
+		}
+		waitVBlank();
+		waitVBlank();
+		ega_BlitFromBackBuffer(info->width * 4, info->height, frontbuffer, info->offs);
+		return;
+	}
 	for (i = 0; i < kNumDoorSprites; i++) {
 		byte w = info->layer[i].width;
 		byte h = info->layer[i].height;
@@ -528,7 +588,10 @@ void animRoomDoorOpen(byte index) {
 		drawRoomDoor();
 #endif
 		info->layer[1].height -= 2;
-		info->layer[1].pixels += info->layer[1].width * 2 * 2;
+		if (g_vm->_videoMode == Common::kRenderEGA)
+			info->layer[1].pixels += info->layer[1].width * 4 * 2;
+		else
+			info->layer[1].pixels += info->layer[1].width * 2 * 2;
 	}
 
 	playSound(31);
@@ -551,7 +614,11 @@ void animRoomDoorClose(byte index) {
 	oldheight = info->layer[1].height;
 	oldpixels = info->layer[1].pixels;
 
-	info->layer[1].pixels += info->layer[1].width * 2 * (info->layer[1].height - 1);
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		info->layer[1].pixels += info->layer[1].width * 4 * (info->layer[1].height - 1);
+	} else {
+		info->layer[1].pixels += info->layer[1].width * 2 * (info->layer[1].height - 1);
+	}
 	info->layer[1].height = 1;
 
 	for (i = 0; i < oldheight / 2; i++) {
@@ -559,7 +626,10 @@ void animRoomDoorClose(byte index) {
 		drawRoomDoor();
 #endif
 		info->layer[1].height += 2;
-		info->layer[1].pixels -= info->layer[1].width * 2 * 2;
+		if (g_vm->_videoMode == Common::kRenderEGA)
+			info->layer[1].pixels -= info->layer[1].width * 4 * 2;
+		else
+			info->layer[1].pixels -= info->layer[1].width * 2 * 2;
 	}
 
 	info->layer[1].height = oldheight;
@@ -764,6 +834,46 @@ void drawPersons(void) {
 Draw room's static object to backbuffer
 */
 void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		Graphics::Surface *surf = ega_puzzl_res->getSprite(aptr[0]);
+		byte x = aptr[1];
+		byte y = aptr[2];
+		uint16 w = surf->w;
+		uint16 h = surf->h;
+		byte wcga = w / 4;
+
+		*rx = x & 0x7F;
+		*ry = (y & 0x7F) * 2;
+		*rw = wcga;
+		*rh = h;
+
+		byte *pixels = (byte *)surf->getPixels();
+		int16 pitch = surf->pitch;
+
+		// EGA: ega_BlitSpriteFlip writes left-to-right from ofs (left edge),
+		// so do NOT shift x to the rightmost position (that's a CGA-only convention).
+		byte drawx = x & 0x7F;
+
+		if (y & 0x80) {
+			pixels += pitch * (h - 1);
+			pitch = -pitch;
+		}
+		y = (y * 2) & 0xFF;
+
+		if (aptr[0] == 83) {
+			if (arpla_y_step & 1)
+				y -= 8;
+			arpla_y_step >>= 1;
+		}
+
+		uint16 ofs = CalcXY_p(drawx, y);
+		if (aptr[1] & 0x80)
+			ega_BlitSpriteFlip(pixels, pitch, w, h, backbuffer, ofs);
+		else
+			ega_BlitSprite(pixels, pitch, w, h, backbuffer, ofs);
+		return;
+	}
+
 	byte x, y, w, h;
 	int16 pitch;
 	byte *sprite = loadPuzzlToScratch(aptr[0]);
@@ -906,8 +1016,8 @@ void drawRoomItemsIndicator(void) {
 			break;
 		}
 	}
-	drawSpriteN(spridx, 296 / g_vm->_screenPPB, 14, CGA_SCREENBUFFER);
-	drawSpriteN(spridx, 296 / g_vm->_screenPPB, 14, backbuffer);
+	drawSpriteN(spridx, 296 / 4, 14, CGA_SCREENBUFFER);
+	drawSpriteN(spridx, 296 / 4, 14, backbuffer);
 
 	/*recalculate the number of zapstiks we have*/
 	script_byte_vars.zapstiks_owned = 0;
@@ -1016,35 +1126,79 @@ void showCommandHint(byte *target) {
 }
 
 void loadLutinSprite(uint16 lutidx) {
-	byte spridx;
-	uint16 flags;
 	byte *lutin_entry, *lutin_entry_end;
 	byte *buffer;
-	byte *sprite;
-	byte sprw, sprh;
+	byte lutW, lutH;
 
-	uint16 i;
+	lutin_entry = seekToEntry(lutin_data, lutidx, &lutin_entry_end);
+	lutW = *lutin_entry++; /* composite width in CGA bytes */
+	lutH = *lutin_entry++; /* composite height in pixels */
 
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		// EGA path: build a CLUT8 flat buffer in lutin_mem.
+		// Layout: [0]=lutW, [1]=lutH, then lutW*4 bytes per row × lutH rows (index 0 = transparent).
+		uint16 pw = (uint16)lutW * 4; // pixel width
+		lutin_mem[0] = lutW;
+		lutin_mem[1] = lutH;
+		memset(lutin_mem + 2, 0, pw * lutH); // clear to transparent (index 0)
+
+		for (; lutin_entry != lutin_entry_end;) {
+			byte spridx = *lutin_entry++;
+			uint16 flags = *lutin_entry++;
+			flags |= (*lutin_entry++) << 8;
+
+			Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(loadSprit(spridx));
+			byte *src = (byte *)surf->getPixels();
+			uint16 sw = surf->w;
+			uint16 sh = surf->h;
+			int16 spitch = surf->pitch;
+
+			// Convert CGA byte-offset to pixel position in lutin buffer
+			uint16 byteOfs = flags & 0x7FFF;
+			uint16 row = (lutW > 0) ? (byteOfs / lutW) : 0;
+			uint16 col = (lutW > 0) ? (byteOfs % lutW) : 0;
+			byte *dst = lutin_mem + 2 + row * pw + col * 4;
+
+			if (flags & 0x8000) { // horizontal flip (mirrors columns, same as CGA mergeSpritesDataFlip)
+				for (uint16 y = 0; y < sh; y++) {
+					for (uint16 x = 0; x < sw; x++) {
+						byte p = src[sw - 1 - x];
+						if (p != 0) dst[x] = p;
+					}
+					src += spitch;
+					dst += pw;
+				}
+			} else {
+				for (uint16 y = 0; y < sh; y++) {
+					for (uint16 x = 0; x < sw; x++) {
+						byte p = src[x];
+						if (p != 0) dst[x] = p;
+					}
+					src += spitch;
+					dst += pw;
+				}
+			}
+		}
+		return;
+	}
+
+	// CGA path: build CGA mask+pixel buffer in lutin_mem.
 	buffer = lutin_mem;
-
-	for (i = 0; i < 800; i++) { /*TODO: fix size*/
+	for (uint16 i = 0; i < 800; i++) { /*TODO: fix size*/
 		buffer[i * 2] = 0xFF;   /*mask*/
 		buffer[i * 2 + 1] = 0;  /*pixels*/
 	}
-
-	lutin_entry = seekToEntry(lutin_data, lutidx, &lutin_entry_end);
-
-	*buffer++ = *lutin_entry++; /*width*/
-	*buffer++ = *lutin_entry++; /*height*/
+	*buffer++ = lutW;
+	*buffer++ = lutH;
 
 	for (; lutin_entry != lutin_entry_end;) {
-		spridx = *lutin_entry++;
-		flags = *lutin_entry++;
+		byte spridx = *lutin_entry++;
+		uint16 flags = *lutin_entry++;
 		flags |= (*lutin_entry++) << 8;
 
-		sprite = loadSprit(spridx);
-		sprw = *sprite++;
-		sprh = *sprite++;
+		byte *sprite = loadSprit(spridx);
+		byte sprw = *sprite++;
+		byte sprh = *sprite++;
 
 		buffer = lutin_mem + 2 + (flags & 0x7FFF) * 2;
 		if (flags & 0x8000)
@@ -1055,9 +1209,39 @@ void loadLutinSprite(uint16 lutidx) {
 }
 
 /*
+EGA helper: draw a lutin composite by overlaying its sub-sprites directly
+on the target framebuffer (no scratch_mem2 packing). Works because
+ega_BlitSprite treats index 0 as transparent.
+*/
+static void egaDrawLutinComposite(uint16 lutidx, byte *target, uint16 baseOfs) {
+	byte *entry, *entry_end;
+	entry = seekToEntry(lutin_data, lutidx, &entry_end);
+	byte w = *entry++;  /* composite width in CGA bytes (1 byte = 4 px) */
+	entry++;            /* height (unused here) */
+	while (entry < entry_end) {
+		byte sub = *entry++;
+		uint16 flags = *entry++;
+		flags |= (*entry++) << 8;
+		uint16 byteOfs = flags & 0x7FFF;
+		uint16 yy = w ? (byteOfs / w) : 0;
+		uint16 xxBytes = w ? (byteOfs % w) : 0;
+		uint16 subOfs = baseOfs + yy * EGA_BYTES_PER_LINE + xxBytes * 4;
+		byte *sprite = loadSprit(sub);
+		if (flags & 0x8000)
+			drawSpriteFlip(sprite, target, subOfs);
+		else
+			drawSprite(sprite, target, subOfs);
+	}
+}
+
+/*
 Draw specific room's person idle sprite
 */
 void drawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		egaDrawLutinComposite(spridx, target, CalcXY_p(x, y));
+		return;
+	}
 	lutin_mem = scratch_mem2;
 
 	loadLutinSprite(spridx);
@@ -1079,13 +1263,23 @@ char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 			spridx = la->sprites[la->phase];
 			la->phase = (la->phase + 1) % 8;
 
+			zsprite_draw_ofs = CalcXY_p(rect->sx, rect->sy);
+
+			if (g_vm->_videoMode == Common::kRenderEGA) {
+				byte *entry, *entry_end;
+				entry = seekToEntry(lutin_data, spridx, &entry_end);
+				zsprite_w = entry[0]; /* CGA byte width */
+				zsprite_h = entry[1]; /* height in pixels */
+				egaDrawLutinComposite(spridx, target, zsprite_draw_ofs);
+				return ~0;
+			}
+
 			lutin_mem = scratch_mem2;
 
 			loadLutinSprite(spridx);
 
 			zsprite_w = scratch_mem2[0];
 			zsprite_h = scratch_mem2[1];
-			zsprite_draw_ofs = CalcXY_p(rect->sx, rect->sy);
 
 			drawSprite(scratch_mem2, target, zsprite_draw_ofs);
 
@@ -1300,6 +1494,19 @@ void prepareTurkey(void) {
 Load puzzl sprite to scratch and init draw params
 */
 uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *ofs) {
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		Graphics::Surface *surf = ega_puzzl_res->getSprite(index);
+		*w = surf->w / 4;
+		*h = surf->h;
+		*ofs = CalcXY_p(x, y);
+		// Copy EGA pixel data into scratch_mem2+2 so cga_BlitScratchBackSprite can find it
+		byte *dst = scratch_mem2 + 2;
+		for (int row = 0; row < surf->h; row++) {
+			memcpy(dst, (byte *)surf->getPixels() + row * surf->pitch, surf->w);
+			dst += surf->w;
+		}
+		return 0;
+	}
 	byte *spr = loadPuzzlToScratch(index);
 	*w = spr[0];
 	*h = spr[1];
@@ -1373,6 +1580,57 @@ Load The Wall gate sprites
 byte *loadMursmSprite(byte index) {
 	byte *pinfo, *end;
 	pinfo = seekToEntry(mursm_data, index, &end);
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/* EGA: build a CLUT8 buffer (80 px wide × 59 rows = 4720 bytes) */
+		const uint16 egaPitch = 80; /* 20 CGA bytes × 4 px/byte */
+		memset(sprit_load_buffer, 0, egaPitch * 59);
+
+		while (pinfo != end) {
+			byte sprIdx = *pinfo++;
+			uint16 flags = *pinfo++;
+			flags |= (*pinfo++) << 8;
+			uint16 cgaOfs = flags & 0x3FFF; /* offset in CGA flat buffer (pitch=20, 2 bytes/unit) */
+
+			/* Convert CGA flat offset → EGA flat offset */
+			uint16 row   = cgaOfs / (20 * 2);       /* 20 CGA bytes × 2 bytes/unit = 40 bytes/row */
+			uint16 colCga = (cgaOfs % (20 * 2)) / 2; /* column in CGA bytes */
+			uint16 egaBufOfs = row * egaPitch + colCga * 4;
+
+			Graphics::Surface *surf = ega_puzzl_res->getSprite(sprIdx & 0x7F);
+			byte *src = (byte *)surf->getPixels();
+			uint16 sw = surf->w;
+			uint16 sh = surf->h;
+			int16 spitch = surf->pitch;
+			byte *dst = sprit_load_buffer + egaBufOfs;
+
+			if (sprIdx & 0x80) { /* horizontal flip */
+				for (uint16 y = 0; y < sh; y++) {
+					for (uint16 x = 0; x < sw; x++) {
+						byte p = src[sw - 1 - x];
+						if (p != 0) dst[x] = p;
+					}
+					src += spitch;
+					dst += egaPitch;
+				}
+			} else {
+				for (uint16 y = 0; y < sh; y++) {
+					for (uint16 x = 0; x < sw; x++) {
+						byte p = src[x];
+						if (p != 0) dst[x] = p;
+					}
+					src += spitch;
+					dst += egaPitch;
+				}
+			}
+		}
+
+		cur_frame_width = 20;
+		cur_image_coords_y = 32;
+		cur_image_size_w = 80 / 4;
+		cur_image_size_h = 59;
+		return sprit_load_buffer;
+	}
 
 	while (pinfo != end) {
 		uint16 flags;
@@ -1507,7 +1765,10 @@ void theWallPhase1_DoorClose1(void) {
 	loadZone();
 
 	spr = loadMursmSprite(0);
-	spr += cur_frame_width - 1;
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		spr += cur_frame_width * 4 - 4;
+	else
+		spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
 	cga_AnimLiftToRight(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
@@ -1531,13 +1792,22 @@ void theWallPhase2_DoorClose2(void) {
 	loadZone();
 
 	spr = loadMursmSprite(0);
-	spr += cur_frame_width - 1;
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		spr += cur_frame_width * 4 - 4;
+	else
+		spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
-	cga_AnimLiftToRight(10, spr - 10, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		cga_AnimLiftToRight(10, spr - 40, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+	else
+		cga_AnimLiftToRight(10, spr - 10, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
 
 	spr = loadMursmSprite(1);
 	cur_image_coords_x = 220 / 4;
-	cga_AnimLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		cga_AnimLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 40);
+	else
+		cga_AnimLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
 
 	IFGM_PlaySample(30);
 
@@ -1551,18 +1821,28 @@ void drawTheWallDoors(void) {
 	switch (script_byte_vars.zone_index) {
 	case 9:
 	case 102:
-		cga_Blit(loadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(64 / g_vm->_screenPPB, 32));
-		if (g_vm->getLanguage() == Common::EN_USA) {
-			/*This fixes odd black patch on the right gate door*/
-			cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(184 / g_vm->_screenPPB, 32));
+		if (g_vm->_videoMode == Common::kRenderEGA) {
+			/* EGA buffer is 80 px wide; CGA +10 bytes = 40 EGA pixels */
+			cga_Blit(loadMursmSprite(0) + 40, 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
+			if (g_vm->getLanguage() == Common::EN_USA) {
+				cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(184 / 4, 32));
+			} else {
+				cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(180 / 4, 32));
+			}
 		} else {
-			cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(180 / g_vm->_screenPPB, 32));
+			cga_Blit(loadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
+			if (g_vm->getLanguage() == Common::EN_USA) {
+				/*This fixes odd black patch on the right gate door*/
+				cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(184 / 4, 32));
+			} else {
+				cga_Blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(180 / 4, 32));
+			}
 		}
 		break;
 	case 95:
 	case 103:
-		cga_Blit(loadMursmSprite(0), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(64 / g_vm->_screenPPB, 32));
-		cga_Blit(loadMursmSprite(1), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(144 / g_vm->_screenPPB, 32));
+		cga_Blit(loadMursmSprite(0), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
+		cga_Blit(loadMursmSprite(1), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(144 / 4, 32));
 		break;
 	}
 }

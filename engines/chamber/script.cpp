@@ -28,6 +28,8 @@
 #include "chamber/enums.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/ega_resource.h"
 #include "chamber/cursor.h"
 #include "chamber/portrait.h"
 #include "chamber/input.h"
@@ -348,29 +350,21 @@ byte wait_delta = 0;
 Wait for a specified number of seconds (real time) or a keypress
 */
 void wait(byte seconds) {
-	warning("STUB: Wait(%d)", seconds);
-
-#if 0
-	struct time t;
-	uint16 endtime;
-
 	seconds += wait_delta;
-	if (seconds > 127)  /*TODO: is this a check for a negative value?*/
+	if (seconds > 127)  /*original: treats as signed; cap to 0*/
 		seconds = 0;
 
-	gettime(&t);
-	endtime = t.ti_sec * 100 + t.ti_hund + seconds * 100;
+	if (seconds == 0)
+		return;
 
-	while (buttons == 0) {
-		uint16 current;
-		gettime(&t);
-		current = t.ti_sec * 100 + t.ti_hund;
-		if (endtime >= 6000 && current < 2048)  /*TODO: some kind of overflow check???*/
-			current += 6000;
-		if (current >= endtime)
+	uint32 end = g_system->getMillis() + (uint32)seconds * 1000;
+	while (!buttons && !g_vm->_shouldQuit) {
+		pollInputButtonsOnly();
+		if (g_system->getMillis() >= end)
 			break;
+		g_system->delayMillis(10);
+		g_system->updateScreen();
 	}
-#endif
 }
 
 /*
@@ -677,7 +671,10 @@ uint16 SCR_5_DrawPortraitLiftRight(void) {
 		return 0;
 
 	/*TODO: use local args instead of globals*/
-	cga_AnimLiftToRight(width, cur_image_pixels + width - 1, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x, y));
+	if (g_vm->_videoMode == Common::kRenderEGA)
+		cga_AnimLiftToRight(width, cur_image_pixels + width * 4 - 4, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x, y));
+	else
+		cga_AnimLiftToRight(width, cur_image_pixels + width - 1, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x, y));
 	return 0;
 }
 
@@ -764,6 +761,8 @@ void twistDraw(byte x, byte y, byte width, byte height, byte *source, byte *targ
 
 	for (i = 0; i < width * 4; i++) {
 		cga_TraceLine(sx, ex, sy, ey, source, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 		waitVBlank();
 		sx += 1;
 		ex -= 1;
@@ -779,6 +778,8 @@ void twistDraw(byte x, byte y, byte width, byte height, byte *source, byte *targ
 
 	for (i = 0; i < height; i++) {
 		cga_TraceLine(sx, ex, sy, ey, source, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 		waitVBlank();
 		sy -= 1;
 		ey += 1;
@@ -819,18 +820,24 @@ void arcDraw(byte x, byte y, byte width, byte height, byte *source, byte *target
 
 	for (i = 0; i < height; i++) {
 		cga_TraceLine(sx, ex, sy, ey, source, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 		waitVBlank();
 		sy -= 1;
 	}
 
 	for (i = 0; i < width * 4; i++) {
 		cga_TraceLine(sx, ex, sy, ey, source, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 		waitVBlank();
 		sx += 1;
 	}
 
 	for (i = 0; i < height + 1; i++) {
 		cga_TraceLine(sx, ex, sy, ey, source, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 		waitVBlank();
 		sy += 1;
 	}
@@ -870,6 +877,28 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 
 	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		uint16 pw = width * 4;
+		cur_image_end = pw * height;
+		uint16 baseOfs = ega_CalcXY_p(x, y);
+		int16 count = 0;
+		for (offs = 0; offs != cur_image_end;) {
+			uint16 px = offs % pw;
+			uint16 py = offs / pw;
+			target[baseOfs + py * EGA_BYTES_PER_LINE + px] = cur_image_pixels[offs];
+
+			if (count % 20 == 0)
+				ega_blitToScreen(x * 4, y, pw, height);
+
+			offs += step;
+			if (offs > cur_image_end)
+				offs -= cur_image_end;
+			count++;
+		}
+		ega_blitToScreen(x * 4, y, pw, height);
+		return 0;
+	}
 
 	cur_image_end = width * height;
 	int16 count = 0;
@@ -923,11 +952,16 @@ uint16 drawPortraitZoomed(byte **params) {
 	zwidth = *((*params)++);
 	zheight = *((*params)++);
 
-	/*adjust the rect for new size*/
-	last_dirty_rect->width = zwidth + 2;
-	last_dirty_rect->height = zheight;
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/*EGA can't zoom: draw at original size; dirty rect already has correct dimensions from drawPortrait*/
+		cga_ZoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, cur_image_size_w, cur_image_size_h, frontbuffer, cur_image_offs);
+	} else {
+		/*adjust the rect for new size*/
+		last_dirty_rect->width = zwidth + 2;
+		last_dirty_rect->height = zheight;
 
-	cga_ZoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, zwidth, zheight, frontbuffer, cur_image_offs);
+		cga_ZoomImage(cur_image_pixels, cur_image_size_w, cur_image_size_h, zwidth, zheight, frontbuffer, cur_image_offs);
+	}
 	return 0;
 }
 
@@ -958,6 +992,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 
 	script_ptr++;
 	index = *script_ptr++;
+	warning("SCR_19_HidePortraitLiftLeft: index=%d", index);
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
@@ -966,6 +1001,21 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 	}
 
 	/*TODO: This originally was done by reusing door sliding routine*/
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		offs += 4;
+		while (--width)
+			cga_HideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		offs -= 4;
+		uint16 ooffs = offs;
+		byte oh = height;
+		while (height--) {
+			memcpy(frontbuffer + offs, backbuffer + offs, 4);
+			offs += EGA_BYTES_PER_LINE;
+		}
+		ega_blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
+		return 0;
+	}
 
 	/*offs = CalcXY_p(x + 1, y);*/
 	offs++;
@@ -1004,6 +1054,7 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 
 	script_ptr++;
 	index = *script_ptr++;
+	warning("SCR_1A_HidePortraitLiftRight: index=%d", index);
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
@@ -1012,6 +1063,21 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 	}
 
 	/*TODO: This originally was done by reusing door sliding routine*/
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		offs = CalcXY_p(x + width - 2, y);
+		while (--width)
+			cga_HideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		offs += 4;
+		uint16 ooffs = offs;
+		byte oh = height;
+		while (height--) {
+			memcpy(frontbuffer + offs, backbuffer + offs, 4);
+			offs += EGA_BYTES_PER_LINE;
+		}
+		ega_blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
+		return 0;
+	}
 
 	offs = CalcXY_p(x + width - 2, y);
 
@@ -1049,9 +1115,16 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 
 	script_ptr++;
 	index = *script_ptr++;
+	warning("SCR_1B_HidePortraitLiftUp: index=%d", index);
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
+		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		return 0;
+	}
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/* offs = CalcXY_p(x, y) from dirty rect — restore full portrait area */
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -1063,12 +1136,13 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 	}
 
 	/*hide topmost line*/
-	/*TODO: move this to CGA?*/
-	offs ^= g_vm->_line_offset;
-	if ((offs & g_vm->_line_offset) != 0)
-		offs -= g_vm->_screenBPL;
-	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
-	cga_blitToScreen(offs, width, 1);
+	{
+		offs ^= g_vm->_line_offset;
+		if ((offs & g_vm->_line_offset) != 0)
+			offs -= g_vm->_screenBPL;
+		memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+		cga_blitToScreen(offs, width, 1);
+	}
 	return 0;
 }
 
@@ -1085,9 +1159,19 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 
 	script_ptr++;
 	index = *script_ptr++;
+	warning("SCR_1C_HidePortraitLiftDown: index=%d", index);
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
+		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		return 0;
+	}
+
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		/* offs = CalcXY_p(x, y) from dirty rect — restore full portrait area.
+		 * The CGA path recalculates offs to y+height-2 (bottom of portrait),
+		 * causing ega_CopyScreenBlock to start from the wrong position and
+		 * leave most of the portrait unresto​red. */
 		cga_CopyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
 		return 0;
 	}
@@ -1099,12 +1183,13 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 	}
 
 	/*hide bottommost line*/
-	/*TODO: move this to CGA?*/
-	offs ^= g_vm->_line_offset;
-	if ((offs & g_vm->_line_offset) == 0)
-		offs += g_vm->_screenBPL;
-	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
-	cga_blitToScreen(offs, width, 1);
+	{
+		offs ^= g_vm->_line_offset;
+		if ((offs & g_vm->_line_offset) == 0)
+			offs += g_vm->_screenBPL;
+		memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+		cga_blitToScreen(offs, width, 1);
+	}
 	return 0;
 }
 
@@ -1299,8 +1384,11 @@ void jaggedZoom(byte *source, byte *target) {
 				ey = points[0].y;
 			}
 			cga_TraceLine(sx / 2, ex / 2, sy / 2, ey / 2, source, target);
-			/*TODO: waitVBlank(); maybe?*/
 		}
+		/* One screen update per cycle (not per line) keeps the animation fluid */
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+		waitVBlank();
 	}
 }
 
@@ -1347,7 +1435,11 @@ void drawStars(star_t *stars, int16 iter, byte *target) {
 		short z, x, y;
 		byte pixel, mask;
 
-		target[stars->ofs] &= stars->mask;
+		/* Erase previous star position */
+		if (g_vm->_videoMode == Common::kRenderEGA)
+			target[stars->ofs] = 0;
+		else
+			target[stars->ofs] &= stars->mask;
 		if (stars->z < 328) {
 			if (iter >= 30) {
 				randomStar(stars);
@@ -1368,17 +1460,24 @@ void drawStars(star_t *stars, int16 iter, byte *target) {
 			continue;
 		}
 
-		stars->ofs = cga_CalcXY(x, y);
-
-		pixel = (stars->z < 0xE00) ? 0xC0 : 0x40;
-		pixel >>= (x % 4) * 2;
-		mask = 0xC0;
-		mask = ~(mask >> (x % 4) * 2);
-		stars->pixel = pixel;
-		stars->mask = mask;
-
-		target[stars->ofs] &= mask;
-		target[stars->ofs] |= pixel;
+		if (g_vm->_videoMode == Common::kRenderEGA) {
+			stars->ofs = ega_CalcXY_p(x, y);
+			/* EGA: CLUT8 single byte per pixel; bright = white (15), dim = dark gray (8) */
+			pixel = (stars->z < 0xE00) ? 15 : 8;
+			stars->pixel = pixel;
+			stars->mask = 0;  /* unused in EGA path */
+			target[stars->ofs] = pixel;
+		} else {
+			stars->ofs = cga_CalcXY(x, y);
+			pixel = (stars->z < 0xE00) ? 0xC0 : 0x40;
+			pixel >>= (x % 4) * 2;
+			mask = 0xC0;
+			mask = ~(mask >> (x % 4) * 2);
+			stars->pixel = pixel;
+			stars->mask = mask;
+			target[stars->ofs] &= mask;
+			target[stars->ofs] |= pixel;
+		}
 	}
 }
 
@@ -1387,8 +1486,12 @@ Play starfield animation
 */
 void animStarfield(star_t *stars, byte *target) {
 	int16 i;
-	for (i = 100; i; i--)
+	for (i = 100; i; i--) {
 		drawStars(stars, i, target);
+		if (g_vm->_videoMode == Common::kRenderEGA && target == CGA_SCREENBUFFER)
+			ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+		waitVBlank();
+	}
 }
 
 /*
@@ -1719,6 +1822,8 @@ uint16 SCR_28_MenuLoop(void) {
 	mask = *script_ptr++;
 	value = *script_ptr++;
 
+	warning("SCR_28_MenuLoop: cursor=%d mask=0x%02X value=0x%02X", cursor, mask, value);
+
 	selectCursor(cursor);
 
 	menuLoop(mask, value);
@@ -1794,6 +1899,7 @@ uint16 SCR_23_HidePortrait(void) {
 
 	script_ptr++;
 	index = *script_ptr++;
+	warning("SCR_23_HidePortrait: index=%d", index);
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
@@ -1831,6 +1937,7 @@ uint16 SCR_3F_HidePortrait(void) {
 Restore screen data from back buffer for all portraits
 */
 uint16 SCR_24_PopAllPortraits(void) {
+	warning("SCR_24_PopAllPortraits");
 	script_ptr++;
 	popDirtyRects(DirtyRectSprite);
 	return 0;
@@ -2378,7 +2485,7 @@ uint16 SCR_47_DeProfundisRiseMonster(void) {
 		waitVBlank();
 
 		ofs ^= g_vm->_line_offset;
-		if ((ofs & g_vm->_line_offset) != 0)
+		if ((ofs & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 			ofs -= g_vm->_screenBPL;
 
 		h++;
@@ -2709,7 +2816,7 @@ uint16 SCR_56_MorphRoom98(void) {
 		memcpy(frontbuffer + ofs, backbuffer + ofs, g_vm->_screenBPL);
 		waitVBlank();
 		ofs ^= g_vm->_line_offset;
-		if ((ofs & g_vm->_line_offset) != 0)
+		if ((ofs & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 			ofs -= g_vm->_screenBPL;
 	}
 
@@ -2728,7 +2835,7 @@ void ShowMirrored(uint16 h, uint16 ofs) {
 
 	/*move 1 line up*/
 	ofs2 ^= g_vm->_line_offset;
-	if ((ofs2 & g_vm->_line_offset) != 0)
+	if ((ofs2 & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 		ofs2 -= g_vm->_screenBPL;
 
 	while (h--) {
@@ -2746,7 +2853,7 @@ void ShowMirrored(uint16 h, uint16 ofs) {
 
 		/*move 1 line up*/
 		ofs2 ^= g_vm->_line_offset;
-		if ((ofs2 & g_vm->_line_offset) != 0)
+		if ((ofs2 & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 			ofs2 -= g_vm->_screenBPL;
 	}
 }
@@ -2824,7 +2931,7 @@ static void AnimSaucer(void) {
 
 			/*previous line*/
 			ofs ^= g_vm->_line_offset;
-			if ((ofs & g_vm->_line_offset) != 0)
+			if ((ofs & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 				ofs -= g_vm->_screenBPL;
 
 			for (i = 0; i < 55; i++) {
@@ -2838,7 +2945,7 @@ static void AnimSaucer(void) {
 
 				/*previous line line*/
 				ofs ^= g_vm->_line_offset;
-				if ((ofs & g_vm->_line_offset) != 0)
+				if ((ofs & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 					ofs -= g_vm->_screenBPL;
 			}
 
@@ -2848,7 +2955,7 @@ static void AnimSaucer(void) {
 				LiftLines(i + 1, backbuffer, ofs, frontbuffer, ofs2);
 
 				ofs2 ^= g_vm->_line_offset;
-				if ((ofs2 & g_vm->_line_offset) != 0)
+				if ((ofs2 & g_vm->_line_offset) != 0 || g_vm->_line_offset == 0)
 					ofs2 -= g_vm->_screenBPL;
 
 				waitVBlank();
@@ -3411,18 +3518,30 @@ uint16 GetZoneObjCommand(uint16 offs) {
 void DrawStickyNet(void) {
 	byte x, y, w, h;
 
-	uint16 ofs;
-	byte *sprite = loadPuzzlToScratch(80);
-
 	x = room_bounds_rect.sx;
 	y = room_bounds_rect.sy;
 	w = room_bounds_rect.ex - x;
 	h = room_bounds_rect.ey - y;
 
-	ofs = CalcXY_p(x, y);
+	uint16 ofs = CalcXY_p(x, y);
 
 	/*16x30 is the net sprite size*/
 
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		Graphics::Surface *surf = ega_puzzl_res->getSprite(80);
+		uint16 sprW = surf->w;  /* pixels */
+		uint16 sprH = surf->h;
+		byte *pixels = (byte *)surf->getPixels();
+		int16 pitch = surf->pitch;
+		for (; h >= sprH; h -= sprH) {
+			for (int16 i = 0; i < w; i += sprW / 4)
+				ega_BlitSprite(pixels, pitch, sprW, sprH, frontbuffer, ofs + i * 4);
+			ofs += EGA_BYTES_PER_LINE * sprH;
+		}
+		return;
+	}
+
+	byte *sprite = loadPuzzlToScratch(80);
 	for (; h; h -= 30) {
 		int16 i;
 		for (i = 0; i < w; i += 16 / 4)

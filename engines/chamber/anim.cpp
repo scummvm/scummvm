@@ -26,6 +26,7 @@
 #include "chamber/common.h"
 #include "chamber/resdata.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
 #include "chamber/room.h"
 #include "chamber/sound.h"
 
@@ -73,6 +74,9 @@ void animLoadSprite(byte **panim) {
 void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
 	if (anim_flags == 7)
 		return;
+	// In EGA mode, lutin_mem CLUT8 buffer has 4 bytes per column (1 byte/pixel × 4 pixels).
+	// In CGA mode, mask+pixel pairs give 2 bytes per column.
+	uint16 bytes_per_col = (g_vm->_videoMode == Common::kRenderEGA) ? 4 : 2;
 	if (anim_flags & 4) {
 		if (anim_cycle == 0)
 			return;
@@ -87,7 +91,7 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 			anim_cycle--;
 		} else {
 			*x -= dx;
-			*sprite += (*sprw - anim_cycle) * 2;
+			*sprite += (*sprw - anim_cycle) * bytes_per_col;
 			*sprw = anim_cycle;
 			anim_cycle--;
 		}
@@ -99,7 +103,7 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 			anim_cycle++;
 		} else {
 			*x -= dx;
-			*sprite += (*sprw - anim_cycle) * 2;
+			*sprite += (*sprw - anim_cycle) * bytes_per_col;
 			*sprw = anim_cycle;
 			anim_cycle++;
 		}
@@ -107,6 +111,10 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 }
 
 void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		ega_CopyScreenBlock(source, width * 4, height, target, ega_CalcXY_p(x, y));
+		return;
+	}
 	uint16 offs;
 	uint16 xx = x * 4;
 	uint16 ww = width * 4;
@@ -134,7 +142,13 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = CalcXY_p(x, y);
 	cga_BackupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
-	cga_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
+	if (g_vm->_videoMode == Common::kRenderEGA) {
+		// In EGA mode, loadLutinSprite builds a CLUT8 flat buffer in lutin_mem+2.
+		// pitch here is sprw*4 (set in playAnimCore for EGA).
+		ega_BlitSprite(pixels, pitch, (uint16)sprw * 4, sprh, backbuffer, ofs);
+	} else {
+		cga_BlitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
+	}
 	ex = x + sprw;
 	ey = y + sprh;
 	if (last_anim_height != 0) {
@@ -216,7 +230,10 @@ void playAnimCore(byte **panim) {
 			sprw = *sprite++;
 			sprh = *sprite++;
 
-			pitch = sprw * 2;
+			if (g_vm->_videoMode == Common::kRenderEGA)
+				pitch = sprw * 4;
+			else
+				pitch = sprw * 2;
 			clipSprite(&x, &y, &sprw, &sprh, &sprite, dx, dy);
 			animDrawSprite(x, y, sprw, sprh, sprite, pitch);
 
