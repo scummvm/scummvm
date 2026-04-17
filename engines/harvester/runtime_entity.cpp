@@ -40,7 +40,14 @@ static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM
 static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
-static const uint32 kAnimationClockDivisorMs = 10;
+// FIXME: The original runtime entity animation timer is driven from a millisecond DOS clock, 
+// but the actual animation frame update logic is more complex than a simple fixed interval. 
+// The current implementation may cause some animations to run faster or slower than intended, 
+// especially if the game is paused for a long time or if the system is under heavy load. 
+// A more accurate implementation would need to track the elapsed time more precisely and update 
+//the animation frames accordingly.
+// kAnimationClockDivisorMs should be 10, but that "feels" too fast, so bump it to 15 for now. 
+static const uint32 kAnimationClockDivisorMs = 15;
 static const byte kTransparentPaletteIndex = 0;
 
 static int roundToInt(float value) {
