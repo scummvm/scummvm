@@ -440,7 +440,8 @@ Common::Error ChessmasterDialogueHandler::handleDialogue(DialogueRuntime &runtim
 		return lineError;
 
 	InteractionResult interaction;
-	if (runtime.startupScript().queueRuntimeNpcDeathOrMonsterfy(
+	// C125.FST already shows the chessmaster death; do not queue the room death bank again.
+	if (runtime.startupScript().finalizeRuntimeNpcDeathOrMonsterfy(
 			kChessmasterNpc, kChessmasterSlashDamageType)) {
 		interaction.mutatedRuntimeState = true;
 		interaction.visualRuntimeStateChanged = true;
