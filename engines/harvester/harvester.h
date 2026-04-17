@@ -123,8 +123,8 @@ public:
 	bool requestDebugCommand(const CommandRecord &command);
 	bool requestDebugRoomChange(const Common::String &roomName);
 	void captureCurrentSaveRoomState(const Common::String &entranceName,
-		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
-		const Common::String &musicPath);
+		const Common::String &roomName, int playerX, int playerY, int playerZ,
+		int playerFacing, int discNumber, const Common::String &musicPath);
 	void clearCurrentSaveRoomState();
 	bool hasCurrentSaveRoomState() const { return _currentSaveRoomState.valid; }
 	const SaveRoomState &getCurrentSaveRoomState() const {

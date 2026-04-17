@@ -631,7 +631,7 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 			const int facing = playerState.facing >= 0 ? playerState.facing : scene.state.playerFacing;
 			_engine.captureCurrentSaveRoomState(scene.state.entranceName, scene.state.roomName,
 				playerState.centerX, playerState.bottomY, (int)playerState.z, facing,
-				_engine.getMusicPath());
+				scene.state.discNumber, _engine.getMusicPath());
 		};
 		auto getSceneObjectBounds = [&](const ObjectRecord &object) {
 			if (object.boundsX2 > object.currentX && object.boundsY2 > object.currentY)
@@ -1603,7 +1603,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				warning("Harvester: unable to activate disc %d resources", discNumber);
 				return Common::kReadingFailed;
 			}
-			if (discNumber == 3 && previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
+			if ((discNumber == 1 || discNumber == 3) &&
+					previousDisc > 0 && previousDisc != resources->getCurrentDisc()) {
 				Script *script = _engine.getScript();
 				if (!script || !script->reloadTownWorld(*resources)) {
 					warning("Harvester: unable to reload town script after disc prompt %d -> %d",

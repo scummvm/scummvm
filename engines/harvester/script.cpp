@@ -1795,6 +1795,18 @@ bool Script::materializeRoomState(const Common::String &entranceName, const Comm
 	return buildRuntimeRoomState(*room, entrance, resources, state);
 }
 
+bool Script::hasRoomSetupTarget(const Common::String &entranceName,
+		const Common::String &roomName) const {
+	const EntranceRecord *entrance = findEntranceRecord(entranceName);
+	const Common::String resolvedRoomName = !roomName.empty()
+		? roomName
+		: (entrance ? entrance->roomName : Common::String());
+	if (resolvedRoomName.empty())
+		return false;
+
+	return findRoomRecord(resolvedRoomName) != nullptr;
+}
+
 bool Script::executeRoomEnterCommands(const Common::String &roomName,
 		InteractionResult &result) {
 	result = InteractionResult();
@@ -2726,6 +2738,7 @@ bool Script::buildRuntimeRoomState(const RoomRecord &room, const EntranceRecord 
 	state.backgroundObjectName = background->objectName;
 	state.palettePath = room.palettePath;
 	state.backgroundPath = background->spritePath;
+	state.discNumber = resources.getCurrentDisc();
 	state.roomMinZ = room.minZ;
 	state.roomMaxZ = room.maxZ;
 	state.roomMaxZScreenY = room.maxZScreenY;

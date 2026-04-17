@@ -46,8 +46,8 @@ static const uint32 kHarvesterSaveVersion = 18;
 
 static void logStartupSaveRoomState(const char *operation, const SaveRoomState &state) {
 	debugC(1, kDebugRoom,
-		"Harvester: %s startup save room state valid=%d entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
-		operation, state.valid, state.entranceName.c_str(), state.roomName.c_str(),
+		"Harvester: %s startup save room state valid=%d disc=%d entrance='%s' room='%s' spawn=(%d,%d,%d) facing=%d music='%s'",
+		operation, state.valid, state.discNumber, state.entranceName.c_str(), state.roomName.c_str(),
 		state.playerX, state.playerY, state.playerZ, state.playerFacing, state.musicPath.c_str());
 }
 
@@ -62,11 +62,98 @@ static void syncStartupSaveRoomState(Common::Serializer &s, SaveRoomState &state
 	s.syncAsSint32LE(state.playerFacing);
 }
 
+static int normalizeDiscNumber(int discNumber) {
+	return discNumber >= ResourceManager::kFirstDiscNumber &&
+			discNumber <= ResourceManager::kLastDiscNumber
+		? discNumber
+		: ResourceManager::kFirstDiscNumber;
+}
+
+static bool reloadTownWorldForSaveRestore(HarvesterEngine &engine, int previousDisc,
+		int discNumber) {
+	Script *script = engine.getScript();
+	ResourceManager *resources = engine.getResources();
+	if (!script || !resources)
+		return false;
+
+	if (!script->reloadTownWorld(*resources)) {
+		warning("Harvester: unable to reload town script after save restore disc switch %d -> %d",
+			previousDisc, discNumber);
+		return false;
+	}
+
+	debugC(1, kDebugResources,
+		"Harvester: reloaded town script after save restore disc switch %d -> %d",
+		previousDisc, discNumber);
+	return true;
+}
+
+static bool loadedRoomTargetAvailableOnDisc(HarvesterEngine &engine,
+		const SaveRoomState &roomState, int discNumber) {
+	ResourceManager *resources = engine.getResources();
+	if (!resources)
+		return false;
+	if (!engine.activateDisc(discNumber))
+		return false;
+
+	Script probeScript;
+	if (!probeScript.load(*resources))
+		return false;
+
+	if (probeScript.hasRoomSetupTarget(roomState.entranceName, roomState.roomName))
+		return true;
+
+	debugC(1, kDebugResources,
+		"Harvester: loaded room target entrance='%s' room='%s' not present on disc %d",
+		roomState.entranceName.c_str(), roomState.roomName.c_str(), discNumber);
+	return false;
+}
+
+static bool prepareLoadedRoomDisc(HarvesterEngine &engine, SaveRoomState &roomState,
+		int preferredDisc) {
+	Script *script = engine.getScript();
+	ResourceManager *resources = engine.getResources();
+	if (!script || !resources)
+		return false;
+
+	const int originalDisc = resources->getCurrentDisc();
+	preferredDisc = normalizeDiscNumber(preferredDisc);
+	int resolvedDisc = 0;
+	if (loadedRoomTargetAvailableOnDisc(engine, roomState, preferredDisc)) {
+		resolvedDisc = preferredDisc;
+	} else {
+		for (int discNumber = ResourceManager::kFirstDiscNumber;
+				discNumber <= ResourceManager::kLastDiscNumber; ++discNumber) {
+			if (discNumber == preferredDisc)
+				continue;
+			if (!loadedRoomTargetAvailableOnDisc(engine, roomState, discNumber))
+				continue;
+
+			debugC(1, kDebugResources,
+				"Harvester: resolved loaded room target entrance='%s' room='%s' on fallback disc %d",
+				roomState.entranceName.c_str(), roomState.roomName.c_str(), discNumber);
+			resolvedDisc = discNumber;
+			break;
+		}
+	}
+
+	if (resolvedDisc <= 0) {
+		warning("Harvester: unable to resolve loaded room target entrance='%s' room='%s' on any mounted disc",
+			roomState.entranceName.c_str(), roomState.roomName.c_str());
+		return false;
+	}
+
+	roomState.discNumber = resolvedDisc;
+	if (!engine.activateDisc(roomState.discNumber))
+		return false;
+	return reloadTownWorldForSaveRestore(engine, originalDisc, roomState.discNumber);
+}
+
 } // End of anonymous namespace
 
 void HarvesterEngine::captureCurrentSaveRoomState(const Common::String &entranceName,
-		const Common::String &roomName, int playerX, int playerY, int playerZ, int playerFacing,
-		const Common::String &musicPath) {
+		const Common::String &roomName, int playerX, int playerY, int playerZ,
+		int playerFacing, int discNumber, const Common::String &musicPath) {
 	_currentSaveRoomState.entranceName = entranceName;
 	_currentSaveRoomState.roomName = roomName;
 	_currentSaveRoomState.musicPath =
@@ -75,6 +162,7 @@ void HarvesterEngine::captureCurrentSaveRoomState(const Common::String &entrance
 	_currentSaveRoomState.playerY = playerY;
 	_currentSaveRoomState.playerZ = playerZ;
 	_currentSaveRoomState.playerFacing = playerFacing;
+	_currentSaveRoomState.discNumber = normalizeDiscNumber(discNumber);
 	_currentSaveRoomState.valid = !roomName.empty();
 }
 
@@ -101,15 +189,22 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (!s.syncVersion(kHarvesterSaveVersion))
 		return Common::kReadingFailed;
 
-	int32 serializedDisc = (_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1;
-	// FIXME: Remove the pre-release version-14 fallback once Harvester ships and only
-	// clean release-era saves remain.
-	s.syncAsSint32LE(serializedDisc, 14);
-	const int restoredDisc = serializedDisc > 0 ? serializedDisc : 1;
-
 	SaveRoomState roomState = s.isLoading()
 		? SaveRoomState()
 		: _currentSaveRoomState;
+
+	int32 serializedDisc = roomState.discNumber > 0
+		? roomState.discNumber
+		: ((_resources && _resources->getCurrentDisc() > 0) ? _resources->getCurrentDisc() : 1);
+	// Save the room's source disc rather than the transient active asset disc.
+	// CD prompts can leave CD3 resources active while a CD1 room is still current.
+	// FIXME: Remove the pre-release version-14 fallback once Harvester ships and only
+	// clean release-era saves remain.
+	s.syncAsSint32LE(serializedDisc, 14);
+	const int restoredDisc = normalizeDiscNumber(serializedDisc);
+	if (s.isLoading())
+		roomState.discNumber = restoredDisc;
+
 	if (s.isSaving())
 		logStartupSaveRoomState("saving", roomState);
 	syncStartupSaveRoomState(s, roomState);
@@ -144,25 +239,11 @@ Common::Error HarvesterEngine::syncGame(Common::Serializer &s) {
 	if (s.isLoading()) {
 		if (!roomState.valid || roomState.roomName.empty())
 			return Common::kReadingFailed;
-		const int previousDisc = (_resources && _resources->getCurrentDisc() > 0)
-			? _resources->getCurrentDisc()
-			: 0;
-		if (!activateDisc(restoredDisc))
+		if (!prepareLoadedRoomDisc(*this, roomState, restoredDisc))
 			return Common::kReadingFailed;
-		if (previousDisc > 0 && previousDisc != restoredDisc) {
-			if (!_script->reloadTownWorld(*_resources)) {
-				warning("Harvester: unable to reload town script after save restore disc switch %d -> %d",
-					previousDisc, restoredDisc);
-				return Common::kReadingFailed;
-			}
-
-			debugC(1, kDebugResources,
-				"Harvester: reloaded town script after save restore disc switch %d -> %d",
-				previousDisc, restoredDisc);
-		}
 		_currentSaveRoomState = roomState;
 		_pendingLoadedSaveRoomState = roomState;
-		_pendingLoadedDisc = restoredDisc;
+		_pendingLoadedDisc = roomState.discNumber;
 		logStartupSaveRoomState("loaded", roomState);
 	}
 	return Common::kNoError;

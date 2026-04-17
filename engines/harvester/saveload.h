@@ -34,6 +34,7 @@ struct SaveRoomState {
 	int playerY = 0;
 	int playerZ = 0;
 	int playerFacing = -1;
+	int discNumber = 0;
 	bool valid = false;
 
 	void clear() {
@@ -44,6 +45,7 @@ struct SaveRoomState {
 		playerY = 0;
 		playerZ = 0;
 		playerFacing = -1;
+		discNumber = 0;
 		valid = false;
 	}
 };
