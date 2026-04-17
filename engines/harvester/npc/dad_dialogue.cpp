@@ -93,7 +93,7 @@ Common::Error DadDialogueHandler::handleDialogue(DialogueRuntime &runtime,
 		sharedState.dialogueStateD2eb4 = 1;
 		(void)runtime.startupScript().addRuntimeObjectToInventory("MEAT_PERMISSION");
 		(void)runtime.startupScript().setRuntimeObjectVisible(
-			kInventoryOwnerName, "MEAT_PERMISSION0", true);
+			kInventoryOwnerName, "MEAT_PERMISSION0", false);
 		return Common::kNoError;
 	};
 	auto isBlackmailEvidence = [&](const Common::String &itemName) {
