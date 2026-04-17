@@ -78,6 +78,7 @@ public:
 	void sub_128_178a(int16 unk2, int16 unk1);
 	void setStateBits(int16 unk1); // sub_128_1c2c
 	void clearStateBits(int16 unk1); // sub_128_1c4a
+	void sub_128_1ef8();
 	void sub_128_1f1e();
 	void sub_128_1f44();
 	void sub_128_1f76();
@@ -119,7 +120,12 @@ public:
 	void sub_128_41d8();
 	void sub_128_4472();
 	void sub_128_4a92();
-	void sub_128_5140();
+
+	void shipsRun(); // sub_128_5140
+	void sub_128_55ac();
+	void sub_128_57a2();
+	void sub_128_5a6c();
+
 	void sub_128_5b30();
 	void sub_128_5baa();
 	void sub_128_5c20();
@@ -258,7 +264,33 @@ public:
 	void cardsStoreState(); // sub_139_1cba
 	void sub_139_1d3e();
 
+	// fool_thoth.cpp
 	void sub_140_004();
+	void sub_140_458();
+	void sub_140_12fc();
+	void sub_140_1486();
+	void sub_140_18fa();
+	void sub_140_1bc4();
+	void sub_140_206a();
+	void sub_140_22b8();
+	void sub_140_24ae();
+	void sub_140_25e4();
+	void sub_140_2662();
+	void sub_140_26ca();
+	void sub_140_28bc();
+	void sub_140_2968();
+	void sub_140_2978();
+	void sub_140_2998();
+	void sub_140_2f92();
+	void sub_140_3050();
+	void sub_140_30da();
+	void sub_140_3148();
+	void sub_140_325a();
+	void sub_140_326e();
+	void sub_140_3282();
+	void sub_140_32ac();
+	void sub_140_3372();
+	void sub_140_3412();
 
 	// fool_death.cpp
 	void deathRun(); // sub_141_004
@@ -368,7 +400,11 @@ private:
 	Common::String activePuzzleBuffer; // var_str_c06
 
 	int16 var_i16_d06;
+	int16 var_i16_d08;
+	int16 var_i16_d0a;
 	int16 var_i16_d0c;
+	int16 var_i16_d0e;
+	int16 var_i16_d10;
 	Common::U32String var_str_d12;
 	int16 var_i16_e12;
 	int16 var_i16_e14;
@@ -462,6 +498,8 @@ private:
 	int16 var_i16_1abc;
 	int16 var_i16_1abe;
 
+	int16 var_i16_1de6;
+
 	int16 var_i16_1e00;
 
 	int16 var_i16_2010;
@@ -478,7 +516,15 @@ private:
 	int16 var_i16_221e;
 	Common::U32String var_str_2222;
 	int16 var_i16_2322;
+	int16 var_i16_2324;
+	uint32 var_ptr_232a;
+	Handle var_bytes_232a;
+	int16 var_i16_232e;
 
+	int16 var_i16_2332;
+	int16 var_i16_2334;
+	int16 var_i16_2336;
+	int16 var_i16_2338;
 	int16 var_i16_233a;
 
 	// FIXME: bounds on the following are guessed! need to trace index range
@@ -529,6 +575,7 @@ private:
 	BitMap arr_bmp_b3ec;
 	BitMap arr_bmp_bbbc; // used by death
 	BitMap arr_bmp_c38c; // used by death
+	BitMap arr_bmp_fa3c;
 	Handle arr_bytes_109dc; // used for data buffering
 	BitMap arr_bmp_109dc;
 	BitMap arr_bmp_138bc;
@@ -537,10 +584,11 @@ private:
 	GrafPort arr_grafport_19042;
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
+	Common::Rect arr_rect_19114;
 	PicHandle arr_i32_1912c[0x54];
 	PicHandle arr_i32_192c0[101];
 	PolyHandle arr_poly_192c0[101];
-	int32 arr_i32_19454[0x65];
+	int32 puzzleDataOffsets[101]; // arr_i32_19454
 	Common::U32String arr_str_195e8[101]; // 0x20 each
 
 	Common::U32String arr_str_1a288[101]; // 0x10 each
