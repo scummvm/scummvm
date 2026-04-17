@@ -638,6 +638,14 @@ void Toolbox::MoveTo(int16 h, int16 v) {
 	}
 }
 
+void Toolbox::OffsetRect(Common::Rect &r, int16 dh, int16 dv) {
+	r.left += dh;
+	r.right += dh;
+	r.top += dv;
+	r.bottom += dv;
+}
+
+
 PolyHandle Toolbox::OpenPoly() {
 	HidePen();
 	PolyHandle handle(new Polygon());

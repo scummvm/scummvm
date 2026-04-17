@@ -1108,6 +1108,8 @@ public:
 	// drawing is performed.
 	void MoveTo(int16 h, int16 v);
 
+	void OffsetRect(Common::Rect &r, int16 dh, int16 dv);
+
 	// FUNCTION OpenPoly : PolyHandle;
 	// OpenPoly returns a handle to a new polygon and tells QuickDraw to start saving the polygon
 	// definition as specified by calls to line-drawing routines. While a polygon is open, all calls to Line

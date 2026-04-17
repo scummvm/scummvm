@@ -34,9 +34,11 @@ namespace Fool {
 ZBasic *g_zbasic;
 Toolbox *g_toolbox;
 
-// Based on disassembly of Fool's Errand v2.0.
-// v3.0 had several features removed to improve compatibility with later versions of Mac OS,
-// and was built with a different ZBASIC compiler.
+// Based on m68k disassembly of the Fool's Errand v2.0, (c) 1988 Cliff Johnson.
+
+// v1.0 - original release, single-density disks
+// v2.0 - fixes full-screen rendering on higher-resolution displays
+// v3.0 - newer ZBasic, changed a few graphics assets, removed custom menu font and sounds for compatibility
 
 void FoolPrologue::run() {
 	g_toolbox = new Toolbox();
