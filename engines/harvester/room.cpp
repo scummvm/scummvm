@@ -3147,6 +3147,8 @@ Common::Error RoomSystem::runRoomLoop(Flow &flow, const Common::String &targetNa
 				else if (movedY != 0)
 					monster.facing = movedY < 0 ? 3 : 0;
 				(void)applyRoomActorPlacement(scene.state, *entity, monster.posX, monster.posY, (float)monster.posZ);
+				if (monster.posZ != previousZ)
+					entityManager->reinsertSceneEntity(entity);
 				if (script)
 					(void)script->syncRuntimeMonsterRecord(monster);
 				debugC(1, kDebugCombat,
