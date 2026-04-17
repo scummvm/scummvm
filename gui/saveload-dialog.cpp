@@ -1180,7 +1180,7 @@ void SaveLoadChooserGrid::updateSaves() {
 		} else {
 			curButton.button->setGfx(kThumbnailWidth, kThumbnailHeight2, 0, 0, 0);
 		}
-		curButton.description->setLabel(Common::U32String(Common::String::format("%d. ", saveSlot)) + _saveList[i].getDescription().decode());
+		curButton.description->setLabel(Common::U32String::format("%d. %s", saveSlot, _saveList[i].getDescription().c_str()));
 
 		Common::U32String tooltip(_("Name: "));
 		tooltip += _saveList[i].getDescription().decode();
