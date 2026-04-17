@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/rendermode.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -52,7 +53,15 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_prioritycommand_1 = false;
 	_prioritycommand_2 = false;
 	_pxiData = NULL;
-	_videoMode = Common::kRenderCGA;
+
+	// Read render mode from ScummVM settings (--render-mode command line flag).
+	// Supported: cga (default), herc, ega.
+	Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	if (renderMode == Common::kRenderEGA || renderMode == Common::kRenderHercG)
+		_videoMode = renderMode;
+	else
+		_videoMode = Common::kRenderCGA;
+
 	_screenH = _screenW = _screenBits = _screenBPL = _screenPPB = 0;
 	_line_offset = _line_offset2 = _fontHeight = _fontWidth = 0;
 }

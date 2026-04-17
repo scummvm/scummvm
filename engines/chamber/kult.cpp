@@ -27,6 +27,8 @@
 #include "chamber/common.h"
 #include "chamber/decompr.h"
 #include "chamber/cga.h"
+#include "chamber/ega.h"
+#include "chamber/ega_resource.h"
 #include "chamber/anim.h"
 #include "chamber/cursor.h"
 #include "chamber/input.h"
@@ -233,23 +235,37 @@ Common::Error ChamberEngine::init() {
 
 	// Initialize graphics using following:
 	bool isCustomHerc = false;
-	if (_videoMode == Common::RenderMode::kRenderHercG) {
-		isCustomHerc = true;
-		_videoMode = Common::RenderMode::kRenderCGA;
-	}
-	_screenW = 320;
-	_screenH = 200;
-	_screenBits = 2;
-	_screenPPB = 8 / _screenBits;
-	_screenBPL = _screenW / _screenPPB;
-	_line_offset = 0x2000;
-	_line_offset2 = 0x2000;
-	_fontHeight = 6;
-	_fontWidth = 4;
-	if (isCustomHerc) {
-		initGraphics(720, 348);
-	} else {
+	if (_videoMode == Common::RenderMode::kRenderEGA) {
+		// EGA: 320x200 CLUT8 linear framebuffer, 1 byte per pixel, no interlacing
+		_screenW    = 320;
+		_screenH    = 200;
+		_screenBits = 8;
+		_screenPPB  = 1;
+		_screenBPL  = _screenW;
+		_line_offset  = 0;
+		_line_offset2 = 0;
+		_fontHeight = 6;
+		_fontWidth  = 4;
 		initGraphics(_screenW, _screenH);
+	} else {
+		if (_videoMode == Common::RenderMode::kRenderHercG) {
+			isCustomHerc = true;
+			_videoMode = Common::RenderMode::kRenderCGA;
+		}
+		_screenW = 320;
+		_screenH = 200;
+		_screenBits = 2;
+		_screenPPB = 8 / _screenBits;
+		_screenBPL = _screenW / _screenPPB;
+		_line_offset = 0x2000;
+		_line_offset2 = 0x2000;
+		_fontHeight = 6;
+		_fontWidth = 4;
+		if (isCustomHerc) {
+			initGraphics(720, 348);
+		} else {
+			initGraphics(_screenW, _screenH);
+		}
 	}
 
 	initSound();
@@ -265,35 +281,52 @@ Common::Error ChamberEngine::init() {
 
 	Graphics::Surface *splash = nullptr;
 
-	if (g_vm->getLanguage() == Common::EN_USA) {
-		/* Load title screen */
-		splash = loadSplash("PRESCGA.BIN");
-		if (!splash)
-			exitGame();
+	if (g_vm->_videoMode == Common::RenderMode::kRenderEGA) {
+		/* EGA title screen — load planar EGA splash (same format as FOND.EGA) */
+		splash = ega_loadFond("PRESEGA.EGA");
+		cga_ColorSelect(0x30); // sets EGA palette
+		if (splash)
+			cga_BackBufferToRealFull();
+	} else {
+		if (g_vm->getLanguage() == Common::EN_USA) {
+			/* Load title screen */
+			splash = loadSplash("PRESCGA.BIN");
+			if (!splash)
+				exitGame();
 
-		if (ifgm_loaded) {
-			/*TODO*/
+			if (ifgm_loaded) {
+				/*TODO*/
+			}
+		} else {
+			/* Load title screen */
+			splash = loadSplash("PRES.BIN");
+			if (!splash)
+				exitGame();
 		}
-	} else {
-		/* Load title screen */
-		splash = loadSplash("PRES.BIN");
-		if (!splash)
-			exitGame();
+
+		if (!isCustomHerc) {
+			/* Select intense cyan-mageta palette */
+			cga_ColorSelect(0x30);
+			cga_BackBufferToRealFull();
+		} else {
+			/* Set authentic Hercules Green phosphor palette */
+			g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+			cga_BackBufferToRealFull();
+		}
 	}
 
-	if (!isCustomHerc) {
-		/* Select intense cyan-mageta palette */
-		cga_ColorSelect(0x30);
-		cga_BackBufferToRealFull();
-	} else {
-		/* Set authentic Hercules Green phosphor palette */
-		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
-		cga_BackBufferToRealFull();
+	if (splash) {
+		if (g_vm->_videoMode != Common::RenderMode::kRenderEGA)
+			splash->free();
+		delete splash;
 	}
 
+<<<<<<< HEAD
     splash->free();
     delete splash;
 
+=======
+>>>>>>> 6182990634e (chamber: Implement EGA rendering path)
 	/* Wait for a keypress */
 	clearKeyboard();
 	readKeyboardChar();
@@ -346,7 +379,7 @@ Common::Error ChamberEngine::init() {
 	if (!loadStaticData())
 		exitGame();
 
-	/* Load text resources */
+/* Load text resources */
 	if (!loadVepciData() || !loadDesciData() || !loadDialiData())
 		exitGame();
 
@@ -354,8 +387,27 @@ Common::Error ChamberEngine::init() {
 	initInput();
 
 	/* Load graphics resources */
-	while (!loadFond() || !loadSpritesData() || !loadPersData())
-		askDisk2();
+	if (g_vm->_videoMode == Common::RenderMode::kRenderEGA) {
+		/* EGA: load decoded sprite banks from external .EGA files */
+		ega_sprit_res = new EgaSpriteResource();
+		ega_sprit_res->appendFromFile("SPRIT.EGA");
+
+		ega_puzzl_res = new EgaSpriteResource();
+		ega_puzzl_res->appendFromFile("PUZZL.EGA");
+		ega_puzzl_res->appendFromFile("PUZZ1.EGA");
+
+		ega_perso_res = new EgaSpriteResource();
+		ega_perso_res->appendFromFile("PERSO.EGA");
+
+		Graphics::Surface *fond = loadFond();
+		if (!fond)
+			exitGame();
+		/* fond wraps ega_backbuffer via init() — surface does not own pixel data, safe to delete directly */
+		delete fond;
+	} else {
+		while (!loadFond() || !loadSpritesData() || !loadPersData())
+			askDisk2();
+	}
 
 	/*TODO: is this necessary?*/
 	cga_BackBufferToRealFull();
