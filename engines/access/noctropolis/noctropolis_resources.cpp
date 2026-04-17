@@ -2015,7 +2015,7 @@ int NoctropolisResources::getCursorWidth(int num) const {
 }
 
 int NoctropolisResources::getCursorHeight(int num) const {
-	if (num > 0 && num < ARRAYSIZE(CURSOR_HEIGHTS))
+	if (num >= 0 && num < ARRAYSIZE(CURSOR_HEIGHTS))
 		return CURSOR_HEIGHTS[num];
 	return 0;
 }

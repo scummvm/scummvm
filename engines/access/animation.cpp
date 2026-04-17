@@ -126,6 +126,7 @@ void Animation::anim0() {
 	}
 }
 
+// Loop and then leave the last frame
 void Animation::anim1() {
 	if (_currentLoopCount == -1 || _countdownTicks != 0) {
 		setFrame1(calcFrame());
@@ -144,6 +145,7 @@ void Animation::anim1() {
 	}
 }
 
+// Loop forever
 void Animation::anim2() {
 	if (_countdownTicks != 0) {
 		setFrame1(calcFrame());
@@ -161,28 +163,35 @@ void Animation::anim2() {
 	}
 }
 
+// Loop and stop.
 void Animation::anim3() {
-	if (_currentLoopCount != -1) {
-		if (_countdownTicks != 0) {
-			setFrame1(calcFrame());
-		} else {
-			_countdownTicks = _initialTicks;
-			++_frameNumber;
-			const AnimationFrame *frame = calcFrame();
+	if (_currentLoopCount == -1)
+		return;
 
-			if (frame == nullptr) {
-				--_currentLoopCount;
-				_frameNumber = 0;
-				frame = calcFrame();
-			}
+	if (_countdownTicks != 0) {
+		setFrame1(calcFrame());
+	} else {
+		_countdownTicks = _initialTicks;
+		++_frameNumber;
+		const AnimationFrame *frame = calcFrame();
 
-			setFrame(frame);
+		if (frame == nullptr) {
+			--_currentLoopCount;
+			_frameNumber = 0;
+			frame = calcFrame();
 		}
+
+		setFrame(frame);
 	}
 }
 
+// Loop and stop?? How is this different from 3?
+// It can't leave the last frame there, that breaks
+// Stiletto's door opening in Noctropolis.
 void Animation::anim4() {
-	if (_currentLoopCount == -1 || _countdownTicks != 0) {
+	if (_currentLoopCount == -1)
+		return;
+	if (_countdownTicks != 0) {
 		setFrame1(calcFrame());
 	} else {
 		_countdownTicks = _initialTicks;
@@ -191,7 +200,6 @@ void Animation::anim4() {
 
 		if (frame == nullptr) {
 			if (--_currentLoopCount == -1) {
-				setFrame1(calcFrame());
 				return;
 			} else {
 				_frameNumber = 0;
@@ -207,6 +215,7 @@ void Animation::animNone() {
 	// Empty implementation
 }
 
+// Just a single frame.
 void Animation::anim7() {
 	setFrame(calcFrame1());
 }
@@ -326,6 +335,11 @@ void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
 		} else {
 			ie._offsetY = part._offsetY - ie._position.y;
 		}
+
+		/*
+		Common::String dumpfn = Common::String::format("anim_%d_%d_%d_sprite_%d_frame_%d", ie._position.x, ie._position.y, ie._offsetY, part._spritesIndex, part._frameIndex);
+		ie._spritesPtr->getFrame(ie._frameNumber)->dump(dumpfn.c_str());
+		*/
 
 		_vm->_images.addToList(ie);
 	}

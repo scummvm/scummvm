@@ -33,16 +33,6 @@
 #include "access/noctropolis/noctropolis_resources.h"
 
 
-// for frame contents debugging
-//#define DEBUG_FRAME_DUMP 1
-
-#ifdef DEBUG_FRAME_DUMP
-#include "graphics/paletteman.h"
-#include "image/png.h"
-#include "common/path.h"
-#include "common/file.h"
-#endif
-
 namespace Access {
 
 ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windowYAdd(0), _scrollCol(0), _scrollRow(0), _screenYOff(0) {
@@ -416,17 +406,6 @@ void Screen::flashPalette(int step) {
 	_vm->_events->delay(30);
 	setPalette();
 	_vm->_events->pollEventsAndWait();
-}
-
-void Screen::dump(const char *fname) const {
-#ifdef DEBUG_FRAME_DUMP
-	// For debugging, dump the frame contents.
-	::Common::DumpFile outf;
-	uint32 now = g_system->getMillis();
-	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));
-	::Image::writePNG(outf, *this, _rawPalette);
-	outf.close();
-#endif
 }
 
 } // End of namespace Access

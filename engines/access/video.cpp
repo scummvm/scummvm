@@ -251,6 +251,9 @@ void VideoPlayer_v2::setVideo(const Common::Point &pt) {
 	_header._frameIncr = _videoData->_stream->readUint16LE();
 	_header._unk = _videoData->_stream->readUint16LE();
 
+	if (_header._id != 0x444956) // 'VID' (LE)
+		warning("Video header for %s is not VID", _videoData->getFileName());
+
 	_videoFrame = 0;
 	_audioStream = NULL;
 	_videoEnd = false;

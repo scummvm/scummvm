@@ -90,7 +90,7 @@ Resource *SoundManager::loadSound(int fileNum, int subfile) {
 	return _vm->_files->loadFile(fileNum, subfile);
 }
 
-void SoundManager::playSound(int soundIndex, bool loop) {
+void SoundManager::playSound(int soundIndex, bool loop /* = false */) {
 	debugC(1, kDebugSound, "playSound(%d, %d)", soundIndex, loop);
 	if (isSoundQueued(soundIndex))
 		// Prevent duplicate copies of a sound from being queued

@@ -194,8 +194,6 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
-
-	void dump(const char *fname) const;
 };
 
 } // End of namespace Access
