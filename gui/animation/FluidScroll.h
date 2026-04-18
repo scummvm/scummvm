@@ -64,6 +64,14 @@ public:
 	// Record a wheel tick and start/update a fling
 	void feedWheel(uint32 time, float deltaY);
 
+	/**
+	 * Handle mouse wheel input
+	 * @param direction Scroll direction
+	 * @param stepSize usually _scrollBar->_singleStep
+	 * @param multiplier Speed multiplier for the scroll
+	 */
+	void handleMouseWheel(int direction, float stepSize, float multiplier = 1.0f);
+
 	// Check if there is an active animation (fling or spring-back)
 	bool isAnimating() const { return _mode != kModeNone; }
 

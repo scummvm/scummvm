@@ -901,6 +901,8 @@ void GridWidget::scrollToEntry(int id, bool forceToTop) {
 		}
 	}
 	handleCommand(this, kSetPositionCmd, newScrollPos);
+	_scrollPos = newScrollPos;
+	applyScrollPos();
 }
 
 void GridWidget::updateGrid() {
@@ -1010,12 +1012,7 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
-	const float stepping = (float)_scrollBar->_singleStep * direction;
-	if (stepping == 0.0f)
-		return;
-
-	_fluidScroller->stopAnimation();
-	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
+	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
 }
 
 void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -1287,12 +1284,13 @@ void GridWidget::openTrayAtSelected() {
 void GridWidget::scrollBarRecalc() {
 	_scrollBar->_numEntries = _innerHeight;
 	_scrollBar->_entriesPerPage = _scrollWindowHeight - 2 * _scrollWindowPaddingY;
-	_scrollBar->_currentPos = (int)_scrollPos;
+	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
+	_scrollBar->_currentPos = CLIP<int>((int)_scrollPos, 0, maxScroll);
 	_scrollBar->_singleStep = kLineHeight;
 
 	_scrollBar->recalc();
 
-	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
+	maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
 	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage);
 }
 

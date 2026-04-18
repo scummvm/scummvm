@@ -356,13 +356,7 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
-	const float stepping = (float)_scrollBar->_singleStep * direction;
-
-	if (stepping == 0.0f)
-		return;
-
-	_fluidScroller->stopAnimation();
-	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
+	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

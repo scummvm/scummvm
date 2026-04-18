@@ -169,6 +169,15 @@ void FluidScroller::feedWheel(uint32 time, float deltaY) {
 	startFling(velocity);
 }
 
+void FluidScroller::handleMouseWheel(int direction, float stepSize, float multiplier) {
+	float stepping = stepSize * (float)direction * multiplier;
+	if (stepping == 0.0f)
+		return;
+
+	stopAnimation();
+	feedWheel(g_system->getMillis(), stepping);
+}
+
 void FluidScroller::absorb(float velocity, float distance) {
 	_mode = kModeSpringBack;
 	_startTime = g_system->getMillis();

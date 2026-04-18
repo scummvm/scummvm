@@ -337,6 +337,8 @@ void ListWidget::scrollTo(int item) {
 
 	if (_currentPos != item) {
 		_currentPos = item;
+		_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+		_fluidScroller->setPosition(_scrollPos, false);
 		checkBounds();
 		scrollBarRecalc();
 		markAsDirty();
@@ -347,7 +349,8 @@ void ListWidget::scrollBarRecalc() {
 	const int lineHeight = kLineHeight + _itemSpacing;
 	_scrollBar->_numEntries = _list.size();
 	_scrollBar->_entriesPerPage = _entriesPerPage;
-	_scrollBar->_currentPos = _currentPos;
+	int maxIndex = MAX(0, (int)_list.size() - _entriesPerPage);
+	_scrollBar->_currentPos = CLIP<int>(_currentPos, 0, maxIndex);
 	_scrollBar->_singleStep = lineHeight;
 	_scrollBar->recalc();
 
@@ -456,13 +459,7 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
-	const float stepping = (float)_scrollBar->_singleStep * direction;
-
-	if (stepping == 0.0f)
-		return;
-
-	_fluidScroller->stopAnimation();
-	_fluidScroller->feedWheel(g_system->getMillis(), stepping);
+	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {
@@ -994,8 +991,10 @@ void ListWidget::scrollToCurrent() {
 	}
 
 	checkBounds();
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
+	_fluidScroller->setPosition(_scrollPos, false);
 }
 
 void ListWidget::scrollToEnd() {
