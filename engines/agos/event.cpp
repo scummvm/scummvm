@@ -246,6 +246,17 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
+				if (isPNDayNightPaletteMode()) {
+					stepPNPaletteFade();
+					if (_pnDayNightControllerActive) {
+						if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
+							_pnDayNightControllerTickCounter -= _vgaBaseDelay;
+						} else {
+							_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
+							updatePNDayNightController();
+						}
+					}
+				}
 				vte++;
 				break;
 			case ANIMATE_EVENT:

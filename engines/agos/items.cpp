@@ -72,6 +72,8 @@ uint AGOSEngine::itemGetIconNumber(Item *item) {
 
 void AGOSEngine::setItemState(Item *item, int value) {
 	item->state = value;
+	if (isPNDayNightPaletteMode())
+		syncPNDesiredPaletteBank();
 }
 
 void AGOSEngine::createPlayer() {

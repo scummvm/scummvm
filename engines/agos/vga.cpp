@@ -289,6 +289,9 @@ uint AGOSEngine::vcReadVar(uint var) {
 void AGOSEngine::vcWriteVar(uint var, int16 value) {
 	assert(var < _numVars);
 	_variableArrayPtr[var] = value;
+
+	if (isPNDayNightPaletteMode() && (var == 84 || var == 85))
+		notePNClockValueChange();
 }
 
 void AGOSEngine::vcSkipNextInstruction() {
@@ -388,6 +391,244 @@ void AGOSEngine::vcSkipNextInstruction() {
 	debugCN(kDebugVGAOpcode, "; skipped\n");
 }
 
+bool AGOSEngine::isPNDayNightPaletteMode() const {
+	return getGameType() == GType_PN && !(getFeatures() & GF_EGA) &&
+		(getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga);
+}
+
+uint8 AGOSEngine::getPNDesiredPaletteBank() const {
+	if (!isPNDayNightPaletteMode())
+		return 0;
+
+	if (_variableArray != nullptr && _numVars > 85) {
+		const int16 hour = _variableArray[84];
+		const int16 minute = _variableArray[85];
+		if (hour >= 0 && hour < 24 && minute >= 0 && minute < 60) {
+			if (!(_pnLastClockMinutes == -1 && hour == 0 && minute == 0))
+				return (hour >= 23 || hour < 7) ? 1 : 0;
+		}
+	}
+
+	if (_itemArrayPtr != nullptr && _itemArraySize > 289) {
+		const Item *item196 = _itemArrayPtr[196];
+		const Item *item289 = _itemArrayPtr[289];
+		const bool nightState = (item196 && item196->state == 7) || (item289 && item289->state == 7);
+		const bool dayState = (item196 && item196->state == 27) || (item289 && item289->state == 27);
+
+		if (nightState && !dayState)
+			return 1;
+		if (dayState && !nightState)
+			return 0;
+	}
+
+	return (_pnDesiredPaletteBank == 1) ? 1 : 0;
+}
+
+void AGOSEngine::syncPNDesiredPaletteBank() {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	_pnDesiredPaletteBank = getPNDesiredPaletteBank();
+}
+
+void AGOSEngine::notePNClockValueChange() {
+	if (!isPNDayNightPaletteMode() || _variableArray == nullptr || _numVars <= 85)
+		return;
+
+	int16 hour = _variableArray[84];
+	int16 minute = _variableArray[85];
+	if (hour < 0 || minute < 0)
+		return;
+
+	if (minute >= 60) {
+		hour += minute / 60;
+		minute %= 60;
+		_variableArray[84] = hour;
+		_variableArray[85] = minute;
+	}
+
+	if (hour >= 24) {
+		hour %= 24;
+		_variableArray[84] = hour;
+	}
+
+	const int16 clockMinutes = hour * 60 + minute;
+	if (_pnLastClockMinutes == -1) {
+		_pnLastClockMinutes = clockMinutes;
+		syncPNDesiredPaletteBank();
+		return;
+	}
+
+	if (clockMinutes != _pnLastClockMinutes)
+		_pnLastClockMinutes = clockMinutes;
+
+	syncPNDesiredPaletteBank();
+}
+
+void AGOSEngine::resetPNRoomPaletteState() {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
+	_pnDayNightControllerActive = false;
+	_pnDayNightControllerLastStage = 0xFF;
+	_pnDayNightControllerSelectorMask = 0xFFFF;
+	_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
+	_pnFadeActive = false;
+	_pnFadeStage = 0;
+	_pnFadeAdvancePending = false;
+}
+
+void AGOSEngine::buildPNPaletteTarget(uint16 selectorMask, uint16 *target) const {
+	for (int i = 0; i < 16; ++i) {
+		const bool useBank1 = (selectorMask & (0x8000 >> i)) != 0;
+		if (useBank1 && _pnHavePaletteBank[1]) {
+			target[i] = _pnPaletteBanks[1][i];
+		} else if (_pnHavePaletteBank[0]) {
+			target[i] = _pnPaletteBanks[0][i];
+		} else if (_pnHavePaletteBank[1]) {
+			target[i] = _pnPaletteBanks[1][i];
+		} else {
+			target[i] = _pnFadeCurrent[i];
+		}
+	}
+}
+
+uint16 AGOSEngine::blendPNPaletteColor(uint16 source, uint16 target, uint8 steps) const {
+	uint16 current = source;
+
+	for (uint8 step = 0; step < steps; ++step) {
+		const uint16 currentRed = current & 0x0f00;
+		const uint16 targetRed = target & 0x0f00;
+		if (currentRed < targetRed)
+			current += 0x0100;
+		else if (currentRed > targetRed)
+			current -= 0x0100;
+
+		const uint16 currentGreen = current & 0x00f0;
+		const uint16 targetGreen = target & 0x00f0;
+		if (currentGreen < targetGreen)
+			current += 0x0010;
+		else if (currentGreen > targetGreen)
+			current -= 0x0010;
+
+		const uint16 currentBlue = current & 0x000f;
+		const uint16 targetBlue = target & 0x000f;
+		if (currentBlue < targetBlue)
+			current += 0x0001;
+		else if (currentBlue > targetBlue)
+			current -= 0x0001;
+	}
+
+	return current;
+}
+
+uint8 AGOSEngine::getPNDayNightControllerStage() const {
+	if (!isPNDayNightPaletteMode() || _variableArray == nullptr || _numVars <= 212)
+		return 0;
+
+	return (uint8)(_variableArray[212] & 7);
+}
+
+void AGOSEngine::updatePNDayNightController() {
+	if (!isPNDayNightPaletteMode())
+		return;
+	if (!_pnDayNightControllerActive)
+		return;
+	if (!_pnHavePaletteBank[0] || !_pnHavePaletteBank[1])
+		return;
+
+	const uint8 stage = getPNDayNightControllerStage();
+	if (stage == _pnDayNightControllerLastStage)
+		return;
+
+	buildPNPaletteTarget(_pnDayNightControllerSelectorMask, _pnFadeTarget);
+	for (int i = 0; i < 16; ++i)
+		_pnFadeCurrent[i] = blendPNPaletteColor(_pnPaletteBanks[0][i], _pnFadeTarget[i], stage);
+
+	if (stage == 0)
+		_pnActivePaletteBank = 0;
+	else if (stage >= 7)
+		_pnActivePaletteBank = 1;
+
+	_pnDayNightControllerLastStage = stage;
+	applyPNDayNightPalette(_pnFadeCurrent, true);
+}
+
+void AGOSEngine::applyPNDayNightPalette(const uint16 *palette, bool updateBackend) {
+	for (int i = 0; i < 16; ++i) {
+		const uint16 color = palette[i];
+		_displayPalette[i * 3 + 0] = ((color & 0x0f00) >> 8) * 32;
+		_displayPalette[i * 3 + 1] = ((color & 0x00f0) >> 4) * 32;
+		_displayPalette[i * 3 + 2] = ((color & 0x000f) >> 0) * 32;
+	}
+
+	memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
+
+	const bool canPushImmediately = updateBackend && (_pnFadeActive || _pnDayNightControllerActive) && _pnHavePaletteBank[0] && _pnHavePaletteBank[1] && _system->getPaletteManager();
+	if (canPushImmediately) {
+		_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
+		_paletteFlag = 0;
+	} else {
+		_paletteFlag = 1;
+	}
+}
+
+void AGOSEngine::startPNPaletteFade(uint16 selectorMask, int16 fadeMode, bool animate) {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	buildPNPaletteTarget(selectorMask, _pnFadeTarget);
+	_pnPendingPaletteBank = _pnDesiredPaletteBank;
+
+	if (!animate) {
+		memcpy(_pnFadeCurrent, _pnFadeTarget, sizeof(_pnFadeCurrent));
+		_pnActivePaletteBank = _pnPendingPaletteBank;
+		_pnFadeActive = false;
+		_pnFadeStage = 0;
+		applyPNDayNightPalette(_pnFadeCurrent, true);
+		return;
+	}
+
+	memcpy(_pnFadeSource, _pnFadeCurrent, sizeof(_pnFadeSource));
+	_pnFadeTickDelay = (fadeMode > 0) ? (uint8)fadeMode : 1;
+	_pnFadeTickCounter = _pnFadeTickDelay;
+	_pnFadeStage = 0;
+	_pnFadeAdvancePending = false;
+	_pnFadeActive = true;
+}
+
+void AGOSEngine::stepPNPaletteFade() {
+	if (!_pnFadeActive)
+		return;
+
+	if (!_pnFadeAdvancePending)
+		return;
+	_pnFadeAdvancePending = false;
+
+	if (_pnFadeTickCounter > 1) {
+		_pnFadeTickCounter--;
+		return;
+	}
+
+	_pnFadeTickCounter = _pnFadeTickDelay;
+
+	if (_pnFadeStage >= 7) {
+		memcpy(_pnFadeCurrent, _pnFadeTarget, sizeof(_pnFadeCurrent));
+		_pnActivePaletteBank = _pnPendingPaletteBank;
+		_pnFadeActive = false;
+		_pnFadeAdvancePending = false;
+		applyPNDayNightPalette(_pnFadeCurrent, true);
+		return;
+	}
+
+	for (int i = 0; i < 16; ++i)
+		_pnFadeCurrent[i] = blendPNPaletteColor(_pnFadeSource[i], _pnFadeTarget[i], _pnFadeStage);
+
+	applyPNDayNightPalette(_pnFadeCurrent, true);
+	_pnFadeStage++;
+}
+
 // VGA Script commands
 void AGOSEngine::vc1_fadeOut() {
 	/* dummy opcode */
@@ -443,8 +684,43 @@ void AGOSEngine::vc3_loadSprite() {
 }
 
 void AGOSEngine::vc4_fadeIn() {
-	/* dummy opcode */
-	_vcPtr += 6;
+	if (!isPNDayNightPaletteMode()) {
+		_vcPtr += 6;
+		return;
+	}
+
+	const uint16 selectorMask = vcReadNextWord();
+	vcReadNextWord();
+	const int16 fadeMode = (int16)vcReadNextWord();
+
+	syncPNDesiredPaletteBank();
+
+	const bool hasAlternateBank = _pnHavePaletteBank[1];
+	const bool isDayPalette = selectorMask == 0;
+
+	if (!hasAlternateBank) {
+		if (_pnHavePaletteBank[0]) {
+			memcpy(_pnFadeCurrent, _pnPaletteBanks[0], sizeof(_pnFadeCurrent));
+			_pnActivePaletteBank = 0;
+		}
+		return;
+	}
+
+	const bool shouldApply = (_pnDesiredPaletteBank == 0) ? isDayPalette : !isDayPalette;
+
+	if (fadeMode == -1) {
+		_pnDayNightControllerSelectorMask = selectorMask;
+		_pnDayNightControllerActive = true;
+		_pnDayNightControllerLastStage = 0xFF;
+		_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
+		updatePNDayNightController();
+		return;
+	}
+
+	if (!shouldApply)
+		return;
+
+	startPNPaletteFade(selectorMask, fadeMode, false);
 }
 
 void AGOSEngine::vc5_ifEqual() {
@@ -944,6 +1220,8 @@ void AGOSEngine::vc22_setPalette() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
 	const uint16 origB = b = vcReadNextWord();
+	uint16 pnPalette[16];
+	const bool pnDayNightPaletteMode = isPNDayNightPaletteMode();
 
 	// PC EGA version of Personal Nightmare uses standard EGA palette
 	if (getGameType() == GType_PN && (getFeatures() & GF_EGA))
@@ -954,10 +1232,14 @@ void AGOSEngine::vc22_setPalette() {
 	palptr = _displayPalette;
 	_bottomPalette = 1;
 
+	uint8 pnBank = 0;
 	if (getGameType() == GType_PN) {
+		if (origB > 128)
+			pnBank = 1;
 		if (b > 128) {
 			b -= 128;
-			palptr = _displayPalette + 3 * 16;
+			if (!pnDayNightPaletteMode)
+				palptr = _displayPalette + 3 * 16;
 		}
 	} else if (getGameType() == GType_ELVIRA1) {
 		if (b >= 1000) {
@@ -1000,21 +1282,42 @@ void AGOSEngine::vc22_setPalette() {
 	offs = _curVgaFile1 + READ_BE_UINT16(_curVgaFile1 + 6);
 	src = offs + b * 32;
 
+	uint pnPaletteIndex = 0;
 	do {
 		uint16 color = READ_BE_UINT16(src);
-		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
-			palptr[0] = atariSTColorNibbleToComponent((color & 0xf00) >> 8);
-			palptr[1] = atariSTColorNibbleToComponent((color & 0x0f0) >> 4);
-			palptr[2] = atariSTColorNibbleToComponent((color & 0x00f) >> 0);
-		} else {
-			palptr[0] = ((color & 0xf00) >> 8) * 32;
-			palptr[1] = ((color & 0x0f0) >> 4) * 32;
-			palptr[2] = ((color & 0x00f) >> 0) * 32;
+		if (pnDayNightPaletteMode)
+			pnPalette[pnPaletteIndex] = color;
+
+		if (!pnDayNightPaletteMode || pnBank == 0) {
+			if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST) {
+				palptr[0] = atariSTColorNibbleToComponent((color & 0xf00) >> 8);
+				palptr[1] = atariSTColorNibbleToComponent((color & 0x0f0) >> 4);
+				palptr[2] = atariSTColorNibbleToComponent((color & 0x00f) >> 0);
+			} else {
+				palptr[0] = ((color & 0xf00) >> 8) * 32;
+				palptr[1] = ((color & 0x0f0) >> 4) * 32;
+				palptr[2] = ((color & 0x00f) >> 0) * 32;
+			}
+			palptr += 3;
 		}
 
-		palptr += 3;
 		src += 2;
+		pnPaletteIndex++;
 	} while (--num);
+
+	if (pnDayNightPaletteMode) {
+		while (pnPaletteIndex < 16)
+			pnPalette[pnPaletteIndex++] = 0;
+
+		memcpy(_pnPaletteBanks[pnBank], pnPalette, sizeof(pnPalette));
+		_pnHavePaletteBank[pnBank] = true;
+
+		if (pnBank == 0) {
+			memcpy(_pnFadeCurrent, _pnPaletteBanks[0], sizeof(_pnFadeCurrent));
+			_pnActivePaletteBank = 0;
+		}
+
+	}
 
 	if (getGameType() == GType_PN && origB == 9 &&
 			(getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga)) {
