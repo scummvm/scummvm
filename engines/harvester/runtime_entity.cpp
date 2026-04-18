@@ -40,13 +40,9 @@ static const char *const kCursorResourcePath = "1:/GRAPHIC/POINTERS/POINTERS.ABM
 static const float kCursorEntityZ = -100.0f;
 static const int kCursorAnimationRate = 10;
 static const int kFramesPerSequence = 10;
-// FIXME: The original runtime entity animation timer is driven from a millisecond DOS clock, 
-// but the actual animation frame update logic is more complex than a simple fixed interval. 
-// The current implementation may cause some animations to run faster or slower than intended, 
-// especially if the game is paused for a long time or if the system is under heavy load. 
-// A more accurate implementation would need to track the elapsed time more precisely and update 
-//the animation frames accordingly.
-// kAnimationClockDivisorMs should be 10, but that "feels" too fast, so bump it to 15 for now. 
+// Animation pacing remains provisional while we compare against the original.
+// Native rate values still feed the recovered 100 / rate interval formula, but
+// this clock divisor is tuned separately from the script/timer countdown clock.
 static const uint32 kAnimationClockDivisorMs = 15;
 static const byte kTransparentPaletteIndex = 0;
 
@@ -75,7 +71,6 @@ static void scaleIndexedBitmapNearest(const IndexedBitmap &source, IndexedBitmap
 }
 
 static uint32 getAnimationClockTicks() {
-	// The original runtime entity animation timer is driven from a centisecond DOS clock.
 	return g_system ? (g_system->getMillis() / kAnimationClockDivisorMs) : 0;
 }
 
@@ -820,8 +815,9 @@ Entity *EntityManager::spawnCursorEntity(const Common::Point &position) {
 		const uint32 animationInterval = _cursorEntity->getAnimationRate() == 0 ? 0 :
 			(100U / (uint32)_cursorEntity->getAnimationRate());
 		debugC(1, kDebugCursor,
-			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock=centiseconds frame=%d..%d pos=(%d,%d)",
-			_cursorEntity->getAnimationRate(), animationInterval, _cursorEntity->getCurrentFrame(),
+			"Harvester: spawned cursor entity rate=%d intervalTicks=%u clock_divisor_ms=%u frame=%d..%d pos=(%d,%d)",
+			_cursorEntity->getAnimationRate(), animationInterval, kAnimationClockDivisorMs,
+			_cursorEntity->getCurrentFrame(),
 			_cursorEntity->getLastFrame(), position.x, position.y);
 	}
 
