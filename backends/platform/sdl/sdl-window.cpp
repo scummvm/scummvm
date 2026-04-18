@@ -539,7 +539,11 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 			SDL_SetWindowFullscreen(_window, fullscreenFlags);
 		} else {
 			SDL_SetWindowFullscreen(_window, fullscreenFlags);
-			SDL_SetWindowSize(_window, width, height);
+			if ((SDL_GetWindowFlags(_window) & SDL_WINDOW_MAXIMIZED) == 0) {
+				// Don't resize the window if we already are maximized
+				// This matches what SDL3 does
+				SDL_SetWindowSize(_window, width, height);
+			}
 			if (flags & SDL_WINDOW_MAXIMIZED) {
 				SDL_MaximizeWindow(_window);
 			} else {

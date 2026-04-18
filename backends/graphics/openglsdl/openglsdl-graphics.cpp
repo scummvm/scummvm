@@ -440,8 +440,6 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 		// Check if the ScummVM window is maximized and store the current
 		// window dimensions.
 		if (SDL_GetWindowFlags(_window->getSDLWindow()) & SDL_WINDOW_MAXIMIZED) {
-			ConfMan.setInt("window_maximized_width", currentWidth, Common::ConfigManager::kApplicationDomain);
-			ConfMan.setInt("window_maximized_height", currentHeight, Common::ConfigManager::kApplicationDomain);
 			ConfMan.setBool("window_maximized", true, Common::ConfigManager::kApplicationDomain);
 		} else {
 			ConfMan.setInt("last_window_width", currentWidth, Common::ConfigManager::kApplicationDomain);
@@ -478,15 +476,8 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	Common::Rect desktopRes = _window->getDesktopResolution();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	bool isMaximized = ConfMan.getBool("window_maximized", Common::ConfigManager::kApplicationDomain);
 	if (!_wantsFullScreen) {
-		if (isMaximized && ConfMan.hasKey("window_maximized_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("window_maximized_height", Common::ConfigManager::kApplicationDomain)) {
-			// Set the window size to the values stored when the window was maximized
-			// for the last time.
-			requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
-			requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
-
-		} else if (!isMaximized && ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+		if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
 			// Load previously stored window dimensions.
 			requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
 			requestedHeight = ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain);
