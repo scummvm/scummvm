@@ -41,17 +41,8 @@ struct ComicBox {
 	const char *msgDe;
 };
 
-class PolygonResource : public Resource {
-public:
-	int findPolygonAt(int16 x, int16 y) const;
-	void free();
-protected:
-	PolygonArray _polygons;
-	void internalLoad(Common::SeekableReadStream &source, uint32 size);
-};
-
 struct ComicBlock {
-	struct Polygon *polygon;
+	const struct Polygon *polygon;
 	int32 soundFileIndex, soundResIndex;
 	const struct ComicBox *boxes;
 	int32 numBoxes;
