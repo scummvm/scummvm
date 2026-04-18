@@ -98,13 +98,7 @@ static inline ImU32 U32(const ImVec4 &c) {
 	return ImGui::GetColorU32(c);
 }
 
-// helper to draw thin rectangles for table grid
-static void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float thickness = 0.1f) {
-	dl->AddLine(ImVec2(min.x, min.y), ImVec2(max.x, min.y), col, thickness); // top
-	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
-	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
-	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
-}
+
 
 // help to draw tool tip with wrapped text
 static void setTooltip(const char *fmt, ...) {

@@ -627,10 +627,7 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 			ImVec2 rMax = ImVec2(x + cellW, y + rulerH);
 			ImU32 rulerCol = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
 			dl->AddRectFilled(rMin, rMax, rulerCol);
-			dl->AddLine(ImVec2(rMin.x, rMin.y), ImVec2(rMax.x, rMin.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(rMax.x, rMin.y), ImVec2(rMax.x, rMax.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(rMax.x, rMax.y), ImVec2(rMin.x, rMax.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(rMin.x, rMax.y), ImVec2(rMin.x, rMin.y), _state->theme->borderColor, 0.1f);
+			addThinRect(dl, rMin, rMax, _state->theme->borderColor);
 			Common::String label = Common::String::format("%d", f + 1);
 			ImVec2 textSz = ImGui::CalcTextSize(label.c_str());
 			dl->AddText(ImVec2(x + (cellW - textSz.x) * 0.5f, y + (rulerH - textSz.y) * 0.5f), _state->theme->gridTextColor, label.c_str());
@@ -655,10 +652,7 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 			ImVec2 lblMin = ImVec2(origin.x, y);
 			ImVec2 lblMax = ImVec2(origin.x + labelW, y + cellH);
 			dl->AddRectFilled(lblMin, lblMax, _state->theme->tableDarkColor);
-			dl->AddLine(ImVec2(lblMin.x, lblMin.y), ImVec2(lblMax.x, lblMin.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(lblMax.x, lblMin.y), ImVec2(lblMax.x, lblMax.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(lblMax.x, lblMax.y), ImVec2(lblMin.x, lblMax.y), _state->theme->borderColor, 0.1f);
-			dl->AddLine(ImVec2(lblMin.x, lblMax.y), ImVec2(lblMin.x, lblMin.y), _state->theme->borderColor, 0.1f);
+			addThinRect(dl, lblMin, lblMax, _state->theme->borderColor);
 			Common::String chLabel = Common::String::format("%d", ch);
 			ImVec2 chSz = ImGui::CalcTextSize(chLabel.c_str());
 			dl->AddText(ImVec2(origin.x + (labelW - chSz.x) * 0.5f, y + (cellH - chSz.y) * 0.5f), _state->theme->gridTextColor, chLabel.c_str());
@@ -670,10 +664,7 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 				ImVec2 cMax = ImVec2(x + cellW, y + cellH);
 				ImU32 col = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
 				dl->AddRectFilled(cMin, cMax, col);
-				dl->AddLine(ImVec2(cMin.x, cMin.y), ImVec2(cMax.x, cMin.y), _state->theme->borderColor, 0.1f);
-				dl->AddLine(ImVec2(cMax.x, cMin.y), ImVec2(cMax.x, cMax.y), _state->theme->borderColor, 0.1f);
-				dl->AddLine(ImVec2(cMax.x, cMax.y), ImVec2(cMin.x, cMax.y), _state->theme->borderColor, 0.1f);
-				dl->AddLine(ImVec2(cMin.x, cMax.y), ImVec2(cMin.x, cMin.y), _state->theme->borderColor, 0.1f);
+				addThinRect(dl, cMin, cMax, _state->theme->borderColor);
 			}
 
 			// Pass 2: span bars

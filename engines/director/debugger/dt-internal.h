@@ -335,6 +335,14 @@ Window *windowListCombo(Common::String *target);
 Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
 void setTheme(int themeIndex);
 
+// helper to draw thin rectangles for table grid
+inline void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float thickness = 0.1f) {
+	dl->AddLine(ImVec2(min.x, min.y), ImVec2(max.x, min.y), col, thickness); // top
+	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
+	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
+	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
+}
+
 void showCast();		// dt-cast.cpp
 void showCastDetails();	// dt-castdetails.cpp
 void showControlPanel();// dt-controlpanel.cpp
