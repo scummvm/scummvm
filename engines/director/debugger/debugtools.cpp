@@ -282,7 +282,7 @@ ImGuiImage getImageID(CastMember *castMember) {
 
 	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
-	if (!pic)
+	if (!pic || !pic->_surface.getPixels())
 		return {};
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);

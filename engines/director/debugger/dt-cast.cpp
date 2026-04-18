@@ -166,8 +166,7 @@ void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						if (!castMember._value->isLoaded())
-							continue;
+						castMember._value->load();
 
 						Common::String name(getDisplayName(castMember._value));
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
@@ -185,6 +184,7 @@ void showCast() {
 							ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowOverlap,
 							ImVec2(0, 32.f) // match row height
 						)) {
+							castMember._value->load();
 							_state->_castDetails._castMember = castMember._value;
 							_state->_w.castDetails = true;
 						}
@@ -261,8 +261,7 @@ void showCast() {
 						continue;
 
 					for (auto castMember : *cast->_loadedCast) {
-						if (!castMember._value->isLoaded())
-							continue;
+						castMember._value->load();
 
 						Common::String name(getDisplayName(castMember._value));
 						if (!_state->_cast._nameFilter.PassFilter(name.c_str()))
@@ -333,6 +332,7 @@ void showCast() {
 
 						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) {
 							// Cast Member Clicked
+							castMember._value->load();
 							_state->_castDetails._castMember = castMember._value; // Must set _castMember before making the caseDetails window visible to prevent null castMember
 							_state->_w.castDetails = true;
 						}

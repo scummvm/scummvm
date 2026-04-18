@@ -31,6 +31,10 @@
 #include "director/castmember/richtext.h"
 #include "director/castmember/shape.h"
 #include "director/castmember/bitmap.h"
+#include "director/sprite.h"
+#include "director/castmember/filmloop.h"
+#include "director/frame.h"
+#include "director/score.h"
 
 #include "director/types.h"
 
@@ -498,6 +502,247 @@ void drawCastProps(Cast *cast) {
 	}
 }
 
+// Per filmloop curent frame, keyed by cast member pointer
+static Common::HashMap<FilmLoopCastMember *, int> _filmLoopCurrentFrame;
+
+void drawFilmLoopCMprops(FilmLoopCastMember *member) {
+	assert(member != nullptr);
+	if (ImGui::BeginTabItem("Film Loop")) {
+		if (ImGui::CollapsingHeader("Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::BeginTable("##FilmLoopProps", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+				showPropertyBool("looping", member->_looping);
+				showPropertyBool("enableSound", member->_enableSound);
+				showPropertyBool("crop", member->_crop);
+				showPropertyBool("center", member->_center);
+				if (member->_score)
+					showProperty("frameCount", "%d", (int)member->_score->_scoreCache.size());
+				ImGui::EndTable();
+			}
+		}
+
+		Score *score = member->_score;
+		if (!score || score->_scoreCache.empty()) {
+			ImGui::TextDisabled("No frames loaded");
+			ImGui::EndTabItem();
+			return;
+		}
+
+		int numFrames = (int)score->_scoreCache.size();
+
+		// find highest active channel
+		int maxChannel = 0;
+		for (int f = 0; f < numFrames; f++) {
+			Frame *frame = score->_scoreCache[f];
+			if (!frame) continue;
+			for (int ch = 1; ch < (int)frame->_sprites.size(); ch++) {
+				if (frame->_sprites[ch] && frame->_sprites[ch]->_castId.member != 0)
+					maxChannel = MAX(maxChannel, ch);
+			}
+		}
+
+		if (maxChannel == 0) {
+			ImGui::TextDisabled("No sprite data");
+			ImGui::EndTabItem();
+			return;
+		}
+
+		// Initialize current frame for this member if needed
+		if (!_filmLoopCurrentFrame.contains(member))
+			_filmLoopCurrentFrame[member] = 0;
+		int &currentFrame = _filmLoopCurrentFrame[member];
+
+		const float cellW = 30.0f;
+		const float cellH = 18.0f;
+		const float labelW = 24.0f;
+		const float rulerH = 16.0f;
+		float gridW = labelW + numFrames * cellW;
+		float gridH = rulerH + maxChannel * cellH;
+
+		ImGui::Spacing();
+		ImGui::Text("Score");
+		ImGui::Separator();
+
+		// Frame navigation controls
+		if (ImGui::Button("|<")) currentFrame = 0;
+		ImGui::SameLine();
+		if (ImGui::Button("<") && currentFrame > 0) currentFrame--;
+		ImGui::SameLine();
+		ImGui::Text("Frame %d / %d", currentFrame + 1, numFrames);
+		ImGui::SameLine();
+		if (ImGui::Button(">") && currentFrame < numFrames - 1) currentFrame++;
+		ImGui::SameLine();
+		if (ImGui::Button(">|")) currentFrame = numFrames - 1;
+
+		// Frame preview, show thumbnails of all active sprites in the current frame
+		Frame *previewFrame = score->_scoreCache[currentFrame];
+		Cast *cast = member->getCast();
+		if (previewFrame && cast) {
+			const float thumbSize = 48.0f;
+			bool anySprite = false;
+			for (int ch = 1; ch <= maxChannel; ch++) {
+				if (ch >= (int)previewFrame->_sprites.size()) break;
+				Sprite *sp = previewFrame->_sprites[ch];
+				if (!sp || sp->_castId.member == 0) continue;
+
+				CastMember *cm = cast->getCastMember(sp->_castId.member, true);
+				if (!cm) continue;
+
+				if (!anySprite) {
+					ImGui::Separator();
+					ImGui::Text("Frame preview");
+					anySprite = true;
+				}
+
+				ImGuiImage imgID = getImageID(cm);
+				ImGui::BeginGroup();
+				if (imgID.id) {
+					showImage(imgID, cm->getName().c_str(), thumbSize);
+				} else {
+					// No image -> draw a placeholder box
+					ImVec2 pos = ImGui::GetCursorScreenPos();
+					ImGui::GetWindowDrawList()->AddRect(pos, ImVec2(pos.x + thumbSize, pos.y + thumbSize), _state->theme->borderColor);
+					ImGui::Dummy(ImVec2(thumbSize, thumbSize));
+				}
+				ImGui::Text("ch%d", ch);
+				ImGui::EndGroup();
+				ImGui::SameLine();
+			}
+			if (anySprite)
+				ImGui::NewLine();
+		}
+		ImGui::Separator();
+
+		// Scrollable child region
+		float scrollbarH = ImGui::GetStyle().ScrollbarSize;
+		ImGui::BeginChild("##FilmLoopScoreChild", ImVec2(0, MIN(gridH + scrollbarH + 4.0f, 200.0f)), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+		ImDrawList *dl = ImGui::GetWindowDrawList();
+		ImVec2 origin = ImGui::GetCursorScreenPos();
+
+		// Ruler
+		for (int f = 0; f < numFrames; f++) {
+			float x = origin.x + labelW + f * cellW;
+			float y = origin.y;
+			ImVec2 rMin = ImVec2(x, y);
+			ImVec2 rMax = ImVec2(x + cellW, y + rulerH);
+			ImU32 rulerCol = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
+			dl->AddRectFilled(rMin, rMax, rulerCol);
+			dl->AddLine(ImVec2(rMin.x, rMin.y), ImVec2(rMax.x, rMin.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(rMax.x, rMin.y), ImVec2(rMax.x, rMax.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(rMax.x, rMax.y), ImVec2(rMin.x, rMax.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(rMin.x, rMax.y), ImVec2(rMin.x, rMin.y), _state->theme->borderColor, 0.1f);
+			Common::String label = Common::String::format("%d", f + 1);
+			ImVec2 textSz = ImGui::CalcTextSize(label.c_str());
+			dl->AddText(ImVec2(x + (cellW - textSz.x) * 0.5f, y + (rulerH - textSz.y) * 0.5f), _state->theme->gridTextColor, label.c_str());
+		}
+
+		// Playhead
+		{
+			float px = origin.x + labelW + currentFrame * cellW;
+			dl->AddLine(ImVec2(px, origin.y), ImVec2(px, origin.y + gridH), _state->theme->playhead_color, 2.0f);
+			dl->AddTriangleFilled(
+				ImVec2(px - 5.0f, origin.y),
+				ImVec2(px + 5.0f, origin.y),
+				ImVec2(px, origin.y + 8.0f),
+				_state->theme->playhead_color);
+		}
+
+		// Channel rows
+		for (int ch = 1; ch <= maxChannel; ch++) {
+			float y = origin.y + rulerH + (ch - 1) * cellH;
+
+			// label cells
+			ImVec2 lblMin = ImVec2(origin.x, y);
+			ImVec2 lblMax = ImVec2(origin.x + labelW, y + cellH);
+			dl->AddRectFilled(lblMin, lblMax, _state->theme->tableDarkColor);
+			dl->AddLine(ImVec2(lblMin.x, lblMin.y), ImVec2(lblMax.x, lblMin.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(lblMax.x, lblMin.y), ImVec2(lblMax.x, lblMax.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(lblMax.x, lblMax.y), ImVec2(lblMin.x, lblMax.y), _state->theme->borderColor, 0.1f);
+			dl->AddLine(ImVec2(lblMin.x, lblMax.y), ImVec2(lblMin.x, lblMin.y), _state->theme->borderColor, 0.1f);
+			Common::String chLabel = Common::String::format("%d", ch);
+			ImVec2 chSz = ImGui::CalcTextSize(chLabel.c_str());
+			dl->AddText(ImVec2(origin.x + (labelW - chSz.x) * 0.5f, y + (cellH - chSz.y) * 0.5f), _state->theme->gridTextColor, chLabel.c_str());
+
+			// Pass 1: cell backgrounds
+			for (int f = 0; f < numFrames; f++) {
+				float x = origin.x + labelW + f * cellW;
+				ImVec2 cMin = ImVec2(x, y);
+				ImVec2 cMax = ImVec2(x + cellW, y + cellH);
+				ImU32 col = ((f + 1) % 5 == 0) ? _state->theme->tableDarkColor : _state->theme->tableLightColor;
+				dl->AddRectFilled(cMin, cMax, col);
+				dl->AddLine(ImVec2(cMin.x, cMin.y), ImVec2(cMax.x, cMin.y), _state->theme->borderColor, 0.1f);
+				dl->AddLine(ImVec2(cMax.x, cMin.y), ImVec2(cMax.x, cMax.y), _state->theme->borderColor, 0.1f);
+				dl->AddLine(ImVec2(cMax.x, cMax.y), ImVec2(cMin.x, cMax.y), _state->theme->borderColor, 0.1f);
+				dl->AddLine(ImVec2(cMin.x, cMax.y), ImVec2(cMin.x, cMin.y), _state->theme->borderColor, 0.1f);
+			}
+
+			// Pass 2: span bars
+			int f = 0;
+			while (f < numFrames) {
+				Frame *frame = score->_scoreCache[f];
+				if (!frame || ch >= (int)frame->_sprites.size() || !frame->_sprites[ch] || frame->_sprites[ch]->_castId.member == 0) {
+					f++;
+					continue;
+				}
+
+				// Find span end
+				int spanStart = f;
+				int memberNum = frame->_sprites[ch]->_castId.member;
+				int spanEnd = f;
+				while (spanEnd + 1 < numFrames) {
+					Frame *nf = score->_scoreCache[spanEnd + 1];
+					if (nf && ch < (int)nf->_sprites.size() && nf->_sprites[ch] && nf->_sprites[ch]->_castId.member == memberNum)
+						spanEnd++;
+					else
+						break;
+				}
+
+				float x1 = origin.x + labelW + spanStart * cellW;
+				float x2 = origin.x + labelW + (spanEnd + 1) * cellW;
+				float cy = y + cellH * 0.5f;
+				float pad = 1.0f;
+
+				int colorIdx = memberNum % 6;
+				ImU32 barColor = _state->theme->contColors[colorIdx];
+
+				dl->AddRectFilled(ImVec2(x1, y + pad), ImVec2(x2 - 1.0f, y + cellH - pad), barColor);
+				dl->AddLine(ImVec2(x1 + 6.0f, cy), ImVec2(x2 - 6.0f, cy), _state->theme->gridTextColor, 1.0f);
+				dl->AddCircle(ImVec2(x1 + 4.0f, cy), 3.0f, _state->theme->gridTextColor, 0, 1.5f);
+				dl->AddRect(ImVec2(x2 - 7.0f, cy - 3.0f), ImVec2(x2 - 1.0f, cy + 3.0f), _state->theme->gridTextColor, 0.0f, 0, 1.5f);
+
+				float spanW = x2 - x1 - 8.0f;
+				Common::String label = Common::String::format("%d", memberNum);
+				if (spanW > 4.0f) {
+					float textY = y + (cellH - ImGui::GetTextLineHeight()) * 0.5f;
+					// clipText function is static in dt-score.cpp, so inline a simple clip
+					Common::String clipped = label;
+					if (ImGui::CalcTextSize(clipped.c_str()).x > spanW) clipped = "";
+					if (!clipped.empty())
+						dl->AddText(ImVec2(x1 + 4.0f, textY), _state->theme->gridTextColor, clipped.c_str());
+				}
+
+				// Tooltip
+				ImGui::SetCursorScreenPos(ImVec2(x1, y));
+				ImGui::InvisibleButton(Common::String::format("##fl_%d_%d", ch, spanStart).c_str(), ImVec2(x2 - x1, cellH));
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::Text("Channel %d | Frames %d-%d | Cast member %d", ch, spanStart + 1, spanEnd + 1, memberNum);
+					ImGui::EndTooltip();
+				}
+
+				f = spanEnd + 1;
+			}
+		}
+
+		// Advance the cursor
+		ImGui::SetCursorScreenPos(ImVec2(origin.x, origin.y + gridH));
+		ImGui::Dummy(ImVec2(gridW, 0));
+
+		ImGui::EndChild();
+		ImGui::EndTabItem();
+	}
+}
+
 void drawCMTypeProps(CastMember *member) {
 	assert(member != nullptr);
 	switch (member->_type) {
@@ -516,9 +761,11 @@ void drawCMTypeProps(CastMember *member) {
 	case kCastShape:
 		drawShapeCMprops(static_cast<ShapeCastMember *>(member));
 		break;
+	case kCastFilmLoop:
+		drawFilmLoopCMprops(static_cast<FilmLoopCastMember *>(member));
+		break;
 	case kCastTypeAny:
 	case kCastTypeNull:
-	case kCastFilmLoop:
 	case kCastPalette:
 	case kCastPicture:
 	case kCastSound:
