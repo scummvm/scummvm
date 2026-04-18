@@ -170,6 +170,7 @@ endif
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
+	plugins/elf/cxa-atexit.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
 	plugins/elf/memory-manager.o \

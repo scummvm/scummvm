@@ -44,7 +44,7 @@ protected:
 	typedef const char *(*CharFunc)();
 
 	DLObject *_dlHandle;
-	void *_dso_handle;
+	VoidFunc _finalizeFunc;
 
 	virtual VoidFunc findSymbol(const char *symbol);
 
@@ -52,7 +52,7 @@ public:
 	ELFPlugin(const Common::Path &filename) :
 		DynamicPlugin(filename),
 		_dlHandle(0),
-		_dso_handle(0) {
+		_finalizeFunc(0) {
 	}
 
 	virtual ~ELFPlugin() {
