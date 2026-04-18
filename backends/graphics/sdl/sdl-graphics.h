@@ -202,7 +202,6 @@ public:
 	virtual void destroyingWindow() {}
 
 protected:
-	Uint32 _lastFlags;
 	bool _allowWindowSizeReset;
 	int _hintedWidth, _hintedHeight;
 

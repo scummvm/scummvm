@@ -2879,7 +2879,7 @@ void SurfaceSdlGraphicsManager::handleScalerHotkeys(uint mode, int factor) {
 	if (sizeChanged) {
 		// Forcibly resizing the window here since a user switching scaler
 		// size will not normally cause the window to update
-		_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _lastFlags);
+		_window->createOrUpdateWindow(_hwScreen->w, _hwScreen->h, _window->getWindowFlags());
 	}
 #endif
 
