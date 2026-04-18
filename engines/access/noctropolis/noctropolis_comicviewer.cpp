@@ -25,34 +25,6 @@ namespace Access {
 
 namespace Noctropolis {
 
-int PolygonResource::findPolygonAt(int16 x, int16 y) const {
-	for (uint i = 0; i < _polygons.size(); i++) {
-		if (_polygons[i].pointInside(x, y))
-			return i;
-	}
-	return -1;
-}
-
-void PolygonResource::internalLoad(Common::SeekableReadStream &source, uint32 size) {
-	int polygonCount = source.readUint32LE();
-	while (polygonCount--) {
-		Polygon polygon;
-		int pointsCount = source.readUint16LE();
-		while (pointsCount--) {
-			Common::Point point;
-			point.x = source.readUint16LE();
-			point.y = source.readUint16LE();
-			polygon.points.push_back(point);
-		}
-		_polygons.push_back(polygon);
-	}
-}
-
-void PolygonResource::free() {
-	_polygons.clear();
-}
-
-////////////////
 
 ComicResource::ComicResource(const ComicPage *pages[], int npages) {
 	for (int i = 0; i < npages; i++)

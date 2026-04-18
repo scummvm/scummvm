@@ -426,7 +426,7 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (const auto extraCell : roomInfo._extraCells)
+	for (const auto &extraCell : roomInfo._extraCells)
 		_vm->_extraCells.push_back(extraCell);
 
 	// Load sounds for the scene

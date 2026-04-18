@@ -23,6 +23,7 @@
 #include "access/access.h"
 #include "access/resources.h"
 #include "access/scripts.h"
+#include "access/asurface.h"
 #include "access/martian/martian_resources.h"
 #include "access/noctropolis/noctropolis_game.h"
 #include "access/noctropolis/noctropolis_resources.h"
@@ -916,9 +917,9 @@ void Scripts::cmdSetVideo_v3() {
 	_vm->_video->setVideo(_vm->_screen, pt, vidpath, 0);
 
 	if (noFrame == 0) {
-		_vm->_screen->ASurface::drawBox(pt.x - 1, pt.y - 1, pt.x + _vm->_video->getWidth(), pt.y + _vm->_video->getHeight(), 249);
-		_vm->_screen->ASurface::drawBox(pt.x - 2, pt.y - 2, pt.x + _vm->_video->getWidth() + 1, pt.y + _vm->_video->getHeight() + 1, 248);
-		_vm->_screen->ASurface::drawBox(pt.x - 3, pt.y - 3, pt.x + _vm->_video->getWidth() + 2, pt.y + _vm->_video->getHeight() + 2, 247);
+		_vm->_screen->BaseSurface::drawBox(pt.x - 1, pt.y - 1, pt.x + _vm->_video->getWidth(), pt.y + _vm->_video->getHeight(), 249);
+		_vm->_screen->BaseSurface::drawBox(pt.x - 2, pt.y - 2, pt.x + _vm->_video->getWidth() + 1, pt.y + _vm->_video->getHeight() + 1, 248);
+		_vm->_screen->BaseSurface::drawBox(pt.x - 3, pt.y - 3, pt.x + _vm->_video->getWidth() + 2, pt.y + _vm->_video->getHeight() + 2, 247);
 	}
 
 	if (cellIndex == 1 && roomNum == 0x36)
