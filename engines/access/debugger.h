@@ -46,6 +46,7 @@ protected:
 	bool Cmd_Ask(int argc, const char **argv);
 	bool Cmd_Inventory(int argc, const char **argv);
 	bool Cmd_Everything(int argc, const char **argv);
+	bool Cmd_Hotspot(int argc, const char **argv);
 
 public:
 	static Debugger *init(AccessEngine *vm);

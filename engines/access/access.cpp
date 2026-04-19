@@ -97,6 +97,7 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_vidX = _vidY = 0;
 	_cheatFl = false;
 	_restartFl = false;
+	_hotspotFl = false;
 	_printEnd = 0;
 	ARRAYCLEAR(_objectsTable);
 	_clearSummaryFlag = false;
@@ -230,7 +231,7 @@ Common::Error AccessEngine::run() {
 
 	setVGA();
 	initialize();
-	
+
 	initObjects();
 	setupGame();
 
@@ -369,6 +370,17 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 	_events->waitKeyActionMouse();
 }
 
+void AccessEngine::addHotspotHighlights() {
+	// find the reddest color in the palette.
+	byte palbuf[Graphics::PALETTE_SIZE];
+	_screen->getPalette(palbuf);
+	Graphics::PaletteLookup lookup;
+	lookup.setPalette(palbuf, 256);
+	byte color = lookup.findBestColor(255, 0, 0);
+	for (const auto &block : _room->_plotter._blocks) {
+		_screen->ASurface::drawBox(block.left, block.top, block.right, block.bottom, color);
+	}
+}
 
 void AccessEngine::plotList() {
 	_player->calcPlayer();
@@ -459,6 +471,9 @@ void AccessEngine::copyRects() {
 		_screen->copyBlock(&_buffer2, rect);
 		_oldRects.push_back(rect);
 	}
+
+	if (_hotspotFl)
+		addHotspotHighlights();
 }
 
 void AccessEngine::copyBF1BF2() {

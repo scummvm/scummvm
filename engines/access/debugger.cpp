@@ -75,6 +75,7 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("ask", WRAP_METHOD(Debugger, Cmd_Ask));
 	registerCmd("inventory", WRAP_METHOD(Debugger, Cmd_Inventory));
 	registerCmd("everything", WRAP_METHOD(Debugger, Cmd_Everything));
+	registerCmd("hotspot", WRAP_METHOD(Debugger, Cmd_Hotspot));
 }
 
 Debugger::~Debugger() {
@@ -359,13 +360,15 @@ bool Debugger::Cmd_Everything(int argc, const char **argv) {
 	// Turn off known-broken/cut locations that exist in the travel table
 	// but you can't go there or going there directly will cause a crash.
 	//
-	const int INVALID_TRAVEL_LOCATIONS[] = {
+	const int MM_INVALID_TRAVEL_LOCATIONS[] = {
 		10, // RESTAURANT
 		12, // LOVE SCENE
 	};
 
-	for (uint i = 0; i < ARRAYSIZE(INVALID_TRAVEL_LOCATIONS); ++i)
-		_vm->_travel[INVALID_TRAVEL_LOCATIONS[i]] = 0;
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (uint i = 0; i < ARRAYSIZE(MM_INVALID_TRAVEL_LOCATIONS); ++i)
+			_vm->_travel[MM_INVALID_TRAVEL_LOCATIONS[i]] = 0;
+	}
 
 	for (uint i = 0; i < ARRAYSIZE(_vm->_ask); ++i)
 		_vm->_ask[i] = 1;
@@ -375,6 +378,12 @@ bool Debugger::Cmd_Everything(int argc, const char **argv) {
 	return true;
 }
 
+bool Debugger::Cmd_Hotspot(int argc, const char **argv) {
+	_vm->_hotspotFl = !_vm->_hotspotFl;
+
+	debugPrintf("Hotspot highlighting %s\n", _vm->_hotspotFl ? "enabled" : "disabled");
+	return true;
+}
 
 
 /*------------------------------------------------------------------------*/
