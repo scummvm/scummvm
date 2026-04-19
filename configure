@@ -3927,6 +3927,16 @@ if test -n "$_host"; then
 			_nuked_opl=no
 			_detection_features_full=no
 
+			if test "$_backend" = sdl; then
+				if cc_check_define __mcoldfire__; then
+					_firebee_plugin_provider=yes
+				else
+					_atari_plugin_provider=yes
+				fi
+				define_in_config_if_yes "$_atari_plugin_provider" 'USE_ATARI_PLUGIN_PROVIDER'
+				define_in_config_if_yes "$_firebee_plugin_provider" 'USE_FIREBEE_PLUGIN_PROVIDER'
+			fi
+
 			_port_mk="backends/platform/atari/atari.mk"
 			;;
 		maemo)

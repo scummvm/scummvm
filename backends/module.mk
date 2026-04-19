@@ -238,7 +238,13 @@ endif
 
 ifndef RISCOS
 ifndef KOLIBRIOS
+ifdef USE_ATARI_PLUGIN_PROVIDER
+MODULE_OBJS += plugins/atari/atari-provider.o
+else ifdef USE_FIREBEE_PLUGIN_PROVIDER
+MODULE_OBJS += plugins/firebee/firebee-provider.o
+else
 MODULE_OBJS += plugins/sdl/sdl-provider.o
+endif
 endif
 endif
 

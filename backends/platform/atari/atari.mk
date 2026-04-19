@@ -108,12 +108,19 @@ ifeq ($(CREATE_ZIP),y)
 	$(ZIP) -r -9 ../${FULL_DIR}.zip ${FULL_DIR}
 endif
 
-fbdist: $(EXECUTABLE)
+fbdist: $(EXECUTABLE) plugins
 	$(RM_REC) ${FB_DIR}
 	$(MKDIR) ${FB_DIR}
 
 	$(CP) $(EXECUTABLE) ${FB_DIR}
 	$(STRIP) -s ${FB_DIR}/$(EXECUTABLE)
+
+ifneq ($(PLUGINS),)
+	$(MKDIR) ${FB_DIR}/plugins
+	$(CP) $(PLUGINS) ${FB_DIR}/plugins
+	$(STRIP) --strip-debug ${FB_DIR}/plugins/*$(PLUGIN_SUFFIX)
+	! [ -f ${FB_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${FB_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${FB_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+endif
 
 	$(MKDIR) ${FB_DOCS}
 	$(CP) $(DIST_FILES_DOCS) ${FB_DOCS}
