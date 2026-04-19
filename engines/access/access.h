@@ -157,6 +157,11 @@ private:
 	 */
 	void setVGA();
 
+	/**
+	 * Add hotspots to buffer2 for debugging purposes
+	 */
+	void addHotspotHighlights();
+
 protected:
 	const AccessGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
@@ -292,6 +297,7 @@ public:
 	bool _cheatFl;
 	bool _restartFl;
 	bool _textFlag; // whether subtitles are enabled
+	bool _hotspotFl; // whether hotspot highlighting is enabled (for debug)
 	bool _exitBox; // whether the current hotspot is an exit (Noctropolis only)
 	uint16 _stilScaleOff;
 
