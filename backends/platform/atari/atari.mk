@@ -17,13 +17,20 @@ FB_DATA		:= ${FB_DIR}
 FB_DOCS		:= ${FB_DIR}/doc
 FB_THEMES	:= ${FB_DIR}
 
-atarilitedist: $(EXECUTABLE)
+atarilitedist: $(EXECUTABLE) plugins
 	$(RM_REC) ${LITE_DIR}
 	$(MKDIR) ${LITE_DIR}
 
 	$(CP) $(EXECUTABLE) ${LITE_DIR}
 	$(NM) -C ${LITE_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CXXFILT) | sort -u > ${LITE_DIR}/scummvm.sym
 	$(STRIP) -s ${LITE_DIR}/$(EXECUTABLE)
+
+ifneq ($(PLUGINS),)
+	$(MKDIR) ${LITE_DIR}/plugins
+	$(CP) $(PLUGINS) ${LITE_DIR}/plugins
+	$(STRIP) --strip-debug ${LITE_DIR}/plugins/*$(PLUGIN_SUFFIX)
+	! [ -f ${LITE_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${LITE_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${LITE_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+endif
 
 	$(MKDIR) ${LITE_DOCS}
 	$(CP) $(DIST_FILES_DOCS) ${LITE_DOCS}
@@ -48,13 +55,20 @@ ifeq ($(CREATE_ZIP),y)
 	$(ZIP) -r -9 ../${LITE_DIR}.zip ${LITE_DIR}
 endif
 
-atarifulldist: $(EXECUTABLE)
+atarifulldist: $(EXECUTABLE) plugins
 	$(RM_REC) ${FULL_DIR}
 	$(MKDIR) ${FULL_DIR}
 
 	$(CP) $(EXECUTABLE) ${FULL_DIR}
 	$(NM) -C ${FULL_DIR}/$(EXECUTABLE) | grep -vF ' .L' | grep ' [TtWV] ' | $(CXXFILT) | sort -u > ${FULL_DIR}/scummvm.sym
 	$(STRIP) -s ${FULL_DIR}/$(EXECUTABLE)
+
+ifneq ($(PLUGINS),)
+	$(MKDIR) ${FULL_DIR}/plugins
+	$(CP) $(PLUGINS) ${FULL_DIR}/plugins
+	$(STRIP) --strip-debug ${FULL_DIR}/plugins/*$(PLUGIN_SUFFIX)
+	! [ -f ${FULL_DIR}/plugins/detection$(PLUGIN_SUFFIX) ] || mv ${FULL_DIR}/plugins/detection$(PLUGIN_SUFFIX) ${FULL_DIR}/plugins/detectio$(PLUGIN_SUFFIX)
+endif
 
 	$(MKDIR) ${FULL_DOCS}
 	$(CP) $(DIST_FILES_DOCS) ${FULL_DOCS}

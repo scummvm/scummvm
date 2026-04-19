@@ -173,6 +173,7 @@ MODULE_OBJS += \
 	plugins/elf/cxa-atexit.o \
 	plugins/elf/elf-loader.o \
 	plugins/elf/elf-provider.o \
+	plugins/elf/m68k-loader.o \
 	plugins/elf/memory-manager.o \
 	plugins/elf/mips-loader.o \
 	plugins/elf/ppc-loader.o \
@@ -428,6 +429,10 @@ MODULE_OBJS += \
 	graphics/atari/atari-supervidel.o \
 	graphics/atari/atari-surface.o \
 	mixer/atari/atari-mixer.o
+ifdef USE_ELF_LOADER
+MODULE_OBJS += \
+	plugins/atari/atari-provider.o
+endif
 endif
 
 ifeq ($(BACKEND),ds)

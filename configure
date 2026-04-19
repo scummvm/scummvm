@@ -684,7 +684,7 @@ get_system_exe_extension() {
 	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
-	mint)
+	mint*)
 		_exeext=".prg"
 		;;
 	emscripten)
@@ -1840,6 +1840,11 @@ kos32)
 	_host_os=kolibrios
 	_host_cpu=i686
 	_host_alias=kos32
+	;;
+m68k-atari-mintelf*)
+	_host_os=mintelf
+	_host_cpu=m68k
+	_host_alias=$_host
 	;;
 m68k-atari-mint*)
 	_host_os=mint
@@ -5203,6 +5208,18 @@ PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
 PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
 POST_OBJS_FLAGS := -Wl,-no-whole-archive
+'
+		;;
+	mintelf)
+		_elf_loader=yes
+		append_var DEFINES "-DM68K_TARGET"
+		append_var DEFINES "-DPLUGIN_DETECTION_NAME=\\\"detectio\\\""
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+		append_var DEFINES "-DELF_NO_MEM_MANAGER"
+_mak_plugins='
+PLUGIN_LDFLAGS		+= -Wl,-m,m68kelf,-T,$(srcdir)/backends/plugins/mintelf/plugin.ld
 '
 		;;
 	*cygwin* | *mingw32* | mingw64)

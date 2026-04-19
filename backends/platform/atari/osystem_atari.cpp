@@ -43,6 +43,9 @@
 #include "backends/platform/atari/osystem_atari.h"
 
 #include "backends/audiocd/default/default-audiocd.h"
+#ifdef DYNAMIC_MODULES
+#include "backends/plugins/atari/atari-provider.h"
+#endif
 #include "common/config-manager.h"
 #include "backends/events/atari/atari-events.h"
 #include "backends/events/default/default-events.h"
@@ -521,6 +524,10 @@ OSystem *OSystem_Atari_create() {
 int main(int argc, char *argv[]) {
 	g_system = OSystem_Atari_create();
 	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new AtariPluginProvider());
+#endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

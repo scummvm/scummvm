@@ -8,6 +8,7 @@ cd build-release
 
 PLATFORM=m68k-atari-mintelf
 FASTCALL=false
+PLUGINS=true
 export ASFLAGS="-m68020-60"
 export CXXFLAGS="-m68020-60 -DUSE_MOVE16 -DUSE_SUPERVIDEL -DUSE_SV_BLITTER -DDISABLE_LAUNCHERDISPLAY_GRID"
 export LDFLAGS="-m68020-60"
@@ -21,6 +22,13 @@ then
 	LDFLAGS="$LDFLAGS -mfastcall"
 fi
 
+if $PLUGINS
+then
+	PLUGINS_FLAGS="--enable-plugins --default-dynamic --enable-detection-dynamic"
+else
+	PLUGINS_FLAGS=""
+fi
+
 if [ ! -f config.log ]
 then
 ../configure \
@@ -28,7 +36,8 @@ then
 	--host=${PLATFORM} \
 	--enable-release \
 	--enable-verbose-build \
-	--disable-engine=hugo,director,cine,ultima,pink,wage
+	--disable-engine=hugo,director,cine,ultima,pink,wage \
+	${PLUGINS_FLAGS}
 fi
 
 make -j$(getconf _NPROCESSORS_CONF) atarifulldist

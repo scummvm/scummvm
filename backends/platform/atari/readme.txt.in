@@ -534,17 +534,9 @@ Future plans
 
 - DSP-based sample mixer (WAV, FLAC, MP2).
 
-- Avoid loading music/speech files (and thus slowing down everything) if muted.
-
-- Cached audio/video streams (i.e. don't load only "audio_buffer_size" number
-  of samples but cache, say, 1 second so disk i/o won't be so stressed).
-
-- Using Thorsten Otto's sharedlibs: https://tho-otto.de/sharedlibs.php for game
-  engine plugins to relieve the huge binary size.
+- Avoid decoding music/speech files (and thus slowing down everything) if muted.
 
 - True audio CD support via MetaDOS API.
-
-- OPL2LPT and Retrowave support (if I manage to purchase it somewhere).
 
 
 Closing words
