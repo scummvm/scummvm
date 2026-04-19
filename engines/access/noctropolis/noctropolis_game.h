@@ -57,6 +57,8 @@ public:
 	int16 getScreenWidth() const override { return 640; }
 	int16 getScreenHeight() const override { return 400; }
 
+	void drawOverlays() override;
+
 	Player *_stil;
 	int _travScrollRow;
 	int _travScrollCol;
@@ -104,6 +106,8 @@ private:
 	void doFlashLogo();
 	void doPublisherLogo();
 	void initVariables();
+
+	void drawDeathTimer();
 };
 
 } // end namespace Noctropolis

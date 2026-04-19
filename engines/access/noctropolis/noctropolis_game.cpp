@@ -152,6 +152,22 @@ void NoctropolisEngine::playGame() {
 	} while (_restartFl);
 }
 
+void NoctropolisEngine::drawOverlays() {
+	AccessEngine::drawOverlays();
+	
+	drawDeathTimer();
+}
+
+void NoctropolisEngine::drawDeathTimer() {
+  if (!_flags[200])
+	return;
+
+	int seconds = _timers[0x12]._timer / 60;
+	Common::String time = Common::String::format("%02d:%02d", seconds / 60, seconds % 60);
+	_screen->fillRect(Common::Rect(0, 384, 47, 399), 0xf6);
+	const Font *font = _fonts.getFont(4);
+	font->drawString(_screen, time, Common::Point(2, 384));
+}
 
 Common::Error NoctropolisEngine::loadGameState(int slot) {
 	_loadFlag = true;
@@ -483,8 +499,10 @@ void NoctropolisEngine::setStilettoPos() {
 
 void NoctropolisEngine::dead(int deathType) {
 	// aka DeadMeat1
-	/*
-	static const struct { int16 x, y; } deathVideoPos[] = {
+
+	Common::String vidfile = Common::String::format("VID2/DEATH%d.VID", deathType + 1);
+
+	static constexpr struct { int16 x, y; } DEAD_COORD[] = {
 		{167, 21},
 		{161, 22},
 		{186, 29},
@@ -495,47 +513,50 @@ void NoctropolisEngine::dead(int deathType) {
 		{227, 0}
 	};
 
+	static constexpr int DEAD_VIDS[] = {
+		3, 0, 0, 0, 0, 0, 5, 6, 7, 1, 1, 2, 6, 4, 3, 3, 0, 3,
+	};
+
+	const char *deathScreenFile =
+		(deathType < 6 || deathType == 9 || deathType == 10 || deathType == 11)
+		 ? "DEATH1.SCN" : "DEATH.SCN";
+
+	const int vidtype = DEAD_VIDS[deathType];
+
+	const Common::Point vidPos(DEAD_COORD[vidtype].x, DEAD_COORD[vidtype].y);
+
+	NoctropolisResources *res = (NoctropolisResources *)_res;
+
 	int16 deathTextX = deathType == 8 ? 80 : 130;
 	int16 deathTextY = deathType == 8 ? 310 : 220;
-	const char *deathScreenBackground =
-		(deathType == 6 || deathType == 12 || deathType == 7 || deathType == 8)
-		? "death1.scn" : "death.scn";
 	const char *deathTextCaption =
 		(deathType == 6 || deathType == 12 || deathType == 7)
-		? "IMPRISONED" : "DEAD";
-	int videoIndex;
+		? res->getImprisonedTitle() : res->getDeathTitle();
 
-	NoctropolisDeathResource *deathTable = new NoctropolisDeathResource();
-	StringResource *deathVideoFilenames = new StringResource();
+	_screen->fadeOut();
+	_midi->loadMusic(98, 39);
+	_midi->midiPlay();
 
-	_res->load(deathTable, GID_NOCTROPOLIS, kResDeathTable, 0);
-	_res->load(deathVideoFilenames, GID_NOCTROPOLIS, kResStringTable, 5);
+	_files->loadScreen(deathScreenFile);
 
-	videoIndex = deathTable->getVideoIndex(deathType);
+	_screen->_printOrg = _screen->_printStart = Common::Point(deathTextX, deathTextY);
+	_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
+	_bubbleBox->_bubbleTitle = deathTextCaption;
+	_bubbleBox->placeBubble(res->getDeathText(deathType));
 
-	// TODO: Stop current music and play death music
+	_screen->fadeIn();
+
+	VideoPlayer_v2 vidPlayer(this);
+	vidPlayer.VideoPlayer::setVideo(_screen, vidPos, Common::Path(vidfile), 0);
+	vidPlayer.playToEnd();
+
+	_events->waitKeyActionMouse();
+
 	_screen->fadeOut();
 
-	_vgaScreen->lock();
-	showScreen(deathScreenBackground);
-	drawTextBox(deathTextX, deathTextY, kTextBoxPlain | kTextBoxCaption,
-		deathTable->getText(deathType), deathTextCaption);
-	_vgaScreen->unlock();
+	_bubbleBox->clearBubbles();
 
-	copySystemPalette();
-	fadeToPalette();
-
-	playVideo((const char*)deathVideoFilenames->getString(videoIndex),
-		deathVideoPos[videoIndex].x, deathVideoPos[videoIndex].y, false, false);
-
-	waitUntilAnyButtonIsClicked();
-	restoreTextBoxRect();
-
-	delete deathTable;
-	delete deathVideoFilenames;
-	*/
-	// TODO: Restart game or something
-	error("TODO: Finish implementing NoctropolisEngine::dead(%d)", deathType);
+	_restartFl = true;
 }
 
 void NoctropolisEngine::initMinigame() {

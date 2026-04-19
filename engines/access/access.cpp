@@ -378,7 +378,7 @@ void AccessEngine::addHotspotHighlights() {
 	lookup.setPalette(palbuf, 256);
 	byte color = lookup.findBestColor(255, 0, 0);
 	for (const auto &block : _room->_plotter._blocks) {
-		_screen->ASurface::drawBox(block.left, block.top, block.right, block.bottom, color);
+		_screen->BaseSurface::drawBox(block.left, block.top, block.right, block.bottom, color);
 	}
 }
 
@@ -471,7 +471,9 @@ void AccessEngine::copyRects() {
 		_screen->copyBlock(&_buffer2, rect);
 		_oldRects.push_back(rect);
 	}
+}
 
+void AccessEngine::drawOverlays() {
 	if (_hotspotFl)
 		addHotspotHighlights();
 }

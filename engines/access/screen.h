@@ -115,6 +115,11 @@ public:
 	 */
 	void forceFadeIn();
 
+	/**
+	 * Fade to white
+	 */
+	void forceFadeWhite();
+
 	void fadeOut() { forceFadeOut(); }
 	void fadeIn() { forceFadeIn(); }
 	void clearScreen();

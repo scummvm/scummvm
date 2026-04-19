@@ -390,6 +390,12 @@ public:
 	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 
 	const AccessActionCode *getActionCodes();
+
+	/**
+	 * Draw additional things on the screen after main rendering
+     */
+	virtual void drawOverlays();
+
 };
 
 } // End of namespace Access

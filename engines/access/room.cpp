@@ -309,6 +309,7 @@ void Room::doRoom() {
 					_vm->copyBlocks();
 				}
 			}
+			_vm->drawOverlays();
 		}
 	}
 }
