@@ -38,7 +38,7 @@ ScrollContainerWidget::ScrollContainerWidget(GuiObject *boss, const Common::Stri
 }
 
 void ScrollContainerWidget::init() {
-	setFlags(WIDGET_ENABLED);
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE);
 	_type = kScrollContainerWidget;
 	_backgroundType = ThemeEngine::kWidgetBackgroundPlain;
 	_verticalScroll = new ScrollBarWidget(this, _w, 0, 16, _h);
@@ -51,6 +51,63 @@ void ScrollContainerWidget::init() {
 
 void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
 	_verticalScroll->handleMouseWheel(x, y, direction);
+}
+
+void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	_mouseDownY = _mouseDownStartY = y;
+	Widget *child = _childUnderMouse;
+	if (child) {
+		int childX = (x + _scrolledX) - child->getRelX();
+		int childY = (y + _scrolledY) - child->getRelY();
+		child->handleMouseDown(childX, childY, button, clickCount);
+	}
+}
+
+void ScrollContainerWidget::handleMouseMoved(int x, int y, int button) {
+	if (_mouseDownY == y)
+		return;
+
+	if (!_isDragging && ABS(y - _mouseDownStartY) > 5)
+		_isDragging = true;
+
+	if (_isDragging) {
+		int deltaY = _mouseDownY - y;
+		_mouseDownY = y;
+		_childUnderMouse = nullptr;
+
+		if (deltaY != 0) {
+			int oldPos = _scrolledY;
+			_scrolledY += deltaY;
+
+			int h = _verticalScroll->_numEntries;
+			if (_scrolledY < 0)
+				_scrolledY = 0;
+			else if (_scrolledY > h - _limitH)
+				_scrolledY = MAX(0, h - _limitH);
+
+			if (_scrolledY != oldPos) {
+				_verticalScroll->_currentPos = _scrolledY;
+				recalc();
+				markAsDirty();
+				g_gui.scheduleTopDialogRedraw();
+			}
+		}
+	}
+}
+
+void ScrollContainerWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	Widget *child = _childUnderMouse;
+	bool isDragging = _isDragging;
+
+	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
+	_childUnderMouse = nullptr;
+
+	if (!isDragging && child) {
+		int childX = (x + _scrolledX) - child->getRelX();
+		int childY = (y + _scrolledY) - child->getRelY();
+		child->handleMouseUp(childX, childY, button, clickCount);
+	}
 }
 
 void ScrollContainerWidget::recalc() {
@@ -80,6 +137,7 @@ void ScrollContainerWidget::recalc() {
 	_verticalScroll->_singleStep = kLineHeight;
 	_verticalScroll->setPos(_w, _scrolledY);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
+	_verticalScroll->recalc();
 }
 
 
@@ -119,6 +177,7 @@ void ScrollContainerWidget::handleCommand(CommandSender *sender, uint32 cmd, uin
 }
 
 void ScrollContainerWidget::reflowLayout() {
+	_childUnderMouse = nullptr;
 	Widget::reflowLayout();
 
 	if (!_dialogName.empty()) {
@@ -169,11 +228,13 @@ bool ScrollContainerWidget::containsWidget(Widget *w) const {
 }
 
 Widget *ScrollContainerWidget::findWidget(int x, int y) {
-	if (_verticalScroll->isVisible() && x >= _w)
+	if (_verticalScroll->isVisible() && x >= _w) {
+		_childUnderMouse = nullptr;
 		return _verticalScroll;
-	Widget *w = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
-	if (w)
-		return w;
+	}
+	_childUnderMouse = Widget::findWidgetInChain(_firstWidget, x + _scrolledX, y + _scrolledY);
+	if (_childUnderMouse == _verticalScroll) 
+		_childUnderMouse = nullptr;
 	return this;
 }
 
