@@ -205,11 +205,20 @@ Renderer *createRenderer(OSystem *system) {
 
 	uint width;
 	uint height = Renderer::kOriginalHeight;
-	if (ConfMan.getBool("widescreen_mod")) {
-		width = Renderer::kOriginalWidth * Renderer::kOriginalHeight / Renderer::kFrameHeight;
-	} else {
-		width = Renderer::kOriginalWidth;
+	// Scale dimensions to properly resize the preferred window configuration
+	if (ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
+		height = MAX<uint>(ConfMan.getInt("last_window_height", Common::ConfigManager::kApplicationDomain), height);
 	}
+	if (ConfMan.getBool("widescreen_mod")) {
+		width = Renderer::kOriginalWidth * (int)height / Renderer::kFrameHeight;
+	} else {
+		width = Renderer::kOriginalWidth * (int)height / Renderer::kOriginalHeight;
+	}
+
+	// Save dimensions to config file to set up preferred window configuration
+	ConfMan.setInt("last_window_width", width, Common::ConfigManager::kApplicationDomain);
+	ConfMan.setInt("last_window_height", height, Common::ConfigManager::kApplicationDomain);
+	ConfMan.flushToDisk();
 
 	if (isAccelerated) {
 		initGraphics3d(width, height);
