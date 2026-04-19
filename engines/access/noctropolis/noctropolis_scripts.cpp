@@ -105,8 +105,8 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		// Clear screen and restore pal here??
 		vm->_screen->fadeOutThenClearAndSetPal();
 		result = true;
-		if (_vm->_player->_roomNumber == 0x36) {
-			error("TODO: Implement special pal hack for fade in room 0x36?");
+		if (_vm->_player->_roomNumber == 54) {
+			error("TODO: Implement special pal hack for fade in room 54?");
 			/*
 			NoctPal_ClearRawPalette();
 			pbVar4 = GetRawPalette();
@@ -174,7 +174,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		result = true;
 		break;
 	default:
-		error("TODO: Unknown special %d in NoctropolisScripts::executeSpecial", commandIndex);
+		error("Unknown special %d in NoctropolisScripts::executeSpecial", commandIndex);
 	}
 	return result;
 }

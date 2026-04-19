@@ -69,6 +69,9 @@ public:
 	const char *getAskItem(int num) const;
 	const char *getMoreItemsText() const;
 	const char *getPlaceName(int num) const;
+	const char *getDeathTitle() const;
+	const char *getImprisonedTitle() const;
+	const char *getDeathText(int num) const;
 
 	const ComicResource *getLastComicResource() const;
 	const ComicResource *getSpecialComicResource() const;

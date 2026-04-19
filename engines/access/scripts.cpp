@@ -332,33 +332,31 @@ void Scripts::cmdEndObject() {
 
 void Scripts::cmdEndObject_v3() {
 	if (_vm->_room->_selectCommand == Noctropolis::kNoctCmdTalk && _vm->_boxSelectY == 0x62) {
-		Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
-		const char *vidfile = "DARK/VID/A4IN00.VID";
+
+		// Note: removed "DARK/" from these..
+		const char *vidfile = "VID/A4IN00.VID";
 		if (_vm->_flags[91] == 2) {
-			vidfile = "DARK/VID/A4IN26.VID";
+			vidfile = "VID/A4IN26.VID";
 		}
 
 		if (_vm->_textFlag) {
+			Noctropolis::NoctropolisResources *res = (Noctropolis::NoctropolisResources *)_vm->_res;
 			const char *subtitle = res->getEndMessage();
 			if (_vm->_flags[91] == 2) {
 				subtitle = res->getStilMessage();
 			}
-			//NoctRoomEngine::setBoxInfo(&_gNoctRoomEngine,0x46,0xcd,"STILETTO",subtitle,3);
+			_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
+			_vm->_bubbleBox->placeBubble(subtitle);
 		}
 
-		error("TODO: Finish the special case for cmdEndObject_v3");
-		/*
-		// duck the sound here.. SetRelVolume(0x32);
-		_vm->playVideo(100,1 00,vidfile,true,false);
-		gNoctRoomVideo.videoEnd = 0;
-		gNoctRoomVideo.field27_0x2a = 0;
-		gNoctRoomVideo.playState = 1;
-		gNoctRoomVideo.field28_0x2b = 1;
-		gNoctRoomVideo.field25_0x28 = 1;
-		NoctRoomEngine::playRoomVideo(&_gNoctRoomEngine,(bool *)&gNoctRoomVideo.videoEnd);
-		gNoctRoomVideo.playState = 2;
-		NoctRoomSubEngine::acceptControl((NoctRoomSubEngine *)&gNoctRoomVideo);
-		*/
+		warning("TODO: duck the sound here.. SetRelVolume(0x32);");
+
+		VideoPlayer_v2 vidPlayer(_vm);
+		vidPlayer.VideoPlayer::setVideo(_vm->_screen, Common::Point(100, 100), Common::Path(vidfile), 0);
+		vidPlayer.playToEnd();
+
+		_vm->_bubbleBox->clearBubbles();
+
 	} else {
 		const char *msg = _vm->_res->getGeneralMessage(_vm->_room->_selectCommand);
 		debugC(1, kDebugScripts, "cmdEndObject_v3(msg=\"%s\")", msg);
@@ -1756,9 +1754,6 @@ void Scripts::cmdDigitalPlay() {
 		_vm->_events->pollEventsAndWait();
 	}
 
-	if (!_vm->_sound->isSFXPlaying() && !_vm->shouldQuit() && _vm->_textFlag)
-		_vm->_events->waitKeyActionMouse();
-
 	_continuenceFlag = true;
 }
 
@@ -1854,7 +1849,8 @@ void Scripts::cmdSoundEnd() {
 }
 
 void Scripts::cmdFadeWhite() {
-	error("TODO: Implement Scripts::cmdFadeWhite");
+	debugC(1, kDebugScripts, "cmdFadeWhite()");
+	_vm->_screen->forceFadeWhite();
 	_continuenceFlag = true;
 }
 

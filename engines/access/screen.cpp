@@ -219,10 +219,10 @@ void Screen::copyRawPalToTempPal() {
 }
 
 void Screen::forceFadeOut() {
-	const int FADE_AMOUNT = 2;
-	bool repeatFlag;
+	constexpr int FADE_AMOUNT = 2;
 	byte *srcP;
 	int count;
+	bool repeatFlag;
 
 	do {
 		repeatFlag = false;
@@ -242,7 +242,7 @@ void Screen::forceFadeOut() {
 void Screen::forceFadeIn() {
 	Common::fill(&_tempPalette[0], &_tempPalette[Graphics::PALETTE_SIZE], 0);
 
-	const int FADE_AMOUNT = 2;
+	constexpr int FADE_AMOUNT = 2;
 	bool repeatFlag;
 	do {
 		repeatFlag = false;
@@ -258,7 +258,28 @@ void Screen::forceFadeIn() {
 
 		updatePalette();
 		_vm->_events->pollEventsAndWait();
-	} while (repeatFlag);
+	} while (repeatFlag && !_vm->shouldQuit());
+}
+
+void Screen::forceFadeWhite() {
+	constexpr int FADE_AMOUNT = 2;
+	byte *srcP;
+	int count;
+	bool repeatFlag;
+
+	do {
+		repeatFlag = false;
+		for (srcP = &_tempPalette[0], count = 0; count < Graphics::PALETTE_SIZE; ++count, ++srcP) {
+			int v = *srcP;
+			if (v) {
+				repeatFlag = true;
+				*srcP = MIN((int)*srcP + FADE_AMOUNT, 255);
+			}
+		}
+
+		updatePalette();
+		_vm->_events->pollEventsAndWait();
+	} while (repeatFlag && !_vm->shouldQuit());
 }
 
 void Screen::fadeOutThenClearAndSetPal() {

@@ -2137,6 +2137,96 @@ static constexpr const char *MORE_ITEMS_TITLE[4] = {
 	"       MEHR INFO        ",
 };
 
+static constexpr const char *DEATH_TITLE[4] = {
+	"DEAD", "MORT", "MUERTO", "TOT",
+};
+
+static constexpr const char *IMPRISONED_TITLE[4] = {
+	"IMPRISONED", "EMPRISONNE", "PRISIONERO", "EINGESPERRT",
+};
+
+static constexpr const char *NOCT_DEATH_TEXT[4][18] = {
+{
+	"Your strength drained, you collapse to the\nground and die.",
+	"The bullet's impact slams you backward to the\nground. Unable to move, your final moments are\ncontinually interrupted by an intermittent\ngurgle and the amplified pounding of your own\nheartbeat; which is getting slower and slower....",
+	"Incensed by your invasion of its unholy\nterritory, the gargoyle sends you to its maker\nwith a vicious blast of energy that rends the flesh\nfrom your bones. Sounding a harrowing shriek of\ntriumph, the sentinel returns to its perch high above\nthe courtyard.",
+	"A concussive blast shatters your awareness, but not\nbefore registering the distinctly painful sensation\nof dismemberment.",
+	"Moving like a viper, Stiletto impales you upon her\nslender, namesake blade, ending your life with the\npracticed ease of a predator.",
+	"Rendering Stiletto unconscious with a savage blow to the head, the\nSuccubus quickly subdues Father Desmond, gagging him with his own collar.\nTaking the priest's gun, the villainess shoots you once in the stomach,\nthen delightedly empties its magazine into the ornate stained glass\ndisplay, which shatters in a deafening shower of coruscation. Relishing your\nanguish, the Succubus throws your bleeding form across the altar, raises her\nvoice in a mockery of the sacramental blessing, then rips into your body with\nher bare hands. Your final moments of consciousness record the Succubus\ngreedily gorging herself upon a mouthful of your own gory entrails.",
+	"The police take you into custody, ultimately\nplacing you within the medium security wing of the\nNoctropolis City Penitentiary. There, you have the\nmisfortune of attracting the attention of a depraved\ninmate ringleader, who fancies you as his new dance\npartner, among other things.",
+	"The police take you into custody, ultimately\nplacing you within the medium security wing of the\nNoctropolis City Penitentiary. There, you have the\nmisfortune of attracting the attention of a depraved\ninmate ringleader who fancies you as his new dance\npartner, among other things.",
+	"To your horror, a weakened section of the suspended catwalk unexpectedly\nbreaks under your weight. As you plummet to your death, you've barely the time\nto scream your companion's name before the depthless chasm claims you completely.",
+	"Weakened from the effects of Macabre's poisoned gas,\nyou collapse under the creature's ferocious assault.\nProducing a blood-encrusted length of metal pipe, the\nwretch brutally bludgeons you to death.",
+	"Moving collectively, the gang of young ruffians\nsurround you and attack like a pack of wild animals.\nEmploying an arsenal of street weapons, they beat you\nto death by firelight.",
+	"Your lungs and digestive system finally succumb\nto Macabre's poisonous gas. Gasping for breath\nthrough the swollen tissues of your esophagus, you\nsuffocate to death in the wetness of your own vomit.",
+	"Venturing too close to the light, the guards spot you from\ntheir vantage on the catwalk above. They quickly capture\nyou within the observatory. As a result of poor legal\nrepresentation, you are ultimately imprisoned within the\ncity penitentiary for a very long time.",
+	"Gloating over his successful creation of the\nQuintessence, Lumisheer again becomes aware of your presence.\nBrandishing the Node of Brilliance in his fist, he employs its\nstaggering power to obliterate you from existence in a blinding\nflash of light.",
+	"Due to the severe physical trauma and blood loss you've\nsuffered, you can go no further. Gripped in a vice of\ndespair, you die with the sound of Tophat's laughter\nechoing over and over inside the vacuum that fills\nyour mind.",
+	"Macabre returns to his chamber of horrors with a\ndisturbing array of strangely bladed tools and\ncorroded surgical implements. The sadistic psychopath\nslowly butchers you while relating the finer points of\nhuman dissection.",
+	"The poison in your system causes you to convulse in\nviolent seizures that throw you to the ground. The\nspasms gradually diminish while your senses become\ndebilitated and your body goes rigid with paralysis.\nTime becomes immeasurable as you lay in desperate\nagony while the poison ravages your nervous system\nand eventually eats away your brain.",
+	"The poison in your system causes you to convulse in\nviolent seizures that throw you to the ground. The\nspasms gradually diminish while your senses become\ndebilitated and your body goes rigid with paralysis.\nTime becomes immeasurable as you lay in desperate\nagony while the poison ravages your nervous system\nand eventually eats away your brain.",
+},
+{
+	"Vos forces vous abandonnent et vous vous\neffondrez sur le sol avant de mourir.",
+	"L'impact des balles vous fait tomber \x85"" terre.\nIncapable de bouger, vos derniers instants sont\ninterrompus par un gargouillis intermittent\net par le battement amplifi\x82"" de votre coeur.\nIl ralentit de plus en plus...",
+	"Ulc\x82""r\x82""e par votre invasion de son territoire,\nla gargouille vous renvoie vers son Cr\x82""ateur\ndans une intense explosion d'\x82""nergie qui \ncarbonise votre chair sur vos os. Avec un cri de\ntriomphe, la sentinelle retourne se percher\nloin au-dessus de l'entr\x82""e de la cath\x82""drale.",
+	"Vos sens sont alert\x82""s par une \x82""norme explosion\nmais juste avant de ressentir la sensation\ndouloureuse d'un d\x82""membrement.",
+	"Rapide comme un serpent, Stiletto vous empale sur\nsa lame tranchante et impitoyable, mettant fin \x85""\nvos souffrances d'un geste de pr\x82""dateur entra\x8c""n\x82"".",
+	"Assommant Stiletto d'un coup puissant sur la t\x88""te, la Succube s'empare\nrapidement du P\x8a""re Desmond, lui serrant le cou avec son propre col. S'emparant\ndu revolver du pr\x88""tre, elle vous tire une balle dans l'estomac, puis vide avec\nd\x82""lice son chargeur sur les vitraux, qui s'effondrent dans une pluie d'\x82""clats\ntranchants. Savourant votre angoisse, la Succube jette ensuite votre corps\nsanguinolent sur l'autel, prononce une parodie des derniers sacrements, puis\nvous d\x82""chire le corps de ses mains nues. Vos derniers instants de lucidit\x82""\nrestent impr\x82""gn\x82""s de l'image de la Succube se d\x82""lectant \x85"" pleines bouch\x82""es de vos\npropres entrailles.",
+	"La police vous arr\x88""te et vous enferme dans\nle quartier de moyenne s\x82""curit\x82"" du p\x82""nitencier\nmunicipal de Noctropolis. Malheureusement pour\nvous, vous attirez l'attention d'un chef de gang\nd\x82""prav\x82"" qui partage votre cellule, et qui d\x82""cide\nde faire de vous son nouveau cavalier, entre\nautres choses...",
+	"La police vous arr\x88""te et vous enferme dans\nle quartier de moyenne s\x82""curit\x82"" du p\x82""nitencier\nmunicipal de Noctropolis. Malheureusement pour\nvous, vous attirez l'attention d'un chef de gang\nd\x82""prav\x82"" qui partage votre cellule, et qui d\x82""cide\nde faire de vous son nouveau cavalier, entre\nautres choses...",
+	"Vous constatez avec horreur qu'un morceau de la passerelle a soudain c\x82""d\x82"" sous\nvotre poids. En tombant vers votre mort, vous avez \x85"" peine le temps de crier le nom\nde votre compagne avant d'\x88""tre englouti d\x82""finitivement par le gouffre obscur.",
+	"Affaibli par les effets du gaz empoisonn\x82"" de Ma\x8c""tre\nMacabre, vous vous \x82""croulez sous l'assaut f\x82""roce de\nla cr\x82""ature. Arm\x82""e d'un morceau de tuyau m\x82""tallique\ntach\x82"" de sang, elle vous transperce de part en part.",
+	"La bande de jeune malfrats se regroupe pour vous\nentourer et vous attaquer comme une meute d'animaux\nsauvages. Gr\x83""ce \x85"" un arsenal d'armes de rue, ils\nvous battent \x85"" mort dans la lueur du feu de camp.",
+	"Vos poumons et votre syst\x8a""me digestif finissent\npar succomber au gaz empoisonn\x82"" de Macabre. Tentant\nd\x82""sesp\x82""r\x82""ment de respirer \x85"" travers les tissus\nintoxiqu\x82""s de votre oesophage, vous finissez par\nvous \x82""touffer dans vos renvois gastriques.",
+	"Vous vous approchez trop pr\x8a""s de la lumi\x8a""re. Un garde vous\nrep\x8a""re de la passerelle. Ils vous capturent rapidement\ndans l'observatoire. Comme vous \x88""tes mal d\x82""fendu,\nvous finissez emprisonn\x82"" dans le p\x82""nitencier\nmunicipal pour une peine tr\x8a""s longue.",
+	"Admirant sa cr\x82""ation r\x82""ussie de la Quintessence,\nLumisheer se souvient soudain de votre pr\x82""sence.\nBrandissant le Noeud de Brillance dans son poing,\nil utilise son immense pouvoir pour vous faire\ndispara\x8c""tre dans un \x82""clair de lumi\x8a""re aveuglante.",
+	"Apr\x8a""s les traumatismes profonds et le sang que vous\navez perdu, vous ne pouvez pas aller plus loin.\nEntra\x8c""n\x82"" dans un tourbillon de d\x82""sespoir, vous vous\n\x82""teignez en entendant un rire sardonique r\x82""sonner\nsans fin dans le vide qui remplit peu \x85"" peu votre\nt\x88""te.",
+	"Ma\x8c""tre Macabre revient dans sa salle de tortures\navec une panoplie impressionnante d'outils munis de \nlames aux formes \x82""tranges et d'instruments\nchirurgicaux rouill\x82""s. Le psychopathe sadique\nvous charcute lentement tout en vous expliquant\nquels sont les avantages de la dissection humaine.",
+	"Le poison qui vous a intoxiqu\x82"" provoque de violentes\ncrises et des convulsions atroces. Les spasmes\ns'apaisent peu \x85"" peu lorsque vous sentez un\nengourdissement de vos sens et la paralysie qui\ns'empare de votre corps. Le temps ne semble plus\nexister. Vous vous \x82""croulez, impuissant, alors que\nle poison d\x82""truit votre syst\x8a""me nerveux et ronge\nvotre cerveau.",
+	"Le poison qui vous a intoxiqu\x82"" provoque de violentes\ncrises et des convulsions atroces. Les spasmes\ns'apaisent peu \x85"" peu lorsque vous sentez un\nengourdissement de vos sens et la paralysie qui\ns'empare de votre corps. Le temps ne semble plus\nexister. Vous vous \x82""croulez, impuissant, alors que\nle poison d\x82""truit votre syst\x8a""me nerveux et ronge\nvotre cerveau.",
+},
+{
+	"Tus fuerzas se acaban, caes al suelo y\nmueres.",
+	"El impacto de la bala te hace caer.\nNo te puedes mover y en tus instantes finales\nsolo escuchas los cada vez mas debiles latidos\nde tu corazon, que se van haciendo mas y mas\nlentos...",
+	"Irritada por tu entrada en sus predios,\nla gargola te envia al encuentro de tu hacedor\ncon un golpe mortal que separa tu carne de tus\nhuesos. Con un chillido triunfal, el centilela\nregresa a su pedestal, desde la cual vigila la\nentrada de la catedral.",
+	"La explosion acaba con tu vida, pero no sin que\nantes percibas cierta sensacion final de\ndesmembramiento.",
+	"Stiletto se mueve como un felino y te clava\nsu espada, poniendo fin a tus dias con la indiferencia\ndel que aplasta a una mosca.",
+	"Mientras Stiletto esta inconsciente y herida en la cabeza,\nla Succubus se vuelve al Padre Desmond, al que estrangula.\nCon la pistola del sacerdote te dispara al estomago y luego se\ndedica a vaciar el cargador en los ventanales de la catedral,\na los que destroza. Al final coloca tu cuerpo sangrante sobre\nel altar y, mientras se burla de los sacramentos, te despedaza\ncon sus manos. En tus momentos finales recuerdas su risa\nmientras introduce su crueles manos en el interior de tu\ncuerpo para comer de el.",
+	"La policia te arresta y te conduce al sector\nde maxima seguridad de la prision de Noctropolis.\nAlli tienes la desgracia de atraer la atencion de\nun criminal depravado que te convierte en su nueva\npareja de baile, entre otras cosas.",
+	"La policia te arresta y te conduce al sector\nde seguridad media de la prision de Noctropolis.\nAlli tienes la desgracia de atraer la atencion de\nun criminal depravado que te convierte en su nueva\npareja de baile, entre otras cosas.",
+	"Para tu horror, una seccion debil del puente cede bajo\ntu peso. Mientras caes hacia tu muerte, gritas el nombre de\nStiletto y te hundes en la oscuridad del abismo.",
+	"Debilitado por el gas de Macabro, no puedes\nresistir el feroz asalto de la criatura.\nCon un largo estilete de metal, el monstruo\nacaba con tu vida.",
+	"La pandilla de jovenes delincuentes te rodea\ny te ataca como un grupo de animales salvajes.\nUtilizan un verdadero arsenal de armas callejeras\npara acabar con tu vida.",
+	"Tu sistema digestivo acaba por sucumbir a los\nefectos del gas venenoso de Macabro. Vomitas\nlos tejidos de tu esofago y pereces sumido\nen espantosos dolores.",
+	"Cuando te acercas a la luz, los guardias te detectan\ny te capturan con facilidad. Tu mediocre abogado no\nconsigue impedir que te encierren en la prision estatal\npor un periodo prolongado.",
+	"Tras su alegria por la exitosa creacion de la\nQuintaesencia, Luminoso recuerda tu presencia.\nBlandiendo el Nodo de Luz, emplea su poder para borrarte\nde la faz de la tierra.",
+	"Las severas heridas y la perdida de sangre acaban\ncon tus fuerzas. Lo ultimo que escuchas es la risa\ntriunfante de la Diva, y poco a poco el vacio se\napodera de tu mente.",
+	"Macabro regresa a su sala de horrores blandiendo\nsus mohosas herramientas. El sadico psicopata\nte despedaza lentamente mientras describe los pasos\nde su diseccion.",
+	"El veneno te provoca convulsiones que te hacen\ncaer al suelo. Los espasmos van disminuyendo a\nmedida que tu cuerpo se paraliza y queda inconsciente.\nEl tiempo transcurre en una desesperada agonia\nhasta que el veneno acaba por devorar tu cerebro.",
+	"El veneno te provoca convulsiones que te hacen\ncaer al suelo. Los espasmos van disminuyendo a\nmedida que tu cuerpo se paraliza y queda inconsciente.\nEl tiempo transcurre en una desesperada agonia\nhasta que el veneno acaba por devorar tu cerebro.",
+},
+{
+	"Als Deine Kraft schlie\xe1""lich aufgezehrt ist, f\x84""llst Du stumm\nzu Boden und stirbst.",
+	"Der Einschlag der Kugel schleudert Dich r\x81""ckw\x84""rts zu Boden.\nDu bist nicht mehr in der Lage, Dich zu bewegen,\nkannst Deine letzten Augenblicke nur damit verbringen,\nDeinem rasselnden Atem zu lauschen und dem \x81""berlauten Schlag\nDeines Herzens, der langsamer und immer langsamer wird...",
+	"Aufgebracht \x81""ber Dein Eindringen in sein Hoheitsgebiet\nschickt Dich der Gargoyle zu seinem Erschaffer.\nMit einem brutalen Strahl reiner Energie fetzt er Dir das\nFleisch von den Knochen, bevor er mit einem heiser\nkr\x84""chzenden Triumphschrei wieder auf seinen Hochsitz \x81""ber \ndem Kirchhof zur\x81""ckkehrt.",
+	"Ein alles zerfetzender Schlag l\x94""scht Dein Bewu\xe1""tsein aus,\naber nicht schnell genug, um Dir das schmerzhafte Gef\x81""hl des\nZerrissenwerdens zu ersparen.",
+	"Mit den gleitenden Bewegungen einer Viper versenkt Stiletto\ndie schlanke Klinge, deren Namen sie tr\x84""gt, in Deinem K\x94""rper und beendet\nDein Leben mit der erfahrenen Ruhe eines Raubtiers.",
+	"Succubus bet\x84""ubt Stiletto mit einem einzigen, harten\nSchlag auf den Kopf. Dann wendet sie sich gegen Vater Desmond,\nden sie aber schnell besiegt und mit seinem eigenen Kragen erw\x81""rgt.\nMit der Pistole des Priesters schie\xe1""t sie Dir einmal in den Bauch,\nbevor sie mit dem Rest der Munition die Bleiglasfenster\nzertr\x81""mmert, die in einem ohrenbet\x84""ubenden Hagel der Zerst\x94""rung\nzersplittern. Succubus genie\xe1""t Deinen Todeskampf; sie wirft\nDeinen blutenden K\x94""rper auf den Altar und verh\x94""hnt Dich mit\neiner blasphemischen Parodie auf den kirchlichen Opfersegen, bevor\nsie Deinen K\x94""rper mit den blo\xe1""en H\x84""nden zerrei\xe1""t.",
+	"Die Polizei nimmt Dich in Gewahrsam und verfrachtet\nDich in den Hochsicherheitstrakt des Zuchthauses von\nNoctropolis City. Dort hast Du das Pech, die Aufmerksamkeit\ndes einsamen Anf\x81""hrers einer Zuchth\x84""uslerbande zu erregen,\nder Dich von da an - unter anderem - als seine neue \nTanzpartnerin mit Beschlag belegt.",
+	"Die Polizei nimmt Dich in Gewahrsam und verfrachtet\nDich in den Hochsicherheitstrakt des Zuchthauses von\nNoctropolis City. Dort hast Du das Pech, die Aufmerksamkeit\ndes einsamen Anf\x81""hrers einer Zuchth\x84""uslerbande zu erregen,\nder Dich von da an - unter anderem - als seine neue \nTanzpartnerin mit Beschlag belegt.",
+	"Zu Deinem Entsetzen bricht ohne Vorwarnung ein bauf\x84""lliger Teil des Steges unter Deinem Gewicht\nzusammen. W\x84""hrend Du Deinem Tod entgegenst\x81""rzt, hast Du kaum noch Zeit, den Namen Deiner\nPartnerin zu schreien, bevor die bodenlose Tiefe des Abgrundes v\x94""llig von Dir Besitz ergreift.",
+	"Noch geschw\x84""cht von Doktor Makabers Giftgas\nbrichst Du unter dem wilden Angriff der Kreatur zusammen.\nMit einem blutverkrusteten St\x81""ck Bleirohr pr\x81""gelt sie Dich\nbrutal zu Tode.",
+	"Die Bande bewegt sich in gut einge\x81""btem Einklang. Sie\nkreisen Dich ein und greifen wie wilde Tiere an. Mit ihrem\nreichhaltigen Arsenal an Stra\xe1""enwaffen pr\x81""geln sie Dich am\nromantisch flackernden Feuer zu Tode.",
+	"Deine Lungen k\x94""nnen schlie\xe1""lich Doktor Makabers\nGiftgas keinen Widerstand mehr leisten. Du schnappst j\x84""mmerlich\nnach Luft, doch Dein Blut transportiert keinen Sauerstoff mehr\nzu Deinen K\x94""rperzellen, und Du erstickst grausam.",
+	"Du kommst dem Licht zu nahe, und die Wachen oben auf dem\nLaufsteg entdecken Dich. In dem engen Observatorium fangen sie\nDich schnell ein. Als Ergebnis eines ungl\x81""cklich ausgew\x84""hlten\nRechtsbeistandes wirst Du zu einem l\x84""ngeren Aufenthalt in der\nst\x84""dtischen Justizvollzugsanstalt verurteilt. Aber was sind\nschon 20 Jahre f\x81""r einen Superhelden...?",
+	"Als seine Erregung \x81""ber die gelungene Destillation der\nQuintessenz langsam abklingt, bemerkt Lumisheer Deine Anwesenheit\nwieder. Er beschw\x94""rt den Lichtkern in seiner Hand und benutzt seine\nunglaubliche Macht, um Dich mit einem einzigen, blendenden Blitz\nauszul\x94""schen.",
+	"Aufgrund des schweren physischen Traumas und des\nBlutverlustes kannst Du nicht weiter. In den Klauen tiefster\nVerzweiflung gefangen, stirbst Du, w\x84""hrend das widerliche\nLachen von Miss Zylinderchen noch lange in dem Vakuum\nwiderhallt, das einmal Dein Geist war...",
+	"Makaber kehrt mit einer beunruhigenden Sammlung\nmerkw\x81""rdig geformter Messer und rostiger Instrumente in\nseinen OP zur\x81""ck. Der sadistische Psychopath schneidet\nDich langsam in St\x81""cke, w\x84""hrend er Dir im Konversationston\ndie Feinheiten der menschlichen Vivisektion erkl\x84""rt.",
+	"Das Gift in Deinem K\x94""rper hat gewonnen.\nIn f\x81""rchterlichen Kr\x84""mpfen gehst Du zu Boden. Dann\nlassen die Kr\x84""mpfe langsam nach, w\x84""hrend Deine Sinne\nsich vernebeln und das Gift Deinen K\x94""rper l\x84""hmt.\nDie Zeit ersteckt sich ins Unendliche: Du f\x81""hlst in stummer\nAgonie, wie das Gift Dein Nervensystem zersetzt und\nschlie\xe1""lich Dein Gehirn zerfri\xe1""t.",
+	"Das Gift in Deinem K\x94""rper hat gewonnen.\nIn f\x81""rchterlichen Kr\x84""mpfen gehst Du zu Boden. Dann\nlassen die Kr\x84""mpfe langsam nach, w\x84""hrend Deine Sinne\nsich vernebeln und das Gift Deinen K\x94""rper l\x84""hmt.\nDie Zeit ersteckt sich ins Unendliche: Du f\x81""hlst in stummer\nAgonie, wie das Gift Dein Nervensystem zersetzt und\nschlie\xe1""lich Dein Gehirn zerfri\xe1""t.",
+},
+};
 
 const char *NoctropolisResources::getGeneralMessage(int command) const {
 	if (command < 0 || command >= ARRAYSIZE(NOCT_GENERAL_MESSAGES[0]))
@@ -2180,6 +2270,19 @@ const char *NoctropolisResources::getPlaceName(int num) const {
 
 const char *NoctropolisResources::getMoreItemsText() const {
 	return MORE_ITEMS_TITLE[_langOffset(_vm->getLanguage())];
+}
+
+const char *NoctropolisResources::getDeathTitle() const {
+	return DEATH_TITLE[_langOffset(_vm->getLanguage())];
+}
+
+const char *NoctropolisResources::getImprisonedTitle() const {
+	return IMPRISONED_TITLE[_langOffset(_vm->getLanguage())];
+}
+
+const char *NoctropolisResources::getDeathText(int num) const {
+	assert(num >= 0 && num < ARRAYSIZE(NOCT_DEATH_TEXT[0]));
+	return NOCT_DEATH_TEXT[_langOffset(_vm->getLanguage())][num];
 }
 
 const ComicResource *NoctropolisResources::getLastComicResource() const {
