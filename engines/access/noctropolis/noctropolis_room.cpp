@@ -226,7 +226,7 @@ void NoctropolisRoom::doCommands() {
 		if (hotspotIndex < 0) {
 			hotspotIndex = checkBoxes1(pt);
 			while (hotspotIndex >= 0 && (validateBox(hotspotIndex) & 0x80))
-				hotspotIndex = checkBoxes2(pt, hotspotIndex + 1, 0);
+				hotspotIndex = checkBoxes2(pt, hotspotIndex + 1, _plotter._blocks.size() - hotspotIndex);
 		}
 
 		if (hotspotIndex >= 0) {

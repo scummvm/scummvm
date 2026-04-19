@@ -1376,7 +1376,9 @@ void Scripts::cmdWait() {
 	while (!_vm->shouldQuit() && !_vm->_events->isKeyActionMousePressed() &&
 			_vm->_timers[3]._flag) {
 		_vm->_midi->midiRepeat();
-		charLoop();
+		// Noctropolis does not run room scripts during wait
+		if (_vm->getGameID() != kGameNoctropolis)
+			charLoop();
 
 		_vm->_events->pollEventsAndWait();
 	}
