@@ -21,11 +21,13 @@
 
 #include "common/memstream.h"
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-void BoltEngine::playSoundMapYogi(int16 memberId) {
+namespace Carnival {
+
+void CarnivalEngine::playSoundMapYogi(int16 memberId) {
 	byte *soundData = getBOLTMember(_yogiBoltLib, memberId);
 	int32 soundSize = memberSize(_yogiBoltLib, memberId);
 	if (soundData) {
@@ -35,7 +37,7 @@ void BoltEngine::playSoundMapYogi(int16 memberId) {
 	}
 }
 
-void BoltEngine::waitSoundMapYogi() {
+void CarnivalEngine::waitSoundMapYogi() {
 	if (!_yogiSoundPlaying)
 		return;
 
@@ -46,28 +48,28 @@ void BoltEngine::waitSoundMapYogi() {
 	_yogiSoundPlaying--;
 }
 
-void BoltEngine::stopSoundYogi() {
+void CarnivalEngine::stopSoundYogi() {
 	if (_yogiSoundActive) {
 		_xp->stopSound();
 		_yogiSoundActive = 0;
 	}
 }
 
-void BoltEngine::setYogiColors(int16 which) {
+void CarnivalEngine::setYogiColors(int16 which) {
 	if (which == 0)
 		_xp->setPalette(_yogiPalRange[1] - _yogiPalRange[0] + 1, _yogiPalRange[0], _yogiPalHighlight0);
 	else if (which == 1)
 		_xp->setPalette(_yogiPalRange[5] - _yogiPalRange[4] + 1, _yogiPalRange[4], _yogiPalHighlight1);
 }
 
-void BoltEngine::restoreYogiColors(int16 which) {
+void CarnivalEngine::restoreYogiColors(int16 which) {
 	if (which == 0)
 		_xp->setPalette(_yogiPalRange[1] - _yogiPalRange[0] + 1, _yogiPalRange[0], _yogiPalSave0);
 	else if (which == 1)
 		_xp->setPalette(_yogiPalRange[5] - _yogiPalRange[4] + 1, _yogiPalRange[4], _yogiPalSave1);
 }
 
-void BoltEngine::drawBasket(int16 slot, byte *basketSprite) {
+void CarnivalEngine::drawBasket(int16 slot, byte *basketSprite) {
 	int16 sprStride = READ_UINT16(basketSprite + 0x0A);
 	int16 sprHeight = READ_UINT16(basketSprite + 0x0C);
 
@@ -115,7 +117,7 @@ void BoltEngine::drawBasket(int16 slot, byte *basketSprite) {
 	_xp->displayPic(&_yogiScratchBuf, slotX, slotY, stFront);
 }
 
-void BoltEngine::drawAllBaskets() {
+void CarnivalEngine::drawAllBaskets() {
 	_xp->fillDisplay(0, stFront);
 
 	int16 basketCount = READ_UINT16(_yogiBasketPic);
@@ -133,7 +135,7 @@ void BoltEngine::drawAllBaskets() {
 	}
 }
 
-void BoltEngine::handleYogiMatch() {
+void CarnivalEngine::handleYogiMatch() {
 	playSoundMapYogi((int16)READ_UINT16(_yogiBasketPic + 0x9E));
 
 	if (_yogiState.basketCount == 2) {
@@ -155,7 +157,7 @@ void BoltEngine::handleYogiMatch() {
 	waitSoundMapYogi();
 }
 
-bool BoltEngine::loadYogiBgPic() {
+bool CarnivalEngine::loadYogiBgPic() {
 	int16 groupId;
 
 	if (_displayMode == 0) {
@@ -173,11 +175,11 @@ bool BoltEngine::loadYogiBgPic() {
 	return true;
 }
 
-void BoltEngine::unloadYogiBgPic() {
+void CarnivalEngine::unloadYogiBgPic() {
 	freeBOLTGroup(_yogiBoltLib, 0x100, 1);
 }
 
-void BoltEngine::drawYogiLevel() {
+void CarnivalEngine::drawYogiLevel() {
 	byte *palSprite = memberAddr(_yogiBoltLib, READ_UINT16(_yogiBasketPic + 0x72));
 
 	_yogiSoundActive = 0;
@@ -224,7 +226,7 @@ void BoltEngine::drawYogiLevel() {
 	_xp->getPalette(_yogiPalRange[6], _yogiPalRange[7] - _yogiPalRange[6] + 1, _yogiPalHighlight1);
 }
 
-bool BoltEngine::loadYogiLevel() {
+bool CarnivalEngine::loadYogiLevel() {
 	int32 maxSize = 0;
 
 	_yogiLevelGroupId = (_yogiState.levelNumber - 1) * 0x100 + 0x300;
@@ -260,14 +262,14 @@ bool BoltEngine::loadYogiLevel() {
 	return true;
 }
 
-void BoltEngine::unloadYogiResources() {
+void CarnivalEngine::unloadYogiResources() {
 	_xp->hideCursor();
 	int16 basketGroupId = (_yogiLevelId << 8) + 0xD00;
 	freeBOLTGroup(_yogiBoltLib, basketGroupId, 1);
 	freeBOLTGroup(_yogiBoltLib, _yogiLevelGroupId, 1);
 }
 
-bool BoltEngine::initYogiLevel() {
+bool CarnivalEngine::initYogiLevel() {
 	_yogiState.currentSlot++;
 	if (_yogiState.currentSlot >= 10)
 		_yogiState.currentSlot = 0;
@@ -319,7 +321,7 @@ bool BoltEngine::initYogiLevel() {
 	return true;
 }
 
-bool BoltEngine::resumeYogiLevel() {
+bool CarnivalEngine::resumeYogiLevel() {
 	_yogiLevelId = _yogiState.slotIndex[_yogiState.currentSlot];
 
 	if (!loadYogiLevel())
@@ -329,7 +331,7 @@ bool BoltEngine::resumeYogiLevel() {
 	return true;
 }
 
-bool BoltEngine::initYogi() {
+bool CarnivalEngine::initYogi() {
 	_yogiSoundPlaying = 0;
 
 	if (!loadYogiBgPic())
@@ -408,7 +410,7 @@ bool BoltEngine::initYogi() {
 		return resumeYogiLevel();
 }
 
-void BoltEngine::yogiToggleBlinking(int16 which, int16 *state) {
+void CarnivalEngine::yogiToggleBlinking(int16 which, int16 *state) {
 	*state = (*state == 0) ? 1 : 0;
 	if (*state)
 		setYogiColors(which);
@@ -416,7 +418,7 @@ void BoltEngine::yogiToggleBlinking(int16 which, int16 *state) {
 		restoreYogiColors(which);
 }
 
-void BoltEngine::yogiUpdateHotSpots(int16 x, int16 y) {
+void CarnivalEngine::yogiUpdateHotSpots(int16 x, int16 y) {
 	Common::Rect helpRect(
 		READ_UINT16(_yogiBasketPic + 0x74), READ_UINT16(_yogiBasketPic + 0x78),
 		READ_UINT16(_yogiBasketPic + 0x76), READ_UINT16(_yogiBasketPic + 0x7A));
@@ -443,7 +445,7 @@ void BoltEngine::yogiUpdateHotSpots(int16 x, int16 y) {
 	}
 }
 
-int16 BoltEngine::findBasket(int16 x, int16 y) {
+int16 CarnivalEngine::findBasket(int16 x, int16 y) {
 	int16 basketCount = READ_UINT16(_yogiBasketPic);
 	for (int16 i = basketCount - 1; i >= 0; i--) {
 		if (_yogiState.basketState[i] != 0)
@@ -470,7 +472,7 @@ int16 BoltEngine::findBasket(int16 x, int16 y) {
 	return -1;
 }
 
-void BoltEngine::resolveYogiSelection() {
+void CarnivalEngine::resolveYogiSelection() {
 	if (_yogiState.sound1 == _yogiState.sound2) {
 		_yogiState.basketState[_yogiState.selected1Slot] = 1;
 		_yogiState.basketState[_yogiState.selected2Slot] = 1;
@@ -496,7 +498,7 @@ void BoltEngine::resolveYogiSelection() {
 	}
 }
 
-bool BoltEngine::handleBasketSelect(int16 x, int16 y) {
+bool CarnivalEngine::handleBasketSelect(int16 x, int16 y) {
 	int16 slot = findBasket(x, y);
 	if (slot == -1)
 		return false;
@@ -558,7 +560,7 @@ bool BoltEngine::handleBasketSelect(int16 x, int16 y) {
 	return true;
 }
 
-void BoltEngine::yogiHandleActionButton(int16 x, int16 y) {
+void CarnivalEngine::yogiHandleActionButton(int16 x, int16 y) {
 	bool didAction = false;
 	bool stoppedAnim = false;
 
@@ -617,7 +619,7 @@ void BoltEngine::yogiHandleActionButton(int16 x, int16 y) {
 	}
 }
 
-void BoltEngine::handleYogiEvent(int16 eventType, uint32 eventData) {
+void CarnivalEngine::handleYogiEvent(int16 eventType, uint32 eventData) {
 	switch (eventType) {
 	case etMouseDown:
 		yogiHandleActionButton(_yogiCursorX, _yogiCursorY);
@@ -688,7 +690,7 @@ void BoltEngine::handleYogiEvent(int16 eventType, uint32 eventData) {
 	}
 }
 
-void BoltEngine::playYogi() {
+void CarnivalEngine::playYogi() {
 	_yogiReturnBooth = 16;
 
 	while (!shouldQuit()) {
@@ -712,7 +714,7 @@ void BoltEngine::playYogi() {
 		_yogiReturnBooth = 0;
 }
 
-void BoltEngine::cleanUpYogi() {
+void CarnivalEngine::cleanUpYogi() {
 	if (_yogiScratchBuf.pixelData) {
 		_xp->freeMem(_yogiScratchBuf.pixelData);
 		_yogiScratchBuf.pixelData = nullptr;
@@ -764,7 +766,7 @@ void BoltEngine::cleanUpYogi() {
 	_xp->updateDisplay();
 }
 
-int16 BoltEngine::yogiGame(int16 prevBooth) {
+int16 CarnivalEngine::yogiGame(int16 prevBooth) {
 	if (!openBOLTLib(&_yogiBoltLib, &_yogiBoltCallbacks, assetPath("yogi.blt")))
 		return _yogiReturnBooth;
 
@@ -780,7 +782,7 @@ int16 BoltEngine::yogiGame(int16 prevBooth) {
 	return _yogiReturnBooth;
 }
 
-void BoltEngine::swapYogiAllWords() {
+void CarnivalEngine::swapYogiAllWords() {
 	byte *ptr = _boltCurrentMemberEntry->dataPtr;
 	if (!ptr)
 		return;
@@ -792,12 +794,14 @@ void BoltEngine::swapYogiAllWords() {
 	}
 }
 
-void BoltEngine::swapYogiFirstWord() {
+void CarnivalEngine::swapYogiFirstWord() {
 	byte *ptr = (byte *)_boltCurrentMemberEntry->dataPtr;
 	if (!ptr)
 		return;
 
 	WRITE_UINT16(ptr, READ_BE_UINT16(ptr));
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

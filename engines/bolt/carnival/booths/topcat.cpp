@@ -19,11 +19,13 @@
  *
  */
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-int16 Bolt::BoltEngine::topCatGame(int16 prevBooth) {
+namespace Carnival {
+
+int16 CarnivalEngine::topCatGame(int16 prevBooth) {
 	int16 savedTimer = _xp->setInactivityTimer(30);
 
 	if (!initTopCat()) {
@@ -38,7 +40,7 @@ int16 Bolt::BoltEngine::topCatGame(int16 prevBooth) {
 	return result;
 }
 
-bool BoltEngine::initTopCat() {
+bool CarnivalEngine::initTopCat() {
 	_topCatRtfHandle = openRTF(assetPath(_displayMode != 0 ? "topcatcr.av" : "topcatog.av"));
 	if (!_topCatRtfHandle)
 		return false;
@@ -210,7 +212,7 @@ bool BoltEngine::initTopCat() {
 	return true;
 }
 
-void BoltEngine::cleanUpTopCat() {
+void CarnivalEngine::cleanUpTopCat() {
 	_xp->stopSound();
 	_xp->stopCycle();
 
@@ -281,7 +283,7 @@ void BoltEngine::cleanUpTopCat() {
 #endif
 }
 
-int16 BoltEngine::playTopCat() {
+int16 CarnivalEngine::playTopCat() {
 	int16 result = 0;
 	int16 exitFlag = 0;
 
@@ -521,7 +523,7 @@ int16 BoltEngine::playTopCat() {
 	}
 }
 
-int16 BoltEngine::handleActionButton(int16 *result) {
+int16 CarnivalEngine::handleActionButton(int16 *result) {
 	int16 prevState = _topCatCurrentAnimType;
 
 	switch (_topCatCurrentAnimType) {
@@ -644,7 +646,7 @@ int16 BoltEngine::handleActionButton(int16 *result) {
 	return 0;
 }
 
-void BoltEngine::queueAnim(int16 animType, int16 param) {
+void CarnivalEngine::queueAnim(int16 animType, int16 param) {
 	int16 slot = _topCatAnimQueueSize;
 	_topCatAnimQueueSize++;
 
@@ -690,7 +692,7 @@ void BoltEngine::queueAnim(int16 animType, int16 param) {
 	}
 }
 
-bool BoltEngine::maintainAnim(int16 soundEvent) {
+bool CarnivalEngine::maintainAnim(int16 soundEvent) {
 	int16 animDone = 0;
 
 	switch (_topCatAnimStateMachineStep) {
@@ -790,7 +792,7 @@ bool BoltEngine::maintainAnim(int16 soundEvent) {
 	return true;
 }
 
-void BoltEngine::maintainIdleSound(int16 decrement) {
+void CarnivalEngine::maintainIdleSound(int16 decrement) {
 	byte *soundData = _topCatSoundInfo.data;
 	int16 chunkSize = (int16)(_topCatSoundInfo.size / _topCatMaxBackgroundAnimFrames);
 
@@ -810,7 +812,7 @@ void BoltEngine::maintainIdleSound(int16 decrement) {
 	}
 }
 
-bool BoltEngine::startNextAnim(int16 *playAnswerAnim) {
+bool CarnivalEngine::startNextAnim(int16 *playAnswerAnim) {
 	TopCatAnim *entry = &_topCatAnimQueue[0];
 	bool startResult = false;
 
@@ -876,7 +878,7 @@ bool BoltEngine::startNextAnim(int16 *playAnswerAnim) {
 	return true;
 }
 
-void BoltEngine::setAnimType(int16 newType) {
+void CarnivalEngine::setAnimType(int16 newType) {
 	if (_topCatCurrentAnimType == newType)
 		return;
 
@@ -952,7 +954,7 @@ void BoltEngine::setAnimType(int16 newType) {
 	_topCatAnimStateMachineStep = 0;
 }
 
-void BoltEngine::highlightObject(byte *entry, int16 highlight) {
+void CarnivalEngine::highlightObject(byte *entry, int16 highlight) {
 	if (!entry)
 		return;
 
@@ -967,7 +969,7 @@ void BoltEngine::highlightObject(byte *entry, int16 highlight) {
 	_system->updateScreen();
 }
 
-bool BoltEngine::setupNextQuestion() {
+bool CarnivalEngine::setupNextQuestion() {
 	_xp->stopCycle();
 
 	int16 attempts = 0;
@@ -1035,7 +1037,7 @@ bool BoltEngine::setupNextQuestion() {
 	return true;
 }
 
-void BoltEngine::adjustColors(byte *pic, int8 shift) {
+void CarnivalEngine::adjustColors(byte *pic, int8 shift) {
 	int16 count = READ_UINT16(pic + 0x0C);
 	byte *data = getResolvedPtr(pic, 0x12);
 
@@ -1056,7 +1058,7 @@ void BoltEngine::adjustColors(byte *pic, int8 shift) {
 	}
 }
 
-void BoltEngine::shuffleTopCatQuestions() {
+void CarnivalEngine::shuffleTopCatQuestions() {
 	int16 answerOff = 0;
 
 	for (int16 i = 0; i < 60; i++) {
@@ -1078,7 +1080,7 @@ void BoltEngine::shuffleTopCatQuestions() {
 	}
 }
 
-void BoltEngine::shuffleTopCatPermutations() {
+void CarnivalEngine::shuffleTopCatPermutations() {
 	// Shuffle first permutation table...
 	for (int16 i = 0; i < 3; i++) {
 		int16 randIdx = _xp->getRandom(3);
@@ -1098,12 +1100,12 @@ void BoltEngine::shuffleTopCatPermutations() {
 	}
 }
 
-void BoltEngine::getTopCatSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
+void CarnivalEngine::getTopCatSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
 	soundInfo->data = memberAddr(lib, memberId);
 	soundInfo->size = memberSize(lib, memberId);
 }
 
-void BoltEngine::setScoreLights(int16 litMask) {
+void CarnivalEngine::setScoreLights(int16 litMask) {
 	int16 lightIdx = 0;
 	int16 tableOff = 0;
 
@@ -1130,7 +1132,7 @@ void BoltEngine::setScoreLights(int16 litMask) {
 	_system->updateScreen();
 }
 
-void BoltEngine::swapTopCatHelpEntry() {
+void CarnivalEngine::swapTopCatHelpEntry() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	int16 offset = 0;
@@ -1148,5 +1150,7 @@ void BoltEngine::swapTopCatHelpEntry() {
 		offset += 0x4A;
 	}
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

@@ -24,6 +24,9 @@
 #include "bolt/bolt.h"
 #include "bolt/metaengine.h"
 #include "bolt/detection.h"
+#include "bolt/carnival/carnival.h"
+#include "bolt/crete/crete.h"
+#include "bolt/merlin/merlin.h"
 
 namespace Bolt {
 
@@ -53,7 +56,16 @@ const ADExtraGuiOptionsMap *BoltMetaEngine::getAdvancedExtraGuiOptions() const {
 }
 
 Common::Error BoltMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Bolt::BoltEngine(syst, desc);
+	if (strcmp(desc->gameId, "carnival") == 0) {
+		*engine = new Bolt::Carnival::CarnivalEngine(syst, desc);
+	} else if (strcmp(desc->gameId, "crete") == 0) {
+		*engine = new Bolt::Crete::CreteEngine(syst, desc);
+	} else if (strcmp(desc->gameId, "merlin") == 0) {
+		*engine = new Bolt::Merlin::MerlinEngine(syst, desc);
+	} else {
+		return Common::kUnsupportedGameidError;
+	}
+
 	return Common::kNoError;
 }
 

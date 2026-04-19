@@ -19,11 +19,13 @@
  *
  */
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-void BoltEngine::startCycle(byte *cycleResource) {
+namespace Carnival {
+
+void CarnivalEngine::startCycle(byte *cycleResource) {
 	if (!cycleResource)
 		return;
 
@@ -32,7 +34,7 @@ void BoltEngine::startCycle(byte *cycleResource) {
 	_xp->startCycle(specs);
 }
 
-void BoltEngine::displayBooth(int16 page) {
+void CarnivalEngine::displayBooth(int16 page) {
 	_xp->setTransparency(page);
 	_xp->displayPic(&_boothLetterSprite, _displayX, _displayY, page);
 	displayColors(_boothPalCycleData, page, 0);
@@ -43,7 +45,7 @@ void BoltEngine::displayBooth(int16 page) {
 	_xp->updateDisplay();
 }
 
-void BoltEngine::playAVOverBooth(int16 animIndex) {
+void CarnivalEngine::playAVOverBooth(int16 animIndex) {
 	_xp->hideCursor();
 	displayBooth(stBack);
 	playAV(_rtfHandle, animIndex, _displayWidth, _displayHeight, _displayX, _displayY);
@@ -51,7 +53,7 @@ void BoltEngine::playAVOverBooth(int16 animIndex) {
 	_xp->showCursor();
 }
 
-int16 BoltEngine::hucksBooth(int16 prevBooth) {
+int16 CarnivalEngine::hucksBooth(int16 prevBooth) {
 	int16 result = openBooth(3);
 	closeBooth();
 
@@ -71,7 +73,7 @@ int16 BoltEngine::hucksBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::fredsBooth(int16 prevBooth) {
+int16 CarnivalEngine::fredsBooth(int16 prevBooth) {
 	int16 result = openBooth(4);
 	closeBooth();
 
@@ -91,7 +93,7 @@ int16 BoltEngine::fredsBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::scoobysBooth(int16 prevBooth) {
+int16 CarnivalEngine::scoobysBooth(int16 prevBooth) {
 	int16 result = openBooth(5);
 	closeBooth();
 
@@ -114,7 +116,7 @@ int16 BoltEngine::scoobysBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::yogisBooth(int16 prevBooth) {
+int16 CarnivalEngine::yogisBooth(int16 prevBooth) {
 	int16 result = openBooth(6);
 	closeBooth();
 
@@ -137,7 +139,7 @@ int16 BoltEngine::yogisBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::georgesBooth(int16 prevBooth) {
+int16 CarnivalEngine::georgesBooth(int16 prevBooth) {
 	int16 result = openBooth(7);
 	closeBooth();
 
@@ -160,7 +162,7 @@ int16 BoltEngine::georgesBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::topCatsBooth(int16 prevBooth) {
+int16 CarnivalEngine::topCatsBooth(int16 prevBooth) {
 	int16 result = openBooth(8);
 	closeBooth();
 
@@ -180,7 +182,7 @@ int16 BoltEngine::topCatsBooth(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::mainEntrance(int16 prevBooth) {
+int16 CarnivalEngine::mainEntrance(int16 prevBooth) {
 	int16 result = openBooth(9);
 	closeBooth();
 
@@ -206,7 +208,7 @@ int16 BoltEngine::mainEntrance(int16 prevBooth) {
 	}
 }
 
-bool BoltEngine::loadBooth(int16 boothId) {
+bool CarnivalEngine::loadBooth(int16 boothId) {
 	switch (boothId) {
 	case 3:
 		if (_boothLoadedMask & 0x01)
@@ -270,7 +272,7 @@ bool BoltEngine::loadBooth(int16 boothId) {
 	return true;
 }
 
-void BoltEngine::unloadBooth() {
+void CarnivalEngine::unloadBooth() {
 	if (_boothLoadedMask & 0x01)
 		freeBOLTGroup(_boothsBoltLib, 0x100, 1);
 
@@ -297,7 +299,7 @@ void BoltEngine::unloadBooth() {
 	_boothLoadedMask = 0;
 }
 
-int16 BoltEngine::openBooth(int16 boothId) {
+int16 CarnivalEngine::openBooth(int16 boothId) {
 	int16 baseResId;
 	int16 resId;
 
@@ -392,7 +394,7 @@ int16 BoltEngine::openBooth(int16 boothId) {
 	return boothEventLoop();
 }
 
-void BoltEngine::closeBooth() {
+void CarnivalEngine::closeBooth() {
 	uint16 buttonState;
 
 	_xp->readCursor(&buttonState, &_cursorY, &_cursorX);
@@ -401,7 +403,7 @@ void BoltEngine::closeBooth() {
 	unloadBooth();
 }
 
-void BoltEngine::playTour() {
+void CarnivalEngine::playTour() {
 	int16 playing = 1;
 
 	_xp->hideCursor();
@@ -442,7 +444,7 @@ void BoltEngine::playTour() {
 	_xp->showCursor();
 }
 
-void BoltEngine::finishPlayingHelp(int16 activeHotspot) {
+void CarnivalEngine::finishPlayingHelp(int16 activeHotspot) {
 	_helpPlaying = 0;
 
 	if (_helpIsIdle != 0) {
@@ -483,7 +485,7 @@ void BoltEngine::finishPlayingHelp(int16 activeHotspot) {
 	}
 }
 
-int16 BoltEngine::hotSpotActive(int16 hotspot) {
+int16 CarnivalEngine::hotSpotActive(int16 hotspot) {
 	switch (hotspot) {
 	case 0:
 	case 1:
@@ -512,7 +514,7 @@ int16 BoltEngine::hotSpotActive(int16 hotspot) {
 	}
 }
 
-void BoltEngine::hoverHotSpot() {
+void CarnivalEngine::hoverHotSpot() {
 	int16 i = 0;
 
 	while (i < _boothNumHotspots) {
@@ -538,7 +540,7 @@ void BoltEngine::hoverHotSpot() {
 	}
 }
 
-int16 BoltEngine::boothEventLoop() {
+int16 CarnivalEngine::boothEventLoop() {
 	uint32 eventData;
 	int16 exitCode = 0;
 
@@ -699,7 +701,7 @@ int16 BoltEngine::boothEventLoop() {
 	return _hoveredHotspot;
 }
 
-void BoltEngine::resetInactivityState() {
+void CarnivalEngine::resetInactivityState() {
 	if (_helpTimer != 0) {
 		_xp->killTimer(_helpTimer);
 		_helpTimer = 0;
@@ -717,7 +719,7 @@ void BoltEngine::resetInactivityState() {
 	_helpFlag = 0;
 }
 
-bool BoltEngine::handleButtonPress(int16 hotspot) {
+bool CarnivalEngine::handleButtonPress(int16 hotspot) {
 	byte savedLeftDoor[3];
 	byte savedRightDoor[3];
 
@@ -879,7 +881,7 @@ bool BoltEngine::handleButtonPress(int16 hotspot) {
 	}
 }
 
-void BoltEngine::blastColors(byte **paletteTable, int16 index, int16 mode) {
+void CarnivalEngine::blastColors(byte **paletteTable, int16 index, int16 mode) {
 	byte localPalette[384];
 	int16 si = 0;
 
@@ -900,7 +902,7 @@ void BoltEngine::blastColors(byte **paletteTable, int16 index, int16 mode) {
 	}
 }
 
-void BoltEngine::setColors(int16 index) {
+void CarnivalEngine::setColors(int16 index) {
 	if (_currentBoothScene == 9) {
 		switch (index) {
 		case 0:
@@ -948,7 +950,7 @@ void BoltEngine::setColors(int16 index) {
 	}
 }
 
-void BoltEngine::restoreColors(int16 index) {
+void CarnivalEngine::restoreColors(int16 index) {
 	if (_currentBoothScene == 9) {
 		switch (index) {
 		case 0:
@@ -1008,7 +1010,7 @@ void BoltEngine::restoreColors(int16 index) {
 	}
 }
 
-void BoltEngine::loadColors() {
+void CarnivalEngine::loadColors() {
 	for (int16 i = 0; i < _boothNumAnimations; i++) {
 		byte *animDesc = _boothAnimDescs[i];
 		_xp->getPalette((int16)READ_UINT16(animDesc), (int16)READ_UINT16(animDesc + 2), _savedPalettes[i]);
@@ -1026,12 +1028,12 @@ void BoltEngine::loadColors() {
 	}
 }
 
-void BoltEngine::shiftColorMap(byte *colorMap, int16 delta) {
+void CarnivalEngine::shiftColorMap(byte *colorMap, int16 delta) {
 	WRITE_BE_INT16(colorMap + 2, READ_BE_INT16(colorMap + 2) + delta);
 	WRITE_BE_INT16(colorMap + 4, READ_BE_INT16(colorMap + 4) + delta);
 }
 
-void BoltEngine::playBoothAV() {
+void CarnivalEngine::playBoothAV() {
 	switch (_currentBoothScene) {
 	case 3:
 		playAVOverBooth(6 - (_isDemo ? 3 : 0));
@@ -1054,7 +1056,7 @@ void BoltEngine::playBoothAV() {
 	}
 }
 
-void BoltEngine::mainEntranceHelpBlink() {
+void CarnivalEngine::mainEntranceHelpBlink() {
 	_tourStep++;
 
 	switch (_tourStep) {
@@ -1126,7 +1128,7 @@ void BoltEngine::mainEntranceHelpBlink() {
 	}
 }
 
-void BoltEngine::boothHelpBlink() {
+void CarnivalEngine::boothHelpBlink() {
 	_tourStep++;
 
 	switch (_tourStep) {
@@ -1169,7 +1171,7 @@ void BoltEngine::boothHelpBlink() {
 	}
 }
 
-void BoltEngine::tourPaletteCycleStep() {
+void CarnivalEngine::tourPaletteCycleStep() {
 	static const int16 cycleResIds[] = {
 		0x700, 0x719, 0x71E, 0x720, 0x725, 0x72A, 0x72F, 0x731,
 		-1,    0x736, 0x73B, 0x73F, 0x743, -1
@@ -1193,7 +1195,7 @@ void BoltEngine::tourPaletteCycleStep() {
 	startCycle(memberAddr(_boothsBoltLib, resId));
 }
 
-void BoltEngine::fadeToBlack(int16 steps) {
+void CarnivalEngine::fadeToBlack(int16 steps) {
 	byte palette[768];
 	XPPicDesc desc;
 
@@ -1229,7 +1231,7 @@ void BoltEngine::fadeToBlack(int16 steps) {
 	_xp->setFrameRate(0);
 }
 
-void BoltEngine::flushInput() {
+void CarnivalEngine::flushInput() {
 	uint32 eventBuf;
 
 	// Drain all mouse-down events
@@ -1239,7 +1241,7 @@ void BoltEngine::flushInput() {
 	while (_xp->getEvent(etMouseUp, &eventBuf) == etMouseUp);
 }
 
-int16 BoltEngine::winALetter(int16 prevBooth) {
+int16 CarnivalEngine::winALetter(int16 prevBooth) {
 	_lettersWon++;
 
 	if (_isDemo && _lettersWon == 6)
@@ -1303,7 +1305,7 @@ int16 BoltEngine::winALetter(int16 prevBooth) {
 	}
 }
 
-int16 BoltEngine::endDemo(int16 prevBooth) {
+int16 CarnivalEngine::endDemo(int16 prevBooth) {
 	_xp->hideCursor();
 	_xp->setTransparency(false);
 
@@ -1318,5 +1320,7 @@ int16 BoltEngine::endDemo(int16 prevBooth) {
 
 	return 0;
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

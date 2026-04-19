@@ -19,11 +19,13 @@
  *
  */
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-int16 BoltEngine::fredGame(int16 prevBooth) {
+namespace Carnival {
+
+int16 CarnivalEngine::fredGame(int16 prevBooth) {
 	int16 savedTimer = _xp->setInactivityTimer(30);
 
 	if (!initFred()) {
@@ -38,7 +40,7 @@ int16 BoltEngine::fredGame(int16 prevBooth) {
 	return result;
 }
 
-bool BoltEngine::initFred() {
+bool CarnivalEngine::initFred() {
 	const char *path = assetPath("fred.blt");
 
 	if (!openBOLTLib(&_fredBoltLib, &_fredBoltCallbacks, path))
@@ -127,7 +129,7 @@ bool BoltEngine::initFred() {
 	return true;
 }
 
-void BoltEngine::cleanUpFred() {
+void CarnivalEngine::cleanUpFred() {
 	int16 savedLevel = _fredSaveData[1]; // Level data group index
 	int16 savedPalette = _fredSaveData[2]; // Palette group index
 
@@ -159,7 +161,7 @@ void BoltEngine::cleanUpFred() {
 	_xp->updateDisplay();
 }
 
-bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
+bool CarnivalEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 	// Load level data group...
 	if (!getBOLTGroup(_fredBoltLib, levelGroup * 0x200 + 0x100, 1))
 		return false;
@@ -283,7 +285,7 @@ bool BoltEngine::initFredLevel(int16 levelGroup, int16 palGroup) {
 	return true;
 }
 
-void BoltEngine::termFredLevel(int16 levelGroup, int16 palGroup) {
+void CarnivalEngine::termFredLevel(int16 levelGroup, int16 palGroup) {
 	// Free balloon state structs...
 	if (_fredEntitiesTable) {
 		uint16 numBalloons = READ_UINT16(_fredLevelPtr + 0x0A);
@@ -310,7 +312,7 @@ void BoltEngine::termFredLevel(int16 levelGroup, int16 palGroup) {
 	freeBOLTGroup(_fredBoltLib, levelGroup * 0x200 + 0x100, 1);
 }
 
-void BoltEngine::swapFredAnimEntry() {
+void CarnivalEngine::swapFredAnimEntry() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	uint32 offset = 0;
@@ -322,7 +324,7 @@ void BoltEngine::swapFredAnimEntry() {
 	}
 }
 
-void BoltEngine::swapFredAnimDesc() {
+void CarnivalEngine::swapFredAnimDesc() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	uint32 decompSize = _boltCurrentMemberEntry->decompSize;
 	uint32 offset = 0;
@@ -347,7 +349,7 @@ void BoltEngine::swapFredAnimDesc() {
 	}
 }
 
-void BoltEngine::swapFredLevelDesc() {
+void CarnivalEngine::swapFredLevelDesc() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 
 	WRITE_UINT16(data + 0x00, READ_BE_INT16(data + 0x00));
@@ -359,7 +361,7 @@ void BoltEngine::swapFredLevelDesc() {
 	WRITE_UINT16(data + 0x0C, READ_BE_INT16(data + 0x0C));
 }
 
-int16 BoltEngine::playFred() {
+int16 CarnivalEngine::playFred() {
 	int16 result = 0;
 	int16 allCaught = 0;
 	int16 exitLoop = 0;
@@ -713,7 +715,7 @@ int16 BoltEngine::playFred() {
 	return result;
 }
 
-int16 BoltEngine::helpFred() {
+int16 CarnivalEngine::helpFred() {
 	byte *firstEntry = getResolvedPtr(_fredHelpEntries, 0);
 	byte *picDesc = getResolvedPtr(firstEntry, 4);
 
@@ -949,7 +951,7 @@ int16 BoltEngine::helpFred() {
 	return exitResult;
 }
 
-void BoltEngine::hiliteFredHelpObject(byte *entry, int16 highlight) {
+void CarnivalEngine::hiliteFredHelpObject(byte *entry, int16 highlight) {
 	if (!entry)
 		return;
 
@@ -966,7 +968,7 @@ void BoltEngine::hiliteFredHelpObject(byte *entry, int16 highlight) {
 	}
 }
 
-void BoltEngine::helpAnimStep() {
+void CarnivalEngine::helpAnimStep() {
 	if (_fredHelpStep < 0 || _fredHelpStep >= 4)
 		return;
 
@@ -1000,7 +1002,7 @@ void BoltEngine::helpAnimStep() {
 	_fredHelpStep++;
 }
 
-bool BoltEngine::spawnBalloon() {
+bool CarnivalEngine::spawnBalloon() {
 	// Count active balloons...
 	int16 activeCount = 0;
 	int16 i = 0;
@@ -1087,13 +1089,13 @@ bool BoltEngine::spawnBalloon() {
 	return true;
 }
 
-int16 BoltEngine::calcBalloonSpawnDelay() {
+int16 CarnivalEngine::calcBalloonSpawnDelay() {
 	int16 range = READ_UINT16(_fredLevelPtr + 2);
 	int16 base = READ_UINT16(_fredLevelPtr + 0);
 	return _xp->getRandom(range) + base;
 }
 
-int16 BoltEngine::selectBalloonRow() {
+int16 CarnivalEngine::selectBalloonRow() {
 	// Get Fred's center X position...
 	int32 fredX = _fredSprite.xPos >> 8;
 
@@ -1124,7 +1126,7 @@ int16 BoltEngine::selectBalloonRow() {
 	return randomRow;
 }
 
-void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
+void CarnivalEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 	if (mode >= 0x0B && mode < 0x0B + (_fredLevelPtr ? READ_UINT16(_fredLevelPtr + 0x0C) : 0)) {
 		state->animMode = 0x0B;
 
@@ -1175,7 +1177,7 @@ void BoltEngine::setFredAnimMode(FredEntityState *state, int16 mode) {
 	}
 }
 
-void BoltEngine::renderFredScene() {
+void CarnivalEngine::renderFredScene() {
 	_xp->fillDisplay(0, stFront);
 
 	int16 idx = 0;
@@ -1204,12 +1206,12 @@ void BoltEngine::renderFredScene() {
 	}
 }
 
-void BoltEngine::getFredSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
+void CarnivalEngine::getFredSoundInfo(BOLTLib *lib, int16 memberId, SoundInfo *soundInfo) {
 	soundInfo->data = memberAddr(lib, memberId);
 	soundInfo->size = memberSize(lib, memberId);
 }
 
-void BoltEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
+void CarnivalEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
 	_fredPendingOneShot = oneShot;
 	_fredPendingLoop = loop; 
 
@@ -1231,7 +1233,7 @@ void BoltEngine::playFredSound(SoundInfo *oneShot, SoundInfo *loop) {
 	}
 }
 
-void BoltEngine::updateFredSound() {
+void CarnivalEngine::updateFredSound() {
 	bool startLoop = false;
 
 	if (_fredLoopSound != nullptr) {
@@ -1262,5 +1264,7 @@ void BoltEngine::updateFredSound() {
 		}
 	}
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

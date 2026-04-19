@@ -3,15 +3,19 @@ MODULE := engines/bolt
 MODULE_OBJS = \
 	anim.o \
 	av.o \
-	barker.o \
+	carnival/barker.o \
 	bolt.o \
-	booth.o \
-	booths/fred.o \
-	booths/george.o \
-	booths/huck.o \
-	booths/scooby.o \
-	booths/topcat.o \
-	booths/yogi.o \
+	carnival/booth.o \
+	carnival/booths/fred.o \
+	carnival/booths/george.o \
+	carnival/booths/huck.o \
+	carnival/booths/scooby.o \
+	carnival/booths/topcat.o \
+	carnival/booths/yogi.o \
+	carnival/carnival.o \
+	carnival/resource.o \
+	crete/crete.o \
+	merlin/merlin.o \
 	metaengine.o \
 	resource.o \
 	rtf.o \
