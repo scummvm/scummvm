@@ -54,7 +54,7 @@ enum {
 
 // Constructor
 GuiManager::GuiManager() : CommandSender(nullptr), _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
-	_cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	_cursorAnimateCounter(0), _cursorAnimateTimer(0), _tooltip(nullptr) {
 	_theme = nullptr;
 	_useStdCursor = false;
 
@@ -401,6 +401,30 @@ void GuiManager::redrawInternalTopDialogOnly() {
 			_theme->copyBackBufferToScreen();
 
 			_dialogStack.top()->drawDialog(kDrawLayerForeground);
+
+			if (_tooltip) {
+				// There is no background for tooltips as we never save them in backbuffer
+				_tooltip->drawDialog(kDrawLayerForeground);
+			}
+			break;
+
+		case kRedrawOpenTooltip:
+
+			// Draw the newly opened tooltip over everything and that's it
+			_theme->drawToScreen();
+
+			assert(_tooltip);
+			// There is no background for tooltips as we never save them in backbuffer
+			_tooltip->drawDialog(kDrawLayerForeground);
+			break;
+
+		case kRedrawCloseTooltip:
+
+			// Restore from background and render the top dialog foreground
+			_theme->drawToScreen();
+			_theme->restoreBackground(Common::Rect(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight()));
+
+			_dialogStack.top()->drawDialog(kDrawLayerForeground);
 			break;
 
 		default:
@@ -461,6 +485,30 @@ void GuiManager::redrawInternal() {
 			_theme->copyBackBufferToScreen();
 
 			_dialogStack.top()->drawDialog(kDrawLayerForeground);
+
+			if (_tooltip) {
+				// There is no background for tooltips as we never save them in backbuffer
+				_tooltip->drawDialog(kDrawLayerForeground);
+			}
+			break;
+
+		case kRedrawOpenTooltip:
+
+			// Draw the newly opened tooltip over everything and that's it
+			_theme->drawToScreen();
+
+			assert(_tooltip);
+			// There is no background for tooltips as we never save them in backbuffer
+			_tooltip->drawDialog(kDrawLayerForeground);
+			break;
+
+		case kRedrawCloseTooltip:
+
+			// Restore from background and render the top dialog foreground
+			_theme->drawToScreen();
+			_theme->restoreBackground(Common::Rect(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight()));
+
+			_dialogStack.top()->drawDialog(kDrawLayerForeground);
 			break;
 
 		default:
@@ -486,6 +534,8 @@ void GuiManager::redraw() {
 }
 
 Dialog *GuiManager::getTopDialog() const {
+	if (_tooltip)
+		return _tooltip;
 	if (_dialogStack.empty())
 		return nullptr;
 	return _dialogStack.top();
@@ -619,7 +669,8 @@ void GuiManager::runLoop() {
 		// 2. If the mouse was moved but ended on the same (tooltip enabled) widget,
 		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
 		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
-		if ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
+		if (!_tooltip
+		    && (_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
 		    && systemMillisNowForTooltipCheck - _lastMousePosition.time > (uint32)kTooltipDelay
 		    && !activeDialog->isDragging()) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
@@ -636,7 +687,9 @@ void GuiManager::runLoop() {
 					if (wdg->hasTooltip()) {
 						Tooltip *tooltip = new Tooltip();
 						tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
-						tooltip->runModal();
+						_tooltip = tooltip;
+						_tooltip->runModal();
+						// _tooltip is reset in closeTopDialog
 						delete tooltip;
 					}
 				}
@@ -719,17 +772,23 @@ void GuiManager::restoreState() {
 
 void GuiManager::openDialog(Dialog *dialog) {
 	if (!_dialogStack.empty())
-		getTopDialog()->lostFocus();
+		_dialogStack.top()->lostFocus();
 
 	giveFocusToDialog(dialog);
 
-	_dialogStack.push(dialog);
-	// We were already ready to redraw a new dialog
-	// Redraw fully to ensure a proper draw of the whole stack
-	if (_redrawStatus == kRedrawOpenDialog)
-		_redrawStatus = kRedrawFull;
-	if (_redrawStatus != kRedrawFull)
-		_redrawStatus = kRedrawOpenDialog;
+	if (dialog == _tooltip) {
+		if (_redrawStatus == kRedrawDisabled)
+			_redrawStatus = kRedrawOpenTooltip;
+	} else {
+		_dialogStack.push(dialog);
+
+		// We were already ready to redraw a new dialog
+		// Redraw fully to ensure a proper draw of the whole stack
+		if (_redrawStatus == kRedrawOpenDialog)
+			_redrawStatus = kRedrawFull;
+		if (_redrawStatus != kRedrawFull)
+			_redrawStatus = kRedrawOpenDialog;
+	}
 
 	// We reflow the dialog just before opening it. If the screen changed
 	// since the last time we looked, also refresh the loaded theme,
@@ -740,21 +799,34 @@ void GuiManager::openDialog(Dialog *dialog) {
 
 void GuiManager::closeTopDialog() {
 	// Don't do anything if no dialog is open
-	if (_dialogStack.empty())
+	if (!_tooltip && _dialogStack.empty())
 		return;
 
-	// Remove the dialog from the stack
-	_dialogStack.pop()->lostFocus();
+	if (!_tooltip) {
+		// Remove the dialog from the stack
+		_dialogStack.pop()->lostFocus();
+	}
 
 	if (!_dialogStack.empty()) {
-		Dialog *dialog = getTopDialog();
+		Dialog *dialog = _dialogStack.top();
 		giveFocusToDialog(dialog);
 	}
 
-	if (_redrawStatus != kRedrawFull)
-		_redrawStatus = kRedrawCloseDialog;
+	if (_tooltip) {
+		if (_redrawStatus == kRedrawDisabled)
+			_redrawStatus = kRedrawCloseTooltip;
+	} else {
+		if (_redrawStatus != kRedrawFull)
+			_redrawStatus = kRedrawCloseDialog;
+	}
 
 	redraw();
+
+	if (_tooltip) {
+		// We need to reset it to nullptr here, else getTopDialog keeps
+		// returning us as top dialog and we never leave the tooltip event loop
+		_tooltip = nullptr;
+	}
 }
 
 void GuiManager::setupCursor() {
