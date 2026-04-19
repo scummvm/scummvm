@@ -19,11 +19,13 @@
  *
  */
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-int16 BoltEngine::georgeGame(int16 prevBooth) {
+namespace Carnival {
+
+int16 CarnivalEngine::georgeGame(int16 prevBooth) {
 	int16 result;
 	int16 prevInactivity = _xp->setInactivityTimer(30);
 
@@ -38,7 +40,7 @@ int16 BoltEngine::georgeGame(int16 prevBooth) {
 	return result;
 }
 
-bool BoltEngine::initGeorge() {
+bool CarnivalEngine::initGeorge() {
 	if (!openBOLTLib(&_georgeBoltLib, &_georgeBoltCallbacks, assetPath("george.blt")))
 		return false;
 
@@ -115,7 +117,7 @@ bool BoltEngine::initGeorge() {
 	return true;
 }
 
-void BoltEngine::cleanUpGeorge() {
+void CarnivalEngine::cleanUpGeorge() {
 	// Save current progress...
 	int16 savedLevel = _georgeSaveData[1];
 	int16 savedVariant = _georgeSaveData[2];
@@ -152,7 +154,7 @@ void BoltEngine::cleanUpGeorge() {
 	_xp->updateDisplay();
 }
 
-bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
+bool CarnivalEngine::initGeorgeLevel(int16 level, int16 variant) {
 	int16 levelGroup = (level * 2) << 8 | 0x100;
 	int16 variantGroup = (variant * 2) << 8 | 0x200;
 
@@ -360,7 +362,7 @@ bool BoltEngine::initGeorgeLevel(int16 level, int16 variant) {
 	return true;
 }
 
-void BoltEngine::termGeorgeLevel(int16 level, int16 variant) {
+void CarnivalEngine::termGeorgeLevel(int16 level, int16 variant) {
 	if (_georgeEntityList) {
 		for (int16 i = 0; i < _georgeTotalSatellites; i++) {
 			GeorgeEntityState *sat = _georgeEntityList[i];
@@ -402,7 +404,7 @@ void BoltEngine::termGeorgeLevel(int16 level, int16 variant) {
 	freeBOLTGroup(_georgeBoltLib, (level * 2) << 8 | 0x100, 1);
 }
 
-void BoltEngine::swapGeorgeFrameArray() {
+void CarnivalEngine::swapGeorgeFrameArray() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	uint32 size = _boltCurrentMemberEntry->decompSize;
 	uint32 off = 0;
@@ -414,7 +416,7 @@ void BoltEngine::swapGeorgeFrameArray() {
 	}
 }
 
-void BoltEngine::swapGeorgeHelpEntry() {
+void CarnivalEngine::swapGeorgeHelpEntry() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	uint32 size = _boltCurrentMemberEntry->decompSize;
 	uint32 off = 0;
@@ -435,13 +437,13 @@ void BoltEngine::swapGeorgeHelpEntry() {
 	}
 }
 
-void BoltEngine::swapGeorgeThresholds() {
+void CarnivalEngine::swapGeorgeThresholds() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	for (int16 i = 0; i < 12; i++)
 		WRITE_UINT16(data + i * 2, READ_BE_UINT16(data + i * 2));
 }
 
-int16 BoltEngine::playGeorge() {
+int16 CarnivalEngine::playGeorge() {
 	int16 returnCode = 0;
 	int16 flyActive = 1;
 	int16 winSeq = 0;
@@ -779,7 +781,7 @@ int16 BoltEngine::playGeorge() {
 	return returnCode;
 }
 
-int16 BoltEngine::helpGeorge() {
+int16 CarnivalEngine::helpGeorge() {
 	byte *firstObj = getResolvedPtr(_georgeHelpObjects, 0);
 	byte *firstInfo = getResolvedPtr(firstObj, 0x04);
 	int16 curX = READ_UINT16(firstInfo + 0x06) + READ_UINT16(firstInfo + 0x0A) - 10;
@@ -1005,7 +1007,7 @@ int16 BoltEngine::helpGeorge() {
 	return exitCode;
 }
 
-void BoltEngine::hiliteGeorgeHelpObject(byte *entry, int16 highlight) {
+void CarnivalEngine::hiliteGeorgeHelpObject(byte *entry, int16 highlight) {
 	if (!entry)
 		return;
 
@@ -1018,7 +1020,7 @@ void BoltEngine::hiliteGeorgeHelpObject(byte *entry, int16 highlight) {
 	}
 }
 
-void BoltEngine::advanceHelpAnimation() {
+void CarnivalEngine::advanceHelpAnimation() {
 	if (_georgeHelpStep < 0 || _georgeHelpStep >= 4)
 		return;
 
@@ -1048,7 +1050,7 @@ void BoltEngine::advanceHelpAnimation() {
 
 	_georgeHelpStep++;
 }
-bool BoltEngine::spawnSatellite() {
+bool CarnivalEngine::spawnSatellite() {
 	// Count active satellites (type 3)...
 	int16 activeCount = 0;
 	for (int16 i = 0;; i++) {
@@ -1115,13 +1117,13 @@ bool BoltEngine::spawnSatellite() {
 	return true;
 }
 
-int16 BoltEngine::getRandomSatelliteWait() {
+int16 CarnivalEngine::getRandomSatelliteWait() {
 	int16 range = _georgeThresholds[2];
 	int16 topY = _georgeThresholds[1];
 	return _xp->getRandom(range) + topY;
 }
 
-int16 BoltEngine::getRandomAsteroidRow() {
+int16 CarnivalEngine::getRandomAsteroidRow() {
 	GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 	int16 carY = carSat->y >> 8;
 
@@ -1147,7 +1149,7 @@ int16 BoltEngine::getRandomAsteroidRow() {
 	return randRow;
 }
 
-bool BoltEngine::confirmAsteroidHitTest() {
+bool CarnivalEngine::confirmAsteroidHitTest() {
 	GeorgeEntityState *candidate = nullptr;
 	int16 startIdx = _georgeHitSearchIdx;
 	int16 idx = startIdx;
@@ -1175,7 +1177,7 @@ bool BoltEngine::confirmAsteroidHitTest() {
 	return true;
 }
 
-bool BoltEngine::spawnAsteroid() {
+bool CarnivalEngine::spawnAsteroid() {
 	// Count active asteroids (type 5)...
 	int16 activeCount = 0;
 	for (int16 i = 0;; i++) {
@@ -1241,13 +1243,13 @@ bool BoltEngine::spawnAsteroid() {
 	return true;
 }
 
-int16 BoltEngine::getRandomAsteroidWait() {
+int16 CarnivalEngine::getRandomAsteroidWait() {
     int16 base  = _georgeThresholds[7];
     int16 range = _georgeThresholds[8];
     return _xp->getRandom(range) + base;
 }
 
-int16 BoltEngine::getAsteroidRow() {
+int16 CarnivalEngine::getAsteroidRow() {
 	GeorgeEntityState *carSat = _georgeEntityList[_georgeCarIdx];
 	int16 carY = carSat->y >> 8;
 
@@ -1266,7 +1268,7 @@ int16 BoltEngine::getAsteroidRow() {
 	return row;
 }
 
-void BoltEngine::setGeorgeAnimMode(GeorgeEntityState *entity, int16 mode) {
+void CarnivalEngine::setGeorgeAnimMode(GeorgeEntityState *entity, int16 mode) {
 	entity->animMode = mode;
 	entity->variant = 0;
 	entity->animTable = _georgeCarPics[mode];
@@ -1274,7 +1276,7 @@ void BoltEngine::setGeorgeAnimMode(GeorgeEntityState *entity, int16 mode) {
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
 
-void BoltEngine::setSatelliteAnimMode(GeorgeEntityState *entity, int16 mode, int16 variant) {
+void CarnivalEngine::setSatelliteAnimMode(GeorgeEntityState *entity, int16 mode, int16 variant) {
 	if (mode == 4) {
 		// Deactivate...
 		entity->animMode = mode;
@@ -1289,7 +1291,7 @@ void BoltEngine::setSatelliteAnimMode(GeorgeEntityState *entity, int16 mode, int
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
 
-void BoltEngine::setAsteroidAnimMode(GeorgeEntityState *entity, int16 mode, int16 variant) {
+void CarnivalEngine::setAsteroidAnimMode(GeorgeEntityState *entity, int16 mode, int16 variant) {
 	entity->animMode = mode;
 	entity->variant = variant;
 	entity->animTable = getResolvedPtr(_georgeAsteroidGfx, variant * 4);
@@ -1297,7 +1299,7 @@ void BoltEngine::setAsteroidAnimMode(GeorgeEntityState *entity, int16 mode, int1
 	entity->frameCountdown = READ_UINT16(entity->animTable + 0x04);
 }
 
-void BoltEngine::drawFlyingObjects() {
+void CarnivalEngine::drawFlyingObjects() {
 	_xp->fillDisplay(0, stFront);
 
 	for (int16 i = 0;; i++) {
@@ -1317,14 +1319,14 @@ void BoltEngine::drawFlyingObjects() {
 	}
 }
 
-void BoltEngine::getGeorgeSoundInfo(BOLTLib *boltLib, int16 member, SoundInfo *outInfo, byte priority) {
+void CarnivalEngine::getGeorgeSoundInfo(BOLTLib *boltLib, int16 member, SoundInfo *outInfo, byte priority) {
 	outInfo->data = memberAddr(boltLib, member);
 	outInfo->size = memberSize(boltLib, member);
 	outInfo->priority = priority;
 	outInfo->channel = _georgeSoundChannelCounter++;
 }
 
-void BoltEngine::playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound) {
+void CarnivalEngine::playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound) {
 	// If a queued sound exists and has higher priority than new sound, don't replace it...
 	if (newSound && _georgeSoundQueued) {
 		if (_georgeSoundQueued->priority > newSound->priority)
@@ -1356,7 +1358,7 @@ void BoltEngine::playGeorgeSound(SoundInfo *newSound, SoundInfo *nextSound) {
 		updateGeorgeSound();
 }
 
-void BoltEngine::updateGeorgeSound() {
+void CarnivalEngine::updateGeorgeSound() {
 	int16 playBoth = 0;
 
 	if (_georgeSoundCurrent != nullptr) {
@@ -1389,5 +1391,7 @@ void BoltEngine::updateGeorgeSound() {
 	_xp->playSound(_georgeSoundCurrent->data, _georgeSoundCurrent->size, 22050);
 	_xp->playSound(_georgeSoundCurrent->data, _georgeSoundCurrent->size, 22050);
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

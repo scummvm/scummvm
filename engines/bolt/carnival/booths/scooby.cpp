@@ -21,11 +21,13 @@
 
 #include "common/memstream.h"
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-bool BoltEngine::loadScoobyBaseAssets() {
+namespace Carnival {
+
+bool CarnivalEngine::loadScoobyBaseAssets() {
 	if (!getBOLTGroup(_scoobyBoltLib, 0, 1))
 		return false;
 
@@ -33,11 +35,11 @@ bool BoltEngine::loadScoobyBaseAssets() {
 	return true;
 }
 
-void BoltEngine::cleanUpScoobyBaseAssets() {
+void CarnivalEngine::cleanUpScoobyBaseAssets() {
 	freeBOLTGroup(_scoobyBoltLib, 0, 1);
 }
 
-void BoltEngine::displayPicClipHack(byte *pic, int16 offsetX, int16 offsetY, int16 *clipRect, int16 displayMode) {
+void CarnivalEngine::displayPicClipHack(byte *pic, int16 offsetX, int16 offsetY, int16 *clipRect, int16 displayMode) {
 	int16 clipW = clipRect[2];
 	int16 clipH = clipRect[3];
 
@@ -64,7 +66,7 @@ void BoltEngine::displayPicClipHack(byte *pic, int16 offsetX, int16 offsetY, int
 					displayMode);
 }
 
-void BoltEngine::drawMovingWalls(int16 cellIdx, int16 direction, int16 picFrame, int16 bgFrame) {
+void CarnivalEngine::drawMovingWalls(int16 cellIdx, int16 direction, int16 picFrame, int16 bgFrame) {
 	// Clamp frames to valid range
 	if (picFrame > 5)
 		picFrame = 5;
@@ -156,7 +158,7 @@ void BoltEngine::drawMovingWalls(int16 cellIdx, int16 direction, int16 picFrame,
 	}
 }
 
-void BoltEngine::drawAllMovingWalls() {
+void CarnivalEngine::drawAllMovingWalls() {
 	ScoobyState *state = &_scoobyGameState;
 
 	// Phase 1: Draw open passages between adjacent cells (both sides state 2)
@@ -235,7 +237,7 @@ void BoltEngine::drawAllMovingWalls() {
 	}
 }
 
-void BoltEngine::animateTransition(int16 memberIdx) {
+void CarnivalEngine::animateTransition(int16 memberIdx) {
 	_scoobyGameState.spriteFrameCount = 1;
 
 	_scoobyGameState.frameData[0] = memberAddr(_scoobyBoltLib, memberIdx - 1);
@@ -246,7 +248,7 @@ void BoltEngine::animateTransition(int16 memberIdx) {
 	_scoobyGameState.velocityY = 0;
 }
 
-void BoltEngine::clearPictMSb(byte *pic) {
+void CarnivalEngine::clearPictMSb(byte *pic) {
 	// Check if bit 8 of flags word at pic+0 is set (byte at pic+1, bit 0)
 	if (READ_UINT16(pic) & 0x100)
 		return;
@@ -259,7 +261,7 @@ void BoltEngine::clearPictMSb(byte *pic) {
 	}
 }
 
-void BoltEngine::initScoobyLevelGraphics() {
+void CarnivalEngine::initScoobyLevelGraphics() {
 	// Get palette from level data
 	byte *palette = memberAddr(_scoobyBoltLib, READ_UINT16(_scoobyLevelData));
 
@@ -326,7 +328,7 @@ void BoltEngine::initScoobyLevelGraphics() {
 	_xp->updateDisplay();
 }
 
-bool BoltEngine::initScoobyLevelAssets() {
+bool CarnivalEngine::initScoobyLevelAssets() {
 	uint32 maxPicSize = 0;
 
 	// Compute graphics group index from level number
@@ -430,12 +432,12 @@ bool BoltEngine::initScoobyLevelAssets() {
 	return true;
 }
 
-void BoltEngine::cleanUpScoobyLevelGraphics() {
+void CarnivalEngine::cleanUpScoobyLevelGraphics() {
 	_xp->stopCycle();
 	freeBOLTGroup(_scoobyBoltLib, _scoobySelectedGraphicsGroup, 1);
 }
 
-void BoltEngine::setScoobySpriteDirection(int16 startMember) {
+void CarnivalEngine::setScoobySpriteDirection(int16 startMember) {
 	_scoobyGameState.spriteFrameCount = 6;
 
 	int16 memberIdx = startMember;
@@ -446,7 +448,7 @@ void BoltEngine::setScoobySpriteDirection(int16 startMember) {
 	setSSpriteFrames(&_scoobySprite, _scoobyGameState.spriteFrameCount, _scoobyGameState.frameData, 1);
 }
 
-void BoltEngine::playSoundMapScooby(int16 memberIdx) {
+void CarnivalEngine::playSoundMapScooby(int16 memberIdx) {
 	byte *soundData = getBOLTMember(_scoobyBoltLib, memberIdx);
 	uint32 soundSize = memberSize(_scoobyBoltLib, memberIdx);
 
@@ -455,7 +457,7 @@ void BoltEngine::playSoundMapScooby(int16 memberIdx) {
 	}
 }
 
-void BoltEngine::playWallSound() {
+void CarnivalEngine::playWallSound() {
 	if (_scoobySoundPlaying == 0)
 		return;
 
@@ -500,7 +502,7 @@ void BoltEngine::playWallSound() {
 	playSoundMapScooby(soundMember);
 }
 
-void BoltEngine::animateWalls() {
+void CarnivalEngine::animateWalls() {
 	// Phase 1: Animate current cell's walls
 	int16 curCell = _scoobyGameState.scoobyCell;
 
@@ -645,7 +647,7 @@ void BoltEngine::animateWalls() {
 	}
 }
 
-void BoltEngine::decideDirection() {
+void CarnivalEngine::decideDirection() {
 	int16 cell = _scoobyGameState.scoobyCell;
 	int16 targetDir = _scoobyGameState.transitionTarget;
 
@@ -752,7 +754,7 @@ void BoltEngine::decideDirection() {
 	}
 }
 
-void BoltEngine::updateScoobySound() {
+void CarnivalEngine::updateScoobySound() {
 	switch (_scoobySoundMode) {
 	case 0:
 		if (_scoobySoundPlaying == 0) {
@@ -771,14 +773,14 @@ void BoltEngine::updateScoobySound() {
 	}
 }
 
-void BoltEngine::setScoobySound(int16 mode) {
+void CarnivalEngine::setScoobySound(int16 mode) {
 	if (mode != _scoobySoundMode) {
 		_scoobySoundMode = mode;
 		updateScoobySound();
 	}
 }
 
-void BoltEngine::updateScoobyLocation() {
+void CarnivalEngine::updateScoobyLocation() {
 	Common::Point loc;
 	getSSpriteLoc(&_scoobySprite, &loc);
 	_scoobyGameState.scoobyX = loc.x;
@@ -878,7 +880,7 @@ void BoltEngine::updateScoobyLocation() {
 		_scoobyGameState.slotIndex[slotIdx] = 0;
 }
 
-void BoltEngine::updateScoobyWalls() {
+void CarnivalEngine::updateScoobyWalls() {
 	if (_scoobyWallAnimating != 0) {
 		_scoobyWallAnimStep++;
 		if (_scoobyWallAnimStep > 5) {
@@ -1021,7 +1023,7 @@ void BoltEngine::updateScoobyWalls() {
 	}
 }
 
-void BoltEngine::updateScoobyDirection(int16 inputDir) {
+void CarnivalEngine::updateScoobyDirection(int16 inputDir) {
 	int16 cell = _scoobyGameState.scoobyCell;
 
 	// If at cell center, wall passable, and no transition active then accept immediately
@@ -1113,7 +1115,7 @@ void BoltEngine::updateScoobyDirection(int16 inputDir) {
 	}
 }
 
-void BoltEngine::updateScoobyTransition() {
+void CarnivalEngine::updateScoobyTransition() {
 	if (_scoobyTransitioning != 0) {
 		// Active transition in progress
 		switch (_scoobyTransitionTarget) {
@@ -1337,7 +1339,7 @@ epilogue:
 	setScoobySound(soundMode);
 }
 
-bool BoltEngine::initScoobyLevel() {
+bool CarnivalEngine::initScoobyLevel() {
 	if (!initScoobyLevelAssets())
 		return false;
 
@@ -1389,7 +1391,7 @@ skipLevelSet:
 	return true;
 }
 
-bool BoltEngine::resumeScoobyLevel() {
+bool CarnivalEngine::resumeScoobyLevel() {
 	if (!initScoobyLevelAssets())
 		return false;
 
@@ -1412,7 +1414,7 @@ bool BoltEngine::resumeScoobyLevel() {
 	return true;
 }
 
-bool BoltEngine::initScooby() {
+bool CarnivalEngine::initScooby() {
 	_xp->randomize();
 
 	_scoobyMoveRequested = 0;
@@ -1508,7 +1510,7 @@ bool BoltEngine::initScooby() {
 	return true;
 }
 
-void BoltEngine::cleanUpScooby() {
+void CarnivalEngine::cleanUpScooby() {
 	vSave(&_scoobyGlobalSaveData, 0x3C, "ScoobyGlobal");
 
 	// Serialize the game state into a flat 0x11A-byte BE buffer
@@ -1567,7 +1569,7 @@ void BoltEngine::cleanUpScooby() {
 	_xp->updateDisplay();
 }
 
-int16 BoltEngine::helpScooby() {
+int16 CarnivalEngine::helpScooby() {
 	int16 selection = 2;
 	int16 isPlaying = 0;
 	int16 soundParam = 0;
@@ -1829,7 +1831,7 @@ int16 BoltEngine::helpScooby() {
 	return selection;
 }
 
-void BoltEngine::hiliteScoobyHelpObject(byte *entry, int16 highlight) {
+void CarnivalEngine::hiliteScoobyHelpObject(byte *entry, int16 highlight) {
 	if (!entry)
 		return;
 
@@ -1844,7 +1846,7 @@ void BoltEngine::hiliteScoobyHelpObject(byte *entry, int16 highlight) {
 	}
 }
 
-int16 BoltEngine::xpDirToBOLTDir(uint32 xpDir) {
+int16 CarnivalEngine::xpDirToBOLTDir(uint32 xpDir) {
 	// xpDir packs (X << 16 | Y & 0xFFFF) where X,Y are -1/0/1
 	// Returns BOLT direction:
 	//   0=up,   1=up-right,  2=right, 3=down-right,
@@ -1872,7 +1874,7 @@ int16 BoltEngine::xpDirToBOLTDir(uint32 xpDir) {
 	return 0;
 }
 
-int16 BoltEngine::playScooby() {
+int16 CarnivalEngine::playScooby() {
 	int16 inputDir = -1;
 
 	// Check if help screen should show on startup
@@ -1930,7 +1932,7 @@ int16 BoltEngine::playScooby() {
 	return 0;
 }
 
-int16 BoltEngine::scoobyGame(int16 prevBooth) {
+int16 CarnivalEngine::scoobyGame(int16 prevBooth) {
 	int16 result = 5;
 
 	if (!openBOLTLib(&_scoobyBoltLib, &_scoobyBoltCallbacks, assetPath("scooby.blt")))
@@ -1949,7 +1951,7 @@ int16 BoltEngine::scoobyGame(int16 prevBooth) {
 	return result;
 }
 
-void BoltEngine::swapScoobyHelpEntry() {
+void CarnivalEngine::swapScoobyHelpEntry() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (data == nullptr)
 		return;
@@ -1962,7 +1964,7 @@ void BoltEngine::swapScoobyHelpEntry() {
 	unpackColors(13, data + 0x0E);
 }
 
-void BoltEngine::swapScoobyWordArray() {
+void CarnivalEngine::swapScoobyWordArray() {
 	byte *data = _boltCurrentMemberEntry->dataPtr;
 	if (data == nullptr)
 		return;
@@ -1974,5 +1976,7 @@ void BoltEngine::swapScoobyWordArray() {
 		data += 2;
 	}
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

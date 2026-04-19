@@ -21,11 +21,13 @@
 
 #include "common/memstream.h"
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-void BoltEngine::playSoundMapHuck(int16 memberId) {
+namespace Carnival {
+
+void CarnivalEngine::playSoundMapHuck(int16 memberId) {
 	byte *soundData = getBOLTMember(_huckBoltLib, memberId);
 	uint32 soundSize = memberSize(_huckBoltLib, memberId);
 	if (soundData) {
@@ -34,7 +36,7 @@ void BoltEngine::playSoundMapHuck(int16 memberId) {
 	}
 }
 
-void BoltEngine::waitSoundMapHuck() {
+void CarnivalEngine::waitSoundMapHuck() {
 	if (!_huckSoundPlaying)
 		return;
 
@@ -43,7 +45,7 @@ void BoltEngine::waitSoundMapHuck() {
 	_huckSoundPlaying--;
 }
 
-void BoltEngine::setHuckColors(int16 which) {
+void CarnivalEngine::setHuckColors(int16 which) {
 	if (which == 0) {
 		int16 count = _huckPalRange[1] - _huckPalRange[0] + 1;
 		_xp->setPalette(count, _huckPalRange[0], _huckPalHighlight0);
@@ -53,7 +55,7 @@ void BoltEngine::setHuckColors(int16 which) {
 	}
 }
 
-void BoltEngine::restoreHuckColors(int16 which) {
+void CarnivalEngine::restoreHuckColors(int16 which) {
 	if (which == 0) {
 		int16 count = _huckPalRange[1] - _huckPalRange[0] + 1;
 		_xp->setPalette(count, _huckPalRange[0], _huckPalSave0);
@@ -63,7 +65,7 @@ void BoltEngine::restoreHuckColors(int16 which) {
 	}
 }
 
-void BoltEngine::startHuckShuffleTimer() {
+void CarnivalEngine::startHuckShuffleTimer() {
 	if (_huckShuffleTimer) {
 		_xp->killTimer(_huckShuffleTimer);
 		_huckShuffleTimer = 0;
@@ -76,7 +78,7 @@ void BoltEngine::startHuckShuffleTimer() {
 	}
 }
 
-void BoltEngine::drawGift(int16 slot) {
+void CarnivalEngine::drawGift(int16 slot) {
 	byte *giftSprite = memberAddr(_huckBoltLib, _huckState.drawTable1[slot]);
 	int16 sprStride = READ_UINT16(giftSprite + 0x0A);
 	int16 sprHeight = READ_UINT16(giftSprite + 0x0C);
@@ -134,7 +136,7 @@ void BoltEngine::drawGift(int16 slot) {
 	_xp->displayPic(&_huckScratchPic, slotY, slotX, stFront);
 }
 
-void BoltEngine::drawHuckGifts() {
+void CarnivalEngine::drawHuckGifts() {
 	_xp->fillDisplay(0, stFront);
 
 	int16 giftCount = READ_UINT16(_huckGiftPic);
@@ -166,7 +168,7 @@ void BoltEngine::drawHuckGifts() {
 	}
 }
 
-void BoltEngine::checkHuckLevelComplete() {
+void CarnivalEngine::checkHuckLevelComplete() {
 	if (_huckState.giftCount == 2) {
 		// Last pair matched, level complete!
 		_huckExitFlag = 1;
@@ -194,7 +196,7 @@ void BoltEngine::checkHuckLevelComplete() {
 	startHuckShuffleTimer();
 }
 
-bool BoltEngine::initHuckDisplay() {
+bool CarnivalEngine::initHuckDisplay() {
 	byte *palPtr = memberAddr(_huckBoltLib, READ_UINT16(_huckBgPic));
 
 	_huckHotSpotCount = 0;
@@ -266,7 +268,7 @@ bool BoltEngine::initHuckDisplay() {
 	return true;
 }
 
-bool BoltEngine::loadHuckResources() {
+bool CarnivalEngine::loadHuckResources() {
 	int16 stateIdx = _huckState.levelNumber - 1;
 	int16 giftGroupId = (stateIdx << 10) + 0x100;
 	_huckGiftGroupId = giftGroupId;
@@ -300,14 +302,14 @@ bool BoltEngine::loadHuckResources() {
 	return true;
 }
 
-void BoltEngine::unloadHuckResources() {
+void CarnivalEngine::unloadHuckResources() {
 	_xp->stopCycle();
 	_xp->hideCursor();
 	freeBOLTGroup(_huckBoltLib, _huckVariantGroupId, 1);
 	freeBOLTGroup(_huckBoltLib, _huckGiftGroupId, 1);
 }
 
-bool BoltEngine::initHuckLevel() {
+bool CarnivalEngine::initHuckLevel() {
 	// Advance slot variant (wraps 0..2)
 	int16 stateIdx = _huckState.levelNumber - 1;
 	_huckState.slotIndex[stateIdx]++;
@@ -355,7 +357,7 @@ bool BoltEngine::initHuckLevel() {
 	return true;
 }
 
-bool BoltEngine::resumeHuckLevel() {
+bool CarnivalEngine::resumeHuckLevel() {
 	if (!loadHuckResources())
 		return false;
 
@@ -370,7 +372,7 @@ bool BoltEngine::resumeHuckLevel() {
 	return true;
 }
 
-bool BoltEngine::initHuck() {
+bool CarnivalEngine::initHuck() {
 	_xp->randomize();
 	_huckSoundPlaying = 0;
 
@@ -436,7 +438,7 @@ bool BoltEngine::initHuck() {
 		return resumeHuckLevel();
 }
 
-void BoltEngine::huckToggleBlinking(int16 *state, int16 which) {
+void CarnivalEngine::huckToggleBlinking(int16 *state, int16 which) {
 	*state = (*state == 0) ? 1 : 0;
 	if (*state)
 		setHuckColors(which);
@@ -444,7 +446,7 @@ void BoltEngine::huckToggleBlinking(int16 *state, int16 which) {
 		restoreHuckColors(which);
 }
 
-void BoltEngine::huckUpdateHotSpots(int16 x, int16 y) {
+void CarnivalEngine::huckUpdateHotSpots(int16 x, int16 y) {
 	Common::Rect helpRect(
 		READ_UINT16(_huckGiftPic + 0x84), READ_UINT16(_huckGiftPic + 0x88),
 		READ_UINT16(_huckGiftPic + 0x86), READ_UINT16(_huckGiftPic + 0x8A));
@@ -472,7 +474,7 @@ void BoltEngine::huckUpdateHotSpots(int16 x, int16 y) {
 	}
 }
 
-int16 BoltEngine::findGift(int16 x, int16 y) {
+int16 CarnivalEngine::findGift(int16 x, int16 y) {
 	byte *sprite0 = memberAddr(_huckBoltLib, _huckState.drawTable1[0]);
 	int16 sprH = READ_UINT16(sprite0 + 0x0A);
 	int16 sprW = READ_UINT16(sprite0 + 0x0C);
@@ -505,7 +507,7 @@ int16 BoltEngine::findGift(int16 x, int16 y) {
 	return -1;
 }
 
-bool BoltEngine::handleGiftSelect(int16 x, int16 y) {
+bool CarnivalEngine::handleGiftSelect(int16 x, int16 y) {
 	int16 slot = findGift(x, y);
 	if (slot == -1)
 		return false;
@@ -552,7 +554,7 @@ bool BoltEngine::handleGiftSelect(int16 x, int16 y) {
 	return true;
 }
 
-void BoltEngine::huckHandleActionButton(int16 x, int16 y) {
+void CarnivalEngine::huckHandleActionButton(int16 x, int16 y) {
 	bool var_6 = false;
 	bool var_4 = false;
 
@@ -612,7 +614,7 @@ void BoltEngine::huckHandleActionButton(int16 x, int16 y) {
 	}
 }
 
-void BoltEngine::giftSwap() {
+void CarnivalEngine::giftSwap() {
 	if (_huckState.giftCount <= 2)
 		return;
 
@@ -690,7 +692,7 @@ void BoltEngine::giftSwap() {
 	drawGift(slotB);
 }
 
-void BoltEngine::resolveHuckSelection() {
+void CarnivalEngine::resolveHuckSelection() {
 	if (!_huckState.selectionPending)
 		return;
 
@@ -717,7 +719,7 @@ void BoltEngine::resolveHuckSelection() {
 	}
 }
 
-void BoltEngine::handleEvent(int16 eventType, uint32 eventData) {
+void CarnivalEngine::handleEvent(int16 eventType, uint32 eventData) {
 	switch (eventType) {
 	case etMouseDown:
 		huckHandleActionButton(_huckCursorX, _huckCursorY);
@@ -825,7 +827,7 @@ void BoltEngine::handleEvent(int16 eventType, uint32 eventData) {
 	}
 }
 
-void BoltEngine::playHuck() {
+void CarnivalEngine::playHuck() {
 	_huckReturnBooth = 0x10;
 
 	while (!shouldQuit()) {
@@ -849,7 +851,7 @@ void BoltEngine::playHuck() {
 		_huckReturnBooth = 0;
 }
 
-void BoltEngine::cleanUpHuck() {
+void CarnivalEngine::cleanUpHuck() {
 	unloadHuckResources();
 
 	if (_huckScratchPic.pixelData) {
@@ -894,7 +896,7 @@ void BoltEngine::cleanUpHuck() {
 	_xp->updateDisplay();
 }
 
-int16 BoltEngine::huckGame(int16 prevBooth) {
+int16 CarnivalEngine::huckGame(int16 prevBooth) {
 	if (!openBOLTLib(&_huckBoltLib, &_huckBoltCallbacks, assetPath("huck.blt")))
 		return _huckReturnBooth;
 
@@ -911,7 +913,7 @@ int16 BoltEngine::huckGame(int16 prevBooth) {
 	return _huckReturnBooth;
 }
 
-void BoltEngine::swapHuckWordArray() {
+void CarnivalEngine::swapHuckWordArray() {
 	byte *ptr = _boltCurrentMemberEntry->dataPtr;
 	if (!ptr)
 		return;
@@ -921,7 +923,7 @@ void BoltEngine::swapHuckWordArray() {
 		WRITE_UINT16(ptr, READ_BE_UINT16(ptr));
 }
 
-void BoltEngine::swapHuckWords() {
+void CarnivalEngine::swapHuckWords() {
 	byte *ptr = _boltCurrentMemberEntry->dataPtr;
 	if (!ptr)
 		return;
@@ -929,5 +931,7 @@ void BoltEngine::swapHuckWords() {
 	WRITE_UINT16(ptr, READ_BE_UINT16(ptr));
 	WRITE_UINT16(ptr + 2, READ_BE_UINT16(ptr + 2));
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt

@@ -19,11 +19,13 @@
  *
  */
 
-#include "bolt/bolt.h"
+#include "bolt/carnival/carnival.h"
 
 namespace Bolt {
 
-BarkerTable *BoltEngine::createBarker(int16 minIndex, int16 maxIndex) {
+namespace Carnival {
+
+BarkerTable *CarnivalEngine::createBarker(int16 minIndex, int16 maxIndex) {
 	bool success = false;
 
 	BarkerTable *table = new BarkerTable();
@@ -52,7 +54,7 @@ BarkerTable *BoltEngine::createBarker(int16 minIndex, int16 maxIndex) {
 	}
 }
 
-void BoltEngine::freeBarker(BarkerTable *table) {
+void CarnivalEngine::freeBarker(BarkerTable *table) {
 	if (!table)
 		return;
 
@@ -62,7 +64,7 @@ void BoltEngine::freeBarker(BarkerTable *table) {
 	delete table;
 }
 
-bool BoltEngine::registerSideShow(BarkerTable *table, SideShowHandler handler, int16 boothId) {
+bool CarnivalEngine::registerSideShow(BarkerTable *table, SideShowHandler handler, int16 boothId) {
 	if (table->minIndex > boothId || table->maxIndex < boothId) {
 		_curErrorCode = 5;
 		return false;
@@ -74,7 +76,7 @@ bool BoltEngine::registerSideShow(BarkerTable *table, SideShowHandler handler, i
 	return true;
 }
 
-int16 BoltEngine::barker(BarkerTable *table, int16 startBooth) {
+int16 CarnivalEngine::barker(BarkerTable *table, int16 startBooth) {
 	int16 prevBooth = 0;
 	int16 currentBooth = startBooth;
 
@@ -93,8 +95,10 @@ int16 BoltEngine::barker(BarkerTable *table, int16 startBooth) {
 	return _currentBoothId;
 }
 
-bool BoltEngine::checkError() {
+bool CarnivalEngine::checkError() {
 	return _curErrorCode != 0;
 }
+
+} // End of namespace Carnival
 
 } // End of namespace Bolt
