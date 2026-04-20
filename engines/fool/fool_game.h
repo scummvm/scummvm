@@ -291,18 +291,9 @@ public:
 	void sub_140_2978();
 	void sub_140_2998();
 	void sub_140_2f92();
-	void sub_140_3050();
-	void sub_140_30da();
-	void sub_140_3148();
-	void sub_140_31b0();
-	void sub_140_31c4();
-	void sub_140_31d8();
-	void sub_140_31fa();
-	void sub_140_321a();
-	void sub_140_323a();
-	void sub_140_325a();
-	void sub_140_326e();
-	void sub_140_3282();
+	Common::Rect thothRandomSquare(); // sub_140_3050
+	Common::Rect thothRandomHRect(); // sub_140_30da
+	Common::Rect thothRandomVRect(); // sub_140_3148
 	void sub_140_3296();
 	void sub_140_32ac();
 	void thothAdjustPuzzleData(); // sub_140_3372
