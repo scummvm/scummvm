@@ -33,8 +33,10 @@
 #include "director/castmember/bitmap.h"
 #include "director/sprite.h"
 #include "director/castmember/filmloop.h"
+#include "director/castmember/sound.h"
 #include "director/frame.h"
 #include "director/score.h"
+#include "director/sound.h"
 
 #include "director/types.h"
 
@@ -502,9 +504,6 @@ void drawCastProps(Cast *cast) {
 	}
 }
 
-// Per filmloop curent frame, keyed by cast member pointer
-static Common::HashMap<FilmLoopCastMember *, int> _filmLoopCurrentFrame;
-
 void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 	assert(member != nullptr);
 	if (ImGui::BeginTabItem("Film Loop")) {
@@ -547,9 +546,10 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 		}
 
 		// Initialize current frame for this member if needed
-		if (!_filmLoopCurrentFrame.contains(member))
-			_filmLoopCurrentFrame[member] = 0;
-		int &currentFrame = _filmLoopCurrentFrame[member];
+		auto &filmLoopFrames = _state->_castDetails._filmLoopCurrentFrame;
+		if (!filmLoopFrames.contains(member))
+			filmLoopFrames[member] = 0;
+		int &currentFrame = filmLoopFrames[member];
 
 		const float cellW = 30.0f;
 		const float cellH = 18.0f;
@@ -734,6 +734,89 @@ void drawFilmLoopCMprops(FilmLoopCastMember *member) {
 	}
 }
 
+// Channel used exclusively for sound previews in the debugger.
+// Chosen high enough to avoid collision with normal score sound channels (1, 2).
+static const int kDebugSoundChannel = 8;
+
+void drawSoundCMprops(SoundCastMember *member) {
+	assert(member != nullptr);
+	if (ImGui::BeginTabItem("Sound")) {
+		DirectorSound *snd = g_director->getCurrentWindow()->getSoundManager();
+
+		// Properties
+		if (ImGui::CollapsingHeader("Properties", ImGuiTreeNodeFlags_DefaultOpen)) {
+			if (ImGui::BeginTable("##SoundProps", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+				showPropertyBool("looping", member->_looping);
+				if (member->_audio) {
+					showProperty("sampleRate", "%d Hz", member->_audio->getSampleRate());
+					showProperty("sampleSize", "%d bit", member->_audio->getSampleSize());
+					showProperty("channels", "%d", member->_audio->getChannelCount());
+				} else {
+					ImVec4 gray = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+					showProperty("sampleRate", &gray, "N/A");
+					showProperty("sampleSize", &gray, "N/A");
+					showProperty("channels", &gray, "N/A");
+				}
+				ImGui::EndTable();
+			}
+		}
+
+		// Playback controls
+		ImGui::Spacing();
+
+		bool channelActive = snd->isChannelActive(kDebugSoundChannel);
+		SoundChannel *ch = snd->getChannel(kDebugSoundChannel);
+		CastMemberID memberId(member->getID(), member->getCast()->_castLibID);
+		bool thisIsPlaying = channelActive && ch &&
+			ch->lastPlayedSound.type == kSoundCast &&
+			ch->lastPlayedSound.u.cast.member == memberId.member &&
+			ch->lastPlayedSound.u.cast.castLib == memberId.castLib;
+
+		if (thisIsPlaying) {
+			if (ImGui::Button(ICON_MS_STOP " Stop")) {
+				snd->stopSound(kDebugSoundChannel);
+			}
+		} else {
+			bool hasAudio = member->_audio != nullptr;
+			if (!hasAudio)
+				ImGui::BeginDisabled();
+			if (ImGui::Button(ICON_MS_PLAY_ARROW " Play")) {
+				snd->playCastMember(memberId, kDebugSoundChannel);
+			}
+			if (!hasAudio) {
+				ImGui::EndDisabled();
+				ImGui::SameLine();
+				ImGui::TextDisabled("(no audio data)");
+			}
+		}
+
+		// Cue Points
+		if (!member->_cuePoints.empty()) {
+			ImGui::Spacing();
+			if (ImGui::CollapsingHeader("Cue Points", ImGuiTreeNodeFlags_DefaultOpen)) {
+				if (ImGui::BeginTable("##CuePoints", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit)) {
+					ImGui::TableSetupColumn("Time", 0, 80.f);
+					ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch);
+					ImGui::TableHeadersRow();
+					for (uint i = 0; i < member->_cuePoints.size(); i++) {
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::Text("%d", member->_cuePoints[i]);
+						ImGui::TableSetColumnIndex(1);
+						if (i < member->_cuePointNames.size())
+							ImGui::Text("%s", member->_cuePointNames[i].c_str());
+						else
+							ImGui::TextDisabled("—");
+					}
+					ImGui::EndTable();
+				}
+			}
+		}
+
+		ImGui::EndTabItem();
+	}
+}
+
 void drawCMTypeProps(CastMember *member) {
 	assert(member != nullptr);
 	switch (member->_type) {
@@ -755,11 +838,13 @@ void drawCMTypeProps(CastMember *member) {
 	case kCastFilmLoop:
 		drawFilmLoopCMprops(static_cast<FilmLoopCastMember *>(member));
 		break;
+	case kCastSound:
+		drawSoundCMprops(static_cast<SoundCastMember *>(member));
+		break;
 	case kCastTypeAny:
 	case kCastTypeNull:
 	case kCastPalette:
 	case kCastPicture:
-	case kCastSound:
 	case kCastMovie:
 	case kCastDigitalVideo:
 	case kCastLingoScript:
