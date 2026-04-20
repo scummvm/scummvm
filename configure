@@ -5602,11 +5602,11 @@ int main(void)
   return -1;
 }
 EOF
-	cc_check $NFM_CFLAGS -DSC_PLATFORM_ATARI=1 -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1 $NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvoplnull -lsyscore -lcontainers -lallocators &&\
+	cc_check $NFM_CFLAGS -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1 $NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvoplnull -lsyscore -lcontainers -lallocators &&\
 	_nfm=yes
 fi
 if test "$_nfm" = yes; then
-	append_var DEFINES "-DSC_PLATFORM_ATARI=1 -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1"
+	append_var DEFINES "-DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1"
 	append_var LIBS "$NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvoplnull -lsyscore -lcontainers -lallocators"
 	append_var INCLUDES "$NFM_CFLAGS"
 fi
