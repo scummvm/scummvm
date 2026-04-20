@@ -356,7 +356,7 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
-	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {

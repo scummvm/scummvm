@@ -103,7 +103,7 @@ RichTextWidget::~RichTextWidget() {
 }
 
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
-	_fluidScroller->handleMouseWheel(direction, (float)_verticalScroll->_singleStep);
+	_fluidScroller->handleMouseWheel(direction);
 	applyScrollPos();
 }
 
@@ -245,7 +245,7 @@ void RichTextWidget::recalc() {
 		_verticalScroll->setSize(_scrollbarWidth, _h - 1);
 		_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 		_verticalScroll->recalc();
-		_fluidScroller->setBounds((float)maxScroll, (float)_limitH);
+		_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
 	}
 }
 
@@ -328,7 +328,7 @@ void RichTextWidget::createWidget() {
 	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
 	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 	_verticalScroll->recalc();
-	_fluidScroller->setBounds((float)maxScroll, (float)_limitH);
+	_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
 }
 
 void RichTextWidget::reflowLayout() {

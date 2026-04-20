@@ -1012,7 +1012,7 @@ void GridWidget::selectVisualRange(int startPos, int endPos) {
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
-	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void GridWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -1266,7 +1266,7 @@ void GridWidget::reflowLayout() {
 	}
 	scrollBarRecalc();
 	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
-	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage);
+	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage, (float)_scrollBar->_singleStep);
 	markAsDirty();
 }
 
@@ -1291,7 +1291,7 @@ void GridWidget::scrollBarRecalc() {
 	_scrollBar->recalc();
 
 	maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
-	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage);
+	_fluidScroller->setBounds((float)maxScroll, _scrollBar->_entriesPerPage, (float)_scrollBar->_singleStep);
 }
 
 void GridWidget::setFilter(const Common::U32String &filter) {

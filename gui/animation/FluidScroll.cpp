@@ -96,6 +96,7 @@ FluidScroller::FluidScroller() :
 	_scrollPosRaw(0.0f), 
 	_animationOffset(0.0f), 
 	_maxScroll(0.0f), 
+	_stepSize(1.0f),
 	_viewportHeight(0),
 	_lastWheelTime(0),
 	_initialVelocity(0.0f),
@@ -104,9 +105,10 @@ FluidScroller::FluidScroller() :
 	_impactVelocity(0.0f) {
 }
 
-void FluidScroller::setBounds(float maxScroll, int viewportHeight) {
+void FluidScroller::setBounds(float maxScroll, int viewportHeight, float stepSize) {
 	_maxScroll = maxScroll;
 	_viewportHeight = viewportHeight;
+	_stepSize = stepSize;
 }
 
 void FluidScroller::reset() {
@@ -169,8 +171,8 @@ void FluidScroller::feedWheel(uint32 time, float deltaY) {
 	startFling(velocity);
 }
 
-void FluidScroller::handleMouseWheel(int direction, float stepSize, float multiplier) {
-	float stepping = stepSize * (float)direction * multiplier;
+void FluidScroller::handleMouseWheel(int direction, float multiplier) {
+	float stepping = _stepSize * (float)direction * multiplier;
 	if (stepping == 0.0f)
 		return;
 

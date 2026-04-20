@@ -437,7 +437,7 @@ void AboutDialog::handleMouseMoved(int x, int y, int button) {
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
 	_autoScroll = false;
-	_fluidScroller->handleMouseWheel(direction, (float)_lineHeight);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
@@ -529,7 +529,7 @@ void AboutDialog::reflowLayout() {
 	buildLines();
 
 	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - _textRect.height());
-	_fluidScroller->setBounds((float)maxScroll, _textRect.height());
+	_fluidScroller->setBounds((float)maxScroll, _textRect.height(), (float)_scrollbar->_singleStep);
 }
 
 

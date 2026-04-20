@@ -40,8 +40,9 @@ public:
 	 * Configure the constraints for the content
 	 * @param maxScroll The maximum scrollable distance (total height - viewport height)
 	 * @param viewportHeight The height of the scrolling area, used for rubber-band range
+	 * @param stepSize Default scroll step (usually _singleStep)
 	 */
-	void setBounds(float maxScroll, int viewportHeight);
+	void setBounds(float maxScroll, int viewportHeight, float stepSize);
 
 	void reset();
 
@@ -67,10 +68,9 @@ public:
 	/**
 	 * Handle mouse wheel input
 	 * @param direction Scroll direction
-	 * @param stepSize usually _scrollBar->_singleStep
 	 * @param multiplier Speed multiplier for the scroll
 	 */
-	void handleMouseWheel(int direction, float stepSize, float multiplier = 1.0f);
+	void handleMouseWheel(int direction, float multiplier = 1.0f);
 
 	// Check if there is an active animation (fling or spring-back)
 	bool isAnimating() const { return _mode != kModeNone; }
@@ -125,6 +125,7 @@ private:
 	float _scrollPosRaw;    // Physical position (can go out of bounds)
 	float _animationOffset; // Anchor position used as the starting point for animation offsets
 	float _maxScroll;
+	float _stepSize;
 	int _viewportHeight;
 
 	// Fling parameter

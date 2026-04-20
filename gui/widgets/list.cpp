@@ -355,7 +355,7 @@ void ListWidget::scrollBarRecalc() {
 	_scrollBar->recalc();
 
 	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
-	_fluidScroller->setBounds((float)maxScroll, _h - _topPadding - _bottomPadding);
+	_fluidScroller->setBounds((float)maxScroll, _h - _topPadding - _bottomPadding, (float)_scrollBar->_singleStep);
 }
 
 void ListWidget::handleTickle() {
@@ -459,7 +459,7 @@ void ListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 }
 
 void ListWidget::handleMouseWheel(int x, int y, int direction) {
-	_fluidScroller->handleMouseWheel(direction, (float)_scrollBar->_singleStep);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void ListWidget::handleMouseMoved(int x, int y, int button) {

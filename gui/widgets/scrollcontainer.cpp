@@ -56,7 +56,7 @@ void ScrollContainerWidget::handleMouseWheel(int x, int y, int direction) {
 	if (!isEnabled())
 		return;
 
-	_fluidScroller->handleMouseWheel(direction, (float)_verticalScroll->_singleStep);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void ScrollContainerWidget::handleMouseDown(int x, int y, int button, int clickCount) {
@@ -156,7 +156,7 @@ void ScrollContainerWidget::recalc() {
 	_verticalScroll->setPos(_w, _scrolledY);
 	_verticalScroll->setSize(_scrollbarWidth, _limitH-1);
 	_verticalScroll->recalc();
-	_fluidScroller->setBounds((float)maxScroll, _limitH);
+	_fluidScroller->setBounds((float)maxScroll, _limitH, (float)_verticalScroll->_singleStep);
 }
 
 
