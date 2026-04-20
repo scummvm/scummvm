@@ -421,9 +421,13 @@ ImGuiImage getTextID(CastMember *castMember) {
 	// Make a temporary channel to blit the shape from
 	Channel *channel = new Channel(nullptr, sprite);
 
-	Graphics::MacText *widget = (Graphics::MacText *)castMember->createWidget(bbox, channel, kTextSprite);
+	Graphics::MacWidget *widget = castMember->createWidget(bbox, channel, kTextSprite);
 	Graphics::Surface surface;
-	surface.copyFrom(*widget->getRawSurface());
+
+	if (!widget || !widget->getSurface() || !widget->getSurface()->getPixels())
+      return {};
+
+	surface.copyFrom(*widget->getSurface());
 
 	if (debugChannelSet(8, kDebugImages)) {
 		Common::String prepend = "text";
