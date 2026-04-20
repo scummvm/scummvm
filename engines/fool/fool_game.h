@@ -129,8 +129,8 @@ public:
 	void sub_128_5b30();
 	void sub_128_5baa();
 	void sub_128_5c20();
-	void sub_128_5ef0();
-	void sub_128_5f16();
+	void thothHidePlayfield(); // sub_128_5ef0
+	void thothShowPlayfield(); // sub_128_5f16
 	void sub_128_5f9e();
 	void sub_128_5fb4();
 	void sub_128_5fea();
@@ -266,11 +266,20 @@ public:
 
 	// fool_thoth.cpp
 	void sub_140_004();
-	void sub_140_458();
+	void thothHighPriestess(); // sub_140_458
+	void thothMoveEnchantment(); // sub_140_9f0
+	void thothDrawEnchantment(); // sub_140_b2c
+	void sub_140_c4c();
+	void thothScrambleScreen(); // sub_140_dd4
+	void sub_140_e3c();
+	void sub_140_f84();
 	void sub_140_12fc();
-	void sub_140_1486();
+	void sub_140_15fc();
+	void thothBook(); // sub_140_1486
 	void sub_140_18fa();
 	void sub_140_1bc4();
+	void sub_140_1f68();
+	void sub_140_205e();
 	void sub_140_206a();
 	void sub_140_22b8();
 	void sub_140_24ae();
@@ -285,11 +294,18 @@ public:
 	void sub_140_3050();
 	void sub_140_30da();
 	void sub_140_3148();
+	void sub_140_31b0();
+	void sub_140_31c4();
+	void sub_140_31d8();
+	void sub_140_31fa();
+	void sub_140_321a();
+	void sub_140_323a();
 	void sub_140_325a();
 	void sub_140_326e();
 	void sub_140_3282();
+	void sub_140_3296();
 	void sub_140_32ac();
-	void sub_140_3372();
+	void thothAdjustPuzzleData(); // sub_140_3372
 	void sub_140_3412();
 
 	// fool_death.cpp
@@ -500,6 +516,8 @@ private:
 
 	int16 var_i16_1de6;
 
+	PatternMode var_i16_1dee;
+
 	int16 var_i16_1e00;
 
 	int16 var_i16_2010;
@@ -517,10 +535,13 @@ private:
 	Common::U32String var_str_2222;
 	int16 var_i16_2322;
 	int16 var_i16_2324;
+	int16 var_i16_2326;
+	int16 var_i16_2328;
 	uint32 var_ptr_232a;
 	Handle var_bytes_232a;
 	int16 var_i16_232e;
 
+	int16 var_i16_2330;
 	int16 var_i16_2332;
 	int16 var_i16_2334;
 	int16 var_i16_2336;
