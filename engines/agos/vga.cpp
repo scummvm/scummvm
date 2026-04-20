@@ -546,11 +546,6 @@ void AGOSEngine::updatePNDayNightController() {
 	for (int i = 0; i < 16; ++i)
 		_pnFadeCurrent[i] = blendPNPaletteColor(_pnPaletteBanks[0][i], _pnFadeTarget[i], stage);
 
-	if (stage == 0)
-		_pnActivePaletteBank = 0;
-	else if (stage >= 7)
-		_pnActivePaletteBank = 1;
-
 	_pnDayNightControllerLastStage = stage;
 	applyPNDayNightPalette(_pnFadeCurrent, true);
 }
@@ -583,7 +578,6 @@ void AGOSEngine::startPNPaletteFade(uint16 selectorMask, int16 fadeMode, bool an
 
 	if (!animate) {
 		memcpy(_pnFadeCurrent, _pnFadeTarget, sizeof(_pnFadeCurrent));
-		_pnActivePaletteBank = _pnPendingPaletteBank;
 		_pnFadeActive = false;
 		_pnFadeStage = 0;
 		applyPNDayNightPalette(_pnFadeCurrent, true);
@@ -615,7 +609,6 @@ void AGOSEngine::stepPNPaletteFade() {
 
 	if (_pnFadeStage >= 7) {
 		memcpy(_pnFadeCurrent, _pnFadeTarget, sizeof(_pnFadeCurrent));
-		_pnActivePaletteBank = _pnPendingPaletteBank;
 		_pnFadeActive = false;
 		_pnFadeAdvancePending = false;
 		applyPNDayNightPalette(_pnFadeCurrent, true);
@@ -701,7 +694,6 @@ void AGOSEngine::vc4_fadeIn() {
 	if (!hasAlternateBank) {
 		if (_pnHavePaletteBank[0]) {
 			memcpy(_pnFadeCurrent, _pnPaletteBanks[0], sizeof(_pnFadeCurrent));
-			_pnActivePaletteBank = 0;
 		}
 		return;
 	}
@@ -1314,7 +1306,6 @@ void AGOSEngine::vc22_setPalette() {
 
 		if (pnBank == 0) {
 			memcpy(_pnFadeCurrent, _pnPaletteBanks[0], sizeof(_pnFadeCurrent));
-			_pnActivePaletteBank = 0;
 		}
 
 	}

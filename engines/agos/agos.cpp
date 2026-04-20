@@ -520,7 +520,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	memset(_pnFadeCurrent, 0, sizeof(_pnFadeCurrent));
 	memset(_pnFadeTarget, 0, sizeof(_pnFadeTarget));
 	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
-	_pnActivePaletteBank = 0;
 	_pnPendingPaletteBank = 0;
 	_pnDesiredPaletteBank = 0;
 	_pnFadeTickDelay = 1;

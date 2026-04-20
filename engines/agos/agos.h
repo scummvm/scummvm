@@ -629,7 +629,6 @@ protected:
 	uint16 _pnFadeSource[16];
 	uint16 _pnFadeCurrent[16];
 	uint16 _pnFadeTarget[16];
-	uint8 _pnActivePaletteBank;
 	uint8 _pnPendingPaletteBank;
 	uint8 _pnDesiredPaletteBank;
 	uint8 _pnFadeTickDelay;
