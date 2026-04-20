@@ -124,14 +124,11 @@ void FoolGame::sub_140_004() {
 	// 140:0328
 	if (this->var_i16_7d2 == 0) {
 		g_toolbox->PenNormal();
-		this->arr_i16_4758[0] = 0;
-		this->arr_i16_4758[1] = 0;
-		this->arr_i16_4758[2] = SCREEN_HEIGHT;
-		this->arr_i16_4758[3] = SCREEN_WIDTH;
+		Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		for (int16 i = 0; i <= 0x22; i++) {
 			this->var_i32_692 = g_toolbox->TickCount();
-			g_toolbox->InvertRect(Common::Rect(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]));
+			g_toolbox->InvertRect(area);
 			this->sub_128_406(1);
 		}
 		// 140:037e
@@ -364,25 +361,10 @@ void FoolGame::thothScrambleScreen() {
 	if (this->var_i16_2326 < 0) {
 		this->var_i16_2326 = 0;
 	}
-	this->sub_140_3050();
+	g_toolbox->InvertRect(this->thothRandomSquare());
+	g_toolbox->InvertRect(this->thothRandomHRect());
+	g_toolbox->InvertRect(this->thothRandomVRect());
 	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
-	this->sub_140_30da();
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
-	this->sub_140_3148();
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
 	temp.top = this->arr_i16_4758[4];
 	temp.left = this->arr_i16_4758[5];
 	temp.bottom = this->arr_i16_4758[6];
@@ -425,42 +407,26 @@ void FoolGame::sub_140_f84() {
 	this->arr_i16_4758[7] = ((SCREEN_WIDTH - this->arr_rect_1f38[1].right) / 0x19) + 1;
 	// 140:1066
 	// unrolled loop
-	this->arr_i16_4758[0] = this->arr_rect_1f38[1].top;
-	this->arr_i16_4758[1] = this->arr_rect_1f38[1].left;
-	this->arr_i16_4758[2] = this->arr_rect_1f38[1].bottom;
-	this->arr_i16_4758[3] = this->arr_rect_1f38[1].right;
+	Common::Rect area = this->arr_rect_1f38[1];
 	// 140:10aa
 	for (int16 i = 0; i <= 0x1a; i++) {
-		this->arr_i16_4758[0] -= this->arr_i16_4758[4];
-		this->arr_i16_4758[1] -= this->arr_i16_4758[5];
-		this->arr_i16_4758[2] += this->arr_i16_4758[6];
-		this->arr_i16_4758[3] += this->arr_i16_4758[7];
-		Common::Rect temp;
-		temp.top = this->arr_i16_4758[0];
-		temp.left = this->arr_i16_4758[1];
-		temp.bottom = this->arr_i16_4758[2];
-		temp.right = this->arr_i16_4758[3];
-		g_toolbox->FrameRect(temp);
+		area.top -= this->arr_i16_4758[4];
+		area.left -= this->arr_i16_4758[5];
+		area.bottom += this->arr_i16_4758[6];
+		area.right += this->arr_i16_4758[7];
+		g_toolbox->FrameRect(area);
 		this->sub_128_3da(1);
 	}
 	// 140:11ae
 	// unrolled loop
-	this->arr_i16_4758[0] = this->arr_rect_1f38[1].top;
-	this->arr_i16_4758[1] = this->arr_rect_1f38[1].left;
-	this->arr_i16_4758[2] = this->arr_rect_1f38[1].bottom;
-	this->arr_i16_4758[3] = this->arr_rect_1f38[1].right;
+	area = this->arr_rect_1f38[1];
 	// 140:11f2
 	for (int16 i = 0; i <= 0x1a; i++) {
-		this->arr_i16_4758[0] -= this->arr_i16_4758[4];
-		this->arr_i16_4758[1] -= this->arr_i16_4758[5];
-		this->arr_i16_4758[2] += this->arr_i16_4758[6];
-		this->arr_i16_4758[3] += this->arr_i16_4758[7];
-		Common::Rect temp;
-		temp.top = this->arr_i16_4758[0];
-		temp.left = this->arr_i16_4758[1];
-		temp.bottom = this->arr_i16_4758[2];
-		temp.right = this->arr_i16_4758[3];
-		g_toolbox->InvertRect(temp);
+		area.top -= this->arr_i16_4758[4];
+		area.left -= this->arr_i16_4758[5];
+		area.bottom += this->arr_i16_4758[6];
+		area.right += this->arr_i16_4758[7];
+		g_toolbox->InvertRect(area);
 		this->sub_128_3da(1);
 	}
 	// 140:12f6
@@ -540,6 +506,7 @@ void FoolGame::thothBook() {
 		this->arr_i16_4758[5] = 0;
 		this->arr_i16_4758[6] = SCREEN_HEIGHT;
 		this->arr_i16_4758[7] = SCREEN_WIDTH;
+		Common::Rect playArea(0, 0x14, SCREEN_WIDTH, SCREEN_HEIGHT);
 		this->var_i16_232e++;
 		if (this->var_i16_232e < 1) {
 			this->var_i16_232e = 1;
@@ -550,22 +517,29 @@ void FoolGame::thothBook() {
 		// 140:1546
 		switch (this->var_i16_232e-1) {
 		case 0:
-			this->sub_140_31b0();
+			// 140:31b0
+			g_toolbox->InvertRect(this->thothRandomSquare());
 			break;
 		case 1:
-			this->sub_140_31c4();
+			// 140:31c4
+			g_toolbox->InvertRect(this->thothRandomHRect());
 			break;
 		case 2:
-			this->sub_140_31d8();
+			// 140:31d8
+			g_toolbox->InvertRect(this->thothRandomVRect());
+			g_toolbox->InvertRect(playArea);
 			break;
 		case 3:
-			this->sub_140_31fa();
+			// 140:31fa
+			g_toolbox->FillRect(this->thothRandomSquare(), this->arr_pat_58f4[2]);
 			break;
 		case 4:
-			this->sub_140_321a();
+			// 140:321a
+			g_toolbox->FillRect(this->thothRandomHRect(), this->arr_pat_58f4[2]);
 			break;
 		case 5:
-			this->sub_140_323a();
+			// 140:323a
+			g_toolbox->FillRect(this->thothRandomVRect(), this->arr_pat_58f4[2]);
 			break;
 		default:
 			warning("thothBook: breaking out of switch statement");
@@ -749,13 +723,16 @@ void FoolGame::sub_140_18fa() {
 			}
 			switch (this->var_i16_232e-1) {
 			case 0:
-				this->sub_140_325a();
+				// 140:325a
+				g_toolbox->InvertRect(this->thothRandomSquare());
 				break;
 			case 1:
-				this->sub_140_326e();
+				// 140:326e
+				g_toolbox->InvertRect(this->thothRandomHRect());
 				break;
 			case 2:
-				this->sub_140_3282();
+				// 140:3282
+				g_toolbox->InvertRect(this->thothRandomVRect());
 				break;
 			default:
 				warning("sub_140_18fa: broke out of switch");
@@ -807,27 +784,24 @@ void FoolGame::sub_140_1bc4() {
 		return;
 	}
 	// 140:1c66
-	this->arr_i16_4758[0] = 0x14;
-	this->arr_i16_4758[1] = -1;
-	this->arr_i16_4758[2] = 0x157;
-	this->arr_i16_4758[3] = 0x201;
+	Common::Rect area(-1, 0x14, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1);
 	if (this->var_ev_46.where.x < 0xf) {
-		this->arr_i16_4758[3] = 0xf;
+		area.right = 0xf;
 		this->var_i16_1de6 = 0;
 	}
 	// 140:1cc6
 	if (this->var_ev_46.where.x > 0x1f1) {
-		this->arr_i16_4758[1] = 0x1f1;
+		area.left = 0x1f1;
 		this->var_i16_1de6 = 1;
 	}
 	// 140:1ce6
 	if (this->var_ev_46.where.y < 0x2d) {
-		this->arr_i16_4758[2] = 0x2d;
+		area.bottom = 0x2d;
 		this->var_i16_1de6 = 2;
 	}
 	// 140:1d06
 	if (this->var_ev_46.where.y > 0x147) {
-		this->arr_i16_4758[0] = 0x147;
+		area.top = 0x147;
 		this->var_i16_1de6 = 3;
 	}
 	// 140:1d26
@@ -836,35 +810,30 @@ void FoolGame::sub_140_1bc4() {
 		// was: 0
 		this->getNextEvent(-1);
 		if (this->var_i16_1de6 == 0) {
-			this->arr_i16_4758[3] = this->var_ev_46.where.x + 0xa;
+			area.right = this->var_ev_46.where.x + 0xa;
 		}
 		if (this->var_i16_1de6 == 1) {
-			this->arr_i16_4758[1] = this->var_ev_46.where.x - 0xa;
+			area.left = this->var_ev_46.where.x - 0xa;
 		}
 		if (this->var_i16_1de6 == 2) {
-			this->arr_i16_4758[2] = this->var_ev_46.where.y + 0xa;
+			area.bottom = this->var_ev_46.where.y + 0xa;
 		}
 		if (this->var_i16_1de6 == 3) {
-			this->arr_i16_4758[0] = this->var_ev_46.where.y - 0xa;
+			area.top = this->var_ev_46.where.y - 0xa;
 		}
 		// 140:1dc6
-		if (this->arr_i16_4758[0] < 0x14) {
-			this->arr_i16_4758[0] = 0x14;
+		if (area.top < 0x14) {
+			area.top = 0x14;
 		}
-		Common::Rect temp;
-		temp.top = this->arr_i16_4758[0];
-		temp.left = this->arr_i16_4758[1];
-		temp.bottom = this->arr_i16_4758[2];
-		temp.right = this->arr_i16_4758[3];
-		g_toolbox->FillRect(temp, this->arr_pat_58f4[this->arr_i16_2f38[this->var_i16_1de6*32+ this->var_i16_103a]]);
+		g_toolbox->FillRect(area, this->arr_pat_58f4[this->arr_i16_2f38[this->var_i16_1de6*32+ this->var_i16_103a]]);
 		// 140:1e2e
-		if ((this->arr_i16_4758[1] <= 0) && (this->arr_i16_4758[0] <= 0x14) && (this->arr_i16_4758[3] >= SCREEN_WIDTH) && (this->arr_i16_4758[2] >= SCREEN_HEIGHT)) {
+		if ((area.left <= 0) && (area.top <= 0x14) && (area.right >= SCREEN_WIDTH) && (area.bottom >= SCREEN_HEIGHT)) {
 			this->var_ev_46.modifiers = kModMouseButtonUp;
 		}
 		// 140:1eae
 	}
 	// 140:1ec4
-	if ((this->arr_i16_4758[1] <= 0) && (this->arr_i16_4758[0] <= 0x14) && (this->arr_i16_4758[3] >= SCREEN_WIDTH) && (this->arr_i16_4758[2] >= SCREEN_HEIGHT)) {
+	if ((area.left <= 0) && (area.top <= 0x14) && (area.right >= SCREEN_WIDTH) && (area.bottom >= SCREEN_HEIGHT)) {
 		if (this->var_i16_1de6 == this->var_i16_103a) {
 			this->sub_140_205e();
 			return;
@@ -880,22 +849,13 @@ void FoolGame::sub_140_1f68() {
 	this->var_i16_103a = 0;
 	g_toolbox->PenSize(0x14, 0x14);
 	g_toolbox->PenPat(this->arr_pat_58f4[3]);
-	this->arr_i16_4758[0] = 0;
-	this->arr_i16_4758[1] = 0;
-	this->arr_i16_4758[2] = SCREEN_HEIGHT;
-	this->arr_i16_4758[3] = SCREEN_WIDTH;
+	Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int16 i = 0; i <= 0x104; i += 0x14) {
-		this->arr_i16_4758[0] = 0x14 + i;
-		this->arr_i16_4758[1] = i;
-		this->arr_i16_4758[2] = SCREEN_HEIGHT - i;
-		this->arr_i16_4758[3] = SCREEN_WIDTH - i;
-		Common::Rect temp;
-		temp.top = this->arr_i16_4758[0];
-		temp.left = this->arr_i16_4758[1];
-		temp.bottom = this->arr_i16_4758[2];
-		temp.right = this->arr_i16_4758[3];
-
-		g_toolbox->FrameRect(temp);
+		area.top = 0x14 + i;
+		area.left = i;
+		area.bottom = SCREEN_HEIGHT - i;
+		area.right = SCREEN_WIDTH - i;
+		g_toolbox->FrameRect(area);
 	}
 	// 140:2056
 	g_toolbox->PenNormal();
@@ -1053,13 +1013,9 @@ void FoolGame::sub_140_25e4() {
 
 void FoolGame::sub_140_2662() {
 	// 140:2662
-	this->arr_i16_4758[0] = 0x29;
-	this->arr_i16_4758[1] = 0x37;
-	this->arr_i16_4758[2] = 0x142;
-	this->arr_i16_4758[3] = 0x1c9;
-	Common::Rect temp(0x37, 0x29, 0x1c9, 0x142);
+	Common::Rect area(0x37, 0x29, 0x1c9, 0x142);
 	for (int16 i = 0; i <= 0x10; i++) {
-		g_toolbox->InvertRect(temp);
+		g_toolbox->InvertRect(area);
 		this->sub_128_3da(1);
 	}
 }
@@ -1071,26 +1027,21 @@ void FoolGame::sub_140_26ca() {
 
 	for (int16 j = 0; j <= 2; j++) {
 		// 140:26e0
-		this->arr_i16_4758[1] = 0x2d;
-		this->arr_i16_4758[0] = 0x22;
-		this->arr_i16_4758[3] = 0x1d3;
-		this->arr_i16_4758[2] = 0x149;
+		Common::Rect area(0x2d, 0x22, 0x1d3, 0x149);
 		for (int16 i = 0; i <= 0x14; i++) {
-			this->arr_i16_4758[0] += 7;
-			this->arr_i16_4758[1] += 0xa;
-			this->arr_i16_4758[2] -= 7;
-			this->arr_i16_4758[3] -= 0xa;
-			Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
-			g_toolbox->InvertRect(temp);
+			area.top += 7;
+			area.left += 0xa;
+			area.bottom -= 7;
+			area.right -= 0xa;
+			g_toolbox->InvertRect(area);
 			this->sub_128_3da(1);
 		}
 		for (int16 i = 0; i <= 0x13; i++) {
-			this->arr_i16_4758[0] -= 7;
-			this->arr_i16_4758[1] -= 0xa;
-			this->arr_i16_4758[2] += 7;
-			this->arr_i16_4758[3] += 0xa;
-			Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
-			g_toolbox->InvertRect(temp);
+			area.top -= 7;
+			area.left -= 0xa;
+			area.bottom += 7;
+			area.right += 0xa;
+			g_toolbox->InvertRect(area);
 			this->sub_128_3da(1);
 		}
 	}
@@ -1266,120 +1217,38 @@ void FoolGame::sub_140_2f92() {
 	g_zbasic->menu(8, 7, 1, g_zbasic->str(333)); // secrets.
 }
 
-void FoolGame::sub_140_3050() {
+Common::Rect FoolGame::thothRandomSquare() {
 	// 140:3050
-	this->arr_i16_4758[0] = 0x14 + g_zbasic->rndInt(0xde);
-	this->arr_i16_4758[1] = g_zbasic->rndInt(0x19c);
-	this->arr_i16_4758[2] = this->arr_i16_4758[0] + 0x64;
-	this->arr_i16_4758[3] = this->arr_i16_4758[1] + 0x64;
+	int16 x = g_zbasic->rndInt(0x19c);
+	int16 y = 0x14 + g_zbasic->rndInt(0xde);
+	return Common::Rect(
+		x,
+		y,
+		x + 0x64,
+		y + 0x64
+	);
 }
 
-void FoolGame::sub_140_30da() {
+Common::Rect FoolGame::thothRandomHRect() {
 	// 140:30da
-	this->arr_i16_4758[0] = 0x14 + g_zbasic->rndInt(0xde);
-	this->arr_i16_4758[1] = 0;
-	this->arr_i16_4758[2] = this->arr_i16_4758[0] + g_zbasic->rndInt(0x64);
-	this->arr_i16_4758[3] = SCREEN_WIDTH;
+	int16 y = 0x14 + g_zbasic->rndInt(0xde);
+	return Common::Rect(
+		0,
+		y,
+		SCREEN_WIDTH,
+		y + g_zbasic->rndInt(0x64)
+	);
 }
 
-void FoolGame::sub_140_3148() {
+Common::Rect FoolGame::thothRandomVRect() {
 	// 140:3148
-	this->arr_i16_4758[0] = 0x14;
-	this->arr_i16_4758[1] = g_zbasic->rndInt(0x19c);
-	this->arr_i16_4758[2] = SCREEN_HEIGHT;
-	this->arr_i16_4758[3] = this->arr_i16_4758[1] + g_zbasic->rndInt(0x64);
-}
-
-void FoolGame::sub_140_31b0() {
-	// 140:31b0
-	this->sub_140_3050();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
-}
-
-void FoolGame::sub_140_31c4() {
-	// 140:31b0
-	this->sub_140_30da();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
-}
-
-void FoolGame::sub_140_31d8() {
-	// 140:31b0
-	this->sub_140_3148();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->InvertRect(temp);
-	temp.top = this->arr_i16_4758[4];
-	temp.left = this->arr_i16_4758[5];
-	temp.bottom = this->arr_i16_4758[6];
-	temp.right = this->arr_i16_4758[7];
-	g_toolbox->InvertRect(temp);
-}
-
-void FoolGame::sub_140_31fa() {
-	// 140:31fa
-	this->sub_140_3050();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->FillRect(temp, this->arr_pat_58f4[2]);
-}
-
-void FoolGame::sub_140_321a() {
-	// 140:321a
-	this->sub_140_30da();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->FillRect(temp, this->arr_pat_58f4[2]);
-}
-
-void FoolGame::sub_140_323a() {
-	// 140:323a
-	this->sub_140_3148();
-	Common::Rect temp;
-	temp.top = this->arr_i16_4758[0];
-	temp.left = this->arr_i16_4758[1];
-	temp.bottom = this->arr_i16_4758[2];
-	temp.right = this->arr_i16_4758[3];
-	g_toolbox->FillRect(temp, this->arr_pat_58f4[2]);
-}
-
-void FoolGame::sub_140_325a() {
-	// 140:325a
-	this->sub_140_3050();
-	Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
-	g_toolbox->InvertRect(temp);
-}
-
-void FoolGame::sub_140_326e() {
-	// 140:326e
-	this->sub_140_30da();
-	Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
-	g_toolbox->InvertRect(temp);
-}
-
-void FoolGame::sub_140_3282() {
-	// 140:3282
-	this->sub_140_3148();
-	Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
-	g_toolbox->InvertRect(temp);
+	int16 x = g_zbasic->rndInt(0x19c);
+	return Common::Rect(
+		x,
+		0x14,
+		x + g_zbasic->rndInt(0x64),
+		SCREEN_HEIGHT
+	);
 }
 
 void FoolGame::sub_140_3296() {
@@ -1403,18 +1272,14 @@ void FoolGame::sub_140_32ac() {
 		}
 	}
 	// 140:3300
-	this->arr_i16_4758[0] = 0;
-	this->arr_i16_4758[1] = 0;
-	this->arr_i16_4758[2] = SCREEN_HEIGHT;
-	this->arr_i16_4758[3] = SCREEN_WIDTH;
-	Common::Rect temp(this->arr_i16_4758[1], this->arr_i16_4758[0], this->arr_i16_4758[3], this->arr_i16_4758[2]);
+	Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	for (int16 i = 1; i <= 0xd; i++) {
 		this->var_i32_692 = g_toolbox->TickCount();
-		g_toolbox->InvertRect(temp);
+		g_toolbox->InvertRect(area);
 		this->sub_128_406(1);
 	}
 	// 140:334a
-	g_toolbox->FillRect(temp, this->arr_pat_58f4[2]);
+	g_toolbox->FillRect(area, this->arr_pat_58f4[2]);
 	this->sub_128_4da(1);
 	g_toolbox->SetPort(this->var_i32_0);
 }
