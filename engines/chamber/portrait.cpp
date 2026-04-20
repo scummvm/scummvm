@@ -20,8 +20,6 @@
  */
 
 #include "common/system.h"
-#include "common/rendermode.h"
-#include "graphics/surface.h"
 #include "chamber/chamber.h"
 #include "chamber/common.h"
 #include "chamber/portrait.h"
@@ -159,53 +157,37 @@ byte *loadPortrait(byte **pinfo, byte *end) {
 	return sprit_load_buffer + 2;
 }
 
-/* Expand a CGA 2bpp packed byte into 4 CLUT8 EGA pixels */
 static void ega_expandCgaByte(byte cgaByte, byte *dst) {
 	for (int p = 3; p >= 0; p--)
 		*dst++ = cga_to_ega_color[(cgaByte >> (p * 2)) & 0x03];
 }
 
-/*
-Build portrait frame in CLUT8 format for EGA mode.
-Pixel width = pframe->width * 4, stored row by row.
-Header bytes: [height][width_cga] to stay compatible with existing callers.
-*/
 static void ega_makePortraitFrame(byte index, byte *target) {
 	persframe_t *pf = &pers_frames[index];
-	uint16 pw = pf->width * 4; // pixel width
+	uint16 pw = pf->width * 4;
 	byte fillCol = cga_to_ega_color[(pf->fill >> 6) & 0x03];
-	debug(1, "ega_makePortraitFrame: frame=%d h=%d w=%d fillEGA=%d", index, pf->height, pf->width, fillCol);
 
 	*target++ = pf->height;
-	*target++ = pf->width; // CGA-unit width for compatibility
+	*target++ = pf->width;
 	cur_frame_width = pf->width;
 
-	// Top border row
 	for (uint16 x = 0; x < pf->width; x++)
 		ega_expandCgaByte(pf->topbot, target + x * 4);
 	target += pw;
 
-	// Middle rows
 	for (uint16 i = 0; i < pf->height - 2; i++) {
 		ega_expandCgaByte(pf->left, target);
-		// Fill middle with solid color from fill byte
-		byte fillCol2 = cga_to_ega_color[(pf->fill >> 6) & 0x03];
-		memset(target + 4, fillCol2, (pf->width - 2) * 4);
+		memset(target + 4, fillCol, (pf->width - 2) * 4);
 		ega_expandCgaByte(pf->right, target + (pf->width - 1) * 4);
 		target += pw;
 	}
 
-	// Bottom border row
 	for (uint16 x = 0; x < pf->width; x++)
 		ega_expandCgaByte(pf->topbot, target + x * 4);
 }
 
-/*
-Composite CLUT8 pers sprites onto EGA portrait frame.
-Sprites from ega_perso_res are already decoded CLUT8 Graphics::Surface.
-*/
 static byte *ega_loadPortrait(byte **pinfo, byte *end) {
-	uint16 frame_pw = cur_frame_width * 4; // pixel width of frame
+	uint16 frame_pw = cur_frame_width * 4;
 
 	while (*pinfo != end) {
 		byte index;
@@ -221,18 +203,17 @@ static byte *ega_loadPortrait(byte **pinfo, byte *end) {
 		uint16 sh = surf->h;
 		int16 spitch = surf->pitch;
 
-		// Decode CGA byte offset to row/col in the frame
 		uint16 cga_ofs = flags & 0x3FFF;
 		uint16 row = cga_ofs / cur_frame_width;
 		uint16 col_cga = cga_ofs % cur_frame_width;
 		byte *dst = sprit_load_buffer + 2 + 2 + row * frame_pw + col_cga * 4;
 
-		if (flags & 0x8000) { // vertical flip
+		if (flags & 0x8000) { /*vertical flip*/
 			src += spitch * (sh - 1);
 			spitch = -spitch;
 		}
 
-		if (flags & 0x4000) { // horizontal flip
+		if (flags & 0x4000) { /*horizontal flip*/
 			for (uint16 y = 0; y < sh; y++) {
 				for (uint16 x = 0; x < sw; x++) {
 					byte p = src[sw - 1 - x];
@@ -341,7 +322,6 @@ void drawBoxAroundSpot(void) {
 
 	/*decode ofs back to x:y*/
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		/* EGA: linear layout, offset = y * 320 + x */
 		y = ofs / EGA_BYTES_PER_LINE;
 		x = ofs % EGA_BYTES_PER_LINE;
 		w *= 4; /* w was stored in CGA byte units */
@@ -371,9 +351,8 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 
 	index = *((*desc)++);
 	if (index == 0xFF) {
-		if (script_byte_vars.dirty_rect_kind != 0) {
+		if (script_byte_vars.dirty_rect_kind != 0)
 			return 0;
-		}
 		drawBoxAroundSpot();
 		if (!selectCurrentAnim(&xx, &yy, &index))
 			return 0;
@@ -384,8 +363,6 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_coords_x = xx;
 	cur_image_coords_y = yy;
 	cur_image_idx = index;
-	debug(1, "drawPortrait: index=%d x=%d y=%d (pixel x=%d y=%d)", index, xx, yy, xx * 4, yy);
-
 	image = loadPortraitWithFrame(index - 1);
 	cur_image_size_h = *image++;
 	cur_image_size_w = *image++;

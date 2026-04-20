@@ -74,8 +74,6 @@ void animLoadSprite(byte **panim) {
 void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx, int8 dy) {
 	if (anim_flags == 7)
 		return;
-	// In EGA mode, lutin_mem CLUT8 buffer has 4 bytes per column (1 byte/pixel × 4 pixels).
-	// In CGA mode, mask+pixel pairs give 2 bytes per column.
 	uint16 bytes_per_col = (g_vm->_videoMode == Common::kRenderEGA) ? 4 : 2;
 	if (anim_flags & 4) {
 		if (anim_cycle == 0)
@@ -142,13 +140,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	byte ex, ey, updx, updy, updw, updh;
 	uint16 ofs = CalcXY_p(x, y);
 	g_vm->_renderer->backupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
-	if (g_vm->_videoMode == Common::kRenderEGA) {
-		// In EGA mode, loadLutinSprite builds a CLUT8 flat buffer in lutin_mem+2.
-		// pitch here is sprw*4 (set in playAnimCore for EGA).
-		ega_BlitSprite(pixels, pitch, (uint16)sprw * 4, sprh, backbuffer, ofs);
-	} else {
-		g_vm->_renderer->blitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
-	}
+	g_vm->_renderer->blitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	ex = x + sprw;
 	ey = y + sprh;
 	if (last_anim_height != 0) {

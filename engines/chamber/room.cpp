@@ -462,8 +462,7 @@ void initRoomDoorInfo(byte index) {
 			h = surf->h;
 
 			ox = x & 0x7F;
-			// EGA: ega_BlitSpriteFlip writes left-to-right, so use original ox for offset.
-			// (CGA convention shifts x to rightmost byte; EGA does not need that.)
+			/*EGA blitter uses left-edge offset; no rightmost-byte shift needed*/
 
 			y = (y * 2) & 0xFF;
 
@@ -534,33 +533,18 @@ Draw sliding door
 void drawRoomDoor(void) {
 	int16 i;
 	doorinfo_t *info = (doorinfo_t *)scratch_mem2;
-	if (g_vm->_videoMode == Common::kRenderEGA) {
-		for (i = 0; i < kNumDoorSprites; i++) {
-			uint16 w = info->layer[i].width * 4;
-			byte h = info->layer[i].height;
-			byte *pixels = info->layer[i].pixels;
-			uint16 offs = info->layer[i].offs;
-
-			if (!info->flipped)
-				ega_BlitSprite(pixels, w, w, h, backbuffer, offs);
-			else
-				ega_BlitSpriteFlip(pixels, w, w, h, backbuffer, offs);
-		}
-		waitVBlank();
-		waitVBlank();
-		ega_BlitFromBackBuffer(info->width * 4, info->height, frontbuffer, info->offs);
-		return;
-	}
+	bool isEGA = (g_vm->_videoMode == Common::kRenderEGA);
 	for (i = 0; i < kNumDoorSprites; i++) {
 		byte w = info->layer[i].width;
 		byte h = info->layer[i].height;
 		byte *pixels = info->layer[i].pixels;
 		uint16 offs = info->layer[i].offs;
+		int16 pitch = isEGA ? w * 4 : w * 2;
 
 		if (!info->flipped)
-			g_vm->_renderer->blitSprite(pixels, w * 2, w, h, backbuffer, offs);
+			g_vm->_renderer->blitSprite(pixels, pitch, w, h, backbuffer, offs);
 		else
-			g_vm->_renderer->blitSpriteFlip(pixels, w * 2, w, h, backbuffer, offs);
+			g_vm->_renderer->blitSpriteFlip(pixels, pitch, w, h, backbuffer, offs);
 	}
 	waitVBlank();
 	waitVBlank();
@@ -850,8 +834,7 @@ void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
 		byte *pixels = (byte *)surf->getPixels();
 		int16 pitch = surf->pitch;
 
-		// EGA: ega_BlitSpriteFlip writes left-to-right from ofs (left edge),
-		// so do NOT shift x to the rightmost position (that's a CGA-only convention).
+		/*EGA blitter uses left-edge offset; no rightmost-byte shift needed*/
 		byte drawx = x & 0x7F;
 
 		if (y & 0x80) {
@@ -1135,12 +1118,11 @@ void loadLutinSprite(uint16 lutidx) {
 	lutH = *lutin_entry++; /* composite height in pixels */
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		// EGA path: build a CLUT8 flat buffer in lutin_mem.
-		// Layout: [0]=lutW, [1]=lutH, then lutW*4 bytes per row × lutH rows (index 0 = transparent).
-		uint16 pw = (uint16)lutW * 4; // pixel width
+		/*EGA: build CLUT8 flat buffer in lutin_mem: [0]=lutW, [1]=lutH, then lutW*4 bytes/row*/
+		uint16 pw = (uint16)lutW * 4;
 		lutin_mem[0] = lutW;
 		lutin_mem[1] = lutH;
-		memset(lutin_mem + 2, 0, pw * lutH); // clear to transparent (index 0)
+		memset(lutin_mem + 2, 0, pw * lutH);
 
 		for (; lutin_entry != lutin_entry_end;) {
 			byte spridx = *lutin_entry++;
@@ -1153,13 +1135,13 @@ void loadLutinSprite(uint16 lutidx) {
 			uint16 sh = surf->h;
 			int16 spitch = surf->pitch;
 
-			// Convert CGA byte-offset to pixel position in lutin buffer
+			/*decode CGA byte-offset to pixel position in lutin buffer*/
 			uint16 byteOfs = flags & 0x7FFF;
 			uint16 row = (lutW > 0) ? (byteOfs / lutW) : 0;
 			uint16 col = (lutW > 0) ? (byteOfs % lutW) : 0;
 			byte *dst = lutin_mem + 2 + row * pw + col * 4;
 
-			if (flags & 0x8000) { // horizontal flip (mirrors columns, same as CGA mergeSpritesDataFlip)
+			if (flags & 0x8000) { /*horizontal flip*/
 				for (uint16 y = 0; y < sh; y++) {
 					for (uint16 x = 0; x < sw; x++) {
 						byte p = src[sw - 1 - x];
@@ -1182,7 +1164,7 @@ void loadLutinSprite(uint16 lutidx) {
 		return;
 	}
 
-	// CGA path: build CGA mask+pixel buffer in lutin_mem.
+	/*CGA path: build CGA mask+pixel buffer in lutin_mem*/
 	buffer = lutin_mem;
 	for (uint16 i = 0; i < 800; i++) { /*TODO: fix size*/
 		buffer[i * 2] = 0xFF;   /*mask*/
@@ -1499,7 +1481,7 @@ uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *
 		*w = surf->w / 4;
 		*h = surf->h;
 		*ofs = CalcXY_p(x, y);
-		// Copy EGA pixel data into scratch_mem2+2 so cga_BlitScratchBackSprite can find it
+		/*copy EGA pixel data into scratch_mem2+2 for blitScratchBackSprite*/
 		byte *dst = scratch_mem2 + 2;
 		for (int row = 0; row < surf->h; row++) {
 			memcpy(dst, (byte *)surf->getPixels() + row * surf->pitch, surf->w);

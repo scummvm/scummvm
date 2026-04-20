@@ -132,8 +132,7 @@ ResEntry_tp res_static[] = {
 	{"$", NULL}
 };
 
-// EGA Kult2.pxi uses SOURI.EGA / GAUSS.EGA and stores the script template
-// data under "kultega.bin" instead of TEMPL.BIN
+/*EGA uses SOURI.EGA / GAUSS.EGA; script template is "kultega.bin" not TEMPL.BIN*/
 ResEntry_tp res_static_ega[] = {
 	{"ARPLA.BIN", &arpla_data},
 	{"ALEAT.BIN", &aleat_data},

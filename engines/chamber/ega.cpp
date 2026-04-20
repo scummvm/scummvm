@@ -328,7 +328,6 @@ void EGARenderer::fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs)
 	byte egaColor = cga_to_ega_color[(pixel >> 6) & 0x03];
 	uint16 oofs = ofs;
 	uint16 w_px = w * 4;
-	debug(1, "EGARenderer::fill: color=%d w=%d h=%d ofs=%d", egaColor, w_px, h, ofs);
 	for (uint16 y = 0; y < h; y++) {
 		memset(screen + ofs, egaColor, w_px);
 		ofs += EGA_BYTES_PER_LINE;
@@ -346,6 +345,20 @@ void EGARenderer::fillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint
 
 void EGARenderer::blitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 oofs = ofs;
+	if ((pw < 0 ? -pw : pw) == (int16)(w * 4)) {
+		uint16 ega_w = w * 4;
+		for (uint16 y = 0; y < h; y++) {
+			for (uint16 x = 0; x < ega_w; x++) {
+				if (pixels[x] != 0)
+					screen[ofs + x] = pixels[x];
+			}
+			pixels += pw;
+			ofs += EGA_BYTES_PER_LINE;
+		}
+		if (screen == ega_screen)
+			ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
+		return;
+	}
 	for (uint16 row = 0; row < h; row++) {
 		for (uint16 bx = 0; bx < w; bx++) {
 			byte mb = pixels[bx * 2];
@@ -366,6 +379,20 @@ void EGARenderer::blitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *s
 
 void EGARenderer::blitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
 	uint16 oofs = ofs;
+	if ((pw < 0 ? -pw : pw) == (int16)(w * 4)) {
+		uint16 ega_w = w * 4;
+		for (uint16 y = 0; y < h; y++) {
+			for (uint16 x = 0; x < ega_w; x++) {
+				if (pixels[ega_w - 1 - x] != 0)
+					screen[ofs + x] = pixels[ega_w - 1 - x];
+			}
+			pixels += pw;
+			ofs += EGA_BYTES_PER_LINE;
+		}
+		if (screen == ega_screen)
+			ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
+		return;
+	}
 	for (uint16 row = 0; row < h; row++) {
 		for (uint16 bx = 0; bx < w; bx++) {
 			byte mb = pixels[bx * 2];
@@ -549,6 +576,8 @@ void EGARenderer::traceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *so
 		if (e2 > -abh) { err -= abh; x0 += ddx; }
 		if (e2 <  abw) { err += abw; y0 += ddy; }
 	}
+	if (target == ega_screen)
+		ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 }
 
 void EGARenderer::zoomImage(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, byte *target, uint16 ofs) {

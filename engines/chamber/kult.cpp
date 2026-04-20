@@ -236,16 +236,15 @@ Common::Error ChamberEngine::init() {
 	// Initialize graphics using following:
 	bool isCustomHerc = false;
 	if (_videoMode == Common::RenderMode::kRenderEGA) {
-		// EGA: 320x200 CLUT8 linear framebuffer, 1 byte per pixel, no interlacing
-		_screenW    = 320;
-		_screenH    = 200;
+		_screenW = 320;
+		_screenH = 200;
 		_screenBits = 8;
-		_screenPPB  = 1;
-		_screenBPL  = _screenW;
-		_line_offset  = 0;
+		_screenPPB = 1;
+		_screenBPL = _screenW;
+		_line_offset = 0;
 		_line_offset2 = 0;
 		_fontHeight = 6;
-		_fontWidth  = 4;
+		_fontWidth = 4;
 		initGraphics(_screenW, _screenH);
 	} else {
 		if (_videoMode == Common::RenderMode::kRenderHercG) {
@@ -284,7 +283,7 @@ Common::Error ChamberEngine::init() {
 	if (g_vm->_videoMode == Common::RenderMode::kRenderEGA) {
 		/* EGA title screen — load planar EGA splash (same format as FOND.EGA) */
 		splash = ega_loadFond("PRESEGA.EGA");
-		g_vm->_renderer->colorSelect(0x30); // sets EGA palette
+		g_vm->_renderer->colorSelect(0x30);
 		if (splash)
 			g_vm->_renderer->backBufferToRealFull();
 	} else {
@@ -373,7 +372,7 @@ Common::Error ChamberEngine::init() {
 	if (!loadStaticData())
 		exitGame();
 
-/* Load text resources */
+	/* Load text resources */
 	if (!loadVepciData() || !loadDesciData() || !loadDialiData())
 		exitGame();
 
@@ -417,8 +416,6 @@ Common::Error ChamberEngine::init() {
 			/*TODO*/
 		}
 	}
-
-	exitGame();
 
 	return Common::kNoError;
 }

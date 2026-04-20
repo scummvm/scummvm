@@ -55,8 +55,6 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_prioritycommand_2 = false;
 	_pxiData = NULL;
 
-	// Read render mode from ScummVM settings (--render-mode command line flag).
-	// Supported: cga (default), herc, ega.
 	Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 	if (renderMode == Common::kRenderEGA || renderMode == Common::kRenderHercG)
 		_videoMode = renderMode;

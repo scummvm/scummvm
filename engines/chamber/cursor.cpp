@@ -71,12 +71,11 @@ void selectCursor(uint16 num) {
 	byte *dst = cursorImage;
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		// EGA SOURI.EGA: 64 bytes/cursor, 4 bytes per row.
-		// Each row = two little-endian 16-bit planes:
-		//   planeA (bytes 0,1): outline/black mask (bit set = black pixel)
-		//   planeB (bytes 2,3): fill/white mask   (bit set = white pixel)
-		// MSB of each word = leftmost pixel (pixel 0).
-		// A=0,B=0 → transparent; A=1,B=0 → black (EGA 0); A=0/1,B=1 → white (EGA 15).
+		/*EGA SOURI.EGA: 64 bytes/cursor, 4 bytes per row.
+		  Each row = two little-endian 16-bit planes:
+		    planeA (bytes 0,1): black mask  (bit set = black pixel)
+		    planeB (bytes 2,3): white mask  (bit set = white pixel)
+		  A=0,B=0 -> transparent; A=1,B=0 -> black; B=1 -> white.*/
 		cursor_shape = souri_data + num * (CURSOR_WIDTH * CURSOR_HEIGHT / 4);
 		byte *src = cursor_shape;
 		for (int16 y = 0; y < CURSOR_HEIGHT; y++) {
@@ -87,11 +86,11 @@ void selectCursor(uint16 num) {
 				byte bitA = (planeA >> (CURSOR_WIDTH - 1 - x)) & 1;
 				byte bitB = (planeB >> (CURSOR_WIDTH - 1 - x)) & 1;
 				if (!bitA && !bitB)
-					*dst++ = 255;  // transparent
+					*dst++ = 255; /*transparent*/
 				else if (bitB)
-					*dst++ = 15;   // white
+					*dst++ = 15;  /*white*/
 				else
-					*dst++ = 0;    // black
+					*dst++ = 0;   /*black*/
 			}
 		}
 	} else {
