@@ -2453,7 +2453,7 @@ void FoolGame::sub_128_5b30() {
 	if (this->var_i16_e12 == 0) {
 		this->var_ev_46.what = kNullEvent;
 		if (this->var_i16_e14 != 0) {
-			this->sub_128_5ef0();
+			this->thothHidePlayfield();
 		}
 		this->var_i32_bf8 = g_toolbox->MenuSelect(this->var_ev_46.where);
 		this->selectedMenuID = (uint16)(this->var_i32_bf8 >> 16);
@@ -2465,7 +2465,7 @@ void FoolGame::sub_128_5b30() {
 		}
 		// 128:5b94
 		if (this->var_i16_e14 != 0) {
-			this->sub_128_5f16();
+			this->thothShowPlayfield();
 		}
 		this->sub_128_61ec();
 	}
@@ -2480,11 +2480,11 @@ void FoolGame::sub_128_5baa() {
 	this->selectedMenuItem = this->var_i32_bf8 & 0xffff;
 	if (this->selectedMenuID > 0) {
 		if (this->var_i16_e14 != 0) {
-			this->sub_128_5ef0();
+			this->thothHidePlayfield();
 		}
 		this->sub_128_5c20();
 		if (this->var_i16_e14 != 0) {
-			this->sub_128_5f16();
+			this->thothShowPlayfield();
 		}
 		g_toolbox->HiliteMenu(0);
 	}
@@ -2576,23 +2576,24 @@ void FoolGame::sub_128_5c20() {
 	// 128:5eee
 }
 
-void FoolGame::sub_128_5ef0() {
+void FoolGame::thothHidePlayfield() {
 	// 128:5ef0
 	this->copyScreen(0, this->arr_bmp_b3ec);
 	g_zbasic->picture(0, 0x14, this->var_pic_7c2);
 }
 
-void FoolGame::sub_128_5f16() {
+void FoolGame::thothShowPlayfield() {
 	// 128:5f16
-	if (this->stateFlags == 4) {
+	if (this->stateFlags == kStateSaveGame) {
 		if (this->arr_i16_1eb8[0] < 1) {
 			this->arr_i16_1eb8[0] = 1;
 		}
 		// 128:5f4c
 		this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
+		this->saveGame();
 	}
 	// 128:5f70
-	if ((this->stateFlags & 1) != 0) {
+	if ((this->stateFlags & 1) == 0) {
 		this->sub_128_6186();
 		this->copyScreen(1, this->arr_bmp_b3ec);
 	}
