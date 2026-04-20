@@ -2458,6 +2458,35 @@ void ToucheEngine::removeFromTalkTable(int keyChar) {
 
 void ToucheEngine::addConversationChoice(int16 num) {
 	debugC(9, kDebugEngine, "ToucheEngine::addConversationChoice(%d)", num);
+	// Workaround for bug #6754 - Player may only ask for boat at Rouen river
+	// gate if and only if potion is in inventory and Juliette has been
+	// kidnapped by the Cardinal to his castle. When reaching the castle without potion
+	// the game can not be finished as there is no way back to Rouen river gate.
+
+	// 018d99d5  ; prginstruction  ; 1d 0001      ; getFlag(1: "puzzles solved progress")
+	// 018d99d8  ; prginstruction  ; 06           ; push
+	// 018d99d9  ; prginstruction  ; 13 000d      ; fetchScriptWord(13)
+	// 018d99dc  ; prginstruction  ; 12           ; testLower (13 < flag[1] ? t:0xffff, f:0x0000)
+	// 018d99dd  ; prginstruction  ; 02 018d99e3  ; jz 018d99e3
+	// 018d99e0  ; prginstruction  ; 3e 0004      ; addConversationChoice("We need a boat...")
+	// 018d99e3  ; prginstruction  ; 1c           ; stopScript
+	if (_currentEpisodeNum == 103  /* Rouen river gate episode */
+			&& _currentRoomNum == 67  /* Rouen river gate */
+			&& _flagsTable[1] == 14   /* Juliette kidnapped */
+			&& num == 4  /* "We need a boat..." */) {
+		bool havePotion = false;
+		int16 *p = _inventoryStateTable[0].itemsList;
+		for (; *p != -1; ++p) {
+			if (*p == 0x0009 /* potion */) {
+				havePotion = true;
+				break;
+			}
+		}
+		if (!havePotion) {
+			return;
+		}
+	}
+
 	_conversationChoicesUpdated = true;
 	int16 msg = _programConversationTable[_currentConversation + num].msg;
 	for (int i = 0; i < NUM_CONVERSATION_CHOICES; ++i) {
