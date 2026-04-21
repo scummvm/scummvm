@@ -588,8 +588,8 @@ error:;
 #endif
 
 int16 loadScena(void) {
-	warning("STUB: loadScena()");
-	return 1;
+	Common::Error err = g_vm->loadGameState(0);
+	return err.getCode() == Common::kNoError ? 0 : 1;
 #if 0
 	int16 f;
 	int16 res;
@@ -622,8 +622,8 @@ int16 loadScena(void) {
 }
 
 int16 saveScena(void) {
-	warning("STUB: saveScena()");
-	return 1;
+	Common::Error err = g_vm->saveGameState(0, Common::U32String("Save"));
+	return err.getCode() == Common::kNoError ? 0 : 1;
 #if 0
 	int16 f;
 	int16 res;
