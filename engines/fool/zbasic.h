@@ -239,7 +239,9 @@ public:
 
 	int16 asc(const Common::U32String &str);
 	void bufferFlush(const Common::U32String &str);
-	void blockMove(void *srcptr, void *destptr, uint16 size);
+	void blockMove(void *srcptr, void *destptr, uint16 size)
+;
+	int16 castInt(const Common::String &str);
 	Common::U32String chr(uint16 code);
 	void close(int16 fileNo);
 	void coordinateWindow();
