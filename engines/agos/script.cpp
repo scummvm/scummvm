@@ -970,9 +970,7 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 	if (variable >= _numVars)
 		error("writeVariable: Variable %d out of range", variable);
 
-	const bool pnDayNightMode = getGameType() == GType_PN &&
-		!(getFeatures() & GF_EGA) &&
-		(getPlatform() == Common::kPlatformAtariST || getPlatform() == Common::kPlatformAmiga);
+	const bool pnDayNightMode = isPNDayNightPaletteMode();
 	const uint16 oldValue = _variableArray[variable];
 	const bool pnDayNightVar = pnDayNightMode && variable == 249 && oldValue != contents;
 
@@ -983,7 +981,7 @@ void AGOSEngine::writeVariable(uint16 variable, uint16 contents) {
 
 	if (pnDayNightVar) {
 		const uint16 selectorMask = (contents == 2) ? 0xFFFF : 0x0000;
-		startPNPaletteFade(selectorMask, -1, true);
+		startPNDayNightController(selectorMask);
 	}
 }
 

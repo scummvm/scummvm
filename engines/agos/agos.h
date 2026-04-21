@@ -627,22 +627,14 @@ protected:
 	bool _simon2LanguageFlagClearPending;
 
 	uint16 _pnPaletteBanks[2][16];
-	uint16 _pnFadeSource[16];
 	uint16 _pnFadeCurrent[16];
 	uint16 _pnFadeTarget[16];
-	uint8 _pnPendingPaletteBank;
 	uint8 _pnDesiredPaletteBank;
-	uint8 _pnFadeTickDelay;
-	uint8 _pnFadeTickCounter;
-	uint8 _pnFadeStage;
 	uint8 _pnDayNightControllerLastStage;
 	uint16 _pnDayNightControllerSelectorMask;
-	bool _pnFadeAdvancePending;
 	int16 _pnLastClockMinutes;
 	bool _pnHavePaletteBank[2];
-	bool _pnFadeActive;
 	bool _pnDayNightControllerActive;
-	uint16 _pnDayNightControllerTickDelay;
 	uint16 _pnDayNightControllerTickCounter;
 	byte *_planarBuf;
 	byte _videoBuf1[32000];
@@ -1330,10 +1322,9 @@ protected:
 	void buildPNPaletteTarget(uint16 selectorMask, uint16 *target) const;
 	uint16 blendPNPaletteColor(uint16 source, uint16 target, uint8 steps) const;
 	uint8 getPNDayNightControllerStage() const;
+	void startPNDayNightController(uint16 selectorMask);
 	void updatePNDayNightController();
 	void applyPNDayNightPalette(const uint16 *palette, bool updateBackend);
-	void startPNPaletteFade(uint16 selectorMask, int16 fadeMode, bool animate);
-	void stepPNPaletteFade();
 	void checkOnStopTable();
 	void checkWaitEndTable();
 

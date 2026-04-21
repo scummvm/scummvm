@@ -239,7 +239,7 @@ void AGOSEngine::schedulePNFadeEvent() {
 			return;
 	}
 
-	addVgaEvent(_frameCount, PN_FADE_EVENT, nullptr, 0, 0);
+	addVgaEvent(_vgaBaseDelay, PN_FADE_EVENT, nullptr, 0, 0);
 }
 
 void AGOSEngine::removePNFadeEvent() {
@@ -267,6 +267,8 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
+				if (_pnDayNightControllerActive)
+					schedulePNFadeEvent();
 				vte++;
 				break;
 			case ANIMATE_EVENT:
@@ -290,26 +292,18 @@ void AGOSEngine::processVgaEvents() {
 				vte = _nextVgaTimerToProcess;
 				break;
 			case PN_FADE_EVENT:
-				if (_pnFadeActive)
-					stepPNPaletteFade();
-
 				if (_pnDayNightControllerActive) {
 					if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
 						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
 					} else {
-						_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
+						_pnDayNightControllerTickCounter = 0x00C8;
 						updatePNDayNightController();
 					}
 				}
 
-				if (_pnFadeActive || _pnDayNightControllerActive) {
-					vte->delay = _frameCount;
-					vte++;
-				} else {
-					_nextVgaTimerToProcess = vte + 1;
-					deleteVgaEvent(vte);
-					vte = _nextVgaTimerToProcess;
-				}
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
+				vte = _nextVgaTimerToProcess;
 				break;
 			default:
 				error("processVgaEvents: Unknown event type %d", vte->type);
