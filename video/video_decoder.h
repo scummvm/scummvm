@@ -504,6 +504,10 @@ public:
 	 */
 	uint getAudioTrackCount() const;
 
+	void loadSubtitles(const Common::Path &filename);
+
+	Subtitles &getSubtitles() { return _subtitles; }
+
 protected:
 	/**
 	 * An abstract representation of a track in a movie. Since tracks here are designed

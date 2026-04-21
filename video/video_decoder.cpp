@@ -56,6 +56,10 @@ VideoDecoder::VideoDecoder() {
 	_subtitles.setFont("LiberationSans-Regular.ttf");
 }
 
+void VideoDecoder::loadSubtitles(const Common::Path &filename) {
+	_subtitles.loadSRTFile(filename);
+}
+
 void VideoDecoder::close() {
 	if (isPlaying())
 		stop();
@@ -93,9 +97,6 @@ bool VideoDecoder::loadFile(const Common::Path &filename) {
 	bool result = loadStream(file);
 	if (!result)
 		delete file;
-
-	Common::String subtitlesName = Common::String::format("%s.srt", filename.toString().c_str());
-	_subtitles.loadSRTFile(subtitlesName.c_str());
 
 	return result;
 }
