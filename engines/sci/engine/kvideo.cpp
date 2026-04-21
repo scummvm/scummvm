@@ -197,6 +197,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 				warning("Failed to open movie file %s", filename.c_str());
 				videoDecoder.reset();
 			}
+			Common::String subtitlesName = Common::String::format("%s.srt", filename.c_str());
+			videoDecoder->loadSubtitles(subtitlesName.c_str());
 			syncLastFrame = false;
 			retval = TRUE_REG;
 			break;
