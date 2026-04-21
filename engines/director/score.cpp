@@ -930,21 +930,14 @@ void Score::incrementFilmLoops() {
 		if (it->_sprite->_cast && (it->_sprite->_cast->_type == kCastFilmLoop || it->_sprite->_cast->_type == kCastMovie)) {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (!fl->_score->_scoreCache.empty()) {
-				// increment the film loop counter
 				if (fl->_looping) {
-					if (fl->_score->_curFrameNumber + 1 > fl->_score->getFramesNum())
-						fl->_score->setCurrentFrame(1);
-
-					fl->_score->step();
-				} else {
-					if (fl->_score->_curFrameNumber < fl->_score->getFramesNum() - 1)
-						fl->_score->step();
-					else
-						fl->_score->stopPlay();
+					it->_filmLoopFrame += 1;
+					it->_filmLoopFrame %= fl->_score->_scoreCache.size();
+				} else if (it->_filmLoopFrame < (fl->_score->_scoreCache.size() - 1)) {
+					it->_filmLoopFrame += 1;
 				}
-
 			} else {
-				warning("Score::updateFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
+				warning("Score::incrementFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
 		}
 	}
