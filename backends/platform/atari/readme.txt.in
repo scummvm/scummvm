@@ -105,7 +105,7 @@ executable size.
 - "null" music driver is automatically enabled (i.e. OPL emulation is never
   used but still allows playing speech/sfx samples and/or CD audio).
 
-- DOSBox OPL emulator is disabled => smaller executable size.
+- DOSBox and MAME OPL emulator is disabled => smaller executable size.
 
 FireBee package
 ~~~~~~~~~~~~~~~
