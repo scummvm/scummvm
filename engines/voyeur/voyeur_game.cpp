@@ -1328,7 +1328,7 @@ void VoyeurEngine::flashTimeBar() {
 void VoyeurEngine::checkPhoneCall() {
 	if ((_voy->_RTVLimit - _voy->_RTVNum) >= 36 && _voy->_totalPhoneCalls < 5 &&
 			_currentVocId <= 151 && _currentVocId > 146) {
-		if ((_voy->_switchBGNum < _checkPhoneVal || _checkPhoneVal > 180) &&
+		if ((_voy->_switchBGNum < _checkPhoneVal || (_voy->_switchBGNum - _checkPhoneVal) > 180) &&
 				!_soundManager->getVOCStatus()) {
 			int soundIndex;
 			do {
