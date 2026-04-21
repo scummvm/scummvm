@@ -190,6 +190,10 @@ void ZBasic::blockMove(void *srcptr, void *destptr, uint16 size) {
 	memmove(destptr, srcptr, size);
 }
 
+int16 ZBasic::castInt(const Common::String &str) {
+	return (int16)strtol(str.c_str(), nullptr, 10);
+}
+
 Common::U32String ZBasic::chr(uint16 code) {
 	char buf[2] = { 0x00, 0x00 };
 	buf[0] = (char)(code & 0xff);

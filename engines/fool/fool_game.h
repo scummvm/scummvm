@@ -306,8 +306,18 @@ public:
 	void deathCaught(); // sub_141_8b8
 	void deathDrawZoom(); // sub_141_934
 
-	void sub_142_004();
-	void sub_142_852();
+	void humbugRun(); // sub_142_004
+	void humbugTrail(); // sub_142_0e6
+	void sub_142_370();
+	void sub_142_5f2();
+	void sub_142_630();
+	void justiceRun(); // sub_142_852
+	void sub_142_9be();
+	void sub_142_f58();
+	void sub_142_f96();
+	void sub_142_10bc();
+	void sub_142_111e();
+	void sub_142_11fe();
 	void sub_142_12ac();
 	void sub_144_004();
 
@@ -538,6 +548,8 @@ private:
 	int16 var_i16_2336;
 	int16 var_i16_2338;
 	int16 var_i16_233a;
+	int16 var_i16_233e;
+	int16 var_i16_233c;
 
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 pageLineRanges[202]; // arr_i16_0
@@ -584,6 +596,8 @@ private:
 	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
 	BitMap arr_jigsaw_5dfc[128];
+	int16 arr_i16_9894[0xa43];					// inside 5dfc, used for humbug
+	int16 arr_i16_ac1c[0xa43];					// inside 5dfc, used for humbug
 	BitMap arr_bmp_b3ec;
 	BitMap arr_bmp_bbbc; // used by death
 	BitMap arr_bmp_c38c; // used by death

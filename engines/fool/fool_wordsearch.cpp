@@ -107,7 +107,7 @@ void FoolGame::wordSearchRun() {
 	this->var_i16_1990 = 0;
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->var_i16_198e; i++) {
-		this->arr_i16_3738[i] =  (int16)strtol(g_zbasic->midStr(this->activePuzzleBuffer, i, 1).c_str(), nullptr, 10);
+		this->arr_i16_3738[i] = g_zbasic->castInt(g_zbasic->midStr(this->activePuzzleBuffer, i, 1));
 		if (this->arr_i16_3738[i] != 0) {
 			this->var_i16_1990++;
 		}
