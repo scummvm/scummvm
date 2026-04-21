@@ -88,7 +88,7 @@ void FoolGame::sentenceRun() {
 			this->arr_i16_4338[this->var_i16_68a] = 1;
 		} else {
 			// 135:03d4
-			this->arr_i16_4338[this->var_i16_68a] = (int16)strtol(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_68a, 1).c_str(), nullptr, 10);
+			this->arr_i16_4338[this->var_i16_68a] = g_zbasic->castInt(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_68a, 1));
 
 		}
 		// 135:0408
