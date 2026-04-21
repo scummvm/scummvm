@@ -260,6 +260,10 @@ bool MoviePlayerDXA::load() {
 	debug(0, "Playing video %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
 	CursorMan.showMouse(false);
+
+	Common::String subtitlesName = Common::String::format("%s.srt", baseName);
+	loadSubtitles(subtitlesName.c_str());
+
 	return true;
 }
 
@@ -430,6 +434,9 @@ bool MoviePlayerSMK::load() {
 	debug(0, "Playing video %s", videoName.toString(Common::Path::kNativeSeparator).c_str());
 
 	CursorMan.showMouse(false);
+
+	Common::String subtitlesName = Common::String::format("%s.srt", baseName);
+	loadSubtitles(subtitlesName.c_str());
 
 	return true;
 }
