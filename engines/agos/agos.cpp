@@ -517,11 +517,9 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	memset(_displayPalette, 0, sizeof(_displayPalette));
 	memset(_pnPaletteBanks, 0, sizeof(_pnPaletteBanks));
 	memset(_pnFadeCurrent, 0, sizeof(_pnFadeCurrent));
-	memset(_pnFadeTarget, 0, sizeof(_pnFadeTarget));
 	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
-	_pnDesiredPaletteBank = 0;
-	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerSelectorMask = 0xFFFF;
+	_pnDayNightControllerLastStage = 0xFF;
 	_pnLastClockMinutes = -1;
 	_pnDayNightControllerTickCounter = 0x00C8;
 

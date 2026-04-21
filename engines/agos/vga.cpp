@@ -421,14 +421,7 @@ uint8 AGOSEngine::getPNDesiredPaletteBank() const {
 			return 0;
 	}
 
-	return (_pnDesiredPaletteBank == 1) ? 1 : 0;
-}
-
-void AGOSEngine::syncPNDesiredPaletteBank() {
-	if (!isPNDayNightPaletteMode())
-		return;
-
-	_pnDesiredPaletteBank = getPNDesiredPaletteBank();
+	return 0;
 }
 
 void AGOSEngine::notePNClockValueChange() {
@@ -455,14 +448,11 @@ void AGOSEngine::notePNClockValueChange() {
 	const int16 clockMinutes = hour * 60 + minute;
 	if (_pnLastClockMinutes == -1) {
 		_pnLastClockMinutes = clockMinutes;
-		syncPNDesiredPaletteBank();
 		return;
 	}
 
 	if (clockMinutes != _pnLastClockMinutes)
 		_pnLastClockMinutes = clockMinutes;
-
-	syncPNDesiredPaletteBank();
 }
 
 void AGOSEngine::resetPNRoomPaletteState() {
@@ -470,8 +460,8 @@ void AGOSEngine::resetPNRoomPaletteState() {
 		return;
 
 	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
-	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerSelectorMask = 0xFFFF;
+	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerTickCounter = 0x00C8;
 	removePNFadeEvent();
 }
@@ -534,11 +524,11 @@ void AGOSEngine::startPNDayNightController(uint16 selectorMask) {
 	_pnDayNightControllerSelectorMask = selectorMask;
 	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerTickCounter = 0x00C8;
-	updatePNDayNightController();
+	updatePNDayNightController(selectorMask);
 	schedulePNFadeEvent();
 }
 
-void AGOSEngine::updatePNDayNightController() {
+void AGOSEngine::updatePNDayNightController(uint16 selectorMask) {
 	if (!isPNDayNightPaletteMode())
 		return;
 	if (!_pnHavePaletteBank[0] || !_pnHavePaletteBank[1])
@@ -548,15 +538,16 @@ void AGOSEngine::updatePNDayNightController() {
 	if (stage == _pnDayNightControllerLastStage)
 		return;
 
-	buildPNPaletteTarget(_pnDayNightControllerSelectorMask, _pnFadeTarget);
+	uint16 fadeTarget[16];
+	buildPNPaletteTarget(selectorMask, fadeTarget);
 	for (int i = 0; i < 16; ++i)
-		_pnFadeCurrent[i] = blendPNPaletteColor(_pnPaletteBanks[0][i], _pnFadeTarget[i], stage);
+		_pnFadeCurrent[i] = blendPNPaletteColor(_pnPaletteBanks[0][i], fadeTarget[i], stage);
 
 	_pnDayNightControllerLastStage = stage;
-	applyPNDayNightPalette(_pnFadeCurrent, true);
+	applyPNDayNightPalette(_pnFadeCurrent);
 }
 
-void AGOSEngine::applyPNDayNightPalette(const uint16 *palette, bool updateBackend) {
+void AGOSEngine::applyPNDayNightPalette(const uint16 *palette) {
 	for (int i = 0; i < 16; ++i) {
 		const uint16 color = palette[i];
 		_displayPalette[i * 3 + 0] = ((color & 0x0f00) >> 8) * 32;
@@ -566,7 +557,7 @@ void AGOSEngine::applyPNDayNightPalette(const uint16 *palette, bool updateBacken
 
 	memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
 
-	const bool canPushImmediately = updateBackend && isPNDayNightPaletteMode() && _pnHavePaletteBank[0] && _pnHavePaletteBank[1] && _system->getPaletteManager();
+	const bool canPushImmediately = isPNDayNightPaletteMode() && _pnHavePaletteBank[0] && _pnHavePaletteBank[1] && _system->getPaletteManager();
 	if (canPushImmediately) {
 		_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
 		_paletteFlag = 0;
@@ -639,8 +630,6 @@ void AGOSEngine::vc4_fadeIn() {
 	vcReadNextWord();
 	const int16 fadeMode = (int16)vcReadNextWord();
 
-	syncPNDesiredPaletteBank();
-
 	const bool hasAlternateBank = _pnHavePaletteBank[1];
 	const bool isDayPalette = selectorMask == 0;
 
@@ -651,7 +640,7 @@ void AGOSEngine::vc4_fadeIn() {
 		return;
 	}
 
-	const bool shouldApply = (_pnDesiredPaletteBank == 0) ? isDayPalette : !isDayPalette;
+	const bool shouldApply = (getPNDesiredPaletteBank() == 0) ? isDayPalette : !isDayPalette;
 
 	if (fadeMode == -1) {
 		startPNDayNightController(selectorMask);
@@ -661,9 +650,10 @@ void AGOSEngine::vc4_fadeIn() {
 	if (!shouldApply)
 		return;
 
-	buildPNPaletteTarget(selectorMask, _pnFadeTarget);
-	memcpy(_pnFadeCurrent, _pnFadeTarget, sizeof(_pnFadeCurrent));
-	applyPNDayNightPalette(_pnFadeCurrent, true);
+	uint16 fadeTarget[16];
+	buildPNPaletteTarget(selectorMask, fadeTarget);
+	memcpy(_pnFadeCurrent, fadeTarget, sizeof(_pnFadeCurrent));
+	applyPNDayNightPalette(_pnFadeCurrent);
 }
 
 void AGOSEngine::vc5_ifEqual() {

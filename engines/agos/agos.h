@@ -628,10 +628,8 @@ protected:
 
 	uint16 _pnPaletteBanks[2][16];
 	uint16 _pnFadeCurrent[16];
-	uint16 _pnFadeTarget[16];
-	uint8 _pnDesiredPaletteBank;
-	uint8 _pnDayNightControllerLastStage;
 	uint16 _pnDayNightControllerSelectorMask;
+	uint8 _pnDayNightControllerLastStage;
 	int16 _pnLastClockMinutes;
 	bool _pnHavePaletteBank[2];
 	uint16 _pnDayNightControllerTickCounter;
@@ -1315,15 +1313,14 @@ protected:
 	void setPaletteSlot(uint16 srcOffs, uint8 dstOffs);
 	bool isPNDayNightPaletteMode() const;
 	uint8 getPNDesiredPaletteBank() const;
-	void syncPNDesiredPaletteBank();
 	void notePNClockValueChange();
 	void resetPNRoomPaletteState();
 	void buildPNPaletteTarget(uint16 selectorMask, uint16 *target) const;
 	uint16 blendPNPaletteColor(uint16 source, uint16 target, uint8 steps) const;
 	uint8 getPNDayNightControllerStage() const;
 	void startPNDayNightController(uint16 selectorMask);
-	void updatePNDayNightController();
-	void applyPNDayNightPalette(const uint16 *palette, bool updateBackend);
+	void updatePNDayNightController(uint16 selectorMask);
+	void applyPNDayNightPalette(const uint16 *palette);
 	void checkOnStopTable();
 	void checkWaitEndTable();
 

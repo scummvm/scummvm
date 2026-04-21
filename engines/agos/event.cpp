@@ -297,7 +297,7 @@ void AGOSEngine::processVgaEvents() {
 						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
 					} else {
 						_pnDayNightControllerTickCounter = 0x00C8;
-						updatePNDayNightController();
+						updatePNDayNightController(_pnDayNightControllerSelectorMask);
 					}
 				}
 
