@@ -634,7 +634,6 @@ protected:
 	uint16 _pnDayNightControllerSelectorMask;
 	int16 _pnLastClockMinutes;
 	bool _pnHavePaletteBank[2];
-	bool _pnDayNightControllerActive;
 	uint16 _pnDayNightControllerTickCounter;
 	byte *_planarBuf;
 	byte _videoBuf1[32000];

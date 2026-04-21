@@ -523,7 +523,6 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerSelectorMask = 0xFFFF;
 	_pnLastClockMinutes = -1;
-	_pnDayNightControllerActive = false;
 	_pnDayNightControllerTickCounter = 0x00C8;
 
 	memset(_videoBuf1, 0, sizeof(_videoBuf1));

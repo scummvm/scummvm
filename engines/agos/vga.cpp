@@ -470,7 +470,6 @@ void AGOSEngine::resetPNRoomPaletteState() {
 		return;
 
 	memset(_pnHavePaletteBank, 0, sizeof(_pnHavePaletteBank));
-	_pnDayNightControllerActive = false;
 	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerSelectorMask = 0xFFFF;
 	_pnDayNightControllerTickCounter = 0x00C8;
@@ -533,7 +532,6 @@ void AGOSEngine::startPNDayNightController(uint16 selectorMask) {
 		return;
 
 	_pnDayNightControllerSelectorMask = selectorMask;
-	_pnDayNightControllerActive = true;
 	_pnDayNightControllerLastStage = 0xFF;
 	_pnDayNightControllerTickCounter = 0x00C8;
 	updatePNDayNightController();
@@ -542,8 +540,6 @@ void AGOSEngine::startPNDayNightController(uint16 selectorMask) {
 
 void AGOSEngine::updatePNDayNightController() {
 	if (!isPNDayNightPaletteMode())
-		return;
-	if (!_pnDayNightControllerActive)
 		return;
 	if (!_pnHavePaletteBank[0] || !_pnHavePaletteBank[1])
 		return;
@@ -570,7 +566,7 @@ void AGOSEngine::applyPNDayNightPalette(const uint16 *palette, bool updateBacken
 
 	memcpy(_currentPalette, _displayPalette, sizeof(_displayPalette));
 
-	const bool canPushImmediately = updateBackend && _pnDayNightControllerActive && _pnHavePaletteBank[0] && _pnHavePaletteBank[1] && _system->getPaletteManager();
+	const bool canPushImmediately = updateBackend && isPNDayNightPaletteMode() && _pnHavePaletteBank[0] && _pnHavePaletteBank[1] && _system->getPaletteManager();
 	if (canPushImmediately) {
 		_system->getPaletteManager()->setPalette(_displayPalette, 0, 16);
 		_paletteFlag = 0;

@@ -267,7 +267,7 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
-				if (_pnDayNightControllerActive)
+				if (isPNDayNightPaletteMode())
 					schedulePNFadeEvent();
 				vte++;
 				break;
@@ -292,7 +292,7 @@ void AGOSEngine::processVgaEvents() {
 				vte = _nextVgaTimerToProcess;
 				break;
 			case PN_FADE_EVENT:
-				if (_pnDayNightControllerActive) {
+				if (isPNDayNightPaletteMode()) {
 					if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
 						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
 					} else {
