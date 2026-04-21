@@ -477,6 +477,7 @@ void AGOSEngine::resetPNRoomPaletteState() {
 	_pnFadeActive = false;
 	_pnFadeStage = 0;
 	_pnFadeAdvancePending = false;
+	removePNFadeEvent();
 }
 
 void AGOSEngine::buildPNPaletteTarget(uint16 selectorMask, uint16 *target) const {
@@ -590,6 +591,7 @@ void AGOSEngine::startPNPaletteFade(uint16 selectorMask, int16 fadeMode, bool an
 	_pnFadeStage = 0;
 	_pnFadeAdvancePending = false;
 	_pnFadeActive = true;
+	schedulePNFadeEvent();
 }
 
 void AGOSEngine::stepPNPaletteFade() {
@@ -706,6 +708,7 @@ void AGOSEngine::vc4_fadeIn() {
 		_pnDayNightControllerLastStage = 0xFF;
 		_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
 		updatePNDayNightController();
+		schedulePNFadeEvent();
 		return;
 	}
 

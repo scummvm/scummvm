@@ -220,7 +220,8 @@ enum EventType {
 	ANIMATE_EVENT = 1 << 2,
 	SCROLL_EVENT  = 1 << 3,
 	PLAYER_DAMAGE_EVENT = 1 << 4,
-	MONSTER_DAMAGE_EVENT = 1 << 5
+	MONSTER_DAMAGE_EVENT = 1 << 5,
+	PN_FADE_EVENT = 1 << 6
 };
 
 struct GameSpecificSettings;
@@ -1346,6 +1347,8 @@ protected:
 	void addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16 curSprite, uint16 curZoneNum);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();
+	void schedulePNFadeEvent();
+	void removePNFadeEvent();
 	void animateEvent(const byte *codePtr, uint16 curZoneNum, uint16 curSprite);
 	void scrollEvent();
 	void drawStuff(const byte *src, uint offs);

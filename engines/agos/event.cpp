@@ -230,6 +230,27 @@ void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_videoLockOut &= ~1;
 }
 
+void AGOSEngine::schedulePNFadeEvent() {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT)
+			return;
+	}
+
+	addVgaEvent(_frameCount, PN_FADE_EVENT, nullptr, 0, 0);
+}
+
+void AGOSEngine::removePNFadeEvent() {
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT) {
+			deleteVgaEvent(vte);
+			return;
+		}
+	}
+}
+
 void AGOSEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
 
@@ -246,17 +267,6 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
-				if (isPNDayNightPaletteMode()) {
-					stepPNPaletteFade();
-					if (_pnDayNightControllerActive) {
-						if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
-							_pnDayNightControllerTickCounter -= _vgaBaseDelay;
-						} else {
-							_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
-							updatePNDayNightController();
-						}
-					}
-				}
 				vte++;
 				break;
 			case ANIMATE_EVENT:
@@ -278,6 +288,28 @@ void AGOSEngine::processVgaEvents() {
 			case MONSTER_DAMAGE_EVENT:
 				monsterDamageEvent(vte, curZoneNum);
 				vte = _nextVgaTimerToProcess;
+				break;
+			case PN_FADE_EVENT:
+				if (_pnFadeActive)
+					stepPNPaletteFade();
+
+				if (_pnDayNightControllerActive) {
+					if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
+						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
+					} else {
+						_pnDayNightControllerTickCounter = _pnDayNightControllerTickDelay;
+						updatePNDayNightController();
+					}
+				}
+
+				if (_pnFadeActive || _pnDayNightControllerActive) {
+					vte->delay = _frameCount;
+					vte++;
+				} else {
+					_nextVgaTimerToProcess = vte + 1;
+					deleteVgaEvent(vte);
+					vte = _nextVgaTimerToProcess;
+				}
 				break;
 			default:
 				error("processVgaEvents: Unknown event type %d", vte->type);
