@@ -106,7 +106,7 @@ private:
 	Subtitle readSubtitle(Common::File &metadataFile);
 	MusicEffect readMusicEffect(Common::File &metadataFile);
 	AudioEffect readAudioEffect(Common::File &metadataFile);
-	char decodeChar(byte c);
+	byte decodeChar(byte c);
 	Subtitle *getSubtitleForFrame(uint16 frameNumber);
 	uint _currentSubtitleIndex = 0;
 	Graphics::Surface _videoSurface = Graphics::Surface();

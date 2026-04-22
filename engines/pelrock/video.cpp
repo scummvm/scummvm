@@ -418,9 +418,9 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 	// Read text until CRLF (0x0D 0x0A)
 	while (!metadataFile.eos()) {
 
-		char c = metadataFile.readByte();
+		byte c = metadataFile.readByte();
 		if (c == 0x0D) {
-			char next = metadataFile.readByte();
+			byte next = metadataFile.readByte();
 			if (next == 0x0A) {
 				break;
 			} else {
@@ -440,7 +440,7 @@ Subtitle VideoManager::readSubtitle(Common::File &metadataFile) {
 	return subtitle;
 }
 
-char VideoManager::decodeChar(byte c) {
+byte VideoManager::decodeChar(byte c) {
 
 	switch (c) {
 	case 0xAD:
