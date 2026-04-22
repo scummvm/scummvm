@@ -24,6 +24,7 @@
 #include "tinsel/handle.h"	// LockMem()
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
+#include "tinsel/psx_japan_font.h"
 #include "tinsel/scene.h"
 #include "tinsel/tinsel.h"
 
@@ -1113,13 +1114,14 @@ void DrawObject(DRAWOBJECT *pObj) {
 	bool psxFourBitClut = false; // Used by Tinsel PSX, true if an image using a 4bit CLUT is rendered
 	bool psxSaturnRLEindex = false; // Used by Tinsel PSX/Saturn, true if an image is using PJCRLE compressed indexes
 	uint32 psxSkipBytes = 0; // Used by Tinsel PSX, number of bytes to skip before counting indexes for image tiles
+	bool psxJapanFontChar = (TinselV1PSXJapan && IsPsxJapanFontChar(pObj->hBits));
 
 	if ((pObj->width <= 0) || (pObj->height <= 0))
 		// Empty image, so return immediately
 		return;
 
 	// If writing constant data, don't bother locking the data pointer and reading src details
-	if (((pObj->flags & DMA_CONST) == 0) || ((TinselVersion == 3) && ((pObj->flags & 0x05) == 0x05))) {
+	if (((pObj->flags & DMA_CONST) == 0 && !psxJapanFontChar) || ((TinselVersion == 3) && ((pObj->flags & 0x05) == 0x05))) {
 		if (TinselVersion >= 2) {
 			srcPtr = (byte *)_vm->_handle->LockMem(pObj->hBits);
 			pObj->charBase = nullptr;
@@ -1215,6 +1217,8 @@ void DrawObject(DRAWOBJECT *pObj) {
 				t3WrtNonZero(pObj, srcPtr, destPtr);
 			else if (TinselVersion >= 2)
 				t2WrtNonZero(pObj, srcPtr, destPtr, (typeId & DMA_CLIP) != 0, (typeId & DMA_FLIPH) != 0);
+			else if (psxJapanFontChar)
+				DrawPsxJapanFontChar(pObj, destPtr);
 			else if (TinselV1PSX || TinselV1Saturn)
 				psxSaturnDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
 			else if (TinselV1Mac)

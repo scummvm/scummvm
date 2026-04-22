@@ -132,6 +132,7 @@ typedef bool (*KEYFPTR)(const Common::KeyState &, const Common::CustomEventType 
 #define TinselV1PSX (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformPSX)
 #define TinselV1Mac (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformMacintosh)
 #define TinselV1Saturn (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformSaturn)
+#define TinselV1PSXJapan (TinselVersion == 1 && _vm->getPlatform() == Common::kPlatformPSX && _vm->getLanguage() == Common::JA_JPN)
 
 #define READ_16(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT16(v) : READ_LE_UINT16(v))
 #define READ_32(v) (TinselV1Mac || TinselV1Saturn ? READ_BE_UINT32(v) : READ_LE_UINT32(v))

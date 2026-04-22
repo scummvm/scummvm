@@ -34,6 +34,7 @@
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
 #include "tinsel/palette.h"
+#include "tinsel/psx_japan_font.h"
 #include "tinsel/sched.h"
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
@@ -329,7 +330,7 @@ void Handle::LoadFile(MEMHANDLE *pH) {
 FONT *Handle::GetFont(SCNHANDLE offset) {
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
-	const uint32 characterCount = GetFontCharacterCount(offset);
+	const uint32 characterCount = GetFontCharacterCount(data);
 	const uint32 size = ((TinselVersion == 3) ? 12 * 4 : 11 * 4) + characterCount * 4;	// FONT struct size
 	Common::MemoryReadStreamEndian *stream = new Common::MemoryReadStreamEndian(data, size, isBE);
 
@@ -347,35 +348,31 @@ FONT *Handle::GetFont(SCNHANDLE offset) {
 	font->fontInit.objY = stream->readSint32();
 	font->fontInit.objZ = stream->readSint32();
 	font->fontDef.resize(characterCount);
-	for (uint32 i = 0; i < characterCount; i++)
-		font->fontDef[i] = stream->readUint32();
+	if (!TinselV1PSXJapan) {
+		for (uint32 i = 0; i < characterCount; i++) {
+			font->fontDef[i] = stream->readUint32();
+		}
+	} else {
+		for (uint32 i = 0; i < characterCount; i++) {
+			font->fontDef[i] = GetPsxJapanFontCharHandle(i);
+		}
+	}
 
 	delete stream;
 
 	return font;
 }
 
-uint32 Handle::GetFontCharacterCount(SCNHANDLE offset) const {
-	// All fonts have 256 characters, unless this is a multibyte language
-	if (!g_bMultiByte)
+uint32 Handle::GetFontCharacterCount(const byte *fontData) const {
+	// Multibyte fonts have variable numbers of characters, others have 256.
+	if (!g_bMultiByte) {
 		return 256;
-
-	// For multibyte languages, different platforms have different characters.
-	// There is only one font per font chunk, so we could use the font offset
-	// to read the chunk header, determine the chunk size, and calculate the
-	// character count. But since there are only three DW1 Japanese versions,
-	// for now we'll just hard-code their known values.
-	// TODO: Update this PSX number once we support its font format.
-	// Japanese PSX stores glyphs in MULTIBYT.FNT and appears to use a
-	// different font header that is larger than the normal header.
-	if (TinselV1Mac)
-		return 815;
-	if (TinselV1PSX)
-		return 667;
-	if (TinselV1Saturn)
-		return 662;
-
-	error("unknown mbs platform");
+	} else {
+		// The first entry in the multibyte font character table is the
+		// maximum character index, instead of an image handle.
+		uint32 maxCharIndex = READ_32(fontData + 44);
+		return maxCharIndex + 1;
+	}
 }
 
 /**
@@ -414,6 +411,10 @@ PALETTE *Handle::GetPalette(SCNHANDLE offset) {
  * @return IMAGE structure
 */
 const IMAGE *Handle::GetImage(SCNHANDLE offset) {
+	if (TinselV1PSXJapan && IsPsxJapanFontChar(offset)) {
+		return GetPsxJapanFontCharImage(offset);
+	}
+
 	byte *data = LockMem(offset);
 	const bool isBE = TinselV1Mac || TinselV1Saturn;
 	const uint32 size = 16; // IMAGE struct size
