@@ -780,8 +780,8 @@ void NoctropolisEngine::stilWalk() {
 	_stil->walk();
 }
 
-void NoctropolisEngine::synchronize(Common::Serializer &s) {
-	AccessEngine::synchronize(s);
+Common::Error NoctropolisEngine::synchronize(Common::Serializer &s) {
+	Common::Error result = AccessEngine::synchronize(s);
 
 	for (int i = 0; i < ARRAYSIZE(_travel); i++)
 		s.syncAsByte(_travel[i]);
@@ -797,6 +797,8 @@ void NoctropolisEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_establishTable[i]);
 
 	_stil->synchronize(s);
+
+	return result;
 }
 
 } // end namespace Noctropolis
