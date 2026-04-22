@@ -361,10 +361,10 @@ RivenOptionsWidget::RivenOptionsWidget(GuiObject *boss, const Common::String &na
 	transitionModeCaption->setAlign(Graphics::kTextAlignRight);
 
 	_transitionModePopUp = new GUI::PopUpWidget(widgetsBoss(), "RivenOptionsDialog.Transistions");
-	_transitionModePopUp->appendEntry(_("Disabled"), kRivenTransitionModeDisabled);
-	_transitionModePopUp->appendEntry(_("Fastest"), kRivenTransitionModeFastest);
-	_transitionModePopUp->appendEntry(_("Normal"), kRivenTransitionModeNormal);
-	_transitionModePopUp->appendEntry(_("Best"), kRivenTransitionModeBest);
+	_transitionModePopUp->appendEntry(_c("Disabled", "riven-transition"), kRivenTransitionModeDisabled);
+	_transitionModePopUp->appendEntry(_c("Fastest", "riven-transition"), kRivenTransitionModeFastest);
+	_transitionModePopUp->appendEntry(_c("Normal", "riven-transition"), kRivenTransitionModeNormal);
+	_transitionModePopUp->appendEntry(_c("Best", "riven-transition"), kRivenTransitionModeBest);
 
 	// Only the 25th anniversary edition is multi-language
 	// Only allow changing the language at run-time, so that there is only one

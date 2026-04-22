@@ -493,8 +493,7 @@ void MatchPuzzle::checkForMatch(int col, int row) {
 			_grid[col][r].matched = true;
 			_score += _scorePerFlag;
 		}
-		// 3-bonus checks hLen (apparent original bug), kept faithful
-		if (hLen == 2)
+		if (vLen == 2)
 			_timerDeadline += (uint32)_timeBonusFor3 * 1000;
 		else if (vLen == 3) {
 			_score         += _scoreBonusFor4;

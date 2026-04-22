@@ -346,7 +346,7 @@ void Draw_Playtoons::printTotText(int16 id) {
 					rectTop = _fonts[fontIndex]->getCharHeight();
 					adjustCoords(1, nullptr, &rectTop);
 
-					_spriteRight = _destSpriteX + rectLeft - 1;
+					_spriteRight = rectLeft - 1;
 					_spriteBottom = offY + rectTop;
 					_destSpriteY = _spriteBottom;
 					spriteOperation(DRAW_DRAWLINE);

@@ -23,9 +23,9 @@
 #define MADS_MENU_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/menu_views.h"
-#include "mads/msurface.h"
+#include "mads/core/game.h"
+#include "mads/core/menu_views.h"
+#include "mads/core/msurface.h"
 #include "mads/nebular/dialogs_nebular.h"
 
 namespace MADS {
@@ -110,7 +110,7 @@ protected:
 	 */
 	bool onEvent(Common::Event &event) override;
 public:
-	MainMenu(MADSEngine *vm);
+	MainMenu(RexNebularEngine *vm);
 
 	~MainMenu() override;
 };
@@ -120,7 +120,7 @@ private:
 	/**
 	 * Engine reference
 	 */
-	MADSEngine *_vm;
+	RexNebularEngine *_vm;
 
 	/**
 	 * Signals when to close the dialog
@@ -132,7 +132,7 @@ protected:
 	*/
 	bool onEvent(Common::Event &event) override;
 public:
-	AdvertView(MADSEngine *vm);
+	AdvertView(RexNebularEngine *vm);
 
 	~AdvertView() override {}
 
@@ -146,16 +146,16 @@ class RexAnimationView : public AnimationView {
 protected:
 	void scriptDone() override;
 public:
-	RexAnimationView(MADSEngine *vm) : AnimationView(vm) {}
+	RexAnimationView(RexNebularEngine *vm) : AnimationView(vm) {}
 };
 
 class RexTextView : public TextView {
 public:
-	RexTextView(MADSEngine *vm) : TextView(vm) {}
+	RexTextView(RexNebularEngine *vm) : TextView(vm) {}
 };
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_MENU_NEBULAR_H */

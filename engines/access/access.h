@@ -135,6 +135,7 @@ struct AccessSavegameHeader {
 	int _year, _month, _day;
 	int _hour, _minute;
 	int _totalFrames;
+	int _totalPlayTime;
 };
 
 class AccessEngine : public Engine {
@@ -183,7 +184,8 @@ protected:
 	/**
 	* Synchronize savegame data
 	*/
-	virtual void synchronize(Common::Serializer &s);
+	virtual Common::Error synchronize(Common::Serializer &s);
+
 public:
 	AnimationManager *_animation;
 	BubbleBox *_bubbleBox;
@@ -335,12 +337,12 @@ public:
 	 * Load a savegame
 	 */
 	Common::Error loadGameState(int slot) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 
 	/**
 	 * Save the game
 	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	/**
 	 * Returns true if a savegame can currently be loaded
 	 */
@@ -354,12 +356,7 @@ public:
 	/**
 	 * Read in a savegame header
 	 */
-	WARN_UNUSED_RESULT static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail = true);
-
-	/**
-	 * Write out a savegame header
-	 */
-	void writeSavegameHeader(Common::OutSaveFile *out, AccessSavegameHeader &header);
+	static bool readSavegameHeader(Common::InSaveFile *in, AccessSavegameHeader &header, bool skipThumbnail = true);
 
 	bool playMovie(const Common::Path &filename, const Common::Point &pos);
 };

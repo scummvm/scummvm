@@ -80,7 +80,13 @@ const char gScummVMCompiler[] = ""
 #undef STR
 #undef STR_HELPER
 	;
-const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+
+#ifdef RELEASE_BUILD
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION;
+#else
+	const char gScummVMFullVersion[] = "ScummVM " SCUMMVM_VERSION SCUMMVM_REVISION " (" __DATE__ " " __TIME__ ")";
+#endif
+
 const char gScummVMFeatures[] = ""
 #ifdef TAINTED_BUILD
 	// TAINTED means the build contains engines/subengines not enabled by default

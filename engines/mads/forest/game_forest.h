@@ -22,8 +22,8 @@
 #ifndef MADS_GAME_FOREST_H
 #define MADS_GAME_FOREST_H
 
-#include "mads/game.h"
-#include "mads/globals.h"
+#include "mads/core/game.h"
+#include "mads/core/globals.h"
 #include "mads/forest/globals_forest.h"
 
 namespace MADS {
@@ -55,7 +55,7 @@ enum InventoryObject {
 class GameForest : public Game {
 	friend class Game;
 protected:
-	GameForest(MADSEngine *vm);
+	GameForest(RexNebularEngine *vm);
 
 	void startGame() override;
 
@@ -82,7 +82,7 @@ public:
 
 class Section1Handler : public SectionHandler {
 public:
-	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
+	Section1Handler(RexNebularEngine *vm) : SectionHandler(vm) {}
 
 	// TODO: Properly implement handler methods
 	void preLoadSection() override {}
@@ -99,7 +99,7 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Forest
-} // End of namespace MADS
+} // namespace Forest
+} // namespace MADS
 
 #endif

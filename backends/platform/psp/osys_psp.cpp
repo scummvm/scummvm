@@ -37,6 +37,7 @@
 #include "backends/platform/psp/powerman.h"
 #include "backends/platform/psp/rtc.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/psp/timer.h"
 #include "graphics/surface.h"
@@ -88,6 +89,7 @@ void OSystem_PSP::initBackend() {
 	_imageViewer.setInputHandler(&_inputHandler);
 	_imageViewer.setDisplayManager(&_displayManager);
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager(PSP_DEFAULT_SAVE_PATH);
 
 	_timerManager = new PspTimerManager();
@@ -97,7 +99,7 @@ void OSystem_PSP::initBackend() {
 
 	setupMixer();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 // Let's us know an engine

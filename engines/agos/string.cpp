@@ -552,8 +552,8 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 		stopAnimate(vgaSpriteId + 199);
 	else
 		stopAnimateSimon2(2, vgaSpriteId);
-
-	if (getPlatform() == Common::kPlatformAmiga) {
+	// Simon II Amiga is built upon the Windows release so should draw subtitles the same way.
+	if (getPlatform() == Common::kPlatformAmiga  && getGameType() != GType_SIMON2) {
 		color = color * 3 + 1;
 		renderStringAmiga(vgaSpriteId, color, width, height, convertedString);
 	} else {

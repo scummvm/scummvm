@@ -32,6 +32,7 @@
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
 #include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
 #include "gui/widget.h"
 
 namespace GUI {
@@ -88,12 +89,17 @@ static const char *const gpl_text[] = {
 
 AboutDialog::AboutDialog(bool inGame)
 	: Dialog(10, 20, 300, 174),
-	  _scrollPos(0), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame),
+	  _scrollPos(0.0f), _scrollTime(0), _willClose(false), _autoScroll(true), _inGame(inGame),
 	  _isDragging(false), _dragLastY(0) {
 
+	_fluidScroller = new FluidScroller();	
 	_scrollbar = nullptr;
 	_closeButton = nullptr;
 	reflowLayout();
+}
+
+AboutDialog::~AboutDialog() {
+	delete _fluidScroller;
 }
 
 void AboutDialog::buildLines() {
@@ -108,8 +114,13 @@ void AboutDialog::buildLines() {
 	version += gScummVMVersion;
 	addLine(version);
 
+	#ifdef RELEASE_BUILD
+	// I18N: built with <compiler>
+	Common::U32String date = Common::U32String::format(_("(built with %s)"), gScummVMCompiler);
+	#else
 	// I18N: built on <build date> with <compiler>
 	Common::U32String date = Common::U32String::format(_("(built on %s with %s)"), gScummVMBuildDate, gScummVMCompiler);
+	#endif
 	addLine(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
@@ -246,9 +257,10 @@ void AboutDialog::addLine(const Common::U32String &str) {
 
 void AboutDialog::open() {
 	_scrollTime = g_system->getMillis() + kScrollStartDelay;
-	_scrollPos = 0;
+	_scrollPos = 0.0f;
 	_willClose = false;
 
+	_fluidScroller->reset();
 	Dialog::open();
 }
 
@@ -270,9 +282,14 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 	// TODO: Maybe prerender all of the text into another surface,
 	//       and then simply compose that over the screen surface
 	//       in the right way. Should be even faster...
-	const int firstLine = _scrollPos / _lineHeight;
-	const int lastLine = MIN((_scrollPos + (_textRect.height())) / _lineHeight + 1, (uint32)_lines.size());
-	int y = _y + _textRect.top - (_scrollPos % _lineHeight);
+	float visualScrollPos = _fluidScroller->getVisualPosition();
+	int firstLine = (int)floorf(visualScrollPos / (float)_lineHeight);
+	int lastLine = (int)floorf((visualScrollPos + (float)_textRect.height()) / (float)_lineHeight) + 1;
+	firstLine = CLIP(firstLine, 0, (int)_lines.size());
+	lastLine = CLIP(lastLine, 0, (int)_lines.size());
+
+	float yOffset = visualScrollPos - (float)firstLine * (float)_lineHeight;
+	int y = _y + _textRect.top - (int)yOffset;
 
 	for (int line = firstLine; line < lastLine; line++) {
 		Common::U32String str = _lines[line];
@@ -327,8 +344,8 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 		Common::U32String renderStr(strLineItrBegin, strLineItrEnd);
 		if (!renderStr.empty())
 			// Center the text line within the _textRect
-			g_gui.theme()->drawText(Common::Rect(_x + _textRect.left + _xOff, y, _x + _textRect.right - _xOff, y + g_gui.theme()->getFontHeight()), 
-									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false, 
+			g_gui.theme()->drawText(Common::Rect(_x + _textRect.left + _xOff, y, _x + _textRect.right - _xOff, y + g_gui.theme()->getFontHeight()),
+									renderStr, state, align, ThemeEngine::kTextInversionNone, 0, false,
 									ThemeEngine::kFontStyleBold, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 		y += _lineHeight;
 	}
@@ -336,6 +353,18 @@ void AboutDialog::drawDialog(DrawLayer layerToDraw) {
 
 void AboutDialog::handleTickle() {
 	const uint32 t = g_system->getMillis();
+
+	if (_fluidScroller->update(t, _scrollPos)) {
+		if (_scrollbar) {
+			_scrollbar->_currentPos = (int)_scrollPos;
+			_scrollbar->recalc();
+		}
+		drawDialog(kDrawLayerForeground);
+		// Update scrollTime to prevent jump (if auto-scroll resumes)
+		_scrollTime = t;
+		return;
+	}
+
 	int scrollOffset = ((int)t - (int)_scrollTime) / kScrollMillisPerPixel;
 	if (_autoScroll && scrollOffset > 0) {
 		int modifiers = g_system->getEventManager()->getModifierState();
@@ -350,13 +379,16 @@ void AboutDialog::handleTickle() {
 		_scrollTime = t;
 
 		if (_scrollPos < 0) {
-			_scrollPos = 0;
-		} else if ((uint32)_scrollPos > _lines.size() * _lineHeight) {
-			_scrollPos = 0;
+			_scrollPos = 0.0f;
+		} else if (_scrollPos > (float)_lines.size() * (float)_lineHeight) {
+			_scrollPos = 0.0f;
 			_scrollTime += kScrollStartDelay;
 		}
+
+		_fluidScroller->setPosition(_scrollPos);
+
 		if (_scrollbar) {
-			_scrollbar->_currentPos = _scrollPos;
+			_scrollbar->_currentPos = (int)_scrollPos;
 			_scrollbar->recalc();
 		}
 		drawDialog(kDrawLayerForeground);
@@ -364,7 +396,10 @@ void AboutDialog::handleTickle() {
 }
 
 void AboutDialog::handleMouseUp(int x, int y, int button, int clickCount) {
-	_isDragging = false;
+	if (_isDragging) {
+		_isDragging = false;
+		_fluidScroller->startFling();
+	}
 	Dialog::handleMouseUp(x, y, button, clickCount);
 }
 
@@ -372,6 +407,8 @@ void AboutDialog::handleMouseDown(int x, int y, int button, int clickCount) {
 	if (button == 1 && !findWidget(x, y)) {
 		_isDragging = true;
 		_dragLastY = y;
+		_autoScroll = false;
+		_fluidScroller->stopAnimation();
 	}
 	Dialog::handleMouseDown(x, y, button, clickCount);
 }
@@ -383,59 +420,32 @@ void AboutDialog::handleMouseMoved(int x, int y, int button) {
 
 		if (deltaY != 0) {
 			_autoScroll = false;
-			int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
-			int visibleHeight = _scrollbar ? _scrollbar->_entriesPerPage : (_h - buttonHeight - 20 - _yOff);
-			int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - visibleHeight);
-
-			_scrollPos += deltaY;
-
-			if (_scrollPos < 0)
-				_scrollPos = 0;
-			else if (_scrollPos > maxScroll)
-				_scrollPos = maxScroll;
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			_scrollPos = _fluidScroller->getVisualPosition();
 
 			if (_scrollbar) {
-				_scrollbar->_currentPos = _scrollPos;
+				_scrollbar->_currentPos = (int)_scrollPos;
 				_scrollbar->recalc();
 			}
 
 			drawDialog(kDrawLayerForeground);
 		}
+	} else {
+		Dialog::handleMouseMoved(x, y, button);
 	}
-
-	Dialog::handleMouseMoved(x, y, button);
 }
 
 void AboutDialog::handleMouseWheel(int x, int y, int direction) {
-	const int stepping = 5 * _lineHeight * direction;
-
-	if (stepping == 0)
-		return;
-
 	_autoScroll = false;
-
-	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 24);
-	int visibleHeight = _scrollbar ? _scrollbar->_entriesPerPage : (_h - buttonHeight - 20 - _yOff);
-	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - visibleHeight);
-
-	_scrollPos += stepping;
-	if (_scrollPos < 0)
-		_scrollPos = 0;
-	else if (_scrollPos > maxScroll)
-		_scrollPos = maxScroll;
-
-	if (_scrollbar) {
-		_scrollbar->_currentPos = _scrollPos;
-		_scrollbar->recalc();
-	}
-
-	drawDialog(kDrawLayerForeground);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void AboutDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	if (cmd == kSetPositionCmd) {
-		_scrollPos = data;
+		_scrollPos = (float)data;
 		_autoScroll = false;
+		_fluidScroller->stopAnimation();
+		_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 		drawDialog(kDrawLayerForeground);
 	} else if (cmd == kCloseCmd) {
 		close();
@@ -517,6 +527,9 @@ void AboutDialog::reflowLayout() {
 	screenArea.constrain(_x, _y, _w, _h);
 
 	buildLines();
+
+	int maxScroll = MAX(0, (int)(_lines.size() * _lineHeight) - _textRect.height());
+	_fluidScroller->setBounds((float)maxScroll, _textRect.height(), (float)_scrollbar->_singleStep);
 }
 
 

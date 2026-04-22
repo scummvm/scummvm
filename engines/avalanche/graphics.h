@@ -95,6 +95,13 @@ public:
 	// Used in winning()
 	void drawWinningPic();
 
+	/* 
+	* Used in quitting(), the parameter is to accept different numbers (representing different scenarios). I put it here to 
+	* preserve some of the multi-purpose functionality of the original function.
+	*/
+
+	void drawQuittingPic();
+
 	// Ghostroom's functions:
 	void ghostDrawMonster(byte ***picture, uint16 destX, int16 destY, MonsterType type);
 	Graphics::Surface ghostLoadPicture(Common::File &file, Common::Point &coord);

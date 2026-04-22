@@ -346,6 +346,7 @@ MODULE_OBJS += \
 	fs/android/android-posix-fs.o \
 	fs/android/android-saf-fs.o \
 	graphics/android/android-graphics.o \
+	mixer/android/android-mixer.o \
 	mutex/pthread/pthread-mutex.o \
 	networking/basic/android/jni.o \
 	networking/basic/android/socket.o \
@@ -356,6 +357,10 @@ MODULE_OBJS += \
 	networking/http/android/connectionmanager-android.o \
 	networking/http/android/networkreadstream-android.o
 endif
+
+# Oboe headers need C++14...
+$(MODULE)/mixer/android/android-mixer.o: CXXFLAGS += "-std=c++14"
+
 endif
 
 ifdef AMIGAOS

@@ -22,8 +22,8 @@
 #ifndef MADS_GLOBALS_FOREST_H
 #define MADS_GLOBALS_FOREST_H
 
-#include "mads/game.h"
-#include "mads/resources.h"
+#include "mads/core/game.h"
+#include "mads/core/resources.h"
 
 namespace MADS {
 namespace Forest {
@@ -52,7 +52,7 @@ public:
 	virtual void synchronize(Common::Serializer &s);
 };
 
-} // End of namespace Forest
-} // End of namespace MADS
+} // namespace Forest
+} // namespace MADS
 
 #endif

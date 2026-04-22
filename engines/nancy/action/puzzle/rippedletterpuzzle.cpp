@@ -216,6 +216,23 @@ void RippedLetterPuzzle::execute() {
 					break;
 				}
 			}
+
+			// Traverse the order and rotations arrays to check if
+			// they have been initialized. If they haven't, they'll
+			// be full of zeroes, so there's no progress to continue,
+			// thus the arrays will need to be initialized normally.
+			if (hasLoadedProgress) {
+				bool arraysAreInitialized = false;
+				for (uint i = 0; i < loadedStateSize; ++i) {
+					if (_puzzleState->order[i] != 0 || _puzzleState->rotations[i] != 0) {
+						arraysAreInitialized = true;
+						break;
+					}
+				}
+
+				if (!arraysAreInitialized)
+					hasLoadedProgress = false;
+			}
 		}
 
 		// The serialized puzzle state uses 24 slots. Resize it to

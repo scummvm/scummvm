@@ -23,8 +23,8 @@
 #define MADS_NEBULAR_SCENES5_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
@@ -46,7 +46,7 @@ protected:
 	void sceneEntrySound();
 
 public:
-	Scene5xx(MADSEngine *vm) : NebularScene(vm) {}
+	Scene5xx(RexNebularEngine *vm) : NebularScene(vm) {}
 };
 
 class Scene501 : public Scene5xx{
@@ -59,7 +59,7 @@ private:
 	void handleSlotActions();
 
 public:
-	Scene501(MADSEngine *vm);
+	Scene501(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -71,7 +71,7 @@ public:
 
 class Scene502 : public SceneTeleporter {
 public:
-	Scene502(MADSEngine *vm) : SceneTeleporter(vm) {}
+	Scene502(RexNebularEngine *vm) : SceneTeleporter(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -84,7 +84,7 @@ private:
 	int _detonatorHotspotId;
 
 public:
-	Scene503(MADSEngine *vm);
+	Scene503(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -98,7 +98,7 @@ private:
 	int _carFrame;
 
 public:
-	Scene504(MADSEngine *vm);
+	Scene504(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -119,7 +119,7 @@ private:
 	int _carLocations[9];
 
 public:
-	Scene505(MADSEngine *vm);
+	Scene505(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -145,7 +145,7 @@ private:
 	void handleDoorSequences();
 
 public:
-	Scene506(MADSEngine *vm);
+	Scene506(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -159,7 +159,7 @@ private:
 	int _penlightHotspotId;
 
 public:
-	Scene507(MADSEngine *vm);
+	Scene507(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -174,7 +174,7 @@ private:
 	void handlePedestral();
 
 public:
-	Scene508(MADSEngine *vm);
+	Scene508(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -193,7 +193,7 @@ private:
 	int _lineAnimationPosition;
 
 public:
-	Scene511(MADSEngine *vm);
+	Scene511(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -209,7 +209,7 @@ private:
   int _keyHotspotId;
 
 public:
-	Scene512(MADSEngine *vm);
+	Scene512(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -219,7 +219,7 @@ public:
 
 class Scene513 : public Scene5xx{
 public:
-	Scene513(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene513(RexNebularEngine *vm) : Scene5xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -229,7 +229,7 @@ public:
 
 class Scene515 : public Scene5xx{
 public:
-	Scene515(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene515(RexNebularEngine *vm) : Scene5xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -239,7 +239,7 @@ public:
 
 class Scene551 : public Scene5xx{
 public:
-	Scene551(MADSEngine *vm) : Scene5xx(vm) {}
+	Scene551(RexNebularEngine *vm) : Scene5xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -247,7 +247,7 @@ public:
 	void preActions() override;
 	void actions() override;
 };
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES5_H */

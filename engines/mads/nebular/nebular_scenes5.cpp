@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes5.h"
 
@@ -91,7 +91,7 @@ void Scene5xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-Scene501::Scene501(MADSEngine *vm) : Scene5xx(vm) {
+Scene501::Scene501(RexNebularEngine *vm) : Scene5xx(vm) {
 	_mainSequenceId = -1;
 	_mainSpriteId = -1;
 	_doorHotspotid = -1;
@@ -531,7 +531,7 @@ void Scene502::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene503::Scene503(MADSEngine *vm) : Scene5xx(vm) {
+Scene503::Scene503(RexNebularEngine *vm) : Scene5xx(vm) {
 	_detonatorHotspotId = -1;
 }
 
@@ -663,7 +663,7 @@ void Scene503::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene504::Scene504(MADSEngine *vm) : Scene5xx(vm) {
+Scene504::Scene504(RexNebularEngine *vm) : Scene5xx(vm) {
 	_carAnimationMode = -1;
 	_carFrame = -1;
 }
@@ -872,7 +872,7 @@ void Scene504::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene505::Scene505(MADSEngine *vm) : Scene5xx(vm) {
+Scene505::Scene505(RexNebularEngine *vm) : Scene5xx(vm) {
 	_frame = -1;
 	_nextButtonId = -1;
 	_homeSelectedId = -1;
@@ -1150,7 +1150,7 @@ void Scene505::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene506::Scene506(MADSEngine *vm) : Scene5xx(vm), _doorPos(0, 0) {
+Scene506::Scene506(RexNebularEngine *vm) : Scene5xx(vm), _doorPos(0, 0) {
 	_heroFacing = FACING_DUMMY;
 
 	_doorDepth = -1;
@@ -1443,7 +1443,7 @@ void Scene506::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene507::Scene507(MADSEngine *vm) : Scene5xx(vm) {
+Scene507::Scene507(RexNebularEngine *vm) : Scene5xx(vm) {
 	_penlightHotspotId = -1;
 }
 
@@ -1566,7 +1566,7 @@ void Scene507::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene508::Scene508(MADSEngine *vm) : Scene5xx(vm) {
+Scene508::Scene508(RexNebularEngine *vm) : Scene5xx(vm) {
 	_chosenObject = -1;
 }
 
@@ -1835,7 +1835,7 @@ void Scene508::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene511::Scene511(MADSEngine *vm) : Scene5xx(vm) {
+Scene511::Scene511(RexNebularEngine *vm) : Scene5xx(vm) {
 	_handingLine = false;
 	_lineMoving = false;
 
@@ -2181,7 +2181,7 @@ void Scene511::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene512::Scene512(MADSEngine *vm) : Scene5xx(vm) {
+Scene512::Scene512(RexNebularEngine *vm) : Scene5xx(vm) {
 	_fishingRodHotspotId = -1;
 	_keyHotspotId = -1;
 }
@@ -2875,5 +2875,5 @@ void Scene551::actions() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

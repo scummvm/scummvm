@@ -19,9 +19,9 @@
  *
  */
 
-#include "mads/mads.h"
-#include "mads/conversations.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/conversations.h"
+#include "mads/core/scene.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/dragonsphere/dragonsphere_scenes1.h"
 
@@ -205,7 +205,7 @@ void Scene1xx::setPlayerSpritesPrefix() {
 
 /*------------------------------------------------------------------------*/
 
-Scene101::Scene101(MADSEngine *vm) : Scene1xx(vm) {
+Scene101::Scene101(RexNebularEngine *vm) : Scene1xx(vm) {
 }
 
 void Scene101::synchronize(Common::Serializer &s) {
@@ -239,7 +239,7 @@ void Scene101::preActions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene102::Scene102(MADSEngine *vm) : Scene1xx(vm) {
+Scene102::Scene102(RexNebularEngine *vm) : Scene1xx(vm) {
 	_diaryHotspotIdx1 = -1;
 	_diaryHotspotIdx2 = -1;
 	_diaryFrame = -1;
@@ -645,7 +645,7 @@ void Scene102::preActions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene103::Scene103(MADSEngine *vm) : Scene1xx(vm) {
+Scene103::Scene103(RexNebularEngine *vm) : Scene1xx(vm) {
 }
 
 void Scene103::synchronize(Common::Serializer &s) {
@@ -1040,7 +1040,7 @@ void Scene103::preActions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene104::Scene104(MADSEngine *vm) : Scene1xx(vm) {
+Scene104::Scene104(RexNebularEngine *vm) : Scene1xx(vm) {
 	_anim0ActvFl = false;
 	_anim1ActvFl = false;
 	_anim2ActvFl = false;
@@ -3072,7 +3072,7 @@ void Scene104::handlePidAnimation() {
 }
 /*------------------------------------------------------------------------*/
 
-Scene105::Scene105(MADSEngine *vm) : Scene1xx(vm) {
+Scene105::Scene105(RexNebularEngine *vm) : Scene1xx(vm) {
 	_maidTalkingFl = false;
 	_sitUpFl = false;
 	_goodNumberFl = false;
@@ -3686,5 +3686,5 @@ void Scene105::handleConversation() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS

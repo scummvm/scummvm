@@ -22,6 +22,7 @@
 #ifndef SCI_GRAPHICS_FRAMEOUT_H
 #define SCI_GRAPHICS_FRAMEOUT_H
 
+#include "common/system.h"               // for g_system
 #include "engines/util.h"                // for initGraphics
 #include "sci/event.h"
 #include "sci/graphics/plane32.h"
@@ -210,8 +211,19 @@ public:
 	/**
 	 * Resets the pixel format of the hardware surface to the given format.
 	 */
-	void setPixelFormat(const Graphics::PixelFormat &format) const {
-		initGraphics(_currentBuffer.w, _currentBuffer.h, &format);
+	bool setPixelFormat(const Graphics::PixelFormat *format) const {
+		if (!format) {
+			initGraphics(_currentBuffer.w, _currentBuffer.h, format);
+			return !g_system->getScreenFormat().isCLUT8();
+		} else {
+			// Also try CLUT8 as a fallback to prevent error dialogs
+			Common::List<Graphics::PixelFormat> formatList;
+			formatList.push_back(*format);
+			if (!format->isCLUT8())
+				formatList.push_back(Graphics::PixelFormat::createFormatCLUT8());
+			initGraphics(_currentBuffer.w, _currentBuffer.h, formatList);
+			return g_system->getScreenFormat() == *format;
+		}
 	}
 
 	/**
@@ -263,12 +275,10 @@ public:
 	 */
 	void redrawGameScreen(const Common::Rect &skipRect) const;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Sends the entire internal screen buffer and palette to hardware.
 	 */
 	void resetHardware();
-#endif
 
 	/**
 	 * Modifies the raw pixel data for the next frame with new palette indexes

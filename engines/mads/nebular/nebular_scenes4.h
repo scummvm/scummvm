@@ -23,8 +23,8 @@
 #define MADS_NEBULAR_SCENES4_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
@@ -46,7 +46,7 @@ protected:
 	void sceneEntrySound();
 
 public:
-	Scene4xx(MADSEngine *vm) : NebularScene(vm) {}
+	Scene4xx(RexNebularEngine *vm) : NebularScene(vm) {}
 };
 
 class Scene401 : public Scene4xx {
@@ -56,7 +56,7 @@ private:
 	uint32 _timer;
 
 public:
-	Scene401(MADSEngine *vm);
+	Scene401(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -117,7 +117,7 @@ private:
 	void handleDialogs();
 
 public:
-	Scene402(MADSEngine *vm);
+	Scene402(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -129,7 +129,7 @@ public:
 
 class Scene405 : public Scene4xx {
 public:
-	Scene405(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene405(RexNebularEngine *vm) : Scene4xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -143,7 +143,7 @@ private:
 	bool _hitStorageDoor;
 
 public:
-	Scene406(MADSEngine *vm);
+	Scene406(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -159,7 +159,7 @@ private:
 	Common::Point _destPos;
 
 public:
-	Scene407(MADSEngine *vm);
+	Scene407(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -171,7 +171,7 @@ public:
 
 class Scene408 : public Scene4xx {
 public:
-	Scene408(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene408(RexNebularEngine *vm) : Scene4xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -181,7 +181,7 @@ public:
 
 class Scene409 : public SceneTeleporter {
 public:
-	Scene409(MADSEngine *vm) : SceneTeleporter(vm) {}
+	Scene409(RexNebularEngine *vm) : SceneTeleporter(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -191,7 +191,7 @@ public:
 
 class Scene410 : public Scene4xx {
 public:
-	Scene410(MADSEngine *vm) : Scene4xx(vm) {}
+	Scene410(RexNebularEngine *vm) : Scene4xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -226,7 +226,7 @@ private:
 	bool addIngredient();
 
 public:
-	Scene411(MADSEngine *vm);
+	Scene411(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -242,7 +242,7 @@ private:
 	int _canMove;
 
 public:
-	Scene413(MADSEngine *vm);
+	Scene413(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -251,7 +251,7 @@ public:
 	void preActions() override;
 	void actions() override;
 };
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES4_H */

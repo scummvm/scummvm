@@ -42,8 +42,9 @@ protected:
 // Changes the scene when clicked
 class HotSingleFrameSceneChange : public SceneChange {
 public:
-	HotSingleFrameSceneChange(bool readExtra = false) : _readExtra(readExtra) {
+	HotSingleFrameSceneChange() {
 		_hasHotspot = false;
+		_hoverCursor = CursorManager::kNormal;
 	}
 	virtual ~HotSingleFrameSceneChange() {}
 
@@ -56,7 +57,6 @@ public:
 
 protected:
 	CursorManager::CursorType _hoverCursor;
-	bool _readExtra;
 
 	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override { return "HotSingleFrameSceneChange"; }
@@ -67,7 +67,8 @@ protected:
 // hovering; all of them are handled in this class as well.
 class HotMultiframeSceneChange : public SceneChange {
 public:
-	HotMultiframeSceneChange(CursorManager::CursorType hoverCursor) : _hoverCursor(hoverCursor) {}
+	HotMultiframeSceneChange(CursorManager::CursorType hoverCursor, bool isTerse = false) :
+		_hoverCursor(hoverCursor), _isTerse(isTerse) {}
 	virtual ~HotMultiframeSceneChange() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -76,10 +77,14 @@ public:
 	CursorManager::CursorType getHoverCursor() const override { return _hoverCursor; }
 
 	Common::Array<HotspotDescription> _hotspots;
+	bool _isTerse = false;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override {
+		if (_isTerse)
+			return "HotMultiframeSceneChangeTerse";
+
 		switch (_hoverCursor) {
 		case CursorManager::kMoveForward:
 			return "HotMultiframeForwardSceneChange";
@@ -100,7 +105,8 @@ protected:
 // hovering; all of them are handled in this class as well.
 class Hot1FrSceneChange : public SceneChange {
 public:
-	Hot1FrSceneChange(CursorManager::CursorType hoverCursor) : _hoverCursor(hoverCursor) {}
+	Hot1FrSceneChange(CursorManager::CursorType hoverCursor, bool dynamicCursor = false) :
+		_hoverCursor(hoverCursor), _dynamicCursor(dynamicCursor) {}
 	virtual ~Hot1FrSceneChange() {}
 
 	void readData(Common::SeekableReadStream &stream) override;
@@ -110,13 +116,13 @@ public:
 
 	HotspotDescription _hotspotDesc;
 	bool _isTerse = false;
+	bool _dynamicCursor = false;
 
 protected:
 	bool canHaveHotspot() const override { return true; }
 	Common::String getRecordTypeName() const override {
-		if (_isTerse) {
+		if (_isTerse)
 			return "HotSceneChangeTerse";
-		}
 
 		switch (_hoverCursor) {
 		case CursorManager::kExit:
@@ -144,7 +150,7 @@ protected:
 // Changes the scene when clicked. Hotspot can move along with scene background frame.
 // However, the scene it changes to can be one of two options, picked based on
 // a provided condition.
-class HotMultiframeMultisceneChange : public ActionRecord {
+class HotMultiframeMultiSceneChange : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;
@@ -164,7 +170,7 @@ protected:
 // Changes the scene when clicked. Hotspot can move along with scene background frame.
 // However, the scene it changes to can be one of several options, picked based on
 // the item the player is currently holding.
-class HotMultiframeMultisceneCursorTypeSceneChange : public ActionRecord {
+class HotMultiframeMultiSceneCursorTypeSceneChange : public ActionRecord {
 public:
 	void readData(Common::SeekableReadStream &stream) override;
 	void execute() override;

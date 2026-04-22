@@ -29,6 +29,7 @@
 #include "common/system.h"
 
 #include "graphics/thumbnail.h"
+#include "avalanche/outro.h"
 
 #include "avalanche/avalanche.h"
 #include "avalanche/intro.h"
@@ -57,6 +58,7 @@ AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *
 	_help = nullptr;
 	_highscore = nullptr;
 	_intro = nullptr;
+	_outro = nullptr;
 
 	initVariables();
 }
@@ -81,6 +83,7 @@ AvalancheEngine::~AvalancheEngine() {
 	delete _help;
 	delete _highscore;
 	delete _intro;
+	delete _outro;
 
 	for (int i = 0; i < 31; i++) {
 		for (int j = 0; j < 2; j++) {
@@ -167,6 +170,7 @@ Common::ErrorCode AvalancheEngine::initialize() {
 	_help = new Help(this);
 	_highscore = new HighScore(this);
 	_intro = new Intro(this);
+	_outro = new Outro(this);
 
 	_graphics->init();
 	_dialogs->init();

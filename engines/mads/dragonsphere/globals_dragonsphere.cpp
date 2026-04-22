@@ -41,5 +41,5 @@ void DragonsphereGlobals::synchronize(Common::Serializer &s) {
 	_animationIndexes.synchronize(s);
 }
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS

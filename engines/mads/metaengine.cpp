@@ -20,7 +20,7 @@
  *
  */
 
-#include "mads/mads.h"
+#include "mads/nebular/nebular.h"
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
@@ -36,9 +36,12 @@
 #include "common/translation.h"
 #include "graphics/surface.h"
 
-#include "mads/events.h"
-#include "mads/game.h"
+#include "mads/core/events.h"
+#include "mads/core/game.h"
 #include "mads/detection.h"
+#ifdef ENABLE_MADSV2
+#include "mads/madsv2/phantom/phantom.h"
+#endif
 
 #define MAX_SAVES 99
 
@@ -158,7 +161,7 @@ Common::Platform MADSEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
-} // End of namespace MADS
+} // namespace MADS
 
 class MADSMetaEngine : public AdvancedMetaEngine<MADS::MADSGameDescription> {
 public:
@@ -183,12 +186,13 @@ public:
 
 bool MADSMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
+		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSimpleSavesNames);
+		(f == kSimpleSavesNames) ||
+		checkExtendedSaves(f);
 }
 
 bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
@@ -199,11 +203,20 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const MADS::MADSGameDescription *desc) const {
-	*engine = new MADS::MADSEngine(syst,desc);
+#ifdef ENABLE_MADSV2
+	if (desc->gameID == MADS::GType_Phantom)
+		*engine = new MADS::MADSV2::Phantom::PhantomEngine(syst, desc);
+	else
+#endif
+
+	*engine = new MADS::RexNebularEngine(syst,desc);
 	return Common::kNoError;
 }
 
 SaveStateList MADSMetaEngine::listSaves(const char *target) const {
+	if (getGameId(target) != "nebular")
+		return AdvancedMetaEngine<MADS::MADSGameDescription>::listSaves(target);
+
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
 	Common::String saveDesc;
@@ -238,11 +251,18 @@ int MADSMetaEngine::getMaximumSaveSlot() const {
 }
 
 bool MADSMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	return g_system->getSavefileManager()->removeSavefile(filename);
+	if (getGameId(target) == "nebular") {
+		Common::String filename = Common::String::format("%s.%03d", target, slot);
+		return g_system->getSavefileManager()->removeSavefile(filename);
+	} else {
+		return AdvancedMetaEngine<MADS::MADSGameDescription>::removeSaveState(target, slot);
+	}
 }
 
 SaveStateDescriptor MADSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	if (getGameId(target) != "nebular")
+		return AdvancedMetaEngine<MADS::MADSGameDescription>::querySaveMetaInfos(target, slot);
+
 	Common::String filename = Common::String::format("%s.%03d", target, slot);
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
 

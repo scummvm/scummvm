@@ -23,8 +23,8 @@
 #define MADS_DIALOGS_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/dialogs.h"
+#include "mads/core/game.h"
+#include "mads/core/dialogs.h"
 
 namespace MADS {
 
@@ -38,7 +38,7 @@ private:
 	int _dialogWidth;
 	CapitalizationMode _capitalizationMode;
 
-	DialogsNebular(MADSEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
+	DialogsNebular(RexNebularEngine *vm): Dialogs(vm), _capitalizationMode(kUppercase), _dialogWidth(0) {}
 
 	Common::String getVocab(int vocabId) override;
 
@@ -78,7 +78,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong);
+	CopyProtectionDialog(RexNebularEngine *vm, bool priorAnswerWrong);
 
 	/**
 	 * Show the dialog
@@ -100,7 +100,7 @@ protected:
 
 	void restore() override;
 public:
-	PictureDialog(MADSEngine *vm, const Common::Point &pos, int maxChars, int objectId);
+	PictureDialog(RexNebularEngine *vm, const Common::Point &pos, int maxChars, int objectId);
 
 	~PictureDialog() override;
 };
@@ -186,7 +186,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	GameDialog(MADSEngine *vm);
+	GameDialog(RexNebularEngine *vm);
 
 	/**
 	 * Destructor
@@ -206,7 +206,7 @@ private:
 	 */
 	void setLines();
 public:
-	DifficultyDialog(MADSEngine *vm);
+	DifficultyDialog(RexNebularEngine *vm);
 
 	/**
 	 * Display the dialog
@@ -226,7 +226,7 @@ private:
 	 */
 	void setLines();
 public:
-	GameMenuDialog(MADSEngine *vm);
+	GameMenuDialog(RexNebularEngine *vm);
 
 	/**
 	* Display the dialog
@@ -251,7 +251,7 @@ private:
 	 */
 	int getOptionQuote(int option);
 public:
-	OptionsDialog(MADSEngine *vm);
+	OptionsDialog(RexNebularEngine *vm);
 
 	/**
 	* Display the dialog
@@ -264,8 +264,8 @@ public:
 	void show() override;
 };
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_DIALOGS_NEBULAR_H */

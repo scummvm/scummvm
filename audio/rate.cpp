@@ -27,9 +27,13 @@
  * improvements over the original code were made.
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "audio/audiostream.h"
 #include "audio/rate.h"
 #include "audio/mixer.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
 #include "common/util.h"
 
 namespace Audio {
@@ -80,6 +84,26 @@ private:
 	int simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
 	int interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t vol_l, st_volume_t vol_r);
 
+	// keep a single printConvertType shared across all RateConverter_Impl specializations
+	struct PrintContext {
+		st_rate_t previousInRate = 0;
+		Common::String previousGameId;
+	};
+	void printConvertType(const char *name, PrintContext &ctx) const {
+		const Common::String activeDomain = ConfMan.getActiveDomainName();
+		if (!activeDomain.empty() &&
+			(ctx.previousInRate != _inRate ||
+			 ctx.previousGameId != activeDomain)) {
+			ctx.previousInRate = _inRate;
+			ctx.previousGameId = activeDomain;
+			debugC(kDebugLevelGAudio, "RateConverter_Impl::%s[%s]: inRate %d Hz (%s) => outRate %d Hz (%s)",
+				  name, activeDomain.c_str(),
+				  _inRate, inStereo ? "stereo" : "mono", _outRate, outStereo ? "stereo" : "mono");
+		}
+	}
+	#define PRINT_OUTPUT_RATE \
+		do { static PrintContext _ctx; printConvertType(__FUNCTION__, _ctx); } while (0)
+
 public:
 	RateConverter_Impl(st_rate_t inputRate, st_rate_t outputRate);
 	virtual ~RateConverter_Impl() {}
@@ -97,6 +121,8 @@ public:
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+	PRINT_OUTPUT_RATE;
+
 	st_sample_t *outStart, *outEnd;
 
 	outStart = outBuffer;
@@ -143,6 +169,8 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::copyConvert(AudioStr
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+	PRINT_OUTPUT_RATE;
+
 	// How much to increment _outPos by
 	frac_t outPos_inc = _inRate / _outRate;
 
@@ -202,6 +230,8 @@ int RateConverter_Impl<inStereo, outStereo, reverseStereo>::simpleConvert(AudioS
 
 template<bool inStereo, bool outStereo, bool reverseStereo>
 int RateConverter_Impl<inStereo, outStereo, reverseStereo>::interpolateConvert(AudioStream &input, st_sample_t *outBuffer, st_size_t numSamples, st_volume_t volL, st_volume_t volR) {
+	PRINT_OUTPUT_RATE;
+
 	// How much to increment _outPosFrac by
 	frac_t outPos_inc = (_inRate << FRAC_BITS_LOW) / _outRate;
 

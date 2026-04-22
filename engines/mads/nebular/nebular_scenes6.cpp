@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes6.h"
 
@@ -216,7 +216,7 @@ void Scene601::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene602::Scene602(MADSEngine *vm) : Scene6xx(vm) {
+Scene602::Scene602(RexNebularEngine *vm) : Scene6xx(vm) {
 	_lastSpriteIdx = -1;
 	_lastSequenceIdx = -1;
 	_cycleIndex = -1;
@@ -545,7 +545,7 @@ void Scene602::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene603::Scene603(MADSEngine *vm) : Scene6xx(vm) {
+Scene603::Scene603(RexNebularEngine *vm) : Scene6xx(vm) {
 	_compactCaseHotspotId = -1;
 	_noteHotspotId = -1;
 }
@@ -698,7 +698,7 @@ void Scene603::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene604::Scene604(MADSEngine *vm) : Scene6xx(vm) {
+Scene604::Scene604(RexNebularEngine *vm) : Scene6xx(vm) {
 	_timebombHotspotId = -1;
 	_bombMode = -1;
 	_monsterFrame = -1;
@@ -1041,7 +1041,7 @@ void Scene605::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene607::Scene607(MADSEngine *vm) : Scene6xx(vm) {
+Scene607::Scene607(RexNebularEngine *vm) : Scene6xx(vm) {
 	_dogTimer = 0;
 	_lastFrameTime = 0;
 
@@ -1504,7 +1504,7 @@ void Scene607::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene608::Scene608(MADSEngine *vm) : Scene6xx(vm) {
+Scene608::Scene608(RexNebularEngine *vm) : Scene6xx(vm) {
 	_carMode = -1;
 	_carFrame = -1;
 	_carMoveMode = -1;
@@ -2502,7 +2502,7 @@ void Scene608::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene609::Scene609(MADSEngine *vm) : Scene6xx(vm) {
+Scene609::Scene609(RexNebularEngine *vm) : Scene6xx(vm) {
 	_videoDoorMode = -1;
 }
 
@@ -2835,7 +2835,7 @@ void Scene609::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene610::Scene610(MADSEngine *vm) : Scene6xx(vm) {
+Scene610::Scene610(RexNebularEngine *vm) : Scene6xx(vm) {
 	_handsetHotspotId = -1;
 	_checkVal = -1;
 
@@ -3040,7 +3040,7 @@ void Scene610::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene611::Scene611(MADSEngine *vm) : Scene6xx(vm), _defaultDialogPos(0, 0) {
+Scene611::Scene611(RexNebularEngine *vm) : Scene6xx(vm), _defaultDialogPos(0, 0) {
 	_seenRatFl = false;
 	_eyesRunningFl = false;
 	_shouldRemoveEyes = false;
@@ -4474,7 +4474,7 @@ void Scene611::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene612::Scene612(MADSEngine *vm) : Scene6xx(vm) {
+Scene612::Scene612(RexNebularEngine *vm) : Scene6xx(vm) {
 	_actionMode = -1;
 	_cycleIndex = -1;
 }
@@ -4747,5 +4747,5 @@ void Scene620::step() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

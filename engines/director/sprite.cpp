@@ -368,8 +368,8 @@ bool Sprite::isActive() {
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
-	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
-			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
+	return (_movie->getScriptContext(kScoreScript, _scriptId) != nullptr)
+			|| (_movie->getScriptContext(kCastScript, _castId) != nullptr);
 }
 
 bool Sprite::shouldHilite() {

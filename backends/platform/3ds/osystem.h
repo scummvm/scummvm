@@ -33,6 +33,7 @@
 #include "backends/graphics/graphics.h"
 #include "backends/log/log.h"
 #include "backends/platform/3ds/sprite.h"
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/queue.h"
 #include "common/ustr.h"
@@ -100,7 +101,7 @@ struct GfxState {
 };
 
 
-class OSystem_3DS : public EventsBaseBackend, public PaletteManager, public Common::EventObserver {
+class OSystem_3DS : virtual public BaseBackend, public Common::EventSource, public PaletteManager, public Common::EventObserver {
 public:
 	OSystem_3DS();
 	virtual ~OSystem_3DS();

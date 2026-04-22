@@ -27,10 +27,10 @@
 
 #include "gui/saveload.h"
 
-#include "mads/mads.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/staticres.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/screen.h"
+#include "mads/core/msurface.h"
+#include "mads/core/staticres.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/menu_nebular.h"
@@ -399,7 +399,7 @@ void DialogsNebular::showScummVMRestoreDialog() {
 
 /*------------------------------------------------------------------------*/
 
-CopyProtectionDialog::CopyProtectionDialog(MADSEngine *vm, bool priorAnswerWrong) :
+CopyProtectionDialog::CopyProtectionDialog(RexNebularEngine *vm, bool priorAnswerWrong) :
 TextDialog(vm, FONT_INTERFACE, Common::Point(-1, -1), 32) {
 	getHogAnusEntry(_hogEntry);
 
@@ -521,7 +521,7 @@ bool CopyProtectionDialog::getHogAnusEntry(HOGANUS &entry) {
 
 /*------------------------------------------------------------------------*/
 
-PictureDialog::PictureDialog(MADSEngine *vm, const Common::Point &pos,
+PictureDialog::PictureDialog(RexNebularEngine *vm, const Common::Point &pos,
 		int maxChars, int objectId) :
 		TextDialog(vm, FONT_INTERFACE, pos, maxChars), _objectId(objectId) {
 	// Turn off cycling if active
@@ -640,7 +640,7 @@ GameDialog::DialogLine::DialogLine(const Common::String &s) {
 
 /*------------------------------------------------------------------------*/
 
-GameDialog::GameDialog(MADSEngine *vm) : FullScreenDialog(vm) {
+GameDialog::GameDialog(RexNebularEngine *vm) : FullScreenDialog(vm) {
 	Game &game = *_vm->_game;
 	Scene &scene = game._scene;
 
@@ -997,7 +997,7 @@ void GameDialog::refreshText() {
 
 /*------------------------------------------------------------------------*/
 
-DifficultyDialog::DifficultyDialog(MADSEngine *vm) : GameDialog(vm) {
+DifficultyDialog::DifficultyDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 	_vm->_palette->resetGamePalette(18, 10);
 }
@@ -1041,7 +1041,7 @@ void DifficultyDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-GameMenuDialog::GameMenuDialog(MADSEngine *vm) : GameDialog(vm) {
+GameMenuDialog::GameMenuDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 }
 
@@ -1092,7 +1092,7 @@ void GameMenuDialog::show() {
 
 /*------------------------------------------------------------------------*/
 
-OptionsDialog::OptionsDialog(MADSEngine *vm) : GameDialog(vm) {
+OptionsDialog::OptionsDialog(RexNebularEngine *vm) : GameDialog(vm) {
 	setLines();
 }
 
@@ -1210,6 +1210,6 @@ void OptionsDialog::show() {
 	}
 }
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS

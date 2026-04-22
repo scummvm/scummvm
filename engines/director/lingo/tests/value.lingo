@@ -11,6 +11,30 @@ scummvmAssertEqual([#a: 1, #b: 2], value("[#a: 1, #b: 2]"))
 -- expressions
 scummvmAssertEqual(9, value("3*3"))
 
+-- empty line is special
+scummvmAssertEqual(Void, value(""))
+
+-- simple expressions with garbage
+scummvmAssertEqual(55, value("55 5"))
+scummvmAssertEqual(55, value("55 abra"))
+scummvmAssertEqual(12, value("12 PM"))
+
+-- simple string
+set test = QUOTE & "abra" & QUOTE
+scummvmAssertEqual("abra", value(test))
+
+-- string with garbage
+set test = QUOTE & "abra" & QUOTE & " 55"
+scummvmAssertEqual("abra", value(test))
+
+-- broken string
+set test = QUOTE & "abra"
+scummvmAssertEqual("Void, value(test))
+
+-- string, starting expression
+set test = QUOTE & "abra" & QUOTE & " & " & QUOTE & "kadabra" & QUOTE
+scummvmAssertEqual("abrakadabra", value(test))
+
 -- the kicker; you are allowed to have garbage on the end!!!
 -- if it hits a token it doesn't understand, the parser should try again but stopping just before that token.
 scummvmNoFatalError(true)

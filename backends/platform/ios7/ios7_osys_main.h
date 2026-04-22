@@ -50,7 +50,7 @@ struct AQCallbackStruct {
 	AudioStreamBasicDescription dataFormat;
 };
 
-class OSystem_iOS7 : public ModularGraphicsBackend, public EventsBaseBackend {
+class OSystem_iOS7 : virtual public BaseBackend, public ModularGraphicsBackend, Common::EventSource {
 protected:
 	static AQCallbackStruct s_AudioQueue;
 	static SoundProc s_soundCallback;

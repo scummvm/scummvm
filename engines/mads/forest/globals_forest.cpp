@@ -41,5 +41,5 @@ void ForestGlobals::synchronize(Common::Serializer &s) {
 	_animationIndexes.synchronize(s);
 }
 
-} // End of namespace Forest
-} // End of namespace MADS
+} // namespace Forest
+} // namespace MADS

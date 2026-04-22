@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/array.h"
+#include "common/compression/packice.h"
 #include "common/file.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -108,6 +109,123 @@ static Common::Array<byte> unsquashAcornDesktopTracker(const byte *data, uint32 
 		if (r6 >= compLen)
 			return out;
 	}
+}
+
+static bool isElvira1PackIcePrg(const Common::Array<byte> &data) {
+	return data.size() >= 0x26 && !memcmp(data.begin() + 0x1E, "Pack-Ice", 8);
+}
+
+static bool depackElvira1PackIcePrg(const Common::Array<byte> &packedData, Common::Array<byte> &unpackedData) {
+	enum {
+		kPackedStreamStart = 0x021C,
+		kPackedStreamEnd = 0xAFE2,
+		kRawSize = 0x1694C
+	};
+
+	if (!isElvira1PackIcePrg(packedData) || packedData.size() < kPackedStreamEnd)
+		return false;
+
+	return Common::decompressPackIceStream(packedData.begin(), packedData.size(), kPackedStreamStart,
+			kPackedStreamEnd, kRawSize, unpackedData, false) &&
+			unpackedData.size() >= 28 && READ_BE_UINT16(unpackedData.begin()) == 0x601A;
+}
+
+static bool extractEmbeddedTosPrg(const Common::Array<byte> &containerPrg, Common::Array<byte> &innerPrg) {
+	if (containerPrg.size() < 28)
+		return false;
+
+	const byte *prg = containerPrg.begin();
+	if (READ_BE_UINT16(prg) != 0x601A)
+		return false;
+
+	const uint32 outerTextSize = READ_BE_UINT32(prg + 2);
+	const uint32 outerRelOffset = 28 + outerTextSize + READ_BE_UINT32(prg + 6) + READ_BE_UINT32(prg + 14);
+	if (containerPrg.size() < outerRelOffset + 4)
+		return false;
+
+	for (uint32 off = 30; off + 28 <= 28 + outerTextSize; off += 2) {
+		if (READ_BE_UINT16(prg + off) != 0x601A)
+			continue;
+
+		const uint32 textSize = READ_BE_UINT32(prg + off + 2);
+		const uint32 dataSize = READ_BE_UINT32(prg + off + 6);
+		const uint32 bssSize = READ_BE_UINT32(prg + off + 10);
+		const uint32 symSize = READ_BE_UINT32(prg + off + 14);
+		const uint32 innerOffText = off + 28;
+		const uint32 innerOffData = innerOffText + textSize;
+		const uint32 innerOffSym = innerOffData + dataSize;
+		const uint32 innerOffRel = innerOffSym + symSize;
+		if (innerOffText < off || innerOffData < innerOffText || innerOffSym < innerOffData || innerOffRel < innerOffSym)
+			continue;
+		if (innerOffRel + 4 > containerPrg.size())
+			continue;
+
+		const uint32 firstRel = READ_BE_UINT32(prg + innerOffRel);
+		if (firstRel >= textSize + dataSize + bssSize && firstRel != 0)
+			continue;
+
+		uint32 pos = innerOffRel + 4;
+		while (pos < containerPrg.size()) {
+			if (containerPrg[pos++] == 0)
+				break;
+		}
+		if (containerPrg[pos - 1] != 0)
+			continue;
+
+		innerPrg.resize(pos - off);
+		memcpy(innerPrg.begin(), prg + off, pos - off);
+		debug(1, "AGOS: Found embedded Atari ST PRG at 0x%X (text=0x%X, data=0x%X, bss=0x%X)",
+			off, textSize, dataSize, bssSize);
+		return true;
+	}
+
+	return false;
+}
+
+static Common::SeekableReadStream *openElvira1AtariSTPrg() {
+	const char *const prgNames[] = {
+		"ELVIRA.PRG",
+		"ELVIRA+.PRG",
+		"RUNENG.PRG",
+		"AUTO/RUNENG.PRG",
+		"AUTO/ADEMO.PRG",
+		"ADEMO.PRG"
+	};
+
+	Common::File file;
+	for (uint i = 0; i < ARRAYSIZE(prgNames); ++i) {
+		const char *prgName = prgNames[i];
+		if (!file.open(Common::Path(prgName)))
+			continue;
+
+		Common::Array<byte> prgData;
+		prgData.resize((uint32)file.size());
+		if (!prgData.empty() && file.read(prgData.begin(), prgData.size()) != prgData.size()) {
+			warning("playMusic: Failed to read Atari ST Elvira 1 PRG '%s'", prgName);
+			return nullptr;
+		}
+
+		if (isElvira1PackIcePrg(prgData)) {
+			Common::Array<byte> unpackedOuterPrg;
+			if (!depackElvira1PackIcePrg(prgData, unpackedOuterPrg)) {
+				warning("playMusic: Failed to depack Atari ST Elvira 1 Pack-Ice PRG '%s'", prgName);
+				return nullptr;
+			}
+			if (!extractEmbeddedTosPrg(unpackedOuterPrg, prgData)) {
+				warning("playMusic: Failed to locate embedded Atari ST PRG inside depacked Elvira 1 wrapper '%s'", prgName);
+				return nullptr;
+			}
+		}
+
+		byte *buf = nullptr;
+		if (!prgData.empty()) {
+			buf = new byte[prgData.size()];
+			memcpy(buf, prgData.begin(), prgData.size());
+		}
+		return new Common::MemoryReadStream(buf, prgData.size(), DisposeAfterUse::YES);
+	}
+
+	return nullptr;
 }
 
 // This data is hardcoded in the executable.
@@ -533,19 +651,18 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 				return;
 			}
 
-			Common::File *file = new Common::File();
-			if (!file->open(Common::Path("ELVIRA.PRG"))) {
-				warning("playMusic: Can't load Atari ST ELVIRA.PRG for music id %d", music);
-				delete file;
+			Common::SeekableReadStream *stream = openElvira1AtariSTPrg();
+			if (!stream) {
+				warning("playMusic: Can't load Atari ST Elvira 1 PRG for music id %d", music);
 				return;
 			}
 
 			delete _elviraAtariSTPlayer;
 			_elviraAtariSTPlayer = nullptr;
 
-			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(file, prgTune);
+			_elviraAtariSTPlayer = new ElviraAtariSTPlayer(stream, prgTune);
 			if (!_elviraAtariSTPlayer->isValid()) {
-				warning("playMusic: Unsupported or unreadable Atari ST ELVIRA.PRG, skipping music id %d", music);
+				warning("playMusic: Unsupported or unreadable Atari ST Elvira 1 PRG, skipping music id %d", music);
 				delete _elviraAtariSTPlayer;
 				_elviraAtariSTPlayer = nullptr;
 				return;

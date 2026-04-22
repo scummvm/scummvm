@@ -37,25 +37,6 @@
 
 namespace hpl {
 
-TGLenum ColorFormatToTGL(eColorDataFormat format) {
-	switch (format) {
-	case eColorDataFormat_RGB:
-		return TGL_RGB;
-	case eColorDataFormat_RGBA:
-		return TGL_RGBA;
-	case eColorDataFormat_ALPHA:
-		return TGL_ALPHA;
-	case eColorDataFormat_BGR:
-		return TGL_BGR;
-	case eColorDataFormat_BGRA:
-		return TGL_BGRA;
-	default:
-		break;
-	}
-	Hpl1::logError(Hpl1::kDebugOpenGL, "invalid color format (%d)\n", format);
-	return 0;
-}
-
 TGLenum TextureTargetToTGL(eTextureTarget target) {
 	switch (target) {
 	case eTextureTarget_1D:

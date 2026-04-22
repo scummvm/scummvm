@@ -22,9 +22,7 @@
 #ifndef SCI_GRAPHICS_VIDEO32_H
 #define SCI_GRAPHICS_VIDEO32_H
 
-#ifdef USE_RGB_COLOR
 #include "common/config-manager.h" // for ConfMan
-#endif
 #include "common/path.h"          // for Path
 #include "common/ptr.h"
 #include "common/rect.h"          // for Rect
@@ -71,11 +69,8 @@ public:
 		_eventMan(eventMan),
 		_decoder(decoder),
 		_needsUpdate(false),
-		_currentFrame(nullptr)
-#ifdef USE_RGB_COLOR
-		,
+		_currentFrame(nullptr),
 		_hqVideoMode(false)
-#endif
 		{}
 
 	virtual ~VideoPlayer() {}
@@ -103,14 +98,13 @@ protected:
 	 * @returns whether or not the system surface was reinitialized for
 	 * high-quality scaled video.
 	 */
-	bool startHQVideo();
+	bool startHQVideo(const Graphics::PixelFormat &format);
 
 	/**
 	 * Determines whether or not the currently loaded video meets the criteria
 	 * for high-quality scaled output.
 	 */
 	virtual bool shouldStartHQVideo() const {
-#ifdef USE_RGB_COLOR
 		if (!ConfMan.getBool("enable_hq_video")) {
 			return false;
 		}
@@ -121,9 +115,6 @@ protected:
 		}
 
 		return true;
-#else
-		return false;
-#endif
 	}
 
 	/**
@@ -160,8 +151,14 @@ protected:
 	 * Renders a video frame to an intermediate surface using low-quality
 	 * scaling, black-lining, or direct copy, depending upon the passed flags.
 	 */
-	template <typename PixelType>
 	void renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const;
+
+	/**
+	 * Renders a video frame to an intermediate surface using low-quality
+	 * scaling.
+	 */
+	template <typename PixelType>
+	void renderLQToSurfaceDouble(Graphics::Surface &out, const Graphics::Surface &nextFrame, int lineCount) const;
 
 	/**
 	 * Sets the draw rect, clipping it to the screen's dimensions if necessary.
@@ -173,6 +170,12 @@ protected:
 	 *
 	 */
 	void setSubtitlePosition() const;
+
+	/**
+	 * Displays a message if the backend doesn't support the video format used
+	 * by the video.
+	 */
+	void showUnsupportedFormatDialog();
 
 	/**
 	 * The rectangle where the video will be drawn, in screen coordinates.
@@ -196,13 +199,11 @@ protected:
 	 */
 	mutable Video::Subtitles _subtitles;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Whether or not the player is currently in high-quality video rendering
 	 * mode.
 	 */
 	bool _hqVideoMode;
-#endif
 };
 
 #pragma mark SEQPlayer
@@ -512,7 +513,6 @@ private:
 	 */
 	void fillPalette(const uint8 rawPalette[256 * 3], Palette &outPalette) const;
 
-#ifdef USE_RGB_COLOR
 	/**
 	 * Redraws areas of the screen outside of the video to the system buffer.
 	 * This is used whenever palette changes occur and the video is rendering in
@@ -539,18 +539,13 @@ private:
 
 		return true;
 	}
-#endif
 
 	/**
 	 * Determines whether or not the video should use the compositing renderer
 	 * instead of the overlay renderer.
 	 */
 	bool shouldUseCompositing() const {
-#ifdef USE_RGB_COLOR
 		return isNormallyComposited() && !shouldStartHQVideo();
-#else
-		return isNormallyComposited();
-#endif
 	}
 
 	bool isNormallyComposited() const {

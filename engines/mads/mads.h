@@ -28,17 +28,6 @@
 #include "common/random.h"
 #include "common/util.h"
 #include "engines/engine.h"
-#include "graphics/surface.h"
-#include "mads/conversations.h"
-#include "mads/debugger.h"
-#include "mads/dialogs.h"
-#include "mads/events.h"
-#include "mads/font.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/resources.h"
-#include "mads/sound.h"
 #include "mads/detection.h"
 
 namespace MADS {
@@ -46,6 +35,19 @@ namespace MADS {
 #define DEBUG_BASIC 1
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
+
+enum MADSDebugChannels {
+	kDebugPath = 1,
+	kDebugScripts,
+	kDebugGraphics,
+	kDebugConversations
+};
+
+enum ScreenFade {
+	SCREEN_FADE_SMOOTH = 0,
+	SCREEN_FADE_MEDIUM = 1,
+	SCREEN_FADE_FAST = 2
+};
 
 enum MADSActions {
 	kActionNone,
@@ -63,54 +65,13 @@ enum MADSActions {
 	kActionRestartAnimation
 };
 
-enum MADSDebugChannels {
-	kDebugPath = 1,
-	kDebugScripts,
-	kDebugGraphics,
-};
-
-enum ScreenFade {
-	SCREEN_FADE_SMOOTH = 0,
-	SCREEN_FADE_MEDIUM = 1,
-	SCREEN_FADE_FAST = 2
-};
-
-
 class MADSEngine : public Engine {
-private:
+protected:
 	const MADSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	/**
-	 * Handles basic initialisation
-	 */
-	void initialize();
-
-	void loadOptions();
-protected:
-	// Engine APIs
-	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
-public:
-	Debugger *_debugger;
-	Dialogs *_dialogs;
-	EventsManager *_events;
-	Font *_font;
-	Game *_game;
-	GameConversations * _gameConv;
-	Palette *_palette;
-	Resources *_resources;
-	Screen *_screen;
-	SoundManager *_sound;
-	AudioPlayer *_audio;
-	bool _easyMouse;
-	bool _invObjectsAnimated;
-	bool _textWindowStill;
-	ScreenFade _screenFade;
-	bool _musicFlag;
-	bool _soundFlag;
-	bool _dithering;
-	bool _disableFastwalk;
+
 public:
 	MADSEngine(OSystem *syst, const MADSGameDescription *gameDesc);
 	~MADSEngine() override;
@@ -125,35 +86,8 @@ public:
 
 	int getRandomNumber(int maxNumber);
 	int getRandomNumber(int minNumber, int maxNumber);
-
-	/**
-	* Returns true if it is currently okay to restore a game
-	*/
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
-
-	/**
-	* Returns true if it is currently okay to save the game
-	*/
-	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
-
-	/**
-	 * Handles loading a game via the GMM
-	 */
-	Common::Error loadGameState(int slot) override;
-
-	/**
-	 * Handles saving the game via the GMM
-	 */
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
-
-	/**
-	 * Handles updating sound settings after they're changed in the GMM dialog
-	 */
-	void syncSoundSettings() override;
-
-	void saveOptions();
 };
 
-} // End of namespace MADS
+} // namespace MADS
 
-#endif /* MADS_MADS_H */
+#endif

@@ -22,360 +22,34 @@
 #ifndef MADS_SOUND_NEBULAR_H
 #define MADS_SOUND_NEBULAR_H
 
-#include "common/scummsys.h"
-#include "common/file.h"
-#include "common/mutex.h"
-#include "common/queue.h"
-
-namespace Audio {
-class Mixer;
-}
-
-namespace Common {
-class SeekableReadStream;
-}
-
-namespace OPL {
-class OPL;
-}
+#include "mads/core/sound.h"
 
 namespace MADS {
-
 namespace Nebular {
 
-class ASound;
-
-/**
- * Represents the data for a channel on the Adlib
- */
-class AdlibChannel {
-public:
-	ASound *_owner;
-
-	int _activeCount;
-	int _field1;
-	int _field2;
-	int _field3;
-	int _field4;
-	int _sampleIndex;
-	int _volume;
-	int _field7;
-	int _field8;
-	int _field9;
-	int _fieldA;
-	uint8 _fieldB;
-	int _fieldC;
-	int _fieldD;
-	int _fieldE;
-	byte *_ptr1;
-	byte *_pSrc;
-	byte *_ptr3;
-	byte *_ptr4;
-	byte *_ptrEnd;
-	int _field17;
-	int _field19;
-	byte *_soundData;
-	int _field1D;
-	int _volumeOffset;
-	int _field1F;
-
-	// TODO: Only used by asound.003. Figure out usage
-	byte _field20;
-public:
-	static bool _channelsEnabled;
-public:
-	AdlibChannel();
-
-	void reset();
-	void enable(int flag);
-	void setPtr2(byte *pData);
-	void load(byte *pData);
-	void check(byte *nullPtr);
-};
-
-class AdlibChannelData {
-public:
-	int _field0;
-	int _freqMask;
-	int _freqBase;
-	int _field6;
-};
-
-class AdlibSample {
-public:
-	int _attackRate;
-	int _decayRate;
-	int _sustainLevel;
-	int _releaseRate;
-	bool _egTyp;
-	bool _ksr;
-	int _totalLevel;
-	int _scalingLevel;
-	int _waveformSelect;
-	int _freqMultiple;
-	int _feedback;
-	bool _ampMod;
-	int _vib;
-	int _alg;
-	int _fieldE;
-	int _freqMask;
-	int _freqBase;
-	int _field14;
-
-	AdlibSample() {}
-	AdlibSample(Common::SeekableReadStream &s);
-};
-
-struct RegisterValue {
-	uint8 _regNum;
-	uint8 _value;
-
-	RegisterValue(int regNum, int value) {
-		_regNum = regNum; _value = value;
-	}
-};
-
-#define ADLIB_CHANNEL_COUNT 9
-#define ADLIB_CHANNEL_MIDWAY 5
-#define CALLBACKS_PER_SECOND 60
-
-struct CachedDataEntry {
-	int _offset;
-	byte *_data;
-	byte *_dataEnd;
-};
-
-/**
- * Base class for the sound player resource files
- */
-class ASound {
-private:
-	Common::List<CachedDataEntry> _dataCache;
-	uint16 _randomSeed;
-	int _masterVolume;
-
-	/**
-	 * Does the initial Adlib initialisation
-	 */
-	void adlibInit();
-
-	/**
-	 * Does on-going processing for the Adlib sounds being played
-	 */
-	void update();
-
-	/**
-	 * Polls each of the channels for updates
-	 */
-	void pollChannels();
-
-	/**
-	 * Checks the status of the channels
-	 */
-	void checkChannels();
-
-	/**
-	 * Polls the currently active channel
-	 */
-	void pollActiveChannel();
-
-	/**
-	 * Updates the octave of the currently active channel
-	 */
-	void updateOctave();
-
-	void updateChannelState();
-	void updateActiveChannel();
-
-	/**
-	 * Loads up the specified sample
-	 */
-	void loadSample(int sampleIndex);
-
-	/**
-	 * Writes out the data of the selected sample to the Adlib
-	 */
-	void processSample();
-
-	void updateFNumber();
-
-	/**
-	 * Timer function for OPL
-	 */
-	void onTimer();
+class RexSoundManager : public SoundManager {
 protected:
-	int _commandParam;
+	void loadDriver(int sectionNum) override;
 
-	/**
-	 * Queue a byte for an Adlib register
-	 */
-	void write(int reg, int val);
-
-	/**
-	 * Queue a byte for an Adlib register, and store it in the _ports array
-	 */
-	int write2(int state, int reg, int val);
-
-	/**
-	 * Flush any pending Adlib register values to the OPL driver
-	 */
-	void flush();
-
-	/**
-	 * Turn a channel on
-	 */
-	void channelOn(int reg, int volume);
-
-	/**
-	 * Turn a channel off
-	 */
-	void channelOff(int reg);
-
-	/**
-	 * Checks for whether a poll result needs to be set
-	 */
-	void resultCheck();
-
-	/**
-	 * Loads a data block from the sound file, caching the result for any future
-	 * calls for the same data
-	 */
-	byte *loadData(int offset, int size);
-
-	/**
-	 * Play the specified sound
-	 * @param offset	Offset of sound data within sound player data segment
-	 * @param size		Size of sound data block
-	 */
-	void playSound(int offset, int size);
-
-	/**
-	 * Play the specified raw sound data
-	 * @param pData		Pointer to data block containing sound data
-	 * @param startingChannel	Channel to start scan from
-	 */
-	void playSoundData(byte *pData, int startingChannel = ADLIB_CHANNEL_MIDWAY);
-
-	/**
-	 * Checks to see whether the given block of data is already loaded into a channel.
-	 */
-	bool isSoundActive(byte *pData);
-
-	/**
-	 * Sets the frequency for a given channel.
-	 */
-	void setFrequency(int channel, int freq);
-
-	/**
-	 * Returns a 16-bit random number
-	 */
-	int getRandomNumber();
-
-	virtual int command0();
-	int command1();
-	int command2();
-	int command3();
-	int command4();
-	int command5();
-	int command6();
-	int command7();
-	int command8();
-
-	int nullCommand() { return 0; }
 public:
-	Audio::Mixer *_mixer;
-	OPL::OPL *_opl;
-	AdlibChannel _channels[ADLIB_CHANNEL_COUNT];
-	AdlibChannel *_activeChannelPtr;
-	AdlibChannelData _channelData[11];
-	Common::Array<AdlibSample> _samples;
-	AdlibSample *_samplePtr;
-	Common::File _soundFile;
-	Common::Queue<RegisterValue> _queue;
-	Common::Mutex _driverMutex;
-	int _dataOffset;
-	int _frameCounter;
-	bool _isDisabled;
-	int _v1;
-	int _v2;
-	int _activeChannelNumber;
-	int _freqMask1;
-	int _freqMask2;
-	int _freqBase1;
-	int _freqBase2;
-	int _channelNum1, _channelNum2;
-	int _v7;
-	int _v8;
-	int _v9;
-	int _v10;
-	int _pollResult;
-	int _resultFlag;
-	byte _nullData[2];
-	int _ports[256];
-	bool _stateFlag;
-	int _activeChannelReg;
-	int _v11;
-	bool _amDep, _vibDep, _splitPoint;
-public:
-	/**
-	 * Constructor
-	 * @param mixer			Mixer
-	 * @param opl			OPL
-	 * @param filename		Specifies the adlib sound player file to use
-	 * @param dataOffset	Offset in the file of the data segment
-	 */
-	ASound(Audio::Mixer *mixer, OPL::OPL *opl, const Common::Path &filename, int dataOffset);
+	RexSoundManager(Audio::Mixer *mixer, bool &soundFlag) : SoundManager(mixer, soundFlag) {
+	}
+	~RexSoundManager() override {
+	}
 
-	/**
-	 * Destructor
-	 */
-	virtual ~ASound();
-
-	/**
-	 * Validates the Adlib sound files
-	 */
-	static void validate();
-
-	/**
-	 * Execute a player command. Most commands represent sounds to play, but some
-	 * low number commands also provide control operations.
-	 * @param commandId		Player ommand to execute.
-	 * @param param			Optional parameter used by a few commands
-	 */
-	virtual int command(int commandId, int param) = 0;
-
-	/**
-	 * Stop all currently playing sounds
-	 */
-	int stop();
-
-	/**
-	 * Main poll method to allow sounds to progress
-	 */
-	int poll();
-
-	/**
-	 * General noise/note output
-	 */
-	void noise();
-
-	/**
-	 * Return the current frame counter
-	 */
-	int getFrameCounter() { return _frameCounter; }
-
-	/**
-	 * Return the cached data block record for previously loaded sound data
-	 */
-	CachedDataEntry &getCachedData(byte *pData);
-
-	/**
-	 * Set the volume
-	 */
-	void setVolume(int volume);
+	void validate() override;
 };
 
-class ASound1 : public ASound {
+class RexASound : public ASound {
+protected:
+	void channelCommand(byte *&pSrc, bool &updateFlag) override;
+
+public:
+	RexASound(Audio::Mixer *mixer, OPL::OPL *opl,
+		const Common::Path &filename, int dataOffset);
+};
+
+class ASound1 : public RexASound {
 private:
 	typedef int (ASound1::*CommandPtr)();
 	static const CommandPtr _commandList[42];
@@ -423,7 +97,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound2 : public ASound {
+class ASound2 : public RexASound {
 private:
 	byte _command12Param;
 private:
@@ -475,7 +149,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound3 : public ASound {
+class ASound3 : public RexASound {
 private:
 	bool _command39Flag;
 
@@ -535,7 +209,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound4 : public ASound {
+class ASound4 : public RexASound {
 private:
 	typedef int (ASound4::*CommandPtr)();
 	static const CommandPtr _commandList[61];
@@ -573,7 +247,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound5 : public ASound {
+class ASound5 : public RexASound {
 private:
 	typedef int (ASound5::*CommandPtr)();
 	static const CommandPtr _commandList[42];
@@ -619,7 +293,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound6 : public ASound {
+class ASound6 : public RexASound {
 private:
 	typedef int (ASound6::*CommandPtr)();
 	static const CommandPtr _commandList[30];
@@ -648,7 +322,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound7 : public ASound {
+class ASound7 : public RexASound {
 private:
 	typedef int (ASound7::*CommandPtr)();
 	static const CommandPtr _commandList[38];
@@ -680,7 +354,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound8 : public ASound {
+class ASound8 : public RexASound {
 private:
 	typedef int (ASound8::*CommandPtr)();
 	static const CommandPtr _commandList[38];
@@ -723,7 +397,7 @@ public:
 	int command(int commandId, int param) override;
 };
 
-class ASound9 : public ASound {
+class ASound9 : public RexASound {
 private:
 	int _v1, _v2;
 	byte *_soundPtr;
@@ -782,8 +456,8 @@ public:
 	int command(int commandId, int param) override;
 };
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_SOUND_NEBULAR_H */

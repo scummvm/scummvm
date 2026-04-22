@@ -33,6 +33,7 @@
 
 #include "gui/widgets/richtext.h"
 #include "gui/widgets/scrollbar.h"
+#include "gui/animation/FluidScroll.h"
 
 namespace GUI {
 
@@ -65,7 +66,7 @@ RichTextWidget::RichTextWidget(GuiObject *boss, const Common::String &name, cons
 }
 
 void RichTextWidget::init() {
-	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP);
+	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_TRACK_MOUSE | WIDGET_DYN_TOOLTIP | WIDGET_WANT_TICKLE | WIDGET_RETAIN_FOCUS);
 
 	_type = kRichTextWidget;
 
@@ -81,6 +82,10 @@ void RichTextWidget::init() {
 	_textHeight = MAX(1, _h - 2 * _innerMargin);
 
 	_limitH = 140;
+
+	_scrollPos = 0.0f;
+	_fluidScroller = new FluidScroller();
+	_isDragging = false;
 }
 
 
@@ -94,25 +99,33 @@ RichTextWidget::~RichTextWidget() {
 	if (_cachedTextSurface)
 		_cachedTextSurface->free();
 	delete _cachedTextSurface;
+	delete _fluidScroller;
 }
 
 void RichTextWidget::handleMouseWheel(int x, int y, int direction) {
-	_verticalScroll->handleMouseWheel(x, y, direction);
+	_fluidScroller->handleMouseWheel(direction);
+	applyScrollPos();
 }
 
 void RichTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	_mouseDownY = _mouseDownStartY = y;
+	_fluidScroller->stopAnimation();
 }
 
 void RichTextWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (_isDragging)
+		_fluidScroller->startFling();
+
 	// Allow some tiny finger slipping
-	if (ABS(_mouseDownY - _mouseDownStartY) > 5) {
+	if (ABS(_mouseDownY - _mouseDownStartY) > 5 || _isDragging) {
 		_mouseDownY = _mouseDownStartY = 0;
+		_isDragging = false;
 
 		return;
 	}
 
 	_mouseDownY = _mouseDownStartY = 0;
+	_isDragging = false;
 
 	if (!_txtWnd)
 		return;
@@ -136,23 +149,31 @@ void RichTextWidget::handleMouseMoved(int x, int y, int button) {
 	if (_mouseDownStartY == 0 || _mouseDownY == y || !_txtWnd)
 		return;
 
-	int h = _txtWnd->getTextHeight();
-	int prevScrolledY = _scrolledY;
+	int deltaY = _mouseDownY - y;
 
-	_scrolledY = CLIP(_scrolledY - (y - _mouseDownY), 0, h);
+	if (!_isDragging && ABS(deltaY) > 5)
+		_isDragging = true;
 
-	_mouseDownY = y;
+	if (_isDragging) {
+		_mouseDownY = y;
+		if (deltaY != 0) {
+			_fluidScroller->feedDrag(g_system->getMillis(), deltaY);
+			applyScrollPos();
+		}
+	}
+}
 
-	if (_scrolledY == prevScrolledY)
-		return;
+void RichTextWidget::handleTickle() {
+	if (_fluidScroller->update(g_system->getMillis(), _scrollPos))
+		applyScrollPos();
+}
 
-	recalc();
+void RichTextWidget::applyScrollPos() {
+	_scrollPos = _fluidScroller->getVisualPosition();
+	_scrolledY = (int)_scrollPos;
+	int maxScroll = MAX(0, _txtWnd->getTextHeight() - _limitH);
+	_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
 	_verticalScroll->recalc();
-
-	// Update scrollbar position
-	_verticalScroll->_currentPos = _scrolledY;
-	_verticalScroll->checkBounds(_verticalScroll->_currentPos);
-
 	markAsDirty();
 }
 
@@ -168,6 +189,9 @@ void RichTextWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kSetPositionCmd:
 		_scrolledY = _verticalScroll->_currentPos;
+		_scrollPos = _scrolledY;
+		_fluidScroller->stopAnimation();
+		_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 		reflowLayout();
 		g_gui.scheduleTopDialogRedraw();
 		break;
@@ -212,18 +236,16 @@ void RichTextWidget::recalc() {
 		_surface->create(_textWidth, _textHeight, g_gui.getWM()->_pixelformat);
 
 		int h = _txtWnd->getTextHeight();
-		if (h <= _limitH)
-			_scrolledY = 0;
-		if (_scrolledY > h - _limitH)
-			_scrolledY = MAX(0, h - _limitH);
+		int maxScroll = MAX(0, h - _limitH);
 		_verticalScroll->_numEntries = h;
-		_verticalScroll->_currentPos = _scrolledY;
+		_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
 		_verticalScroll->_entriesPerPage = _limitH;
 		_verticalScroll->_singleStep = _h / 4;
 		_verticalScroll->setPos(_w - _scrollbarWidth, 0);
 		_verticalScroll->setSize(_scrollbarWidth, _h - 1);
 		_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 		_verticalScroll->recalc();
+		_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
 	}
 }
 
@@ -297,18 +319,16 @@ void RichTextWidget::createWidget() {
 	}
 
 	int h = _txtWnd->getTextHeight();
-	if (h <= _limitH)
-		_scrolledY = 0;
-	if (_scrolledY > h - _limitH)
-		_scrolledY = MAX(0, h - _limitH);
+	int maxScroll = MAX(0, h - _limitH);
 	_verticalScroll->_numEntries = h;
-	_verticalScroll->_currentPos = _scrolledY;
+	_verticalScroll->_currentPos = CLIP((int)_scrolledY, 0, (int)maxScroll);
 	_verticalScroll->_entriesPerPage = _limitH;
 	_verticalScroll->_singleStep = _h / 4;
 	_verticalScroll->setPos(_w - _scrollbarWidth, 0);
 	_verticalScroll->setSize(_scrollbarWidth, _h - 1);
 	_verticalScroll->setVisible(_verticalScroll->_numEntries > _limitH); //show when there is something to scroll
 	_verticalScroll->recalc();
+	_fluidScroller->setBounds((float)maxScroll, (float)_limitH, (float)_verticalScroll->_singleStep);
 }
 
 void RichTextWidget::reflowLayout() {
@@ -342,10 +362,12 @@ void RichTextWidget::drawWidget() {
 
 	if (_cachedTextSurface) {
 		int cachedHeight = _cachedTextSurface->h;
-		int maxY = MAX(0, cachedHeight - _textHeight);
-		int srcY = CLIP((int)_scrolledY, 0, maxY);
+		int srcY = _scrolledY < 0 ? 0 : (int)_scrolledY;
+		int destY = _scrolledY < 0 ? -(int)_scrolledY : 0;
 
-		_surface->simpleBlitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth, MIN(srcY + _textHeight, cachedHeight)), Common::Point(0, 0));
+		if (srcY < cachedHeight)
+			_surface->simpleBlitFrom(*_cachedTextSurface, Common::Rect(0, srcY, _textWidth,
+			MIN(srcY + _textHeight - destY, cachedHeight)), Common::Point(0, destY));
 	} else
 		_txtWnd->draw(_surface, 0, _scrolledY, _textWidth, _textHeight, 0, 0);
 

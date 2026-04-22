@@ -200,6 +200,10 @@ Common::Error WageEngine::run() {
 		}
 	}
 
+#ifdef USE_IMGUI
+	_system->setImGuiCallbacks(ImGuiCallbacks());
+#endif
+
 	return Common::kNoError;
 }
 
@@ -534,7 +538,7 @@ void WageEngine::processTurnInternal(Common::String *textInput, Designed *clickI
 		_temporarilyHidden = true;
 		_gui->clearOutput();
 		_gui->_consoleWindow->setTextWindowFont(_world->_player->_currentScene->getFont());
-   		_world->_commandsMenu = _world->_commandsMenuDefault;  
+		_world->_commandsMenu = _world->_commandsMenuDefault;
    		_gui->regenCommandsMenu();
 		regen();
 		sayText(playerScene->_name, Common::TextToSpeechManager::QUEUE);

@@ -23,8 +23,8 @@
 #define MADS_NEBULAR_SCENES3_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
@@ -75,21 +75,21 @@ protected:
 	int computeScale(int low, int high, int id);
 
 public:
-	Scene3xx(MADSEngine *vm) : NebularScene(vm) {}
+	Scene3xx(RexNebularEngine *vm) : NebularScene(vm) {}
 
 	void actions() override {}
 };
 
 class Scene300s : public Scene3xx {
 public:
-	Scene300s(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene300s(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void preActions() override;
 };
 
 class Scene301 : public Scene3xx {
 public:
-	Scene301(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene301(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -101,7 +101,7 @@ private:
 	int _oldFrame;
 
 public:
-	Scene302(MADSEngine *vm);
+	Scene302(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -111,7 +111,7 @@ public:
 
 class Scene303 : public Scene3xx {
 public:
-	Scene303(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene303(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -123,7 +123,7 @@ private:
 	int _explosionSpriteId;
 
 public:
-	Scene304(MADSEngine *vm);
+	Scene304(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -160,7 +160,7 @@ private:
 	void handlePrisonerSpeech(int firstQuoteId, int number, uint32 timeout);
 
 public:
-	Scene307(MADSEngine *vm);
+	Scene307(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -174,7 +174,7 @@ private:
 	ForceField _forceField;
 
 public:
-	Scene308(MADSEngine *vm);
+	Scene308(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -190,7 +190,7 @@ private:
 	int _lastFrame;
 
 public:
-	Scene309(MADSEngine *vm);
+	Scene309(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -203,7 +203,7 @@ private:
 	ForceField _forceField;
 
 public:
-	Scene310(MADSEngine *vm);
+	Scene310(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -216,7 +216,7 @@ private:
 	bool _checkGuardFl;
 
 public:
-	Scene311(MADSEngine *vm);
+	Scene311(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -227,7 +227,7 @@ public:
 
 class Scene313 : public Scene3xx {
 public:
-	Scene313(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene313(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -240,7 +240,7 @@ private:
 	void handleRoxInGrate();
 
 public:
-	Scene316(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene316(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -275,7 +275,7 @@ private:
 	void handleInternDialog(int quoteId, int quoteNum, uint32 timeout);
 
 public:
-	Scene318(MADSEngine *vm);
+	Scene318(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -304,7 +304,7 @@ private:
 	void handleRexDialogues(int quote);
 	void handleSlacheDialogs(int quoteId, int counter, uint32 timer);
 public:
-	Scene319(MADSEngine *vm);
+	Scene319(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -329,7 +329,7 @@ private:
 	int _rightItemId;
 
 public:
-	Scene320(MADSEngine *vm);
+	Scene320(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -340,7 +340,7 @@ public:
 
 class Scene321 : public Scene3xx {
 public:
-	Scene321(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene321(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -349,7 +349,7 @@ public:
 
 class Scene322 : public SceneTeleporter {
 public:
-	Scene322(MADSEngine *vm) : SceneTeleporter(vm) {}
+	Scene322(RexNebularEngine *vm) : SceneTeleporter(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -359,7 +359,7 @@ public:
 
 class Scene351 : public Scene3xx {
 public:
-	Scene351(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene351(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -383,7 +383,7 @@ private:
 	void putArmDown(bool corridorExit, bool doorwayExit);
 
 public:
-	Scene352(MADSEngine *vm);
+	Scene352(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -394,7 +394,7 @@ public:
 
 class Scene353 : public Scene3xx {
 public:
-	Scene353(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene353(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -403,7 +403,7 @@ public:
 
 class Scene354 : public Scene3xx {
 public:
-	Scene354(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene354(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -413,7 +413,7 @@ public:
 
 class Scene357 : public Scene3xx {
 public:
-	Scene357(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene357(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -423,7 +423,7 @@ public:
 
 class Scene358 : public Scene3xx {
 public:
-	Scene358(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene358(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -436,7 +436,7 @@ private:
 	int _cardHotspotId;
 
 public:
-	Scene359(MADSEngine *vm);
+	Scene359(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -447,7 +447,7 @@ public:
 
 class Scene360 : public Scene3xx {
 public:
-	Scene360(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene360(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -461,7 +461,7 @@ private:
 	void handleRoxAction();
 
 public:
-	Scene361(MADSEngine *vm) : Scene3xx(vm) {}
+	Scene361(RexNebularEngine *vm) : Scene3xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -472,7 +472,7 @@ public:
 
 class Scene366 : public Scene300s {
 public:
-	Scene366(MADSEngine *vm) : Scene300s(vm) {}
+	Scene366(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -481,7 +481,7 @@ public:
 
 class Scene387 : public Scene300s {
 public:
-	Scene387(MADSEngine *vm) : Scene300s(vm) {}
+	Scene387(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -490,7 +490,7 @@ public:
 
 class Scene388 : public Scene300s {
 public:
-	Scene388(MADSEngine *vm) : Scene300s(vm) {}
+	Scene388(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -504,7 +504,7 @@ private:
 	int _circularQuoteId;
 
 public:
-	Scene389(MADSEngine *vm);
+	Scene389(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -515,7 +515,7 @@ public:
 
 class Scene390 : public Scene300s {
 public:
-	Scene390(MADSEngine *vm) : Scene300s(vm) {}
+	Scene390(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -524,7 +524,7 @@ public:
 
 class Scene391 : public Scene300s {
 public:
-	Scene391(MADSEngine *vm) : Scene300s(vm) {}
+	Scene391(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -533,15 +533,15 @@ public:
 
 class Scene399 : public Scene300s {
 public:
-	Scene399(MADSEngine *vm) : Scene300s(vm) {}
+	Scene399(RexNebularEngine *vm) : Scene300s(vm) {}
 
 	void setup() override;
 	void enter() override;
 	void actions() override;
 };
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES3_H */

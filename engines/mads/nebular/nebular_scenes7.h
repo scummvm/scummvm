@@ -23,8 +23,8 @@
 #define MADS_NEBULAR_SCENES7_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
@@ -46,7 +46,7 @@ protected:
 	void sceneEntrySound();
 
 public:
-	Scene7xx(MADSEngine *vm) : NebularScene(vm) {}
+	Scene7xx(RexNebularEngine *vm) : NebularScene(vm) {}
 };
 
 class Scene701 : public Scene7xx {
@@ -54,7 +54,7 @@ private:
 	int _fishingLineId;
 
 public:
-	Scene701(MADSEngine *vm);
+	Scene701(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -66,7 +66,7 @@ public:
 
 class Scene702 : public Scene7xx {
 public:
-	Scene702(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene702(RexNebularEngine *vm) : Scene7xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -96,7 +96,7 @@ private:
 	void handleFillBottle(int quote);
 
 public:
-	Scene703(MADSEngine *vm);
+	Scene703(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -121,7 +121,7 @@ private:
 	void handleBottleInterface();
 
 public:
-	Scene704(MADSEngine *vm);
+	Scene704(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -139,7 +139,7 @@ private:
 	void handleBottleInterface();
 
 public:
-	Scene705(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene705(RexNebularEngine *vm) : Scene7xx(vm) {}
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -161,7 +161,7 @@ private:
 	void handleRexDeath();
 
 public:
-	Scene706(MADSEngine *vm);
+	Scene706(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -173,7 +173,7 @@ public:
 
 class Scene707 : public SceneTeleporter {
 public:
-	Scene707(MADSEngine *vm) : SceneTeleporter(vm) {}
+	Scene707(RexNebularEngine *vm) : SceneTeleporter(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -183,7 +183,7 @@ public:
 
 class Scene710 : public Scene7xx {
 public:
-	Scene710(MADSEngine *vm) : Scene7xx(vm) {}
+	Scene710(RexNebularEngine *vm) : Scene7xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -193,7 +193,7 @@ public:
 
 class Scene711 : public SceneTeleporter {
 public:
-	Scene711(MADSEngine *vm) : SceneTeleporter(vm) {}
+	Scene711(RexNebularEngine *vm) : SceneTeleporter(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -206,7 +206,7 @@ private:
 	bool _rexHandingLine;
 
 public:
-	Scene751(MADSEngine *vm);
+	Scene751(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -221,7 +221,7 @@ private:
 	int _cardId;
 
 public:
-	Scene752(MADSEngine *vm);
+	Scene752(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -231,7 +231,7 @@ public:
 	void actions() override;
 };
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES7_H */

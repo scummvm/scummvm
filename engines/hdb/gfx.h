@@ -23,6 +23,7 @@
 #define HDB_GFX_H
 
 #include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 
 namespace Math {
 	class SineTable;
@@ -74,12 +75,12 @@ public:
 	Gfx();
 	~Gfx();
 
-	Graphics::ManagedSurface _globalSurface;
+	Graphics::Screen _globalSurface;
 
 	void init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
-	void fillScreen(uint32 color);
+	void fillScreen();
 	void updateVideo();
 	void setPointerState(int value);
 	void drawPointer();
@@ -101,7 +102,7 @@ public:
 	Picture *loadPic(const char *picName);
 	Tile *loadTile(const char *tileName);
 	Tile *loadIcon(const char *tileName);
-	void setPixel(int x, int y, uint16 color);
+	void setPixel(int x, int y, uint32 color);
 
 	Tile *getTile(int index);
 	void cacheTileSequence(int index, int count);
@@ -186,12 +187,12 @@ private:
 
 	struct {
 		int x, y, speed;
-		uint16 color;
+		uint32 color;
 	} _stars3D[kNum3DStars];
 
 	struct {
 		double x, y, speed;
-		uint16 color;
+		uint32 color;
 	} _stars3DSlow[kNum3DStars];
 
 	int _tileSkyStars; // Index of sky_stars tile
@@ -221,7 +222,7 @@ private:
 
 	FontInfo _fontHeader;
 	Common::Array<CharInfo *> _charInfoBlocks;
-	Graphics::Surface _fontSurfaces[256];
+	Graphics::ManagedSurface _fontSurfaces[256];
 	uint16 _fontGfx;
 	int _eLeft, _eRight, _eTop, _eBottom;
 
@@ -239,7 +240,7 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
-	int drawMasked(int x, int y, int alpha = 0xff);
+	int drawMasked(int x, int y, uint8 alpha = 0xff);
 
 	int _width, _height;
 
@@ -261,7 +262,7 @@ public:
 
 	Graphics::Surface load(Common::SeekableReadStream *stream);
 	int draw(int x, int y);
-	int drawMasked(int x, int y, int alpha = 0xff);
+	int drawMasked(int x, int y, uint8 alpha = 0xff);
 
 	uint32 _flags;
 

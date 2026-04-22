@@ -208,7 +208,7 @@ private:
 
 class ThemeEngine {
 protected:
-	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
+	typedef Common::HashMap<Common::String, Common::SharedPtr<Graphics::ManagedSurface> > ImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -648,15 +648,9 @@ protected:
 	void setGraphicsMode(GraphicsMode mode);
 
 	struct CursorData {
-		byte *data = nullptr;
-		uint width = 0;
-		uint height = 0;
+		Common::SharedPtr<Graphics::ManagedSurface> surface;
 		int hotspotX = 0;
 		int hotspotY = 0;
-		uint32 transparent = 255;
-		Graphics::PixelFormat format;
-		byte palSize = 0;
-		byte pal[3 * 256];
 	};
 
 	CursorData _cursors[kCursorMax];
@@ -670,7 +664,7 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
+	Common::SharedPtr<Graphics::ManagedSurface> getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
 	}
 

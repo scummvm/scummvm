@@ -139,7 +139,7 @@ static uint32 findTuneTable(const Common::Array<uint8> &mem) {
 
 
 static bool applyKnownElviraDriverLayout(uint32 textSize, ElviraPrgLabels &L) {
-	// Full game
+	// Full game (DE)
 	if (textSize == 0x15920) {
 		L.L003C = 0xDF6A;
 		L.L003D = 0xDFFE;
@@ -167,6 +167,37 @@ static bool applyKnownElviraDriverLayout(uint32 textSize, ElviraPrgLabels &L) {
 		L.L0051 = 0xE184;
 		L.L0067 = 0xE5E8;
 		L.L0068 = 0xE652;
+		return true;
+	}
+
+	// Full game (RUNENG variants)
+	if (textSize == 0x158DE) {
+		L.L003C = 0xDF28;
+		L.L003D = 0xDFBC;
+		L.L003E = 0xDFC2;
+		L.L003F = 0xDFC8;
+		L.L0040 = 0xDFD4;
+		L.L0041 = 0xDFE0;
+		L.L0042 = 0xDFF0;
+		L.L0043 = 0xE008;
+		L.L0044 = 0xE00E;
+		L.L0045 = 0xE014;
+		L.L0046 = 0xE01A;
+		L.L0047 = 0xE06E;
+		L.L0048 = 0xE070;
+		L.L0049 = 0xE074;
+		L.L004A = 0xE076;
+		L.L004B = 0xE07E;
+		L.L004C = 0xE084;
+		L.L004D = 0xE08A;
+		L.L004E = 0xE091;
+		L.L004F = 0xE09C;
+		L.L003A = L.L003C - 64;
+		L.L003B = L.L003C - 62;
+		L.tunetab = 0xE0D2;
+		L.L0051 = 0xE142;
+		L.L0067 = 0xE5A6;
+		L.L0068 = 0xE610;
 		return true;
 	}
 
@@ -206,6 +237,9 @@ static bool applyKnownElviraDriverLayout(uint32 textSize, ElviraPrgLabels &L) {
 
 
 static bool locateEmbeddedDriverLayout(const Common::Array<uint8> &mem, ElviraPrgLabels &L, uint32 textSize) {
+	if (applyKnownElviraDriverLayout(textSize, L))
+		return true;
+
 	static const uint8 sigL0068[] = {0xFF,0xFF,0x00,0x01,0x00,0xA0,0xFF,0xFF,0x00,0x02,0x00,0x00,0x02,0x00,0x00,0x14};
 	static const uint8 sigL004B[] = {0x00,0x00,0x00,0x1A,0x00,0x34};
 	static const uint8 sigL003C[] = {0x0D,0x60,0x0C,0xA0,0x0B,0xE8,0x0B,0x40};
@@ -224,7 +258,7 @@ static bool locateEmbeddedDriverLayout(const Common::Array<uint8> &mem, ElviraPr
 	L.tunetab = findTuneTable(mem);
 
 	if (!L.L0068 || !L.L004B || !L.L003C || !L.L003D || !L.L003E || !L.L0067 || !L.L0045 || !L.tunetab)
-		return applyKnownElviraDriverLayout(textSize, L);
+		return false;
 
 	if (L.L003C >= 64) {
 		L.L003A = L.L003C - 64;

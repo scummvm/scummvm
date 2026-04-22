@@ -262,7 +262,11 @@ void VisualText::createBitmap() {
 
 	// Make sure lines have approximately consistent height regardless of the characters they use
 	scaledRect.bottom = MAX<int16>(scaledRect.bottom, scaledLineHeight * lines.size());
-	scaledRect.right = MAX<int16>(scaledRect.right, maxScaledLineWidth);
+
+	Graphics::TextAlign align = Graphics::convertTextAlignH(_align, StarkSettings->getLanguage() == Common::HE_ISR);
+
+	if (align == Graphics::kTextAlignRight)
+		scaledRect.right = MAX<int16>(scaledRect.right, maxScaledLineWidth);
 
 	if (!isBlank()) {
 		_originalRect.right = StarkGfx->scaleWidthCurrentToOriginal(scaledRect.right);
@@ -282,8 +286,6 @@ void VisualText::createBitmap() {
 	uint32 white = surface.format.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	surface.fillRect(Common::Rect(surface.w, surface.h), black);
-
-	Graphics::TextAlign align = Graphics::convertTextAlignH(_align, StarkSettings->getLanguage() == Common::HE_ISR);
 
 	// Render the lines to the surface
 	for (uint i = 0; i < lines.size(); i++) {

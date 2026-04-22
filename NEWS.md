@@ -2,6 +2,11 @@ For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
 #### 2026.3.0 (2026-06-XX)
+
+ New games:
+   - Added support for Nancy Drew: The Haunted Carousel.
+   - Added support for Nancy Drew: Danger on Deception Island.
+
  General:
    - Highlight clickable links in the GUI with a cursor change.
    - Fixed window size when switching out of fullscreen mode on 3D engines.
@@ -16,6 +21,10 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Reworked keymapper for MM1.
+
+ SLUDGE:
+   - Added two more games to detection, "Sam and Max Flintlocked" and
+	   "Full Moon".
 
 
 #### 2026.2.0 "Railmonicon" (2026-03-28)

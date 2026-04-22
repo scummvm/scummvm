@@ -98,13 +98,7 @@ static inline ImU32 U32(const ImVec4 &c) {
 	return ImGui::GetColorU32(c);
 }
 
-// helper to draw thin rectangles for table grid
-static void addThinRect(ImDrawList *dl, ImVec2 min, ImVec2 max, ImU32 col, float thickness = 0.1f) {
-	dl->AddLine(ImVec2(min.x, min.y), ImVec2(max.x, min.y), col, thickness); // top
-	dl->AddLine(ImVec2(max.x, min.y), ImVec2(max.x, max.y), col, thickness); // right
-	dl->AddLine(ImVec2(max.x, max.y), ImVec2(min.x, max.y), col, thickness); // bottom
-	dl->AddLine(ImVec2(min.x, max.y), ImVec2(min.x, min.y), col, thickness); // left
-}
+
 
 // help to draw tool tip with wrapped text
 static void setTooltip(const char *fmt, ...) {
@@ -269,7 +263,7 @@ static void drawSidebar1(ImDrawList *dl, ImVec2 startPos, Score *score) {
 	}
 }
 
-static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
+static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score, Window *window) {
 	float toggleColWidth = 20.0f;
 	float labelColWidth  = 40.0f;
 	float totalWidth = toggleColWidth + labelColWidth;
@@ -318,6 +312,7 @@ static void drawSidebar2(ImDrawList *dl, ImVec2 startPos, Score *score) {
 			setTooltip("Playback toggle");
 		if (ImGui::IsItemClicked()) { // determines what happens on toggle of the button
 			score->_channels[ch]->_hideFromStage = !isHiddenFromStage;
+			_state->_windowToRedraw = window;
 		}
 
 		// channel num and extra stuff if extended mode
@@ -742,9 +737,18 @@ static void drawSpriteGrid(ImDrawList *dl, ImVec2 startPos, Score *score, Cast *
 					_state->_selectedScoreCast.channel = ch;
 					_state->_selectedScoreCast.isMainChannel = false;
 
+					// Open cast member details window
+					if (sprite._castId.member) {
+						CastMember *clickedCM = cast->getCastMember(sprite._castId.member, true);
+						if (clickedCM) {
+							_state->_castDetails._castMember = clickedCM;
+							_state->_w.castDetails = true;
+						}
+					}
+
 					int playheadIdx = score->getCurrentFrameNum() - 1;
 					if (playheadIdx >= spanStart && playheadIdx <= spanEnd) {
-						Director::DT::setSelectedChannel(ch);
+						_state->_selectedChannel = ch;
 						_state->_windowToRedraw = window;
 					}
 				}
@@ -1163,7 +1167,7 @@ void showScore() {
 		drawMainChannelGrid(dl, layout.mainChannelGridPos, score);
 		drawModeSelector(layout.modeSelectorPos);
 		drawRuler(dl, layout.rulerPos);
-		drawSidebar2(dl, layout.sidebar2Pos, score);
+		drawSidebar2(dl, layout.sidebar2Pos, score, selectedWindow);
 		drawSpriteGrid(dl, layout.gridPos, score, cast, selectedWindow);
 		drawPlayhead(dl, layout.rulerPos, layout.mainChannelGridPos, layout.gridPos, score);
 		drawSliderX(layout.sliderPos, score);

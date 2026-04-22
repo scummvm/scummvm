@@ -23,8 +23,8 @@
 #define MADS_NEBULAR_SCENES_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/globals_nebular.h"
 
@@ -1339,7 +1339,7 @@ enum Noun {
 
 class SceneFactory {
 public:
-	static SceneLogic *createScene(MADSEngine *vm);
+	static SceneLogic *createScene(RexNebularEngine *vm);
 };
 
 /**
@@ -1364,7 +1364,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	NebularScene(MADSEngine *vm);
+	NebularScene(RexNebularEngine *vm);
 
 	void sub7178C();
 };
@@ -1379,7 +1379,7 @@ protected:
 	/**
 	* Constructor
 	*/
-	SceneInfoNebular(MADSEngine *vm) : SceneInfo(vm) {}
+	SceneInfoNebular(RexNebularEngine *vm) : SceneInfo(vm) {}
 };
 
 class SceneTeleporter : public NebularScene {
@@ -1408,10 +1408,10 @@ protected:
 	/**
 	* Constructor
 	*/
-	SceneTeleporter(MADSEngine *vm);
+	SceneTeleporter(RexNebularEngine *vm);
 };
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES_H */

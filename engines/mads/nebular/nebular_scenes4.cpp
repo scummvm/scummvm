@@ -21,8 +21,8 @@
 
 #include "common/scummsys.h"
 #include "math/utils.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes4.h"
 
@@ -93,7 +93,7 @@ void Scene4xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-Scene401::Scene401(MADSEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
+Scene401::Scene401(RexNebularEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
 	_northFl = false;
 	_timer = 0;
 }
@@ -237,7 +237,7 @@ void Scene401::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene402::Scene402(MADSEngine *vm) : Scene4xx(vm) {
+Scene402::Scene402(RexNebularEngine *vm) : Scene4xx(vm) {
 	_lightOn = false;
 	_blowingSmoke = false;
 	_leftWomanMoving = false;
@@ -2576,7 +2576,7 @@ void Scene405::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene406::Scene406(MADSEngine *vm) : Scene4xx(vm) {
+Scene406::Scene406(RexNebularEngine *vm) : Scene4xx(vm) {
 	_hitStorageDoor = false;
 }
 
@@ -2791,7 +2791,7 @@ void Scene406::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene407::Scene407(MADSEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
+Scene407::Scene407(RexNebularEngine *vm) : Scene4xx(vm), _destPos(0, 0) {
 	_fromNorth = false;
 }
 
@@ -3284,7 +3284,7 @@ void Scene410::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene411::Scene411(MADSEngine *vm) : Scene4xx(vm) {
+Scene411::Scene411(RexNebularEngine *vm) : Scene4xx(vm) {
 	_curAnimationFrame = -1;
 	_newIngredient = -1;
 	_newQuantity = -1;
@@ -4054,7 +4054,7 @@ void Scene411::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene413::Scene413(MADSEngine *vm) : Scene4xx(vm) {
+Scene413::Scene413(RexNebularEngine *vm) : Scene4xx(vm) {
 	_rexDeath = -1;
 	_canMove = -1;
 }
@@ -4211,5 +4211,5 @@ void Scene413::actions() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

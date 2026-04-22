@@ -25,7 +25,6 @@
 #include "common/system.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
-#include "graphics/thumbnail.h"
 #include "common/translation.h"
 #include "gui/widgets/list.h"
 #include "gui/editrecorddialog.h"
@@ -274,7 +273,7 @@ void RecorderDialog::updateList() {
 int RecorderDialog::runModal(Common::String &target) {
 	_target = target;
 	if (_gfxWidget)
-		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
+		_gfxWidget->clearGfx();
 
 	reflowLayout();
 	updateList();
@@ -346,13 +345,11 @@ void RecorderDialog::updateScreenshot() {
 		_currentScreenshot = 1;
 	}
 
-	Graphics::Surface *srcsf = _playbackFile.getScreenShot(_currentScreenshot);
-	Common::SharedPtr<Graphics::Surface> srcsfSptr = Common::SharedPtr<Graphics::Surface>(srcsf, Graphics::SurfaceDeleter());
-	if (srcsfSptr) {
-		Graphics::Surface *destsf = Graphics::scale(*srcsfSptr, _gfxWidget->getWidth(), _gfxWidget->getHeight());
-		Common::SharedPtr<Graphics::Surface> destsfSptr = Common::SharedPtr<Graphics::Surface>(destsf, Graphics::SurfaceDeleter());
-		if (destsfSptr && _gfxWidget->isVisible())
-			_gfxWidget->setGfx(destsf, false);
+	Common::SharedPtr<Graphics::ManagedSurface> srcsf(_playbackFile.getScreenShot(_currentScreenshot));
+	if (srcsf) {
+		Common::SharedPtr<Graphics::ManagedSurface> destsf(srcsf->scale(_gfxWidget->getWidth(), _gfxWidget->getHeight()));
+		if (destsf && _gfxWidget->isVisible())
+			_gfxWidget->setGfx(destsf);
 	} else {
 		_gfxWidget->setGfx(-1, -1, 0, 0, 0);
 	}

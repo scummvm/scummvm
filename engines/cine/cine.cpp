@@ -197,6 +197,12 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	_restartRequested = false;
 	_preLoad = false;
 	setDefaultGameSpeed();
+
+	_ttsLanguage = kEnglish;
+	_copyProtectionTextScreen = false;
+	_copyProtectionColorScreen = false;
+	_saveInputMenuOpen = false;
+	_scriptInfo = nullptr;
 }
 
 CineEngine::~CineEngine() {

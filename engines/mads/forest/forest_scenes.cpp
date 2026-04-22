@@ -20,17 +20,17 @@
  */
 
 #include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
-#include "mads/resources.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/compression.h"
+#include "mads/core/resources.h"
+#include "mads/core/scene.h"
 #include "mads/forest/game_forest.h"
 #include "mads/forest/forest_scenes.h"
 
 namespace MADS {
 namespace Forest {
 
-SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
+SceneLogic *SceneFactory::createScene(RexNebularEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
 	// TODO
@@ -124,7 +124,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 /*------------------------------------------------------------------------*/
 
-ForestScene::ForestScene(MADSEngine *vm) : SceneLogic(vm),
+ForestScene::ForestScene(RexNebularEngine *vm) : SceneLogic(vm),
 		_globals(static_cast<GameForest *>(vm->_game)->_globals),
 		_game(*static_cast<GameForest *>(vm->_game)),
 		_action(vm->_game->_scene._action) {
@@ -171,5 +171,5 @@ void SceneInfoForest::loadCodes(BaseSurface &depthSurface, Common::SeekableReadS
 	delete[] walkMap;
 }
 
-} // End of namespace Forest
-} // End of namespace MADS
+} // namespace Forest
+} // namespace MADS

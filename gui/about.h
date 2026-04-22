@@ -33,10 +33,11 @@ namespace GUI {
 class EEHandler;
 class ScrollBarWidget;
 class ButtonWidget;
+class FluidScroller;
 
 class AboutDialog : public Dialog {
 protected:
-	int	       _scrollPos;
+	float	       _scrollPos;
 	uint32         _scrollTime;
 	Common::U32StringArray _lines;
 	uint32         _lineHeight;
@@ -48,6 +49,7 @@ protected:
 	bool _isDragging;
 	int _dragLastY;
 
+	FluidScroller *_fluidScroller;
 	ScrollBarWidget *_scrollbar;
 	ButtonWidget *_closeButton;
 	Common::Rect _textRect;
@@ -59,6 +61,7 @@ protected:
 
 public:
 	AboutDialog(bool inGame = false);
+	~AboutDialog() override;
 
 	void open() override;
 	void close() override;

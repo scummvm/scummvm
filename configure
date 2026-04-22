@@ -4228,9 +4228,8 @@ case $_backend in
 		fi
 		;;
 	atari)
-		define_in_config_if_yes yes "ATARI"
+		append_var DEFINES "-DATARI"
 		append_var DEFINES "-DDISABLE_NES_APU"
-		#append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 		append_var LIBS "-lgem"
 		_ogg=no
 		_vorbis=no
@@ -7729,7 +7728,7 @@ case $_host_os in
 			esac
 		done
 
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -ljnigraphics -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic $system_libs -llog -landroid -loboe -ljnigraphics -lEGL"
 		;;
 	ds)
 		# Moved -Wl,--gc-sections here to avoid it interfering with the library checks

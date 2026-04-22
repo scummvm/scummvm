@@ -1207,10 +1207,21 @@ void Inter_v2::o2_addHotspot(OpFuncParams &params) {
 		top     = 0;
 	}
 
-	if (id < 0)
-		_vm->_game->_hotspots->add(0xD000 - id, left & 0xFFFC, top & 0xFFFC,
+	if (id < 0) {
+		int16 hotspotLeft = 0;
+		int16 hotspotTop = 0;
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
+			// The operation is no longer a "floor to previous multiple of 4", but a "minus 4"
+			// NOTE: may be needed by other games as well
+			hotspotLeft = left - 4;
+			hotspotTop  = top  - 4;
+		} else {
+			hotspotLeft = left & 0xFFFC;
+			hotspotTop  = top  & 0xFFFC;
+		}
+		_vm->_game->_hotspots->add(0xD000 - id, hotspotLeft, hotspotTop,
 				left + width + 3, top + height + 3, flags, key, 0, 0, funcPos);
-	else
+	} else
 		_vm->_game->_hotspots->add(0xE000 + id, left, top,
 				left + width - 1, top + height - 1, flags, key, 0, 0, funcPos);
 }

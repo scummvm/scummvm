@@ -28,6 +28,7 @@
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "backends/events/default/default-events.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 #include "backends/mutex/wii/wii-mutex.h"
 #include "backends/saves/default/default-saves.h"
@@ -134,6 +135,7 @@ void OSystem_Wii::initBackend() {
 	if (!getcwd(buf, MAXPATHLEN))
 		Common::strcpy_s(buf, "/");
 
+	_eventManager = new DefaultEventManager(this);
 	_savefileManager = new DefaultSaveFileManager(buf);
 	_timerManager = new DefaultTimerManager();
 
@@ -141,7 +143,7 @@ void OSystem_Wii::initBackend() {
 	initSfx();
 	initEvents();
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 void OSystem_Wii::quit() {
@@ -343,7 +345,7 @@ Common::String OSystem_Wii::getSystemLanguage() const {
 	} else {
 		// This will only happen when new languages are added to the API.
 		warning("WII: Unknown system language: %d", langID);
-		return EventsBaseBackend::getSystemLanguage();
+		return BaseBackend::getSystemLanguage();
 	}
 }
 #endif // !GAMECUBE

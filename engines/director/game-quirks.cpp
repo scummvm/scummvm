@@ -292,6 +292,8 @@ const struct Quirk {
 	{ "pipcatalog", Common::kPlatformPippin, &quirkPipCatalog },
 
 	// Some games pop up a nag mesasage if the color depth isn't exactly 16 bit.
+	{ "badday", Common::kPlatformWindows, &quirkPretend16Bit },
+	{ "badday", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "vnc", Common::kPlatformWindows, &quirkPretend16Bit },
 	{ "vnc", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "finkletimes", Common::kPlatformWindows, &quirkPretend16Bit },

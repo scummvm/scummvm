@@ -113,6 +113,7 @@ public:
 	void handleMouseLeft(int button) override { _lastRead = -1; };
 	bool handleKeyDown(Common::KeyState state) override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	void handleTickle() override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	virtual int getFirstVisible() const;
 	virtual void setFirstVisible(int tabID, bool adjustIfRoom = false);

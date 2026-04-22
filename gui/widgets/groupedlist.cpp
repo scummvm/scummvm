@@ -29,6 +29,7 @@
 #include "gui/widgets/scrollbar.h"
 #include "gui/dialog.h"
 #include "gui/gui-manager.h"
+#include "gui/animation/FluidScroll.h"
 
 #include "gui/ThemeEval.h"
 
@@ -258,22 +259,14 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	if (!isEnabled())
 		return;
 
-	// First check whether the selection changed
-	int newSelectedItem = findItem(x, y);
-	if (newSelectedItem == -1)
-		return;
+	_isMouseDown = true;
+	_isDragging = false;
+	_dragLastY = 0;
 
-	if (isGroupHeader(_listIndex[newSelectedItem])) {
-		int groupID = indexToGroupID(_listIndex[newSelectedItem]);
-		int oldSelection = getSelected();
-		_selectedItem = -1;
-		toggleGroup(groupID);
-		if (oldSelection != -1) {
-			_selectedItem = findDataIndex(oldSelection);
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		}
-		markAsDirty();
-		return;
+	if (button == 1) {
+		_dragStartY = y;
+		_dragLastY = y;
+		_fluidScroller->stopAnimation();
 	}
 
 	// TODO: Determine where inside the string the user clicked and place the
@@ -281,53 +274,77 @@ void GroupedListWidget::handleMouseDown(int x, int y, int button, int clickCount
 	// See _editScrollOffset and EditTextWidget::handleMouseDown.
 	if (_editMode)
 		abortEditMode();
-
-	int dataIndex = _listIndex[newSelectedItem];
-	if (dataIndex < 0)
-		return;
-
-	// Get modifier keys
-	int modifiers = g_system->getEventManager()->getModifierState();
-	bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
-	bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
-
-	// Only handle multi-select if it's enabled
-	if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
-		if (shiftClick && _lastSelectionStartItem != -1) {
-			// Shift+Click: Select range in terms of underlying data indices
-			int startListIndex = _lastSelectionStartItem;
-			int endListIndex = newSelectedItem;              
-			selectItemRange(startListIndex, endListIndex);
-			_selectedItem = newSelectedItem;
-			_lastSelectionStartItem = newSelectedItem;
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		} else if (ctrlClick) {
-			// Ctrl+Click: toggle selection for the underlying data index
-			if (isItemSelected(newSelectedItem)) {
-				markSelectedItem(newSelectedItem, false);
-			} else {
-				markSelectedItem(newSelectedItem, true);
-				_selectedItem = newSelectedItem;
-				_lastSelectionStartItem = newSelectedItem;
-			}
-			sendCommand(kListSelectionChangedCmd, _selectedItem);
-		}
-	} else {
-		// Regular click: clear selection and select only this underlying item
-		clearSelection();
-		_selectedItem = newSelectedItem;
-		markSelectedItem(newSelectedItem, true);
-		sendCommand(kListSelectionChangedCmd, _selectedItem);
-	}
-
-	// Notify clients if an item was clicked
-	if (newSelectedItem >= 0)
-		sendCommand(kListItemSingleClickedCmd, _selectedItem);
-
-	markAsDirty();
 }
 
 void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (button == 1 || button == 2) {
+		if (_isMouseDown && button == 1 && _isDragging)
+			_fluidScroller->startFling();
+
+		if (_isMouseDown && !_isDragging) {
+			int newSelectedItem = findItem(x, y);
+			if (newSelectedItem != -1) {
+				if (isGroupHeader(_listIndex[newSelectedItem])) {
+					int groupID = indexToGroupID(_listIndex[newSelectedItem]);
+					int oldSelection = getSelected();
+					_selectedItem = -1;
+					toggleGroup(groupID);
+					if (oldSelection != -1) {
+						_selectedItem = findDataIndex(oldSelection);
+						sendCommand(kListSelectionChangedCmd, _selectedItem);
+					}
+					applyScrollPos();
+				} else {
+					int dataIndex = _listIndex[newSelectedItem];
+					if (dataIndex >= 0) {
+						// Get modifier keys
+						int modifiers = g_system->getEventManager()->getModifierState();
+						bool ctrlClick = (modifiers & Common::KBD_CTRL) != 0;
+						bool shiftClick = (modifiers & Common::KBD_SHIFT) != 0;
+
+						// Only handle multi-select if it's enabled
+						if (_multiSelectEnabled && (shiftClick || ctrlClick)) {
+							if (shiftClick && _lastSelectionStartItem != -1) {
+								// Shift+Click: Select range in terms of underlying data indices
+								int startListIndex = _lastSelectionStartItem;
+								int endListIndex = newSelectedItem;              
+								selectItemRange(startListIndex, endListIndex);
+								_selectedItem = newSelectedItem;
+								_lastSelectionStartItem = newSelectedItem;
+								sendCommand(kListSelectionChangedCmd, _selectedItem);
+							} else if (ctrlClick) {
+								// Ctrl+Click: toggle selection for the underlying data index
+								if (isItemSelected(newSelectedItem)) {
+									markSelectedItem(newSelectedItem, false);
+								} else {
+									markSelectedItem(newSelectedItem, true);
+									_selectedItem = newSelectedItem;
+									_lastSelectionStartItem = newSelectedItem;
+								}
+								sendCommand(kListSelectionChangedCmd, _selectedItem);
+							}
+						} else {
+							// Regular click: clear selection and select only this underlying item
+							clearSelection();
+							_selectedItem = newSelectedItem;
+							markSelectedItem(newSelectedItem, true);
+							sendCommand(kListSelectionChangedCmd, _selectedItem);
+						}
+
+						// Notify clients if an item was clicked
+						if (newSelectedItem >= 0)
+							sendCommand(kListItemSingleClickedCmd, _selectedItem);
+
+						applyScrollPos();
+					}
+				}
+			}
+		}
+
+		_isMouseDown = false;
+		_isDragging = false;
+	}
+
 	// If this was a double click and the mouse is still over
 	// the selected item, send the double click command
 	if (clickCount == 2 && (_selectedItem == findItem(x, y))) {
@@ -339,16 +356,17 @@ void GroupedListWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 }
 
 void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
-	_scrollBar->handleMouseWheel(x, y, direction);
+	_fluidScroller->handleMouseWheel(direction);
 }
 
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
-			_currentPos = data;
-			checkBounds();
-			markAsDirty();
+			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+			_fluidScroller->stopAnimation();
+			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
+			applyScrollPos();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
 			// NOTE: ListWidget's boss is always GUI::Dialog
@@ -412,9 +430,15 @@ void GroupedListWidget::drawWidget() {
 
 	// Draw the list items
 	const int lineHeight = kLineHeight + _itemSpacing;
+	const int firstItem = MAX(0, (int)(_scrollPos / lineHeight));
+	const int offset = _scrollPos < 0 ? (int)_scrollPos : (int)_scrollPos % lineHeight;
 	const int indentSpacing = g_gui.getFontHeight();
-	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
-		const int y = _y + _topPadding + lineHeight * i;
+
+	Common::Rect innerRect(_x, _y + _topPadding, _x + _w - _scrollBarWidth, _y + _h - _bottomPadding);
+	Common::Rect oldClip = g_gui.theme()->swapClipRect(innerRect.findIntersectingRect(g_gui.theme()->getClipRect()));
+
+	for (i = 0, pos = firstItem; i <= _entriesPerPage && pos < len; i++, pos++) {
+		const int y = _y + _topPadding + lineHeight * i - offset;
 		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 #if 0
 		ThemeEngine::FontStyle bold = ThemeEngine::kFontStyleBold;
@@ -492,6 +516,9 @@ void GroupedListWidget::drawWidget() {
 			g_gui.theme()->drawText(r2, buffer, itemState, _drawAlign, inverted, _leftPadding, true);
 		}
 	}
+
+	g_gui.theme()->swapClipRect(oldClip);
+
 	if (_editMode)
 		EditableWidget::drawWidget();
 }

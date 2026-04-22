@@ -45,12 +45,12 @@ protected:
 	 */
 	void setPlayerSpritesPrefix();
 public:
-	Scene1xx(MADSEngine *vm) : DragonsphereScene(vm) {}
+	Scene1xx(RexNebularEngine *vm) : DragonsphereScene(vm) {}
 };
 
 class Scene101 : public Scene1xx {
 public:
-	Scene101(MADSEngine *vm);
+	Scene101(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -68,7 +68,7 @@ private:
 	int _animRunning;
 
 public:
-	Scene102(MADSEngine *vm);
+	Scene102(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -80,7 +80,7 @@ public:
 
 class Scene103 : public Scene1xx {
 public:
-	Scene103(MADSEngine *vm);
+	Scene103(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -137,7 +137,7 @@ private:
 	void handlePidAnimation();
 
 public:
-	Scene104(MADSEngine *vm);
+	Scene104(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -167,7 +167,7 @@ private:
 	void handleConversation();
 
 public:
-	Scene105(MADSEngine *vm);
+	Scene105(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -177,7 +177,7 @@ public:
 	void actions() override;
 };
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS
 
 #endif

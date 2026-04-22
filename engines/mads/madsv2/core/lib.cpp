@@ -1,0 +1,37 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/debug.h"
+#include "mads/madsv2/core/lib.h"
+
+namespace MADS {
+namespace MADSV2 {
+
+char mads_dev_lib_version[5] = lib_version;
+char mads_dev_lib_date[11] = lib_date;
+
+void lib_show_version() {
+	debug(1, "(Mads development library version %s as of %s)\n",
+		mads_dev_lib_version, mads_dev_lib_date);
+}
+
+} // namespace MADSV2
+} // namespace MADS

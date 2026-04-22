@@ -26,6 +26,8 @@
 #ifndef AUDIO_SOFTSYNTH_OPL_MAME_H
 #define AUDIO_SOFTSYNTH_OPL_MAME_H
 
+#ifndef DISABLE_MAME_OPL
+
 #include "common/scummsys.h"
 #include "common/random.h"
 
@@ -195,5 +197,7 @@ protected:
 
 } // End of namespace MAME
 } // End of namespace OPL
+
+#endif // !DISABLE_MAME_OPL
 
 #endif

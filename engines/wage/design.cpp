@@ -421,7 +421,7 @@ void Design::drawRoundRect(Graphics::ManagedSurface *surface, Common::ReadStream
 	if (y1 > y2)
 		SWAP(y1, y2);
 
-	if (_boundsCalculationMode) 
+	if (_boundsCalculationMode)
 		_lastOpString = Common::String::format("roundRect %d, %d, %d, %d", x1, y1, x2, y2);
 
 	if (_surface) {

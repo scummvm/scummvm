@@ -22,11 +22,11 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "graphics/scaler.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
-#include "mads/menu_views.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/game.h"
+#include "mads/core/screen.h"
+#include "mads/core/msurface.h"
+#include "mads/core/menu_views.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "mads/nebular/globals_nebular.h"
@@ -36,7 +36,7 @@ namespace MADS {
 
 namespace Nebular {
 
-GameNebular::GameNebular(MADSEngine *vm)
+GameNebular::GameNebular(RexNebularEngine *vm)
 	: Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
@@ -904,6 +904,6 @@ void GameNebular::synchronize(Common::Serializer &s, bool phase1) {
 	}
 }
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS

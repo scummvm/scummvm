@@ -50,7 +50,7 @@ typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, co
 
 struct DrawStep {
 	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
-	Graphics::ManagedSurface *blitSrc;
+	Common::SharedPtr<Graphics::ManagedSurface> blitSrc;
 	Graphics::AlphaType alphaType;
 
 	struct Color {
@@ -99,7 +99,6 @@ struct DrawStep {
 
 	DrawStep() {
 		drawingCall = nullptr;
-		blitSrc = nullptr;
 		alphaType = Graphics::ALPHA_OPAQUE;
 		// fgColor, bgColor, gradColor1, gradColor2, bevelColor initialized by Color default constructor
 		autoWidth = autoHeight = false;
@@ -474,7 +473,7 @@ public:
 	void drawCallback_BITMAP(const Common::Rect &area, const DrawStep &step) {
 		uint16 x, y, w, h;
 		stepGetPositions(step, area, x, y, w, h);
-		blitManagedSurface(step.blitSrc, Common::Point(x, y), step.alphaType);
+		blitManagedSurface(step.blitSrc.get(), Common::Point(x, y), step.alphaType);
 	}
 
 	void drawCallback_CROSS(const Common::Rect &area, const DrawStep &step) {

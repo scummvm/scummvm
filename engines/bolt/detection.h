@@ -44,11 +44,11 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Cartoon Carnival";
+		return "BOLT";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Hanna-Barbera's Cartoon Carnival (C) 1993-1995 Funhouse Design";
+		return "(C) 1993-1995 Philips Interactive Media";
 	}
 };
 

@@ -304,11 +304,11 @@ GlkOptionsWidget::GlkOptionsWidget(GuiObject *boss, const Common::String &name, 
 	// I18N: These is setting for type of text quote symbols
 	NEW_LABEL_POPUP("GlkOptionsDialog.quoteslbl", _("Typographic quotes:"),
 		 _quotes, "GlkOptionsDialog.quotes", _("Choose typographic quotes"));
-	_quotes->appendEntry(_("Off"), 0);
+	_quotes->appendEntry(_c("Off", "quotes"), 0);
 	// I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
-	_quotes->appendEntry(_("Normal"), 1);
+	_quotes->appendEntry(_c("Normal", "quotes"), 1);
 	// I18N: This is a setting for using "rabid" quotes, which are like normal typographic quotes but with the opening quote lower than the closing one, like in some comic books
-	_quotes->appendEntry(_("Rabid"), 2);
+	_quotes->appendEntry(_c("Rabid", "quotes"), 2);
 
 	// I18N: This is a setting for forcing all input to be in uppercase
 	NEW_LABEL_CHECKBOX("GlkOptionsDialog.capslbl", _("Caps:"), _caps, "GlkOptionsDialog.caps", _("Force uppercase input"));

@@ -593,6 +593,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "y2lsnoopy",			"Yearn2Learn: Snoopy" },
 	{ "y2lspelling",		"Yearn2Learn: Master Snoopy's Spelling" },
 	{ "ybr1",				"Yellow Brick Road" },
+	{ "zerocritical",		"Zero Critical" },
 	{ "zerozero",			"Zero Zero" },
 
 	// Multimedia or reference products
@@ -3787,14 +3788,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Both Mac and Win english versions require installation to extract executable
 	// Russian version appears to be identical with only assets replaced
 	// Original Japanese Mac filename is バッドデイ(Power PC)
-	MACGAME1("badday", "",	 "BadDay (Universal)", "r:b7e69c37b7355022d400c14aa97c5d54", 483525, 404),
-	MACGAME1_l("badday", "", "xn--HDD-u63b4bubm7e8b7bw9c7lkr/xn--(Power PC)-jx4ilmwb1a7h", "r:c5f8c31feb5c3d4596b63455c520fc46", 60096, Common::JA_JPN, 404),
-	WINGAME2("badday", "",   "BAD_DAY.EXE",		  "t:30b577ecf8bc2083f52760341a62bc6b", 742342,
-							 "BADDAY/BADDAY.DXR", "d:b4b6fa644f64555f9f7af51454c40909", 288810, 404),
-	WINGAME2_l("badday", "", "BAD_DAY.EXE",		  "4ad339db5379a860b33cbb0fa64f18e2", 742342,
-							 "BADDAY/BADDAY.DXR", "b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404),
-	WINGAME2_l("badday", "", "BDM/BAD_DAY.EXE",	  "t:3023f944e8d494393bf08c0cb7a61ba0", 768773,
-							 "BADDAY/BADDAY.DXR", "d:26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404),
+	MACGAME1f("badday", "",	 "BadDay (Universal)", "r:b7e69c37b7355022d400c14aa97c5d54", 483525, 404, GF_32BPP),
+	MACGAME1f_l("badday", "", "xn--HDD-u63b4bubm7e8b7bw9c7lkr/xn--(Power PC)-jx4ilmwb1a7h", "r:c5f8c31feb5c3d4596b63455c520fc46", 60096, Common::JA_JPN, 404, GF_32BPP),
+	WINGAME2f("badday", "",   "BAD_DAY.EXE",		  "t:30b577ecf8bc2083f52760341a62bc6b", 742342,
+							 "BADDAY/BADDAY.DXR", "d:b4b6fa644f64555f9f7af51454c40909", 288810, 404, GF_32BPP),
+	WINGAME2f_l("badday", "", "BAD_DAY.EXE",		  "4ad339db5379a860b33cbb0fa64f18e2", 742342,
+							 "BADDAY/BADDAY.DXR", "b4b6fa644f64555f9f7af51454c40909", 397994, Common::RU_RUS, 404, GF_32BPP),
+	WINGAME2f_l("badday", "", "BDM/BAD_DAY.EXE",	  "t:3023f944e8d494393bf08c0cb7a61ba0", 768773,
+							 "BADDAY/BADDAY.DXR", "d:26c3b03b18e7aa098216be73d96289b0", 549108, Common::JA_JPN, 404, GF_32BPP),
 
 	WINGAME2("barbmagichouse", "", "BARBIE.EXE", "t:daa44668235cb5debf68e9e92cce4643", 909919,
 			                       "BDATA/OUTSIDE.DIR", "b914daee4a5531493247d537ee48a185", 3084168, 404),
@@ -9372,6 +9373,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("yokai400", "", "xn--2-we0by4fq4jlr4e", "r:d14bf1f7a413df29a04b8fbc7a0fe81f", 1033295, Common::JA_JPN, 601),
 	WINGAME1_l("yokai400", "", "YOUKAI2.EXE",		   "t:f43e37dd62ff37b9ac4734f45e105c93", 1512615, Common::JA_JPN, 601),
 
+	MACGAME1f("zerocritical", "", "Zero Critical Folder/Zero Critical", "rt:aafa56b07820caeb33fe5329088eb7b5", 1031489, 650, GF_32BPP),
+	WINGAME1f("zerocritical", "", "Zero Critical.exe", "t:8fa5dacb308c5db71db0abc91e8e2ba7", 24238200, 602, GF_32BPP),
+
 //////////////////////////////////////////////////
 //
 // Macromedia Director v7
@@ -9852,24 +9856,33 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("vjg", "Quarters screensaver", "Data/scrnsave/mac/Quarters (800x600)", "0944b962ebb00f4b5d5149d220f8449b", 228719, 700),
 	WINGAME1t("vjg", "Quarters screensaver", "Data/scrnsave/pc/Quarters.exe", "fb759c6bf4b009ddf9f7fe74c2dbdac4", 2696814, 700),
 
-	MACGAME1("webmaster", "", "Webmaster",		"rt:40ccf1c4502f22aa1deb2662fcc71fa9", 128041, 702),
+	// FIXME: Missing release, language and region information
 	WINGAME2("webmaster", "", "Webmaster.exe",  "t:b757ff13f0f10c94b1b9fc5f2ceac6ec", 1820594,
-							  "Data/chaos.dxr", "d:1d3e9f04eb1ba627d8b0bba826a042f4",  556601, 702),
+							  "Data/chaos.dxr", "d:1d3e9f04eb1ba627d8b0bba826a042f4", 556601, 702),
 
 	// German: "Webmaster: Fantastische Abenteuer in der Welt des Internets",
-	// developed by IJsfontein, published by Tivola, disc pressing timestamp "11/00"
+	// developed by IJsfontein, published by Tivola, disc pressing timestamp "11/00", PC/Mac Hybrid
 	WINGAME2_l("webmaster", "", "Webmaster.exe",  "t:b757ff13f0f10c94b1b9fc5f2ceac6ec", 1820594,
 								"Data/chaos.dxr", "d:a61309dc913a5f99041dbcd60372fb2e", 556781, Common::DE_DEU, 702),
 
+	MACGAME2_l("webmaster", "", "Webmaster",      "rt:40ccf1c4502f22aa1deb2662fcc71fa9", 128041,
+								"Data/chaos.dxr", "d:a61309dc913a5f99041dbcd60372fb2e",  556781, Common::DE_DEU, 702),
+
 	// US variant
-	// developed by IJsfontein, published by Tivola, disc pressing timestamp "01/01"
+	// developed by IJsfontein, published by Tivola, disc pressing timestamp "01/01", PC/Mac Hybrid
 	WINGAME2_l("webmaster", "", "Webmaster.exe",  "t:b757ff13f0f10c94b1b9fc5f2ceac6ec", 1820594,
 								"Data/chaos.dxr", "d:a974288bad555038af8a0791b1ae0292", 556715, Common::EN_ANY, 702),
 
+	MACGAME2_l("webmaster", "", "Webmaster",      "rt:40ccf1c4502f22aa1deb2662fcc71fa9", 128041,
+								"Data/chaos.dxr", "d:a974288bad555038af8a0791b1ae0292",  556715, Common::EN_ANY, 702),
+
 	// French: "Webmaster: le maître d'internet"
-	// developed by IJsfontein, published by Multimédia Gallimard
+	// developed by IJsfontein, published by Multimédia Gallimard, PC/Mac Hybrid
 	WINGAME2_l("webmaster", "", "Webmaster.exe",  "t:e1e8d498214e8ffc50f65973c510962b", 178102,
 								"Data/chaos.dxr", "d:a8857ee87e3435190a880e3f45085212", 436488, Common::FR_FRA, 702),
+
+	MACGAME2_l("webmaster", "", "Webmaster",      "rt:234290fb0eae69c9beae5efb69c0c4ce", 35113,
+								"Data/chaos.dxr", "d:a8857ee87e3435190a880e3f45085212",  436488, Common::FR_FRA, 702),
 
 	// Published by The Wine CD Corp (1999)
 	// Windows version needs installation

@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -48,10 +50,10 @@
 #include "backends/keymapper/hardware-input.h"
 #include "backends/mixer/atari/atari-mixer.h"
 #include "backends/mutex/null/null-mutex.h"
-#include "backends/platform/atari/atari-debug.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "base/main.h"
+#include "common/debug.h"
 
 #define INPUT_ACTIVE
 
@@ -124,7 +126,7 @@ static long atari_200hz_shutdown(void)
 }
 
 static void critical_restore() {
-	//atari_debug("critical_restore()");
+	//debug("critical_restore()");
 
 	Supexec(atari_200hz_shutdown);
 
@@ -159,7 +161,7 @@ static void critical_restore() {
 // called on normal program termination (via exit() or returning from main())
 static void exit_restore() {
 	// causes a crash upon termination
-	//atari_debug("exit_restore()");
+	//debug("exit_restore()");
 
 	if (!s_dtor_already_called)
 		g_system->destroy();
@@ -228,7 +230,7 @@ OSystem_Atari::OSystem_Atari() {
 }
 
 OSystem_Atari::~OSystem_Atari() {
-	atari_debug("OSystem_Atari::~OSystem_Atari()");
+	debug("OSystem_Atari::~OSystem_Atari()");
 
 	s_dtor_already_called = true;
 
@@ -282,7 +284,7 @@ OSystem_Atari::~OSystem_Atari() {
 }
 
 void OSystem_Atari::initBackend() {
-	atari_debug("OSystem_Atari::initBackend()");
+	debug("OSystem_Atari::initBackend()");
 
 	s_app_id = appl_init();
 	if (s_app_id != -1) {
@@ -354,13 +356,13 @@ void OSystem_Atari::initBackend() {
 }
 
 void OSystem_Atari::engineInit() {
-	//atari_debug("engineInit");
+	//debug("engineInit");
 
 	g_gameEngineActive = true;
 }
 
 void OSystem_Atari::engineDone() {
-	//atari_debug("engineDone");
+	//debug("engineDone");
 
 	g_gameEngineActive = false;
 }
@@ -382,7 +384,7 @@ void OSystem_Atari::delayMillis(uint msecs) {
 }
 
 void OSystem_Atari::getTimeAndDate(TimeDate &td, bool skipRecord) const {
-	//atari_debug("getTimeAndDate");
+	//debug("getTimeAndDate");
 	time_t curTime = time(0);
 	struct tm t = *localtime(&curTime);
 	td.tm_sec = t.tm_sec;
@@ -412,7 +414,7 @@ Common::HardwareInputSet *OSystem_Atari::getHardwareInputSet() {
 }
 
 void OSystem_Atari::quit() {
-	atari_debug("OSystem_Atari::quit()");
+	debug("OSystem_Atari::quit()");
 
 	if (!s_dtor_already_called)
 		destroy();
@@ -421,7 +423,7 @@ void OSystem_Atari::quit() {
 }
 
 void OSystem_Atari::fatalError() {
-	atari_debug("OSystem_Atari::fatalError()");
+	debug("OSystem_Atari::fatalError()");
 
 	if (!s_dtor_already_called)
 		destroy();

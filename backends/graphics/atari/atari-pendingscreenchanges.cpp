@@ -19,12 +19,14 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "atari-pendingscreenchanges.h"
 
 #include <cassert>
 #include <mint/falcon.h>
 
-#include "backends/platform/atari/atari-debug.h"
+#include "common/debug.h"
 #include "graphics/surface.h"
 
 #include "atari-graphics.h"
@@ -151,7 +153,7 @@ void PendingScreenChanges::processVideoMode(const Screen &screen) {
 		if (_resetSuperVidel)
 			VsetMode(SVEXT | SVEXT_BASERES(0) | COL80 | BPS8C);	// resync to proper 640x480
 
-		atari_debug("VsetMode: %04x", _mode);
+		debug("VsetMode: %04x", _mode);
 		VsetMode(_mode);
 	}
 }

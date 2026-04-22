@@ -282,7 +282,7 @@ ImGuiImage getImageID(CastMember *castMember) {
 
 	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
-	if (!pic)
+	if (!pic || !pic->_surface.getPixels())
 		return {};
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
@@ -423,6 +423,10 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 	Graphics::MacWidget *widget = castMember->createWidget(bbox, channel, kTextSprite);
 	Graphics::Surface surface;
+
+	if (!widget || !widget->getSurface() || !widget->getSurface()->getPixels())
+      return {};
+
 	surface.copyFrom(*widget->getSurface());
 
 	if (debugChannelSet(8, kDebugImages)) {
@@ -835,14 +839,7 @@ void onImGuiRender() {
 		return;
 
 	if (_state->_windowToRedraw) {
-		Graphics::ManagedSurface *surface = _state->_windowToRedraw->getSurface();
-		if (surface) {
-			Common::Rect fullScreen(0, 0, surface->w, surface->h);
-
-			_state->_windowToRedraw->addDirtyRect(fullScreen);
-			_state->_windowToRedraw->setDirty(true);
-		}
-
+		_state->_windowToRedraw->render(true);
 		_state->_windowToRedraw = nullptr;
 	}
 
@@ -947,7 +944,7 @@ void setSelectedChannel(int channel) {
 		_state->_selectedChannel = channel;
 
 		if (channel > 0) {
-			_state->_scrollToChannel = true; 
+			_state->_scrollToChannel = true;
 			_state->_w.channels = true;
 		}
 	}

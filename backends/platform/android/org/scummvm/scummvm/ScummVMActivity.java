@@ -4,17 +4,25 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Rect;
+import android.hardware.usb.UsbConstants;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbInterface;
+import android.hardware.usb.UsbManager;
+import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioTrack;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Build;
@@ -129,6 +137,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	private boolean keyboardWithoutTextInputShown = false;
 
 	private InputMethodManager _inputManager = null;
+
+	private PluginBroadcastReceiver _pluginBroadcastReceiver = null;
 
 	// Set to true in onDestroy
 	// This avoids that when C++ terminates we call finish() a second time
@@ -1010,7 +1020,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//_main_surface.captureMouse(true, true);
 		//_main_surface.showSystemMouseCursor(false);
 
+		updateAudioValues();
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+		_pluginBroadcastReceiver = new PluginBroadcastReceiver();
 
 		// TODO needed?
 		takeKeyEvents(true);
@@ -1206,6 +1218,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//_main_surface.showSystemMouseCursor(false);
 		//Log.d(ScummVM.LOG_TAG, "onResume - captureMouse(true)");
 		_main_surface.captureMouse(true);
+
+		_pluginBroadcastReceiver.register(this);
 	}
 
 	@Override
@@ -1215,6 +1229,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 //		_isPaused = true;
 
 		super.onPause();
+
+		_pluginBroadcastReceiver.unregister(this);
 
 		if (_scummvm != null)
 			_scummvm.setPause(true);
@@ -1461,6 +1477,153 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		// so if we target more recent API levels, we could remove this function
 		return getWindowManager().getDefaultDisplay().getPixelFormat();
 	}
+
+	// region Audio/Oboe helpers
+
+	private void updateAudioValues() {
+		// These values are useless on Android Oreo and above as AAudio doesn't use them
+		/*
+		PackageManager pm = getPackageManager();
+		boolean hasLL = pm.hasSystemFeature(PackageManager.FEATURE_AUDIO_LOW_LATENCY);
+		*/
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			int audioTrackSampleRate = AudioTrack.getNativeOutputSampleRate(AudioManager.STREAM_MUSIC);
+			int audioTrackFramesPerBurst = AudioTrack.getMinBufferSize(audioTrackSampleRate,
+				AudioFormat.CHANNEL_OUT_STEREO,
+				AudioFormat.ENCODING_PCM_16BIT);
+			audioTrackFramesPerBurst /= 2 * 2; // Convert Stereo 16-bits to frames
+			audioTrackFramesPerBurst /= 4; // AudioTrack tends to buffer a lot
+
+			Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
+				" at=" + Integer.toString(audioTrackSampleRate) + "/" + Integer.toString(audioTrackFramesPerBurst));
+
+			ScummVM.setDefaultAudioValues(audioTrackSampleRate, audioTrackFramesPerBurst);
+			return;
+		}
+
+		AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+		String text = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_SAMPLE_RATE);
+		int audioManagerSampleRate = Integer.parseInt(text);
+		text = audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER);
+		int audioManagerFramesPerBurst = Integer.parseInt(text);
+
+		Log.d(ScummVM.LOG_TAG,  "updateAudioValues:" +
+			" am=" + Integer.toString(audioManagerSampleRate) + "/" + Integer.toString(audioManagerFramesPerBurst));
+
+		ScummVM.setDefaultAudioValues(audioManagerSampleRate, audioManagerFramesPerBurst);
+	}
+
+	/**
+	 * This BroadcastReceiver works around an AAudio/oboe bug
+	 * cf. <a href="https://github.com/google/oboe/wiki/TechNote_Disconnect">Oboe doc</a>
+	 */
+	private static class PluginBroadcastReceiver extends BroadcastReceiver {
+		private static final String ACTION_HEADSET_PLUG	=
+			(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) ?
+				AudioManager.ACTION_HEADSET_PLUG :
+				Intent.ACTION_HEADSET_PLUG;
+
+		private int lastStatus = -1;
+
+		private IntentFilter getIntentFilter() {
+			IntentFilter filter = new IntentFilter(ACTION_HEADSET_PLUG);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+			filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+			return filter;
+		}
+
+		void register(Context ctx) {
+			if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+				CompatHelpers.ReceiverCompat.registerReceiver(ctx, this, getIntentFilter());
+			}
+		}
+
+		void unregister(Context ctx) {
+			if (Build.VERSION_CODES.P <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+				ctx.unregisterReceiver(this);
+			}
+		}
+
+		@Override
+		public void onReceive(Context context, @NonNull Intent intent) {
+			// Close the stream if it was not disconnected.
+			String action = intent.getAction();
+			if (ACTION_HEADSET_PLUG.equals(action)) {
+				boolean micro = intent.getIntExtra("microphone", -1) == 1;
+				boolean state = intent.getIntExtra("state", -1) == 1;
+				int newStatus = (micro ? 1 : 0) + (state ? 2 : 0);
+
+				Log.i(ScummVM.LOG_TAG, action +
+					" micro=" + Boolean.toString(micro) +
+					" state=" + Boolean.toString(state) +
+					" status=" + Integer.toString(newStatus) +
+					" lastStatus=" + Integer.toString(lastStatus) +
+					" diff=" + Integer.toString(lastStatus ^ newStatus));
+
+				if (isInitialStickyBroadcast()) {
+					if (lastStatus == -1) {
+						lastStatus = newStatus;
+						return;
+					}
+				}
+
+				if (((lastStatus ^ newStatus) & 2) == 0) {
+					// We are only interested in a state change
+					return;
+				}
+
+				lastStatus = newStatus;
+				ScummVM.notifyAudioDisconnect();
+			}
+			else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action) ||
+				UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
+				UsbDevice device = CompatHelpers.IntentCompat.getParcelableExtra(intent, UsbManager.EXTRA_DEVICE, UsbDevice.class);
+				if (device == null) {
+					return;
+				}
+				final boolean hasAudioPlayback =
+					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_OUT);
+				final boolean hasAudioCapture =
+					containsAudioStreamingInterface(device, UsbConstants.USB_DIR_IN);
+				Log.w(ScummVM.LOG_TAG, action + " device=" + device.toString() + " playback=" + Boolean.toString(hasAudioPlayback) + " capture=" + Boolean.toString(hasAudioCapture));
+				if (!hasAudioPlayback) {
+					// We are only interested in playback sinks
+					return;
+				}
+				ScummVM.notifyAudioDisconnect();
+			}
+		}
+
+		private static final int AUDIO_STREAMING_SUB_CLASS = 2;
+
+		/**
+		 * Figure out if an UsbDevice contains audio input/output streaming interface or not.
+		 *
+		 * @param device the given UsbDevice
+		 * @param direction the direction of the audio streaming interface
+		 * @return true if the UsbDevice contains the audio input/output streaming interface.
+		 */
+		private boolean containsAudioStreamingInterface(UsbDevice device, int direction) {
+			final int interfaceCount = device.getInterfaceCount();
+			for (int i = 0; i < interfaceCount; ++i) {
+				UsbInterface usbInterface = device.getInterface(i);
+				if (usbInterface.getInterfaceClass() != UsbConstants.USB_CLASS_AUDIO
+					&& usbInterface.getInterfaceSubclass() != AUDIO_STREAMING_SUB_CLASS) {
+					continue;
+				}
+				final int endpointCount = usbInterface.getEndpointCount();
+				for (int j = 0; j < endpointCount; ++j) {
+					if (usbInterface.getEndpoint(j).getDirection() == direction) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+	}
+
+	// endregion
 
 	// region Configuration migration and internal folder init
 	// -------------------------------------------------------------------------------------------

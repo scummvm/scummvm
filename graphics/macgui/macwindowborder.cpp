@@ -314,7 +314,7 @@ void MacWindowBorder::loadInternalBorder(uint32 flags) {
 	}
 }
 
-void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags) {
+void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, bool maskOnly, uint32 maskColor) {
 	if (flags >= kWindowBorderMaxFlag) {
 		warning("Accessing non-existed border type");
 		return;
@@ -337,12 +337,12 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags) 
 		setTitle(_title, destination.w);
 	}
 
-	src->blit(destination, 0, 0, destination.w, destination.h, _wm);
+	src->blit(destination, 0, 0, destination.w, destination.h, _wm, maskOnly, maskColor);
 
-	if (flags & kWindowBorderTitle)
+	if (flags & kWindowBorderTitle && !maskOnly)
 		drawTitle(&destination, src->getTitleOffset(), _border[flags]->getMinWidth());
 
-	if (flags & kWindowBorderScrollbar)
+	if (flags & kWindowBorderScrollbar && !maskOnly)
 		drawScrollBar(&destination);
 }
 

@@ -6,12 +6,15 @@ MODULE_OBJS := \
 	gamemap.o \
 	gxlarchive.o \
 	graphics.o \
-	intro.o \
 	metaengine.o \
 	pathfinding.o \
 	sound.o \
 	staticdata.o \
-	waynesworld.o
+	waynesworld.o \
+	wwintro.o \
+	wwintro_demo1.o \
+	wwintro_full.o
+	
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_WAYNESWORLD), DYNAMIC_PLUGIN)

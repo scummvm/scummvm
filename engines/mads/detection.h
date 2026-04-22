@@ -60,6 +60,6 @@ struct MADSGameDescription {
 
 //#define GAMEOPTION_GRAPHICS_DITHERING  GUIO_GAMEOPTIONS7
 
-} // End of namespace MADS
+} // namespace MADS
 
-#endif // MADS_DETECTION_H
+#endif

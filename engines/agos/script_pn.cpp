@@ -266,7 +266,11 @@ void AGOSEngine_PN::opn_opcode15() {
 
 	pcf((unsigned char)254);
 	_curWindow = x;
-	_xofs = (8 * _windowArray[_curWindow]->textLength) / 6 + 1;
+	WindowBlock *window = _windowArray[_curWindow];
+	if (isPnAmigaTextWindow(window))
+		_xofs = window->textColumn;
+	else
+		_xofs = (8 * window->textLength) / 6 + 1;
 	setScriptReturn(true);
 }
 
@@ -755,7 +759,7 @@ int AGOSEngine_PN::inventoryOn(int val) {
 
 int AGOSEngine_PN::inventoryOff() {
 	if (_videoLockOut & 0x10) {
-		_windowArray[2]->textColor = 15;
+		_windowArray[2]->textColor = isPnAmiga() ? 14 : 15;
 
 		restoreBlock(48, 2, 272, 130);
 

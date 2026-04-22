@@ -68,15 +68,16 @@ public:
 
 	void render();
 	void undrawCursor();
+	void drawStep(ManagedSurface *g, ManagedSurface *src,  ManagedSurface *border, int x, int y, int w, int h, int xoff, int yoff, uint32 transcolor, uint32 btcolor);
 	void draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff);
 	bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	bool draw(bool forceRedraw = false) override;
 	void drawToPoint(ManagedSurface *g, Common::Rect srcRect, Common::Point dstPoint);
 	void drawToPoint(ManagedSurface *g, Common::Point dstPoint);
 
-	ManagedSurface *getSurface() { return _canvas._surface; }
-	ManagedSurface *getGlyphMask() { return _canvas._glyphMask; }
-	ManagedSurface *getCharBoxMask() { return _canvas._charBoxMask; }
+	ManagedSurface *getRawSurface() { return _canvas._surface; }
+	ManagedSurface *getGlyphMask() { return _glyphMaskSurface; }
+	ManagedSurface *getCharBoxMask() { return _charBoxMaskSurface; }
 
 	int getInterLinear() { return _canvas._interLinear; }
 	void setInterLinear(int interLinear);
@@ -235,6 +236,7 @@ protected:
 	bool _scrollBar;
 	MacWindowBorder _scrollBorder;
 	ManagedSurface _borderSurface;
+	ManagedSurface _borderMaskSurface;
 
 	int _selEnd;
 	int _selStart;
@@ -247,6 +249,9 @@ protected:
 private:
 	ManagedSurface *_cursorSurface;
 	ManagedSurface *_cursorSurface2;
+
+	ManagedSurface *_glyphMaskSurface;
+	ManagedSurface *_charBoxMaskSurface;
 
 	int _editableRow;
 

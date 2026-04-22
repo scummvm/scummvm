@@ -22,9 +22,7 @@
 #include "audio/mixer.h"                 // for Audio::Mixer::kSFXSoundType
 #include "common/config-manager.h"       // for ConfMan
 #include "common/textconsole.h"          // for warning, error
-#ifndef USE_RGB_COLOR
 #include "common/translation.h"          // for _
-#endif
 #include "common/util.h"                 // for ARRAYSIZE
 #include "common/system.h"               // for g_system
 #include "engines/engine.h"              // for Engine, g_engine
@@ -54,69 +52,49 @@ namespace Graphics { struct Surface; }
 
 namespace Sci {
 
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
+
 bool VideoPlayer::open(const Common::Path &fileName) {
 	if (!_decoder->loadFile(fileName)) {
 		warning("Failed to load %s", fileName.toString().c_str());
 		return false;
 	}
 
-#ifndef USE_RGB_COLOR
-	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
-	// system with no RGB support
-	if (_decoder->getPixelFormat().bytesPerPixel != 1) {
-		void showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
-		showScummVMDialog(Common::U32String::format(_("Cannot play back %dbpp video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().bpp()));
-		_decoder->close();
-		return false;
-	}
-#endif
-
 	return true;
 }
 
-bool VideoPlayer::startHQVideo() {
-#ifdef USE_RGB_COLOR
+void VideoPlayer::showUnsupportedFormatDialog() {
+	// KQ7 2.00b videos are compressed in 24bpp Cinepak, so cannot play on a
+	// system with no RGB support
+	// TODO: Optionally support dithering for Cinepak videos
+	showScummVMDialog(Common::U32String::format(_("Cannot play back %s video on a system with maximum color depth of 8bpp"), _decoder->getPixelFormat().toString().c_str()));
+}
+
+bool VideoPlayer::startHQVideo(const Graphics::PixelFormat &format) {
 	// Optimize rendering performance for unscaled videos, and allow
 	// better-than-NN interpolation for videos that are scaled
 	if (shouldStartHQVideo()) {
-		const Common::List<Graphics::PixelFormat> outFormats = g_system->getSupportedFormats();
-		Graphics::PixelFormat bestFormat = outFormats.front();
-		if (bestFormat.bytesPerPixel != 2 && bestFormat.bytesPerPixel != 4) {
-			Common::List<Graphics::PixelFormat>::const_iterator it;
-			for (it = outFormats.begin(); it != outFormats.end(); ++it) {
-				if (it->bytesPerPixel == 2 || it->bytesPerPixel == 4) {
-					bestFormat = *it;
-					break;
-				}
-			}
-		}
-
-		if (bestFormat.bytesPerPixel != 2 && bestFormat.bytesPerPixel != 4) {
-			warning("Failed to find any valid output pixel format");
-			_hqVideoMode = false;
+		if (format.isCLUT8()) {
+			_hqVideoMode = g_sci->_gfxFrameout->setPixelFormat(nullptr);
 		} else {
-			g_sci->_gfxFrameout->setPixelFormat(bestFormat);
-			_hqVideoMode = (g_system->getScreenFormat() != Graphics::PixelFormat::createFormatCLUT8());
-			return _hqVideoMode;
+			_hqVideoMode = g_sci->_gfxFrameout->setPixelFormat(&format);
 		}
+		return _hqVideoMode;
 	} else {
 		_hqVideoMode = false;
 	}
-#endif
 
 	return false;
 }
 
 bool VideoPlayer::endHQVideo() {
-#ifdef USE_RGB_COLOR
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-		g_sci->_gfxFrameout->setPixelFormat(format);
-		assert(g_system->getScreenFormat() == format);
+		bool success = g_sci->_gfxFrameout->setPixelFormat(&format);
+		assert(success);
 		_hqVideoMode = false;
 		return true;
 	}
-#endif
 
 	return false;
 }
@@ -239,11 +217,9 @@ VideoPlayer::EventFlags VideoPlayer::checkForEvent(const EventFlags flags) {
 }
 
 void VideoPlayer::submitPalette(const uint8 palette[256 * 3]) const {
-#ifdef USE_RGB_COLOR
 	if (g_system->getScreenFormat().bytesPerPixel != 1) {
 		return;
 	}
-#endif
 
 	assert(palette);
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
@@ -277,15 +253,9 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 
 	if (_decoder->getWidth() != _drawRect.width() || _decoder->getHeight() != _drawRect.height()) {
 		Graphics::Surface *const unscaledFrame(convertedFrame);
-#ifdef USE_RGB_COLOR
 		if (_hqVideoMode) {
 			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), true);
 		} else {
-#elif 1
-		{
-#else
-		}
-#endif
 			convertedFrame = unscaledFrame->scale(_drawRect.width(), _drawRect.height(), false);
 		}
 		assert(convertedFrame);
@@ -310,23 +280,35 @@ void VideoPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
 }
 
 template <typename PixelType>
+void VideoPlayer::renderLQToSurfaceDouble(Graphics::Surface &out, const Graphics::Surface &nextFrame, const int lineCount) const {
+	for (int16 y = 0; y < nextFrame.h * 2; y += lineCount) {
+		const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y >> 1);
+		PixelType *target = (PixelType *)out.getBasePtr(0, y);
+		for (int16 x = 0; x < nextFrame.w; ++x) {
+			*target++ = *source;
+			*target++ = *source++;
+		}
+	}
+}
+
 void VideoPlayer::renderLQToSurface(Graphics::Surface &out, const Graphics::Surface &nextFrame, const bool doublePixels, const bool blackLines) const {
 
 	const int lineCount = blackLines ? 2 : 1;
 	if (doublePixels) {
-		for (int16 y = 0; y < nextFrame.h * 2; y += lineCount) {
-			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y >> 1);
-			PixelType *target = (PixelType *)out.getBasePtr(0, y);
-			for (int16 x = 0; x < nextFrame.w; ++x) {
-				*target++ = *source;
-				*target++ = *source++;
-			}
+		if (out.format.bytesPerPixel == 1) {
+			renderLQToSurfaceDouble<uint8>(out, nextFrame, lineCount);
+		} else if (out.format.bytesPerPixel == 2) {
+			renderLQToSurfaceDouble<uint16>(out, nextFrame, lineCount);
+		} else if (out.format.bytesPerPixel == 4) {
+			renderLQToSurfaceDouble<uint32>(out, nextFrame, lineCount);
+		} else {
+			error("renderLQToSurface: Unsupported pixel format: %s", out.format.toString().c_str());
 		}
 	} else if (blackLines) {
 		for (int16 y = 0; y < nextFrame.h; y += lineCount) {
-			const PixelType *source = (const PixelType *)nextFrame.getBasePtr(0, y);
-			PixelType *target = (PixelType *)out.getBasePtr(0, y);
-			memcpy(target, source, out.w * sizeof(PixelType));
+			const void *source = nextFrame.getBasePtr(0, y);
+			void *target = out.getBasePtr(0, y);
+			memcpy(target, source, out.w * out.format.bytesPerPixel);
 		}
 	} else {
 		out.copyRectToSurface(nextFrame.getPixels(), nextFrame.pitch, 0, 0, nextFrame.w, nextFrame.h);
@@ -373,7 +355,7 @@ void SEQPlayer::play(const Common::Path &fileName, const int16 numTicks, const i
 	_drawRect.setWidth(scaledWidth);
 	_drawRect.setHeight(scaledHeight);
 
-	startHQVideo();
+	startHQVideo(_decoder->getPixelFormat());
 	playUntilEvent(kEventFlagMouseDown | kEventFlagEscapeKey);
 	endHQVideo();
 	g_system->fillScreen(0);
@@ -431,8 +413,6 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool doublePixels) {
 		return kIOFileNotFound;
 	}
 
-	g_sci->_gfxCursor32->hide();
-
 	int16 width = _decoder->getWidth();
 	int16 height = _decoder->getHeight();
 	if (doublePixels) {
@@ -455,24 +435,19 @@ AVIPlayer::IOStatus AVIPlayer::init(const bool doublePixels) {
 	_drawRect.setWidth(width);
 	_drawRect.setHeight(height);
 
-	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
-		const Common::List<Graphics::PixelFormat> outFormats = g_system->getSupportedFormats();
-		Graphics::PixelFormat inFormat = _decoder->getPixelFormat();
-		Graphics::PixelFormat bestFormat = outFormats.front();
-		Common::List<Graphics::PixelFormat>::const_iterator it;
-		for (it = outFormats.begin(); it != outFormats.end(); ++it) {
-			if (*it == inFormat) {
-				bestFormat = inFormat;
-				break;
-			}
-		}
+	// Try and select an optimal pixel format
+	_decoder->setOutputPixelFormats(g_system->getSupportedFormats());
+	Graphics::PixelFormat format = _decoder->getPixelFormat();
 
-		if (bestFormat.bytesPerPixel != 2 && bestFormat.bytesPerPixel != 4) {
-			error("Failed to find any valid output pixel format");
+	if (!startHQVideo(format) && _decoder->getPixelFormat().bytesPerPixel != 1) {
+		if (!g_sci->_gfxFrameout->setPixelFormat(&format)) {
+			showUnsupportedFormatDialog();
+			_status = kAVINotOpen;
+			return kIOFileNotFound;
 		}
-
-		g_sci->_gfxFrameout->setPixelFormat(bestFormat);
 	}
+
+	g_sci->_gfxCursor32->hide();
 
 	return kIOSuccess;
 }
@@ -566,7 +541,17 @@ void QuickTimePlayer::play(const Common::Path &fileName) {
 	_drawRect.setWidth(scaledWidth);
 	_drawRect.setHeight(scaledHeight);
 
-	startHQVideo();
+	// Try and select an optimal pixel format
+	_decoder->setOutputPixelFormats(g_system->getSupportedFormats());
+	Graphics::PixelFormat format = _decoder->getPixelFormat();
+
+	if (!startHQVideo(format) && _decoder->getPixelFormat().bytesPerPixel != 1) {
+		if (!g_sci->_gfxFrameout->setPixelFormat(&format)) {
+			showUnsupportedFormatDialog();
+			return;
+		}
+	}
+
 	playUntilEvent(kEventFlagMouseDown | kEventFlagEscapeKey);
 	endHQVideo();
 
@@ -908,18 +893,15 @@ void VMDPlayer::initOverlay() {
 	// enabled in Shivers.)
 	g_sci->_gfxFrameout->frameOut(true);
 
-#ifdef USE_RGB_COLOR
 	// TODO: Allow interpolation for videos where the cursor is drawn, either by
 	// writing to an intermediate 4bpp surface and using that surface during
 	// cursor drawing, or by promoting the cursor code to use CursorMan, if
 	// possible
-	if (startHQVideo()) {
+	if (startHQVideo(_decoder->getPixelFormat())) {
 		redrawGameScreen();
 	}
-#endif
 }
 
-#ifdef USE_RGB_COLOR
 void VMDPlayer::redrawGameScreen() const {
 	if (!_hqVideoMode) {
 		return;
@@ -927,18 +909,15 @@ void VMDPlayer::redrawGameScreen() const {
 
 	g_sci->_gfxFrameout->redrawGameScreen(_drawRect);
 }
-#endif
 
 void VMDPlayer::renderOverlay(const Graphics::Surface &nextFrame) const {
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		VideoPlayer::renderFrame(nextFrame);
 		return;
 	}
-#endif
 
 	Graphics::Surface out = g_sci->_gfxFrameout->getCurrentBuffer().getSubArea(_drawRect);
-	renderLQToSurface<uint8>(out, nextFrame, _doublePixels, _blackLines);
+	renderLQToSurface(out, nextFrame, _doublePixels, _blackLines);
 	g_sci->_gfxFrameout->directFrameOut(_drawRect);
 }
 
@@ -990,12 +969,10 @@ void VMDPlayer::submitPalette(const uint8 rawPalette[256 * 3]) const {
 	}
 #endif
 
-#ifdef USE_RGB_COLOR
 	// Changes to the palette may affect areas outside of the video; when the
 	// engine is rendering video in high color, palette changes will only take
 	// effect once the entire screen is redrawn to the high color surface
 	redrawGameScreen();
-#endif
 }
 
 void VMDPlayer::closeOverlay() {
@@ -1004,14 +981,12 @@ void VMDPlayer::closeOverlay() {
 		_plane = nullptr;
 	}
 
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		if (endHQVideo()) {
 			g_sci->_gfxFrameout->resetHardware();
 		}
 		return;
 	}
-#endif
 
 	if (!_leaveLastFrame && _leaveScreenBlack) {
 		g_sci->_gfxFrameout->frameOut(true, _drawRect);
@@ -1210,17 +1185,24 @@ void DuckPlayer::open(const GuiResourceId resourceId, const int displayMode, con
 				(_decoder->getWidth() << (_doublePixels ? 1 : 0)),
 				(_decoder->getHeight() << (_doublePixels ? 1 : 0)));
 
-	g_sci->_gfxCursor32->hide();
-
 	if (_doFrameOut) {
 		_plane = new Plane(_drawRect, kPlanePicColored);
 		g_sci->_gfxFrameout->addPlane(_plane);
 		g_sci->_gfxFrameout->frameOut(true);
 	}
 
-	if (!startHQVideo() && _decoder->getPixelFormat().bytesPerPixel != 1) {
-		g_sci->_gfxFrameout->setPixelFormat(_decoder->getPixelFormat());
+	// Try and select an optimal pixel format
+	_decoder->setOutputPixelFormats(g_system->getSupportedFormats());
+	Graphics::PixelFormat format = _decoder->getPixelFormat();
+
+	if (!startHQVideo(format) && _decoder->getPixelFormat().bytesPerPixel != 1) {
+		if (!g_sci->_gfxFrameout->setPixelFormat(&format)) {
+			showUnsupportedFormatDialog();
+			return;
+		}
 	}
+
+	g_sci->_gfxCursor32->hide();
 
 	// Try load fan-made SRT subtitles for current video
 	Common::Path subtitlesName(fileName.append(".srt"));
@@ -1273,16 +1255,14 @@ void DuckPlayer::close() {
 }
 
 void DuckPlayer::renderFrame(const Graphics::Surface &nextFrame) const {
-#ifdef USE_RGB_COLOR
 	if (_hqVideoMode) {
 		VideoPlayer::renderFrame(nextFrame);
 		return;
 	}
-#endif
 
 	Graphics::Surface out;
 	out.create(_drawRect.width(), _drawRect.height(), nextFrame.format);
-	renderLQToSurface<uint16>(out, nextFrame, _doublePixels, _blackLines);
+	renderLQToSurface(out, nextFrame, _doublePixels, _blackLines);
 	if (out.format != g_system->getScreenFormat()) {
 		out.convertToInPlace(g_system->getScreenFormat());
 	}

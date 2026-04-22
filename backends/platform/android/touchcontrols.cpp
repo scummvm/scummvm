@@ -155,8 +155,8 @@ TouchControls::FunctionId TouchControls::getFunctionId(int x, int y) {
 	// Exclude areas reserved for system
 	if ((x < JNI::gestures_insets[0] * SCALE_FACTOR_FXP) ||
 		(y < JNI::gestures_insets[1] * SCALE_FACTOR_FXP) ||
-		(x >= _screen_width - JNI::gestures_insets[2] * SCALE_FACTOR_FXP) ||
-		(y >= _screen_height - JNI::gestures_insets[3] * SCALE_FACTOR_FXP)) {
+		(x >= (int)_screen_width - JNI::gestures_insets[2] * SCALE_FACTOR_FXP) ||
+		(y >= (int)_screen_height - JNI::gestures_insets[3] * SCALE_FACTOR_FXP)) {
 		return kFunctionNone;
 	}
 

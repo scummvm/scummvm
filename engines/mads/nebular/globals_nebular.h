@@ -24,8 +24,8 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
-#include "mads/game.h"
-#include "mads/resources.h"
+#include "mads/core/game.h"
+#include "mads/core/resources.h"
 
 namespace MADS {
 
@@ -307,8 +307,8 @@ public:
 	virtual void synchronize(Common::Serializer &s);
 };
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_GLOBALS_NEBULAR_H */

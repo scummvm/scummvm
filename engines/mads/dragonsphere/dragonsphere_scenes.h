@@ -22,7 +22,7 @@
 #ifndef MADS_DRAGONSPHERE_SCENES_H
 #define MADS_DRAGONSPHERE_SCENES_H
 
-#include "mads/scene.h"
+#include "mads/core/scene.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/dragonsphere/globals_dragonsphere.h"
 
@@ -610,7 +610,7 @@ enum Noun {
 
 class SceneFactory {
 public:
-	static SceneLogic *createScene(MADSEngine *vm);
+	static SceneLogic *createScene(RexNebularEngine *vm);
 };
 
 /**
@@ -635,7 +635,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	DragonsphereScene(MADSEngine *vm);
+	DragonsphereScene(RexNebularEngine *vm);
 
 	void sub7178C();
 };
@@ -650,13 +650,13 @@ protected:
 	/**
 	* Constructor
 	*/
-	SceneInfoDragonsphere(MADSEngine *vm) : SceneInfo(vm) {}
+	SceneInfoDragonsphere(RexNebularEngine *vm) : SceneInfo(vm) {}
 };
 
 // TODO: Temporary, remove once implemented properly
 class DummyScene : public DragonsphereScene {
 public:
-	DummyScene(MADSEngine *vm) : DragonsphereScene(vm) {
+	DummyScene(RexNebularEngine *vm) : DragonsphereScene(vm) {
 		warning("Unimplemented scene");
 	}
 
@@ -665,7 +665,7 @@ public:
 	void actions() override {}
 };
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS
 
 #endif

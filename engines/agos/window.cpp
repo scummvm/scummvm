@@ -41,6 +41,45 @@ uint AGOSEngine::getWindowNum(WindowBlock *window) {
 	return 0;	// for compilers that don't support NORETURN
 }
 
+bool AGOSEngine::isPnAmigaMainTextWindow(const WindowBlock *window) const {
+	return window != nullptr && isPnAmiga() && window->x == 0 && window->width == 40 && window->y == kPnAmigaMainTextTop;
+}
+
+bool AGOSEngine::isPnAmigaInputWindow(const WindowBlock *window) const {
+	return window != nullptr && isPnAmiga() && window->x == 0 && window->width == 40 && window->y == kPnAmigaInputTop;
+}
+
+bool AGOSEngine::isPnAmigaTextWindow(const WindowBlock *window) const {
+	return isPnAmigaMainTextWindow(window) || isPnAmigaInputWindow(window);
+}
+
+uint16 AGOSEngine::getPnAmigaWindowInteriorHeight(const WindowBlock *window) const {
+	if (window == nullptr)
+		return 0;
+
+	uint16 pixelHeight = window->height * 8;
+	if (window->x == 0 && window->width == 40 && window->y == 136)
+		pixelHeight = 88;
+	else if (window->x == 0 && window->width == 40 && window->y == 224)
+		pixelHeight = 16;
+	return (pixelHeight > 2) ? pixelHeight - 2 : 0;
+}
+
+uint16 AGOSEngine::getPnAmigaTextPlaneWidth(const WindowBlock *window) const {
+	if (window == nullptr)
+		return 0;
+
+	if (isPnAmigaTextWindow(window))
+		return kPnAmigaTextPlaneWidth;
+	return window->width * 16 - 2;
+}
+
+uint16 AGOSEngine::getPnAmigaTextLineStep() const {
+	if (usePnAmigaDoubleHeightTopaz())
+		return getPnAmigaGlyphHeight();
+	return 9;
+}
+
 WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor) {
 	WindowBlock *window;
 
@@ -67,6 +106,8 @@ WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, 
 	// Characters are 6 pixels (except Japanese: when downscaled, 1-byte characters are 4 pixels, 2-byte characters are 8 pixels)
 	if (getGameType() == GType_ELVIRA2)
 		window->textMaxLength = (window->width * 8 - 4) / 6;
+	else if (isPnAmigaTextWindow(window))
+		window->textMaxLength = getPnAmigaTextPlaneWidth(window) / getPnAmigaGlyphAdvance(' ');
 	else if (getGameType() == GType_PN)
 		window->textMaxLength = window->width * 8 / 6 + 1;
 	else if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98)
@@ -119,6 +160,61 @@ void AGOSEngine::clearWindow(WindowBlock *window) {
 	window->textColumnOffset = (getGameType() == GType_ELVIRA2) ? 4 : 0;
 	window->textLength = 0;
 	window->scrollY = 0;
+
+	if (isPnAmigaTextWindow(window)) {
+		window->textColumn = kPnAmigaTextStartX;
+		clearPnAmigaTextPlane(window);
+		if (isPnAmigaInputWindow(window)) {
+			const int16 top = ((int16)getPnAmigaWindowInteriorHeight(window) - (int16)getPnAmigaGlyphHeight()) / 2;
+			window->textRow = MAX((int16)0, top);
+		}
+		compositePnAmigaTextPlane(window);
+	}
+}
+
+void AGOSEngine::clearPnAmigaTextPlane(WindowBlock *window) {
+	ensurePnAmigaTextPlanes();
+	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr)
+		return;
+	memset(plane->pixels, window->fillColor, plane->width * plane->height);
+}
+
+void AGOSEngine::compositePnAmigaTextPlane(WindowBlock *window) {
+	const PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr || _scaleBuf == nullptr)
+		return;
+
+	Graphics::Surface *screen = _scaleBuf;
+	const uint16 dstLeft = window->x * 16 + 1;
+	const uint16 dstTop = window->y + 1;
+	const uint16 dstWidth = MIN<uint16>(getPnAmigaTextPlaneWidth(window), plane->width);
+	const uint16 dstHeight = MIN<uint16>(getPnAmigaWindowInteriorHeight(window), plane->height);
+
+	for (uint16 y = 0; y < dstHeight; ++y) {
+		byte *dst = (byte *)screen->getBasePtr(dstLeft, dstTop + y);
+		const byte *src = plane->pixels + y * plane->width;
+		memcpy(dst, src, dstWidth);
+	}
+
+	Common::Rect dirtyRect(0, 136, 320, _screenHeight);
+	updateBackendSurface(&dirtyRect);
+}
+
+void AGOSEngine::scrollPnAmigaTextPlane(WindowBlock *window) {
+	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr)
+		return;
+
+	const uint16 step = getPnAmigaTextLineStep();
+	if (plane->height > step) {
+		memmove(plane->pixels, plane->pixels + plane->width * step, plane->width * (plane->height - step));
+		memset(plane->pixels + plane->width * (plane->height - step), window->fillColor, plane->width * step);
+	} else {
+		memset(plane->pixels, window->fillColor, plane->width * plane->height);
+	}
+
+	compositePnAmigaTextPlane(window);
 }
 
 #ifdef ENABLE_AGOS2
@@ -144,6 +240,30 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 
 void AGOSEngine::colorWindow(WindowBlock *window) {
 	uint16 y, h;
+	uint16 x, w;
+
+	if (isPnAmigaTextWindow(window)) {
+		x = window->x * 16 + 1;
+		y = window->y + 1;
+		w = window->width * 16 - 2;
+		h = getPnAmigaWindowInteriorHeight(window);
+		_videoLockOut |= 0x8000;
+
+		Graphics::Surface *screen = _scaleBuf;
+		byte *dst = (byte *)screen->getBasePtr(x, y);
+
+		do {
+			memset(dst, window->fillColor, w);
+			dst += screen->pitch;
+		} while (--h);
+
+		Common::Rect dirtyRect(0, 136, kPnAmigaLowresWidth, _screenHeight);
+		updateBackendSurface(&dirtyRect);
+
+		_videoLockOut &= ~0x8000;
+		drawPnAmigaTextWindowBorders();
+		return;
+	}
 
 	y = window->y;
 	h = window->height * 8;
@@ -177,6 +297,9 @@ void AGOSEngine::colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, u
 	uint8 color = window->fillColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			y < 136 && (_windowNum == 1 || _windowNum == 2 || y >= 132))
+		color = (color & 0x0F) | 208;
 	uint16 h2 = h;
 
 	do {
@@ -198,6 +321,13 @@ void AGOSEngine::resetWindow(WindowBlock *window) {
 
 void AGOSEngine::restoreWindow(WindowBlock *window) {
 	_videoLockOut |= 0x8000;
+
+	if (isPnAmigaTextWindow(window)) {
+		_videoLockOut &= ~0x8000;
+		colorWindow(window);
+		compositePnAmigaTextPlane(window);
+		return;
+	}
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		restoreBlock(window->x, window->y, window->x + window->width, window->y + window->height);
@@ -287,8 +417,14 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	HitArea *ha;
 	const char *message;
 
-	window->textColumn = (window->width / 2) - 3;
-	window->textRow = window->height - 1;
+	if (isPnAmigaTextWindow(window)) {
+		const uint16 buttonWidth = getPnAmigaGlyphAdvance(' ') * 6;
+		window->textColumn = MAX<int16>((int16)kPnAmigaTextStartX, ((int16)getPnAmigaTextPlaneWidth(window) - (int16)buttonWidth) / 2);
+		window->textRow = MAX<int16>(0, (int16)getPnAmigaWindowInteriorHeight(window) - (int16)getPnAmigaGlyphHeight());
+	} else {
+		window->textColumn = (window->width / 2) - 3;
+		window->textRow = window->height - 1;
+	}
 	window->textLength = 0;
 
 	_forceAscii = true;
@@ -298,10 +434,16 @@ void AGOSEngine::waitWindow(WindowBlock *window) {
 	_forceAscii = false;
 
 	ha = findEmptyHitArea();
-	ha->x = (window->width / 2 + window->x - 3) * 8;
-	ha->y = window->height * 8 + window->y - 8;
-	ha->width = 48;
-	ha->height = 8;
+	if (isPnAmigaTextWindow(window)) {
+		ha->x = window->x * 8 + window->textColumn / 2;
+		ha->y = window->y + getPnAmigaWindowInteriorHeight(window) + 2 - getPnAmigaGlyphHeight();
+		ha->width = getPnAmigaGlyphAdvance(' ') * 3;
+	} else {
+		ha->x = (window->width / 2 + window->x - 3) * 8;
+		ha->y = window->height * 8 + window->y - 8;
+		ha->width = 48;
+	}
+	ha->height = isPnAmiga() ? getPnAmigaGlyphHeight() : 8;
 	ha->flags = kBFBoxInUse;
 	ha->id = 0x7FFF;
 	ha->priority = 999;

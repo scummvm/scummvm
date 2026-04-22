@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes7.h"
 
@@ -88,7 +88,7 @@ void Scene7xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-Scene701::Scene701(MADSEngine *vm) : Scene7xx(vm) {
+Scene701::Scene701(RexNebularEngine *vm) : Scene7xx(vm) {
 	_fishingLineId = -1;
 }
 
@@ -551,7 +551,7 @@ void Scene702::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene703::Scene703(MADSEngine *vm) : Scene7xx(vm) {
+Scene703::Scene703(RexNebularEngine *vm) : Scene7xx(vm) {
 	_monsterMode = -1;
 	_boatFrame = -1;
 	_curSequence = -1;
@@ -1109,7 +1109,7 @@ void Scene703::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene704::Scene704(MADSEngine *vm) : Scene7xx(vm) {
+Scene704::Scene704(RexNebularEngine *vm) : Scene7xx(vm) {
 	_bottleHotspotId = -1;
 	_boatCurrentFrame = -1;
 	_animationMode = -1;
@@ -1736,7 +1736,7 @@ void Scene705::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene706::Scene706(MADSEngine *vm) : Scene7xx(vm) {
+Scene706::Scene706(RexNebularEngine *vm) : Scene7xx(vm) {
 	_vaseHotspotId = -1;
 	_vaseMode = -1;
 	_animationMode = -1;
@@ -2168,7 +2168,7 @@ void Scene711::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene751::Scene751(MADSEngine *vm) : Scene7xx(vm) {
+Scene751::Scene751(RexNebularEngine *vm) : Scene7xx(vm) {
 	_rexHandingLine = false;
 }
 
@@ -2503,7 +2503,7 @@ void Scene751::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene752::Scene752(MADSEngine *vm) : Scene7xx(vm) {
+Scene752::Scene752(RexNebularEngine *vm) : Scene7xx(vm) {
 	_cardId = -1;
 }
 
@@ -2678,5 +2678,5 @@ void Scene752::actions() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

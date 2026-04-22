@@ -230,6 +230,27 @@ void AGOSEngine::deleteVgaEvent(VgaTimerEntry * vte) {
 	_videoLockOut &= ~1;
 }
 
+void AGOSEngine::schedulePNFadeEvent() {
+	if (!isPNDayNightPaletteMode())
+		return;
+
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT)
+			return;
+	}
+
+	addVgaEvent(_vgaBaseDelay, PN_FADE_EVENT, nullptr, 0, 0);
+}
+
+void AGOSEngine::removePNFadeEvent() {
+	for (VgaTimerEntry *vte = _vgaTimerList; vte->delay; ++vte) {
+		if (vte->type == PN_FADE_EVENT) {
+			deleteVgaEvent(vte);
+			return;
+		}
+	}
+}
+
 void AGOSEngine::processVgaEvents() {
 	VgaTimerEntry *vte = _vgaTimerList;
 
@@ -246,6 +267,8 @@ void AGOSEngine::processVgaEvents() {
 			case ANIMATE_INT:
 				vte->delay = (getGameType() == GType_SIMON2) ? 5 : _frameCount;
 				animateSprites();
+				if (isPNDayNightPaletteMode())
+					schedulePNFadeEvent();
 				vte++;
 				break;
 			case ANIMATE_EVENT:
@@ -266,6 +289,20 @@ void AGOSEngine::processVgaEvents() {
 				break;
 			case MONSTER_DAMAGE_EVENT:
 				monsterDamageEvent(vte, curZoneNum);
+				vte = _nextVgaTimerToProcess;
+				break;
+			case PN_FADE_EVENT:
+				if (isPNDayNightPaletteMode()) {
+					if (_pnDayNightControllerTickCounter > _vgaBaseDelay) {
+						_pnDayNightControllerTickCounter -= _vgaBaseDelay;
+					} else {
+						_pnDayNightControllerTickCounter = 0x00C8;
+						updatePNDayNightController(_pnDayNightControllerSelectorMask);
+					}
+				}
+
+				_nextVgaTimerToProcess = vte + 1;
+				deleteVgaEvent(vte);
 				vte = _nextVgaTimerToProcess;
 				break;
 			default:
@@ -490,6 +527,9 @@ void AGOSEngine::delay(uint amount) {
 				if (event.kbd.keycode >= Common::KEYCODE_0 && event.kbd.keycode <= Common::KEYCODE_9
 					&& (event.kbd.hasFlags(Common::KBD_ALT) ||
 						event.kbd.hasFlags(Common::KBD_CTRL))) {
+					if (getGameType() == GType_PN)
+						break;
+
 					_saveLoadSlot = event.kbd.keycode - Common::KEYCODE_0;
 
 					// There is no save slot 0

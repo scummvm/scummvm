@@ -21,12 +21,12 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "mads/game.h"
-#include "mads/mads.h"
-#include "mads/menu_views.h"
-#include "mads/resources.h"
-#include "mads/scene.h"
-#include "mads/screen.h"
+#include "mads/core/game.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/menu_views.h"
+#include "mads/core/resources.h"
+#include "mads/core/scene.h"
+#include "mads/core/screen.h"
 #include "mads/nebular/menu_nebular.h"
 
 namespace MADS {
@@ -37,7 +37,7 @@ namespace Nebular {
 #define MADS_MENU_Y ((MADS_SCREEN_HEIGHT - MADS_SCENE_HEIGHT) / 2)
 #define MADS_MENU_ANIM_DELAY 70
 
-MainMenu::MainMenu(MADSEngine *vm): MenuView(vm) {
+MainMenu::MainMenu(RexNebularEngine *vm): MenuView(vm) {
 	Common::fill(&_menuItems[0], &_menuItems[7], (SpriteAsset *)nullptr);
 	Common::fill(&_menuItemIndexes[0], &_menuItemIndexes[7], -1);
 	_delayTimeout = 0;
@@ -371,7 +371,7 @@ void MainMenu::handleAction(MADSGameAction action) {
 
 /*------------------------------------------------------------------------*/
 
-AdvertView::AdvertView(MADSEngine *vm): EventTarget(), _vm(vm) {
+AdvertView::AdvertView(RexNebularEngine *vm): EventTarget(), _vm(vm) {
 	_breakFlag = false;
 }
 
@@ -432,6 +432,6 @@ void RexAnimationView::scriptDone() {
 	}
 }
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS

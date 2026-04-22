@@ -61,7 +61,7 @@ private:
 	Common::Array<Common::ScopedPtr<UI::Scrollbar>> _scrollbars;
 	Common::ScopedPtr<UI::Button> _exitButton;
 
-	const SET *_setupData;
+	const SET *_setupData = nullptr;
 };
 
 } // End of namespace State

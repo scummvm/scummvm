@@ -159,6 +159,8 @@ public:
 	bool   hasVideo          (int slot = 0) const;
 
 
+	bool getFrameCoords(int slot, int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) const;
+
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
 	bool                      hasEmbeddedFile(const Common::String &fileName, int slot = 0) const;

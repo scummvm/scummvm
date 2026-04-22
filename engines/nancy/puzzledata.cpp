@@ -82,8 +82,8 @@ void RippedLetterPuzzleData::synchronize(Common::Serializer &ser) {
 	ser.syncArray(serializedRotations.data(), serializedRotations.size(), Common::Serializer::Byte);
 
 	if (ser.isLoading()) {
-		order = serializedOrder;
-		rotations = serializedRotations;
+		Common::move(serializedOrder.begin(), serializedOrder.end(), order.begin());
+		Common::move(serializedRotations.begin(), serializedRotations.end(), rotations.begin());
 	}
 }
 

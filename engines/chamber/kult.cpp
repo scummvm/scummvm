@@ -247,11 +247,11 @@ Common::Error ChamberEngine::init() {
 	_fontHeight = 6;
 	_fontWidth = 4;
 	if (isCustomHerc) {
-		initGraphics(720, 348); 
+		initGraphics(720, 348);
 	} else {
 		initGraphics(_screenW, _screenH);
 	}
-	
+
 	initSound();
 
 	/*TODO: DetectCPU*/
@@ -262,7 +262,7 @@ Common::Error ChamberEngine::init() {
 
 	/* Install timer callback */
 	initTimer();
-	
+
 	Graphics::Surface *splash = nullptr;
 
 	if (g_vm->getLanguage() == Common::EN_USA) {
@@ -293,12 +293,12 @@ Common::Error ChamberEngine::init() {
 
     splash->free();
     delete splash;
-   
+
 	/* Wait for a keypress */
 	clearKeyboard();
 	readKeyboardChar();
 
-	
+
 	if (g_vm->getLanguage() == Common::EN_USA) {
 		if (ifgm_loaded) {
 			/*TODO*/
@@ -371,6 +371,8 @@ Common::Error ChamberEngine::init() {
 			/*TODO*/
 		}
 	}
+
+	exitGame();
 
 	return Common::kNoError;
 }

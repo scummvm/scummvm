@@ -22,7 +22,7 @@
 #ifndef MADS_FOREST_SCENES_H
 #define MADS_FOREST_SCENES_H
 
-#include "mads/scene.h"
+#include "mads/core/scene.h"
 #include "mads/forest/game_forest.h"
 #include "mads/forest/globals_forest.h"
 
@@ -176,7 +176,7 @@ enum Noun {
 
 class SceneFactory {
 public:
-	static SceneLogic *createScene(MADSEngine *vm);
+	static SceneLogic *createScene(RexNebularEngine *vm);
 };
 
 /**
@@ -201,7 +201,7 @@ public:
 	/**
 	 * Constructor
 	 */
-	ForestScene(MADSEngine *vm);
+	ForestScene(RexNebularEngine *vm);
 };
 
 class SceneInfoForest : public SceneInfo {
@@ -214,13 +214,13 @@ protected:
 	/**
 	* Constructor
 	*/
-	SceneInfoForest(MADSEngine *vm) : SceneInfo(vm) {}
+	SceneInfoForest(RexNebularEngine *vm) : SceneInfo(vm) {}
 };
 
 // TODO: Temporary, remove once implemented properly
 class DummyScene : public ForestScene {
 public:
-	DummyScene(MADSEngine *vm) : ForestScene(vm) {
+	DummyScene(RexNebularEngine *vm) : ForestScene(vm) {
 		warning("Unimplemented scene");
 	}
 
@@ -229,7 +229,7 @@ public:
 	void actions() override {}
 };
 
-} // End of namespace Forest
-} // End of namespace MADS
+} // namespace Forest
+} // namespace MADS
 
 #endif

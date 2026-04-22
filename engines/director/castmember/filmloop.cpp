@@ -48,9 +48,9 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_crop = false;
 	_center = false;
 	_index = -1;
+	_score = nullptr;
 
-	// We are ignoring some of the bits in the flags
-	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
+	if (cast->_version >= kFileVer400) {
 		_initialRect = Movie::readRect(stream);
 		uint32 flags = stream.readUint32BE();
 		uint16 unk1 = stream.readUint16BE();
@@ -69,6 +69,8 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 		_enableSound = flags & 8 ? 1 : 0;
 		_crop = flags & 2 ? 0 : 1;
 		_center = flags & 1 ? 1 : 0;
+
+		debugC(5, kDebugLoading, "FilmLoopCastMember::FilmLoopCastMember(): flags: %d, unk1: %d, looping: %d, enableSound: %d, crop: %d, center: %d", flags, unk1, _looping, _enableSound, _crop, _center);
 	}
 }
 
@@ -118,8 +120,8 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 
 	// get the list of sprite IDs for this frame
 	Common::Array<int> spriteIds;
-	for (uint i = 0; i < _score->_channels.size(); ++i) {
-		if (_score->_channels[i]->_sprite && !_score->_channels[i]->_sprite->_castId.isNull())
+	for (uint i = 0; i < _score->_scoreCache[frame]->_sprites.size(); ++i) {
+		if (_score->_scoreCache[frame]->_sprites[i] && !_score->_scoreCache[frame]->_sprites[i]->_castId.isNull())
 			spriteIds.push_back(i);
 	}
 
@@ -143,9 +145,12 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, u
 
 	// copy the sprites in order to the list
 	for (auto &iter : spriteIds) {
-		Sprite src = *_score->_channels[iter]->_sprite;
+		Sprite src = *_score->_scoreCache[frame]->_sprites[iter];
 		if (src._castId.isNull())
 			continue;
+
+		if (src._cast == nullptr && _cast != nullptr)
+			src._cast = _cast->getCastMember(src._castId.member, true);
 
 		debugCN(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): sprite: %d - cast: %s, orig: %d,%d %dx%d",
 				iter, src._castId.asString().c_str(),
@@ -210,7 +215,7 @@ Common::String FilmLoopCastMember::formatInfo() {
 		_initialRect.left, _initialRect.top,
 		_boundingRect.width(), _boundingRect.height(),
 		_boundingRect.left, _boundingRect.top,
-		_score->_scoreCache.size(), _subchannels.size(), _enableSound, _looping,
+		_score ? _score->_scoreCache.size() : -1, _score ? _subchannels.size() : -1, _enableSound, _looping,
 		_crop, _center
 	);
 }

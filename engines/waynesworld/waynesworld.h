@@ -33,6 +33,7 @@
 #include "image/pcx.h"
 
 #include "waynesworld/sound.h"
+#include "wwintro.h"
 
 #define kWWSavegameVersion 1
 #define kWWSavegameStrSize 14
@@ -141,52 +142,7 @@ public:
 private:
 	Graphics::PixelFormat _pixelFormat;
 
-	void wwEffect(int arg0, int arg1, bool flag);
-	void cleanPt3();
-
-	bool introPt1();
-	bool introPt2();
-	bool introPt3(bool flag);
-	bool introPt4();
-	void introPt5();
-	void introPt6();
-	void introPt7();
-
-	WWSurface *_introBackg1Image = nullptr;
-	WWSurface *_introWbodyImage[5] = {nullptr};
-	WWSurface *_introGbodyImage = nullptr;
-	WWSurface *_introWhead1[8] = {nullptr};
-	WWSurface *_introGhead1[11] = {nullptr};
-
-	int _old_arg_refreshBackgFl = -1;
-	int _old_arg_wBodyIndex = -1;
-	int _old_arg_gBodyIndex = -1;
-	int _old_argWHead1Index = -1;
-	int _old_argGHead1Index = -1;
-	int _startOawPos = 0;
-	int _startOagPos = 0;
-	int _startOaoPos = 0;
 	int _loadSaveSlot = -1;
-
-	void sub3009A(int textId);
-	void sub2FEFB(int arg_refreshBackgFl, int arg_wBodyIndex, int arg_gBodyIndex, int arg_wHead1Index, int arg_gHead1Index, int arg_TextId);
-
-	void introPt4_init();
-	bool introPt4_intro();
-	bool introPt4_displayCallInTime();
-	bool introPt4_caller1();
-	bool introPt4_caller2();
-	bool introPt4_caller3();
-	bool introPt4_caller4();
-	void introPt4_cleanup();
-	bool introPt4_playGuitar();
-
-	WWSurface *_demoPt2Surface = nullptr;
-	WWSurface *_backg2Surface = nullptr;
-	WWSurface *_logoSurface = nullptr;
-	WWSurface *_outlineSurface = nullptr;
-
-	GxlArchive *_oanGxl = nullptr;
 
 public:
 	Common::RandomSource *_random = nullptr;
@@ -301,7 +257,8 @@ public:
 	int _gameMapCtr = 0;
 	uint32 _gameMapLastTicks = 0;
 
-	void runIntro();
+	// Intro
+	WWIntro *intro = nullptr;
 
 	// Utils
 	int getRandom(int max);

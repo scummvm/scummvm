@@ -998,7 +998,7 @@ void Player_SID::releaseResourceBySound(int resID) { // $5088
 void Player_SID::readVec6Data(int x, int *offset, uint8 *songFilePtr, int chanResID) { // $4E99
 	//vec5[x] = songFilePtr;
 	assert(x < ARRAYSIZE(vec6));
-	vec6[x] = songFilePtr[*offset];
+	vec6[x] = READ_LE_UINT16(songFilePtr + *offset);
 	*offset += 2;
 	_soundQueue[x] = chanResID;
 }

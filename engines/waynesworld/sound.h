@@ -44,12 +44,19 @@ private:
 	WaynesWorldEngine *_vm;
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle *_effectsHandle;
+	char _abtLookupTable[256] = {0};
+
+	byte decompDelta1(int16 *curVal, byte **src, byte **dst, byte count);
+	byte decompDelta2(int16 *curVal, byte **src, byte **dst, byte count);
+	byte decompDelta4(int16 *curVal, byte **src, byte **dst, byte count);
+	
+	byte* abtDecomp(Common::File *fd, int *size, int *freq);
 
 public:
 	SoundManager(WaynesWorldEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
 
-	void playSound(const char *filename, int flag);
+	void playSound(const char *filename, bool flag);
 	bool isSFXPlaying();
 
 	void syncVolume();

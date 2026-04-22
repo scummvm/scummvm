@@ -437,11 +437,11 @@ void WageEngine::performMagic(Chr *attacker, Chr *victim, Obj *magicalObject) {
 	int chance = _rnd->getRandomNumber(255);
 
 	// pass -1 to indicate a non physical hit
-	if (chance < magicAcc) 
+	if (chance < magicAcc)
 		attackHit(attacker, victim, magicalObject, -1);
-	else if (attacker->_playerCharacter) 
+	else if (attacker->_playerCharacter)
 		appendText("The spell has no effect.");
-	else 
+	else
 		appendText("A miss!");
 
 	decrementUses(magicalObject);
@@ -539,9 +539,12 @@ void WageEngine::performMove(Chr *chr, int validMoves) {
 
 	// The enemy always runs to the next room first.
 	Scene *currentScene = chr->_currentScene;
-	int destX = currentScene->_worldX + directionsX[dir];
-	int destY = currentScene->_worldY + directionsY[dir];
-	Scene *destScene = _world->getSceneAt(destX, destY);
+	Scene *destScene = NULL;
+	if (dir != -1) {
+		int destX = currentScene->_worldX + directionsX[dir];
+		int destY = currentScene->_worldY + directionsY[dir];
+		destScene = _world->getSceneAt(destX, destY);
+	}
 
 	if (destScene != NULL) {
 		char buf[256];

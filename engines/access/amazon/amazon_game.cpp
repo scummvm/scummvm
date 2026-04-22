@@ -769,7 +769,7 @@ void AmazonEngine::dead(int deathId) {
 	}
 }
 
-void AmazonEngine::synchronize(Common::Serializer &s) {
+Common::Error AmazonEngine::synchronize(Common::Serializer &s) {
 	AccessEngine::synchronize(s);
 
 	s.syncAsSint16LE(_chapter);
@@ -785,6 +785,8 @@ void AmazonEngine::synchronize(Common::Serializer &s) {
 
 	_river->synchronize(s);
 	_ant->synchronize(s);
+
+	return Common::kNoError;
 }
 
 } // End of namespace Amazon

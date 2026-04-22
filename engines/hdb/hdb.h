@@ -320,7 +320,8 @@ public:
 
 	Save _saveHeader;
 	bool _gameShutdown;
-	Graphics::PixelFormat _format;
+	Graphics::PixelFormat _dataFormat;
+	Graphics::PixelFormat _screenFormat;
 
 	Picture *_progressGfx, *_progressMarkGfx;
 	Picture *_loadingScreenGfx, *_logoGfx;

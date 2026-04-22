@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-10 19:13+0000\n"
+"POT-Creation-Date: 2026-04-21 19:16+0000\n"
 "PO-Revision-Date: 2026-02-11 14:23+0000\n"
 "Last-Translator: SecularSteve <fairfull.playing@gmail.com>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -25,39 +25,46 @@ msgstr ""
 msgid "Apple Macintosh Audio"
 msgstr "Apple Macintosh Geluid"
 
+#. I18N: built with <compiler>
+#: gui/about.cpp:119
+#, fuzzy, c-format
+#| msgid "(built on %s with %s)"
+msgid "(built with %s)"
+msgstr "(gebouwd op %s met %s)"
+
 #. I18N: built on <build date> with <compiler>
-#: gui/about.cpp:112
+#: gui/about.cpp:122
 #, c-format
 msgid "(built on %s with %s)"
 msgstr "(gebouwd op %s met %s)"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:130
 msgid "Features compiled in:"
 msgstr "Features meegecompileerd:"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "not supported"
 msgstr "niet ondersteund"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "disabled"
 msgstr "uitgeschakeld"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "enabled"
 msgstr "ingeschakeld"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
-#: gui/about.cpp:151
+#: gui/about.cpp:162
 msgid "CPU extensions support:"
 msgstr "CPU extentie ondersteuning:"
 
-#: gui/about.cpp:164
+#: gui/about.cpp:175
 msgid "Available engines:"
 msgstr "Beschikbare engines:"
 
 #. I18N: Close dialog button
-#: gui/about.cpp:506 gui/about.cpp:635 gui/downloadpacksdialog.cpp:298
+#: gui/about.cpp:516 gui/about.cpp:648 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/helpdialog.cpp:128 gui/imagealbum-dialog.cpp:133
 #: gui/textviewer.cpp:56 gui/unknown-game-dialog.cpp:53
@@ -78,7 +85,7 @@ msgstr "Sluiten"
 #. I18N: Opens the help screen.
 #: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:959
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
-#: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
+#: engines/access/metaengine.cpp:356 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
@@ -113,7 +120,7 @@ msgstr "Ga omhoog"
 #: gui/integrity-dialog.cpp:253 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2416
 #: gui/predictivedialog.cpp:68 gui/printing-dialog.cpp:96
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:211
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
 #: gui/saveload-dialog.cpp:456 gui/saveload-dialog.cpp:540
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
@@ -579,7 +586,7 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2254
-#: backends/graphics/atari/atari-graphics.cpp:1054
+#: backends/graphics/atari/atari-graphics.cpp:1056
 #: backends/graphics/sdl/sdl-graphics.cpp:488
 msgid "Graphics"
 msgstr "Beeld"
@@ -1658,7 +1665,7 @@ msgid "Unknown Year"
 msgstr "Onbekend Jaar"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1640 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1640 gui/widgets/groupedlist.cpp:82
 msgid "All"
 msgstr "Alles"
 
@@ -1937,7 +1944,7 @@ msgstr "Spel 3D Renderer:"
 msgid "3D Anti-aliasing:"
 msgstr "3D Anti-aliasing:"
 
-#: gui/options.cpp:1731 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1731
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
@@ -2651,7 +2658,7 @@ msgstr ""
 "En meer..."
 
 #: gui/options.cpp:2966 engines/engine.cpp:647
-#: engines/access/metaengine.cpp:281 engines/drascula/metaengine.cpp:255
+#: engines/access/metaengine.cpp:294 engines/drascula/metaengine.cpp:255
 #: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
 #: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
@@ -2813,43 +2820,43 @@ msgstr "Aanwijzer Snelheid:"
 msgid "Orientation:"
 msgstr "Volgende actie"
 
-#: gui/recorderdialog.cpp:67
+#: gui/recorderdialog.cpp:66
 msgid "Recorder or Playback Gameplay"
 msgstr "Opnemen of Afspelen Spel"
 
-#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:71 gui/recorderdialog.cpp:211
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
 #: dists/android.strings.xml.cpp:47 engines/engine.cpp:641
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: gui/recorderdialog.cpp:74
+#: gui/recorderdialog.cpp:73
 msgid "Record"
 msgstr "Opnemen"
 
-#: gui/recorderdialog.cpp:75
+#: gui/recorderdialog.cpp:74
 msgid "Playback"
 msgstr "Opnieuw afspelen"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:340
+#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:338
 msgid "Edit"
 msgstr "Bewerken"
 
-#: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
-#: gui/recorderdialog.cpp:308
+#: gui/recorderdialog.cpp:141 gui/recorderdialog.cpp:300
+#: gui/recorderdialog.cpp:307
 msgid "Author: "
 msgstr "Auteur: "
 
-#: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
-#: gui/recorderdialog.cpp:309
+#: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:301
+#: gui/recorderdialog.cpp:308
 msgid "Notes: "
 msgstr "Notities: "
 
-#: gui/recorderdialog.cpp:211
+#: gui/recorderdialog.cpp:210
 msgid "Do you really want to delete this record?"
 msgstr "Wilt u deze opname echt verwijderen?"
 
-#: gui/recorderdialog.cpp:228
+#: gui/recorderdialog.cpp:227
 msgid "Unknown Author"
 msgstr "Onbekende Auteur"
 
@@ -2965,28 +2972,28 @@ msgstr "Selecteer shader"
 msgid "Select a Theme"
 msgstr "Selecteer een thema"
 
-#: gui/ThemeEngine.cpp:266
+#: gui/ThemeEngine.cpp:256
 msgid "Disabled GFX"
 msgstr "GFX uitgeschakeld"
 
-#: gui/ThemeEngine.cpp:266
+#: gui/ThemeEngine.cpp:256
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "GFX uitgeschakeld"
 
-#: gui/ThemeEngine.cpp:267
+#: gui/ThemeEngine.cpp:257
 msgid "Standard renderer"
 msgstr "Standaard renderer"
 
-#: gui/ThemeEngine.cpp:267 engines/scumm/dialogs.cpp:1054
+#: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:1054
 msgid "Standard"
 msgstr "Standaard"
 
-#: gui/ThemeEngine.cpp:269
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased renderer"
 msgstr "Antialiased renderer"
 
-#: gui/ThemeEngine.cpp:269
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
 msgstr "Antialiased"
 
@@ -3042,15 +3049,15 @@ msgstr ""
 "U kunt deze instelling later in het Misc-tabblad\n"
 "in het dialoogvenster Opties wijzigen."
 
-#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
+#: gui/widget.cpp:467 gui/widget.cpp:469 gui/widget.cpp:474 gui/widget.cpp:476
 msgid "Clear value"
 msgstr "Veld leegmaken"
 
-#: gui/widgets/grid.cpp:334
+#: gui/widgets/grid.cpp:332
 msgid "Play"
 msgstr "Spelen"
 
-#: gui/widgets/grid.cpp:337
+#: gui/widgets/grid.cpp:335
 msgid "Saves"
 msgstr "Opgeslagen spellen"
 
@@ -3754,7 +3761,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "FOUT: Kon het opgeslagen spel niet kopiëren naar een nieuw slot"
 
 #: engines/engine.cpp:681 engines/savestate.cpp:103
-#: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:269 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "Automatisch opslaan"
@@ -3890,7 +3897,7 @@ msgstr "Standaard speltoetsenkoppelingen"
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
-#: engines/mads/metaengine.cpp:280 engines/mm/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:300 engines/mm/metaengine.cpp:186
 #: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:181
 #: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
 #: engines/sludge/keymapper_tables.h:561 engines/sludge/keymapper_tables.h:580
@@ -3923,7 +3930,7 @@ msgstr "Middenklik"
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
 #: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:286
+#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:306
 #: engines/mm/metaengine.cpp:192 engines/mtropolis/metaengine.cpp:167
 #: engines/nancy/input.cpp:188 engines/parallaction/metaengine.cpp:144
 #: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:567
@@ -3964,7 +3971,7 @@ msgstr "Spelmenu"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:208
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:221
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -4024,31 +4031,31 @@ msgstr "OpenGL met shaders"
 msgid "AdLib emulator"
 msgstr "AdLib emulator"
 
-#: audio/fmopl.cpp:84
+#: audio/fmopl.cpp:85
 msgid "MAME OPL emulator"
 msgstr "MAME OPL emulator"
 
-#: audio/fmopl.cpp:86
+#: audio/fmopl.cpp:88
 msgid "DOSBox OPL emulator"
 msgstr "DOSBox OPL emulator"
 
-#: audio/fmopl.cpp:89
+#: audio/fmopl.cpp:91
 msgid "Nuked OPL emulator"
 msgstr "Nuked OPL emulator"
 
-#: audio/fmopl.cpp:92
+#: audio/fmopl.cpp:94
 msgid "ALSA Direct FM"
 msgstr "ALSA Direct FM"
 
-#: audio/fmopl.cpp:95
+#: audio/fmopl.cpp:97
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
 
-#: audio/fmopl.cpp:96
+#: audio/fmopl.cpp:98
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/fmopl.cpp:99
+#: audio/fmopl.cpp:101
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
@@ -4264,7 +4271,7 @@ msgstr "Voeg een nieuwe map toe"
 msgid "Choose a new folder"
 msgstr "Selecteer een nieuwe map"
 
-#: backends/graphics/atari/atari-graphics.cpp:1058
+#: backends/graphics/atari/atari-graphics.cpp:1060
 #: backends/graphics/sdl/sdl-graphics.cpp:515 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
 msgstr "Pixelverhoudingcorrectie aan-/uitzetten"
@@ -4350,7 +4357,7 @@ msgstr "Schermafdruk opslaan mislukt"
 msgid "Windowed mode"
 msgstr "Venstermodus"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/colony/metaengine.cpp:169
+#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/colony/metaengine.cpp:168
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Volledig scherm aan-/uitzetten"
@@ -4971,12 +4978,12 @@ msgstr "Vergroot Modus Uit. Sleep Modus wordt geheractiveerd..."
 msgid "Magnify Mode Off"
 msgstr "Vergroot Modus Uit"
 
-#: backends/platform/android/android.cpp:1076
-#: backends/platform/ios7/ios7_osys_misc.mm:249
+#: backends/platform/android/android.cpp:930
+#: backends/platform/ios7/ios7_osys_misc.mm:246
 msgid "Getting help"
 msgstr "Hulp krijgen"
 
-#: backends/platform/android/android.cpp:1079
+#: backends/platform/android/android.cpp:933
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -5018,13 +5025,13 @@ msgstr ""
 "soms zelfs verbijsterend lastig. Als je vastloopt in een speel, kun je "
 "overwegen om een walkthrough te bekijken. Veel succes!\n"
 
-#: backends/platform/android/android.cpp:1088
-#: backends/platform/ios7/ios7_osys_misc.mm:261
-#: backends/platform/ios7/ios7_osys_misc.mm:357
+#: backends/platform/android/android.cpp:942
+#: backends/platform/ios7/ios7_osys_misc.mm:258
+#: backends/platform/ios7/ios7_osys_misc.mm:354
 msgid "Touch Controls"
 msgstr "Aanraak Bediening"
 
-#: backends/platform/android/android.cpp:1091
+#: backends/platform/android/android.cpp:945
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5165,13 +5172,13 @@ msgstr ""
 "![Toetsenbordpictogram](keyboard.png \"Toetsenbordpictogram\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1147
-#: backends/platform/ios7/ios7_osys_misc.mm:336
-#: backends/platform/ios7/ios7_osys_misc.mm:380
+#: backends/platform/android/android.cpp:1001
+#: backends/platform/ios7/ios7_osys_misc.mm:333
+#: backends/platform/ios7/ios7_osys_misc.mm:377
 msgid "Adding Games"
 msgstr "Spellen Toevoegen"
 
-#: backends/platform/android/android.cpp:1150
+#: backends/platform/android/android.cpp:1004
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5439,7 +5446,7 @@ msgstr "Gebruik minimale speelpad indeling"
 msgid "Show keyboard function bar"
 msgstr "Toon toetenbord functiebalk"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:252
+#: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -5477,7 +5484,7 @@ msgstr ""
 "soms zelfs verbijsterend lastig. Als je vastloopt in een speel, kun je "
 "overwegen om een walkthrough te bekijken. Veel succes!\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:264
+#: backends/platform/ios7/ios7_osys_misc.mm:261
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5602,11 +5609,11 @@ msgstr ""
 "[Toetsenbordpictogram](keyboard.png \"Toetsenbordpictogram\"){w=10em}\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:314
+#: backends/platform/ios7/ios7_osys_misc.mm:311
 msgid "External keyboard"
 msgstr "Extern toetsenbord"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:317
+#: backends/platform/ios7/ios7_osys_misc.mm:314
 msgid ""
 "## Use of keyboard\n"
 "External keyboards are supported and from iOS 13.4 most of the special keys, "
@@ -5652,7 +5659,7 @@ msgstr ""
 "| `CMD + RECHTS` | END               \n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:339
+#: backends/platform/ios7/ios7_osys_misc.mm:336
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5690,7 +5697,7 @@ msgstr ""
 "Zie onze [iOS-documentatie](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) voor meer informatie.\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:360
+#: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -5733,7 +5740,7 @@ msgstr ""
 "Terug/Menu.\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:383
+#: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -6064,7 +6071,7 @@ msgstr "R2"
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
-#: engines/alcachofa/metaengine.cpp:110 engines/colony/metaengine.cpp:180
+#: engines/alcachofa/metaengine.cpp:110 engines/colony/metaengine.cpp:179
 #: engines/grim/grim.cpp:545 engines/grim/grim.cpp:645
 #: engines/hdb/metaengine.cpp:264 engines/made/metaengine.cpp:186
 #: engines/phoenixvr/metaengine.cpp:101 engines/toltecs/metaengine.cpp:252
@@ -6258,7 +6265,7 @@ msgstr "Startmenu"
 msgid "Check for Updates..."
 msgstr "Controleren op updates..."
 
-#: engines/access/metaengine.cpp:198 engines/alcachofa/metaengine.cpp:94
+#: engines/access/metaengine.cpp:211 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
 #: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
@@ -6267,7 +6274,7 @@ msgstr "Controleren op updates..."
 #: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
-#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/mads/metaengine.cpp:294 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:127
 #: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
@@ -6282,16 +6289,16 @@ msgstr "Controleren op updates..."
 msgid "Default keymappings"
 msgstr "Standaardtoetsenindelingen"
 
-#: engines/access/metaengine.cpp:202
+#: engines/access/metaengine.cpp:215
 msgid "Move / Interact / Skip"
 msgstr "Verplaatsen / Interactie / Overslaan"
 
-#: engines/access/metaengine.cpp:214 engines/sherlock/metaengine.cpp:483
+#: engines/access/metaengine.cpp:227 engines/sherlock/metaengine.cpp:483
 msgid "Skip movie"
 msgstr "Film overslaan"
 
 #. I18N: Move Actor to upwards direction
-#: engines/access/metaengine.cpp:220 engines/asylum/metaengine.cpp:171
+#: engines/access/metaengine.cpp:233 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:302 engines/hypno/metaengine.cpp:356
@@ -6301,7 +6308,7 @@ msgid "Move up"
 msgstr "Beweeg omhoog"
 
 #. I18N: Move Actor to downwards direction
-#: engines/access/metaengine.cpp:227 engines/asylum/metaengine.cpp:177
+#: engines/access/metaengine.cpp:240 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:290 engines/hypno/metaengine.cpp:342
@@ -6312,7 +6319,7 @@ msgstr "Beweeg omlaag"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
-#: engines/access/metaengine.cpp:234 engines/asylum/metaengine.cpp:183
+#: engines/access/metaengine.cpp:247 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
@@ -6325,7 +6332,7 @@ msgstr "Beweeg naar links"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
-#: engines/access/metaengine.cpp:241 engines/asylum/metaengine.cpp:189
+#: engines/access/metaengine.cpp:254 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
@@ -6337,31 +6344,31 @@ msgid "Move right"
 msgstr "Beweeg naar rechts"
 
 #. I18N: Move Actor to top-left direction
-#: engines/access/metaengine.cpp:248 engines/cine/metaengine.cpp:405
+#: engines/access/metaengine.cpp:261 engines/cine/metaengine.cpp:405
 #: engines/efh/metaengine.cpp:314
 msgid "Move up-left"
 msgstr "Naar linksboven verplaatsen"
 
 #. I18N: Move Actor to top-right direction
-#: engines/access/metaengine.cpp:253 engines/cine/metaengine.cpp:411
+#: engines/access/metaengine.cpp:266 engines/cine/metaengine.cpp:411
 #: engines/efh/metaengine.cpp:320
 msgid "Move up-right"
 msgstr "Naar rechtsboven verplaatsen"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/access/metaengine.cpp:258 engines/cine/metaengine.cpp:417
+#: engines/access/metaengine.cpp:271 engines/cine/metaengine.cpp:417
 #: engines/efh/metaengine.cpp:326
 msgid "Move down-left"
 msgstr "Naar linksonder verplaatsen"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/access/metaengine.cpp:263 engines/cine/metaengine.cpp:423
+#: engines/access/metaengine.cpp:276 engines/cine/metaengine.cpp:423
 #: engines/efh/metaengine.cpp:332
 msgid "Move down-right"
 msgstr "Naar rechtsonder gaan"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
-#: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:124
+#: engines/access/metaengine.cpp:281 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
@@ -6372,7 +6379,7 @@ msgstr "Naar rechtsonder gaan"
 msgid "Look"
 msgstr "Kijk"
 
-#: engines/access/metaengine.cpp:276 engines/drascula/metaengine.cpp:240
+#: engines/access/metaengine.cpp:289 engines/drascula/metaengine.cpp:240
 #: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
@@ -6382,13 +6389,13 @@ msgstr "Kijk"
 msgid "Open"
 msgstr "Open"
 
-#: engines/access/metaengine.cpp:286 engines/scumm/help.cpp:128
+#: engines/access/metaengine.cpp:299 engines/scumm/help.cpp:128
 #: engines/ultima/nuvie/metaengine.cpp:70
 msgid "Get"
 msgstr "Pak"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/access/metaengine.cpp:291 engines/access/metaengine.cpp:312
+#: engines/access/metaengine.cpp:304 engines/access/metaengine.cpp:325
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
 #: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:82
@@ -6408,11 +6415,11 @@ msgstr "Pak"
 msgid "Use"
 msgstr "Gebruik"
 
-#: engines/access/metaengine.cpp:296
+#: engines/access/metaengine.cpp:309
 msgid "Goto"
 msgstr "Ga naar"
 
-#: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
+#: engines/access/metaengine.cpp:314 engines/access/metaengine.cpp:345
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
 #: engines/efh/metaengine.cpp:506 engines/petka/metaengine.cpp:158
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
@@ -6423,18 +6430,18 @@ msgstr "Ga naar"
 msgid "Talk"
 msgstr "Praat"
 
-#: engines/access/metaengine.cpp:306 engines/scumm/help.cpp:175
+#: engines/access/metaengine.cpp:319 engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Reis"
 
-#: engines/access/metaengine.cpp:317 engines/cine/metaengine.cpp:332
+#: engines/access/metaengine.cpp:330 engines/cine/metaengine.cpp:332
 #: engines/petka/metaengine.cpp:144 engines/saga/metaengine.cpp:394
 #: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "Pak"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:322 engines/alcachofa/metaengine.cpp:116
+#: engines/access/metaengine.cpp:335 engines/alcachofa/metaengine.cpp:116
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
@@ -6454,18 +6461,18 @@ msgstr "Pak"
 msgid "Inventory"
 msgstr "Inventaris"
 
-#: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
+#: engines/access/metaengine.cpp:340 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
 msgstr "Klimmen"
 
-#: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
+#: engines/access/metaengine.cpp:350 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:503
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Loop"
 
-#: engines/access/metaengine.cpp:348
+#: engines/access/metaengine.cpp:361
 msgid "Open save/load menu"
 msgstr "Menu openen/opslaan laden"
 
@@ -6549,7 +6556,7 @@ msgstr "Gebruik de geruite wijzer van latere Apple II modellen"
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1252
+#: engines/sci/detection_options.h:221 engines/scumm/dialogs.cpp:1252
 #: engines/scumm/metaengine.cpp:872 engines/supernova/metaengine.cpp:53
 #: engines/wage/metaengine.cpp:51 engines/wintermute/metaengine.cpp:81
 msgid "Enable Text to Speech"
@@ -6589,7 +6596,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
 #: engines/neverhood/dialogs.cpp:47 engines/phoenixvr/metaengine.cpp:38
-#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:47
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
 #: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
 #: engines/zvision/metaengine.cpp:42
@@ -6603,7 +6610,7 @@ msgstr "Gebruik originele opslaan/laad schermen"
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
 #: engines/neverhood/dialogs.cpp:48 engines/phoenixvr/metaengine.cpp:39
-#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:48
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
 #: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
 #: engines/zvision/metaengine.cpp:43
@@ -6683,7 +6690,7 @@ msgstr "Voeg spelsnelheid menu toe (net als PC versie)"
 
 #: engines/agi/metaengine.cpp:195 engines/agos/dialogs.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:45
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:54
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1233 engines/scumm/metaengine.cpp:821
 #: engines/tot/metaengine.cpp:37
@@ -6692,7 +6699,7 @@ msgstr "Kopieerbeveiliging inschakelen"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/dialogs.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:46
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:55
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1234 engines/scumm/metaengine.cpp:822
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -6759,11 +6766,11 @@ msgstr ""
 "Met deze optie zal de muziek het tempo van de DOS versie gebruiken. Anders "
 "zal het snellere tempo van de Windows versie gebruikt worden."
 
-#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:95
+#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Geef de voorkeur aan digitale geluidseffecten"
 
-#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:96
+#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Geef de voorkeur aan digitale geluidseffecten boven gesynthetiseerde"
 
@@ -6785,11 +6792,11 @@ msgstr "Gebruik originele opslaan/laad schermen"
 msgid "Toggle between the system cursor and the default cursor."
 msgstr ""
 
-#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:263
+#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
 msgid "MIDI mode:"
 msgstr "MIDI modus:"
 
-#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:264
+#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:262
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6797,15 +6804,15 @@ msgstr ""
 "Bij het gebruik van externe MIDI apparaten (bijv. door USB-MIDI), kunt u "
 "hier uw apparaat kiezen"
 
-#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:269
+#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:267
 msgid "Standard (GM / MT-32)"
 msgstr "Standaard (GM / MT-32)"
 
-#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:281
+#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:279
 msgid "Casio MT-540"
 msgstr "Casio MT-540"
 
-#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:285
+#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:283
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
@@ -6829,7 +6836,7 @@ msgstr "AGOS basis"
 #: engines/hypno/metaengine.cpp:267 engines/hypno/metaengine.cpp:311
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:133
-#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:295 engines/neverhood/metaengine.cpp:186
 #: engines/queen/metaengine.cpp:147 engines/saga/metaengine.cpp:268
 #: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
 #: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
@@ -7332,7 +7339,7 @@ msgstr "Soldier 714 Oog Valsspelen"
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:107 engines/got/metaengine.cpp:78
 #: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
-#: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:42
+#: engines/mads/metaengine.cpp:312 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/saga/metaengine.cpp:328
 #: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
 #: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
@@ -7633,7 +7640,7 @@ msgstr "Privacy van aanwijzingen in-/uitschakelen"
 #: engines/freescape/games/eclipse/eclipse.cpp:351
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mads/metaengine.cpp:325 engines/mohawk/myst.cpp:583
 #: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
@@ -7709,7 +7716,7 @@ msgstr "Aanwijzingen database"
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:361
-#: engines/mads/metaengine.cpp:361 engines/phoenixvr/metaengine.cpp:80
+#: engines/mads/metaengine.cpp:381 engines/phoenixvr/metaengine.cpp:80
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
 #: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
 #: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
@@ -7788,15 +7795,15 @@ msgstr "Kijk omhoog"
 msgid "Look down"
 msgstr "Kijk omlaag"
 
-#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:138
+#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:137
 msgid "Look left"
 msgstr "Kijk naar links"
 
-#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:143
+#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:142
 msgid "Look right"
 msgstr "Kijk naar rechts"
 
-#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:100
+#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:99
 #: engines/dm/metaengine.cpp:196 engines/kyra/engine/eobcommon.cpp:371
 #: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
@@ -7998,9 +8005,9 @@ msgstr "Zet tekst-naar-spraak aan voor Objecten en Opties"
 
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
-#: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
+#: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:128
 #: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
-#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:121
+#: engines/sci/detection_options.h:222 engines/sherlock/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:54 engines/teenagent/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -8128,31 +8135,31 @@ msgstr ""
 "onvolledig formaat. Er zullen zaken fout gaan. Overweeg a.u.b. om Operation "
 "Stealth opnieuw te beginnen met nieuwe opgeslagen spellen."
 
-#: engines/colony/metaengine.cpp:46 engines/myst3/metaengine.cpp:40
+#: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
 msgstr "Breedbeeld aanpassing"
 
-#: engines/colony/metaengine.cpp:47 engines/myst3/metaengine.cpp:41
+#: engines/colony/metaengine.cpp:46 engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Zet breedbeeld rendering in volscherm modus aan."
 
-#: engines/colony/metaengine.cpp:107
+#: engines/colony/metaengine.cpp:106
 msgid "Move backward"
 msgstr "Achteruit bewegen"
 
-#: engines/colony/metaengine.cpp:114 engines/dm/metaengine.cpp:216
+#: engines/colony/metaengine.cpp:113 engines/dm/metaengine.cpp:216
 #: engines/freescape/movement.cpp:53 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe left"
 msgstr "Links straffen"
 
-#: engines/colony/metaengine.cpp:121 engines/dm/metaengine.cpp:236
+#: engines/colony/metaengine.cpp:120 engines/dm/metaengine.cpp:236
 #: engines/freescape/movement.cpp:61 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:101
 msgid "Strafe right"
 msgstr "Rechts straffen"
 
-#: engines/colony/metaengine.cpp:128
+#: engines/colony/metaengine.cpp:127
 #: engines/freescape/games/castle/castle.cpp:488
 #: engines/freescape/games/dark/dark.cpp:252
 #: engines/freescape/games/driller/driller.cpp:149
@@ -8162,7 +8169,7 @@ msgstr "Rechts straffen"
 msgid "Rotate left"
 msgstr "Draai Linksom"
 
-#: engines/colony/metaengine.cpp:133
+#: engines/colony/metaengine.cpp:132
 #: engines/freescape/games/castle/castle.cpp:493
 #: engines/freescape/games/dark/dark.cpp:257
 #: engines/freescape/games/driller/driller.cpp:154
@@ -8172,38 +8179,38 @@ msgstr "Draai Linksom"
 msgid "Rotate right"
 msgstr "Draai Rechtsom"
 
-#: engines/colony/metaengine.cpp:148
+#: engines/colony/metaengine.cpp:147
 #, fuzzy
 #| msgid "Look down"
 msgid "Look behind"
 msgstr "Kijk omlaag"
 
-#: engines/colony/metaengine.cpp:153
+#: engines/colony/metaengine.cpp:152
 #, fuzzy
 #| msgid "Toggle mute"
 msgid "Toggle mouselook"
 msgstr "Dempen aan-/uitzetten"
 
-#: engines/colony/metaengine.cpp:159
+#: engines/colony/metaengine.cpp:158
 #, fuzzy
 #| msgid "Toggle sound"
 msgid "Toggle dashboard"
 msgstr "Geluid in- en uitschakelen"
 
-#: engines/colony/metaengine.cpp:164
+#: engines/colony/metaengine.cpp:163
 #, fuzzy
 #| msgid "Toggle frame by frame"
 msgid "Toggle wireframe"
 msgstr "Frame voor frame schakelen"
 
-#: engines/colony/metaengine.cpp:174 engines/hypno/metaengine.cpp:146
+#: engines/colony/metaengine.cpp:173 engines/hypno/metaengine.cpp:146
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
 #: engines/sherlock/metaengine.cpp:872 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Intro overslaan"
 
-#: engines/colony/metaengine.cpp:186 engines/ultima/ultima8/metaengine.cpp:89
+#: engines/colony/metaengine.cpp:185 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
 msgstr "Vuurwapen"
 
@@ -8927,116 +8934,116 @@ msgstr "Speel geluidstype 9 af"
 msgid "Play sound type 16"
 msgstr "Speel geluidstype 16 af"
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:41
 msgid "Prerecorded sounds"
 msgstr "Opgenomen geluiden"
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:42
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Gebruik hoge kwaliteit opgenomen geluiden in plaats van PC speaker emulatie"
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:52
 msgid "Extended timer"
 msgstr "Extended timer"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:53
 msgid "Start the game timer at 99:59:59"
 msgstr "Start de spel timer met 99:59:59"
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:63
 msgid "Automatic drilling"
 msgstr "Automatisch boren"
 
-#: engines/freescape/metaengine.cpp:65
+#: engines/freescape/metaengine.cpp:64
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr ""
 "Maak het mogelijk om met succes te boren in elk deel van het gebied in "
 "Driller"
 
-#: engines/freescape/metaengine.cpp:75
+#: engines/freescape/metaengine.cpp:74
 msgid "Disable demo mode"
 msgstr "Debug modus uitschakelen"
 
-#: engines/freescape/metaengine.cpp:76
+#: engines/freescape/metaengine.cpp:75
 msgid "Never activate demo mode"
 msgstr "Nooit demo modus activeren"
 
-#: engines/freescape/metaengine.cpp:86
+#: engines/freescape/metaengine.cpp:85
 msgid "Disable sensors"
 msgstr "Sensors uitschakelen"
 
-#: engines/freescape/metaengine.cpp:87
+#: engines/freescape/metaengine.cpp:86
 msgid "Sensors will not shoot the player"
 msgstr "Sensoren zullen niet op de speler schieten"
 
-#: engines/freescape/metaengine.cpp:97
+#: engines/freescape/metaengine.cpp:96
 msgid "Disable falling"
 msgstr "Vallen uitschakelen"
 
-#: engines/freescape/metaengine.cpp:98
+#: engines/freescape/metaengine.cpp:97
 msgid "Player cannot fall over edges"
 msgstr "Speler kan niet van de rand af vallen"
 
-#: engines/freescape/metaengine.cpp:108
+#: engines/freescape/metaengine.cpp:107
 msgid "Invert Y-axis on mouse"
 msgstr "Inverteer Y-as op muis"
 
-#: engines/freescape/metaengine.cpp:109
+#: engines/freescape/metaengine.cpp:108
 msgid "Use alternative camera controls"
 msgstr "Gebruik alternatieve camera besturing"
 
-#: engines/freescape/metaengine.cpp:119
+#: engines/freescape/metaengine.cpp:118
 msgid "Authentic graphics"
 msgstr "Authentieke afbeeldingen"
 
-#: engines/freescape/metaengine.cpp:120
+#: engines/freescape/metaengine.cpp:119
 msgid "Keep graphics as close as possible to the original"
 msgstr "Houd afbeeldingen zo nauwkeurig mogelijk als het origineel"
 
-#: engines/freescape/metaengine.cpp:130
+#: engines/freescape/metaengine.cpp:129
 msgid "Enable rock travel"
 msgstr "Rotsreizen inschakelen"
 
-#: engines/freescape/metaengine.cpp:131
+#: engines/freescape/metaengine.cpp:130
 msgid "Enable traveling using a rock shoot at start"
 msgstr "Reizen mogelijk maken met behulp van een rotsafschot bij de start"
 
-#: engines/freescape/metaengine.cpp:141
+#: engines/freescape/metaengine.cpp:140
 msgid "Smoother movement"
 msgstr "Soepelere beweging"
 
-#: engines/freescape/metaengine.cpp:142
+#: engines/freescape/metaengine.cpp:141
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Gebruik vloeiendere bewegingen in plaats van afzonderlijke stappen"
 
 #. I18N: Use modern FPS-style controls: WASD for movement, Shift to run
-#: engines/freescape/metaengine.cpp:153
+#: engines/freescape/metaengine.cpp:152
 #, fuzzy
 #| msgid "Volume controls"
 msgid "WASD controls"
 msgstr "Volumeregeling"
 
-#: engines/freescape/metaengine.cpp:154
+#: engines/freescape/metaengine.cpp:153
 msgid "Use WASD keys for movement and Shift to run"
 msgstr ""
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
-#: engines/freescape/metaengine.cpp:165
+#: engines/freescape/metaengine.cpp:164
 msgid "Backported music from C64 releases (AdLib)"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:166
+#: engines/freescape/metaengine.cpp:165
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
 
 #. I18N: Enable background music using AY chip emulation
-#: engines/freescape/metaengine.cpp:177
+#: engines/freescape/metaengine.cpp:176
 msgid "Backported music from C64 releases"
 msgstr ""
 
-#: engines/freescape/metaengine.cpp:178
+#: engines/freescape/metaengine.cpp:177
 msgid "Enable background music ported from the C64 version"
 msgstr ""
 
@@ -9585,18 +9592,22 @@ msgstr "Grafische modus:"
 msgid "Choose typographic quotes"
 msgstr "Kleurenafbeeldingen"
 
-#: engines/glk/dialogs.cpp:307 engines/glk/dialogs.cpp:320
-#: engines/glk/dialogs.cpp:332
+#: engines/glk/dialogs.cpp:307
+msgctxt "quotes"
 msgid "Off"
 msgstr ""
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
-#: engines/glk/dialogs.cpp:309 engines/mohawk/dialogs.cpp:366
+#: engines/glk/dialogs.cpp:309
+#, fuzzy
+#| msgid "Normal"
+msgctxt "quotes"
 msgid "Normal"
 msgstr "Normaal"
 
 #. I18N: This is a setting for using "rabid" quotes, which are like normal typographic quotes but with the opening quote lower than the closing one, like in some comic books
 #: engines/glk/dialogs.cpp:311
+msgctxt "quotes"
 msgid "Rabid"
 msgstr ""
 
@@ -9617,6 +9628,10 @@ msgstr ""
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
+msgstr ""
+
+#: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
+msgid "Off"
 msgstr ""
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
@@ -9813,12 +9828,12 @@ msgid "Save file created by different version."
 msgstr "Opgeslagen spel gecreëerd door andere versie."
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:285
-#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:588
+#: engines/gob/inter_v2.cpp:1523 engines/tinsel/saveload.cpp:588
 msgid "Failed to load saved game from file."
 msgstr "Laden van opgeslagen spel mislukt."
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_playtoons.cpp:426
-#: engines/gob/inter_v2.cpp:1591 engines/tinsel/saveload.cpp:601
+#: engines/gob/inter_v2.cpp:1602 engines/tinsel/saveload.cpp:601
 msgid "Failed to save game to file."
 msgstr "Opslaan van spel in bestand is mislukt."
 
@@ -10188,7 +10203,7 @@ msgid "Repeat last line"
 msgstr "Herhaal laatste regel"
 
 #: engines/hugo/metaengine.cpp:172 engines/lure/metaengine.cpp:197
-#: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
+#: engines/mads/metaengine.cpp:331 engines/tsage/metaengine.cpp:247
 msgid "Restore game"
 msgstr "Laad opgeslagen spel"
 
@@ -10371,7 +10386,7 @@ msgstr "Toetsencombinaties pauzeren"
 msgid "Direction keymappings"
 msgstr "Richtingstoetsindelingen"
 
-#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
+#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:369
 #: engines/tsage/metaengine.cpp:259
 msgid "Show credits"
 msgstr "Tool credits"
@@ -10895,7 +10910,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Deze puzzel is niet beschikbaar in de probeer versie van het spel"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:127
 #: engines/sherlock/metaengine.cpp:120 engines/twine/metaengine.cpp:144
 msgid "TTS Narrator"
 msgstr "TTS Verteller"
@@ -10966,7 +10981,7 @@ msgstr ""
 "Indien geselecteerd, zal de speel de digitale geluidsspoor gedurende de "
 "introductie afspelen. Anders zal het de MIDI muziek afspelen."
 
-#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
 msgstr "Gebruik Windows muisaanwijzers"
 
@@ -11000,59 +11015,59 @@ msgstr "Wijzer naar rechts"
 msgid "Repeat last message"
 msgstr "Laatste bericht herhalen"
 
-#: engines/mads/metaengine.cpp:63
+#: engines/mads/metaengine.cpp:66
 msgid "Easy mouse interface"
 msgstr "Makkelijke muis interface"
 
-#: engines/mads/metaengine.cpp:64
+#: engines/mads/metaengine.cpp:67
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Toon labels voor objecten als de muis er over zweeft"
 
-#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
+#: engines/mads/metaengine.cpp:78 engines/mads/metaengine.cpp:79
 msgid "Animated inventory items"
 msgstr "Geanimeerde inventaris"
 
-#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
+#: engines/mads/metaengine.cpp:90 engines/mads/metaengine.cpp:91
 msgid "Animated game interface"
 msgstr "Geanimeerde spel interface"
 
-#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
+#: engines/mads/metaengine.cpp:102 engines/mads/metaengine.cpp:103
 msgid "Naughty game mode"
 msgstr "Ondeugende spelmodus"
 
-#: engines/mads/metaengine.cpp:276
+#: engines/mads/metaengine.cpp:296
 msgid "Start menu keymappings"
 msgstr "Toetsenbordindeling startmenu"
 
-#: engines/mads/metaengine.cpp:299
+#: engines/mads/metaengine.cpp:319
 msgid "Open game menu"
 msgstr "Open spelmenu"
 
-#: engines/mads/metaengine.cpp:317
+#: engines/mads/metaengine.cpp:337
 msgid "Scroll bar up"
 msgstr "Schuifbalk omhoog"
 
-#: engines/mads/metaengine.cpp:323
+#: engines/mads/metaengine.cpp:343
 msgid "Scroll bar down"
 msgstr "Scrollbalk omlaag"
 
-#: engines/mads/metaengine.cpp:331
+#: engines/mads/metaengine.cpp:351
 msgid "Start game"
 msgstr "Start spel"
 
-#: engines/mads/metaengine.cpp:337
+#: engines/mads/metaengine.cpp:357
 msgid "Resume game"
 msgstr "Hervat spel"
 
-#: engines/mads/metaengine.cpp:343
+#: engines/mads/metaengine.cpp:363
 msgid "Show intro"
 msgstr "Intro tonen"
 
-#: engines/mads/metaengine.cpp:355
+#: engines/mads/metaengine.cpp:375
 msgid "Show quotes"
 msgstr "Citaten weergeven"
 
-#: engines/mads/metaengine.cpp:368
+#: engines/mads/metaengine.cpp:388
 msgid "Restart animation"
 msgstr "Animatie opnieuw starten"
 
@@ -11343,11 +11358,31 @@ msgstr ""
 "Pas de snelheid van schermovergangen aan. Zonder schermovergangen kunt u "
 "sneller door het spel navigeren."
 
+#: engines/mohawk/dialogs.cpp:364
+#, fuzzy
+#| msgid "Disabled"
+msgctxt "riven-transition"
+msgid "Disabled"
+msgstr "Uitgeschakeld"
+
 #: engines/mohawk/dialogs.cpp:365
+#, fuzzy
+#| msgid "Fastest"
+msgctxt "riven-transition"
 msgid "Fastest"
 msgstr "Snelst"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1582
+#: engines/mohawk/dialogs.cpp:366
+#, fuzzy
+#| msgid "Normal"
+msgctxt "riven-transition"
+msgid "Normal"
+msgstr "Normaal"
+
+#: engines/mohawk/dialogs.cpp:367
+#, fuzzy
+#| msgid "Best"
+msgctxt "riven-transition"
 msgid "Best"
 msgstr "Beste"
 
@@ -12303,95 +12338,95 @@ msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Teken zwarte lijntjes over videos om de scherpte ogenschijnlijk te verhogen"
 
-#: engines/sci/detection_options.h:70
+#: engines/sci/detection_options.h:69
 msgid "Use high-quality video scaling"
 msgstr "Gebruik hoge kwaliteit video schaling"
 
-#: engines/sci/detection_options.h:71
+#: engines/sci/detection_options.h:70
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 "Gebruik lineaire interpolatie tijdens het opschalen van videos, waar mogelijk"
 
-#: engines/sci/detection_options.h:83
+#: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Gebruik hoge kwaliteit \"LarryScale\" cel schaling"
 
-#: engines/sci/detection_options.h:84
+#: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 "Gebruik speciale cartoon schaler voor het tekenen van de personage sprites"
 
-#: engines/sci/detection_options.h:119
+#: engines/sci/detection_options.h:117
 msgid "Use CD audio"
 msgstr "Gebruik CD audio"
 
-#: engines/sci/detection_options.h:120
+#: engines/sci/detection_options.h:118
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Gebruik CD audio in plaats van in-speel audio, als dat beschikbaar is"
 
-#: engines/sci/detection_options.h:133
+#: engines/sci/detection_options.h:131
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Gebruik Windows muisaanwijzers (kleiner en monochrome) in plaats van de DOS "
 "muisaanwijzers"
 
-#: engines/sci/detection_options.h:145
+#: engines/sci/detection_options.h:143
 msgid "Use silver cursors"
 msgstr "Gebruik zilveren muisaanwijzers"
 
-#: engines/sci/detection_options.h:146
+#: engines/sci/detection_options.h:144
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Gebruik de alternative set van zilveren wijzers in plaats van de normale "
 "gouden"
 
-#: engines/sci/detection_options.h:158
+#: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
 msgstr "Censureren content inschakelen"
 
-#: engines/sci/detection_options.h:159
+#: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Inschakelen van het in het spel gebouwde optionele inhoud censuur"
 
-#: engines/sci/detection_options.h:171
+#: engines/sci/detection_options.h:169
 msgid "Upscale videos"
 msgstr "Videos opschalen"
 
-#: engines/sci/detection_options.h:172
+#: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
 msgstr "Schaal videos op naar dubbele grootte"
 
-#: engines/sci/detection_options.h:184
+#: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
 msgstr "Gebruik RGB rendering"
 
-#: engines/sci/detection_options.h:185
+#: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
 
-#: engines/sci/detection_options.h:197
+#: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
 msgstr "Gebruikt per bron gemodificieerde kleurenpaletten"
 
-#: engines/sci/detection_options.h:198
+#: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr "Gebruik per object aangepaste kleurenpaletten om beeld te verbeteren"
 
-#: engines/sci/detection_options.h:210
+#: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
 msgstr "Schakel bebaarde muziekanten in"
 
-#: engines/sci/detection_options.h:211
+#: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr "Toon beelden die uitgeschakeld waren vanwege juridische redenen"
 
-#: engines/sci/detection_options.h:236
+#: engines/sci/detection_options.h:234
 msgid "Enable saving via the GMM"
 msgstr "Opslaan via de GMM inschakelen"
 
-#: engines/sci/detection_options.h:237
+#: engines/sci/detection_options.h:235
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
@@ -12400,11 +12435,11 @@ msgstr ""
 "zijn opgeslagen, kunnen beschadigd en onbruikbaar zijn. Gebruik op eigen "
 "risico!"
 
-#: engines/sci/detection_options.h:248
+#: engines/sci/detection_options.h:246
 msgid "Repair speech audio"
 msgstr "Reparatie spraakaudio"
 
-#: engines/sci/detection_options.h:249
+#: engines/sci/detection_options.h:247
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
@@ -12412,11 +12447,11 @@ msgstr ""
 "Detecteer en probeer overflows in DPCM8-audio te herstellen, die merkbare "
 "knallen en kraakgeluiden veroorzaken."
 
-#: engines/sci/detection_options.h:273
+#: engines/sci/detection_options.h:271
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection_options.h:277
+#: engines/sci/detection_options.h:275
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -12474,10 +12509,11 @@ msgstr ""
 "Dit opgeslagen spel is gemaakt met een andere versie van het spel, het laden "
 "is niet mogelijk"
 
-#: engines/sci/graphics/video32.cpp:68
-#, c-format
-msgid ""
-"Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+#: engines/sci/graphics/video32.cpp:70
+#, fuzzy, c-format
+#| msgid ""
+#| "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+msgid "Cannot play back %s video on a system with maximum color depth of 8bpp"
 msgstr ""
 "Kan geen %dbpp video afspelen op een systeem met een maximale kleur diepte "
 "van 8bpp"
@@ -12837,6 +12873,10 @@ msgstr "Goed"
 #: engines/scumm/dialogs.cpp:1582
 msgid "Better"
 msgstr "Beter"
+
+#: engines/scumm/dialogs.cpp:1582
+msgid "Best"
+msgstr "Beste"
 
 #: engines/scumm/dialogs.cpp:1583
 #, c-format

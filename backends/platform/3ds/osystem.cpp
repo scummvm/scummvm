@@ -151,12 +151,13 @@ void OSystem_3DS::initBackend() {
 		ConfMan.set("vkeybd_pack_name", "vkeybd_small");
 	}
 
+	_eventManager = new DefaultEventManager(this);
 	_timerManager = new DefaultTimerManager();
 	_savefileManager = new DefaultSaveFileManager("sdmc:/3ds/scummvm/saves/");
 
 	init3DSGraphics();
 	initAudio();
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 	initEvents();
 }
 

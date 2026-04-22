@@ -39,7 +39,18 @@ void SceneChange::execute() {
 }
 
 void HotMultiframeSceneChange::readData(Common::SeekableReadStream &stream) {
-	SceneChange::readData(stream);
+	if (_isTerse) {
+		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+		_sceneChange.sceneID = stream.readUint16LE();
+		_sceneChange.frameID = stream.readUint16LE();
+		_sceneChange.verticalOffset = 0;
+		_sceneChange.continueSceneSound = stream.readUint16LE();
+		_sceneChange.listenerFrontVector.set(0, 0, 1);
+		_sceneChange.frontVectorFrameID = _sceneChange.frameID;
+	} else {
+		SceneChange::readData(stream);
+	}
+	
 	uint16 numHotspots = stream.readUint16LE();
 
 	_hotspots.reserve(numHotspots);
@@ -77,11 +88,6 @@ void HotSingleFrameSceneChange::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.continueSceneSound = kContinueSceneSound;
 	_sceneChange.listenerFrontVector.set(0, 0, 1);
 	readRect(stream, _sceneHotspot.coords);
-	if (_readExtra) {
-		uint16 unk1 = stream.readUint16LE();
-		uint16 unk2 = stream.readUint16LE();
-		debug("Read extra data for HotSingleFrameSceneChange: %u, %u", unk1, unk2);
-	}
 }
 
 void HotSingleFrameSceneChange::execute() {
@@ -100,6 +106,9 @@ void HotSingleFrameSceneChange::execute() {
 }
 
 void Hot1FrSceneChange::readData(Common::SeekableReadStream &stream) {
+	if (_dynamicCursor)
+		_hoverCursor = (CursorManager::CursorType)stream.readUint16LE();
+
 	if (!_isTerse) {
 		SceneChange::readData(stream);
 		_hotspotDesc.readData(stream);
@@ -130,7 +139,7 @@ void Hot1FrSceneChange::execute() {
 	}
 }
 
-void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream) {
+void HotMultiframeMultiSceneChange::readData(Common::SeekableReadStream &stream) {
 	if (g_nancy->getGameType() <= kGameTypeNancy2) {
 		_onTrue._sceneChange.readData(stream);
 		_onFalse._sceneChange.readData(stream);
@@ -151,7 +160,7 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 	}
 }
 
-void HotMultiframeMultisceneChange::execute() {
+void HotMultiframeMultiSceneChange::execute() {
 	switch (_state) {
 	case kBegin:
 		// set something to 1
@@ -199,7 +208,7 @@ void HotMultiframeMultisceneChange::execute() {
 	}
 }
 
-void HotMultiframeMultisceneCursorTypeSceneChange::readData(Common::SeekableReadStream &stream) {
+void HotMultiframeMultiSceneCursorTypeSceneChange::readData(Common::SeekableReadStream &stream) {
 	uint16 numScenes = stream.readUint16LE();
 	_scenes.resize(numScenes);
 	_cursorTypes.resize(numScenes);
@@ -218,7 +227,7 @@ void HotMultiframeMultisceneCursorTypeSceneChange::readData(Common::SeekableRead
 	}
 }
 
-void HotMultiframeMultisceneCursorTypeSceneChange::execute() {
+void HotMultiframeMultiSceneCursorTypeSceneChange::execute() {
 	switch (_state) {
 	case kBegin:
 		// turn main rendering on

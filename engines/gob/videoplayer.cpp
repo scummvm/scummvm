@@ -234,14 +234,12 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
-				uint16 height = screenSize ? _vm->_width  : video->decoder->getWidth();
-				uint16 width = screenSize ? _vm->_height : video->decoder->getHeight();
+				uint16 width = screenSize ? _vm->_width  : video->decoder->getWidth();
+				uint16 height = screenSize ? _vm->_height : video->decoder->getHeight();
 
 				if (height > 0 && width > 0) {
 					_vm->_draw->_spritesArray[properties.sprite] =
-						_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-												  screenSize ? _vm->_height : video->decoder->getHeight(), 0,
-												  0);
+						_vm->_video->initSurfDesc(width, height, 0, 0);
 				} else {
 					warning("VideoPlayer::openVideo() file=%s:"
 							"Invalid surface dimensions (%dx%d)", file.c_str(), width, height);
@@ -1066,6 +1064,14 @@ Common::SeekableReadStream *VideoPlayer::getEmbeddedFile(const Common::String &f
 	return video->decoder->getEmbeddedFile(fileName);
 }
 
+bool VideoPlayer::getFrameCoords(int slot, int16 frame, int16 &x, int16 &y, int16 &width, int16 &height) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return false;
+
+	return video->decoder->getFrameCoords(frame, x, y, width, height);
+}
+
 int32 VideoPlayer::getSubtitleIndex(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -1090,8 +1096,11 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, uint16 varX, uint16
 		width  = video.decoder->getWidth();
 		height = video.decoder->getHeight();
 
-		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			video.decoder->getFrameCoords(1, x, y, width, height);
+		if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4) {
+			// Note: not found in Adibou2/Adi4 disasm, and cause video gltiches
+			if (VAR_OFFSET(varX) == 0xFFFFFFFF)
+				video.decoder->getFrameCoords(1, x, y, width, height);
+		}
 
 		WRITE_VAR_OFFSET(varX     , x);
 		WRITE_VAR_OFFSET(varY     , y);

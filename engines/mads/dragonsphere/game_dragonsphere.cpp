@@ -20,10 +20,10 @@
  */
 
 #include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/game.h"
-#include "mads/screen.h"
-#include "mads/msurface.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/game.h"
+#include "mads/core/screen.h"
+#include "mads/core/msurface.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 //#include "mads/nebular/dialogs_nebular.h"
 #include "mads/dragonsphere/globals_dragonsphere.h"
@@ -32,7 +32,7 @@
 namespace MADS {
 namespace Dragonsphere {
 
-GameDragonsphere::GameDragonsphere(MADSEngine *vm)
+GameDragonsphere::GameDragonsphere(RexNebularEngine *vm)
 	: Game(vm) {
 	_surface = new MSurface(MADS_SCREEN_WIDTH, MADS_SCENE_HEIGHT);
 	_storyMode = STORYMODE_NAUGHTY;
@@ -155,5 +155,5 @@ void GameDragonsphere::synchronize(Common::Serializer &s, bool phase1) {
 	}
 }
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS

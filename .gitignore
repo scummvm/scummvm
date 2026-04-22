@@ -308,3 +308,7 @@ __pycache__/
 
 #Ignore vcpkg generated files
 /vcpkg_installed/
+
+#Ignore Claude instruction files
+CLAUDE.md
+.claude

@@ -364,6 +364,40 @@ uint32 Surface::getColorFromIndex(uint8 index) const {
 		return _highColorMap[index];
 }
 
+template<bool yAxisReflection, bool kTransp, bool kSameBpp>
+static void blitPixels(Pixel dst, ConstPixel src,
+					   uint16 width, uint16 height,
+					   int16 dstPitch, int16 srcPitch,
+					   int32 transp, const uint32 *highColorMap) {
+	while (height-- > 0) {
+		Pixel dstRow = dst;
+		ConstPixel srcRow = src;
+
+		if (yAxisReflection)
+			srcRow += width - 1;
+
+		for (uint16 i = 0; i < width; i++, ++dstRow) {
+			uint32 pixel = srcRow.get();
+
+			if (yAxisReflection)
+				--srcRow;
+			else
+				++srcRow;
+
+			if (kTransp && pixel == (uint32)transp)
+				continue;
+
+			if (kSameBpp)
+				dstRow.set(pixel);
+			else
+				dstRow.set(highColorMap[pixel]);
+		}
+
+		dst += dstPitch;
+		src += srcPitch;
+	}
+}
+
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
 		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
@@ -399,7 +433,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	if (transp == -1 && !yAxisReflection && from._bpp == _bpp && _bpp == 1) {
+	if (transp == -1 && !yAxisReflection && from._bpp == _bpp) {
 		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
@@ -422,37 +456,30 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 	     Pixel dst =      get(x   , y);
 	ConstPixel src = from.get(left, top);
 
-	while (height-- > 0) {
-		     Pixel dstRow = dst;
-		ConstPixel srcRow = src;
-
-		if (yAxisReflection) {
-			srcRow += width - 1;
-			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow) {
-				if (srcRow.get() != ((uint32) transp)) {
-					if (_bpp == from._bpp)
-						dstRow.set(srcRow.get());
-					else {
-						uint32 index = srcRow.get();
-						dstRow.set(from._highColorMap[index]);
-					}
-				}
-			}
+	if (yAxisReflection) {
+		if (transp == -1) {
+			if (_bpp == from._bpp)
+				blitPixels<true, false, true>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+			else
+				blitPixels<true, false, false>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
 		} else {
-			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow) {
-				if (srcRow.get() != ((uint32) transp)) {
-					if (_bpp == from._bpp)
-						dstRow.set(srcRow.get());
-					else {
-						uint32 index = srcRow.get();
-						dstRow.set(from._highColorMap[index]);
-					}
-				}
-			}
+			if (_bpp == from._bpp)
+				blitPixels<true, true, true>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+			else
+				blitPixels<true, true, false>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
 		}
-
-		dst +=      _width;
-		src += from._width;
+	} else {
+		if (transp == -1) {
+			if (_bpp == from._bpp)
+				blitPixels<false, false, true>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+			else
+				blitPixels<false, false, false>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+		} else {
+			if (_bpp == from._bpp)
+				blitPixels<false, true, true>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+			else
+				blitPixels<false, true, false>(dst, src, width, height, _width, from._width, transp, from._highColorMap);
+		}
 	}
 }
 
@@ -571,7 +598,7 @@ void Surface::blitShaded(const Surface &from, int16 left, int16 top, int16 right
 		     Pixel dstRow = dst;
 		ConstPixel srcRow = src;
 		for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow) {
-			if (srcRow.get() == ((uint32) transp))
+			if (transp != -1 && srcRow.get() == ((uint32) transp))
 				continue;
 
 			uint8 srcR = 0;

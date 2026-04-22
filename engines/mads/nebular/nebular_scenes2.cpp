@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes2.h"
 
@@ -116,7 +116,7 @@ void Scene2xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-Scene201::Scene201(MADSEngine *vm) : Scene2xx(vm) {
+Scene201::Scene201(RexNebularEngine *vm) : Scene2xx(vm) {
 	_pterodactylFlag = false;
 }
 
@@ -337,7 +337,7 @@ void Scene201::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene202::Scene202(MADSEngine *vm) : Scene2xx(vm) {
+Scene202::Scene202(RexNebularEngine *vm) : Scene2xx(vm) {
 	_activeMsgFl = false;
 	_ladderTopFl = false;
 	_waitingMeteoFl = false;
@@ -1022,7 +1022,7 @@ void Scene202::actions() {
 
 /*****************************************************************************/
 
-Scene203::Scene203(MADSEngine *vm) : Scene2xx(vm) {
+Scene203::Scene203(RexNebularEngine *vm) : Scene2xx(vm) {
 	_rhotundaEat2Fl = false;
 	_rhotundaEatFl = false;
 }
@@ -1154,7 +1154,7 @@ void Scene205::setup() {
 	_scene->addActiveVocab(NOUN_PIRANHA);
 }
 
-Scene205::Scene205(MADSEngine *vm) : Scene2xx(vm) {
+Scene205::Scene205(RexNebularEngine *vm) : Scene2xx(vm) {
 	_lastFishTime = _scene->_frameStartTime;
 	_chickenTime = _scene->_frameStartTime;
 
@@ -1443,7 +1443,7 @@ void Scene205::actions() {
 
 /*****************************************************************************/
 
-Scene207::Scene207(MADSEngine *vm) : Scene2xx(vm) {
+Scene207::Scene207(RexNebularEngine *vm) : Scene2xx(vm) {
 	_vultureFl = false;
 	_spiderFl = false;
 	_eyeFl = false;
@@ -1655,7 +1655,7 @@ void Scene207::actions() {
 
 /*****************************************************************************/
 
-Scene208::Scene208(MADSEngine *vm) : Scene2xx(vm) {
+Scene208::Scene208(RexNebularEngine *vm) : Scene2xx(vm) {
 	_rhotundaTurnFl = false;
 	_boundingFl = false;
 	_rhotundaTime = 0;
@@ -1962,7 +1962,7 @@ void Scene208::actions() {
 
 /*****************************************************************************/
 
-Scene209::Scene209(MADSEngine *vm) : Scene2xx(vm) {
+Scene209::Scene209(RexNebularEngine *vm) : Scene2xx(vm) {
 	_dodgeFl = false;
 	_forceDodgeFl = false;
 	_pitchFl = false;
@@ -3678,7 +3678,7 @@ void Scene209::actions() {
 
 /*****************************************************************************/
 
-Scene210::Scene210(MADSEngine *vm) : Scene2xx(vm) {
+Scene210::Scene210(RexNebularEngine *vm) : Scene2xx(vm) {
 	_curDialogNode = -1;
 	_nextHandsPlace = 0;
 	_twinkleAnimationType = 0;
@@ -4732,7 +4732,7 @@ void Scene210::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene211::Scene211(MADSEngine *vm) : Scene2xx(vm) {
+Scene211::Scene211(RexNebularEngine *vm) : Scene2xx(vm) {
 	_ambushFl = false;
 	_wakeFl = false;
 	_monkeyFrame = 0;
@@ -5151,7 +5151,7 @@ void Scene213::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene214::Scene214(MADSEngine *vm) : Scene2xx(vm) {
+Scene214::Scene214(RexNebularEngine *vm) : Scene2xx(vm) {
 	_devilTime = 0;
 	_devilRunningFl = false;
 }
@@ -5522,5 +5522,5 @@ void Scene216::step() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

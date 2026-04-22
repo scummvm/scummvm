@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-04-10 19:13+0000\n"
-"PO-Revision-Date: 2026-04-09 23:22+0000\n"
+"POT-Creation-Date: 2026-04-21 19:16+0000\n"
+"PO-Revision-Date: 2026-04-14 18:12+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -24,39 +24,45 @@ msgstr ""
 msgid "Apple Macintosh Audio"
 msgstr "Audio Apple Macintosh"
 
+#. I18N: built with <compiler>
+#: gui/about.cpp:119
+#, c-format
+msgid "(built with %s)"
+msgstr "(compilata con %s)"
+
 #. I18N: built on <build date> with <compiler>
-#: gui/about.cpp:112
+#: gui/about.cpp:122
 #, c-format
 msgid "(built on %s with %s)"
 msgstr "(build creata il %s con %s)"
 
-#: gui/about.cpp:119
+#: gui/about.cpp:130
 msgid "Features compiled in:"
 msgstr "Funzionalità incluse:"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "not supported"
 msgstr "non supportato"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "disabled"
 msgstr "disabilitato"
 
-#: gui/about.cpp:127
+#: gui/about.cpp:138
 msgid "enabled"
 msgstr "abilitato"
 
 #. I18N: CPU extensions are sets of extra processor instructions used to speed up operations. See Intel AVX2, ARM NEON, etc.
-#: gui/about.cpp:151
+#: gui/about.cpp:162
 msgid "CPU extensions support:"
 msgstr "Supporto per estensioni CPU:"
 
-#: gui/about.cpp:164
+#: gui/about.cpp:175
 msgid "Available engines:"
 msgstr "Motori disponibili:"
 
 #. I18N: Close dialog button
-#: gui/about.cpp:506 gui/about.cpp:635 gui/downloadpacksdialog.cpp:298
+#: gui/about.cpp:516 gui/about.cpp:648 gui/downloadpacksdialog.cpp:298
 #: gui/downloadpacksdialog.cpp:389 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/helpdialog.cpp:128 gui/imagealbum-dialog.cpp:133
 #: gui/textviewer.cpp:56 gui/unknown-game-dialog.cpp:53
@@ -77,7 +83,7 @@ msgstr "Chiudi"
 #. I18N: Opens the help screen.
 #: gui/browser.cpp:64 gui/launcher.cpp:277 gui/launcher.cpp:959
 #: backends/platform/sdl/macosx/appmenu_osx.mm:319
-#: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
+#: engines/access/metaengine.cpp:356 engines/bladerunner/metaengine.cpp:321
 #: engines/ngi/metaengine.cpp:162 engines/supernova/metaengine.cpp:238
 #: engines/tucker/metaengine.cpp:215 engines/zvision/metaengine.cpp:246
 msgid "Help"
@@ -112,7 +118,7 @@ msgstr "Su"
 #: gui/integrity-dialog.cpp:253 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2416
 #: gui/predictivedialog.cpp:68 gui/printing-dialog.cpp:96
-#: gui/recorderdialog.cpp:73 gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:211
 #: gui/remotebrowser.cpp:59 gui/saveload-dialog.cpp:64
 #: gui/saveload-dialog.cpp:456 gui/saveload-dialog.cpp:540
 #: gui/saveload-dialog.cpp:839 gui/saveload-dialog.cpp:1243
@@ -582,7 +588,7 @@ msgid "GFX"
 msgstr "Graf."
 
 #: gui/editgamedialog.cpp:164 gui/options.cpp:2075 gui/options.cpp:2254
-#: backends/graphics/atari/atari-graphics.cpp:1054
+#: backends/graphics/atari/atari-graphics.cpp:1056
 #: backends/graphics/sdl/sdl-graphics.cpp:488
 msgid "Graphics"
 msgstr "Grafica"
@@ -1688,7 +1694,7 @@ msgid "Unknown Year"
 msgstr "Anno sconosciuto"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1640 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1640 gui/widgets/groupedlist.cpp:82
 msgid "All"
 msgstr "Tutti"
 
@@ -1964,7 +1970,7 @@ msgstr "Renderer 3D:"
 msgid "3D Anti-aliasing:"
 msgstr "Anti-aliasing 3D:"
 
-#: gui/options.cpp:1731 engines/mohawk/dialogs.cpp:364
+#: gui/options.cpp:1731
 msgid "Disabled"
 msgstr "Disattiva"
 
@@ -2682,7 +2688,7 @@ msgstr ""
 "E altri ancora..."
 
 #: gui/options.cpp:2966 engines/engine.cpp:647
-#: engines/access/metaengine.cpp:281 engines/drascula/metaengine.cpp:255
+#: engines/access/metaengine.cpp:294 engines/drascula/metaengine.cpp:255
 #: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
 #: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
@@ -2835,43 +2841,43 @@ msgstr "Stampante:"
 msgid "Orientation:"
 msgstr "Orientamento:"
 
-#: gui/recorderdialog.cpp:67
+#: gui/recorderdialog.cpp:66
 msgid "Recorder or Playback Gameplay"
 msgstr "Registra/riproduci Gameplay"
 
-#: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
+#: gui/recorderdialog.cpp:71 gui/recorderdialog.cpp:211
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
 #: dists/android.strings.xml.cpp:47 engines/engine.cpp:641
 msgid "Delete"
 msgstr "Elimina"
 
-#: gui/recorderdialog.cpp:74
+#: gui/recorderdialog.cpp:73
 msgid "Record"
 msgstr "Registra"
 
-#: gui/recorderdialog.cpp:75
+#: gui/recorderdialog.cpp:74
 msgid "Playback"
 msgstr "Riproduci"
 
-#: gui/recorderdialog.cpp:77 gui/widgets/grid.cpp:340
+#: gui/recorderdialog.cpp:76 gui/widgets/grid.cpp:338
 msgid "Edit"
 msgstr "Modifica"
 
-#: gui/recorderdialog.cpp:142 gui/recorderdialog.cpp:301
-#: gui/recorderdialog.cpp:308
+#: gui/recorderdialog.cpp:141 gui/recorderdialog.cpp:300
+#: gui/recorderdialog.cpp:307
 msgid "Author: "
 msgstr "Autore: "
 
-#: gui/recorderdialog.cpp:144 gui/recorderdialog.cpp:302
-#: gui/recorderdialog.cpp:309
+#: gui/recorderdialog.cpp:143 gui/recorderdialog.cpp:301
+#: gui/recorderdialog.cpp:308
 msgid "Notes: "
 msgstr "Note: "
 
-#: gui/recorderdialog.cpp:211
+#: gui/recorderdialog.cpp:210
 msgid "Do you really want to delete this record?"
 msgstr "Sei sicuro di voler eliminare questa registrazione?"
 
-#: gui/recorderdialog.cpp:228
+#: gui/recorderdialog.cpp:227
 msgid "Unknown Author"
 msgstr "Autore sconosciuto"
 
@@ -2985,28 +2991,28 @@ msgstr "Seleziona uno shader"
 msgid "Select a Theme"
 msgstr "Seleziona un tema"
 
-#: gui/ThemeEngine.cpp:266
+#: gui/ThemeEngine.cpp:256
 msgid "Disabled GFX"
 msgstr "Graf. disattivata"
 
-#: gui/ThemeEngine.cpp:266
+#: gui/ThemeEngine.cpp:256
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Graf. disattivata"
 
-#: gui/ThemeEngine.cpp:267
+#: gui/ThemeEngine.cpp:257
 msgid "Standard renderer"
 msgstr "Renderer standard"
 
-#: gui/ThemeEngine.cpp:267 engines/scumm/dialogs.cpp:1054
+#: gui/ThemeEngine.cpp:257 engines/scumm/dialogs.cpp:1054
 msgid "Standard"
 msgstr "Normale"
 
-#: gui/ThemeEngine.cpp:269
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased renderer"
 msgstr "Renderer con antialiasing"
 
-#: gui/ThemeEngine.cpp:269
+#: gui/ThemeEngine.cpp:259
 msgid "Antialiased"
 msgstr "Con antialiasing"
 
@@ -3063,15 +3069,15 @@ msgstr ""
 "E' possibile cambiare questa impostazione in seguito\n"
 "tramite la sezione Varie del menu Opzioni."
 
-#: gui/widget.cpp:466 gui/widget.cpp:468 gui/widget.cpp:473 gui/widget.cpp:475
+#: gui/widget.cpp:467 gui/widget.cpp:469 gui/widget.cpp:474 gui/widget.cpp:476
 msgid "Clear value"
 msgstr "Cancella"
 
-#: gui/widgets/grid.cpp:334
+#: gui/widgets/grid.cpp:332
 msgid "Play"
 msgstr "Gioca"
 
-#: gui/widgets/grid.cpp:337
+#: gui/widgets/grid.cpp:335
 msgid "Saves"
 msgstr "Salvataggi"
 
@@ -3780,7 +3786,7 @@ msgstr ""
 "ERRORE: Non è stato possibile copiare il salvataggio in una nuova posizione"
 
 #: engines/engine.cpp:681 engines/savestate.cpp:103
-#: backends/platform/ios7/ios7_osys_main.cpp:266 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:269 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "Autosalvataggio"
@@ -3916,7 +3922,7 @@ msgstr "Mappa tasti predefinita"
 #: engines/hugo/metaengine.cpp:134 engines/illusions/metaengine.cpp:94
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:505
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:137
-#: engines/mads/metaengine.cpp:280 engines/mm/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:300 engines/mm/metaengine.cpp:186
 #: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:181
 #: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
 #: engines/sludge/keymapper_tables.h:561 engines/sludge/keymapper_tables.h:580
@@ -3949,7 +3955,7 @@ msgstr "Clic centrale"
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:141
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:370
 #: engines/kyra/engine/lol.cpp:506 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:286
+#: engines/made/metaengine.cpp:144 engines/mads/metaengine.cpp:306
 #: engines/mm/metaengine.cpp:192 engines/mtropolis/metaengine.cpp:167
 #: engines/nancy/input.cpp:188 engines/parallaction/metaengine.cpp:144
 #: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:567
@@ -3990,7 +3996,7 @@ msgstr "Menù di gioco"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:208
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:221
 #: engines/composer/metaengine.cpp:126 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:93
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -4050,31 +4056,31 @@ msgstr "OpenGL con shaders"
 msgid "AdLib emulator"
 msgstr "Emulatore AdLib"
 
-#: audio/fmopl.cpp:84
+#: audio/fmopl.cpp:85
 msgid "MAME OPL emulator"
 msgstr "Emulatore OPL MAME"
 
-#: audio/fmopl.cpp:86
+#: audio/fmopl.cpp:88
 msgid "DOSBox OPL emulator"
 msgstr "Emulatore OPL DOSBox"
 
-#: audio/fmopl.cpp:89
+#: audio/fmopl.cpp:91
 msgid "Nuked OPL emulator"
 msgstr "Emulatore OPL Nuked"
 
-#: audio/fmopl.cpp:92
+#: audio/fmopl.cpp:94
 msgid "ALSA Direct FM"
 msgstr "ALSA Direct FM"
 
-#: audio/fmopl.cpp:95
+#: audio/fmopl.cpp:97
 msgid "OPL2LPT"
 msgstr "OPL2LPT"
 
-#: audio/fmopl.cpp:96
+#: audio/fmopl.cpp:98
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/fmopl.cpp:99
+#: audio/fmopl.cpp:101
 msgid "RetroWave OPL3"
 msgstr "RetroWave OPL3"
 
@@ -4292,7 +4298,7 @@ msgstr "Aggiungi cartella"
 msgid "Choose a new folder"
 msgstr "Seleziona cartella"
 
-#: backends/graphics/atari/atari-graphics.cpp:1058
+#: backends/graphics/atari/atari-graphics.cpp:1060
 #: backends/graphics/sdl/sdl-graphics.cpp:515 engines/scumm/help.cpp:103
 msgid "Toggle aspect ratio correction"
 msgstr "Attiva/disattiva correzione proporzioni"
@@ -4378,7 +4384,7 @@ msgstr "Non è stato possibile salvare lo screenshot"
 msgid "Windowed mode"
 msgstr "Modalità finestra"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/colony/metaengine.cpp:169
+#: backends/graphics/sdl/sdl-graphics.cpp:492 engines/colony/metaengine.cpp:168
 #: engines/scumm/help.cpp:88
 msgid "Toggle fullscreen"
 msgstr "Attiva/disattiva schermo intero"
@@ -5011,12 +5017,12 @@ msgstr ""
 msgid "Magnify Mode Off"
 msgstr "Vista Ingrandita disattivata"
 
-#: backends/platform/android/android.cpp:1076
-#: backends/platform/ios7/ios7_osys_misc.mm:249
+#: backends/platform/android/android.cpp:930
+#: backends/platform/ios7/ios7_osys_misc.mm:246
 msgid "Getting help"
 msgstr "Ottenere aiuto"
 
-#: backends/platform/android/android.cpp:1079
+#: backends/platform/android/android.cpp:933
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -5058,13 +5064,13 @@ msgstr ""
 "complicati, talvolta a livelli impensabili. Se rimani bloccato, prova a "
 "cercare qualche guida online. Buona fortuna!\n"
 
-#: backends/platform/android/android.cpp:1088
-#: backends/platform/ios7/ios7_osys_misc.mm:261
-#: backends/platform/ios7/ios7_osys_misc.mm:357
+#: backends/platform/android/android.cpp:942
+#: backends/platform/ios7/ios7_osys_misc.mm:258
+#: backends/platform/ios7/ios7_osys_misc.mm:354
 msgid "Touch Controls"
 msgstr "Controlli Touch"
 
-#: backends/platform/android/android.cpp:1091
+#: backends/platform/android/android.cpp:945
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5204,13 +5210,13 @@ msgstr ""
 "  ![Icona tastiera](keyboard.png \"Icona tastiera\"){w=10em}\n"
 "\n"
 
-#: backends/platform/android/android.cpp:1147
-#: backends/platform/ios7/ios7_osys_misc.mm:336
-#: backends/platform/ios7/ios7_osys_misc.mm:380
+#: backends/platform/android/android.cpp:1001
+#: backends/platform/ios7/ios7_osys_misc.mm:333
+#: backends/platform/ios7/ios7_osys_misc.mm:377
 msgid "Adding Games"
 msgstr "Aggiungere Giochi"
 
-#: backends/platform/android/android.cpp:1150
+#: backends/platform/android/android.cpp:1004
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5481,7 +5487,7 @@ msgstr "Gamepad con layout minimale"
 msgid "Show keyboard function bar"
 msgstr "Mostra barra funzioni della tastiera"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:252
+#: backends/platform/ios7/ios7_osys_misc.mm:249
 msgid ""
 "## Help, I'm lost!\n"
 "\n"
@@ -5520,7 +5526,7 @@ msgstr ""
 "complicati, talvolta a livelli impensabili. Se rimani bloccato, prova a "
 "cercare qualche guida online. Buona fortuna!\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:264
+#: backends/platform/ios7/ios7_osys_misc.mm:261
 msgid ""
 "## Touch control modes\n"
 "The touch control mode can be changed by tapping or clicking on the "
@@ -5667,11 +5673,11 @@ msgstr ""
 "  ![Icona tastiera](keyboard.png \"Icona Tastiera\"){w=10em}\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:314
+#: backends/platform/ios7/ios7_osys_misc.mm:311
 msgid "External keyboard"
 msgstr "Tastiera esterna"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:317
+#: backends/platform/ios7/ios7_osys_misc.mm:314
 msgid ""
 "## Use of keyboard\n"
 "External keyboards are supported and from iOS 13.4 most of the special keys, "
@@ -5717,7 +5723,7 @@ msgstr ""
 "| `CMD + DESTRA`    | FINE               \n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:339
+#: backends/platform/ios7/ios7_osys_misc.mm:336
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -5755,7 +5761,7 @@ msgstr ""
 "Consulta la nostra [Documentazione iOS](https://docs.scummvm.org/en/latest/"
 "other_platforms/ios.html) per ulteriori informazioni.\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:360
+#: backends/platform/ios7/ios7_osys_misc.mm:357
 msgid ""
 "## Touch actions \n"
 "\n"
@@ -5795,7 +5801,7 @@ msgstr ""
 "Per nascondere la tastiera virtuale, premi il tasto Indietro/Menu.\n"
 "\n"
 
-#: backends/platform/ios7/ios7_osys_misc.mm:383
+#: backends/platform/ios7/ios7_osys_misc.mm:380
 msgid ""
 "## Adding Games \n"
 "\n"
@@ -6124,7 +6130,7 @@ msgstr "R2"
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
 #: backends/platform/sdl/miyoo/miyoo.cpp:114
-#: engines/alcachofa/metaengine.cpp:110 engines/colony/metaengine.cpp:180
+#: engines/alcachofa/metaengine.cpp:110 engines/colony/metaengine.cpp:179
 #: engines/grim/grim.cpp:545 engines/grim/grim.cpp:645
 #: engines/hdb/metaengine.cpp:264 engines/made/metaengine.cpp:186
 #: engines/phoenixvr/metaengine.cpp:101 engines/toltecs/metaengine.cpp:252
@@ -6318,7 +6324,7 @@ msgstr "Elenco giochi"
 msgid "Check for Updates..."
 msgstr "Cerca aggiornamenti..."
 
-#: engines/access/metaengine.cpp:198 engines/alcachofa/metaengine.cpp:94
+#: engines/access/metaengine.cpp:211 engines/alcachofa/metaengine.cpp:94
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
 #: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
@@ -6327,7 +6333,7 @@ msgstr "Cerca aggiornamenti..."
 #: engines/hugo/metaengine.cpp:129 engines/hypno/metaengine.cpp:128
 #: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:132
-#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/mads/metaengine.cpp:294 engines/neverhood/metaengine.cpp:185
 #: engines/ngi/metaengine.cpp:115 engines/petka/metaengine.cpp:113
 #: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:127
 #: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
@@ -6342,16 +6348,16 @@ msgstr "Cerca aggiornamenti..."
 msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
-#: engines/access/metaengine.cpp:202
+#: engines/access/metaengine.cpp:215
 msgid "Move / Interact / Skip"
 msgstr "Movimento / Interazione / Salta"
 
-#: engines/access/metaengine.cpp:214 engines/sherlock/metaengine.cpp:483
+#: engines/access/metaengine.cpp:227 engines/sherlock/metaengine.cpp:483
 msgid "Skip movie"
 msgstr "Salta filmato"
 
 #. I18N: Move Actor to upwards direction
-#: engines/access/metaengine.cpp:220 engines/asylum/metaengine.cpp:171
+#: engines/access/metaengine.cpp:233 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:302 engines/hypno/metaengine.cpp:356
@@ -6361,7 +6367,7 @@ msgid "Move up"
 msgstr "Movimento verso l'alto"
 
 #. I18N: Move Actor to downwards direction
-#: engines/access/metaengine.cpp:227 engines/asylum/metaengine.cpp:177
+#: engines/access/metaengine.cpp:240 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:290 engines/hypno/metaengine.cpp:342
@@ -6372,7 +6378,7 @@ msgstr "Movimento verso il basso"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
-#: engines/access/metaengine.cpp:234 engines/asylum/metaengine.cpp:183
+#: engines/access/metaengine.cpp:247 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
@@ -6385,7 +6391,7 @@ msgstr "Movimento verso sinistra"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
-#: engines/access/metaengine.cpp:241 engines/asylum/metaengine.cpp:189
+#: engines/access/metaengine.cpp:254 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
@@ -6397,31 +6403,31 @@ msgid "Move right"
 msgstr "Movimento verso destra"
 
 #. I18N: Move Actor to top-left direction
-#: engines/access/metaengine.cpp:248 engines/cine/metaengine.cpp:405
+#: engines/access/metaengine.cpp:261 engines/cine/metaengine.cpp:405
 #: engines/efh/metaengine.cpp:314
 msgid "Move up-left"
 msgstr "Movimento verso l'alto e a sinistra"
 
 #. I18N: Move Actor to top-right direction
-#: engines/access/metaengine.cpp:253 engines/cine/metaengine.cpp:411
+#: engines/access/metaengine.cpp:266 engines/cine/metaengine.cpp:411
 #: engines/efh/metaengine.cpp:320
 msgid "Move up-right"
 msgstr "Movimento verso l'alto e a destra"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/access/metaengine.cpp:258 engines/cine/metaengine.cpp:417
+#: engines/access/metaengine.cpp:271 engines/cine/metaengine.cpp:417
 #: engines/efh/metaengine.cpp:326
 msgid "Move down-left"
 msgstr "Movimento verso il basso e a sinistra"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/access/metaengine.cpp:263 engines/cine/metaengine.cpp:423
+#: engines/access/metaengine.cpp:276 engines/cine/metaengine.cpp:423
 #: engines/efh/metaengine.cpp:332
 msgid "Move down-right"
 msgstr "Movimento verso il basso e a destra"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
-#: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:124
+#: engines/access/metaengine.cpp:281 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/petka/metaengine.cpp:130 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:231 engines/sherlock/metaengine.cpp:405
@@ -6432,7 +6438,7 @@ msgstr "Movimento verso il basso e a destra"
 msgid "Look"
 msgstr "Guarda"
 
-#: engines/access/metaengine.cpp:276 engines/drascula/metaengine.cpp:240
+#: engines/access/metaengine.cpp:289 engines/drascula/metaengine.cpp:240
 #: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
@@ -6442,13 +6448,13 @@ msgstr "Guarda"
 msgid "Open"
 msgstr "Apri"
 
-#: engines/access/metaengine.cpp:286 engines/scumm/help.cpp:128
+#: engines/access/metaengine.cpp:299 engines/scumm/help.cpp:128
 #: engines/ultima/nuvie/metaengine.cpp:70
 msgid "Get"
 msgstr "Prendi"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/access/metaengine.cpp:291 engines/access/metaengine.cpp:312
+#: engines/access/metaengine.cpp:304 engines/access/metaengine.cpp:325
 #: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
 #: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:82
@@ -6468,11 +6474,11 @@ msgstr "Prendi"
 msgid "Use"
 msgstr "Usa"
 
-#: engines/access/metaengine.cpp:296
+#: engines/access/metaengine.cpp:309
 msgid "Goto"
 msgstr "Vai verso"
 
-#: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
+#: engines/access/metaengine.cpp:314 engines/access/metaengine.cpp:345
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
 #: engines/efh/metaengine.cpp:506 engines/petka/metaengine.cpp:158
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
@@ -6483,18 +6489,18 @@ msgstr "Vai verso"
 msgid "Talk"
 msgstr "Parla"
 
-#: engines/access/metaengine.cpp:306 engines/scumm/help.cpp:175
+#: engines/access/metaengine.cpp:319 engines/scumm/help.cpp:175
 msgid "Travel"
 msgstr "Viaggio"
 
-#: engines/access/metaengine.cpp:317 engines/cine/metaengine.cpp:332
+#: engines/access/metaengine.cpp:330 engines/cine/metaengine.cpp:332
 #: engines/petka/metaengine.cpp:144 engines/saga/metaengine.cpp:394
 #: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "Prendi"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:322 engines/alcachofa/metaengine.cpp:116
+#: engines/access/metaengine.cpp:335 engines/alcachofa/metaengine.cpp:116
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
@@ -6514,18 +6520,18 @@ msgstr "Prendi"
 msgid "Inventory"
 msgstr "Inventario"
 
-#: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
+#: engines/access/metaengine.cpp:340 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
 msgstr "Scala"
 
-#: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
+#: engines/access/metaengine.cpp:350 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:503
 #: engines/petka/metaengine.cpp:137 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "Cammina"
 
-#: engines/access/metaengine.cpp:348
+#: engines/access/metaengine.cpp:361
 msgid "Open save/load menu"
 msgstr "Apri menù di salvataggio/caricamento"
 
@@ -6611,7 +6617,7 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:56
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1252
+#: engines/sci/detection_options.h:221 engines/scumm/dialogs.cpp:1252
 #: engines/scumm/metaengine.cpp:872 engines/supernova/metaengine.cpp:53
 #: engines/wage/metaengine.cpp:51 engines/wintermute/metaengine.cpp:81
 msgid "Enable Text to Speech"
@@ -6651,7 +6657,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
 #: engines/neverhood/dialogs.cpp:47 engines/phoenixvr/metaengine.cpp:38
-#: engines/sci/detection_options.h:107 engines/sherlock/metaengine.cpp:47
+#: engines/sci/detection_options.h:105 engines/sherlock/metaengine.cpp:47
 #: engines/toltecs/metaengine.cpp:44 engines/trecision/metaengine.cpp:41
 #: engines/ultima/metaengine.cpp:56 engines/waynesworld/metaengine.cpp:37
 #: engines/zvision/metaengine.cpp:42
@@ -6665,7 +6671,7 @@ msgstr "Usa schermate di salvataggio originali"
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
 #: engines/neverhood/dialogs.cpp:48 engines/phoenixvr/metaengine.cpp:39
-#: engines/sci/detection_options.h:108 engines/sherlock/metaengine.cpp:48
+#: engines/sci/detection_options.h:106 engines/sherlock/metaengine.cpp:48
 #: engines/toltecs/metaengine.cpp:45 engines/trecision/metaengine.cpp:42
 #: engines/ultima/metaengine.cpp:57 engines/waynesworld/metaengine.cpp:38
 #: engines/zvision/metaengine.cpp:43
@@ -6744,7 +6750,7 @@ msgstr ""
 
 #: engines/agi/metaengine.cpp:195 engines/agos/dialogs.cpp:38
 #: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:45
-#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
+#: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:54
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1233 engines/scumm/metaengine.cpp:821
 #: engines/tot/metaengine.cpp:37
@@ -6753,7 +6759,7 @@ msgstr "Abilita protezione anticopia"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/dialogs.cpp:39
 #: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:46
-#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
+#: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:55
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1234 engines/scumm/metaengine.cpp:822
 msgid "Enable any copy protection that would otherwise be bypassed by default."
@@ -6823,11 +6829,11 @@ msgstr ""
 "andamenti musicali presenti nella versione DOS del gioco. Altrimenti "
 "verranno utilizzati gli andamenti (più veloci) della versione Windows."
 
-#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:95
+#: engines/agos/dialogs.cpp:71 engines/sci/detection_options.h:93
 msgid "Prefer digital sound effects"
 msgstr "Preferisci effetti sonori digitalizzati"
 
-#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:96
+#: engines/agos/dialogs.cpp:72 engines/sci/detection_options.h:94
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 "Usa preferibilmente gli effetti sonori digitalizzati, anziché quelli "
@@ -6849,11 +6855,11 @@ msgstr "Usa il puntatore originale Acorn"
 msgid "Toggle between the system cursor and the default cursor."
 msgstr "Utilizza il puntatore del sistema Acorn, anzichè quello standard."
 
-#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:263
+#: engines/agos/dialogs.cpp:107 engines/sci/detection_options.h:261
 msgid "MIDI mode:"
 msgstr "Modalità MIDI:"
 
-#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:264
+#: engines/agos/dialogs.cpp:108 engines/sci/detection_options.h:262
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6861,15 +6867,15 @@ msgstr ""
 "Se intendi usare periferiche MIDI esterne (per es. attraverso USB-MIDI), "
 "seleziona qui il dispositivo appropriato"
 
-#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:269
+#: engines/agos/dialogs.cpp:113 engines/sci/detection_options.h:267
 msgid "Standard (GM / MT-32)"
 msgstr "Standard (GM / MT-32)"
 
-#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:281
+#: engines/agos/dialogs.cpp:117 engines/sci/detection_options.h:279
 msgid "Casio MT-540"
 msgstr "Casio MT-540"
 
-#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:285
+#: engines/agos/dialogs.cpp:121 engines/sci/detection_options.h:283
 msgid "Casio CT-460 / CSM-1"
 msgstr "Casio CT-460 / CSM-1"
 
@@ -6893,7 +6899,7 @@ msgstr "AGOS - Principali"
 #: engines/hypno/metaengine.cpp:267 engines/hypno/metaengine.cpp:311
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:133
-#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/mads/metaengine.cpp:295 engines/neverhood/metaengine.cpp:186
 #: engines/queen/metaengine.cpp:147 engines/saga/metaengine.cpp:268
 #: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
 #: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
@@ -7399,7 +7405,7 @@ msgstr "Cheat 'Occhio del soldato 714'"
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:107 engines/got/metaengine.cpp:78
 #: engines/hugo/metaengine.cpp:197 engines/lure/metaengine.cpp:209
-#: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:42
+#: engines/mads/metaengine.cpp:312 engines/mm/mm1/metaengine.cpp:42
 #: engines/mm/mm1/metaengine.cpp:48 engines/saga/metaengine.cpp:328
 #: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
 #: engines/tucker/metaengine.cpp:221 engines/twine/metaengine.cpp:388
@@ -7705,7 +7711,7 @@ msgstr "Imposta indizio privato/pubblico"
 #: engines/freescape/games/eclipse/eclipse.cpp:351
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:165
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:192
-#: engines/mads/metaengine.cpp:305 engines/mohawk/myst.cpp:583
+#: engines/mads/metaengine.cpp:325 engines/mohawk/myst.cpp:583
 #: engines/mohawk/riven.cpp:864 engines/pegasus/pegasus.cpp:2825
 #: engines/petka/metaengine.cpp:198 engines/prince/metaengine.cpp:243
 #: engines/saga/metaengine.cpp:442 engines/sherlock/metaengine.cpp:462
@@ -7781,7 +7787,7 @@ msgstr "Database indizi"
 #: engines/freescape/games/dark/dark.cpp:236
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:361
-#: engines/mads/metaengine.cpp:361 engines/phoenixvr/metaengine.cpp:80
+#: engines/mads/metaengine.cpp:381 engines/phoenixvr/metaengine.cpp:80
 #: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
 #: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:852
 #: engines/stark/metaengine.cpp:280 engines/sword1/metaengine.cpp:295
@@ -7799,6 +7805,8 @@ msgid ""
 "This option allows the game to play at a slightly extended resolution. This "
 "is what the Mac and CDi versions are supposed to play like."
 msgstr ""
+"Questa opzione permette di utilizzare una risoluzione grafica leggermente "
+"superiore, come nelle versioni originali per Mac e CDi."
 
 #: engines/buried/buried.cpp:598
 msgid "Are you sure you want to quit?"
@@ -7858,15 +7866,15 @@ msgstr "Guarda su"
 msgid "Look down"
 msgstr "Guarda giù"
 
-#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:138
+#: engines/buried/metaengine.cpp:204 engines/colony/metaengine.cpp:137
 msgid "Look left"
 msgstr "Guarda a sinistra"
 
-#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:143
+#: engines/buried/metaengine.cpp:211 engines/colony/metaengine.cpp:142
 msgid "Look right"
 msgstr "Guarda a destra"
 
-#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:100
+#: engines/buried/metaengine.cpp:218 engines/colony/metaengine.cpp:99
 #: engines/dm/metaengine.cpp:196 engines/kyra/engine/eobcommon.cpp:371
 #: engines/kyra/engine/lol.cpp:513 engines/mohawk/riven.cpp:881
 #: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
@@ -8049,9 +8057,9 @@ msgstr "Abilita Sintesi Vocale per gli oggetti e le opzioni"
 
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
-#: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
+#: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:128
 #: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
-#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:121
+#: engines/sci/detection_options.h:222 engines/sherlock/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:54 engines/teenagent/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -8177,31 +8185,31 @@ msgstr ""
 "Riscontrerai dei problemi. Se possibile, ricomincia Operation Stealth "
 "dall'inizio e crea dei nuovi salvataggi."
 
-#: engines/colony/metaengine.cpp:46 engines/myst3/metaengine.cpp:40
+#: engines/colony/metaengine.cpp:45 engines/myst3/metaengine.cpp:40
 msgid "Widescreen mod"
 msgstr "Modalità widescreen"
 
-#: engines/colony/metaengine.cpp:47 engines/myst3/metaengine.cpp:41
+#: engines/colony/metaengine.cpp:46 engines/myst3/metaengine.cpp:41
 msgid "Enable widescreen rendering in fullscreen mode."
 msgstr "Abilita la modalità widescreen nella visualizzazione a schermo intero."
 
-#: engines/colony/metaengine.cpp:107
+#: engines/colony/metaengine.cpp:106
 msgid "Move backward"
 msgstr "Movimento indietro"
 
-#: engines/colony/metaengine.cpp:114 engines/dm/metaengine.cpp:216
+#: engines/colony/metaengine.cpp:113 engines/dm/metaengine.cpp:216
 #: engines/freescape/movement.cpp:53 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:100
 msgid "Strafe left"
 msgstr "Scorri a sinistra"
 
-#: engines/colony/metaengine.cpp:121 engines/dm/metaengine.cpp:236
+#: engines/colony/metaengine.cpp:120 engines/dm/metaengine.cpp:236
 #: engines/freescape/movement.cpp:61 engines/hpl1/metaengine.cpp:79
 #: engines/mm/mm1/metaengine.cpp:101
 msgid "Strafe right"
 msgstr "Scorri a destra"
 
-#: engines/colony/metaengine.cpp:128
+#: engines/colony/metaengine.cpp:127
 #: engines/freescape/games/castle/castle.cpp:488
 #: engines/freescape/games/dark/dark.cpp:252
 #: engines/freescape/games/driller/driller.cpp:149
@@ -8209,7 +8217,7 @@ msgstr "Scorri a destra"
 msgid "Rotate left"
 msgstr "Ruota verso sinistra"
 
-#: engines/colony/metaengine.cpp:133
+#: engines/colony/metaengine.cpp:132
 #: engines/freescape/games/castle/castle.cpp:493
 #: engines/freescape/games/dark/dark.cpp:257
 #: engines/freescape/games/driller/driller.cpp:154
@@ -8217,30 +8225,30 @@ msgstr "Ruota verso sinistra"
 msgid "Rotate right"
 msgstr "Ruota verso destra"
 
-#: engines/colony/metaengine.cpp:148
+#: engines/colony/metaengine.cpp:147
 msgid "Look behind"
 msgstr "Guarda indietro"
 
-#: engines/colony/metaengine.cpp:153
+#: engines/colony/metaengine.cpp:152
 msgid "Toggle mouselook"
 msgstr "Attiva/disattiva controllo vista con il mouse"
 
-#: engines/colony/metaengine.cpp:159
+#: engines/colony/metaengine.cpp:158
 msgid "Toggle dashboard"
 msgstr "Mostra / nascondi strumentazione"
 
-#: engines/colony/metaengine.cpp:164
+#: engines/colony/metaengine.cpp:163
 msgid "Toggle wireframe"
 msgstr "Attiva / disattiva wireframe"
 
-#: engines/colony/metaengine.cpp:174 engines/hypno/metaengine.cpp:146
+#: engines/colony/metaengine.cpp:173 engines/hypno/metaengine.cpp:146
 #: engines/lab/metaengine.cpp:209 engines/ngi/metaengine.cpp:168
 #: engines/sherlock/metaengine.cpp:872 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Salta introduzione"
 
-#: engines/colony/metaengine.cpp:186 engines/ultima/ultima8/metaengine.cpp:89
+#: engines/colony/metaengine.cpp:185 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
 msgstr "Spara con l'arma"
 
@@ -8477,21 +8485,16 @@ msgid "Brighten the graphics to simulate a Macintosh monitor"
 msgstr "Rende i colori più brillanti per simulare un schermo Macintosh"
 
 #: engines/director/metaengine.cpp:81
-#, fuzzy
-#| msgid "Force true color"
 msgid "Force true color (32bpp) mode"
-msgstr "Forza modalità true color"
+msgstr "Forza modalità true color (32 bpp)"
 
 #: engines/director/metaengine.cpp:82
-#, fuzzy
-#| msgid ""
-#| "Use true color graphics mode, even if the game is not designed for it"
 msgid ""
 "Use true color graphics mode (32 bits per pixel), even if the game is not "
 "designed for it"
 msgstr ""
-"Utilizza la modalità grafica true color, anche se il gioco non richiede tale "
-"modalità"
+"Utilizza la modalità grafica true color (a 32 bit per pixel), anche se il "
+"gioco non è progettato per tale modalità"
 
 #: engines/dm/metaengine.cpp:125
 msgid "Dialog choice selection keymappings"
@@ -8968,105 +8971,105 @@ msgstr "Riproduci suono tipo 9"
 msgid "Play sound type 16"
 msgstr "Riproduci suono tipo 16"
 
-#: engines/freescape/metaengine.cpp:42
+#: engines/freescape/metaengine.cpp:41
 msgid "Prerecorded sounds"
 msgstr "Effetti sonori preregistrati"
 
-#: engines/freescape/metaengine.cpp:43
+#: engines/freescape/metaengine.cpp:42
 msgid "Use high-quality pre-recorded sounds instead of pc speaker emulation"
 msgstr ""
 "Utilizza effetti sonori pre-registrati ad alta qualità, anzichè emulare "
 "l'altoparlante del PC"
 
-#: engines/freescape/metaengine.cpp:53
+#: engines/freescape/metaengine.cpp:52
 msgid "Extended timer"
 msgstr "Tempo aggiuntivo"
 
-#: engines/freescape/metaengine.cpp:54
+#: engines/freescape/metaengine.cpp:53
 msgid "Start the game timer at 99:59:59"
 msgstr "Imposta il timer a 99:59:59"
 
-#: engines/freescape/metaengine.cpp:64
+#: engines/freescape/metaengine.cpp:63
 msgid "Automatic drilling"
 msgstr "Perforazione automatica"
 
-#: engines/freescape/metaengine.cpp:65
+#: engines/freescape/metaengine.cpp:64
 msgid "Allow to successfully drill in any part of the area in Driller"
 msgstr "Permette di perforare con successo in qualsiasi area del gioco"
 
-#: engines/freescape/metaengine.cpp:75
+#: engines/freescape/metaengine.cpp:74
 msgid "Disable demo mode"
 msgstr "Disabilita modalità demo"
 
-#: engines/freescape/metaengine.cpp:76
+#: engines/freescape/metaengine.cpp:75
 msgid "Never activate demo mode"
 msgstr "Non attiva mai la modalità dimostrativa"
 
-#: engines/freescape/metaengine.cpp:86
+#: engines/freescape/metaengine.cpp:85
 msgid "Disable sensors"
 msgstr "Disabilita torrette laser"
 
-#: engines/freescape/metaengine.cpp:87
+#: engines/freescape/metaengine.cpp:86
 msgid "Sensors will not shoot the player"
 msgstr "Le torrette non spareranno al giocatore"
 
-#: engines/freescape/metaengine.cpp:97
+#: engines/freescape/metaengine.cpp:96
 msgid "Disable falling"
 msgstr "Disabilita cadute"
 
-#: engines/freescape/metaengine.cpp:98
+#: engines/freescape/metaengine.cpp:97
 msgid "Player cannot fall over edges"
 msgstr "Il giocatore non cadrà mai fuori dai bordi"
 
-#: engines/freescape/metaengine.cpp:108
+#: engines/freescape/metaengine.cpp:107
 msgid "Invert Y-axis on mouse"
 msgstr "Inverti asse Y del mouse"
 
-#: engines/freescape/metaengine.cpp:109
+#: engines/freescape/metaengine.cpp:108
 msgid "Use alternative camera controls"
 msgstr "Usa metodo di controllo alternativo per la camera"
 
-#: engines/freescape/metaengine.cpp:119
+#: engines/freescape/metaengine.cpp:118
 msgid "Authentic graphics"
 msgstr "Grafica fedele"
 
-#: engines/freescape/metaengine.cpp:120
+#: engines/freescape/metaengine.cpp:119
 msgid "Keep graphics as close as possible to the original"
 msgstr "Mantiene la grafica il più possibile fedele all'originale"
 
-#: engines/freescape/metaengine.cpp:130
+#: engines/freescape/metaengine.cpp:129
 msgid "Enable rock travel"
 msgstr "Abilita \"rock travel\""
 
-#: engines/freescape/metaengine.cpp:131
+#: engines/freescape/metaengine.cpp:130
 msgid "Enable traveling using a rock shoot at start"
 msgstr ""
 "Abilita, all'inizio del gioco, la possibilità di spostarsi seguendo le "
 "pietre lanciate"
 
-#: engines/freescape/metaengine.cpp:141
+#: engines/freescape/metaengine.cpp:140
 msgid "Smoother movement"
 msgstr "Movimento fluido"
 
-#: engines/freescape/metaengine.cpp:142
+#: engines/freescape/metaengine.cpp:141
 msgid "Use smoother movements instead of discrete steps"
 msgstr "Effettua movimenti fluidi anzichè spostamenti a passi prestabiliti"
 
 #. I18N: Use modern FPS-style controls: WASD for movement, Shift to run
-#: engines/freescape/metaengine.cpp:153
+#: engines/freescape/metaengine.cpp:152
 msgid "WASD controls"
 msgstr "Controlli WASD"
 
-#: engines/freescape/metaengine.cpp:154
+#: engines/freescape/metaengine.cpp:153
 msgid "Use WASD keys for movement and Shift to run"
 msgstr "Usa i tasti WASD per il movimento e Shift per correre"
 
 #. I18N: Enable background music using AdLib/OPL2 FM synthesis
-#: engines/freescape/metaengine.cpp:165
+#: engines/freescape/metaengine.cpp:164
 msgid "Backported music from C64 releases (AdLib)"
 msgstr "Usa musica della versione C64 (convertita AdLib)"
 
-#: engines/freescape/metaengine.cpp:166
+#: engines/freescape/metaengine.cpp:165
 msgid ""
 "Enable background music ported from the C64 version using AdLib FM synthesis"
 msgstr ""
@@ -9074,11 +9077,11 @@ msgstr ""
 "FM AdLib"
 
 #. I18N: Enable background music using AY chip emulation
-#: engines/freescape/metaengine.cpp:177
+#: engines/freescape/metaengine.cpp:176
 msgid "Backported music from C64 releases"
 msgstr "Usa musica della versione C64"
 
-#: engines/freescape/metaengine.cpp:178
+#: engines/freescape/metaengine.cpp:177
 msgid "Enable background music ported from the C64 version"
 msgstr "Riproduce la musica della versione per Commodore 64"
 
@@ -9293,228 +9296,194 @@ msgstr "Visualizzazione immagine/testo modificata\n"
 
 #: engines/glk/dialogs.cpp:141
 msgid "white"
-msgstr ""
+msgstr "bianco"
 
 #: engines/glk/dialogs.cpp:142
 msgid "green"
-msgstr ""
+msgstr "verde"
 
 #: engines/glk/dialogs.cpp:143
-#, fuzzy
-#| msgid "Proceed"
 msgid "red"
-msgstr "Procedi"
+msgstr "rosso"
 
 #: engines/glk/dialogs.cpp:144
 msgid "blue"
-msgstr ""
+msgstr "blu"
 
 #: engines/glk/dialogs.cpp:145
 msgid "black"
-msgstr ""
+msgstr "nero"
 
 #: engines/glk/dialogs.cpp:146
 msgid "grey"
-msgstr ""
+msgstr "grigio"
 
 #: engines/glk/dialogs.cpp:195
 msgid "Monospace Regular"
-msgstr ""
+msgstr "Monospaziato normale"
 
 #: engines/glk/dialogs.cpp:196
 msgid "Monospace Bold"
-msgstr ""
+msgstr "Monospaziato grassetto"
 
 #: engines/glk/dialogs.cpp:197
 msgid "Monospace Italic"
-msgstr ""
+msgstr "Monospaziato corsivo"
 
 #: engines/glk/dialogs.cpp:198
 msgid "Monospace Bold Italic"
-msgstr ""
+msgstr "Monospaziato grassetto corsivo"
 
 #: engines/glk/dialogs.cpp:199
 msgid "Proportional Regular"
-msgstr ""
+msgstr "Proporzionale normale"
 
 #: engines/glk/dialogs.cpp:200
 msgid "Proportional Bold"
-msgstr ""
+msgstr "Proporzionale grassetto"
 
 #: engines/glk/dialogs.cpp:201
 msgid "Proportional Italic"
-msgstr ""
+msgstr "Proporzionale corsivo"
 
 #: engines/glk/dialogs.cpp:202
 msgid "Proportional Bold Italic"
-msgstr ""
+msgstr "Proporzionale grassetto corsivo"
 
 #: engines/glk/dialogs.cpp:210
-#, fuzzy
-#| msgid "SoundFont:"
 msgid "Font"
-msgstr "SoundFont:"
+msgstr "Font"
 
 #: engines/glk/dialogs.cpp:212 engines/glk/dialogs.cpp:222
-#, fuzzy
-#| msgid "ProText"
 msgid "Text:"
-msgstr "ProText"
+msgstr "Testo:"
 
 #: engines/glk/dialogs.cpp:212
 msgid "Font for the text"
-msgstr ""
+msgstr "Font per il testo"
 
 #: engines/glk/dialogs.cpp:216 engines/glk/dialogs.cpp:227
 msgid "Grid:"
-msgstr ""
+msgstr "Griglia:"
 
 #: engines/glk/dialogs.cpp:216
 msgid "Font for drawn graphics like maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Font utilizzato per la grafica di mappe, diagrammi, puzzle, ecc."
 
 #: engines/glk/dialogs.cpp:220
 msgid "Color"
-msgstr ""
+msgstr "Colore"
 
 #: engines/glk/dialogs.cpp:222
-#, fuzzy
-#| msgid "Move focus to interactive object"
 msgid "Color of the interactive text"
-msgstr "Sposta focus sull'oggetto interattivo"
+msgstr "Colore dei testi interattivi"
 
 #: engines/glk/dialogs.cpp:225 engines/glk/dialogs.cpp:230
 #: engines/glk/dialogs.cpp:236 engines/glk/dialogs.cpp:242
 #: engines/glk/dialogs.cpp:254 engines/glk/dialogs.cpp:260
 #: engines/glk/dialogs.cpp:269
 msgid "<custom>"
-msgstr ""
+msgstr "<personalizzato>"
 
 #: engines/glk/dialogs.cpp:227
 msgid "Color for drawn graphics such as maps, diagrams, puzzles, etc"
-msgstr ""
+msgstr "Colore per la grafica di mappe, diagrammi, puzzle, ecc."
 
 #: engines/glk/dialogs.cpp:232
-#, fuzzy
-#| msgid "Window"
 msgid "Window:"
-msgstr "Finestra"
+msgstr "Finestra:"
 
 #: engines/glk/dialogs.cpp:232
-#, fuzzy
-#| msgid "Toggle windows mode"
 msgid "Color of the window (background)"
-msgstr "Alterna modalità finestre"
+msgstr "Colore della finestra (sfondo)"
 
 #: engines/glk/dialogs.cpp:238
-#, fuzzy
-#| msgid "New order"
 msgid "Border:"
-msgstr "Nuovo ordine"
+msgstr "Bordo:"
 
 #: engines/glk/dialogs.cpp:238
-#, fuzzy
-#| msgid "Toggle windows mode"
 msgid "Color of the window border"
-msgstr "Alterna modalità finestre"
+msgstr "Colore del bordo della finestra"
 
 #. I18N: This is a section for text windows border settings
 #: engines/glk/dialogs.cpp:245
-#, fuzzy
-#| msgid "New order"
 msgid "Border"
-msgstr "Nuovo ordine"
+msgstr "Bordi"
 
 #: engines/glk/dialogs.cpp:247 engines/glk/dialogs.cpp:341
 #: engines/glk/dialogs.cpp:345 engines/glk/dialogs.cpp:349
-#, fuzzy
-#| msgid "Horizontal underscan:"
 msgid "Horizontal:"
-msgstr "Underscan orizzontale:"
+msgstr "Orizzontale:"
 
 #: engines/glk/dialogs.cpp:247
-#, fuzzy
-#| msgid "Horizontal underscan:"
 msgid "Horizontal border size"
-msgstr "Underscan orizzontale:"
+msgstr "Spessore dei bordi orizzontali"
 
 #: engines/glk/dialogs.cpp:248 engines/glk/dialogs.cpp:342
 #: engines/glk/dialogs.cpp:346 engines/glk/dialogs.cpp:350
-#, fuzzy
-#| msgid "Vertical underscan:"
 msgid "Vertical:"
-msgstr "Underscan verticale:"
+msgstr "Verticale:"
 
 #: engines/glk/dialogs.cpp:248
-#, fuzzy
-#| msgid "Vertical underscan:"
 msgid "Vertical border size"
-msgstr "Underscan verticale:"
+msgstr "Spessore dei bordi verticali"
 
 #: engines/glk/dialogs.cpp:250
 msgid "Caret:"
-msgstr ""
+msgstr "Cursore:"
 
 #: engines/glk/dialogs.cpp:250
-#, fuzzy
-#| msgid "Teleport to cursor"
 msgid "Color of the cursor"
-msgstr "Teletrasporto al cursore"
+msgstr "Colore del cursore"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Link:"
-msgstr ""
+msgstr "Link:"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Color for URLs if they appear in-game"
-msgstr ""
+msgstr "Colore dei collegamenti ipertestuali, se presenti nel gioco"
 
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr ""
+msgstr "\"Altro...\":"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
-msgstr ""
+msgstr "Colore dei marcatori \"Altro...\" nei testi"
 
 #: engines/glk/dialogs.cpp:272
-#, fuzzy
-#| msgid "Graphics mode:"
 msgid "Typography"
-msgstr "Modalità grafica:"
+msgstr "Tipografia"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Link style:"
-msgstr ""
+msgstr "Stile link:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Style for URLs if they appear in-game"
-msgstr ""
+msgstr "Stile dei collegamenti ipertestuali, se presenti nel gioco"
 
 #: engines/glk/dialogs.cpp:279
-#, fuzzy
-#| msgid "Change shadow type"
 msgid "Caret shape:"
-msgstr "Cambia qualità ombre"
+msgstr "Forma cursore:"
 
 #: engines/glk/dialogs.cpp:279
-#, fuzzy
-#| msgid "Show mouse cursor"
 msgid "Shape of the cursor"
-msgstr "Mostra cursore"
+msgstr "Forma del cursore"
 
 #: engines/glk/dialogs.cpp:286
-#, fuzzy
-#| msgid "Quit prompt"
 msgid "More prompt:"
-msgstr "Finestra di chiusura"
+msgstr "Marcatore \"Altro...\":"
 
 #: engines/glk/dialogs.cpp:286
 msgid ""
 "Custom marker in place of the \"More...\" marker for eg. \"continue\". Leave "
 "it blank to use the game's default"
 msgstr ""
+"Marcatore personalizzato, al posto di \"Altro...\". Lascia in bianco per "
+"usare l'opzione predefinita dal gioco"
 
 #: engines/glk/dialogs.cpp:288
 #, fuzzy
@@ -9598,18 +9567,22 @@ msgstr "Modalità grafica:"
 msgid "Choose typographic quotes"
 msgstr "Grafica a colori"
 
-#: engines/glk/dialogs.cpp:307 engines/glk/dialogs.cpp:320
-#: engines/glk/dialogs.cpp:332
+#: engines/glk/dialogs.cpp:307
+msgctxt "quotes"
 msgid "Off"
 msgstr ""
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
-#: engines/glk/dialogs.cpp:309 engines/mohawk/dialogs.cpp:366
+#: engines/glk/dialogs.cpp:309
+#, fuzzy
+#| msgid "Normal"
+msgctxt "quotes"
 msgid "Normal"
 msgstr "Normali"
 
 #. I18N: This is a setting for using "rabid" quotes, which are like normal typographic quotes but with the opening quote lower than the closing one, like in some comic books
 #: engines/glk/dialogs.cpp:311
+msgctxt "quotes"
 msgid "Rabid"
 msgstr ""
 
@@ -9630,6 +9603,10 @@ msgstr ""
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
+msgstr ""
+
+#: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
+msgid "Off"
 msgstr ""
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
@@ -9822,12 +9799,12 @@ msgid "Save file created by different version."
 msgstr "Salvataggio creato con una versione differente."
 
 #: engines/gob/inter_geisha.cpp:237 engines/gob/inter_playtoons.cpp:285
-#: engines/gob/inter_v2.cpp:1512 engines/tinsel/saveload.cpp:588
+#: engines/gob/inter_v2.cpp:1523 engines/tinsel/saveload.cpp:588
 msgid "Failed to load saved game from file."
 msgstr "Impossibile caricare la partita dal file."
 
 #: engines/gob/inter_geisha.cpp:268 engines/gob/inter_playtoons.cpp:426
-#: engines/gob/inter_v2.cpp:1591 engines/tinsel/saveload.cpp:601
+#: engines/gob/inter_v2.cpp:1602 engines/tinsel/saveload.cpp:601
 msgid "Failed to save game to file."
 msgstr "Impossibile salvare la partita nel file."
 
@@ -10203,7 +10180,7 @@ msgid "Repeat last line"
 msgstr "Ripeti l'ultima linea di testo"
 
 #: engines/hugo/metaengine.cpp:172 engines/lure/metaengine.cpp:197
-#: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
+#: engines/mads/metaengine.cpp:331 engines/tsage/metaengine.cpp:247
 msgid "Restore game"
 msgstr "Ripristina gioco"
 
@@ -10386,7 +10363,7 @@ msgstr "Mappatura tasti pausa"
 msgid "Direction keymappings"
 msgstr "Mappatura tasti di direzione"
 
-#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
+#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:369
 #: engines/tsage/metaengine.cpp:259
 msgid "Show credits"
 msgstr "Mostra riconoscimenti"
@@ -10916,7 +10893,7 @@ msgstr ""
 msgid "This puzzle is not available in the trial version of the game"
 msgstr "Questo puzzle non è disponibile nella versione dimostrativa del gioco"
 
-#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
+#: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:127
 #: engines/sherlock/metaengine.cpp:120 engines/twine/metaengine.cpp:144
 msgid "TTS Narrator"
 msgstr "Sintesi vocale"
@@ -10987,7 +10964,7 @@ msgstr ""
 "Se attivato, il gioco riprodurrà la musica in formato digitale durante "
 "l'introduzione. Altrimenti verrà utilizzata la musica MIDI."
 
-#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:132
+#: engines/made/metaengine.cpp:63 engines/sci/detection_options.h:130
 msgid "Use Windows cursors"
 msgstr "Usa cursori di Windows"
 
@@ -11021,59 +10998,59 @@ msgstr "Cursore a destra"
 msgid "Repeat last message"
 msgstr "Ripeti ultimo messaggio"
 
-#: engines/mads/metaengine.cpp:63
+#: engines/mads/metaengine.cpp:66
 msgid "Easy mouse interface"
 msgstr "Interfaccia mouse facilitata"
 
-#: engines/mads/metaengine.cpp:64
+#: engines/mads/metaengine.cpp:67
 msgid "Shows object names when hovering the mouse over them"
 msgstr "Mostra i nomi degli oggetti al passaggio del mouse"
 
-#: engines/mads/metaengine.cpp:75 engines/mads/metaengine.cpp:76
+#: engines/mads/metaengine.cpp:78 engines/mads/metaengine.cpp:79
 msgid "Animated inventory items"
 msgstr "Animazioni oggetti inventario"
 
-#: engines/mads/metaengine.cpp:87 engines/mads/metaengine.cpp:88
+#: engines/mads/metaengine.cpp:90 engines/mads/metaengine.cpp:91
 msgid "Animated game interface"
 msgstr "Animazioni interfaccia di gioco"
 
-#: engines/mads/metaengine.cpp:99 engines/mads/metaengine.cpp:100
+#: engines/mads/metaengine.cpp:102 engines/mads/metaengine.cpp:103
 msgid "Naughty game mode"
 msgstr "Modalità osé"
 
-#: engines/mads/metaengine.cpp:276
+#: engines/mads/metaengine.cpp:296
 msgid "Start menu keymappings"
 msgstr "Mappature menù principale"
 
-#: engines/mads/metaengine.cpp:299
+#: engines/mads/metaengine.cpp:319
 msgid "Open game menu"
 msgstr "Apri menù del gioco"
 
-#: engines/mads/metaengine.cpp:317
+#: engines/mads/metaengine.cpp:337
 msgid "Scroll bar up"
 msgstr "Barra scorrimento su"
 
-#: engines/mads/metaengine.cpp:323
+#: engines/mads/metaengine.cpp:343
 msgid "Scroll bar down"
 msgstr "Barra scorrimento giù"
 
-#: engines/mads/metaengine.cpp:331
+#: engines/mads/metaengine.cpp:351
 msgid "Start game"
 msgstr "Inizia partita"
 
-#: engines/mads/metaengine.cpp:337
+#: engines/mads/metaengine.cpp:357
 msgid "Resume game"
 msgstr "Ripristina partita"
 
-#: engines/mads/metaengine.cpp:343
+#: engines/mads/metaengine.cpp:363
 msgid "Show intro"
 msgstr "Mostra introduzione"
 
-#: engines/mads/metaengine.cpp:355
+#: engines/mads/metaengine.cpp:375
 msgid "Show quotes"
 msgstr "Mostra citazioni"
 
-#: engines/mads/metaengine.cpp:368
+#: engines/mads/metaengine.cpp:388
 msgid "Restart animation"
 msgstr "Ripeti animazione"
 
@@ -11367,11 +11344,31 @@ msgstr ""
 "Modifica la velocità delle transizioni tra le schermate. Disabilitando "
 "questa opzione è possibile spostarsi più velocemente all'interno del gioco."
 
+#: engines/mohawk/dialogs.cpp:364
+#, fuzzy
+#| msgid "Disabled"
+msgctxt "riven-transition"
+msgid "Disabled"
+msgstr "Disattiva"
+
 #: engines/mohawk/dialogs.cpp:365
+#, fuzzy
+#| msgid "Fastest"
+msgctxt "riven-transition"
 msgid "Fastest"
 msgstr "Veloci"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1582
+#: engines/mohawk/dialogs.cpp:366
+#, fuzzy
+#| msgid "Normal"
+msgctxt "riven-transition"
+msgid "Normal"
+msgstr "Normali"
+
+#: engines/mohawk/dialogs.cpp:367
+#, fuzzy
+#| msgid "Best"
+msgctxt "riven-transition"
 msgid "Best"
 msgstr "Migliori"
 
@@ -12334,94 +12331,94 @@ msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Applica linee di scansione ai video per migliorarne la nitidezza (apparente)"
 
-#: engines/sci/detection_options.h:70
+#: engines/sci/detection_options.h:69
 msgid "Use high-quality video scaling"
 msgstr "Usa lo scaling video di alta qualità"
 
-#: engines/sci/detection_options.h:71
+#: engines/sci/detection_options.h:70
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Usa filtro bilineare per lo scaling dei filmati, ove possibile"
 
-#: engines/sci/detection_options.h:83
+#: engines/sci/detection_options.h:81
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Usa cel scaling di alta qualità \"LarryScale\""
 
-#: engines/sci/detection_options.h:84
+#: engines/sci/detection_options.h:82
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "Usa il Cartoon-Scaler speciale per disegnare gli sprite dei personaggi"
 
-#: engines/sci/detection_options.h:119
+#: engines/sci/detection_options.h:117
 msgid "Use CD audio"
 msgstr "Usa audio da CD"
 
-#: engines/sci/detection_options.h:120
+#: engines/sci/detection_options.h:118
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 "Usa l'audio da CD al posto di quello incorporato nel gioco, se disponibile"
 
-#: engines/sci/detection_options.h:133
+#: engines/sci/detection_options.h:131
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Usa i cursori di Windows (più piccoli e monocromatici) al posto di quelli DOS"
 
-#: engines/sci/detection_options.h:145
+#: engines/sci/detection_options.h:143
 msgid "Use silver cursors"
 msgstr "Usa cursori d'argento"
 
-#: engines/sci/detection_options.h:146
+#: engines/sci/detection_options.h:144
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Usa il set alternativo di cursori d'argento al posto di quelli normali d'oro"
 
-#: engines/sci/detection_options.h:158
+#: engines/sci/detection_options.h:156
 msgid "Enable content censoring"
 msgstr "Attiva censura del contenuto"
 
-#: engines/sci/detection_options.h:159
+#: engines/sci/detection_options.h:157
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Attiva la censura dei contenuti incorporata nel gioco"
 
-#: engines/sci/detection_options.h:171
+#: engines/sci/detection_options.h:169
 msgid "Upscale videos"
 msgstr "Applica upscale ai video"
 
-#: engines/sci/detection_options.h:172
+#: engines/sci/detection_options.h:170
 msgid "Upscale videos to double their size"
 msgstr "Applica upscale ai video per raddoppiarne la dimensione"
 
-#: engines/sci/detection_options.h:184
+#: engines/sci/detection_options.h:182
 msgid "Use RGB rendering"
 msgstr "Usa rendering RGB"
 
-#: engines/sci/detection_options.h:185
+#: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "Usa il rendering RGB per migliorare le transizioni tra le schermate"
 
-#: engines/sci/detection_options.h:197
+#: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
 msgstr "Usa palette ottimizzata per ogni elemento"
 
-#: engines/sci/detection_options.h:198
+#: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 "Utilizza una palette di colori personalizzata per ogni elemento grafico, "
 "migliorandone la resa estetica"
 
-#: engines/sci/detection_options.h:210
+#: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
 msgstr "Abilita musicisti barbuti"
 
-#: engines/sci/detection_options.h:211
+#: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
 msgstr "Abilita elementi grafici che sono stati disattivati per ragioni legali"
 
-#: engines/sci/detection_options.h:236
+#: engines/sci/detection_options.h:234
 msgid "Enable saving via the GMM"
 msgstr "Abilita i salvataggi nel Menù Principale di ScummVM"
 
-#: engines/sci/detection_options.h:237
+#: engines/sci/detection_options.h:235
 msgid ""
 "Allows saving via the GMM. WARNING: saves created via the GMM may be "
 "corrupted and unusable. Use at your own risk!"
@@ -12430,11 +12427,11 @@ msgstr ""
 "salvataggi creati in questo modo possono risultare corrotti e "
 "inutilizzabili. Usali a tuo rischio!"
 
-#: engines/sci/detection_options.h:248
+#: engines/sci/detection_options.h:246
 msgid "Repair speech audio"
 msgstr "Correggi difetti nel parlato"
 
-#: engines/sci/detection_options.h:249
+#: engines/sci/detection_options.h:247
 msgid ""
 "Detect and attempt to repair overflows in DPCM8 audio, which cause "
 "noticeable pops and crackles."
@@ -12442,11 +12439,11 @@ msgstr ""
 "Rileva e prova a riparare gli overflow nell'audio DPCM8, responsabili di "
 "evidenti scoppiettii e crepitii."
 
-#: engines/sci/detection_options.h:273
+#: engines/sci/detection_options.h:271
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection_options.h:277
+#: engines/sci/detection_options.h:275
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -12505,10 +12502,11 @@ msgstr ""
 "Questo salvataggio è stato creato con una versione diversa del gioco, "
 "impossibile caricarlo"
 
-#: engines/sci/graphics/video32.cpp:68
-#, c-format
-msgid ""
-"Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+#: engines/sci/graphics/video32.cpp:70
+#, fuzzy, c-format
+#| msgid ""
+#| "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
+msgid "Cannot play back %s video on a system with maximum color depth of 8bpp"
 msgstr ""
 "Non è possibile riprodurre un filmato a %dbpp su di un sistema con "
 "profondità di colore massima di 8bpp"
@@ -12871,6 +12869,10 @@ msgstr "Buona"
 #: engines/scumm/dialogs.cpp:1582
 msgid "Better"
 msgstr "Ottima"
+
+#: engines/scumm/dialogs.cpp:1582
+msgid "Best"
+msgstr "Migliori"
 
 #: engines/scumm/dialogs.cpp:1583
 #, c-format

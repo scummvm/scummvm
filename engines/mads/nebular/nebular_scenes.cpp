@@ -21,10 +21,10 @@
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
-#include "mads/resources.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/compression.h"
+#include "mads/core/resources.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/game_nebular.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes1.h"
@@ -40,7 +40,7 @@ namespace MADS {
 
 namespace Nebular {
 
-SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
+SceneLogic *SceneFactory::createScene(RexNebularEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
 	scene.addActiveVocab(NOUN_DROP);
@@ -297,7 +297,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 /*------------------------------------------------------------------------*/
 
-NebularScene::NebularScene(MADSEngine *vm) : SceneLogic(vm),
+NebularScene::NebularScene(RexNebularEngine *vm) : SceneLogic(vm),
 		_globals(static_cast<GameNebular *>(vm->_game)->_globals),
 		_game(*static_cast<GameNebular *>(vm->_game)),
 		_action(vm->_game->_scene._action) {
@@ -343,7 +343,7 @@ void SceneInfoNebular::loadCodes(BaseSurface &depthSurface, Common::SeekableRead
 
 /*------------------------------------------------------------------------*/
 
-SceneTeleporter::SceneTeleporter(MADSEngine *vm) : NebularScene(vm) {
+SceneTeleporter::SceneTeleporter(RexNebularEngine *vm) : NebularScene(vm) {
 	_buttonTyped = -1;
 	_curCode = -1;
 	_digitCount = -1;
@@ -625,6 +625,6 @@ void SceneTeleporter::teleporterStep() {
 	}
 }
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS

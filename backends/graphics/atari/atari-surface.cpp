@@ -19,6 +19,8 @@
  *
  */
 
+#define FORCE_TEXT_CONSOLE
+
 #include "atari-surface.h"
 #include "graphics/surface.h"
 
@@ -32,8 +34,8 @@
 #include "backends/graphics/atari/atari-c2p-asm.h"
 #include "backends/graphics/atari/atari-graphics-asm.h"
 #include "backends/graphics/atari/atari-supervidel.h"
-#include "backends/platform/atari/atari-debug.h"
 #include "backends/platform/atari/dlmalloc.h"
+#include "common/debug.h"
 #include "common/textconsole.h"	// error()
 
 static struct MemoryPool {
@@ -42,7 +44,7 @@ static struct MemoryPool {
 			_mspace = create_mspace_with_base((void *)base, size, 0);
 
 		if (_mspace)
-			atari_debug("Allocated mspace at 0x%08lx (%ld bytes)", base, size);
+			debug("Allocated mspace at 0x%08lx (%ld bytes)", base, size);
 		else
 			error("mspace allocation failed at 0x%08lx (%ld bytes)", base, size);
 	}
@@ -294,15 +296,15 @@ void AtariSurfaceInit() {
 #ifdef USE_SV_BLITTER
 		g_superVidelFwVersion = *SV_VERSION & 0x01ff;
 
-		atari_debug("SuperVidel FW Revision: %d, using %s", g_superVidelFwVersion,
+		debug("SuperVidel FW Revision: %d, using %s", g_superVidelFwVersion,
 			g_superVidelFwVersion >= 9 ? "fast async FIFO" : "slower sync blitting");
 #else
-		atari_debug("SuperVidel FW Revision: %d, SuperBlitter not used", *SV_VERSION & 0x01ff);
+		debug("SuperVidel FW Revision: %d, SuperBlitter not used", *SV_VERSION & 0x01ff);
 #endif
 		if (Supexec(hasSvRamBoosted))
-			atari_debug("SV_XBIOS has the pmmu boost enabled");
+			debug("SV_XBIOS has the pmmu boost enabled");
 		else
-			atari_warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
+			warning("SV_XBIOS has the pmmu boost disabled, set 'pmmu_boost = true' in C:\\SV.INF");
 
 #ifdef USE_SV_BLITTER
 		s_blitterPool.size = ct60_vmalloc(-1) - (16 * 1024 * 1024);	// SV XBIOS seems to forget the initial 16 MB ST RAM mirror

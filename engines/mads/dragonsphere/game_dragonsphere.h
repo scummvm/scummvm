@@ -22,8 +22,8 @@
 #ifndef MADS_GAME_DRAGONSPHERE_H
 #define MADS_GAME_DRAGONSPHERE_H
 
-#include "mads/game.h"
-#include "mads/globals.h"
+#include "mads/core/game.h"
+#include "mads/core/globals.h"
 #include "mads/dragonsphere/globals_dragonsphere.h"
 
 namespace MADS {
@@ -88,7 +88,7 @@ enum InventoryObject {
 class GameDragonsphere : public Game {
 	friend class Game;
 protected:
-	GameDragonsphere(MADSEngine *vm);
+	GameDragonsphere(RexNebularEngine *vm);
 
 	void startGame() override;
 
@@ -115,7 +115,7 @@ public:
 
 class Section1Handler : public SectionHandler {
 public:
-	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
+	Section1Handler(RexNebularEngine *vm) : SectionHandler(vm) {}
 
 	// TODO: Properly implement handler methods
 	void preLoadSection() override {}
@@ -132,7 +132,7 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS
 
 #endif

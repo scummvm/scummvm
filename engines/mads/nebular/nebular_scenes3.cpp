@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes3.h"
 
@@ -265,7 +265,7 @@ void Scene301::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene302::Scene302(MADSEngine *vm) : Scene3xx(vm) {
+Scene302::Scene302(RexNebularEngine *vm) : Scene3xx(vm) {
 	_oldFrame = 0;
 }
 
@@ -340,7 +340,7 @@ void Scene303::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene304::Scene304(MADSEngine *vm) : Scene3xx(vm) {
+Scene304::Scene304(RexNebularEngine *vm) : Scene3xx(vm) {
 	_explosionSpriteId = -1;
 }
 
@@ -476,7 +476,7 @@ void Scene304::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene307::Scene307(MADSEngine *vm) : Scene3xx(vm) {
+Scene307::Scene307(RexNebularEngine *vm) : Scene3xx(vm) {
 	_afterPeeingFl = false;
 	_duringPeeingFl = false;
 	_grateOpenedFl = false;
@@ -1203,7 +1203,7 @@ void Scene307::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene308::Scene308(MADSEngine *vm) : Scene3xx(vm) {
+Scene308::Scene308(RexNebularEngine *vm) : Scene3xx(vm) {
 	_forceField.init();
 }
 
@@ -1337,7 +1337,7 @@ void Scene308::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene309::Scene309(MADSEngine *vm) : Scene3xx(vm) {
+Scene309::Scene309(RexNebularEngine *vm) : Scene3xx(vm) {
 	for (int i = 0; i < 3; i++) {
 		_characterSpriteIndexes[i] = -1;
 		_messagesIndexes[i] = -1;
@@ -1547,7 +1547,7 @@ void Scene309::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene310::Scene310(MADSEngine *vm) : Scene3xx(vm) {
+Scene310::Scene310(RexNebularEngine *vm) : Scene3xx(vm) {
 	_forceField.init();
 }
 
@@ -1590,7 +1590,7 @@ void Scene310::step() {
 
 /*------------------------------------------------------------------------*/
 
-Scene311::Scene311(MADSEngine *vm) : Scene3xx(vm) {
+Scene311::Scene311(RexNebularEngine *vm) : Scene3xx(vm) {
 	_checkGuardFl = false;
 }
 
@@ -2421,7 +2421,7 @@ void Scene316::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene318::Scene318(MADSEngine *vm) : Scene3xx(vm) {
+Scene318::Scene318(RexNebularEngine *vm) : Scene3xx(vm) {
 	_dropTimer = 0;
 
 	_lastFrame = -1;
@@ -3064,7 +3064,7 @@ void Scene318::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene319::Scene319(MADSEngine *vm) : Scene3xx(vm) {
+Scene319::Scene319(RexNebularEngine *vm) : Scene3xx(vm) {
 	_animMode = -1;
 	_animFrame = -1;
 	_nextAction1 = -1;
@@ -3566,7 +3566,7 @@ void Scene319::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene320::Scene320(MADSEngine *vm) : Scene300s(vm) {
+Scene320::Scene320(RexNebularEngine *vm) : Scene300s(vm) {
 	_blinkFl = false;
 	_flippedFl = false;
 
@@ -4160,7 +4160,7 @@ void Scene351::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene352::Scene352(MADSEngine *vm) : Scene3xx(vm) {
+Scene352::Scene352(RexNebularEngine *vm) : Scene3xx(vm) {
 	_vaultOpenFl = false;
 	_mustPutArmDownFl = false;
 	_leaveRoomFl = false;
@@ -4972,7 +4972,7 @@ void Scene358::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene359::Scene359(MADSEngine *vm) : Scene3xx(vm) {
+Scene359::Scene359(RexNebularEngine *vm) : Scene3xx(vm) {
 	_cardHotspotId = -1;
 }
 
@@ -5681,7 +5681,7 @@ void Scene388::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene389::Scene389(MADSEngine *vm) : Scene300s(vm) {
+Scene389::Scene389(RexNebularEngine *vm) : Scene300s(vm) {
 	_monsterTime = 0;
 	_circularQuoteId = -1;
 }
@@ -5873,5 +5873,5 @@ void Scene399::actions() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

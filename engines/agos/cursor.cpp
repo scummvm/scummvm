@@ -128,6 +128,11 @@ static const uint16 _common_moveLeft[32] = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
+static const byte elvira2AtariSTCursorPalette[] = {
+	0x00, 0x00, 0x00,
+	0xE0, 0xA0, 0x00
+};
+
 static const byte _amiga_mousePalettePN[] = {
 	0x00, 0x00, 0x00,
 	0xDE, 0x20, 0x21,
@@ -171,6 +176,23 @@ static const byte _amiga_handInfo[16 * 16] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF, 0xFF,
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF
 };
+
+static void scaleCursor2x(const byte *src, int srcWidth, int srcHeight, byte *dst, int dstWidth) {
+	for (int y = 0; y < srcHeight; ++y) {
+		byte *dstRow1 = dst + (y * 2) * dstWidth;
+		byte *dstRow2 = dstRow1 + dstWidth;
+		const byte *srcRow = src + y * srcWidth;
+
+		for (int x = 0; x < srcWidth; ++x) {
+			const byte pixel = srcRow[x];
+			const int dstX = x * 2;
+			dstRow1[dstX] = pixel;
+			dstRow1[dstX + 1] = pixel;
+			dstRow2[dstX] = pixel;
+			dstRow2[dstX + 1] = pixel;
+		}
+	}
+}
 
 static const byte _simon2_cursors[10][256] = {
 	// cross hair
@@ -524,6 +546,10 @@ void AGOSEngine_PN::handleMouseMoved() {
 
 	CursorMan.showMouse(true);
 	_mouse = _eventMan->getMousePos();
+	if (isPnAmiga()) {
+		_mouse.x >>= 1;
+		_mouse.y >>= 1;
+	}
 
 	if (_leftClick == true) {
 		_leftClick = false;
@@ -842,7 +868,7 @@ void AGOSEngine::initMouse() {
 	_maxCursorWidth = 16;
 	_maxCursorHeight = 16;
 
-	if (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
+	if ((getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) || isPnAmiga()) {
 		_maxCursorWidth <<= 1;
 		_maxCursorHeight <<= 1;
 	}
@@ -868,7 +894,13 @@ void AGOSEngine::drawMousePointer() {
 			}
 
 			CursorMan.replaceCursorPalette(_amiga_mousePalettePN, 0, ARRAYSIZE(_amiga_mousePalettePN) / 3);
-			CursorMan.replaceCursor(cursor, 16, 16, 0, 0, 0xFF);
+			if (_maxCursorWidth == 32 && _maxCursorHeight == 32) {
+				memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+				scaleCursor2x(cursor, 16, 16, _mouseData, _maxCursorWidth);
+				CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, 0, 0, 0xFF);
+			} else {
+				CursorMan.replaceCursor(cursor, 16, 16, 0, 0, 0xFF);
+			}
 			return;
 		}
 
@@ -941,6 +973,9 @@ void AGOSEngine::drawMousePointer() {
 			}
 			src += 2;
 		}
+
+		if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST)
+			CursorMan.replaceCursorPalette(elvira2AtariSTCursorPalette, 0, ARRAYSIZE(elvira2AtariSTCursorPalette) / 3);
 
 		if (getGameId() == GID_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
 			// Simple 2x upscaling for the cursor in dual layer hi-res mode.

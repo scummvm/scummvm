@@ -28,6 +28,7 @@
 
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
+#include "graphics/fonts/amigafont.h"
 
 namespace AGOS {
 
@@ -3005,6 +3006,9 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 	color = window->textColor;
 	if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW)
 		color += dst[0] & 0xF0;
+	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST &&
+			y < 136 && (_windowNum == 1 || _windowNum == 2 || y >= 132))
+		color = (color & 0x0F) | 208;
 
 	do {
 		int8 b = *src++;
@@ -3057,6 +3061,39 @@ static inline void pnSqueezeGlyph8Rows(const byte *src8, byte *dst8) {
 		dst8[i] = pnSqueezeRow(src8[i], anyBit1SetAcrossGlyph);
 }
 
+void AGOSEngine::drawPnAmigaTopazChar(WindowBlock *window, byte chr) {
+	PnAmigaTextPlane *plane = getPnAmigaTextPlane(window);
+	if (plane == nullptr || plane->pixels == nullptr)
+		return;
+
+	Graphics::Surface surface;
+	surface.init(plane->width, plane->height, plane->width, plane->pixels, Graphics::PixelFormat::createFormatCLUT8());
+
+	const int x = window->textColumn;
+	const int y = window->textRow;
+	const int glyphWidth = getPnAmigaGlyphAdvance(' ');
+	const int fontHeight = getPnAmigaGlyphHeight();
+	if (chr == 128 && isPnAmigaInputWindow(window)) {
+		chr = '_';
+	}
+
+	if (chr == 128 || chr == 129) {
+		surface.fillRect(Common::Rect(x, y, x + glyphWidth, y + fontHeight), window->textColor);
+		return;
+	}
+
+	const Graphics::AmigaFont *font = getPnAmigaFont();
+	if (font == nullptr)
+		return;
+	if (chr < font->getLoChar() || chr > font->getHiChar())
+		return;
+
+	if (usePnAmigaDoubleHeightTopaz())
+		font->drawCharDoubleHeight(&surface, chr, x, y, window->textColor);
+	else
+		font->drawChar(&surface, chr, x + font->getCharDrawOffset(chr), y, window->textColor);
+}
+
 void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr) {
 	const byte *src;
 	byte color, *dst;
@@ -3100,6 +3137,15 @@ void AGOSEngine::drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte ch
 }
 
 void AGOSEngine_PN::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	if (isPnAmigaTextWindow(window)) {
+		(void)x;
+		(void)y;
+		_videoLockOut |= 0x8000;
+		drawPnAmigaTopazChar(window, chr);
+		compositePnAmigaTextPlane(window);
+		_videoLockOut &= ~0x8000;
+		return;
+	}
 	_videoLockOut |= 0x8000;
 	drawPnSqueezedChar(window, x, y, chr);
 	_videoLockOut &= ~0x8000;

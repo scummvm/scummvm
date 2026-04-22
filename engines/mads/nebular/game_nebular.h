@@ -23,8 +23,8 @@
 #define MADS_GAME_NEBULAR_H
 
 #include "common/scummsys.h"
-#include "mads/game.h"
-#include "mads/globals.h"
+#include "mads/core/game.h"
+#include "mads/core/globals.h"
 #include "mads/nebular/globals_nebular.h"
 
 namespace MADS {
@@ -105,7 +105,7 @@ class GameNebular : public Game {
 private:
 	ProtectionResult checkCopyProtection();
 protected:
-	GameNebular(MADSEngine *vm);
+	GameNebular(RexNebularEngine *vm);
 
 	void startGame() override;
 
@@ -138,7 +138,7 @@ public:
 // Section handlers aren't needed in ScummVM implementation
 class Section1Handler : public SectionHandler {
 public:
-	Section1Handler(MADSEngine *vm) : SectionHandler(vm) {}
+	Section1Handler(RexNebularEngine *vm) : SectionHandler(vm) {}
 
 	void preLoadSection() override {}
 	void sectionPtr2() override {}
@@ -153,8 +153,8 @@ typedef Section1Handler Section6Handler;
 typedef Section1Handler Section7Handler;
 typedef Section1Handler Section8Handler;
 
-} // End of namespace Nebular
+} // namespace Nebular
 
-} // End of namespace MADS
+} // namespace MADS
 
 #endif /* MADS_GAME_NEBULAR_H */

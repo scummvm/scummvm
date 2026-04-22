@@ -27,6 +27,7 @@
 /* AVALOT		The kernel of the program. */
 
 #include "avalanche/avalanche.h"
+#include "avalanche/outro.h"
 
 #include "common/random.h"
 #include "common/system.h"
@@ -249,8 +250,7 @@ void AvalancheEngine::runAvalot() {
 		if (delay <= 55)
 			_system->delayMillis(55 - delay); // Replaces slowdown(); 55 comes from 18.2 Hz (B Flight).
 	};
-
-	_closing->exitGame();
+	_outro->run();
 }
 
 void AvalancheEngine::init() {

@@ -20,10 +20,10 @@
  */
 
 #include "common/config-manager.h"
-#include "mads/mads.h"
-#include "mads/compression.h"
-#include "mads/resources.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/compression.h"
+#include "mads/core/resources.h"
+#include "mads/core/scene.h"
 #include "mads/dragonsphere/game_dragonsphere.h"
 #include "mads/dragonsphere/dragonsphere_scenes.h"
 #include "mads/dragonsphere/dragonsphere_scenes1.h"
@@ -31,7 +31,7 @@
 namespace MADS {
 namespace Dragonsphere {
 
-SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
+SceneLogic *SceneFactory::createScene(RexNebularEngine *vm) {
 	Scene &scene = vm->_game->_scene;
 
 	// TODO
@@ -185,7 +185,7 @@ SceneLogic *SceneFactory::createScene(MADSEngine *vm) {
 
 /*------------------------------------------------------------------------*/
 
-DragonsphereScene::DragonsphereScene(MADSEngine *vm) : SceneLogic(vm),
+DragonsphereScene::DragonsphereScene(RexNebularEngine *vm) : SceneLogic(vm),
 		_globals(static_cast<GameDragonsphere *>(vm->_game)->_globals),
 		_game(*static_cast<GameDragonsphere *>(vm->_game)),
 		_action(vm->_game->_scene._action) {
@@ -232,5 +232,5 @@ void SceneInfoDragonsphere::loadCodes(BaseSurface &depthSurface, Common::Seekabl
 	delete[] walkMap;
 }
 
-} // End of namespace Dragonsphere
-} // End of namespace MADS
+} // namespace Dragonsphere
+} // namespace MADS

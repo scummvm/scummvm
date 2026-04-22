@@ -45,6 +45,15 @@ Debugger::Debugger(AGOSEngine *vm)
 	registerCmd("dumpimage",      WRAP_METHOD(Debugger, Cmd_dumpImage));
 	registerCmd("dumpscript",     WRAP_METHOD(Debugger, Cmd_dumpScript));
 
+	if (_vm->getGameType() == GType_PN) {
+		registerCmd("gettime",      WRAP_METHOD(Debugger, Cmd_GetTime));
+
+		if (_vm->getPlatform() == Common::kPlatformAmiga || _vm->getPlatform() == Common::kPlatformAtariST) {
+			registerCmd("startday",   WRAP_METHOD(Debugger, Cmd_StartDay));
+			registerCmd("startnight", WRAP_METHOD(Debugger, Cmd_StartNight));
+		}
+	}
+
 }
 
 bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
@@ -263,6 +272,27 @@ bool Debugger::Cmd_dumpScript(int argc, const char **argv) {
 		debugPrintf("Syntax: dumpscript <zonenum>\n");
 
 	return true;
+}
+
+
+bool Debugger::setPNDebugTime(uint16 hour, uint16 minute) {
+	_vm->writeVariable(84, hour);
+	_vm->writeVariable(85, minute);
+	debugPrintf("Set time to %02u:%02u\n", hour, minute);
+	return true;
+}
+
+bool Debugger::Cmd_GetTime(int argc, const char **argv) {
+	debugPrintf("Time is %02u:%02u\n", (uint)_vm->readVariable(84), (uint)_vm->readVariable(85));
+	return true;
+}
+
+bool Debugger::Cmd_StartDay(int argc, const char **argv) {
+	return setPNDebugTime(6, 58);
+}
+
+bool Debugger::Cmd_StartNight(int argc, const char **argv) {
+	return setPNDebugTime(17, 58);
 }
 
 } // End of namespace AGOS

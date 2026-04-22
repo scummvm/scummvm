@@ -13,8 +13,8 @@ New port?
 ---------
 
 Keith Scroggins (aka KeithS) has been providing ScummVM (and many other) builds
-for the Atari community for an unbelievable 17 years. He put quite a lot of time
-into testing each release, updating ScummVM dependencies to their latest
+for the Atari community for an unbelievable 17 years. He put quite a lot of
+time into testing each release, updating ScummVM dependencies to their latest
 versions and even regularly upgrading his compiler toolchain to get the best
 possible performance.
 
@@ -81,9 +81,10 @@ Atari Lite package
 
 Minimum hardware requirements: Atari TT / Falcon with 4 + 32 MB RAM.
 
-As a further optimisation step, a 030-only version of ScummVM is provided, aimed
-at less powerful TT and Falcon machines with the 68030 CPU. It further restricts
-features but also improves performance and reduces executable size.
+As a further optimisation step, a 030-only version of ScummVM is provided,
+aimed at less powerful TT and Falcon machines with the 68030 CPU. It
+further restricts features but also improves performance and reduces
+executable size.
 
 - Compiled with -m68030 => 68030/68882-specific optimisations enabled.
 
@@ -104,7 +105,7 @@ features but also improves performance and reduces executable size.
 - "null" music driver is automatically enabled (i.e. OPL emulation is never
   used but still allows playing speech/sfx samples and/or CD audio).
 
-- DOSBox OPL emulator is disabled => smaller executable size.
+- DOSBox and MAME OPL emulator is disabled => smaller executable size.
 
 FireBee package
 ~~~~~~~~~~~~~~~
@@ -159,16 +160,13 @@ The lower the value, the faster the mixing but the worse the quality. The
 default is 22050 Hz in Full and 11025 Hz in Lite (16-bit, stereo), to natively
 support most (DOS/Windows) games that use these frequencies. On TT and Falcon
 systems without an external DSP clock, these frequencies are converted to
-19668 Hz and 9834 Hz, respectively. Note that you do not need to enter the exact
-value; it will be rounded automatically to the nearest suitable value.
+19668 Hz and 9834 Hz, respectively. Note that you do not need to enter
+the exact value; it will be rounded automatically to the nearest suitable
+value.
 
 "output_channels" in scummvm.ini: mono (1) or stereo (2) mixing. Please note
 that Falcon doesn't allow mixing in 16-bit mono, so this will have no effect on
 this machine.
-
-"print_rate" in scummvm.ini: used for optimising sample playback (where
-available). It prints input and output sample format as well as the name of the
-converter used. See below for details.
 
 "audio_buffer_size" in scummvm.ini: number of samples to preload. Default is
 2048 which equals to about 83ms of audio lag and seems to be about right for
@@ -177,6 +175,10 @@ most games on my CT60@66 MHz.
 If you want to play with "audio_buffer_size", the rule of thumb is: (lag in ms)
 = (audio_buffer_size / output_rate) * 1000. But it's totally OK just to double
 the samples value to get rid of stuttering in a heavier game.
+
+"gaudio" debug channel: used for optimising sample playback (where
+available). It prints input and output sample format as well as the name of the
+converter used. See below for details.
 
 
 Graphics modes
@@ -188,8 +190,9 @@ rectangles and this port offers the following options to render them:
 Direct rendering
 ~~~~~~~~~~~~~~~~
 
-This is direct writing of the pixels into the screen buffer. On SuperVidel it is
-done natively, on Videl a chunky to planar conversion takes place beforehand.
+This is direct writing of the pixels into the screen buffer. On
+SuperVidel it is done natively, on Videl a chunky to planar conversion
+takes place beforehand.
 
 Pros:
 
@@ -333,8 +336,8 @@ the same routines as X-SOUND.
 Performance considerations/pitfalls
 -----------------------------------
 
-It's important to understand what affects performance on our limited platform to
-avoid unpleasant gaming experiences.
+It's important to understand what affects performance on our limited
+platform to avoid unpleasant gaming experiences.
 
 Game engines with unexpected performance hit
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -403,14 +406,16 @@ music (and therefore avoiding the expensive synthesis emulation) but beware, it
 doesn't affect CD (*.wav) playback at all! Same applies for speech and sfx.
 
 The least amount of cycles is spent when:
-- "No music" as "Preferred device": This prevents MIDI/OPL synthesis of any kind.
+- "No music" as "Preferred device": This prevents MIDI/OPL synthesis of any
+  kind.
 - "output_rate" set to a DOS/Windows compatible value (default). Even if game
   uses 22050 Hz and your Falcon supports 22050 Hz, it is always faster to use
   11025 Hz!
 - "Subtitles" as "Text and speech": This prevents any sampled speech to be
   mixed.
 - All external audio files are deleted (typically *.wav); that way the mixer
-  won't have anything to mix. However beware, this is not allowed in every game!
+  won't have anything to mix. However beware, this is not allowed in every
+  game!
 
 Sample rate
 ~~~~~~~~~~~
@@ -441,9 +446,10 @@ frequencies):
 - Any other combination: "interpolateConvert" (slowest).
 
 So how do you know which frequency to set as "output_rate" ? This is where
-"print_rate" comes to rescue. Enabling this option in scummvm.ini will tell you
-for each game which sample converters are being used and for what input/values.
-So you can easily verify whether the given game's demands match your setting.
+"gaudio" debug channel comes to rescue. Executing ScummVM as
+"scummvm.prg --debugflags=gaudio" will tell you for each game which sample
+converters are being used and for what input/values. So you can easily verify
+whether the given game's demands match your setting.
 
 Unfortunately, currently per-game "output_rate" / "output_channels" is not
 possible but this may change in the future.
@@ -461,10 +467,8 @@ distributed with repackaged theme files with compression level zero.
 Changes to upstream
 -------------------
 
-There are a few features that have been disabled or changed and are not possible
-/ plausible to merge into upstream:
-
-- The aforementioned "print_rate" feature, too invasive for other platforms
+There are a few features that have been disabled or changed and are not
+possible / plausible to merge into upstream:
 
 - This port contains an implementation of much faster tooltips in the overlay.
   However, there is a minor rendering bug which sometimes corrupts the
@@ -515,6 +519,13 @@ Known issues
       https://bugs.scummvm.org/ticket/14790
     - This prevents adding the 15 MB ultima.dat to the release archive.
     - https://wiki.scummvm.org/index.php?title=Ultima
+  - Macintosh engines
+    - Director, Pink, WAGE: explicitly disabled
+    - MacVenture, MTropolis, Colony: implicitly disabled (due to unmet
+      dependencies)
+    - classicmacfonts.dat, macgui.dat: explicitly deleted
+    - SCUMM's mac versions: not supported (but compiled in)
+    - SCI's mac font support: not supported (but compiled in)
 
 - When using FreeMiNT, ScummVM requires a recent kernel (>= 2021), otherwise
   keyboard handling won't work properly.

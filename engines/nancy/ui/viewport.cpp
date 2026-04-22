@@ -274,11 +274,15 @@ void Viewport::setFrame(uint frameNr) {
 
 	if (_videoType == kVideoPlaytypeAVF) {
 		AVFDecoder *decoder = dynamic_cast<AVFDecoder *>(_decoder.get());
+		if (!decoder)
+			error("Viewport::setFrame(): Decoder is not an AVFDecoder");
 		newFrame = decoder->decodeFrame(frameNr);
 		decoder->seek(frameNr); // Seek to take advantage of caching
 	} else {
 		Video::BinkDecoder *decoder = dynamic_cast<Video::BinkDecoder *>(_decoder.get());
-		decoder->seek(frameNr); // Seek to take advantage of caching
+		if (!decoder)
+			error("Viewport::setFrame(): Decoder is not a BinkDecoder");
+		decoder->seekToFrame(frameNr); // Seek to take advantage of caching
 		newFrame = decoder->decodeNextFrame();
 	}
 

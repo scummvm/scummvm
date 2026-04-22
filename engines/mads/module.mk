@@ -1,6 +1,8 @@
 MODULE := engines/mads
 
 MODULE_OBJS := \
+	nebular/nebular.o \
+	nebular/debugger.o \
 	nebular/dialogs_nebular.o \
 	nebular/game_nebular.o \
 	nebular/globals_nebular.o \
@@ -15,40 +17,40 @@ MODULE_OBJS := \
 	nebular/nebular_scenes6.o \
 	nebular/nebular_scenes7.o \
 	nebular/nebular_scenes8.o \
-	action.o \
-	animation.o \
-	assets.o \
-	audio.o \
-	camera.o \
-	compression.o \
-	conversations.o \
-	debugger.o \
-	dialogs.o \
-	events.o \
-	font.o \
-	game.o \
-	game_data.o \
-	globals.o \
-	hotspots.o \
-	inventory.o \
-	mads.o \
-	menu_views.o \
-	messages.o \
-	msurface.o \
+	core/action.o \
+	core/animation.o \
+	core/assets.o \
+	core/audio.o \
+	core/camera.o \
+	core/compression.o \
+	core/conversations.o \
+	core/dialogs.o \
+	core/events.o \
+	core/font.o \
+	core/game.o \
+	core/game_data.o \
+	core/globals.o \
+	core/hag.o \
+	core/hotspots.o \
+	core/inventory.o \
+	core/menu_views.o \
+	core/messages.o \
+	core/msurface.o \
+	core/mps_installer.o \
+	core/palette.o \
+	core/player.o \
+	core/rails.o \
+	core/resources.o \
+	core/scene.o \
+	core/scene_data.o \
+	core/screen.o \
+	core/sequence.o \
+	core/sound.o \
+	core/sprites.o \
+	core/staticres.o \
+	core/user_interface.o \
 	metaengine.o \
-	mps_installer.o \
-	palette.o \
-	player.o \
-	rails.o \
-	resources.o \
-	scene.o \
-	scene_data.o \
-	screen.o \
-	sequence.o \
-	sound.o \
-	sprites.o \
-	staticres.o \
-	user_interface.o
+	mads.o
 
 ifdef ENABLE_MADSV2
 MODULE_OBJS += \
@@ -59,16 +61,127 @@ MODULE_OBJS += \
 	forest/game_forest.o \
 	forest/forest_scenes.o \
 	forest/globals_forest.o \
-	phantom/dialogs_phantom.o \
-	phantom/game_phantom.o \
-	phantom/globals_phantom.o \
-	phantom/menu_phantom.o \
-	phantom/phantom_scenes.o \
-	phantom/phantom_scenes1.o \
-	phantom/phantom_scenes2.o \
-	phantom/phantom_scenes3.o \
-	phantom/phantom_scenes4.o \
-	phantom/phantom_scenes5.o
+	madsv2/console.o \
+	madsv2/engine.o \
+	madsv2/core/anim.o \
+	madsv2/core/attr.o \
+	madsv2/core/buffer.o \
+	madsv2/core/camera.o \
+	madsv2/core/color.o \
+	madsv2/core/config.o \
+	madsv2/core/conv.o \
+	madsv2/core/copy.o \
+	madsv2/core/cursor.o \
+	madsv2/core/cycle.o \
+	madsv2/core/dialog.o \
+	madsv2/core/ems.o \
+	madsv2/core/env.o \
+	madsv2/core/error.o \
+	madsv2/core/extra.o \
+	madsv2/core/fileio.o \
+	madsv2/core/font.o \
+	madsv2/core/game.o \
+	madsv2/core/global.o \
+	madsv2/core/heap.o \
+	madsv2/core/himem.o \
+	madsv2/core/hspot.o \
+	madsv2/core/image.o \
+	madsv2/core/imath.o \
+	madsv2/core/implode.o \
+	madsv2/core/inter.o \
+	madsv2/core/kernel.o \
+	madsv2/core/keys.o \
+	madsv2/core/lbm.o \
+	madsv2/core/lib.o \
+	madsv2/core/loader.o \
+	madsv2/core/magic.o \
+	madsv2/core/matte.o \
+	madsv2/core/mcga.o \
+	madsv2/core/mem.o \
+	madsv2/core/mouse.o \
+	madsv2/core/object.o \
+	madsv2/core/pack.o \
+	madsv2/core/pal.o \
+	madsv2/core/pfab.o \
+	madsv2/core/player.o \
+	madsv2/core/popup.o \
+	madsv2/core/quote.o \
+	madsv2/core/rail.o \
+	madsv2/core/room.o \
+	madsv2/core/screen.o \
+	madsv2/core/sort.o \
+	madsv2/core/sound.o \
+	madsv2/core/speech.o \
+	madsv2/core/sprite.o \
+	madsv2/core/text.o \
+	madsv2/core/tile.o \
+	madsv2/core/timer.o \
+	madsv2/core/video.o \
+	madsv2/core/vocab.o \
+	madsv2/core/window.o \
+	madsv2/core/xms.o \
+	madsv2/phantom/mads/mads.o \
+	madsv2/phantom/rooms/section1.o \
+	madsv2/phantom/rooms/room101.o \
+	madsv2/phantom/rooms/room102.o \
+	madsv2/phantom/rooms/room103.o \
+	madsv2/phantom/rooms/room104.o \
+	madsv2/phantom/rooms/room105.o \
+	madsv2/phantom/rooms/room106.o \
+	madsv2/phantom/rooms/room107.o \
+	madsv2/phantom/rooms/room108.o \
+	madsv2/phantom/rooms/room109.o \
+	madsv2/phantom/rooms/room110.o \
+	madsv2/phantom/rooms/room111.o \
+	madsv2/phantom/rooms/room112.o \
+	madsv2/phantom/rooms/room113.o \
+	madsv2/phantom/rooms/room114.o \
+	madsv2/phantom/rooms/room150.o \
+	madsv2/phantom/rooms/section2.o \
+	madsv2/phantom/rooms/room201.o \
+	madsv2/phantom/rooms/room202.o \
+	madsv2/phantom/rooms/room203.o \
+	madsv2/phantom/rooms/room204.o \
+	madsv2/phantom/rooms/room205.o \
+	madsv2/phantom/rooms/room206.o \
+	madsv2/phantom/rooms/room207.o \
+	madsv2/phantom/rooms/room208.o \
+	madsv2/phantom/rooms/room250.o \
+	madsv2/phantom/rooms/section3.o \
+	madsv2/phantom/rooms/room301.o \
+	madsv2/phantom/rooms/room302.o \
+	madsv2/phantom/rooms/room303.o \
+	madsv2/phantom/rooms/room304.o \
+	madsv2/phantom/rooms/room305.o \
+	madsv2/phantom/rooms/room306.o \
+	madsv2/phantom/rooms/room307.o \
+	madsv2/phantom/rooms/room308.o \
+	madsv2/phantom/rooms/room309.o \
+	madsv2/phantom/rooms/room310.o \
+	madsv2/phantom/rooms/section4.o \
+	madsv2/phantom/rooms/room401.o \
+	madsv2/phantom/rooms/room403.o \
+	madsv2/phantom/rooms/room404.o \
+	madsv2/phantom/rooms/room406.o \
+	madsv2/phantom/rooms/room407.o \
+	madsv2/phantom/rooms/room408.o \
+	madsv2/phantom/rooms/room409.o \
+	madsv2/phantom/rooms/room410.o \
+	madsv2/phantom/rooms/room453.o \
+	madsv2/phantom/rooms/room456.o \
+	madsv2/phantom/rooms/section5.o \
+	madsv2/phantom/rooms/room501.o \
+	madsv2/phantom/rooms/room502.o \
+	madsv2/phantom/rooms/room504.o \
+	madsv2/phantom/rooms/room505.o \
+	madsv2/phantom/rooms/room506.o \
+	madsv2/phantom/phantom.o \
+	madsv2/phantom/catacombs.o \
+	madsv2/phantom/global.o \
+	madsv2/phantom/main_menu.o \
+	madsv2/phantom/menus.o \
+	madsv2/phantom/main.o \
+	madsv2/phantom/sound_phantom.o
 endif
 
 # This module can be built as a plugin

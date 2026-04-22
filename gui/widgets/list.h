@@ -30,6 +30,7 @@
 namespace GUI {
 
 class ScrollBarWidget;
+class FluidScroller;
 
 enum NumberingMode {
 	kListNumberingOff	= -1,
@@ -60,6 +61,7 @@ public:
 	};
 
 	typedef Common::Array<ListData> ListDataArray;
+	~ListWidget() override;
 
 protected:
 	Common::U32StringArray	_list;
@@ -76,6 +78,13 @@ protected:
 	bool			_multiSelectEnabled;	/// Flag for multi-selection
 	ScrollBarWidget	*_scrollBar;
 	int				_currentKeyDown;
+
+	float			_scrollPos;
+	FluidScroller	*_fluidScroller;
+	bool			_isMouseDown;
+	bool			_isDragging;
+	int				_dragStartY;
+	int				_dragLastY;
 
 	Common::String	_quickSelectStr;
 	uint32			_quickSelectTime;
@@ -101,6 +110,9 @@ protected:
 
 	FilterMatcher	_filterMatcher;
 	void			*_filterMatcherArg;
+
+	static const int kDragThreshold = 5;
+
 public:
 	ListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, bool scale, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -157,6 +169,7 @@ public:
 	void setFilter(const Common::U32String &filter, bool redraw = true);
 
 	void handleTickle() override;
+	void applyScrollPos();
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseWheel(int x, int y, int direction) override;

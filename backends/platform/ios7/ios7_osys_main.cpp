@@ -47,6 +47,7 @@
 #include "graphics/cursorman.h"
 #include "gui/gui-manager.h"
 
+#include "backends/events/default/default-events.h"
 #include "backends/graphics/ios/ios-graphics.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -153,6 +154,8 @@ int OSystem_iOS7::timerHandler(int t) {
 }
 
 void OSystem_iOS7::initBackend() {
+	_eventManager = new DefaultEventManager(this);
+
 	_savefileManager = new SandboxedSaveFileManager(Common::Path(_chrootBasePath, Common::Path::kNativeSeparator), "/Savegames");
 
 	_timerManager = new DefaultTimerManager();
@@ -172,7 +175,7 @@ void OSystem_iOS7::initBackend() {
 
 	ConfMan.registerDefault("iconspath", Common::Path("/"));
 
-	EventsBaseBackend::initBackend();
+	BaseBackend::initBackend();
 }
 
 bool OSystem_iOS7::hasFeature(Feature f) {

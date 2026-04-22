@@ -671,6 +671,14 @@ void Score::update() {
 		_activeFade = _soundManager->fadeChannels();
 	}
 
+	// Process timeout events independently of the frame delay
+	if (_haveInteractivity && !_vm->_playbackPaused) {
+		if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
+			_movie->processEvent(kEventTimeout);
+			_movie->_lastTimeOut = _vm->getMacTicks();
+		}
+	}
+
 	if (!debugChannelSet(-1, kDebugFast)) {
 		// end update cycle if we're still waiting for the next frame
 		if (isWaitingForNextFrame()) {
@@ -888,13 +896,6 @@ void Score::update() {
 	}
 
 	// TODO Director 6 - another order
-
-	// TODO: Figure out when exactly timeout events are processed
-	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
-		_movie->processEvent(kEventTimeout);
-		_movie->_lastTimeOut = _vm->getMacTicks();
-	}
-
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode, bool sound1Changed, bool sound2Changed) {
@@ -965,15 +966,14 @@ void Score::incrementFilmLoops() {
 		if (it->_sprite->_cast && (it->_sprite->_cast->_type == kCastFilmLoop || it->_sprite->_cast->_type == kCastMovie)) {
 			FilmLoopCastMember *fl = ((FilmLoopCastMember *)it->_sprite->_cast);
 			if (!fl->_score->_scoreCache.empty()) {
-				// increment the film loop counter
 				if (fl->_looping) {
-					if (_curFrameNumber + 1 > getFramesNum())
-						fl->_score->setCurrentFrame(1);
+					it->_filmLoopFrame += 1;
+					it->_filmLoopFrame %= fl->_score->_scoreCache.size();
+				} else if (it->_filmLoopFrame < (fl->_score->_scoreCache.size() - 1)) {
+					it->_filmLoopFrame += 1;
 				}
-
-				fl->_score->step();
 			} else {
-				warning("Score::updateFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
+				warning("Score::incrementFilmLoops(): invalid film loop in castId %s", it->_sprite->_castId.asString().c_str());
 			}
 		}
 	}

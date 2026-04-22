@@ -833,11 +833,81 @@ void LB::b_value(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
+
+	bool maybeExpression = false;
+
+	// First, let's check that it is a number
+	if (expr[0] == '-' || expr[0] == '+' || (expr[0] >= '0' && expr[0] <= '9') ||
+			(expr[0] == '.' && expr.size() > 1 && expr[1] >= '0' && expr[1] <= '9')) {
+		char *endPtr = nullptr;
+		double result = strtof(expr.c_str(), &endPtr);
+
+		// Maybe it is part of an expression?
+		if (endPtr && *endPtr) {
+			while (*endPtr && Common::isSpace(*endPtr))
+				endPtr++;
+
+			if (strchr("-+*/%^:,()><&|", *endPtr) != NULL) {
+				maybeExpression = true;
+			}
+		}
+
+		if (!maybeExpression) {
+			if (result < INT_MAX && floor(result) == result) {
+				g_lingo->push(Datum((int)result));
+			} else {
+				g_lingo->push(Datum(result));
+			}
+			return;
+		}
+	}
+
+	// Or maybe it is a string with quotes around it?
+	if (expr.size() >= 2 && expr[0] == '"') {
+		// scan for the end quote, ignoring escaped quotes
+		bool escaped = false;
+		size_t i;
+		for (i = 1; i < expr.size(); i++) {
+			if (expr[i] == '"' && !escaped) {
+				break;
+			}
+			escaped = (expr[i] == '\\' && !escaped);
+		}
+		if (i == expr.size()) {
+			// No closing quote found, push void
+			g_lingo->pushVoid();
+			return;
+		}
+
+		if (i + 1 < expr.size()) {
+			// There are extra characters after the closing quote, this is not a simple string
+			size_t j = i + 1;
+			while (expr[j] && Common::isSpace(expr[j]))
+				j++;
+
+			if (strchr("&", expr[j]) != NULL) {
+				maybeExpression = true;
+			}
+		}
+
+		if (!maybeExpression) {
+			g_lingo->push(expr.substr(1, i - 1));
+			return;
+		}
+	}
+
+	// There is no simple way, feed it to the Lingo parser
+
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code, kLPPTrimGarbage);
 	if (!sc) {
 		warning("b_value(): Failed to parse expression \"%s\", returning void", expr.c_str());
+
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
+
 		g_lingo->pushVoid();
 		return;
 	}
@@ -1933,6 +2003,11 @@ void LB::b_do(int nargs) {
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
 	if (!sc) {
 		warning("b_do(): compilation failed, ignoring");
+
+		if (debugChannelSet(-1, kDebugLingoStrict)) {
+			error("Uncaught Lingo error");
+		}
+
 		return;
 	} else if (!sc->_eventHandlers.contains(kEventGeneric)) {
 		warning("b_do(): compiled code did not return handler, ignoring");
@@ -4025,9 +4100,9 @@ void LB::b_member(int nargs) {
 	}
 
 	if (res.member > g_lingo->getMembersNum(res.castLib)) {
+		// D6 and up does not error on non-existing cast members
 		if (g_director->getVersion() < 600) {
 			g_lingo->lingoError("b_member: Cast member ID out of range");
-			return;
 		}
 	}
 	g_lingo->push(res);
@@ -4265,6 +4340,9 @@ void LB::b_scummvmassertequal(int nargs) {
 		result = LC::eqData(d1, d2).u.i;
 	} else if (d1.type == PARRAY && d2.type == PARRAY) {
 		result = LC::eqData(d1, d2).u.i;
+	} else if (d1.type == FLOAT && d2.type == FLOAT) {
+		// Use tolerance
+		result = (ABS(d1.asFloat() - d2.asFloat()) < 0.000001) ? 1 : 0;
 	} else {
 		result = (d1 == d2);
 	}

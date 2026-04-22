@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	unknown-game-dialog.o \
 	widget.o \
 	animation/Animation.o \
+	animation/FluidScroll.o \
 	animation/RepeatAnimationWrapper.o \
 	animation/SequenceAnimationComposite.o \
 	widgets/editable.o \

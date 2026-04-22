@@ -950,6 +950,9 @@ void AGOSEngine::displayScreen() {
 			_moveYMin = 0xFFFF;
 			_moveXMax = 0;
 			_moveYMax = 0;
+
+			if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST)
+				remapElvira2AtariSTUIRegions(screen);
 		}
 
 		if (_window6Flag == 2) {

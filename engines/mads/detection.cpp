@@ -40,6 +40,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{MADS::kDebugPath, "Path", "Pathfinding debug level"},
 	{MADS::kDebugScripts, "scripts", "Game scripts"},
 	{MADS::kDebugGraphics, "graphics", "Graphics handling"},
+	{MADS::kDebugConversations, "conv", "Game conversations"},
 	DEBUG_CHANNEL_END
 };
 

@@ -24,8 +24,8 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "mads/game.h"
-#include "mads/scene.h"
+#include "mads/core/game.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 
 namespace MADS {
@@ -49,7 +49,7 @@ protected:
 	 */
 	void setPlayerSpritesPrefix();
 public:
-	Scene1xx(MADSEngine *vm) : NebularScene(vm) {}
+	Scene1xx(RexNebularEngine *vm) : NebularScene(vm) {}
 };
 
 class Scene101 : public Scene1xx {
@@ -66,7 +66,7 @@ private:
 	void sayDang();
 
 public:
-	Scene101(MADSEngine *vm);
+	Scene101(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -90,7 +90,7 @@ private:
 	void addRandomMessage();
 
 public:
-	Scene102(MADSEngine *vm);
+	Scene102(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -106,7 +106,7 @@ private:
 	uint32 _updateClock;
 
 public:
-	Scene103(MADSEngine *vm);
+	Scene103(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -122,7 +122,7 @@ private:
 	bool _loseFl;
 
 public:
-	Scene104(MADSEngine *vm);
+	Scene104(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -137,7 +137,7 @@ private:
 	bool _explosionFl;
 
 public:
-	Scene105(MADSEngine *vm);
+	Scene105(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -156,7 +156,7 @@ private:
 	int _positionY;
 
 public:
-	Scene106(MADSEngine *vm);
+	Scene106(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -171,7 +171,7 @@ private:
 	bool _shootingFl;
 
 public:
-	Scene107(MADSEngine *vm);
+	Scene107(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -183,7 +183,7 @@ public:
 
 class Scene108 : public Scene1xx {
 public:
-	Scene108(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene108(RexNebularEngine *vm) : Scene1xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -204,7 +204,7 @@ private:
 	int _hoovicTrigger;
 
 public:
-	Scene109(MADSEngine *vm);
+	Scene109(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -219,7 +219,7 @@ private:
 	bool _crabsFl;
 
 public:
-	Scene110(MADSEngine *vm);
+	Scene110(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -237,7 +237,7 @@ private:
 	bool _rexDivingFl;
 
 public:
-	Scene111(MADSEngine *vm);
+	Scene111(RexNebularEngine *vm);
 	void synchronize(Common::Serializer &s) override;
 
 	void setup() override;
@@ -249,7 +249,7 @@ public:
 
 class Scene112 : public Scene1xx {
 public:
-	Scene112(MADSEngine *vm) : Scene1xx(vm) {}
+	Scene112(RexNebularEngine *vm) : Scene1xx(vm) {}
 
 	void setup() override;
 	void enter() override;
@@ -257,7 +257,7 @@ public:
 	void actions() override {};
 };
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS
 
 #endif /* MADS_NEBULAR_SCENES1_H */

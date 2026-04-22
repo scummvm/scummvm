@@ -156,7 +156,7 @@ static const MADSGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GAMEOPTION_EASY_MOUSE)
+			GUIO2(GUIO_NOMUSIC, GAMEOPTION_EASY_MOUSE)
 		},
 		GType_Phantom,
 		0
@@ -240,4 +240,4 @@ static const MADSGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
-} // End of namespace MADS
+} // namespace MADS

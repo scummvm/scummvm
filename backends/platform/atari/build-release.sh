@@ -23,7 +23,6 @@ fi
 
 if [ ! -f ../backends/platform/atari/.patched ]
 then
-	cd .. && cat backends/platform/atari/patches/print_rate.patch | patch -p1 && cd -
 	cd .. && cat backends/platform/atari/patches/tooltips.patch | patch -p1 && cd -
 	touch ../backends/platform/atari/.patched
 fi
@@ -35,7 +34,7 @@ then
 	--host=${PLATFORM} \
 	--enable-release \
 	--enable-verbose-build \
-	--disable-engine=hugo,director,cine,ultima
+	--disable-engine=hugo,director,cine,ultima,pink,wage
 fi
 
 make -j$(getconf _NPROCESSORS_CONF) atarifulldist

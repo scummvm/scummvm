@@ -412,15 +412,15 @@ void MacFONTFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color)
 	if (x + glyph->bitmapWidth < 0 || y + _data._fRectHeight < 0)
 		return;
 
+	// due to the way we are handling the generated fonts. we only add the kerning offset for the original font
+	if (!_data._slant)
+		x += glyph->kerningOffset;
+
 	// Make sure we do not draw outside the surface
 	uint16 yStart = (y < 0) ? -y : 0;
 	uint16 yStop = _data._fRectHeight;
 	uint16 xStart = (x < 0) ? -x : 0;
 	uint16 xStop = glyph->bitmapWidth;
-
-	// due to the way we are handling the generated fonts. we only add the kerning offset for the original font
-	if (!_data._slant)
-		x += glyph->kerningOffset;
 
 	if (x >= dst->w)
 		return;

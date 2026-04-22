@@ -265,7 +265,7 @@ void AndroidGraphicsManager::syncVirtkeyboardState(bool virtkeybd_on) {
 }
 
 void AndroidGraphicsManager::touchControlInitSurface(const Graphics::ManagedSurface &surf) {
-	if (_touchcontrols->getWidth() == surf.w && _touchcontrols->getHeight() == surf.h) {
+	if (_touchcontrols->getWidth() == (uint)surf.w && _touchcontrols->getHeight() == (uint)surf.h) {
 		return;
 	}
 

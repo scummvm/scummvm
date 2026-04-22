@@ -194,7 +194,7 @@ endif
 
 endif
 
-ifdef ATARI
+ifeq ($(BACKEND),atari)
 MODULE_OBJS += \
 	blit/blit-atari.o
 endif

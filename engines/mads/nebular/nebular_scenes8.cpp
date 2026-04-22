@@ -20,8 +20,8 @@
  */
 
 #include "common/scummsys.h"
-#include "mads/mads.h"
-#include "mads/scene.h"
+#include "mads/nebular/nebular.h"
+#include "mads/core/scene.h"
 #include "mads/nebular/nebular_scenes.h"
 #include "mads/nebular/nebular_scenes8.h"
 
@@ -77,7 +77,7 @@ void Scene8xx::sceneEntrySound() {
 
 /*------------------------------------------------------------------------*/
 
-Scene801::Scene801(MADSEngine *vm) : Scene8xx(vm) {
+Scene801::Scene801(RexNebularEngine *vm) : Scene8xx(vm) {
 	_walkThroughDoor = false;
 }
 
@@ -832,7 +832,7 @@ void Scene803::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene804::Scene804(MADSEngine *vm) : Scene8xx(vm) {
+Scene804::Scene804(RexNebularEngine *vm) : Scene8xx(vm) {
 	_messWithThrottle = false;
 	_movingThrottle = false;
 	_throttleGone = false;
@@ -1368,7 +1368,7 @@ void Scene807::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene808::Scene808(MADSEngine *vm) : Scene8xx(vm) {
+Scene808::Scene808(RexNebularEngine *vm) : Scene8xx(vm) {
 	_goingTo803 = false;
 }
 
@@ -1584,7 +1584,7 @@ void Scene808::actions() {
 
 /*------------------------------------------------------------------------*/
 
-Scene810::Scene810(MADSEngine *vm) : Scene8xx(vm) {
+Scene810::Scene810(RexNebularEngine *vm) : Scene8xx(vm) {
 	_moveAllowed = false;
 }
 
@@ -1622,5 +1622,5 @@ void Scene810::step() {
 
 /*------------------------------------------------------------------------*/
 
-} // End of namespace Nebular
-} // End of namespace MADS
+} // namespace Nebular
+} // namespace MADS

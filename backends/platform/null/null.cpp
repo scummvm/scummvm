@@ -47,6 +47,8 @@ typedef void (*sighandler_t)(int);
 #include "common/scummsys.h"
 
 #if defined(USE_NULL_DRIVER)
+#include "common/events.h"
+
 #include "backends/modular-backend.h"
 #include "backends/mutex/null/null-mutex.h"
 #include "base/main.h"

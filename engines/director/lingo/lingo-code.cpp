@@ -1001,9 +1001,17 @@ void LC::c_intersects() {
 		return;
 	}
 
+	// tested in D6:
+	// both sprites matte: do a matte-on-matte intersection
+	// just S1 matte: do a box-on-box intersection
+	// just S2 matte: do a box-on-matte intersection
+	// neither sprite matte: do a box-on-box intersection
+
 	// don't regard quick draw shape as matte type
 	if ((!sprite1->_sprite->isQDShape() && sprite1->_sprite->_ink == kInkTypeMatte) && (!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
+	} else if ((!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
+		g_lingo->push(Datum(sprite2->isMatteBoxIntersect(sprite1)));
 	} else {
 		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
 	}

@@ -43,28 +43,161 @@ SoundManager::~SoundManager() {
 	delete _effectsHandle;
 }
 
-void SoundManager::playSound(const char *filename, int flag) {
+byte SoundManager::decompDelta1(int16 *curVal, byte **src, byte **dst, byte count) {
+	uint16 loop_cx = count >> 3;
+	int val = *curVal;
+
+	for (uint16 i = 0; i < loop_cx; i++) {
+		uint8 bits = *(*src)++;
+		for (int b = 0; b < 8; b++) {
+			// Extract high bit, then shift left
+			byte index = (bits & 0x80) ? 1 : 0;
+			bits <<= 1;
+
+			val = CLIP(val + _abtLookupTable[index], 0, 0xFF);
+			*(*dst)++ = (char)val;
+		}
+	}
+	return (byte)val;
+}
+
+// Unpacks 2-bit differences (4 values per byte)
+byte SoundManager::decompDelta2(int16 *curVal, byte **src, byte **dst, byte count) {
+	uint16 loop_cx = count >> 2;
+	int val = *curVal;
+
+	for (uint16 i = 0; i < loop_cx; i++) {
+		uint8 bits = *(*src)++;
+		for (int b = 0; b < 4; b++) {
+			// Extract top 2 bits
+			byte index = (bits >> 6) & 0x03;
+			bits <<= 2;
+
+			val = CLIP(val + _abtLookupTable[index], 0, 0xFF);
+			*(*dst)++ = (char)val;
+		}
+	}
+	return (byte)val;
+}
+
+// Unpacks 4-bit differences (2 values per byte)
+byte SoundManager::decompDelta4(int16 *curVal, byte **src, byte **dst, byte count) {
+	uint16 loop_cx = count >> 1;
+	int val = *curVal;
+
+	for (uint16 i = 0; i < loop_cx; i++) {
+		uint8 bits = *(*src)++;
+		for (int b = 0; b < 2; b++) {
+			// Extract top 4 bits
+			byte index = (bits >> 4) & 0x0F;
+			bits <<= 4;
+
+			val = CLIP(val + _abtLookupTable[index], 0, 0xFF);
+			*(*dst)++ = (char)val;
+		}
+	}
+	return (byte)val;
+}
+
+byte *SoundManager::abtDecomp(Common::File *fd, int *size, int *freq) {
+	fd->seek(0);
+	int compSize = fd->size();
+	byte *tmpBuffer = new byte[compSize];
+	fd->read(tmpBuffer, compSize);
+
+	*size = READ_LE_UINT16(tmpBuffer);
+	tmpBuffer += 2;
+	*freq = READ_LE_UINT16(tmpBuffer);
+	tmpBuffer += 2;
+	int cx = *size;
+
+	byte var_6 = *tmpBuffer++; // step size
+	tmpBuffer += 3;           // skip header padding
+
+	byte last_out = *tmpBuffer++;
+	byte *destBuffer = new byte[*size];
+	byte *headPtr = destBuffer;
+	*destBuffer++ = last_out;
+	cx--;
+
+	while (cx > 0) {
+		byte ctrl = *tmpBuffer++;
+
+		if (ctrl & 0x80) { // Mode 1: Direct Shift
+			last_out = (ctrl << 1);
+			*destBuffer++ = last_out;
+			cx--;
+		} else if (ctrl & 0x40) { // Mode 2: RLE Fill
+			uint16 run = ctrl & 0x3F;
+			memset(destBuffer, last_out, run);
+			*destBuffer += run;
+			cx -= run;
+		} else { // Mode 3: Delta Unpacking
+			int16 mode_type = (ctrl >> 4);
+			char step = (ctrl & 0x0F) + 1;
+
+			// Build Table (Simplified from assembly neg/add logic)
+			char entry = -step;
+			int table_size = (mode_type == 1) ? 2 : (mode_type == 2) ? 4 : 16;
+			if (mode_type == 2)
+				entry <<= 1;
+			else if (mode_type != 1)
+				entry <<= 3; // Assembly loc_10E33 path
+
+			for (int i = 0; i < table_size; i++) {
+				_abtLookupTable[i] = entry;
+				entry += step;
+				if (entry == 0)
+					entry = step;
+			}
+
+			int16 current_val = last_out;
+			if (mode_type == 1)
+				last_out = decompDelta1(&current_val, &tmpBuffer, &destBuffer, var_6);
+			else if (mode_type == 2)
+				last_out = decompDelta2(&current_val, &tmpBuffer, &destBuffer, var_6);
+			else
+				last_out = decompDelta4(&current_val, &tmpBuffer, &destBuffer, var_6);
+
+			cx -= var_6;
+		}
+	}
+	return headPtr;
+}
+
+void SoundManager::playSound(const char *filename, bool flag) {
 	while (isSFXPlaying())
 		_vm->waitMillis(10);
 
 	_filename = Common::String(filename);
-
+	
+	int freq;
+	int size;
+	byte *buffer = nullptr;
 	Common::File fd;
 	if (!fd.open(Common::Path(filename))) {
 		error("playSound : Enable to open %s", filename);
 	}
 
-	const int size = fd.size();
-	byte *buffer = new byte[size];
-	fd.read(buffer, size);
+	if (scumm_stricmp(filename + (_filename.size() - 3), "ABT") == 0) {
+		buffer = abtDecomp(&fd, &size, &freq);
+#ifdef WW_DUMPAUDIO
+		Common::DumpFile dump;
+		dump.open(Common::Path{Common::String(filename) + ".dump"});
+		dump.write(buffer, size);
+		dump.flush();
+		dump.close();
+#endif
+	} else {
+		size = fd.size();
+		freq = 9000;
+		buffer = new byte[size];
+		fd.read(buffer, size);
+	}
 
 	Common::SeekableReadStream *rawStream = new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
-	Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(rawStream, 9000, Audio::FLAG_UNSIGNED);
+	Audio::RewindableAudioStream *audioStream = Audio::makeRawStream(rawStream, freq, Audio::FLAG_UNSIGNED);
 
-/*
-	if (loop)
-		Audio::LoopingAudioStream *loopingStream = new Audio::LoopingAudioStream(audioStream, 0, DisposeAfterUse::NO));
-*/
 	if (!_mixer->isSoundHandleActive(*_effectsHandle)) {
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, _effectsHandle, audioStream, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}

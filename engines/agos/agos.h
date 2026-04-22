@@ -62,6 +62,7 @@ class SeekableReadStream;
 namespace Graphics {
 struct Surface;
 class FontSJIS;
+class AmigaFont;
 }
 
 namespace Audio {
@@ -219,7 +220,8 @@ enum EventType {
 	ANIMATE_EVENT = 1 << 2,
 	SCROLL_EVENT  = 1 << 3,
 	PLAYER_DAMAGE_EVENT = 1 << 4,
-	MONSTER_DAMAGE_EVENT = 1 << 5
+	MONSTER_DAMAGE_EVENT = 1 << 5,
+	PN_FADE_EVENT = 1 << 6
 };
 
 struct GameSpecificSettings;
@@ -540,6 +542,20 @@ protected:
 
 	VgaTimerEntry *_nextVgaTimerToProcess;
 
+	struct PnAmigaTextPlane {
+		byte *pixels;
+		uint16 width, height;
+		PnAmigaTextPlane() : pixels(nullptr), width(0), height(0) {}
+	};
+
+	enum {
+		kPnAmigaTextStartX = 2,
+		kPnAmigaLowresWidth = 320,
+		kPnAmigaMainTextTop = 136,
+		kPnAmigaInputTop = 224,
+		kPnAmigaTextPlaneWidth = 552
+	};
+
 	uint8 _opcode177Var1, _opcode177Var2;
 	uint8 _opcode178Var1, _opcode178Var2;
 
@@ -561,6 +577,10 @@ protected:
 
 	WindowBlock *_dummyWindow;
 	WindowBlock *_windowArray[80];
+	Graphics::AmigaFont *_pnAmigaFont;
+	bool _pnAmigaUiVisible;
+	PnAmigaTextPlane _pnAmigaMainTextPlane;
+	PnAmigaTextPlane _pnAmigaInputTextPlane;
 
 	byte _fcsData1[8];
 	bool _fcsData2[8];
@@ -606,6 +626,13 @@ protected:
 	uint8 _simon2LanguageFlagTimer;
 	bool _simon2LanguageFlagClearPending;
 
+	uint16 _pnPaletteBanks[2][16];
+	uint16 _pnFadeCurrent[16];
+	uint16 _pnDayNightControllerSelectorMask;
+	uint8 _pnDayNightControllerLastStage;
+	int16 _pnLastClockMinutes;
+	bool _pnHavePaletteBank[2];
+	uint16 _pnDayNightControllerTickCounter;
 	byte *_planarBuf;
 	byte _videoBuf1[32000];
 	uint16 _videoWindows[128];
@@ -702,6 +729,27 @@ protected:
 	void decompressData(const char *srcName, byte *dst, uint32 offset, uint32 srcSize, uint32 dstSize);
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void drawPnSqueezedChar(WindowBlock *window, uint x, uint y, byte chr);
+	bool isPnAmiga() const;
+	bool isPnAmigaMainTextWindow(const WindowBlock *window) const;
+	bool isPnAmigaInputWindow(const WindowBlock *window) const;
+	bool isPnAmigaTextWindow(const WindowBlock *window) const;
+	const Graphics::AmigaFont *getPnAmigaFont() const;
+	uint16 getPnAmigaWindowInteriorHeight(const WindowBlock *window) const;
+	uint16 getPnAmigaTextPlaneWidth(const WindowBlock *window) const;
+	uint16 getPnAmigaTextLineStep() const;
+	uint16 getPnAmigaGlyphAdvance(byte chr) const;
+	uint16 getPnAmigaGlyphRenderWidth(byte chr) const;
+	uint16 getPnAmigaGlyphHeight() const;
+	bool usePnAmigaDoubleHeightTopaz() const;
+	void ensurePnAmigaTextPlanes();
+	PnAmigaTextPlane *getPnAmigaTextPlane(const WindowBlock *window);
+	const PnAmigaTextPlane *getPnAmigaTextPlane(const WindowBlock *window) const;
+	void clearPnAmigaTextPlane(WindowBlock *window);
+	void compositePnAmigaTextPlane(WindowBlock *window);
+	void scrollPnAmigaTextPlane(WindowBlock *window);
+	void drawPnAmigaTopazChar(WindowBlock *window, byte chr);
+	void drawPnAmigaTextWindowBorders();
+
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
 	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly = false, bool midiOnly = false);
@@ -1237,7 +1285,7 @@ protected:
 	void drawVertImage(VC10_state *state);
 	void drawVertImageCompressed(VC10_state *state);
 	void drawVertImageUncompressed(VC10_state *state);
-
+	void remapElvira2AtariSTUIRegions(Graphics::Surface *screen);
 	void setMoveRect(uint16 x, uint16 y, uint16 width, uint16 height);
 
 	void horizontalScroll(VC10_state *state);
@@ -1263,6 +1311,16 @@ protected:
 	void clearVideoBackGround(uint16 windowNum, uint16 color);
 
 	void setPaletteSlot(uint16 srcOffs, uint8 dstOffs);
+	bool isPNDayNightPaletteMode() const;
+	uint8 getPNDesiredPaletteBank() const;
+	void notePNClockValueChange();
+	void resetPNRoomPaletteState();
+	void buildPNPaletteTarget(uint16 selectorMask, uint16 *target) const;
+	uint16 blendPNPaletteColor(uint16 source, uint16 target, uint8 steps) const;
+	uint8 getPNDayNightControllerStage() const;
+	void startPNDayNightController(uint16 selectorMask);
+	void updatePNDayNightController(uint16 selectorMask);
+	void applyPNDayNightPalette(const uint16 *palette);
 	void checkOnStopTable();
 	void checkWaitEndTable();
 
@@ -1276,6 +1334,8 @@ protected:
 	void addVgaEvent(uint16 num, uint8 type, const byte *codePtr, uint16 curSprite, uint16 curZoneNum);
 	void deleteVgaEvent(VgaTimerEntry * vte);
 	void processVgaEvents();
+	void schedulePNFadeEvent();
+	void removePNFadeEvent();
 	void animateEvent(const byte *codePtr, uint16 curZoneNum, uint16 curSprite);
 	void scrollEvent();
 	void drawStuff(const byte *src, uint offs);
@@ -1637,6 +1697,9 @@ protected:
 	void addChar(uint8 chr);
 	void clearCursor(WindowBlock *window);
 	void clearInputLine();
+	bool tryHandleDebugTimeCommand();
+	bool tryParseDebugTimeCommand(const char *typed, uint16 &hour, uint16 &minute) const;
+	void setDebugTime(uint16 hour, uint16 minute);
 	void handleKeyboard();
 	void handleMouseMoved() override;
 	void interact(char *buffer, uint8 size);

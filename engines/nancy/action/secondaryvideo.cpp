@@ -184,6 +184,16 @@ void PlaySecondaryVideo::readData(Common::SeekableReadStream &stream) {
 	for (uint i = 0; i < numVideoDescs; ++i) {
 		_videoDescs[i].readData(stream);
 	}
+
+	if (g_nancy->getGameType() >= kGameTypeNancy10) {
+		// TODO: Hotspot data
+		uint32 num;
+		ser.syncAsUint32LE(num);
+		Common::Array<Common::Rect> rects;
+		readRectArray(stream, rects, 4);
+
+		stream.skip(16);
+	}
 }
 
 void PlaySecondaryVideo::execute() {

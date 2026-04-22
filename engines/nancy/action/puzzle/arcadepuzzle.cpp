@@ -1254,7 +1254,6 @@ void ArcadePuzzle::updateTimer() {
 	uint32 mins = totalSecs / 60;
 	uint32 secs = totalSecs % 60;
 	if (mins > 59) mins = 59;
-	if (secs > 59) secs = 59;
 
 	if (mins != _timerMins || secs != _timerSecs) {
 		_timerMins = mins;

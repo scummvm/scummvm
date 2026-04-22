@@ -87,7 +87,7 @@ static inline void execute_on_main_thread(void (^block)(void)) {
 }
 
 void OSystem_iOS7::engineInit() {
-	EventsBaseBackend::engineInit();
+	BaseBackend::engineInit();
 	// Prevent the device going to sleep during game play (and in particular cut scenes)
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[[UIApplication sharedApplication] setIdleTimerDisabled:YES];
@@ -111,7 +111,7 @@ void OSystem_iOS7::engineInit() {
 }
 
 void OSystem_iOS7::engineDone() {
-	EventsBaseBackend::engineDone();
+	BaseBackend::engineDone();
 	// Allow the device going to sleep if idle while in the Launcher
 	dispatch_async(dispatch_get_main_queue(), ^{
 		[[UIApplication sharedApplication] setIdleTimerDisabled:NO];
@@ -130,7 +130,7 @@ void OSystem_iOS7::engineDone() {
 }
 
 void OSystem_iOS7::taskStarted(Task task) {
-	EventsBaseBackend::taskStarted(task);
+	BaseBackend::taskStarted(task);
 	if (_runningTasks++ == 0) {
 		// Prevent the device going to sleep while a task is running
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -139,7 +139,7 @@ void OSystem_iOS7::taskStarted(Task task) {
 	}
 }
 void OSystem_iOS7::taskFinished(Task task) {
-	EventsBaseBackend::taskFinished(task);
+	BaseBackend::taskFinished(task);
 	if (--_runningTasks == 0) {
 		dispatch_async(dispatch_get_main_queue(), ^{
 			[[UIApplication sharedApplication] setIdleTimerDisabled:NO];

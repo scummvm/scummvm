@@ -64,7 +64,6 @@ struct DrawOp {
 	int fillType;
 	int borderThickness;
 	int borderFillType;
-	int lineSize;
 };
 
 class Design {

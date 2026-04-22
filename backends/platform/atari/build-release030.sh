@@ -9,7 +9,7 @@ cd build-release030
 PLATFORM=m68k-atari-mintelf
 FASTCALL=false
 export ASFLAGS="-m68030"
-export CXXFLAGS="-m68030 -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL"
+export CXXFLAGS="-m68030 -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL -DDISABLE_MAME_OPL"
 export LDFLAGS="-m68030"
 
 export PKG_CONFIG_LIBDIR="$(${PLATFORM}-gcc -print-sysroot)/usr/lib/m68020-60/pkgconfig"
@@ -23,7 +23,6 @@ fi
 
 if [ ! -f ../backends/platform/atari/.patched ]
 then
-	cd .. && cat backends/platform/atari/patches/print_rate.patch | patch -p1 && cd -
 	cd .. && cat backends/platform/atari/patches/tooltips.patch | patch -p1 && cd -
 	touch ../backends/platform/atari/.patched
 fi
