@@ -134,8 +134,9 @@ class VideoPlayer_v2 : public VideoPlayer {
 private:
 	VideoHeader _header;
 	BaseSurface *_frame;
-	byte _palette[768];
 	uint32 _nextFrameTime;
+	bool _setPal;
+	uint32 _startMs;
 
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
@@ -154,7 +155,7 @@ protected:
 
 	void delayToNextFrame() override;
 public:
-	VideoPlayer_v2(AccessEngine *vm);
+	VideoPlayer_v2(AccessEngine *vm, bool setPal = false);
 
 	void playVideo() override;
 

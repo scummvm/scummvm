@@ -97,6 +97,7 @@ void NoctropolisPlayer::updatePlayerDirection() {
 	int scaleEntry = (_vm->_room->_roomFlag & kRoomFlagTopView) ? 4 : 20;
 	int16 minMove = _vm->_screen->_scaleTable1[scaleEntry];
 	if (minMove < absDeltaX) {
+		// Need to move in X
 		if (minMove < absDeltaY) {
 			if (_moveTo.y < _rawPlayer.y) {
 				if (_moveTo.x < _rawPlayer.x) {
@@ -112,6 +113,7 @@ void NoctropolisPlayer::updatePlayerDirection() {
 				}
 			}
 		} else {
+			// Move in x only
 			_rawPlayer.y = _moveTo.y;
 			if (_moveTo.x < _rawPlayer.x) {
 				_playerDirection = LEFT;
@@ -120,6 +122,7 @@ void NoctropolisPlayer::updatePlayerDirection() {
 			}
 		}
 	} else if (minMove < absDeltaY) {
+		// Move in y only
 		_rawPlayer.x = _moveTo.x;
 		if (_moveTo.y < _rawPlayer.y) {
 			_playerDirection = UP;
@@ -127,6 +130,7 @@ void NoctropolisPlayer::updatePlayerDirection() {
 			_playerDirection = DOWN;
 		}
 	} else {
+		// Delta < minMove, stop.
 		_playerDirection = NONE;
 		_rawPlayer.x = _moveTo.x;
 		_rawPlayer.y = _moveTo.y;
@@ -176,6 +180,7 @@ void NoctropolisPlayer::walk() {
 		// Idle animation (using last direction)
 		_playerX = _rawPlayer.x;
 		_playerY = _rawPlayer.y;
+		_playerXLow = _playerYLow = 0;
 		if (_animManager)
 			_animManager->animate(_animNumForDir(_lastDirection) + 8);
 		_playerMove = false;

@@ -99,6 +99,8 @@ void NoctropolisRoom::reloadRoom1() {
 	vm->_loadFlag = false;
 	_vm->_screen->forceFadeOut();
 	_vm->_screen->clearScreen();
+	_vm->_buffer1.clear();
+	_vm->_buffer2.clear();
 	roomInit();
 	_vm->_player->load();
 

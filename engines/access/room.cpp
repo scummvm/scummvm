@@ -309,6 +309,7 @@ void Room::doRoom() {
 					_vm->copyBlocks();
 				}
 			}
+
 			_vm->drawOverlays();
 		}
 	}
@@ -987,7 +988,7 @@ int Room::checkBoxes1(const Common::Point &pt) {
 }
 
 int Room::checkBoxes2(const Common::Point &pt, int start, int count) {
-	for (; count > 0; --count, ++start) {
+	for (; count > 0 && start < (int)_plotter._blocks.size(); --count, ++start) {
 		if (_plotter._blocks[start].contains(pt)) {
 			_plotter._blockIn = start;
 			return start;

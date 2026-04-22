@@ -1195,7 +1195,7 @@ void Scripts::cmdPlayerSpeak() {
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
 	_vm->_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-	_vm->_bubbleBox->_bubbleTitle = title;
+	_vm->_bubbleBox->_bubbleDisplStr = title;
 
 	_vm->_bubbleBox->placeBubble(str);
 	_continuenceFlag = true;
@@ -1698,6 +1698,7 @@ void Scripts::cmdBlock() {
 	int w = _data->readSint16LE();
 	int h = _data->readUint16LE();
 	debugC(1, kDebugScripts, "cmdBlock(x=%d, y=%d, w=%d, h=%d)", x, y, w, h);
+	// FIXME: Shouldn't this use copyBlock to apply window correctly?
 	_vm->_screen->blitFrom(_vm->_buffer2, Common::Rect(x, y, x + w, y + h), Common::Point(x, y));
 }
 
@@ -1876,7 +1877,8 @@ void Scripts::cmdRestoreBlock() {
 	int16 h = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdRestoreBlock(%d, %d, %d, %d)", x, y, w, h);
 	Common::Rect r(Common::Point(x, y), w, h);
-	_vm->_screen->blitFrom(_vm->_buffer1, r, r);
+	r.translate(-_vm->_screen->_windowXAdd, -_vm->_screen->_windowYAdd);
+	_vm->_screen->copyBlock(&_vm->_buffer2, r);
 
 	// Remake does this, but it doesn't use same buffer setup..
 	//_vm->clearPlotImagesIn(x, y, w, h);
@@ -1885,7 +1887,15 @@ void Scripts::cmdRestoreBlock() {
 
 void Scripts::cmdCopyScnBuf() {
 	debugC(1, kDebugScripts, "cmdCopyScnBuf()");
-	_vm->_buffer1.blitFrom(*_vm->_screen);
+
+	// Copy the screen to the buffer, applying windowing offsets
+	Common::Rect src(_vm->_screen->w, _vm->_screen->h);
+	const Common::Rect screenSize = src;
+	src.translate(_vm->_screen->_windowXAdd, _vm->_screen->_windowYAdd + _vm->_screen->_screenYOff);
+	src.clip(screenSize);
+	Common::Rect dest = src;
+	dest.translate(-dest.left, -dest.top);
+	_vm->_buffer2.blitFrom(*_vm->_screen, src, dest);
 }
 
 void Scripts::cmdStilWalkTo() {

@@ -69,7 +69,6 @@ void VideoPlayer::playToEnd() {
 			continue;
 		}
 
-		// TODO: This is not very exact, should calculate expected frame time etc.
 		delayToNextFrame();
 	}
 }
@@ -238,8 +237,8 @@ void VideoPlayer_v1::copyVideo() {
 
 //////////////////////////////////////////////////
 
-VideoPlayer_v2::VideoPlayer_v2(AccessEngine *vm) : VideoPlayer(vm), _audioStream(nullptr),
-_frame(nullptr), _nextFrameTime(0) {
+VideoPlayer_v2::VideoPlayer_v2(AccessEngine *vm, bool setPal) : VideoPlayer(vm), _audioStream(nullptr),
+_frame(nullptr), _nextFrameTime(0), _setPal(setPal), _startMs(0) {
 }
 
 void VideoPlayer_v2::setVideo(const Common::Point &pt) {
@@ -262,6 +261,8 @@ void VideoPlayer_v2::setVideo(const Common::Point &pt) {
 
 	_frame = new BaseSurface();
 	_frame->create(_header._width, _header._height, Graphics::PixelFormat::createFormatCLUT8());
+
+	_startMs = _vm->_events->getPriorFrameTime();
 
 	debugC(kDebugGraphics, "Load video V2: id = %d, version = %d, frameCount = %d, width = %d, height = %d, frameIncr = %d, unk = %d",
 	  _header._id, _header._version, _header._frameCount, _header._width, _header._height, _header._frameIncr, _header._unk);
@@ -320,12 +321,23 @@ void VideoPlayer_v2::playVideo() {
 
 void VideoPlayer_v2::handlePaletteChunk() {
 	debugC(kDebugGraphics, "VideoPlayer_v2::handlePaletteChunk()");
-	_videoData->_stream->read(_palette, 768);
+	byte buf[768];
+	_videoData->_stream->read(buf, 768);
+	if (_setPal) {
+		for (int i = 0; i < 768; i++)
+			buf[i] *= 4;
+		Graphics::Palette pal(buf, 256);
+		_vm->_screen->setRawPalette(pal);
+		_vm->_screen->setPalette();
+		_vm->_screen->copyRawPalToTempPal();
+	}
 }
 
 void VideoPlayer_v2::calcNextFrameTime(int delay) {
-	uint32 lastFrameTime = _vm->_events->getPriorFrameTime();
-	_nextFrameTime = lastFrameTime + (delay * 1000) / 60 + _header._frameIncr * 1000 / 60;
+	if (delay)
+		error("TODO: Implement frame-specific delay %d ms", delay * 1000 / 60);
+	uint32 elapsedForNextFrame = _header._frameIncr * 1000 * (_videoFrame + 1) / 60;
+	_nextFrameTime = _startMs + elapsedForNextFrame;
 }
 
 void VideoPlayer_v2::handleFrameChunk(bool delta, bool skipLines) {

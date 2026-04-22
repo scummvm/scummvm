@@ -108,6 +108,7 @@ void CharManager::loadChar(int charId) {
 		_vm->_screen->fadeIn();
 	}
 
+	// FIXME: This ignores any window on the screen??
 	_vm->_buffer1.blitFrom(*_vm->_screen);
 	_vm->_buffer2.blitFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();

@@ -68,7 +68,7 @@ public:
 	int _vesaMode;
 	int _startColor, _numColors;
 	Common::Point _bufferStart;
-	int _windowXAdd, _windowYAdd;
+	int _windowXAdd, _windowYAdd; // the offset between the screen and the 2 buffers
 	int _screenYOff;
 	byte _manPal[0x84];
 	byte _stilPal[99]; // only used in Noctropolis

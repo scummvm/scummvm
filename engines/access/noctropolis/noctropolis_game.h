@@ -85,7 +85,6 @@ public:
 	void playStilMorph();
 	void flashPaletteEffect();
 	void shotoMeanwhile();
-	void makeVidPaletteCurrent();
 	void showComicCover();
 	void playSuccubusSplit();
 	void playSuccubusAttack();

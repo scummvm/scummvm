@@ -279,15 +279,46 @@ void Animation::anim12() {
 		int16 deltaY = (frame->_baseY + frame->_parts[0]._position.y) -
 			(prevAnimationFrame->_baseY + prevAnimationFrame->_parts[0]._position.y);
 		int16 xadd = ABS(deltaX) * _vm->_scale / 256;
+		int16 xaddLow = (ABS(deltaX) * _vm->_scale) % 256;
 		int16 yadd = ABS(deltaY) * _vm->_scale / 256;
-		if (deltaX < 0)
-			_vm->_curPlayer->_playerX -= xadd;
-		else
-			_vm->_curPlayer->_playerX += xadd;
-		if (deltaY < 0)
-			_vm->_curPlayer->_playerY -= yadd;
-		else
-			_vm->_curPlayer->_playerY += yadd;
+		int16 yaddLow = (ABS(deltaY) * _vm->_scale) % 256;
+
+		// Original uses "low" parts to do some fixed-point movement
+		// to make scaling slightly smoother.
+		Player *player = _vm->_curPlayer;
+
+		if (deltaX < 0) {
+			player->_playerX -= xadd;
+			player->_playerXLow -= xaddLow;
+			if (player->_playerXLow <= -256) {
+				player->_playerX--;
+				player->_playerXLow += 256;
+			}
+		} else {
+			player->_playerX += xadd;
+			player->_playerXLow += xaddLow;
+			if (player->_playerXLow >= 256) {
+				player->_playerX++;
+				player->_playerXLow -= 256;
+			}
+		}
+
+		if (deltaY < 0) {
+			player->_playerY -= yadd;
+			player->_playerYLow -= yaddLow;
+			if (player->_playerYLow <= -256) {
+				player->_playerY--;
+				player->_playerYLow += 256;
+			}
+		} else {
+			player->_playerY += yadd;
+			player->_playerYLow += yaddLow;
+			if (player->_playerYLow >= 256) {
+				player->_playerY++;
+				player->_playerYLow -= 256;
+			}
+		}
+
 		_countdownTicks += frame->_frameDelay;
 		debugC(kDebugGraphics, "anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
 	}

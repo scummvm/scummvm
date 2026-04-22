@@ -154,7 +154,7 @@ void NoctropolisEngine::playGame() {
 
 void NoctropolisEngine::drawOverlays() {
 	AccessEngine::drawOverlays();
-	
+
 	drawDeathTimer();
 }
 
@@ -166,6 +166,8 @@ void NoctropolisEngine::drawDeathTimer() {
 	Common::String time = Common::String::format("%02d:%02d", seconds / 60, seconds % 60);
 	_screen->fillRect(Common::Rect(0, 384, 47, 399), 0xf6);
 	const Font *font = _fonts.getFont(4);
+	Font::_fontColors[0] = 0;
+	Font::_fontColors[1] = 0xf4;
 	font->drawString(_screen, time, Common::Point(2, 384));
 }
 
@@ -265,6 +267,8 @@ void NoctropolisEngine::doIntro() {
 	_midi->loadMusic(98, 1);
 	_midi->midiPlay();
 	_room->loadPlayField(1, 0);
+
+	// This ignores window values, but we know that's ok here.
 	_buffer2.copyFrom(*_screen);
 	_buffer1.copyFrom(*_screen);
 
@@ -374,8 +378,9 @@ void NoctropolisEngine::doTravel() {
 	_buffer2.clear();
 	_screen->clearScreen();
 	_room->loadPlayField(0, 0); // MAP.AP
-	_buffer1.copyFrom(*_screen);
-	_buffer2.copyFrom(*_screen);
+	// FIXME: This ignores window and probably is just plain wrong?
+	//_buffer1.copyFrom(*_screen);
+	//_buffer2.copyFrom(*_screen);
 	_screen->setPalette();
 	_screen->setIconPalette();
 	_scrollRow = _travScrollRow;
@@ -389,7 +394,7 @@ void NoctropolisEngine::doTravel() {
 
 	// This section is "state 1" in NoctTravelEngine::ticker
 	((NoctropolisRoom *)_room)->buildScreenXScroll();
-	_buffer2.copyFrom(_buffer1);
+	copyBF1BF2();
 	copyBF2Vid();
 	_screen->setPaletteCycle(0xb5, 0xbe, 5);
 	_screen->fadeIn();
@@ -699,12 +704,6 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_system->showMouse(true);
 }
 
-void NoctropolisEngine::makeVidPaletteCurrent() {
-	warning("TODO: Implement Noctropolis type video player (makeVidPaletteCurrent)");
-	//copyPaletteRange(_video->getPalette(), 0, 256);
-	_screen->setPalette();
-}
-
 void NoctropolisEngine::showComicCover() {
 	_midi->stopSong();
 	_midi->loadMusic(98, 1);
@@ -722,8 +721,8 @@ void NoctropolisEngine::playSuccubusSplit() {
 	_midi->loadMusic(98, 25);
 	_midi->midiPlay();
 	_screen->clearScreen();
-	VideoPlayer_v2 vidPlayer(this);
-	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(116, 2), Common::Path("VID1/SUCATT1.VID"), 0);
+	VideoPlayer_v2 vidPlayer(this, true);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(116, 2), Common::Path("VID1/SUCSPLT1.VID"), 0);
 	vidPlayer.playToEnd();
 	_midi->stopSong();
 	_screen->fadeOutThenClearAndSetPal();
