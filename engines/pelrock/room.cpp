@@ -23,8 +23,30 @@
 #include "pelrock/pelrock.h"
 #include "pelrock/room.h"
 #include "pelrock/util.h"
+#include "room.h"
 
 namespace Pelrock {
+
+const int kTalkingAnimHeaderSize = 55;
+const int kNumSfxPerRoom = 9;
+const int unpickableHotspotExtras[] = {
+	308, // lamppost cable
+	65,  // objects in shop
+	66,
+	67,
+	68,
+	69,
+	70,
+	71,
+	72,
+	73,
+	74,
+	6,
+	7,
+	91, // mud and stone should only be picked under certain conditions!
+	92};
+
+const int kNumUnpickableHotspotExtras = ARRAYSIZE(unpickableHotspotExtras);
 
 static const uint32 kPaletteRemapOffset = 0x4C77C; // JUEGO.EXE — water-effect palette remap table
 
@@ -47,21 +69,21 @@ RoomManager::~RoomManager() {
 	if (_passerByAnims) {
 		delete _passerByAnims;
 	}
-	if(_conversationData) {
+	if (_conversationData) {
 		delete[] _conversationData;
 	}
 }
 
 void RoomManager::clearTalkingAnims() {
 	for (int i = 0; i < _talkingAnims.numFramesAnimA; i++) {
-		if(_talkingAnims.animA[i]) {
+		if (_talkingAnims.animA[i]) {
 			delete[] _talkingAnims.animA[i];
 			_talkingAnims.animA[i] = nullptr;
 		}
 	}
 	delete[] _talkingAnims.animA;
 	for (int i = 0; i < _talkingAnims.numFramesAnimB; i++) {
-		if(_talkingAnims.animB[i]) {
+		if (_talkingAnims.animB[i]) {
 			delete[] _talkingAnims.animB[i];
 			_talkingAnims.animB[i] = nullptr;
 		}
@@ -383,7 +405,18 @@ void RoomManager::addWalkbox(WalkBox walkbox, int persist) {
 	}
 }
 
+bool RoomManager::isPickableByExtra(uint16 extra) {
+	if (extra > 112)
+		return false;
+	for (int i = 0; i < kNumUnpickableHotspotExtras; i++) {
+		if (extra == unpickableHotspotExtras[i])
+			return false;
+	}
+	return true;
+}
+
 Sprite *RoomManager::findSpriteByIndex(byte index) {
+
 	for (uint i = 0; i < _currentRoomAnims.size(); i++) {
 		if (_currentRoomAnims[i].index == index) {
 			return &_currentRoomAnims[i];
