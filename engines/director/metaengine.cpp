@@ -59,8 +59,7 @@ const char *DirectorEngine::getExtra() {
 }
 
 bool DirectorEngine::hasFeature(EngineFeature f) const {
-	return false;
-		//(f == kSupportsReturnToLauncher);
+	return (f == kSupportsReturnToLauncher);
 }
 
 static const ADExtraGuiOptionsMap optionsList[] = {

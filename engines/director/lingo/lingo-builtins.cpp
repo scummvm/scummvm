@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/events.h"
 #include "common/system.h"
 #include "common/translation.h"
 
@@ -1806,6 +1807,27 @@ void LB::b_saveMovie(int nargs) {
 	if (nargs) {
 		filename = g_lingo->pop().asString();
 	}
+
+	// Log MASTER.CST time/money values at save time
+	Movie *saveMovie = g_director->getCurrentMovie();
+	if (saveMovie) {
+		for (auto &castEntry : *(saveMovie->getCasts())) {
+			Cast *cast = castEntry._value;
+			if (!cast || !cast->getArchive()) continue;
+			if (!Common::String(cast->getArchive()->getFileName()).equalsIgnoreCase("MASTER.CST")) continue;
+			warning("b_saveMovie: saving from movie '%s'", saveMovie->getArchive()->getFileName().c_str());
+			const int masterMembers[] = {4, 21};
+			for (int membId : masterMembers) {
+				CastMember *cm = cast->getCastMember(membId);
+				if (cm && cm->_type == kCastText) {
+					TextCastMember *tm = static_cast<TextCastMember *>(cm);
+					if (!tm->isLoaded()) tm->load();
+					warning("b_saveMovie: MASTER.CST member %d = '%s'", membId, tm->_ptext.encode().c_str());
+				}
+			}
+		}
+	}
+
 	g_director->getCurrentMovie()->getArchive()->writeToFile(filename, g_director->getCurrentMovie());
 }
 
@@ -2256,11 +2278,20 @@ void LB::b_printFrom(int nargs) {
 }
 
 void LB::b_quit(int nargs) {
+	Window *stage = g_director->getStage();
+	stage->_movieStack.clear();
+	stage->_nextMovie.movie.clear();
+	g_lingo->_playDone = false;
+	g_lingo->_playDoneReady = false;
+
+	// Signal return to launcher; the main loop exits via shouldQuit().
+	Common::Event event;
+	event.type = Common::EVENT_RETURN_TO_LAUNCHER;
+	g_system->getEventManager()->pushEvent(event);
+
 	Movie *movie = g_director->getCurrentMovie();
 	if (movie)
 		movie->getScore()->_playState = kPlayStopped;
-
-	g_lingo->pushVoid();
 }
 
 void LB::b_return(int nargs) {

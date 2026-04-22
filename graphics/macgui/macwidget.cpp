@@ -52,6 +52,15 @@ MacWidget::MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowMan
 }
 
 MacWidget::~MacWidget() {
+	// Null children's _parent before our _children storage is freed.
+	// If a child outlives this widget (e.g. a Director channel widget whose
+	// parent MacWindow was destroyed before the channel cleaned up), it will
+	// see _parent == nullptr in its own destructor and skip removeWidget safely.
+	for (uint i = 0; i < _children.size(); i++) {
+		if (_children[i])
+			_children[i]->_parent = nullptr;
+	}
+
 	if (_parent)
 		_parent->removeWidget(this, false);
 

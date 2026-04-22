@@ -245,7 +245,7 @@ void DirectorEngine::addArchiveToOpenList(const Common::Path &path) {
 }
 
 Archive *DirectorEngine::openArchive(const Common::Path &path) {
-	debug(1, "DirectorEngine::openArchive(\"%s\")", path.toString().c_str());
+	warning("DirectorEngine::openArchive(\"%s\")", path.toString().c_str());
 
 	// If the archive is already open, don't reopen it;
 	// just init from the existing archive. This prevents errors that

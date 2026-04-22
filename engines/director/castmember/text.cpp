@@ -35,6 +35,8 @@
 #include "director/window.h"
 #include "director/castmember/text.h"
 #include "director/lingo/lingo-the.h"
+#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-object.h"
 
 namespace Director {
 
@@ -411,6 +413,18 @@ void TextCastMember::setRawText(const Common::String &text) {
 	if (_ptext.equals(Common::U32String(text)))
 		return;
 
+	if (getCast() && getCast()->getArchive() &&
+			Common::String(getCast()->getArchive()->getFileName()).equalsIgnoreCase("MASTER.CST")) {
+		Common::String movieName = (g_director && g_director->getCurrentMovie() && g_director->getCurrentMovie()->getArchive())
+			? g_director->getCurrentMovie()->getArchive()->getFileName() : Common::String("no-movie");
+		Common::String scriptName = "no-lingo";
+		if (g_lingo && g_lingo->_state && g_lingo->_state->context)
+			scriptName = g_lingo->_state->context->getName();
+		warning("MASTER.CST setRawText: member %d '%s' -> '%s' [movie=%s script=%s tm=%p cast=%p]",
+			getID(), _ptext.encode().c_str(), text.c_str(), movieName.c_str(), scriptName.c_str(),
+			(void *)this, (void *)getCast());
+	}
+
 	_rtext = text;
 	_ptext = Common::U32String(text);
 
@@ -418,6 +432,46 @@ void TextCastMember::setRawText(const Common::String &text) {
 	Common::U32String formatting = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo3);
 	_ftext = formatting + _ptext;
 	_modified = true;
+
+	// Live-sync savedCastText for external cast members.  Real Director keeps
+	// external castlibs alive in memory across play/go transitions, so any
+	// value written by a script stays visible to the next movie.  ScummVM
+	// reloads them from disk, so we mirror every script write here to ensure
+	// the value survives movie transitions that bypass loadNextMovie() (e.g.
+	// the play-done / processFrozenPlayScript path used when MAINMENU returns
+	// to STRTGAME/DAY1 after loading a save game).
+	if (g_director && getCast() && getCast()->getArchive()) {
+		Movie *curMovie = g_director->getCurrentMovie();
+		Archive *castArchive = getCast()->getArchive();
+		Archive *movieArchive = curMovie ? curMovie->getArchive() : nullptr;
+		if (movieArchive && castArchive != movieArchive) {
+			Common::String key = castArchive->getFileName();
+			key.toUppercase();
+			if (!key.empty()) {
+				// During startMovie, suppress writes to members that are ALREADY in
+				// savedCastText (i.e. values we restored from a save game).
+				// Init-clock-style handlers unconditionally reset those fields to
+				// cold-start defaults; we don't want them to overwrite the saved value
+				// or poison child windows (e.g. MAINMENU) that inherit from savedCastText.
+				// Writes to members NOT already in savedCastText are allowed through so
+				// that fresh scene-setup / chapter-marker writes are not suppressed.
+				bool suppress = false;
+				if (g_director->_inStartMovieHandler) {
+					auto savedIt = g_director->_savedCastText.find(key);
+					if (savedIt != g_director->_savedCastText.end() &&
+							savedIt->_value.contains(_castId)) {
+						suppress = true;
+					}
+				}
+				if (!suppress) {
+					g_director->_savedCastText[key][_castId] = _ptext;
+				} else if (key == "MASTER.CST") {
+					warning("MASTER.CST live-sync SUPPRESSED (inStartMovie): member %d new='%s' savedCastText unchanged",
+						_castId, _ptext.encode().c_str());
+				}
+			}
+		}
+	}
 }
 
 int TextCastMember::getLineCount() {
@@ -632,6 +686,9 @@ void TextCastMember::load() {
 		const Stxt *stxt = _cast->_loadedStxts.getVal(stxtid);
 		importStxt(stxt);
 		_size = stxt->_size;
+		if (getCast() && getCast()->getArchive() &&
+				Common::String(getCast()->getArchive()->getFileName()).equalsIgnoreCase("MASTER.CST"))
+			warning("MASTER.CST load() disk value: member %d ptext='%s'", _castId, _ptext.encode().c_str());
 	} else {
 		warning("TextCastMember::load(): stxtid %i isn't loaded", stxtid);
 	}
@@ -989,6 +1046,11 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 	if (!_loaded) {
 		load();
 	}
+
+	if (getCast() && getCast()->getArchive() &&
+			Common::String(getCast()->getArchive()->getFileName()).equalsIgnoreCase("MASTER.CST"))
+		warning("MASTER.CST writeSTXTResource: member %d saving ptext='%s'", getID(), _ptext.encode().c_str());
+
 
 	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s",
 		_ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str(), Common::toPrintable(_rtext).c_str());

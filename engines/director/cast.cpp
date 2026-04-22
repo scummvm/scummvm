@@ -353,7 +353,8 @@ bool Cast::loadConfig() {
 		stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 	}
 	if (!stream) {
-		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
+		warning("Cast::loadConfig(): Wrong format. VWCF resource missing for archive: %s",
+				_castArchive->getPathName().toString().c_str());
 		return false;
 	}
 
@@ -571,7 +572,7 @@ bool Cast::loadConfig() {
 	return true;
 }
 
-void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
+void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset, bool isBE) {
 	if (_version < kFileVer400) {
 		error("Cast::saveConfig called on a pre-D4 Director movie");
 	}
@@ -580,84 +581,90 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 
 	uint32 configSize = getConfigSize();
 
-	writeStream->writeUint32LE(MKTAG('V', 'W', 'C', 'F'));
-	writeStream->writeUint32LE(configSize);
+	// Resource header: always use archive-native endianness for tag and size fields.
+	auto writeTag = [&](uint32 v) { if (isBE) writeStream->writeUint32BE(v); else writeStream->writeUint32LE(v); };
+	auto write16  = [&](uint16 v) { if (isBE) writeStream->writeUint16BE(v); else writeStream->writeUint16LE(v); };
+	auto write16s = [&](int16  v) { if (isBE) writeStream->writeSint16BE(v); else writeStream->writeSint16LE(v); };
+	auto write32  = [&](uint32 v) { if (isBE) writeStream->writeUint32BE(v); else writeStream->writeUint32LE(v); };
+	auto write32s = [&](int32  v) { if (isBE) writeStream->writeSint32BE(v); else writeStream->writeSint32LE(v); };
 
-	// These offsets are only for Director Version 4 to Director version 6
-	// offsets
-	writeStream->writeUint16BE(configSize);			// 0    // This will change
-	writeStream->writeUint16BE(_fileVersion);	    // 2
+	writeTag(MKTAG('V', 'W', 'C', 'F'));
+	writeTag(configSize);
 
-	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
+	// Config data fields — must match the endianness loadConfig() uses when reading.
+	write16(configSize);                // 0
+	write16(_fileVersion);              // 2
 
-	writeStream->writeUint16BE(_castArrayStart);    // 12
-	// This will change
-	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
+	write16s(_checkRect.top);           // 4
+	write16s(_checkRect.left);          // 6
+	write16s(_checkRect.bottom);        // 8
+	write16s(_checkRect.right);         // 10
 
-	writeStream->writeByte(_readRate);              // 16
-	writeStream->writeByte(_lightswitch);           // 17
-	writeStream->writeSint16BE(_unk1);              // 18
+	write16(_castArrayStart);           // 12
+	write16(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size()); // 14
 
-	writeStream->writeUint16BE(_commentFont);       // 20
-	writeStream->writeUint16BE(_commentSize);       // 22
-	writeStream->writeUint16BE(_commentStyle);      // 24
-	writeStream->writeUint16BE(_stageColor);        // 26
+	writeStream->writeByte(_readRate);  // 16
+	writeStream->writeByte(_lightswitch); // 17
+	write16s(_unk1);                    // 18
 
-	writeStream->writeUint16BE(_bitdepth);          // 28
+	write16(_commentFont);              // 20
+	write16(_commentSize);              // 22
+	write16(_commentStyle);             // 24
+	write16(_stageColor);               // 26
 
-	writeStream->writeByte(_field17);               // 29
-	writeStream->writeByte(_field18);               // 30
-	writeStream->writeSint32BE(_field19);           // 34
+	write16(_bitdepth);                 // 28
 
-	writeStream->writeUint16BE(_version);   		// 36
+	writeStream->writeByte(_field17);   // 29
+	writeStream->writeByte(_field18);   // 30
+	write32s(_field19);                 // 34
 
-	writeStream->writeUint16BE(_movieDepth);           // 38
-	writeStream->writeUint32BE(_field22);           // 40
-	writeStream->writeUint32BE(_field23);           // 44
+	write16(_version);                  // 36
 
-	writeStream->writeSint32BE(_field24);           // 48
-	writeStream->writeSByte(_field25);              // 52
-	writeStream->writeSByte(_field26);              // 53
+	write16(_movieDepth);               // 38
+	write32(_field22);                  // 40
+	write32(_field23);                  // 44
 
-	writeStream->writeSint16BE(_frameRate);         // 54
-	writeStream->writeUint16BE(_platformID);          // 56
-	writeStream->writeSint16BE(_protection);        // 58
-	writeStream->writeSint32BE(_field29);           // 60
+	write32s(_field24);                 // 48
+	writeStream->writeSByte(_field25);  // 52
+	writeStream->writeSByte(_field26);  // 53
+
+	write16s(_frameRate);               // 54
+	write16(_platformID);               // 56
+	write16s(_protection);              // 58
+	write32s(_field29);                 // 60
 
 	uint32 checksum = computeChecksum();
-	writeStream->writeUint32BE(checksum);           // 64
+	write32(checksum);                  // 64
 
 	if (_version >= kFileVer400 && _version < kFileVer500) {
-		writeStream->writeSint16BE(_field30);       // 68
+		write16s(_field30);             // 68
 
-		// This loop isn't writing meaningful data currently
-		// But it is possible that this data might be needed
 		for (int i = 0; i < 0x08; i++) {
-			writeStream->writeByte(0);              // 70, 71, 72, 73, 74, 75, 76, 77
+			writeStream->writeByte(0);  // 70-77
 		}
-	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+	} else if (_version >= kFileVer500) {
 		for (int i = 0; i < 0x08; i++) {
-			writeStream->writeByte(0);              // 68, 69, 70, 71, 72, 73, 74, 75
+			writeStream->writeByte(0);  // 68-75
 		}
 
-		writeStream->writeSint16BE(_defaultPalette.castLib);    // 76
-		writeStream->writeSint16BE(_defaultPalette.member);     // 78
+		write16s(_defaultPalette.castLib);  // 76
+		write16s(_defaultPalette.member);   // 78
 	}
 
 	if (_version >= kFileVer600 && _version < kFileVer1000) {
 		writeStream->writeByte(_netUnk1);
 		writeStream->writeByte(_netUnk2);
-		writeStream->writeSint16BE(_netPreloadNumFrames);
+		write16s(_netPreloadNumFrames);
 	}
 
 	if (_version >= kFileVer1000 && _version < kFileVer1100) {
-		writeStream->writeUint32BE(_windowFlags);
-		writeStream->writeSint16BE(_windowIconId.castLib);
-		writeStream->writeSint16BE(_windowIconId.member);
-		writeStream->writeSint16BE(_windowMaskId.castLib);
-		writeStream->writeSint16BE(_windowMaskId.member);
-		writeStream->writeSint16BE(_windowDragRegionMaskId.castLib);
-		writeStream->writeSint16BE(_windowDragRegionMaskId.member);
+		write32(_windowFlags);
+		write16s(_windowIconId.castLib);
+		write16s(_windowIconId.member);
+		write16s(_windowMaskId.castLib);
+		write16s(_windowMaskId.member);
+		write16s(_windowDragRegionMaskId.castLib);
+		write16s(_windowDragRegionMaskId.member);
 	}
 
 	if (debugChannelSet(7, kDebugSaving)) {
@@ -683,9 +690,11 @@ uint32 Cast::getConfigSize() {
 		return 78; // 78 bytes of data in castConfig
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		return 80;	// 80 bytes of data in castConfig
+	} else if (_version >= kFileVer600 && _version < kFileVer1000) {
+		return 84;	// 80 bytes (D5 format) + 4 bytes (netUnk1, netUnk2, netPreloadNumFrames)
 	}
 
-	warning("Cast::getConfigSize: Director version 6+ is not handled");
+	warning("Cast::getConfigSize: Director version not handled");
 	return 0;
 }
 

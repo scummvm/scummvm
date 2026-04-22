@@ -68,6 +68,14 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
 
+		Common::String frameStr = frame.type == STRING ? frame.asString() : Common::String("");
+		Common::String fromMovie = _vm->getCurrentMovie() ? Common::String(_vm->getCurrentMovie()->getArchive()->getFileName()) : Common::String("none");
+		warning("Lingo::func_goto(): go to movie '%s' frame '%s'/%d (from movie '%s')",
+			movieFilenameRaw.c_str(),
+			frameStr.c_str(),
+			frame.type == INT ? frame.asInt() : -1,
+			fromMovie.c_str());
+
 		if (!stage->setNextMovie(movieFilenameRaw))
 			return;
 
@@ -106,9 +114,13 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	if (frame.type == STRING) {
 		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame \"%s\"", frame.u.s->c_str());
 		score->setStartToLabel(*frame.u.s);
+		debugC(3, kDebugLingoExec, "Lingo::func_goto(): label \"%s\" -> frame %d (cur=%d frozen=%d)",
+			frame.u.s->c_str(), score->getNextFrame(), score->getCurrentFrameNum(), g_lingo->_freezeState ? 1 : 0);
 	} else {
 		debugC(3, kDebugLingoExec, "Lingo::func_goto(): going to frame %d", frame.asInt());
 		score->setCurrentFrame(frame.asInt());
+		debugC(3, kDebugLingoExec, "Lingo::func_goto(): frame %d (cur=%d frozen=%d)",
+			frame.asInt(), score->getCurrentFrameNum(), g_lingo->_freezeState ? 1 : 0);
 	}
 
 	// Since the frames are not going to be consecutive, we might run into
@@ -169,10 +181,12 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 		}
 		_playDone = true;
 		if (stage->_movieStack.empty()) {	// No op if no nested movies
-
+			warning("Lingo::func_play(#done): movieStack empty, no-op (cur=%d)", _vm->getCurrentMovie()->getScore()->getCurrentFrameNum());
 			return;
 		}
 		ref = stage->_movieStack.back();
+		debugC(3, kDebugLingoExec, "Lingo::func_play(#done): returning to frame=%d movie=\"%s\" (cur=%d)",
+			ref.frameI, ref.movie.c_str(), _vm->getCurrentMovie()->getScore()->getCurrentFrameNum());
 
 		stage->_movieStack.pop_back();
 
@@ -206,6 +220,10 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	// if we are issuing play command from script channel script. then play done should return to next frame
 	if (g_lingo->_currentChannelId == 0)
 		ref.frameI++;
+
+	debugC(3, kDebugLingoExec, "Lingo::func_play(): saving return frame=%d (cur=%d channelId=%d) before going to \"%s\"",
+		ref.frameI, _vm->getCurrentMovie()->getScore()->getCurrentFrameNum(), g_lingo->_currentChannelId,
+		frame.type == STRING ? frame.u.s->c_str() : Common::String::format("%d", frame.asInt()).c_str());
 
 	stage->_movieStack.push_back(ref);
 

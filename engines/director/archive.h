@@ -179,10 +179,10 @@ public:
 private:
 	/* archive-save.cpp */
 	/* These functions are for writing movies */
-	bool writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
+	bool writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resource, bool isBE); 	// Parallel to readMemoryMap
 	bool writeAfterBurnerMap(Common::SeekableWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
-	bool writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
-	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib);	// Parallel to readCast
+	bool writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset, bool isBE);	// Parallel to readKeyTable
+	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib, bool isBE);	// Parallel to readCast
 
 	uint32 getArchiveSize(Common::Array<Resource *> resources);
 	uint32 getMmapSize();
@@ -281,6 +281,9 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+
+	// Register a newly written save file so it is visible without restarting
+	void addFile(const Common::String &origName, const Common::String &savedName);
 
 private:
 	typedef Common::HashMap<Common::String, Common::String> FileMap;

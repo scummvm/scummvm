@@ -131,6 +131,10 @@ void Movie::setArchive(Archive *archive) {
 		// D5 archive, can contain multiple internal/external casts
 		loadCastLibMapping(*r);
 		delete r;
+		// If MCsL failed to assign an archive for the main cast (e.g. unresolvable
+		// external path), fall back to the movie archive so loadConfig() can proceed.
+		if (!_cast->getArchive())
+			_cast->setArchive(archive);
 	} else {
 		// D4 or lower, only 1 cast
 		_cast->setArchive(archive);
@@ -363,6 +367,11 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
 	_remapPalettesWhenNeeded = (fileInfo.flags & kMovieFlagRemapPalettesWhenNeeded) != 0;
 
+	if (fileInfo.strings.size() < 1) {
+		warning("Movie::loadFileInfo(): VWFI has no strings, skipping");
+		return;
+	}
+
 	_script = fileInfo.strings[0].readString(false);
 
 	if (!_script.empty() && ConfMan.getBool("dump_scripts"))
@@ -371,12 +380,15 @@ void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	if (!_script.empty())
 		_cast->_lingoArchive->addCode(_script, kMovieScript, 0, nullptr, kLPPTrimGarbage);
 
-	_changedBy = fileInfo.strings[1].readString();
-	_createdBy = fileInfo.strings[2].readString();
-	_origDirectory = fileInfo.strings[3].readString();
+	if (fileInfo.strings.size() > 1)
+		_changedBy = fileInfo.strings[1].readString();
+	if (fileInfo.strings.size() > 2)
+		_createdBy = fileInfo.strings[2].readString();
+	if (fileInfo.strings.size() > 3)
+		_origDirectory = fileInfo.strings[3].readString();
 
 	uint16 preload = 0;
-	if (fileInfo.strings[4].len) {
+	if (fileInfo.strings.size() > 4 && fileInfo.strings[4].len) {
 		if (stream.isBE())
 			preload = READ_BE_INT16(fileInfo.strings[4].data);
 		else
@@ -485,6 +497,9 @@ bool Movie::loadCastLibFrom(uint16 libId, Common::Path &filename) {
 
 CastMember *Movie::getCastMember(CastMemberID memberID) {
 	CastMember *result = nullptr;
+	// D6 score convention: castLib=-1 means "internal/default cast library"
+	if (memberID.castLib == -1)
+		memberID.castLib = DEFAULT_CAST_LIB;
 	if (_casts.contains(memberID.castLib)) {
 		if (memberID.member == 0)
 			return nullptr;
@@ -494,6 +509,8 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 		}
 	} else if (memberID.castLib != 0) {
 		warning("Movie::getCastMember: Unknown castLib %d", memberID.castLib);
+	} else if (memberID.member != 0) {
+		warning("Movie::getCastMember: castLib=0 but member=%d (silent null)", memberID.member);
 	}
 	return result;
 }
@@ -501,6 +518,9 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 Cast *Movie::getCast(CastMemberID memberID) {
 	if (memberID.castLib == SHARED_CAST_LIB)
 		return _sharedCast;
+
+	if (memberID.castLib == -1)
+		memberID.castLib = DEFAULT_CAST_LIB;
 
 	if (_casts.contains(memberID.castLib)) {
 		return _casts.getVal(memberID.castLib);
@@ -511,15 +531,36 @@ Cast *Movie::getCast(CastMemberID memberID) {
 	return nullptr;
 }
 
-Cast *Movie::getCastByLibResourceID(int libresourceID) {
+Cast *Movie::getCastByLibResourceID(int libresourceID, Archive *preferArchive) {
+	Cast *fallback = nullptr;
 	for (auto it : _casts) {
 		if (it._value->_libResourceId == libresourceID) {
-			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);
-			return it._value;
+			// When preferArchive is set, prefer the cast whose archive matches.
+			// This disambiguates casts that share a libResourceId (e.g. a movie's
+			// own internal cast and an external castlib both default to 1024).
+			if (!preferArchive || it._value->getArchive() == preferArchive) {
+				debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);
+				return it._value;
+			}
+			if (!fallback)
+				fallback = it._value;
 		}
 	}
 
+	if (fallback) {
+		debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast (fallback) with libresourceID: %d", libresourceID);
+		return fallback;
+	}
+
 	warning("Movie::getCastByLibResourceID: No cast with libresourceID: %d", libresourceID);
+	return nullptr;
+}
+
+Cast *Movie::getCastByArchive(Archive *archive) {
+	for (auto it : _casts) {
+		if (it._value && it._value->getArchive() == archive)
+			return it._value;
+	}
 	return nullptr;
 }
 

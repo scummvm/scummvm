@@ -476,8 +476,14 @@ Common::Rect Sprite::getBbox(bool unstretched) {
 	Common::Rect result(_width, _height);
 	// If this is a cast member, use the cast member's getBbox function
 	// so we start with a rect containing the correct registration offset.
-	if (_cast)
-		result = _cast->getBbox(_width, _height);
+	if (_cast) {
+		// In D6+, the score delta may omit width/height (meaning "use native size").
+		// When both are 0, fall back to the cast member's natural dimensions.
+		if (_width == 0 && _height == 0)
+			result = _cast->getBbox();
+		else
+			result = _cast->getBbox(_width, _height);
+	}
 
 	// The origin of the rect should be at the registration offset,
 	// e.g. for bitmap sprites this defaults to the centre.

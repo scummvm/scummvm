@@ -1348,7 +1348,7 @@ static void writePadding(Common::SeekableWriteStream *writeStream, int size) {
 
 void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 	// Script
-	writeStream->writeUint32BE(_mainChannels.actionId.castLib);				// 0+0
+	writeStream->writeUint16BE((uint16)_mainChannels.actionId.castLib);		// 0+0 (uint16, matches readUint16 in readMainChannelsD6)
 	writeStream->writeUint16BE(_mainChannels.actionId.member);				// 0+2
 	writeStream->writeUint32BE(_mainChannels.scriptSpriteListIdx);			// 0+4
 	writeStream->writeByte(_mainChannels.colorScript);						// 0+8

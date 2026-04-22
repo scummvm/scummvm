@@ -94,6 +94,8 @@ Score::Score(Movie *movie, bool haveInteractivity) {
 	_curFrameNumber = 1;
 	_framesStream = nullptr;
 	_currentFrame = nullptr;
+	_firstFramePosition = 0;
+	_frameDataOffset = 0;
 
 	_disableGoPlayUpdateStage = false;
 }
@@ -139,9 +141,11 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 }
 
 bool Score::processFrozenPlayScript() {
-	// Unfreeze the play script if the special flag is set
-	if (g_lingo->_playDone) {
-		g_lingo->_playDone = false;
+	// Unfreeze the play script if the special flag is set.
+	// We check _playDoneReady (not _playDone) because _playDone is cleared
+	// inside execute() before we ever get here.
+	if (g_lingo->_playDoneReady) {
+		g_lingo->_playDoneReady = false;
 		if (_window->thawLingoPlayState()) {
 			Symbol currentScript;
 			LingoState *state = _window->getLingoState();
@@ -333,8 +337,11 @@ void Score::startPlay() {
 		return;
 	}
 
-	if (_haveInteractivity && _version >= kFileVer300)
+	if (_haveInteractivity && _version >= kFileVer300) {
+		g_director->_inStartMovieHandler = true;
 		_movie->processEvent(kEventStartMovie);
+		g_director->_inStartMovieHandler = false;
+	}
 
 	// load first frame (either 1 or _nextFrame)
 	updateCurrentFrame();
@@ -347,8 +354,11 @@ void Score::startPlay() {
 	updateSprites(kRenderForceUpdate, true);
 
 	// Stage has been set up, run the StartMovie script
-	if (_version >= kFileVer300)
+	if (_version >= kFileVer300) {
+		g_director->_inStartMovieHandler = true;
 		_movie->processEvent(kEventStartMovie);
+		g_director->_inStartMovieHandler = false;
+	}
 }
 
 void Score::step() {
@@ -359,8 +369,13 @@ void Score::step() {
 		return;
 
 	if (_haveInteractivity) {
-		if (!_movie->_inputEventQueue.empty() && !_window->frozenLingoStateCount()) {
-			_lingo->processEvents(_movie->_inputEventQueue, true);
+		if (!_movie->_inputEventQueue.empty()) {
+			if (_window->frozenLingoStateCount()) {
+				debugC(3, kDebugEvents, "Score::step(): skipping %d queued input event(s): Lingo frozen depth=%d frame=%d nextFrame=%d",
+					_movie->_inputEventQueue.size(), _window->frozenLingoStateCount(), _curFrameNumber, _nextFrame);
+			} else {
+				_lingo->processEvents(_movie->_inputEventQueue, true);
+			}
 		}
 		if (_version >= kFileVer300 && !_window->_newMovieStarted && _playState != kPlayStopped) {
 			_movie->processEvent(kEventIdle);
@@ -450,6 +465,10 @@ bool Score::isWaitingForNextFrame() {
 				_nextFrameTime = g_system->getMillis();
 			}
 			keepWaiting = true;
+		} else {
+			// A goto was issued while waiting for click — clear the flag (same
+			// behaviour as _waitForChannel and _waitForVideoChannel when goingTo).
+			_waitForClick = false;
 		}
 	} else if (_waitForVideoChannel) {
 		Channel *movieChannel = _channels[_waitForVideoChannel];
@@ -662,8 +681,14 @@ void Score::update() {
 
 			// Don't process frozen script if we use jump instructions
 			// like "go to frame", or open a new movie.
-			if (!_nextFrame && _window->_nextMovie.movie.empty()) {
+			// Exception: "go to the frame" self-loops (_nextFrame == _curFrameNumber) must
+			// still thaw frozen scripts so queued input events can be dispatched next cycle;
+			// without this, the frozen exitFrame script never resumes and user clicks are lost.
+			if ((!_nextFrame || _nextFrame == _curFrameNumber) && _window->_nextMovie.movie.empty()) {
 				processFrozenScripts();
+			} else if (_nextFrame) {
+				debugC(3, kDebugLingoExec, "Score::update(): waiting+goto: cur=%d next=%d frozen=%d nextMovie=%s",
+					_curFrameNumber, _nextFrame, _window->frozenLingoStateCount(), _window->_nextMovie.movie.c_str());
 			}
 			return;
 		}
@@ -823,6 +848,17 @@ void Score::update() {
 		return;
 	}
 
+	// If returning from play #done, thaw the frozen play-state BEFORE enterFrame fires.
+	// Real Director treats play as a subroutine — the frozen handler resumes at its
+	// call site before the return frame's enterFrame event fires.
+	if (g_lingo->_playDoneReady) {
+		count = _window->frozenLingoStateCount();
+		if (!processFrozenPlayScript())
+			return;
+		if (_window->frozenLingoStateCount() > count)
+			return;
+	}
+
 	// then call the enterFrame hook (if one exists)
 	count = _window->frozenLingoStateCount();
 	if (!_vm->_playbackPaused) {
@@ -967,6 +1003,8 @@ void Score::updateSprites(RenderMode mode, bool withClean) {
 
 		if (channel->isDirty(nextSprite) || widgetRedrawn || mode == kRenderForceUpdate) {
 			bool invalidCastMember = currentSprite && currentSprite->_spriteType == kCastMemberSprite && currentSprite->_cast == nullptr;
+			if (invalidCastMember)
+				warning("Score::updateSprites(): CH %d has null cast: castId=%s spriteType=%d", i, currentSprite->_castId.asString().c_str(), currentSprite->_spriteType);
 			if (currentSprite && !invalidCastMember && !currentSprite->_trails)
 				_window->addDirtyRect(channel->getBbox());
 
@@ -2282,6 +2320,15 @@ void Score::setSpriteCasts() {
 		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,
 			spriteType2str(_currentFrame->_sprites[j]->_spriteType));
+
+		// Dump non-empty channels for diagnosis
+		//Sprite *sp = _currentFrame->_sprites[j];
+	//	if (sp->_spriteType != kInactiveSprite || sp->_castId.member != 0) {
+	//		warning("Score::setSpriteCasts(): CH %d castId=%s spriteType=%d w=%d h=%d pos=(%d,%d) cast=%s",
+	//			j, sp->_castId.asString().c_str(), sp->_spriteType,
+	//			sp->_width, sp->_height, sp->_startPoint.x, sp->_startPoint.y,
+//				sp->_cast ? castType2str(sp->_cast->_type) : "null");
+//		}
 	}
 
 	if (_channels.size() == 0) {
@@ -2458,10 +2505,16 @@ void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 o
 	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
 	} else {
-		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
+		warning("Score::writeVWSCResource: Writing Director Version 7+ not supported yet");
 		return;
 	}
+
+	warning("Score::writeVWSCResource: DIAG _version=%d _firstFramePosition=%d _scoreCache.size()=%d _framesStreamSize=%d _frameDataOffset=%d _numChannelsDisplayed=%d channelSize=%d mainChannelSize=%d",
+		_version, _firstFramePosition, (int)_scoreCache.size(), _framesStreamSize, _frameDataOffset, _numChannelsDisplayed, channelSize, mainChannelSize);
 
 	writeStream->seek(offset);
 
@@ -2470,17 +2523,42 @@ void Score::writeVWSCResource(Common::SeekableWriteStream *writeStream, uint32 o
 	writeStream->writeUint32LE(MKTAG('V', 'W', 'S', 'C'));
 	writeStream->writeUint32LE(scoreSize);
 
-	// The format of a score is similar to that of FilmLoopCastMember, or rather its vice-verca
-	writeStream->writeUint32BE(scoreSize);
+	if (_version >= kFileVer600 && _version < kFileVer700) {
+		// For D6, copy the original header bytes verbatim from the loaded frame stream.
+		// The D6 VWSC format has a complex outer structure (sprite details list + inner D4+
+		// header) that we preserve as-is; only the frame data below is rewritten.
+		// NOTE: this assumes the frame/sprite counts have not changed since loading.
+		if (_framesStream && _firstFramePosition > 0) {
+			uint32 savedPos = _framesStream->pos();
+			_framesStream->seek(0);
+			writeStream->writeStream(_framesStream, _firstFramePosition);
+			_framesStream->seek(savedPos);
 
-	// Headers
-	writeStream->writeUint32BE(0);		// frame10Offset
-	writeStream->writeUint32BE(0);		// numOfFrames
-	writeStream->writeUint16BE(_framesVersion);
-	writeStream->writeUint16BE(_spriteRecordSize);
-	writeStream->writeUint16BE(_numChannels);
+			// Patch the inner D4+ framesStreamSize to reflect the new frame data size.
+			// The inner D4+ header occupies the last 20 bytes of the copied region
+			// (_firstFramePosition - 20 through _firstFramePosition - 1); its first field
+			// is the framesStreamSize used in readOneFrame() assertions.
+			// New value = scoreSize - _frameDataOffset covers header + all new frame bytes.
+			uint32 innerFSSOffset = offset + 8 + (_firstFramePosition - 20);
+			uint32 newFSS = scoreSize - _frameDataOffset;
+			uint32 currentWritePos = writeStream->pos();
+			writeStream->seek(innerFSSOffset, SEEK_SET);
+			writeStream->writeUint32BE(newFSS);
+			writeStream->seek(currentWritePos, SEEK_SET);
+		}
+	} else {
+		// The format of a score is similar to that of FilmLoopCastMember, or rather its vice-versa
+		writeStream->writeUint32BE(scoreSize);
 
-	writeStream->writeUint16BE(_numChannelsDisplayed);		// In case _framesVersion > 13, we ignore this while loading
+		// Headers
+		writeStream->writeUint32BE(0);		// frame10Offset
+		writeStream->writeUint32BE(0);		// numOfFrames
+		writeStream->writeUint16BE(_framesVersion);
+		writeStream->writeUint16BE(_spriteRecordSize);
+		writeStream->writeUint16BE(_numChannels);
+
+		writeStream->writeUint16BE(_numChannelsDisplayed);		// In case _framesVersion > 13, we ignore this while loading
+	}
 
 	// until there are no more frames
 		// size of the frame ->
@@ -2519,6 +2597,8 @@ void Score::writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, ui
 			writeSpriteDataD4(writeStream, sprite);
 		} else if (_version >= kFileVer500 && _version < kFileVer600) {
 			writeSpriteDataD5(writeStream, sprite);
+		} else if (_version >= kFileVer600 && _version < kFileVer700) {
+			writeSpriteDataD6(writeStream, sprite);
 		}
 	}
 }
@@ -2529,11 +2609,14 @@ uint32 Score::getVWSCResourceSize() {
 	if (_version >= kFileVer400 && _version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
 		mainChannelSize = kMainChannelSizeD4;
-	} else if (_version >= kFileVer500) {
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 		mainChannelSize = kMainChannelSizeD5;
+	} else if (_version >= kFileVer600 && _version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
+		mainChannelSize = kMainChannelSizeD6;
 	} else {
-		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
+		warning("Score::getVWSCResourceSize: Director version unsupported");
 	}
 
 	uint32 framesSize = 0;

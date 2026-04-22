@@ -179,6 +179,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_freezeState = false;
 	_freezePlay = false;
 	_playDone = false;
+	_playDoneReady = false;
 	_abort = false;
 	_expectError = false;
 	_caughtError = false;
@@ -723,6 +724,10 @@ bool Lingo::execute(int targetFrame) {
 			popContext(true);
 		}
 		if (_playDone) {
+			// Signal processFrozenPlayScript() to thaw the frozen play state.
+			// We can't thaw here because the play state may need to run in
+			// the correct frame context; defer to the next processFrozenScripts() call.
+			_playDoneReady = true;
 			_playDone = false;
 		}
 	}

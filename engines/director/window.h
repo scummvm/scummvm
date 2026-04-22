@@ -171,7 +171,7 @@ public:
 	Common::Path getSharedCastPath();
 
 	LingoState *getLingoState() { return _lingoState; };
-	LingoState *getLingoPlayState() { return _lingoPlayState; };
+	LingoState *getLingoPlayState() { return _lingoPlayStates.empty() ? nullptr : _lingoPlayStates.back(); };
 	uint32 frozenLingoStateCount() { return _frozenLingoStates.size(); };
 	uint32 frozenLingoRecursionCount();
 	void freezeLingoState();
@@ -235,12 +235,16 @@ private:
 	DirectorSound *_soundManager;
 	LingoState *_lingoState;
 	Common::Array<LingoState *> _frozenLingoStates;
-	LingoState *_lingoPlayState;
+	Common::Array<LingoState *> _lingoPlayStates;
 	bool _isStage;
 	Movie *_currentMovie;
 	Common::String _currentPath;
 	Common::StringArray _movieQueue;
 	int16 _startFrame;
+
+	// External cast text values to re-apply after startMovie handlers run,
+	// overriding any damage done by init-clock-style startMovie scripts.
+	Common::HashMap<Common::String, Common::HashMap<int, Common::U32String>> _postStartMovieRestore;
 
 	int _windowType;
 	bool _isModal;

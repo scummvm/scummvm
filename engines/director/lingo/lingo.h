@@ -518,6 +518,7 @@ public:
 	bool _freezeState;
 	bool _freezePlay;
 	bool _playDone;
+	bool _playDoneReady;	// survives execute() cleanup so processFrozenPlayScript() can thaw the play state
 	bool _abort;
 	bool _expectError;
 	bool _caughtError;

@@ -88,6 +88,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
 	_clipBoard = nullptr;
+	_inStartMovieHandler = false;
 	_fixStageSize = false;
 	_fixStageRect = Common::Rect();
 	_wmMode = 0;
@@ -358,7 +359,7 @@ Common::Error DirectorEngine::run() {
 
 	bool loop = true;
 
-	while (loop) {
+	while (loop && !shouldQuit()) {
 		if (_stage->getCurrentMovie())
 			processEvents();
 

@@ -19,12 +19,14 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/util.h"
 #include "director/cast.h"
 #include "director/movie.h"
 #include "director/score.h"
@@ -47,13 +49,6 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	}
 
 	Common::String saveFileName = g_director->getTargetName() + "-" + filename;
-	// Don't open the save file as compressed which doesn't support seeking
-	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(saveFileName, false);
-
-	if (!saveFile) {
-		warning("RIFXArchive::writeToFile: Failed to open file %s for saving", saveFileName.c_str());
-		return false;
-	}
 
 	// Update the resources, their sizes and offsets
 	Common::Array<Resource *> builtResources = rebuildResources(movie);
@@ -62,16 +57,63 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
 	_size = getArchiveSize(builtResources);
-	saveFile->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
 
-	saveFile->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
-	saveFile->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
+	// Use the source archive's endianness throughout: RIFX (Mac) is big-endian, XFIR (Win) is little-endian.
+	bool isBE = _isBigEndian;
+
+	// Pre-read all passthrough (default-case) resources from the source stream BEFORE opening
+	// the output file. openForSaving() truncates the destination file, which may be the same
+	// physical file we're currently reading from (e.g. re-saving a previously saved .dir).
+	// If we read after the truncation we get zeros instead of the original resource data.
+	Common::HashMap<uint32, Common::Array<byte>> passthroughData;
+	for (auto &it : builtResources) {
+		switch (it->tag) {
+		case MKTAG('R', 'I', 'F', 'X'): case MKTAG('X', 'F', 'I', 'R'):
+		case MKTAG('i', 'm', 'a', 'p'): case MKTAG('m', 'm', 'a', 'p'):
+		case MKTAG('K', 'E', 'Y', '*'): case MKTAG('C', 'A', 'S', '*'):
+		case MKTAG('C', 'A', 'S', 't'): case MKTAG('V', 'W', 'C', 'F'):
+		case MKTAG('S', 'T', 'X', 'T'): case MKTAG('C', 'L', 'U', 'T'):
+			break; // handled explicitly — no passthrough read needed
+		default:
+			if (it->size > 0 && _types.contains(it->tag) && _types[it->tag].contains(it->index)) {
+				Common::SeekableReadStreamEndian *res = getResource(it->tag, it->index);
+				uint32 sz = (uint32)res->size();
+				passthroughData[it->index].resize(sz);
+				if (sz > 0)
+					res->read(passthroughData[it->index].data(), sz);
+				delete res;
+			}
+			break;
+		}
+	}
+
+	// Don't open the save file as compressed which doesn't support seeking
+	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(saveFileName, false);
+
+	if (!saveFile) {
+		warning("RIFXArchive::writeToFile: Failed to open file %s for saving", saveFileName.c_str());
+		for (auto it : builtResources)
+			delete it;
+		return false;
+	}
+
+	// Write the 12-byte RIFX/XFIR file header with correct endianness.
+	// For RIFX (BE): bytes "RIFX"; for XFIR (LE): bytes "XFIR".
+	if (isBE) {
+		saveFile->writeUint32BE(_metaTag);
+		saveFile->writeUint32BE(_size + 4); // size field = total_file - 8 = rifxType(4) + content(_size)
+		saveFile->writeUint32BE(_rifxType);
+	} else {
+		saveFile->writeUint32LE(_metaTag);
+		saveFile->writeUint32LE(_size + 4);
+		saveFile->writeUint32LE(_rifxType);
+	}
 
 	switch (_rifxType) {
 	case MKTAG('M', 'V', '9', '3'):
 	case MKTAG('M', 'C', '9', '5'):
 	case MKTAG('A', 'P', 'P', 'L'):
-		writeMemoryMap(saveFile, builtResources);
+		writeMemoryMap(saveFile, builtResources, isBE);
 		break;
 
 	case MKTAG('F', 'G', 'D', 'M'):
@@ -101,15 +143,15 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('K', 'E', 'Y', '*'):
-			writeKeyTable(saveFile, it->offset);
+			writeKeyTable(saveFile, it->offset, isBE);
 			break;
 
 		case MKTAG('C', 'A', 'S', '*'):
-			writeCast(saveFile, it->offset, it->libResourceId);
+			writeCast(saveFile, it->offset, it->libResourceId, isBE);
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
-			cast = movie->getCastByLibResourceID(it->libResourceId);
+			cast = movie->getCastByLibResourceID(it->libResourceId, this);
 			cast->saveCastData(saveFile, it);
 			break;
 
@@ -118,18 +160,7 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			// The external casts don't have a config
 			// movie->getCast() returns the internal cast
 			cast = movie->getCast();
-			cast->saveConfig(saveFile, it->offset);
-			break;
-
-		case MKTAG('B', 'I', 'T', 'D'):
-			{
-				uint32 parentIndex = findParentIndex(it->tag, it->index);
-				Resource parent = castResMap[parentIndex];
-
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
-				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeBITDResource(saveFile, it->offset);
-			}
+			cast->saveConfig(saveFile, it->offset, isBE);
 			break;
 
 		case MKTAG('S', 'T', 'X', 'T'):
@@ -137,9 +168,19 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
-				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSTXTResource(saveFile, it->offset);
+				cast = movie->getCastByArchive(this);
+				TextCastMember *target = nullptr;
+				if (cast) {
+					CastMember *cm = cast->getCastMember(parent.castId + cast->_castArrayStart);
+					target = dynamic_cast<TextCastMember *>(cm);
+					if (!target)
+						warning("RIFXArchive::writeToFile: STXT parent castId=%d is type %d, not TextCastMember", parent.castId, cm ? (int)cm->_type : -1);
+				} else {
+					warning("RIFXArchive::writeToFile: STXT no cast for archive %s", getFileName().c_str());
+				}
+
+				if (target)
+					target->writeSTXTResource(saveFile, it->offset);
 			}
 			break;
 
@@ -148,34 +189,27 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
+				cast = movie->getCastByLibResourceID(parent.libResourceId, this);
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				target->writePaletteData(saveFile, it->offset);
 			}
 			break;
 
-		case MKTAG('S', 'C', 'V', 'W'):
-			{
-
-				uint32 parentIndex = findParentIndex(it->tag, it->index);
-				Resource parent = castResMap[parentIndex];
-
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
-				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSCVWResource(saveFile, it->offset);
-			}
-			break;
-
-		case MKTAG('V', 'W', 'S', 'C'):
-			movie->getScore()->writeVWSCResource(saveFile, it->offset);
-			break;
-
+		// BITD, SCVW, VWSC: write original bytes verbatim (passthrough).
+		// This preserves compressed bitmaps, filmloop data, and the score's delta-encoded frame data
+		// exactly as they appear in the source archive, avoiding size inflation and endianness confusion.
 		default:
 			debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
 			saveFile->seek(it->offset, SEEK_SET);
-			saveFile->writeUint32LE(it->tag);
-			saveFile->writeUint32LE(it->size);
-			saveFile->writeStream(getResource(it->tag, it->index));
+			if (isBE) {
+				saveFile->writeUint32BE(it->tag);
+				saveFile->writeUint32BE(it->size);
+			} else {
+				saveFile->writeUint32LE(it->tag);
+				saveFile->writeUint32LE(it->size);
+			}
+			if (passthroughData.contains(it->index) && !passthroughData[it->index].empty())
+				saveFile->write(passthroughData[it->index].data(), passthroughData[it->index].size());
 			break;
 		}
 	}
@@ -194,10 +228,17 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	for (auto it : builtResources) {
 		delete it;
 	}
+
+	// Register the newly written file in the SavedArchive so it is visible
+	// to hasFile() / createReadStreamForMember() without requiring a restart.
+	SavedArchive *savedArchive = (SavedArchive *)SearchMan.getArchive(kSavedFilesArchive);
+	if (savedArchive)
+		savedArchive->addFile(filename, saveFileName);
+
 	return true;
 }
 
-bool RIFXArchive::writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resources) {
+bool RIFXArchive::writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resources, bool isBE) {
 	Resource mmap;
 
 	for (auto it : resources) {
@@ -206,40 +247,46 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableWriteStream *writeStream, Commo
 		}
 	}
 
-	writeStream->writeUint32LE(MKTAG('i', 'm', 'a', 'p')); // The "imap" resource
-	writeStream->writeUint32LE(_imapLength);		// length of "imap" resource
-	writeStream->writeUint32LE(_mapversion);		// "imap" version
-	writeStream->writeUint32LE(mmap.offset);		// offset of the "mmap" resource
-	writeStream->writeUint32LE(_version);
+	// Helper lambdas to write with correct endianness
+	auto write32 = [&](uint32 v) { if (isBE) writeStream->writeUint32BE(v); else writeStream->writeUint32LE(v); };
+	auto write16 = [&](uint16 v) { if (isBE) writeStream->writeUint16BE(v); else writeStream->writeUint16LE(v); };
+
+	write32(MKTAG('i', 'm', 'a', 'p')); // The "imap" resource
+	write32(_imapLength);		// length of "imap" resource
+	write32(_mapversion);		// "imap" version
+	write32(mmap.offset);		// offset of the "mmap" resource
+	write32(_version);
 
 	writeStream->seek(mmap.offset);
-	writeStream->writeUint32LE(MKTAG('m', 'm', 'a', 'p'));
-	writeStream->writeUint32LE(mmap.size);
+	write32(MKTAG('m', 'm', 'a', 'p'));
+	write32(mmap.size);
 
-	writeStream->writeUint16LE(_mmapHeaderSize);
-	writeStream->writeUint16LE(_mmapEntrySize);
+	write16(_mmapHeaderSize);
+	write16(_mmapEntrySize);
 
 	uint32 newResCount = resources.size();
-	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
-	writeStream->writeUint32LE(newResCount);
+	write32(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
+	write32(newResCount);
 	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff
 
 	// ID of the first 'free' resource, we don't make use of it
-	writeStream->writeUint32LE(0);
+	write32(0);
 
 	for (auto &it : resources) {
 		debugC(3, kDebugSaving, "RIFXArchive::writeMemoryMap: Memory map entry: '%s', size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
 			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
 
-		// Write down the tag, the size and offset of the current resource
-		writeStream->writeUint32LE(it->tag);
-		writeStream->writeUint32LE(it->size);
-		writeStream->writeUint32LE(it->offset);
+		// Write down the tag, the size and offset of the current resource.
+		// mmap stores TAG offsets; getResource() adds +8 to reach the data.
+		// rebuildResources() already computes TAG offsets, so write them as-is.
+		write32(it->tag);
+		write32(it->size);
+		write32(it->offset);
 
 		// Currently ignoring flags, unk1 and nextFreeResourceID
-		writeStream->writeUint16LE(it->flags);
-		writeStream->writeUint16LE(it->unk1);
-		writeStream->writeUint32LE(it->nextFreeResourceID);
+		write16(it->flags);
+		write16(it->unk1);
+		write32(it->nextFreeResourceID);
 	}
 
 	return true;
@@ -273,16 +320,19 @@ bool RIFXArchive::writeAfterBurnerMap(Common::SeekableWriteStream *writeStream) 
 #endif
 }
 
-bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset) {
+bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset, bool isBE) {
 	writeStream->seek(offset);
 
-	writeStream->writeUint32LE(MKTAG('K', 'E', 'Y', '*'));
-	writeStream->writeUint32LE(getResourceSize(MKTAG('K', 'E', 'Y', '*'), getResourceIDList(MKTAG('K', 'E', 'Y', '*'))[0]));
+	auto write32 = [&](uint32 v) { if (isBE) writeStream->writeUint32BE(v); else writeStream->writeUint32LE(v); };
+	auto write16 = [&](uint16 v) { if (isBE) writeStream->writeUint16BE(v); else writeStream->writeUint16LE(v); };
 
-	writeStream->writeUint16LE(_keyTableEntrySize);
-	writeStream->writeUint16LE(_keyTableEntrySize2);
-	writeStream->writeUint32LE(_keyTableEntryCount);
-	writeStream->writeUint32LE(_keyTableUsedCount);
+	write32(MKTAG('K', 'E', 'Y', '*'));
+	write32(getKeyTableResourceSize());
+
+	write16(_keyTableEntrySize);
+	write16(_keyTableEntrySize2);
+	write32(_keyTableEntryCount);
+	write32(_keyTableUsedCount);
 
 	debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: writing key table:");
 
@@ -294,9 +344,9 @@ bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32
 
 			for (auto childIndex : keyArray) {
 				debugC(3, kDebugSaving, "_keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
-				writeStream->writeUint32LE(childIndex);
-				writeStream->writeUint32LE(parentIndex._key);
-				writeStream->writeUint32LE(childTag._key);
+				write32(childIndex);
+				write32(parentIndex._key);
+				write32(childTag._key);
 			}
 		}
 	}
@@ -304,13 +354,15 @@ bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32
 	return true;
 }
 
-bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 libResourceId) {
+bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 libResourceId, bool isBE) {
 	writeStream->seek(offset);
 	uint32 casSize = getCASResourceSize(libResourceId);
 
+	auto write32 = [&](uint32 v) { if (isBE) writeStream->writeUint32BE(v); else writeStream->writeUint32LE(v); };
+
 	uint castTag = MKTAG('C', 'A', 'S', 't');
-	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', '*'));
-	writeStream->writeUint32LE(casSize);
+	write32(MKTAG('C', 'A', 'S', '*'));
+	write32(casSize);
 
 	Common::HashMap<uint16, uint16> castIndexes;
 
@@ -330,7 +382,7 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
 		if (castIndex) {
 			debugCN(5, kDebugSaving, (i == 0 ? "%d" : ", %d"), castIndex);
-			writeStream->writeUint32BE(castIndex);
+			write32(castIndex);
 		}
 	}
 	debugC(5, kDebugSaving, "]");
@@ -357,6 +409,9 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// Iterate over all the casts
 	for (auto it : *(movie->getCasts())) {
 		cast = it._value;
+		// Only process cast members that belong to this archive
+		if (!cast || cast->getArchive() != this)
+			continue;
 
 		// Iterate over all the loaded members of the cast to check for new cast members
 		for (auto jt : *(cast->_loadedCast)) {
@@ -462,7 +517,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('C', 'A', 'S', 't'):
 			{
-				cast = movie->getCastByLibResourceID(it->libResourceId);
+				cast = movie->getCastByLibResourceID(it->libResourceId, this);
 				// The castIds of cast members start from _castArrayStart
 				CastMember *target = cast->getCastMember(it->castId + cast->_castArrayStart);
 
@@ -511,8 +566,21 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
-				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				resSize = target->getSTXTResourceSize();
+				cast = movie->getCastByArchive(this);
+				TextCastMember *target = nullptr;
+				if (cast) {
+					CastMember *cm = cast->getCastMember(parent.castId + cast->_castArrayStart);
+					target = dynamic_cast<TextCastMember *>(cm);
+					if (!target)
+						warning("RIFXArchive::rebuildResources: STXT parent castId=%d is type %d, not TextCastMember", parent.castId, cm ? (int)cm->_type : -1);
+				} else {
+					warning("RIFXArchive::rebuildResources: STXT no cast for archive %s", getFileName().c_str());
+				}
+
+				if (target)
+					resSize = target->getSTXTResourceSize();
+				else
+					resSize = it->size;
 
 				it->offset = currentSize;
 				it->size = resSize;
@@ -527,7 +595,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				// Get the appropriate cast in case of multiple casts
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
+				cast = movie->getCastByLibResourceID(parent.libResourceId, this);
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				resSize = target->getPaletteDataSize();
 
@@ -538,44 +606,9 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			}
 			break;
 
-		case MKTAG('B', 'I', 'T', 'D'):
-			{
-				uint32 parentIndex = findParentIndex(it->tag, it->index);
-				Resource parent = castResMap[parentIndex];
-
-				// Get the appropriate cast in case of multiple casts
-				cast = movie->getCastByLibResourceID(parent.libResourceId);
-				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				resSize = target->getBITDResourceSize();
-
-				it->offset = currentSize;
-				it->size = resSize;
-
-				currentSize += resSize + 8;
-			}
-			break;
-
-		case MKTAG('S', 'C', 'V', 'W'):
-			{
-				uint32 parentIndex = findParentIndex(it->tag, it->index);
-				Resource parent = castResMap[parentIndex];
-
-				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				resSize = target->getSCVWResourceSize();
-
-				it->offset = currentSize;
-				it->size = resSize;
-
-				currentSize += resSize + 8;
-			}
-			break;
-
-		case MKTAG('V', 'W', 'S', 'C'):
-			resSize = movie->getScore()->getVWSCResourceSize();
-			it->size = resSize;
-			it->offset = currentSize;
-			currentSize += resSize + 8;		// The size doesn't include the header and the size entry
-			break;
+		// BITD, SCVW, VWSC: fall through to default to preserve the original resource size.
+		// Passthrough write (in writeToFile) keeps the original bytes from the source archive,
+		// so we must also keep the original size here to maintain consistent offsets.
 
 		case MKTAG('f', 'r', 'e', 'e'):
 		case MKTAG('j', 'u', 'n', 'k'):
@@ -694,19 +727,35 @@ uint32 RIFXArchive::findParentIndex(uint32 tag, uint16 index) {
 SavedArchive::SavedArchive(Common::String target) {
 	Common::StringArray saveFileList = g_engine->getSaveFileManager()->listSavefiles(target + "-*");
 
-	debugC(3, kDebugLoading, "DirectorEngine:: loadSaveFiles: Loading save files");
+	warning("SavedArchive::ctor: target='%s', found %d save file(s)", target.c_str(), (int)saveFileList.size());
 	for (auto saveFileName : saveFileList) {
 		// Derive the original file name from the save file name
 		// Save files are named target_name-save_filename
 		Common::String origFileName = saveFileName.substr(target.size() + 1);
-		debugC(3, kDebugLoading, "Found save file: %s -> %s", saveFileName.c_str(), origFileName.c_str());
+		// Normalize key to uppercase so lookups are case-insensitive
+		Common::String key = origFileName;
+		key.toUppercase();
+		warning("SavedArchive::ctor: registering '%s' -> '%s'", key.c_str(), saveFileName.c_str());
 
-		_files[origFileName] = saveFileName;
+		_files[key] = saveFileName;
 	}
 }
 
 bool SavedArchive::hasFile(const Common::Path &path) const {
-	return (_files.find(path.toString()) != _files.end());
+	Common::String basename = getFileName(path.toString());
+	Common::String upperBasename = basename;
+	upperBasename.toUppercase();
+	bool found = (_files.find(upperBasename) != _files.end());
+	if (!found) {
+		// Also try the full path uppercased, in case it was registered that way
+		Common::String upperPath = path.toString();
+		upperPath.toUppercase();
+		found = (_files.find(upperPath) != _files.end());
+	}
+	warning("SavedArchive::hasFile('%s') [basename='%s'] -> %s", path.toString().c_str(), basename.c_str(), found ? "YES" : "NO");
+	for (auto &it : _files)
+		warning("  SavedArchive file: '%s' -> '%s'", it._key.c_str(), it._value.c_str());
+	return found;
 }
 
 int SavedArchive::listMembers(Common::ArchiveMemberList &list) const {
@@ -728,11 +777,48 @@ const Common::ArchiveMemberPtr SavedArchive::getMember(const Common::Path &path)
 }
 
 Common::SeekableReadStream *SavedArchive::createReadStreamForMember(const Common::Path &path) const {
-	FileMap::const_iterator fDesc = _files.find(path.toString());
-	if (fDesc == _files.end())
+	// Keys are stored uppercase; normalize the lookup to uppercase
+	Common::String upperBasename = getFileName(path.toString());
+	upperBasename.toUppercase();
+	FileMap::const_iterator fDesc = _files.find(upperBasename);
+	if (fDesc == _files.end()) {
+		Common::String upperPath = path.toString();
+		upperPath.toUppercase();
+		fDesc = _files.find(upperPath);
+	}
+	if (fDesc == _files.end()) {
+		warning("SavedArchive::createReadStreamForMember('%s') -> NOT FOUND", path.toString().c_str());
 		return nullptr;
+	}
 
+	warning("SavedArchive::createReadStreamForMember('%s') -> loading '%s'", path.toString().c_str(), fDesc->_value.c_str());
 	return g_engine->getSaveFileManager()->openForLoading(fDesc->_value);
+}
+
+void SavedArchive::addFile(const Common::String &origName, const Common::String &savedName) {
+	// Keys are stored uppercase for case-insensitive matching
+	Common::String upperName = origName;
+	upperName.toUppercase();
+	debugC(3, kDebugLoading, "SavedArchive::addFile: registering '%s' -> '%s'", upperName.c_str(), savedName.c_str());
+	_files[upperName] = savedName;
+
+	// Also register by all seen full paths that match this filename
+	if (g_director) {
+		Common::Array<Common::Path> toEvict;
+		for (auto &entry : g_director->_allSeenResFiles) {
+			Common::String fname = getFileName(entry._key.toString(g_director->_dirSeparator));
+			if (fname.equalsIgnoreCase(origName)) {
+				Common::String upperKey = entry._key.toString();
+				upperKey.toUppercase();
+				_files[upperKey] = savedName;
+				debugC(3, kDebugLoading, "SavedArchive::addFile: mapped full path '%s' -> '%s'",
+					upperKey.c_str(), savedName.c_str());
+				toEvict.push_back(entry._key);
+			}
+		}
+		for (auto &evictPath : toEvict)
+			g_director->_allSeenResFiles.erase(evictPath);
+	}
 }
 
 } // End of namespace Director

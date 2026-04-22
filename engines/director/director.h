@@ -292,6 +292,12 @@ protected:
 public:
 	const DirectorGameDescription *_gameDescription;
 	Common::HashMap<Common::String, Common::String> _cachedSaveFiles;
+	// Saved text cast member values keyed by archive filename → member index → text.
+	// Populated in loadNextMovie before movie destruction; applied after next movie loads.
+	Common::HashMap<Common::String, Common::HashMap<int, Common::U32String>> _savedCastText;
+	// True while a startMovie event is being dispatched; suppresses live-sync writes
+	// so init-clock-style startMovie handlers can't poison savedCastText.
+	bool _inStartMovieHandler;
 	Common::FSNode _gameDataDir;
 	CastMemberID *_clipBoard;
 	uint32 _wmMode;

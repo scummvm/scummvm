@@ -189,14 +189,18 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_regY = stream.readUint16();
 		_regX = stream.readUint16();
 
-		_updateFlags = stream.readByte();
+		// 22 bytes of base D6 CASt data ends here.
+		// _updateFlags is only present for COLOR bitmaps (pitch & 0x8000).
+		// For 1bpp bitmaps the CASt data is exactly 22 bytes; reading _updateFlags
+		// unconditionally (before the color check) was wrong: it triggered eos() on 1bpp
+		// bitmaps AND shifted all color fields by one byte for 8bpp bitmaps.
 
-		// 22 bytes
 		// This is color image flag
 		if (_pitch & 0x8000) {
 			_pitch &= 0x3fff;
 
-			_bitsPerPixel = stream.readByte();
+			_updateFlags = stream.readByte();  // byte 23, only present for color bitmaps
+			_bitsPerPixel = stream.readByte();  // byte 24
 
 			int clutCastLib = -1;
 			if (version >= kFileVer500) {
@@ -1106,21 +1110,43 @@ void BitmapCastMember::setField(int field, const Datum &d) {
 }
 
 uint32 BitmapCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		// D6 CASt data layout (see BitmapCastMember constructor D6 branch):
+		// _pitch (uint16): 2 — high bit 0x8000 set if color image
+		// _initialRect: 8
+		// padding (uint16): 2
+		// _editVersion (uint16): 2
+		// _scrollPoint.y (sint16): 2
+		// _scrollPoint.x (sint16): 2
+		// _regY (uint16): 2
+		// _regX (uint16): 2
+		// Total base: 22 bytes (1bpp bitmaps stop here)
+		// Color block (only for bitmaps with pitch & 0x8000):
+		//   _updateFlags (byte): 1
+		//   bitsPerPixel (byte): 1
+		//   clutCastLib (sint16): 2
+		//   clutId (sint16): 2
+		// Total color: 6 bytes, grand total: 28 bytes
+		uint32 dataSize = 22;
+		if (_bitsPerPixel > 1) {
+			dataSize += 6;
+		}
+		return dataSize;
+	}
+
+	// D4/D5 CASt data layout:
 	// _pitch : 2 bytes
 	// _initialRect : 8 bytes
 	// _boundingRect : 8 bytes
 	// _regY : 2 bytes
 	// _regX : 2 bytes
 	// Total: 22 bytes
-	// For Director 4 : 2 byte extra for casttype and flags (See Cast::loadCastData())
+	// The +2 accounts for the D4 casttype+flags bytes (consumed before writeCastData() is
+	// called for D4), and also coincidentally covers the extra D5+ clutCastLib sint16.
 	uint32 dataSize = 22 + 2;
 
 	if (_bitsPerPixel != 0) {
 		dataSize += 4;
-		// if (_cast->_version >= kFileVer500) {
-		// 	dataSize += 2;		// Added two bytes for _clut.member
-		// 	dataSize -= 2;		// Removed two bytes for _castType and _flags (See Cast::loadCastData())
-		// }
 
 		if (_flags2 != 0) {
 			dataSize += 16;
@@ -1130,6 +1156,37 @@ uint32 BitmapCastMember::getCastDataSize() {
 }
 
 void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		// D6 format (mirrors the D6 branch of BitmapCastMember constructor)
+		bool isColor = (_bitsPerPixel > 1);
+		writeStream->writeUint16BE(isColor ? (_pitch | 0x8000) : _pitch);
+		Movie::writeRect(writeStream, _initialRect);
+		writeStream->writeUint16BE(0);					// padding (alphaThreshold is D7+)
+		writeStream->writeUint16BE(_editVersion);
+		writeStream->writeSint16BE(_scrollPoint.y);
+		writeStream->writeSint16BE(_scrollPoint.x);
+		writeStream->writeUint16BE(_regY);
+		writeStream->writeUint16BE(_regX);
+		// 22-byte base ends here.  Color block follows only for color bitmaps.
+
+		if (isColor) {
+			writeStream->writeByte(_updateFlags);   // byte 23, color-block header
+			writeStream->writeByte(_bitsPerPixel);  // byte 24
+			if (_clut.castLib == _cast->_castLibID) {
+				writeStream->writeSint16BE(-1);
+			} else {
+				writeStream->writeSint16BE(_clut.castLib);
+			}
+			if (_clut.member > 0) {
+				writeStream->writeSint16BE(_clut.member);
+			} else {
+				writeStream->writeSint16BE(_clut.member + 1);
+			}
+		}
+		return;
+	}
+
+	// D4/D5 format
 	writeStream->writeUint16BE(_pitch);
 
 	Movie::writeRect(writeStream, _initialRect);
@@ -1137,8 +1194,6 @@ void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 
 	writeStream->writeUint16BE(_regY);
 	writeStream->writeUint16BE(_regX);
-
-	warning("BitmapCastMember::writeCastData(): TODO process D6+");
 
 	if (_bitsPerPixel != 0) {
 		writeStream->writeByte(0);		// Skip one byte (not stored)
@@ -1193,16 +1248,14 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 
 	if (_bitsPerPixel >> 3) {
 		format.bytesPerPixel = _bitsPerPixel >> 3;
-		pixels.create(_picture->_surface.w, _picture->_surface.h, format);
+		// Allocate _pitch / bytesPerPixel pixels wide so the buffer is exactly
+		// _pitch * h bytes — matching getBITDResourceSize() and the final write below.
+		// Using surface.w would allocate too little when _pitch > w * bytesPerPixel,
+		// causing a heap write overflow in the 8bpp case.
+		pixels.create(_pitch / format.bytesPerPixel, _picture->_surface.h, format);
 	} else {
 		format.bytesPerPixel = 1;
 		pixels.create(_pitch, _picture->_surface.h, format);
-	}
-
-	offset = 0;
-
-	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(_pitch * _picture->_surface.h / _picture->_surface.h)) {
-		offset = (_pitch - _picture->_surface.w) % 2;
 	}
 
 	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
@@ -1235,7 +1288,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 				break;
 
 			case 8:
-				*(ptr + (y * offset)) = *((byte *)_picture->_surface.getBasePtr(x, y));
+				*ptr = *((byte *)_picture->_surface.getBasePtr(x, y));
 				ptr++; x++;
 				break;
 

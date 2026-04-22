@@ -38,6 +38,7 @@
 #include "director/sound.h"
 #include "director/sprite.h"
 #include "director/castmember/castmember.h"
+#include "director/castmember/text.h"
 #include "director/debugger/debugtools.h"
 #include "graphics/managed_surface.h"
 
@@ -57,7 +58,6 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_puppetTransition = nullptr;
 	_soundManager = new DirectorSound(this);
 	_lingoState = new LingoState;
-	_lingoPlayState = nullptr;
 
 	_currentMovie = nullptr;
 	_nextMovie.frameI = -1;
@@ -81,8 +81,8 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 
 Window::~Window() {
 	delete _lingoState;
-	if (_lingoPlayState)
-		delete _lingoPlayState;
+	for (uint i = 0; i < _lingoPlayStates.size(); i++)
+		delete _lingoPlayStates[i];
 	delete _soundManager;
 	delete _currentMovie;
 	for (uint i = 0; i < _frozenLingoStates.size(); i++)
@@ -474,7 +474,7 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 		file.close();
 	}
 
-	debug(1, "Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), _fileName.toString(Common::Path::kNativeSeparator).c_str());
+	warning("Window::setNextMovie: '%s' -> '%s' -> '%s'", movieFilenameRaw.c_str(), convertPath(movieFilenameRaw).c_str(), _fileName.toString(Common::Path::kNativeSeparator).c_str());
 
 	if (!fileExists) {
 		warning("Movie %s does not exist", _fileName.toString(Common::Path::kNativeSeparator).c_str());
@@ -544,6 +544,42 @@ bool Window::loadNextMovie() {
 	if (_currentMovie) {
 		previousSharedCast = _currentMovie->getSharedCast();
 		_currentMovie->_sharedCast = nullptr;
+
+
+		// Persist text cast member values from external castlibs before this movie
+		// is destroyed.  In real Director these castlibs stay in memory across play/go
+		// transitions so script-visible field values survive intact.  ScummVM re-loads
+		// them from disk each time, so we snapshot the current text here and re-apply
+		// it after the next movie's casts have loaded.
+		Archive *mainArchive = _currentMovie->getArchive();
+		warning("loadNextMovie: snapshot from movie '%s' -> '%s'", mainArchive->getFileName().c_str(), _nextMovie.movie.c_str());
+		for (auto &castEntry : *(_currentMovie->getCasts())) {
+			Cast *cast = castEntry._value;
+			if (!cast)
+				continue;
+			Archive *castArchive = cast->getArchive();
+			if (!castArchive || castArchive == mainArchive)
+				continue;
+			Common::String castFilename = castArchive->getFileName();
+			if (castFilename.empty())
+				continue;
+			Common::String key = castFilename;
+			key.toUppercase();
+			for (auto &member : *(cast->_loadedCast)) {
+				if (!member._value)
+					continue;
+				if (member._value->_type == kCastText) {
+					TextCastMember *tm = static_cast<TextCastMember *>(member._value);
+					if (!tm->isLoaded())
+						tm->load();
+					if (!tm->_ptext.empty()) {
+						g_director->_savedCastText[key][member._key] = tm->_ptext;
+						if (key == "MASTER.CST")
+							warning("MASTER.CST snapshot: member %d ptext='%s'", member._key, tm->_ptext.encode().c_str());
+					}
+				}
+			}
+		}
 	}
 
 	delete _currentMovie;
@@ -639,6 +675,75 @@ bool Window::step() {
 				debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 				bool goodMovie = _currentMovie->loadArchive();
+
+				// Re-apply text values snapshotted from external castlibs before the
+				// previous movie was destroyed.  This preserves script-visible field
+				// values (money, time, etc.) that real Director keeps live in memory.
+				warning("loadNextMovie apply: in movie '%s'", _currentMovie->getArchive()->getFileName().c_str());
+				warning("savedCastText restore: entering movie '%s' with %d saved cast(s)",
+					_currentMovie->getArchive()->getFileName().c_str(), g_director->_savedCastText.size());
+				if (!g_director->_savedCastText.empty()) {
+					Archive *newMainArchive = _currentMovie->getArchive();
+					Common::Array<Common::String> appliedKeys;
+					for (auto &castEntry : *(_currentMovie->getCasts())) {
+						Cast *cast = castEntry._value;
+						if (!cast)
+							continue;
+						Archive *castArchive = cast->getArchive();
+						if (!castArchive || castArchive == newMainArchive)
+							continue;
+						Common::String castFilename = castArchive->getFileName();
+						if (castFilename.empty())
+							continue;
+						Common::String key = castFilename;
+						key.toUppercase();
+						auto savedIt = g_director->_savedCastText.find(key);
+						if (savedIt == g_director->_savedCastText.end()) {
+							warning("savedCastText restore: cast '%s' present in movie but NOT in savedCastText — skipping", castFilename.c_str());
+							continue;
+						}
+						for (auto &savedMember : savedIt->_value) {
+							auto memberIt = cast->_loadedCast->find(savedMember._key);
+							if (memberIt == cast->_loadedCast->end())
+								continue;
+							CastMember *cm = memberIt->_value;
+							if (!cm || cm->_type != kCastText)
+								continue;
+							TextCastMember *tm = static_cast<TextCastMember *>(cm);
+							// load() sets _loaded=true but overwrites _ptext from archive.
+							// Restore our saved value and rebuild _ftext so the widget
+							// renders the correct text.
+							tm->load();
+							if (key == "MASTER.CST")
+								warning("MASTER.CST apply: restoring member %d disk='%s' -> saved='%s' [tm=%p cast=%p]",
+									savedMember._key, tm->_ptext.encode().c_str(), savedMember._value.encode().c_str(),
+									(void *)tm, (void *)cast);
+							tm->_ptext = savedMember._value;
+							tm->_rtext = savedMember._value.encode(Common::kUtf8);
+							Common::U32String fmt = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x",
+								tm->_fontId, tm->_textSlant, tm->_fontSize,
+								tm->_fgpalinfo1, tm->_fgpalinfo2, tm->_fgpalinfo3);
+							tm->_ftext = fmt + tm->_ptext;
+							tm->setModified(true);
+							// Remember this value so we can re-apply it after startMovie
+							// handlers run.  startMovie scripts (e.g. "init clock") may
+							// unconditionally reset fields we just restored.
+							_postStartMovieRestore[key][savedMember._key] = savedMember._value;
+						}
+						appliedKeys.push_back(key);
+					}
+					// Only remove entries that were actually applied to this movie's casts.
+					// Unmatched entries (e.g. MASTER.CST when a transitional movie lacks it)
+					// are preserved so the next movie in the chain can receive them.
+					for (const auto &key : appliedKeys)
+						g_director->_savedCastText.erase(key);
+					if (!g_director->_savedCastText.empty()) {
+						for (auto &remaining : g_director->_savedCastText)
+							warning("savedCastText restore: '%s' still has %d entry/entries (not in this movie — will survive to next)",
+								remaining._key.c_str(), remaining._value.size());
+					}
+				}
+
 				// If we've just started, switch to the default palette
 				if (g_director->_firstMovie)
 					g_director->setPalette(_currentMovie->getCast()->_defaultPalette);
@@ -674,6 +779,10 @@ bool Window::step() {
 			}
 
 		case kPlayLoaded:
+			warning("MASTER.CST kPlayLoaded: movie='%s' postRestore=%d savedCastText=%d",
+				_currentMovie->getMacName().c_str(),
+				(int)_postStartMovieRestore.size(),
+				(int)g_director->_savedCastText.size());
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				debugC(1, kDebugEvents, "Starting playback of movie '%s'", _currentMovie->getMacName().c_str());
 
@@ -690,6 +799,65 @@ bool Window::step() {
 					_currentMovie->getScore()->setCurrentFrame(_startFrame);
 					_startFrame = -1;
 				}
+
+				// Re-apply any external cast text values that were snapshotted
+				// before this movie loaded.  startMovie handlers (e.g. "init clock")
+				// may have reset fields we already restored in kPlayNotStarted.
+				// We also push the values back into savedCastText so the next child
+				// window (e.g. MAINMENU as a dialog) inherits the correct value.
+				if (_isStage && !_postStartMovieRestore.empty()) {
+					warning("MASTER.CST post-startMovie: _postStartMovieRestore has %d entries", (int)_postStartMovieRestore.size());
+					Archive *newMainArchive = _currentMovie->getArchive();
+					for (auto &castEntry : *(_currentMovie->getCasts())) {
+						Cast *cast = castEntry._value;
+						if (!cast) continue;
+						Archive *castArchive = cast->getArchive();
+						if (!castArchive || castArchive == newMainArchive) continue;
+						Common::String castFilename = castArchive->getFileName();
+						if (castFilename.empty()) continue;
+						Common::String key = castFilename;
+						key.toUppercase();
+						auto restoreIt = _postStartMovieRestore.find(key);
+						if (restoreIt == _postStartMovieRestore.end()) {
+							warning("MASTER.CST post-startMovie: key '%s' not found in _postStartMovieRestore", key.c_str());
+							continue;
+						}
+						for (auto &entry : restoreIt->_value) {
+							auto memberIt = cast->_loadedCast->find(entry._key);
+							if (memberIt == cast->_loadedCast->end()) {
+								warning("MASTER.CST post-startMovie: member %d not found in cast [cast=%p]", entry._key, (void *)cast);
+								continue;
+							}
+							CastMember *cm = memberIt->_value;
+							if (!cm || cm->_type != kCastText) {
+								warning("MASTER.CST post-startMovie: member %d is not text [cm=%p type=%d]", entry._key, (void *)cm, cm ? (int)cm->_type : -1);
+								continue;
+							}
+							TextCastMember *tm = static_cast<TextCastMember *>(cm);
+							warning("MASTER.CST post-startMovie: re-applying member %d '%s' -> '%s' [tm=%p]",
+								entry._key, tm->_ptext.encode().c_str(), entry._value.encode().c_str(), (void *)tm);
+							tm->_ptext = entry._value;
+							tm->_rtext = entry._value.encode(Common::kUtf8);
+							Common::U32String fmt = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x",
+								tm->_fontId, tm->_textSlant, tm->_fontSize,
+								tm->_fgpalinfo1, tm->_fgpalinfo2, tm->_fgpalinfo3);
+							tm->_ftext = fmt + tm->_ptext;
+							tm->setModified(true);
+							// Also refresh savedCastText so any child window that opens
+							// next (e.g. MAINMENU) inherits the correct value.
+							g_director->_savedCastText[key][entry._key] = entry._value;
+						}
+					}
+					// Do NOT clear _postStartMovieRestore here: frame-1 scripts (e.g.
+					// an init-clock prepareFrame/enterFrame handler) fire during
+					// Score::step() below and can overwrite values we just restored.
+					// We re-apply and clear in kPlayStarted after that first step.
+				} else {
+					// Not the stage, or nothing to restore: discard so kPlayStarted
+					// doesn't pick it up and override child-window script updates.
+					_postStartMovieRestore.clear();
+				}
+
 				g_debugger->movieHook();
 			} else {
 				return false;
@@ -700,6 +868,46 @@ bool Window::step() {
 			debugC(5, kDebugEvents, "@@@@   Stepping movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 			debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 			_currentMovie->getScore()->step();
+			// Re-apply saved external cast values that may have been overwritten by
+			// frame-1 scripts (e.g. an init-clock handler that fires on the first
+			// prepareFrame/enterFrame rather than on startMovie).  This is a second
+			// pass identical to the kPlayLoaded post-startMovie block above; together
+			// the two passes bracket startMovie writes AND first-frame writes.
+			if (_isStage && !_postStartMovieRestore.empty()) {
+				warning("MASTER.CST post-firstFrame: re-applying %d entry/entries", (int)_postStartMovieRestore.size());
+				Archive *newMainArchive = _currentMovie->getArchive();
+				for (auto &castEntry : *(_currentMovie->getCasts())) {
+					Cast *cast = castEntry._value;
+					if (!cast) continue;
+					Archive *castArchive = cast->getArchive();
+					if (!castArchive || castArchive == newMainArchive) continue;
+					Common::String castFilename = castArchive->getFileName();
+					if (castFilename.empty()) continue;
+					Common::String key = castFilename;
+					key.toUppercase();
+					auto restoreIt = _postStartMovieRestore.find(key);
+					if (restoreIt == _postStartMovieRestore.end()) continue;
+					for (auto &entry : restoreIt->_value) {
+						auto memberIt = cast->_loadedCast->find(entry._key);
+						if (memberIt == cast->_loadedCast->end()) continue;
+						CastMember *cm = memberIt->_value;
+						if (!cm || cm->_type != kCastText) continue;
+						TextCastMember *tm = static_cast<TextCastMember *>(cm);
+						if (key == "MASTER.CST")
+							warning("MASTER.CST post-firstFrame: member %d '%s' -> '%s' [tm=%p]",
+								entry._key, tm->_ptext.encode().c_str(), entry._value.encode().c_str(), (void *)tm);
+						tm->_ptext = entry._value;
+						tm->_rtext = entry._value.encode(Common::kUtf8);
+						Common::U32String fmt = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x",
+							tm->_fontId, tm->_textSlant, tm->_fontSize,
+							tm->_fgpalinfo1, tm->_fgpalinfo2, tm->_fgpalinfo3);
+						tm->_ftext = fmt + tm->_ptext;
+						tm->setModified(true);
+						g_director->_savedCastText[key][entry._key] = entry._value;
+					}
+				}
+				_postStartMovieRestore.clear();
+			}
 			return true;
 		case kPlayPausedAfterLoading:
 		case kPlayPaused:
@@ -761,17 +969,13 @@ void Window::thawLingoState() {
 }
 
 void Window::freezeLingoPlayState() {
-	if (_lingoPlayState) {
-		warning("FIXME: Just clobbered the play state");
-		delete _lingoPlayState;
-	}
-	_lingoPlayState = _lingoState;
+	_lingoPlayStates.push_back(_lingoState);
 	_lingoState = new LingoState;
-	debugC(3, kDebugLingoExec, "Freezing Lingo play state");
+	debugC(3, kDebugLingoExec, "Freezing Lingo play state, depth %d", _lingoPlayStates.size());
 }
 
 bool Window::thawLingoPlayState() {
-	if (!_lingoPlayState) {
+	if (_lingoPlayStates.empty()) {
 		warning("Tried to thaw when there's no frozen play state, ignoring");
 		return false;
 	}
@@ -780,9 +984,9 @@ bool Window::thawLingoPlayState() {
 		return false;
 	}
 	delete _lingoState;
-	debugC(3, kDebugLingoExec, "Thawing Lingo play state");
-	_lingoState = _lingoPlayState;
-	_lingoPlayState = nullptr;
+	debugC(3, kDebugLingoExec, "Thawing Lingo play state, depth %d", _lingoPlayStates.size());
+	_lingoState = _lingoPlayStates.back();
+	_lingoPlayStates.pop_back();
 	return true;
 }
 

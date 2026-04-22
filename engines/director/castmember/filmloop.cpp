@@ -59,7 +59,8 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 		_enableSound = flags & 8 ? 1 : 0;
 		_crop = flags & 2 ? 0 : 1;
 		_center = flags & 1 ? 1 : 0;
-	} else if (cast->_version >= kFileVer500 && cast->_version < kFileVer600) {
+	} else if (cast->_version >= kFileVer500 && cast->_version < kFileVer700) {
+		// D5 and D6 share the same CASt layout: initialRect (8) + flags (4) + unk1 (2) = 14 bytes
 		_initialRect = Movie::readRect(stream);
 		uint32 flags = stream.readUint32BE();
 		uint16 unk1 = stream.readUint16BE();
@@ -272,7 +273,8 @@ uint32 FilmLoopCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// It has been observed that the FilmCastMember has _flags as 0x00
 		return 8 + 4 + 2 + 2;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer700) {
+		// D5 and D6: initialRect (8) + flags (4) + unk1 (2) = 14 bytes
 		return 8 + 4 + 2;
 	}
 
@@ -289,7 +291,8 @@ void FilmLoopCastMember::writeCastData(Common::SeekableWriteStream *writeStream)
 		flags |= (_enableSound) ? 8 : 0;
 		flags |= (_crop) ? 0 : 2;
 		flags |= (_center) ? 1 : 0;
-	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer700) {
+		// D5 and D6 share the same flags layout
 		flags |= (_looping) ? 0 : 32;
 		flags |= (_enableSound) ? 8 : 0;
 		flags |= (_crop) ? 0 : 2;
@@ -311,8 +314,10 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 		channelSize = kSprChannelSizeD4;
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
+	} else if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
 	} else {
-		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
+		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 7+ not supported yet");
 		return;
 	}
 
@@ -325,13 +330,26 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
 	writeStream->writeUint32LE(filmloopSize);	// Size of the resource
 
-	writeStream->writeUint32BE(filmloopSize);
+	if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		// For D6, copy the original header bytes verbatim from the loaded frame stream.
+		// The D6 SCVW format has a complex outer structure (sprite details list + inner D4+
+		// header) that we preserve as-is; only the frame data below is rewritten.
+		// NOTE: this assumes the frame/sprite counts have not changed since loading.
+		if (_score->_framesStream && _score->_firstFramePosition > 0) {
+			uint32 savedPos = _score->_framesStream->pos();
+			_score->_framesStream->seek(0);
+			writeStream->writeStream(_score->_framesStream, _score->_firstFramePosition);
+			_score->_framesStream->seek(savedPos);
+		}
+	} else {
+		writeStream->writeUint32BE(filmloopSize);
 
-	uint32 frameOffset = 20;							// Should be greater than 20
-	writeStream->writeUint32BE(frameOffset);			// framesOffset
-	writeStream->seek(6, SEEK_CUR);						// Ignored data
-	writeStream->writeUint16BE(channelSize);
-	writeStream->seek(frameOffset - 16, SEEK_CUR);				// Ignored data
+		uint32 frameOffset = 20;							// Should be greater than 20
+		writeStream->writeUint32BE(frameOffset);			// framesOffset
+		writeStream->seek(6, SEEK_CUR);						// Ignored data
+		writeStream->writeUint16BE(channelSize);
+		writeStream->seek(frameOffset - 16, SEEK_CUR);		// Ignored data
+	}
 
 	// The structure of the filmloop 'SCVW' data is as follows
 	// The 'SCVW' tag -> the size of the resource ->
@@ -365,6 +383,8 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 				writeSpriteDataD4(writeStream, *sprite);
 			} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 				writeSpriteDataD5(writeStream, *sprite);
+			} else if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+				writeSpriteDataD6(writeStream, *sprite);
 			}
 		}
 
@@ -388,11 +408,22 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 }
 
 uint32 FilmLoopCastMember::getSCVWResourceSize() {
+	if (!_loaded) {
+		load();
+	}
+
+	if (!_score) {
+		warning("FilmLoopCastMember::getSCVWResourceSize: score not loaded");
+		return 0;
+	}
+
 	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
-	} else if (_cast->_version >= kFileVer500) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
+	} else if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		channelSize = kSprChannelSizeD6;
 	} else {
 		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
 	}
@@ -404,8 +435,14 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 
 		// message width: 2 bytes
 		// order: 2 bytes
-		// Sprite data: 20 bytes
+		// Sprite data: channelSize bytes
 		framesSize += (2 + 2 + channelSize) * frame->_sprites.size();
+	}
+
+	if (_cast->_version >= kFileVer600 && _cast->_version < kFileVer700) {
+		// For D6, the header is the original D6 outer structure preserved verbatim;
+		// _firstFramePosition is where the frame data starts within that structure.
+		return _score->_firstFramePosition + framesSize;
 	}
 
 	// Size: 4 bytes
