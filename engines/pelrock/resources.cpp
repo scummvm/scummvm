@@ -413,7 +413,7 @@ void ResourceManager::loadHardcodedText() {
 	_ingameTexts = processTextData(descBuffer, kAlfredResponsesSize);
 	// exe.seek(-1, SEEK_CUR);
 	_left = exe.readString();
-	_right = exe.readString(0xFD);
+	_right = exe.readString((char)0xFD);
 	byte *terminatorBuffer = new byte[39];
 	exe.seek(kConversationTerminatorOffset, SEEK_SET);
 	exe.read(terminatorBuffer, 39);

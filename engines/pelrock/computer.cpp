@@ -247,8 +247,8 @@ void Computer::drawScreen() {
 		Common::String navOptions;
 		Common::String actions = _computerText[7][0];
 		if (!book.available) {
-			actions.setChar(180, 1);
-			actions.setChar(180, 4);
+			actions.setChar((char)180, 1);
+			actions.setChar((char)180, 4);
 		}
 		g_engine->_graphics->drawColoredText(g_engine->_screen, actions, 174, 258, 325, defaultColor, g_engine->_smallFont);
 
