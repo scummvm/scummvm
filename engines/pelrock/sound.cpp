@@ -35,6 +35,7 @@
 
 #include "pelrock/pelrock.h"
 #include "pelrock/sound.h"
+#include "sound.h"
 
 namespace Pelrock {
 
@@ -219,7 +220,6 @@ int SoundManager::playSound(SonidoFile sound, int channel, int loopCount) {
 		} else {
 			if (_mixer->isSoundHandleActive(_sfxHandles[channel])) {
 				_mixer->stopHandle(_sfxHandles[channel]);
-				debug("Stopped active sound on channel %d to play new sound %s", channel, sound.filename.c_str());
 			}
 		}
 		Audio::AudioStream *finalStream = loopCount != -1 ? stream : Audio::makeLoopingAudioStream(stream, 0);
@@ -432,6 +432,14 @@ int SoundManager::tickAmbientSound(uint32 frameCount) {
 	int ambientSlotOffset = g_engine->getRandomNumber(3);
 
 	return ambientSlotOffset;
+}
+
+void SoundManager::playClick() {
+	playSound("11ZZZZZZ.SMP", 0);
+}
+
+void SoundManager::playClonk() {
+	playSound("56ZZZZZZ.SMP", 0);
 }
 
 } // End of namespace Pelrock

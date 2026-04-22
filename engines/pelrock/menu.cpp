@@ -436,22 +436,22 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 	MainMenuButton mainMenuButton = isMainMenuButtonUnder(x, y);
 	switch (mainMenuButton) {
 	case QUESTION_MARK_BUTTON:
-		_sound->playSound("56ZZZZZZ.SMP", 0);
+		_sound->playClonk();
 		_events->_leftMouseClicked = false;
 		showCredits();
 		break;
 	case INVENTORY_PREV_BUTTON:
-		_sound->playSound("56ZZZZZZ.SMP", 0);
+		_sound->playClonk();
 		if (_curInventoryPage > 0)
 			_curInventoryPage--;
 		break;
 	case INVENTORY_NEXT_BUTTON:
-		_sound->playSound("56ZZZZZZ.SMP", 0);
+		_sound->playClonk();
 		if ((_curInventoryPage + 1) * 4 < g_engine->_state->inventoryItems.size())
 			_curInventoryPage++;
 		break;
 	case SAVE_GAME_BUTTON:
-		_sound->playSound("11ZZZZZZ.SMP", 0);
+		_sound->playClick();
 		if (ConfMan.getBool("original_menus") == true) {
 			_saveGamePage = 0;
 			_editingSaveSlot = -1;
@@ -463,7 +463,7 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 		}
 		break;
 	case LOAD_GAME_BUTTON:
-		_sound->playSound("11ZZZZZZ.SMP", 0);
+		_sound->playClick();
 		if (ConfMan.getBool("original_menus") == true) {
 			_saveGamePage = 0;
 			refreshSaveDescriptions();
@@ -474,11 +474,11 @@ bool MenuManager::checkMainMenuMouse(int x, int y) {
 		}
 		break;
 	case EXIT_MENU_BUTTON:
-		_sound->playSound("11ZZZZZZ.SMP", 0);
+		_sound->playClick();
 		_menuState = EXIT_GAME;
 		break;
 	case SOUNDS_BUTTON:
-		_sound->playSound("11ZZZZZZ.SMP", 0);
+		_sound->playClick();
 		_menuState = SOUND;
 		_menuText = Common::StringArray();
 		break;

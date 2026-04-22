@@ -88,6 +88,9 @@ public:
 	 */
 	int tickAmbientSound(uint32 frameCount);
 
+	void playClick();
+	void playClonk();
+
 	bool isPaused() const { return _isPaused; }
 	byte getCurrentMusicTrack() const { return _currentMusicTrack; }
 
