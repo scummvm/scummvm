@@ -520,8 +520,8 @@ PaletteAnim *RoomManager::getPaletteAnimForRoom(int roomNumber) {
 	return anim;
 }
 
-Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
-	Common::Array<Exit> exits;
+void RoomManager::loadExits(byte *data, size_t size) {
+	_currentRoomExits.clear();
 	int exitCountOffset = 0x1BE;
 	byte exitCount = data[exitCountOffset];
 	int exitDataOffset = 0x1BF;
@@ -567,17 +567,16 @@ Common::Array<Exit> RoomManager::loadExits(byte *data, size_t size) {
 				}
 			}
 		}
-		exits.push_back(exit);
+		_currentRoomExits.push_back(exit);
 	}
-	return exits;
 }
 
-Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
+void RoomManager::loadHotspots(byte *data, size_t size) {
+	_staticHotspots.clear();
 	int pair10StartingPos = 0x47a;
 
 	byte hotspot_count = data[pair10StartingPos];
 	int hotspotsDataStart = pair10StartingPos + 2;
-	Common::Array<HotSpot> hotspots;
 	for (int i = 0; i < hotspot_count; i++) {
 		int hotspotOffset = hotspotsDataStart + i * 9;
 		HotSpot spot;
@@ -588,7 +587,7 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 			// if the hotspot has been changed, load the changed version
 			for (uint j = 0; j < g_engine->_state->roomHotSpotChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspotIndex == spot.innerIndex) {
-					hotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
+					_staticHotspots.push_back(g_engine->_state->roomHotSpotChanges[_currentRoomNumber][j].hotspot);
 					isChanged = true;
 					break;
 				}
@@ -603,10 +602,8 @@ Common::Array<HotSpot> RoomManager::loadHotspots(byte *data, size_t size) {
 		spot.h = data[hotspotOffset + 6];
 		spot.isSprite = false;
 		spot.extra = READ_LE_INT16(data + hotspotOffset + 7);
-		hotspots.push_back(spot);
+		_staticHotspots.push_back(spot);
 	}
-
-	return hotspots;
 }
 
 void RoomManager::resetConversationStates(byte roomNumber, byte *conversationData, size_t conversationDataSize) {
@@ -670,18 +667,17 @@ void RoomManager::loadRoomMetadata(Common::File *roomFile, int roomNumber) {
 	// The user's game can be in any state so we reset to defaults first
 	resetMetadataDefaults(roomNumber, pair10, pair10size);
 
-	Common::Array<Sprite> sprites = loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
-	Common::Array<HotSpot> staticHotspots = loadHotspots(pair10, pair10size);
+	// clear anims from previous room before loading new ones into _currentRoomAnims
+	clearAnims();
+
+	loadRoomAnimations(pic, pixelDataSize, pair10, pair10size);
+	loadHotspots(pair10, pair10size);
 
 	free(pic);
 
-	// clear anims from previous room
-	clearAnims();
-
-	_currentRoomAnims = sprites;
-	_currentRoomHotspots = unifyHotspots(sprites, staticHotspots);
-	_currentRoomExits = loadExits(pair10, pair10size);
-	_currentRoomWalkboxes = loadWalkboxes(pair10, pair10size);
+	_currentRoomHotspots = unifyHotspots(_currentRoomAnims, _staticHotspots);
+	loadExits(pair10, pair10size);
+	loadWalkboxes(pair10, pair10size);
 	_scaleParams = loadScalingParams(pair10, pair10size);
 
 	clearRoomStickerPixels(); // free all sticker buffers first
@@ -994,9 +990,9 @@ void RoomManager::loadAnimationPixelData(Common::File *roomFile, int roomOffset,
 	delete[] pixelData;
 }
 
-Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
+void RoomManager::loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size) {
 
-	Common::Array<Sprite> anims = Common::Array<Sprite>();
+	_currentRoomAnims.clear();
 	uint32 spriteCountPos = 5;
 	byte spriteCount = data[spriteCountPos] - 2;
 	uint32 metadata_start = spriteCountPos + (44 * 2 + 5);
@@ -1071,19 +1067,18 @@ Common::Array<Sprite> RoomManager::loadRoomAnimations(byte *pixelData, size_t pi
 			sprite.animData[j] = anim;
 		}
 
-		anims.push_back(sprite);
+		_currentRoomAnims.push_back(sprite);
 	}
-	return anims;
 }
 
-Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
+void RoomManager::loadWalkboxes(byte *data, size_t size) {
 
+	_currentRoomWalkboxes.clear();
 	int walkboxCountOffset = 0x213;
 	byte walkboxCount = data[walkboxCountOffset];
 
 	// debug("Walkbox count: %d", walkbox_count);
 	uint32 walkboxOffset = 0x218;
-	Common::Array<WalkBox> walkboxes;
 	for (int i = 0; i < walkboxCount; i++) {
 		uint32 boxOffset = walkboxOffset + i * 9;
 		int16 x1 = READ_LE_INT16(data + boxOffset);
@@ -1098,7 +1093,7 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 			// if the walkbox has been changed, load the changed version
 			for (uint j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == i) {
-					walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
+					_currentRoomWalkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 					isChanged = true;
 					break;
 				}
@@ -1111,25 +1106,24 @@ Common::Array<WalkBox> RoomManager::loadWalkboxes(byte *data, size_t size) {
 		box.w = w;
 		box.h = h;
 		box.flags = flags;
-		walkboxes.push_back(box);
+		_currentRoomWalkboxes.push_back(box);
 	}
 
 	if (g_engine->_state->roomWalkBoxChanges.contains(_currentRoomNumber)) {
 		// Add any new walkboxes that were added
 		for (uint j = 0; j < g_engine->_state->roomWalkBoxChanges[_currentRoomNumber].size(); j++) {
 			bool found = false;
-			for (uint i = 0; i < walkboxes.size(); i++) {
-				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == walkboxes[i].index) {
+			for (uint i = 0; i < _currentRoomWalkboxes.size(); i++) {
+				if (g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkboxIndex == _currentRoomWalkboxes[i].index) {
 					found = true;
 					break;
 				}
 			}
 			if (!found) {
-				walkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
+				_currentRoomWalkboxes.push_back(g_engine->_state->roomWalkBoxChanges[_currentRoomNumber][j].walkbox);
 			}
 		}
 	}
-	return walkboxes;
 }
 
 uint32 RoomManager::loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions) {

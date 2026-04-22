@@ -141,11 +141,11 @@ public:
 private:
 	void init();
 	void loadAnimationPixelData(Common::File *roomFile, int roomOffset, byte *&buffer, size_t &outSize);
-	Common::Array<Sprite> loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
-	Common::Array<HotSpot> loadHotspots(byte *data, size_t size);
-	Common::Array<Exit> loadExits(byte *data, size_t size);
+	void loadRoomAnimations(byte *pixelData, size_t pixelDataSize, byte *data, size_t size);
+	void loadHotspots(byte *data, size_t size);
+	void loadExits(byte *data, size_t size);
 	ScalingParams loadScalingParams(byte *data, size_t size);
-	Common::Array<WalkBox> loadWalkboxes(byte *data, size_t size);
+	void loadWalkboxes(byte *data, size_t size);
 	uint32 loadDescriptions(byte *pair12data, size_t pair12size, Common::Array<Description> &outDescriptions);
 	void loadConversationData(byte *pair12data, size_t pair12size, uint32 startPos, size_t &outConversationDataSize, byte *&outConversationData);
 	void resetConversationStates(byte roomNumber, byte *conversationData, size_t conversationDataSize);
@@ -158,6 +158,7 @@ private:
 	Common::Array<byte> loadRoomSfx(Common::File *roomFile, int roomOffset);
 
 	byte *_resetData = nullptr;
+	Common::Array<HotSpot> _staticHotspots;
 };
 
 } // End of namespace Pelrock
