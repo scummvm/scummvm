@@ -115,7 +115,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_numLines = 0;
 	_pictureTaken = 0;
 
-	_vidEnd = false;
 	_textFlag = true;
 	_exitBox = false;
 

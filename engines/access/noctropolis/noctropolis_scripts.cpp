@@ -104,6 +104,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 	case 1:
 		// Clear screen and restore pal here??
 		vm->_screen->fadeOutThenClearAndSetPal();
+		vm->_buffer2.clear();
 		result = true;
 		if (_vm->_player->_roomNumber == 54) {
 			error("TODO: Implement special pal hack for fade in room 54?");

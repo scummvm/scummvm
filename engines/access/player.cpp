@@ -56,9 +56,9 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_rawXTemp = 0;
 	_rawYTempL = 0;
 	_rawYTemp = 0;
-	//_playerXLow = 0;
+	_playerXLow = 0;
 	_playerX = 0;
-	//_playerYLow = 0;
+	_playerYLow = 0;
 	_playerY = 0;
 	_frame = 0;
 	_playerOff = false;

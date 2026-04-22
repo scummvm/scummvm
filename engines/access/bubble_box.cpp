@@ -57,12 +57,22 @@ void BubbleBox::load(Common::SeekableReadStream *stream) {
 
 void BubbleBox::clearBubbles() {
 	// Loop through the bubble list to restore the screen areas
-	for (Common::Rect r: _bubbles) {
-		_vm->_screen->_screenYOff = 0;
-		r.left -= 2;
-		r.right = MIN(r.right, (int16)_vm->_screen->w);
+	if (_vm->getGameID() == kGameNoctropolis) {
+		for (Common::Rect r: _bubbles) {
+			_vm->_screen->_screenYOff = 0;
+			r.left -= (MIN((int)r.left, 2) + _vm->_screen->_windowXAdd);
+			r.right = MIN(r.right, (int16)(_vm->_screen->w - _vm->_screen->_windowXAdd));
 
-		_vm->_screen->blitFrom(_vm->_buffer1, r, r);
+			_vm->_screen->copyBlock(&_vm->_buffer2, r);
+		}
+	} else {
+		for (Common::Rect r: _bubbles) {
+			_vm->_screen->_screenYOff = 0;
+			r.left -= 2;
+			r.right = MIN(r.right, (int16)_vm->_screen->w);
+
+			_vm->_screen->copyBlock(&_vm->_buffer1, r);
+		}
 	}
 
 	// Clear the list
@@ -73,6 +83,7 @@ void BubbleBox::placeBubble(const Common::String &msg) {
 	switch (_vm->getGameID()) {
 		case kGameMartianMemorandum: 	_vm->_screen->_maxChars = 30; break;
 		case kGameAmazon: 				_vm->_screen->_maxChars = 27; break;
+		// All Noctropolis messages are pre-wrapped.
 		case kGameNoctropolis: 			_vm->_screen->_maxChars = 200; break;
 	}
 	placeBubble1(msg);

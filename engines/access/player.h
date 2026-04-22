@@ -101,9 +101,9 @@ public:
 	byte _rawYTempL;
 	int _rawYTemp;
 	Common::Point _playerOffset;
-	//int _playerXLow;
+	int _playerXLow;
 	int _playerX;
-	//int _playerYLow;
+	int _playerYLow;
 	int _playerY;
 	int _frame;
 	int _xFlag, _yFlag;

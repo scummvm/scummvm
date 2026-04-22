@@ -292,13 +292,12 @@ public:
 	int _numLines;
 	int _bcnt;
 
-	bool _vidEnd;
 	bool _clearSummaryFlag;
-	bool _cheatFl;
-	bool _restartFl;
-	bool _textFlag; // whether subtitles are enabled
+	bool _cheatFl; 	 // cheats are enabled
+	bool _restartFl; // game should restart
+	bool _textFlag;  // whether subtitles are enabled
 	bool _hotspotFl; // whether hotspot highlighting is enabled (for debug)
-	bool _exitBox; // whether the current hotspot is an exit (Noctropolis only)
+	bool _exitBox;   // whether the current hotspot is an exit (Noctropolis only)
 	uint16 _stilScaleOff;
 
 	// Fields mapped into the flags array
