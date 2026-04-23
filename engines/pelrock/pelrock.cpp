@@ -852,8 +852,15 @@ void PelrockEngine::chooseAlfredStateAndDraw() {
 	}
 	case ALFRED_TALKING:
 		drawAlfred(_res->alfredTalkFrames[_alfredState.direction][_alfredState.curFrame]);
-		if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+		// In alternate timing, shouldSkipFrame() never throttles, so use the frameCount gate.
+		// In original timing, shouldSkipFrame() already skips every other tick while talking,
+		// so advancing every rendered frame gives the same rate without parity phase-locking.
+		if (isAlternateTiming()) {
+			if (_chrono->getFrameCount() % kAlfredAnimationSpeed == 0)
+				_alfredState.curFrame++;
+		} else {
 			_alfredState.curFrame++;
+		}
 		if (_alfredState.curFrame >= talkingAnimLengths[_alfredState.direction] - 1) {
 			_alfredState.curFrame = 0;
 		}
