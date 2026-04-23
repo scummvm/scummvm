@@ -2514,6 +2514,26 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
+	// King's Quest 6 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.00G"
+	// SCI interpreter version 1.001.054
+	{"kq6", "", {
+		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformDOS, ADGF_CD, GUIO_KQ6_CD},
+
+	// King's Quest 6 - Fanmade Hebrew translation Windows CD (based on the series GOG version)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.000.00G"
+	// SCI interpreter version 1.001.054
+	{"kq6", "", {
+		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
+		{"0.fon", 0, "a2fc0fd2c4ddcf1f1dc5207126cd998b", 3419},
+		AD_LISTEND},
+		Common::HE_ISR, Common::kPlatformWindows, ADGF_CD, GUIO_KQ6_CD_WINDOWS},
+
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
 	{"kq6", "", {
