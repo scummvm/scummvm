@@ -1195,16 +1195,16 @@ void ScummEngine::checkAndRunSentenceScript() {
 	// and not in the inventory.
 	// This intercepts the specific note objects that appear in rooms where Herman
 	// can be present, consumes the invalid give, and queues a pickup instead.
-
-	if (_game.id == GID_MONKEY &&
+	if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) &&
 		enhancementEnabled(kEnhMinorBugFixes) &&
-		st.verb == 4 && // Give
+		// Give(EGA 3, VGA 4)
+		st.verb == (_game.id == GID_MONKEY_EGA ? 3 : 4) &&
 		st.objectB == 7 && // Herman
-		getOwner(st.objectA) == OF_OWNER_ROOM && (
-		st.objectA == 27 || // note (volcano beach)
-		st.objectA == 545))  // note (dry pond)
-	{
-		doSentence(9, st.objectA, 0);
+		getOwner(st.objectA) == OF_OWNER_ROOM && // Object in room, not inventory
+		// note (volcano beach VGA), note (dry pond VGA), note (volcano beach EGA), note (dry pond EGA)
+		(st.objectA == 27 || st.objectA == 545 || st.objectA == 296 || st.objectA == 297)) {
+		// Pick up(EGA 11, VGA 9)
+		doSentence(_game.id == GID_MONKEY_EGA ? 11 : 9, st.objectA, 0); // Pick up
 		return;
 	}
 
