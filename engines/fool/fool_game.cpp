@@ -368,12 +368,12 @@ int32 FoolGame::puzzlesReadLong() {
 	return this->var_i32_68e;
 }
 
-Common::U32String FoolGame::puzzlesReadString() {
+Common::String FoolGame::puzzlesReadString() {
 	// 128:049a
 	// read a pascal string
 	this->var_i16_79e = *(byte *)(&var_bytes_696->data()[this->var_ptr_696]);
-	this->var_str_69a = Common::U32String((const char *)&var_bytes_696->data()[this->var_ptr_696+1], this->var_i16_79e, Common::kMacRoman);
-	debugC(8, kDebugLoading, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.encode().c_str());
+	this->var_str_69a = Common::String((const char *)&var_bytes_696->data()[this->var_ptr_696+1], this->var_i16_79e);
+	debugC(8, kDebugLoading, "Read[%04x]: %s", this->var_ptr_696, this->var_str_69a.c_str());
 	this->var_ptr_696 += this->var_i16_79e + 1;
 	return this->var_str_69a;
 }
@@ -3013,7 +3013,7 @@ void FoolGame::sub_129_068() {
 		this->arr_i16_18b2[i] = this->puzzlesReadShort();
 		this->arr_i16_15e8[i] = this->puzzlesReadShort();
 		this->arr_i16_197c[i] = this->puzzlesReadShort();
-		this->arr_str_195e8[i] = this->puzzlesReadString();
+		this->arr_str_195e8[i] = this->puzzlesReadString().decode(Common::kMacRoman);
 	}
 	// 129:0c0a
 	this->var_i16_103a = this->puzzlesReadShort();
@@ -3049,12 +3049,11 @@ void FoolGame::sub_129_068() {
 		// indent at start of story paragraph
 		if (this->var_i16_103e & 0x8) {
 			this->var_i16_103e ^= 0x8;
-			this->var_str_384 = this->puzzlesReadString();
 			// 129:0d7e
-			g_zbasic->indexSet(g_zbasic->space(4) + this->var_str_384, 0, i);
+			g_zbasic->indexRawSet(g_zbasic->space(4).encode(Common::kMacRoman) + this->puzzlesReadString(), 0, i);
 		} else {
 		// 129:0da4
-			g_zbasic->indexSet(this->puzzlesReadString(), 0, i);
+			g_zbasic->indexRawSet(this->puzzlesReadString(), 0, i);
 		}
 		// 129:0db8
 		// 0x4 == newline
@@ -3084,7 +3083,7 @@ void FoolGame::sub_129_068() {
 	this->sub_129_123a();
 	this->var_i16_103a = this->puzzlesReadShort();
 	for (int i = this->var_i16_103c + 1; i <= this->var_i16_103a; i++) {
-		g_zbasic->indexSet(this->puzzlesReadString(), 0, i);
+		g_zbasic->indexRawSet(this->puzzlesReadString(), 0, i);
 	}
 	// 129:0ec2
 	for (int j = 1; j <= 0x50; j++) {
