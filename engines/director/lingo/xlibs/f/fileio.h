@@ -55,7 +55,6 @@ class FileObject : public Object<FileObject> {
 public:
 	Common::String *_filename;
 	Common::SeekableReadStream *_inStream;
-	Common::OutSaveFile *_outFile;
 	Common::MemoryWriteStreamDynamic *_outStream;
 	FileIOError _lastError;
 

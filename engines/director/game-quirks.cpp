@@ -153,6 +153,7 @@ struct SaveFilePath {
 	const char *path;
 } const saveFilePaths[] = {
 	{ "darkeye", Common::kPlatformWindows, "SAVEDDKY/" },
+	{ "missionplanetx", Common::kPlatformWindows, "" },
 	{"simpsonsstudio", Common::kPlatformWindows, "SIMPSONS/SUPPORT/TOONDATA/"},
 	{"simpsonsstudio", Common::kPlatformMacintosh, "SIMPSONS/SUPPORT/TOONDATA/"},
 	{ nullptr, Common::kPlatformUnknown, nullptr },
