@@ -257,6 +257,7 @@ public:
 	void maybeHaveDogPee();
 	void maybePlayPostIntro();
 	void maybeShakeEffect();
+	void resetPasserByAnim(int startX, int startY, Sprite *sprite);
 	void handleFightRoomFrame();
 	void paintDebugLayer();
 

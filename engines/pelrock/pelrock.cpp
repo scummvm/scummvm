@@ -481,6 +481,15 @@ void PelrockEngine::maybeShakeEffect() {
 	_alfredState.x += (_shakeEffectState.shakeX / 2);
 }
 
+void PelrockEngine::resetPasserByAnim(int startX, int startY, Sprite *sprite) {
+	sprite->x = startX;
+	sprite->y = startY;
+	sprite->zOrder = 255;
+	sprite->curAnimIndex = 0;
+	sprite->animData[0].curFrame = 0;
+	_room->_passerByAnims->latch = false;
+}
+
 void PelrockEngine::maybeUpdatePasserByAnim(uint32 frameCount) {
 	if (_room->_passerByAnims == nullptr) {
 		return;
@@ -509,31 +518,15 @@ void PelrockEngine::maybeUpdatePasserByAnim(uint32 frameCount) {
 		Sprite *sprite = _room->findSpriteByIndex(spriteIndex);
 		if (direction == kPasserbyRight) {
 			if (sprite->x >= anim.resetCoord) {
-				sprite->x = startX;
-				sprite->y = startY;
-				sprite->zOrder = 255;
-				sprite->curAnimIndex = 0;
-				sprite->animData[0].curFrame = 0;
-				_room->_passerByAnims->latch = false;
+				resetPasserByAnim(startX, startY, sprite);
 			}
 		} else if (direction == kPasserbyLeft) {
-
 			if (sprite->x <= anim.resetCoord) {
-				sprite->x = startX;
-				sprite->y = startY;
-				sprite->zOrder = 255;
-				sprite->curAnimIndex = 0;
-				sprite->animData[0].curFrame = 0;
-				_room->_passerByAnims->latch = false;
+				resetPasserByAnim(startX, startY, sprite);
 			}
 		} else if (direction == kPasserbyDown) {
 			if (sprite->y >= anim.resetCoord) {
-				sprite->x = startX;
-				sprite->y = startY;
-				sprite->zOrder = 255;
-				sprite->curAnimIndex = 0;
-				sprite->animData[0].curFrame = 0;
-				_room->_passerByAnims->latch = false;
+				resetPasserByAnim(startX, startY, sprite);
 			}
 		}
 	}
