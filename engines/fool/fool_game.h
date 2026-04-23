@@ -59,7 +59,7 @@ public:
 	int16 puzzlesReadByte(); // sub_128_428
 	int16 puzzlesReadShort(); // sub_128_446
 	int32 puzzlesReadLong(); // sub_128_462
-	Common::U32String puzzlesReadString(); // sub_128_49a
+	Common::String puzzlesReadString(); // sub_128_49a
 	void sub_128_4da(int16 unk1);
 	void sub_128_50e(int16 freq, int16 duration, int16 wait);
 	void sub_128_55c(const Common::U32String &unk1);
@@ -368,7 +368,7 @@ private:
 	// instead we track it as a handle + offset
 	uint32 var_ptr_696;
 	Handle var_bytes_696;
-	Common::U32String var_str_69a;
+	Common::String var_str_69a;
 	int16 var_i16_78a;
 	int16 var_i16_79e;
 	int16 var_i16_7a0;

@@ -152,7 +152,7 @@ void FoolGame::jumbleRun() {
 		this->var_str_1170 = g_zbasic->str(169); // empty
 		this->var_i16_1270 = this->puzzlesReadShort();
 		for (this->var_i16_103a = 1; this->var_i16_103a <= this->var_i16_1270; this->var_i16_103a++) {
-			this->var_str_1272 = this->puzzlesReadString();
+			this->var_str_1272 = this->puzzlesReadString().decode(Common::kMacRoman);
 			this->var_i16_1372 = this->var_str_1272.size();
 			this->var_str_1170 += this->var_str_1272;
 			// 130:047e
@@ -213,7 +213,7 @@ void FoolGame::jumbleRun() {
 				}
 			}
 			// 130:0716
-			g_zbasic->indexSet(this->puzzlesReadString(), 1, this->var_i16_103a);
+			g_zbasic->indexRawSet(this->puzzlesReadString(), 1, this->var_i16_103a);
 		}
 		// 130:073e
 		this->var_i16_1576 = this->var_str_1170.size();
@@ -245,7 +245,7 @@ void FoolGame::jumbleRun() {
 			for (this->var_i16_68a = 1; this->var_i16_68a <= this->var_i16_103a; this->var_i16_68a++) {
 				this->var_i16_484 = this->puzzlesReadShort();
 				this->var_i16_7e4 = this->puzzlesReadShort();
-				this->var_str_1578 = this->puzzlesReadString();
+				this->var_str_1578 = this->puzzlesReadString().decode(Common::kMacRoman);
 				g_zbasic->text(0xfa, 0xc, 0, kSrcOr);
 				if (this->var_i16_7e4 > 0) {
 					g_toolbox->MoveTo(this->var_i16_484, this->var_i16_7e4);

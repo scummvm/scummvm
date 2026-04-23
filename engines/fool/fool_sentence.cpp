@@ -52,9 +52,9 @@ void FoolGame::sentenceRun() {
 	this->var_i16_1066 = this->puzzlesReadShort();
 	this->arr_i32_192c0[0] = g_toolbox->GetPicture(this->var_i16_1066);
 	this->arr_i16_1eb8[0] = this->puzzlesReadShort();
-	g_zbasic->indexSet(this->puzzlesReadString(), 1, 0);
-	this->var_str_1272 = this->puzzlesReadString();
-	this->var_str_384 = this->puzzlesReadString();
+	g_zbasic->indexRawSet(this->puzzlesReadString(), 1, 0);
+	this->var_str_1272 = this->puzzlesReadString().decode(Common::kMacRoman);
+	this->var_str_384 = this->puzzlesReadString().decode(Common::kMacRoman);
 	this->var_str_384 = g_zbasic->str(215) + this->var_str_384 + g_zbasic->str(216); // to reveal XXXXX
 	// 135:0152
 	g_zbasic->menu(8, 7, 1, this->var_str_384);
@@ -66,9 +66,9 @@ void FoolGame::sentenceRun() {
 	for (int16 i = 1; i <= this->arr_i16_1eb8[0]; i++) {
 		this->arr_i16_4338[i] = 0;
 		this->arr_i16_4338[i + this->arr_i16_1eb8[0]] = this->puzzlesReadByte();
-		g_zbasic->indexSet(this->puzzlesReadString(), 1, i);
+		g_zbasic->indexRawSet(this->puzzlesReadString(), 1, i);
 		// 135:0254
-		g_zbasic->indexSet(this->puzzlesReadString(), 1, i + this->arr_i16_1eb8[0]);
+		g_zbasic->indexRawSet(this->puzzlesReadString(), 1, i + this->arr_i16_1eb8[0]);
 		this->arr_rect_1f38[i].top = 0xf2;
 		this->arr_rect_1f38[i].left = this->var_i16_7e4;
 		this->arr_rect_1f38[i].bottom = 0x156;
