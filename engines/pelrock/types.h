@@ -483,6 +483,10 @@ struct PasserByAnim {
 	byte dir;
 	byte spriteIndex;
 	byte targetZIndex;
+
+	PasserByAnim() = default;
+	PasserByAnim(byte spriteIndex_, int16 startX_, int16 startY_, byte dir_, int16 resetCoord_, byte targetZIndex_, uint32 frameTrigger_)
+	    : frameTrigger(frameTrigger_), startX(startX_), startY(startY_), resetCoord(resetCoord_), dir(dir_), spriteIndex(spriteIndex_), targetZIndex(targetZIndex_) {}
 };
 
 struct RoomPasserBys {

@@ -771,13 +771,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		mouse->animData[3].movementFlags = 0x3E0;
 
 		anims = new RoomPasserBys(roomNumber, 1);
-		PasserByAnim anim;
-		anim.spriteIndex = 2;
-		anim.startX = mouse->x;
-		anim.startY = mouse->y;
-		anim.dir = kPasserbyDown;
-		anim.targetZIndex = blank->zOrder + 1;
-		anim.resetCoord = blank->y;
+		PasserByAnim anim(2, mouse->x, mouse->y, kPasserbyDown, blank->y, blank->zOrder + 1, 0x3FF);
 		anims->passerByAnims[0] = anim;
 		break;
 	}
@@ -821,22 +815,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *carRight = findSpriteByIndex(3);
 
 		anims = new RoomPasserBys(roomNumber, 2);
-		PasserByAnim animA;
-		animA.spriteIndex = 2;
-		animA.startX = carLeft->x;
-		animA.startY = carLeft->y;
-		animA.dir = kPasserbyLeft;
-		animA.resetCoord = carRight->x + carRight->w - carLeft->w;
-		animA.targetZIndex = 100;
-
+		PasserByAnim animA(2, carLeft->x, carLeft->y, kPasserbyLeft, carRight->x + carRight->w - carLeft->w, 100, 0x3FF);
 		anims->passerByAnims[0] = animA;
-		PasserByAnim animB;
-		animB.spriteIndex = 3;
-		animB.startX = carRight->x;
-		animB.startY = carRight->y;
-		animB.dir = kPasserbyRight;
-		animB.targetZIndex = 100;
-		animB.resetCoord = 639 + carRight->w;
+		PasserByAnim animB(3, carRight->x, carRight->y, kPasserbyRight, 639 + carRight->w, 100, 0x3FF);
 		anims->passerByAnims[1] = animB;
 		break;
 	}
@@ -845,13 +826,7 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		anims = new RoomPasserBys(roomNumber, 1);
 		Sprite *walker = findSpriteByIndex(2);
 		Sprite *dark = findSpriteByIndex(5);
-		PasserByAnim anim;
-		anim.spriteIndex = 2;
-		anim.startX = walker->x;
-		anim.startY = walker->y;
-		anim.dir = kPasserbyRight;
-		anim.resetCoord = dark->x;
-		anim.targetZIndex = dark->zOrder + 1;
+		PasserByAnim anim(2, walker->x, walker->y, kPasserbyRight, dark->x, dark->zOrder + 1, 0x3FF);
 		anims->passerByAnims[0] = anim;
 		break;
 	}
@@ -860,22 +835,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *catLeft = findSpriteByIndex(3);
 		Sprite *blank = findSpriteByIndex(0);
 		anims = new RoomPasserBys(roomNumber, 2);
-		PasserByAnim animA;
-		animA.spriteIndex = 2;
-		animA.startX = catRight->x;
-		animA.startY = catRight->y;
-		animA.dir = kPasserbyRight;
-		animA.resetCoord = catLeft->x;
-		animA.targetZIndex = blank->zOrder + 1;
-
+		PasserByAnim animA(2, catRight->x, catRight->y, kPasserbyRight, catLeft->x, blank->zOrder + 1, 0x3FF);
 		anims->passerByAnims[0] = animA;
-		PasserByAnim animB;
-		animB.spriteIndex = 3;
-		animB.startX = catLeft->x;
-		animB.startY = catLeft->y;
-		animB.dir = kPasserbyLeft;
-		animB.resetCoord = blank->x;
-		animB.targetZIndex = blank->zOrder + 1;
+		PasserByAnim animB(3, catLeft->x, catLeft->y, kPasserbyLeft, blank->x, blank->zOrder + 1, 0x3FF);
 		anims->passerByAnims[1] = animB;
 		break;
 	}
@@ -885,22 +847,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *papers = findSpriteByIndex(1);
 
 		anims = new RoomPasserBys(roomNumber, 2);
-		PasserByAnim animA;
-		animA.spriteIndex = 3;
-		animA.startX = mouseRight->x;
-		animA.startY = mouseRight->y;
-		animA.dir = kPasserbyRight;
-		animA.resetCoord = mouseLeft->x;
-		animA.targetZIndex = papers->zOrder + 1;
+		PasserByAnim animA(3, mouseRight->x, mouseRight->y, kPasserbyRight, mouseLeft->x, papers->zOrder + 1, 0x3FF);
 		anims->passerByAnims[0] = animA;
-
-		PasserByAnim animB;
-		animB.spriteIndex = 4;
-		animB.startX = mouseLeft->x;
-		animB.startY = mouseLeft->y;
-		animB.dir = kPasserbyLeft;
-		animB.resetCoord = mouseRight->x;
-		animB.targetZIndex = papers->zOrder + 1;
+		PasserByAnim animB(4, mouseLeft->x, mouseLeft->y, kPasserbyLeft, mouseRight->x, papers->zOrder + 1, 0x3FF);
 		anims->passerByAnims[1] = animB;
 		break;
 	}
@@ -909,22 +858,9 @@ RoomPasserBys *RoomManager::loadPasserByAnims(int roomNumber) {
 		Sprite *mummyRight = findSpriteByIndex(3);
 
 		anims = new RoomPasserBys(roomNumber, 2);
-		PasserByAnim animA;
-		animA.spriteIndex = 2;
-		animA.startX = mummyLeft->x;
-		animA.startY = mummyLeft->y;
-		animA.dir = kPasserbyLeft;
-		animA.resetCoord = 0 - mummyLeft->w;
-		animA.targetZIndex = 1;
-
+		PasserByAnim animA(2, mummyLeft->x, mummyLeft->y, kPasserbyLeft, 0 - mummyLeft->w, 1, 0x3FF);
 		anims->passerByAnims[0] = animA;
-		PasserByAnim animB;
-		animB.spriteIndex = 3;
-		animB.startX = mummyRight->x;
-		animB.startY = mummyRight->y;
-		animB.dir = kPasserbyRight;
-		animB.targetZIndex = 1;
-		animB.resetCoord = 639 + mummyRight->w;
+		PasserByAnim animB(3, mummyRight->x, mummyRight->y, kPasserbyRight, 639 + mummyRight->w, 1, 0x3FF);
 		anims->passerByAnims[1] = animB;
 		break;
 	}
