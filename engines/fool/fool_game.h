@@ -311,6 +311,8 @@ public:
 	void sub_142_370();
 	void sub_142_5f2();
 	void sub_142_630();
+
+	// fool_justice.cpp
 	void justiceRun(); // sub_142_852
 	void sub_142_9be();
 	void justiceOnClick(); // sub_142_cb2
@@ -319,6 +321,7 @@ public:
 	void justiceRemoveBlock(); // sub_142_10bc
 	void justiceStoreState(); // sub_142_111e
 	void justiceResetGrid(); // sub_142_11fe
+
 	void hermitRun(); // sub_142_12ac
 
 	void sub_144_004();

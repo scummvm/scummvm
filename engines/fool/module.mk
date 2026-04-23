@@ -6,8 +6,10 @@ MODULE_OBJS = \
 	fool_cards.o \
 	fool_death.o \
 	fool_game.o \
+	fool_humbug.o \
 	fool_jigsaw.o \
 	fool_jumble.o \
+	fool_justice.o \
 	fool_polyomino.o \
 	fool_prologue.o \
 	fool_reveal.o \
