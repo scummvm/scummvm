@@ -313,12 +313,14 @@ public:
 	void sub_142_630();
 	void justiceRun(); // sub_142_852
 	void sub_142_9be();
-	void sub_142_f58();
-	void sub_142_f96();
-	void sub_142_10bc();
-	void sub_142_111e();
-	void sub_142_11fe();
-	void sub_142_12ac();
+	void justiceOnClick(); // sub_142_cb2
+	void justiceZoom(); // sub_142_f58
+	void justiceDrawBlock(); // sub_142_f96
+	void justiceRemoveBlock(); // sub_142_10bc
+	void justiceStoreState(); // sub_142_111e
+	void justiceResetGrid(); // sub_142_11fe
+	void hermitRun(); // sub_142_12ac
+
 	void sub_144_004();
 
 private:
@@ -550,6 +552,9 @@ private:
 	int16 var_i16_233a;
 	int16 var_i16_233e;
 	int16 var_i16_233c;
+
+	int16 var_i16_2340;
+	int16 var_i16_2342;
 
 	// FIXME: bounds on the following are guessed! need to trace index range
 	int16 pageLineRanges[202]; // arr_i16_0
