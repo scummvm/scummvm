@@ -1006,11 +1006,16 @@ void LC::c_intersects() {
 	// just S1 matte: do a box-on-box intersection
 	// just S2 matte: do a box-on-matte intersection
 	// neither sprite matte: do a box-on-box intersection
+	// If the cast member is not a bitmap, always treat it as a bounding box collision,
+	// even if the ink type is matte and there's visibly no overlap (e.g a kCastShape circle).
+
+	bool s1IsBitmap = sprite1->_sprite->_cast && sprite1->_sprite->_cast->_type == kCastBitmap;
+	bool s2IsBitmap = sprite2->_sprite->_cast && sprite2->_sprite->_cast->_type == kCastBitmap;
 
 	// don't regard quick draw shape as matte type
-	if ((!sprite1->_sprite->isQDShape() && sprite1->_sprite->_ink == kInkTypeMatte) && (!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
+	if ((s1IsBitmap && sprite1->_sprite->_ink == kInkTypeMatte) && (s2IsBitmap && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteIntersect(sprite1)));
-	} else if ((!sprite2->_sprite->isQDShape() && sprite2->_sprite->_ink == kInkTypeMatte)) {
+	} else if ((s2IsBitmap && sprite2->_sprite->_ink == kInkTypeMatte)) {
 		g_lingo->push(Datum(sprite2->isMatteBoxIntersect(sprite1)));
 	} else {
 		g_lingo->push(Datum(sprite2->getBbox().intersects(sprite1->getBbox())));
