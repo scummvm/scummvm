@@ -34,7 +34,7 @@ extern Toolbox *g_toolbox;
 void FoolGame::wordSearchRun() {
 	// 131:0004
 	this->sub_128_271a();
-	this->var_str_188e = this->puzzlesReadString();
+	this->var_str_188e = this->puzzlesReadString().decode(Common::kMacRoman);
 	for (int i = 0; i <= 0xe; i++) {
 		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
 	}
@@ -147,7 +147,7 @@ void FoolGame::wordSearchRun() {
 	g_zbasic->unk_20();
 	// 131:04e0
 	for (int j = 1; j <= this->arr_i16_1eb8[1]; j++) {
-		this->var_str_1994 = this->puzzlesReadString();
+		this->var_str_1994 = this->puzzlesReadString().decode(Common::kMacRoman);
 		this->var_i16_1574 = 1 + (j - 1) * this->arr_i16_1eb8[0];
 		// 131:051e
 		this->arr_rect_5b7c.top = this->arr_rect_1f38[this->var_i16_1574].top - 1;

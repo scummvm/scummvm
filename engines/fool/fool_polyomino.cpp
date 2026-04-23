@@ -38,7 +38,7 @@ void FoolGame::polyominoRun() {
 		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
 	}
 	// 133:003c
-	this->var_str_384 = this->puzzlesReadString();
+	this->var_str_384 = this->puzzlesReadString().decode(Common::kMacRoman);
 	// "the completed puzzle will reveal..."
 	this->var_str_384 = g_zbasic->str(209) + this->var_str_384 + g_zbasic->str(210);
 	g_zbasic->menu(8, 0xf, 1, this->var_str_384);

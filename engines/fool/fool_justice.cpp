@@ -79,7 +79,7 @@ void FoolGame::sub_142_9be() {
 	// 142:09be
 	this->sub_128_271a();
 	for (int16 i = 1; i <= 0x19; i++) {
-		g_zbasic->indexSet(this->puzzlesReadString(), 1, i);
+		g_zbasic->indexRawSet(this->puzzlesReadString(), 1, i);
 	}
 	// 142:09ea
 	if (this->puzzleCompletionStatus[0x34] < 4) {

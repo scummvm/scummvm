@@ -99,7 +99,8 @@ void FoolGame::jigsawRun() {
 	// rearrange picture tiles to match state
 	if (!this->activePuzzleBuffer.empty()) { // was: str(207)
 		for (int i = 1; i <= this->var_i16_1a9e; i++) {
-			this->arr_i16_3738[i] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, i*2 - 1, 2));
+			Common::String tileData = g_zbasic->midStr(this->activePuzzleBuffer, i*2 - 1, 2);
+			this->arr_i16_3738[i] = g_zbasic->unk_310(tileData);
 			g_zbasic->put(
 				this->arr_rect_1f38[i].left,
 				this->arr_rect_1f38[i].top,
