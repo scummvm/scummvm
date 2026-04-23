@@ -1188,6 +1188,27 @@ void ScummEngine::checkAndRunSentenceScript() {
 	_sentenceNum--;
 	SentenceTab &st = _sentence[_sentenceNum];
 
+	// WORKAROUND: Monkey Island 1 note/Herman bug #12010.
+	//
+	// This workaround fixes an issue where the scripts would get stuck in a loop
+	// if you tried to give a note to Herman while the note was still in the room
+	// and not in the inventory.
+	// This intercepts the specific note objects that appear in rooms where Herman
+	// can be present, consumes the invalid give, and queues a pickup instead.
+
+	if (_game.id == GID_MONKEY &&
+		_game.version == 5 &&
+		enhancementEnabled(kEnhMinorBugFixes) &&
+		st.verb == 4 && // Give
+		st.objectB == 7 && // Herman
+		getOwner(st.objectA) == OF_OWNER_ROOM && (
+		st.objectA == 27 || // note (volcano beach)
+		st.objectA == 545))  // note (dry pond)
+	{
+		doSentence(9, st.objectA, 0);
+		return;
+	}
+
 	if (_game.version < 7)
 		if (st.preposition && st.objectB == st.objectA)
 			return;
