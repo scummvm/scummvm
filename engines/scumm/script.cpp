@@ -1197,7 +1197,6 @@ void ScummEngine::checkAndRunSentenceScript() {
 	// can be present, consumes the invalid give, and queues a pickup instead.
 
 	if (_game.id == GID_MONKEY &&
-		_game.version == 5 &&
 		enhancementEnabled(kEnhMinorBugFixes) &&
 		st.verb == 4 && // Give
 		st.objectB == 7 && // Herman
