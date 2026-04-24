@@ -263,6 +263,7 @@ void VideoPlayer_v2::setVideo(const Common::Point &pt) {
 	_frame->create(_header._width, _header._height, Graphics::PixelFormat::createFormatCLUT8());
 
 	_startMs = _vm->_events->getPriorFrameTime();
+	_delayTotal = 0;
 
 	debugC(kDebugGraphics, "Load video V2: id = %d, version = %d, frameCount = %d, width = %d, height = %d, frameIncr = %d, unk = %d",
 	  _header._id, _header._version, _header._frameCount, _header._width, _header._height, _header._frameIncr, _header._unk);
@@ -335,9 +336,9 @@ void VideoPlayer_v2::handlePaletteChunk() {
 
 void VideoPlayer_v2::calcNextFrameTime(int delay) {
 	if (delay)
-		error("TODO: Implement frame-specific delay %d ms", delay * 1000 / 60);
+		_delayTotal += delay;
 	uint32 elapsedForNextFrame = _header._frameIncr * 1000 * (_videoFrame + 1) / 60;
-	_nextFrameTime = _startMs + elapsedForNextFrame;
+	_nextFrameTime = _startMs + _delayTotal * 1000 / 60 + elapsedForNextFrame;
 }
 
 void VideoPlayer_v2::handleFrameChunk(bool delta, bool skipLines) {
