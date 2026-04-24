@@ -254,7 +254,9 @@ public:
 	uint32 mem(int16 index);
 	void menu(uint16 menuNo, uint16 itemNo, uint16 state, const Common::U32String &title);
 	Common::U32String leftStr(const Common::U32String &str, int16 expression);
+	Common::String leftStr(const Common::String &str, int16 expression);
 	Common::U32String rightStr(const Common::U32String &str, int16 expression);
+	Common::String rightStr(const Common::String &str, int16 expression);
 	Common::U32String midStr(const Common::U32String &str, int16 expr1, int16 expr2);
 	void midStrSet(Common::U32String &target, int16 expr1, int16 expr2, const Common::U32String &src);
 	Common::String midStr(const Common::String &str, int16 expr1, int16 expr2);
@@ -296,11 +298,11 @@ public:
 	void unk_20();
 	bool incrAndCheck(int16 &a0, int16 d1, int16 d0);
 	void unk_44(int16 unk1);
-	Common::String unk_88(uint16 unk1);
+	Common::String encodeInt(uint16 data);
 	void stringCopy(Common::U32String &dest, const Common::U32String &src);
 	void unk_130(int16 unk1);
 	void unk_158();
-	uint16 unk_310(const Common::String &unk1);
+	uint16 decodeInt(const Common::String &data);
 	void unk_331(uint16 unk1, int16 unk2);
 	void unk_333(uint16 unk1);
 	void indexSet(const Common::U32String &value, int16 table, int16 index);

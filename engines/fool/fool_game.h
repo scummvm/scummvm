@@ -252,7 +252,7 @@ public:
 	void sub_139_4de();
 	void sub_139_50e();
 	void cardsShuffleDeck(); // sub_139_51e
-	void sub_139_582();
+	void cardsDrawTable(); // sub_139_582
 	void cardsOnClick(); // sub_139_6b0
 	void sub_139_a22();
 	void cardsOpponentYields(); // sub_139_da8
@@ -265,31 +265,31 @@ public:
 	void sub_139_1d3e();
 
 	// fool_thoth.cpp
-	void sub_140_004();
-	void thothHighPriestess(); // sub_140_458
+	void highPriestessRun(); // sub_140_004
+	void thoth99Enchantments(); // sub_140_458
 	void thothMoveEnchantment(); // sub_140_9f0
 	void thothDrawEnchantment(); // sub_140_b2c
 	void sub_140_c4c();
 	void thothScrambleScreen(); // sub_140_dd4
 	void sub_140_e3c();
 	void sub_140_f84();
-	void sub_140_12fc();
+	void thothKey1st(); // sub_140_12fc
 	void sub_140_15fc();
-	void thothBook(); // sub_140_1486
-	void sub_140_18fa();
-	void sub_140_1bc4();
+	void thothKey2nd(); // sub_140_1486
+	void thothKey3rd(); // sub_140_18fa
+	void thothKey3rdOnClick(); // sub_140_1bc4
 	void sub_140_1f68();
 	void sub_140_205e();
-	void sub_140_206a();
-	void sub_140_22b8();
-	void sub_140_24ae();
-	void sub_140_25e4();
-	void sub_140_2662();
-	void sub_140_26ca();
-	void sub_140_28bc();
+	void thothKeyLast(); // sub_140_206a
+	void thothKeyLastOnClick(); // sub_140_22b8
+	void thothBadSelect(); // sub_140_24ae
+	void hermitNextStage(); // sub_140_25e4
+	void hermitScreenFlash(); // sub_140_2662
+	void hermitScreenZoom(); // sub_140_26ca
+	void hermitScreenBehold(); // sub_140_28bc
 	void sub_140_2968();
 	void sub_140_2978();
-	void sub_140_2998();
+	void thothKeyLastSetup(); // sub_140_2998
 	void sub_140_2f92();
 	Common::Rect thothRandomSquare(); // sub_140_3050
 	Common::Rect thothRandomHRect(); // sub_140_30da
@@ -332,6 +332,7 @@ private:
 	GrafPtr var_i32_0;
 	GrafPtr var_i32_4;
 	GrafPtr var_i32_8;
+	GrafPtr var_i32_8_thoth;
 	Handle var_i32_c;
 	int16 var_i16_30;
 	int16 var_i16_32;
@@ -540,7 +541,7 @@ private:
 	int16 var_i16_221e;
 	Common::U32String var_str_2222;
 	int16 var_i16_2322;
-	int16 var_i16_2324;
+	int16 hermitPathStage; // var_i16_2324
 	int16 var_i16_2326;
 	int16 var_i16_2328;
 	uint32 var_ptr_232a;
@@ -549,8 +550,8 @@ private:
 
 	int16 var_i16_2330;
 	int16 var_i16_2332;
-	int16 var_i16_2334;
-	int16 var_i16_2336;
+	int16 hermitPathStartIndex; // var_i16_2334
+	int16 hermitPathEndIndex; // var_i16_2336
 	int16 var_i16_2338;
 	int16 var_i16_233a;
 	int16 var_i16_233e;
@@ -616,6 +617,7 @@ private:
 	GrafPort arr_grafport_18eae;
 	GrafPort arr_grafport_18f78;
 	GrafPort arr_grafport_19042;
+	GrafPort arr_grafport_19042_thoth;
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
 	Common::Rect arr_rect_19114;

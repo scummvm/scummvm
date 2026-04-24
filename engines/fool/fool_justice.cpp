@@ -55,7 +55,7 @@ void FoolGame::justiceRun() {
 	if (this->var_i16_c04 == 0x63) {
 		g_zbasic->menu(8, 0, 1, g_zbasic->str(346)); // the 3rd key of thoth
 		g_zbasic->menu(8, 1, 1, g_zbasic->str(347)); // return to scroll
-		this->sub_140_18fa();
+		this->thothKey3rd();
 		if (this->var_i16_d0c == 1) {
 			this->sub_128_962(0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 0xa2, 0xff, 0xac, 0x10e, 2, kPatXor, 0x19);
 		}
@@ -187,9 +187,9 @@ void FoolGame::justiceOnClick() {
 		this->var_i16_233e = 0;
 	}
 	// 142:0e44
-	this->var_str_1272 = g_zbasic->indexRaw(1, this->var_i16_103a);
-	if (g_zbasic->leftStr(this->var_str_1272, 1) == g_zbasic->str(359)) { // M
-		this->var_i16_484 = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_1272, 2, 2));
+	Common::String buffer = g_zbasic->indexRaw(1, this->var_i16_103a);
+	if (g_zbasic->leftStr(buffer, 1) == g_zbasic->str(359).encode(Common::kMacRoman)) { // M
+		this->var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(buffer, 2, 2));
 		this->justiceDrawBlock();
 		this->var_i16_2340 = 5;
 	} else {
@@ -197,10 +197,10 @@ void FoolGame::justiceOnClick() {
 		this->var_i16_2340 = 2;
 	}
 	// 142:0eae
-	this->var_i16_2342 = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_1272, this->var_i16_2340, 2));
+	this->var_i16_2342 = g_zbasic->decodeInt(g_zbasic->midStr(buffer, this->var_i16_2340, 2));
 	for (int16 i = 1; i <= this->var_i16_2342; i++) {
 		this->var_i16_2340 += 2;
-		this->var_i16_484 = g_zbasic->unk_310(g_zbasic->midStr(this->var_str_1272, this->var_i16_2340, 2));
+		this->var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(buffer, this->var_i16_2340, 2));
 		// 142:0ef0
 		if (this->arr_i16_3738[this->var_i16_484] == 0) {
 			this->justiceDrawBlock();
@@ -209,6 +209,7 @@ void FoolGame::justiceOnClick() {
 		}
 	}
 	// 142:0f20
+	this->var_i16_d0c = 1;
 	for (int16 i = 1; i <= 0x19; i++) {
 		if (this->arr_i16_3738[i] == 0) {
 			this->var_i16_d0c = 0;
@@ -252,7 +253,7 @@ void FoolGame::justiceStoreState() {
 	this->var_str_384 = Common::U32String::format(" %d", this->var_i16_233e);
 	this->activePuzzleBuffer = g_zbasic->rightStr(this->var_str_384, 1);
 	for (int16 i = 1; i <= 0x19; i++) {
-		this->arr_i16_3738[i] = this->var_i16_484;
+		this->var_i16_484 = this->arr_i16_3738[i];
 		if (g_zbasic->index(1, i + 0x19) == g_zbasic->str(360)) { // ~
 			this->var_i16_484 |= 2;
 			this->var_str_384 = g_zbasic->rightStr(Common::U32String::format(" %d", this->var_i16_484), 1);
