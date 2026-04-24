@@ -56,7 +56,7 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_pxiData = NULL;
 
 	Common::RenderMode renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
-	if (renderMode == Common::kRenderEGA || renderMode == Common::kRenderHercG)
+	if (renderMode == Common::kRenderEGA || renderMode == Common::kRenderHercG || renderMode == Common::kRenderHercA)
 		_videoMode = renderMode;
 	else
 		_videoMode = Common::kRenderCGA;

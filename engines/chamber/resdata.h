@@ -27,7 +27,7 @@
 namespace Chamber {
 
 typedef struct ResEntry_t {
-	char    name[16];
+	char    name[8 + 1 + 3 + 1];
 	void    *buffer;
 } ResEntry_t;
 

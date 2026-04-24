@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
@@ -31,150 +32,37 @@
 #include "chamber/input.h"
 #include "chamber/resdata.h"
 #include "chamber/renderer.h"
+#include "chamber/ega_resource.h"
 #include "chamber/room.h"
 
 namespace Chamber {
 
-// ---------------------------------------------------------------------------
-// EGA 16-color palette (standard EGA RGB values)
-// Source: kult/kult.cpp — this is the correct version (NOT BGR-swapped)
-// ---------------------------------------------------------------------------
-const byte EGA_PALETTE[16 * 3] = {
-	0x00, 0x00, 0x00,  // 0  black
-	0x00, 0x00, 0xaa,  // 1  dark blue
-	0x00, 0xaa, 0x00,  // 2  dark green
-	0x00, 0xaa, 0xaa,  // 3  dark cyan
-	0xaa, 0x00, 0x00,  // 4  dark red
-	0xaa, 0x00, 0xaa,  // 5  dark magenta
-	0xaa, 0x55, 0x00,  // 6  brown
-	0xaa, 0xaa, 0xaa,  // 7  light grey
-	0x00, 0x00, 0x00,  // 8  dark grey (same as black in standard EGA)
-	0x55, 0x55, 0xff,  // 9  bright blue
-	0x55, 0xff, 0x55,  // 10 bright green
-	0x55, 0xff, 0xff,  // 11 bright cyan
-	0xff, 0x55, 0x55,  // 12 bright red
-	0xff, 0x55, 0xff,  // 13 bright magenta
-	0xff, 0xff, 0x55,  // 14 yellow
-	0xff, 0xff, 0xff,  // 15 white
-};
-
-// ---------------------------------------------------------------------------
-// EGA framebuffers — aliases to the shared CGA/EGA buffers (both 64000 bytes)
-// ega_screen    -> CGA_SCREENBUFFER (frontbuffer in room.cpp)
-// ega_backbuffer -> backbuffer       (backbuffer in room.cpp)
-// ---------------------------------------------------------------------------
-byte *ega_screen    = CGA_SCREENBUFFER;
 byte *ega_backbuffer = backbuffer;
 
 const byte cga_to_ega_color[] = { 0, 11, 13, 15 };
-
-// ---------------------------------------------------------------------------
-// Screen management
-// ---------------------------------------------------------------------------
-
-void ega_blitToScreen(int16 x, int16 y, int16 w, int16 h) {
-	if (x < 0) { w += x; x = 0; }
-	if (y < 0) { h += y; y = 0; }
-	if (x + w > EGA_WIDTH)  w = EGA_WIDTH  - x;
-	if (y + h > EGA_HEIGHT) h = EGA_HEIGHT - y;
-	if (w <= 0 || h <= 0)
-		return;
-
-	g_system->copyRectToScreen(
-		ega_screen + y * EGA_BYTES_PER_LINE + x,
-		EGA_BYTES_PER_LINE,
-		x, y, w, h);
-	g_system->updateScreen();
-}
-
-// ---------------------------------------------------------------------------
-// Offset helpers
-// EGA: linear layout, no interlacing — offset = y * 320 + x
-// ---------------------------------------------------------------------------
-
-uint16 ega_CalcXY(uint16 x, uint16 y) {
-	return y * EGA_BYTES_PER_LINE + x;
-}
-
-// "packed" variant: x is in 4-pixel units (matching CGA convention)
-uint16 ega_CalcXY_p(uint16 x, uint16 y) {
-	return y * EGA_BYTES_PER_LINE + x * 4;
-}
 
 // ---------------------------------------------------------------------------
 // Memory / block blit helpers
 // w is in *bytes* == *pixels* in EGA mode (1 byte per pixel)
 // ---------------------------------------------------------------------------
 
-void ega_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
+static void ega_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
 	uint16 oofs = ofs;
 	for (uint16 y = 0; y < h; y++) {
 		memcpy(target + ofs, source + ofs, w);
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (target == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w, h);
-}
-
-// EGA backup image header (6 bytes):
-//   [0]   h   (byte)
-//   [1]   w_cga = w_pixels / 4 (byte, CGA byte-units; avoids overflow for w <= 1020 px)
-//   [2:3] ofs (uint16, linear EGA offset)
-// Pixel data follows at buffer+4, w_pixels bytes per row × h rows.
-// w is passed as pixel width (w_cga * 4).  Callers from cga_BackupImage
-// already multiply by 4; callers from backupAndShowSprite pass surf->w directly.
-byte *ega_BackupImage(byte *source, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
-	*(byte *)(buffer + 0) = (byte)h;
-	*(byte *)(buffer + 1) = (byte)(w >> 2); // store CGA byte-units to keep in one byte
-	*(uint16 *)(buffer + 2) = ofs;
-	buffer += 4;
-	for (uint16 y = 0; y < h; y++) {
-		memcpy(buffer, source + ofs, w);
-		buffer += w;
-		ofs += EGA_BYTES_PER_LINE;
-	}
-	return buffer;
-}
-
-void ega_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
-	ega_CopyScreenBlock(ega_backbuffer, w, h, screen, ofs);
-}
-
-void ega_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	uint16 oofs = ofs;
-	for (uint16 y = 0; y < h; y++) {
-		for (uint16 x = 0; x < w; x++) {
-			if (pixels[x] != 0)
-				screen[ofs + x] = pixels[x];
-		}
-		pixels += pw;
-		ofs += EGA_BYTES_PER_LINE;
-	}
-
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w, h);
-}
-
-void ega_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
-	uint16 oofs = ofs;
-	for (uint16 y = 0; y < h; y++) {
-		for (uint16 x = 0; x < w; x++) {
-			if (pixels[w - 1 - x] != 0)
-				screen[ofs + x] = pixels[w - 1 - x];
-		}
-		pixels += pw;
-		ofs += EGA_BYTES_PER_LINE;
-	}
-
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w, h);
+	if (target == SCREENBUFFER)
+		g_vm->_renderer->blitToScreen((int16)(oofs % EGA_BYTES_PER_LINE), (int16)(oofs / EGA_BYTES_PER_LINE), (int16)w, (int16)h);
 }
 
 byte ega_fond_clean[EGA_SCREEN_SIZE];
 
 void ega_drawBackground(byte *target) {
 	memcpy(target, ega_fond_clean, EGA_SCREEN_SIZE);
+	if (target == SCREENBUFFER)
+		g_vm->_renderer->blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 }
 
 Graphics::Surface *ega_loadFond(const char *filename) {
@@ -214,22 +102,36 @@ Graphics::Surface *ega_loadFond(const char *filename) {
 // Implementations live directly here; no delegation to removed ega_* helpers.
 // ===========================================================================
 
+static void setGameEGAPalette() {
+	Graphics::Palette pal = Graphics::Palette::createEGAPalette();
+	byte palData[16 * 3];
+	memcpy(palData, pal.data(), sizeof(palData));
+	/* This game remaps EGA color 8 to black (not standard dark gray) */
+	palData[8 * 3] = palData[8 * 3 + 1] = palData[8 * 3 + 2] = 0;
+	g_system->getPaletteManager()->setPalette(palData, 0, 16);
+}
+
 void EGARenderer::switchToGraphicsMode() {
-	g_system->getPaletteManager()->setPalette(EGA_PALETTE, 0, 16);
+	setGameEGAPalette();
 }
 
 void EGARenderer::colorSelect(byte /*csel*/) {
-	g_system->getPaletteManager()->setPalette(EGA_PALETTE, 0, 16);
+	setGameEGAPalette();
 }
 
 void EGARenderer::blitToScreen(int16 x, int16 y, int16 w, int16 h) {
-	ega_blitToScreen(x, y, w, h);
+	if (x < 0) { w += x; x = 0; }
+	if (y < 0) { h += y; y = 0; }
+	if (x + w > EGA_WIDTH)  w = EGA_WIDTH  - x;
+	if (y + h > EGA_HEIGHT) h = EGA_HEIGHT - y;
+	if (w <= 0 || h <= 0)
+		return;
+	g_system->copyRectToScreen(SCREENBUFFER + y * EGA_BYTES_PER_LINE + x, EGA_BYTES_PER_LINE, x, y, w, h);
+	g_system->updateScreen();
 }
 
 void EGARenderer::blitToScreen(int16 ofs, int16 w, int16 h) {
-	int16 dy = ofs / EGA_BYTES_PER_LINE;
-	int16 dx = ofs % EGA_BYTES_PER_LINE;
-	ega_blitToScreen(dx, dy, w, h);
+	blitToScreen((int16)(ofs % EGA_BYTES_PER_LINE), (int16)(ofs / EGA_BYTES_PER_LINE), w, h);
 }
 
 uint16 EGARenderer::calcXY(uint16 x, uint16 y) {
@@ -241,20 +143,20 @@ uint16 EGARenderer::calcXY_p(uint16 x, uint16 y) {
 }
 
 void EGARenderer::backBufferToRealFull() {
-	memcpy(ega_screen, ega_backbuffer, EGA_SCREEN_SIZE);
-	ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+	memcpy(SCREENBUFFER, ega_backbuffer, EGA_SCREEN_SIZE);
+	blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 }
 
 void EGARenderer::realBufferToBackFull() {
-	memcpy(ega_backbuffer, ega_screen, EGA_SCREEN_SIZE);
+	memcpy(ega_backbuffer, SCREENBUFFER, EGA_SCREEN_SIZE);
 }
 
 void EGARenderer::swapRealBackBuffer() {
 	static byte tmp[EGA_SCREEN_SIZE];
-	memcpy(tmp,            ega_screen,     EGA_SCREEN_SIZE);
-	memcpy(ega_screen,     ega_backbuffer, EGA_SCREEN_SIZE);
+	memcpy(tmp,            SCREENBUFFER,     EGA_SCREEN_SIZE);
+	memcpy(SCREENBUFFER,     ega_backbuffer, EGA_SCREEN_SIZE);
 	memcpy(ega_backbuffer, tmp,            EGA_SCREEN_SIZE);
-	ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+	blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 }
 
 void EGARenderer::copyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) {
@@ -273,12 +175,22 @@ void EGARenderer::swapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen,
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, pw, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, pw, h);
 }
 
 byte *EGARenderer::backupImage(byte *screen, uint16 ofs, uint16 w, uint16 h, byte *buffer) {
-	return ega_BackupImage(screen, ofs, w * 4, h, buffer);
+	w = w * 4;
+	*(byte *)(buffer + 0) = (byte)h;
+	*(byte *)(buffer + 1) = (byte)(w >> 2);
+	*(uint16 *)(buffer + 2) = ofs;
+	buffer += 4;
+	for (uint16 y = 0; y < h; y++) {
+		memcpy(buffer, screen + ofs, w);
+		buffer += w;
+		ofs += EGA_BYTES_PER_LINE;
+	}
+	return buffer;
 }
 
 void EGARenderer::restoreImage(byte *buffer, byte *target) {
@@ -297,7 +209,7 @@ void EGARenderer::refreshImageData(byte *buffer) {
 	uint16 h   = *(byte *)(buffer + 0);
 	uint16 w   = (uint16)*(byte *)(buffer + 1) * 4;
 	uint16 ofs = *(uint16 *)(buffer + 2);
-	ega_CopyScreenBlock(ega_screen, w, h, ega_backbuffer, ofs);
+	ega_CopyScreenBlock(SCREENBUFFER, w, h, ega_backbuffer, ofs);
 }
 
 void EGARenderer::restoreBackupImage(byte *target) {
@@ -314,8 +226,8 @@ void EGARenderer::blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
 }
 
 void EGARenderer::blitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
@@ -333,8 +245,8 @@ void EGARenderer::fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs)
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
 }
 
 void EGARenderer::fillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs) {
@@ -355,8 +267,8 @@ void EGARenderer::blitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *s
 			pixels += pw;
 			ofs += EGA_BYTES_PER_LINE;
 		}
-		if (screen == ega_screen)
-			ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
+		if (screen == SCREENBUFFER)
+			blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
 		return;
 	}
 	for (uint16 row = 0; row < h; row++) {
@@ -373,8 +285,8 @@ void EGARenderer::blitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *s
 		pixels += pw;
 		ofs += EGA_BYTES_PER_LINE;
 	}
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w * 4, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w * 4, h);
 }
 
 void EGARenderer::blitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
@@ -389,8 +301,8 @@ void EGARenderer::blitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byt
 			pixels += pw;
 			ofs += EGA_BYTES_PER_LINE;
 		}
-		if (screen == ega_screen)
-			ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
+		if (screen == SCREENBUFFER)
+			blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, ega_w, h);
 		return;
 	}
 	for (uint16 row = 0; row < h; row++) {
@@ -408,8 +320,8 @@ void EGARenderer::blitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byt
 		ofs += EGA_BYTES_PER_LINE;
 	}
 	uint16 startX = (oofs % EGA_BYTES_PER_LINE) - (w * 4 - 1);
-	if (screen == ega_screen)
-		ega_blitToScreen(startX, oofs / EGA_BYTES_PER_LINE, w * 4, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(startX, oofs / EGA_BYTES_PER_LINE, w * 4, h);
 }
 
 void EGARenderer::blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) {
@@ -425,8 +337,8 @@ void EGARenderer::blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
 }
 
 void EGARenderer::blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) {
@@ -442,33 +354,33 @@ void EGARenderer::blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte 
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (screen == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
+	if (screen == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, w_px, h);
 }
 
 void EGARenderer::blitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) {
-	ega_BlitFromBackBuffer(w * 4, h, screen, ofs);
+	ega_CopyScreenBlock(ega_backbuffer, w * 4, h, screen, ofs);
 }
 
 void EGARenderer::drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	byte egaColor = cga_to_ega_color[color & 0x03];
-	uint16 ofs = ega_CalcXY(x, y);
+	uint16 ofs = calcXY(x, y);
 	for (uint16 i = 0; i < l; i++) {
 		target[ofs] = egaColor;
 		ofs += EGA_BYTES_PER_LINE;
 	}
 
-	if (target == ega_screen)
-		ega_blitToScreen(x, y, 1, l);
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, 1, l);
 }
 
 void EGARenderer::drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) {
 	byte egaColor = cga_to_ega_color[color & 0x03];
-	uint16 ofs = ega_CalcXY(x, y);
+	uint16 ofs = calcXY(x, y);
 	memset(target + ofs, egaColor, l);
 
-	if (target == ega_screen)
-		ega_blitToScreen(x, y, l, 1);
+	if (target == SCREENBUFFER)
+		blitToScreen(x, y, l, 1);
 }
 
 uint16 EGARenderer::drawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) {
@@ -499,15 +411,15 @@ uint16 EGARenderer::drawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uin
 	}
 
 	uint16 totalW = (l + 2) * 4;
-	if (target == ega_screen)
-		ega_blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, totalW, 1);
+	if (target == SCREENBUFFER)
+		blitToScreen(oofs % EGA_BYTES_PER_LINE, oofs / EGA_BYTES_PER_LINE, totalW, 1);
 
 	return oofs + EGA_BYTES_PER_LINE;
 }
 
 void EGARenderer::printChar(byte c, byte *target) {
 	byte *font = carpc_data + c * g_vm->_fontHeight;
-	uint16 ofs  = ega_CalcXY_p(char_draw_coords_x, char_draw_coords_y);
+	uint16 ofs  = calcXY_p(char_draw_coords_x, char_draw_coords_y);
 
 	for (uint16 row = 0; row < (uint16)g_vm->_fontHeight; row++) {
 		byte bits = char_xlat_table[*font++];
@@ -520,8 +432,8 @@ void EGARenderer::printChar(byte c, byte *target) {
 
 	char_draw_coords_x++;
 
-	if (target == ega_screen)
-		ega_blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth,
+	if (target == SCREENBUFFER)
+		blitToScreen((char_draw_coords_x - 1) * g_vm->_fontWidth,
 		                  char_draw_coords_y,
 		                  g_vm->_fontWidth, g_vm->_fontHeight);
 }
@@ -576,8 +488,8 @@ void EGARenderer::traceLine(uint16 sx, uint16 ex, uint16 sy, uint16 ey, byte *so
 		if (e2 > -abh) { err -= abh; x0 += ddx; }
 		if (e2 <  abw) { err += abw; y0 += ddy; }
 	}
-	if (target == ega_screen)
-		ega_blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
+	if (target == SCREENBUFFER)
+		blitToScreen(0, 0, EGA_WIDTH, EGA_HEIGHT);
 }
 
 void EGARenderer::zoomImage(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, byte *target, uint16 ofs) {
@@ -589,7 +501,51 @@ void EGARenderer::animZoomIn(byte *pixels, byte w, byte h, byte *target, uint16 
 }
 
 void EGARenderer::zoomInplaceXY(byte *pixels, byte w, byte h, byte /*nw*/, byte /*nh*/, uint16 x, uint16 y, byte *target) {
-	blit(pixels, w, w, h, target, ega_CalcXY_p(x, y));
+	blit(pixels, w, w, h, target, calcXY_p(x, y));
+}
+
+void EGARenderer::drawSprite(byte *sprite, byte *screen, uint16 ofs) {
+	Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(sprite);
+	blitSprite((byte *)surf->getPixels(), surf->pitch, surf->w / 4, surf->h, screen, ofs);
+}
+
+void EGARenderer::drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) {
+	Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(sprite);
+	blitSpriteFlip((byte *)surf->getPixels(), surf->pitch, surf->w / 4, surf->h, screen, ofs);
+}
+
+byte *EGARenderer::loadSprit(byte index) {
+	return reinterpret_cast<byte *>(ega_sprit_res->getSprite(index));
+}
+
+byte *EGARenderer::loadPersSprit(byte index) {
+	return reinterpret_cast<byte *>(ega_perso_res->getSprite(index));
+}
+
+void EGARenderer::backupAndShowSprite(byte index, byte x, byte y) {
+	byte *sprite = loadSprit(index);
+	uint16 ofs = calcXY_p(x, y);
+	Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(sprite);
+	backupImage(SCREENBUFFER, ofs, surf->w / 4, surf->h, scratch_mem2);
+	drawSprite(sprite, SCREENBUFFER, ofs);
+}
+
+void EGARenderer::animLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) {
+	uint16 i;
+	uint16 epw = pw * 4;
+	pixels += epw * (h - 1);
+	for (i = 1; i <= h; i++) {
+		blitAndWait(pixels, pw, w, i, screen, ofs);
+		pixels -= epw;
+	}
+}
+
+void EGARenderer::animLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) {
+	uint16 i;
+	for (i = 1; i <= h; i++) {
+		blitAndWait(pixels, pw, w, i, screen, calcXY_p(x, y));
+		y -= 1;
+	}
 }
 
 } // End of namespace Chamber

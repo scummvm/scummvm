@@ -32,6 +32,7 @@ public:
 
 	virtual void switchToGraphicsMode() = 0;
 	virtual void colorSelect(byte csel) = 0;
+	virtual void selectCursor(uint16 num) = 0;
 	virtual void blitToScreen(int16 x, int16 y, int16 w, int16 h) = 0;
 	virtual void blitToScreen(int16 ofs, int16 w, int16 h) = 0;
 
@@ -59,6 +60,12 @@ public:
 	virtual void blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) = 0;
 	virtual void blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) = 0;
 	virtual void blitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) = 0;
+	virtual void drawSprite(byte *sprite, byte *screen, uint16 ofs) = 0;
+	virtual void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) = 0;
+	virtual byte *loadSprit(byte index) = 0;
+	virtual byte *loadPersSprit(byte index) = 0;
+	virtual void backupAndShowSprite(byte index, byte x, byte y) = 0;
+	virtual byte *loadPortraitWithFrame(byte index) = 0;
 
 	virtual void drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) = 0;
 	virtual void drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) = 0;
@@ -67,6 +74,8 @@ public:
 
 	virtual void animLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) = 0;
 	virtual void animLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) = 0;
+	virtual void animLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) = 0;
+	virtual void animLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) = 0;
 
 	virtual void hideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) = 0;
 	virtual void hideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) = 0;
@@ -85,6 +94,7 @@ class CGARenderer : public Renderer {
 public:
 	void switchToGraphicsMode() override;
 	void colorSelect(byte csel) override;
+	void selectCursor(uint16 num) override;
 	void blitToScreen(int16 x, int16 y, int16 w, int16 h) override;
 	void blitToScreen(int16 ofs, int16 w, int16 h) override;
 	uint16 calcXY(uint16 x, uint16 y) override;
@@ -107,12 +117,20 @@ public:
 	void blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) override;
 	void blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
 	void blitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) override;
+	void drawSprite(byte *sprite, byte *screen, uint16 ofs) override;
+	void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) override;
+	byte *loadSprit(byte index) override;
+	byte *loadPersSprit(byte index) override;
+	void backupAndShowSprite(byte index, byte x, byte y) override;
+	byte *loadPortraitWithFrame(byte index) override;
 	void drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
 	void drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
 	uint16 drawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) override;
 	void printChar(byte c, byte *target) override;
 	void animLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
 	void animLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
+	void animLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
+	void animLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) override;
 	void hideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;
 	void hideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;
 	void hideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;
@@ -128,6 +146,7 @@ class EGARenderer : public Renderer {
 public:
 	void switchToGraphicsMode() override;
 	void colorSelect(byte csel) override;
+	void selectCursor(uint16 num) override;
 	void blitToScreen(int16 x, int16 y, int16 w, int16 h) override;
 	void blitToScreen(int16 ofs, int16 w, int16 h) override;
 	uint16 calcXY(uint16 x, uint16 y) override;
@@ -150,12 +169,20 @@ public:
 	void blitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask) override;
 	void blitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
 	void blitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs) override;
+	void drawSprite(byte *sprite, byte *screen, uint16 ofs) override;
+	void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs) override;
+	byte *loadSprit(byte index) override;
+	byte *loadPersSprit(byte index) override;
+	void backupAndShowSprite(byte index, byte x, byte y) override;
+	byte *loadPortraitWithFrame(byte index) override;
 	void drawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
 	void drawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target) override;
 	uint16 drawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs) override;
 	void printChar(byte c, byte *target) override;
 	void animLiftToLeft(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
 	void animLiftToRight(uint16 n, byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
+	void animLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs) override;
+	void animLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y) override;
 	void hideScreenBlockLiftToDown(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;
 	void hideScreenBlockLiftToUp(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;
 	void hideScreenBlockLiftToLeft(uint16 n, byte *screen, byte *source, uint16 w, uint16 h, byte *target, uint16 ofs) override;

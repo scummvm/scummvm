@@ -143,11 +143,11 @@ void gameLoop(byte *target) {
 
 		the_command = 0;
 		if (isCursorInRect(&room_bounds_rect)) {
-			selectCursor(CURSOR_TARGET);
+			g_vm->_renderer->selectCursor(CURSOR_TARGET);
 			command_hint = 100;
 			selectSpotCursor();
 		} else {
-			selectCursor(CURSOR_FINGER);
+			g_vm->_renderer->selectCursor(CURSOR_FINGER);
 			object_hint = 117;
 			checkMenuCommandHover();
 		}

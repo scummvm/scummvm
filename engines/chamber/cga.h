@@ -59,14 +59,14 @@ namespace Chamber {
 #define CGA_PIXELS_PER_BYTE (8 / CGA_BITS_PER_PIXEL)
 #define CGA_BYTES_PER_LINE (CGA_WIDTH / CGA_PIXELS_PER_BYTE)
 
-extern byte CGA_SCREENBUFFER[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
+extern byte SCREENBUFFER[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
 
 #define CGA_FONT_HEIGHT 6
 
 #define CGA_NEXT_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) + (((offs) & CGA_ODD_LINES_OFS) ? 0 : CGA_BYTES_PER_LINE))
 #define CGA_PREV_LINE(offs) ((CGA_ODD_LINES_OFS ^ (offs)) - (((offs) & CGA_ODD_LINES_OFS) ? CGA_BYTES_PER_LINE : 0))
 
-#define frontbuffer CGA_SCREENBUFFER
+#define frontbuffer SCREENBUFFER
 extern byte backbuffer[0xFA00]; ///< CGA/HGA: 0xB800, EGA: 0xFA00 (64000)
 
 extern byte sprit_load_buffer[8192];
@@ -84,8 +84,6 @@ void switchToTextMode(void);
 
 void waitVBlank(void);
 
-uint16 CalcXY(uint16 x, uint16 y);
-uint16 CalcXY_p(uint16 x, uint16 y);
 
 uint16 HGA_CalcXY(uint16 x, uint16 y);
 uint16 HGA_CalcXY_p(uint16 x, uint16 y);
@@ -93,21 +91,10 @@ uint16 cga_CalcXY_p(uint16 x, uint16 y);
 
 byte *cga_BackupImageReal(uint16 ofs, uint16 w, uint16 h);
 
-void drawSprite(byte *sprite, byte *screen, uint16 ofs);
-void drawSpriteFlip(byte *sprite, byte *screen, uint16 ofs);
-
 void drawSpriteN(byte index, uint16 x, uint16 y, byte *target);
 void drawSpriteNFlip(byte index, uint16 x, uint16 y, byte *target);
 
-void backupAndShowSprite(byte index, byte x, byte y);
-
 byte *loadSprite(byte index, byte *bank, byte *buffer, byte header_only);
-
-byte *loadSprit(byte index);
-byte *loadPersSprit(byte index);
-
-void cga_AnimLiftToUp(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 x, uint16 y);
-void cga_AnimLiftToDown(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
 
 } // End of namespace Chamber
 

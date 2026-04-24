@@ -257,7 +257,7 @@ void drawMessage(byte *msg, byte *target) {
 	draw_x = x;
 	draw_y = y;
 
-	cga_BackupImageReal(CalcXY_p(x, y), char_draw_max_width + 2, char_draw_max_height); /*backup orig. screen data*/
+	cga_BackupImageReal(g_vm->_renderer->calcXY_p(x, y), char_draw_max_width + 2, char_draw_max_height); /*backup orig. screen data*/
 	cga_DrawTextBox(msg, target);                   /*draw box with text*/
 	promptWait();                                   /*wait keypress*/
 	g_vm->_renderer->restoreBackupImage(target);                 /*restore screen data*/

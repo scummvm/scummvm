@@ -672,9 +672,9 @@ uint16 SCR_5_DrawPortraitLiftRight(void) {
 
 	/*TODO: use local args instead of globals*/
 	if (g_vm->_videoMode == Common::kRenderEGA)
-		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width * 4 - 4, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x, y));
+		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width * 4 - 4, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x, y));
 	else
-		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width - 1, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x, y));
+		g_vm->_renderer->animLiftToRight(width, cur_image_pixels + width - 1, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x, y));
 	return 0;
 }
 
@@ -690,7 +690,7 @@ uint16 SCR_6_DrawPortraitLiftLeft(void) {
 		return 0;
 
 	/*TODO: use local args instead of globals*/
-	g_vm->_renderer->animLiftToLeft(width, cur_image_pixels, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x + width - 1, y));
+	g_vm->_renderer->animLiftToLeft(width, cur_image_pixels, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x + width - 1, y));
 	return 0;
 }
 
@@ -706,7 +706,7 @@ uint16 SCR_7_DrawPortraitLiftDown(void) {
 		return 0;
 
 	/*TODO: use local args instead of globals*/
-	cga_AnimLiftToDown(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+	g_vm->_renderer->animLiftToDown(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 	return 0;
 }
 
@@ -722,7 +722,7 @@ uint16 SCR_8_DrawPortraitLiftUp(void) {
 		return 0;
 
 	/*TODO: use local args instead of globals*/
-	cga_AnimLiftToUp(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, x, y + height - 1);
+	g_vm->_renderer->animLiftToUp(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, x, y + height - 1);
 	return 0;
 }
 
@@ -737,7 +737,7 @@ uint16 SCR_9_DrawPortrait(void) {
 	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
-	g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+	g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 	return 0;
 }
 
@@ -794,7 +794,7 @@ uint16 SCR_B_DrawPortraitTwistEffect(void) {
 	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
-	offs = CalcXY_p(x, y);
+	offs = g_vm->_renderer->calcXY_p(x, y);
 
 	g_vm->_renderer->swapScreenRect(cur_image_pixels, width, height, backbuffer, offs);
 	twistDraw(x, y, width, height, backbuffer, frontbuffer);
@@ -845,7 +845,7 @@ uint16 SCR_C_DrawPortraitArcEffect(void) {
 	if (!drawPortrait(&script_ptr, &x, &y, &width, &height))
 		return 0;
 
-	offs = CalcXY_p(x, y);
+	offs = g_vm->_renderer->calcXY_p(x, y);
 
 	g_vm->_renderer->swapScreenRect(cur_image_pixels, width, height, backbuffer, offs);
 	arcDraw(x, y, width, height, backbuffer, frontbuffer);
@@ -861,7 +861,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	//int16 i;
 	byte x, y, width, height;
 	uint16 offs, step = 17;
-	byte *target = CGA_SCREENBUFFER;
+	byte *target = SCREENBUFFER;
 
 	script_ptr++;
 
@@ -871,7 +871,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	if (g_vm->_videoMode == Common::kRenderEGA) {
 		uint16 pw = width * 4;
 		cur_image_end = pw * height;
-		uint16 baseOfs = ega_CalcXY_p(x, y);
+		uint16 baseOfs = g_vm->_renderer->calcXY_p(x, y);
 		int16 count = 0;
 		for (offs = 0; offs != cur_image_end;) {
 			uint16 px = offs % pw;
@@ -879,14 +879,14 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 			target[baseOfs + py * EGA_BYTES_PER_LINE + px] = cur_image_pixels[offs];
 
 			if (count % 20 == 0)
-				ega_blitToScreen(x * 4, y, pw, height);
+				g_vm->_renderer->blitToScreen(x * 4, y, pw, height);
 
 			offs += step;
 			if (offs > cur_image_end)
 				offs -= cur_image_end;
 			count++;
 		}
-		ega_blitToScreen(x * 4, y, pw, height);
+		g_vm->_renderer->blitToScreen(x * 4, y, pw, height);
 		return 0;
 	}
 
@@ -901,7 +901,7 @@ uint16 SCR_D_DrawPortraitDotEffect(void) {
 	}
 
 	for (offs = 0; offs != cur_image_end;) {
-		target[CalcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs]; // TODO check this
+		target[g_vm->_renderer->calcXY_p(x + offs % cur_image_size_w, y + offs / cur_image_size_w)] = cur_image_pixels[offs]; // TODO check this
 
 		if (count % 5 == 0)
 			g_vm->_renderer->blitToScreen(offs, g_vm->_screenPPB, 1);
@@ -985,7 +985,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
@@ -994,7 +994,7 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 	if (g_vm->_videoMode == Common::kRenderEGA) {
 		offs += 4;
 		while (--width)
-			g_vm->_renderer->hideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+			g_vm->_renderer->hideScreenBlockLiftToLeft(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 		offs -= 4;
 		uint16 ooffs = offs;
 		byte oh = height;
@@ -1002,15 +1002,15 @@ uint16 SCR_19_HidePortraitLiftLeft(void) {
 			memcpy(frontbuffer + offs, backbuffer + offs, 4);
 			offs += EGA_BYTES_PER_LINE;
 		}
-		ega_blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
+		g_vm->_renderer->blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
 		return 0;
 	}
 
-	/*offs = CalcXY_p(x + 1, y);*/
+	/*offs = g_vm->_renderer->calcXY_p(x + 1, y);*/
 	offs++;
 
 	while (--width) {
-		g_vm->_renderer->hideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToLeft(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 	}
 
 	offs--;
@@ -1046,16 +1046,16 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
 	/*TODO: This originally was done by reusing door sliding routine*/
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		offs = CalcXY_p(x + width - 2, y);
+		offs = g_vm->_renderer->calcXY_p(x + width - 2, y);
 		while (--width)
-			g_vm->_renderer->hideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+			g_vm->_renderer->hideScreenBlockLiftToRight(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 		offs += 4;
 		uint16 ooffs = offs;
 		byte oh = height;
@@ -1063,14 +1063,14 @@ uint16 SCR_1A_HidePortraitLiftRight(void) {
 			memcpy(frontbuffer + offs, backbuffer + offs, 4);
 			offs += EGA_BYTES_PER_LINE;
 		}
-		ega_blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
+		g_vm->_renderer->blitToScreen(ooffs % EGA_BYTES_PER_LINE, ooffs / EGA_BYTES_PER_LINE, 4, oh);
 		return 0;
 	}
 
-	offs = CalcXY_p(x + width - 2, y);
+	offs = g_vm->_renderer->calcXY_p(x + width - 2, y);
 
 	while (--width) {
-		g_vm->_renderer->hideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToRight(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 	}
 
 	offs++;
@@ -1106,19 +1106,19 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
-	offs = CalcXY_p(x, y + 1);
+	offs = g_vm->_renderer->calcXY_p(x, y + 1);
 
 	while (--height) {
-		g_vm->_renderer->hideScreenBlockLiftToUp(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToUp(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 	}
 
 	/*hide topmost line*/
@@ -1126,7 +1126,7 @@ uint16 SCR_1B_HidePortraitLiftUp(void) {
 	offs ^= g_vm->_line_offset;
 	if ((offs & g_vm->_line_offset) != 0)
 		offs -= g_vm->_screenBPL;
-	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+	memcpy(SCREENBUFFER + offs, backbuffer + offs, width);
 	g_vm->_renderer->blitToScreen(offs, width, 1);
 	return 0;
 }
@@ -1147,19 +1147,19 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
-	offs = CalcXY_p(x, y + height - 2);
+	offs = g_vm->_renderer->calcXY_p(x, y + height - 2);
 
 	while (--height) {
-		g_vm->_renderer->hideScreenBlockLiftToDown(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToDown(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 	}
 
 	/*hide bottommost line*/
@@ -1167,7 +1167,7 @@ uint16 SCR_1C_HidePortraitLiftDown(void) {
 	offs ^= g_vm->_line_offset;
 	if ((offs & g_vm->_line_offset) == 0)
 		offs += g_vm->_screenBPL;
-	memcpy(CGA_SCREENBUFFER + offs, backbuffer + offs, width);
+	memcpy(SCREENBUFFER + offs, backbuffer + offs, width);
 	g_vm->_renderer->blitToScreen(offs, width, 1);
 	return 0;
 }
@@ -1188,7 +1188,7 @@ uint16 SCR_1E_HidePortraitTwist(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
@@ -1212,7 +1212,7 @@ uint16 SCR_1F_HidePortraitArc(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
@@ -1236,7 +1236,7 @@ uint16 SCR_20_HidePortraitDots(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
@@ -1436,7 +1436,7 @@ void drawStars(star_t *stars, int16 iter, byte *target) {
 		}
 
 		if (g_vm->_videoMode == Common::kRenderEGA) {
-			stars->ofs = ega_CalcXY_p(x, y);
+			stars->ofs = g_vm->_renderer->calcXY_p(x, y);
 			pixel = (stars->z < 0xE00) ? 15 : 8;
 			stars->pixel = pixel;
 			stars->mask = 0;
@@ -1633,7 +1633,7 @@ Display a static sprite in the room (to screen)
 uint16 SCR_11_DrawRoomObject(void) {
 	byte x, y, w, h;
 	SCR_DrawRoomObjectBack(&x, &y, &w, &h);
-	g_vm->_renderer->copyScreenBlock(backbuffer, w, h, frontbuffer, CalcXY_p(x, y));
+	g_vm->_renderer->copyScreenBlock(backbuffer, w, h, frontbuffer, g_vm->_renderer->calcXY_p(x, y));
 	return 0;
 }
 
@@ -1794,7 +1794,7 @@ uint16 SCR_28_MenuLoop(void) {
 	mask = *script_ptr++;
 	value = *script_ptr++;
 
-	selectCursor(cursor);
+	g_vm->_renderer->selectCursor(cursor);
 
 	menuLoop(mask, value);
 
@@ -1816,8 +1816,8 @@ uint16 SCR_2A_PopDialogRect(void) {
 	index = *script_ptr++;
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
-	g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs); /*TODO: implicit target*/
-	g_vm->_renderer->copyScreenBlock(backbuffer, 2, 21, CGA_SCREENBUFFER, offs = (x << 8) | y);  /*TODO: implicit target*/
+	g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs); /*TODO: implicit target*/
+	g_vm->_renderer->copyScreenBlock(backbuffer, 2, 21, SCREENBUFFER, offs = (x << 8) | y);  /*TODO: implicit target*/
 
 	cur_dlg_index = 0;
 
@@ -1848,11 +1848,11 @@ uint16 SCR_22_HidePortraitShatter(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
-	g_vm->_renderer->hideShatterFall(CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+	g_vm->_renderer->hideShatterFall(SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 
 	return 0;
 }
@@ -1872,11 +1872,11 @@ uint16 SCR_23_HidePortrait(void) {
 
 	getDirtyRectAndFree(index, &kind, &x, &y, &width, &height, &offs);
 	if (right_button) {
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 		return 0;
 	}
 
-	g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+	g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 
 	return 0;
 }
@@ -1975,13 +1975,13 @@ uint16 SCR_30_Fight(void) {
 	player_image[1] = x;
 	player_image[2] = y;
 	if (drawPortrait(&image, &x, &y, &width, &height))
-		g_vm->_renderer->animLiftToLeft(width, cur_image_pixels, width, 1, height, CGA_SCREENBUFFER, CalcXY_p(x + width - 1, y));
+		g_vm->_renderer->animLiftToLeft(width, cur_image_pixels, width, 1, height, SCREENBUFFER, g_vm->_renderer->calcXY_p(x + width - 1, y));
 
 	blinkToWhite();
 
 	if (pers->name != 44 && pers->name != 56 && pers->name != 51) {	/*VORT, MONKEY, TURKEY*/
 		getDirtyRectAndFree(1, &kind, &x, &y, &width, &height, &offs);
-		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->copyScreenBlock(backbuffer, width, height, SCREENBUFFER, offs);
 	}
 
 	/*check fight outcome*/
@@ -2378,27 +2378,27 @@ uint16 SCR_45_DeProfundisRoomEntry(void) {
 
 	/*draw Platform*/
 	sprofs = getPuzzlSprite(3, 140 / 4, 174, &w, &h, &ofs);
-	g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+	g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 
 	/*draw Granite Monster*/
 	sprofs = getPuzzlSprite(119, 128 / 4, 94, &w, &h, &ofs);
-	g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+	g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 
 	promptWait();
 
 	for (; h; h--) {
 		waitVBlank();
 		waitVBlank();
-		g_vm->_renderer->blitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, 1, SCREENBUFFER, ofs);
 
 		ofs ^= g_vm->_line_offset;
 		if ((ofs & g_vm->_line_offset) == 0)
 			ofs += g_vm->_screenBPL;
 
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
-	g_vm->_renderer->blitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
+	g_vm->_renderer->blitFromBackBuffer(w, 1, SCREENBUFFER, ofs);
 
 	return 0;
 }
@@ -2422,12 +2422,12 @@ uint16 SCR_46_DeProfundisLowerHook(void) {
 
 	for (; y; y--) {
 		waitVBlank();
-		g_vm->_renderer->blitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, h, SCREENBUFFER, ofs);
 
 		h++;
 		sprofs -= 20 / 4 * 2;
 
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
 	return 0;
@@ -2458,7 +2458,7 @@ uint16 SCR_47_DeProfundisRiseMonster(void) {
 
 		h++;
 
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
 	return 0;
@@ -2481,14 +2481,14 @@ uint16 SCR_48_DeProfundisLowerMonster(void) {
 
 	for (; y; y--) {
 		waitVBlank();
-		g_vm->_renderer->blitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, 1, SCREENBUFFER, ofs);
 
 		ofs ^= g_vm->_line_offset;
 		if ((ofs & g_vm->_line_offset) == 0)
 			ofs += g_vm->_screenBPL;
 
 		h--;
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
 	return 0;
@@ -2512,15 +2512,15 @@ uint16 SCR_49_DeProfundisRiseHook(void) {
 
 	for (; y; y--) {
 		waitVBlank();
-		g_vm->_renderer->blitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, h, SCREENBUFFER, ofs);
 
 		h--;
 		sprofs += 20 / 4 * 2;
 
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
-	g_vm->_renderer->blitFromBackBuffer(w, 1, CGA_SCREENBUFFER, ofs);
+	g_vm->_renderer->blitFromBackBuffer(w, 1, SCREENBUFFER, ofs);
 
 	return 0;
 }
@@ -2553,7 +2553,7 @@ uint16 SCR_65_DeProfundisMovePlatform(void) {
 
 	for (; y; y--) {
 		waitVBlank();
-		g_vm->_renderer->blitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, h, SCREENBUFFER, ofs);
 
 		ofs ^= g_vm->_line_offset;
 		if ((ofs & g_vm->_line_offset) == 0)
@@ -2561,11 +2561,11 @@ uint16 SCR_65_DeProfundisMovePlatform(void) {
 
 		h--;
 
-		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitScratchBackSprite(sprofs, w, h, SCREENBUFFER, ofs);
 	}
 
 	if (state)
-		g_vm->_renderer->blitFromBackBuffer(w, h, CGA_SCREENBUFFER, ofs);
+		g_vm->_renderer->blitFromBackBuffer(w, h, SCREENBUFFER, ofs);
 
 	return 0;
 }
@@ -3093,7 +3093,7 @@ uint16 SCR_14_DrawDesc(void) {
 	msg = seekToStringScr(desci_data, *script_ptr, &script_ptr);
 	script_ptr++;
 
-	drawMessage(msg, CGA_SCREENBUFFER);
+	drawMessage(msg, SCREENBUFFER);
 
 	return 0;
 }
@@ -3286,7 +3286,7 @@ uint16 SCR_6A_Unused(void) {
 Open room's items inventory
 */
 uint16 CMD_1_RoomObjects(void) {
-	updateUndrawCursor(CGA_SCREENBUFFER);
+	updateUndrawCursor(SCREENBUFFER);
 	inv_bgcolor = 0xAA;
 	openInventory((0xFF << 8) | ITEMFLG_ROOM, (script_byte_vars.zone_area << 8) | ITEMFLG_ROOM);
 	return ScriptRerun;
@@ -3297,20 +3297,20 @@ Open Psi Powers menu
 */
 uint16 CMD_2_PsiPowers(void) {
 	/*Psi powers bar*/
-	backupAndShowSprite(3, 280 / 4, 40);
+	g_vm->_renderer->backupAndShowSprite(3, 280 / 4, 40);
 	processInput();
 	do {
 		pollInput();
-		selectCursor(CURSOR_FINGER);
+		g_vm->_renderer->selectCursor(CURSOR_FINGER);
 		checkPsiCommandHover();
 		if (command_hint != 100)
 			command_hint += 109;
 		if (command_hint != last_command_hint)
 			drawCommandHint();
-		drawHintsAndCursor(CGA_SCREENBUFFER);
+		drawHintsAndCursor(SCREENBUFFER);
 	} while (buttons == 0);
-	undrawCursor(CGA_SCREENBUFFER);
-	g_vm->_renderer->restoreBackupImage(CGA_SCREENBUFFER);
+	undrawCursor(SCREENBUFFER);
+	g_vm->_renderer->restoreBackupImage(SCREENBUFFER);
 	return ScriptRerun;
 }
 
@@ -3318,7 +3318,7 @@ uint16 CMD_2_PsiPowers(void) {
 Open normal inventory box
 */
 uint16 CMD_3_Possessions(void) {
-	updateUndrawCursor(CGA_SCREENBUFFER);
+	updateUndrawCursor(SCREENBUFFER);
 	inv_bgcolor = 0x55;
 	openInventory(ITEMFLG_OWNED, ITEMFLG_OWNED);
 	return ScriptRerun;
@@ -3343,7 +3343,7 @@ uint16 CMD_4_EnergyLevel(void) {
 		anim = 41 + (script_byte_vars.psy_energy / 16);
 
 	if (drawPortrait(&image, &x, &y, &width, &height)) {
-		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 	}
 
 	do {
@@ -3418,7 +3418,7 @@ uint16 CMD_8_Timer(void) {
 	byte *image = timer_image;
 
 	if (drawPortrait(&image, &x, &y, &width, &height)) {
-		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 	}
 
 	do {
@@ -3429,10 +3429,10 @@ uint16 CMD_8_Timer(void) {
 		char_draw_coords_y = 120;
 
 		waitVBlank();
-		g_vm->_renderer->printChar(timer / (60 * 60) + 16, CGA_SCREENBUFFER);
-		g_vm->_renderer->printChar((minutes & 1) ? 26 : 0, CGA_SCREENBUFFER);    /*colon*/
-		g_vm->_renderer->printChar(minutes / (60 * 10) + 16, CGA_SCREENBUFFER);
-		g_vm->_renderer->printChar(minutes / 60 + 16, CGA_SCREENBUFFER);
+		g_vm->_renderer->printChar(timer / (60 * 60) + 16, SCREENBUFFER);
+		g_vm->_renderer->printChar((minutes & 1) ? 26 : 0, SCREENBUFFER);    /*colon*/
+		g_vm->_renderer->printChar(minutes / (60 * 10) + 16, SCREENBUFFER);
+		g_vm->_renderer->printChar(minutes / 60 + 16, SCREENBUFFER);
 		pollInputButtonsOnly();
 	} while (buttons == 0);
 
@@ -3491,7 +3491,7 @@ void DrawStickyNet(void) {
 	w = room_bounds_rect.ex - x;
 	h = room_bounds_rect.ey - y;
 
-	uint16 ofs = CalcXY_p(x, y);
+	uint16 ofs = g_vm->_renderer->calcXY_p(x, y);
 
 	/*16x30 is the net sprite size*/
 
@@ -3503,7 +3503,7 @@ void DrawStickyNet(void) {
 		int16 pitch = surf->pitch;
 		for (; h >= sprH; h -= sprH) {
 			for (int16 i = 0; i < w; i += sprW / 4)
-				ega_BlitSprite(pixels, pitch, sprW, sprH, frontbuffer, ofs + i * 4);
+				g_vm->_renderer->blitSprite(pixels, pitch, sprW, sprH, frontbuffer, ofs + i * 4);
 			ofs += EGA_BYTES_PER_LINE * sprH;
 		}
 		return;
@@ -3513,7 +3513,7 @@ void DrawStickyNet(void) {
 	for (; h; h -= 30) {
 		int16 i;
 		for (i = 0; i < w; i += 16 / 4)
-			drawSprite(sprite, frontbuffer, ofs + i);
+			g_vm->_renderer->drawSprite(sprite, frontbuffer, ofs + i);
 		ofs += g_vm->_screenBPL * 30 / 2;
 	}
 }
@@ -3529,7 +3529,7 @@ uint16 CMD_B_PsiStickyFingers(void) {
 
 	backupScreenOfSpecialRoom();
 	DrawStickyNet();
-	selectCursor(CURSOR_FLY);
+	g_vm->_renderer->selectCursor(CURSOR_FLY);
 	menuLoop(0, 0);
 	playSound(224);
 	g_vm->_renderer->backBufferToRealFull();
@@ -3621,7 +3621,7 @@ uint16 CMD_E_PsiZoneScan(void) {
 
 	IFGM_PlaySample(26);
 
-	offs = CalcXY_p(room_bounds_rect.sx, room_bounds_rect.sy);
+	offs = g_vm->_renderer->calcXY_p(room_bounds_rect.sx, room_bounds_rect.sy);
 	w = room_bounds_rect.ex - room_bounds_rect.sx;
 	h = room_bounds_rect.ey - room_bounds_rect.sy;
 
@@ -3666,7 +3666,7 @@ uint16 CMD_F_PsiPsiShift(void) {
 		return ScriptRerun;
 	}
 
-	selectCursor(CURSOR_GRAB);
+	g_vm->_renderer->selectCursor(CURSOR_GRAB);
 	menuLoop(0, 0);
 	backupScreenOfSpecialRoom();
 	playSound(25);
@@ -4487,7 +4487,7 @@ again:;
 		res = RunScript(templ_data + the_command);
 		break;
 	case 0x9000:
-		drawMessage(seekToString(desci_data, cmd), CGA_SCREENBUFFER);
+		drawMessage(seekToString(desci_data, cmd), SCREENBUFFER);
 		break;
 	case 0xA000:
 	case 0xB000:

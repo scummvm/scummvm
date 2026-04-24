@@ -27,6 +27,7 @@
 #include "chamber/room.h"
 #include "chamber/cga.h"
 #include "chamber/ega.h"
+#include "chamber/renderer.h"
 #include "chamber/ega_resource.h"
 #include "chamber/script.h"
 #include "chamber/dialog.h"
@@ -141,7 +142,7 @@ byte *loadPortrait(byte **pinfo, byte *end) {
 		buffer = sprit_load_buffer + 2 + 2 + (flags & 0x3FFF);
 		pitch = cur_frame_width;
 
-		sprite = loadPersSprit(index);
+		sprite = g_vm->_renderer->loadPersSprit(index);
 		sprw = *sprite++;
 		sprh = *sprite++;
 
@@ -238,15 +239,18 @@ static byte *ega_loadPortrait(byte **pinfo, byte *end) {
 	return sprit_load_buffer + 2;
 }
 
-byte *loadPortraitWithFrame(byte index) {
+byte *CGARenderer::loadPortraitWithFrame(byte index) {
 	byte *pinfo, *end;
 	pinfo = seekToEntry(icone_data, index, &end);
-	if (g_vm->_videoMode == Common::kRenderEGA) {
-		ega_makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
-		return ega_loadPortrait(&pinfo, end);
-	}
 	makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
 	return loadPortrait(&pinfo, end);
+}
+
+byte *EGARenderer::loadPortraitWithFrame(byte index) {
+	byte *pinfo, *end;
+	pinfo = seekToEntry(icone_data, index, &end);
+	ega_makePortraitFrame(*pinfo++, sprit_load_buffer + 2);
+	return ega_loadPortrait(&pinfo, end);
 }
 
 
@@ -333,10 +337,10 @@ void drawBoxAroundSpot(void) {
 		w *= g_vm->_screenPPB;
 	}
 
-	g_vm->_renderer->drawVLine(x, y, h - 1, 0, CGA_SCREENBUFFER);
-	g_vm->_renderer->drawHLine(x, y, w - 1, 0, CGA_SCREENBUFFER);
-	g_vm->_renderer->drawVLine(x + w - 1, y, h - 1, 0, CGA_SCREENBUFFER);
-	g_vm->_renderer->drawHLine(x, y + h - 1, w - 1, 0, CGA_SCREENBUFFER);
+	g_vm->_renderer->drawVLine(x, y, h - 1, 0, SCREENBUFFER);
+	g_vm->_renderer->drawHLine(x, y, w - 1, 0, SCREENBUFFER);
+	g_vm->_renderer->drawVLine(x + w - 1, y, h - 1, 0, SCREENBUFFER);
+	g_vm->_renderer->drawHLine(x, y + h - 1, w - 1, 0, SCREENBUFFER);
 
 	g_vm->_renderer->refreshImageData(*spot_sprite);
 }
@@ -363,11 +367,11 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	cur_image_coords_x = xx;
 	cur_image_coords_y = yy;
 	cur_image_idx = index;
-	image = loadPortraitWithFrame(index - 1);
+	image = g_vm->_renderer->loadPortraitWithFrame(index - 1);
 	cur_image_size_h = *image++;
 	cur_image_size_w = *image++;
 	cur_image_pixels = image;
-	cur_image_offs = CalcXY_p(cur_image_coords_x, cur_image_coords_y);
+	cur_image_offs = g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y);
 	addDirtyRect(DirtyRectSprite, cur_image_coords_x, cur_image_coords_y, cur_image_size_w, cur_image_size_h, cur_image_offs);
 
 	/*TODO: remove and use only globals?*/
@@ -377,7 +381,7 @@ int16 drawPortrait(byte **desc, byte *x, byte *y, byte *width, byte *height) {
 	*height = cur_image_size_h;
 
 	if (right_button) {
-		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, CGA_SCREENBUFFER, cur_image_offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, cur_image_size_w, cur_image_size_w, cur_image_size_h, SCREENBUFFER, cur_image_offs);
 		return 0;
 	}
 
@@ -441,7 +445,7 @@ void animPortrait(byte layer, byte index, byte delay) {
 		uint16 offs;
 
 		byte portrait = *ani++;
-		loadPortraitWithFrame(portrait - 1);
+		g_vm->_renderer->loadPortraitWithFrame(portrait - 1);
 		if (*ani == 0xFF) {
 			ani++;
 			if (g_vm->_videoMode == Common::kRenderEGA)
@@ -451,7 +455,7 @@ void animPortrait(byte layer, byte index, byte delay) {
 		}
 		getDirtyRectAndSetSprite(layer, &kind, &x, &y, &width, &height, &offs);
 		waitVBlank();
-		g_vm->_renderer->blitAndWait(cur_image_pixels, width, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->blitAndWait(cur_image_pixels, width, width, height, SCREENBUFFER, offs);
 		waitVBlankTimer();
 		if (delay) {
 			if (ani[-1] == 37) { /*TODO: what is it?*/

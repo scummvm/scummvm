@@ -110,7 +110,7 @@ void clipSprite(byte *x, byte *y, byte *sprw, byte *sprh, byte **sprite, int8 dx
 
 void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte height, byte *target) {
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		ega_CopyScreenBlock(source, width * 4, height, target, ega_CalcXY_p(x, y));
+		g_vm->_renderer->copyScreenBlock(source, width, height, target, g_vm->_renderer->calcXY_p(x, y));
 		return;
 	}
 	uint16 offs;
@@ -138,7 +138,7 @@ void copyScreenBlockWithDotEffect(byte *source, byte x, byte y, byte width, byte
 void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 pitch) {
 	uint16 delay;
 	byte ex, ey, updx, updy, updw, updh;
-	uint16 ofs = CalcXY_p(x, y);
+	uint16 ofs = g_vm->_renderer->calcXY_p(x, y);
 	g_vm->_renderer->backupImage(backbuffer, ofs, sprw, sprh, sprit_load_buffer);
 	g_vm->_renderer->blitSprite(pixels, pitch, sprw, sprh, backbuffer, ofs);
 	ex = x + sprw;
@@ -158,7 +158,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 	}
 	updw = ex - updx;
 	updh = ey - updy;
-	ofs = CalcXY_p(updx, updy);
+	ofs = g_vm->_renderer->calcXY_p(updx, updy);
 	/*TODO looks like here was some code before*/
 	for (delay = 0; delay < anim_draw_delay; delay++) {
 		g_system->delayMillis(1000 / 16 / 25);
@@ -181,7 +181,7 @@ void animDrawSprite(byte x, byte y, byte sprw, byte sprh, byte *pixels, uint16 p
 }
 
 void animUndrawSprite(void) {
-	g_vm->_renderer->copyScreenBlock(backbuffer, last_anim_width, last_anim_height, CGA_SCREENBUFFER, CalcXY_p(last_anim_x, last_anim_y));
+	g_vm->_renderer->copyScreenBlock(backbuffer, last_anim_width, last_anim_height, SCREENBUFFER, g_vm->_renderer->calcXY_p(last_anim_x, last_anim_y));
 	last_anim_height = 0;
 }
 

@@ -189,7 +189,7 @@ int16 askQuitGame(void) {
 			}
 		}
 	}
-	g_vm->_renderer->copyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CalcXY_p(draw_x, draw_y));
+	g_vm->_renderer->copyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, g_vm->_renderer->calcXY_p(draw_x, draw_y));
 
 	keymapper->getKeymap("quit-dialog")->setEnabled(false);
 	keymapper->getKeymap("chamber-default")->setEnabled(true);

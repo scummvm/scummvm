@@ -479,7 +479,7 @@ void initRoomDoorInfo(byte index) {
 			info->layer[i].width = w;
 			info->layer[i].height = h;
 			info->layer[i].pixels = (byte *)surf->getPixels();
-			info->layer[i].offs = CalcXY_p(ox, y);
+			info->layer[i].offs = g_vm->_renderer->calcXY_p(ox, y);
 
 			aptr += 3;
 		}
@@ -516,7 +516,7 @@ void initRoomDoorInfo(byte index) {
 			info->layer[i].width = w;
 			info->layer[i].height = h;
 			info->layer[i].pixels = sprite + 2;
-			info->layer[i].offs = CalcXY_p(x, y);
+			info->layer[i].offs = g_vm->_renderer->calcXY_p(x, y);
 
 			aptr += 3;
 		}
@@ -524,7 +524,7 @@ void initRoomDoorInfo(byte index) {
 
 	info->width = bounds.ex - bounds.sx;
 	info->height = bounds.ey - bounds.sy;
-	info->offs = CalcXY_p(bounds.sx, bounds.sy);
+	info->offs = g_vm->_renderer->calcXY_p(bounds.sx, bounds.sy);
 }
 
 /*
@@ -849,11 +849,11 @@ void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
 			arpla_y_step >>= 1;
 		}
 
-		uint16 ofs = CalcXY_p(drawx, y);
+		uint16 ofs = g_vm->_renderer->calcXY_p(drawx, y);
 		if (aptr[1] & 0x80)
-			ega_BlitSpriteFlip(pixels, pitch, w, h, backbuffer, ofs);
+			g_vm->_renderer->blitSpriteFlip(pixels, pitch, wcga, h, backbuffer, ofs);
 		else
-			ega_BlitSprite(pixels, pitch, w, h, backbuffer, ofs);
+			g_vm->_renderer->blitSprite(pixels, pitch, wcga, h, backbuffer, ofs);
 		return;
 	}
 
@@ -896,9 +896,9 @@ void drawRoomStaticObject(byte *aptr, byte *rx, byte *ry, byte *rw, byte *rh) {
 	/*TODO: check if this results in any glitches in Who Will Be Saved*/
 
 	if (aptr[1] & 0x80)
-		g_vm->_renderer->blitSpriteFlip(sprite, pitch, w, h, backbuffer, CalcXY_p(x, y));
+		g_vm->_renderer->blitSpriteFlip(sprite, pitch, w, h, backbuffer, g_vm->_renderer->calcXY_p(x, y));
 	else
-		g_vm->_renderer->blitSprite(sprite, pitch, w, h, backbuffer, CalcXY_p(x, y));
+		g_vm->_renderer->blitSprite(sprite, pitch, w, h, backbuffer, g_vm->_renderer->calcXY_p(x, y));
 }
 
 /*
@@ -999,7 +999,7 @@ void drawRoomItemsIndicator(void) {
 			break;
 		}
 	}
-	drawSpriteN(spridx, 296 / 4, 14, CGA_SCREENBUFFER);
+	drawSpriteN(spridx, 296 / 4, 14, SCREENBUFFER);
 	drawSpriteN(spridx, 296 / 4, 14, backbuffer);
 
 	/*recalculate the number of zapstiks we have*/
@@ -1041,7 +1041,7 @@ void refreshZone(void) {
 	popDirtyRects(DirtyRectText);
 
 	if (!skip_zone_transition && !right_button)
-		drawBackground(CGA_SCREENBUFFER, 1);
+		drawBackground(SCREENBUFFER, 1);
 
 	g_vm->_renderer->backBufferToRealFull();
 
@@ -1087,7 +1087,7 @@ Copy object hint from backbuffer to screen
 void showObjectHint(byte *target) {
 	if (script_byte_vars.zone_index == 135)
 		return;
-	g_vm->_renderer->copyScreenBlock(backbuffer, room_hint_bar_width + 2, 9, target, CalcXY_p(room_hint_bar_coords_x - 1, room_hint_bar_coords_y - 2));
+	g_vm->_renderer->copyScreenBlock(backbuffer, room_hint_bar_width + 2, 9, target, g_vm->_renderer->calcXY_p(room_hint_bar_coords_x - 1, room_hint_bar_coords_y - 2));
 }
 
 /*
@@ -1105,7 +1105,7 @@ void drawCommandHint(void) {
 Copy command hint from backbuffer to screen
 */
 void showCommandHint(byte *target) {
-	g_vm->_renderer->copyScreenBlock(backbuffer, cmd_hint_bar_width + 2, 9, target, CalcXY_p(cmd_hint_bar_coords_x - 1, cmd_hint_bar_coords_y - 2));
+	g_vm->_renderer->copyScreenBlock(backbuffer, cmd_hint_bar_width + 2, 9, target, g_vm->_renderer->calcXY_p(cmd_hint_bar_coords_x - 1, cmd_hint_bar_coords_y - 2));
 }
 
 void loadLutinSprite(uint16 lutidx) {
@@ -1129,7 +1129,7 @@ void loadLutinSprite(uint16 lutidx) {
 			uint16 flags = *lutin_entry++;
 			flags |= (*lutin_entry++) << 8;
 
-			Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(loadSprit(spridx));
+			Graphics::Surface *surf = reinterpret_cast<Graphics::Surface *>(g_vm->_renderer->loadSprit(spridx));
 			byte *src = (byte *)surf->getPixels();
 			uint16 sw = surf->w;
 			uint16 sh = surf->h;
@@ -1178,7 +1178,7 @@ void loadLutinSprite(uint16 lutidx) {
 		uint16 flags = *lutin_entry++;
 		flags |= (*lutin_entry++) << 8;
 
-		byte *sprite = loadSprit(spridx);
+		byte *sprite = g_vm->_renderer->loadSprit(spridx);
 		byte sprw = *sprite++;
 		byte sprh = *sprite++;
 
@@ -1208,11 +1208,11 @@ static void egaDrawLutinComposite(uint16 lutidx, byte *target, uint16 baseOfs) {
 		uint16 yy = w ? (byteOfs / w) : 0;
 		uint16 xxBytes = w ? (byteOfs % w) : 0;
 		uint16 subOfs = baseOfs + yy * EGA_BYTES_PER_LINE + xxBytes * 4;
-		byte *sprite = loadSprit(sub);
+		byte *sprite = g_vm->_renderer->loadSprit(sub);
 		if (flags & 0x8000)
-			drawSpriteFlip(sprite, target, subOfs);
+			g_vm->_renderer->drawSpriteFlip(sprite, target, subOfs);
 		else
-			drawSprite(sprite, target, subOfs);
+			g_vm->_renderer->drawSprite(sprite, target, subOfs);
 	}
 }
 
@@ -1221,14 +1221,14 @@ Draw specific room's person idle sprite
 */
 void drawCharacterSprite(byte spridx, byte x, byte y, byte *target) {
 	if (g_vm->_videoMode == Common::kRenderEGA) {
-		egaDrawLutinComposite(spridx, target, CalcXY_p(x, y));
+		egaDrawLutinComposite(spridx, target, g_vm->_renderer->calcXY_p(x, y));
 		return;
 	}
 	lutin_mem = scratch_mem2;
 
 	loadLutinSprite(spridx);
 
-	drawSprite(scratch_mem2, target, CalcXY_p(x, y));
+	g_vm->_renderer->drawSprite(scratch_mem2, target, g_vm->_renderer->calcXY_p(x, y));
 }
 
 /*
@@ -1245,7 +1245,7 @@ char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 			spridx = la->sprites[la->phase];
 			la->phase = (la->phase + 1) % 8;
 
-			zsprite_draw_ofs = CalcXY_p(rect->sx, rect->sy);
+			zsprite_draw_ofs = g_vm->_renderer->calcXY_p(rect->sx, rect->sy);
 
 			if (g_vm->_videoMode == Common::kRenderEGA) {
 				byte *entry, *entry_end;
@@ -1263,7 +1263,7 @@ char drawZoneAniSprite(rect_t *rect, uint16 index, byte *target) {
 			zsprite_w = scratch_mem2[0];
 			zsprite_h = scratch_mem2[1];
 
-			drawSprite(scratch_mem2, target, zsprite_draw_ofs);
+			g_vm->_renderer->drawSprite(scratch_mem2, target, zsprite_draw_ofs);
 
 			return ~0;
 		}
@@ -1480,7 +1480,7 @@ uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *
 		Graphics::Surface *surf = ega_puzzl_res->getSprite(index);
 		*w = surf->w / 4;
 		*h = surf->h;
-		*ofs = CalcXY_p(x, y);
+		*ofs = g_vm->_renderer->calcXY_p(x, y);
 		/*copy EGA pixel data into scratch_mem2+2 for blitScratchBackSprite*/
 		byte *dst = scratch_mem2 + 2;
 		for (int row = 0; row < surf->h; row++) {
@@ -1492,7 +1492,7 @@ uint16 getPuzzlSprite(byte index, byte x, byte y, uint16 *w, uint16 *h, uint16 *
 	byte *spr = loadPuzzlToScratch(index);
 	*w = spr[0];
 	*h = spr[1];
-	*ofs = CalcXY_p(x, y);
+	*ofs = g_vm->_renderer->calcXY_p(x, y);
 	return 0;   /*sprite offset in scratch buf*/
 }
 
@@ -1652,10 +1652,10 @@ Open The Wall's right gate
 TODO: move this to CGA?
 */
 void theWallOpenRightDoor(byte x, byte y, byte width, byte height, byte limit) {
-	uint16 offs = CalcXY_p(x + width - 2, y);
+	uint16 offs = g_vm->_renderer->calcXY_p(x + width - 2, y);
 
 	while (--width) {
-		g_vm->_renderer->hideScreenBlockLiftToRight(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToRight(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 		if (width == limit)
 			return;
 	}
@@ -1681,10 +1681,10 @@ Open The Wall's left gate
 TODO: move this to CGA?
 */
 void theWallOpenLeftDoor(byte x, byte y, byte width, byte height, byte limit) {
-	uint16 offs = CalcXY_p(x + 1, y);
+	uint16 offs = g_vm->_renderer->calcXY_p(x + 1, y);
 
 	while (--width) {
-		g_vm->_renderer->hideScreenBlockLiftToLeft(1, CGA_SCREENBUFFER, backbuffer, width, height, CGA_SCREENBUFFER, offs);
+		g_vm->_renderer->hideScreenBlockLiftToLeft(1, SCREENBUFFER, backbuffer, width, height, SCREENBUFFER, offs);
 		if (width == limit)
 			return;
 	}
@@ -1752,11 +1752,11 @@ void theWallPhase1_DoorClose1(void) {
 	else
 		spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
-	g_vm->_renderer->animLiftToRight(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+	g_vm->_renderer->animLiftToRight(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y));
 
 	spr = loadMursmSprite(1);
 	cur_image_coords_x = 220 / 4;
-	g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+	g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y));
 
 	IFGM_StopSample();
 
@@ -1780,16 +1780,16 @@ void theWallPhase2_DoorClose2(void) {
 		spr += cur_frame_width - 1;
 	cur_image_coords_x = 64 / 4;
 	if (g_vm->_videoMode == Common::kRenderEGA)
-		g_vm->_renderer->animLiftToRight(10, spr - 40, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+		g_vm->_renderer->animLiftToRight(10, spr - 40, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y));
 	else
-		g_vm->_renderer->animLiftToRight(10, spr - 10, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y));
+		g_vm->_renderer->animLiftToRight(10, spr - 10, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y));
 
 	spr = loadMursmSprite(1);
 	cur_image_coords_x = 220 / 4;
 	if (g_vm->_videoMode == Common::kRenderEGA)
-		g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 40);
+		g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y) - 40);
 	else
-		g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, CalcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
+		g_vm->_renderer->animLiftToLeft(10, spr, cur_frame_width, 1 + 10, cur_image_size_h, frontbuffer, g_vm->_renderer->calcXY_p(cur_image_coords_x, cur_image_coords_y) - 10);
 
 	IFGM_PlaySample(30);
 
@@ -1805,26 +1805,26 @@ void drawTheWallDoors(void) {
 	case 102:
 		if (g_vm->_videoMode == Common::kRenderEGA) {
 			/* EGA buffer is 80 px wide; CGA +10 bytes = 40 EGA pixels */
-			g_vm->_renderer->blit(loadMursmSprite(0) + 40, 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
+			g_vm->_renderer->blit(loadMursmSprite(0) + 40, 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(64 / 4, 32));
 			if (g_vm->getLanguage() == Common::EN_USA) {
-				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(184 / 4, 32));
+				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(184 / 4, 32));
 			} else {
-				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(180 / 4, 32));
+				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(180 / 4, 32));
 			}
 		} else {
-			g_vm->_renderer->blit(loadMursmSprite(0) + 10, 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
+			g_vm->_renderer->blit(loadMursmSprite(0) + 10, 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(64 / 4, 32));
 			if (g_vm->getLanguage() == Common::EN_USA) {
 				/*This fixes odd black patch on the right gate door*/
-				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(184 / 4, 32));
+				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(184 / 4, 32));
 			} else {
-				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, CGA_SCREENBUFFER, CalcXY_p(180 / 4, 32));
+				g_vm->_renderer->blit(loadMursmSprite(1)     , 20, 10, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(180 / 4, 32));
 			}
 		}
 		break;
 	case 95:
 	case 103:
-		g_vm->_renderer->blit(loadMursmSprite(0), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(64 / 4, 32));
-		g_vm->_renderer->blit(loadMursmSprite(1), 20, 20, 59, CGA_SCREENBUFFER, CalcXY_p(144 / 4, 32));
+		g_vm->_renderer->blit(loadMursmSprite(0), 20, 20, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(64 / 4, 32));
+		g_vm->_renderer->blit(loadMursmSprite(1), 20, 20, 59, SCREENBUFFER, g_vm->_renderer->calcXY_p(144 / 4, 32));
 		break;
 	}
 }
@@ -1871,7 +1871,7 @@ Return current and next free buffer ptr
 */
 byte *backupSpotImage(spot_t *spot, byte **spotback, byte *buffer) {
 	*spotback = buffer;
-	buffer = g_vm->_renderer->backupImage(backbuffer, CalcXY_p(spot->sx, spot->sy), spot->ex - spot->sx, spot->ey - spot->sy, buffer);
+	buffer = g_vm->_renderer->backupImage(backbuffer, g_vm->_renderer->calcXY_p(spot->sx, spot->sy), spot->ex - spot->sx, spot->ey - spot->sy, buffer);
 	return buffer;
 }
 

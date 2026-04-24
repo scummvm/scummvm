@@ -37,56 +37,10 @@ namespace Chamber {
 // Planar background: 4 planes × 8000 bytes
 #define EGA_PLANAR_SIZE    (EGA_WIDTH / 8 * EGA_HEIGHT)   // 8000 bytes per plane
 
-extern byte *ega_screen;     // aliases CGA_SCREENBUFFER (frontbuffer)
 extern byte *ega_backbuffer; // aliases backbuffer
-
-// Standard EGA 16-color palette (RGB, used for screen and cursor)
-extern const byte EGA_PALETTE[16 * 3];
 
 // CGA palette 1 high-intensity → EGA color index mapping
 extern const byte cga_to_ega_color[4];
-
-// --- screen management ---
-void ega_switchToGraphicsMode();
-void ega_blitToScreen(int16 x, int16 y, int16 w, int16 h);
-void ega_BackBufferToRealFull();
-void ega_RealBufferToBackFull();
-void ega_SwapRealBackBuffer();
-
-// --- offset helpers ---
-uint16 ega_CalcXY(uint16 x, uint16 y);
-uint16 ega_CalcXY_p(uint16 x, uint16 y);
-
-// --- memory / blit ---
-void ega_CopyScreenBlock(byte *source, uint16 w, uint16 h, byte *target, uint16 ofs);
-void ega_SwapScreenRect(byte *pixels, uint16 w, uint16 h, byte *screen, uint16 ofs);
-
-byte *ega_BackupImage(byte *source, uint16 ofs, uint16 w, uint16 h, byte *buffer);
-void  ega_RestoreImage(byte *buffer, byte *target);
-void  ega_RefreshImageData(byte *buffer);
-void  ega_RestoreBackupImage(byte *target);
-
-void ega_Blit(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
-void ega_BlitAndWait(byte *pixels, uint16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
-void ega_Fill(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs);
-void ega_FillAndWait(byte pixel, uint16 w, uint16 h, byte *screen, uint16 ofs);
-
-void ega_BlitFromBackBuffer(byte w, byte h, byte *screen, uint16 ofs);
-
-// --- sprite blitters ---
-// EGA sprites are decoded to CLUT8 (1 byte/pixel); pixel 0 = transparent
-void ega_BlitSprite(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
-void ega_BlitSpriteFlip(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs);
-void ega_BlitSpriteBak(byte *pixels, int16 pw, uint16 w, uint16 h, byte *screen, uint16 ofs, byte *backup, byte mask);
-
-void ega_BlitScratchBackSprite(uint16 sprofs, uint16 w, uint16 h, byte *screen, uint16 ofs);
-
-// --- draw primitives ---
-void ega_DrawVLine(uint16 x, uint16 y, uint16 l, byte color, byte *target);
-void ega_DrawHLine(uint16 x, uint16 y, uint16 l, byte color, byte *target);
-uint16 ega_DrawHLineWithEnds(uint16 bmask, uint16 bpix, byte color, uint16 l, byte *target, uint16 ofs);
-
-void ega_PrintChar(byte c, byte *target);
 
 // --- resource loader ---
 Graphics::Surface *ega_loadFond(const char *filename);
