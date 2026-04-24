@@ -66,7 +66,7 @@ void FoolGame::cardsRun() {
 	g_zbasic->picture(0xc3, 0xf3, this->arr_i32_192c0[0x17]);
 	if (this->activePuzzleBuffer.empty()) { // was: str(278)
 		// 139:01fa
-		this->activePuzzleBuffer = g_zbasic->unk_88(0) + g_zbasic->unk_88(0) + g_zbasic->unk_88(0);
+		this->activePuzzleBuffer = g_zbasic->encodeInt(0) + g_zbasic->encodeInt(0) + g_zbasic->encodeInt(0);
 		// card IDs
 		for (int16 i = 0; i <= 0x15; i++) {
 			this->arr_i16_5cbc[i] = i;
@@ -79,15 +79,15 @@ void FoolGame::cardsRun() {
 		}
 		// 139:029c
 		for (int i = 0; i <= 0x15; i++) {
-			this->activePuzzleBuffer += g_zbasic->unk_88(this->arr_i16_5cbc[i]);
+			this->activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_5cbc[i]);
 		}
 	}
 	// 139:02d8
 	// player scores
-	this->arr_i16_1eb8[5] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, 1, 2));
-	this->arr_i16_1eb8[6] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, 3, 2));
+	this->arr_i16_1eb8[5] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, 1, 2));
+	this->arr_i16_1eb8[6] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, 3, 2));
 	// 139:0320
-	this->var_i16_2010 = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, 5, 2));
+	this->var_i16_2010 = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, 5, 2));
 	if ((this->arr_i16_1eb8[5] > CARDS_MAX_SCORE) || (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
 		this->arr_i16_1eb8[5] = 0;
 		this->arr_i16_1eb8[6] = 0;
@@ -96,7 +96,7 @@ void FoolGame::cardsRun() {
 	// 139:039e
 
 	for (int i = 0; i <= 0x15; i++) {
-		this->arr_i16_5cbc[i] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, i*2 + 7, 2));
+		this->arr_i16_5cbc[i] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, i*2 + 7, 2));
 	}
 	// 139:03ea
 	this->arr_i16_5cbc[0x16] = 0x16;
@@ -111,7 +111,7 @@ void FoolGame::cardsRun() {
 		this->cardsShuffleDeck();
 	}
 	// 139:0456
-	this->sub_139_582();
+	this->cardsDrawTable();
 	while ((this->stateFlags & 1) == 0) {
 		// 139:045e
 		this->var_i16_2014 = 0;
@@ -151,13 +151,13 @@ void FoolGame::sub_139_4de() {
 	this->var_i16_2012 = 0;
 	this->cardsDrawScores();
 	this->cardsShuffleDeck();
-	this->sub_139_582();
+	this->cardsDrawTable();
 }
 
 void FoolGame::sub_139_50e() {
 	this->var_i16_2014 = 0;
 	this->cardsShuffleDeck();
-	this->sub_139_582();
+	this->cardsDrawTable();
 }
 
 void FoolGame::cardsShuffleDeck() {
@@ -171,7 +171,7 @@ void FoolGame::cardsShuffleDeck() {
 	}
 }
 
-void FoolGame::sub_139_582() {
+void FoolGame::cardsDrawTable() {
 	this->sub_139_17fc();
 	this->drawTarotCard(5, 0, 0);
 	this->drawTarotCard(4, 1, 0);
@@ -685,12 +685,12 @@ void FoolGame::cardsDrawScores() {
 
 void FoolGame::cardsStoreState() {
 	// 139:1cba
-	this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[5]) +
-		g_zbasic->unk_88(this->arr_i16_1eb8[6]) +
-		g_zbasic->unk_88(this->var_i16_2010);
+	this->activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[5]) +
+		g_zbasic->encodeInt(this->arr_i16_1eb8[6]) +
+		g_zbasic->encodeInt(this->var_i16_2010);
 	// 139:1d00
 	for (int i = 0; i <= 0x15; i++) {
-		this->activePuzzleBuffer += g_zbasic->unk_88(this->arr_i16_5cbc[i]);
+		this->activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_5cbc[i]);
 	}
 }
 

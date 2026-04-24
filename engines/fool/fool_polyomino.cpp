@@ -122,7 +122,7 @@ void FoolGame::polyominoRun() {
 				this->var_i16_1aa8 = 1;
 			}
 			for (int i = 3; i <= 4; i++) {
-				this->arr_i16_47d8[j*8 + i] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_1aa8, 2));
+				this->arr_i16_47d8[j*8 + i] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_1aa8, 2));
 				this->var_i16_1aa8 += 2;
 			}
 		}
@@ -519,8 +519,8 @@ void FoolGame::polyominoStoreState() {
 	this->activePuzzleBuffer = g_zbasic->str(212); // empty
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->arr_i16_1eb8[0x10]; i++) {
-		Common::String val1 = g_zbasic->unk_88(this->arr_i16_47d8[i*8 + 3]);
-		Common::String val2 = g_zbasic->unk_88(this->arr_i16_47d8[i*8 + 4]);
+		Common::String val1 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);
+		Common::String val2 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 4]);
 		this->activePuzzleBuffer += val1 + val2;
 	}
 }

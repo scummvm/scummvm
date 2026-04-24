@@ -100,7 +100,7 @@ void FoolGame::jigsawRun() {
 	if (!this->activePuzzleBuffer.empty()) { // was: str(207)
 		for (int i = 1; i <= this->var_i16_1a9e; i++) {
 			Common::String tileData = g_zbasic->midStr(this->activePuzzleBuffer, i*2 - 1, 2);
-			this->arr_i16_3738[i] = g_zbasic->unk_310(tileData);
+			this->arr_i16_3738[i] = g_zbasic->decodeInt(tileData);
 			g_zbasic->put(
 				this->arr_rect_1f38[i].left,
 				this->arr_rect_1f38[i].top,
@@ -379,8 +379,7 @@ void FoolGame::jigsawStoreState() {
 	// 132:1384
 	this->activePuzzleBuffer = g_zbasic->str(208);
 	for (int i = 1; i <= this->var_i16_1a9e; i++) {
-		this->var_str_384 = g_zbasic->unk_88(this->arr_i16_3738[i]);
-		this->activePuzzleBuffer += this->var_str_384;
+		this->activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_3738[i]);
 	}
 }
 

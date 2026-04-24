@@ -72,9 +72,9 @@ void FoolGame::wordSearchRun() {
 		this->activePuzzleBuffer = g_zbasic->space(this->var_i16_198e).encode(Common::kMacRoman);
 	} else {
 		// 131:01f2
-		this->arr_i16_4758[0] = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_198e + 1, 2));
+		this->arr_i16_4758[0] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_198e + 1, 2));
 		for (int i = 1; i <= this->arr_i16_4758[0]; i++) {
-			this->arr_i16_4758[i] = g_zbasic->unk_310(g_zbasic->midStr(
+			this->arr_i16_4758[i] = g_zbasic->decodeInt(g_zbasic->midStr(
 				this->activePuzzleBuffer,
 				this->var_i16_198e + 1 + i*2,
 				2
@@ -364,7 +364,7 @@ void FoolGame::wordSearchStoreState() {
 	debugC(5, kDebugLoading, "wordSearchStoreState:");
 	for (int i = 0; i <= this->arr_i16_4758[0]; i++) {
 		debugCN(5, kDebugLoading, "%04x ", this->arr_i16_4758[i]);
-		this->activePuzzleBuffer += g_zbasic->unk_88(this->arr_i16_4758[i]);
+		this->activePuzzleBuffer += g_zbasic->encodeInt(this->arr_i16_4758[i]);
 	}
 }
 
