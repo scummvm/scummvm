@@ -137,6 +137,7 @@ private:
 	uint32 _nextFrameTime;
 	bool _setPal;
 	uint32 _startMs;
+	uint32 _delayTotal;
 
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
