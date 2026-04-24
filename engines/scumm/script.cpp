@@ -1188,25 +1188,8 @@ void ScummEngine::checkAndRunSentenceScript() {
 	_sentenceNum--;
 	SentenceTab &st = _sentence[_sentenceNum];
 
-	// WORKAROUND: Monkey Island 1 note/Herman bug #12010.
-	//
-	// This workaround fixes an issue where the scripts would get stuck in a loop
-	// if you tried to give a note to Herman while the note was still in the room
-	// and not in the inventory.
-	// This intercepts the specific note objects that appear in rooms where Herman
-	// can be present, consumes the invalid give, and queues a pickup instead.
-	if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) &&
-		enhancementEnabled(kEnhMinorBugFixes) &&
-		// Give(EGA 3, VGA 4)
-		st.verb == (_game.id == GID_MONKEY_EGA ? 3 : 4) &&
-		st.objectB == 7 && // Herman
-		getOwner(st.objectA) == OF_OWNER_ROOM && // Object in room, not inventory
-		// note (volcano beach VGA), note (dry pond VGA), note (volcano beach EGA), note (dry pond EGA)
-		(st.objectA == 27 || st.objectA == 545 || st.objectA == 296 || st.objectA == 297)) {
-		// Pick up(EGA 11, VGA 9)
-		doSentence(_game.id == GID_MONKEY_EGA ? 11 : 9, st.objectA, 0); // Pick up
+	if (monkey1HermanNoteWorkaround(st))
 		return;
-	}
 
 	if (_game.version < 7)
 		if (st.preposition && st.objectB == st.objectA)
@@ -1279,6 +1262,30 @@ void ScummEngine_v0::walkToActorOrObject(int object) {
 		a->stopActorMoving();
 		a->_newWalkBoxEntered = false;
 	}
+}
+
+bool ScummEngine::monkey1HermanNoteWorkaround(const SentenceTab &st) {
+	// WORKAROUND: Monkey Island 1 note/Herman bug #12010.
+	//
+	// This workaround fixes an issue where the scripts would get stuck in a loop
+	// if you tried to give a note to Herman while the note was still in the room
+	// and not in the inventory.
+	// This intercepts the specific note objects that appear in rooms where Herman
+	// can be present, consumes the invalid give, and queues a pickup instead.
+	if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA) &&
+		enhancementEnabled(kEnhMinorBugFixes) &&
+		// Give(EGA 3, VGA 4)
+		st.verb == (_game.id == GID_MONKEY_EGA ? 3 : 4) &&
+		st.objectB == 7 && // Herman
+		getOwner(st.objectA) == OF_OWNER_ROOM && // Object in room, not inventory
+		// note (volcano beach VGA), note (dry pond VGA), note (volcano beach EGA), note (dry pond EGA)
+		(st.objectA == 27 || st.objectA == 545 || st.objectA == 296 || st.objectA == 297)) {
+		// Pick up(EGA 11, VGA 9)
+		doSentence(_game.id == GID_MONKEY_EGA ? 11 : 9, st.objectA, 0);
+		return true;
+	}
+
+	return false;
 }
 
 bool ScummEngine_v0::checkPendingWalkAction() {

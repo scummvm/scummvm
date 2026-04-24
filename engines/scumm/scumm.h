@@ -1074,6 +1074,7 @@ protected:
 	virtual void runInventoryScript(int i);
 	virtual void runInventoryScriptEx(int i);
 	virtual void checkAndRunSentenceScript();
+	bool monkey1HermanNoteWorkaround(const SentenceTab &st);
 	void runExitScript();
 	void runEntryScript();
 	void runQuitScript();
