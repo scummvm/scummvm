@@ -1716,7 +1716,7 @@ void FoolGame::sub_128_39a0() {
 		this->cardsRun();
 		break;
 	case 13:
-		this->sub_140_004();
+		this->highPriestessRun();
 		break;
 	case 14:
 		this->deathRun();
@@ -2589,7 +2589,7 @@ void FoolGame::thothShowPlayfield() {
 			this->arr_i16_1eb8[0] = 1;
 		}
 		// 128:5f4c
-		this->activePuzzleBuffer = g_zbasic->unk_88(this->arr_i16_1eb8[0]);
+		this->activePuzzleBuffer = g_zbasic->encodeInt(this->arr_i16_1eb8[0]);
 		this->saveGame();
 	}
 	// 128:5f70
@@ -2793,6 +2793,13 @@ void FoolGame::sub_129_068() {
 	// as such, to avoid a clash, we need to draw onto the menu bar widget.
 	this->var_i32_8->portBits = g_toolbox->_defaultMenuBits;
 	this->var_i32_8->portRect = g_toolbox->_defaultMenuBits->getBounds();
+
+	// Thoth, on the other hand, expects to be able to draw to the screen.
+	this->var_i32_8_thoth = &this->arr_grafport_19042_thoth;
+	g_toolbox->OpenPort(this->var_i32_8_thoth);
+	g_toolbox->PortSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_toolbox->MovePortTo(this->var_i16_56, this->var_i16_58);
+	g_toolbox->ClipRect(this->arr_rect_1ae06);
 
 	this->var_i32_4 = &this->arr_grafport_18f78;
 	g_toolbox->OpenPort(this->var_i32_4);
@@ -3208,35 +3215,35 @@ void FoolGame::hermitRun() {
 	}
 	// 142:132c
 	if (this->var_i16_c04 == 0) {
-		this->var_i16_2324 = 1;
+		this->hermitPathStage = 1;
 	}
 	if ((this->var_i16_c04 > 0) && (this->var_i16_c04 < 0x63)) {
-		this->var_i16_2324 = this->var_i16_c04;
+		this->hermitPathStage = this->var_i16_c04;
 	}
 	// 142:1360
 	if (this->var_i16_c04 == 0x63) {
-		this->var_i16_2324 = 6;
+		this->hermitPathStage = 6;
 	}
 	if (this->var_i16_c04 == 0x64) {
-		this->var_i16_2324 = 1;
+		this->hermitPathStage = 1;
 	}
 	if (this->var_i16_c04 > 0x64) {
-		this->var_i16_2324 = this->var_i16_c04 - 0x64;
+		this->hermitPathStage = this->var_i16_c04 - 0x64;
 	}
-	this->sub_140_206a();
-	if (this->var_i16_2324 == 6) {
+	this->thothKeyLast();
+	if (this->hermitPathStage == 6) {
 		this->var_i16_c04 = 0x63;
 	} else {
 		if (this->var_i16_c04 < 0x63) {
 			// 142:13be
-			this->var_i16_c04 = this->var_i16_2324;
+			this->var_i16_c04 = this->hermitPathStage;
 			if (this->var_i16_d0c != 0) {
 				this->var_i16_c04 = 0x64;
 			}
 		} else {
 			// 142:13da
 			if (this->var_i16_c04 >= 0x64) {
-				this->var_i16_c04 = this->var_i16_2324 + 0x64;
+				this->var_i16_c04 = this->hermitPathStage + 0x64;
 				if (this->var_i16_d0c != 0) {
 					this->var_i16_c04 = 0x65;
 				}

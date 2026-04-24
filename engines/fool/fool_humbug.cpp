@@ -196,7 +196,7 @@ void FoolGame::sub_142_630() {
 	// 142:0630
 	g_zbasic->menu(8, 0, 1, g_zbasic->str(342)); // the 2nd key of thoth
 	g_zbasic->menu(8, 1, 1, g_zbasic->str(343)); // return to scroll
-	this->thothBook();
+	this->thothKey2nd();
 	if (this->var_i16_d0c == 1) {
 		// 142:066e
 		g_toolbox->PenNormal();

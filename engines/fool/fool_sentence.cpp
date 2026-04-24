@@ -103,7 +103,7 @@ void FoolGame::sentenceRun() {
 		this->var_str_1070 = g_zbasic->index(1, 0);
 	} else {
 		// 135:049a
-		this->var_i16_1372 = g_zbasic->unk_310(g_zbasic->midStr(this->activePuzzleBuffer, this->arr_i16_1eb8[0]+1, 2));
+		this->var_i16_1372 = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, this->arr_i16_1eb8[0]+1, 2));
 		this->var_str_1070 = g_zbasic->midStr(this->activePuzzleBuffer, this->arr_i16_1eb8[0]+3, this->var_i16_1372);
 	}
 	// 135:04f2
@@ -316,7 +316,7 @@ void FoolGame::sub_135_c1c() {
 	// 135:0cba
 	Common::String temp = this->var_str_1070.encode(Common::kMacRoman);
 	this->var_i16_1372 = (int16)temp.size();
-	this->activePuzzleBuffer += g_zbasic->unk_88(this->var_i16_1372) + temp;
+	this->activePuzzleBuffer += g_zbasic->encodeInt(this->var_i16_1372) + temp;
 }
 
 void FoolGame::sub_135_cee() {
