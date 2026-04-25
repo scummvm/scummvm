@@ -964,16 +964,20 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 	Common::Rect area = r;
 	area.clip(_screen.w, _screen.h);
 
+	// First, clip to what the user provides
+	// If an empty rect is provided, use the standard area
 	Common::Rect dirty = drawableTextArea;
 	if (dirty.isEmpty()) dirty = area;
 	else dirty.clip(area);
 
-	if (!_clip.isEmpty()) {
-		dirty.clip(_clip);
-	}
+	// Then, clip to the clipping rect set by GUI
+	dirty.clip(_clip);
 
-	// HACK: One small pixel should be invisible enough
-	if (dirty.isEmpty()) dirty = Common::Rect(0, 0, 1, 1);
+	// An empty clip means "fully outside active clip region" — cull entirely
+	// rather than falling through, otherwise restoreBackground() below would
+	// wipe the widget's pixels on screen without re-drawing them.
+	if (dirty.isEmpty())
+		return;
 
 	if (restoreBg)
 		restoreBackground(dirty);
