@@ -39,6 +39,14 @@ enum FoolStateBits : uint16 {
 	kStateOpenGame = 0x10,
 	kStateQuit = 0x20,
 	kStateChapterSelect = 0x40,
+	kStatePuzzleSelect = 0x80,
+};
+
+enum FoolPuzzleFlags : uint16 {
+	kFlagMenuDisabled = 0x00,
+	kFlagMenuEnabled = 0x01,
+	kFlagMenuDiamond = 0x02,
+	kFlagMapTile = 0x08,
 };
 
 class FoolGame {
@@ -76,8 +84,8 @@ public:
 	void sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 
 	void sub_128_178a(int16 unk2, int16 unk1);
-	void setStateBits(int16 unk1); // sub_128_1c2c
-	void clearStateBits(int16 unk1); // sub_128_1c4a
+	void setStateBits(uint16 bits); // sub_128_1c2c
+	void clearStateBits(uint16 bits); // sub_128_1c4a
 	void sub_128_1ef8();
 	void sub_128_1f1e();
 	void sub_128_1f44();
@@ -104,22 +112,22 @@ public:
 
 	void sub_128_3032();
 	void sub_128_32c8();
-	void sub_128_32fa();
+	void savePrompt(); // sub_128_32fa
 	void saveGame(); // sub_128_3536
 	void sub_128_3744();
 	void sub_128_3774();
-	void sub_128_378a();
+	void cursorExplodingWatch(); // sub_128_378a
 	void sub_128_37ce();
 	void sub_128_388a();
-	void sub_128_39a0();
-	void sub_128_3de6();
+	void puzzleRun(); // sub_128_39a0
+	void storyUnlockChapter(); // sub_128_3de6
 	void sub_128_3fb6();
 
-	void sub_128_4168();
-	void sub_128_41aa();
+	void puzzleLoadContext(); // sub_128_4168
+	void puzzleSaveContext(); // sub_128_41aa
 	void sub_128_41d8();
 	void sub_128_4472();
-	void sub_128_4a92();
+	void menuAbout(); // sub_128_4a92
 
 	void shipsRun(); // sub_128_5140
 	void sub_128_55ac();
@@ -137,7 +145,7 @@ public:
 	void sub_128_6154();
 	void sub_128_6186();
 	void sub_128_61c2();
-	void sub_128_61ec();
+	void sub_128_61ec(); // sub_128_61ec
 	void sub_128_6244();
 
 	void sub_129_004();
@@ -352,7 +360,7 @@ private:
 	Common::U32String var_str_172;
 	Common::U32String var_str_272;
 	RGBColor var_i16_372;
-	int16 var_i16_378;
+	int16 soundEnabled; // var_i16_378
 	int16 var_i16_37a;
 	uint32 var_i32_37c;
 	Common::U32String var_str_384;
@@ -392,8 +400,8 @@ private:
 	uint32 var_i32_7c8;
 	int16 var_i16_7cc;
 	int16 var_i16_7ce;
-	int16 var_i16_7d0;
-	int16 var_i16_7d2;
+	int16 storyCurrentChapter; // var_i16_7d0
+	int16 sunMapRestored; // var_i16_7d2
 	int16 storyCurrentPage; // var_i16_7d4
 	int16 var_i16_7d6;
 	int16 storyNextPage; // var_i16_7d8
@@ -566,13 +574,13 @@ private:
 	int16 pageLineBreak[1301]; // arr_i16_bbe
 	int16 arr_i16_15e8[101];
 	int16 arr_i16_16b2[0x100];
-	int16 arr_i16_18b2[101];
-	int16 arr_i16_197c[101];
+	int16 puzzleType[101]; // arr_i16_18b2
+	int16 puzzleUnlockChapter[101]; // arr_i16_197c
 	int16 pageToChapter[101]; // arr_i16_1a46
 	int16 arr_i16_1b10[6969];
 	int16 pageVisible[101]; // arr_i16_1b90
 	int16 puzzleCompletionStatus[101]; // arr_i16_1c5a
-	int16 arr_i16_1d24[101];
+	uint16 puzzleFlags[101]; // arr_i16_1d24
 	int16 arr_i16_1dee[202];
 	int16 arr_i16_1eb8[0x29];
 	// used just for death?
