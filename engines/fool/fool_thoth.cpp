@@ -100,7 +100,7 @@ void FoolGame::highPriestessRun() {
 			this->sub_140_3412();
 			return;
 		}
-		this->arr_i16_1d24[0x51] |= 0x5;
+		this->puzzleFlags[0x51] |= 0x5;
 		if (this->puzzleCompletionStatus[0x48] == 0x63) {
 			// is the hermit marked with the wadjet eye? if so, unmark
 			this->puzzleCompletionStatus[0x48] = 0x64;
@@ -109,7 +109,7 @@ void FoolGame::highPriestessRun() {
 		}
 	}
 	// 140:024c
-	if (this->var_i16_7d2 == 0) {
+	if (this->sunMapRestored == 0) {
 		// show the fake puzzle picture
 		g_toolbox->PenNormal();
 		this->arr_i32_192c0[0] = g_toolbox->GetPicture(0x78);
@@ -128,10 +128,12 @@ void FoolGame::highPriestessRun() {
 	for (int16 i = 1; i <= 0x155; i++) {
 		g_zbasic->get(1, i, SCREEN_WIDTH, i + 1, this->arr_bmp_fa3c);
 		g_zbasic->put(g_zbasic->rndInt(0x14) - 0xa, i, this->arr_bmp_fa3c, kPutCopy);
-		g_toolbox->Delay(0);
+		if (i % 2 == 0) {
+			g_toolbox->Delay(0);
+		}
 	}
 	// 140:0328
-	if (this->var_i16_7d2 == 0) {
+	if (this->sunMapRestored == 0) {
 		g_toolbox->PenNormal();
 		Common::Rect area(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
