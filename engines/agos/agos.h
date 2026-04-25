@@ -288,6 +288,7 @@ public:
 	int getGameType() const;
 	uint32 getFeatures() const;
 	const char *getExtra() const;
+	bool isSimon2MacAmiga() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	const char *getFileName(int type) const;

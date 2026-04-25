@@ -3054,11 +3054,12 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
-	// Simon the Sorcerer 2 - Amiga CD (Update 5)
+	// Simon the Sorcerer 2 - Mac/Amiga CD (Update 5)
+	// kPlatformUnknown because Mac/Amiga(update 5) are identical.
 	{
 		{
 			"simon2",
-			"Amiga CD - Update 5",
+			"Mac/Amiga(Update 5)",
 
 			{
 				{ "gsptr30",		GAME_BASEFILE,	"608e277904d87dd28725fa08eacc2c0d", 58652},
@@ -3070,7 +3071,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
-			Common::kPlatformAmiga,
+			Common::kPlatformUnknown,
 			ADGF_CD,
 			GUIO1(GAMEOPTION_DISABLE_FADE_EFFECTS)
 		},
