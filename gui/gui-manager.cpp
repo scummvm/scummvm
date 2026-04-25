@@ -418,14 +418,22 @@ void GuiManager::redrawInternalTopDialogOnly() {
 			_tooltip->drawDialog(kDrawLayerForeground);
 			break;
 
-		case kRedrawCloseTooltip:
+		case kRedrawCloseTooltip: {
 
-			// Restore from background and render the top dialog foreground
+			// Restore the area under the tooltip from the backbuffer, then
+			// redraw the top dialog's foreground within that rect only. The
+			// clip is pinned to the tooltip rect so widget draws outside it
+			// are culled, keeping work proportional to the tooltip size.
+			Common::Rect tooltipRect = _tooltip->getMaxDirtyRect();
+
 			_theme->drawToScreen();
-			_theme->restoreBackground(Common::Rect(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight()));
+			_theme->restoreBackground(tooltipRect);
 
-			_dialogStack.top()->drawDialog(kDrawLayerForeground);
+			Common::Rect oldClip = _theme->swapClipRect(tooltipRect);
+			_dialogStack.top()->drawDialog(kDrawLayerForeground, false);
+			_theme->swapClipRect(oldClip);
 			break;
+		}
 
 		default:
 			// Redraw only the widgets that are marked as dirty on screen
@@ -502,14 +510,22 @@ void GuiManager::redrawInternal() {
 			_tooltip->drawDialog(kDrawLayerForeground);
 			break;
 
-		case kRedrawCloseTooltip:
+		case kRedrawCloseTooltip: {
 
-			// Restore from background and render the top dialog foreground
+			// Restore the area under the tooltip from the backbuffer, then
+			// redraw the top dialog's foreground within that rect only. The
+			// clip is pinned to the tooltip rect so widget draws outside it
+			// are culled, keeping work proportional to the tooltip size.
+			Common::Rect tooltipRect = _tooltip->getMaxDirtyRect();
+
 			_theme->drawToScreen();
-			_theme->restoreBackground(Common::Rect(0, 0, g_system->getOverlayWidth(), g_system->getOverlayHeight()));
+			_theme->restoreBackground(tooltipRect);
 
-			_dialogStack.top()->drawDialog(kDrawLayerForeground);
+			Common::Rect oldClip = _theme->swapClipRect(tooltipRect);
+			_dialogStack.top()->drawDialog(kDrawLayerForeground, false);
+			_theme->swapClipRect(oldClip);
 			break;
+		}
 
 		default:
 			// Redraw only the widgets that are marked as dirty on screen
