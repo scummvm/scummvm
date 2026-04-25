@@ -155,8 +155,8 @@ void TextViewerDialog::open() {
 	Dialog::open();
 }
 
-void TextViewerDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void TextViewerDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	setTextDrawableArea(Common::Rect(_x, _y, _x + _w, _y + _h));
 

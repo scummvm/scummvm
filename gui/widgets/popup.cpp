@@ -127,8 +127,8 @@ void PopUpDialog::open() {
 void PopUpDialog::reflowLayout() {
 }
 
-void PopUpDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void PopUpDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	int16 x = _x;
 	if (g_gui.useRTL()) {

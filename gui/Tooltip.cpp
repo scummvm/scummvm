@@ -64,11 +64,11 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	}
 }
 
-void Tooltip::drawDialog(DrawLayer layerToDraw) {
+void Tooltip::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
 	int num = 0;
 	int h = g_gui.theme()->getFontHeight(ThemeEngine::kFontStyleTooltip) + 2;
 
-	Dialog::drawDialog(layerToDraw);
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	int16 textX = _x + 1 + _xpadding;
 	if (g_gui.useRTL()) {

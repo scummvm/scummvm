@@ -102,8 +102,7 @@ protected:
 	void markWidgetsAsDirty();
 
 	/** Draw the dialog in its entirety (background and widgets) */
-	virtual void drawDialog(DrawLayer layerToDraw);
-
+	virtual void drawDialog(DrawLayer layerToDraw, bool resetClipping = true);
 	/** Draw only the dialog's widgets */
 	void drawWidgets();
 

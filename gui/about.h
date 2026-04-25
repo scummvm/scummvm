@@ -65,7 +65,7 @@ public:
 
 	void open() override;
 	void close() override;
-	void drawDialog(DrawLayer layerToDraw) override;
+	void drawDialog(DrawLayer layerToDraw, bool resetClipping = true) override;
 	void handleTickle() override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
