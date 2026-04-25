@@ -377,8 +377,7 @@ const char *AGOSEngine::getExtra() const {
 // It is still distinct from the Original Amiga release (simon2.german is different)
 bool AGOSEngine::isSimon2MacAmiga() const {
 	return getGameType() == GType_SIMON2 &&
-		getPlatform() == Common::kPlatformUnknown &&
-		!strcmp(getExtra(), "Mac/Amiga(Update 5)");
+		getPlatform() == Common::kPlatformUnknown;
 }
 
 Common::Language AGOSEngine::getLanguage() const {
