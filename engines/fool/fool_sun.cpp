@@ -58,19 +58,19 @@ void FoolGame::sunMapRun() {
 	// 137:0148
 	for (int i = 1; i <= 0x51; i++) {
 		this->var_i16_484 = this->arr_i16_4c7c[i];
-		if ((this->arr_i16_1d24[this->var_i16_484] & 3) != 0) {
+		if ((this->puzzleFlags[this->var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled)) != 0) {
 			this->arr_i32_192c0[i] = this->arr_i32_1912c[i];
 		} else {
 			// 137:01b2
 			this->arr_i32_192c0[i] = this->arr_i32_1912c[0x52];
 		}
 		// 137:01d8
-		if ((this->arr_i16_1d24[this->var_i16_484] & 4) != 0) {
-			this->arr_i16_1d24[this->var_i16_484] ^= 4;
-			this->arr_i16_1d24[i] |= 8;
+		if ((this->puzzleFlags[this->var_i16_484] & 4) != 0) {
+			this->puzzleFlags[this->var_i16_484] ^= 4;
+			this->puzzleFlags[i] |= kFlagMapTile;
 		}
 		// 137:0252
-		if ((this->arr_i16_1d24[i] & 8) != 0) {
+		if ((this->puzzleFlags[i] & kFlagMapTile) != 0) {
 			this->arr_i32_192c0[i] = this->arr_i32_1912c[0x53];
 		}
 		// 137:0294
@@ -114,10 +114,10 @@ void FoolGame::sunMapRun() {
 	// 137:1654
 	this->activePuzzle = 0;
 	this->var_i16_c04 = 0x64;
-	this->var_i16_7d2 = 1;
+	this->sunMapRestored = 1;
 	g_zbasic->menu(2, 7, 1, Common::U32String());
 	for (int i = 1; i <= 0x50; i++) {
-		this->arr_i16_1d24[i] = 1;
+		this->puzzleFlags[i] = kFlagMenuEnabled;
 	}
 	for (int j = 3; j <= 7; j++) {
 		for (int i = 1; i <= 0x10; i++) {
@@ -141,7 +141,7 @@ void FoolGame::sunMapOnClick() {
 	g_toolbox->PenMode(kPatXor);
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
-	if (this->arr_i16_1d24[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & 8) {
+	if (this->puzzleFlags[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & kFlagMapTile) {
 		this->sunMapRevealPiece();
 		return;
 	}
@@ -325,7 +325,7 @@ void FoolGame::sunMapCheckIfSolved() {
 	if (this->var_i16_d0c == 1) {
 		for (int i = 1; i <= 0x51; i++) {
 			this->var_i16_484 = this->arr_i16_4c7c[i];
-			if ((this->arr_i16_1d24[this->var_i16_484] & 8) || (this->arr_i16_1d24[this->var_i16_484] == 0)) {
+			if ((this->puzzleFlags[this->var_i16_484] & kFlagMapTile) || (this->puzzleFlags[this->var_i16_484] == kFlagMenuDisabled)) {
 				this->var_i16_d0c = 0;
 				i = 0x51;
 			}
@@ -340,7 +340,7 @@ void FoolGame::sunMapCheckIfSolved() {
 
 void FoolGame::sunMapRevealPiece() {
 	// 137:131a
-	this->arr_i16_1d24[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= 8;
+	this->puzzleFlags[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= kFlagMapTile;
 	this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = this->arr_i32_1912c[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
 	// 137:142c
 	// unrolled loop
