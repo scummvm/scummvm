@@ -163,6 +163,14 @@ void Dialog::markWidgetsAsDirty() {
 	}
 }
 
+Common::Rect Dialog::getMaxDirtyRect() const {
+	int16 x = _x;
+	if (g_gui.useRTL()) {
+		x = g_system->getOverlayWidth() - _x - _w;
+	}
+	return g_gui.theme()->getDialogDirtyRect(Common::Rect(x, _y, x + _w, _y + _h), _backgroundType);
+}
+
 void Dialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
 
 	if (!isVisible())
