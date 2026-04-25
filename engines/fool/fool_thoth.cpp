@@ -100,6 +100,7 @@ void FoolGame::highPriestessRun() {
 			this->sub_140_3412();
 			return;
 		}
+		this->var_i16_c04 = 0x64;
 		this->puzzleFlags[0x51] |= 0x5;
 		if (this->puzzleCompletionStatus[0x48] == 0x63) {
 			// is the hermit marked with the wadjet eye? if so, unmark
