@@ -112,7 +112,7 @@ void FoolGame::cardsRun() {
 	}
 	// 139:0456
 	this->cardsDrawTable();
-	while ((this->stateFlags & 1) == 0) {
+	while ((this->stateFlags & kStateReturn) == 0) {
 		// 139:045e
 		this->var_i16_2014 = 0;
 		this->stateFlags = 0;
@@ -130,7 +130,7 @@ void FoolGame::cardsRun() {
 		if (this->stateFlags == 2) {
 			this->sub_139_4de();
 		}
-		if (this->stateFlags == 4) {
+		if (this->stateFlags == kStateSaveGame) {
 			this->cardsStoreState();
 			this->saveGame();
 		}
@@ -289,8 +289,8 @@ void FoolGame::cardsOnClick() {
 			}
 		}
 		// 139:09d8
-		if (((this->stateFlags & 1) == 0) && (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
-			this->stateFlags = 2;
+		if (((this->stateFlags & kStateReturn) == 0) && (this->arr_i16_1eb8[6] > CARDS_MAX_SCORE)) {
+			this->stateFlags = kStateUndo;
 			this->var_i16_2014 = 0;
 		}
 	}
@@ -696,8 +696,8 @@ void FoolGame::cardsStoreState() {
 
 void FoolGame::sub_139_1d3e() {
 	// 139:1d3e
-	this->stateFlags = 1;
-	if (this->var_i16_c04 >= 0x64) {
+	this->stateFlags = kFlagMenuEnabled;
+	if (this->var_i16_c04 < 0x64) {
 		this->var_i16_c04 = 0x64;
 	}
 	this->sub_128_6186();
