@@ -392,7 +392,7 @@ void InsaneRebel2::iactRebel2Opcode2(Common::SeekableReadStream &b, int16 par2, 
 			}
 
 		} else if (value > 0x3ff) { // Bitmask case: value > 0x3FF
- 			for (int slot = 1; slot <= 9; ++slot) {
+			for (int slot = 1; slot <= 9; ++slot) {
 				if ((value & (1 << (slot - 1))) != 0) {
 					if (!isBitSet(targetId)) {
 						_rebelMaskCounters[slot]++;
