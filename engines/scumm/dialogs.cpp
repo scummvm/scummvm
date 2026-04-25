@@ -908,8 +908,8 @@ ValueDisplayDialog::ValueDisplayDialog(const Common::U32String &label, int minVa
 	assert(_min <= _value && _value <= _max);
 }
 
-void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void ValueDisplayDialog::drawDialog(GUI::DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	const int labelWidth = _w - 8 - _percentBarWidth;
 	g_gui.theme()->drawText(Common::Rect(_x+4, _y+4, _x+labelWidth+4,

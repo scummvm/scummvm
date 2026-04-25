@@ -163,12 +163,14 @@ void Dialog::markWidgetsAsDirty() {
 	}
 }
 
-void Dialog::drawDialog(DrawLayer layerToDraw) {
+void Dialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
 
 	if (!isVisible())
 		return;
 
-	g_gui.theme()->disableClipRect();
+	if (resetClipping) {
+		g_gui.theme()->disableClipRect();
+	}
 	g_gui.theme()->_layerToDraw = layerToDraw;
 	int16 x = _x;
 	if (g_gui.useRTL()) {

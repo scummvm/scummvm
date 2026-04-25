@@ -268,8 +268,8 @@ void AboutDialog::close() {
 	Dialog::close();
 }
 
-void AboutDialog::drawDialog(DrawLayer layerToDraw) {
-	Dialog::drawDialog(layerToDraw);
+void AboutDialog::drawDialog(DrawLayer layerToDraw, bool resetClipping) {
+	Dialog::drawDialog(layerToDraw, resetClipping);
 
 	// Draw text inside this rectangle to mimic a viewport
 	Common::Rect r = _textRect;

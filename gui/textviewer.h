@@ -72,7 +72,7 @@ public:
 
 	void destroy();
 	void open() override;
-	void drawDialog(DrawLayer layerToDraw) override;
+	void drawDialog(DrawLayer layerToDraw, bool resetClipping = true) override;
 
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleKeyDown(Common::KeyState state) override;
