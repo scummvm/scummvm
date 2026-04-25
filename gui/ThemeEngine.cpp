@@ -899,6 +899,21 @@ bool ThemeEngine::loadThemeXML(const Common::String &themeId) {
 /**********************************************************
  * Draw Date descriptors drawing functions
  *********************************************************/
+Common::Rect ThemeEngine::getDrawDataExtendedRect(DrawData type, const Common::Rect &r) const {
+	WidgetDrawData *drawData = _widgets[type];
+	if (!drawData)
+		return Common::Rect();
+
+	Common::Rect extendedRect = r;
+	extendedRect.clip(_screen.w, _screen.h);
+	extendedRect.grow(kDirtyRectangleThreshold + drawData->_backgroundOffset);
+	if (drawData->_shadowOffset > drawData->_backgroundOffset) {
+		extendedRect.right += drawData->_shadowOffset - drawData->_backgroundOffset;
+		extendedRect.bottom += drawData->_shadowOffset - drawData->_backgroundOffset;
+	}
+	return extendedRect;
+}
+
 void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, bool forceRestore) {
 	WidgetDrawData *drawData = _widgets[type];
 
@@ -911,16 +926,15 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 	Common::Rect area = r;
 	area.clip(_screen.w, _screen.h);
 
-	Common::Rect extendedRect = area;
-	extendedRect.grow(kDirtyRectangleThreshold + drawData->_backgroundOffset);
-	if (drawData->_shadowOffset > drawData->_backgroundOffset) {
-		extendedRect.right += drawData->_shadowOffset - drawData->_backgroundOffset;
-		extendedRect.bottom += drawData->_shadowOffset - drawData->_backgroundOffset;
-	}
+	// An empty clip means "fully outside active clip region" (e.g. a widget
+	// whose boss clip does not intersect the tooltip clip). Cull entirely —
+	// otherwise restoreBackground() below would overwrite screen pixels at
+	// the full widget rect with backbuffer content.
+	if (_clip.isEmpty())
+		return;
 
-	if (!_clip.isEmpty()) {
-		extendedRect.clip(_clip);
-	}
+	Common::Rect extendedRect = getDrawDataExtendedRect(type, r);
+	extendedRect.clip(_clip);
 
 	// Cull the elements not in the clip rect
 	if (extendedRect.isEmpty()) {
@@ -1160,37 +1174,49 @@ void ThemeEngine::drawScrollbar(const Common::Rect &r, int sliderY, int sliderHe
 	drawDD(scrollState == kScrollbarStateSlider ? kDDScrollbarHandleHover : kDDScrollbarHandleIdle, r2);
 }
 
+static DrawData drawDataFromBgType(ThemeEngine::DialogBackground bgtype) {
+	switch (bgtype) {
+	case ThemeEngine::kDialogBackgroundMain:
+		return kDDMainDialogBackground;
+	case ThemeEngine::kDialogBackgroundSpecial:
+		return kDDSpecialColorBackground;
+	case ThemeEngine::kDialogBackgroundPlain:
+		return kDDPlainColorBackground;
+	case ThemeEngine::kDialogBackgroundTooltip:
+		return kDDTooltipBackground;
+	case ThemeEngine::kDialogBackgroundDefault:
+		return kDDDefaultBackground;
+	default:
+		// fallthrough intended
+	case ThemeEngine::kDialogBackgroundNone:
+		// no op
+		return kDDNone;
+	}
+}
+
+Common::Rect ThemeEngine::getDialogDirtyRect(const Common::Rect &r, DialogBackground bgtype) {
+	if (!ready()) {
+		return Common::Rect();
+	}
+
+	DrawData type = drawDataFromBgType(bgtype);
+	if (type == kDDNone) {
+		return Common::Rect();
+	}
+
+	return getDrawDataExtendedRect(type, r);
+}
+
 void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground bgtype) {
 	if (!ready())
 		return;
 
-	switch (bgtype) {
-	case kDialogBackgroundMain:
-		drawDD(kDDMainDialogBackground, r);
-		break;
-
-	case kDialogBackgroundSpecial:
-		drawDD(kDDSpecialColorBackground, r);
-		break;
-
-	case kDialogBackgroundPlain:
-		drawDD(kDDPlainColorBackground, r);
-		break;
-
-	case kDialogBackgroundTooltip:
-		drawDD(kDDTooltipBackground, r);
-		break;
-
-	case kDialogBackgroundDefault:
-		drawDD(kDDDefaultBackground, r);
-		break;
-
-	default:
-		// fallthrough intended
-	case kDialogBackgroundNone:
-		// no op
-		break;
+	DrawData type = drawDataFromBgType(bgtype);
+	if (type == kDDNone) {
+		return;
 	}
+
+	drawDD(type, r);
 }
 
 void ThemeEngine::drawCaret(const Common::Rect &r, bool erase) {

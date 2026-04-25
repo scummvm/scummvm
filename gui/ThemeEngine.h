@@ -458,6 +458,16 @@ public:
 	 */
 	void disableClipRect();
 
+	/**
+	 * Get the rectangle that a dialog with provided coordinates would dirty on screen.
+	 *
+	 * @param r The dialog rectangle
+	 * @param bgtype The dialog background
+	 *
+	 * @return The rectangle drawn by the engine including drop shadows
+	 */
+	Common::Rect getDialogDirtyRect(const Common::Rect &r, DialogBackground bgtype);
+
 	/** @name WIDGET DRAWING METHODS */
 	//@{
 
@@ -743,6 +753,12 @@ protected:
 	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
 	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,
 	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
+
+	/**
+	 * Compute the extended (dirty) rectangle for a given draw data type applied
+	 * to the given base rect. Includes background and shadow offsets.
+	 */
+	Common::Rect getDrawDataExtendedRect(DrawData type, const Common::Rect &r) const;
 
 	/**
 	 * DEBUG: Draws a white square and writes some text next to it.
