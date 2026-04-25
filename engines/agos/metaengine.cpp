@@ -373,8 +373,8 @@ const char *AGOSEngine::getExtra() const {
 	return _gameDescription->desc.extra;
 }
 
-//The Mac release of Simon 2 uses identical data to the Amiga release with update 5
-//It is still distinct from the Original Amiga release(simon2.german is different)
+// The Mac release of Simon 2 uses identical data to the Amiga release with update 5.
+// It is still distinct from the Original Amiga release (simon2.german is different)
 bool AGOSEngine::isSimon2MacAmiga() const {
 	return getGameType() == GType_SIMON2 &&
 		getPlatform() == Common::kPlatformUnknown &&
