@@ -59,20 +59,26 @@ SECTIONS
 		PROVIDE (__preinit_array_end = .);
 	} : plugin
 
-	/* m68k-atari-mintelf gcc emits constructors into .init_array (and dtors
-	 * into .fini_array). The ELF plugin loader walks ___plugin_ctors and
-	 * ___plugin_dtors both forward; .init_array semantics match (ascending
-	 * priority = construction order), but standard .fini_array is walked
-	 * backward by a normal runtime, so we REVERSE the .fini_array sort here
-	 * to get reverse-of-construction destruction order out of a forward
-	 * walk. .ctors/.dtors are kept too in case any input object still uses
-	 * the legacy sections. */
+	.init_array ALIGN(4) :
+	{
+		PROVIDE (__init_array_start = .);
+		KEEP (*(SORT(.init_array.*)))
+		KEEP (*(.init_array))
+		PROVIDE (__init_array_end = .);
+	} : plugin
+
+	.fini_array ALIGN(4) :
+	{
+		PROVIDE (__fini_array_start = .);
+		KEEP (*(.fini_array))
+		KEEP (*(SORT(.fini_array.*)))
+		PROVIDE (__fini_array_end = .);
+	} : plugin
+
 	.ctors ALIGN(4) :
 	{
 		___plugin_ctors = .;
-		KEEP (*(SORT_BY_INIT_PRIORITY(.init_array.*)))
-		KEEP (*(.init_array))
-		KEEP (*(SORT_BY_INIT_PRIORITY(.ctors.*)))
+		KEEP (*(SORT(.ctors.*)))
 		KEEP (*(.ctors))
 		___plugin_ctors_end = .;
 	} : plugin
@@ -80,9 +86,7 @@ SECTIONS
 	.dtors ALIGN(4) :
 	{
 		___plugin_dtors = .;
-		KEEP (*(SORT_BY_INIT_PRIORITY(REVERSE(.fini_array.*))))
-		KEEP (*(.fini_array))
-		KEEP (*(SORT_BY_INIT_PRIORITY(REVERSE(.dtors.*))))
+		KEEP (*(SORT(.dtors.*)))
 		KEEP (*(.dtors))
 		___plugin_dtors_end = .;
 	} : plugin
