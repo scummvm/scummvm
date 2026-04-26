@@ -92,6 +92,20 @@
 },
 {
 	{
+		"playtoons1",
+		"v1.001",
+		AD_ENTRY2s("playtoon.stk",	"9716d245639b3025f4eebc3afb469ec0", 25574338,
+			    "archi.stk",	"651c94a542a20fe8157af9faaff02a09", 5520472),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kFeatures640x480,
+	"intro2.stk", 0, 0
+},
+{
+	{
 		"playtoonsdemo",
 		"Non-Interactive",
 		AD_ENTRY1s("play123.scn", "4689a31f543915e488c3bc46ea358add", 258),
