@@ -106,6 +106,20 @@
 	0, 0, 0
 },
 {
+	{ // 1994 CD version - alternative version
+		"adibou1",
+		"ADI Jr. 4-6 Jahre (CD)",
+		AD_ENTRY2s("intro.stk", "1569c9ab16727100c9f4fc08e370f544", 4881534,
+				   "l51.stk", "cc06d22b654655c6e79e1aed00890242", 3818474),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_CD,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesAdLib | kFeatures640x400,
+	0, 0, 0
+},
+{
 	{ // 1994 CD version - Supplied by Indy4-Fan
 		"adibou1",
 		"ADI Jr. 6-7 Jahre (CD)",
@@ -119,7 +133,20 @@
 	 kFeaturesAdLib | kFeatures640x400,
 	 0, 0, 0
 },
-
+{
+	{ // 1994 CD version - alternative version
+		"adibou1",
+		"ADI Jr. 6-7 Jahre (CD)",
+		AD_ENTRY2s("intro.stk", "1569c9ab16727100c9f4fc08e370f544", 4881534,
+				   "c51.stk", "9cb9f4682b498c4771ae9568e368c479", 2650002),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_CD,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	 kFeaturesAdLib | kFeatures640x400,
+	 0, 0, 0
+},
 // -- English: A.J.'s World of Discovery / ADI Jnr.
 
 // -- DOS VGA Floppy --
