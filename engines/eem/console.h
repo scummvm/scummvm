@@ -26,10 +26,17 @@
 
 namespace EEM {
 
+class EEMEngine;
+
 class Console : public GUI::Debugger {
 public:
-	Console();
+	explicit Console(EEMEngine *vm);
 	~Console() override {}
+
+private:
+	EEMEngine *_vm;
+
+	bool cmdPic(int argc, const char **argv);
 };
 
 } // End of namespace EEM

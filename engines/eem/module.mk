@@ -3,7 +3,8 @@ MODULE := engines/eem
 MODULE_OBJS = \
 	console.o \
 	eem.o \
-	metaengine.o
+	metaengine.o \
+	resource.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_EEM), DYNAMIC_PLUGIN)
