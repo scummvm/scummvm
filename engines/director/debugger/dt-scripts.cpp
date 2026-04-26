@@ -548,7 +548,7 @@ void showExecutionContext() {
 	Window *currentWindow = g_director->getCurrentWindow();
 	bool scriptsRendered = false;
 
-	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
 		Window *stage = g_director->getStage();
 		g_director->setCurrentWindow(stage);
 		g_lingo->switchStateFromWindow();
@@ -557,7 +557,7 @@ void showExecutionContext() {
 		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
+		ImGui::BeginChild("Window##", ImGui::GetContentRegionAvail());
 		ImGui::Text("%s", stage->asString().c_str());
 		ImGui::Text("%s", stage->getCurrentMovie()->getMacName().c_str());
 
