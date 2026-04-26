@@ -160,6 +160,7 @@ _flac=auto
 _mad=auto
 _opl2lpt=no
 _retrowave=auto
+_nfm=auto
 _alsa=auto
 _seq_midi=auto
 _sndio=auto
@@ -1160,6 +1161,9 @@ Optional Libraries:
   --with-retrowave-prefix=DIR prefix where libretrowave is installed (optional)
   --enable-retrowave          enable RetroWave OPL3 support
 
+  --with-nfm-prefix=DIR  prefix where nFM is installed (optional)
+  --enable-nfm           enable OPL2/3 support via nFM
+
   --with-sparkle-prefix=DIR prefix where sparkle is installed
                             (macOS/Windows only - optional)
   --disable-sparkle         disable sparkle automatic update support
@@ -1298,6 +1302,8 @@ for ac_option in $@; do
 	--disable-opl2lpt)            _opl2lpt=no            ;;
 	--enable-retrowave)           _retrowave=yes         ;;
 	--disable-retrowave)          _retrowave=no          ;;
+	--enable-nfm)                 _nfm=yes               ;;
+	--disable-nfm)                _nfm=no                ;;
 	--enable-flac)                _flac=yes              ;;
 	--disable-flac)               _flac=no               ;;
 	--enable-mad)                 _mad=yes               ;;
@@ -1483,6 +1489,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		RETROWAVE_CFLAGS="-I$arg/include"
 		RETROWAVE_LIBS="-L$arg/lib"
+		;;
+	--with-nfm-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		NFM_CFLAGS="-I$arg/include -I$arg/include/platform/atari"
+		NFM_LIBS="-L$arg/lib/m68020-60"
 		;;
 	--with-flac-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -3869,7 +3880,9 @@ if test -n "$_host"; then
 			#	# --disable-debug
 			#	append_var LDFLAGS "-s"
 			#fi
-
+			
+			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
+			
 			# auto -> no
 			if test "$_optimizations" = "yes"; then
 				# --enable-release, --enable-optimizations
@@ -5547,6 +5560,58 @@ if test "$_retrowave" = yes; then
 fi
 define_in_config_if_yes "$_retrowave" 'USE_RETROWAVE'
 echo "$_retrowave"
+
+#
+# Check for nFM OPL2/3 library
+#
+echocheck "nFM OPL2 / OPL3"
+if test "$_nfm" = auto ; then
+	_nfm=no
+	cat > $TMPC << EOF
+extern "C"
+{
+#include <nfmcore.h>
+#include <nfmutil.h>
+}
+
+sOplInterface gOplIf;
+
+int main(void)
+{ 
+	sOplInterfaceConfiguration ifCfg;
+	ifCfg.deviceType = FMD_NULL;
+    ifCfg.soundchip = CM_OPL3;
+    ifCfg.operationMode = CO_OPL3;
+    ifCfg.setup = CC_SINGLE;
+    ifCfg.dualChipEmulationEnabled = false;
+
+    sInterfaceInitData params;
+	params.uParam.outputPort = OPT_INTERNAL;
+    params.uParam.param = 0;
+
+    gOplIf = nfCreateInterface(ifCfg); 
+
+    const int32_t retval = nfInit(&gOplIf, &params);
+
+    if (retval >= 0)
+    {
+	 (void)nfDeinit(&gOplIf);
+     return 0;
+    }	
+
+  return -1;
+}
+EOF
+	cc_check $NFM_CFLAGS -DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1 $NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvoplnull -lsyscore -lcontainers -lallocators &&\
+	_nfm=yes
+fi
+if test "$_nfm" = yes; then
+	append_var DEFINES "-DSC_ENABLE_MALLOC=0 -DNFM_OPL_SHADOW_REG_WRITE_ENABLE=1"
+	append_var LIBS "$NFM_LIBS -lnfmcore -lnfmutil -ldrvcommon -ldrvnokturnfm -ldrvopl3Duo -ldrvopl3express -ldrvoplxlpt -ldrvoplnull -lsyscore -lcontainers -lallocators"
+	append_var INCLUDES "$NFM_CFLAGS"
+fi
+define_in_config_if_yes "$_nfm" 'USE_NFM'
+echo "$_nfm"
 
 #
 # Check for FLAC
