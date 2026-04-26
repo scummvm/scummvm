@@ -67,9 +67,9 @@ void CuttingPuzzle::readData(Common::SeekableReadStream &stream) {
 		_correctGrooves[i] = stream.readSint16LE();  // +0x3cc..0x3db
 
 	_latheSound.readNormal(stream);                  // +0x3dc (49 bytes)
-	_clickSound.readNormal(stream);                  // +0x40d (49 bytes)
-	_clickSound2.readNormal(stream);                 // +0x43e (49 bytes)
-	_clickSound3.readNormal(stream);                 // +0x46f (49 bytes)
+	_moveSound.readNormal(stream);                   // +0x40d (49 bytes)
+	_startStopSound.readNormal(stream);              // +0x43e (49 bytes)
+	_depthSound.readNormal(stream);                  // +0x46f (49 bytes)
 	_cutSound.readNormal(stream);                    // +0x4a0 (49 bytes)
 
 	_puzzleSolvedScene.readData(stream);                 // +0x4d1 (25 bytes)
@@ -183,9 +183,9 @@ void CuttingPuzzle::execute() {
 		registerGraphics();
 
 		g_nancy->_sound->loadSound(_latheSound);
-		g_nancy->_sound->loadSound(_clickSound);
-		g_nancy->_sound->loadSound(_clickSound2);
-		g_nancy->_sound->loadSound(_clickSound3);
+		g_nancy->_sound->loadSound(_moveSound);
+		g_nancy->_sound->loadSound(_startStopSound);
+		g_nancy->_sound->loadSound(_depthSound);
 		g_nancy->_sound->loadSound(_cutSound);
 
 		_state = kRun;
@@ -307,9 +307,9 @@ void CuttingPuzzle::execute() {
 		// Stop all sounds.
 		g_nancy->_sound->stopSound(_latheSound);
 		g_nancy->_sound->stopSound(_cutSound);
-		g_nancy->_sound->stopSound(_clickSound);
-		g_nancy->_sound->stopSound(_clickSound2);
-		g_nancy->_sound->stopSound(_clickSound3);
+		g_nancy->_sound->stopSound(_moveSound);
+		g_nancy->_sound->stopSound(_startStopSound);
+		g_nancy->_sound->stopSound(_depthSound);
 
 		if (_cancelled) {
 			// Player explicitly cancelled: go to the cancel scene and possibly set
@@ -369,7 +369,7 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 				_currentLeverDepth = (_currentLeverDepth == 0) ? 3 : _currentLeverDepth - 1;
 			else
 				_currentLeverDepth = (_currentLeverDepth + 1) % 4;
-			g_nancy->_sound->playSound(_clickSound);
+			g_nancy->_sound->playSound(_depthSound);
 			redrawSurface();
 		}
 		return;
@@ -384,7 +384,7 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 			_latheRunning    = true;
 			_macroCycleCount = 0;
 			_animFrame       = 0;
-			g_nancy->_sound->playSound(_clickSound2);
+			g_nancy->_sound->playSound(_startStopSound);
 			redrawSurface();
 		}
 		return;
@@ -401,14 +401,14 @@ void CuttingPuzzle::handleInput(NancyInput &input) {
 			g_nancy->_cursor->setCursorType(CursorManager::kMoveLeft);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				--_currentMarkerPos;
-				g_nancy->_sound->playSound(_clickSound3);
+				g_nancy->_sound->playSound(_moveSound);
 				redrawSurface();
 			}
 		} else if (!goLeft && _currentMarkerPos + 1 < _numGrooves) {
 			g_nancy->_cursor->setCursorType(CursorManager::kMoveRight);
 			if (input.input & NancyInput::kLeftMouseButtonUp) {
 				++_currentMarkerPos;
-				g_nancy->_sound->playSound(_clickSound3);
+				g_nancy->_sound->playSound(_moveSound);
 				redrawSurface();
 			}
 		}
