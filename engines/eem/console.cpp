@@ -20,10 +20,34 @@
  */
 
 #include "eem/console.h"
+#include "eem/eem.h"
+#include "eem/resource.h"
 
 namespace EEM {
 
-Console::Console() : GUI::Debugger() {
+Console::Console(EEMEngine *vm) : GUI::Debugger(), _vm(vm) {
+	registerCmd("pic", WRAP_METHOD(Console, cmdPic));
+}
+
+bool Console::cmdPic(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: pic <number>\n");
+		debugPrintf("Loads picture <number> from PICS.DBD and reports its dimensions.\n");
+		debugPrintf("PICS.DBX has %u entries.\n", _vm->getPics().size());
+		return true;
+	}
+
+	const uint num = (uint)atoi(argv[1]);
+	Picture pic;
+	if (!_vm->getPics().getPicture(num, pic)) {
+		debugPrintf("pic %u: load failed\n", num);
+		return true;
+	}
+
+	debugPrintf("pic %u (idx %u): %dx%d, compsize=%u, flags=0x%04x, miscflags=0x%04x, rowoff=%u\n",
+				num, num - 1, pic.surface.w, pic.surface.h,
+				pic.compsize, pic.flags, pic.miscflags, pic.rowoff);
+	return true;
 }
 
 } // End of namespace EEM

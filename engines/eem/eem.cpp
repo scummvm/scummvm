@@ -23,7 +23,10 @@
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/file.h"
+#include "common/path.h"
 #include "common/system.h"
+#include "common/textconsole.h"
 
 #include "engines/util.h"
 
@@ -32,6 +35,11 @@
 #include "eem/console.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+
+namespace {
+const uint kPalSize = 768;     ///< 256 colors * 3 bytes
+const uint kNumSitePals = 40;  ///< SITEPALS holds 40 palettes (40 * 768 = 30720)
+} // anonymous namespace
 
 namespace EEM {
 
@@ -48,7 +56,7 @@ Common::Error EEMEngine::run() {
 	// Original _main @ 1a35:0f59 enters mode 13h via _SetMode13X (320x200x256).
 	initGraphics(320, 200);
 
-	_console = new Console();
+	_console = new Console(this);
 	setDebugger(_console);
 
 	// _main's startup paints the screen black via _AllBlack @ 172b:0d4b before
@@ -56,7 +64,59 @@ Common::Error EEMEngine::run() {
 	byte palette[3 * 256] = { 0 };
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
+	// Mirrors _main's `_picsFile = _fopen("PICS.DBD", ...)` plus
+	// _InitGraphicsSystem's PICS.DBX index parse (172b:0145).
+	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
+		return Common::Error(Common::kReadingFailed, "PICS archive missing");
+	}
+
+	// Mirrors _ReadPalettes @ 172b:0d89 — slurp SITEPALS in one read.
+	Common::File palFile;
+	if (!palFile.open(Common::Path("SITEPALS"))) {
+		return Common::Error(Common::kReadingFailed, "SITEPALS missing");
+	}
+	_sitePals.resize(palFile.size());
+	if (palFile.read(_sitePals.data(), _sitePals.size()) != _sitePals.size()) {
+		return Common::Error(Common::kReadingFailed, "SITEPALS short read");
+	}
+	palFile.close();
+	debugC(1, kDebugGfx, "Loaded %u SITEPALS palettes", (uint)(_sitePals.size() / kPalSize));
+
 	debugC(1, kDebugGeneral, "EEM engine starting; first screen = 0x%02X", _nextScreen);
+
+	// Show the first intro image (EA Kids logo) — mirrors the opening of
+	// _ShowEAKids @ 2520:05f0: GetPicture(0x54), MemoryCopy to 0xa000:0,
+	// GetPalette(0x25), setmany(_fpal, 0). Skipped: color-cycle loop.
+	{
+		Picture eakids;
+		if (!_picsArchive.getPicture(0x54, eakids)) {
+			return Common::Error(Common::kReadingFailed, "EA Kids logo (picture #0x54) load failed");
+		}
+		debugC(1, kDebugGfx, "EA Kids logo: %dx%d", eakids.surface.w, eakids.surface.h);
+		blitFullScreen(eakids);
+		setSitePalette(0x25);
+		g_system->updateScreen();
+
+		// Hold the image for up to 3 s or until the user clicks/keys/quits.
+		const uint32 startMs = g_system->getMillis();
+		while (g_system->getMillis() - startMs < 3000) {
+			Common::Event event;
+			bool stop = false;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_QUIT ||
+					event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					event.type == Common::EVENT_LBUTTONDOWN ||
+					event.type == Common::EVENT_KEYDOWN) {
+					stop = true;
+					break;
+				}
+			}
+			if (stop)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+	}
 
 	screenDriver();
 
@@ -87,6 +147,28 @@ void EEMEngine::screenDriver() {
 		if (!pollEvents())
 			break;
 	}
+}
+
+void EEMEngine::setSitePalette(uint num) {
+	if (num >= kNumSitePals || _sitePals.size() < (num + 1) * kPalSize) {
+		warning("setSitePalette: index %u out of range", num);
+		return;
+	}
+	// SITEPALS stores 6-bit VGA-DAC values (0..63); ScummVM expects 8-bit
+	// (0..255), so left-shift by 2 like the original VGA hardware did.
+	const byte *src = _sitePals.data() + num * kPalSize;
+	byte expanded[kPalSize];
+	for (uint i = 0; i < kPalSize; i++) {
+		expanded[i] = (byte)(src[i] << 2);
+	}
+	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
+}
+
+void EEMEngine::blitFullScreen(const Picture &pic) {
+	// _MemoryCopy(0, 0xa000, srcOff, srcSeg) in _ShowEAKids dumps the picture
+	// straight into VGA's 320x200 framebuffer.
+	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,
+							   0, 0, pic.surface.w, pic.surface.h);
 }
 
 bool EEMEngine::pollEvents() {

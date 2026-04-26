@@ -31,6 +31,8 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
+#include "eem/resource.h"
+
 namespace EEM {
 
 class Console;
@@ -58,6 +60,18 @@ public:
 
 	const ADGameDescription *_gameDescription;
 
+	DBDArchive &getPics() { return _picsArchive; }
+
+	/**
+	 * Upload palette index @p num (one of 40 stored in SITEPALS) to the
+	 * screen, with the VGA-DAC 6-bit-to-8-bit shift. Mirrors _GetPalette
+	 * @ 172b:0e80 followed by _setmany @ 1000:0930.
+	 */
+	void setSitePalette(uint num);
+
+	/** Blit @p pic to the screen at (0,0), expecting a 320x200 picture. */
+	void blitFullScreen(const Picture &pic);
+
 private:
 	/**
 	 * Central dispatch loop matching the original _ScreenDriver @ 1a35:0dc1.
@@ -71,6 +85,9 @@ private:
 
 	Console *_console;
 	Common::RandomSource _rng;
+
+	DBDArchive _picsArchive;  ///< PICS.DBD/.DBX (mouse, buttons, markers, balloons sprites)
+	Common::Array<byte> _sitePals; ///< 40 x 768 bytes of 6-bit VGA palettes from SITEPALS
 
 	uint16 _lastScreen;  ///< Mirrors _LastScreen @ 2d5d:3f24
 	uint16 _nextScreen;  ///< Mirrors _NextScreen @ 2d5d:3f26
