@@ -32,121 +32,176 @@
 
 #include "graphics/paletteman.h"
 
-#include "eem/console.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/site.h"
+
+#include "common/config-manager.h"
+#include "common/savefile.h"
+#include "common/serializer.h"
+
+#include "graphics/managed_surface.h"
+
+namespace EEM {
 
 namespace {
 const uint kPalSize = 768;     ///< 256 colors * 3 bytes
 const uint kNumSitePals = 40;  ///< SITEPALS holds 40 palettes (40 * 768 = 30720)
+
+// Picture / palette IDs from the original code (1-based picture IDs).
+const uint kPicEAKidsLogo      = 0x54;  ///< _ShowEAKids: GetPicture(0x54)
+const uint kPicHighScoreLogo   = 0x20c; ///< _ShowHScoreLogo: GetPicture(0x20c)
+const uint kPicChooseBackground = 0x8c; ///< _DoChoosePartner: GetBackground(0x8c)
+const uint kPalEAKids          = 0x25;
+const uint kPalHighScore       = 0x27;
+
+// Animation IDs (0-based per ANI.DBX). _DoChoosePartner uses GetAnimation(8/9).
+const uint kAniBoy  = 8;
+const uint kAniGirl = 9;
+
+// On-screen positions for the boy and girl partner sprites, from
+// _DoChoosePartner: NewAnimation(0xe2, 0x62, ...) and (0x42, 0x60, ...).
+const int kBoyX  = 0xe2; // 226
+const int kBoyY  = 0x62; // 98
+const int kGirlX = 0x42; // 66
+const int kGirlY = 0x60; // 96
 } // anonymous namespace
 
-namespace EEM {
-
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
-	: Engine(syst), _gameDescription(gameDesc), _console(nullptr),
-	  _rng("eem"), _lastScreen(kScreenInvalid), _nextScreen(kScreenTitle) {
+	: Engine(syst), _gameDescription(gameDesc), _rng("eem"),
+	  _playerName("Detective"),
+	  _lastScreen(kScreenInvalid), _nextScreen(kScreenTitle), _partner(0) {
 }
 
 EEMEngine::~EEMEngine() {
-	// _console is owned by the Engine base class.
 }
 
 Common::Error EEMEngine::run() {
-	// Original _main @ 1a35:0f59 enters mode 13h via _SetMode13X (320x200x256).
+	// _SetMode13X @ 1000:0358 enters VGA mode 13h (320x200x256).
 	initGraphics(320, 200);
 
-	_console = new Console(this);
-	setDebugger(_console);
+	if (!openArchives())
+		return Common::Error(Common::kReadingFailed, "EEM archive open failed");
 
-	// _main's startup paints the screen black via _AllBlack @ 172b:0d4b before
-	// the first screen handler runs; we do the same here.
-	byte palette[3 * 256] = { 0 };
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	if (!loadSitePalettes())
+		return Common::Error(Common::kReadingFailed, "SITEPALS load failed");
 
-	// Mirrors _main's `_picsFile = _fopen("PICS.DBD", ...)` plus
-	// _InitGraphicsSystem's PICS.DBX index parse (172b:0145).
-	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
-		return Common::Error(Common::kReadingFailed, "PICS archive missing");
-	}
+	// _LoadFont @ 1b66:023c — main 8 px bitmap font.
+	if (!_font.load(Common::Path("FONT.FNT")))
+		warning("FONT.FNT failed to load; text will not render");
 
-	// Mirrors _ReadPalettes @ 172b:0d89 — slurp SITEPALS in one read.
-	Common::File palFile;
-	if (!palFile.open(Common::Path("SITEPALS"))) {
-		return Common::Error(Common::kReadingFailed, "SITEPALS missing");
-	}
-	_sitePals.resize(palFile.size());
-	if (palFile.read(_sitePals.data(), _sitePals.size()) != _sitePals.size()) {
-		return Common::Error(Common::kReadingFailed, "SITEPALS short read");
-	}
-	palFile.close();
-	debugC(1, kDebugGfx, "Loaded %u SITEPALS palettes", (uint)(_sitePals.size() / kPalSize));
+	// _AllBlack @ 172b:0d4b paints the screen black before the first handler.
+	byte black[3 * 256] = { 0 };
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
 
-	debugC(1, kDebugGeneral, "EEM engine starting; first screen = 0x%02X", _nextScreen);
+	debugC(1, kDebugGeneral, "EEM engine starting");
 
-	// Show the first intro image (EA Kids logo) — mirrors the opening of
-	// _ShowEAKids @ 2520:05f0: GetPicture(0x54), MemoryCopy to 0xa000:0,
-	// GetPalette(0x25), setmany(_fpal, 0). Skipped: color-cycle loop.
-	{
-		Picture eakids;
-		if (!_picsArchive.getPicture(0x54, eakids)) {
-			return Common::Error(Common::kReadingFailed, "EA Kids logo (picture #0x54) load failed");
-		}
-		debugC(1, kDebugGfx, "EA Kids logo: %dx%d", eakids.surface.w, eakids.surface.h);
-		blitFullScreen(eakids);
-		setSitePalette(0x25);
-		g_system->updateScreen();
-
-		// Hold the image for up to 3 s or until the user clicks/keys/quits.
-		const uint32 startMs = g_system->getMillis();
-		while (g_system->getMillis() - startMs < 3000) {
-			Common::Event event;
-			bool stop = false;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_QUIT ||
-					event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-					event.type == Common::EVENT_LBUTTONDOWN ||
-					event.type == Common::EVENT_KEYDOWN) {
-					stop = true;
-					break;
-				}
+	// If the user chose "Load" before pressing Play, the framework
+	// invokes `loadGameState` which sets up `_mystery` and `_partner`.
+	// Honour that by skipping the intros and going straight to the
+	// loaded mystery's site loop.
+	const int wantedSave = ConfMan.hasKey("save_slot")
+		? ConfMan.getInt("save_slot") : -1;
+	if (wantedSave >= 0) {
+		const Common::Error err = loadGameState(wantedSave);
+		if (err.getCode() == Common::kNoError && _mystery.isLoaded()) {
+			debugC(1, kDebugGeneral, "Resuming from slot %d at mystery %u",
+				   wantedSave, _mystery.number());
+			doInitClues();
+			doSiteLoop();
+			while (!shouldQuit()) {
+				doCaseSelection();
+				if (!_mystery.isLoaded()) break;
+				doInitClues();
+				doSiteLoop();
 			}
-			if (stop)
-				break;
-			g_system->updateScreen();
-			g_system->delayMillis(10);
+			return Common::kNoError;
 		}
 	}
 
-	screenDriver();
+	// Reproduces _DoOpeningAnims @ 2520:082a (sans audio):
+	//   EA Kids logo (PIC) -> HighScore Productions logo (PIC) ->
+	//   Storm Software logo (BOLT.ANM) -> 20 character-intro animations
+	//   (ANIM01.A .. ANIM20.A) -> TITLE.ANM. Each can be skipped with a
+	//   click or any key.
+	showEAKidsLogo();
+	if (!shouldQuit())
+		showHighScoreLogo();
+	if (!shouldQuit())
+		playAnm(Common::Path("BOLT.ANM"));
+	for (int i = 1; i <= 20 && !shouldQuit(); i++) {
+		Common::String name = Common::String::format("ANIM%02d.A", i);
+		playAnm(Common::Path(name));
+		// Between anims the original plays a voice clip via _SpoolSound;
+		// without audio we still want a beat so each scene reads.
+		if (!shouldQuit() && i != 20)
+			waitForInput(2000);
+	}
+	if (!shouldQuit())
+		playAnm(Common::Path("TITLE.ANM"), 120, /*holdLastFrame=*/true);
+
+	// After the title chain, the original goes Title (B) -> screen 8
+	// (NewPlayer / saved-record selection) -> screen 9 (ChoosePartner) ->
+	// screen A (CaseSelection) -> site loop. We mirror the same order.
+	if (!shouldQuit())
+		doNewPlayer();
+	if (!shouldQuit())
+		doChoosePartner();
+	if (!shouldQuit())
+		doCaseSelection();
+	if (!shouldQuit() && _mystery.isLoaded()) {
+		// Mark the starting site as active and display the case briefing.
+		// `_DoInitClues` @ 1a35:0411 — case briefing.
+		doInitClues();
+		doSiteLoop();
+
+		// After a case, loop back to CaseSelection.
+		while (!shouldQuit()) {
+			doCaseSelection();
+			if (!_mystery.isLoaded())
+				break;
+			doInitClues();
+			doSiteLoop();
+		}
+	}
 
 	debugC(1, kDebugGeneral, "EEM engine exiting");
 	return Common::kNoError;
 }
 
-void EEMEngine::screenDriver() {
-	// Mirrors _ScreenDriver @ 1a35:0dc1. The original walks a 14-entry table at
-	// 1a35:0e5e of (id, handler) pairs; we use a switch as we port handlers in.
-	while (_nextScreen != kScreenInvalid && !shouldQuit()) {
-		ScreenId next = static_cast<ScreenId>(_nextScreen);
-		switch (next) {
-		case kScreenTitle:
-			// TODO(M3): port _ShowTitlePage @ 1a35:06b7
-			warning("Screen 0x%02X (title) not implemented yet", next);
-			_lastScreen = _nextScreen;
-			_nextScreen = kScreenInvalid;
-			break;
-		default:
-			warning("Unknown screen id 0x%02X; exiting", next);
-			_nextScreen = kScreenInvalid;
-			break;
-		}
-
-		// Until handlers run their own event loops, pump events here so the
-		// engine remains responsive and the user can quit.
-		if (!pollEvents())
-			break;
+bool EEMEngine::openArchives() {
+	// _InitGraphicsSystem @ 172b:0145 opens these five .DBD/.DBX pairs.
+	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
+		warning("PICS archive missing");
+		return false;
 	}
+	if (!_aniArchive.open(Common::Path("ANI.DBD"), Common::Path("ANI.DBX"))) {
+		warning("ANI archive missing");
+		return false;
+	}
+	// SITES + BALLOON are optional for the boot path but needed for site
+	// rendering and clue display.
+	if (!_sitesArchive.open(Common::Path("SITES.DBD"), Common::Path("SITES.DBX")))
+		warning("SITES archive missing — site backgrounds disabled");
+	if (!_balloonArchive.open(Common::Path("BALLOON.DBD"), Common::Path("BALLOON.DBX")))
+		warning("BALLOON archive missing — clue text will lack balloons");
+	return true;
+}
+
+bool EEMEngine::loadSitePalettes() {
+	Common::File f;
+	if (!f.open(Common::Path("SITEPALS"))) {
+		warning("SITEPALS missing");
+		return false;
+	}
+	_sitePals.resize(f.size());
+	if (f.read(_sitePals.data(), _sitePals.size()) != _sitePals.size()) {
+		warning("SITEPALS short read");
+		return false;
+	}
+	debugC(1, kDebugGfx, "Loaded %u SITEPALS palettes",
+		   (uint)(_sitePals.size() / kPalSize));
+	return true;
 }
 
 void EEMEngine::setSitePalette(uint num) {
@@ -158,33 +213,1640 @@ void EEMEngine::setSitePalette(uint num) {
 	// (0..255), so left-shift by 2 like the original VGA hardware did.
 	const byte *src = _sitePals.data() + num * kPalSize;
 	byte expanded[kPalSize];
-	for (uint i = 0; i < kPalSize; i++) {
+	for (uint i = 0; i < kPalSize; i++)
 		expanded[i] = (byte)(src[i] << 2);
-	}
 	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
 }
 
-void EEMEngine::blitFullScreen(const Picture &pic) {
-	// _MemoryCopy(0, 0xa000, srcOff, srcSeg) in _ShowEAKids dumps the picture
-	// straight into VGA's 320x200 framebuffer.
-	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,
-							   0, 0, pic.surface.w, pic.surface.h);
+bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
+	Common::File f;
+	if (!f.open(anmPath)) {
+		warning("setAnmPalette: cannot open %s", anmPath.toString().c_str());
+		return false;
+	}
+	byte raw[kPalSize];
+	if (f.read(raw, kPalSize) != kPalSize) {
+		warning("setAnmPalette: short read on %s", anmPath.toString().c_str());
+		return false;
+	}
+	byte expanded[kPalSize];
+	for (uint i = 0; i < kPalSize; i++)
+		expanded[i] = (byte)(raw[i] << 2);
+	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
+	return true;
 }
 
-bool EEMEngine::pollEvents() {
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		switch (event.type) {
-		case Common::EVENT_QUIT:
-		case Common::EVENT_RETURN_TO_LAUNCHER:
-			return false;
-		default:
+void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLastFrame) {
+	ANMDecoder anm;
+	if (!anm.open(path)) {
+		warning("playAnm: %s missing", path.toString().c_str());
+		return;
+	}
+
+	byte palette[768];
+	anm.getPalette8(palette);
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
+
+	const uint16 w = anm.width();
+	const uint16 h = anm.height();
+
+	while (!shouldQuit()) {
+		const byte *frame = anm.nextFrame();
+		if (!frame)
+			break;
+
+		g_system->copyRectToScreen(frame, w, 0, 0, w, h);
+		g_system->updateScreen();
+
+		// Drain events and let the user skip with click/key. The original
+		// uses _CheckFrameRate / _kbhit; we use a simple fixed delay until
+		// the frame-rate calibration logic from _GetSpeedRating is wired up.
+		const uint32 frameStart = g_system->getMillis();
+		bool aborted = false;
+		while (g_system->getMillis() - frameStart < frameDelayMs && !aborted) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_QUIT ||
+					event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					event.type == Common::EVENT_LBUTTONDOWN ||
+					event.type == Common::EVENT_KEYDOWN) {
+					aborted = true;
+					break;
+				}
+			}
+			g_system->delayMillis(5);
+		}
+		if (aborted)
+			break;
+	}
+
+	if (holdLastFrame && !shouldQuit()) {
+		// Mirror the wait-loop at the end of `_DoOpeningAnims`:
+		//   while (!keyDataAvailable) ;
+		// We accept either a click or a key.
+		while (!shouldQuit()) {
+			Common::Event ev;
+			bool clicked = false;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN) {
+					clicked = true;
+					break;
+				}
+			}
+			if (clicked)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(20);
+		}
+	}
+}
+
+void EEMEngine::blitAt(const Picture &pic, int x, int y) {
+	// Clip against the 320x200 frame buffer.
+	const int w = MIN<int>(pic.surface.w, 320 - x);
+	const int h = MIN<int>(pic.surface.h, 200 - y);
+	if (w <= 0 || h <= 0)
+		return;
+	g_system->copyRectToScreen(pic.surface.getPixels(), pic.surface.pitch,
+							   x, y, w, h);
+}
+
+void EEMEngine::waitForInput(uint32 maxMs) {
+	const uint32 startMs = g_system->getMillis();
+	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_QUIT ||
+				event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+				event.type == Common::EVENT_LBUTTONDOWN ||
+				event.type == Common::EVENT_KEYDOWN) {
+				return;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+}
+
+void EEMEngine::showEAKidsLogo() {
+	// Mirrors _ShowEAKids @ 2520:05f0 (without the color-cycle loop):
+	// GetPicture(0x54), MemoryCopy to VGA, GetPalette(0x25), setmany.
+	Picture pic;
+	if (!_picsArchive.getPicture(kPicEAKidsLogo, pic)) {
+		warning("EA Kids logo (%u) load failed", kPicEAKidsLogo);
+		return;
+	}
+	blitAt(pic, 0, 0);
+	setSitePalette(kPalEAKids);
+	g_system->updateScreen();
+	waitForInput(2500);
+}
+
+void EEMEngine::showHighScoreLogo() {
+	// Mirrors _ShowHScoreLogo @ 2520:0799 (without the wait-loop):
+	// GetPicture(0x20c), MemoryCopy to VGA, GetPalette(0x27), FadeIn.
+	Picture pic;
+	if (!_picsArchive.getPicture(kPicHighScoreLogo, pic)) {
+		warning("HighScore logo (%u) load failed", kPicHighScoreLogo);
+		return;
+	}
+	blitAt(pic, 0, 0);
+	setSitePalette(kPalHighScore);
+	g_system->updateScreen();
+	waitForInput(2500);
+}
+
+void EEMEngine::doNewPlayer() {
+	// Mirrors `_NewPlayer` @ 1c33:0dda. The original draws background
+	// 0x104 + character peek pic 0x107, then shows "Please type your
+	// name" and accepts up to 12 characters until Enter. We render a
+	// minimal version: black screen + prompt.
+	if (!_font.isLoaded()) {
+		_playerName = "Detective";
+		return;
+	}
+
+	Common::String name;
+	const int maxChars = 12;
+
+	// Mirror the original: load PIC 0x104 as the name-entry backdrop.
+	// The original also slides in PIC 0x107 (a peeking character).
+	Picture bg;
+	const bool haveBG = _picsArchive.getPicture(0x104, bg);
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveBG) {
+			const int w = MIN<int>(bg.surface.w, 320);
+			const int h = MIN<int>(bg.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.surface.getBasePtr(0, row), w);
+		}
+		_font.drawString(&scratch, 40, 24,
+			"Welcome to Eagle Eye Mysteries!", 0xF);
+		_font.drawString(&scratch, 40, 40, "Please type your name:", 0xF);
+		_font.drawString(&scratch, 40, 60,
+			"(Backspace to delete, Enter to confirm)", 0xF);
+		Common::String shown = name + "_";
+		_font.drawString(&scratch, 40, 90, shown, 0xF);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	draw();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type != Common::EVENT_KEYDOWN)
+				continue;
+			const Common::KeyCode k = ev.kbd.keycode;
+			if (k == Common::KEYCODE_RETURN) {
+				if (name.empty())
+					name = "Detective";
+				_playerName = name;
+				return;
+			}
+			if (k == Common::KEYCODE_ESCAPE) {
+				_playerName = "Detective";
+				return;
+			}
+			if (k == Common::KEYCODE_BACKSPACE) {
+				if (!name.empty()) {
+					name.deleteLastChar();
+					dirty = true;
+				}
+				continue;
+			}
+			if (ev.kbd.ascii >= ' ' && ev.kbd.ascii < 127 &&
+				(int)name.size() < maxChars) {
+				name += (char)ev.kbd.ascii;
+				dirty = true;
+			}
+		}
+		if (dirty)
+			draw();
+		g_system->delayMillis(15);
+	}
+}
+
+void EEMEngine::doChoosePartner() {
+	// Mirrors _DoChoosePartner @ 1a35:0756. The original places boy + girl
+	// animations on a backdrop and polls four click rectangles (two per
+	// character) for the player's choice. We approximate by splitting the
+	// screen at x=160: left half = girl (Jenny), right half = boy (Jake).
+	Picture background;
+	if (!_picsArchive.getPicture(kPicChooseBackground, background)) {
+		warning("ChoosePartner background (%u) load failed", kPicChooseBackground);
+		return;
+	}
+
+	Animation boyAnim;
+	if (!_aniArchive.loadAnimation(kAniBoy, boyAnim) || boyAnim.empty()) {
+		warning("Boy animation (%u) load failed", kAniBoy);
+		return;
+	}
+	Animation girlAnim;
+	if (!_aniArchive.loadAnimation(kAniGirl, girlAnim) || girlAnim.empty()) {
+		warning("Girl animation (%u) load failed", kAniGirl);
+		return;
+	}
+
+	setAnmPalette(Common::Path("TITLE.ANM"));
+	blitAt(background, 0, 0);
+	blitAt(girlAnim[0], kGirlX, kGirlY);
+	blitAt(boyAnim[0], kBoyX, kBoyY);
+	g_system->updateScreen();
+
+	debugC(1, kDebugGeneral, "ChoosePartner: %u boy frames at (%d,%d), "
+		   "%u girl frames at (%d,%d)",
+		   (uint)boyAnim.size(), kBoyX, kBoyY,
+		   (uint)girlAnim.size(), kGirlX, kGirlY);
+
+	uint frame = 0;
+	uint32 lastTick = g_system->getMillis();
+	while (!shouldQuit()) {
+		// Advance frame at ~5 Hz so the animations cycle gently.
+		if (g_system->getMillis() - lastTick > 200) {
+			lastTick = g_system->getMillis();
+			frame++;
+			blitAt(background, 0, 0);
+			blitAt(girlAnim[frame % girlAnim.size()], kGirlX, kGirlY);
+			blitAt(boyAnim[frame % boyAnim.size()], kBoyX, kBoyY);
+			g_system->updateScreen();
+		}
+
+		Common::Event ev;
+		bool done = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				done = true;
+				break;
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				_partner = (ev.mouse.x >= 160) ? 0 : 1;
+				debugC(1, kDebugGeneral, "Partner picked: %s",
+					   _partner == 0 ? "Jake" : "Jennifer");
+				done = true;
+				break;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
+					_partner = 1; done = true; break;
+				}
+				if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
+					_partner = 0; done = true; break;
+				}
+				if (ev.kbd.keycode == Common::KEYCODE_RETURN ||
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					done = true; break;
+				}
+			}
+		}
+		if (done)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	}
+}
+
+void EEMEngine::doCaseSelection() {
+	// Mirrors `_CaseSelection` @ 1c33:0a87. The original draws PIC 0x41
+	// (chooser background) and a paginated list of mystery names rendered
+	// from M<n>.BIN headers, then calls `_DoChoose` to read a selection.
+	// We approximate with a numeric prompt (0..9 for first ten mysteries,
+	// Tab to cycle, Enter to load).
+	const uint kMaxMystery = 54;
+	// Default selection = the next unsolved mystery so post-win the
+	// player doesn't have to scroll to find what's left.
+	uint sel = 0;
+	for (uint i = 0; i <= kMaxMystery; i++) {
+		if (i < sizeof(_mysteriesSolved) && !_mysteriesSolved[i]) {
+			sel = i;
 			break;
 		}
 	}
+
+	// Mirrors `_CaseSelection`: load PIC 0x41 as the chooser backdrop.
+	Picture caseBg;
+	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveCaseBg) {
+			const int w = MIN<int>(caseBg.surface.w, 320);
+			const int h = MIN<int>(caseBg.surface.h, 200);
+			for (int row = 0; row < h; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)caseBg.surface.getBasePtr(0, row), w);
+			}
+		}
+		if (_font.isLoaded()) {
+			_font.drawString(&scratch, 8, 4,
+				Common::String::format("EAGLE EYE - %s", _playerName.c_str()), 0xF);
+
+			// Solved count.
+			uint solved = 0, perfectSolved = 0;
+			for (uint i = 0; i < sizeof(_mysteriesSolved); i++) {
+				if (_mysteriesSolved[i] >= 1) solved++;
+				if (_mysteriesSolved[i] == 2) perfectSolved++;
+			}
+			_font.drawString(&scratch, 200, 4,
+				Common::String::format("solved %u (1st try %u)",
+									   solved, perfectSolved), 0xF);
+			if (perfectSolved >= 55) {
+				_font.drawString(&scratch, 8, 168,
+					"** PERFECT MASTER SLEUTH! **", 0xF);
+			} else if (solved >= 55) {
+				_font.drawString(&scratch, 8, 168,
+					"** ALL MYSTERIES SOLVED! **", 0xF);
+			}
+
+			char marker = ' ';
+			if (sel < sizeof(_mysteriesSolved)) {
+				if (_mysteriesSolved[sel] == 2) marker = '*';
+				else if (_mysteriesSolved[sel] == 1) marker = '+';
+			}
+			// Per the original tiers: 0 (tutorial), 1-24 (Junior),
+			// 25-48 (Senior), 49-54 (Master).
+			const char *tier = "Tutorial";
+			if (sel >= 1 && sel <= 24) tier = "Junior Sleuth";
+			else if (sel >= 25 && sel <= 48) tier = "Senior Sleuth";
+			else if (sel >= 49 && sel <= 54) tier = "Master Sleuth";
+			_font.drawString(&scratch, 8, 24,
+				Common::String::format("Mystery %u  %c  [%s]",
+									   sel, marker, tier), 0xF);
+			_font.drawString(&scratch, 8, 40,
+				"  0..9        quick select", 0xF);
+			_font.drawString(&scratch, 8, 52,
+				"  Tab / +     next mystery", 0xF);
+			_font.drawString(&scratch, 8, 64,
+				"  Shift+Tab   prev mystery", 0xF);
+			_font.drawString(&scratch, 8, 76,
+				"  PgUp/PgDn   jump 10", 0xF);
+			_font.drawString(&scratch, 8, 88,
+				"  Home/End    first/last", 0xF);
+			_font.drawString(&scratch, 8, 100,
+				"  Enter       start mystery", 0xF);
+			_font.drawString(&scratch, 8, 112,
+				"  F5          save / load (ScummVM)", 0xF);
+			_font.drawString(&scratch, 8, 124,
+				"  ESC         quit", 0xF);
+			_font.drawString(&scratch, 8, 144,
+				"  *  solved on first try", 0xF);
+			_font.drawString(&scratch, 8, 156,
+				"  +  solved", 0xF);
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	draw();
+
+	bool confirmed = false;
+	while (!confirmed && !shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type != Common::EVENT_KEYDOWN)
+				continue;
+			const Common::KeyCode k = ev.kbd.keycode;
+			if (k == Common::KEYCODE_ESCAPE) {
+                _mystery.clear();
+				_nextScreen = kScreenInvalid;
+				return;
+			}
+			if (k == Common::KEYCODE_RETURN) {
+				confirmed = true;
+				break;
+			}
+			if (k >= Common::KEYCODE_0 && k <= Common::KEYCODE_9) {
+				sel = (uint)(k - Common::KEYCODE_0);
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_TAB || k == Common::KEYCODE_PLUS ||
+				k == Common::KEYCODE_RIGHT || k == Common::KEYCODE_DOWN) {
+				const bool back = (ev.kbd.flags & Common::KBD_SHIFT) ||
+								  k == Common::KEYCODE_LEFT;
+				if (back)
+					sel = (sel == 0) ? kMaxMystery : sel - 1;
+				else
+					sel = (sel >= kMaxMystery) ? 0 : sel + 1;
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_LEFT || k == Common::KEYCODE_UP ||
+				k == Common::KEYCODE_MINUS) {
+				sel = (sel == 0) ? kMaxMystery : sel - 1;
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_PAGEDOWN) {
+				sel = (sel + 10 > kMaxMystery) ? kMaxMystery : sel + 10;
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_PAGEUP) {
+				sel = (sel < 10) ? 0 : sel - 10;
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_HOME) {
+				sel = 0;
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_END) {
+				sel = kMaxMystery;
+				draw();
+				continue;
+			}
+		}
+		g_system->delayMillis(15);
+	}
+
+	if (!_mystery.load(sel, &_rng)) {
+		warning("doCaseSelection: failed to load mystery %u", sel);
+		_mystery.clear();
+		return;
+	}
+	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
+		   sel, _mystery.numSites(), _mystery.numSuspects());
+}
+
+void EEMEngine::doInitClues() {
+	// Mirrors `_DoInitClues` @ 1a35:0411. Sets BG 0x52 + palette 0x22,
+	// blits the Goblindroid game and book first frames, then displays
+	// the case briefing ClueBlock at InitBlock + 4. Marks the starting
+	// site (InitBlock word[1]) on `_OnSites`.
+	if (!_mystery.isLoaded())
+		return;
+
+	const byte *ib = _mystery.initBlock();
+	if (!ib)
+		return;
+
+	const uint16 startSite = READ_LE_UINT16(ib + 2);
+	if (startSite < Mystery::kVisitedSiteCap)
+		_mystery._onSites[startSite] = 1;
+
+	setSitePalette(0x22);
+	Picture bg;
+	if (_picsArchive.getPicture(0x52, bg))
+		blitAt(bg, 0, 0);
+
+	const uint gameAni = _partner == 0 ? 0x17 : 0x3b;
+	const uint bookAni = _partner == 0 ? 0x18 : 0x3c;
+	Animation game, book;
+	if (_aniArchive.loadAnimation(gameAni, game) && !game.empty())
+		blitAt(game[0], 0xcd, 0x6c);
+	if (_aniArchive.loadAnimation(bookAni, book) && !book.empty())
+		blitAt(book[0], 0, 99);
+
+	// Case type 1 also places "Nancy" (a third character) at (0x68, 0x8b)
+	// per `_DoInitClues`.
+	const uint16 caseType = READ_LE_UINT16(ib);
+	if (caseType == 1) {
+		Animation nancy;
+		if (_aniArchive.loadAnimation(0x19, nancy) && !nancy.empty())
+			blitAt(nancy[0], 0x68, 0x8b);
+	}
+
+	displayClue(ib + 4);
+}
+
+void EEMEngine::doSiteLoop() {
+	// Mirrors the per-mystery site loop. SiteScreen::run() handles
+	// hotspot clicks plus M (map), N (notebook), G (gallery), A (accuse),
+	// Tab (next site), ESC (exit).
+	SiteScreen screen(this, &_mystery);
+	screen.run();
+}
+
+/// Mirror `_ParseString` @ 1b66:07c3 — substitute the control bytes that
+/// the original engine uses as placeholders. Only the two we encounter most
+/// often (player name = 0x80, partner first name = 0x82) are substituted;
+/// other 0x8N opcodes are stripped. The original engine also handles
+/// hyphenation marks and a hint placeholder (0x89) we ignore for now.
+static Common::String parseString(const Common::String &raw,
+								  const Common::String &playerName,
+								  const Common::String &partnerName) {
+	Common::String out;
+	for (uint i = 0; i < raw.size(); i++) {
+		const byte c = (byte)raw[i];
+		if (c == 0x80) {
+			out += playerName;
+		} else if (c == 0x82) {
+			out += partnerName;
+		} else if (c >= 0x80 && c < 0x8A) {
+			// Other control opcodes: eat them silently for now.
+		} else if (c == 0 || c == '\r') {
+			// stop on NUL, ignore CR
+			if (c == 0)
+				break;
+		} else {
+			out += (char)c;
+		}
+	}
+	return out;
+}
+
+void EEMEngine::applyClueSideEffects(const byte *c) {
+	for (uint j = 0; j < 5; j++) {
+		const uint16 note = READ_LE_UINT16(c + 0x30 + j * 2);
+		if (note != 0xFFFF && note < Mystery::kCluesFoundCap)
+			_mystery._cluesFound[note] = 1;
+
+		const uint16 galIdx = READ_LE_UINT16(c + 0x26 + j * 2);
+		if (galIdx != 0xFFFF && galIdx < Mystery::kGalleryCap) {
+			const uint8 phys = _mystery._newOrder[galIdx];
+			if (phys < Mystery::kGalleryCap)
+				_mystery._inGallery[phys] = 1;
+		}
+
+		const uint16 siteIdx = READ_LE_UINT16(c + 0x1c + j * 2);
+		if (siteIdx != 0xFFFF) {
+			const uint16 siteVal = siteIdx & 0x7FFF;
+			if (siteVal < Mystery::kVisitedSiteCap)
+				_mystery._onSites[siteVal] = 1;
+			if (siteIdx & 0x8000)
+				_mystery._sawCONSITEs = true;
+		}
+	}
+}
+
+void EEMEngine::displayClue(const byte *clueBlock) {
+	if (!clueBlock || !_mystery.isLoaded())
+		return;
+
+	// ClueBlock layout (verified against M0.BIN):
+	//   +0..1: number (entry count)
+	//   +2..3: pic ID for entry 0 (entry N>0 uses prev entry's last 2 bytes)
+	//   +4..:  array of 62-byte entries
+	const uint16 number = READ_LE_UINT16(clueBlock);
+	debugC(1, kDebugScript, "displayClue: %u entries", number);
+	if (number == 0 || number > 32) {
+		// number==0 = no briefing (e.g. mystery 0 case-type 4); >32 is a
+		// guard against bad pointers.
+		return;
+	}
+
+	// Snapshot the current screen as the BG so character pics from
+	// earlier entries don't stack on top of each other.
+	Graphics::ManagedSurface bg(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	bg.clear();
+	{
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)bg.getBasePtr(0, row),
+					   (const byte *)screen->getBasePtr(0, row), 320);
+			}
+			g_system->unlockScreen();
+		}
+	}
+
+	for (uint i = 0; i < number && !shouldQuit(); i++) {
+		// Restore BG before drawing this entry's portrait + balloon.
+		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
+		const byte *c = clueBlock + 4 + i * 62;
+		// Per-partner fields:
+		//   +0..1, +2..3: tx, ty (partner 0)
+		//   +4..5, +6..7: tx, ty (partner 1)
+		//   +8..9, +10..11: bubText offset for partner 0/1 (rel. TextBlock)
+		//   +12..13, +14..15: balloon picture ID for partner 0/1
+		//   +16..17, +18..19: bubX, bubY
+		// Per `_DisplayClue` @ 2404:05e6: partner 1 uses its own field
+		// set ONLY when bubText1 is not -1; otherwise it falls back to
+		// the partner 0 fields entirely. Partner 0 always uses field 0.
+		const bool useP1 = (_partner == 1) &&
+			(READ_LE_UINT16(c + 10) != 0xFFFF);
+		const uint partner = useP1 ? 1 : 0;
+		const uint16 textOff = READ_LE_UINT16(c + 8 + partner * 2);
+		const bool hasText = (textOff != 0xFFFF);
+		// Partner 1 bubX/bubY at +0x14/+0x16; partner 0 at +0x10/+0x12.
+		const uint16 bubX = READ_LE_UINT16(c + (useP1 ? 0x14 : 0x10));
+		const uint16 bubY = READ_LE_UINT16(c + (useP1 ? 0x16 : 0x12));
+		const uint16 bubNum = READ_LE_UINT16(c + (useP1 ? 0x0E : 0x0C));
+		const char *raw   = hasText ? _mystery.textAt(textOff) : "";
+
+		// Speaker portrait. Mirrors `_DisplayClue`'s `pic[clues+i*62-2]`:
+		// for entry 0 the pic ID is in the ClueBlock header at +2; for
+		// later entries it sits in the previous entry's last 2 bytes.
+		// Speaker portrait position uses partner 0 fields (+0..+3) when
+		// _partner==0 or when partner 1 falls back; otherwise partner 1
+		// fields (+4..+7). Same logic as the original.
+		const uint16 charX  = READ_LE_UINT16(c + (useP1 ? 4 : 0));
+		const uint16 charY  = READ_LE_UINT16(c + (useP1 ? 6 : 2));
+		const uint16 charPicId = (i == 0)
+			? READ_LE_UINT16(clueBlock + 2)
+			: READ_LE_UINT16(c - 2);
+		if (charPicId != 0 && charPicId != 0xFFFF) {
+			Picture charPic;
+			if (_picsArchive.getPicture(charPicId, charPic) &&
+				charX < 320 && charY < 200) {
+				const int w = MIN<int>(charPic.surface.w, 320 - charX);
+				const int h = MIN<int>(charPic.surface.h, 200 - charY);
+				if (w > 0 && h > 0)
+					g_system->copyRectToScreen(charPic.surface.getPixels(),
+						charPic.surface.pitch, charX, charY, w, h);
+			}
+		}
+
+		// Substitute placeholder control bytes with the entered player
+		// name and the chosen partner's first name (Jake / Jennifer).
+		const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
+		const Common::String text = parseString(raw ? raw : "",
+												_playerName, partnerName);
+
+		// Speech balloon. Mirrors `_GetBalloon` + `_AddPicBackground` in
+		// `_DisplayClue`. The original looks up per-balloon text-area
+		// metadata in a table at offset 0x875 (within `_DisplayClue`'s
+		// segment); we don't have that table decoded yet, so we use a
+		// fixed inset of 8 px from the balloon's top-left.
+		Picture balloon;
+		const uint16 balloonId = bubNum & 0x7F;
+		const bool haveBalloon = bubNum != 0xFFFF &&
+			_balloonArchive.size() > balloonId &&
+			_balloonArchive.loadEntry(balloonId, balloon);
+
+		if (_font.isLoaded() && !text.empty()) {
+			// Snapshot the current screen, overlay balloon + text, then
+			// copy the changed band back. This preserves the site BG
+			// underneath unchanged regions.
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (!screen) break;
+			Graphics::ManagedSurface scratch(320, 200,
+				Graphics::PixelFormat::createFormatCLUT8());
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)screen->getBasePtr(0, row), 320);
+			}
+			g_system->unlockScreen();
+
+			int textX = bubX;
+			int textY = bubY;
+			int textW = MIN<int>(320 - bubX, 200);
+			int copyY = bubY;
+			int copyH = _font.height() * 4 + 8;
+
+			if (haveBalloon) {
+				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
+				const int bh = MIN<int>(balloon.surface.h, 200 - bubY);
+				if (bw > 0 && bh > 0) {
+					for (int row = 0; row < bh; row++) {
+						memcpy((byte *)scratch.getBasePtr(bubX, bubY + row),
+							   (const byte *)balloon.surface.getBasePtr(0, row),
+							   bw);
+					}
+				}
+				// Per-balloon metadata table at 29be:0875 in the original
+				// uses (textX=6, textY=4) inset across all entries; we
+				// adopt the same constants instead of approximating with 8.
+				textX = bubX + 6;
+				textY = bubY + 4;
+				textW = bw - 12;
+				copyH = bh;
+			} else {
+				// No balloon — clear a band so old pixels don't bleed.
+				const Common::Rect band(0, bubY, 320,
+					MIN<int>(bubY + copyH, 200));
+				scratch.fillRect(band, 0);
+				copyY = bubY;
+			}
+
+			_font.drawWordWrapped(&scratch, textX, textY,
+				MAX<int>(8, textW), text, 0xF);
+
+			g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
+				scratch.pitch, 0, copyY, 320,
+				MIN<int>(copyH, 200 - copyY));
+			g_system->updateScreen();
+		}
+
+		// Wait for click/key to advance — only if we drew something.
+		// ESC skips the entire dialogue rather than just one entry.
+		if (hasText || (charPicId != 0 && charPicId != 0xFFFF)) {
+			bool advance = false;
+			bool skipAll = false;
+			while (!advance && !shouldQuit()) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_QUIT ||
+						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+						advance = true;
+						break;
+					}
+					if (ev.type == Common::EVENT_KEYDOWN &&
+						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						advance = true;
+						skipAll = true;
+						break;
+					}
+					if (ev.type == Common::EVENT_LBUTTONDOWN ||
+						ev.type == Common::EVENT_KEYDOWN) {
+						advance = true;
+						break;
+					}
+				}
+				g_system->delayMillis(10);
+			}
+			if (skipAll) {
+				// Apply remaining side-effects without rendering. The
+				// original silently runs the state updates even when the
+				// player skips ahead.
+				for (uint k = i; k < number; k++)
+					applyClueSideEffects(clueBlock + 4 + k * 62);
+				return;
+			}
+		}
+
+		applyClueSideEffects(c);
+	}
+}
+
+void EEMEngine::doNotebook() {
+	// Mirrors `_DrawNotes` @ 161e:01d0 + `_HandleNoteButton`. We list every
+	// found clue with its NoteIndex point value and let the player toggle
+	// "selected" with number keys 1..9 (paged in groups of 9). The total
+	// points of selected clues feed `_SolvedCheck` during accuse.
+	if (!_font.isLoaded())
+		return;
+
+	int page = 0;
+	const int kPerPage = 9;
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		_font.drawString(&scratch, 8, 4, "NOTEBOOK", 0xF);
+		_font.drawString(&scratch, 200, 4,
+			Common::String::format("pts: %d", _mystery.selectedPoints()), 0xF);
+
+		// Build a list of found-clue indices.
+		Common::Array<uint> found;
+		for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
+			if (_mystery._cluesFound[i])
+				found.push_back(i);
+		const int total = (int)found.size();
+		const int pages = MAX<int>(1, (total + kPerPage - 1) / kPerPage);
+		page = MIN<int>(page, pages - 1);
+
+		_font.drawString(&scratch, 200, 16,
+			Common::String::format("page %d/%d", page + 1, pages), 0xF);
+
+		const byte *ni = _mystery.noteIndex();
+		const uint16 niCount = _mystery.noteIndexCount();
+		const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
+		int y = 4 + _font.height() * 2 + 4;
+		for (int slot = 0; slot < kPerPage; slot++) {
+			const int idx = page * kPerPage + slot;
+			if (idx >= total)
+				break;
+			const uint clueId = found[idx];
+			Common::String text;
+			int pts = 0;
+			if (ni && clueId < niCount) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				const uint16 ptsRaw  = READ_LE_UINT16(ni + clueId * 4 + 2);
+				pts = (int)(int16)ptsRaw;
+				const Common::String raw = _mystery.textAt(textOff);
+				text = parseString(raw, _playerName, partnerName);
+			}
+			if (text.empty())
+				text = Common::String::format("clue %u", clueId);
+
+			const char selMark = _mystery._noteSelected[clueId] ? '*' : ' ';
+			Common::String line = Common::String::format(
+				"%d [%c] (%d pts) %s", slot + 1, selMark, pts, text.c_str());
+			const int used = _font.drawWordWrapped(&scratch, 8, y, 304, line, 0xF);
+			y += used + 2;
+			if (y >= 192) break;
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	draw();
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		bool exit  = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) { exit = true; break; }
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) { exit = true; break; }
+				if (ev.kbd.keycode >= Common::KEYCODE_1 && ev.kbd.keycode <= Common::KEYCODE_9) {
+					const int slot = (int)(ev.kbd.keycode - Common::KEYCODE_1);
+					Common::Array<uint> found;
+					for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
+						if (_mystery._cluesFound[i])
+							found.push_back(i);
+					const int idx = page * kPerPage + slot;
+					if (idx < (int)found.size()) {
+						const uint clueId = found[idx];
+						_mystery._noteSelected[clueId] ^= 1;
+						dirty = true;
+					}
+				} else if (ev.kbd.keycode == Common::KEYCODE_TAB ||
+						   ev.kbd.keycode == Common::KEYCODE_RIGHT) {
+					page++; dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
+					if (page > 0) page--;
+					dirty = true;
+				}
+			}
+		}
+		if (exit) break;
+		if (dirty) draw();
+		g_system->delayMillis(15);
+	}
+}
+
+void EEMEngine::doGallery() {
+	// Mirrors `_DrawGallery` @ 158f:0046. The original loops `_NumSuspects`
+	// gallery entries (0x46 = 70 bytes each in `_GalleryData`); the first
+	// u16 of each entry is the PIC picture ID for that suspect. We render
+	// them in a row across the screen.
+	if (!_mystery.isLoaded())
+		return;
+
+	const byte *gd = _mystery.galleryData();
+	if (!gd) {
+		warning("doGallery: no GalleryData in mystery %u", _mystery.number());
+		return;
+	}
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+
+	// Use PIC 0x3f as the gallery backdrop, matching `_DoAccuseGallery`.
+	Picture galBg;
+	if (_picsArchive.getPicture(0x3f, galBg)) {
+		const int w = MIN<int>(galBg.surface.w, 320);
+		const int h = MIN<int>(galBg.surface.h, 200);
+		for (int row = 0; row < h; row++) {
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)galBg.surface.getBasePtr(0, row), w);
+		}
+	}
+
+	if (_font.isLoaded())
+		_font.drawString(&scratch, 8, 4, "GALLERY", 0xF);
+
+	const uint8 num = _mystery.numSuspects();
+	int slotX = 8;
+	const int slotY = 24;
+	const int slotStep = 320 / MAX<uint8>(1, num);
+	for (uint i = 0; i < num; i++) {
+		const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+		if (picId == 0)
+			continue;
+		Picture portrait;
+		if (!_picsArchive.getPicture(picId, portrait))
+			continue;
+		const int placeX = slotX + (slotStep - portrait.surface.w) / 2;
+		const int placeY = slotY;
+		const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+		const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+		if (w > 0 && h > 0) {
+			for (int row = 0; row < h; row++) {
+				memcpy((byte *)scratch.getBasePtr(placeX, placeY + row),
+					   (const byte *)portrait.surface.getBasePtr(0, row), w);
+			}
+		}
+		// Suspect number + discovered marker under the portrait.
+		if (_font.isLoaded()) {
+			const bool discovered = (i < Mystery::kGalleryCap) &&
+									_mystery._inGallery[i];
+			Common::String label = Common::String::format("%u%s",
+				i + 1, discovered ? " *" : "");
+			_font.drawString(&scratch, placeX + 4, placeY + h + 2, label, 0xF);
+		}
+		slotX += slotStep;
+	}
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
 	g_system->updateScreen();
-	g_system->delayMillis(10);
-	return true;
+	waitForInput(60000);
+}
+
+void EEMEngine::doBigMap() {
+	// Mirrors `_DoBigMap` @ 20fe:09e7. The original lays out a 0xe9 x 0xab
+	// map window inside frame PIC 0x42 with per-site clickable markers
+	// scrolling under it. We render BIGMAP.PIC at top-left, draw an
+	// overlay listing the sites that the player can travel to (per
+	// `_OnSites`), and accept either number keys or clicks on the
+	// overlay rows to travel.
+	Common::File f;
+	if (!f.open(Common::Path("BIGMAP.PIC"))) {
+		warning("doBigMap: BIGMAP.PIC missing");
+		return;
+	}
+	const uint16 mapH = f.readUint16LE();
+	const uint16 mapW = f.readUint16LE();
+	if (mapW == 0 || mapH == 0)
+		return;
+
+	Common::Array<byte> mapPixels((uint32)mapW * mapH);
+	if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
+		warning("doBigMap: short read on BIGMAP.PIC");
+		return;
+	}
+
+	// Approximate inner map window from the original `_DoBigMap`:
+	//   if (sx < 0x75) sx = 0; else sx -= 0x74;     // 0x74 = 116
+	//   if (mapW < sx + 0xe9) sx = mapW - 0xe9;     // window width  = 233
+	//   if (sy < 0x56) sy = 0; else sy -= 0x55;
+	//   if (mapH < sy + 0xab) sy = mapH - 0xab;     // window height = 171
+	const int kMapWinW = 0xe9; // 233
+	const int kMapWinH = 0xab; // 171
+	const int kMapWinX = 4;
+	const int kMapWinY = 4;
+
+	int scrollX = 0;
+	int scrollY = 0;
+
+	// Auto-scroll to centre the current site, if known.
+	if (_mystery.isLoaded()) {
+		const byte *entry = _mystery.mapEntry(_mystery._siteNumber);
+		if (entry) {
+			const uint16 mx = READ_LE_UINT16(entry + 4);
+			const uint16 my = READ_LE_UINT16(entry + 6);
+			scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW,
+				(int)mx - kMapWinW / 2));
+			scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH,
+				(int)my - kMapWinH / 2));
+		}
+	}
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+
+		// Frame from PIC 0x42 (`_GetPicture(0x42)` in `_DoBigMap`).
+		Picture frame;
+		if (_picsArchive.getPicture(0x42, frame)) {
+			const int w = MIN<int>(frame.surface.w, 320);
+			const int h = MIN<int>(frame.surface.h, 200);
+			for (int row = 0; row < h; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)frame.surface.getBasePtr(0, row), w);
+			}
+		}
+
+		// Map content clipped into the inner window, applying scroll.
+		const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
+		const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
+		for (int row = 0; row < copyH; row++) {
+			memcpy((byte *)scratch.getBasePtr(kMapWinX, kMapWinY + row),
+				   mapPixels.data() + (scrollY + row) * mapW + scrollX,
+				   copyW);
+		}
+
+		// Site markers from MapData. Each per-mystery MapData entry is
+		// 14 bytes; bytes +4..+5 / +6..+7 hold an (x, y) pair on the big
+		// map. We draw a small filled square for each accessible site.
+		if (_mystery.isLoaded()) {
+			for (uint i = 0; i < _mystery.numSites(); i++) {
+				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+					continue;
+				const byte *entry = _mystery.mapEntry(i);
+				if (!entry)
+					continue;
+				const uint16 mx = READ_LE_UINT16(entry + 4);
+				const uint16 my = READ_LE_UINT16(entry + 6);
+				const int sx = (int)mx - scrollX + kMapWinX;
+				const int sy = (int)my - scrollY + kMapWinY;
+				if (sx < kMapWinX || sx >= kMapWinX + kMapWinW ||
+					sy < kMapWinY || sy >= kMapWinY + kMapWinH)
+					continue;
+				const byte color = (i == _mystery._siteNumber) ? 0x0E : 0x0F;
+				const Common::Rect mark(sx - 2, sy - 2, sx + 3, sy + 3);
+				scratch.fillRect(mark, color);
+				if (_font.isLoaded()) {
+					Common::String num = Common::String::format("%u", i);
+					_font.drawString(&scratch, sx + 4, sy - 4, num, color);
+				}
+			}
+		}
+
+		// Travel-target overlay (right-side panel).
+		if (_font.isLoaded() && _mystery.isLoaded()) {
+			const int panelX = kMapWinX + kMapWinW + 4;
+			int y = 4;
+			_font.drawString(&scratch, panelX, y, "TRAVEL", 0xF);
+			y += _font.height() + 4;
+			for (uint i = 0; i < _mystery.numSites() && y < 192; i++) {
+				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+					continue;
+				const char marker = (i == _mystery._siteNumber) ? '>' : ' ';
+				Common::String label = Common::String::format(
+					"%c %u", marker, i);
+				_font.drawString(&scratch, panelX, y, label, 0x0F);
+				y += _font.height() + 1;
+			}
+			_font.drawString(&scratch, panelX, 188,
+							 "Esc", 0x0F);
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	draw();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return;
+				const int kStep = 16;
+				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
+					scrollX = MAX<int>(0, scrollX - kStep);
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
+					scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW), scrollX + kStep);
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
+					scrollY = MAX<int>(0, scrollY - kStep);
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
+					scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH), scrollY + kStep);
+					dirty = true;
+				}
+				if (ev.kbd.keycode >= Common::KEYCODE_0 &&
+					ev.kbd.keycode <= Common::KEYCODE_9) {
+					const uint target = (uint)(ev.kbd.keycode - Common::KEYCODE_0);
+					if (_mystery.isLoaded() &&
+						target < _mystery.numSites() &&
+						_mystery._onSites[target]) {
+						_mystery._lastSite = _mystery._siteNumber;
+						_mystery._siteNumber = (uint16)target;
+						return;
+					}
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// Click on a map marker?
+				if (_mystery.isLoaded() &&
+					ev.mouse.x >= kMapWinX &&
+					ev.mouse.x < kMapWinX + kMapWinW &&
+					ev.mouse.y >= kMapWinY &&
+					ev.mouse.y < kMapWinY + kMapWinH) {
+					for (uint i = 0; i < _mystery.numSites(); i++) {
+						if (!_mystery._onSites[i] &&
+							i != _mystery._siteNumber)
+							continue;
+						const byte *entry = _mystery.mapEntry(i);
+						if (!entry) continue;
+						const uint16 mx = READ_LE_UINT16(entry + 4);
+						const uint16 my = READ_LE_UINT16(entry + 6);
+						const int sx = (int)mx - scrollX + kMapWinX;
+						const int sy = (int)my - scrollY + kMapWinY;
+						if (ABS(ev.mouse.x - sx) <= 5 &&
+							ABS(ev.mouse.y - sy) <= 5) {
+							_mystery._lastSite = _mystery._siteNumber;
+							_mystery._siteNumber = (uint16)i;
+							return;
+						}
+					}
+				}
+
+				// Click in the right panel: travel to that row.
+				const int panelX = kMapWinX + kMapWinW + 4;
+				if (_font.isLoaded() && _mystery.isLoaded() &&
+					ev.mouse.x >= panelX) {
+					const int row = (ev.mouse.y - 4 - _font.height() - 4) /
+									(_font.height() + 1);
+					int seen = 0;
+					for (uint i = 0; i < _mystery.numSites(); i++) {
+						if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+							continue;
+						if (seen == row) {
+							_mystery._lastSite = _mystery._siteNumber;
+							_mystery._siteNumber = (uint16)i;
+							return;
+						}
+						seen++;
+					}
+				}
+			}
+		}
+		if (dirty)
+			draw();
+		g_system->delayMillis(10);
+	}
+}
+
+void EEMEngine::doHelp() {
+	// `_KDHelp` reads two hint TextBlock offsets from `_KDTextIndex`:
+	//   word @ +0xe : first-time hint
+	//   word @ +0x10: second-time hint (cycles back to first if missing)
+	// `_SawHelpHint` toggles between them.
+	if (!_mystery.isLoaded() || !_font.isLoaded())
+		return;
+
+	const byte *kd = _mystery.kdTextIndex();
+	if (!kd)
+		return;
+
+	const uint16 hintFirst  = READ_LE_UINT16(kd + 0x0e);
+	const uint16 hintSecond = READ_LE_UINT16(kd + 0x10);
+	uint16 use = _mystery._sawHelpHint && hintSecond != 0xFFFF ? hintSecond : hintFirst;
+	if (use == 0xFFFF) {
+		debugC(1, kDebugScript, "doHelp: no hint configured");
+		return;
+	}
+	if (!_mystery._sawHelpHint && hintFirst != 0xFFFF)
+		_mystery._sawHelpHint = true;
+
+	const Common::String raw = _mystery.textAt(use);
+	const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
+	const Common::String text = parseString(raw, _playerName, partnerName);
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	_font.drawString(&scratch, 8, 4, "HELP", 0xF);
+	_font.drawWordWrapped(&scratch, 8, 24, 304, text, 0xF);
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+	waitForInput(60000);
+}
+
+bool EEMEngine::areYouSure() {
+	// Mirrors `_AreYouSure` @ 1a35:0a5c. Original loads PIC 0x136 for the
+	// dialog body and PIC 0x1FD/0x1FE for YES/NO. We render a minimal
+	// text dialog that preserves the screen behind it.
+	if (!_font.isLoaded())
+		return true;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::ManagedSurface saved(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	if (screen) {
+		for (int row = 0; row < 200; row++) {
+			memcpy((byte *)saved.getBasePtr(0, row),
+				   (const byte *)screen->getBasePtr(0, row), 320);
+		}
+		g_system->unlockScreen();
+	}
+
+	const Common::Rect dlg(60, 70, 260, 140);
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	for (int row = 0; row < 200; row++)
+		memcpy((byte *)scratch.getBasePtr(0, row),
+			   (const byte *)saved.getBasePtr(0, row), 320);
+	scratch.fillRect(dlg, 0);
+	scratch.frameRect(dlg, 0xF);
+	_font.drawString(&scratch, dlg.left + 8, dlg.top + 8,
+		"Are you sure you want to quit?", 0xF);
+	_font.drawString(&scratch, dlg.left + 16, dlg.top + 36, "Y - Yes", 0xF);
+	_font.drawString(&scratch, dlg.left + 100, dlg.top + 36, "N - No", 0xF);
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+
+	bool result = false;
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool decided = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				result = true;
+				decided = true;
+				break;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_y ||
+					ev.kbd.keycode == Common::KEYCODE_RETURN) {
+					result = true; decided = true; break;
+				}
+				if (ev.kbd.keycode == Common::KEYCODE_n ||
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					result = false; decided = true; break;
+				}
+			}
+		}
+		if (decided)
+			break;
+		g_system->delayMillis(15);
+	}
+
+	// Restore the screen so the caller's UI is intact.
+	g_system->copyRectToScreen(saved.getPixels(), saved.pitch, 0, 0, 320, 200);
+	g_system->updateScreen();
+	return result;
+}
+
+void EEMEngine::doAccuse() {
+	if (!_mystery.isLoaded())
+		return;
+
+	// Mirrors `_DoAccuseGallery` @ 1df2:0a31. Render gallery + prompt,
+	// accept either keyboard 1..N or a click on a suspect's portrait.
+	const uint8 num = _mystery.numSuspects();
+	if (num == 0)
+		return;
+
+	const byte *gd = _mystery.galleryData();
+	const int slotStep = 320 / MAX<uint8>(1, num);
+	const int slotY    = 24;
+
+	// Mirrors `_DoAccuseGallery`: load PIC 0x3f as the accuse backdrop.
+	Picture accuseBg;
+	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
+
+	auto drawGallery = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveAccuseBg) {
+			const int w = MIN<int>(accuseBg.surface.w, 320);
+			const int h = MIN<int>(accuseBg.surface.h, 200);
+			for (int row = 0; row < h; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)accuseBg.surface.getBasePtr(0, row), w);
+			}
+		}
+		if (_font.isLoaded())
+			_font.drawString(&scratch, 8, 4, "ACCUSE", 0xF);
+
+		for (uint i = 0; i < num; i++) {
+			if (!gd) continue;
+			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+			if (picId == 0)
+				continue;
+			Picture portrait;
+			if (!_picsArchive.getPicture(picId, portrait))
+				continue;
+			const int placeX = i * slotStep +
+							   (slotStep - portrait.surface.w) / 2;
+			const int placeY = slotY;
+			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+			if (w > 0 && h > 0) {
+				for (int row = 0; row < h; row++)
+					memcpy((byte *)scratch.getBasePtr(placeX, placeY + row),
+						   (const byte *)portrait.surface.getBasePtr(0, row), w);
+			}
+			if (_font.isLoaded()) {
+				Common::String label = Common::String::format("%u", i + 1);
+				_font.drawString(&scratch, placeX + 4,
+					placeY + h + 2, label, 0xF);
+			}
+		}
+		if (_font.isLoaded()) {
+			_font.drawString(&scratch, 8, 180,
+				"Click a suspect or press 1..N - ESC to cancel", 0xF);
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	drawGallery();
+
+	int picked = -1;
+	while (picked < 0 && !shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return;
+				const int k = (int)ev.kbd.keycode;
+				if (k >= Common::KEYCODE_1 && k <= Common::KEYCODE_9) {
+					const int idx = k - Common::KEYCODE_1;
+					if (idx < num)
+						picked = idx;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				const int slot = ev.mouse.x / slotStep;
+				if (slot >= 0 && slot < (int)num &&
+					ev.mouse.y >= slotY && ev.mouse.y < slotY + 120)
+					picked = slot;
+			}
+		}
+		g_system->delayMillis(10);
+	}
+	if (picked < 0)
+		return;
+
+	// Real chain evaluation: sum point values of clues the player marked
+	// "selected" in the notebook. Mirrors `_SolvedCheck` @ 1df2:00ec.
+	const int points = _mystery.selectedPoints();
+	const bool guessedRight = _mystery.solvedCheck();
+	debugC(1, kDebugScript, "doAccuse: picked=%d selectedPts=%d -> %s",
+		   picked, points, guessedRight ? "correct" : "wrong");
+
+	// If the player hasn't marked any evidence yet, give them a hint
+	// rather than an instant fail. Mirrors the original "We're not ready
+	// to solve this mystery yet..." string at 29be:10f0.
+	if (points == 0 && _font.isLoaded()) {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		_font.drawWordWrapped(&scratch, 16, 80, 288,
+			"We're not ready to solve this mystery yet. "
+			"Let's keep investigating until we have some "
+			"more solid evidence to make our case! "
+			"(Press N in the site screen to mark clues.)",
+			0xF);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+		waitForInput(15000);
+		return;
+	}
+
+	// Pick the ending based on the chain. For a correct accusation the
+	// original would call `_DisplayClue(_Mystery + AChain[0])`, play
+	// SCRAPBK.ANI and save progress. We load the matching `E<n>.BIN`
+	// ending text and render its pages with prev/next navigation.
+	const int endingNum = guessedRight ? picked : 0;
+	const Common::String fname = Common::String::format("E%d.BIN", endingNum);
+	Common::File f;
+	if (!f.open(Common::Path(fname))) {
+		warning("doAccuse: %s missing", fname.c_str());
+		return;
+	}
+
+	// E<n>.BIN format (verified against `_DisplayEndingPage` @ 1df2:044c):
+	//   u16 numPages
+	//   per page (10 bytes header + NUL-string):
+	//     u16 picNum
+	//     u16 x1, y1, x2, y2  (story rect)
+	//     bytes[] NUL-terminated text
+	const uint32 fileLen = f.size();
+	Common::Array<byte> blob(fileLen);
+	if (f.read(blob.data(), fileLen) != fileLen)
+		return;
+	const byte *e = blob.data();
+	const uint16 pages = READ_LE_UINT16(e);
+
+	const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
+	uint pageIdx = 0;
+
+	while (!shouldQuit()) {
+		// Walk to pageIdx.
+		uint pos = 2;
+		uint cur = 0;
+		while (cur < pageIdx && pos + 10 < fileLen) {
+			const char *t = (const char *)(e + pos + 10);
+			pos += 10 + strlen(t) + 1;
+			cur++;
+		}
+		if (pos + 10 >= fileLen)
+			break;
+
+		const uint16 picNum = READ_LE_UINT16(e + pos + 0);
+		const uint16 x1     = READ_LE_UINT16(e + pos + 2);
+		const uint16 y1     = READ_LE_UINT16(e + pos + 4);
+		const uint16 x2     = READ_LE_UINT16(e + pos + 6);
+		const uint16 y2     = READ_LE_UINT16(e + pos + 8);
+		const char *raw     = (const char *)(e + pos + 10);
+		const Common::String txt = parseString(raw, _playerName, partnerName);
+
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+
+		// Page background.
+		if (picNum != 0) {
+			Picture bg;
+			if (_picsArchive.getPicture(picNum, bg)) {
+				const int w = MIN<int>(bg.surface.w, 320);
+				const int h = MIN<int>(bg.surface.h, 200);
+				for (int row = 0; row < h; row++) {
+					memcpy((byte *)scratch.getBasePtr(0, row),
+						   (const byte *)bg.surface.getBasePtr(0, row), w);
+				}
+			}
+		}
+
+		if (_font.isLoaded()) {
+			Common::String banner = "Not enough evidence";
+			if (guessedRight)
+				banner = _mystery._firstTry ? "CORRECT - FIRST TRY!" : "CORRECT!";
+			_font.drawString(&scratch, 8, 4, banner, 0xF);
+			_font.drawString(&scratch, 8, 16,
+				Common::String::format("Evidence: %d/100  Suspect: %d",
+									   points, picked + 1), 0xF);
+			const int wrapW = MAX<int>(16, x2 - x1);
+			const int wrapY = MAX<int>(28, (int)y1);
+			(void)y2;
+			_font.drawWordWrapped(&scratch, x1, wrapY, wrapW, txt, 0xF);
+			_font.drawString(&scratch, 8, 188,
+				Common::String::format("page %u/%u  (Left/Right or click)",
+									   pageIdx + 1, pages), 0xF);
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// Page navigation.
+		bool advance = false;
+		bool back    = false;
+		bool exit    = false;
+		while (!advance && !back && !exit && !shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					exit = true; break;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					advance = true; break;
+				}
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+						exit = true;
+					else if (ev.kbd.keycode == Common::KEYCODE_LEFT)
+						back = true;
+					else
+						advance = true;
+					break;
+				}
+			}
+			g_system->delayMillis(15);
+		}
+		if (exit) break;
+		if (advance) {
+			if (pageIdx + 1 >= pages) break;
+			pageIdx++;
+		} else if (back) {
+			if (pageIdx > 0) pageIdx--;
+		}
+	}
+
+	// Mirror `_DisplayCorrect`'s scrap-book animation + solved tracking +
+	// auto-save (the original calls `_SavePlayerRecord` after a win).
+	if (guessedRight) {
+		const uint mn = _mystery.number();
+		if (mn < sizeof(_mysteriesSolved)) {
+			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
+		}
+		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
+
+		// Auto-save into slot 0 (the engine's quicksave slot).
+		const Common::String desc = Common::String::format(
+			"%s — solved mystery %u", _playerName.c_str(), mn);
+		Common::Error err = saveGameState(0, desc, true);
+		if (err.getCode() != Common::kNoError)
+			warning("auto-save after solve failed: %s",
+					err.getDesc().c_str());
+	} else {
+		_mystery._firstTry = false;
+	}
+}
+
+// -------------------- save / load --------------------
+
+namespace {
+const uint32 kSaveMagic = MKTAG('E', 'E', 'M', '0');
+const byte   kSaveVer   = 3;  ///< v2: _mysteriesSolved tracker; v3: player name
+} // anonymous namespace
+
+bool EEMEngine::hasFeature(EngineFeature f) const {
+	// We support saving any time but loading only at startup (via the
+	// `--save-slot=N` resume path or a slot picked from the launcher).
+	// Runtime loads would replace `_mystery._data` while pointers into
+	// it are alive on the stack inside `displayClue` etc.
+	return f == kSupportsSavingDuringRuntime ||
+		   f == kSupportsReturnToLauncher;
+}
+
+bool EEMEngine::canLoadGameStateCurrently(Common::U32String *) {
+	return false;  // Loading is startup-only.
+}
+
+bool EEMEngine::canSaveGameStateCurrently(Common::U32String *) {
+	return _mystery.isLoaded();
+}
+
+Common::Error EEMEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
+	Common::OutSaveFile *out = getSaveFileManager()->openForSaving(getSaveStateName(slot));
+	if (!out)
+		return Common::kCreatingFileFailed;
+
+	out->writeUint32BE(kSaveMagic);
+	out->writeByte(kSaveVer);
+
+	// Header: description + ScummVM extended save metadata are appended
+	// automatically when `EngineFeature::kSavesUseExtendedFormat` is set;
+	// our save body just carries the engine state.
+	(void)desc;
+	(void)isAutosave;
+
+	uint16 mysteryNum = (uint16)_mystery.number();
+	out->writeUint16LE(mysteryNum);
+	out->writeByte(_partner);
+	out->write(_mysteriesSolved, sizeof(_mysteriesSolved));
+
+	// v3: persist the player name so save-slot resume restores it.
+	out->writeUint16LE((uint16)_playerName.size());
+	out->writeString(_playerName);
+
+	debugC(1, kDebugGeneral,
+		   "Saved slot %d: mystery=%u partner=%u name=%s autosave=%d",
+		   slot, mysteryNum, _partner, _playerName.c_str(), isAutosave ? 1 : 0);
+
+	Common::Serializer s(nullptr, out);
+	s.setVersion(kSaveVer);
+	_mystery.syncState(s);
+
+	out->finalize();
+	delete out;
+	return Common::kNoError;
+}
+
+Common::Error EEMEngine::loadGameState(int slot) {
+	Common::InSaveFile *in = getSaveFileManager()->openForLoading(getSaveStateName(slot));
+	if (!in)
+		return Common::kReadingFailed;
+
+	if (in->readUint32BE() != kSaveMagic) {
+		delete in;
+		return Common::kUnknownError;
+	}
+	const byte ver = in->readByte();
+	if (ver > kSaveVer) {
+		delete in;
+		return Common::kUnknownError;
+	}
+
+	const uint16 mysteryNum = in->readUint16LE();
+	_partner = in->readByte();
+	if (ver >= 2)
+		in->read(_mysteriesSolved, sizeof(_mysteriesSolved));
+	else
+		memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
+
+	if (ver >= 3) {
+		const uint16 nameLen = in->readUint16LE();
+		Common::String name;
+		for (uint16 i = 0; i < nameLen && i < 64; i++)
+			name += (char)in->readByte();
+		_playerName = name.empty() ? Common::String("Detective") : name;
+	}
+
+	if (!_mystery.load(mysteryNum, &_rng)) {
+		_mystery.clear();
+		delete in;
+		return Common::kReadingFailed;
+	}
+
+	Common::Serializer s(in, nullptr);
+	s.setVersion(ver);
+	_mystery.syncState(s);
+
+	delete in;
+	debugC(1, kDebugGeneral,
+		   "Loaded slot %d: mystery=%u partner=%u name=%s",
+		   slot, mysteryNum, _partner, _playerName.c_str());
+	return Common::kNoError;
+}
+
+void EEMEngine::screenDriver() {
+	// Placeholder for the eventual dispatch table (one entry per ScreenId).
+	// run() currently calls handlers directly until the title path lands.
 }
 
 } // End of namespace EEM

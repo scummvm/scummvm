@@ -59,6 +59,9 @@ struct Picture {
 	Graphics::ManagedSurface surface;
 };
 
+/// Multi-frame animation as stored in ANI.DBD — a sequence of Pictures.
+typedef Common::Array<Picture> Animation;
+
 /**
  * Reader for a .DBD + .DBX archive pair.
  *
@@ -95,6 +98,13 @@ public:
 	 * porting code that references picture IDs by their original number.
 	 */
 	bool getPicture(uint num, Picture &out) { return loadEntry(num - 1, out); }
+
+	/**
+	 * Load a multi-frame animation entry. Mirrors _GetAnimation @ 172b:163a:
+	 * read u16 frameCount, then for each frame read a 12-byte header and
+	 * decompress the payload. Used for ANI.DBD entries.
+	 */
+	bool loadAnimation(uint num, Animation &out);
 
 private:
 	Common::File _dbd;

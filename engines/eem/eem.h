@@ -24,6 +24,7 @@
 #ifndef EEM_EEM_H
 #define EEM_EEM_H
 
+#include "common/array.h"
 #include "common/platform.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -31,11 +32,12 @@
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 
+#include "eem/animation.h"
+#include "eem/font.h"
+#include "eem/mystery.h"
 #include "eem/resource.h"
 
 namespace EEM {
-
-class Console;
 
 /**
  * Screen IDs used by the original ScreenDriver dispatch table at 1a35:0e5e.
@@ -43,9 +45,9 @@ class Console;
  * a matching id and calls its handler. ID 0xFFFF is the exit sentinel.
  */
 enum ScreenId {
-	kScreenInvalid    = 0xFFFF,
-	kScreenTitle      = 0x0B,  ///< _ShowTitlePage @ 1a35:06b7
-	kScreenNext       = 0x08   ///< follow-up after title (case selection); to be confirmed
+	kScreenInvalid       = 0xFFFF,
+	kScreenChoosePartner = 0x09,  ///< _DoChoosePartner @ 1a35:0756 (boy/girl picker)
+	kScreenTitle         = 0x0B   ///< _ShowTitlePage @ 1a35:06b7
 };
 
 class EEMEngine : public Engine {
@@ -58,9 +60,69 @@ public:
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
 
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
+	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
+	Common::Error loadGameState(int slot) override;
+	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+
 	const ADGameDescription *_gameDescription;
 
-	DBDArchive &getPics() { return _picsArchive; }
+	DBDArchive &getPics()    { return _picsArchive; }
+	DBDArchive &getAni()     { return _aniArchive; }
+	DBDArchive &getSites()   { return _sitesArchive; }
+	DBDArchive &getBalloons(){ return _balloonArchive; }
+	Mystery    &getMystery() { return _mystery; }
+	const EEMFont &getFont() const { return _font; }
+
+	/// Display one ClueBlock. @p clueBlock points at the u16 frame count
+	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.
+	void displayClue(const byte *clueBlock);
+
+	/// Apply a single ClueEntry's side effects — notebook adds, gallery
+	/// updates, site flags. Called both by `displayClue` after a normal
+	/// click-through and when the player ESC-skips a multi-entry clue.
+	void applyClueSideEffects(const byte *entry);
+
+	/// Show clue/notebook screen. Mirrors `_DrawNotes` @ 161e:01d0.
+	void doNotebook();
+
+	/// Show suspect gallery. Mirrors `_DrawGallery` @ 158f:0046.
+	void doGallery();
+
+	/// Show big map; click chooses next site. Mirrors `_DoBigMap` @ 20fe:09e7.
+	void doBigMap();
+
+	/// Run the accuse flow (pick suspect, evaluate chains, show ending).
+	/// Mirrors `_DoAccuseGallery` @ 1df2:0a31 + `_DisplayEnding` @ 1df2:0548.
+	void doAccuse();
+
+	/// Show a host hint from `KDTextIndex`. Mirrors `_KDHelp` @ 1560:010a +
+	/// `_DisplayHint` @ 1560:0009. Cycles between the two hint slots that
+	/// the original engine tracks via `_SawHelpHint`.
+	void doHelp();
+
+	/// "Are you sure?" yes/no dialog. Mirrors `_AreYouSure` @ 1a35:0a5c.
+	/// Returns true if the user picked YES.
+	bool areYouSure();
+
+private:
+	/**
+	 * Central dispatch loop matching the original _ScreenDriver @ 1a35:0dc1.
+	 * Each iteration calls the screen handler that matches _nextScreen.
+	 * Handlers update _lastScreen / _nextScreen and return; the loop exits
+	 * when _nextScreen == kScreenInvalid.
+	 */
+	void screenDriver();
+
+	/**
+	 * Open the five .DBD/.DBX archive pairs the way _InitGraphicsSystem
+	 * @ 172b:0145 does at boot.
+	 */
+	bool openArchives();
+
+	/** Slurp SITEPALS into @c _sitePals. Mirrors _ReadPalettes @ 172b:0d89. */
+	bool loadSitePalettes();
 
 	/**
 	 * Upload palette index @p num (one of 40 stored in SITEPALS) to the
@@ -69,28 +131,73 @@ public:
 	 */
 	void setSitePalette(uint num);
 
-	/** Blit @p pic to the screen at (0,0), expecting a 320x200 picture. */
-	void blitFullScreen(const Picture &pic);
-
-private:
 	/**
-	 * Central dispatch loop matching the original _ScreenDriver @ 1a35:0dc1.
-	 * Each iteration restores video mode and calls the screen handler that
-	 * matches _nextScreen. Handlers update _lastScreen / _nextScreen and
-	 * return; the loop exits when _nextScreen == kScreenInvalid.
+	 * Upload a 6-bit VGA palette read from the head of an .ANM file (the
+	 * first 0x300 bytes per Load_Sequence @ 2503:0006). Used until the
+	 * full title-page animation chain is wired in.
 	 */
-	void screenDriver();
+	bool setAnmPalette(const Common::Path &anmPath);
 
-	bool pollEvents();
+public:
+	/// Public so SiteScreen can switch palettes per site.
+	void setSitePaletteForSite(uint siteNum) { setSitePalette(siteNum + 1); }
+private:
 
-	Console *_console;
+	/** Blit @p pic to @p x, @p y on screen. */
+	void blitAt(const Picture &pic, int x, int y);
+
+	/** Hold the current frame for up to @p maxMs or until the user inputs. */
+public:
+	void waitForInput(uint32 maxMs);
+private:
+
+	/**
+	 * Play a difference-encoded animation file (.ANM / .A) on the full
+	 * 320x200 screen. Mirrors the data flow of `OpenDifferenceAnimation`
+	 * @ 2520:0337 → `Load_Sequence` + `Play_Sequence`. Audio cues are
+	 * skipped for now. The default frame delay is 120 ms to match the
+	 * original FRAME_RATE = 0x78 used by `_DoOpeningAnims`.
+	 *
+	 * If @p holdLastFrame is true the call blocks on the final frame
+	 * until the user clicks or hits a key — used for the title screen.
+	 */
+	void playAnm(const Common::Path &path, uint frameDelayMs = 120,
+				 bool holdLastFrame = false);
+
+	// Screen handlers — port targets in screens/ later.
+	void showEAKidsLogo();
+	void showHighScoreLogo();
+	void doNewPlayer();          ///< Mirrors `_NewPlayer` @ 1c33:0dda
+	void doChoosePartner();
+	void doCaseSelection();
+	void doSiteLoop();
+
+	/// Render the case briefing background + game/book decorations and
+	/// display the briefing ClueBlock. Mirrors `_DoInitClues` @ 1a35:0411
+	/// minus the live ANI sequence playback.
+	void doInitClues();
+
+	Common::String _playerName;  ///< Substituted into 0x80 placeholders
+
+	/// Per-mystery solved state. 0 = unsolved, 1 = solved, 2 = solved
+	/// on first try. Mirrors `_PlayerRecord.SolvedMysteries[55]` in the
+	/// original `_DisplayCorrect` flow.
+	uint8 _mysteriesSolved[55] = {};
+
 	Common::RandomSource _rng;
 
-	DBDArchive _picsArchive;  ///< PICS.DBD/.DBX (mouse, buttons, markers, balloons sprites)
-	Common::Array<byte> _sitePals; ///< 40 x 768 bytes of 6-bit VGA palettes from SITEPALS
+	DBDArchive _picsArchive;     ///< PICS.DBD/.DBX (sprites, buttons, frame backgrounds)
+	DBDArchive _aniArchive;      ///< ANI.DBD/.DBX (multi-frame character animations)
+	DBDArchive _sitesArchive;    ///< SITES.DBD/.DBX (one full-screen scene per site)
+	DBDArchive _balloonArchive;  ///< BALLOON.DBD/.DBX (speech-balloon sprites)
+	Mystery    _mystery;         ///< Currently-loaded case file (M<n>.BIN)
+	EEMFont    _font;            ///< FONT.FNT - main 8 px font
+
+	Common::Array<byte> _sitePals; ///< 40 x 768 bytes of 6-bit VGA palettes
 
 	uint16 _lastScreen;  ///< Mirrors _LastScreen @ 2d5d:3f24
 	uint16 _nextScreen;  ///< Mirrors _NextScreen @ 2d5d:3f26
+	uint8  _partner;     ///< Mirrors _Partner: 0 = boy (Jake), 1 = girl (Jenny)
 };
 
 } // End of namespace EEM

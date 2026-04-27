@@ -76,6 +76,43 @@ void DBDArchive::close() {
 	_index.clear();
 }
 
+/**
+ * Read one 12-byte frame header + payload at the current stream position.
+ * Shared between picture and animation loaders since the layout is the same.
+ */
+static bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out) {
+	out.flags             = stream.readUint16LE();
+	const uint16 height   = stream.readUint16LE();
+	const uint16 width    = stream.readUint16LE();
+	out.rowoff            = stream.readUint16LE();
+	out.miscflags         = stream.readUint16LE();
+	out.compsize          = stream.readUint16LE();
+
+	if (width == 0 || height == 0) {
+		warning("readFrame: zero dimensions (%ux%u)", width, height);
+		return false;
+	}
+
+	out.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	const uint32 unpacked = (uint32)width * (uint32)height;
+
+	if (!compressed) {
+		if (stream.read(out.surface.getPixels(), unpacked) != unpacked) {
+			warning("readFrame: short raw read (%u bytes)", unpacked);
+			return false;
+		}
+		return true;
+	}
+
+	if (!Common::decompressDCL(&stream, (byte *)out.surface.getPixels(),
+							   out.compsize, unpacked)) {
+		warning("readFrame: DCL decompression failed (%u packed -> %u pixels)",
+				out.compsize, unpacked);
+		return false;
+	}
+	return true;
+}
+
 bool DBDArchive::loadEntry(uint num, Picture &out) {
 	if (num >= _index.size()) {
 		warning("DBDArchive::loadEntry: %u out of range (max %u)", num, _index.size());
@@ -88,43 +125,39 @@ bool DBDArchive::loadEntry(uint num, Picture &out) {
 		return false;
 	}
 
-	// Mirrors _GetFromDB @ 172b:105d:
-	//   _fread(i)            // 2-byte skip word (purpose unclear; always 0x0001)
-	//   _fread(pic, 1, 12)   // 12-byte header
+	// Mirrors _GetFromDB @ 172b:105d. The 2-byte word read first matches
+	// loadAnimation's frame-count read; for picture entries it is always 1.
 	(void)_dbd.readUint16LE();
-	out.flags             = _dbd.readUint16LE();
-	const uint16 height   = _dbd.readUint16LE();
-	const uint16 width    = _dbd.readUint16LE();
-	out.rowoff            = _dbd.readUint16LE();
-	out.miscflags         = _dbd.readUint16LE();
-	out.compsize          = _dbd.readUint16LE();
+	return readFrame(_dbd, entry.compressed != 0, out);
+}
 
-	if (width == 0 || height == 0) {
-		warning("DBDArchive::loadEntry: %u has zero dimensions (%ux%u)",
-				num, width, height);
+bool DBDArchive::loadAnimation(uint num, Animation &out) {
+	if (num >= _index.size()) {
+		warning("DBDArchive::loadAnimation: %u out of range (max %u)", num, _index.size());
 		return false;
 	}
 
-	out.surface.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+	const DBEntry &entry = _index[num];
+	if (!_dbd.seek(entry.offset)) {
+		warning("DBDArchive::loadAnimation: seek to 0x%08x failed", entry.offset);
+		return false;
+	}
 
-	if (entry.compressed == 0) {
-		// Raw pixel data — read width*height bytes verbatim.
-		const uint32 pixelCount = (uint32)width * (uint32)height;
-		if (_dbd.read(out.surface.getPixels(), pixelCount) != pixelCount) {
-			warning("DBDArchive::loadEntry: short raw read on %u", num);
+	// Mirrors _GetAnimation @ 172b:163a: u16 frame count, then N frames.
+	const uint16 frameCount = _dbd.readUint16LE();
+	if (frameCount == 0 || frameCount > 256) {
+		warning("DBDArchive::loadAnimation: %u has implausible frame count %u",
+				num, frameCount);
+		return false;
+	}
+
+	out.resize(frameCount);
+	for (uint16 i = 0; i < frameCount; i++) {
+		if (!readFrame(_dbd, entry.compressed != 0, out[i])) {
+			warning("DBDArchive::loadAnimation: frame %u/%u failed in entry %u",
+					i, frameCount, num);
 			return false;
 		}
-		return true;
-	}
-
-	// Compressed payload: feed the .DBD stream straight into the DCL
-	// decoder, matching the pattern used by Neverhood's BLB archive.
-	const uint32 unpacked = (uint32)width * (uint32)height;
-	if (!Common::decompressDCL(&_dbd, (byte *)out.surface.getPixels(),
-							   out.compsize, unpacked)) {
-		warning("DBDArchive::loadEntry: DCL decompression failed on %u "
-				"(%u packed -> %u pixels)", num, out.compsize, unpacked);
-		return false;
 	}
 	return true;
 }
