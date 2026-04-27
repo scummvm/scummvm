@@ -908,19 +908,31 @@ void ElviraPrgDriver::updateVolumeEnvelopeStages_L002E() {
 }
 
 void ElviraPrgDriver::updateAutomaticEnvelopeWrites_L0037() {
-	uint32 voiceState = _labels.L004C;
+	uint32 delayState = _labels.L004F;
+	uint32 currentPeriods = _labels.L0043;
+	uint32 lastNotes = _labels.L0044;
+	uint32 periodTable = _labels.L003C;
+	uint16 channelReg = 0;
 	int16 channelCount = 2;
-	uint8 volumeReg = 8;
 
 	while (true) {
-		if (read8(voiceState + 5) != 0) {
-			psgWrite(0x0D, read8(voiceState + 5));
-			psgWrite(0x0B, read8(voiceState + 3));
-			psgWrite(0x0C, read8(voiceState + 2));
-			psgWrite(volumeReg, read8(voiceState + 1));
+		uint8 delay = read8(delayState);
+		if (delay != 0) {
+			delay = (uint8)(delay - 1);
+			write8(delayState, delay);
+			if (delay == 0) {
+				uint8 tableIndex = (uint8)(read8(lastNotes) << 1);
+				uint16 period = READ_BE_UINT16(&_mem[periodTable + tableIndex]);
+				WRITE_BE_UINT16(&_mem[currentPeriods], period);
+				psgWrite((uint8)channelReg, (uint8)(period & 0xFF));
+				psgWrite((uint8)(channelReg + 1), (uint8)(period >> 8));
+			}
 		}
-		voiceState += 26;
-		++volumeReg;
+
+		channelReg = (uint16)(channelReg + 2);
+		currentPeriods += 2;
+		lastNotes += 1;
+		delayState += 26;
 		if (--channelCount < 0)
 			break;
 	}
