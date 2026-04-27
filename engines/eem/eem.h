@@ -104,6 +104,11 @@ public:
 	/// the original engine tracks via `_SawHelpHint`.
 	void doHelp();
 
+	/// Display the interface-help picture sequence. Mirrors `_InterfaceHelp`
+	/// @ 1560:0205 — walks `HelpData @ 29be:00c8`, blits each pic fullscreen,
+	/// and waits for click / key (ESC ends the cycle).
+	void doInterfaceHelp(uint num = 0);
+
 	/// "Are you sure?" yes/no dialog. Mirrors `_AreYouSure` @ 1a35:0a5c.
 	/// Returns true if the user picked YES.
 	bool areYouSure();
