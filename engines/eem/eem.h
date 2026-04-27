@@ -74,6 +74,7 @@ public:
 	DBDArchive &getBalloons(){ return _balloonArchive; }
 	Mystery    &getMystery() { return _mystery; }
 	const EEMFont &getFont() const { return _font; }
+	uint8       getPartnerIndex() const { return _partner; }
 
 	/// Display one ClueBlock. @p clueBlock points at the u16 frame count
 	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.

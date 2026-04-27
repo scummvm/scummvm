@@ -65,9 +65,22 @@ private:
 	int  hotspotAtPoint(uint siteNum, int x, int y) const;
 	void onHotspotClicked(uint siteNum, uint hotIdx);
 
+	/// Play the partner's site-arrival sequence once `_LastSite !=
+	/// _SiteNumber`. Mirrors `_EnterSiteAnim @ 1000:9b21` — animation
+	/// 6 (Jake) / 14 (Jenny) skateboards in from the right edge along
+	/// the bottom, then animation 7 / 15 slides KD in from the left.
+	void enterSiteAnim();
+
+	/// Draw the persistent in-site partner sprite (Jake or Jenny
+	/// standing/idling) at the position from `_WaitAnims` @ 29be:021c.
+	/// Mirrors the `_GetAnimation` + `_NewAnimation` block at the tail
+	/// of `_DoSiteLoop @ 168d:03f4`.
+	void renderPartner(uint siteNum);
+
 	EEMEngine *_vm;
 	Mystery *_mystery;
 	bool _showHotspots = true;  ///< Toggle outlines with V key.
+	int _lastSiteAnim = -1;     ///< Last site we played the arrival on.
 };
 
 } // End of namespace EEM
