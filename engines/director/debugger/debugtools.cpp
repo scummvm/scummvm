@@ -754,6 +754,14 @@ void setTheme(int themeIndex) {
 	}
 }
 
+// helper to draw Image Viewer
+void openImageViewer(ImGuiImage image, const Common::String &text, const Common::String &title) {
+	_state->_imageViewerState.image = image;
+    _state->_imageViewerState.text = text;
+    _state->_imageViewerState.title = title;
+    _state->_w.imageViewer = true;
+}
+
 static void showSettings() {
 	if (!_state->_w.settings)
 		return;
@@ -913,6 +921,7 @@ void onImGuiRender() {
 	showChannels();
 	showCast();
 	showCastDetails();
+	showImageViewer();
 	showFuncList();
 	showScore();
 	showSearchBar();

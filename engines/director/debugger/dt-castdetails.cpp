@@ -153,9 +153,203 @@ void drawBitmapCMprops(BitmapCastMember *member) {
 	}
 }
 
+// Old Mac systems used carriage returns '\r' as line endings
+// ImGui expects line feeds '\n' for proper multiline rendering
+// Normalize all line endings to '\n'
+static Common::String normalizeText(const Common::String &src) {
+	Common::String out;
+
+	for (uint i = 0; i < src.size(); i++) {
+		char c = src[i];
+
+		if (c == '\r') {
+			if (i + 1 < src.size() && src[i + 1] == '\n') // handle \r\n
+				i++;
+			out += '\n';
+		} else {
+			out += c;
+		}
+	}
+
+	return out;
+}
+
+void showImageViewer() {
+	if (!_state->_w.imageViewer)
+		return;
+
+	auto state = &_state->_imageViewerState;
+
+	ImGuiImage imgID = state->image;
+	const Common::String &text = state->text;
+	Common::String title = state->title;
+
+	if (!imgID.id) {
+		_state->_w.imageViewer = false;
+		return;
+	}
+
+	// Recompute cache ig required
+	if (text != state->cachedRaw) {
+		state->cachedRaw = text;
+		state->cachedNormalized = normalizeText(text);
+
+		size_t needed = state->cachedNormalized.size() + 1;
+
+		if (needed > state->bufferSize) {
+			free(state->buffer);
+			state->buffer = (char *)malloc(needed);
+			state->bufferSize = needed;
+		}
+
+		memcpy(state->buffer, state->cachedNormalized.c_str(), needed);
+	}
+
+	static float zoom = 1.0f;
+	static bool fitToWindow = true;
+	static ImVec2 offset(0.0f, 0.0f);
+
+	const char *windowTitle = title.empty() ? "Image Viewer" : title.c_str();
+
+	if (ImGui::Begin(windowTitle, &_state->_w.imageViewer,
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+
+		// Toolbar
+		if (ImGui::Button("Fit")) {
+			fitToWindow = true;
+			offset = ImVec2(0.0f, 0.0f);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("-")) {
+			zoom = MAX(0.1f, zoom - 0.1f);
+			fitToWindow = false;
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("+")) {
+			zoom = MIN(10.0f, zoom + 0.1f);
+			fitToWindow = false;
+		}
+		ImGui::SameLine();
+		ImGui::Text("| %d x %d |", imgID.width, imgID.height);
+
+		if (!state->cachedNormalized.empty()) {
+			ImGui::SameLine();
+			if (ImGui::Button("Copy text"))
+				ImGui::SetClipboardText(state->cachedNormalized.c_str());
+		}
+
+		ImGui::Separator();
+
+		// Tabs
+		if (ImGui::BeginTabBar("##imageViewerTabs")) {
+
+			// view tab
+			if (ImGui::BeginTabItem("View")) {
+
+				ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+
+				ImGui::BeginChild("##imageCanvas", canvasSize, false,
+					ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+				ImVec2 size = { imgID.width * zoom, imgID.height * zoom };
+
+				if (fitToWindow && imgID.width > 0 && imgID.height > 0) {
+					float scaleX = canvasSize.x / (float)imgID.width;
+					float scaleY = canvasSize.y / (float)imgID.height;
+					zoom = MIN(scaleX, scaleY);
+					size = { imgID.width * zoom, imgID.height * zoom };
+				}
+
+				ImVec2 pos = ImGui::GetCursorPos();
+				ImVec2 imgPos = pos + ImVec2(
+					offset.x + (canvasSize.x - size.x) * 0.5f,
+					offset.y + (canvasSize.y - size.y) * 0.5f
+				);
+
+				ImGui::SetCursorPos(imgPos);
+
+				ImGui::GetWindowDrawList()->AddRect(
+					ImGui::GetCursorScreenPos(),
+					ImGui::GetCursorScreenPos() + size,
+					0xFFFFFFFF
+				);
+
+				ImGui::Image(imgID.id, size);
+
+				ImGui::SetCursorPos(pos);
+				ImGui::InvisibleButton("##canvas", canvasSize);
+
+				if (ImGui::IsItemHovered()) {
+					ImGuiIO &io = ImGui::GetIO();
+					float speed = 30.0f;
+
+					// Ctrl + wheel -> zoom
+					if (io.KeyCtrl && io.MouseWheel != 0.0f) {
+						zoom = CLIP(zoom + io.MouseWheel * 0.1f, 0.1f, 10.0f);
+						fitToWindow = false;
+					} else {
+						// Vertical scroll -> vertical pan
+						if (io.MouseWheel != 0.0f && !io.KeyShift) {
+							offset.y += io.MouseWheel * speed;
+							fitToWindow = false;
+						}
+
+						// Horizontal scroll -> Shift + wheel
+						if (io.KeyShift && io.MouseWheel != 0.0f) {
+							offset.x += io.MouseWheel * speed;
+							fitToWindow = false;
+						}
+
+						// Trackpad / horizontal wheel
+						if (io.MouseWheelH != 0.0f) {
+							offset.x += io.MouseWheelH * speed;
+							fitToWindow = false;
+						}
+					}
+				}
+
+				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+					offset.x += ImGui::GetIO().MouseDelta.x;
+					offset.y += ImGui::GetIO().MouseDelta.y;
+					fitToWindow = false;
+				}
+
+				ImGui::EndChild();
+				ImGui::EndTabItem();
+			}
+
+			// text tab
+			if (!state->cachedNormalized.empty() && ImGui::BeginTabItem("Text")) {
+
+				ImGui::BeginChild("##textPanel", ImGui::GetContentRegionAvail(), false,
+					ImGuiWindowFlags_HorizontalScrollbar);
+
+				ImGui::InputTextMultiline(
+					"##text",
+					state->buffer,
+					state->bufferSize,
+					ImGui::GetContentRegionAvail(),
+					ImGuiInputTextFlags_ReadOnly
+				);
+
+				ImGui::EndChild();
+				ImGui::EndTabItem();
+			}
+
+			ImGui::EndTabBar();
+		}
+	}
+
+	ImGui::End();
+}
+
 void drawTextCMprops(TextCastMember *member) {
 	assert(member != nullptr);
 	if (ImGui::BeginTabItem("Text")) {
+
+		if (ImGui::Button("View")) {
+			openImageViewer(getTextID(member), member->getText());
+		}
 
 		if (ImGui::CollapsingHeader("Text Properties")) {
 			if (ImGui::BeginTable("##TextProperties", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
