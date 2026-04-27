@@ -147,12 +147,19 @@ Common::Error EEMEngine::run() {
 				   wantedSave, _mystery.number());
 			CursorMan.showMouse(true);
 			doInitClues();
-			doSiteLoop();
+			// Original screen 0 → screen 1: after the briefing the
+			// game opens the map (function at 20fe:120b → _DoBigMap)
+			// and only enters a site once the player clicks on one.
+			doBigMap();
+			if (_mystery.isLoaded())
+				doSiteLoop();
 			while (!shouldQuit()) {
 				doCaseSelection();
 				if (!_mystery.isLoaded()) break;
 				doInitClues();
-				doSiteLoop();
+				doBigMap();
+				if (_mystery.isLoaded())
+					doSiteLoop();
 			}
 			return Common::kNoError;
 		}
@@ -199,7 +206,12 @@ Common::Error EEMEngine::run() {
 		// Mark the starting site as active and display the case briefing.
 		// `_DoInitClues` @ 1a35:0411 — case briefing.
 		doInitClues();
-		doSiteLoop();
+		// Original screen 0 → screen 1: after the briefing the game
+		// opens the map (function at 20fe:120b → `_DoBigMap`) and only
+		// enters a site once the player clicks on one.
+		doBigMap();
+		if (_mystery.isLoaded())
+			doSiteLoop();
 
 		// After a case, loop back to CaseSelection.
 		while (!shouldQuit()) {
@@ -207,7 +219,12 @@ Common::Error EEMEngine::run() {
 			if (!_mystery.isLoaded())
 				break;
 			doInitClues();
-			doSiteLoop();
+			// Original screen 0 → screen 1: after the briefing the
+			// game opens the map (function at 20fe:120b → _DoBigMap)
+			// and only enters a site once the player clicks on one.
+			doBigMap();
+			if (_mystery.isLoaded())
+				doSiteLoop();
 		}
 	}
 
@@ -978,6 +995,13 @@ void EEMEngine::doInitClues() {
 	const uint16 startSite = READ_LE_UINT16(ib + 2);
 	if (startSite < Mystery::kVisitedSiteCap)
 		_mystery._onSites[startSite] = 1;
+	// Mirror the original: at briefing time the player isn't actually
+	// at any site yet — they pick from the map next. Set _siteNumber
+	// to the start site so the map opens centred on the only initially
+	// accessible location and the post-map site loop has a sensible
+	// resume point.
+	_mystery._siteNumber = startSite;
+	_mystery._lastSite = startSite;
 
 	setSitePalette(0x22);
 	Picture bg;
@@ -1483,12 +1507,21 @@ void EEMEngine::doGallery() {
 }
 
 void EEMEngine::doBigMap() {
-	// Mirrors `_DoBigMap` @ 20fe:09e7. The original lays out a 0xe9 x 0xab
-	// map window inside frame PIC 0x42 with per-site clickable markers
-	// scrolling under it. We render BIGMAP.PIC at top-left, draw an
-	// overlay listing the sites that the player can travel to (per
-	// `_OnSites`), and accept either number keys or clicks on the
-	// overlay rows to travel.
+	// Mirrors the small/scrollable map view used inside the site loop —
+	// the original game draws a 0xe9 × 0xab viewport at (2, 2) into
+	// `_MapBitMap` (= BIGMAP.PIC) via `DrawMap @ 20fe:1058`; on top of
+	// that, `_StampButtons @ 20fe:0d2f` bakes site icons into the
+	// bitmap at MapData offsets (+4, +6). We render BIGMAP.PIC into a
+	// 233×171 viewport and overlay markers ourselves.
+	//
+	// MapData entry layout (14 bytes), confirmed from
+	// `_DrawBigMapButtons @ 20fe:0877` and `_StampButtons @ 20fe:0d2f`:
+	//   +0..1  BigMap X (overview frame PIC 0x42)
+	//   +2..3  BigMap Y
+	//   +4..5  SmallMap X (stamped into _MapBitMap at this position)
+	//   +6..7  SmallMap Y
+	//   +8..9  crime-flag (DAT_2d5d_5436): non-zero → crime-scene marker
+	//   +10..13 unused
 	Common::File f;
 	if (!f.open(Common::Path("BIGMAP.PIC"))) {
 		warning("doBigMap: BIGMAP.PIC missing");
@@ -1505,11 +1538,8 @@ void EEMEngine::doBigMap() {
 		return;
 	}
 
-	// Approximate inner map window from the original `_DoBigMap`:
-	//   if (sx < 0x75) sx = 0; else sx -= 0x74;     // 0x74 = 116
-	//   if (mapW < sx + 0xe9) sx = mapW - 0xe9;     // window width  = 233
-	//   if (sy < 0x56) sy = 0; else sy -= 0x55;
-	//   if (mapH < sy + 0xab) sy = mapH - 0xab;     // window height = 171
+	// Viewport size from `DrawMap`: 0xe9 × 0xab at screen (2, 2).
+	// We use (4, 4) so a 1-pixel inset preserves the frame border.
 	const int kMapWinW = 0xe9; // 233
 	const int kMapWinH = 0xab; // 171
 	const int kMapWinX = 4;
@@ -1518,7 +1548,7 @@ void EEMEngine::doBigMap() {
 	int scrollX = 0;
 	int scrollY = 0;
 
-	// Auto-scroll to centre the current site, if known.
+	// Auto-scroll to centre the current site (using SmallMap coords).
 	if (_mystery.isLoaded()) {
 		const byte *entry = _mystery.mapEntry(_mystery._siteNumber);
 		if (entry) {
@@ -1530,6 +1560,14 @@ void EEMEngine::doBigMap() {
 				(int)my - kMapWinH / 2));
 		}
 	}
+
+	CursorMan.showMouse(true);
+
+	// `_DoBigMap @ 20fe:09e7` calls `_GetPalette(0x24)` after loading
+	// the frame. Without this, the map would render under whatever
+	// palette the prior site set, which makes BIGMAP.PIC look like
+	// noise / incomplete colours.
+	setSitePalette(0x24);
 
 	auto draw = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
@@ -1556,9 +1594,12 @@ void EEMEngine::doBigMap() {
 				   copyW);
 		}
 
-		// Site markers from MapData. Each per-mystery MapData entry is
-		// 14 bytes; bytes +4..+5 / +6..+7 hold an (x, y) pair on the big
-		// map. We draw a small filled square for each accessible site.
+		// Site markers — three states from `_DrawBigMapButtons`:
+		//   _DoneMarker if `SaveSiteComplete[i]` (already searched)
+		//   _CrimeMarker if MapData[+8] != 0 (crime scene)
+		//   _SiteMarker otherwise
+		// We don't have the marker PICs traced yet, so draw small filled
+		// squares with three colours that match the original semantics.
 		if (_mystery.isLoaded()) {
 			for (uint i = 0; i < _mystery.numSites(); i++) {
 				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
@@ -1568,37 +1609,26 @@ void EEMEngine::doBigMap() {
 					continue;
 				const uint16 mx = READ_LE_UINT16(entry + 4);
 				const uint16 my = READ_LE_UINT16(entry + 6);
+				const uint16 crime = READ_LE_UINT16(entry + 8);
 				const int sx = (int)mx - scrollX + kMapWinX;
 				const int sy = (int)my - scrollY + kMapWinY;
 				if (sx < kMapWinX || sx >= kMapWinX + kMapWinW ||
 					sy < kMapWinY || sy >= kMapWinY + kMapWinH)
 					continue;
-				const byte color = (i == _mystery._siteNumber) ? 0x0E : 0x0F;
-				const Common::Rect mark(sx - 2, sy - 2, sx + 3, sy + 3);
-				scratch.fillRect(mark, color);
-				if (_font.isLoaded()) {
-					Common::String num = Common::String::format("%u", i);
-					_font.drawString(&scratch, num, sx + 4, sy - 4, 320, color);
-				}
-			}
-		}
 
-		// Travel-target overlay (right-side panel).
-		if (_font.isLoaded() && _mystery.isLoaded()) {
-			const int panelX = kMapWinX + kMapWinW + 4;
-			int y = 4;
-			_font.drawString(&scratch, "TRAVEL", panelX, y, 320, 0xF);
-			y += _font.getFontHeight() + 4;
-			for (uint i = 0; i < _mystery.numSites() && y < 192; i++) {
-				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-					continue;
-				const char marker = (i == _mystery._siteNumber) ? '>' : ' ';
-				Common::String label = Common::String::format(
-					"%c %u", marker, i);
-				_font.drawString(&scratch, label, panelX, y, 320, 0x0F);
-				y += _font.getFontHeight() + 1;
+				byte color;
+				if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
+					color = 0x07;       // searched (DoneMarker analogue)
+				else if (crime != 0)
+					color = 0x0C;       // crime scene (CrimeMarker analogue)
+				else
+					color = 0x0F;       // available (SiteMarker analogue)
+				if (i == _mystery._siteNumber)
+					color = 0x0E;       // current site — bright yellow
+
+				const Common::Rect mark(sx - 3, sy - 3, sx + 4, sy + 4);
+				scratch.fillRect(mark, color);
 			}
-			_font.drawString(&scratch, "Esc", panelX, 188, 320, 0x0F);
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -1669,24 +1699,6 @@ void EEMEngine::doBigMap() {
 					}
 				}
 
-				// Click in the right panel: travel to that row.
-				const int panelX = kMapWinX + kMapWinW + 4;
-				if (_font.isLoaded() && _mystery.isLoaded() &&
-					ev.mouse.x >= panelX) {
-					const int row = (ev.mouse.y - 4 - _font.getFontHeight() - 4) /
-									(_font.getFontHeight() + 1);
-					int seen = 0;
-					for (uint i = 0; i < _mystery.numSites(); i++) {
-						if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-							continue;
-						if (seen == row) {
-							_mystery._lastSite = _mystery._siteNumber;
-							_mystery._siteNumber = (uint16)i;
-							return;
-						}
-						seen++;
-					}
-				}
 			}
 		}
 		if (dirty)
