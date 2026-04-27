@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 
+#include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 
@@ -228,6 +229,15 @@ void EEMEngine::doChoosePartner() {
 		g_system->updateScreen();
 		g_system->delayMillis(20);
 	}
+
+	// Mirrors the tail of `_DoChoosePartner @ 1a35:097f` — once the
+	// player commits to a partner, load and play their intro VOC
+	// (`jen.voc` for Jenny, `jake.voc` for Jake; strings at 29be:0af1 /
+	// 29be:0af9) and block on `_WaitForVoiceDone`.
+	if (_audio) {
+		_audio->playVoc(Common::Path(_partner == 0 ? "JAKE.VOC" : "JEN.VOC"));
+		_audio->waitForVoiceDone();
+	}
 }
 
 void EEMEngine::doInitClues() {
@@ -407,6 +417,15 @@ void EEMEngine::doInitClues() {
 				}
 			}
 		}
+	}
+
+	// `_DoInitClues` plays `phone.voc` (29be:0acc) ONLY when caseType == 2
+	// (the "incoming call" briefing variant). Verified at 1a35:05a2 —
+	// the gate is `iVar1 == 2 && _VoiceAvailable`. Other case types open
+	// straight into the briefing dialogue without it.
+	if (caseType == 2 && _audio) {
+		_audio->playVoc(Common::Path("PHONE.VOC"));
+		_audio->waitForVoiceDone();
 	}
 
 	// Step 6 — case briefing dialogue.
@@ -684,6 +703,20 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				scratch.pitch, 0, copyY, 320,
 				MIN<int>(copyH, 200 - copyY));
 			g_system->updateScreen();
+		}
+
+		// `_DisplayClue` @ 2404:0833-085a — after the balloon is drawn,
+		// spool the per-clue voice. Each ClueEntry stores two 1-based
+		// sound indices: `+0x18` for partner=Jenny and `+0x1a` for
+		// partner=Jake (verified against 2404:0823-0834). Index 0 / -1
+		// = no audio. The original blocks until the line ends; we run
+		// async (the wait happens implicitly while the player reads).
+		if (_audio) {
+			const uint16 voiceJenny = READ_LE_UINT16(c + 0x18);
+			const uint16 voiceJake  = READ_LE_UINT16(c + 0x1a);
+			const uint16 voice = (_partner == 0) ? voiceJake : voiceJenny;
+			if (voice != 0 && voice != 0xFFFF)
+				_audio->spoolSound((uint)(voice - 1));
 		}
 
 		// Wait for click/key to advance — only if we drew something.

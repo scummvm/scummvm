@@ -39,6 +39,7 @@
 
 namespace EEM {
 
+class AudioPlayer;
 class MusicPlayer;
 
 /**
@@ -307,6 +308,13 @@ private:
 	/// at 20a2:00e2-05c9). Constructed lazily during `run()` once the
 	/// MIDI driver / timer system is up.
 	MusicPlayer *_music = nullptr;
+
+	/// Digitised audio (voice + SFX). Mirrors `SOUND.C` / `SPOOLSND.C`
+	/// — VOC playback (`_PlayVoice @ 1ff1:023e`) and the per-mystery
+	/// SDB spool (`_SpoolSound @ 202f:068d` / `_InitMysterySounds @
+	/// 202f:05cb`). Constructed alongside `_music` in `run()`.
+public:
+	AudioPlayer *_audio = nullptr;
 };
 
 } // End of namespace EEM
