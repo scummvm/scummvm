@@ -64,7 +64,14 @@ void SiteScreen::run() {
 	if (!_mystery || !_mystery->isLoaded())
 		return;
 
-	uint cur = 0;
+	// The caller (run() in eem.cpp) is responsible for bringing the
+	// player into a site via the map first, so `_siteNumber` is
+	// already set to the destination they picked. Resuming a save
+	// also restores `_siteNumber`. Start there instead of forcing
+	// site 0 each time.
+	uint cur = _mystery->_siteNumber;
+	if (cur >= _mystery->numSites())
+		cur = 0;
 	enter(cur);
 
 	while (!_vm->shouldQuit()) {
@@ -188,19 +195,26 @@ void SiteScreen::run() {
 }
 
 void SiteScreen::renderBackground(uint siteNum) {
-	// Mirrors `_BuildBackground` @ 172b:13e2 (simplified):
-	//   1. Load PIC 0x3d (the site frame) from PICS.DBD.
-	//   2. Load entry @p siteNum from SITES.DBD (the site scene).
-	//   3. Composite scene into the frame at the position carried in the
-	//      SiteData fields.
-	//   4. Set palette to (siteNum + 1) — per-site palettes start at 1.
-	// We render frame + scene at (0,0); the original positions the scene
-	// at (x,y) read from the SiteData but we don't have the offsets fully
-	// decoded yet so a top-left placement will do.
+	// Site loop entry `screen 1` calls into a function at 20fe:120b in
+	// the original; that function opens `_GetPicture(0x43)` (PIC 0x43,
+	// 1-based) as the screen frame and `_GetPalette(0x23)` as the base
+	// palette. The case-briefing's `_BuildBackground @ 172b:13e2`
+	// instead uses entry 0x3d directly and palette `sitenum + 1` — but
+	// that path is only used by `_DisplayCorrect` (winner scene), not
+	// by the regular per-site renderer.
+	//
+	// We follow the regular site loop here:
+	//   1. PIC 0x43 frame at (0, 0).
+	//   2. SITES.DBD entry indexed by SiteData[+0] (1-based sitepic) at
+	//      (x, y) from the original `_Rect_Move` composition.
+	//   3. Per-site palette (`sitenum + 1`) — set by the caller in
+	//      SiteScreen::enter via `setSitePaletteForSite`.
 
-	// Frame.
 	Picture frame;
-	if (_vm->getPics().getPicture(0x3d, frame)) {
+	bool haveFrame = _vm->getPics().getPicture(0x43, frame);
+	if (!haveFrame)
+		haveFrame = _vm->getPics().getPicture(0x3d, frame);
+	if (haveFrame) {
 		g_system->copyRectToScreen(frame.surface.getPixels(),
 								   frame.surface.pitch,
 								   0, 0, frame.surface.w, frame.surface.h);
