@@ -432,14 +432,22 @@ void SiteScreen::renderBackground(uint siteNum) {
 								   0, 0, frame.surface.w, frame.surface.h);
 	}
 
+	// `_BuildBackground @ 172b:13e2` calls
+	//   `_GetFromDB(_siteFile, &_SiteDBIndex, sitenum)`
+	// with the value at SiteData[+0] passed straight through. The
+	// `_GetFromDB` callee uses that as a **0-based** index into
+	// SITES.DBD (verified at 172b:14c8: `MOV BX, [BP+0x6]; IMUL BX, BX, 0xa`
+	// — the dbi entry stride is 10 bytes, no -1 adjustment). Our
+	// previous `loadEntry(sitepic - 1)` was off by one, which is why
+	// the tutorial mystery rendered scenes from neighbouring cases.
 	const byte *site = _mystery->siteData(siteNum);
 	const uint16 sitepic = site ? READ_LE_UINT16(site) : 0;
 	Picture scene;
 	bool haveScene = false;
-	if (sitepic > 0 && _vm->getSites().size() > sitepic - 1)
-		haveScene = _vm->getSites().loadEntry(sitepic - 1, scene);
-	if (!haveScene && sitepic > 0)
-		haveScene = _vm->getPics().getPicture(sitepic, scene);
+	if (sitepic < _vm->getSites().size())
+		haveScene = _vm->getSites().loadEntry(sitepic, scene);
+	if (!haveScene)
+		haveScene = _vm->getPics().getPicture(sitepic + 1, scene);
 	if (haveScene) {
 		// Hard-coded composition position from `_BuildBackground`:
 		//   `_Rect_Move(0, 0, h, ..., 0x42, 0x14, 48000, h, w)`.
