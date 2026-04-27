@@ -24,6 +24,8 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 
+#include "graphics/paletteman.h"
+
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/mystery.h"
@@ -82,6 +84,11 @@ void SiteScreen::enter(uint siteNum) {
 	// `_AddDrop` PIC every frame.
 	captureBgSnapshot();
 	_snapshotSite = (int)siteNum;
+
+	// Cache ColorCycle palette ranges for this site so the per-tick
+	// frame pump can rotate them. Mirrors the init scan at the top of
+	// `_DoSiteLoop @ 168d:03f4`.
+	scanColorCycles(siteNum);
 
 	// Animated NPCs (Loop 1) and the persistent partner sit on top of
 	// the snapshot. Initial frame goes at tickMs=now.
@@ -297,6 +304,10 @@ void SiteScreen::run() {
 			renderAnimatedDrops(cur, now);
 			renderPartner(cur, now);
 			renderHotspots(cur);
+			// Per-tick palette rotation for ColorCycle entries +
+			// hotspot marching ants. Matches `_ColorCycle(start, end)`
+			// calls inside `_DoSiteLoop @ 168d:03f4`'s main loop.
+			applyColorCycles();
 			_lastTickMs = now;
 		}
 		g_system->updateScreen();
@@ -542,6 +553,67 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	g_system->unlockScreen();
 }
 
+void SiteScreen::scanColorCycles(uint siteNum) {
+	// `_DoSiteLoop @ 168d:03f4` walks Loop 1 entries (siteData[+0xa]
+	// count, 6-byte entries at siteData[+0x48]) and stores each entry
+	// with `animId == -1` into a 5-slot table:
+	//   start palette idx = entry +2
+	//   end   palette idx = entry +4
+	// We mirror the layout exactly. Up to 5 entries are tracked (the
+	// original's `[unaff_BP + -0x12]` and `[unaff_BP + -0x1c]` arrays
+	// are 5 × u16 each).
+	_colorCycles.clear();
+	if (!_mystery)
+		return;
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 numAnims = READ_LE_UINT16(site + 0xa);
+	for (uint i = 0; i < numAnims && _colorCycles.size() < 5; i++) {
+		const int16 animId = (int16)READ_LE_UINT16(site + 0x48 + i * 6);
+		if (animId != -1)
+			continue;
+		const uint16 startPal = READ_LE_UINT16(site + 0x48 + i * 6 + 2);
+		const uint16 endPal   = READ_LE_UINT16(site + 0x48 + i * 6 + 4);
+		ColorCycleRange r;
+		r.start = (uint8)startPal;
+		r.end   = (uint8)endPal;
+		if (r.end > r.start)
+			_colorCycles.push_back(r);
+	}
+}
+
+void SiteScreen::applyColorCycles() {
+	// `_ColorCycle @ 172b:2015` rotates `_fpal[start..end]` by one
+	// palette slot — saves [start], shifts [start..end-1] = [start+1..
+	// end], restores saved at [end] — then re-uploads via `_Set_Palette`.
+	// We do the same against ScummVM's palette manager. Always rotate
+	// 0xf9..0xfe for hotspot marching ants (the `_ColorCycle(0xf9,
+	// 0xfe)` call at the bottom of `_DoSiteLoop`'s main loop).
+	auto rotate = [&](uint8 start, uint8 end) {
+		if (end <= start) return;
+		const uint count = (uint)end - (uint)start + 1;
+		byte buf[256 * 3];
+		g_system->getPaletteManager()->grabPalette(buf, start, count);
+		// Save first triplet, shift, restore at end.
+		byte savedR = buf[0], savedG = buf[1], savedB = buf[2];
+		for (uint i = 0; i + 1 < count; i++) {
+			buf[i * 3 + 0] = buf[(i + 1) * 3 + 0];
+			buf[i * 3 + 1] = buf[(i + 1) * 3 + 1];
+			buf[i * 3 + 2] = buf[(i + 1) * 3 + 2];
+		}
+		buf[(count - 1) * 3 + 0] = savedR;
+		buf[(count - 1) * 3 + 1] = savedG;
+		buf[(count - 1) * 3 + 2] = savedB;
+		g_system->getPaletteManager()->setPalette(buf, start, count);
+	};
+	for (uint i = 0; i < _colorCycles.size(); i++) {
+		rotate(_colorCycles[i].start, _colorCycles[i].end);
+	}
+	// Hotspot marching ants — always cycled.
+	rotate(0xF9, 0xFE);
+}
+
 void SiteScreen::captureBgSnapshot() {
 	_bgSnapshot.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -708,6 +780,19 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	if (!screen)
 		return;
 
+	// Mirrors `_DrawSearchButtons @ 2404:0a8f`:
+	//   for each hotspot:
+	//     if `_Sawit(theSite, loc)` (= _SaveBuffer[hotspot[+0xa]] != 0)
+	//       _DrawRect(rect)        // outline in cycling colors 0xF9..0xFE
+	//     else
+	//       _DrawSolidRect(rect)   // outline in solid white 0xFF
+	// `_DrawRect`'s cycling colors produce a "marching ants" effect that
+	// makes already-searched hotspots visually distinct without hiding
+	// them. We approximate the cycling by rotating the start color via
+	// the global tick.
+	const uint32 tickMs = g_system->getMillis();
+	const byte cyclePhase = (byte)((tickMs / 80) & 0x07);  // 0..7
+
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * 14;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
@@ -717,11 +802,43 @@ void SiteScreen::renderHotspots(uint siteNum) {
 		const Common::Rect rect(MAX<int>(0, x1), MAX<int>(0, y1),
 								MIN<int>(screen->w, x2),
 								MIN<int>(screen->h, y2));
-		// Hotspots flagged as "seen" get a different colour so the
-		// player knows they've already searched them.
-		const byte color =
-			(i < Mystery::kHotSpotsCap && _mystery->_hotSpotsSeen[i]) ? 0x07 : 0x0F;
-		screen->frameRect(rect, color);
+		const bool seen = (i < Mystery::kHotSpotsCap)
+						   && _mystery->_hotSpotsSeen[i];
+		if (!seen) {
+			// `_DrawSolidRect` — solid white outline (color 0xFF).
+			screen->frameRect(rect, 0xFF);
+		} else {
+			// `_DrawRect` — cycling colors 0xF9..0xFE on each pixel of
+			// the outline. We approximate per-pixel cycling with a
+			// per-rect phase shift so the rects look animated. Start
+			// color is rotated via the global clock.
+			const byte palette[6] = { 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE };
+			byte color = palette[cyclePhase % 6];
+			// Top edge
+			for (int x = rect.left; x < rect.right; x++) {
+				if (x >= 0 && x < screen->w && rect.top >= 0 && rect.top < screen->h)
+					*(byte *)screen->getBasePtr(x, rect.top) = color;
+				color = palette[(color - 0xF9 + 1) % 6];
+			}
+			// Right edge
+			for (int y = rect.top; y < rect.bottom; y++) {
+				if (rect.right - 1 >= 0 && rect.right - 1 < screen->w && y >= 0 && y < screen->h)
+					*(byte *)screen->getBasePtr(rect.right - 1, y) = color;
+				color = palette[(color - 0xF9 + 1) % 6];
+			}
+			// Bottom edge
+			for (int x = rect.right - 1; x >= rect.left; x--) {
+				if (x >= 0 && x < screen->w && rect.bottom - 1 >= 0 && rect.bottom - 1 < screen->h)
+					*(byte *)screen->getBasePtr(x, rect.bottom - 1) = color;
+				color = palette[(color - 0xF9 + 1) % 6];
+			}
+			// Left edge
+			for (int y = rect.bottom - 1; y >= rect.top; y--) {
+				if (rect.left >= 0 && rect.left < screen->w && y >= 0 && y < screen->h)
+					*(byte *)screen->getBasePtr(rect.left, y) = color;
+				color = palette[(color - 0xF9 + 1) % 6];
+			}
+		}
 	}
 
 	g_system->unlockScreen();
@@ -748,9 +865,21 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	debugC(1, kDebugSite, "Site %u: hotspot %u clicked", siteNum, hotIdx);
 
-	// Mark the hotspot itself as seen.
+	// `_DoSiteLoop @ 168d:03f4` (after _DisplayClue):
+	//   _HotSpotsSeen[hotspot[+0xa] * 2] = _HotSpotComplete;
+	// The "seen" key is the hotspotIndex field (+0xa) — the 1-based
+	// ordinal — NOT the array index. Two hotspots can share an ordinal
+	// across sites (e.g., a partner's clue you can re-read), so this
+	// matters for cross-site state.
+	const byte *spots = _mystery->hotspots(siteNum);
+	uint hotOrdinal = hotIdx; // fallback to array index
+	if (spots) {
+		hotOrdinal = READ_LE_UINT16(spots + hotIdx * 14 + 0xa);
+	}
+	if (hotOrdinal < Mystery::kHotSpotsCap)
+		_mystery->_hotSpotsSeen[hotOrdinal] = 1;
 	if (hotIdx < Mystery::kHotSpotsCap)
-		_mystery->_hotSpotsSeen[hotIdx] = 1;
+		_mystery->_hotSpotsSeen[hotIdx] = 1;  // also mark by array idx for our render
 	_mystery->_searchLocationNumber = (uint16)hotIdx;
 
 	// Bytes 8..9 of each 14-byte hotspot rect = byte offset within the
@@ -759,7 +888,6 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	// trick on us...". `displayClue` runs the entry's side effects
 	// (`_AddNotebook` for ClueEntry +0x30..+0x39, gallery +0x26..+0x2f,
 	// onsite +0x1c..+0x25) so we don't need to touch `_cluesFound` here.
-	const byte *spots = _mystery->hotspots(siteNum);
 	if (spots) {
 		const uint16 clueOff = READ_LE_UINT16(spots + hotIdx * 14 + 8);
 		debugC(2, kDebugSite, "  hotspot %u -> clue offset 0x%04x",

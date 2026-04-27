@@ -102,6 +102,18 @@ private:
 	/// Restore the snapshot taken at `captureBgSnapshot` time.
 	void restoreBgSnapshot();
 
+	/// Scan the site's Loop 1 entries for ColorCycle entries (animId
+	/// == -1) and cache their (start, end) palette ranges. Called from
+	/// `enter()`. Mirrors `_DoSiteLoop @ 168d:03f4`'s init scan.
+	void scanColorCycles(uint siteNum);
+
+	/// Rotate cached ColorCycle palette ranges (and 0xf9..0xfe for
+	/// hotspot marching ants) one step. Mirrors the original's per-tick
+	/// `_ColorCycle(start, end)` calls inside `_DoSiteLoop`'s main
+	/// loop. ScummVM's palette manager grabs current 8-bit RGB and
+	/// writes back the rotated values.
+	void applyColorCycles();
+
 	EEMEngine *_vm;
 	Mystery *_mystery;
 	bool _showHotspots = true;     ///< Toggle outlines with V key.
@@ -109,6 +121,11 @@ private:
 	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
 	Graphics::ManagedSurface _bgSnapshot;
 	uint32 _lastTickMs = 0;        ///< Last frame-pump tick in ms.
+
+	/// Per-site cached ColorCycle ranges. Up to 5 (matching the
+	/// original's 5-slot animation table).
+	struct ColorCycleRange { uint8 start, end; };
+	Common::Array<ColorCycleRange> _colorCycles;
 };
 
 } // End of namespace EEM

@@ -206,6 +206,13 @@ private:
 	/// the opening-anim loop in run() to skip the rest of the chain
 	/// instead of asking the user to click through every screen.
 	bool _skipIntro = false;
+
+	/// Per-slot rectangles + clue IDs from the most recent notebook
+	/// render, populated by the `draw` lambda inside `doNotebook` and
+	/// consumed by the click handler. The original walks the notes
+	/// inline; we cache the layout to keep click hit-testing simple.
+	Common::Array<Common::Rect> _notebookSlotRects;
+	Common::Array<uint>         _notebookSlotClues;
 };
 
 } // End of namespace EEM

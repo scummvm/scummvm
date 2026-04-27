@@ -987,10 +987,23 @@ void EEMEngine::doCaseSelection() {
 }
 
 void EEMEngine::doInitClues() {
-	// Mirrors `_DoInitClues` @ 1a35:0411. Sets BG 0x52 + palette 0x22,
-	// blits the Goblindroid game and book first frames, then displays
-	// the case briefing ClueBlock at InitBlock + 4. Marks the starting
-	// site (InitBlock word[1]) on `_OnSites`.
+	// Mirrors `_DoInitClues` @ 1a35:0411. The original does:
+	//   1. _AllBlack(); _GetBackground(0x52); _GetPalette(0x22);
+	//   2. _GetAnimation(gameAni); _NewAnimation(0xcd, 0x6c, ...)
+	//      _GetAnimation(bookAni); _NewAnimation(0,    99,   ...)
+	//      (case type 1 also: _NewAnimation(0x68, 0x8b, nancyAni))
+	//   3. _UpdateAnimations(); _FadeIn();
+	//   4. while (frame != gameNum) { _CheckFrameRate(); _UpdateAnimations(); }
+	//        — cycles through the entire game animation once. Click skips.
+	//   5. _PlayInSequence(seqId, ...) — plays a follow-up sequence based
+	//      on partner + case type.
+	//   6. _DisplayClue(InitBlock + 2, 1) — the briefing dialogue.
+	//   7. _OnSites[startSite] = 1.
+	//
+	// gameAni / bookAni / nancyAni values verified directly from Ghidra:
+	//   gameAni  = 0x17 (Jake) / 0x3b (Jenny)
+	//   bookAni  = 0x18 (Jake) / 0x3c (Jenny)
+	//   nancyAni = 0x19 (case type 1 only)
 	if (!_mystery.isLoaded())
 		return;
 
@@ -1001,11 +1014,6 @@ void EEMEngine::doInitClues() {
 	const uint16 startSite = READ_LE_UINT16(ib + 2);
 	if (startSite < Mystery::kVisitedSiteCap)
 		_mystery._onSites[startSite] = 1;
-	// Mirror the original: at briefing time the player isn't actually
-	// at any site yet — they pick from the map next. Set _siteNumber
-	// to the start site so the map opens centred on the only initially
-	// accessible location and the post-map site loop has a sensible
-	// resume point.
 	_mystery._siteNumber = startSite;
 	_mystery._lastSite = startSite;
 
@@ -1016,21 +1024,82 @@ void EEMEngine::doInitClues() {
 
 	const uint gameAni = _partner == 0 ? 0x17 : 0x3b;
 	const uint bookAni = _partner == 0 ? 0x18 : 0x3c;
-	Animation game, book;
-	if (_aniArchive.loadAnimation(gameAni, game) && !game.empty())
-		blitAt(game[0], 0xcd, 0x6c);
-	if (_aniArchive.loadAnimation(bookAni, book) && !book.empty())
-		blitAt(book[0], 0, 99);
+	Animation game, book, nancy;
+	const bool haveGame  = _aniArchive.loadAnimation(gameAni, game) && !game.empty();
+	const bool haveBook  = _aniArchive.loadAnimation(bookAni, book) && !book.empty();
 
-	// Case type 1 also places "Nancy" (a third character) at (0x68, 0x8b)
-	// per `_DoInitClues`.
 	const uint16 caseType = READ_LE_UINT16(ib);
-	if (caseType == 1) {
-		Animation nancy;
-		if (_aniArchive.loadAnimation(0x19, nancy) && !nancy.empty())
-			blitAt(nancy[0], 0x68, 0x8b);
+	const bool haveNancy = (caseType == 1)
+						  && _aniArchive.loadAnimation(0x19, nancy)
+						  && !nancy.empty();
+
+	auto blitMaskedAt = [&](const Picture &p, int x, int y) {
+		const byte transp = (byte)(p.flags >> 8);
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen) return;
+		for (int row = 0; row < p.surface.h; row++) {
+			const int dstY = y + row;
+			if (dstY < 0 || dstY >= screen->h) continue;
+			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+			byte *dst = (byte *)screen->getBasePtr(0, dstY);
+			for (int col = 0; col < p.surface.w; col++) {
+				const int dstX = x + col;
+				if (dstX < 0 || dstX >= screen->w) continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+		g_system->unlockScreen();
+	};
+
+	// Step 4 — cycle through the game animation once before the briefing.
+	// Mirrors the `while (uVar9 != gameNum)` loop. The original calls
+	// `_UpdateAnimations` per `_CheckFrameRate` tick (~10 fps). We use
+	// 100 ms ticks for the same cadence. Click / key skips.
+	if (haveGame || haveBook || haveNancy) {
+		const uint frameCount = haveGame ? game.size() : 8;
+		bool skip = false;
+		for (uint frame = 0; frame < frameCount && !shouldQuit() && !skip; frame++) {
+			// Restore BG + advance frame.
+			if (_picsArchive.getPicture(0x52, bg))
+				blitAt(bg, 0, 0);
+			if (haveGame)
+				blitMaskedAt(game[frame % game.size()], 0xcd, 0x6c);
+			if (haveBook)
+				blitMaskedAt(book[frame % book.size()], 0, 99);
+			if (haveNancy)
+				blitMaskedAt(nancy[frame % nancy.size()], 0x68, 0x8b);
+			g_system->updateScreen();
+
+			// Wait 100 ms or until input.
+			const uint32 wakeup = g_system->getMillis() + 100;
+			while (g_system->getMillis() < wakeup && !shouldQuit() && !skip) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_LBUTTONDOWN ||
+						ev.type == Common::EVENT_KEYDOWN) {
+						skip = true;
+						break;
+					}
+				}
+				g_system->delayMillis(10);
+			}
+		}
 	}
 
+	// Composite the final frames (or first frames if skipped) so the BG
+	// is in a sensible state when displayClue overlays the speaker.
+	if (_picsArchive.getPicture(0x52, bg))
+		blitAt(bg, 0, 0);
+	if (haveGame)
+		blitMaskedAt(game[0], 0xcd, 0x6c);
+	if (haveBook)
+		blitMaskedAt(book[0], 0, 99);
+	if (haveNancy)
+		blitMaskedAt(nancy[0], 0x68, 0x8b);
+	g_system->updateScreen();
+
+	// Step 6 — case briefing dialogue.
 	displayClue(ib + 4);
 }
 
@@ -1269,14 +1338,39 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						}
 					}
 				}
-				// Per-balloon metadata table at 29be:0875 — 10-byte
-				// entries indexed by `(bubNum & 0x7f)`. Layout:
-				//   +0..1 textX inset, +2..3 textY inset, +4..5 textWidth.
-				// All entries use textX=6, textY=4 so we hard-code those
-				// constants; textWidth is read live from the table.
-				textX = bubX + 6;
-				textY = bubY + 4;
-				textW = bw - 12;
+				// Per-balloon metadata table verified from 29be:0875 —
+				// 10-byte entries indexed by `(bubNum & 0x7f)`. Layout:
+				//   +0..1 textX inset, +2..3 textY inset, +4..5 width,
+				//   +6..7 height, +8..9 tail offset.
+				// 52 entries total; insets vary (3, 5, 6, or 8 px).
+				// The original `_DisplayClue` does:
+				//   _WordWrap(bubX + table[bubNum].x, bubY + table[bubNum].y,
+				//             table[bubNum].w, ...);
+				static const struct { uint16 x, y, w; } kBalloonTable[] = {
+					{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+					{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+					{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+					{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+					{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+					{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+					{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+					{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+					{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+					{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+					{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+					{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+					{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+					{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+					{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
+				};
+				const uint kBalloonTableSize = sizeof(kBalloonTable) /
+											   sizeof(kBalloonTable[0]);
+				const uint balloonIdx = balloonId < kBalloonTableSize
+										? balloonId : 0;
+				const auto &bm = kBalloonTable[balloonIdx];
+				textX = bubX + bm.x;
+				textY = bubY + bm.y;
+				textW = bm.w;
 				copyH = bh;
 			} else {
 				// No balloon — clear a band so old pixels don't bleed.
@@ -1344,109 +1438,340 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 }
 
 void EEMEngine::doNotebook() {
-	// Mirrors `_DrawNotes` @ 161e:01d0 + `_HandleNoteButton`. We list every
-	// found clue with its NoteIndex point value and let the player toggle
-	// "selected" with number keys 1..9 (paged in groups of 9). The total
-	// points of selected clues feed `_SolvedCheck` during accuse.
-	if (!_font.isLoaded())
+	// Mirrors `_DoNotebook @ 161e:0500` + `_DrawNotes @ 161e:01d0` +
+	// `_HandleNoteButton @ 161e:03cb`.
+	//
+	// Layout (verified from Ghidra labels in 29be:013f / 29be:0147):
+	//   _NotebookRect = (78, 12, 288, 152)   — note display rectangle.
+	//   _NoteButtons (11 entries, 8 bytes each, at 29be:0147):
+	//     [0]  (134, 174, 155, 190)  decorative — `_HandleNoteButton(0)`
+	//                                returns immediately (i-1 unsigned > 9).
+	//     [1]  (93,  174, 115, 190)  → `_InterfaceHelp(0)` (handler 0x3f9)
+	//     [2]  (157, 174, 178, 190)  → handler 0x477   (page nav)
+	//     [3]  (5,   80,  44, 110)   → `_KDHelp` (host hint, 0x403)
+	//     [4]  (180, 174, 201, 190)  → solve / accuse  (0x436)
+	//     [5]  (204, 174, 224, 190)  → `_NextScreen = 5` (gallery, 0x489)
+	//     [6]  (226, 174, 247, 190)  → handler 0x4ab
+	//     [7]  (7,   177,  57, 200)  → handler 0x480   (back to map)
+	//     [8]  (35,  111,  56, 136)  → `_NextScreen = 3` (site)
+	//     [9]  (0, 0, 0, 0)          → same exit as [8]
+	//     [10] (66,  79, 267, 174)   → `_InterfaceHelp(0)` (note area)
+	//   Background: PIC 0x3f.
+	//   Partner anim: anim 1 (Jake) / 0xb (Jenny) at (5, 80).
+	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
+	const Common::Rect kNotebookRect(78, 12, 288, 152);
+	const Common::Rect kBtnHelp1   ( 93, 174, 115, 190);  // [1]
+	const Common::Rect kBtnPagePrev(157, 174, 178, 190);  // [2]
+	const Common::Rect kBtnPartner (  5,  80,  44, 110);  // [3]
+	const Common::Rect kBtnAccuse  (180, 174, 201, 190);  // [4]
+	const Common::Rect kBtnGallery (204, 174, 224, 190);  // [5]
+	const Common::Rect kBtnPageNext(226, 174, 247, 190);  // [6]
+	const Common::Rect kBtnMap     (  7, 177,  57, 200);  // [7]
+	const Common::Rect kBtnSite    ( 35, 111,  56, 136);  // [8]
+	const Common::Rect kNoteArea   ( 66,  79, 267, 174);  // [10]
+	(void)kBtnHelp1; (void)kBtnPagePrev; (void)kBtnPageNext;
+
+	CursorMan.showMouse(true);
+
 	int page = 0;
-	const int kPerPage = 9;
+	int hoveredNoteSlot = -1;
+
+	// Build a list of found-clue indices, identical ordering to the
+	// original's iteration through `_CluesFound[]`.
+	auto buildFound = [&]() {
+		Common::Array<uint> found;
+		for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
+			if (_mystery._cluesFound[i])
+				found.push_back(i);
+		return found;
+	};
 
 	auto draw = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
-		_font.drawString(&scratch, "NOTEBOOK", 8, 4, 320, 0xF);
-		_font.drawString(&scratch, Common::String::format("pts: %d", _mystery.selectedPoints()), 200, 4, 320, 0xF);
 
-		// Build a list of found-clue indices.
-		Common::Array<uint> found;
-		for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
-			if (_mystery._cluesFound[i])
-				found.push_back(i);
-		const int total = (int)found.size();
-		const int pages = MAX<int>(1, (total + kPerPage - 1) / kPerPage);
-		page = MIN<int>(page, pages - 1);
-
-		_font.drawString(&scratch, Common::String::format("page %d/%d", page + 1, pages), 200, 16, 320, 0xF);
-
-		const byte *ni = _mystery.noteIndex();
-		const uint16 niCount = _mystery.noteIndexCount();
-		int y = 4 + _font.getFontHeight() * 2 + 4;
-		for (int slot = 0; slot < kPerPage; slot++) {
-			const int idx = page * kPerPage + slot;
-			if (idx >= total)
-				break;
-			const uint clueId = found[idx];
-			Common::String text;
-			int pts = 0;
-			if (ni && clueId < niCount) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				const uint16 ptsRaw  = READ_LE_UINT16(ni + clueId * 4 + 2);
-				pts = (int)(int16)ptsRaw;
-				const Common::String raw = _mystery.textAt(textOff);
-				text = parseString(raw, _playerName, _partner);
-			}
-			if (text.empty())
-				text = Common::String::format("clue %u", clueId);
-
-			const char selMark = _mystery._noteSelected[clueId] ? '*' : ' ';
-			Common::String line = Common::String::format(
-				"%d [%c] (%d pts) %s", slot + 1, selMark, pts, text.c_str());
-			const int used = _font.drawWordWrapped(&scratch, 8, y, 304, line, 0xF);
-			y += used + 2;
-			if (y >= 192) break;
+		// PIC 0x3f frame.
+		Picture frame;
+		if (_picsArchive.getPicture(0x3f, frame)) {
+			const int w = MIN<int>(frame.surface.w, 320);
+			const int h = MIN<int>(frame.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)frame.surface.getBasePtr(0, row), w);
 		}
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
 
-	draw();
-	while (!shouldQuit()) {
-		Common::Event ev;
-		bool dirty = false;
-		bool exit  = false;
-		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) { exit = true; break; }
-			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) { exit = true; break; }
-				if (ev.kbd.keycode >= Common::KEYCODE_1 && ev.kbd.keycode <= Common::KEYCODE_9) {
-					const int slot = (int)(ev.kbd.keycode - Common::KEYCODE_1);
-					Common::Array<uint> found;
-					for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
-						if (_mystery._cluesFound[i])
-							found.push_back(i);
-					const int idx = page * kPerPage + slot;
-					if (idx < (int)found.size()) {
-						const uint clueId = found[idx];
-						_mystery._noteSelected[clueId] ^= 1;
-						dirty = true;
-					}
-				} else if (ev.kbd.keycode == Common::KEYCODE_TAB ||
-						   ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-					page++; dirty = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-					if (page > 0) page--;
-					dirty = true;
+		// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny.
+		const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
+		Animation partnerAni;
+		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = (uint)((now / 100) % partnerAni.size());
+			const Picture &fr = partnerAni[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			for (int row = 0; row < fr.surface.h; row++) {
+				const int dstY = 80 + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < fr.surface.w; col++) {
+					const int dstX = 5 + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
 				}
 			}
 		}
-		if (exit) break;
-		if (dirty) draw();
+
+		// Notes — `_DrawNotes` walks `_NoteIndex` for the current page,
+		// rendering each found clue's text inside `_NotebookRect` with
+		// word-wrap. Selected clues are highlighted (color 0x3c in the
+		// original's case-briefing palette).
+		const Common::Array<uint> found = buildFound();
+		const byte *ni = _mystery.noteIndex();
+		const uint16 niCount = _mystery.noteIndexCount();
+
+		const int kRectX = kNotebookRect.left;
+		const int kRectY = kNotebookRect.top;
+		const int kRectW = kNotebookRect.width();
+		const int kRectH = kNotebookRect.height();
+
+		// Walk forward to the start clue of the current page.
+		// Each page renders as many clues as fit in `kRectH`.
+		int clueCursor = 0;
+		Common::Array<int> pageStarts;
+		pageStarts.push_back(0);
+		{
+			const int lineH = _font.getFontHeight() + 1;
+			int y = kRectY;
+			while (clueCursor < (int)found.size()) {
+				const uint clueId = found[clueCursor];
+				Common::String txt;
+				if (ni && clueId < niCount) {
+					const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+					txt = parseString(_mystery.textAt(textOff),
+									  _playerName, _partner);
+				}
+				// Measure height by wrapping the text without drawing.
+				Common::Array<Common::String> wrapped;
+				_font.wordWrapText(txt, kRectW, wrapped);
+				const int h = (int)wrapped.size() * lineH;
+				if (y + h + 7 > kRectY + kRectH) {
+					// Page break before this clue.
+					y = kRectY;
+					pageStarts.push_back(clueCursor);
+				}
+				y += h + 7;
+				clueCursor++;
+			}
+			if (page >= (int)pageStarts.size())
+				page = (int)pageStarts.size() - 1;
+			if (page < 0)
+				page = 0;
+		}
+
+		// Track per-slot rectangles so the click handler can map a
+		// click in `kNoteArea` back to a clue index.
+		Common::Array<Common::Rect> slotRects;
+		Common::Array<uint> slotClues;
+
+		const int startClue = (page < (int)pageStarts.size())
+								? pageStarts[page] : 0;
+		const int endClue   = (page + 1 < (int)pageStarts.size())
+								? pageStarts[page + 1] : (int)found.size();
+
+		int y = kRectY;
+		for (int i = startClue; i < endClue; i++) {
+			const uint clueId = found[i];
+			Common::String txt;
+			if (ni && clueId < niCount) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				txt = parseString(_mystery.textAt(textOff),
+								  _playerName, _partner);
+			}
+			if (txt.empty())
+				txt = Common::String::format("clue %u", clueId);
+			// Compute wrapped lines first to know the rect.
+			Common::Array<Common::String> wrapped;
+			_font.wordWrapText(txt, kRectW, wrapped);
+			const int lineH = _font.getFontHeight() + 1;
+			const int h = (int)wrapped.size() * lineH;
+
+			// Per `_DrawNotes @ 161e:01d0`: text uses
+			// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
+			// (light yellow-white) for selected. Paint a dark "paper"
+			// rectangle behind the text first — without this, the
+			// notebook BG (PIC 0x3f) bleeds through and makes the cyan
+			// text hard to read on lighter pixel runs. The fill colour
+			// 0x20 maps to a dark navy across all site palettes.
+			scratch.fillRect(Common::Rect(kRectX - 2, y - 1,
+				kRectX + kRectW + 2, y + h + 1), 0x20);
+
+			const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
+			for (uint li = 0; li < wrapped.size(); li++) {
+				_font.drawString(&scratch, wrapped[li], kRectX,
+								 y + (int)li * lineH, kRectW, color);
+			}
+			slotRects.push_back(Common::Rect(kRectX, y,
+											  kRectX + kRectW, y + h));
+			slotClues.push_back(clueId);
+			y += h + 7;
+		}
+
+		// Page indicator + selected-points counter. Paint a small dark
+		// strip behind them too so the text reads on the PDA frame's
+		// upper-right corner.
+		scratch.fillRect(Common::Rect(266, 0, 320, 24), 0x20);
+		_font.drawString(&scratch, Common::String::format("p%d/%d",
+								   page + 1, (int)pageStarts.size()),
+						 270, 4, 320, 0x5C);
+		_font.drawString(&scratch, Common::String::format("%d pts",
+								   _mystery.selectedPoints()),
+						 270, 14, 320, 0x5C);
+		(void)hoveredNoteSlot;
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// Stash slot info on the captures so the click handler below
+		// can use it via the closure.
+		_notebookSlotRects = slotRects;
+		_notebookSlotClues = slotClues;
+	};
+
+	draw();
+
+	uint32 lastDraw = g_system->getMillis();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		bool exitFlag = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				exitFlag = true;
+				break;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					exitFlag = true;
+					break;
+				}
+				if (ev.kbd.keycode == Common::KEYCODE_LEFT ||
+					ev.kbd.keycode == Common::KEYCODE_PAGEUP) {
+					if (page > 0) page--;
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT ||
+						   ev.kbd.keycode == Common::KEYCODE_PAGEDOWN ||
+						   ev.kbd.keycode == Common::KEYCODE_TAB) {
+					page++;
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_h) {
+					doHelp();
+					dirty = true;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// Test buttons in the order the original would —
+				// button 0 / 9 are dead zones, so check the actionable
+				// rects directly. Earlier rects "win" when overlapping
+				// (matches `_FindButton`).
+				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+					exitFlag = true;
+					break;  // back to site
+				}
+				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
+					doBigMap();
+					exitFlag = true;
+					break;
+				}
+				if (kBtnPartner.contains(ev.mouse.x, ev.mouse.y)) {
+					doHelp();              // _KDHelp = host hint
+					dirty = true;
+					continue;
+				}
+				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
+					doAccuse();
+					exitFlag = true;
+					break;
+				}
+				if (kBtnGallery.contains(ev.mouse.x, ev.mouse.y)) {
+					doGallery();
+					dirty = true;
+					continue;
+				}
+				if (kBtnPagePrev.contains(ev.mouse.x, ev.mouse.y)) {
+					if (page > 0) page--;
+					dirty = true;
+					continue;
+				}
+				if (kBtnPageNext.contains(ev.mouse.x, ev.mouse.y)) {
+					page++;
+					dirty = true;
+					continue;
+				}
+				if (kNoteArea.contains(ev.mouse.x, ev.mouse.y)) {
+					// Toggle the selection on whichever clue's text
+					// the click landed in. The original calls
+					// `_InterfaceHelp` here; that's the help screen,
+					// not selection — selection is in the Accuse
+					// screen. We use the area for selection because
+					// keyboard 1..9 toggling is awkward, and the
+					// resulting `_NoteSelected` state is what
+					// `_SolvedCheck` reads.
+					for (uint i = 0; i < _notebookSlotRects.size(); i++) {
+						if (_notebookSlotRects[i].contains(ev.mouse.x,
+														   ev.mouse.y)) {
+							const uint clueId = _notebookSlotClues[i];
+							_mystery._noteSelected[clueId] ^= 1;
+							dirty = true;
+							break;
+						}
+					}
+					continue;
+				}
+			}
+		}
+		if (exitFlag)
+			break;
+
+		const uint32 now = g_system->getMillis();
+		// Re-render every 100 ms so the partner sprite cycles frames.
+		if (dirty || now - lastDraw >= 100) {
+			draw();
+			lastDraw = now;
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 }
 
 void EEMEngine::doGallery() {
-	// Mirrors `_DrawGallery` @ 158f:0046. The original loops `_NumSuspects`
-	// gallery entries (0x46 = 70 bytes each in `_GalleryData`); the first
-	// u16 of each entry is the PIC picture ID for that suspect. We render
-	// them in a row across the screen.
+	// Mirrors `_DoGallery @ 158f:065b` and `_DrawGallery @ 158f:0046`.
+	// Verified directly from the disassembly:
+	//   * Background: PIC 0x3f (same as PDA).
+	//   * Partner sprite at (5, 0x50): anim 2 (Jake) / 0x10 (Jenny).
+	//     `_NewAnimation(5, 0x50, ...)`. NOTE: gallery uses anim 2/0x10,
+	//     PDA uses 1/0xb — different sprites.
+	//   * Five fixed slot positions at `29be:0x116` (4 bytes per slot,
+	//     `{u16 x, u16 y}`):
+	//         slot 0 = ( 83,  14)   slot 3 = (119,  90)
+	//         slot 1 = (155,  14)   slot 4 = (191,  90)
+	//         slot 2 = (227,  14)
+	//   * For each logical suspect i in 0..NumSuspects-1:
+	//         picId   = `*(u16 *)(_GalleryData + i * 0x46)` (entry +0).
+	//         visible = `_InGallery[_NewOrder[i]] != 0`.
+	//         drawX   = positions[_NewOrder[i]].x
+	//         drawY   = positions[_NewOrder[i]].y + (0x48 - pic.height)
+	//     So portraits are BOTTOM-aligned to baselines 0x48 + pos.y.
+	//   * Click on portrait via `_SearchSuspects` → `MoreInfo(i)` shows
+	//     the suspect detail page. ESC returns to PDA.
+	//   * Frame-cycled @ 100ms via `_CheckFrameRate` + `_UpdateAnimations`
+	//     + `_GizmoColorCycle`.
 	if (!_mystery.isLoaded())
 		return;
 
@@ -1456,60 +1781,323 @@ void EEMEngine::doGallery() {
 		return;
 	}
 
-	Graphics::ManagedSurface scratch(320, 200,
-		Graphics::PixelFormat::createFormatCLUT8());
-	scratch.clear();
+	CursorMan.showMouse(true);
 
-	// Use PIC 0x3f as the gallery backdrop, matching `_DoAccuseGallery`.
+	struct Slot { int x; int y; };
+	static const Slot kGallerySlots[5] = {
+		{  83,  14 }, // 0
+		{ 155,  14 }, // 1
+		{ 227,  14 }, // 2
+		{ 119,  90 }, // 3
+		{ 191,  90 }  // 4
+	};
+
+	// Pre-load static elements once.
 	Picture galBg;
-	if (_picsArchive.getPicture(0x3f, galBg)) {
-		const int w = MIN<int>(galBg.surface.w, 320);
-		const int h = MIN<int>(galBg.surface.h, 200);
-		for (int row = 0; row < h; row++) {
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)galBg.surface.getBasePtr(0, row), w);
-		}
-	}
+	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
 
-	if (_font.isLoaded())
-		_font.drawString(&scratch, "GALLERY", 8, 4, 320, 0xF);
+	// Gallery partner anim — `_DoGallery` calls `_GetAnimation(uVar6)` with
+	// uVar6 = 2 (Jake) / 0x10 (Jenny). Different from PDA (1 / 0xb).
+	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+	Animation partnerAni;
+	const bool havePartner = _aniArchive.loadAnimation(partnerAnim, partnerAni)
+							  && !partnerAni.empty();
 
 	const uint8 num = _mystery.numSuspects();
-	int slotX = 8;
-	const int slotY = 24;
-	const int slotStep = 320 / MAX<uint8>(1, num);
+
+	// Cache slot rects for click hit-testing.
+	Common::Array<Common::Rect> slotRects;
+	Common::Array<int> slotSuspect; // logical suspect index in [0, num)
+	slotRects.resize(num);
+	slotSuspect.resize(num);
 	for (uint i = 0; i < num; i++) {
-		const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-		if (picId == 0)
-			continue;
-		Picture portrait;
-		if (!_picsArchive.getPicture(picId, portrait))
-			continue;
-		const int placeX = slotX + (slotStep - portrait.surface.w) / 2;
-		const int placeY = slotY;
-		const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-		const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-		if (w > 0 && h > 0) {
-			for (int row = 0; row < h; row++) {
-				memcpy((byte *)scratch.getBasePtr(placeX, placeY + row),
-					   (const byte *)portrait.surface.getBasePtr(0, row), w);
-			}
-		}
-		// Suspect number + discovered marker under the portrait.
-		if (_font.isLoaded()) {
-			const bool discovered = (i < Mystery::kGalleryCap) &&
-									_mystery._inGallery[i];
-			Common::String label = Common::String::format("%u%s",
-				i + 1, discovered ? " *" : "");
-			_font.drawString(&scratch, label, placeX + 4, placeY + h + 2, 320, 0xF);
-		}
-		slotX += slotStep;
+		slotSuspect[i] = -1;
 	}
 
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
-	g_system->updateScreen();
-	waitForInput(60000);
+	auto drawFrame = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+
+		if (haveBg) {
+			const int bw = MIN<int>(galBg.surface.w, 320);
+			const int bh = MIN<int>(galBg.surface.h, 200);
+			for (int row = 0; row < bh; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)galBg.surface.getBasePtr(0, row), bw);
+			}
+		}
+
+		// Partner sprite frame @ (5, 0x50).
+		if (havePartner) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = (uint)((now / 100) % partnerAni.size());
+			const Picture &fr = partnerAni[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			const int px = 5, py = 0x50;
+			for (int row = 0; row < fr.surface.h; row++) {
+				const int dstY = py + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < fr.surface.w; col++) {
+					const int dstX = px + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+		}
+
+		// Portraits.
+		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
+			slotRects[i] = Common::Rect();   // empty
+			slotSuspect[i] = -1;
+
+			const uint8 phys = _mystery._newOrder[i];
+			if (phys >= 5)
+				continue;
+			const bool discovered = _mystery._inGallery[phys] != 0;
+			if (!discovered)
+				continue;
+
+			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+			if (picId == 0)
+				continue;
+			Picture portrait;
+			if (!_picsArchive.getPicture(picId, portrait))
+				continue;
+
+			const Slot &s = kGallerySlots[phys];
+			const int placeX = s.x;
+			const int placeY = s.y + (0x48 - portrait.surface.h);
+			const byte transp = (byte)(portrait.flags >> 8);
+
+			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+			if (w <= 0 || h <= 0)
+				continue;
+			for (int row = 0; row < h; row++) {
+				const int dstY = placeY + row;
+				if (dstY < 0) continue;
+				const byte *src =
+					(const byte *)portrait.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < w; col++) {
+					const int dstX = placeX + col;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+
+			// Cache rect for hit-test.
+			slotRects[i] = Common::Rect(placeX, placeY,
+										 placeX + w, placeY + h);
+			slotSuspect[i] = (int)i;
+
+			// Index label below portrait — original doesn't draw labels
+			// (the detail page does), but useful while MoreInfo isn't
+			// implemented.
+			if (_font.isLoaded()) {
+				Common::String label = Common::String::format("%u", i + 1);
+				_font.drawString(&scratch, label,
+								 placeX + portrait.surface.w / 2 - 3,
+								 placeY + portrait.surface.h + 2,
+								 320, 0x5C);
+			}
+		}
+
+		// Header / hint line — KD's hint balloon would normally show here
+		// (`_DoAccuseGallery` plays a balloon at top), but the standalone
+		// `_DoGallery` doesn't. We add a small header for clarity.
+		if (_font.isLoaded()) {
+			_font.drawString(&scratch, "GALLERY", 60, 4, 256, 0x5C);
+			_font.drawString(&scratch, "Click suspect | ESC", 60, 188, 256, 0x5C);
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	drawFrame();
+	uint32 lastDraw = g_system->getMillis();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool exitFlag = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				return;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					exitFlag = true;
+					break;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// `_SearchSuspects` walks the per-slot rects and returns
+				// the suspect index. We mirror that with cached rects.
+				bool clicked = false;
+				for (uint i = 0; i < slotRects.size(); i++) {
+					if (slotSuspect[i] < 0) continue;
+					if (slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
+						// `MoreInfo(i)` — show the suspect detail page.
+						// Mirrors `MoreInfo @ 158f:0419`:
+						//   _RefreshGalleryBackground();
+						//   _GetPicture(*(u16*)(gd + i*0x46));
+						//   _AddPicBackground(pic, 0x94, 0xf);
+						//   _DrawGalleryNotes(gd + i*0x46);
+						//   loop until ESC or button click.
+						// Suspect data layout (verified against M1):
+						//   +0..1: picId (used here AND for gallery slot)
+						//   +8..9: number of clues for this suspect
+						//   +0xa..??: array of u16 clue IDs (terminated
+						//             by 0xFFFF if shorter than count).
+						const uint suspectIdx = (uint)slotSuspect[i];
+						const byte *suspect = gd + suspectIdx * 0x46;
+						const uint16 detailPic =
+							READ_LE_UINT16(suspect + 0);
+						const uint16 clueCount =
+							READ_LE_UINT16(suspect + 8);
+
+						Graphics::ManagedSurface ms(320, 200,
+							Graphics::PixelFormat::createFormatCLUT8());
+						ms.clear();
+						if (haveBg) {
+							const int bw = MIN<int>(galBg.surface.w, 320);
+							const int bh = MIN<int>(galBg.surface.h, 200);
+							for (int row = 0; row < bh; row++) {
+								memcpy((byte *)ms.getBasePtr(0, row),
+									   (const byte *)galBg.surface.getBasePtr(0, row), bw);
+							}
+						}
+						// Full suspect picture at (0x94, 0xf).
+						Picture detail;
+						if (_picsArchive.getPicture(detailPic, detail)) {
+							const byte transp =
+								(byte)(detail.flags >> 8);
+							const int dx = 0x94, dy = 0x0f;
+							const int dw = MIN<int>(detail.surface.w, 320 - dx);
+							const int dh = MIN<int>(detail.surface.h, 200 - dy);
+							for (int row = 0; row < dh; row++) {
+								const byte *src =
+									(const byte *)detail.surface.getBasePtr(0, row);
+								byte *dst =
+									(byte *)ms.getBasePtr(0, dy + row);
+								for (int col = 0; col < dw; col++) {
+									if (src[col] != transp)
+										dst[dx + col] = src[col];
+								}
+							}
+						}
+						// Suspect's clue notes inside _GalleryNoteRect
+						// = (78, 93, 288, 152), per 29be:0100.
+						const int rx = 78, ry = 93;
+						const int rw = 288 - 78, rh = 152 - 93;
+						// Paint a dark fill behind the entire notes area
+						// so cyan text on a possibly-cyan PIC background
+						// stays readable. Color 0x20 = dark navy in all
+						// site palettes.
+						ms.fillRect(Common::Rect(rx - 2, ry - 12,
+							rx + rw + 2, ry + rh + 12), 0x20);
+
+						const byte *ni = _mystery.noteIndex();
+						const uint16 niCount = _mystery.noteIndexCount();
+						int yPos = ry;
+						const int lineH = _font.getFontHeight() + 1;
+						bool drewAny = false;
+						for (uint k = 0; k < clueCount && k < 30; k++) {
+							const uint16 clueId =
+								READ_LE_UINT16(suspect + 0xa + k * 2);
+							if (clueId == 0xFFFF) break;
+							if (clueId >= Mystery::kCluesFoundCap ||
+								!_mystery._cluesFound[clueId])
+								continue;
+							if (!ni || clueId >= niCount) continue;
+							const uint16 textOff =
+								READ_LE_UINT16(ni + clueId * 4);
+							Common::String txt =
+								parseString(_mystery.textAt(textOff),
+											_playerName, _partner);
+							if (txt.empty()) continue;
+							const byte color =
+								_mystery._noteSelected[clueId] ? 0x3C : 0x5C;
+							const int hLine = _font.drawWordWrapped(
+								&ms, rx, yPos, rw, txt, color);
+							yPos += hLine + 7;
+							drewAny = true;
+							if (yPos + lineH > ry + rh) break;
+						}
+						if (!drewAny && _font.isLoaded()) {
+							_font.drawString(&ms,
+								"No clues yet for this suspect.",
+								rx, ry, rw, 0x5C);
+						}
+						// Header / footer text.
+						if (_font.isLoaded()) {
+							_font.drawString(&ms, "SUSPECT FILE",
+											  rx, ry - 11, rw, 0x3C);
+							_font.drawString(&ms, "(click / ESC: back)",
+											  rx, ry + rh + 2, rw, 0x3C);
+						}
+						g_system->copyRectToScreen(ms.getPixels(),
+							ms.pitch, 0, 0, 320, 200);
+						g_system->updateScreen();
+
+						// Wait for click or ESC. Drain the queued
+						// LBUTTONDOWN that triggered this MoreInfo first
+						// so we don't immediately accept it as the
+						// dismiss event.
+						g_system->delayMillis(150);
+						{
+							Common::Event drain;
+							while (g_system->getEventManager()->pollEvent(drain)) {
+								if (drain.type == Common::EVENT_QUIT ||
+									drain.type == Common::EVENT_RETURN_TO_LAUNCHER)
+									return;
+							}
+						}
+						bool back = false;
+						while (!back && !shouldQuit()) {
+							Common::Event e2;
+							while (g_system->getEventManager()->pollEvent(e2)) {
+								if (e2.type == Common::EVENT_LBUTTONDOWN ||
+									(e2.type == Common::EVENT_KEYDOWN &&
+									 (e2.kbd.keycode == Common::KEYCODE_ESCAPE ||
+									  e2.kbd.keycode == Common::KEYCODE_RETURN))) {
+									back = true;
+									break;
+								}
+								if (e2.type == Common::EVENT_QUIT ||
+									e2.type == Common::EVENT_RETURN_TO_LAUNCHER)
+									return;
+							}
+							g_system->delayMillis(20);
+						}
+						// Force gallery redraw immediately so the
+						// player isn't left looking at the dismissed
+						// MoreInfo screen until the next 100 ms tick.
+						drawFrame();
+						lastDraw = g_system->getMillis();
+						clicked = true;
+						break;
+					}
+				}
+				(void)clicked;
+			}
+		}
+		if (exitFlag) break;
+
+		const uint32 now = g_system->getMillis();
+		if (now - lastDraw >= 100) {
+			drawFrame();
+			lastDraw = now;
+		}
+		g_system->delayMillis(15);
+	}
 }
 
 void EEMEngine::doBigMap() {
