@@ -388,11 +388,12 @@ void EEMEngine::doNewPlayer() {
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)bg.surface.getBasePtr(0, row), w);
 		}
-		_font.drawString(&scratch, "Welcome to Eagle Eye Mysteries!", 40, 24, 320, 0xF);
-		_font.drawString(&scratch, "Please type your name:", 40, 40, 320, 0xF);
-		_font.drawString(&scratch, "(Backspace to delete, Enter to confirm)", 40, 60, 320, 0xF);
+		// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
+		// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
+		// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
+		_font.drawString(&scratch, "Please type your name:", 80, 40, 240, 0xF);
 		Common::String shown = name + "_";
-		_font.drawString(&scratch, shown, 40, 90, 320, 0xF);
+		_font.drawString(&scratch, shown, 80, 80, 240, 0xF);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
