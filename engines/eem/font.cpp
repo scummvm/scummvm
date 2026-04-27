@@ -42,7 +42,7 @@ namespace EEM {
 // and 'a' to the lowercase glyph (so the original engine renders all
 // text in lowercase). We route uppercase ASCII letters to the uppercase
 // glyph slots (33..58) for proper mixed-case rendering.
-static const byte kCharToGlyph[128] = {
+const byte kCharToGlyph[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -61,7 +61,7 @@ static const byte kCharToGlyph[128] = {
 	0x52, 0x53, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00  // 0x78..0x7F 'x','y','z'..
 };
 
-static inline byte mapChar(uint32 c) {
+inline byte mapChar(uint32 c) {
 	return c < 128 ? kCharToGlyph[c] : 0;
 }
 

@@ -45,7 +45,6 @@
 
 namespace EEM {
 
-namespace {
 const uint kPalSize = 768;     ///< 256 colors * 3 bytes
 const uint kNumSitePals = 40;  ///< SITEPALS holds 40 palettes (40 * 768 = 30720)
 
@@ -87,7 +86,6 @@ const byte kCursorPalette[] = {
 	0x00, 0x00, 0x00, // 1 — outline
 	0xFF, 0xFF, 0xFF  // 2 — fill
 };
-} // anonymous namespace
 
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _gameDescription(gameDesc), _rng("eem"),

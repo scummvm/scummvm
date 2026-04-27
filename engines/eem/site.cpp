@@ -33,8 +33,6 @@
 
 namespace EEM {
 
-namespace {
-
 // Masked blit a Picture into a ManagedSurface. Pixels equal to `transp`
 // (the high byte of `pic.flags`, per `_Rect_Move_Mask @ 1000:03fc`) are
 // skipped. Used by `enterSiteAnim` for both skateboard + KD slide-in
@@ -56,6 +54,31 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 				continue;
 			if (src[col] != transp)
 				out[dstX] = src[col];
+		}
+	}
+}
+
+// Mask-aware blit from a Picture into a `Graphics::Surface` (the
+// locked framebuffer). Same pixel-mask semantics as `blitFrame`.
+// Used by hotspot/NPC rendering inside `SiteScreen::renderHotspots`
+// and `renderStaticDrops`.
+void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
+					   int x, int y) {
+	if (!screen)
+		return;
+	const byte transp = (byte)(p.flags >> 8);
+	for (int row = 0; row < p.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= screen->h)
+			continue;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+		byte *dst = (byte *)screen->getBasePtr(0, dstY);
+		for (int col = 0; col < p.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= screen->w)
+				continue;
+			if (src[col] != transp)
+				dst[dstX] = src[col];
 		}
 	}
 }
@@ -83,7 +106,68 @@ void cyclePaletteRange(uint8 start, uint8 end) {
 	g_system->getPaletteManager()->setPalette(buf, start, count);
 }
 
-} // anonymous namespace
+// Per-speaker partner-position table verified against `_WaitAnims @
+// 29be:021c`. 12 bytes per entry, indexed by `siteData[+8]`. Layout:
+//   +0..1 anim Jake, +2..3 anim Jenny,
+//   +4..5 x    Jake, +6..7 x    Jenny,
+//   +8..9 y    Jake, +10..11 y    Jenny.
+// Seven valid entries — anything past entry 6 in the binary is
+// `_SiteButtons` rect data that follows the table in memory.
+const uint16 kWaitAnims[7][6] = {
+	{ 0x00, 0x0a, 0x06, 0x06, 0x50, 0x50 }, // 0
+	{ 0x03, 0x0c, 0x06, 0x06, 0x50, 0x50 }, // 1
+	{ 0x01, 0x0b, 0x06, 0x06, 0x50, 0x50 }, // 2
+	{ 0x04, 0x0d, 0x06, 0x06, 0x50, 0x50 }, // 3
+	{ 0x02, 0x10, 0x06, 0x06, 0x50, 0x50 }, // 4
+	{ 0x05, 0x05, 0x06, 0x06, 0x50, 0x50 }, // 5
+	{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
+};
+
+// `_DoKDAnim` lookup table. Six valid kdAnimNum entries (0..5)
+// verified from `29be:0228`. Layout per entry: { animJake, animJenny,
+// xJake, xJenny, yJake, yJenny }. Position is (6, 80) in every entry.
+const uint16 kKdAnimTable[6][6] = {
+	{ 0x03, 0x0c, 6, 6, 80, 80 }, // 0 — speaker idx 1 wait anim
+	{ 0x01, 0x0b, 6, 6, 80, 80 }, // 1 — same as PDA idle
+	{ 0x04, 0x0d, 6, 6, 80, 80 }, // 2
+	{ 0x02, 0x10, 6, 6, 80, 80 }, // 3 — same as gallery
+	{ 0x05, 0x05, 6, 6, 80, 80 }, // 4 — same anim both partners
+	{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
+};
+
+// Sequence-script lookup. Entries copied verbatim from
+// `_AnimationSequences @ 29be:22d4` walked through to the next 0x80.
+// Each script is a u16[] of frame indices terminated by 0x80; we
+// don't yet handle 0x81 jumps (none of the kdAnim sequences use
+// them — verified). seqnum == animId for these calls (per
+// `_PlayAnimation` 172b:1f5d push order).
+struct KdScript {
+	uint16 seqnum;
+	uint8 len;
+	uint8 frames[20];  // long enough for any kdAnim script
+};
+const KdScript kKdScripts[] = {
+	// seqnum 1 (29be:188a) — head bob
+	{ 0x01, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
+	// seqnum 2 (29be:18aa) — short blip then long pause
+	{ 0x02, 16, { 0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0 } },
+	// seqnum 3 (29be:18e0) — Jake "lift, hold, lower" gesture
+	{ 0x03,  9, { 0,1,2,3,2,2,2,1,0 } },
+	// seqnum 4 (29be:18f4) — bigger gesture (camera flash-style)
+	{ 0x04, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
+	// seqnum 5 (29be:1910) — held idle with a single peak
+	{ 0x05, 13, { 0,0,0,1,2,3,2,1,0,0,0,0,0 } },
+	// seqnum 6 (29be:192c) — empty (immediate END)
+	{ 0x06,  0, { 0 } },
+	// seqnum 0xb (29be:188a, same as 1) — Jenny PDA idle
+	{ 0x0b, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
+	// seqnum 0xc (29be:18e0, same as 3) — Jenny "take a picture"
+	{ 0x0c,  9, { 0,1,2,3,2,2,2,1,0 } },
+	// seqnum 0xd (29be:18f4, same as 4) — Jenny big gesture
+	{ 0x0d, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
+	// seqnum 0x10 (29be:1956) — Jenny short anim
+	{ 0x10,  9, { 0,0,0,1,0,0,0,0,0 } },
+};
 
 void SiteScreen::enter(uint siteNum) {
 	if (!_mystery || !_mystery->isLoaded()) {
@@ -490,28 +574,6 @@ void SiteScreen::enterSiteAnim() {
 	}
 }
 
-// Mask-aware blit from a Picture into a Graphics::Surface.
-static void blitMaskedSurface(Graphics::Surface *screen,
-							  const Picture &p, int x, int y) {
-	if (!screen)
-		return;
-	const byte transp = (byte)(p.flags >> 8);
-	for (int row = 0; row < p.surface.h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= screen->h)
-			continue;
-		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-		byte *dst = (byte *)screen->getBasePtr(0, dstY);
-		for (int col = 0; col < p.surface.w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= screen->w)
-				continue;
-			if (src[col] != transp)
-				dst[dstX] = src[col];
-		}
-	}
-}
-
 void SiteScreen::renderStaticDrops(uint siteNum) {
 	// Loop 2 from `_DoSiteLoop @ 168d:03f4`:
 	//   bound: siteData[+0x4]   (verified at 168d:05c0:
@@ -671,21 +733,9 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	//   +0..1 anim Jake, +2..3 anim Jenny,
 	//   +4..5 x    Jake, +6..7 x    Jenny,
 	//   +8..9 y    Jake, +10..11 y    Jenny.
-	// Seven valid entries verified against the bytes at 29be:021c.
-	// Anything past entry 6 in the binary is `_SiteButtons` rect data
-	// that follows the table in memory — NOT continuation entries —
-	// so we cap the table here and skip rendering for siteData[+8] >= 7
-	// (which would indicate corrupt mystery data anyway).
-	static const uint16 kWaitAnims[7][6] = {
-		{ 0x00, 0x0a, 0x06, 0x06, 0x50, 0x50 }, // 0
-		{ 0x03, 0x0c, 0x06, 0x06, 0x50, 0x50 }, // 1
-		{ 0x01, 0x0b, 0x06, 0x06, 0x50, 0x50 }, // 2
-		{ 0x04, 0x0d, 0x06, 0x06, 0x50, 0x50 }, // 3
-		{ 0x02, 0x10, 0x06, 0x06, 0x50, 0x50 }, // 4
-		{ 0x05, 0x05, 0x06, 0x06, 0x50, 0x50 }, // 5
-		{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
-	};
-
+	// `kWaitAnims` lives at file scope above; we cap rendering at
+	// `speaker < 7` since anything past entry 6 is the `_SiteButtons`
+	// rect data that follows the table in the binary.
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
@@ -954,17 +1004,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 	// gesture (Jenny taking a picture, etc.) finishes before the
 	// speaker portrait + speech balloon appear.
 	//
-	// Six valid kdAnimNum entries (0..5). Verified bytes from
-	// `29be:0228`. Layout per entry: { animJake, animJenny, xJake,
-	// xJenny, yJake, yJenny }. Position is (6, 80) in every entry.
-	static const uint16 kKdAnimTable[6][6] = {
-		{ 0x03, 0x0c, 6, 6, 80, 80 }, // 0 — speaker idx 1 wait anim
-		{ 0x01, 0x0b, 6, 6, 80, 80 }, // 1 — same as PDA idle
-		{ 0x04, 0x0d, 6, 6, 80, 80 }, // 2
-		{ 0x02, 0x10, 6, 6, 80, 80 }, // 3 — same as gallery
-		{ 0x05, 0x05, 6, 6, 80, 80 }, // 4 — same anim both partners
-		{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
-	};
+	// `kKdAnimTable` and `kKdScripts` live at file scope above.
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return;
 
@@ -979,45 +1019,12 @@ void EEMEngine::playKdAnim(uint16 num) {
 		return;
 	}
 
-	// Sequence-script lookup. Entries copied verbatim from
-	// `_AnimationSequences @ 29be:22d4` walked through to the next 0x80.
-	// Each script is a u16[] of frame indices terminated by 0x80; we
-	// don't yet handle 0x81 jumps (none of the kdAnim sequences use
-	// them — verified). seqnum == animId for these calls (per
-	// `_PlayAnimation` 172b:1f5d push order).
-	struct Script {
-		uint16 seqnum;
-		uint8 len;
-		uint8 frames[20];  // long enough for any kdAnim script
-	};
-	static const Script kScripts[] = {
-		// seqnum 1 (29be:188a) — head bob
-		{ 0x01, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
-		// seqnum 2 (29be:18aa) — short blip then long pause
-		{ 0x02, 16, { 0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0 } },
-		// seqnum 3 (29be:18e0) — Jake "lift, hold, lower" gesture
-		{ 0x03,  9, { 0,1,2,3,2,2,2,1,0 } },
-		// seqnum 4 (29be:18f4) — bigger gesture (camera flash-style)
-		{ 0x04, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
-		// seqnum 5 (29be:1910) — held idle with a single peak
-		{ 0x05, 13, { 0,0,0,1,2,3,2,1,0,0,0,0,0 } },
-		// seqnum 6 (29be:192c) — empty (immediate END)
-		{ 0x06,  0, { 0 } },
-		// seqnum 0xb (29be:188a, same as 1) — Jenny PDA idle
-		{ 0x0b, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
-		// seqnum 0xc (29be:18e0, same as 3) — Jenny "take a picture"
-		{ 0x0c,  9, { 0,1,2,3,2,2,2,1,0 } },
-		// seqnum 0xd (29be:18f4, same as 4) — Jenny big gesture
-		{ 0x0d, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
-		// seqnum 0x10 (29be:1956) — Jenny short anim
-		{ 0x10,  9, { 0,0,0,1,0,0,0,0,0 } },
-	};
 	const uint8 *frames = nullptr;
 	uint frameCount = 0;
-	for (uint i = 0; i < ARRAYSIZE(kScripts); i++) {
-		if (kScripts[i].seqnum == animId) {
-			frames = kScripts[i].frames;
-			frameCount = kScripts[i].len;
+	for (uint i = 0; i < ARRAYSIZE(kKdScripts); i++) {
+		if (kKdScripts[i].seqnum == animId) {
+			frames = kKdScripts[i].frames;
+			frameCount = kKdScripts[i].len;
 			break;
 		}
 	}

@@ -40,7 +40,24 @@
 
 namespace EEM {
 
-namespace {
+// Five fixed gallery slot positions verified at `29be:0x116`. Used by
+// both `_DrawGallery @ 158f:0046` (notebook gallery) and the accuse
+// portrait grid; the layout is identical so we share the table.
+struct GallerySlot { int x; int y; };
+const GallerySlot kGallerySlots[5] = {
+	{  83,  14 }, // 0
+	{ 155,  14 }, // 1
+	{ 227,  14 }, // 2
+	{ 119,  90 }, // 3
+	{ 191,  90 }  // 4
+};
+
+// `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ `29be:1064`:
+//   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
+//   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
+const uint16 kDigitBalloons[10] = {
+	0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x20, 0x21, 0x22, 0x1e
+};
 
 // Return the next non-empty slot in `slotRects` starting from `from`,
 // stepping by `dir` (+1 or -1) with wraparound. Used by the accuse
@@ -214,8 +231,6 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 							   0, 0, 320, 200);
 	g_system->updateScreen();
 }
-
-} // anonymous namespace
 
 void EEMEngine::doNewPlayer() {
 	// Mirrors `_NewPlayer` @ 1c33:0dda. The original draws background
@@ -1259,16 +1274,8 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 								  Common::Array<int> &slotSuspect) {
 	// Gallery redraw — formerly the `drawFrame` lambda inside `doGallery`.
 	// Mirrors `_DrawGallery @ 158f:0046`: PIC 0x3f frame + partner sprite
-	// at (5, 0x50) + suspect portraits in their `_NewOrder` slots.
-	struct Slot { int x; int y; };
-	static const Slot kGallerySlots[5] = {
-		{  83,  14 }, // 0
-		{ 155,  14 }, // 1
-		{ 227,  14 }, // 2
-		{ 119,  90 }, // 3
-		{ 191,  90 }  // 4
-	};
-
+	// at (5, 0x50) + suspect portraits in their `_NewOrder` slots. Slot
+	// positions live in `kGallerySlots` in this file's anon namespace.
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
 	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
@@ -1322,7 +1329,7 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 		const uint8 phys = _mystery._newOrder[i];
 		if (phys >= 5)
 			continue;
-		const Slot &s = kGallerySlots[phys];
+		const GallerySlot &s = kGallerySlots[phys];
 
 		const bool discovered = _mystery._inGallery[phys] != 0;
 		if (discovered) {
@@ -1878,9 +1885,7 @@ uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
 	// reusing the digit-2 slot.
 	if (firstChar < '0' || firstChar > '9')
 		return 0x17;
-	static const uint16 kDigitBalloons[10] = {
-		0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x20, 0x21, 0x22, 0x1e
-	};
+	// `kDigitBalloons` lives at file scope above.
 	return kDigitBalloons[firstChar - '0'];
 }
 
@@ -2265,14 +2270,9 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 								   Common::Array<int> &slotSuspect) {
 	// Accuse-gallery redraw — formerly the `drawGallery` lambda inside
 	// `doAccuse`. Mirrors `_DoAccuseGallery @ 1df2:0a31` portrait grid:
-	// PIC 0x3f backdrop, suspect portraits at the 5 fixed slots, and a
-	// 1-px outline (palette index 0xFE) around the highlighted slot.
-	struct Slot { int x; int y; };
-	static const Slot kGallerySlots[5] = {
-		{  83,  14 }, { 155,  14 }, { 227,  14 },
-		{ 119,  90 }, { 191,  90 }
-	};
-
+	// PIC 0x3f backdrop, suspect portraits at the 5 fixed slots
+	// (`kGallerySlots` in this file's anon namespace), and a 1-px
+	// outline (palette index 0xFE) around the highlighted slot.
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -2300,7 +2300,7 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 		// `_InGallery[phys]` flag is 0 — that's the original gate.
 		if (_mystery._inGallery[phys] == 0)
 			continue;
-		const Slot &s = kGallerySlots[phys];
+		const GallerySlot &s = kGallerySlots[phys];
 
 		const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
 		if (picId == 0)

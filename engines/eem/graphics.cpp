@@ -39,6 +39,42 @@
 
 namespace EEM {
 
+// `_InterfaceHelp(num)` @ 1560:0205 reads `HelpData @ 29be:00c8` (5-byte
+// entries: u8 count, then up to 2 u16 picIds). Verified bytes:
+//   entry 0 (PDA / gallery HELP button): count=2, picIds = 0x0063, 0x01ae
+//   entry 1: count=2, picIds = 0x0192, 0x01b1
+// Only entry 0 is reachable from the PDA notebook (rect 1) and the
+// gallery (rect 1) — both call `_InterfaceHelp(0)`.
+const uint16 kHelpPics[][2] = {
+	{ 0x0063, 0x01ae },
+	{ 0x0192, 0x01b1 },
+};
+
+// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875`.
+// Used at 1df2:0aef-0af9 (accuse hint) and `_DisplayClue` to position
+// `_WordWrap` text inside the balloon. Only +0/+2/+4 are read by
+// `getBalloonInsets`:
+//   +0..1 = text X inset, +2..3 = Y inset, +4..5 = max wrap width
+// (+6/+8 = balloon h / tail offset, both unused for text layout).
+struct BalloonInsets { uint16 x; uint16 y; uint16 w; };
+const BalloonInsets kBalloonInsetTable[] = {
+	{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+	{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+	{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+	{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+	{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+	{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+	{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+	{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+	{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+	{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+	{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+	{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+	{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+	{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+	{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
+};
+
 void EEMEngine::doHelp() {
 	// `_KDHelp` reads two hint TextBlock offsets from `_KDTextIndex`:
 	//   word @ +0xe : first-time hint
@@ -82,15 +118,8 @@ void EEMEngine::doInterfaceHelp(uint num) {
 	// `_Rect_Move_Mask(0, 0, ...)`, and waits for click / key. ESC ends
 	// the cycle; any other input advances to the next pic.
 	//
-	// Verified from Ghidra HelpData bytes:
-	//   entry 0 (PDA / gallery HELP button): count=2, picIds = 0x0063, 0x01ae
-	//   entry 1: count=2, picIds = 0x0192, 0x01b1
-	// Only entry 0 is reachable from the PDA notebook (rect 1) and the
-	// gallery (rect 1) — both call `_InterfaceHelp(0)`.
-	static const uint16 kHelpPics[][2] = {
-		{ 0x0063, 0x01ae },
-		{ 0x0192, 0x01b1 },
-	};
+	// `kHelpPics` lives at file scope above; see comment there for the
+	// HelpData decoding.
 	if (num >= ARRAYSIZE(kHelpPics))
 		return;
 
@@ -175,34 +204,13 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 
 bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 								  uint16 &yInset, uint16 &textW) const {
-	// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875`.
-	// Used at 1df2:0aef-0af9 (accuse hint) and `_DisplayClue` to position
-	// `_WordWrap` text inside the balloon. Only +0/+2/+4 are read here:
-	//   +0..1 = text X inset, +2..3 = Y inset, +4..5 = max wrap width
-	// (+6/+8 = balloon h / tail offset, both unused for text layout).
-	static const struct { uint16 x, y, w; } kTable[] = {
-		{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-		{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-		{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-		{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-		{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-		{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-		{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-		{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-		{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-		{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-		{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-		{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-		{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-		{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-		{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
-	};
+	// `kBalloonInsetTable` lives at file scope above; see comment there.
 	const uint idx = bubNum & 0x7F;
-	if (idx >= ARRAYSIZE(kTable))
+	if (idx >= ARRAYSIZE(kBalloonInsetTable))
 		return false;
-	xInset = kTable[idx].x;
-	yInset = kTable[idx].y;
-	textW  = kTable[idx].w;
+	xInset = kBalloonInsetTable[idx].x;
+	yInset = kBalloonInsetTable[idx].y;
+	textW  = kBalloonInsetTable[idx].w;
 	return true;
 }
 
