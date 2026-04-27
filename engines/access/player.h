@@ -159,6 +159,8 @@ public:
 	* Synchronize savegame data
 	*/
 	virtual void synchronize(Common::Serializer &s);
+
+	virtual void setDirFromScript(byte newDir) { _playerDirection = (Direction)newDir; }
 };
 
 } // End of namespace Access

@@ -55,6 +55,8 @@ public:
 	void updateTimers() override;
 
 	void synchronize(Common::Serializer &s) override;
+
+	void setDirFromScript(byte newDir) override;
 };
 
 } // End of namespace Noctropolis
