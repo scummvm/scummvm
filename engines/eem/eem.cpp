@@ -1507,85 +1507,197 @@ void EEMEngine::doGallery() {
 }
 
 void EEMEngine::doBigMap() {
-	// Mirrors the small/scrollable map view used inside the site loop —
-	// the original game draws a 0xe9 × 0xab viewport at (2, 2) into
-	// `_MapBitMap` (= BIGMAP.PIC) via `DrawMap @ 20fe:1058`; on top of
-	// that, `_StampButtons @ 20fe:0d2f` bakes site icons into the
-	// bitmap at MapData offsets (+4, +6). We render BIGMAP.PIC into a
-	// 233×171 viewport and overlay markers ourselves.
+	// Two-stage flow that mirrors the original screen-1 wrapper at
+	// 20fe:120b and `_DoBigMap @ 20fe:09e7`:
 	//
-	// MapData entry layout (14 bytes), confirmed from
-	// `_DrawBigMapButtons @ 20fe:0877` and `_StampButtons @ 20fe:0d2f`:
-	//   +0..1  BigMap X (overview frame PIC 0x42)
-	//   +2..3  BigMap Y
-	//   +4..5  SmallMap X (stamped into _MapBitMap at this position)
-	//   +6..7  SmallMap Y
-	//   +8..9  crime-flag (DAT_2d5d_5436): non-zero → crime-scene marker
-	//   +10..13 unused
+	//   STAGE 1 — Overview. PIC 0x42 + site icons drawn via the
+	//   `_DrawBigMapButtons` algorithm at BigMap coords MapData[+4/+6].
+	//   The original `_DoBigMap` returns sx/sy = (mouseX*2 - 0x74,
+	//   mouseY*2 - 0x55) when the player clicks inside `BigMapWindow`,
+	//   which is the scroll position into the SmallMap.
+	//
+	//   STAGE 2 — Detail zoom. PIC 0x43 frame + a 0xe9 × 0xab viewport
+	//   into BIGMAP.PIC at (2, 2), drawn by `DrawMap @ 20fe:1058` with
+	//   the (sx, sy) returned from stage 1. Site icons are stamped at
+	//   SmallMap coords MapData[+8/+0xa] via `_StampButtons`. Click on
+	//   a site icon → travel.
+	//
+	// MapData entry layout (14 bytes), verified directly from the
+	// disassembly of `_DrawBigMapButtons @ 20fe:0877` (`PUSH ES:[BX+4]`
+	// for X, `PUSH ES:[BX+6]` for Y, `CMP ES:[BX+0xc], 0` for crime)
+	// and `_StampButtons @ 20fe:0d2f` (`MOV AX, ES:[BX+8]`,
+	// `MOV AX, ES:[BX+0xa]`):
+	//   +0..3   ??? (not yet decoded)
+	//   +4..5   BigMap X
+	//   +6..7   BigMap Y
+	//   +8..9   SmallMap X
+	//   +0xa..b SmallMap Y
+	//   +0xc..d crime-flag
+
+	if (!_mystery.isLoaded())
+		return;
+
+	CursorMan.showMouse(true);
+
+	// `_GetPalette(0x24)` per `_DoBigMap @ 20fe:09e7`.
+	setSitePalette(0x24);
+
+	const Common::Rect kSetupRect(0xc7, 0x12, 0xc7 + 0x32, 0x12 + 0xa); // approx; original from globals
+	(void)kSetupRect; // not yet wired into our overlay
+
+	// ------------------------------------------------------------------
+	// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
+	// ------------------------------------------------------------------
+
+	auto drawOverview = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+
+		Picture frame;
+		if (_picsArchive.getPicture(0x42, frame)) {
+			const int w = MIN<int>(frame.surface.w, 320);
+			const int h = MIN<int>(frame.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)frame.surface.getBasePtr(0, row), w);
+		}
+
+		// Site icons at BigMap coords (+4, +6). Three colours by state:
+		//   visited → DoneMarker analogue, crime flag → CrimeMarker,
+		//   else → SiteMarker. Current site gets a bright highlight.
+		for (uint i = 0; i < _mystery.numSites(); i++) {
+			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+				continue;
+			const byte *entry = _mystery.mapEntry(i);
+			if (!entry)
+				continue;
+			const uint16 mx    = READ_LE_UINT16(entry + 0x4);
+			const uint16 my    = READ_LE_UINT16(entry + 0x6);
+			const uint16 crime = READ_LE_UINT16(entry + 0xc);
+
+			byte color;
+			if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
+				color = 0x07;
+			else if (crime != 0)
+				color = 0x0C;
+			else
+				color = 0x0F;
+			if (i == _mystery._siteNumber)
+				color = 0x0E;
+
+			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
+			scratch.fillRect(mark, color);
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	auto findSiteAt = [&](int x, int y) -> int {
+		// Hit-test the icons drawn in stage 1. Generous radius matches
+		// the marker square plus a couple of pixels of slop.
+		for (uint i = 0; i < _mystery.numSites(); i++) {
+			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+				continue;
+			const byte *entry = _mystery.mapEntry(i);
+			if (!entry) continue;
+			const int mx = (int)READ_LE_UINT16(entry + 0x4);
+			const int my = (int)READ_LE_UINT16(entry + 0x6);
+			if (ABS(x - mx) <= 6 && ABS(y - my) <= 6)
+				return (int)i;
+		}
+		return -1;
+	};
+
+	drawOverview();
+
+	bool wantZoom = false;
+	int  zoomX = 0, zoomY = 0;
+	while (!shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_KEYDOWN &&
+				ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+				return;
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				const int hit = findSiteAt(ev.mouse.x, ev.mouse.y);
+				if (hit >= 0) {
+					// Direct click on a site marker → travel.
+					_mystery._lastSite = _mystery._siteNumber;
+					_mystery._siteNumber = (uint16)hit;
+					return;
+				}
+				// `_DoBigMap` rule for clicks elsewhere: convert mouse
+				// coords to a SmallMap scroll position
+				//   sx = mouseX * 2 - 0x74
+				//   sy = mouseY * 2 - 0x55
+				// then transition to the detail zoom.
+				int sx = ev.mouse.x * 2;
+				int sy = ev.mouse.y * 2;
+				sx = (sx < 0x75) ? 0 : sx - 0x74;
+				sy = (sy < 0x56) ? 0 : sy - 0x55;
+				zoomX = sx;
+				zoomY = sy;
+				wantZoom = true;
+				break;
+			}
+		}
+		if (wantZoom)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	if (!wantZoom)
+		return;
+
+	// ------------------------------------------------------------------
+	// STAGE 2 — Detail zoom: PIC 0x43 frame + scrollable BIGMAP.PIC
+	// viewport at (2, 2), 0xe9 × 0xab. Click on a stamped icon → travel.
+	// ------------------------------------------------------------------
+
 	Common::File f;
 	if (!f.open(Common::Path("BIGMAP.PIC"))) {
-		warning("doBigMap: BIGMAP.PIC missing");
+		warning("doBigMap: BIGMAP.PIC missing for detail view");
 		return;
 	}
 	const uint16 mapH = f.readUint16LE();
 	const uint16 mapW = f.readUint16LE();
 	if (mapW == 0 || mapH == 0)
 		return;
-
 	Common::Array<byte> mapPixels((uint32)mapW * mapH);
 	if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
-		warning("doBigMap: short read on BIGMAP.PIC");
+		warning("doBigMap: short read on BIGMAP.PIC for detail view");
 		return;
 	}
 
-	// Viewport size from `DrawMap`: 0xe9 × 0xab at screen (2, 2).
-	// We use (4, 4) so a 1-pixel inset preserves the frame border.
 	const int kMapWinW = 0xe9; // 233
 	const int kMapWinH = 0xab; // 171
-	const int kMapWinX = 4;
-	const int kMapWinY = 4;
+	const int kMapWinX = 2;
+	const int kMapWinY = 2;
 
-	int scrollX = 0;
-	int scrollY = 0;
+	int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
+	int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
 
-	// Auto-scroll to centre the current site (using SmallMap coords).
-	if (_mystery.isLoaded()) {
-		const byte *entry = _mystery.mapEntry(_mystery._siteNumber);
-		if (entry) {
-			const uint16 mx = READ_LE_UINT16(entry + 4);
-			const uint16 my = READ_LE_UINT16(entry + 6);
-			scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW,
-				(int)mx - kMapWinW / 2));
-			scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH,
-				(int)my - kMapWinH / 2));
-		}
-	}
-
-	CursorMan.showMouse(true);
-
-	// `_DoBigMap @ 20fe:09e7` calls `_GetPalette(0x24)` after loading
-	// the frame. Without this, the map would render under whatever
-	// palette the prior site set, which makes BIGMAP.PIC look like
-	// noise / incomplete colours.
-	setSitePalette(0x24);
-
-	auto draw = [&]() {
+	auto drawDetail = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 
-		// Frame from PIC 0x42 (`_GetPicture(0x42)` in `_DoBigMap`).
 		Picture frame;
-		if (_picsArchive.getPicture(0x42, frame)) {
+		if (_picsArchive.getPicture(0x43, frame)) {
 			const int w = MIN<int>(frame.surface.w, 320);
 			const int h = MIN<int>(frame.surface.h, 200);
-			for (int row = 0; row < h; row++) {
+			for (int row = 0; row < h; row++)
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)frame.surface.getBasePtr(0, row), w);
-			}
 		}
 
-		// Map content clipped into the inner window, applying scroll.
 		const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
 		const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
 		for (int row = 0; row < copyH; row++) {
@@ -1594,48 +1706,42 @@ void EEMEngine::doBigMap() {
 				   copyW);
 		}
 
-		// Site markers — three states from `_DrawBigMapButtons`:
-		//   _DoneMarker if `SaveSiteComplete[i]` (already searched)
-		//   _CrimeMarker if MapData[+8] != 0 (crime scene)
-		//   _SiteMarker otherwise
-		// We don't have the marker PICs traced yet, so draw small filled
-		// squares with three colours that match the original semantics.
-		if (_mystery.isLoaded()) {
-			for (uint i = 0; i < _mystery.numSites(); i++) {
-				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-					continue;
-				const byte *entry = _mystery.mapEntry(i);
-				if (!entry)
-					continue;
-				const uint16 mx = READ_LE_UINT16(entry + 4);
-				const uint16 my = READ_LE_UINT16(entry + 6);
-				const uint16 crime = READ_LE_UINT16(entry + 8);
-				const int sx = (int)mx - scrollX + kMapWinX;
-				const int sy = (int)my - scrollY + kMapWinY;
-				if (sx < kMapWinX || sx >= kMapWinX + kMapWinW ||
-					sy < kMapWinY || sy >= kMapWinY + kMapWinH)
-					continue;
+		// Stamped site icons at SmallMap coords (+8, +0xa). Same colour
+		// scheme as the overview so the player can tell them apart.
+		for (uint i = 0; i < _mystery.numSites(); i++) {
+			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+				continue;
+			const byte *entry = _mystery.mapEntry(i);
+			if (!entry) continue;
+			const uint16 mx    = READ_LE_UINT16(entry + 0x8);
+			const uint16 my    = READ_LE_UINT16(entry + 0xa);
+			const uint16 crime = READ_LE_UINT16(entry + 0xc);
+			const int sx = (int)mx - scrollX + kMapWinX;
+			const int sy = (int)my - scrollY + kMapWinY;
+			if (sx < kMapWinX || sx >= kMapWinX + kMapWinW ||
+				sy < kMapWinY || sy >= kMapWinY + kMapWinH)
+				continue;
 
-				byte color;
-				if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
-					color = 0x07;       // searched (DoneMarker analogue)
-				else if (crime != 0)
-					color = 0x0C;       // crime scene (CrimeMarker analogue)
-				else
-					color = 0x0F;       // available (SiteMarker analogue)
-				if (i == _mystery._siteNumber)
-					color = 0x0E;       // current site — bright yellow
+			byte color;
+			if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
+				color = 0x07;
+			else if (crime != 0)
+				color = 0x0C;
+			else
+				color = 0x0F;
+			if (i == _mystery._siteNumber)
+				color = 0x0E;
 
-				const Common::Rect mark(sx - 3, sy - 3, sx + 4, sy + 4);
-				scratch.fillRect(mark, color);
-			}
+			const Common::Rect mark(sx - 3, sy - 3, sx + 4, sy + 4);
+			scratch.fillRect(mark, color);
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
-	draw();
+
+	drawDetail();
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -1646,37 +1752,26 @@ void EEMEngine::doBigMap() {
 				return;
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return;
+					return;  // exit detail back to caller (site loop / engine)
 				const int kStep = 16;
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
 					scrollX = MAX<int>(0, scrollX - kStep);
 					dirty = true;
 				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-					scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW), scrollX + kStep);
+					scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW),
+						scrollX + kStep);
 					dirty = true;
 				} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
 					scrollY = MAX<int>(0, scrollY - kStep);
 					dirty = true;
 				} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
-					scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH), scrollY + kStep);
+					scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH),
+						scrollY + kStep);
 					dirty = true;
-				}
-				if (ev.kbd.keycode >= Common::KEYCODE_0 &&
-					ev.kbd.keycode <= Common::KEYCODE_9) {
-					const uint target = (uint)(ev.kbd.keycode - Common::KEYCODE_0);
-					if (_mystery.isLoaded() &&
-						target < _mystery.numSites() &&
-						_mystery._onSites[target]) {
-						_mystery._lastSite = _mystery._siteNumber;
-						_mystery._siteNumber = (uint16)target;
-						return;
-					}
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Click on a map marker?
-				if (_mystery.isLoaded() &&
-					ev.mouse.x >= kMapWinX &&
+				if (ev.mouse.x >= kMapWinX &&
 					ev.mouse.x < kMapWinX + kMapWinW &&
 					ev.mouse.y >= kMapWinY &&
 					ev.mouse.y < kMapWinY + kMapWinH) {
@@ -1686,23 +1781,22 @@ void EEMEngine::doBigMap() {
 							continue;
 						const byte *entry = _mystery.mapEntry(i);
 						if (!entry) continue;
-						const uint16 mx = READ_LE_UINT16(entry + 4);
-						const uint16 my = READ_LE_UINT16(entry + 6);
+						const uint16 mx = READ_LE_UINT16(entry + 0x8);
+						const uint16 my = READ_LE_UINT16(entry + 0xa);
 						const int sx = (int)mx - scrollX + kMapWinX;
 						const int sy = (int)my - scrollY + kMapWinY;
-						if (ABS(ev.mouse.x - sx) <= 5 &&
-							ABS(ev.mouse.y - sy) <= 5) {
+						if (ABS(ev.mouse.x - sx) <= 6 &&
+							ABS(ev.mouse.y - sy) <= 6) {
 							_mystery._lastSite = _mystery._siteNumber;
 							_mystery._siteNumber = (uint16)i;
 							return;
 						}
 					}
 				}
-
 			}
 		}
 		if (dirty)
-			draw();
+			drawDetail();
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
