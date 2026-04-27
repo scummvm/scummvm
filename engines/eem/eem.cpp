@@ -1778,9 +1778,9 @@ void EEMEngine::doNotebook() {
 					continue;
 				}
 				if (kBtnHelp1.contains(ev.mouse.x, ev.mouse.y)) {
-					// rect 1 → `_InterfaceHelp(0)`. We use doHelp() to
-					// surface the same kind of hint pane.
-					doHelp();
+					// rect 1 → `_InterfaceHelp(0)`: walks `HelpData[0]` and
+					// blits PICs 0x63 / 0x1ae fullscreen for click-through.
+					doInterfaceHelp(0);
 					dirty = true;
 					continue;
 				}
@@ -2055,7 +2055,10 @@ void EEMEngine::doGallery() {
 					exitFlag = true; break;
 				}
 				if (kBtnHelp.contains(ev.mouse.x, ev.mouse.y)) {
-					doHelp();
+					// Gallery rect 1 → `_InterfaceHelp(0)` per jmp table at
+					// 158f:0625 (HandleGalleryButton). Same picture sequence
+					// as the notebook HELP button.
+					doInterfaceHelp(0);
 					lastDraw = 0;
 					continue;
 				}
@@ -2648,6 +2651,91 @@ void EEMEngine::doHelp() {
 	waitForInput(60000);
 }
 
+void EEMEngine::doInterfaceHelp(uint num) {
+	// Mirrors `_InterfaceHelp(num)` @ 1560:0205. The original walks
+	// `HelpData @ 29be:00c8` (5-byte entries: u8 count, then up to 2
+	// u16 picIds), `_GetPicture`s each one, blits it fullscreen via
+	// `_Rect_Move_Mask(0, 0, ...)`, and waits for click / key. ESC ends
+	// the cycle; any other input advances to the next pic.
+	//
+	// Verified from Ghidra HelpData bytes:
+	//   entry 0 (PDA / gallery HELP button): count=2, picIds = 0x0063, 0x01ae
+	//   entry 1: count=2, picIds = 0x0192, 0x01b1
+	// Only entry 0 is reachable from the PDA notebook (rect 1) and the
+	// gallery (rect 1) — both call `_InterfaceHelp(0)`.
+	static const uint16 kHelpPics[][2] = {
+		{ 0x0063, 0x01ae },
+		{ 0x0192, 0x01b1 },
+	};
+	if (num >= ARRAYSIZE(kHelpPics))
+		return;
+
+	debugC(1, kDebugScript, "doInterfaceHelp(%u): showing pics 0x%x, 0x%x",
+		   num, kHelpPics[num][0], kHelpPics[num][1]);
+
+	for (uint i = 0; i < 2; i++) {
+		const uint16 picId = kHelpPics[num][i];
+		Picture pic;
+		if (!_picsArchive.getPicture(picId, pic)) {
+			warning("doInterfaceHelp: getPicture(0x%x) failed", picId);
+			continue;
+		}
+		debugC(1, kDebugScript, "doInterfaceHelp: pic 0x%x = %dx%d flags=0x%x",
+			   picId, pic.surface.w, pic.surface.h, pic.flags);
+
+		// Compose a 320x200 frame (cleared) and blit the help pic at (0,0)
+		// with the original's masked-blit semantics: pixels equal to the
+		// pic's sub-mode (high byte of `pic[0]`, see `_Rect_Move_Mask`
+		// param_10 at 1000:03fc) are treated as transparent and skipped.
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		const byte transp = (byte)(pic.flags >> 8);
+		const int w = MIN<int>(pic.surface.w, 320);
+		const int h = MIN<int>(pic.surface.h, 200);
+		for (int row = 0; row < h; row++) {
+			const byte *src = (const byte *)pic.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, row);
+			for (int col = 0; col < w; col++) {
+				if (src[col] != transp)
+					dst[col] = src[col];
+			}
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		bool escape = false;
+		while (!shouldQuit() && !escape) {
+			Common::Event ev;
+			bool advance = false;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					return;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					advance = true;
+					break;
+				}
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+						escape = true;
+					else
+						advance = true;
+					break;
+				}
+			}
+			if (advance || escape)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(15);
+		}
+		if (escape)
+			break;
+	}
+}
+
 bool EEMEngine::areYouSure() {
 	// Mirrors `_AreYouSure` @ 1a35:0a5c. Original loads PIC 0x136 for the
 	// dialog body and PIC 0x1FD/0x1FE for YES/NO. We render a minimal
@@ -2805,8 +2893,24 @@ void EEMEngine::doAccuse() {
 		g_system->updateScreen();
 	};
 
-	// Step 1 — KD hint balloon. `KDTextIndex[+8]` = third hint slot
-	// (offset 8 from the index array).
+	// Step 1 — KD hint balloon. Mirrors `_DoAccuseGallery @ 1df2:0a31`
+	// (1df2:0a4c-1df2:0afe):
+	//   text       = TextBlock + KDTextIndex[+8]
+	//   bub        = _GetKDTextBalloon(text)              — 1df2:0105
+	//   GetBalloon(bub)                                   → pic in [BP-6:-8]
+	//   if (pic.h < 0x4e)  y = (0x50 - pic.h) >> 1   else y = 1   (1df2:0a8b)
+	//   AddPicBackground(pic, 0x21, y)                    (1df2:0aab)
+	//   WordWrap(0x21 + tbl[bub].x, y + tbl[bub].y, tbl[bub].w, text, color=0, -1)
+	//   tbl base = 29be:0875, 10-byte entries: x@+0, y@+2, w@+4
+	//
+	// `_GetKDTextBalloon` (1df2:0105): when (ctype[firstChar] & 2) == 0 →
+	//   bub = *(u16*)29be:1068 = 0x0017                   (verified)
+	// else                                                 → table lookup
+	//   bub = *(u16*)(29be:0fe6 + 0x1e + firstChar*2)
+	// Bit 1 in Borland's ctype = punctuation, so non-punctuation (most
+	// letters / control bytes / digits) takes the constant-balloon path.
+	// We use 0x17 as the default; the table-lookup path covers a small
+	// minority of texts (those starting with `,` `.` `:` etc.).
 	const byte *kdIdx = _mystery.kdTextIndex();
 	if (kdIdx) {
 		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
@@ -2815,9 +2919,19 @@ void EEMEngine::doAccuse() {
 			Common::String hint =
 				parseString(raw ? raw : "", _playerName, _partner);
 			if (!hint.empty()) {
-				// Mini ClueBlock: 1 entry, partner-0 fields. Compose
-				// just the balloon at (0x21, 0x10) (default position
-				// from `_DoAccuseGallery`).
+				// 29be:1068 = 0x0017, the non-punctuation default.
+				const uint16 bubNum = 0x17;
+				Picture balloon;
+				const bool haveBalloon =
+					_balloonArchive.size() > (bubNum & 0x7F) &&
+					_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+
+				// 1df2:0a8b-1df2:0aa5: y = (h < 0x4e) ? (0x50-h)>>1 : 1
+				const int balloonX = 0x21;
+				int balloonY = 1;
+				if (haveBalloon && balloon.surface.h < 0x4e)
+					balloonY = (0x50 - balloon.surface.h) / 2;
+
 				Graphics::ManagedSurface ms(320, 200,
 					Graphics::PixelFormat::createFormatCLUT8());
 				ms.clear();
@@ -2829,8 +2943,29 @@ void EEMEngine::doAccuse() {
 							   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
 					}
 				}
-				if (_font.isLoaded()) {
-					_font.drawWordWrapped(&ms, 0x52, 0x14, 218, hint, 0x5C);
+				// `_Rect_Move_Mask` (1000:03fc) — pixels == pic[0]>>8 are
+				// transparent (verified at displayClue site).
+				if (haveBalloon) {
+					const byte transp = (byte)(balloon.flags >> 8);
+					const int bw = MIN<int>(balloon.surface.w, 320 - balloonX);
+					const int bh = MIN<int>(balloon.surface.h, 200 - balloonY);
+					for (int row = 0; row < bh; row++) {
+						const byte *src = (const byte *)balloon.surface.getBasePtr(0, row);
+						byte *dst = (byte *)ms.getBasePtr(balloonX, balloonY + row);
+						for (int col = 0; col < bw; col++) {
+							if (src[col] != transp)
+								dst[col] = src[col];
+						}
+					}
+				}
+				// 29be:0875 entry 23 (= 0x17): bytes `05 00 04 00 9b 00 96 00 23 00`
+				// → x=5, y=4, w=155 (verified). 1df2:0acb pushes color=0.
+				if (haveBalloon && _font.isLoaded()) {
+					_font.drawWordWrapped(&ms, balloonX + 5, balloonY + 4, 155,
+										  hint, 0);
+				} else if (_font.isLoaded()) {
+					_font.drawWordWrapped(&ms, balloonX + 5, balloonY + 4, 155,
+										  hint, 0xF);
 				}
 				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 					0, 0, 320, 200);
