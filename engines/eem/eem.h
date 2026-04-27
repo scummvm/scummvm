@@ -116,6 +116,13 @@ public:
 	/// ctype-bit-1 (= digit) at `29be:2be1 + char`.
 	uint16 getKDTextBalloon(byte firstChar) const;
 
+	/// Substitute the 0x80..0x89 control bytes the engine uses inside
+	/// `TextBlock` strings. Mirrors `_ParseString @ 1b66:07c3`; jump
+	/// table at 1b66:0cbe. Used by every clue / hint / balloon caller.
+	Common::String parseString(const Common::String &raw,
+							   const Common::String &playerName,
+							   uint partner) const;
+
 	/// Play the partner's one-shot reaction animation slot @num. Mirrors
 	/// `_DoKDAnim @ 168d:028a` + `_PlayAnimation @ 172b:1f46`. The
 	/// per-partner (animId, x, y) come from `_WaitAnims[1+num] @ 29be:0228`,

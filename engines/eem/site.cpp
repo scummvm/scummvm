@@ -919,4 +919,174 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	// Caller (`SiteScreen::run`) re-renders the site after this returns.
 }
 
+void EEMEngine::playKdAnim(uint16 num) {
+	// Mirrors `_DoKDAnim(num) @ 168d:028a` + `_PlayAnimation @ 172b:1f46`:
+	//   _SuspendAnimation(WaitHandle);
+	//   anim   = WaitAnims[1+num].anim[partner]   (table @ 29be:0228)
+	//   x      = WaitAnims[1+num].x[partner]
+	//   y      = WaitAnims[1+num].y[partner]
+	//   _PlayAnimation(anim, x, y, WaitHandle)
+	//     → registers a state-4 (one-shot) animation slot and lets
+	//       `_UpdateAnimations` walk the sequence script until 0x80,
+	//       then frees this slot and re-activates `WaitHandle`.
+	// Our port renders the partner's idle inline in each redraw rather
+	// than via a slot system, so we play the one-shot synchronously here
+	// (blocking) and resume normal idle rendering when the caller
+	// returns. That matches the user-visible effect: the partner's
+	// gesture (Jenny taking a picture, etc.) finishes before the
+	// speaker portrait + speech balloon appear.
+	//
+	// Six valid kdAnimNum entries (0..5). Verified bytes from
+	// `29be:0228`. Layout per entry: { animJake, animJenny, xJake,
+	// xJenny, yJake, yJenny }. Position is (6, 80) in every entry.
+	static const uint16 kKdAnimTable[6][6] = {
+		{ 0x03, 0x0c, 6, 6, 80, 80 }, // 0 — speaker idx 1 wait anim
+		{ 0x01, 0x0b, 6, 6, 80, 80 }, // 1 — same as PDA idle
+		{ 0x04, 0x0d, 6, 6, 80, 80 }, // 2
+		{ 0x02, 0x10, 6, 6, 80, 80 }, // 3 — same as gallery
+		{ 0x05, 0x05, 6, 6, 80, 80 }, // 4 — same anim both partners
+		{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
+	};
+	if (num >= ARRAYSIZE(kKdAnimTable))
+		return;
+
+	const uint partner = (_partner == 0) ? 0 : 1;
+	const uint16 animId = kKdAnimTable[num][partner];
+	const int    px     = (int)kKdAnimTable[num][2 + partner];
+	const int    py     = (int)kKdAnimTable[num][4 + partner];
+
+	Animation anim;
+	if (!_aniArchive.loadAnimation(animId, anim) || anim.empty()) {
+		warning("playKdAnim(%u): anim %u failed to load", num, animId);
+		return;
+	}
+
+	// Sequence-script lookup. Entries copied verbatim from
+	// `_AnimationSequences @ 29be:22d4` walked through to the next 0x80.
+	// Each script is a u16[] of frame indices terminated by 0x80; we
+	// don't yet handle 0x81 jumps (none of the kdAnim sequences use
+	// them — verified). seqnum == animId for these calls (per
+	// `_PlayAnimation` 172b:1f5d push order).
+	struct Script {
+		uint16 seqnum;
+		uint8 len;
+		uint8 frames[20];  // long enough for any kdAnim script
+	};
+	static const Script kScripts[] = {
+		// seqnum 1 (29be:188a) — head bob
+		{ 0x01, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
+		// seqnum 2 (29be:18aa) — short blip then long pause
+		{ 0x02, 16, { 0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0 } },
+		// seqnum 3 (29be:18e0) — Jake "lift, hold, lower" gesture
+		{ 0x03,  9, { 0,1,2,3,2,2,2,1,0 } },
+		// seqnum 4 (29be:18f4) — bigger gesture (camera flash-style)
+		{ 0x04, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
+		// seqnum 5 (29be:1910) — held idle with a single peak
+		{ 0x05, 13, { 0,0,0,1,2,3,2,1,0,0,0,0,0 } },
+		// seqnum 6 (29be:192c) — empty (immediate END)
+		{ 0x06,  0, { 0 } },
+		// seqnum 0xb (29be:188a, same as 1) — Jenny PDA idle
+		{ 0x0b, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
+		// seqnum 0xc (29be:18e0, same as 3) — Jenny "take a picture"
+		{ 0x0c,  9, { 0,1,2,3,2,2,2,1,0 } },
+		// seqnum 0xd (29be:18f4, same as 4) — Jenny big gesture
+		{ 0x0d, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
+		// seqnum 0x10 (29be:1956) — Jenny short anim
+		{ 0x10,  9, { 0,0,0,1,0,0,0,0,0 } },
+	};
+	const uint8 *frames = nullptr;
+	uint frameCount = 0;
+	for (uint i = 0; i < ARRAYSIZE(kScripts); i++) {
+		if (kScripts[i].seqnum == animId) {
+			frames = kScripts[i].frames;
+			frameCount = kScripts[i].len;
+			break;
+		}
+	}
+	if (frameCount == 0) {
+		// Fallback: linear playback through anim cells (better than
+		// nothing if a future kdAnim references an unscripted anim).
+		frameCount = (uint)anim.size();
+	}
+
+	// Erase-source for between-frame redraw. Prefer the partner-less
+	// backdrop the caller stashed via `setPartnerEraseBg` (e.g. the
+	// site's `_bgSnapshot`, which has the static drops + frame but no
+	// partner sprite). Without that, fall back to whatever's currently
+	// on screen — which works for full-screen contexts (PDA / accuse /
+	// briefing) where there is no separate idle partner overlay to
+	// erase, but produces visible "ghosting" against the site's idle
+	// partner cell at (6, 80) because it has the resting pose baked in.
+	Graphics::ManagedSurface bg(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	if (_partnerEraseBg.w == 320 && _partnerEraseBg.h == 200) {
+		for (int row = 0; row < 200; row++) {
+			memcpy((byte *)bg.getBasePtr(0, row),
+				   (const byte *)_partnerEraseBg.getBasePtr(0, row), 320);
+		}
+	} else {
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen)
+			return;
+		for (int row = 0; row < 200; row++) {
+			memcpy((byte *)bg.getBasePtr(0, row),
+				   (const byte *)screen->getBasePtr(0, row), 320);
+		}
+		g_system->unlockScreen();
+	}
+
+	for (uint i = 0; i < frameCount && !shouldQuit(); i++) {
+		const uint frameIdx = frames ? (uint)frames[i] : i;
+		if (frameIdx >= anim.size())
+			continue;
+		const Picture &fr = anim[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+
+		// Restore BG, then masked-blit the next frame.
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		for (int row = 0; row < 200; row++) {
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)bg.getBasePtr(0, row), 320);
+		}
+		const int w = MIN<int>(fr.surface.w, 320 - px);
+		const int h = MIN<int>(fr.surface.h, 200 - py);
+		for (int row = 0; row < h; row++) {
+			const int dstY = py + row;
+			if (dstY < 0) continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < w; col++) {
+				const int dstX = px + col;
+				if (dstX < 0) continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// One frame per `_CheckFrameRate` tick. The original calibrates
+		// this to ~10 fps; 100 ms matches what the rest of the engine
+		// uses for partner / NPC frame cycling.
+		const uint32 wakeup = g_system->getMillis() + 100;
+		while (g_system->getMillis() < wakeup && !shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				// Drain events but don't allow skipping mid-animation —
+				// the speaker portrait + balloon haven't been drawn yet
+				// and a click would otherwise eat the upcoming clue.
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+					return;
+			}
+			g_system->delayMillis(10);
+		}
+	}
+
+	// Restore BG so the next caller (speaker portrait blit) starts clean.
+	g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
+	g_system->updateScreen();
+}
 } // End of namespace EEM
