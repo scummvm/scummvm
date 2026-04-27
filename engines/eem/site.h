@@ -77,6 +77,15 @@ private:
 	/// of `_DoSiteLoop @ 168d:03f4`.
 	void renderPartner(uint siteNum);
 
+	/// Draw the per-site NPC "drops" (the locals you click on to
+	/// trigger a clue). `_DoSiteLoop` reads `siteData[+0xa]` as the
+	/// drop count, then iterates 6-byte entries at `siteData[+0x48]`:
+	///   {anim_id (-1 = ColorCycle), x, y}.
+	/// Each non-(-1) entry is a `_NewAnimation(x, y, animId)`. We blit
+	/// the first frame as a static sprite; the original cycles via
+	/// `_UpdateAnimations`.
+	void renderDrops(uint siteNum);
+
 	EEMEngine *_vm;
 	Mystery *_mystery;
 	bool _showHotspots = true;  ///< Toggle outlines with V key.
