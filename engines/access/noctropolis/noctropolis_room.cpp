@@ -37,7 +37,12 @@ NoctropolisRoom::NoctropolisRoom(AccessEngine *vm): Room(vm) {
 void NoctropolisRoom::reloadRoom() {
 	loadRoom(_vm->_player->_roomNumber);
 
-	// This is LoadPlayer1
+	loadPlayer1();
+
+	reloadRoom1();
+}
+
+void NoctropolisRoom::loadPlayer1() {
 	int subFileBase = 1;
 	int numSubFiles = -1;
 	int objBase = -1;
@@ -58,6 +63,7 @@ void NoctropolisRoom::reloadRoom() {
 				fileNum = 0xff;
 			}
 		} else {
+			// kRoomFlagNoPlayer.
 		}
 	} else {
 		// Top
@@ -76,8 +82,6 @@ void NoctropolisRoom::reloadRoom() {
 			_vm->_objectsTable[objBase + i - subFileBase] = new SpriteResource(_vm, data);
 		}
 	}
-
-	reloadRoom1();
 }
 
 void NoctropolisRoom::reloadRoom1() {

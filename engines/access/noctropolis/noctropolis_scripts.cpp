@@ -21,6 +21,7 @@
 
 #include "access/noctropolis/noctropolis_scripts.h"
 #include "access/noctropolis/noctropolis_game.h"
+#include "access/noctropolis/noctropolis_room.h"
 
 namespace Access {
 
@@ -126,8 +127,11 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 	case 5:
 		vm->playSuccubusAttack();
 		break;
-	case 6:
-		error("TODO: Special 6: Load DARKSHEER player!");
+	case 6: // Set player model
+		((NoctropolisRoom *)vm->_room)->loadPlayer1();
+		_vm->_player->load();
+		_vm->_screen->setManPalette();
+		_vm->_screen->setPalette();
 	case 7:
 		vm->_midi->loadMusic(98, param1);
 		break;
