@@ -39,6 +39,7 @@
 #include "chamber/room.h"
 #include "chamber/dialog.h"
 #include "chamber/cga.h"
+#include "chamber/cursor.h"
 
 namespace Chamber {
 
@@ -94,6 +95,8 @@ bool ChamberEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
+static const byte kSaveVersion = 1;
+
 // Serializes a pointer as a byte offset from base; 0xFFFF represents null
 template<typename T>
 static void syncPtrOffset(Common::Serializer &s, T *&ptr, void *base) {
@@ -103,21 +106,62 @@ static void syncPtrOffset(Common::Serializer &s, T *&ptr, void *base) {
 		ptr = (ofs == 0xFFFF) ? nullptr : (T *)((byte *)base + ofs);
 }
 
+static void syncItem(Common::Serializer &s, item_t &it) {
+	s.syncAsByte(it.flags);
+	s.syncAsByte(it.area);
+	s.syncAsByte(it.sprite);
+	s.syncAsByte(it.name);
+	s.syncAsUint16LE(it.command);
+}
+
+static void syncPers(Common::Serializer &s, pers_t &p) {
+	s.syncAsByte(p.area);
+	s.syncAsByte(p.flags);
+	s.syncAsByte(p.name);
+	s.syncAsByte(p.index);
+	s.syncAsByte(p.item);
+}
+
+static void syncDirtyRect(Common::Serializer &s, dirty_rect_t &dr) {
+	s.syncAsByte(dr.kind);
+	s.syncAsUint16LE(dr.offs);
+	s.syncAsByte(dr.height);
+	s.syncAsByte(dr.width);
+	s.syncAsByte(dr.y);
+	s.syncAsByte(dr.x);
+}
+
+static void syncRect(Common::Serializer &s, rect_t &r) {
+	s.syncAsByte(r.sx);
+	s.syncAsByte(r.ex);
+	s.syncAsByte(r.sy);
+	s.syncAsByte(r.ey);
+}
+
 Common::Error ChamberEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer s(stream, nullptr);
+	if (!s.syncVersion(kSaveVersion))
+		return Common::Error(Common::kReadingFailed, "Save from a newer engine version");
 	syncGameStream(s);
+	if (s.err())
+		return Common::kReadingFailed;
 	// Prevent door transition animation from firing on load (mirrors restartGame behavior)
 	script_byte_vars.cur_spot_flags = 0xFF;
 	memset(backbuffer, 0, sizeof(backbuffer));
 	drawRoomStatics();
-	blitSpritesToBackBuffer();
+	backupSpotsImages();
+	drawPersons();
 	_renderer->backBufferToRealFull();
+	_renderer->selectCursor(CURSOR_FINGER);
 	return Common::kNoError;
 }
 
 Common::Error ChamberEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer s(nullptr, stream);
+	s.syncVersion(kSaveVersion);
 	syncGameStream(s);
+	if (s.err())
+		return Common::kWritingFailed;
 	return Common::kNoError;
 }
 
@@ -125,14 +169,21 @@ void ChamberEngine::syncGameStream(Common::Serializer &s) {
 	s.syncBytes((byte *)&script_byte_vars, sizeof(script_byte_vars));
 	s.syncBytes((byte *)&script_word_vars, sizeof(script_word_vars));
 	s.syncBytes(zones_data, RES_ZONES_MAX);
-	s.syncBytes((byte *)inventory_items, sizeof(item_t) * MAX_INV_ITEMS);
-	s.syncBytes((byte *)pers_list, sizeof(pers_t) * PERS_MAX);
-	s.syncBytes((byte *)dirty_rects, sizeof(dirty_rect_t) * MAX_DIRTY_RECT);
-	s.syncBytes((byte *)menu_commands_12, sizeof(uint16) * SPECIAL_COMMANDS_MAX);
-	s.syncBytes((byte *)menu_commands_22, sizeof(uint16) * SPECIAL_COMMANDS_MAX);
-	s.syncBytes((byte *)menu_commands_24, sizeof(uint16) * SPECIAL_COMMANDS_MAX);
-	s.syncBytes((byte *)menu_commands_23, sizeof(uint16) * SPECIAL_COMMANDS_MAX);
-	s.syncBytes((byte *)&room_bounds_rect, sizeof(rect_t));
+
+	for (int i = 0; i < MAX_INV_ITEMS; i++)
+		syncItem(s, inventory_items[i]);
+	for (int i = 0; i < PERS_MAX; i++)
+		syncPers(s, pers_list[i]);
+	for (int i = 0; i < MAX_DIRTY_RECT; i++)
+		syncDirtyRect(s, dirty_rects[i]);
+
+	for (int i = 0; i < SPECIAL_COMMANDS_MAX; i++) {
+		s.syncAsUint16LE(menu_commands_12[i]);
+		s.syncAsUint16LE(menu_commands_22[i]);
+		s.syncAsUint16LE(menu_commands_24[i]);
+		s.syncAsUint16LE(menu_commands_23[i]);
+	}
+	syncRect(s, room_bounds_rect);
 
 	s.syncAsUint16LE(next_vorts_cmd);
 	s.syncAsUint16LE(next_vorts_ticks);
