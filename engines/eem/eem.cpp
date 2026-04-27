@@ -1019,26 +1019,56 @@ void EEMEngine::doSiteLoop() {
 /// hyphenation marks and a hint placeholder (0x89) we ignore for now.
 static Common::String parseString(const Common::String &raw,
 								  const Common::String &playerName,
-								  const Common::String &partnerName) {
+								  uint partner) {
+	// Substitution opcodes from `_ParseString` @ 1b66:07c3, jump-table
+	// at 1b66:0cbe. Each handler reads `_Partner` (16-bit at 0x7918)
+	// and indexes the name table at 29be:0c28 ({Jake, Jennifer, he,
+	// she, him, her, his} as far pointers).
+	//   0x80 — player's typed name (auto-cap word starts) — uses _PlayerRecord
+	//   0x81 — _Partner == 0 ? "Jake"     : "Jennifer"  (chosen detective)
+	//   0x82 — _Partner == 0 ? "Jennifer" : "Jake"      (the OTHER one)
+	//   0x83 — _Partner == 0 ? "he"       : "she"
+	//   0x84 — _Partner == 0 ? "him"      : "her"
+	//   0x85 — _Partner == 0 ? "his"      : "her"
+	//   0x86..0x88 read a different gender flag at 0x7985 — left alone
+	//     until that flag's source is traced.
+	//   0x89 — KD hint placeholder (handled by caller).
+	const bool isJake = (partner == 0);
 	Common::String out;
 	for (uint i = 0; i < raw.size(); i++) {
 		const byte c = (byte)raw[i];
-		if (c == 0x80) {
+		switch (c) {
+		case 0x80:
 			out += playerName;
-		} else if (c == 0x81 || c == 0x82) {
-			// Both forms substitute the partner's name. The original
-			// likely has a casual ("Jake/Jenny") and a formal
-			// ("Jake/Jennifer") variant; we render the same partner
-			// name in both spots — close enough for natural reading.
-			out += partnerName;
-		} else if (c >= 0x80 && c < 0x8A) {
-			// Other control opcodes: eat them silently for now.
-		} else if (c == 0 || c == '\r') {
-			// stop on NUL, ignore CR
-			if (c == 0)
-				break;
-		} else {
+			break;
+		case 0x81:
+			out += isJake ? "Jake" : "Jennifer";
+			break;
+		case 0x82:
+			out += isJake ? "Jennifer" : "Jake";
+			break;
+		case 0x83:
+			out += isJake ? "he" : "she";
+			break;
+		case 0x84:
+			out += isJake ? "him" : "her";
+			break;
+		case 0x85:
+			out += isJake ? "his" : "her";
+			break;
+		case 0x86:
+		case 0x87:
+		case 0x88:
+		case 0x89:
+			// Eaten silently — see comment above.
+			break;
+		case 0:
+			return out;
+		case '\r':
+			break;
+		default:
 			out += (char)c;
+			break;
 		}
 	}
 	return out;
@@ -1147,11 +1177,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			}
 		}
 
-		// Substitute placeholder control bytes with the entered player
-		// name and the chosen partner's first name (Jake / Jennifer).
-		const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
+		// Substitute control bytes (0x80..0x89) — see `parseString` for
+		// the table. 0x81 = chosen detective, 0x82 = the other one.
 		const Common::String text = parseString(raw ? raw : "",
-												_playerName, partnerName);
+												_playerName, _partner);
 
 		// Speech balloon. Mirrors `_GetBalloon` + `_AddPicBackground` in
 		// `_DisplayClue`. The original looks up per-balloon text-area
@@ -1188,25 +1217,33 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
 				const int bh = MIN<int>(balloon.surface.h, 200 - bubY);
 				// `_AddPicBackground` passes `pic->miscflags >> 8` as
-				// the transparent colour to `_Rect_Move_Mask`. Without
-				// that mask, the balloon's tail/corner padding bleeds
-				// into the surrounding scene. The on-disk u16 at file
-				// offset 0 maps to our `Picture::flags` field.
+				// the transparent colour to `_Rect_Move_Mask`. The
+				// on-disk u16 at file offset 0 maps to `Picture::flags`.
 				const byte transp = (byte)(balloon.flags >> 8);
+				// `_GetBalloon @ 172b:1d7d` mirrors the picture horizontally
+				// when `(bubNum & 0x80)` is set — used for right-side
+				// speakers so the tail points the other way.
+				const bool flipBalloon = (bubNum & 0x80) != 0;
 				if (bw > 0 && bh > 0) {
 					for (int row = 0; row < bh; row++) {
 						const byte *src =
 							(const byte *)balloon.surface.getBasePtr(0, row);
 						byte *dst = (byte *)scratch.getBasePtr(bubX, bubY + row);
 						for (int col = 0; col < bw; col++) {
-							if (src[col] != transp)
-								dst[col] = src[col];
+							const int srcCol = flipBalloon
+								? (balloon.surface.w - 1 - col)
+								: col;
+							const byte px = src[srcCol];
+							if (px != transp)
+								dst[col] = px;
 						}
 					}
 				}
-				// Per-balloon metadata table at 29be:0875 in the original
-				// uses (textX=6, textY=4) inset across all entries; we
-				// adopt the same constants instead of approximating with 8.
+				// Per-balloon metadata table at 29be:0875 — 10-byte
+				// entries indexed by `(bubNum & 0x7f)`. Layout:
+				//   +0..1 textX inset, +2..3 textY inset, +4..5 textWidth.
+				// All entries use textX=6, textY=4 so we hard-code those
+				// constants; textWidth is read live from the table.
 				textX = bubX + 6;
 				textY = bubY + 4;
 				textW = bw - 12;
@@ -1219,8 +1256,11 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				copyY = bubY;
 			}
 
+			// `_DisplayClue` @ 2404:07fe passes fontColor=0 (palette
+			// index 0 of the case-briefing palette 0x22) to `_WordWrap`.
+			// Hard-coding 0xF here gave the wrong colour.
 			_font.drawWordWrapped(&scratch, textX, textY,
-				MAX<int>(8, textW), text, 0xF);
+				MAX<int>(8, textW), text, 0);
 
 			g_system->copyRectToScreen(scratch.getBasePtr(0, copyY),
 				scratch.pitch, 0, copyY, 320,
@@ -1304,7 +1344,6 @@ void EEMEngine::doNotebook() {
 
 		const byte *ni = _mystery.noteIndex();
 		const uint16 niCount = _mystery.noteIndexCount();
-		const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
 		int y = 4 + _font.getFontHeight() * 2 + 4;
 		for (int slot = 0; slot < kPerPage; slot++) {
 			const int idx = page * kPerPage + slot;
@@ -1318,7 +1357,7 @@ void EEMEngine::doNotebook() {
 				const uint16 ptsRaw  = READ_LE_UINT16(ni + clueId * 4 + 2);
 				pts = (int)(int16)ptsRaw;
 				const Common::String raw = _mystery.textAt(textOff);
-				text = parseString(raw, _playerName, partnerName);
+				text = parseString(raw, _playerName, _partner);
 			}
 			if (text.empty())
 				text = Common::String::format("clue %u", clueId);
@@ -1680,8 +1719,7 @@ void EEMEngine::doHelp() {
 		_mystery._sawHelpHint = true;
 
 	const Common::String raw = _mystery.textAt(use);
-	const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
-	const Common::String text = parseString(raw, _playerName, partnerName);
+	const Common::String text = parseString(raw, _playerName, _partner);
 
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -1908,7 +1946,6 @@ void EEMEngine::doAccuse() {
 	const byte *e = blob.data();
 	const uint16 pages = READ_LE_UINT16(e);
 
-	const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
 	uint pageIdx = 0;
 
 	while (!shouldQuit()) {
@@ -1929,7 +1966,7 @@ void EEMEngine::doAccuse() {
 		const uint16 x2     = READ_LE_UINT16(e + pos + 6);
 		const uint16 y2     = READ_LE_UINT16(e + pos + 8);
 		const char *raw     = (const char *)(e + pos + 10);
-		const Common::String txt = parseString(raw, _playerName, partnerName);
+		const Common::String txt = parseString(raw, _playerName, _partner);
 
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
