@@ -30,6 +30,7 @@
 
 #include "engines/util.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
 #include "eem/detection.h"
@@ -65,6 +66,35 @@ const int kBoyX  = 0xe2; // 226
 const int kBoyY  = 0x62; // 98
 const int kGirlX = 0x42; // 66
 const int kGirlY = 0x60; // 96
+
+// 11x16 mouse cursor — replaces the DOS hardware cursor wired in by
+// _InitMouse @ 152d:018b (INT 33h). The original game sets the cursor
+// visible/hidden via _MouseCursor; we leave it on once the screens
+// that need it (ChoosePartner, CaseSelection, sites) are reached.
+//   0 = transparent, 1 = black outline, 2 = white fill
+const byte kCursorBitmap[11 * 16] = {
+	1,1,0,0,0,0,0,0,0,0,0,
+	1,2,1,0,0,0,0,0,0,0,0,
+	1,2,2,1,0,0,0,0,0,0,0,
+	1,2,2,2,1,0,0,0,0,0,0,
+	1,2,2,2,2,1,0,0,0,0,0,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,2,2,2,2,2,1,0,0,0,
+	1,2,2,2,2,2,2,2,1,0,0,
+	1,2,2,2,2,2,2,2,2,1,0,
+	1,2,2,2,2,2,2,2,2,2,1,
+	1,2,2,2,2,2,1,0,0,0,0,
+	1,2,1,0,1,2,2,1,0,0,0,
+	1,1,0,0,1,2,2,1,0,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,1,2,2,1,0,0,
+	0,0,0,0,0,0,1,2,2,1,0
+};
+const byte kCursorPalette[] = {
+	0x00, 0x00, 0x00, // 0 — transparent (key)
+	0x00, 0x00, 0x00, // 1 — outline
+	0xFF, 0xFF, 0xFF  // 2 — fill
+};
 } // anonymous namespace
 
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
@@ -90,6 +120,14 @@ Common::Error EEMEngine::run() {
 	if (!_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
 
+	// _InitMouse @ 152d:018b in the original — install our 11x16 arrow,
+	// using palette index 0 as the transparency key. The cursor is left
+	// hidden through the opening anims and switched on at NewPlayer /
+	// ChoosePartner where the player actually clicks.
+	CursorMan.replaceCursor(kCursorBitmap, 11, 16, 0, 0, 0);
+	CursorMan.replaceCursorPalette(kCursorPalette, 0, 3);
+	CursorMan.showMouse(false);
+
 	// _AllBlack @ 172b:0d4b paints the screen black before the first handler.
 	byte black[3 * 256] = { 0 };
 	g_system->getPaletteManager()->setPalette(black, 0, 256);
@@ -107,6 +145,7 @@ Common::Error EEMEngine::run() {
 		if (err.getCode() == Common::kNoError && _mystery.isLoaded()) {
 			debugC(1, kDebugGeneral, "Resuming from slot %d at mystery %u",
 				   wantedSave, _mystery.number());
+			CursorMan.showMouse(true);
 			doInitClues();
 			doSiteLoop();
 			while (!shouldQuit()) {
@@ -122,27 +161,34 @@ Common::Error EEMEngine::run() {
 	// Reproduces _DoOpeningAnims @ 2520:082a (sans audio):
 	//   EA Kids logo (PIC) -> HighScore Productions logo (PIC) ->
 	//   Storm Software logo (BOLT.ANM) -> 20 character-intro animations
-	//   (ANIM01.A .. ANIM20.A) -> TITLE.ANM. Each can be skipped with a
-	//   click or any key.
+	//   (ANIM01.A .. ANIM20.A) -> TITLE.ANM. Click / any key skips a
+	//   single clip; ESC skips the rest of the chain (waitForInput /
+	//   playAnm raise `_skipIntro` so each subsequent step bails out).
+	_skipIntro = false;
 	showEAKidsLogo();
-	if (!shouldQuit())
+	if (!shouldQuit() && !_skipIntro)
 		showHighScoreLogo();
-	if (!shouldQuit())
+	if (!shouldQuit() && !_skipIntro)
 		playAnm(Common::Path("BOLT.ANM"));
-	for (int i = 1; i <= 20 && !shouldQuit(); i++) {
+	for (int i = 1; i <= 20 && !shouldQuit() && !_skipIntro; i++) {
 		Common::String name = Common::String::format("ANIM%02d.A", i);
 		playAnm(Common::Path(name));
 		// Between anims the original plays a voice clip via _SpoolSound;
 		// without audio we still want a beat so each scene reads.
-		if (!shouldQuit() && i != 20)
+		if (!shouldQuit() && !_skipIntro && i != 20)
 			waitForInput(2000);
 	}
-	if (!shouldQuit())
+	if (!shouldQuit() && !_skipIntro)
 		playAnm(Common::Path("TITLE.ANM"), 120, /*holdLastFrame=*/true);
+	_skipIntro = false;
 
 	// After the title chain, the original goes Title (B) -> screen 8
 	// (NewPlayer / saved-record selection) -> screen 9 (ChoosePartner) ->
 	// screen A (CaseSelection) -> site loop. We mirror the same order.
+	// Mouse stays hidden through the opening anims; show it now for
+	// the interactive screens (matches `_MouseCursor = 1` at the tail
+	// of `_NewPlayer`).
+	CursorMan.showMouse(true);
 	if (!shouldQuit())
 		doNewPlayer();
 	if (!shouldQuit())
@@ -261,6 +307,9 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 		// Drain events and let the user skip with click/key. The original
 		// uses _CheckFrameRate / _kbhit; we use a simple fixed delay until
 		// the frame-rate calibration logic from _GetSpeedRating is wired up.
+		// ESC additionally sets `_skipIntro` so the opening-anim chain in
+		// run() bails out of the whole sequence instead of advancing to
+		// the next clip.
 		const uint32 frameStart = g_system->getMillis();
 		bool aborted = false;
 		while (g_system->getMillis() - frameStart < frameDelayMs && !aborted) {
@@ -268,8 +317,13 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 			while (g_system->getEventManager()->pollEvent(event)) {
 				if (event.type == Common::EVENT_QUIT ||
 					event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-					event.type == Common::EVENT_LBUTTONDOWN ||
-					event.type == Common::EVENT_KEYDOWN) {
+					event.type == Common::EVENT_LBUTTONDOWN) {
+					aborted = true;
+					break;
+				}
+				if (event.type == Common::EVENT_KEYDOWN) {
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+						_skipIntro = true;
 					aborted = true;
 					break;
 				}
@@ -280,7 +334,7 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 			break;
 	}
 
-	if (holdLastFrame && !shouldQuit()) {
+	if (holdLastFrame && !shouldQuit() && !_skipIntro) {
 		// Mirror the wait-loop at the end of `_DoOpeningAnims`:
 		//   while (!keyDataAvailable) ;
 		// We accept either a click or a key.
@@ -290,8 +344,13 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-					ev.type == Common::EVENT_LBUTTONDOWN ||
-					ev.type == Common::EVENT_KEYDOWN) {
+					ev.type == Common::EVENT_LBUTTONDOWN) {
+					clicked = true;
+					break;
+				}
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+						_skipIntro = true;
 					clicked = true;
 					break;
 				}
@@ -315,14 +374,20 @@ void EEMEngine::blitAt(const Picture &pic, int x, int y) {
 }
 
 void EEMEngine::waitForInput(uint32 maxMs) {
+	// ESC additionally raises `_skipIntro` so the opening-anim chain
+	// can fast-forward past the rest of the sequence.
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			if (event.type == Common::EVENT_QUIT ||
 				event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-				event.type == Common::EVENT_LBUTTONDOWN ||
-				event.type == Common::EVENT_KEYDOWN) {
+				event.type == Common::EVENT_LBUTTONDOWN) {
+				return;
+			}
+			if (event.type == Common::EVENT_KEYDOWN) {
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					_skipIntro = true;
 				return;
 			}
 		}
