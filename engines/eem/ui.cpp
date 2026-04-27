@@ -32,6 +32,7 @@
 
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/music.h"
 
 // EEM — UI screens (NOTE.C, GALLERY.C, ACCUSE.C, MAP.C, CHOOSE.C combined).
 // Each function is a self-contained modal `EEMEngine::doX()` reachable from
@@ -2250,6 +2251,12 @@ void EEMEngine::doAccuse() {
 		if (mn < sizeof(_mysteriesSolved)) {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 		}
+
+		// `_DisplayCorrect @ 1df2:073c` calls `_MIDIPlay(5)` (1df2:0789)
+		// before `_DifferenceAnimation("scrapbk.ani")` to swap from the
+		// travel music to the winner cue.
+		if (_music)
+			_music->playMus(5, /*loop=*/false);
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
 
 		// Auto-save into slot 0 (the engine's quicksave slot).

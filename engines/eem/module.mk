@@ -7,6 +7,7 @@ MODULE_OBJS = \
 	font.o \
 	graphics.o \
 	metaengine.o \
+	music.o \
 	mystery.o \
 	resource.o \
 	site.o \
