@@ -147,7 +147,8 @@ Common::Error EEMEngine::run() {
 				doSiteLoop();
 			while (!shouldQuit()) {
 				doCaseSelection();
-				if (!_mystery.isLoaded()) break;
+				if (!_mystery.isLoaded())
+					break;
 				doInitClues();
 				doBigMap();
 				if (_mystery.isLoaded())

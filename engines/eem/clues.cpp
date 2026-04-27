@@ -242,15 +242,18 @@ void EEMEngine::doInitClues() {
 	auto blitMaskedAt = [&](const Picture &p, int x, int y) {
 		const byte transp = (byte)(p.flags >> 8);
 		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen) return;
+		if (!screen)
+			return;
 		for (int row = 0; row < p.surface.h; row++) {
 			const int dstY = y + row;
-			if (dstY < 0 || dstY >= screen->h) continue;
+			if (dstY < 0 || dstY >= screen->h)
+				continue;
 			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
 			byte *dst = (byte *)screen->getBasePtr(0, dstY);
 			for (int col = 0; col < p.surface.w; col++) {
 				const int dstX = x + col;
-				if (dstX < 0 || dstX >= screen->w) continue;
+				if (dstX < 0 || dstX >= screen->w)
+					continue;
 				if (src[col] != transp)
 					dst[dstX] = src[col];
 			}
@@ -319,16 +322,33 @@ void EEMEngine::doInitClues() {
 	uint16 seqY   = 0x6c;
 	if (_partner == 0) {
 		switch (caseType) {
-		case 1: seqAni = 0x38; seqY = 0x6d; break;
-		case 2: seqAni = 0x37; seqY = 0x6c; break;
-		case 3: seqAni = 0x39; seqY = 0x6c; break;
-		default: break;
+		case 1:
+			seqAni = 0x38;
+			seqY = 0x6d;
+			break;
+		case 2:
+			seqAni = 0x37;
+			seqY = 0x6c;
+			break;
+		case 3:
+			seqAni = 0x39;
+			seqY = 0x6c;
+			break;
+		default:
+			break;
 		}
 	} else {
 		switch (caseType) {
-		case 2: seqAni = 0x3a; seqY = 0x6c; break;
-		case 3: seqAni = 0x3d; seqY = 0x6c; break;
-		default: break;
+		case 2:
+			seqAni = 0x3a;
+			seqY = 0x6c;
+			break;
+		case 3:
+			seqAni = 0x3d;
+			seqY = 0x6c;
+			break;
+		default:
+			break;
 		}
 	}
 	if (seqAni != 0xFFFF) {
@@ -574,7 +594,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			// copy the changed band back. This preserves the site BG
 			// underneath unchanged regions.
 			Graphics::Surface *screen = g_system->lockScreen();
-			if (!screen) break;
+			if (!screen)
+				break;
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
 			for (int row = 0; row < 200; row++) {

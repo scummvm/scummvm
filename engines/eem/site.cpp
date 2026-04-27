@@ -465,12 +465,14 @@ static void blitMaskedSurface(Graphics::Surface *screen,
 	const byte transp = (byte)(p.flags >> 8);
 	for (int row = 0; row < p.surface.h; row++) {
 		const int dstY = y + row;
-		if (dstY < 0 || dstY >= screen->h) continue;
+		if (dstY < 0 || dstY >= screen->h)
+			continue;
 		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
 		byte *dst = (byte *)screen->getBasePtr(0, dstY);
 		for (int col = 0; col < p.surface.w; col++) {
 			const int dstX = x + col;
-			if (dstX < 0 || dstX >= screen->w) continue;
+			if (dstX < 0 || dstX >= screen->w)
+				continue;
 			if (src[col] != transp)
 				dst[dstX] = src[col];
 		}
@@ -598,12 +600,15 @@ void SiteScreen::applyColorCycles() {
 	// 0xf9..0xfe for hotspot marching ants (the `_ColorCycle(0xf9,
 	// 0xfe)` call at the bottom of `_DoSiteLoop`'s main loop).
 	auto rotate = [&](uint8 start, uint8 end) {
-		if (end <= start) return;
+		if (end <= start)
+			return;
 		const uint count = (uint)end - (uint)start + 1;
 		byte buf[256 * 3];
 		g_system->getPaletteManager()->grabPalette(buf, start, count);
 		// Save first triplet, shift, restore at end.
-		byte savedR = buf[0], savedG = buf[1], savedB = buf[2];
+		const byte savedR = buf[0];
+		const byte savedG = buf[1];
+		const byte savedB = buf[2];
 		for (uint i = 0; i + 1 < count; i++) {
 			buf[i * 3 + 0] = buf[(i + 1) * 3 + 0];
 			buf[i * 3 + 1] = buf[(i + 1) * 3 + 1];
@@ -1053,12 +1058,14 @@ void EEMEngine::playKdAnim(uint16 num) {
 		const int h = MIN<int>(fr.surface.h, 200 - py);
 		for (int row = 0; row < h; row++) {
 			const int dstY = py + row;
-			if (dstY < 0) continue;
+			if (dstY < 0)
+				continue;
 			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 			for (int col = 0; col < w; col++) {
 				const int dstX = px + col;
-				if (dstX < 0) continue;
+				if (dstX < 0)
+					continue;
 				if (src[col] != transp)
 					dst[dstX] = src[col];
 			}
