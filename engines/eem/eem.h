@@ -72,6 +72,7 @@ public:
 	DBDArchive &getAni()     { return _aniArchive; }
 	DBDArchive &getSites()   { return _sitesArchive; }
 	DBDArchive &getBalloons(){ return _balloonArchive; }
+	DBDArchive &getButtons() { return _buttonArchive; }
 	Mystery    &getMystery() { return _mystery; }
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
@@ -191,6 +192,7 @@ private:
 	DBDArchive _aniArchive;      ///< ANI.DBD/.DBX (multi-frame character animations)
 	DBDArchive _sitesArchive;    ///< SITES.DBD/.DBX (one full-screen scene per site)
 	DBDArchive _balloonArchive;  ///< BALLOON.DBD/.DBX (speech-balloon sprites)
+	DBDArchive _buttonArchive;   ///< BUTTON.DBD/.DBX (per-site labeled map buttons; `_GetButton`)
 	Mystery    _mystery;         ///< Currently-loaded case file (M<n>.BIN)
 	EEMFont    _font;            ///< FONT.FNT - main 8 px font
 

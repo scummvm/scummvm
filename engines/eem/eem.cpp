@@ -248,6 +248,12 @@ bool EEMEngine::openArchives() {
 		warning("SITES archive missing — site backgrounds disabled");
 	if (!_balloonArchive.open(Common::Path("BALLOON.DBD"), Common::Path("BALLOON.DBX")))
 		warning("BALLOON archive missing — clue text will lack balloons");
+	// `_GetButton @ 172b:199d` reads from this archive (see strings
+	// 'button.dbd' / 'Button.DBX' at 29be:06bf / 29be:04bb). Each
+	// per-site map marker (used by `_StampButtons @ 20fe:0d2f` and
+	// looked up via MapData[+0]) lives here.
+	if (!_buttonArchive.open(Common::Path("BUTTON.DBD"), Common::Path("BUTTON.DBX")))
+		warning("BUTTON archive missing — map markers will be unlabelled");
 	return true;
 }
 
@@ -1595,22 +1601,6 @@ void EEMEngine::doBigMap() {
 		g_system->updateScreen();
 	};
 
-	auto findSiteAt = [&](int x, int y) -> int {
-		// Hit-test the icons drawn in stage 1. Generous radius matches
-		// the marker square plus a couple of pixels of slop.
-		for (uint i = 0; i < _mystery.numSites(); i++) {
-			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-				continue;
-			const byte *entry = _mystery.mapEntry(i);
-			if (!entry) continue;
-			const int mx = (int)READ_LE_UINT16(entry + 0x4);
-			const int my = (int)READ_LE_UINT16(entry + 0x6);
-			if (ABS(x - mx) <= 6 && ABS(y - my) <= 6)
-				return (int)i;
-		}
-		return -1;
-	};
-
 	drawOverview();
 
 	bool wantZoom = false;
@@ -1625,18 +1615,11 @@ void EEMEngine::doBigMap() {
 				ev.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				const int hit = findSiteAt(ev.mouse.x, ev.mouse.y);
-				if (hit >= 0) {
-					// Direct click on a site marker → travel.
-					_mystery._lastSite = _mystery._siteNumber;
-					_mystery._siteNumber = (uint16)hit;
-					return;
-				}
-				// `_DoBigMap` rule for clicks elsewhere: convert mouse
-				// coords to a SmallMap scroll position
-				//   sx = mouseX * 2 - 0x74
-				//   sy = mouseY * 2 - 0x55
-				// then transition to the detail zoom.
+				// `_DoBigMap @ 20fe:09e7` does NOT travel directly when
+				// the player clicks an overview icon — it always returns
+				// `(sx, sy) = (mouseX*2 - 0x74, mouseY*2 - 0x55)` so the
+				// caller can switch to the detail zoom centred there.
+				// Travel happens after a SECOND click in the detail view.
 				int sx = ev.mouse.x * 2;
 				int sy = ev.mouse.y * 2;
 				sx = (sx < 0x75) ? 0 : sx - 0x74;
@@ -1706,34 +1689,42 @@ void EEMEngine::doBigMap() {
 				   copyW);
 		}
 
-		// Stamped site icons at SmallMap coords (+8, +0xa). Same colour
-		// scheme as the overview so the player can tell them apart.
+		// Stamped site buttons. `_StampButtons @ 20fe:0d2f` does:
+		//   button = _GetButton(MapData[+0])      // BUTTON.DBD entry
+		//   destX  = MapData[+8],  destY = MapData[+0xa]
+		// then bakes the button PIC into the map bitmap. Each button
+		// sprite carries the site name baked in. We blit them on top
+		// of the BIGMAP.PIC viewport at the same SmallMap coords.
 		for (uint i = 0; i < _mystery.numSites(); i++) {
 			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 				continue;
 			const byte *entry = _mystery.mapEntry(i);
 			if (!entry) continue;
-			const uint16 mx    = READ_LE_UINT16(entry + 0x8);
-			const uint16 my    = READ_LE_UINT16(entry + 0xa);
-			const uint16 crime = READ_LE_UINT16(entry + 0xc);
+			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
+			const uint16 mx       = READ_LE_UINT16(entry + 0x8);
+			const uint16 my       = READ_LE_UINT16(entry + 0xa);
+
+			Picture button;
+			if (!_buttonArchive.loadEntry(buttonId, button))
+				continue;
 			const int sx = (int)mx - scrollX + kMapWinX;
 			const int sy = (int)my - scrollY + kMapWinY;
-			if (sx < kMapWinX || sx >= kMapWinX + kMapWinW ||
-				sy < kMapWinY || sy >= kMapWinY + kMapWinH)
-				continue;
+			const byte transp = (byte)(button.flags >> 8);
 
-			byte color;
-			if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
-				color = 0x07;
-			else if (crime != 0)
-				color = 0x0C;
-			else
-				color = 0x0F;
-			if (i == _mystery._siteNumber)
-				color = 0x0E;
-
-			const Common::Rect mark(sx - 3, sy - 3, sx + 4, sy + 4);
-			scratch.fillRect(mark, color);
+			// Crop blit against the viewport.
+			const int x0 = MAX<int>(sx, kMapWinX);
+			const int y0 = MAX<int>(sy, kMapWinY);
+			const int x1 = MIN<int>(sx + button.surface.w, kMapWinX + kMapWinW);
+			const int y1 = MIN<int>(sy + button.surface.h, kMapWinY + kMapWinH);
+			for (int row = y0; row < y1; row++) {
+				const byte *src = (const byte *)button.surface.getBasePtr(0, row - sy);
+				byte *dst = (byte *)scratch.getBasePtr(0, row);
+				for (int col = x0; col < x1; col++) {
+					const byte px = src[col - sx];
+					if (px != transp)
+						dst[col] = px;
+				}
+			}
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -1775,18 +1766,28 @@ void EEMEngine::doBigMap() {
 					ev.mouse.x < kMapWinX + kMapWinW &&
 					ev.mouse.y >= kMapWinY &&
 					ev.mouse.y < kMapWinY + kMapWinH) {
+					// Hit-test the per-site button at its actual bbox
+					// (`_StampButtons` records the rect at SmallMap +8/+0xa
+					// with the button PIC's width/height).
 					for (uint i = 0; i < _mystery.numSites(); i++) {
 						if (!_mystery._onSites[i] &&
 							i != _mystery._siteNumber)
 							continue;
 						const byte *entry = _mystery.mapEntry(i);
 						if (!entry) continue;
-						const uint16 mx = READ_LE_UINT16(entry + 0x8);
-						const uint16 my = READ_LE_UINT16(entry + 0xa);
+						const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
+						const uint16 mx       = READ_LE_UINT16(entry + 0x8);
+						const uint16 my       = READ_LE_UINT16(entry + 0xa);
+						Picture button;
+						int bw = 16, bh = 16;
+						if (_buttonArchive.loadEntry(buttonId, button)) {
+							bw = button.surface.w;
+							bh = button.surface.h;
+						}
 						const int sx = (int)mx - scrollX + kMapWinX;
 						const int sy = (int)my - scrollY + kMapWinY;
-						if (ABS(ev.mouse.x - sx) <= 6 &&
-							ABS(ev.mouse.y - sy) <= 6) {
+						if (ev.mouse.x >= sx && ev.mouse.x < sx + bw &&
+							ev.mouse.y >= sy && ev.mouse.y < sy + bh) {
 							_mystery._lastSite = _mystery._siteNumber;
 							_mystery._siteNumber = (uint16)i;
 							return;
