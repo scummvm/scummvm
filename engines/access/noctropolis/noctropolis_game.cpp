@@ -665,8 +665,9 @@ void NoctropolisEngine::playStilMorph() {
 	_midi->midiPlay();
 	_screen->fadeOut();
 	_screen->clearScreen();
-	warning("TODO: Implement Noctropolis type video player");
-	//playVideo("VID1/DRLM00.VID", 118, 118, true, true, true);
+	VideoPlayer_v2 vidPlayer(this, true);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(118, 118), Common::Path("VID1/DRLM00.VID"), 0);
+	vidPlayer.playToEnd();
 }
 
 void NoctropolisEngine::flashPaletteEffect() {
@@ -684,7 +685,7 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_screen->clearScreen();
 	// TODO: Check these colors
 	Font::_fontColors[0] = 0;
-	Font::_fontColors[3] = 244;
+	Font::_fontColors[1] = 244;
 	const char *meanwhileTxt = ((NoctropolisResources *)_res)->getMeanwhileMessage();
 	_fonts._fonts[3]->drawString(_screen, meanwhileTxt, Common::Point(100, 200));
 	_screen->fadeIn();
@@ -694,11 +695,12 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_screen->clearScreen();
 	_screen->_printOrg = _screen->_printStart = Common::Point(300, 300);
 	_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
-	_bubbleBox->_bubbleTitle = ((NoctropolisResources *)_res)->getShotoTitle();
+	_bubbleBox->_bubbleDisplStr = ((NoctropolisResources *)_res)->getShotoTitle();
 	_bubbleBox->placeBubble(((NoctropolisResources *)_res)->getShotoText());
 	_events->waitKeyActionMouse();
-	warning("TODO: Implement Noctropolis type video player (shotoMeanwhile)");
-	//_video->setVideo(_screen, Common::Point(120, 30), "VID1/B126MEAN.VID", 10); //, , false, true, true);
+	VideoPlayer_v2 vidPlayer(this, true);
+	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(120, 30), Common::Path("VID1/B126MEAN.VID"), 0);
+	vidPlayer.playToEnd();
 	_midi->stopSong();
 	_screen->fadeOut();
 	_system->showMouse(true);
@@ -748,7 +750,6 @@ void NoctropolisEngine::playSuccubusAttack() {
 	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(196, 96), Common::Path ("VID1/SUCATT2.VID"), 0);
 	vidPlayer.playToEnd();
 
-	//playVideo("VID1\\SUCATT2.VID", 196, 96, false, false);
 	_sound->playSound(1);
 	_midi->stopSong();
 	_screen->fadeOutThenClearAndSetPal();

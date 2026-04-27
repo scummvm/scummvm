@@ -1821,7 +1821,7 @@ void Scripts::cmdWalkTo() {
 
 	_vm->_player->_moveTo.x = x;
 	_vm->_player->_moveTo.y = y;
-	_vm->_player->_playerDirection = (Direction)dir;
+	_vm->_player->setDirFromScript(dir);
 	_vm->_player->_move = (Direction)dir;
 	_vm->_player->_playerMove = true;
 }
@@ -1906,6 +1906,7 @@ void Scripts::cmdStilWalkTo() {
 
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.x = x;
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_moveTo.y = y;
+	((Noctropolis::NoctropolisEngine*)_vm)->_stil->setDirFromScript(dir);
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_move = (Direction)dir;
 	((Noctropolis::NoctropolisEngine*)_vm)->_stil->_playerMove = true;
 }
@@ -1964,18 +1965,21 @@ void Scripts::cmdSetStilCoords() {
 }
 
 void Scripts::cmdSetPlayerDir() {
-	debugC(1, kDebugScripts, "cmdSetPlayerDir()");
-	_vm->_player->_playerDirection = (Direction)_data->readByte();
+	byte dir = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetPlayerDir(%d)", dir);
+	_vm->_player->setDirFromScript(dir);
 }
 
 void Scripts::cmdSetStilDir() {
-	debugC(1, kDebugScripts, "cmdSetStilDir()");
-	((Noctropolis::NoctropolisEngine *)_vm)->_stil->_playerDirection = (Direction)_data->readByte();
+	byte dir = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetStilDir(%d)", dir);
+	((Noctropolis::NoctropolisEngine *)_vm)->_stil->setDirFromScript(dir);
 }
 
 void Scripts::cmdStilScale() {
-	debugC(1, kDebugScripts, "cmdStilScale()");
-	_vm->_stilScaleOff = _data->readUint16LE();
+	short scale = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdStilScale(%d)", scale);
+	_vm->_stilScaleOff = scale;
 }
 
 void Scripts::cmdLockInterface() {
