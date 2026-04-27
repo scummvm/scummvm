@@ -73,16 +73,21 @@ void SiteScreen::enter(uint siteNum) {
 		renderBackground(siteNum);
 	}
 
-	// Per-site NPCs / decorative animations (`_DoSiteLoop` reads
-	// `siteData[+0xa]` as the drop count and iterates 6-byte entries
-	// from `siteData[+0x48]`). Drawn before the partner sprite so
-	// the partner appears on top of any background NPCs.
-	renderDrops(siteNum);
+	// Static drops (Loop 2 from `_DoSiteLoop`) — no animation, baked
+	// into the BG snapshot the run() pump uses to restore.
+	renderStaticDrops(siteNum);
 
-	// Persistent partner sprite (`_NewAnimation` at the tail of
-	// `_DoSiteLoop`). Drawn after the BG so the hotspot outlines and
-	// HUD that follow stay on top of it.
-	renderPartner(siteNum);
+	// Snapshot the static layers so per-tick animation re-blits don't
+	// have to re-load PIC 0x43, the SITES.DBD scene, or each
+	// `_AddDrop` PIC every frame.
+	captureBgSnapshot();
+	_snapshotSite = (int)siteNum;
+
+	// Animated NPCs (Loop 1) and the persistent partner sit on top of
+	// the snapshot. Initial frame goes at tickMs=now.
+	const uint32 now = g_system->getMillis();
+	renderAnimatedDrops(siteNum, now);
+	renderPartner(siteNum, now);
 
 	renderHotspots(siteNum);
 	g_system->updateScreen();
@@ -110,10 +115,14 @@ void SiteScreen::enter(uint siteNum) {
 			_mystery->_visitedSite[siteNum] = 1;
 		// The dialog overlay will have left the screen with portrait /
 		// balloon residues; refresh the site so the player returns to
-		// a clean state.
+		// a clean state. Re-build the snapshot too.
 		renderBackground(siteNum);
-		renderDrops(siteNum);
-		renderPartner(siteNum);
+		renderStaticDrops(siteNum);
+		captureBgSnapshot();
+		_snapshotSite = (int)siteNum;
+		const uint32 nowAfter = g_system->getMillis();
+		renderAnimatedDrops(siteNum, nowAfter);
+		renderPartner(siteNum, nowAfter);
 		renderHotspots(siteNum);
 		g_system->updateScreen();
 	} else if (siteNum < Mystery::kVisitedSiteCap) {
@@ -275,6 +284,21 @@ void SiteScreen::run() {
 		}
 		if (exitRequested)
 			return;
+
+		// Per-tick frame pump (mirrors `_CheckFrameRate` +
+		// `_UpdateAnimations` at the top of `_DoSiteLoop`'s main loop).
+		// Restore the static BG snapshot, redraw animated NPCs +
+		// partner at the current frame, then re-render hotspots on
+		// top. We tick at 100 ms (~10 FPS) which is in the same ball
+		// park as the original.
+		const uint32 now = g_system->getMillis();
+		if (_snapshotSite == (int)cur && now - _lastTickMs >= 100) {
+			restoreBgSnapshot();
+			renderAnimatedDrops(cur, now);
+			renderPartner(cur, now);
+			renderHotspots(cur);
+			_lastTickMs = now;
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
@@ -415,93 +439,131 @@ void SiteScreen::enterSiteAnim() {
 	}
 }
 
-void SiteScreen::renderDrops(uint siteNum) {
-	// `_DoSiteLoop @ 168d:03f4` runs TWO per-site loops, both feeding
-	// the visible NPCs / decorations on the site BG:
-	//
-	//   Loop 1 (animations / animated NPCs)
-	//     bound: siteData[+0xa]
-	//     per entry at siteData[+0x48 + i*6]:  {animId, x, y}
-	//     if animId == -1: a `_ColorCycle(x, y)` palette range each tick
-	//     else: `_GetAnimation(animId)` + `_NewAnimation(x, y, ...)` —
-	//           added inactive (arg5=0), updated by `_UpdateAnimations`.
-	//
-	//   Loop 2 (static drops)
-	//     bound: siteData[+0x4]  (verified at 168d:05c0:
-	//            `MOV ES:[BX+0x4], DI; CMP ES:[BX+0x4], DI`)
-	//     per entry at siteData[+0xc + i*6]:    {picId, x, y}
-	//     each → `_AddDrop(picId, x, y)` which loads PIC `picId-1`
-	//     from PICS.DBD and blits it at (x, y) onto offscreen 32000.
-	//
-	// Both contribute to the visible scene. We render Loop 2 statics
-	// directly and Loop 1's first frame as a static sprite (per-tick
-	// animation cycling is still TODO).
+// Mask-aware blit from a Picture into a Graphics::Surface.
+static void blitMaskedSurface(Graphics::Surface *screen,
+							  const Picture &p, int x, int y) {
+	if (!screen)
+		return;
+	const byte transp = (byte)(p.flags >> 8);
+	for (int row = 0; row < p.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= screen->h) continue;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+		byte *dst = (byte *)screen->getBasePtr(0, dstY);
+		for (int col = 0; col < p.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= screen->w) continue;
+			if (src[col] != transp)
+				dst[dstX] = src[col];
+		}
+	}
+}
+
+void SiteScreen::renderStaticDrops(uint siteNum) {
+	// Loop 2 from `_DoSiteLoop @ 168d:03f4`:
+	//   bound: siteData[+0x4]   (verified at 168d:05c0:
+	//          `MOV ES:[BX+0x4], DI; CMP ES:[BX+0x4], DI`)
+	//   per entry at siteData[+0xc + i*6]: {picId, x, y}
+	//   each → `_AddDrop(picId, x, y)` (`_AddDrop @ 172b:1a77`):
+	//   loads PIC `picId-1` from PICS.DBD and blits with miscflags
+	//   high-byte as the transparent colour. These NEVER cycle, so
+	//   they belong to the BG snapshot.
 	if (!_mystery)
 		return;
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
 	const uint16 numStatic = READ_LE_UINT16(site + 0x4);
-	const uint16 numAnims  = READ_LE_UINT16(site + 0xa);
+	if (numStatic == 0 || numStatic > 16)
+		return;
 
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
 
-	auto blitMasked = [&](const Picture &p, int x, int y) {
-		const byte transp = (byte)(p.flags >> 8);
-		for (int row = 0; row < p.surface.h; row++) {
-			const int dstY = y + row;
-			if (dstY < 0 || dstY >= screen->h) continue;
-			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-			byte *dst = (byte *)screen->getBasePtr(0, dstY);
-			for (int col = 0; col < p.surface.w; col++) {
-				const int dstX = x + col;
-				if (dstX < 0 || dstX >= screen->w) continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
-	};
-
-	// Loop 2 — `_AddDrop(picId, x, y)`. PIC IDs are 1-based per
-	// `_AddDrop @ 172b:1a77` (it does `_GetFromDB(.., number - 1)`).
-	if (numStatic > 0 && numStatic <= 16) {
-		for (uint i = 0; i < numStatic; i++) {
-			const uint dropOff = 0xc + i * 6;
-			const uint16 picId = READ_LE_UINT16(site + dropOff + 0);
-			const int16  x     = (int16)READ_LE_UINT16(site + dropOff + 2);
-			const int16  y     = (int16)READ_LE_UINT16(site + dropOff + 4);
-			if (picId == 0)
-				continue;
-			Picture pic;
-			if (!_vm->getPics().getPicture(picId, pic))
-				continue;
-			blitMasked(pic, x, y);
-		}
-	}
-
-	// Loop 1 — animation drops. Use frame 0 as a static placeholder
-	// for non-`-1` entries.
-	if (numAnims > 0 && numAnims <= 16) {
-		for (uint i = 0; i < numAnims; i++) {
-			const uint dropOff = 0x48 + i * 6;
-			const int16 animId = (int16)READ_LE_UINT16(site + dropOff + 0);
-			if (animId < 0)
-				continue; // -1 → ColorCycle entry, handled per tick
-			const int16 x = (int16)READ_LE_UINT16(site + dropOff + 2);
-			const int16 y = (int16)READ_LE_UINT16(site + dropOff + 4);
-			Animation anim;
-			if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
-				continue;
-			blitMasked(anim[0], x, y);
-		}
+	for (uint i = 0; i < numStatic; i++) {
+		const uint dropOff = 0xc + i * 6;
+		const uint16 picId = READ_LE_UINT16(site + dropOff + 0);
+		const int16  x     = (int16)READ_LE_UINT16(site + dropOff + 2);
+		const int16  y     = (int16)READ_LE_UINT16(site + dropOff + 4);
+		if (picId == 0)
+			continue;
+		Picture pic;
+		if (!_vm->getPics().getPicture(picId, pic))
+			continue;
+		blitMaskedSurface(screen, pic, x, y);
 	}
 
 	g_system->unlockScreen();
 }
 
-void SiteScreen::renderPartner(uint siteNum) {
+void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
+	// Loop 1 from `_DoSiteLoop @ 168d:03f4`:
+	//   bound: siteData[+0xa]
+	//   per entry at siteData[+0x48 + i*6]: {animId, x, y}
+	//   animId == -1 → `_ColorCycle(x, y)` palette range (handled
+	//                  in the run() loop's frame pump as palette
+	//                  rotation; not yet implemented).
+	//   else → `_GetAnimation(animId)` + `_NewAnimation` then
+	//          `_UpdateAnimations @ 172b:09c1` walks a sequence
+	//          script (entries are frame indices; 0x80 = end-of-loop,
+	//          0x81 = jump command). We don't have the sequence-script
+	//          structure decoded yet, so for now we cycle through the
+	//          raw animation frames in order using a global tick.
+	if (!_mystery)
+		return;
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 numAnims = READ_LE_UINT16(site + 0xa);
+	if (numAnims == 0 || numAnims > 16)
+		return;
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	const uint32 kFramePeriodMs = 100; // ~10 FPS, in line with `_CheckFrameRate`.
+
+	for (uint i = 0; i < numAnims; i++) {
+		const uint dropOff = 0x48 + i * 6;
+		const int16 animId = (int16)READ_LE_UINT16(site + dropOff + 0);
+		if (animId < 0)
+			continue;
+		const int16 x = (int16)READ_LE_UINT16(site + dropOff + 2);
+		const int16 y = (int16)READ_LE_UINT16(site + dropOff + 4);
+		Animation anim;
+		if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
+			continue;
+		const uint frameIdx = (uint)((tickMs / kFramePeriodMs) % anim.size());
+		blitMaskedSurface(screen, anim[frameIdx], x, y);
+	}
+
+	g_system->unlockScreen();
+}
+
+void SiteScreen::captureBgSnapshot() {
+	_bgSnapshot.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen) {
+		_snapshotSite = -1;
+		return;
+	}
+	for (int row = 0; row < 200; row++) {
+		memcpy((byte *)_bgSnapshot.getBasePtr(0, row),
+			   (const byte *)screen->getBasePtr(0, row), 320);
+	}
+	g_system->unlockScreen();
+}
+
+void SiteScreen::restoreBgSnapshot() {
+	if (_bgSnapshot.w != 320 || _bgSnapshot.h != 200)
+		return;
+	g_system->copyRectToScreen(_bgSnapshot.getPixels(), _bgSnapshot.pitch,
+							   0, 0, 320, 200);
+}
+
+void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	// `_DoSiteLoop @ 168d:03f4` reads `siteData[+8]` as the speaker
 	// table index, then for each (speaker × partner) loads
 	//   anim  = WaitAnims[speakerIdx].anim[partner]
@@ -543,28 +605,16 @@ void SiteScreen::renderPartner(uint siteNum) {
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
 		return;
 
-	// Show the first frame as a static sprite. The original updates it
-	// each `_CheckFrameRate` tick; we don't have a frame pump in the
-	// site loop yet so a static pose is enough for now.
-	const Picture &fr = anim[0];
-	const byte transp = (byte)(fr.flags >> 8);
+	// `_UpdateAnimations @ 172b:09c1` advances the partner's frame
+	// every `_CheckFrameRate` tick. We pick the frame from a global
+	// 100 ms clock so the partner cycles in sync with the animated
+	// drops.
+	const uint32 kFramePeriodMs = 100;
+	const uint frameIdx = (uint)((tickMs / kFramePeriodMs) % anim.size());
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
-	for (int row = 0; row < fr.surface.h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= 200)
-			continue;
-		const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-		byte *dst = (byte *)screen->getBasePtr(0, dstY);
-		for (int col = 0; col < fr.surface.w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= 320)
-				continue;
-			if (src[col] != transp)
-				dst[dstX] = src[col];
-		}
-	}
+	blitMaskedSurface(screen, anim[frameIdx], x, y);
 	g_system->unlockScreen();
 }
 

@@ -25,6 +25,8 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 
+#include "graphics/managed_surface.h"
+
 namespace EEM {
 
 class EEMEngine;
@@ -74,22 +76,39 @@ private:
 	/// Draw the persistent in-site partner sprite (Jake or Jenny
 	/// standing/idling) at the position from `_WaitAnims` @ 29be:021c.
 	/// Mirrors the `_GetAnimation` + `_NewAnimation` block at the tail
-	/// of `_DoSiteLoop @ 168d:03f4`.
-	void renderPartner(uint siteNum);
+	/// of `_DoSiteLoop @ 168d:03f4`. `tickMs` selects which frame of
+	/// the partner's animation to render; in the original, frames
+	/// advance per `_CheckFrameRate` tick via `_UpdateAnimations`.
+	void renderPartner(uint siteNum, uint32 tickMs);
 
-	/// Draw the per-site NPC "drops" (the locals you click on to
-	/// trigger a clue). `_DoSiteLoop` reads `siteData[+0xa]` as the
-	/// drop count, then iterates 6-byte entries at `siteData[+0x48]`:
-	///   {anim_id (-1 = ColorCycle), x, y}.
-	/// Each non-(-1) entry is a `_NewAnimation(x, y, animId)`. We blit
-	/// the first frame as a static sprite; the original cycles via
-	/// `_UpdateAnimations`.
-	void renderDrops(uint siteNum);
+	/// Draw the per-site `_AddDrop` static decorations (Loop 2).
+	/// `_DoSiteLoop` runs this loop with bound siteData[+0x4] and
+	/// 6-byte entries at siteData[+0xc]: {picId, x, y}. These never
+	/// animate so they go in the BG snapshot.
+	void renderStaticDrops(uint siteNum);
+
+	/// Draw the per-site animated NPCs (Loop 1) at the current tick.
+	/// `_DoSiteLoop` registers each via `_NewAnimation` (siteData[+0xa]
+	/// entries at siteData[+0x48]: {animId (-1 = ColorCycle), x, y})
+	/// and `_UpdateAnimations @ 172b:09c1` advances frame indices each
+	/// tick. We use a millis-based frame index so all NPCs cycle in
+	/// step with the global clock.
+	void renderAnimatedDrops(uint siteNum, uint32 tickMs);
+
+	/// Snapshot the post-BG, post-static-drops screen so the per-tick
+	/// frame pump can restore it without reloading PICS.DBD entries.
+	void captureBgSnapshot();
+
+	/// Restore the snapshot taken at `captureBgSnapshot` time.
+	void restoreBgSnapshot();
 
 	EEMEngine *_vm;
 	Mystery *_mystery;
-	bool _showHotspots = true;  ///< Toggle outlines with V key.
-	int _lastSiteAnim = -1;     ///< Last site we played the arrival on.
+	bool _showHotspots = true;     ///< Toggle outlines with V key.
+	int _lastSiteAnim = -1;        ///< Last site we played the arrival on.
+	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
+	Graphics::ManagedSurface _bgSnapshot;
+	uint32 _lastTickMs = 0;        ///< Last frame-pump tick in ms.
 };
 
 } // End of namespace EEM
