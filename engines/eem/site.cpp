@@ -155,8 +155,8 @@ void SiteScreen::run() {
 							"Selected-points > 99 wins the case."
 						};
 						for (uint i = 0; i < sizeof(lines)/sizeof(lines[0]); i++) {
-							fnt.drawString(&help, 8, y, lines[i], 0xF);
-							y += fnt.height() + 1;
+							fnt.drawString(&help, lines[i], 8, y, 320, 0xF);
+							y += fnt.getFontHeight() + 1;
 						}
 						g_system->copyRectToScreen(help.getPixels(),
 							help.pitch, 0, 0, 320, 200);
@@ -253,7 +253,7 @@ void SiteScreen::renderHotspots(uint siteNum) {
 			Graphics::ManagedSurface mgr(320, 9,
 				Graphics::PixelFormat::createFormatCLUT8());
 			mgr.clear();
-			_vm->getFont().drawString(&mgr, 4, 0, hud, 0x0F);
+			_vm->getFont().drawString(&mgr, hud, 4, 0, 320, 0x0F);
 			for (int row = 0; row < 8; row++) {
 				memcpy((byte *)screen->getBasePtr(0, hudY + row),
 					   (const byte *)mgr.getBasePtr(0, row), 320);

@@ -27,9 +27,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-namespace Graphics {
-class ManagedSurface;
-}
+#include "graphics/font.h"
 
 namespace EEM {
 
@@ -49,40 +47,37 @@ struct FontGlyph {
  *   - u16 numChars
  *   - per char: u8 height, u8 widthBits, u8 sizeBytes, bytes[sizeBytes] bitmap
  *
- * Drawing mirrors `_ShowChar` @ 1b66:0346: each set bit becomes `fontColor`
- * on the destination surface; clear bits are transparent.
+ * Subclasses `Graphics::Font` so callers can use the standard
+ * `drawString` / `drawStringUnboxed` / `wordWrapText` helpers without
+ * us reimplementing them. Lookups go through a 128-byte char→glyph
+ * translation table extracted from CHR2FNT (segment 29b6:0000) — the
+ * font is uppercase-only with lowercase aliased to uppercase glyphs.
  */
-class EEMFont {
+class EEMFont : public Graphics::Font {
 public:
 	EEMFont() = default;
 
 	bool load(const Common::Path &path);
-
-	uint16 height() const { return _maxHeight; }
-
-	int charWidth(byte c) const;
-
-	/// Total pixel width of @p s when rendered (no shadow).
-	int stringWidth(const Common::String &s) const;
-
-	/// Draw @p c at (@p x, @p y) on @p dst with foreground @p color.
-	/// Returns the advance width.
-	int drawChar(Graphics::ManagedSurface *dst, int x, int y, byte c, byte color) const;
-
-	/// Draw @p s at (@p x, @p y) and return total advance width.
-	int drawString(Graphics::ManagedSurface *dst, int x, int y,
-				   const Common::String &s, byte color) const;
-
-	/// Word-wrap @p s into the rect (x..x+width, y..) and draw line by line.
-	/// Mirrors the data flow of `_DoWordWrap` @ 1b66:04a7.
-	int drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y, int width,
-						const Common::String &s, byte color) const;
-
 	bool isLoaded() const { return !_glyphs.empty(); }
+
+	// --- Graphics::Font overrides ---
+	int getFontHeight() const override { return _maxHeight; }
+	int getMaxCharWidth() const override { return _maxWidth; }
+	int getCharWidth(uint32 chr) const override;
+	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
+				  uint32 color) const override;
+	using Graphics::Font::drawChar;  // keep ManagedSurface overload
+
+	/// Convenience wrap-and-draw helper that uses the inherited
+	/// `wordWrapText` to break @p s into lines and then `drawString`
+	/// to render each. Returns the total height drawn.
+	int drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
+						int width, const Common::String &s, uint32 color) const;
 
 private:
 	Common::Array<FontGlyph> _glyphs;
 	uint16 _maxHeight = 0;
+	uint16 _maxWidth  = 0;
 };
 
 } // End of namespace EEM

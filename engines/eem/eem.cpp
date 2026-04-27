@@ -388,13 +388,11 @@ void EEMEngine::doNewPlayer() {
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)bg.surface.getBasePtr(0, row), w);
 		}
-		_font.drawString(&scratch, 40, 24,
-			"Welcome to Eagle Eye Mysteries!", 0xF);
-		_font.drawString(&scratch, 40, 40, "Please type your name:", 0xF);
-		_font.drawString(&scratch, 40, 60,
-			"(Backspace to delete, Enter to confirm)", 0xF);
+		_font.drawString(&scratch, "Welcome to Eagle Eye Mysteries!", 40, 24, 320, 0xF);
+		_font.drawString(&scratch, "Please type your name:", 40, 40, 320, 0xF);
+		_font.drawString(&scratch, "(Backspace to delete, Enter to confirm)", 40, 60, 320, 0xF);
 		Common::String shown = name + "_";
-		_font.drawString(&scratch, 40, 90, shown, 0xF);
+		_font.drawString(&scratch, shown, 40, 90, 320, 0xF);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -555,8 +553,7 @@ void EEMEngine::doCaseSelection() {
 			}
 		}
 		if (_font.isLoaded()) {
-			_font.drawString(&scratch, 8, 4,
-				Common::String::format("EAGLE EYE - %s", _playerName.c_str()), 0xF);
+			_font.drawString(&scratch, Common::String::format("EAGLE EYE - %s", _playerName.c_str()), 8, 4, 320, 0xF);
 
 			// Solved count.
 			uint solved = 0, perfectSolved = 0;
@@ -564,15 +561,12 @@ void EEMEngine::doCaseSelection() {
 				if (_mysteriesSolved[i] >= 1) solved++;
 				if (_mysteriesSolved[i] == 2) perfectSolved++;
 			}
-			_font.drawString(&scratch, 200, 4,
-				Common::String::format("solved %u (1st try %u)",
-									   solved, perfectSolved), 0xF);
+			_font.drawString(&scratch, Common::String::format("solved %u (1st try %u)",
+									   solved, perfectSolved), 200, 4, 320, 0xF);
 			if (perfectSolved >= 55) {
-				_font.drawString(&scratch, 8, 168,
-					"** PERFECT MASTER SLEUTH! **", 0xF);
+				_font.drawString(&scratch, "** PERFECT MASTER SLEUTH! **", 8, 168, 320, 0xF);
 			} else if (solved >= 55) {
-				_font.drawString(&scratch, 8, 168,
-					"** ALL MYSTERIES SOLVED! **", 0xF);
+				_font.drawString(&scratch, "** ALL MYSTERIES SOLVED! **", 8, 168, 320, 0xF);
 			}
 
 			char marker = ' ';
@@ -586,29 +580,18 @@ void EEMEngine::doCaseSelection() {
 			if (sel >= 1 && sel <= 24) tier = "Junior Sleuth";
 			else if (sel >= 25 && sel <= 48) tier = "Senior Sleuth";
 			else if (sel >= 49 && sel <= 54) tier = "Master Sleuth";
-			_font.drawString(&scratch, 8, 24,
-				Common::String::format("Mystery %u  %c  [%s]",
-									   sel, marker, tier), 0xF);
-			_font.drawString(&scratch, 8, 40,
-				"  0..9        quick select", 0xF);
-			_font.drawString(&scratch, 8, 52,
-				"  Tab / +     next mystery", 0xF);
-			_font.drawString(&scratch, 8, 64,
-				"  Shift+Tab   prev mystery", 0xF);
-			_font.drawString(&scratch, 8, 76,
-				"  PgUp/PgDn   jump 10", 0xF);
-			_font.drawString(&scratch, 8, 88,
-				"  Home/End    first/last", 0xF);
-			_font.drawString(&scratch, 8, 100,
-				"  Enter       start mystery", 0xF);
-			_font.drawString(&scratch, 8, 112,
-				"  F5          save / load (ScummVM)", 0xF);
-			_font.drawString(&scratch, 8, 124,
-				"  ESC         quit", 0xF);
-			_font.drawString(&scratch, 8, 144,
-				"  *  solved on first try", 0xF);
-			_font.drawString(&scratch, 8, 156,
-				"  +  solved", 0xF);
+			_font.drawString(&scratch, Common::String::format("Mystery %u  %c  [%s]",
+									   sel, marker, tier), 8, 24, 320, 0xF);
+			_font.drawString(&scratch, "  0..9        quick select", 8, 40, 320, 0xF);
+			_font.drawString(&scratch, "  Tab / +     next mystery", 8, 52, 320, 0xF);
+			_font.drawString(&scratch, "  Shift+Tab   prev mystery", 8, 64, 320, 0xF);
+			_font.drawString(&scratch, "  PgUp/PgDn   jump 10", 8, 76, 320, 0xF);
+			_font.drawString(&scratch, "  Home/End    first/last", 8, 88, 320, 0xF);
+			_font.drawString(&scratch, "  Enter       start mystery", 8, 100, 320, 0xF);
+			_font.drawString(&scratch, "  F5          save / load (ScummVM)", 8, 112, 320, 0xF);
+			_font.drawString(&scratch, "  ESC         quit", 8, 124, 320, 0xF);
+			_font.drawString(&scratch, "  *  solved on first try", 8, 144, 320, 0xF);
+			_font.drawString(&scratch, "  +  solved", 8, 156, 320, 0xF);
 		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
@@ -910,7 +893,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			int textY = bubY;
 			int textW = MIN<int>(320 - bubX, 200);
 			int copyY = bubY;
-			int copyH = _font.height() * 4 + 8;
+			int copyH = _font.getFontHeight() * 4 + 8;
 
 			if (haveBalloon) {
 				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
@@ -1002,9 +985,8 @@ void EEMEngine::doNotebook() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
-		_font.drawString(&scratch, 8, 4, "NOTEBOOK", 0xF);
-		_font.drawString(&scratch, 200, 4,
-			Common::String::format("pts: %d", _mystery.selectedPoints()), 0xF);
+		_font.drawString(&scratch, "NOTEBOOK", 8, 4, 320, 0xF);
+		_font.drawString(&scratch, Common::String::format("pts: %d", _mystery.selectedPoints()), 200, 4, 320, 0xF);
 
 		// Build a list of found-clue indices.
 		Common::Array<uint> found;
@@ -1015,13 +997,12 @@ void EEMEngine::doNotebook() {
 		const int pages = MAX<int>(1, (total + kPerPage - 1) / kPerPage);
 		page = MIN<int>(page, pages - 1);
 
-		_font.drawString(&scratch, 200, 16,
-			Common::String::format("page %d/%d", page + 1, pages), 0xF);
+		_font.drawString(&scratch, Common::String::format("page %d/%d", page + 1, pages), 200, 16, 320, 0xF);
 
 		const byte *ni = _mystery.noteIndex();
 		const uint16 niCount = _mystery.noteIndexCount();
 		const Common::String partnerName = (_partner == 0) ? "Jake" : "Jennifer";
-		int y = 4 + _font.height() * 2 + 4;
+		int y = 4 + _font.getFontHeight() * 2 + 4;
 		for (int slot = 0; slot < kPerPage; slot++) {
 			const int idx = page * kPerPage + slot;
 			if (idx >= total)
@@ -1118,7 +1099,7 @@ void EEMEngine::doGallery() {
 	}
 
 	if (_font.isLoaded())
-		_font.drawString(&scratch, 8, 4, "GALLERY", 0xF);
+		_font.drawString(&scratch, "GALLERY", 8, 4, 320, 0xF);
 
 	const uint8 num = _mystery.numSuspects();
 	int slotX = 8;
@@ -1147,7 +1128,7 @@ void EEMEngine::doGallery() {
 									_mystery._inGallery[i];
 			Common::String label = Common::String::format("%u%s",
 				i + 1, discovered ? " *" : "");
-			_font.drawString(&scratch, placeX + 4, placeY + h + 2, label, 0xF);
+			_font.drawString(&scratch, label, placeX + 4, placeY + h + 2, 320, 0xF);
 		}
 		slotX += slotStep;
 	}
@@ -1254,7 +1235,7 @@ void EEMEngine::doBigMap() {
 				scratch.fillRect(mark, color);
 				if (_font.isLoaded()) {
 					Common::String num = Common::String::format("%u", i);
-					_font.drawString(&scratch, sx + 4, sy - 4, num, color);
+					_font.drawString(&scratch, num, sx + 4, sy - 4, 320, color);
 				}
 			}
 		}
@@ -1263,19 +1244,18 @@ void EEMEngine::doBigMap() {
 		if (_font.isLoaded() && _mystery.isLoaded()) {
 			const int panelX = kMapWinX + kMapWinW + 4;
 			int y = 4;
-			_font.drawString(&scratch, panelX, y, "TRAVEL", 0xF);
-			y += _font.height() + 4;
+			_font.drawString(&scratch, "TRAVEL", panelX, y, 320, 0xF);
+			y += _font.getFontHeight() + 4;
 			for (uint i = 0; i < _mystery.numSites() && y < 192; i++) {
 				if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 					continue;
 				const char marker = (i == _mystery._siteNumber) ? '>' : ' ';
 				Common::String label = Common::String::format(
 					"%c %u", marker, i);
-				_font.drawString(&scratch, panelX, y, label, 0x0F);
-				y += _font.height() + 1;
+				_font.drawString(&scratch, label, panelX, y, 320, 0x0F);
+				y += _font.getFontHeight() + 1;
 			}
-			_font.drawString(&scratch, panelX, 188,
-							 "Esc", 0x0F);
+			_font.drawString(&scratch, "Esc", panelX, 188, 320, 0x0F);
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -1350,8 +1330,8 @@ void EEMEngine::doBigMap() {
 				const int panelX = kMapWinX + kMapWinW + 4;
 				if (_font.isLoaded() && _mystery.isLoaded() &&
 					ev.mouse.x >= panelX) {
-					const int row = (ev.mouse.y - 4 - _font.height() - 4) /
-									(_font.height() + 1);
+					const int row = (ev.mouse.y - 4 - _font.getFontHeight() - 4) /
+									(_font.getFontHeight() + 1);
 					int seen = 0;
 					for (uint i = 0; i < _mystery.numSites(); i++) {
 						if (!_mystery._onSites[i] && i != _mystery._siteNumber)
@@ -1401,7 +1381,7 @@ void EEMEngine::doHelp() {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
-	_font.drawString(&scratch, 8, 4, "HELP", 0xF);
+	_font.drawString(&scratch, "HELP", 8, 4, 320, 0xF);
 	_font.drawWordWrapped(&scratch, 8, 24, 304, text, 0xF);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
@@ -1435,10 +1415,9 @@ bool EEMEngine::areYouSure() {
 			   (const byte *)saved.getBasePtr(0, row), 320);
 	scratch.fillRect(dlg, 0);
 	scratch.frameRect(dlg, 0xF);
-	_font.drawString(&scratch, dlg.left + 8, dlg.top + 8,
-		"Are you sure you want to quit?", 0xF);
-	_font.drawString(&scratch, dlg.left + 16, dlg.top + 36, "Y - Yes", 0xF);
-	_font.drawString(&scratch, dlg.left + 100, dlg.top + 36, "N - No", 0xF);
+	_font.drawString(&scratch, "Are you sure you want to quit?", dlg.left + 8, dlg.top + 8, 320, 0xF);
+	_font.drawString(&scratch, "Y - Yes", dlg.left + 16, dlg.top + 36, 320, 0xF);
+	_font.drawString(&scratch, "N - No", dlg.left + 100, dlg.top + 36, 320, 0xF);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
@@ -1507,7 +1486,7 @@ void EEMEngine::doAccuse() {
 			}
 		}
 		if (_font.isLoaded())
-			_font.drawString(&scratch, 8, 4, "ACCUSE", 0xF);
+			_font.drawString(&scratch, "ACCUSE", 8, 4, 320, 0xF);
 
 		for (uint i = 0; i < num; i++) {
 			if (!gd) continue;
@@ -1529,13 +1508,11 @@ void EEMEngine::doAccuse() {
 			}
 			if (_font.isLoaded()) {
 				Common::String label = Common::String::format("%u", i + 1);
-				_font.drawString(&scratch, placeX + 4,
-					placeY + h + 2, label, 0xF);
+				_font.drawString(&scratch, label, placeX + 4, placeY + h + 2, 320, 0xF);
 			}
 		}
 		if (_font.isLoaded()) {
-			_font.drawString(&scratch, 8, 180,
-				"Click a suspect or press 1..N - ESC to cancel", 0xF);
+			_font.drawString(&scratch, "Click a suspect or press 1..N - ESC to cancel", 8, 180, 320, 0xF);
 		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
@@ -1668,17 +1645,15 @@ void EEMEngine::doAccuse() {
 			Common::String banner = "Not enough evidence";
 			if (guessedRight)
 				banner = _mystery._firstTry ? "CORRECT - FIRST TRY!" : "CORRECT!";
-			_font.drawString(&scratch, 8, 4, banner, 0xF);
-			_font.drawString(&scratch, 8, 16,
-				Common::String::format("Evidence: %d/100  Suspect: %d",
-									   points, picked + 1), 0xF);
+			_font.drawString(&scratch, banner, 8, 4, 320, 0xF);
+			_font.drawString(&scratch, Common::String::format("Evidence: %d/100  Suspect: %d",
+									   points, picked + 1), 8, 16, 320, 0xF);
 			const int wrapW = MAX<int>(16, x2 - x1);
 			const int wrapY = MAX<int>(28, (int)y1);
 			(void)y2;
 			_font.drawWordWrapped(&scratch, x1, wrapY, wrapW, txt, 0xF);
-			_font.drawString(&scratch, 8, 188,
-				Common::String::format("page %u/%u  (Left/Right or click)",
-									   pageIdx + 1, pages), 0xF);
+			_font.drawString(&scratch, Common::String::format("page %u/%u  (Left/Right or click)",
+									   pageIdx + 1, pages), 8, 188, 320, 0xF);
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,

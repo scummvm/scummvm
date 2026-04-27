@@ -22,9 +22,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "common/tokenizer.h"
 
-#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 
 #include "eem/detection.h"
@@ -32,9 +30,9 @@
 
 namespace EEM {
 
-// Character -> glyph translation table from CHR2FNT segment (29b6:0000).
-// 128 bytes mapping ASCII 0..127 to a glyph index in FONT.FNT (which only
-// stores 85 glyphs covering ' ', '!'..'9', ':', 'A'..'Z'). Lowercase
+// Character → glyph translation table from segment CHR2FNT (29b6:0000).
+// 128 bytes mapping ASCII 0..127 to a glyph index in FONT.FNT (which
+// only stores 85 glyphs covering ' ', '!'..'9', ':', 'A'..'Z'). Lowercase
 // letters map to uppercase glyphs; chars without a glyph map to 0.
 static const byte kCharToGlyph[128] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -55,10 +53,9 @@ static const byte kCharToGlyph[128] = {
 	0x52, 0x53, 0x54, 0x00, 0x00, 0x00, 0x00, 0x00  // 0x78..0x7F 'x','y','z'..
 };
 
-static inline byte mapChar(byte c) {
+static inline byte mapChar(uint32 c) {
 	return c < 128 ? kCharToGlyph[c] : 0;
 }
-
 
 bool EEMFont::load(const Common::Path &path) {
 	Common::File f;
@@ -69,10 +66,12 @@ bool EEMFont::load(const Common::Path &path) {
 
 	const uint16 numChars = f.readUint16LE();
 	if (numChars == 0 || numChars > 256) {
-		warning("EEMFont::load: %s reports %u chars", path.toString().c_str(), numChars);
+		warning("EEMFont::load: %s reports %u chars",
+				path.toString().c_str(), numChars);
 		return false;
 	}
 	_glyphs.resize(numChars);
+	_maxHeight = _maxWidth = 0;
 
 	for (uint i = 0; i < numChars; i++) {
 		FontGlyph &g = _glyphs[i];
@@ -88,36 +87,43 @@ bool EEMFont::load(const Common::Path &path) {
 		}
 		if (g.height > _maxHeight)
 			_maxHeight = g.height;
+		if (g.widthBits > _maxWidth)
+			_maxWidth = g.widthBits;
 	}
 
-	debugC(1, kDebugGfx, "Font %s loaded: %u glyphs, max h=%u",
-		   path.toString().c_str(), numChars, _maxHeight);
+	debugC(1, kDebugGfx, "Font %s loaded: %u glyphs, max %ux%u",
+		   path.toString().c_str(), numChars, _maxWidth, _maxHeight);
 	return true;
 }
 
-int EEMFont::charWidth(byte c) const {
-	const byte g = mapChar(c);
-	if (g >= _glyphs.size())
-		return 0;
-	return _glyphs[g].widthBits;
-}
-
-int EEMFont::stringWidth(const Common::String &s) const {
-	int w = 0;
-	for (uint i = 0; i < s.size(); i++)
-		w += charWidth((byte)s[i]);
-	return w;
-}
-
-int EEMFont::drawChar(Graphics::ManagedSurface *dst, int x, int y, byte c, byte color) const {
-	if (!dst)
-		return 0;
-	const byte gi = mapChar(c);
+int EEMFont::getCharWidth(uint32 chr) const {
+	const byte gi = mapChar(chr);
 	if (gi >= _glyphs.size())
 		return 0;
+	return _glyphs[gi].widthBits;
+}
+
+int EEMFont::drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
+							 int width, const Common::String &s,
+							 uint32 color) const {
+	Common::Array<Common::String> lines;
+	wordWrapText(s, width, lines);
+	const int lineH = getFontHeight() + 1;
+	for (uint i = 0; i < lines.size(); i++)
+		drawString(dst, lines[i], x, y + (int)i * lineH, width, color);
+	return (int)lines.size() * lineH;
+}
+
+void EEMFont::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
+					   uint32 color) const {
+	if (!dst)
+		return;
+	const byte gi = mapChar(chr);
+	if (gi >= _glyphs.size())
+		return;
 	const FontGlyph &g = _glyphs[gi];
 	if (g.bitmap.empty())
-		return g.widthBits;
+		return;
 
 	const uint bytesPerRow = (g.widthBits + 7) / 8;
 	for (uint row = 0; row < g.height; row++) {
@@ -132,40 +138,9 @@ int EEMFont::drawChar(Graphics::ManagedSurface *dst, int x, int y, byte c, byte 
 				continue;
 			const byte mask = (byte)(0x80 >> (bit & 7));
 			if (srcRow[bit / 8] & mask)
-				dstRow[dstX] = color;
+				dstRow[dstX] = (byte)color;
 		}
 	}
-	return g.widthBits;
-}
-
-int EEMFont::drawString(Graphics::ManagedSurface *dst, int x, int y,
-						const Common::String &s, byte color) const {
-	int penX = x;
-	for (uint i = 0; i < s.size(); i++)
-		penX += drawChar(dst, penX, y, (byte)s[i], color);
-	return penX - x;
-}
-
-int EEMFont::drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y, int width,
-							 const Common::String &s, byte color) const {
-	Common::StringTokenizer tok(s, " \t");
-	int penY = y;
-	Common::String line;
-
-	while (!tok.empty()) {
-		const Common::String word = tok.nextToken();
-		Common::String trial = line.empty() ? word : line + " " + word;
-		if (stringWidth(trial) <= width) {
-			line = trial;
-		} else {
-			drawString(dst, x, penY, line, color);
-			penY += _maxHeight + 1;
-			line = word;
-		}
-	}
-	if (!line.empty())
-		drawString(dst, x, penY, line, color);
-	return penY + _maxHeight - y;
 }
 
 } // End of namespace EEM
