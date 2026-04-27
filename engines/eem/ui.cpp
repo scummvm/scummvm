@@ -214,12 +214,14 @@ void EEMEngine::doCaseSelection() {
 			const byte transp = (byte)(fr.flags >> 8);
 			for (int row = 0; row < fr.surface.h; row++) {
 				const int dstY = kKdAnimY + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < fr.surface.w; col++) {
 					const int dstX = kKdAnimX + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -420,7 +422,8 @@ void EEMEngine::doCaseSelection() {
 			const int kLineH  = 10;
 			const int kVisible = 12;
 			int top = (int)sel - kVisible / 2;
-			if (top < 0) top = 0;
+			if (top < 0)
+				top = 0;
 			if (top + kVisible > (int)kMaxMystery + 1)
 				top = (int)kMaxMystery + 1 - kVisible;
 			for (int r = 0; r < kVisible; r++) {
@@ -429,8 +432,10 @@ void EEMEngine::doCaseSelection() {
 					break;
 				char marker = ' ';
 				if ((uint)idx < sizeof(_mysteriesSolved)) {
-					if (_mysteriesSolved[idx] == 2) marker = '*';
-					else if (_mysteriesSolved[idx] == 1) marker = '+';
+					if (_mysteriesSolved[idx] == 2)
+						marker = '*';
+					else if (_mysteriesSolved[idx] == 1)
+						marker = '+';
 				}
 				const char arrow = ((uint)idx == sel) ? '>' : ' ';
 				_font.drawString(&scratch,
@@ -476,7 +481,8 @@ void EEMEngine::doCaseSelection() {
 					const int kLineH = 10;
 					const int kVisible = 12;
 					int top = (int)sel - kVisible / 2;
-					if (top < 0) top = 0;
+					if (top < 0)
+						top = 0;
 					if (top + kVisible > (int)kMaxMystery + 1)
 						top = (int)kMaxMystery + 1 - kVisible;
 					const int row = (ev.mouse.y - kListRect.top) / kLineH;
@@ -630,12 +636,14 @@ void EEMEngine::doNotebook() {
 			const byte transp = (byte)(fr.flags >> 8);
 			for (int row = 0; row < fr.surface.h; row++) {
 				const int dstY = 80 + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < fr.surface.w; col++) {
 					const int dstX = 5 + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -771,7 +779,8 @@ void EEMEngine::doNotebook() {
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT ||
 					ev.kbd.keycode == Common::KEYCODE_PAGEUP) {
-					if (page > 0) page--;
+					if (page > 0)
+						page--;
 					dirty = true;
 				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT ||
 						   ev.kbd.keycode == Common::KEYCODE_PAGEDOWN ||
@@ -820,7 +829,8 @@ void EEMEngine::doNotebook() {
 					continue;
 				}
 				if (kBtnPagePrev.contains(ev.mouse.x, ev.mouse.y)) {
-					if (page > 0) page--;
+					if (page > 0)
+						page--;
 					dirty = true;
 					continue;
 				}
@@ -952,12 +962,14 @@ void EEMEngine::doGallery() {
 			const int px = 5, py = 0x50;
 			for (int row = 0; row < fr.surface.h; row++) {
 				const int dstY = py + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < fr.surface.w; col++) {
 					const int dstX = px + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -996,7 +1008,8 @@ void EEMEngine::doGallery() {
 					continue;
 				for (int row = 0; row < h; row++) {
 					const int dstY = placeY + row;
-					if (dstY < 0) continue;
+					if (dstY < 0)
+						continue;
 					const byte *src =
 						(const byte *)portrait.surface.getBasePtr(0, row);
 					byte *dst = (byte *)scratch.getBasePtr(0, dstY);
@@ -1106,7 +1119,8 @@ void EEMEngine::doGallery() {
 				// the suspect index. We mirror that with cached rects.
 				bool clicked = false;
 				for (uint i = 0; i < slotRects.size(); i++) {
-					if (slotSuspect[i] < 0) continue;
+					if (slotSuspect[i] < 0)
+						continue;
 					if (slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
 						// `MoreInfo(i)` — show the suspect detail page.
 						// Mirrors `MoreInfo @ 158f:0419`:
@@ -1172,24 +1186,28 @@ void EEMEngine::doGallery() {
 						for (uint k = 0; k < clueCount && k < 30; k++) {
 							const uint16 clueId =
 								READ_LE_UINT16(suspect + 0xa + k * 2);
-							if (clueId == 0xFFFF) break;
+							if (clueId == 0xFFFF)
+								break;
 							if (clueId >= Mystery::kCluesFoundCap ||
 								!_mystery._cluesFound[clueId])
 								continue;
-							if (!ni || clueId >= niCount) continue;
+							if (!ni || clueId >= niCount)
+								continue;
 							const uint16 textOff =
 								READ_LE_UINT16(ni + clueId * 4);
 							Common::String txt =
 								parseString(_mystery.textAt(textOff),
 											_playerName, _partner);
-							if (txt.empty()) continue;
+							if (txt.empty())
+								continue;
 							const byte color =
 								_mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 							const int hLine = _font.drawWordWrapped(
 								&ms, rx, yPos, rw, txt, color);
 							yPos += hLine + 7;
 							drewAny = true;
-							if (yPos + lineH > ry + rh) break;
+							if (yPos + lineH > ry + rh)
+								break;
 						}
 						if (!drewAny && _font.isLoaded()) {
 							_font.drawString(&ms,
@@ -1249,7 +1267,8 @@ void EEMEngine::doGallery() {
 				(void)clicked;
 			}
 		}
-		if (exitFlag) break;
+		if (exitFlag)
+			break;
 
 		const uint32 now = g_system->getMillis();
 		if (now - lastDraw >= 100) {
@@ -1351,12 +1370,14 @@ void EEMEngine::doBigMap() {
 			const byte transp = (byte)(m.flags >> 8);
 			for (int row = 0; row < m.surface.h; row++) {
 				const int dstY = y + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)m.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < m.surface.w; col++) {
 					const int dstX = x + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -1376,9 +1397,12 @@ void EEMEngine::doBigMap() {
 								  && _mystery._visitedSite[i];
 
 			const Picture *m = nullptr;
-			if (done_ && haveDone)            m = &done;
-			else if (crime != 0 && haveCrime) m = &crimeM;
-			else if (haveNormal)              m = &normal;
+			if (done_ && haveDone)
+				m = &done;
+			else if (crime != 0 && haveCrime)
+				m = &crimeM;
+			else if (haveNormal)
+				m = &normal;
 
 			if (m)
 				blitMarker(*m, (int)mx, (int)my);
@@ -1400,12 +1424,14 @@ void EEMEngine::doBigMap() {
 			const byte transp = (byte)(fr.flags >> 8);
 			for (int row = 0; row < fr.surface.h; row++) {
 				const int dstY = kMapAnimY + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < fr.surface.w; col++) {
 					const int dstX = kMapAnimX + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -1426,7 +1452,8 @@ void EEMEngine::doBigMap() {
 	const Common::Rect kSetupBtnRect   (252,   4, 315,  42); // 29be:15ce
 
 	bool wantZoom = false;
-	int  zoomX = 0, zoomY = 0;
+	int zoomX = 0;
+	int zoomY = 0;
 	while (!shouldQuit()) {
 		Common::Event ev;
 		while (g_system->getEventManager()->pollEvent(ev)) {
@@ -1549,7 +1576,8 @@ void EEMEngine::doBigMap() {
 			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 				continue;
 			const byte *entry = _mystery.mapEntry(i);
-			if (!entry) continue;
+			if (!entry)
+				continue;
 			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
 			const uint16 mx       = READ_LE_UINT16(entry + 0x8);
 			const uint16 my       = READ_LE_UINT16(entry + 0xa);
@@ -1587,12 +1615,14 @@ void EEMEngine::doBigMap() {
 			const byte transp = (byte)(fr.flags >> 8);
 			for (int row = 0; row < fr.surface.h; row++) {
 				const int dstY = kDetailAnimY + row;
-				if (dstY < 0 || dstY >= 200) continue;
+				if (dstY < 0 || dstY >= 200)
+					continue;
 				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
 				for (int col = 0; col < fr.surface.w; col++) {
 					const int dstX = kDetailAnimX + col;
-					if (dstX < 0 || dstX >= 320) continue;
+					if (dstX < 0 || dstX >= 320)
+						continue;
 					if (src[col] != transp)
 						dst[dstX] = src[col];
 				}
@@ -1704,12 +1734,14 @@ void EEMEngine::doBigMap() {
 							i != _mystery._siteNumber)
 							continue;
 						const byte *entry = _mystery.mapEntry(i);
-						if (!entry) continue;
+						if (!entry)
+							continue;
 						const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
 						const uint16 mx       = READ_LE_UINT16(entry + 0x8);
 						const uint16 my       = READ_LE_UINT16(entry + 0xa);
 						Picture button;
-						int bw = 16, bh = 16;
+						int bw = 16;
+						int bh = 16;
 						if (_buttonArchive.loadEntry(buttonId, button)) {
 							bw = button.surface.w;
 							bh = button.surface.h;
@@ -1813,18 +1845,22 @@ void EEMEngine::doAccuse() {
 		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
 			slotRects[i] = Common::Rect();
 			slotSuspect[i] = -1;
-			if (!gd) continue;
+			if (!gd)
+				continue;
 			const uint8 phys = _mystery._newOrder[i];
-			if (phys >= 5) continue;
+			if (phys >= 5)
+				continue;
 			// `_DrawGallery @ 158f:00b9` skips suspects whose
 			// `_InGallery[phys]` flag is 0 — that's the original gate
 			// (some suspects only become visible after being met or
 			// stay hidden after a wrong accusation removes them).
-			if (_mystery._inGallery[phys] == 0) continue;
+			if (_mystery._inGallery[phys] == 0)
+				continue;
 			const Slot &s = kGallerySlots[phys];
 
 			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-			if (picId == 0) continue;
+			if (picId == 0)
+				continue;
 			Picture portrait;
 			if (!_picsArchive.getPicture(picId, portrait))
 				continue;
@@ -1834,10 +1870,12 @@ void EEMEngine::doAccuse() {
 			const byte transp = (byte)(portrait.flags >> 8);
 			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
 			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-			if (w <= 0 || h <= 0) continue;
+			if (w <= 0 || h <= 0)
+				continue;
 			for (int row = 0; row < h; row++) {
 				const int dstY = placeY + row;
-				if (dstY < 0) continue;
+				if (dstY < 0)
+					continue;
 				const byte *src =
 					(const byte *)portrait.surface.getBasePtr(0, row);
 				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
@@ -1933,7 +1971,9 @@ void EEMEngine::doAccuse() {
 					}
 				}
 				// Inset table @ 29be:0875 — 1df2:0acb pushes color=0.
-				uint16 tx = 5, ty = 4, tw = 155;
+				uint16 tx = 5;
+				uint16 ty = 4;
+				uint16 tw = 155;
 				getBalloonInsets(bubNum, tx, ty, tw);
 				if (_font.isLoaded()) {
 					_font.drawWordWrapped(&ms, balloonX + tx,
@@ -1953,10 +1993,12 @@ void EEMEngine::doAccuse() {
 	// way the original wraps DI past empty slots.
 	auto nextLiveSlot = [&](int from, int dir) -> int {
 		const int n = (int)slotRects.size();
-		if (n <= 0) return 0;
+		if (n <= 0)
+			return 0;
 		for (int step = 1; step <= n; step++) {
 			int idx = (from + dir * step) % n;
-			if (idx < 0) idx += n;
+			if (idx < 0)
+				idx += n;
 			if (!slotRects[idx].isEmpty())
 				return idx;
 		}
@@ -2028,7 +2070,8 @@ void EEMEngine::doAccuse() {
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				for (uint i = 0; i < slotRects.size(); i++) {
-					if (slotSuspect[i] < 0) continue;
+					if (slotSuspect[i] < 0)
+						continue;
 					if (slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
 						picked = (int)i;
 						break;
@@ -2189,12 +2232,15 @@ void EEMEngine::doAccuse() {
 			g_system->updateScreen();
 			g_system->delayMillis(15);
 		}
-		if (exit) break;
+		if (exit)
+			break;
 		if (advance) {
-			if (pageIdx + 1 >= pages) break;
+			if (pageIdx + 1 >= pages)
+				break;
 			pageIdx++;
 		} else if (back) {
-			if (pageIdx > 0) pageIdx--;
+			if (pageIdx > 0)
+				pageIdx--;
 		}
 	}
 
