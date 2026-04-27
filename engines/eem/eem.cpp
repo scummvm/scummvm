@@ -1569,9 +1569,36 @@ void EEMEngine::doBigMap() {
 					   (const byte *)frame.surface.getBasePtr(0, row), w);
 		}
 
-		// Site icons at BigMap coords (+4, +6). Three colours by state:
-		//   visited → DoneMarker analogue, crime flag → CrimeMarker,
-		//   else → SiteMarker. Current site gets a bright highlight.
+		// Marker PICs from `_main @ 1a35:0f59`. Three globals are filled
+		// once at boot via `_GetPicture` (1-based IDs → entries N-1):
+		//   _DoneMarker  = PIC 0x20d  (already-searched site)
+		//   _SiteMarker  = PIC 0xc5   (default available site)
+		//   _CrimeMarker = PIC 0xc6   (crime-scene flag set)
+		// Picked per-site by `_DrawBigMapButtons @ 20fe:0877`:
+		//   1. SaveSiteComplete[i] → DoneMarker
+		//   2. else MapData[+0xc] != 0 → CrimeMarker
+		//   3. else SiteMarker
+		Picture done, normal, crimeM;
+		const bool haveDone   = _picsArchive.getPicture(0x20d, done);
+		const bool haveNormal = _picsArchive.getPicture(0xc5,  normal);
+		const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
+
+		auto blitMarker = [&](const Picture &m, int x, int y) {
+			const byte transp = (byte)(m.flags >> 8);
+			for (int row = 0; row < m.surface.h; row++) {
+				const int dstY = y + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)m.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < m.surface.w; col++) {
+					const int dstX = x + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+		};
+
 		for (uint i = 0; i < _mystery.numSites(); i++) {
 			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 				continue;
@@ -1581,19 +1608,21 @@ void EEMEngine::doBigMap() {
 			const uint16 mx    = READ_LE_UINT16(entry + 0x4);
 			const uint16 my    = READ_LE_UINT16(entry + 0x6);
 			const uint16 crime = READ_LE_UINT16(entry + 0xc);
+			const bool   done_ = (i < Mystery::kVisitedSiteCap)
+								  && _mystery._visitedSite[i];
 
-			byte color;
-			if (i < Mystery::kVisitedSiteCap && _mystery._visitedSite[i])
-				color = 0x07;
-			else if (crime != 0)
-				color = 0x0C;
-			else
-				color = 0x0F;
-			if (i == _mystery._siteNumber)
-				color = 0x0E;
+			const Picture *m = nullptr;
+			if (done_ && haveDone)            m = &done;
+			else if (crime != 0 && haveCrime) m = &crimeM;
+			else if (haveNormal)              m = &normal;
 
-			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
-			scratch.fillRect(mark, color);
+			if (m)
+				blitMarker(*m, (int)mx, (int)my);
+			else {
+				// Fallback if the markers couldn't be loaded.
+				const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
+				scratch.fillRect(mark, 0x0F);
+			}
 		}
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,

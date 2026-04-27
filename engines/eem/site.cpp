@@ -42,9 +42,14 @@ void SiteScreen::enter(uint siteNum) {
 		return;
 	}
 
+	// Capture whether this is the first time the player enters this
+	// site BEFORE we mark it visited — `_DoSiteLoop @ 168d:03f4`
+	// uses the same check to decide whether to play the arrival
+	// dialog: `if (_VisitedSite[_SiteNumber] == 0) _DisplayClue(...)`.
+	const bool firstVisit = (siteNum < Mystery::kVisitedSiteCap)
+							 && (_mystery->_visitedSite[siteNum] == 0);
+
 	_mystery->_siteNumber = siteNum;
-	if (siteNum < Mystery::kVisitedSiteCap)
-		_mystery->_visitedSite[siteNum] = 1;
 	debugC(1, kDebugSite, "Entering site %u (%u hotspots)",
 		   siteNum, _mystery->hotspotCount(siteNum));
 
@@ -68,6 +73,12 @@ void SiteScreen::enter(uint siteNum) {
 		renderBackground(siteNum);
 	}
 
+	// Per-site NPCs / decorative animations (`_DoSiteLoop` reads
+	// `siteData[+0xa]` as the drop count and iterates 6-byte entries
+	// from `siteData[+0x48]`). Drawn before the partner sprite so
+	// the partner appears on top of any background NPCs.
+	renderDrops(siteNum);
+
 	// Persistent partner sprite (`_NewAnimation` at the tail of
 	// `_DoSiteLoop`). Drawn after the BG so the hotspot outlines and
 	// HUD that follow stay on top of it.
@@ -75,6 +86,39 @@ void SiteScreen::enter(uint siteNum) {
 
 	renderHotspots(siteNum);
 	g_system->updateScreen();
+
+	// First-visit dialog. `_DoSiteLoop @ 168d:03f4` does:
+	//   if (_VisitedSite[_SiteNumber] == 0) {
+	//       _DisplayClue(_Mystery + SiteIndex[siteNum*6 + 2], 1);
+	//       _VisitedSite[_SiteNumber] = 1;
+	//   }
+	// `SiteIndex[+2..+3]` is the byte offset (within the mystery
+	// buffer) of a ClueBlock that holds the partner's arrival
+	// dialogue. We've kept the +2 field undocumented up to now —
+	// this confirms it's the entry-clue offset.
+	if (firstVisit) {
+		const byte *idx = _mystery->siteIndexEntry(siteNum);
+		if (idx) {
+			const uint16 clueOff = READ_LE_UINT16(idx + 2);
+			if (clueOff != 0xFFFF) {
+				const byte *clueBlock = _mystery->blobAt(clueOff);
+				if (clueBlock)
+					_vm->displayClue(clueBlock);
+			}
+		}
+		if (siteNum < Mystery::kVisitedSiteCap)
+			_mystery->_visitedSite[siteNum] = 1;
+		// The dialog overlay will have left the screen with portrait /
+		// balloon residues; refresh the site so the player returns to
+		// a clean state.
+		renderBackground(siteNum);
+		renderDrops(siteNum);
+		renderPartner(siteNum);
+		renderHotspots(siteNum);
+		g_system->updateScreen();
+	} else if (siteNum < Mystery::kVisitedSiteCap) {
+		_mystery->_visitedSite[siteNum] = 1;
+	}
 }
 
 void SiteScreen::run() {
@@ -344,6 +388,92 @@ void SiteScreen::enterSiteAnim() {
 			g_system->delayMillis(80);
 		}
 	}
+}
+
+void SiteScreen::renderDrops(uint siteNum) {
+	// `_DoSiteLoop @ 168d:03f4` runs TWO per-site loops, both feeding
+	// the visible NPCs / decorations on the site BG:
+	//
+	//   Loop 1 (animations / animated NPCs)
+	//     bound: siteData[+0xa]
+	//     per entry at siteData[+0x48 + i*6]:  {animId, x, y}
+	//     if animId == -1: a `_ColorCycle(x, y)` palette range each tick
+	//     else: `_GetAnimation(animId)` + `_NewAnimation(x, y, ...)` —
+	//           added inactive (arg5=0), updated by `_UpdateAnimations`.
+	//
+	//   Loop 2 (static drops)
+	//     bound: siteData[+0x4]  (verified at 168d:05c0:
+	//            `MOV ES:[BX+0x4], DI; CMP ES:[BX+0x4], DI`)
+	//     per entry at siteData[+0xc + i*6]:    {picId, x, y}
+	//     each → `_AddDrop(picId, x, y)` which loads PIC `picId-1`
+	//     from PICS.DBD and blits it at (x, y) onto offscreen 32000.
+	//
+	// Both contribute to the visible scene. We render Loop 2 statics
+	// directly and Loop 1's first frame as a static sprite (per-tick
+	// animation cycling is still TODO).
+	if (!_mystery)
+		return;
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 numStatic = READ_LE_UINT16(site + 0x4);
+	const uint16 numAnims  = READ_LE_UINT16(site + 0xa);
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	auto blitMasked = [&](const Picture &p, int x, int y) {
+		const byte transp = (byte)(p.flags >> 8);
+		for (int row = 0; row < p.surface.h; row++) {
+			const int dstY = y + row;
+			if (dstY < 0 || dstY >= screen->h) continue;
+			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+			byte *dst = (byte *)screen->getBasePtr(0, dstY);
+			for (int col = 0; col < p.surface.w; col++) {
+				const int dstX = x + col;
+				if (dstX < 0 || dstX >= screen->w) continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	};
+
+	// Loop 2 — `_AddDrop(picId, x, y)`. PIC IDs are 1-based per
+	// `_AddDrop @ 172b:1a77` (it does `_GetFromDB(.., number - 1)`).
+	if (numStatic > 0 && numStatic <= 16) {
+		for (uint i = 0; i < numStatic; i++) {
+			const uint dropOff = 0xc + i * 6;
+			const uint16 picId = READ_LE_UINT16(site + dropOff + 0);
+			const int16  x     = (int16)READ_LE_UINT16(site + dropOff + 2);
+			const int16  y     = (int16)READ_LE_UINT16(site + dropOff + 4);
+			if (picId == 0)
+				continue;
+			Picture pic;
+			if (!_vm->getPics().getPicture(picId, pic))
+				continue;
+			blitMasked(pic, x, y);
+		}
+	}
+
+	// Loop 1 — animation drops. Use frame 0 as a static placeholder
+	// for non-`-1` entries.
+	if (numAnims > 0 && numAnims <= 16) {
+		for (uint i = 0; i < numAnims; i++) {
+			const uint dropOff = 0x48 + i * 6;
+			const int16 animId = (int16)READ_LE_UINT16(site + dropOff + 0);
+			if (animId < 0)
+				continue; // -1 → ColorCycle entry, handled per tick
+			const int16 x = (int16)READ_LE_UINT16(site + dropOff + 2);
+			const int16 y = (int16)READ_LE_UINT16(site + dropOff + 4);
+			Animation anim;
+			if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
+				continue;
+			blitMasked(anim[0], x, y);
+		}
+	}
+
+	g_system->unlockScreen();
 }
 
 void SiteScreen::renderPartner(uint siteNum) {
