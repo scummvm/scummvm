@@ -587,20 +587,57 @@ void EEMEngine::doChoosePartner() {
 
 void EEMEngine::doCaseSelection() {
 	// Mirrors `_CaseSelection` @ 1c33:0a87. The original draws PIC 0x41
-	// (chooser background) and a paginated list of mystery names rendered
-	// from M<n>.BIN headers, then calls `_DoChoose` to read a selection.
-	// We approximate with a numeric prompt (0..9 for first ten mysteries,
-	// Tab to cycle, Enter to load).
+	// (chooser background) plus a centred "Book %d" / "Challenge Book"
+	// header at (y=12) and then calls `_DoChoose(list)` to render the
+	// menu via `DrawList` @ 1c33:040d at (_TextBox+3, DAT_29be_0d02) =
+	// (61, 35), 12 rows × 10 px line height. The menu list itself is
+	// the static array at 29be:0d6a (verified via `push 0x0d6a` at
+	// 1c33:1ab4). Strings are at 29be:0ef4 onwards. Layout:
+	//   list[0]  = "----------------------------------"
+	//   list[1]  = "         Choose A Mystery"
+	//   list[2..10] = alternating menu items + separators
+	// Five selectable items: Choose A Mystery / Practice Mystery /
+	// See ScrapBook 1/2/3.
 	const uint kMaxMystery = 54;
-	// Default selection = the next unsolved mystery so post-win the
-	// player doesn't have to scroll to find what's left.
-	uint sel = 0;
-	for (uint i = 0; i <= kMaxMystery; i++) {
-		if (i < sizeof(_mysteriesSolved) && !_mysteriesSolved[i]) {
-			sel = i;
-			break;
-		}
-	}
+
+	enum MenuPick {
+		kPickChoose = 0,
+		kPickPractice,
+		kPickScrap1,
+		kPickScrap2,
+		kPickScrap3,
+		kNumPicks
+	};
+	const char *kPickLabel[kNumPicks] = {
+		"         Choose A Mystery",
+		"         Practice Mystery",
+		"         See ScrapBook 1",
+		"         See ScrapBook 2",
+		"         See ScrapBook 3"
+	};
+	// ScrapBooks aren't implemented yet — grey them so the player can't
+	// stop on them, mirroring the original `_Greys` mask.
+	const bool kPickEnabled[kNumPicks] = { true, true, false, false, false };
+	uint pick = kPickChoose;
+
+	const char *kSeparator = "----------------------------------";
+
+	// Click rectangles from the original `_DoChoose` @ 1c33:0514 — each
+	// `_InRect(_MouseX, _MouseY, addr, 0x29be)` reads one 4×u16 rect at
+	// the listed offset in segment 29be ({x1, y1, x2, y2}). We use
+	// `Common::Rect` (left/top/right/bottom) which also gives us
+	// `contains(x, y)` for hit testing.
+	const Common::Rect kOkRect      ( 12,  63,  41,  87); // 29be:0cd8 confirm
+	const Common::Rect kHelpRect    ( 12, 100,  41, 124); // 29be:0ce0 help
+	const Common::Rect kExitRect    ( 12, 137,  41, 161); // 29be:0ce8 cancel
+	const Common::Rect kUpArrowRect (240,  31, 250,  43); // 29be:0cf0 scroll up
+	const Common::Rect kDnArrowRect (240, 148, 250, 159); // 29be:0cf8 scroll dn
+	const Common::Rect kListRect    ( 58,  35, 238, 158); // 29be:0d00 list panel
+
+	// The original `_NewPlayer` set `_MouseCursor = 1` on exit; the
+	// chain of screens after it expects the cursor to stay visible.
+	// Reassert here in case anything between hid it.
+	CursorMan.showMouse(true);
 
 	// Mirrors `_CaseSelection`: load PIC 0x41 as the chooser backdrop.
 	Picture caseBg;
@@ -619,53 +656,215 @@ void EEMEngine::doCaseSelection() {
 			}
 		}
 		if (_font.isLoaded()) {
-			_font.drawString(&scratch, Common::String::format("EAGLE EYE - %s", _playerName.c_str()), 8, 4, 320, 0xF);
+			// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
+			// and `DAT_29be_0d02` for y. `_TextBox` @ 29be:0d00 holds
+			// {x=58, y=35, x2=238, y2=158}. Matches the blue panel.
+			const int kListX  = 58 + 3;
+			const int kListW  = 238 - kListX;
+			const int kListY0 = 35;
+			const int kLineH  = 10;
 
-			// Solved count.
-			uint solved = 0, perfectSolved = 0;
-			for (uint i = 0; i < sizeof(_mysteriesSolved); i++) {
-				if (_mysteriesSolved[i] >= 1) solved++;
-				if (_mysteriesSolved[i] == 2) perfectSolved++;
-			}
-			_font.drawString(&scratch, Common::String::format("solved %u (1st try %u)",
-									   solved, perfectSolved), 200, 4, 320, 0xF);
-			if (perfectSolved >= 55) {
-				_font.drawString(&scratch, "** PERFECT MASTER SLEUTH! **", 8, 168, 320, 0xF);
-			} else if (solved >= 55) {
-				_font.drawString(&scratch, "** ALL MYSTERIES SOLVED! **", 8, 168, 320, 0xF);
-			}
+			// Top centred "Book %d" / "Challenge Book" title — sprintf
+			// format strings at 29be:0deb / 29be:0dfa shown via
+			// `_Show_String(0xc, (0xba - width)/2 + 0x3c, …)` in the
+			// original. We don't track challenge tier yet so always
+			// show "Book 1".
+			const Common::String book = "Book 1";
+			const int titleW = _font.getStringWidth(book);
+			const int titleX = (0xba - titleW) / 2 + 0x3c;
+			_font.drawString(&scratch, book, titleX, 12, 320, 0xF);
 
-			char marker = ' ';
-			if (sel < sizeof(_mysteriesSolved)) {
-				if (_mysteriesSolved[sel] == 2) marker = '*';
-				else if (_mysteriesSolved[sel] == 1) marker = '+';
+			// Render 11 list rows: separator + menu item pairs.
+			//   row 0  separator
+			//   row 1  Choose A Mystery
+			//   row 2  separator
+			//   row 3  Practice Mystery
+			//   ...
+			//   row 9  See ScrapBook 3
+			//   row 10 separator
+			for (int r = 0; r < 11; r++) {
+				const int y = kListY0 + r * kLineH;
+				if ((r & 1) == 0) {
+					_font.drawString(&scratch, kSeparator, kListX, y, kListW, 0x7);
+					continue;
+				}
+				const uint mp = (uint)(r >> 1);
+				const bool isSel  = (mp == pick);
+				const byte color  = isSel        ? 0xF :
+									kPickEnabled[mp] ? 0x7 : 0x8;
+				_font.drawString(&scratch, kPickLabel[mp], kListX, y, kListW, color);
 			}
-			// Per the original tiers: 0 (tutorial), 1-24 (Junior),
-			// 25-48 (Senior), 49-54 (Master).
-			const char *tier = "Tutorial";
-			if (sel >= 1 && sel <= 24) tier = "Junior Sleuth";
-			else if (sel >= 25 && sel <= 48) tier = "Senior Sleuth";
-			else if (sel >= 49 && sel <= 54) tier = "Master Sleuth";
-			_font.drawString(&scratch, Common::String::format("Mystery %u  %c  [%s]",
-									   sel, marker, tier), 8, 24, 320, 0xF);
-			_font.drawString(&scratch, "  0..9        quick select", 8, 40, 320, 0xF);
-			_font.drawString(&scratch, "  Tab / +     next mystery", 8, 52, 320, 0xF);
-			_font.drawString(&scratch, "  Shift+Tab   prev mystery", 8, 64, 320, 0xF);
-			_font.drawString(&scratch, "  PgUp/PgDn   jump 10", 8, 76, 320, 0xF);
-			_font.drawString(&scratch, "  Home/End    first/last", 8, 88, 320, 0xF);
-			_font.drawString(&scratch, "  Enter       start mystery", 8, 100, 320, 0xF);
-			_font.drawString(&scratch, "  F5          save / load (ScummVM)", 8, 112, 320, 0xF);
-			_font.drawString(&scratch, "  ESC         quit", 8, 124, 320, 0xF);
-			_font.drawString(&scratch, "  *  solved on first try", 8, 144, 320, 0xF);
-			_font.drawString(&scratch, "  +  solved", 8, 156, 320, 0xF);
 		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
 
+	auto pickPrev = [&]() {
+		for (int i = 0; i < (int)kNumPicks; i++) {
+			pick = (pick == 0) ? (uint)(kNumPicks - 1) : pick - 1;
+			if (kPickEnabled[pick])
+				break;
+		}
+	};
+	auto pickNext = [&]() {
+		for (int i = 0; i < (int)kNumPicks; i++) {
+			pick = (pick + 1) % kNumPicks;
+			if (kPickEnabled[pick])
+				break;
+		}
+	};
+
 	draw();
 
+	bool exitChosen = false;
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool confirmed = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// OK / EXIT / HELP buttons (rectangles from `_DoChoose`).
+				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+					confirmed = true;
+					break;
+				}
+				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
+					exitChosen = true;
+					confirmed = true;
+					break;
+				}
+				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// HELP placeholder — original calls `_DisplayHint`;
+					// our help screen is wired to `H` later in the flow.
+					continue;
+				}
+				// List panel: click on a non-separator row selects the
+				// menu entry under the cursor.
+				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
+					const int kLineH = 10;
+					const int row = (ev.mouse.y - kListRect.top) / kLineH;
+					if ((row & 1) == 1) {
+						const uint mp = (uint)(row >> 1);
+						if (mp < kNumPicks && kPickEnabled[mp]) {
+							pick = mp;
+							draw();
+							continue;
+						}
+					}
+				}
+			}
+			if (ev.type != Common::EVENT_KEYDOWN)
+				continue;
+			const Common::KeyCode k = ev.kbd.keycode;
+			if (k == Common::KEYCODE_ESCAPE) {
+				exitChosen = true;
+				confirmed = true;
+				break;
+			}
+			if (k == Common::KEYCODE_RETURN) {
+				confirmed = true;
+				break;
+			}
+			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
+				pickPrev();
+				draw();
+				continue;
+			}
+			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_RIGHT ||
+				k == Common::KEYCODE_TAB) {
+				pickNext();
+				draw();
+				continue;
+			}
+		}
+		if (confirmed) {
+			draw();
+			break;
+		}
+		g_system->delayMillis(15);
+	}
+
+	if (shouldQuit())
+		return;
+
+	if (exitChosen) {
+		_mystery.clear();
+		_nextScreen = kScreenInvalid;
+		return;
+	}
+
+	// "Practice Mystery" is the tutorial → mystery 0.
+	if (pick == kPickPractice) {
+		if (!_mystery.load(0, &_rng)) {
+			warning("doCaseSelection: failed to load practice mystery");
+			_mystery.clear();
+		}
+		return;
+	}
+
+	if (pick != kPickChoose) {
+		// ScrapBooks aren't implemented; bail back to the menu loop.
+		_mystery.clear();
+		return;
+	}
+
+	// "Choose A Mystery" sub-screen: pick a specific case from the
+	// 55-mystery roster. The original opens a different list here;
+	// we approximate with the tier-aware numeric chooser we used
+	// before. Default to the first unsolved mystery.
+	uint sel = 0;
+	for (uint i = 0; i <= kMaxMystery; i++) {
+		if (i < sizeof(_mysteriesSolved) && !_mysteriesSolved[i]) {
+			sel = i;
+			break;
+		}
+	}
+
+	auto drawSubmenu = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveCaseBg) {
+			const int w = MIN<int>(caseBg.surface.w, 320);
+			const int h = MIN<int>(caseBg.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)caseBg.surface.getBasePtr(0, row), w);
+		}
+		if (_font.isLoaded()) {
+			const int kListX  = 61;
+			const int kListW  = 238 - kListX;
+			const int kListY0 = 35;
+			const int kLineH  = 10;
+			const int kVisible = 12;
+			int top = (int)sel - kVisible / 2;
+			if (top < 0) top = 0;
+			if (top + kVisible > (int)kMaxMystery + 1)
+				top = (int)kMaxMystery + 1 - kVisible;
+			for (int r = 0; r < kVisible; r++) {
+				const int idx = top + r;
+				if (idx > (int)kMaxMystery)
+					break;
+				char marker = ' ';
+				if ((uint)idx < sizeof(_mysteriesSolved)) {
+					if (_mysteriesSolved[idx] == 2) marker = '*';
+					else if (_mysteriesSolved[idx] == 1) marker = '+';
+				}
+				const char arrow = ((uint)idx == sel) ? '>' : ' ';
+				_font.drawString(&scratch,
+								 Common::String::format("%c %c Mystery %d", arrow, marker, idx),
+								 kListX, kListY0 + r * kLineH, kListW, 0xF);
+			}
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	drawSubmenu();
 	bool confirmed = false;
 	while (!confirmed && !shouldQuit()) {
 		Common::Event ev;
@@ -673,12 +872,48 @@ void EEMEngine::doCaseSelection() {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// Same `_DoChoose` rectangles as the top-level menu.
+				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+					confirmed = true;
+					break;
+				}
+				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
+					_mystery.clear();
+					return;
+				}
+				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+					sel = (sel == 0) ? kMaxMystery : sel - 1;
+					drawSubmenu();
+					continue;
+				}
+				if (kDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+					sel = (sel >= kMaxMystery) ? 0 : sel + 1;
+					drawSubmenu();
+					continue;
+				}
+				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// Pick the row under the cursor.
+					const int kLineH = 10;
+					const int kVisible = 12;
+					int top = (int)sel - kVisible / 2;
+					if (top < 0) top = 0;
+					if (top + kVisible > (int)kMaxMystery + 1)
+						top = (int)kMaxMystery + 1 - kVisible;
+					const int row = (ev.mouse.y - kListRect.top) / kLineH;
+					const int idx = top + row;
+					if (idx >= 0 && idx <= (int)kMaxMystery) {
+						sel = (uint)idx;
+						drawSubmenu();
+					}
+					continue;
+				}
+			}
 			if (ev.type != Common::EVENT_KEYDOWN)
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
 			if (k == Common::KEYCODE_ESCAPE) {
-                _mystery.clear();
-				_nextScreen = kScreenInvalid;
+				_mystery.clear();
 				return;
 			}
 			if (k == Common::KEYCODE_RETURN) {
@@ -687,46 +922,31 @@ void EEMEngine::doCaseSelection() {
 			}
 			if (k >= Common::KEYCODE_0 && k <= Common::KEYCODE_9) {
 				sel = (uint)(k - Common::KEYCODE_0);
-				draw();
+				drawSubmenu();
 				continue;
 			}
-			if (k == Common::KEYCODE_TAB || k == Common::KEYCODE_PLUS ||
-				k == Common::KEYCODE_RIGHT || k == Common::KEYCODE_DOWN) {
-				const bool back = (ev.kbd.flags & Common::KBD_SHIFT) ||
-								  k == Common::KEYCODE_LEFT;
-				if (back)
-					sel = (sel == 0) ? kMaxMystery : sel - 1;
-				else
-					sel = (sel >= kMaxMystery) ? 0 : sel + 1;
-				draw();
+			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_TAB) {
+				sel = (sel >= kMaxMystery) ? 0 : sel + 1;
+				drawSubmenu();
 				continue;
 			}
-			if (k == Common::KEYCODE_LEFT || k == Common::KEYCODE_UP ||
-				k == Common::KEYCODE_MINUS) {
+			if (k == Common::KEYCODE_UP) {
 				sel = (sel == 0) ? kMaxMystery : sel - 1;
-				draw();
+				drawSubmenu();
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEDOWN) {
 				sel = (sel + 10 > kMaxMystery) ? kMaxMystery : sel + 10;
-				draw();
+				drawSubmenu();
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEUP) {
 				sel = (sel < 10) ? 0 : sel - 10;
-				draw();
+				drawSubmenu();
 				continue;
 			}
-			if (k == Common::KEYCODE_HOME) {
-				sel = 0;
-				draw();
-				continue;
-			}
-			if (k == Common::KEYCODE_END) {
-				sel = kMaxMystery;
-				draw();
-				continue;
-			}
+			if (k == Common::KEYCODE_HOME) { sel = 0; drawSubmenu(); continue; }
+			if (k == Common::KEYCODE_END)  { sel = kMaxMystery; drawSubmenu(); continue; }
 		}
 		g_system->delayMillis(15);
 	}
