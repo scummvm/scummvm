@@ -29,8 +29,11 @@
 #include "common/random.h"
 #include "common/scummsys.h"
 
+#include "common/serializer.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
+#include "engines/savestate.h"
 
 #include "eem/animation.h"
 #include "eem/font.h"
@@ -66,8 +69,37 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
-	Common::Error loadGameState(int slot) override;
-	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave) override;
+
+	// ScummVM extended-save hooks. The base `Engine::saveGameState` /
+	// `loadGameState` write/read the framework header (description,
+	// thumbnail, playtime, version) around our body via these
+	// streams. We keep all per-profile state in the body, with a
+	// single `Common::Serializer` version so future field additions
+	// stay backward-compatible.
+	Common::Error saveGameStream(Common::WriteStream *stream,
+								  bool isAutosave = false) override;
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+
+	// Per-profile save helpers. The original `_PlayerRecord` lives at
+	// `2d5d:3f6a` (159 bytes) and is written by `_SavePlayerRecord @
+	// 1c33:034f` to `C:\EEMCDSAV\<name>.PLR`. The DOS launcher screen
+	// `screen8_handler @ 1c33:1012` walks `*.PLR`, lets the player
+	// pick a profile, and calls `_LoadPlayerRecord`. We mirror the
+	// pattern by mapping each ScummVM save slot to one profile (slot
+	// description = player name) — same approach Wetlands uses.
+
+	/// Mirrors `_SavePlayerRecord @ 1c33:034f`. Saves into the slot
+	/// whose description matches @p name, or the lowest unused slot
+	/// if no match. Returns the kNoError on success.
+	Common::Error saveProfile(const Common::String &name);
+
+	/// Mirrors `_LoadPlayerRecord @ 1c33:03a6`. Returns false if no
+	/// slot has @p name as its description.
+	bool loadProfile(const Common::String &name);
+
+	/// Mirrors the `_findfirst("*.PLR")` walk inside
+	/// `screen8_handler`. Sorted by slot.
+	SaveStateList listProfiles() const;
 
 	const ADGameDescription *_gameDescription;
 
