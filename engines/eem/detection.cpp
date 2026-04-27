@@ -26,7 +26,7 @@
 
 namespace EEM {
 
-static const PlainGameDescriptor eemGames[] = {
+const PlainGameDescriptor eemGames[] = {
 	{ "eem", "Eagle Eye Mysteries" },
 	{ nullptr, nullptr }
 };
@@ -46,7 +46,7 @@ const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const DebugChannelDef debugFlagList[] = {
+const DebugChannelDef debugFlagList[] = {
 	{ kDebugGeneral, "general", "General debug" },
 	{ kDebugScript,  "script",  "Script execution" },
 	{ kDebugMystery, "mystery", "Mystery loading and state" },

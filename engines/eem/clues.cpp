@@ -40,8 +40,9 @@
 
 namespace EEM {
 
-namespace {
 // Picture / animation IDs verified against `_DoChoosePartner @ 1a35:0756`.
+// `const` at namespace scope already implies internal linkage in C++,
+// so no `static` needed.
 const uint kPicChooseBackground = 0x8c; ///< `_GetBackground(0x8c)`
 const uint kAniBoy  = 8;                 ///< `_GetAnimation(8)` (Jake)
 const uint kAniGirl = 9;                 ///< `_GetAnimation(9)` (Jenny)
@@ -53,6 +54,32 @@ const Common::Rect kHappyZones[4] = {
 	Common::Rect( 70, 0, 126, 200), // girl's column
 	Common::Rect(126, 0, 182, 200), // middle
 	Common::Rect(182, 0, 235, 200), // boy's column
+};
+
+// On-screen positions verified from `_NewAnimation` calls @ 1a35:07b9 / 07d5.
+const int kBoyX  = 0xe2; // 226
+const int kBoyY  = 0x62; // 98
+const int kGirlX = 0x42; // 66
+const int kGirlY = 0x60; // 96
+
+// `_DoHappiness @ 172b:27b5`: each cursor zone swaps the partner's
+// sequence script to a more / less "happy" cycle. Boy seqs lifted
+// verbatim from `29be:0337` (5 × 0x14 bytes), girl seqs from
+// `29be:039b`. Both cycle through 9 frames (the boy/girl anim cells
+// contain 10 cells = pairs of "neutral, smile" at increasing intensity).
+const uint8 kBoySeqs[5][9] = {
+	{ 0,0,0,0,0,0,0,1,0 }, // level 0
+	{ 2,2,2,2,2,2,2,3,2 }, // level 1
+	{ 4,4,4,4,4,4,4,5,4 }, // level 2
+	{ 6,6,6,6,6,6,7,6,6 }, // level 3
+	{ 8,8,8,8,8,8,8,8,9 }, // level 4 (cursor past zone 3)
+};
+const uint8 kGirlSeqs[5][9] = {
+	{ 8,9,8,8,8,8,8,8,8 },
+	{ 6,6,6,7,6,6,6,6,6 },
+	{ 4,4,5,4,4,4,4,4,4 },
+	{ 2,2,2,2,2,2,3,2,2 },
+	{ 0,0,0,0,0,1,0,0,0 },
 };
 
 uint happinessLevel(int x) {
@@ -87,13 +114,6 @@ void blitMaskedToScreen(const Picture &p, int x, int y) {
 	g_system->unlockScreen();
 }
 
-// On-screen positions verified from `_NewAnimation` calls @ 1a35:07b9 / 07d5.
-const int kBoyX  = 0xe2; // 226
-const int kBoyY  = 0x62; // 98
-const int kGirlX = 0x42; // 66
-const int kGirlY = 0x60; // 96
-} // anonymous namespace
-
 void EEMEngine::doChoosePartner() {
 	// Mirrors _DoChoosePartner @ 1a35:0756. The original places boy + girl
 	// animations on a backdrop and polls four click rectangles (two per
@@ -119,27 +139,9 @@ void EEMEngine::doChoosePartner() {
 	setAnmPalette(Common::Path("TITLE.ANM"));
 
 	// `_DoHappiness @ 172b:27b5`: the cursor's X column picks one of 4
-	// rects (29be:030f, all full-height); past rect 3 → "level 4".
-	// Each level swaps the partner's sequence script to a more / less
-	// "happy" cycle. Boy seqs at 29be:0337 (5 × 0x14 bytes), girl seqs
-	// at 29be:039b. Both cycle through 9 frames (the boy/girl anim
-	// cells contain 10 cells = pairs of "neutral, smile" at increasing
-	// intensity). Lifted verbatim from the binary so the gestures
-	// match the original beat-for-beat.
-	static const uint8 kBoySeqs[5][9] = {
-		{ 0,0,0,0,0,0,0,1,0 }, // level 0
-		{ 2,2,2,2,2,2,2,3,2 }, // level 1
-		{ 4,4,4,4,4,4,4,5,4 }, // level 2
-		{ 6,6,6,6,6,6,7,6,6 }, // level 3
-		{ 8,8,8,8,8,8,8,8,9 }, // level 4 (cursor past zone 3)
-	};
-	static const uint8 kGirlSeqs[5][9] = {
-		{ 8,9,8,8,8,8,8,8,8 },
-		{ 6,6,6,7,6,6,6,6,6 },
-		{ 4,4,5,4,4,4,4,4,4 },
-		{ 2,2,2,2,2,2,3,2,2 },
-		{ 0,0,0,0,0,1,0,0,0 },
-	};
+	// rects (29be:030f, all full-height); past rect 3 → "level 4". The
+	// per-zone sequence scripts (`kBoySeqs` / `kGirlSeqs`) live at file
+	// scope above so the gestures match the original beat-for-beat.
 
 	// `_DoChoosePartner` opens with `_SetMousePos(0xa0, 0x96)` so the
 	// cursor lands centred between the two partners — start the
@@ -650,39 +652,19 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						}
 					}
 				}
-				// Per-balloon metadata table verified from 29be:0875 —
-				// 10-byte entries indexed by `(bubNum & 0x7f)`. Layout:
-				//   +0..1 textX inset, +2..3 textY inset, +4..5 width,
-				//   +6..7 height, +8..9 tail offset.
-				// 52 entries total; insets vary (3, 5, 6, or 8 px).
-				// The original `_DisplayClue` does:
-				//   _WordWrap(bubX + table[bubNum].x, bubY + table[bubNum].y,
-				//             table[bubNum].w, ...);
-				static const struct { uint16 x, y, w; } kBalloonTable[] = {
-					{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-					{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-					{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-					{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-					{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-					{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-					{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-					{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-					{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-					{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-					{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-					{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-					{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-					{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-					{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
-				};
-				const uint kBalloonTableSize = sizeof(kBalloonTable) /
-											   sizeof(kBalloonTable[0]);
-				const uint balloonIdx = balloonId < kBalloonTableSize
-										? balloonId : 0;
-				const auto &bm = kBalloonTable[balloonIdx];
-				textX = bubX + bm.x;
-				textY = bubY + bm.y;
-				textW = bm.w;
+				// Per-balloon metadata from `29be:0875` (52 × 10 bytes,
+				// indexed by `bubNum & 0x7F`). The original `_DisplayClue`
+				// does `_WordWrap(bubX + table[bub].x, bubY + table[bub].y,
+				// table[bub].w, ...)`. `getBalloonInsets` is the shared
+				// accessor (defined in `graphics.cpp`); fall back to the
+				// (5, 4, 155) entry-23 inset if the lookup fails.
+				uint16 bx = 5;
+				uint16 by = 4;
+				uint16 bw_ = 155;
+				getBalloonInsets(balloonId, bx, by, bw_);
+				textX = bubX + bx;
+				textY = bubY + by;
+				textW = bw_;
 				copyH = bh;
 			} else {
 				// No balloon — clear a band so old pixels don't bleed.

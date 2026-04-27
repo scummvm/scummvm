@@ -80,7 +80,7 @@ void DBDArchive::close() {
  * Read one 12-byte frame header + payload at the current stream position.
  * Shared between picture and animation loaders since the layout is the same.
  */
-static bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out) {
+bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out) {
 	out.flags             = stream.readUint16LE();
 	const uint16 height   = stream.readUint16LE();
 	const uint16 width    = stream.readUint16LE();
