@@ -145,6 +145,31 @@ void SiteScreen::run() {
 				return;
 
 			case Common::EVENT_LBUTTONDOWN: {
+				// On-screen UI buttons. `_DoSiteLoop @ 168d:03f4` calls
+				//   _FindButton(&SiteButtons, 2, MouseX, MouseY)
+				// where `SiteButtons` is two 8-byte rectangles at
+				// 29be:0x274 (verified via 168d:0729-0848):
+				//   Button 0: (35, 111) - (56, 136)  → notebook
+				//                                       (`_NextScreen = 4`)
+				//   Button 1: (7, 177)  - (57, 200)  → map
+				//                                       (`_NextScreen = 1`)
+				// Test the buttons before falling through to hotspots so
+				// a click on the PDA / map icon doesn't accidentally
+				// trigger a hotspot underneath.
+				const Common::Rect kBtnNotebook(35, 111, 56, 136);
+				const Common::Rect kBtnMap     ( 7, 177, 57, 200);
+				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
+					_vm->doNotebook();
+					enter(cur);
+					break;
+				}
+				if (kBtnMap.contains(event.mouse.x, event.mouse.y)) {
+					_vm->doBigMap();
+					if (_mystery->_siteNumber < _mystery->numSites())
+						cur = _mystery->_siteNumber;
+					enter(cur);
+					break;
+				}
 				const int idx = hotspotAtPoint(cur, event.mouse.x, event.mouse.y);
 				if (idx >= 0) {
 					onHotspotClicked(cur, (uint)idx);

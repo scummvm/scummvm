@@ -1632,6 +1632,11 @@ void EEMEngine::doBigMap() {
 
 	drawOverview();
 
+	// Static rectangles read directly from the binary at the labelled
+	// addresses (29be:0x1596 onwards). Format is {x1, y1, x2, y2}.
+	const Common::Rect kBigMapWindow   (  0,   0, 247, 192); // 29be:1596
+	const Common::Rect kSetupBtnRect   (252,   4, 315,  42); // 29be:15ce
+
 	bool wantZoom = false;
 	int  zoomX = 0, zoomY = 0;
 	while (!shouldQuit()) {
@@ -1644,19 +1649,27 @@ void EEMEngine::doBigMap() {
 				ev.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// `_DoBigMap @ 20fe:09e7` does NOT travel directly when
-				// the player clicks an overview icon — it always returns
-				// `(sx, sy) = (mouseX*2 - 0x74, mouseY*2 - 0x55)` so the
-				// caller can switch to the detail zoom centred there.
-				// Travel happens after a SECOND click in the detail view.
-				int sx = ev.mouse.x * 2;
-				int sy = ev.mouse.y * 2;
-				sx = (sx < 0x75) ? 0 : sx - 0x74;
-				sy = (sy < 0x56) ? 0 : sy - 0x55;
-				zoomX = sx;
-				zoomY = sy;
-				wantZoom = true;
-				break;
+				// SetupButtonRect → `_NextScreen = 6` (the original's
+				// settings screen). We use it as "back to menu":
+				// abandon the current mystery and return to case
+				// selection.
+				if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
+					_mystery.clear();
+					_nextScreen = kScreenInvalid;
+					return;
+				}
+				// Click in the BigMapWindow → zoom. Original formula:
+				//   sx = mouseX*2 - 0x74; sy = mouseY*2 - 0x55
+				if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
+					int sx = ev.mouse.x * 2;
+					int sy = ev.mouse.y * 2;
+					sx = (sx < 0x75) ? 0 : sx - 0x74;
+					sy = (sy < 0x56) ? 0 : sy - 0x55;
+					zoomX = sx;
+					zoomY = sy;
+					wantZoom = true;
+					break;
+				}
 			}
 		}
 		if (wantZoom)
@@ -1791,10 +1804,67 @@ void EEMEngine::doBigMap() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (ev.mouse.x >= kMapWinX &&
-					ev.mouse.x < kMapWinX + kMapWinW &&
-					ev.mouse.y >= kMapWinY &&
-					ev.mouse.y < kMapWinY + kMapWinH) {
+				// Scroll arrows + slider rects live in `SmallMapButtons`
+				// at 29be:0x159e (six 8-byte rects in order: Y-up, Y-down,
+				// X-left, X-right, right-panel, top-right) plus the
+				// dedicated `XSliderRect @ 29be:15d6` and
+				// `YSliderRect @ 29be:15de`. Format {x1,y1,x2,y2}.
+				const Common::Rect kArrowYUp   (237,   2, 247,  11);
+				const Common::Rect kArrowYDown (237, 163, 247, 172);
+				const Common::Rect kArrowXLeft (  2, 175,  12, 185);
+				const Common::Rect kArrowXRight(224, 175, 234, 185);
+				const Common::Rect kXSlider    ( 15, 175, 221, 185);
+				const Common::Rect kYSlider    (237,  14, 247, 160);
+				const Common::Rect kSetupBtn   (252,   4, 315,  42);
+
+				const int kArrowStep = 16;
+				const int kSliderRange = mapW - kMapWinW;
+				const int kSliderRangeY = mapH - kMapWinH;
+
+				if (kSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
+					// Setup button on detail too — `_NextScreen = 6` in
+					// the original. We treat it the same way: bail back
+					// to case selection.
+					_mystery.clear();
+					_nextScreen = kScreenInvalid;
+					return;
+				}
+				if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
+					scrollY = MAX<int>(0, scrollY - kArrowStep);
+					dirty = true;
+				} else if (kArrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
+					scrollY = MIN<int>(MAX<int>(0, kSliderRangeY),
+						scrollY + kArrowStep);
+					dirty = true;
+				} else if (kArrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
+					scrollX = MAX<int>(0, scrollX - kArrowStep);
+					dirty = true;
+				} else if (kArrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
+					scrollX = MIN<int>(MAX<int>(0, kSliderRange),
+						scrollX + kArrowStep);
+					dirty = true;
+				} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
+					// Click on X slider track → jump scrollX so the
+					// click position maps proportionally into the map.
+					if (kSliderRange > 0) {
+						const int t = ev.mouse.x - kXSlider.left;
+						const int tw = kXSlider.width();
+						scrollX = MAX<int>(0, MIN<int>(kSliderRange,
+							t * kSliderRange / MAX<int>(1, tw)));
+						dirty = true;
+					}
+				} else if (kYSlider.contains(ev.mouse.x, ev.mouse.y)) {
+					if (kSliderRangeY > 0) {
+						const int t = ev.mouse.y - kYSlider.top;
+						const int th = kYSlider.height();
+						scrollY = MAX<int>(0, MIN<int>(kSliderRangeY,
+							t * kSliderRangeY / MAX<int>(1, th)));
+						dirty = true;
+					}
+				} else if (ev.mouse.x >= kMapWinX &&
+						   ev.mouse.x < kMapWinX + kMapWinW &&
+						   ev.mouse.y >= kMapWinY &&
+						   ev.mouse.y < kMapWinY + kMapWinH) {
 					// Hit-test the per-site button at its actual bbox
 					// (`_StampButtons` records the rect at SmallMap +8/+0xa
 					// with the button PIC's width/height).
