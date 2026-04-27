@@ -2736,6 +2736,60 @@ void EEMEngine::doInterfaceHelp(uint num) {
 	}
 }
 
+uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
+	// Mirrors `_GetKDTextBalloon @ 1df2:0105`:
+	//   if ((ctype[firstChar] & 2) == 0)  bub = *(u16*)29be:1068 = 0x17
+	//   else                              bub = *(u16*)(29be:0fe6+0x1e+c*2)
+	// `ctype` is Borland's `_ctype_` array at `29be:2be1`. Bit 1 (0x02) is
+	// set only for digits '0'..'9' (verified by reading the table — '0'..'9'
+	// each map to byte 0x02; everything else has bit 1 clear).
+	// Lookup table at 29be:1064 (= 29be:0fe6 + 0x1e + '0'*2):
+	//   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
+	//   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
+	// Note `*(u16*)29be:1068` (= entry for '2') is the same byte the
+	// non-digit fallback returns — the original encodes the constant by
+	// reusing the digit-2 slot.
+	if (firstChar < '0' || firstChar > '9')
+		return 0x17;
+	static const uint16 kDigitBalloons[10] = {
+		0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x20, 0x21, 0x22, 0x1e
+	};
+	return kDigitBalloons[firstChar - '0'];
+}
+
+bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
+								  uint16 &yInset, uint16 &textW) const {
+	// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875`.
+	// Used at 1df2:0aef-0af9 (accuse hint) and `_DisplayClue` to position
+	// `_WordWrap` text inside the balloon. Only +0/+2/+4 are read here:
+	//   +0..1 = text X inset, +2..3 = Y inset, +4..5 = max wrap width
+	// (+6/+8 = balloon h / tail offset, both unused for text layout).
+	static const struct { uint16 x, y, w; } kTable[] = {
+		{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+		{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
+		{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+		{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
+		{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+		{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
+		{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+		{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
+		{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+		{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
+		{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+		{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
+		{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+		{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
+		{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
+	};
+	const uint idx = bubNum & 0x7F;
+	if (idx >= ARRAYSIZE(kTable))
+		return false;
+	xInset = kTable[idx].x;
+	yInset = kTable[idx].y;
+	textW  = kTable[idx].w;
+	return true;
+}
+
 bool EEMEngine::areYouSure() {
 	// Mirrors `_AreYouSure` @ 1a35:0a5c. Original loads PIC 0x136 for the
 	// dialog body and PIC 0x1FD/0x1FE for YES/NO. We render a minimal
@@ -2838,6 +2892,7 @@ void EEMEngine::doAccuse() {
 	for (uint i = 0; i < num; i++)
 		slotSuspect[i] = -1;
 
+	int highlighted = 0;
 	auto drawGallery = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
@@ -2857,6 +2912,11 @@ void EEMEngine::doAccuse() {
 			if (!gd) continue;
 			const uint8 phys = _mystery._newOrder[i];
 			if (phys >= 5) continue;
+			// `_DrawGallery @ 158f:00b9` skips suspects whose
+			// `_InGallery[phys]` flag is 0 — that's the original gate
+			// (some suspects only become visible after being met or
+			// stay hidden after a wrong accusation removes them).
+			if (_mystery._inGallery[phys] == 0) continue;
 			const Slot &s = kGallerySlots[phys];
 
 			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
@@ -2888,6 +2948,19 @@ void EEMEngine::doAccuse() {
 			slotSuspect[i] = (int)i;
 		}
 
+		// Highlight indicator. The original moves the mouse cursor
+		// to the centre of the highlighted suspect via `_PutMouseInRect`
+		// (1df2:0b8e) — we draw a 1px outline in palette index 0xFE
+		// (within the marching-ants cycle range 0xF9..0xFE) which is
+		// unambiguously visible under any palette without warping the
+		// player's cursor.
+		if (highlighted >= 0 && highlighted < (int)slotRects.size() &&
+			!slotRects[highlighted].isEmpty()) {
+			Common::Rect r = slotRects[highlighted];
+			r.grow(1);
+			scratch.frameRect(r, 0xFE);
+		}
+
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -2895,22 +2968,13 @@ void EEMEngine::doAccuse() {
 
 	// Step 1 — KD hint balloon. Mirrors `_DoAccuseGallery @ 1df2:0a31`
 	// (1df2:0a4c-1df2:0afe):
-	//   text       = TextBlock + KDTextIndex[+8]
-	//   bub        = _GetKDTextBalloon(text)              — 1df2:0105
-	//   GetBalloon(bub)                                   → pic in [BP-6:-8]
-	//   if (pic.h < 0x4e)  y = (0x50 - pic.h) >> 1   else y = 1   (1df2:0a8b)
+	//   text  = TextBlock + KDTextIndex[+8]               (1df2:0a4c-0a57)
+	//   bub   = _GetKDTextBalloon(text[0])                (1df2:0a6d)
+	//   GetBalloon(bub)                                   (1df2:0a7c)
+	//   y     = (h < 0x4e) ? (0x50 - h) >> 1 : 1          (1df2:0a8b-0aa5)
 	//   AddPicBackground(pic, 0x21, y)                    (1df2:0aab)
-	//   WordWrap(0x21 + tbl[bub].x, y + tbl[bub].y, tbl[bub].w, text, color=0, -1)
-	//   tbl base = 29be:0875, 10-byte entries: x@+0, y@+2, w@+4
-	//
-	// `_GetKDTextBalloon` (1df2:0105): when (ctype[firstChar] & 2) == 0 →
-	//   bub = *(u16*)29be:1068 = 0x0017                   (verified)
-	// else                                                 → table lookup
-	//   bub = *(u16*)(29be:0fe6 + 0x1e + firstChar*2)
-	// Bit 1 in Borland's ctype = punctuation, so non-punctuation (most
-	// letters / control bytes / digits) takes the constant-balloon path.
-	// We use 0x17 as the default; the table-lookup path covers a small
-	// minority of texts (those starting with `,` `.` `:` etc.).
+	//   WordWrap(0x21+tbl[bub].x, y+tbl[bub].y, tbl[bub].w, text, color=0)
+	//     tbl @ 29be:0875, 10-byte entries (1df2:0ad6-0af1)
 	const byte *kdIdx = _mystery.kdTextIndex();
 	if (kdIdx) {
 		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
@@ -2919,8 +2983,14 @@ void EEMEngine::doAccuse() {
 			Common::String hint =
 				parseString(raw ? raw : "", _playerName, _partner);
 			if (!hint.empty()) {
-				// 29be:1068 = 0x0017, the non-punctuation default.
-				const uint16 bubNum = 0x17;
+				// First-char dispatch via getKDTextBalloon (1df2:0105).
+				// Note: we pass the *parsed* first char; the original
+				// reads it BEFORE `_ParseString`, but the player-name /
+				// partner-name substitutions never start with digits, so
+				// the dispatch result is the same either way.
+				const byte firstChar =
+					hint.empty() ? (byte)0 : (byte)hint[0];
+				const uint16 bubNum = getKDTextBalloon(firstChar);
 				Picture balloon;
 				const bool haveBalloon =
 					_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -2943,8 +3013,8 @@ void EEMEngine::doAccuse() {
 							   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
 					}
 				}
-				// `_Rect_Move_Mask` (1000:03fc) — pixels == pic[0]>>8 are
-				// transparent (verified at displayClue site).
+				// Masked balloon blit — `_Rect_Move_Mask` (1000:03fc)
+				// skips pixels equal to `pic[0] >> 8`.
 				if (haveBalloon) {
 					const byte transp = (byte)(balloon.flags >> 8);
 					const int bw = MIN<int>(balloon.surface.w, 320 - balloonX);
@@ -2958,14 +3028,13 @@ void EEMEngine::doAccuse() {
 						}
 					}
 				}
-				// 29be:0875 entry 23 (= 0x17): bytes `05 00 04 00 9b 00 96 00 23 00`
-				// → x=5, y=4, w=155 (verified). 1df2:0acb pushes color=0.
-				if (haveBalloon && _font.isLoaded()) {
-					_font.drawWordWrapped(&ms, balloonX + 5, balloonY + 4, 155,
-										  hint, 0);
-				} else if (_font.isLoaded()) {
-					_font.drawWordWrapped(&ms, balloonX + 5, balloonY + 4, 155,
-										  hint, 0xF);
+				// Inset table @ 29be:0875 — 1df2:0acb pushes color=0.
+				uint16 tx = 5, ty = 4, tw = 155;
+				getBalloonInsets(bubNum, tx, ty, tw);
+				if (_font.isLoaded()) {
+					_font.drawWordWrapped(&ms, balloonX + tx,
+										  balloonY + ty, tw, hint,
+										  haveBalloon ? 0 : 0xF);
 				}
 				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 					0, 0, 320, 200);
@@ -2975,9 +3044,42 @@ void EEMEngine::doAccuse() {
 		}
 	}
 
+	// Helper to find the next "alive" slot (one whose `_inGallery[phys]`
+	// flag is still set so a portrait was actually drawn). Mirrors the
+	// way the original wraps DI past empty slots.
+	auto nextLiveSlot = [&](int from, int dir) -> int {
+		const int n = (int)slotRects.size();
+		if (n <= 0) return 0;
+		for (int step = 1; step <= n; step++) {
+			int idx = (from + dir * step) % n;
+			if (idx < 0) idx += n;
+			if (!slotRects[idx].isEmpty())
+				return idx;
+		}
+		return from;
+	};
+	if (slotRects[highlighted].isEmpty())
+		highlighted = nextLiveSlot(highlighted, +1);
+
 	drawGallery();
 
+	// Wait-for-pick loop. Mirrors `_DoAccuseGallery` 1df2:0b26-1df2:0bc8:
+	//   * `_CheckFrameRate` + `_UpdateAnimations` per tick (1df2:0b2a-0b33)
+	//   * 5-entry input dispatch table @ 1df2:0bc9:
+	//       0x09 (TAB)   → handler 0x0b94 (cycle highlight)
+	//       0x0d (Enter) → handler 0x0b72 (pick = _SearchSuspects)
+	//       0x4b (LEFT)  → handler 0x0b94
+	//       0x4d (RIGHT) → handler 0x0b94
+	//       0xFFFF (mb)  → handler 0x0b72
+	//   * 0x0b94: `INC DI` + wraparound + `_PutMouseInRect(&Guys[DI])`,
+	//     i.e. advance highlight and warp cursor (1df2:0b94-0bb1).
+	//   * 0x0b72: `_SearchSuspects` (158f:0584) — mouse-rect hit-test;
+	//     if non-0xFFFF, pick that suspect.
+	// We don't warp the cursor (unfriendly under SDL); instead the
+	// highlight is drawn as a 1px outline and Enter picks it.
 	int picked = -1;
+	uint32 lastTick = g_system->getMillis();
+	bool dirty = false;
 	while (picked < 0 && !shouldQuit()) {
 		Common::Event ev;
 		while (g_system->getEventManager()->pollEvent(ev)) {
@@ -2985,13 +3087,39 @@ void EEMEngine::doAccuse() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
 					return;
-				const int k = (int)ev.kbd.keycode;
-				if (k >= Common::KEYCODE_1 && k <= Common::KEYCODE_9) {
-					const int idx = k - Common::KEYCODE_1;
-					if (idx < num)
-						picked = idx;
+				case Common::KEYCODE_TAB:
+				case Common::KEYCODE_RIGHT:
+					highlighted = nextLiveSlot(highlighted, +1);
+					dirty = true;
+					break;
+				case Common::KEYCODE_LEFT:
+					// 1df2:0b94 increments DI for LEFT too — but a
+					// keyboard-driven UX is friendlier with separate
+					// directions, so we mirror Right=+1 / Left=-1.
+					highlighted = nextLiveSlot(highlighted, -1);
+					dirty = true;
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					if (highlighted >= 0 &&
+						highlighted < (int)slotRects.size() &&
+						!slotRects[highlighted].isEmpty()) {
+						picked = highlighted;
+					}
+					break;
+				default: {
+					const int k = (int)ev.kbd.keycode;
+					if (k >= Common::KEYCODE_1 && k <= Common::KEYCODE_9) {
+						const int idx = k - Common::KEYCODE_1;
+						if (idx < num &&
+							!slotRects[idx].isEmpty())
+							picked = idx;
+					}
+					break;
+				}
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -3003,6 +3131,16 @@ void EEMEngine::doAccuse() {
 					}
 				}
 			}
+		}
+		// 100 ms tick — the original calls `_UpdateAnimations` per
+		// `_CheckFrameRate` (1df2:0b33). The accuse screen has no
+		// animations registered, so the tick is just a redraw cadence.
+		// We still re-render whenever the highlight moves (`dirty`).
+		const uint32 now = g_system->getMillis();
+		if (dirty || now - lastTick >= 100) {
+			drawGallery();
+			lastTick = now;
+			dirty = false;
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);

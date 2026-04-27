@@ -109,6 +109,20 @@ public:
 	/// and waits for click / key (ESC ends the cycle).
 	void doInterfaceHelp(uint num = 0);
 
+	/// First-char-dispatch balloon picker. Mirrors `_GetKDTextBalloon @
+	/// 1df2:0105`. For digit first chars (0..9) returns balloon from the
+	/// table at `29be:1064`; for any other char returns the constant
+	/// `*(u16*)29be:1068 = 0x17`. The original branch is on Borland's
+	/// ctype-bit-1 (= digit) at `29be:2be1 + char`.
+	uint16 getKDTextBalloon(byte firstChar) const;
+
+	/// Look up balloon-text-inset metadata. Mirrors the 52-entry table at
+	/// `29be:0875`, indexed by `(bubNum & 0x7F)`. 10 bytes per entry; only
+	/// the first 3 fields (x inset, y inset, text width) are used for
+	/// rendering. Returns false if `bubNum` is outside the table.
+	bool getBalloonInsets(uint16 bubNum, uint16 &xInset, uint16 &yInset,
+						  uint16 &textW) const;
+
 	/// "Are you sure?" yes/no dialog. Mirrors `_AreYouSure` @ 1a35:0a5c.
 	/// Returns true if the user picked YES.
 	bool areYouSure();
