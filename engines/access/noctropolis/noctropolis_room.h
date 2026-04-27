@@ -41,6 +41,8 @@ public:
 	 */
 	void buildScreenXScroll();
 
+	void loadPlayer1();
+
 protected:
 	void reloadRoom() override;
 

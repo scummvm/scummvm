@@ -28,6 +28,7 @@
 #include "access/events.h"
 #include "access/player.h"
 #include "access/amazon/amazon_resources.h"
+#include "access/noctropolis/noctropolis_game.h"
 
 namespace Access {
 
@@ -311,6 +312,8 @@ void EventsManager::nextTimer() {
 	_vm->_animation->updateTimers();
 	_vm->_timers.updateTimers();
 	_vm->_player->updateTimers();
+	if (_vm->getGameID() == kGameNoctropolis)
+		((Noctropolis::NoctropolisEngine *)_vm)->_stil->updateTimers();
 }
 
 void EventsManager::delay(int time) {
