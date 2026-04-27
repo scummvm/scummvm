@@ -198,6 +198,11 @@ private:
 	uint16 _lastScreen;  ///< Mirrors _LastScreen @ 2d5d:3f24
 	uint16 _nextScreen;  ///< Mirrors _NextScreen @ 2d5d:3f26
 	uint8  _partner;     ///< Mirrors _Partner: 0 = boy (Jake), 1 = girl (Jenny)
+
+	/// Set when ESC is pressed during an intro animation or logo. Tells
+	/// the opening-anim loop in run() to skip the rest of the chain
+	/// instead of asking the user to click through every screen.
+	bool _skipIntro = false;
 };
 
 } // End of namespace EEM
