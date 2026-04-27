@@ -500,6 +500,7 @@ void EEMEngine::doNewPlayer() {
 		}
 		if (dirty)
 			draw();
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 }
@@ -784,6 +785,7 @@ void EEMEngine::doCaseSelection() {
 			draw();
 			break;
 		}
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 
@@ -948,6 +950,7 @@ void EEMEngine::doCaseSelection() {
 			if (k == Common::KEYCODE_HOME) { sel = 0; drawSubmenu(); continue; }
 			if (k == Common::KEYCODE_END)  { sel = kMaxMystery; drawSubmenu(); continue; }
 		}
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 
@@ -1184,11 +1187,21 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			if (haveBalloon) {
 				const int bw = MIN<int>(balloon.surface.w, 320 - bubX);
 				const int bh = MIN<int>(balloon.surface.h, 200 - bubY);
+				// `_AddPicBackground` passes `pic->miscflags >> 8` as
+				// the transparent colour to `_Rect_Move_Mask`. Without
+				// that mask, the balloon's tail/corner padding bleeds
+				// into the surrounding scene. The on-disk u16 at file
+				// offset 0 maps to our `Picture::flags` field.
+				const byte transp = (byte)(balloon.flags >> 8);
 				if (bw > 0 && bh > 0) {
 					for (int row = 0; row < bh; row++) {
-						memcpy((byte *)scratch.getBasePtr(bubX, bubY + row),
-							   (const byte *)balloon.surface.getBasePtr(0, row),
-							   bw);
+						const byte *src =
+							(const byte *)balloon.surface.getBasePtr(0, row);
+						byte *dst = (byte *)scratch.getBasePtr(bubX, bubY + row);
+						for (int col = 0; col < bw; col++) {
+							if (src[col] != transp)
+								dst[col] = src[col];
+						}
 					}
 				}
 				// Per-balloon metadata table at 29be:0875 in the original
@@ -1240,6 +1253,10 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						break;
 					}
 				}
+				// Tick the screen so the OSystem cursor follows the
+				// mouse — ScummVM redraws the cursor overlay only on
+				// updateScreen.
+				g_system->updateScreen();
 				g_system->delayMillis(10);
 			}
 			if (skipAll) {
@@ -1351,6 +1368,7 @@ void EEMEngine::doNotebook() {
 		}
 		if (exit) break;
 		if (dirty) draw();
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 }
@@ -1634,6 +1652,7 @@ void EEMEngine::doBigMap() {
 		}
 		if (dirty)
 			draw();
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 }
@@ -1732,6 +1751,7 @@ bool EEMEngine::areYouSure() {
 		}
 		if (decided)
 			break;
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 
@@ -1830,6 +1850,7 @@ void EEMEngine::doAccuse() {
 					picked = slot;
 			}
 		}
+		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 	if (picked < 0)
@@ -1970,6 +1991,7 @@ void EEMEngine::doAccuse() {
 					break;
 				}
 			}
+			g_system->updateScreen();
 			g_system->delayMillis(15);
 		}
 		if (exit) break;
