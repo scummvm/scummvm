@@ -33,6 +33,58 @@
 
 namespace EEM {
 
+namespace {
+
+// Masked blit a Picture into a ManagedSurface. Pixels equal to `transp`
+// (the high byte of `pic.flags`, per `_Rect_Move_Mask @ 1000:03fc`) are
+// skipped. Used by `enterSiteAnim` for both skateboard + KD slide-in
+// passes; the surface is the in-memory frame buffer that gets pushed
+// to the screen each tick.
+void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
+			   int x, int y, byte transp) {
+	const int w = p.surface.w;
+	const int h = p.surface.h;
+	for (int row = 0; row < h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= 200)
+			continue;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+		byte *out = (byte *)dst.getBasePtr(0, dstY);
+		for (int col = 0; col < w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= 320)
+				continue;
+			if (src[col] != transp)
+				out[dstX] = src[col];
+		}
+	}
+}
+
+// Rotate one VGA palette range by one slot. Mirrors `_ColorCycle @
+// 172b:2015` — used by both the per-site Loop-1 ColorCycle entries and
+// the always-on hotspot marching-ants range 0xF9..0xFE.
+void cyclePaletteRange(uint8 start, uint8 end) {
+	if (end <= start)
+		return;
+	const uint count = (uint)end - (uint)start + 1;
+	byte buf[256 * 3];
+	g_system->getPaletteManager()->grabPalette(buf, start, count);
+	const byte savedR = buf[0];
+	const byte savedG = buf[1];
+	const byte savedB = buf[2];
+	for (uint i = 0; i + 1 < count; i++) {
+		buf[i * 3 + 0] = buf[(i + 1) * 3 + 0];
+		buf[i * 3 + 1] = buf[(i + 1) * 3 + 1];
+		buf[i * 3 + 2] = buf[(i + 1) * 3 + 2];
+	}
+	buf[(count - 1) * 3 + 0] = savedR;
+	buf[(count - 1) * 3 + 1] = savedG;
+	buf[(count - 1) * 3 + 2] = savedB;
+	g_system->getPaletteManager()->setPalette(buf, start, count);
+}
+
+} // anonymous namespace
+
 void SiteScreen::enter(uint siteNum) {
 	if (!_mystery || !_mystery->isLoaded()) {
 		warning("SiteScreen::enter: no mystery loaded");
@@ -353,25 +405,6 @@ void SiteScreen::enterSiteAnim() {
 	}
 	g_system->unlockScreen();
 
-	auto blitFrame = [](Graphics::ManagedSurface &dst, const Picture &p,
-						int x, int y, byte transp) {
-		const int w = p.surface.w, h = p.surface.h;
-		for (int row = 0; row < h; row++) {
-			const int dstY = y + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-			byte *out = (byte *)dst.getBasePtr(0, dstY);
-			for (int col = 0; col < w; col++) {
-				const int dstX = x + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					out[dstX] = src[col];
-			}
-		}
-	};
-
 	// Phase 1 — skateboard scroll. `_GetAnimation(6 | 0xe)`.
 	Animation skate;
 	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
@@ -599,31 +632,11 @@ void SiteScreen::applyColorCycles() {
 	// We do the same against ScummVM's palette manager. Always rotate
 	// 0xf9..0xfe for hotspot marching ants (the `_ColorCycle(0xf9,
 	// 0xfe)` call at the bottom of `_DoSiteLoop`'s main loop).
-	auto rotate = [&](uint8 start, uint8 end) {
-		if (end <= start)
-			return;
-		const uint count = (uint)end - (uint)start + 1;
-		byte buf[256 * 3];
-		g_system->getPaletteManager()->grabPalette(buf, start, count);
-		// Save first triplet, shift, restore at end.
-		const byte savedR = buf[0];
-		const byte savedG = buf[1];
-		const byte savedB = buf[2];
-		for (uint i = 0; i + 1 < count; i++) {
-			buf[i * 3 + 0] = buf[(i + 1) * 3 + 0];
-			buf[i * 3 + 1] = buf[(i + 1) * 3 + 1];
-			buf[i * 3 + 2] = buf[(i + 1) * 3 + 2];
-		}
-		buf[(count - 1) * 3 + 0] = savedR;
-		buf[(count - 1) * 3 + 1] = savedG;
-		buf[(count - 1) * 3 + 2] = savedB;
-		g_system->getPaletteManager()->setPalette(buf, start, count);
-	};
 	for (uint i = 0; i < _colorCycles.size(); i++) {
-		rotate(_colorCycles[i].start, _colorCycles[i].end);
+		cyclePaletteRange(_colorCycles[i].start, _colorCycles[i].end);
 	}
 	// Hotspot marching ants — always cycled.
-	rotate(0xF9, 0xFE);
+	cyclePaletteRange(0xF9, 0xFE);
 }
 
 void SiteScreen::captureBgSnapshot() {

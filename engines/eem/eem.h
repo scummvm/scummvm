@@ -163,6 +163,24 @@ private:
 	 */
 	void screenDriver();
 
+	/// Re-render helpers used by the corresponding `doX()` modal screens.
+	/// Each replaces what would otherwise be a `[&]()` capture-everything
+	/// lambda inside the `doX()` body; called from the screen's redraw
+	/// triggers (input changes, frame ticks). The state these need is
+	/// passed via reference parameters or read off engine members.
+	void drawNotebookFrame(int &page);
+	void drawGalleryFrame(const byte *gd, uint8 numSuspects,
+						  Common::Array<Common::Rect> &slotRects,
+						  Common::Array<int> &slotSuspect);
+	void drawBigMapOverview();
+	void drawBigMapDetail(int scrollX, int scrollY,
+						  const Common::Array<byte> &mapPixels,
+						  uint16 mapW, uint16 mapH);
+	void drawAccuseGallery(uint8 numSuspects, const byte *gd,
+						   int highlighted,
+						   Common::Array<Common::Rect> &slotRects,
+						   Common::Array<int> &slotSuspect);
+
 	/**
 	 * Open the five .DBD/.DBX archive pairs the way _InitGraphicsSystem
 	 * @ 172b:0145 does at boot.

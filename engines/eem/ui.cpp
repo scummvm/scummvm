@@ -40,6 +40,183 @@
 
 namespace EEM {
 
+namespace {
+
+// Return the next non-empty slot in `slotRects` starting from `from`,
+// stepping by `dir` (+1 or -1) with wraparound. Used by the accuse
+// gallery's keyboard-cycle (TAB / arrow keys) — mirrors the way
+// `_PutMouseInRect` skips eliminated suspects in the original.
+int nextLiveSlot(const Common::Array<Common::Rect> &slotRects,
+				 int from, int dir) {
+	const int n = (int)slotRects.size();
+	if (n <= 0)
+		return 0;
+	for (int step = 1; step <= n; step++) {
+		int idx = (from + dir * step) % n;
+		if (idx < 0)
+			idx += n;
+		if (!slotRects[idx].isEmpty())
+			return idx;
+	}
+	return from;
+}
+
+// Snapshot of `doCaseSelection`'s captured locals, used by
+// `drawCaseSelectionFrame` (which replaces the original lambda). Lives
+// on the stack inside `doCaseSelection`; never escapes.
+struct CaseSelectionView {
+	EEMEngine *vm;
+	const Picture *caseBg;
+	bool haveCaseBg;
+	const Animation *kdAnim;
+	bool haveKdAnim;
+	int kdAnimX;
+	int kdAnimY;
+	const char *separator;
+	const char *const *pickLabel;
+	const bool *pickEnabled;
+	uint pick;
+};
+
+// Per-mystery sub-chooser ("Choose A Mystery") view.
+struct CaseSubmenuView {
+	EEMEngine *vm;
+	const Picture *caseBg;
+	bool haveCaseBg;
+	const byte *mysteriesSolved;
+	uint mysteriesSolvedSize;
+	uint sel;
+	uint maxMystery;
+};
+
+void drawCaseSubmenu(const CaseSubmenuView &v) {
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (v.haveCaseBg) {
+		const int w = MIN<int>(v.caseBg->surface.w, 320);
+		const int h = MIN<int>(v.caseBg->surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)v.caseBg->surface.getBasePtr(0, row), w);
+	}
+	if (v.vm->getFont().isLoaded()) {
+		const int kListX  = 61;
+		const int kListW  = 238 - kListX;
+		const int kListY0 = 35;
+		const int kLineH  = 10;
+		const int kVisible = 12;
+		int top = (int)v.sel - kVisible / 2;
+		if (top < 0)
+			top = 0;
+		if (top + kVisible > (int)v.maxMystery + 1)
+			top = (int)v.maxMystery + 1 - kVisible;
+		for (int r = 0; r < kVisible; r++) {
+			const int idx = top + r;
+			if (idx > (int)v.maxMystery)
+				break;
+			char marker = ' ';
+			if ((uint)idx < v.mysteriesSolvedSize) {
+				if (v.mysteriesSolved[idx] == 2)
+					marker = '*';
+				else if (v.mysteriesSolved[idx] == 1)
+					marker = '+';
+			}
+			const char arrow = ((uint)idx == v.sel) ? '>' : ' ';
+			v.vm->getFont().drawString(&scratch,
+				Common::String::format("%c %c Mystery %d", arrow, marker, idx),
+				kListX, kListY0 + r * kLineH, kListW, 0xF);
+		}
+	}
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
+void drawCaseSelectionFrame(const CaseSelectionView &v) {
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (v.haveCaseBg) {
+		const int w = MIN<int>(v.caseBg->surface.w, 320);
+		const int h = MIN<int>(v.caseBg->surface.h, 200);
+		for (int row = 0; row < h; row++) {
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)v.caseBg->surface.getBasePtr(0, row), w);
+		}
+	}
+
+	// KD greeter frame — masked-blit current animation cell at
+	// (0x112, 0x50). 100 ms tick matches the engine's `_CheckFrameRate`.
+	if (v.haveKdAnim) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = (uint)((now / 100) % v.kdAnim->size());
+		const Picture &fr = (*v.kdAnim)[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+		for (int row = 0; row < fr.surface.h; row++) {
+			const int dstY = v.kdAnimY + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < fr.surface.w; col++) {
+				const int dstX = v.kdAnimX + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	}
+	if (v.vm->getFont().isLoaded()) {
+		// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
+		// and `DAT_29be_0d02` for y. `_TextBox` @ 29be:0d00 holds
+		// {x=58, y=35, x2=238, y2=158}. Matches the blue panel.
+		const int kListX  = 58 + 3;
+		const int kListW  = 238 - kListX;
+		const int kListY0 = 35;
+		const int kLineH  = 10;
+
+		// Top centred "Book %d" / "Challenge Book" title — sprintf
+		// format strings at 29be:0deb / 29be:0dfa shown via
+		// `_Show_String(0xc, (0xba - width)/2 + 0x3c, …)` in the
+		// original. We don't track challenge tier yet so always
+		// show "Book 1".
+		const Common::String book = "Book 1";
+		const int titleW = v.vm->getFont().getStringWidth(book);
+		const int titleX = (0xba - titleW) / 2 + 0x3c;
+		v.vm->getFont().drawString(&scratch, book, titleX, 12, 320, 0xF);
+
+		// Render 11 list rows: separator + menu item pairs.
+		//   row 0  separator
+		//   row 1  Choose A Mystery
+		//   row 2  separator
+		//   row 3  Practice Mystery
+		//   ...
+		//   row 9  See ScrapBook 3
+		//   row 10 separator
+		for (int r = 0; r < 11; r++) {
+			const int y = kListY0 + r * kLineH;
+			if ((r & 1) == 0) {
+				v.vm->getFont().drawString(&scratch, v.separator,
+										   kListX, y, kListW, 0x7);
+				continue;
+			}
+			const uint mp = (uint)(r >> 1);
+			const bool isSel  = (mp == v.pick);
+			const byte color  = isSel             ? 0xF :
+								v.pickEnabled[mp] ? 0x7 : 0x8;
+			v.vm->getFont().drawString(&scratch, v.pickLabel[mp],
+									   kListX, y, kListW, color);
+		}
+	}
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
+} // anonymous namespace
+
 void EEMEngine::doNewPlayer() {
 	// Mirrors `_NewPlayer` @ 1c33:0dda. The original draws background
 	// 0x104 + character peek pic 0x107, then shows "Please type your
@@ -58,28 +235,24 @@ void EEMEngine::doNewPlayer() {
 	Picture bg;
 	const bool haveBG = _picsArchive.getPicture(0x104, bg);
 
-	auto draw = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveBG) {
-			const int w = MIN<int>(bg.surface.w, 320);
-			const int h = MIN<int>(bg.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)bg.surface.getBasePtr(0, row), w);
-		}
-		// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
-		// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
-		// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
-		_font.drawString(&scratch, "Please type your name:", 80, 40, 240, 0xF);
-		Common::String shown = name + "_";
-		_font.drawString(&scratch, shown, 80, 80, 240, 0xF);
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
-	draw();
+	// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
+	// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
+	// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (haveBG) {
+		const int w = MIN<int>(bg.surface.w, 320);
+		const int h = MIN<int>(bg.surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)bg.surface.getBasePtr(0, row), w);
+	}
+	_font.drawString(&scratch, "Please type your name:", 80, 40, 240, 0xF);
+	_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -114,8 +287,24 @@ void EEMEngine::doNewPlayer() {
 				dirty = true;
 			}
 		}
-		if (dirty)
-			draw();
+		if (dirty) {
+			// Re-render with the updated `name`. Same body as the
+			// initial render above — only `name + "_"` changes.
+			scratch.clear();
+			if (haveBG) {
+				const int w = MIN<int>(bg.surface.w, 320);
+				const int h = MIN<int>(bg.surface.h, 200);
+				for (int row = 0; row < h; row++)
+					memcpy((byte *)scratch.getBasePtr(0, row),
+						   (const byte *)bg.surface.getBasePtr(0, row), w);
+			}
+			_font.drawString(&scratch, "Please type your name:",
+							 80, 40, 240, 0xF);
+			_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
+			g_system->updateScreen();
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
@@ -192,102 +381,20 @@ void EEMEngine::doCaseSelection() {
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
 
-	auto draw = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveCaseBg) {
-			const int w = MIN<int>(caseBg.surface.w, 320);
-			const int h = MIN<int>(caseBg.surface.h, 200);
-			for (int row = 0; row < h; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)caseBg.surface.getBasePtr(0, row), w);
-			}
-		}
+	CaseSelectionView v;
+	v.vm = this;
+	v.caseBg = &caseBg;
+	v.haveCaseBg = haveCaseBg;
+	v.kdAnim = &kdAnim;
+	v.haveKdAnim = haveKdAnim;
+	v.kdAnimX = kKdAnimX;
+	v.kdAnimY = kKdAnimY;
+	v.separator = kSeparator;
+	v.pickLabel = kPickLabel;
+	v.pickEnabled = kPickEnabled;
+	v.pick = pick;
 
-		// KD greeter frame — masked-blit current animation cell at
-		// (0x112, 0x50). 100 ms tick matches the engine's `_CheckFrameRate`.
-		if (haveKdAnim) {
-			const uint32 now = g_system->getMillis();
-			const uint frameIdx = (uint)((now / 100) % kdAnim.size());
-			const Picture &fr = kdAnim[frameIdx];
-			const byte transp = (byte)(fr.flags >> 8);
-			for (int row = 0; row < fr.surface.h; row++) {
-				const int dstY = kKdAnimY + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < fr.surface.w; col++) {
-					const int dstX = kKdAnimX + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		}
-		if (_font.isLoaded()) {
-			// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
-			// and `DAT_29be_0d02` for y. `_TextBox` @ 29be:0d00 holds
-			// {x=58, y=35, x2=238, y2=158}. Matches the blue panel.
-			const int kListX  = 58 + 3;
-			const int kListW  = 238 - kListX;
-			const int kListY0 = 35;
-			const int kLineH  = 10;
-
-			// Top centred "Book %d" / "Challenge Book" title — sprintf
-			// format strings at 29be:0deb / 29be:0dfa shown via
-			// `_Show_String(0xc, (0xba - width)/2 + 0x3c, …)` in the
-			// original. We don't track challenge tier yet so always
-			// show "Book 1".
-			const Common::String book = "Book 1";
-			const int titleW = _font.getStringWidth(book);
-			const int titleX = (0xba - titleW) / 2 + 0x3c;
-			_font.drawString(&scratch, book, titleX, 12, 320, 0xF);
-
-			// Render 11 list rows: separator + menu item pairs.
-			//   row 0  separator
-			//   row 1  Choose A Mystery
-			//   row 2  separator
-			//   row 3  Practice Mystery
-			//   ...
-			//   row 9  See ScrapBook 3
-			//   row 10 separator
-			for (int r = 0; r < 11; r++) {
-				const int y = kListY0 + r * kLineH;
-				if ((r & 1) == 0) {
-					_font.drawString(&scratch, kSeparator, kListX, y, kListW, 0x7);
-					continue;
-				}
-				const uint mp = (uint)(r >> 1);
-				const bool isSel  = (mp == pick);
-				const byte color  = isSel        ? 0xF :
-									kPickEnabled[mp] ? 0x7 : 0x8;
-				_font.drawString(&scratch, kPickLabel[mp], kListX, y, kListW, color);
-			}
-		}
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
-
-	auto pickPrev = [&]() {
-		for (int i = 0; i < (int)kNumPicks; i++) {
-			pick = (pick == 0) ? (uint)(kNumPicks - 1) : pick - 1;
-			if (kPickEnabled[pick])
-				break;
-		}
-	};
-	auto pickNext = [&]() {
-		for (int i = 0; i < (int)kNumPicks; i++) {
-			pick = (pick + 1) % kNumPicks;
-			if (kPickEnabled[pick])
-				break;
-		}
-	};
-
-	draw();
+	drawCaseSelectionFrame(v);
 	uint32 lastTick = g_system->getMillis();
 
 	bool exitChosen = false;
@@ -299,7 +406,8 @@ void EEMEngine::doCaseSelection() {
 		const uint32 now = g_system->getMillis();
 		if (haveKdAnim && now - lastTick >= 100) {
 			lastTick = now;
-			draw();
+			v.pick = pick;
+			drawCaseSelectionFrame(v);
 		}
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
@@ -330,7 +438,8 @@ void EEMEngine::doCaseSelection() {
 						const uint mp = (uint)(row >> 1);
 						if (mp < kNumPicks && kPickEnabled[mp]) {
 							pick = mp;
-							draw();
+							v.pick = pick;
+							drawCaseSelectionFrame(v);
 							continue;
 						}
 					}
@@ -349,19 +458,34 @@ void EEMEngine::doCaseSelection() {
 				break;
 			}
 			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
-				pickPrev();
-				draw();
+				// Cycle backwards through enabled picks (mirrors the
+				// `_DoChoose` arrow handlers @ 1c33:0514). Loop is
+				// bounded by `kNumPicks` so a row of all-disabled picks
+				// can't spin forever.
+				for (int i = 0; i < (int)kNumPicks; i++) {
+					pick = (pick == 0) ? (uint)(kNumPicks - 1) : pick - 1;
+					if (kPickEnabled[pick])
+						break;
+				}
+				v.pick = pick;
+				drawCaseSelectionFrame(v);
 				continue;
 			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_RIGHT ||
 				k == Common::KEYCODE_TAB) {
-				pickNext();
-				draw();
+				for (int i = 0; i < (int)kNumPicks; i++) {
+					pick = (pick + 1) % kNumPicks;
+					if (kPickEnabled[pick])
+						break;
+				}
+				v.pick = pick;
+				drawCaseSelectionFrame(v);
 				continue;
 			}
 		}
 		if (confirmed) {
-			draw();
+			v.pick = pick;
+			drawCaseSelectionFrame(v);
 			break;
 		}
 		g_system->updateScreen();
@@ -404,51 +528,16 @@ void EEMEngine::doCaseSelection() {
 		}
 	}
 
-	auto drawSubmenu = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveCaseBg) {
-			const int w = MIN<int>(caseBg.surface.w, 320);
-			const int h = MIN<int>(caseBg.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)caseBg.surface.getBasePtr(0, row), w);
-		}
-		if (_font.isLoaded()) {
-			const int kListX  = 61;
-			const int kListW  = 238 - kListX;
-			const int kListY0 = 35;
-			const int kLineH  = 10;
-			const int kVisible = 12;
-			int top = (int)sel - kVisible / 2;
-			if (top < 0)
-				top = 0;
-			if (top + kVisible > (int)kMaxMystery + 1)
-				top = (int)kMaxMystery + 1 - kVisible;
-			for (int r = 0; r < kVisible; r++) {
-				const int idx = top + r;
-				if (idx > (int)kMaxMystery)
-					break;
-				char marker = ' ';
-				if ((uint)idx < sizeof(_mysteriesSolved)) {
-					if (_mysteriesSolved[idx] == 2)
-						marker = '*';
-					else if (_mysteriesSolved[idx] == 1)
-						marker = '+';
-				}
-				const char arrow = ((uint)idx == sel) ? '>' : ' ';
-				_font.drawString(&scratch,
-								 Common::String::format("%c %c Mystery %d", arrow, marker, idx),
-								 kListX, kListY0 + r * kLineH, kListW, 0xF);
-			}
-		}
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
+	CaseSubmenuView sv;
+	sv.vm = this;
+	sv.caseBg = &caseBg;
+	sv.haveCaseBg = haveCaseBg;
+	sv.mysteriesSolved = _mysteriesSolved;
+	sv.mysteriesSolvedSize = sizeof(_mysteriesSolved);
+	sv.sel = sel;
+	sv.maxMystery = kMaxMystery;
 
-	drawSubmenu();
+	drawCaseSubmenu(sv);
 	bool confirmed = false;
 	while (!confirmed && !shouldQuit()) {
 		Common::Event ev;
@@ -468,12 +557,14 @@ void EEMEngine::doCaseSelection() {
 				}
 				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
 					sel = (sel == 0) ? kMaxMystery : sel - 1;
-					drawSubmenu();
+					sv.sel = sel;
+					drawCaseSubmenu(sv);
 					continue;
 				}
 				if (kDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
 					sel = (sel >= kMaxMystery) ? 0 : sel + 1;
-					drawSubmenu();
+					sv.sel = sel;
+					drawCaseSubmenu(sv);
 					continue;
 				}
 				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -489,7 +580,8 @@ void EEMEngine::doCaseSelection() {
 					const int idx = top + row;
 					if (idx >= 0 && idx <= (int)kMaxMystery) {
 						sel = (uint)idx;
-						drawSubmenu();
+						sv.sel = sel;
+						drawCaseSubmenu(sv);
 					}
 					continue;
 				}
@@ -507,31 +599,36 @@ void EEMEngine::doCaseSelection() {
 			}
 			if (k >= Common::KEYCODE_0 && k <= Common::KEYCODE_9) {
 				sel = (uint)(k - Common::KEYCODE_0);
-				drawSubmenu();
+				sv.sel = sel;
+				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_TAB) {
 				sel = (sel >= kMaxMystery) ? 0 : sel + 1;
-				drawSubmenu();
+				sv.sel = sel;
+				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_UP) {
 				sel = (sel == 0) ? kMaxMystery : sel - 1;
-				drawSubmenu();
+				sv.sel = sel;
+				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEDOWN) {
 				sel = (sel + 10 > kMaxMystery) ? kMaxMystery : sel + 10;
-				drawSubmenu();
+				sv.sel = sel;
+				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEUP) {
 				sel = (sel < 10) ? 0 : sel - 10;
-				drawSubmenu();
+				sv.sel = sel;
+				drawCaseSubmenu(sv);
 				continue;
 			}
-			if (k == Common::KEYCODE_HOME) { sel = 0; drawSubmenu(); continue; }
-			if (k == Common::KEYCODE_END)  { sel = kMaxMystery; drawSubmenu(); continue; }
+			if (k == Common::KEYCODE_HOME) { sel = 0; sv.sel = sel; drawCaseSubmenu(sv); continue; }
+			if (k == Common::KEYCODE_END)  { sel = kMaxMystery; sv.sel = sel; drawCaseSubmenu(sv); continue; }
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -585,7 +682,6 @@ void EEMEngine::doNotebook() {
 	//   rect 8 (35,111)  → 0x03ed = `_NextScreen = 3`             (SITE)
 	//   rect 9 (0,0)     → 0x03ed = same as rect 8
 	//   rect 10 (66,79)  → 0x03f9 = `_InterfaceHelp(0)`           (note-area help)
-	const Common::Rect kNotebookRect(78, 12, 288, 152);
 	const Common::Rect kBtnHelp1   ( 93, 174, 115, 190);  // [1] HELP
 	const Common::Rect kBtnGallery (157, 174, 178, 190);  // [2] GALLERY
 	const Common::Rect kBtnPartner (  5,  80,  44, 110);  // [3] KD HELP
@@ -600,165 +696,9 @@ void EEMEngine::doNotebook() {
 
 	int page = 0;
 	int hoveredNoteSlot = -1;
+	(void)hoveredNoteSlot;
 
-	// Build a list of found-clue indices, identical ordering to the
-	// original's iteration through `_CluesFound[]`.
-	auto buildFound = [&]() {
-		Common::Array<uint> found;
-		for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
-			if (_mystery._cluesFound[i])
-				found.push_back(i);
-		return found;
-	};
-
-	auto draw = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-
-		// PIC 0x3f frame.
-		Picture frame;
-		if (_picsArchive.getPicture(0x3f, frame)) {
-			const int w = MIN<int>(frame.surface.w, 320);
-			const int h = MIN<int>(frame.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)frame.surface.getBasePtr(0, row), w);
-		}
-
-		// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny.
-		const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
-		Animation partnerAni;
-		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
-			const uint32 now = g_system->getMillis();
-			const uint frameIdx = (uint)((now / 100) % partnerAni.size());
-			const Picture &fr = partnerAni[frameIdx];
-			const byte transp = (byte)(fr.flags >> 8);
-			for (int row = 0; row < fr.surface.h; row++) {
-				const int dstY = 80 + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < fr.surface.w; col++) {
-					const int dstX = 5 + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		}
-
-		// Notes — `_DrawNotes` walks `_NoteIndex` for the current page,
-		// rendering each found clue's text inside `_NotebookRect` with
-		// word-wrap. Selected clues are highlighted (color 0x3c in the
-		// original's case-briefing palette).
-		const Common::Array<uint> found = buildFound();
-		const byte *ni = _mystery.noteIndex();
-		const uint16 niCount = _mystery.noteIndexCount();
-
-		const int kRectX = kNotebookRect.left;
-		const int kRectY = kNotebookRect.top;
-		const int kRectW = kNotebookRect.width();
-		const int kRectH = kNotebookRect.height();
-
-		// Walk forward to the start clue of the current page.
-		// Each page renders as many clues as fit in `kRectH`.
-		int clueCursor = 0;
-		Common::Array<int> pageStarts;
-		pageStarts.push_back(0);
-		{
-			const int lineH = _font.getFontHeight() + 1;
-			int y = kRectY;
-			while (clueCursor < (int)found.size()) {
-				const uint clueId = found[clueCursor];
-				Common::String txt;
-				if (ni && clueId < niCount) {
-					const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-					txt = parseString(_mystery.textAt(textOff),
-									  _playerName, _partner);
-				}
-				// Measure height by wrapping the text without drawing.
-				Common::Array<Common::String> wrapped;
-				_font.wordWrapText(txt, kRectW, wrapped);
-				const int h = (int)wrapped.size() * lineH;
-				if (y + h + 7 > kRectY + kRectH) {
-					// Page break before this clue.
-					y = kRectY;
-					pageStarts.push_back(clueCursor);
-				}
-				y += h + 7;
-				clueCursor++;
-			}
-			if (page >= (int)pageStarts.size())
-				page = (int)pageStarts.size() - 1;
-			if (page < 0)
-				page = 0;
-		}
-
-		// Track per-slot rectangles so the click handler can map a
-		// click in `kNoteArea` back to a clue index.
-		Common::Array<Common::Rect> slotRects;
-		Common::Array<uint> slotClues;
-
-		const int startClue = (page < (int)pageStarts.size())
-								? pageStarts[page] : 0;
-		const int endClue   = (page + 1 < (int)pageStarts.size())
-								? pageStarts[page + 1] : (int)found.size();
-
-		int y = kRectY;
-		for (int i = startClue; i < endClue; i++) {
-			const uint clueId = found[i];
-			Common::String txt;
-			if (ni && clueId < niCount) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				txt = parseString(_mystery.textAt(textOff),
-								  _playerName, _partner);
-			}
-			if (txt.empty())
-				txt = Common::String::format("clue %u", clueId);
-			// Per `_DrawNotes @ 161e:01d0`: text uses
-			// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
-			// (light yellow-white) for selected. Both contrast cleanly
-			// with the PDA screen's natural blue, so we draw text
-			// directly on PIC 0x3f without an extra fill rectangle —
-			// matches the original design.
-			Common::Array<Common::String> wrapped;
-			_font.wordWrapText(txt, kRectW, wrapped);
-			const int lineH = _font.getFontHeight() + 1;
-			const int h = (int)wrapped.size() * lineH;
-			const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
-			for (uint li = 0; li < wrapped.size(); li++) {
-				_font.drawString(&scratch, wrapped[li], kRectX,
-								 y + (int)li * lineH, kRectW, color);
-			}
-			slotRects.push_back(Common::Rect(kRectX, y,
-											  kRectX + kRectW, y + h));
-			slotClues.push_back(clueId);
-			y += h + 7;
-		}
-
-		// Page indicator + selected-points counter directly on PIC.
-		_font.drawString(&scratch, Common::String::format("p%d/%d",
-								   page + 1, (int)pageStarts.size()),
-						 270, 4, 320, 0x5C);
-		_font.drawString(&scratch, Common::String::format("%d pts",
-								   _mystery.selectedPoints()),
-						 270, 14, 320, 0x5C);
-		(void)hoveredNoteSlot;
-
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-
-		// Stash slot info on the captures so the click handler below
-		// can use it via the closure.
-		_notebookSlotRects = slotRects;
-		_notebookSlotClues = slotClues;
-	};
-
-	draw();
+	drawNotebookFrame(page);
 
 	uint32 lastDraw = g_system->getMillis();
 
@@ -867,12 +807,171 @@ void EEMEngine::doNotebook() {
 		const uint32 now = g_system->getMillis();
 		// Re-render every 100 ms so the partner sprite cycles frames.
 		if (dirty || now - lastDraw >= 100) {
-			draw();
+			drawNotebookFrame(page);
 			lastDraw = now;
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+}
+
+void EEMEngine::drawNotebookFrame(int &page) {
+	// PDA notebook redraw — formerly the `draw` lambda inside `doNotebook`.
+	// Mirrors `_DrawNotes @ 161e:01d0` for the per-page note layout, plus
+	// the partner-sprite blit at (5, 80) (`_NewAnimation` from
+	// `_DoNotebook @ 161e:0500`). Uses `_notebookSlotRects` /
+	// `_notebookSlotClues` to publish the per-page slot layout to the
+	// click handler in `doNotebook`.
+	const Common::Rect kNotebookRect(78, 12, 288, 152);
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+
+	// PIC 0x3f frame.
+	Picture frame;
+	if (_picsArchive.getPicture(0x3f, frame)) {
+		const int w = MIN<int>(frame.surface.w, 320);
+		const int h = MIN<int>(frame.surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)frame.surface.getBasePtr(0, row), w);
+	}
+
+	// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny.
+	const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
+	Animation partnerAni;
+	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = (uint)((now / 100) % partnerAni.size());
+		const Picture &fr = partnerAni[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+		for (int row = 0; row < fr.surface.h; row++) {
+			const int dstY = 80 + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < fr.surface.w; col++) {
+				const int dstX = 5 + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	}
+
+	// Notes — `_DrawNotes` walks `_NoteIndex` for the current page,
+	// rendering each found clue's text inside `_NotebookRect` with
+	// word-wrap. Selected clues are highlighted (color 0x3c in the
+	// original's case-briefing palette).
+	// Build a list of found-clue indices, identical ordering to the
+	// original's iteration through `_CluesFound[]`.
+	Common::Array<uint> found;
+	for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
+		if (_mystery._cluesFound[i])
+			found.push_back(i);
+	}
+	const byte *ni = _mystery.noteIndex();
+	const uint16 niCount = _mystery.noteIndexCount();
+
+	const int kRectX = kNotebookRect.left;
+	const int kRectY = kNotebookRect.top;
+	const int kRectW = kNotebookRect.width();
+	const int kRectH = kNotebookRect.height();
+
+	// Walk forward to the start clue of the current page.
+	// Each page renders as many clues as fit in `kRectH`.
+	int clueCursor = 0;
+	Common::Array<int> pageStarts;
+	pageStarts.push_back(0);
+	{
+		const int lineH = _font.getFontHeight() + 1;
+		int y = kRectY;
+		while (clueCursor < (int)found.size()) {
+			const uint clueId = found[clueCursor];
+			Common::String txt;
+			if (ni && clueId < niCount) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				txt = parseString(_mystery.textAt(textOff),
+								  _playerName, _partner);
+			}
+			// Measure height by wrapping the text without drawing.
+			Common::Array<Common::String> wrapped;
+			_font.wordWrapText(txt, kRectW, wrapped);
+			const int h = (int)wrapped.size() * lineH;
+			if (y + h + 7 > kRectY + kRectH) {
+				// Page break before this clue.
+				y = kRectY;
+				pageStarts.push_back(clueCursor);
+			}
+			y += h + 7;
+			clueCursor++;
+		}
+		if (page >= (int)pageStarts.size())
+			page = (int)pageStarts.size() - 1;
+		if (page < 0)
+			page = 0;
+	}
+
+	// Track per-slot rectangles so the click handler can map a
+	// click in `kNoteArea` back to a clue index.
+	Common::Array<Common::Rect> slotRects;
+	Common::Array<uint> slotClues;
+
+	const int startClue = (page < (int)pageStarts.size())
+							? pageStarts[page] : 0;
+	const int endClue   = (page + 1 < (int)pageStarts.size())
+							? pageStarts[page + 1] : (int)found.size();
+
+	int y = kRectY;
+	for (int i = startClue; i < endClue; i++) {
+		const uint clueId = found[i];
+		Common::String txt;
+		if (ni && clueId < niCount) {
+			const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+			txt = parseString(_mystery.textAt(textOff),
+							  _playerName, _partner);
+		}
+		if (txt.empty())
+			txt = Common::String::format("clue %u", clueId);
+		// Per `_DrawNotes @ 161e:01d0`: text uses
+		// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
+		// (light yellow-white) for selected. Both contrast cleanly
+		// with the PDA screen's natural blue, so we draw text
+		// directly on PIC 0x3f without an extra fill rectangle —
+		// matches the original design.
+		Common::Array<Common::String> wrapped;
+		_font.wordWrapText(txt, kRectW, wrapped);
+		const int lineH = _font.getFontHeight() + 1;
+		const int h = (int)wrapped.size() * lineH;
+		const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
+		for (uint li = 0; li < wrapped.size(); li++) {
+			_font.drawString(&scratch, wrapped[li], kRectX,
+							 y + (int)li * lineH, kRectW, color);
+		}
+		slotRects.push_back(Common::Rect(kRectX, y,
+										  kRectX + kRectW, y + h));
+		slotClues.push_back(clueId);
+		y += h + 7;
+	}
+
+	// Page indicator + selected-points counter directly on PIC.
+	_font.drawString(&scratch, Common::String::format("p%d/%d",
+							   page + 1, (int)pageStarts.size()),
+					 270, 4, 320, 0x5C);
+	_font.drawString(&scratch, Common::String::format("%d pts",
+							   _mystery.selectedPoints()),
+					 270, 14, 320, 0x5C);
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+
+	// Publish slot info to `doNotebook`'s click handler.
+	_notebookSlotRects = slotRects;
+	_notebookSlotClues = slotClues;
 }
 
 void EEMEngine::doGallery() {
@@ -908,25 +1007,10 @@ void EEMEngine::doGallery() {
 
 	CursorMan.showMouse(true);
 
-	struct Slot { int x; int y; };
-	static const Slot kGallerySlots[5] = {
-		{  83,  14 }, // 0
-		{ 155,  14 }, // 1
-		{ 227,  14 }, // 2
-		{ 119,  90 }, // 3
-		{ 191,  90 }  // 4
-	};
-
-	// Pre-load static elements once.
+	// Pre-load PIC 0x3f for the MoreInfo backdrop blit further down.
+	// (`drawGalleryFrame` reloads it on its own per-call too.)
 	Picture galBg;
 	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
-
-	// Gallery partner anim — `_DoGallery` calls `_GetAnimation(uVar6)` with
-	// uVar6 = 2 (Jake) / 0x10 (Jenny). Different from PDA (1 / 0xb).
-	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
-	Animation partnerAni;
-	const bool havePartner = _aniArchive.loadAnimation(partnerAnim, partnerAni)
-							  && !partnerAni.empty();
 
 	const uint8 num = _mystery.numSuspects();
 
@@ -939,116 +1023,7 @@ void EEMEngine::doGallery() {
 		slotSuspect[i] = -1;
 	}
 
-	auto drawFrame = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-
-		if (haveBg) {
-			const int bw = MIN<int>(galBg.surface.w, 320);
-			const int bh = MIN<int>(galBg.surface.h, 200);
-			for (int row = 0; row < bh; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)galBg.surface.getBasePtr(0, row), bw);
-			}
-		}
-
-		// Partner sprite frame @ (5, 0x50).
-		if (havePartner) {
-			const uint32 now = g_system->getMillis();
-			const uint frameIdx = (uint)((now / 100) % partnerAni.size());
-			const Picture &fr = partnerAni[frameIdx];
-			const byte transp = (byte)(fr.flags >> 8);
-			const int px = 5, py = 0x50;
-			for (int row = 0; row < fr.surface.h; row++) {
-				const int dstY = py + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < fr.surface.w; col++) {
-					const int dstX = px + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		}
-
-		// Portraits — `_DrawGallery @ 158f:0046` walks suspects 0..N-1
-		// and only renders those flagged in `_InGallery[NewOrder[i]]`.
-		// Undiscovered slots are left empty in the original. We render
-		// a darkened placeholder + "?" so the player has visual feedback
-		// that suspects exist but are still unknown.
-		uint discoveredCount = 0;
-		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
-			slotRects[i] = Common::Rect();
-			slotSuspect[i] = -1;
-
-			const uint8 phys = _mystery._newOrder[i];
-			if (phys >= 5)
-				continue;
-			const Slot &s = kGallerySlots[phys];
-
-			const bool discovered = _mystery._inGallery[phys] != 0;
-			if (discovered) {
-				const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-				Picture portrait;
-				if (picId == 0 ||
-					!_picsArchive.getPicture(picId, portrait))
-					continue;
-
-				const int placeX = s.x;
-				const int placeY = s.y + (0x48 - portrait.surface.h);
-				const byte transp = (byte)(portrait.flags >> 8);
-				const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-				const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-				if (w <= 0 || h <= 0)
-					continue;
-				for (int row = 0; row < h; row++) {
-					const int dstY = placeY + row;
-					if (dstY < 0)
-						continue;
-					const byte *src =
-						(const byte *)portrait.surface.getBasePtr(0, row);
-					byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-					for (int col = 0; col < w; col++) {
-						const int dstX = placeX + col;
-						if (src[col] != transp)
-							dst[dstX] = src[col];
-					}
-				}
-				slotRects[i] = Common::Rect(placeX, placeY,
-											 placeX + w, placeY + h);
-				slotSuspect[i] = (int)i;
-				discoveredCount++;
-			} else {
-				// Undiscovered placeholder — small framed "?" box at
-				// (s.x, s.y) sized 0x40 × 0x48 (typical portrait size).
-				const int phW = 0x40, phH = 0x48;
-				const int phX = s.x, phY = s.y;
-				if (phX + phW <= 320 && phY + phH <= 200) {
-					scratch.fillRect(Common::Rect(phX, phY,
-						phX + phW, phY + phH), 0x20);
-					scratch.frameRect(Common::Rect(phX, phY,
-						phX + phW, phY + phH), 0x5C);
-					if (_font.isLoaded()) {
-						_font.drawString(&scratch, "?",
-							phX + phW / 2 - 3,
-							phY + phH / 2 - 4, phW, 0x5C);
-					}
-				}
-			}
-		}
-		(void)discoveredCount;
-
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
-
-	drawFrame();
+	drawGalleryFrame(gd, num, slotRects, slotSuspect);
 	uint32 lastDraw = g_system->getMillis();
 
 	while (!shouldQuit()) {
@@ -1258,7 +1233,7 @@ void EEMEngine::doGallery() {
 						// Force gallery redraw immediately so the
 						// player isn't left looking at the dismissed
 						// MoreInfo screen until the next 100 ms tick.
-						drawFrame();
+						drawGalleryFrame(gd, num, slotRects, slotSuspect);
 						lastDraw = g_system->getMillis();
 						clicked = true;
 						break;
@@ -1272,11 +1247,137 @@ void EEMEngine::doGallery() {
 
 		const uint32 now = g_system->getMillis();
 		if (now - lastDraw >= 100) {
-			drawFrame();
+			drawGalleryFrame(gd, num, slotRects, slotSuspect);
 			lastDraw = now;
 		}
 		g_system->delayMillis(15);
 	}
+}
+
+void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
+								  Common::Array<Common::Rect> &slotRects,
+								  Common::Array<int> &slotSuspect) {
+	// Gallery redraw — formerly the `drawFrame` lambda inside `doGallery`.
+	// Mirrors `_DrawGallery @ 158f:0046`: PIC 0x3f frame + partner sprite
+	// at (5, 0x50) + suspect portraits in their `_NewOrder` slots.
+	struct Slot { int x; int y; };
+	static const Slot kGallerySlots[5] = {
+		{  83,  14 }, // 0
+		{ 155,  14 }, // 1
+		{ 227,  14 }, // 2
+		{ 119,  90 }, // 3
+		{ 191,  90 }  // 4
+	};
+
+	Picture galBg;
+	const bool haveBg = _picsArchive.getPicture(0x3f, galBg);
+	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+	Animation partnerAni;
+	const bool havePartner = _aniArchive.loadAnimation(partnerAnim, partnerAni)
+							  && !partnerAni.empty();
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+
+	if (haveBg) {
+		const int bw = MIN<int>(galBg.surface.w, 320);
+		const int bh = MIN<int>(galBg.surface.h, 200);
+		for (int row = 0; row < bh; row++) {
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)galBg.surface.getBasePtr(0, row), bw);
+		}
+	}
+
+	// Partner sprite frame @ (5, 0x50).
+	if (havePartner) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = (uint)((now / 100) % partnerAni.size());
+		const Picture &fr = partnerAni[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+		const int px = 5;
+		const int py = 0x50;
+		for (int row = 0; row < fr.surface.h; row++) {
+			const int dstY = py + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < fr.surface.w; col++) {
+				const int dstX = px + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	}
+
+	// Portraits — `_DrawGallery @ 158f:0046` walks suspects 0..N-1 and
+	// only renders those flagged in `_InGallery[NewOrder[i]]`.
+	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
+		slotRects[i] = Common::Rect();
+		slotSuspect[i] = -1;
+
+		const uint8 phys = _mystery._newOrder[i];
+		if (phys >= 5)
+			continue;
+		const Slot &s = kGallerySlots[phys];
+
+		const bool discovered = _mystery._inGallery[phys] != 0;
+		if (discovered) {
+			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+			Picture portrait;
+			if (picId == 0 ||
+				!_picsArchive.getPicture(picId, portrait))
+				continue;
+
+			const int placeX = s.x;
+			const int placeY = s.y + (0x48 - portrait.surface.h);
+			const byte transp = (byte)(portrait.flags >> 8);
+			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+			if (w <= 0 || h <= 0)
+				continue;
+			for (int row = 0; row < h; row++) {
+				const int dstY = placeY + row;
+				if (dstY < 0)
+					continue;
+				const byte *src =
+					(const byte *)portrait.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < w; col++) {
+					const int dstX = placeX + col;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+			slotRects[i] = Common::Rect(placeX, placeY,
+										 placeX + w, placeY + h);
+			slotSuspect[i] = (int)i;
+		} else {
+			// Undiscovered placeholder — small framed "?" box.
+			const int phW = 0x40;
+			const int phH = 0x48;
+			const int phX = s.x;
+			const int phY = s.y;
+			if (phX + phW <= 320 && phY + phH <= 200) {
+				scratch.fillRect(Common::Rect(phX, phY,
+					phX + phW, phY + phH), 0x20);
+				scratch.frameRect(Common::Rect(phX, phY,
+					phX + phW, phY + phH), 0x5C);
+				if (_font.isLoaded()) {
+					_font.drawString(&scratch, "?",
+						phX + phW / 2 - 3,
+						phY + phH / 2 - 4, phW, 0x5C);
+				}
+			}
+		}
+	}
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
 }
 
 void EEMEngine::doBigMap() {
@@ -1322,128 +1423,7 @@ void EEMEngine::doBigMap() {
 	// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
 	// ------------------------------------------------------------------
 
-	// `_DoBigMap @ 20fe:09e7` (20fe:0a44-0a99) registers a partner sprite
-	// on the overview frame. The animation depends on `_LastScreen`:
-	//   * When LastScreen == 2 (came from the site loop) the original
-	//     plays an entrance anim (`anum-1` for Jake / Jenny) at
-	//     (0x102, 0x50), then on END swaps to the idle anim at (0xfd,
-	//     0x50). We don't track LastScreen finely enough to distinguish,
-	//     so we render the IDLE pose at (0xfd, 0x50) which is what the
-	//     player sees the rest of the time anyway.
-	//   * Idle anim ID: Jake = 0x14 (20), Jenny = 0x12 (18).
-	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
-	Animation mapAnim;
-	const bool haveMapAnim = _aniArchive.loadAnimation(kMapAniId, mapAnim)
-							   && !mapAnim.empty();
-	const int kMapAnimX = 0xfd;
-	const int kMapAnimY = 0x50;
-
-	auto drawOverview = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-
-		Picture frame;
-		if (_picsArchive.getPicture(0x42, frame)) {
-			const int w = MIN<int>(frame.surface.w, 320);
-			const int h = MIN<int>(frame.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)frame.surface.getBasePtr(0, row), w);
-		}
-
-		// Marker PICs from `_main @ 1a35:0f59`. Three globals are filled
-		// once at boot via `_GetPicture` (1-based IDs → entries N-1):
-		//   _DoneMarker  = PIC 0x20d  (already-searched site)
-		//   _SiteMarker  = PIC 0xc5   (default available site)
-		//   _CrimeMarker = PIC 0xc6   (crime-scene flag set)
-		// Picked per-site by `_DrawBigMapButtons @ 20fe:0877`:
-		//   1. SaveSiteComplete[i] → DoneMarker
-		//   2. else MapData[+0xc] != 0 → CrimeMarker
-		//   3. else SiteMarker
-		Picture done, normal, crimeM;
-		const bool haveDone   = _picsArchive.getPicture(0x20d, done);
-		const bool haveNormal = _picsArchive.getPicture(0xc5,  normal);
-		const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
-
-		auto blitMarker = [&](const Picture &m, int x, int y) {
-			const byte transp = (byte)(m.flags >> 8);
-			for (int row = 0; row < m.surface.h; row++) {
-				const int dstY = y + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)m.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < m.surface.w; col++) {
-					const int dstX = x + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		};
-
-		for (uint i = 0; i < _mystery.numSites(); i++) {
-			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-				continue;
-			const byte *entry = _mystery.mapEntry(i);
-			if (!entry)
-				continue;
-			const uint16 mx    = READ_LE_UINT16(entry + 0x4);
-			const uint16 my    = READ_LE_UINT16(entry + 0x6);
-			const uint16 crime = READ_LE_UINT16(entry + 0xc);
-			const bool   done_ = (i < Mystery::kVisitedSiteCap)
-								  && _mystery._visitedSite[i];
-
-			const Picture *m = nullptr;
-			if (done_ && haveDone)
-				m = &done;
-			else if (crime != 0 && haveCrime)
-				m = &crimeM;
-			else if (haveNormal)
-				m = &normal;
-
-			if (m)
-				blitMarker(*m, (int)mx, (int)my);
-			else {
-				// Fallback if the markers couldn't be loaded.
-				const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
-				scratch.fillRect(mark, 0x0F);
-			}
-		}
-
-		// Partner sprite — masked-blit at (0xfd, 0x50). Same per-tick
-		// idle the original would run via `_UpdateAnimations` once the
-		// entrance one-shot transitions out (see `_DoBigMap` 0xae3-0xae7
-		// where it swaps animId on the 0x80 marker).
-		if (haveMapAnim) {
-			const uint32 now = g_system->getMillis();
-			const uint frameIdx = (uint)((now / 100) % mapAnim.size());
-			const Picture &fr = mapAnim[frameIdx];
-			const byte transp = (byte)(fr.flags >> 8);
-			for (int row = 0; row < fr.surface.h; row++) {
-				const int dstY = kMapAnimY + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < fr.surface.w; col++) {
-					const int dstX = kMapAnimX + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		}
-
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
-
-	drawOverview();
+	drawBigMapOverview();
 	uint32 mapLastTick = g_system->getMillis();
 
 	// Static rectangles read directly from the binary at the labelled
@@ -1492,9 +1472,9 @@ void EEMEngine::doBigMap() {
 		// Cycle the partner-sprite frame every 100 ms (matching the
 		// original's `_CheckFrameRate` cadence inside `_DoBigMap`).
 		const uint32 now = g_system->getMillis();
-		if (haveMapAnim && now - mapLastTick >= 100) {
+		if (now - mapLastTick >= 100) {
 			mapLastTick = now;
-			drawOverview();
+			drawBigMapOverview();
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -1531,110 +1511,7 @@ void EEMEngine::doBigMap() {
 	int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 	int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
 
-	// `_DoMapScreen @ 20fe:120b` (20fe:12cd-12f0): partner sprite on
-	// the detail-zoom screen. Jake = anim 0x13 (19), Jenny = anim 0x11
-	// (17). Position (0x101, 0x50) = (257, 80), seqnum 0x13. The cells
-	// here have a "looking at the map" pose, distinct from the BigMap
-	// overview entrance/idle.
-	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
-	Animation detailAnim;
-	const bool haveDetailAnim = _aniArchive.loadAnimation(kDetailAniId,
-														   detailAnim)
-								  && !detailAnim.empty();
-	const int kDetailAnimX = 0x101;
-	const int kDetailAnimY = 0x50;
-
-	auto drawDetail = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-
-		Picture frame;
-		if (_picsArchive.getPicture(0x43, frame)) {
-			const int w = MIN<int>(frame.surface.w, 320);
-			const int h = MIN<int>(frame.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)frame.surface.getBasePtr(0, row), w);
-		}
-
-		const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
-		const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
-		for (int row = 0; row < copyH; row++) {
-			memcpy((byte *)scratch.getBasePtr(kMapWinX, kMapWinY + row),
-				   mapPixels.data() + (scrollY + row) * mapW + scrollX,
-				   copyW);
-		}
-
-		// Stamped site buttons. `_StampButtons @ 20fe:0d2f` does:
-		//   button = _GetButton(MapData[+0])      // BUTTON.DBD entry
-		//   destX  = MapData[+8],  destY = MapData[+0xa]
-		// then bakes the button PIC into the map bitmap. Each button
-		// sprite carries the site name baked in. We blit them on top
-		// of the BIGMAP.PIC viewport at the same SmallMap coords.
-		for (uint i = 0; i < _mystery.numSites(); i++) {
-			if (!_mystery._onSites[i] && i != _mystery._siteNumber)
-				continue;
-			const byte *entry = _mystery.mapEntry(i);
-			if (!entry)
-				continue;
-			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
-			const uint16 mx       = READ_LE_UINT16(entry + 0x8);
-			const uint16 my       = READ_LE_UINT16(entry + 0xa);
-
-			Picture button;
-			if (!_buttonArchive.loadEntry(buttonId, button))
-				continue;
-			const int sx = (int)mx - scrollX + kMapWinX;
-			const int sy = (int)my - scrollY + kMapWinY;
-			const byte transp = (byte)(button.flags >> 8);
-
-			// Crop blit against the viewport.
-			const int x0 = MAX<int>(sx, kMapWinX);
-			const int y0 = MAX<int>(sy, kMapWinY);
-			const int x1 = MIN<int>(sx + button.surface.w, kMapWinX + kMapWinW);
-			const int y1 = MIN<int>(sy + button.surface.h, kMapWinY + kMapWinH);
-			for (int row = y0; row < y1; row++) {
-				const byte *src = (const byte *)button.surface.getBasePtr(0, row - sy);
-				byte *dst = (byte *)scratch.getBasePtr(0, row);
-				for (int col = x0; col < x1; col++) {
-					const byte px = src[col - sx];
-					if (px != transp)
-						dst[col] = px;
-				}
-			}
-		}
-
-		// Partner sprite on the detail map. Drawn last so it sits over
-		// the frame and the BIGMAP.PIC viewport.
-		if (haveDetailAnim) {
-			const uint32 now = g_system->getMillis();
-			const uint frameIdx =
-				(uint)((now / 100) % detailAnim.size());
-			const Picture &fr = detailAnim[frameIdx];
-			const byte transp = (byte)(fr.flags >> 8);
-			for (int row = 0; row < fr.surface.h; row++) {
-				const int dstY = kDetailAnimY + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < fr.surface.w; col++) {
-					const int dstX = kDetailAnimX + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-		}
-
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
-
-	drawDetail();
+	drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH);
 	uint32 detailLastTick = g_system->getMillis();
 
 	while (!shouldQuit()) {
@@ -1761,15 +1638,229 @@ void EEMEngine::doBigMap() {
 		// Cycle the partner sprite at 100 ms ticks (same cadence as
 		// `_DoMapScreen`'s `_CheckFrameRate` + `_UpdateAnimations` loop).
 		const uint32 now = g_system->getMillis();
-		if (haveDetailAnim && now - detailLastTick >= 100) {
+		if (now - detailLastTick >= 100) {
 			detailLastTick = now;
 			dirty = true;
 		}
 		if (dirty)
-			drawDetail();
+			drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+}
+
+void EEMEngine::drawBigMapOverview() {
+	// Map-overview redraw — formerly the `drawOverview` lambda inside
+	// `doBigMap`. PIC 0x42 frame + per-site marker (Done / Crime / Site
+	// per `_DrawBigMapButtons @ 20fe:0877`) + the partner idle sprite.
+	// `_DoBigMap @ 20fe:09e7` (`_NewAnimation` block at 20fe:0a44-0a99)
+	// registers the partner: when `_LastScreen == 2` it plays an
+	// entrance one-shot at (0x102, 0x50) and on END swaps to the idle
+	// at (0xfd, 0x50). We don't track LastScreen finely enough so we
+	// always render the IDLE pose at (0xfd, 0x50). Idle anim ID:
+	// Jake = 0x14 (20), Jenny = 0x12 (18).
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+
+	Picture frame;
+	if (_picsArchive.getPicture(0x42, frame)) {
+		const int w = MIN<int>(frame.surface.w, 320);
+		const int h = MIN<int>(frame.surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)frame.surface.getBasePtr(0, row), w);
+	}
+
+	// Marker PICs from `_main @ 1a35:0f59`. Three globals are filled
+	// once at boot via `_GetPicture` (1-based IDs):
+	//   _DoneMarker  = PIC 0x20d  (already-searched site)
+	//   _SiteMarker  = PIC 0xc5   (default available site)
+	//   _CrimeMarker = PIC 0xc6   (crime-scene flag set)
+	Picture done;
+	Picture normal;
+	Picture crimeM;
+	const bool haveDone   = _picsArchive.getPicture(0x20d, done);
+	const bool haveNormal = _picsArchive.getPicture(0xc5,  normal);
+	const bool haveCrime  = _picsArchive.getPicture(0xc6,  crimeM);
+
+	for (uint i = 0; i < _mystery.numSites(); i++) {
+		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+			continue;
+		const byte *entry = _mystery.mapEntry(i);
+		if (!entry)
+			continue;
+		const uint16 mx    = READ_LE_UINT16(entry + 0x4);
+		const uint16 my    = READ_LE_UINT16(entry + 0x6);
+		const uint16 crime = READ_LE_UINT16(entry + 0xc);
+		const bool   done_ = (i < Mystery::kVisitedSiteCap)
+							  && _mystery._visitedSite[i];
+
+		const Picture *m = nullptr;
+		if (done_ && haveDone)
+			m = &done;
+		else if (crime != 0 && haveCrime)
+			m = &crimeM;
+		else if (haveNormal)
+			m = &normal;
+
+		if (m) {
+			// Masked-blit the marker PIC.
+			const byte transp = (byte)(m->flags >> 8);
+			for (int row = 0; row < m->surface.h; row++) {
+				const int dstY = (int)my + row;
+				if (dstY < 0 || dstY >= 200)
+					continue;
+				const byte *src = (const byte *)m->surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < m->surface.w; col++) {
+					const int dstX = (int)mx + col;
+					if (dstX < 0 || dstX >= 320)
+						continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+		} else {
+			// Fallback if the markers couldn't be loaded.
+			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
+			scratch.fillRect(mark, 0x0F);
+		}
+	}
+
+	// Partner idle sprite at (0xfd, 0x50). Jake = anim 0x14, Jenny = 0x12.
+	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
+	Animation mapAnim;
+	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = (uint)((now / 100) % mapAnim.size());
+		const Picture &fr = mapAnim[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+		const int kMapAnimX = 0xfd;
+		const int kMapAnimY = 0x50;
+		for (int row = 0; row < fr.surface.h; row++) {
+			const int dstY = kMapAnimY + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < fr.surface.w; col++) {
+				const int dstX = kMapAnimX + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	}
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
+void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
+								 const Common::Array<byte> &mapPixels,
+								 uint16 mapW, uint16 mapH) {
+	// Map-detail redraw — formerly the `drawDetail` lambda inside
+	// `doBigMap`. PIC 0x43 frame + a 0xe9 × 0xab BIGMAP.PIC viewport at
+	// (2, 2), stamped site buttons, and the partner sprite at (0x101,
+	// 0x50) — `_DoMapScreen @ 20fe:120b` (`_NewAnimation` at
+	// 20fe:12cd-12f0, anim 0x13 Jake / 0x11 Jenny, seqnum 0x13).
+	const int kMapWinW = 0xe9;
+	const int kMapWinH = 0xab;
+	const int kMapWinX = 2;
+	const int kMapWinY = 2;
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+
+	Picture frame;
+	if (_picsArchive.getPicture(0x43, frame)) {
+		const int w = MIN<int>(frame.surface.w, 320);
+		const int h = MIN<int>(frame.surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)frame.surface.getBasePtr(0, row), w);
+	}
+
+	const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
+	const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
+	for (int row = 0; row < copyH; row++) {
+		memcpy((byte *)scratch.getBasePtr(kMapWinX, kMapWinY + row),
+			   mapPixels.data() + (scrollY + row) * mapW + scrollX,
+			   copyW);
+	}
+
+	// Stamped site buttons. `_StampButtons @ 20fe:0d2f`:
+	//   button = _GetButton(MapData[+0])
+	//   destX  = MapData[+8]
+	//   destY  = MapData[+0xa]
+	for (uint i = 0; i < _mystery.numSites(); i++) {
+		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
+			continue;
+		const byte *entry = _mystery.mapEntry(i);
+		if (!entry)
+			continue;
+		const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
+		const uint16 mx       = READ_LE_UINT16(entry + 0x8);
+		const uint16 my       = READ_LE_UINT16(entry + 0xa);
+
+		Picture button;
+		if (!_buttonArchive.loadEntry(buttonId, button))
+			continue;
+		const int sx = (int)mx - scrollX + kMapWinX;
+		const int sy = (int)my - scrollY + kMapWinY;
+		const byte transp = (byte)(button.flags >> 8);
+
+		// Crop blit against the viewport.
+		const int x0 = MAX<int>(sx, kMapWinX);
+		const int y0 = MAX<int>(sy, kMapWinY);
+		const int x1 = MIN<int>(sx + button.surface.w, kMapWinX + kMapWinW);
+		const int y1 = MIN<int>(sy + button.surface.h, kMapWinY + kMapWinH);
+		for (int row = y0; row < y1; row++) {
+			const byte *src = (const byte *)button.surface.getBasePtr(0, row - sy);
+			byte *dst = (byte *)scratch.getBasePtr(0, row);
+			for (int col = x0; col < x1; col++) {
+				const byte px = src[col - sx];
+				if (px != transp)
+					dst[col] = px;
+			}
+		}
+	}
+
+	// Partner sprite on the detail map (drawn last to sit over the
+	// frame and the BIGMAP.PIC viewport).
+	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
+	Animation detailAnim;
+	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
+		!detailAnim.empty()) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = (uint)((now / 100) % detailAnim.size());
+		const Picture &fr = detailAnim[frameIdx];
+		const byte transp = (byte)(fr.flags >> 8);
+		const int kDetailAnimX = 0x101;
+		const int kDetailAnimY = 0x50;
+		for (int row = 0; row < fr.surface.h; row++) {
+			const int dstY = kDetailAnimY + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < fr.surface.w; col++) {
+				const int dstX = kDetailAnimX + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+	}
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
 }
 
 uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
@@ -1812,12 +1903,6 @@ void EEMEngine::doAccuse() {
 
 	// Verbatim from 29be:0x116 — same five suspect slot positions as
 	// `_DrawGallery @ 158f:0046`.
-	struct Slot { int x; int y; };
-	static const Slot kGallerySlots[5] = {
-		{  83,  14 }, { 155,  14 }, { 227,  14 },
-		{ 119,  90 }, { 191,  90 }
-	};
-
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -1829,84 +1914,6 @@ void EEMEngine::doAccuse() {
 		slotSuspect[i] = -1;
 
 	int highlighted = 0;
-	auto drawGallery = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveAccuseBg) {
-			const int bw = MIN<int>(accuseBg.surface.w, 320);
-			const int bh = MIN<int>(accuseBg.surface.h, 200);
-			for (int row = 0; row < bh; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
-			}
-		}
-
-		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
-			slotRects[i] = Common::Rect();
-			slotSuspect[i] = -1;
-			if (!gd)
-				continue;
-			const uint8 phys = _mystery._newOrder[i];
-			if (phys >= 5)
-				continue;
-			// `_DrawGallery @ 158f:00b9` skips suspects whose
-			// `_InGallery[phys]` flag is 0 — that's the original gate
-			// (some suspects only become visible after being met or
-			// stay hidden after a wrong accusation removes them).
-			if (_mystery._inGallery[phys] == 0)
-				continue;
-			const Slot &s = kGallerySlots[phys];
-
-			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-			if (picId == 0)
-				continue;
-			Picture portrait;
-			if (!_picsArchive.getPicture(picId, portrait))
-				continue;
-
-			const int placeX = s.x;
-			const int placeY = s.y + (0x48 - portrait.surface.h);
-			const byte transp = (byte)(portrait.flags >> 8);
-			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-			if (w <= 0 || h <= 0)
-				continue;
-			for (int row = 0; row < h; row++) {
-				const int dstY = placeY + row;
-				if (dstY < 0)
-					continue;
-				const byte *src =
-					(const byte *)portrait.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < w; col++) {
-					const int dstX = placeX + col;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
-			slotRects[i] = Common::Rect(placeX, placeY,
-										 placeX + w, placeY + h);
-			slotSuspect[i] = (int)i;
-		}
-
-		// Highlight indicator. The original moves the mouse cursor
-		// to the centre of the highlighted suspect via `_PutMouseInRect`
-		// (1df2:0b8e) — we draw a 1px outline in palette index 0xFE
-		// (within the marching-ants cycle range 0xF9..0xFE) which is
-		// unambiguously visible under any palette without warping the
-		// player's cursor.
-		if (highlighted >= 0 && highlighted < (int)slotRects.size() &&
-			!slotRects[highlighted].isEmpty()) {
-			Common::Rect r = slotRects[highlighted];
-			r.grow(1);
-			scratch.frameRect(r, 0xFE);
-		}
-
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-	};
 
 	// Step 1 — KD hint balloon. Mirrors `_DoAccuseGallery @ 1df2:0a31`
 	// (1df2:0a4c-1df2:0afe):
@@ -1991,23 +1998,10 @@ void EEMEngine::doAccuse() {
 	// Helper to find the next "alive" slot (one whose `_inGallery[phys]`
 	// flag is still set so a portrait was actually drawn). Mirrors the
 	// way the original wraps DI past empty slots.
-	auto nextLiveSlot = [&](int from, int dir) -> int {
-		const int n = (int)slotRects.size();
-		if (n <= 0)
-			return 0;
-		for (int step = 1; step <= n; step++) {
-			int idx = (from + dir * step) % n;
-			if (idx < 0)
-				idx += n;
-			if (!slotRects[idx].isEmpty())
-				return idx;
-		}
-		return from;
-	};
 	if (slotRects[highlighted].isEmpty())
-		highlighted = nextLiveSlot(highlighted, +1);
+		highlighted = nextLiveSlot(slotRects, highlighted, +1);
 
-	drawGallery();
+	drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
 
 	// Wait-for-pick loop. Mirrors `_DoAccuseGallery` 1df2:0b26-1df2:0bc8:
 	//   * `_CheckFrameRate` + `_UpdateAnimations` per tick (1df2:0b2a-0b33)
@@ -2038,14 +2032,14 @@ void EEMEngine::doAccuse() {
 					return;
 				case Common::KEYCODE_TAB:
 				case Common::KEYCODE_RIGHT:
-					highlighted = nextLiveSlot(highlighted, +1);
+					highlighted = nextLiveSlot(slotRects, highlighted, +1);
 					dirty = true;
 					break;
 				case Common::KEYCODE_LEFT:
 					// 1df2:0b94 increments DI for LEFT too — but a
 					// keyboard-driven UX is friendlier with separate
 					// directions, so we mirror Right=+1 / Left=-1.
-					highlighted = nextLiveSlot(highlighted, -1);
+					highlighted = nextLiveSlot(slotRects, highlighted, -1);
 					dirty = true;
 					break;
 				case Common::KEYCODE_RETURN:
@@ -2085,7 +2079,7 @@ void EEMEngine::doAccuse() {
 		// We still re-render whenever the highlight moves (`dirty`).
 		const uint32 now = g_system->getMillis();
 		if (dirty || now - lastTick >= 100) {
-			drawGallery();
+			drawAccuseGallery(num, gd, highlighted, slotRects, slotSuspect);
 			lastTick = now;
 			dirty = false;
 		}
@@ -2263,6 +2257,98 @@ void EEMEngine::doAccuse() {
 	} else {
 		_mystery._firstTry = false;
 	}
+}
+
+void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
+								   int highlighted,
+								   Common::Array<Common::Rect> &slotRects,
+								   Common::Array<int> &slotSuspect) {
+	// Accuse-gallery redraw — formerly the `drawGallery` lambda inside
+	// `doAccuse`. Mirrors `_DoAccuseGallery @ 1df2:0a31` portrait grid:
+	// PIC 0x3f backdrop, suspect portraits at the 5 fixed slots, and a
+	// 1-px outline (palette index 0xFE) around the highlighted slot.
+	struct Slot { int x; int y; };
+	static const Slot kGallerySlots[5] = {
+		{  83,  14 }, { 155,  14 }, { 227,  14 },
+		{ 119,  90 }, { 191,  90 }
+	};
+
+	Picture accuseBg;
+	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
+
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (haveAccuseBg) {
+		const int bw = MIN<int>(accuseBg.surface.w, 320);
+		const int bh = MIN<int>(accuseBg.surface.h, 200);
+		for (int row = 0; row < bh; row++) {
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
+		}
+	}
+
+	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
+		slotRects[i] = Common::Rect();
+		slotSuspect[i] = -1;
+		if (!gd)
+			continue;
+		const uint8 phys = _mystery._newOrder[i];
+		if (phys >= 5)
+			continue;
+		// `_DrawGallery @ 158f:00b9` skips suspects whose
+		// `_InGallery[phys]` flag is 0 — that's the original gate.
+		if (_mystery._inGallery[phys] == 0)
+			continue;
+		const Slot &s = kGallerySlots[phys];
+
+		const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+		if (picId == 0)
+			continue;
+		Picture portrait;
+		if (!_picsArchive.getPicture(picId, portrait))
+			continue;
+
+		const int placeX = s.x;
+		const int placeY = s.y + (0x48 - portrait.surface.h);
+		const byte transp = (byte)(portrait.flags >> 8);
+		const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+		const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+		if (w <= 0 || h <= 0)
+			continue;
+		for (int row = 0; row < h; row++) {
+			const int dstY = placeY + row;
+			if (dstY < 0)
+				continue;
+			const byte *src =
+				(const byte *)portrait.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+			for (int col = 0; col < w; col++) {
+				const int dstX = placeX + col;
+				if (src[col] != transp)
+					dst[dstX] = src[col];
+			}
+		}
+		slotRects[i] = Common::Rect(placeX, placeY,
+									 placeX + w, placeY + h);
+		slotSuspect[i] = (int)i;
+	}
+
+	// Highlight indicator. The original moves the mouse cursor to the
+	// centre of the highlighted suspect via `_PutMouseInRect` (1df2:0b8e);
+	// we draw a 1-px outline in palette index 0xFE instead, which sits
+	// inside the marching-ants cycle range 0xF9..0xFE and is visible
+	// under any palette without warping the player's cursor.
+	if (highlighted >= 0 && highlighted < (int)slotRects.size() &&
+		!slotRects[highlighted].isEmpty()) {
+		Common::Rect r = slotRects[highlighted];
+		r.grow(1);
+		scratch.frameRect(r, 0xFE);
+	}
+
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
 }
 
 } // End of namespace EEM
