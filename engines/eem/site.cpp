@@ -114,8 +114,15 @@ void SiteScreen::enter(uint siteNum) {
 			const uint16 clueOff = READ_LE_UINT16(idx + 2);
 			if (clueOff != 0xFFFF) {
 				const byte *clueBlock = _mystery->blobAt(clueOff);
-				if (clueBlock)
+				if (clueBlock) {
+					// See onHotspotClicked — supply a partner-less BG
+					// so KD-anim playback (e.g. the partner's arrival
+					// camera gesture) doesn't ghost over the resting
+					// idle frame.
+					_vm->setPartnerEraseBg(&_bgSnapshot);
 					_vm->displayClue(clueBlock);
+					_vm->setPartnerEraseBg(nullptr);
+				}
 			}
 		}
 		if (siteNum < Mystery::kVisitedSiteCap)
@@ -893,8 +900,18 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 		debugC(2, kDebugSite, "  hotspot %u -> clue offset 0x%04x",
 			   hotIdx, clueOff);
 		const byte *clueBlock = _mystery->blobAt(clueOff);
-		if (clueBlock)
+		if (clueBlock) {
+			// Hand the engine our partner-less backdrop so that
+			// `_DoKDAnim` / `playKdAnim` (the camera-style reaction
+			// animation that fires when a ClueEntry has +0x3a != -1)
+			// can erase the partner's resting frame between cells
+			// instead of compositing over it. Cleared after the call
+			// so accuse / briefing contexts fall back to their own
+			// snapshots.
+			_vm->setPartnerEraseBg(&_bgSnapshot);
 			_vm->displayClue(clueBlock);
+			_vm->setPartnerEraseBg(nullptr);
+		}
 	}
 	// Caller (`SiteScreen::run`) re-renders the site after this returns.
 }

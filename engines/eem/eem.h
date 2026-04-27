@@ -116,6 +116,26 @@ public:
 	/// ctype-bit-1 (= digit) at `29be:2be1 + char`.
 	uint16 getKDTextBalloon(byte firstChar) const;
 
+	/// Play the partner's one-shot reaction animation slot @num. Mirrors
+	/// `_DoKDAnim @ 168d:028a` + `_PlayAnimation @ 172b:1f46`. The
+	/// per-partner (animId, x, y) come from `_WaitAnims[1+num] @ 29be:0228`,
+	/// and the per-frame timing follows the sequence script that the
+	/// original would index at `_AnimationSequences[seqnum=animId]`. Used
+	/// by `displayClue` when a ClueEntry's KD-anim field (+0x3a) is set —
+	/// e.g. Jenny's "take a picture" gesture when the player searches an
+	/// NPC. Blocks until the script's first 0x80 marker.
+	void playKdAnim(uint16 num);
+
+	/// Provide a "clean" 320x200 backdrop for the next `playKdAnim` (and
+	/// any future blocking partner-anim playback) to use as the
+	/// background-erase source. Without this, the camera animation would
+	/// composite on top of the static partner sprite from the screen and
+	/// the previous resting frame would bleed through transparent pixels.
+	/// `SiteScreen` calls this with its `_bgSnapshot` (site BG + static
+	/// drops, no NPCs / partner) before invoking `displayClue` from a
+	/// hotspot click. Pass `nullptr` to clear.
+	void setPartnerEraseBg(const Graphics::ManagedSurface *bg);
+
 	/// Look up balloon-text-inset metadata. Mirrors the 52-entry table at
 	/// `29be:0875`, indexed by `(bubNum & 0x7F)`. 10 bytes per entry; only
 	/// the first 3 fields (x inset, y inset, text width) are used for
@@ -232,6 +252,13 @@ private:
 	/// inline; we cache the layout to keep click hit-testing simple.
 	Common::Array<Common::Rect> _notebookSlotRects;
 	Common::Array<uint>         _notebookSlotClues;
+
+	/// Optional clean BG (no partner / NPC sprites) used by `playKdAnim`
+	/// to erase the partner's resting frame between camera-anim cells.
+	/// Empty when no caller has provided one (PDA / case briefing /
+	/// accuse contexts use their own composed backdrops). See
+	/// `setPartnerEraseBg`.
+	Graphics::ManagedSurface _partnerEraseBg;
 };
 
 } // End of namespace EEM
