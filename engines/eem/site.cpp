@@ -653,9 +653,12 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	//   +0..1 anim Jake, +2..3 anim Jenny,
 	//   +4..5 x    Jake, +6..7 x    Jenny,
 	//   +8..9 y    Jake, +10..11 y    Jenny.
-	// Verbatim copy of the bytes Ghidra dumped at 29be:021c so we
-	// don't need to ship the original data segment.
-	static const uint16 kWaitAnims[][6] = {
+	// Seven valid entries verified against the bytes at 29be:021c.
+	// Anything past entry 6 in the binary is `_SiteButtons` rect data
+	// that follows the table in memory — NOT continuation entries —
+	// so we cap the table here and skip rendering for siteData[+8] >= 7
+	// (which would indicate corrupt mystery data anyway).
+	static const uint16 kWaitAnims[7][6] = {
 		{ 0x00, 0x0a, 0x06, 0x06, 0x50, 0x50 }, // 0
 		{ 0x03, 0x0c, 0x06, 0x06, 0x50, 0x50 }, // 1
 		{ 0x01, 0x0b, 0x06, 0x06, 0x50, 0x50 }, // 2
@@ -663,17 +666,17 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 		{ 0x02, 0x10, 0x06, 0x06, 0x50, 0x50 }, // 4
 		{ 0x05, 0x05, 0x06, 0x06, 0x50, 0x50 }, // 5
 		{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
-		{ 0x00, 0x00, 0x23, 0x6f, 0x38, 0x88 }, // 7 — special pos
-		{ 0x07, 0xb1, 0x39, 0xc8, 0x88, 0xae }, // 8 — likely junk; 0xb1 anim id is suspect
-		{ 0x9d, 0xbe, 0xa3, 0xae, 0xb8, 0xbe }  // 9 — likely junk
 	};
 
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
 	const uint16 speaker = READ_LE_UINT16(site + 8);
-	if (speaker >= ARRAYSIZE(kWaitAnims))
+	if (speaker >= ARRAYSIZE(kWaitAnims)) {
+		warning("renderPartner: site %u has speakerIdx=%u out of range",
+				siteNum, speaker);
 		return;
+	}
 
 	const uint8 partner = _vm->getPartnerIndex();
 	const uint  animId  = kWaitAnims[speaker][0 + partner];

@@ -551,27 +551,74 @@ void EEMEngine::doChoosePartner() {
 	}
 
 	setAnmPalette(Common::Path("TITLE.ANM"));
-	blitAt(background, 0, 0);
-	blitAt(girlAnim[0], kGirlX, kGirlY);
-	blitAt(boyAnim[0], kBoyX, kBoyY);
-	g_system->updateScreen();
+
+	// `_DoHappiness @ 172b:27b5`: the cursor's X column picks one of 4
+	// rects (29be:030f, all full-height); past rect 3 → "level 4".
+	// Each level swaps the partner's sequence script to a more / less
+	// "happy" cycle. Boy seqs at 29be:0337 (5 × 0x14 bytes), girl seqs
+	// at 29be:039b. Both cycle through 9 frames (the boy/girl anim
+	// cells contain 10 cells = pairs of "neutral, smile" at increasing
+	// intensity). Lifted verbatim from the binary so the gestures
+	// match the original beat-for-beat.
+	static const Common::Rect kHappyZones[4] = {
+		Common::Rect(  0, 0,  70, 200), // far left  — girl very happy, boy neutral
+		Common::Rect( 70, 0, 126, 200), // girl's column
+		Common::Rect(126, 0, 182, 200), // middle
+		Common::Rect(182, 0, 235, 200), // boy's column
+	};
+	static const uint8 kBoySeqs[5][9] = {
+		{ 0,0,0,0,0,0,0,1,0 }, // level 0
+		{ 2,2,2,2,2,2,2,3,2 }, // level 1
+		{ 4,4,4,4,4,4,4,5,4 }, // level 2
+		{ 6,6,6,6,6,6,7,6,6 }, // level 3
+		{ 8,8,8,8,8,8,8,8,9 }, // level 4 (cursor past zone 3)
+	};
+	static const uint8 kGirlSeqs[5][9] = {
+		{ 8,9,8,8,8,8,8,8,8 },
+		{ 6,6,6,7,6,6,6,6,6 },
+		{ 4,4,5,4,4,4,4,4,4 },
+		{ 2,2,2,2,2,2,3,2,2 },
+		{ 0,0,0,0,0,1,0,0,0 },
+	};
+	auto happinessLevel = [](int x) {
+		for (uint i = 0; i < ARRAYSIZE(kHappyZones); i++) {
+			if (kHappyZones[i].contains(x, 100))
+				return (uint)i;
+		}
+		return 4u; // past zone 3 → max level
+	};
+
+	int curMouseX = 0xa0;  // _DoChoosePartner sets `_SetMousePos(0xa0, 0x96)` on entry
+	int curMouseY = 0x96;
+	uint level = happinessLevel(curMouseX);
+	uint seqIdx = 0;       // step within the 9-frame seq
+
+	auto draw = [&]() {
+		blitAt(background, 0, 0);
+		const uint girlFrame = kGirlSeqs[level][seqIdx % 9];
+		const uint boyFrame  = kBoySeqs [level][seqIdx % 9];
+		blitAt(girlAnim[girlFrame % girlAnim.size()], kGirlX, kGirlY);
+		blitAt(boyAnim[boyFrame  % boyAnim.size()],  kBoyX,  kBoyY);
+		g_system->updateScreen();
+	};
+	draw();
 
 	debugC(1, kDebugGeneral, "ChoosePartner: %u boy frames at (%d,%d), "
 		   "%u girl frames at (%d,%d)",
 		   (uint)boyAnim.size(), kBoyX, kBoyY,
 		   (uint)girlAnim.size(), kGirlX, kGirlY);
 
-	uint frame = 0;
 	uint32 lastTick = g_system->getMillis();
 	while (!shouldQuit()) {
-		// Advance frame at ~5 Hz so the animations cycle gently.
-		if (g_system->getMillis() - lastTick > 200) {
+		// Advance through the 9-frame seq at 100 ms — `_CheckFrameRate`
+		// cadence. The seq is short and loops; matches the original
+		// `_UpdateAnimations` which restarts at curIdx=0 on the 0x80
+		// marker. Mirrors `_DoHappiness`'s rewriting of `curIdx = 0xFFFF`
+		// when the cursor crosses zones (we restart `seqIdx` instead).
+		if (g_system->getMillis() - lastTick > 100) {
 			lastTick = g_system->getMillis();
-			frame++;
-			blitAt(background, 0, 0);
-			blitAt(girlAnim[frame % girlAnim.size()], kGirlX, kGirlY);
-			blitAt(boyAnim[frame % boyAnim.size()], kBoyX, kBoyY);
-			g_system->updateScreen();
+			seqIdx = (seqIdx + 1) % 9;
+			draw();
 		}
 
 		Common::Event ev;
@@ -581,6 +628,16 @@ void EEMEngine::doChoosePartner() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				done = true;
 				break;
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				curMouseX = ev.mouse.x;
+				curMouseY = ev.mouse.y;
+				const uint newLevel = happinessLevel(curMouseX);
+				if (newLevel != level) {
+					level = newLevel;
+					seqIdx = 0; // restart cycle so the gesture pops
+					draw();
+				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				_partner = (ev.mouse.x >= 160) ? 0 : 1;
@@ -667,6 +724,19 @@ void EEMEngine::doCaseSelection() {
 	Picture caseBg;
 	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
 
+	// KD greeter sprite. `_CaseSelection @ 1c33:0a87` (1c33:0b7e-0ba1)
+	// loads anim 0x15 (Jake-paired) or 0x16 (Jenny-paired) and registers
+	// `_NewAnimation(0x112, 0x50, ..., seqnum=0x15, prior=1)` — partner-
+	// dependent because the host KD changes who's "with him" on the
+	// briefing intro frame. Runs continuously through the menu loop via
+	// `_UpdateAnimations`. We approximate with millis-based frame cycling.
+	const uint kKdAniId = (_partner == 0) ? 0x15 : 0x16;
+	Animation kdAnim;
+	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
+							 && !kdAnim.empty();
+	const int kKdAnimX = 0x112;
+	const int kKdAnimY = 0x50;
+
 	auto draw = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
@@ -677,6 +747,27 @@ void EEMEngine::doCaseSelection() {
 			for (int row = 0; row < h; row++) {
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)caseBg.surface.getBasePtr(0, row), w);
+			}
+		}
+
+		// KD greeter frame — masked-blit current animation cell at
+		// (0x112, 0x50). 100 ms tick matches the engine's `_CheckFrameRate`.
+		if (haveKdAnim) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = (uint)((now / 100) % kdAnim.size());
+			const Picture &fr = kdAnim[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			for (int row = 0; row < fr.surface.h; row++) {
+				const int dstY = kKdAnimY + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < fr.surface.w; col++) {
+					const int dstX = kKdAnimX + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
 			}
 		}
 		if (_font.isLoaded()) {
@@ -740,11 +831,19 @@ void EEMEngine::doCaseSelection() {
 	};
 
 	draw();
+	uint32 lastTick = g_system->getMillis();
 
 	bool exitChosen = false;
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool confirmed = false;
+		// Redraw every 100 ms so the KD greeter cycles. Mirrors the
+		// `_CheckFrameRate` cadence in `_CaseSelection`'s main loop.
+		const uint32 now = g_system->getMillis();
+		if (haveKdAnim && now - lastTick >= 100) {
+			lastTick = now;
+			draw();
+		}
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
@@ -2279,6 +2378,22 @@ void EEMEngine::doBigMap() {
 	// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
 	// ------------------------------------------------------------------
 
+	// `_DoBigMap @ 20fe:09e7` (20fe:0a44-0a99) registers a partner sprite
+	// on the overview frame. The animation depends on `_LastScreen`:
+	//   * When LastScreen == 2 (came from the site loop) the original
+	//     plays an entrance anim (`anum-1` for Jake / Jenny) at
+	//     (0x102, 0x50), then on END swaps to the idle anim at (0xfd,
+	//     0x50). We don't track LastScreen finely enough to distinguish,
+	//     so we render the IDLE pose at (0xfd, 0x50) which is what the
+	//     player sees the rest of the time anyway.
+	//   * Idle anim ID: Jake = 0x14 (20), Jenny = 0x12 (18).
+	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
+	Animation mapAnim;
+	const bool haveMapAnim = _aniArchive.loadAnimation(kMapAniId, mapAnim)
+							   && !mapAnim.empty();
+	const int kMapAnimX = 0xfd;
+	const int kMapAnimY = 0x50;
+
 	auto drawOverview = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
@@ -2349,12 +2464,36 @@ void EEMEngine::doBigMap() {
 			}
 		}
 
+		// Partner sprite — masked-blit at (0xfd, 0x50). Same per-tick
+		// idle the original would run via `_UpdateAnimations` once the
+		// entrance one-shot transitions out (see `_DoBigMap` 0xae3-0xae7
+		// where it swaps animId on the 0x80 marker).
+		if (haveMapAnim) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = (uint)((now / 100) % mapAnim.size());
+			const Picture &fr = mapAnim[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			for (int row = 0; row < fr.surface.h; row++) {
+				const int dstY = kMapAnimY + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < fr.surface.w; col++) {
+					const int dstX = kMapAnimX + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+		}
+
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
 
 	drawOverview();
+	uint32 mapLastTick = g_system->getMillis();
 
 	// Static rectangles read directly from the binary at the labelled
 	// addresses (29be:0x1596 onwards). Format is {x1, y1, x2, y2}.
@@ -2398,6 +2537,13 @@ void EEMEngine::doBigMap() {
 		}
 		if (wantZoom)
 			break;
+		// Cycle the partner-sprite frame every 100 ms (matching the
+		// original's `_CheckFrameRate` cadence inside `_DoBigMap`).
+		const uint32 now = g_system->getMillis();
+		if (haveMapAnim && now - mapLastTick >= 100) {
+			mapLastTick = now;
+			drawOverview();
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
@@ -2432,6 +2578,19 @@ void EEMEngine::doBigMap() {
 
 	int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 	int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
+
+	// `_DoMapScreen @ 20fe:120b` (20fe:12cd-12f0): partner sprite on
+	// the detail-zoom screen. Jake = anim 0x13 (19), Jenny = anim 0x11
+	// (17). Position (0x101, 0x50) = (257, 80), seqnum 0x13. The cells
+	// here have a "looking at the map" pose, distinct from the BigMap
+	// overview entrance/idle.
+	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
+	Animation detailAnim;
+	const bool haveDetailAnim = _aniArchive.loadAnimation(kDetailAniId,
+														   detailAnim)
+								  && !detailAnim.empty();
+	const int kDetailAnimX = 0x101;
+	const int kDetailAnimY = 0x50;
 
 	auto drawDetail = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
@@ -2493,12 +2652,35 @@ void EEMEngine::doBigMap() {
 			}
 		}
 
+		// Partner sprite on the detail map. Drawn last so it sits over
+		// the frame and the BIGMAP.PIC viewport.
+		if (haveDetailAnim) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx =
+				(uint)((now / 100) % detailAnim.size());
+			const Picture &fr = detailAnim[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			for (int row = 0; row < fr.surface.h; row++) {
+				const int dstY = kDetailAnimY + row;
+				if (dstY < 0 || dstY >= 200) continue;
+				const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < fr.surface.w; col++) {
+					const int dstX = kDetailAnimX + col;
+					if (dstX < 0 || dstX >= 320) continue;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
+			}
+		}
+
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
 
 	drawDetail();
+	uint32 detailLastTick = g_system->getMillis();
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -2618,6 +2800,13 @@ void EEMEngine::doBigMap() {
 					}
 				}
 			}
+		}
+		// Cycle the partner sprite at 100 ms ticks (same cadence as
+		// `_DoMapScreen`'s `_CheckFrameRate` + `_UpdateAnimations` loop).
+		const uint32 now = g_system->getMillis();
+		if (haveDetailAnim && now - detailLastTick >= 100) {
+			detailLastTick = now;
+			dirty = true;
 		}
 		if (dirty)
 			drawDetail();
