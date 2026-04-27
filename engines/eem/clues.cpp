@@ -46,6 +46,47 @@ const uint kPicChooseBackground = 0x8c; ///< `_GetBackground(0x8c)`
 const uint kAniBoy  = 8;                 ///< `_GetAnimation(8)` (Jake)
 const uint kAniGirl = 9;                 ///< `_GetAnimation(9)` (Jenny)
 
+// `_DoHappiness @ 172b:27b5`: cursor X picks one of 4 rects; past
+// rect 3 is treated as level 4. Verbatim from `29be:030f`.
+const Common::Rect kHappyZones[4] = {
+	Common::Rect(  0, 0,  70, 200), // far left  — girl very happy, boy neutral
+	Common::Rect( 70, 0, 126, 200), // girl's column
+	Common::Rect(126, 0, 182, 200), // middle
+	Common::Rect(182, 0, 235, 200), // boy's column
+};
+
+uint happinessLevel(int x) {
+	for (uint i = 0; i < ARRAYSIZE(kHappyZones); i++) {
+		if (kHappyZones[i].contains(x, 100))
+			return i;
+	}
+	return 4; // past zone 3 → max level
+}
+
+// Lock the framebuffer, masked-blit `p` at (x, y), unlock. The transparent
+// colour is the high byte of `p.flags` per `_Rect_Move_Mask @ 1000:03fc`.
+void blitMaskedToScreen(const Picture &p, int x, int y) {
+	const byte transp = (byte)(p.flags >> 8);
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+	for (int row = 0; row < p.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= screen->h)
+			continue;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+		byte *dst = (byte *)screen->getBasePtr(0, dstY);
+		for (int col = 0; col < p.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= screen->w)
+				continue;
+			if (src[col] != transp)
+				dst[dstX] = src[col];
+		}
+	}
+	g_system->unlockScreen();
+}
+
 // On-screen positions verified from `_NewAnimation` calls @ 1a35:07b9 / 07d5.
 const int kBoyX  = 0xe2; // 226
 const int kBoyY  = 0x62; // 98
@@ -85,12 +126,6 @@ void EEMEngine::doChoosePartner() {
 	// cells contain 10 cells = pairs of "neutral, smile" at increasing
 	// intensity). Lifted verbatim from the binary so the gestures
 	// match the original beat-for-beat.
-	static const Common::Rect kHappyZones[4] = {
-		Common::Rect(  0, 0,  70, 200), // far left  — girl very happy, boy neutral
-		Common::Rect( 70, 0, 126, 200), // girl's column
-		Common::Rect(126, 0, 182, 200), // middle
-		Common::Rect(182, 0, 235, 200), // boy's column
-	};
 	static const uint8 kBoySeqs[5][9] = {
 		{ 0,0,0,0,0,0,0,1,0 }, // level 0
 		{ 2,2,2,2,2,2,2,3,2 }, // level 1
@@ -105,13 +140,6 @@ void EEMEngine::doChoosePartner() {
 		{ 2,2,2,2,2,2,3,2,2 },
 		{ 0,0,0,0,0,1,0,0,0 },
 	};
-	auto happinessLevel = [](int x) {
-		for (uint i = 0; i < ARRAYSIZE(kHappyZones); i++) {
-			if (kHappyZones[i].contains(x, 100))
-				return (uint)i;
-		}
-		return 4u; // past zone 3 → max level
-	};
 
 	// `_DoChoosePartner` opens with `_SetMousePos(0xa0, 0x96)` so the
 	// cursor lands centred between the two partners — start the
@@ -120,15 +148,13 @@ void EEMEngine::doChoosePartner() {
 	uint level = happinessLevel(curMouseX);
 	uint seqIdx = 0;       // step within the 9-frame seq
 
-	auto draw = [&]() {
-		blitAt(background, 0, 0);
-		const uint girlFrame = kGirlSeqs[level][seqIdx % 9];
-		const uint boyFrame  = kBoySeqs [level][seqIdx % 9];
-		blitAt(girlAnim[girlFrame % girlAnim.size()], kGirlX, kGirlY);
-		blitAt(boyAnim[boyFrame  % boyAnim.size()],  kBoyX,  kBoyY);
-		g_system->updateScreen();
-	};
-	draw();
+	// Initial render — pose 0 of whichever zone the cursor opens in.
+	blitAt(background, 0, 0);
+	blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
+		   kGirlX, kGirlY);
+	blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
+		   kBoyX, kBoyY);
+	g_system->updateScreen();
 
 	debugC(1, kDebugGeneral, "ChoosePartner: %u boy frames at (%d,%d), "
 		   "%u girl frames at (%d,%d)",
@@ -145,7 +171,12 @@ void EEMEngine::doChoosePartner() {
 		if (g_system->getMillis() - lastTick > 100) {
 			lastTick = g_system->getMillis();
 			seqIdx = (seqIdx + 1) % 9;
-			draw();
+			blitAt(background, 0, 0);
+			blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
+				   kGirlX, kGirlY);
+			blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
+				   kBoyX, kBoyY);
+			g_system->updateScreen();
 		}
 
 		Common::Event ev;
@@ -162,7 +193,12 @@ void EEMEngine::doChoosePartner() {
 				if (newLevel != level) {
 					level = newLevel;
 					seqIdx = 0; // restart cycle so the gesture pops
-					draw();
+					blitAt(background, 0, 0);
+					blitAt(girlAnim[kGirlSeqs[level][seqIdx % 9] % girlAnim.size()],
+						   kGirlX, kGirlY);
+					blitAt(boyAnim [kBoySeqs [level][seqIdx % 9] % boyAnim.size()],
+						   kBoyX, kBoyY);
+					g_system->updateScreen();
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -239,28 +275,6 @@ void EEMEngine::doInitClues() {
 						  && _aniArchive.loadAnimation(0x19, nancy)
 						  && !nancy.empty();
 
-	auto blitMaskedAt = [&](const Picture &p, int x, int y) {
-		const byte transp = (byte)(p.flags >> 8);
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (!screen)
-			return;
-		for (int row = 0; row < p.surface.h; row++) {
-			const int dstY = y + row;
-			if (dstY < 0 || dstY >= screen->h)
-				continue;
-			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-			byte *dst = (byte *)screen->getBasePtr(0, dstY);
-			for (int col = 0; col < p.surface.w; col++) {
-				const int dstX = x + col;
-				if (dstX < 0 || dstX >= screen->w)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
-		g_system->unlockScreen();
-	};
-
 	// Step 4 — cycle through the game animation once before the briefing.
 	// Mirrors the `while (uVar9 != gameNum)` loop. The original calls
 	// `_UpdateAnimations` per `_CheckFrameRate` tick (~10 fps). We use
@@ -273,11 +287,11 @@ void EEMEngine::doInitClues() {
 			if (_picsArchive.getPicture(0x52, bg))
 				blitAt(bg, 0, 0);
 			if (haveGame)
-				blitMaskedAt(game[frame % game.size()], 0xcd, 0x6c);
+				blitMaskedToScreen(game[frame % game.size()], 0xcd, 0x6c);
 			if (haveBook)
-				blitMaskedAt(book[frame % book.size()], 0, 99);
+				blitMaskedToScreen(book[frame % book.size()], 0, 99);
 			if (haveNancy)
-				blitMaskedAt(nancy[frame % nancy.size()], 0x68, 0x8b);
+				blitMaskedToScreen(nancy[frame % nancy.size()], 0x68, 0x8b);
 			g_system->updateScreen();
 
 			// Wait 100 ms or until input.
@@ -301,11 +315,11 @@ void EEMEngine::doInitClues() {
 	if (_picsArchive.getPicture(0x52, bg))
 		blitAt(bg, 0, 0);
 	if (haveGame)
-		blitMaskedAt(game[0], 0xcd, 0x6c);
+		blitMaskedToScreen(game[0], 0xcd, 0x6c);
 	if (haveBook)
-		blitMaskedAt(book[0], 0, 99);
+		blitMaskedToScreen(book[0], 0, 99);
 	if (haveNancy)
-		blitMaskedAt(nancy[0], 0x68, 0x8b);
+		blitMaskedToScreen(nancy[0], 0x68, 0x8b);
 	g_system->updateScreen();
 
 	// Step 5 — `_PlayInSequence(animSeq, 0xcd, animY)` per Ghidra:
@@ -363,18 +377,18 @@ void EEMEngine::doInitClues() {
 				if (_picsArchive.getPicture(0x52, bg))
 					blitAt(bg, 0, 0);
 				if (haveGame)
-					blitMaskedAt(game[frame % game.size()], 0xcd, 0x6c);
+					blitMaskedToScreen(game[frame % game.size()], 0xcd, 0x6c);
 				if (haveBook)
-					blitMaskedAt(book[frame % book.size()], 0, 99);
+					blitMaskedToScreen(book[frame % book.size()], 0, 99);
 				if (haveNancy)
-					blitMaskedAt(nancy[frame % nancy.size()], 0x68, 0x8b);
+					blitMaskedToScreen(nancy[frame % nancy.size()], 0x68, 0x8b);
 				// Anchor: original blits at `(sx - frame.width,
 				// sy - frame.rowoff)`. `frame.rowoff` is the y-anchor
 				// in our PicData. We use width/height directly since
 				// loadAnimation places anchor at (0, 0).
 				const int dstX = (int)0xcd - (int)fr.surface.w;
 				const int dstY = (int)seqY - (int)fr.rowoff;
-				blitMaskedAt(fr, dstX, dstY);
+				blitMaskedToScreen(fr, dstX, dstY);
 				g_system->updateScreen();
 				const uint32 wakeup = g_system->getMillis() + 100;
 				while (g_system->getMillis() < wakeup &&
