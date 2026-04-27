@@ -101,6 +101,18 @@ public:
 	/// host hint lines.
 	const byte *kdTextIndex() const;
 
+	/// Pointer to the HintBlock; per-clue hint TextBlock offsets indexed
+	/// by `_aChain[i]` (the Nth required clue). Mirrors the
+	/// `_HintBlock` global read in `_KDHelp @ 1560:010a`.
+	const byte *hintBlock() const;
+
+	/// Read entry @p i from `_aChain` (the required-clue chain). Returns
+	/// 0xFFFF when no entry exists. Used by `_KDHelp` to walk unfound
+	/// clues for hints.
+	uint16 aChain(uint i) const {
+		return i < kChainLen ? _aChain[i] : 0xFFFF;
+	}
+
 	/// Pointer to the MapData entry for site @p siteNum (14 bytes per
 	/// entry; first u16 = sitepic, +4..7 = (x, y) on the big map).
 	const byte *mapEntry(uint siteNum) const;

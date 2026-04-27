@@ -1099,6 +1099,74 @@ void EEMEngine::doInitClues() {
 		blitMaskedAt(nancy[0], 0x68, 0x8b);
 	g_system->updateScreen();
 
+	// Step 5 — `_PlayInSequence(animSeq, 0xcd, animY)` per Ghidra:
+	//   Jake (partner=0):
+	//     caseType=1 → anim 0x38 at (0xcd, 0x6d)
+	//     caseType=2 → anim 0x37 at (0xcd, 0x6c)
+	//     caseType=3 → anim 0x39 at (0xcd, 0x6c)
+	//   Jenny (partner=1):
+	//     caseType=2 → anim 0x3a at (0xcd, 0x6c)
+	//     caseType=3 → anim 0x3d at (0xcd, 0x6c)
+	// `_PlayInSequence @ 172b:2d03` plays each frame at (sx-w, sy-rowoff)
+	// with mask blit, advancing one frame per `_CheckFrameRate` tick.
+	uint16 seqAni = 0xFFFF;
+	uint16 seqY   = 0x6c;
+	if (_partner == 0) {
+		switch (caseType) {
+		case 1: seqAni = 0x38; seqY = 0x6d; break;
+		case 2: seqAni = 0x37; seqY = 0x6c; break;
+		case 3: seqAni = 0x39; seqY = 0x6c; break;
+		default: break;
+		}
+	} else {
+		switch (caseType) {
+		case 2: seqAni = 0x3a; seqY = 0x6c; break;
+		case 3: seqAni = 0x3d; seqY = 0x6c; break;
+		default: break;
+		}
+	}
+	if (seqAni != 0xFFFF) {
+		Animation seq;
+		if (_aniArchive.loadAnimation(seqAni, seq) && !seq.empty()) {
+			bool skip = false;
+			for (uint frame = 0; frame < seq.size() && !shouldQuit() && !skip;
+				 frame++) {
+				const Picture &fr = seq[frame];
+				// Restore BG + base anim frames so each new frame
+				// composites cleanly.
+				if (_picsArchive.getPicture(0x52, bg))
+					blitAt(bg, 0, 0);
+				if (haveGame)
+					blitMaskedAt(game[frame % game.size()], 0xcd, 0x6c);
+				if (haveBook)
+					blitMaskedAt(book[frame % book.size()], 0, 99);
+				if (haveNancy)
+					blitMaskedAt(nancy[frame % nancy.size()], 0x68, 0x8b);
+				// Anchor: original blits at `(sx - frame.width,
+				// sy - frame.rowoff)`. `frame.rowoff` is the y-anchor
+				// in our PicData. We use width/height directly since
+				// loadAnimation places anchor at (0, 0).
+				const int dstX = (int)0xcd - (int)fr.surface.w;
+				const int dstY = (int)seqY - (int)fr.rowoff;
+				blitMaskedAt(fr, dstX, dstY);
+				g_system->updateScreen();
+				const uint32 wakeup = g_system->getMillis() + 100;
+				while (g_system->getMillis() < wakeup &&
+					   !shouldQuit() && !skip) {
+					Common::Event ev;
+					while (g_system->getEventManager()->pollEvent(ev)) {
+						if (ev.type == Common::EVENT_LBUTTONDOWN ||
+							ev.type == Common::EVENT_KEYDOWN) {
+							skip = true;
+							break;
+						}
+					}
+					g_system->delayMillis(10);
+				}
+			}
+		}
+	}
+
 	// Step 6 — case briefing dialogue.
 	displayClue(ib + 4);
 }
@@ -1461,17 +1529,31 @@ void EEMEngine::doNotebook() {
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
+	// Button rects from `_NoteButtons @ 29be:0147` matched to handler
+	// addresses via the jump table at `_HandleNoteButton + 0xec` (i.e.
+	// 161e:04ec). Decoded handlers (i = rect_index, dispatch = handler[i-1]):
+	//   rect 0 (134,155) → no handler (i-1 underflows; original treats
+	//                      this as a decorative/no-op slot)
+	//   rect 1 (93,115)  → 0x03f9 = `_InterfaceHelp(0)`           (HELP)
+	//   rect 2 (157,178) → 0x0477 = `_NextScreen = 5`             (GALLERY)
+	//   rect 3 (5,80)    → 0x0403 = `_KDHelp`                     (host hint)
+	//   rect 4 (180,201) → 0x0436 = `_SolvedCheck` -> NextScreen=7 (SOLVE)
+	//   rect 5 (204,224) → 0x0489 = `_EraseNotes` + `_DrawNotes`  (PAGE NEXT)
+	//   rect 6 (226,247) → 0x04ab = decrement CurrentPage + redraw (PAGE PREV)
+	//   rect 7 (7,177)   → 0x0480 = `_NextScreen = 2`             (MAP)
+	//   rect 8 (35,111)  → 0x03ed = `_NextScreen = 3`             (SITE)
+	//   rect 9 (0,0)     → 0x03ed = same as rect 8
+	//   rect 10 (66,79)  → 0x03f9 = `_InterfaceHelp(0)`           (note-area help)
 	const Common::Rect kNotebookRect(78, 12, 288, 152);
-	const Common::Rect kBtnHelp1   ( 93, 174, 115, 190);  // [1]
-	const Common::Rect kBtnPagePrev(157, 174, 178, 190);  // [2]
-	const Common::Rect kBtnPartner (  5,  80,  44, 110);  // [3]
-	const Common::Rect kBtnAccuse  (180, 174, 201, 190);  // [4]
-	const Common::Rect kBtnGallery (204, 174, 224, 190);  // [5]
-	const Common::Rect kBtnPageNext(226, 174, 247, 190);  // [6]
-	const Common::Rect kBtnMap     (  7, 177,  57, 200);  // [7]
-	const Common::Rect kBtnSite    ( 35, 111,  56, 136);  // [8]
-	const Common::Rect kNoteArea   ( 66,  79, 267, 174);  // [10]
-	(void)kBtnHelp1; (void)kBtnPagePrev; (void)kBtnPageNext;
+	const Common::Rect kBtnHelp1   ( 93, 174, 115, 190);  // [1] HELP
+	const Common::Rect kBtnGallery (157, 174, 178, 190);  // [2] GALLERY
+	const Common::Rect kBtnPartner (  5,  80,  44, 110);  // [3] KD HELP
+	const Common::Rect kBtnAccuse  (180, 174, 201, 190);  // [4] SOLVE
+	const Common::Rect kBtnPageNext(204, 174, 224, 190);  // [5] PAGE NEXT
+	const Common::Rect kBtnPagePrev(226, 174, 247, 190);  // [6] PAGE PREV
+	const Common::Rect kBtnMap     (  7, 177,  57, 200);  // [7] MAP
+	const Common::Rect kBtnSite    ( 35, 111,  56, 136);  // [8] SITE
+	const Common::Rect kNoteArea   ( 66,  79, 267, 174);  // [10] note area
 
 	CursorMan.showMouse(true);
 
@@ -1593,22 +1675,16 @@ void EEMEngine::doNotebook() {
 			}
 			if (txt.empty())
 				txt = Common::String::format("clue %u", clueId);
-			// Compute wrapped lines first to know the rect.
+			// Per `_DrawNotes @ 161e:01d0`: text uses
+			// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
+			// (light yellow-white) for selected. Both contrast cleanly
+			// with the PDA screen's natural blue, so we draw text
+			// directly on PIC 0x3f without an extra fill rectangle —
+			// matches the original design.
 			Common::Array<Common::String> wrapped;
 			_font.wordWrapText(txt, kRectW, wrapped);
 			const int lineH = _font.getFontHeight() + 1;
 			const int h = (int)wrapped.size() * lineH;
-
-			// Per `_DrawNotes @ 161e:01d0`: text uses
-			// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
-			// (light yellow-white) for selected. Paint a dark "paper"
-			// rectangle behind the text first — without this, the
-			// notebook BG (PIC 0x3f) bleeds through and makes the cyan
-			// text hard to read on lighter pixel runs. The fill colour
-			// 0x20 maps to a dark navy across all site palettes.
-			scratch.fillRect(Common::Rect(kRectX - 2, y - 1,
-				kRectX + kRectW + 2, y + h + 1), 0x20);
-
 			const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 			for (uint li = 0; li < wrapped.size(); li++) {
 				_font.drawString(&scratch, wrapped[li], kRectX,
@@ -1620,10 +1696,7 @@ void EEMEngine::doNotebook() {
 			y += h + 7;
 		}
 
-		// Page indicator + selected-points counter. Paint a small dark
-		// strip behind them too so the text reads on the PDA frame's
-		// upper-right corner.
-		scratch.fillRect(Common::Rect(266, 0, 320, 24), 0x20);
+		// Page indicator + selected-points counter directly on PIC.
 		_font.drawString(&scratch, Common::String::format("p%d/%d",
 								   page + 1, (int)pageStarts.size()),
 						 270, 4, 320, 0x5C);
@@ -1701,6 +1774,13 @@ void EEMEngine::doNotebook() {
 				}
 				if (kBtnGallery.contains(ev.mouse.x, ev.mouse.y)) {
 					doGallery();
+					dirty = true;
+					continue;
+				}
+				if (kBtnHelp1.contains(ev.mouse.x, ev.mouse.y)) {
+					// rect 1 → `_InterfaceHelp(0)`. We use doHelp() to
+					// surface the same kind of hint pane.
+					doHelp();
 					dirty = true;
 					continue;
 				}
@@ -1849,71 +1929,71 @@ void EEMEngine::doGallery() {
 			}
 		}
 
-		// Portraits.
+		// Portraits — `_DrawGallery @ 158f:0046` walks suspects 0..N-1
+		// and only renders those flagged in `_InGallery[NewOrder[i]]`.
+		// Undiscovered slots are left empty in the original. We render
+		// a darkened placeholder + "?" so the player has visual feedback
+		// that suspects exist but are still unknown.
+		uint discoveredCount = 0;
 		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
-			slotRects[i] = Common::Rect();   // empty
+			slotRects[i] = Common::Rect();
 			slotSuspect[i] = -1;
 
 			const uint8 phys = _mystery._newOrder[i];
 			if (phys >= 5)
 				continue;
-			const bool discovered = _mystery._inGallery[phys] != 0;
-			if (!discovered)
-				continue;
-
-			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-			if (picId == 0)
-				continue;
-			Picture portrait;
-			if (!_picsArchive.getPicture(picId, portrait))
-				continue;
-
 			const Slot &s = kGallerySlots[phys];
-			const int placeX = s.x;
-			const int placeY = s.y + (0x48 - portrait.surface.h);
-			const byte transp = (byte)(portrait.flags >> 8);
 
-			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
-			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-			if (w <= 0 || h <= 0)
-				continue;
-			for (int row = 0; row < h; row++) {
-				const int dstY = placeY + row;
-				if (dstY < 0) continue;
-				const byte *src =
-					(const byte *)portrait.surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < w; col++) {
-					const int dstX = placeX + col;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
+			const bool discovered = _mystery._inGallery[phys] != 0;
+			if (discovered) {
+				const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+				Picture portrait;
+				if (picId == 0 ||
+					!_picsArchive.getPicture(picId, portrait))
+					continue;
+
+				const int placeX = s.x;
+				const int placeY = s.y + (0x48 - portrait.surface.h);
+				const byte transp = (byte)(portrait.flags >> 8);
+				const int w = MIN<int>(portrait.surface.w, 320 - placeX);
+				const int h = MIN<int>(portrait.surface.h, 200 - placeY);
+				if (w <= 0 || h <= 0)
+					continue;
+				for (int row = 0; row < h; row++) {
+					const int dstY = placeY + row;
+					if (dstY < 0) continue;
+					const byte *src =
+						(const byte *)portrait.surface.getBasePtr(0, row);
+					byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+					for (int col = 0; col < w; col++) {
+						const int dstX = placeX + col;
+						if (src[col] != transp)
+							dst[dstX] = src[col];
+					}
+				}
+				slotRects[i] = Common::Rect(placeX, placeY,
+											 placeX + w, placeY + h);
+				slotSuspect[i] = (int)i;
+				discoveredCount++;
+			} else {
+				// Undiscovered placeholder — small framed "?" box at
+				// (s.x, s.y) sized 0x40 × 0x48 (typical portrait size).
+				const int phW = 0x40, phH = 0x48;
+				const int phX = s.x, phY = s.y;
+				if (phX + phW <= 320 && phY + phH <= 200) {
+					scratch.fillRect(Common::Rect(phX, phY,
+						phX + phW, phY + phH), 0x20);
+					scratch.frameRect(Common::Rect(phX, phY,
+						phX + phW, phY + phH), 0x5C);
+					if (_font.isLoaded()) {
+						_font.drawString(&scratch, "?",
+							phX + phW / 2 - 3,
+							phY + phH / 2 - 4, phW, 0x5C);
+					}
 				}
 			}
-
-			// Cache rect for hit-test.
-			slotRects[i] = Common::Rect(placeX, placeY,
-										 placeX + w, placeY + h);
-			slotSuspect[i] = (int)i;
-
-			// Index label below portrait — original doesn't draw labels
-			// (the detail page does), but useful while MoreInfo isn't
-			// implemented.
-			if (_font.isLoaded()) {
-				Common::String label = Common::String::format("%u", i + 1);
-				_font.drawString(&scratch, label,
-								 placeX + portrait.surface.w / 2 - 3,
-								 placeY + portrait.surface.h + 2,
-								 320, 0x5C);
-			}
 		}
-
-		// Header / hint line — KD's hint balloon would normally show here
-		// (`_DoAccuseGallery` plays a balloon at top), but the standalone
-		// `_DoGallery` doesn't. We add a small header for clarity.
-		if (_font.isLoaded()) {
-			_font.drawString(&scratch, "GALLERY", 60, 4, 256, 0x5C);
-			_font.drawString(&scratch, "Click suspect | ESC", 60, 188, 256, 0x5C);
-		}
+		(void)discoveredCount;
 
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
@@ -1938,6 +2018,52 @@ void EEMEngine::doGallery() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				// PDA bottom-bar buttons mirror `_NoteButtons @ 29be:0147`.
+				// `_DoGallery @ 158f:065b` shares the SAME button table
+				// with `_DoNotebook` (both call `_FindButton` against the
+				// 11-entry table at 0x147). `_HandleGalleryButton @
+				// 158f:05c0` dispatches via a different jump table
+				// (158f:0645). Verified gallery button mapping:
+				//   rect 0 (134,155) → 0x05ef = `_NextScreen = 4` (NOTEBOOK)
+				//   rect 1 (93,115)  → 0x0625 = `_InterfaceHelp` (HELP)
+				//   rect 2 (157,178) → 0x0638 = generic exit (no-op)
+				//   rect 3 (5,80)    → 0x061e = `_KDHelp` (host hint)
+				//   rect 4 (180,201) → 0x05ff = `_SolvedCheck` -> SOLVE
+				//   rect 5 (204,224) → 0x0638 = generic exit
+				//   rect 6 (226,247) → 0x0638 = generic exit
+				//   rect 7 (7,177)   → 0x05f7 = `_NextScreen = 2` (MAP)
+				//   rect 8 (35,111)  → 0x05e4 = `_NextScreen = 3` (SITE)
+				const Common::Rect kBtnSite    ( 35, 111,  56, 136); // [8] SITE
+				const Common::Rect kBtnMap     (  7, 177,  57, 200); // [7] MAP
+				const Common::Rect kBtnAccuse  (180, 174, 201, 190); // [4] SOLVE
+				const Common::Rect kBtnNotebook(134, 174, 155, 190); // [0] NOTEBOOK (back to PDA notes)
+				const Common::Rect kBtnHelp    ( 93, 174, 115, 190); // [1] HELP
+				const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3] KD HELP
+				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+					exitFlag = true; break;
+				}
+				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
+					doBigMap();
+					exitFlag = true; break;
+				}
+				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
+					doAccuse();
+					exitFlag = true; break;
+				}
+				if (kBtnNotebook.contains(ev.mouse.x, ev.mouse.y)) {
+					// Already came from notebook; exiting returns to it.
+					exitFlag = true; break;
+				}
+				if (kBtnHelp.contains(ev.mouse.x, ev.mouse.y)) {
+					doHelp();
+					lastDraw = 0;
+					continue;
+				}
+				if (kBtnPartner.contains(ev.mouse.x, ev.mouse.y)) {
+					doHelp();
+					lastDraw = 0;
+					continue;
+				}
 				// `_SearchSuspects` walks the per-slot rects and returns
 				// the suspect index. We mirror that with cached rects.
 				bool clicked = false;
@@ -1994,15 +2120,11 @@ void EEMEngine::doGallery() {
 							}
 						}
 						// Suspect's clue notes inside _GalleryNoteRect
-						// = (78, 93, 288, 152), per 29be:0100.
+						// = (78, 93, 288, 152), per 29be:0100. Cyan text
+						// renders directly on the PDA's natural blue
+						// screen — matches `_DrawGalleryNotes @ 158f:01f4`.
 						const int rx = 78, ry = 93;
 						const int rw = 288 - 78, rh = 152 - 93;
-						// Paint a dark fill behind the entire notes area
-						// so cyan text on a possibly-cyan PIC background
-						// stays readable. Color 0x20 = dark navy in all
-						// site palettes.
-						ms.fillRect(Common::Rect(rx - 2, ry - 12,
-							rx + rw + 2, ry + rh + 12), 0x20);
 
 						const byte *ni = _mystery.noteIndex();
 						const uint16 niCount = _mystery.noteIndexCount();
@@ -2597,65 +2719,127 @@ void EEMEngine::doAccuse() {
 	if (!_mystery.isLoaded())
 		return;
 
-	// Mirrors `_DoAccuseGallery` @ 1df2:0a31. Render gallery + prompt,
-	// accept either keyboard 1..N or a click on a suspect's portrait.
+	// Mirrors `_DoAccuseGallery @ 1df2:0a31`:
+	//   1. Show KD's hint balloon (KDTextIndex[+8] text).
+	//   2. `_GetBackground(0x3f)` — same backdrop as PDA / gallery.
+	//   3. `_DrawGallery()` — renders portraits at the standard 5 slots
+	//      (positions verified at 29be:0x116, bottom-aligned baseline 0x48).
+	//   4. Click loop dispatching on `_NoteButtons` (same table as PDA)
+	//      with a separate `_HandleAccuseNoteButton` jump table.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0)
 		return;
 
 	const byte *gd = _mystery.galleryData();
-	const int slotStep = 320 / MAX<uint8>(1, num);
-	const int slotY    = 24;
 
-	// Mirrors `_DoAccuseGallery`: load PIC 0x3f as the accuse backdrop.
+	// Verbatim from 29be:0x116 — same five suspect slot positions as
+	// `_DrawGallery @ 158f:0046`.
+	struct Slot { int x; int y; };
+	static const Slot kGallerySlots[5] = {
+		{  83,  14 }, { 155,  14 }, { 227,  14 },
+		{ 119,  90 }, { 191,  90 }
+	};
+
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
+
+	Common::Array<Common::Rect> slotRects;
+	Common::Array<int> slotSuspect;
+	slotRects.resize(num);
+	slotSuspect.resize(num);
+	for (uint i = 0; i < num; i++)
+		slotSuspect[i] = -1;
 
 	auto drawGallery = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		if (haveAccuseBg) {
-			const int w = MIN<int>(accuseBg.surface.w, 320);
-			const int h = MIN<int>(accuseBg.surface.h, 200);
-			for (int row = 0; row < h; row++) {
+			const int bw = MIN<int>(accuseBg.surface.w, 320);
+			const int bh = MIN<int>(accuseBg.surface.h, 200);
+			for (int row = 0; row < bh; row++) {
 				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)accuseBg.surface.getBasePtr(0, row), w);
+					   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
 			}
 		}
-		if (_font.isLoaded())
-			_font.drawString(&scratch, "ACCUSE", 8, 4, 320, 0xF);
 
-		for (uint i = 0; i < num; i++) {
+		for (uint i = 0; i < num && i < Mystery::kGalleryCap; i++) {
+			slotRects[i] = Common::Rect();
+			slotSuspect[i] = -1;
 			if (!gd) continue;
+			const uint8 phys = _mystery._newOrder[i];
+			if (phys >= 5) continue;
+			const Slot &s = kGallerySlots[phys];
+
 			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
-			if (picId == 0)
-				continue;
+			if (picId == 0) continue;
 			Picture portrait;
 			if (!_picsArchive.getPicture(picId, portrait))
 				continue;
-			const int placeX = i * slotStep +
-							   (slotStep - portrait.surface.w) / 2;
-			const int placeY = slotY;
+
+			const int placeX = s.x;
+			const int placeY = s.y + (0x48 - portrait.surface.h);
+			const byte transp = (byte)(portrait.flags >> 8);
 			const int w = MIN<int>(portrait.surface.w, 320 - placeX);
 			const int h = MIN<int>(portrait.surface.h, 200 - placeY);
-			if (w > 0 && h > 0) {
-				for (int row = 0; row < h; row++)
-					memcpy((byte *)scratch.getBasePtr(placeX, placeY + row),
-						   (const byte *)portrait.surface.getBasePtr(0, row), w);
+			if (w <= 0 || h <= 0) continue;
+			for (int row = 0; row < h; row++) {
+				const int dstY = placeY + row;
+				if (dstY < 0) continue;
+				const byte *src =
+					(const byte *)portrait.surface.getBasePtr(0, row);
+				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
+				for (int col = 0; col < w; col++) {
+					const int dstX = placeX + col;
+					if (src[col] != transp)
+						dst[dstX] = src[col];
+				}
 			}
-			if (_font.isLoaded()) {
-				Common::String label = Common::String::format("%u", i + 1);
-				_font.drawString(&scratch, label, placeX + 4, placeY + h + 2, 320, 0xF);
-			}
+			slotRects[i] = Common::Rect(placeX, placeY,
+										 placeX + w, placeY + h);
+			slotSuspect[i] = (int)i;
 		}
-		if (_font.isLoaded()) {
-			_font.drawString(&scratch, "Click a suspect or press 1..N - ESC to cancel", 8, 180, 320, 0xF);
-		}
+
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
+
+	// Step 1 — KD hint balloon. `KDTextIndex[+8]` = third hint slot
+	// (offset 8 from the index array).
+	const byte *kdIdx = _mystery.kdTextIndex();
+	if (kdIdx) {
+		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
+		if (textOff != -1) {
+			const char *raw = _mystery.textAt((uint16)textOff);
+			Common::String hint =
+				parseString(raw ? raw : "", _playerName, _partner);
+			if (!hint.empty()) {
+				// Mini ClueBlock: 1 entry, partner-0 fields. Compose
+				// just the balloon at (0x21, 0x10) (default position
+				// from `_DoAccuseGallery`).
+				Graphics::ManagedSurface ms(320, 200,
+					Graphics::PixelFormat::createFormatCLUT8());
+				ms.clear();
+				if (haveAccuseBg) {
+					const int bw = MIN<int>(accuseBg.surface.w, 320);
+					const int bh = MIN<int>(accuseBg.surface.h, 200);
+					for (int row = 0; row < bh; row++) {
+						memcpy((byte *)ms.getBasePtr(0, row),
+							   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
+					}
+				}
+				if (_font.isLoaded()) {
+					_font.drawWordWrapped(&ms, 0x52, 0x14, 218, hint, 0x5C);
+				}
+				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
+					0, 0, 320, 200);
+				g_system->updateScreen();
+				waitForInput(8000);
+			}
+		}
+	}
+
 	drawGallery();
 
 	int picked = -1;
@@ -2676,10 +2860,13 @@ void EEMEngine::doAccuse() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				const int slot = ev.mouse.x / slotStep;
-				if (slot >= 0 && slot < (int)num &&
-					ev.mouse.y >= slotY && ev.mouse.y < slotY + 120)
-					picked = slot;
+				for (uint i = 0; i < slotRects.size(); i++) {
+					if (slotSuspect[i] < 0) continue;
+					if (slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
+						picked = (int)i;
+						break;
+					}
+				}
 			}
 		}
 		g_system->updateScreen();
