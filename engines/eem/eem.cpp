@@ -56,9 +56,15 @@ const uint kPicHighScoreLogo   = 0x20c; ///< _ShowHScoreLogo: GetPicture(0x20c)
 const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
 
-// Save format. Used by `saveGameState` / `loadGameState`.
-const uint32 kSaveMagic = MKTAG('E', 'E', 'M', '0');
-const byte   kSaveVer   = 3;  ///< v2: _mysteriesSolved tracker; v3: player name
+// Save body version, used by the `Common::Serializer` inside
+// `saveGameStream`/`loadGameStream`. The framework's extended-save
+// header (description / thumbnail / playtime) is appended/parsed
+// separately by `Engine::saveGameState` / `MetaEngine::readSavegameHeader`,
+// so we don't need a magic word or our own metadata fields.
+//
+//   v1 — initial schema: name + mysteriesSolved + partner +
+//        optional mystery sub-state.
+const byte kSaveBodyVer = 1;
 
 // 11x16 mouse cursor — replaces the DOS hardware cursor wired in by
 // _InitMouse @ 152d:018b (INT 33h). The original game sets the cursor
@@ -541,99 +547,176 @@ bool EEMEngine::hasFeature(EngineFeature f) const {
 }
 
 bool EEMEngine::canLoadGameStateCurrently(Common::U32String *) {
-	return false;  // Loading is startup-only.
+	// Loading mid-mystery would replace `_mystery._data` while
+	// pointers into it are alive on the stack inside `displayClue`
+	// etc. Profile picking still works via `loadProfile` from the
+	// menu screens before a mystery loads.
+	return !_mystery.isLoaded();
 }
 
 bool EEMEngine::canSaveGameStateCurrently(Common::U32String *) {
-	return _mystery.isLoaded();
+	// Profile saves (no mystery loaded) are always OK; mid-mystery
+	// snapshots only after the active case has fully initialised.
+	return true;
 }
 
-Common::Error EEMEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::OutSaveFile *out = getSaveFileManager()->openForSaving(getSaveStateName(slot));
-	if (!out)
-		return Common::kCreatingFileFailed;
-
-	out->writeUint32BE(kSaveMagic);
-	out->writeByte(kSaveVer);
-
-	// Header: description + ScummVM extended save metadata are appended
-	// automatically when `EngineFeature::kSavesUseExtendedFormat` is set;
-	// our save body just carries the engine state.
-	(void)desc;
+Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
+										 bool isAutosave) {
 	(void)isAutosave;
 
-	uint16 mysteryNum = (uint16)_mystery.number();
-	out->writeUint16LE(mysteryNum);
-	out->writeByte(_partner);
-	out->write(_mysteriesSolved, sizeof(_mysteriesSolved));
+	Common::Serializer s(nullptr, stream);
+	s.setVersion(kSaveBodyVer);
 
-	// v3: persist the player name so save-slot resume restores it.
-	out->writeUint16LE((uint16)_playerName.size());
-	out->writeString(_playerName);
+	// Profile-level state — mirrors the original `_PlayerRecord` body
+	// at `2d5d:3f6a` (159 bytes, written by `_SavePlayerRecord @
+	// 1c33:034f`). The `_PlayerRecord` layout is:
+	//   +0x00..+0x0b : player name (12 chars, null-padded)
+	//   +0x0c..+0x1f : random ID bytes used by `_GenerateFilename`
+	//                  (29be:0dbf "C:\EEMCDSAV\%s.PLR") — irrelevant to
+	//                  ScummVM saves which key on slot, not filename.
+	//   +0x20..+0x28 : derived 8-char .PLR basename — likewise unused.
+	//   +0x2d        : voice-enable flag (`DAT_2d5d_3f97`, default 1).
+	//   +0x2f        : chain stage (`DAT_2d5d_3f99`, 1=A, 2=B, 3=C —
+	//                  `_DisplayCorrect` advances it once every case
+	//                  in the current set is solved).
+	//   +0x31..+0xa6 : `mysteriesSolved[55]` u16 (0=unsolved, 1=solved,
+	//                  2=solved on first try) — `_DisplayCorrect`
+	//                  writes 1 always, 2 when `_FirstTry != 0`.
+	//
+	// We persist the gameplay-meaningful subset (name + solved table +
+	// partner) and skip the filename-derivation bytes. The voice /
+	// chain-stage fields aren't yet wired into the C++ port; we save
+	// space for them so they slot in without a version bump.
+	s.syncString(_playerName);
+	s.syncBytes(_mysteriesSolved, sizeof(_mysteriesSolved));
+	s.syncAsByte(_partner);
+
+	// ScummVM-only extension: persist the in-progress mystery so the
+	// player can resume mid-case. The original engine has no such
+	// notion — `_LoadGame @ 2404:0dc7` simply loads a fresh mystery,
+	// it doesn't preserve site progress. The flag lets a profile save
+	// stay valid even when no mystery is loaded (e.g. fresh profile).
+	bool hasMystery = _mystery.isLoaded();
+	s.syncAsByte(hasMystery);
+	if (hasMystery) {
+		uint16 mysteryNum = (uint16)_mystery.number();
+		s.syncAsUint16LE(mysteryNum);
+		_mystery.syncState(s);
+	}
 
 	debugC(1, kDebugGeneral,
-		   "Saved slot %d: mystery=%u partner=%u name=%s autosave=%d",
-		   slot, mysteryNum, _partner, _playerName.c_str(), isAutosave ? 1 : 0);
-
-	Common::Serializer s(nullptr, out);
-	s.setVersion(kSaveVer);
-	_mystery.syncState(s);
-
-	out->finalize();
-	delete out;
+		   "Saved profile name=%s partner=%u mystery=%d autosave=%d",
+		   _playerName.c_str(), _partner,
+		   hasMystery ? (int)_mystery.number() : -1,
+		   isAutosave ? 1 : 0);
 	return Common::kNoError;
 }
 
-Common::Error EEMEngine::loadGameState(int slot) {
-	Common::InSaveFile *in = getSaveFileManager()->openForLoading(getSaveStateName(slot));
-	if (!in)
-		return Common::kReadingFailed;
+Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	Common::Serializer s(stream, nullptr);
+	s.setVersion(kSaveBodyVer);
 
-	if (in->readUint32BE() != kSaveMagic) {
-		delete in;
-		return Common::kUnknownError;
-	}
-	const byte ver = in->readByte();
-	if (ver > kSaveVer) {
-		delete in;
-		return Common::kUnknownError;
-	}
+	s.syncString(_playerName);
+	if (_playerName.empty())
+		_playerName = "Detective";
 
-	const uint16 mysteryNum = in->readUint16LE();
-	_partner = in->readByte();
-	if (ver >= 2)
-		in->read(_mysteriesSolved, sizeof(_mysteriesSolved));
-	else
-		memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
+	s.syncBytes(_mysteriesSolved, sizeof(_mysteriesSolved));
+	s.syncAsByte(_partner);
 
-	if (ver >= 3) {
-		const uint16 nameLen = in->readUint16LE();
-		Common::String name;
-		for (uint16 i = 0; i < nameLen && i < 64; i++)
-			name += (char)in->readByte();
-		_playerName = name.empty() ? Common::String("Detective") : name;
-	}
-
-	if (!_mystery.load(mysteryNum, &_rng)) {
+	bool hasMystery = false;
+	s.syncAsByte(hasMystery);
+	if (hasMystery) {
+		uint16 mysteryNum = 0;
+		s.syncAsUint16LE(mysteryNum);
+		if (!_mystery.load(mysteryNum, &_rng)) {
+			_mystery.clear();
+			return Common::kReadingFailed;
+		}
+		// `_ReadMystery @ 2404:008f` calls `_InitMysterySounds` at the
+		// tail (2404:0298) so the SDB index is in place for clue and
+		// partner-speech spool sounds.
+		if (_audio)
+			_audio->initMysterySounds(mysteryNum);
+		_mystery.syncState(s);
+	} else {
 		_mystery.clear();
-		delete in;
-		return Common::kReadingFailed;
 	}
-	// `_ReadMystery @ 2404:008f` calls `_InitMysterySounds(_MysteryNumber)`
-	// at the tail (2404:0298) so the SDB index is in place for clue and
-	// partner-speech spool sounds.
-	if (_audio)
-		_audio->initMysterySounds(mysteryNum);
 
-	Common::Serializer s(in, nullptr);
-	s.setVersion(ver);
-	_mystery.syncState(s);
-
-	delete in;
 	debugC(1, kDebugGeneral,
-		   "Loaded slot %d: mystery=%u partner=%u name=%s",
-		   slot, mysteryNum, _partner, _playerName.c_str());
+		   "Loaded profile name=%s partner=%u mystery=%d",
+		   _playerName.c_str(), _partner,
+		   _mystery.isLoaded() ? (int)_mystery.number() : -1);
 	return Common::kNoError;
+}
+
+SaveStateList EEMEngine::listProfiles() const {
+	// Mirrors `_findfirst("*.PLR")` in `screen8_handler @ 1c33:1012`.
+	return getMetaEngine()->listSaves(_targetName.c_str());
+}
+
+Common::Error EEMEngine::saveProfile(const Common::String &name) {
+	if (name.empty())
+		return Common::kCreatingFileFailed;
+
+	const SaveStateList saves = listProfiles();
+
+	// Slot lookup by description: if a save with this profile name
+	// already exists, overwrite it. Same as Wetlands' `saveProfile`.
+	int slot = -1;
+	for (auto &s : saves) {
+		if (s.getDescription() == name) {
+			slot = s.getSaveSlot();
+			break;
+		}
+	}
+
+	// New profile — pick the lowest unused slot. The MetaEngine caps
+	// us at 99 by default (`getMaximumSaveSlot`); 25 was the DOS
+	// original's limit (`screen8_handler` walks `*.PLR` up to 25
+	// entries in `local_8c[0x19][2]`).
+	if (slot < 0) {
+		const int maxSlot = getMetaEngine()->getMaximumSaveSlot();
+		Common::Array<bool> used(maxSlot + 1);
+		for (auto &s : saves) {
+			const int sl = s.getSaveSlot();
+			if (sl >= 0 && sl <= maxSlot)
+				used[sl] = true;
+		}
+		for (int i = 0; i <= maxSlot; i++) {
+			if (!used[i]) {
+				slot = i;
+				break;
+			}
+		}
+		if (slot < 0)
+			return Common::kCreatingFileFailed;
+	}
+
+	_playerName = name;
+	debugC(1, kDebugGeneral, "saveProfile(%s) -> slot %d",
+		   name.c_str(), slot);
+	return saveGameState(slot, name, /*isAutosave=*/false);
+}
+
+bool EEMEngine::loadProfile(const Common::String &name) {
+	if (name.empty())
+		return false;
+
+	const SaveStateList saves = listProfiles();
+	for (auto &s : saves) {
+		if (s.getDescription() == name) {
+			const Common::Error err = loadGameState(s.getSaveSlot());
+			if (err.getCode() == Common::kNoError) {
+				debugC(1, kDebugGeneral, "loadProfile(%s) <- slot %d",
+					   name.c_str(), s.getSaveSlot());
+				return true;
+			}
+			break;
+		}
+	}
+	debugC(1, kDebugGeneral, "loadProfile(%s) — no matching slot",
+		   name.c_str());
+	return false;
 }
 
 void EEMEngine::screenDriver() {

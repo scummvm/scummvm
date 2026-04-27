@@ -284,7 +284,19 @@ void EEMEngine::doNewPlayer() {
 			if (k == Common::KEYCODE_RETURN) {
 				if (name.empty())
 					name = "Detective";
-				_playerName = name;
+				// Mirrors `_NewPlayer @ 1c33:0dda` tail (1c33:0fa0+):
+				// after the name is committed, try `_LoadPlayerRecord`
+				// — if it returns 0 (no existing .PLR), zero out the
+				// per-profile state and call `_SavePlayerRecord` to
+				// create a fresh profile file. Same flow here, mapped
+				// onto ScummVM save slots via name → description.
+				if (!loadProfile(name)) {
+					_playerName = name;
+					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
+					_mystery.clear();
+					_partner = 0;
+					saveProfile(name);
+				}
 				return;
 			}
 			if (k == Common::KEYCODE_ESCAPE) {
@@ -2264,12 +2276,16 @@ void EEMEngine::doAccuse() {
 			_music->playMus(5, /*loop=*/false);
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
 
-		// Auto-save into slot 0 (the engine's quicksave slot).
-		const Common::String desc = Common::String::format(
-			"%s — solved mystery %u", _playerName.c_str(), mn);
-		Common::Error err = saveGameState(0, desc, true);
+		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the
+		// `_mysteriesSolved` table is updated, the original
+		// immediately persists the player record so the win sticks
+		// even if the player quits before reaching the menu. We do
+		// the same by writing back to the active profile (the slot
+		// keyed on `_playerName`) rather than clobbering slot 0 like
+		// a generic quicksave.
+		const Common::Error err = saveProfile(_playerName);
 		if (err.getCode() != Common::kNoError)
-			warning("auto-save after solve failed: %s",
+			warning("saveProfile after solve failed: %s",
 					err.getDesc().c_str());
 	} else {
 		_mystery._firstTry = false;
