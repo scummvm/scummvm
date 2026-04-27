@@ -753,7 +753,11 @@ static Common::String parseString(const Common::String &raw,
 		const byte c = (byte)raw[i];
 		if (c == 0x80) {
 			out += playerName;
-		} else if (c == 0x82) {
+		} else if (c == 0x81 || c == 0x82) {
+			// Both forms substitute the partner's name. The original
+			// likely has a casual ("Jake/Jenny") and a formal
+			// ("Jake/Jennifer") variant; we render the same partner
+			// name in both spots — close enough for natural reading.
 			out += partnerName;
 		} else if (c >= 0x80 && c < 0x8A) {
 			// Other control opcodes: eat them silently for now.
