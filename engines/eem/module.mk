@@ -2,6 +2,7 @@ MODULE := engines/eem
 
 MODULE_OBJS = \
 	animation.o \
+	audio.o \
 	clues.o \
 	eem.o \
 	font.o \

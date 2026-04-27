@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 
+#include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/music.h"
@@ -522,6 +523,8 @@ void EEMEngine::doCaseSelection() {
 		if (!_mystery.load(0, &_rng)) {
 			warning("doCaseSelection: failed to load practice mystery");
 			_mystery.clear();
+		} else if (_audio) {
+			_audio->initMysterySounds(0);
 		}
 		return;
 	}
@@ -655,6 +658,8 @@ void EEMEngine::doCaseSelection() {
 		_mystery.clear();
 		return;
 	}
+	if (_audio)
+		_audio->initMysterySounds(sel);
 	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
 		   sel, _mystery.numSites(), _mystery.numSuspects());
 }

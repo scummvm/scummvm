@@ -26,6 +26,7 @@
 
 #include "graphics/paletteman.h"
 
+#include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/mystery.h"
@@ -380,6 +381,8 @@ void SiteScreen::run() {
 				case Common::KEYCODE_r:
 					// Restart the mystery from scratch (mirrors `_ReloadMystery`).
 					if (_mystery->load(_mystery->number())) {
+						if (_vm->_audio)
+							_vm->_audio->initMysterySounds(_mystery->number());
 						cur = 0;
 						enter(cur);
 					}

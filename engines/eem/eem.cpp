@@ -33,6 +33,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 
+#include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/music.h"
@@ -95,6 +96,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 EEMEngine::~EEMEngine() {
+	delete _audio;
 	delete _music;
 }
 
@@ -115,6 +117,12 @@ Common::Error EEMEngine::run() {
 	// MIDI music player. Mirrors `_InitMIDI @ 20a2:013a`. Constructed
 	// here (after `initGraphics` so the OSystem's timer/mixer is up).
 	_music = new MusicPlayer();
+
+	// Digital audio (VOC + spool). Mirrors `_InitDrivers @ 1ff1:0368`
+	// which `_AIL_register_driver`s SBDIG.ADV / PASDIG.ADV alongside
+	// the MIDI driver.
+	_audio = new AudioPlayer(this);
+	syncSoundSettings();
 
 	// _InitMouse @ 152d:018b in the original — install our 11x16 arrow,
 	// using palette index 0 as the transparency key. The cursor is left
@@ -184,8 +192,22 @@ Common::Error EEMEngine::run() {
 	showEAKidsLogo();
 	if (!shouldQuit() && !_skipIntro)
 		showHighScoreLogo();
-	if (!shouldQuit() && !_skipIntro)
+	// Storm Software logo: voice + animation. The original at
+	// `_ShowStormLogo @ 2520:0707` calls `_LoadSoundName("thunder.voc")`
+	// (29be:177d) and passes the buffer to `OpenDifferenceAnimation_Sound`
+	// so the thunder roar plays alongside the lightning bolt.
+	if (!shouldQuit() && !_skipIntro) {
+		if (_audio)
+			_audio->playVoc(Common::Path("THUNDER.VOC"));
 		playAnm(Common::Path("BOLT.ANM"));
+		if (_audio)
+			_audio->stopVoice();
+	}
+	// `_InitMysterySounds(0x3c)` at 2520:086a — load M60.SDX/SDB so
+	// `_SpoolSound(uVar3 - 1)` between the ANIM01..ANIM20 anims has
+	// data to draw from.
+	if (!shouldQuit() && !_skipIntro && _audio)
+		_audio->initMysterySounds(60);
 	// Theme begins HERE — after the three silent logos, before the
 	// character-intro reel.
 	if (!shouldQuit() && !_skipIntro && _music)
@@ -193,11 +215,18 @@ Common::Error EEMEngine::run() {
 	for (int i = 1; i <= 20 && !shouldQuit() && !_skipIntro; i++) {
 		Common::String name = Common::String::format("ANIM%02d.A", i);
 		playAnm(Common::Path(name));
-		// Between anims the original plays a voice clip via _SpoolSound;
-		// without audio we still want a beat so each scene reads.
-		if (!shouldQuit() && !_skipIntro && i != 20)
-			waitForInput(2000);
+		// `_SpoolSound(uVar3 - 1)` at 2520:08c2 — the per-character VO
+		// plays AFTER each anim except the last (`if (uVar3 != 0x14)`
+		// at 2520:08a8). Original blocks until done; we run async and
+		// wait so the next anim doesn't start before the line ends.
+		if (!shouldQuit() && !_skipIntro && i != 20 && _audio) {
+			_audio->spoolSound((uint)(i - 1));
+			_audio->waitForSpoolDone();
+		}
 	}
+	// `_CleanMysterySounds` at 2520:0903 — release M60 before the title.
+	if (_audio)
+		_audio->cleanMysterySounds();
 	// Restart the theme for TITLE.ANM — matches the second
 	// `_MIDIPlayFile("theme.xmi")` call at 2520:0918.
 	if (!shouldQuit() && !_skipIntro && _music)
@@ -590,6 +619,11 @@ Common::Error EEMEngine::loadGameState(int slot) {
 		delete in;
 		return Common::kReadingFailed;
 	}
+	// `_ReadMystery @ 2404:008f` calls `_InitMysterySounds(_MysteryNumber)`
+	// at the tail (2404:0298) so the SDB index is in place for clue and
+	// partner-speech spool sounds.
+	if (_audio)
+		_audio->initMysterySounds(mysteryNum);
 
 	Common::Serializer s(in, nullptr);
 	s.setVersion(ver);
