@@ -39,6 +39,8 @@
 
 namespace EEM {
 
+class MusicPlayer;
+
 /**
  * Screen IDs used by the original ScreenDriver dispatch table at 1a35:0e5e.
  * The table holds 14 (id, handler) entries; the loop iterates until it finds
@@ -243,6 +245,21 @@ private:
 	/// minus the live ANI sequence playback.
 	void doInitClues();
 
+public:
+	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`
+	/// based on `_mystery._siteNumber % 5` and starts it (looping). The
+	/// site loop calls this each time `enter(siteNum)` runs so the
+	/// music changes as the player travels between sites.
+	void startTravelMusic();
+
+	/// Forwarded from `Engine::syncSoundSettings`. Re-pulls the user's
+	/// `music_volume` slider into the MIDI player's `_masterVolume`,
+	/// otherwise the AdLib output stays at whatever the slider was at
+	/// the moment `_music` was constructed (and the live launcher
+	/// changes to the volume slider have no effect).
+	void syncSoundSettings() override;
+private:
+
 	Common::String _playerName;  ///< Substituted into 0x80 placeholders
 
 	/// Per-mystery solved state. 0 = unsolved, 1 = solved, 2 = solved
@@ -284,6 +301,12 @@ private:
 	/// accuse contexts use their own composed backdrops). See
 	/// `setPartnerEraseBg`.
 	Graphics::ManagedSurface _partnerEraseBg;
+
+	/// XMIDI music player. Mirrors the original `MIDI.C` family
+	/// (`_MIDIPlayFile`, `_MIDIPlay`, `_StopMIDI`, `_StartTravelMusic`
+	/// at 20a2:00e2-05c9). Constructed lazily during `run()` once the
+	/// MIDI driver / timer system is up.
+	MusicPlayer *_music = nullptr;
 };
 
 } // End of namespace EEM

@@ -35,6 +35,7 @@
 
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/music.h"
 #include "eem/site.h"
 
 #include "common/config-manager.h"
@@ -94,6 +95,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 EEMEngine::~EEMEngine() {
+	delete _music;
 }
 
 Common::Error EEMEngine::run() {
@@ -109,6 +111,10 @@ Common::Error EEMEngine::run() {
 	// _LoadFont @ 1b66:023c — main 8 px bitmap font.
 	if (!_font.load(Common::Path("FONT.FNT")))
 		warning("FONT.FNT failed to load; text will not render");
+
+	// MIDI music player. Mirrors `_InitMIDI @ 20a2:013a`. Constructed
+	// here (after `initGraphics` so the OSystem's timer/mixer is up).
+	_music = new MusicPlayer();
 
 	// _InitMouse @ 152d:018b in the original — install our 11x16 arrow,
 	// using palette index 0 as the transparency key. The cursor is left
@@ -156,18 +162,34 @@ Common::Error EEMEngine::run() {
 		}
 	}
 
-	// Reproduces _DoOpeningAnims @ 2520:082a (sans audio):
+	// Reproduces _DoOpeningAnims @ 2520:082a:
 	//   EA Kids logo (PIC) -> HighScore Productions logo (PIC) ->
-	//   Storm Software logo (BOLT.ANM) -> 20 character-intro animations
-	//   (ANIM01.A .. ANIM20.A) -> TITLE.ANM. Click / any key skips a
-	//   single clip; ESC skips the rest of the chain (waitForInput /
-	//   playAnm raise `_skipIntro` so each subsequent step bails out).
+	//   Storm Software logo (BOLT.ANM) -> [music starts] -> 20
+	//   character-intro animations (ANIM01.A..ANIM20.A) -> [music
+	//   restarts] -> TITLE.ANM. Click / any key skips a single clip;
+	//   ESC skips the rest of the chain (waitForInput / playAnm raise
+	//   `_skipIntro` so each subsequent step bails out).
+	//
+	// Music timing (verified at 2520:0883 and 2520:0918):
+	//   - The three logos and `_InitMysterySounds(0x3c)` all run BEFORE
+	//     any `_MIDIPlayFile` call — those segments are voice-only.
+	//   - Theme starts with `_LoopMIDI = 0x7fff` right before the
+	//     ANIM01..ANIM20 loop (2520:0883).
+	//   - After the loop the original calls `_CleanMysterySounds` and
+	//     then `_MIDIPlayFile("theme.xmi")` again with `_LoopMIDI =
+	//     0xffff` (2520:0918) to restart the theme for TITLE.ANM.
+	//   - `_StopMIDI()` runs on keypress at the title screen
+	//     (2520:094c).
 	_skipIntro = false;
 	showEAKidsLogo();
 	if (!shouldQuit() && !_skipIntro)
 		showHighScoreLogo();
 	if (!shouldQuit() && !_skipIntro)
 		playAnm(Common::Path("BOLT.ANM"));
+	// Theme begins HERE — after the three silent logos, before the
+	// character-intro reel.
+	if (!shouldQuit() && !_skipIntro && _music)
+		_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
 	for (int i = 1; i <= 20 && !shouldQuit() && !_skipIntro; i++) {
 		Common::String name = Common::String::format("ANIM%02d.A", i);
 		playAnm(Common::Path(name));
@@ -176,6 +198,10 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro && i != 20)
 			waitForInput(2000);
 	}
+	// Restart the theme for TITLE.ANM — matches the second
+	// `_MIDIPlayFile("theme.xmi")` call at 2520:0918.
+	if (!shouldQuit() && !_skipIntro && _music)
+		_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
 	if (!shouldQuit() && !_skipIntro)
 		playAnm(Common::Path("TITLE.ANM"), 120, /*holdLastFrame=*/true);
 	_skipIntro = false;
@@ -187,6 +213,12 @@ Common::Error EEMEngine::run() {
 	// the interactive screens (matches `_MouseCursor = 1` at the tail
 	// of `_NewPlayer`).
 	CursorMan.showMouse(true);
+
+	// Stop the title music — the original `_NewPlayer / _DoChoosePartner`
+	// screens have no music until the briefing's `_PlayInSequence` /
+	// per-mystery `_StartTravelMusic` kicks in.
+	if (_music)
+		_music->stop();
 	if (!shouldQuit())
 		doNewPlayer();
 	if (!shouldQuit())
@@ -444,6 +476,30 @@ void EEMEngine::doSiteLoop() {
 	// Tab (next site), ESC (exit).
 	SiteScreen screen(this, &_mystery);
 	screen.run();
+}
+
+void EEMEngine::startTravelMusic() {
+	// Mirrors `_StartTravelMusic @ 20a2:0595`:
+	//
+	//   for (num = _SiteNumber; num > 4; num -= 5) {}
+	//   if (_MIDIAvailable && _MusicEnabled) {
+	//       if (_IsMIDIPlaying()) _StopMIDI();
+	//       _MIDIPlay(num);
+	//   }
+	//
+	// Five travel tracks: MUS00000.XMI .. MUS00004.XMI, picked by
+	// `_SiteNumber % 5`. The original always loops travel music (the
+	// `_LoopMIDI` global isn't reset between site changes).
+	if (!_music || !_mystery.isLoaded())
+		return;
+	const uint num = _mystery._siteNumber % 5;
+	_music->playMus(num, /*loop=*/true);
+}
+
+void EEMEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+	if (_music)
+		_music->syncVolume();
 }
 
 bool EEMEngine::hasFeature(EngineFeature f) const {

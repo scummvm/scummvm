@@ -191,6 +191,11 @@ void SiteScreen::enter(uint siteNum) {
 	debugC(1, kDebugSite, "Entering site %u (%u hotspots)",
 		   siteNum, _mystery->hotspotCount(siteNum));
 
+	// `_DoTravel @ 168d:02da` calls `_StartTravelMusic` after the
+	// destination is set. We do the same here so the music swaps as
+	// the player moves between sites.
+	_vm->startTravelMusic();
+
 	// Palette: original `_BuildBackground` calls `GetPalette(sitenum + 1)`
 	// where sitenum is the global SITES.DBD index (= the per-mystery
 	// `sitepic` field), not the per-mystery site index.
