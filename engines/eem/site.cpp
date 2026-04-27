@@ -56,6 +56,23 @@ void SiteScreen::enter(uint siteNum) {
 	_vm->setSitePaletteForSite(sitepic);
 
 	renderBackground(siteNum);
+
+	// `_DoSiteLoop @ 168d:03f4` plays `_EnterSiteAnim` whenever
+	// `_LastSite != _SiteNumber`. We track the last site we *played*
+	// the arrival on so re-entries (after notebook/map/etc.) don't
+	// repeat the animation.
+	if ((int)siteNum != _lastSiteAnim) {
+		enterSiteAnim();
+		_lastSiteAnim = (int)siteNum;
+		// Re-paint the BG; the arrival animation drew on top of it.
+		renderBackground(siteNum);
+	}
+
+	// Persistent partner sprite (`_NewAnimation` at the tail of
+	// `_DoSiteLoop`). Drawn after the BG so the hotspot outlines and
+	// HUD that follow stay on top of it.
+	renderPartner(siteNum);
+
 	renderHotspots(siteNum);
 	g_system->updateScreen();
 }
@@ -194,56 +211,245 @@ void SiteScreen::run() {
 	}
 }
 
-void SiteScreen::renderBackground(uint siteNum) {
-	// Site loop entry `screen 1` calls into a function at 20fe:120b in
-	// the original; that function opens `_GetPicture(0x43)` (PIC 0x43,
-	// 1-based) as the screen frame and `_GetPalette(0x23)` as the base
-	// palette. The case-briefing's `_BuildBackground @ 172b:13e2`
-	// instead uses entry 0x3d directly and palette `sitenum + 1` — but
-	// that path is only used by `_DisplayCorrect` (winner scene), not
-	// by the regular per-site renderer.
-	//
-	// We follow the regular site loop here:
-	//   1. PIC 0x43 frame at (0, 0).
-	//   2. SITES.DBD entry indexed by SiteData[+0] (1-based sitepic) at
-	//      (x, y) from the original `_Rect_Move` composition.
-	//   3. Per-site palette (`sitenum + 1`) — set by the caller in
-	//      SiteScreen::enter via `setSitePaletteForSite`.
+void SiteScreen::enterSiteAnim() {
+	// Mirrors `_EnterSiteAnim @ 1000:9b21`. Two phases, both partner
+	// dependent:
+	//   Phase 1 — skateboard scroll: anim 6 (Jake) / 0xe (Jenny). Sprite
+	//             starts at (320 - sprite_w, 199 - sprite_h) and slides
+	//             left until off-screen.
+	//   Phase 2 — KD slide-in: anim 7 (Jake) / 0xf (Jenny). Sprite enters
+	//             from x = -sprite_w at y = 0x8b (Jake) / 0x8e (Jenny)
+	//             and slides until x = 0.
+	// Original cycles frames every `_MoveSkateBoardPixels` worth of
+	// motion (a runtime-calibrated speed value); we use a fixed 4 px
+	// per tick which feels close to the DOS pacing.
+	if (!_vm || !_mystery)
+		return;
+	const uint8 partner = _vm->getPartnerIndex();
+	const uint kSkateAni = (partner == 0) ? 6  : 0xe;
+	const uint kKDAni    = (partner == 0) ? 7  : 0xf;
+	const int  kKDY      = (partner == 0) ? 0x8b : 0x8e;
 
+	// Snapshot the current screen so we can restore between frames.
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+	Graphics::ManagedSurface bg(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	for (int row = 0; row < 200; row++) {
+		memcpy((byte *)bg.getBasePtr(0, row),
+			   (const byte *)screen->getBasePtr(0, row), 320);
+	}
+	g_system->unlockScreen();
+
+	auto blitFrame = [](Graphics::ManagedSurface &dst, const Picture &p,
+						int x, int y, byte transp) {
+		const int w = p.surface.w, h = p.surface.h;
+		for (int row = 0; row < h; row++) {
+			const int dstY = y + row;
+			if (dstY < 0 || dstY >= 200)
+				continue;
+			const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+			byte *out = (byte *)dst.getBasePtr(0, dstY);
+			for (int col = 0; col < w; col++) {
+				const int dstX = x + col;
+				if (dstX < 0 || dstX >= 320)
+					continue;
+				if (src[col] != transp)
+					out[dstX] = src[col];
+			}
+		}
+	};
+
+	// Phase 1 — skateboard scroll. `_GetAnimation(6 | 0xe)`.
+	Animation skate;
+	if (_vm->getAni().loadAnimation(kSkateAni, skate) && !skate.empty()) {
+		// `iVar4 = 199 - sprite_h`, `uVar5 = 320 - sprite_w` from the
+		// original; sprite_h/w come from the FIRST frame.
+		const int spriteH = skate[0].surface.h;
+		const int spriteW = skate[0].surface.w;
+		int x = (320 - spriteW) & ~3;            // 4-px aligned (mode-X)
+		const int y = 199 - spriteH;
+		const byte transp = (byte)(skate[0].flags >> 8);
+		uint frameIdx = 0;
+		int distSinceTick = 0;
+		const int kStep = 4;            // _MoveSkateBoardPixels analogue
+		const int kFrameTicks = 0xc;    // original switches frame at 12 px
+
+		while (x + spriteW > 0 && !_vm->shouldQuit()) {
+			Graphics::ManagedSurface scratch(320, 200,
+				Graphics::PixelFormat::createFormatCLUT8());
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.getBasePtr(0, row), 320);
+			}
+			blitFrame(scratch, skate[frameIdx], x, y, transp);
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
+			g_system->updateScreen();
+
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_KEYDOWN ||
+					ev.type == Common::EVENT_LBUTTONDOWN) {
+					return; // user-skip — bail out of the animation
+				}
+			}
+
+			x -= kStep;
+			distSinceTick += kStep;
+			if (distSinceTick >= kFrameTicks) {
+				frameIdx = (frameIdx + 1) % skate.size();
+				distSinceTick = 0;
+			}
+			g_system->delayMillis(40);
+		}
+	}
+
+	// Phase 2 — KD slide-in. From `_EnterSiteAnim` each frame is blitted
+	// at its OWN anchor offsets (the sprite "walks in" because the
+	// frame-by-frame anchors decrease as the animation progresses):
+	//   destX = -frame.miscflags    (on-disk byte 8 = anchor X)
+	//   destY = kKDY - frame.rowoff (on-disk byte 6 = anchor Y)
+	// Each frame waits one `_CheckFrameRate` tick — we use 80 ms which
+	// matches the original's ~12 FPS pacing.
+	Animation kd;
+	if (_vm->getAni().loadAnimation(kKDAni, kd) && !kd.empty()) {
+		for (uint frameIdx = 0;
+			 frameIdx < kd.size() && !_vm->shouldQuit();
+			 frameIdx++) {
+			const Picture &fr = kd[frameIdx];
+			const byte transp = (byte)(fr.flags >> 8);
+			const int destX = -(int)fr.miscflags;
+			const int destY = kKDY - (int)fr.rowoff;
+
+			Graphics::ManagedSurface scratch(320, 200,
+				Graphics::PixelFormat::createFormatCLUT8());
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.getBasePtr(0, row), 320);
+			}
+			blitFrame(scratch, fr, destX, destY, transp);
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
+			g_system->updateScreen();
+
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_KEYDOWN ||
+					ev.type == Common::EVENT_LBUTTONDOWN) {
+					return;
+				}
+			}
+			g_system->delayMillis(80);
+		}
+	}
+}
+
+void SiteScreen::renderPartner(uint siteNum) {
+	// `_DoSiteLoop @ 168d:03f4` reads `siteData[+8]` as the speaker
+	// table index, then for each (speaker × partner) loads
+	//   anim  = WaitAnims[speakerIdx].anim[partner]
+	//   x     = WaitAnims[speakerIdx].x[partner]
+	//   y     = WaitAnims[speakerIdx].y[partner]
+	// from the table at `_WaitAnims @ 29be:021c`. Each entry is
+	// 12 bytes / 6 u16:
+	//   +0..1 anim Jake, +2..3 anim Jenny,
+	//   +4..5 x    Jake, +6..7 x    Jenny,
+	//   +8..9 y    Jake, +10..11 y    Jenny.
+	// Verbatim copy of the bytes Ghidra dumped at 29be:021c so we
+	// don't need to ship the original data segment.
+	static const uint16 kWaitAnims[][6] = {
+		{ 0x00, 0x0a, 0x06, 0x06, 0x50, 0x50 }, // 0
+		{ 0x03, 0x0c, 0x06, 0x06, 0x50, 0x50 }, // 1
+		{ 0x01, 0x0b, 0x06, 0x06, 0x50, 0x50 }, // 2
+		{ 0x04, 0x0d, 0x06, 0x06, 0x50, 0x50 }, // 3
+		{ 0x02, 0x10, 0x06, 0x06, 0x50, 0x50 }, // 4
+		{ 0x05, 0x05, 0x06, 0x06, 0x50, 0x50 }, // 5
+		{ 0x06, 0x06, 0x06, 0x06, 0x50, 0x50 }, // 6
+		{ 0x00, 0x00, 0x23, 0x6f, 0x38, 0x88 }, // 7 — special pos
+		{ 0x07, 0xb1, 0x39, 0xc8, 0x88, 0xae }, // 8 — likely junk; 0xb1 anim id is suspect
+		{ 0x9d, 0xbe, 0xa3, 0xae, 0xb8, 0xbe }  // 9 — likely junk
+	};
+
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 speaker = READ_LE_UINT16(site + 8);
+	if (speaker >= ARRAYSIZE(kWaitAnims))
+		return;
+
+	const uint8 partner = _vm->getPartnerIndex();
+	const uint  animId  = kWaitAnims[speaker][0 + partner];
+	const int   x       = (int)(int16)kWaitAnims[speaker][2 + partner];
+	const int   y       = (int)(int16)kWaitAnims[speaker][4 + partner];
+
+	Animation anim;
+	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
+		return;
+
+	// Show the first frame as a static sprite. The original updates it
+	// each `_CheckFrameRate` tick; we don't have a frame pump in the
+	// site loop yet so a static pose is enough for now.
+	const Picture &fr = anim[0];
+	const byte transp = (byte)(fr.flags >> 8);
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+	for (int row = 0; row < fr.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= 200)
+			continue;
+		const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
+		byte *dst = (byte *)screen->getBasePtr(0, dstY);
+		for (int col = 0; col < fr.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= 320)
+				continue;
+			if (src[col] != transp)
+				dst[dstX] = src[col];
+		}
+	}
+	g_system->unlockScreen();
+}
+
+void SiteScreen::renderBackground(uint siteNum) {
+	// Mirrors `_BuildBackground(sitepic, 0x42, 0x14)` as called from
+	// `_DoSiteLoop @ 168d:03f4` and `_DisplayCorrect`. The original:
+	//   1. Loads frame via `_GetFromDB(_PicIndex, 0x3d)` — that's
+	//      DBI entry 0x3d (0-based). Note this is NOT the same as
+	//      `_GetPicture(0x3d)` which would index entry 0x3c. Our
+	//      `loadEntry(0x3d)` matches the original directly.
+	//   2. Loads SITES.DBD entry by `sitepic` (0-based, from
+	//      SiteData[+0..+1]).
+	//   3. `_Rect_Move(... x, y, 48000, ...)` composes the scene at
+	//      (x, y) = (0x42, 0x14) = (66, 20) on top of the frame.
+	//   4. `_GetPalette(sitepic + 1)` — per-site palette.
 	Picture frame;
-	bool haveFrame = _vm->getPics().getPicture(0x43, frame);
-	if (!haveFrame)
-		haveFrame = _vm->getPics().getPicture(0x3d, frame);
-	if (haveFrame) {
+	if (_vm->getPics().loadEntry(0x3d, frame)) {
 		g_system->copyRectToScreen(frame.surface.getPixels(),
 								   frame.surface.pitch,
 								   0, 0, frame.surface.w, frame.surface.h);
 	}
 
-	// Scene from SITES.DBD: indexed by `sitepic` from SiteData (global
-	// SITES.DBD entry, NOT the per-mystery site index). Falls back to
-	// `_GetPicture(sitepic)` if SITES is unavailable.
 	const byte *site = _mystery->siteData(siteNum);
 	const uint16 sitepic = site ? READ_LE_UINT16(site) : 0;
 	Picture scene;
 	bool haveScene = false;
-	bool fromPics = false;
 	if (sitepic > 0 && _vm->getSites().size() > sitepic - 1)
 		haveScene = _vm->getSites().loadEntry(sitepic - 1, scene);
-	if (!haveScene && sitepic > 0) {
+	if (!haveScene && sitepic > 0)
 		haveScene = _vm->getPics().getPicture(sitepic, scene);
-		fromPics = haveScene;
-	}
 	if (haveScene) {
-		const int w = MIN<int>(scene.surface.w, 320);
-		const int h = MIN<int>(scene.surface.h, 200);
-		// Full-screen pictures (sitepic fallback) go at (0, 0); smaller
-		// SITES.DBD scenes are centred horizontally with the top below
-		// the HUD bar so progress info stays visible.
-		const int x = fromPics ? 0 : (320 - w) / 2;
-		const int y = fromPics ? 0 : (h < 180 ? 4 : 0);
-		g_system->copyRectToScreen(scene.surface.getPixels(),
-								   scene.surface.pitch, x, y, w, h);
+		// Hard-coded composition position from `_BuildBackground`:
+		//   `_Rect_Move(0, 0, h, ..., 0x42, 0x14, 48000, h, w)`.
+		const int x = 0x42;
+		const int y = 0x14;
+		const int w = MIN<int>(scene.surface.w, 320 - x);
+		const int h = MIN<int>(scene.surface.h, 200 - y);
+		if (w > 0 && h > 0)
+			g_system->copyRectToScreen(scene.surface.getPixels(),
+									   scene.surface.pitch, x, y, w, h);
 	}
 }
 
