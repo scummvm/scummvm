@@ -24,6 +24,8 @@
 
 #include "eem/eem.h"
 
+#include "common/system.h"
+
 namespace EEM {
 
 const char *EEMEngine::getGameId() const {
@@ -48,7 +50,8 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
-		return false;
+		return checkExtendedSaves(f) ||
+			   f == kSupportsLoadingDuringStartup;
 	}
 };
 

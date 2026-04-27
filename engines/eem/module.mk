@@ -1,10 +1,13 @@
 MODULE := engines/eem
 
 MODULE_OBJS = \
-	console.o \
+	animation.o \
 	eem.o \
+	font.o \
 	metaengine.o \
-	resource.o
+	mystery.o \
+	resource.o \
+	site.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_EEM), DYNAMIC_PLUGIN)
