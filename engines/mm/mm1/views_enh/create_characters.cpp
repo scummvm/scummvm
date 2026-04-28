@@ -29,6 +29,13 @@ namespace ViewsEnh {
 
 #define RIGHT_X 200
 
+static Common::String getAlignmentString(Alignment alignment) {
+	if (alignment == NEUTRAL)
+		return "Neutral";
+
+	return STRING[Common::String::format("stats.alignments.%d", alignment)];
+}
+
 void CreateCharacters::NewCharacter::clear() {
 	Common::fill(_attribs1, _attribs1 + 7, 0);
 	Common::fill(_attribs2, _attribs2 + 7, 0);
@@ -211,6 +218,10 @@ bool CreateCharacters::msgFocus(const FocusMessage &msg) {
 }
 
 void CreateCharacters::draw() {
+	if (_state == SELECT_CLASS || _state == SELECT_RACE ||
+			_state == SELECT_ALIGNMENT || _state == SELECT_SEX)
+		removeButtons(5, -1);
+
 	ScrollView::draw();
 	printAttributes();
 
@@ -276,30 +287,34 @@ void CreateCharacters::printAttributes() {
 	}
 }
 
-void CreateCharacters::addSelection(int yStart, int num) {
-	Common::Rect r(170, 0, 320, 9);
+int CreateCharacters::addSelection(int yStart, int num, const Common::String &text) {
+	Common::Rect r(170, 0, 170 + getStringWidth(text),
+		g_globals->_fontNormal.getFontHeight());
 	r.translate(0, (yStart + num) * 9);
 
-	addButton(r, Common::KeyState((Common::KeyCode)(Common::KEYCODE_0 + num), '0' + num));
+	return addButton(r, Common::KeyState((Common::KeyCode)(Common::KEYCODE_0 + num), '0' + num));
 }
 
 void CreateCharacters::printClasses() {
+	bool rosterFull = g_globals->_roster.full();
 	for (int classNum = KNIGHT; classNum <= SORCERER; ++classNum) {
-		setTextColor(_newChar._classesAllowed[classNum] ? 0 : 1);
-		writeLine(4 + classNum, Common::String::format("%d) %s",
+		Common::String text = Common::String::format("%d) %s",
 			classNum,
 			STRING[Common::String::format("stats.classes.%d", classNum)].c_str()
-		), ALIGN_LEFT, 170);
+		);
+		bool enabled = _newChar._classesAllowed[classNum] && !rosterFull;
+		int buttonNum = enabled ? addSelection(4, classNum, text) : -1;
+		setTextColor(enabled ? (_selectedButton == buttonNum ? 15 : 0) : 1);
+		writeLine(4 + classNum, text, ALIGN_LEFT, 170);
 
-		if (_newChar._classesAllowed[classNum])
-			addSelection(4, classNum);
 	}
 
-	setTextColor(0);
-	writeLine(10, Common::String::format("6) %s", STRING["stats.classes.6"].c_str()),
-		ALIGN_LEFT, 170);
-	addSelection(4, ROBBER);
+	Common::String text = Common::String::format("6) %s", STRING["stats.classes.6"].c_str());
+	int buttonNum = rosterFull ? -1 : addSelection(4, ROBBER, text);
+	setTextColor(rosterFull ? 1 : (_selectedButton == buttonNum ? 15 : 0));
+	writeLine(10, text, ALIGN_LEFT, 170);
 
+	setTextColor(0);
 	writeLine(13, STRING["dialogs.create_characters.select_class"], ALIGN_MIDDLE, RIGHT_X);
 	writeLine(14, "(1-6)", ALIGN_MIDDLE, RIGHT_X);
 }
@@ -309,10 +324,12 @@ void CreateCharacters::printRaces() {
 	writeString(STRING[Common::String::format("stats.classes.%d", _newChar._class)]);
 
 	for (int i = 1; i <= 5; ++i) {
-		writeLine(6 + i, Common::String::format("%d) %s", i,
-			STRING[Common::String::format("stats.races.%d", i)].c_str()),
-			ALIGN_LEFT, 170);
-		addSelection(6, i);
+		Common::String text = Common::String::format("%d) %s", i,
+			STRING[Common::String::format("stats.races.%d", i)].c_str());
+		int buttonNum = addSelection(6, i, text);
+		byte oldColor = setTextColor(_selectedButton == buttonNum ? 15 : 0);
+		writeLine(6 + i, text, ALIGN_LEFT, 170);
+		setTextColor(oldColor);
 	}
 
 	writeLine(13, STRING["dialogs.create_characters.select_race"], ALIGN_MIDDLE, RIGHT_X);
@@ -326,10 +343,12 @@ void CreateCharacters::printAlignments() {
 	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
 
 	for (int i = 1; i <= 3; ++i) {
-		writeLine(7 + i, Common::String::format("%d) %s", i,
-			STRING[Common::String::format("stats.alignments.%d", i)].c_str()),
-			ALIGN_LEFT, 170);
-		addSelection(7, i);
+		Common::String text = Common::String::format("%d) %s", i,
+			getAlignmentString((Alignment)i).c_str());
+		int buttonNum = addSelection(7, i, text);
+		byte oldColor = setTextColor(_selectedButton == buttonNum ? 15 : 0);
+		writeLine(7 + i, text, ALIGN_LEFT, 170);
+		setTextColor(oldColor);
 	}
 
 	writeLine(13, STRING["dialogs.create_characters.select_alignment"], ALIGN_MIDDLE, RIGHT_X);
@@ -342,14 +361,18 @@ void CreateCharacters::printSexes() {
 	writeLine(6, STRING["enhdialogs.create_characters.race"], ALIGN_RIGHT, RIGHT_X);
 	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
 	writeLine(7, STRING["enhdialogs.create_characters.alignment"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.alignments.%d", _newChar._alignment)]);
+	writeString(getAlignmentString(_newChar._alignment));
 
-	writeLine(9, "1) ", ALIGN_LEFT, 170);
-	writeString(STRING["stats.sex.1"]);
-	addSelection(8, 1);
-	writeLine(10, "2) ", ALIGN_LEFT, 170);
-	writeString(STRING["stats.sex.2"]);
-	addSelection(8, 2);
+	Common::String male = Common::String::format("1) %s", STRING["stats.sex.1"].c_str());
+	Common::String female = Common::String::format("2) %s", STRING["stats.sex.2"].c_str());
+	int maleButton = addSelection(8, 1, male);
+	byte oldColor = setTextColor(_selectedButton == maleButton ? 15 : 0);
+	writeLine(9, male, ALIGN_LEFT, 170);
+	setTextColor(oldColor);
+	int femaleButton = addSelection(8, 2, female);
+	oldColor = setTextColor(_selectedButton == femaleButton ? 15 : 0);
+	writeLine(10, female, ALIGN_LEFT, 170);
+	setTextColor(oldColor);
 
 	writeLine(14, STRING["dialogs.create_characters.select_sex"], ALIGN_MIDDLE, RIGHT_X);
 	writeLine(15, "(1-2)", ALIGN_MIDDLE, RIGHT_X);
@@ -361,7 +384,7 @@ void CreateCharacters::printSelections() {
 	writeLine(6, STRING["enhdialogs.create_characters.race"], ALIGN_RIGHT, RIGHT_X);
 	writeString(STRING[Common::String::format("stats.races.%d", _newChar._race)]);
 	writeLine(7, STRING["enhdialogs.create_characters.alignment"], ALIGN_RIGHT, RIGHT_X);
-	writeString(STRING[Common::String::format("stats.alignments.%d", _newChar._alignment)]);
+	writeString(getAlignmentString(_newChar._alignment));
 	writeLine(8, STRING["enhdialogs.create_characters.sex"], ALIGN_RIGHT, RIGHT_X);
 	writeString(STRING[Common::String::format("stats.sex.%d", _newChar._sex)]);
 }
@@ -550,6 +573,16 @@ bool CreateCharacters::msgAction(const ActionMessage &msg) {
 	return false;
 }
 
+bool CreateCharacters::msgMouseMove(const MouseMoveMessage &msg) {
+	int selectedButton = getButtonAt(msg._pos);
+	if (selectedButton != _selectedButton) {
+		_selectedButton = selectedButton;
+		redraw();
+	}
+
+	return true;
+}
+
 void CreateCharacters::abortFunc() {
 	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
 	view->setState(SELECT_CLASS);
@@ -564,6 +597,7 @@ void CreateCharacters::enterFunc(const Common::String &name) {
 
 void CreateCharacters::setState(State state) {
 	_state = state;
+	resetSelectedButton();
 
 	setButtonEnabled(2, _state == SELECT_PORTRAIT);
 	setButtonEnabled(3, _state == SELECT_PORTRAIT);

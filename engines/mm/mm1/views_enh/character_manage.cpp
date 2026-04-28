@@ -32,10 +32,18 @@ CharacterManage::CharacterManage() : CharacterBase("CharacterManage") {
 	addButton(&_escSprite, Common::Point(90, 172), 0, Common::KEYCODE_r, true);
 	addButton(&_escSprite, Common::Point(160, 172), 0, Common::KEYCODE_d, true);
 	addButton(&_escSprite, Common::Point(230, 172), 0, KEYBIND_ESCAPE, true);
+	addButton(&g_globals->_confirmIcons, Common::Point(240, 163), 0,
+		Common::KeyState(Common::KEYCODE_y, 'y'));
+	addButton(&g_globals->_confirmIcons, Common::Point(270, 163), 2,
+		Common::KeyState(Common::KEYCODE_n, 'n'));
+
+	setButtonEnabled(4, false);
+	setButtonEnabled(5, false);
 }
 
 bool CharacterManage::msgFocus(const FocusMessage &msg) {
 	CharacterBase::msgFocus(msg);
+	setMode(DISPLAY);
 	_changed = false;
 	return true;
 }
@@ -79,7 +87,7 @@ void CharacterManage::draw() {
 		break;
 
 	case DELETE:
-		writeString(120, 174, STRING["enhdialogs.character.are_you_sure"]);
+		writeString(110, 171, STRING["enhdialogs.character.are_you_sure"]);
 		break;
 	}
 }
@@ -150,6 +158,7 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 			// Removes the character and returns to View All Characters
 			g_globals->_roster.remove(g_globals->_currCharacter);
 			_changed = true;
+			setMode(DISPLAY);
 			close();
 		}
 	}
@@ -159,10 +168,23 @@ bool CharacterManage::msgAction(const ActionMessage &msg) {
 
 void CharacterManage::setMode(ViewState state) {
 	_state = state;
+	resetSelectedButton();
 
 	for (int i = 0; i < 4; ++i)
 		setButtonEnabled(i, state == DISPLAY);
+	setButtonEnabled(4, state == DELETE);
+	setButtonEnabled(5, state == DELETE);
 	redraw();
+}
+
+bool CharacterManage::msgMouseMove(const MouseMoveMessage &msg) {
+	int selectedButton = _state == DELETE ? getButtonAt(msg._pos) : -1;
+	if (selectedButton != _selectedButton) {
+		_selectedButton = selectedButton;
+		redraw();
+	}
+
+	return true;
 }
 
 void CharacterManage::setName(const Common::String &newName) {

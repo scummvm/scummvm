@@ -247,6 +247,7 @@ public:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 	MESSAGE(Action);
 	MESSAGE(Game);
 	MESSAGE(Header);
@@ -293,6 +294,7 @@ protected:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(MouseMove);
 	MESSAGE(DrawGraphic);
 	#undef MESSAGE
 public:

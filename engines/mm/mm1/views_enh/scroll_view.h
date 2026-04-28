@@ -75,8 +75,8 @@ class ScrollView : public TextView {
 	};
 private:
 	Common::Array<Button> _buttons;
-	int _selectedButton = -1;
 protected:
+	int _selectedButton = -1;
 	Common::Point _symbolPos;
 protected:
 	/**

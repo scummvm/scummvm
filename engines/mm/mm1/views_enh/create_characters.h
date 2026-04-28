@@ -80,7 +80,7 @@ private:
 	/**
 	 * Add a selection entry
 	 */
-	void addSelection(int yStart, int num);
+	int addSelection(int yStart, int num, const Common::String &text);
 
 	/**
 	 * Display the available classes
@@ -135,6 +135,7 @@ public:
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
 };
 
 } // namespace ViewsEnh

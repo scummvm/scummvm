@@ -19,75 +19,28 @@
  *
  */
 
-#ifndef MM1_VIEWS_TITLE_H
-#define MM1_VIEWS_TITLE_H
+#ifndef MM1_VIEWS_ENH_TOWN_SELECT_H
+#define MM1_VIEWS_ENH_TOWN_SELECT_H
 
-#include "mm/mm1/events.h"
+#include "mm/mm1/views_enh/scroll_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Views {
+namespace ViewsEnh {
 
-#define SCREENS_COUNT 10
-
-class Title : public UIElement {
-private:
-	/**
-	 * Starts the slideshow of game scenes
-	 */
-	void startSlideshow();
-
-	/**
-	 * Advances to the next scene screen
-	 */
-	void advanceSlideshow();
-
-protected:
-	Graphics::ManagedSurface _screens[SCREENS_COUNT];
-	int _screenNum = -1;
-	int _fadeIndex = 0;
-
+class TownSelect : public ScrollView {
 public:
-	Title();
-	virtual ~Title() {}
+	TownSelect();
+	virtual ~TownSelect() {}
 
-	/**
-	 * Called when the screen is displayed
-	 */
-	bool msgFocus(const FocusMessage &msg) override;
-
-	/**
-	 * Called when the screen is hidden
-	 */
-	bool msgUnfocus(const UnfocusMessage &msg) override;
-
-	/**
-	 * Draw the screen
-	 */
 	void draw() override;
-
-	/**
-	 * Delay timeout
-	 */
-	void timeout() override;
-
-	/**
-	 * Handles keypresses
-	 */
-	bool msgKeypress(const KeypressMessage &msg) override;
-
-	/**
-	 * Handle actions
-	 */
 	bool msgAction(const ActionMessage &msg) override;
-
-	/**
-	 * Mouse up handler
-	 */
-	bool msgMouseUp(const MouseUpMessage &msg) override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseDown(const MouseDownMessage &msg) override;
 };
 
-} // namespace Views
+} // namespace ViewsEnh
 } // namespace MM1
 } // namespace MM
 

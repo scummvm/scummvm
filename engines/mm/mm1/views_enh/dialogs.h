@@ -44,6 +44,7 @@
 #include "mm/mm1/views_enh/rest.h"
 #include "mm/mm1/views_enh/search.h"
 #include "mm/mm1/views_enh/title.h"
+#include "mm/mm1/views_enh/town_select.h"
 #include "mm/mm1/views_enh/trade.h"
 #include "mm/mm1/views_enh/trap.h"
 #include "mm/mm1/views_enh/unlock.h"
@@ -170,6 +171,7 @@ private:
 	ViewsEnh::Rest _rest;
 	ViewsEnh::Search _search;
 	ViewsEnh::Title _title;
+	ViewsEnh::TownSelect _townSelect;
 	ViewsEnh::Trade _trade;
 	ViewsEnh::Trap _trap;
 	ViewsEnh::Unlock _unlock;

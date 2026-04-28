@@ -70,6 +70,7 @@ bool Inn::msgFocus(const FocusMessage &msg) {
 }
 
 void Inn::draw() {
+	setButtonEnabled(0, true);
 	setButtonEnabled(1, !_partyChars.empty());
 	if (!_partyChars.empty()) {
 		setButtonPos(0, Common::Point(155, 166));
@@ -149,7 +150,7 @@ bool Inn::msgMouseDown(const MouseDownMessage &msg) {
 				else
 					_partyChars.push_back(charNum);
 
-				setButtonEnabled(0, !_partyChars.empty());
+				setButtonEnabled(1, !_partyChars.empty());
 				redraw();
 			} else {
 				g_globals->_currCharacter = &g_globals->_roster[charNum];
@@ -174,7 +175,7 @@ bool Inn::msgKeypress(const KeypressMessage &msg) {
 			else
 				_partyChars.push_back(charNum);
 
-			setButtonEnabled(0, !_partyChars.empty());
+			setButtonEnabled(1, !_partyChars.empty());
 			redraw();
 
 		} else {

@@ -31,8 +31,16 @@ namespace Views {
 #define FADE_SEGMENTS 20
 #define FADE_SEGMENT_X (SCREEN_W / 2 / FADE_SEGMENTS)
 #define FADE_SEGMENT_Y (SCREEN_H / 2 / FADE_SEGMENTS)
+#define FIRST_SCENE_SCREEN 2
+#define FIRST_TEXT_SCENE_SCREEN 5
+#define SCENE_SECONDS 5
+#define TEXT_SCENE_SECONDS 12
+
+static const Common::Rect START_GAME_BOUNDS(23, 164, 157, 173);
+static const Common::Rect SCENES_BOUNDS(162, 164, 292, 173);
 
 Title::Title() : UIElement("Title", g_engine) {
+	_bounds = Common::Rect(0, 0, SCREEN_W, SCREEN_H);
 }
 
 bool Title::msgFocus(const FocusMessage &msg) {
@@ -109,22 +117,18 @@ void Title::draw() {
 		const Graphics::ManagedSurface &src = _screens[_screenNum];
 		surf.blitFrom(src);
 
-		delaySeconds(5);
+		delaySeconds(_screenNum >= FIRST_TEXT_SCENE_SCREEN ? TEXT_SCENE_SECONDS : SCENE_SECONDS);
 	}
 }
 
 void Title::timeout() {
-	if (_screenNum < 2) {
+	if (_screenNum < FIRST_SCENE_SCREEN) {
 		if (_fadeIndex++ == FADE_SEGMENTS) {
 			_screenNum = (_screenNum == 0) ? 1 : 0;
 			_fadeIndex = 0;
 		}
 	} else {
-		if (++_screenNum >= SCREENS_COUNT) {
-			// Go back to alternating first two screens
-			_screenNum = -1;
-			_fadeIndex = 0;
-		}
+		advanceSlideshow();
 	}
 
 	redraw();
@@ -132,7 +136,7 @@ void Title::timeout() {
 
 bool Title::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_SPACE)
-		startSlideshow();
+		msgAction(ActionMessage(KEYBIND_SELECT));
 
 	return true;
 }
@@ -143,18 +147,57 @@ bool Title::msgAction(const ActionMessage &msg) {
 			"MainMenu" : "AreYouReady");
 		return true;
 	} else if (msg._action == KEYBIND_SELECT) {
-		startSlideshow();
+		if (_screenNum >= FIRST_SCENE_SCREEN) {
+			cancelDelay();
+			advanceSlideshow();
+			redraw();
+		} else {
+			startSlideshow();
+		}
 		return true;
 	}
 
 	return false;
 }
 
+bool Title::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_RIGHT) {
+		_screenNum = -1;
+		_fadeIndex = 0;
+		cancelDelay();
+		redraw();
+		return true;
+	}
+
+	if (msg._button != MouseMessage::MB_LEFT)
+		return false;
+
+	Common::Point pos = msg._pos;
+	pos -= Common::Point(_bounds.left, _bounds.top);
+
+	if (_screenNum >= FIRST_SCENE_SCREEN) {
+		msgAction(ActionMessage(KEYBIND_SELECT));
+	} else if (START_GAME_BOUNDS.contains(pos)) {
+		msgAction(ActionMessage(KEYBIND_ESCAPE));
+	} else if (SCENES_BOUNDS.contains(pos)) {
+		msgAction(ActionMessage(KEYBIND_SELECT));
+	}
+
+	return true;
+}
+
 void Title::startSlideshow() {
 	cancelDelay();
-	_screenNum = 2;
+	_screenNum = FIRST_SCENE_SCREEN;
 	_fadeIndex = 0;
 	redraw();
+}
+
+void Title::advanceSlideshow() {
+	if (++_screenNum >= SCREENS_COUNT) {
+		_screenNum = -1;
+		_fadeIndex = 0;
+	}
 }
 
 } // namespace Views

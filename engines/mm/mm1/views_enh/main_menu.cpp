@@ -122,12 +122,49 @@ void MainMenu::draw() {
 	writeString(80, 120, Common::String(line1.c_str(), line1.c_str() + 3));
 	writeString(80, 130, Common::String(line2.c_str(), line2.c_str() + 3));
 	writeString(43, 140, line31);
+
+	byte oldColor = setTextColor(_hoverChoice == CHOICE_CREATE ? 15 : 0);
 	writeString(110, 120, Common::String(line1.c_str() + line1.findLastOf('.') + 1));
+	setTextColor(oldColor);
+	oldColor = setTextColor(_hoverChoice == CHOICE_VIEW ? 15 : 0);
 	writeString(110, 130, Common::String(line2.c_str() + line2.findLastOf('.') + 1));
+	setTextColor(oldColor);
+	oldColor = setTextColor(_hoverChoice == CHOICE_TOWN ? 15 : 0);
 	writeString(110, 140, line32);
+	setTextColor(oldColor);
 
 	writeString(0, 165, STRING["dialogs.main_menu.copyright1"], ALIGN_MIDDLE);
 	writeString(0, 175, STRING["dialogs.main_menu.scummvm"], ALIGN_MIDDLE);
+}
+
+MainMenu::Choice MainMenu::getChoiceAt(const Common::Point &pos) {
+	const int height = g_globals->_fontNormal.getFontHeight();
+	const Common::String line1 = STRING["dialogs.main_menu.option1"];
+	const Common::String line2 = STRING["dialogs.main_menu.option2"];
+	const Common::String line32 = STRING["dialogs.main_menu.option3e2"];
+	const Common::String create = Common::String(line1.c_str() + line1.findLastOf('.') + 1);
+	const Common::String view = Common::String(line2.c_str() + line2.findLastOf('.') + 1);
+
+	Common::Rect createBounds(110, 120, 110 + getStringWidth(create), 120 + height);
+	Common::Rect viewBounds(110, 130, 110 + getStringWidth(view), 130 + height);
+	Common::Rect townBounds(110, 140, 110 + getStringWidth(line32), 140 + height);
+	createBounds.translate(_innerBounds.left, _innerBounds.top);
+	viewBounds.translate(_innerBounds.left, _innerBounds.top);
+	townBounds.translate(_innerBounds.left, _innerBounds.top);
+
+	if (createBounds.contains(pos))
+		return CHOICE_CREATE;
+	if (viewBounds.contains(pos))
+		return CHOICE_VIEW;
+	if (townBounds.contains(pos))
+		return CHOICE_TOWN;
+
+	return CHOICE_NONE;
+}
+
+bool MainMenu::msgFocus(const FocusMessage &msg) {
+	_hoverChoice = CHOICE_NONE;
+	return ScrollView::msgFocus(msg);
 }
 
 bool MainMenu::msgKeypress(const KeypressMessage &msg) {
@@ -158,11 +195,52 @@ bool MainMenu::msgKeypress(const KeypressMessage &msg) {
 
 }
 
-bool msgAction(const ActionMessage &msg) {
-	if (msg._action == KEYBIND_SELECT) {
+bool MainMenu::msgMouseMove(const MouseMoveMessage &msg) {
+	Choice choice = getChoiceAt(msg._pos);
+	if (choice != _hoverChoice) {
+		_hoverChoice = choice;
+		redraw();
 	}
 
-	return false;
+	return true;
+}
+
+bool MainMenu::msgMouseDown(const MouseDownMessage &msg) {
+	return msg._button == MouseMessage::MB_LEFT && getChoiceAt(msg._pos) != CHOICE_NONE;
+}
+
+bool MainMenu::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button != MouseMessage::MB_LEFT)
+		return false;
+
+	Choice choice = getChoiceAt(msg._pos);
+	_hoverChoice = CHOICE_NONE;
+
+	switch (choice) {
+	case CHOICE_CREATE:
+		addView("CreateCharacters");
+		break;
+	case CHOICE_VIEW:
+		addView("Characters");
+		break;
+	case CHOICE_TOWN:
+		addView("TownSelect");
+		break;
+	default:
+		break;
+	}
+
+	return choice != CHOICE_NONE;
+}
+
+bool MainMenu::msgGame(const GameMessage &msg) {
+	if (msg._name == "START_TOWN") {
+		g_globals->_startingTown = (Maps::TownId)msg._value;
+		replaceView("Inn");
+		return true;
+	}
+
+	return ScrollView::msgGame(msg);
 }
 
 } // namespace ViewsEnh

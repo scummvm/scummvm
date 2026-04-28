@@ -92,7 +92,14 @@ void Events::processEvent(Common::Event &ev) {
 			msgKeypress(KeypressMessage(ev.kbd));
 		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		msgAction(ActionMessage((KeybindingAction)ev.customType));
+		if (MetaEngine::getActionKeyState((KeybindingAction)ev.customType).keycode != Common::KEYCODE_INVALID) {
+			msgKeypress(KeypressMessage(MetaEngine::getActionKeyState((KeybindingAction)ev.customType)));
+		} else {
+			msgAction(ActionMessage((KeybindingAction)ev.customType));
+		}
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		msgMouseMove(MouseMoveMessage(ev.mouse));
 		break;
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
