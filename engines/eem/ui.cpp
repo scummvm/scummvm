@@ -1817,9 +1817,6 @@ void EEMEngine::doNotebook() {
 						   ev.kbd.keycode == Common::KEYCODE_TAB) {
 					page++;
 					dirty = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_h) {
-					doHelp();
-					dirty = true;
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
