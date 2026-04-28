@@ -541,6 +541,29 @@ void SiteScreen::enter(uint siteNum) {
 	const uint16 sitepic = sd ? READ_LE_UINT16(sd) : 0;
 	_vm->setSitePaletteForSite(sitepic);
 
+	// SITEPALS ships with palette indices 0xF9..0xFE all set to a
+	// uniform yellow (`3F 3E 00` = R=63 G=62 B=0 for every site palette
+	// in the file), so the original `_DrawRect`'s cycling colour
+	// pattern + `_ColorCycle(0xF9, 0xFE)` produced a uniformly-coloured
+	// outline with no visible movement — the "marching ants" pattern
+	// was a placeholder that never lit up. Override those entries with
+	// a 6-step yellow ramp here so the existing per-tick rotation
+	// (`applyColorCycles → cyclePaletteRange(0xF9, 0xFE)`) creates a
+	// pulsing glow on unsearched hotspots. Done after `setSitePalette`
+	// so the per-site palette load doesn't clobber the ramp.
+	{
+		// 6-step yellow glow: dark → bright → dim → ...
+		static const byte kAntsGlow[6 * 3] = {
+			0x40, 0x40, 0x00, // F9 — dim
+			0x80, 0x80, 0x00, // FA
+			0xC0, 0xC0, 0x00, // FB
+			0xFF, 0xFF, 0x40, // FC — peak
+			0xC0, 0xC0, 0x00, // FD
+			0x80, 0x80, 0x00, // FE
+		};
+		g_system->getPaletteManager()->setPalette(kAntsGlow, 0xF9, 6);
+	}
+
 	renderBackground(siteNum);
 
 	// `_DoSiteLoop @ 168d:03f4` plays `_EnterSiteAnim` whenever
@@ -1271,16 +1294,24 @@ void SiteScreen::renderHotspots(uint siteNum) {
 
 	// Mirrors `_DrawSearchButtons @ 2404:0a8f`:
 	//   for each hotspot:
-	//     if `_Sawit(theSite, loc)` (= _SaveBuffer[hotspot[+0xa]] != 0)
-	//       _DrawRect(rect)        // outline in cycling colors 0xF9..0xFE
-	//     else
-	//       _DrawSolidRect(rect)   // outline in solid white 0xFF
-	// `_DrawRect`'s cycling colors produce a "marching ants" effect that
-	// makes already-searched hotspots visually distinct without hiding
-	// them. We approximate the cycling by rotating the start color via
-	// the global tick.
+	//     if `_Sawit(theSite, loc) == 0` (NOT seen yet):
+	//       `_DrawRect(rect)`       — outline in cycling colors
+	//                                 0xF9..0xFE; `_ColorCycle(0xF9,
+	//                                 0xFE)` rotates them every tick →
+	//                                 "marching ants" glow that draws
+	//                                 the player's eye to unsearched
+	//                                 spots.
+	//     else (seen):
+	//       `_DrawSolidRect(rect)` — outline in solid colour 0xFF.
+	// (Verified at the actual asm `2404:0af6 OR AX,AX; 2404:0af8 JZ` —
+	// the C-level decompile mis-reordered the if/else branches.)
+	//
+	// We don't need per-pixel colour cycling here because palette
+	// `0xF9..0xFE` is already rotated by `applyColorCycles` each tick;
+	// drawing the outline with any single colour in that range will
+	// pulse on its own. We pick a phased start so adjacent hotspots
+	// don't all glow in lock-step.
 	const uint32 tickMs = g_system->getMillis();
-	const byte cyclePhase = (byte)((tickMs / 80) & 0x07);  // 0..7
 
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * 14;
@@ -1293,39 +1324,44 @@ void SiteScreen::renderHotspots(uint siteNum) {
 								MIN<int>(screen->h, y2));
 		const bool seen = (i < Mystery::kHotSpotsCap)
 						   && _mystery->_hotSpotsSeen[i];
-		if (!seen) {
-			// `_DrawSolidRect` — solid white outline (color 0xFF).
+		if (seen) {
+			// `_DrawSolidRect` (172b:0506) — outline in palette
+			// index 0xFF (a fixed, non-cycling colour) so already-
+			// found hotspots visually retreat into the BG.
 			screen->frameRect(rect, 0xFF);
 		} else {
-			// `_DrawRect` — cycling colors 0xF9..0xFE on each pixel of
-			// the outline. We approximate per-pixel cycling with a
-			// per-rect phase shift so the rects look animated. Start
-			// color is rotated via the global clock.
-			const byte palette[6] = { 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE };
-			byte color = palette[cyclePhase % 6];
+			// `_DrawRect` (172b:03e2) — outline in palette indices
+			// 0xF9..0xFE which `_ColorCycle(0xF9, 0xFE)` rotates
+			// every tick. Walk all four edges incrementing the
+			// colour per pixel, exactly like the original.
+			byte color = (byte)(0xF9 + ((i + (tickMs / 80)) & 0x07) % 6);
+			auto bumpColor = [&]() {
+				const byte next = (byte)(color + 1);
+				color = (next > 0xFE) ? (byte)0xF9 : next;
+			};
 			// Top edge
 			for (int x = rect.left; x < rect.right; x++) {
 				if (x >= 0 && x < screen->w && rect.top >= 0 && rect.top < screen->h)
 					*(byte *)screen->getBasePtr(x, rect.top) = color;
-				color = palette[(color - 0xF9 + 1) % 6];
+				bumpColor();
 			}
 			// Right edge
 			for (int y = rect.top; y < rect.bottom; y++) {
 				if (rect.right - 1 >= 0 && rect.right - 1 < screen->w && y >= 0 && y < screen->h)
 					*(byte *)screen->getBasePtr(rect.right - 1, y) = color;
-				color = palette[(color - 0xF9 + 1) % 6];
+				bumpColor();
 			}
 			// Bottom edge
 			for (int x = rect.right - 1; x >= rect.left; x--) {
 				if (x >= 0 && x < screen->w && rect.bottom - 1 >= 0 && rect.bottom - 1 < screen->h)
 					*(byte *)screen->getBasePtr(x, rect.bottom - 1) = color;
-				color = palette[(color - 0xF9 + 1) % 6];
+				bumpColor();
 			}
 			// Left edge
 			for (int y = rect.bottom - 1; y >= rect.top; y--) {
 				if (rect.left >= 0 && rect.left < screen->w && y >= 0 && y < screen->h)
 					*(byte *)screen->getBasePtr(rect.left, y) = color;
-				color = palette[(color - 0xF9 + 1) % 6];
+				bumpColor();
 			}
 		}
 	}
