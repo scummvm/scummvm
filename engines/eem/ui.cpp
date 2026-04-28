@@ -1283,25 +1283,44 @@ void EEMEngine::doCaseSelection() {
 		"         See ScrapBook 2",
 		"         See ScrapBook 3"
 	};
-	// ScrapBook entries are gated by chain stage exactly as the
-	// original `_ActionScreen @ 1c33:195b` does at 1c33:19f3-19f7:
-	//   stage 1 + nothing solved → ScrapBook 1/2/3 all greyed
-	//   stage 1 + ≥1 solved      → ScrapBook 1 enabled, 2/3 greyed
-	//   stage 2                  → ScrapBook 1 enabled, 2 enabled, 3 greyed
-	//   stage 3                  → all three enabled
-	// (`_3f9b[i] != 0` over the tier's mystery range is the per-tier
-	// gate; we approximate "any in tier" by checking _chainStage and
-	// any solved flag.)
+	// Menu entry gating per `_ActionScreen @ 1c33:195b` — the asm at
+	// 1c33:19d1-1a70 sets greys[] based on chain stage AND per-tier
+	// solve count:
+	//   stage 1 → grey ScrapBook 2/3; grey ScrapBook 1 if no tier-1 solves
+	//   stage 2 → grey Practice + ScrapBook 3; grey ScrapBook 2 if no tier-2 solves
+	//   stage 3 → grey Practice; grey ScrapBook 3 if no tier-3 solves
+	//   stage 4 → grey Choose + Practice (post-completion read-only state)
+	// In other words: each tier's ScrapBook unlocks as soon as you've
+	// solved your first case in that tier. Practice Mystery is only
+	// available at stage 1. Choose A Mystery is greyed once every case
+	// in every tier is solved (stage 4).
 	bool anySolved1 = false;
 	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
 		if (_mysteriesSolved[i]) { anySolved1 = true; break; }
-	const bool scrap1On = anySolved1 || _chainStage >= 2;
-	const bool scrap2On = _chainStage >= 2;
-	const bool scrap3On = _chainStage >= 3;
+	bool anySolved2 = false;
+	for (uint i = 0x19; i <= 0x30 && i < sizeof(_mysteriesSolved); i++)
+		if (_mysteriesSolved[i]) { anySolved2 = true; break; }
+	bool anySolved3 = false;
+	for (uint i = 0x31; i <= 0x36 && i < sizeof(_mysteriesSolved); i++)
+		if (_mysteriesSolved[i]) { anySolved3 = true; break; }
+
+	const bool chooseOn   = _chainStage < 4;
+	const bool practiceOn = _chainStage <= 1;
+	const bool scrap1On =
+		_chainStage >= 2 || (_chainStage == 1 && anySolved1);
+	const bool scrap2On =
+		_chainStage >= 3 || (_chainStage == 2 && anySolved2);
+	const bool scrap3On =
+		_chainStage >= 4 || (_chainStage == 3 && anySolved3);
 	const bool kPickEnabled[kNumPicks] = {
-		true, true, scrap1On, scrap2On, scrap3On
+		chooseOn, practiceOn, scrap1On, scrap2On, scrap3On
 	};
-	uint pick = kPickChoose;
+	// Seed selection on the first enabled entry — at stage 4 the
+	// `Choose A Mystery` default is greyed, so we land on ScrapBook 1.
+	uint pick = 0;
+	for (uint i = 0; i < kNumPicks; i++) {
+		if (kPickEnabled[i]) { pick = i; break; }
+	}
 
 	const char *kSeparator = "----------------------------------";
 
@@ -1383,7 +1402,11 @@ void EEMEngine::doCaseSelection() {
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				// OK / EXIT / HELP buttons (rectangles from `_DoChoose`).
 				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
-					confirmed = true;
+					// Greyed entries can't be confirmed (mirrors
+					// `_DoChoose @ 1c33:0635` — clicks on a `_Greys[i]
+					// != 0` row are ignored before `select` is set).
+					if (kPickEnabled[pick])
+						confirmed = true;
 					break;
 				}
 				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -1420,8 +1443,10 @@ void EEMEngine::doCaseSelection() {
 				confirmed = true;
 				break;
 			}
-			if (k == Common::KEYCODE_RETURN) {
-				confirmed = true;
+			if (k == Common::KEYCODE_RETURN ||
+				k == Common::KEYCODE_KP_ENTER) {
+				if (kPickEnabled[pick])
+					confirmed = true;
 				break;
 			}
 			if (k == Common::KEYCODE_UP || k == Common::KEYCODE_LEFT) {
@@ -3941,7 +3966,13 @@ void EEMEngine::doAccuse() {
 				if (i >= sizeof(_mysteriesSolved) || _mysteriesSolved[i] == 0)
 					allSolved = false;
 			}
-			if (allSolved && _chainStage < 3) {
+			// `_DisplayCorrect @ 1df2:0852` increments unconditionally
+			// when every case in the current tier is solved — including
+			// past stage 3 (so a stage-4 endgame state exists in the
+			// `.PLR` save format). `_ActionScreen @ 1c33:19d1` gates
+			// the menu on `if (3 < _chainStage)` to grey
+			// Choose-A-Mystery and Practice once everything's solved.
+			if (allSolved && _chainStage < 4) {
 				_chainStage++;
 				debugC(1, kDebugMystery,
 					   "chainStage advanced to %u after solving mystery %u",
