@@ -1523,7 +1523,11 @@ void EEMEngine::playKdAnim(uint16 num) {
 
 		// One frame per `_CheckFrameRate` tick. The original calibrates
 		// this to ~10 fps; 100 ms matches what the rest of the engine
-		// uses for partner / NPC frame cycling.
+		// uses for partner / NPC frame cycling. Pump `updateScreen`
+		// inside the inner wait so ScummVM's cursor overlay refreshes
+		// at the same rate as the wait granularity (10 ms ≈ 100 Hz)
+		// rather than only on the per-frame redraw — without this the
+		// cursor only refreshes once every 100 ms during the anim.
 		const uint32 wakeup = g_system->getMillis() + 100;
 		while (g_system->getMillis() < wakeup && !shouldQuit()) {
 			Common::Event ev;
@@ -1535,6 +1539,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 					return;
 			}
+			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 	}

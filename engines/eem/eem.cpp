@@ -536,6 +536,12 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 					break;
 				}
 			}
+			// Refresh ScummVM's cursor overlay every tick — without
+			// this the cursor only redraws when the next frame is
+			// blitted (every `frameDelayMs` ms, ~8 Hz at 120 ms),
+			// which the user perceives as choppy / unresponsive
+			// during long animations like SCRAPBK.ANI.
+			g_system->updateScreen();
 			g_system->delayMillis(5);
 		}
 		if (aborted)
