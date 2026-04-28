@@ -46,14 +46,59 @@ class AudioPlayer;
 class MusicPlayer;
 
 /**
- * Screen IDs used by the original ScreenDriver dispatch table at 1a35:0e5e.
- * The table holds 14 (id, handler) entries; the loop iterates until it finds
- * a matching id and calls its handler. ID 0xFFFF is the exit sentinel.
+ * Screen IDs used by the original `_ScreenDriver` dispatch table at
+ * 1a35:0e5e (and the fallback at 1a35:0e54). 14 entries total: each
+ * one is a screen ID + a near function pointer at offset +0x1c. The
+ * driver does `JMP word ptr CS:[BX + 0x1c]`, so handlers tail-call —
+ * each one runs the screen and updates `_NextScreen` for the next
+ * trip through the dispatcher.
+ *
+ * IDs and their handlers (verified from disassembly at 1a35:0dec..0e4f):
+ *
+ *   0  INIT_CLUES  → `_PreLoad` + `_DoInitClues`, sets _NextScreen=1
+ *   1  MAP         → `_DoMapScreen` @ 20fe:120b (sets _NextScreen
+ *                    inside; 3 = a site was clicked, 6 = setup, etc.)
+ *   2  MAP         → same handler as 1 (alternate entry, used when
+ *                    `_LastScreen == 2` to swap the briefcase anim)
+ *   3  SITE        → `_DoSiteLoop` @ 168d:03f4
+ *   4  NOTEBOOK    → `_DoNotebook` @ 161e:0500
+ *   5  GALLERY     → `_DoGallery` @ 158f:065b
+ *   6  SETUP       → `_DoSetup` @ 1f78:044e
+ *   7  ACCUSE      → `_DoAccuse` @ 1df2:0bdd (win → 12, lose → last)
+ *   8  PROFILE     → `screen8_handler` @ 1c33:1012; tail sets =9
+ *   9  PARTNER     → `_DoChoosePartner` @ 1a35:0756; sets =0xc inside
+ *   10 (0xa) CHOOSE_MYSTERY → `_DoChooseMystery` + `_CaseSelection`;
+ *                    starts with _NextScreen=0 so a successful pick
+ *                    falls through to INIT_CLUES.
+ *   11 (0xb) TITLE  → set _NextScreen=8 then dispatch (TITLE.ANM is
+ *                    actually shown earlier by `_DoOpeningAnims`, this
+ *                    handler is the post-intro "fall into PROFILE"
+ *                    redirect)
+ *   12 (0xc) ACTION → `_ActionScreen` @ 1c33:195b — post-mystery menu
+ *                    ("Solve a Mystery", scrapbook, more mysteries,
+ *                    setup). Action 1 sets =10 (CHOOSE_MYSTERY).
+ *   0xFFFF SENTINEL → exit loop
+ *
+ * Screen-driver state writes verified via xrefs to `_NextScreen @
+ * 2d5d:3f26`: `_DisplayCorrect` writes 0xc (winner returns to ACTION),
+ * `_DisplayAlibi` writes `_LastScreen` (loser snaps back), and
+ * `_DoSiteLoop` writes 1/3/4 plus 0xffff on ESC.
  */
 enum ScreenId {
-	kScreenInvalid       = 0xFFFF,
-	kScreenChoosePartner = 0x09,  ///< _DoChoosePartner @ 1a35:0756 (boy/girl picker)
-	kScreenTitle         = 0x0B   ///< _ShowTitlePage @ 1a35:06b7
+	kScreenInvalid        = 0xFFFF,
+	kScreenInitClues      = 0x00,
+	kScreenMap            = 0x01,
+	kScreenMapAlt         = 0x02,
+	kScreenSite           = 0x03,
+	kScreenNotebook       = 0x04,
+	kScreenGallery        = 0x05,
+	kScreenSetup          = 0x06,
+	kScreenAccuse         = 0x07,
+	kScreenProfile        = 0x08,
+	kScreenChoosePartner  = 0x09,
+	kScreenChooseMystery  = 0x0A,
+	kScreenTitle          = 0x0B,
+	kScreenAction         = 0x0C
 };
 
 class EEMEngine : public Engine {
@@ -268,10 +313,54 @@ private:
 	// Screen handlers — port targets in screens/ later.
 	void showEAKidsLogo();
 	void showHighScoreLogo();
+
+	/// Profile selector — mirrors `screen8_handler @ 1c33:1012`.
+	/// Walks `listProfiles()`, draws the list of existing profile
+	/// names plus a "[New Player]" entry, and either calls
+	/// `loadProfile(name)` on a click or falls through to
+	/// `doNewPlayer()` if the user picks "New". When no profiles
+	/// exist, behaves identically to `doNewPlayer()` (the original
+	/// also bypasses the picker when `local_20 == 0` — see
+	/// 1c33:1170: `if (saves == 0) _NewPlayer();`).
+	void doProfilePicker();
 	void doNewPlayer();          ///< Mirrors `_NewPlayer` @ 1c33:0dda
 	void doChoosePartner();
+
+	/// Display the per-mystery ending pages from `E<num>.BIN`.
+	/// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage
+	/// @ 1df2:044c`. The file format is a 2-byte page count followed
+	/// by N pages, each `{ u16 picNum, u16 x1, u16 y1, u16 x2, u16 y2,
+	/// char text[] (null-terminated, ParseString placeholders) }`.
+	/// Blocks until the player clicks past the last page or hits ESC.
+	/// `_ShowOneScrap @ 1f78:0773` is just `_DisplayEnding(num, 1)`,
+	/// so this same call covers the post-mystery scrapbook view from
+	/// the action menu.
+	void doShowEnding(uint num);
 	void doCaseSelection();
 	void doSiteLoop();
+
+	/// Post-mystery action menu. Mirrors `_ActionScreen @ 1c33:195b` —
+	/// the screen the original returns to after `_DisplayCorrect`
+	/// (winner) or after the player explicitly leaves a case via the
+	/// PROFILE → PARTNER chain. The original offers up to 5 choices
+	/// gated on the player's chain stage (`DAT_2d5d_3f99`):
+	///   1: "Solve a Mystery" (set _NextScreen=10 — CHOOSE_MYSTERY)
+	///   3: replay the last solved case (`_ReloadMystery(0)` callsite)
+	///   5: scrapbook viewer (`_ShowOneScrap(0, 1)` callsite)
+	///   7: chain-stage advance (cmp `_3f99 == 1`)
+	///   9: chain-stage advance (cmp `_3f99 == 2` / `== 3`)
+	///   sentinel: exit / back to PARTNER
+	/// We start with just option 1 wired (the practical loop) plus
+	/// quit; the others slot in as their underlying screens land.
+	void doActionScreen();
+
+	/// Setup / preferences screen. Mirrors `_DoSetup @ 1f78:044e` —
+	/// per-profile preferences (voice on/off via `DAT_2d5d_3f97`,
+	/// partner pick via SwapColors on Kid1/Kid2 rects). Reachable
+	/// from BigMap's setup button (sets `_NextScreen = 6` per
+	/// `_DoBigMap @ 20fe:0c33`). Returns to whatever
+	/// `_lastScreen` was — typically MAP.
+	void doSetup();
 
 	/// Render the case briefing background + game/book decorations and
 	/// display the briefing ClueBlock. Mirrors `_DoInitClues` @ 1a35:0411
@@ -299,6 +388,28 @@ private:
 	/// on first try. Mirrors `_PlayerRecord.SolvedMysteries[55]` in the
 	/// original `_DisplayCorrect` flow.
 	uint8 _mysteriesSolved[55] = {};
+
+	/// Current chain/tier the player is at — mirrors `DAT_2d5d_3f99`
+	/// (`_PlayerRecord +0x2f`):
+	///   1 = Junior detective  (mysteries  1 .. 24, "A chain")
+	///   2 = Senior detective  (mysteries 25 .. 48, "B chain")
+	///   3 = Master detective  (mysteries 49 .. 54, "C chain")
+	/// Initialized to 1 in `_NewPlayer @ 1c33:0fa3` and bumped by
+	/// `_DisplayCorrect @ 1df2:0853` once every mystery in the current
+	/// tier is solved (range checks at 1df2:080d / 0824 / 0837). The
+	/// value also gates `_CaseSelection`'s book label and selection
+	/// list (1c33:0a87 onwards).
+	uint8 _chainStage = 1;
+
+	/// Voice / digital-audio enable flag. Mirrors `DAT_2d5d_3f97`
+	/// (`_PlayerRecord +0x2d`). Set to 1 by `_NewPlayer @ 1c33:0fa3`,
+	/// toggled by the SoundOn / SoundOff hot-rects in `_DoSetup @
+	/// 1f78:044e` (verified at `_SetupSettings` 1f78:0076 reading
+	/// the same byte to colour the on/off labels). Gates every
+	/// `_PlayVoice` and `_SpoolSound` call site (clue voices,
+	/// partner speech, intro VO etc. — see `_DoChoosePartner`,
+	/// `_DisplayClue`, `_SayKDDigital` xrefs).
+	bool _voiceOn = true;
 
 	Common::RandomSource _rng;
 
@@ -347,6 +458,12 @@ private:
 	/// 202f:05cb`). Constructed alongside `_music` in `run()`.
 public:
 	AudioPlayer *_audio = nullptr;
+
+	/// Public setter for `_nextScreen` so site loop / inline screens
+	/// can drive the screen-driver state machine without making the
+	/// member itself public. Mirrors the original's direct write to
+	/// `_NextScreen @ 2d5d:3f26` from anywhere in the engine.
+	void setNextScreen(ScreenId s) { _nextScreen = s; }
 };
 
 } // End of namespace EEM

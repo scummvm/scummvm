@@ -61,10 +61,7 @@ const uint kPalHighScore       = 0x27;
 // header (description / thumbnail / playtime) is appended/parsed
 // separately by `Engine::saveGameState` / `MetaEngine::readSavegameHeader`,
 // so we don't need a magic word or our own metadata fields.
-//
-//   v1 — initial schema: name + mysteriesSolved + partner +
-//        optional mystery sub-state.
-const byte kSaveBodyVer = 1;
+const byte kSaveBodyVer = 3;
 
 // 11x16 mouse cursor — replaces the DOS hardware cursor wired in by
 // _InitMouse @ 152d:018b (INT 33h). The original game sets the cursor
@@ -128,6 +125,7 @@ Common::Error EEMEngine::run() {
 	// which `_AIL_register_driver`s SBDIG.ADV / PASDIG.ADV alongside
 	// the MIDI driver.
 	_audio = new AudioPlayer(this);
+	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
 	// _InitMouse @ 152d:018b in the original — install our 11x16 arrow,
@@ -146,35 +144,30 @@ Common::Error EEMEngine::run() {
 
 	// If the user chose "Load" before pressing Play, the framework
 	// invokes `loadGameState` which sets up `_mystery` and `_partner`.
-	// Honour that by skipping the intros and going straight to the
-	// loaded mystery's site loop.
+	// Honour that by skipping the intros and dropping into the screen-
+	// driver loop just past the briefing — the loaded mystery already
+	// knows its current site, so we resume at MAP (the original's
+	// post-briefing state, set by handler 0 at 1a35:0e1d).
 	const int wantedSave = ConfMan.hasKey("save_slot")
 		? ConfMan.getInt("save_slot") : -1;
+	bool resumed = false;
 	if (wantedSave >= 0) {
 		const Common::Error err = loadGameState(wantedSave);
 		if (err.getCode() == Common::kNoError && _mystery.isLoaded()) {
 			debugC(1, kDebugGeneral, "Resuming from slot %d at mystery %u",
 				   wantedSave, _mystery.number());
 			CursorMan.showMouse(true);
-			doInitClues();
-			// Original screen 0 → screen 1: after the briefing the
-			// game opens the map (function at 20fe:120b → _DoBigMap)
-			// and only enters a site once the player clicks on one.
-			doBigMap();
-			if (_mystery.isLoaded())
-				doSiteLoop();
-			while (!shouldQuit()) {
-				doCaseSelection();
-				if (!_mystery.isLoaded())
-					break;
-				doInitClues();
-				doBigMap();
-				if (_mystery.isLoaded())
-					doSiteLoop();
-			}
-			return Common::kNoError;
+			_nextScreen = kScreenMap;
+			resumed = true;
 		}
 	}
+
+	// Skip the entire intro chain (logos + anims + name entry +
+	// partner pick) when resuming a saved profile — the partner is
+	// already known, the player has already named themselves, and the
+	// loaded mystery's site loop is what they want to see again.
+	if (resumed)
+		goto screen_loop;
 
 	// Reproduces _DoOpeningAnims @ 2520:082a:
 	//   EA Kids logo (PIC) -> HighScore Productions logo (PIC) ->
@@ -254,36 +247,120 @@ Common::Error EEMEngine::run() {
 	// per-mystery `_StartTravelMusic` kicks in.
 	if (_music)
 		_music->stop();
+	// Profile pick (or fresh creation) — `screen8_handler @ 1c33:1012`.
+	// `doProfilePicker` lists existing profiles via `listProfiles()`
+	// and falls through to `doNewPlayer` if none exist or the user
+	// picks "[New Player]".
 	if (!shouldQuit())
-		doNewPlayer();
+		doProfilePicker();
 	if (!shouldQuit())
 		doChoosePartner();
-	if (!shouldQuit())
-		doCaseSelection();
-	if (!shouldQuit() && _mystery.isLoaded()) {
-		// Mark the starting site as active and display the case briefing.
-		// `_DoInitClues` @ 1a35:0411 — case briefing.
-		doInitClues();
-		// Original screen 0 → screen 1: after the briefing the game
-		// opens the map (function at 20fe:120b → `_DoBigMap`) and only
-		// enters a site once the player clicks on one.
-		doBigMap();
-		if (_mystery.isLoaded())
-			doSiteLoop();
 
-		// After a case, loop back to CaseSelection.
-		while (!shouldQuit()) {
+	// Now drop into the screen-driver state machine — same pattern as
+	// `_ScreenDriver @ 1a35:0dc1` + the per-screen handlers in the
+	// table at 1a35:0e5e. The original sets `_NextScreen` either
+	// directly (e.g. `_DisplayCorrect` writes 12 = ACTION) or via the
+	// jumptable handlers (e.g. handler 0 calls `_DoInitClues` then
+	// writes 1 = MAP). The handlers here mirror that exactly: each
+	// case body runs the screen and updates `_nextScreen` for the next
+	// iteration. Sentinel `kScreenInvalid` (0xFFFF) ends the loop —
+	// same as the original's table-end marker.
+	//
+	// Initial value `kScreenAction` matches the original flow at the
+	// tail of `_DoChoosePartner @ 1a35:099d` which sets
+	// `_NextScreen = 0xc` once the partner has been picked. (The
+	// resume path above bypasses this and seeds `kScreenMap` instead.)
+	//
+	// Mid-mystery profile resume: if the profile picker loaded a
+	// save whose `hasMystery` flag was set, `_mystery.isLoaded()` is
+	// true here and the player just re-picked their partner. Drop
+	// straight to MAP rather than ACTION so they don't have to walk
+	// back through the case picker (which would `_mystery.load()`
+	// fresh and discard their site / clue progress). The original
+	// has no equivalent — it persists only profile-level state via
+	// `_PlayerRecord`, not in-progress mysteries — so this is a
+	// ScummVM-only ergonomics improvement.
+	if (!shouldQuit() && !resumed)
+		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
+screen_loop:
+	while (!shouldQuit() && _nextScreen != kScreenInvalid) {
+		const ScreenId current = (ScreenId)_nextScreen;
+		debugC(1, kDebugGeneral, "screenDriver: id=%d", (int)current);
+
+		switch (current) {
+		case kScreenAction:
+			// Post-mystery menu. `_ActionScreen` sets _NextScreen via
+			// its action jumptable (1c33:1be1) — see `doActionScreen`.
+			doActionScreen();
+			break;
+
+		case kScreenChooseMystery:
+			// Handler 10 at 1a35:0e0e calls `_DoChooseMystery` which
+			// presets `_NextScreen = 0` (INIT_CLUES) before
+			// `_CaseSelection`. If the picker bails out without
+			// loading a mystery (no `_ReadMystery` call), drop back
+			// to ACTION instead of falling into a missing case.
 			doCaseSelection();
-			if (!_mystery.isLoaded())
-				break;
+			_nextScreen = _mystery.isLoaded() ? kScreenInitClues
+											  : kScreenAction;
+			break;
+
+		case kScreenInitClues:
+			// Handler 0 at 1a35:0e14 runs `_PreLoad` + `_DoInitClues`
+			// then writes `_NextScreen = 1` (MAP).
 			doInitClues();
-			// Original screen 0 → screen 1: after the briefing the
-			// game opens the map (function at 20fe:120b → _DoBigMap)
-			// and only enters a site once the player clicks on one.
+			_nextScreen = _mystery.isLoaded() ? kScreenMap
+											  : kScreenAction;
+			break;
+
+		case kScreenMap:
+		case kScreenMapAlt:
+			// Handler 1/2 at 1a35:0e25 calls `_DoMapScreen @
+			// 20fe:120b` which manages its own `_NextScreen` writes —
+			// 3 (a site was clicked), 6 (setup), or 0xffff (quit).
+			// Our `doBigMap` keeps the original's "click site, then
+			// enter the site loop" behaviour inline; once it returns
+			// the natural next state is SITE.
 			doBigMap();
-			if (_mystery.isLoaded())
-				doSiteLoop();
+			if (!_mystery.isLoaded())
+				_nextScreen = kScreenAction;
+			else if (_nextScreen == current)
+				_nextScreen = kScreenSite;
+			break;
+
+		case kScreenSite:
+			// Handler 3 at 1a35:0e2c calls `_DoSiteLoop @
+			// 168d:03f4`. Our `doSiteLoop` is a complete loop —
+			// notebook / gallery / accuse / map are dispatched
+			// inline within `SiteScreen::run`. The accusation tail
+			// in `doAccuse` (see ui.cpp) writes the next screen:
+			// kScreenAction on win (matches `_DisplayCorrect @
+			// 1df2:0895` writing 0xc) or kScreenSite on lose
+			// (matches `_DisplayAlibi @ 1df2:043f` snapping back
+			// via `_LastScreen`).
+			doSiteLoop();
+			if (!_mystery.isLoaded())
+				_nextScreen = kScreenAction;
+			else if (_nextScreen == current)
+				_nextScreen = kScreenInvalid;  // user quit
+			break;
+
+		case kScreenSetup:
+			// Handler 6 at 1a35:0e48 calls `_DoSetup @ 1f78:044e`.
+			// Reachable via the BigMap setup button which writes
+			// `_NextScreen = 6` (verified at 20fe:0c33). The
+			// original sets `_NextScreen = _LastScreen` on entry,
+			// then the toggle UI returns when ESC / Back is hit;
+			// `doSetup` sets `_nextScreen` itself.
+			doSetup();
+			break;
+
+		default:
+			warning("screenDriver: unhandled screen id %d", (int)current);
+			_nextScreen = kScreenInvalid;
+			break;
 		}
+		_lastScreen = current;
 	}
 
 	debugC(1, kDebugGeneral, "EEM engine exiting");
@@ -564,8 +641,14 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 										 bool isAutosave) {
 	(void)isAutosave;
 
+	// Body header: one byte version. `Common::Serializer::setVersion`
+	// alone doesn't write/read the version — we emit it explicitly so
+	// `loadGameStream` knows which fields are present. Older saves
+	// (v1) lack `_chainStage`; newer ones include it.
 	Common::Serializer s(nullptr, stream);
 	s.setVersion(kSaveBodyVer);
+	byte ver = kSaveBodyVer;
+	s.syncAsByte(ver);
 
 	// Profile-level state — mirrors the original `_PlayerRecord` body
 	// at `2d5d:3f6a` (159 bytes, written by `_SavePlayerRecord @
@@ -590,6 +673,10 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	s.syncString(_playerName);
 	s.syncBytes(_mysteriesSolved, sizeof(_mysteriesSolved));
 	s.syncAsByte(_partner);
+	// v2+: chain-stage tier (1=Junior, 2=Senior, 3=Master).
+	s.syncAsByte(_chainStage);
+	// v3+: voice on/off flag (DAT_2d5d_3f97).
+	s.syncAsByte(_voiceOn);
 
 	// ScummVM-only extension: persist the in-progress mystery so the
 	// player can resume mid-case. The original engine has no such
@@ -605,8 +692,8 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	}
 
 	debugC(1, kDebugGeneral,
-		   "Saved profile name=%s partner=%u mystery=%d autosave=%d",
-		   _playerName.c_str(), _partner,
+		   "Saved profile name=%s partner=%u stage=%u mystery=%d autosave=%d",
+		   _playerName.c_str(), _partner, _chainStage,
 		   hasMystery ? (int)_mystery.number() : -1,
 		   isAutosave ? 1 : 0);
 	return Common::kNoError;
@@ -614,7 +701,14 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 
 Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer s(stream, nullptr);
-	s.setVersion(kSaveBodyVer);
+	byte ver = 0;
+	s.syncAsByte(ver);
+	if (ver > kSaveBodyVer) {
+		warning("loadGameStream: save body version %u newer than %u — refusing",
+				ver, kSaveBodyVer);
+		return Common::kReadingFailed;
+	}
+	s.setVersion(ver);
 
 	s.syncString(_playerName);
 	if (_playerName.empty())
@@ -622,6 +716,10 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 	s.syncBytes(_mysteriesSolved, sizeof(_mysteriesSolved));
 	s.syncAsByte(_partner);
+	s.syncAsByte(_chainStage);
+	s.syncAsByte(_voiceOn);
+	if (_audio)
+		_audio->setVoiceEnabled(_voiceOn);
 
 	bool hasMystery = false;
 	s.syncAsByte(hasMystery);

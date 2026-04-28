@@ -65,6 +65,12 @@ void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 // and `renderStaticDrops`.
 void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
 					   int x, int y) {
+	// Top-left semantics. Used for static drops (`_AddDrop @
+	// 172b:1a77` which calls `_Rect_Move_Mask(..., x, y, ...)` with
+	// the raw (x, y) and ignores per-frame anchors) and any other
+	// non-animated overlay. Animation rendering should go through
+	// `blitAnimFrameAnchored` instead so per-frame anchor offsets
+	// (miscflags = X, rowoff = Y) apply correctly.
 	if (!screen)
 		return;
 	const byte transp = (byte)(p.flags >> 8);
@@ -76,6 +82,40 @@ void blitMaskedSurface(Graphics::Surface *screen, const Picture &p,
 		byte *dst = (byte *)screen->getBasePtr(0, dstY);
 		for (int col = 0; col < p.surface.w; col++) {
 			const int dstX = x + col;
+			if (dstX < 0 || dstX >= screen->w)
+				continue;
+			if (src[col] != transp)
+				dst[dstX] = src[col];
+		}
+	}
+}
+
+void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
+						   int anchorX, int anchorY) {
+	// `_UpdateAnimations @ 172b:09c1` blits each animation frame at
+	// `(anchor_x - puVar5[4], anchor_y - puVar5[3])` where puVar5[3]/[4]
+	// are the per-frame `rowoff` / `miscflags` values from the
+	// 16-byte PicData header. Both are SIGNED 16-bit anchor offsets
+	// — when frames have varying anchors (anim 0x14 BigMap walk-
+	// cycle has miscflags = -2 per cell, anim 0x07 has rowoff up to
+	// 61), the sprite actually translates across the screen as it
+	// cycles through cells. Without this, the partner "shakes in
+	// place" instead of walking. (Transparency still comes from
+	// `flags >> 8`, verified at the `_Rect_Move_Mask(..., *thePic >>
+	// 8)` call — NOT from miscflags as an earlier comment claimed.)
+	if (!screen)
+		return;
+	const int blitX = anchorX - (int)(int16)p.miscflags;
+	const int blitY = anchorY - (int)(int16)p.rowoff;
+	const byte transp = (byte)(p.flags >> 8);
+	for (int row = 0; row < p.surface.h; row++) {
+		const int dstY = blitY + row;
+		if (dstY < 0 || dstY >= screen->h)
+			continue;
+		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
+		byte *dst = (byte *)screen->getBasePtr(0, dstY);
+		for (int col = 0; col < p.surface.w; col++) {
+			const int dstX = blitX + col;
 			if (dstX < 0 || dstX >= screen->w)
 				continue;
 			if (src[col] != transp)
@@ -136,39 +176,286 @@ const uint16 kKdAnimTable[6][6] = {
 	{ 0x06, 0x06, 6, 6, 80, 80 }, // 5 — same anim both partners
 };
 
-// Sequence-script lookup. Entries copied verbatim from
-// `_AnimationSequences @ 29be:22d4` walked through to the next 0x80.
-// Each script is a u16[] of frame indices terminated by 0x80; we
-// don't yet handle 0x81 jumps (none of the kdAnim sequences use
-// them — verified). seqnum == animId for these calls (per
-// `_PlayAnimation` 172b:1f5d push order).
-struct KdScript {
+// Animation script table. Mirrors `_AnimationSequences @ 29be:22d4`
+// (a 55-entry table of far ptrs, each pointing to a u16-frame-index
+// stream terminated by 0x80; 0x81 marks a jump that we don't see in
+// the partner subset and so don't yet implement).
+//
+// `_NewAnimation @ 172b:06e1` reads the script via
+// `_AnimationSequences[anim_id]` and stores the pointer in
+// `DAT_2d5d_3eaf[i*0xb]`. `_UpdateAnimations @ 172b:09c1` then walks
+// it one entry per `_CheckFrameRate` tick (~100 ms): the value at
+// `script[index]` is the frame to render; 0x80 resets index to 0
+// (loop). So a script like `[0,0,0,0,0,0,0,0,0,2]` renders nine ticks
+// of frame 0 then one tick of frame 2 → the natural "blink with long
+// idle hold" cadence.
+//
+// We use the same scripts for the wait anims (`renderPartner`) AND
+// the kd-clue reaction anims (`playKdAnim`), since both call
+// `_NewAnimation` in the original — only the state field differs (1
+// = looping, 4 = one-shot). seqnum == animId per `_PlayAnimation`
+// 172b:1f5d push order.
+//
+// Each entry was read directly from the EXE via Ghidra; cross-checked
+// against `_NewAnimation`'s read. Frame counts include only the
+// playable frames (the trailing 0x80 is the terminator, not a frame).
+struct AnimScript {
 	uint16 seqnum;
 	uint8 len;
-	uint8 frames[20];  // long enough for any kdAnim script
+	uint8 frames[28];  // longest partner-subset script is 26 frames (anim 2)
 };
-const KdScript kKdScripts[] = {
-	// seqnum 1 (29be:188a) — head bob
+const AnimScript kAnimScripts[] = {
+	// 0x00 (29be:185e) — Jake speaker-0 wait: nine idle, one blink, loop
+	{ 0x00, 10, { 0,0,0,0,0,0,0,0,0,2 } },
+	// 0x01 (29be:188a) — Jake PDA idle: alternating head bob with peak
 	{ 0x01, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
-	// seqnum 2 (29be:18aa) — short blip then long pause
-	{ 0x02, 16, { 0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0 } },
-	// seqnum 3 (29be:18e0) — Jake "lift, hold, lower" gesture
+	// 0x02 (29be:18aa) — Jake gallery: brief wave, long hold, second
+	// wave, hold (CONFIRMED 26 frames — earlier table was truncated to
+	// 16 which dropped the second wave cycle).
+	{ 0x02, 26, { 0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,0,0 } },
+	// 0x03 (29be:18e0) — Jake "lift, hold, lower" gesture
 	{ 0x03,  9, { 0,1,2,3,2,2,2,1,0 } },
-	// seqnum 4 (29be:18f4) — bigger gesture (camera flash-style)
+	// 0x04 (29be:18f4) — Jake bigger gesture (camera flash-style)
 	{ 0x04, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
-	// seqnum 5 (29be:1910) — held idle with a single peak
+	// 0x05 (29be:1910) — Jake/Jenny shared (speaker 5): held idle, peak
 	{ 0x05, 13, { 0,0,0,1,2,3,2,1,0,0,0,0,0 } },
-	// seqnum 6 (29be:192c) — empty (immediate END)
+	// 0x06 (29be:192c) — speaker 6 partner: empty (immediate END,
+	// renders nothing — verified at 29be:192c byte 0 = 0x80)
 	{ 0x06,  0, { 0 } },
-	// seqnum 0xb (29be:188a, same as 1) — Jenny PDA idle
+	// 0x07 (29be:192e) — Jake walk-cycle (10 frames: 0..9)
+	{ 0x07, 10, { 0,1,2,3,4,5,6,7,8,9 } },
+	// 0x08 (29be:1944) — Jake stand-still with very late blink
+	{ 0x08,  8, { 0,0,0,0,0,0,0,1 } },
+	// 0x09 (29be:1956) — short blip animation
+	{ 0x09,  9, { 0,0,0,1,0,0,0,0,0 } },
+	// 0x0a — Jenny speaker-0 wait (alias of 0x00 in the binary)
+	{ 0x0a, 10, { 0,0,0,0,0,0,0,0,0,2 } },
+	// 0x0b — Jenny PDA idle (alias of 0x01)
 	{ 0x0b, 15, { 0,1,2,0,1,0,2,1,0,1,0,1,2,1,0 } },
-	// seqnum 0xc (29be:18e0, same as 3) — Jenny "take a picture"
+	// 0x0c — Jenny "take a picture" (alias of 0x03)
 	{ 0x0c,  9, { 0,1,2,3,2,2,2,1,0 } },
-	// seqnum 0xd (29be:18f4, same as 4) — Jenny big gesture
+	// 0x0d — Jenny big gesture (alias of 0x04)
 	{ 0x0d, 13, { 0,1,2,3,4,5,4,4,4,3,2,1,0 } },
-	// seqnum 0x10 (29be:1956) — Jenny short anim
+	// 0x0e — alias of 0x06 (empty)
+	{ 0x0e,  0, { 0 } },
+	// 0x0f — alias of 0x09
+	{ 0x0f,  9, { 0,0,0,1,0,0,0,0,0 } },
+	// 0x10 — Jenny gallery wait (alias of 0x09 — verified at 29be:1956)
 	{ 0x10,  9, { 0,0,0,1,0,0,0,0,0 } },
+	// 0x11 (29be:1992) — Jenny entrance count-up: 0..7. Used by
+	// `_DoBigMap` when `_LastScreen == 2` (BigMap entrance one-shot).
+	{ 0x11,  8, { 0,1,2,3,4,5,6,7 } },
+	// 0x12 (29be:197e) — Jake entrance count-down 8..0. Used by
+	// `_DoBigMap` (entrance one-shot, partner-specific exit cell).
+	{ 0x12,  9, { 8,7,6,5,4,3,2,1,0 } },
+	// 0x13 (29be:1992, alias of 0x11) — Jake walk-cycle 0..7,
+	// looped during BigMap idle.
+	{ 0x13,  8, { 0,1,2,3,4,5,6,7 } },
+	// 0x14 (29be:196a) — BigMap idle walk-cycle 0..8 (9 cells),
+	// partner shifts feet while you pick a site.
+	{ 0x14,  9, { 0,1,2,3,4,5,6,7,8 } },
+	// 0x15 (29be:185e, alias of 0x00) — Jake CaseSelection greeter:
+	// nine idle, one blink, loop. Same blink cadence as the site
+	// loop's wait anim (animID 0x00).
+	{ 0x15, 10, { 0,0,0,0,0,0,0,0,0,2 } },
+	// 0x16 (29be:185e, alias of 0x00) — Jenny CaseSelection greeter,
+	// same blink script as 0x15.
+	{ 0x16, 10, { 0,0,0,0,0,0,0,0,0,2 } },
+	// Briefing animations — `_DoInitClues @ 1a35:0411` calls
+	// `_NewAnimation(..., (PicData *)CONCAT22(0x17, ...), 1, ...)`
+	// for the game animation (always anim ID 0x17 — even Jenny's
+	// briefing reuses Jake's SCRIPT, even though the loaded ANI.DBD
+	// cells come from her partner-specific entry 0x3b). Same pattern
+	// for book (0x18 always) and nancy (0x19 always).
+	//
+	// AnimScript len was 28 — these scripts overflow that. Bump
+	// `frames[]` is fine because we just need to fit 30 frames per
+	// briefing entry. We size `frames` to 36 so all five scripts fit
+	// (longest is 0x18 at 30 frames).
 };
+static_assert(true, "see kAnimScriptsLong below for >28-frame scripts");
+
+// Scripts longer than 28 frames live here so the main `kAnimScripts`
+// table can keep its tight `frames[28]` storage (the lookup in
+// `findAnimScript` checks both arrays). Used for the briefing
+// animations whose original scripts run 30 frames each.
+struct AnimScriptLong {
+	uint16 seqnum;
+	uint8 len;
+	uint8 frames[36];
+};
+const AnimScriptLong kAnimScriptsLong[] = {
+	// 0x17 (29be:221a) — briefing game count-up 0..29 (30 frames),
+	// drives the per-tick frame walk of the game piece animation
+	// during `_DoInitClues`.
+	{ 0x17, 30, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+				  20,21,22,23,24,25,26,27,28,29 } },
+	// 0x18 (29be:2296) — briefing book: counts up to cell 8 then
+	// holds for 16 ticks (the "thinking" pose) then count up 9..15.
+	{ 0x18, 30, { 0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8,
+				  8,8,8,8,8,8,8,9,10,11,12,13,14,15 } },
+	// 0x19 (29be:2258) — briefing nancy: 18 idle ticks then
+	// count-up 1..12 (the late-arriving sidekick pose).
+	{ 0x19, 30, { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+				  1,2,3,4,5,6,7,8,9,10,11,12 } },
+};
+
+// Look up the script for `seqnum`. Returns the frame array + length,
+// or `(nullptr, 0)` if no script is known — caller falls back to
+// flipbook cycling so unknown anims still animate (just without idle
+// holds).
+struct AnimScriptRef {
+	const uint8 *frames;
+	uint8 len;
+};
+static AnimScriptRef findAnimScript(uint16 seqnum) {
+	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++) {
+		if (kAnimScripts[i].seqnum == seqnum) {
+			AnimScriptRef r;
+			r.frames = kAnimScripts[i].frames;
+			r.len = kAnimScripts[i].len;
+			return r;
+		}
+	}
+	for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLong); i++) {
+		if (kAnimScriptsLong[i].seqnum == seqnum) {
+			AnimScriptRef r;
+			r.frames = kAnimScriptsLong[i].frames;
+			r.len = kAnimScriptsLong[i].len;
+			return r;
+		}
+	}
+	AnimScriptRef r;
+	r.frames = nullptr;
+	r.len = 0;
+	return r;
+}
+
+void auditPartnerAnims(EEMEngine *vm) {
+	// Cross-check every registered partner-subset script against the
+	// underlying ANI.DBD entry it references. If the script asks for
+	// a frame past the anim's actual frame count, the visible result
+	// is "missing frames" — that's the user-reported symptom we
+	// want to catch and fix here, not paper over with a clamp.
+	if (!vm)
+		return;
+	DBDArchive &ani = vm->getAni();
+
+	// Helper: audit one (id, frames, len) tuple — log a warning if
+	// the script asks for a frame the ANI.DBD entry doesn't have.
+	struct Walker {
+		static void check(DBDArchive &ani, uint16 id, const uint8 *frames, uint8 len) {
+			if (len == 0)
+				return;
+			Animation a;
+			if (!ani.loadAnimation(id, a) || a.empty()) {
+				debugC(1, kDebugSite,
+					   "auditPartnerAnims: anim 0x%02x failed to load", id);
+				return;
+			}
+			uint maxRequested = 0;
+			for (uint j = 0; j < len; j++)
+				if (frames[j] > maxRequested)
+					maxRequested = frames[j];
+			if (maxRequested >= a.size()) {
+				warning("anim 0x%02x: script wants frame %u but ANI.DBD has "
+						"only %u — frames will be clamped (verify script "
+						"reading from `_AnimationSequences[0x%02x]` against "
+						"Ghidra)",
+						id, maxRequested, (uint)a.size(), id);
+			} else {
+				debugC(2, kDebugSite,
+					   "anim 0x%02x: %u cells, script max=%u, len=%u",
+					   id, (uint)a.size(), maxRequested, len);
+			}
+		}
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++)
+		Walker::check(ani, kAnimScripts[i].seqnum,
+					  kAnimScripts[i].frames, kAnimScripts[i].len);
+	for (uint i = 0; i < ARRAYSIZE(kAnimScriptsLong); i++)
+		Walker::check(ani, kAnimScriptsLong[i].seqnum,
+					  kAnimScriptsLong[i].frames, kAnimScriptsLong[i].len);
+
+	// Per-frame anchor-offset audit. The original `_UpdateAnimations
+	// @ 172b:09c1` blits each frame at `(anchor_x - frame.miscflags,
+	// anchor_y - frame.rowoff)`. Our `blitMaskedSurface` ignores
+	// those offsets — it treats the WaitAnims (anchor_x, anchor_y)
+	// as the top-left. That's fine when every frame has
+	// `miscflags == 0 && rowoff == 0`; if any frame has a non-zero
+	// anchor, the partner sprite jumps between cells. Log the
+	// offending IDs so we know whether to plumb anchors through
+	// `partnerFrameAtTick` callers.
+	// Audit covers every animID we register a script for — the
+	// partner-subset (0x00..0x16, used by the wait anims, kd-clue
+	// reactions, BigMap, Notebook, Gallery, CaseSelection greeter)
+	// AND the briefing-subset (0x17..0x19, the
+	// game/book/nancy anims driven by `_DoInitClues @ 1a35:0411`).
+	const uint16 partnerIds[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
+								   0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
+								   0x0d, 0x0f, 0x10, 0x11, 0x12, 0x13,
+								   0x14, 0x15, 0x16, 0x17, 0x18, 0x19 };
+	for (uint i = 0; i < ARRAYSIZE(partnerIds); i++) {
+		const uint16 id = partnerIds[i];
+		Animation a;
+		if (!ani.loadAnimation(id, a) || a.empty())
+			continue;
+		bool anyAnchor = false;
+		int rowMin = 0, rowMax = 0, miscMin = 0, miscMax = 0;
+		for (uint f = 0; f < a.size(); f++) {
+			const Picture &fr = a[f];
+			const int sRow  = (int)(int16)fr.rowoff;
+			const int sMisc = (int)(int16)fr.miscflags;
+			if (sRow != 0 || sMisc != 0) {
+				if (!anyAnchor) {
+					rowMin = rowMax = sRow;
+					miscMin = miscMax = sMisc;
+					anyAnchor = true;
+				} else {
+					rowMin = MIN(rowMin, sRow);
+					rowMax = MAX(rowMax, sRow);
+					miscMin = MIN(miscMin, sMisc);
+					miscMax = MAX(miscMax, sMisc);
+				}
+			}
+		}
+		if (anyAnchor) {
+			// `_UpdateAnimations @ 172b:09c1` reads these as signed
+			// 16-bit values via `puVar5[3]/[4]`, so log them with
+			// the sign preserved — earlier the log printed unsigned
+			// 65534 instead of -2.
+			debugC(1, kDebugSite,
+				   "anim 0x%02x: per-frame anchor (rowoff [%d..%d], "
+				   "miscflags [%d..%d]) — handled by "
+				   "`blitAnimFrameAnchored`",
+				   id, rowMin, rowMax, miscMin, miscMax);
+		}
+	}
+}
+
+// Pick the frame index to render at `tickMs` for the looping
+// animation `seqnum` whose underlying ANI.DBD entry has `numFrames`
+// frames. Mirrors the looping path of `_UpdateAnimations`: walk the
+// script one entry per ~100 ms `_CheckFrameRate` tick, wrap on the
+// 0x80 terminator. Exposed (non-static) so the BigMap, CaseSelection
+// greeter, Notebook, and Gallery render paths in `ui.cpp` can use the
+// same cadence — without this, every off-site partner rendering
+// flipbook-cycles ALL cells of the ANI entry (no idle holds, no
+// timing variations) which is the user-reported "constantly looping"
+// symptom.
+uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
+	const AnimScriptRef s = findAnimScript(seqnum);
+	const uint kFramePeriodMs = 100;
+	if (!s.frames || s.len == 0)
+		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
+	const uint scriptIdx = (uint)((tickMs / kFramePeriodMs) % s.len);
+	const uint frame     = s.frames[scriptIdx];
+	// The script can in theory request a frame that's outside the
+	// animation's actual frame count (a misencoded script). Clamp so
+	// we don't read past `anim[]` in the caller.
+	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
+}
 
 void SiteScreen::enter(uint siteNum) {
 	if (!_mystery || !_mystery->isLoaded()) {
@@ -180,6 +467,13 @@ void SiteScreen::enter(uint siteNum) {
 				siteNum, _mystery->numSites());
 		return;
 	}
+
+	// Reset the wait-anim phase so the partner starts fresh from
+	// script[0] when entering. Mirrors `_DoSiteLoop @ 168d:0436`
+	// where `_NewAnimation` sets the new slot's frame index to
+	// 0xffff (= -1, becomes 0 on the first `_UpdateAnimations`
+	// tick).
+	_waitPhaseAnchor = g_system->getMillis();
 
 	// Capture whether this is the first time the player enters this
 	// site BEFORE we mark it visited — `_DoSiteLoop @ 168d:03f4`
@@ -347,8 +641,18 @@ void SiteScreen::run() {
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					if (_vm->areYouSure())
+					if (_vm->areYouSure()) {
+						// Mirrors `_DoSiteLoop @ 168d:07b7` ESC path:
+						// `_NextScreen = 1` (back to MAP) after the
+						// areYouSure confirm. Without explicitly
+						// writing it here, the run() loop would see
+						// _nextScreen unchanged and treat it as a
+						// quit-engine signal — abandoning the case.
+						// Going to MAP keeps the case alive so the
+						// player can continue from a different site.
+						_vm->setNextScreen(kScreenMap);
 						return;
+					}
 					enter(cur);
 					break;
 				case Common::KEYCODE_m:
@@ -646,8 +950,6 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	if (!screen)
 		return;
 
-	const uint32 kFramePeriodMs = 100; // ~10 FPS, in line with `_CheckFrameRate`.
-
 	for (uint i = 0; i < numAnims; i++) {
 		const uint dropOff = 0x48 + i * 6;
 		const int16 animId = (int16)READ_LE_UINT16(site + dropOff + 0);
@@ -658,8 +960,12 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 		Animation anim;
 		if (!_vm->getAni().loadAnimation((uint)animId, anim) || anim.empty())
 			continue;
-		const uint frameIdx = (uint)((tickMs / kFramePeriodMs) % anim.size());
-		blitMaskedSurface(screen, anim[frameIdx], x, y);
+		const uint frameIdx = partnerFrameAtTick((uint16)animId,
+												  (uint)anim.size(), tickMs);
+		// Animated drops go through `_NewAnimation` in the original,
+		// so `_UpdateAnimations` applies per-frame anchor offsets —
+		// route through the anchored blitter.
+		blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
 	}
 
 	g_system->unlockScreen();
@@ -763,16 +1069,31 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
 		return;
 
-	// `_UpdateAnimations @ 172b:09c1` advances the partner's frame
-	// every `_CheckFrameRate` tick. We pick the frame from a global
-	// 100 ms clock so the partner cycles in sync with the animated
-	// drops.
-	const uint32 kFramePeriodMs = 100;
-	const uint frameIdx = (uint)((tickMs / kFramePeriodMs) % anim.size());
+	// `_UpdateAnimations @ 172b:09c1` walks the per-anim script (from
+	// `_AnimationSequences[seqnum]`) one entry per `_CheckFrameRate`
+	// tick (~100 ms): render `script[index]`, advance, wrap on 0x80.
+	// That's how the original gets long idle holds with brief blinks
+	// — naive flipbook cycling (`tick % nFrames`) loses those pauses
+	// and makes the partner constantly fidget. `partnerFrameAt` picks
+	// the right frame; if no script is registered for this anim it
+	// falls back to flipbook so unknown anims still move.
+	// Use the relative phase anchor instead of the raw `tickMs` so
+	// the wait anim resumes from script[0] after each kdAnim
+	// one-shot ends — matching the original's `_PlayAnimation @
+	// 172b:1f5d` resetting the resumed slot's frame index to
+	// 0xffff. Without this, the wait anim snaps mid-cycle every
+	// time we return from a clue display.
+	const uint32 elapsed = (tickMs >= _waitPhaseAnchor)
+							? (tickMs - _waitPhaseAnchor)
+							: tickMs;
+	const uint frameIdx = partnerFrameAtTick((uint16)animId,
+											  (uint)anim.size(), elapsed);
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
-	blitMaskedSurface(screen, anim[frameIdx], x, y);
+	// Partner sprite — anchor-aware blit so per-frame `miscflags` /
+	// `rowoff` apply (e.g. the BigMap walk-cycle's -2 px shift).
+	blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
 	g_system->unlockScreen();
 }
 
@@ -1012,7 +1333,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 	// gesture (Jenny taking a picture, etc.) finishes before the
 	// speaker portrait + speech balloon appear.
 	//
-	// `kKdAnimTable` and `kKdScripts` live at file scope above.
+	// `kKdAnimTable` and `kAnimScripts` live at file scope above.
 	if (num >= ARRAYSIZE(kKdAnimTable))
 		return;
 
@@ -1027,15 +1348,14 @@ void EEMEngine::playKdAnim(uint16 num) {
 		return;
 	}
 
-	const uint8 *frames = nullptr;
-	uint frameCount = 0;
-	for (uint i = 0; i < ARRAYSIZE(kKdScripts); i++) {
-		if (kKdScripts[i].seqnum == animId) {
-			frames = kKdScripts[i].frames;
-			frameCount = kKdScripts[i].len;
-			break;
-		}
-	}
+	// `_DoKDAnim` (168d:028a) calls `_PlayAnimation` with state=4 (one-
+	// shot), which `_UpdateAnimations` walks until it sees the 0x80
+	// terminator and then frees the slot. The same script the
+	// site-loop wait anim uses (looping) is what the one-shot plays
+	// through ONCE here.
+	const AnimScriptRef s = findAnimScript(animId);
+	const uint8 *frames = s.frames;
+	uint frameCount     = s.len;
 	if (frameCount == 0) {
 		// Fallback: linear playback through anim cells (better than
 		// nothing if a future kdAnim references an unscripted anim).
@@ -1082,22 +1402,13 @@ void EEMEngine::playKdAnim(uint16 num) {
 			memcpy((byte *)scratch.getBasePtr(0, row),
 				   (const byte *)bg.getBasePtr(0, row), 320);
 		}
-		const int w = MIN<int>(fr.surface.w, 320 - px);
-		const int h = MIN<int>(fr.surface.h, 200 - py);
-		for (int row = 0; row < h; row++) {
-			const int dstY = py + row;
-			if (dstY < 0)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < w; col++) {
-				const int dstX = px + col;
-				if (dstX < 0)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		// Anchor-aware: kdAnim cells (0x03/0x04/0x0c/0x0d ...) have
+		// non-zero per-frame `miscflags`/`rowoff` (anim 0x03 has
+		// rowoff up to 9, anim 0x04 has miscflags = -2). Without
+		// applying those, the camera-flash gesture pop-up appears
+		// at a fixed pixel rather than translating across cells.
+		(void)transp;  // anchored blitter recomputes from p.flags
+		blitAnimFrameAnchored(scratch.surfacePtr(), fr, px, py);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
