@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/ustr.h"
 
+#include "audio/mixer.h"
 #include "graphics/cursor.h"
 #include "image/pict.h"
 #include "graphics/framelimiter.h"
@@ -37,6 +38,10 @@
 #include "graphics/macgui/macwindowmanager.h"
 
 #include "fool/siphash/halfsip.h"
+
+namespace Audio {
+class PCSpeakerStream;
+}
 
 namespace Fool {
 
@@ -550,6 +555,10 @@ struct SynthRec {
 typedef SynthRec * SynthPtr;
 
 struct SWSynthRec : SynthRec {
+
+	SWSynthRec() {
+		mode = swMode;
+	}
 	Common::Array<Tone> triplets;
 };
 
@@ -609,6 +618,19 @@ public:
 
 	// toolbox_sound.cpp
 
+	// PROCEDURE GetSoundVol (VAR level : INTEGER);
+	// GetSoundVol returns the current speaker volume, from 0 (silent) to 7 (loudest).
+	int16 GetSoundVol();
+
+	// PROCEDURE SetSoundVol (level: INTEGER);
+	// SetSoundVol immediately sets the speaker volume to the specified level, from 0 (silent) to 7 (loudest).
+	void SetSoundVol(int16 level);
+
+	// FUNCTION SoundDone: BOOLEAN;
+	// SoundDone returns TRUE if the Sound Driver isn't currently producing sound and there are no
+	// asynchronous StartSound calls pending; otherwise it returns FALSE.
+	bool SoundDone();
+
 	// PROCEDURE StartSound (synthRec: Ptr; numBytes: LONGINT; completionRtn: ProcPtr);
 	// StartSound begins producing the sound described by the synthesizer buffer pointed to by
 	// synthRec. NumBytes indicates the size of the synthesizer buffer (in bytes), and completionRtn
@@ -619,6 +641,11 @@ public:
 	// • Otherwise, the sound will be produced asynchronously and the routine pointed to by
 	// completionRtn will be executed when the sound finishes.
 	void StartSound(SynthPtr synthRec, uint32 numBytes, ProcPtr completionRtn);
+
+	// PROCEDURE StopSound;
+	// StopSound immediately stops the current StartSound call (if any), executes the current
+	// StartSound call's completion routine (if any), and cancels any pending asynchronous StartSound calls.
+	void StopSound();
 
 	// toolbox_resman.cpp
 
@@ -1290,6 +1317,8 @@ private:
 	Common::Point _mouse;
 	uint16 _modifiers = 0x80;
 	Common::HashMap<uint16, MenuHandle> _menu;
+	Audio::SoundHandle _soundDriver;
+	Audio::PCSpeakerStream *_swSynth;
 
 	Common::List<EventRecord> _events;
 

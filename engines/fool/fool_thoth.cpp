@@ -19,8 +19,6 @@
  *
  */
 
-#include "graphics/managed_surface.h"
-
 #include "fool/fool.h"
 #include "fool/fool_game.h"
 #include "fool/toolbox.h"
