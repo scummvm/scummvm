@@ -1792,13 +1792,15 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		y += h + 7;
 	}
 
-	// Page indicator + selected-points counter directly on PIC.
+	// Page indicator only — the original `_DrawNotes @ 161e:01d0`
+	// has no points display in the PDA notebook (the per-clue point
+	// values are SPOILERS for the chain weighting that the engine
+	// uses internally for `_GetSelectedPoints`). Showing the running
+	// total tells the player exactly when they have enough evidence
+	// to solve, which deflates the deduction step.
 	_font.drawString(&scratch, Common::String::format("p%d/%d",
 							   page + 1, (int)pageStarts.size()),
 					 270, 4, 320, 0x5C);
-	_font.drawString(&scratch, Common::String::format("%d pts",
-							   _mystery.selectedPoints()),
-					 270, 14, 320, 0x5C);
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
@@ -2753,32 +2755,339 @@ uint16 EEMEngine::getKDTextBalloon(byte firstChar) const {
 	return kDigitBalloons[firstChar - '0'];
 }
 
+bool EEMEngine::doAccuseNotes() {
+	// Mirrors the accuse-notes screen at the head of `_DoAccuse @
+	// 1df2:0bdd`:
+	//   * BG: PIC 0x1A7 (the red "accuse-mode" backdrop).
+	//   * `_AccuseNoteRect @ 29be:1048` = (79, 27, 304, 159) holds
+	//     the rendered clue list.
+	//   * Counter at `(0xd1, 0xb)` = `(209, 11)` shows "N clue(s)"
+	//     remaining (`_UpdateSelectionCount @ 1df2:08dd`,
+	//     `_Show_String(0xb, 0xd1, ...)`).
+	//   * Expected count = `6 - DAT_2d5d_3f99`:
+	//       chainStage 1 → 5 clues, 2 → 4 clues, 3 → 3 clues.
+	//   * `_NoteUnselectedColor = 1` (red) for unselected, `0x3c`
+	//     for selected (1df2:0c2c sets it on entry).
+	//   * Click on a clue toggles its selection
+	//     (`_SearchNoteAreas` + `_SwapColors`).
+	//   * Click `_NoteButtons[2]` (rect at `(157, 174, 178, 190)`,
+	//     the original's "go to gallery" button) jumps to the
+	//     evidence check; `_HandleAccuseNoteButton(2)` returns 2
+	//     and the outer loop forces `uStack_8 = uStack_a` to
+	//     trigger `_SolvedCheck`.
+	//   * ESC sets `_NextScreen = 3` and exits.
+	if (!_mystery.isLoaded() || !_font.isLoaded())
+		return false;
+	const byte *ni = _mystery.noteIndex();
+	const uint16 niCount = _mystery.noteIndexCount();
+	if (!ni)
+		return false;
+
+	Picture accuseBg;
+	const bool haveBg = _picsArchive.getPicture(0x1a7, accuseBg);
+
+	// Required count for solving — `6 - chainStage`.
+	const uint expected = (_chainStage >= 1 && _chainStage <= 3)
+		? (uint)(6 - _chainStage)
+		: 5;
+
+	// Build the list of FOUND clue IDs (in clue-ID order; the
+	// original's `_DrawNotes(NULL, 100, ...)` walks `_CluesFound[]`
+	// the same way).
+	Common::Array<uint> found;
+	for (uint i = 0; i < niCount && i < Mystery::kCluesFoundCap; i++) {
+		if (_mystery._cluesFound[i])
+			found.push_back(i);
+	}
+
+	// `_AccuseNoteRect` (79, 27, 304, 159) — text wrap area.
+	const int rectX = 79;
+	const int rectY = 27;
+	const int rectW = 304 - 79;
+	const int rectH = 159 - 27;
+
+	// `_NoteButtons` rects (verified at `29be:0147`). `_DoAccuse`
+	// re-uses the same table as `_DoNotebook`, but only SOLVE /
+	// PAGE NEXT / PAGE PREV do anything; others sit inert.
+	// `_HandleAccuseNoteButton @ 1df2:0990` returns `DI` (initialised
+	// to 0) and only sets `DI = 2` in the `i == 4` branch (asm:
+	// `1df2:09b2: MOV DI, 0x2`). The outer loop's `iVar6 == 2` test
+	// at `1df2:0db2` is checking the HANDLER'S RETURN VALUE, not the
+	// button INDEX — earlier comment had this backwards. So the
+	// SOLVE rect is `[4]` (180, 174, 201, 190), the same icon the
+	// PDA uses to trigger the accuse flow in the first place.
+	const Common::Rect kBtnSolve   (180, 174, 201, 190); // [4] SOLVE
+	const Common::Rect kBtnPageNext(204, 174, 224, 190); // [5] PAGE NEXT
+	const Common::Rect kBtnPagePrev(226, 174, 247, 190); // [6] PAGE PREV
+	const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3] KD HELP
+
+	// Per-page slot rects + their clue IDs (for click hit-testing).
+	Common::Array<Common::Rect> slotRects;
+	Common::Array<uint> slotClues;
+
+	int page = 0;
+	int pageBreaks[16];
+	int numPages = 1;
+	pageBreaks[0] = 0;
+
+	auto rebuildPagination = [&]() {
+		numPages = 1;
+		pageBreaks[0] = 0;
+		const int lineH = _font.getFontHeight() + 1;
+		int y = rectY;
+		for (uint i = 0; i < found.size(); i++) {
+			const uint clueId = found[i];
+			Common::String txt;
+			if (clueId < niCount) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				txt = parseString(_mystery.textAt(textOff),
+								   _playerName, _partner);
+			}
+			Common::Array<Common::String> wrapped;
+			_font.wordWrapText(txt, rectW, wrapped);
+			const int h = (int)wrapped.size() * lineH;
+			if (y + h + 7 > rectY + rectH) {
+				if (numPages < (int)ARRAYSIZE(pageBreaks)) {
+					pageBreaks[numPages++] = (int)i;
+					y = rectY;
+				}
+			}
+			y += h + 7;
+		}
+		if (page >= numPages)
+			page = numPages - 1;
+		if (page < 0)
+			page = 0;
+	};
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveBg)
+			scratch.simpleBlitFrom(accuseBg.surface);
+
+		// Partner sprite at (5, 0x50). The original `_DoAccuse @
+		// 1df2:0c2c` does `_NewAnimation(5, 0x50, partnerCells,
+		// script=2, prior=1)` — same anim cells as the gallery
+		// (anim 2 for Jake / 0x10 for Jenny) with script 0x02. The
+		// `_UpdateAnimations` loop in `_DoAccuse @ 1df2:0bfa` keeps
+		// the slot painting through the entire selection screen;
+		// without an explicit blit here the player sees a partner-
+		// less accuse-mode screen.
+		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+		Animation partnerAni;
+		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+			!partnerAni.empty()) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = partnerFrameAtTick(0x02,
+													  (uint)partnerAni.size(), now);
+			blitAnimFrameAnchored(scratch.surfacePtr(),
+								  partnerAni[frameIdx], 5, 0x50);
+		}
+
+		// Clue list inside `_AccuseNoteRect`. Selected = 0x3c (yellow),
+		// unselected = 1 (red), per `_NoteUnselectedColor = 1` set at
+		// 1df2:0c25 — the red colour is what gives the screen its
+		// "accuse-mode" look together with PIC 0x1A7.
+		slotRects.clear();
+		slotClues.clear();
+		const int lineH = _font.getFontHeight() + 1;
+		const int startIdx = pageBreaks[page];
+		const int endIdx   = (page + 1 < numPages)
+			? pageBreaks[page + 1]
+			: (int)found.size();
+		int y = rectY;
+		uint selectedCount = 0;
+		for (uint i = 0; i < found.size(); i++) {
+			if (_mystery._noteSelected[found[i]])
+				selectedCount++;
+		}
+		for (int i = startIdx; i < endIdx; i++) {
+			const uint clueId = found[i];
+			Common::String txt;
+			if (clueId < niCount) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				txt = parseString(_mystery.textAt(textOff),
+								   _playerName, _partner);
+			}
+			if (txt.empty())
+				txt = Common::String::format("clue %u", clueId);
+			Common::Array<Common::String> wrapped;
+			_font.wordWrapText(txt, rectW, wrapped);
+			const int h = (int)wrapped.size() * lineH;
+			const byte color = _mystery._noteSelected[clueId] ? 0x3c : 0x01;
+			for (uint li = 0; li < wrapped.size(); li++) {
+				_font.drawString(&scratch, wrapped[li], rectX,
+								 y + (int)li * lineH, rectW, color);
+			}
+			slotRects.push_back(Common::Rect(rectX, y,
+											  rectX + rectW, y + h));
+			slotClues.push_back(clueId);
+			y += h + 7;
+		}
+
+		// Counter — `_UpdateSelectionCount(remaining)` at (0xd1, 0xb).
+		const uint remaining = (selectedCount < expected)
+			? expected - selectedCount
+			: 0;
+		const Common::String counter = Common::String::format("%u %s",
+			remaining, remaining == 1 ? "clue" : "clues");
+		_font.drawString(&scratch, counter, 209, 11, 100, 0x0F);
+
+		if (numPages > 1) {
+			_font.drawString(&scratch,
+				Common::String::format("p%d/%d", page + 1, numPages),
+				rectX, 11, 60, 0x0F);
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	rebuildPagination();
+	draw();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return false;
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return false;
+				if (ev.kbd.keycode == Common::KEYCODE_LEFT &&
+					page > 0) {
+					page--;
+					dirty = true;
+				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT &&
+						   page + 1 < numPages) {
+					page++;
+					dirty = true;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				const int mx = ev.mouse.x;
+				const int my = ev.mouse.y;
+				// Page navigation — `_NoteButtons[5]` / `[6]`,
+				// dispatched in `_HandleAccuseNoteButton @
+				// 1df2:0990`. Only effective if there's another
+				// page in that direction; mirrors the
+				// `1 < _CurrentPage` guard at 1df2:09a8 and the
+				// `_NextClue != -1` guard at 1df2:099e.
+				if (kBtnPageNext.contains(mx, my)) {
+					if (page + 1 < numPages) {
+						page++;
+						dirty = true;
+					}
+					continue;
+				}
+				if (kBtnPagePrev.contains(mx, my)) {
+					if (page > 0) {
+						page--;
+						dirty = true;
+					}
+					continue;
+				}
+				// Partner click — `_NoteButtons[3]`. Original
+				// `_HandleAccuseNoteButton` doesn't dispatch this
+				// (no case for i == 3), but the rect is still in
+				// the table; we wire it to the puzzle hint so the
+				// player can ask the partner what to look for
+				// without leaving accuse mode.
+				if (kBtnPartner.contains(mx, my)) {
+					doHelp();
+					dirty = true;
+					continue;
+				}
+				if (kBtnSolve.contains(mx, my)) {
+					// Count selected.
+					uint selected = 0;
+					for (uint i = 0; i < found.size(); i++) {
+						if (_mystery._noteSelected[found[i]])
+							selected++;
+					}
+					if (selected == expected) {
+						// Commit — let the caller do the
+						// `_SolvedCheck` + suspect picker dance.
+						return true;
+					}
+					// Wrong count — `_DoAccuse` only triggers the
+					// check when `uStack_8 == uStack_a`; we just
+					// stay in the loop so the player can keep
+					// adjusting.
+					continue;
+				}
+				// Toggle clue under cursor.
+				for (uint i = 0; i < slotRects.size(); i++) {
+					if (slotRects[i].contains(mx, my)) {
+						const uint clueId = slotClues[i];
+						_mystery._noteSelected[clueId] ^= 1;
+						dirty = true;
+						break;
+					}
+				}
+			}
+		}
+		if (dirty)
+			draw();
+		// Per-tick redraw so the partner sprite cycles. Same
+		// 100 ms cadence as `_CheckFrameRate` + `_UpdateAnimations`
+		// in the original (1df2:0bfa).
+		static uint32 sLastTick = 0;
+		const uint32 now = g_system->getMillis();
+		if (now - sLastTick >= 100) {
+			sLastTick = now;
+			draw();
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
+	return false;
+}
+
 void EEMEngine::doAccuse() {
-	if (!_mystery.isLoaded())
+	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
 	// Mirrors `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
-	//   1. The original notes-selection screen runs first (PIC 0x1A7).
-	//      We skip it because note-selection lives in the PDA in our
-	//      port — the accuse path is reached via the SOLVE button.
-	//   2. EVIDENCE GATE: `_DoAccuse @ 1df2:0bdd` calls `_SolvedCheck`
-	//      (1df2:0c75) before `_DoAccuseGallery`. If `selectedPoints
-	//      <= 99`, the original shows a partner balloon
-	//      (`KDTextIndex[+6]` text + `_SayKDDigital(3)`) and returns
-	//      to `_LastScreen` — the suspect picker is NEVER opened.
-	//      Our previous flow opened the picker and only checked after
-	//      the player committed a suspect; that let the player accuse
-	//      without the required evidence.
-	//   3. If the gate passes:
-	//      a. KD intro balloon (`KDTextIndex[+8]` text + `_SayKDDigital(4)`).
-	//      b. `_GetBackground(0x3f)` + `_DrawGallery()` — portraits at
-	//         the 5 fixed slots (`29be:0x116`).
-	//      c. Click loop on portraits → `_WITCH(picked)` → guilty/alibi.
+	//   1. ACCUSE-NOTES SCREEN (PIC 0x1A7, the red "accuse-mode" BG):
+	//      `_DrawNotes(_AccuseNoteRect, NULL, 100, _NoteSelected)`
+	//      lists every found clue inside the rect at `29be:1048` =
+	//      `(79, 27, 304, 159)`. `_UpdateSelectionCount(remaining)`
+	//      shows "N clue(s)" at `(209, 11)` (ASM: `_Show_String(0xb,
+	//      0xd1, ...)` at 1df2:0907). `_NoteUnselectedColor = 1` is
+	//      the dim red used for unselected entries; selected ones
+	//      get `0x3c`. Click toggles via `_SearchNoteAreas` +
+	//      `_SwapColors`. Expected count = `6 - DAT_2d5d_3f99`
+	//      (= 6 - chainStage):
+	//          stage 1 → 5 clues, stage 2 → 4, stage 3 → 3.
+	//      When the count matches, `_SolvedCheck` decides:
+	//          fail → KD "not enough evidence" balloon → return.
+	//          pass → `_DoAccuseGallery()` (suspect picker).
+	//   2. KD intro balloon (`KDTextIndex[+8]` + `_SayKDDigital(4)`).
+	//   3. `_GetBackground(0x3f)` + `_DrawGallery()` — portraits at
+	//      the 5 fixed slots (`29be:0x116`).
+	//   4. Click loop on portraits → `_WITCH(picked)` → guilty/alibi.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0)
 		return;
 
 	const byte *gd = _mystery.galleryData();
+
+	// ACCUSE-NOTES SCREEN — let the player commit which N clues they
+	// believe solve the case. Mirrors the click-driven selection of
+	// `_DoAccuse @ 1df2:0bdd`'s outer loop. ESC / cancel returns to
+	// the site (matches `_DoAccuse @ 1df2:0c11` writing
+	// `_NextScreen = 3` on ESC).
+	if (!doAccuseNotes()) {
+		_nextScreen = _lastScreen != kScreenInvalid
+						? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
 
 	// Evidence gate. `_DoAccuse @ 1df2:0c75` runs `_SolvedCheck`
 	// before opening the suspect picker; on failure it renders a

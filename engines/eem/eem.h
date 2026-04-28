@@ -188,6 +188,14 @@ public:
 	/// Mirrors `_DoAccuseGallery` @ 1df2:0a31 + `_DisplayEnding` @ 1df2:0548.
 	void doAccuse();
 
+	/// Show the accuse-notes screen (PIC 0x1A7, the red "accuse-mode"
+	/// BG with selectable clue list + "N clues" remaining counter).
+	/// Mirrors the outer loop of `_DoAccuse @ 1df2:0bdd`. Returns
+	/// true if the player committed (selected the chain-required
+	/// number of clues and clicked SOLVE), false if they exited via
+	/// ESC / back. Called from `doAccuse` before the evidence gate.
+	bool doAccuseNotes();
+
 	/// Show a host hint from `KDTextIndex`. Mirrors `_KDHelp` @ 1560:010a +
 	/// `_DisplayHint` @ 1560:0009. Cycles between the two hint slots that
 	/// the original engine tracks via `_SawHelpHint`.
