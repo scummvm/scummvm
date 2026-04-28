@@ -40,7 +40,7 @@
 #include "chamber/anim.h"
 #include "chamber/invent.h"
 #include "chamber/sound.h"
-#include "chamber/savegame.h"
+#include "chamber/saveload.h"
 #include "chamber/ifgm.h"
 
 #if 0

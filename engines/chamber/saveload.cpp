@@ -21,7 +21,7 @@
 
 #include "chamber/chamber.h"
 #include "chamber/common.h"
-#include "chamber/savegame.h"
+#include "chamber/saveload.h"
 #include "chamber/resdata.h"
 #include "chamber/script.h"
 #include "chamber/cga.h"

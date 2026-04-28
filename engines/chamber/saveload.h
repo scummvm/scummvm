@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CHAMBER_SAVEGAME_H
-#define CHAMBER_SAVEGAME_H
+#ifndef CHAMBER_SAVELOAD_H
+#define CHAMBER_SAVELOAD_H
 
 namespace Chamber {
 

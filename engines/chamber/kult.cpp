@@ -35,7 +35,7 @@
 #include "chamber/timer.h"
 #include "chamber/portrait.h"
 #include "chamber/room.h"
-#include "chamber/savegame.h"
+#include "chamber/saveload.h"
 #include "chamber/resdata.h"
 #include "chamber/script.h"
 #include "chamber/print.h"
