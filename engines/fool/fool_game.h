@@ -241,7 +241,28 @@ public:
 	void sub_135_c1c();
 	void sub_135_cee();
 
-	void sub_136_004();
+	// fool_maze.cpp
+	void mazeRun();
+	void sub_136_79e();
+	void sub_136_994();
+	void sub_136_a22();
+	void sub_136_ade();
+	void sub_136_b00();
+	void sub_136_2582();
+	void sub_136_274e();
+	void sub_136_2a7c();
+	void sub_136_2b30();
+	void sub_136_2be2();
+	void sub_136_2c96();
+	void sub_136_2d4c();
+	void sub_136_2dd0();
+	void sub_136_2e52();
+	void sub_136_2ed6();
+	void sub_136_2f5c();
+	void sub_136_3408();
+	void sub_136_342a();
+	void sub_136_3466();
+	void sub_136_3a70();
 
 	// fool_sun.cpp
 	void sunMapRun(); // sub_137_004
@@ -528,12 +549,38 @@ private:
 	int16 var_i16_1aba;
 	int16 var_i16_1abc;
 	int16 var_i16_1abe;
+	PicHandle var_i32_1ac0;
+	int16 var_i16_1ac4;
+	Common::String var_str_1ac8;
+	int16 var_i16_1bc8;
+
+	int16 var_i16_1bcc;
+	int16 var_i16_1bce;
+	int16 var_i16_1bd0;
+
+	int16 var_i16_1bd2;
+	int16 var_i16_1bd4;
+	int16 var_i16_1bd6;
+	int16 var_i16_1bd8;
+	int16 var_i16_1bda;
+	int16 var_i16_1bdc;
+	Common::U32String var_str_1bde;
+
+	int16 var_i16_1de4;
 
 	int16 var_i16_1de6;
+
+	int16 var_i16_1de8;
+	int16 var_i16_1dea;
 
 	PatternMode var_i16_1dee;
 
 	int16 var_i16_1e00;
+
+	Common::U32String var_str_1e08;
+
+	uint16 var_i16_1f08;
+	int16 var_i16_1f0a;
 
 	int16 var_i16_2010;
 	int16 var_i16_2012;
