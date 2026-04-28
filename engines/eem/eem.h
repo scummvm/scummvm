@@ -170,6 +170,9 @@ public:
 	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.
 	void displayClue(const byte *clueBlock);
 
+	/// Active player name (saved as the profile-save description).
+	const Common::String &playerName() const { return _playerName; }
+
 	/// Apply a single ClueEntry's side effects — notebook adds, gallery
 	/// updates, site flags. Called both by `displayClue` after a normal
 	/// click-through and when the player ESC-skips a multi-entry clue.

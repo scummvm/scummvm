@@ -1374,6 +1374,12 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 			   hotIdx, clueOff);
 		const byte *clueBlock = _mystery->blobAt(clueOff);
 		if (clueBlock) {
+			// Snapshot `_cluesFound` BEFORE the clue display so we
+			// can detect if any new clue was actually collected
+			// (vs. a re-read of an already-found clue) — only worth
+			// auto-saving when the player makes progress.
+			byte before[Mystery::kCluesFoundCap];
+			memcpy(before, _mystery->_cluesFound, sizeof(before));
 			// Hand the engine our partner-less backdrop so that
 			// `_DoKDAnim` / `playKdAnim` (the camera-style reaction
 			// animation that fires when a ClueEntry has +0x3a != -1)
@@ -1384,6 +1390,26 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 			_vm->setPartnerEraseBg(&_bgSnapshot);
 			_vm->displayClue(clueBlock);
 			_vm->setPartnerEraseBg(nullptr);
+			// Auto-save when a new clue is found. The original
+			// engine has no autosave (saving is a manual SETUP
+			// button, `_SaveGame @ 2404:0c87`); we add the autosave
+			// here so the player never loses mystery progress.
+			// Detected via 0→1 transition in `_cluesFound[]` (set
+			// by `applyClueSideEffects` inside `displayClue`).
+			bool foundNewClue = false;
+			for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
+				if (!before[i] && _mystery->_cluesFound[i]) {
+					foundNewClue = true;
+					break;
+				}
+			}
+			if (foundNewClue) {
+				const Common::Error err =
+					_vm->saveProfile(_vm->playerName());
+				if (err.getCode() != Common::kNoError)
+					warning("auto-save after clue failed: %s",
+							err.getDesc().c_str());
+			}
 		}
 	}
 	// Caller (`SiteScreen::run`) re-renders the site after this returns.

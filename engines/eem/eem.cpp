@@ -143,21 +143,36 @@ Common::Error EEMEngine::run() {
 	debugC(1, kDebugGeneral, "EEM engine starting");
 
 	// If the user chose "Load" before pressing Play, the framework
-	// invokes `loadGameState` which sets up `_mystery` and `_partner`.
-	// Honour that by skipping the intros and dropping into the screen-
-	// driver loop just past the briefing — the loaded mystery already
-	// knows its current site, so we resume at MAP (the original's
-	// post-briefing state, set by handler 0 at 1a35:0e1d).
+	// invokes `loadGameState` which sets up `_playerName`, `_partner`,
+	// `_mysteriesSolved`, and (optionally) `_mystery`. Honour that by
+	// skipping the intros — the player has already typed their name
+	// and picked a partner, so the title chain + profile picker +
+	// partner picker would all be redundant.
+	//
+	//   * Save HAS a mystery in progress → resume at MAP (mirrors the
+	//     original's post-briefing state, handler 0 at 1a35:0e1d).
+	//   * Save has NO mystery → drop into the case-selection screen
+	//     (`kScreenChooseMystery`) so the player can pick which case
+	//     to play. This matches what the original `_ActionScreen`
+	//     leads to — without the redundant action menu in front.
 	const int wantedSave = ConfMan.hasKey("save_slot")
 		? ConfMan.getInt("save_slot") : -1;
 	bool resumed = false;
 	if (wantedSave >= 0) {
 		const Common::Error err = loadGameState(wantedSave);
-		if (err.getCode() == Common::kNoError && _mystery.isLoaded()) {
-			debugC(1, kDebugGeneral, "Resuming from slot %d at mystery %u",
-				   wantedSave, _mystery.number());
+		if (err.getCode() == Common::kNoError) {
 			CursorMan.showMouse(true);
-			_nextScreen = kScreenMap;
+			if (_mystery.isLoaded()) {
+				debugC(1, kDebugGeneral,
+					   "Resuming from slot %d at mystery %u",
+					   wantedSave, _mystery.number());
+				_nextScreen = kScreenMap;
+			} else {
+				debugC(1, kDebugGeneral,
+					   "Resuming profile from slot %d (no mystery — "
+					   "→ case selection)", wantedSave);
+				_nextScreen = kScreenChooseMystery;
+			}
 			resumed = true;
 		}
 	}
