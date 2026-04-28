@@ -749,7 +749,20 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 SaveStateList EEMEngine::listProfiles() const {
 	// Mirrors `_findfirst("*.PLR")` in `screen8_handler @ 1c33:1012`.
-	return getMetaEngine()->listSaves(_targetName.c_str());
+	// We disable autosave (`getAutosaveSlot()` returns -1) but a
+	// pre-existing slot-0 file from a previous run, or one written by
+	// another engine using the same target, would still show up here
+	// and pollute the picker. Filter it out so the picker treats slot
+	// 0 as if it didn't exist — matching the original which never
+	// has an autosave concept.
+	SaveStateList saves = getMetaEngine()->listSaves(_targetName.c_str());
+	for (uint i = 0; i < saves.size(); ) {
+		if (saves[i].getSaveSlot() == 0)
+			saves.remove_at(i);
+		else
+			i++;
+	}
+	return saves;
 }
 
 Common::Error EEMEngine::saveProfile(const Common::String &name) {
