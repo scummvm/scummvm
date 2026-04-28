@@ -114,9 +114,13 @@ void EEMEngine::doHelp() {
 void EEMEngine::doInterfaceHelp(uint num) {
 	// Mirrors `_InterfaceHelp(num)` @ 1560:0205. The original walks
 	// `HelpData @ 29be:00c8` (5-byte entries: u8 count, then up to 2
-	// u16 picIds), `_GetPicture`s each one, blits it fullscreen via
-	// `_Rect_Move_Mask(0, 0, ...)`, and waits for click / key. ESC ends
-	// the cycle; any other input advances to the next pic.
+	// u16 picIds), `_GetPicture`s each one, blits it via
+	// `_Rect_Move_Mask(0, 0, ...)` (a MASKED blit on top of the
+	// existing screen — transparent pixels show the caller's BG), and
+	// waits for click / key. ESC at `1560:02b3` skips to end. The
+	// function also hides the cursor at the top (`MOV [0x3a00], 0` at
+	// 1560:0216 + `_RemoveMouse @ 1000:542f` at 1560:021c) and
+	// restores it at the tail (`_DrawMouse @ 1000:5429` at 1560:02e8).
 	//
 	// `kHelpPics` lives at file scope above; see comment there for the
 	// HelpData decoding.
@@ -125,6 +129,26 @@ void EEMEngine::doInterfaceHelp(uint num) {
 
 	debugC(1, kDebugScript, "doInterfaceHelp(%u): showing pics 0x%x, 0x%x",
 		   num, kHelpPics[num][0], kHelpPics[num][1]);
+
+	// Snapshot the caller's screen ONCE so each help PIC overlays the
+	// same clean BG. Without this, after the first PIC is dismissed the
+	// second snapshot would include the first PIC's pixels and the two
+	// would composite together — same gotcha as the setup-screen help
+	// loop fix in `doSetup`.
+	Graphics::ManagedSurface bg(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	{
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			for (int row = 0; row < 200; row++)
+				memcpy((byte *)bg.getBasePtr(0, row),
+					   (const byte *)cur->getBasePtr(0, row), 320);
+			g_system->unlockScreen();
+		}
+	}
+
+	const bool wasShown = CursorMan.isVisible();
+	CursorMan.showMouse(false);
 
 	for (uint i = 0; i < 2; i++) {
 		const uint16 picId = kHelpPics[num][i];
@@ -136,24 +160,15 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		debugC(1, kDebugScript, "doInterfaceHelp: pic 0x%x = %dx%d flags=0x%x",
 			   picId, pic.surface.w, pic.surface.h, pic.flags);
 
-		// Compose a 320x200 frame (cleared) and blit the help pic at (0,0)
-		// with the original's masked-blit semantics: pixels equal to the
-		// pic's sub-mode (high byte of `pic[0]`, see `_Rect_Move_Mask`
-		// param_10 at 1000:03fc) are treated as transparent and skipped.
+		// Compose a 320x200 frame from the clean BG snapshot and overlay
+		// the help pic with `transBlitFrom` — `Graphics::ManagedSurface`'s
+		// masked blit (transparent colour = the pic's `flags >> 8`,
+		// matching `_Rect_Move_Mask`'s param_10 at 1000:03fc).
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
+		scratch.simpleBlitFrom(bg);
 		const byte transp = (byte)(pic.flags >> 8);
-		const int w = MIN<int>(pic.surface.w, 320);
-		const int h = MIN<int>(pic.surface.h, 200);
-		for (int row = 0; row < h; row++) {
-			const byte *src = (const byte *)pic.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, row);
-			for (int col = 0; col < w; col++) {
-				if (src[col] != transp)
-					dst[col] = src[col];
-			}
-		}
+		scratch.transBlitFrom(pic.surface, (uint32)transp);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -165,6 +180,8 @@ void EEMEngine::doInterfaceHelp(uint num) {
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					if (wasShown)
+						CursorMan.showMouse(true);
 					return;
 				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -187,6 +204,9 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		if (escape)
 			break;
 	}
+
+	if (wasShown)
+		CursorMan.showMouse(true);
 }
 
 void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {

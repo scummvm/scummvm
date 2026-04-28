@@ -1425,7 +1425,13 @@ void EEMEngine::doNotebook() {
 	const Common::Rect kBtnPagePrev(226, 174, 247, 190);  // [6] PAGE PREV
 	const Common::Rect kBtnMap     (  7, 177,  57, 200);  // [7] MAP
 	const Common::Rect kBtnSite    ( 35, 111,  56, 136);  // [8] SITE
-	const Common::Rect kNoteArea   ( 66,  79, 267, 174);  // [10] note area
+	const Common::Rect kBtnHelp2   (267, 174, 288, 190);  // [10] extra HELP
+	// (`_NoteButtons @ 29be:0147` actually has rect [10] at
+	// (267,174,288,190) — small button on the right of the bottom
+	// bar that the original handler dispatch table at 161e:04ec
+	// routes to `_InterfaceHelp(0)` again. Earlier this rect was
+	// mis-noted as a "note area" of (66,79,267,174) — that
+	// rectangle exists nowhere in the binary's button table.)
 
 	CursorMan.showMouse(true);
 
@@ -1514,25 +1520,30 @@ void EEMEngine::doNotebook() {
 					dirty = true;
 					continue;
 				}
-				if (kNoteArea.contains(ev.mouse.x, ev.mouse.y)) {
-					// Toggle the selection on whichever clue's text
-					// the click landed in. The original calls
-					// `_InterfaceHelp` here; that's the help screen,
-					// not selection — selection is in the Accuse
-					// screen. We use the area for selection because
-					// keyboard 1..9 toggling is awkward, and the
-					// resulting `_NoteSelected` state is what
-					// `_SolvedCheck` reads.
-					for (uint i = 0; i < _notebookSlotRects.size(); i++) {
-						if (_notebookSlotRects[i].contains(ev.mouse.x,
-														   ev.mouse.y)) {
-							const uint clueId = _notebookSlotClues[i];
-							_mystery._noteSelected[clueId] ^= 1;
-							dirty = true;
-							break;
-						}
-					}
+				if (kBtnHelp2.contains(ev.mouse.x, ev.mouse.y)) {
+					// `_NoteButtons[10]` → handler 0x03f9 = same
+					// `_InterfaceHelp(0)` as button [1].
+					doInterfaceHelp(0);
+					dirty = true;
 					continue;
+				}
+				// Click on a clue's slot rect → toggle selection. The
+				// original `_DoNotebook` doesn't do this — note
+				// selection lives in the accuse screen there — but
+				// keyboard 1..9 toggling is awkward, and the resulting
+				// `_NoteSelected` state is what `_SolvedCheck` reads
+				// either way. Slot rects are the per-clue rectangles
+				// `drawNotebookFrame` publishes, so this just
+				// reproduces the visible-text-bbox click without the
+				// previous bogus outer-area gate.
+				for (uint i = 0; i < _notebookSlotRects.size(); i++) {
+					if (_notebookSlotRects[i].contains(ev.mouse.x,
+													   ev.mouse.y)) {
+						const uint clueId = _notebookSlotClues[i];
+						_mystery._noteSelected[clueId] ^= 1;
+						dirty = true;
+						break;
+					}
 				}
 			}
 		}
@@ -1982,6 +1993,12 @@ void EEMEngine::doGallery() {
 			drawGalleryFrame(gd, num, slotRects, slotSuspect);
 			lastDraw = now;
 		}
+		// `g_system->updateScreen()` is what tells the framework to
+		// re-render the cursor at its current mouse position; without
+		// it here, the cursor only refreshes when `drawGalleryFrame`
+		// runs (every 100 ms) and visibly lags the mouse. Match
+		// `doNotebook`'s per-tick `updateScreen()` cadence (line 1548).
+		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 }
