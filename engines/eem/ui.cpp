@@ -816,7 +816,12 @@ void EEMEngine::doSetup() {
 				g_system->unlockScreen();
 			}
 			const byte transp = (byte)(pic.flags >> 8);
-			scratch.transBlitFrom(pic.surface, (uint32)transp);
+			// Explicit destPos — the no-destPos overload of
+			// `transBlitFrom` (managed_surface.cpp:738) stretches
+			// src to dst dimensions, scaling the PIC to 320x200.
+			// The original `_Rect_Move_Mask` blits at native size.
+			scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
+								  (uint32)transp);
 		} else {
 			scratch.clear();
 			scratch.simpleBlitFrom(pic.surface);
@@ -2834,25 +2839,43 @@ void EEMEngine::doAccuse() {
 	if (picked < 0)
 		return;
 
-	// Real chain evaluation: sum point values of clues the player marked
-	// "selected" in the notebook. Mirrors `_SolvedCheck` @ 1df2:00ec.
-	const int points = _mystery.selectedPoints();
-	const bool guessedRight = _mystery.solvedCheck();
-	debugC(1, kDebugScript, "doAccuse: picked=%d selectedPts=%d -> %s",
-		   picked, points, guessedRight ? "correct" : "wrong");
+	// Real chain evaluation. Mirrors the original two-gate accusation:
+	//   1. `_AccuseEntry @ 1df2:0ff8` checks `_GetFoundPoints() >= 100`
+	//      — gates whether the suspect picker is even reachable. We
+	//      replicate this with `_SolvedCheck → selectedPoints > 99`,
+	//      since our port marks clues in the notebook (port deviation;
+	//      the original gates on the auto-sorted top-5 found clues
+	//      via `_GetFoundPoints @ 1df2:0098`).
+	//   2. `_WITCH @ 1df2:089f` checks `GalleryData[picked*0x46+0x02] ==
+	//      0xFFFF`. Innocent suspects store an alibi-text TextBlock
+	//      offset there; the guilty one uses the sentinel.
+	// Both must hold for `_DisplayCorrect`; otherwise it's an alibi.
+	const int points          = _mystery.selectedPoints();
+	const bool enoughEvidence = _mystery.solvedCheck();
+	const bool pickedGuilty   = _mystery.isGuilty((uint)picked);
+	const bool guessedRight   = enoughEvidence && pickedGuilty;
+	debugC(1, kDebugScript,
+		   "doAccuse: picked=%d selectedPts=%d evidence=%s guilty=%s -> %s",
+		   picked, points,
+		   enoughEvidence ? "yes" : "no",
+		   pickedGuilty ? "yes" : "no",
+		   guessedRight ? "correct" : "wrong");
 
-	// If the player hasn't marked any evidence yet, give them a hint
-	// rather than an instant fail. Mirrors the original "We're not ready
-	// to solve this mystery yet..." string at 29be:10f0.
-	if (points == 0 && _font.isLoaded()) {
+	// Insufficient evidence: same hint the original shows when
+	// `_AccuseEntry` returns 0 (string at `_KDTextIndex[0]`).
+	if (!enoughEvidence && _font.isLoaded()) {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		_font.drawWordWrapped(&scratch, 16, 80, 288,
-			"We're not ready to solve this mystery yet. "
-			"Let's keep investigating until we have some "
-			"more solid evidence to make our case! "
-			"(Press N in the site screen to mark clues.)",
+			points == 0
+				? "We're not ready to solve this mystery yet. "
+				  "Let's keep investigating until we have some "
+				  "more solid evidence to make our case! "
+				  "(Press N in the site screen to mark clues.)"
+				: "We don't have quite enough solid evidence yet. "
+				  "Let's review our notes and find a few more "
+				  "clues before we accuse anyone.",
 			0xF);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
@@ -2861,131 +2884,72 @@ void EEMEngine::doAccuse() {
 		return;
 	}
 
-	// Pick the ending based on the chain. For a correct accusation the
-	// original would call `_DisplayClue(_Mystery + AChain[0])`, play
-	// SCRAPBK.ANI and save progress. We load the matching `E<n>.BIN`
-	// ending text and render its pages with prev/next navigation.
-	const int endingNum = guessedRight ? picked : 0;
-	const Common::String fname = Common::String::format("E%d.BIN", endingNum);
-	Common::File f;
-	if (!f.open(Common::Path(fname))) {
-		warning("doAccuse: %s missing", fname.c_str());
-		return;
-	}
-
-	// E<n>.BIN format (verified against `_DisplayEndingPage` @ 1df2:044c):
-	//   u16 numPages
-	//   per page (10 bytes header + NUL-string):
-	//     u16 picNum
-	//     u16 x1, y1, x2, y2  (story rect)
-	//     bytes[] NUL-terminated text
-	const uint32 fileLen = f.size();
-	Common::Array<byte> blob(fileLen);
-	if (f.read(blob.data(), fileLen) != fileLen)
-		return;
-	const byte *e = blob.data();
-	const uint16 pages = READ_LE_UINT16(e);
-
-	uint pageIdx = 0;
-
-	while (!shouldQuit()) {
-		// Walk to pageIdx.
-		uint pos = 2;
-		uint cur = 0;
-		while (cur < pageIdx && pos + 10 < fileLen) {
-			const char *t = (const char *)(e + pos + 10);
-			pos += 10 + strlen(t) + 1;
-			cur++;
+	// Wrong suspect: render alibi flow. Mirrors `_DisplayAlibi @
+	// 1df2:0145` — shows the suspect's alibi text + their picture on
+	// PIC 0x3e, then returns to the accuse gallery for another try.
+	// Skips MIDI 6 (alibi music) and the per-partner voice line — the
+	// text rendering alone is enough to convey "this suspect is
+	// innocent". `_FirstTry` is cleared so a subsequent correct pick
+	// no longer counts as a first-try win (1df2:0445 -> _FirstTry=0).
+	if (!guessedRight) {
+		const uint16 alibiOff = _mystery.alibiTextOffset((uint)picked);
+		Common::String alibi;
+		if (gd && alibiOff != 0xFFFF) {
+			const char *raw = _mystery.textAt(alibiOff);
+			if (raw)
+				alibi = parseString(raw, _playerName, _partner);
 		}
-		if (pos + 10 >= fileLen)
-			break;
-
-		const uint16 picNum = READ_LE_UINT16(e + pos + 0);
-		const uint16 x1     = READ_LE_UINT16(e + pos + 2);
-		const uint16 y1     = READ_LE_UINT16(e + pos + 4);
-		const uint16 x2     = READ_LE_UINT16(e + pos + 6);
-		const uint16 y2     = READ_LE_UINT16(e + pos + 8);
-		const char *raw     = (const char *)(e + pos + 10);
-		const Common::String txt = parseString(raw, _playerName, _partner);
+		Picture alibiBg;
+		const bool haveAlibiBg =
+			_picsArchive.getPicture(0x3e, alibiBg);
+		Picture suspect;
+		const uint16 picId = gd
+			? READ_LE_UINT16(gd + (uint)picked * 0x46)
+			: 0;
+		const bool haveSuspect = picId != 0 &&
+			_picsArchive.getPicture(picId, suspect);
 
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
-
-		// Page background.
-		if (picNum != 0) {
-			Picture bg;
-			if (_picsArchive.getPicture(picNum, bg)) {
-				const int w = MIN<int>(bg.surface.w, 320);
-				const int h = MIN<int>(bg.surface.h, 200);
-				for (int row = 0; row < h; row++) {
-					memcpy((byte *)scratch.getBasePtr(0, row),
-						   (const byte *)bg.surface.getBasePtr(0, row), w);
-				}
-			}
+		if (haveAlibiBg) {
+			scratch.simpleBlitFrom(alibiBg.surface);
 		}
-
-		if (_font.isLoaded()) {
-			Common::String banner = "Not enough evidence";
-			if (guessedRight)
-				banner = _mystery._firstTry ? "CORRECT - FIRST TRY!" : "CORRECT!";
-			_font.drawString(&scratch, banner, 8, 4, 320, 0xF);
-			_font.drawString(&scratch, Common::String::format("Evidence: %d/100  Suspect: %d",
-									   points, picked + 1), 8, 16, 320, 0xF);
-			const int wrapW = MAX<int>(16, x2 - x1);
-			const int wrapY = MAX<int>(28, (int)y1);
-			(void)y2;
-			_font.drawWordWrapped(&scratch, x1, wrapY, wrapW, txt, 0xF);
-			_font.drawString(&scratch, Common::String::format("page %u/%u  (Left/Right or click)",
-									   pageIdx + 1, pages), 8, 188, 320, 0xF);
+		if (haveSuspect) {
+			// Original `_DisplayAlibi` blits the suspect at (0x82, py)
+			// where py varies by balloon size; we use a fixed centred
+			// position since we don't render the balloon shapes yet.
+			const byte transp = (byte)(suspect.flags >> 8);
+			scratch.transBlitFrom(suspect.surface,
+								  Common::Point(0x82, 0x40),
+								  (uint32)transp);
 		}
-
+		if (_font.isLoaded() && !alibi.empty()) {
+			_font.drawWordWrapped(&scratch, 16, 8, 200, alibi, 0xF);
+			_font.drawString(&scratch, "(click / ESC: back)",
+							 16, 188, 200, 0xF);
+		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
+		waitForInput(20000);
 
-		// Page navigation.
-		bool advance = false;
-		bool back    = false;
-		bool exit    = false;
-		while (!advance && !back && !exit && !shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-					exit = true; break;
-				}
-				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					advance = true; break;
-				}
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-						exit = true;
-					else if (ev.kbd.keycode == Common::KEYCODE_LEFT)
-						back = true;
-					else
-						advance = true;
-					break;
-				}
-			}
-			g_system->updateScreen();
-			g_system->delayMillis(15);
-		}
-		if (exit)
-			break;
-		if (advance) {
-			if (pageIdx + 1 >= pages)
-				break;
-			pageIdx++;
-		} else if (back) {
-			if (pageIdx > 0)
-				pageIdx--;
-		}
+		_mystery._firstTry = false;
+		// `_DisplayAlibi @ 1df2:043f` writes `_NextScreen =
+		// _LastScreen` so the player drops back to wherever they
+		// accused from (typically the site loop). With no mystery
+		// state to unload, the site loop resumes naturally.
+		_nextScreen = _lastScreen != kScreenInvalid
+						? (ScreenId)_lastScreen : kScreenSite;
+		return;
 	}
 
-	// Mirror `_DisplayCorrect`'s scrap-book animation + solved tracking +
-	// auto-save (the original calls `_SavePlayerRecord` after a win).
-	if (guessedRight) {
+	// Right suspect — full win flow. Mirrors `_DisplayCorrect @
+	// 1df2:073c`: mark mystery solved, advance chain stage if the
+	// tier is complete, swap MIDI to the win cue, run SCRAPBK.ANI,
+	// show the per-mystery ending, save the profile, return to the
+	// action menu (`_NextScreen = 0xc` at 1df2:0895).
+	{
 		const uint mn = _mystery.number();
 		if (mn < sizeof(_mysteriesSolved)) {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
@@ -3059,14 +3023,6 @@ void EEMEngine::doAccuse() {
 		// 1df2:08a4 do the same.
 		_mystery.clear();
 		_nextScreen = kScreenAction;
-	} else {
-		_mystery._firstTry = false;
-		// `_DisplayAlibi @ 1df2:043f` writes `_NextScreen =
-		// _LastScreen` — drop back to wherever the player accused
-		// from. With no mystery state to unload, the site loop
-		// resumes naturally.
-		_nextScreen = _lastScreen != kScreenInvalid
-						? (ScreenId)_lastScreen : kScreenSite;
 	}
 }
 
@@ -3079,6 +3035,15 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	// PIC 0x3f backdrop, suspect portraits at the 5 fixed slots
 	// (`kGallerySlots` in this file's anon namespace), and a 1-px
 	// outline (palette index 0xFE) around the highlighted slot.
+	//
+	// Partner sprite at (5, 0x50): the original `_DoAccuse @ 1df2:0bdd`
+	// registers `_NewAnimation(5, 0x50, partnerCells, script=2, prior=1)`
+	// (1df2:0c30) BEFORE calling `_DoAccuseGallery`, then `_DrawGallery`
+	// calls `_DrawActiveAnimations` (158f:00a3) which re-renders the
+	// slot every frame. Without an explicit blit here, our port's
+	// accuse screen comes out partner-less. Anim CELLS are 2 (Jake) /
+	// 0x10 (Jenny); SCRIPT key is 0x02 for both partners (matches the
+	// `CONCAT22(2, ...)` arg verified at 1df2:0c2e).
 	Picture accuseBg;
 	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
 
@@ -3092,6 +3057,21 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 			memcpy((byte *)scratch.getBasePtr(0, row),
 				   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
 		}
+	}
+
+	// Partner sprite, drawn BEFORE portraits so the suspect grid
+	// covers it where they overlap (the gallery slots start at
+	// y=14 / y=90, partner is at y=0x50=80 — no overlap, so order
+	// is purely defensive).
+	const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+	Animation partnerAni;
+	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+		!partnerAni.empty()) {
+		const uint32 now = g_system->getMillis();
+		const uint frameIdx = partnerFrameAtTick(0x02,
+												  (uint)partnerAni.size(), now);
+		blitAnimFrameAnchored(scratch.surfacePtr(),
+							  partnerAni[frameIdx], 5, 0x50);
 	}
 
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {

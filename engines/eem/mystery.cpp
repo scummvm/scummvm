@@ -224,6 +224,31 @@ const byte *Mystery::mapEntry(uint siteNum) const {
 	return _data.data() + off;
 }
 
+bool Mystery::isGuilty(uint suspectIdx) const {
+	// `_WITCH @ 1df2:089f`: `if (GalleryData[i*0x46 + 0x02] == -1)
+	// _DisplayCorrect(); else _DisplayAlibi(...)`. Innocent suspects
+	// store their alibi-text TextBlock offset at +0x02; the guilty
+	// one stores the sentinel 0xFFFF.
+	const byte *gd = galleryData();
+	if (!gd || suspectIdx >= _numSuspects)
+		return false;
+	const uint16 off = READ_LE_UINT16(gd + suspectIdx * 0x46 + 0x02);
+	return off == 0xFFFF;
+}
+
+uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
+	const byte *gd = galleryData();
+	if (!gd || suspectIdx >= _numSuspects)
+		return 0xFFFF;
+	return READ_LE_UINT16(gd + suspectIdx * 0x46 + 0x02);
+}
+
+const byte *Mystery::solvedClueBlock() const {
+	if (!isLoaded() || _solvedOffset == 0 || _solvedOffset >= _data.size())
+		return nullptr;
+	return _data.data() + _solvedOffset;
+}
+
 int Mystery::selectedPoints() const {
 	const byte *ni = noteIndex();
 	const uint16 cnt = noteIndexCount();

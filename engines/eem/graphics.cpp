@@ -163,12 +163,20 @@ void EEMEngine::doInterfaceHelp(uint num) {
 		// Compose a 320x200 frame from the clean BG snapshot and overlay
 		// the help pic with `transBlitFrom` — `Graphics::ManagedSurface`'s
 		// masked blit (transparent colour = the pic's `flags >> 8`,
-		// matching `_Rect_Move_Mask`'s param_10 at 1000:03fc).
+		// matching `_Rect_Move_Mask`'s param_10 at 1000:03fc). Pass an
+		// explicit `destPos` of (0, 0) — the no-destPos overload at
+		// managed_surface.cpp:738 scales src to fill `this`'s rect,
+		// stretching the help PIC to 320x200 instead of placing it at
+		// native size. The original `_Rect_Move_Mask` passes destX=0,
+		// destY=0 with copy-width = pic[+4] (= `pic.surface.w`) and
+		// copy-height = pic[+2] (= `pic.surface.h`) — i.e. native size,
+		// not stretched.
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.simpleBlitFrom(bg);
 		const byte transp = (byte)(pic.flags >> 8);
-		scratch.transBlitFrom(pic.surface, (uint32)transp);
+		scratch.transBlitFrom(pic.surface, Common::Point(0, 0),
+							  (uint32)transp);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
