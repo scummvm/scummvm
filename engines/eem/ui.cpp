@@ -1462,7 +1462,7 @@ void EEMEngine::doCaseSelection() {
 		if (!_mystery.load(0, &_rng)) {
 			warning("doCaseSelection: failed to load practice mystery");
 			_mystery.clear();
-		} else if (_audio) {
+		} else if (_audio && !isFloppy()) {
 			_audio->initMysterySounds(0);
 		}
 		return;
@@ -1685,7 +1685,7 @@ void EEMEngine::doCaseSelection() {
 		_mystery.clear();
 		return;
 	}
-	if (_audio)
+	if (_audio && !isFloppy())
 		_audio->initMysterySounds(mn);
 	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
 		   mn, _mystery.numSites(), _mystery.numSuspects());
@@ -2699,8 +2699,11 @@ void EEMEngine::doBigMap() {
 						   ev.mouse.y < kMapWinY + kMapWinH) {
 					// Hit-test the per-site button at its actual bbox
 					// (`_StampButtons` records the rect at SmallMap +8/+0xa
-					// with the button PIC's width/height).
-					for (uint i = 0; i < _mystery.numSites(); i++) {
+					// with the button PIC's width/height). Floppy entries
+					// have a different shape so skip the SmallMap hit-test
+					// (we still get clicks via the BigMap overview path).
+					const bool fmap = _mystery.isLoaded() && isFloppy();
+					for (uint i = 0; !fmap && i < _mystery.numSites(); i++) {
 						if (!_mystery._onSites[i] &&
 							i != _mystery._siteNumber)
 							continue;
@@ -2785,9 +2788,20 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
 			continue;
-		const uint16 mx    = READ_LE_UINT16(entry + 0x4);
-		const uint16 my    = READ_LE_UINT16(entry + 0x6);
-		const uint16 crime = READ_LE_UINT16(entry + 0xc);
+		// CD entries are 14 bytes: X@+4, Y@+6, crime@+12.
+		// Floppy entries are 11 bytes: X@+6, Y@+8, recolor@+10.
+		// Floppy layout verified at `FUN_1fed_07ed` (BigMap iteration):
+		//   `*(int *)(pcVar2 + i*0xb + 7)` (= entry+6, X u16)
+		//   `*(int *)(pcVar2 + i*0xb + 9)` (= entry+8, Y u16)
+		//   `pcVar2[i*0xb + 0xb]` (= entry+10, recolor flag — non-zero
+		//   selects the crime-marker PIC over the regular site marker).
+		const bool floppy  = _mystery.isLoaded() && isFloppy();
+		const uint16 mx    = floppy ? READ_LE_UINT16(entry + 0x6)
+									: READ_LE_UINT16(entry + 0x4);
+		const uint16 my    = floppy ? READ_LE_UINT16(entry + 0x8)
+									: READ_LE_UINT16(entry + 0x6);
+		const uint16 crime = floppy ? (uint16)entry[0xa]
+									: READ_LE_UINT16(entry + 0xc);
 		const bool   done_ = (i < Mystery::kVisitedSiteCap)
 							  && _mystery._visitedSite[i];
 
@@ -2885,7 +2899,12 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	//   button = _GetButton(MapData[+0])
 	//   destX  = MapData[+8]
 	//   destY  = MapData[+0xa]
-	for (uint i = 0; i < _mystery.numSites(); i++) {
+	// Floppy mystery 0 ships no SmallMap detail layer, but mapEntry() still
+	// returns the floppy SITES row which has a different shape (no
+	// per-button PIC ID, X/Y at +6/+8) — skip the per-site stamp on floppy
+	// to avoid stamping garbage button IDs from the wrong field offsets.
+	const bool floppyMap = _mystery.isLoaded() && isFloppy();
+	for (uint i = 0; !floppyMap && i < _mystery.numSites(); i++) {
 		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 			continue;
 		const byte *entry = _mystery.mapEntry(i);

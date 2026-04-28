@@ -115,7 +115,15 @@ bool readFrame(Common::SeekableReadStream &stream, bool compressed, Picture &out
 
 bool DBDArchive::loadEntry(uint num, Picture &out) {
 	if (num >= _index.size()) {
-		warning("DBDArchive::loadEntry: %u out of range (max %u)", num, _index.size());
+		// Out-of-range picture IDs are non-fatal — every caller already
+		// checks the return value (e.g., `haveDone`/`haveCrime` in
+		// `drawBigMapOverview`). The floppy's PICS.DBD ships fewer
+		// entries than the CD (e.g., the BigMap done-marker `0x20D` is
+		// CD-only), so this fires routinely on floppy and shouldn't
+		// be a `warning`.
+		debugC(2, kDebugGfx,
+			   "DBDArchive::loadEntry: %u out of range (max %u)",
+			   num, (uint)_index.size());
 		return false;
 	}
 

@@ -42,6 +42,16 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		"eem",
+		"Floppy",
+		AD_ENTRY2s("EEM.EXE",   "692a5e6e7f4516d6e40c1f80cbc1b2cc", 109542,
+				   "PICS.DBD",  "26b97e8586f798ea90440e88d3d527cd", 959160),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

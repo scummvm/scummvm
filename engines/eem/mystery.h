@@ -209,6 +209,20 @@ private:
 	uint16 _bChain[kChainLen] = {};
 	uint16 _cChain[kChainLen] = {};
 
+	// Floppy variant uses a completely different header (see comment
+	// in `Mystery::load`). When `_isFloppy` is true, the CD-shaped
+	// `_initOffset / _siteIndexOffset / etc.` fields are unset and the
+	// floppy section pointers below are populated from the floppy
+	// header offsets verified at `_ReadMystery_Floppy @ 22dc:0178`.
+	bool   _isFloppy = false;
+	uint16 _floppySuspectsOff = 0;   ///< header[+4]  → suspects
+	uint16 _floppyHintBlockOff = 0;  ///< header[+6]  → hint→clue table
+	uint16 _floppyNoteIndexOff = 0;  ///< header[+8]  → notes (7B/clue)
+	uint16 _floppyGalleryOff = 0;    ///< header[+0xa] → gallery portraits
+	uint16 _floppyTextOff = 0;       ///< header[+0xc] → text block
+	uint16 _floppyKDTextOff = 0;     ///< header[+0x10] → KDTextIndex
+	uint16 _floppySolvedOff = 0;     ///< header[+0x12] → solved clue chain
+
 	uint16 readU16(uint offset) const;
 };
 
