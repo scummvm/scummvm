@@ -787,25 +787,40 @@ void EEMEngine::doSetup() {
 		return false;
 	};
 
-	// Fullscreen-pic modal. Mirrors `_InterfaceHelp @ 1560:0205`'s
-	// per-frame loop: blit pic, wait for click/key, advance / exit.
-	// Used by Credits (single PIC 0x208) and Help (we reuse for a
-	// minimal stub since the help-pic table at `_InterfaceHelp`'s
-	// offset isn't fully decoded yet).
-	auto showFullscreenPic = [&](uint16 picId) {
+	// Render `picId` and block until click/key. Returns the pressed
+	// keycode (KEYCODE_ESCAPE for an explicit bail, KEYCODE_INVALID
+	// for a click or any other key). When `transparent` is true,
+	// preserve the current screen behind and overlay `picId` with
+	// its transparent colour key — mirrors `_InterfaceHelp @
+	// 1560:0205` calling `_Rect_Move_Mask` with the pic's
+	// `miscflags >> 8` as the transp byte. When false, do a raw
+	// fullscreen blit — mirrors the credits handler at 1f78:0281
+	// using `_vga_fbuffvid`.
+	auto showFullscreenPic = [&](uint16 picId,
+								  bool transparent) -> Common::KeyCode {
 		Picture pic;
 		if (!_picsArchive.getPicture(picId, pic)) {
 			warning("doSetup: PIC %u missing", (uint)picId);
-			return;
+			return Common::KEYCODE_INVALID;
 		}
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		const int w = MIN<int>(pic.surface.w, 320);
-		const int h = MIN<int>(pic.surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)pic.surface.getBasePtr(0, row), w);
+		if (transparent) {
+			// Preserve the current screen so the help PIC's
+			// transparent pixels show the setup BG underneath.
+			Graphics::Surface *cur = g_system->lockScreen();
+			if (cur) {
+				for (int row = 0; row < 200; row++)
+					memcpy((byte *)scratch.getBasePtr(0, row),
+						   (const byte *)cur->getBasePtr(0, row), 320);
+				g_system->unlockScreen();
+			}
+			const byte transp = (byte)(pic.flags >> 8);
+			scratch.transBlitFrom(pic.surface, (uint32)transp);
+		} else {
+			scratch.clear();
+			scratch.simpleBlitFrom(pic.surface);
+		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -813,13 +828,16 @@ void EEMEngine::doSetup() {
 			Common::Event ev;
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
-					ev.type == Common::EVENT_KEYDOWN ||
-					ev.type == Common::EVENT_LBUTTONDOWN)
-					return;
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+					return Common::KEYCODE_ESCAPE;
+				if (ev.type == Common::EVENT_KEYDOWN)
+					return ev.kbd.keycode;
+				if (ev.type == Common::EVENT_LBUTTONDOWN)
+					return Common::KEYCODE_INVALID;
 			}
 			g_system->delayMillis(15);
 		}
+		return Common::KEYCODE_ESCAPE;
 	};
 
 	auto leaveSetup = [&]() {
@@ -939,22 +957,48 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Help (button [9]). Original calls `_InterfaceHelp(1)`,
-			// which walks a sequence of help-pic IDs from a runtime
-			// table we haven't fully decoded. PIC 0x4F is the in-game
-			// help backdrop the briefing chain reuses; we show that
-			// as a stub until the full table is wired.
+			// Help (button [9]). Original `_InterfaceHelp(1) @
+			// 1560:0205` walks the help-pic table at `29be:00c8`:
+			// each `num` slot is 5 bytes — count + two u16 PIC IDs.
+			// For num=1: count=2, pics = {0x0192, 0x01B1}. The
+			// original blits each pic with `_Rect_Move_Mask` — a
+			// MASKED blit whose transparent colour is the pic's
+			// `miscflags >> 8`, so the setup BG shows through. It
+			// also hides the cursor (`MOV [0x3a00], 0` + `_RemoveMouse`
+			// at the top of `_InterfaceHelp`, 1560:0216-021c). ESC
+			// at any point breaks out (1560:02b3 sets uVar5 = count).
 			if (kHelpBtn.contains(mx, my)) {
-				showFullscreenPic(0x4F);
+				static const uint16 kHelp1Pics[] = { 0x0192, 0x01B1 };
+				CursorMan.showMouse(false);
+				for (uint i = 0; i < ARRAYSIZE(kHelp1Pics); i++) {
+					// Re-render the setup BG before each help PIC so
+					// each one overlays a clean canvas. Without this,
+					// `showFullscreenPic`'s `lockScreen` snapshot would
+					// pick up the previous PIC and the two help cards
+					// would composite together. Mirrors the original's
+					// `_vga_fvidvid(0)` call at the tail of every
+					// `_InterfaceHelp` iteration (1560:02e5), which
+					// restores the back-buffer BG between cards.
+					draw();
+					const Common::KeyCode k =
+						showFullscreenPic(kHelp1Pics[i], /*transparent=*/true);
+					if (k == Common::KEYCODE_ESCAPE)
+						break;
+				}
+				CursorMan.showMouse(true);
 				dirty = true;
 				continue;
 			}
 
 			// Credits (button [11]). Original handler at 1f78:025a
-			// loads PIC 0x208 and blits it fullscreen, then waits
-			// for any input.
+			// loads PIC 0x208, hides the cursor (`MOV [0x3a00], 0`
+			// at 1f78:0269 + `_RemoveMouse @ 1000:542f` at 1f78:026F),
+			// blits it fullscreen via `_vga_fbuffvid` (raw copy, no
+			// mask), then waits for any input.
 			if (kCreditsBtn.contains(mx, my)) {
-				showFullscreenPic(0x208);
+				CursorMan.showMouse(false);
+				showFullscreenPic(0x208, /*transparent=*/false);
+				CursorMan.showMouse(true);
 				// PIC 0x208 has its own palette baked into the BG
 				// dump via `_GetPicture`; the original restores via
 				// `_GetPalette` on return. Reset to setup palette
