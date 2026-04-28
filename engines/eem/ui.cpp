@@ -1980,8 +1980,15 @@ void EEMEngine::doBigMap() {
 	// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
 	// ------------------------------------------------------------------
 
-	drawBigMapOverview();
-	uint32 mapLastTick = g_system->getMillis();
+	// Anchor for the partner-sprite timeline. `_DoBigMap`'s
+	// `_NewAnimation` call seeds the slot's frame index to 0xffff so
+	// the first `_UpdateAnimations` tick starts at script[0]; we mirror
+	// that by passing elapsed-since-open (zero on the first paint) into
+	// `bigMapPartnerFrameAtTick`, which plays the unfold once and then
+	// loops the wait sequence.
+	const uint32 mapStartTick = g_system->getMillis();
+	drawBigMapOverview(0);
+	uint32 mapLastTick = mapStartTick;
 
 	// Static rectangles read directly from the binary at the labelled
 	// addresses (29be:0x1596 onwards). Format is {x1, y1, x2, y2}.
@@ -2032,7 +2039,7 @@ void EEMEngine::doBigMap() {
 		const uint32 now = g_system->getMillis();
 		if (now - mapLastTick >= 100) {
 			mapLastTick = now;
-			drawBigMapOverview();
+			drawBigMapOverview(now - mapStartTick);
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
@@ -2069,8 +2076,12 @@ void EEMEngine::doBigMap() {
 	int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
 	int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
 
-	drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH);
-	uint32 detailLastTick = g_system->getMillis();
+	// Anchor the detail-screen partner timeline (mirrors `_DoMapScreen`'s
+	// `_NewAnimation` seeding the slot's frame index to 0xffff). The
+	// unfold (script 0x13) plays once, then `_SmallMapWaitSeq` loops.
+	const uint32 detailStartTick = g_system->getMillis();
+	drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
+	uint32 detailLastTick = detailStartTick;
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -2201,13 +2212,14 @@ void EEMEngine::doBigMap() {
 			dirty = true;
 		}
 		if (dirty)
-			drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH);
+			drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
+							 now - detailStartTick);
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
 }
 
-void EEMEngine::drawBigMapOverview() {
+void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	// Map-overview redraw — formerly the `drawOverview` lambda inside
 	// `doBigMap`. PIC 0x42 frame + per-site marker (Done / Crime / Site
 	// per `_DrawBigMapButtons @ 20fe:0877`) + the partner idle sprite.
@@ -2217,6 +2229,11 @@ void EEMEngine::drawBigMapOverview() {
 	// at (0xfd, 0x50). We don't track LastScreen finely enough so we
 	// always render the IDLE pose at (0xfd, 0x50). Idle anim ID:
 	// Jake = 0x14 (20), Jenny = 0x12 (18).
+	//
+	// `elapsedMs` is the time since `doBigMap` opened — the partner-sprite
+	// timeline anchor. `bigMapPartnerFrameAtTick` uses it to play the
+	// unfold script (0..8) once, then loop `_BigMapWaitSeq` (the open-map
+	// hold). Without that anchor the unfold would loop indefinitely.
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
@@ -2295,9 +2312,8 @@ void EEMEngine::drawBigMapOverview() {
 	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x14,
-												  (uint)mapAnim.size(), now);
+		const uint frameIdx = bigMapPartnerFrameAtTick((uint)mapAnim.size(),
+													   elapsedMs);
 		// Anchor-aware: the BigMap walk-cycle has miscflags = -2 per
 		// cell, so the partner shifts left as it cycles — without the
 		// anchor adjustment the sprite "shakes in place" instead of
@@ -2313,12 +2329,17 @@ void EEMEngine::drawBigMapOverview() {
 
 void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 								 const Common::Array<byte> &mapPixels,
-								 uint16 mapW, uint16 mapH) {
+								 uint16 mapW, uint16 mapH,
+								 uint32 elapsedMs) {
 	// Map-detail redraw — formerly the `drawDetail` lambda inside
 	// `doBigMap`. PIC 0x43 frame + a 0xe9 × 0xab BIGMAP.PIC viewport at
 	// (2, 2), stamped site buttons, and the partner sprite at (0x101,
 	// 0x50) — `_DoMapScreen @ 20fe:120b` (`_NewAnimation` at
 	// 20fe:12cd-12f0, anim 0x13 Jake / 0x11 Jenny, seqnum 0x13).
+	//
+	// `elapsedMs` is the time since the detail screen was opened —
+	// `bigMapDetailPartnerFrameAtTick` uses it to play the unfold once
+	// and then loop `_SmallMapWaitSeq`.
 	const int kMapWinW = 0xe9;
 	const int kMapWinH = 0xab;
 	const int kMapWinX = 2;
@@ -2392,9 +2413,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	Animation detailAnim;
 	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
 		!detailAnim.empty()) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x13,
-												  (uint)detailAnim.size(), now);
+		const uint frameIdx = bigMapDetailPartnerFrameAtTick(
+				(uint)detailAnim.size(), elapsedMs);
 		blitAnimFrameAnchored(scratch.surfacePtr(),
 							  detailAnim[frameIdx], 0x101, 0x50);
 	}

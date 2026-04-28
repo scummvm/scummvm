@@ -44,6 +44,26 @@ class Mystery;
 /// values that point past the asset.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
 
+/// BigMap-overview partner frame: plays the count-up 0..8 once (the
+/// "unfold the map" pose), then loops the `_BigMapWaitSeq` hold
+/// (9,9,9,9,10,9,9,9,9). Mirrors `_DoBigMap @ 20fe:09e7`'s two-phase
+/// dispatch — the slot starts on script 0x14 (count-up @ 29be:196a)
+/// and on the 0x80 terminator the slot's script pointer is rewritten
+/// to `_BigMapWaitSeq @ 29be:1574`. `partnerFrameAtTick` can't model
+/// that swap on its own (it always loops), so without this helper the
+/// unfold cycles forever instead of resting on the open-map pose.
+/// `elapsedMs` is the time since the BigMap was opened.
+uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
+
+/// BigMap-detail (zoomed view) partner frame. Same two-phase shape as
+/// `bigMapPartnerFrameAtTick`, but the original `_DoMapScreen @ 20fe:120b`
+/// uses script 0x13 (count-up 0..7 @ 29be:1992) for the unfold and
+/// swaps the slot pointer to `_SmallMapWaitSeq @ 29be:1548` (an
+/// 18-frame hold of cell 7 with a single cell-10 fidget) on the
+/// terminator (`MOV [BX+0x789f],0x1548` at 20fe:1390). `elapsedMs`
+/// is the time since the detail screen was opened.
+uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
+
 /// Anchor-aware masked blit. Mirrors the per-frame anchor offset
 /// math in `_UpdateAnimations @ 172b:09c1`:
 /// `blit_x = anchor_x - frame.miscflags`, `blit_y = anchor_y -
