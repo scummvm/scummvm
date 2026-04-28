@@ -434,12 +434,18 @@ void EEMEngine::doInitClues() {
 					blitMaskedToScreen(book[frame % book.size()], 0, 99);
 				if (haveNancy)
 					blitMaskedToScreen(nancy[frame % nancy.size()], 0x68, 0x8b);
-				// Anchor: original blits at `(sx - frame.width,
-				// sy - frame.rowoff)`. `frame.rowoff` is the y-anchor
-				// in our PicData. We use width/height directly since
-				// loadAnimation places anchor at (0, 0).
-				const int dstX = (int)0xcd - (int)fr.surface.w;
-				const int dstY = (int)seqY - (int)fr.rowoff;
+				// Anchor: `_PlayInSequence @ 172b:2d35-2d50` does
+				//   dstX = sx - cell[+0x8]     ; miscflags (signed)
+				//   dstY = sy - cell[+0x6]     ; rowoff   (signed)
+				// Ghidra's C decompile mis-labels `cell[+0x8]` as
+				// `width`; the actual asm is `SUB AX, ES:[BX+0x8]`,
+				// which is the per-frame X anchor offset stored in our
+				// `Picture::miscflags` field. Using `fr.surface.w`
+				// shifted every frame by the cell width and made the
+				// briefing partner appear duplicated next to the BG-
+				// baked figure (mystery 1 office briefing).
+				const int dstX = (int)0xcd - (int)(int16)fr.miscflags;
+				const int dstY = (int)seqY - (int)(int16)fr.rowoff;
 				blitMaskedToScreen(fr, dstX, dstY);
 				g_system->updateScreen();
 				const uint32 wakeup = g_system->getMillis() + 100;
