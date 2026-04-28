@@ -3414,14 +3414,31 @@ void EEMEngine::doAccuse() {
 		   pickedGuilty ? "yes" : "no",
 		   guessedRight ? "correct" : "wrong");
 
-	// Wrong suspect: render alibi flow. Mirrors `_DisplayAlibi @
-	// 1df2:0145` — shows the suspect's alibi text + their picture on
-	// PIC 0x3e, then returns to the accuse gallery for another try.
-	// Skips MIDI 6 (alibi music) and the per-partner voice line — the
-	// text rendering alone is enough to convey "this suspect is
-	// innocent". `_FirstTry` is cleared so a subsequent correct pick
-	// no longer counts as a first-try win (1df2:0445 -> _FirstTry=0).
+	// Wrong suspect: full alibi flow. Mirrors `_DisplayAlibi @
+	// 1df2:0145`:
+	//   1. Plays MIDI 6 (loser sting) and waits for it to finish while
+	//      the gallery is still on screen (1df2:0184-1df2:0192).
+	//   2. Draws PIC 0x3e + the suspect's speech balloon + their
+	//      portrait at (0x82, py), where the balloon shape comes from
+	//      `AlibiBubbles[bindx]` (table @ 29be:1050) and bindx is the
+	//      digit-prefix on the alibi text (else 2). bindx<8 centres the
+	//      balloon horizontally; bindx>=8 pins it at x=0x21.
+	//   3. Plays the suspect's voice via `_SpoolSound(talk - 1)` where
+	//      `talk = (Partner == 0) ? gd[+0x6] : gd[+0x0]` (1df2:0258),
+	//      then waits for a click.
+	//   4. Overlays the partner's reaction balloon (text @
+	//      `KDTextIndex[+10]`) at (0x21, y) and plays
+	//      `_SayKDDigital(5)`.
+	//   5. Clears `_FirstTry` (1df2:0447) and returns to LastScreen.
 	if (!guessedRight) {
+		// Balloon-shape table @ 29be:1050 — 16 entries × u16.
+		static const uint16 kAlibiBubbles[16] = {
+			0x002B, 0x002C, 0x002D, 0x002E,
+			0x00AB, 0x00AC, 0x00AD, 0x00AE,
+			0x001D, 0x001E, 0x0015, 0x0016,
+			0x0017, 0x0018, 0x0019, 0x001A,
+		};
+
 		const uint16 alibiOff = _mystery.alibiTextOffset((uint)picked);
 		Common::String alibi;
 		if (gd && alibiOff != 0xFFFF) {
@@ -3429,46 +3446,230 @@ void EEMEngine::doAccuse() {
 			if (raw)
 				alibi = parseString(raw, _playerName, _partner);
 		}
+		// Digit-prefix dispatch — `_DisplayAlibi @ 1df2:0163` reads
+		// `*str` for `bindx` and advances `str = pbVar7 + 1` so the
+		// digit doesn't reach the renderer. Non-digit first chars fall
+		// through to the default bindx=2 (1df2:015e).
+		uint bindx = 2;
+		const byte firstChar = alibi.empty() ? (byte)0 : (byte)alibi[0];
+		if (firstChar >= '0' && firstChar <= '9') {
+			bindx = (uint)(firstChar - '0');
+			alibi.deleteChar(0);
+		}
+		if (bindx >= 16)
+			bindx = 2;
+		const uint16 bubNum = kAlibiBubbles[bindx];
+
 		Picture alibiBg;
-		const bool haveAlibiBg =
-			_picsArchive.getPicture(0x3e, alibiBg);
+		const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
 		Picture suspect;
 		const uint16 picId = gd
 			? READ_LE_UINT16(gd + (uint)picked * 0x46)
 			: 0;
 		const bool haveSuspect = picId != 0 &&
 			_picsArchive.getPicture(picId, suspect);
+		Picture balloon;
+		const bool haveBalloon =
+			_balloonArchive.size() > (bubNum & 0x7F) &&
+			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
 
+		// Position math from 1df2:01a4-1df2:0207. py is the suspect
+		// portrait's Y; defaults to 0x5a, only overridden in the
+		// bindx<8 branch when the balloon is too tall to fit.
+		int balloonX = 0x21;
+		int balloonY = 1;
+		int py = 0x5a;
+		if (bindx < 8) {
+			const int bw = haveBalloon ? balloon.surface.w : 0;
+			const int bh = haveBalloon ? balloon.surface.h : 0;
+			balloonX = (320 - bw) / 2;
+			if (bh < 0x5a) {
+				balloonY = (0x5a - bh) / 2;
+			} else {
+				balloonY = 1;
+				py = bh;
+			}
+		} else {
+			const int bh = haveBalloon ? balloon.surface.h : 0;
+			balloonX = 0x21;
+			balloonY = (bh < 0x4f) ? (0x50 - bh) / 2 : 1;
+		}
+
+		// `base` = BG + suspect + partner sprite — the persistent layer
+		// that survives across both balloon phases. The original engine
+		// keeps PIC 0x3e in the master BG buffer (16000), `_AddPicBackground`
+		// commits the suspect there, and the partner animation
+		// registered by `_DoAccuse @ 1df2:0c30` is re-blitted by every
+		// `_Repaint` via `_DrawActiveAnimations`. We don't have a
+		// slot-based animation system, so we manually keep a "base"
+		// surface and re-draw the partner frame for each phase.
+		Graphics::ManagedSurface base(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		base.clear();
+		if (haveAlibiBg)
+			base.simpleBlitFrom(alibiBg.surface);
+		if (haveSuspect) {
+			const byte transp = (byte)(suspect.flags >> 8);
+			base.transBlitFrom(suspect.surface,
+							   Common::Point(0x82, py),
+							   (uint32)transp);
+		}
+		// Partner sprite at (5, 0x50). Anim cells: 2 (Jake) / 0x10
+		// (Jenny); script key 0x02 — same indices `_DoAccuse @
+		// 1df2:0c30` uses for its `_NewAnimation` call. Partner is
+		// drawn AFTER the suspect so it doesn't get clipped by the
+		// portrait if their bounding boxes graze.
+		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+		Animation partnerAni;
+		const bool havePartner =
+			_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+			!partnerAni.empty();
+
+		// Alibi-phase scratch = base + alibi balloon + alibi text +
+		// partner sprite (animation slot drawn on top per
+		// `_DrawActiveAnimations`).
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveAlibiBg) {
-			scratch.simpleBlitFrom(alibiBg.surface);
-		}
-		if (haveSuspect) {
-			// Original `_DisplayAlibi` blits the suspect at (0x82, py)
-			// where py varies by balloon size; we use a fixed centred
-			// position since we don't render the balloon shapes yet.
-			const byte transp = (byte)(suspect.flags >> 8);
-			scratch.transBlitFrom(suspect.surface,
-								  Common::Point(0x82, 0x40),
+		scratch.simpleBlitFrom(base);
+		if (haveBalloon) {
+			const byte transp = (byte)(balloon.flags >> 8);
+			scratch.transBlitFrom(balloon.surface,
+								  Common::Point(balloonX, balloonY),
 								  (uint32)transp);
 		}
+		// Balloon-text inset table @ 29be:0875 — same dispatch as KD
+		// balloons. WordWrap color is 0 inside a balloon (1df2:0240).
+		uint16 tx = 5, ty = 4, tw = 155;
+		getBalloonInsets(bubNum, tx, ty, tw);
 		if (_font.isLoaded() && !alibi.empty()) {
-			_font.drawWordWrapped(&scratch, 16, 8, 200, alibi, 0xF);
-			_font.drawString(&scratch, "(click / ESC: back)",
-							 16, 188, 200, 0xF);
+			_font.drawWordWrapped(&scratch, balloonX + tx,
+								  balloonY + ty, tw, alibi,
+								  haveBalloon ? 0 : 0xF);
 		}
+		if (havePartner) {
+			const uint frameIdx = partnerFrameAtTick(0x02,
+				(uint)partnerAni.size(), g_system->getMillis());
+			blitAnimFrameAnchored(scratch.surfacePtr(),
+								  partnerAni[frameIdx], 5, 0x50);
+		}
+
+		// Step 1 — alibi music. Original blocks until MIDI 6 ends with
+		// the gallery still on screen. We poll `_music->isPlaying`;
+		// click/ESC aborts early.
+		if (_music) {
+			_music->playMus(6, /*loop=*/false);
+			const uint32 musStart = g_system->getMillis();
+			bool aborted = false;
+			while (_music->isPlaying() && !shouldQuit() && !aborted) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_QUIT ||
+						ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+						return;
+					if (ev.type == Common::EVENT_KEYDOWN ||
+						ev.type == Common::EVENT_LBUTTONDOWN) {
+						aborted = true;
+						break;
+					}
+				}
+				// Hard cap so we never get stuck if MIDI never reports
+				// finish (some sound configurations).
+				if (g_system->getMillis() - musStart > 10000)
+					break;
+				g_system->updateScreen();
+				g_system->delayMillis(20);
+			}
+			_music->stop();
+		}
+
+		// Step 2 — flip the alibi scene to screen + play suspect voice.
+		// `talk = (Partner==0) ? gd[+0x6] : gd[+0x0]` (1df2:0252-0258);
+		// indices are 1-based so subtract 1 before SpoolSound.
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
-		waitForInput(20000);
+		if (_audio && gd) {
+			const uint16 alibiVoice =
+				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x00);
+			const uint16 jakeVoice =
+				READ_LE_UINT16(gd + (uint)picked * 0x46 + 0x06);
+			const uint16 talk =
+				(_partner == 0) ? jakeVoice : alibiVoice;
+			if (talk != 0)
+				_audio->spoolSound((uint)(talk - 1));
+		}
+		waitForInput(60000);
+
+		// Step 3 — partner reaction balloon. Mirrors 1df2:026e-1df2:02b6.
+		// Rebuild scratch from `base` (BG + suspect + partner sprite)
+		// so the alibi balloon + text don't bleed through. The
+		// original's `_Repaint` re-renders the master BG (which still
+		// has the alibi balloon committed), but the engine ALSO calls
+		// `_GetBackground(0x3e)` again before `_AddPicBackground` for
+		// each new balloon — flushing the master back to a clean state.
+		// We achieve the same end result by restoring `base` here.
+		// `_SayKDDigital(5)` auto-cancels the still-playing alibi voice
+		// (spoolSound calls stopSpool internally) so no explicit stop.
+		const byte *reactIdx = _mystery.kdTextIndex();
+		if (reactIdx) {
+			const int16 reactOff = (int16)READ_LE_UINT16(reactIdx + 10);
+			Common::String react;
+			if (reactOff != -1) {
+				const char *raw = _mystery.textAt((uint16)reactOff);
+				if (raw)
+					react = parseString(raw, _playerName, _partner);
+			}
+			if (!react.empty()) {
+				const byte rChar = (byte)react[0];
+				const uint16 rBub = getKDTextBalloon(rChar);
+				if (rChar >= '0' && rChar <= '9')
+					react.deleteChar(0);
+				Picture rBalloon;
+				const bool haveR =
+					_balloonArchive.size() > (rBub & 0x7F) &&
+					_balloonArchive.loadEntry(rBub & 0x7F, rBalloon);
+				const int rX = 0x21;
+				int rY = 1;
+				if (haveR && rBalloon.surface.h < 0x4e)
+					rY = (0x50 - rBalloon.surface.h) / 2;
+
+				// Reset to a clean BG + suspect, then layer the new
+				// balloon and the (refreshed) partner frame on top.
+				scratch.simpleBlitFrom(base);
+				if (haveR) {
+					const byte transp = (byte)(rBalloon.flags >> 8);
+					scratch.transBlitFrom(rBalloon.surface,
+										   Common::Point(rX, rY),
+										   (uint32)transp);
+				}
+				uint16 rtx = 5, rty = 4, rtw = 155;
+				getBalloonInsets(rBub, rtx, rty, rtw);
+				if (_font.isLoaded()) {
+					_font.drawWordWrapped(&scratch, rX + rtx,
+										  rY + rty, rtw, react,
+										  haveR ? 0 : 0xF);
+				}
+				if (havePartner) {
+					const uint frameIdx = partnerFrameAtTick(0x02,
+						(uint)partnerAni.size(),
+						g_system->getMillis());
+					blitAnimFrameAnchored(scratch.surfacePtr(),
+										  partnerAni[frameIdx],
+										  5, 0x50);
+				}
+				g_system->copyRectToScreen(scratch.getPixels(),
+					scratch.pitch, 0, 0, 320, 200);
+				g_system->updateScreen();
+				if (_audio)
+					_audio->sayKDDigital(reactIdx, 5, _partner);
+			}
+		}
+		waitForInput(60000);
 
 		_mystery._firstTry = false;
 		// `_DisplayAlibi @ 1df2:043f` writes `_NextScreen =
-		// _LastScreen` so the player drops back to wherever they
-		// accused from (typically the site loop). With no mystery
-		// state to unload, the site loop resumes naturally.
+		// _LastScreen`. The original returns the player to the caller
+		// (PDA / site / map) for another try.
 		_nextScreen = _lastScreen != kScreenInvalid
 						? (ScreenId)_lastScreen : kScreenSite;
 		return;
