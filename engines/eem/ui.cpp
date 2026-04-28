@@ -3516,19 +3516,50 @@ void EEMEngine::doAccuse() {
 			}
 		}
 
-		// `_DisplayCorrect @ 1df2:073c` calls `_MIDIPlay(5)` (1df2:0789)
-		// before `_DisplayClue` to swap from the travel music to the
-		// winner cue.
+		// `_DisplayCorrect @ 1df2:073c` order:
+		//   1df2:0773  _AllBlack();
+		//   1df2:0776  _BuildBackground(5, 0x42, 0x14);  // conclusion BG
+		//   1df2:0780  _FadeIn();
+		//   1df2:0789  _MIDIPlay(5);                      // win music
+		//   1df2:07ac  _DisplayClue(MysteryIndex[+0x10]); // chain recap
+		// `_BuildBackground @ 172b:13e2` loads PIC 0x3D (the standard
+		// frame) and overlays SITES.DBD entry 5 at (0x42, 0x14), then
+		// sets palette via `_GetPalette(sitenum + 1)` = palette 6.
+		// Without this BG the chain-recap balloons render on top of
+		// the accuse-gallery BG (PIC 0x3F + suspect portraits), which
+		// is visually jarring — the conclusion is supposed to play
+		// against the dedicated "office / desk" scene.
+		Graphics::Surface *blk = g_system->lockScreen();
+		if (blk) {
+			memset(blk->getPixels(), 0, 320 * 200);
+			g_system->unlockScreen();
+		}
+		setSitePalette(6); // sitenum + 1 per `_GetPalette` call
+		Picture frame, scene;
+		if (_picsArchive.loadEntry(0x3d, frame)) {
+			g_system->copyRectToScreen(frame.surface.getPixels(),
+									   frame.surface.pitch, 0, 0,
+									   frame.surface.w, frame.surface.h);
+		}
+		if (5 < _sitesArchive.size() &&
+			_sitesArchive.loadEntry(5, scene)) {
+			const int sx = 0x42, sy = 0x14;
+			const int sw = MIN<int>(scene.surface.w, 320 - sx);
+			const int sh = MIN<int>(scene.surface.h, 200 - sy);
+			if (sw > 0 && sh > 0)
+				g_system->copyRectToScreen(scene.surface.getPixels(),
+										   scene.surface.pitch, sx, sy,
+										   sw, sh);
+		}
+		g_system->updateScreen();
+
 		if (_music)
 			_music->playMus(5, /*loop=*/false);
 
-		// `_DisplayCorrect @ 1df2:07ac` calls
-		// `_DisplayClue(_Mystery + _MysteryIndex[0x10], 0)` BEFORE the
-		// scrapbook animation. That clueblock is the partner's
-		// chain-by-chain RECAP — they enumerate every required clue
-		// (`Look at this — the suspect was here at 8pm`, `... and
-		// remember the broken vase from the kitchen`, `... so it had
-		// to be X!`) and arrive at the conclusion. Without rendering
+		// Chain-by-chain RECAP. Partner enumerates every required
+		// clue ("Look at this — the suspect was here at 8pm", "... and
+		// remember the broken vase from the kitchen", "... so it had
+		// to be X!") and arrives at the conclusion. Without rendering
 		// it the player goes straight from suspect-pick to the
 		// scrapbook anim and misses the deduction entirely.
 		const byte *solved = _mystery.solvedClueBlock();
