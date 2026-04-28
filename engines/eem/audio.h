@@ -73,6 +73,17 @@ public:
 	explicit AudioPlayer(EEMEngine *vm);
 	~AudioPlayer();
 
+	/// Mirrors the gate in every original audio call site
+	/// (`_DisplayClue` 2404:0845, `_DoChoosePartner` 1a35:098c,
+	/// `_DoOpeningAnims` 2520:08a8, `_DisplayCorrect` 1df2:0780, ...)
+	/// — every `_PlayVoice` / `_SpoolSound` is wrapped in
+	/// `if ((DAT_2d5d_3f97 != 0) && (_VoiceAvailable != 0))`. The
+	/// engine pulls `_voiceOn` (= `DAT_2d5d_3f97`) into here so we
+	/// can early-return at the audio boundary instead of duplicating
+	/// the gate at every call site.
+	void setVoiceEnabled(bool enabled) { _voiceEnabled = enabled; }
+	bool voiceEnabled() const { return _voiceEnabled; }
+
 	// VOC playback ----------------------------------------------------
 
 	/// Mirrors `_LoadSoundName` + `_PlayVoice`. Loads the named .VOC
@@ -152,6 +163,7 @@ private:
 	Common::Array<SoundEntry> _sdxIndex;
 	Common::Path _sdbPath;
 	int _currentMystery = -1;
+	bool _voiceEnabled = true;
 };
 
 } // End of namespace EEM

@@ -27,10 +27,34 @@
 
 #include "graphics/managed_surface.h"
 
+#include "eem/resource.h"  // Picture / Animation
+
 namespace EEM {
 
 class EEMEngine;
 class Mystery;
+
+/// Pick the frame index to render at `tickMs` for animation
+/// `seqnum`. Walks the script registered in `kAnimScripts` (mirrors
+/// `_UpdateAnimations @ 172b:09c1`'s looping path) at one entry per
+/// 100 ms tick, wrapping on the script's 0x80 terminator. Falls
+/// back to flipbook (`tick % numFrames`) when no script is
+/// registered. `numFrames` is the underlying ANI.DBD entry's cell
+/// count — used both for the fallback path and to clamp script
+/// values that point past the asset.
+uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs);
+
+/// Anchor-aware masked blit. Mirrors the per-frame anchor offset
+/// math in `_UpdateAnimations @ 172b:09c1`:
+/// `blit_x = anchor_x - frame.miscflags`, `blit_y = anchor_y -
+/// frame.rowoff`. Use for any animation rendered through the
+/// `_NewAnimation` path in the original (partner sprites, animated
+/// drops, briefing animations) — without it, frames with non-zero
+/// per-cell anchors (e.g. anim 0x14 BigMap walk-cycle's miscflags
+/// = -2 shift) "shake in place" instead of translating across
+/// the screen as they're meant to.
+void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
+						   int anchorX, int anchorY);
 
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
 struct Hotspot {
@@ -121,6 +145,22 @@ private:
 	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
 	Graphics::ManagedSurface _bgSnapshot;
 	uint32 _lastTickMs = 0;        ///< Last frame-pump tick in ms.
+
+	/// Wall-clock timestamp at which the partner's wait animation
+	/// "started" (or last restarted). The site loop renders the
+	/// wait sprite at `partnerFrameAtTick(animId, ..., now -
+	/// _waitPhaseAnchor)` so the script position is RELATIVE to
+	/// this anchor, not the global clock. Bump it on:
+	///   - entry to a new site (mirrors `_NewAnimation` setting
+	///     the slot's frame index to 0xffff at site setup, see
+	///     `_DoSiteLoop @ 168d:0436`)
+	///   - return from a one-shot kdAnim (mirrors `_PlayAnimation
+	///     @ 172b:1f5d` writing 0xffff to the resumed slot's frame
+	///     index when state=4 chains back to WaitHandle)
+	/// Without this, the wait anim "snaps" to wherever the global
+	/// clock dictates each time the partner reappears, instead of
+	/// resuming from script[0].
+	uint32 _waitPhaseAnchor = 0;
 
 	/// Per-site cached ColorCycle ranges. Up to 5 (matching the
 	/// original's 5-slot animation table).

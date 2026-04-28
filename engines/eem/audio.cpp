@@ -54,6 +54,17 @@ void AudioPlayer::stopAll() {
 // VOC playback --------------------------------------------------------
 
 void AudioPlayer::playVoc(const Common::Path &vocPath) {
+	// Voice / digital audio is gated by the `DAT_2d5d_3f97` flag in
+	// the original — verified at every callsite (`_DoChoosePartner @
+	// 1a35:098c`, `_DisplayClue @ 2404:0845`, `_DoOpeningAnims @
+	// 2520:08a8`, etc.). Setup-screen toggle and `_NewPlayer` fresh-
+	// profile init both rewrite that flag. We pull it into the audio
+	// player so callers don't have to duplicate the check.
+	if (!_voiceEnabled) {
+		debugC(2, kDebugSound, "AudioPlayer: voice disabled, skipping %s",
+			   vocPath.toString().c_str());
+		return;
+	}
 	stopVoice();
 
 	// Mirrors `_LoadSoundName`'s `_fopen` (1ff1:02ac).
@@ -189,6 +200,11 @@ void AudioPlayer::playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 }
 
 void AudioPlayer::spoolSound(uint num) {
+	if (!_voiceEnabled) {
+		debugC(2, kDebugSound,
+			   "AudioPlayer: voice disabled, skipping spoolSound(%u)", num);
+		return;
+	}
 	if (_currentMystery < 0 || num >= _sdxIndex.size()) {
 		warning("AudioPlayer: spoolSound(%u) — invalid index (%d, %u)",
 				num, _currentMystery, (uint)_sdxIndex.size());

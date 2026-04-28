@@ -33,6 +33,7 @@
 #include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
+#include "eem/site.h"
 
 // EEM — clue / briefing pipeline (SCRIPT.C clue parts + KD.C briefing parts).
 // Everything that drives a `ClueBlock` through the displayClue / portrait /
@@ -295,15 +296,44 @@ void EEMEngine::doInitClues() {
 		const uint frameCount = haveGame ? game.size() : 8;
 		bool skip = false;
 		for (uint frame = 0; frame < frameCount && !shouldQuit() && !skip; frame++) {
-			// Restore BG + advance frame.
+			// Restore BG + advance frame. The original always uses
+			// Jake's anim IDs (0x17/0x18/0x19) as the SCRIPT keys
+			// even when Jenny's CELL data is loaded — verified at
+			// `_DoInitClues @ 1a35:0507`/`0541` where
+			// `_NewAnimation(..., (PicData *)CONCAT22(0x17, ...), ...)`
+			// hard-codes the script index to 0x17. So we look up
+			// `partnerFrameAtTick(0x17, ...)` regardless of partner.
+			// This gives us the correct cadence — book holds on its
+			// "thinking" pose (cell 8) for 16 ticks instead of
+			// flipbook-cycling, and nancy waits 18 ticks before her
+			// late-arrival count-up.
 			if (_picsArchive.getPicture(0x52, bg))
 				blitAt(bg, 0, 0);
-			if (haveGame)
-				blitMaskedToScreen(game[frame % game.size()], 0xcd, 0x6c);
-			if (haveBook)
-				blitMaskedToScreen(book[frame % book.size()], 0, 99);
-			if (haveNancy)
-				blitMaskedToScreen(nancy[frame % nancy.size()], 0x68, 0x8b);
+			const uint32 t = frame * 100;
+			// All three briefing anims (game/book/nancy) go through
+			// the original `_NewAnimation` path so per-frame anchors
+			// apply. Use `blitAnimFrameAnchored` against a locked
+			// screen surface so the briefing partner / book / nancy
+			// translate cleanly between cells instead of pinning at
+			// the same top-left.
+			Graphics::Surface *scr = g_system->lockScreen();
+			if (!scr) {
+				skip = true;
+				break;
+			}
+			if (haveGame) {
+				const uint f = partnerFrameAtTick(0x17, (uint)game.size(), t);
+				blitAnimFrameAnchored(scr, game[f], 0xcd, 0x6c);
+			}
+			if (haveBook) {
+				const uint f = partnerFrameAtTick(0x18, (uint)book.size(), t);
+				blitAnimFrameAnchored(scr, book[f], 0, 99);
+			}
+			if (haveNancy) {
+				const uint f = partnerFrameAtTick(0x19, (uint)nancy.size(), t);
+				blitAnimFrameAnchored(scr, nancy[f], 0x68, 0x8b);
+			}
+			g_system->unlockScreen();
 			g_system->updateScreen();
 
 			// Wait 100 ms or until input.

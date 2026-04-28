@@ -34,6 +34,7 @@
 #include "eem/detection.h"
 #include "eem/eem.h"
 #include "eem/music.h"
+#include "eem/site.h"
 
 // EEM — UI screens (NOTE.C, GALLERY.C, ACCUSE.C, MAP.C, CHOOSE.C combined).
 // Each function is a self-contained modal `EEMEngine::doX()` reachable from
@@ -89,6 +90,7 @@ struct CaseSelectionView {
 	bool haveCaseBg;
 	const Animation *kdAnim;
 	bool haveKdAnim;
+	uint16 kdAnimId;     ///< 0x15 / 0x16 — looked up in kAnimScripts
 	int kdAnimX;
 	int kdAnimY;
 	const char *separator;
@@ -166,26 +168,24 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 	}
 
 	// KD greeter frame — masked-blit current animation cell at
-	// (0x112, 0x50). 100 ms tick matches the engine's `_CheckFrameRate`.
+	// (0x112, 0x50). 100 ms tick matches `_CheckFrameRate`. The
+	// original `_CaseSelection @ 1c33:0a87` calls `_NewAnimation(...,
+	// CONCAT22(0x15, ...), ..., seqnum=0x15, ...)` so the script
+	// key is 0x15 regardless of partner — even Jenny's CELLS (loaded
+	// via animID 0x16 = ANI.DBD slot) get driven by Jake's 0x15
+	// blink script. Both 0x15 and 0x16 are aliases of 0x00 in our
+	// table so the result is identical, but routing through 0x15
+	// matches the binary.
 	if (v.haveKdAnim) {
 		const uint32 now = g_system->getMillis();
-		const uint frameIdx = (uint)((now / 100) % v.kdAnim->size());
-		const Picture &fr = (*v.kdAnim)[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-		for (int row = 0; row < fr.surface.h; row++) {
-			const int dstY = v.kdAnimY + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < fr.surface.w; col++) {
-				const int dstX = v.kdAnimX + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		const uint frameIdx = partnerFrameAtTick(0x15,
+												  (uint)v.kdAnim->size(), now);
+		// Anchor-aware blit. Same rendering path used everywhere
+		// the partner is registered through `_NewAnimation` in the
+		// original.
+		blitAnimFrameAnchored(scratch.surfacePtr(),
+							  (*v.kdAnim)[frameIdx],
+							  v.kdAnimX, v.kdAnimY);
 	}
 	if (v.vm->getFont().isLoaded()) {
 		// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
@@ -232,6 +232,138 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
+}
+
+void EEMEngine::doProfilePicker() {
+	// Mirrors `screen8_handler @ 1c33:1012`. The original walks
+	// `*.PLR` files in `C:\EEMCDSAV\` (max 25), reads the first 12
+	// bytes of each (the player-name field of `_PlayerRecord`), and
+	// hands the list to `_DoChoose`. If no profiles exist (loop hits
+	// `local_20 == 0` at 1c33:1170), it falls straight into
+	// `_NewPlayer`. Selecting an entry calls `_LoadPlayerRecord` and
+	// returns; selecting the "exit" sentinel goes back to title.
+	const SaveStateList saves = listProfiles();
+	if (saves.empty()) {
+		doNewPlayer();
+		return;
+	}
+
+	if (!_font.isLoaded()) {
+		// No font means we can't render the picker — fall through.
+		doNewPlayer();
+		return;
+	}
+
+	// Build the visible list: existing profile names + "[New Player]".
+	struct Entry {
+		Common::String label;
+		int slot;       ///< -1 means "create new"
+	};
+	Common::Array<Entry> entries;
+	for (const SaveStateDescriptor &s : saves) {
+		Entry e;
+		e.label = s.getDescription();
+		e.slot  = s.getSaveSlot();
+		entries.push_back(e);
+	}
+	Entry newEntry;
+	newEntry.label = "[New Player]";
+	newEntry.slot  = -1;
+	entries.push_back(newEntry);
+
+	int sel = 0;
+	bool done = false;
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		Picture bg;
+		if (_picsArchive.getPicture(0x104, bg)) {
+			const int w = MIN<int>(bg.surface.w, 320);
+			const int h = MIN<int>(bg.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.surface.getBasePtr(0, row), w);
+		}
+		_font.drawString(&scratch, "Pick a player:", 80, 30, 220, 0xF);
+		const int kLineH = 12;
+		for (uint i = 0; i < entries.size(); i++) {
+			const byte color = ((int)i == sel) ? 0xF : 0x8;
+			_font.drawString(&scratch, entries[i].label,
+							 80, 60 + (int)i * kLineH, 220, color);
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	draw();
+
+	while (!done && !shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		bool committed = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_playerName = "Detective";
+				return;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_UP:
+					sel = (sel + (int)entries.size() - 1) % (int)entries.size();
+					dirty = true;
+					break;
+				case Common::KEYCODE_DOWN:
+					sel = (sel + 1) % (int)entries.size();
+					dirty = true;
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					committed = true;
+					break;
+				case Common::KEYCODE_ESCAPE:
+					_playerName = "Detective";
+					return;
+				default:
+					break;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				const int kLineH = 12;
+				const int hit = (ev.mouse.y - 60) / kLineH;
+				if (hit >= 0 && hit < (int)entries.size()) {
+					sel = hit;
+					committed = true;
+				}
+			}
+			if (committed)
+				break;
+		}
+		if (committed) {
+			done = true;
+			break;
+		}
+		if (dirty)
+			draw();
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
+
+	const Entry &e = entries[sel];
+	if (e.slot < 0) {
+		doNewPlayer();
+	} else {
+		// Mirrors `_LoadPlayerRecord` at 1c33:1281 — slot found,
+		// load it. The save body re-fills `_playerName`, partner,
+		// chain stage, mysteriesSolved.
+		if (!loadProfile(e.label)) {
+			warning("doProfilePicker: failed to load profile '%s' at slot %d",
+					e.label.c_str(), e.slot);
+			doNewPlayer();
+		}
+	}
 }
 
 void EEMEngine::doNewPlayer() {
@@ -295,6 +427,10 @@ void EEMEngine::doNewPlayer() {
 					memset(_mysteriesSolved, 0, sizeof(_mysteriesSolved));
 					_mystery.clear();
 					_partner = 0;
+					// `_NewPlayer @ 1c33:0fa3` writes
+					// `DAT_2d5d_3f99 = 1` — fresh profiles always
+					// start at the Junior tier.
+					_chainStage = 1;
 					saveProfile(name);
 				}
 				return;
@@ -337,6 +473,395 @@ void EEMEngine::doNewPlayer() {
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+}
+
+void EEMEngine::doShowEnding(uint num) {
+	// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @
+	// 1df2:044c`. File format (verified by reading E0.BIN's bytes):
+	//   u16 pageCount
+	//   for each page:
+	//     u16 picNum
+	//     u16 x1, y1, x2, y2  (story rect — passed to WordWrap)
+	//     char text[]        (null-terminated, ParseString opcodes)
+	//
+	// The original walks pages with PrevPage / NextPage rects (29be:
+	// 0x..); we approximate with mouse-click / Enter = next, ESC =
+	// exit. ParseString substitutes `\x80` (player name) and the rest
+	// of the 0x80..0x89 placeholder family so the rendered text
+	// reads as the correct player + partner combo.
+	const Common::String fname = Common::String::format("E%u.BIN", num);
+	Common::File f;
+	if (!f.open(Common::Path(fname))) {
+		warning("doShowEnding: %s missing", fname.c_str());
+		return;
+	}
+	const uint32 size = f.size();
+	if (size < 2) {
+		warning("doShowEnding: %s too small (%u bytes)",
+				fname.c_str(), size);
+		return;
+	}
+	Common::Array<byte> buf(size);
+	if (f.read(buf.data(), size) != size) {
+		warning("doShowEnding: %s short read", fname.c_str());
+		return;
+	}
+
+	const uint16 pageCount = READ_LE_UINT16(buf.data());
+	if (pageCount == 0)
+		return;
+
+	// Walk page records. Each page header is 10 bytes; text is
+	// null-terminated and follows the header.
+	uint pageOffsets[8];   // ENDING_RANGE_MAX from `_DisplayEnding`
+	const uint kMaxPages = MIN<uint>(pageCount,
+									 (uint)(sizeof(pageOffsets) / sizeof(uint)));
+	uint cursor = 2;
+	for (uint p = 0; p < kMaxPages; p++) {
+		pageOffsets[p] = cursor;
+		if (cursor + 10 >= size)
+			break;
+		// Skip the 10-byte header and find the null terminator.
+		cursor += 10;
+		while (cursor < size && buf[cursor] != 0)
+			cursor++;
+		cursor++;  // past the null
+	}
+
+	uint pageIdx = 0;
+	bool dirty = true;
+	while (!shouldQuit() && pageIdx < kMaxPages) {
+		if (dirty) {
+			const uint off = pageOffsets[pageIdx];
+			if (off + 10 >= size)
+				break;
+			const uint16 picNum = READ_LE_UINT16(buf.data() + off);
+			const uint16 x1     = READ_LE_UINT16(buf.data() + off + 2);
+			const uint16 y1     = READ_LE_UINT16(buf.data() + off + 4);
+			const uint16 x2     = READ_LE_UINT16(buf.data() + off + 6);
+			(void)READ_LE_UINT16(buf.data() + off + 8);  // y2 (unused — WordWrap2 takes width only)
+
+			// Halve the rect coords: ending pages use 320x400 logical
+			// coords (x2=0x128=296, y2=0xa8=168 in our test file
+			// E0.BIN — both already 320x200 mode 13h). No conversion.
+			Picture bg;
+			Graphics::ManagedSurface scratch(320, 200,
+				Graphics::PixelFormat::createFormatCLUT8());
+			scratch.clear();
+			if (_picsArchive.getPicture(picNum, bg)) {
+				const int w = MIN<int>(bg.surface.w, 320);
+				const int h = MIN<int>(bg.surface.h, 200);
+				for (int row = 0; row < h; row++)
+					memcpy((byte *)scratch.getBasePtr(0, row),
+						   (const byte *)bg.surface.getBasePtr(0, row), w);
+			}
+
+			// Story text. The bytes are a null-terminated string with
+			// `_ParseString` placeholders (0x80 = player name, 0x82
+			// = partner first name, etc.).
+			const char *raw = (const char *)buf.data() + off + 10;
+			const Common::String text = parseString(raw, _playerName, _partner);
+
+			if (_font.isLoaded() && x2 > x1) {
+				const int textW = MIN<int>((int)x2 - (int)x1, 320 - (int)x1);
+				_font.drawWordWrapped(&scratch, (int)x1, (int)y1,
+									  textW, text, 0xF);
+			}
+
+			// Page indicator at top-right ("page 1/3").
+			if (_font.isLoaded() && kMaxPages > 1) {
+				const Common::String hdr = Common::String::format(
+					"%u/%u", (unsigned)pageIdx + 1, (unsigned)kMaxPages);
+				_font.drawString(&scratch, hdr, 280, 4, 32, 0xF);
+			}
+
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
+			g_system->updateScreen();
+			dirty = false;
+		}
+
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_ESCAPE:
+					return;
+				case Common::KEYCODE_LEFT:
+				case Common::KEYCODE_PAGEUP:
+					if (pageIdx > 0) {
+						pageIdx--;
+						dirty = true;
+					}
+					break;
+				case Common::KEYCODE_RIGHT:
+				case Common::KEYCODE_PAGEDOWN:
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+				case Common::KEYCODE_SPACE:
+					pageIdx++;
+					dirty = true;
+					break;
+				default:
+					break;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				pageIdx++;
+				dirty = true;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
+}
+
+void EEMEngine::doSetup() {
+	// Mirrors `_DoSetup @ 1f78:044e`. Loads BG pic 0x40 +
+	// state-button pics 0x9b/0x9c/0x9d/0x9e. The original wires 13
+	// hot-rects (`_SetupButtons @ 29be:1218`) but only two of them
+	// drive persistent state — `Kid1`/`Kid2` (partner) and
+	// `SoundOn`/`SoundOff` (voice flag, `DAT_2d5d_3f97`). The rest
+	// are reset/help/return buttons. We render a minimal text
+	// version: two toggle lines, click to flip, ESC to leave.
+	if (!_font.isLoaded()) {
+		_nextScreen = (ScreenId)_lastScreen;
+		return;
+	}
+
+	const Common::Rect kBackBtn(120, 170, 200, 188);
+	const Common::Rect kPartnerToggle(40, 60, 280, 78);
+	const Common::Rect kVoiceToggle  (40, 90, 280, 108);
+
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		Picture bg;
+		if (_picsArchive.getPicture(0x40, bg)) {
+			const int w = MIN<int>(bg.surface.w, 320);
+			const int h = MIN<int>(bg.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.surface.getBasePtr(0, row), w);
+		}
+		_font.drawString(&scratch, "Setup", 140, 30, 80, 0xF);
+		const Common::String partnerLine = Common::String::format(
+			"Partner: %s   (click to switch)",
+			_partner == 0 ? "Jake" : "Jenny");
+		_font.drawString(&scratch, partnerLine, 50, 64, 240, 0xF);
+		const Common::String voiceLine = Common::String::format(
+			"Voice:   %s   (click to toggle)",
+			_voiceOn ? "ON" : "OFF");
+		_font.drawString(&scratch, voiceLine, 50, 94, 240, 0xF);
+		_font.drawString(&scratch, "[ Back ]", 130, 174, 80, 0xF);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	draw();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
+				return;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE ||
+					ev.kbd.keycode == Common::KEYCODE_RETURN) {
+					// `_DoSetup @ 1f78:044a` writes `_NextScreen =
+					// _LastScreen` on entry. Returning means we just
+					// dispatch back to whichever screen called us.
+					_nextScreen = (ScreenId)_lastScreen;
+					if (_nextScreen == kScreenSetup ||
+						_nextScreen == kScreenInvalid)
+						_nextScreen = kScreenMap;
+					if (_voiceOn)
+						saveProfile(_playerName);
+					return;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (kBackBtn.contains(ev.mouse.x, ev.mouse.y)) {
+					_nextScreen = (ScreenId)_lastScreen;
+					if (_nextScreen == kScreenSetup ||
+						_nextScreen == kScreenInvalid)
+						_nextScreen = kScreenMap;
+					saveProfile(_playerName);
+					return;
+				}
+				if (kPartnerToggle.contains(ev.mouse.x, ev.mouse.y)) {
+					_partner = _partner == 0 ? 1 : 0;
+					dirty = true;
+				}
+				if (kVoiceToggle.contains(ev.mouse.x, ev.mouse.y)) {
+					_voiceOn = !_voiceOn;
+					if (_audio)
+						_audio->setVoiceEnabled(_voiceOn);
+					dirty = true;
+				}
+			}
+		}
+		if (dirty)
+			draw();
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
+}
+
+void EEMEngine::doActionScreen() {
+	// Mirrors `_ActionScreen @ 1c33:195b` — the post-mystery menu the
+	// original loops back to after `_DisplayCorrect` (winner). The
+	// original draws PIC 0x122 (Cok), 0x124 (Cexit), then calls
+	// `_DoChoose(ActionNames)` and dispatches the result via the
+	// jumptable at 1c33:1be1 (verified to set `_NextScreen` for each
+	// action — entry 1 → 10 = CHOOSE_MYSTERY, entry 3 →
+	// `_ReloadMystery`, etc.).
+	//
+	// We render a minimal text version of the menu — the original's
+	// background pic + "Cok" / "Cexit" overlays land once the
+	// `_DoChoose` UI lands. For now: two practical entries — "Solve a
+	// Mystery" (the only one whose underlying screen is wired) and
+	// "Quit". Sets `_nextScreen` exactly the same way the original
+	// jumptable does:
+	//   "Solve a Mystery"   → kScreenChooseMystery (matches handler 1
+	//                          at 1c33:1add: `MOV [_NextScreen], 0xa`)
+	//   "Quit"              → kScreenInvalid (matches the sentinel
+	//                          handler at 1c33:1afa)
+	if (!_font.isLoaded()) {
+		_nextScreen = kScreenChooseMystery;
+		return;
+	}
+
+	enum ActionKind {
+		kActSolve,         // → kScreenChooseMystery (action 1, 1c33:1add)
+		kActScrapbook,     // → doShowEnding(lastSolved) (action 5, 1c33:1b13)
+		kActQuit
+	};
+	struct Entry {
+		const char *label;
+		ActionKind  kind;
+	};
+	// Locate the highest-numbered solved mystery — that's the one
+	// the player most recently completed, and what the action-menu
+	// "Look at My Books" entry replays. If none solved yet, hide
+	// the entry (matches the original's grey-out at 1c33:19f3 where
+	// `local_24[5] = 1` before the chain-stage check toggles it).
+	int lastSolved = -1;
+	for (int i = (int)sizeof(_mysteriesSolved) - 1; i >= 0; i--) {
+		if (_mysteriesSolved[i] != 0) {
+			lastSolved = i;
+			break;
+		}
+	}
+
+	Common::Array<Entry> entries;
+	Entry solveEntry; solveEntry.label = "Solve a Mystery"; solveEntry.kind = kActSolve;
+	entries.push_back(solveEntry);
+	if (lastSolved >= 0) {
+		Entry sb; sb.label = "Look at My Books"; sb.kind = kActScrapbook;
+		entries.push_back(sb);
+	}
+	Entry quitEntry; quitEntry.label = "Quit"; quitEntry.kind = kActQuit;
+	entries.push_back(quitEntry);
+	const int kCount = (int)entries.size();
+
+	int sel = 0;
+	auto draw = [&]() {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		Picture bg;
+		if (_picsArchive.getPicture(0x104, bg)) {
+			const int w = MIN<int>(bg.surface.w, 320);
+			const int h = MIN<int>(bg.surface.h, 200);
+			for (int row = 0; row < h; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)bg.surface.getBasePtr(0, row), w);
+		}
+		_font.drawString(&scratch, "What now?", 100, 30, 220, 0xF);
+		for (int i = 0; i < kCount; i++) {
+			const byte color = (i == sel) ? 0xF : 0x8;
+			_font.drawString(&scratch, entries[i].label,
+							 100, 60 + i * 14, 220, color);
+		}
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+	draw();
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool dirty = false;
+		bool committed = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
+				return;
+			}
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				switch (ev.kbd.keycode) {
+				case Common::KEYCODE_UP:
+					sel = (sel + kCount - 1) % kCount;
+					dirty = true;
+					break;
+				case Common::KEYCODE_DOWN:
+					sel = (sel + 1) % kCount;
+					dirty = true;
+					break;
+				case Common::KEYCODE_RETURN:
+				case Common::KEYCODE_KP_ENTER:
+					committed = true;
+					break;
+				case Common::KEYCODE_ESCAPE:
+					_nextScreen = kScreenInvalid;
+					return;
+				default:
+					break;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				const int hit = (ev.mouse.y - 60) / 14;
+				if (hit >= 0 && hit < kCount) {
+					sel = hit;
+					committed = true;
+				}
+			}
+			if (committed)
+				break;
+		}
+		if (committed) {
+			switch (entries[sel].kind) {
+			case kActSolve:
+				_nextScreen = kScreenChooseMystery;
+				return;
+			case kActScrapbook:
+				if (lastSolved >= 0)
+					doShowEnding((uint)lastSolved);
+				// Fall through to redraw the menu after viewing.
+				draw();
+				continue;
+			case kActQuit:
+				_nextScreen = kScreenInvalid;
+				return;
+			}
+			return;
+		}
+		if (dirty)
+			draw();
+		g_system->updateScreen();
+		g_system->delayMillis(15);
+	}
+	_nextScreen = kScreenInvalid;
 }
 
 void EEMEngine::doCaseSelection() {
@@ -416,6 +941,7 @@ void EEMEngine::doCaseSelection() {
 	v.haveCaseBg = haveCaseBg;
 	v.kdAnim = &kdAnim;
 	v.haveKdAnim = haveKdAnim;
+	v.kdAnimId = (uint16)kKdAniId;
 	v.kdAnimX = kKdAnimX;
 	v.kdAnimY = kKdAnimY;
 	v.separator = kSeparator;
@@ -548,11 +1074,25 @@ void EEMEngine::doCaseSelection() {
 	}
 
 	// "Choose A Mystery" sub-screen: pick a specific case from the
-	// 55-mystery roster. The original opens a different list here;
-	// we approximate with the tier-aware numeric chooser we used
-	// before. Default to the first unsolved mystery.
-	uint sel = 0;
-	for (uint i = 0; i <= kMaxMystery; i++) {
+	// 55-mystery roster. `_CaseSelection @ 1c33:0a87` only shows
+	// mysteries in the player's current chain stage:
+	//   stage 1 (Junior) → 1..24    (start = `iVar1 = 1`     @ 1c33:0aff)
+	//   stage 2 (Senior) → 25..48   (start = `iVar1 = 0x19`)
+	//   stage 3 (Master) → 49..54   (start = `iVar1 = 0x31`)
+	// The original passes `&DAT_2d5d_3f9b + iVar1` as the grey-mask
+	// pointer so DoChoose lights up only the tier-relevant entries.
+	// We clamp `sel` to the tier range and pre-seed it to the first
+	// unsolved case in that range.
+	uint stageLo = 1, stageHi = 0x18;
+	switch (_chainStage) {
+	case 2: stageLo = 0x19; stageHi = 0x30; break;
+	case 3: stageLo = 0x31; stageHi = 0x36; break;
+	default: break;  // stage 1 (or fallback)
+	}
+	if (stageHi > kMaxMystery)
+		stageHi = kMaxMystery;
+	uint sel = stageLo;
+	for (uint i = stageLo; i <= stageHi; i++) {
 		if (i < sizeof(_mysteriesSolved) && !_mysteriesSolved[i]) {
 			sel = i;
 			break;
@@ -587,13 +1127,13 @@ void EEMEngine::doCaseSelection() {
 					return;
 				}
 				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
-					sel = (sel == 0) ? kMaxMystery : sel - 1;
+					sel = (sel <= stageLo) ? stageHi : sel - 1;
 					sv.sel = sel;
 					drawCaseSubmenu(sv);
 					continue;
 				}
 				if (kDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
-					sel = (sel >= kMaxMystery) ? 0 : sel + 1;
+					sel = (sel >= stageHi) ? stageLo : sel + 1;
 					sv.sel = sel;
 					drawCaseSubmenu(sv);
 					continue;
@@ -635,31 +1175,31 @@ void EEMEngine::doCaseSelection() {
 				continue;
 			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_TAB) {
-				sel = (sel >= kMaxMystery) ? 0 : sel + 1;
+				sel = (sel >= stageHi) ? stageLo : sel + 1;
 				sv.sel = sel;
 				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_UP) {
-				sel = (sel == 0) ? kMaxMystery : sel - 1;
+				sel = (sel <= stageLo) ? stageHi : sel - 1;
 				sv.sel = sel;
 				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEDOWN) {
-				sel = (sel + 10 > kMaxMystery) ? kMaxMystery : sel + 10;
+				sel = (sel + 10 > stageHi) ? stageHi : sel + 10;
 				sv.sel = sel;
 				drawCaseSubmenu(sv);
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEUP) {
-				sel = (sel < 10) ? 0 : sel - 10;
+				sel = (sel < stageLo + 10) ? stageLo : sel - 10;
 				sv.sel = sel;
 				drawCaseSubmenu(sv);
 				continue;
 			}
-			if (k == Common::KEYCODE_HOME) { sel = 0; sv.sel = sel; drawCaseSubmenu(sv); continue; }
-			if (k == Common::KEYCODE_END)  { sel = kMaxMystery; sv.sel = sel; drawCaseSubmenu(sv); continue; }
+			if (k == Common::KEYCODE_HOME) { sel = stageLo; sv.sel = sel; drawCaseSubmenu(sv); continue; }
+			if (k == Common::KEYCODE_END)  { sel = stageHi; sv.sel = sel; drawCaseSubmenu(sv); continue; }
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -871,28 +1411,25 @@ void EEMEngine::drawNotebookFrame(int &page) {
 				   (const byte *)frame.surface.getBasePtr(0, row), w);
 	}
 
-	// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny.
+	// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny
+	// for CELLS, but the original `_DoNotebook @ 161e:0500` always
+	// uses script 0x01 (verified by `CONCAT22(1, ...)` in its
+	// `_NewAnimation` call at 161e:054c). Both 0x01 and 0x0b have
+	// the SAME script in `kAnimScripts` (alias), so both lookups
+	// produce identical results — but routing through 0x01
+	// matches the original verbatim.
 	const uint partnerAnim = (_partner == 0) ? 1 : 0xb;
 	Animation partnerAni;
 	if (_aniArchive.loadAnimation(partnerAnim, partnerAni) && !partnerAni.empty()) {
 		const uint32 now = g_system->getMillis();
-		const uint frameIdx = (uint)((now / 100) % partnerAni.size());
-		const Picture &fr = partnerAni[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-		for (int row = 0; row < fr.surface.h; row++) {
-			const int dstY = 80 + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < fr.surface.w; col++) {
-				const int dstX = 5 + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		const uint frameIdx = partnerFrameAtTick(0x01,
+												  (uint)partnerAni.size(), now);
+		// Anchor-aware blit. The PDA partner (anim 0x01/0x0b) cells
+		// have miscflags = rowoff = 0 in the audit, but routing
+		// through `blitAnimFrameAnchored` is harmless and keeps the
+		// rendering path consistent with the BigMap partner.
+		blitAnimFrameAnchored(scratch.surfacePtr(),
+							  partnerAni[frameIdx], 5, 80);
 	}
 
 	// Notes — `_DrawNotes` walks `_NoteIndex` for the current page,
@@ -1314,28 +1851,23 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 		}
 	}
 
-	// Partner sprite frame @ (5, 0x50).
+	// Partner sprite frame @ (5, 0x50). The original `_DoGallery @
+	// 158f:065b` registers `_NewAnimation(..., CONCAT22(2, ...), ...)`
+	// — script key 0x02 regardless of partner. Jake's 0x02 script
+	// (26 frames, brief wave + long hold + second wave) is what
+	// drives BOTH partners' cells. Earlier our port used 0x10 for
+	// Jenny, which is a 9-frame short blip — so Jenny was missing
+	// 17 frames of the wave-and-pause cadence that Jake has.
 	if (havePartner) {
 		const uint32 now = g_system->getMillis();
-		const uint frameIdx = (uint)((now / 100) % partnerAni.size());
-		const Picture &fr = partnerAni[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-		const int px = 5;
-		const int py = 0x50;
-		for (int row = 0; row < fr.surface.h; row++) {
-			const int dstY = py + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < fr.surface.w; col++) {
-				const int dstX = px + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		const uint frameIdx = partnerFrameAtTick(0x02,
+												  (uint)partnerAni.size(), now);
+		// Anchor-aware blit, consistent with site-loop / BigMap
+		// rendering paths. Anim 0x02 has rowoff = miscflags = 0
+		// per the audit but the anchored blitter is still the
+		// right semantic for an `_NewAnimation`-rendered sprite.
+		blitAnimFrameAnchored(scratch.surfacePtr(),
+							  partnerAni[frameIdx], 5, 0x50);
 	}
 
 	// Portraits — `_DrawGallery @ 158f:0046` walks suspects 0..N-1 and
@@ -1470,12 +2002,13 @@ void EEMEngine::doBigMap() {
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				// SetupButtonRect → `_NextScreen = 6` (the original's
-				// settings screen). We use it as "back to menu":
-				// abandon the current mystery and return to case
-				// selection.
+				// settings screen, mirrors `_DoBigMap @ 20fe:0c33`
+				// where it pushes `_PressButton` then writes
+				// `_NextScreen = 6`). Now wired to the actual
+				// `doSetup` handler instead of dropping the player
+				// out to the launcher.
 				if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
-					_mystery.clear();
-					_nextScreen = kScreenInvalid;
+					_nextScreen = kScreenSetup;
 					return;
 				}
 				// Click in the BigMapWindow → zoom. Original formula:
@@ -1753,30 +2286,24 @@ void EEMEngine::drawBigMapOverview() {
 		}
 	}
 
-	// Partner idle sprite at (0xfd, 0x50). Jake = anim 0x14, Jenny = 0x12.
+	// Partner idle sprite at (0xfd, 0x50). Jake = anim 0x14, Jenny = 0x12
+	// for the loaded CELLS, but the original `_DoBigMap @ 20fe:0a47`
+	// always passes `CONCAT22(0x14, ...)` to `_NewAnimation` so the
+	// SCRIPT key is 0x14 (`[0..8]` count-up) regardless of partner.
+	// Without this, Jenny was running 0x12's count-DOWN script
+	// `[8..0]` over her cells — visually backwards from the original.
 	const uint kMapAniId = (_partner == 0) ? 0x14 : 0x12;
 	Animation mapAnim;
 	if (_aniArchive.loadAnimation(kMapAniId, mapAnim) && !mapAnim.empty()) {
 		const uint32 now = g_system->getMillis();
-		const uint frameIdx = (uint)((now / 100) % mapAnim.size());
-		const Picture &fr = mapAnim[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-		const int kMapAnimX = 0xfd;
-		const int kMapAnimY = 0x50;
-		for (int row = 0; row < fr.surface.h; row++) {
-			const int dstY = kMapAnimY + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < fr.surface.w; col++) {
-				const int dstX = kMapAnimX + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		const uint frameIdx = partnerFrameAtTick(0x14,
+												  (uint)mapAnim.size(), now);
+		// Anchor-aware: the BigMap walk-cycle has miscflags = -2 per
+		// cell, so the partner shifts left as it cycles — without the
+		// anchor adjustment the sprite "shakes in place" instead of
+		// walking forward.
+		blitAnimFrameAnchored(scratch.surfacePtr(), mapAnim[frameIdx],
+							  0xfd, 0x50);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -1856,31 +2383,20 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	}
 
 	// Partner sprite on the detail map (drawn last to sit over the
-	// frame and the BIGMAP.PIC viewport).
+	// frame and the BIGMAP.PIC viewport). The original always passes
+	// `CONCAT22(0x13, ...)` to `_NewAnimation` (i.e. script ID 0x13)
+	// regardless of partner — verified at `_DoBigMap @ 20fe:0a47`.
+	// So we look up script 0x13 for both partners while still
+	// loading the partner-specific CELLS via `kDetailAniId`.
 	const uint kDetailAniId = (_partner == 0) ? 0x13 : 0x11;
 	Animation detailAnim;
 	if (_aniArchive.loadAnimation(kDetailAniId, detailAnim) &&
 		!detailAnim.empty()) {
 		const uint32 now = g_system->getMillis();
-		const uint frameIdx = (uint)((now / 100) % detailAnim.size());
-		const Picture &fr = detailAnim[frameIdx];
-		const byte transp = (byte)(fr.flags >> 8);
-		const int kDetailAnimX = 0x101;
-		const int kDetailAnimY = 0x50;
-		for (int row = 0; row < fr.surface.h; row++) {
-			const int dstY = kDetailAnimY + row;
-			if (dstY < 0 || dstY >= 200)
-				continue;
-			const byte *src = (const byte *)fr.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-			for (int col = 0; col < fr.surface.w; col++) {
-				const int dstX = kDetailAnimX + col;
-				if (dstX < 0 || dstX >= 320)
-					continue;
-				if (src[col] != transp)
-					dst[dstX] = src[col];
-			}
-		}
+		const uint frameIdx = partnerFrameAtTick(0x13,
+												  (uint)detailAnim.size(), now);
+		blitAnimFrameAnchored(scratch.surfacePtr(),
+							  detailAnim[frameIdx], 0x101, 0x50);
 	}
 
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -2269,12 +2785,54 @@ void EEMEngine::doAccuse() {
 			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
 		}
 
+		// Mirrors the chain-advancement loop at `_DisplayCorrect @
+		// 1df2:0824-0850`. Skip mystery 0 (the practice case) per the
+		// `if (_MysteryNumber != 0)` guard at 1df2:080d, then check
+		// every mystery in the current tier:
+		//   stage 1 → check  1..0x18 (24 mysteries, "A chain")
+		//   stage 2 → check 0x19..0x30 (24 mysteries, "B chain")
+		//   stage 3 → check 0x31..0x36 (6 mysteries, "C chain")
+		// If every solve flag in that range is non-zero, bump the
+		// stage. Original increments unconditionally (3→4 is harmless
+		// since no further range covers it); we cap at 3 for clarity.
+		if (mn != 0) {
+			uint lo = 0, hi = 0;
+			switch (_chainStage) {
+			case 1: lo = 1;    hi = 0x18; break;
+			case 2: lo = 0x19; hi = 0x30; break;
+			case 3: lo = 0x31; hi = 0x36; break;
+			default: break;
+			}
+			bool allSolved = (hi >= lo);
+			for (uint i = lo; i <= hi && allSolved; i++) {
+				if (i >= sizeof(_mysteriesSolved) || _mysteriesSolved[i] == 0)
+					allSolved = false;
+			}
+			if (allSolved && _chainStage < 3) {
+				_chainStage++;
+				debugC(1, kDebugMystery,
+					   "chainStage advanced to %u after solving mystery %u",
+					   _chainStage, mn);
+			}
+		}
+
 		// `_DisplayCorrect @ 1df2:073c` calls `_MIDIPlay(5)` (1df2:0789)
 		// before `_DifferenceAnimation("scrapbk.ani")` to swap from the
 		// travel music to the winner cue.
 		if (_music)
 			_music->playMus(5, /*loop=*/false);
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
+
+		// `_DisplayCorrect @ 1df2:07ac` then calls `_DisplayClue`
+		// against the briefing's winning ClueBlock at
+		// `_Mystery + _MysteryIndex[0x10]` BEFORE `_ShowOneScrap`.
+		// We don't render that intermediate ClueBlock yet (it ties
+		// into the chain-A/B/C result selection); skip straight to
+		// the per-mystery ending pages — the same screen
+		// `_ShowOneScrap @ 1f78:0773` displays via
+		// `_DisplayEnding(num, 1)`. Players see the per-mystery
+		// resolution text on top of the ending pic.
+		doShowEnding(mn);
 
 		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the
 		// `_mysteriesSolved` table is updated, the original
@@ -2287,8 +2845,22 @@ void EEMEngine::doAccuse() {
 		if (err.getCode() != Common::kNoError)
 			warning("saveProfile after solve failed: %s",
 					err.getDesc().c_str());
+
+		// `_DisplayCorrect @ 1df2:0895` writes `_NextScreen = 0xc`
+		// — the winner returns to the post-mystery `_ActionScreen`.
+		// Free the mystery first so the loop can break out cleanly:
+		// `_DeleteSavedGame` at 1df2:0851 + `_FreeMystery` at
+		// 1df2:08a4 do the same.
+		_mystery.clear();
+		_nextScreen = kScreenAction;
 	} else {
 		_mystery._firstTry = false;
+		// `_DisplayAlibi @ 1df2:043f` writes `_NextScreen =
+		// _LastScreen` — drop back to wherever the player accused
+		// from. With no mystery state to unload, the site loop
+		// resumes naturally.
+		_nextScreen = _lastScreen != kScreenInvalid
+						? (ScreenId)_lastScreen : kScreenSite;
 	}
 }
 
