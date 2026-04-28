@@ -728,104 +728,20 @@ void SiteScreen::run() {
 			}
 
 			case Common::EVENT_KEYDOWN:
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_ESCAPE:
+				// `_DoSiteLoop @ 168d:07e1` only dispatches on the
+				// 6-entry table at `168d:09d5` (TAB / ENTER / arrow
+				// keys for hotspot cursor cycling) plus ESC handled
+				// separately at 168d:07a9. We don't implement the
+				// hotspot cursor cycling — clicks are the primary
+				// interaction — so the only keyboard binding kept
+				// here is ESC (matches `_ESCHit` → "Are you sure?"
+				// → MAP).
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					if (_vm->areYouSure()) {
-						// Mirrors `_DoSiteLoop @ 168d:07b7` ESC path:
-						// `_NextScreen = 1` (back to MAP) after the
-						// areYouSure confirm. Without explicitly
-						// writing it here, the run() loop would see
-						// _nextScreen unchanged and treat it as a
-						// quit-engine signal — abandoning the case.
-						// Going to MAP keeps the case alive so the
-						// player can continue from a different site.
 						_vm->setNextScreen(kScreenMap);
 						return;
 					}
 					enter(cur);
-					break;
-				case Common::KEYCODE_m:
-					_vm->doBigMap();
-					// Either way the map covered the site — re-render.
-					if (_mystery->_siteNumber < _mystery->numSites())
-						cur = _mystery->_siteNumber;
-					enter(cur);
-					break;
-				case Common::KEYCODE_n:
-					_vm->doNotebook();
-					enter(cur);
-					break;
-				case Common::KEYCODE_g:
-					_vm->doGallery();
-					enter(cur);
-					break;
-				case Common::KEYCODE_a:
-					_vm->doAccuse();
-					exitRequested = true;
-					break;
-				case Common::KEYCODE_h:
-					_vm->doHelp();
-					enter(cur);
-					break;
-				case Common::KEYCODE_v:
-					_showHotspots = !_showHotspots;
-					enter(cur);
-					break;
-				case Common::KEYCODE_r:
-					// Restart the mystery from scratch (mirrors `_ReloadMystery`).
-					if (_mystery->load(_mystery->number())) {
-						if (_vm->_audio)
-							_vm->_audio->initMysterySounds(_mystery->number());
-						cur = 0;
-						enter(cur);
-					}
-					break;
-				case Common::KEYCODE_QUESTION:
-				case Common::KEYCODE_F1: {
-					if (_vm->getFont().isLoaded()) {
-						Graphics::ManagedSurface help(320, 200,
-							Graphics::PixelFormat::createFormatCLUT8());
-						help.clear();
-						const EEMFont &fnt = _vm->getFont();
-						int y = 8;
-						const char *lines[] = {
-							"EAGLE EYE MYSTERIES — keys",
-							"",
-							"  click   search a hotspot",
-							"  V       toggle hotspot outlines",
-							"  M       map (travel between sites)",
-							"  N       notebook (mark evidence with 1..9)",
-							"  G       gallery (suspect portraits)",
-							"  H       hint from the case host",
-							"  A       accuse a suspect",
-							"  R       restart current mystery",
-							"  Tab     next site (cycle)",
-							"  F5      save / load (ScummVM dialog)",
-							"  ? / F1  this help",
-							"  Esc     quit (with confirm)",
-							"",
-							"Notebook: select evidence with 1..9.",
-							"Selected-points > 99 wins the case."
-						};
-						for (uint i = 0; i < sizeof(lines)/sizeof(lines[0]); i++) {
-							fnt.drawString(&help, lines[i], 8, y, 320, 0xF);
-							y += fnt.getFontHeight() + 1;
-						}
-						g_system->copyRectToScreen(help.getPixels(),
-							help.pitch, 0, 0, 320, 200);
-						g_system->updateScreen();
-						_vm->waitForInput(60000);
-						enter(cur);
-					}
-					break;
-				}
-				case Common::KEYCODE_TAB:
-					_mystery->_lastSite = cur;
-					cur = (cur + 1) % _mystery->numSites();
-					enter(cur);
-					break;
-				default:
-					break;
 				}
 				break;
 
@@ -1251,34 +1167,6 @@ void SiteScreen::renderBackground(uint siteNum) {
 }
 
 void SiteScreen::renderHotspots(uint siteNum) {
-	// HUD overlay: site number, found clues, selected points. Drawn at
-	// the BOTTOM of the screen so the scene's top row stays visible —
-	// 320x200 mode 13h has a small bottom strip that the original engine
-	// uses for tool buttons; we repurpose it for the HUD.
-	if (_vm->getFont().isLoaded()) {
-		Graphics::Surface *screen = g_system->lockScreen();
-		if (screen) {
-			uint cluesFound = 0;
-			for (uint i = 0; i < Mystery::kCluesFoundCap; i++)
-				if (_mystery->_cluesFound[i])
-					cluesFound++;
-			Common::String hud = Common::String::format(
-				"Site %u  Clues %u  Pts %d   M N G H A R V Tab ?",
-				siteNum, cluesFound, _mystery->selectedPoints());
-			const int hudY = 192;
-			screen->fillRect(Common::Rect(0, hudY, 320, 200), 0);
-			Graphics::ManagedSurface mgr(320, 9,
-				Graphics::PixelFormat::createFormatCLUT8());
-			mgr.clear();
-			_vm->getFont().drawString(&mgr, hud, 4, 0, 320, 0x0F);
-			for (int row = 0; row < 8; row++) {
-				memcpy((byte *)screen->getBasePtr(0, hudY + row),
-					   (const byte *)mgr.getBasePtr(0, row), 320);
-			}
-			g_system->unlockScreen();
-		}
-	}
-
 	// Hotspot outlines (`_DrawSearchButtons`): toggle via V.
 	if (!_showHotspots)
 		return;
