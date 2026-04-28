@@ -236,7 +236,21 @@ void EEMEngine::doChoosePartner() {
 	// (`jen.voc` for Jenny, `jake.voc` for Jake; strings at 29be:0af1 /
 	// 29be:0af9) and block on `_WaitForVoiceDone`.
 	if (_audio) {
-		_audio->playVoc(Common::Path(_partner == 0 ? "JAKE.VOC" : "JEN.VOC"));
+		// CD: standalone clips `JAKE.VOC` / `JEN.VOC`. Floppy uses
+		// per-partner-and-event voice tables at `2608:0F0E` (Jake) /
+		// `2608:0F76` (Jenny), each 25 entries × FAR ptr to a VOC
+		// filename. After a partner pick, `FUN_19bb_0858 @ 19bb:0858`
+		// calls `FUN_1f4e_0305(0x14)` which loads voice slot 20 from
+		// the table for the chosen partner:
+		//   Jake  slot 20 → `2608:116B = "m-0113sl.voc"`
+		//   Jenny slot 20 → `2608:12AE = "f-0140sl.voc"`
+		Common::String voc;
+		if (isFloppy()) {
+			voc = (_partner == 0) ? "M-0113SL.VOC" : "F-0140SL.VOC";
+		} else {
+			voc = (_partner == 0) ? "JAKE.VOC" : "JEN.VOC";
+		}
+		_audio->playVoc(Common::Path(voc));
 		_audio->waitForVoiceDone();
 	}
 }
@@ -266,11 +280,28 @@ void EEMEngine::doInitClues() {
 	if (!ib)
 		return;
 
-	const uint16 startSite = READ_LE_UINT16(ib + 2);
-	if (startSite < Mystery::kVisitedSiteCap)
-		_mystery._onSites[startSite] = 1;
-	_mystery._siteNumber = startSite;
-	_mystery._lastSite = startSite;
+	// CD InitBlock starts with `u16 caseType; u16 startSite; <clue block>`.
+	// Floppy InitBlock starts with `u8 caseType; u8 nSubjects; subjects[];
+	// u8 nDialog; dialog_records[]` — no embedded `startSite`. Verified in
+	// `FUN_19bb_042f` (floppy briefing) where `cVar1 = *(buffer +
+	// initOffset)` reads caseType as a single byte and the dialog loop
+	// uses `local_e = byte[initOffset + 1 + nSubjects + 1]`.
+	const bool floppy = isFloppy();
+	const uint16 caseType = floppy ? (uint16)ib[0] : READ_LE_UINT16(ib);
+
+	if (!floppy) {
+		const uint16 startSite = READ_LE_UINT16(ib + 2);
+		if (startSite < Mystery::kVisitedSiteCap)
+			_mystery._onSites[startSite] = 1;
+		_mystery._siteNumber = startSite;
+		_mystery._lastSite = startSite;
+	} else {
+		// Floppy doesn't store a startSite in the InitBlock; default to 0
+		// so the first BigMap entry is reachable.
+		_mystery._onSites[0] = 1;
+		_mystery._siteNumber = 0;
+		_mystery._lastSite = 0;
+	}
 
 	setSitePalette(0x22);
 	Picture bg;
@@ -283,7 +314,6 @@ void EEMEngine::doInitClues() {
 	const bool haveGame  = _aniArchive.loadAnimation(gameAni, game) && !game.empty();
 	const bool haveBook  = _aniArchive.loadAnimation(bookAni, book) && !book.empty();
 
-	const uint16 caseType = READ_LE_UINT16(ib);
 	const bool haveNancy = (caseType == 1)
 						  && _aniArchive.loadAnimation(0x19, nancy)
 						  && !nancy.empty();
@@ -476,12 +506,24 @@ void EEMEngine::doInitClues() {
 	// the gate is `iVar1 == 2 && _VoiceAvailable`. Other case types open
 	// straight into the briefing dialogue without it.
 	if (caseType == 2 && _audio) {
-		_audio->playVoc(Common::Path("PHONE.VOC"));
+		// Floppy ships `PHONESL.VOC` instead of CD's `PHONE.VOC` (the
+		// `_LoadSoundName` call site at 2608:1107-110c hands the
+		// floppy filename to the same loader).
+		_audio->playVoc(Common::Path(isFloppy() ? "PHONESL.VOC" : "PHONE.VOC"));
 		_audio->waitForVoiceDone();
 	}
 
-	// Step 6 — case briefing dialogue.
-	displayClue(ib + 4);
+	// Step 6 — case briefing dialogue. CD InitBlock has the clue block
+	// at +4 (after `u16 caseType; u16 startSite`); floppy uses an
+	// entirely different format — `u8 caseType; u8 nSubjects;
+	// subjects[nSubjects]; u8 nDialog; dialog_records[nDialog]` —
+	// dispatched via `FUN_22dc_05c8 @ 22dc:05c8` per record (a
+	// different on-screen format from the CD clue blocks we render
+	// here). Skip the briefing display on floppy until the dialog-record
+	// renderer is ported; the briefing animations + composited final
+	// frames remain on screen until the user clicks past the BigMap.
+	if (!floppy)
+		displayClue(ib + 4);
 }
 
 /// Mirror `_ParseString` @ 1b66:07c3 — substitute the control bytes that

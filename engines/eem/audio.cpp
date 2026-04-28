@@ -205,9 +205,17 @@ void AudioPlayer::spoolSound(uint num) {
 			   "AudioPlayer: voice disabled, skipping spoolSound(%u)", num);
 		return;
 	}
-	if (_currentMystery < 0 || num >= _sdxIndex.size()) {
-		warning("AudioPlayer: spoolSound(%u) — invalid index (%d, %u)",
-				num, _currentMystery, (uint)_sdxIndex.size());
+	if (_currentMystery < 0) {
+		// No SDB/SDX bundle is loaded — floppy install (no `M*.SDB`)
+		// or pre-mystery state. Silently no-op; per-voice VOC playback
+		// for floppy lives elsewhere (TODO).
+		debugC(2, kDebugSound,
+			   "AudioPlayer: spoolSound(%u) skipped (no mystery sounds)", num);
+		return;
+	}
+	if (num >= _sdxIndex.size()) {
+		warning("AudioPlayer: spoolSound(%u) — index out of range (%u)",
+				num, (uint)_sdxIndex.size());
 		return;
 	}
 	const SoundEntry &entry = _sdxIndex[num];

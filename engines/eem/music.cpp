@@ -31,7 +31,7 @@
 
 namespace EEM {
 
-MusicPlayer::MusicPlayer() {
+MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 	// Mirrors `_InitMIDI @ 20a2:013a` which used `_AIL_register_driver`
 	// to walk the .ADV files (ADLIB.ADV, SBFM.ADV, MT32MPU.ADV, etc.)
 	// and pick a backend. We honour the launcher's "Music driver"
@@ -166,7 +166,31 @@ void MusicPlayer::playFile(const Common::Path &xmiPath, bool loop) {
 }
 
 void MusicPlayer::playMus(uint num, bool loop) {
-	// Format string verified at `29be:1525` ("mus%05d.xmi").
+	// CD format string verified at `29be:1525` ("mus%05d.xmi").
+	// Floppy maps the same numeric slots to its own filenames:
+	//   0..4 → travel music. The floppy table at 2608:1399-13cd holds
+	//          5 entries (Travel-6, Travel-4, Travel-7, Travel-1,
+	//          Travel-8) used by `_StartTravelMusic` via
+	//          `siteNumber % 5`.
+	//   5    → FANFARE2.XMI (winner). String at 2608:0c64.
+	//   6    → no equivalent in floppy install (the loser sting in
+	//          `_DisplayAlibi` is CD-only); skip.
+	if (_isFloppy) {
+		static const char *const kTravelTracks[5] = {
+			"Travel-6.XMI", "Travel-4.XMI", "Travel-7.XMI",
+			"Travel-1.XMI", "Travel-8.XMI",
+		};
+		Common::String name;
+		if (num < 5) {
+			name = kTravelTracks[num];
+		} else if (num == 5) {
+			name = "FANFARE2.XMI";
+		} else {
+			return; // num == 6 (loser sting): not present on floppy
+		}
+		playFile(Common::Path(name), loop);
+		return;
+	}
 	const Common::String name = Common::String::format("MUS%05u.XMI", num);
 	playFile(Common::Path(name), loop);
 }

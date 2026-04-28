@@ -101,6 +101,18 @@ enum ScreenId {
 	kScreenAction         = 0x0C
 };
 
+/// Distribution variant. Selected at engine init from the
+/// `ADGameDescription::extra` field set by `gameDescriptions[]` in
+/// `detection.cpp`. Used to gate filename selection (TRAVEL-N.XMI
+/// vs MUS%05u.XMI, FANFARE2.XMI vs MUS00005.XMI, PHONESL.VOC vs
+/// PHONE.VOC), opening-anim flow (MOVIE.ANM vs ANIM01..20.A) and
+/// per-variant sound effects (DING.VOC / NEWSCAN.VOC only ship with
+/// the floppy release).
+enum Variant {
+	kVariantCD     = 0,
+	kVariantFloppy = 1,
+};
+
 class EEMEngine : public Engine {
 public:
 	EEMEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -110,6 +122,8 @@ public:
 
 	const char *getGameId() const;
 	Common::Platform getPlatform() const;
+	Variant getVariant() const { return _variant; }
+	bool isFloppy() const { return _variant == kVariantFloppy; }
 
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
@@ -156,6 +170,7 @@ public:
 	SaveStateList listProfiles() const;
 
 	const ADGameDescription *_gameDescription;
+	Variant _variant = kVariantCD;
 
 	DBDArchive &getPics()    { return _picsArchive; }
 	DBDArchive &getAni()     { return _aniArchive; }

@@ -44,6 +44,10 @@ void Mystery::clear() {
 	_solvedOffset = _hintOffset = 0;
 	_numSites = 0;
 	_numSuspects = _numCONSITEs = _numCOFFSITEs = 0;
+	_isFloppy = false;
+	_floppySuspectsOff = _floppyHintBlockOff = _floppyNoteIndexOff = 0;
+	_floppyGalleryOff = _floppyTextOff = _floppyKDTextOff = 0;
+	_floppySolvedOff = 0;
 	memset(_aChain, 0, sizeof(_aChain));
 	memset(_bChain, 0, sizeof(_bChain));
 	memset(_cChain, 0, sizeof(_cChain));
@@ -86,6 +90,118 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_data = staging;
 	_number = num;
 
+	// Floppy `M*.BIN` uses a completely different header layout from
+	// the CD release. Verified via Ghidra of `EEM.EXE` floppy:
+	//
+	//   `_ReadMystery_Floppy @ 22dc:0178` parses M0..M54 into pointers
+	//    held in a global table at 28da:3c87+. The header offsets are:
+	//
+	//     header[+0..+1]   ???
+	//     header[+2..+3]   ???
+	//     header[+4..+5]   pointer → SUSPECTS section
+	//                      (count byte, then 0xb-byte entries; entry[+4] =
+	//                       pic ID, entry[+10] = recolor flag)
+	//                      (`_FloppySuspectsPtr` @ 28da:3c8b)
+	//     header[+6..+7]   pointer → ???       (28da:3c9f)
+	//     header[+8..+9]   pointer → NOTES section
+	//                      (7-byte entries indexed by clue ID; used by
+	//                       floppy `_DrawNotes` @ 15e0:01e8)
+	//                      (`DAT_28da_3c9b`)
+	//     header[+0xa..+b] pointer → GALLERY-PORTRAITS section
+	//                      (count byte, then variable-length entries
+	//                       `5 + name_len` bytes; entry[+0..+1] = u16
+	//                       picID, entry[+4] = name length)
+	//                      (`_FloppyGalleryPtr` @ 28da:3c87, count =
+	//                       `_FloppyNumSuspects` @ 28da:004b)
+	//     header[+0xc..+d] pointer → TEXT block (alibi text base; used in
+	//                       floppy `_DisplayAlibi` @ 1d40:00df)
+	//     header[+0x10..1] pointer → KDTextIndex (`_FloppyKDTextIndexPtr`
+	//                       @ 28da:3c93)
+	//     header[+0x12..3] pointer → ???       (28da:3c8f)
+	//
+	//   There is NO fixed-offset numSites / numSuspects / numCONSITEs
+	//   field — counts are stored as the FIRST byte of each section.
+	//   The CD release refactored this into a flat header at fixed
+	//   offsets; our `Mystery::load` here parses the CD layout.
+	//
+	// Detect the variant from the first u16: CD M0 starts with `0x003e`
+	// (initOffset = 62), floppy M0 starts with `0x2286` (a section
+	// pointer near end-of-file). When the first u16 is too high to be
+	// a CD `_initOffset`, parse as floppy.
+	if (readU16(0) > 0x100) {
+		_isFloppy = true;
+		// Section-pointer header verified via Ghidra of floppy
+		// `_ReadMystery_Floppy @ 22dc:0178`,
+		// `_DoSiteLoop_Floppy @ 1652:03a3`,
+		// and `FUN_1fed_07ed` (BigMap site iteration):
+		//
+		//   header[+4]   → SITES section
+		//                  count byte + 0xb-byte entries; entry[+4] =
+		//                  pic ID for BigMap marker, [+6..7] = u16 X,
+		//                  [+8..9] = u16 Y, [+10] = recolor flag.
+		//   header[+6]   → SITE INDEX (array of u16 offsets to per-site
+		//                  data structs; site[+0]=picOff,
+		//                  site[+2]=clueBlockOff, site[+8]=speakerInfo)
+		//   header[+8]   → NOTES (7-byte entries / clue ID)
+		//   header[+0xa] → SUSPECTS / GALLERY portraits
+		//   header[+0xc] → TEXT block base
+		//   header[+0x10] → KDTextIndex
+		//   header[+0x12] → SOLVED CLUE CHAIN
+		_floppySuspectsOff  = readU16(0x04);  // SITES
+		_floppyHintBlockOff = readU16(0x06);  // SITE INDEX
+		_floppyNoteIndexOff = readU16(0x08);
+		_floppyGalleryOff   = readU16(0x0a);  // SUSPECTS
+		_floppyTextOff      = readU16(0x0c);
+		_floppyKDTextOff    = readU16(0x10);
+		_floppySolvedOff    = readU16(0x12);
+
+		// header[+0] (the first u16) holds the InitBlock byte offset on
+		// floppy too — verified at `FUN_19bb_042f` where `*DAT_28da_3ca5`
+		// (deref'd as int *) reads the first u16 of the buffer and uses
+		// it as `cVar1 = *(buffer + initOffset)` (caseType byte).
+		_initOffset = readU16(0x00);
+
+		// Counts: first byte of each section. Verified at
+		// `FUN_1fed_07ed` (`uVar3 = *_FloppySuspectsPtr` then iterates)
+		// and `FUN_154e_0045` (`DAT_28da_004b = *DAT_28da_3c87`).
+		const byte *sitesSec = (_floppySuspectsOff < _data.size())
+								? _data.data() + _floppySuspectsOff : nullptr;
+		const byte *susSec   = (_floppyGalleryOff < _data.size())
+								? _data.data() + _floppyGalleryOff : nullptr;
+		_numSites    = sitesSec ? *sitesSec : 0;
+		_numSuspects = susSec   ? *susSec   : 0;
+		_numCONSITEs = 0;
+		_numCOFFSITEs = 0;
+
+		// Point CD-shaped accessor offsets at the floppy equivalents
+		// so existing accessors return the right base for floppy:
+		//   siteIndexEntry() → floppy site index (header[+6])
+		//   noteIndex()       → floppy notes (header[+8])
+		//   galleryData()     → floppy suspects (header[+0xa])
+		//   textAt()          → floppy text block (header[+0xc])
+		//   kdTextIndex()     → floppy KDTextIndex (header[+0x10])
+		//   solvedClueBlock() → floppy solved chain (header[+0x12])
+		// Per-section LAYOUTS still differ from CD, so consumers
+		// walking entries need `isFloppy()` branches.
+		_siteIndexOffset = _floppyHintBlockOff;
+		_noteOffset      = _floppyNoteIndexOff;
+		_galleryOffset   = _floppyGalleryOff;
+		_textOffset      = _floppyTextOff;
+		_kdTextOffset    = _floppyKDTextOff;
+		_solvedOffset    = _floppySolvedOff;
+		_hintOffset      = _floppyHintBlockOff;
+
+		debugC(1, kDebugMystery,
+			   "Mystery::load(%u) floppy: sites=0x%04x siteIdx=0x%04x "
+			   "notes=0x%04x suspects=0x%04x text=0x%04x kd=0x%04x "
+			   "solved=0x%04x  numSites=%u numSuspects=%u",
+			   num, _floppySuspectsOff, _floppyHintBlockOff,
+			   _floppyNoteIndexOff, _floppyGalleryOff, _floppyTextOff,
+			   _floppyKDTextOff, _floppySolvedOff,
+			   _numSites, _numSuspects);
+		return true;
+	}
+
 	// Header is 16-bit-word indexed (matches `int *piVar1 = __Mystery; piVar1[N]`).
 	_initOffset      = readU16(0  * 2);
 	_mapOffset       = readU16(2  * 2);
@@ -101,6 +217,16 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 	_numSuspects = (uint8)readU16(13 * 2);
 	_numCONSITEs = (uint8)readU16(14 * 2);
 	_numCOFFSITEs = (uint8)readU16(15 * 2);
+
+	// Defensive clamp. The floppy mystery file format uses a different
+	// header layout (verified by comparing M0.BIN: CD has `numSites =
+	// readU16(0x14) = 3`; floppy has `readU16(0x14) = 0x1925`,
+	// obviously not a site count). Without a clamp, downstream loops
+	// over `_onSites` / `_visitedSite` (capacity 20) blow past the
+	// array end. Until the floppy format is fully supported, cap at
+	// the array capacity so the engine fails gracefully.
+	if (_numSites > kVisitedSiteCap)
+		_numSites = kVisitedSiteCap;
 
 	for (uint i = 0; i < kChainLen; i++) {
 		_aChain[i] = readU16((16 + i) * 2);
@@ -218,6 +344,18 @@ const byte *Mystery::kdTextIndex() const {
 const byte *Mystery::mapEntry(uint siteNum) const {
 	if (!isLoaded() || siteNum >= _numSites)
 		return nullptr;
+	if (_isFloppy) {
+		// Floppy SITES section: byte[0] = count, then 11-byte entries.
+		// Verified at `FUN_1fed_07ed` (BigMap site iteration) where
+		// `pcVar2 = _FloppySuspectsPtr` (header[+4]) and the loop reads
+		// `*(int *)(pcVar2 + i*0xb + 7)` (X) and `*(int *)(pcVar2 + i*0xb
+		// + 9)` (Y) — the +7/+9 offsets are 1-based because pcVar2[0]
+		// holds the count, so entry stride 11 starts at byte 1.
+		const uint off = _floppySuspectsOff + 1 + siteNum * 11;
+		if (off + 11 > _data.size())
+			return nullptr;
+		return _data.data() + off;
+	}
 	const uint off = _mapOffset + siteNum * 14;
 	if (off + 14 > _data.size())
 		return nullptr;

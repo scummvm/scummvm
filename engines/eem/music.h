@@ -65,7 +65,7 @@ namespace EEM {
  */
 class MusicPlayer : public Audio::MidiPlayer {
 public:
-	MusicPlayer();
+	explicit MusicPlayer(bool isFloppy = false);
 
 	/// Mirrors `_MIDIPlayFile @ 20a2:024c`. Reads the .XMI from the game
 	/// directory and starts playing. `loop=true` mirrors the
@@ -73,7 +73,8 @@ public:
 	void playFile(const Common::Path &xmiPath, bool loop = false);
 
 	/// Mirrors `_MIDIPlay(num) @ 20a2:047d`. Composes the filename
-	/// "MUS%05u.XMI" and plays it. Used by `_StartTravelMusic`,
+	/// "MUS%05u.XMI" (CD) or maps to TRAVEL-N.XMI / FANFARE2.XMI
+	/// (floppy) and plays it. Used by `_StartTravelMusic`,
 	/// `_DisplayCorrect` (winner), `_DisplayAlibi` (loser).
 	void playMus(uint num, bool loop = false);
 
@@ -87,6 +88,7 @@ public:
 
 private:
 	bool _milesAudioMode = false;
+	const bool _isFloppy;
 	Common::Array<byte> _xmiData;
 };
 
