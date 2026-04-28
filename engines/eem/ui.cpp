@@ -2291,11 +2291,18 @@ void EEMEngine::doBigMap() {
 				const int kSliderRangeY = mapH - kMapWinH;
 
 				if (kSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
-					// Setup button on detail too — `_NextScreen = 6` in
-					// the original. We treat it the same way: bail back
-					// to case selection.
-					_mystery.clear();
-					_nextScreen = kScreenInvalid;
+					// `_DoMapScreen @ 20fe:1560` writes `_NextScreen
+					// = 6` (= kScreenSetup) and `INC [BP-8]` to bail
+					// out of the detail loop — verified via the byte
+					// search for `c7 06 16 79 06 00`, which finds the
+					// imm at exactly this site and `_DoBigMap @
+					// 20fe:0c33`. Same `SetupButtonRect @ 29be:15ce`
+					// rect used by both the overview and the detail
+					// (no per-screen rect duplication in the binary).
+					// The detail/zoom state is lost on return because
+					// the screen driver re-enters BigMap at stage 1 —
+					// this matches the original behaviour.
+					_nextScreen = kScreenSetup;
 					return;
 				}
 				if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
