@@ -813,6 +813,15 @@ void SiteScreen::run() {
 		if (exitRequested)
 			return;
 
+		// `doAccuse` on a win clears the mystery (so the screen driver
+		// can route to the post-mystery menu). Notebook / Gallery /
+		// hotspot paths route through this same loop, so a transitive
+		// `doAccuse` may have wiped `_mystery` underneath us — exit
+		// immediately rather than tick another frame against stale BG
+		// snapshots / hotspot tables.
+		if (!_mystery || !_mystery->isLoaded())
+			return;
+
 		// Per-tick frame pump (mirrors `_CheckFrameRate` +
 		// `_UpdateAnimations` at the top of `_DoSiteLoop`'s main loop).
 		// Restore the static BG snapshot, redraw animated NPCs +

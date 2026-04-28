@@ -368,7 +368,19 @@ private:
 	/// `_ShowOneScrap @ 1f78:0773` is just `_DisplayEnding(num, 1)`,
 	/// so this same call covers the post-mystery scrapbook view from
 	/// the action menu.
-	void doShowEnding(uint num);
+	///
+	/// `firstPage=true` opens at page 0; `false` opens at the last
+	/// page (used by `doShowScrapbook` when navigating backwards
+	/// between mysteries — mirrors the `local_8 = 0` write at
+	/// `_ShowScrapbook @ 1f78:067e`).
+	///
+	/// Returns the direction the user wants the caller to navigate:
+	///   -1 → previous mystery (LEFT pressed on the first page or
+	///        click in `PrevPageRect` while on first page),
+	///    0 → exit the scrapbook (ESC or click outside both rects),
+	///   +1 → next mystery (RIGHT/SPACE/Enter/click on last page).
+	/// Mirrors `_DisplayEnding`'s `[BP-0x18]` return at 1df2:0723.
+	int doShowEnding(uint num, bool firstPage = true);
 
 	/// Walk every solved mystery in tier @p stage (1=Junior, 2=Senior,
 	/// 3=Master) and display each one's ending pages in sequence.

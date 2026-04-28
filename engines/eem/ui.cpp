@@ -491,7 +491,7 @@ void EEMEngine::doNewPlayer() {
 	}
 }
 
-void EEMEngine::doShowEnding(uint num) {
+int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @
 	// 1df2:044c`. File format (verified by reading E0.BIN's bytes):
 	//   u16 pageCount
@@ -500,32 +500,63 @@ void EEMEngine::doShowEnding(uint num) {
 	//     u16 x1, y1, x2, y2  (story rect — passed to WordWrap)
 	//     char text[]        (null-terminated, ParseString opcodes)
 	//
-	// The original walks pages with PrevPage / NextPage rects (29be:
-	// 0x..); we approximate with mouse-click / Enter = next, ESC =
-	// exit. ParseString substitutes `\x80` (player name) and the rest
-	// of the 0x80..0x89 placeholder family so the rendered text
-	// reads as the correct player + partner combo.
+	// The original swaps the font: `_FreeFont(); _LoadFont("tiny.fnt")`
+	// at 1df2:055f-1df2:0563, calls `_GetPalette(0)` (site palette 0),
+	// then for each page `_GetBackground(picNum)` +
+	// `_WordWrap2(x1, y1, x2-x1, text, fontColor=0, dropColor=-1)`. The
+	// fontColor=0 draws in palette index 0 (the newspaper's body-text
+	// colour), with no drop shadow. Verified at the call site asm
+	// 1df2:04cf-1df2:04f4 (Ghidra mis-paired the two trailing args).
+	//
+	// Page navigation mirrors the original key/click handlers
+	// (1df2:0689 / 1df2:06a0): LEFT decrements pageIdx, RIGHT (or
+	// SPACE / Enter / click) increments it. Hitting the boundary
+	// (LEFT on page 0, RIGHT on last page) sets `[BP-0x18]` to -1 / 1
+	// respectively and exits — that return value is what
+	// `_ShowScrapbook` uses to walk forward / backward through
+	// solved mysteries (see 1f78:0664-1f78:069c). ESC and clicks
+	// outside both PrevPage / NextPage rects exit with `[BP-0x18]=0`.
+	//
+	// `firstPage=false` opens the ending at the LAST page (used by
+	// `doShowScrapbook` after a "previous mystery" navigation —
+	// matches `local_8 = 0` written before the back-step at
+	// 1f78:067e).
 	const Common::String fname = Common::String::format("E%u.BIN", num);
 	Common::File f;
 	if (!f.open(Common::Path(fname))) {
 		warning("doShowEnding: %s missing", fname.c_str());
-		return;
+		return 0;
 	}
 	const uint32 size = f.size();
 	if (size < 2) {
 		warning("doShowEnding: %s too small (%u bytes)",
 				fname.c_str(), size);
-		return;
+		return 0;
 	}
 	Common::Array<byte> buf(size);
 	if (f.read(buf.data(), size) != size) {
 		warning("doShowEnding: %s short read", fname.c_str());
-		return;
+		return 0;
 	}
 
 	const uint16 pageCount = READ_LE_UINT16(buf.data());
 	if (pageCount == 0)
-		return;
+		return 0;
+
+	// Mirrors 1df2:0558-1df2:056a — `_FreeFont(); _LoadFont(tiny.fnt)`.
+	// The newspaper layout uses TINY.FNT (smaller glyphs) so the body
+	// copy fits in the columns. `_LoadFont(font.fnt)` is restored at
+	// 1df2:0625 after the page loop.
+	EEMFont tinyFont;
+	const bool haveTinyFont = tinyFont.load(Common::Path("TINY.FNT"));
+	if (!haveTinyFont)
+		warning("doShowEnding: TINY.FNT failed to load — falling back");
+
+	// Mirrors 1df2:055f `_GetPalette(0)` — site palette 0 is the
+	// shared "newspaper" CLUT for ending pages. The newspaper body
+	// text in particular is palette index 0 (= newspaper black) so we
+	// MUST switch palettes before rendering.
+	setSitePalette(0);
 
 	// Walk page records. Each page header is 10 bytes; text is
 	// null-terminated and follows the header.
@@ -544,9 +575,11 @@ void EEMEngine::doShowEnding(uint num) {
 		cursor++;  // past the null
 	}
 
-	uint pageIdx = 0;
+	uint pageIdx = firstPage ? 0 : (kMaxPages - 1);
+	int direction = 0;     // -1 / 0 / +1, see header doc.
+	bool exitLoop = false;
 	bool dirty = true;
-	while (!shouldQuit() && pageIdx < kMaxPages) {
+	while (!shouldQuit() && !exitLoop) {
 		if (dirty) {
 			const uint off = pageOffsets[pageIdx];
 			if (off + 10 >= size)
@@ -557,9 +590,6 @@ void EEMEngine::doShowEnding(uint num) {
 			const uint16 x2     = READ_LE_UINT16(buf.data() + off + 6);
 			(void)READ_LE_UINT16(buf.data() + off + 8);  // y2 (unused — WordWrap2 takes width only)
 
-			// Halve the rect coords: ending pages use 320x400 logical
-			// coords (x2=0x128=296, y2=0xa8=168 in our test file
-			// E0.BIN — both already 320x200 mode 13h). No conversion.
 			Picture bg;
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
@@ -578,13 +608,20 @@ void EEMEngine::doShowEnding(uint num) {
 			const char *raw = (const char *)buf.data() + off + 10;
 			const Common::String text = parseString(raw, _playerName, _partner);
 
-			if (_font.isLoaded() && x2 > x1) {
+			// Use TINY.FNT (`_LoadFont(@29be:10a5)` at 1df2:055f-0563)
+			// and color 0 (`_WordWrap2(...,0,-1)` per asm at 1df2:04cf,
+			// not 0xF as Ghidra's decompile output suggests). Falls
+			// back to the main font if TINY.FNT failed to load.
+			const EEMFont &renderFont = haveTinyFont ? tinyFont : _font;
+			if (renderFont.isLoaded() && x2 > x1) {
 				const int textW = MIN<int>((int)x2 - (int)x1, 320 - (int)x1);
-				_font.drawWordWrapped(&scratch, (int)x1, (int)y1,
-									  textW, text, 0xF);
+				renderFont.drawWordWrapped(&scratch, (int)x1, (int)y1,
+										   textW, text, 0);
 			}
 
-			// Page indicator at top-right ("page 1/3").
+			// Page indicator at top-right ("page 1/3"). Stays in the
+			// main font + color 0xF so it doesn't blend into the
+			// newspaper masthead.
 			if (_font.isLoaded() && kMaxPages > 1) {
 				const Common::String hdr = Common::String::format(
 					"%u/%u", (unsigned)pageIdx + 1, (unsigned)kMaxPages);
@@ -600,14 +637,25 @@ void EEMEngine::doShowEnding(uint num) {
 		Common::Event ev;
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-				return;
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				return 0;
+			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					return;
+					// ESC is the ONLY way out of the newspaper view.
+					// Departs from the original `_DisplayEnding`, which
+					// also exits on boundary arrow keys / clicks
+					// (1df2:0689 / 1df2:06a0); the boundary-exit path is
+					// what fed `[BP-0x18]` to `_ShowScrapbook` for
+					// per-mystery scrapbook navigation. We don't expose
+					// that — clicking ESC closes the scrapbook entirely.
+					direction = 0;
+					exitLoop = true;
+					break;
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_PAGEUP:
+					// Clamp at page 0 — never exit on LEFT.
 					if (pageIdx > 0) {
 						pageIdx--;
 						dirty = true;
@@ -618,21 +666,45 @@ void EEMEngine::doShowEnding(uint num) {
 				case Common::KEYCODE_RETURN:
 				case Common::KEYCODE_KP_ENTER:
 				case Common::KEYCODE_SPACE:
-					pageIdx++;
-					dirty = true;
+				case Common::KEYCODE_TAB:
+					// Clamp at last page — never exit on RIGHT either.
+					if (pageIdx + 1 < kMaxPages) {
+						pageIdx++;
+						dirty = true;
+					}
 					break;
 				default:
 					break;
 				}
+				if (exitLoop)
+					break;
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				pageIdx++;
-				dirty = true;
+				// Mouse clicks shift pages too — never exit on click.
+				// Use the original PrevPage/NextPage rect split for
+				// click direction (29be:1078 / 29be:1080); clicks
+				// outside both rects fall through to next-page so the
+				// player still gets some feedback.
+				const Common::Rect kPrevPageRect(0, 0, 27, 200);
+				if (kPrevPageRect.contains(ev.mouse.x, ev.mouse.y)) {
+					if (pageIdx > 0) {
+						pageIdx--;
+						dirty = true;
+					}
+				} else {
+					if (pageIdx + 1 < kMaxPages) {
+						pageIdx++;
+						dirty = true;
+					}
+				}
+				if (exitLoop)
+					break;
 			}
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+	return direction;
 }
 
 void EEMEngine::doShowScrapbook(uint stage) {
@@ -654,7 +726,14 @@ void EEMEngine::doShowScrapbook(uint stage) {
 	const uint hi = lo + 0x17;
 	const bool currentTier = (stage == _chainStage);
 
-	for (uint m = lo; m <= hi; m++) {
+	// `doShowEnding` only reports `direction = 0` now (ESC), so we
+	// can't use the original 1f78:067e/0698 forward-backward walk.
+	// Instead iterate every solved mystery in the tier linearly:
+	// each ESC closes the current newspaper and moves us to the
+	// next solved entry. Departs from `_ShowScrapbook @ 1f78:0642`
+	// (which let the player browse via the boundary keys), but
+	// matches the user-requested "ESC is the only exit" rule.
+	for (uint m = lo; m <= hi && !shouldQuit(); m++) {
 		if (m >= sizeof(_mysteriesSolved))
 			break;
 		// Current-tier filter (1f78:0664). Completed tiers show all
@@ -662,9 +741,7 @@ void EEMEngine::doShowScrapbook(uint stage) {
 		// the player hasn't earned that scrapbook page yet.
 		if (currentTier && _mysteriesSolved[m] == 0)
 			continue;
-		doShowEnding(m);
-		if (shouldQuit())
-			return;
+		(void)doShowEnding(m, /*firstPage=*/true);
 	}
 }
 
@@ -3751,6 +3828,30 @@ void EEMEngine::doAccuse() {
 				g_system->copyRectToScreen(scene.surface.getPixels(),
 										   scene.surface.pitch, sx, sy,
 										   sw, sh);
+		}
+
+		// Partner sprite at (5, 0x50). The original `_DoAccuse @
+		// 1df2:0c30` registered the partner anim BEFORE entering the
+		// gallery; that slot stays active across `_DisplayCorrect`'s
+		// `_BuildBackground` (which calls `_Repaint` →
+		// `_DrawActiveAnimations` and re-blits the partner over the
+		// fresh BG). We don't have a slot system, so manually stamp
+		// the resting frame here. `displayClue` snapshots the screen
+		// on entry, so the partner ends up baked into its BG and is
+		// preserved across every clue iteration.
+		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+		Animation partnerAni;
+		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+			!partnerAni.empty()) {
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (screen) {
+				const uint frameIdx = partnerFrameAtTick(0x02,
+					(uint)partnerAni.size(),
+					g_system->getMillis());
+				blitAnimFrameAnchored(screen, partnerAni[frameIdx],
+									  5, 0x50);
+				g_system->unlockScreen();
+			}
 		}
 		g_system->updateScreen();
 
