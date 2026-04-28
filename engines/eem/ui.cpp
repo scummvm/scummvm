@@ -635,6 +635,39 @@ void EEMEngine::doShowEnding(uint num) {
 	}
 }
 
+void EEMEngine::doShowScrapbook(uint stage) {
+	// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`. Walk the
+	// stage's mystery range and call `_DisplayEnding` on each solved
+	// mystery. The original splits the 55 cases into three tiers:
+	//   stage 1 (Junior) → mysteries  1..0x18 (24 cases)
+	//   stage 2 (Senior) → mysteries 0x19..0x30 (24 cases)
+	//   stage 3 (Master) → mysteries 0x31..0x36 (6 cases)
+	// Each tier's range is `lo = (stage-1)*0x18 + 1`, `hi = lo + 0x17`
+	// (verified at 1f78:064b: `iVar1 = (param_1 - 1) * 0x18; uVar2 =
+	// iVar1 + 1`). The current-stage filter at 1f78:065e
+	// (`if (DAT_2d5d_3f99 == param_1)`) skips unsolved mysteries
+	// inside the player's CURRENT tier — completed tiers show every
+	// mystery regardless. We mirror that exactly.
+	if (stage < 1 || stage > 3)
+		return;
+	const uint lo = (stage - 1) * 0x18 + 1;
+	const uint hi = lo + 0x17;
+	const bool currentTier = (stage == _chainStage);
+
+	for (uint m = lo; m <= hi; m++) {
+		if (m >= sizeof(_mysteriesSolved))
+			break;
+		// Current-tier filter (1f78:0664). Completed tiers show all
+		// 24 entries; the active tier hides unsolved ones because
+		// the player hasn't earned that scrapbook page yet.
+		if (currentTier && _mysteriesSolved[m] == 0)
+			continue;
+		doShowEnding(m);
+		if (shouldQuit())
+			return;
+	}
+}
+
 void EEMEngine::doSetup() {
 	// Mirrors `_DoSetup @ 1f78:044e`. The setup screen is BG `PIC 0x40`
 	// (loaded once on entry) with every label baked in — "Setup",
@@ -1022,7 +1055,35 @@ void EEMEngine::doSetup() {
 				return;
 			}
 
-			(void)kScrap1Btn; (void)kScrap2Btn; (void)kScrap3Btn;
+			// ScrapBook 1 / 2 / 3 (buttons [3] / [4] / [5]). Original
+			// handlers at 1f78:021F (`_ShowScrapbook(0, 1)`) /
+			// 1f78:022E (gated chain >= 2 / `_ShowScrapbook(0, 2)`) /
+			// 1f78:0244 (gated chain >= 3 / `_ShowScrapbook(0, 3)`).
+			// Convert the original's `(0, stage)` invocation into our
+			// `doShowScrapbook(stage)` (we collapse the param_1=0
+			// "no-current-mystery" indirection — relevant only for
+			// the post-win callsite).
+			auto runScrapbook = [&](uint stage) {
+				CursorMan.showMouse(false);
+				doShowScrapbook(stage);
+				CursorMan.showMouse(true);
+				setSitePalette(0);
+			};
+			if (kScrap1Btn.contains(mx, my)) {
+				runScrapbook(1);
+				dirty = true;
+				continue;
+			}
+			if (kScrap2Btn.contains(mx, my) && _chainStage >= 2) {
+				runScrapbook(2);
+				dirty = true;
+				continue;
+			}
+			if (kScrap3Btn.contains(mx, my) && _chainStage >= 3) {
+				runScrapbook(3);
+				dirty = true;
+				continue;
+			}
 		}
 		if (dirty)
 			draw();
@@ -1061,9 +1122,24 @@ void EEMEngine::doCaseSelection() {
 		"         See ScrapBook 2",
 		"         See ScrapBook 3"
 	};
-	// ScrapBooks aren't implemented yet — grey them so the player can't
-	// stop on them, mirroring the original `_Greys` mask.
-	const bool kPickEnabled[kNumPicks] = { true, true, false, false, false };
+	// ScrapBook entries are gated by chain stage exactly as the
+	// original `_ActionScreen @ 1c33:195b` does at 1c33:19f3-19f7:
+	//   stage 1 + nothing solved → ScrapBook 1/2/3 all greyed
+	//   stage 1 + ≥1 solved      → ScrapBook 1 enabled, 2/3 greyed
+	//   stage 2                  → ScrapBook 1 enabled, 2 enabled, 3 greyed
+	//   stage 3                  → all three enabled
+	// (`_3f9b[i] != 0` over the tier's mystery range is the per-tier
+	// gate; we approximate "any in tier" by checking _chainStage and
+	// any solved flag.)
+	bool anySolved1 = false;
+	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
+		if (_mysteriesSolved[i]) { anySolved1 = true; break; }
+	const bool scrap1On = anySolved1 || _chainStage >= 2;
+	const bool scrap2On = _chainStage >= 2;
+	const bool scrap3On = _chainStage >= 3;
+	const bool kPickEnabled[kNumPicks] = {
+		true, true, scrap1On, scrap2On, scrap3On
+	};
 	uint pick = kPickChoose;
 
 	const char *kSeparator = "----------------------------------";
@@ -1234,8 +1310,19 @@ void EEMEngine::doCaseSelection() {
 		return;
 	}
 
-	if (pick != kPickChoose) {
-		// ScrapBooks aren't implemented; bail back to the menu loop.
+	if (pick == kPickScrap1 || pick == kPickScrap2 || pick == kPickScrap3) {
+		// `_ActionScreen` handlers at 1c33:1B13 / 1B26 / 1B40 each
+		// call `_ShowScrapbook(0, stage)` for the matching tier
+		// (verified at the action-handler jumptable bytes
+		// `01 03 05 07 09 ff` paired with handlers at 1c33:1be1).
+		// The picker here is meant to LEAVE the mystery state untouched
+		// — viewing the scrapbook never starts a new case.
+		const uint stage = (pick == kPickScrap1) ? 1
+						 : (pick == kPickScrap2) ? 2 : 3;
+		CursorMan.showMouse(false);
+		doShowScrapbook(stage);
+		CursorMan.showMouse(true);
+		setSitePalette(0);
 		_mystery.clear();
 		return;
 	}
@@ -1976,6 +2063,12 @@ void EEMEngine::doGallery() {
 									e2.type == Common::EVENT_RETURN_TO_LAUNCHER)
 									return;
 							}
+							// Per-tick `updateScreen()` so the SDL cursor
+							// follows the mouse — without it the cursor
+							// freezes on entry to the MoreInfo screen
+							// (we never repaint here, so the cursor never
+							// gets drawn at its current position).
+							g_system->updateScreen();
 							g_system->delayMillis(20);
 						}
 						// Force gallery redraw immediately so the
