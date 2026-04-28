@@ -249,6 +249,7 @@ public:
 	void sub_136_ade();
 	void sub_136_b00();
 	void sub_136_2582();
+	void sub_136_2664();
 	void sub_136_274e();
 	void sub_136_2a7c();
 	void sub_136_2b30();
@@ -575,7 +576,11 @@ private:
 
 	PatternMode var_i16_1dee;
 
+	int16 var_i16_1df2;
+
 	int16 var_i16_1e00;
+
+	int16 var_i16_1e06;
 
 	Common::U32String var_str_1e08;
 

@@ -635,7 +635,6 @@ void ZBasic::sound(int16 frequency, int32 duration, int16 volume, int16 voice) {
 	// to program the 4-tone synthesizer.
 	// Without this, out of the box ZBasic seems to use
 	// square wave output.
-	warning("STUB: ZBasic::unk_6: frequency %d, duration %d, volume %d, voice %d", frequency, duration, volume, voice);
 	SWSynthRec record;
 	if (frequency == 0)
 		return;
