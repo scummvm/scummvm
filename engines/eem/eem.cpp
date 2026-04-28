@@ -266,22 +266,31 @@ Common::Error EEMEngine::run() {
 	// iteration. Sentinel `kScreenInvalid` (0xFFFF) ends the loop —
 	// same as the original's table-end marker.
 	//
-	// Initial value `kScreenAction` matches the original flow at the
-	// tail of `_DoChoosePartner @ 1a35:099d` which sets
-	// `_NextScreen = 0xc` once the partner has been picked. (The
-	// resume path above bypasses this and seeds `kScreenMap` instead.)
+	// `_DoChoosePartner @ 1a35:099d` sets `_NextScreen = 0xc` (= the
+	// original `_ActionScreen` — "Choose A Mystery / Practice Mystery /
+	// See ScrapBook 1..3"). In our port that menu lives inside
+	// `doCaseSelection`, which already mirrors `_ActionScreen`'s 5-entry
+	// list (verified against `ActionNames @ 29be:0d6a`) and rolls the
+	// individual-mystery picker (`_CaseSelection @ 1c33:0a87`) into the
+	// same flow. So we route straight to `kScreenChooseMystery`; the
+	// `kScreenAction` (= 0xc) state still exists for the post-win path
+	// (`_DisplayCorrect @ 1df2:0895` writes 0xc) but its handler also
+	// dispatches `doCaseSelection`. The previous `doActionScreen` was a
+	// synthetic stub ("What now?" / "Solve a Mystery" / "Look at My
+	// Books") whose strings are nowhere in the binary — confirmed by a
+	// `search_strings` for "What" returning zero matches.
 	//
 	// Mid-mystery profile resume: if the profile picker loaded a
 	// save whose `hasMystery` flag was set, `_mystery.isLoaded()` is
 	// true here and the player just re-picked their partner. Drop
-	// straight to MAP rather than ACTION so they don't have to walk
-	// back through the case picker (which would `_mystery.load()`
-	// fresh and discard their site / clue progress). The original
-	// has no equivalent — it persists only profile-level state via
-	// `_PlayerRecord`, not in-progress mysteries — so this is a
-	// ScummVM-only ergonomics improvement.
+	// straight to MAP rather than the action menu so they don't have
+	// to walk back through the case picker (which would
+	// `_mystery.load()` fresh and discard their site / clue
+	// progress). The original has no equivalent — it persists only
+	// profile-level state via `_PlayerRecord`, not in-progress
+	// mysteries — so this is a ScummVM-only ergonomics improvement.
 	if (!shouldQuit() && !resumed)
-		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
+		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenChooseMystery;
 screen_loop:
 	while (!shouldQuit() && _nextScreen != kScreenInvalid) {
 		const ScreenId current = (ScreenId)_nextScreen;
@@ -289,20 +298,27 @@ screen_loop:
 
 		switch (current) {
 		case kScreenAction:
-			// Post-mystery menu. `_ActionScreen` sets _NextScreen via
-			// its action jumptable (1c33:1be1) — see `doActionScreen`.
-			doActionScreen();
+			// Post-mystery menu. The original's `_ActionScreen @
+			// 1c33:195b` shows the 5-entry "Choose A Mystery /
+			// Practice / ScrapBook" picker; `doCaseSelection` is
+			// our port of that exact menu (plus the individual-case
+			// sub-picker the original handles in `_CaseSelection @
+			// 1c33:0a87`). After the player picks, fall through to
+			// the same routing the `kScreenChooseMystery` case uses.
+			// Reachable from `_DisplayCorrect`'s 0xc write after a
+			// solve (see `ui.cpp` `_nextScreen = kScreenAction`).
+			doCaseSelection();
+			_nextScreen = _mystery.isLoaded() ? kScreenInitClues
+											  : kScreenInvalid;
 			break;
 
 		case kScreenChooseMystery:
 			// Handler 10 at 1a35:0e0e calls `_DoChooseMystery` which
 			// presets `_NextScreen = 0` (INIT_CLUES) before
-			// `_CaseSelection`. If the picker bails out without
-			// loading a mystery (no `_ReadMystery` call), drop back
-			// to ACTION instead of falling into a missing case.
+			// `_CaseSelection`. Same dispatch as `kScreenAction`.
 			doCaseSelection();
 			_nextScreen = _mystery.isLoaded() ? kScreenInitClues
-											  : kScreenAction;
+											  : kScreenInvalid;
 			break;
 
 		case kScreenInitClues:
@@ -310,7 +326,7 @@ screen_loop:
 			// then writes `_NextScreen = 1` (MAP).
 			doInitClues();
 			_nextScreen = _mystery.isLoaded() ? kScreenMap
-											  : kScreenAction;
+											  : kScreenChooseMystery;
 			break;
 
 		case kScreenMap:
@@ -323,7 +339,7 @@ screen_loop:
 			// the natural next state is SITE.
 			doBigMap();
 			if (!_mystery.isLoaded())
-				_nextScreen = kScreenAction;
+				_nextScreen = kScreenChooseMystery;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenSite;
 			break;
@@ -340,7 +356,7 @@ screen_loop:
 			// via `_LastScreen`).
 			doSiteLoop();
 			if (!_mystery.isLoaded())
-				_nextScreen = kScreenAction;
+				_nextScreen = kScreenChooseMystery;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenInvalid;  // user quit
 			break;
