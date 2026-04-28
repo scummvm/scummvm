@@ -181,9 +181,7 @@ void EEMEngine::doHelp() {
 	{
 		Graphics::Surface *cur = g_system->lockScreen();
 		if (cur) {
-			for (int row = 0; row < 200; row++)
-				memcpy((byte *)ms.getBasePtr(0, row),
-					   (const byte *)cur->getBasePtr(0, row), 320);
+			ms.simpleBlitFrom(*cur);
 			g_system->unlockScreen();
 		}
 	}
@@ -270,9 +268,7 @@ void EEMEngine::doInterfaceHelp(uint num) {
 	{
 		Graphics::Surface *cur = g_system->lockScreen();
 		if (cur) {
-			for (int row = 0; row < 200; row++)
-				memcpy((byte *)bg.getBasePtr(0, row),
-					   (const byte *)cur->getBasePtr(0, row), 320);
+			bg.simpleBlitFrom(*cur);
 			g_system->unlockScreen();
 		}
 	}
@@ -351,10 +347,7 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 	if (bg && bg->w == 320 && bg->h == 200) {
 		_partnerEraseBg.create(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		for (int row = 0; row < 200; row++) {
-			memcpy((byte *)_partnerEraseBg.getBasePtr(0, row),
-				   (const byte *)bg->getBasePtr(0, row), 320);
-		}
+		_partnerEraseBg.simpleBlitFrom(*bg);
 	} else {
 		_partnerEraseBg.free();
 	}

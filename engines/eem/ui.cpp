@@ -162,13 +162,8 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
-	if (v.haveCaseBg) {
-		const int w = MIN<int>(v.caseBg->surface.w, 320);
-		const int h = MIN<int>(v.caseBg->surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)v.caseBg->surface.getBasePtr(0, row), w);
-	}
+	if (v.haveCaseBg)
+		scratch.simpleBlitFrom(v.caseBg->surface);
 	if (!v.vm->getFont().isLoaded() || !v.names)
 		return;
 
@@ -242,14 +237,8 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
-	if (v.haveCaseBg) {
-		const int w = MIN<int>(v.caseBg->surface.w, 320);
-		const int h = MIN<int>(v.caseBg->surface.h, 200);
-		for (int row = 0; row < h; row++) {
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)v.caseBg->surface.getBasePtr(0, row), w);
-		}
-	}
+	if (v.haveCaseBg)
+		scratch.simpleBlitFrom(v.caseBg->surface);
 
 	// KD greeter frame — masked-blit current animation cell at
 	// (0x112, 0x50). 100 ms tick matches `_CheckFrameRate`. The
@@ -382,13 +371,8 @@ void EEMEngine::doProfilePicker() {
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		Picture bg;
-		if (_picsArchive.getPicture(0x104, bg)) {
-			const int w = MIN<int>(bg.surface.w, 320);
-			const int h = MIN<int>(bg.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)bg.surface.getBasePtr(0, row), w);
-		}
+		if (_picsArchive.getPicture(0x104, bg))
+			scratch.simpleBlitFrom(bg.surface);
 		for (uint i = 0; i < entries.size(); i++) {
 			const byte color = ((int)i == sel) ? 0xF : 0x8;
 			_font.drawString(&scratch, entries[i].label,
@@ -490,13 +474,8 @@ void EEMEngine::doNewPlayer() {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
-	if (haveBG) {
-		const int w = MIN<int>(bg.surface.w, 320);
-		const int h = MIN<int>(bg.surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)bg.surface.getBasePtr(0, row), w);
-	}
+	if (haveBG)
+		scratch.simpleBlitFrom(bg.surface);
 	_font.drawString(&scratch, "Please type your name:", 80, 40, 240, 0xF);
 	_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
@@ -556,13 +535,8 @@ void EEMEngine::doNewPlayer() {
 			// Re-render with the updated `name`. Same body as the
 			// initial render above — only `name + "_"` changes.
 			scratch.clear();
-			if (haveBG) {
-				const int w = MIN<int>(bg.surface.w, 320);
-				const int h = MIN<int>(bg.surface.h, 200);
-				for (int row = 0; row < h; row++)
-					memcpy((byte *)scratch.getBasePtr(0, row),
-						   (const byte *)bg.surface.getBasePtr(0, row), w);
-			}
+			if (haveBG)
+				scratch.simpleBlitFrom(bg.surface);
 			_font.drawString(&scratch, "Please type your name:",
 							 80, 40, 240, 0xF);
 			_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
@@ -678,13 +652,8 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.clear();
-			if (_picsArchive.getPicture(picNum, bg)) {
-				const int w = MIN<int>(bg.surface.w, 320);
-				const int h = MIN<int>(bg.surface.h, 200);
-				for (int row = 0; row < h; row++)
-					memcpy((byte *)scratch.getBasePtr(0, row),
-						   (const byte *)bg.surface.getBasePtr(0, row), w);
-			}
+			if (_picsArchive.getPicture(picNum, bg))
+				scratch.simpleBlitFrom(bg.surface);
 
 			// Story text. The bytes are a null-terminated string with
 			// `_ParseString` placeholders (0x80 = player name, 0x82
@@ -909,13 +878,8 @@ void EEMEngine::doSetup() {
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
 		Picture bg;
-		if (_picsArchive.getPicture(0x40, bg)) {
-			const int w = MIN<int>(bg.surface.w, 320);
-			const int h = MIN<int>(bg.surface.h, 200);
-			for (int row = 0; row < h; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)bg.surface.getBasePtr(0, row), w);
-		}
+		if (_picsArchive.getPicture(0x40, bg))
+			scratch.simpleBlitFrom(bg.surface);
 
 		const byte kKey    = 0xFE;
 		const byte kBright = 0x15;
@@ -1922,13 +1886,8 @@ void EEMEngine::drawNotebookFrame(int &page) {
 
 	// PIC 0x3f frame.
 	Picture frame;
-	if (_picsArchive.getPicture(0x3f, frame)) {
-		const int w = MIN<int>(frame.surface.w, 320);
-		const int h = MIN<int>(frame.surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)frame.surface.getBasePtr(0, row), w);
-	}
+	if (_picsArchive.getPicture(0x3f, frame))
+		scratch.simpleBlitFrom(frame.surface);
 
 	// Partner sprite at (5, 80). Anim 1 for Jake, 0xb (11) for Jenny
 	// for CELLS, but the original `_DoNotebook @ 161e:0500` always
@@ -2805,13 +2764,8 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	scratch.clear();
 
 	Picture frame;
-	if (_picsArchive.getPicture(0x42, frame)) {
-		const int w = MIN<int>(frame.surface.w, 320);
-		const int h = MIN<int>(frame.surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)frame.surface.getBasePtr(0, row), w);
-	}
+	if (_picsArchive.getPicture(0x42, frame))
+		scratch.simpleBlitFrom(frame.surface);
 
 	// Marker PICs from `_main @ 1a35:0f59`. Three globals are filled
 	// once at boot via `_GetPicture` (1-based IDs):
@@ -2916,13 +2870,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	scratch.clear();
 
 	Picture frame;
-	if (_picsArchive.getPicture(0x43, frame)) {
-		const int w = MIN<int>(frame.surface.w, 320);
-		const int h = MIN<int>(frame.surface.h, 200);
-		for (int row = 0; row < h; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)frame.surface.getBasePtr(0, row), w);
-	}
+	if (_picsArchive.getPicture(0x43, frame))
+		scratch.simpleBlitFrom(frame.surface);
 
 	const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
 	const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
