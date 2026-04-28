@@ -252,10 +252,11 @@ private:
 	void drawGalleryFrame(const byte *gd, uint8 numSuspects,
 						  Common::Array<Common::Rect> &slotRects,
 						  Common::Array<int> &slotSuspect);
-	void drawBigMapOverview();
+	void drawBigMapOverview(uint32 elapsedMs);
 	void drawBigMapDetail(int scrollX, int scrollY,
 						  const Common::Array<byte> &mapPixels,
-						  uint16 mapW, uint16 mapH);
+						  uint16 mapW, uint16 mapH,
+						  uint32 elapsedMs);
 	void drawAccuseGallery(uint8 numSuspects, const byte *gd,
 						   int highlighted,
 						   Common::Array<Common::Rect> &slotRects,

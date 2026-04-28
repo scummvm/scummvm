@@ -457,6 +457,49 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
+// Generic "play `unfold` once, then loop `waitSeq` forever" walker.
+// Mirrors the original's slot-script-swap idiom: the entrance script
+// runs to its 0x80 terminator, then the slot's script pointer is
+// rewritten to a looping wait sequence (e.g. `_BigMapWaitSeq @
+// 29be:1574`, `_SmallMapWaitSeq @ 29be:1548`). `partnerFrameAtTick`
+// can't model that swap on its own (it always wraps on the same
+// script), hence this helper.
+static uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
+									   const uint8 *waitSeq, uint waitSeqLen,
+									   uint numFrames, uint32 elapsedMs) {
+	const uint kFramePeriodMs = 100;
+	const uint tick = elapsedMs / kFramePeriodMs;
+	const uint frame = (tick < unfoldLen)
+		? unfold[tick]
+		: waitSeq[(tick - unfoldLen) % waitSeqLen];
+	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
+}
+
+uint bigMapPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
+	// Script 0x14 @ 29be:196a (count-up 0..8, 0x80) → on terminator,
+	// `_DoBigMap` swaps to `_BigMapWaitSeq` @ 29be:1574
+	// (9,9,9,9,10,9,9,9,9, 0x80) — open-map hold with a fidget.
+	static const uint8 kUnfold[]  = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+	static const uint8 kWaitSeq[] = { 9, 9, 9, 9, 10, 9, 9, 9, 9 };
+	return oneShotThenLoopFrameAtTick(kUnfold, ARRAYSIZE(kUnfold),
+									  kWaitSeq, ARRAYSIZE(kWaitSeq),
+									  numFrames, elapsedMs);
+}
+
+uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
+	// Script 0x13 @ 29be:1992 (count-up 0..7, 0x80) → on terminator,
+	// `_DoMapScreen @ 20fe:1390` swaps to `_SmallMapWaitSeq` @ 29be:1548
+	// (18 entries: hold cell 7 with a single cell-10 fidget) — fidget
+	// every ~1.8 s.
+	static const uint8 kUnfold[]  = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	static const uint8 kWaitSeq[] = {
+		7, 7, 7, 10, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
+	};
+	return oneShotThenLoopFrameAtTick(kUnfold, ARRAYSIZE(kUnfold),
+									  kWaitSeq, ARRAYSIZE(kWaitSeq),
+									  numFrames, elapsedMs);
+}
+
 void SiteScreen::enter(uint siteNum) {
 	if (!_mystery || !_mystery->isLoaded()) {
 		warning("SiteScreen::enter: no mystery loaded");
