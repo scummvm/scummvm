@@ -226,6 +226,11 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 
 		pm.drawEllipse(0, 0, destRect.width(), destRect.height(), fgColor, !frame, &pd);
 
+		byte fakePal[768];
+		Common::fill(fakePal, fakePal+3, 0xff);
+		Common::fill(fakePal+3, fakePal+768, 0x00);
+		mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
+
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
 		_addDirtyRect(dstRect);
 	}
