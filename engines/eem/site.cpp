@@ -41,22 +41,7 @@ namespace EEM {
 // to the screen each tick.
 void blitFrame(Graphics::ManagedSurface &dst, const Picture &p,
 			   int x, int y, byte transp) {
-	const int w = p.surface.w;
-	const int h = p.surface.h;
-	for (int row = 0; row < h; row++) {
-		const int dstY = y + row;
-		if (dstY < 0 || dstY >= 200)
-			continue;
-		const byte *src = (const byte *)p.surface.getBasePtr(0, row);
-		byte *out = (byte *)dst.getBasePtr(0, dstY);
-		for (int col = 0; col < w; col++) {
-			const int dstX = x + col;
-			if (dstX < 0 || dstX >= 320)
-				continue;
-			if (src[col] != transp)
-				out[dstX] = src[col];
-		}
-	}
+	dst.transBlitFrom(p.surface, Common::Point(x, y), (uint32)transp);
 }
 
 // Mask-aware blit from a Picture into a `Graphics::Surface` (the
@@ -809,10 +794,7 @@ void SiteScreen::enterSiteAnim() {
 		return;
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
-	for (int row = 0; row < 200; row++) {
-		memcpy((byte *)bg.getBasePtr(0, row),
-			   (const byte *)screen->getBasePtr(0, row), 320);
-	}
+	bg.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
 
 	// Phase 1 — skateboard scroll. `_GetAnimation(6 | 0xe)`.
@@ -833,10 +815,7 @@ void SiteScreen::enterSiteAnim() {
 		while (x + spriteW > 0 && !_vm->shouldQuit()) {
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)bg.getBasePtr(0, row), 320);
-			}
+			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, skate[frameIdx], x, y, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, 320, 200);
@@ -886,10 +865,7 @@ void SiteScreen::enterSiteAnim() {
 
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)bg.getBasePtr(0, row), 320);
-			}
+			scratch.simpleBlitFrom(bg);
 			blitFrame(scratch, fr, destX, destY, transp);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, 320, 200);
@@ -1043,10 +1019,7 @@ void SiteScreen::captureBgSnapshot() {
 		_snapshotSite = -1;
 		return;
 	}
-	for (int row = 0; row < 200; row++) {
-		memcpy((byte *)_bgSnapshot.getBasePtr(0, row),
-			   (const byte *)screen->getBasePtr(0, row), 320);
-	}
+	_bgSnapshot.simpleBlitFrom(*screen);
 	g_system->unlockScreen();
 }
 
@@ -1405,18 +1378,12 @@ void EEMEngine::playKdAnim(uint16 num) {
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	if (_partnerEraseBg.w == 320 && _partnerEraseBg.h == 200) {
-		for (int row = 0; row < 200; row++) {
-			memcpy((byte *)bg.getBasePtr(0, row),
-				   (const byte *)_partnerEraseBg.getBasePtr(0, row), 320);
-		}
+		bg.simpleBlitFrom(_partnerEraseBg);
 	} else {
 		Graphics::Surface *screen = g_system->lockScreen();
 		if (!screen)
 			return;
-		for (int row = 0; row < 200; row++) {
-			memcpy((byte *)bg.getBasePtr(0, row),
-				   (const byte *)screen->getBasePtr(0, row), 320);
-		}
+		bg.simpleBlitFrom(*screen);
 		g_system->unlockScreen();
 	}
 
@@ -1430,10 +1397,7 @@ void EEMEngine::playKdAnim(uint16 num) {
 		// Restore BG, then masked-blit the next frame.
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		for (int row = 0; row < 200; row++) {
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)bg.getBasePtr(0, row), 320);
-		}
+		scratch.simpleBlitFrom(bg);
 		// Anchor-aware: kdAnim cells (0x03/0x04/0x0c/0x0d ...) have
 		// non-zero per-frame `miscflags`/`rowoff` (anim 0x03 has
 		// rowoff up to 9, anim 0x04 has miscflags = -2). Without
