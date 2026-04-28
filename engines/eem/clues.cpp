@@ -773,16 +773,28 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 		// `_DisplayClue` @ 2404:0833-085a — after the balloon is drawn,
 		// spool the per-clue voice. Each ClueEntry stores two 1-based
-		// sound indices: `+0x18` for partner=Jenny and `+0x1a` for
-		// partner=Jake (verified against 2404:0823-0834). Index 0 / -1
-		// = no audio. The original blocks until the line ends; we run
-		// async (the wait happens implicitly while the player reads).
+		// sound indices: `+0x18` (Jenny voice) and `+0x1a` (Jake voice).
+		//
+		// Critical gate (verified at 2404:0833):
+		//   if (clue[+0x18] != 0 && voiceOn && voiceAvail) {
+		//       iVar6 = clue[+0x18];           // Jenny default
+		//       if (Partner == 0) iVar6 = clue[+0x1a];  // Jake override
+		//       _SpoolSound(iVar6 - 1);
+		//   }
+		// The condition gates on the JENNY slot regardless of partner.
+		// Some hotspot ClueBlocks define `+0x1a` (Jake voice) but leave
+		// `+0x18` at 0 — for those, the original engine plays nothing
+		// and the entry is text-only. Our previous code gated on the
+		// partner-selected slot and ended up firing unrelated voices
+		// (e.g., a "no audio" entry triggering Jake's spoolSound).
 		if (_audio) {
 			const uint16 voiceJenny = READ_LE_UINT16(c + 0x18);
-			const uint16 voiceJake  = READ_LE_UINT16(c + 0x1a);
-			const uint16 voice = (_partner == 0) ? voiceJake : voiceJenny;
-			if (voice != 0 && voice != 0xFFFF)
-				_audio->spoolSound((uint)(voice - 1));
+			if (voiceJenny != 0 && voiceJenny != 0xFFFF) {
+				const uint16 voiceJake = READ_LE_UINT16(c + 0x1a);
+				const uint16 voice = (_partner == 0) ? voiceJake : voiceJenny;
+				if (voice != 0 && voice != 0xFFFF)
+					_audio->spoolSound((uint)(voice - 1));
+			}
 		}
 
 		// Wait for click/key to advance — only if we drew something.
