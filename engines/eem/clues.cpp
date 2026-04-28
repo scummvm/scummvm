@@ -601,8 +601,22 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		// This is what surfaces "Jenny takes a picture with a camera"
 		// (and the matching Jake gestures) during NPC searches.
 		const int16 kdAnimNum = (int16)READ_LE_UINT16(c + 0x3a);
-		if (kdAnimNum != -1)
+		if (kdAnimNum != -1) {
 			playKdAnim((uint16)kdAnimNum);
+			// `playKdAnim` leaves the screen on the partner-less
+			// `_partnerEraseBg`, mirroring its between-frame erase
+			// source. Re-stamp `bg` so the partner sprite captured at
+			// `displayClue` entry returns before we draw the speaker
+			// portrait + balloon. Without this the bubble lands on a
+			// partner-less screen and the partner appears invisible
+			// for the entire first iteration. Mirrors the original's
+			// `_UpdateAnimations @ 172b:09c1` swap on `0x80`: the
+			// kdAnim slot is freed and the WaitHandle (partner) slot
+			// is reactivated with frame index 0xffff, so on the next
+			// tick the partner renders at script[0] of its wait anim.
+			g_system->copyRectToScreen(bg.getPixels(), bg.pitch,
+									   0, 0, 320, 200);
+		}
 
 		const bool useP1 = (_partner == 1) &&
 			(READ_LE_UINT16(c + 10) != 0xFFFF);

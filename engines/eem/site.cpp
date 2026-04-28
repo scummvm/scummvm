@@ -894,6 +894,13 @@ void SiteScreen::enterSiteAnim() {
 	// frame-by-frame anchors decrease as the animation progresses):
 	//   destX = -frame.miscflags    (on-disk byte 8 = anchor X)
 	//   destY = kKDY - frame.rowoff (on-disk byte 6 = anchor Y)
+	// Both anchors are SIGNED int16 (mirrors `blitAnimFrameAnchored` /
+	// `_UpdateAnimations @ 172b:09c1`). The original's `-pPVar8->width`
+	// negation wraps in 16-bit on DOS, so a frame with `miscflags = -2`
+	// (0xFFFE) lands at destX = +2 in the original. Without the int16
+	// re-cast our 32-bit negation produces destX = -65534 and the
+	// second-to-last frame (which has a non-zero anchor in anim 7/0xf)
+	// clips entirely off-screen, leaving a one-tick partner-less gap.
 	// Each frame waits one `_CheckFrameRate` tick — we use 80 ms which
 	// matches the original's ~12 FPS pacing.
 	Animation kd;
@@ -903,8 +910,8 @@ void SiteScreen::enterSiteAnim() {
 			 frameIdx++) {
 			const Picture &fr = kd[frameIdx];
 			const byte transp = (byte)(fr.flags >> 8);
-			const int destX = -(int)fr.miscflags;
-			const int destY = kKDY - (int)fr.rowoff;
+			const int destX = -(int)(int16)fr.miscflags;
+			const int destY = kKDY - (int)(int16)fr.rowoff;
 
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
