@@ -626,13 +626,25 @@ void ZBasic::unk_4() {
 	warning("STUB: ZBasic::unk_4");
 }
 
-int16 ZBasic::unk_5() {
-	warning("STUB: ZBasic::unk_5");
-	return 0;
+int16 ZBasic::soundBusy() {
+	return _toolbox->SoundDone() ? 0 : 1;
 }
 
 void ZBasic::sound(int16 frequency, int32 duration, int16 volume, int16 voice) {
+	// FIXME: It is possible to use voice and the WAVE command
+	// to program the 4-tone synthesizer.
+	// Without this, out of the box ZBasic seems to use
+	// square wave output.
 	warning("STUB: ZBasic::unk_6: frequency %d, duration %d, volume %d, voice %d", frequency, duration, volume, voice);
+	SWSynthRec record;
+	if (frequency == 0)
+		return;
+	record.triplets.push_back({ (uint16)(783360/frequency),  MIN(MAX((uint16)volume, (uint16)0), (uint16)255), (uint16)(duration*60/1000) });
+	_toolbox->StartSound(&record, 8, 0);
+}
+
+void ZBasic::unk_8() {
+	warning("STUB: ZBasic::unk_8");
 }
 
 void ZBasic::unk_11(int16 unk1) {

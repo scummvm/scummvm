@@ -400,9 +400,10 @@ void FoolGame::sub_128_50e(int16 freq, int16 duration, int16 wait) {
 	this->var_i16_32 = duration;
 	this->var_i16_30 = freq;
 	if (this->soundEnabled == 1) {
-		g_zbasic->sound(this->var_i16_30, this->var_i16_32, 0x96, 0);
+		// the volume was originally 150, this is crazy loud.
+		g_zbasic->sound(this->var_i16_30, this->var_i16_32, 20, 0);
 		if (this->var_i16_34 == 1) {
-			while (g_zbasic->unk_5()) {
+			while (g_zbasic->soundBusy()) {
 				g_toolbox->Delay(0);
 			}
 		}
@@ -1703,7 +1704,7 @@ void FoolGame::puzzleRun() {
 		this->sentenceRun();
 		break;
 	case 9:
-		this->sub_136_004();
+		this->mazeRun();
 		break;
 	case 10:
 		this->jumbleRun();
@@ -3191,11 +3192,6 @@ void FoolGame::sub_129_123a() {
 }
 
 
-
-// maze game
-void FoolGame::sub_136_004() {
-	warning("STUB: %s", __func__);
-}
 
 void FoolGame::sub_138_004() {
 	warning("STUB: %s", __func__);

@@ -19,6 +19,8 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/system.h"
 #include "common/savefile.h"
 
@@ -29,17 +31,46 @@
 
 namespace Fool {
 
+// FIXME: This sound code is incredibly basic, only providing
+// an interface for the square wave synthesiser.
+
 void Toolbox::StartSound(SynthPtr synthRec, uint32 numBytes, ProcPtr completionRtn) {
 	if (!synthRec) {
 		warning("Toolbox::startSound: record not found");
 		return;
 	}
+	bool synch = completionRtn == -1;
 	if (synthRec->mode == swMode) {
 		SWSynthRec *rec = static_cast<SWSynthRec *>(synthRec);
+		for (auto &it : rec->triplets) {
+			_swSynth->playQueue(Audio::PCSpeaker::kWaveFormSquare, it.count == 0 ? 783360.0f : (783360.0f / it.count), it.duration*1000000/60, MIN(it.amplitude, (uint16)255));
+		}
+		if (synch) {
+			while (_swSynth->isPlaying()) {
+				Delay(1);
+			}
+		}
 	} else {
 		warning("Toolbox::startSound: unimplemented synth mode %d", synthRec->mode);
 		return;
 	}
+}
+
+void Toolbox::StopSound() {
+	_swSynth->stop();
+}
+
+bool Toolbox::SoundDone() {
+	return !_swSynth->isPlaying();
+}
+
+void Toolbox::SetSoundVol(int16 level) {
+	warning("STUB: Toolbox::SetSoundVol");
+}
+
+int16 Toolbox::GetSoundVol() {
+	warning("STUB: Toolbox::GetSoundVol");
+	return 7;
 }
 
 

@@ -19,6 +19,8 @@
  *
  */
 
+#include "audio/mixer.h"
+#include "audio/softsynth/pcspk.h"
 #include "common/events.h"
 #include "common/system.h"
 
@@ -159,12 +161,26 @@ static const struct MacKeyCodeMapping {
 
 Toolbox::Toolbox() {
 	_frameLimiter = new Graphics::FrameLimiter(g_system, 60, false);
-	for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++)
+	for (const MacKeyCodeMapping *k = MackeyCodeMappings; k->scummvm != Common::KEYCODE_INVALID; k++) {
 		_keyMap[k->scummvm] = k->mac;
+	}
+	Audio::Mixer *mixer = g_system->getMixer();
+	if (mixer) {
+		_swSynth = new Audio::PCSpeakerStream(mixer->getOutputRate());
+		mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundDriver,
+			              _swSynth, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	}
+
 }
 
 Toolbox::~Toolbox() {
 	delete _frameLimiter;
+	Audio::Mixer *mixer = g_system->getMixer();
+	if (mixer) {
+		mixer->stopHandle(_soundDriver);
+	}
+	delete _swSynth;
+	_swSynth = nullptr;
 }
 
 void Toolbox::_pumpEvents() {

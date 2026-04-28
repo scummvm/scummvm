@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	fool_jigsaw.o \
 	fool_jumble.o \
 	fool_justice.o \
+	fool_maze.o \
 	fool_polyomino.o \
 	fool_prologue.o \
 	fool_reveal.o \
