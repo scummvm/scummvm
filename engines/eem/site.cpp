@@ -554,6 +554,14 @@ void SiteScreen::enter(uint siteNum) {
 		renderBackground(siteNum);
 	}
 
+	// Stop the travel music explicitly. `_DoSiteLoop @ 168d:06c0`
+	// waits for the one-shot travel track to play out and then calls
+	// `_StopMIDI()` before the interactive site phase begins —
+	// blocking the engine while it spins. We just stop now so the
+	// site investigation runs without music (matches the original
+	// silent-investigation phase).
+	_vm->stopMusic();
+
 	// Static drops (Loop 2 from `_DoSiteLoop`) — no animation, baked
 	// into the BG snapshot the run() pump uses to restore.
 	renderStaticDrops(siteNum);
