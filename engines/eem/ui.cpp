@@ -242,6 +242,15 @@ void EEMEngine::doProfilePicker() {
 	// `local_20 == 0` at 1c33:1170), it falls straight into
 	// `_NewPlayer`. Selecting an entry calls `_LoadPlayerRecord` and
 	// returns; selecting the "exit" sentinel goes back to title.
+
+	// Palette reset. `screen8_handler` runs `_FadeOut(); _GetPalette(0);
+	// _GetBackground(0x104);` before the picker, so the BG always
+	// renders against SITEPALS index 0 regardless of which intro
+	// palette was active last. Without this, skipping out of an intro
+	// anim (THEME / ANIM01..20 / TITLE) leaves the previous video's
+	// palette in place and the picker draws with the wrong colours.
+	setSitePalette(0);
+
 	const SaveStateList saves = listProfiles();
 	if (saves.empty()) {
 		doNewPlayer();
@@ -274,6 +283,16 @@ void EEMEngine::doProfilePicker() {
 	int sel = 0;
 	bool done = false;
 
+	// Picker geometry: `DrawList @ 1c33:040d` is called from
+	// `screen8_handler @ 1c33:1012` with `(_TextBox + 3, DAT_29be_0d02)`.
+	// `_TextBox @ 29be:0d00` holds {x1=58, y1=35, x2=238, y2=158} so
+	// the list origin is (61, 35), 10 px per row, max 12 visible
+	// rows. The "Pick a player" caption is part of the BG (PIC 0x104)
+	// — `screen8_handler` never draws it as text — so an extra
+	// `drawString` would overlay on top of the baked-in heading.
+	const int kListX = 61;
+	const int kListY = 35;
+	const int kLineH = 10;
 	auto draw = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
@@ -286,12 +305,10 @@ void EEMEngine::doProfilePicker() {
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)bg.surface.getBasePtr(0, row), w);
 		}
-		_font.drawString(&scratch, "Pick a player:", 80, 30, 220, 0xF);
-		const int kLineH = 12;
 		for (uint i = 0; i < entries.size(); i++) {
 			const byte color = ((int)i == sel) ? 0xF : 0x8;
 			_font.drawString(&scratch, entries[i].label,
-							 80, 60 + (int)i * kLineH, 220, color);
+							 kListX, kListY + (int)i * kLineH, 220, color);
 		}
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
@@ -331,8 +348,7 @@ void EEMEngine::doProfilePicker() {
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				const int kLineH = 12;
-				const int hit = (ev.mouse.y - 60) / kLineH;
+				const int hit = (ev.mouse.y - kListY) / kLineH;
 				if (hit >= 0 && hit < (int)entries.size()) {
 					sel = hit;
 					committed = true;

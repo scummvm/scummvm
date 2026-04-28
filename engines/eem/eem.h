@@ -115,6 +115,15 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	// Disable ScummVM's periodic autosave. The original engine's
+	// `screen8_handler @ 1c33:1012` builds the profile picker by
+	// walking every `*.PLR` file in the save dir, and we mirror that
+	// via `listProfiles() → MetaEngine::listSaves`. Letting the
+	// framework write a slot-0 autosave creates a phantom profile
+	// that shows up on the picker as a real save. Returning -1 tells
+	// the framework to skip autosave entirely.
+	int getAutosaveSlot() const override { return -1; }
+
 	// ScummVM extended-save hooks. The base `Engine::saveGameState` /
 	// `loadGameState` write/read the framework header (description,
 	// thumbnail, playtime, version) around our body via these
