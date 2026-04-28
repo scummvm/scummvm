@@ -99,17 +99,65 @@ struct CaseSelectionView {
 	uint pick;
 };
 
+// Mystery list shown in the "Choose A Mystery" sub-screen. Mirrors
+// `_DoChooseMystery @ 1a35:02b7`: opens BOOK%u.NME (CRLF-separated
+// ASCII strings, last entry is whitespace = sentinel), reads up to 25
+// lines × 40 bytes each, hands the array to `_CaseSelection`. We
+// preserve the trailing whitespace line as the original sentinel
+// since `_DoChoose @ 1c33:0514` walks until `*piVar3 == 0 && piVar3[1]
+// == 0` — but for our renderer we just keep the names array.
+Common::StringArray loadBookNames(uint book) {
+	Common::StringArray names;
+	const Common::String fname = Common::String::format("BOOK%u.NME", book);
+	Common::File f;
+	if (!f.open(Common::Path(fname))) {
+		warning("loadBookNames: %s missing", fname.c_str());
+		return names;
+	}
+	while (!f.eos()) {
+		Common::String line = f.readLine();
+		if (f.eos() && line.empty())
+			break;
+		// `_fgets` in the original reads CRLF terminators with the line;
+		// `Common::File::readLine` strips them, so `line` here is the
+		// text only. Trim trailing whitespace so the sentinel "        "
+		// last entry doesn't render as a blank scrollable row.
+		while (!line.empty() &&
+			   (line.lastChar() == ' ' || line.lastChar() == '\t' ||
+				line.lastChar() == '\r'))
+			line.deleteLastChar();
+		if (line.empty())
+			continue;
+		names.push_back(line);
+	}
+	return names;
+}
+
 // Per-mystery sub-chooser ("Choose A Mystery") view.
+//
+// `names` are the entries from BOOK%d.NME (in display order — index 0
+// = first case in the tier, mystery number = `tierLo + index`).
+// `solvedFlags` is a parallel bool array indicating which entries are
+// already solved (greyed and unselectable in `_DoChoose`).
+// `topRow` is the scroll position; up to 12 entries are visible.
+// `selRow` is the highlighted row (0-based within the names array).
 struct CaseSubmenuView {
 	EEMEngine *vm;
 	const Picture *caseBg;
 	bool haveCaseBg;
-	const byte *mysteriesSolved;
-	uint mysteriesSolvedSize;
-	uint sel;
-	uint maxMystery;
+	const Common::StringArray *names;
+	const Common::Array<bool> *solvedFlags;
+	uint topRow;
+	uint selRow;
+	uint book;            ///< 1..3 — for the "Book N" / "Challenge Book" title
 };
 
+// Mirrors `_DoChoose`'s `DrawList @ 1c33:040d`. 12 visible rows × 10 px
+// at (61, 35); colour palette: 0x13 = highlighted (selected), 0x1B =
+// greyed (already solved), 0x5C = default. We approximate with the
+// closest indices of site palette 0 — 0xF (white) / 0x7 (medium grey)
+// / 0x8 (dark grey) — since we don't decode the original CLUT byte
+// ramp.
 void drawCaseSubmenu(const CaseSubmenuView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -121,34 +169,70 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 			memcpy((byte *)scratch.getBasePtr(0, row),
 				   (const byte *)v.caseBg->surface.getBasePtr(0, row), w);
 	}
-	if (v.vm->getFont().isLoaded()) {
-		const int kListX  = 61;
-		const int kListW  = 238 - kListX;
-		const int kListY0 = 35;
-		const int kLineH  = 10;
-		const int kVisible = 12;
-		int top = (int)v.sel - kVisible / 2;
-		if (top < 0)
-			top = 0;
-		if (top + kVisible > (int)v.maxMystery + 1)
-			top = (int)v.maxMystery + 1 - kVisible;
-		for (int r = 0; r < kVisible; r++) {
-			const int idx = top + r;
-			if (idx > (int)v.maxMystery)
-				break;
-			char marker = ' ';
-			if ((uint)idx < v.mysteriesSolvedSize) {
-				if (v.mysteriesSolved[idx] == 2)
-					marker = '*';
-				else if (v.mysteriesSolved[idx] == 1)
-					marker = '+';
-			}
-			const char arrow = ((uint)idx == v.sel) ? '>' : ' ';
-			v.vm->getFont().drawString(&scratch,
-				Common::String::format("%c %c Mystery %d", arrow, marker, idx),
-				kListX, kListY0 + r * kLineH, kListW, 0xF);
+	if (!v.vm->getFont().isLoaded() || !v.names)
+		return;
+
+	// Top centred title. `_CaseSelection @ 1c33:0aa3` formats "Book %d"
+	// for tiers 1/2 and "Challenge Book" (sprintf with no arg) for
+	// tier 3. `_Show_String(0xc, (0xba - width)/2 + 0x3c, …, 0x10)`
+	// places it horizontally centred over the panel.
+	const Common::String title = (v.book == 3)
+		? Common::String("Challenge Book")
+		: Common::String::format("Book %u", v.book);
+	const int titleW = v.vm->getFont().getStringWidth(title);
+	const int titleX = (0xba - titleW) / 2 + 0x3c;
+	v.vm->getFont().drawString(&scratch, title, titleX, 12, 320, 0xF);
+
+	const int kListX  = 61;
+	const int kListW  = 238 - kListX;
+	const int kListY0 = 35;
+	const int kLineH  = 10;
+	const int kVisible = 12;
+	const uint count = (uint)v.names->size();
+
+	for (int r = 0; r < kVisible; r++) {
+		const uint idx = v.topRow + (uint)r;
+		if (idx >= count)
+			break;
+		const Common::String &name = (*v.names)[idx];
+		byte color = 0xF;  // default
+		if (idx == v.selRow) {
+			color = 0xF;   // highlighted
+		} else if (v.solvedFlags && idx < v.solvedFlags->size() &&
+				   (*v.solvedFlags)[idx]) {
+			color = 0x8;   // greyed (already solved)
+		} else {
+			color = 0x7;   // normal
 		}
+		v.vm->getFont().drawString(&scratch, name,
+			kListX, kListY0 + r * kLineH, kListW, color);
 	}
+
+	// Selection arrow at the left edge of the highlighted row — the
+	// original highlights via colour change but adding an arrow makes
+	// the keyboard-driven path obvious.
+	if (v.selRow >= v.topRow && v.selRow < v.topRow + (uint)kVisible) {
+		const int r = (int)(v.selRow - v.topRow);
+		v.vm->getFont().drawString(&scratch, ">",
+			kListX - 6, kListY0 + r * kLineH, 6, 0xF);
+	}
+
+	// Scrollbar thumb. `DrawThumb @ 1c33:????` renders a thumb at
+	// (240, 45..146) proportional to scroll position. We draw a
+	// 1-px outlined block to indicate the same range.
+	if (count > (uint)kVisible) {
+		const int trackY0 = 45;
+		const int trackH  = 146 - 45;
+		const int thumbH  = MAX<int>(8, (trackH * kVisible) / (int)count);
+		const int travel  = trackH - thumbH;
+		const int pos = (int)v.topRow * travel /
+						MAX<int>(1, (int)count - kVisible);
+		const Common::Rect thumb(240, trackY0 + pos,
+								  250, trackY0 + pos + thumbH);
+		scratch.fillRect(thumb, 0x8);
+		scratch.frameRect(thumb, 0xF);
+	}
+
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
@@ -1413,52 +1497,94 @@ void EEMEngine::doCaseSelection() {
 	}
 
 	// "Choose A Mystery" sub-screen: pick a specific case from the
-	// 55-mystery roster. `_CaseSelection @ 1c33:0a87` only shows
-	// mysteries in the player's current chain stage:
-	//   stage 1 (Junior) → 1..24    (start = `iVar1 = 1`     @ 1c33:0aff)
-	//   stage 2 (Senior) → 25..48   (start = `iVar1 = 0x19`)
-	//   stage 3 (Master) → 49..54   (start = `iVar1 = 0x31`)
-	// The original passes `&DAT_2d5d_3f9b + iVar1` as the grey-mask
-	// pointer so DoChoose lights up only the tier-relevant entries.
-	// We clamp `sel` to the tier range and pre-seed it to the first
-	// unsolved case in that range.
+	// chain-stage's roster. Mirrors `_DoChooseMystery @ 1a35:02b7` +
+	// `_CaseSelection @ 1c33:0a87`:
+	//   stage 1 (Junior, BOOK1.NME) → mysteries  1..24
+	//   stage 2 (Senior, BOOK2.NME) → mysteries 25..48
+	//   stage 3 (Master, BOOK3.NME) → mysteries 49..54
+	// `_DoChooseMystery` opens BOOK<stage>.NME and reads up to 25
+	// CRLF-terminated lines into a 25-entry FAR-pointer array passed
+	// to `_CaseSelection`. The grey mask `_Greys = &mysteriesSolved +
+	// stageLo` (1c33:0b22) makes already-solved entries unselectable.
 	uint stageLo = 1, stageHi = 0x18;
+	uint book = 1;
 	switch (_chainStage) {
-	case 2: stageLo = 0x19; stageHi = 0x30; break;
-	case 3: stageLo = 0x31; stageHi = 0x36; break;
+	case 2: stageLo = 0x19; stageHi = 0x30; book = 2; break;
+	case 3: stageLo = 0x31; stageHi = 0x36; book = 3; break;
 	default: break;  // stage 1 (or fallback)
 	}
 	if (stageHi > kMaxMystery)
 		stageHi = kMaxMystery;
-	uint sel = stageLo;
-	for (uint i = stageLo; i <= stageHi; i++) {
-		if (i < sizeof(_mysteriesSolved) && !_mysteriesSolved[i]) {
-			sel = i;
-			break;
-		}
+
+	const Common::StringArray names = loadBookNames(book);
+	if (names.empty()) {
+		warning("doCaseSelection: BOOK%u.NME failed to load — bailing",
+				book);
+		_mystery.clear();
+		return;
 	}
+	const uint listLen = MIN<uint>((uint)names.size(), stageHi - stageLo + 1);
+
+	// Per-row solved flags. `_DoChoose @ 1c33:0521` skips solved entries
+	// when seeding the initial selection (`while *_Greys[select] != 0`)
+	// and again per-click via the same mask check.
+	Common::Array<bool> solvedFlags;
+	solvedFlags.resize(listLen);
+	for (uint i = 0; i < listLen; i++) {
+		const uint mn = stageLo + i;
+		solvedFlags[i] =
+			mn < sizeof(_mysteriesSolved) && _mysteriesSolved[mn] != 0;
+	}
+
+	// Seed the selection at the first unsolved entry — same as
+	// `_DoChoose`'s `while (*Greys[select] != 0) select++;` loop at
+	// 1c33:0524.
+	uint selRow = 0;
+	while (selRow < listLen && solvedFlags[selRow])
+		selRow++;
+	if (selRow >= listLen)
+		selRow = 0;  // every case solved — let player re-pick
+	uint topRow = 0;
+	const uint kVisible = 12;
+	if (selRow >= kVisible) {
+		topRow = selRow - kVisible / 2;
+		if (topRow + kVisible > listLen)
+			topRow = listLen > kVisible ? listLen - kVisible : 0;
+	}
+
+	auto clampTopRow = [&](uint &t) {
+		if (listLen <= kVisible) {
+			t = 0;
+			return;
+		}
+		const uint maxTop = listLen - kVisible;
+		if (t > maxTop)
+			t = maxTop;
+	};
 
 	CaseSubmenuView sv;
 	sv.vm = this;
 	sv.caseBg = &caseBg;
 	sv.haveCaseBg = haveCaseBg;
-	sv.mysteriesSolved = _mysteriesSolved;
-	sv.mysteriesSolvedSize = sizeof(_mysteriesSolved);
-	sv.sel = sel;
-	sv.maxMystery = kMaxMystery;
+	sv.names = &names;
+	sv.solvedFlags = &solvedFlags;
+	sv.topRow = topRow;
+	sv.selRow = selRow;
+	sv.book = book;
 
 	drawCaseSubmenu(sv);
 	bool confirmed = false;
 	while (!confirmed && !shouldQuit()) {
 		Common::Event ev;
+		bool dirty = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Same `_DoChoose` rectangles as the top-level menu.
 				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
-					confirmed = true;
+					if (selRow < listLen && !solvedFlags[selRow])
+						confirmed = true;
 					break;
 				}
 				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
@@ -1466,35 +1592,32 @@ void EEMEngine::doCaseSelection() {
 					return;
 				}
 				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
-					sel = (sel <= stageLo) ? stageHi : sel - 1;
-					sv.sel = sel;
-					drawCaseSubmenu(sv);
+					if (topRow > 0) { topRow--; dirty = true; }
 					continue;
 				}
 				if (kDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
-					sel = (sel >= stageHi) ? stageLo : sel + 1;
-					sv.sel = sel;
-					drawCaseSubmenu(sv);
+					topRow++;
+					clampTopRow(topRow);
+					dirty = true;
 					continue;
 				}
 				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Pick the row under the cursor.
+					// Pick the row under the cursor — mirrors
+					// 1c33:0635 `i = (MouseY - DAT_29be_0d02) / 10;`.
 					const int kLineH = 10;
-					const int kVisible = 12;
-					int top = (int)sel - kVisible / 2;
-					if (top < 0)
-						top = 0;
-					if (top + kVisible > (int)kMaxMystery + 1)
-						top = (int)kMaxMystery + 1 - kVisible;
-					const int row = (ev.mouse.y - kListRect.top) / kLineH;
-					const int idx = top + row;
-					if (idx >= 0 && idx <= (int)kMaxMystery) {
-						sel = (uint)idx;
-						sv.sel = sel;
-						drawCaseSubmenu(sv);
-					}
+					const int row = (ev.mouse.y - 35) / kLineH;
+					if (row < 0 || row >= (int)kVisible)
+						continue;
+					const uint idx = topRow + (uint)row;
+					if (idx >= listLen)
+						continue;
+					if (solvedFlags[idx])
+						continue;  // greyed entries ignore clicks
+					selRow = idx;
+					dirty = true;
 					continue;
 				}
+				continue;
 			}
 			if (ev.type != Common::EVENT_KEYDOWN)
 				continue;
@@ -1503,56 +1626,80 @@ void EEMEngine::doCaseSelection() {
 				_mystery.clear();
 				return;
 			}
-			if (k == Common::KEYCODE_RETURN) {
-				confirmed = true;
+			if (k == Common::KEYCODE_RETURN ||
+				k == Common::KEYCODE_KP_ENTER) {
+				if (selRow < listLen && !solvedFlags[selRow])
+					confirmed = true;
 				break;
 			}
-			if (k >= Common::KEYCODE_0 && k <= Common::KEYCODE_9) {
-				sel = (uint)(k - Common::KEYCODE_0);
-				sv.sel = sel;
-				drawCaseSubmenu(sv);
-				continue;
-			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_TAB) {
-				sel = (sel >= stageHi) ? stageLo : sel + 1;
-				sv.sel = sel;
-				drawCaseSubmenu(sv);
+				if (selRow + 1 < listLen) {
+					selRow++;
+					if (selRow >= topRow + kVisible) {
+						topRow = selRow - kVisible + 1;
+						clampTopRow(topRow);
+					}
+					dirty = true;
+				}
 				continue;
 			}
 			if (k == Common::KEYCODE_UP) {
-				sel = (sel <= stageLo) ? stageHi : sel - 1;
-				sv.sel = sel;
-				drawCaseSubmenu(sv);
+				if (selRow > 0) {
+					selRow--;
+					if (selRow < topRow)
+						topRow = selRow;
+					dirty = true;
+				}
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEDOWN) {
-				sel = (sel + 10 > stageHi) ? stageHi : sel + 10;
-				sv.sel = sel;
-				drawCaseSubmenu(sv);
+				selRow = MIN<uint>(selRow + kVisible, listLen - 1);
+				if (selRow >= topRow + kVisible) {
+					topRow = selRow - kVisible + 1;
+					clampTopRow(topRow);
+				}
+				dirty = true;
 				continue;
 			}
 			if (k == Common::KEYCODE_PAGEUP) {
-				sel = (sel < stageLo + 10) ? stageLo : sel - 10;
-				sv.sel = sel;
-				drawCaseSubmenu(sv);
+				selRow = (selRow >= kVisible) ? selRow - kVisible : 0;
+				if (selRow < topRow)
+					topRow = selRow;
+				dirty = true;
 				continue;
 			}
-			if (k == Common::KEYCODE_HOME) { sel = stageLo; sv.sel = sel; drawCaseSubmenu(sv); continue; }
-			if (k == Common::KEYCODE_END)  { sel = stageHi; sv.sel = sel; drawCaseSubmenu(sv); continue; }
+			if (k == Common::KEYCODE_HOME) {
+				selRow = 0;
+				topRow = 0;
+				dirty = true;
+				continue;
+			}
+			if (k == Common::KEYCODE_END) {
+				selRow = listLen - 1;
+				topRow = listLen > kVisible ? listLen - kVisible : 0;
+				dirty = true;
+				continue;
+			}
+		}
+		if (dirty) {
+			sv.topRow = topRow;
+			sv.selRow = selRow;
+			drawCaseSubmenu(sv);
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 
-	if (!_mystery.load(sel, &_rng)) {
-		warning("doCaseSelection: failed to load mystery %u", sel);
+	const uint mn = stageLo + selRow;
+	if (!_mystery.load(mn, &_rng)) {
+		warning("doCaseSelection: failed to load mystery %u", mn);
 		_mystery.clear();
 		return;
 	}
 	if (_audio)
-		_audio->initMysterySounds(sel);
+		_audio->initMysterySounds(mn);
 	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
-		   sel, _mystery.numSites(), _mystery.numSuspects());
+		   mn, _mystery.numSites(), _mystery.numSuspects());
 }
 
 void EEMEngine::doNotebook() {
