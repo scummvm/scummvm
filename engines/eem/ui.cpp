@@ -1238,6 +1238,14 @@ void EEMEngine::doCaseSelection() {
 	// Reassert here in case anything between hid it.
 	CursorMan.showMouse(true);
 
+	// Reassert site palette 0 (the case-selection / chooser CLUT). In
+	// the normal flow `doProfilePicker` (or the post-screen reset paths
+	// at lines 1402 / 1147 / 1121) leaves us on palette 0 already, but
+	// the launcher-resume path jumps straight here from `_AllBlack`
+	// (palette = all-zero) — without this the BG renders into a black
+	// CLUT and the player sees an empty screen.
+	setSitePalette(0);
+
 	// Mirrors `_CaseSelection`: load PIC 0x41 as the chooser backdrop.
 	Picture caseBg;
 	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
@@ -3880,21 +3888,23 @@ void EEMEngine::doAccuse() {
 		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the
 		// `_mysteriesSolved` table is updated, the original
 		// immediately persists the player record so the win sticks
-		// even if the player quits before reaching the menu. We do
-		// the same by writing back to the active profile (the slot
-		// keyed on `_playerName`) rather than clobbering slot 0 like
-		// a generic quicksave.
+		// even if the player quits before reaching the menu.
+		//
+		// Order matters: `_mystery.clear()` BEFORE `saveProfile` so the
+		// save records `hasMystery=false`. Otherwise the next load of
+		// this profile sees the just-won mystery still loaded and the
+		// screen driver routes to its map (forcing the player to
+		// replay the win flow). Mirrors `_DisplayCorrect @ 1df2:0851`
+		// (`_DeleteSavedGame` removes the in-progress save before
+		// `_SavePlayerRecord` writes the post-win profile).
+		_mystery.clear();
 		const Common::Error err = saveProfile(_playerName);
 		if (err.getCode() != Common::kNoError)
 			warning("saveProfile after solve failed: %s",
 					err.getDesc().c_str());
 
-		// `_DisplayCorrect @ 1df2:0895` writes `_NextScreen = 0xc`
-		// — the winner returns to the post-mystery `_ActionScreen`.
-		// Free the mystery first so the loop can break out cleanly:
-		// `_DeleteSavedGame` at 1df2:0851 + `_FreeMystery` at
-		// 1df2:08a4 do the same.
-		_mystery.clear();
+		// `_DisplayCorrect @ 1df2:0895` writes `_NextScreen = 0xc` —
+		// the winner returns to the post-mystery `_ActionScreen`.
 		_nextScreen = kScreenAction;
 	}
 }
