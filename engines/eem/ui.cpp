@@ -636,21 +636,79 @@ void EEMEngine::doShowEnding(uint num) {
 }
 
 void EEMEngine::doSetup() {
-	// Mirrors `_DoSetup @ 1f78:044e`. Loads BG pic 0x40 +
-	// state-button pics 0x9b/0x9c/0x9d/0x9e. The original wires 13
-	// hot-rects (`_SetupButtons @ 29be:1218`) but only two of them
-	// drive persistent state — `Kid1`/`Kid2` (partner) and
-	// `SoundOn`/`SoundOff` (voice flag, `DAT_2d5d_3f97`). The rest
-	// are reset/help/return buttons. We render a minimal text
-	// version: two toggle lines, click to flip, ESC to leave.
+	// Mirrors `_DoSetup @ 1f78:044e`. The setup screen is BG `PIC 0x40`
+	// (loaded once on entry) with every label baked in — "Setup",
+	// "Partner", "Sound", "Music", the "Jake"/"Jenny"/"On"/"Off"
+	// option strings, etc. — all rendered in palette key `0xFE`. The
+	// original then runs `_SetupSettings @ 1f78:000d` which uses
+	// `_SwapColors @ 172b:1d2a` to recolour those `0xFE` pixels per
+	// label rect: `0x15` for the active state, `0` for the inactive
+	// one. So nothing is drawn as text; the visible state of each
+	// toggle is purely a per-rect colour swap on top of `PIC 0x40`.
+	//
+	// Click hit-tests go through `_SetupButtons @ 29be:1218` — 13×
+	// 8-byte rects. Each click runs `HandleSetupButton @ 1f78:0158`,
+	// which dispatches via the 12-entry jumptable at `1f78:0436`.
+	// Verified handler map (decompiled at each jumptable target):
+	//   [0]  ( 20, 44, 39, 61)   Partner toggle (1f78:017a)
+	//   [1]  ( 20, 87, 39,104)   Voice toggle   (1f78:0196 → DAT_2d5d_3f97)
+	//   [2]  ( 20,127, 39,144)   back to profile (NextScreen=8)
+	//   [3]  (281, 43,299, 60)   ScrapBook 1   (_ShowScrapbook(0,1))
+	//   [4]  (281, 62,299, 79)   ScrapBook 2   gated chainStage>=2
+	//   [5]  (281, 81,299, 98)   ScrapBook 3   gated chainStage>=3
+	//   [6]  (281,108,299,125)   Save game     (_SaveGame @ 2404:0c87)
+	//   [7]  (281,127,299,144)   New Case      (NextScreen=0xa)
+	//   [8]  ( 53,153,108,183)   Done          (SI=1, exit)
+	//   [9]  (145,163,174,187)   Help          (_InterfaceHelp(1))
+	//   [10] (212,153,266,184)   Quit          (_AreYouSure → NextScreen=0xffff)
+	//   [11] ( 81, 25,238, 37)   Credits       (PIC 0x208 fullscreen)
+	//   [12] ( 11,  1,  3,  3)   debug placeholder
+	// Highlight rects (`Kid1 @ 29be:1320` / `Kid2 @ 29be:1328` /
+	// `SoundOn @ 29be:1330` / `SoundOff @ 29be:1338`) drive
+	// `_SwapColors`; they're not click targets in the original.
 	if (!_font.isLoaded()) {
 		_nextScreen = (ScreenId)_lastScreen;
 		return;
 	}
 
-	const Common::Rect kBackBtn(120, 170, 200, 188);
-	const Common::Rect kPartnerToggle(40, 60, 280, 78);
-	const Common::Rect kVoiceToggle  (40, 90, 280, 108);
+	// Original button rects (`_SetupButtons` indices wired here).
+	const Common::Rect kPartnerBtn   ( 20,  44,  39,  61); // [0]
+	const Common::Rect kVoiceBtn     ( 20,  87,  39, 104); // [1]
+	const Common::Rect kProfileBtn   ( 20, 127,  39, 144); // [2]
+	const Common::Rect kScrap1Btn    (281,  43, 299,  60); // [3]
+	const Common::Rect kScrap2Btn    (281,  62, 299,  79); // [4]
+	const Common::Rect kScrap3Btn    (281,  81, 299,  98); // [5]
+	const Common::Rect kSaveBtn      (281, 108, 299, 125); // [6]
+	const Common::Rect kNewCaseBtn   (281, 127, 299, 144); // [7]
+	const Common::Rect kDoneBtn      ( 53, 153, 108, 183); // [8]
+	const Common::Rect kHelpBtn      (145, 163, 174, 187); // [9]
+	const Common::Rect kQuitBtn      (212, 153, 266, 184); // [10]
+	const Common::Rect kCreditsBtn   ( 81,  25, 238,  37); // [11]
+	// Highlight / fallback-click rects.
+	const Common::Rect kKid1Rect     ( 99,  44, 148,  52);
+	const Common::Rect kKid2Rect     ( 99,  54, 148,  62);
+	const Common::Rect kSoundOnRect  (106,  86, 125,  94);
+	const Common::Rect kSoundOffRect (106,  96, 125, 104);
+
+	// Pixel-level color-key swap. Mirrors `_SwapColors @ 172b:1d2a`:
+	// for each pixel in `r` whose value equals `from`, replace with
+	// `to`. `0xFE` is the BG's text-key color; `0x15` is the active
+	// (bright) palette index, `0x00` the inactive one — both verified
+	// in `_SetupSettings @ 1f78:000d`.
+	auto swapColors = [](Graphics::ManagedSurface &dst,
+						 const Common::Rect &r, byte from, byte to) {
+		const int x1 = MAX<int>(0, r.left);
+		const int y1 = MAX<int>(0, r.top);
+		const int x2 = MIN<int>(320, r.right);
+		const int y2 = MIN<int>(200, r.bottom);
+		for (int y = y1; y < y2; y++) {
+			byte *row = (byte *)dst.getBasePtr(0, y);
+			for (int x = x1; x < x2; x++) {
+				if (row[x] == from)
+					row[x] = to;
+			}
+		}
+	};
 
 	auto draw = [&]() {
 		Graphics::ManagedSurface scratch(320, 200,
@@ -664,22 +722,121 @@ void EEMEngine::doSetup() {
 				memcpy((byte *)scratch.getBasePtr(0, row),
 					   (const byte *)bg.surface.getBasePtr(0, row), w);
 		}
-		_font.drawString(&scratch, "Setup", 140, 30, 80, 0xF);
-		const Common::String partnerLine = Common::String::format(
-			"Partner: %s   (click to switch)",
-			_partner == 0 ? "Jake" : "Jenny");
-		_font.drawString(&scratch, partnerLine, 50, 64, 240, 0xF);
-		const Common::String voiceLine = Common::String::format(
-			"Voice:   %s   (click to toggle)",
-			_voiceOn ? "ON" : "OFF");
-		_font.drawString(&scratch, voiceLine, 50, 94, 240, 0xF);
-		_font.drawString(&scratch, "[ Back ]", 130, 174, 80, 0xF);
+
+		const byte kKey    = 0xFE;
+		const byte kBright = 0x15;
+		const byte kDim    = 0x00;
+		swapColors(scratch, kKid1Rect, kKey,
+				   _partner == 0 ? kBright : kDim);
+		swapColors(scratch, kKid2Rect, kKey,
+				   _partner == 1 ? kBright : kDim);
+		swapColors(scratch, kSoundOnRect,  kKey,
+				   _voiceOn ? kBright : kDim);
+		swapColors(scratch, kSoundOffRect, kKey,
+				   _voiceOn ? kDim : kBright);
+
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
 	};
 	draw();
 
+	// Modal "Are you sure?" yes/no prompt. Mirrors `_AreYouSure @
+	// 1a35:0a5c` — the original draws a centred message, listens for
+	// Y/Enter (confirm) or N/ESC (cancel). We render a minimal
+	// overlay with Y / N keys (and click on left/right halves) so
+	// the Quit button gives the player a chance to back out.
+	auto areYouSure = [&]() -> bool {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			for (int row = 0; row < 200; row++)
+				memcpy((byte *)scratch.getBasePtr(0, row),
+					   (const byte *)cur->getBasePtr(0, row), 320);
+			g_system->unlockScreen();
+		}
+		const Common::Rect kBox(80, 80, 240, 120);
+		scratch.fillRect(kBox, 0x00);
+		_font.drawString(&scratch, "Are you sure?", 100, 88, 200, 0xF);
+		_font.drawString(&scratch, "Y = yes   N = no", 100, 102, 200, 0xF);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+		while (!shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+					return true;
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					const Common::KeyCode k = ev.kbd.keycode;
+					if (k == Common::KEYCODE_y ||
+						k == Common::KEYCODE_RETURN)
+						return true;
+					if (k == Common::KEYCODE_n ||
+						k == Common::KEYCODE_ESCAPE)
+						return false;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					return ev.mouse.x < 160;
+				}
+			}
+			g_system->delayMillis(15);
+		}
+		return false;
+	};
+
+	// Fullscreen-pic modal. Mirrors `_InterfaceHelp @ 1560:0205`'s
+	// per-frame loop: blit pic, wait for click/key, advance / exit.
+	// Used by Credits (single PIC 0x208) and Help (we reuse for a
+	// minimal stub since the help-pic table at `_InterfaceHelp`'s
+	// offset isn't fully decoded yet).
+	auto showFullscreenPic = [&](uint16 picId) {
+		Picture pic;
+		if (!_picsArchive.getPicture(picId, pic)) {
+			warning("doSetup: PIC %u missing", (uint)picId);
+			return;
+		}
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		const int w = MIN<int>(pic.surface.w, 320);
+		const int h = MIN<int>(pic.surface.h, 200);
+		for (int row = 0; row < h; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)pic.surface.getBasePtr(0, row), w);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+		while (!shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					ev.type == Common::EVENT_KEYDOWN ||
+					ev.type == Common::EVENT_LBUTTONDOWN)
+					return;
+			}
+			g_system->delayMillis(15);
+		}
+	};
+
+	auto leaveSetup = [&]() {
+		// `_DoSetup`'s entry writes `_NextScreen = _LastScreen`. We
+		// honor any handler that has already overridden `_nextScreen`
+		// (Credits / Save don't, but New Case / Quit do). Otherwise
+		// fall back to `_lastScreen`.
+		if (_nextScreen == kScreenSetup) {
+			_nextScreen = (ScreenId)_lastScreen;
+			if (_nextScreen == kScreenSetup ||
+				_nextScreen == kScreenInvalid)
+				_nextScreen = kScreenMap;
+		}
+		saveProfile(_playerName);
+	};
+
+	_nextScreen = kScreenSetup;  // sentinel — leaveSetup picks the real target
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
@@ -692,38 +849,131 @@ void EEMEngine::doSetup() {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE ||
 					ev.kbd.keycode == Common::KEYCODE_RETURN) {
-					// `_DoSetup @ 1f78:044a` writes `_NextScreen =
-					// _LastScreen` on entry. Returning means we just
-					// dispatch back to whichever screen called us.
-					_nextScreen = (ScreenId)_lastScreen;
-					if (_nextScreen == kScreenSetup ||
-						_nextScreen == kScreenInvalid)
-						_nextScreen = kScreenMap;
-					if (_voiceOn)
-						saveProfile(_playerName);
+					leaveSetup();
 					return;
 				}
 			}
-			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kBackBtn.contains(ev.mouse.x, ev.mouse.y)) {
-					_nextScreen = (ScreenId)_lastScreen;
-					if (_nextScreen == kScreenSetup ||
-						_nextScreen == kScreenInvalid)
-						_nextScreen = kScreenMap;
-					saveProfile(_playerName);
-					return;
-				}
-				if (kPartnerToggle.contains(ev.mouse.x, ev.mouse.y)) {
-					_partner = _partner == 0 ? 1 : 0;
-					dirty = true;
-				}
-				if (kVoiceToggle.contains(ev.mouse.x, ev.mouse.y)) {
-					_voiceOn = !_voiceOn;
+			if (ev.type != Common::EVENT_LBUTTONDOWN)
+				continue;
+			const int mx = ev.mouse.x;
+			const int my = ev.mouse.y;
+
+			// Partner toggle (button [0]) — original has no symmetric
+			// right-side button (the [3] rect is ScrapBook 1, not a
+			// partner arrow). Direct clicks on the Jake/Jenny labels
+			// are accepted as a more intuitive fallback.
+			if (kPartnerBtn.contains(mx, my)) {
+				_partner = _partner == 0 ? 1 : 0;
+				dirty = true;
+				continue;
+			}
+			if (kKid1Rect.contains(mx, my)) {
+				if (_partner != 0) { _partner = 0; dirty = true; }
+				continue;
+			}
+			if (kKid2Rect.contains(mx, my)) {
+				if (_partner != 1) { _partner = 1; dirty = true; }
+				continue;
+			}
+
+			// Voice toggle (button [1]).
+			if (kVoiceBtn.contains(mx, my)) {
+				_voiceOn = !_voiceOn;
+				if (_audio)
+					_audio->setVoiceEnabled(_voiceOn);
+				dirty = true;
+				continue;
+			}
+			if (kSoundOnRect.contains(mx, my)) {
+				if (!_voiceOn) {
+					_voiceOn = true;
 					if (_audio)
 						_audio->setVoiceEnabled(_voiceOn);
 					dirty = true;
 				}
+				continue;
 			}
+			if (kSoundOffRect.contains(mx, my)) {
+				if (_voiceOn) {
+					_voiceOn = false;
+					if (_audio)
+						_audio->setVoiceEnabled(_voiceOn);
+					dirty = true;
+				}
+				continue;
+			}
+
+			// New Case (button [7]). Original handler at 1f78:01ad
+			// sets `_NextScreen = 0xa` (CHOOSE_MYSTERY) and exits the
+			// dispatch loop with SI=1.
+			if (kNewCaseBtn.contains(mx, my)) {
+				saveProfile(_playerName);
+				_nextScreen = kScreenChooseMystery;
+				return;
+			}
+
+			// Save (button [6]). Original calls `_SaveGame @
+			// 2404:0c87` and stays in the setup loop. Our save is
+			// profile-scoped (one slot per player name) — same effect.
+			if (kSaveBtn.contains(mx, my)) {
+				saveProfile(_playerName);
+				continue;
+			}
+
+			// Done (button [8]). Original handler is just `MOV SI,1;
+			// JMP exit` — `_NextScreen` stays at whatever entry set it
+			// to (= `_LastScreen`).
+			if (kDoneBtn.contains(mx, my)) {
+				leaveSetup();
+				return;
+			}
+
+			// Quit (button [10]). Original: `_AreYouSure(0)` →
+			// confirmed → `_NextScreen = 0xffff` (sentinel quit).
+			if (kQuitBtn.contains(mx, my)) {
+				if (areYouSure()) {
+					_nextScreen = kScreenInvalid;
+					return;
+				}
+				dirty = true;  // restore the BG after the prompt
+				continue;
+			}
+
+			// Help (button [9]). Original calls `_InterfaceHelp(1)`,
+			// which walks a sequence of help-pic IDs from a runtime
+			// table we haven't fully decoded. PIC 0x4F is the in-game
+			// help backdrop the briefing chain reuses; we show that
+			// as a stub until the full table is wired.
+			if (kHelpBtn.contains(mx, my)) {
+				showFullscreenPic(0x4F);
+				dirty = true;
+				continue;
+			}
+
+			// Credits (button [11]). Original handler at 1f78:025a
+			// loads PIC 0x208 and blits it fullscreen, then waits
+			// for any input.
+			if (kCreditsBtn.contains(mx, my)) {
+				showFullscreenPic(0x208);
+				// PIC 0x208 has its own palette baked into the BG
+				// dump via `_GetPicture`; the original restores via
+				// `_GetPalette` on return. Reset to setup palette
+				// (SITEPALS index 0) so the setup BG renders right.
+				setSitePalette(0);
+				dirty = true;
+				continue;
+			}
+
+			// Profile (button [2]). Goes back to the profile picker
+			// in the original (`_NextScreen = 8`). Treat the same way
+			// as Done for now — switching profiles mid-game isn't
+			// wired in our port and would discard mystery state.
+			if (kProfileBtn.contains(mx, my)) {
+				leaveSetup();
+				return;
+			}
+
+			(void)kScrap1Btn; (void)kScrap2Btn; (void)kScrap3Btn;
 		}
 		if (dirty)
 			draw();
