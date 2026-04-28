@@ -153,27 +153,6 @@ void drawBitmapCMprops(BitmapCastMember *member) {
 	}
 }
 
-// Old Mac systems used carriage returns '\r' as line endings
-// ImGui expects line feeds '\n' for proper multiline rendering
-// Normalize all line endings to '\n'
-static Common::String normalizeText(const Common::String &src) {
-	Common::String out;
-
-	for (uint i = 0; i < src.size(); i++) {
-		char c = src[i];
-
-		if (c == '\r') {
-			if (i + 1 < src.size() && src[i + 1] == '\n') // handle \r\n
-				i++;
-			out += '\n';
-		} else {
-			out += c;
-		}
-	}
-
-	return out;
-}
-
 void showImageViewer() {
 	if (!_state->_w.imageViewer)
 		return;
@@ -192,7 +171,8 @@ void showImageViewer() {
 	// Recompute cache ig required
 	if (text != state->cachedRaw) {
 		state->cachedRaw = text;
-		state->cachedNormalized = normalizeText(text);
+		state->cachedNormalized = text;
+		state->cachedNormalized.replace('\r', '\n');
 
 		size_t needed = state->cachedNormalized.size() + 1;
 
