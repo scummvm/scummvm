@@ -226,12 +226,12 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 
 		pm.drawEllipse(0, 0, destRect.width(), destRect.height(), fgColor, !frame, &pd);
 
-		byte fakePal[768];
-		Common::fill(fakePal, fakePal+3, 0xff);
-		Common::fill(fakePal+3, fakePal+768, 0x00);
-		mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
+		//byte fakePal[768];
+		//Common::fill(fakePal, fakePal+3, 0xff);
+		//Common::fill(fakePal+3, fakePal+768, 0x00);
+		//mask->rawSurface().debugPrint(5, 0, 0, 0, 0, -1, 512, fakePal);
 
-		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
+		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, mode);
 		_addDirtyRect(dstRect);
 	}
 }
@@ -602,6 +602,10 @@ void Toolbox::LineTo(int16 h, int16 v) {
 
 		Common::Rect dstRect = blitMono(intermediate, _port->portBits, mask, destPos, _port->pnMode);
 		_addDirtyRect(dstRect);
+
+		if (debugChannelSet(5, kDebugGraphics)) {
+			debugC(5, kDebugGraphics, "Toolbox::LineTo: startPos(%d, %d), endPos(%d, %d), dstRect (%d, %d) %dx%d, pattern %s, mode %d, fgColor %08x, bkColor %08x", _port->pnLoc.x, _port->pnLoc.y, h, v, dstRect.left, dstRect.top, dstRect.width(), dstRect.height(), _port->pnPat.format().c_str(), _port->pnMode, _port->fgColor, _port->bkColor);
+		}
 
 	}
 	if (_port) {
