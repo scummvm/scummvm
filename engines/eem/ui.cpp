@@ -2757,18 +2757,114 @@ void EEMEngine::doAccuse() {
 	if (!_mystery.isLoaded())
 		return;
 
-	// Mirrors `_DoAccuseGallery @ 1df2:0a31`:
-	//   1. Show KD's hint balloon (KDTextIndex[+8] text).
-	//   2. `_GetBackground(0x3f)` — same backdrop as PDA / gallery.
-	//   3. `_DrawGallery()` — renders portraits at the standard 5 slots
-	//      (positions verified at 29be:0x116, bottom-aligned baseline 0x48).
-	//   4. Click loop dispatching on `_NoteButtons` (same table as PDA)
-	//      with a separate `_HandleAccuseNoteButton` jump table.
+	// Mirrors `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
+	//   1. The original notes-selection screen runs first (PIC 0x1A7).
+	//      We skip it because note-selection lives in the PDA in our
+	//      port — the accuse path is reached via the SOLVE button.
+	//   2. EVIDENCE GATE: `_DoAccuse @ 1df2:0bdd` calls `_SolvedCheck`
+	//      (1df2:0c75) before `_DoAccuseGallery`. If `selectedPoints
+	//      <= 99`, the original shows a partner balloon
+	//      (`KDTextIndex[+6]` text + `_SayKDDigital(3)`) and returns
+	//      to `_LastScreen` — the suspect picker is NEVER opened.
+	//      Our previous flow opened the picker and only checked after
+	//      the player committed a suspect; that let the player accuse
+	//      without the required evidence.
+	//   3. If the gate passes:
+	//      a. KD intro balloon (`KDTextIndex[+8]` text + `_SayKDDigital(4)`).
+	//      b. `_GetBackground(0x3f)` + `_DrawGallery()` — portraits at
+	//         the 5 fixed slots (`29be:0x116`).
+	//      c. Click loop on portraits → `_WITCH(picked)` → guilty/alibi.
 	const uint8 num = _mystery.numSuspects();
 	if (num == 0)
 		return;
 
 	const byte *gd = _mystery.galleryData();
+
+	// Evidence gate. `_DoAccuse @ 1df2:0c75` runs `_SolvedCheck`
+	// before opening the suspect picker; on failure it renders a
+	// partner balloon over the CURRENT screen (the PDA in the
+	// original) and returns. We render the same hint over the
+	// caller's screen and bail back to `_lastScreen` without ever
+	// touching the gallery BG.
+	if (!_mystery.solvedCheck()) {
+		const byte *kdIdx = _mystery.kdTextIndex();
+		const int16 hintOff = kdIdx
+			? (int16)READ_LE_UINT16(kdIdx + 6)
+			: -1;
+		Common::String hint;
+		if (hintOff != -1)
+			hint = parseString(_mystery.textAt((uint16)hintOff),
+							   _playerName, _partner);
+		if (hint.empty()) {
+			// Fallback if `KDTextIndex[+6]` isn't set in this mystery.
+			hint = (_mystery.selectedPoints() == 0)
+				? "We're not ready to solve this mystery yet. "
+				  "Let's keep investigating until we have some "
+				  "more solid evidence."
+				: "We don't have quite enough evidence yet. "
+				  "Let's review our notes and find a few more "
+				  "clues before we accuse anyone.";
+		}
+
+		// Compose balloon overlay on the current screen. Mirrors the
+		// `_GetKDTextBalloon` + `_GetBalloon` + `_AddPicBackground`
+		// + `_WordWrap` sequence at 1df2:0c8d-0cd1.
+		Graphics::ManagedSurface ms(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		ms.clear();
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			for (int row = 0; row < 200; row++)
+				memcpy((byte *)ms.getBasePtr(0, row),
+					   (const byte *)cur->getBasePtr(0, row), 320);
+			g_system->unlockScreen();
+		}
+		const byte firstChar =
+			hint.empty() ? (byte)0 : (byte)hint[0];
+		const uint16 bubNum = getKDTextBalloon(firstChar);
+		// Strip the digit prefix used for balloon dispatch — it's
+		// consumed by the original at `_DisplayAlibi @ 1df2:0163`
+		// (`str = pbVar7 + 1`) and shouldn't appear in the rendered
+		// text. `_GetKDTextBalloon` itself doesn't advance past it.
+		if (firstChar >= '0' && firstChar <= '9')
+			hint.deleteChar(0);
+		Picture balloon;
+		const bool haveBalloon =
+			_balloonArchive.size() > (bubNum & 0x7F) &&
+			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+		const int balloonX = 0x21;
+		int balloonY = 1;
+		if (haveBalloon && balloon.surface.h < 0x4e)
+			balloonY = (0x50 - balloon.surface.h) / 2;
+		if (haveBalloon) {
+			const byte transp = (byte)(balloon.flags >> 8);
+			ms.transBlitFrom(balloon.surface,
+							 Common::Point(balloonX, balloonY),
+							 (uint32)transp);
+		}
+		uint16 tx = 5, ty = 4, tw = 155;
+		getBalloonInsets(bubNum, tx, ty, tw);
+		if (_font.isLoaded()) {
+			_font.drawWordWrapped(&ms, balloonX + tx,
+								  balloonY + ty, tw, hint,
+								  haveBalloon ? 0 : 0xF);
+		}
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// `_DoAccuse @ 1df2:0cd9` plays `_SayKDDigital(3)` —
+		// partner-specific "not enough evidence" voice line.
+		if (_audio && kdIdx)
+			_audio->sayKDDigital(kdIdx, 3, _partner);
+
+		waitForInput(20000);
+		// `_DoAccuse @ 1df2:0ce5` writes `_NextScreen = _LastScreen`
+		// so the player drops back where they came from.
+		_nextScreen = _lastScreen != kScreenInvalid
+						? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
 
 	// Verbatim from 29be:0x116 — same five suspect slot positions as
 	// `_DrawGallery @ 158f:0046`.
@@ -2809,6 +2905,14 @@ void EEMEngine::doAccuse() {
 				const byte firstChar =
 					hint.empty() ? (byte)0 : (byte)hint[0];
 				const uint16 bubNum = getKDTextBalloon(firstChar);
+				// Strip the digit prefix used for balloon dispatch.
+				// `_DisplayAlibi @ 1df2:0163` does `str = pbVar7 + 1`
+				// after using `*str` for `bindx`. Same pattern used by
+				// `_DisplayHint`: digit picks the bubble shape AND is
+				// then consumed from the rendered text. Without this
+				// the intro balloon shows e.g. "1Ready to solve?".
+				if (firstChar >= '0' && firstChar <= '9')
+					hint.deleteChar(0);
 				Picture balloon;
 				const bool haveBalloon =
 					_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -2985,47 +3089,21 @@ void EEMEngine::doAccuse() {
 	// Real chain evaluation. Mirrors the original two-gate accusation:
 	//   1. `_AccuseEntry @ 1df2:0ff8` checks `_GetFoundPoints() >= 100`
 	//      — gates whether the suspect picker is even reachable. We
-	//      replicate this with `_SolvedCheck → selectedPoints > 99`,
-	//      since our port marks clues in the notebook (port deviation;
-	//      the original gates on the auto-sorted top-5 found clues
-	//      via `_GetFoundPoints @ 1df2:0098`).
+	//      `_SolvedCheck → selectedPoints > 99` is now gated at the
+	//      TOP of `doAccuse` — by the time we reach this point we
+	//      already know `solvedCheck()` was true (the picker wouldn't
+	//      have opened otherwise).
 	//   2. `_WITCH @ 1df2:089f` checks `GalleryData[picked*0x46+0x02] ==
 	//      0xFFFF`. Innocent suspects store an alibi-text TextBlock
 	//      offset there; the guilty one uses the sentinel.
-	// Both must hold for `_DisplayCorrect`; otherwise it's an alibi.
 	const int points          = _mystery.selectedPoints();
-	const bool enoughEvidence = _mystery.solvedCheck();
 	const bool pickedGuilty   = _mystery.isGuilty((uint)picked);
-	const bool guessedRight   = enoughEvidence && pickedGuilty;
+	const bool guessedRight   = pickedGuilty;
 	debugC(1, kDebugScript,
-		   "doAccuse: picked=%d selectedPts=%d evidence=%s guilty=%s -> %s",
+		   "doAccuse: picked=%d selectedPts=%d guilty=%s -> %s",
 		   picked, points,
-		   enoughEvidence ? "yes" : "no",
 		   pickedGuilty ? "yes" : "no",
 		   guessedRight ? "correct" : "wrong");
-
-	// Insufficient evidence: same hint the original shows when
-	// `_AccuseEntry` returns 0 (string at `_KDTextIndex[0]`).
-	if (!enoughEvidence && _font.isLoaded()) {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		_font.drawWordWrapped(&scratch, 16, 80, 288,
-			points == 0
-				? "We're not ready to solve this mystery yet. "
-				  "Let's keep investigating until we have some "
-				  "more solid evidence to make our case! "
-				  "(Press N in the site screen to mark clues.)"
-				: "We don't have quite enough solid evidence yet. "
-				  "Let's review our notes and find a few more "
-				  "clues before we accuse anyone.",
-			0xF);
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-		waitForInput(15000);
-		return;
-	}
 
 	// Wrong suspect: render alibi flow. Mirrors `_DisplayAlibi @
 	// 1df2:0145` — shows the suspect's alibi text + their picture on
@@ -3130,21 +3208,31 @@ void EEMEngine::doAccuse() {
 		}
 
 		// `_DisplayCorrect @ 1df2:073c` calls `_MIDIPlay(5)` (1df2:0789)
-		// before `_DifferenceAnimation("scrapbk.ani")` to swap from the
-		// travel music to the winner cue.
+		// before `_DisplayClue` to swap from the travel music to the
+		// winner cue.
 		if (_music)
 			_music->playMus(5, /*loop=*/false);
+
+		// `_DisplayCorrect @ 1df2:07ac` calls
+		// `_DisplayClue(_Mystery + _MysteryIndex[0x10], 0)` BEFORE the
+		// scrapbook animation. That clueblock is the partner's
+		// chain-by-chain RECAP — they enumerate every required clue
+		// (`Look at this — the suspect was here at 8pm`, `... and
+		// remember the broken vase from the kitchen`, `... so it had
+		// to be X!`) and arrive at the conclusion. Without rendering
+		// it the player goes straight from suspect-pick to the
+		// scrapbook anim and misses the deduction entirely.
+		const byte *solved = _mystery.solvedClueBlock();
+		if (solved)
+			displayClue(solved);
+
+		// `_DifferenceAnimation("scrapbk.ani")` (1df2:0848) — the
+		// physical scrapbook flip animation that introduces the
+		// per-mystery ending pages.
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
 
-		// `_DisplayCorrect @ 1df2:07ac` then calls `_DisplayClue`
-		// against the briefing's winning ClueBlock at
-		// `_Mystery + _MysteryIndex[0x10]` BEFORE `_ShowOneScrap`.
-		// We don't render that intermediate ClueBlock yet (it ties
-		// into the chain-A/B/C result selection); skip straight to
-		// the per-mystery ending pages — the same screen
-		// `_ShowOneScrap @ 1f78:0773` displays via
-		// `_DisplayEnding(num, 1)`. Players see the per-mystery
-		// resolution text on top of the ending pic.
+		// `_ShowOneScrap @ 1f78:0773` is `_DisplayEnding(num, 1)` —
+		// the multi-page per-mystery ending narrative.
 		doShowEnding(mn);
 
 		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the

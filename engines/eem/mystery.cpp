@@ -243,6 +243,16 @@ uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
 	return READ_LE_UINT16(gd + suspectIdx * 0x46 + 0x02);
 }
 
+const byte *Mystery::hintBlock() const {
+	// Header word at index 9 (`_hintOffset`) — used by `_KDHelp @
+	// 1560:010a`'s per-chain-clue hint table. Each pair-of-bytes is
+	// a TextBlock offset for the corresponding `_AChain` entry, or
+	// `0xFFFF` if no hint is defined for that chain position.
+	if (!isLoaded() || _hintOffset == 0 || _hintOffset >= _data.size())
+		return nullptr;
+	return _data.data() + _hintOffset;
+}
+
 const byte *Mystery::solvedClueBlock() const {
 	if (!isLoaded() || _solvedOffset == 0 || _solvedOffset >= _data.size())
 		return nullptr;
