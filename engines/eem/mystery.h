@@ -152,6 +152,23 @@ public:
 	/// True when `selectedPoints() > 99`. Mirrors `_SolvedCheck`.
 	bool solvedCheck() const { return selectedPoints() > 99; }
 
+	/// True iff suspect @p suspectIdx is the case's guilty party. The
+	/// guilty marker is `GalleryData[suspectIdx * 0x46 + 0x02] ==
+	/// 0xFFFF` — innocent suspects store their alibi text offset there;
+	/// the guilty suspect uses the sentinel. Verified at `_WITCH @
+	/// 1df2:089f` (`if (psVar1->field_0x2 == -1) _DisplayCorrect();
+	/// else _DisplayAlibi(...)`).
+	bool isGuilty(uint suspectIdx) const;
+
+	/// TextBlock offset of suspect @p suspectIdx's alibi text. Returns
+	/// 0xFFFF for the guilty suspect (no alibi).
+	uint16 alibiTextOffset(uint suspectIdx) const;
+
+	/// Pointer to the win-clueblock (`MysteryIndex[+0x10]` =
+	/// `_solvedOffset`). Mirrors `_DisplayCorrect`'s
+	/// `_DisplayClue(_Mystery + MysteryIndex[+0x10], 0)` at 1df2:0769.
+	const byte *solvedClueBlock() const;
+
 	/// Per-mystery runtime state, zeroed at load time.
 	uint8  _cluesFound[kCluesFoundCap]   = {};
 	uint8  _noteSelected[kCluesFoundCap] = {};  ///< Mirror `_NoteSelected`
