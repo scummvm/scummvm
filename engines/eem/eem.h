@@ -349,21 +349,6 @@ private:
 	void doCaseSelection();
 	void doSiteLoop();
 
-	/// Post-mystery action menu. Mirrors `_ActionScreen @ 1c33:195b` —
-	/// the screen the original returns to after `_DisplayCorrect`
-	/// (winner) or after the player explicitly leaves a case via the
-	/// PROFILE → PARTNER chain. The original offers up to 5 choices
-	/// gated on the player's chain stage (`DAT_2d5d_3f99`):
-	///   1: "Solve a Mystery" (set _NextScreen=10 — CHOOSE_MYSTERY)
-	///   3: replay the last solved case (`_ReloadMystery(0)` callsite)
-	///   5: scrapbook viewer (`_ShowOneScrap(0, 1)` callsite)
-	///   7: chain-stage advance (cmp `_3f99 == 1`)
-	///   9: chain-stage advance (cmp `_3f99 == 2` / `== 3`)
-	///   sentinel: exit / back to PARTNER
-	/// We start with just option 1 wired (the practical loop) plus
-	/// quit; the others slot in as their underlying screens land.
-	void doActionScreen();
-
 	/// Setup / preferences screen. Mirrors `_DoSetup @ 1f78:044e` —
 	/// per-profile preferences (voice on/off via `DAT_2d5d_3f97`,
 	/// partner pick via SwapColors on Kid1/Kid2 rects). Reachable
