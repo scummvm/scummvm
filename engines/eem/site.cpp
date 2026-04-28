@@ -668,6 +668,16 @@ void SiteScreen::run() {
 				// trigger a hotspot underneath.
 				const Common::Rect kBtnNotebook(35, 111, 56, 136);
 				const Common::Rect kBtnMap     ( 7, 177, 57, 200);
+				// Partner area — port-only enhancement so the player
+				// can click the host sprite for a hint, mirroring the
+				// PDA's rect-3 / gallery's rect-3 behaviour. The
+				// original site loop's `_FindButton(&SiteButtons, 2,
+				// ...)` only checks notebook + map, but the same
+				// partner-click → `_KDHelp` shortcut is wired in
+				// `_HandleNoteButton[3]` (0x0403) and
+				// `_HandleGalleryButton[3]` (0x061e). Rect matches
+				// the PDA / gallery `kBtnPartner` (5, 80, 44, 110).
+				const Common::Rect kBtnPartner ( 5,  80, 44, 110);
 				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
 					_vm->doNotebook();
 					enter(cur);
@@ -677,6 +687,11 @@ void SiteScreen::run() {
 					_vm->doBigMap();
 					if (_mystery->_siteNumber < _mystery->numSites())
 						cur = _mystery->_siteNumber;
+					enter(cur);
+					break;
+				}
+				if (kBtnPartner.contains(event.mouse.x, event.mouse.y)) {
+					_vm->doHelp();
 					enter(cur);
 					break;
 				}

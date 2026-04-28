@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
 
+#include "eem/audio.h"
 #include "eem/detection.h"
 #include "eem/eem.h"
 
@@ -76,38 +77,167 @@ const BalloonInsets kBalloonInsetTable[] = {
 };
 
 void EEMEngine::doHelp() {
-	// `_KDHelp` reads two hint TextBlock offsets from `_KDTextIndex`:
-	//   word @ +0xe : first-time hint
-	//   word @ +0x10: second-time hint (cycles back to first if missing)
-	// `_SawHelpHint` toggles between them.
+	// Mirrors `_KDHelp @ 1560:010a`. The original walks the first two
+	// entries of `_AChain` (the puzzle's required-clue chain — the
+	// "spine" of evidence the player must collect):
+	//
+	//   for (i = 0; i < 2; i++) {
+	//       if (_AChain[i] != -1 && _HintBlock[i] != -1 &&
+	//           _CluesFound[_AChain[i]] == 0) {
+	//           _DisplayHint(TextBlock + _HintBlock[i], i + 10);
+	//           shown++; break;
+	//       }
+	//       if (_HintBlock[i] != -1) defined++;
+	//   }
+	//   if (!shown) {
+	//       // Fall back to the generic KD hint: KDTextIndex[+0xe]
+	//       // (first time) / KDTextIndex[+0x10] (second time, toggled
+	//       // by _SawHelpHint). If neither chain entry had a hint
+	//       // defined, show the global "no hints" sentinel instead.
+	//       _DisplayHint(...);
+	//   }
+	//
+	// So this is a SMART per-puzzle hint: the partner points the
+	// player at whichever chain clue they haven't yet found, only
+	// falling back to the generic "let's keep looking" line when
+	// every chain hint has been triggered already.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
-	const byte *kd = _mystery.kdTextIndex();
+	const byte *kd  = _mystery.kdTextIndex();
+	const byte *hb  = _mystery.hintBlock();
 	if (!kd)
 		return;
 
-	const uint16 hintFirst  = READ_LE_UINT16(kd + 0x0e);
-	const uint16 hintSecond = READ_LE_UINT16(kd + 0x10);
-	uint16 use = _mystery._sawHelpHint && hintSecond != 0xFFFF ? hintSecond : hintFirst;
-	if (use == 0xFFFF) {
-		debugC(1, kDebugScript, "doHelp: no hint configured");
+	uint16 chosenText = 0xFFFF;
+	int    soundNum   = 0;
+	bool   anyHintDefined = false;
+
+	if (hb) {
+		for (uint i = 0; i < 2; i++) {
+			const uint16 chainClue = _mystery.aChain(i);
+			if (chainClue == 0xFFFF)
+				continue;
+			const uint16 hintOff = READ_LE_UINT16(hb + i * 2);
+			if (hintOff == 0xFFFF)
+				continue;
+			anyHintDefined = true;
+			if (chainClue < Mystery::kCluesFoundCap &&
+				_mystery._cluesFound[chainClue] == 0) {
+				chosenText = hintOff;
+				soundNum   = (int)i + 10;
+				break;
+			}
+		}
+	}
+
+	if (chosenText == 0xFFFF) {
+		// No unfound chain clue had a hint to give — fall back to the
+		// generic KD hint (or the "no hints defined" sentinel if the
+		// chain has no hints at all). Mirrors the second arm of
+		// `_KDHelp` (1560:0152-019b).
+		if (anyHintDefined) {
+			const uint16 hintFirst  = READ_LE_UINT16(kd + 0x0e);
+			const uint16 hintSecond = READ_LE_UINT16(kd + 0x10);
+			if (!_mystery._sawHelpHint && hintFirst != 0xFFFF) {
+				chosenText = hintFirst;
+				soundNum   = 7;
+				_mystery._sawHelpHint = true;
+			} else if (hintSecond != 0xFFFF) {
+				chosenText = hintSecond;
+				soundNum   = 8;
+			}
+		}
+		// Else: keep chosenText == 0xFFFF — original would render
+		// `NoHints` (a "There are no hints defined for this Mystery"
+		// string at 29be:00d3); we just bail.
+	}
+
+	if (chosenText == 0xFFFF) {
+		debugC(1, kDebugScript, "doHelp: no hint available");
 		return;
 	}
-	if (!_mystery._sawHelpHint && hintFirst != 0xFFFF)
-		_mystery._sawHelpHint = true;
 
-	const Common::String raw = _mystery.textAt(use);
-	const Common::String text = parseString(raw, _playerName, _partner);
+	const Common::String raw  = _mystery.textAt(chosenText);
+	Common::String text = parseString(raw, _playerName, _partner);
 
-	Graphics::ManagedSurface scratch(320, 200,
+	// Render as a speech-balloon overlay, exactly mirroring
+	// `_DisplayHint @ 1560:0009`:
+	//
+	//   _GetKDTextBalloon(text, &bub);             // first-char dispatch
+	//   _GetBalloon(bub);                           // load balloon pic
+	//   y = (h < 0x4e) ? (0x50 - h) >> 1 : 1;       // vertical centre
+	//   _AddPicBackground(balloon, 0x21, y);        // overlay on screen
+	//   _WordWrap(0x21+tbl[bub].x, y+tbl[bub].y,   // text inside balloon
+	//             tbl[bub].w, text, -1, color=0);
+	//   _SayKDDigital(snd);                          // partner voice
+	//   _Wait();
+	//
+	// The balloon BG is the caller's CURRENT screen — site / PDA /
+	// gallery — not a cleared scratch.
+	Graphics::ManagedSurface ms(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
-	scratch.clear();
-	_font.drawString(&scratch, "HELP", 8, 4, 320, 0xF);
-	_font.drawWordWrapped(&scratch, 8, 24, 304, text, 0xF);
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+	ms.clear();
+	{
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			for (int row = 0; row < 200; row++)
+				memcpy((byte *)ms.getBasePtr(0, row),
+					   (const byte *)cur->getBasePtr(0, row), 320);
+			g_system->unlockScreen();
+		}
+	}
+
+	// Balloon shape dispatch via `_GetKDTextBalloon @ 1df2:0105` —
+	// based on the first char of the parsed text. Digits select a
+	// specific balloon variant; non-digit defaults to `0x17`. The
+	// digit, when present, is THEN consumed from the displayed
+	// text — mirrors `_DisplayAlibi @ 1df2:0145`'s `str = pbVar7 + 1`
+	// advance after using `*str` for `bindx`. Without this the hint
+	// renders like "1Try checking the kitchen..." with a stray
+	// leading digit. `_GetKDTextBalloon` itself doesn't strip it
+	// (verified at 1df2:0105 — it just reads `*str`), so the caller
+	// has to.
+	const byte firstChar =
+		text.empty() ? (byte)0 : (byte)text[0];
+	const uint16 bubNum = getKDTextBalloon(firstChar);
+	if (firstChar >= '0' && firstChar <= '9')
+		text.deleteChar(0);
+	Picture balloon;
+	const bool haveBalloon =
+		_balloonArchive.size() > (bubNum & 0x7F) &&
+		_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+
+	const int balloonX = 0x21;
+	int balloonY = 1;
+	if (haveBalloon && balloon.surface.h < 0x4e)
+		balloonY = (0x50 - balloon.surface.h) / 2;
+
+	if (haveBalloon) {
+		const byte transp = (byte)(balloon.flags >> 8);
+		ms.transBlitFrom(balloon.surface,
+						 Common::Point(balloonX, balloonY),
+						 (uint32)transp);
+	}
+
+	// Balloon-relative text insets from the table at `29be:0875`
+	// (10 bytes per entry: x, y, max-width, ...).
+	uint16 tx = 5, ty = 4, tw = 155;
+	getBalloonInsets(bubNum, tx, ty, tw);
+	_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty, tw, text,
+						  haveBalloon ? 0 : 0xF);
+
+	g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
+
+	// `_DisplayHint @ 1560:0009` plays `_SayKDDigital(soundnum)` —
+	// partner-specific voice line keyed to which hint type fired (10
+	// = first chain hint, 11 = second, 7 / 8 = generic KD).
+	if (_audio && _mystery.kdTextIndex() && soundNum > 0)
+		_audio->sayKDDigital(_mystery.kdTextIndex(), (uint)soundNum,
+							 _partner);
+
 	waitForInput(60000);
 }
 
