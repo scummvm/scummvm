@@ -346,6 +346,17 @@ private:
 	/// so this same call covers the post-mystery scrapbook view from
 	/// the action menu.
 	void doShowEnding(uint num);
+
+	/// Walk every solved mystery in tier @p stage (1=Junior, 2=Senior,
+	/// 3=Master) and display each one's ending pages in sequence.
+	/// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`: the original
+	/// computes the mystery range from `(stage - 1) * 0x18 + 1` to
+	/// `(stage - 1) * 0x18 + 0x18` and skips entries whose
+	/// `_3f9b[i] == 0` (unsolved) so the scrapbook only contains
+	/// completed cases. Used by both the setup-screen ScrapBook
+	/// buttons and the action-menu "See ScrapBook 1/2/3" entries.
+	void doShowScrapbook(uint stage);
+
 	void doCaseSelection();
 	void doSiteLoop();
 
