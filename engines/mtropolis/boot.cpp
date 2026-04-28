@@ -2657,14 +2657,21 @@ void findWindowsMainSegment(Common::Archive &fs, const BootScriptContext &bootSc
 	if (bootScriptContext.getMainSegmentFileOverride().empty()) {
 		fs.listMembers(allFiles);
 
+		const Common::Path copyingPath("workspace/LICENSES/COPYING.MPL");
+
 		for (const Common::ArchiveMemberPtr &archiveMember : allFiles) {
 			Common::String fileName = archiveMember->getFileName();
 
 			for (const char *suffix : mainSegmentSuffixes) {
 				if (fileName.hasSuffixIgnoreCase(suffix)) {
-					filteredFiles.push_back(archiveMember);
-					debug(4, "Identified possible main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
-					break;
+					// Ignore LICENSES/COPYING.MPL from the ScummVM source tree
+					if (archiveMember->getPathInArchive() != copyingPath) {
+						filteredFiles.push_back(archiveMember);
+						debug(4, "Identified possible main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+						break;
+					} else {
+						debug(4, "Ignoring unlikely main segment file %s", archiveMember->getPathInArchive().toString(fs.getPathSeparator()).c_str());
+					}
 				}
 			}
 		}
