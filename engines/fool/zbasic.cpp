@@ -251,6 +251,13 @@ int16 ZBasic::instr(int16 expression, const Common::U32String &string1, const Co
 	return (int16)(result + 1);
 }
 
+int16 ZBasic::instr(int16 expression, const Common::String &string1, const Common::String &string2) {
+	uint32 result =  string1.find(string2, (uint32)MAX<int16>(expression - 1, 0));
+	if (result == Common::String::npos)
+		return 0;
+	return (int16)(result + 1);
+}
+
 Common::U32String ZBasic::files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume) {
 	warning("STUB: ZBasic::files");
 	return Common::U32String();
@@ -582,6 +589,10 @@ int16 ZBasic::rndInt(int16 max) {
 
 const Common::U32String &ZBasic::str(size_t index) {
 	return *_stringTable[index]->data.str;
+}
+
+const Common::String ZBasic::strRaw(size_t index) {
+	return _stringTable[index]->data.str->encode(Common::kMacRoman);
 }
 
 Common::U32String ZBasic::space(int16 count) {

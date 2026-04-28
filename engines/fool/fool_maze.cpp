@@ -82,7 +82,7 @@ void FoolGame::mazeRun() {
 
 	Common::Rect playArea;
 	playArea.top = arr_rect_1f38[1].top + 3;
-	playArea.left = arr_rect_1f38[0].top + 3;
+	playArea.left = arr_rect_1f38[1].left + 3;
 	playArea.bottom = arr_rect_1f38[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].bottom - 3;
 	playArea.right = arr_rect_1f38[arr_i16_1eb8[0] * arr_i16_1eb8[1] - 1].right - 3;
 	g_toolbox->FillRect(playArea, arr_pat_58f4[2]);
@@ -90,7 +90,7 @@ void FoolGame::mazeRun() {
 	g_toolbox->PenSize(5, 5);
 	g_toolbox->PenPat(arr_pat_58f4[arr_i16_1eb8[17]]);
 	// 136:042c
-	var_i16_1ac4 = arr_i16_1eb8[1];
+	var_i16_1ac4 = arr_i16_1eb8[17];
 	var_i16_1574 = 0;
 	var_i16_68c = 1;
 	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
@@ -125,7 +125,7 @@ void FoolGame::mazeRun() {
 		for (int16 j = 1; j <= arr_i16_1eb8[23]; j++) {
 			var_str_1ac8 = g_zbasic->indexRaw(1, j);
 			var_i16_1bc8 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ac8, 3, 2));
-			if (var_i16_1bc8 != 0x29a) {
+			if (var_i16_1bc8 != 666) {
 				for (int16 i = 1; i <= var_i16_1bc8; i++) {
 					sub_136_2582();
 				}
@@ -144,7 +144,7 @@ void FoolGame::mazeRun() {
 	var_str_1578.clear(); // was str(224)
 	sub_136_274e();
 	sub_136_ade();
-	stateFlags = 0;
+	stateFlags = kStateNull;
 	sub_128_4da(1);
 	if (var_i16_1bcc == 0x19) {
 		var_i16_d0c = 1;
@@ -161,6 +161,9 @@ void FoolGame::mazeRun() {
 			getNextEvent(-1);
 			if ((var_ev_46.modifiers & kModMouseButtonUp) == 0) {
 				sub_136_79e();
+			}
+			if (var_i16_1bcc == 0x19) {
+				var_i16_d0c = 1;
 			}
 		}
 		// 136:074a
@@ -307,7 +310,7 @@ void FoolGame::sub_136_a22() {
 		g_toolbox->PenNormal();
 		g_toolbox->PenPat(arr_pat_58f4[arr_i16_1eb8[17]]);
 		g_toolbox->PenSize(5, 5);
-		switch (var_i16_1bd6 - 1) {
+		switch (var_i16_1bd4 - 1) {
 		case 0:
 			sub_136_2d4c();
 			break;
@@ -377,11 +380,284 @@ void FoolGame::sub_136_b00() {
 		var_i16_1bd0 = var_i16_1574;
 		return;
 	}
-	var_str_1ac8 = g_zbasic->index(1, arr_i16_3b38[var_i16_1bcc*32 + var_i16_1bce]);
-	var_str_1bde = g_zbasic->str(226); // CILTDABRPXMOZSFQGWEJKV
+	var_str_1ac8 = g_zbasic->indexRaw(1, arr_i16_3b38[var_i16_1bcc*32 + var_i16_1bce]);
+	var_str_1bde = g_zbasic->strRaw(226); // CILTDABRPXMOZSFQGWEJKV
+	// 136:0bd0
+	var_i16_1cde = 1;
+	g_zbasic->unk_20();
+	while (var_i16_1cde > 0) {
+		// 136:0bde
+		var_i16_1cde = g_zbasic->instr(var_i16_1cde, var_str_1ac8, g_zbasic->strRaw(227)); // \xa5\xa5
+		if (var_i16_1cde > 0) {
+			var_i16_484 = 1;
+			for (int16 i = 1; i <= (int16)var_str_1bde.size(); i++) {
+				if (g_zbasic->midStr(var_str_1ac8, var_i16_1cde + 2, 1) == g_zbasic->midStr(var_str_1bde, i, 1)) {
+					var_i16_1a9a = i;
+				}
+				// 136:0c4c
+			}
+			// 136:0c5e
+			var_i16_1ce0 = g_zbasic->instr(var_i16_1cde, var_str_1ac8, g_zbasic->strRaw(228)); // <<
+			var_str_1ce2 = g_zbasic->midStr(var_str_1ac8, var_i16_1cde + 3, var_i16_1ce0 - var_i16_1cde - 3);
+			if (g_zbasic->midStr(var_str_1ac8, var_i16_1ce0 + 2, 2) == g_zbasic->strRaw(229)) {
+				// 136:0cdc
+				var_i16_1cde = 0;
+			} else {
+				var_i16_1cde = var_i16_1ce0;
+			}
+			// 136:0cec
+			switch (var_i16_1a9a - 1) {
+			case 0:
+				sub_136_d64();
+				break;
+			case 1:
+				sub_136_e4c();
+				break;
+			case 2:
+				sub_136_ed8();
+				break;
+			case 3:
+				sub_136_f74();
+				break;
+			case 4:
+				sub_136_115a();
+				break;
+			case 5:
+				sub_136_137c();
+				break;
+			case 6:
+				sub_136_163c();
+				break;
+			case 7:
+				sub_136_1650();
+				break;
+			case 8:
+				sub_136_1756();
+				break;
+			case 9:
+				sub_136_17a4();
+				break;
+			case 10:
+				sub_136_1806();
+				break;
+			case 11:
+				sub_136_185a();
+				break;
+			case 12:
+				sub_136_1898();
+				break;
+			case 13:
+				sub_136_18f4();
+				break;
+			case 14:
+				sub_136_1932();
+				break;
+			case 15:
+				sub_136_19d2();
+				break;
+			case 16:
+				sub_136_1cf4();
+				break;
+			case 17:
+				sub_136_1ddc();
+				break;
+			case 18:
+				sub_136_1df4();
+				break;
+			case 19:
+				sub_136_1e4c();
+				break;
+			case 20:
+				sub_136_21fa();
+				break;
+			case 21:
+				sub_136_2200();
+				break;
+			default:
+				warning("sub_136_b00: breaking out of switch statement");
+				break;
+			}
+		}
+		// 136:0d54
+	}
+	// 136:0d5c
+	var_i16_1bd0 = var_i16_1574;
+}
 
+void FoolGame::sub_136_d64() {
+	// 136:0d64
+	if (var_str_1ce2.decode(Common::kMacRoman) == var_str_1578) {
+		return;
+	}
+	fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
+	if (!var_str_1ce2.empty()) { // was: str(230)
+		g_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+		var_i16_484 = g_toolbox->StringWidth(var_str_1ce2);
+		fillRect(0x13b, 0xf1 - (var_i16_484 / 2), 0x14f, 0x10f + (var_i16_484 / 2), 2);
+		var_i16_7a2 = 0x149;
+		sub_128_918(var_str_1ce2.decode(Common::kMacRoman));
+	}
+	// 136:0e3a
+	var_str_1578 = var_str_1ce2.decode(Common::kMacRoman);
+}
+
+void FoolGame::sub_136_e4c() {
 	warning("STUB: %s", __func__);
 }
+
+void FoolGame::sub_136_ed8() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_f74() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_115a() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_137c() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_163c() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1650() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1756() {
+	// 136:1756
+	var_i16_1bd8 = var_i16_1574;
+	var_i16_1bd4 = g_zbasic->decodeInt(var_str_1ce2);
+	g_toolbox->PenNormal();
+	g_toolbox->PenPat(arr_pat_58f4[2]);
+	g_toolbox->PenSize(5, 5);
+	switch (var_i16_1bd4-1) {
+	case 0:
+		sub_136_2d4c();
+		break;
+	case 1:
+		sub_136_2dd0();
+		break;
+	case 2:
+		sub_136_2e52();
+		break;
+	case 3:
+		sub_136_2ed6();
+		break;
+	default:
+		warning("sub_136_1756: broke out of switch statement");
+		break;
+	}
+}
+
+void FoolGame::sub_136_17a4() {
+	// 136:17a4
+	var_i16_1bd8 = var_i16_1574;
+	var_i16_1bd6 = g_zbasic->decodeInt(var_str_1ce2);
+	g_toolbox->PenNormal();
+	g_toolbox->PenPat(arr_pat_58f4[arr_i16_1eb8[17]]);
+	g_toolbox->PenSize(5, 5);
+	switch (var_i16_1bd6-1) {
+	case 0:
+		sub_136_2d4c();
+		break;
+	case 1:
+		sub_136_2dd0();
+		break;
+	case 2:
+		sub_136_2e52();
+		break;
+	case 3:
+		sub_136_2ed6();
+		break;
+	default:
+		warning("sub_136_17a4: broke out of switch statement");
+		break;
+	}
+}
+
+void FoolGame::sub_136_1806() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_185a() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1898() {
+	// 136:1898
+	var_i16_484 = g_zbasic->decodeInt(var_str_1ce2);
+	if (arr_i16_3738[var_i16_484] & 0x1000) {
+		arr_i16_3738[var_i16_484] ^= 0x1000;
+	}
+}
+
+void FoolGame::sub_136_18f4() {
+	// 136:18f4
+	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 1, 2));
+	var_i16_484 = 3;
+	sub_136_24ae();
+	for (var_i16_68a = 1; var_i16_68a <= var_i16_1de4; var_i16_68a++) {
+		sub_136_2538();
+	}
+}
+
+void FoolGame::sub_136_1932() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_19d2() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1cf4() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1ddc() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1df4() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_1e4c() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_21fa() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_2200() {
+	warning("STUB: %s", __func__);
+}
+
+void FoolGame::sub_136_24ae() {
+	// 136:24ae
+	var_i16_1df4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_484, 2));
+	if (var_i16_1df4 > 0) {
+		var_i16_1e02 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_484 + 2, 2));
+		var_i16_1372 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_484 + 4, 2))*2;
+		var_i16_1e04 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_484 + 6, 2));
+	}
+	// 136:2536
+}
+
+void FoolGame::sub_136_2538() {
+	// 136:2538
+	sub_128_50e(var_i16_1df4, var_i16_1372, 0);
+	if ((var_i16_1df4 > 0xe) && (var_i16_1df4 < 0x7d00)) {
+		var_i16_1df4 += var_i16_1e02;
+	}
+}
+
 
 void FoolGame::sub_136_2582() {
 	// 136:2582
@@ -389,7 +665,7 @@ void FoolGame::sub_136_2582() {
 	var_i16_1e06 = g_zbasic->decodeInt(g_zbasic->leftStr(var_str_1ac8, 2));
 	for (int16 i = 1; i <= var_i16_1e06; i++) {
 		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ac8, i*2 + 3, 2));
-		if (arr_i16_3738[var_i16_484] & 0x1000) {
+		if ((arr_i16_3738[var_i16_484] & 0x1000) == 0) {
 			var_i16_1df2++;
 			arr_i16_5bbc[var_i16_1df2] = var_i16_484;
 		}
@@ -802,7 +1078,7 @@ void FoolGame::sub_136_3a70() {
 					arr_i16_4758[4] = 0x14;
 				}
 
-				if (var_i16_68c == 0) {
+				if (j == 0) {
 					g_toolbox->InvertRect(temp);
 				} else {
 					// 136:3c48

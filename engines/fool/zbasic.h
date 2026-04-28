@@ -248,6 +248,7 @@ public:
 	void defOpen(const Common::U32String &str);
 	void get(int16 x1, int16 y1, int16 x2, int16 y2, BitMap &dest, bool preserveDims = false);
 	int16 instr(int16 expression, const Common::U32String &string1, const Common::U32String &string2);
+	int16 instr(int16 expression, const Common::String &string1, const Common::String &string2);
 	Common::U32String files(int16 expression, const Common::U32String &prompt, const Common::U32String &defaultFilename, int16 &volume);
 	int finderInfo(int16 &count, Common::U32String &var, OSType &type, uint16 volume);
 	bool maybe();
@@ -288,6 +289,7 @@ public:
 	Common::U32String ucase(const Common::U32String &str);
 
 	const Common::U32String &str(size_t index);
+	const Common::String strRaw(size_t index);
 
 
 	void unk_4(); // possibly quit?

@@ -248,6 +248,33 @@ public:
 	void sub_136_a22();
 	void sub_136_ade();
 	void sub_136_b00();
+
+	void sub_136_d64();
+	void sub_136_e4c();
+	void sub_136_ed8();
+	void sub_136_f74();
+	void sub_136_115a();
+	void sub_136_137c();
+	void sub_136_163c();
+	void sub_136_1650();
+	void sub_136_1756();
+	void sub_136_17a4();
+	void sub_136_1806();
+	void sub_136_185a();
+	void sub_136_1898();
+	void sub_136_18f4();
+	void sub_136_1932();
+	void sub_136_19d2();
+	void sub_136_1cf4();
+	void sub_136_1ddc();
+	void sub_136_1df4();
+	void sub_136_1e4c();
+	void sub_136_21fa();
+	void sub_136_2200();
+
+	void sub_136_24ae();
+	void sub_136_2538();
+
 	void sub_136_2582();
 	void sub_136_2664();
 	void sub_136_274e();
@@ -565,7 +592,11 @@ private:
 	int16 var_i16_1bd8;
 	int16 var_i16_1bda;
 	int16 var_i16_1bdc;
-	Common::U32String var_str_1bde;
+	Common::String var_str_1bde;
+
+	int16 var_i16_1cde;
+	int16 var_i16_1ce0;
+	Common::String var_str_1ce2;
 
 	int16 var_i16_1de4;
 
@@ -577,8 +608,11 @@ private:
 	PatternMode var_i16_1dee;
 
 	int16 var_i16_1df2;
+	int16 var_i16_1df4;
 
 	int16 var_i16_1e00;
+	int16 var_i16_1e02;
+	int16 var_i16_1e04;
 
 	int16 var_i16_1e06;
 
