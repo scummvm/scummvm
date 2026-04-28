@@ -1962,6 +1962,32 @@ void EEMEngine::doGallery() {
 									   (const byte *)galBg.surface.getBasePtr(0, row), bw);
 							}
 						}
+						// Partner sprite at (5, 0x50). The original
+						// `MoreInfo @ 158f:0419` calls
+						// `_RefreshGalleryBackground` (clears the
+						// portrait grid) but the partner anim slot
+						// registered by `_DoGallery` keeps painting
+						// at every `_UpdateAnimations` tick — the
+						// suspect detail pic covers the right side
+						// only (drawn at 0x94, 0xf), so the partner
+						// stays visible on the left. Without this
+						// blit the suspect-detail screen has no
+						// partner.
+						{
+							const uint partnerAnim =
+								(_partner == 0) ? 2 : 0x10;
+							Animation partnerAni;
+							if (_aniArchive.loadAnimation(partnerAnim,
+														   partnerAni) &&
+								!partnerAni.empty()) {
+								const uint32 now = g_system->getMillis();
+								const uint frameIdx =
+									partnerFrameAtTick(0x02,
+										(uint)partnerAni.size(), now);
+								blitAnimFrameAnchored(ms.surfacePtr(),
+									partnerAni[frameIdx], 5, 0x50);
+							}
+						}
 						// Full suspect picture at (0x94, 0xf).
 						Picture detail;
 						if (_picsArchive.getPicture(detailPic, detail)) {
@@ -2794,15 +2820,39 @@ void EEMEngine::doAccuse() {
 				if (haveBalloon && balloon.surface.h < 0x4e)
 					balloonY = (0x50 - balloon.surface.h) / 2;
 
+				// Render the gallery FIRST so the balloon snapshot
+				// includes the partner sprite. The original
+				// `_DoAccuseGallery @ 1df2:0a31` does this implicitly:
+				// `_NewAnimation` registered the partner slot at
+				// (5, 0x50) before reaching this point, then
+				// `_GetBackground(0x3f)` + `_DrawGallery` paint the
+				// portraits, and `_UpdateAnimations` keeps the partner
+				// visible underneath the balloon overlay. Without this,
+				// the player sees an 8-second partner-less screen
+				// while reading the hint.
+				drawAccuseGallery(num, gd, /*highlighted=*/-1,
+								  slotRects, slotSuspect);
+
 				Graphics::ManagedSurface ms(320, 200,
 					Graphics::PixelFormat::createFormatCLUT8());
 				ms.clear();
-				if (haveAccuseBg) {
-					const int bw = MIN<int>(accuseBg.surface.w, 320);
-					const int bh = MIN<int>(accuseBg.surface.h, 200);
-					for (int row = 0; row < bh; row++) {
-						memcpy((byte *)ms.getBasePtr(0, row),
-							   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
+				{
+					Graphics::Surface *cur = g_system->lockScreen();
+					if (cur) {
+						for (int row = 0; row < 200; row++)
+							memcpy((byte *)ms.getBasePtr(0, row),
+								   (const byte *)cur->getBasePtr(0, row), 320);
+						g_system->unlockScreen();
+					} else if (haveAccuseBg) {
+						// Fallback: lockScreen failed somehow; at least
+						// fill from PIC 0x3f so we don't render against
+						// stale memory.
+						const int bw = MIN<int>(accuseBg.surface.w, 320);
+						const int bh = MIN<int>(accuseBg.surface.h, 200);
+						for (int row = 0; row < bh; row++) {
+							memcpy((byte *)ms.getBasePtr(0, row),
+								   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
+						}
 					}
 				}
 				// Masked balloon blit — `_Rect_Move_Mask` (1000:03fc)
