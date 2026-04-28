@@ -336,11 +336,21 @@ void EEMEngine::doInitClues() {
 			g_system->unlockScreen();
 			g_system->updateScreen();
 
-			// Wait 100 ms or until input.
+			// Wait 100 ms or until input. ESC also stops any pending
+			// voice / spool so audio doesn't bleed past the briefing
+			// when the player skips early — without this the per-clue
+			// voice line that `displayClue` would spool keeps playing
+			// after we've moved on to the MAP.
 			const uint32 wakeup = g_system->getMillis() + 100;
 			while (g_system->getMillis() < wakeup && !shouldQuit() && !skip) {
 				Common::Event ev;
 				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_KEYDOWN &&
+						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						interruptAudio();
+						skip = true;
+						break;
+					}
 					if (ev.type == Common::EVENT_LBUTTONDOWN ||
 						ev.type == Common::EVENT_KEYDOWN) {
 						skip = true;
@@ -437,6 +447,12 @@ void EEMEngine::doInitClues() {
 					   !shouldQuit() && !skip) {
 					Common::Event ev;
 					while (g_system->getEventManager()->pollEvent(ev)) {
+						if (ev.type == Common::EVENT_KEYDOWN &&
+							ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+							interruptAudio();
+							skip = true;
+							break;
+						}
 						if (ev.type == Common::EVENT_LBUTTONDOWN ||
 							ev.type == Common::EVENT_KEYDOWN) {
 							skip = true;
@@ -780,6 +796,13 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						advance = true;
 						skipAll = true;
+						// Cut the per-clue voice line that was just
+						// spooled — without this the voice keeps
+						// playing past the dialog dismissal and
+						// bleeds into the next screen (e.g. the
+						// case-briefing voice still talking on the
+						// MAP after ESC).
+						interruptAudio();
 						break;
 					}
 					if (ev.type == Common::EVENT_LBUTTONDOWN ||

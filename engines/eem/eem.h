@@ -320,6 +320,18 @@ private:
 	void playAnm(const Common::Path &path, uint frameDelayMs = 120,
 				 bool holdLastFrame = false);
 
+	/// Stop every active audio channel — voice, sound spool, and
+	/// MIDI. Mirrors the `_CleanMysterySounds @ 202f:05a5` +
+	/// `_StopMIDI @ 20a2:0512` pair the original triggers when the
+	/// player aborts the opening-anim chain or dismisses the title
+	/// (`_DoOpeningAnims @ 2520:082a` writes `_LoopMIDI = 0;
+	/// _StopMIDI();` after the title-input loop, and
+	/// `_CleanMysterySounds` is called twice — once after the loop
+	/// and once before TITLE.ANM). Called from every ESC handler in
+	/// the intro / title chain so the theme music + voice spool
+	/// don't bleed past the abort.
+	void interruptAudio();
+
 	// Screen handlers — port targets in screens/ later.
 	void showEAKidsLogo();
 	void showHighScoreLogo();
@@ -379,6 +391,12 @@ public:
 	/// site loop calls this each time `enter(siteNum)` runs so the
 	/// music changes as the player travels between sites.
 	void startTravelMusic();
+
+	/// Stop any currently playing MIDI track. Mirrors `_StopMIDI @
+	/// 20a2:0512` — used by `_DoSiteLoop @ 168d:06c0` after the
+	/// one-shot travel track plays out and by `_DisplayCorrect /
+	/// _DisplayAlibi` between MIDI cues.
+	void stopMusic();
 
 	/// Forwarded from `Engine::syncSoundSettings`. Re-pulls the user's
 	/// `music_volume` slider into the MIDI player's `_masterVolume`,

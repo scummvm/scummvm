@@ -456,6 +456,22 @@ bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
 	return true;
 }
 
+void EEMEngine::interruptAudio() {
+	// Mirrors `_CleanMysterySounds @ 202f:05a5` + `_StopMIDI @
+	// 20a2:0512` — the original calls both whenever the player aborts
+	// the opening-anim chain or dismisses the title (`_DoOpeningAnims
+	// @ 2520:082a` writes `_LoopMIDI = 0; _StopMIDI();` after the
+	// title-input loop). We expose the same combined stop on every
+	// ESC handler so currently-playing music + voice + spool actually
+	// halt instead of bleeding through into the next screen.
+	if (_audio) {
+		_audio->stopVoice();
+		_audio->stopSpool();
+	}
+	if (_music)
+		_music->stop();
+}
+
 void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLastFrame) {
 	ANMDecoder anm;
 	if (!anm.open(path)) {
@@ -483,7 +499,8 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 		// the frame-rate calibration logic from _GetSpeedRating is wired up.
 		// ESC additionally sets `_skipIntro` so the opening-anim chain in
 		// run() bails out of the whole sequence instead of advancing to
-		// the next clip.
+		// the next clip — and stops every active audio channel so the
+		// theme music / voice spool don't bleed past the abort.
 		const uint32 frameStart = g_system->getMillis();
 		bool aborted = false;
 		while (g_system->getMillis() - frameStart < frameDelayMs && !aborted) {
@@ -496,8 +513,10 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 					break;
 				}
 				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						_skipIntro = true;
+						interruptAudio();
+					}
 					aborted = true;
 					break;
 				}
@@ -523,8 +542,10 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 					break;
 				}
 				if (ev.type == Common::EVENT_KEYDOWN) {
-					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
 						_skipIntro = true;
+						interruptAudio();
+					}
 					clicked = true;
 					break;
 				}
@@ -534,6 +555,12 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 			g_system->updateScreen();
 			g_system->delayMillis(20);
 		}
+		// `_DoOpeningAnims @ 2520:0945` writes `_LoopMIDI = 0;
+		// _StopMIDI();` once the title-input loop exits — so the
+		// theme stops the moment the player dismisses the title,
+		// regardless of whether they used ESC or clicked.
+		if (_music)
+			_music->stop();
 	}
 }
 
@@ -549,7 +576,10 @@ void EEMEngine::blitAt(const Picture &pic, int x, int y) {
 
 void EEMEngine::waitForInput(uint32 maxMs) {
 	// ESC additionally raises `_skipIntro` so the opening-anim chain
-	// can fast-forward past the rest of the sequence.
+	// can fast-forward past the rest of the sequence, and stops any
+	// active audio so the theme / voice / spool don't bleed past
+	// the abort. Mirrors the `_CleanMysterySounds` + `_StopMIDI`
+	// pair around the title wait in `_DoOpeningAnims`.
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
 		Common::Event event;
@@ -560,8 +590,10 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 				return;
 			}
 			if (event.type == Common::EVENT_KEYDOWN) {
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_skipIntro = true;
+					interruptAudio();
+				}
 				return;
 			}
 		}
@@ -616,12 +648,25 @@ void EEMEngine::startTravelMusic() {
 	//   }
 	//
 	// Five travel tracks: MUS00000.XMI .. MUS00004.XMI, picked by
-	// `_SiteNumber % 5`. The original always loops travel music (the
-	// `_LoopMIDI` global isn't reset between site changes).
+	// `_SiteNumber % 5`. ONE-SHOT — `_DoOpeningAnims @ 2520:0945`
+	// resets `_LoopMIDI = 0` after the title-screen wait, and
+	// `_StartTravelMusic` doesn't write to it; combined with
+	// `_DoSiteLoop @ 168d:06c0` which waits for the track to play
+	// out and then calls `_StopMIDI()` before the interactive phase
+	// begins, the original effectively plays travel music ONCE
+	// during the entrance animation only — the site investigation
+	// itself runs without music. Our previous `loop=true` made the
+	// music never end, leaving travel music droning through site
+	// investigation, accuse, gallery, etc.
 	if (!_music || !_mystery.isLoaded())
 		return;
 	const uint num = _mystery._siteNumber % 5;
-	_music->playMus(num, /*loop=*/true);
+	_music->playMus(num, /*loop=*/false);
+}
+
+void EEMEngine::stopMusic() {
+	if (_music)
+		_music->stop();
 }
 
 void EEMEngine::syncSoundSettings() {
