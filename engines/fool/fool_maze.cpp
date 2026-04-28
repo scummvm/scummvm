@@ -37,17 +37,17 @@ void FoolGame::mazeRun() {
 		arr_i16_1eb8[i] = puzzlesReadShort();
 	}
 	var_i16_484 = 0;
+	var_i16_68c = arr_i16_1eb8[8];
 	do {
-		var_i16_68c = arr_i16_1eb8[8];
+		var_i16_68a = arr_i16_1eb8[10];
 		do {
-			var_i16_68a = arr_i16_1eb8[10];
 			var_i16_484++;
 			g_toolbox->SetRect(
 				arr_rect_1f38[var_i16_484],
 				var_i16_68a,
 				var_i16_68c,
-				arr_i16_1eb8[13],
-				arr_i16_1eb8[12]
+				var_i16_68a + arr_i16_1eb8[13],
+				var_i16_68c + arr_i16_1eb8[12]
 			);
 			// 136:00ca
 		} while (g_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
@@ -331,26 +331,43 @@ void FoolGame::sub_136_a22() {
 		var_i16_1bd4 = 0;
 		var_i16_1bd8 = 0;
 		Common::Rect temp;
-		temp.top = arr_i16_1eb8[12];
-		temp.left = arr_i16_1eb8[13];
-		temp.bottom = arr_i16_1eb8[14];
-		temp.right = arr_i16_1eb8[15];
+		temp.top = arr_i16_1eb8[24];
+		temp.left = arr_i16_1eb8[25];
+		temp.bottom = arr_i16_1eb8[26];
+		temp.right = arr_i16_1eb8[27];
 		g_toolbox->InvertOval(temp);
+		sub_136_2664();
 		var_i16_1bda = var_i16_1574;
 		sub_136_b00();
-	} while (var_i16_1bd8 != var_i16_1574);
+	} while (var_i16_1bda != var_i16_1574);
 }
 
 
 void FoolGame::sub_136_ade() {
 	// 136:0ade
-
-	warning("STUB: %s", __func__);
+	// this was done by a GOTO into the previous function, so we copy most of it here.
+	sub_136_2664();
+	var_i16_1bda = var_i16_1574;
+	sub_136_b00();
+	while (var_i16_1bda != var_i16_1574) {
+		var_i16_1bd6 = 0;
+		var_i16_1bd4 = 0;
+		var_i16_1bd8 = 0;
+		Common::Rect temp;
+		temp.top = arr_i16_1eb8[24];
+		temp.left = arr_i16_1eb8[25];
+		temp.bottom = arr_i16_1eb8[26];
+		temp.right = arr_i16_1eb8[27];
+		g_toolbox->InvertOval(temp);
+		sub_136_2664();
+		var_i16_1bda = var_i16_1574;
+		sub_136_b00();
+	};
 }
 
 void FoolGame::sub_136_b00() {
 	// 136:0b00
-	if (arr_i16_1eb8[11] | var_i16_1bdc) {
+	if (arr_i16_1eb8[22] | var_i16_1bdc) {
 		fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
 		var_i16_1bdc = 0;
 		var_str_1578.clear(); // was: str(225)
@@ -367,7 +384,35 @@ void FoolGame::sub_136_b00() {
 }
 
 void FoolGame::sub_136_2582() {
-	warning("STUB: %s", __func__);
+	// 136:2582
+	var_i16_1df2 = 0;
+	var_i16_1e06 = g_zbasic->decodeInt(g_zbasic->leftStr(var_str_1ac8, 2));
+	for (int16 i = 1; i <= var_i16_1e06; i++) {
+		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ac8, i*2 + 3, 2));
+		if (arr_i16_3738[var_i16_484] & 0x1000) {
+			var_i16_1df2++;
+			arr_i16_5bbc[var_i16_1df2] = var_i16_484;
+		}
+		// 136:2602
+	}
+	var_i16_484 = arr_i16_5bbc[g_zbasic->rndInt(var_i16_1df2)];
+	arr_i16_3738[var_i16_484] |= 0x1000;
+}
+
+void FoolGame::sub_136_2664() {
+	// 136:2664
+	var_i16_1574 = arr_i16_2f38[var_i16_1bcc*32 + var_i16_1bce];
+	arr_i16_1eb8[24] = arr_rect_1f38[var_i16_1574].top + 4;
+	arr_i16_1eb8[25] = arr_rect_1f38[var_i16_1574].left + 4;
+	arr_i16_1eb8[26] = arr_rect_1f38[var_i16_1574].bottom - 4;
+	arr_i16_1eb8[27] = arr_rect_1f38[var_i16_1574].right - 4;
+	// 136:273e
+	Common::Rect temp;
+	temp.top = arr_i16_1eb8[24];
+	temp.left = arr_i16_1eb8[25];
+	temp.bottom = arr_i16_1eb8[26];
+	temp.right = arr_i16_1eb8[27];
+	g_toolbox->InvertOval(temp);
 }
 
 void FoolGame::sub_136_274e() {
