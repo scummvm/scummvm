@@ -199,6 +199,39 @@ void AudioPlayer::playPcmBuffer(byte *pcm, uint32 size, uint sampleRate,
 					   DisposeAfterUse::YES);
 }
 
+// Floppy per-partner voice table — verified by reading the raw filename
+// pointers at `2608:0f0e` (Jake) and `2608:0f76` (Jenny) in EEM.EXE,
+// each 26 × FAR-ptr to a NUL-terminated `*.voc` filename. Indexed by
+// `_LoadSoundName_Floppy @ 1f4e:0305`. Slots match across partners:
+//   12 = PHONESL.VOC, 20 = partner intro, 25 = THUNDER.VOC.
+static const char *const kFloppyJakeVoiceTable[26] = {
+	"DING.VOC",       "M-0083SL.VOC", "M-0085SL.VOC", "NEWSCAN.VOC",
+	"M-0089SL.VOC",   "M-0091SL.VOC", "M-0092SL.VOC", "NEWSSHRT.VOC",
+	"M-0096SL.VOC",   "M-0102SL.VOC", "M-0104SL.VOC", "M-0107SL.VOC",
+	"PHONESL.VOC",    "M-0113SL.VOC", "DING.VOC",     "DING.VOC",
+	"M-0054SL.VOC",   "M-0014SL.VOC", "M-0012SL.VOC", "SQUAK2SL.VOC",
+	"M-0113SL.VOC",   "B-0006SL.VOC", "B-0003SL.VOC", "B-0004SL.VOC",
+	"M-0163SL.VOC",   "THUNDER.VOC",
+};
+static const char *const kFloppyJennyVoiceTable[26] = {
+	"DING.VOC",       "F-0194SL.VOC", "F-0191SL.VOC", "NEWSCAN.VOC",
+	"F-0187SL.VOC",   "F-0184SL.VOC", "F-0181SL.VOC", "NEWSSHRT.VOC",
+	"F-0177SL.VOC",   "F-0170SL.VOC", "F-0168SL.VOC", "F-0166SL.VOC",
+	"PHONESL.VOC",    "F-0161SL.VOC", "DING.VOC",     "DING.VOC",
+	"F-0067SL.VOC",   "F-0016SL.VOC", "F-0013SL.VOC", "SQUAK2SL.VOC",
+	"F-0140SL.VOC",   "B-0006SL.VOC", "B-0003SL.VOC", "B-0004SL.VOC",
+	"F-0165SL.VOC",   "THUNDER.VOC",
+};
+
+void AudioPlayer::playFloppyVoiceSlot(uint slot, uint partner) {
+	if (slot >= 26)
+		slot = 0;  // mirrors `_LoadSoundName_Floppy`'s `if (0x19 < slot) slot = 0;`
+	const char *name = (partner == 0)
+		? kFloppyJakeVoiceTable[slot]
+		: kFloppyJennyVoiceTable[slot];
+	playVoc(Common::Path(name));
+}
+
 void AudioPlayer::spoolSound(uint num) {
 	if (!_voiceEnabled) {
 		debugC(2, kDebugSound,

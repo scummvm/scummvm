@@ -236,21 +236,16 @@ void EEMEngine::doChoosePartner() {
 	// (`jen.voc` for Jenny, `jake.voc` for Jake; strings at 29be:0af1 /
 	// 29be:0af9) and block on `_WaitForVoiceDone`.
 	if (_audio) {
-		// CD: standalone clips `JAKE.VOC` / `JEN.VOC`. Floppy uses
-		// per-partner-and-event voice tables at `2608:0F0E` (Jake) /
-		// `2608:0F76` (Jenny), each 25 entries × FAR ptr to a VOC
-		// filename. After a partner pick, `FUN_19bb_0858 @ 19bb:0858`
-		// calls `FUN_1f4e_0305(0x14)` which loads voice slot 20 from
-		// the table for the chosen partner:
-		//   Jake  slot 20 → `2608:116B = "m-0113sl.voc"`
-		//   Jenny slot 20 → `2608:12AE = "f-0140sl.voc"`
-		Common::String voc;
 		if (isFloppy()) {
-			voc = (_partner == 0) ? "M-0113SL.VOC" : "F-0140SL.VOC";
+			// Floppy `_DoChoosePartner_Floppy @ 19bb:0a8e` calls
+			// `_LoadSoundName_Floppy(0x14)` (= slot 20) which the
+			// per-partner table at `2608:0f0e` / `2608:0f76` resolves
+			// to `m-0113sl.voc` (Jake) or `f-0140sl.voc` (Jenny).
+			_audio->playFloppyVoiceSlot(0x14, _partner);
 		} else {
-			voc = (_partner == 0) ? "JAKE.VOC" : "JEN.VOC";
+			_audio->playVoc(Common::Path(
+				(_partner == 0) ? "JAKE.VOC" : "JEN.VOC"));
 		}
-		_audio->playVoc(Common::Path(voc));
 		_audio->waitForVoiceDone();
 	}
 }
@@ -507,16 +502,25 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// `_DoInitClues` plays `phone.voc` (29be:0acc) ONLY when caseType == 2
-	// (the "incoming call" briefing variant). Verified at 1a35:05a2 —
-	// the gate is `iVar1 == 2 && _VoiceAvailable`. Other case types open
-	// straight into the briefing dialogue without it.
-	if (caseType == 2 && _audio) {
-		// Floppy ships `PHONESL.VOC` instead of CD's `PHONE.VOC` (the
-		// `_LoadSoundName` call site at 2608:1107-110c hands the
-		// floppy filename to the same loader).
-		_audio->playVoc(Common::Path(isFloppy() ? "PHONESL.VOC" : "PHONE.VOC"));
-		_audio->waitForVoiceDone();
+	// `_DoInitClues` plays a setup-voice ONLY for caseType 2/3.
+	//   CD: caseType 2 → PHONE.VOC. caseType 3 → no voice.
+	//   Floppy `_DoInitClues_Floppy @ 19bb:042f`:
+	//     caseType 2 → `_LoadSoundName_Floppy(slot 0xc)` = PHONESL.VOC
+	//     caseType 3 → `_LoadSoundName_Floppy(slot 3)`   = NEWSCAN.VOC
+	// (newspaper-scanner sting for the "TV/news anchor" briefing
+	// variant). Other case types open straight into the briefing
+	// dialogue without it.
+	if (_audio) {
+		if (caseType == 2) {
+			if (floppy)
+				_audio->playFloppyVoiceSlot(0x0c, _partner);
+			else
+				_audio->playVoc(Common::Path("PHONE.VOC"));
+			_audio->waitForVoiceDone();
+		} else if (caseType == 3 && floppy) {
+			_audio->playFloppyVoiceSlot(0x03, _partner);
+			_audio->waitForVoiceDone();
+		}
 	}
 
 	// Step 6 — case briefing dialogue. CD InitBlock has the clue block
@@ -944,17 +948,39 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 		const uint8  ballY    = rec[8];
 		const uint8  textCount= rec[10];
 
+		// Per-record voice playback. `FUN_22dc_05c8 @ 22dc:05c8`:
+		//   if ((rec[+9] & 0x80) && voiceOption && voiceAvail) {
+		//       slot = rec[+9] & 0x7f;
+		//       _LoadSoundName_Floppy(slot); _PlayVoc(...);
+		//   }
+		// The slot indexes the per-partner table at `2608:0f0e` /
+		// `2608:0f76` (= our `playFloppyVoiceSlot`). Sound is started
+		// BEFORE the bubble renders so it plays while the player reads.
+		if ((rec[9] & 0x80) != 0 && _audio) {
+			const uint slot = rec[9] & 0x7f;
+			_audio->playFloppyVoiceSlot(slot, _partner);
+		}
+
 		// Build the full text by concatenating each note's per-partner
 		// text string (parsed for `%s`-style placeholders). Bounds-
 		// check every offset against the mystery blob; if any byte
 		// looks out of range we just stop appending — corrupt offsets
 		// from a misparsed record would otherwise dereference past the
 		// buffer and SIGBUS inside `strlen`.
+		//
+		// Each text index also flags `_cluesFound[idx]` so the PDA /
+		// notebook ("DrawNotes") later renders the clue. Mirrors
+		// `FUN_22dc_05c8 @ 22dc:091a`:
+		//   ((undefined1 *)&DAT_28da_3c08)[textIdx & 0x7f] = 1;
+		// `DAT_28da_3c08` is the floppy `TextSeen` array; we reuse the
+		// `_cluesFound` flag store since both index 0..127 by note id.
 		const uint32 dsz       = _mystery.dataSize();
 		const uint32 notesBase = (uint32)(notes - bufBase);
 		Common::String raw;
 		for (uint t = 0; t < textCount; t++) {
 			const uint8  idx        = rec[11 + t] & 0x7f;
+			if (idx < Mystery::kCluesFoundCap)
+				_mystery._cluesFound[idx] = 1;
 			const uint32 noteAbs    = notesBase + (uint32)idx * 7;
 			if (noteAbs + 6 > dsz)
 				break;
@@ -974,6 +1000,23 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 			if (t > 0)
 				raw += ' ';
 			raw += Common::String(line, lineLen);
+		}
+
+		// Suspect/gallery side effect — `FUN_22dc_05c8 @ 22dc:08eb`:
+		//   if ((rec[+9] & 0x80) == 0 && rec[+9] != 0)
+		//       *(u16 *)(0x5d20 + table[0x2d65 + rec[+9]] * 2) = 1;
+		// Byte 9 doubles as the voice slot (when high bit set) or as a
+		// suspect identifier (low 7 bits, when high bit clear). The
+		// 0x5d20 array is the per-mystery "suspect found in gallery"
+		// flag table that `FUN_154e_0045` reads at gallery render time.
+		// We don't model the per-mystery shuffle table at 0x2d65
+		// (`_NewOrder` is set to identity in `_ReadMystery_Floppy` for
+		// our port), so byte9-1 indexes `_inGallery` directly.
+		const uint8 b9 = rec[9];
+		if ((b9 & 0x80) == 0 && b9 != 0) {
+			const uint slot = (uint)b9 - 1;
+			if (slot < Mystery::kGalleryCap)
+				_mystery._inGallery[slot] = 1;
 		}
 		const Common::String text = parseString(raw, _playerName, _partner);
 
