@@ -25,6 +25,7 @@
 #define EEM_EEM_H
 
 #include "common/array.h"
+#include "common/language.h"
 #include "common/platform.h"
 #include "common/random.h"
 #include "common/scummsys.h"
@@ -171,6 +172,13 @@ public:
 
 	const ADGameDescription *_gameDescription;
 	Variant _variant = kVariantCD;
+	Common::Language _language = Common::EN_ANY;
+
+	/// True for the Spanish floppy release. Used to swap hardcoded
+	/// English UI strings (menus, name prompt, notebook labels,
+	/// fallback hint copy) for their Spanish equivalents extracted
+	/// from EEM.EXE in `eem-full-game/floppy-es/`.
+	bool isSpanish() const { return _language == Common::ES_ESP; }
 
 	DBDArchive &getPics()    { return _picsArchive; }
 	DBDArchive &getAni()     { return _aniArchive; }
@@ -212,6 +220,7 @@ public:
 	/// Run the accuse flow (pick suspect, evaluate chains, show ending).
 	/// Mirrors `_DoAccuseGallery` @ 1df2:0a31 + `_DisplayEnding` @ 1df2:0548.
 	void doAccuse();
+	void doAccuseFloppy();
 
 	/// Show the accuse-notes screen (PIC 0x1A7, the red "accuse-mode"
 	/// BG with selectable clue list + "N clues" remaining counter).

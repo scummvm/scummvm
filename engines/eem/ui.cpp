@@ -55,6 +55,19 @@ const GallerySlot kGallerySlots[5] = {
 	{ 191,  90 }  // 4
 };
 
+// Floppy gallery slot positions verified at `2608:0x16c` (5 ×
+// {u16 x, u16 y}) — read by `_DrawGallery_Floppy @ 154e:0045`'s
+// `[BX + 0x16c]` (x) and `[BX + 0x16e]` (y) loads. The floppy
+// layout is shifted left ~0x30 px relative to CD: row 0 starts at
+// x=0x53 (vs 0x53→0x83 on CD) and the bottom row at x=0x77 / 0xbf.
+const GallerySlot kFloppyGallerySlots[5] = {
+	{ 0x53, 0x0e }, // 0
+	{ 0x9b, 0x0e }, // 1
+	{ 0xe3, 0x0e }, // 2
+	{ 0x77, 0x5a }, // 3
+	{ 0xbf, 0x5a }  // 4
+};
+
 // `_GetKDTextBalloon @ 1df2:0105` digit-balloon table @ `29be:1064`:
 //   '0'→0x15  '1'→0x16  '2'→0x17  '3'→0x18  '4'→0x19
 //   '5'→0x1a  '6'→0x20  '7'→0x21  '8'→0x22  '9'→0x1e
@@ -170,10 +183,12 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 	// Top centred title. `_CaseSelection @ 1c33:0aa3` formats "Book %d"
 	// for tiers 1/2 and "Challenge Book" (sprintf with no arg) for
 	// tier 3. `_Show_String(0xc, (0xba - width)/2 + 0x3c, …, 0x10)`
-	// places it horizontally centred over the panel.
+	// places it horizontally centred over the panel. Spanish floppy
+	// uses "Lib. %u" / "Libro de Retos" (verified in Spanish EEM.EXE).
+	const bool spanish = v.vm && v.vm->isSpanish();
 	const Common::String title = (v.book == 3)
-		? Common::String("Challenge Book")
-		: Common::String::format("Book %u", v.book);
+		? Common::String(spanish ? "Libro de Retos" : "Challenge Book")
+		: Common::String::format(spanish ? "Lib. %u" : "Book %u", v.book);
 	const int titleW = v.vm->getFont().getStringWidth(title);
 	const int titleX = (0xba - titleW) / 2 + 0x3c;
 	v.vm->getFont().drawString(&scratch, title, titleX, 12, 320, 0xF);
@@ -274,7 +289,8 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 		// `_Show_String(0xc, (0xba - width)/2 + 0x3c, …)` in the
 		// original. We don't track challenge tier yet so always
 		// show "Book 1".
-		const Common::String book = "Book 1";
+		const Common::String book = v.vm->isSpanish()
+			? Common::String("Lib. 1") : Common::String("Book 1");
 		const int titleW = v.vm->getFont().getStringWidth(book);
 		const int titleX = (0xba - titleW) / 2 + 0x3c;
 		v.vm->getFont().drawString(&scratch, book, titleX, 12, 320, 0xF);
@@ -468,6 +484,12 @@ void EEMEngine::doNewPlayer() {
 	Picture bg;
 	const bool haveBG = _picsArchive.getPicture(0x104, bg);
 
+	// Localized name-entry prompt. Spanish text is taken from the
+	// Spanish floppy EEM.EXE ("Teclea tu nombre"). The colon suffix is
+	// our own — the original DOS prompt has none.
+	const char *prompt = isSpanish()
+		? "Teclea tu nombre:" : "Please type your name:";
+
 	// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
 	// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
 	// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
@@ -476,7 +498,7 @@ void EEMEngine::doNewPlayer() {
 	scratch.clear();
 	if (haveBG)
 		scratch.simpleBlitFrom(bg.surface);
-	_font.drawString(&scratch, "Please type your name:", 80, 40, 240, 0xF);
+	_font.drawString(&scratch, prompt, 80, 40, 240, 0xF);
 	_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
@@ -537,8 +559,7 @@ void EEMEngine::doNewPlayer() {
 			scratch.clear();
 			if (haveBG)
 				scratch.simpleBlitFrom(bg.surface);
-			_font.drawString(&scratch, "Please type your name:",
-							 80, 40, 240, 0xF);
+			_font.drawString(&scratch, prompt, 80, 40, 240, 0xF);
 			_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, 320, 200);
@@ -916,8 +937,12 @@ void EEMEngine::doSetup() {
 		}
 		const Common::Rect kBox(80, 80, 240, 120);
 		scratch.fillRect(kBox, 0x00);
-		_font.drawString(&scratch, "Are you sure?", 100, 88, 200, 0xF);
-		_font.drawString(&scratch, "Y = yes   N = no", 100, 102, 200, 0xF);
+		_font.drawString(&scratch,
+			isSpanish() ? "Estas seguro?" : "Are you sure?",
+			100, 88, 200, 0xF);
+		_font.drawString(&scratch,
+			isSpanish() ? "S = si   N = no" : "Y = yes   N = no",
+			100, 102, 200, 0xF);
 		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 								   0, 0, 320, 200);
 		g_system->updateScreen();
@@ -929,7 +954,9 @@ void EEMEngine::doSetup() {
 					return true;
 				if (ev.type == Common::EVENT_KEYDOWN) {
 					const Common::KeyCode k = ev.kbd.keycode;
+					// Spanish prompt is "S = si" — accept both Y and S.
 					if (k == Common::KEYCODE_y ||
+						k == Common::KEYCODE_s ||
 						k == Common::KEYCODE_RETURN)
 						return true;
 					if (k == Common::KEYCODE_n ||
@@ -1240,13 +1267,24 @@ void EEMEngine::doCaseSelection() {
 		kPickScrap3,
 		kNumPicks
 	};
-	const char *kPickLabel[kNumPicks] = {
+	// Localized action-menu labels. Spanish text is taken verbatim
+	// from the Spanish floppy EEM.EXE (`eem-full-game/floppy-es/`):
+	// "Elegir Misterio" / "Caso de Practica" / "Ver Recortes  1..3".
+	const char *kPickLabelEN[kNumPicks] = {
 		"         Choose A Mystery",
 		"         Practice Mystery",
 		"         See ScrapBook 1",
 		"         See ScrapBook 2",
 		"         See ScrapBook 3"
 	};
+	const char *kPickLabelES[kNumPicks] = {
+		"         Elegir Misterio ",
+		"         Caso de Practica",
+		"         Ver Recortes  1",
+		"         Ver Recortes  2",
+		"         Ver Recortes  3"
+	};
+	const char * const *kPickLabel = isSpanish() ? kPickLabelES : kPickLabelEN;
 	// Menu entry gating per `_ActionScreen @ 1c33:195b` — the asm at
 	// 1c33:19d1-1a70 sets greys[] based on chain stage AND per-tier
 	// solve count:
@@ -2002,7 +2040,8 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		const uint clueId = found[i];
 		Common::String txt = noteText(clueId);
 		if (txt.empty())
-			txt = Common::String::format("clue %u", clueId);
+			txt = Common::String::format(
+				isSpanish() ? "nota %u" : "clue %u", clueId);
 		// Per `_DrawNotes @ 161e:01d0`: text uses
 		// `_NoteUnselectedColor` (0x5c=cyan) for unselected and 0x3c
 		// (light yellow-white) for selected. Both contrast cleanly
@@ -2173,17 +2212,34 @@ void EEMEngine::doGallery() {
 						//   _AddPicBackground(pic, 0x94, 0xf);
 						//   _DrawGalleryNotes(gd + i*0x46);
 						//   loop until ESC or button click.
-						// Suspect data layout (verified against M1):
-						//   +0..1: picId (used here AND for gallery slot)
-						//   +8..9: number of clues for this suspect
-						//   +0xa..??: array of u16 clue IDs (terminated
-						//             by 0xFFFF if shorter than count).
+						// Suspect data layout differs by variant:
+						//   * CD (`158f:0419`): fixed 0x46-byte stride.
+						//     +0..1   picId
+						//     +8..9   clue count (u16)
+						//     +0xa..  array of u16 clue IDs (max 30,
+						//             terminated by 0xFFFF if short).
+						//   * Floppy (`_MoreInfo_Floppy = 154e:042b` →
+						//     `FUN_154e_0201` → `FUN_15e0_01e8`):
+						//     variable-stride.
+						//     +0..1   picId
+						//     +2..3   alibi (0xFFFF = guilty)
+						//     +4      clue count (u8)
+						//     +5..    u8 clue IDs (per the asm at
+						//             154e:020e..0282 which calls
+						//             `FUN_15e0_01e8(rect, entry+5,
+						//                            entry[4], NULL)`).
+						const bool floppyMI = isFloppy();
 						const uint suspectIdx = (uint)slotSuspect[i];
-						const byte *suspect = gd + suspectIdx * 0x46;
+						const byte *suspect = floppyMI
+							? _mystery.floppySuspectEntry(suspectIdx)
+							: gd + suspectIdx * 0x46;
+						if (!suspect)
+							break;
 						const uint16 detailPic =
 							READ_LE_UINT16(suspect + 0);
-						const uint16 clueCount =
-							READ_LE_UINT16(suspect + 8);
+						const uint clueCount = floppyMI
+							? (uint)suspect[4]
+							: READ_LE_UINT16(suspect + 8);
 
 						Graphics::ManagedSurface ms(320, 200,
 							Graphics::PixelFormat::createFormatCLUT8());
@@ -2253,18 +2309,33 @@ void EEMEngine::doGallery() {
 						int yPos = ry;
 						const int lineH = _font.getFontHeight() + 1;
 						bool drewAny = false;
-						for (uint k = 0; k < clueCount && k < 30; k++) {
-							const uint16 clueId =
-								READ_LE_UINT16(suspect + 0xa + k * 2);
-							if (clueId == 0xFFFF)
+						const uint clueMax = floppyMI ? clueCount : 30u;
+						for (uint k = 0; k < clueCount && k < clueMax; k++) {
+							const uint16 clueId = floppyMI
+								? (uint16)suspect[5 + k]
+								: READ_LE_UINT16(suspect + 0xa + k * 2);
+							if (!floppyMI && clueId == 0xFFFF)
 								break;
 							if (clueId >= Mystery::kCluesFoundCap ||
 								!_mystery._cluesFound[clueId])
 								continue;
 							if (!ni || clueId >= niCount)
 								continue;
-							const uint16 textOff =
-								READ_LE_UINT16(ni + clueId * 4);
+							// Floppy notes are 7-byte entries: u16 ?,
+							// u16 jakeOff, u16 jennyOff, u8 score. The
+							// partner-specific text offset is at +2
+							// (Jake) or +4 (Jenny) — verified at
+							// `FUN_22dc_05c8 @ 22dc:0843`. CD notes are
+							// 4 bytes: u16 textOff, u16 score.
+							uint16 textOff;
+							if (floppyMI) {
+								const uint partnerByte = (_partner == 0)
+									? 2 : 4;
+								textOff = READ_LE_UINT16(
+									ni + clueId * 7 + partnerByte);
+							} else {
+								textOff = READ_LE_UINT16(ni + clueId * 4);
+							}
 							Common::String txt =
 								parseString(_mystery.textAt(textOff),
 											_playerName, _partner);
@@ -2281,15 +2352,20 @@ void EEMEngine::doGallery() {
 						}
 						if (!drewAny && _font.isLoaded()) {
 							_font.drawString(&ms,
-								"No clues yet for this suspect.",
+								isSpanish()
+									? "Aun no hay pistas para este sospechoso."
+									: "No clues yet for this suspect.",
 								rx, ry, rw, 0x5C);
 						}
 						// Header / footer text.
 						if (_font.isLoaded()) {
-							_font.drawString(&ms, "SUSPECT FILE",
-											  rx, ry - 11, rw, 0x3C);
-							_font.drawString(&ms, "(click / ESC: back)",
-											  rx, ry + rh + 2, rw, 0x3C);
+							_font.drawString(&ms,
+								isSpanish() ? "EXPEDIENTE" : "SUSPECT FILE",
+								rx, ry - 11, rw, 0x3C);
+							_font.drawString(&ms,
+								isSpanish() ? "(clic / ESC: volver)"
+											: "(click / ESC: back)",
+								rx, ry + rh + 2, rw, 0x3C);
 						}
 						g_system->copyRectToScreen(ms.getPixels(),
 							ms.pitch, 0, 0, 320, 200);
@@ -2407,8 +2483,17 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 							  partnerAni[frameIdx], 5, 0x50);
 	}
 
-	// Portraits — `_DrawGallery @ 158f:0046` walks suspects 0..N-1 and
-	// only renders those flagged in `_InGallery[NewOrder[i]]`.
+	// Portraits — `_DrawGallery @ 158f:0046` (CD) /
+	// `_DrawGallery_Floppy @ 154e:0045` (floppy) walks suspects 0..N-1
+	// and only renders those flagged in `_InGallery[NewOrder[i]]`.
+	// Layout differs by variant:
+	//   * CD: fixed 0x46-byte stride, slot positions at `kGallerySlots`.
+	//   * Floppy: variable-stride entries (5 + entry[4] bytes per
+	//     suspect), slot positions at `kFloppyGallerySlots` (verified
+	//     at `2608:0x16c`).
+	const bool floppy = isFloppy();
+	const GallerySlot * const slots =
+		floppy ? kFloppyGallerySlots : kGallerySlots;
 	for (uint i = 0; i < numSuspects && i < Mystery::kGalleryCap; i++) {
 		slotRects[i] = Common::Rect();
 		slotSuspect[i] = -1;
@@ -2416,11 +2501,16 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 		const uint8 phys = _mystery._newOrder[i];
 		if (phys >= 5)
 			continue;
-		const GallerySlot &s = kGallerySlots[phys];
+		const GallerySlot &s = slots[phys];
 
 		const bool discovered = _mystery._inGallery[phys] != 0;
 		if (discovered) {
-			const uint16 picId = READ_LE_UINT16(gd + i * 0x46);
+			const byte *entry = floppy
+				? _mystery.floppySuspectEntry(i)
+				: gd + i * 0x46;
+			if (!entry)
+				continue;
+			const uint16 picId = READ_LE_UINT16(entry);
 			Picture portrait;
 			if (picId == 0 ||
 				!_picsArchive.getPicture(picId, portrait))
@@ -3176,7 +3266,8 @@ bool EEMEngine::doAccuseNotes() {
 								   _playerName, _partner);
 			}
 			if (txt.empty())
-				txt = Common::String::format("clue %u", clueId);
+				txt = Common::String::format(
+					isSpanish() ? "nota %u" : "clue %u", clueId);
 			Common::Array<Common::String> wrapped;
 			_font.wordWrapText(txt, rectW, wrapped);
 			const int h = (int)wrapped.size() * lineH;
@@ -3195,8 +3286,12 @@ bool EEMEngine::doAccuseNotes() {
 		const uint remaining = (selectedCount < expected)
 			? expected - selectedCount
 			: 0;
-		const Common::String counter = Common::String::format("%u %s",
-			remaining, remaining == 1 ? "clue" : "clues");
+		// Spanish floppy uses "nota/notas" (verified in Spanish EEM.EXE).
+		const char *clueWord = isSpanish()
+			? (remaining == 1 ? "nota" : "notas")
+			: (remaining == 1 ? "clue" : "clues");
+		const Common::String counter =
+			Common::String::format("%u %s", remaining, clueWord);
 		_font.drawString(&scratch, counter, 209, 11, 100, 0x0F);
 
 		if (numPages > 1) {
@@ -3317,6 +3412,22 @@ void EEMEngine::doAccuse() {
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return;
 
+	// Floppy accusation flow is structurally different from the CD's:
+	// the suspect gallery section uses variable-stride entries (5 +
+	// nameLen bytes, NOT 0x46), the score is computed from the top-5
+	// note scores in `_TextSeen` (not `_NoteSelected`), and the win
+	// path renders the solved-chain dialog records at header[+0x12]
+	// rather than a single ClueBlock. Dispatch to a dedicated handler
+	// that mirrors `_KDHelp_Floppy` + `_HandleNoteButton_Floppy` (button
+	// 4 → `FUN_1d40_11fd` "ready to solve" gate) +
+	// `FUN_1d40_0c79` (gallery picker) + `_DisplayCorrect_Floppy` /
+	// `_DisplayAlibi_Floppy`.
+	if (isFloppy()) {
+		doAccuseFloppy();
+		return;
+	}
+
+
 	// Mirrors `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
 	//   1. ACCUSE-NOTES SCREEN (PIC 0x1A7, the red "accuse-mode" BG):
 	//      `_DrawNotes(_AccuseNoteRect, NULL, 100, _NoteSelected)`
@@ -3370,13 +3481,22 @@ void EEMEngine::doAccuse() {
 							   _playerName, _partner);
 		if (hint.empty()) {
 			// Fallback if `KDTextIndex[+6]` isn't set in this mystery.
-			hint = (_mystery.selectedPoints() == 0)
-				? "We're not ready to solve this mystery yet. "
-				  "Let's keep investigating until we have some "
-				  "more solid evidence."
-				: "We don't have quite enough evidence yet. "
-				  "Let's review our notes and find a few more "
-				  "clues before we accuse anyone.";
+			// Spanish text from the Spanish floppy EEM.EXE — there's
+			// only the single "1Necesitamos buscar pistas..." string
+			// in the binary, so use it for both the zero-points and
+			// some-points cases.
+			if (isSpanish()) {
+				hint = "Necesitamos buscar pistas antes de resolver "
+					   "el misterio. Investiguemos un poco mas!";
+			} else {
+				hint = (_mystery.selectedPoints() == 0)
+					? "We're not ready to solve this mystery yet. "
+					  "Let's keep investigating until we have some "
+					  "more solid evidence."
+					: "We don't have quite enough evidence yet. "
+					  "Let's review our notes and find a few more "
+					  "clues before we accuse anyone.";
+			}
 		}
 
 		// Compose balloon overlay on the current screen. Mirrors the
@@ -4092,6 +4212,417 @@ void EEMEngine::doAccuse() {
 		// the winner returns to the post-mystery `_ActionScreen`.
 		_nextScreen = kScreenAction;
 	}
+}
+
+void EEMEngine::doAccuseFloppy() {
+	// Floppy accuse flow — mirrors:
+	//   `_KDHelp_Floppy / FUN_1d40_11fd @ 1d40:11fd` (score gate +
+	//        partner "ready / not ready" balloon)
+	//   `FUN_1d40_0e07 @ 1d40:0e07`   (clue-selection screen — skipped
+	//        in this MVP; selectedPoints() already takes the top-5)
+	//   `FUN_1d40_0c79 @ 1d40:0c79`   (gallery picker)
+	//   `_DisplayCorrect_Floppy @ 1d40:0894`
+	//   `_DisplayAlibi_Floppy   @ 1d40:00df`
+	const byte *kdIdx     = _mystery.kdTextIndex();
+	const byte *bufBase   = _mystery.blobAt(0);
+	const uint32 mysSize  = _mystery.dataSize();
+	if (!kdIdx || !bufBase)
+		return;
+
+	// Helper: render one KDTextIndex string as a centred KD balloon
+	// over the current screen, mirroring `_DisplayHint_Floppy @
+	// 1503:00ca` (= `FUN_1d40_11fd`'s body). `kdSlot` is the index
+	// into KDTextIndex (0..N) — entries are u16 absolute text
+	// offsets.
+	auto showFloppyKDHint = [&](uint kdSlot) {
+		if ((uint)(kdSlot * 2) + 2 > (uint)(mysSize - (kdIdx - bufBase)))
+			return;
+		const uint16 textOff = READ_LE_UINT16(kdIdx + kdSlot * 2);
+		if (textOff == 0 || textOff >= mysSize)
+			return;
+		const char *p = (const char *)(bufBase + textOff);
+		uint32 lineLen = 0;
+		while (textOff + lineLen < mysSize && p[lineLen] != 0)
+			lineLen++;
+		if (lineLen == 0)
+			return;
+		Common::String raw(p, lineLen);
+		// Digit prefix → balloon variant (per `_GetKDTextBalloon_Floppy
+		// @ 1d40:009f` and the `_KDBalloonByChar_Floppy` table at
+		// `2608:0c14 + char`).
+		static const uint8 kDigitToBalloon[10] = {
+			0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
+		};
+		uint balloonIdx = 0x17;
+		const char *txt = raw.c_str();
+		if (*txt >= '0' && *txt <= '9') {
+			balloonIdx = kDigitToBalloon[(int)(*txt - '0')];
+			txt++;
+		}
+		Common::String text =
+			parseString(Common::String(txt), _playerName, _partner);
+		Graphics::ManagedSurface ms(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			ms.simpleBlitFrom(*cur);
+			g_system->unlockScreen();
+		}
+		Picture balloon;
+		const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
+			_balloonArchive.loadEntry(balloonIdx, balloon);
+		uint16 balloonY = 1;
+		if (haveBalloon) {
+			const uint h = (uint)balloon.surface.h;
+			if (h < 0x4e)
+				balloonY = (uint16)((0x50 - h) >> 1);
+			const byte transp = (byte)(balloon.flags >> 8);
+			for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
+				 row++) {
+				const byte *src =
+					(const byte *)balloon.surface.getBasePtr(0, row);
+				byte *dst = (byte *)ms.getBasePtr(0x21, balloonY + row);
+				for (int col = 0; col < balloon.surface.w && 0x21 + col < 320;
+					 col++) {
+					if (src[col] != transp)
+						dst[col] = src[col];
+				}
+			}
+		}
+		uint16 bx = 5;
+		uint16 by = 4;
+		uint16 bw = 142;
+		getBalloonInsets(balloonIdx, bx, by, bw);
+		_font.drawWordWrapped(&ms, 0x21 + bx, balloonY + by,
+							  MAX<int>(8, (int)bw), text, 0);
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, 320, 200);
+		g_system->updateScreen();
+		// Wait for click.
+		while (!shouldQuit()) {
+			Common::Event ev;
+			bool advance = false;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN) {
+					advance = true;
+					break;
+				}
+			}
+			if (advance)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+	};
+
+	// `FUN_1d40_11fd` score gate. Picks one of three KD strings and
+	// returns 1 only when score >= 100.
+	const int score = _mystery.selectedPoints();
+	uint kdSlot;
+	bool readyToSolve;
+	if (score < 50) {
+		kdSlot = 0;        // KDTextIndex[0] — "we've barely started"
+		readyToSolve = false;
+	} else if (score < 100) {
+		kdSlot = 1;        // KDTextIndex[1] — "getting closer"
+		readyToSolve = false;
+	} else {
+		kdSlot = 2;        // KDTextIndex[2] — "ready to solve"
+		readyToSolve = true;
+	}
+	showFloppyKDHint(kdSlot);
+	if (!readyToSolve) {
+		_nextScreen = _lastScreen != kScreenInvalid
+			? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
+
+	// `FUN_1d40_0c79` — gallery picker. Show "Which suspect?" KD
+	// hint at slot 4 (KDTextIndex[+8]/2 = entry index 4), then
+	// render the gallery and wait for click.
+	showFloppyKDHint(4);
+
+	// Build slot list. Floppy gallery section: byte0 = numSuspects,
+	// then variable-stride entries.
+	const uint8 num = _mystery.numSuspects();
+	if (num == 0) {
+		_nextScreen = _lastScreen != kScreenInvalid
+			? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
+
+	// Verbatim from `_DrawGallery_Floppy @ 154e:0050` — slot positions
+	// at `2608:016c` (5 × {u16 x, u16 y}).
+	struct GallerySlot { int x, y; };
+	static const GallerySlot kFloppySlots[5] = {
+		{ 0x53, 0x0e }, { 0x9b, 0x0e }, { 0xe3, 0x0e },
+		{ 0x77, 0x5a }, { 0xbf, 0x5a },
+	};
+
+	Picture accuseBg;
+	const bool haveAccuseBg = _picsArchive.getPicture(0x3f, accuseBg);
+
+	auto drawGallery = [&](int highlighted,
+						   Common::Array<Common::Rect> &rects,
+						   Common::Array<int> &suspects) {
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveAccuseBg)
+			scratch.simpleBlitFrom(accuseBg.surface);
+
+		// Partner sprite (anim 2 / 0x10) — same as CD doAccuse.
+		const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+		Animation partnerAni;
+		if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+			!partnerAni.empty()) {
+			const uint32 now = g_system->getMillis();
+			const uint frameIdx = partnerFrameAtTick(0x02,
+													  (uint)partnerAni.size(), now);
+			blitAnimFrameAnchored(scratch.surfacePtr(),
+								  partnerAni[frameIdx], 5, 0x50);
+		}
+
+		rects.resize(num);
+		suspects.resize(num);
+		for (uint i = 0; i < num; i++) {
+			rects[i] = Common::Rect();
+			suspects[i] = -1;
+			const uint8 phys = _mystery._newOrder[i];
+			if (phys >= 5)
+				continue;
+			if (_mystery._inGallery[phys] == 0)
+				continue;
+			const byte *e = _mystery.floppySuspectEntry(i);
+			if (!e)
+				continue;
+			const uint16 picId = READ_LE_UINT16(e + 0);
+			if (picId == 0)
+				continue;
+			Picture portrait;
+			if (!_picsArchive.getPicture(picId, portrait))
+				continue;
+			const GallerySlot &s = kFloppySlots[phys];
+			// `_DrawGallery_Floppy @ 154e:00ed` bottom-aligns to baseline
+			// 0x48 (= 72), same as CD: `placeY = s.y + (0x48 - h)`.
+			const int placeX = s.x;
+			const int placeY = s.y + (0x48 - portrait.surface.h);
+			const byte transp = (byte)(portrait.flags >> 8);
+			scratch.transBlitFrom(portrait.surface,
+								  Common::Point(placeX, placeY),
+								  (uint32)transp);
+			rects[i] = Common::Rect(placeX, placeY,
+									 placeX + portrait.surface.w,
+									 placeY + portrait.surface.h);
+			suspects[i] = (int)i;
+			if (highlighted == (int)i) {
+				scratch.frameRect(rects[i], 0xFE);
+			}
+		}
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+	};
+
+	Common::Array<Common::Rect> slotRects;
+	Common::Array<int> slotSuspect;
+	int highlighted = 0;
+	int picked = -1;
+	drawGallery(highlighted, slotRects, slotSuspect);
+
+	uint32 lastTick = g_system->getMillis();
+	while (picked < 0 && !shouldQuit()) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				return;
+			if (ev.type == Common::EVENT_KEYDOWN) {
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return;
+				if (ev.kbd.keycode == Common::KEYCODE_TAB ||
+					ev.kbd.keycode == Common::KEYCODE_RIGHT) {
+					highlighted = (highlighted + 1) % MAX<int>(1, (int)num);
+					drawGallery(highlighted, slotRects, slotSuspect);
+				} else if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
+					highlighted = (highlighted + (int)num - 1) %
+								  MAX<int>(1, (int)num);
+					drawGallery(highlighted, slotRects, slotSuspect);
+				} else if ((ev.kbd.keycode == Common::KEYCODE_RETURN ||
+							ev.kbd.keycode == Common::KEYCODE_KP_ENTER) &&
+						   highlighted < (int)slotRects.size() &&
+						   !slotRects[highlighted].isEmpty()) {
+					picked = slotSuspect[highlighted];
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				for (uint i = 0; i < slotRects.size(); i++) {
+					if (slotSuspect[i] >= 0 &&
+						slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
+						picked = slotSuspect[i];
+						break;
+					}
+				}
+			}
+		}
+		const uint32 now = g_system->getMillis();
+		if (now - lastTick >= 100) {
+			drawGallery(highlighted, slotRects, slotSuspect);
+			lastTick = now;
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+	if (picked < 0)
+		return;
+
+	const bool guilty = _mystery.isGuilty((uint)picked);
+
+	if (guilty) {
+		// `_DisplayCorrect_Floppy @ 1d40:0894` — load PIC 5 (win BG),
+		// walk the solved-clue chain at header[+0x12]: byte0 = count,
+		// then `count` dialog records (same FUN_22dc_05c8 layout). We
+		// reuse `displayFloppyDialogRecords` for the rendering.
+		Picture winBg;
+		if (_picsArchive.getPicture(5, winBg))
+			blitAt(winBg, 0, 0);
+		setSitePalette(0x22);
+		g_system->updateScreen();
+
+		const byte *chain = _mystery.solvedClueBlock();
+		if (chain) {
+			const uint count = chain[0];
+			displayFloppyDialogRecords(chain + 1, count, 0);
+		}
+
+		// Mark mystery solved — equivalent to
+		// `((u16 *)0x5d20)... actually 0x3054[mysteryNum] = 1` which we
+		// translate to clearing the in-progress mystery + saving the
+		// profile (matches CD `doAccuse` win path).
+		if (_partner == 0)
+			_mystery._firstTry = false;
+		_mystery._solvedPuzzle = true;
+		_mystery.clear();
+		(void)saveProfile(_playerName);
+		_nextScreen = kScreenAction;
+		return;
+	}
+
+	// Innocent — `_DisplayAlibi_Floppy @ 1d40:00df`:
+	//   1. Load PIC 0x3e (alibi BG), draw at (0x42, 0x14).
+	//   2. Load suspect picID, draw portrait at (0x82, 0x5a).
+	//   3. Read alibi text via TEXT_BLOCK[suspect[+3] * 2]; render in
+	//      a balloon picked by digit-prefix dispatch.
+	//   4. Voice from per-partner table at suspect_entry[+5..]
+	//      (we approximate using slot 13/14 — Jake/Jenny "wrong"
+	//      sting; original picks per-suspect).
+	//   5. Wait for click, then KD reaction balloon
+	//      (KDTextIndex[+0x10]/2 = slot 8) + voice slot 5.
+	const byte *susp = _mystery.floppySuspectEntry((uint)picked);
+	uint16 picId = 0;
+	uint16 alibiOff = 0xFFFF;
+	if (susp) {
+		picId    = READ_LE_UINT16(susp + 0);
+		alibiOff = _mystery.alibiTextOffset((uint)picked);
+	}
+
+	Picture alibiBg;
+	const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
+	Picture suspectPic;
+	const bool haveSuspect = picId != 0 &&
+		_picsArchive.getPicture(picId, suspectPic);
+
+	Common::String alibi;
+	if (alibiOff != 0xFFFF && alibiOff < mysSize) {
+		const char *raw = (const char *)(bufBase + alibiOff);
+		uint32 lineLen = 0;
+		while (alibiOff + lineLen < mysSize && raw[lineLen] != 0)
+			lineLen++;
+		alibi = parseString(Common::String(raw, lineLen),
+							_playerName, _partner);
+	}
+
+	// Digit-prefix → alibi balloon idx. CD has its own table at
+	// 29be:1050; floppy uses the same KD digit→balloon mapping for
+	// the alibi too (verified by inspecting `_DisplayAlibi_Floppy`'s
+	// `_GetKDTextBalloon_Floppy` call).
+	static const uint8 kDigitToBalloon[10] = {
+		0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
+	};
+	uint balloonIdx = 0x17;
+	if (!alibi.empty() && alibi[0] >= '0' && alibi[0] <= '9') {
+		balloonIdx = kDigitToBalloon[(int)(alibi[0] - '0')];
+		alibi.deleteChar(0);
+	}
+
+	// Compose alibi screen.
+	Graphics::ManagedSurface scene(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scene.clear();
+	if (haveAlibiBg)
+		scene.simpleBlitFrom(alibiBg.surface);
+	if (haveSuspect) {
+		const byte transp = (byte)(suspectPic.flags >> 8);
+		scene.transBlitFrom(suspectPic.surface,
+							 Common::Point(0x82, 0x5a),
+							 (uint32)transp);
+	}
+	Picture balloon;
+	const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
+		_balloonArchive.loadEntry(balloonIdx, balloon);
+	int balloonX = 0x21;
+	int balloonY = 1;
+	if (haveBalloon) {
+		if (balloon.surface.h < 0x4e)
+			balloonY = (0x50 - balloon.surface.h) / 2;
+		const byte transp = (byte)(balloon.flags >> 8);
+		scene.transBlitFrom(balloon.surface,
+							 Common::Point(balloonX, balloonY),
+							 (uint32)transp);
+	}
+	uint16 tx = 5, ty = 4, tw = 155;
+	getBalloonInsets(balloonIdx, tx, ty, tw);
+	if (!alibi.empty()) {
+		_font.drawWordWrapped(&scene, balloonX + tx, balloonY + ty,
+							  MAX<int>(8, (int)tw), alibi, 0);
+	}
+	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
+	g_system->updateScreen();
+
+	// Voice — suspect alibi voice. The original picks per-suspect from
+	// the alibi voice table at `2608:0c5e + suspectIdx`; we don't have
+	// the table indexed, so play slot 13 (= F-0161SL.VOC / M-0113SL.VOC)
+	// as a generic alibi cue.
+	if (_audio)
+		_audio->playFloppyVoiceSlot(13, _partner);
+
+	while (!shouldQuit()) {
+		Common::Event ev;
+		bool advance = false;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+				ev.type == Common::EVENT_LBUTTONDOWN ||
+				ev.type == Common::EVENT_KEYDOWN) {
+				advance = true;
+				break;
+			}
+		}
+		if (advance)
+			break;
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	// Partner reaction — KDTextIndex slot 8 (= +0x10).
+	showFloppyKDHint(8);
+
+	_mystery._firstTry = false;
+	_nextScreen = _lastScreen != kScreenInvalid
+		? (ScreenId)_lastScreen : kScreenSite;
 }
 
 void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,

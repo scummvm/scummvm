@@ -105,6 +105,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	_variant = (gameDesc && gameDesc->extra &&
 				Common::String(gameDesc->extra).contains("Floppy"))
 				 ? kVariantFloppy : kVariantCD;
+	_language = gameDesc ? gameDesc->language : Common::EN_ANY;
 }
 
 EEMEngine::~EEMEngine() {
