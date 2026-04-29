@@ -589,6 +589,19 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 			return out;
 		case '\r':
 			break;
+		case '^':
+			// `_WordWrap @ 1b03:0456` treats `^` as a forced line
+			// break (sets `cur_width = max_width`, forcing the next
+			// loop turn to wrap at the previous space and skip the
+			// `^` itself). Without this conversion the caret falls
+			// through the default case and renders as a literal,
+			// pushing the line past the balloon's visual edge — the
+			// "bubbles aren't large enough" symptom. Promote it to
+			// `\n` so ScummVM's `Font::wordWrapText` (which honours
+			// embedded newlines) picks the same break point the
+			// original engine did.
+			out += '\n';
+			break;
 		default:
 			out += (char)c;
 			break;
@@ -939,6 +952,39 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 		}
 	}
 
+	const uint32 dsz       = _mystery.dataSize();
+	const uint32 notesBase = (uint32)(notes - bufBase);
+
+	auto waitForClick = [&]() -> bool {
+		// Drain pending events first so a previous keystroke's tail
+		// doesn't auto-advance the new page.
+		Common::Event drain;
+		while (g_system->getEventManager()->pollEvent(drain)) {}
+		const uint32 minVisibleMs = 250;
+		const uint32 startedAt = g_system->getMillis();
+		while (!shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+					return true;  // skip
+				if (g_system->getMillis() - startedAt < minVisibleMs)
+					continue;
+				if (ev.type == Common::EVENT_KEYDOWN &&
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					interruptAudio();
+					return true;  // skip
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN)
+					return false;  // advance one page
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		return true;
+	};
+
 	for (uint i = 0; i < count && !shouldQuit(); i++) {
 		const uint16 picID    = READ_LE_UINT16(rec + 0);
 		const uint16 picX     = READ_LE_UINT16(rec + 2);
@@ -948,102 +994,22 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 		const uint8  ballY    = rec[8];
 		const uint8  textCount= rec[10];
 
-		// Per-record voice playback. `FUN_22dc_05c8 @ 22dc:05c8`:
-		//   if ((rec[+9] & 0x80) && voiceOption && voiceAvail) {
-		//       slot = rec[+9] & 0x7f;
-		//       _LoadSoundName_Floppy(slot); _PlayVoc(...);
-		//   }
-		// The slot indexes the per-partner table at `2608:0f0e` /
-		// `2608:0f76` (= our `playFloppyVoiceSlot`). Sound is started
-		// BEFORE the bubble renders so it plays while the player reads.
+		// Per-record voice (byte 9 high bit) — see comment in original
+		// header.
 		if ((rec[9] & 0x80) != 0 && _audio) {
 			const uint slot = rec[9] & 0x7f;
 			_audio->playFloppyVoiceSlot(slot, _partner);
 		}
-
-		// Build the full text by concatenating each note's per-partner
-		// text string (parsed for `%s`-style placeholders). Bounds-
-		// check every offset against the mystery blob; if any byte
-		// looks out of range we just stop appending — corrupt offsets
-		// from a misparsed record would otherwise dereference past the
-		// buffer and SIGBUS inside `strlen`.
-		//
-		// Each text index also flags `_cluesFound[idx]` so the PDA /
-		// notebook ("DrawNotes") later renders the clue. Mirrors
-		// `FUN_22dc_05c8 @ 22dc:091a`:
-		//   ((undefined1 *)&DAT_28da_3c08)[textIdx & 0x7f] = 1;
-		// `DAT_28da_3c08` is the floppy `TextSeen` array; we reuse the
-		// `_cluesFound` flag store since both index 0..127 by note id.
-		const uint32 dsz       = _mystery.dataSize();
-		const uint32 notesBase = (uint32)(notes - bufBase);
-		Common::String raw;
-		for (uint t = 0; t < textCount; t++) {
-			const uint8  idx        = rec[11 + t] & 0x7f;
-			if (idx < Mystery::kCluesFoundCap)
-				_mystery._cluesFound[idx] = 1;
-			const uint32 noteAbs    = notesBase + (uint32)idx * 7;
-			if (noteAbs + 6 > dsz)
-				break;
-			const uint16 textOff = (_partner == 0)
-				? READ_LE_UINT16(notes + idx * 7 + 2)
-				: READ_LE_UINT16(notes + idx * 7 + 4);
-			if (textOff >= dsz)
-				break;
-			const char *line = (const char *)(bufBase + textOff);
-			// Find the NUL terminator within the blob — refuse to
-			// strlen past the end.
-			uint32 lineLen = 0;
-			while (textOff + lineLen < dsz && line[lineLen] != 0)
-				lineLen++;
-			if (textOff + lineLen >= dsz)
-				break;
-			if (t > 0)
-				raw += ' ';
-			raw += Common::String(line, lineLen);
-		}
-
-		// Suspect/gallery side effect — `FUN_22dc_05c8 @ 22dc:08eb`:
-		//   if ((rec[+9] & 0x80) == 0 && rec[+9] != 0)
-		//       *(u16 *)(0x5d20 + table[0x2d65 + rec[+9]] * 2) = 1;
-		// Byte 9 doubles as the voice slot (when high bit set) or as a
-		// suspect identifier (low 7 bits, when high bit clear). The
-		// 0x5d20 array is the per-mystery "suspect found in gallery"
-		// flag table that `FUN_154e_0045` reads at gallery render time.
-		// We don't model the per-mystery shuffle table at 0x2d65
-		// (`_NewOrder` is set to identity in `_ReadMystery_Floppy` for
-		// our port), so byte9-1 indexes `_inGallery` directly.
+		// Suspect-found side effect for byte 9 with high bit clear.
 		const uint8 b9 = rec[9];
 		if ((b9 & 0x80) == 0 && b9 != 0) {
 			const uint slot = (uint)b9 - 1;
 			if (slot < Mystery::kGalleryCap)
 				_mystery._inGallery[slot] = 1;
 		}
-		const Common::String text = parseString(raw, _playerName, _partner);
 
-		// Restore briefing BG before drawing this bubble.
-		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
-
-		// Optional character portrait.
-		if (picID != 0 && picID != 0xFFFF) {
-			Picture pic;
-			if (_picsArchive.getPicture(picID, pic))
-				blitAt(pic, picX, picY);
-		}
-
-		// Compose balloon + text on a scratch surface.
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		{
-			Graphics::Surface *screen = g_system->lockScreen();
-			if (screen) {
-				for (int row = 0; row < 200; row++) {
-					memcpy((byte *)scratch.getBasePtr(0, row),
-						   (const byte *)screen->getBasePtr(0, row), 320);
-				}
-				g_system->unlockScreen();
-			}
-		}
-
+		// Pre-load balloon picture + insets once per record (constant
+		// across all paginated text indices).
 		Picture balloon;
 		const uint16 balloonId  = balByte & 0x7F;
 		const bool   flipBall   = (balByte & 0x80) != 0;
@@ -1053,81 +1019,134 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 		uint16 textWidth = 142;
 		uint16 textXIns  = 6;
 		uint16 textYIns  = 4;
-		if (haveBalloon) {
-			const int bw = MIN<int>(balloon.surface.w, 320 - ballX);
-			const int bh = MIN<int>(balloon.surface.h, 200 - ballY);
-			const byte transp = (byte)(balloon.flags >> 8);
-			for (int row = 0; row < bh; row++) {
-				const byte *src =
-					(const byte *)balloon.surface.getBasePtr(0, row);
-				byte *dst =
-					(byte *)scratch.getBasePtr(ballX, ballY + row);
-				for (int col = 0; col < bw; col++) {
-					const int srcCol = flipBall
-						? (balloon.surface.w - 1 - col) : col;
-					const byte px = src[srcCol];
-					if (px != transp)
-						dst[col] = px;
-				}
-			}
+		if (haveBalloon)
 			getBalloonInsets(balloonId, textXIns, textYIns, textWidth);
-		}
-
 		const int textX = ballX + textXIns;
-		const int textY = ballY + textYIns;
-		_font.drawWordWrapped(&scratch, textX, textY,
-			MAX<int>(8, (int)textWidth), text, 0);
+		const int balloonH = haveBalloon ? balloon.surface.h : 200;
+		const int lineH    = _font.getFontHeight() + 1;
 
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
+		// Pagination state — `FUN_22dc_05c8`'s text-idx loop uses
+		// `local_1c` (set from the PREVIOUS text's flag bit) to decide
+		// between "fresh page" (redraw balloon, restart Y at top) and
+		// "continuation" (append below previous lines). We mirror that
+		// state machine so multi-text records render the same way the
+		// original does — without it our impl concatenates every text
+		// idx into ONE balloon and the result spills out the bottom
+		// (the user's "bubbles aren't large enough" screenshot).
+		bool firstPage  = true;
+		int  cursorY    = ballY + textYIns;
+		bool skipAll    = false;
 
-		// Drain pending events from the previous bubble (or upstream
-		// animation skip) so a single Enter press doesn't burst-advance
-		// through multiple bubbles. Without this, key-repeat or stacked
-		// KEYUP/KEYDOWN events from one keystroke could roll past
-		// several records before the user could even read them.
-		{
-			Common::Event drain;
-			while (g_system->getEventManager()->pollEvent(drain)) {}
-		}
-		// Minimum visible time per bubble — guards against accidental
-		// rapid-fire advances from accumulated input.
-		const uint32 minVisibleMs = 250;
-		const uint32 startedAt = g_system->getMillis();
+		for (uint t = 0; t < textCount && !shouldQuit() && !skipAll; t++) {
+			const uint8 idxByte = rec[11 + t];
+			const uint8 idx     = idxByte & 0x7f;
+			if (idx < Mystery::kCluesFoundCap)
+				_mystery._cluesFound[idx] = 1;
+			const uint32 noteAbs = notesBase + (uint32)idx * 7;
+			if (noteAbs + 6 > dsz)
+				break;
+			const uint16 textOff = (_partner == 0)
+				? READ_LE_UINT16(notes + idx * 7 + 2)
+				: READ_LE_UINT16(notes + idx * 7 + 4);
+			if (textOff >= dsz)
+				break;
+			const char *linePtr = (const char *)(bufBase + textOff);
+			uint32 lineLen = 0;
+			while (textOff + lineLen < dsz && linePtr[lineLen] != 0)
+				lineLen++;
+			Common::String raw(linePtr, lineLen);
+			const Common::String text =
+				parseString(raw, _playerName, _partner);
 
-		// Wait for click / key. ESC skips the rest of the briefing.
-		// Inside the loop we ignore input until at least `minVisibleMs`
-		// has elapsed since the bubble was drawn — combined with the
-		// pre-loop event drain, this prevents one keystroke (or its
-		// auto-repeat tail) from advancing several bubbles back to back.
-		bool advance = false;
-		bool skipAll = false;
-		while (!advance && !shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-					advance = true;
-					break;
+			// Render this text page.
+			Graphics::ManagedSurface scratch(320, 200,
+				Graphics::PixelFormat::createFormatCLUT8());
+			scratch.simpleBlitFrom(*bg.surfacePtr());
+
+			if (firstPage) {
+				// Optional character portrait — only draws once per
+				// fresh page (matches the original which only redraws
+				// the balloon on `local_1c == 0`).
+				if (picID != 0 && picID != 0xFFFF) {
+					Picture pic;
+					if (_picsArchive.getPicture(picID, pic)) {
+						const byte transpC = (byte)(pic.flags >> 8);
+						const int pw = MIN<int>(pic.surface.w, 320 - picX);
+						const int ph = MIN<int>(pic.surface.h, 200 - picY);
+						for (int row = 0; row < ph; row++) {
+							const byte *src = (const byte *)
+								pic.surface.getBasePtr(0, row);
+							byte *dst = (byte *)
+								scratch.getBasePtr(picX, picY + row);
+							for (int col = 0; col < pw; col++) {
+								if (src[col] != transpC)
+									dst[col] = src[col];
+							}
+						}
+					}
 				}
-				if (g_system->getMillis() - startedAt < minVisibleMs)
-					continue;
-				if (ev.type == Common::EVENT_KEYDOWN &&
-					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					advance = true;
-					skipAll = true;
-					interruptAudio();
-					break;
+				if (haveBalloon) {
+					const int bw = MIN<int>(balloon.surface.w, 320 - ballX);
+					const int bh = MIN<int>(balloonH, 200 - ballY);
+					const byte transp = (byte)(balloon.flags >> 8);
+					for (int row = 0; row < bh; row++) {
+						const byte *src = (const byte *)
+							balloon.surface.getBasePtr(0, row);
+						byte *dst = (byte *)
+							scratch.getBasePtr(ballX, ballY + row);
+						for (int col = 0; col < bw; col++) {
+							const int srcCol = flipBall
+								? (balloon.surface.w - 1 - col)
+								: col;
+							const byte px = src[srcCol];
+							if (px != transp)
+								dst[col] = px;
+						}
+					}
 				}
-				if (ev.type == Common::EVENT_LBUTTONDOWN ||
-					ev.type == Common::EVENT_KEYDOWN) {
-					advance = true;
-					break;
-				}
+				cursorY = ballY + textYIns;
 			}
+
+			// Wrap text into lines and draw each at cursorY.
+			Common::Array<Common::String> lines;
+			_font.wordWrapText(text, MAX<int>(8, (int)textWidth), lines);
+			for (uint l = 0; l < lines.size(); l++) {
+				_font.drawString(&scratch, lines[l], textX,
+								  cursorY + (int)l * lineH,
+								  MAX<int>(8, (int)textWidth), 0);
+			}
+			cursorY += (int)lines.size() * lineH;
+
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
 			g_system->updateScreen();
-			g_system->delayMillis(10);
+
+			// Decide pagination for the NEXT text idx based on THIS
+			// text's high bit.
+			const bool textHighBit = (idxByte & 0x80) != 0;
+			const bool isLastText  = (t + 1 == textCount);
+
+			if (!isLastText) {
+				if (textHighBit) {
+					// Continuation flag — next text appends below
+					// without waiting.
+					firstPage = false;
+				} else {
+					// New page next: wait for click, then redraw
+					// balloon for the next text.
+					if (waitForClick()) {
+						skipAll = true;
+						break;
+					}
+					firstPage = true;
+				}
+			} else {
+				// Last text in record — wait for the user's click
+				// before moving on (mirrors the caller's
+				// `FUN_16e2_1a7f()` after every `FUN_22dc_05c8` call).
+				if (waitForClick())
+					skipAll = true;
+			}
 		}
 		if (skipAll)
 			return;

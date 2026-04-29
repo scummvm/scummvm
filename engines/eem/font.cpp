@@ -80,6 +80,7 @@ bool EEMFont::load(const Common::Path &path) {
 	}
 	_glyphs.resize(numChars);
 	_maxHeight = _maxWidth = 0;
+	_lineHeight = 0;
 
 	for (uint i = 0; i < numChars; i++) {
 		FontGlyph &g = _glyphs[i];
@@ -98,6 +99,19 @@ bool EEMFont::load(const Common::Path &path) {
 		if (g.widthBits > _maxWidth)
 			_maxWidth = g.widthBits;
 	}
+
+	// `_LoadFont @ 1b03:0220` sets the line stride to the FIRST
+	// glyph's height (= the space character) — `DAT_28da_30ca =
+	// DAT_28da_30ce` (the first byte of glyph 0 = its height). Tall
+	// descender glyphs ('g', 'j', 'p', 'q', 'y') hang into the next
+	// row by design, which is how the original engine keeps balloon
+	// text dense enough to fit. Using `_maxHeight` (the descender-
+	// inflated value) added 2–3 px per line and made every multi-
+	// line bubble overflow its graphic vertically — verbatim user-
+	// reported "bubbles aren't large enough" symptom.
+	_lineHeight = !_glyphs.empty() ? _glyphs[0].height : _maxHeight;
+	if (_lineHeight == 0)
+		_lineHeight = _maxHeight;
 
 	debugC(1, kDebugGfx, "Font %s loaded: %u glyphs, max %ux%u",
 		   path.toString().c_str(), numChars, _maxWidth, _maxHeight);
