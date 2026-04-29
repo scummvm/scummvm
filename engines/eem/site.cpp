@@ -1391,9 +1391,31 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 		if (hotIdx < Mystery::kHotSpotsCap)
 			_mystery->_hotSpotsSeen[hotIdx] = 1;
 		_mystery->_searchLocationNumber = (uint16)hotIdx;
+		// Snapshot `_cluesFound` BEFORE the floppy dialog so we can
+		// auto-save only when a new note (= clue text idx) is added.
+		// The floppy clue-side-effect path lives in
+		// `displayFloppyDialogRecords` (see clues.cpp), not in
+		// `displayClue` / `applyClueSideEffects`, so the CD-side
+		// autosave below would never trigger for floppy.
+		byte before[Mystery::kCluesFoundCap];
+		memcpy(before, _mystery->_cluesFound, sizeof(before));
 		_vm->setPartnerEraseBg(&_bgSnapshot);
 		_vm->displayFloppyHotspotDialog(siteNum, hotIdx);
 		_vm->setPartnerEraseBg(nullptr);
+		bool foundNewClue = false;
+		for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
+			if (!before[i] && _mystery->_cluesFound[i]) {
+				foundNewClue = true;
+				break;
+			}
+		}
+		if (foundNewClue) {
+			const Common::Error err =
+				_vm->saveProfile(_vm->playerName());
+			if (err.getCode() != Common::kNoError)
+				warning("auto-save after floppy clue failed: %s",
+						err.getDesc().c_str());
+		}
 		return;
 	}
 

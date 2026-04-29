@@ -956,6 +956,29 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	const uint32 dsz       = _mystery.dataSize();
 	const uint32 notesBase = (uint32)(notes - bufBase);
 
+	// Pre-mark every text index across all records as "seen" up front.
+	// `_DisplayHotspotClue_Floppy @ 22dc:05c8` writes
+	// `_TextSeen_Floppy[idx] = 1` inside its render loop, but the
+	// original's `_WaitForClick` blocks until input — so the loop always
+	// runs to completion and every text gets marked. Our `waitForClick`
+	// honours ESC as "skip all" (sets `skipAll`/break), which matches
+	// player expectations for fast-forward but used to drop the seen-bit
+	// for every text after the ESC point. Pre-marking restores parity:
+	// ESC fast-forwards the *visual* but the notebook always reflects
+	// every clue the player would have seen if they'd clicked through.
+	{
+		const byte *r = rec;
+		for (uint i = 0; i < count; i++) {
+			const uint8 tc = r[10];
+			for (uint t = 0; t < tc; t++) {
+				const uint8 idx = r[11 + t] & 0x7f;
+				if (idx < Mystery::kCluesFoundCap)
+					_mystery._cluesFound[idx] = 1;
+			}
+			r += 11 + tc;
+		}
+	}
+
 	auto waitForClick = [&]() -> bool {
 		// Drain pending events first so a previous keystroke's tail
 		// doesn't auto-advance the new page.
