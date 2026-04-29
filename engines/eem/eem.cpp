@@ -53,8 +53,10 @@ const uint kNumSitePals = 40;  ///< SITEPALS holds 40 palettes (40 * 768 = 30720
 // Picture / palette IDs from the original code (1-based picture IDs).
 const uint kPicEAKidsLogo      = 0x54;  ///< _ShowEAKids: GetPicture(0x54)
 const uint kPicHighScoreLogo   = 0x20c; ///< _ShowHScoreLogo: GetPicture(0x20c)
+const uint kPicStormLogo       = 0x20b; ///< Floppy storm-logo still: PIC 0x20b
 const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
+const uint kPalStormLogo       = 0x26;  ///< Floppy `FUN_23d2_0605` palette idx
 
 // Save body version, used by the `Common::Serializer` inside
 // `saveGameStream`/`loadGameStream`. The framework's extended-save
@@ -211,15 +213,35 @@ Common::Error EEMEngine::run() {
 	//     (2520:094c).
 	_skipIntro = false;
 	if (isFloppy()) {
-		// Floppy opening — strings verified via Ghidra of `EEM.EXE`
-		// floppy at `2608:1513` ("movie.anm"), `2608:14F2` ("title.anm"),
-		// `2608:151D` ("theme.xmi"). The floppy ships only those three
-		// intro assets (no `BOLT.ANM`, no `ANIM01..20.A` reel, no
-		// `THUNDER.VOC`). Order: `MOVIE.ANM` plays as the intro
-		// cinematic with theme music, then `TITLE.ANM` holds the title
-		// screen until the player clicks.
+		// Floppy opening — driven by `FUN_23d2_039c @ 23d2:039c`:
+		//   FUN_23d2_0170()  — clear palette
+		//   FUN_23d2_004b()  — set up timer
+		//   FUN_23d2_050c()  — show PIC 0x54 (EA Kids logo, palette 0x25)
+		//   FUN_23d2_06c6()  — show PIC 0x20c (High Score logo, palette 0x27)
+		//   FUN_23d2_0605()  — show PIC 0x20b (Storm Software, palette
+		//                      0x26) AND play voice slot 25 (thunder.voc
+		//                      — verified via the Jake voice table at
+		//                      `2608:0f0e` slot 25 → `2608:11ac` =
+		//                      "thunder.voc").
+		//   _MIDIPlayFile("theme.xmi", loop=1)
+		//   _PlayANM(idx=0) — CHAT.ANM (filename table at `2608:14fe`
+		//                     index 0 → "chat.anm" at `2608:150a`).
+		//   _PlayANM(idx=1) — MOVIE.ANM (table index 1 → `2608:1513`).
+		// `TITLE.ANM` is shown later by screen-`0xb` handler `@
+		// 19bb:0ebc` once the intro driver returns. The thunder VOC
+		// alongside the storm logo is the "intro voice" the user heard
+		// missing — without it the lightning-bolt logo plays silently.
+		if (!shouldQuit() && !_skipIntro)
+			showEAKidsLogo();
+		if (!shouldQuit() && !_skipIntro)
+			showHighScoreLogo();
+		if (!shouldQuit() && !_skipIntro)
+			showFloppyStormLogo();
 		if (!shouldQuit() && !_skipIntro && _music)
 			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
+		if (!shouldQuit() && !_skipIntro)
+			playAnm(Common::Path("CHAT.ANM"), 120,
+					/*holdLastFrame=*/false);
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("MOVIE.ANM"), 120,
 					/*holdLastFrame=*/false);
@@ -676,6 +698,29 @@ void EEMEngine::showHighScoreLogo() {
 	setSitePalette(kPalHighScore);
 	g_system->updateScreen();
 	waitForInput(2500);
+}
+
+void EEMEngine::showFloppyStormLogo() {
+	// Floppy storm-logo splash — `FUN_23d2_0605 @ 23d2:0605`:
+	//   GetPicture(0x20b); BlitToVGA;
+	//   if (sound) { LoadVOC(slot 25 = "thunder.voc"); PlayVOC(...); }
+	//   GetPalette(0x26); FadeIn; wait 50 ticks; FadeOut.
+	// CD plays `BOLT.ANM` at this slot with `THUNDER.VOC` overlaid; the
+	// floppy uses a static still + the same VOC. Without the VOC the
+	// lightning logo plays silently — the user noticed.
+	Picture pic;
+	if (!_picsArchive.getPicture(kPicStormLogo, pic)) {
+		warning("Storm logo (%u) load failed", kPicStormLogo);
+		return;
+	}
+	blitAt(pic, 0, 0);
+	setSitePalette(kPalStormLogo);
+	g_system->updateScreen();
+	if (_audio)
+		_audio->playVoc(Common::Path("THUNDER.VOC"));
+	waitForInput(2500);
+	if (_audio)
+		_audio->stopVoice();
 }
 
 void EEMEngine::doSiteLoop() {

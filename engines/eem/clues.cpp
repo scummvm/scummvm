@@ -296,9 +296,15 @@ void EEMEngine::doInitClues() {
 		_mystery._siteNumber = startSite;
 		_mystery._lastSite = startSite;
 	} else {
-		// Floppy doesn't store a startSite in the InitBlock; default to 0
-		// so the first BigMap entry is reachable.
-		_mystery._onSites[0] = 1;
+		// Floppy InitBlock has no startSite. The floppy BigMap iterator
+		// `FUN_1fed_07ed` walks every site in the SITES section
+		// unconditionally (no `_OnSites` gate) — verified at the floppy
+		// `_DoMapScreen @ 1fed:1060` which stamps every site marker
+		// before the interaction loop. Mark every loaded site as visible
+		// so our `_onSites`-gated overview stamps the same set.
+		const uint sites = _mystery.numSites();
+		for (uint s = 0; s < sites && s < Mystery::kVisitedSiteCap; s++)
+			_mystery._onSites[s] = 1;
 		_mystery._siteNumber = 0;
 		_mystery._lastSite = 0;
 	}
@@ -514,15 +520,14 @@ void EEMEngine::doInitClues() {
 	}
 
 	// Step 6 — case briefing dialogue. CD InitBlock has the clue block
-	// at +4 (after `u16 caseType; u16 startSite`); floppy uses an
-	// entirely different format — `u8 caseType; u8 nSubjects;
-	// subjects[nSubjects]; u8 nDialog; dialog_records[nDialog]` —
-	// dispatched via `FUN_22dc_05c8 @ 22dc:05c8` per record (a
-	// different on-screen format from the CD clue blocks we render
-	// here). Skip the briefing display on floppy until the dialog-record
-	// renderer is ported; the briefing animations + composited final
-	// frames remain on screen until the user clicks past the BigMap.
-	if (!floppy)
+	// at +4 (after `u16 caseType; u16 startSite`); floppy uses
+	// `u8 caseType; u8 nSubjects; subjects[nSubjects]; u8 nDialog;
+	// dialog_records[nDialog]` (each record `11 + textCount` bytes),
+	// dispatched via `FUN_22dc_05c8 @ 22dc:05c8`. We render dialog
+	// records ourselves on floppy.
+	if (floppy)
+		displayFloppyBriefing(ib);
+	else
 		displayClue(ib + 4);
 }
 
@@ -888,6 +893,193 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		}
 
 		applyClueSideEffects(c);
+	}
+}
+
+void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
+	// Floppy briefing — mirrors the dialog loop at the tail of
+	// `FUN_19bb_042f @ 19bb:042f`:
+	//   nSubjects = ib[1]; nDialog = ib[2 + nSubjects];
+	//   records   = ib + 3 + nSubjects;
+	// Each record is dispatched through `FUN_22dc_05c8 @ 22dc:05c8`,
+	// which reads:
+	//   u16 picID    @ +0     (character portrait, 0 = skip pic)
+	//   u16 picX     @ +2
+	//   u8  picY     @ +4
+	//   u8  balloon  @ +5     (low 7 bits = balloon idx, +0x80 = mirror)
+	//   u16 ballX    @ +6
+	//   u8  ballY    @ +8
+	//   u8  sound    @ +9     (high bit = play voice, low 7 bits = slot)
+	//   u8  textCount@ +10
+	//   u8  textIdx[]@ +11    (1 byte per — low 7 bits = NOTES idx)
+	// Text offsets in NOTES are ABSOLUTE byte offsets into the mystery
+	// buffer (verified by note 0 of M0.BIN at file offset 0xd0 holding
+	// "Hello, ..., I'm ... Eagle!"), so we read text via
+	// `mystery.blobAt(noteEntry[+2..3])` for Jake / `+4..5` for Jenny.
+	if (!initBlock || !isFloppy() || !_font.isLoaded())
+		return;
+
+	const uint8 nSubjects = initBlock[1];
+	const uint8 nDialog   = initBlock[2 + nSubjects];
+	const byte *rec       = initBlock + 3 + nSubjects;
+
+	const byte *notes   = _mystery.noteIndex();
+	const byte *bufBase = _mystery.blobAt(0);
+	if (!notes || !bufBase)
+		return;
+
+	// Snapshot the current screen so each record restores the
+	// briefing background between bubbles.
+	Graphics::ManagedSurface bg(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	{
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)bg.getBasePtr(0, row),
+					   (const byte *)screen->getBasePtr(0, row), 320);
+			}
+			g_system->unlockScreen();
+		}
+	}
+
+	for (uint i = 0; i < nDialog && !shouldQuit(); i++) {
+		const uint16 picID    = READ_LE_UINT16(rec + 0);
+		const uint16 picX     = READ_LE_UINT16(rec + 2);
+		const uint8  picY     = rec[4];
+		const uint8  balByte  = rec[5];
+		const uint16 ballX    = READ_LE_UINT16(rec + 6);
+		const uint8  ballY    = rec[8];
+		const uint8  textCount= rec[10];
+
+		// Build the full text by concatenating each note's per-partner
+		// text string (parsed for `%s`-style placeholders).
+		Common::String raw;
+		for (uint t = 0; t < textCount; t++) {
+			const uint8  idx     = rec[11 + t] & 0x7f;
+			const uint16 textOff = (_partner == 0)
+				? READ_LE_UINT16(notes + idx * 7 + 2)
+				: READ_LE_UINT16(notes + idx * 7 + 4);
+			const char *line = (const char *)(bufBase + textOff);
+			if (t > 0)
+				raw += ' ';
+			raw += line;
+		}
+		const Common::String text = parseString(raw, _playerName, _partner);
+
+		// Restore briefing BG before drawing this bubble.
+		g_system->copyRectToScreen(bg.getPixels(), bg.pitch, 0, 0, 320, 200);
+
+		// Optional character portrait.
+		if (picID != 0 && picID != 0xFFFF) {
+			Picture pic;
+			if (_picsArchive.getPicture(picID, pic))
+				blitAt(pic, picX, picY);
+		}
+
+		// Compose balloon + text on a scratch surface.
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		{
+			Graphics::Surface *screen = g_system->lockScreen();
+			if (screen) {
+				for (int row = 0; row < 200; row++) {
+					memcpy((byte *)scratch.getBasePtr(0, row),
+						   (const byte *)screen->getBasePtr(0, row), 320);
+				}
+				g_system->unlockScreen();
+			}
+		}
+
+		Picture balloon;
+		const uint16 balloonId  = balByte & 0x7F;
+		const bool   flipBall   = (balByte & 0x80) != 0;
+		const bool   haveBalloon = balByte != 0xFF &&
+			_balloonArchive.size() > balloonId &&
+			_balloonArchive.loadEntry(balloonId, balloon);
+		uint16 textWidth = 142;
+		uint16 textXIns  = 6;
+		uint16 textYIns  = 4;
+		if (haveBalloon) {
+			const int bw = MIN<int>(balloon.surface.w, 320 - ballX);
+			const int bh = MIN<int>(balloon.surface.h, 200 - ballY);
+			const byte transp = (byte)(balloon.flags >> 8);
+			for (int row = 0; row < bh; row++) {
+				const byte *src =
+					(const byte *)balloon.surface.getBasePtr(0, row);
+				byte *dst =
+					(byte *)scratch.getBasePtr(ballX, ballY + row);
+				for (int col = 0; col < bw; col++) {
+					const int srcCol = flipBall
+						? (balloon.surface.w - 1 - col) : col;
+					const byte px = src[srcCol];
+					if (px != transp)
+						dst[col] = px;
+				}
+			}
+			getBalloonInsets(balloonId, textXIns, textYIns, textWidth);
+		}
+
+		const int textX = ballX + textXIns;
+		const int textY = ballY + textYIns;
+		_font.drawWordWrapped(&scratch, textX, textY,
+			MAX<int>(8, (int)textWidth), text, 0);
+
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// Drain pending events from the previous bubble (or upstream
+		// animation skip) so a single Enter press doesn't burst-advance
+		// through multiple bubbles. Without this, key-repeat or stacked
+		// KEYUP/KEYDOWN events from one keystroke could roll past
+		// several records before the user could even read them.
+		{
+			Common::Event drain;
+			while (g_system->getEventManager()->pollEvent(drain)) {}
+		}
+		// Minimum visible time per bubble — guards against accidental
+		// rapid-fire advances from accumulated input.
+		const uint32 minVisibleMs = 250;
+		const uint32 startedAt = g_system->getMillis();
+
+		// Wait for click / key. ESC skips the rest of the briefing.
+		// Inside the loop we ignore input until at least `minVisibleMs`
+		// has elapsed since the bubble was drawn — combined with the
+		// pre-loop event drain, this prevents one keystroke (or its
+		// auto-repeat tail) from advancing several bubbles back to back.
+		bool advance = false;
+		bool skipAll = false;
+		while (!advance && !shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					advance = true;
+					break;
+				}
+				if (g_system->getMillis() - startedAt < minVisibleMs)
+					continue;
+				if (ev.type == Common::EVENT_KEYDOWN &&
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					advance = true;
+					skipAll = true;
+					interruptAudio();
+					break;
+				}
+				if (ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN) {
+					advance = true;
+					break;
+				}
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		if (skipAll)
+			return;
+
+		rec += 11 + textCount;
 	}
 }
 
