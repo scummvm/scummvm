@@ -588,8 +588,13 @@ void SiteScreen::enter(uint siteNum) {
 	_vm->stopMusic();
 
 	// Static drops (Loop 2 from `_DoSiteLoop`) — no animation, baked
-	// into the BG snapshot the run() pump uses to restore.
-	renderStaticDrops(siteNum);
+	// into the BG snapshot the run() pump uses to restore. Floppy
+	// stores them in a different shape (drops sub-struct after the
+	// site_data offset), so dispatch on `isFloppy()`.
+	if (_vm->isFloppy())
+		renderFloppyDrops(siteNum);
+	else
+		renderStaticDrops(siteNum);
 
 	// Snapshot the static layers so per-tick animation re-blits don't
 	// have to re-load PIC 0x43, the SITES.DBD scene, or each
@@ -643,7 +648,10 @@ void SiteScreen::enter(uint siteNum) {
 		// balloon residues; refresh the site so the player returns to
 		// a clean state. Re-build the snapshot too.
 		renderBackground(siteNum);
-		renderStaticDrops(siteNum);
+		if (_vm->isFloppy())
+			renderFloppyDrops(siteNum);
+		else
+			renderStaticDrops(siteNum);
 		captureBgSnapshot();
 		_snapshotSite = (int)siteNum;
 		const uint32 nowAfter = g_system->getMillis();
@@ -938,6 +946,53 @@ void SiteScreen::renderStaticDrops(uint siteNum) {
 	g_system->unlockScreen();
 }
 
+void SiteScreen::renderFloppyDrops(uint siteNum) {
+	// Floppy drops live inside the drops sub-struct pointed to by
+	// `*site_data` (u16 offset). Verified from the call site in
+	// `_DoSiteLoop_Floppy @ 1652:0418`:
+	//   FUN_16e2_18eb(
+	//     *(u16 *)(local_1a + i*5),          // arg1 = u16 picID @ +0..1
+	//     *(u16 *)(local_1a + i*5 + 2),      // arg2 = u16 X     @ +2..3
+	//     local_1a[i*5 + 4]                  // arg3 = u8  Y     @ +4
+	//   );
+	// Inside `FUN_16e2_18eb @ 16e2:18eb`, `arg1 - 1` indexes the
+	// PICS.DBX table at `2608:4537` (loaded from `PICS.DBX` by
+	// `FUN_16e2_0149 @ 16e2:0149`); `arg2/arg3` become destX/destY.
+	// drops_struct[0] = BG picID (rendered separately by
+	// `renderBackground`), drops_struct[1] = drop count.
+	if (!_mystery)
+		return;
+	const byte *site = _mystery->siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 dropsOff = READ_LE_UINT16(site);
+	const byte *drops = _mystery->blobAt(dropsOff);
+	if (!drops)
+		return;
+	const uint8 count = drops[1];
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	if (!screen)
+		return;
+
+	for (uint i = 0; i < count; i++) {
+		const byte *e = drops + 2 + i * 5;
+		const uint16 picID = READ_LE_UINT16(e + 0);
+		const int16  x     = (int16)READ_LE_UINT16(e + 2);
+		const int16  y     = (int16)e[4];
+		if (picID == 0)
+			continue;
+		// `getPicture(num)` already does `loadEntry(num - 1)` (see
+		// `resource.h:100`), matching the `picID - 1` index the
+		// original passes to PICS.DBD.
+		Picture pic;
+		if (!_vm->getPics().getPicture((uint)picID, pic))
+			continue;
+		blitMaskedSurface(screen, pic, x, y);
+	}
+	g_system->unlockScreen();
+}
+
 void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	// Loop 1 from `_DoSiteLoop @ 168d:03f4`:
 	//   bound: siteData[+0xa]
@@ -1071,29 +1126,46 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	// `kWaitAnims` lives at file scope above; we cap rendering at
 	// `speaker < 7` since anything past entry 6 is the `_SiteButtons`
 	// rect data that follows the table in the binary.
-	// Floppy site data has a different shape: site_data+8 is a u16
-	// OFFSET to a 10-byte speakerInfo struct (verified at
-	// `_DoSiteLoop_Floppy @ 1652:042b` reading `*(undefined2 *)
-	// (DAT_28da_0172) = anim_id_jake` etc.), not an index into the
-	// `kWaitAnims` table the CD uses. Skip the partner render until
-	// the floppy speakerInfo is wired up — without this guard we
-	// dereference garbage entries past the table end.
-	if (_vm && _vm->isFloppy())
-		return;
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
-	const uint16 speaker = READ_LE_UINT16(site + 8);
-	if (speaker >= ARRAYSIZE(kWaitAnims)) {
-		warning("renderPartner: site %u has speakerIdx=%u out of range",
-				siteNum, speaker);
-		return;
-	}
-
 	const uint8 partner = _vm->getPartnerIndex();
-	const uint  animId  = kWaitAnims[speaker][0 + partner];
-	const int   x       = (int)(int16)kWaitAnims[speaker][2 + partner];
-	const int   y       = (int)(int16)kWaitAnims[speaker][4 + partner];
+	uint   animId;
+	int    x;
+	int    y;
+	if (_vm->isFloppy()) {
+		// Floppy: site_data+8 is a u16 OFFSET to a 10-byte
+		// speakerInfo struct (per `_DoSiteLoop_Floppy @ 1652:042b`):
+		//   bytes 0..1  Jake anim ID  (u16)
+		//   bytes 2..3  Jake X        (u16)
+		//   byte  4     Jake Y        (u8)
+		//   bytes 5..6  Jenny anim ID (u16)
+		//   bytes 7..8  Jenny X       (u16)
+		//   byte  9     Jenny Y       (u8)
+		const uint16 spkOff = READ_LE_UINT16(site + 8);
+		const byte *spk = _mystery->blobAt(spkOff);
+		if (!spk)
+			return;
+		if (partner == 0) {
+			animId = READ_LE_UINT16(spk + 0);
+			x      = (int)READ_LE_UINT16(spk + 2);
+			y      = (int)spk[4];
+		} else {
+			animId = READ_LE_UINT16(spk + 5);
+			x      = (int)READ_LE_UINT16(spk + 7);
+			y      = (int)spk[9];
+		}
+	} else {
+		const uint16 speaker = READ_LE_UINT16(site + 8);
+		if (speaker >= ARRAYSIZE(kWaitAnims)) {
+			warning("renderPartner: site %u has speakerIdx=%u out of range",
+					siteNum, speaker);
+			return;
+		}
+		animId = kWaitAnims[speaker][0 + partner];
+		x      = (int)(int16)kWaitAnims[speaker][2 + partner];
+		y      = (int)(int16)kWaitAnims[speaker][4 + partner];
+	}
 
 	Animation anim;
 	if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
@@ -1227,8 +1299,13 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	// don't all glow in lock-step.
 	const uint32 tickMs = g_system->getMillis();
 
+	// CD hotspot rows are 14 bytes each (rect + 6 bytes of clue
+	// metadata). Floppy stores plain 8-byte rectangles only — clue
+	// data lives in a separate dialog-record list at `site_data[+6]`,
+	// keyed by hotspot index. Verified at `FUN_22dc_0b80 @ 22dc:0b80`.
+	const uint stride = _vm && _vm->isFloppy() ? 8 : 14;
 	for (uint i = 0; i < count; i++) {
-		const byte *r = spots + i * 14;
+		const byte *r = spots + i * stride;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
 		const int16 y1 = (int16)READ_LE_UINT16(r + 2);
 		const int16 x2 = (int16)READ_LE_UINT16(r + 4);
@@ -1289,8 +1366,9 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 	if (!spots)
 		return -1;
 
+	const uint stride = _vm && _vm->isFloppy() ? 8 : 14;
 	for (uint i = 0; i < count; i++) {
-		const byte *r = spots + i * 14;
+		const byte *r = spots + i * stride;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
 		const int16 y1 = (int16)READ_LE_UINT16(r + 2);
 		const int16 x2 = (int16)READ_LE_UINT16(r + 4);
@@ -1303,6 +1381,21 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	debugC(1, kDebugSite, "Site %u: hotspot %u clicked", siteNum, hotIdx);
+
+	// Floppy: hotspot rectangles are plain 8-byte rects (no clue
+	// metadata at +0xa or +8); the dialog records live in a separate
+	// per-hotspot list at `site_data[+6]`. Dispatch through the
+	// floppy-specific renderer and mark the click rectangle seen by
+	// array index (the only ordinal we have on floppy).
+	if (_vm->isFloppy()) {
+		if (hotIdx < Mystery::kHotSpotsCap)
+			_mystery->_hotSpotsSeen[hotIdx] = 1;
+		_mystery->_searchLocationNumber = (uint16)hotIdx;
+		_vm->setPartnerEraseBg(&_bgSnapshot);
+		_vm->displayFloppyHotspotDialog(siteNum, hotIdx);
+		_vm->setPartnerEraseBg(nullptr);
+		return;
+	}
 
 	// `_DoSiteLoop @ 168d:03f4` (after _DisplayClue):
 	//   _HotSpotsSeen[hotspot[+0xa] * 2] = _HotSpotComplete;

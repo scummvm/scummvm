@@ -2710,14 +2710,15 @@ void EEMEngine::doBigMap() {
 							continue;
 						uint16 mx;
 						uint16 my;
-						uint16 buttonId = 0;
+						uint16 buttonId;
 						if (fmap) {
 							// Floppy detail view: click rect on
-							// BIGMAP.PIC at (+0, +2), per
-							// `FUN_1fed_0c3e`'s write to
-							// DAT_28da_3aee/DAT_28da_3af0.
+							// BIGMAP.PIC at (+0, +2), labelled BUTTON.DBD
+							// entry ID at entry+4 (per
+							// `FUN_1fed_0c3e @ 1fed:0c3e`).
 							mx = READ_LE_UINT16(entry + 0x0);
 							my = READ_LE_UINT16(entry + 0x2);
+							buttonId = (uint16)entry[0x4];
 						} else {
 							buttonId = READ_LE_UINT16(entry + 0x0);
 							mx       = READ_LE_UINT16(entry + 0x8);
@@ -2726,18 +2727,7 @@ void EEMEngine::doBigMap() {
 						Picture button;
 						int bw = 16;
 						int bh = 16;
-						if (fmap) {
-							// Floppy uses the global site-marker PIC for
-							// every site; the recolor flag at +10 picks
-							// the crime variant. Sized off whichever PIC
-							// is loaded successfully.
-							Picture m;
-							const uint pic = (entry[0xa] != 0) ? 0xc6 : 0xc5;
-							if (_picsArchive.getPicture(pic, m)) {
-								bw = m.surface.w;
-								bh = m.surface.h;
-							}
-						} else if (_buttonArchive.loadEntry(buttonId, button)) {
+						if (_buttonArchive.loadEntry(buttonId, button)) {
 							bw = button.surface.w;
 							bh = button.surface.h;
 						}
@@ -2916,18 +2906,18 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 			   copyW);
 	}
 
-	// Stamped site buttons. `_StampButtons @ 20fe:0d2f`:
+	// Stamped site buttons. `_StampButtons @ 20fe:0d2f` (CD):
 	//   button = _GetButton(MapData[+0])
 	//   destX  = MapData[+8]
 	//   destY  = MapData[+0xa]
-	// Floppy SITES rows are 11 bytes — no per-button PIC ID. Use the
-	// regular site / crime marker PICs (0xc5 / 0xc6) keyed off the
-	// recolor flag at +10, same logic as the overview stamp.
+	// Floppy uses `FUN_1fed_0c3e @ 1fed:0c3e`: for each SITES row, the
+	// byte at entry+4 is a BUTTON.DBD entry ID (loaded via
+	// `FUN_16e2_1838 @ 16e2:1838`, which opens `button.dbd` — string
+	// at `2608:0558`). The labelled button is stamped at
+	// `(entry+0..1, entry+2..3)` on BIGMAP.PIC. These are the same
+	// per-site labelled buttons the CD uses, just keyed off a
+	// different field offset.
 	const bool floppyMap = _mystery.isLoaded() && isFloppy();
-	Picture floppySiteM;
-	Picture floppyCrimeM;
-	const bool haveFloppySite  = floppyMap && _picsArchive.getPicture(0xc5, floppySiteM);
-	const bool haveFloppyCrime = floppyMap && _picsArchive.getPicture(0xc6, floppyCrimeM);
 	for (uint i = 0; i < _mystery.numSites(); i++) {
 		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 			continue;
@@ -2938,24 +2928,10 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 		uint16 my;
 		Picture button;
 		if (floppyMap) {
-			// Floppy SITES rows carry TWO position pairs:
-			//   (+0, +2) = position on BIGMAP.PIC (the zoomed view).
-			//              Used by `FUN_1fed_0c3e @ 1fed:0c3e` for
-			//              suspect-portrait stamping AND as the
-			//              click bbox on the zoomed map.
-			//   (+6, +8) = position on the overview PIC 0x42.
-			//              Used by `FUN_1fed_07ed @ 1fed:07ed`.
-			// The detail view scrolls BIGMAP.PIC, so we need the
-			// (+0, +2) coords here. Recolor flag at +10 still
-			// selects crime vs site marker.
 			mx = READ_LE_UINT16(entry + 0x0);
 			my = READ_LE_UINT16(entry + 0x2);
-			const bool useCrime = entry[0xa] != 0;
-			if (useCrime && haveFloppyCrime)
-				button = floppyCrimeM;
-			else if (haveFloppySite)
-				button = floppySiteM;
-			else
+			const uint16 buttonId = (uint16)entry[0x4];
+			if (!_buttonArchive.loadEntry(buttonId, button))
 				continue;
 		} else {
 			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);

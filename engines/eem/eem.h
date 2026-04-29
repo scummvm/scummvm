@@ -185,6 +185,13 @@ public:
 	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.
 	void displayClue(const byte *clueBlock);
 
+	/// Floppy hotspot click — locate the dialog records for the
+	/// clicked hotspot in the site's per-hotspot dialog list at
+	/// `site_data[+6]` and dispatch them through
+	/// `displayFloppyDialogRecords`. Mirrors `FUN_22dc_0b80 +
+	/// FUN_1652_00e6 + FUN_1652_006c`.
+	void displayFloppyHotspotDialog(uint siteNum, uint hotIdx);
+
 	/// Active player name (saved as the profile-save description).
 	const Common::String &playerName() const { return _playerName; }
 
@@ -438,6 +445,12 @@ private:
 	///   +10    textCount
 	///   +11..  text indices (1 byte each, low 7 bits = NOTES idx)
 	void displayFloppyBriefing(const byte *initBlock);
+
+	/// Render `count` consecutive floppy dialog records starting at
+	/// `rec`. Shared between briefing and hotspot click handlers since
+	/// the original engine uses the same `FUN_22dc_05c8 @ 22dc:05c8`
+	/// renderer in both contexts.
+	void displayFloppyDialogRecords(const byte *rec, uint count);
 
 public:
 	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`

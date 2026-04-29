@@ -287,16 +287,24 @@ const byte *Mystery::siteData(uint siteNum) const {
 }
 
 const byte *Mystery::hotspots(uint siteNum) const {
+	if (_isFloppy) {
+		// Floppy: hotspot table sits inside the per-site sub-blob.
+		// `site_data[+4..5]` is a u16 file offset to a header byte
+		// (count) + N×8-byte rectangles (x1, y1, x2, y2 as u16s) —
+		// verified at `FUN_22dc_0b80 @ 22dc:0b80` (the click hit-test
+		// loop reads `*(byte *)(buf + site_data[+4])` for the count
+		// then `FUN_14c9_0039(... buf + site_data[+4] + 1 + i*8)`
+		// for each rectangle).
+		const byte *site = siteData(siteNum);
+		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
+			return nullptr;
+		const uint16 hotspotOff = READ_LE_UINT16(site + 4);
+		if (hotspotOff == 0 || hotspotOff + 1 > _data.size())
+			return nullptr;
+		return _data.data() + hotspotOff + 1;
+	}
 	const byte *idx = siteIndexEntry(siteNum);
 	if (!idx)
-		return nullptr;
-	// Floppy site index is only 2 bytes per entry; `idx + 4` would
-	// read into the NEXT entry's offset, returning garbage. The
-	// floppy hotspot list lives inside the site-data sub-blob (see
-	// `_DoSiteLoop_Floppy @ 1652:03a3` walking 5-byte drop entries
-	// from `*site_data + 2`); don't fake a CD-style result here —
-	// SiteScreen guards floppy paths separately.
-	if (_isFloppy)
 		return nullptr;
 	const uint16 hotspotOff = READ_LE_UINT16(idx + 4);
 	if (hotspotOff >= _data.size())
@@ -305,8 +313,15 @@ const byte *Mystery::hotspots(uint siteNum) const {
 }
 
 uint16 Mystery::hotspotCount(uint siteNum) const {
-	if (_isFloppy)
-		return 0;
+	if (_isFloppy) {
+		const byte *site = siteData(siteNum);
+		if (!site || (size_t)(site - _data.data()) + 6 > _data.size())
+			return 0;
+		const uint16 hotspotOff = READ_LE_UINT16(site + 4);
+		if (hotspotOff == 0 || hotspotOff >= _data.size())
+			return 0;
+		return (uint16)_data[hotspotOff];
+	}
 	const byte *site = siteData(siteNum);
 	if (!site || (size_t)(site - _data.data()) + 8 > _data.size())
 		return 0;

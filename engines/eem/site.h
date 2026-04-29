@@ -131,6 +131,13 @@ private:
 	/// animate so they go in the BG snapshot.
 	void renderStaticDrops(uint siteNum);
 
+	/// Floppy variant: drops live inside the drops sub-struct
+	/// (`*site_data` → drops; `drops[1]` = count; entries at
+	/// `drops + 2` are 5 bytes each: {u16 X, u16 Y, byte picID}).
+	/// PIC entries are loaded from PICS.DBD with `picID - 1`. Per
+	/// `_DoSiteLoop_Floppy @ 1652:0418` and `FUN_16e2_18eb`.
+	void renderFloppyDrops(uint siteNum);
+
 	/// Draw the per-site animated NPCs (Loop 1) at the current tick.
 	/// `_DoSiteLoop` registers each via `_NewAnimation` (siteData[+0xa]
 	/// entries at siteData[+0x48]: {animId (-1 = ColorCycle), x, y})
