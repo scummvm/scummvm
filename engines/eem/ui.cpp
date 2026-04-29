@@ -2699,24 +2699,45 @@ void EEMEngine::doBigMap() {
 						   ev.mouse.y < kMapWinY + kMapWinH) {
 					// Hit-test the per-site button at its actual bbox
 					// (`_StampButtons` records the rect at SmallMap +8/+0xa
-					// with the button PIC's width/height). Floppy entries
-					// have a different shape so skip the SmallMap hit-test
-					// (we still get clicks via the BigMap overview path).
+					// with the button PIC's width/height).
 					const bool fmap = _mystery.isLoaded() && isFloppy();
-					for (uint i = 0; !fmap && i < _mystery.numSites(); i++) {
+					for (uint i = 0; i < _mystery.numSites(); i++) {
 						if (!_mystery._onSites[i] &&
 							i != _mystery._siteNumber)
 							continue;
 						const byte *entry = _mystery.mapEntry(i);
 						if (!entry)
 							continue;
-						const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
-						const uint16 mx       = READ_LE_UINT16(entry + 0x8);
-						const uint16 my       = READ_LE_UINT16(entry + 0xa);
+						uint16 mx;
+						uint16 my;
+						uint16 buttonId = 0;
+						if (fmap) {
+							// Floppy detail view: click rect on
+							// BIGMAP.PIC at (+0, +2), per
+							// `FUN_1fed_0c3e`'s write to
+							// DAT_28da_3aee/DAT_28da_3af0.
+							mx = READ_LE_UINT16(entry + 0x0);
+							my = READ_LE_UINT16(entry + 0x2);
+						} else {
+							buttonId = READ_LE_UINT16(entry + 0x0);
+							mx       = READ_LE_UINT16(entry + 0x8);
+							my       = READ_LE_UINT16(entry + 0xa);
+						}
 						Picture button;
 						int bw = 16;
 						int bh = 16;
-						if (_buttonArchive.loadEntry(buttonId, button)) {
+						if (fmap) {
+							// Floppy uses the global site-marker PIC for
+							// every site; the recolor flag at +10 picks
+							// the crime variant. Sized off whichever PIC
+							// is loaded successfully.
+							Picture m;
+							const uint pic = (entry[0xa] != 0) ? 0xc6 : 0xc5;
+							if (_picsArchive.getPicture(pic, m)) {
+								bw = m.surface.w;
+								bh = m.surface.h;
+							}
+						} else if (_buttonArchive.loadEntry(buttonId, button)) {
 							bw = button.surface.w;
 							bh = button.surface.h;
 						}
@@ -2899,24 +2920,50 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 	//   button = _GetButton(MapData[+0])
 	//   destX  = MapData[+8]
 	//   destY  = MapData[+0xa]
-	// Floppy mystery 0 ships no SmallMap detail layer, but mapEntry() still
-	// returns the floppy SITES row which has a different shape (no
-	// per-button PIC ID, X/Y at +6/+8) — skip the per-site stamp on floppy
-	// to avoid stamping garbage button IDs from the wrong field offsets.
+	// Floppy SITES rows are 11 bytes — no per-button PIC ID. Use the
+	// regular site / crime marker PICs (0xc5 / 0xc6) keyed off the
+	// recolor flag at +10, same logic as the overview stamp.
 	const bool floppyMap = _mystery.isLoaded() && isFloppy();
-	for (uint i = 0; !floppyMap && i < _mystery.numSites(); i++) {
+	Picture floppySiteM;
+	Picture floppyCrimeM;
+	const bool haveFloppySite  = floppyMap && _picsArchive.getPicture(0xc5, floppySiteM);
+	const bool haveFloppyCrime = floppyMap && _picsArchive.getPicture(0xc6, floppyCrimeM);
+	for (uint i = 0; i < _mystery.numSites(); i++) {
 		if (!_mystery._onSites[i] && i != _mystery._siteNumber)
 			continue;
 		const byte *entry = _mystery.mapEntry(i);
 		if (!entry)
 			continue;
-		const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
-		const uint16 mx       = READ_LE_UINT16(entry + 0x8);
-		const uint16 my       = READ_LE_UINT16(entry + 0xa);
-
+		uint16 mx;
+		uint16 my;
 		Picture button;
-		if (!_buttonArchive.loadEntry(buttonId, button))
-			continue;
+		if (floppyMap) {
+			// Floppy SITES rows carry TWO position pairs:
+			//   (+0, +2) = position on BIGMAP.PIC (the zoomed view).
+			//              Used by `FUN_1fed_0c3e @ 1fed:0c3e` for
+			//              suspect-portrait stamping AND as the
+			//              click bbox on the zoomed map.
+			//   (+6, +8) = position on the overview PIC 0x42.
+			//              Used by `FUN_1fed_07ed @ 1fed:07ed`.
+			// The detail view scrolls BIGMAP.PIC, so we need the
+			// (+0, +2) coords here. Recolor flag at +10 still
+			// selects crime vs site marker.
+			mx = READ_LE_UINT16(entry + 0x0);
+			my = READ_LE_UINT16(entry + 0x2);
+			const bool useCrime = entry[0xa] != 0;
+			if (useCrime && haveFloppyCrime)
+				button = floppyCrimeM;
+			else if (haveFloppySite)
+				button = floppySiteM;
+			else
+				continue;
+		} else {
+			const uint16 buttonId = READ_LE_UINT16(entry + 0x0);
+			mx                    = READ_LE_UINT16(entry + 0x8);
+			my                    = READ_LE_UINT16(entry + 0xa);
+			if (!_buttonArchive.loadEntry(buttonId, button))
+				continue;
+		}
 		const int sx = (int)mx - scrollX + kMapWinX;
 		const int sy = (int)my - scrollY + kMapWinY;
 		const byte transp = (byte)(button.flags >> 8);

@@ -522,8 +522,25 @@ void SiteScreen::enter(uint siteNum) {
 	// Palette: original `_BuildBackground` calls `GetPalette(sitenum + 1)`
 	// where sitenum is the global SITES.DBD index (= the per-mystery
 	// `sitepic` field), not the per-mystery site index.
+	//
+	// Floppy site_data layout differs (per `_DoSiteLoop_Floppy @
+	// 1652:03f4`): the FIRST u16 is the *offset* to a drops sub-struct
+	// whose byte 0 is the small SITES.DBD picID. Without this branch
+	// we'd dereference the offset directly and call setSitePalette
+	// with a value in the thousands — the user reported `index 9275
+	// out of range` for site 2.
 	const byte *sd = _mystery->siteData(siteNum);
-	const uint16 sitepic = sd ? READ_LE_UINT16(sd) : 0;
+	uint16 sitepic = 0;
+	if (sd) {
+		if (_vm->isFloppy()) {
+			const uint16 dropsOff = READ_LE_UINT16(sd);
+			const byte *drops = _mystery->blobAt(dropsOff);
+			if (drops)
+				sitepic = (uint16)drops[0];
+		} else {
+			sitepic = READ_LE_UINT16(sd);
+		}
+	}
 	_vm->setSitePaletteForSite(sitepic);
 
 	// SITEPALS ships with palette indices 0xF9..0xFE all set to a
@@ -980,6 +997,16 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 	_colorCycles.clear();
 	if (!_mystery)
 		return;
+	// Floppy site data has a different layout (per `_DoSiteLoop_Floppy
+	// @ 1652:03a3`: site index is 2-byte u16 entries, site data starts
+	// with an offset to a sub-structure with picID + 5-byte hotspot
+	// entries — there's no `[+0xa]` anim count at the same place). The
+	// CD-shaped offsets read garbage and run past the buffer end. Until
+	// the floppy color-cycle layout is reverse-engineered, skip the
+	// scan: the floppy still does palette F9..FE rotation in its own
+	// driver, but our hotspot palette override works without it.
+	if (_vm && _vm->isFloppy())
+		return;
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
@@ -1044,6 +1071,15 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	// `kWaitAnims` lives at file scope above; we cap rendering at
 	// `speaker < 7` since anything past entry 6 is the `_SiteButtons`
 	// rect data that follows the table in the binary.
+	// Floppy site data has a different shape: site_data+8 is a u16
+	// OFFSET to a 10-byte speakerInfo struct (verified at
+	// `_DoSiteLoop_Floppy @ 1652:042b` reading `*(undefined2 *)
+	// (DAT_28da_0172) = anim_id_jake` etc.), not an index into the
+	// `kWaitAnims` table the CD uses. Skip the partner render until
+	// the floppy speakerInfo is wired up — without this guard we
+	// dereference garbage entries past the table end.
+	if (_vm && _vm->isFloppy())
+		return;
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
@@ -1118,8 +1154,25 @@ void SiteScreen::renderBackground(uint siteNum) {
 	// — the dbi entry stride is 10 bytes, no -1 adjustment). Our
 	// previous `loadEntry(sitepic - 1)` was off by one, which is why
 	// the tutorial mystery rendered scenes from neighbouring cases.
+	// Floppy site_data stores the picID one indirection deeper:
+	// `*site_data` (u16) → drops sub-struct, `drops[0]` (byte) is the
+	// SITES.DBD entry. CD uses the u16 directly. Verified at
+	// `FUN_16e2_12fd @ 16e2:12fd` (called as
+	// `FUN_16e2_12fd(*local_12, 0x42, 0x14)` from
+	// `_DoSiteLoop_Floppy`, where `*local_12` is the byte at
+	// drops_struct+0 via the `(undefined1 *)` cast).
 	const byte *site = _mystery->siteData(siteNum);
-	const uint16 sitepic = site ? READ_LE_UINT16(site) : 0;
+	uint16 sitepic = 0;
+	if (site) {
+		if (_vm->isFloppy()) {
+			const uint16 dropsOff = READ_LE_UINT16(site);
+			const byte *drops = _mystery->blobAt(dropsOff);
+			if (drops)
+				sitepic = (uint16)drops[0];
+		} else {
+			sitepic = READ_LE_UINT16(site);
+		}
+	}
 	Picture scene;
 	bool haveScene = false;
 	if (sitepic < _vm->getSites().size())

@@ -266,8 +266,12 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 const byte *Mystery::siteIndexEntry(uint siteNum) const {
 	if (!isLoaded() || siteNum >= _numSites)
 		return nullptr;
-	const uint off = _siteIndexOffset + siteNum * 6;
-	if (off + 6 > _data.size())
+	// Floppy site index uses 2-byte (u16) entries — verified at
+	// `_DoSiteLoop_Floppy @ 1652:03d2` reading `*(int *)
+	// ((int)_FloppySiteIndexPtr + siteNum * 2)`. CD uses 6-byte rows.
+	const uint stride = _isFloppy ? 2 : 6;
+	const uint off = _siteIndexOffset + siteNum * stride;
+	if (off + stride > _data.size())
 		return nullptr;
 	return _data.data() + off;
 }
@@ -286,6 +290,14 @@ const byte *Mystery::hotspots(uint siteNum) const {
 	const byte *idx = siteIndexEntry(siteNum);
 	if (!idx)
 		return nullptr;
+	// Floppy site index is only 2 bytes per entry; `idx + 4` would
+	// read into the NEXT entry's offset, returning garbage. The
+	// floppy hotspot list lives inside the site-data sub-blob (see
+	// `_DoSiteLoop_Floppy @ 1652:03a3` walking 5-byte drop entries
+	// from `*site_data + 2`); don't fake a CD-style result here —
+	// SiteScreen guards floppy paths separately.
+	if (_isFloppy)
+		return nullptr;
 	const uint16 hotspotOff = READ_LE_UINT16(idx + 4);
 	if (hotspotOff >= _data.size())
 		return nullptr;
@@ -293,6 +305,8 @@ const byte *Mystery::hotspots(uint siteNum) const {
 }
 
 uint16 Mystery::hotspotCount(uint siteNum) const {
+	if (_isFloppy)
+		return 0;
 	const byte *site = siteData(siteNum);
 	if (!site || (size_t)(site - _data.data()) + 8 > _data.size())
 		return 0;

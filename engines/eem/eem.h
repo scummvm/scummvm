@@ -361,6 +361,7 @@ private:
 	// Screen handlers — port targets in screens/ later.
 	void showEAKidsLogo();
 	void showHighScoreLogo();
+	void showFloppyStormLogo();
 
 	/// Profile selector — mirrors `screen8_handler @ 1c33:1012`.
 	/// Walks `listProfiles()`, draws the list of existing profile
@@ -422,6 +423,21 @@ private:
 	/// display the briefing ClueBlock. Mirrors `_DoInitClues` @ 1a35:0411
 	/// minus the live ANI sequence playback.
 	void doInitClues();
+
+	/// Floppy variant of the briefing dialog renderer. Walks the dialog
+	/// record list at the tail of the floppy InitBlock (per
+	/// `FUN_19bb_042f` and `FUN_22dc_05c8 @ 22dc:05c8`) and renders one
+	/// speech balloon per record. Each record is `11 + textCount` bytes:
+	///   +0..1  picID (character portrait, 0 = none)
+	///   +2..3  picX
+	///   +4     picY
+	///   +5     balloonId | (mirror_flag << 7)
+	///   +6..7  balloonX
+	///   +8     balloonY
+	///   +9     soundFlag (high bit) | sound slot (low 7 bits)
+	///   +10    textCount
+	///   +11..  text indices (1 byte each, low 7 bits = NOTES idx)
+	void displayFloppyBriefing(const byte *initBlock);
 
 public:
 	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`
