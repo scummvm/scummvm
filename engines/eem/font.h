@@ -61,7 +61,9 @@ public:
 	bool isLoaded() const { return !_glyphs.empty(); }
 
 	// --- Graphics::Font overrides ---
-	int getFontHeight() const override { return _maxHeight; }
+	int getFontHeight() const override {
+		return _lineHeight ? _lineHeight : _maxHeight;
+	}
 	int getMaxCharWidth() const override { return _maxWidth; }
 	int getCharWidth(uint32 chr) const override;
 	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y,
@@ -76,8 +78,9 @@ public:
 
 private:
 	Common::Array<FontGlyph> _glyphs;
-	uint16 _maxHeight = 0;
-	uint16 _maxWidth  = 0;
+	uint16 _maxHeight  = 0;
+	uint16 _maxWidth   = 0;
+	uint16 _lineHeight = 0;  ///< First glyph height (= original line stride)
 };
 
 } // End of namespace EEM
