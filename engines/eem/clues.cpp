@@ -913,7 +913,8 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	}
 }
 
-void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
+void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
+											uint lastIndicator) {
 	// Render `count` consecutive floppy dialog records starting at
 	// `rec`. Per `FUN_22dc_05c8 @ 22dc:05c8`, each record is:
 	//   u16 picID    @ +0     (character portrait, 0 = skip pic)
@@ -1117,35 +1118,68 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
 			}
 			cursorY += (int)lines.size() * lineH;
 
-			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
-			g_system->updateScreen();
-
 			// Decide pagination for the NEXT text idx based on THIS
 			// text's high bit.
 			const bool textHighBit = (idxByte & 0x80) != 0;
 			const bool isLastText  = (t + 1 == textCount);
+			const bool isLastRec   = (i + 1 == count);
 
+			// Stamp the "click to continue" indicator (PIC 0xa0
+			// "more" arrow / PIC 0xa1 end indicator) before
+			// flipping to wait. Mirrors `_DisplayHotspotClue_Floppy
+			// @ 22dc:08aa` (mid-page) and `@ 22dc:08c0`
+			// (end-of-record). We skip drawing it on the very last
+			// click of the very last record when the caller passes
+			// `lastIndicator == 0` — that's the original `param_2 ==
+			// 0` "no indicator" case.
+			bool waitNeeded   = false;
+			bool drawArrow    = false;
+			bool useEndPic    = false;
 			if (!isLastText) {
 				if (textHighBit) {
-					// Continuation flag — next text appends below
-					// without waiting.
+					// continuation — no wait, no indicator
 					firstPage = false;
 				} else {
-					// New page next: wait for click, then redraw
-					// balloon for the next text.
-					if (waitForClick()) {
-						skipAll = true;
-						break;
-					}
-					firstPage = true;
+					waitNeeded = true;
+					drawArrow  = true;          // PIC 0xa0
+					useEndPic  = false;
 				}
 			} else {
-				// Last text in record — wait for the user's click
-				// before moving on (mirrors the caller's
-				// `FUN_16e2_1a7f()` after every `FUN_22dc_05c8` call).
-				if (waitForClick())
+				// Last text in this record.
+				waitNeeded = true;
+				if (!isLastRec) {
+					// More records follow — original passes
+					// `param_2 = 1` → PIC 0xa0.
+					drawArrow = true;
+					useEndPic = false;
+				} else {
+					// Last record. Use caller-supplied indicator.
+					if (lastIndicator == 1) {
+						drawArrow = true;
+						useEndPic = false;
+					} else if (lastIndicator == 2) {
+						drawArrow = true;
+						useEndPic = true;       // PIC 0xa1
+					}
+				}
+			}
+
+			if (drawArrow) {
+				drawFloppyBubbleIndicator(scratch, balloonId, ballX,
+										   ballY, useEndPic);
+			}
+
+			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+									   0, 0, 320, 200);
+			g_system->updateScreen();
+
+			if (waitNeeded) {
+				if (waitForClick()) {
 					skipAll = true;
+					break;
+				}
+				if (!isLastText && !textHighBit)
+					firstPage = true;
 			}
 		}
 		if (skipAll)
@@ -1234,11 +1268,23 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 		}
 	}
 	const byte *mainRec = bufBase + off;
-	displayFloppyDialogRecords(mainRec, 1);
 	const uint mainLen = 11u + (uint)mainRec[10];
-	if (off + mainLen >= _mystery.dataSize())
-		return;
-	const uint contCount = (uint)(bufBase[off + mainLen] & 0x7F);
+	uint contCount = 0;
+	uint contFlagsByte = 0;
+	if (off + mainLen < _mystery.dataSize()) {
+		contFlagsByte = bufBase[off + mainLen];
+		contCount = contFlagsByte & 0x7F;
+	}
+	// `_HandleHotspotClick_Floppy @ 1652:00e6` derives the main
+	// record's `param_2` from the continuation byte:
+	//   contFlagsByte == 0  → 0 (no indicator, only one record)
+	//   high bit set         → 1 (PIC 0xa0, "more" arrow)
+	//   low 7 bits non-zero  → 2 (PIC 0xa1, alternate end)
+	uint mainIndicator = 0;
+	if (contFlagsByte != 0) {
+		mainIndicator = (contFlagsByte & 0x80) ? 1 : 2;
+	}
+	displayFloppyDialogRecords(mainRec, 1, mainIndicator);
 	if (contCount == 0)
 		return;
 	const uint32 contOff = off + mainLen + 1;
@@ -1251,7 +1297,13 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 	g_system->copyRectToScreen(siteBG.getPixels(), siteBG.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
-	displayFloppyDialogRecords(bufBase + contOff, contCount);
+	// Continuation chain: `_DisplayDialogContinuations_Floppy @
+	// 1652:006c` passes `param_2 + -1 != 0` (= 1 if more records
+	// follow, 0 on the last). Our renderer maps that automatically
+	// because mid-batch records always get PIC 0xa0; the last record
+	// uses our `lastIndicator` argument (= 0, no indicator on the
+	// final continuation).
+	displayFloppyDialogRecords(bufBase + contOff, contCount, 0);
 }
 
 bool EEMEngine::areYouSure() {

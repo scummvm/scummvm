@@ -51,29 +51,38 @@ const uint16 kHelpPics[][2] = {
 	{ 0x0192, 0x01b1 },
 };
 
-// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875`.
-// Used at 1df2:0aef-0af9 (accuse hint) and `_DisplayClue` to position
-// `_WordWrap` text inside the balloon. Only +0/+2/+4 are read by
-// `getBalloonInsets`:
-//   +0..1 = text X inset, +2..3 = Y inset, +4..5 = max wrap width
-// (+6/+8 = balloon h / tail offset, both unused for text layout).
-struct BalloonInsets { uint16 x; uint16 y; uint16 w; };
+// 52-entry, 10-bytes-each balloon-metadata table at `29be:0875` (CD)
+// / `2608:05f9` (floppy). Used by `_DisplayClue` to position
+// `_WordWrap` text inside the balloon AND to position the
+// "click to continue" indicator drawn by
+// `_DisplayHotspotClue_Floppy @ 22dc:05c8`. Layout per entry:
+//   +0..1 = text X inset, +2..3 = text Y inset
+//   +4..5 = wrap width
+//   +6..7 = "more / end" indicator X within the balloon
+//   +8..9 = "more / end" indicator Y within the balloon
+struct BalloonInsets {
+	uint16 x;
+	uint16 y;
+	uint16 w;
+	uint16 indDX;
+	uint16 indDY;
+};
 const BalloonInsets kBalloonInsetTable[] = {
-	{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-	{ 6, 4, 142 }, { 6, 4, 142 }, { 6, 4, 142 },
-	{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-	{ 6, 4, 224 }, { 6, 4, 224 }, { 6, 4, 224 },
-	{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-	{ 6, 4, 291 }, { 6, 4, 291 }, { 6, 4, 291 },
-	{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-	{ 5, 4, 155 }, { 5, 4, 155 }, { 5, 4, 155 },
-	{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-	{ 5, 4, 237 }, { 5, 4, 237 }, { 5, 4, 237 },
-	{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-	{ 3, 4, 155 }, { 3, 4, 155 }, { 3, 4, 155 },
-	{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-	{ 5, 4, 238 }, { 5, 4, 238 }, { 5, 4, 238 },
-	{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
+	{ 6, 4, 142, 150,  6 }, { 6, 4, 142, 150, 14 }, { 6, 4, 142, 150, 22 }, { 6, 4, 142, 150, 40 },
+	{ 6, 4, 142, 150, 50 }, { 6, 4, 142, 150, 70 }, { 6, 4, 142, 150, 86 },
+	{ 6, 4, 224, 233,  6 }, { 6, 4, 224, 233, 14 }, { 6, 4, 224, 233, 23 }, { 6, 4, 224, 233, 41 },
+	{ 6, 4, 224, 233, 59 }, { 6, 4, 224, 233, 68 }, { 6, 4, 224, 233, 77 },
+	{ 6, 4, 291, 300,  6 }, { 6, 4, 291, 300, 14 }, { 6, 4, 291, 300, 23 }, { 6, 4, 291, 300, 32 },
+	{ 6, 4, 291, 300, 50 }, { 6, 4, 291, 300, 69 }, { 6, 4, 291, 300, 77 },
+	{ 5, 4, 155, 150, 14 }, { 5, 4, 155, 150, 25 }, { 5, 4, 155, 150, 35 }, { 5, 4, 155, 150, 52 },
+	{ 5, 4, 155, 150, 61 }, { 5, 4, 155, 150, 78 }, { 5, 4, 155, 150, 81 },
+	{ 5, 4, 237, 233, 15 }, { 5, 4, 237, 233, 24 }, { 5, 4, 237, 233, 42 }, { 5, 4, 237, 233, 50 },
+	{ 5, 4, 237, 233, 69 }, { 5, 4, 237, 233, 80 }, { 5, 4, 237, 233, 80 },
+	{ 3, 4, 155, 150, 15 }, { 3, 4, 155, 150, 24 }, { 3, 4, 155, 150, 34 }, { 3, 4, 155, 150, 40 },
+	{ 3, 4, 155, 150, 61 }, { 3, 4, 155, 150, 82 }, { 3, 4, 155, 150, 88 },
+	{ 5, 4, 238, 232, 16 }, { 5, 4, 238, 232, 25 }, { 5, 4, 238, 232, 34 }, { 5, 4, 238, 232, 51 },
+	{ 5, 4, 238, 232, 66 }, { 5, 4, 238, 232, 71 }, { 5, 4, 238, 232, 95 },
+	{ 5, 8, 158, 160, 45 }, { 5, 8, 176, 176, 50 }, { 8, 7, 142, 142, 71 }
 };
 
 // Floppy KDHelp hotspot-searched check. Mirrors
@@ -567,6 +576,50 @@ bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,
 	yInset = kBalloonInsetTable[idx].y;
 	textW  = kBalloonInsetTable[idx].w;
 	return true;
+}
+
+bool EEMEngine::getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
+										uint16 &dy) const {
+	const uint idx = bubNum & 0x7F;
+	if (idx >= ARRAYSIZE(kBalloonInsetTable))
+		return false;
+	dx = kBalloonInsetTable[idx].indDX;
+	dy = kBalloonInsetTable[idx].indDY;
+	return true;
+}
+
+void EEMEngine::drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
+										   uint16 bubNum, int ballX, int ballY,
+										   bool endIndicator) {
+	// Mirrors `_DisplayHotspotClue_Floppy @ 22dc:08c0` (end-of-record)
+	// and `@ 22dc:08aa` (mid-pagination). Both grab a pre-loaded PIC
+	// (`DAT_28da_3034 = PIC 0xa0` for "more pages",
+	//  `DAT_28da_3030 = PIC 0xa1` for "end indicator") and stamp it at
+	// `(ballX + insetTable[bubNum].indDX,
+	//   ballY + insetTable[bubNum].indDY)` via `_AddPicBackground`.
+	uint16 dx = 0;
+	uint16 dy = 0;
+	if (!getBalloonIndicatorPos(bubNum, dx, dy))
+		return;
+	const uint picId = endIndicator ? 0xa1 : 0xa0;
+	Picture pic;
+	if (!_picsArchive.getPicture(picId, pic))
+		return;
+	const int x = ballX + (int)dx;
+	const int y = ballY + (int)dy;
+	const byte transp = (byte)(pic.flags >> 8);
+	const int pw = MIN<int>(pic.surface.w, 320 - x);
+	const int ph = MIN<int>(pic.surface.h, 200 - y);
+	if (x < 0 || y < 0 || pw <= 0 || ph <= 0)
+		return;
+	for (int row = 0; row < ph; row++) {
+		const byte *src = (const byte *)pic.surface.getBasePtr(0, row);
+		byte *out = (byte *)dst.getBasePtr(x, y + row);
+		for (int col = 0; col < pw; col++) {
+			if (src[col] != transp)
+				out[col] = src[col];
+		}
+	}
 }
 
 } // End of namespace EEM

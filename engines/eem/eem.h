@@ -266,11 +266,24 @@ public:
 	void setPartnerEraseBg(const Graphics::ManagedSurface *bg);
 
 	/// Look up balloon-text-inset metadata. Mirrors the 52-entry table at
-	/// `29be:0875`, indexed by `(bubNum & 0x7F)`. 10 bytes per entry; only
-	/// the first 3 fields (x inset, y inset, text width) are used for
-	/// rendering. Returns false if `bubNum` is outside the table.
+	/// `29be:0875` (CD) / `2608:05f9` (floppy), indexed by
+	/// `(bubNum & 0x7F)`. 10 bytes per entry; the first 3 fields
+	/// (x inset, y inset, text width) are used for text wrap, the last
+	/// 2 (indicator dX/dY) by `drawFloppyBubbleIndicator`. Returns
+	/// false if `bubNum` is outside the table.
 	bool getBalloonInsets(uint16 bubNum, uint16 &xInset, uint16 &yInset,
 						  uint16 &textW) const;
+	bool getBalloonIndicatorPos(uint16 bubNum, uint16 &dx,
+								 uint16 &dy) const;
+
+	/// Stamp the floppy "click to continue" indicator (PIC 0xa0 for
+	/// `endIndicator==false`, PIC 0xa1 otherwise) onto @p dst at the
+	/// position derived from the balloon-inset table. Mirrors
+	/// `FUN_22dc_05c8 @ 22dc:08aa` (mid-page) and `@ 22dc:08c0`
+	/// (end-of-record).
+	void drawFloppyBubbleIndicator(Graphics::ManagedSurface &dst,
+								   uint16 bubNum, int ballX, int ballY,
+								   bool endIndicator);
 
 	/// "Are you sure?" yes/no dialog. Mirrors `_AreYouSure` @ 1a35:0a5c.
 	/// Returns true if the user picked YES.
@@ -449,8 +462,13 @@ private:
 	/// Render `count` consecutive floppy dialog records starting at
 	/// `rec`. Shared between briefing and hotspot click handlers since
 	/// the original engine uses the same `FUN_22dc_05c8 @ 22dc:05c8`
-	/// renderer in both contexts.
-	void displayFloppyDialogRecords(const byte *rec, uint count);
+	/// renderer in both contexts. `lastIndicator` is the `param_2`
+	/// equivalent for the LAST record in the batch — 0 = no
+	/// indicator, 1 = PIC 0xa0 (red "more" arrow), 2 = PIC 0xa1
+	/// (alternate end indicator). Records before the last always get
+	/// PIC 0xa0.
+	void displayFloppyDialogRecords(const byte *rec, uint count,
+									 uint lastIndicator = 0);
 
 public:
 	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`
