@@ -242,8 +242,8 @@ public:
 	void sub_135_cee();
 
 	// fool_maze.cpp
-	void mazeRun();
-	void sub_136_79e();
+	void mazeRun(); // sub_136_004
+	void mazeOnClick(); // sub_136_79e
 	void sub_136_994();
 	void sub_136_a22();
 	void sub_136_ade();
@@ -257,8 +257,8 @@ public:
 	void sub_136_137c();
 	void sub_136_163c();
 	void sub_136_1650();
-	void sub_136_1756();
-	void sub_136_17a4();
+	void mazeHiddenDoorOpen(); // sub_136_1756
+	void mazeHiddenDoorShut(); // sub_136_17a4
 	void sub_136_1806();
 	void sub_136_185a();
 	void sub_136_1898();
@@ -271,6 +271,7 @@ public:
 	void sub_136_1e4c();
 	void sub_136_21fa();
 	void sub_136_2200();
+	void sub_136_2208();
 
 	void sub_136_24ae();
 	void sub_136_2538();
@@ -290,6 +291,7 @@ public:
 	void sub_136_3408();
 	void sub_136_342a();
 	void sub_136_3466();
+	void sub_136_3a30();
 	void sub_136_3a70();
 
 	// fool_sun.cpp
@@ -302,7 +304,21 @@ public:
 	void sunMapCheckIfSolved(); // sub_137_124e
 	void sunMapRevealPiece(); // sub_137_131a
 
+	// fool_metapuzzle.cpp
 	void sub_138_004();
+	void sub_138_1b4();
+	void sub_138_21e();
+	void sub_138_3e0();
+	void sub_138_49e();
+	void sub_138_550();
+	void sub_138_864();
+	void sub_138_9c4();
+	void sub_138_a22();
+	void sub_138_a90();
+	void sub_138_b06();
+	void sub_138_b6a();
+
+	void sub_143_004();
 
 	// fool_cards.cpp
 	void cardsRun(); // sub_139_004
@@ -363,6 +379,7 @@ public:
 	void deathCaught(); // sub_141_8b8
 	void deathDrawZoom(); // sub_141_934
 
+	// fool_humbug.cpp
 	void humbugRun(); // sub_142_004
 	void humbugTrail(); // sub_142_0e6
 	void sub_142_370();
@@ -502,6 +519,7 @@ private:
 	int16 var_i16_f2e;
 	Common::U32String var_str_f30;
 	int16 var_i16_1030;
+	PicHandle var_pic_1032;
 	int32 var_i32_1036;
 	int16 var_i16_103a;
 	int16 var_i16_103c;
@@ -564,6 +582,7 @@ private:
 	uint16 var_i16_1a9c;
 	int16 var_i16_1a9e;
 	int16 var_i16_1aa0;
+	int16 var_i16_1aa2;
 	int16 var_i16_1aa4;
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
@@ -604,8 +623,10 @@ private:
 
 	int16 var_i16_1de8;
 	int16 var_i16_1dea;
+	int16 var_i16_1dec;
 
 	PatternMode var_i16_1dee;
+	SourceMode var_src_1dee;
 
 	int16 var_i16_1df2;
 	int16 var_i16_1df4;
@@ -620,7 +641,10 @@ private:
 
 	uint16 var_i16_1f08;
 	int16 var_i16_1f0a;
+	Common::U32String var_str_1f0c;
 
+	int16 var_i16_200c;
+	int16 var_i16_200e;
 	int16 var_i16_2010;
 	int16 var_i16_2012;
 	int16 var_i16_2014;
@@ -663,7 +687,7 @@ private:
 	int16 puzzleType[101]; // arr_i16_18b2
 	int16 puzzleUnlockChapter[101]; // arr_i16_197c
 	int16 pageToChapter[101]; // arr_i16_1a46
-	int16 arr_i16_1b10[6969];
+	int16 arr_i16_1b10[0x40];
 	int16 pageVisible[101]; // arr_i16_1b90
 	int16 puzzleCompletionStatus[101]; // arr_i16_1c5a
 	uint16 puzzleFlags[101]; // arr_i16_1d24
@@ -686,7 +710,7 @@ private:
 	PicHandle arr_pic_49d8[0x80];
 	int16 sunMapTileID[0x52]; // arr_i16_4bd8
 	int16 arr_i16_4c7c[0x52];
-	int16 arr_i16_4d20[48];
+	int16 arr_i16_4d20[52];
 	Common::SharedPtr<Cursor> arr_curs_4d88[0x2b]; // 0x44
 	Pattern arr_pat_58f4[0x51];
 	Common::Rect arr_rect_5b7c;
