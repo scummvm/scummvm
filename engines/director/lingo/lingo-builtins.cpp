@@ -2868,12 +2868,11 @@ void LB::b_installMenu(int nargs) {
 	// Menu definitions use the character 0xc5 to denote a code separator.
 	// For Mac D4 and below, this is ≈. For Windows D4 and below, this is Å.
 	char CODE_SEPARATOR_CHAR = '\xC5';
-	char CODE_SEPARATOR_CHAR_2 = '\xC5';
+	// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
+	char CODE_SEPARATOR_CHAR_2 = '\xBC';
 	if (g_director->getVersion() >= 500) {
 		// D5 changed this to be the pipe | character, the same in Windows and Mac.
 		CODE_SEPARATOR_CHAR = '\x7C';
-		// FIXME: For some reason there are games which use º (Mac) or ¼ (Win) and it works too?
-		CODE_SEPARATOR_CHAR_2 = '\xBC';
 	}
 	// Continuation character is 0xac to denote a line running over.
 	// For Mac, this is ¨. For Windows, this is ¬.
