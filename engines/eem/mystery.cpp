@@ -191,6 +191,30 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_solvedOffset    = _floppySolvedOff;
 		_hintOffset      = _floppyHintBlockOff;
 
+		// Per-mystery runtime state — mirror `_ReadMystery_Floppy @
+		// 22dc:0178` zeroing `_TextSeen_Floppy` / `_InGallery_Floppy` and
+		// seeding `_NewOrder_Floppy[0]` (random) + the `+1`-shift loop
+		// that fills the rest. We use the identity mapping `[0..N-1]` so
+		// dialog `byte9` (1-based logical idx) maps to `_inGallery[idx -
+		// 1]` and the gallery render iterates the same indices. Without
+		// this init the floppy load path returns with `_newOrder` left
+		// at whatever `clear()` zeroed it to, so every byte9>0 dialog
+		// resolves through `_newOrder[logicalIdx]==0` and the second
+		// suspect overwrites the first slot.
+		memset(_cluesFound, 0, sizeof(_cluesFound));
+		memset(_noteSelected, 0, sizeof(_noteSelected));
+		memset(_hotSpotsSeen, 0, sizeof(_hotSpotsSeen));
+		memset(_inGallery, 0, sizeof(_inGallery));
+		(void)rng;
+		for (uint i = 0; i < kGalleryCap; i++)
+			_newOrder[i] = (uint8)i;
+		memset(_visitedSite, 0, sizeof(_visitedSite));
+		memset(_onSites, 0, sizeof(_onSites));
+		_sawCOFFSITEs = _sawCONSITEs = _sawHelpHint = _solvedPuzzle = false;
+		_firstTry = true;
+		_searchLocationNumber = _siteNumber = 0xFFFF;
+		_lastSite = 0x1B;
+
 		debugC(1, kDebugMystery,
 			   "Mystery::load(%u) floppy: sites=0x%04x siteIdx=0x%04x "
 			   "notes=0x%04x suspects=0x%04x text=0x%04x kd=0x%04x "
@@ -396,11 +420,46 @@ const byte *Mystery::mapEntry(uint siteNum) const {
 	return _data.data() + off;
 }
 
+const byte *Mystery::floppySuspectEntry(uint suspectIdx) const {
+	// Floppy gallery section: byte[0] = numSuspects, then per suspect a
+	// variable-size record of `5 + nameLen` bytes (verified at
+	// `_DrawGallery_Floppy @ 154e:00b6` advancing `iVar7 += pbVar4[4]
+	// + 5`):
+	//   u16 +0  picID (gallery portrait, BUTTON.DBD entry)
+	//   u16 +2  alibi marker (0xFFFF = guilty; else high byte = index
+	//           into TEXT_BLOCK alibi-offset table at header[+0xc])
+	//   u8  +4  name length
+	//   u8  +5..+5+nameLen-1  name string
+	if (!_isFloppy || !isLoaded())
+		return nullptr;
+	const byte *gd = _data.data() + _galleryOffset;
+	if (gd + 1 > _data.data() + _data.size())
+		return nullptr;
+	const uint8 numSus = gd[0];
+	if (suspectIdx >= numSus)
+		return nullptr;
+	const byte *p = gd + 1;
+	const byte *bufEnd = _data.data() + _data.size();
+	for (uint i = 0; i < suspectIdx; i++) {
+		if (p + 5 > bufEnd)
+			return nullptr;
+		p += 5 + (uint)p[4];
+	}
+	if (p + 5 > bufEnd)
+		return nullptr;
+	return p;
+}
+
 bool Mystery::isGuilty(uint suspectIdx) const {
-	// `_WITCH @ 1df2:089f`: `if (GalleryData[i*0x46 + 0x02] == -1)
+	// `_WITCH @ 1df2:089f` (CD): `if (GalleryData[i*0x46 + 0x02] == -1)
 	// _DisplayCorrect(); else _DisplayAlibi(...)`. Innocent suspects
 	// store their alibi-text TextBlock offset at +0x02; the guilty
-	// one stores the sentinel 0xFFFF.
+	// one stores the sentinel 0xFFFF. Floppy uses the same convention
+	// at suspect entry +2..3 but with variable-stride entries.
+	if (_isFloppy) {
+		const byte *e = floppySuspectEntry(suspectIdx);
+		return e && READ_LE_UINT16(e + 2) == 0xFFFF;
+	}
 	const byte *gd = galleryData();
 	if (!gd || suspectIdx >= _numSuspects)
 		return false;
@@ -409,6 +468,26 @@ bool Mystery::isGuilty(uint suspectIdx) const {
 }
 
 uint16 Mystery::alibiTextOffset(uint suspectIdx) const {
+	if (_isFloppy) {
+		// Floppy alibi: u16 at suspect +2..3 carries TWO things:
+		// 0xFFFF = guilty, otherwise the HIGH BYTE indexes the
+		// TEXT_BLOCK table (header[+0xc]), each entry u16 = absolute
+		// alibi-text offset in the buffer. Verified at
+		// `_DisplayAlibi_Floppy @ 1d40:0145` reading
+		// `*(int *)(textBlock + ((byte *)entry)[3] * 2)`. The result
+		// is an ABSOLUTE offset; caller reads via `blobAt(off)`.
+		const byte *e = floppySuspectEntry(suspectIdx);
+		if (!e)
+			return 0xFFFF;
+		const uint16 alibi = READ_LE_UINT16(e + 2);
+		if (alibi == 0xFFFF)
+			return 0xFFFF;
+		const uint8 idx = (uint8)(alibi >> 8);
+		const uint32 base = _textOffset;
+		if ((uint32)idx * 2 + 2 > _data.size() - base)
+			return 0xFFFF;
+		return READ_LE_UINT16(_data.data() + base + (uint32)idx * 2);
+	}
 	const byte *gd = galleryData();
 	if (!gd || suspectIdx >= _numSuspects)
 		return 0xFFFF;
@@ -436,6 +515,38 @@ int Mystery::selectedPoints() const {
 	const uint16 cnt = noteIndexCount();
 	if (!ni || cnt == 0)
 		return 0;
+	if (_isFloppy) {
+		// Floppy `_GetSelectedPoints_Floppy @ 1d40:0c23`: collect the
+		// per-note score (note +6 byte) for every clue with TextSeen
+		// set, sort descending, sum the top 5. Mirrors
+		// `_SortNotesByScore_Floppy @ 1d40:000e` + the top-5 fold.
+		uint8 scores[Mystery::kCluesFoundCap] = {};
+		uint scoreCount = 0;
+		const uint maxIdx = MIN<uint>(cnt, kCluesFoundCap);
+		for (uint i = 0; i < maxIdx; i++) {
+			if (_cluesFound[i] == 0)
+				continue;
+			scores[scoreCount++] = ni[i * 7 + 6];
+		}
+		// Partial selection sort for top 5.
+		const uint topN = MIN<uint>(5u, scoreCount);
+		for (uint k = 0; k < topN; k++) {
+			uint best = k;
+			for (uint j = k + 1; j < scoreCount; j++) {
+				if (scores[j] > scores[best])
+					best = j;
+			}
+			if (best != k) {
+				uint8 tmp = scores[k];
+				scores[k] = scores[best];
+				scores[best] = tmp;
+			}
+		}
+		int total = 0;
+		for (uint k = 0; k < topN; k++)
+			total += scores[k];
+		return total;
+	}
 	int total = 0;
 	for (uint i = 0; i < cnt && i < kCluesFoundCap; i++) {
 		if (!_noteSelected[i])
@@ -453,6 +564,22 @@ void Mystery::syncState(Common::Serializer &s) {
 	s.syncArray(_hotSpotsSeen, kHotSpotsCap, Common::Serializer::Uint16LE);
 	s.syncArray(_inGallery,    kGalleryCap,  Common::Serializer::Uint16LE);
 	s.syncBytes(_newOrder, kGalleryCap);
+	// Save profiles created before the floppy `_newOrder` identity init
+	// was added stored all-zeros here. Loading that back over the
+	// identity set by `Mystery::load()` makes every dialog with byte9>0
+	// resolve to slot 0 (so the second suspect found at a CONSITE
+	// overwrites the first). Detect the legacy zero-fill on read and
+	// rebuild the identity mapping that the loader produced.
+	if (s.isLoading()) {
+		bool allZero = true;
+		for (uint i = 0; i < kGalleryCap; i++) {
+			if (_newOrder[i] != 0) { allZero = false; break; }
+		}
+		if (allZero) {
+			for (uint i = 0; i < kGalleryCap; i++)
+				_newOrder[i] = (uint8)i;
+		}
+	}
 	s.syncArray(_visitedSite, kVisitedSiteCap, Common::Serializer::Uint16LE);
 	s.syncArray(_onSites,     kVisitedSiteCap, Common::Serializer::Uint16LE);
 	s.syncAsByte(_sawCOFFSITEs);

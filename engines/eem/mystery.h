@@ -91,6 +91,13 @@ public:
 	/// First u16 of each entry is the PIC picture ID for that suspect.
 	const byte *galleryData() const;
 
+	/// Floppy variable-stride suspect record. Returns nullptr on CD or
+	/// when @p suspectIdx is out of range. Walks the gallery section
+	/// (`5 + nameLen` bytes per suspect) to land on the requested entry.
+	/// Layout: u16 picID, u16 alibiMarker (0xFFFF = guilty),
+	/// u8 nameLen, nameLen bytes of name.
+	const byte *floppySuspectEntry(uint suspectIdx) const;
+
 	/// Pointer to the NoteIndex array (4 bytes per entry: u16 textOff + u16 pts).
 	const byte *noteIndex() const;
 

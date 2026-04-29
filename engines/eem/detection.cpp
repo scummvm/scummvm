@@ -52,6 +52,20 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		// Spanish floppy release — same EEM.EXE binary as the English
+		// floppy (the engine code is identical), with a localised
+		// PICS.DBD that swaps the embedded English image text for
+		// Spanish equivalents.
+		"eem",
+		"Floppy",
+		AD_ENTRY2s("EEM.EXE",   "692a5e6e7f4516d6e40c1f80cbc1b2cc", 109542,
+				   "PICS.DBD",  "199150e7d612f87477814bc5f4a1967a", 955332),
+		Common::ES_ESP,
+		Common::kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
 
 	AD_TABLE_END_MARKER
 };

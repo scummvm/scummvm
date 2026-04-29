@@ -1002,11 +1002,25 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			_audio->playFloppyVoiceSlot(slot, _partner);
 		}
 		// Suspect-found side effect for byte 9 with high bit clear.
+		// Mirrors `_DisplayHotspotClue_Floppy @ 22dc:0908..0922`:
+		//   if ((rec[9] & 0x80) == 0 && rec[9] != 0)
+		//     _InGallery_Floppy[_GalleryShuffleSeed_Floppy[rec[9]]] = 1;
+		// `_GalleryShuffleSeed_Floppy` is a byte array at DS:0x2d65 that
+		// overlaps `_NewOrder_Floppy` at DS:0x2d66 by one byte: i.e.
+		// `_GalleryShuffleSeed[i+1] == _NewOrder[i]` (verified by
+		// comparing the two writes in `_ReadMystery_Floppy @ 22dc:0178`).
+		// So in our terms the mapping is `_inGallery[_newOrder[b9 - 1]]`.
+		// Skipping `_newOrder` (as we did before) drew the right portrait
+		// only when `_newOrder` happened to be identity — randomized
+		// shuffles dropped one of the two M0 suspects.
 		const uint8 b9 = rec[9];
 		if ((b9 & 0x80) == 0 && b9 != 0) {
-			const uint slot = (uint)b9 - 1;
-			if (slot < Mystery::kGalleryCap)
-				_mystery._inGallery[slot] = 1;
+			const uint logicalIdx = (uint)b9 - 1;
+			if (logicalIdx < Mystery::kGalleryCap) {
+				const uint8 slot = _mystery._newOrder[logicalIdx];
+				if (slot < Mystery::kGalleryCap)
+					_mystery._inGallery[slot] = 1;
+			}
 		}
 
 		// Pre-load balloon picture + insets once per record (constant
@@ -1332,8 +1346,13 @@ bool EEMEngine::areYouSure() {
 			   (const byte *)saved.getBasePtr(0, row), 320);
 	scratch.fillRect(dlg, 0);
 	scratch.frameRect(dlg, 0xF);
-	_font.drawString(&scratch, "Are you sure you want to quit?", dlg.left + 8, dlg.top + 8, 320, 0xF);
-	_font.drawString(&scratch, "Y - Yes", dlg.left + 16, dlg.top + 36, 320, 0xF);
+	_font.drawString(&scratch,
+		isSpanish() ? "Estas seguro que quieres salir?"
+					: "Are you sure you want to quit?",
+		dlg.left + 8, dlg.top + 8, 320, 0xF);
+	_font.drawString(&scratch,
+		isSpanish() ? "S - Si" : "Y - Yes",
+		dlg.left + 16, dlg.top + 36, 320, 0xF);
 	_font.drawString(&scratch, "N - No", dlg.left + 100, dlg.top + 36, 320, 0xF);
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
@@ -1351,7 +1370,9 @@ bool EEMEngine::areYouSure() {
 				break;
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
+				// Spanish prompt is "S - Si" — accept both Y and S.
 				if (ev.kbd.keycode == Common::KEYCODE_y ||
+					ev.kbd.keycode == Common::KEYCODE_s ||
 					ev.kbd.keycode == Common::KEYCODE_RETURN) {
 					result = true; decided = true; break;
 				}
