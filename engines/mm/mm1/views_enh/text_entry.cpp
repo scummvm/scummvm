@@ -26,12 +26,13 @@ namespace MM1 {
 namespace ViewsEnh {
 
 void TextEntry::display(int x, int y, int maxLen,
-		bool isNumeric, Abort abortFn, Enter enterFn) {
+		bool isNumeric, Abort abortFn, Enter enterFn,
+		const Common::String &initialText) {
 	_maxLen = maxLen;
 	_abortFn = abortFn;
 	_enterFn = enterFn;
 	_isNumeric = isNumeric;
-	_text = "";
+	_text = initialText;
 
 	Common::String maxText;
 	for (int i = 0; i < maxLen; ++i)

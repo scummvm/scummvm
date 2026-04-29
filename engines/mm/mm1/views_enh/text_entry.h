@@ -56,7 +56,8 @@ public:
 	bool msgAction(const ActionMessage &msg) override;
 
 	void display(int x, int y, int maxLen, bool isNumeric,
-		Abort abortFn, Enter enterFn);
+		Abort abortFn, Enter enterFn,
+		const Common::String &initialText = Common::String());
 };
 
 } // namespace ViewsEnh

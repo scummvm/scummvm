@@ -63,8 +63,26 @@ class CreateCharacters : public ScrollView {
 		void loadPortrait();
 	};
 
+	class NameEntry : public TextEntry {
+	private:
+		CreateCharacters *_owner;
+		Common::Rect _confirmBounds;
+		Common::Rect _cancelBounds;
+		bool _confirmHover = false;
+		bool _cancelHover = false;
+	public:
+		NameEntry(CreateCharacters *owner) : _owner(owner) {}
+
+		void addConfirmIcons();
+
+		void draw() override;
+		bool msgMouseDown(const MouseDownMessage &msg) override;
+		bool msgMouseUp(const MouseUpMessage &msg) override;
+		bool msgMouseMove(const MouseMoveMessage &msg) override;
+	};
+
 private:
-	TextEntry _textEntry;
+	NameEntry _textEntry;
 	static void abortFunc();
 	static void enterFunc(const Common::String &name);
 	Shared::Xeen::SpriteResource _icons;
@@ -121,6 +139,21 @@ private:
 	 * Display the selection summary
 	 */
 	void printSummary();
+
+	/**
+	 * Gets a random suggested name for the selected class and sex
+	 */
+	Common::String getSuggestedName();
+
+	/**
+	 * Accepts the name currently in the text entry
+	 */
+	void acceptName();
+
+	/**
+	 * Cancels the current name entry
+	 */
+	void abortName();
 
 	/**
 	 * Sets a new state
