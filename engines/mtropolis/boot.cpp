@@ -1130,8 +1130,8 @@ public:
 	void bootFTTSWin();
 	void bootArchitectureWin();
 	void bootDrawMarvelWin();
-	void bootWannaDinoFinderWin();
-	void bootCanDinosaurFinderWin();
+	void bootWannaBeADinoFinderWin();
+	void bootICanBeADinosaurFinderWin();
 	void bootAnimalDoctorWin();
 	void bootIvoclarWin();
 	void bootBeatrixWin();
@@ -1509,13 +1509,13 @@ void BootScriptContext::bootDrawMarvelWin() {
 	setMainSegmentFile("workspace/MDRAW.C9A");
 }
 
-void BootScriptContext::bootWannaDinoFinderWin() {
+void BootScriptContext::bootWannaBeADinoFinderWin() {
 	addPlugIn(kPlugInStandard);
 	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
 	setMainSegmentFile("workspace/WBDF.C9A");
 }
 
-void BootScriptContext::bootCanDinosaurFinderWin() {
+void BootScriptContext::bootICanBeADinosaurFinderWin() {
 	addPlugIn(kPlugInStandard);
 	setRuntimeVersion(RuntimeVersion::kRuntimeVersion100);
 	setMainSegmentFile("workspace/WBDFR1.C9A");
@@ -2177,12 +2177,12 @@ const Game games[] = {
 	// Wanna-Be a Dinosaur Finder - Retail - Windows - English
 	{
 		MTBOOT_WANNADINO_RETAIL_EN,
-	 	&BootScriptContext::bootWannaDinoFinderWin
+	 	&BootScriptContext::bootWannaBeADinoFinderWin
 	},
 	// I Can Be a Dinosaur Finder - Retail - Windows - English
 	{
 		MTBOOT_IDINO_RETAIL_EN,
-	 	&BootScriptContext::bootCanDinosaurFinderWin
+	 	&BootScriptContext::bootICanBeADinosaurFinderWin
 	},
 	// I Can Be an Animal Doctor - Retail - Windows - English
 	{
