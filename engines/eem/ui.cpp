@@ -820,15 +820,26 @@ void EEMEngine::doShowScrapbook(uint stage) {
 }
 
 void EEMEngine::doSetup() {
-	// Mirrors `_DoSetup @ 1f78:044e`. The setup screen is BG `PIC 0x40`
-	// (loaded once on entry) with every label baked in — "Setup",
-	// "Partner", "Sound", "Music", the "Jake"/"Jenny"/"On"/"Off"
-	// option strings, etc. — all rendered in palette key `0xFE`. The
-	// original then runs `_SetupSettings @ 1f78:000d` which uses
-	// `_SwapColors @ 172b:1d2a` to recolour those `0xFE` pixels per
-	// label rect: `0x15` for the active state, `0` for the inactive
-	// one. So nothing is drawn as text; the visible state of each
-	// toggle is purely a per-rect colour swap on top of `PIC 0x40`.
+	// Mirrors `_DoSetup @ 1f78:044e` (CD) and `_DoSetup_Floppy @
+	// 1ee2:0387` (floppy). Both variants share the same PIC 0x40 BG
+	// with text labels baked in, the same 13 button rectangles at
+	// `_SetupButtons @ 29be:1218` (CD) / `2608:0d8c` (floppy), and the
+	// same 4 highlight rectangles at `0xe94..0xeb3` (Kid1 / Kid2 /
+	// SoundOn / SoundOff). Floppy additionally pre-loads a few overlay
+	// PICs (0x9b..0x9e + 0x1fa) that the CD uses on demand, but the
+	// behaviour is identical — colour-key swap on `0xFE` to indicate
+	// active state, click dispatch via the same 12-entry handler
+	// jumptable. So a single shared handler covers both variants.
+	//
+	// The setup screen is BG `PIC 0x40` (loaded once on entry) with
+	// every label baked in — "Setup", "Partner", "Sound", "Music",
+	// the "Jake"/"Jenny"/"On"/"Off" option strings, etc. — all
+	// rendered in palette key `0xFE`. The original then runs
+	// `_SetupSettings @ 1f78:000d` which uses `_SwapColors @
+	// 172b:1d2a` to recolour those `0xFE` pixels per label rect:
+	// `0x15` for the active state, `0` for the inactive one. So
+	// nothing is drawn as text; the visible state of each toggle is
+	// purely a per-rect colour swap on top of `PIC 0x40`.
 	//
 	// Click hit-tests go through `_SetupButtons @ 29be:1218` — 13×
 	// 8-byte rects. Each click runs `HandleSetupButton @ 1f78:0158`,
@@ -2618,9 +2629,18 @@ void EEMEngine::doBigMap() {
 	uint32 mapLastTick = mapStartTick;
 
 	// Static rectangles read directly from the binary at the labelled
-	// addresses (29be:0x1596 onwards). Format is {x1, y1, x2, y2}.
+	// addresses (CD `29be:0x1596` / floppy `2608:0x13fe..0x143e`).
+	// Format is {x1, y1, x2, y2}. The floppy click table at
+	// `2608:1436` (verified at `_BigMapInteractionLoop_Floppy @
+	// 1fed:0a3a`) puts the setup button at (251, 3, 315, 42) — 1 px
+	// up and 1 px left of the CD's (252, 4, 315, 42). The floppy
+	// PIC 0x42 BG paints the visible button border at the same
+	// pixels, so use the variant-specific rect to match the
+	// hit-test region the original uses for that variant.
 	const Common::Rect kBigMapWindow   (  0,   0, 247, 192); // 29be:1596
-	const Common::Rect kSetupBtnRect   (252,   4, 315,  42); // 29be:15ce
+	const Common::Rect kSetupBtnRect   = isFloppy()
+		? Common::Rect(251, 3, 315, 42)   // 2608:1436
+		: Common::Rect(252, 4, 315, 42);  // 29be:15ce
 
 	bool wantZoom = false;
 	int zoomX = 0;
@@ -2749,7 +2769,9 @@ void EEMEngine::doBigMap() {
 				const Common::Rect kArrowXRight(224, 175, 234, 185);
 				const Common::Rect kXSlider    ( 15, 175, 221, 185);
 				const Common::Rect kYSlider    (237,  14, 247, 160);
-				const Common::Rect kSetupBtn   (252,   4, 315,  42);
+				const Common::Rect kSetupBtn = isFloppy()
+					? Common::Rect(251, 3, 315, 42)   // 2608:1436
+					: Common::Rect(252, 4, 315, 42);  // 29be:15ce
 
 				const int kArrowStep = 16;
 				const int kSliderRange = mapW - kMapWinW;
