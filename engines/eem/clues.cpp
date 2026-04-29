@@ -896,13 +896,9 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	}
 }
 
-void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
-	// Floppy briefing — mirrors the dialog loop at the tail of
-	// `FUN_19bb_042f @ 19bb:042f`:
-	//   nSubjects = ib[1]; nDialog = ib[2 + nSubjects];
-	//   records   = ib + 3 + nSubjects;
-	// Each record is dispatched through `FUN_22dc_05c8 @ 22dc:05c8`,
-	// which reads:
+void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count) {
+	// Render `count` consecutive floppy dialog records starting at
+	// `rec`. Per `FUN_22dc_05c8 @ 22dc:05c8`, each record is:
 	//   u16 picID    @ +0     (character portrait, 0 = skip pic)
 	//   u16 picX     @ +2
 	//   u8  picY     @ +4
@@ -916,12 +912,8 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 	// buffer (verified by note 0 of M0.BIN at file offset 0xd0 holding
 	// "Hello, ..., I'm ... Eagle!"), so we read text via
 	// `mystery.blobAt(noteEntry[+2..3])` for Jake / `+4..5` for Jenny.
-	if (!initBlock || !isFloppy() || !_font.isLoaded())
+	if (!rec || !isFloppy() || !_font.isLoaded() || count == 0)
 		return;
-
-	const uint8 nSubjects = initBlock[1];
-	const uint8 nDialog   = initBlock[2 + nSubjects];
-	const byte *rec       = initBlock + 3 + nSubjects;
 
 	const byte *notes   = _mystery.noteIndex();
 	const byte *bufBase = _mystery.blobAt(0);
@@ -943,7 +935,7 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 		}
 	}
 
-	for (uint i = 0; i < nDialog && !shouldQuit(); i++) {
+	for (uint i = 0; i < count && !shouldQuit(); i++) {
 		const uint16 picID    = READ_LE_UINT16(rec + 0);
 		const uint16 picX     = READ_LE_UINT16(rec + 2);
 		const uint8  picY     = rec[4];
@@ -953,17 +945,35 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 		const uint8  textCount= rec[10];
 
 		// Build the full text by concatenating each note's per-partner
-		// text string (parsed for `%s`-style placeholders).
+		// text string (parsed for `%s`-style placeholders). Bounds-
+		// check every offset against the mystery blob; if any byte
+		// looks out of range we just stop appending — corrupt offsets
+		// from a misparsed record would otherwise dereference past the
+		// buffer and SIGBUS inside `strlen`.
+		const uint32 dsz       = _mystery.dataSize();
+		const uint32 notesBase = (uint32)(notes - bufBase);
 		Common::String raw;
 		for (uint t = 0; t < textCount; t++) {
-			const uint8  idx     = rec[11 + t] & 0x7f;
+			const uint8  idx        = rec[11 + t] & 0x7f;
+			const uint32 noteAbs    = notesBase + (uint32)idx * 7;
+			if (noteAbs + 6 > dsz)
+				break;
 			const uint16 textOff = (_partner == 0)
 				? READ_LE_UINT16(notes + idx * 7 + 2)
 				: READ_LE_UINT16(notes + idx * 7 + 4);
+			if (textOff >= dsz)
+				break;
 			const char *line = (const char *)(bufBase + textOff);
+			// Find the NUL terminator within the blob — refuse to
+			// strlen past the end.
+			uint32 lineLen = 0;
+			while (textOff + lineLen < dsz && line[lineLen] != 0)
+				lineLen++;
+			if (textOff + lineLen >= dsz)
+				break;
 			if (t > 0)
 				raw += ' ';
-			raw += line;
+			raw += Common::String(line, lineLen);
 		}
 		const Common::String text = parseString(raw, _playerName, _partner);
 
@@ -1081,6 +1091,105 @@ void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
 
 		rec += 11 + textCount;
 	}
+}
+
+void EEMEngine::displayFloppyBriefing(const byte *initBlock) {
+	// Floppy briefing — `FUN_19bb_042f @ 19bb:042f` walks
+	// `nDialog = ib[2 + nSubjects]` records starting at
+	// `ib + 3 + nSubjects`. Each record is rendered identically to a
+	// hotspot dialog record (same `FUN_22dc_05c8` callee), so we
+	// share `displayFloppyDialogRecords`.
+	if (!initBlock || !isFloppy())
+		return;
+	const uint8 nSubjects = initBlock[1];
+	const uint8 nDialog   = initBlock[2 + nSubjects];
+	const byte *rec       = initBlock + 3 + nSubjects;
+	displayFloppyDialogRecords(rec, nDialog);
+}
+
+void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
+	// Floppy hotspot click — mirrors `FUN_22dc_0b80 @ 22dc:0b80` +
+	// `FUN_1652_00e6 @ 1652:00e6` + `FUN_1652_006c @ 1652:006c`.
+	// Each site stores a per-hotspot dialog list at
+	// `site_data[+6..7]`. The list is laid out as:
+	//   for each hotspot in order:
+	//     main record (11 + textCount bytes)
+	//     u8 contFlags  (low 7 bits = continuation count, high bit
+	//                    used by FUN_1652_00e6 to drive the partner
+	//                    pose — irrelevant for text rendering)
+	//     contCount × { record (11 + textCount bytes) }
+	// We walk past `hotIdx` hotspots, then dispatch the matched main
+	// record + its continuation chain through the same renderer
+	// `displayFloppyBriefing` uses.
+	if (!_mystery.isLoaded() || !isFloppy())
+		return;
+	const byte *site = _mystery.siteData(siteNum);
+	if (!site)
+		return;
+	const uint16 dlgListOff = READ_LE_UINT16(site + 6);
+	const byte *bufBase = _mystery.blobAt(0);
+	if (!bufBase || dlgListOff == 0 || dlgListOff >= _mystery.dataSize())
+		return;
+	uint32 off = dlgListOff;
+	for (uint h = 0; h < hotIdx; h++) {
+		// Skip main record.
+		const byte *rec = bufBase + off;
+		off += 11 + rec[10];
+		// Read continuation count and skip those records.
+		const uint contCount = bufBase[off] & 0x7F;
+		off += 1;
+		for (uint c = 0; c < contCount; c++) {
+			const byte *cr = bufBase + off;
+			off += 11 + cr[10];
+		}
+	}
+	if (off >= _mystery.dataSize())
+		return;
+	// Layout per hotspot is:
+	//   main record (11 + textCount bytes)
+	//   1 byte: continuation count (high bit = partner-pose flag,
+	//           low 7 bits = number of follow-up records)
+	//   continuation records (each 11 + textCount bytes, tightly packed)
+	// `displayFloppyDialogRecords` walks tightly so we have to call it
+	// twice — once for the main record, once for the continuations —
+	// otherwise the second iteration treats the cont-count byte as a
+	// record header and runs off the buffer.
+	//
+	// Each `displayFloppyDialogRecords` call snapshots the screen to
+	// know what to redraw between bubbles. If we just call it twice
+	// back-to-back the second snapshot includes the first call's last
+	// bubble, so the second bubble draws on top of the first one (the
+	// "background isn't redrawn" glitch the user reported). Capture
+	// the clean site BG here and restore it between the two calls so
+	// every record snapshots a bubble-free background.
+	Graphics::ManagedSurface siteBG(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	{
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			siteBG.simpleBlitFrom(*screen);
+			g_system->unlockScreen();
+		}
+	}
+	const byte *mainRec = bufBase + off;
+	displayFloppyDialogRecords(mainRec, 1);
+	const uint mainLen = 11u + (uint)mainRec[10];
+	if (off + mainLen >= _mystery.dataSize())
+		return;
+	const uint contCount = (uint)(bufBase[off + mainLen] & 0x7F);
+	if (contCount == 0)
+		return;
+	const uint32 contOff = off + mainLen + 1;
+	if (contOff >= _mystery.dataSize())
+		return;
+	// Wipe the main bubble before the continuation chain snapshots the
+	// screen — otherwise the first continuation bubble treats the
+	// post-main-bubble image as its background and the main balloon
+	// pixels persist behind every following balloon.
+	g_system->copyRectToScreen(siteBG.getPixels(), siteBG.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+	displayFloppyDialogRecords(bufBase + contOff, contCount);
 }
 
 bool EEMEngine::areYouSure() {

@@ -141,6 +141,9 @@ public:
 		return offset < _data.size() ? _data.data() + offset : nullptr;
 	}
 
+	/// Total mystery blob size in bytes (for bounds checks).
+	uint32 dataSize() const { return (uint32)_data.size(); }
+
 	/// Synchronize the per-mystery runtime state for save/load. The fixed
 	/// arrays serialize first, then the booleans and counters.
 	void syncState(Common::Serializer &s);
