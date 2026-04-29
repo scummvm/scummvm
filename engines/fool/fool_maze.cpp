@@ -160,7 +160,7 @@ void FoolGame::mazeRun() {
 			// 136:06fe
 			getNextEvent(-1);
 			if ((var_ev_46.modifiers & kModMouseButtonUp) == 0) {
-				sub_136_79e();
+				mazeOnClick();
 			}
 			if (var_i16_1bcc == 0x19) {
 				var_i16_d0c = 1;
@@ -180,7 +180,7 @@ void FoolGame::mazeRun() {
 	sub_136_2f5c();
 }
 
-void FoolGame::sub_136_79e() {
+void FoolGame::mazeOnClick() {
 	// 136:079e
 	sub_128_2be(var_i16_68a, var_i16_68c);
 	if ((var_i16_68a == var_i16_1bcc) && (var_i16_68c == var_i16_1bce)) {
@@ -432,10 +432,10 @@ void FoolGame::sub_136_b00() {
 				sub_136_1650();
 				break;
 			case 8:
-				sub_136_1756();
+				mazeHiddenDoorOpen();
 				break;
 			case 9:
-				sub_136_17a4();
+				mazeHiddenDoorShut();
 				break;
 			case 10:
 				sub_136_1806();
@@ -510,11 +510,92 @@ void FoolGame::sub_136_ed8() {
 }
 
 void FoolGame::sub_136_f74() {
-	warning("STUB: %s", __func__);
+	// 136:0f74
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(231)) { // L
+		var_i16_1de6 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		var_i16_1de4 = g_zbasic->rndInt(var_i16_1de6);
+		var_i16_1de8 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_1de4 * 2 + 2, 2));
+		var_i16_484 = var_i16_1de6 * 2 + 4;
+		sub_136_24ae();
+	}
+	// 136:0ffc
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(232)) { // A
+		var_i16_68a = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		var_i16_68c = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 4, 2));
+		var_i16_1a96 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 6, 2));
+		var_i16_1a98 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 8, 2));
+		var_i16_68a += g_zbasic->rndInt(var_i16_1a96 + 1) - 1;
+		var_i16_68c += g_zbasic->rndInt(var_i16_1a98 + 1) - 1;
+		// 136:10bc
+		var_i16_1de8 = arr_i16_2f38[var_i16_68a*32 + var_i16_68c];
+		var_i16_484 = 0xa;
+		sub_136_24ae();
+	}
+	// 136:10ea
+	Common::Rect temp;
+	temp.top = arr_i16_1eb8[24];
+	temp.left = arr_i16_1eb8[25];
+	temp.bottom = arr_i16_1eb8[26];
+	temp.right = arr_i16_1eb8[27];
+	g_toolbox->InvertOval(temp);
+	var_i16_1dea = var_i16_1574;
+	var_i16_1dec = 2;
+	sub_136_2208();
+	// 136:1108
+	var_i16_1bcc = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
+	var_i16_1bce = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
+	sub_136_2664();
 }
 
 void FoolGame::sub_136_115a() {
-	warning("STUB: %s", __func__);
+	// 136:115a
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(233)) { // P
+		var_i16_1dea = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		var_i16_106e = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 4, 2));
+		if (var_i16_1dea == var_i16_1574) {
+			var_src_1dee = kSrcOr;
+		} else {
+			var_src_1dee = kSrcBic;
+		}
+		// 136:11ce
+		arr_i16_4338[var_i16_1dea] = var_i16_106e;
+	}
+	// 136:11e0
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(234)) { // E
+		var_i16_1dea = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if (var_i16_1dea < 0) {
+			var_i16_1dea = var_i16_1574;
+		}
+		var_i16_106e = arr_i16_4338[var_i16_1dea];
+		arr_i16_4338[var_i16_1dea] = 0;
+		if (var_i16_1dea == var_i16_1574) {
+			var_src_1dee = kSrcBic;
+		} else {
+			// 136:126a
+			var_src_1dee = kSrcOr;
+		}
+	}
+	// 136:1270
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(235)) { // C
+		var_i16_1dea = var_i16_1574;
+		var_i16_106e = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if (var_i16_1dea == var_i16_1574) {
+			var_src_1dee = kSrcOr;
+		} else {
+			// 136:12cc
+			var_src_1dee = kSrcBic;
+		}
+		// 136:12d2
+		arr_i16_4338[var_i16_1dea] = var_i16_106e;
+	}
+	// 136:12e4
+	g_zbasic->text(0xfb, 0xc, 0, var_src_1dee);
+	g_toolbox->MoveTo(
+		arr_rect_1f38[var_i16_1dea].left + arr_i16_1eb8[2],
+		arr_rect_1f38[var_i16_1dea].top + arr_i16_1eb8[3]
+	);
+	var_str_384 = g_zbasic->chr(var_i16_106e);
+	g_toolbox->DrawString(var_str_384);
 }
 
 void FoolGame::sub_136_137c() {
@@ -529,7 +610,7 @@ void FoolGame::sub_136_1650() {
 	warning("STUB: %s", __func__);
 }
 
-void FoolGame::sub_136_1756() {
+void FoolGame::mazeHiddenDoorOpen() {
 	// 136:1756
 	var_i16_1bd8 = var_i16_1574;
 	var_i16_1bd4 = g_zbasic->decodeInt(var_str_1ce2);
@@ -550,12 +631,12 @@ void FoolGame::sub_136_1756() {
 		sub_136_2ed6();
 		break;
 	default:
-		warning("sub_136_1756: broke out of switch statement");
+		warning("mazeHiddenDoorOpen: broke out of switch statement");
 		break;
 	}
 }
 
-void FoolGame::sub_136_17a4() {
+void FoolGame::mazeHiddenDoorShut() {
 	// 136:17a4
 	var_i16_1bd8 = var_i16_1574;
 	var_i16_1bd6 = g_zbasic->decodeInt(var_str_1ce2);
@@ -576,7 +657,7 @@ void FoolGame::sub_136_17a4() {
 		sub_136_2ed6();
 		break;
 	default:
-		warning("sub_136_17a4: broke out of switch statement");
+		warning("mazeHiddenDoorShut: broke out of switch statement");
 		break;
 	}
 }
@@ -602,7 +683,7 @@ void FoolGame::sub_136_18f4() {
 	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_484 = 3;
 	sub_136_24ae();
-	for (var_i16_68a = 1; var_i16_68a <= var_i16_1de4; var_i16_68a++) {
+	for (int16 i = 1; i <= var_i16_1de4; i++) {
 		sub_136_2538();
 	}
 }
@@ -632,11 +713,53 @@ void FoolGame::sub_136_1e4c() {
 }
 
 void FoolGame::sub_136_21fa() {
-	warning("STUB: %s", __func__);
+	// 136:21fa
+	sub_128_6186();
 }
 
 void FoolGame::sub_136_2200() {
-	warning("STUB: %s", __func__);
+	// 136:2200
+	var_i16_1bdc = 1;
+}
+
+void FoolGame::sub_136_2208() {
+	// 136:2208
+	// unrolled loop
+	arr_bcd_5dbc[4 + 0] = (arr_rect_1f38[var_i16_1de8].top - arr_rect_1f38[var_i16_1dea].top) / 25.0f;
+	arr_bcd_5dbc[4 + 1] = (arr_rect_1f38[var_i16_1de8].left - arr_rect_1f38[var_i16_1dea].left) / 25.0f;
+	arr_bcd_5dbc[4 + 2] = (arr_rect_1f38[var_i16_1de8].bottom - arr_rect_1f38[var_i16_1dea].bottom) / 25.0f;
+	arr_bcd_5dbc[4 + 3] = (arr_rect_1f38[var_i16_1de8].right - arr_rect_1f38[var_i16_1dea].right) / 25.0f;
+	// 136:229a
+	for (int16 k = 0; k <= 1; k++) {
+		// 136:22a0
+		arr_bcd_5dbc[0] = arr_rect_1f38[var_i16_1dea].top + 4.0f;
+		arr_bcd_5dbc[1] = arr_rect_1f38[var_i16_1dea].left + 4.0f;
+		arr_bcd_5dbc[2] = arr_rect_1f38[var_i16_1dea].bottom - 4.0f;
+		arr_bcd_5dbc[3] = arr_rect_1f38[var_i16_1dea].right - 4.0f;
+		for (int16 j = 1; j <= 0x19; j++) {
+			var_i32_692 = g_toolbox->TickCount();
+			for (int16 i = 0; i <= 3; i++) {
+				// 136:23c4
+				arr_bcd_5dbc[i] += arr_bcd_5dbc[i + 4];
+				arr_i16_4758[i] = (int16)arr_bcd_5dbc[i];
+			}
+			// 136:245a
+			Common::Rect temp;
+			temp.top = arr_i16_4758[0];
+			temp.left = arr_i16_4758[1];
+			temp.bottom = arr_i16_4758[2];
+			temp.right = arr_i16_4758[3];
+
+			if (var_i16_1dec == 1) {
+				g_toolbox->InvertRect(temp);
+			}
+			// 136:2472
+			if (var_i16_1dec == 2) {
+				g_toolbox->InvertOval(temp);
+			}
+			sub_128_406(0);
+		}
+	}
 }
 
 void FoolGame::sub_136_24ae() {
@@ -1032,10 +1155,62 @@ void FoolGame::sub_136_3466() {
 	var_i16_1f08 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
 	// 136:3766
 	var_i16_1f0a += 2;
-	var_i16_68c = 1;
-	var_i16_68a = 1;
+	for (var_i16_68c = 1; var_i16_68c <= arr_i16_1eb8[1]; var_i16_68c++) {
+		for (var_i16_68a = 1; var_i16_68a <= arr_i16_1eb8[0]; var_i16_68a++) {
+			var_i16_1574++;
+			if (arr_i16_1eb8[21] != 0) {
+				if (((arr_i16_3738[var_i16_1574] & 1) == 1) && ((arr_i16_3738[var_i16_1574] & 0x10) == 0)) {
+					if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
+						sub_136_2a7c();
+					}
+					sub_136_3a30();
+				}
+				// 136:380c
+				if (((arr_i16_3738[var_i16_1574] & 2) == 2) && ((arr_i16_3738[var_i16_1574] & 0x20) == 0)) {
+					if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
+						sub_136_2b30();
+					}
+					sub_136_3a30();
+				}
+				// 136:3886
+				if (((arr_i16_3738[var_i16_1574] & 4) == 0) && ((arr_i16_3738[var_i16_1574] & 0x40) == 0)) {
+					if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
+						sub_136_2be2();
+					}
+					sub_136_3a30();
+				}
+				// 136:3900
+				if (((arr_i16_3738[var_i16_1574] & 8) == 8) && ((arr_i16_3738[var_i16_1574] & 0x80) == 0)) {
+					if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
+						sub_136_2c96();
+					}
+					sub_136_3a30();
+				}
+			}
+			// 136:397c
+			if (arr_i16_3b38[var_i16_68a*32 + var_i16_68c] > 0) {
+				if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
+					arr_i16_3738[var_i16_1574] |= 0x1000;
+				}
+				// 136:39f2
+				sub_136_3a30();
+			}
+			// 136:39f6
+		}
+	}
+}
 
-	warning("STUB: %s", __func__);
+void FoolGame::sub_136_3a30() {
+	// 136:3a30
+	var_i16_1de6++;
+	if (var_i16_1de6 > 0xf) {
+		var_i16_1de6 = 0;
+	}
+	if (var_i16_1de6 == 0) {
+		var_i16_1f08 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
+		var_i16_1f0a += 2;
+	}
+	// 136:3a6e
 }
 
 void FoolGame::sub_136_3a70() {
@@ -1085,6 +1260,7 @@ void FoolGame::sub_136_3a70() {
 					g_toolbox->PaintRect(temp);
 				}
 				// 136:3c56
+				g_toolbox->Delay(0);
 			}
 			// 136:3c64
 		}

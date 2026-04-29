@@ -3192,12 +3192,6 @@ void FoolGame::sub_129_123a() {
 }
 
 
-
-void FoolGame::sub_138_004() {
-	warning("STUB: %s", __func__);
-}
-
-
 // hermit key trace
 void FoolGame::hermitRun() {
 	// 142:12ac
