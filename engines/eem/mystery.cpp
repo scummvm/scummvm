@@ -359,9 +359,14 @@ uint16 Mystery::noteIndexCount() const {
 	if (!isLoaded())
 		return 0;
 	// NoteIndex runs from _noteOffset to the start of GalleryData.
+	// CD entries are 4 bytes (`u16 textOff; u16 points`); floppy
+	// entries are 7 bytes (`u16 ?; u16 jakeOff; u16 jennyOff; u8
+	// score`) — verified at `FUN_22dc_05c8 @ 22dc:0843` reading
+	// `*(int *)(notes + idx*7 + 2)` (Jake) / `+4` (Jenny).
 	if (_galleryOffset <= _noteOffset)
 		return 0;
-	return (uint16)((_galleryOffset - _noteOffset) / 4);
+	const uint stride = _isFloppy ? 7 : 4;
+	return (uint16)((_galleryOffset - _noteOffset) / stride);
 }
 
 const byte *Mystery::kdTextIndex() const {

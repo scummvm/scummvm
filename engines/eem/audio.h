@@ -104,6 +104,13 @@ public:
 	/// Mirrors `_StopTheVoice @ 1ff1:0283`.
 	void stopVoice();
 
+	/// Floppy variant: play a VOC by 0..25 slot index in the per-partner
+	/// voice table. Mirrors `_LoadSoundName_Floppy @ 1f4e:0305` which
+	/// indexes the table at `2608:0f0e` (Jake) / `2608:0f76` (Jenny).
+	/// `partner` is 0 for Jake, 1 for Jenny. Common slots: 12 =
+	/// PHONESL.VOC, 20 = partner intro voice, 25 = THUNDER.VOC.
+	void playFloppyVoiceSlot(uint slot, uint partner);
+
 	// Mystery sound spool ---------------------------------------------
 
 	/// Mirrors `_InitMysterySounds @ 202f:05cb`. Loads `M%u.SDX` into

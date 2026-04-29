@@ -1934,17 +1934,41 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
 	pageStarts.push_back(0);
+	// Floppy NoteIndex entries are 7 bytes (`u16 ?; u16 jakeOff; u16
+	// jennyOff; u8 score`) with ABSOLUTE byte offsets into the mystery
+	// blob, while CD entries are 4 bytes with offsets relative to the
+	// TextBlock at header[+0xc]. Resolve the right text for the active
+	// partner / variant once per render.
+	const bool floppyNb = isFloppy();
+	const byte *bufBase = _mystery.blobAt(0);
+	const uint32 mysSz  = _mystery.dataSize();
+	auto noteText = [&](uint clueId) -> Common::String {
+		if (!ni || clueId >= niCount)
+			return Common::String();
+		if (floppyNb && bufBase) {
+			const uint stride = 7;
+			const uint16 textOff = (_partner == 0)
+				? READ_LE_UINT16(ni + clueId * stride + 2)
+				: READ_LE_UINT16(ni + clueId * stride + 4);
+			if (textOff == 0 || textOff >= mysSz)
+				return Common::String();
+			const char *p = (const char *)(bufBase + textOff);
+			uint32 len = 0;
+			while (textOff + len < mysSz && p[len] != 0)
+				len++;
+			return parseString(Common::String(p, len),
+							   _playerName, _partner);
+		}
+		const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+		return parseString(_mystery.textAt(textOff),
+						   _playerName, _partner);
+	};
 	{
 		const int lineH = _font.getFontHeight() + 1;
 		int y = kRectY;
 		while (clueCursor < (int)found.size()) {
 			const uint clueId = found[clueCursor];
-			Common::String txt;
-			if (ni && clueId < niCount) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				txt = parseString(_mystery.textAt(textOff),
-								  _playerName, _partner);
-			}
+			Common::String txt = noteText(clueId);
 			// Measure height by wrapping the text without drawing.
 			Common::Array<Common::String> wrapped;
 			_font.wordWrapText(txt, kRectW, wrapped);
@@ -1976,12 +2000,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	int y = kRectY;
 	for (int i = startClue; i < endClue; i++) {
 		const uint clueId = found[i];
-		Common::String txt;
-		if (ni && clueId < niCount) {
-			const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-			txt = parseString(_mystery.textAt(textOff),
-							  _playerName, _partner);
-		}
+		Common::String txt = noteText(clueId);
 		if (txt.empty())
 			txt = Common::String::format("clue %u", clueId);
 		// Per `_DrawNotes @ 161e:01d0`: text uses

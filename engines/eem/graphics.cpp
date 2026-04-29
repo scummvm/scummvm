@@ -76,7 +76,211 @@ const BalloonInsets kBalloonInsetTable[] = {
 	{ 5, 8, 158 }, { 5, 8, 176 }, { 8, 7, 142 }
 };
 
+// Floppy KDHelp hotspot-searched check. Mirrors
+// `FUN_22dc_096c @ 22dc:096c`: walks the per-site dialog records at
+// `site_data[+6]` to skip `hotspotIdx` hotspots, then returns the
+// `_cluesFound` flag for that hotspot's first text index.
+static bool floppyHotspotSearched(EEM::Mystery &mystery, uint siteIdx,
+								   uint hotspotIdx) {
+	const byte *site = mystery.siteData(siteIdx);
+	if (!site)
+		return false;
+	const uint16 dlgListOff = READ_LE_UINT16(site + 6);
+	const byte *bufBase = mystery.blobAt(0);
+	if (!bufBase || dlgListOff == 0 || dlgListOff >= mystery.dataSize())
+		return false;
+	uint32 off = dlgListOff;
+	for (uint h = 0; h < hotspotIdx; h++) {
+		const byte *rec = bufBase + off;
+		off += 11u + (uint)rec[10];
+		if (off >= mystery.dataSize())
+			return false;
+		const uint contCount = (uint)(bufBase[off] & 0x7F);
+		off += 1;
+		for (uint c = 0; c < contCount; c++) {
+			const byte *cr = bufBase + off;
+			off += 11u + (uint)cr[10];
+			if (off >= mystery.dataSize())
+				return false;
+		}
+	}
+	if (off + 11 >= mystery.dataSize())
+		return false;
+	const byte *mainRec = bufBase + off;
+	const uint8 textIdx = mainRec[11] & 0x7F;
+	return textIdx < EEM::Mystery::kCluesFoundCap &&
+		   mystery._cluesFound[textIdx] != 0;
+}
+
 void EEMEngine::doHelp() {
+	// Floppy uses a totally different hint mechanism — per-mystery
+	// `H<n>.BIN` data files (one per case). Format verified at
+	// `FUN_1503_0001 @ 1503:0001` (loader, format string at
+	// `2608:0154` = "h%d.bin") + `FUN_1503_01a5 @ 1503:01a5`
+	// (consumer):
+	//   byte 0 = numChainHints
+	//   numChainHints × { byte siteIdx; byte hotspotIdx; }
+	//   byte = numExtraHints
+	//   numExtraHints × { byte siteIdx; byte hotspotIdx; }
+	//   asciiz string 1  ("[balloon-digit]Let's go to <site>...")
+	//   asciiz string 2  (alternate hint)
+	//   asciiz string 3  (post-solve hint, used when score ≥ 100)
+	// Selection logic: if any chain hotspot is unsearched → string 1.
+	// Else if any extra hotspot is unsearched → string 2. Else if
+	// `selectedPoints() ≥ 100` → string 3.
+	if (isFloppy() && _mystery.isLoaded()) {
+		const Common::String filename = Common::String::format("H%u.BIN",
+															   _mystery.number());
+		Common::File hf;
+		if (!hf.open(Common::Path(filename))) {
+			warning("doHelp: cannot open %s", filename.c_str());
+			return;
+		}
+		const uint32 hsz = hf.size();
+		Common::Array<byte> hbuf;
+		hbuf.resize(hsz);
+		if (hf.read(hbuf.data(), hsz) != hsz)
+			return;
+		const byte *hd = hbuf.data();
+
+		const uint chainCount = hd[0];
+		uint off = 1;
+		uint chainEnd = off + chainCount * 2;
+		if (chainEnd >= hsz)
+			return;
+		const uint extraCount = hd[chainEnd];
+		uint extraStart = chainEnd + 1;
+		uint extraEnd = extraStart + extraCount * 2;
+		if (extraEnd >= hsz)
+			return;
+		// Three NUL-terminated strings follow.
+		const char *str1 = (const char *)(hd + extraEnd);
+		const char *str2 = nullptr;
+		const char *str3 = nullptr;
+		const char *p = str1;
+		while ((uint)((const byte *)p - hd) < hsz && *p != 0) p++;
+		if ((uint)((const byte *)p - hd) >= hsz) return;
+		str2 = p + 1;
+		p = str2;
+		while ((uint)((const byte *)p - hd) < hsz && *p != 0) p++;
+		if ((uint)((const byte *)p - hd) >= hsz) return;
+		str3 = p + 1;
+
+		const char *chosen = nullptr;
+		bool anyChainUnseen = false;
+		for (uint i = 0; i < chainCount; i++) {
+			const uint8 siteIdx    = hd[off + i * 2 + 0];
+			const uint8 hotspotIdx = hd[off + i * 2 + 1];
+			if (!floppyHotspotSearched(_mystery, siteIdx, hotspotIdx)) {
+				anyChainUnseen = true;
+				break;
+			}
+		}
+		bool anyExtraUnseen = false;
+		if (!anyChainUnseen) {
+			for (uint i = 0; i < extraCount; i++) {
+				const uint8 siteIdx    = hd[extraStart + i * 2 + 0];
+				const uint8 hotspotIdx = hd[extraStart + i * 2 + 1];
+				if (!floppyHotspotSearched(_mystery, siteIdx, hotspotIdx)) {
+					anyExtraUnseen = true;
+					break;
+				}
+			}
+		}
+		if (anyChainUnseen)
+			chosen = str1;
+		else if (anyExtraUnseen)
+			chosen = str2;
+		else if (_mystery.selectedPoints() >= 100)
+			chosen = str3;
+		if (!chosen || *chosen == 0)
+			return;
+
+		// Strip leading balloon-digit byte. `_GetKDTextBalloon @
+		// 1df2:0105` (= floppy `FUN_1d40_009f`) doesn't take the
+		// digit's *value* — it indexes the per-character table at
+		// `2608:0c14` by the literal byte, so '0'..'9' map to a
+		// non-trivial balloon-id sequence. Verified bytes at
+		// `2608:0c44` (= 0xc14 + '0'):
+		//   '0'→0x15, '1'→0x16, '2'→0x17, '3'→0x18, '4'→0x19,
+		//   '5'→0x1a, '6'→0x1c, '7'→0x1d, '8'→0x1e, '9'→0x0a.
+		// Without this map the previous (digit - '0') version asked
+		// `getBalloonInsets` for balloon 0 (text width 142) instead of
+		// the correct balloon 21 (text width 155), which is why the
+		// hint bubble rendered narrower than the original.
+		static const uint8 kFloppyDigitToBalloon[10] = {
+			0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
+		};
+		uint balloonIdx = 0x17;
+		const char *txt = chosen;
+		if (*txt >= '0' && *txt <= '9') {
+			balloonIdx = kFloppyDigitToBalloon[(int)(*txt - '0')];
+			txt++;
+		}
+
+		Common::String text = parseString(Common::String(txt),
+										   _playerName, _partner);
+		Graphics::ManagedSurface ms(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		ms.clear();
+		{
+			Graphics::Surface *cur = g_system->lockScreen();
+			if (cur) {
+				ms.simpleBlitFrom(*cur);
+				g_system->unlockScreen();
+			}
+		}
+		Picture balloon;
+		const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
+			_balloonArchive.loadEntry(balloonIdx, balloon);
+		uint16 balloonY = 1;
+		if (haveBalloon) {
+			const uint h = (uint)balloon.surface.h;
+			if (h < 0x4e)
+				balloonY = (uint16)((0x50 - h) >> 1);
+			const byte transp = (byte)(balloon.flags >> 8);
+			for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
+				 row++) {
+				const byte *src =
+					(const byte *)balloon.surface.getBasePtr(0, row);
+				byte *dst = (byte *)ms.getBasePtr(0x21, balloonY + row);
+				for (int col = 0; col < balloon.surface.w && 0x21 + col < 320;
+					 col++) {
+					if (src[col] != transp)
+						dst[col] = src[col];
+				}
+			}
+		}
+		uint16 bx = 5;
+		uint16 by = 4;
+		uint16 bw = 142;
+		getBalloonInsets(balloonIdx, bx, by, bw);
+		_font.drawWordWrapped(&ms, 0x21 + bx, balloonY + by,
+							  MAX<int>(8, (int)bw), text, 0);
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch, 0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// Wait for click — KD hint dismisses on any input.
+		while (!shouldQuit()) {
+			Common::Event ev;
+			bool advance = false;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER ||
+					ev.type == Common::EVENT_LBUTTONDOWN ||
+					ev.type == Common::EVENT_KEYDOWN) {
+					advance = true;
+					break;
+				}
+			}
+			if (advance)
+				break;
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+		return;
+	}
+
 	// Mirrors `_KDHelp @ 1560:010a`. The original walks the first two
 	// entries of `_AChain` (the puzzle's required-clue chain — the
 	// "spine" of evidence the player must collect):
