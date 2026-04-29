@@ -24,6 +24,28 @@
 
 namespace MM {
 
+static bool isRomanNumeral(const Common::String &str, uint start, uint end) {
+	if (start == end)
+		return false;
+
+	for (uint i = start; i < end; ++i) {
+		switch (toupper(str[i])) {
+		case 'I':
+		case 'V':
+		case 'X':
+		case 'L':
+		case 'C':
+		case 'D':
+		case 'M':
+			break;
+		default:
+			return false;
+		}
+	}
+
+	return true;
+}
+
 Common::String capitalize(const Common::String &str) {
 	Common::String result = str;
 	bool capitalize = true;
@@ -52,6 +74,20 @@ Common::String camelCase(const Common::String &str) {
 	bool capitalize = true;
 
 	for (uint i = 0; i < str.size(); ++i) {
+		if (capitalize) {
+			uint end = i;
+			while (end < str.size() && str[end] != ' ')
+				++end;
+
+			if (isRomanNumeral(str, i, end)) {
+				for (; i < end; ++i)
+					result.setChar(toupper(result[i]), i);
+				--i;
+				capitalize = false;
+				continue;
+			}
+		}
+
 		if (capitalize) {
 			result.setChar(toupper(result[i]), i);
 			capitalize = false;

@@ -374,6 +374,9 @@ bool Combat::msgAction(const ActionMessage &msg) {
 }
 
 bool Combat::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button != MouseMessage::MB_LEFT)
+		return ScrollView::msgMouseUp(msg);
+
 	const KeybindingAction BTN_ACTIONS[8] = {
 		KEYBIND_COMBAT_ATTACK, KEYBIND_COMBAT_FIGHT,
 		KEYBIND_COMBAT_RETREAT, KEYBIND_COMBAT_EXCHANGE,

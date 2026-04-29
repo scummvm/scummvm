@@ -180,6 +180,21 @@ size_t TextView::getStringWidth(const Common::String &str) {
 	return getFont()->getStringWidth(str);
 }
 
+Common::String TextView::truncateString(const Common::String &str, int maxWidth) {
+	Common::String result = str;
+	const Common::String ellipsis = "...";
+
+	if ((int)getStringWidth(result) <= maxWidth)
+		return result;
+
+	const int ellipsisWidth = (int)getStringWidth(ellipsis);
+	while (!result.empty() && (int)getStringWidth(result) + ellipsisWidth > maxWidth)
+		result.deleteLastChar();
+
+	return result.empty() && ellipsisWidth > maxWidth ? Common::String() :
+		result + ellipsis;
+}
+
 void TextView::newLine() {
 	_textPos.x = 0;
 	_textPos.y += ROW_HEIGHT;
@@ -202,13 +217,15 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 		return lines;
 
 	do {
+		bool forceSplit = false;
 		endP = strchr(startP, '\n');
+		const char *lineEndP = endP;
 		int strWidth = font.getStringWidth(endP ?
 			Common::String(startP, endP) : Common::String(startP));
 
 		if (strWidth > lineWidth) {
 			// Find the last space before a full line
-			endP = startP + strlen(startP) - 1;
+			endP = startP + (lineEndP ? lineEndP - startP : (int)strlen(startP)) - 1;
 			while (strWidth > lineWidth) {
 				// Move back to a prior space
 				for (--endP; endP > startP && *endP != ' '; --endP) {
@@ -225,8 +242,17 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 
 				if (endP <= startP) {
 					// No place to word wrap, and it's longer than the width.
-					// So just use the entirety of the remainder
-					endP = startP + strlen(startP) - 1;
+					// Split an unbroken word near the visual center.
+					const char *wordEndP = lineEndP ? lineEndP : startP + strlen(startP);
+					endP = startP + (wordEndP - startP) / 2;
+
+					while (endP > startP + 1 &&
+							font.getStringWidth(Common::String(startP, endP)) > lineWidth)
+						--endP;
+					if (endP <= startP)
+						endP = startP + 1;
+
+					forceSplit = true;
 					break;
 				}
 
@@ -241,7 +267,7 @@ Common::StringArray TextView::splitLines(const Common::String &str,
 			break;
 
 		// Start next line after space or carriage return
-		startP = endP + 1;
+		startP = forceSplit ? endP : endP + 1;
 
 	} while (*startP);
 

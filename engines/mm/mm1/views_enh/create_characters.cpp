@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/create_characters.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 
@@ -591,7 +592,7 @@ void CreateCharacters::abortFunc() {
 void CreateCharacters::enterFunc(const Common::String &name) {
 	CreateCharacters *view = static_cast<CreateCharacters *>(g_events->focusedView());
 
-	view->_newChar._name = name;
+	view->_newChar._name = camelCase(name);
 	view->setState(SAVE_PROMPT);
 }
 

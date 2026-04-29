@@ -64,7 +64,7 @@ void CastSpell::draw() {
 
 	const Character &c = *g_globals->_currCharacter;
 	writeString(0, 0, STRING["enhdialogs.cast_spell.title"], ALIGN_MIDDLE);
-	writeString(0, 20, c._name, ALIGN_MIDDLE);
+	writeString(0, 16, c._name, ALIGN_MIDDLE);
 	writeString(0, 40, STRING["enhdialogs.cast_spell.spell_ready"]);
 
 	setTextColor(37);

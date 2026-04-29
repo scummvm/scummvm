@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views_enh/character_manage.h"
+#include "mm/shared/utils/strings.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 
@@ -62,7 +63,7 @@ void CharacterManage::abortFunc() {
 
 void CharacterManage::enterFunc(const Common::String &name) {
 	CharacterManage *view = static_cast<CharacterManage *>(g_events->focusedView());
-	view->setName(name);
+	view->setName(camelCase(name));
 }
 
 void CharacterManage::draw() {
@@ -185,6 +186,18 @@ bool CharacterManage::msgMouseMove(const MouseMoveMessage &msg) {
 	}
 
 	return true;
+}
+
+bool CharacterManage::msgMouseUp(const MouseUpMessage &msg) {
+	if (msg._button == MouseMessage::MB_RIGHT && _state == DISPLAY) {
+		const Common::Rect portrait(_innerBounds.left, _innerBounds.top,
+			_innerBounds.left + 30, _innerBounds.top + 30);
+
+		if (portrait.contains(msg._pos) || getButtonAt(msg._pos) == 0)
+			return true;
+	}
+
+	return CharacterBase::msgMouseUp(msg);
 }
 
 void CharacterManage::setName(const Common::String &newName) {

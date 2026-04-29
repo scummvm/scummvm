@@ -97,6 +97,7 @@ void Spellbook::draw() {
 		STRING["enhdialogs.spellbook.title"].c_str(),
 		c._name
 	);
+	title = truncateString(title, _innerBounds.width());
 	writeString(0, 0, title, ALIGN_MIDDLE);
 
 	// Write current spell points

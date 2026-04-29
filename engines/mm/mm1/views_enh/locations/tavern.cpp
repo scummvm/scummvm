@@ -30,6 +30,11 @@ namespace ViewsEnh {
 namespace Locations {
 
 Tavern::Tavern() : Location("Tavern", LOC_TAVERN) {
+	_btnSprites.load("buy.icn");
+	addButton(&_btnSprites, Common::Point(2, 45), 0, Common::KEYCODE_d, true);
+	addButton(&_btnSprites, Common::Point(2, 56), 2, Common::KEYCODE_g, true);
+	addButton(&_btnSprites, Common::Point(2, 67), 6, Common::KEYCODE_t, true);
+	addButton(&_btnSprites, Common::Point(2, 78), 10, Common::KEYCODE_r, true);
 	addButton(&_escSprite, Common::Point(24, 100), 0, KEYBIND_ESCAPE);
 }
 
@@ -40,12 +45,12 @@ void Tavern::draw() {
 	setReduced(false);
 	writeLine(0, STRING["enhdialogs.tavern.title"], ALIGN_MIDDLE);
 	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
-	writeLine(3, c._name, ALIGN_MIDDLE);
+	writeString(0, 23, c._name, ALIGN_MIDDLE);
 
-	writeLine(5, STRING["enhdialogs.tavern.drink"], ALIGN_LEFT, 10);
-	writeLine(6, STRING["enhdialogs.tavern.gather"], ALIGN_LEFT, 10);
-	writeLine(7, STRING["enhdialogs.tavern.tip"], ALIGN_LEFT, 10);
-	writeLine(8, STRING["enhdialogs.tavern.rumor"], ALIGN_LEFT, 10);
+	writeString(18, 46, STRING["enhdialogs.tavern.drink"]);
+	writeString(18, 57, STRING["enhdialogs.tavern.gather"]);
+	writeString(18, 68, STRING["enhdialogs.tavern.tip"]);
+	writeString(18, 79, STRING["enhdialogs.tavern.rumor"]);
 
 	writeLine(10, STRING["enhdialogs.location.gold"]);
 	writeLine(10, Common::String::format("%d",

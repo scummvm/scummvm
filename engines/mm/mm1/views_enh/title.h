@@ -35,6 +35,7 @@ public:
 
 	bool msgFocus(const FocusMessage &msg) override;
 	bool msgUnfocus(const UnfocusMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 } // namespace ViewsEnh

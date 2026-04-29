@@ -30,7 +30,34 @@ namespace MM1 {
 namespace ViewsEnh {
 namespace Locations {
 
+static const int BTN_SIZE = 10;
+static const int OPTION_X = 0;
+static const int OPTION_Y = 45;
+static const int OPTION_SPACING = 11;
+static const int OPTION_TEXT_X = OPTION_X + BTN_SIZE;
+
+static Common::Rect getOptionButtonRect(int row) {
+	const int y = OPTION_Y + OPTION_SPACING * row;
+	return Common::Rect(OPTION_X, y, OPTION_X + BTN_SIZE, y + BTN_SIZE);
+}
+
+static Common::String getOptionText(const Common::String &text) {
+	const char *s = text.c_str();
+
+	// Option strings highlight their hotkey as "\x01NNx".
+	if (*s == '\x01' && s[1] && s[2] && s[3])
+		return Common::String(s + 4);
+	if (*s)
+		return Common::String(s + 1);
+
+	return text;
+}
+
 Temple::Temple() : Location("Temple", LOC_TEMPLE) {
+	addButton(getOptionButtonRect(0), Common::KEYCODE_h);
+	addButton(getOptionButtonRect(1), Common::KEYCODE_u);
+	addButton(getOptionButtonRect(2), Common::KEYCODE_r);
+	addButton(getOptionButtonRect(3), Common::KEYCODE_d);
 	addButton(&_escSprite, Common::Point(24, 100), 0, KEYBIND_ESCAPE);
 }
 
@@ -47,25 +74,17 @@ void Temple::draw() {
 	setReduced(false);
 	writeLine(0, STRING["enhdialogs.temple.title"], ALIGN_MIDDLE);
 	writeLine(1, STRING["enhdialogs.location.options_for"], ALIGN_MIDDLE);
-	writeLine(3, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
+	writeString(0, 23, camelCase(g_globals->_currCharacter->_name), ALIGN_MIDDLE);
 
 	setReduced(true);
-	writeLine(5, STRING["enhdialogs.temple.heal"]);
-	writeLine(6, STRING["enhdialogs.temple.uncurse"]);
-	writeLine(7, STRING["enhdialogs.temple.realign"]);
-	writeLine(8, STRING["enhdialogs.temple.donate"]);
-
-	writeLine(5, _healCost ?
-		Common::String::format("%d", _healCost).c_str() : "----",
-		ALIGN_RIGHT);
-	writeLine(6, _uncurseCost ?
-		Common::String::format("%d", _uncurseCost).c_str() : "----",
-		ALIGN_RIGHT);
-	writeLine(7, _alignmentCost ?
-		Common::String::format("%d", _alignmentCost).c_str() : "----",
-		ALIGN_RIGHT);
-	writeLine(8, Common::String::format("%d", _donateCost).c_str(),
-		ALIGN_RIGHT);
+	writeOption(0, 'H', STRING["enhdialogs.temple.heal"],
+		_healCost ? Common::String::format("%d", _healCost) : "----");
+	writeOption(1, 'U', STRING["enhdialogs.temple.uncurse"],
+		_uncurseCost ? Common::String::format("%d", _uncurseCost) : "----");
+	writeOption(2, 'R', STRING["enhdialogs.temple.realign"],
+		_alignmentCost ? Common::String::format("%d", _alignmentCost) : "----");
+	writeOption(3, 'D', STRING["enhdialogs.temple.donate"],
+		Common::String::format("%d", _donateCost));
 
 	setReduced(false);
 	writeLine(10, STRING["enhdialogs.location.gold"]);
@@ -74,6 +93,25 @@ void Temple::draw() {
 
 	setReduced(true);
 	writeString(27, 122, STRING["enhdialogs.location.esc"]);
+}
+
+void Temple::writeOption(int row, char c, const Common::String &text,
+		const Common::String &cost) {
+	const int y = OPTION_Y + OPTION_SPACING * row;
+	const int textY = y + (BTN_SIZE - 8) / 2 + 1;
+
+	Graphics::ManagedSurface btnSmall(BTN_SIZE, BTN_SIZE);
+	btnSmall.blitFrom(g_globals->_blankButton, Common::Rect(0, 0, 20, 20),
+		Common::Rect(0, 0, BTN_SIZE, BTN_SIZE));
+
+	Graphics::ManagedSurface s = getSurface();
+	s.blitFrom(btnSmall, Common::Point(OPTION_X + _bounds.borderSize(),
+		y + _bounds.borderSize()));
+
+	writeString(OPTION_X + (BTN_SIZE / 2) + 1, textY,
+		Common::String::format("%c", c), ALIGN_MIDDLE);
+	writeString(OPTION_TEXT_X, textY, getOptionText(text));
+	writeString(0, textY, cost, ALIGN_RIGHT);
 }
 
 bool Temple::msgKeypress(const KeypressMessage &msg) {

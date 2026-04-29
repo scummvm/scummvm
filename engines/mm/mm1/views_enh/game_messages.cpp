@@ -157,7 +157,8 @@ bool GameMessages::msgMouseDown(const MouseDownMessage &msg) {
 	if (_callback)
 		return send("MessagesYesNo", msg);
 
-	return msgAction(KeybindingAction(KEYBIND_SELECT));
+	return msgAction(ActionMessage(msg._button == MouseMessage::MB_RIGHT ?
+		KEYBIND_ESCAPE : KEYBIND_SELECT));
 }
 
 bool GameMessages::msgMouseUp(const MouseUpMessage &msg) {

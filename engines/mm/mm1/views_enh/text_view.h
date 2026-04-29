@@ -90,6 +90,11 @@ protected:
 	size_t getStringWidth(const Common::String &str);
 
 	/**
+	 * Truncates a string to fit in the given pixel width
+	 */
+	Common::String truncateString(const Common::String &str, int maxWidth);
+
+	/**
 	 * Move the text position to the next line
 	 */
 	void newLine();

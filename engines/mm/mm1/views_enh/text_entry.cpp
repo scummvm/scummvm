@@ -32,7 +32,13 @@ void TextEntry::display(int x, int y, int maxLen,
 	_enterFn = enterFn;
 	_isNumeric = isNumeric;
 	_text = "";
-	_bounds = Common::Rect(x, y, x + maxLen * 8, y + 9);
+
+	Common::String maxText;
+	for (int i = 0; i < maxLen; ++i)
+		maxText += isNumeric ? '8' : 'W';
+
+	_bounds = Common::Rect(x, y, x + getStringWidth(maxText) +
+		getStringWidth("_") + 1, y + 9);
 
 	addView(this);
 }

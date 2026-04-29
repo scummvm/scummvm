@@ -115,7 +115,9 @@ void Inn::draw() {
 			if (isInParty)
 				s.frameRect(Common::Rect(pt.x, pt.y, pt.x + 19, pt.y + 19), 37);
 
-			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, c._name);
+			Common::String name = truncateString(c._name, _innerBounds.width() / 3 - 22);
+
+			writeString(pt.x - _innerBounds.left + 22, pt.y - _innerBounds.top + 5, name);
 		}
 
 		setReduced(false);

@@ -41,8 +41,8 @@ void WheelSpin::draw() {
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
-		writeLine(i, c._name, ALIGN_LEFT, 0);
-		writeLine(i, _results[i], ALIGN_LEFT, 100);
+		writeLine(i, truncateString(c._name, 130), ALIGN_LEFT, 0);
+		writeLine(i, _results[i], ALIGN_LEFT, 130);
 	}
 }
 

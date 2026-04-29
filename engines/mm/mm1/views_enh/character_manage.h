@@ -62,6 +62,7 @@ public:
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
 	bool msgMouseMove(const MouseMoveMessage &msg) override;
+	bool msgMouseUp(const MouseUpMessage &msg) override;
 };
 
 

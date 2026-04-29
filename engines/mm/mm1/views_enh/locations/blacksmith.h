@@ -31,6 +31,8 @@ namespace ViewsEnh {
 namespace Locations {
 
 class Blacksmith : public Location {
+private:
+	Shared::Xeen::SpriteResource _browseSprite;
 public:
 	Blacksmith();
 
