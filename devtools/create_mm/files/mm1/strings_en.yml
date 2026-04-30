@@ -82,6 +82,7 @@ dialogs:
 		select_alignment: "Select alignment"
 		select_sex: "Select a sex"
 		save_character: "Save character"
+		full: "*** Roster is full ***"
 		reroll: "'ent' to re-roll"
 		start_over: "'esc' start over"
 		name: "name:"
