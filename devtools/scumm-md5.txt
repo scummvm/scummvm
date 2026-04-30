@@ -447,6 +447,14 @@ ft	Full Throttle
 	9b7452b5cd6d3ffb2b2f5118010af84f	116463537	en	Mac	Demo	Demo	Mac bundle	Fingolfin, Joachim Eberhard
 	8ead2c01c48c2e3d15d6a89b86cd84ab	19697	he	DOS	-	-	-	Hebrew fan translation
 
+rebel1	Star Wars: Rebel Assault
+	b9ac90e4411da1b6f7dd075cc4b03c2a	214435	en	DOS	-	-	-	-
+
+rebel2	Star Wars: Rebel Assault II: The Hidden Empire
+	6b73a08c535c0544785d73ff812908a0	9430	en	DOS	-	-	-	-
+
+	e977ed046b88e75b645491caeff37b0c	313689	en	DOS	Demo	Demo	-	-
+
 dig	The Dig
 	d8323015ecb8b10bf53474f6e6b0ae33	16304	All	All	-	-	-	Fingolfin
 	aad201302286c1cfee92321cd406e427	811008	All	Windows	Steam	Steam	Steam Version	Ben Castricum, Filippos Karapetis
