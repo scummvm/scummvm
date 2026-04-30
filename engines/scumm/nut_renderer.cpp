@@ -368,7 +368,7 @@ int NutRenderer::getCharHeight(byte c) const {
 
 const byte *NutRenderer::getCharData(byte c) {
 	if (c >= _numChars)
-		error("invalid character in NutRenderer::getCharData : %d (%d)", c, _numChars);
+		error("invalid character in NutRenderer::getCharData: %d (%d)", c, _numChars);
 
 	return _chars[c].src;
 }
