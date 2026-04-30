@@ -30,6 +30,7 @@
 #include "scumm/file.h"
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/rebel/codec_ra2.h"
 #include "scumm/smush/rebel/smush_player_ra1.h"
 
 #include "scumm/insane/rebel1/rebel.h"
@@ -292,8 +293,6 @@ void smushDecodeRA1Transparent(byte *dst, const byte *src, int left, int top, in
 		dst += pitch;
 	} while (--height);
 }
-void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-
 /**
  * RA1 codec 21: Skip/copy line codec (FUN_10D41).
  */

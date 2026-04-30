@@ -21,7 +21,10 @@
 
 // Rebel Assault 2 SMUSH video codecs
 
+#include "scumm/smush/rebel/codec_ra2.h"
+
 #include "common/endian.h"
+#include "common/textconsole.h"
 
 #include "scumm/bomp.h"
 
@@ -162,10 +165,12 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 
 	// Detect header pattern and find RLE data start
 	int headerSkip = 0;
+	bool foundValidOffset = false;
 
 	// Check for common 6-byte header pattern: 01 FE XX XX XX XX
 	if (dataSize > 6 && src[0] == 0x01 && src[1] == 0xFE) {
 		headerSkip = 6;
+		foundValidOffset = true;
 	} else {
 		// Probe offsets to find valid RLE start
 		// Valid start should have reasonable line size values
@@ -190,10 +195,15 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 
 				if (validSum && linesTest >= height - 1) {
 					headerSkip = testOffset;
+					foundValidOffset = true;
 					break;
 				}
 			}
 		}
+	}
+
+	if (!foundValidOffset) {
+		warning("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
 	}
 
 	src += headerSkip;

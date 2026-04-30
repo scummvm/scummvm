@@ -32,17 +32,13 @@
 #include "scumm/scumm_v7.h"
 #include "scumm/smush/smush_font.h"
 #include "scumm/smush/rebel/smush_multi_font.h"
+#include "scumm/smush/rebel/codec_ra2.h"
 #include "scumm/smush/rebel/smush_player_ra2.h"
 
 #include "scumm/insane/insane.h"
 #include "scumm/insane/rebel2/rebel.h"
 
 namespace Scumm {
-
-// Forward declarations for RA2 codec functions (defined in codec_ra2.cpp)
-void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
-void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 
 // ---------------------------------------------------------------------------
 // SmushPlayerRebel2 — construction / destruction

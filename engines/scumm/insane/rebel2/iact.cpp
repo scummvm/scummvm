@@ -27,13 +27,11 @@
 
 #include "scumm/smush/smush_player.h"
 #include "scumm/smush/smush_font.h"
+#include "scumm/smush/rebel/codec_ra2.h"
 
 #include "scumm/insane/rebel2/rebel.h"
 
 namespace Scumm {
-
-// External codec functions from codec1.cpp
-extern void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
 //
 // procPreRendering -- Pre-frame setup: background restore and corridor overlays.
