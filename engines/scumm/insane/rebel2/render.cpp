@@ -148,7 +148,7 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	// If no known header found, probe offsets 0, 2, 4, 6 to find valid RLE start
 	if (!foundValidOffset) {
 		for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
-			int testLineSize = READ_LE_UINT16(src + testOffset);
+			int testLineSize = READ_LE_INT16(src + testOffset);
 			// A valid first line size should be: > 0, <= width*2
 			if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
 				// Validate line-size sequence
@@ -157,7 +157,7 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 				bool validSum = true;
 
 				while (linesTest < height && testPtr + 2 <= src + dataSize) {
-					int ls = READ_LE_UINT16(testPtr);
+					int ls = READ_LE_INT16(testPtr);
 					if (ls <= 0 || ls > width * 2) {
 						validSum = false;
 						break;
@@ -185,13 +185,13 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	const byte *dataEnd = src + dataSize;
 
 	// Check if this is per-line RLE or continuous RLE
-	int firstVal = READ_LE_UINT16(srcPtr);
+	int firstVal = READ_LE_INT16(srcPtr);
 	bool perLineMode = (firstVal > 0 && firstVal <= width * 2);
 
 	if (perLineMode) {
 		debug("Rebel2: Codec 45 using per-line RLE (firstLineSize=%d)", firstVal);
 		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
-			int lineSize = READ_LE_UINT16(srcPtr);
+			int lineSize = READ_LE_INT16(srcPtr);
 			srcPtr += 2;
 			if (lineSize <= 0 || lineSize > (int)(dataEnd - srcPtr))
 				break;

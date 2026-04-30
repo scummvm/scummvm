@@ -170,7 +170,7 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 		// Probe offsets to find valid RLE start
 		// Valid start should have reasonable line size values
 		for (int testOffset = 0; testOffset <= 6 && testOffset + 2 <= dataSize; testOffset += 2) {
-			int testLineSize = READ_LE_UINT16(src + testOffset);
+			int testLineSize = READ_LE_INT16(src + testOffset);
 			// A valid line size should be positive and reasonable for the width
 			if (testLineSize > 0 && testLineSize <= width * 2 && testLineSize < dataSize - testOffset) {
 				// Further validation: try to count valid line sizes
@@ -179,7 +179,7 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 				bool validSum = true;
 
 				while (linesTest < height && testPtr + 2 <= src + dataSize) {
-					int ls = READ_LE_UINT16(testPtr);
+					int ls = READ_LE_INT16(testPtr);
 					if (ls <= 0 || ls > width * 2) {
 						validSum = false;
 						break;
@@ -200,13 +200,13 @@ void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width
 	const byte *dataEnd = src + (dataSize - headerSkip);
 
 	// Check first value to determine per-line vs continuous mode
-	int firstVal = (src + 2 <= dataEnd) ? READ_LE_UINT16(src) : 0;
+	int firstVal = (src + 2 <= dataEnd) ? READ_LE_INT16(src) : 0;
 	bool perLineMode = (firstVal > 0 && firstVal <= width * 2);
 
 	if (perLineMode) {
 		// Per-line RLE with 2-byte size headers
 		for (int row = 0; row < height && src < dataEnd; row++) {
-			int lineSize = READ_LE_UINT16(src);
+			int lineSize = READ_LE_INT16(src);
 			src += 2;
 			if (lineSize <= 0 || lineSize > (int)(dataEnd - src))
 				break;
