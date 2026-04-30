@@ -880,7 +880,7 @@ static const ExtraGuiOption enableTTS = {
 
 static const ExtraGuiOption enableRebel2HiRes = {
 	_s("High resolution mode"),
-	_s("Run the game in 640x400 high resolution mode instead of 320x200."),
+	_s("Run the game in 640x400 high resolution mode instead of 320x200"),
 	"rebel2_hires",
 	true,
 	0,
@@ -889,7 +889,7 @@ static const ExtraGuiOption enableRebel2HiRes = {
 
 static const ExtraGuiOption enableRebel2UnlockAll = {
 	_s("Unlock all levels"),
-	_s("All levels will be available without requiring passwords."),
+	_s("All levels will be available without requiring passwords"),
 	"rebel2_unlock_all",
 	false,
 	0,
