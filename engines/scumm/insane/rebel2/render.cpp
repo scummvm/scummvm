@@ -310,9 +310,9 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 		debug("Rebel2: Invalid embedded SAN: userId=%d, size=%d", userId, size);
 		return;
 	}
-	
+
 	Common::MemoryReadStream stream(animData, size);
-	
+
 	// Read ANIM header
 	uint32 animTag = stream.readUint32BE();
 	if (animTag != MKTAG('A','N','I','M')) {
@@ -321,7 +321,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	}
 	uint32 animSize = stream.readUint32BE();
 	debug("Rebel2: Parsing embedded ANIM: userId=%d, reported size=%u, actual=%d", userId, animSize, size - 8);
-	
+
 	// Iterate through chunks to find FRME -> FOBJ
 	while (!stream.eos() && stream.pos() < size) {
 		uint32 tag = stream.readUint32BE();
@@ -389,7 +389,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 						// Update render position from FOBJ header
 						frame.renderX = left;
 						frame.renderY = top;
-						
+
 						// Read the raw FOBJ data
 						int32 dataSize = subSize - 14;
 						if (dataSize > 0) {
@@ -443,7 +443,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 							free(fobjData);
 						}
 					}
-					
+
 					// Done with FOBJ - assume only one relevant frame per embedded SAN
 					stream.seek(nextChunkPos);
 					goto end_parsing;
@@ -461,7 +461,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 				stream.skip(1);
 		}
 	}
-	
+
 	debug("Rebel2: No FOBJ found in embedded SAN userId=%d", userId);
 
 end_parsing:;
@@ -683,7 +683,7 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	const byte *srcData = nut->getCharData(spriteIdx);
 	int texW = nut->getCharWidth(spriteIdx);
 	int texH = nut->getCharHeight(spriteIdx);
-	
+
 	if (!srcData || texW <= 0 || texH <= 0)
 		return;
 	if (v < 0)
@@ -694,12 +694,12 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 	int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 	int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
 	int err = dx + dy, e2;
-	
+
 	// Total length approximation for UV mapping
 	int totalDist = (abs(dx) > abs(dy)) ? abs(dx) : abs(dy);
 	if (totalDist == 0)
 		totalDist = 1;
-	
+
 	int currentDist = 0;
 
 	for (;;) {
@@ -708,21 +708,21 @@ void InsaneRebel2::drawTexturedLine(byte *dst, int pitch, int width, int height,
 			int u = (currentDist * texW) / totalDist;
 			if (u >= texW)
 				u = texW - 1;
-			
+
 			byte color = srcData[v * texW + u];
-			
+
 			// Check for transparency (0 and optionally 231)
-			if (color != 0 && (!mask231 || color != 231)) { 
+			if (color != 0 && (!mask231 || color != 231)) {
 				dst[y0 * pitch + x0] = color;
 			}
 		}
-		
+
 		if (x0 == x1 && y0 == y1)
 			break;
 		e2 = 2 * err;
 		if (e2 >= dy) { err += dy; x0 += sx; }
 		if (e2 <= dx) { err += dx; y0 += sy; }
-		
+
 		currentDist++;
 	}
 }
@@ -2227,17 +2227,17 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// Map mouse Y (0-200) to Scroll Y (0-60)
 	int maxScrollX = width - _vm->_screenWidth;
 	int maxScrollY = height - _vm->_screenHeight;
-	
+
 	if (maxScrollX < 0)
 		maxScrollX = 0;
 	if (maxScrollY < 0)
 		maxScrollY = 0;
-	
+
 	// Simple linear mapping: Center of screen corresponds to center of buffer
 	Common::Point aimPos = getGameplayAimPoint();
 	_viewX = (aimPos.x * maxScrollX) / _vm->_screenWidth;
 	_viewY = (aimPos.y * maxScrollY) / _vm->_screenHeight;
-	
+
 	_player->setScrollOffset(_viewX, _viewY);
 
 	// Death check: original game (FUN_417E53 line 25) exits video playback
@@ -2263,10 +2263,10 @@ void InsaneRebel2::procPostRendering(byte *renderBitmap, int32 codecparam, int32
 	// - DISPFONT.NUT (DAT_00482200) sprites 1-7 contain the status bar elements
 	//
 	// We draw directly to screen at Y=180
-	
+
 	// Use video content coordinates, NOT buffer coordinates
 	const int videoWidth = 320;    // Native video width
-	const int videoHeight = 200;   // Native video height  
+	const int videoHeight = 200;   // Native video height
 	const int statusBarY = 180;    // 0xb4 - status bar starts at Y=180 in video coords
 
 	// Hide HUD/status bar during intro videos (marked by SmushPlayer video flag 0x20)

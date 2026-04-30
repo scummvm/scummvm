@@ -1120,35 +1120,35 @@ Common::KeymapArray ScummMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("JOY_LEFT");
 		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1RIGHT", _("Aim right / menu right"));
-			act->setCustomEngineActionEvent(kScummActionInsaneRight);
-			act->addDefaultInputMapping("JOY_RIGHT");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1RIGHT", _("Aim right / menu right"));
+		act->setCustomEngineActionEvent(kScummActionInsaneRight);
+		act->addDefaultInputMapping("JOY_RIGHT");
+		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1STICKUP", _("Stick up"));
-			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
-			act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1STICKUP", _("Stick up"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisUp);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y-");
+		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1STICKDOWN", _("Stick down"));
-			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
-			act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1STICKDOWN", _("Stick down"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisDown);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_Y+");
+		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1STICKLEFT", _("Stick left"));
-			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
-			act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1STICKLEFT", _("Stick left"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisLeft);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X-");
+		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1STICKRIGHT", _("Stick right"));
-			act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
-			act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1STICKRIGHT", _("Stick right"));
+		act->setCustomBackendActionAxisEvent(kScummBackendActionRebel1AxisRight);
+		act->addDefaultInputMapping("JOY_LEFT_STICK_X+");
+		rebel1Keymap->addAction(act);
 
-			act = new Action("RA1FIRE", _("Fire / select"));
-			act->setCustomEngineActionEvent(kScummActionInsaneAttack);
-			act->addDefaultInputMapping("JOY_A");
-			rebel1Keymap->addAction(act);
+		act = new Action("RA1FIRE", _("Fire / select"));
+		act->setCustomEngineActionEvent(kScummActionInsaneAttack);
+		act->addDefaultInputMapping("JOY_A");
+		rebel1Keymap->addAction(act);
 
 		act = new Action("RA1BACK", _("Back / skip"));
 		act->setKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE));

@@ -251,24 +251,24 @@ private:
 	int16 _mouseOffsetX; // 0x9762-style accumulated recenter offset in DOS 640-space
 	int16 _mouseOffsetY; // 0x9760-style accumulated recenter offset in DOS 200-space
 	int16 _mouseBiasX;   // 0x9774: current preprocessed horizontal bias
-		int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
-		int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
-		int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
-		bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
-		bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
-		int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
-		int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
-		int16 _level2JoystickFilteredX; // Smoothed Level 2 analog X input
-		int16 _level2JoystickFilteredY; // Smoothed Level 2 analog Y input
-		enum InputSource {
-			kInputSourceMouse,
-			kInputSourceJoystickAnalog,
-			kInputSourceJoystickDigital
-		};
-		InputSource _activeInputSource;
+	int16 _mouseBiasY;   // 0x9772: current preprocessed vertical bias
+	int16 _mousePrevBiasX; // 0x9770: previous-frame biasX
+	int16 _mousePrevBiasY; // 0x976E: previous-frame biasY
+	bool _mouseBiasLatch;  // 0x4486: one-frame large-jump latch
+	bool _mouseRecentering; // 0x976D: suppress recursive updates during warp
+	int16 _joystickAxisX;   // Rebel-specific left-stick X captured from keymapper axis events
+	int16 _joystickAxisY;   // Rebel-specific left-stick Y captured from keymapper axis events
+	int16 _level2JoystickFilteredX; // Smoothed Level 2 analog X input
+	int16 _level2JoystickFilteredY; // Smoothed Level 2 analog Y input
+	enum InputSource {
+		kInputSourceMouse,
+		kInputSourceJoystickAnalog,
+		kInputSourceJoystickDigital
+	};
+	InputSource _activeInputSource;
 
-		// 0x0B handler physics update (asteroid/surface levels)
-		void updateAsteroidPhysics();
+	// 0x0B handler physics update (asteroid/surface levels)
+	void updateAsteroidPhysics();
 
 	// 0x19/0x1A on-foot handler (Level 9 Stormtroopers)
 	void updateOnFootPhysics();
@@ -377,16 +377,16 @@ private:
 	// Path branching for levels with left/right alternative videos.
 	// Original sets nextSceneA/nextSceneB when GAME 0x07 counter == 394 (0x18A).
 	// We check ship position at that counter value to decide left vs right path.
-		static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
-		int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
-		bool _pathBranchEnabled;     // True when branching is active for this video
-		bool _rightPathSelected;     // True if player chose the right/easy path
-		int _levelRouteIndex;        // Current mid-level route/segment for branching levels
-		int _pendingRouteIndex;      // Next route requested by original frame-branch logic
-		int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
-		int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (Level 7 uses branchFrame + 7)
-		int _levelRouteChoice;       // Level-local pending branch choice (0=none, 1=left, 2=right)
-		int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
+	static const int32 kPathBranchCounter = 394;  // GAME 0x07 field1 value
+	int32 _gameCounter;          // GAME 0x07 field1 — the original's _DAT_7740
+	bool _pathBranchEnabled;     // True when branching is active for this video
+	bool _rightPathSelected;     // True if player chose the right/easy path
+	int _levelRouteIndex;        // Current mid-level route/segment for branching levels
+	int _pendingRouteIndex;      // Next route requested by original frame-branch logic
+	int32 _pendingRouteStartFrame; // Resume frame for branch-driven route switches
+	int32 _pendingRouteCutoverFrame; // Delayed inline route splice frame (Level 7 uses branchFrame + 7)
+	int _levelRouteChoice;       // Level-local pending branch choice (0=none, 1=left, 2=right)
+	int _levelGameplayPhase;     // Level-local interactive phase (e.g. LVL4 PLAY1 vs PLAY2)
 
 	// Main menu / options state
 	void runOptionsMenu();
