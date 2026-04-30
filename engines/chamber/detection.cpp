@@ -34,7 +34,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
+		AD_ENTRY2s("ere.pxi",  "5aa5bd2d79eefde70675b0b6734944f2", 134358,
+		           "PRES.BIN", nullptr,                              0),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH_DRAP,
@@ -44,18 +45,20 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"chamber",
 		"",
-		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
+		AD_ENTRY2s("kult1.pxi",   "fc0bd31a3c380338f76ff53e421e47b6", 140537,
+		           "PRESCGA.BIN", nullptr,                              0),
 		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE | GF_SPLASH_PRESCGA,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
-	// TODO: add EGA variant once Kult2.pxi MD5 is verified
+	// TODO: add EGA variant once Kult2.pxi and PRESEGA.EGA MD5s are verified
 	// {
 	// 	"chamber",
 	// 	"EGA",
-	// 	AD_ENTRY1s("Kult2.pxi", "<md5>", <size>),
+	// 	AD_ENTRY2s("Kult2.pxi",   "<md5>", <size>,
+	// 	           "PRESEGA.EGA", "<md5>", <size>),
 	// 	Common::EN_USA,
 	// 	Common::kPlatformDOS,
 	// 	ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
