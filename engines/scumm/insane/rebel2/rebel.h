@@ -477,7 +477,7 @@ public:
 	bool _pauseOverlayActive;
 
 	bool _introCursorPushed; // true when we've pushed an invisible cursor for intro
-	
+
 
 	int32 processMouse() override;
 	Common::Point getGameplayAimPoint();
@@ -672,15 +672,15 @@ public:
 	void enemyUpdate(byte *renderBitmap, Common::SeekableReadStream &b, int16 par2, int16 par3, int16 par4);
 
 	Common::List<enemy> _enemies;
-	
+
 	// Current handler type for Rebel Assault 2 (determines crosshair sprite)
 	// Handler 0: Background only
 	// Handler 7: Third-Person Ship - uses crosshair sprite 0x2F (47)
-	// Handler 8: Third-Person On Foot - uses crosshair sprite 0x2E (46)  
+	// Handler 8: Third-Person On Foot - uses crosshair sprite 0x2E (46)
 	// Handler 0x19: FPS/Mixed view - uses crosshair sprite 0x2F (47)
 	// Handler 0x26: Turret/Cockpit - crosshair varies by level type
 	int _rebelHandler;
-	
+
 	// Level type from IACT opcode 6 par3 (corresponds to DAT_004436de)
 	// Determines crosshair variant for turret mode:
 	// - levelType == 5: Use sprites 0x30+ (48+) for crosshair
@@ -702,7 +702,7 @@ public:
 		int renderY;       // Y position to render
 		bool valid;        // True if this slot has valid data
 	};
-	
+
 	EmbeddedSanFrame _rebelEmbeddedHud[16];  // HUD overlay slots (userId 0-15)
 
 	// Load and decode an embedded SAN animation from IACT chunk data
@@ -744,7 +744,7 @@ public:
 		int scale;       // Determines sprite set (small/med/large)
 		bool active;
 	};
-	
+
 	Explosion _explosions[5];
 	void spawnExplosion(int x, int y, int objectHalfWidth);
 

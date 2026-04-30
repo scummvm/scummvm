@@ -177,7 +177,7 @@ void InsaneRebel2::iactRebel2Scene1(byte *renderBitmap, int32 codecparam, int32 
 	// par4 is word at offset +6
 	//
 	// Based on disassembly of FUN_4028C5 and FUN_4033CF:
-	// 
+	//
 	// For IACT opcode 4 (enemy position update), the structure is:
 	//   Offset +0x06: Type/SubType (par3)
 	//   Offset +0x08: Enemy ID

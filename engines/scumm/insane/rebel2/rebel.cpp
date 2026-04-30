@@ -239,7 +239,7 @@ InsaneRebel2::InsaneRebel2(ScummEngine_v7 *scumm) {
 	_iactSceneId2 = 0;
 
 	int i, j;
-	
+
 	for (i = 0; i < 12; i++)
 		_metEnemiesList[i] = 0;
 
