@@ -32,7 +32,7 @@ extern ZBasic *g_zbasic;
 extern Toolbox *g_toolbox;
 
 // sun's map metapuzzle
-void FoolGame::sub_138_004() {
+void FoolGame::metapuzzleRun() {
 	// 138:0004
 	if (sunMapRestored == 1) {
 		sunMapRestored = 666;
@@ -66,7 +66,7 @@ void FoolGame::sub_138_004() {
 		// 138:0126
 		getNextEvent(-1);
 		if (var_ev_46.what == 1) {
-			sub_138_1b4();
+			metapuzzleOnClick();
 		}
 		if ((var_ev_46.modifiers & (kModLOptionKeyDown | kModMouseButtonUp)) == 0) {
 			sub_138_b06();
@@ -109,7 +109,7 @@ void FoolGame::sub_138_004() {
 	// 138:0f1a
 }
 
-void FoolGame::sub_138_1b4() {
+void FoolGame::metapuzzleOnClick() {
 	// 138:01b4
 	var_i16_7e4 = 0;
 	activePuzzle = 0;

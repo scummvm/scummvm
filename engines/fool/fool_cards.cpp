@@ -35,6 +35,9 @@ extern Toolbox *g_toolbox;
 
 // wheel of fortune card game
 void FoolGame::cardsRun() {
+	// missing zeroed state
+	var_i16_2016 = 0;
+
 	// 139:0004
 	this->sub_128_271a();
 	this->var_i16_c00 = 1;
@@ -75,7 +78,7 @@ void FoolGame::cardsRun() {
 		for (int i = 0; i <= 0x15; i++) {
 			this->var_i16_484 = g_zbasic->rndInt(0x16) - 1;
 			this->var_i16_7e4 = g_zbasic->rndInt(0x16) - 1;
-			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[this->var_i16_484]);
+			g_zbasic->swapInt(this->arr_i16_5cbc[this->var_i16_484], this->arr_i16_5cbc[this->var_i16_7e4]);
 		}
 		// 139:029c
 		for (int i = 0; i <= 0x15; i++) {

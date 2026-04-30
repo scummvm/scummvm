@@ -39,9 +39,9 @@ void FoolGame::highPriestessRun() {
 		g_toolbox->SetCursor(this->arr_curs_4d88[0x10]);
 	}
 	if (this->var_i16_c04 == 0) {
-		this->var_i16_e14 = 1;
+		this->menuHidesPlayfield = true;
 		this->thoth99Enchantments();
-		this->var_i16_e14 = 0;
+		this->menuHidesPlayfield = false;
 		if (this->var_i16_d0c == 0) {
 			this->sub_140_3412();
 			return;

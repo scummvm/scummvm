@@ -134,7 +134,7 @@ void FoolGame::sunMapOnClick() {
 		return;
 	}
 	// 137:0466
-	this->var_i16_e12 = 1;
+	this->menuDisabled = true;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);
@@ -156,7 +156,7 @@ void FoolGame::sunMapOnClick() {
 	this->sunMapCheckIfSolved();
 	this->sub_128_6186();
 	g_zbasic->menu(8, 3, 1, Common::U32String());
-	this->var_i16_e12 = 0;
+	this->menuDisabled = false;
 }
 
 void FoolGame::sunMapDragSelect() {
@@ -370,7 +370,7 @@ void FoolGame::sunMapRevealPiece() {
 	);
 	this->sub_128_6186();
 	this->sunMapCheckIfSolved();
-	this->var_i16_e12 = 0;
+	this->menuDisabled = false;
 }
 
 

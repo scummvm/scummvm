@@ -179,6 +179,7 @@ class MacDrawPrimitives : public Primitives {
 public:
 	void drawPoint(int x, int y, uint32 color, void *data) override;
 	void drawPolygonScan(const int *polyX, const int *polyY, int npoints, const Common::Rect &bbox, uint32 color, void *data) override;
+	void drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void *data) override;
 };
 
 template<typename T>
@@ -898,6 +899,44 @@ void MacDrawPrimitives<T>::drawPolygonScan(const int *polyX, const int *polyY, i
 	}
 
 	free(nodeX);
+}
+
+// http://members.chello.at/easyfilter/bresenham.html
+// Basically the same as the one in Graphics::Primitives, only tweaked to produce similar output to QuickDraw.
+template<typename T>
+void MacDrawPrimitives<T>::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled, void *data) {
+	int a = abs(x1 - x0), b = abs(y1 - y0), b1 = b & 1; /* values of diameter */
+	long dx = 4 * (1 - a) * b * b, dy = 4 * (b1 + 1) * a * a; /* error increment */
+	long err = dx + dy + b1 * a * a, e2; /* error of 1.step */
+
+	if (x0 > x1) { x0 = x1; x1 += a; } /* if called with swapped points */
+	if (y0 > y1) y0 = y1; /* .. exchange them */
+	y0 += (b + 1) / 2; y1 = y0 - b1;   /* starting pixel */
+	a *= 8 * a; b1 = 8 * b * b;
+
+	do {
+		if (filled) {
+			drawHLine(x0, x1, y0, color, data);
+			drawHLine(x0, x1, y1, color, data);
+		} else {
+			drawPoint(x1, y0, color, data); /*   I. Quadrant */
+			drawPoint(x0, y0, color, data); /*  II. Quadrant */
+			drawPoint(x0, y1, color, data); /* III. Quadrant */
+			drawPoint(x1, y1, color, data); /*  IV. Quadrant */
+		}
+		e2 = 2*err;
+		if (e2 <= dy) { y0++; y1--; err += dy += a; }  /* y step */
+		if (e2 >= dx || 2*err > dy) { x0++; x1--; err += dx += b1; } /* x step */
+	} while (x0 <= x1);
+
+	while (y0-y1 < b) {  /* too early stop of flat ellipses a=1 */
+		drawPoint(x0 - 1, y0, color, data); /* -> finish tip of ellipse */
+		drawPoint(x1 + 1, y0, color, data);
+		drawPoint(x0 - 1, y1, color, data);
+		drawPoint(x1 + 1, y1, color, data);
+		y0++;
+		y1--;
+	}
 }
 
 
