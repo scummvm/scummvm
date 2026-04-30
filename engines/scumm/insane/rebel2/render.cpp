@@ -40,6 +40,55 @@ namespace Scumm {
 extern void smushDecodeRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 extern void smushDecodeUncompressed(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
 
+static bool isValidEmbeddedFrame(const InsaneRebel2::EmbeddedSanFrame &frame) {
+	return frame.valid && frame.pixels && frame.width > 0 && frame.height > 0;
+}
+
+static int countEmbeddedFramePixels(const InsaneRebel2::EmbeddedSanFrame &frame) {
+	if (!isValidEmbeddedFrame(frame))
+		return 0;
+
+	int count = 0;
+	for (int i = 0; i < frame.width * frame.height; i++) {
+		if (frame.pixels[i] != 0)
+			count++;
+	}
+
+	return count;
+}
+
+static void blitEmbeddedFrameRegion(byte *renderBitmap, int pitch, int clipWidth, int clipHeight,
+		const InsaneRebel2::EmbeddedSanFrame &frame, int destX, int destY,
+		int srcX, int srcY, int drawWidth, int drawHeight) {
+	if (!renderBitmap || !isValidEmbeddedFrame(frame) || drawWidth <= 0 || drawHeight <= 0)
+		return;
+	if (srcX < 0 || srcY < 0)
+		return;
+
+	drawWidth = MIN(drawWidth, frame.width - srcX);
+	drawHeight = MIN(drawHeight, frame.height - srcY);
+	if (drawWidth <= 0 || drawHeight <= 0)
+		return;
+
+	for (int y = 0; y < drawHeight; y++) {
+		int dy = destY + y;
+		if (dy < 0 || dy >= clipHeight)
+			continue;
+
+		const byte *srcRow = frame.pixels + (srcY + y) * frame.width + srcX;
+		byte *dstRow = renderBitmap + dy * pitch;
+		for (int x = 0; x < drawWidth; x++) {
+			int dx = destX + x;
+			if (dx < 0 || dx >= clipWidth)
+				continue;
+
+			byte pixel = srcRow[x];
+			if (pixel != 0 && pixel != 231)
+				dstRow[dx] = pixel;
+		}
+	}
+}
+
 // renderEmbeddedFrame -- Blit a decoded embedded frame to the video buffer.
 void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFrame &frame, int userId) {
 	// Render the decoded embedded frame to the video buffer
@@ -72,18 +121,8 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 	int pitch = (_player && _player->_width > 0) ? _player->_width : 320;
 	int bufHeight = (_player && _player->_height > 0) ? _player->_height : 200;
 
-	for (int y = 0; y < frame.height && (frame.renderY + y) < bufHeight; y++) {
-		for (int x = 0; x < frame.width && (frame.renderX + x) < pitch; x++) {
-			byte pixel = frame.pixels[y * frame.width + x];
-			if (pixel != 0 && pixel != 231) {  // 0 and 231 = transparent
-				int destX = frame.renderX + x;
-				int destY = frame.renderY + y;
-				if (destX >= 0 && destY >= 0) {
-					renderBitmap[destY * pitch + destX] = pixel;
-				}
-			}
-		}
-	}
+	blitEmbeddedFrameRegion(renderBitmap, pitch, pitch, bufHeight, frame,
+		frame.renderX, frame.renderY, 0, 0, frame.width, frame.height);
 	debug("Rebel2: Rendered embedded HUD %d at (%d,%d)", userId, frame.renderX, frame.renderY);
 }
 
@@ -217,11 +256,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 
 							// Count non-zero pixels to verify frame has content
 							if (frame.valid) {
-								int nonZeroPixels = 0;
-								for (int i = 0; i < width * height; i++) {
-									if (frame.pixels[i] != 0)
-										nonZeroPixels++;
-								}
+								int nonZeroPixels = countEmbeddedFramePixels(frame);
 								debug("Rebel2: Frame userId=%d has %d non-zero pixels (%d%%)",
 									userId, nonZeroPixels, (nonZeroPixels * 100) / (width * height));
 							}
@@ -2672,7 +2707,7 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 
 	for (int hudSlot = 1; hudSlot < 16; hudSlot++) {
 		EmbeddedSanFrame &frame = _rebelEmbeddedHud[hudSlot];
-		if (!frame.valid || !frame.pixels || frame.width <= 0 || frame.height <= 0)
+		if (!isValidEmbeddedFrame(frame))
 			continue;
 
 		// Handler 25: Skip slot 4 (corridor overlay) in post-rendering.
@@ -2707,23 +2742,11 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 				int selectedOffset = _shipDirectionIndex % groupCount;
 				int selectedId = groupMembers[selectedOffset];
 
-				// Verify selected frame has pixels
 				EmbeddedSanFrame &selectedFrame = _rebelEmbeddedHud[selectedId];
-				int nonZero = 0;
-				for (int i = 0; i < selectedFrame.width * selectedFrame.height; i++) {
-					if (selectedFrame.pixels[i] != 0)
-						nonZero++;
-				}
-
-				if (nonZero == 0) {
+				if (countEmbeddedFramePixels(selectedFrame) == 0) {
 					for (int i = 0; i < groupCount; i++) {
 						EmbeddedSanFrame &altFrame = _rebelEmbeddedHud[groupMembers[i]];
-						int altNonZero = 0;
-						for (int j = 0; j < altFrame.width * altFrame.height; j++) {
-							if (altFrame.pixels[j] != 0)
-								altNonZero++;
-						}
-						if (altNonZero > 0) {
+						if (countEmbeddedFramePixels(altFrame) > 0) {
 							selectedId = groupMembers[i];
 							break;
 						}
@@ -2762,19 +2785,8 @@ void InsaneRebel2::renderEmbeddedHudOverlays(byte *renderBitmap, int pitch, int 
 		debug(3, "Rebel2: Rendering embedded HUD slot=%d size=%dx%d at (%d,%d)",
 			hudSlot, frame.width, frame.height, destX, destY);
 
-		// Draw frame with transparency (pixel 0 and 231 = transparent)
-		for (int y = 0; y < frame.height && (destY + y) < height; y++) {
-			for (int x = 0; x < frame.width && (destX + x) < pitch; x++) {
-				byte pixel = frame.pixels[y * frame.width + x];
-				if (pixel != 0 && pixel != 231) {
-					int fx = destX + x;
-					int fy = destY + y;
-					if (fx >= 0 && fy >= 0) {
-						renderBitmap[fy * pitch + fx] = pixel;
-					}
-				}
-			}
-		}
+		blitEmbeddedFrameRegion(renderBitmap, pitch, pitch, height, frame,
+			destX, destY, 0, 0, frame.width, frame.height);
 	}
 }
 
@@ -3336,7 +3348,7 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 		return;
 
 	EmbeddedSanFrame &shipFrame = _rebelEmbeddedHud[11];
-	if (!shipFrame.valid || !shipFrame.pixels || shipFrame.width <= 0 || shipFrame.height <= 0)
+	if (!isValidEmbeddedFrame(shipFrame))
 		return;
 
 	// Calculate display offset
@@ -3368,21 +3380,8 @@ void InsaneRebel2::renderFallbackShip(byte *renderBitmap, int pitch, int width, 
 	int drawX = shipScreenX - spriteW / 2 + _viewX;
 	int drawY = shipScreenY - spriteH / 2 + _viewY;
 
-	// Blit from embedded HUD
-	for (int y = 0; y < spriteH && (drawY + y) < height; y++) {
-		if (drawY + y < 0)
-			continue;
-		for (int x = 0; x < spriteW && (drawX + x) < width; x++) {
-			if (drawX + x < 0)
-				continue;
-			int srcIdx = (srcY + y) * shipFrame.width + (srcX + x);
-			byte pixel = shipFrame.pixels[srcIdx];
-			if (pixel != 0 && pixel != 231) {
-				int dstIdx = (drawY + y) * pitch + (drawX + x);
-				renderBitmap[dstIdx] = pixel;
-			}
-		}
-	}
+	blitEmbeddedFrameRegion(renderBitmap, pitch, width, height, shipFrame,
+		drawX, drawY, srcX, srcY, spriteW, spriteH);
 
 	debug("Rebel2: Ship (fallback) at (%d,%d) strip=(%d,%d) of (%dx%d) dir=(%d,%d)",
 		drawX, drawY, srcX, srcY, numHorizontal, numVertical, _shipDirectionH, _shipDirectionV);
