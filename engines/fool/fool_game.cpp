@@ -54,6 +54,17 @@ void FoolGame::run() {
 }
 
 void FoolGame::sub_128_004() {
+	// zero out variables
+	storyCurrentChapter = 0;
+	sunMapRestored = 0;
+	menuDisabled = false;
+	menuHidesPlayfield = false;
+	// zero out pattern buffer; sub_129_123a uses entry
+	// 0 for filling the top bar
+	for (int i = 0; i <= 0x50; i++) {
+		Common::fill(arr_pat_58f4[i].data, arr_pat_58f4[i].data + 8, 0);
+	}
+
 	// Define the bitmap surfaces (normally pointers to raw memory)
 	this->arr_bmp_5dfc = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
 	this->arr_bmp_b3ec = BitMap(new Graphics::ManagedSurface(SCREEN_WIDTH, SCREEN_HEIGHT, Graphics::PixelFormat::createFormatCLUT8()));
@@ -198,8 +209,8 @@ void FoolGame::sub_128_004() {
 		if (this->stateFlags & kStatePuzzleSelect) {
 			this->puzzleRun();
 		}
-		if (this->stateFlags & 0x100) {
-			this->sub_138_004();
+		if (this->stateFlags & kStateMetapuzzleSelect) {
+			this->metapuzzleRun();
 		}
 		if (this->stateFlags & 0x400) {
 			this->sub_128_2b0a();
@@ -1513,7 +1524,7 @@ void FoolGame::sub_128_32c8() {
 
 void FoolGame::savePrompt() {
 	// 128:32fa
-	if (this->var_i16_7ce == 0x29a) {
+	if (this->var_i16_7ce == 666) {
 		return;
 	}
 	this->var_i16_7be = 0;
@@ -1541,7 +1552,7 @@ void FoolGame::savePrompt() {
 void FoolGame::saveGame() {
 	// write save file
 	this->clearStateBits(kStateSaveGame);
-	if (this->var_i16_7ce == 0x29a)
+	if (this->var_i16_7ce == 666)
 		return;
 	// 128:3548
 	if (this->var_str_8ec == g_zbasic->str(57)) { // empty
@@ -2451,40 +2462,40 @@ void FoolGame::sub_128_5a6c() {
 
 void FoolGame::sub_128_5b30() {
 	// 128:5b30
-	if (this->var_i16_e12 == 0) {
-		this->var_ev_46.what = kNullEvent;
-		if (this->var_i16_e14 != 0) {
-			this->thothHidePlayfield();
-		}
-		this->var_i32_bf8 = g_toolbox->MenuSelect(this->var_ev_46.where);
-		this->selectedMenuID = (uint16)(this->var_i32_bf8 >> 16);
-		this->selectedMenuItem = (uint16)(this->var_i32_bf8 & 0xffff);
-		if (this->selectedMenuID > 0) {
-			// 128:5b8c
-			this->sub_128_5c20();
-			g_toolbox->HiliteMenu(0);
-		}
-		// 128:5b94
-		if (this->var_i16_e14 != 0) {
-			this->thothShowPlayfield();
-		}
-		this->sub_128_61ec();
+	if (this->menuDisabled)
+		return;
+	this->var_ev_46.what = kNullEvent;
+	if (this->menuHidesPlayfield) {
+		this->thothHidePlayfield();
 	}
+	this->var_i32_bf8 = g_toolbox->MenuSelect(this->var_ev_46.where);
+	this->selectedMenuID = (uint16)(this->var_i32_bf8 >> 16);
+	this->selectedMenuItem = (uint16)(this->var_i32_bf8 & 0xffff);
+	if (this->selectedMenuID > 0) {
+		// 128:5b8c
+		this->sub_128_5c20();
+		g_toolbox->HiliteMenu(0);
+	}
+	// 128:5b94
+	if (this->menuHidesPlayfield) {
+		this->thothShowPlayfield();
+	}
+	this->sub_128_61ec();
 }
 
 void FoolGame::sub_128_5baa() {
-	if (this->var_i16_e12 != 0)
+	if (this->menuDisabled)
 		return;
 	this->var_i32_bf8 = g_toolbox->MenuKey((char)(this->var_ev_46.message & 0xff));
 	g_toolbox->Delay(0);
 	this->selectedMenuID = this->var_i32_bf8 >> 16;
 	this->selectedMenuItem = this->var_i32_bf8 & 0xffff;
 	if (this->selectedMenuID > 0) {
-		if (this->var_i16_e14 != 0) {
+		if (this->menuHidesPlayfield) {
 			this->thothHidePlayfield();
 		}
 		this->sub_128_5c20();
-		if (this->var_i16_e14 != 0) {
+		if (this->menuHidesPlayfield) {
 			this->thothShowPlayfield();
 		}
 		g_toolbox->HiliteMenu(0);
@@ -2725,7 +2736,7 @@ void FoolGame::sub_129_004() {
 }
 
 void FoolGame::sub_129_068() {
-	this->var_i16_7ce = 0x29a;
+	this->var_i16_7ce = 666;
 	this->var_i16_372 = { 0, 0, 0 };
 	this->soundEnabled = 1;
 	this->var_i16_7a0 = 1;
@@ -2937,6 +2948,7 @@ void FoolGame::sub_129_068() {
 	for (int i = 0; i <= 1; i++) {
 		g_toolbox->ReleaseResource(this->arr_i32_192c0[i]);
 	}
+
 	// 129:091a
 	this->var_i32_692 = g_toolbox->TickCount();
 	this->var_i16_68a = 0x28;
@@ -3164,10 +3176,10 @@ void FoolGame::sub_129_068() {
 	// 129:11f6
 	if (g_zbasic->str(157) == this->var_str_8ec) { // empty
 		// cold start
-		this->stateFlags = 8;
+		this->stateFlags = kStateNewGame;
 	} else {
 		// loading a save game
-		this->stateFlags = 0x10;
+		this->stateFlags = kStateOpenGame;
 		this->var_str_588 = this->var_str_8ec;
 		this->var_i16_688 = this->var_i16_9ec;
 	}
