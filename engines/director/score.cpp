@@ -138,37 +138,9 @@ bool Score::processImmediateFrameScript(Common::String s, int id) {
 	return false;
 }
 
-bool Score::processFrozenPlayScript() {
-	// Unfreeze the play script if the special flag is set
-	if (g_lingo->_playDone) {
-		g_lingo->_playDone = false;
-		if (_window->thawLingoPlayState()) {
-			Symbol currentScript;
-			LingoState *state = _window->getLingoState();
-			if (state && !state->callstack.empty())
-				currentScript = state->callstack.front()->sp;
-			g_lingo->switchStateFromWindow();
-			bool completed = g_lingo->execute();
-			if (!completed) {
-				debugC(3, kDebugLingoExec, "Score::processFrozenPlayScript(): State froze again mid-thaw, interrupting");
-				return false;
-			} else if (currentScript == g_lingo->_currentInputEvent) {
-				// script that just completed was the current input event, clear the flag
-				debugC(3, kDebugEvents, "Score::processFrozenPlayScript(): Input event completed");
-				g_lingo->_currentInputEvent = Symbol();
-			}
-		}
-	}
-	return true;
-}
-
-
 bool Score::processFrozenScripts(bool recursion, int count) {
 	if (!_haveInteractivity)
 		return true;
-
-	if (!processFrozenPlayScript())
-		return false;
 
 	// Unfreeze any in-progress scripts and attempt to run them
 	// to completion.
@@ -485,6 +457,7 @@ void Score::updateCurrentFrame() {
 
 	if (nextFrameNumberToLoad >= getFramesNum()) {
 		Window *window = _vm->getCurrentWindow();
+		// reached the end of the movie
 		if (!window->_movieStack.empty()) {
 			MovieReference ref = window->_movieStack.back();
 			window->_movieStack.pop_back();
@@ -493,6 +466,9 @@ void Score::updateCurrentFrame() {
 				window->setNextMovie(ref.movie);
 				window->_nextMovie.frameI = ref.frameI;
 				return;
+			}
+			if (window->getLingoPlayState()) {
+				window->requeueLingoPlayState();
 			}
 			nextFrameNumberToLoad = ref.frameI;
 		} else {

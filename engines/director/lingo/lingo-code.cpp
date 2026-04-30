@@ -381,6 +381,12 @@ void Lingo::freezePlayState() {
 	switchStateFromWindow();
 }
 
+void Lingo::requeuePlayState() {
+	Window *window = _vm->getCurrentWindow();
+	window->requeueLingoPlayState();
+}
+
+
 void LC::c_constpush() {
 	Common::String name(g_lingo->readString());
 

@@ -142,7 +142,6 @@ public:
 	void playSoundChannel(bool puppetOnly, bool sound1Changed = true, bool sound2Changed = true);
 
 	Common::String formatChannelInfo();
-	bool processFrozenPlayScript();
 
 	Common::MemoryReadStreamEndian *getSpriteDetailsStream(int spriteIdx);
 

@@ -724,6 +724,7 @@ bool Lingo::execute(int targetFrame) {
 		}
 		if (_playDone) {
 			_playDone = false;
+			requeuePlayState();
 		}
 	}
 	_abort = false;

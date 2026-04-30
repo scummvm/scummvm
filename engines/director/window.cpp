@@ -603,8 +603,8 @@ bool Window::step() {
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
 		// attempt to thaw the lingo play state, if required
 		// For movie switches, we want to run it in the context of the new movie.
-		if (_nextMovie.movie.empty())
-			_currentMovie->getScore()->processFrozenPlayScript();
+		if (_nextMovie.movie.empty() && getLingoPlayState())
+			requeueLingoPlayState();
 		debugC(5, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		debugC(5, kDebugEvents, "@@@@   Finishing movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 		debugC(5, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
@@ -760,6 +760,12 @@ void Window::thawLingoState() {
 	_frozenLingoStates.pop_back();
 }
 
+// When "play frame x" or "play frame movie" is called, something special happens.
+// The current Lingo state is frozen, in a different buffer to the normal frozen states.
+// That state is resumed if the Score play head reaches the end of the movie, or "play done"
+// is called. At that point, the current Lingo execution state is obliterated, and the
+// play state is introduced as the very first frozen state to process.
+
 void Window::freezeLingoPlayState() {
 	if (_lingoPlayState) {
 		warning("FIXME: Just clobbered the play state");
@@ -770,18 +776,12 @@ void Window::freezeLingoPlayState() {
 	debugC(3, kDebugLingoExec, "Freezing Lingo play state");
 }
 
-bool Window::thawLingoPlayState() {
+bool Window::requeueLingoPlayState() {
 	if (!_lingoPlayState) {
-		warning("Tried to thaw when there's no frozen play state, ignoring");
+		warning("Tried to requeue when there's no frozen play state, ignoring");
 		return false;
 	}
-	if (!_lingoState->callstack.empty()) {
-		warning("Can't thaw a Lingo state in mid-execution, ignoring");
-		return false;
-	}
-	delete _lingoState;
-	debugC(3, kDebugLingoExec, "Thawing Lingo play state");
-	_lingoState = _lingoPlayState;
+	_frozenLingoStates.insert_at(0, _lingoPlayState);
 	_lingoPlayState = nullptr;
 	return true;
 }
