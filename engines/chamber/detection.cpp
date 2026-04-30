@@ -21,6 +21,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "chamber/detection.h"
 
 namespace Chamber {
 static const PlainGameDescriptor ChamberGames[] = {
@@ -36,7 +37,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("ere.pxi", "5aa5bd2d79eefde70675b0b6734944f2", 134358),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH_DRAP,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
@@ -46,9 +47,20 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("kult1.pxi", "fc0bd31a3c380338f76ff53e421e47b6", 140537),
 		Common::EN_USA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | GF_SPLASH_PRESCGA,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
+
+	// TODO: add EGA variant once Kult2.pxi MD5 is verified
+	// {
+	// 	"chamber",
+	// 	"EGA",
+	// 	AD_ENTRY1s("Kult2.pxi", "<md5>", <size>),
+	// 	Common::EN_USA,
+	// 	Common::kPlatformDOS,
+	// 	ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
+	// 	GUIO1(GUIO_RENDEREGA)
+	// },
 
 	AD_TABLE_END_MARKER
 };

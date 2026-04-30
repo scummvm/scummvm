@@ -280,31 +280,48 @@ Common::Error ChamberEngine::init() {
 
 	Graphics::Surface *splash = nullptr;
 
-	if (g_vm->_videoMode == Common::RenderMode::kRenderEGA) {
-		/* EGA title screen — load planar EGA splash (same format as FOND.EGA) */
+	if (_gameDescription->flags & GF_SPLASH_PRESEGA) {
+		/* EGA title screen */
 		splash = ega_loadFond("PRESEGA.EGA");
+		if (!splash) {
+			_shouldQuit = true;
+			return Common::kNoError;
+		}
 		g_vm->_renderer->colorSelect(0x30);
-		if (splash)
-			g_vm->_renderer->backBufferToRealFull();
-	} else {
-		if (g_vm->getLanguage() == Common::EN_USA) {
-			/* Load title screen */
-			splash = loadSplash("PRESCGA.BIN");
-			if (!splash)
-				exitGame();
+		g_vm->_renderer->backBufferToRealFull();
+	} else if (_gameDescription->flags & GF_SPLASH_PRESCGA) {
+		/* EN_USA CGA title screen */
+		splash = loadSplash("PRESCGA.BIN");
+		if (!splash) {
+			_shouldQuit = true;
+			return Common::kNoError;
+		}
 
-			if (ifgm_loaded) {
-				/*TODO*/
-			}
-		} else {
-			/* Load title screen */
-			splash = loadSplash("PRES.BIN");
-			if (!splash)
-				exitGame();
+		if (ifgm_loaded) {
+			/*TODO*/
 		}
 
 		if (!isCustomHerc) {
-			/* Select intense cyan-mageta palette */
+			g_vm->_renderer->colorSelect(0x30);
+			g_vm->_renderer->backBufferToRealFull();
+		} else {
+			if (_renderMode == Common::kRenderHercG)
+				g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
+			else
+				g_system->getPaletteManager()->setPalette(Graphics::HGC_A_PALETTE, 0, 2);
+
+			g_vm->_renderer->backBufferToRealFull();
+		}
+	} else {
+		/* Multilingual CGA title screen */
+		splash = loadSplash("PRES.BIN");
+		if (!splash) {
+			_shouldQuit = true;
+			return Common::kNoError;
+		}
+
+		if (!isCustomHerc) {
+			/* Select intense cyan-magenta palette */
 			g_vm->_renderer->colorSelect(0x30);
 			g_vm->_renderer->backBufferToRealFull();
 		} else {
@@ -328,17 +345,19 @@ Common::Error ChamberEngine::init() {
 	readKeyboardChar();
 
 
-	if (g_vm->getLanguage() == Common::EN_USA) {
+	if (!(_gameDescription->flags & GF_SPLASH_DRAP)) {
 		if (ifgm_loaded) {
 			/*TODO*/
 		}
 
-		/* Force English language */
+		/* Single-language variant — force English */
 		c = 'E';
 	} else {
 		/* Load language selection screen */
-		if (!loadSplash("DRAP.BIN"))
-			exitGame();
+		if (!loadSplash("DRAP.BIN")) {
+			_shouldQuit = true;
+			return Common::kNoError;
+		}
 
 		/* Wait for a keypress and show the language selection screen */
 		clearKeyboard();

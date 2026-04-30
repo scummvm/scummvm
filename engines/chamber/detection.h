@@ -1,0 +1,37 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef CHAMBER_DETECTION_H
+#define CHAMBER_DETECTION_H
+
+namespace Chamber {
+
+// Bits 0-14 are free for engine use; ADGF_* flags occupy bits 15-31.
+enum ChamberGameFlags {
+	GF_SPLASH_PRESCGA = (1 << 0), ///< Title screen is PRESCGA.BIN (EN_USA CGA)
+	GF_SPLASH_PRES    = (1 << 1), ///< Title screen is PRES.BIN (multilingual CGA)
+	GF_SPLASH_PRESEGA = (1 << 2), ///< Title screen is PRESEGA.EGA (EGA)
+	GF_SPLASH_DRAP    = (1 << 3), ///< Has DRAP.BIN language selection screen
+};
+
+} // End of namespace Chamber
+
+#endif // CHAMBER_DETECTION_H
