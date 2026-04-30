@@ -427,8 +427,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 					}
 
 					// Done with FOBJ - assume only one relevant frame per embedded SAN
-					stream.seek(nextChunkPos);
-					goto end_parsing;
+					return;
 				} else {
 					// Skip other sub-chunks (AHDR inside FRME?) or padding
 					stream.seek(nextSubPos);
@@ -445,8 +444,6 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 	}
 
 	debug("Rebel2: No FOBJ found in embedded SAN userId=%d", userId);
-
-end_parsing:;
 }
 
 // Spawn explosion into the shared 5-slot system.
