@@ -1983,11 +1983,24 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	int clueCursor = 0;
 	Common::Array<int> pageStarts;
 	pageStarts.push_back(0);
-	// Floppy NoteIndex entries are 7 bytes (`u16 ?; u16 jakeOff; u16
-	// jennyOff; u8 score`) with ABSOLUTE byte offsets into the mystery
-	// blob, while CD entries are 4 bytes with offsets relative to the
-	// TextBlock at header[+0xc]. Resolve the right text for the active
-	// partner / variant once per render.
+	// Floppy NoteIndex entries are 7 bytes:
+	//   +0..1  clue text offset (ABSOLUTE byte offset into the
+	//          mystery blob; partner-agnostic clue statement —
+	//          this is what the notebook displays).
+	//   +2..3  Jake's spoken line offset (used by
+	//          `_DisplayHotspotClue_Floppy` when Jake narrates a
+	//          dialog record — NOT for the notebook).
+	//   +4..5  Jenny's spoken line offset (same, for Jenny).
+	//   +6     score.
+	// Verified at `_DrawNotes_Floppy / FUN_15e0_01e8`'s
+	// `*(int *)(notes + idx * 7)` access (no `+2`/`+4` shift —
+	// always reads byte +0). The earlier port used the dialog
+	// spoken line for the notebook, which showed the partner's
+	// "Hi, Jake! Hi, Jenny!" intro instead of the actual clue
+	// statement ("We received a note that says..."). CD entries
+	// are 4 bytes with offsets relative to the TextBlock at
+	// header[+0xc]. Resolve the right text for the active variant
+	// once per render.
 	const bool floppyNb = isFloppy();
 	const byte *bufBase = _mystery.blobAt(0);
 	const uint32 mysSz  = _mystery.dataSize();
@@ -1995,10 +2008,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		if (!ni || clueId >= niCount)
 			return Common::String();
 		if (floppyNb && bufBase) {
-			const uint stride = 7;
-			const uint16 textOff = (_partner == 0)
-				? READ_LE_UINT16(ni + clueId * stride + 2)
-				: READ_LE_UINT16(ni + clueId * stride + 4);
+			const uint16 textOff = READ_LE_UINT16(ni + clueId * 7);
 			if (textOff == 0 || textOff >= mysSz)
 				return Common::String();
 			const char *p = (const char *)(bufBase + textOff);
@@ -2332,24 +2342,46 @@ void EEMEngine::doGallery() {
 								continue;
 							if (!ni || clueId >= niCount)
 								continue;
-							// Floppy notes are 7-byte entries: u16 ?,
-							// u16 jakeOff, u16 jennyOff, u8 score. The
-							// partner-specific text offset is at +2
-							// (Jake) or +4 (Jenny) — verified at
-							// `FUN_22dc_05c8 @ 22dc:0843`. CD notes are
-							// 4 bytes: u16 textOff, u16 score.
-							uint16 textOff;
+							// Floppy notes are 7-byte entries:
+							//   +0..1 clue text (absolute offset)
+							//   +2..3 Jake spoken line
+							//   +4..5 Jenny spoken line
+							//   +6    score
+							// `_DrawNotes_Floppy / FUN_15e0_01e8`'s
+							// `*(int *)(notes + idx * 7)` shows the
+							// notebook always uses +0 — the partner-
+							// agnostic clue statement. The +2/+4
+							// offsets are the partner spoken lines used
+							// by `FUN_22dc_05c8` when rendering dialog
+							// records (NOT this notebook view). CD
+							// notes are 4 bytes: u16 textOff, u16
+							// score.
+							Common::String txt;
 							if (floppyMI) {
-								const uint partnerByte = (_partner == 0)
-									? 2 : 4;
-								textOff = READ_LE_UINT16(
-									ni + clueId * 7 + partnerByte);
+								const uint16 textOff =
+									READ_LE_UINT16(ni + clueId * 7);
+								const byte *bb = _mystery.blobAt(0);
+								const uint32 dsz =
+									_mystery.dataSize();
+								if (bb && textOff != 0 &&
+									textOff < dsz) {
+									const char *p =
+										(const char *)(bb + textOff);
+									uint32 len = 0;
+									while (textOff + len < dsz &&
+										   p[len] != 0)
+										len++;
+									txt = parseString(
+										Common::String(p, len),
+										_playerName, _partner);
+								}
 							} else {
-								textOff = READ_LE_UINT16(ni + clueId * 4);
+								const uint16 textOff =
+									READ_LE_UINT16(ni + clueId * 4);
+								txt = parseString(
+									_mystery.textAt(textOff),
+									_playerName, _partner);
 							}
-							Common::String txt =
-								parseString(_mystery.textAt(textOff),
-											_playerName, _partner);
 							if (txt.empty())
 								continue;
 							const byte color =
@@ -3162,6 +3194,13 @@ bool EEMEngine::doAccuseNotes() {
 	Picture accuseBg;
 	const bool haveBg = _picsArchive.getPicture(0x1a7, accuseBg);
 
+	// Reset selection on entry. `FUN_1d40_0e07 @ 1d40:0e34` (floppy)
+	// explicitly zeroes the 0x7f-byte `_NoteSelected_Floppy` array
+	// before drawing, so the player always starts with a clean board.
+	// Without this, leftover selections from a failed attempt persist
+	// and the post-selection 100-point gate gets the wrong sum.
+	memset(_mystery._noteSelected, 0, sizeof(_mystery._noteSelected));
+
 	// Required count for solving — `6 - chainStage`.
 	const uint expected = (_chainStage >= 1 && _chainStage <= 3)
 		? (uint)(6 - _chainStage)
@@ -3206,6 +3245,37 @@ bool EEMEngine::doAccuseNotes() {
 	int numPages = 1;
 	pageBreaks[0] = 0;
 
+	// Variant-aware text resolver. CD note entries are 4 bytes
+	// (u16 textOff RELATIVE to TextBlock, u16 score), so the offset
+	// is added to `_textOffset` via `Mystery::textAt`. Floppy
+	// entries are 7 bytes:
+	//   +0..1  clue text offset (ABSOLUTE byte offset into the
+	//          mystery blob — partner-agnostic clue statement;
+	//          this is what the notebook displays).
+	//   +2..3  Jake spoken-line offset (`FUN_22dc_05c8 @ 22dc:0843`).
+	//   +4..5  Jenny spoken-line offset.
+	//   +6     score (`FUN_1d40_0c48`).
+	// `_DrawNotes_Floppy / FUN_15e0_01e8` reads `*(int *)(notes +
+	// idx * 7)` — always byte +0 — for the notebook text.
+	// Reading +2/+4 here showed the partner's "Hi, Jake! Hi,
+	// Jenny!" intro instead of the actual clue statement.
+	const bool floppyNote = isFloppy();
+	const byte *bufBaseNotes = _mystery.blobAt(0);
+	auto noteText = [&](uint clueId) -> Common::String {
+		if (floppyNote) {
+			const uint16 textOff = READ_LE_UINT16(ni + clueId * 7);
+			if (textOff == 0 || textOff >= _mystery.dataSize() ||
+				!bufBaseNotes)
+				return Common::String();
+			return parseString(
+				(const char *)(bufBaseNotes + textOff),
+				_playerName, _partner);
+		}
+		const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+		return parseString(_mystery.textAt(textOff),
+						   _playerName, _partner);
+	};
+
 	auto rebuildPagination = [&]() {
 		numPages = 1;
 		pageBreaks[0] = 0;
@@ -3214,11 +3284,8 @@ bool EEMEngine::doAccuseNotes() {
 		for (uint i = 0; i < found.size(); i++) {
 			const uint clueId = found[i];
 			Common::String txt;
-			if (clueId < niCount) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				txt = parseString(_mystery.textAt(textOff),
-								   _playerName, _partner);
-			}
+			if (clueId < niCount)
+				txt = noteText(clueId);
 			Common::Array<Common::String> wrapped;
 			_font.wordWrapText(txt, rectW, wrapped);
 			const int h = (int)wrapped.size() * lineH;
@@ -3282,11 +3349,8 @@ bool EEMEngine::doAccuseNotes() {
 		for (int i = startIdx; i < endIdx; i++) {
 			const uint clueId = found[i];
 			Common::String txt;
-			if (clueId < niCount) {
-				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
-				txt = parseString(_mystery.textAt(textOff),
-								   _playerName, _partner);
-			}
+			if (clueId < niCount)
+				txt = noteText(clueId);
 			if (txt.empty())
 				txt = Common::String::format(
 					isSpanish() ? "nota %u" : "clue %u", clueId);
@@ -3408,6 +3472,40 @@ bool EEMEngine::doAccuseNotes() {
 						const uint clueId = slotClues[i];
 						_mystery._noteSelected[clueId] ^= 1;
 						dirty = true;
+
+						// Debug: dump current user-selected score so
+						// the post-selection 100-point gate behaviour
+						// is visible while picking. Mirrors the
+						// floppy `FUN_1d40_0c48` (sum of `note[+6]`
+						// across `_NoteSelected != 0`) and the CD
+						// `selectedPoints()` (sum of `note[+2]` u16
+						// across `_NoteSelected != 0`).
+						{
+							int total = 0;
+							uint selectedCount = 0;
+							const uint maxIdx = MIN<uint>(niCount,
+								Mystery::kCluesFoundCap);
+							const bool floppy = isFloppy();
+							for (uint j = 0; j < maxIdx; j++) {
+								if (!_mystery._noteSelected[j])
+									continue;
+								selectedCount++;
+								if (floppy) {
+									total += (int)ni[j * 7 + 6];
+								} else {
+									const int16 pts =
+										(int16)READ_LE_UINT16(
+											ni + j * 4 + 2);
+									total += (int)pts;
+								}
+							}
+							warning("EEM accuse: clue %u %s "
+									"(selected=%u points=%d)",
+									clueId,
+									_mystery._noteSelected[clueId]
+										? "ON" : "OFF",
+									selectedCount, total);
+						}
 						break;
 					}
 				}
@@ -4361,6 +4459,53 @@ void EEMEngine::doAccuseFloppy() {
 		return;
 	}
 
+	// Clue selection screen — `FUN_1d40_0e07 @ 1d40:0e07`. The user
+	// must pick exactly `6 - chainStage` clues from the found list,
+	// rendered on the red accuse-mode BG (PIC 0x1A7). Verified by
+	// the asm at 1d40:0e34 reading `local_c = 6 - DAT_28da_3052`,
+	// matching the CD's `_DoAccuse @ 1df2:0bdd` expected count.
+	// `doAccuseNotes()` already handles this UI for both variants
+	// (note text reading is variant-aware via `noteTextOff`); it
+	// returns true on commit, false on ESC.
+	if (!doAccuseNotes()) {
+		_nextScreen = _lastScreen != kScreenInvalid
+			? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
+
+	// Second score gate — based on the CLUES THE USER ACTUALLY
+	// PICKED. `_DoAccuse_Floppy @ 1d40:0e07` (after the commit
+	// branch at 1d40:0f3a) reads `local_a = FUN_1d40_0c48()` (=
+	// sum of byte +6 across selected note entries) and:
+	//   if (local_a < 100) → KDTextIndex[+6] hint (slot 3),
+	//                        bail back to last screen.
+	//   else              → call FUN_1d40_0c79 (gallery picker).
+	// Note this is distinct from the entry gate on
+	// `_GetSelectedPoints_Floppy @ 1d40:0c23` (which uses the
+	// auto-top-5 of FOUND clues — what `Mystery::selectedPoints`
+	// returns on floppy). A player can be "ready to solve" by score
+	// yet still pick the wrong subset; that's the case this gate
+	// catches.
+	int userSelectedScore = 0;
+	{
+		const byte *ni2 = _mystery.noteIndex();
+		const uint16 niCount2 = _mystery.noteIndexCount();
+		if (ni2) {
+			const uint maxIdx = MIN<uint>(niCount2,
+										   Mystery::kCluesFoundCap);
+			for (uint i = 0; i < maxIdx; i++) {
+				if (_mystery._noteSelected[i])
+					userSelectedScore += (int)ni2[i * 7 + 6];
+			}
+		}
+	}
+	if (userSelectedScore < 100) {
+		showFloppyKDHint(3);
+		_nextScreen = _lastScreen != kScreenInvalid
+			? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
+
 	// `FUN_1d40_0c79` — gallery picker. Show "Which suspect?" KD
 	// hint at slot 4 (KDTextIndex[+8]/2 = entry index 4), then
 	// render the gallery and wait for click.
@@ -4504,28 +4649,146 @@ void EEMEngine::doAccuseFloppy() {
 	const bool guilty = _mystery.isGuilty((uint)picked);
 
 	if (guilty) {
-		// `_DisplayCorrect_Floppy @ 1d40:0894` — load PIC 5 (win BG),
-		// walk the solved-clue chain at header[+0x12]: byte0 = count,
-		// then `count` dialog records (same FUN_22dc_05c8 layout). We
-		// reuse `displayFloppyDialogRecords` for the rendering.
-		Picture winBg;
-		if (_picsArchive.getPicture(5, winBg))
-			blitAt(winBg, 0, 0);
-		setSitePalette(0x22);
-		g_system->updateScreen();
+		// Win path. Mirrors `_DisplayCorrect_Floppy @ 1d40:0894`:
+		//   1d40:08a0  _BuildBackground_Floppy(5, 0x42, 0x14);
+		//                 → PIC 0x3d frame + SITES entry 5 at (0x42,
+		//                   0x14), palette = sitenum + 1 = 6.
+		//   1d40:08b1  _FadeIn();
+		//   1d40:08c0  _MIDIPlayFile("travel-2.xmi");
+		//   1d40:08d0  walk solved chain via _DisplayHotspotClue_Floppy
+		//                 + _WaitForClick per record. Mid-recap: when
+		//                 only 3 records remain, play TITLE.ANM(0)
+		//                 (transition graphic; not yet ported).
+		//   1d40:0939  ((u16 *)0x3054)[mysteryNum] =
+		//                  _firstTry ? 2 : 1;
+		//   1d40:0941  tier-promotion check (advance _chainStage when
+		//                 every mystery in the current tier is solved).
+		//   1d40:0982  _SavePlayerRecord  (= saveProfile)
+		//   1d40:0985  _DeleteMysteryFile (= mystery cleanup)
+		//   1d40:09b0  _NextScreen = 0xc.
+		const uint mn = _mystery.number();
 
+		// Conclusion BG composition. `_BuildBackground_Floppy @
+		// 16e2:12fd` blits PIC 0x3d (the desk frame) onto a cleared
+		// page, then overlays SITES.DBD entry 5 (the conclusion
+		// artwork) at (param_2, param_3) = (0x42, 0x14). Palette
+		// becomes `sitenum + 1` = 6. Same composition the CD `doAccuse`
+		// win flow performs (see ui.cpp:4145-4166), just driven from
+		// the floppy data archives.
+		{
+			Graphics::Surface *blk = g_system->lockScreen();
+			if (blk) {
+				memset(blk->getPixels(), 0, 320 * 200);
+				g_system->unlockScreen();
+			}
+			setSitePalette(6);
+			Picture frame;
+			if (_picsArchive.loadEntry(0x3d, frame)) {
+				g_system->copyRectToScreen(frame.surface.getPixels(),
+					frame.surface.pitch, 0, 0,
+					frame.surface.w, frame.surface.h);
+			}
+			Picture scene;
+			if (5 < _sitesArchive.size() &&
+				_sitesArchive.loadEntry(5, scene)) {
+				const int sx = 0x42, sy = 0x14;
+				const int sw = MIN<int>(scene.surface.w, 320 - sx);
+				const int sh = MIN<int>(scene.surface.h, 200 - sy);
+				if (sw > 0 && sh > 0)
+					g_system->copyRectToScreen(scene.surface.getPixels(),
+						scene.surface.pitch, sx, sy, sw, sh);
+			}
+
+			// Partner sprite at (5, 0x50). The original keeps its
+			// `_NewAnimation` slot active across `_DisplayCorrect`'s
+			// `_BuildBackground_Floppy`, so `_UpdateAnimations` keeps
+			// re-stamping the partner over the fresh BG. We don't have
+			// a slot system, so manually bake the resting frame into
+			// the BG before the recap kicks off — `displayFloppyDialog
+			// Records` snapshots the screen on entry and the partner
+			// stays visible across every chain record. Without this
+			// the win sequence ends up partner-less. Anim 2 (Jake) /
+			// 0x10 (Jenny), script key 0x02 — same as the gallery
+			// picker and the CD accuse path (ui.cpp:4177).
+			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+			Animation partnerAni;
+			if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+				!partnerAni.empty()) {
+				Graphics::Surface *screen = g_system->lockScreen();
+				if (screen) {
+					const uint frameIdx = partnerFrameAtTick(0x02,
+						(uint)partnerAni.size(),
+						g_system->getMillis());
+					blitAnimFrameAnchored(screen, partnerAni[frameIdx],
+										  5, 0x50);
+					g_system->unlockScreen();
+				}
+			}
+			g_system->updateScreen();
+		}
+
+		// Win music — TRAVEL-2.XMI (`2608:0c84`, played via
+		// `_MIDIPlayFile` at `_DisplayCorrect_Floppy @ 1d40:08c0`).
+		// The CD path uses internal MUS index 5; the floppy plays the
+		// XMI directly by filename. `_voiceOn` (= `DAT_28da_3050`) is
+		// the gate the original checks first.
+		if (_music && _voiceOn)
+			_music->playFile(Common::Path("travel-2.xmi"), false);
+
+		// Walk the solved-clue chain. Header[+0x12] points at a
+		// `count` byte followed by `count` dialog records (same layout
+		// as hotspot dialogs).
 		const byte *chain = _mystery.solvedClueBlock();
 		if (chain) {
 			const uint count = chain[0];
 			displayFloppyDialogRecords(chain + 1, count, 0);
 		}
 
-		// Mark mystery solved — equivalent to
-		// `((u16 *)0x5d20)... actually 0x3054[mysteryNum] = 1` which we
-		// translate to clearing the in-progress mystery + saving the
-		// profile (matches CD `doAccuse` win path).
-		if (_partner == 0)
-			_mystery._firstTry = false;
+		// Mark mystery solved with first-try bonus tracking.
+		// `_DisplayCorrect_Floppy @ 1d40:0939`:
+		//   ((u16 *)0x3054)[mysteryNum] = 1;
+		//   if (DAT_28da_35df != 0)
+		//       ((u16 *)0x3054)[iVar5] = 2;
+		// `DAT_28da_35df` is `_firstTry`; it starts at 1 on
+		// `_ReadMystery_Floppy` and is cleared to 0 by
+		// `_DisplayAlibi_Floppy` on a wrong accusation. So 2 = won on
+		// first try, 1 = won after at least one alibi.
+		if (mn < sizeof(_mysteriesSolved))
+			_mysteriesSolved[mn] = _mystery._firstTry ? 2 : 1;
+
+		// Tier-promotion check. `_DisplayCorrect_Floppy @
+		// 1d40:0941..0978` walks the current tier's mystery range and
+		// advances `DAT_28da_3052` (= `_chainStage`) when every entry
+		// is non-zero. Skip mystery 0 (practice case) per the
+		// `if (DAT_2608_149c != 0)` guard at 1d40:093f.
+		if (mn != 0) {
+			uint lo = 0, hi = 0;
+			switch (_chainStage) {
+			case 1: lo = 1;    hi = 0x18; break;
+			case 2: lo = 0x19; hi = 0x30; break;
+			case 3: lo = 0x31; hi = 0x36; break;
+			default: break;
+			}
+			bool allSolved = (hi >= lo);
+			for (uint i = lo; i <= hi && allSolved; i++) {
+				if (i >= sizeof(_mysteriesSolved) ||
+					_mysteriesSolved[i] == 0)
+					allSolved = false;
+			}
+			if (allSolved && _chainStage < 4) {
+				_chainStage++;
+				debugC(1, kDebugMystery,
+					   "chainStage advanced to %u after solving mystery %u",
+					   _chainStage, mn);
+			}
+		}
+
+		// Persist progress before clearing the in-progress mystery.
+		// `_DisplayCorrect_Floppy @ 1d40:0982` calls
+		// `_SavePlayerRecord` then `FUN_22dc_0dbd` (which deletes the
+		// per-mystery save file via DOS int 21h). Order matters here
+		// for the same reason as the CD path — clear → save so the
+		// profile records `hasMystery=false`.
 		_mystery._solvedPuzzle = true;
 		_mystery.clear();
 		(void)saveProfile(_playerName);
@@ -4534,15 +4797,24 @@ void EEMEngine::doAccuseFloppy() {
 	}
 
 	// Innocent — `_DisplayAlibi_Floppy @ 1d40:00df`:
-	//   1. Load PIC 0x3e (alibi BG), draw at (0x42, 0x14).
-	//   2. Load suspect picID, draw portrait at (0x82, 0x5a).
-	//   3. Read alibi text via TEXT_BLOCK[suspect[+3] * 2]; render in
-	//      a balloon picked by digit-prefix dispatch.
-	//   4. Voice from per-partner table at suspect_entry[+5..]
-	//      (we approximate using slot 13/14 — Jake/Jenny "wrong"
-	//      sting; original picks per-suspect).
-	//   5. Wait for click, then KD reaction balloon
-	//      (KDTextIndex[+0x10]/2 = slot 8) + voice slot 5.
+	//   1d40:00fb  _GetBackground(0x3e);
+	//   1d40:0103  _GetPicture(suspect.picID);
+	//   1d40:010c  _AddPicBackground(susp_pic, 0x82, 0x5a);
+	//   1d40:0125  _MIDIPlayFile("fanfare2.xmi");  // alibi sting
+	//   1d40:0145  alibi-balloon table at `2608:0c0a + first_char`
+	//                  (separate from the KD digit→balloon table at
+	//                  `2608:0c14` — yes, 0xc0a, NOT 0xc14, verified
+	//                  via the `*(char *)(*local_a + 0xc0a)` access).
+	//                  Default = `DAT_2608_0c3c` = 0x2c.
+	//   1d40:01a3  balloon centred:
+	//                  bx = (0x140 - balloon.w) / 2;
+	//                  by = (0x5a  - balloon.h) / 2;
+	//   1d40:01d5  WordWrap alibi text inside balloon, _WaitForClick.
+	//   1d40:01ee  KD reaction at KDTextIndex[+10] = slot 5
+	//                  (NOT slot 8 — slot 8 is the gallery prompt).
+	//                  Balloon at (0x21, (0x50 - h) / 2).
+	//   1d40:0247  _NextScreen = _LastScreen;
+	//   1d40:024b  _firstTry = 0;
 	const byte *susp = _mystery.floppySuspectEntry((uint)picked);
 	uint16 picId = 0;
 	uint16 alibiOff = 0xFFFF;
@@ -4550,6 +4822,11 @@ void EEMEngine::doAccuseFloppy() {
 		picId    = READ_LE_UINT16(susp + 0);
 		alibiOff = _mystery.alibiTextOffset((uint)picked);
 	}
+
+	// Alibi-screen MIDI sting (FANFARE2.XMI). `_MIDIPlayFile` is
+	// gated on `_voiceOn` (= `DAT_28da_3050`) in the original.
+	if (_music && _voiceOn)
+		_music->playFile(Common::Path("fanfare2.xmi"), false);
 
 	Picture alibiBg;
 	const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
@@ -4567,18 +4844,24 @@ void EEMEngine::doAccuseFloppy() {
 							_playerName, _partner);
 	}
 
-	// Digit-prefix → alibi balloon idx. CD has its own table at
-	// 29be:1050; floppy uses the same KD digit→balloon mapping for
-	// the alibi too (verified by inspecting `_DisplayAlibi_Floppy`'s
-	// `_GetKDTextBalloon_Floppy` call).
-	static const uint8 kDigitToBalloon[10] = {
-		0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1c, 0x1d, 0x1e, 0x0a
+	// Alibi balloon dispatch. The original reads the alibi-balloon
+	// table at `2608:0c0a + first_char` — a SEPARATE table from the
+	// KD-hint table at `2608:0c14`. For digits '0'..'9' the values at
+	// `2608:0c3a..0c43` are { 0x2a, 0x2b, 0x2c, 0x2d, 0xaa, 0xab,
+	// 0xac, 0xad, 0x09, 0x0a }; default (non-digit char) is
+	// `DAT_2608_0c3c` = 0x2c. The high-bit values (0xAA..0xAD) are
+	// `_GetBalloon`'s "mirrored" flag — the low 7 bits are the
+	// balloon idx, top bit flips horizontally.
+	static const uint8 kFloppyAlibiBalloonByDigit[10] = {
+		0x2a, 0x2b, 0x2c, 0x2d, 0xaa, 0xab, 0xac, 0xad, 0x09, 0x0a
 	};
-	uint balloonIdx = 0x17;
+	uint balloonRaw = 0x2c; // default `DAT_2608_0c3c`
 	if (!alibi.empty() && alibi[0] >= '0' && alibi[0] <= '9') {
-		balloonIdx = kDigitToBalloon[(int)(alibi[0] - '0')];
+		balloonRaw = kFloppyAlibiBalloonByDigit[(int)(alibi[0] - '0')];
 		alibi.deleteChar(0);
 	}
+	const uint balloonIdx = balloonRaw & 0x7F;
+	const bool flipBalloon = (balloonRaw & 0x80) != 0;
 
 	// Compose alibi screen.
 	Graphics::ManagedSurface scene(320, 200,
@@ -4595,15 +4878,35 @@ void EEMEngine::doAccuseFloppy() {
 	Picture balloon;
 	const bool haveBalloon = _balloonArchive.size() > balloonIdx &&
 		_balloonArchive.loadEntry(balloonIdx, balloon);
+	// Centred per `_DisplayAlibi_Floppy @ 1d40:01a0`:
+	//   uVar2 = (0x140 - balloon.w) / 2;  // x
+	//   uVar3 = (0x5a  - balloon.h) / 2;  // y (anchor in top-half)
 	int balloonX = 0x21;
 	int balloonY = 1;
 	if (haveBalloon) {
-		if (balloon.surface.h < 0x4e)
-			balloonY = (0x50 - balloon.surface.h) / 2;
+		balloonX = (320 - balloon.surface.w) / 2;
+		balloonY = (0x5a - balloon.surface.h) / 2;
+		if (balloonX < 0) balloonX = 0;
+		if (balloonY < 0) balloonY = 0;
 		const byte transp = (byte)(balloon.flags >> 8);
-		scene.transBlitFrom(balloon.surface,
-							 Common::Point(balloonX, balloonY),
-							 (uint32)transp);
+		// `_GetBalloon`'s mirror flag (high bit of the table value)
+		// flips the balloon horizontally — the original applies it
+		// inside the blit primitive. We emulate by reading the source
+		// row in reverse.
+		for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
+			 row++) {
+			const byte *src =
+				(const byte *)balloon.surface.getBasePtr(0, row);
+			byte *dst = (byte *)scene.getBasePtr(balloonX, balloonY + row);
+			for (int col = 0;
+				 col < balloon.surface.w && balloonX + col < 320; col++) {
+				const int srcCol = flipBalloon
+					? (balloon.surface.w - 1 - col) : col;
+				const byte px = src[srcCol];
+				if (px != transp)
+					dst[col] = px;
+			}
+		}
 	}
 	uint16 tx = 5, ty = 4, tw = 155;
 	getBalloonInsets(balloonIdx, tx, ty, tw);
@@ -4614,12 +4917,11 @@ void EEMEngine::doAccuseFloppy() {
 	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 
-	// Voice — suspect alibi voice. The original picks per-suspect from
-	// the alibi voice table at `2608:0c5e + suspectIdx`; we don't have
-	// the table indexed, so play slot 13 (= F-0161SL.VOC / M-0113SL.VOC)
-	// as a generic alibi cue.
-	if (_audio)
-		_audio->playFloppyVoiceSlot(13, _partner);
+	// `_DisplayAlibi_Floppy` does NOT play any per-suspect VOC — the
+	// alibi table at `2608:0c5e` (3 bytes: 0x15, 0x16, 0x17) is
+	// referenced by the post-win scrapbook (`FUN_1d40_05b7`), not the
+	// alibi screen. The MIDI sting we kicked off above carries the
+	// audio.
 
 	while (!shouldQuit()) {
 		Common::Event ev;
@@ -4639,8 +4941,13 @@ void EEMEngine::doAccuseFloppy() {
 		g_system->delayMillis(10);
 	}
 
-	// Partner reaction — KDTextIndex slot 8 (= +0x10).
-	showFloppyKDHint(8);
+	// Partner reaction — `KDTextIndex[+10]` is byte offset 10 = u16
+	// stride entry 5 (NOT 8). Verified at
+	// `_DisplayAlibi_Floppy @ 1d40:01ee`:
+	//   `iVar4 = MysteryOff + *(KDTextIndex + 10);`
+	// Our `showFloppyKDHint(slot)` reads `kdIdx + slot * 2`, so slot
+	// 5 is the right argument here.
+	showFloppyKDHint(5);
 
 	_mystery._firstTry = false;
 	_nextScreen = _lastScreen != kScreenInvalid
