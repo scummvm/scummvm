@@ -49,7 +49,6 @@ static const char *const directoryGlobs[] = {
 	"Contents", // Mac Steam versions
 	"MacOS",    // Mac Steam versions
 	"Resources", // Mac SE/Remastered versions
-	"OPEN",     // RA2 demo detection (O_DEMO.SAN)
 	0
 };
 
@@ -504,8 +503,8 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "rebel1", "ASSAULT.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
 
-	{ "rebel2", "RA2START.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
-	{ "rebel2", "O_DEMO.SAN", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo" },
+	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "" },
+	{ "rebel2", "REBEL2.EXE", kGenUnchanged, UNK_LANG, Common::kPlatformDOS, "Demo" },
 
 	{ "comi", "comi.la%d", kGenDiskNum, UNK_LANG, UNK, 0 },
 
