@@ -338,7 +338,7 @@ void FoolGame::sub_136_a22() {
 		temp.left = arr_i16_1eb8[25];
 		temp.bottom = arr_i16_1eb8[26];
 		temp.right = arr_i16_1eb8[27];
-		g_toolbox->InvertOval(temp);
+		g_toolbox->InvertOval(temp); // erase current spot
 		sub_136_2664();
 		var_i16_1bda = var_i16_1574;
 		sub_136_b00();
@@ -408,7 +408,7 @@ void FoolGame::sub_136_b00() {
 			// 136:0cec
 			switch (var_i16_1a9a - 1) {
 			case 0:
-				sub_136_d64();
+				mazePrintMessage();
 				break;
 			case 1:
 				sub_136_e4c();
@@ -417,7 +417,7 @@ void FoolGame::sub_136_b00() {
 				sub_136_ed8();
 				break;
 			case 3:
-				sub_136_f74();
+				mazeWanderingWinds();
 				break;
 			case 4:
 				sub_136_115a();
@@ -484,7 +484,7 @@ void FoolGame::sub_136_b00() {
 	var_i16_1bd0 = var_i16_1574;
 }
 
-void FoolGame::sub_136_d64() {
+void FoolGame::mazePrintMessage() {
 	// 136:0d64
 	if (var_str_1ce2.decode(Common::kMacRoman) == var_str_1578) {
 		return;
@@ -509,7 +509,7 @@ void FoolGame::sub_136_ed8() {
 	warning("STUB: %s", __func__);
 }
 
-void FoolGame::sub_136_f74() {
+void FoolGame::mazeWanderingWinds() {
 	// 136:0f74
 	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(231)) { // L
 		var_i16_1de6 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
@@ -540,7 +540,7 @@ void FoolGame::sub_136_f74() {
 	g_toolbox->InvertOval(temp);
 	var_i16_1dea = var_i16_1574;
 	var_i16_1dec = 2;
-	sub_136_2208();
+	mazeMovementTrail();
 	// 136:1108
 	var_i16_1bcc = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
 	var_i16_1bce = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
@@ -548,6 +548,7 @@ void FoolGame::sub_136_f74() {
 }
 
 void FoolGame::sub_136_115a() {
+	warning(__func__);
 	// 136:115a
 	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(233)) { // P
 		var_i16_1dea = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
@@ -671,6 +672,7 @@ void FoolGame::sub_136_185a() {
 }
 
 void FoolGame::sub_136_1898() {
+	warning(__func__);
 	// 136:1898
 	var_i16_484 = g_zbasic->decodeInt(var_str_1ce2);
 	if (arr_i16_3738[var_i16_484] & 0x1000) {
@@ -679,6 +681,7 @@ void FoolGame::sub_136_1898() {
 }
 
 void FoolGame::sub_136_18f4() {
+	warning(__func__);
 	// 136:18f4
 	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 1, 2));
 	var_i16_484 = 3;
@@ -722,7 +725,7 @@ void FoolGame::sub_136_2200() {
 	var_i16_1bdc = 1;
 }
 
-void FoolGame::sub_136_2208() {
+void FoolGame::mazeMovementTrail() {
 	// 136:2208
 	// unrolled loop
 	arr_bcd_5dbc[4 + 0] = (arr_rect_1f38[var_i16_1de8].top - arr_rect_1f38[var_i16_1dea].top) / 25.0f;
@@ -811,7 +814,7 @@ void FoolGame::sub_136_2664() {
 	temp.left = arr_i16_1eb8[25];
 	temp.bottom = arr_i16_1eb8[26];
 	temp.right = arr_i16_1eb8[27];
-	g_toolbox->InvertOval(temp);
+	g_toolbox->InvertOval(temp); // draw new player pos
 }
 
 void FoolGame::sub_136_274e() {

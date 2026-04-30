@@ -40,6 +40,7 @@ enum FoolStateBits : uint16 {
 	kStateQuit = 0x20,
 	kStateChapterSelect = 0x40,
 	kStatePuzzleSelect = 0x80,
+	kStateMetapuzzleSelect = 0x100,
 };
 
 enum FoolPuzzleFlags : uint16 {
@@ -249,10 +250,10 @@ public:
 	void sub_136_ade();
 	void sub_136_b00();
 
-	void sub_136_d64();
+	void mazePrintMessage(); // sub_136_d64
 	void sub_136_e4c();
 	void sub_136_ed8();
-	void sub_136_f74();
+	void mazeWanderingWinds(); // sub_136_f74
 	void sub_136_115a();
 	void sub_136_137c();
 	void sub_136_163c();
@@ -271,7 +272,7 @@ public:
 	void sub_136_1e4c();
 	void sub_136_21fa();
 	void sub_136_2200();
-	void sub_136_2208();
+	void mazeMovementTrail(); // sub_136_2208
 
 	void sub_136_24ae();
 	void sub_136_2538();
@@ -283,7 +284,7 @@ public:
 	void sub_136_2b30();
 	void sub_136_2be2();
 	void sub_136_2c96();
-	void sub_136_2d4c();
+	void sub_136_2d4c(); // sub_136_2d4c
 	void sub_136_2dd0();
 	void sub_136_2e52();
 	void sub_136_2ed6();
@@ -305,8 +306,8 @@ public:
 	void sunMapRevealPiece(); // sub_137_131a
 
 	// fool_metapuzzle.cpp
-	void sub_138_004();
-	void sub_138_1b4();
+	void metapuzzleRun(); // sub_138_004
+	void metapuzzleOnClick(); // sub_138_1b4
 	void sub_138_21e();
 	void sub_138_3e0();
 	void sub_138_49e();
@@ -503,8 +504,8 @@ private:
 	int16 var_i16_d0e;
 	int16 var_i16_d10;
 	Common::U32String var_str_d12;
-	int16 var_i16_e12;
-	int16 var_i16_e14;
+	bool menuDisabled; // var_i16_e12
+	bool menuHidesPlayfield; // var_i16_e14
 	int16 selectedMenuID; // var_i16_e16
 	int16 selectedMenuItem; // var_i16_e18
 	int16 var_i16_e1a;
