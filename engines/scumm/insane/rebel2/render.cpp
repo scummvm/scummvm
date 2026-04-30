@@ -129,11 +129,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	// Codec 45: RA2-specific BOMP RLE with variable header (FUN_0042B5F0)
 	// May have a 6-byte sub-header starting with "01 FE"
 
-	debug("Rebel2: Codec 45 first 20 bytes: %02X %02X %02X %02X %02X %02X | %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-		src[0], src[1], src[2], src[3], src[4], src[5], src[6], src[7],
-		src[8], src[9], src[10], src[11], src[12], src[13], src[14], src[15],
-		src[16], src[17], src[18], src[19]);
-
 	// Probe for header offset
 	int headerSkip = 0;
 	bool foundValidOffset = false;
@@ -141,7 +136,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	// Check for known 6-byte header pattern: 01 FE XX XX XX XX
 	if (dataSize > 6 && src[0] == 0x01 && src[1] == 0xFE) {
 		headerSkip = 6;
-		debug("Rebel2: Codec 45 found 01 FE header, skipping 6 bytes");
 		foundValidOffset = true;
 	}
 
@@ -170,7 +164,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 				if (validSum && linesTest >= height - 1) {
 					headerSkip = testOffset;
 					foundValidOffset = true;
-					debug("Rebel2: Codec 45 found valid RLE at offset %d (tested %d lines)", testOffset, linesTest);
 					break;
 				}
 			}
@@ -178,7 +171,7 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	}
 
 	if (!foundValidOffset) {
-		debug("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
+		warning("Rebel2: Codec 45 couldn't find valid RLE offset, using offset 0");
 	}
 
 	const byte *srcPtr = src + headerSkip;
@@ -189,7 +182,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 	bool perLineMode = (firstVal > 0 && firstVal <= width * 2);
 
 	if (perLineMode) {
-		debug("Rebel2: Codec 45 using per-line RLE (firstLineSize=%d)", firstVal);
 		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
 			int lineSize = READ_LE_INT16(srcPtr);
 			srcPtr += 2;
@@ -216,7 +208,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 		}
 	} else {
 		// Continuous BOMP RLE (no per-line headers)
-		debug("Rebel2: Codec 45 using continuous BOMP RLE");
 		for (int row = 0; row < height && srcPtr < dataEnd; row++) {
 			byte *rowDst = dst + row * width;
 			int x = 0;
@@ -240,15 +231,6 @@ void InsaneRebel2::decodeCodec45(byte *dst, const byte *src, int width, int heig
 			}
 		}
 	}
-
-	// Count non-zero pixels for debug
-	int nonZero = 0;
-	for (int i = 0; i < width * height; i++) {
-		if (dst[i] != 0)
-			nonZero++;
-	}
-	debug("Rebel2: Decoded codec 45: %dx%d, %d non-zero (%d%%)",
-		width, height, nonZero, (nonZero * 100) / (width * height));
 }
 
 // renderEmbeddedFrame -- Blit a decoded embedded frame to the video buffer.
