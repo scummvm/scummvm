@@ -504,13 +504,18 @@ void EEMEngine::doNewPlayer() {
 							   0, 0, 320, 200);
 	g_system->updateScreen();
 
-	while (!shouldQuit()) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
+	bool done = false;
+	while (!done && !shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-				return;
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				done = true;
+				break;
+			}
 			if (ev.type != Common::EVENT_KEYDOWN)
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
@@ -534,11 +539,13 @@ void EEMEngine::doNewPlayer() {
 					_chainStage = 1;
 					saveProfile(name);
 				}
-				return;
+				done = true;
+				break;
 			}
 			if (k == Common::KEYCODE_ESCAPE) {
 				_playerName = "Detective";
-				return;
+				done = true;
+				break;
 			}
 			if (k == Common::KEYCODE_BACKSPACE) {
 				if (!name.empty()) {
@@ -568,6 +575,8 @@ void EEMEngine::doNewPlayer() {
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 }
 
 int EEMEngine::doShowEnding(uint num, bool firstPage) {
