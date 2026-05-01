@@ -573,9 +573,19 @@ void SiteScreen::enter(uint siteNum) {
 	// the arrival on so re-entries (after notebook/map/etc.) don't
 	// repeat the animation.
 	if ((int)siteNum != _lastSiteAnim) {
+		// `_EnterSiteAnim` snapshots the current screen, so populate
+		// that temporary background with the same site layers that
+		// should already be visible behind the arriving partner.
+		if (_vm->isFloppy())
+			renderFloppyDrops(siteNum);
+		else
+			renderStaticDrops(siteNum);
+		renderAnimatedDrops(siteNum, g_system->getMillis());
 		enterSiteAnim();
 		_lastSiteAnim = (int)siteNum;
-		// Re-paint the BG; the arrival animation drew on top of it.
+		// Re-paint the BG; the normal snapshot below should contain
+		// only the static layers, while animated NPCs are redrawn per
+		// tick by the frame pump.
 		renderBackground(siteNum);
 	}
 
