@@ -188,8 +188,12 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
-	/// Switch to a lightly tinted cursor while the mouse is over a
-	/// searchable hotspot and the highlight boxes are hidden.
+	/// Switch to the red-outline cursor used to hint at interactive
+	/// regions that do not have their own original highlight art.
+	void setInteractiveMouseCursor(bool active);
+
+	/// Switch to the interactive cursor while the mouse is over a
+	/// searchable hotspot.
 	void setHotspotMouseCursor(bool active);
 
 	/// Display one ClueBlock. @p clueBlock points at the u16 frame count
@@ -302,6 +306,8 @@ public:
 	bool areYouSure();
 
 private:
+	void applyStartupTestOverrides();
+
 	/**
 	 * Central dispatch loop matching the original _ScreenDriver @ 1a35:0dc1.
 	 * Each iteration calls the screen handler that matches _nextScreen.
@@ -426,7 +432,7 @@ private:
 	/// Returns the direction the user wants the caller to navigate:
 	///   -1 → previous mystery (LEFT pressed on the first page or
 	///        click in `PrevPageRect` while on first page),
-	///    0 → exit the scrapbook (ESC or click outside both rects),
+	///    0 → exit the scrapbook (ESC / quit; central clicks are ignored),
 	///   +1 → next mystery (RIGHT/SPACE/Enter/click on last page).
 	/// Mirrors `_DisplayEnding`'s `[BP-0x18]` return at 1df2:0723.
 	int doShowEnding(uint num, bool firstPage = true);
@@ -569,7 +575,7 @@ private:
 	/// `setPartnerEraseBg`.
 	Graphics::ManagedSurface _partnerEraseBg;
 
-	bool _hotspotMouseCursor = false;
+	bool _interactiveMouseCursor = false;
 
 	/// XMIDI music player. Mirrors the original `MIDI.C` family
 	/// (`_MIDIPlayFile`, `_MIDIPlay`, `_StopMIDI`, `_StartTravelMusic`
