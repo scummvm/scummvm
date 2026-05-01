@@ -80,7 +80,7 @@ void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 struct Hotspot {
 	int16  x1, y1, x2, y2;     ///< rectangle in screen coordinates
 	uint16 clueOffset;          ///< +8: byte offset of ClueBlock in the mystery file
-	uint16 hotspotIndex;        ///< +10: 1-based hotspot ordinal within the site
+	uint16 hotspotIndex;        ///< +10: zero-based mystery-wide seen ordinal
 	uint16 extra;               ///< +12: unknown (zero in M0..M54)
 
 	Common::Rect rect() const { return Common::Rect(x1, y1, x2, y2); }
