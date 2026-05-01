@@ -278,7 +278,7 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 								debug("Rebel2: Decoded embedded HUD (codec 20/raw): %dx%d", width, height);
 							} else if (codec == 21 || codec == 44) {
 								// Codec 21/44: Line update (FUN_0042BD60)
-								smushDecodeLineUpdate(frame.pixels, fobjData, 0, 0, width, height, width);
+								smushDecodeLineUpdate(frame.pixels, fobjData, 0, 0, width, height, width, dataSize);
 								frame.valid = true;
 								debug("Rebel2: Decoded embedded HUD (codec %d/line update): %dx%d", codec, width, height);
 							} else if (codec == 45) {

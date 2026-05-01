@@ -26,9 +26,56 @@
 #include "common/endian.h"
 #include "common/textconsole.h"
 
-#include "scumm/bomp.h"
-
 namespace Scumm {
+
+static void bompDecodeLineOpaqueBounded(byte *dst, const byte *src, const byte *srcEnd, int len) {
+	while (len > 0 && src < srcEnd) {
+		byte code = *src++;
+		int num = (code >> 1) + 1;
+		if (num > len)
+			num = len;
+
+		if (code & 1) {
+			if (src >= srcEnd)
+				break;
+			memset(dst, *src++, num);
+			dst += num;
+			len -= num;
+		} else {
+			int toCopy = num;
+			if (toCopy > (int)(srcEnd - src))
+				toCopy = (int)(srcEnd - src);
+			memcpy(dst, src, toCopy);
+			src += toCopy;
+			dst += toCopy;
+			len -= toCopy;
+			if (toCopy < num)
+				break;
+		}
+	}
+}
+
+const byte *smushSkipRLELines(const byte *src, int &dataSize, int lines) {
+	for (int i = 0; i < lines; i++) {
+		if (dataSize < 2) {
+			src += dataSize;
+			dataSize = 0;
+			break;
+		}
+
+		int rowSize = READ_LE_UINT16(src) + 2;
+		if (rowSize > dataSize) {
+			src += dataSize;
+			dataSize = 0;
+			break;
+		}
+
+		src += rowSize;
+		dataSize -= rowSize;
+	}
+
+	return src;
+}
 
 /**
  * Codec 3 RLE decoder that writes ALL colors including color 0 (black).
@@ -38,14 +85,24 @@ namespace Scumm {
  *
  * Used by: Rebel Assault 2 Level 2 background loading (IACT opcode 8, par4=5)
  */
-void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
+	if (dataSize <= 0)
+		return;
+
+	const byte *srcEnd = src + dataSize;
 	dst += top * pitch;
-	do {
+	while (height-- && srcEnd - src >= 2) {
+		int lineSize = READ_LE_UINT16(src);
+		src += 2;
+		if (lineSize > srcEnd - src)
+			lineSize = (int)(srcEnd - src);
+		const byte *lineEnd = src + lineSize;
+
 		dst += left;
-		bompDecodeLine(dst, src + 2, width, true);  // setZero = TRUE to write all colors
-		src += READ_LE_UINT16(src) + 2;
+		bompDecodeLineOpaqueBounded(dst, src, lineEnd, width);
+		src = lineEnd;
 		dst += pitch - left;
-	} while (--height);
+	}
 }
 
 /**
@@ -55,39 +112,53 @@ void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int wid
  * The count value needs +1 to get the actual number of pixels to copy.
  * Note: Skip regions preserve previous frame content (delta compression).
  */
-void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch) {
+void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize) {
+	if (dataSize <= 0)
+		return;
+
+	const byte *srcEnd = src + dataSize;
 	dst += top * pitch + left;
 
-	while (height--) {
+	while (height-- && srcEnd - src >= 2) {
 		byte *dstPtrNext = dst + pitch;
-		const byte *srcPtrNext = src + 2 + READ_LE_UINT16(src);
-		src += 2;  // Skip line size header
+		int lineDataSize = READ_LE_UINT16(src);
+		src += 2;
+		if (lineDataSize > srcEnd - src)
+			lineDataSize = (int)(srcEnd - src);
+		const byte *lineEnd = src + lineDataSize;
 		int len = width;
 		byte *lineDst = dst;
 
-		while (len > 0) {
+		while (len > 0 && lineEnd - src >= 2) {
 			// Read 2-byte LE skip value
 			int skip = READ_LE_UINT16(src);
 			src += 2;
+			if (skip >= len)
+				break;
 			lineDst += skip;
 			len -= skip;
-			if (len <= 0)
-				break;
 
 			// Read 2-byte LE copy count (+1 for actual count)
+			if (lineEnd - src < 2)
+				break;
 			int count = READ_LE_UINT16(src) + 1;
 			src += 2;
 			if (count > len)
 				count = len;
-			len -= count;
 
 			// Copy literal pixels
-			memcpy(lineDst, src, count);
-			lineDst += count;
-			src += count;
+			int toCopy = count;
+			if (toCopy > (int)(lineEnd - src))
+				toCopy = (int)(lineEnd - src);
+			memcpy(lineDst, src, toCopy);
+			lineDst += toCopy;
+			src += toCopy;
+			len -= toCopy;
+			if (toCopy < count)
+				break;
 		}
 		dst = dstPtrNext;
-		src = srcPtrNext;
+		src = lineEnd;
 	}
 }
 

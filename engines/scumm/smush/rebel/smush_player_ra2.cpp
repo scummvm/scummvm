@@ -85,6 +85,7 @@ void SmushPlayerRebel2::initGamePlayerFields() {
 	_loadReadOffset = 8;  // Original starts reading at offset 8 (skips header)
 	_lastLoadChunkIdx = -1;
 	_totalLoadChunks = 0;
+	_ra2FrameSourceSkipY = 0;
 	_scrollX = 0;
 	_scrollY = 0;
 }
@@ -593,15 +594,21 @@ bool SmushPlayerRebel2::ra2DecodeCodec(int codec, const uint8 *src, int left, in
 								 int width, int height, int pitch, int dataSize) {
 	switch (codec) {
 	case SMUSH_CODEC_LINE_UPDATE:
-	case SMUSH_CODEC_LINE_UPDATE2:
-		smushDecodeLineUpdate(_dst, src, left, top, width, height, pitch);
+	case SMUSH_CODEC_LINE_UPDATE2: {
+		const uint8 *adjustedSrc = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
+		smushDecodeLineUpdate(_dst, adjustedSrc, left, top, width, height, pitch, dataSize);
 		return true;
-	case SMUSH_CODEC_SKIP_RLE:
-		smushDecodeSkipRLE(_dst, src, left, top, width, height, pitch, dataSize);
+	}
+	case SMUSH_CODEC_SKIP_RLE: {
+		const uint8 *adjustedSrc = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
+		smushDecodeSkipRLE(_dst, adjustedSrc, left, top, width, height, pitch, dataSize);
 		return true;
-	case SMUSH_CODEC_RA2_BOMP:
-		smushDecodeRA2Bomp(_dst, src, left, top, width, height, pitch, dataSize);
+	}
+	case SMUSH_CODEC_RA2_BOMP: {
+		const uint8 *adjustedSrc = smushSkipRLELines(src, dataSize, _ra2FrameSourceSkipY);
+		smushDecodeRA2Bomp(_dst, adjustedSrc, left, top, width, height, pitch, dataSize);
 		return true;
+	}
 	default:
 		return false;
 	}
@@ -731,7 +738,17 @@ bool SmushPlayerRebel2::handleGameDimensionOverride(int codec, int width, int he
 }
 
 bool SmushPlayerRebel2::handleGameAdjustCoords(int codec, int &left, int &top, int &width, int &height, int pitch, int *srcSkipY) {
-	adjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	int sourceSkipY = 0;
+	_ra2FrameSourceSkipY = 0;
+	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
+	if (codec == SMUSH_CODEC_LINE_UPDATE || codec == SMUSH_CODEC_LINE_UPDATE2 ||
+			codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA2_BOMP) {
+		_ra2FrameSourceSkipY = sourceSkipY;
+		if (srcSkipY)
+			*srcSkipY = 0;
+	} else if (srcSkipY) {
+		*srcSkipY = sourceSkipY;
+	}
 	return true;
 }
 

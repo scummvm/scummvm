@@ -2198,7 +2198,8 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 			if (codec == 3 && fobjX >= 0 && fobjY >= 0 && fobjW > 0 && fobjH > 0 &&
 					fobjX + fobjW <= 320 && fobjY + fobjH <= 200 && stream.pos() < subDataEnd) {
 				const byte *rleData = animData + stream.pos();
-				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320,
+					(int)(subDataEnd - stream.pos()));
 
 				debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
 					fobjW, fobjH, fobjX, fobjY);
