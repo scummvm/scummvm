@@ -380,9 +380,12 @@ private:
 	 *
 	 * If @p holdLastFrame is true the call blocks on the final frame
 	 * until the user clicks or hits a key — used for the title screen.
+	 * If @p fadeIn is true the first decoded frame is copied while the
+	 * palette is black, then the animation palette is ramped in like
+	 * `_OpenFadeIn`.
 	 */
 	void playAnm(const Common::Path &path, uint frameDelayMs = 120,
-				 bool holdLastFrame = false);
+				 bool holdLastFrame = false, bool fadeIn = false);
 
 	/// Stop every active audio channel — voice, sound spool, and
 	/// MIDI. Mirrors the `_CleanMysterySounds @ 202f:05a5` +

@@ -141,6 +141,14 @@ void ANMDecoder::getPalette8(byte *out) const {
 		out[i] = (byte)(_palette[i] << 2);
 }
 
+void ANMDecoder::seedFrameBuffer(const byte *pixels, uint pitch) {
+	if (!pixels || _buffer.empty() || _width == 0 || _height == 0)
+		return;
+
+	for (uint y = 0; y < _height; y++)
+		memcpy(_buffer.data() + y * _width, pixels + y * pitch, _width);
+}
+
 const byte *ANMDecoder::nextFrame() {
 	if (_nextFrameIdx >= _frameCount)
 		return nullptr;

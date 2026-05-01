@@ -99,6 +99,34 @@ const byte kCursorInteractivePalette[] = {
 	0xFF, 0xFF, 0xFF  // 2 — white fill
 };
 
+static void fadeCurrentPaletteToBlack(uint delayMs = 8) {
+	byte start[kPalSize];
+	byte stepPal[kPalSize];
+	g_system->getPaletteManager()->grabPalette(start, 0, 256);
+
+	for (int step = 15; step >= 0; step--) {
+		for (uint i = 0; i < kPalSize; i++)
+			stepPal[i] = (byte)((uint)start[i] * step / 16);
+		g_system->getPaletteManager()->setPalette(stepPal, 0, 256);
+		g_system->updateScreen();
+		if (delayMs)
+			g_system->delayMillis(delayMs);
+	}
+}
+
+static void fadePaletteFromBlack(const byte *target, uint delayMs = 8) {
+	byte stepPal[kPalSize];
+
+	for (uint step = 1; step <= 16; step++) {
+		for (uint i = 0; i < kPalSize; i++)
+			stepPal[i] = (byte)((uint)target[i] * step / 16);
+		g_system->getPaletteManager()->setPalette(stepPal, 0, 256);
+		g_system->updateScreen();
+		if (delayMs)
+			g_system->delayMillis(delayMs);
+	}
+}
+
 static void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	byte palette[kPalSize];
 	bool used[256];
@@ -349,7 +377,10 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro) {
 			if (_audio)
 				_audio->playVoc(Common::Path("THUNDER.VOC"));
-			playAnm(Common::Path("BOLT.ANM"));
+			playAnm(Common::Path("BOLT.ANM"), 120,
+					/*holdLastFrame=*/false, /*fadeIn=*/true);
+			waitForInput(1800);
+			fadeCurrentPaletteToBlack();
 			if (_audio)
 				_audio->stopVoice();
 		}
@@ -363,8 +394,12 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro && _music)
 			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
 		for (int i = 1; i <= 20 && !shouldQuit() && !_skipIntro; i++) {
+			const bool fadeIn = (i == 1 || i == 5);
+			if (i == 5)
+				fadeCurrentPaletteToBlack();
 			Common::String name = Common::String::format("ANIM%02d.A", i);
-			playAnm(Common::Path(name));
+			playAnm(Common::Path(name), 120,
+					/*holdLastFrame=*/false, fadeIn);
 			// `_SpoolSound(uVar3 - 1)` at 2520:08c2 — per-character
 			// VO after each anim except the last (`if (uVar3 != 0x14)`
 			// at 2520:08a8). Original blocks until done; we run async
@@ -383,7 +418,8 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro && _music)
 			_music->playFile(Common::Path("THEME.XMI"), /*loop=*/true);
 		if (!shouldQuit() && !_skipIntro)
-			playAnm(Common::Path("TITLE.ANM"), 120, /*holdLastFrame=*/true);
+			playAnm(Common::Path("TITLE.ANM"), 120,
+					/*holdLastFrame=*/true, /*fadeIn=*/true);
 	}
 	_skipIntro = false;
 
@@ -668,7 +704,8 @@ void EEMEngine::interruptAudio() {
 		_music->stop();
 }
 
-void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLastFrame) {
+void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs,
+						bool holdLastFrame, bool fadeIn) {
 	ANMDecoder anm;
 	if (!anm.open(path)) {
 		warning("playAnm: %s missing", path.toString().c_str());
@@ -677,17 +714,32 @@ void EEMEngine::playAnm(const Common::Path &path, uint frameDelayMs, bool holdLa
 
 	byte palette[768];
 	anm.getPalette8(palette);
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	const uint16 w = anm.width();
 	const uint16 h = anm.height();
+	{
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			if (screen->w >= w && screen->h >= h)
+				anm.seedFrameBuffer((const byte *)screen->getBasePtr(0, 0), screen->pitch);
+			g_system->unlockScreen();
+		}
+	}
 
+	bool paletteApplied = false;
 	while (!shouldQuit()) {
 		const byte *frame = anm.nextFrame();
 		if (!frame)
 			break;
 
 		g_system->copyRectToScreen(frame, w, 0, 0, w, h);
+		if (!paletteApplied) {
+			if (fadeIn)
+				fadePaletteFromBlack(palette);
+			else
+				g_system->getPaletteManager()->setPalette(palette, 0, 256);
+			paletteApplied = true;
+		}
 		g_system->updateScreen();
 
 		// Drain events and let the user skip with click/key. The original
