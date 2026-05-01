@@ -649,21 +649,24 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	// Walk page records. Each page header is 10 bytes; text is
 	// null-terminated and follows the header.
 	uint pageOffsets[8];   // ENDING_RANGE_MAX from `_DisplayEnding`
-	const uint kMaxPages = MIN<uint>(pageCount,
-									 (uint)(sizeof(pageOffsets) / sizeof(uint)));
+	const uint maxPages = MIN<uint>(pageCount,
+									(uint)(sizeof(pageOffsets) / sizeof(uint)));
 	uint cursor = 2;
-	for (uint p = 0; p < kMaxPages; p++) {
-		pageOffsets[p] = cursor;
+	uint validPages = 0;
+	for (uint p = 0; p < maxPages; p++) {
 		if (cursor + 10 >= size)
 			break;
+		pageOffsets[validPages++] = cursor;
 		// Skip the 10-byte header and find the null terminator.
 		cursor += 10;
 		while (cursor < size && buf[cursor] != 0)
 			cursor++;
 		cursor++;  // past the null
 	}
+	if (validPages == 0)
+		return 0;
 
-	uint pageIdx = firstPage ? 0 : (kMaxPages - 1);
+	uint pageIdx = firstPage ? 0 : (validPages - 1);
 	int direction = 0;     // -1 / 0 / +1, see header doc.
 	bool exitLoop = false;
 	bool dirty = true;
@@ -702,15 +705,6 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 										   textW, text, 0);
 			}
 
-			// Page indicator at top-right ("page 1/3"). Stays in the
-			// main font + color 0xF so it doesn't blend into the
-			// newspaper masthead.
-			if (_font.isLoaded() && kMaxPages > 1) {
-				const Common::String hdr = Common::String::format(
-					"%u/%u", (unsigned)pageIdx + 1, (unsigned)kMaxPages);
-				_font.drawString(&scratch, hdr, 280, 4, 32, 0xF);
-			}
-
 			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 									   0, 0, 320, 200);
 			g_system->updateScreen();
@@ -726,22 +720,17 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					// ESC is the ONLY way out of the newspaper view.
-					// Departs from the original `_DisplayEnding`, which
-					// also exits on boundary arrow keys / clicks
-					// (1df2:0689 / 1df2:06a0); the boundary-exit path is
-					// what fed `[BP-0x18]` to `_ShowScrapbook` for
-					// per-mystery scrapbook navigation. We don't expose
-					// that — clicking ESC closes the scrapbook entirely.
 					direction = 0;
 					exitLoop = true;
 					break;
 				case Common::KEYCODE_LEFT:
 				case Common::KEYCODE_PAGEUP:
-					// Clamp at page 0 — never exit on LEFT.
 					if (pageIdx > 0) {
 						pageIdx--;
 						dirty = true;
+					} else {
+						direction = -1;
+						exitLoop = true;
 					}
 					break;
 				case Common::KEYCODE_RIGHT:
@@ -750,10 +739,12 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 				case Common::KEYCODE_KP_ENTER:
 				case Common::KEYCODE_SPACE:
 				case Common::KEYCODE_TAB:
-					// Clamp at last page — never exit on RIGHT either.
-					if (pageIdx + 1 < kMaxPages) {
+					if (pageIdx + 1 < validPages) {
 						pageIdx++;
 						dirty = true;
+					} else {
+						direction = 1;
+						exitLoop = true;
 					}
 					break;
 				default:
@@ -763,22 +754,30 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 					break;
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Mouse clicks shift pages too — never exit on click.
-				// Use the original PrevPage/NextPage rect split for
-				// click direction (29be:1078 / 29be:1080); clicks
-				// outside both rects fall through to next-page so the
-				// player still gets some feedback.
-				const Common::Rect kPrevPageRect(0, 0, 27, 200);
+				// Original PrevPage/NextPage rects at 29be:1078 /
+				// 29be:1080. Clicks outside both rects exit with
+				// direction 0.
+				const Common::Rect kPrevPageRect(0, 0, 28, 200);
+				const Common::Rect kNextPageRect(28, 7, 317, 197);
 				if (kPrevPageRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (pageIdx > 0) {
 						pageIdx--;
 						dirty = true;
+					} else {
+						direction = -1;
+						exitLoop = true;
 					}
-				} else {
-					if (pageIdx + 1 < kMaxPages) {
+				} else if (kNextPageRect.contains(ev.mouse.x, ev.mouse.y)) {
+					if (pageIdx + 1 < validPages) {
 						pageIdx++;
 						dirty = true;
+					} else {
+						direction = 1;
+						exitLoop = true;
 					}
+				} else {
+					direction = 0;
+					exitLoop = true;
 				}
 				if (exitLoop)
 					break;
@@ -791,40 +790,53 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 }
 
 void EEMEngine::doShowScrapbook(uint stage) {
-	// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`. Walk the
-	// stage's mystery range and call `_DisplayEnding` on each solved
-	// mystery. The original splits the 55 cases into three tiers:
-	//   stage 1 (Junior) → mysteries  1..0x18 (24 cases)
-	//   stage 2 (Senior) → mysteries 0x19..0x30 (24 cases)
-	//   stage 3 (Master) → mysteries 0x31..0x36 (6 cases)
-	// Each tier's range is `lo = (stage-1)*0x18 + 1`, `hi = lo + 0x17`
-	// (verified at 1f78:064b: `iVar1 = (param_1 - 1) * 0x18; uVar2 =
-	// iVar1 + 1`). The current-stage filter at 1f78:065e
-	// (`if (DAT_2d5d_3f99 == param_1)`) skips unsolved mysteries
-	// inside the player's CURRENT tier — completed tiers show every
-	// mystery regardless. We mirror that exactly.
+	// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`. The original
+	// splits the cases into 24-entry tiers, then feeds each ending
+	// viewer return direction back into the tier walk:
+	//   -1 -> previous mystery, opened at its last page
+	//    0 -> close scrapbook
+	//   +1 -> next mystery, opened at its first page
+	// When the requested tier is the player's current chain stage, the
+	// original skips unsolved entries; completed tiers are already solved,
+	// so they are shown as a full range.
 	if (stage < 1 || stage > 3)
 		return;
-	const uint lo = (stage - 1) * 0x18 + 1;
-	const uint hi = lo + 0x17;
+	const int solvedCount =
+		(int)(sizeof(_mysteriesSolved) / sizeof(_mysteriesSolved[0]));
+	const int lo = (int)(stage - 1) * 0x18 + 1;
+	const int hi = MIN<int>(lo + 0x18, solvedCount);
+	if (lo >= hi)
+		return;
 	const bool currentTier = (stage == _chainStage);
 
-	// `doShowEnding` only reports `direction = 0` now (ESC), so we
-	// can't use the original 1f78:067e/0698 forward-backward walk.
-	// Instead iterate every solved mystery in the tier linearly:
-	// each ESC closes the current newspaper and moves us to the
-	// next solved entry. Departs from `_ShowScrapbook @ 1f78:0642`
-	// (which let the player browse via the boundary keys), but
-	// matches the user-requested "ESC is the only exit" rule.
-	for (uint m = lo; m <= hi && !shouldQuit(); m++) {
-		if (m >= sizeof(_mysteriesSolved))
+	int mystery = lo;
+	if (currentTier) {
+		while (mystery < hi && _mysteriesSolved[mystery] == 0)
+			mystery++;
+	}
+
+	bool firstPage = true;
+	while (!shouldQuit() && mystery >= lo && mystery < hi) {
+		const int direction = doShowEnding((uint)mystery, firstPage);
+		if (direction < 0) {
+			if (mystery == lo)
+				break;
+			mystery--;
+			if (currentTier) {
+				while (mystery >= lo && _mysteriesSolved[mystery] == 0)
+					mystery--;
+			}
+			firstPage = false;
+		} else if (direction > 0) {
+			mystery++;
+			if (currentTier) {
+				while (mystery < hi && _mysteriesSolved[mystery] == 0)
+					mystery++;
+			}
+			firstPage = true;
+		} else {
 			break;
-		// Current-tier filter (1f78:0664). Completed tiers show all
-		// 24 entries; the active tier hides unsolved ones because
-		// the player hasn't earned that scrapbook page yet.
-		if (currentTier && _mysteriesSolved[m] == 0)
-			continue;
-		(void)doShowEnding(m, /*firstPage=*/true);
+		}
 	}
 }
 
@@ -1176,31 +1188,29 @@ void EEMEngine::doSetup() {
 			}
 
 			// ScrapBook 1 / 2 / 3 (buttons [3] / [4] / [5]). Original
-			// handlers at 1f78:021F (`_ShowScrapbook(0, 1)`) /
-			// 1f78:022E (gated chain >= 2 / `_ShowScrapbook(0, 2)`) /
-			// 1f78:0244 (gated chain >= 3 / `_ShowScrapbook(0, 3)`).
-			// Convert the original's `(0, stage)` invocation into our
-			// `doShowScrapbook(stage)` (we collapse the param_1=0
-			// "no-current-mystery" indirection — relevant only for
-			// the post-win callsite).
-			auto runScrapbook = [&](uint stage) {
+			// handlers call `_ShowScrapbook(stage, 0)`, with stages 2
+			// and 3 gated by chain progress.
+			if (kScrap1Btn.contains(mx, my)) {
 				CursorMan.showMouse(false);
-				doShowScrapbook(stage);
+				doShowScrapbook(1);
 				CursorMan.showMouse(true);
 				setSitePalette(0);
-			};
-			if (kScrap1Btn.contains(mx, my)) {
-				runScrapbook(1);
 				dirty = true;
 				continue;
 			}
 			if (kScrap2Btn.contains(mx, my) && _chainStage >= 2) {
-				runScrapbook(2);
+				CursorMan.showMouse(false);
+				doShowScrapbook(2);
+				CursorMan.showMouse(true);
+				setSitePalette(0);
 				dirty = true;
 				continue;
 			}
 			if (kScrap3Btn.contains(mx, my) && _chainStage >= 3) {
-				runScrapbook(3);
+				CursorMan.showMouse(false);
+				doShowScrapbook(3);
+				CursorMan.showMouse(true);
+				setSitePalette(0);
 				dirty = true;
 				continue;
 			}

@@ -412,7 +412,8 @@ private:
 	/// @ 1df2:044c`. The file format is a 2-byte page count followed
 	/// by N pages, each `{ u16 picNum, u16 x1, u16 y1, u16 x2, u16 y2,
 	/// char text[] (null-terminated, ParseString placeholders) }`.
-	/// Blocks until the player clicks past the last page or hits ESC.
+	/// Blocks until the player exits the ending view or crosses either
+	/// page boundary.
 	/// `_ShowOneScrap @ 1f78:0773` is just `_DisplayEnding(num, 1)`,
 	/// so this same call covers the post-mystery scrapbook view from
 	/// the action menu.
@@ -430,14 +431,15 @@ private:
 	/// Mirrors `_DisplayEnding`'s `[BP-0x18]` return at 1df2:0723.
 	int doShowEnding(uint num, bool firstPage = true);
 
-	/// Walk every solved mystery in tier @p stage (1=Junior, 2=Senior,
-	/// 3=Master) and display each one's ending pages in sequence.
+	/// Browse the scrapbook tier @p stage (1=Junior, 2=Senior,
+	/// 3=Master), moving between mystery endings with the original
+	/// `_DisplayEnding` return direction.
 	/// Mirrors `_ShowScrapbook(stage, 0) @ 1f78:0642`: the original
 	/// computes the mystery range from `(stage - 1) * 0x18 + 1` to
-	/// `(stage - 1) * 0x18 + 0x18` and skips entries whose
-	/// `_3f9b[i] == 0` (unsolved) so the scrapbook only contains
-	/// completed cases. Used by both the setup-screen ScrapBook
-	/// buttons and the action-menu "See ScrapBook 1/2/3" entries.
+	/// `(stage - 1) * 0x18 + 0x18`. If this is the current chain stage,
+	/// unsolved entries are skipped; completed tiers are already solved.
+	/// Used by both the setup-screen ScrapBook buttons and the
+	/// action-menu "See ScrapBook 1/2/3" entries.
 	void doShowScrapbook(uint stage);
 
 	void doCaseSelection();
