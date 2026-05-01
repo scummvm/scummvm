@@ -1812,11 +1812,13 @@ void EEMEngine::doNotebook() {
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
 				exitFlag = true;
 				break;
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;
 				}
@@ -1838,11 +1840,12 @@ void EEMEngine::doNotebook() {
 				// rects directly. Earlier rects "win" when overlapping
 				// (matches `_FindButton`).
 				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;  // back to site
 				}
 				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
-					doBigMap();
+					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
 				}
@@ -1852,14 +1855,14 @@ void EEMEngine::doNotebook() {
 					continue;
 				}
 				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
-					doAccuse();
+					_nextScreen = kScreenAccuse;
 					exitFlag = true;
 					break;
 				}
 				if (kBtnGallery.contains(ev.mouse.x, ev.mouse.y)) {
-					doGallery();
-					dirty = true;
-					continue;
+					_nextScreen = kScreenGallery;
+					exitFlag = true;
+					break;
 				}
 				if (kBtnHelp1.contains(ev.mouse.x, ev.mouse.y)) {
 					// rect 1 → `_InterfaceHelp(0)`: walks `HelpData[0]` and
@@ -2161,10 +2164,12 @@ void EEMEngine::doGallery() {
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
 				return;
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;
 				}
@@ -2192,18 +2197,19 @@ void EEMEngine::doGallery() {
 				const Common::Rect kBtnHelp    ( 93, 174, 115, 190); // [1] HELP
 				const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3] KD HELP
 				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+					_nextScreen = kScreenSite;
 					exitFlag = true; break;
 				}
 				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
-					doBigMap();
+					_nextScreen = kScreenMapAlt;
 					exitFlag = true; break;
 				}
 				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
-					doAccuse();
+					_nextScreen = kScreenAccuse;
 					exitFlag = true; break;
 				}
 				if (kBtnNotebook.contains(ev.mouse.x, ev.mouse.y)) {
-					// Already came from notebook; exiting returns to it.
+					_nextScreen = kScreenNotebook;
 					exitFlag = true; break;
 				}
 				if (kBtnHelp.contains(ev.mouse.x, ev.mouse.y)) {
