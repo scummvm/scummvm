@@ -35,6 +35,10 @@
 
 namespace EEM {
 
+constexpr Common::Rect kSitePdaRect(Common::Point(35, 111), 21, 25);
+constexpr Common::Rect kSitePartnerFootMapRect(Common::Point(7, 177), 50, 23);
+constexpr Common::Rect kSitePartnerHeadHintRect(Common::Point(5, 80), 39, 30);
+
 // Masked blit a Picture into a ManagedSurface. Pixels equal to `transp`
 // (the high byte of `pic.flags`, per `_Rect_Move_Mask @ 1000:03fc`) are
 // skipped. Used by `enterSiteAnim` for both skateboard + KD slide-in
@@ -761,27 +765,24 @@ void SiteScreen::run() {
 				//                                       (CD `_NextScreen = 1`,
 				//                                       floppy = 2)
 				// Test the buttons before falling through to hotspots so
-				// a click on the PDA / map icon doesn't accidentally
+				// a click on the PDA / partner foot doesn't accidentally
 				// trigger a hotspot underneath.
-				const Common::Rect kBtnNotebook(35, 111, 56, 136);
-				const Common::Rect kBtnMap     ( 7, 177, 57, 200);
-				// Partner area — port-only enhancement so the player
+				// Partner head is a port-only enhancement so the player
 				// can click the host sprite for a hint, mirroring the
 				// PDA's rect-3 / gallery's rect-3 behaviour. The
 				// original site loop's `_FindButton(&SiteButtons, 2,
 				// ...)` only checks notebook + map, but the same
-				// partner-click → `_KDHelp` shortcut is wired in
+				// partner-click -> `_KDHelp` shortcut is wired in
 				// `_HandleNoteButton[3]` (0x0403) and
 				// `_HandleGalleryButton[3]` (0x061e). Rect matches
 				// the PDA / gallery `kBtnPartner` (5, 80, 44, 110).
-				const Common::Rect kBtnPartner ( 5,  80, 44, 110);
-				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
+				if (kSitePdaRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
 					return;
 				}
-				if (kBtnMap.contains(event.mouse.x, event.mouse.y)) {
+				if (kSitePartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					// CD writes `_NextScreen = 1`; floppy writes 2.
@@ -789,7 +790,7 @@ void SiteScreen::run() {
 													   : kScreenMap);
 					return;
 				}
-				if (kBtnPartner.contains(event.mouse.x, event.mouse.y)) {
+				if (kSitePartnerHeadHintRect.contains(event.mouse.x, event.mouse.y)) {
 					_vm->setHotspotMouseCursor(false);
 					_vm->doHelp();
 					notePartnerActivity();
@@ -1477,7 +1478,10 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
 	if (!_vm)
 		return;
-	_vm->setHotspotMouseCursor(hotspotAtPoint(siteNum, x, y) >= 0);
+	const bool siteControl = kSitePdaRect.contains(x, y) ||
+							 kSitePartnerFootMapRect.contains(x, y) ||
+							 kSitePartnerHeadHintRect.contains(x, y);
+	_vm->setHotspotMouseCursor(siteControl || hotspotAtPoint(siteNum, x, y) >= 0);
 }
 
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
