@@ -93,7 +93,8 @@ uint happinessLevel(int x) {
 }
 
 // Lock the framebuffer, masked-blit `p` at (x, y), unlock. The transparent
-// colour is the high byte of `p.flags` per `_Rect_Move_Mask @ 1000:03fc`.
+// colour is the high byte of `p.flags`; `_AddPicBackground @ 172b:0ed4`
+// pushes `word ptr ES:[BX] >> 8` as `_Rect_Move_Mask`'s mask byte.
 void blitMaskedToScreen(const Picture &p, int x, int y) {
 	const byte transp = (byte)(p.flags >> 8);
 	Graphics::Surface *screen = g_system->lockScreen();
@@ -730,11 +731,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 			Picture charPic;
 			if (_picsArchive.getPicture(charPicId, charPic) &&
 				charX < 320 && charY < 200) {
-				const int w = MIN<int>(charPic.surface.w, 320 - charX);
-				const int h = MIN<int>(charPic.surface.h, 200 - charY);
-				if (w > 0 && h > 0)
-					g_system->copyRectToScreen(charPic.surface.getPixels(),
-						charPic.surface.pitch, charX, charY, w, h);
+				blitMaskedToScreen(charPic, charX, charY);
 			}
 		}
 
