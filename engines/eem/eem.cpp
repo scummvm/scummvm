@@ -392,8 +392,9 @@ screen_loop:
 		case kScreenMap:
 		case kScreenMapAlt:
 			// Handler 1/2 at 1a35:0e25 calls `_DoMapScreen @
-			// 20fe:120b` which manages its own `_NextScreen` writes —
-			// 3 (a site was clicked), 6 (setup), or 0xffff (quit).
+			// 20fe:120b` (floppy: 19bb:0ef3 -> 1fed map code),
+			// which manages its own `_NextScreen` writes — 3 (a site
+			// was clicked), 6 (setup), or 0xffff (quit).
 			// Our `doBigMap` keeps the original's "click site, then
 			// enter the site loop" behaviour inline; once it returns
 			// the natural next state is SITE.
@@ -406,19 +407,36 @@ screen_loop:
 
 		case kScreenSite:
 			// Handler 3 at 1a35:0e2c calls `_DoSiteLoop @
-			// 168d:03f4`. Our `doSiteLoop` is a complete loop —
-			// notebook / gallery / accuse / map are dispatched
-			// inline within `SiteScreen::run`. The accusation tail
-			// in `doAccuse` (see ui.cpp) writes the next screen:
-			// kScreenAction on win (matches `_DisplayCorrect @
-			// 1df2:0895` writing 0xc) or kScreenSite on lose
-			// (matches `_DisplayAlibi @ 1df2:043f` snapping back
-			// via `_LastScreen`).
+			// 168d:03f4` (floppy's equivalent dispatches through
+			// 1652). Site writes `_NextScreen` for PDA / map rather
+			// than entering those screens as nested modals.
 			doSiteLoop();
 			if (!_mystery.isLoaded())
 				_nextScreen = kScreenChooseMystery;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenInvalid;  // user quit
+			break;
+
+		case kScreenNotebook:
+			// Handler 4 calls the PDA notebook screen. Its button
+			// handler writes 2 (map), 3 (site), 5 (gallery), or 7
+			// (accuse) and then returns to this dispatcher.
+			doNotebook();
+			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
+				_nextScreen = kScreenChooseMystery;
+			else if (_nextScreen == current)
+				_nextScreen = kScreenSite;
+			break;
+
+		case kScreenGallery:
+			// Handler 5 calls the suspect gallery. Like the original,
+			// ESC and the site button write 3, the map button writes
+			// 2, and the PDA button writes 4.
+			doGallery();
+			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
+				_nextScreen = kScreenChooseMystery;
+			else if (_nextScreen == current)
+				_nextScreen = kScreenSite;
 			break;
 
 		case kScreenSetup:
@@ -429,6 +447,17 @@ screen_loop:
 			// then the toggle UI returns when ESC / Back is hit;
 			// `doSetup` sets `_nextScreen` itself.
 			doSetup();
+			break;
+
+		case kScreenAccuse:
+			// Handler 7 runs the accusation flow. A failed accusation
+			// returns to `_LastScreen`; a correct solution writes
+			// 0xc (ACTION).
+			doAccuse();
+			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
+				_nextScreen = kScreenChooseMystery;
+			else if (_nextScreen == current)
+				_nextScreen = kScreenSite;
 			break;
 
 		default:

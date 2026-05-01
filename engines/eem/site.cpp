@@ -695,7 +695,8 @@ void SiteScreen::run() {
 				//   Button 0: (35, 111) - (56, 136)  → notebook
 				//                                       (`_NextScreen = 4`)
 				//   Button 1: (7, 177)  - (57, 200)  → map
-				//                                       (`_NextScreen = 1`)
+				//                                       (CD `_NextScreen = 1`,
+				//                                       floppy = 2)
 				// Test the buttons before falling through to hotspots so
 				// a click on the PDA / map icon doesn't accidentally
 				// trigger a hotspot underneath.
@@ -712,16 +713,14 @@ void SiteScreen::run() {
 				// the PDA / gallery `kBtnPartner` (5, 80, 44, 110).
 				const Common::Rect kBtnPartner ( 5,  80, 44, 110);
 				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
-					_vm->doNotebook();
-					enter(cur);
-					break;
+					_vm->setNextScreen(kScreenNotebook);
+					return;
 				}
 				if (kBtnMap.contains(event.mouse.x, event.mouse.y)) {
-					_vm->doBigMap();
-					if (_mystery->_siteNumber < _mystery->numSites())
-						cur = _mystery->_siteNumber;
-					enter(cur);
-					break;
+					// CD writes `_NextScreen = 1`; floppy writes 2.
+					_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
+													   : kScreenMap);
+					return;
 				}
 				if (kBtnPartner.contains(event.mouse.x, event.mouse.y)) {
 					_vm->doHelp();
@@ -748,7 +747,8 @@ void SiteScreen::run() {
 				// → MAP).
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					if (_vm->areYouSure()) {
-						_vm->setNextScreen(kScreenMap);
+						_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
+														   : kScreenMap);
 						return;
 					}
 					enter(cur);
@@ -762,10 +762,7 @@ void SiteScreen::run() {
 		if (exitRequested)
 			return;
 
-		// `doAccuse` on a win clears the mystery (so the screen driver
-		// can route to the post-mystery menu). Notebook / Gallery /
-		// hotspot paths route through this same loop, so a transitive
-		// `doAccuse` may have wiped `_mystery` underneath us — exit
+		// Hotspot side effects can invalidate the active mystery; exit
 		// immediately rather than tick another frame against stale BG
 		// snapshots / hotspot tables.
 		if (!_mystery || !_mystery->isLoaded())
