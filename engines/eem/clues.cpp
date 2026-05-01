@@ -64,6 +64,29 @@ const int kBoyY  = 0x62; // 98
 const int kGirlX = 0x42; // 66
 const int kGirlY = 0x60; // 96
 
+uint markClueBlockNotebookEntries(Mystery &mystery, const byte *clueBlock) {
+	if (!clueBlock)
+		return 0;
+
+	const uint16 number = READ_LE_UINT16(clueBlock);
+	if (number == 0 || number > 32)
+		return 0;
+
+	uint marked = 0;
+	for (uint i = 0; i < number; i++) {
+		const byte *entry = clueBlock + 4 + i * 62;
+		for (uint j = 0; j < 5; j++) {
+			const uint16 note = READ_LE_UINT16(entry + 0x30 + j * 2);
+			if (note != 0xFFFF && note < Mystery::kCluesFoundCap &&
+				mystery._cluesFound[note] == 0) {
+				mystery._cluesFound[note] = 1;
+				marked++;
+			}
+		}
+	}
+	return marked;
+}
+
 // `_DoHappiness @ 172b:27b5`: each cursor zone swaps the partner's
 // sequence script to a more / less "happy" cycle. Boy seqs lifted
 // verbatim from `29be:0337` (5 × 0x14 bytes), girl seqs from
@@ -540,10 +563,24 @@ void EEMEngine::doInitClues() {
 	// dialog_records[nDialog]` (each record `11 + textCount` bytes),
 	// dispatched via `FUN_22dc_05c8 @ 22dc:05c8`. We render dialog
 	// records ourselves on floppy.
-	if (floppy)
+	if (floppy) {
 		displayFloppyBriefing(ib);
-	else
-		displayClue(ib + 4);
+	} else {
+		const byte *briefingClues = ib + 4;
+		// Ghidra confirms CD `_DoInitClues` enters the normal
+		// `_DisplayClue(_InitBlock + 2, 1)` path, and `_DisplayClue`
+		// calls `_AddNotebook` for each ClueEntry note list at
+		// +0x30..+0x39. These starting notes are required before the
+		// first PDA visit, so mark them explicitly here. The regular
+		// displayClue side-effect pass is idempotent and still handles
+		// gallery/site updates in the original order.
+		const uint marked = markClueBlockNotebookEntries(_mystery, briefingClues);
+		if (marked != 0)
+			debugC(1, kDebugScript,
+				   "doInitClues: marked %u CD briefing notebook entries",
+				   marked);
+		displayClue(briefingClues);
+	}
 }
 
 /// Mirror `_ParseString` @ 1b66:07c3 — substitute the control bytes that
