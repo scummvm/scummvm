@@ -57,7 +57,7 @@ void Globals::createBlankButton() {
 bool Globals::load(bool isEnhanced) {
 	// Initialise engine data for the game
 	Common::U32String errMsg;
-	if (!Common::load_engine_data("mm.dat", "mm1", 1, 0, errMsg)) {
+	if (!Common::load_engine_data("mm.dat", "mm1", 1, 1, errMsg)) {
 		GUIErrorMessage(errMsg);
 		return false;
 	}
