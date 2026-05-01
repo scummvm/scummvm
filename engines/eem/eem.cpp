@@ -58,12 +58,7 @@ const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  ///< Floppy `FUN_23d2_0605` palette idx
 
-// Save body version, used by the `Common::Serializer` inside
-// `saveGameStream`/`loadGameStream`. The framework's extended-save
-// header (description / thumbnail / playtime) is appended/parsed
-// separately by `Engine::saveGameState` / `MetaEngine::readSavegameHeader`,
-// so we don't need a magic word or our own metadata fields.
-const byte kSaveBodyVer = 3;
+const byte kSaveBodyVer = 1;
 
 // 11x16 mouse cursor — replaces the DOS hardware cursor wired in by
 // _InitMouse @ 152d:018b (INT 33h). The original game sets the cursor
@@ -797,9 +792,8 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	(void)isAutosave;
 
 	// Body header: one byte version. `Common::Serializer::setVersion`
-	// alone doesn't write/read the version — we emit it explicitly so
-	// `loadGameStream` knows which fields are present. Older saves
-	// (v1) lack `_chainStage`; newer ones include it.
+	// alone doesn't write/read the version, so emit it explicitly and
+	// require an exact match on load.
 	Common::Serializer s(nullptr, stream);
 	s.setVersion(kSaveBodyVer);
 	byte ver = kSaveBodyVer;
@@ -821,16 +815,12 @@ Common::Error EEMEngine::saveGameStream(Common::WriteStream *stream,
 	//                  2=solved on first try) — `_DisplayCorrect`
 	//                  writes 1 always, 2 when `_FirstTry != 0`.
 	//
-	// We persist the gameplay-meaningful subset (name + solved table +
-	// partner) and skip the filename-derivation bytes. The voice /
-	// chain-stage fields aren't yet wired into the C++ port; we save
-	// space for them so they slot in without a version bump.
+	// We persist the gameplay-meaningful subset and skip the original
+	// filename-derivation bytes.
 	s.syncString(_playerName);
 	s.syncBytes(_mysteriesSolved, sizeof(_mysteriesSolved));
 	s.syncAsByte(_partner);
-	// v2+: chain-stage tier (1=Junior, 2=Senior, 3=Master).
 	s.syncAsByte(_chainStage);
-	// v3+: voice on/off flag (DAT_2d5d_3f97).
 	s.syncAsByte(_voiceOn);
 
 	// ScummVM-only extension: persist the in-progress mystery so the
@@ -858,8 +848,8 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	Common::Serializer s(stream, nullptr);
 	byte ver = 0;
 	s.syncAsByte(ver);
-	if (ver > kSaveBodyVer) {
-		warning("loadGameStream: save body version %u newer than %u — refusing",
+	if (ver != kSaveBodyVer) {
+		warning("loadGameStream: unsupported save body version %u (expected %u)",
 				ver, kSaveBodyVer);
 		return Common::kReadingFailed;
 	}

@@ -564,22 +564,6 @@ void Mystery::syncState(Common::Serializer &s) {
 	s.syncArray(_hotSpotsSeen, kHotSpotsCap, Common::Serializer::Uint16LE);
 	s.syncArray(_inGallery,    kGalleryCap,  Common::Serializer::Uint16LE);
 	s.syncBytes(_newOrder, kGalleryCap);
-	// Save profiles created before the floppy `_newOrder` identity init
-	// was added stored all-zeros here. Loading that back over the
-	// identity set by `Mystery::load()` makes every dialog with byte9>0
-	// resolve to slot 0 (so the second suspect found at a CONSITE
-	// overwrites the first). Detect the legacy zero-fill on read and
-	// rebuild the identity mapping that the loader produced.
-	if (s.isLoading()) {
-		bool allZero = true;
-		for (uint i = 0; i < kGalleryCap; i++) {
-			if (_newOrder[i] != 0) { allZero = false; break; }
-		}
-		if (allZero) {
-			for (uint i = 0; i < kGalleryCap; i++)
-				_newOrder[i] = (uint8)i;
-		}
-	}
 	s.syncArray(_visitedSite, kVisitedSiteCap, Common::Serializer::Uint16LE);
 	s.syncArray(_onSites,     kVisitedSiteCap, Common::Serializer::Uint16LE);
 	s.syncAsByte(_sawCOFFSITEs);
