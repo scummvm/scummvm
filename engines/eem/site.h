@@ -100,7 +100,7 @@ public:
 		: _vm(vm), _mystery(mystery) {}
 
 	/** Enter site @p siteNum. Renders BG + hotspots; runs the input loop. */
-	void enter(uint siteNum);
+	void enter(uint siteNum, bool resetPartnerMood = true);
 
 	/// Run the per-mystery loop: site -> map -> next site, ESC exits.
 	void run();
@@ -111,6 +111,9 @@ private:
 	int  hotspotAtPoint(uint siteNum, int x, int y) const;
 	void updateHotspotCursor(uint siteNum, int x, int y);
 	void onHotspotClicked(uint siteNum, uint hotIdx);
+	void initImpatienceCounter();
+	bool checkImpatienceCounter();
+	void notePartnerActivity();
 
 	/// Play the partner's site-arrival sequence once `_LastSite !=
 	/// _SiteNumber`. Mirrors `_EnterSiteAnim @ 1000:9b21` — animation
@@ -168,10 +171,17 @@ private:
 
 	EEMEngine *_vm;
 	Mystery *_mystery;
+	enum PartnerWaitMood {
+		kPartnerWaitDefault,
+		kPartnerWaitPatient,
+		kPartnerWaitImpatient
+	};
 	int _lastSiteAnim = -1;        ///< Last site we played the arrival on.
 	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
 	Graphics::ManagedSurface _bgSnapshot;
 	uint32 _lastTickMs = 0;        ///< Last frame-pump tick in ms.
+	uint32 _impatientDeadlineMs = 0; ///< Test-shortened impatience deadline.
+	PartnerWaitMood _partnerWaitMood = kPartnerWaitDefault;
 
 	/// Wall-clock timestamp at which the partner's wait animation
 	/// "started" (or last restarted). The site loop renders the
