@@ -33,6 +33,30 @@
 
 namespace Scumm {
 
+static bool readLevel2BackgroundChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
+		uint32 &tag, uint32 &chunkSize, int64 &dataEnd, int64 &nextChunkPos) {
+	const int64 headerPos = stream.pos();
+	if (headerPos < 0 || headerPos + 8 > containerEnd)
+		return false;
+
+	tag = stream.readUint32BE();
+	chunkSize = stream.readUint32BE();
+
+	const int64 dataStart = stream.pos();
+	if ((int64)chunkSize > containerEnd - dataStart) {
+		debug("Rebel2 loadLevel2Background: Truncated %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+			context, tag, headerPos, chunkSize, containerEnd - dataStart);
+		return false;
+	}
+
+	dataEnd = dataStart + chunkSize;
+	nextChunkPos = dataEnd + (chunkSize & 1);
+	if (nextChunkPos > containerEnd)
+		nextChunkPos = dataEnd;
+
+	return true;
+}
+
 //
 // procPreRendering -- Pre-frame setup: background restore and corridor overlays.
 //
@@ -2103,77 +2127,104 @@ bool InsaneRebel2::loadLevel2Background(byte *animData, int32 size, byte *render
 		memset(_level2Background, 0, 320 * 200);
 	}
 
-	// Parse embedded ANIM to find FOBJ
-	// Structure: ANIM tag at offset 0, AHDR, then FRME with FOBJ
-	int animOffset = 0;
-	if (READ_BE_UINT32(animData) == MKTAG('A','N','I','M')) {
-		uint32 animSize = READ_BE_UINT32(animData + 4);
-		debug("Rebel2 loadLevel2Background: Found ANIM tag, size=%u", animSize);
+	Common::MemoryReadStream stream(animData, size);
+	const int64 streamEnd = stream.size();
 
-		// Skip ANIM header (8 bytes) + AHDR chunk
-		if (size >= 16 && READ_BE_UINT32(animData + 8) == MKTAG('A','H','D','R')) {
-			uint32 ahdrSize = READ_BE_UINT32(animData + 12);
-			animOffset = 8 + 8 + ahdrSize;  // After ANIM tag + AHDR
-			debug("Rebel2 loadLevel2Background: AHDR size=%u, FRME expected at offset %d", ahdrSize, animOffset);
-		}
+	uint32 animTag = stream.readUint32BE();
+	if (animTag != MKTAG('A','N','I','M')) {
+		debug("Rebel2 loadLevel2Background: Missing ANIM tag, got 0x%08X", animTag);
+		return false;
 	}
 
-	// Look for FRME containing FOBJ
+	uint32 animSize = stream.readUint32BE();
+	int64 animEnd = streamEnd;
+	if ((int64)animSize <= streamEnd - 8) {
+		animEnd = 8 + (int64)animSize;
+	} else {
+		debug("Rebel2 loadLevel2Background: ANIM truncated: reported size=%u, actual=%lld",
+			animSize, streamEnd - 8);
+	}
+	debug("Rebel2 loadLevel2Background: Found ANIM tag, size=%u", animSize);
+
 	bool foundBackground = false;
-	for (int scanPos = animOffset; scanPos + 16 < size && !foundBackground; scanPos++) {
-		if (READ_BE_UINT32(animData + scanPos) == MKTAG('F','R','M','E')) {
-			int frmeSize = READ_BE_UINT32(animData + scanPos + 4);
-			debug("Rebel2 loadLevel2Background: Found FRME at %d, size=%d", scanPos, frmeSize);
+	while (!stream.eos() && stream.pos() + 8 <= animEnd && !foundBackground) {
+		uint32 tag;
+		uint32 chunkSize;
+		int64 chunkDataEnd;
+		int64 nextChunkPos;
+		if (!readLevel2BackgroundChunkHeader(stream, animEnd, "ANIM", tag, chunkSize, chunkDataEnd, nextChunkPos))
+			break;
 
-			for (int fobjPos = scanPos + 8; fobjPos + 18 < scanPos + 8 + frmeSize && fobjPos + 18 < size; fobjPos++) {
-				if (READ_BE_UINT32(animData + fobjPos) == MKTAG('F','O','B','J')) {
-					byte *fobjData = animData + fobjPos + 8;
+		if (tag != MKTAG('F','R','M','E')) {
+			stream.seek(nextChunkPos);
+			continue;
+		}
 
-					// FOBJ header: codec(2), x(2), y(2), w(2), h(2)
-					int16 codec = READ_LE_INT16(fobjData);
-					int16 fobjX = READ_LE_INT16(fobjData + 2);
-					int16 fobjY = READ_LE_INT16(fobjData + 4);
-					int16 fobjW = READ_LE_INT16(fobjData + 6);
-					int16 fobjH = READ_LE_INT16(fobjData + 8);
+		debug("Rebel2 loadLevel2Background: Found FRME at %lld, size=%u", stream.pos() - 8, chunkSize);
 
-					debug("Rebel2 loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
-						codec, fobjX, fobjY, fobjW, fobjH);
+		while (stream.pos() + 8 <= chunkDataEnd && !stream.eos() && !foundBackground) {
+			uint32 subTag;
+			uint32 subSize;
+			int64 subDataEnd;
+			int64 nextSubPos;
+			if (!readLevel2BackgroundChunkHeader(stream, chunkDataEnd, "FRME", subTag, subSize, subDataEnd, nextSubPos))
+				break;
 
-					// Decode codec 3 (RLE) into background buffer
-					// Use smushDecodeRLEOpaque to write ALL colors including color 0 (black).
-					// The standard smushDecodeRLE treats color 0 as transparent, which causes
-					// the background to appear as a "sketch" with black pixels missing.
-					if (codec == 3 && fobjW > 0 && fobjH > 0 && fobjW <= 320 && fobjH <= 200) {
-						byte *rleData = fobjData + 14;  // Skip full 14-byte FOBJ header
-						smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+			if (subTag != MKTAG('F','O','B','J')) {
+				stream.seek(nextSubPos);
+				continue;
+			}
 
-						debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
-							fobjW, fobjH, fobjX, fobjY);
-						_level2BackgroundLoaded = true;
-						foundBackground = true;
+			if (subSize < 14) {
+				debug("Rebel2 loadLevel2Background: FOBJ too small: size=%u", subSize);
+				stream.seek(nextSubPos);
+				continue;
+			}
 
-						// Copy to render bitmap immediately if provided.
-						// Only copy when render buffer pitch is 320 (standard screen size).
-						// For oversized buffers (e.g., Level 12's 640x260 corridor),
-						// the FOBJ/FETCH system handles background rendering and copying
-						// 320-wide data into a wider buffer would corrupt the corridor.
-						if (renderBitmap) {
-							int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
-							if (bufferPitch == 320) {
-								for (int by = 0; by < 200; by++) {
-									memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
-								}
-								debug("Rebel2 loadLevel2Background: Copied to renderBitmap (pitch=%d)", bufferPitch);
-							} else {
-								debug("Rebel2 loadLevel2Background: Skipping renderBitmap copy (pitch=%d != 320)", bufferPitch);
-							}
+			// FOBJ header: codec(2), x(2), y(2), w(2), h(2)
+			int codec = stream.readUint16LE();
+			int fobjX = stream.readSint16LE();
+			int fobjY = stream.readSint16LE();
+			int fobjW = stream.readSint16LE();
+			int fobjH = stream.readSint16LE();
+			stream.readUint16LE();  // unknown
+			stream.readUint16LE();  // unknown
+
+			debug("Rebel2 loadLevel2Background: Found FOBJ: codec=%d pos=(%d,%d) size=%dx%d",
+				codec, fobjX, fobjY, fobjW, fobjH);
+
+			// Decode codec 3 (RLE) into background buffer.
+			// Use smushDecodeRLEOpaque to write ALL colors including color 0 (black).
+			if (codec == 3 && fobjX >= 0 && fobjY >= 0 && fobjW > 0 && fobjH > 0 &&
+					fobjX + fobjW <= 320 && fobjY + fobjH <= 200 && stream.pos() < subDataEnd) {
+				const byte *rleData = animData + stream.pos();
+				smushDecodeRLEOpaque(_level2Background, rleData, fobjX, fobjY, fobjW, fobjH, 320);
+
+				debug("Rebel2 loadLevel2Background: Decoded Level 2 background (%dx%d at %d,%d)",
+					fobjW, fobjH, fobjX, fobjY);
+				_level2BackgroundLoaded = true;
+				foundBackground = true;
+
+				// Copy to render bitmap immediately if provided.
+				// Only copy when render buffer pitch is 320 (standard screen size).
+				// For oversized buffers, the FOBJ/FETCH system handles background rendering.
+				if (renderBitmap) {
+					int bufferPitch = (_player && _player->_width > 0) ? _player->_width : 320;
+					if (bufferPitch == 320) {
+						for (int by = 0; by < 200; by++) {
+							memcpy(renderBitmap + by * 320, _level2Background + by * 320, 320);
 						}
+						debug("Rebel2 loadLevel2Background: Copied to renderBitmap (pitch=%d)", bufferPitch);
+					} else {
+						debug("Rebel2 loadLevel2Background: Skipping renderBitmap copy (pitch=%d != 320)", bufferPitch);
 					}
-					break;
 				}
 			}
-			break;
+
+			stream.seek(nextSubPos);
 		}
+
+		stream.seek(nextChunkPos);
 	}
 
 	if (!foundBackground) {
