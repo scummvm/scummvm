@@ -1297,10 +1297,11 @@ void SiteScreen::renderHotspots(uint siteNum) {
 	const uint32 tickMs = g_system->getMillis();
 
 	// CD hotspot rows are 14 bytes each (rect + 6 bytes of clue
-	// metadata). Floppy stores plain 8-byte rectangles only — clue
-	// data lives in a separate dialog-record list at `site_data[+6]`,
-	// keyed by hotspot index. Verified at `FUN_22dc_0b80 @ 22dc:0b80`.
-	const uint stride = _vm && _vm->isFloppy() ? 8 : 14;
+	// metadata). The seen key is the zero-based mystery-wide ordinal
+	// at +0xa, not this site's local row index. Floppy stores plain
+	// 8-byte rectangles only, so its seen key remains the row index.
+	const bool floppy = _vm && _vm->isFloppy();
+	const uint stride = floppy ? 8 : 14;
 	for (uint i = 0; i < count; i++) {
 		const byte *r = spots + i * stride;
 		const int16 x1 = (int16)READ_LE_UINT16(r + 0);
@@ -1310,8 +1311,9 @@ void SiteScreen::renderHotspots(uint siteNum) {
 		const Common::Rect rect(MAX<int>(0, x1), MAX<int>(0, y1),
 								MIN<int>(screen->w, x2),
 								MIN<int>(screen->h, y2));
-		const bool seen = (i < Mystery::kHotSpotsCap)
-						   && _mystery->_hotSpotsSeen[i];
+		const uint seenKey = floppy ? i : READ_LE_UINT16(r + 0xa);
+		const bool seen = seenKey < Mystery::kHotSpotsCap &&
+						   _mystery->_hotSpotsSeen[seenKey];
 		if (seen) {
 			// `_DrawSolidRect` (172b:0506) — outline in palette
 			// index 0xFF (a fixed, non-cycling colour) so already-
@@ -1418,10 +1420,10 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 
 	// `_DoSiteLoop @ 168d:03f4` (after _DisplayClue):
 	//   _HotSpotsSeen[hotspot[+0xa] * 2] = _HotSpotComplete;
-	// The "seen" key is the hotspotIndex field (+0xa) — the 1-based
-	// ordinal — NOT the array index. Two hotspots can share an ordinal
-	// across sites (e.g., a partner's clue you can re-read), so this
-	// matters for cross-site state.
+	// The seen key is the hotspotIndex field (+0xa) — a zero-based
+	// mystery-wide ordinal — NOT the site's local row index. Using the
+	// local index makes unrelated hotspots on later sites inherit the
+	// first site's seen state after travel or reload.
 	const byte *spots = _mystery->hotspots(siteNum);
 	uint hotOrdinal = hotIdx; // fallback to array index
 	if (spots) {
@@ -1429,8 +1431,6 @@ void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {
 	}
 	if (hotOrdinal < Mystery::kHotSpotsCap)
 		_mystery->_hotSpotsSeen[hotOrdinal] = 1;
-	if (hotIdx < Mystery::kHotSpotsCap)
-		_mystery->_hotSpotsSeen[hotIdx] = 1;  // also mark by array idx for our render
 	_mystery->_searchLocationNumber = (uint16)hotIdx;
 
 	// Bytes 8..9 of each 14-byte hotspot rect = byte offset within the
