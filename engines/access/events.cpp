@@ -238,7 +238,8 @@ void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown
 		return;
 	}
 
-	if (_interfaceOff)
+	// Ignore all actions except skip when the inteface is locked.
+	if (_interfaceOff && action != kActionSkip)
 		return;
 
 	_action = action;
