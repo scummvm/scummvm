@@ -157,8 +157,8 @@ public:
 	// description = player name) — same approach Wetlands uses.
 
 	/// Mirrors `_SavePlayerRecord @ 1c33:034f`. Saves into the slot
-	/// whose description matches @p name, or the lowest unused slot
-	/// if no match. Returns the kNoError on success.
+	/// whose description matches @p name, or the lowest unused visible
+	/// slot if no match. Returns the kNoError on success.
 	Common::Error saveProfile(const Common::String &name);
 
 	/// Mirrors `_LoadPlayerRecord @ 1c33:03a6`. Returns false if no

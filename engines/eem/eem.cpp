@@ -959,10 +959,13 @@ Common::Error EEMEngine::saveProfile(const Common::String &name) {
 		}
 	}
 
-	// New profile — pick the lowest unused slot. The MetaEngine caps
-	// us at 99 by default (`getMaximumSaveSlot`); 25 was the DOS
-	// original's limit (`screen8_handler` walks `*.PLR` up to 25
-	// entries in `local_8c[0x19][2]`).
+	// New profile — pick the lowest unused visible slot. Slot 0 is
+	// filtered out by `listProfiles()` because it is ScummVM's
+	// conventional autosave slot, so allocating a new profile there
+	// makes the profile disappear from the picker on the next refresh.
+	// The MetaEngine caps us at 99 by default (`getMaximumSaveSlot`);
+	// 25 was the DOS original's limit (`screen8_handler` walks `*.PLR`
+	// up to 25 entries in `local_8c[0x19][2]`).
 	if (slot < 0) {
 		const int maxSlot = getMetaEngine()->getMaximumSaveSlot();
 		Common::Array<bool> used(maxSlot + 1);
@@ -971,7 +974,7 @@ Common::Error EEMEngine::saveProfile(const Common::String &name) {
 			if (sl >= 0 && sl <= maxSlot)
 				used[sl] = true;
 		}
-		for (int i = 0; i <= maxSlot; i++) {
+		for (int i = 1; i <= maxSlot; i++) {
 			if (!used[i]) {
 				slot = i;
 				break;
