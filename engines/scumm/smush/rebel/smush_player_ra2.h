@@ -79,6 +79,7 @@ private:
 	int32 _loadReadOffset;
 	int16 _lastLoadChunkIdx;
 	int16 _totalLoadChunks;
+	int _ra2FrameSourceSkipY;
 };
 
 } // End of namespace Scumm

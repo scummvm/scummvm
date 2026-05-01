@@ -75,6 +75,7 @@ void SmushPlayerRebel1::initGamePlayerFields() {
 	_ra1ObjOverlayHeight = 0;
 	_ra1ViewportOffsetX = 0;
 	_ra1ViewportOffsetY = 0;
+	_ra1FrameSourceSkipY = 0;
 }
 
 void SmushPlayerRebel1::destroyGamePlayerFields() {
@@ -508,7 +509,16 @@ bool SmushPlayerRebel1::handleGameAdjustCoords(int codec, int &left, int &top, i
 	// positions — they must NOT be clipped/adjusted.
 	if (codec == SMUSH_CODEC_SKIP_RLE || codec == SMUSH_CODEC_RA1_SCATTER)
 		return false;
-	adjustFrameCoords(left, top, width, height, pitch, srcSkipY);
+	int sourceSkipY = 0;
+	_ra1FrameSourceSkipY = 0;
+	adjustFrameCoords(left, top, width, height, pitch, &sourceSkipY);
+	if (codec == SMUSH_CODEC_RLE_ALT) {
+		_ra1FrameSourceSkipY = sourceSkipY;
+		if (srcSkipY)
+			*srcSkipY = 0;
+	} else if (srcSkipY) {
+		*srcSkipY = sourceSkipY;
+	}
 	return true;
 }
 
@@ -518,7 +528,8 @@ bool SmushPlayerRebel1::handleGameCodecDecode(int codec, const uint8 *src, int l
 		smushDecodeRA1Transparent(_dst, src, left, top, width, height, pitch);
 		return true;
 	case SMUSH_CODEC_RLE_ALT:
-		smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch);
+		src = smushSkipRLELines(src, dataSize, _ra1FrameSourceSkipY);
+		smushDecodeRLEOpaque(_dst, src, left, top, width, height, pitch, dataSize);
 		return true;
 	case SMUSH_CODEC_RA1_SCATTER:
 		smushDecodeRA1Scatter(_dst, src, left, top, _width, _height, pitch, dataSize);

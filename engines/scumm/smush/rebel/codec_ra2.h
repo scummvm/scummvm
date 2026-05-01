@@ -26,10 +26,11 @@
 
 namespace Scumm {
 
-void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
-void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch);
+void smushDecodeRLEOpaque(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
+void smushDecodeLineUpdate(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeSkipRLE(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
 void smushDecodeRA2Bomp(byte *dst, const byte *src, int left, int top, int width, int height, int pitch, int dataSize);
+const byte *smushSkipRLELines(const byte *src, int &dataSize, int lines);
 
 } // End of namespace Scumm
 
