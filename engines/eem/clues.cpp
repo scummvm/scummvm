@@ -117,6 +117,16 @@ void blitMaskedToScreen(const Picture &p, int x, int y) {
 	g_system->unlockScreen();
 }
 
+void blitRawToScreen(const Picture &p, int x, int y) {
+	const int w = MIN<int>(p.surface.w, 320 - x);
+	const int h = MIN<int>(p.surface.h, 200 - y);
+	if (x < 0 || y < 0 || w <= 0 || h <= 0)
+		return;
+
+	g_system->copyRectToScreen(p.surface.getPixels(), p.surface.pitch,
+							   x, y, w, h);
+}
+
 void EEMEngine::doChoosePartner() {
 	// Mirrors _DoChoosePartner @ 1a35:0756. The original places boy + girl
 	// animations on a backdrop and polls four click rectangles (two per
@@ -1341,12 +1351,6 @@ void EEMEngine::displayFloppyHotspotDialog(uint siteNum, uint hotIdx) {
 }
 
 bool EEMEngine::areYouSure() {
-	// Mirrors `_AreYouSure` @ 1a35:0a5c. Original loads PIC 0x136 for the
-	// dialog body and PIC 0x1FD/0x1FE for YES/NO. We render a minimal
-	// text dialog that preserves the screen behind it.
-	if (!_font.isLoaded())
-		return true;
-
 	Graphics::Surface *screen = g_system->lockScreen();
 	Graphics::ManagedSurface saved(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
@@ -1358,24 +1362,65 @@ bool EEMEngine::areYouSure() {
 		g_system->unlockScreen();
 	}
 
-	const Common::Rect dlg(60, 70, 260, 140);
-	Graphics::ManagedSurface scratch(320, 200,
-		Graphics::PixelFormat::createFormatCLUT8());
-	for (int row = 0; row < 200; row++)
-		memcpy((byte *)scratch.getBasePtr(0, row),
-			   (const byte *)saved.getBasePtr(0, row), 320);
-	scratch.fillRect(dlg, 0);
-	scratch.frameRect(dlg, 0xF);
-	_font.drawString(&scratch,
-		isSpanish() ? "Estas seguro que quieres salir?"
-					: "Are you sure you want to quit?",
-		dlg.left + 8, dlg.top + 8, 320, 0xF);
-	_font.drawString(&scratch,
-		isSpanish() ? "S - Si" : "Y - Yes",
-		dlg.left + 16, dlg.top + 36, 320, 0xF);
-	_font.drawString(&scratch, "N - No", dlg.left + 100, dlg.top + 36, 320, 0xF);
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
+	// CD `_AreYouSure @ 1a35:0a5c` and floppy `FUN_19bb_0b43` both:
+	//   * load PIC 0x136 as the dialog body,
+	//   * load PIC 0x1fd / 0x1fe as the pressed YES / NO button images,
+	//   * center the dialog,
+	//   * hit-test YES at (x+0x0c,y+0x23)-(x+0x20,y+0x32),
+	//     and NO at (x+0x60,y+0x23)-(x+0x74,y+0x32).
+	Picture dialogPic;
+	Picture yesPic;
+	Picture noPic;
+	const bool haveOriginalDialog =
+		_picsArchive.getPicture(0x136, dialogPic) &&
+		_picsArchive.getPicture(0x1fd, yesPic) &&
+		_picsArchive.getPicture(0x1fe, noPic);
+
+	Common::Rect yesRect;
+	Common::Rect noRect;
+	int yesX = 0;
+	int yesY = 0;
+	int noX = 0;
+	int noY = 0;
+
+	if (haveOriginalDialog) {
+		const int x = (320 - dialogPic.surface.w) / 2;
+		const int y = (200 - dialogPic.surface.h) / 2;
+		yesX = x + 0x0c;
+		yesY = y + 0x23;
+		noX = x + 0x60;
+		noY = y + 0x23;
+		yesRect = Common::Rect(yesX, yesY, x + 0x20 + 1, y + 0x32 + 1);
+		noRect = Common::Rect(noX, noY, x + 0x74 + 1, y + 0x32 + 1);
+		blitMaskedToScreen(dialogPic, x, y);
+	} else if (_font.isLoaded()) {
+		const Common::Rect dlg(60, 70, 260, 140);
+		yesRect = Common::Rect(dlg.left + 16, dlg.top + 34,
+							   dlg.left + 84, dlg.top + 54);
+		noRect = Common::Rect(dlg.left + 100, dlg.top + 34,
+							  dlg.left + 160, dlg.top + 54);
+
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		for (int row = 0; row < 200; row++)
+			memcpy((byte *)scratch.getBasePtr(0, row),
+				   (const byte *)saved.getBasePtr(0, row), 320);
+		scratch.fillRect(dlg, 0);
+		scratch.frameRect(dlg, 0xF);
+		_font.drawString(&scratch,
+			isSpanish() ? "Estas seguro que quieres salir?"
+						: "Are you sure you want to quit?",
+			dlg.left + 8, dlg.top + 8, 320, 0xF);
+		_font.drawString(&scratch,
+			isSpanish() ? "S - Si" : "Y - Yes",
+			dlg.left + 16, dlg.top + 36, 320, 0xF);
+		_font.drawString(&scratch, "N - No", dlg.left + 100,
+						 dlg.top + 36, 320, 0xF);
+		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+								   0, 0, 320, 200);
+	} else {
+		return true;
+	}
 	g_system->updateScreen();
 
 	bool result = false;
@@ -1398,6 +1443,24 @@ bool EEMEngine::areYouSure() {
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_n ||
 					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					result = false; decided = true; break;
+				}
+			}
+			if (ev.type == Common::EVENT_LBUTTONDOWN) {
+				if (yesRect.contains(ev.mouse.x, ev.mouse.y)) {
+					if (haveOriginalDialog) {
+						blitRawToScreen(yesPic, yesX, yesY);
+						g_system->updateScreen();
+						g_system->delayMillis(90);
+					}
+					result = true; decided = true; break;
+				}
+				if (noRect.contains(ev.mouse.x, ev.mouse.y)) {
+					if (haveOriginalDialog) {
+						blitRawToScreen(noPic, noX, noY);
+						g_system->updateScreen();
+						g_system->delayMillis(90);
+					}
 					result = false; decided = true; break;
 				}
 			}
