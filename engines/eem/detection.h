@@ -26,6 +26,8 @@
 
 namespace EEM {
 
+#define GAMEOPTION_HIDE_HIGHLIGHT_BOXES GUIO_GAMEOPTIONS1
+
 enum EEMDebugChannels {
 	kDebugGeneral = 1 << 0,
 	kDebugScript  = 1 << 1,

@@ -57,13 +57,14 @@ const uint kPicStormLogo       = 0x20b; ///< Floppy storm-logo still: PIC 0x20b
 const uint kPalEAKids          = 0x25;
 const uint kPalHighScore       = 0x27;
 const uint kPalStormLogo       = 0x26;  ///< Floppy `FUN_23d2_0605` palette idx
+const uint kPicMousePointer    = 0x50;  ///< Original startup pointer; 0x51 is the wait cursor
 
 const byte kSaveBodyVer = 1;
 
-// 11x16 mouse cursor — replaces the DOS hardware cursor wired in by
-// _InitMouse @ 152d:018b (INT 33h). The original game sets the cursor
-// visible/hidden via _MouseCursor; we leave it on once the screens
-// that need it (ChoosePartner, CaseSelection, sites) are reached.
+// Fallback 11x16 mouse cursor used if the selected PIC pointer cannot be
+// loaded. The original game sets the cursor visible/hidden via
+// _MouseCursor; we leave it on once the screens that need it
+// (ChoosePartner, CaseSelection, sites) are reached.
 //   0 = transparent, 1 = black outline, 2 = white fill
 const byte kCursorBitmap[11 * 16] = {
 	1,1,0,0,0,0,0,0,0,0,0,
@@ -88,11 +89,85 @@ const byte kCursorPalette[] = {
 	0x00, 0x00, 0x00, // 1 — outline
 	0xFF, 0xFF, 0xFF  // 2 — fill
 };
+const byte kCursorHotspotPalette[] = {
+	0x00, 0x00, 0x00, // 0 — transparent (key)
+	0xFF, 0x00, 0x00, // 1 — red outline
+	0xFF, 0xFF, 0xFF  // 2 — white fill
+};
+
+static void setHotspotCursorPalette(const Picture &cursor, byte transparent) {
+	byte palette[kPalSize];
+	bool used[256];
+	memset(used, 0, sizeof(used));
+
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+	for (int y = 0; y < cursor.surface.h; y++) {
+		const byte *src = (const byte *)cursor.surface.getBasePtr(0, y);
+		for (int x = 0; x < cursor.surface.w; x++) {
+			if (src[x] != transparent)
+				used[src[x]] = true;
+		}
+	}
+
+	int minLuma = 255;
+	int maxLuma = 0;
+	for (uint i = 0; i < 256; i++) {
+		if (!used[i])
+			continue;
+		const byte *rgb = palette + i * 3;
+		const int luma = (rgb[0] * 30 + rgb[1] * 59 + rgb[2] * 11) / 100;
+		minLuma = MIN(minLuma, luma);
+		maxLuma = MAX(maxLuma, luma);
+	}
+	const int outlineThreshold = (minLuma + maxLuma) / 2;
+
+	for (uint i = 0; i < 256; i++) {
+		if (!used[i])
+			continue;
+		byte *rgb = palette + i * 3;
+		const int luma = (rgb[0] * 30 + rgb[1] * 59 + rgb[2] * 11) / 100;
+		if (luma <= outlineThreshold) {
+			rgb[0] = 0xFF;
+			rgb[1] = 0x00;
+			rgb[2] = 0x00;
+		} else {
+			rgb[0] = 0xFF;
+			rgb[1] = 0xFF;
+			rgb[2] = 0xFF;
+		}
+	}
+
+	CursorMan.replaceCursorPalette(palette, 0, 256);
+}
+
+static void installMouseCursor(DBDArchive &pics, bool hotspot) {
+	Picture cursor;
+	if (pics.getPicture(kPicMousePointer, cursor) && !cursor.surface.empty()) {
+		const byte transparent = (byte)(cursor.flags >> 8);
+		CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0,
+								transparent);
+		if (hotspot)
+			setHotspotCursorPalette(cursor, transparent);
+		else
+			CursorMan.replaceCursorPalette(nullptr, 0, 0);
+		return;
+	}
+
+	warning("EEM: mouse cursor PIC 0x%x missing; using fallback cursor",
+			kPicMousePointer);
+	CursorMan.replaceCursor(kCursorBitmap, 11, 16, 0, 0, 0);
+	CursorMan.replaceCursorPalette(hotspot ? kCursorHotspotPalette
+										   : kCursorPalette,
+								   0, 3);
+}
 
 EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst), _gameDescription(gameDesc), _rng("eem"),
 	  _playerName("Detective"),
 	  _lastScreen(kScreenInvalid), _nextScreen(kScreenTitle), _partner(0) {
+	ConfMan.registerDefault("hide_highlight_boxes", false);
+
 	// `ADGameDescription::extra` is set by the matching entry in
 	// `gameDescriptions[]` ("CD" or "Floppy"). Keep variant detection
 	// purely string-based so a future re-release with a different
@@ -133,12 +208,14 @@ Common::Error EEMEngine::run() {
 	_audio->setVoiceEnabled(_voiceOn);
 	syncSoundSettings();
 
-	// _InitMouse @ 152d:018b in the original — install our 11x16 arrow,
-	// using palette index 0 as the transparency key. The cursor is left
-	// hidden through the opening anims and switched on at NewPlayer /
-	// ChoosePartner where the player actually clicks.
-	CursorMan.replaceCursor(kCursorBitmap, 11, 16, 0, 0, 0);
-	CursorMan.replaceCursorPalette(kCursorPalette, 0, 3);
+	// CD `_main @ 1a35:0f59` and floppy `_main_Floppy @ 19bb:1012`
+	// both load `_GetPicture(0x50)` as the active mouse pointer before
+	// calling `_InitMouse`. PIC 0x51 is present in both archives but has
+	// no executable xrefs and appears to be the wait cursor.
+	// CD's `_SwitchMouse` supports swapping to a hotspot cursor ID stored
+	// at search record +0x0c, but the shipped CD mystery data only uses
+	// cursor 0; floppy search records have no cursor-id field.
+	installMouseCursor(_picsArchive, false);
 	CursorMan.showMouse(false);
 
 	// _AllBlack @ 172b:0d4b paints the screen black before the first handler.
@@ -472,6 +549,15 @@ screen_loop:
 	return Common::kNoError;
 }
 
+void EEMEngine::setHotspotMouseCursor(bool active) {
+	active = active && ConfMan.getBool("hide_highlight_boxes");
+	if (_hotspotMouseCursor == active)
+		return;
+
+	_hotspotMouseCursor = active;
+	installMouseCursor(_picsArchive, active);
+}
+
 bool EEMEngine::openArchives() {
 	// _InitGraphicsSystem @ 172b:0145 opens these five .DBD/.DBX pairs.
 	if (!_picsArchive.open(Common::Path("PICS.DBD"), Common::Path("PICS.DBX"))) {
@@ -754,6 +840,7 @@ void EEMEngine::doSiteLoop() {
 	// Tab (next site), ESC (exit).
 	SiteScreen screen(this, &_mystery);
 	screen.run();
+	setHotspotMouseCursor(false);
 }
 
 void EEMEngine::startTravelMusic() {

@@ -81,7 +81,7 @@ struct Hotspot {
 	int16  x1, y1, x2, y2;     ///< rectangle in screen coordinates
 	uint16 clueOffset;          ///< +8: byte offset of ClueBlock in the mystery file
 	uint16 hotspotIndex;        ///< +10: zero-based mystery-wide seen ordinal
-	uint16 extra;               ///< +12: unknown (zero in M0..M54)
+	uint16 extra;               ///< +12: CD cursor ID for _SwitchMouse; shipped data uses 0
 
 	Common::Rect rect() const { return Common::Rect(x1, y1, x2, y2); }
 };
@@ -109,6 +109,7 @@ private:
 	void renderBackground(uint siteNum);
 	void renderHotspots(uint siteNum);
 	int  hotspotAtPoint(uint siteNum, int x, int y) const;
+	void updateHotspotCursor(uint siteNum, int x, int y);
 	void onHotspotClicked(uint siteNum, uint hotIdx);
 
 	/// Play the partner's site-arrival sequence once `_LastSite !=
@@ -167,7 +168,6 @@ private:
 
 	EEMEngine *_vm;
 	Mystery *_mystery;
-	bool _showHotspots = true;     ///< Toggle outlines with V key.
 	int _lastSiteAnim = -1;        ///< Last site we played the arrival on.
 	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
 	Graphics::ManagedSurface _bgSnapshot;

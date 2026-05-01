@@ -40,7 +40,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_HIDE_HIGHLIGHT_BOXES)
 	},
 	{
 		"eem",
@@ -50,7 +50,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_HIDE_HIGHLIGHT_BOXES)
 	},
 	{
 		// Spanish floppy release — same EEM.EXE binary as the English
@@ -64,7 +64,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_HIDE_HIGHLIGHT_BOXES)
 	},
 
 	AD_TABLE_END_MARKER
