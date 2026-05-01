@@ -58,6 +58,55 @@ const GallerySlot kGallerySlots[5] = {
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
 constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
 
+constexpr Common::Rect kPdaHelpRect(Common::Point(93, 174), 22, 16);
+constexpr Common::Rect kPdaNotebookRect(Common::Point(134, 174), 21, 16);
+constexpr Common::Rect kPdaGalleryRect(Common::Point(157, 174), 21, 16);
+constexpr Common::Rect kPdaPartnerHeadHintRect(Common::Point(5, 80), 39, 30);
+constexpr Common::Rect kPdaAccuseRect(Common::Point(180, 174), 21, 16);
+constexpr Common::Rect kPdaPageNextRect(Common::Point(204, 174), 20, 16);
+constexpr Common::Rect kPdaPagePrevRect(Common::Point(226, 174), 21, 16);
+constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
+constexpr Common::Rect kPdaPartnerFootMapRect(Common::Point(7, 177), 50, 23);
+constexpr Common::Rect kPdaSiteRect(Common::Point(35, 111), 21, 25);
+
+bool notebookButtonAt(int x, int y) {
+	return kPdaHelpRect.contains(x, y) ||
+		   kPdaGalleryRect.contains(x, y) ||
+		   kPdaPartnerHeadHintRect.contains(x, y) ||
+		   kPdaAccuseRect.contains(x, y) ||
+		   kPdaPageNextRect.contains(x, y) ||
+		   kPdaPagePrevRect.contains(x, y) ||
+		   kPdaHelp2Rect.contains(x, y) ||
+		   kPdaPartnerFootMapRect.contains(x, y) ||
+		   kPdaSiteRect.contains(x, y);
+}
+
+bool galleryButtonAt(int x, int y) {
+	return kPdaSiteRect.contains(x, y) ||
+		   kPdaPartnerFootMapRect.contains(x, y) ||
+		   kPdaAccuseRect.contains(x, y) ||
+		   kPdaNotebookRect.contains(x, y) ||
+		   kPdaHelpRect.contains(x, y) ||
+		   kPdaPartnerHeadHintRect.contains(x, y);
+}
+
+bool rectListContains(const Common::Array<Common::Rect> &rects, int x, int y) {
+	for (uint i = 0; i < rects.size(); i++) {
+		if (rects[i].contains(x, y))
+			return true;
+	}
+	return false;
+}
+
+bool gallerySlotAt(const Common::Array<Common::Rect> &rects,
+				   const Common::Array<int> &suspects, int x, int y) {
+	for (uint i = 0; i < rects.size() && i < suspects.size(); i++) {
+		if (suspects[i] >= 0 && rects[i].contains(x, y))
+			return true;
+	}
+	return false;
+}
+
 // Floppy gallery slot positions verified at `2608:0x16c` (5 ×
 // {u16 x, u16 y}) — read by `_DrawGallery_Floppy @ 154e:0045`'s
 // `[BX + 0x16c]` (x) and `[BX + 0x16e]` (y) loads. The floppy
@@ -1749,15 +1798,6 @@ void EEMEngine::doNotebook() {
 	//   rect 8 (35,111)  → 0x03ed = `_NextScreen = 3`             (SITE)
 	//   rect 9 (0,0)     → 0x03ed = same as rect 8
 	//   rect 10 (66,79)  → 0x03f9 = `_InterfaceHelp(0)`           (note-area help)
-	const Common::Rect kBtnHelp1   ( 93, 174, 115, 190);  // [1] HELP
-	const Common::Rect kBtnGallery (157, 174, 178, 190);  // [2] GALLERY
-	const Common::Rect kBtnPartner (  5,  80,  44, 110);  // [3] KD HELP
-	const Common::Rect kBtnAccuse  (180, 174, 201, 190);  // [4] SOLVE
-	const Common::Rect kBtnPageNext(204, 174, 224, 190);  // [5] PAGE NEXT
-	const Common::Rect kBtnPagePrev(226, 174, 247, 190);  // [6] PAGE PREV
-	const Common::Rect kBtnMap     (  7, 177,  57, 200);  // [7] MAP
-	const Common::Rect kBtnSite    ( 35, 111,  56, 136);  // [8] SITE
-	const Common::Rect kBtnHelp2   (267, 174, 288, 190);  // [10] extra HELP
 	// (`_NoteButtons @ 29be:0147` actually has rect [10] at
 	// (267,174,288,190) — small button on the right of the bottom
 	// bar that the original handler dispatch table at 161e:04ec
@@ -1772,6 +1812,10 @@ void EEMEngine::doNotebook() {
 	(void)hoveredNoteSlot;
 
 	drawNotebookFrame(page);
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
+							  rectListContains(_notebookSlotRects,
+											   mouse.x, mouse.y));
 
 	uint32 lastDraw = g_system->getMillis();
 
@@ -1785,6 +1829,13 @@ void EEMEngine::doNotebook() {
 				_nextScreen = kScreenInvalid;
 				exitFlag = true;
 				break;
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				setInteractiveMouseCursor(notebookButtonAt(ev.mouse.x,
+														   ev.mouse.y) ||
+										  rectListContains(_notebookSlotRects,
+														   ev.mouse.x,
+														   ev.mouse.y));
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -1809,52 +1860,55 @@ void EEMEngine::doNotebook() {
 				// button 0 / 9 are dead zones, so check the actionable
 				// rects directly. Earlier rects "win" when overlapping
 				// (matches `_FindButton`).
-				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenSite;
 					exitFlag = true;
 					break;  // back to site
 				}
-				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenMapAlt;
 					exitFlag = true;
 					break;
 				}
-				if (kBtnPartner.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPartnerHeadHintRect.contains(ev.mouse.x, ev.mouse.y)) {
+					setInteractiveMouseCursor(false);
 					doHelp();              // _KDHelp = host hint
 					dirty = true;
 					continue;
 				}
-				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaAccuseRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenAccuse;
 					exitFlag = true;
 					break;
 				}
-				if (kBtnGallery.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaGalleryRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenGallery;
 					exitFlag = true;
 					break;
 				}
-				if (kBtnHelp1.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
 					// rect 1 → `_InterfaceHelp(0)`: walks `HelpData[0]` and
 					// blits PICs 0x63 / 0x1ae fullscreen for click-through.
+					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
 					continue;
 				}
-				if (kBtnPagePrev.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPagePrevRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (page > 0)
 						page--;
 					dirty = true;
 					continue;
 				}
-				if (kBtnPageNext.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPageNextRect.contains(ev.mouse.x, ev.mouse.y)) {
 					page++;
 					dirty = true;
 					continue;
 				}
-				if (kBtnHelp2.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaHelp2Rect.contains(ev.mouse.x, ev.mouse.y)) {
 					// `_NoteButtons[10]` → handler 0x03f9 = same
 					// `_InterfaceHelp(0)` as button [1].
+					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					dirty = true;
 					continue;
@@ -1887,10 +1941,15 @@ void EEMEngine::doNotebook() {
 		if (dirty || now - lastDraw >= 100) {
 			drawNotebookFrame(page);
 			lastDraw = now;
+			mouse = g_system->getEventManager()->getMousePos();
+			setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
+									  rectListContains(_notebookSlotRects,
+													   mouse.x, mouse.y));
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+	setInteractiveMouseCursor(false);
 }
 
 void EEMEngine::drawNotebookFrame(int &page) {
@@ -2126,6 +2185,10 @@ void EEMEngine::doGallery() {
 	}
 
 	drawGalleryFrame(gd, num, slotRects, slotSuspect);
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	setInteractiveMouseCursor(galleryButtonAt(mouse.x, mouse.y) ||
+							  gallerySlotAt(slotRects, slotSuspect,
+											mouse.x, mouse.y));
 	uint32 lastDraw = g_system->getMillis();
 
 	while (!shouldQuit()) {
@@ -2135,7 +2198,16 @@ void EEMEngine::doGallery() {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 				_nextScreen = kScreenInvalid;
+				setInteractiveMouseCursor(false);
 				return;
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				setInteractiveMouseCursor(galleryButtonAt(ev.mouse.x,
+														  ev.mouse.y) ||
+										  gallerySlotAt(slotRects,
+														slotSuspect,
+														ev.mouse.x,
+														ev.mouse.y));
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -2160,37 +2232,37 @@ void EEMEngine::doGallery() {
 				//   rect 6 (226,247) → 0x0638 = generic exit
 				//   rect 7 (7,177)   → 0x05f7 = `_NextScreen = 2` (MAP)
 				//   rect 8 (35,111)  → 0x05e4 = `_NextScreen = 3` (SITE)
-				const Common::Rect kBtnSite    ( 35, 111,  56, 136); // [8] SITE
-				const Common::Rect kBtnMap     (  7, 177,  57, 200); // [7] MAP
-				const Common::Rect kBtnAccuse  (180, 174, 201, 190); // [4] SOLVE
-				const Common::Rect kBtnNotebook(134, 174, 155, 190); // [0] NOTEBOOK (back to PDA notes)
-				const Common::Rect kBtnHelp    ( 93, 174, 115, 190); // [1] HELP
-				const Common::Rect kBtnPartner (  5,  80,  44, 110); // [3] KD HELP
-				if (kBtnSite.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaSiteRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenSite;
-					exitFlag = true; break;
+					exitFlag = true;
+					break;
 				}
-				if (kBtnMap.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPartnerFootMapRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenMapAlt;
-					exitFlag = true; break;
+					exitFlag = true;
+					break;
 				}
-				if (kBtnAccuse.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaAccuseRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenAccuse;
-					exitFlag = true; break;
+					exitFlag = true;
+					break;
 				}
-				if (kBtnNotebook.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaNotebookRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_nextScreen = kScreenNotebook;
-					exitFlag = true; break;
+					exitFlag = true;
+					break;
 				}
-				if (kBtnHelp.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
 					// Gallery rect 1 → `_InterfaceHelp(0)` per jmp table at
 					// 158f:0625 (HandleGalleryButton). Same picture sequence
 					// as the notebook HELP button.
+					setInteractiveMouseCursor(false);
 					doInterfaceHelp(0);
 					lastDraw = 0;
 					continue;
 				}
-				if (kBtnPartner.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kPdaPartnerHeadHintRect.contains(ev.mouse.x, ev.mouse.y)) {
+					setInteractiveMouseCursor(false);
 					doHelp();
 					lastDraw = 0;
 					continue;
@@ -2228,18 +2300,18 @@ void EEMEngine::doGallery() {
 						const bool floppyMI = isFloppy();
 						const uint suspectIdx = (uint)slotSuspect[i];
 						const byte *suspect = floppyMI
-							? _mystery.floppySuspectEntry(suspectIdx)
-							: gd + suspectIdx * 0x46;
+												  ? _mystery.floppySuspectEntry(suspectIdx)
+												  : gd + suspectIdx * 0x46;
 						if (!suspect)
 							break;
 						const uint16 detailPic =
 							READ_LE_UINT16(suspect + 0);
 						const uint clueCount = floppyMI
-							? (uint)suspect[4]
-							: READ_LE_UINT16(suspect + 8);
+												   ? (uint)suspect[4]
+												   : READ_LE_UINT16(suspect + 8);
 
 						Graphics::ManagedSurface ms(320, 200,
-							Graphics::PixelFormat::createFormatCLUT8());
+													Graphics::PixelFormat::createFormatCLUT8());
 						ms.clear();
 						if (haveBg) {
 							const int bw = MIN<int>(galBg.surface.w, 320);
@@ -2260,19 +2332,20 @@ void EEMEngine::doGallery() {
 						// stays visible on the left. Without this
 						// blit the suspect-detail screen has no
 						// partner.
+						setInteractiveMouseCursor(false);
 						{
 							const uint partnerAnim =
 								(_partner == 0) ? 2 : 0x10;
 							Animation partnerAni;
 							if (_aniArchive.loadAnimation(partnerAnim,
-														   partnerAni) &&
+														  partnerAni) &&
 								!partnerAni.empty()) {
 								const uint32 now = g_system->getMillis();
 								const uint frameIdx =
 									partnerFrameAtTick(0x02,
-										(uint)partnerAni.size(), now);
+													   (uint)partnerAni.size(), now);
 								blitAnimFrameAnchored(ms.surfacePtr(),
-									partnerAni[frameIdx], 5, 0x50);
+													  partnerAni[frameIdx], 5, 0x50);
 							}
 						}
 						// Full suspect picture at (0x94, 0xf).
@@ -2399,8 +2472,10 @@ void EEMEngine::doGallery() {
 							Common::Event drain;
 							while (g_system->getEventManager()->pollEvent(drain)) {
 								if (drain.type == Common::EVENT_QUIT ||
-									drain.type == Common::EVENT_RETURN_TO_LAUNCHER)
+									drain.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+									setInteractiveMouseCursor(false);
 									return;
+								}
 							}
 						}
 						bool back = false;
@@ -2415,8 +2490,10 @@ void EEMEngine::doGallery() {
 									break;
 								}
 								if (e2.type == Common::EVENT_QUIT ||
-									e2.type == Common::EVENT_RETURN_TO_LAUNCHER)
+									e2.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+									setInteractiveMouseCursor(false);
 									return;
+								}
 							}
 							// Per-tick `updateScreen()` so the SDL cursor
 							// follows the mouse — without it the cursor
@@ -2431,6 +2508,13 @@ void EEMEngine::doGallery() {
 						// MoreInfo screen until the next 100 ms tick.
 						drawGalleryFrame(gd, num, slotRects, slotSuspect);
 						lastDraw = g_system->getMillis();
+						mouse = g_system->getEventManager()->getMousePos();
+						setInteractiveMouseCursor(galleryButtonAt(mouse.x,
+																  mouse.y) ||
+												  gallerySlotAt(slotRects,
+																slotSuspect,
+																mouse.x,
+																mouse.y));
 						clicked = true;
 						break;
 					}
@@ -2445,6 +2529,10 @@ void EEMEngine::doGallery() {
 		if (now - lastDraw >= 100) {
 			drawGalleryFrame(gd, num, slotRects, slotSuspect);
 			lastDraw = now;
+			mouse = g_system->getEventManager()->getMousePos();
+			setInteractiveMouseCursor(galleryButtonAt(mouse.x, mouse.y) ||
+									  gallerySlotAt(slotRects, slotSuspect,
+													mouse.x, mouse.y));
 		}
 		// `g_system->updateScreen()` is what tells the framework to
 		// re-render the cursor at its current mouse position; without
@@ -2454,6 +2542,7 @@ void EEMEngine::doGallery() {
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+	setInteractiveMouseCursor(false);
 }
 
 void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
@@ -4283,7 +4372,9 @@ void EEMEngine::doAccuse() {
 		playAnm(Common::Path("SCRAPBK.ANI"), 120, true);
 
 		// `_ShowOneScrap @ 1f78:0773` is `_DisplayEnding(num, 1)` —
-		// the multi-page per-mystery ending narrative.
+		// the multi-page per-mystery ending narrative. This shares the
+		// same red edge cursor + edge-only mouse navigation used by the
+		// scrapbook browser.
 		doShowEnding(mn);
 
 		// Mirrors `_SavePlayerRecord` at 1df2:0857 — once the
