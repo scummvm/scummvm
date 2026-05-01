@@ -940,58 +940,6 @@ void EEMEngine::doSetup() {
 	};
 	draw();
 
-	// Modal "Are you sure?" yes/no prompt. Mirrors `_AreYouSure @
-	// 1a35:0a5c` — the original draws a centred message, listens for
-	// Y/Enter (confirm) or N/ESC (cancel). We render a minimal
-	// overlay with Y / N keys (and click on left/right halves) so
-	// the Quit button gives the player a chance to back out.
-	auto areYouSure = [&]() -> bool {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		Graphics::Surface *cur = g_system->lockScreen();
-		if (cur) {
-			for (int row = 0; row < 200; row++)
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)cur->getBasePtr(0, row), 320);
-			g_system->unlockScreen();
-		}
-		const Common::Rect kBox(80, 80, 240, 120);
-		scratch.fillRect(kBox, 0x00);
-		_font.drawString(&scratch,
-			isSpanish() ? "Estas seguro?" : "Are you sure?",
-			100, 88, 200, 0xF);
-		_font.drawString(&scratch,
-			isSpanish() ? "S = si   N = no" : "Y = yes   N = no",
-			100, 102, 200, 0xF);
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
-		while (!shouldQuit()) {
-			Common::Event ev;
-			while (g_system->getEventManager()->pollEvent(ev)) {
-				if (ev.type == Common::EVENT_QUIT ||
-					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-					return true;
-				if (ev.type == Common::EVENT_KEYDOWN) {
-					const Common::KeyCode k = ev.kbd.keycode;
-					// Spanish prompt is "S = si" — accept both Y and S.
-					if (k == Common::KEYCODE_y ||
-						k == Common::KEYCODE_s ||
-						k == Common::KEYCODE_RETURN)
-						return true;
-					if (k == Common::KEYCODE_n ||
-						k == Common::KEYCODE_ESCAPE)
-						return false;
-				}
-				if (ev.type == Common::EVENT_LBUTTONDOWN) {
-					return ev.mouse.x < 160;
-				}
-			}
-			g_system->delayMillis(15);
-		}
-		return false;
-	};
-
 	// Render `picId` and block until click/key. Returns the pressed
 	// keycode (KEYCODE_ESCAPE for an explicit bail, KEYCODE_INVALID
 	// for a click or any other key). When `transparent` is true,
