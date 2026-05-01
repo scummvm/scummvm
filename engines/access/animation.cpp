@@ -259,6 +259,8 @@ void Animation::anim11() {
 	const AnimationFrame *frame = calcFrame();
 	_countdownTicks += frame->_frameDelay;
 	_scaling = _vm->_scale;
+	debugC(kDebugGraphics, "anim11: idle %s scale %d (%d, %d) yoffset %d", (_vm->_curPlayer == _vm->_player ? "peter" : "stil"),
+		_vm->_scale, _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY, _vm->_curPlayer->_playerOffset.y);
 	setFrame1(frame, _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY - _vm->_curPlayer->_playerOffset.y);
 }
 
@@ -320,7 +322,8 @@ void Animation::anim12() {
 		}
 
 		_countdownTicks += frame->_frameDelay;
-		debugC(kDebugGraphics, "anim12: player pos %d, %d (change %d %d -> %d %d) scale %d", _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY, deltaX, deltaY, xadd, yadd, _vm->_scale);
+
+		debugC(kDebugGraphics, "anim12: %s pos %d, %d yoff %d (change %d %d -> %d %d) scale %d", (_vm->_curPlayer == _vm->_player ? "peter" : "stil"), _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY, _vm->_curPlayer->_playerOffset.y, deltaX, deltaY, xadd, yadd, _vm->_scale);
 	}
 	_scaling = _vm->_scale;
 	setFrame1(frame, _vm->_curPlayer->_playerX, _vm->_curPlayer->_playerY - _vm->_curPlayer->_playerOffset.y);

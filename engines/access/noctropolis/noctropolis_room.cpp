@@ -291,7 +291,8 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 		}
 	}
 
-	if (_vm->_flags[0xcd] == 1 || (_roomFlag & kRoomFlagStiletto) == 0 || _vm->_flags[0xea] != 2)
+	// These flags are vm->_stilFlag1 and vm->_stilFlag2
+	if (_vm->_flags[205] == 1 || (_roomFlag & kRoomFlagStiletto) == 0 || _vm->_flags[234] != 2)
 		return 1;
 
 	Player *stil = ((NoctropolisEngine *)_vm)->_stil;
@@ -308,12 +309,12 @@ int NoctropolisRoom::checkPlayerBox(const Common::Point &pt) {
 						 / (uint)_vm->_scaleH1) >> 8);
 	}
 	_vm->_screen->setScaleTable(_vm->_scale);
-	_vm->_player->_playerOffset.y = _vm->_screen->_scaleTable1[180];
-	_vm->_player->_playerOffset.x = _vm->_screen->_scaleTable1[60];
+	stil->_playerOffset.y = _vm->_screen->_scaleTable1[180];
+	stil->_playerOffset.x = _vm->_screen->_scaleTable1[60];
 	if (pt.x < stil->_rawPlayer.x || stil->_rawPlayer.y < pt.y)
 		return 1;
 
-	if ((stil->_rawPlayer.y - _vm->_player->_playerOffset.y) <= pt.y && (pt.x <= (_vm->_player->_playerOffset.x + stil->_rawPlayer.x))) {
+	if ((stil->_rawPlayer.y - stil->_playerOffset.y) <= pt.y && (pt.x <= (stil->_playerOffset.x + stil->_rawPlayer.x))) {
 		_plotter._blockIn = 98;
 		return 0;
 	}

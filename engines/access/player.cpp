@@ -114,7 +114,7 @@ void Player::load() {
 	_walkOffDL = new Common::Point[dataCount];
 
 	// NOTE: Although the values get set here to Amazon defaults, they are overridden
-	// in both AmazonPlayer and MartianPlayer load() functions.
+	// in all the sub-class load() functions.
 	_playerOffset.x = _vm->_screen->_scaleTable1[25];
 	_playerOffset.y = _vm->_screen->_scaleTable1[67];
 	_leftDelta = -3;

@@ -90,7 +90,7 @@ void NoctropolisEngine::initVariables() {
 	_inventory->_startInvBox = 0;
 	Common::fill(&_objectsTable[0], &_objectsTable[128], (SpriteResource *)nullptr);
 	_player->_playerOff = false;
-	debug("TODO: set player starting point - using first _TravManPos entry for now");
+	debug("TODO: set player starting point? using first _TravManPos entry for now");
 	_player->_playerX = _player->_rawPlayer.x = _player->_moveTo.x = 280;
 	_player->_playerY = _player->_rawPlayer.y = _player->_moveTo.y = 390;
 	_room->_selectCommand = -1;

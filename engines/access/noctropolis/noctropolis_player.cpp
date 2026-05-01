@@ -138,7 +138,12 @@ void NoctropolisPlayer::updatePlayerDirection() {
 }
 
 void NoctropolisPlayer::calcManScale() {
-	if (!_vm->_player->_playerOff) {
+	// Note: original does _vm->_player->_playerOff check here, but that
+	// makes no sense - should check for the current player's on/off value surely?
+
+	// If we don't do this, Stil warps in at the wrong size/offset after we
+	// defeat the succubus becuase her _playerOffset is never configured.
+	if (!_playerOff) {
 		calcManScale1();
 	}
 }
