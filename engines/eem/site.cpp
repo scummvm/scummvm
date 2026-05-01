@@ -286,6 +286,18 @@ const AnimScriptLong kAnimScriptsLong[] = {
 				  1,2,3,4,5,6,7,8,9,10,11,12 } },
 };
 
+// `_PatientSequence` and `_ImpatientSequence` are standalone script
+// pointers, not entries in `_AnimationSequences`. CD has the data but
+// never calls the switchers; floppy calls them from `_DoSiteLoop_Floppy`.
+// We intentionally enable the same switch for both builds.
+static const uint8 kPatientSequence[]   = { 0,0,0,0,0,0,0,0,0,2 };
+static const uint8 kImpatientSequence[] = { 0,1,0,1,0,1,0,1,2,1 };
+
+// Test-shortened impatience delay. The original stores an hour-rounded
+// wall-clock value via DOS gettime; this keeps the same reset/switch
+// behavior but makes the feature observable during normal testing.
+static const uint32 kImpatienceDelayMs = 60 * 1000;
+
 // Look up the script for `seqnum`. Returns the frame array + length,
 // or `(nullptr, 0)` if no script is known — caller falls back to
 // flipbook cycling so unknown anims still animate (just without idle
@@ -315,6 +327,16 @@ static AnimScriptRef findAnimScript(uint16 seqnum) {
 	r.frames = nullptr;
 	r.len = 0;
 	return r;
+}
+
+static uint frameFromScriptAtTick(const uint8 *frames, uint len,
+								  uint numFrames, uint32 tickMs) {
+	const uint kFramePeriodMs = 100;
+	if (!frames || len == 0)
+		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
+	const uint scriptIdx = (uint)((tickMs / kFramePeriodMs) % len);
+	const uint frame     = frames[scriptIdx];
+	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
 }
 
 void auditPartnerAnims(EEMEngine *vm) {
@@ -432,15 +454,10 @@ void auditPartnerAnims(EEMEngine *vm) {
 // symptom.
 uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 	const AnimScriptRef s = findAnimScript(seqnum);
-	const uint kFramePeriodMs = 100;
-	if (!s.frames || s.len == 0)
-		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
-	const uint scriptIdx = (uint)((tickMs / kFramePeriodMs) % s.len);
-	const uint frame     = s.frames[scriptIdx];
 	// The script can in theory request a frame that's outside the
 	// animation's actual frame count (a misencoded script). Clamp so
 	// we don't read past `anim[]` in the caller.
-	return (numFrames > 0) ? MIN<uint>(frame, numFrames - 1) : 0;
+	return frameFromScriptAtTick(s.frames, s.len, numFrames, tickMs);
 }
 
 // Generic "play `unfold` once, then loop `waitSeq` forever" walker.
@@ -486,7 +503,7 @@ uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs) {
 									  numFrames, elapsedMs);
 }
 
-void SiteScreen::enter(uint siteNum) {
+void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	if (!_mystery || !_mystery->isLoaded()) {
 		warning("SiteScreen::enter: no mystery loaded");
 		return;
@@ -503,6 +520,10 @@ void SiteScreen::enter(uint siteNum) {
 	// 0xffff (= -1, becomes 0 on the first `_UpdateAnimations`
 	// tick).
 	_waitPhaseAnchor = g_system->getMillis();
+	if (resetPartnerMood) {
+		_partnerWaitMood = kPartnerWaitDefault;
+		initImpatienceCounter();
+	}
 
 	// Capture whether this is the first time the player enters this
 	// site BEFORE we mark it visited — `_DoSiteLoop @ 168d:03f4`
@@ -675,6 +696,30 @@ void SiteScreen::enter(uint siteNum) {
 	}
 }
 
+void SiteScreen::initImpatienceCounter() {
+	_impatientDeadlineMs = g_system->getMillis() + kImpatienceDelayMs;
+}
+
+bool SiteScreen::checkImpatienceCounter() {
+	const uint32 now = g_system->getMillis();
+	const bool impatient = (int32)(now - _impatientDeadlineMs) >= 0;
+	if (impatient)
+		initImpatienceCounter();
+	return impatient;
+}
+
+void SiteScreen::notePartnerActivity() {
+	// Mirrors `_Switch2Patient(WaitHandle)` plus
+	// `_InitImpatientCounter()` in the floppy site loop, but only for
+	// deliberate actions in the port: clicks and key presses. Passive
+	// mouse movement should not make impatience impossible to see.
+	const bool wasImpatient = _partnerWaitMood == kPartnerWaitImpatient;
+	_partnerWaitMood = kPartnerWaitPatient;
+	initImpatienceCounter();
+	if (wasImpatient)
+		debugC(1, kDebugSite, "Partner impatience: reset to patient");
+}
+
 void SiteScreen::run() {
 	if (!_mystery || !_mystery->isLoaded())
 		return;
@@ -731,11 +776,13 @@ void SiteScreen::run() {
 				// the PDA / gallery `kBtnPartner` (5, 80, 44, 110).
 				const Common::Rect kBtnPartner ( 5,  80, 44, 110);
 				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
+					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
 					return;
 				}
 				if (kBtnMap.contains(event.mouse.x, event.mouse.y)) {
+					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					// CD writes `_NextScreen = 1`; floppy writes 2.
 					_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
@@ -745,7 +792,8 @@ void SiteScreen::run() {
 				if (kBtnPartner.contains(event.mouse.x, event.mouse.y)) {
 					_vm->setHotspotMouseCursor(false);
 					_vm->doHelp();
-					enter(cur);
+					notePartnerActivity();
+					enter(cur, false);
 					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
 					break;
 				}
@@ -754,13 +802,17 @@ void SiteScreen::run() {
 					_vm->setHotspotMouseCursor(false);
 					onHotspotClicked(cur, (uint)idx);
 					// Restore the site BG after the clue overlay.
-					enter(cur);
+					notePartnerActivity();
+					enter(cur, false);
 					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
+				} else {
+					notePartnerActivity();
 				}
 				break;
 			}
 
 			case Common::EVENT_KEYDOWN:
+				notePartnerActivity();
 				// `_DoSiteLoop @ 168d:07e1` only dispatches on the
 				// 6-entry table at `168d:09d5` (TAB / ENTER / arrow
 				// keys for hotspot cursor cycling) plus ESC handled
@@ -776,7 +828,7 @@ void SiteScreen::run() {
 														   : kScreenMap);
 						return;
 					}
-					enter(cur);
+					enter(cur, false);
 					mouse = g_system->getEventManager()->getMousePos();
 					updateHotspotCursor(cur, mouse.x, mouse.y);
 				}
@@ -803,6 +855,10 @@ void SiteScreen::run() {
 		// park as the original.
 		const uint32 now = g_system->getMillis();
 		if (_snapshotSite == (int)cur && now - _lastTickMs >= 100) {
+			if (checkImpatienceCounter()) {
+				_partnerWaitMood = kPartnerWaitImpatient;
+				debugC(1, kDebugSite, "Partner impatience: switched to impatient");
+			}
 			restoreBgSnapshot();
 			renderAnimatedDrops(cur, now);
 			renderPartner(cur, now);
@@ -1212,8 +1268,19 @@ void SiteScreen::renderPartner(uint siteNum, uint32 tickMs) {
 	const uint32 elapsed = (tickMs >= _waitPhaseAnchor)
 							? (tickMs - _waitPhaseAnchor)
 							: tickMs;
-	const uint frameIdx = partnerFrameAtTick((uint16)animId,
-											  (uint)anim.size(), elapsed);
+	uint frameIdx = 0;
+	if (_partnerWaitMood == kPartnerWaitImpatient) {
+		frameIdx = frameFromScriptAtTick(kImpatientSequence,
+										 ARRAYSIZE(kImpatientSequence),
+										 (uint)anim.size(), elapsed);
+	} else if (_partnerWaitMood == kPartnerWaitPatient) {
+		frameIdx = frameFromScriptAtTick(kPatientSequence,
+										 ARRAYSIZE(kPatientSequence),
+										 (uint)anim.size(), elapsed);
+	} else {
+		frameIdx = partnerFrameAtTick((uint16)animId,
+									  (uint)anim.size(), elapsed);
+	}
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
 		return;
