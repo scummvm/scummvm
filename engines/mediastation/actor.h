@@ -192,7 +192,7 @@ private:
 
 // For a range of valid argument counts (min to max).
 #define ARGCOUNTRANGE(min, max) \
-	if ((int64)(min) > args.size() || args.size() > (int64)(max)) { \
+	if ((int64)(min) > (int64)args.size() || (int64)args.size() > (int64)(max)) { \
 		warning("%s: Expected %d to %d arguments, got %d", builtInMethodToStr(methodId), (min), (max), args.size()); \
 	}
 

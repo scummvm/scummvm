@@ -625,7 +625,7 @@ void VideoDisplayManager::_setPalette(Graphics::Palette &palette, uint startInde
 }
 
 void VideoDisplayManager::_setPaletteToColor(Graphics::Palette &targetPalette, byte r, byte g, byte b) {
-	for (uint colorIndex = 0; colorIndex < Graphics::PALETTE_COUNT; colorIndex++) {
+	for (int colorIndex = 0; colorIndex < Graphics::PALETTE_COUNT; colorIndex++) {
 		targetPalette.set(colorIndex, r, g, b);
 	}
 }
