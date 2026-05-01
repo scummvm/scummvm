@@ -32,6 +32,71 @@
 
 namespace MediaStation {
 
+const char *transitionTypeToString(TransitionType type) {
+	switch (type) {
+	case kTransitionFadeToBlack:
+		return "FadeToBlack";
+	case kTransitionFadeToPalette:
+		return "FadeToPalette";
+	case kTransitionSetToPalette:
+		return "SetToPalette";
+	case kTransitionSetToBlack:
+		return "SetToBlack";
+	case kTransitionFadeToColor:
+		return "FadeToColor";
+	case kTransitionSetToColor:
+		return "SetToColor";
+	case kTransitionSetToPercentOfPalette:
+		return "SetToPercentOfPalette";
+	case kTransitionFadeToPaletteObject:
+		return "FadeToPaletteObject";
+	case kTransitionSetToPaletteObject:
+		return "SetToPaletteObject";
+	case kTransitionSetToPercentOfPaletteObject:
+		return "SetToPercentOfPaletteObject";
+	case kTransitionColorShiftCurrentPalette:
+		return "ColorShiftCurrentPalette";
+	case kTransitionScrollLeft:
+		return "ScrollLeft";
+	case kTransitionScrollRight:
+		return "ScrollRight";
+	case kTransitionScrollUp:
+		return "ScrollUp";
+	case kTransitionScrollDown:
+		return "ScrollDown";
+	case kTransitionWipeLeft:
+		return "WipeLeft";
+	case kTransitionWipeRight:
+		return "WipeRight";
+	case kTransitionWipeUp:
+		return "WipeUp";
+	case kTransitionWipeDown:
+		return "WipeDown";
+	case kTransitionSlideLeft:
+		return "SlideLeft";
+	case kTransitionSlideRight:
+		return "SlideRight";
+	case kTransitionSlideUp:
+		return "SlideUp";
+	case kTransitionSlideDown:
+		return "SlideDown";
+	case kTransitionSlitLROpen:
+		return "SlitLROpen";
+	case kTransitionSlitLRClose:
+		return "SlitLRClose";
+	case kTransitionSlitUDOpen:
+		return "SlitUDOpen";
+	case kTransitionSlitUDClose:
+		return "SlitUDClose";
+	case kTransitionCircleIn:
+		return "CircleIn";
+	case kTransitionCircleOut:
+		return "CircleOut";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 void Region::addRect(const Common::Rect &rect) {
 	if (rect.isEmpty()) {
 		return;
@@ -346,6 +411,7 @@ void VideoDisplayManager::readAndRegisterPalette(Chunk &chunk) {
 
 void VideoDisplayManager::effectTransition(Common::Array<ScriptValue> &args) {
 	TransitionType transitionType = static_cast<TransitionType>(args[0].asParamToken());
+	debugC(5, kDebugGraphics, "%s: %s", __func__, transitionTypeToString(transitionType));
 	switch (transitionType) {
 	case kTransitionFadeToBlack:
 		fadeToBlack(args);
@@ -396,7 +462,7 @@ void VideoDisplayManager::effectTransition(Common::Array<ScriptValue> &args) {
 		break;
 
 	default:
-		warning("%s: Got unknown transition type %d", __func__, static_cast<uint>(transitionType));
+		warning("%s: Got unknown transition type %d (%s)", __func__, static_cast<uint>(transitionType), transitionTypeToString(transitionType));
 	}
 }
 

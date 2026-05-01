@@ -61,8 +61,26 @@ enum TransitionType {
 	kTransitionSetToPaletteObject = 308,
 	kTransitionSetToPercentOfPaletteObject = 309,
 	kTransitionColorShiftCurrentPalette = 310,
+	kTransitionScrollLeft = 311,
+	kTransitionScrollRight = 312,
+	kTransitionScrollUp = 313,
+	kTransitionScrollDown = 314,
+	kTransitionWipeLeft = 315,
+	kTransitionWipeRight = 316,
+	kTransitionWipeUp = 317,
+	kTransitionWipeDown = 318,
+	kTransitionSlideLeft = 319,
+	kTransitionSlideRight = 320,
+	kTransitionSlideUp = 321,
+	kTransitionSlideDown = 322,
+	kTransitionSlitLROpen = 323,
+	kTransitionSlitLRClose = 324,
+	kTransitionSlitUDOpen = 325,
+	kTransitionSlitUDClose = 326,
+	kTransitionCircleIn = 327,
 	kTransitionCircleOut = 328
 };
+const char *transitionTypeToStr(TransitionType type);
 
 enum VideoDisplayManagerSectionType {
 	kVideoDisplayManagerUpdateDirty = 0x578,
