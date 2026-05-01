@@ -427,17 +427,23 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// Composite the final frames (or first frames if skipped) so the BG
-	// is in a sensible state when displayClue overlays the speaker.
-	if (_picsArchive.getPicture(0x52, bg))
-		blitAt(bg, 0, 0);
-	if (haveGame)
-		blitMaskedToScreen(game[0], 0xcd, 0x6c);
-	if (haveBook)
-		blitMaskedToScreen(book[0], 0, 99);
-	if (haveNancy)
-		blitMaskedToScreen(nancy[0], 0x68, 0x8b);
-	g_system->updateScreen();
+	// Freeze the completed setup animation as the base for
+	// `_PlayInSequence`. The original clears the registered animations
+	// before playing the short case-type overlay, so the game/book/nancy
+	// cells do not keep cycling or wrap back to cell 0 underneath it.
+	Graphics::ManagedSurface briefingBase(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	briefingBase.clear();
+	{
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			for (int row = 0; row < 200; row++) {
+				memcpy((byte *)briefingBase.getBasePtr(0, row),
+					   (const byte *)screen->getBasePtr(0, row), 320);
+			}
+			g_system->unlockScreen();
+		}
+	}
 
 	// Step 5 — `_PlayInSequence(animSeq, 0xcd, animY)` per Ghidra:
 	//   Jake (partner=0):
@@ -489,16 +495,11 @@ void EEMEngine::doInitClues() {
 			for (uint frame = 0; frame < seq.size() && !shouldQuit() && !skip;
 				 frame++) {
 				const Picture &fr = seq[frame];
-				// Restore BG + base anim frames so each new frame
-				// composites cleanly.
-				if (_picsArchive.getPicture(0x52, bg))
-					blitAt(bg, 0, 0);
-				if (haveGame)
-					blitMaskedToScreen(game[frame % game.size()], 0xcd, 0x6c);
-				if (haveBook)
-					blitMaskedToScreen(book[frame % book.size()], 0, 99);
-				if (haveNancy)
-					blitMaskedToScreen(nancy[frame % nancy.size()], 0x68, 0x8b);
+				// Restore the frozen setup frame so the short overlay
+				// does not make the setup animation wrap to frame 0.
+				g_system->copyRectToScreen(briefingBase.getPixels(),
+										   briefingBase.pitch, 0, 0,
+										   320, 200);
 				// Anchor: `_PlayInSequence @ 172b:2d35-2d50` does
 				//   dstX = sx - cell[+0x8]     ; miscflags (signed)
 				//   dstY = sy - cell[+0x6]     ; rowoff   (signed)

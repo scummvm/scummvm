@@ -67,6 +67,9 @@ public:
 	/// Fill @p out (768 bytes) with the 8-bit-shifted palette. Convenience.
 	void getPalette8(byte *out) const;
 
+	/// Seed the persistent frame buffer from the current 8-bit screen pixels.
+	void seedFrameBuffer(const byte *pixels, uint pitch);
+
 	/**
 	 * Decode the next frame in place into the internal buffer. Returns a
 	 * pointer to the @c width()*@c height() byte image, or nullptr at EOF.
