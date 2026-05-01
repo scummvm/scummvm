@@ -89,6 +89,30 @@ static void blitEmbeddedFrameRegion(byte *renderBitmap, int pitch, int clipWidth
 	}
 }
 
+static bool readEmbeddedSanChunkHeader(Common::SeekableReadStream &stream, int64 containerEnd, const char *context,
+		uint32 &tag, uint32 &chunkSize, int64 &dataEnd, int64 &nextChunkPos) {
+	const int64 headerPos = stream.pos();
+	if (headerPos < 0 || headerPos + 8 > containerEnd)
+		return false;
+
+	tag = stream.readUint32BE();
+	chunkSize = stream.readUint32BE();
+
+	const int64 dataStart = stream.pos();
+	if ((int64)chunkSize > containerEnd - dataStart) {
+		debug("Rebel2: Truncated embedded SAN %s chunk 0x%08X at %lld: size=%u, remaining=%lld",
+			context, tag, headerPos, chunkSize, containerEnd - dataStart);
+		return false;
+	}
+
+	dataEnd = dataStart + chunkSize;
+	nextChunkPos = dataEnd + (chunkSize & 1);
+	if (nextChunkPos > containerEnd)
+		nextChunkPos = dataEnd;
+
+	return true;
+}
+
 // renderEmbeddedFrame -- Blit a decoded embedded frame to the video buffer.
 void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFrame &frame, int userId) {
 	// Render the decoded embedded frame to the video buffer
@@ -134,12 +158,13 @@ void InsaneRebel2::renderEmbeddedFrame(byte *renderBitmap, const EmbeddedSanFram
 //
 void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte *renderBitmap) {
 	// Validate userId - Level 3 uses slots 0-11, allow up to 15 for safety
-	if (userId < 0 || userId > 15 || !animData || size < 32) {
+	if (userId < 0 || userId > 15 || !animData || size < 8) {
 		debug("Rebel2: Invalid embedded SAN: userId=%d, size=%d", userId, size);
 		return;
 	}
 
 	Common::MemoryReadStream stream(animData, size);
+	const int64 streamEnd = stream.size();
 
 	// Read ANIM header
 	uint32 animTag = stream.readUint32BE();
@@ -148,42 +173,44 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 		return;
 	}
 	uint32 animSize = stream.readUint32BE();
-	debug("Rebel2: Parsing embedded ANIM: userId=%d, reported size=%u, actual=%d", userId, animSize, size - 8);
+	int64 animEnd = streamEnd;
+	if ((int64)animSize <= streamEnd - 8) {
+		animEnd = 8 + (int64)animSize;
+	} else {
+		debug("Rebel2: Embedded ANIM truncated: reported size=%u, actual=%lld", animSize, streamEnd - 8);
+	}
+	debug("Rebel2: Parsing embedded ANIM: userId=%d, reported size=%u, actual=%lld", userId, animSize, streamEnd - 8);
 
 	// Iterate through chunks to find FRME -> FOBJ
-	while (!stream.eos() && stream.pos() < size) {
-		uint32 tag = stream.readUint32BE();
-		uint32 chunkSize = stream.readUint32BE();
-		int32 nextChunkPos = stream.pos() + chunkSize;
+	while (!stream.eos() && stream.pos() + 8 <= animEnd) {
+		uint32 tag;
+		uint32 chunkSize;
+		int64 chunkDataEnd;
+		int64 nextChunkPos;
+		if (!readEmbeddedSanChunkHeader(stream, animEnd, "top-level", tag, chunkSize, chunkDataEnd, nextChunkPos))
+			break;
 
 		if (tag == MKTAG('F','R','M','E')) {
 			// Iterate sub-chunks in FRME
-			while (stream.pos() < nextChunkPos && !stream.eos()) {
-				uint32 subTag = stream.readUint32BE();
-				uint32 subSize = stream.readUint32BE();
-				int32 nextSubPos = stream.pos() + subSize;
+			while (stream.pos() + 8 <= chunkDataEnd && !stream.eos()) {
+				uint32 subTag;
+				uint32 subSize;
+				int64 subDataEnd;
+				int64 nextSubPos;
+				if (!readEmbeddedSanChunkHeader(stream, chunkDataEnd, "FRME", subTag, subSize, subDataEnd, nextSubPos))
+					break;
 
 				if (subTag == MKTAG('F','O','B','J')) {
-					// Found FOBJ - Embedded HUD Frame
-					// Dump raw FOBJ bytes for analysis
-					int32 fobjStart = stream.pos();
-					byte rawHeader[20];
-					int headerBytesToRead = MIN((int)subSize, 20);
-					stream.read(rawHeader, headerBytesToRead);
-					stream.seek(fobjStart);  // Reset to read normally
-
-					debug("Rebel2: Raw FOBJ header (%d bytes): %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X",
-						headerBytesToRead,
-						rawHeader[0], rawHeader[1], rawHeader[2], rawHeader[3],
-						rawHeader[4], rawHeader[5], rawHeader[6], rawHeader[7],
-						rawHeader[8], rawHeader[9], rawHeader[10], rawHeader[11],
-						rawHeader[12], rawHeader[13], rawHeader[14], rawHeader[15],
-						rawHeader[16], rawHeader[17], rawHeader[18], rawHeader[19]);
+					if (subSize < 14) {
+						debug("Rebel2: Embedded FOBJ too small: userId=%d, size=%u", userId, subSize);
+						stream.seek(nextSubPos);
+						continue;
+					}
 
 					// Read FOBJ header
 					int codec = stream.readUint16LE();
-					int left = stream.readUint16LE();
-					int top = stream.readUint16LE();
+					int left = stream.readSint16LE();
+					int top = stream.readSint16LE();
 					int width = stream.readUint16LE();
 					int height = stream.readUint16LE();
 					stream.readUint16LE();  // unknown
@@ -203,11 +230,16 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 
 					// Allocate storage for the decoded frame
 					EmbeddedSanFrame &frame = _rebelEmbeddedHud[userId];
+					frame.valid = false;
 
 					if (width > 0 && height > 0 && width <= 800 && height <= 480) {
 						if (frame.width != width || frame.height != height || !frame.pixels) {
 							free(frame.pixels);
 							frame.pixels = (byte *)malloc(width * height);
+							if (!frame.pixels) {
+								warning("Rebel2: Failed to allocate embedded HUD frame: %dx%d", width, height);
+								return;
+							}
 							frame.width = width;
 							frame.height = height;
 						}
@@ -219,10 +251,19 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 						frame.renderY = top;
 
 						// Read the raw FOBJ data
-						int32 dataSize = subSize - 14;
+						int32 dataSize = (int32)(subDataEnd - stream.pos());
 						if (dataSize > 0) {
 							byte *fobjData = (byte *)malloc(dataSize);
-							stream.read(fobjData, dataSize);
+							if (!fobjData) {
+								warning("Rebel2: Failed to allocate embedded FOBJ data: %d bytes", dataSize);
+								return;
+							}
+							uint32 bytesRead = stream.read(fobjData, dataSize);
+							if (bytesRead != (uint32)dataSize) {
+								debug("Rebel2: Short embedded FOBJ read: got %u of %d bytes", bytesRead, dataSize);
+								free(fobjData);
+								return;
+							}
 
 							// Decode based on codec - use extracted helper functions (FUN_0042BD60, etc.)
 							if (codec == 1 || codec == 3) {
@@ -273,15 +314,12 @@ void InsaneRebel2::loadEmbeddedSan(int userId, byte *animData, int32 size, byte 
 				} else {
 					// Skip other sub-chunks (AHDR inside FRME?) or padding
 					stream.seek(nextSubPos);
-					if (subSize & 1)
-						stream.skip(1);
 				}
 			}
+			stream.seek(nextChunkPos);
 		} else {
 			// Skip non-FRME chunks (AHDR, etc at top level)
 			stream.seek(nextChunkPos);
-			if (chunkSize & 1)
-				stream.skip(1);
 		}
 	}
 
