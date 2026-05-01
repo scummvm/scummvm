@@ -22,11 +22,30 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
+#include "eem/detection.h"
 #include "eem/eem.h"
 
 #include "common/system.h"
 
 namespace EEM {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_HIDE_HIGHLIGHT_BOXES,
+		{
+			_s("Hide the highlight boxes"),
+			_s("Hide the boxes that highlight searchable clue locations."),
+			"hide_highlight_boxes",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 const char *EEMEngine::getGameId() const {
 	return _gameDescription->gameId;
@@ -42,6 +61,10 @@ class EEMMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "eem";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return EEM::optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {

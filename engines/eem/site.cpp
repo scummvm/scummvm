@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/system.h"
@@ -687,6 +688,8 @@ void SiteScreen::run() {
 	if (cur >= _mystery->numSites())
 		cur = 0;
 	enter(cur);
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	updateHotspotCursor(cur, mouse.x, mouse.y);
 
 	while (!_vm->shouldQuit()) {
 		Common::Event event;
@@ -695,7 +698,12 @@ void SiteScreen::run() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
+				_vm->setHotspotMouseCursor(false);
 				return;
+
+			case Common::EVENT_MOUSEMOVE:
+				updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
+				break;
 
 			case Common::EVENT_LBUTTONDOWN: {
 				// On-screen UI buttons. `_DoSiteLoop @ 168d:03f4` calls
@@ -723,25 +731,31 @@ void SiteScreen::run() {
 				// the PDA / gallery `kBtnPartner` (5, 80, 44, 110).
 				const Common::Rect kBtnPartner ( 5,  80, 44, 110);
 				if (kBtnNotebook.contains(event.mouse.x, event.mouse.y)) {
+					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
 					return;
 				}
 				if (kBtnMap.contains(event.mouse.x, event.mouse.y)) {
+					_vm->setHotspotMouseCursor(false);
 					// CD writes `_NextScreen = 1`; floppy writes 2.
 					_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
 													   : kScreenMap);
 					return;
 				}
 				if (kBtnPartner.contains(event.mouse.x, event.mouse.y)) {
+					_vm->setHotspotMouseCursor(false);
 					_vm->doHelp();
 					enter(cur);
+					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
 					break;
 				}
 				const int idx = hotspotAtPoint(cur, event.mouse.x, event.mouse.y);
 				if (idx >= 0) {
+					_vm->setHotspotMouseCursor(false);
 					onHotspotClicked(cur, (uint)idx);
 					// Restore the site BG after the clue overlay.
 					enter(cur);
+					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
 				}
 				break;
 			}
@@ -756,12 +770,15 @@ void SiteScreen::run() {
 				// here is ESC (matches `_ESCHit` → "Are you sure?"
 				// → MAP).
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_vm->setHotspotMouseCursor(false);
 					if (_vm->areYouSure()) {
 						_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
 														   : kScreenMap);
 						return;
 					}
 					enter(cur);
+					mouse = g_system->getEventManager()->getMousePos();
+					updateHotspotCursor(cur, mouse.x, mouse.y);
 				}
 				break;
 
@@ -1272,8 +1289,10 @@ void SiteScreen::renderBackground(uint siteNum) {
 }
 
 void SiteScreen::renderHotspots(uint siteNum) {
-	// Hotspot outlines (`_DrawSearchButtons`): toggle via V.
-	if (!_showHotspots)
+	// Hotspot outlines (`_DrawSearchButtons`). The original always
+	// draws these; the port exposes an optional game setting to hide
+	// them for players who do not want location hints.
+	if (ConfMan.getBool("hide_highlight_boxes"))
 		return;
 
 	const byte *spots = _mystery->hotspots(siteNum);
@@ -1386,6 +1405,12 @@ int SiteScreen::hotspotAtPoint(uint siteNum, int x, int y) const {
 			return (int)i;
 	}
 	return -1;
+}
+
+void SiteScreen::updateHotspotCursor(uint siteNum, int x, int y) {
+	if (!_vm)
+		return;
+	_vm->setHotspotMouseCursor(hotspotAtPoint(siteNum, x, y) >= 0);
 }
 
 void SiteScreen::onHotspotClicked(uint siteNum, uint hotIdx) {

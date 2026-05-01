@@ -188,6 +188,10 @@ public:
 	const EEMFont &getFont() const { return _font; }
 	uint8       getPartnerIndex() const { return _partner; }
 
+	/// Switch to a lightly tinted cursor while the mouse is over a
+	/// searchable hotspot and the highlight boxes are hidden.
+	void setHotspotMouseCursor(bool active);
+
 	/// Display one ClueBlock. @p clueBlock points at the u16 frame count
 	/// followed by 62-byte ClueEntries. Mirrors _DisplayClue @ 2404:05e6.
 	void displayClue(const byte *clueBlock);
@@ -562,6 +566,8 @@ private:
 	/// accuse contexts use their own composed backdrops). See
 	/// `setPartnerEraseBg`.
 	Graphics::ManagedSurface _partnerEraseBg;
+
+	bool _hotspotMouseCursor = false;
 
 	/// XMIDI music player. Mirrors the original `MIDI.C` family
 	/// (`_MIDIPlayFile`, `_MIDIPlay`, `_StopMIDI`, `_StartTravelMusic`
