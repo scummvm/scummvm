@@ -879,20 +879,28 @@ void EEMEngine::doShowScrapbook(uint stage) {
 	while (!shouldQuit() && mystery >= lo && mystery < hi) {
 		const int direction = doShowEnding((uint)mystery, firstPage);
 		if (direction < 0) {
-			if (mystery == lo)
-				break;
-			mystery--;
+			int prevMystery = mystery - 1;
 			if (currentTier) {
-				while (mystery >= lo && _mysteriesSolved[mystery] == 0)
-					mystery--;
+				while (prevMystery >= lo && _mysteriesSolved[prevMystery] == 0)
+					prevMystery--;
 			}
+			if (prevMystery < lo) {
+				firstPage = true;
+				continue;
+			}
+			mystery = prevMystery;
 			firstPage = false;
 		} else if (direction > 0) {
-			mystery++;
+			int nextMystery = mystery + 1;
 			if (currentTier) {
-				while (mystery < hi && _mysteriesSolved[mystery] == 0)
-					mystery++;
+				while (nextMystery < hi && _mysteriesSolved[nextMystery] == 0)
+					nextMystery++;
 			}
+			if (nextMystery >= hi) {
+				firstPage = false;
+				continue;
+			}
+			mystery = nextMystery;
 			firstPage = true;
 		} else {
 			break;
@@ -1550,6 +1558,7 @@ void EEMEngine::doCaseSelection() {
 		doShowScrapbook(stage);
 		setSitePalette(0);
 		_mystery.clear();
+		_nextScreen = kScreenChooseMystery;
 		return;
 	}
 

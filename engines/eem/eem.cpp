@@ -498,18 +498,20 @@ screen_loop:
 			// the same routing the `kScreenChooseMystery` case uses.
 			// Reachable from `_DisplayCorrect`'s 0xc write after a
 			// solve (see `ui.cpp` `_nextScreen = kScreenAction`).
+			_nextScreen = kScreenInvalid;
 			doCaseSelection();
-			_nextScreen = _mystery.isLoaded() ? kScreenInitClues
-											  : kScreenInvalid;
+			if (_mystery.isLoaded())
+				_nextScreen = kScreenInitClues;
 			break;
 
 		case kScreenChooseMystery:
 			// Handler 10 at 1a35:0e0e calls `_DoChooseMystery` which
 			// presets `_NextScreen = 0` (INIT_CLUES) before
 			// `_CaseSelection`. Same dispatch as `kScreenAction`.
+			_nextScreen = kScreenInvalid;
 			doCaseSelection();
-			_nextScreen = _mystery.isLoaded() ? kScreenInitClues
-											  : kScreenInvalid;
+			if (_mystery.isLoaded())
+				_nextScreen = kScreenInitClues;
 			break;
 
 		case kScreenInitClues:
