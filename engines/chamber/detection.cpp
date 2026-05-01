@@ -62,7 +62,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// 	Common::EN_USA,
 	// 	Common::kPlatformDOS,
 	// 	ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
-	// 	GUIO1(GUIO_RENDEREGA)
+	// 	GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
 	// },
 
 	AD_TABLE_END_MARKER
