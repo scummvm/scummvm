@@ -61,6 +61,10 @@ const uint kPicMousePointer    = 0x50;  ///< Original startup pointer; 0x51 is t
 
 const byte kSaveBodyVer = 1;
 
+// Internal test switch: populate ScrapBook 1 at startup without exposing a
+// game option or changing save format. Set false before release.
+const bool kDebugPopulateScrapbook1AtStartup = false;
+
 // Fallback 11x16 mouse cursor used if the selected PIC pointer cannot be
 // loaded. The original game sets the cursor visible/hidden via
 // _MouseCursor; we leave it on once the screens that need it
@@ -89,13 +93,13 @@ const byte kCursorPalette[] = {
 	0x00, 0x00, 0x00, // 1 — outline
 	0xFF, 0xFF, 0xFF  // 2 — fill
 };
-const byte kCursorHotspotPalette[] = {
+const byte kCursorInteractivePalette[] = {
 	0x00, 0x00, 0x00, // 0 — transparent (key)
 	0xFF, 0x00, 0x00, // 1 — red outline
 	0xFF, 0xFF, 0xFF  // 2 — white fill
 };
 
-static void setHotspotCursorPalette(const Picture &cursor, byte transparent) {
+static void setInteractiveCursorPalette(const Picture &cursor, byte transparent) {
 	byte palette[kPalSize];
 	bool used[256];
 	memset(used, 0, sizeof(used));
@@ -141,14 +145,14 @@ static void setHotspotCursorPalette(const Picture &cursor, byte transparent) {
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 }
 
-static void installMouseCursor(DBDArchive &pics, bool hotspot) {
+static void installMouseCursor(DBDArchive &pics, bool interactive) {
 	Picture cursor;
 	if (pics.getPicture(kPicMousePointer, cursor) && !cursor.surface.empty()) {
 		const byte transparent = (byte)(cursor.flags >> 8);
 		CursorMan.replaceCursor(cursor.surface.rawSurface(), 0, 0,
 								transparent);
-		if (hotspot)
-			setHotspotCursorPalette(cursor, transparent);
+		if (interactive)
+			setInteractiveCursorPalette(cursor, transparent);
 		else
 			CursorMan.replaceCursorPalette(nullptr, 0, 0);
 		return;
@@ -157,8 +161,8 @@ static void installMouseCursor(DBDArchive &pics, bool hotspot) {
 	warning("EEM: mouse cursor PIC 0x%x missing; using fallback cursor",
 			kPicMousePointer);
 	CursorMan.replaceCursor(kCursorBitmap, 11, 16, 0, 0, 0);
-	CursorMan.replaceCursorPalette(hotspot ? kCursorHotspotPalette
-										   : kCursorPalette,
+	CursorMan.replaceCursorPalette(interactive ? kCursorInteractivePalette
+											   : kCursorPalette,
 								   0, 3);
 }
 
@@ -181,6 +185,17 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 EEMEngine::~EEMEngine() {
 	delete _audio;
 	delete _music;
+}
+
+void EEMEngine::applyStartupTestOverrides() {
+	if (!kDebugPopulateScrapbook1AtStartup)
+		return;
+
+	for (uint i = 1; i <= 0x18 && i < sizeof(_mysteriesSolved); i++)
+		_mysteriesSolved[i] = 1;
+
+	debugC(1, kDebugGeneral,
+		   "startup test override: populated ScrapBook 1 mystery flags");
 }
 
 Common::Error EEMEngine::run() {
@@ -243,6 +258,7 @@ Common::Error EEMEngine::run() {
 	if (wantedSave >= 0) {
 		const Common::Error err = loadGameState(wantedSave);
 		if (err.getCode() == Common::kNoError) {
+			applyStartupTestOverrides();
 			CursorMan.showMouse(true);
 			if (_mystery.isLoaded()) {
 				debugC(1, kDebugGeneral,
@@ -390,6 +406,8 @@ Common::Error EEMEngine::run() {
 	// picks "[New Player]".
 	if (!shouldQuit())
 		doProfilePicker();
+	if (!shouldQuit())
+		applyStartupTestOverrides();
 	if (!shouldQuit())
 		doChoosePartner();
 
@@ -549,13 +567,16 @@ screen_loop:
 	return Common::kNoError;
 }
 
-void EEMEngine::setHotspotMouseCursor(bool active) {
-	active = active && ConfMan.getBool("hide_highlight_boxes");
-	if (_hotspotMouseCursor == active)
+void EEMEngine::setInteractiveMouseCursor(bool active) {
+	if (_interactiveMouseCursor == active)
 		return;
 
-	_hotspotMouseCursor = active;
+	_interactiveMouseCursor = active;
 	installMouseCursor(_picsArchive, active);
+}
+
+void EEMEngine::setHotspotMouseCursor(bool active) {
+	setInteractiveMouseCursor(active);
 }
 
 bool EEMEngine::openArchives() {

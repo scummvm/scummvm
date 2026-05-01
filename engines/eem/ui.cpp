@@ -55,6 +55,9 @@ const GallerySlot kGallerySlots[5] = {
 	{ 191,  90 }  // 4
 };
 
+constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
+constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
+
 // Floppy gallery slot positions verified at `2608:0x16c` (5 ×
 // {u16 x, u16 y}) — read by `_DrawGallery_Floppy @ 154e:0045`'s
 // `[BX + 0x16c]` (x) and `[BX + 0x16e]` (y) loads. The floppy
@@ -596,14 +599,14 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	// colour), with no drop shadow. Verified at the call site asm
 	// 1df2:04cf-1df2:04f4 (Ghidra mis-paired the two trailing args).
 	//
-	// Page navigation mirrors the original key/click handlers
+	// Keyboard page navigation mirrors the original handlers
 	// (1df2:0689 / 1df2:06a0): LEFT decrements pageIdx, RIGHT (or
-	// SPACE / Enter / click) increments it. Hitting the boundary
-	// (LEFT on page 0, RIGHT on last page) sets `[BP-0x18]` to -1 / 1
-	// respectively and exits — that return value is what
-	// `_ShowScrapbook` uses to walk forward / backward through
-	// solved mysteries (see 1f78:0664-1f78:069c). ESC and clicks
-	// outside both PrevPage / NextPage rects exit with `[BP-0x18]=0`.
+	// SPACE / Enter) increments it. Hitting the boundary (LEFT on page
+	// 0, RIGHT on last page) sets `[BP-0x18]` to -1 / 1 respectively
+	// and exits — that return value is what `_ShowScrapbook` uses to
+	// walk forward / backward through solved mysteries (see
+	// 1f78:0664-1f78:069c). Mouse navigation is intentionally limited
+	// to the red-highlighted edge rects so central page clicks are ignored.
 	//
 	// `firstPage=false` opens the ending at the LAST page (used by
 	// `doShowScrapbook` after a "previous mystery" navigation —
@@ -645,6 +648,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	// text in particular is palette index 0 (= newspaper black) so we
 	// MUST switch palettes before rendering.
 	setSitePalette(0);
+	CursorMan.showMouse(true);
 
 	// Walk page records. Each page header is 10 bytes; text is
 	// null-terminated and follows the header.
@@ -670,6 +674,11 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	int direction = 0;     // -1 / 0 / +1, see header doc.
 	bool exitLoop = false;
 	bool dirty = true;
+	const Common::Point mousePos = g_system->getEventManager()->getMousePos();
+	setInteractiveMouseCursor(kEndingPrevPageRect.contains(mousePos.x,
+														   mousePos.y) ||
+							  kEndingNextPageRect.contains(mousePos.x,
+														   mousePos.y));
 	while (!shouldQuit() && !exitLoop) {
 		if (dirty) {
 			const uint off = pageOffsets[pageIdx];
@@ -715,8 +724,14 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-				return 0;
+				direction = 0;
+				exitLoop = true;
+				break;
 			}
+			if (ev.type == Common::EVENT_MOUSEMOVE)
+				setInteractiveMouseCursor(
+					kEndingPrevPageRect.contains(ev.mouse.x, ev.mouse.y) ||
+					kEndingNextPageRect.contains(ev.mouse.x, ev.mouse.y));
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
@@ -754,12 +769,10 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 					break;
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Original PrevPage/NextPage rects at 29be:1078 /
-				// 29be:1080. Clicks outside both rects exit with
-				// direction 0.
-				const Common::Rect kPrevPageRect(0, 0, 28, 200);
-				const Common::Rect kNextPageRect(28, 7, 317, 197);
-				if (kPrevPageRect.contains(ev.mouse.x, ev.mouse.y)) {
+				setInteractiveMouseCursor(
+					kEndingPrevPageRect.contains(ev.mouse.x, ev.mouse.y) ||
+					kEndingNextPageRect.contains(ev.mouse.x, ev.mouse.y));
+				if (kEndingPrevPageRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (pageIdx > 0) {
 						pageIdx--;
 						dirty = true;
@@ -767,7 +780,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 						direction = -1;
 						exitLoop = true;
 					}
-				} else if (kNextPageRect.contains(ev.mouse.x, ev.mouse.y)) {
+				} else if (kEndingNextPageRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (pageIdx + 1 < validPages) {
 						pageIdx++;
 						dirty = true;
@@ -775,9 +788,6 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 						direction = 1;
 						exitLoop = true;
 					}
-				} else {
-					direction = 0;
-					exitLoop = true;
 				}
 				if (exitLoop)
 					break;
@@ -786,6 +796,7 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+	setInteractiveMouseCursor(false);
 	return direction;
 }
 
@@ -1191,25 +1202,19 @@ void EEMEngine::doSetup() {
 			// handlers call `_ShowScrapbook(stage, 0)`, with stages 2
 			// and 3 gated by chain progress.
 			if (kScrap1Btn.contains(mx, my)) {
-				CursorMan.showMouse(false);
 				doShowScrapbook(1);
-				CursorMan.showMouse(true);
 				setSitePalette(0);
 				dirty = true;
 				continue;
 			}
 			if (kScrap2Btn.contains(mx, my) && _chainStage >= 2) {
-				CursorMan.showMouse(false);
 				doShowScrapbook(2);
-				CursorMan.showMouse(true);
 				setSitePalette(0);
 				dirty = true;
 				continue;
 			}
 			if (kScrap3Btn.contains(mx, my) && _chainStage >= 3) {
-				CursorMan.showMouse(false);
 				doShowScrapbook(3);
-				CursorMan.showMouse(true);
 				setSitePalette(0);
 				dirty = true;
 				continue;
@@ -1493,9 +1498,7 @@ void EEMEngine::doCaseSelection() {
 		// — viewing the scrapbook never starts a new case.
 		const uint stage = (pick == kPickScrap1) ? 1
 						 : (pick == kPickScrap2) ? 2 : 3;
-		CursorMan.showMouse(false);
 		doShowScrapbook(stage);
-		CursorMan.showMouse(true);
 		setSitePalette(0);
 		_mystery.clear();
 		return;
