@@ -142,9 +142,8 @@ public:
 	// ScummVM extended-save hooks. The base `Engine::saveGameState` /
 	// `loadGameState` write/read the framework header (description,
 	// thumbnail, playtime, version) around our body via these
-	// streams. We keep all per-profile state in the body, with a
-	// single `Common::Serializer` version so future field additions
-	// stay backward-compatible.
+	// streams. We keep all per-profile state in the body and only
+	// accept the current private body layout.
 	Common::Error saveGameStream(Common::WriteStream *stream,
 								  bool isAutosave = false) override;
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
