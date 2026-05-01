@@ -74,7 +74,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_scaleI = 0;
 	_scrollCol = _scrollRow = 0;
 	_scrollX = _scrollY = 0;
-	_imgUnscaled = false;
 	_canSaveLoad = false;
 	_establish = nullptr;
 
@@ -390,13 +389,13 @@ void AccessEngine::plotList1() {
 	for (uint idx = 0; idx < _images.size(); ++idx) {
 		ImageEntry &ie = _images[idx];
 
-		_imgUnscaled = (ie._flags & IMGFLAG_UNSCALED) != 0;
+		bool imgUnscaled = (ie._flags & IMGFLAG_UNSCALED) != 0;
 		Common::Point pt = ie._position - _screen->_bufferStart;
 		const SpriteResource *sprites = ie._spritesPtr;
 		const SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
 
 		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
-		if (!_imgUnscaled) {
+		if (!imgUnscaled) {
 			bounds.setWidth(_screen->_scaleTable1[frame->w]);
 			bounds.setHeight(_screen->_scaleTable1[frame->h]);
 		}
@@ -415,7 +414,7 @@ void AccessEngine::plotList1() {
 
 			_newRects.push_back(bounds);
 
-			if (!_imgUnscaled) {
+			if (!imgUnscaled) {
 				_buffer2._rightSkip /= _scale;
 				bounds.setWidth(bounds.width() / _scale);
 

@@ -256,7 +256,6 @@ public:
 	int _scaleI;
 	int _scrollX, _scrollY;
 	int _scrollCol, _scrollRow;
-	bool _imgUnscaled;
 	bool _canSaveLoad;
 
 	Resource *_establish;
