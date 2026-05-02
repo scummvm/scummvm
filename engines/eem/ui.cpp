@@ -92,6 +92,21 @@ void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marke
 	}
 }
 
+void blitAccusePartner(Graphics::ManagedSurface &dstSurface,
+					   DBDArchive &aniArchive, uint8 partner,
+					   uint32 tickMs) {
+	const uint partnerAnim = (partner == 0) ? 2 : 0x10;
+	Animation partnerAni;
+	if (aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+		!partnerAni.empty()) {
+		const uint frameIdx = partnerFrameAtTick(0x02,
+												 (uint)partnerAni.size(),
+												 tickMs);
+		blitAnimFrameAnchored(dstSurface.surfacePtr(),
+							  partnerAni[frameIdx], 5, 0x50);
+	}
+}
+
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
 constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
 constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
@@ -5654,6 +5669,11 @@ void EEMEngine::doAccuseFloppy() {
 		_font.drawWordWrapped(&scene, balloonX + tx, balloonY + ty,
 							  MAX<int>(8, (int)tw), alibi, 0);
 	}
+	// The floppy original keeps the accuse partner animation slot alive
+	// across `_DisplayAlibi_Floppy` and restores the screen with active
+	// animations between alibi phases. Stamp the same resting frame here
+	// before the KD reaction helper snapshots the current screen.
+	blitAccusePartner(scene, _aniArchive, _partner, g_system->getMillis());
 	g_system->copyRectToScreen(scene.getPixels(), scene.pitch, 0, 0, 320, 200);
 	g_system->updateScreen();
 
