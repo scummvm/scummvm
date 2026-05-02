@@ -340,7 +340,8 @@ void EEMEngine::doInitClues() {
 
 	setSitePalette(0x22);
 	Picture bg;
-	if (_picsArchive.getPicture(0x52, bg))
+	const bool haveBriefingBg = _picsArchive.getPicture(0x52, bg);
+	if (haveBriefingBg)
 		blitAt(bg, 0, 0);
 
 	const uint gameAni = _partner == 0 ? 0x17 : 0x3b;
@@ -372,7 +373,7 @@ void EEMEngine::doInitClues() {
 			// "thinking" pose (cell 8) for 16 ticks instead of
 			// flipbook-cycling, and nancy waits 18 ticks before her
 			// late-arrival count-up.
-			if (_picsArchive.getPicture(0x52, bg))
+			if (haveBriefingBg)
 				blitAt(bg, 0, 0);
 			const uint32 t = frame * 100;
 			// All three briefing anims (game/book/nancy) go through
@@ -427,20 +428,38 @@ void EEMEngine::doInitClues() {
 		}
 	}
 
-	// Freeze the completed setup animation as the base for
-	// `_PlayInSequence`. The original clears the registered animations
-	// before playing the short case-type overlay, so the game/book/nancy
-	// cells do not keep cycling or wrap back to cell 0 underneath it.
+	// Freeze only the same setup-animation band the original bakes into
+	// its background buffers before clearing the registered animations:
+	// `_VidramRectCopy(0, 0x5a, 0x28, 0x6d, 16000, 48000/32000)`.
+	// Width is in mode-X columns, so 0x28 columns = 160 pixels. This
+	// preserves the lower-left book/Nancy area but intentionally drops the
+	// right-side game animation; `_PlayInSequence` redraws that character
+	// over a clean background next. Preserving the full screen leaves the
+	// old right-side Jake/Jenny frame underneath the sequence.
 	Graphics::ManagedSurface briefingBase(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	briefingBase.clear();
-	{
+	if (haveBriefingBg) {
+		briefingBase.simpleBlitFrom(bg.surface);
+	} else {
 		Graphics::Surface *screen = g_system->lockScreen();
 		if (screen) {
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)briefingBase.getBasePtr(0, row),
-					   (const byte *)screen->getBasePtr(0, row), 320);
-			}
+			briefingBase.simpleBlitFrom(*screen);
+			g_system->unlockScreen();
+		}
+	}
+	{
+		const int preserveX = 0;
+		const int preserveY = 0x5a;
+		const int preserveW = 0x28 * 4;
+		const int preserveH = 0x6d;
+		const Common::Rect preserveRect(preserveX, preserveY,
+										preserveX + preserveW,
+										preserveY + preserveH);
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (screen) {
+			briefingBase.simpleBlitFrom(*screen, preserveRect,
+										Common::Point(preserveX, preserveY));
 			g_system->unlockScreen();
 		}
 	}
