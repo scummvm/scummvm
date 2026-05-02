@@ -72,6 +72,18 @@ constexpr Common::Rect kPdaHelp2Rect(Common::Point(267, 174), 21, 16);
 constexpr Common::Rect kPdaPartnerFootMapRect(Common::Point(7, 177), 50, 23);
 constexpr Common::Rect kPdaSiteRect(Common::Point(35, 111), 21, 25);
 
+constexpr uint16 kProfilePickerRevealPic = 0x105;
+constexpr int kProfilePickerRevealX = 0x3e;
+constexpr int kProfilePickerRevealY = 0xb3;
+
+constexpr uint16 kNameEntryPeekPic = 0x107;
+constexpr int kNameEntryPeekX = 0x3e;
+constexpr int kNameEntryPeekY = 0xb3;
+
+constexpr uint16 kCaseSelectionRevealPic = 0x53;
+constexpr int kCaseSelectionRevealX = 0x3e;
+constexpr int kCaseSelectionRevealY = 0xb2;
+
 bool notebookButtonAt(int x, int y) {
 	return kPdaHelpRect.contains(x, y) ||
 		   kPdaGalleryRect.contains(x, y) ||
@@ -149,6 +161,143 @@ int nextLiveSlot(const Common::Array<Common::Rect> &slotRects,
 	return from;
 }
 
+void copyToScreen(Graphics::ManagedSurface &scratch) {
+	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
+							   0, 0, 320, 200);
+	g_system->updateScreen();
+}
+
+void blitMaskedPicSlice(Graphics::ManagedSurface &dst, const Picture &pic,
+						int srcX, int srcY, int w, int h,
+						int dstX, int dstY) {
+	if (pic.surface.empty() || w <= 0 || h <= 0)
+		return;
+
+	const byte transp = (byte)(pic.flags >> 8);
+	for (int row = 0; row < h; row++) {
+		const int sy = srcY + row;
+		const int dy = dstY + row;
+		if (sy < 0 || sy >= pic.surface.h || dy < 0 || dy >= dst.h)
+			continue;
+		for (int col = 0; col < w; col++) {
+			const int sx = srcX + col;
+			const int dx = dstX + col;
+			if (sx < 0 || sx >= pic.surface.w || dx < 0 || dx >= dst.w)
+				continue;
+			const byte c = *(const byte *)pic.surface.getBasePtr(sx, sy);
+			if (c != transp)
+				*(byte *)dst.getBasePtr(dx, dy) = c;
+		}
+	}
+}
+
+void blitMaskedPic(Graphics::ManagedSurface &dst, const Picture &pic,
+				   int x, int y) {
+	blitMaskedPicSlice(dst, pic, 0, 0, pic.surface.w, pic.surface.h, x, y);
+}
+
+void blitMaskedPicRightReveal(Graphics::ManagedSurface &dst,
+							  const Picture &pic, int x, int y,
+							  int visibleW) {
+	const int w = CLIP<int>(visibleW, 0, pic.surface.w);
+	if (w == 0)
+		return;
+	blitMaskedPicSlice(dst, pic, 0, 0, w, pic.surface.h,
+					   x + pic.surface.w - w, y);
+}
+
+void blitMaskedPicBottomReveal(Graphics::ManagedSurface &dst,
+							   const Picture &pic, int x, int y,
+							   int visibleH) {
+	const int h = CLIP<int>(visibleH, 0, pic.surface.h);
+	if (h == 0)
+		return;
+	blitMaskedPicSlice(dst, pic, 0, 0, pic.surface.w, h,
+					   x, y + pic.surface.h - h);
+}
+
+bool pumpQuitEvents(EEMEngine *vm) {
+	Common::Event ev;
+	while (g_system->getEventManager()->pollEvent(ev)) {
+		if (ev.type == Common::EVENT_QUIT ||
+			ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+			return true;
+	}
+	return vm && vm->shouldQuit();
+}
+
+void drawCaseBookTitle(Graphics::ManagedSurface &scratch, const EEMEngine *vm,
+					   uint book) {
+	if (!vm || !vm->getFont().isLoaded())
+		return;
+
+	const bool spanish = vm->isSpanish();
+	const Common::String title = (book == 3)
+		? Common::String(spanish ? "Libro de Retos" : "Challenge Book")
+		: Common::String::format(spanish ? "Lib. %u" : "Book %u", book);
+	const int titleW = vm->getFont().getStringWidth(title);
+	const int titleX = (0xba - titleW) / 2 + 0x3c;
+	vm->getFont().drawString(&scratch, title, titleX, 12, 320, 0xF);
+}
+
+void drawNameEntryFrame(EEMEngine *vm, const Picture *bg, bool haveBG,
+						const Picture *peek, const Common::String &name,
+						const char *prompt) {
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (haveBG)
+		scratch.simpleBlitFrom(bg->surface);
+	if (peek)
+		blitMaskedPic(scratch, *peek, kNameEntryPeekX, kNameEntryPeekY);
+	vm->getFont().drawString(&scratch, prompt, 80, 40, 240, 0xF);
+	vm->getFont().drawString(&scratch, name + "_", 80, 80, 240, 0xF);
+	copyToScreen(scratch);
+}
+
+bool animateNameEntryPeek(EEMEngine *vm, const Picture *bg, bool haveBG,
+						  const Picture *peek) {
+	if (!peek || peek->surface.empty())
+		return false;
+
+	for (int w = 1; w <= peek->surface.w; w++) {
+		if (pumpQuitEvents(vm))
+			return true;
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveBG)
+			scratch.simpleBlitFrom(bg->surface);
+		blitMaskedPicRightReveal(scratch, *peek,
+								  kNameEntryPeekX, kNameEntryPeekY, w);
+		copyToScreen(scratch);
+		g_system->delayMillis(10);
+	}
+	return false;
+}
+
+bool animateProfilePickerReveal(EEMEngine *vm, const Picture *bg,
+								bool haveBG, const Picture *reveal) {
+	if (!reveal || reveal->surface.empty())
+		return false;
+
+	for (int h = 1; h <= reveal->surface.h; h++) {
+		if (pumpQuitEvents(vm))
+			return true;
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveBG)
+			scratch.simpleBlitFrom(bg->surface);
+		blitMaskedPicBottomReveal(scratch, *reveal,
+								   kProfilePickerRevealX,
+								   kProfilePickerRevealY, h);
+		copyToScreen(scratch);
+		g_system->delayMillis(10);
+	}
+	return false;
+}
+
 // Snapshot of `doCaseSelection`'s captured locals, used by
 // `drawCaseSelectionFrame` (which replaces the original lambda). Lives
 // on the stack inside `doCaseSelection`; never escapes.
@@ -156,6 +305,8 @@ struct CaseSelectionView {
 	EEMEngine *vm;
 	const Picture *caseBg;
 	bool haveCaseBg;
+	const Picture *revealPic;
+	bool haveRevealPic;
 	const Animation *kdAnim;
 	bool haveKdAnim;
 	uint16 kdAnimId;     ///< 0x15 / 0x16 — looked up in kAnimScripts
@@ -165,6 +316,7 @@ struct CaseSelectionView {
 	const char *const *pickLabel;
 	const bool *pickEnabled;
 	uint pick;
+	uint book;
 };
 
 // Mystery list shown in the "Choose A Mystery" sub-screen. Mirrors
@@ -213,12 +365,84 @@ struct CaseSubmenuView {
 	EEMEngine *vm;
 	const Picture *caseBg;
 	bool haveCaseBg;
+	const Picture *revealPic;
+	bool haveRevealPic;
+	const Animation *kdAnim;
+	bool haveKdAnim;
+	int kdAnimX;
+	int kdAnimY;
 	const Common::StringArray *names;
 	const Common::Array<bool> *solvedFlags;
 	uint topRow;
 	uint selRow;
 	uint book;            ///< 1..3 — for the "Book N" / "Challenge Book" title
 };
+
+void drawCaseGreeter(Graphics::ManagedSurface &scratch,
+					 const Animation *kdAnim, bool haveKdAnim,
+					 int kdAnimX, int kdAnimY) {
+	if (!haveKdAnim || !kdAnim || kdAnim->empty())
+		return;
+
+	// `_CaseSelection` registers the partner-specific ANI slot, but
+	// drives it with script 0x15 regardless of partner. The chooser
+	// loop advances it through `_UpdateAnimations` after each
+	// `_CheckFrameRate` tick.
+	const uint32 now = g_system->getMillis();
+	const uint frameIdx = partnerFrameAtTick(0x15, (uint)kdAnim->size(), now);
+	blitAnimFrameAnchored(scratch.surfacePtr(), (*kdAnim)[frameIdx],
+						  kdAnimX, kdAnimY);
+}
+
+void drawCaseBase(Graphics::ManagedSurface &scratch, EEMEngine *vm,
+				  const Picture *caseBg, bool haveCaseBg,
+				  const Picture *revealPic, bool haveRevealPic,
+				  const Animation *kdAnim, bool haveKdAnim,
+				  int kdAnimX, int kdAnimY, uint book) {
+	scratch.clear();
+	if (haveCaseBg && caseBg)
+		scratch.simpleBlitFrom(caseBg->surface);
+	if (haveRevealPic && revealPic)
+		blitMaskedPic(scratch, *revealPic,
+					   kCaseSelectionRevealX, kCaseSelectionRevealY);
+	drawCaseBookTitle(scratch, vm, book);
+	drawCaseGreeter(scratch, kdAnim, haveKdAnim, kdAnimX, kdAnimY);
+}
+
+bool animateCaseSelectionReveal(EEMEngine *vm, const Picture *caseBg,
+								bool haveCaseBg, const Picture *revealPic,
+								bool haveRevealPic, const Animation *kdAnim,
+								bool haveKdAnim, int kdAnimX, int kdAnimY,
+								uint book) {
+	if (!haveRevealPic || !revealPic || revealPic->surface.empty())
+		return false;
+
+	const int steps = vm && vm->isFloppy()
+		? revealPic->surface.w : revealPic->surface.h;
+	for (int i = 1; i <= steps; i++) {
+		if (pumpQuitEvents(vm))
+			return true;
+		Graphics::ManagedSurface scratch(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		scratch.clear();
+		if (haveCaseBg && caseBg)
+			scratch.simpleBlitFrom(caseBg->surface);
+		if (vm && vm->isFloppy()) {
+			blitMaskedPicRightReveal(scratch, *revealPic,
+									  kCaseSelectionRevealX,
+									  kCaseSelectionRevealY, i);
+		} else {
+			blitMaskedPicBottomReveal(scratch, *revealPic,
+									   kCaseSelectionRevealX,
+									   kCaseSelectionRevealY, i);
+		}
+		drawCaseBookTitle(scratch, vm, book);
+		drawCaseGreeter(scratch, kdAnim, haveKdAnim, kdAnimX, kdAnimY);
+		copyToScreen(scratch);
+		g_system->delayMillis(8);
+	}
+	return false;
+}
 
 // Mirrors `_DoChoose`'s `DrawList @ 1c33:040d`. 12 visible rows × 10 px
 // at (61, 35); colour palette: 0x13 = highlighted (selected), 0x1B =
@@ -229,24 +453,11 @@ struct CaseSubmenuView {
 void drawCaseSubmenu(const CaseSubmenuView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
-	scratch.clear();
-	if (v.haveCaseBg)
-		scratch.simpleBlitFrom(v.caseBg->surface);
+	drawCaseBase(scratch, v.vm, v.caseBg, v.haveCaseBg,
+				 v.revealPic, v.haveRevealPic,
+				 v.kdAnim, v.haveKdAnim, v.kdAnimX, v.kdAnimY, v.book);
 	if (!v.vm->getFont().isLoaded() || !v.names)
 		return;
-
-	// Top centred title. `_CaseSelection @ 1c33:0aa3` formats "Book %d"
-	// for tiers 1/2 and "Challenge Book" (sprintf with no arg) for
-	// tier 3. `_Show_String(0xc, (0xba - width)/2 + 0x3c, …, 0x10)`
-	// places it horizontally centred over the panel. Spanish floppy
-	// uses "Lib. %u" / "Libro de Retos" (verified in Spanish EEM.EXE).
-	const bool spanish = v.vm && v.vm->isSpanish();
-	const Common::String title = (v.book == 3)
-		? Common::String(spanish ? "Libro de Retos" : "Challenge Book")
-		: Common::String::format(spanish ? "Lib. %u" : "Book %u", v.book);
-	const int titleW = v.vm->getFont().getStringWidth(title);
-	const int titleX = (0xba - titleW) / 2 + 0x3c;
-	v.vm->getFont().drawString(&scratch, title, titleX, 12, 320, 0xF);
 
 	const int kListX  = 61;
 	const int kListW  = 238 - kListX;
@@ -298,38 +509,16 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 		scratch.frameRect(thumb, 0xF);
 	}
 
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
-	g_system->updateScreen();
+	copyToScreen(scratch);
 }
 
 void drawCaseSelectionFrame(const CaseSelectionView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
-	scratch.clear();
-	if (v.haveCaseBg)
-		scratch.simpleBlitFrom(v.caseBg->surface);
+	drawCaseBase(scratch, v.vm, v.caseBg, v.haveCaseBg,
+				 v.revealPic, v.haveRevealPic,
+				 v.kdAnim, v.haveKdAnim, v.kdAnimX, v.kdAnimY, v.book);
 
-	// KD greeter frame — masked-blit current animation cell at
-	// (0x112, 0x50). 100 ms tick matches `_CheckFrameRate`. The
-	// original `_CaseSelection @ 1c33:0a87` calls `_NewAnimation(...,
-	// CONCAT22(0x15, ...), ..., seqnum=0x15, ...)` so the script
-	// key is 0x15 regardless of partner — even Jenny's CELLS (loaded
-	// via animID 0x16 = ANI.DBD slot) get driven by Jake's 0x15
-	// blink script. Both 0x15 and 0x16 are aliases of 0x00 in our
-	// table so the result is identical, but routing through 0x15
-	// matches the binary.
-	if (v.haveKdAnim) {
-		const uint32 now = g_system->getMillis();
-		const uint frameIdx = partnerFrameAtTick(0x15,
-												  (uint)v.kdAnim->size(), now);
-		// Anchor-aware blit. Same rendering path used everywhere
-		// the partner is registered through `_NewAnimation` in the
-		// original.
-		blitAnimFrameAnchored(scratch.surfacePtr(),
-							  (*v.kdAnim)[frameIdx],
-							  v.kdAnimX, v.kdAnimY);
-	}
 	if (v.vm->getFont().isLoaded()) {
 		// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
 		// and `DAT_29be_0d02` for y. `_TextBox` @ 29be:0d00 holds
@@ -338,17 +527,6 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 		const int kListW  = 238 - kListX;
 		const int kListY0 = 35;
 		const int kLineH  = 10;
-
-		// Top centred "Book %d" / "Challenge Book" title — sprintf
-		// format strings at 29be:0deb / 29be:0dfa shown via
-		// `_Show_String(0xc, (0xba - width)/2 + 0x3c, …)` in the
-		// original. We don't track challenge tier yet so always
-		// show "Book 1".
-		const Common::String book = v.vm->isSpanish()
-			? Common::String("Lib. 1") : Common::String("Book 1");
-		const int titleW = v.vm->getFont().getStringWidth(book);
-		const int titleX = (0xba - titleW) / 2 + 0x3c;
-		v.vm->getFont().drawString(&scratch, book, titleX, 12, 320, 0xF);
 
 		// Render 11 list rows: separator + menu item pairs.
 		//   row 0  separator
@@ -373,9 +551,7 @@ void drawCaseSelectionFrame(const CaseSelectionView &v) {
 									   kListX, y, kListW, color);
 		}
 	}
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
-	g_system->updateScreen();
+	copyToScreen(scratch);
 }
 
 void EEMEngine::doProfilePicker() {
@@ -426,14 +602,18 @@ void EEMEngine::doProfilePicker() {
 
 	int sel = 0;
 	bool done = false;
+	Picture bg;
+	const bool haveBG = _picsArchive.getPicture(0x104, bg);
+	Picture reveal;
+	const bool haveReveal =
+		_picsArchive.getPicture(kProfilePickerRevealPic, reveal);
 
 	// Picker geometry: `DrawList @ 1c33:040d` is called from
 	// `screen8_handler @ 1c33:1012` with `(_TextBox + 3, DAT_29be_0d02)`.
 	// `_TextBox @ 29be:0d00` holds {x1=58, y1=35, x2=238, y2=158} so
 	// the list origin is (61, 35), 10 px per row, max 12 visible
-	// rows. The "Pick a player" caption is part of the BG (PIC 0x104)
-	// — `screen8_handler` never draws it as text — so an extra
-	// `drawString` would overlay on top of the baked-in heading.
+	// rows. `screen8_handler` slides PIC 0x105 into the lower strip
+	// before calling `_DoChoose`; it does not draw that caption as text.
 	const int kListX = 61;
 	const int kListY = 35;
 	const int kLineH = 10;
@@ -441,18 +621,21 @@ void EEMEngine::doProfilePicker() {
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		scratch.clear();
-		Picture bg;
-		if (_picsArchive.getPicture(0x104, bg))
+		if (haveBG)
 			scratch.simpleBlitFrom(bg.surface);
+		if (haveReveal)
+			blitMaskedPic(scratch, reveal,
+						   kProfilePickerRevealX, kProfilePickerRevealY);
 		for (uint i = 0; i < entries.size(); i++) {
 			const byte color = ((int)i == sel) ? 0xF : 0x8;
 			_font.drawString(&scratch, entries[i].label,
 							 kListX, kListY + (int)i * kLineH, 220, color);
 		}
-		g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-								   0, 0, 320, 200);
-		g_system->updateScreen();
+		copyToScreen(scratch);
 	};
+	if (animateProfilePickerReveal(this, &bg, haveBG,
+								   haveReveal ? &reveal : nullptr))
+		return;
 	draw();
 
 	while (!done && !shouldQuit()) {
@@ -524,8 +707,7 @@ void EEMEngine::doProfilePicker() {
 void EEMEngine::doNewPlayer() {
 	// Mirrors `_NewPlayer` @ 1c33:0dda. The original draws background
 	// 0x104 + character peek pic 0x107, then shows "Please type your
-	// name" and accepts up to 12 characters until Enter. We render a
-	// minimal version: black screen + prompt.
+	// name" and accepts up to 12 characters until Enter.
 	if (!_font.isLoaded()) {
 		_playerName = "Detective";
 		return;
@@ -538,6 +720,8 @@ void EEMEngine::doNewPlayer() {
 	// The original also slides in PIC 0x107 (a peeking character).
 	Picture bg;
 	const bool haveBG = _picsArchive.getPicture(0x104, bg);
+	Picture peek;
+	const bool havePeek = _picsArchive.getPicture(kNameEntryPeekPic, peek);
 
 	// Localized name-entry prompt. Spanish text is taken from the
 	// Spanish floppy EEM.EXE ("Teclea tu nombre"). The colon suffix is
@@ -545,19 +729,13 @@ void EEMEngine::doNewPlayer() {
 	const char *prompt = isSpanish()
 		? "Teclea tu nombre:" : "Please type your name:";
 
+	if (animateNameEntryPeek(this, &bg, haveBG, havePeek ? &peek : nullptr))
+		return;
 	// Match the original `_NewPlayer`: `_Show_String(rw=0x28, cl=0x50)`
 	// for the prompt, then `_ShowChar(0x50, x, …)` for typed input.
 	// (rw=row=y, cl=col=x.) Prompt at (y=40, x=80), input at (y=80, x=80).
-	Graphics::ManagedSurface scratch(320, 200,
-		Graphics::PixelFormat::createFormatCLUT8());
-	scratch.clear();
-	if (haveBG)
-		scratch.simpleBlitFrom(bg.surface);
-	_font.drawString(&scratch, prompt, 80, 40, 240, 0xF);
-	_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
-	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-							   0, 0, 320, 200);
-	g_system->updateScreen();
+	drawNameEntryFrame(this, &bg, haveBG, havePeek ? &peek : nullptr,
+					   name, prompt);
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
@@ -616,16 +794,8 @@ void EEMEngine::doNewPlayer() {
 			}
 		}
 		if (dirty) {
-			// Re-render with the updated `name`. Same body as the
-			// initial render above — only `name + "_"` changes.
-			scratch.clear();
-			if (haveBG)
-				scratch.simpleBlitFrom(bg.surface);
-			_font.drawString(&scratch, prompt, 80, 40, 240, 0xF);
-			_font.drawString(&scratch, name + "_", 80, 80, 240, 0xF);
-			g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
-									   0, 0, 320, 200);
-			g_system->updateScreen();
+			drawNameEntryFrame(this, &bg, haveBG, havePeek ? &peek : nullptr,
+							   name, prompt);
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -1482,6 +1652,9 @@ void EEMEngine::doCaseSelection() {
 	// Mirrors `_CaseSelection`: load PIC 0x41 as the chooser backdrop.
 	Picture caseBg;
 	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
+	Picture revealPic;
+	const bool haveRevealPic =
+		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
 
 	// KD greeter sprite. `_CaseSelection @ 1c33:0a87` (1c33:0b7e-0ba1)
 	// loads anim 0x15 (Jake-paired) or 0x16 (Jenny-paired) and registers
@@ -1495,11 +1668,15 @@ void EEMEngine::doCaseSelection() {
 							 && !kdAnim.empty();
 	const int kKdAnimX = 0x112;
 	const int kKdAnimY = 0x50;
+	const uint caseBook = (_chainStage == 3) ? 3 :
+						  (_chainStage == 2) ? 2 : 1;
 
 	CaseSelectionView v;
 	v.vm = this;
 	v.caseBg = &caseBg;
 	v.haveCaseBg = haveCaseBg;
+	v.revealPic = &revealPic;
+	v.haveRevealPic = haveRevealPic;
 	v.kdAnim = &kdAnim;
 	v.haveKdAnim = haveKdAnim;
 	v.kdAnimId = (uint16)kKdAniId;
@@ -1509,7 +1686,13 @@ void EEMEngine::doCaseSelection() {
 	v.pickLabel = kPickLabel;
 	v.pickEnabled = kPickEnabled;
 	v.pick = pick;
+	v.book = caseBook;
 
+	if (animateCaseSelectionReveal(this, &caseBg, haveCaseBg,
+								   &revealPic, haveRevealPic,
+								   &kdAnim, haveKdAnim,
+								   kKdAnimX, kKdAnimY, caseBook))
+		return;
 	drawCaseSelectionFrame(v);
 	uint32 lastTick = g_system->getMillis();
 
@@ -1723,13 +1906,25 @@ void EEMEngine::doCaseSelection() {
 	sv.vm = this;
 	sv.caseBg = &caseBg;
 	sv.haveCaseBg = haveCaseBg;
+	sv.revealPic = &revealPic;
+	sv.haveRevealPic = haveRevealPic;
+	sv.kdAnim = &kdAnim;
+	sv.haveKdAnim = haveKdAnim;
+	sv.kdAnimX = kKdAnimX;
+	sv.kdAnimY = kKdAnimY;
 	sv.names = &names;
 	sv.solvedFlags = &solvedFlags;
 	sv.topRow = topRow;
 	sv.selRow = selRow;
 	sv.book = book;
 
+	if (animateCaseSelectionReveal(this, &caseBg, haveCaseBg,
+								   &revealPic, haveRevealPic,
+								   &kdAnim, haveKdAnim,
+								   kKdAnimX, kKdAnimY, book))
+		return;
 	drawCaseSubmenu(sv);
+	uint32 submenuLastTick = g_system->getMillis();
 	bool confirmed = false;
 	while (!confirmed && !shouldQuit()) {
 		Common::Event ev;
@@ -1838,7 +2033,11 @@ void EEMEngine::doCaseSelection() {
 				continue;
 			}
 		}
-		if (dirty) {
+		const uint32 now = g_system->getMillis();
+		const bool animTick = haveKdAnim && now - submenuLastTick >= 100;
+		if (animTick)
+			submenuLastTick = now;
+		if (dirty || animTick) {
 			sv.topRow = topRow;
 			sv.selRow = selRow;
 			drawCaseSubmenu(sv);
