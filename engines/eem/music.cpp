@@ -22,6 +22,7 @@
 #include "audio/midiparser.h"
 #include "audio/miles.h"
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/textconsole.h"
@@ -31,15 +32,23 @@
 
 namespace EEM {
 
+namespace {
+
+const int kMidiDriverFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
+
+} // End of anonymous namespace
+
 MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 	// Mirrors `_InitMIDI @ 20a2:013a` which used `_AIL_register_driver`
 	// to walk the .ADV files (ADLIB.ADV, SBFM.ADV, MT32MPU.ADV, etc.)
 	// and pick a backend. We honour the launcher's "Music driver"
-	// setting and only force AdLib / MT-32 paths through Miles when the
-	// detected device matches.
+	// setting while preferring MT-32 when no concrete device was chosen,
+	// like other ScummVM engines with native MT-32 scores.
 	const MidiDriver::DeviceHandle dev =
-		MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
-	const MusicType musicType = MidiDriver::getMusicType(dev);
+		MidiDriver::detectDevice(kMidiDriverFlags);
+	MusicType musicType = MidiDriver::getMusicType(dev);
+	if (musicType == MT_GM && ConfMan.getBool("native_mt32"))
+		musicType = MT_MT32;
 
 	switch (musicType) {
 	case MT_ADLIB:
@@ -64,7 +73,7 @@ MusicPlayer::MusicPlayer(bool isFloppy) : _isFloppy(isFloppy) {
 		break;
 	default:
 		_milesAudioMode = false;
-		createDriver(MDT_MIDI | MDT_ADLIB);
+		createDriver(kMidiDriverFlags);
 		break;
 	}
 

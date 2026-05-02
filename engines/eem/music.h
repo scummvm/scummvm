@@ -53,8 +53,8 @@ namespace EEM {
  * different timbres. ScummVM ships a Miles AdLib driver
  * (`Audio::MidiDriver_Miles_AdLib_create`) that loads `SAMPLE.AD` and
  * implements the same install-on-demand workflow, so we use it for
- * AdLib output. MT-32 / GM fall back to the generic driver via
- * `Audio::MidiPlayer::createDriver`.
+ * AdLib output. MT-32 uses ScummVM's Miles MT-32 driver path, and any
+ * other MIDI output falls back to `Audio::MidiPlayer::createDriver`.
  *
  * Available music files in the game directory:
  *   - THEME.XMI   — opening anims (looping) + title screen
