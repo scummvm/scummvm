@@ -500,9 +500,9 @@ public:
 	/// music changes as the player travels between sites.
 	void startTravelMusic();
 
-	/// Block until the current MIDI cue finishes, then stop/unload it.
-	/// Mirrors the `_IsMIDIPlaying` spin + `_StopMIDI` cleanup in
-	/// `_DoSiteLoop` after the CD travel cue.
+	/// Block until the current MIDI cue finishes or the player skips it,
+	/// then stop/unload it. Mirrors the `_IsMIDIPlaying` spin +
+	/// `_StopMIDI` cleanup in `_DoSiteLoop` after the CD travel cue.
 	void waitForMusicDone(uint32 maxMs = 60000);
 
 	/// Stop any currently playing MIDI track. Mirrors `_StopMIDI @

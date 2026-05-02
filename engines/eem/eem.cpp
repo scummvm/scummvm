@@ -958,6 +958,11 @@ void EEMEngine::waitForMusicDone(uint32 maxMs) {
 				stopMusic();
 				return;
 			}
+			if (ev.type == Common::EVENT_KEYDOWN ||
+				ev.type == Common::EVENT_LBUTTONDOWN) {
+				stopMusic();
+				return;
+			}
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(20);

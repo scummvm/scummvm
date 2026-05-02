@@ -119,7 +119,8 @@ private:
 	/// _SiteNumber`. Mirrors `_EnterSiteAnim @ 1000:9b21` — animation
 	/// 6 (Jake) / 14 (Jenny) skateboards in from the right edge along
 	/// the bottom, then animation 7 / 15 slides KD in from the left.
-	void enterSiteAnim();
+	/// Returns true when the player skipped it with input.
+	bool enterSiteAnim();
 
 	/// Draw the persistent in-site partner sprite (Jake or Jenny
 	/// standing/idling) at the position from `_WaitAnims` @ 29be:021c.

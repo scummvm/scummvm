@@ -610,10 +610,14 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 		else
 			renderStaticDrops(siteNum);
 		renderAnimatedDrops(siteNum, g_system->getMillis());
-		enterSiteAnim();
+		const bool skippedArrival = enterSiteAnim();
 		_vm->markSiteArrivalPlayed(siteNum);
-		if (!_vm->isFloppy())
-			_vm->waitForMusicDone();
+		if (!_vm->isFloppy()) {
+			if (skippedArrival)
+				_vm->stopMusic();
+			else
+				_vm->waitForMusicDone();
+		}
 		// Re-paint the BG; the normal snapshot below should contain
 		// only the static layers, while animated NPCs are redrawn per
 		// tick by the frame pump.
@@ -873,7 +877,7 @@ void SiteScreen::run() {
 	}
 }
 
-void SiteScreen::enterSiteAnim() {
+bool SiteScreen::enterSiteAnim() {
 	// Mirrors `_EnterSiteAnim @ 1000:9b21`. Two phases, both partner
 	// dependent:
 	//   Phase 1 — skateboard scroll: anim 6 (Jake) / 0xe (Jenny). Sprite
@@ -886,7 +890,7 @@ void SiteScreen::enterSiteAnim() {
 	// motion (a runtime-calibrated speed value); we use a fixed 4 px
 	// per tick which feels close to the DOS pacing.
 	if (!_vm || !_mystery)
-		return;
+		return false;
 	const uint8 partner = _vm->getPartnerIndex();
 	const uint kSkateAni = (partner == 0) ? 6  : 0xe;
 	const uint kKDAni    = (partner == 0) ? 7  : 0xf;
@@ -895,7 +899,7 @@ void SiteScreen::enterSiteAnim() {
 	// Snapshot the current screen so we can restore between frames.
 	Graphics::Surface *screen = g_system->lockScreen();
 	if (!screen)
-		return;
+		return false;
 	Graphics::ManagedSurface bg(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	bg.simpleBlitFrom(*screen);
@@ -929,7 +933,7 @@ void SiteScreen::enterSiteAnim() {
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_KEYDOWN ||
 					ev.type == Common::EVENT_LBUTTONDOWN) {
-					return; // user-skip — bail out of the animation
+					return true; // user-skip
 				}
 			}
 
@@ -979,12 +983,13 @@ void SiteScreen::enterSiteAnim() {
 			while (g_system->getEventManager()->pollEvent(ev)) {
 				if (ev.type == Common::EVENT_KEYDOWN ||
 					ev.type == Common::EVENT_LBUTTONDOWN) {
-					return;
+					return true;
 				}
 			}
 			g_system->delayMillis(80);
 		}
 	}
+	return false;
 }
 
 void SiteScreen::renderStaticDrops(uint siteNum) {
