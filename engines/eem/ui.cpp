@@ -2885,6 +2885,8 @@ void EEMEngine::doBigMap() {
 		if (now - mapLastTick >= 100) {
 			mapLastTick = now;
 			drawBigMapOverview(now - mapStartTick);
+			cyclePaletteRange(0xf7, 0xfa);
+			cyclePaletteRange(0xfb, 0xfe);
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(10);
