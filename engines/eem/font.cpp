@@ -130,7 +130,7 @@ int EEMFont::drawWordWrapped(Graphics::ManagedSurface *dst, int x, int y,
 							 uint32 color) const {
 	Common::Array<Common::String> lines;
 	wordWrapText(s, width, lines);
-	const int lineH = getFontHeight() + 1;
+	const int lineH = getFontHeight();
 	for (uint i = 0; i < lines.size(); i++)
 		drawString(dst, lines[i], x, y + (int)i * lineH, width, color);
 	return (int)lines.size() * lineH;

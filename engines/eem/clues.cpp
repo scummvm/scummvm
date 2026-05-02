@@ -1107,7 +1107,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			getBalloonInsets(balloonId, textXIns, textYIns, textWidth);
 		const int textX = ballX + textXIns;
 		const int balloonH = haveBalloon ? balloon.surface.h : 200;
-		const int lineH    = _font.getFontHeight() + 1;
+		const int lineH    = _font.getFontHeight();
 
 		// Pagination state — `FUN_22dc_05c8`'s text-idx loop uses
 		// `local_1c` (set from the PREVIOUS text's flag bit) to decide
