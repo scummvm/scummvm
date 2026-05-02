@@ -147,6 +147,13 @@ constexpr int kNameEntryPeekY = 0xb3;
 constexpr uint16 kCaseSelectionRevealPic = 0x53;
 constexpr int kCaseSelectionRevealX = 0x3e;
 constexpr int kCaseSelectionRevealY = 0xb2;
+constexpr uint16 kActionScreenBackgroundPic = 0x104;
+constexpr uint16 kActionScreenDecorPic = 0x0009;
+constexpr int kActionScreenDecorX = 10;
+constexpr int kActionScreenDecorY = 0x87;
+constexpr byte kChooserCycleStart = 0x6f;
+constexpr byte kChooserCycleEnd = 0x73;
+constexpr uint32 kChooserCycleMillis = 100;
 
 bool notebookButtonAt(int x, int y) {
 	return kPdaHelpRect.contains(x, y) ||
@@ -242,6 +249,13 @@ void copyToScreen(Graphics::ManagedSurface &scratch) {
 	g_system->copyRectToScreen(scratch.getPixels(), scratch.pitch,
 							   0, 0, 320, 200);
 	g_system->updateScreen();
+}
+
+void cycleChooserPalette() {
+	// `_DoChoose` / `_DoListPicker_Floppy` rotate 0x6f..0x73 on each
+	// frame tick while waiting for input. These colors are used by the
+	// animated chooser surface baked into the menu backgrounds.
+	cyclePaletteRange(kChooserCycleStart, kChooserCycleEnd);
 }
 
 void blitMaskedPicSlice(Graphics::ManagedSurface &dst, const Picture &pic,
@@ -431,25 +445,19 @@ void drawProfilePickerFrame(const ProfilePickerView &v) {
 	copyToScreen(scratch);
 }
 
-// Snapshot of `doCaseSelection`'s captured locals, used by
-// `drawCaseSelectionFrame` (which replaces the original lambda). Lives
-// on the stack inside `doCaseSelection`; never escapes.
-struct CaseSelectionView {
+// Snapshot of `doActionScreen`'s captured locals, used by
+// `drawActionMenuFrame`. Lives on the stack inside `doActionScreen`;
+// never escapes.
+struct ActionMenuView {
 	EEMEngine *vm;
-	const Picture *caseBg;
-	bool haveCaseBg;
-	const Picture *revealPic;
-	bool haveRevealPic;
-	const Animation *kdAnim;
-	bool haveKdAnim;
-	uint16 kdAnimId;     ///< 0x15 / 0x16 — looked up in kAnimScripts
-	int kdAnimX;
-	int kdAnimY;
+	const Picture *bg;
+	bool haveBg;
+	const Picture *decor;
+	bool haveDecor;
 	const char *separator;
 	const char *const *pickLabel;
 	const bool *pickEnabled;
 	uint pick;
-	uint book;
 };
 
 // Mystery list shown in the "Choose A Mystery" sub-screen. Mirrors
@@ -484,6 +492,16 @@ Common::StringArray loadBookNames(uint book) {
 		names.push_back(line);
 	}
 	return names;
+}
+
+void clampCaseTopRow(uint &topRow, uint listLen, uint visibleRows) {
+	if (listLen <= visibleRows) {
+		topRow = 0;
+		return;
+	}
+	const uint maxTop = listLen - visibleRows;
+	if (topRow > maxTop)
+		topRow = maxTop;
 }
 
 // Per-mystery sub-chooser ("Choose A Mystery") view.
@@ -645,12 +663,15 @@ void drawCaseSubmenu(const CaseSubmenuView &v) {
 	copyToScreen(scratch);
 }
 
-void drawCaseSelectionFrame(const CaseSelectionView &v) {
+void drawActionMenuFrame(const ActionMenuView &v) {
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
-	drawCaseBase(scratch, v.vm, v.caseBg, v.haveCaseBg,
-				 v.revealPic, v.haveRevealPic,
-				 v.kdAnim, v.haveKdAnim, v.kdAnimX, v.kdAnimY, v.book);
+	scratch.clear();
+	if (v.haveBg && v.bg)
+		scratch.simpleBlitFrom(v.bg->surface);
+	if (v.haveDecor && v.decor)
+		blitMaskedPic(scratch, *v.decor,
+					   kActionScreenDecorX, kActionScreenDecorY);
 
 	if (v.vm->getFont().isLoaded()) {
 		// `DrawList` @ 1c33:040d coordinates: `_TextBox + 3` for x
@@ -763,6 +784,7 @@ void EEMEngine::doProfilePicker() {
 								   haveReveal ? &reveal : nullptr))
 		return;
 	drawProfilePickerFrame(view);
+	uint32 chooserLastTick = g_system->getMillis();
 
 	while (!done && !shouldQuit()) {
 		Common::Event ev;
@@ -874,6 +896,11 @@ void EEMEngine::doProfilePicker() {
 			view.selected = sel;
 			view.start = start;
 			drawProfilePickerFrame(view);
+		}
+		const uint32 now = g_system->getMillis();
+		if (now - chooserLastTick >= kChooserCycleMillis) {
+			chooserLastTick = now;
+			cycleChooserPalette();
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -1738,21 +1765,18 @@ void EEMEngine::doSetup() {
 	}
 }
 
-void EEMEngine::doCaseSelection() {
-	// Mirrors `_CaseSelection` @ 1c33:0a87. The original draws PIC 0x41
-	// (chooser background) plus a centred "Book %d" / "Challenge Book"
-	// header at (y=12) and then calls `_DoChoose(list)` to render the
-	// menu via `DrawList` @ 1c33:040d at (_TextBox+3, DAT_29be_0d02) =
-	// (61, 35), 12 rows × 10 px line height. The menu list itself is
-	// the static array at 29be:0d6a (verified via `push 0x0d6a` at
-	// 1c33:1ab4). Strings are at 29be:0ef4 onwards. Layout:
+void EEMEngine::doActionScreen() {
+	// Mirrors `_ActionScreen` @ 1c33:195b. The original draws background
+	// PIC 0x104 plus PIC 9 at (10, 0x87), then calls `_DoChoose` with
+	// `ActionNames @ 29be:0d6a`. The "Book N" heading belongs only to
+	// `_CaseSelection`, so this top-level menu intentionally does not
+	// draw one.
+	// Layout:
 	//   list[0]  = "----------------------------------"
 	//   list[1]  = "         Choose A Mystery"
 	//   list[2..10] = alternating menu items + separators
 	// Five selectable items: Choose A Mystery / Practice Mystery /
 	// See ScrapBook 1/2/3.
-	const uint kMaxMystery = 54;
-
 	enum MenuPick {
 		kPickChoose = 0,
 		kPickPractice,
@@ -1828,8 +1852,6 @@ void EEMEngine::doCaseSelection() {
 	const Common::Rect kOkRect      ( 12,  63,  41,  87); // 29be:0cd8 confirm
 	const Common::Rect kHelpRect    ( 12, 100,  41, 124); // 29be:0ce0 help
 	const Common::Rect kExitRect    ( 12, 137,  41, 161); // 29be:0ce8 cancel
-	const Common::Rect kUpArrowRect (240,  31, 250,  43); // 29be:0cf0 scroll up
-	const Common::Rect kDnArrowRect (240, 148, 250, 159); // 29be:0cf8 scroll dn
 	const Common::Rect kListRect    ( 58,  35, 238, 158); // 29be:0d00 list panel
 
 	// The original `_NewPlayer` set `_MouseCursor = 1` on exit; the
@@ -1837,7 +1859,7 @@ void EEMEngine::doCaseSelection() {
 	// Reassert here in case anything between hid it.
 	CursorMan.showMouse(true);
 
-	// Reassert site palette 0 (the case-selection / chooser CLUT). In
+	// Reassert site palette 0 (the chooser CLUT). In
 	// the normal flow `doProfilePicker` (or the post-screen reset paths
 	// at lines 1402 / 1147 / 1121) leaves us on palette 0 already, but
 	// the launcher-resume path jumps straight here from `_AllBlack`
@@ -1845,65 +1867,29 @@ void EEMEngine::doCaseSelection() {
 	// CLUT and the player sees an empty screen.
 	setSitePalette(0);
 
-	// Mirrors `_CaseSelection`: load PIC 0x41 as the chooser backdrop.
-	Picture caseBg;
-	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
-	Picture revealPic;
-	const bool haveRevealPic =
-		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
+	Picture bg;
+	const bool haveBg = _picsArchive.getPicture(kActionScreenBackgroundPic, bg);
+	Picture decor;
+	const bool haveDecor = _picsArchive.getPicture(kActionScreenDecorPic, decor);
 
-	// KD greeter sprite. `_CaseSelection @ 1c33:0a87` (1c33:0b7e-0ba1)
-	// loads anim 0x15 (Jake-paired) or 0x16 (Jenny-paired) and registers
-	// `_NewAnimation(0x112, 0x50, ..., seqnum=0x15, prior=1)` — partner-
-	// dependent because the host KD changes who's "with him" on the
-	// briefing intro frame. Runs continuously through the menu loop via
-	// `_UpdateAnimations`. We approximate with millis-based frame cycling.
-	const uint kKdAniId = (_partner == 0) ? 0x15 : 0x16;
-	Animation kdAnim;
-	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
-							 && !kdAnim.empty();
-	const int kKdAnimX = 0x112;
-	const int kKdAnimY = 0x50;
-	const uint caseBook = (_chainStage == 3) ? 3 :
-						  (_chainStage == 2) ? 2 : 1;
-
-	CaseSelectionView v;
+	ActionMenuView v;
 	v.vm = this;
-	v.caseBg = &caseBg;
-	v.haveCaseBg = haveCaseBg;
-	v.revealPic = &revealPic;
-	v.haveRevealPic = haveRevealPic;
-	v.kdAnim = &kdAnim;
-	v.haveKdAnim = haveKdAnim;
-	v.kdAnimId = (uint16)kKdAniId;
-	v.kdAnimX = kKdAnimX;
-	v.kdAnimY = kKdAnimY;
+	v.bg = &bg;
+	v.haveBg = haveBg;
+	v.decor = &decor;
+	v.haveDecor = haveDecor;
 	v.separator = kSeparator;
 	v.pickLabel = kPickLabel;
 	v.pickEnabled = kPickEnabled;
 	v.pick = pick;
-	v.book = caseBook;
 
-	if (animateCaseSelectionReveal(this, &caseBg, haveCaseBg,
-								   &revealPic, haveRevealPic,
-								   &kdAnim, haveKdAnim,
-								   kKdAnimX, kKdAnimY, caseBook))
-		return;
-	drawCaseSelectionFrame(v);
-	uint32 lastTick = g_system->getMillis();
+	drawActionMenuFrame(v);
+	uint32 chooserLastTick = g_system->getMillis();
 
 	bool exitChosen = false;
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool confirmed = false;
-		// Redraw every 100 ms so the KD greeter cycles. Mirrors the
-		// `_CheckFrameRate` cadence in `_CaseSelection`'s main loop.
-		const uint32 now = g_system->getMillis();
-		if (haveKdAnim && now - lastTick >= 100) {
-			lastTick = now;
-			v.pick = pick;
-			drawCaseSelectionFrame(v);
-		}
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
@@ -1938,7 +1924,7 @@ void EEMEngine::doCaseSelection() {
 						if (mp < kNumPicks && kPickEnabled[mp]) {
 							pick = mp;
 							v.pick = pick;
-							drawCaseSelectionFrame(v);
+							drawActionMenuFrame(v);
 							continue;
 						}
 					}
@@ -1969,7 +1955,7 @@ void EEMEngine::doCaseSelection() {
 						break;
 				}
 				v.pick = pick;
-				drawCaseSelectionFrame(v);
+				drawActionMenuFrame(v);
 				continue;
 			}
 			if (k == Common::KEYCODE_DOWN || k == Common::KEYCODE_RIGHT ||
@@ -1980,14 +1966,19 @@ void EEMEngine::doCaseSelection() {
 						break;
 				}
 				v.pick = pick;
-				drawCaseSelectionFrame(v);
+				drawActionMenuFrame(v);
 				continue;
 			}
 		}
 		if (confirmed) {
 			v.pick = pick;
-			drawCaseSelectionFrame(v);
+			drawActionMenuFrame(v);
 			break;
+		}
+		const uint32 now = g_system->getMillis();
+		if (now - chooserLastTick >= kChooserCycleMillis) {
+			chooserLastTick = now;
+			cycleChooserPalette();
 		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
@@ -1997,15 +1988,20 @@ void EEMEngine::doCaseSelection() {
 		return;
 
 	if (exitChosen) {
-		_mystery.clear();
-		_nextScreen = kScreenInvalid;
+		if (areYouSure()) {
+			_mystery.clear();
+			_nextScreen = kScreenInvalid;
+		} else {
+			drawActionMenuFrame(v);
+			_nextScreen = kScreenAction;
+		}
 		return;
 	}
 
 	// "Practice Mystery" is the tutorial → mystery 0.
 	if (pick == kPickPractice) {
 		if (!_mystery.load(0, &_rng)) {
-			warning("doCaseSelection: failed to load practice mystery");
+			warning("doActionScreen: failed to load practice mystery");
 			_mystery.clear();
 			resetSiteArrivalState();
 		} else {
@@ -2021,49 +2017,72 @@ void EEMEngine::doCaseSelection() {
 		// call `_ShowScrapbook(0, stage)` for the matching tier
 		// (verified at the action-handler jumptable bytes
 		// `01 03 05 07 09 ff` paired with handlers at 1c33:1be1).
-		// The picker here is meant to LEAVE the mystery state untouched
-		// — viewing the scrapbook never starts a new case.
+		// Viewing the scrapbook never starts a new case; return to
+		// the same action menu afterwards.
 		const uint stage = (pick == kPickScrap1) ? 1
 						 : (pick == kPickScrap2) ? 2 : 3;
 		doShowScrapbook(stage);
 		setSitePalette(0);
 		_mystery.clear();
-		_nextScreen = kScreenChooseMystery;
+		_nextScreen = kScreenAction;
 		return;
 	}
 
-	// "Choose A Mystery" sub-screen: pick a specific case from the
-	// chain-stage's roster. Mirrors `_DoChooseMystery @ 1a35:02b7` +
-	// `_CaseSelection @ 1c33:0a87`:
-	//   stage 1 (Junior, BOOK1.NME) → mysteries  1..24
-	//   stage 2 (Senior, BOOK2.NME) → mysteries 25..48
-	//   stage 3 (Master, BOOK3.NME) → mysteries 49..54
-	// `_DoChooseMystery` opens BOOK<stage>.NME and reads up to 25
-	// CRLF-terminated lines into a 25-entry FAR-pointer array passed
-	// to `_CaseSelection`. The grey mask `_Greys = &mysteriesSolved +
-	// stageLo` (1c33:0b22) makes already-solved entries unselectable.
+	_nextScreen = kScreenChooseMystery;
+}
+
+void EEMEngine::doCaseSelection() {
+	// Mirrors `_DoChooseMystery @ 1a35:02b7` + `_CaseSelection @
+	// 1c33:0a87`. `_DoChooseMystery` loads BOOK<stage>.NME and
+	// `_CaseSelection` draws PIC 0x41 plus the centered "Book N" /
+	// "Challenge Book" title. This screen is entered only after the
+	// player selects "Choose A Mystery" on `_ActionScreen`.
+	const uint kMaxMystery = 54;
+
+	CursorMan.showMouse(true);
+	setSitePalette(0);
+	_mystery.clear();
+	resetSiteArrivalState();
+
+	Picture caseBg;
+	const bool haveCaseBg = _picsArchive.getPicture(0x41, caseBg);
+	Picture revealPic;
+	const bool haveRevealPic =
+		_picsArchive.getPicture(kCaseSelectionRevealPic, revealPic);
+
+	// KD greeter sprite. `_CaseSelection @ 1c33:0a87` loads anim 0x15
+	// (Jake-paired) or 0x16 (Jenny-paired), then runs it through the
+	// chooser loop via `_UpdateAnimations`.
+	const uint kKdAniId = (_partner == 0) ? 0x15 : 0x16;
+	Animation kdAnim;
+	const bool haveKdAnim = _aniArchive.loadAnimation(kKdAniId, kdAnim)
+							 && !kdAnim.empty();
+	const int kKdAnimX = 0x112;
+	const int kKdAnimY = 0x50;
+
+	// Stage roster:
+	//   stage 1 (Junior, BOOK1.NME) -> mysteries  1..24
+	//   stage 2 (Senior, BOOK2.NME) -> mysteries 25..48
+	//   stage 3 (Master, BOOK3.NME) -> mysteries 49..54
 	uint stageLo = 1, stageHi = 0x18;
 	uint book = 1;
 	switch (_chainStage) {
 	case 2: stageLo = 0x19; stageHi = 0x30; book = 2; break;
 	case 3: stageLo = 0x31; stageHi = 0x36; book = 3; break;
-	default: break;  // stage 1 (or fallback)
+	default: break;
 	}
 	if (stageHi > kMaxMystery)
 		stageHi = kMaxMystery;
 
 	const Common::StringArray names = loadBookNames(book);
 	if (names.empty()) {
-		warning("doCaseSelection: BOOK%u.NME failed to load — bailing",
-				book);
-		_mystery.clear();
+		warning("doCaseSelection: BOOK%u.NME failed to load", book);
 		return;
 	}
 	const uint listLen = MIN<uint>((uint)names.size(), stageHi - stageLo + 1);
 
 	// Per-row solved flags. `_DoChoose @ 1c33:0521` skips solved entries
-	// when seeding the initial selection (`while *_Greys[select] != 0`)
-	// and again per-click via the same mask check.
+	// when seeding the initial selection and ignores clicks on them.
 	Common::Array<bool> solvedFlags;
 	solvedFlags.resize(listLen);
 	for (uint i = 0; i < listLen; i++) {
@@ -2072,31 +2091,18 @@ void EEMEngine::doCaseSelection() {
 			mn < sizeof(_mysteriesSolved) && _mysteriesSolved[mn] != 0;
 	}
 
-	// Seed the selection at the first unsolved entry — same as
-	// `_DoChoose`'s `while (*Greys[select] != 0) select++;` loop at
-	// 1c33:0524.
 	uint selRow = 0;
 	while (selRow < listLen && solvedFlags[selRow])
 		selRow++;
 	if (selRow >= listLen)
-		selRow = 0;  // every case solved — let player re-pick
+		selRow = 0;
+
 	uint topRow = 0;
 	const uint kVisible = 12;
 	if (selRow >= kVisible) {
 		topRow = selRow - kVisible / 2;
-		if (topRow + kVisible > listLen)
-			topRow = listLen > kVisible ? listLen - kVisible : 0;
+		clampCaseTopRow(topRow, listLen, kVisible);
 	}
-
-	auto clampTopRow = [&](uint &t) {
-		if (listLen <= kVisible) {
-			t = 0;
-			return;
-		}
-		const uint maxTop = listLen - kVisible;
-		if (t > maxTop)
-			t = maxTop;
-	};
 
 	CaseSubmenuView sv;
 	sv.vm = this;
@@ -2130,49 +2136,43 @@ void EEMEngine::doCaseSelection() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				if (kOkRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserOkRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (selRow < listLen && !solvedFlags[selRow])
 						confirmed = true;
 					break;
 				}
-				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserExitRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_mystery.clear();
 					return;
 				}
-				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// In original `_CaseSelection`, this button is
-					// PIC 0x123 and returns 0xfffe, which calls
-					// `_ChooseSavedGame`. The ScummVM port stores the
-					// in-progress case in the profile save instead of
-					// original per-mystery files, so route to screen 8
-					// (profile picker) as the load/resume path.
+				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// Original `_CaseSelection` returns 0xfffe here,
+					// then `_ChooseSavedGame` runs. ScummVM stores
+					// in-progress cases in the profile, so route to
+					// the profile picker instead.
 					saveProfile(_playerName);
 					_mystery.clear();
 					_nextScreen = kScreenProfile;
 					return;
 				}
-				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
 					if (topRow > 0) { topRow--; dirty = true; }
 					continue;
 				}
-				if (kDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+				if (kChooserDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
 					topRow++;
-					clampTopRow(topRow);
+					clampCaseTopRow(topRow, listLen, kVisible);
 					dirty = true;
 					continue;
 				}
-				if (kListRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// Pick the row under the cursor — mirrors
-					// 1c33:0635 `i = (MouseY - DAT_29be_0d02) / 10;`.
+				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
 					const int kLineH = 10;
-					const int row = (ev.mouse.y - 35) / kLineH;
+					const int row = (ev.mouse.y - kChooserListRect.top) / kLineH;
 					if (row < 0 || row >= (int)kVisible)
 						continue;
 					const uint idx = topRow + (uint)row;
-					if (idx >= listLen)
+					if (idx >= listLen || solvedFlags[idx])
 						continue;
-					if (solvedFlags[idx])
-						continue;  // greyed entries ignore clicks
 					selRow = idx;
 					dirty = true;
 					continue;
@@ -2197,7 +2197,7 @@ void EEMEngine::doCaseSelection() {
 					selRow++;
 					if (selRow >= topRow + kVisible) {
 						topRow = selRow - kVisible + 1;
-						clampTopRow(topRow);
+						clampCaseTopRow(topRow, listLen, kVisible);
 					}
 					dirty = true;
 				}
@@ -2216,7 +2216,7 @@ void EEMEngine::doCaseSelection() {
 				selRow = MIN<uint>(selRow + kVisible, listLen - 1);
 				if (selRow >= topRow + kVisible) {
 					topRow = selRow - kVisible + 1;
-					clampTopRow(topRow);
+					clampCaseTopRow(topRow, listLen, kVisible);
 				}
 				dirty = true;
 				continue;
@@ -2242,10 +2242,12 @@ void EEMEngine::doCaseSelection() {
 			}
 		}
 		const uint32 now = g_system->getMillis();
-		const bool animTick = haveKdAnim && now - submenuLastTick >= 100;
-		if (animTick)
+		const bool chooserTick = now - submenuLastTick >= kChooserCycleMillis;
+		if (chooserTick) {
 			submenuLastTick = now;
-		if (dirty || animTick) {
+			cycleChooserPalette();
+		}
+		if (dirty || (chooserTick && haveKdAnim)) {
 			sv.topRow = topRow;
 			sv.selRow = selRow;
 			drawCaseSubmenu(sv);
@@ -2253,6 +2255,9 @@ void EEMEngine::doCaseSelection() {
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
+
+	if (shouldQuit())
+		return;
 
 	const uint mn = stageLo + selRow;
 	if (!_mystery.load(mn, &_rng)) {

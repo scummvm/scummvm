@@ -68,7 +68,7 @@ const bool kDebugPopulateScrapbook1AtStartup = false;
 // Fallback 11x16 mouse cursor used if the selected PIC pointer cannot be
 // loaded. The original game sets the cursor visible/hidden via
 // _MouseCursor; we leave it on once the screens that need it
-// (ChoosePartner, CaseSelection, sites) are reached.
+// (ChoosePartner, ActionScreen, CaseSelection, sites) are reached.
 //   0 = transparent, 1 = black outline, 2 = white fill
 const byte kCursorBitmap[11 * 16] = {
 	1,1,0,0,0,0,0,0,0,0,0,
@@ -276,10 +276,8 @@ Common::Error EEMEngine::run() {
 	//
 	//   * Save HAS a mystery in progress → resume at MAP (mirrors the
 	//     original's post-briefing state, handler 0 at 1a35:0e1d).
-	//   * Save has NO mystery → drop into the case-selection screen
-	//     (`kScreenChooseMystery`) so the player can pick which case
-	//     to play. This matches what the original `_ActionScreen`
-	//     leads to — without the redundant action menu in front.
+	//   * Save has NO mystery → drop into `_ActionScreen`, same as the
+	//     original after partner selection.
 	const int wantedSave = ConfMan.hasKey("save_slot")
 		? ConfMan.getInt("save_slot") : -1;
 	bool resumed = false;
@@ -297,8 +295,8 @@ Common::Error EEMEngine::run() {
 			} else {
 				debugC(1, kDebugGeneral,
 					   "Resuming profile from slot %d (no mystery — "
-					   "→ case selection)", wantedSave);
-				_nextScreen = kScreenChooseMystery;
+					   "→ action screen)", wantedSave);
+				_nextScreen = kScreenAction;
 			}
 			resumed = true;
 		}
@@ -429,7 +427,8 @@ Common::Error EEMEngine::run() {
 
 	// After the title chain, the original goes Title (B) -> screen 8
 	// (NewPlayer / saved-record selection) -> screen 9 (ChoosePartner) ->
-	// screen A (CaseSelection) -> site loop. We mirror the same order.
+	// screen C (ActionScreen). Choosing a mystery there enters screen A
+	// (CaseSelection) and then the site loop.
 	// Mouse stays hidden through the opening anims; show it now for
 	// the interactive screens (matches `_MouseCursor = 1` at the tail
 	// of `_NewPlayer`).
@@ -463,17 +462,9 @@ Common::Error EEMEngine::run() {
 	//
 	// `_DoChoosePartner @ 1a35:099d` sets `_NextScreen = 0xc` (= the
 	// original `_ActionScreen` — "Choose A Mystery / Practice Mystery /
-	// See ScrapBook 1..3"). In our port that menu lives inside
-	// `doCaseSelection`, which already mirrors `_ActionScreen`'s 5-entry
-	// list (verified against `ActionNames @ 29be:0d6a`) and rolls the
-	// individual-mystery picker (`_CaseSelection @ 1c33:0a87`) into the
-	// same flow. So we route straight to `kScreenChooseMystery`; the
-	// `kScreenAction` (= 0xc) state still exists for the post-win path
-	// (`_DisplayCorrect @ 1df2:0895` writes 0xc) but its handler also
-	// dispatches `doCaseSelection`. The previous `doActionScreen` was a
-	// synthetic stub ("What now?" / "Solve a Mystery" / "Look at My
-	// Books") whose strings are nowhere in the binary — confirmed by a
-	// `search_strings` for "What" returning zero matches.
+	// See ScrapBook 1..3"). That screen is separate from handler 10's
+	// `_DoChooseMystery` / `_CaseSelection`, which is where the "Book N"
+	// title is drawn.
 	//
 	// Mid-mystery profile resume: if the profile picker loaded a
 	// save whose `hasMystery` flag was set, `_mystery.isLoaded()` is
@@ -485,7 +476,7 @@ Common::Error EEMEngine::run() {
 	// profile-level state via `_PlayerRecord`, not in-progress
 	// mysteries — so this is a ScummVM-only ergonomics improvement.
 	if (!shouldQuit() && !resumed)
-		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenChooseMystery;
+		_nextScreen = _mystery.isLoaded() ? kScreenMap : kScreenAction;
 screen_loop:
 	while (!shouldQuit() && _nextScreen != kScreenInvalid) {
 		const ScreenId current = (ScreenId)_nextScreen;
@@ -509,28 +500,23 @@ screen_loop:
 			break;
 
 		case kScreenAction:
-			// Post-mystery menu. The original's `_ActionScreen @
-			// 1c33:195b` shows the 5-entry "Choose A Mystery /
-			// Practice / ScrapBook" picker; `doCaseSelection` is
-			// our port of that exact menu (plus the individual-case
-			// sub-picker the original handles in `_CaseSelection @
-			// 1c33:0a87`). After the player picks, fall through to
-			// the same routing the `kScreenChooseMystery` case uses.
-			// Reachable from `_DisplayCorrect`'s 0xc write after a
-			// solve (see `ui.cpp` `_nextScreen = kScreenAction`).
+			// Top-level post-profile / post-mystery menu. `_ActionScreen
+			// @ 1c33:195b` shows the 5-entry "Choose A Mystery /
+			// Practice / ScrapBook" picker and writes screen 0xa only
+			// when the player picks "Choose A Mystery".
 			_nextScreen = kScreenInvalid;
-			doCaseSelection();
-			if (_mystery.isLoaded())
+			doActionScreen();
+			if (_nextScreen == kScreenInvalid && _mystery.isLoaded())
 				_nextScreen = kScreenInitClues;
 			break;
 
 		case kScreenChooseMystery:
 			// Handler 10 at 1a35:0e0e calls `_DoChooseMystery` which
 			// presets `_NextScreen = 0` (INIT_CLUES) before
-			// `_CaseSelection`. Same dispatch as `kScreenAction`.
+			// `_CaseSelection`.
 			_nextScreen = kScreenInvalid;
 			doCaseSelection();
-			if (_mystery.isLoaded())
+			if (_nextScreen == kScreenInvalid && _mystery.isLoaded())
 				_nextScreen = kScreenInitClues;
 			break;
 
@@ -539,7 +525,7 @@ screen_loop:
 			// then writes `_NextScreen = 1` (MAP).
 			doInitClues();
 			_nextScreen = _mystery.isLoaded() ? kScreenMap
-											  : kScreenChooseMystery;
+											  : kScreenAction;
 			break;
 
 		case kScreenMap:
@@ -553,7 +539,7 @@ screen_loop:
 			// the natural next state is SITE.
 			doBigMap();
 			if (!_mystery.isLoaded())
-				_nextScreen = kScreenChooseMystery;
+				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenSite;
 			break;
@@ -565,7 +551,7 @@ screen_loop:
 			// than entering those screens as nested modals.
 			doSiteLoop();
 			if (!_mystery.isLoaded())
-				_nextScreen = kScreenChooseMystery;
+				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenInvalid;  // user quit
 			break;
@@ -576,7 +562,7 @@ screen_loop:
 			// (accuse) and then returns to this dispatcher.
 			doNotebook();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
-				_nextScreen = kScreenChooseMystery;
+				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenSite;
 			break;
@@ -587,7 +573,7 @@ screen_loop:
 			// 2, and the PDA button writes 4.
 			doGallery();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
-				_nextScreen = kScreenChooseMystery;
+				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenSite;
 			break;
@@ -620,7 +606,7 @@ screen_loop:
 				doChoosePartner();
 			if (!shouldQuit())
 				_nextScreen = _mystery.isLoaded() ? kScreenMap
-												  : kScreenChooseMystery;
+												  : kScreenAction;
 			break;
 
 		case kScreenAccuse:
@@ -629,7 +615,7 @@ screen_loop:
 			// 0xc (ACTION).
 			doAccuse();
 			if (!_mystery.isLoaded() && _nextScreen != kScreenAction)
-				_nextScreen = kScreenChooseMystery;
+				_nextScreen = kScreenAction;
 			else if (_nextScreen == current)
 				_nextScreen = kScreenSite;
 			break;

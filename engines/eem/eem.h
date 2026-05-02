@@ -75,9 +75,9 @@ class MusicPlayer;
  *                    for input, then writes =8. CD shows TITLE.ANM in
  *                    `_DoOpeningAnims`, so it usually never enters this
  *                    handler.
- *   12 (0xc) ACTION → `_ActionScreen` @ 1c33:195b — post-mystery menu
- *                    ("Solve a Mystery", scrapbook, more mysteries,
- *                    setup). Action 1 sets =10 (CHOOSE_MYSTERY).
+ *   12 (0xc) ACTION → `_ActionScreen` @ 1c33:195b — Choose A Mystery /
+ *                    Practice Mystery / See ScrapBook 1..3. Action 1
+ *                    sets =10 (CHOOSE_MYSTERY).
  *   0xFFFF SENTINEL → exit loop
  *
  * Screen-driver state writes verified via xrefs to `_NextScreen @
@@ -451,6 +451,7 @@ private:
 	/// action-menu "See ScrapBook 1/2/3" entries.
 	void doShowScrapbook(uint stage);
 
+	void doActionScreen();
 	void doCaseSelection();
 	void doSiteLoop();
 
