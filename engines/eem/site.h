@@ -76,6 +76,11 @@ uint bigMapDetailPartnerFrameAtTick(uint numFrames, uint32 elapsedMs);
 void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 						   int anchorX, int anchorY);
 
+/// Rotate one VGA palette range by one slot. Mirrors `_ColorCycle`
+/// and is used by site color cycles, hotspot marching ants, and the
+/// BigMap marker shine.
+void cyclePaletteRange(uint8 start, uint8 end);
+
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
 struct Hotspot {
 	int16  x1, y1, x2, y2;     ///< rectangle in screen coordinates
