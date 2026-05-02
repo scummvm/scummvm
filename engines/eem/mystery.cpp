@@ -48,6 +48,8 @@ void Mystery::clear() {
 	_floppySuspectsOff = _floppyHintBlockOff = _floppyNoteIndexOff = 0;
 	_floppyGalleryOff = _floppyTextOff = _floppyKDTextOff = 0;
 	_floppySolvedOff = 0;
+	_floppySiteAnimData.clear();
+	memset(_floppySiteAnimSiteOff, 0, sizeof(_floppySiteAnimSiteOff));
 	memset(_aChain, 0, sizeof(_aChain));
 	memset(_bChain, 0, sizeof(_bChain));
 	memset(_cChain, 0, sizeof(_cChain));
@@ -214,6 +216,7 @@ bool Mystery::load(uint num, Common::RandomSource *rng) {
 		_firstTry = true;
 		_searchLocationNumber = _siteNumber = 0xFFFF;
 		_lastSite = 0x1B;
+		loadFloppySiteAnimData();
 
 		debugC(1, kDebugMystery,
 			   "Mystery::load(%u) floppy: sites=0x%04x siteIdx=0x%04x "
@@ -308,6 +311,74 @@ const byte *Mystery::siteData(uint siteNum) const {
 	if (dataOff >= _data.size())
 		return nullptr;
 	return _data.data() + dataOff;
+}
+
+const byte *Mystery::floppySiteAnimData(uint siteNum) const {
+	if (!_isFloppy || siteNum >= kVisitedSiteCap)
+		return nullptr;
+	const uint16 off = _floppySiteAnimSiteOff[siteNum];
+	if (off == 0 || off >= _floppySiteAnimData.size())
+		return nullptr;
+	return _floppySiteAnimData.data() + off;
+}
+
+void Mystery::loadFloppySiteAnimData() {
+	_floppySiteAnimData.clear();
+	memset(_floppySiteAnimSiteOff, 0, sizeof(_floppySiteAnimSiteOff));
+
+	Common::File f;
+	if (!f.open(Common::Path("ANI.BIN"))) {
+		warning("Mystery::loadFloppySiteAnimData: ANI.BIN missing");
+		return;
+	}
+
+	const int32 size = f.size();
+	if (size <= 0 || size > 0xFFFF) {
+		warning("Mystery::loadFloppySiteAnimData: invalid ANI.BIN size %d",
+				size);
+		return;
+	}
+
+	_floppySiteAnimData.resize((uint)size);
+	if (f.read(_floppySiteAnimData.data(), (uint32)size) != (uint32)size) {
+		warning("Mystery::loadFloppySiteAnimData: short ANI.BIN read");
+		_floppySiteAnimData.clear();
+		return;
+	}
+
+	const uint tableOff = _number * 2;
+	if (tableOff + 2 > _floppySiteAnimData.size())
+		return;
+	uint32 pos = READ_LE_UINT16(_floppySiteAnimData.data() + tableOff);
+	if (pos == 0 || pos >= _floppySiteAnimData.size())
+		return;
+
+	for (uint site = 0; site < _numSites && site < kVisitedSiteCap; site++) {
+		const uint32 start = pos;
+		if (pos + 1 > _floppySiteAnimData.size())
+			break;
+		const uint cycles = _floppySiteAnimData[pos++];
+		if (pos + cycles * 2 + 1 > _floppySiteAnimData.size()) {
+			warning("Mystery::loadFloppySiteAnimData: malformed cycles "
+					"for mystery %u site %u", _number, site);
+			break;
+		}
+		pos += cycles * 2;
+
+		const uint anims = _floppySiteAnimData[pos++];
+		if (pos + anims * 4 > _floppySiteAnimData.size()) {
+			warning("Mystery::loadFloppySiteAnimData: malformed anims "
+					"for mystery %u site %u", _number, site);
+			break;
+		}
+		_floppySiteAnimSiteOff[site] = (uint16)start;
+		pos += anims * 4;
+	}
+
+	debugC(1, kDebugMystery,
+		   "Mystery::loadFloppySiteAnimData(%u): base=0x%04x sites=%u",
+		   _number, READ_LE_UINT16(_floppySiteAnimData.data() + tableOff),
+		   _numSites);
 }
 
 const byte *Mystery::hotspots(uint siteNum) const {
