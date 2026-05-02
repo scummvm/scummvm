@@ -435,6 +435,18 @@ cc_check() {
 	return "$TMPR"
 }
 
+cc_objc_check() {
+	prevcxx=$CXX
+	# `-ObjC++` flag doesn't always exist; `-x` flag is more portable, but
+	# should appear before any input file.
+	CXX="$CXX -x objective-c++ -lobjc"
+	cc_check_no_clean "$@"
+	TMPR="$?"
+	cc_check_clean
+	CXX=$prevcxx
+	return "$TMPR"
+}
+
 cc_check_define() {
 cat > $TMPC << EOF
 int main(void) {
@@ -5441,7 +5453,7 @@ EOF
 @end
 int main(void) { return 0; }
 EOF
-				cc_check -ObjC++ -lobjc && _tts=yes
+				cc_objc_check && _tts=yes
 			else
 				# Check the newer AVSpeechSynthesizer API is available
 				cat > $TMPC << EOF
@@ -5451,7 +5463,7 @@ EOF
 @end
 int main(void) { return 0; }
 EOF
-				cc_check -ObjC++ -lobjc && _tts=yes
+				cc_objc_check && _tts=yes
 			fi
 			;;
 		iphoneos)
@@ -5462,7 +5474,7 @@ EOF
 @end
 int main(void) { return 0; }
 EOF
-			cc_check -ObjC++ -lobjc && _tts=yes
+			cc_objc_check && _tts=yes
 			;;
 		emscripten)
 			# Emscripten has the "Web Speech API" available
@@ -5996,7 +6008,7 @@ case $_host_os in
 #include <Sparkle/Sparkle.h>
 int main(void) { SPUStandardUpdaterController *updater = [[SPUStandardUpdaterController alloc] initWithUpdaterDelegate:nil userDriverDelegate:nil]; return 0; }
 EOF
-				cc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle -ObjC++ -lobjc && _sparkle=yes
+				cc_objc_check $SPARKLE_CFLAGS $SPARKLE_LIBS -framework Sparkle && _sparkle=yes
 			fi
 			if test "$_sparkle" = yes ; then
 				append_var LIBS "$SPARKLE_LIBS -framework Sparkle"
@@ -6315,8 +6327,9 @@ case $_host_os in
 @interface ScummVMDockTilePlugIn : NSObject <NSDockTilePlugIn> {
 }
 @end
+int main(void) { return 0; }
 EOF
-			cc_check -c -ObjC++ && _osxdockplugin=yes
+			cc_objc_check && _osxdockplugin=yes
 		fi
 		define_in_config_if_yes "$_osxdockplugin" 'USE_DOCKTILEPLUGIN'
 		echo "$_osxdockplugin"
