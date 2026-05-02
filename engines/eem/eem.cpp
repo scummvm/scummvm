@@ -582,6 +582,27 @@ screen_loop:
 			doSetup();
 			break;
 
+		case kScreenProfile:
+			// Handler 8 is the player/profile picker. CD
+			// `screen8_handler @ 1c33:1012` loads an existing player
+			// record or runs `_NewPlayer`; floppy
+			// `_HandleScreen8_NewPlayer_Floppy @ 19bb:0ec2` then
+			// writes screen 9. Mirror that route inline: after the
+			// profile is selected, choose a partner, then continue to
+			// the selected profile's loaded case if ScummVM save state
+			// had one, otherwise to case selection.
+			_nextScreen = kScreenInvalid;
+			_mystery.clear();
+			doProfilePicker();
+			if (!shouldQuit())
+				applyStartupTestOverrides();
+			if (!shouldQuit())
+				doChoosePartner();
+			if (!shouldQuit())
+				_nextScreen = _mystery.isLoaded() ? kScreenMap
+												  : kScreenChooseMystery;
+			break;
+
 		case kScreenAccuse:
 			// Handler 7 runs the accusation flow. A failed accusation
 			// returns to `_LastScreen`; a correct solution writes

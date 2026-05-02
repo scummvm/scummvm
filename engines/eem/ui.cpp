@@ -75,6 +75,18 @@ constexpr Common::Rect kPdaSiteRect(Common::Point(35, 111), 21, 25);
 constexpr uint16 kProfilePickerRevealPic = 0x105;
 constexpr int kProfilePickerRevealX = 0x3e;
 constexpr int kProfilePickerRevealY = 0xb3;
+constexpr int kProfileListX = 61;
+constexpr int kProfileListY = 35;
+constexpr int kProfileListW = 220;
+constexpr int kProfileLineH = 10;
+constexpr int kProfileVisibleRows = 12;
+constexpr Common::Rect kChooserOkRect(Common::Point(12, 63), 29, 24);
+constexpr Common::Rect kChooserHelpRect(Common::Point(12, 100), 29, 24);
+constexpr Common::Rect kChooserExitRect(Common::Point(12, 137), 29, 24);
+constexpr Common::Rect kChooserUpArrowRect(Common::Point(240, 31), 10, 12);
+constexpr Common::Rect kChooserDnArrowRect(Common::Point(240, 148), 10, 11);
+constexpr Common::Rect kChooserListRect(Common::Point(58, 35), 180, 123);
+constexpr Common::Rect kChooserNewPlayerRect(Common::Point(61, 176), 185, 15);
 
 constexpr uint16 kNameEntryPeekPic = 0x107;
 constexpr int kNameEntryPeekX = 0x3e;
@@ -296,6 +308,62 @@ bool animateProfilePickerReveal(EEMEngine *vm, const Picture *bg,
 		g_system->delayMillis(10);
 	}
 	return false;
+}
+
+struct ProfilePickerEntry {
+	Common::String label;
+	int slot;       ///< -1 means "create new"
+};
+
+struct ProfilePickerView {
+	EEMEngine *vm;
+	const Picture *bg;
+	bool haveBG;
+	const Picture *reveal;
+	bool haveReveal;
+	const Common::Array<ProfilePickerEntry> *entries;
+	int selected;
+	int start;
+};
+
+void clampProfileScroll(int &selected, int &start, int count) {
+	if (count <= 0) {
+		selected = 0;
+		start = 0;
+		return;
+	}
+	selected = CLIP<int>(selected, 0, count - 1);
+	const int maxStart = MAX<int>(0, count - kProfileVisibleRows);
+	start = CLIP<int>(start, 0, maxStart);
+	if (selected < start)
+		start = selected;
+	if (selected >= start + kProfileVisibleRows)
+		start = selected - kProfileVisibleRows + 1;
+	start = CLIP<int>(start, 0, maxStart);
+}
+
+void drawProfilePickerFrame(const ProfilePickerView &v) {
+	Graphics::ManagedSurface scratch(320, 200,
+		Graphics::PixelFormat::createFormatCLUT8());
+	scratch.clear();
+	if (v.haveBG)
+		scratch.simpleBlitFrom(v.bg->surface);
+	if (v.haveReveal)
+		blitMaskedPic(scratch, *v.reveal,
+					   kProfilePickerRevealX, kProfilePickerRevealY);
+
+	const int count = v.entries ? (int)v.entries->size() : 0;
+	for (int row = 0; row < kProfileVisibleRows; row++) {
+		const int idx = v.start + row;
+		if (idx >= count)
+			break;
+		const byte color = idx == v.selected ? 0xF : 0x8;
+		v.vm->getFont().drawString(&scratch, (*v.entries)[idx].label,
+									kProfileListX,
+									kProfileListY + row * kProfileLineH,
+									kProfileListW, color);
+	}
+	copyToScreen(scratch);
 }
 
 // Snapshot of `doCaseSelection`'s captured locals, used by
@@ -561,7 +629,8 @@ void EEMEngine::doProfilePicker() {
 	// hands the list to `_DoChoose`. If no profiles exist (loop hits
 	// `local_20 == 0` at 1c33:1170), it falls straight into
 	// `_NewPlayer`. Selecting an entry calls `_LoadPlayerRecord` and
-	// returns; selecting the "exit" sentinel goes back to title.
+	// returns; the 0xfffe / 0xffff chooser sentinels both enter
+	// `_NewPlayer` in this screen.
 
 	// Palette reset. `screen8_handler` runs `_FadeOut(); _GetPalette(0);
 	// _GetBackground(0x104);` before the picker, so the BG always
@@ -584,24 +653,26 @@ void EEMEngine::doProfilePicker() {
 	}
 
 	// Build the visible list: existing profile names + "[New Player]".
-	struct Entry {
-		Common::String label;
-		int slot;       ///< -1 means "create new"
-	};
-	Common::Array<Entry> entries;
+	// The DOS picker also has a bottom click area at 29be:0d08 that
+	// returns 0xfffe and immediately enters `_NewPlayer`; keeping the
+	// explicit row makes that affordance visible in ScummVM while the
+	// bottom rect remains active too.
+	Common::Array<ProfilePickerEntry> entries;
 	for (const SaveStateDescriptor &s : saves) {
-		Entry e;
+		ProfilePickerEntry e;
 		e.label = s.getDescription();
 		e.slot  = s.getSaveSlot();
 		entries.push_back(e);
 	}
-	Entry newEntry;
+	ProfilePickerEntry newEntry;
 	newEntry.label = "[New Player]";
 	newEntry.slot  = -1;
 	entries.push_back(newEntry);
 
 	int sel = 0;
+	int start = 0;
 	bool done = false;
+	bool createNew = false;
 	Picture bg;
 	const bool haveBG = _picsArchive.getPicture(0x104, bg);
 	Picture reveal;
@@ -614,29 +685,19 @@ void EEMEngine::doProfilePicker() {
 	// the list origin is (61, 35), 10 px per row, max 12 visible
 	// rows. `screen8_handler` slides PIC 0x105 into the lower strip
 	// before calling `_DoChoose`; it does not draw that caption as text.
-	const int kListX = 61;
-	const int kListY = 35;
-	const int kLineH = 10;
-	auto draw = [&]() {
-		Graphics::ManagedSurface scratch(320, 200,
-			Graphics::PixelFormat::createFormatCLUT8());
-		scratch.clear();
-		if (haveBG)
-			scratch.simpleBlitFrom(bg.surface);
-		if (haveReveal)
-			blitMaskedPic(scratch, reveal,
-						   kProfilePickerRevealX, kProfilePickerRevealY);
-		for (uint i = 0; i < entries.size(); i++) {
-			const byte color = ((int)i == sel) ? 0xF : 0x8;
-			_font.drawString(&scratch, entries[i].label,
-							 kListX, kListY + (int)i * kLineH, 220, color);
-		}
-		copyToScreen(scratch);
-	};
+	ProfilePickerView view;
+	view.vm = this;
+	view.bg = &bg;
+	view.haveBG = haveBG;
+	view.reveal = &reveal;
+	view.haveReveal = haveReveal;
+	view.entries = &entries;
+	view.selected = sel;
+	view.start = start;
 	if (animateProfilePickerReveal(this, &bg, haveBG,
 								   haveReveal ? &reveal : nullptr))
 		return;
-	draw();
+	drawProfilePickerFrame(view);
 
 	while (!done && !shouldQuit()) {
 		Common::Event ev;
@@ -652,10 +713,24 @@ void EEMEngine::doProfilePicker() {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_UP:
 					sel = (sel + (int)entries.size() - 1) % (int)entries.size();
+					clampProfileScroll(sel, start, (int)entries.size());
 					dirty = true;
 					break;
 				case Common::KEYCODE_DOWN:
 					sel = (sel + 1) % (int)entries.size();
+					clampProfileScroll(sel, start, (int)entries.size());
+					dirty = true;
+					break;
+				case Common::KEYCODE_PAGEUP:
+					start -= kProfileVisibleRows;
+					sel = start;
+					clampProfileScroll(sel, start, (int)entries.size());
+					dirty = true;
+					break;
+				case Common::KEYCODE_PAGEDOWN:
+					start += kProfileVisibleRows;
+					sel = start;
+					clampProfileScroll(sel, start, (int)entries.size());
 					dirty = true;
 					break;
 				case Common::KEYCODE_RETURN:
@@ -663,17 +738,64 @@ void EEMEngine::doProfilePicker() {
 					committed = true;
 					break;
 				case Common::KEYCODE_ESCAPE:
-					_playerName = "Detective";
-					return;
+					createNew = true;
+					committed = true;
+					break;
 				default:
 					break;
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				const int hit = (ev.mouse.y - kListY) / kLineH;
-				if (hit >= 0 && hit < (int)entries.size()) {
-					sel = hit;
+				if (kChooserOkRect.contains(ev.mouse.x, ev.mouse.y)) {
 					committed = true;
+					break;
+				}
+				if (kChooserExitRect.contains(ev.mouse.x, ev.mouse.y) ||
+					kChooserNewPlayerRect.contains(ev.mouse.x, ev.mouse.y)) {
+					createNew = true;
+					committed = true;
+					break;
+				}
+				if (kChooserUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+					if (start > 0) {
+						start--;
+						if (sel >= start + kProfileVisibleRows)
+							sel = start + kProfileVisibleRows - 1;
+						clampProfileScroll(sel, start, (int)entries.size());
+						dirty = true;
+					}
+					break;
+				}
+				if (kChooserDnArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
+					const int maxStart = MAX<int>(0,
+						(int)entries.size() - kProfileVisibleRows);
+					if (start < maxStart) {
+						start++;
+						if (sel < start)
+							sel = start;
+						clampProfileScroll(sel, start, (int)entries.size());
+						dirty = true;
+					}
+					break;
+				}
+				if (kChooserHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// `screen8_handler` sets `Chelp = 0`, so the
+					// original ignores this chooser button here.
+					break;
+				}
+				if (kChooserListRect.contains(ev.mouse.x, ev.mouse.y)) {
+					const int hit = (ev.mouse.y - kProfileListY) /
+									kProfileLineH;
+					const int idx = start + hit;
+					if (hit >= 0 && hit < kProfileVisibleRows &&
+						idx >= 0 && idx < (int)entries.size()) {
+						if (idx == sel) {
+							committed = true;
+							break;
+						}
+						sel = idx;
+						dirty = true;
+					}
 				}
 			}
 			if (committed)
@@ -683,13 +805,21 @@ void EEMEngine::doProfilePicker() {
 			done = true;
 			break;
 		}
-		if (dirty)
-			draw();
+		if (dirty) {
+			view.selected = sel;
+			view.start = start;
+			drawProfilePickerFrame(view);
+		}
 		g_system->updateScreen();
 		g_system->delayMillis(15);
 	}
 
-	const Entry &e = entries[sel];
+	if (createNew) {
+		doNewPlayer();
+		return;
+	}
+
+	const ProfilePickerEntry &e = entries[sel];
 	if (e.slot < 0) {
 		doNewPlayer();
 	} else {
@@ -1504,12 +1634,13 @@ void EEMEngine::doSetup() {
 				continue;
 			}
 
-			// Profile (button [2]). Goes back to the profile picker
-			// in the original (`_NextScreen = 8`). Treat the same way
-			// as Done for now — switching profiles mid-game isn't
-			// wired in our port and would discard mystery state.
+			// Profile (button [2]). Original handler writes
+			// `_NextScreen = 8`, returning to the player/profile
+			// picker. Save the current profile settings first, then
+			// let the screen driver run profile → partner → case/map.
 			if (kProfileBtn.contains(mx, my)) {
-				leaveSetup();
+				saveProfile(_playerName);
+				_nextScreen = kScreenProfile;
 				return;
 			}
 
