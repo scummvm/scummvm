@@ -918,7 +918,7 @@ TestExitStatus GFXtests::maskedCursors() {
 		g_system->getPaletteManager()->setPalette(newPalette, 0, 4);
 
 		if (haveCursorPalettes)
-			g_system->setCursorPalette(newPalette, 0, 4);
+			CursorMan.replaceCursorPalette(newPalette, 0, 4);
 
 		CursorMan.replaceCursor(cursorData, 16, 16, 1, 1, 0, false, nullptr, maskData);
 		CursorMan.showMouse(true);
