@@ -176,7 +176,6 @@ private:
 		kPartnerWaitPatient,
 		kPartnerWaitImpatient
 	};
-	int _lastSiteAnim = -1;        ///< Last site we played the arrival on.
 	int _snapshotSite = -1;        ///< Site number the snapshot belongs to.
 	Graphics::ManagedSurface _bgSnapshot;
 	uint32 _lastTickMs = 0;        ///< Last frame-pump tick in ms.

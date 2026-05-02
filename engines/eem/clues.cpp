@@ -1065,7 +1065,8 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 
 		// Per-record voice (byte 9 high bit) — see comment in original
 		// header.
-		if ((rec[9] & 0x80) != 0 && _audio) {
+		const bool playedRecordVoice = (rec[9] & 0x80) != 0 && _audio;
+		if (playedRecordVoice) {
 			const uint slot = rec[9] & 0x7f;
 			_audio->playFloppyVoiceSlot(slot, _partner);
 		}
@@ -1264,8 +1265,14 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 					firstPage = true;
 			}
 		}
-		if (skipAll)
+		if (skipAll) {
+			if (playedRecordVoice)
+				_audio->stopVoice();
 			return;
+		}
+
+		if (playedRecordVoice)
+			_audio->stopVoice();
 
 		rec += 11 + textCount;
 	}

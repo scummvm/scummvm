@@ -1540,8 +1540,11 @@ void EEMEngine::doCaseSelection() {
 		if (!_mystery.load(0, &_rng)) {
 			warning("doCaseSelection: failed to load practice mystery");
 			_mystery.clear();
-		} else if (_audio && !isFloppy()) {
-			_audio->initMysterySounds(0);
+			resetSiteArrivalState();
+		} else {
+			resetSiteArrivalState();
+			if (_audio && !isFloppy())
+				_audio->initMysterySounds(0);
 		}
 		return;
 	}
@@ -1762,6 +1765,7 @@ void EEMEngine::doCaseSelection() {
 		_mystery.clear();
 		return;
 	}
+	resetSiteArrivalState();
 	if (_audio && !isFloppy())
 		_audio->initMysterySounds(mn);
 	debugC(1, kDebugMystery, "Mystery %u loaded; %u sites, %u suspects",
@@ -4134,7 +4138,7 @@ void EEMEngine::doAccuse() {
 		// Step 1 — alibi music. Original blocks until MIDI 6 ends with
 		// the gallery still on screen. We poll `_music->isPlaying`;
 		// click/ESC aborts early.
-		if (_music) {
+		if (_music && _voiceOn) {
 			_music->playMus(6, /*loop=*/false);
 			const uint32 musStart = g_system->getMillis();
 			bool aborted = false;
@@ -4142,8 +4146,10 @@ void EEMEngine::doAccuse() {
 				Common::Event ev;
 				while (g_system->getEventManager()->pollEvent(ev)) {
 					if (ev.type == Common::EVENT_QUIT ||
-						ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+						_music->stop();
 						return;
+					}
 					if (ev.type == Common::EVENT_KEYDOWN ||
 						ev.type == Common::EVENT_LBUTTONDOWN) {
 						aborted = true;
@@ -4362,7 +4368,7 @@ void EEMEngine::doAccuse() {
 		}
 		g_system->updateScreen();
 
-		if (_music)
+		if (_music && _voiceOn)
 			_music->playMus(5, /*loop=*/false);
 
 		// Chain-by-chain RECAP. Partner enumerates every required
@@ -4374,6 +4380,8 @@ void EEMEngine::doAccuse() {
 		const byte *solved = _mystery.solvedClueBlock();
 		if (solved)
 			displayClue(solved);
+		if (_music && _voiceOn)
+			_music->stop();
 
 		// `_DifferenceAnimation("scrapbk.ani")` (1df2:0848) — the
 		// physical scrapbook flip animation that introduces the
@@ -4741,6 +4749,7 @@ void EEMEngine::doAccuseFloppy() {
 		//                 every mystery in the current tier is solved).
 		//   1d40:0982  _SavePlayerRecord  (= saveProfile)
 		//   1d40:0985  _DeleteMysteryFile (= mystery cleanup)
+		//   1d40:0991  MakeSolvedSound = 1; ShowOneScrap(mystery)
 		//   1d40:09b0  _NextScreen = 0xc.
 		const uint mn = _mystery.number();
 
@@ -4819,6 +4828,8 @@ void EEMEngine::doAccuseFloppy() {
 			const uint count = chain[0];
 			displayFloppyDialogRecords(chain + 1, count, 0);
 		}
+		if (_music && _voiceOn)
+			_music->stop();
 
 		// Mark mystery solved with first-try bonus tracking.
 		// `_DisplayCorrect_Floppy @ 1d40:0939`:
@@ -4856,6 +4867,27 @@ void EEMEngine::doAccuseFloppy() {
 				debugC(1, kDebugMystery,
 					   "chainStage advanced to %u after solving mystery %u",
 					   _chainStage, mn);
+			}
+		}
+
+		// `_DisplayCorrect_Floppy` sets `MakeSolvedSound` before the
+		// newly solved ending is shown. `FUN_1d40_05b7` reads byte 0 of
+		// `E<num>.BIN` and maps values 0..2 through the table at
+		// `2608:0c5e` to VOC slots 0x15, 0x16, 0x17.
+		if (_audio && _voiceOn) {
+			Common::File ending;
+			const Common::String fname =
+				Common::String::format("E%u.BIN", mn);
+			if (ending.open(Common::Path(fname)) && ending.size() > 0) {
+				static const uint8 kSolvedVoiceSlot[3] = {
+					0x15, 0x16, 0x17
+				};
+				const byte type = ending.readByte();
+				if (type < ARRAYSIZE(kSolvedVoiceSlot)) {
+					_audio->playFloppyVoiceSlot(kSolvedVoiceSlot[type],
+												_partner);
+					_audio->waitForVoiceDone();
+				}
 			}
 		}
 
@@ -5024,6 +5056,8 @@ void EEMEngine::doAccuseFloppy() {
 	// Our `showFloppyKDHint(slot)` reads `kdIdx + slot * 2`, so slot
 	// 5 is the right argument here.
 	showFloppyKDHint(5);
+	if (_music && _voiceOn)
+		_music->stop();
 
 	_mystery._firstTry = false;
 	_nextScreen = _lastScreen != kScreenInvalid
