@@ -217,12 +217,14 @@ void Toolbox::_drawOval(const Common::Rect &r, const Pattern &pat, PatternMode m
 		destPos.y += _port->portRect.top;
 		Graphics::MacPatterns macpat({pat.data});
 
-		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
+		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
+		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
-		destRect.right -= _port->pnSize.x - 1;
-		destRect.bottom -= _port->pnSize.y - 1;
+		destRect.right -= penSize.x;
+		destRect.bottom -= penSize.y;
 
 		pm.drawEllipse(0, 0, destRect.width(), destRect.height(), fgColor, !frame, &pd);
 
@@ -320,12 +322,14 @@ void Toolbox::_drawRect(const Common::Rect &r, const Pattern &pat, PatternMode m
 		destPos.y += _port->portRect.top;
 		Graphics::MacPatterns macpat({pat.data});
 
-		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
+		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
+		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
-		destRect.right -= _port->pnSize.x - 1;
-		destRect.bottom -= _port->pnSize.y - 1;
+		destRect.right -= penSize.x - 1;
+		destRect.bottom -= penSize.y - 1;
 
 		if (frame) {
 			pm.drawRect(destRect, fgColor, &pd);
@@ -357,12 +361,14 @@ void Toolbox::_drawRoundRect(const Common::Rect &r, const Pattern &pat, PatternM
 		destPos.y += _port->portRect.top;
 		Graphics::MacPatterns macpat({pat.data});
 
-		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, _port->pnSize, bkColor);
+		// Only use a different pen size in frame mode, otherwise small filled shapes appear wrong
+		Common::Point penSize = frame ? _port->pnSize : Common::Point(1, 1);
+		Graphics::MacPlotData pd(intermediate.get(), mask.get(), &macpat, 1, destPos.x, destPos.y, penSize, bkColor);
 		Graphics::Primitives &pm = g_engine->_wm.getDrawPrimitives();
 		// For thicker outlines, the shape should be adjusted inward
 		Common::Rect destRect = intermediate->getBounds();
-		destRect.right -= _port->pnSize.x - 1;
-		destRect.bottom -= _port->pnSize.y - 1;
+		destRect.right -= penSize.x - 1;
+		destRect.bottom -= penSize.y - 1;
 
 		if (ovalWidth != ovalHeight) {
 			warning("Toolbox::_drawRoundRect: different corner diameters not supported");
