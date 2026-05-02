@@ -55,6 +55,43 @@ const GallerySlot kGallerySlots[5] = {
 	{ 191,  90 }  // 4
 };
 
+byte mapVisitedMarkerColor(byte color) {
+	switch (color) {
+	case 0xf7:
+	case 0xfb:
+	case 0xfd:
+		return 0x1b;
+	case 0xf8:
+	case 0xf9:
+	case 0xfa:
+	case 0xfc:
+	case 0xfe:
+		return 0x19;
+	default:
+		return color;
+	}
+}
+
+void blitBigMapMarker(Graphics::ManagedSurface &dstSurface, const Picture &marker,
+					  int x, int y, bool useVisitedColors) {
+	const byte transp = (byte)(marker.flags >> 8);
+	for (int row = 0; row < marker.surface.h; row++) {
+		const int dstY = y + row;
+		if (dstY < 0 || dstY >= dstSurface.h)
+			continue;
+		const byte *src = (const byte *)marker.surface.getBasePtr(0, row);
+		byte *dst = (byte *)dstSurface.getBasePtr(0, dstY);
+		for (int col = 0; col < marker.surface.w; col++) {
+			const int dstX = x + col;
+			if (dstX < 0 || dstX >= dstSurface.w)
+				continue;
+			if (src[col] != transp)
+				dst[dstX] = useVisitedColors ? mapVisitedMarkerColor(src[col])
+											  : src[col];
+		}
+	}
+}
+
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
 constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
 constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
@@ -3499,6 +3536,9 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 	//   _DoneMarker  = PIC 0x20d  (already-searched site)
 	//   _SiteMarker  = PIC 0xc5   (default available site)
 	//   _CrimeMarker = PIC 0xc6   (crime-scene flag set)
+	// Floppy's `PICS.DBX` has 524 entries, so PIC 0x20d is CD-only.
+	// Its pixels are the same 7x8 marker as PIC 0xc5, with the animated
+	// 0xfb/0xfc interior remapped to static 0x1b/0x19 blue.
 	Picture done;
 	Picture normal;
 	Picture crimeM;
@@ -3530,30 +3570,20 @@ void EEMEngine::drawBigMapOverview(uint32 elapsedMs) {
 							  && _mystery._visitedSite[i];
 
 		const Picture *m = nullptr;
+		bool useVisitedColors = false;
 		if (done_ && haveDone)
 			m = &done;
-		else if (crime != 0 && haveCrime)
+		else if (done_ && haveNormal) {
+			m = &normal;
+			useVisitedColors = true;
+		} else if (crime != 0 && haveCrime)
 			m = &crimeM;
 		else if (haveNormal)
 			m = &normal;
 
 		if (m) {
-			// Masked-blit the marker PIC.
-			const byte transp = (byte)(m->flags >> 8);
-			for (int row = 0; row < m->surface.h; row++) {
-				const int dstY = (int)my + row;
-				if (dstY < 0 || dstY >= 200)
-					continue;
-				const byte *src = (const byte *)m->surface.getBasePtr(0, row);
-				byte *dst = (byte *)scratch.getBasePtr(0, dstY);
-				for (int col = 0; col < m->surface.w; col++) {
-					const int dstX = (int)mx + col;
-					if (dstX < 0 || dstX >= 320)
-						continue;
-					if (src[col] != transp)
-						dst[dstX] = src[col];
-				}
-			}
+			blitBigMapMarker(scratch, *m, (int)mx, (int)my,
+							  useVisitedColors);
 		} else {
 			// Fallback if the markers couldn't be loaded.
 			const Common::Rect mark(mx - 3, my - 3, mx + 4, my + 4);
