@@ -40,6 +40,7 @@ class Mixer;
 }
 
 namespace Graphics {
+class CursorManager;
 struct Surface;
 }
 
@@ -162,6 +163,8 @@ typedef struct ImGuiCallbacks {
  * - Sound output
  */
 class OSystem : Common::NonCopyable {
+	friend class Graphics::CursorManager;
+
 protected:
 	OSystem();
 	virtual ~OSystem();
@@ -1480,7 +1483,7 @@ public:
 	 * class instead of using this directly.
 	 */
 
-
+protected:
 	/**
 	 * Show or hide the mouse cursor.
 	 *
@@ -1494,21 +1497,6 @@ public:
 	 * @see Graphics::CursorManager::showMouse
 	 */
 	virtual bool showMouse(bool visible) = 0;
-
-	/**
-	 * Lock or unlock the mouse cursor within the window.
-	 *
-	 */
-	virtual bool lockMouse(bool lock) { return false; }
-
-	/**
-	 * Move ("warp") the mouse cursor to the specified position in virtual
-	 * screen coordinates.
-	 *
-	 * @param x		New x position of the mouse.
-	 * @param y		New y position of the mouse.
-	 */
-	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Set the bitmap used for drawing the cursor.
@@ -1542,7 +1530,21 @@ public:
 	 */
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) {}
 
+public:
+	/**
+	 * Lock or unlock the mouse cursor within the window.
+	 *
+	 */
+	virtual bool lockMouse(bool lock) { return false; }
 
+	/**
+	 * Move ("warp") the mouse cursor to the specified position in virtual
+	 * screen coordinates.
+	 *
+	 * @param x		New x position of the mouse.
+	 * @param y		New y position of the mouse.
+	 */
+	virtual void warpMouse(int x, int y) = 0;
 
 	/**
 	 * Get the system-configured double-click time interval.
