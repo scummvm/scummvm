@@ -57,6 +57,9 @@ const GallerySlot kGallerySlots[5] = {
 
 constexpr Common::Rect kEndingPrevPageRect(Common::Point(0, 0), 28, 200);
 constexpr Common::Rect kEndingNextPageRect(Common::Point(292, 0), 28, 200);
+constexpr uint16 kFloppyEndingBackgroundPic = 0x8b;
+constexpr uint16 kFirstTryBadgePic = 0x205;
+constexpr Common::Point kFirstTryBadgePos(0x1e, 9);
 
 constexpr Common::Rect kPdaHelpRect(Common::Point(93, 174), 22, 16);
 constexpr Common::Rect kPdaNotebookRect(Common::Point(134, 174), 21, 16);
@@ -633,12 +636,15 @@ void EEMEngine::doNewPlayer() {
 
 int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	// Mirrors `_DisplayEnding @ 1df2:0548` + `_DisplayEndingPage @
-	// 1df2:044c`. File format (verified by reading E0.BIN's bytes):
+	// 1df2:044c` on CD and `FUN_1d40_05b7` + `FUN_1d40_031e` on
+	// floppy. CD ending file format:
 	//   u16 pageCount
 	//   for each page:
 	//     u16 picNum
 	//     u16 x1, y1, x2, y2  (story rect — passed to WordWrap)
 	//     char text[]        (null-terminated, ParseString opcodes)
+	// Floppy files prepend a small title header and use a shared
+	// newspaper background (PIC 0x8b) plus per-page overlay pictures.
 	//
 	// The original swaps the font: `_FreeFont(); _LoadFont("tiny.fnt")`
 	// at 1df2:055f-1df2:0563, calls `_GetPalette(0)` (site palette 0),
@@ -679,10 +685,6 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 		return 0;
 	}
 
-	const uint16 pageCount = READ_LE_UINT16(buf.data());
-	if (pageCount == 0)
-		return 0;
-
 	// Mirrors 1df2:0558-1df2:056a — `_FreeFont(); _LoadFont(tiny.fnt)`.
 	// The newspaper layout uses TINY.FNT (smaller glyphs) so the body
 	// copy fits in the columns. `_LoadFont(font.fnt)` is restored at
@@ -699,25 +701,68 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	setSitePalette(0);
 	CursorMan.showMouse(true);
 
-	// Walk page records. Each page header is 10 bytes; text is
-	// null-terminated and follows the header.
+	const bool floppyEnding = isFloppy();
 	uint pageOffsets[8];   // ENDING_RANGE_MAX from `_DisplayEnding`
-	const uint maxPages = MIN<uint>(pageCount,
-									(uint)(sizeof(pageOffsets) / sizeof(uint)));
-	uint cursor = 2;
+	const uint pageOffsetCap =
+		(uint)(sizeof(pageOffsets) / sizeof(pageOffsets[0]));
 	uint validPages = 0;
-	for (uint p = 0; p < maxPages; p++) {
-		if (cursor + 10 >= size)
-			break;
-		pageOffsets[validPages++] = cursor;
-		// Skip the 10-byte header and find the null terminator.
-		cursor += 10;
-		while (cursor < size && buf[cursor] != 0)
-			cursor++;
-		cursor++;  // past the null
+
+	if (floppyEnding) {
+		// Floppy `E<num>.BIN` starts with:
+		//   u8 type, 3 bytes of title metadata, char title[], u8 pageCount
+		// followed by pages:
+		//   u8 overlayCount, N * { u16 picNum, u16 x, u8 y },
+		//   u16 x1, y1, x2, y2, char text[].
+		uint titleEnd = 4;
+		while (titleEnd < size && buf[titleEnd] != 0)
+			titleEnd++;
+		if (titleEnd + 2 >= size)
+			return 0;
+		const uint pageCount = buf[titleEnd + 1];
+		uint cursor = titleEnd + 2;
+		const uint maxPages = MIN<uint>(pageCount, pageOffsetCap);
+		for (uint p = 0; p < maxPages; p++) {
+			if (cursor >= size)
+				break;
+			const uint pageStart = cursor;
+			const uint overlayCount = buf[cursor++];
+			const uint overlaysSize = overlayCount * 5;
+			if (cursor + overlaysSize + 8 >= size)
+				break;
+			cursor += overlaysSize + 8;
+			while (cursor < size && buf[cursor] != 0)
+				cursor++;
+			if (cursor >= size)
+				break;
+			pageOffsets[validPages++] = pageStart;
+			cursor++;  // past the null
+		}
+	} else {
+		const uint16 pageCount = READ_LE_UINT16(buf.data());
+		if (pageCount == 0)
+			return 0;
+		const uint maxPages = MIN<uint>(pageCount, pageOffsetCap);
+		uint cursor = 2;
+		for (uint p = 0; p < maxPages; p++) {
+			if (cursor + 10 >= size)
+				break;
+			pageOffsets[validPages++] = cursor;
+			// Skip the 10-byte header and find the null terminator.
+			cursor += 10;
+			while (cursor < size && buf[cursor] != 0)
+				cursor++;
+			cursor++;  // past the null
+		}
 	}
 	if (validPages == 0)
 		return 0;
+
+	const bool showFirstTryBadge =
+		num < sizeof(_mysteriesSolved) && _mysteriesSolved[num] == 2;
+	Picture firstTryBadge;
+	const bool haveFirstTryBadge =
+		showFirstTryBadge &&
+		_picsArchive.getPicture(kFirstTryBadgePic, firstTryBadge);
 
 	uint pageIdx = firstPage ? 0 : (validPages - 1);
 	int direction = 0;     // -1 / 0 / +1, see header doc.
@@ -731,25 +776,68 @@ int EEMEngine::doShowEnding(uint num, bool firstPage) {
 	while (!shouldQuit() && !exitLoop) {
 		if (dirty) {
 			const uint off = pageOffsets[pageIdx];
-			if (off + 10 >= size)
-				break;
-			const uint16 picNum = READ_LE_UINT16(buf.data() + off);
-			const uint16 x1     = READ_LE_UINT16(buf.data() + off + 2);
-			const uint16 y1     = READ_LE_UINT16(buf.data() + off + 4);
-			const uint16 x2     = READ_LE_UINT16(buf.data() + off + 6);
-			(void)READ_LE_UINT16(buf.data() + off + 8);  // y2 (unused — WordWrap2 takes width only)
-
-			Picture bg;
+			uint16 x1 = 0;
+			uint16 y1 = 0;
+			uint16 x2 = 0;
+			const char *raw = nullptr;
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
 			scratch.clear();
-			if (_picsArchive.getPicture(picNum, bg))
-				scratch.simpleBlitFrom(bg.surface);
+
+			if (floppyEnding) {
+				Picture bg;
+				if (_picsArchive.getPicture(kFloppyEndingBackgroundPic, bg))
+					scratch.simpleBlitFrom(bg.surface);
+
+				uint cursor = off;
+				if (cursor >= size)
+					break;
+				const uint overlayCount = buf[cursor++];
+				for (uint i = 0; i < overlayCount; i++) {
+					if (cursor + 5 > size)
+						break;
+					const uint16 picNum = READ_LE_UINT16(buf.data() + cursor);
+					const uint16 px = READ_LE_UINT16(buf.data() + cursor + 2);
+					const byte py = buf[cursor + 4];
+					Picture overlay;
+					if (_picsArchive.getPicture(picNum, overlay)) {
+						const byte transp = (byte)(overlay.flags >> 8);
+						scratch.transBlitFrom(overlay.surface,
+											  Common::Point(px, py), transp);
+					}
+					cursor += 5;
+				}
+				if (cursor + 8 >= size)
+					break;
+				x1 = READ_LE_UINT16(buf.data() + cursor);
+				y1 = READ_LE_UINT16(buf.data() + cursor + 2);
+				x2 = READ_LE_UINT16(buf.data() + cursor + 4);
+				(void)READ_LE_UINT16(buf.data() + cursor + 6);
+				raw = (const char *)buf.data() + cursor + 8;
+			} else {
+				if (off + 10 >= size)
+					break;
+				const uint16 picNum = READ_LE_UINT16(buf.data() + off);
+				x1 = READ_LE_UINT16(buf.data() + off + 2);
+				y1 = READ_LE_UINT16(buf.data() + off + 4);
+				x2 = READ_LE_UINT16(buf.data() + off + 6);
+				(void)READ_LE_UINT16(buf.data() + off + 8);  // y2 (unused — WordWrap2 takes width only)
+
+				Picture bg;
+				if (_picsArchive.getPicture(picNum, bg))
+					scratch.simpleBlitFrom(bg.surface);
+				raw = (const char *)buf.data() + off + 10;
+			}
+
+			if (pageIdx == 0 && haveFirstTryBadge) {
+				const byte transp = (byte)(firstTryBadge.flags >> 8);
+				scratch.transBlitFrom(firstTryBadge.surface,
+									  kFirstTryBadgePos, transp);
+			}
 
 			// Story text. The bytes are a null-terminated string with
 			// `_ParseString` placeholders (0x80 = player name, 0x82
 			// = partner first name, etc.).
-			const char *raw = (const char *)buf.data() + off + 10;
 			const Common::String text = parseString(raw, _playerName, _partner);
 
 			// Use TINY.FNT (`_LoadFont(@29be:10a5)` at 1df2:055f-0563)
@@ -4990,6 +5078,13 @@ void EEMEngine::doAccuseFloppy() {
 				}
 			}
 		}
+
+		// `_DisplayCorrect_Floppy @ 1d40:0991` calls
+		// `FUN_1ee2_06ac(mystery)`, whose body is just
+		// `FUN_1d40_05b7(mystery, 1)` plus font cleanup. That is the
+		// floppy ending/scrapbook viewer, and it receives the
+		// first-try badge state from the solved table entry above.
+		doShowEnding(mn);
 
 		// Persist progress before clearing the in-progress mystery.
 		// `_DisplayCorrect_Floppy @ 1d40:0982` calls
