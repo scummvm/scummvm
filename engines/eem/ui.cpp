@@ -2511,7 +2511,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 						   _playerName, _partner);
 	};
 	{
-		const int lineH = _font.getFontHeight() + 1;
+		const int lineH = _font.getFontHeight();
 		int y = kRectY;
 		while (clueCursor < (int)found.size()) {
 			const uint clueId = found[clueCursor];
@@ -2559,7 +2559,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 		// matches the original design.
 		Common::Array<Common::String> wrapped;
 		_font.wordWrapText(txt, kRectW, wrapped);
-		const int lineH = _font.getFontHeight() + 1;
+		const int lineH = _font.getFontHeight();
 		const int h = (int)wrapped.size() * lineH;
 		const byte color = _mystery._noteSelected[clueId] ? 0x3C : 0x5C;
 		for (uint li = 0; li < wrapped.size(); li++) {
@@ -2833,7 +2833,7 @@ void EEMEngine::doGallery() {
 						const byte *ni = _mystery.noteIndex();
 						const uint16 niCount = _mystery.noteIndexCount();
 						int yPos = ry;
-						const int lineH = _font.getFontHeight() + 1;
+						const int lineH = _font.getFontHeight();
 						bool drewAny = false;
 						const uint clueMax = floppyMI ? clueCount : 30u;
 						for (uint k = 0; k < clueCount && k < clueMax; k++) {
@@ -3832,7 +3832,7 @@ bool EEMEngine::doAccuseNotes() {
 	auto rebuildPagination = [&]() {
 		numPages = 1;
 		pageBreaks[0] = 0;
-		const int lineH = _font.getFontHeight() + 1;
+		const int lineH = _font.getFontHeight();
 		int y = rectY;
 		for (uint i = 0; i < found.size(); i++) {
 			const uint clueId = found[i];
@@ -3888,7 +3888,7 @@ bool EEMEngine::doAccuseNotes() {
 		// "accuse-mode" look together with PIC 0x1A7.
 		slotRects.clear();
 		slotClues.clear();
-		const int lineH = _font.getFontHeight() + 1;
+		const int lineH = _font.getFontHeight();
 		const int startIdx = pageBreaks[page];
 		const int endIdx   = (page + 1 < numPages)
 			? pageBreaks[page + 1]
