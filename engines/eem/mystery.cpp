@@ -558,6 +558,43 @@ int Mystery::selectedPoints() const {
 	return total;
 }
 
+int Mystery::foundPoints() const {
+	const byte *ni = noteIndex();
+	const uint16 cnt = noteIndexCount();
+	if (!ni || cnt == 0)
+		return 0;
+
+	uint16 scores[Mystery::kCluesFoundCap] = {};
+	uint scoreCount = 0;
+	const uint maxIdx = MIN<uint>(cnt, kCluesFoundCap);
+	for (uint i = 0; i < maxIdx; i++) {
+		if (_cluesFound[i] == 0)
+			continue;
+		const uint16 pts = _isFloppy ? ni[i * 7 + 6]
+									 : READ_LE_UINT16(ni + i * 4 + 2);
+		scores[scoreCount++] = pts;
+	}
+
+	const uint topN = MIN<uint>(5u, scoreCount);
+	for (uint k = 0; k < topN; k++) {
+		uint best = k;
+		for (uint j = k + 1; j < scoreCount; j++) {
+			if (scores[j] > scores[best])
+				best = j;
+		}
+		if (best != k) {
+			const uint16 tmp = scores[k];
+			scores[k] = scores[best];
+			scores[best] = tmp;
+		}
+	}
+
+	int total = 0;
+	for (uint k = 0; k < topN; k++)
+		total += scores[k];
+	return total;
+}
+
 void Mystery::syncState(Common::Serializer &s) {
 	s.syncBytes(_cluesFound, kCluesFoundCap);
 	s.syncBytes(_noteSelected, kCluesFoundCap);

@@ -159,6 +159,10 @@ public:
 	/// `_GetSelectedPoints` @ 1df2:00bd.
 	int selectedPoints() const;
 
+	/// Sum of the top five point values among found notebook entries.
+	/// Mirrors `_GetFoundPoints` @ 1df2:0098.
+	int foundPoints() const;
+
 	/// True when `selectedPoints() > 99`. Mirrors `_SolvedCheck`.
 	bool solvedCheck() const { return selectedPoints() > 99; }
 
