@@ -283,6 +283,7 @@ Common::Error EEMEngine::run() {
 	const int wantedSave = ConfMan.hasKey("save_slot")
 		? ConfMan.getInt("save_slot") : -1;
 	bool resumed = false;
+	bool skippedIntro = false;
 	if (wantedSave >= 0) {
 		const Common::Error err = loadGameState(wantedSave);
 		if (err.getCode() == Common::kNoError) {
@@ -362,9 +363,6 @@ Common::Error EEMEngine::run() {
 		if (!shouldQuit() && !_skipIntro)
 			playAnm(Common::Path("MOVIE.ANM"), 120,
 					/*holdLastFrame=*/false);
-		if (!shouldQuit() && !_skipIntro)
-			playAnm(Common::Path("TITLE.ANM"), 120,
-					/*holdLastFrame=*/true);
 	} else {
 		showEAKidsLogo();
 		if (!shouldQuit() && !_skipIntro)
@@ -421,7 +419,13 @@ Common::Error EEMEngine::run() {
 			playAnm(Common::Path("TITLE.ANM"), 120,
 					/*holdLastFrame=*/true, /*fadeIn=*/true);
 	}
+	skippedIntro = _skipIntro;
 	_skipIntro = false;
+
+	if (isFloppy() && !shouldQuit() && !skippedIntro) {
+		_nextScreen = kScreenTitle;
+		goto screen_loop;
+	}
 
 	// After the title chain, the original goes Title (B) -> screen 8
 	// (NewPlayer / saved-record selection) -> screen 9 (ChoosePartner) ->
@@ -488,6 +492,22 @@ screen_loop:
 		debugC(1, kDebugGeneral, "screenDriver: id=%d", (int)current);
 
 		switch (current) {
+		case kScreenTitle:
+			// Floppy handler 0xb (`_HandleScreen11_Title_Floppy`) calls
+			// `_DoTitle_Floppy`, whose `_PlayTitleANM_Floppy(1)` file
+			// table entry is `TITLE.ANM`. The opening driver stops after
+			// `MOVIE.ANM`; this live screen owns the title wait and then
+			// writes `_NextScreen = 8` for the profile picker.
+			_nextScreen = kScreenProfile;
+			if (isFloppy()) {
+				CursorMan.showMouse(false);
+				playAnm(Common::Path("TITLE.ANM"), 120,
+						/*holdLastFrame=*/true, /*fadeIn=*/true);
+				_skipIntro = false;
+				CursorMan.showMouse(true);
+			}
+			break;
+
 		case kScreenAction:
 			// Post-mystery menu. The original's `_ActionScreen @
 			// 1c33:195b` shows the 5-entry "Choose A Mystery /

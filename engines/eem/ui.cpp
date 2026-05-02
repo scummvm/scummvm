@@ -134,6 +134,19 @@ bool gallerySlotAt(const Common::Array<Common::Rect> &rects,
 	return false;
 }
 
+const byte *advanceFloppyDialogRecords(const byte *rec, uint count,
+									   const byte *end) {
+	for (uint i = 0; i < count; i++) {
+		if (!rec || rec + 11 > end)
+			return nullptr;
+		const uint len = 11u + rec[10];
+		if (rec + len > end)
+			return nullptr;
+		rec += len;
+	}
+	return rec;
+}
+
 // Floppy gallery slot positions verified at `2608:0x16c` (5 ×
 // {u16 x, u16 y}) — read by `_DrawGallery_Floppy @ 154e:0045`'s
 // `[BX + 0x16c]` (x) and `[BX + 0x16e]` (y) loads. The floppy
@@ -5300,8 +5313,8 @@ void EEMEngine::doAccuseFloppy() {
 		//   1d40:08c0  _MIDIPlayFile("travel-2.xmi");
 		//   1d40:08d0  walk solved chain via _DisplayHotspotClue_Floppy
 		//                 + _WaitForClick per record. Mid-recap: when
-		//                 only 3 records remain, play TITLE.ANM(0)
-		//                 (transition graphic; not yet ported).
+		//                 only 3 records remain, play
+		//                 _PlayTitleANM_Floppy(0) = SCRAPBK.ANI.
 		//   1d40:0939  ((u16 *)0x3054)[mysteryNum] =
 		//                  _firstTry ? 2 : 1;
 		//   1d40:0941  tier-promotion check (advance _chainStage when
@@ -5381,11 +5394,34 @@ void EEMEngine::doAccuseFloppy() {
 
 		// Walk the solved-clue chain. Header[+0x12] points at a
 		// `count` byte followed by `count` dialog records (same layout
-		// as hotspot dialogs).
+		// as hotspot dialogs). When only three records remain, the
+		// original clears animation slots and calls
+		// `_PlayTitleANM_Floppy(0)`. The title helper's file table maps
+		// index 0 to `SCRAPBK.ANI` and index 1 to `TITLE.ANM`, so this
+		// is the same scrapbook flip transition used by the CD win flow,
+		// just inserted before the last three floppy recap records.
 		const byte *chain = _mystery.solvedClueBlock();
 		if (chain) {
 			const uint count = chain[0];
-			displayFloppyDialogRecords(chain + 1, count, 0);
+			const byte *records = chain + 1;
+			const byte *end = bufBase + mysSize;
+			if (count > 3) {
+				const uint beforeScrapbook = count - 3;
+				const byte *tail =
+					advanceFloppyDialogRecords(records, beforeScrapbook,
+											   end);
+				if (tail) {
+					displayFloppyDialogRecords(records, beforeScrapbook, 1);
+					playAnm(Common::Path("SCRAPBK.ANI"), 120,
+							/*holdLastFrame=*/false, /*fadeIn=*/true);
+					displayFloppyDialogRecords(tail, 3, 1);
+				} else {
+					warning("doAccuseFloppy: malformed solved chain");
+					displayFloppyDialogRecords(records, count, 1);
+				}
+			} else {
+				displayFloppyDialogRecords(records, count, 1);
+			}
 		}
 		if (_music && _voiceOn)
 			_music->stop();

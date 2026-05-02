@@ -1083,7 +1083,7 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	//   per entry at siteData[+0x48 + i*6]: {animId, x, y}
 	//   animId == -1 → `_ColorCycle(x, y)` palette range (handled
 	//                  in the run() loop's frame pump as palette
-	//                  rotation; not yet implemented).
+	//                  rotation).
 	//   else → `_GetAnimation(animId)` + `_NewAnimation` then
 	//          `_UpdateAnimations @ 172b:09c1` walks a sequence
 	//          script (entries are frame indices; 0x80 = end-of-loop,
@@ -1092,6 +1092,49 @@ void SiteScreen::renderAnimatedDrops(uint siteNum, uint32 tickMs) {
 	//          raw animation frames in order using a global tick.
 	if (!_mystery)
 		return;
+
+	if (_vm && _vm->isFloppy()) {
+		// Floppy extra site anims live in `ANI.BIN`, not in the
+		// mystery's site_data. `_ReadMystery_Floppy` asks
+		// `_GetSiteAnimData_Floppy(mystery)` for the case block, then
+		// walks one entry per site:
+		//   u8 cycleCount, cycleCount × {u8 start, u8 end},
+		//   u8 animCount, animCount × {u8 animId, u16 x, u8 y}.
+		// `_DoSiteLoop_Floppy` registers at most four of these in local
+		// animation slots, so cap the draw loop the same way.
+		const byte *siteAnim = _mystery->floppySiteAnimData(siteNum);
+		if (!siteAnim)
+			return;
+		const uint cycles = siteAnim[0];
+		const byte *animList = siteAnim + 1 + cycles * 2;
+		const uint animCount = animList[0];
+		animList++;
+		if (animCount == 0)
+			return;
+
+		Graphics::Surface *screen = g_system->lockScreen();
+		if (!screen)
+			return;
+
+		const uint maxAnims = MIN<uint>(animCount, 4);
+		for (uint i = 0; i < maxAnims; i++) {
+			const byte *e = animList + i * 4;
+			const uint animId = e[0];
+			const int16 x = (int16)READ_LE_UINT16(e + 1);
+			const int16 y = (int16)e[3];
+			Animation anim;
+			if (!_vm->getAni().loadAnimation(animId, anim) || anim.empty())
+				continue;
+			const uint frameIdx = partnerFrameAtTick((uint16)animId,
+													  (uint)anim.size(),
+													  tickMs);
+			blitAnimFrameAnchored(screen, anim[frameIdx], x, y);
+		}
+
+		g_system->unlockScreen();
+		return;
+	}
+
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;
@@ -1136,16 +1179,22 @@ void SiteScreen::scanColorCycles(uint siteNum) {
 	_colorCycles.clear();
 	if (!_mystery)
 		return;
-	// Floppy site data has a different layout (per `_DoSiteLoop_Floppy
-	// @ 1652:03a3`: site index is 2-byte u16 entries, site data starts
-	// with an offset to a sub-structure with picID + 5-byte hotspot
-	// entries — there's no `[+0xa]` anim count at the same place). The
-	// CD-shaped offsets read garbage and run past the buffer end. Until
-	// the floppy color-cycle layout is reverse-engineered, skip the
-	// scan: the floppy still does palette F9..FE rotation in its own
-	// driver, but our hotspot palette override works without it.
-	if (_vm && _vm->isFloppy())
+
+	if (_vm && _vm->isFloppy()) {
+		const byte *siteAnim = _mystery->floppySiteAnimData(siteNum);
+		if (!siteAnim)
+			return;
+		const uint cycles = siteAnim[0];
+		for (uint i = 0; i < cycles && _colorCycles.size() < 5; i++) {
+			ColorCycleRange r;
+			r.start = siteAnim[1 + i * 2];
+			r.end = siteAnim[1 + i * 2 + 1];
+			if (r.end > r.start)
+				_colorCycles.push_back(r);
+		}
 		return;
+	}
+
 	const byte *site = _mystery->siteData(siteNum);
 	if (!site)
 		return;

@@ -71,10 +71,10 @@ class MusicPlayer;
  *   10 (0xa) CHOOSE_MYSTERY → `_DoChooseMystery` + `_CaseSelection`;
  *                    starts with _NextScreen=0 so a successful pick
  *                    falls through to INIT_CLUES.
- *   11 (0xb) TITLE  → set _NextScreen=8 then dispatch (TITLE.ANM is
- *                    actually shown earlier by `_DoOpeningAnims`, this
- *                    handler is the post-intro "fall into PROFILE"
- *                    redirect)
+ *   11 (0xb) TITLE  → floppy `_DoTitle_Floppy` plays TITLE.ANM, waits
+ *                    for input, then writes =8. CD shows TITLE.ANM in
+ *                    `_DoOpeningAnims`, so it usually never enters this
+ *                    handler.
  *   12 (0xc) ACTION → `_ActionScreen` @ 1c33:195b — post-mystery menu
  *                    ("Solve a Mystery", scrapbook, more mysteries,
  *                    setup). Action 1 sets =10 (CHOOSE_MYSTERY).

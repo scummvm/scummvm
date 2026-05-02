@@ -131,6 +131,11 @@ public:
 	/// referenced by SiteIndex[@p siteNum].
 	const byte *siteData(uint siteNum) const;
 
+	/// Floppy-only pointer to the matching `ANI.BIN` per-site animation
+	/// block. Layout: u8 cycleCount, cycleCount × {u8 start, u8 end},
+	/// u8 animCount, animCount × {u8 animId, u16 x, u8 y}.
+	const byte *floppySiteAnimData(uint siteNum) const;
+
 	/// Pointer to the hotspot rectangle array for site @p siteNum.
 	/// Each rect is 14 bytes: x1, y1, x2, y2, then 6 bytes of clue data.
 	const byte *hotspots(uint siteNum) const;
@@ -236,8 +241,11 @@ private:
 	uint16 _floppyTextOff = 0;       ///< header[+0xc] → text block
 	uint16 _floppyKDTextOff = 0;     ///< header[+0x10] → KDTextIndex
 	uint16 _floppySolvedOff = 0;     ///< header[+0x12] → solved clue chain
+	Common::Array<byte> _floppySiteAnimData;
+	uint16 _floppySiteAnimSiteOff[kVisitedSiteCap] = {};
 
 	uint16 readU16(uint offset) const;
+	void loadFloppySiteAnimData();
 };
 
 } // End of namespace EEM
