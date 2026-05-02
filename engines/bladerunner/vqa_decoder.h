@@ -31,6 +31,7 @@
 #include "common/stream.h"
 #include "common/types.h"
 
+#include "graphics/blit.h"
 #include "graphics/surface.h"
 
 #include "common/array.h"
@@ -278,6 +279,8 @@ public:
 		uint32         _accumulatedCBPZsizeToCBF;
 
 		CodebookInfo  *_codebookInfoNext; // Used to store the decompressed codebook data and swap with the active codebook
+
+		Graphics::FastBlitFunc _blitFunc;
 
 		void VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha = false);
 		bool decodeFrame(Graphics::Surface *surface);

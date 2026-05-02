@@ -745,6 +745,8 @@ VQADecoder::VQAVideoTrack::VQAVideoTrack(VQADecoder *vqaDecoder) {
 	_codebookInfoNext         = nullptr; // stores the decompressed codebook parts and it's swapped with the active codebook
 	_countOfCBPsToCBF         = 0;
 	_accumulatedCBPZsizeToCBF = 0;
+
+	_blitFunc = Graphics::getFastBlitFunc(screenPixelFormat(), gameDataPixelFormat());
 }
 
 VQADecoder::VQAVideoTrack::~VQAVideoTrack() {
@@ -835,9 +837,13 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 		return true;
 	}
 
-	uint32 codebookSize = 2 * _maxBlocks * _blockW * _blockH;
+	uint32 codebookSize;
 	if (_vqaDecoder->_oldV2VQA) {
 		codebookSize = _maxBlocks * _cbParts;
+	} else {
+		uint bpp = screenPixelFormat().bytesPerPixel;
+		assert(bpp >= 2);
+		codebookSize = _maxBlocks * _blockW * _blockH * (bpp + 1);
 	}
 
 	// This is released in VQADecoder::~VQADecoder()
@@ -851,6 +857,41 @@ bool VQADecoder::VQAVideoTrack::readCBFZ(Common::SeekableReadStream *s, uint32 s
 
 	uint32 bytesDecomprsd = decompress_lcw(_cbfz, size, codebookInfo.data, codebookSize);
 	codebookInfo.size = bytesDecomprsd;
+
+	if (!_vqaDecoder->_oldV2VQA) {
+		// Alpha component is inversed, set srcFormat to XRGB1555 to ignore it
+		// Instead we manually transform alpha values into a mask
+		const Graphics::PixelFormat  srcFormat = gameDataPixelFormat();
+		const Graphics::PixelFormat &dstFormat = screenPixelFormat();
+		uint bpp = dstFormat.bytesPerPixel;
+
+		uint16 *block_src = (uint16 *)codebookInfo.data;
+		uint8 *mask_src = (uint8 *)codebookInfo.data + (bpp * _maxBlocks * _blockW * _blockH);
+
+		for (uint x = 0; x < _maxBlocks * _blockW * _blockH; ++x) {
+#ifdef SCUMM_BIG_ENDIAN
+			// Swap bytes to big endian as the source is little endian
+			block_src[x] = SWAP_BYTES_16(block_src[x]);
+#endif
+			// Extract and invert alpha value
+			// TODO: Can this be skipped if the mask is never used?
+			mask_src[x] = (block_src[x] >> 15) ^ 0x01;
+		}
+
+		// Convert pixel data in place
+		if (_blitFunc) {
+			_blitFunc((byte *)block_src, (const byte *)block_src,
+				_blockW * _blockH * _maxBlocks * bpp,
+				_blockW * _blockH * _maxBlocks * 2,
+				_blockW * _blockH * _maxBlocks, 1);
+		} else if (dstFormat != srcFormat) {
+			Graphics::crossBlit((byte *)block_src, (const byte *)block_src,
+				_blockW * _blockH * _maxBlocks * bpp,
+				_blockW * _blockH * _maxBlocks * 2,
+				_blockW * _blockH * _maxBlocks, 1, dstFormat, srcFormat);
+		}
+	}
+
 	return true;
 }
 
@@ -1097,48 +1138,17 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 }
 
 void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha) {
-	const uint8 *const block_src = &_codebook[2 * srcBlock * _blockW * _blockH];
+	uint bpp = screenPixelFormat().bytesPerPixel;
+
+	const uint8 *const block_src = &_codebook[bpp *  srcBlock  * _blockW * _blockH];
+	const uint8 *const mask_base = &_codebook[bpp * _maxBlocks * _blockW * _blockH];
+	const uint8 *const mask_src = &mask_base[srcBlock * _blockW * _blockH];
 
 	uint16 blocks_per_line = _width / _blockW;
 
 	uint32 intermDiv = 0;
 	uint32 dst_x = 0;
 	uint32 dst_y = 0;
-
-	// Alpha component is inversed, set srcFormat to XRGB1555 to ignore it
-	// Instead we manually transform alpha values into a mask
-	Graphics::PixelFormat srcFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
-	const uint16 *src_p = (const uint16 *)block_src;
-	uint8 *mask = nullptr;
-
-#ifdef SCUMM_BIG_ENDIAN
-	// Swap bytes to big endian as the source is little endian
-	uint16 *swapSrc = (uint16 *)malloc(2 * _blockW * _blockH);
-	if (!swapSrc) {
-		warning("Not enough memory for VPTRWriteBlock");
-		return;
-	}
-
-	for (uint x = 0; x < _blockW * _blockH; ++x) {
-		swapSrc[x] = SWAP_BYTES_16(src_p[x]);
-	}
-
-	src_p = swapSrc;
-#endif
-
-	if (alpha) {
-		mask = (uint8 *)malloc(_blockW * _blockH);
-		if (!mask) {
-			warning("Not enough memory for VPTRWriteBlock");
-			return;
-		}
-		// Create mask using alpha values
-		for (uint x = 0; x < static_cast<uint>(_blockW * _blockH); ++x) {
-			// Extract alpha value
-			// We XOR it with 1 to invert and get an actual alpha value
-			mask[x] = (byte)(READ_UINT16(src_p + x) >> 15) ^ 0x01;
-		}
-	}
 
 	for (uint i = count; i != 0; --i) {
 		intermDiv = (dstBlock + count - i) / blocks_per_line; // start of current blocks line
@@ -1148,19 +1158,11 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 		uint8* dstPtr = (uint8 *)surface->getBasePtr(dst_x, dst_y);
 		if (alpha) {
 			// Use mask to blit
-			Graphics::crossMaskBlit(dstPtr, (const byte *)src_p, (const byte *)mask, surface->pitch, _blockW * 2, _blockW, _blockW, _blockH, surface->format, srcFormat);
+			Graphics::maskBlit(dstPtr, block_src, mask_src, surface->pitch, _blockW * bpp, _blockW, _blockW, _blockH, bpp);
 		} else {
-			Graphics::crossBlit(dstPtr, (const byte *)src_p, surface->pitch, _blockW * 2, _blockW, _blockH, surface->format, srcFormat);
+			Graphics::copyBlit(dstPtr, block_src, surface->pitch, _blockW * bpp, _blockW, _blockH, bpp);
 		}
 	}
-
-#ifdef SCUMM_BIG_ENDIAN
-	if (swapSrc)
-		free(swapSrc);
-#endif
-
-	if (mask)
-		free(mask);
 }
 
 bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
