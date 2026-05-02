@@ -382,7 +382,17 @@ Common::Error BladeRunnerEngine::run() {
 		}
 	}
 
+#ifdef __3DS__
+	// On the 3DS following pixel format is the closest supported
+	// format to the one used by the game data files. We use it here
+	// to take advantage of faster blitting functions.
+	// TODO: Determine this programatically?
+	Graphics::PixelFormat fmt5551(2, 5, 5, 5, 1, 11, 6, 1, 0);
+	initGraphics(gameBRWidth, gameBRHeight, &fmt5551);
+#else
 	initGraphics(gameBRWidth, gameBRHeight, nullptr);
+#endif
+
 	_screenPixelFormat = g_system->getScreenFormat();
 	debug("Using pixel format: %s", _screenPixelFormat.toString().c_str());
 
