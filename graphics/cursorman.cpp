@@ -338,10 +338,10 @@ void CursorManager::setDefaultArrowCursor(bool push) {
 
 	if (push) {
 		pushCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
-		pushCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+		pushCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, false, &format);
 	} else {
 		replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
-		replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+		replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, false, &format);
 	}
 }
 

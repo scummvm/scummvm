@@ -171,7 +171,7 @@ void Cursor::showCursor() {
 		CursorMan.replaceCursor(cursor);
 	} else {
 		CursorMan.replaceCursor(_surface.getPixels(),
-			_surface.w, _surface.h, 0, 0, 0, true, &format);
+			_surface.w, _surface.h, 0, 0, 0, false, &format);
 	}
 
 	CursorMan.showMouse(true);

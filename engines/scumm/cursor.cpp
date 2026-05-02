@@ -428,6 +428,7 @@ void ScummEngine::updateCursor() {
 	if (_macScreen && _game.version == 6 && _game.heversion == 0)
 		mac_scaleCursor(cursor, hotspotX, hotspotY, width, height);
 
+	// FIXME: This is likely too small on high DPI displays with HE 70 games.
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat format = _system->getScreenFormat();
 	CursorMan.replaceCursor(cursor, width, height,

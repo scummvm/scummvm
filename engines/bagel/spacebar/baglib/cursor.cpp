@@ -133,7 +133,7 @@ void CSystemCursor::setCurrent() {
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	CursorMan.replaceCursorPalette(CURSOR_PALETTE, 0, ARRAYSIZE(CURSOR_PALETTE) / 3);
-	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, true, &format);
+	CursorMan.replaceCursor(ARROW_CURSOR, CURSOR_W, CURSOR_H, 0, 0, 0, false, &format);
 }
 
 } // namespace SpaceBar
