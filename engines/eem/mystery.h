@@ -104,6 +104,12 @@ public:
 	/// Number of entries in NoteIndex.
 	uint16 noteIndexCount() const;
 
+	/// True when @p clueId has a visible notebook/accuse text entry.
+	/// Floppy dialog text indices may be spoken-only records with a
+	/// zero notebook text offset; those are marked seen but skipped by
+	/// `_DrawNotes_Floppy`.
+	bool noteHasNotebookText(uint clueId) const;
+
 	/// Pointer to the KDTextIndex; first u16s are TextBlock offsets for
 	/// host hint lines.
 	const byte *kdTextIndex() const;

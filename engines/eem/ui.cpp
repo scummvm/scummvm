@@ -2455,7 +2455,7 @@ void EEMEngine::drawNotebookFrame(int &page) {
 	// original's iteration through `_CluesFound[]`.
 	Common::Array<uint> found;
 	for (uint i = 0; i < Mystery::kCluesFoundCap; i++) {
-		if (_mystery._cluesFound[i])
+		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
 			found.push_back(i);
 	}
 	const byte *ni = _mystery.noteIndex();
@@ -3762,7 +3762,7 @@ bool EEMEngine::doAccuseNotes() {
 	// the same way).
 	Common::Array<uint> found;
 	for (uint i = 0; i < niCount && i < Mystery::kCluesFoundCap; i++) {
-		if (_mystery._cluesFound[i])
+		if (_mystery._cluesFound[i] && _mystery.noteHasNotebookText(i))
 			found.push_back(i);
 	}
 
