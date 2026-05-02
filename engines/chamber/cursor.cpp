@@ -28,6 +28,7 @@
 #include "chamber/cga.h"
 #include "chamber/ega.h"
 #include "chamber/renderer.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
 
@@ -94,8 +95,8 @@ void CGARenderer::selectCursor(uint16 num) {
 		}
 	}
 
-	g_system->setMouseCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
-	g_system->showMouse(true);
+	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	CursorMan.showMouse(true);
 }
 
 void EGARenderer::selectCursor(uint16 num) {
@@ -127,9 +128,10 @@ void EGARenderer::selectCursor(uint16 num) {
 		}
 	}
 
-	g_system->setMouseCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
-	g_system->setCursorPalette(Graphics::Palette::createEGAPalette().data(), 0, 16);
-	g_system->showMouse(true);
+	CursorMan.replaceCursor(cursorImage, CURSOR_WIDTH, CURSOR_HEIGHT, cursor_x_shift, cursor_y_shift, 255);
+	// TODO: Replace use of cursor palettes
+	CursorMan.replaceCursorPalette(Graphics::Palette::createEGAPalette().data(), 0, 16);
+	CursorMan.showMouse(true);
 }
 
 /*

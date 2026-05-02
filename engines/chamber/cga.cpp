@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
@@ -148,12 +149,13 @@ void waitVBlank(void) {
 }
 
 void CGARenderer::colorSelect(byte csel) {
+	// TODO: Replace use of cursor palettes
 	if (g_vm->_renderMode == Common::kRenderHercG) {
 		g_system->getPaletteManager()->setPalette(Graphics::HGC_G_PALETTE, 0, 2);
-		g_system->setCursorPalette(Graphics::HGC_G_PALETTE, 0, 2);
+		CursorMan.replaceCursorPalette(Graphics::HGC_G_PALETTE, 0, 2);
 	} else if (g_vm->_renderMode == Common::kRenderHercA) {
 		g_system->getPaletteManager()->setPalette(Graphics::HGC_A_PALETTE, 0, 2);
-		g_system->setCursorPalette(Graphics::HGC_A_PALETTE, 0, 2);
+		CursorMan.replaceCursorPalette(Graphics::HGC_A_PALETTE, 0, 2);
 	} else {
 		const byte *pal;
 		if (csel & 0x10)
@@ -162,7 +164,7 @@ void CGARenderer::colorSelect(byte csel) {
 			pal = PALETTE_CGA2;
 
 		g_system->getPaletteManager()->setPalette(pal, 0, 4);
-		g_system->setCursorPalette(pal, 0, 4);
+		CursorMan.replaceCursorPalette(pal, 0, 4);
 	}
 }
 
