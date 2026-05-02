@@ -1859,8 +1859,8 @@ void EEMEngine::doCaseSelection() {
 					break;
 				}
 				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
-					// HELP placeholder — original calls `_DisplayHint`;
-					// our help screen is wired to `H` later in the flow.
+					// `_ActionScreen` sets `Chelp = 0`, so `_DoChoose`
+					// ignores this middle button on the top-level menu.
 					continue;
 				}
 				// List panel: click on a non-separator row selects the
@@ -2072,6 +2072,18 @@ void EEMEngine::doCaseSelection() {
 				}
 				if (kExitRect.contains(ev.mouse.x, ev.mouse.y)) {
 					_mystery.clear();
+					return;
+				}
+				if (kHelpRect.contains(ev.mouse.x, ev.mouse.y)) {
+					// In original `_CaseSelection`, this button is
+					// PIC 0x123 and returns 0xfffe, which calls
+					// `_ChooseSavedGame`. The ScummVM port stores the
+					// in-progress case in the profile save instead of
+					// original per-mystery files, so route to screen 8
+					// (profile picker) as the load/resume path.
+					saveProfile(_playerName);
+					_mystery.clear();
+					_nextScreen = kScreenProfile;
 					return;
 				}
 				if (kUpArrowRect.contains(ev.mouse.x, ev.mouse.y)) {
