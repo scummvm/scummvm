@@ -540,10 +540,13 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	debugC(1, kDebugSite, "Entering site %u (%u hotspots)",
 		   siteNum, _mystery->hotspotCount(siteNum));
 
+	const bool playArrival = _vm->shouldPlaySiteArrival(siteNum);
+
 	// `_DoTravel @ 168d:02da` calls `_StartTravelMusic` after the
 	// destination is set. We do the same here so the music swaps as
 	// the player moves between sites.
-	_vm->startTravelMusic();
+	if (playArrival)
+		_vm->startTravelMusic();
 
 	// Palette: original `_BuildBackground` calls `GetPalette(sitenum + 1)`
 	// where sitenum is the global SITES.DBD index (= the per-mystery
@@ -595,10 +598,10 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 	renderBackground(siteNum);
 
 	// `_DoSiteLoop @ 168d:03f4` plays `_EnterSiteAnim` whenever
-	// `_LastSite != _SiteNumber`. We track the last site we *played*
-	// the arrival on so re-entries (after notebook/map/etc.) don't
-	// repeat the animation.
-	if ((int)siteNum != _lastSiteAnim) {
+	// `_LastSite != _SiteNumber`. Keep our guard on the engine rather
+	// than on SiteScreen, because PDA/gallery returns recreate
+	// SiteScreen and must not replay the arrival.
+	if (playArrival) {
 		// `_EnterSiteAnim` snapshots the current screen, so populate
 		// that temporary background with the same site layers that
 		// should already be visible behind the arriving partner.
@@ -608,20 +611,14 @@ void SiteScreen::enter(uint siteNum, bool resetPartnerMood) {
 			renderStaticDrops(siteNum);
 		renderAnimatedDrops(siteNum, g_system->getMillis());
 		enterSiteAnim();
-		_lastSiteAnim = (int)siteNum;
+		_vm->markSiteArrivalPlayed(siteNum);
+		if (!_vm->isFloppy())
+			_vm->waitForMusicDone();
 		// Re-paint the BG; the normal snapshot below should contain
 		// only the static layers, while animated NPCs are redrawn per
 		// tick by the frame pump.
 		renderBackground(siteNum);
 	}
-
-	// Stop the travel music explicitly. `_DoSiteLoop @ 168d:06c0`
-	// waits for the one-shot travel track to play out and then calls
-	// `_StopMIDI()` before the interactive site phase begins —
-	// blocking the engine while it spins. We just stop now so the
-	// site investigation runs without music (matches the original
-	// silent-investigation phase).
-	_vm->stopMusic();
 
 	// Static drops (Loop 2 from `_DoSiteLoop`) — no animation, baked
 	// into the BG snapshot the run() pump uses to restore. Floppy
@@ -742,12 +739,12 @@ void SiteScreen::run() {
 
 	while (!_vm->shouldQuit()) {
 		Common::Event event;
-		bool exitRequested = false;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				_vm->setHotspotMouseCursor(false);
+				_vm->stopMusic();
 				return;
 
 			case Common::EVENT_MOUSEMOVE:
@@ -759,9 +756,9 @@ void SiteScreen::run() {
 				//   _FindButton(&SiteButtons, 2, MouseX, MouseY)
 				// where `SiteButtons` is two 8-byte rectangles at
 				// 29be:0x274 (verified via 168d:0729-0848):
-				//   Button 0: (35, 111) - (56, 136)  → notebook
+				//   Button 0: (35, 111) - (56, 136)  -> notebook
 				//                                       (`_NextScreen = 4`)
-				//   Button 1: (7, 177)  - (57, 200)  → map
+				//   Button 1: (7, 177)  - (57, 200)  -> map
 				//                                       (CD `_NextScreen = 1`,
 				//                                       floppy = 2)
 				// Test the buttons before falling through to hotspots so
@@ -780,6 +777,7 @@ void SiteScreen::run() {
 					notePartnerActivity();
 					_vm->setHotspotMouseCursor(false);
 					_vm->setNextScreen(kScreenNotebook);
+					_vm->stopMusic();
 					return;
 				}
 				if (kSitePartnerFootMapRect.contains(event.mouse.x, event.mouse.y)) {
@@ -788,6 +786,7 @@ void SiteScreen::run() {
 					// CD writes `_NextScreen = 1`; floppy writes 2.
 					_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
 													   : kScreenMap);
+					_vm->stopMusic();
 					return;
 				}
 				if (kSitePartnerHeadHintRect.contains(event.mouse.x, event.mouse.y)) {
@@ -818,15 +817,14 @@ void SiteScreen::run() {
 				// 6-entry table at `168d:09d5` (TAB / ENTER / arrow
 				// keys for hotspot cursor cycling) plus ESC handled
 				// separately at 168d:07a9. We don't implement the
-				// hotspot cursor cycling — clicks are the primary
-				// interaction — so the only keyboard binding kept
-				// here is ESC (matches `_ESCHit` → "Are you sure?"
-				// → MAP).
+				// hotspot cursor cycling, so the only keyboard binding kept
+				// here is ESC (matches `_ESCHit` -> "Are you sure?" -> MAP).
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_vm->setHotspotMouseCursor(false);
 					if (_vm->areYouSure()) {
 						_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
 														   : kScreenMap);
+						_vm->stopMusic();
 						return;
 					}
 					enter(cur, false);
@@ -839,14 +837,14 @@ void SiteScreen::run() {
 				break;
 			}
 		}
-		if (exitRequested)
-			return;
 
 		// Hotspot side effects can invalidate the active mystery; exit
 		// immediately rather than tick another frame against stale BG
 		// snapshots / hotspot tables.
-		if (!_mystery || !_mystery->isLoaded())
+		if (!_mystery || !_mystery->isLoaded()) {
+			_vm->stopMusic();
 			return;
+		}
 
 		// Per-tick frame pump (mirrors `_CheckFrameRate` +
 		// `_UpdateAnimations` at the top of `_DoSiteLoop`'s main loop).

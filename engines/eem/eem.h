@@ -495,10 +495,15 @@ private:
 
 public:
 	/// Mirrors `_StartTravelMusic @ 20a2:0595`. Picks `MUS%05d.XMI`
-	/// based on `_mystery._siteNumber % 5` and starts it (looping). The
+	/// based on `_mystery._siteNumber % 5` and starts it one-shot. The
 	/// site loop calls this each time `enter(siteNum)` runs so the
 	/// music changes as the player travels between sites.
 	void startTravelMusic();
+
+	/// Block until the current MIDI cue finishes, then stop/unload it.
+	/// Mirrors the `_IsMIDIPlaying` spin + `_StopMIDI` cleanup in
+	/// `_DoSiteLoop` after the CD travel cue.
+	void waitForMusicDone(uint32 maxMs = 60000);
 
 	/// Stop any currently playing MIDI track. Mirrors `_StopMIDI @
 	/// 20a2:0512` — used by `_DoSiteLoop @ 168d:06c0` after the
@@ -580,6 +585,11 @@ private:
 
 	bool _interactiveMouseCursor = false;
 
+	/// Site whose entrance animation has already played in the current
+	/// mystery. Kept on the engine, not SiteScreen, because PDA/gallery
+	/// screens destroy and recreate SiteScreen when returning to the site.
+	int _lastSiteArrivalAnim = -1;
+
 	/// XMIDI music player. Mirrors the original `MIDI.C` family
 	/// (`_MIDIPlayFile`, `_MIDIPlay`, `_StopMIDI`, `_StartTravelMusic`
 	/// at 20a2:00e2-05c9). Constructed lazily during `run()` once the
@@ -598,6 +608,18 @@ public:
 	/// member itself public. Mirrors the original's direct write to
 	/// `_NextScreen @ 2d5d:3f26` from anywhere in the engine.
 	void setNextScreen(ScreenId s) { _nextScreen = s; }
+	bool shouldPlaySiteArrival(uint siteNum) const {
+		return _lastSiteArrivalAnim != (int)siteNum;
+	}
+	void markSiteArrivalPlayed(uint siteNum) {
+		_lastSiteArrivalAnim = (int)siteNum;
+	}
+	void resetSiteArrivalState() {
+		_lastSiteArrivalAnim = -1;
+	}
+	void setSiteArrivalState(uint siteNum) {
+		_lastSiteArrivalAnim = (int)siteNum;
+	}
 };
 
 } // End of namespace EEM

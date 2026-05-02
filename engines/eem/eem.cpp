@@ -938,10 +938,31 @@ void EEMEngine::startTravelMusic() {
 	// itself runs without music. Our previous `loop=true` made the
 	// music never end, leaving travel music droning through site
 	// investigation, accuse, gallery, etc.
-	if (!_music || !_mystery.isLoaded())
+	if (!_music || !_mystery.isLoaded() || !_voiceOn)
 		return;
 	const uint num = _mystery._siteNumber % 5;
 	_music->playMus(num, /*loop=*/false);
+}
+
+void EEMEngine::waitForMusicDone(uint32 maxMs) {
+	if (!_music)
+		return;
+
+	const uint32 startMs = g_system->getMillis();
+	while (_music->isPlaying() && !shouldQuit() &&
+		   g_system->getMillis() - startMs < maxMs) {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			if (ev.type == Common::EVENT_QUIT ||
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				stopMusic();
+				return;
+			}
+		}
+		g_system->updateScreen();
+		g_system->delayMillis(20);
+	}
+	stopMusic();
 }
 
 void EEMEngine::stopMusic() {
@@ -1064,6 +1085,7 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		s.syncAsUint16LE(mysteryNum);
 		if (!_mystery.load(mysteryNum, &_rng)) {
 			_mystery.clear();
+			resetSiteArrivalState();
 			return Common::kReadingFailed;
 		}
 		// `_ReadMystery @ 2404:008f` calls `_InitMysterySounds` at the
@@ -1076,8 +1098,13 @@ Common::Error EEMEngine::loadGameStream(Common::SeekableReadStream *stream) {
 		if (_audio && !isFloppy())
 			_audio->initMysterySounds(mysteryNum);
 		_mystery.syncState(s);
+		if (_mystery._siteNumber < _mystery.numSites())
+			setSiteArrivalState(_mystery._siteNumber);
+		else
+			resetSiteArrivalState();
 	} else {
 		_mystery.clear();
+		resetSiteArrivalState();
 	}
 
 	debugC(1, kDebugGeneral,
