@@ -570,6 +570,7 @@ public:
 protected:
 	// Widget API
 	void reflowLayout() override;
+	Common::Rect getClipRect() const override;
 	void drawWidget() override {}
 	bool containsWidget(Widget *widget) const override;
 	Widget *findWidget(int x, int y) override;

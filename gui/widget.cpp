@@ -1111,6 +1111,12 @@ void OptionsContainerWidget::reflowLayout() {
 	_h = maxY - minY;
 }
 
+Common::Rect OptionsContainerWidget::getClipRect() const {
+	// Use boss clipping rectangle to avoid drawing issues on checkboxes
+	// which stick out of their rectangle due to their bevel.
+	return _boss->getClipRect();
+}
+
 bool OptionsContainerWidget::containsWidget(Widget *widget) const {
 	return containsWidgetInChain(_firstWidget, widget);
 }
