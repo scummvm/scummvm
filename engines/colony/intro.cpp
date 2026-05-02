@@ -62,7 +62,6 @@ public:
 		_tempSurface->copyRectToSurface(_screen->getBasePtr(_bbox.left, _bbox.top), _screen->pitch,
 			0, 0, _bbox.width() + 1, _bbox.height() + 1);
 		_wm->pushCursor(Graphics::kMacCursorArrow, nullptr);
-		g_system->showMouse(true);
 		CursorMan.showMouse(true);
 
 		while (!shouldQuit) {
@@ -1173,7 +1172,6 @@ void ColonyEngine::terminateGame(bool blowup) {
 	_animationRunning = false;
 	_mouseLocked = false;
 	_system->lockMouse(false);
-	_system->showMouse(true);
 	CursorMan.setDefaultArrowCursor(true);
 	CursorMan.showMouse(true);
 
@@ -1323,7 +1321,6 @@ void ColonyEngine::gameOver(bool kill) {
 
 	_mouseLocked = false;
 	_system->lockMouse(false);
-	_system->showMouse(true);
 	CursorMan.setDefaultArrowCursor(true);
 	CursorMan.showMouse(true);
 

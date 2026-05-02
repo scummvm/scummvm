@@ -39,6 +39,8 @@
 #include "common/queue.h"
 #include "common/config-manager.h"
 
+#include "graphics/cursorman.h"
+
 #define DIRTY_RECT_LIMIT 800
 
 namespace Wintermute {
@@ -121,7 +123,7 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 		return STATUS_FAILED;
 	}
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	_renderSurface->create(g_system->getWidth(), g_system->getHeight(), g_system->getScreenFormat());
 	_active = true;

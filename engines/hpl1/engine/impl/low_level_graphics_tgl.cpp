@@ -31,6 +31,7 @@
 #include "common/algorithm.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/tinygl/tinygl.h"
 #include "hpl1/debug.h"
 #include "hpl1/graphics.h"
@@ -459,7 +460,7 @@ int LowLevelGraphicsTGL::GetCaps(eGraphicCaps type) const {
 //-----------------------------------------------------------------------
 
 void LowLevelGraphicsTGL::ShowCursor(bool toggle) {
-	g_system->showMouse(toggle);
+	CursorMan.showMouse(toggle);
 }
 
 //-----------------------------------------------------------------------

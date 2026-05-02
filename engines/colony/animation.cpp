@@ -396,7 +396,6 @@ void ColonyEngine::playAnimation() {
 
 	_animationRunning = true;
 	_system->lockMouse(false);
-	_system->showMouse(true);
 	warpMouseLogical(_centerX, _centerY);
 	const char *cursorName = "default arrow cursor";
 	if (_renderMode == Common::kRenderMacintosh && _macArrowCursor) {
@@ -649,7 +648,6 @@ void ColonyEngine::playAnimation() {
 	}
 
 	_system->lockMouse(true);
-	_system->showMouse(false);
 	CursorMan.showMouse(false);
 	CursorMan.popAllCursors();
 

@@ -66,6 +66,7 @@
 #include "ultima/nuvie/nuvie.h"
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -437,7 +438,7 @@ void Game::init_cursor() {
 		cursor = new Cursor();
 
 	if (cursor->init(config, screen, game_type))
-		g_system->showMouse(false); // won't need the system default
+		CursorMan.showMouse(false); // won't need the system default
 	else {
 		delete cursor;
 		cursor = nullptr; // no game cursor

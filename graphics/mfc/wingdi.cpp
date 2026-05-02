@@ -21,6 +21,7 @@
 
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/cursorman.h"
 #include "graphics/mfc/wingdi.h"
 #include "graphics/mfc/global_functions.h"
 #include "graphics/mfc/afxwin.h"
@@ -350,7 +351,7 @@ HCURSOR SetCursor(HCURSOR hCursor) {
 }
 
 int ShowCursor(bool bShow) {
-	g_system->showMouse(bShow);
+	CursorMan.showMouse(bShow);
 	return 0;
 }
 

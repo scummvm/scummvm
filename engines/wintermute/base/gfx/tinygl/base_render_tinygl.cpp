@@ -34,6 +34,8 @@
 
 #include "common/config-manager.h"
 
+#include "graphics/cursorman.h"
+
 #include "engines/util.h"
 
 #if defined(USE_TINYGL)
@@ -117,7 +119,7 @@ bool BaseRenderTinyGL::initRenderer(int width, int height, bool windowed) {
 	_width = width;
 	_height = height;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	setViewport(0, 0, width, height);
 

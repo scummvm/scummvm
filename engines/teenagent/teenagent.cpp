@@ -731,7 +731,7 @@ Common::Error TeenAgentEngine::run() {
 			}
 			_sceneBusy = b;
 		}
-		_system->showMouse(scene->getMessage().empty() && !_sceneBusy);
+		CursorMan.showMouse(scene->getMessage().empty() && !_sceneBusy);
 
 		bool busy = inventory->active() || _sceneBusy;
 

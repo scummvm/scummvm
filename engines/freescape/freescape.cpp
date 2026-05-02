@@ -869,7 +869,7 @@ Common::Error FreescapeEngine::run() {
 	loadAssets();
 	loadColorPalette();
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 
 	// Simple main event loop
@@ -886,7 +886,7 @@ Common::Error FreescapeEngine::run() {
 		loadGameState(saveSlot);
 	}
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	g_system->lockMouse(true);
 	resetInput();
 
@@ -938,7 +938,7 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	_eventManager->clearExitEvents();
-	g_system->showMouse(true);
+	CursorMan.showMouse(true);
 	g_system->lockMouse(false);
 	return Common::kNoError;
 }

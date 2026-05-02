@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/gfx/3dlight.h"
 #include "engines/wintermute/platform_osystem.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/opengl/system_headers.h"
 
 #include "common/config-manager.h"
@@ -195,7 +196,7 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_width = width;
 	_height = height;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	setViewport(0, 0, width, height);
 

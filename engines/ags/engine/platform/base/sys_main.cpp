@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
@@ -213,7 +214,7 @@ void sys_window_set_style(WindowMode mode, int /*ex_flags*/) {
 }
 
 void sys_window_show_cursor(bool on) {
-	g_system->showMouse(on);
+	CursorMan.showMouse(on);
 }
 
 bool sys_window_lock_mouse(bool on) {

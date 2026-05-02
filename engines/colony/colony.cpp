@@ -480,7 +480,7 @@ void ColonyEngine::syncMacMenuChecks() {
 
 void ColonyEngine::updateMouseCapture(bool recenter) {
 	_system->lockMouse(_mouseLocked);
-	_system->showMouse(!_mouseLocked);
+	CursorMan.showMouse(!_mouseLocked);
 
 	int cursorMode = 0;
 
@@ -538,7 +538,6 @@ void ColonyEngine::handleMenuAction(int action) {
 		break;
 	case kMenuActionOpen:
 		_system->lockMouse(false);
-		_system->showMouse(true);
 		CursorMan.setDefaultArrowCursor();
 		CursorMan.showMouse(true);
 		loadGameDialog();
@@ -547,7 +546,6 @@ void ColonyEngine::handleMenuAction(int action) {
 	case kMenuActionSave:
 	case kMenuActionSaveAs:
 		_system->lockMouse(false);
-		_system->showMouse(true);
 		CursorMan.setDefaultArrowCursor();
 		CursorMan.showMouse(true);
 		saveGameDialog();
@@ -923,7 +921,6 @@ Common::Error ColonyEngine::run() {
 					// WM consumed the event (menu interaction)
 					if (!wasMenuActive && _wm->isMenuActive()) {
 						_system->lockMouse(false);
-						_system->showMouse(true);
 						CursorMan.setDefaultArrowCursor();
 						CursorMan.showMouse(true);
 					}
@@ -1007,7 +1004,6 @@ Common::Error ColonyEngine::run() {
 					break;
 				case kActionEscape:
 					_system->lockMouse(false);
-					_system->showMouse(true);
 					CursorMan.setDefaultArrowCursor();
 					CursorMan.showMouse(true);
 					openMainMenuDialog();

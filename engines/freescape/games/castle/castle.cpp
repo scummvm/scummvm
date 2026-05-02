@@ -1148,7 +1148,7 @@ void CastleEngine::drawInfoMenu() {
 					_eventManager->purgeMouseEvents();
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
-						g_system->showMouse(true);
+						CursorMan.showMouse(true);
 					}
 
 					_gfx->setViewport(_viewArea);
@@ -1161,7 +1161,7 @@ void CastleEngine::drawInfoMenu() {
 					_eventManager->purgeMouseEvents();
 					if (isDOS() || isAmiga() || isAtariST()) {
 						g_system->lockMouse(false);
-						g_system->showMouse(true);
+						CursorMan.showMouse(true);
 					}
 
 					_gfx->setViewport(_viewArea);
@@ -1208,7 +1208,7 @@ void CastleEngine::drawInfoMenu() {
 					_eventManager->purgeKeyboardEvents();
 					loadGameDialog();
 					g_system->lockMouse(false);
-					g_system->showMouse(true);
+					CursorMan.showMouse(true);
 
 					_gfx->setViewport(_viewArea);
 				} else if (saveGameRect.contains(mousePos)) {
@@ -1216,7 +1216,7 @@ void CastleEngine::drawInfoMenu() {
 					_eventManager->purgeKeyboardEvents();
 					saveGameDialog();
 					g_system->lockMouse(false);
-					g_system->showMouse(true);
+					CursorMan.showMouse(true);
 
 					_gfx->setViewport(_viewArea);
 				} else if (toggleSoundRect.contains(mousePos)) {
@@ -2121,10 +2121,9 @@ void CastleEngine::selectCharacterScreen() {
 
 	if (isTouchscreenActive()) {
 		CursorMan.setDefaultArrowCursor();
-		CursorMan.showMouse(true);
 	}
 	_system->lockMouse(false);
-	_system->showMouse(true);
+	CursorMan.showMouse(true);
 
 	// Calculate tap/click rectangles from actual rendered text positions.
 	// lines[5] = prince, lines[6] = princess for ZX/CPC.
@@ -2218,7 +2217,6 @@ void CastleEngine::selectCharacterScreen() {
 		g_system->delayMillis(15); // try to target ~60 FPS
 	}
 	_system->lockMouse(true);
-	_system->showMouse(false);
 	CursorMan.showMouse(false);
 	_gfx->clear(0, 0, 0, true);
 

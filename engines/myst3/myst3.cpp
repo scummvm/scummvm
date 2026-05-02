@@ -53,6 +53,7 @@
 
 #include "image/jpeg.h"
 
+#include "graphics/cursorman.h"
 #include "graphics/renderer.h"
 #include "graphics/yuv_to_rgb.h"
 #include "graphics/framelimiter.h"
@@ -178,7 +179,7 @@ Common::Error Myst3Engine::run() {
 	}
 	_archiveNode = new Archive();
 
-	_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	settingsInitDefaults();
 	syncSoundSettings();

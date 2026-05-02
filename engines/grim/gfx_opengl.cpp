@@ -25,6 +25,7 @@
 
 #if defined(USE_OPENGL_GAME)
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
 #include "math/glmath.h"
@@ -125,7 +126,7 @@ void GfxOpenGL::setupScreen(int screenW, int screenH) {
 	_useDepthShader = false;
 	_useDimShader = false;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	int screenSize = _screenWidth * _screenHeight * 4;
 	_storedDisplay = new byte[screenSize]();

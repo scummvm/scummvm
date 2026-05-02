@@ -43,6 +43,7 @@
 
 #if defined(USE_OPENGL_SHADERS)
 
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 #include "graphics/opengl/context.h"
 
@@ -403,7 +404,7 @@ void GfxOpenGLS::setupScreen(int screenW, int screenH) {
 	_scaleW = _screenWidth / (float)_gameWidth;
 	_scaleH = _screenHeight / (float)_gameHeight;
 
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 
 	setupZBuffer();
 	setupShaders();

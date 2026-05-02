@@ -25,6 +25,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/paletteman.h"
 #include "graphics/framelimiter.h"
 #include "graphics/thumbnail.h"
@@ -76,7 +77,7 @@ Common::String AlcachofaEngine::getGameId() const {
 }
 
 Common::Error AlcachofaEngine::run() {
-	g_system->showMouse(false);
+	CursorMan.showMouse(false);
 	setDebugger(_console);
 	_game.reset(Game::create());
 	Config::registerDefaults();
