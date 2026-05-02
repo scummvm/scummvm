@@ -3625,6 +3625,83 @@ void EEMEngine::doAccuse() {
 		return;
 	}
 
+	// `_AccuseEntry @ 1df2:0ff8` runs before the red accuse-notes
+	// picker. It scores the top five FOUND clues, says how close the
+	// player is, and only lets `_DoAccuse` continue when that score is
+	// at least 0x65.
+	const byte *entryKdIdx = _mystery.kdTextIndex();
+	if (!entryKdIdx)
+		return;
+	const int foundPoints = _mystery.foundPoints();
+	uint entryKDSpeak = 0;
+	uint16 entryTextOff = 0xFFFF;
+	bool canAccuse = false;
+	Common::String entryText;
+	if (foundPoints == 0) {
+		entryKDSpeak = 9;
+		entryText = "3We're not ready to solve this mystery yet.  "
+					"Let's keep investigating until we have some more solid "
+					"evidence to make our case!";
+	} else if (foundPoints < 0x32) {
+		entryKDSpeak = 0;
+		entryTextOff = READ_LE_UINT16(entryKdIdx + 0);
+	} else if (foundPoints < 0x65) {
+		entryKDSpeak = 1;
+		entryTextOff = READ_LE_UINT16(entryKdIdx + 2);
+	} else {
+		entryKDSpeak = 2;
+		entryTextOff = READ_LE_UINT16(entryKdIdx + 4);
+		canAccuse = true;
+	}
+	if (entryText.empty() && entryTextOff != 0xFFFF) {
+		entryText = parseString(_mystery.textAt(entryTextOff),
+								_playerName, _partner);
+	}
+	if (!entryText.empty()) {
+		Graphics::ManagedSurface ms(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		ms.clear();
+		Graphics::Surface *cur = g_system->lockScreen();
+		if (cur) {
+			ms.simpleBlitFrom(*cur);
+			g_system->unlockScreen();
+		}
+		const byte firstChar = (byte)entryText[0];
+		const uint16 bubNum = getKDTextBalloon(firstChar);
+		if (firstChar >= '0' && firstChar <= '9')
+			entryText.deleteChar(0);
+		Picture balloon;
+		const bool haveBalloon =
+			_balloonArchive.size() > (bubNum & 0x7F) &&
+			_balloonArchive.loadEntry(bubNum & 0x7F, balloon);
+		const int balloonX = 0x21;
+		int balloonY = 1;
+		if (haveBalloon && balloon.surface.h < 0x4e)
+			balloonY = (0x50 - balloon.surface.h) / 2;
+		if (haveBalloon) {
+			const byte transp = (byte)(balloon.flags >> 8);
+			ms.transBlitFrom(balloon.surface,
+							 Common::Point(balloonX, balloonY),
+							 (uint32)transp);
+		}
+		uint16 tx = 5, ty = 4, tw = 155;
+		getBalloonInsets(bubNum, tx, ty, tw);
+		if (_font.isLoaded()) {
+			_font.drawWordWrapped(&ms, balloonX + tx, balloonY + ty,
+								  tw, entryText, haveBalloon ? 0 : 0xF);
+		}
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
+								   0, 0, 320, 200);
+		g_system->updateScreen();
+		if (_audio)
+			_audio->sayKDDigital(entryKdIdx, entryKDSpeak, _partner);
+		waitForInput(60000);
+	}
+	if (!canAccuse) {
+		_nextScreen = _lastScreen != kScreenInvalid
+						? (ScreenId)_lastScreen : kScreenSite;
+		return;
+	}
 
 	// Mirrors `_DoAccuse @ 1df2:0bdd` + `_DoAccuseGallery @ 1df2:0a31`:
 	//   1. ACCUSE-NOTES SCREEN (PIC 0x1A7, the red "accuse-mode" BG):
@@ -3780,6 +3857,7 @@ void EEMEngine::doAccuse() {
 	//   AddPicBackground(pic, 0x21, y)                    (1df2:0aab)
 	//   WordWrap(0x21+tbl[bub].x, y+tbl[bub].y, tbl[bub].w, text, color=0)
 	//     tbl @ 29be:0875, 10-byte entries (1df2:0ad6-0af1)
+	//   _SayKDDigital(4); _Wait();                        (1df2:0b09-0b11)
 	const byte *kdIdx = _mystery.kdTextIndex();
 	if (kdIdx) {
 		const int16 textOff = (int16)READ_LE_UINT16(kdIdx + 8);
@@ -3878,6 +3956,8 @@ void EEMEngine::doAccuse() {
 				g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
 					0, 0, 320, 200);
 				g_system->updateScreen();
+				if (_audio)
+					_audio->sayKDDigital(kdIdx, 4, _partner);
 				waitForInput(8000);
 			}
 		}
@@ -3978,13 +4058,13 @@ void EEMEngine::doAccuse() {
 		return;
 
 	// Real chain evaluation. Mirrors the original two-gate accusation:
-	//   1. `_AccuseEntry @ 1df2:0ff8` checks `_GetFoundPoints() >= 100`
-	//      — gates whether the suspect picker is even reachable. We
-	//      `_SolvedCheck → selectedPoints > 99` is now gated at the
-	//      TOP of `doAccuse` — by the time we reach this point we
-	//      already know `solvedCheck()` was true (the picker wouldn't
-	//      have opened otherwise).
-	//   2. `_WITCH @ 1df2:089f` checks `GalleryData[picked*0x46+0x02] ==
+	//   1. `_AccuseEntry @ 1df2:0ff8` checked top-five found points
+	//      before the note picker, so by this point the player has
+	//      enough evidence to attempt an accusation.
+	//   2. `_SolvedCheck @ 1df2:00ec` checked selectedPoints > 99
+	//      before opening this suspect picker, so the clue set is
+	//      valid if we got here.
+	//   3. `_WITCH @ 1df2:089f` checks `GalleryData[picked*0x46+0x02] ==
 	//      0xFFFF`. Innocent suspects store an alibi-text TextBlock
 	//      offset there; the guilty one uses the sentinel.
 	const int points          = _mystery.selectedPoints();
