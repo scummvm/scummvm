@@ -3256,12 +3256,13 @@ bool EEMEngine::doAccuseNotes() {
 	//     for selected (1df2:0c2c sets it on entry).
 	//   * Click on a clue toggles its selection
 	//     (`_SearchNoteAreas` + `_SwapColors`).
-	//   * Click `_NoteButtons[2]` (rect at `(157, 174, 178, 190)`,
-	//     the original's "go to gallery" button) jumps to the
-	//     evidence check; `_HandleAccuseNoteButton(2)` returns 2
-	//     and the outer loop forces `uStack_8 = uStack_a` to
-	//     trigger `_SolvedCheck`.
-	//   * ESC sets `_NextScreen = 3` and exits.
+	//   * Click `_NoteButtons[4]` (rect at `(180, 174, 201, 190)`,
+	//     the original's solve button) jumps to the evidence check;
+	//     `_HandleAccuseNoteButton(4)` returns 2 and the outer loop
+	//     forces `uStack_8 = uStack_a` to trigger `_SolvedCheck`.
+	//   * CD and floppy originals only cancel this screen through ESC.
+	//     ScummVM also wires the visible PDA navigation buttons so the
+	//     accusation can be abandoned without a keyboard.
 	if (!_mystery.isLoaded() || !_font.isLoaded())
 		return false;
 	const byte *ni = _mystery.noteIndex();
@@ -3300,8 +3301,10 @@ bool EEMEngine::doAccuseNotes() {
 	const int rectH = 159 - 27;
 
 	// `_NoteButtons` rects (verified at `29be:0147`). `_DoAccuse`
-	// re-uses the same table as `_DoNotebook`, but only SOLVE /
-	// PAGE NEXT / PAGE PREV do anything; others sit inert.
+	// re-uses the same table as `_DoNotebook`, but the original
+	// handler only routes SOLVE / PAGE NEXT / PAGE PREV; ScummVM
+	// additionally routes the visible site/map/notebook/gallery
+	// buttons below for pointer-only cancellation.
 	// `_HandleAccuseNoteButton @ 1df2:0990` returns `DI` (initialised
 	// to 0) and only sets `DI = 2` in the `i == 4` branch (asm:
 	// `1df2:09b2: MOV DI, 0x2`). The outer loop's `iVar6 == 2` test
@@ -3471,17 +3474,31 @@ bool EEMEngine::doAccuseNotes() {
 
 	rebuildPagination();
 	draw();
+	Common::Point mouse = g_system->getEventManager()->getMousePos();
+	setInteractiveMouseCursor(notebookButtonAt(mouse.x, mouse.y) ||
+							  kPdaNotebookRect.contains(mouse.x, mouse.y) ||
+							  rectListContains(slotRects, mouse.x, mouse.y));
 
 	while (!shouldQuit()) {
 		Common::Event ev;
 		bool dirty = false;
 		while (g_system->getEventManager()->pollEvent(ev)) {
 			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+				ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+				_nextScreen = kScreenInvalid;
 				return false;
+			}
+			if (ev.type == Common::EVENT_MOUSEMOVE) {
+				setInteractiveMouseCursor(
+					notebookButtonAt(ev.mouse.x, ev.mouse.y) ||
+					kPdaNotebookRect.contains(ev.mouse.x, ev.mouse.y) ||
+					rectListContains(slotRects, ev.mouse.x, ev.mouse.y));
+			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					_nextScreen = kScreenSite;
 					return false;
+				}
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT &&
 					page > 0) {
 					page--;
@@ -3495,6 +3512,29 @@ bool EEMEngine::doAccuseNotes() {
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
 				const int mx = ev.mouse.x;
 				const int my = ev.mouse.y;
+				if (kPdaSiteRect.contains(mx, my)) {
+					_nextScreen = kScreenSite;
+					return false;
+				}
+				if (kPdaPartnerFootMapRect.contains(mx, my)) {
+					_nextScreen = kScreenMapAlt;
+					return false;
+				}
+				if (kPdaNotebookRect.contains(mx, my)) {
+					_nextScreen = kScreenNotebook;
+					return false;
+				}
+				if (kPdaGalleryRect.contains(mx, my)) {
+					_nextScreen = kScreenGallery;
+					return false;
+				}
+				if (kPdaHelpRect.contains(mx, my) ||
+					kPdaHelp2Rect.contains(mx, my)) {
+					setInteractiveMouseCursor(false);
+					doInterfaceHelp(0);
+					dirty = true;
+					continue;
+				}
 				// Page navigation — `_NoteButtons[5]` / `[6]`,
 				// dispatched in `_HandleAccuseNoteButton @
 				// 1df2:0990`. Only effective if there's another
@@ -3548,42 +3588,18 @@ bool EEMEngine::doAccuseNotes() {
 				for (uint i = 0; i < slotRects.size(); i++) {
 					if (slotRects[i].contains(mx, my)) {
 						const uint clueId = slotClues[i];
-						_mystery._noteSelected[clueId] ^= 1;
-						dirty = true;
-
-						// Debug: dump current user-selected score so
-						// the post-selection 100-point gate behaviour
-						// is visible while picking. Mirrors the
-						// floppy `FUN_1d40_0c48` (sum of `note[+6]`
-						// across `_NoteSelected != 0`) and the CD
-						// `selectedPoints()` (sum of `note[+2]` u16
-						// across `_NoteSelected != 0`).
-						{
-							int total = 0;
-							uint selectedCount = 0;
-							const uint maxIdx = MIN<uint>(niCount,
-								Mystery::kCluesFoundCap);
-							const bool floppy = isFloppy();
-							for (uint j = 0; j < maxIdx; j++) {
-								if (!_mystery._noteSelected[j])
-									continue;
-								selectedCount++;
-								if (floppy) {
-									total += (int)ni[j * 7 + 6];
-								} else {
-									const int16 pts =
-										(int16)READ_LE_UINT16(
-											ni + j * 4 + 2);
-									total += (int)pts;
-								}
+						if (!_mystery._noteSelected[clueId]) {
+							uint selected = 0;
+							for (uint j = 0; j < found.size(); j++) {
+								if (_mystery._noteSelected[found[j]])
+									selected++;
 							}
-							warning("EEM accuse: clue %u %s "
-									"(selected=%u points=%d)",
-									clueId,
-									_mystery._noteSelected[clueId]
-										? "ON" : "OFF",
-									selectedCount, total);
+							if (selected >= expected)
+								break;
 						}
+						_mystery._noteSelected[clueId] =
+							_mystery._noteSelected[clueId] ? 0 : 1;
+						dirty = true;
 						break;
 					}
 				}
@@ -3730,12 +3746,14 @@ void EEMEngine::doAccuse() {
 
 	// ACCUSE-NOTES SCREEN — let the player commit which N clues they
 	// believe solve the case. Mirrors the click-driven selection of
-	// `_DoAccuse @ 1df2:0bdd`'s outer loop. ESC / cancel returns to
-	// the site (matches `_DoAccuse @ 1df2:0c11` writing
-	// `_NextScreen = 3` on ESC).
+	// `_DoAccuse @ 1df2:0bdd`'s outer loop. ESC returns to the site
+	// (matches `_DoAccuse @ 1df2:0c11` writing `_NextScreen = 3`);
+	// pointer navigation can also leave for the PDA, gallery, or map.
 	if (!doAccuseNotes()) {
-		_nextScreen = _lastScreen != kScreenInvalid
-						? (ScreenId)_lastScreen : kScreenSite;
+		if (_nextScreen == kScreenAccuse) {
+			_nextScreen = _lastScreen != kScreenInvalid
+							? (ScreenId)_lastScreen : kScreenSite;
+		}
 		return;
 	}
 
@@ -4630,10 +4648,12 @@ void EEMEngine::doAccuseFloppy() {
 	// matching the CD's `_DoAccuse @ 1df2:0bdd` expected count.
 	// `doAccuseNotes()` already handles this UI for both variants
 	// (note text reading is variant-aware via `noteTextOff`); it
-	// returns true on commit, false on ESC.
+	// returns true on commit, false on ESC / pointer navigation.
 	if (!doAccuseNotes()) {
-		_nextScreen = _lastScreen != kScreenInvalid
-			? (ScreenId)_lastScreen : kScreenSite;
+		if (_nextScreen == kScreenAccuse) {
+			_nextScreen = _lastScreen != kScreenInvalid
+				? (ScreenId)_lastScreen : kScreenSite;
+		}
 		return;
 	}
 
