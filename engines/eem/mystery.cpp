@@ -464,6 +464,23 @@ uint16 Mystery::noteIndexCount() const {
 	return (uint16)((_galleryOffset - _noteOffset) / stride);
 }
 
+bool Mystery::noteHasNotebookText(uint clueId) const {
+	const byte *ni = noteIndex();
+	const uint16 cnt = noteIndexCount();
+	if (!ni || clueId >= cnt)
+		return false;
+
+	if (!_isFloppy)
+		return true;
+
+	// `_DrawNotes_Floppy @ 15e0:01e8` first checks `_TextSeen[idx]`,
+	// then skips the row when `*(u16 *)(notes + idx * 7) == 0`.
+	// Many floppy dialog records are spoken-only lines: they must still
+	// be marked seen so site dialog does not repeat, but they are not
+	// notebook clues and should not render fallback "note N" labels.
+	return READ_LE_UINT16(ni + clueId * 7) != 0;
+}
+
 const byte *Mystery::kdTextIndex() const {
 	if (!isLoaded() || _kdTextOffset >= _data.size())
 		return nullptr;
