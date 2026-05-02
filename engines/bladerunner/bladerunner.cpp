@@ -1282,14 +1282,12 @@ void BladeRunnerEngine::gameTick() {
 		// We need to copy pixel by pixel, converting each pixel from 16 to 32bit
 		for (int y = 0; y < kOriginalGameHeight; ++y) {
 			for (int x = 0; x < kOriginalGameWidth; ++x) {
-				uint8 a, r, g, b;
-				//getGameDataColor(_zbuffer->getData()[y*kOriginalGameWidth + x], a, r, g, b);
-				a = 1;
+				uint8 r, g, b;
 				r = _zbuffer->getData()[y*kOriginalGameWidth + x] / 256;
 				g = r;
 				b = r;
 				void   *dstPixel = _surfaceFront.getBasePtr(x, y);
-				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.ARGBToColor(a, r, g, b));
+				drawPixel(_surfaceFront, dstPixel, _surfaceFront.format.RGBToColor(r, g, b));
 			}
 		}
 	}
@@ -2628,6 +2626,7 @@ bool BladeRunnerEngine::saveGame(Common::WriteStream &stream, Graphics::Surface 
 		else
 			Graphics::saveThumbnail(s);
 	} else {
+		// TODO: Do we need to set the alpha channel for original save files?
 		thumb->convertToInPlace(gameDataPixelFormat());
 
 		uint16 *thumbnailData = (uint16*)thumb->getPixels();
@@ -2921,20 +2920,16 @@ void BladeRunnerEngine::blitToScreen(const Graphics::Surface &src) const {
 
 Graphics::Surface BladeRunnerEngine::generateThumbnail() const {
 	Graphics::Surface thumbnail;
-	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, gameDataPixelFormat());
+	thumbnail.create(kOriginalGameWidth / 8, kOriginalGameHeight / 8, _surfaceFront.format);
 
 	for (int y = 0; y < thumbnail.h; ++y) {
 		for (int x = 0; x < thumbnail.w; ++x) {
-			uint8 r, g, b;
-
-			uint32  srcPixel = READ_UINT32(_surfaceFront.getBasePtr(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1)));
-			void   *dstPixel = thumbnail.getBasePtr(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1));
-
-			// Throw away alpha channel as it is not needed
-			_surfaceFront.format.colorToRGB(srcPixel, r, g, b);
-			drawPixel(thumbnail, dstPixel, thumbnail.format.RGBToColor(r, g, b));
+			uint32 srcPixel = _surfaceFront.getPixel(CLIP(x * 8, 0, _surfaceFront.w - 1), CLIP(y * 8, 0, _surfaceFront.h - 1));
+			thumbnail.setPixel(CLIP(x, 0, thumbnail.w - 1), CLIP(y, 0, thumbnail.h - 1), srcPixel);
 		}
 	}
+
+	thumbnail.convertToInPlace(gameDataPixelFormat());
 
 	return thumbnail;
 }
