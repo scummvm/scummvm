@@ -2806,286 +2806,313 @@ void EEMEngine::doBigMap() {
 
 	CursorMan.showMouse(true);
 
-	// `_GetPalette(0x24)` per `_DoBigMap @ 20fe:09e7`.
-	setSitePalette(0x24);
-
-	const Common::Rect kSetupRect(0xc7, 0x12, 0xc7 + 0x32, 0x12 + 0xa); // approx; original from globals
-	(void)kSetupRect; // not yet wired into our overlay
-
-	// ------------------------------------------------------------------
-	// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
-	// ------------------------------------------------------------------
-
-	// Anchor for the partner-sprite timeline. `_DoBigMap`'s
-	// `_NewAnimation` call seeds the slot's frame index to 0xffff so
-	// the first `_UpdateAnimations` tick starts at script[0]; we mirror
-	// that by passing elapsed-since-open (zero on the first paint) into
-	// `bigMapPartnerFrameAtTick`, which plays the unfold once and then
-	// loops the wait sequence.
-	const uint32 mapStartTick = g_system->getMillis();
-	drawBigMapOverview(0);
-	uint32 mapLastTick = mapStartTick;
-
-	// Static rectangles read directly from the binary at the labelled
-	// addresses (CD `29be:0x1596` / floppy `2608:0x13fe..0x143e`).
-	// Format is {x1, y1, x2, y2}. The floppy click table at
-	// `2608:1436` (verified at `_BigMapInteractionLoop_Floppy @
-	// 1fed:0a3a`) puts the setup button at (251, 3, 315, 42) — 1 px
-	// up and 1 px left of the CD's (252, 4, 315, 42). The floppy
-	// PIC 0x42 BG paints the visible button border at the same
-	// pixels, so use the variant-specific rect to match the
-	// hit-test region the original uses for that variant.
-	const Common::Rect kBigMapWindow   (  0,   0, 247, 192); // 29be:1596
-	const Common::Rect kSetupBtnRect   = isFloppy()
-		? Common::Rect(251, 3, 315, 42)   // 2608:1436
-		: Common::Rect(252, 4, 315, 42);  // 29be:15ce
-
-	bool wantZoom = false;
-	int zoomX = 0;
-	int zoomY = 0;
 	while (!shouldQuit()) {
-		Common::Event ev;
-		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-				return;
-			if (ev.type == Common::EVENT_KEYDOWN &&
-				ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-				return;
-			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// SetupButtonRect → `_NextScreen = 6` (the original's
-				// settings screen, mirrors `_DoBigMap @ 20fe:0c33`
-				// where it pushes `_PressButton` then writes
-				// `_NextScreen = 6`). Now wired to the actual
-				// `doSetup` handler instead of dropping the player
-				// out to the launcher.
-				if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
-					_nextScreen = kScreenSetup;
+		setInteractiveMouseCursor(false);
+		setSitePalette(0x24); // `_GetPalette(0x24)` per `_DoBigMap @ 20fe:09e7`.
+
+		// ------------------------------------------------------------------
+		// STAGE 1 — Overview: PIC 0x42 + clickable site icons.
+		// ------------------------------------------------------------------
+
+		// Anchor for the partner-sprite timeline. `_DoBigMap`'s
+		// `_NewAnimation` call seeds the slot's frame index to 0xffff so
+		// the first `_UpdateAnimations` tick starts at script[0]; we mirror
+		// that by passing elapsed-since-open (zero on the first paint) into
+		// `bigMapPartnerFrameAtTick`, which plays the unfold once and then
+		// loops the wait sequence.
+		const uint32 mapStartTick = g_system->getMillis();
+		drawBigMapOverview(0);
+		uint32 mapLastTick = mapStartTick;
+
+		// Static rectangles read directly from the binary at the labelled
+		// addresses (CD `29be:0x1596` / floppy `2608:0x13fe..0x143e`).
+		// Format is {x1, y1, x2, y2}. The floppy click table at
+		// `2608:1436` (verified at `_BigMapInteractionLoop_Floppy @
+		// 1fed:0a3a`) puts the setup button at (251, 3, 315, 42) — 1 px
+		// up and 1 px left of the CD's (252, 4, 315, 42). The floppy
+		// PIC 0x42 BG paints the visible button border at the same
+		// pixels, so use the variant-specific rect to match the
+		// hit-test region the original uses for that variant.
+		const Common::Rect kBigMapWindow(0, 0, 247, 192); // 29be:1596
+		const Common::Rect kSetupBtnRect = isFloppy()
+			? Common::Rect(251, 3, 315, 42)   // 2608:1436
+			: Common::Rect(252, 4, 315, 42);  // 29be:15ce
+
+		bool wantZoom = false;
+		int zoomX = 0;
+		int zoomY = 0;
+		while (!shouldQuit()) {
+			Common::Event ev;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
+					return;
+				if (ev.type == Common::EVENT_KEYDOWN &&
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE)
+					return;
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					// SetupButtonRect → `_NextScreen = 6` (the original's
+					// settings screen, mirrors `_DoBigMap @ 20fe:0c33`
+					// where it pushes `_PressButton` then writes
+					// `_NextScreen = 6`). Now wired to the actual
+					// `doSetup` handler instead of dropping the player
+					// out to the launcher.
+					if (kSetupBtnRect.contains(ev.mouse.x, ev.mouse.y)) {
+						_nextScreen = kScreenSetup;
+						return;
+					}
+					// Click in the BigMapWindow → zoom. Original formula:
+					//   sx = mouseX*2 - 0x74; sy = mouseY*2 - 0x55
+					if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
+						int sx = ev.mouse.x * 2;
+						int sy = ev.mouse.y * 2;
+						sx = (sx < 0x75) ? 0 : sx - 0x74;
+						sy = (sy < 0x56) ? 0 : sy - 0x55;
+						zoomX = sx;
+						zoomY = sy;
+						wantZoom = true;
+						break;
+					}
+				}
+			}
+			if (wantZoom)
+				break;
+
+			// Cycle the partner-sprite frame every 100 ms (matching the
+			// original's `_CheckFrameRate` cadence inside `_DoBigMap`).
+			const uint32 now = g_system->getMillis();
+			if (now - mapLastTick >= 100) {
+				mapLastTick = now;
+				drawBigMapOverview(now - mapStartTick);
+				cyclePaletteRange(0xf7, 0xfa);
+				cyclePaletteRange(0xfb, 0xfe);
+			}
+			g_system->updateScreen();
+			g_system->delayMillis(10);
+		}
+
+		if (!wantZoom)
+			return;
+
+		// ------------------------------------------------------------------
+		// STAGE 2 — Detail zoom: PIC 0x43 frame + scrollable BIGMAP.PIC
+		// viewport at (2, 2), 0xe9 × 0xab. Click on a stamped icon → travel.
+		// ------------------------------------------------------------------
+
+		Common::File f;
+		if (!f.open(Common::Path("BIGMAP.PIC"))) {
+			warning("doBigMap: BIGMAP.PIC missing for detail view");
+			return;
+		}
+		const uint16 mapH = f.readUint16LE();
+		const uint16 mapW = f.readUint16LE();
+		if (mapW == 0 || mapH == 0)
+			return;
+		Common::Array<byte> mapPixels((uint32)mapW * mapH);
+		if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
+			warning("doBigMap: short read on BIGMAP.PIC for detail view");
+			return;
+		}
+
+		const int kMapWinW = 0xe9; // 233
+		const int kMapWinH = 0xab; // 171
+		const int kMapWinX = 2;
+		const int kMapWinY = 2;
+
+		int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
+		int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
+
+		// Anchor the detail-screen partner timeline (mirrors `_DoMapScreen`'s
+		// `_NewAnimation` seeding the slot's frame index to 0xffff). The
+		// unfold (script 0x13) plays once, then `_SmallMapWaitSeq` loops.
+		const uint32 detailStartTick = g_system->getMillis();
+		drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
+		uint32 detailLastTick = detailStartTick;
+		bool returnToOverview = false;
+
+		// `SmallMapButtons[4]` is the large right-side panel below setup:
+		// CD/floppy both store `(252, 43, 320, 200)`. Its handler at
+		// CD `20fe:156c` kills the zoom animation, sets `_NextScreen = 1`
+		// and calls `_DoBigMap` again, so mouse players can return to the
+		// overview without leaving the map screen.
+		const Common::Rect kBigMapReturnRect(252, 43, 320, 200);
+		const Common::Rect kArrowYUp(237, 2, 247, 11);
+		const Common::Rect kArrowYDown(237, 163, 247, 172);
+		const Common::Rect kArrowXLeft(2, 175, 12, 185);
+		const Common::Rect kArrowXRight(224, 175, 234, 185);
+		const Common::Rect kXSlider(15, 175, 221, 185);
+		const Common::Rect kYSlider(237, 14, 247, 160);
+		const Common::Rect kDetailSetupBtn = isFloppy()
+			? Common::Rect(251, 3, 315, 42)   // 2608:1436
+			: Common::Rect(252, 4, 315, 42);  // 29be:15ce
+		const int kArrowStep = 16;
+		const int kSliderRange = mapW - kMapWinW;
+		const int kSliderRangeY = mapH - kMapWinH;
+		const Common::Point detailMouse =
+			g_system->getEventManager()->getMousePos();
+		setInteractiveMouseCursor(
+			kBigMapReturnRect.contains(detailMouse.x, detailMouse.y) ||
+			kDetailSetupBtn.contains(detailMouse.x, detailMouse.y));
+
+		while (!shouldQuit() && !returnToOverview) {
+			Common::Event ev;
+			bool dirty = false;
+			while (g_system->getEventManager()->pollEvent(ev)) {
+				if (ev.type == Common::EVENT_QUIT ||
+					ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					setInteractiveMouseCursor(false);
 					return;
 				}
-				// Click in the BigMapWindow → zoom. Original formula:
-				//   sx = mouseX*2 - 0x74; sy = mouseY*2 - 0x55
-				if (kBigMapWindow.contains(ev.mouse.x, ev.mouse.y)) {
-					int sx = ev.mouse.x * 2;
-					int sy = ev.mouse.y * 2;
-					sx = (sx < 0x75) ? 0 : sx - 0x74;
-					sy = (sy < 0x56) ? 0 : sy - 0x55;
-					zoomX = sx;
-					zoomY = sy;
-					wantZoom = true;
-					break;
-				}
-			}
-		}
-		if (wantZoom)
-			break;
-		// Cycle the partner-sprite frame every 100 ms (matching the
-		// original's `_CheckFrameRate` cadence inside `_DoBigMap`).
-		const uint32 now = g_system->getMillis();
-		if (now - mapLastTick >= 100) {
-			mapLastTick = now;
-			drawBigMapOverview(now - mapStartTick);
-			cyclePaletteRange(0xf7, 0xfa);
-			cyclePaletteRange(0xfb, 0xfe);
-		}
-		g_system->updateScreen();
-		g_system->delayMillis(10);
-	}
-
-	if (!wantZoom)
-		return;
-
-	// ------------------------------------------------------------------
-	// STAGE 2 — Detail zoom: PIC 0x43 frame + scrollable BIGMAP.PIC
-	// viewport at (2, 2), 0xe9 × 0xab. Click on a stamped icon → travel.
-	// ------------------------------------------------------------------
-
-	Common::File f;
-	if (!f.open(Common::Path("BIGMAP.PIC"))) {
-		warning("doBigMap: BIGMAP.PIC missing for detail view");
-		return;
-	}
-	const uint16 mapH = f.readUint16LE();
-	const uint16 mapW = f.readUint16LE();
-	if (mapW == 0 || mapH == 0)
-		return;
-	Common::Array<byte> mapPixels((uint32)mapW * mapH);
-	if (f.read(mapPixels.data(), mapPixels.size()) != mapPixels.size()) {
-		warning("doBigMap: short read on BIGMAP.PIC for detail view");
-		return;
-	}
-
-	const int kMapWinW = 0xe9; // 233
-	const int kMapWinH = 0xab; // 171
-	const int kMapWinX = 2;
-	const int kMapWinY = 2;
-
-	int scrollX = MAX<int>(0, MIN<int>(mapW - kMapWinW, zoomX));
-	int scrollY = MAX<int>(0, MIN<int>(mapH - kMapWinH, zoomY));
-
-	// Anchor the detail-screen partner timeline (mirrors `_DoMapScreen`'s
-	// `_NewAnimation` seeding the slot's frame index to 0xffff). The
-	// unfold (script 0x13) plays once, then `_SmallMapWaitSeq` loops.
-	const uint32 detailStartTick = g_system->getMillis();
-	drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH, 0);
-	uint32 detailLastTick = detailStartTick;
-
-	while (!shouldQuit()) {
-		Common::Event ev;
-		bool dirty = false;
-		while (g_system->getEventManager()->pollEvent(ev)) {
-			if (ev.type == Common::EVENT_QUIT ||
-				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
-				return;
-			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return;  // exit detail back to caller (site loop / engine)
-				const int kStep = 16;
-				if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
-					scrollX = MAX<int>(0, scrollX - kStep);
-					dirty = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
-					scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW),
-						scrollX + kStep);
-					dirty = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
-					scrollY = MAX<int>(0, scrollY - kStep);
-					dirty = true;
-				} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
-					scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH),
-						scrollY + kStep);
-					dirty = true;
-				}
-			}
-			if (ev.type == Common::EVENT_LBUTTONDOWN) {
-				// Scroll arrows + slider rects live in `SmallMapButtons`
-				// at 29be:0x159e (six 8-byte rects in order: Y-up, Y-down,
-				// X-left, X-right, right-panel, top-right) plus the
-				// dedicated `XSliderRect @ 29be:15d6` and
-				// `YSliderRect @ 29be:15de`. Format {x1,y1,x2,y2}.
-				const Common::Rect kArrowYUp   (237,   2, 247,  11);
-				const Common::Rect kArrowYDown (237, 163, 247, 172);
-				const Common::Rect kArrowXLeft (  2, 175,  12, 185);
-				const Common::Rect kArrowXRight(224, 175, 234, 185);
-				const Common::Rect kXSlider    ( 15, 175, 221, 185);
-				const Common::Rect kYSlider    (237,  14, 247, 160);
-				const Common::Rect kSetupBtn = isFloppy()
-					? Common::Rect(251, 3, 315, 42)   // 2608:1436
-					: Common::Rect(252, 4, 315, 42);  // 29be:15ce
-
-				const int kArrowStep = 16;
-				const int kSliderRange = mapW - kMapWinW;
-				const int kSliderRangeY = mapH - kMapWinH;
-
-				if (kSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
-					// `_DoMapScreen @ 20fe:1560` writes `_NextScreen
-					// = 6` (= kScreenSetup) and `INC [BP-8]` to bail
-					// out of the detail loop — verified via the byte
-					// search for `c7 06 16 79 06 00`, which finds the
-					// imm at exactly this site and `_DoBigMap @
-					// 20fe:0c33`. Same `SetupButtonRect @ 29be:15ce`
-					// rect used by both the overview and the detail
-					// (no per-screen rect duplication in the binary).
-					// The detail/zoom state is lost on return because
-					// the screen driver re-enters BigMap at stage 1 —
-					// this matches the original behaviour.
-					_nextScreen = kScreenSetup;
-					return;
-				}
-				if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
-					scrollY = MAX<int>(0, scrollY - kArrowStep);
-					dirty = true;
-				} else if (kArrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
-					scrollY = MIN<int>(MAX<int>(0, kSliderRangeY),
-						scrollY + kArrowStep);
-					dirty = true;
-				} else if (kArrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
-					scrollX = MAX<int>(0, scrollX - kArrowStep);
-					dirty = true;
-				} else if (kArrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
-					scrollX = MIN<int>(MAX<int>(0, kSliderRange),
-						scrollX + kArrowStep);
-					dirty = true;
-				} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
-					// Click on X slider track → jump scrollX so the
-					// click position maps proportionally into the map.
-					if (kSliderRange > 0) {
-						const int t = ev.mouse.x - kXSlider.left;
-						const int tw = kXSlider.width();
-						scrollX = MAX<int>(0, MIN<int>(kSliderRange,
-							t * kSliderRange / MAX<int>(1, tw)));
+				if (ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+						setInteractiveMouseCursor(false);
+						return;  // exit detail back to caller (site loop / engine)
+					}
+					const int kStep = 16;
+					if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
+						scrollX = MAX<int>(0, scrollX - kStep);
+						dirty = true;
+					} else if (ev.kbd.keycode == Common::KEYCODE_RIGHT) {
+						scrollX = MIN<int>(MAX<int>(0, mapW - kMapWinW),
+							scrollX + kStep);
+						dirty = true;
+					} else if (ev.kbd.keycode == Common::KEYCODE_UP) {
+						scrollY = MAX<int>(0, scrollY - kStep);
+						dirty = true;
+					} else if (ev.kbd.keycode == Common::KEYCODE_DOWN) {
+						scrollY = MIN<int>(MAX<int>(0, mapH - kMapWinH),
+							scrollY + kStep);
 						dirty = true;
 					}
-				} else if (kYSlider.contains(ev.mouse.x, ev.mouse.y)) {
-					if (kSliderRangeY > 0) {
-						const int t = ev.mouse.y - kYSlider.top;
-						const int th = kYSlider.height();
-						scrollY = MAX<int>(0, MIN<int>(kSliderRangeY,
-							t * kSliderRangeY / MAX<int>(1, th)));
-						dirty = true;
+				}
+				if (ev.type == Common::EVENT_MOUSEMOVE)
+					setInteractiveMouseCursor(
+						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
+						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
+				if (ev.type == Common::EVENT_LBUTTONDOWN) {
+					setInteractiveMouseCursor(
+						kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y) ||
+						kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y));
+					if (kDetailSetupBtn.contains(ev.mouse.x, ev.mouse.y)) {
+						// `_DoMapScreen @ 20fe:1560` writes `_NextScreen
+						// = 6` (= kScreenSetup) and `INC [BP-8]` to bail
+						// out of the detail loop — verified via the byte
+						// search for `c7 06 16 79 06 00`, which finds the
+						// imm at exactly this site and `_DoBigMap @
+						// 20fe:0c33`. Same `SetupButtonRect @ 29be:15ce`
+						// rect used by both the overview and the detail
+						// (no per-screen rect duplication in the binary).
+						// The detail/zoom state is lost on return because
+						// the screen driver re-enters BigMap at stage 1 —
+						// this matches the original behaviour.
+						_nextScreen = kScreenSetup;
+						setInteractiveMouseCursor(false);
+						return;
 					}
-				} else if (ev.mouse.x >= kMapWinX &&
-						   ev.mouse.x < kMapWinX + kMapWinW &&
-						   ev.mouse.y >= kMapWinY &&
-						   ev.mouse.y < kMapWinY + kMapWinH) {
-					// Hit-test the per-site button at its actual bbox
-					// (`_StampButtons` records the rect at SmallMap +8/+0xa
-					// with the button PIC's width/height).
-					const bool fmap = _mystery.isLoaded() && isFloppy();
-					for (uint i = 0; i < _mystery.numSites(); i++) {
-						if (!_mystery._onSites[i] &&
-							i != _mystery._siteNumber)
-							continue;
-						const byte *entry = _mystery.mapEntry(i);
-						if (!entry)
-							continue;
-						uint16 mx;
-						uint16 my;
-						uint16 buttonId;
-						if (fmap) {
-							// Floppy detail view: click rect on
-							// BIGMAP.PIC at (+0, +2), labelled BUTTON.DBD
-							// entry ID at entry+4 (per
-							// `FUN_1fed_0c3e @ 1fed:0c3e`).
-							mx = READ_LE_UINT16(entry + 0x0);
-							my = READ_LE_UINT16(entry + 0x2);
-							buttonId = (uint16)entry[0x4];
-						} else {
-							buttonId = READ_LE_UINT16(entry + 0x0);
-							mx       = READ_LE_UINT16(entry + 0x8);
-							my       = READ_LE_UINT16(entry + 0xa);
+					if (kBigMapReturnRect.contains(ev.mouse.x, ev.mouse.y)) {
+						returnToOverview = true;
+						break;
+					} else if (kArrowYUp.contains(ev.mouse.x, ev.mouse.y)) {
+						scrollY = MAX<int>(0, scrollY - kArrowStep);
+						dirty = true;
+					} else if (kArrowYDown.contains(ev.mouse.x, ev.mouse.y)) {
+						scrollY = MIN<int>(MAX<int>(0, kSliderRangeY),
+							scrollY + kArrowStep);
+						dirty = true;
+					} else if (kArrowXLeft.contains(ev.mouse.x, ev.mouse.y)) {
+						scrollX = MAX<int>(0, scrollX - kArrowStep);
+						dirty = true;
+					} else if (kArrowXRight.contains(ev.mouse.x, ev.mouse.y)) {
+						scrollX = MIN<int>(MAX<int>(0, kSliderRange),
+							scrollX + kArrowStep);
+						dirty = true;
+					} else if (kXSlider.contains(ev.mouse.x, ev.mouse.y)) {
+						// Click on X slider track → jump scrollX so the
+						// click position maps proportionally into the map.
+						if (kSliderRange > 0) {
+							const int t = ev.mouse.x - kXSlider.left;
+							const int tw = kXSlider.width();
+							scrollX = MAX<int>(0, MIN<int>(kSliderRange,
+								t * kSliderRange / MAX<int>(1, tw)));
+							dirty = true;
 						}
-						Picture button;
-						int bw = 16;
-						int bh = 16;
-						if (_buttonArchive.loadEntry(buttonId, button)) {
-							bw = button.surface.w;
-							bh = button.surface.h;
+					} else if (kYSlider.contains(ev.mouse.x, ev.mouse.y)) {
+						if (kSliderRangeY > 0) {
+							const int t = ev.mouse.y - kYSlider.top;
+							const int th = kYSlider.height();
+							scrollY = MAX<int>(0, MIN<int>(kSliderRangeY,
+								t * kSliderRangeY / MAX<int>(1, th)));
+							dirty = true;
 						}
-						const int sx = (int)mx - scrollX + kMapWinX;
-						const int sy = (int)my - scrollY + kMapWinY;
-						if (ev.mouse.x >= sx && ev.mouse.x < sx + bw &&
-							ev.mouse.y >= sy && ev.mouse.y < sy + bh) {
-							_mystery._lastSite = _mystery._siteNumber;
-							_mystery._siteNumber = (uint16)i;
-							return;
+					} else if (ev.mouse.x >= kMapWinX &&
+							   ev.mouse.x < kMapWinX + kMapWinW &&
+							   ev.mouse.y >= kMapWinY &&
+							   ev.mouse.y < kMapWinY + kMapWinH) {
+						// Hit-test the per-site button at its actual bbox
+						// (`_StampButtons` records the rect at SmallMap +8/+0xa
+						// with the button PIC's width/height).
+						const bool fmap = _mystery.isLoaded() && isFloppy();
+						for (uint i = 0; i < _mystery.numSites(); i++) {
+							if (!_mystery._onSites[i] &&
+								i != _mystery._siteNumber)
+								continue;
+							const byte *entry = _mystery.mapEntry(i);
+							if (!entry)
+								continue;
+							uint16 mx;
+							uint16 my;
+							uint16 buttonId;
+							if (fmap) {
+								// Floppy detail view: click rect on
+								// BIGMAP.PIC at (+0, +2), labelled BUTTON.DBD
+								// entry ID at entry+4 (per
+								// `FUN_1fed_0c3e @ 1fed:0c3e`).
+								mx = READ_LE_UINT16(entry + 0x0);
+								my = READ_LE_UINT16(entry + 0x2);
+								buttonId = (uint16)entry[0x4];
+							} else {
+								buttonId = READ_LE_UINT16(entry + 0x0);
+								mx       = READ_LE_UINT16(entry + 0x8);
+								my       = READ_LE_UINT16(entry + 0xa);
+							}
+							Picture button;
+							int bw = 16;
+							int bh = 16;
+							if (_buttonArchive.loadEntry(buttonId, button)) {
+								bw = button.surface.w;
+								bh = button.surface.h;
+							}
+							const int sx = (int)mx - scrollX + kMapWinX;
+							const int sy = (int)my - scrollY + kMapWinY;
+							if (ev.mouse.x >= sx && ev.mouse.x < sx + bw &&
+								ev.mouse.y >= sy && ev.mouse.y < sy + bh) {
+								_mystery._lastSite = _mystery._siteNumber;
+								_mystery._siteNumber = (uint16)i;
+								setInteractiveMouseCursor(false);
+								return;
+							}
 						}
 					}
 				}
 			}
+			if (returnToOverview)
+				break;
+
+			// Cycle the partner sprite at 100 ms ticks (same cadence as
+			// `_DoMapScreen`'s `_CheckFrameRate` + `_UpdateAnimations` loop).
+			const uint32 now = g_system->getMillis();
+			if (now - detailLastTick >= 100) {
+				detailLastTick = now;
+				dirty = true;
+			}
+			if (dirty)
+				drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
+					now - detailStartTick);
+			g_system->updateScreen();
+			g_system->delayMillis(10);
 		}
-		// Cycle the partner sprite at 100 ms ticks (same cadence as
-		// `_DoMapScreen`'s `_CheckFrameRate` + `_UpdateAnimations` loop).
-		const uint32 now = g_system->getMillis();
-		if (now - detailLastTick >= 100) {
-			detailLastTick = now;
-			dirty = true;
-		}
-		if (dirty)
-			drawBigMapDetail(scrollX, scrollY, mapPixels, mapW, mapH,
-							 now - detailStartTick);
-		g_system->updateScreen();
-		g_system->delayMillis(10);
+		if (!returnToOverview)
+			return;
 	}
 }
 
