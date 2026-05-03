@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	fool_prologue.o \
 	fool_reveal.o \
 	fool_sentence.o \
+	fool_straightpath.o \
 	fool_sun.o \
 	fool_thoth.o \
 	fool_wordsearch.o \

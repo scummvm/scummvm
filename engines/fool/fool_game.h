@@ -310,17 +310,16 @@ public:
 	void metapuzzleOnClick(); // sub_138_1b4
 	void sub_138_21e();
 	void sub_138_3e0();
-	void sub_138_49e();
-	void sub_138_550();
-	void sub_138_864();
+	void metapuzzleWheel(); // sub_138_49e
+	void metapuzzleSecretCode(); // sub_138_550
+	void metapuzzleSecretCodeDrawText(); // sub_138_864
 	void sub_138_9c4();
 	void sub_138_a06();
-	void sub_138_a22();
+	void metapuzzleSecretCodeReset(); // sub_138_a22
 	void sub_138_a90();
 	void metapuzzleOnOption(); // sub_138_b06
 	void metapuzzleOnShift(); // sub_138_b6a
 
-	void sub_143_004();
 
 	// fool_cards.cpp
 	void cardsRun(); // sub_139_004
@@ -399,6 +398,14 @@ public:
 	void justiceResetGrid(); // sub_142_11fe
 
 	void hermitRun(); // sub_142_12ac
+
+	// fool_straightpath.cpp
+	void straightPathRun(); // sub_143_004
+	void straightPathOnClick(); // sub_143_5c0
+	void straightPathReset(); // sub_143_784
+	void straightPathDrawText(); // sub_143_864
+	void straightPathClearText(); // sub_143_890
+	void straightPathSuccess(); // sub_143_8b0
 
 	void sub_144_004();
 

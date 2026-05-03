@@ -150,7 +150,7 @@ void FoolGame::sub_138_21e() {
 		jumbleRun();
 	}
 	if (activePuzzle == 0x56) {
-		sub_143_004();
+		straightPathRun();
 	}
 	if (activePuzzle == 0x57) {
 		sub_128_962(arr_i16_4d20[28], arr_i16_4d20[0x1c+1], arr_i16_4d20[0x1c+2], arr_i16_4d20[0x1c+3], 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kPatXor, 0x1a);
@@ -158,10 +158,10 @@ void FoolGame::sub_138_21e() {
 	}
 	// 138:0334
 	if ((activePuzzle >= 0x58) && (activePuzzle <= 0x5b)) {
-		sub_138_550();
+		metapuzzleSecretCode();
 	}
 	if (activePuzzle == 0x5c) {
-		sub_138_49e();
+		metapuzzleWheel();
 	}
 	puzzleSaveContext();
 	if ((activePuzzle == 0x55) && (puzzleCompletionStatus[0x55] == 0x64)) {
@@ -191,7 +191,7 @@ void FoolGame::sub_138_3e0() {
 	}
 }
 
-void FoolGame::sub_138_49e() {
+void FoolGame::metapuzzleWheel() {
 	// 138:049e
 	for (int16 i = 1; i <= 2; i++) {
 		sub_128_962(arr_i16_4d20[0x30], arr_i16_4d20[0x30 + 1], arr_i16_4d20[0x30 + 2], arr_i16_4d20[0x30 + 3], 0x6e, 7, 0x100, 0x5d, 0x1, kPatXor, 0x1a);
@@ -201,7 +201,7 @@ void FoolGame::sub_138_49e() {
 	sub_128_61c2();
 }
 
-void FoolGame::sub_138_550() {
+void FoolGame::metapuzzleSecretCode() {
 	// 138:0550
 	var_i16_c00 = 1;
 	for (int16 i = 1; i <= 2; i++) {
@@ -228,7 +228,7 @@ void FoolGame::sub_138_550() {
 	// 138:06c4
 	if (activePuzzle == 0x5b) {
 		var_str_1170 = g_zbasic->str(270); // treasure name
-		var_i16_1aa2 = 5;
+		var_i16_1aa2 = 9;
 		var_str_1f0c = g_zbasic->str(271); // ZYXWVUTSRQPONMLKJIHGFEDCBA
 	}
 	// 138:06fe
@@ -243,7 +243,7 @@ void FoolGame::sub_138_550() {
 	temp.right = arr_i16_1eb8[3];
 	g_toolbox->FillRect(temp, arr_pat_58f4[2]);
 	if (activePuzzleBuffer.empty()) { // was: str(272)
-		sub_138_a22();
+		metapuzzleSecretCodeReset();
 	} else {
 		// 138:0778
 		var_str_1272 = activePuzzleBuffer;
@@ -266,7 +266,7 @@ void FoolGame::sub_138_550() {
 			// 138:07ec
 			getNextEvent(-1);
 			if (keyLastPressed > 0) {
-				sub_138_864();
+				metapuzzleSecretCodeDrawText();
 				keyLastPressed = 0;
 			}
 			if (var_str_1272 == var_str_1170) {
@@ -276,7 +276,7 @@ void FoolGame::sub_138_550() {
 		}
 		// 138:0822
 		if (stateFlags == kStateUndo) {
-			sub_138_a22();
+			metapuzzleSecretCodeReset();
 		}
 		activePuzzleBuffer = var_str_1272;
 		if (stateFlags == kStateSaveGame) {
@@ -285,8 +285,7 @@ void FoolGame::sub_138_550() {
 	}
 }
 
-void FoolGame::sub_138_864() {
-	warning(__func__);
+void FoolGame::metapuzzleSecretCodeDrawText() {
 	// 138:0864
 	if ((keyLastPressed == 3) || (keyLastPressed == 0xd)) {
 		sub_138_a06();
@@ -295,7 +294,7 @@ void FoolGame::sub_138_864() {
 	if ((keyLastPressed >= 0x61) && (keyLastPressed <= 0x7a)) {
 		keyLastPressed -= 0x20;
 	}
-	if ((keyLastPressed >= 0x41) && (keyLastPressed <= 0x5a)) {
+	if (!((keyLastPressed >= 0x41) && (keyLastPressed <= 0x5a))) {
 		return;
 	}
 	g_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
@@ -335,10 +334,10 @@ void FoolGame::sub_138_a06() {
 	sub_128_50e(0x19, 0x64, 1);
 	if (var_i16_200c == 0)
 		return;
-	sub_138_a22();
+	metapuzzleSecretCodeReset();
 }
 
-void FoolGame::sub_138_a22() {
+void FoolGame::metapuzzleSecretCodeReset() {
 	// 138:0a22
 	Common::Rect temp;
 	temp.top = arr_i16_1eb8[0];
@@ -464,10 +463,5 @@ void FoolGame::metapuzzleOnShift() {
 	g_toolbox->SetPort(var_i32_0);
 	sub_128_61ec();
 }
-
-void FoolGame::sub_143_004() {
-	warning("STUB: %s", __func__);
-}
-
 
 }
