@@ -278,7 +278,7 @@ public:
 	void sub_136_2538();
 
 	void sub_136_2582();
-	void sub_136_2664();
+	void mazeDrawPlayer(); // sub_136_2664
 	void sub_136_274e();
 	void sub_136_2a7c();
 	void sub_136_2b30();
@@ -314,10 +314,11 @@ public:
 	void sub_138_550();
 	void sub_138_864();
 	void sub_138_9c4();
+	void sub_138_a06();
 	void sub_138_a22();
 	void sub_138_a90();
-	void sub_138_b06();
-	void sub_138_b6a();
+	void metapuzzleOnOption(); // sub_138_b06
+	void metapuzzleOnShift(); // sub_138_b6a
 
 	void sub_143_004();
 
@@ -618,6 +619,7 @@ private:
 	int16 var_i16_1ce0;
 	Common::String var_str_1ce2;
 
+	int16 var_i16_1de2;
 	int16 var_i16_1de4;
 
 	int16 var_i16_1de6;
@@ -625,6 +627,8 @@ private:
 	int16 var_i16_1de8;
 	int16 var_i16_1dea;
 	int16 var_i16_1dec;
+
+	int16 var_i16_1df0;
 
 	PatternMode var_i16_1dee;
 	SourceMode var_src_1dee;
