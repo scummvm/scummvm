@@ -1,0 +1,219 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "graphics/managed_surface.h"
+
+#include "fool/fool.h"
+#include "fool/fool_game.h"
+#include "fool/toolbox.h"
+#include "fool/zbasic.h"
+
+namespace Fool {
+
+extern ZBasic *g_zbasic;
+extern Toolbox *g_toolbox;
+
+void FoolGame::straightPathRun() {
+	// 143:0004
+	sub_128_271a();
+	for (int16 i = 0; i <= 0xe; i++) {
+		arr_i16_1eb8[i] = puzzlesReadShort();
+	}
+	var_i16_484 = 0;
+	var_i16_68c = arr_i16_1eb8[8];
+	do {
+		var_i16_68a = arr_i16_1eb8[10];
+		do {
+			var_i16_484++;
+			g_toolbox->SetRect(
+				arr_rect_1f38[var_i16_484],
+				var_i16_68a,
+				var_i16_68c,
+				var_i16_68a + arr_i16_1eb8[13] - 1,
+				var_i16_68c + arr_i16_1eb8[12] - 1
+			);
+		} while (g_zbasic->incrAndCheck(var_i16_68a, arr_i16_1eb8[11], arr_i16_1eb8[6]));
+	} while (g_zbasic->incrAndCheck(var_i16_68c, arr_i16_1eb8[9], arr_i16_1eb8[7]));
+	// 143:0128
+	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
+		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+			arr_i16_2f38[i*32 + j] = 0;
+			arr_i16_3b38[i*32 + j] = 0;
+		}
+	}
+	// 143:01a4
+	var_str_1272.clear(); // was: str(366)
+	arr_i16_1eb8[15] = puzzlesReadShort();
+	for (int16 i = 1; i <= arr_i16_1eb8[15]; i++) {
+		var_i16_1a96 = puzzlesReadByte();
+		var_i16_1a98 = puzzlesReadByte();
+		g_zbasic->indexRawSet(puzzlesReadString(), 1, i);
+		arr_i16_2f38[var_i16_1a96*32 + var_i16_1a98] = i;
+		arr_i16_3b38[var_i16_1a96*32 + var_i16_1a98] = g_zbasic->asc(g_zbasic->leftStr(g_zbasic->index(1, i), 1));
+		var_str_1272 += g_zbasic->index(1, i);
+		// 143:0276
+	}
+	g_zbasic->text(0xfb, arr_i16_1eb8[14], 0, kSrcOr);
+	g_zbasic->unk_20();
+	// 143:02b6
+	for (int16 j = 0; j <= arr_i16_1eb8[1]; j++) {
+		Common::Rect temp;
+		temp.top = arr_i16_1eb8[8] + arr_i16_1eb8[7] * (j - 1);
+		temp.left = 0;
+		temp.bottom = temp.top + arr_i16_1eb8[7] + 2;
+		temp.right = SCREEN_WIDTH;
+		g_toolbox->FillRect(temp, arr_pat_58f4[0]);
+		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+			var_i16_1574 = (j - 1)*arr_i16_1eb8[0] + i;
+			if (arr_i16_3b38[i*32 + j] == 0) {
+				// 143:03c4
+				arr_i16_3b38[i*32 + j] = g_zbasic->rndInt(0x1a) + 0x40;
+			}
+			// 143:03f0
+			g_toolbox->MoveTo(
+				arr_rect_1f38[var_i16_1574].left + arr_i16_1eb8[2] - 1,
+				arr_rect_1f38[var_i16_1574].top + arr_i16_1eb8[3]
+			);
+			var_str_384 = g_zbasic->chr(arr_i16_3b38[i*32 + j]);
+			g_toolbox->DrawString(var_str_384);
+		}
+	}
+	straightPathDrawText();
+	// 143:04cc
+	var_i16_1574 = 0;
+	stateFlags = kStateNull;
+	if (var_str_1272 == activePuzzleBuffer) {
+		var_i16_d0c = 1;
+	} else {
+		var_i16_d0c = 0;
+	}
+	// JMP 0x582
+	while (((stateFlags & kStateReturn) == 0) && (var_i16_d0c == 0)) {
+		// 143:0500
+		while ((stateFlags == kStateNull) && (var_i16_d0c == 0)) {
+			getNextEvent(-1);
+			if (var_ev_46.what == kMouseDown) {
+				straightPathOnClick();
+			}
+			if ((keyLastPressed == 3) || (keyLastPressed == 0xd)) {
+				straightPathReset();
+			}
+			if (var_str_1272 == activePuzzleBuffer) {
+				var_i16_d0c = 1;
+			}
+		}
+		// 143:0574
+		if (stateFlags == kStateSaveGame) {
+			saveGame();
+		}
+	}
+	// 143:05ac
+	if (var_i16_d0c != 0) {
+		straightPathSuccess();
+	}
+}
+
+void FoolGame::straightPathOnClick() {
+	// 143:05c0
+	sub_128_2be(var_i16_68a, var_i16_68c);
+	if (var_i16_1574 > 0) {
+		g_toolbox->InvertRect(arr_rect_1f38[var_i16_1574]);
+		var_i16_1574 = 0;
+	}
+	// 143:05fc
+	if ((var_i16_68a < 1) || (var_i16_68a > arr_i16_1eb8[0]) || (var_i16_68c < 1) || (var_i16_68c > arr_i16_1eb8[1]))
+		return;
+	// 143:066c
+	var_i16_c04++;
+	if (arr_i16_2f38[var_i16_68a*32 + var_i16_68c] != var_i16_c04) {
+		activePuzzleBuffer += g_zbasic->chr(arr_i16_3b38[var_i16_68a*32 + var_i16_68c]);
+	} else {
+		// 143:06d8
+		activePuzzleBuffer += g_zbasic->indexRaw(1, var_i16_c04);
+	}
+	// 143:06fa
+	straightPathDrawText();
+	if (var_i16_c04 < arr_i16_1eb8[15]) {
+		var_i16_1574 = (var_i16_68c - 1)*arr_i16_1eb8[0] + var_i16_68a;
+		g_toolbox->InvertRect(arr_rect_1f38[var_i16_1574]);
+	} else {
+		// 143:0766
+		if (activePuzzleBuffer != var_str_1272.encode(Common::kMacRoman)) {
+			straightPathReset();
+		}
+	}
+	// 143:077e
+	sub_128_6186();
+}
+
+void FoolGame::straightPathReset() {
+	// 143:0784
+	if (var_i16_1574 > 0) {
+		g_toolbox->InvertRect(arr_rect_1f38[var_i16_1574]);
+	}
+	// 143:07a4
+	for (int16 i = 0; i <= 0x14; i++) {
+		var_i16_1574 = g_zbasic->rndInt(arr_i16_1eb8[0] * arr_i16_1eb8[1]);
+		g_toolbox->InvertRect(arr_rect_1f38[var_i16_1574]);
+		sub_128_50e(g_zbasic->rndInt(0x2328) + 0xf, 0x28, 0x1);
+		// 143:0812
+		g_toolbox->InvertRect(arr_rect_1f38[var_i16_1574]);
+	}
+	var_i16_c04 = 0;
+	activePuzzleBuffer.clear(); // was: str(367)
+	var_i16_1574 = 0;
+	keyLastPressed = 0;
+	straightPathClearText();
+}
+
+void FoolGame::straightPathDrawText() {
+	// 143:0864
+	straightPathClearText();
+	g_zbasic->text(0xfe, 0x18, 0x18, kSrcBic);
+	var_i16_7a2 = 0x148;
+	sub_128_918(activePuzzleBuffer);
+}
+
+void FoolGame::straightPathClearText() {
+	// 143:0890
+	fillRect(0x127, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2);
+}
+
+void FoolGame::straightPathSuccess() {
+	// 143:08b0
+	g_toolbox->PenMode(kPatBic);
+	g_toolbox->PenPat(arr_pat_58f4[1]);
+	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
+		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
+			if (arr_i16_2f38[i*32 + j] == 0) {
+				var_i16_1574 = (j - 1)*arr_i16_1eb8[0] + i;
+				g_toolbox->PaintRect(arr_rect_1f38[var_i16_1574]);
+			}
+			// 143:0936
+		}
+	}
+	g_toolbox->PenNormal();
+	sub_128_2664();
+	sub_128_61c2();
+}
+
+
+}

@@ -2968,9 +2968,12 @@ void FoolGame::sub_129_068() {
 	// 129:097c
 	this->var_i16_68a = 0x3c;
 	this->sub_129_123a();
+
 	// wadjet eye
 	this->var_pic_7c2 = g_toolbox->GetPicture(0x56);
 	g_toolbox->DetachResource(this->var_pic_7c2);
+	var_pic_1032 = g_toolbox->GetPicture(0xac);
+	g_toolbox->DetachResource(var_pic_1032);
 	// icon of a scroll
 	this->var_i32_c = g_toolbox->GetIcon(0x101);
 	g_toolbox->DetachResource(this->var_i32_c);
