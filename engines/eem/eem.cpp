@@ -864,6 +864,10 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 	// active audio so the theme / voice / spool don't bleed past
 	// the abort. Mirrors the `_CleanMysterySounds` + `_StopMIDI`
 	// pair around the title wait in `_DoOpeningAnims`.
+	//
+	// Only Return / KP-Enter / Space / Escape advance — letting any key
+	// dismiss balloons makes typing-while-reading (or a stuck modifier)
+	// blow past dialog the player hasn't finished reading.
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
 		Common::Event event;
@@ -877,8 +881,13 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_skipIntro = true;
 					interruptAudio();
+					return;
 				}
-				return;
+				if (event.kbd.keycode == Common::KEYCODE_RETURN ||
+					event.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					event.kbd.keycode == Common::KEYCODE_SPACE) {
+					return;
+				}
 			}
 		}
 		g_system->updateScreen();

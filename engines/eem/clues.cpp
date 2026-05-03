@@ -926,6 +926,9 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 		// Wait for click/key to advance — only if we drew something.
 		// ESC skips the entire dialogue rather than just one entry.
+		// Only Return / KP-Enter / Space advance one entry; other keys
+		// are ignored so accidental keystrokes don't blow past dialog
+		// the player hasn't finished reading.
 		if (hasText || (charPicId != 0 && charPicId != 0xFFFF)) {
 			bool advance = false;
 			bool skipAll = false;
@@ -950,8 +953,14 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						interruptAudio();
 						break;
 					}
-					if (ev.type == Common::EVENT_LBUTTONDOWN ||
-						ev.type == Common::EVENT_KEYDOWN) {
+					if (ev.type == Common::EVENT_LBUTTONDOWN) {
+						advance = true;
+						break;
+					}
+					if (ev.type == Common::EVENT_KEYDOWN &&
+						(ev.kbd.keycode == Common::KEYCODE_RETURN ||
+						 ev.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+						 ev.kbd.keycode == Common::KEYCODE_SPACE)) {
 						advance = true;
 						break;
 					}
