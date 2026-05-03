@@ -817,20 +817,15 @@ void SiteScreen::run() {
 
 			case Common::EVENT_KEYDOWN:
 				notePartnerActivity();
-				// `_DoSiteLoop @ 168d:07e1` only dispatches on the
-				// 6-entry table at `168d:09d5` (TAB / ENTER / arrow
-				// keys for hotspot cursor cycling) plus ESC handled
-				// separately at 168d:07a9. We don't implement the
-				// hotspot cursor cycling, so the only keyboard binding kept
-				// here is ESC (matches `_ESCHit` -> "Are you sure?" -> MAP).
+				// `_DoSiteLoop @ 168d:07e1` originally routed ESC
+				// through `_ESCHit` -> "Are you sure?" -> MAP. The
+				// site has visible MAP / SETUP / etc. controls along
+				// the top bar, so ESC now opens the ScummVM in-game
+				// menu (save / load / quit) instead of the back-nav
+				// shortcut.
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					_vm->setHotspotMouseCursor(false);
-					if (_vm->areYouSure()) {
-						_vm->setNextScreen(_vm->isFloppy() ? kScreenMapAlt
-														   : kScreenMap);
-						_vm->stopMusic();
-						return;
-					}
+					_vm->openMainMenuDialog();
 					enter(cur, false);
 					mouse = g_system->getEventManager()->getMousePos();
 					updateHotspotCursor(cur, mouse.x, mouse.y);

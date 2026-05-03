@@ -1934,9 +1934,8 @@ void EEMEngine::doActionScreen() {
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
 			if (k == Common::KEYCODE_ESCAPE) {
-				exitChosen = true;
-				confirmed = true;
-				break;
+				openMainMenuDialog();
+				continue;
 			}
 			if (k == Common::KEYCODE_RETURN ||
 				k == Common::KEYCODE_KP_ENTER) {
@@ -2173,6 +2172,13 @@ void EEMEngine::doCaseSelection() {
 					const uint idx = topRow + (uint)row;
 					if (idx >= listLen || solvedFlags[idx])
 						continue;
+					// Second click on the already-selected row counts as
+					// the OK button — saves the player a trip down to the
+					// bottom-bar after picking a mystery.
+					if (idx == selRow) {
+						confirmed = true;
+						break;
+					}
 					selRow = idx;
 					dirty = true;
 					continue;
@@ -2183,8 +2189,8 @@ void EEMEngine::doCaseSelection() {
 				continue;
 			const Common::KeyCode k = ev.kbd.keycode;
 			if (k == Common::KEYCODE_ESCAPE) {
-				_mystery.clear();
-				return;
+				openMainMenuDialog();
+				continue;
 			}
 			if (k == Common::KEYCODE_RETURN ||
 				k == Common::KEYCODE_KP_ENTER) {
@@ -2352,9 +2358,8 @@ void EEMEngine::doNotebook() {
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_nextScreen = kScreenSite;
-					exitFlag = true;
-					break;
+					openMainMenuDialog();
+					continue;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT ||
 					ev.kbd.keycode == Common::KEYCODE_PAGEUP) {
@@ -2724,9 +2729,8 @@ void EEMEngine::doGallery() {
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_nextScreen = kScreenSite;
-					exitFlag = true;
-					break;
+					openMainMenuDialog();
+					continue;
 				}
 			}
 			if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -3080,7 +3084,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 				}
 				if (e2.type == Common::EVENT_KEYDOWN &&
 					e2.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					back = true;
+					openMainMenuDialog();
+					redraw = true;
 					break;
 				}
 				if (e2.type == Common::EVENT_LBUTTONDOWN) {
@@ -3386,8 +3391,10 @@ void EEMEngine::doBigMap() {
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 					return;
 				if (ev.type == Common::EVENT_KEYDOWN &&
-					ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return;
+					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					openMainMenuDialog();
+					continue;
+				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN) {
 					// SetupButtonRect → `_NextScreen = 6` (the original's
 					// settings screen, mirrors `_DoBigMap @ 20fe:0c33`
@@ -3503,8 +3510,9 @@ void EEMEngine::doBigMap() {
 				}
 				if (ev.type == Common::EVENT_KEYDOWN) {
 					if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						setInteractiveMouseCursor(false);
-						return;  // exit detail back to caller (site loop / engine)
+						openMainMenuDialog();
+						dirty = true;
+						continue;
 					}
 					const int kStep = 16;
 					if (ev.kbd.keycode == Common::KEYCODE_LEFT) {
@@ -4144,8 +4152,9 @@ bool EEMEngine::doAccuseNotes() {
 			}
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					_nextScreen = kScreenSite;
-					return false;
+					openMainMenuDialog();
+					dirty = true;
+					continue;
 				}
 				if (ev.kbd.keycode == Common::KEYCODE_LEFT &&
 					page > 0) {
@@ -4666,7 +4675,9 @@ void EEMEngine::doAccuse() {
 			if (ev.type == Common::EVENT_KEYDOWN) {
 				switch (ev.kbd.keycode) {
 				case Common::KEYCODE_ESCAPE:
-					return;
+					openMainMenuDialog();
+					dirty = true;
+					continue;
 				case Common::KEYCODE_TAB:
 				case Common::KEYCODE_RIGHT:
 					highlighted = nextLiveSlot(slotRects, highlighted, +1);
@@ -5446,8 +5457,11 @@ void EEMEngine::doAccuseFloppy() {
 				ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 				return;
 			if (ev.type == Common::EVENT_KEYDOWN) {
-				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE)
-					return;
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					openMainMenuDialog();
+					drawGallery(highlighted, slotRects, slotSuspect);
+					continue;
+				}
 				if (ev.kbd.keycode == Common::KEYCODE_TAB ||
 					ev.kbd.keycode == Common::KEYCODE_RIGHT) {
 					highlighted = (highlighted + 1) % MAX<int>(1, (int)num);
