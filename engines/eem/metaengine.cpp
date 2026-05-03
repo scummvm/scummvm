@@ -43,6 +43,18 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_FIT_DIALOG_BALLOONS,
+		{
+			_s("Better fit for dialog balloons"),
+			_s("Pick a smaller speech-bubble graphic when the wrapped "
+			   "text doesn't need the original size."),
+			"fit_dialog_balloons",
+			false,
+			0,
+			0
+		}
+	},
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

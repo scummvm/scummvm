@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -84,6 +85,52 @@ const BalloonInsets kBalloonInsetTable[] = {
 	{ 5, 4, 238, 232, 66 }, { 5, 4, 238, 232, 71 }, { 5, 4, 238, 232, 95 },
 	{ 5, 8, 158, 160, 45 }, { 5, 8, 176, 176, 50 }, { 8, 7, 142, 142, 71 }
 };
+
+struct BalloonFamily {
+	uint16 first;
+	uint16 last;
+};
+
+const BalloonFamily kBalloonFamilies[] = {
+	{ 0x00, 0x06 },
+	{ 0x07, 0x0d },
+	{ 0x0e, 0x14 },
+	{ 0x15, 0x1b },
+	{ 0x1c, 0x22 },
+	{ 0x23, 0x29 },
+	{ 0x2a, 0x30 },
+	{ 0x31, 0x31 },
+	{ 0x32, 0x32 },
+	{ 0x33, 0x33 },
+};
+
+bool findBalloonFamily(uint16 balloonId, uint16 &first, uint16 &last) {
+	for (uint i = 0; i < ARRAYSIZE(kBalloonFamilies); i++) {
+		if (balloonId >= kBalloonFamilies[i].first &&
+			balloonId <= kBalloonFamilies[i].last) {
+			first = kBalloonFamilies[i].first;
+			last  = kBalloonFamilies[i].last;
+			return true;
+		}
+	}
+	first = last = balloonId;
+	return false;
+}
+
+// Lines that fit inside balloon @p balloonId. The metadata-table `indDY`
+// is the designed bottom of the text area, NOT the indicator-drawing
+// position alone — for families 3, 4, 6 and the singletons the bubble
+// graphic continues below `indDY` with shadow / tail decoration that
+// text must not encroach on. Image height is therefore an overestimate;
+// `indDY` is the artist-intended last text line.
+uint getBalloonLineCapacity(uint16 balloonId, int lineH) {
+	const uint idx = balloonId & 0x7F;
+	if (idx >= ARRAYSIZE(kBalloonInsetTable) || lineH <= 0)
+		return 0;
+
+	const BalloonInsets &insets = kBalloonInsetTable[idx];
+	return MAX<uint>(1, ((int)insets.indDY - (int)insets.y) / lineH + 1);
+}
 
 // Floppy KDHelp hotspot-searched check. Mirrors
 // `FUN_22dc_096c @ 22dc:096c`: walks the per-site dialog records at
@@ -229,6 +276,7 @@ void EEMEngine::doHelp() {
 
 		Common::String text = parseString(Common::String(txt),
 										   _playerName, _partner);
+		balloonIdx = fitBalloonToText((uint16)balloonIdx, text) & 0x7F;
 		Graphics::ManagedSurface ms(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
@@ -411,9 +459,10 @@ void EEMEngine::doHelp() {
 	// has to.
 	const byte firstChar =
 		text.empty() ? (byte)0 : (byte)text[0];
-	const uint16 bubNum = getKDTextBalloon(firstChar);
+	uint16 bubNum = getKDTextBalloon(firstChar);
 	if (firstChar >= '0' && firstChar <= '9')
 		text.deleteChar(0);
+	bubNum = fitBalloonToText(bubNum, text);
 	Picture balloon;
 	const bool haveBalloon =
 		_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -564,6 +613,72 @@ void EEMEngine::setPartnerEraseBg(const Graphics::ManagedSurface *bg) {
 	} else {
 		_partnerEraseBg.free();
 	}
+}
+
+uint16 EEMEngine::fitBalloonToText(uint16 bubNum,
+								   const Common::String &text) {
+	// Opt-in via the "Better fit for dialog balloons" game option, and
+	// CD-only — the floppy build's balloon archive / inset table hasn't
+	// been validated for shrinking yet, so leave it on the original
+	// artist-chosen bubble.
+	if (isFloppy() || !ConfMan.getBool("fit_dialog_balloons"))
+		return bubNum;
+
+	const uint16 originalId = bubNum & 0x7F;
+	if (bubNum == 0xFFFF || text.empty() || !_font.isLoaded() ||
+		originalId >= ARRAYSIZE(kBalloonInsetTable))
+		return bubNum;
+
+	const BalloonInsets &originalInsets = kBalloonInsetTable[originalId];
+	const int lineH = _font.getFontHeight();
+	const uint originalCapacity = getBalloonLineCapacity(originalId, lineH);
+	if (originalCapacity == 0)
+		return bubNum;
+
+	Common::Array<Common::String> lines;
+	_font.wordWrapText(text, MAX<int>(8, (int)originalInsets.w), lines);
+	if (lines.empty())
+		return bubNum;
+
+	const uint usedLines = lines.size();
+	if (usedLines > originalCapacity)
+		return bubNum;
+
+	uint16 familyFirst = 0;
+	uint16 familyLast = 0;
+	if (!findBalloonFamily(originalId, familyFirst, familyLast))
+		return bubNum;
+
+	uint16 chosenId = originalId;
+	uint chosenCapacity = originalCapacity;
+	debug(
+		   "fitBalloonToText: original 0x%02x, usedLines=%u, capacity=%u, family=0x%02x-0x%02x",
+		   (int)originalId, usedLines, originalCapacity,
+		   (int)familyFirst, (int)familyLast);
+	while (chosenId > familyFirst) {
+		if (chosenCapacity < usedLines)
+			break;
+
+		const uint16 candidateId = chosenId - 1;
+		if (candidateId >= ARRAYSIZE(kBalloonInsetTable) ||
+			kBalloonInsetTable[candidateId].w != originalInsets.w)
+			break;
+		const uint candidateCapacity =
+			getBalloonLineCapacity(candidateId, lineH);
+		if (candidateCapacity < usedLines)
+			break;
+		chosenId = candidateId;
+		chosenCapacity = candidateCapacity;
+	}
+
+	if (chosenId == originalId)
+		return bubNum;
+
+	debug(
+		   "fitBalloonToText: 0x%02x -> 0x%02x (%u lines, capacity %u -> %u)",
+		   (int)originalId, (int)chosenId, usedLines,
+		   originalCapacity, chosenCapacity);
+	return (bubNum & 0x80) | chosenId;
 }
 
 bool EEMEngine::getBalloonInsets(uint16 bubNum, uint16 &xInset,

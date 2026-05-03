@@ -4205,9 +4205,10 @@ void EEMEngine::doAccuse() {
 			g_system->unlockScreen();
 		}
 		const byte firstChar = (byte)entryText[0];
-		const uint16 bubNum = getKDTextBalloon(firstChar);
+		uint16 bubNum = getKDTextBalloon(firstChar);
 		if (firstChar >= '0' && firstChar <= '9')
 			entryText.deleteChar(0);
+		bubNum = fitBalloonToText(bubNum, entryText);
 		Picture balloon;
 		const bool haveBalloon =
 			_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -4329,13 +4330,14 @@ void EEMEngine::doAccuse() {
 		}
 		const byte firstChar =
 			hint.empty() ? (byte)0 : (byte)hint[0];
-		const uint16 bubNum = getKDTextBalloon(firstChar);
+		uint16 bubNum = getKDTextBalloon(firstChar);
 		// Strip the digit prefix used for balloon dispatch — it's
 		// consumed by the original at `_DisplayAlibi @ 1df2:0163`
 		// (`str = pbVar7 + 1`) and shouldn't appear in the rendered
 		// text. `_GetKDTextBalloon` itself doesn't advance past it.
 		if (firstChar >= '0' && firstChar <= '9')
 			hint.deleteChar(0);
+		bubNum = fitBalloonToText(bubNum, hint);
 		Picture balloon;
 		const bool haveBalloon =
 			_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -4413,7 +4415,7 @@ void EEMEngine::doAccuse() {
 				// the dispatch result is the same either way.
 				const byte firstChar =
 					hint.empty() ? (byte)0 : (byte)hint[0];
-				const uint16 bubNum = getKDTextBalloon(firstChar);
+				uint16 bubNum = getKDTextBalloon(firstChar);
 				// Strip the digit prefix used for balloon dispatch.
 				// `_DisplayAlibi @ 1df2:0163` does `str = pbVar7 + 1`
 				// after using `*str` for `bindx`. Same pattern used by
@@ -4422,6 +4424,7 @@ void EEMEngine::doAccuse() {
 				// the intro balloon shows e.g. "1Ready to solve?".
 				if (firstChar >= '0' && firstChar <= '9')
 					hint.deleteChar(0);
+				bubNum = fitBalloonToText(bubNum, hint);
 				Picture balloon;
 				const bool haveBalloon =
 					_balloonArchive.size() > (bubNum & 0x7F) &&
@@ -4660,7 +4663,8 @@ void EEMEngine::doAccuse() {
 		}
 		if (bindx >= 16)
 			bindx = 2;
-		const uint16 bubNum = kAlibiBubbles[bindx];
+		uint16 bubNum = kAlibiBubbles[bindx];
+		bubNum = fitBalloonToText(bubNum, alibi);
 
 		Picture alibiBg;
 		const bool haveAlibiBg = _picsArchive.getPicture(0x3e, alibiBg);
@@ -4825,9 +4829,10 @@ void EEMEngine::doAccuse() {
 			}
 			if (!react.empty()) {
 				const byte rChar = (byte)react[0];
-				const uint16 rBub = getKDTextBalloon(rChar);
+				uint16 rBub = getKDTextBalloon(rChar);
 				if (rChar >= '0' && rChar <= '9')
 					react.deleteChar(0);
+				rBub = fitBalloonToText(rBub, react);
 				Picture rBalloon;
 				const bool haveR =
 					_balloonArchive.size() > (rBub & 0x7F) &&
@@ -5085,6 +5090,7 @@ void EEMEngine::doAccuseFloppy() {
 		}
 		Common::String text =
 			parseString(Common::String(txt), _playerName, _partner);
+		balloonIdx = fitBalloonToText((uint16)balloonIdx, text) & 0x7F;
 		Graphics::ManagedSurface ms(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		Graphics::Surface *cur = g_system->lockScreen();
@@ -5620,6 +5626,7 @@ void EEMEngine::doAccuseFloppy() {
 		balloonRaw = kFloppyAlibiBalloonByDigit[(int)(alibi[0] - '0')];
 		alibi.deleteChar(0);
 	}
+	balloonRaw = fitBalloonToText((uint16)balloonRaw, alibi);
 	const uint balloonIdx = balloonRaw & 0x7F;
 	const bool flipBalloon = (balloonRaw & 0x80) != 0;
 

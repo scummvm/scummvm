@@ -808,12 +808,11 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 												_playerName, _partner);
 
 		// Speech balloon. Mirrors `_GetBalloon` + `_AddPicBackground` in
-		// `_DisplayClue`. The original looks up per-balloon text-area
-		// metadata in a table at offset 0x875 (within `_DisplayClue`'s
-		// segment); we don't have that table decoded yet, so we use a
-		// fixed inset of 8 px from the balloon's top-left.
+		// `_DisplayClue`, with the shared balloon metadata table used for
+		// text placement and the fitted balloon variant.
+		const uint16 fittedBubNum = fitBalloonToText(bubNum, text);
 		Picture balloon;
-		const uint16 balloonId = bubNum & 0x7F;
+		const uint16 balloonId = fittedBubNum & 0x7F;
 		const bool haveBalloon = bubNum != 0xFFFF &&
 			_balloonArchive.size() > balloonId &&
 			_balloonArchive.loadEntry(balloonId, balloon);
@@ -849,7 +848,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				// `_GetBalloon @ 172b:1d7d` mirrors the picture horizontally
 				// when `(bubNum & 0x80)` is set — used for right-side
 				// speakers so the tail points the other way.
-				const bool flipBalloon = (bubNum & 0x80) != 0;
+				const bool flipBalloon = (fittedBubNum & 0x80) != 0;
 				if (bw > 0 && bh > 0) {
 					for (int row = 0; row < bh; row++) {
 						const byte *src =
@@ -1111,11 +1110,57 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 			}
 		}
 
+		Common::String fitText;
+		Common::String fitPage;
+		uint16 fitXIns = 0;
+		uint16 fitYIns = 0;
+		uint16 fitWidth = 142;
+		getBalloonInsets(balByte, fitXIns, fitYIns, fitWidth);
+		uint fitTextLines = 0;
+		for (uint t = 0; t < textCount; t++) {
+			const uint8 idxByte = rec[11 + t];
+			const uint8 idx = idxByte & 0x7f;
+			const uint32 noteAbs = notesBase + (uint32)idx * 7;
+			if (noteAbs + 6 > dsz)
+				continue;
+			const uint16 textOff = (_partner == 0)
+				? READ_LE_UINT16(notes + idx * 7 + 2)
+				: READ_LE_UINT16(notes + idx * 7 + 4);
+			if (textOff >= dsz)
+				continue;
+			const char *linePtr = (const char *)(bufBase + textOff);
+			uint32 lineLen = 0;
+			while (textOff + lineLen < dsz && linePtr[lineLen] != 0)
+				lineLen++;
+			Common::String raw(linePtr, lineLen);
+			Common::String parsed = parseString(raw, _playerName, _partner);
+			if (!parsed.empty()) {
+				if (!fitPage.empty())
+					fitPage += '\n';
+				fitPage += parsed;
+			}
+			const bool continuePage =
+				(idxByte & 0x80) != 0 && t + 1 < textCount;
+			if (!continuePage) {
+				Common::Array<Common::String> wrapped;
+				_font.wordWrapText(fitPage, MAX<int>(8, (int)fitWidth),
+					wrapped);
+				if (wrapped.size() > fitTextLines ||
+					(wrapped.size() == fitTextLines &&
+					 fitPage.size() > fitText.size())) {
+					fitText = fitPage;
+					fitTextLines = wrapped.size();
+				}
+				fitPage.clear();
+			}
+		}
+
 		// Pre-load balloon picture + insets once per record (constant
 		// across all paginated text indices).
+		const uint16 fittedBalByte = fitBalloonToText(balByte, fitText);
 		Picture balloon;
-		const uint16 balloonId  = balByte & 0x7F;
-		const bool   flipBall   = (balByte & 0x80) != 0;
+		const uint16 balloonId  = fittedBalByte & 0x7F;
+		const bool   flipBall   = (fittedBalByte & 0x80) != 0;
 		const bool   haveBalloon = balByte != 0xFF &&
 			_balloonArchive.size() > balloonId &&
 			_balloonArchive.loadEntry(balloonId, balloon);
