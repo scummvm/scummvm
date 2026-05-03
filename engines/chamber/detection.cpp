@@ -53,17 +53,16 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
-	// TODO: add EGA variant once Kult2.pxi and PRESEGA.EGA MD5s are verified
-	// {
-	// 	"chamber",
-	// 	"EGA",
-	// 	AD_ENTRY2s("Kult2.pxi",   "<md5>", <size>,
-	// 	           "PRESEGA.EGA", "<md5>", <size>),
-	// 	Common::EN_USA,
-	// 	Common::kPlatformDOS,
-	// 	ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
-	// 	GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
-	// },
+	{
+		"chamber",
+		"EGA",
+		AD_ENTRY2s("Kult2.pxi",   "2f5cea29072e8c16bf4724a0d0a2201d", 142658,
+		           "PRESEGA.EGA", "b0a6474fa95276255f8eb85c12aab031",  32000),
+		Common::EN_USA,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE | GF_SPLASH_PRESEGA,
+		GUIO4(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA, GUIO_RENDEREGA)
+	},
 
 	AD_TABLE_END_MARKER
 };
