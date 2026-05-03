@@ -683,7 +683,6 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_midi->midiPlay();
 	_screen->fadeOut();
 	_screen->clearScreen();
-	// TODO: Check these colors
 	Font::_fontColors[0] = 0;
 	Font::_fontColors[1] = 244;
 	const char *meanwhileTxt = ((NoctropolisResources *)_res)->getMeanwhileMessage();
@@ -697,11 +696,13 @@ void NoctropolisEngine::shotoMeanwhile() {
 	_bubbleBox->_type = (BoxType)(kTextBoxNoctCaption | kTextBoxNoctPlain);
 	_bubbleBox->_bubbleDisplStr = ((NoctropolisResources *)_res)->getShotoTitle();
 	_bubbleBox->placeBubble(((NoctropolisResources *)_res)->getShotoText());
-	_events->waitKeyActionMouse();
 	VideoPlayer_v2 vidPlayer(this, true);
 	vidPlayer.VideoPlayer::setVideo(_screen, Common::Point(120, 30), Common::Path("VID1/B126MEAN.VID"), 0);
+	_screen->setIconPalette();
+	_screen->setPalette();
 	vidPlayer.playToEnd();
 	_midi->stopSong();
+	_screen->copyRawPalToTempPal();
 	_screen->fadeOut();
 	_system->showMouse(true);
 }
