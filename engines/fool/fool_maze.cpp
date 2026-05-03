@@ -339,7 +339,7 @@ void FoolGame::sub_136_a22() {
 		temp.bottom = arr_i16_1eb8[26];
 		temp.right = arr_i16_1eb8[27];
 		g_toolbox->InvertOval(temp); // erase current spot
-		sub_136_2664();
+		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
 		sub_136_b00();
 	} while (var_i16_1bda != var_i16_1574);
@@ -349,7 +349,7 @@ void FoolGame::sub_136_a22() {
 void FoolGame::sub_136_ade() {
 	// 136:0ade
 	// this was done by a GOTO into the previous function, so we copy most of it here.
-	sub_136_2664();
+	mazeDrawPlayer();
 	var_i16_1bda = var_i16_1574;
 	sub_136_b00();
 	while (var_i16_1bda != var_i16_1574) {
@@ -362,13 +362,14 @@ void FoolGame::sub_136_ade() {
 		temp.bottom = arr_i16_1eb8[26];
 		temp.right = arr_i16_1eb8[27];
 		g_toolbox->InvertOval(temp);
-		sub_136_2664();
+		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
 		sub_136_b00();
 	};
 }
 
 void FoolGame::sub_136_b00() {
+	warning(__func__);
 	// 136:0b00
 	if (arr_i16_1eb8[22] | var_i16_1bdc) {
 		fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
@@ -502,11 +503,29 @@ void FoolGame::mazePrintMessage() {
 }
 
 void FoolGame::sub_136_e4c() {
-	warning("STUB: %s", __func__);
+	// 136:0e4c
+	warning(__func__);
+	var_i16_1de2 = g_zbasic->decodeInt(var_str_1ce2);
+	arr_i16_5cbc[var_i16_1de2]++;
+	if (arr_i16_3738[var_i16_1574] & 0x1000) {
+		arr_i16_3738[var_i16_1574] ^= 0x1000;
+	}
+	// 136:0ed2
+	sub_136_274e();
 }
 
 void FoolGame::sub_136_ed8() {
-	warning("STUB: %s", __func__);
+	warning(__func__);
+	// 136:0ed8
+	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 1, 2));
+	var_i16_1de2 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 3, 2));
+	for (int16 i = 1; i <= var_i16_1de4; i++) {
+		arr_i16_5cbc[var_i16_1de2]--;
+	}
+	if (arr_i16_5cbc[var_i16_1de2] < 0) {
+		arr_i16_5cbc[var_i16_1de2] = 0;
+	}
+	sub_136_274e();
 }
 
 void FoolGame::mazeWanderingWinds() {
@@ -544,7 +563,7 @@ void FoolGame::mazeWanderingWinds() {
 	// 136:1108
 	var_i16_1bcc = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
 	var_i16_1bce = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
-	sub_136_2664();
+	mazeDrawPlayer();
 }
 
 void FoolGame::sub_136_115a() {
@@ -600,7 +619,62 @@ void FoolGame::sub_136_115a() {
 }
 
 void FoolGame::sub_136_137c() {
-	warning("STUB: %s", __func__);
+	warning(__func__);
+	// 136:137c
+	var_i16_1df0 = 0;
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(236)) { // I
+		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if (arr_i16_5cbc[var_i16_484] == 0) {
+			var_i16_1df0 = 1;
+		}
+	}
+	// 136:13d8
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(237)) { // M
+		var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		var_i16_1de2 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 4, 2));
+		if (arr_i16_5cbc[var_i16_1de2] < var_i16_1de4) {
+			var_i16_1df0 = 1;
+		}
+	}
+	// 136:144e
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(238)) { // B
+		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if ((arr_i16_3738[var_i16_484] & 0x1000) == 0) {
+			var_i16_1df0 = 1;
+		}
+	}
+	// 136:14b2
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(239)) { // L
+		// 136:14d6
+		var_i16_7e4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if (arr_i16_4338[var_i16_484] != var_i16_7e4) {
+			var_i16_1df0 = 1;
+		}
+	}
+	// 136:1528
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(240)) { // S
+		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		var_i16_68a = 4;
+		for (int16 i = 4; i <= (2*var_i16_484 + 2); i += 2) {
+			var_i16_7e4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_68a, 2));
+			if (arr_i16_4338[var_i16_7e4] == 0) {
+				var_i16_1df0 = 1;
+			}
+		}
+	}
+	// 136:15c0
+	if (g_zbasic->leftStr(var_str_1ce2, 1) == g_zbasic->strRaw(241)) { // P
+		var_i16_484 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 2, 2));
+		if (var_i16_1bd0 != var_i16_484) {
+			var_i16_1df0 = 1;
+		}
+	}
+	// 136:1612
+	if (var_i16_1df0 != 0) {
+		var_i16_1cde = g_zbasic->instr(1, var_str_1ac8, g_zbasic->strRaw(242));
+	}
+	// 136:163a
+	return;
 }
 
 void FoolGame::sub_136_163c() {
@@ -692,10 +766,35 @@ void FoolGame::sub_136_18f4() {
 }
 
 void FoolGame::sub_136_1932() {
-	warning("STUB: %s", __func__);
+	warning(__func__);
+	// 136:1932
+	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, 1, 2));
+	var_i16_484 = 3;
+	sub_136_24ae();
+	arr_i16_4758[0] = 0x14;
+	arr_i16_4758[1] = 0;
+	arr_i16_4758[2] = SCREEN_HEIGHT;
+	arr_i16_4758[3] = SCREEN_WIDTH;
+	for (var_i16_68a = 1; var_i16_68a <= var_i16_1de4; var_i16_68a++) {
+		Common::Rect temp;
+		temp.top = arr_i16_4758[0];
+		temp.left = arr_i16_4758[1];
+		temp.bottom = arr_i16_4758[2];
+		temp.right = arr_i16_4758[3];
+		g_toolbox->InvertRect(temp);
+		if (var_i16_1df4 > 0) {
+			sub_136_2538();
+		}
+		temp.top = arr_i16_4758[0];
+		temp.left = arr_i16_4758[1];
+		temp.bottom = arr_i16_4758[2];
+		temp.right = arr_i16_4758[3];
+		g_toolbox->InvertRect(temp);
+	}
 }
 
 void FoolGame::sub_136_19d2() {
+	// 136:19d2
 	warning("STUB: %s", __func__);
 }
 
@@ -766,6 +865,7 @@ void FoolGame::mazeMovementTrail() {
 }
 
 void FoolGame::sub_136_24ae() {
+	warning(__func__);
 	// 136:24ae
 	var_i16_1df4 = g_zbasic->decodeInt(g_zbasic->midStr(var_str_1ce2, var_i16_484, 2));
 	if (var_i16_1df4 > 0) {
@@ -777,6 +877,7 @@ void FoolGame::sub_136_24ae() {
 }
 
 void FoolGame::sub_136_2538() {
+	warning(__func__);
 	// 136:2538
 	sub_128_50e(var_i16_1df4, var_i16_1372, 0);
 	if ((var_i16_1df4 > 0xe) && (var_i16_1df4 < 0x7d00)) {
@@ -786,6 +887,7 @@ void FoolGame::sub_136_2538() {
 
 
 void FoolGame::sub_136_2582() {
+	warning(__func__);
 	// 136:2582
 	var_i16_1df2 = 0;
 	var_i16_1e06 = g_zbasic->decodeInt(g_zbasic->leftStr(var_str_1ac8, 2));
@@ -801,7 +903,8 @@ void FoolGame::sub_136_2582() {
 	arr_i16_3738[var_i16_484] |= 0x1000;
 }
 
-void FoolGame::sub_136_2664() {
+void FoolGame::mazeDrawPlayer() {
+	warning(__func__);
 	// 136:2664
 	var_i16_1574 = arr_i16_2f38[var_i16_1bcc*32 + var_i16_1bce];
 	arr_i16_1eb8[24] = arr_rect_1f38[var_i16_1574].top + 4;
@@ -818,6 +921,7 @@ void FoolGame::sub_136_2664() {
 }
 
 void FoolGame::sub_136_274e() {
+	warning(__func__);
 	// 136:274e
 	g_zbasic->menu(8, 0, 1, arr_str_195e8[activePuzzle]);
 	if (activePuzzle < 0x50) {
