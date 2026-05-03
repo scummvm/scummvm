@@ -718,19 +718,19 @@ bool EEMEngine::setAnmPalette(const Common::Path &anmPath) {
 	return true;
 }
 
-void EEMEngine::interruptAudio() {
+void EEMEngine::interruptAudio(bool stopMusicToo) {
 	// Mirrors `_CleanMysterySounds @ 202f:05a5` + `_StopMIDI @
 	// 20a2:0512` — the original calls both whenever the player aborts
 	// the opening-anim chain or dismisses the title (`_DoOpeningAnims
 	// @ 2520:082a` writes `_LoopMIDI = 0; _StopMIDI();` after the
-	// title-input loop). We expose the same combined stop on every
-	// ESC handler so currently-playing music + voice + spool actually
-	// halt instead of bleeding through into the next screen.
+	// title-input loop). Conversation / clue-dialog skip paths pass
+	// `stopMusicToo = false` so the site / briefing MIDI keeps going
+	// across an ESC — only the per-line voice + spool need to stop.
 	if (_audio) {
 		_audio->stopVoice();
 		_audio->stopSpool();
 	}
-	if (_music)
+	if (stopMusicToo && _music)
 		_music->stop();
 }
 
