@@ -68,11 +68,11 @@ void FoolGame::metapuzzleRun() {
 		if (var_ev_46.what == 1) {
 			metapuzzleOnClick();
 		}
-		if ((var_ev_46.modifiers & (kModLOptionKeyDown | kModMouseButtonUp)) == 0) {
-			sub_138_b06();
+		if ((var_ev_46.modifiers & (kModLOptionKeyDown | kModMouseButtonUp)) == (kModLOptionKeyDown | kModMouseButtonUp)) {
+			metapuzzleOnOption();
 		}
-		if ((var_ev_46.modifiers & (kModLShiftKeyDown | kModMouseButtonUp)) == 0) {
-			sub_138_b6a();
+		if ((var_ev_46.modifiers & (kModLShiftKeyDown | kModMouseButtonUp)) == (kModLShiftKeyDown | kModMouseButtonUp)) {
+			metapuzzleOnShift();
 		}
 		if (activePuzzle != 0) {
 			sub_138_21e();
@@ -286,22 +286,84 @@ void FoolGame::sub_138_550() {
 }
 
 void FoolGame::sub_138_864() {
-	warning("STUB: %s", __func__);
+	warning(__func__);
+	// 138:0864
+	if ((keyLastPressed == 3) || (keyLastPressed == 0xd)) {
+		sub_138_a06();
+		return;
+	}
+	if ((keyLastPressed >= 0x61) && (keyLastPressed <= 0x7a)) {
+		keyLastPressed -= 0x20;
+	}
+	if ((keyLastPressed >= 0x41) && (keyLastPressed <= 0x5a)) {
+		return;
+	}
+	g_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
+	var_i16_200c++;
+	if (var_i16_1aa2 == var_i16_200c) {
+		if (g_zbasic->leftStr(var_str_1170, var_i16_1aa2 - 1) == var_str_1272) {
+			var_str_1272 += g_zbasic->str(274); // ' '
+		}
+	}
+	// 138:0946
+	var_str_d12 = g_zbasic->midStr(var_str_1f0c, keyLastPressed - 0x40, 1);
+	var_str_1272 += var_str_d12;
+	var_i16_484 = g_toolbox->StringWidth(var_str_1272);
+	var_i16_7e4 = g_toolbox->StringWidth(var_str_1170);
+	if (var_i16_484 > var_i16_7e4) {
+		sub_138_a06();
+	} else {
+		sub_138_9c4();
+	}
 }
 
 void FoolGame::sub_138_9c4() {
-	warning("STUB: %s", __func__);
+	// 138:09c4
+	g_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
+	Common::Rect temp;
+	temp.top = arr_i16_1eb8[0];
+	temp.left = arr_i16_1eb8[1];
+	temp.bottom = arr_i16_1eb8[2];
+	temp.right = arr_i16_1eb8[3];
+	g_toolbox->FillRect(temp, arr_pat_58f4[2]);
+	var_i16_7a2 = 0x146;
+	sub_128_918(var_str_1272);
+}
+
+void FoolGame::sub_138_a06() {
+	// 138:0a06
+	sub_128_50e(0x19, 0x64, 1);
+	if (var_i16_200c == 0)
+		return;
+	sub_138_a22();
 }
 
 void FoolGame::sub_138_a22() {
-	warning("STUB: %s", __func__);
+	// 138:0a22
+	Common::Rect temp;
+	temp.top = arr_i16_1eb8[0];
+	temp.left = arr_i16_1eb8[1];
+	temp.bottom = arr_i16_1eb8[2];
+	temp.right = arr_i16_1eb8[3];
+	g_toolbox->FillRect(temp, arr_pat_58f4[2]);
+	g_zbasic->text(0xfa, 0xc, 0, kSrcBic);
+	var_i16_7a2 = 0x140;
+	var_str_384 = g_zbasic->str(275); // if you know which is which, enter the letters you wish to switch
+	sub_128_918(var_str_384);
+	var_str_1272.clear(); // was: str(276)
+	var_i16_200c = 0;
 }
 
 void FoolGame::sub_138_a90() {
-	warning("STUB: %s", __func__);
+	// 138:0a90
+	stateFlags = 1;
+	activePuzzleBuffer = var_str_1272;
+	sub_128_2664();
+	sub_128_6186();
+	sub_128_d34(arr_i16_1eb8[0], arr_i16_1eb8[1], arr_i16_1eb8[2], arr_i16_1eb8[3], 0xc8);
 }
 
-void FoolGame::sub_138_b06() {
+void FoolGame::metapuzzleOnOption() {
 	// 138:0b06
 	var_i16_bfc++;
 	if ((var_i16_bfc < 0) || (var_i16_bfc > 0xc)) {
@@ -317,13 +379,13 @@ void FoolGame::sub_138_b06() {
 	g_toolbox->InvertRect(temp);
 }
 
-void FoolGame::sub_138_b6a() {
+void FoolGame::metapuzzleOnShift() {
 	// 138:0b6a
 	if (!((var_ev_46.where.x >= 0x6e) && (var_ev_46.where.y >= 0x1a) && (var_ev_46.where.x <= 0x1a8) && (var_ev_46.where.y <= SCREEN_HEIGHT))) {
 		return;
 	}
 	var_i16_200e = 0;
-	while ((var_ev_46.modifiers & kModLShiftKeyDown) == 0) {
+	while ((var_ev_46.modifiers & kModLShiftKeyDown) != 0) {
 		getNextEvent(-1); // was: 0
 		if ((var_ev_46.where.x >= 0x6e) && (var_ev_46.where.y >= 0x1a) && (var_ev_46.where.x <= 0x1a8) && (var_ev_46.where.y <= SCREEN_HEIGHT)) {
 			// 138:0c04
@@ -366,13 +428,14 @@ void FoolGame::sub_138_b6a() {
 				var_i16_30 = g_toolbox->StringWidth(var_str_384);
 				g_toolbox->MoveTo((var_i16_5a / 2) - (var_i16_30 / 2), 0xf);
 				g_toolbox->DrawString(var_str_384);
+				g_toolbox->_defaultMenu->setOverlayDirty(true);
 				g_toolbox->SetPort(var_i32_0);
 				var_i16_200e = selectedMenuChapter;
 			}
 			// 138:0dfc
 			if ((var_ev_46.modifiers & kModMouseButtonUp) == 0) {
 				if (selectedMenuChapter != 0x51) {
-					setStateBits(0x41);
+					setStateBits(kStateChapterSelect | kStateReturn);
 					return;
 				} else {
 					activePuzzle = 0x55;

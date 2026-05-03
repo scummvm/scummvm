@@ -231,6 +231,11 @@ void Toolbox::_pumpEvents() {
 			} else {
 				_modifiers &= ~kModLControlKeyDown;
 			}
+			if (event.kbd.flags & Common::KBD_SHIFT) {
+				_modifiers |= kModLShiftKeyDown;
+			} else {
+				_modifiers &= ~kModLShiftKeyDown;
+			}
 			newRecord.modifiers = _modifiers;
 			_events.push_back(newRecord);
 			break;
@@ -253,6 +258,11 @@ void Toolbox::_pumpEvents() {
 				_modifiers |= kModLControlKeyDown;
 			} else {
 				_modifiers &= ~kModLControlKeyDown;
+			}
+			if (event.kbd.flags & Common::KBD_SHIFT) {
+				_modifiers |= kModLShiftKeyDown;
+			} else {
+				_modifiers &= ~kModLShiftKeyDown;
 			}
 			newRecord.modifiers = _modifiers;
 			_events.push_back(newRecord);
