@@ -81,6 +81,12 @@ void blitAnimFrameAnchored(Graphics::Surface *screen, const Picture &p,
 /// BigMap marker shine.
 void cyclePaletteRange(uint8 start, uint8 end);
 
+/// Rotate one VGA palette range by one slot in the OPPOSITE direction.
+/// Mirrors `_OpenColorCycle @ 2520:04f7` (CD) / `_ReverseColorCycle_Floppy`
+/// — used by the opening-anim logos (EA Kids, etc.) where the cycle
+/// shifts END→START rather than START→END.
+void cyclePaletteRangeReverse(uint8 start, uint8 end);
+
 /// One hotspot (search rectangle) within a site, 14 bytes on disk.
 struct Hotspot {
 	int16  x1, y1, x2, y2;     ///< rectangle in screen coordinates

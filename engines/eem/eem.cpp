@@ -686,17 +686,23 @@ bool EEMEngine::loadSitePalettes() {
 	return true;
 }
 
-void EEMEngine::setSitePalette(uint num) {
-	if (num >= kNumSitePals || _sitePals.size() < (num + 1) * kPalSize) {
-		warning("setSitePalette: index %u out of range", num);
-		return;
-	}
+bool EEMEngine::getSitePalette(uint num, byte *out) const {
+	if (num >= kNumSitePals || _sitePals.size() < (num + 1) * kPalSize)
+		return false;
 	// SITEPALS stores 6-bit VGA-DAC values (0..63); ScummVM expects 8-bit
 	// (0..255), so left-shift by 2 like the original VGA hardware did.
 	const byte *src = _sitePals.data() + num * kPalSize;
-	byte expanded[kPalSize];
 	for (uint i = 0; i < kPalSize; i++)
-		expanded[i] = (byte)(src[i] << 2);
+		out[i] = (byte)(src[i] << 2);
+	return true;
+}
+
+void EEMEngine::setSitePalette(uint num) {
+	byte expanded[kPalSize];
+	if (!getSitePalette(num, expanded)) {
+		warning("setSitePalette: index %u out of range", num);
+		return;
+	}
 	g_system->getPaletteManager()->setPalette(expanded, 0, 256);
 }
 
@@ -910,8 +916,18 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 }
 
 void EEMEngine::showEAKidsLogo() {
-	// Mirrors _ShowEAKids @ 2520:05f0 (without the color-cycle loop):
-	// GetPicture(0x54), MemoryCopy to VGA, GetPalette(0x25), setmany.
+	// Mirrors `_ShowEAKids @ 2520:05f0`. The original:
+	//   1. GetPicture(0x54) + MemoryCopy to VGA + GetPalette(0x25).
+	//   2. FRAME_RATE = 25; for j in 0..1, for u in 0..0x36 (= 55):
+	//        OpenColorCycle(0x01, 0x6e)   // bg / outer ring shimmer
+	//        OpenColorCycle(0x81, 0xee)   // inner gradient shimmer
+	//        every 8 ticks: OpenColorCycle(0x70, 0x80)  // mid band
+	//   3. After the 110-tick loop: 5 more cycles of 0x70..0x80.
+	//   4. Wait 0x23 (= 35) more frames.
+	//   5. _OpenFadeOut.
+	// The cycling is what gives the EA Kids logo its characteristic
+	// shifting glow — it's NOT a static logo. ESC / click skips the
+	// remaining cycle.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicEAKidsLogo, pic)) {
 		warning("EA Kids logo (%u) load failed", kPicEAKidsLogo);
@@ -920,21 +936,95 @@ void EEMEngine::showEAKidsLogo() {
 	blitAt(pic, 0, 0);
 	setSitePalette(kPalEAKids);
 	g_system->updateScreen();
-	waitForInput(2500);
+
+	// 25 fps → 40 ms / tick. Two outer iterations × 55 ticks each = 110
+	// ticks of palette rotation. The first inner-loop iteration of each
+	// outer pass rotates the in-memory palette once *before* applying
+	// to VGA (original gates the wait + setmany on `show != 0`); we
+	// just call the setter every tick — the visible cycle starts
+	// immediately, which is the same end result.
+	const uint kFrameMs = 40;
+	int delayCount = 8;
+	bool aborted = false;
+	for (uint outer = 0; outer < 2 && !aborted && !shouldQuit(); outer++) {
+		for (uint i = 0; i < 0x37 && !aborted && !shouldQuit(); i++) {
+			cyclePaletteRangeReverse(0x01, 0x6e);
+			cyclePaletteRangeReverse(0x81, 0xee);
+			delayCount--;
+			if (delayCount == 0) {
+				delayCount = 8;
+				cyclePaletteRangeReverse(0x70, 0x80);
+			}
+			g_system->updateScreen();
+
+			// Tick wait + skip detection.
+			const uint32 frameEnd = g_system->getMillis() + kFrameMs;
+			while (g_system->getMillis() < frameEnd && !aborted) {
+				Common::Event ev;
+				while (g_system->getEventManager()->pollEvent(ev)) {
+					if (ev.type == Common::EVENT_QUIT ||
+						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+						_skipIntro = true;
+						return;
+					}
+					if (ev.type == Common::EVENT_KEYDOWN ||
+						ev.type == Common::EVENT_LBUTTONDOWN) {
+						if (ev.type == Common::EVENT_KEYDOWN &&
+							ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+							_skipIntro = true;
+						}
+						aborted = true;
+						break;
+					}
+				}
+				g_system->delayMillis(5);
+			}
+		}
+	}
+
+	if (aborted)
+		return;
+
+	// Tail: 5 more rotations of the mid band, then 35 idle frames.
+	for (uint i = 0; i < 5 && !shouldQuit(); i++)
+		cyclePaletteRangeReverse(0x70, 0x80);
+	g_system->updateScreen();
+	waitForInput(0x23 * kFrameMs);
+
+	// `_OpenFadeOut @ 2520:0093` — 16 linear steps from current palette
+	// to black. Without this, the EA Kids logo cuts hard to the next
+	// screen.
+	fadeCurrentPaletteToBlack();
 }
 
 void EEMEngine::showHighScoreLogo() {
-	// Mirrors _ShowHScoreLogo @ 2520:0799 (without the wait-loop):
-	// GetPicture(0x20c), MemoryCopy to VGA, GetPalette(0x27), FadeIn.
+	// Mirrors `_ShowHScoreLogo @ 2520:0799`:
+	//   GetPicture(0x20c) + MemoryCopy to VGA + GetPalette(0x27) +
+	//   _OpenFadeIn + 50-tick wait at 25 fps + _OpenFadeOut.
 	Picture pic;
 	if (!_picsArchive.getPicture(kPicHighScoreLogo, pic)) {
 		warning("HighScore logo (%u) load failed", kPicHighScoreLogo);
 		return;
 	}
 	blitAt(pic, 0, 0);
-	setSitePalette(kPalHighScore);
+
+	// Load target palette into a buffer, force a black palette, then
+	// fade in — without the explicit black step we'd flash the full
+	// logo briefly between blit and fade.
+	byte target[kPalSize];
+	if (!getSitePalette(kPalHighScore, target)) {
+		warning("HighScore palette (%u) load failed", kPalHighScore);
+		return;
+	}
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
-	waitForInput(2500);
+	fadePaletteFromBlack(target);
+
+	// 50 ticks at 25 fps = ~2 s.
+	waitForInput(2000);
+
+	fadeCurrentPaletteToBlack();
 }
 
 void EEMEngine::showFloppyStormLogo() {
@@ -951,11 +1041,23 @@ void EEMEngine::showFloppyStormLogo() {
 		return;
 	}
 	blitAt(pic, 0, 0);
-	setSitePalette(kPalStormLogo);
+
+	byte target[kPalSize];
+	if (!getSitePalette(kPalStormLogo, target)) {
+		warning("Storm palette (%u) load failed", kPalStormLogo);
+		return;
+	}
+	byte black[kPalSize] = {};
+	g_system->getPaletteManager()->setPalette(black, 0, 256);
 	g_system->updateScreen();
+
 	if (_audio)
 		_audio->playVoc(Common::Path("THUNDER.VOC"));
-	waitForInput(2500);
+
+	fadePaletteFromBlack(target);
+	waitForInput(2000);
+	fadeCurrentPaletteToBlack();
+
 	if (_audio)
 		_audio->stopVoice();
 }

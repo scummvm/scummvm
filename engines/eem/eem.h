@@ -368,6 +368,13 @@ private:
 	 */
 	void setSitePalette(uint num);
 
+	/// Fill @p out (256 × 3 bytes) with the SITEPALS palette at index
+	/// @p num, expanded from VGA's 6-bit DAC range to 8-bit. Returns
+	/// false if the index is out of range. Used when callers need the
+	/// palette for fade-in (set black first, then fade) without
+	/// flashing the target on screen.
+	bool getSitePalette(uint num, byte *out) const;
+
 	/**
 	 * Upload a 6-bit VGA palette read from the head of an .ANM file (the
 	 * first 0x300 bytes per Load_Sequence @ 2503:0006). Used until the

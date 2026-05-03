@@ -137,6 +137,32 @@ void cyclePaletteRange(uint8 start, uint8 end) {
 	g_system->getPaletteManager()->setPalette(buf, start, count);
 }
 
+void cyclePaletteRangeReverse(uint8 start, uint8 end) {
+	// Mirrors `_OpenColorCycle @ 2520:04f7`: save the END color, shift
+	// every entry up by one (END-1 → END, ...), wrap saved END to
+	// START. Visually colors march from start toward end — opposite
+	// direction from `cyclePaletteRange`. Used by the EA Kids /
+	// HighScore logo cycles.
+	if (end <= start)
+		return;
+	const uint count = (uint)end - (uint)start + 1;
+	byte buf[256 * 3];
+	g_system->getPaletteManager()->grabPalette(buf, start, count);
+	const uint last = count - 1;
+	const byte savedR = buf[last * 3 + 0];
+	const byte savedG = buf[last * 3 + 1];
+	const byte savedB = buf[last * 3 + 2];
+	for (uint i = last; i > 0; i--) {
+		buf[i * 3 + 0] = buf[(i - 1) * 3 + 0];
+		buf[i * 3 + 1] = buf[(i - 1) * 3 + 1];
+		buf[i * 3 + 2] = buf[(i - 1) * 3 + 2];
+	}
+	buf[0] = savedR;
+	buf[1] = savedG;
+	buf[2] = savedB;
+	g_system->getPaletteManager()->setPalette(buf, start, count);
+}
+
 // Per-speaker partner-position table verified against `_WaitAnims @
 // 29be:021c`. 12 bytes per entry, indexed by `siteData[+8]`. Layout:
 //   +0..1 anim Jake, +2..3 anim Jenny,
