@@ -98,13 +98,13 @@ DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 	_borderExtra = nullptr;
 	_borderExtraTexture = nullptr;
-	_playerSid = nullptr;
+	_playerMusic = nullptr;
 	_playerC64Sfx = nullptr;
 	_c64UseSFX = false;
 }
 
 DrillerEngine::~DrillerEngine() {
-	delete _playerSid;
+	delete _playerMusic;
 	delete _playerC64Sfx;
 	delete _drillBase;
 
@@ -268,8 +268,8 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (isC64()) {
-			if (!_c64UseSFX && _playerSid)
-				_playerSid->startMusic();
+			if (!_c64UseSFX && _playerMusic)
+				_playerMusic->startMusic();
 			playSound(_soundIndexStart, true, _soundFxHandle);
 		} else {
 			playSound(_soundIndexStart, true, _soundFxHandle);

@@ -21,14 +21,12 @@
 
 #include "common/file.h"
 
+#include "freescape/music.h"
 #include "freescape/sound.h"
 
 namespace Freescape {
 
-class EclipseAYMusicPlayer;
-class EclipseC64MusicPlayer;
 class EclipseC64SFXPlayer;
-class EclipseOPLMusicPlayer;
 
 enum EclipseReleaseFlags {
 	GF_ZX_DEMO_CRASH = (1 << 0),
@@ -123,14 +121,12 @@ public:
 
 	Common::Array<byte> _musicData; // TEMUSIC.ST TEXT segment (Atari ST)
 	Common::Array<byte> _c64MusicData;
-	EclipseC64MusicPlayer *_playerC64Music;
 	EclipseC64SFXPlayer *_playerC64Sfx;
 	bool _c64UseSFX;
 	void playSoundC64(int index) override;
 	void toggleC64Sound();
 
-	EclipseAYMusicPlayer *_playerAYMusic;
-	EclipseOPLMusicPlayer *_playerOPLMusic;
+	MusicPlayer *_playerMusic;
 	void restartBackgroundMusic();
 	void stopBackgroundMusic();
 

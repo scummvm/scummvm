@@ -150,12 +150,14 @@ byte EclipseC64MusicPlayer::clampNote(byte note) const {
 void EclipseC64MusicPlayer::startMusic() {
 	if (_musicData.empty())
 		return;
+	initSID();
 	setupSong();
 }
 
 void EclipseC64MusicPlayer::stopMusic() {
 	_musicActive = false;
 	silenceAll();
+	destroySID();
 }
 
 void EclipseC64MusicPlayer::setupSong() {

@@ -58,10 +58,8 @@ static const WBTableOffsets kEclipseAmigaMusicOffsets = {
 };
 
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	_playerC64Music = nullptr;
 	_playerC64Sfx = nullptr;
-	_playerAYMusic = nullptr;
-	_playerOPLMusic = nullptr;
+	_playerMusic = nullptr;
 	_c64UseSFX = false;
 
 	// These sounds can be overriden by the class of each platform
@@ -136,23 +134,15 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 }
 
 void EclipseEngine::stopBackgroundMusic() {
-	if (_playerOPLMusic)
-		_playerOPLMusic->stopMusic();
-	if (_playerAYMusic)
-		_playerAYMusic->stopMusic();
-	if (_playerC64Music)
-		_playerC64Music->stopMusic();
+	if (_playerMusic)
+		_playerMusic->stopMusic();
 	if (_mixer)
 		_mixer->stopHandle(_musicHandle);
 }
 
 void EclipseEngine::restartBackgroundMusic() {
-	if (isC64() && _playerC64Music) {
-		_playerC64Music->startMusic();
-	} else if ((isCPC() || isSpectrum()) && _playerAYMusic) {
-		_playerAYMusic->startMusic();
-	} else if (isDOS() && _playerOPLMusic) {
-		_playerOPLMusic->startMusic();
+	if (_playerMusic) {
+		_playerMusic->startMusic();
 	} else if ((isAtariST() || isAmiga()) && !_musicData.empty()) {
 		if (_mixer)
 			_mixer->stopHandle(_musicHandle);
@@ -183,9 +173,7 @@ EclipseEngine::~EclipseEngine() {
 		_compassBackground->free();
 		delete _compassBackground;
 	}
-	delete _playerOPLMusic;
-	delete _playerAYMusic;
-	delete _playerC64Music;
+	delete _playerMusic;
 	delete _playerC64Sfx;
 }
 

@@ -162,7 +162,7 @@ void EclipseEngine::loadAssetsDOSFullGame() {
 		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 
 	if (ConfMan.getBool("opl_music"))
-		_playerOPLMusic = new EclipseOPLMusicPlayer();
+		_playerMusic = new EclipseOPLMusicPlayer();
 }
 
 void EclipseEngine::drawDOSUI(Graphics::Surface *surface) {

@@ -24,19 +24,18 @@
 
 #include "audio/sid.h"
 #include "common/array.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
-class EclipseC64MusicPlayer {
+class EclipseC64MusicPlayer : public MusicPlayer {
 public:
 	EclipseC64MusicPlayer(const Common::Array<byte> &musicData);
 	~EclipseC64MusicPlayer();
 
-	void startMusic();
-	void stopMusic();
-	bool isPlaying() const;
-	void initSID();
-	void destroySID();
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 private:
 	static const uint16 kLoadAddress = 0x0410;
@@ -128,6 +127,9 @@ private:
 	void applyEffectArpeggio(int channel);
 	void applyTimedSlide(int channel);
 	void applyPulseWidthModulation(int channel);
+
+	void initSID();
+	void destroySID();
 };
 
 } // namespace Freescape

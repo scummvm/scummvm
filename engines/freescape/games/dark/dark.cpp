@@ -35,7 +35,7 @@ namespace Freescape {
 
 DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_playerC64Sfx = nullptr;
-	_playerC64Music = nullptr;
+	_playerMusic = nullptr;
 	_c64UseSFX = false;
 	_c64CompassInitialized = false;
 	_c64CompassPosition = 0;
@@ -106,7 +106,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 
 DarkEngine::~DarkEngine() {
 	delete _playerC64Sfx;
-	delete _playerC64Music;
+	delete _playerMusic;
 
 	for (auto &indicator : _cpcIndicators) {
 		indicator->free();
@@ -348,8 +348,8 @@ void DarkEngine::initGameState() {
 		}
 	}
 
-	if (isC64() && _playerC64Music)
-		_playerC64Music->startMusic();
+	if (isC64() && _playerMusic)
+		_playerMusic->startMusic();
 }
 
 void DarkEngine::loadAssets() {

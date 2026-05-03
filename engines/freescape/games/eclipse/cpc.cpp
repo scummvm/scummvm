@@ -146,7 +146,7 @@ void EclipseEngine::loadAssetsCPCFullGame() {
 		it->convertToInPlace(_gfx->_texturePixelFormat);
 
 	if (ConfMan.getBool("ay_music"))
-		_playerAYMusic = new EclipseAYMusicPlayer(_mixer);
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::loadAssetsCPCDemo() {
@@ -187,7 +187,7 @@ void EclipseEngine::loadAssetsCPCDemo() {
 		it->convertToInPlace(_gfx->_texturePixelFormat);
 
 	if (ConfMan.getBool("ay_music"))
-		_playerAYMusic = new EclipseAYMusicPlayer(_mixer);
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::updateHeartFramesCPC() {

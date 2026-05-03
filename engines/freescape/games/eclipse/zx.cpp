@@ -128,7 +128,7 @@ void EclipseEngine::loadAssetsZXFullGame() {
 		it->convertToInPlace(_gfx->_texturePixelFormat);
 
 	if (ConfMan.getBool("ay_music"))
-		_playerAYMusic = new EclipseAYMusicPlayer(_mixer);
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::loadAssetsZXDemo() {
@@ -173,7 +173,7 @@ void EclipseEngine::loadAssetsZXDemo() {
 		it->convertToInPlace(_gfx->_texturePixelFormat);
 
 	if (ConfMan.getBool("ay_music"))
-		_playerAYMusic = new EclipseAYMusicPlayer(_mixer);
+		_playerMusic = new EclipseAYMusicPlayer(_mixer);
 }
 
 void EclipseEngine::drawZXUI(Graphics::Surface *surface) {

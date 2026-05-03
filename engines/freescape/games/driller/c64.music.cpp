@@ -210,9 +210,10 @@ const uint8_t initialTwoCtr[] = {0x02, 0x02, 0x02};
 // Debug log levels
 #define DEBUG_LEVEL 4 // 0: Minimal, 1: Basic Flow, 2: Detailed State
 
-DrillerSIDPlayer::DrillerSIDPlayer() : _sid(nullptr),
+// Tune 0 seems unused, Tune 1 is the main theme
+DrillerSIDPlayer::DrillerSIDPlayer(int tuneIndex) : _sid(nullptr),
 														  _playState(STOPPED),
-														  _targetTuneIndex(0),
+														  _targetTuneIndex(tuneIndex),
 														  _globalTempo(3),        // Default tempo
 														  _globalTempoCounter(1)  // Start immediately
 {
@@ -234,14 +235,8 @@ void DrillerSIDPlayer::destroySID() {
 	}
 }
 
-// Tune 0 seems unused, Tune 1 is the main theme
-void DrillerSIDPlayer::startMusic(int tuneIndex) {
-	if (tuneIndex < 0 || tuneIndex >= NUM_TUNES) {
-		debug(DEBUG_LEVEL >= 0, "Driller: Invalid tune index %d requested", tuneIndex);
-		return;
-	}
-	debug(DEBUG_LEVEL >= 0, "Driller: Starting Tune %d", tuneIndex);
-	_targetTuneIndex = tuneIndex;
+void DrillerSIDPlayer::startMusic() {
+	initSID();
 	// Signal to change tune on the next frame update
 	// If stopped, this will trigger initialization. If playing, triggers change.
 	_playState = CHANGING_TUNE;
@@ -258,6 +253,11 @@ void DrillerSIDPlayer::stopMusic() {
 			SID_Write(offset + 4, 0); // Gate off, keep waveform bits
 		}
 	}
+	destroySID();
+}
+
+bool DrillerSIDPlayer::isPlaying() const {
+        return _playState == PLAYING;
 }
 
 // --- SID Interaction ---

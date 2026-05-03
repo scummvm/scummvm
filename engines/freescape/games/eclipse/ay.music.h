@@ -24,6 +24,7 @@
 
 #include "audio/softsynth/ay8912.h"
 #include "audio/mixer.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
@@ -37,14 +38,14 @@ namespace Freescape {
  * - Dropping SID-specific features (pulse width, filters)
  *
  */
-class EclipseAYMusicPlayer : public Audio::AY8912Stream {
+class EclipseAYMusicPlayer : public MusicPlayer, private Audio::AY8912Stream {
 public:
 	EclipseAYMusicPlayer(Audio::Mixer *mixer);
 	~EclipseAYMusicPlayer() override;
 
-	void startMusic();
-	void stopMusic();
-	bool isPlaying() const;
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 	// AudioStream overrides
 	int readBuffer(int16 *buffer, const int numSamples) override;

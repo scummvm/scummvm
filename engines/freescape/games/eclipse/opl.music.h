@@ -23,6 +23,7 @@
 #define FREESCAPE_ECLIPSE_OPL_MUSIC_H
 
 #include "audio/fmopl.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
@@ -35,14 +36,14 @@ namespace Freescape {
  * - Mapping SID waveforms to OPL FM instrument patches
  * - Rebuilding the SID envelope and pulse-width motion on top of AdLib timbres
  */
-class EclipseOPLMusicPlayer {
+class EclipseOPLMusicPlayer : public MusicPlayer {
 public:
 	EclipseOPLMusicPlayer();
 	~EclipseOPLMusicPlayer();
 
-	void startMusic();
-	void stopMusic();
-	bool isPlaying() const;
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 private:
 	enum {

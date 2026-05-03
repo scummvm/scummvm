@@ -21,10 +21,11 @@
 
 #include "audio/sid.h"
 #include "common/debug.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
-class DrillerSIDPlayer {
+class DrillerSIDPlayer : public MusicPlayer {
 
 	// --- Voice State Structure ---
 	struct VoiceState {
@@ -221,14 +222,15 @@ class DrillerSIDPlayer {
 	// Gate mask is now per-voice (v.gateMask) matching assembly's control3
 
 public:
-	DrillerSIDPlayer();
+	DrillerSIDPlayer(int tuneIndex = 1);
 	~DrillerSIDPlayer();
-	void startMusic(int tuneIndex = 1);
-	void stopMusic();
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
+
+private:
 	void initSID();
 	void destroySID();
-
-	private:
 	void SID_Write(int reg, uint8_t data);
 	void onTimer();
 	void handleChangeTune(int tuneIndex);

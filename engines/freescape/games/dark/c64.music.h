@@ -23,21 +23,20 @@
 #define FREESCAPE_DARK_C64_MUSIC_H
 
 #include "audio/sid.h"
+#include "freescape/music.h"
 
 namespace Freescape {
 
 // 3-channel SID music player for Dark Side C64.
 // Implements the Wally Beben byte-stream sequencer from darkside.prg ($0901).
-class DarkSideC64MusicPlayer {
+class DarkSideC64MusicPlayer : public MusicPlayer {
 public:
 	DarkSideC64MusicPlayer();
 	~DarkSideC64MusicPlayer();
 
-	void startMusic();
-	void stopMusic();
-	bool isPlaying() const;
-	void initSID();
-	void destroySID();
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 private:
 	SID::SID *_sid;
@@ -66,6 +65,9 @@ private:
 	void applyPWModulation(int ch);
 
 	uint8 readPatByte(int ch);
+
+	void initSID();
+	void destroySID();
 
 	// Global state
 	bool _musicActive;
