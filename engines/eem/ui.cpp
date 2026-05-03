@@ -2925,18 +2925,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		Picture detail;
 		if (_picsArchive.getPicture(detailPic, detail)) {
 			const byte transp = (byte)(detail.flags >> 8);
-			const int dx = 0x94, dy = 0x0f;
-			const int dw = MIN<int>(detail.surface.w, 320 - dx);
-			const int dh = MIN<int>(detail.surface.h, 200 - dy);
-			for (int row = 0; row < dh; row++) {
-				const byte *src = (const byte *)
-					detail.surface.getBasePtr(0, row);
-				byte *dst = (byte *)ms.getBasePtr(0, dy + row);
-				for (int col = 0; col < dw; col++) {
-					if (src[col] != transp)
-						dst[dx + col] = src[col];
-				}
-			}
+			ms.transBlitFrom(detail.surface,
+							 Common::Point(0x94, 0x0f), transp);
 		}
 
 		// Walk the clue list from `pageStart`. Skip clues that aren't
@@ -4588,16 +4578,9 @@ void EEMEngine::doAccuse() {
 				// skips pixels equal to `pic[0] >> 8`.
 				if (haveBalloon) {
 					const byte transp = (byte)(balloon.flags >> 8);
-					const int bw = MIN<int>(balloon.surface.w, 320 - balloonX);
-					const int bh = MIN<int>(balloon.surface.h, 200 - balloonY);
-					for (int row = 0; row < bh; row++) {
-						const byte *src = (const byte *)balloon.surface.getBasePtr(0, row);
-						byte *dst = (byte *)ms.getBasePtr(balloonX, balloonY + row);
-						for (int col = 0; col < bw; col++) {
-							if (src[col] != transp)
-								dst[col] = src[col];
-						}
-					}
+					ms.transBlitFrom(balloon.surface,
+									 Common::Point(balloonX, balloonY),
+									 transp);
 				}
 				// Inset table @ 29be:0875 — 1df2:0acb pushes color=0.
 				uint16 tx = 5;
