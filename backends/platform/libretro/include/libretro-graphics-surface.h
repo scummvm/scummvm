@@ -33,7 +33,8 @@ public:
 	Graphics::Palette _gamePalette;
 
 private:
-	bool _cursorDontScale;
+	float _cursorScaleX;
+	float _cursorScaleY;
 	bool _cursorPaletteEnabled;
 	bool _screenUpdatePending;
 	int _cursorHotspotX;
@@ -64,7 +65,7 @@ public:
 	Graphics::PixelFormat getOverlayFormat() const override;
 	const Graphics::ManagedSurface *getScreen(void);
 	void warpMouse(int x, int y) override;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) override;
 	void setCursorPalette(const byte *colors, uint start, uint num) override;
 	bool isOverlayInGUI(void);
 

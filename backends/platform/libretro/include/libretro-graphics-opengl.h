@@ -33,7 +33,7 @@ public:
 	}
 	void refreshScreen() override;
 	void setSystemMousePosition(const int x, const int y) override {};
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) override;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) override;
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format) override;
 	void setMousePosition(int x, int y);
 	void resetContext(OpenGL::ContextType contextType);

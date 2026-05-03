@@ -41,7 +41,8 @@ OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
 
 	_overlayInGUI(false),
-	_cursorDontScale(true),
+	_cursorScaleX(0),
+	_cursorScaleY(0),
 	_cursorPaletteDisabled(true),
 	_cursorPalette(NULL),
 	_cursorPaletteDirty(false),

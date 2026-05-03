@@ -78,9 +78,9 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	  _defaultFormat(), _defaultFormatAlpha(), _targetBuffer(nullptr),
 	  _gameScreen(nullptr), _overlay(nullptr),
 	  _cursor(nullptr), _cursorMask(nullptr),
-	  _cursorHotspotX(0), _cursorHotspotY(0),
+	  _cursorHotspotX(0), _cursorHotspotY(0), _cursorScaleX(0), _cursorScaleY(0),
 	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
-	  _cursorKeyColor(0), _cursorUseKey(true), _cursorDontScale(false), _cursorPaletteEnabled(false), _shakeOffsetScaled()
+	  _cursorKeyColor(0), _cursorUseKey(true), _cursorPaletteEnabled(false), _shakeOffsetScaled()
 #if !USE_FORCED_GLES
 	  , _libretroPipeline(nullptr)
 #endif
@@ -1080,14 +1080,15 @@ void multiplyColorWithAlpha(const byte *src, byte *dst, const uint w, const uint
 } // End of anonymous namespace
 
 
-void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	_cursorUseKey = (mask == nullptr);
 	if (_cursorUseKey)
 		_cursorKeyColor = keycolor;
 
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
-	_cursorDontScale = dontScale;
+	_cursorScaleX = fracToDouble(scaleX);
+	_cursorScaleY = fracToDouble(scaleY);
 
 	if (!w || !h) {
 		delete _cursor;
@@ -1105,6 +1106,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		inputFormat = Graphics::PixelFormat::createFormatCLUT8();
 	}
 
+	bool dontScale = (scaleX == 0 && scaleY == 0);
 #ifdef USE_SCALERS
 	bool wantScaler = (_currentState.scaleFactor > 1) && !dontScale && _scalerPlugins[_currentState.scalerIndex]->get<ScalerPluginObject>().canDrawCursor();
 #else
@@ -1170,7 +1172,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 	// If the cursor is scalable, add a 1-texel transparent border.
 	// This ensures that linear filtering falloff from the edge pixels has room to completely fade out instead of
 	// being cut off at half-way.  Could use border clamp too, but GLES2 doesn't support that.
-	if (!_cursorDontScale) {
+	if (!dontScale) {
 		topLeftCoord = Common::Point(1, 1);
 		cursorSurfaceSize += Common::Point(2, 2);
 	}
@@ -1185,7 +1187,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 	if (inputFormat.bytesPerPixel == 1) {
 		// For CLUT8 cursors we can simply copy the input data into the
 		// texture.
-		if (!_cursorDontScale)
+		if (!dontScale)
 			_cursor->fill(keycolor);
 		_cursor->copyRectToTexture(topLeftCoord.x, topLeftCoord.y, w, h, buf, w * inputFormat.bytesPerPixel);
 
@@ -1220,7 +1222,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		// The pre-multiplication allows using a blend mode that prevents
 		// color fringes due to filtering.
 
-		if (!_cursorDontScale)
+		if (!dontScale)
 			_cursor->fill(0);
 
 		byte *topLeftPixelPtr = static_cast<byte *>(dst->getBasePtr(topLeftCoord.x, topLeftCoord.y));
@@ -1941,21 +1943,24 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 	// In case scaling is actually enabled we will scale the cursor according
 	// to the game screen.
 	// In 3D mode, there is no scaling
-	if (!_cursorDontScale && _gameScreen) {
+	if (!(_cursorScaleX == 0 && _cursorScaleY == 0) && _gameScreen) {
 		int rotatedWidth = _gameDrawRect.width();
 		int rotatedHeight = _gameDrawRect.height();
 		if (_rotationMode == Common::kRotation90 || _rotationMode == Common::kRotation270) {
 			SWAP(rotatedWidth, rotatedHeight);
 		}
 
-		const frac_t screenScaleFactorX = intToFrac(rotatedWidth) / _gameScreen->getWidth();
-		const frac_t screenScaleFactorY = intToFrac(rotatedHeight) / _gameScreen->getHeight();
+		const float screenScaleFactorX = rotatedWidth / _gameScreen->getWidth();
+		const float screenScaleFactorY = rotatedHeight / _gameScreen->getHeight();
 
-		_cursorHotspotXScaled = fracToInt(_cursorHotspotXScaled * screenScaleFactorX);
-		_cursorWidthScaled    = fracToDouble(cursorWidth        * screenScaleFactorX);
+		const float cursorScaleFactorX = screenScaleFactorX * _cursorScaleX;
+		const float cursorScaleFactorY = screenScaleFactorY * _cursorScaleY;
 
-		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
-		_cursorHeightScaled   = fracToDouble(cursorHeight       * screenScaleFactorY);
+		_cursorHotspotXScaled = _cursorHotspotXScaled * cursorScaleFactorX;
+		_cursorWidthScaled    =  cursorWidth          * cursorScaleFactorX;
+
+		_cursorHotspotYScaled = _cursorHotspotYScaled * cursorScaleFactorY;
+		_cursorHeightScaled   =  cursorHeight         * cursorScaleFactorY;
 	}
 
 	switch (_rotationMode) {

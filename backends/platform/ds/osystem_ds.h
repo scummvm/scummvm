@@ -171,7 +171,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask);
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY);
 
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 

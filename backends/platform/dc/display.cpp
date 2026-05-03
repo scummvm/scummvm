@@ -295,7 +295,7 @@ void OSystem_Dreamcast::warpMouse(int x, int y)
 
 void OSystem_Dreamcast::setMouseCursor(const void *buf, uint w, uint h,
 				       int hotspot_x, int hotspot_y,
-				       uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+				       uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	if (mask)
 		warning("OSystem_Dreamcast::setMouseCursor: Masks are not supported");
 

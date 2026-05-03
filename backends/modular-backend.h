@@ -124,7 +124,7 @@ public:
 
 	bool showMouse(bool visible) override final;
 	void warpMouse(int x, int y) override final;
-	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = NULL) override final;
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) override final;
 	void setCursorPalette(const byte *colors, uint start, uint num) override final;
 	bool lockMouse(bool lock) override final;
 

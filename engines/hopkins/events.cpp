@@ -532,7 +532,7 @@ void EventsManager::updateCursor() {
 	// Set the ScummVM cursor from the surface
 	CursorMan.replaceCursorPalette(cursorPalette, 0, PALETTE_SIZE - 1);
 	CursorMan.replaceCursor(cursorSurface, _vm->_objectsMan->getObjectWidth(), _vm->_objectsMan->getObjectHeight(),
-		xOffset, 0, 0, false);
+		xOffset, 0, 0);
 
 	// Delete the cursor surface and palette
 	delete[] cursorPalette;

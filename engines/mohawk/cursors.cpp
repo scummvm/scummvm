@@ -130,7 +130,7 @@ void MystCursorManager::setCursor(uint16 id) {
 			CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-		CursorMan.replaceCursor(*surface, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false);
+		CursorMan.replaceCursor(*surface, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255));
 	}
 }
 
