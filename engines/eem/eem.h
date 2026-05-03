@@ -221,6 +221,18 @@ public:
 	/// Show suspect gallery. Mirrors `_DrawGallery` @ 158f:0046.
 	void doGallery();
 
+	/// Suspect-detail view inside the gallery. Mirrors
+	/// `MoreInfo @ 158f:0419`: paints PIC 0x3f + suspect picture at
+	/// (0x94, 0x0f), paginates the suspect's found clues inside the
+	/// `_GalleryNoteRect`, and dispatches PDA bottom-bar buttons via
+	/// `_HandleMoreButton @ 158f:027d`. Sets `_nextScreen` and
+	/// returns true when the user picks a button that should exit
+	/// `doGallery` outright (NOTEBOOK / ACCUSE / MAP); returns false
+	/// for plain dismissal (ESC / GALLERY button) so the caller stays
+	/// on the portrait grid.
+	bool moreInfo(const byte *gd, uint suspectIdx,
+				   const Picture &galBg, bool haveBg);
+
 	/// Show big map; click chooses next site. Mirrors `_DoBigMap` @ 20fe:09e7.
 	void doBigMap();
 
