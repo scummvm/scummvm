@@ -251,6 +251,41 @@ const AnimScript kAnimScripts[] = {
 	// 0x16 (29be:185e, alias of 0x00) — Jenny CaseSelection greeter,
 	// same blink script as 0x15.
 	{ 0x16, 10, { 0,0,0,0,0,0,0,0,0,2 } },
+	// Site / drop scripts ≤28 frames — see `_AnimationSequences @
+	// 29be:22d4`. Many of these are short count-ups used by ambient
+	// animations (people walking, vehicles passing) that the original
+	// drives one entry per `_CheckFrameRate` tick (~140 ms). Without
+	// these, our generic fallback cycles through every animation cell
+	// at one entry per tick and the ambient anims look 2-3× too fast.
+	// 0x1b (29be:192e, alias of 0x07) — walk-cycle 0..9.
+	{ 0x1b, 10, { 0,1,2,3,4,5,6,7,8,9 } },
+	// 0x1c (29be:21a8) — short 6-frame count-up.
+	{ 0x1c,  6, { 0,1,2,3,4,5 } },
+	// 0x1d (29be:21a8, alias of 0x1c).
+	{ 0x1d,  6, { 0,1,2,3,4,5 } },
+	// 0x21 (29be:1b86) — paired-step idle bob.
+	{ 0x21, 14, { 0,0,0,1,1,2,2,3,3,3,2,2,1,1 } },
+	// 0x25 (29be:218a) — 3-frame trigger.
+	{ 0x25,  3, { 0,1,2 } },
+	// 0x26 (29be:1d3e) — count-up 0..17 (18 frames).
+	{ 0x26, 18, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17 } },
+	// 0x27 (29be:1d64) — count-up 0..11 (12 frames).
+	{ 0x27, 12, { 0,1,2,3,4,5,6,7,8,9,10,11 } },
+	// 0x2a (29be:1e50) — 5-step micro-anim.
+	{ 0x2a,  5, { 0,1,2,2,3 } },
+	// 0x2e (29be:21ce) — count-up 0..12 (13 frames).
+	{ 0x2e, 13, { 0,1,2,3,4,5,6,7,8,9,10,11,12 } },
+	// 0x2f (29be:21ea) — count-up 0..22 (23 frames).
+	{ 0x2f, 23, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+				  20,21,22 } },
+	// 0x32 (29be:219c) — count-up 0..4 (5 frames).
+	{ 0x32,  5, { 0,1,2,3,4 } },
+	// 0x33 (29be:2192) — count-up 0..3 (4 frames).
+	{ 0x33,  4, { 0,1,2,3 } },
+	// 0x34 (29be:219c, alias of 0x32).
+	{ 0x34,  5, { 0,1,2,3,4 } },
+	// 0x35 (29be:21b6) — count-up 0..10 (11 frames).
+	{ 0x35, 11, { 0,1,2,3,4,5,6,7,8,9,10 } },
 	// Briefing animations — `_DoInitClues @ 1a35:0411` calls
 	// `_NewAnimation(..., (PicData *)CONCAT22(0x17, ...), 1, ...)`
 	// for the game animation (always anim ID 0x17 — even Jenny's
@@ -265,29 +300,228 @@ const AnimScript kAnimScripts[] = {
 };
 static_assert(true, "see kAnimScriptsLong below for >28-frame scripts");
 
-// Scripts longer than 28 frames live here so the main `kAnimScripts`
-// table can keep its tight `frames[28]` storage (the lookup in
-// `findAnimScript` checks both arrays). Used for the briefing
-// animations whose original scripts run 30 frames each.
+// Scripts longer than 28 frames live here. The lookup in
+// `findAnimScript` checks both arrays. Stored as
+// `(seqnum, len, ptr)` so each script can be any length without
+// bloating every entry — the longest (0x22) runs 115 frames.
 struct AnimScriptLong {
 	uint16 seqnum;
-	uint8 len;
-	uint8 frames[36];
+	uint16 len;
+	const uint8 *frames;
 };
+
+// Briefing animations — `_DoInitClues @ 1a35:0411` calls
+// `_NewAnimation(..., (PicData *)CONCAT22(0x17, ...), 1, ...)` for the
+// game animation (always anim ID 0x17 — even Jenny's briefing reuses
+// Jake's SCRIPT, even though the loaded ANI.DBD cells come from her
+// partner-specific entry 0x3b). Same pattern for book (0x18) / nancy
+// (0x19).
+static const uint8 kScript17[] = {
+	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+	20,21,22,23,24,25,26,27,28,29
+};
+static const uint8 kScript18[] = {
+	0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8,
+	8,8,8,8,8,8,8,9,10,11,12,13,14,15
+};
+static const uint8 kScript19[] = {
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	1,2,3,4,5,6,7,8,9,10,11,12
+};
+
+// Site / NPC drop scripts (29be:22d4 entries 0x1a..0x36 minus the
+// short ones that fit in `kAnimScripts`). Many entries deliberately
+// repeat the same frame several times — that's the original's
+// "frame-hold" mechanism (the per-tick walk advances exactly one
+// entry, so K repeats hold the frame for K * `kFramePeriodMs` ≈
+// K * 140 ms). Without these scripts our generic fallback cycles
+// through every animation cell at one entry per tick, which is the
+// "site animations run too fast" symptom.
+
+// 0x1a (29be:19a4) — count-up 0..7, long idle hold, repeat 1..7,
+// idle, mirror 7..0, idle (77 entries).
+static const uint8 kScript1a[] = {
+	0,1,2,3,4,5,6,7,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	1,2,3,4,5,6,7,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+	7,6,5,4,3,2,1,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x1e (29be:1a40) — slow walk-stutter with idle tail (76 entries).
+static const uint8 kScript1e[] = {
+	0,1,2,3,3,3,3,4,4,3,4,4,4,4,4,3,
+	5,5,5,5,5,5,5,5,4,4,4,4,4,4,4,4,
+	5,5,5,5,5,5,6,5,6,5,7,7,7,7,7,7,
+	7,8,7,7,7,7,7,8,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x1f (29be:1ada) — 0..5, idle, 0..5, idle, 6..8 alternation,
+// idle (50 entries).
+static const uint8 kScript1f[] = {
+	0,1,2,3,4,5,
+	0,0,0,0,
+	1,2,3,4,5,
+	0,0,0,0,0,
+	6,7,8,8,8,7,6,7,8,8,8,7,
+	6,7,8,8,8,7,6,7,8,8,8,7,
+	6,
+	0,0,0,0,0
+};
+// 0x20 (29be:1b40) — count-up 0..33 (34 frames).
+static const uint8 kScript20[] = {
+	0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+	20,21,22,23,24,25,26,27,28,29,30,31,32,33
+};
+// 0x22 (29be:1ba4) — long held-frame walker 0..22 with idle tail
+// (115 entries; most frames held 4-7 ticks each).
+static const uint8 kScript22[] = {
+	0,
+	1,1,1,1,1,
+	2,2,2,2,2,
+	3,3,3,3,3,
+	4,4,4,4,
+	5,5,5,5,
+	6,6,6,6,
+	7,7,7,7,
+	8,8,8,8,
+	9,9,9,9,
+	10,10,10,10,10,
+	11,11,11,11,11,
+	12,12,12,12,12,12,
+	13,13,13,13,13,
+	14,14,14,14,
+	15,15,15,15,
+	16,16,16,16,16,16,16,
+	17,17,17,17,
+	18,18,18,18,
+	19,19,19,19,
+	20,20,20,20,
+	21,21,21,21,
+	22,22,22,22,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x23 (29be:1c8c) — 29 entries: 0, 6 holds of 1, count-up 2..4,
+// down-up gesture, 5 idle frames.
+static const uint8 kScript23[] = {
+	0,1,1,1,1,1,1,
+	2,3,4,3,2,
+	5,5,5,
+	2,3,4,3,3,3,3,3,
+	0,0,0,0,0,0
+};
+// 0x24 (29be:1cc8) — bell-curve hold (58 entries): 0,0, 1,1, 2,2,
+// 3 held for 26 ticks, mirror back, idle.
+static const uint8 kScript24[] = {
+	0,0,1,1,2,2,
+	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+	2,2,1,1,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x28 (29be:1d7e) — gentle hold 0..3 with long hold on 3, mirror
+// back, idle (45 entries).
+static const uint8 kScript28[] = {
+	0,1,1,2,2,
+	3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+	2,2,1,1,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x29 (29be:1dda) — paired-step count-up 0..21 plus idle
+// (58 entries).
+static const uint8 kScript29[] = {
+	0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,
+	11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,
+	20,20,21,21,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x2b (29be:1e5c) — count-up 0..11 with each frame held 4 ticks
+// (48 entries).
+static const uint8 kScript2b[] = {
+	0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,
+	4,4,4,4,5,5,5,5,6,6,6,6,7,7,7,7,
+	8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11
+};
+// 0x2c (29be:1ebe) — alternation walk 0..19 with idle tail
+// (54 entries).
+static const uint8 kScript2c[] = {
+	0,1,2,3,4,5,
+	0,
+	6,7,8,9,10,10,10,10,10,10,
+	11,11,11,
+	12,13,14,15,
+	0,
+	16,17,18,19,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x2d (29be:1f2c) — count-up 0..11 with each frame held 8 ticks
+// (96 entries).
+static const uint8 kScript2d[] = {
+	0,0,0,0,0,0,0,0,
+	1,1,1,1,1,1,1,1,
+	2,2,2,2,2,2,2,2,
+	3,3,3,3,3,3,3,3,
+	4,4,4,4,4,4,4,4,
+	5,5,5,5,5,5,5,5,
+	6,6,6,6,6,6,6,6,
+	7,7,7,7,7,7,7,7,
+	8,8,8,8,8,8,8,8,
+	9,9,9,9,9,9,9,9,
+	10,10,10,10,10,10,10,10,
+	11,11,11,11,11,11,11,11
+};
+// 0x30 (29be:1fee) — 0,0, count-up 1..19, idle, mirror down, extra
+// idle (86 entries).
+static const uint8 kScript30[] = {
+	0,0,
+	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
+	0,0,0,0,0,0,0,0,0,0,
+	19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,
+	5,4,4,3,3,2,2,1,1,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+// 0x31 (29be:209c) — paired-step idle alternations (57 entries).
+static const uint8 kScript31[] = {
+	0,0,0,1,1,1,
+	0,0,0,1,1,1,
+	2,2,2,3,3,3,
+	2,2,2,3,3,3,
+	4,4,4,5,5,5,
+	4,4,4,5,5,5,
+	3,3,3,2,2,2,
+	3,3,3,2,2,2,
+	1,1,1,
+	0,0,0,
+	1,1,1
+};
+// 0x36 (29be:2110) — 0..8 forward, 1..8 forward, frame 1 held 20
+// ticks, 8..0 mirror, idle tail (60 entries).
+static const uint8 kScript36[] = {
+	0,1,2,3,4,5,6,7,8,
+	1,2,3,4,5,6,7,8,
+	1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	8,7,6,5,4,3,2,1,
+	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+};
+
 const AnimScriptLong kAnimScriptsLong[] = {
-	// 0x17 (29be:221a) — briefing game count-up 0..29 (30 frames),
-	// drives the per-tick frame walk of the game piece animation
-	// during `_DoInitClues`.
-	{ 0x17, 30, { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
-				  20,21,22,23,24,25,26,27,28,29 } },
-	// 0x18 (29be:2296) — briefing book: counts up to cell 8 then
-	// holds for 16 ticks (the "thinking" pose) then count up 9..15.
-	{ 0x18, 30, { 0,1,2,3,4,5,6,7,8,8,8,8,8,8,8,8,
-				  8,8,8,8,8,8,8,9,10,11,12,13,14,15 } },
-	// 0x19 (29be:2258) — briefing nancy: 18 idle ticks then
-	// count-up 1..12 (the late-arriving sidekick pose).
-	{ 0x19, 30, { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-				  1,2,3,4,5,6,7,8,9,10,11,12 } },
+	{ 0x17, 30,  kScript17 },
+	{ 0x18, 30,  kScript18 },
+	{ 0x19, 30,  kScript19 },
+	{ 0x1a, 77,  kScript1a },
+	{ 0x1e, 76,  kScript1e },
+	{ 0x1f, 50,  kScript1f },
+	{ 0x20, 34,  kScript20 },
+	{ 0x22, 115, kScript22 },
+	{ 0x23, 29,  kScript23 },
+	{ 0x24, 58,  kScript24 },
+	{ 0x28, 45,  kScript28 },
+	{ 0x29, 58,  kScript29 },
+	{ 0x2b, 48,  kScript2b },
+	{ 0x2c, 54,  kScript2c },
+	{ 0x2d, 96,  kScript2d },
+	{ 0x30, 86,  kScript30 },
+	{ 0x31, 57,  kScript31 },
+	{ 0x36, 60,  kScript36 },
 };
 
 // `_PatientSequence` and `_ImpatientSequence` are standalone script
@@ -308,7 +542,7 @@ static const uint32 kImpatienceDelayMs = 60 * 1000;
 // holds).
 struct AnimScriptRef {
 	const uint8 *frames;
-	uint8 len;
+	uint16 len;
 };
 static AnimScriptRef findAnimScript(uint16 seqnum) {
 	for (uint i = 0; i < ARRAYSIZE(kAnimScripts); i++) {
@@ -333,9 +567,17 @@ static AnimScriptRef findAnimScript(uint16 seqnum) {
 	return r;
 }
 
+// Original frame period from `_InitFrameCounter @ 1a35:01ae`:
+// `LastFrame = (cs_within_hour) + 0xe`, with `cs_within_hour` =
+// `((ti_min * 60) + ti_sec) * 100 + ti_hund` (Borland C `struct time`
+// memory order is min, hour, hund, sec). The `+ 0xe` is 14
+// centiseconds → ~140 ms per frame, matching `_CheckFrameRate @
+// 1a35:0204`. Earlier 100 ms ran the partner / hotspot animations
+// roughly 1.4× faster than the original.
+static const uint kFramePeriodMs = 140;
+
 static uint frameFromScriptAtTick(const uint8 *frames, uint len,
 								  uint numFrames, uint32 tickMs) {
-	const uint kFramePeriodMs = 100;
 	if (!frames || len == 0)
 		return numFrames > 0 ? (uint)((tickMs / kFramePeriodMs) % numFrames) : 0;
 	const uint scriptIdx = (uint)((tickMs / kFramePeriodMs) % len);
@@ -474,7 +716,6 @@ uint partnerFrameAtTick(uint16 seqnum, uint numFrames, uint32 tickMs) {
 static uint oneShotThenLoopFrameAtTick(const uint8 *unfold, uint unfoldLen,
 									   const uint8 *waitSeq, uint waitSeqLen,
 									   uint numFrames, uint32 elapsedMs) {
-	const uint kFramePeriodMs = 100;
 	const uint tick = elapsedMs / kFramePeriodMs;
 	const uint frame = (tick < unfoldLen)
 		? unfold[tick]
@@ -849,10 +1090,12 @@ void SiteScreen::run() {
 		// `_UpdateAnimations` at the top of `_DoSiteLoop`'s main loop).
 		// Restore the static BG snapshot, redraw animated NPCs +
 		// partner at the current frame, then re-render hotspots on
-		// top. We tick at 100 ms (~10 FPS) which is in the same ball
-		// park as the original.
+		// top. The original ticks at 14 cs (~140 ms, see
+		// `kFramePeriodMs` above) — we matched 100 ms before, which
+		// ran site animations ~1.4× too fast.
 		const uint32 now = g_system->getMillis();
-		if (_snapshotSite == (int)cur && now - _lastTickMs >= 100) {
+		if (_snapshotSite == (int)cur &&
+			now - _lastTickMs >= kFramePeriodMs) {
 			if (checkImpatienceCounter()) {
 				_partnerWaitMood = kPartnerWaitImpatient;
 				debugC(1, kDebugSite, "Partner impatience: switched to impatient");
