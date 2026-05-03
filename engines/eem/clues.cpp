@@ -413,7 +413,7 @@ void EEMEngine::doInitClues() {
 				while (g_system->getEventManager()->pollEvent(ev)) {
 					if (ev.type == Common::EVENT_KEYDOWN &&
 						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-						interruptAudio();
+						interruptAudio(/*stopMusicToo=*/false);
 						skip = true;
 						break;
 					}
@@ -540,7 +540,7 @@ void EEMEngine::doInitClues() {
 					while (g_system->getEventManager()->pollEvent(ev)) {
 						if (ev.type == Common::EVENT_KEYDOWN &&
 							ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-							interruptAudio();
+							interruptAudio(/*stopMusicToo=*/false);
 							skip = true;
 							break;
 						}
@@ -953,8 +953,9 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						// playing past the dialog dismissal and
 						// bleeds into the next screen (e.g. the
 						// case-briefing voice still talking on the
-						// MAP after ESC).
-						interruptAudio();
+						// MAP after ESC). Site / briefing MIDI
+						// stays — only voice + spool halt here.
+						interruptAudio(/*stopMusicToo=*/false);
 						break;
 					}
 					if (ev.type == Common::EVENT_LBUTTONDOWN) {
@@ -987,6 +988,15 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 
 		applyClueSideEffects(c);
 	}
+
+	// `_DisplayClue @ 2404:05e6` lets the per-clue voice bleed past
+	// the last entry's dismissal — `_Wait()` returns on ANY input
+	// without touching the digital playback. We deliberately diverge
+	// (mirroring `_StopTheVoice @ 1ff1:0283`'s effect, voice only,
+	// MIDI untouched) so the briefing voice line doesn't keep talking
+	// over the next screen when the player clicks through the final
+	// entry.
+	interruptAudio(/*stopMusicToo=*/false);
 }
 
 void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
@@ -1069,7 +1079,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 					continue;
 				if (ev.type == Common::EVENT_KEYDOWN &&
 					ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					interruptAudio();
+					interruptAudio(/*stopMusicToo=*/false);
 					return true;  // skip
 				}
 				if (ev.type == Common::EVENT_LBUTTONDOWN ||

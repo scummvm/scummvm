@@ -414,7 +414,12 @@ private:
 	/// and once before TITLE.ANM). Called from every ESC handler in
 	/// the intro / title chain so the theme music + voice spool
 	/// don't bleed past the abort.
-	void interruptAudio();
+	/// Stop currently-playing voice / spooled SFX. Pass `stopMusic =
+	/// true` (the default — matches `_CleanMysterySounds + _StopMIDI`)
+	/// to also halt the MIDI track; conversation / dialog skip paths
+	/// pass `false` so the site / briefing music keeps going across an
+	/// ESC.
+	void interruptAudio(bool stopMusicToo = true);
 
 	// Screen handlers — port targets in screens/ later.
 	void showEAKidsLogo();
