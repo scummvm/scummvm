@@ -744,10 +744,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 	{
 		Graphics::Surface *screen = g_system->lockScreen();
 		if (screen) {
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)bg.getBasePtr(0, row),
-					   (const byte *)screen->getBasePtr(0, row), 320);
-			}
+			bg.simpleBlitFrom(*screen);
 			g_system->unlockScreen();
 		}
 	}
@@ -844,10 +841,7 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				break;
 			Graphics::ManagedSurface scratch(320, 200,
 				Graphics::PixelFormat::createFormatCLUT8());
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)scratch.getBasePtr(0, row),
-					   (const byte *)screen->getBasePtr(0, row), 320);
-			}
+			scratch.simpleBlitFrom(*screen);
 			g_system->unlockScreen();
 
 			int textX = bubX;
@@ -1035,10 +1029,7 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 	{
 		Graphics::Surface *screen = g_system->lockScreen();
 		if (screen) {
-			for (int row = 0; row < 200; row++) {
-				memcpy((byte *)bg.getBasePtr(0, row),
-					   (const byte *)screen->getBasePtr(0, row), 320);
-			}
+			bg.simpleBlitFrom(*screen);
 			g_system->unlockScreen();
 		}
 	}
@@ -1491,10 +1482,7 @@ bool EEMEngine::areYouSure() {
 	Graphics::ManagedSurface saved(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	if (screen) {
-		for (int row = 0; row < 200; row++) {
-			memcpy((byte *)saved.getBasePtr(0, row),
-				   (const byte *)screen->getBasePtr(0, row), 320);
-		}
+		saved.simpleBlitFrom(*screen);
 		g_system->unlockScreen();
 	}
 
@@ -1538,9 +1526,7 @@ bool EEMEngine::areYouSure() {
 
 		Graphics::ManagedSurface scratch(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
-		for (int row = 0; row < 200; row++)
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)saved.getBasePtr(0, row), 320);
+		scratch.simpleBlitFrom(saved);
 		scratch.fillRect(dlg, 0);
 		scratch.frameRect(dlg, 0xF);
 		_font.drawString(&scratch,
