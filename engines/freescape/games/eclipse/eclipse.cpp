@@ -41,10 +41,6 @@
 
 namespace Freescape {
 
-// Forward declaration (defined in atari.music.cpp)
-Audio::AudioStream *makeEclipseAtariMusicStream(const byte *data, uint32 dataSize,
-                                                  int songNum = 1, int rate = 44100);
-
 // Wally Beben table offsets for Total Eclipse Amiga TEMUSIC.AM
 static const WBTableOffsets kEclipseAmigaMusicOffsets = {
 	0x0ACA, // periodTable
@@ -143,17 +139,12 @@ void EclipseEngine::stopBackgroundMusic() {
 void EclipseEngine::restartBackgroundMusic() {
 	if (_playerMusic) {
 		_playerMusic->startMusic();
-	} else if ((isAtariST() || isAmiga()) && !_musicData.empty()) {
+	} else if (isAmiga() && !_musicData.empty()) {
 		if (_mixer)
 			_mixer->stopHandle(_musicHandle);
-		Audio::AudioStream *musicStream = nullptr;
-		if (isAmiga())
-			musicStream = makeWallyBebenStream(
-				_musicData.data(), _musicData.size(), 1, 44100, true,
-				&kEclipseAmigaMusicOffsets);
-		else
-			musicStream = makeEclipseAtariMusicStream(
-				_musicData.data(), _musicData.size(), 1);
+		Audio::AudioStream *musicStream = makeWallyBebenStream(
+			_musicData.data(), _musicData.size(), 1, 44100, true,
+			&kEclipseAmigaMusicOffsets);
 		if (musicStream) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType,
 				&_musicHandle, musicStream);
@@ -473,16 +464,11 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		}
 	}
 
-	// Start background music (Atari ST / Amiga)
-	if ((isAtariST() || isAmiga()) && !_musicData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
-		Audio::AudioStream *musicStream = nullptr;
-		if (isAmiga())
-			musicStream = makeWallyBebenStream(
-				_musicData.data(), _musicData.size(), 1, 44100, true,
-				&kEclipseAmigaMusicOffsets);
-		else
-			musicStream = makeEclipseAtariMusicStream(
-				_musicData.data(), _musicData.size(), 1);
+	// Start background music (Amiga)
+	if (isAmiga() && !_musicData.empty() && !_mixer->isSoundHandleActive(_musicHandle)) {
+		Audio::AudioStream *musicStream = makeWallyBebenStream(
+			_musicData.data(), _musicData.size(), 1, 44100, true,
+			&kEclipseAmigaMusicOffsets);
 		if (musicStream) {
 			_mixer->playStream(Audio::Mixer::kMusicSoundType,
 				&_musicHandle, musicStream);

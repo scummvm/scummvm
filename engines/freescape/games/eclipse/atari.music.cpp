@@ -35,9 +35,10 @@
  *   $0DCC  Pattern pointer table (up to 31 x uint32 BE)
  */
 
-#include "audio/softsynth/ym2149.h"
+#include "audio/ym2149.h"
 
 #include "freescape/freescape.h"
+#include "freescape/music.h"
 #include "freescape/wb.h"
 
 #include "common/endian.h"
@@ -58,17 +59,18 @@ static const int kTENumPeriods     = 96;
 static const int kTENumInstruments = 12;
 static const int kTEMaxPatterns    = 31;
 
-class EclipseAtariMusicStream : public Audio::YM2149Emu {
+class EclipseAtariMusicPlayer : public MusicPlayer {
 public:
-	EclipseAtariMusicStream(const byte *data, uint32 dataSize, int songNum, int rate = 44100);
-	~EclipseAtariMusicStream() override {}
+	EclipseAtariMusicPlayer(const byte *data, uint32 dataSize, int songNum);
+	~EclipseAtariMusicPlayer();
 
-	int readBuffer(int16 *buffer, const int numSamples) override;
-	bool endOfData() const override { return !_musicActive; }
-	bool endOfStream() const override { return !_musicActive; }
-	Audio::AudioStream *toAudioStream() { return this; }
+	void startMusic() override;
+	void stopMusic() override;
+	bool isPlaying() const override;
 
 private:
+	YM2149::YM2149 *_ym2149;
+
 	// --- Data tables ---
 	const byte *_data;
 	uint32 _dataSize;
@@ -178,10 +180,10 @@ private:
 	bool _musicActive;
 	byte _tickSpeed;
 	byte _tickCounter;
-	int _tickSampleCount;
 	bool _hwEnvelopeDirty;
 	uint16 _hwEnvelopePeriod;
 	byte _hwEnvelopeShape;
+	int _songNum;
 
 	// --- Methods ---
 	void loadTables();
@@ -195,7 +197,7 @@ private:
 	void buildArpeggioTable(ChannelState &c, byte mask);
 	void tickUpdate();
 	void writeYMRegisters();
-	void setReg(int reg, byte value) { writeReg(reg, value); }
+	void setReg(int reg, byte value) { if (_ym2149) _ym2149->writeReg(reg, value); }
 
 	uint16 getPeriod(int note) const {
 		if (note < 0 || note >= kTENumPeriods)
@@ -226,12 +228,12 @@ private:
 // Construction / data loading
 // ---------------------------------------------------------------------------
 
-EclipseAtariMusicStream::EclipseAtariMusicStream(const byte *data, uint32 dataSize,
-                                                   int songNum, int)
+EclipseAtariMusicPlayer::EclipseAtariMusicPlayer(const byte *data, uint32 dataSize,
+                                                   int songNum)
 	: _data(data), _dataSize(dataSize),
 	  _musicActive(false), _tickSpeed(6), _tickCounter(0),
-	  _tickSampleCount(0), _hwEnvelopeDirty(false), _hwEnvelopePeriod(0), _hwEnvelopeShape(0),
-	  _numPatterns(0) {
+	  _hwEnvelopeDirty(false), _hwEnvelopePeriod(0), _hwEnvelopeShape(0),
+	  _numPatterns(0), _songNum(songNum) {
 
 	memset(_periods, 0, sizeof(_periods));
 	memset(_instruments, 0, sizeof(_instruments));
@@ -240,13 +242,47 @@ EclipseAtariMusicStream::EclipseAtariMusicStream(const byte *data, uint32 dataSi
 	memset(_arpeggioIntervals, 0, sizeof(_arpeggioIntervals));
 	memset(_channels, 0, sizeof(_channels));
 
-	init();
+	_ym2149 = YM2149::Config::create();
+	if (!_ym2149 || !_ym2149->init()) {
+		warning("EclipseAtariMusicPlayer: Failed to create YM2149 emulator");
+		delete _ym2149;
+		_ym2149 = nullptr;
+	}
 
 	loadTables();
-	startSong(songNum);
 }
 
-void EclipseAtariMusicStream::loadTables() {
+EclipseAtariMusicPlayer::~EclipseAtariMusicPlayer() {
+	stopMusic();
+	delete _ym2149;
+}
+
+
+// ============================================================================
+// Public interface
+// ============================================================================
+
+void EclipseAtariMusicPlayer::startMusic() {
+	if (!_ym2149)
+		return;
+	stopMusic();
+	_ym2149->start(new Common::Functor0Mem<void, EclipseAtariMusicPlayer>(
+		this, &EclipseAtariMusicPlayer::tickUpdate), 50);
+	startSong(_songNum);
+}
+
+void EclipseAtariMusicPlayer::stopMusic() {
+	_musicActive = false;
+	if (_ym2149) {
+		_ym2149->stop();
+	}
+}
+
+bool EclipseAtariMusicPlayer::isPlaying() const {
+	return _musicActive;
+}
+
+void EclipseAtariMusicPlayer::loadTables() {
 	// Period table: 96 x uint16 BE at TEXT+$0B24
 	for (int i = 0; i < kTENumPeriods; i++) {
 		_periods[i] = readDataWord(kTEPeriodTableOffset + i * 2);
@@ -314,7 +350,7 @@ void EclipseAtariMusicStream::loadTables() {
 // Song init
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::startSong(int songNum) {
+void EclipseAtariMusicPlayer::startSong(int songNum) {
 	_musicActive = false;
 
 	if (songNum < 1 || songNum > 2)
@@ -349,7 +385,7 @@ void EclipseAtariMusicStream::startSong(int songNum) {
 	}
 }
 
-void EclipseAtariMusicStream::initChannel(int ch) {
+void EclipseAtariMusicPlayer::initChannel(int ch) {
 	ChannelState &c = _channels[ch];
 	memset(&c, 0, sizeof(ChannelState));
 	c.duration = 1;
@@ -366,7 +402,7 @@ void EclipseAtariMusicStream::initChannel(int ch) {
 // Same format as wb.cpp: $00-$C0=pattern#, $C1-$FE=transpose, $FF=loop
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::readOrderList(int ch) {
+void EclipseAtariMusicPlayer::readOrderList(int ch) {
 	ChannelState &c = _channels[ch];
 
 	for (int safety = 0; safety < 256; safety++) {
@@ -408,7 +444,7 @@ void EclipseAtariMusicStream::readOrderList(int ch) {
 //   $7D/$7C=vibrato/arpeggio, $00-$5F=note
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::readPatternCommands(int ch) {
+void EclipseAtariMusicPlayer::readPatternCommands(int ch) {
 	ChannelState &c = _channels[ch];
 
 	for (int safety = 0; safety < 256; safety++) {
@@ -605,7 +641,7 @@ void EclipseAtariMusicStream::readPatternCommands(int ch) {
 // Note trigger — set YM period, reset envelope
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::triggerNote(int ch) {
+void EclipseAtariMusicPlayer::triggerNote(int ch) {
 	ChannelState &c = _channels[ch];
 
 	// Apply transpose and clamp
@@ -707,7 +743,7 @@ void EclipseAtariMusicStream::triggerNote(int ch) {
 // Effects processing — runs every tick (50 Hz)
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::processEffects(int ch) {
+void EclipseAtariMusicPlayer::processEffects(int ch) {
 	ChannelState &c = _channels[ch];
 
 	// Noise gate: in TEMUSIC, instrument high nibble is a countdown that
@@ -823,7 +859,7 @@ void EclipseAtariMusicStream::processEffects(int ch) {
 // Volume range: 0-63 internal, written to YM as >>2 (0-15)
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::processEnvelope(int ch) {
+void EclipseAtariMusicPlayer::processEnvelope(int ch) {
 	ChannelState &c = _channels[ch];
 	// Noise-only instruments may validly run with zero tone period.
 	if (c.outputPeriod == 0 && !c.noiseEnabled)
@@ -900,7 +936,7 @@ void EclipseAtariMusicStream::processEnvelope(int ch) {
 // Arpeggio table builder
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::buildArpeggioTable(ChannelState &c, byte mask) {
+void EclipseAtariMusicPlayer::buildArpeggioTable(ChannelState &c, byte mask) {
 	c.arpeggioTableLen = WBCommon::buildArpeggioTable(_arpeggioIntervals, mask, c.arpeggioTable, 16, false);
 	c.arpeggioPos = 0;
 }
@@ -909,7 +945,7 @@ void EclipseAtariMusicStream::buildArpeggioTable(ChannelState &c, byte mask) {
 // Write channel state to YM2149 registers
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::writeYMRegisters() {
+void EclipseAtariMusicPlayer::writeYMRegisters() {
 	byte mixer = 0x3F; // Start with all disabled (bits 0-2=tone, bits 3-5=noise)
 	if (_hwEnvelopeDirty) {
 		setReg(11, _hwEnvelopePeriod & 0xFF);
@@ -970,7 +1006,7 @@ void EclipseAtariMusicStream::writeYMRegisters() {
 // Main tick update — called at 50 Hz
 // ---------------------------------------------------------------------------
 
-void EclipseAtariMusicStream::tickUpdate() {
+void EclipseAtariMusicPlayer::tickUpdate() {
 	if (!_musicActive)
 		return;
 
@@ -1024,48 +1060,17 @@ void EclipseAtariMusicStream::tickUpdate() {
 }
 
 // ---------------------------------------------------------------------------
-// Audio stream readBuffer — tick at 50 Hz, generate AY samples
-// ---------------------------------------------------------------------------
-
-int EclipseAtariMusicStream::readBuffer(int16 *buffer, const int numSamples) {
-	if (!_musicActive)
-		return 0;
-
-	int samplesGenerated = 0;
-	int samplesPerTick = MAX(1, getRate() / 50);
-
-	while (samplesGenerated < numSamples && _musicActive) {
-		int remaining = samplesPerTick - _tickSampleCount;
-		int toGenerate = MIN(numSamples - samplesGenerated, remaining);
-
-		if (toGenerate > 0) {
-			generateSamples(buffer + samplesGenerated, toGenerate);
-			samplesGenerated += toGenerate;
-			_tickSampleCount += toGenerate;
-		}
-
-		if (_tickSampleCount >= samplesPerTick) {
-			_tickSampleCount -= samplesPerTick;
-			tickUpdate();
-		}
-	}
-
-	return samplesGenerated;
-}
-
-// ---------------------------------------------------------------------------
 // Factory function
 // ---------------------------------------------------------------------------
 
-Audio::AudioStream *makeEclipseAtariMusicStream(const byte *data, uint32 dataSize,
-                                                  int songNum, int rate) {
+MusicPlayer *makeEclipseAtariMusicPlayer(const byte *data, uint32 dataSize,
+                                                  int songNum) {
 	if (!data || dataSize < 0x1000) {
 		warning("TE-Atari music: invalid data (size %u)", dataSize);
 		return nullptr;
 	}
 
-	EclipseAtariMusicStream *stream = new EclipseAtariMusicStream(data, dataSize, songNum, rate);
-	return stream->toAudioStream();
+	return new EclipseAtariMusicPlayer(data, dataSize, songNum);
 }
 
 } // End of namespace Freescape
