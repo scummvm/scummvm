@@ -3773,11 +3773,8 @@ void EEMEngine::drawBigMapDetail(int scrollX, int scrollY,
 
 	const int copyW = MIN<int>(mapW - scrollX, kMapWinW);
 	const int copyH = MIN<int>(mapH - scrollY, kMapWinH);
-	for (int row = 0; row < copyH; row++) {
-		memcpy((byte *)scratch.getBasePtr(kMapWinX, kMapWinY + row),
-			   mapPixels.data() + (scrollY + row) * mapW + scrollX,
-			   copyW);
-	}
+	scratch.copyRectToSurface(mapPixels.data() + scrollY * mapW + scrollX,
+							  mapW, kMapWinX, kMapWinY, copyW, copyH);
 
 	// Stamped site buttons. `_StampButtons @ 20fe:0d2f` (CD):
 	//   button = _GetButton(MapData[+0])
@@ -5205,17 +5202,8 @@ void EEMEngine::doAccuseFloppy() {
 			if (h < 0x4e)
 				balloonY = (uint16)((0x50 - h) >> 1);
 			const byte transp = (byte)(balloon.flags >> 8);
-			for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
-				 row++) {
-				const byte *src =
-					(const byte *)balloon.surface.getBasePtr(0, row);
-				byte *dst = (byte *)ms.getBasePtr(0x21, balloonY + row);
-				for (int col = 0; col < balloon.surface.w && 0x21 + col < 320;
-					 col++) {
-					if (src[col] != transp)
-						dst[col] = src[col];
-				}
-			}
+			ms.transBlitFrom(balloon.surface,
+							 Common::Point(0x21, balloonY), transp);
 		}
 		uint16 bx = 5;
 		uint16 by = 4;
@@ -5759,22 +5747,11 @@ void EEMEngine::doAccuseFloppy() {
 		const byte transp = (byte)(balloon.flags >> 8);
 		// `_GetBalloon`'s mirror flag (high bit of the table value)
 		// flips the balloon horizontally — the original applies it
-		// inside the blit primitive. We emulate by reading the source
-		// row in reverse.
-		for (int row = 0; row < balloon.surface.h && balloonY + row < 200;
-			 row++) {
-			const byte *src =
-				(const byte *)balloon.surface.getBasePtr(0, row);
-			byte *dst = (byte *)scene.getBasePtr(balloonX, balloonY + row);
-			for (int col = 0;
-				 col < balloon.surface.w && balloonX + col < 320; col++) {
-				const int srcCol = flipBalloon
-					? (balloon.surface.w - 1 - col) : col;
-				const byte px = src[srcCol];
-				if (px != transp)
-					dst[col] = px;
-			}
-		}
+		// inside the blit primitive; ScummVM's `transBlitFrom` exposes
+		// the same via its `flipped` argument.
+		scene.transBlitFrom(balloon.surface,
+							Common::Point(balloonX, balloonY),
+							transp, flipBalloon);
 	}
 	uint16 tx = 5, ty = 4, tw = 155;
 	getBalloonInsets(balloonIdx, tx, ty, tw);
