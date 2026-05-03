@@ -675,7 +675,25 @@ Common::String EEMEngine::parseString(const Common::String &raw,
 			break;
 		}
 	}
-	return out;
+
+	// Strip leading spaces at the start of each emitted line. Mirrors
+	// `_DoWordWrap @ 1b66:04a7`, which advances past spaces at the
+	// start of every output line via `for (; str[last] == ' '; last++)`.
+	// ~60% of mystery-text strings carry 1-2 leading spaces in the data
+	// (verified across all CD M*.BIN files); the original WordWrap
+	// discards them, so we do the same before the text reaches
+	// `Font::wordWrapText` (which only trims at wrap-induced line
+	// boundaries, not at start-of-input or after an embedded '\n').
+	Common::String cleaned;
+	bool atLineStart = true;
+	for (uint i = 0; i < out.size(); i++) {
+		const char ch = out[i];
+		if (atLineStart && ch == ' ')
+			continue;
+		cleaned += ch;
+		atLineStart = (ch == '\n');
+	}
+	return cleaned;
 }
 
 void EEMEngine::applyClueSideEffects(const byte *c) {
