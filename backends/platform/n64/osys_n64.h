@@ -24,6 +24,7 @@
 
 #include "common/rect.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 
 #include "backends/base-backend.h"
 

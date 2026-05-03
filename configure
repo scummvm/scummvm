@@ -4033,7 +4033,6 @@ if test -n "$_host"; then
 			append_var LDFLAGS "-mtune=vr4300"
 			append_var LDFLAGS "-nodefaultlibs"
 			append_var LDFLAGS "-nostartfiles"
-			append_var LDFLAGS "-mno-crt0"
 			append_var LDFLAGS "-L$N64SDK/hkz-libn64"
 			append_var LDFLAGS "-L$N64SDK/lib"
 			append_var LDFLAGS "-T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
