@@ -72,6 +72,45 @@ enum GraphicModeID {
 
 class OSystem_N64 : virtual public BaseBackend, public Common::EventSource, public PaletteManager {
 protected:
+	enum TransactionMode {
+		kTransactionNone = 0,
+		kTransactionActive = 1,
+		kTransactionRollback = 2
+	};
+
+	/**
+	 * The current transaction mode.
+	 */
+	TransactionMode _transactionMode;
+
+	//
+	// Transaction support
+	//
+	struct VideoState {
+		constexpr VideoState() : width(0), height(0), format(),
+		    graphicsMode(OVERS_NTSC_340X240) {
+		}
+
+		uint width, height;
+		Graphics::PixelFormat format;
+		int graphicsMode;
+	};
+
+	/**
+	 * The currently set up video state.
+	 */
+	VideoState _currentState;
+
+	/**
+	 * The old video state used when doing a transaction rollback.
+	 */
+	VideoState _oldState;
+
+	/**
+	 * The current screen change ID.
+	 */
+	int _screenChangeID;
+
 	Audio::MixerImpl *_mixer;
 
 	struct display_context * _dc; // Display context for N64 on screen buffer switching
@@ -89,9 +128,7 @@ protected:
 #endif
 	uint16 _cursorPalette[256]; // Palette entries for the cursor
 
-	int _graphicMode; // Graphic mode
 	uint16 _screenWidth, _screenHeight;
-	uint16 _gameWidth, _gameHeight;
 	uint16 _frameBufferWidth; // Width of framebuffer in N64 memory
 	uint8 _offscrPixels; // Pixels to skip on each line before start drawing, used to center image
 	uint8 _maxFps; // Max frames-per-second which can be shown on screen
@@ -149,6 +186,9 @@ public:
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode, uint flags = OSystem::kGfxModeNoFlags);
 	virtual int getGraphicsMode() const;
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
+	virtual int getScreenChangeID() const;
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();

@@ -68,10 +68,6 @@ OSystem_N64::OSystem_N64() {
 	_screenWidth = 320;
 	_screenHeight = 240;
 
-	// Game screen size
-	_gameHeight = 320;
-	_gameWidth = 240;
-
 	// Overlay size
 	_overlayWidth = 320;
 	_overlayHeight = 240;
@@ -113,9 +109,6 @@ OSystem_N64::OSystem_N64() {
 	memset(_offscreen_hic, 0, _screenWidth * _screenHeight * 2);
 	memset(_offscreen_pal, 0, _screenWidth * _screenHeight);
 	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(uint16));
-
-	// Default graphic mode
-	_graphicMode = OVERS_NTSC_340X240;
 
 	// Clear palette array
 	_screenPalette = (uint16 *)memalign(8, 256 * sizeof(uint16));
@@ -229,8 +222,9 @@ int OSystem_N64::getDefaultGraphicsMode() const {
 }
 
 bool OSystem_N64::setGraphicsMode(int mode, uint /*flags*/) {
-	_graphicMode = mode;
-	switchGraphicModeId(_graphicMode);
+	assert(_transactionMode != kTransactionNone);
+
+	_currentState.graphicsMode = mode;
 
 	return true;
 }
@@ -246,7 +240,6 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 0;
-		_graphicMode = NORM_PAL_320X240;
 		enableAudioPlayback();
 		break;
 
@@ -259,7 +252,6 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 16;
-		_graphicMode = OVERS_PAL_340X240;
 		enableAudioPlayback();
 		break;
 
@@ -272,7 +264,6 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 0;
-		_graphicMode = NORM_MPAL_320X240;
 		enableAudioPlayback();
 		break;
 
@@ -285,7 +276,6 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 16;
-		_graphicMode = OVERS_MPAL_340X240;
 		enableAudioPlayback();
 		break;
 
@@ -298,7 +288,6 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 0;
-		_graphicMode = NORM_NTSC_320X240;
 		enableAudioPlayback();
 		break;
 
@@ -312,35 +301,65 @@ void OSystem_N64::switchGraphicModeId(int mode) {
 		_screenWidth = 320;
 		_screenHeight = 240;
 		_offscrPixels = 16;
-		_graphicMode = OVERS_NTSC_340X240;
 		enableAudioPlayback();
 		break;
 	}
 }
 
 int OSystem_N64::getGraphicsMode() const {
-	return _graphicMode;
+	return _currentState.graphicsMode;
+}
+
+void OSystem_N64::beginGFXTransaction() {
+	assert(_transactionMode == kTransactionNone);
+
+	// Start a transaction.
+	_oldState = _currentState;
+	_transactionMode = kTransactionActive;
 }
 
 void OSystem_N64::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-	_gameWidth = width;
-	_gameHeight = height;
+	_currentState.width = width;
+	_currentState.height = height;
+	_currentState.format = format ? *format : Graphics::PixelFormat::createFormatCLUT8();
+}
 
-	if (_gameWidth > _screenWidth)
-		_gameWidth = _screenWidth;
-	if (_gameHeight > _screenHeight)
-		_gameHeight = _screenHeight;
+OSystem::TransactionError OSystem_N64::endGFXTransaction() {
+	assert(_transactionMode == kTransactionActive);
 
-	_mouseMaxX = _gameWidth;
-	_mouseMaxY = _gameHeight;
+	uint transactionError = OSystem::kTransactionSuccess;
+
+	switchGraphicModeId(_currentState.graphicsMode);
+
+	if (_currentState.width > _screenWidth || _currentState.height > _screenHeight) {
+		_currentState.width  = _oldState.width;
+		_currentState.height = _oldState.height;
+		transactionError |= OSystem::kTransactionSizeChangeFailed;
+	}
+
+	if (!_currentState.format.isCLUT8()) {
+		_currentState.format = _oldState.format;
+		transactionError |= OSystem::kTransactionFormatNotSupported;
+	}
+
+	_mouseMaxX = _currentState.width;
+	_mouseMaxY = _currentState.height;
+
+	_transactionMode = kTransactionNone;
+
+	return (OSystem::TransactionError)transactionError;
+}
+
+int OSystem_N64::getScreenChangeID() const {
+	return _screenChangeID;
 }
 
 int16 OSystem_N64::getHeight() {
-	return _screenHeight;
+	return _currentState.height;
 }
 
 int16 OSystem_N64::getWidth() {
-	return _screenWidth;
+	return _currentState.width;
 }
 
 void OSystem_N64::setPalette(const byte *colors, uint start, uint num) {
@@ -366,8 +385,8 @@ void OSystem_N64::rebuildOffscreenGameBuffer(void) {
 	uint64 four_col_hi;
 	uint32 four_col_pal;
 
-	for (int h = 0; h < _gameHeight; h++) {
-		for (int w = 0; w < _gameWidth; w += 4) {
+	for (int h = 0; h < getHeight(); h++) {
+		for (int w = 0; w < getWidth(); w += 4) {
 			four_col_pal = *(uint32 *)(_offscreen_pal + ((h * _screenWidth) + w));
 
 			four_col_hi = 0;
@@ -496,8 +515,8 @@ void OSystem_N64::updateScreen() {
 
 	if (!_dirtyOffscreen && !_dirtyPalette) return; // The offscreen is clean
 
-	uint8 skip_lines = (_screenHeight - _gameHeight) / 4;
-	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
+	uint8 skip_lines = (_screenHeight - getHeight()) / 4;
+	uint8 skip_pixels = (_screenWidth - getWidth()) / 2; // Center horizontally the image
 	skip_pixels -= (skip_pixels % 8); // To keep aligned memory access
 
 	if (_dirtyPalette)
@@ -517,12 +536,12 @@ void OSystem_N64::updateScreen() {
 	if (!_overlayVisible) {
 		tmpDst = game_framebuffer;
 		tmpSrc = _offscreen_hic + (_shakeYOffset * _screenWidth);
-		for (currentHeight = _shakeYOffset; currentHeight < _gameHeight; currentHeight++) {
+		for (currentHeight = _shakeYOffset; currentHeight < getHeight(); currentHeight++) {
 			uint64 *game_dest = (uint64 *)(tmpDst + skip_pixels + _offscrPixels);
 			uint64 *game_src = (uint64 *)tmpSrc;
 
 			// With uint64 we copy 4 pixels at a time
-			for (currentWidth = 0; currentWidth < _gameWidth; currentWidth += 4) {
+			for (currentWidth = 0; currentWidth < getWidth(); currentWidth += 4) {
 				*game_dest++ = *game_src++;
 			}
 			tmpDst += _frameBufferWidth;
@@ -593,7 +612,7 @@ void OSystem_N64::updateScreen() {
 }
 
 Graphics::Surface *OSystem_N64::lockScreen() {
-	_framebuffer.init(_gameWidth, _gameHeight, _screenWidth, _offscreen_pal, Graphics::PixelFormat::createFormatCLUT8());
+	_framebuffer.init(getWidth(), getHeight(), _screenWidth, _offscreen_pal, Graphics::PixelFormat::createFormatCLUT8());
 
 	return &_framebuffer;
 }
@@ -635,8 +654,8 @@ void OSystem_N64::showOverlay(bool inGUI) {
 void OSystem_N64::hideOverlay() {
 	if (_overlayInGUI) {
 		// Change min/max mouse coords
-		_mouseMaxX = _gameWidth;
-		_mouseMaxY = _gameHeight;
+		_mouseMaxX = getWidth();
+		_mouseMaxY = getHeight();
 
 		// Relocate the mouse cursor given the new limitations
 		warpMouse(_mouseX, _mouseY);
@@ -662,13 +681,13 @@ void OSystem_N64::hideOverlay() {
 void OSystem_N64::clearOverlay() {
 	memset(_overlayBuffer, 0, _overlayWidth * _overlayHeight * sizeof(uint16));
 
-	uint8 skip_lines = (_screenHeight - _gameHeight) / 4;
-	uint8 skip_pixels = (_screenWidth - _gameWidth) / 2; // Center horizontally the image
+	uint8 skip_lines = (_screenHeight - getHeight()) / 4;
+	uint8 skip_pixels = (_screenWidth - getWidth()) / 2; // Center horizontally the image
 
 	uint16 *tmpDst = _overlayBuffer + (_overlayWidth * skip_lines * 2);
 	uint16 *tmpSrc = _offscreen_hic + (_shakeYOffset * _screenWidth);
-	for (uint16 currentHeight = _shakeYOffset; currentHeight < _gameHeight; currentHeight++) {
-		memcpy((tmpDst + skip_pixels), tmpSrc, _gameWidth * 2);
+	for (uint16 currentHeight = _shakeYOffset; currentHeight < getHeight(); currentHeight++) {
+		memcpy((tmpDst + skip_pixels), tmpSrc, getWidth() * 2);
 		tmpDst += _overlayWidth;
 		tmpSrc += _screenWidth;
 	}
