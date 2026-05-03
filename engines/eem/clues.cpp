@@ -857,24 +857,16 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 				// the transparent colour to `_Rect_Move_Mask`. The
 				// on-disk u16 at file offset 0 maps to `Picture::flags`.
 				const byte transp = (byte)(balloon.flags >> 8);
-				// `_GetBalloon @ 172b:1d7d` mirrors the picture horizontally
-				// when `(bubNum & 0x80)` is set — used for right-side
-				// speakers so the tail points the other way.
+				// `_GetBalloon @ 172b:1d7d` mirrors the picture
+				// horizontally when `(bubNum & 0x80)` is set — used
+				// for right-side speakers so the tail points the
+				// other way. ScummVM's `transBlitFrom` exposes the
+				// same via its `flipped` argument.
 				const bool flipBalloon = (fittedBubNum & 0x80) != 0;
 				if (bw > 0 && bh > 0) {
-					for (int row = 0; row < bh; row++) {
-						const byte *src =
-							(const byte *)balloon.surface.getBasePtr(0, row);
-						byte *dst = (byte *)scratch.getBasePtr(bubX, bubY + row);
-						for (int col = 0; col < bw; col++) {
-							const int srcCol = flipBalloon
-								? (balloon.surface.w - 1 - col)
-								: col;
-							const byte px = src[srcCol];
-							if (px != transp)
-								dst[col] = px;
-						}
-					}
+					scratch.transBlitFrom(balloon.surface,
+										  Common::Point(bubX, bubY),
+										  transp, flipBalloon);
 				}
 				// Per-balloon metadata from `29be:0875` (52 × 10 bytes,
 				// indexed by `bubNum & 0x7F`). The original `_DisplayClue`
@@ -1188,7 +1180,6 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 		if (haveBalloon)
 			getBalloonInsets(balloonId, textXIns, textYIns, textWidth);
 		const int textX = ballX + textXIns;
-		const int balloonH = haveBalloon ? balloon.surface.h : 200;
 		const int lineH    = _font.getFontHeight();
 
 		// Pagination state — `FUN_22dc_05c8`'s text-idx loop uses
@@ -1252,23 +1243,10 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 					}
 				}
 				if (haveBalloon) {
-					const int bw = MIN<int>(balloon.surface.w, 320 - ballX);
-					const int bh = MIN<int>(balloonH, 200 - ballY);
 					const byte transp = (byte)(balloon.flags >> 8);
-					for (int row = 0; row < bh; row++) {
-						const byte *src = (const byte *)
-							balloon.surface.getBasePtr(0, row);
-						byte *dst = (byte *)
-							scratch.getBasePtr(ballX, ballY + row);
-						for (int col = 0; col < bw; col++) {
-							const int srcCol = flipBall
-								? (balloon.surface.w - 1 - col)
-								: col;
-							const byte px = src[srcCol];
-							if (px != transp)
-								dst[col] = px;
-						}
-					}
+					scratch.transBlitFrom(balloon.surface,
+										  Common::Point(ballX, ballY),
+										  transp, flipBall);
 				}
 				cursorY = ballY + textYIns;
 			}
