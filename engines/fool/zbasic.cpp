@@ -741,8 +741,10 @@ void ZBasic::unk_331(uint16 unk1, int16 unk2) {
 	warning("STUB: ZBasic::unk_331");
 }
 
-void ZBasic::unk_333(uint16 unk1) {
-	warning("STUB: ZBasic::unk_333");
+void ZBasic::indexClear(int16 table) {
+	if (_index.contains(table)) {
+		_index[table].clear();
+	}
 }
 
 void ZBasic::indexSet(const Common::U32String &value, int16 table, int16 index) {

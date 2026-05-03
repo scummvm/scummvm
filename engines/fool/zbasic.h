@@ -307,7 +307,7 @@ public:
 	void unk_158();
 	uint16 decodeInt(const Common::String &data);
 	void unk_331(uint16 unk1, int16 unk2);
-	void unk_333(uint16 unk1);
+	void indexClear(int16 table);
 	void indexSet(const Common::U32String &value, int16 table, int16 index);
 	void indexRawSet(const Common::String &value, int16 table, int16 index);
 	Common::U32String index(int16 table, int16 index);
