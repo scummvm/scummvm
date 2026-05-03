@@ -1383,7 +1383,7 @@ void FoolGame::newGame() {
 		// 128:2e02
 	}
 	// 128:2e14
-	g_zbasic->unk_333(0x2);
+	g_zbasic->indexClear(0x2);
 	this->storyNextPage = 1;
 	this->var_i16_7ce = 0;
 	this->activePuzzle = 0;
@@ -1765,7 +1765,7 @@ void FoolGame::puzzleRun() {
 		g_toolbox->DrawMenuBar();
 	}
 	// 128:3aea
-	g_zbasic->unk_333(1);
+	g_zbasic->indexClear(1);
 	if (this->puzzleCompletionStatus[this->storyCurrentChapter] == 0x63) {
 		this->storyUnlockChapter();
 	}
