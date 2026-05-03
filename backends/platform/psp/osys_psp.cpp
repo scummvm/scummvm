@@ -307,7 +307,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_cursor.setXY(x, y);
 }
 
-void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format, const byte *mask) {
+void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format, const byte *mask, frac_t scaleX, frac_t scaleY) {
 	DEBUG_ENTER_FUNC();
 
 	if (mask)
@@ -316,7 +316,7 @@ void OSystem_PSP::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, 
 	_displayManager.waitUntilRenderFinished();
 	_pendingUpdate = false;
 
-	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], scale[%d], pformat[%p]\n", buf, w, h, hotspotX, hotspotY, keycolor, !dontScale, format);
+	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], pformat[%p], scaleX[%f], scaleY[%f]\n", buf, w, h, hotspotX, hotspotY, keycolor, format, fracToDouble(scaleX), fracToDouble(scaleY));
 	if (format) {
 		PSP_DEBUG_PRINT("format: bpp[%d], rLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d], rShift[%d], gShift[%d], bShift[%d], aShift[%d]\n", format->bytesPerPixel, format->rLoss, format->gLoss, format->bLoss, format->aLoss, format->rShift, format->gShift, format->bShift, format->aShift);
 	}

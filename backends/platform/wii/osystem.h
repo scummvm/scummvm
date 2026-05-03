@@ -56,7 +56,8 @@ class OSystem_Wii final : virtual public BaseBackend, public Common::EventSource
 private:
 	s64 _startup_time;
 
-	bool _cursorDontScale;
+	float _cursorScaleX;
+	float _cursorScaleY;
 	bool _cursorPaletteDisabled;
 	u16 *_cursorPalette;
 	bool _cursorPaletteDirty;
@@ -191,8 +192,8 @@ public:
 	void warpMouse(int x, int y) override;
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 								int hotspotY, uint32 keycolor,
-								bool dontScale,
-								const Graphics::PixelFormat *format, const byte *mask) override;
+								const Graphics::PixelFormat *format, const byte *mask,
+								frac_t scaleX, frac_t scaleY) override;
 
 	bool pollEvent(Common::Event &event) override;
 	uint32 getMillis(bool skipRecord = false) override;

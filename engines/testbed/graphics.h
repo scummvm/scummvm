@@ -30,12 +30,12 @@ namespace GFXtests {
 
 // Helper functions for GFX tests
 void drawEllipse(int x, int y, int a, int b);
-void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
+void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", frac_t cursorTargetScaleX = FRAC_ONE, frac_t cursorTargetScaleY = FRAC_ONE);
 void initMousePalette();
 void initMouseCursor();
-Common::Rect computeSize(const Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale);
+Common::Rect computeSize(const Common::Rect &cursorRect, frac_t cursorTargetScaleX, frac_t cursorTargetScaleY);
 void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
-Common::Rect drawCursor(bool cursorPaletteDisabled = false, int cursorTargetScale = 1);
+Common::Rect drawCursor(bool cursorPaletteDisabled, frac_t cursorTargetScaleX, frac_t cursorTargetScaleY);
 TestExitStatus pixelFormats(Common::List<Graphics::PixelFormat> &pfList);
 void showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss);
 

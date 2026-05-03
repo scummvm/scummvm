@@ -339,7 +339,7 @@ void CursorManager::applyCursor() {
 
 		Graphics::ManagedSurface temp(*surf, bounds);
 
-		CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphics->getTransColor(), false);
+		CursorMan.replaceCursor(temp, hotspot.x, hotspot.y, g_nancy->_graphics->getTransColor());
 		if (g_nancy->getGameType() == kGameTypeVampire) {
 			byte palette[3 * 256];
 			surf->grabPalette(palette, 0, 256);

@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"
+#include "common/frac.h"
 #include "graphics/cursor.h"
 #include "graphics/surface.h"
 
@@ -75,17 +76,19 @@ public:
 	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
 	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
 	 * @param format	Pointer to the pixel format that the cursor graphic uses.
 	 *					CLUT8 will be used if this is null or not specified.
 	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 *
 	 * @note It is acceptable for the buffer to be a null pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr);
+	void pushCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format = NULL, const byte *mask = nullptr, frac_t scaleX = FRAC_ONE, frac_t scaleY = FRAC_ONE);
 
 	/**
 	 * Push a new cursor onto the stack, and set it in the backend.
@@ -99,15 +102,17 @@ public:
 	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
 	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
 	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 *
 	 * @note It is acceptable for the surface to be empty. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const byte *mask = nullptr);
+	void pushCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask = nullptr, frac_t scaleX = FRAC_ONE, frac_t scaleY = FRAC_ONE);
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -132,13 +137,15 @@ public:
 	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
 	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
 	 * @param format	Pointer to the pixel format that the cursor graphic uses,
 	 *					CLUT8 will be used if this is null or not specified.
 	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 */
-	void replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr);
+	void replaceCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, const Graphics::PixelFormat *format = nullptr, const byte *mask = nullptr, frac_t scaleX = FRAC_ONE, frac_t scaleY = FRAC_ONE);
 
 	/**
 	 * Replace the current cursor on the stack.
@@ -153,11 +160,13 @@ public:
 	 * @param keycolor	Color value for the transparent color. This cannot exceed
 	 *                  the maximum color value as defined by format.
 	 *                  Does nothing if mask is set.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
 	 * @param mask      Optional pointer to cursor mask containing values from the CursorMaskValue enum.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 */
-	void replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale = false, const byte *mask = nullptr);
+	void replaceCursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask = nullptr, frac_t scaleX = FRAC_ONE, frac_t scaleY = FRAC_ONE);
 
 	/**
 	 * Replace the current cursor on the stack.
@@ -166,10 +175,12 @@ public:
 	 * more optimized way of popping the old cursor before pushing the new one.
 	 *
 	 * @param cursor	New cursor.
-	 * @param dontScale	Whether the cursor should never be scaled. An exception are high PPI displays, where the cursor
-	 *                  would be too small to notice otherwise. These are allowed to scale the cursor anyway.
+	 * @param scaleX    Horizontal scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
+	 * @param scaleY    Vertical scaling factor for the cursor relative to the
+	 *                  game screen scale. A value of 0 means that the cursor should not be scaled.
 	 */
-	void replaceCursor(const Graphics::Cursor *cursor, bool dontScale = false);
+	void replaceCursor(const Graphics::Cursor *cursor, frac_t scaleX = FRAC_ONE, frac_t scaleY = FRAC_ONE);
 
 	/**
 	 * Pop all cursors and cursor palettes from their respective stacks.
@@ -275,14 +286,15 @@ private:
 		int _hotspotX;
 		int _hotspotY;
 		uint32 _keycolor;
-		bool _dontScale;
+		frac_t _scaleX;
+		frac_t _scaleY;
 
 		uint _size;
 
 		// _surf set to default by Graphics::Surface default constructor
-		Cursor() : _mask(0), _visible(false), _hotspotX(0), _hotspotY(0), _keycolor(0), _dontScale(false), _size(0) {}
+		Cursor() : _mask(0), _visible(false), _hotspotX(0), _hotspotY(0), _keycolor(0), _scaleX(FRAC_ONE), _scaleY(FRAC_ONE), _size(0) {}
 
-		Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const byte *mask);
+		Cursor(const Surface &surf, int hotspotX, int hotspotY, uint32 keycolor, const byte *mask, frac_t scaleX, frac_t scaleY);
 		~Cursor();
 	};
 

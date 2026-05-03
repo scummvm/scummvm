@@ -775,7 +775,6 @@ void OSystem_3DS::warpMouse(int x, int y) {
 		_cursorOverlayY = y;
 	}
 
-	// TODO: adjust for _cursorScalable ?
 	x -= _cursorHotspotX;
 	y -= _cursorHotspotY;
 
@@ -796,9 +795,9 @@ void OSystem_3DS::setCursorDelta(float deltaX, float deltaY) {
 
 void OSystem_3DS::setMouseCursor(const void *buf, uint w, uint h,
 								 int hotspotX, int hotspotY,
-								 uint32 keycolor, bool dontScale,
-								 const Graphics::PixelFormat *format, const byte *mask) {
-	_cursorScalable = !dontScale;
+								 uint32 keycolor,
+								 const Graphics::PixelFormat *format, const byte *mask,
+								 frac_t scaleX, frac_t scaleY) {
 	_cursorHotspotX = hotspotX;
 	_cursorHotspotY = hotspotY;
 	_cursorKeyColor = keycolor;

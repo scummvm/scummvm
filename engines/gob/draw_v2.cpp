@@ -162,7 +162,7 @@ void Draw_v2::animateCursor(int16 cursor) {
 				_cursorHeight - 1, 0, 0);
 
 		CursorMan.replaceCursor(_scummvmCursor->getData(),
-				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, false, &_vm->getPixelFormat());
+				_cursorWidth, _cursorHeight, hotspotX, hotspotY, 0, &_vm->getPixelFormat());
 		CursorMan.disableCursorPalette(true);
 
 		if (_frontSurface != _backSurface) {

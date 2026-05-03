@@ -940,7 +940,7 @@ void CastleEngine::setAmigaCursor(bool crosshair) {
 			scaledCursor[y * sw + x] = srcData[(y / scale) * _cursorW + (x / scale)];
 
 	Graphics::PixelFormat cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	CursorMan.replaceCursor(scaledCursor, sw, sh, hotX, hotY, 0, false, &cursorFormat);
+	CursorMan.replaceCursor(scaledCursor, sw, sh, hotX, hotY, 0, &cursorFormat);
 	CursorMan.replaceCursorPalette(cursorPalette, 0, 16);
 	delete[] scaledCursor;
 }

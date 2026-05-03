@@ -389,7 +389,7 @@ void ThemeEngine::refresh() {
 				CursorMan.replaceCursorPalette(pal->data(), 0, pal->size());
 			}
 			CursorMan.replaceCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
-			                        cur.surface->getTransparentColor(), true);
+			                        cur.surface->getTransparentColor(), nullptr, 0, 0);
 		}
 	}
 }
@@ -1689,7 +1689,7 @@ void ThemeEngine::setActiveCursor(CursorType type) {
             CursorMan.replaceCursorPalette(pal->data(), 0, pal->size());
         }
         CursorMan.replaceCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
-                                cur.surface->getTransparentColor(), true);
+                                cur.surface->getTransparentColor(), nullptr, 0, 0);
     }
 }
 
@@ -2264,7 +2264,7 @@ void ThemeEngine::showCursor() {
     }
 
     CursorMan.pushCursor(cur.surface->rawSurface(), cur.hotspotX, cur.hotspotY,
-                         cur.surface->getTransparentColor(), true);
+                         cur.surface->getTransparentColor(), nullptr, 0, 0);
     CursorMan.showMouse(true);
 }
 
