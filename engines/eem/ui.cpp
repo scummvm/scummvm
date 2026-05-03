@@ -1523,9 +1523,7 @@ void EEMEngine::doSetup() {
 			// transparent pixels show the setup BG underneath.
 			Graphics::Surface *cur = g_system->lockScreen();
 			if (cur) {
-				for (int row = 0; row < 200; row++)
-					memcpy((byte *)scratch.getBasePtr(0, row),
-						   (const byte *)cur->getBasePtr(0, row), 320);
+				scratch.simpleBlitFrom(*cur);
 				g_system->unlockScreen();
 			}
 			const byte transp = (byte)(pic.flags >> 8);
@@ -2902,14 +2900,8 @@ bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
 		Graphics::ManagedSurface ms(320, 200,
 			Graphics::PixelFormat::createFormatCLUT8());
 		ms.clear();
-		if (haveBg) {
-			const int bw = MIN<int>(galBg.surface.w, 320);
-			const int bh = MIN<int>(galBg.surface.h, 200);
-			for (int row = 0; row < bh; row++) {
-				memcpy((byte *)ms.getBasePtr(0, row),
-					   (const byte *)galBg.surface.getBasePtr(0, row), bw);
-			}
-		}
+		if (haveBg)
+			ms.simpleBlitFrom(galBg.surface);
 		// Partner sprite at (5, 0x50). The original `MoreInfo @
 		// 158f:0419` calls `_RefreshGalleryBackground` (clears the
 		// portrait grid) but the partner anim slot registered by
@@ -3207,14 +3199,8 @@ void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
 
-	if (haveBg) {
-		const int bw = MIN<int>(galBg.surface.w, 320);
-		const int bh = MIN<int>(galBg.surface.h, 200);
-		for (int row = 0; row < bh; row++) {
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)galBg.surface.getBasePtr(0, row), bw);
-		}
-	}
+	if (haveBg)
+		scratch.simpleBlitFrom(galBg.surface);
 
 	// Partner sprite frame @ (5, 0x50). The original `_DoGallery @
 	// 158f:065b` registers `_NewAnimation(..., CONCAT22(2, ...), ...)`
@@ -4458,9 +4444,7 @@ void EEMEngine::doAccuse() {
 		ms.clear();
 		Graphics::Surface *cur = g_system->lockScreen();
 		if (cur) {
-			for (int row = 0; row < 200; row++)
-				memcpy((byte *)ms.getBasePtr(0, row),
-					   (const byte *)cur->getBasePtr(0, row), 320);
+			ms.simpleBlitFrom(*cur);
 			g_system->unlockScreen();
 		}
 		const byte firstChar =
@@ -4590,20 +4574,14 @@ void EEMEngine::doAccuse() {
 				{
 					Graphics::Surface *cur = g_system->lockScreen();
 					if (cur) {
-						for (int row = 0; row < 200; row++)
-							memcpy((byte *)ms.getBasePtr(0, row),
-								   (const byte *)cur->getBasePtr(0, row), 320);
+						ms.simpleBlitFrom(*cur);
 						g_system->unlockScreen();
 					} else if (haveAccuseBg) {
 						// Fallback: lockScreen failed somehow; at least
 						// fill from PIC 0x3f so we don't render against
-						// stale memory.
-						const int bw = MIN<int>(accuseBg.surface.w, 320);
-						const int bh = MIN<int>(accuseBg.surface.h, 200);
-						for (int row = 0; row < bh; row++) {
-							memcpy((byte *)ms.getBasePtr(0, row),
-								   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
-						}
+						// stale memory. simpleBlitFrom auto-clips, so
+						// no MIN(w, 320)/MIN(h, 200) needed.
+						ms.simpleBlitFrom(accuseBg.surface);
 					}
 				}
 				// Masked balloon blit — `_Rect_Move_Mask` (1000:03fc)
@@ -5892,14 +5870,8 @@ void EEMEngine::drawAccuseGallery(uint8 numSuspects, const byte *gd,
 	Graphics::ManagedSurface scratch(320, 200,
 		Graphics::PixelFormat::createFormatCLUT8());
 	scratch.clear();
-	if (haveAccuseBg) {
-		const int bw = MIN<int>(accuseBg.surface.w, 320);
-		const int bh = MIN<int>(accuseBg.surface.h, 200);
-		for (int row = 0; row < bh; row++) {
-			memcpy((byte *)scratch.getBasePtr(0, row),
-				   (const byte *)accuseBg.surface.getBasePtr(0, row), bw);
-		}
-	}
+	if (haveAccuseBg)
+		scratch.simpleBlitFrom(accuseBg.surface);
 
 	// Partner sprite, drawn BEFORE portraits so the suspect grid
 	// covers it where they overlap (the gallery slots start at
