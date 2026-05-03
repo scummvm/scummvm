@@ -101,7 +101,7 @@ SpriteFrame::~SpriteFrame() {
 
 /*------------------------------------------------------------------------*/
 
-ImageEntry::ImageEntry() : _frameNumber(0), _spritesPtr(nullptr), _offsetY(0), _flags(0) {
+ImageEntry::ImageEntry() : _frameNumber(0), _spritesPtr(nullptr), _offsetY(0), _flags(0), _scaleOverride(0) {
 }
 
 /*------------------------------------------------------------------------*/

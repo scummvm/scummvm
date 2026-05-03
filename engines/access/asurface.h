@@ -170,6 +170,8 @@ public:
 	int _offsetY; // offset to apply to y position when sorting draw order
 	Common::Point _position;
 	int _flags;
+	int _scaleOverride;
+	Common::Point _sizeOverride;
 public:
 	ImageEntry();
 };
