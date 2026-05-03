@@ -48,7 +48,9 @@ static const KeybindingRecord MENU_KEYS[] = {
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr },
 	// I18N: Return key
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr },
+	// I18N: N key for No
 	{ KEYBIND_KEY_N, "KEY_N", _s("N"), "n", nullptr },
+	// I18N: Y key for Yes
 	{ KEYBIND_KEY_Y, "KEY_Y", _s("Y"), "y", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
