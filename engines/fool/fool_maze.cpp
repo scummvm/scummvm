@@ -678,7 +678,9 @@ void FoolGame::sub_136_137c() {
 }
 
 void FoolGame::sub_136_163c() {
-	warning("STUB: %s", __func__);
+	// 136:163c
+	var_i16_1bd8 = var_i16_1574;
+	var_i16_1bd6 = g_zbasic->decodeInt(var_str_1ce2);
 }
 
 void FoolGame::sub_136_1650() {
