@@ -2787,235 +2787,9 @@ void EEMEngine::doGallery() {
 					if (slotSuspect[i] < 0)
 						continue;
 					if (slotRects[i].contains(ev.mouse.x, ev.mouse.y)) {
-						// `MoreInfo(i)` — show the suspect detail page.
-						// Mirrors `MoreInfo @ 158f:0419`:
-						//   _RefreshGalleryBackground();
-						//   _GetPicture(*(u16*)(gd + i*0x46));
-						//   _AddPicBackground(pic, 0x94, 0xf);
-						//   _DrawGalleryNotes(gd + i*0x46);
-						//   loop until ESC or button click.
-						// Suspect data layout differs by variant:
-						//   * CD (`158f:0419`): fixed 0x46-byte stride.
-						//     +0..1   picId
-						//     +8..9   clue count (u16)
-						//     +0xa..  array of u16 clue IDs (max 30,
-						//             terminated by 0xFFFF if short).
-						//   * Floppy (`_MoreInfo_Floppy = 154e:042b` →
-						//     `FUN_154e_0201` → `FUN_15e0_01e8`):
-						//     variable-stride.
-						//     +0..1   picId
-						//     +2..3   alibi (0xFFFF = guilty)
-						//     +4      clue count (u8)
-						//     +5..    u8 clue IDs (per the asm at
-						//             154e:020e..0282 which calls
-						//             `FUN_15e0_01e8(rect, entry+5,
-						//                            entry[4], NULL)`).
-						const bool floppyMI = isFloppy();
-						const uint suspectIdx = (uint)slotSuspect[i];
-						const byte *suspect = floppyMI
-												  ? _mystery.floppySuspectEntry(suspectIdx)
-												  : gd + suspectIdx * 0x46;
-						if (!suspect)
-							break;
-						const uint16 detailPic =
-							READ_LE_UINT16(suspect + 0);
-						const uint clueCount = floppyMI
-												   ? (uint)suspect[4]
-												   : READ_LE_UINT16(suspect + 8);
-
-						Graphics::ManagedSurface ms(320, 200,
-													Graphics::PixelFormat::createFormatCLUT8());
-						ms.clear();
-						if (haveBg) {
-							const int bw = MIN<int>(galBg.surface.w, 320);
-							const int bh = MIN<int>(galBg.surface.h, 200);
-							for (int row = 0; row < bh; row++) {
-								memcpy((byte *)ms.getBasePtr(0, row),
-									   (const byte *)galBg.surface.getBasePtr(0, row), bw);
-							}
-						}
-						// Partner sprite at (5, 0x50). The original
-						// `MoreInfo @ 158f:0419` calls
-						// `_RefreshGalleryBackground` (clears the
-						// portrait grid) but the partner anim slot
-						// registered by `_DoGallery` keeps painting
-						// at every `_UpdateAnimations` tick — the
-						// suspect detail pic covers the right side
-						// only (drawn at 0x94, 0xf), so the partner
-						// stays visible on the left. Without this
-						// blit the suspect-detail screen has no
-						// partner.
-						setInteractiveMouseCursor(false);
-						{
-							const uint partnerAnim =
-								(_partner == 0) ? 2 : 0x10;
-							Animation partnerAni;
-							if (_aniArchive.loadAnimation(partnerAnim,
-														  partnerAni) &&
-								!partnerAni.empty()) {
-								const uint32 now = g_system->getMillis();
-								const uint frameIdx =
-									partnerFrameAtTick(0x02,
-													   (uint)partnerAni.size(), now);
-								blitAnimFrameAnchored(ms.surfacePtr(),
-													  partnerAni[frameIdx], 5, 0x50);
-							}
-						}
-						// Full suspect picture at (0x94, 0xf).
-						Picture detail;
-						if (_picsArchive.getPicture(detailPic, detail)) {
-							const byte transp =
-								(byte)(detail.flags >> 8);
-							const int dx = 0x94, dy = 0x0f;
-							const int dw = MIN<int>(detail.surface.w, 320 - dx);
-							const int dh = MIN<int>(detail.surface.h, 200 - dy);
-							for (int row = 0; row < dh; row++) {
-								const byte *src =
-									(const byte *)detail.surface.getBasePtr(0, row);
-								byte *dst =
-									(byte *)ms.getBasePtr(0, dy + row);
-								for (int col = 0; col < dw; col++) {
-									if (src[col] != transp)
-										dst[dx + col] = src[col];
-								}
-							}
-						}
-						// Suspect's clue notes inside _GalleryNoteRect
-						// = (78, 93, 288, 152), per 29be:0100. Cyan text
-						// renders directly on the PDA's natural blue
-						// screen — matches `_DrawGalleryNotes @ 158f:01f4`.
-						const int rx = 78, ry = 93;
-						const int rw = 288 - 78, rh = 152 - 93;
-
-						const byte *ni = _mystery.noteIndex();
-						const uint16 niCount = _mystery.noteIndexCount();
-						int yPos = ry;
-						const int lineH = _font.getFontHeight();
-						bool drewAny = false;
-						const uint clueMax = floppyMI ? clueCount : 30u;
-						for (uint k = 0; k < clueCount && k < clueMax; k++) {
-							const uint16 clueId = floppyMI
-								? (uint16)suspect[5 + k]
-								: READ_LE_UINT16(suspect + 0xa + k * 2);
-							if (!floppyMI && clueId == 0xFFFF)
-								break;
-							if (clueId >= Mystery::kCluesFoundCap ||
-								!_mystery._cluesFound[clueId])
-								continue;
-							if (!ni || clueId >= niCount)
-								continue;
-							// Floppy notes are 7-byte entries:
-							//   +0..1 clue text (absolute offset)
-							//   +2..3 Jake spoken line
-							//   +4..5 Jenny spoken line
-							//   +6    score
-							// `_DrawNotes_Floppy / FUN_15e0_01e8`'s
-							// `*(int *)(notes + idx * 7)` shows the
-							// notebook always uses +0 — the partner-
-							// agnostic clue statement. The +2/+4
-							// offsets are the partner spoken lines used
-							// by `FUN_22dc_05c8` when rendering dialog
-							// records (NOT this notebook view). CD
-							// notes are 4 bytes: u16 textOff, u16
-							// score.
-							Common::String txt;
-							if (floppyMI) {
-								const uint16 textOff =
-									READ_LE_UINT16(ni + clueId * 7);
-								const byte *bb = _mystery.blobAt(0);
-								const uint32 dsz =
-									_mystery.dataSize();
-								if (bb && textOff != 0 &&
-									textOff < dsz) {
-									const char *p =
-										(const char *)(bb + textOff);
-									uint32 len = 0;
-									while (textOff + len < dsz &&
-										   p[len] != 0)
-										len++;
-									txt = parseString(
-										Common::String(p, len),
-										_playerName, _partner);
-								}
-							} else {
-								const uint16 textOff =
-									READ_LE_UINT16(ni + clueId * 4);
-								txt = parseString(
-									_mystery.textAt(textOff),
-									_playerName, _partner);
-							}
-							if (txt.empty())
-								continue;
-							const byte color =
-								_mystery._noteSelected[clueId] ? 0x3C : 0x5C;
-							const int hLine = _font.drawWordWrapped(
-								&ms, rx, yPos, rw, txt, color);
-							yPos += hLine + 7;
-							drewAny = true;
-							if (yPos + lineH > ry + rh)
-								break;
-						}
-						if (!drewAny && _font.isLoaded()) {
-							_font.drawString(&ms,
-								isSpanish()
-									? "Aun no hay pistas para este sospechoso."
-									: "No clues yet for this suspect.",
-								rx, ry, rw, 0x5C);
-						}
-						// Header / footer text.
-						if (_font.isLoaded()) {
-							_font.drawString(&ms,
-								isSpanish() ? "EXPEDIENTE" : "SUSPECT FILE",
-								rx, ry - 11, rw, 0x3C);
-							_font.drawString(&ms,
-								isSpanish() ? "(clic / ESC: volver)"
-											: "(click / ESC: back)",
-								rx, ry + rh + 2, rw, 0x3C);
-						}
-						g_system->copyRectToScreen(ms.getPixels(),
-							ms.pitch, 0, 0, 320, 200);
-						g_system->updateScreen();
-
-						// Wait for click or ESC. Drain the queued
-						// LBUTTONDOWN that triggered this MoreInfo first
-						// so we don't immediately accept it as the
-						// dismiss event.
-						g_system->delayMillis(150);
-						{
-							Common::Event drain;
-							while (g_system->getEventManager()->pollEvent(drain)) {
-								if (drain.type == Common::EVENT_QUIT ||
-									drain.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-									setInteractiveMouseCursor(false);
-									return;
-								}
-							}
-						}
-						bool back = false;
-						while (!back && !shouldQuit()) {
-							Common::Event e2;
-							while (g_system->getEventManager()->pollEvent(e2)) {
-								if (e2.type == Common::EVENT_LBUTTONDOWN ||
-									(e2.type == Common::EVENT_KEYDOWN &&
-									 (e2.kbd.keycode == Common::KEYCODE_ESCAPE ||
-									  e2.kbd.keycode == Common::KEYCODE_RETURN))) {
-									back = true;
-									break;
-								}
-								if (e2.type == Common::EVENT_QUIT ||
-									e2.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-									setInteractiveMouseCursor(false);
-									return;
-								}
-							}
-							// Per-tick `updateScreen()` so the SDL cursor
-							// follows the mouse — without it the cursor
-							// freezes on entry to the MoreInfo screen
-							// (we never repaint here, so the cursor never
-							// gets drawn at its current position).
-							g_system->updateScreen();
-							g_system->delayMillis(20);
-						}
+						if (moreInfo(gd, (uint)slotSuspect[i],
+									 galBg, haveBg))
+							exitFlag = true;
 						// Force gallery redraw immediately so the
 						// player isn't left looking at the dismissed
 						// MoreInfo screen until the next 100 ms tick.
@@ -3056,6 +2830,358 @@ void EEMEngine::doGallery() {
 		g_system->delayMillis(15);
 	}
 	setInteractiveMouseCursor(false);
+}
+
+bool EEMEngine::moreInfo(const byte *gd, uint suspectIdx,
+						  const Picture &galBg, bool haveBg) {
+	// Suspect-detail page. Mirrors `MoreInfo @ 158f:0419`:
+	//   _RefreshGalleryBackground();
+	//   _GetPicture(*(u16*)(gd + i*0x46));
+	//   _AddPicBackground(pic, 0x94, 0xf);
+	//   _DrawGalleryNotes(gd + i*0x46);
+	//   loop until ESC or button click.
+	// Suspect data layout differs by variant:
+	//   * CD (`158f:0419`): fixed 0x46-byte stride.
+	//     +0..1   picId
+	//     +8..9   clue count (u16)
+	//     +0xa..  array of u16 clue IDs (max 30,
+	//             terminated by 0xFFFF if short).
+	//   * Floppy (`_MoreInfo_Floppy = 154e:042b` →
+	//     `FUN_154e_0201` → `FUN_15e0_01e8`):
+	//     variable-stride.
+	//     +0..1   picId
+	//     +2..3   alibi (0xFFFF = guilty)
+	//     +4      clue count (u8)
+	//     +5..    u8 clue IDs (per the asm at
+	//             154e:020e..0282 which calls
+	//             `FUN_15e0_01e8(rect, entry+5,
+	//                            entry[4], NULL)`).
+	const bool floppyMI = isFloppy();
+	const byte *suspect = floppyMI
+							  ? _mystery.floppySuspectEntry(suspectIdx)
+							  : gd + suspectIdx * 0x46;
+	if (!suspect)
+		return false;
+	const uint16 detailPic = READ_LE_UINT16(suspect + 0);
+	const uint clueCount = floppyMI
+							   ? (uint)suspect[4]
+							   : READ_LE_UINT16(suspect + 8);
+
+	setInteractiveMouseCursor(false);
+
+	// Suspect's clue notes inside _GalleryNoteRect
+	// = (78, 93, 288, 152), per 29be:0100. Cyan text
+	// renders directly on the PDA's natural blue
+	// screen — matches `_DrawGalleryNotes @ 158f:01f4`.
+	const int rx = 78, ry = 93;
+	const int rw = 288 - 78, rh = 152 - 93;
+	const int lineH = _font.getFontHeight();
+	const uint clueMax = floppyMI ? clueCount : 30u;
+	const byte *ni = _mystery.noteIndex();
+	const uint16 niCount = _mystery.noteIndexCount();
+
+	// Pagination matches `_DrawNotes @ 161e:01d0` / `MoreInfo @
+	// 158f:0419`: the original tracks `_NextClue` across redraws and
+	// only emits clues whose wrapped height fits the rect, deferring
+	// the rest to the next page. `_PageBreaks[]` stores the
+	// entry-point for each page so PREV (button 6 / case 6 at
+	// 158f:03b8 — `SUB _CurrentPage, 2; _NextClue = _PageBreaks[...]`)
+	// can step back. We mirror that with an explicit stack of
+	// page-start indices: forward push, back pop.
+	uint pageStart = 0;
+	Common::Array<uint> pageStack;
+	bool back = false;
+	bool exitGallery = false;
+	bool isFirstShow = true;
+
+	while (!back && !shouldQuit()) {
+		Graphics::ManagedSurface ms(320, 200,
+			Graphics::PixelFormat::createFormatCLUT8());
+		ms.clear();
+		if (haveBg) {
+			const int bw = MIN<int>(galBg.surface.w, 320);
+			const int bh = MIN<int>(galBg.surface.h, 200);
+			for (int row = 0; row < bh; row++) {
+				memcpy((byte *)ms.getBasePtr(0, row),
+					   (const byte *)galBg.surface.getBasePtr(0, row), bw);
+			}
+		}
+		// Partner sprite at (5, 0x50). The original `MoreInfo @
+		// 158f:0419` calls `_RefreshGalleryBackground` (clears the
+		// portrait grid) but the partner anim slot registered by
+		// `_DoGallery` keeps painting at every `_UpdateAnimations`
+		// tick — the suspect detail pic covers the right side only
+		// (drawn at 0x94, 0xf), so the partner stays visible on the
+		// left. Re-blit per page so the frame stays current.
+		{
+			const uint partnerAnim = (_partner == 0) ? 2 : 0x10;
+			Animation partnerAni;
+			if (_aniArchive.loadAnimation(partnerAnim, partnerAni) &&
+				!partnerAni.empty()) {
+				const uint32 now = g_system->getMillis();
+				const uint frameIdx = partnerFrameAtTick(0x02,
+					(uint)partnerAni.size(), now);
+				blitAnimFrameAnchored(ms.surfacePtr(),
+									  partnerAni[frameIdx], 5, 0x50);
+			}
+		}
+		// Full suspect picture at (0x94, 0xf).
+		Picture detail;
+		if (_picsArchive.getPicture(detailPic, detail)) {
+			const byte transp = (byte)(detail.flags >> 8);
+			const int dx = 0x94, dy = 0x0f;
+			const int dw = MIN<int>(detail.surface.w, 320 - dx);
+			const int dh = MIN<int>(detail.surface.h, 200 - dy);
+			for (int row = 0; row < dh; row++) {
+				const byte *src = (const byte *)
+					detail.surface.getBasePtr(0, row);
+				byte *dst = (byte *)ms.getBasePtr(0, dy + row);
+				for (int col = 0; col < dw; col++) {
+					if (src[col] != transp)
+						dst[dx + col] = src[col];
+				}
+			}
+		}
+
+		// Walk the clue list from `pageStart`. Skip clues that aren't
+		// found / lack a note entry, then measure the wrapped height
+		// before drawing. If a clue would overflow and we've already
+		// drawn at least one, defer it to the next page; if it's the
+		// FIRST clue on this page (one clue too tall to ever fit),
+		// draw it anyway so progress is guaranteed.
+		int yPos = ry;
+		bool drewAny = false;
+		uint k = pageStart;
+		bool reachedEnd = false;
+		for (; k < clueCount && k < clueMax; k++) {
+			const uint16 clueId = floppyMI
+				? (uint16)suspect[5 + k]
+				: READ_LE_UINT16(suspect + 0xa + k * 2);
+			if (!floppyMI && clueId == 0xFFFF) {
+				reachedEnd = true;
+				break;
+			}
+			if (clueId >= Mystery::kCluesFoundCap ||
+				!_mystery._cluesFound[clueId])
+				continue;
+			if (!ni || clueId >= niCount)
+				continue;
+			// Floppy notes: 7-byte entries (+0..1 clue text, +2..3 Jake
+			// spoken, +4..5 Jenny spoken, +6 score). Notebook always
+			// uses +0 (partner-agnostic statement) per `FUN_15e0_01e8`.
+			// CD notes are 4-byte: u16 textOff + u16 score.
+			Common::String txt;
+			if (floppyMI) {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 7);
+				const byte *bb = _mystery.blobAt(0);
+				const uint32 dsz = _mystery.dataSize();
+				if (bb && textOff != 0 && textOff < dsz) {
+					const char *p = (const char *)(bb + textOff);
+					uint32 len = 0;
+					while (textOff + len < dsz && p[len] != 0)
+						len++;
+					txt = parseString(Common::String(p, len),
+									  _playerName, _partner);
+				}
+			} else {
+				const uint16 textOff = READ_LE_UINT16(ni + clueId * 4);
+				txt = parseString(_mystery.textAt(textOff),
+								  _playerName, _partner);
+			}
+			if (txt.empty())
+				continue;
+
+			Common::Array<Common::String> wrapped;
+			_font.wordWrapText(txt, MAX<int>(8, rw), wrapped);
+			const int hClue = (int)wrapped.size() * lineH;
+			if (yPos + hClue > ry + rh && drewAny) {
+				// Defer to next page.
+				break;
+			}
+			const byte color = _mystery._noteSelected[clueId]
+								   ? 0x3C : 0x5C;
+			for (uint l = 0; l < wrapped.size(); l++) {
+				_font.drawString(&ms, wrapped[l], rx,
+					yPos + (int)l * lineH, MAX<int>(8, rw), color);
+			}
+			yPos += hClue + 7;
+			drewAny = true;
+		}
+		if (k >= clueCount || k >= clueMax)
+			reachedEnd = true;
+		const uint pageEnd = k;
+		const bool hasMore = !reachedEnd;
+		const bool hasPrev = !pageStack.empty();
+
+		if (pageStart == 0 && !drewAny && _font.isLoaded()) {
+			_font.drawString(&ms,
+				isSpanish()
+					? "Aun no hay pistas para este sospechoso."
+					: "No clues yet for this suspect.",
+				rx, ry, MAX<int>(8, rw), 0x5C);
+		}
+		// Header / footer text. The PDA's NEXT (case 5) and PREV
+		// (case 6) icons are visible on the bottom bar — the footer
+		// just covers dismissal here.
+		if (_font.isLoaded()) {
+			_font.drawString(&ms,
+				isSpanish() ? "EXPEDIENTE" : "SUSPECT FILE",
+				rx, ry - 11, MAX<int>(8, rw), 0x3C);
+			_font.drawString(&ms,
+				isSpanish() ? "(ESC: volver)" : "(ESC: back)",
+				rx, ry + rh + 2, MAX<int>(8, rw), 0x3C);
+		}
+		g_system->copyRectToScreen(ms.getPixels(), ms.pitch,
+			0, 0, 320, 200);
+		g_system->updateScreen();
+
+		// Drain the queued LBUTTONDOWN that brought us into MoreInfo
+		// so it doesn't get caught by the input loop below. Subsequent
+		// pages don't need this.
+		if (isFirstShow) {
+			isFirstShow = false;
+			g_system->delayMillis(150);
+			Common::Event drain;
+			while (g_system->getEventManager()->pollEvent(drain)) {
+				if (drain.type == Common::EVENT_QUIT ||
+					drain.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					_nextScreen = kScreenInvalid;
+					return true;
+				}
+			}
+		}
+
+		// Wait for input. Each PDA button maps to a distinct action,
+		// mirroring `_HandleMoreButton @ 158f:027d`:
+		//   case 0 NOTEBOOK    -> NextScreen=4
+		//   case 1 HELP        -> _InterfaceHelp(0)
+		//   case 2 GALLERY     -> close MoreInfo
+		//   case 3 PARTNER head-> _KDHelp + redraw
+		//   case 4 ACCUSE      -> NextScreen=7
+		//   case 5 PAGE NEXT   -> next page
+		//   case 6 PAGE PREV   -> prev page
+		//   case 7 MAP         -> NextScreen=2
+		//   case 8 SITE        -> no-op
+		//   case 10 HELP (alt) -> _InterfaceHelp(0)
+		// Clicks outside any known button rect are no-ops, matching
+		// the original (which short-circuits on `_FindButton == -1`).
+		// ESC closes; PgDn / PgUp / Return / Backspace also paginate
+		// as a modern accessibility convenience.
+		bool advance = false;
+		bool prev = false;
+		bool redraw = false;
+		while (!back && !advance && !prev && !redraw && !shouldQuit()) {
+			Common::Event e2;
+			while (g_system->getEventManager()->pollEvent(e2)) {
+				if (e2.type == Common::EVENT_QUIT ||
+					e2.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+					_nextScreen = kScreenInvalid;
+					return true;
+				}
+				if (e2.type == Common::EVENT_KEYDOWN &&
+					e2.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					back = true;
+					break;
+				}
+				if (e2.type == Common::EVENT_LBUTTONDOWN) {
+					const int mx = e2.mouse.x;
+					const int my = e2.mouse.y;
+					debugC(2, kDebugGfx,
+						"MoreInfo click (%d,%d) hasMore=%d hasPrev=%d",
+						mx, my, (int)hasMore, (int)hasPrev);
+					if (kPdaNotebookRect.contains(mx, my)) {
+						_nextScreen = kScreenNotebook;
+						exitGallery = true;
+						back = true;
+						break;
+					}
+					if (kPdaAccuseRect.contains(mx, my)) {
+						_nextScreen = kScreenAccuse;
+						exitGallery = true;
+						back = true;
+						break;
+					}
+					if (kPdaPartnerFootMapRect.contains(mx, my)) {
+						_nextScreen = kScreenMapAlt;
+						exitGallery = true;
+						back = true;
+						break;
+					}
+					if (kPdaHelpRect.contains(mx, my) ||
+						kPdaHelp2Rect.contains(mx, my)) {
+						// Help overlay; re-render the current page
+						// after it dismisses.
+						setInteractiveMouseCursor(false);
+						doInterfaceHelp(0);
+						redraw = true;
+						break;
+					}
+					if (kPdaGalleryRect.contains(mx, my)) {
+						// Case 2: close MoreInfo and return to the
+						// portrait grid.
+						back = true;
+						break;
+					}
+					if (kPdaPageNextRect.contains(mx, my)) {
+						if (hasMore)
+							advance = true;
+						break;
+					}
+					if (kPdaPagePrevRect.contains(mx, my)) {
+						if (hasPrev)
+							prev = true;
+						break;
+					}
+					if (kPdaPartnerHeadHintRect.contains(mx, my)) {
+						// Case 3: ask KD for a hint then redraw the
+						// current page over the clean BG.
+						setInteractiveMouseCursor(false);
+						doHelp();
+						redraw = true;
+						break;
+					}
+					// Case 8 SITE and click outside any known button
+					// = no-op. The original `_FindButton`
+					// short-circuits when no rect matches.
+					break;
+				}
+				if (e2.type == Common::EVENT_KEYDOWN && hasMore &&
+					(e2.kbd.keycode == Common::KEYCODE_RETURN ||
+					 e2.kbd.keycode == Common::KEYCODE_KP_ENTER ||
+					 e2.kbd.keycode == Common::KEYCODE_SPACE ||
+					 e2.kbd.keycode == Common::KEYCODE_PAGEDOWN ||
+					 e2.kbd.keycode == Common::KEYCODE_RIGHT)) {
+					advance = true;
+					break;
+				}
+				if (e2.type == Common::EVENT_KEYDOWN && hasPrev &&
+					(e2.kbd.keycode == Common::KEYCODE_BACKSPACE ||
+					 e2.kbd.keycode == Common::KEYCODE_LEFT ||
+					 e2.kbd.keycode == Common::KEYCODE_PAGEUP)) {
+					prev = true;
+					break;
+				}
+			}
+			// Per-tick `updateScreen()` so the SDL cursor follows the
+			// mouse — without it the cursor freezes on entry to the
+			// MoreInfo screen.
+			g_system->updateScreen();
+			g_system->delayMillis(20);
+		}
+
+		if (advance) {
+			pageStack.push_back(pageStart);
+			pageStart = pageEnd;
+		} else if (prev && !pageStack.empty()) {
+			pageStart = pageStack.back();
+			pageStack.pop_back();
+		}
+		// `redraw` falls through with the same `pageStart` and
+		// re-iterates the outer while, repainting on top of whatever
+		// the help overlay left behind.
+	}
+
+	return exitGallery;
 }
 
 void EEMEngine::drawGalleryFrame(const byte *gd, uint8 numSuspects,
