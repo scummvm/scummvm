@@ -868,6 +868,14 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 	// Only Return / KP-Enter / Space / Escape advance — letting any key
 	// dismiss balloons makes typing-while-reading (or a stuck modifier)
 	// blow past dialog the player hasn't finished reading.
+	//
+	// Drop the highlighted-cursor state any caller (site loop, gallery,
+	// notebook hover-handler) may have left on. While a balloon /
+	// intro is showing, click anywhere just dismisses — no
+	// hover-interactive areas — so a "clickable" cursor over the
+	// dialog is misleading. The caller's MOUSEMOVE handler will
+	// re-enable the highlight after we return if appropriate.
+	setInteractiveMouseCursor(false);
 	const uint32 startMs = g_system->getMillis();
 	while (!shouldQuit() && (g_system->getMillis() - startMs < maxMs)) {
 		Common::Event event;
@@ -876,6 +884,12 @@ void EEMEngine::waitForInput(uint32 maxMs) {
 				event.type == Common::EVENT_RETURN_TO_LAUNCHER ||
 				event.type == Common::EVENT_LBUTTONDOWN) {
 				return;
+			}
+			if (event.type == Common::EVENT_MOUSEMOVE) {
+				// Defensive: keep the cursor non-interactive across
+				// moves while the dialog is up.
+				setInteractiveMouseCursor(false);
+				continue;
 			}
 			if (event.type == Common::EVENT_KEYDOWN) {
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {

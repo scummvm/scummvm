@@ -1039,7 +1039,12 @@ void SiteScreen::run() {
 					_vm->doHelp();
 					notePartnerActivity();
 					enter(cur, false);
-					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
+					// Re-evaluate cursor against the CURRENT pointer
+					// position, not the click that opened the help.
+					// The player may have moved off the partner-head
+					// area during the dialog.
+					mouse = g_system->getEventManager()->getMousePos();
+					updateHotspotCursor(cur, mouse.x, mouse.y);
 					break;
 				}
 				const int idx = hotspotAtPoint(cur, event.mouse.x, event.mouse.y);
@@ -1049,7 +1054,12 @@ void SiteScreen::run() {
 					// Restore the site BG after the clue overlay.
 					notePartnerActivity();
 					enter(cur, false);
-					updateHotspotCursor(cur, event.mouse.x, event.mouse.y);
+					// Use CURRENT pointer position — the click pos is
+					// still inside the hotspot rect, so reusing it
+					// would leave the "clickable" cursor stuck after
+					// the conversation even if the player moved off.
+					mouse = g_system->getEventManager()->getMousePos();
+					updateHotspotCursor(cur, mouse.x, mouse.y);
 				} else {
 					notePartnerActivity();
 				}

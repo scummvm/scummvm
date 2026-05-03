@@ -934,6 +934,14 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 		// are ignored so accidental keystrokes don't blow past dialog
 		// the player hasn't finished reading.
 		if (hasText || (charPicId != 0 && charPicId != 0xFFFF)) {
+			// Click during a clue dialog only dismisses — there are no
+			// hover-interactive areas. Drop the highlighted cursor
+			// state the site loop may have left set so the player
+			// doesn't see a "clickable" cursor stuck on top of the
+			// balloon. The post-dialog `MOUSEMOVE` in the site loop
+			// will re-evaluate against hotspots and re-enable as
+			// needed.
+			setInteractiveMouseCursor(false);
 			bool advance = false;
 			bool skipAll = false;
 			while (!advance && !shouldQuit()) {
@@ -943,6 +951,13 @@ void EEMEngine::displayClue(const byte *clueBlock) {
 						ev.type == Common::EVENT_RETURN_TO_LAUNCHER) {
 						advance = true;
 						break;
+					}
+					if (ev.type == Common::EVENT_MOUSEMOVE) {
+						// Keep the cursor non-interactive across moves
+						// inside the dialog (defensive — in case some
+						// other code path tries to set it).
+						setInteractiveMouseCursor(false);
+						continue;
 					}
 					if (ev.type == Common::EVENT_KEYDOWN &&
 						ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
@@ -1067,6 +1082,11 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 		// doesn't auto-advance the new page.
 		Common::Event drain;
 		while (g_system->getEventManager()->pollEvent(drain)) {}
+		// Click during the floppy dialog only dismisses — no
+		// hover-interactive areas. Clear any stuck highlight from the
+		// site loop so the cursor stays a normal pointer over the
+		// balloon.
+		setInteractiveMouseCursor(false);
 		const uint32 minVisibleMs = 250;
 		const uint32 startedAt = g_system->getMillis();
 		while (!shouldQuit()) {
@@ -1075,6 +1095,10 @@ void EEMEngine::displayFloppyDialogRecords(const byte *rec, uint count,
 				if (ev.type == Common::EVENT_QUIT ||
 					ev.type == Common::EVENT_RETURN_TO_LAUNCHER)
 					return true;  // skip
+				if (ev.type == Common::EVENT_MOUSEMOVE) {
+					setInteractiveMouseCursor(false);
+					continue;
+				}
 				if (g_system->getMillis() - startedAt < minVisibleMs)
 					continue;
 				if (ev.type == Common::EVENT_KEYDOWN &&
