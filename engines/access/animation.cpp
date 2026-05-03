@@ -363,9 +363,16 @@ void Animation::setFrame1(const AnimationFrame *frame, int16 xoff, int16 yoff) {
 		ie._position.x = xoff ? xoff : (part._position.x + _vm->_animation->_base.x);
 		ie._position.y = yoff ? yoff : (part._position.y + _vm->_animation->_base.y);
 		if (xoff && _scaling != -1) {
-			// If xoff is set, the animation is for an actor so we need to apply scale factor
-			// to frame height for priority.
+			// If xoff is set, the animation is for an actor so we need to apply scale
+			// factor to frame offset for priority.  We also need to determine its size
+			// now so Stiletto and Peter can have different scale factors in Noctropolis
 			ie._offsetY = (part._offsetY - frame->_baseY - part._position.y) * _scaling / 256;
+			ie._scaleOverride = _scaling;
+			const SpriteFrame *frame = ie._spritesPtr->getFrame(ie._frameNumber);
+			ie._sizeOverride = Common::Point(
+				_vm->_screen->_scaleTable1[frame->w],
+				_vm->_screen->_scaleTable1[frame->h]
+			);
 		} else {
 			ie._offsetY = part._offsetY - ie._position.y;
 		}

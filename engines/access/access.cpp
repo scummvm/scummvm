@@ -396,13 +396,15 @@ void AccessEngine::plotList1() {
 
 		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
 		if (!imgUnscaled) {
-			bounds.setWidth(_screen->_scaleTable1[frame->w]);
-			bounds.setHeight(_screen->_scaleTable1[frame->h]);
+			int sizex = ie._sizeOverride.x ? ie._sizeOverride.x : _screen->_scaleTable1[frame->w];
+			int sizey = ie._sizeOverride.y ? ie._sizeOverride.y : _screen->_scaleTable1[frame->h];
+			bounds.setWidth(sizex);
+			bounds.setHeight(sizey);
 		}
 
 		// Make a copy - some of the drawing methods I've adapted need the full
 		// scaled dimensions on-screen, and handle clipping themselves
-		Common::Rect destBounds = bounds;
+		const Common::Rect destBounds = bounds;
 
 		if (_buffer2.clip(bounds)) {
 			ie._flags |= IMGFLAG_CROPPED;
@@ -415,8 +417,9 @@ void AccessEngine::plotList1() {
 			_newRects.push_back(bounds);
 
 			if (!imgUnscaled) {
-				_buffer2._rightSkip /= _scale;
-				bounds.setWidth(bounds.width() / _scale);
+				int scale = ie._scaleOverride ? ie._scaleOverride : _scale;
+				_buffer2._rightSkip /= scale;
+				bounds.setWidth(bounds.width() / scale);
 
 				if (ie._flags & IMGFLAG_BACKWARDS) {
 					_buffer2.sPlotB(frame, destBounds);
