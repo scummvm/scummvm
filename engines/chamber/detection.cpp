@@ -35,10 +35,10 @@ static const ADGameDescription gameDescriptions[] = {
 		"chamber",
 		"",
 		AD_ENTRY2s("ere.pxi",  "5aa5bd2d79eefde70675b0b6734944f2", 134358,
-		           "PRES.BIN", nullptr,                              0),
+		           "PRES.BIN", "b8376a81d9ef6d9c5f783c64f718a782",   8005),
 		Common::UNK_LANG, // EN/FR/DE
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH_DRAP,
+		ADGF_UNSTABLE | GF_SPLASH_PRES | GF_SPLASH2_DRAP,
 		GUIO3(GUIO_RENDERHERCGREEN, GUIO_RENDERHERCAMBER, GUIO_RENDERCGA)
 	},
 
@@ -46,7 +46,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"chamber",
 		"",
 		AD_ENTRY2s("kult1.pxi",   "fc0bd31a3c380338f76ff53e421e47b6", 140537,
-		           "PRESCGA.BIN", nullptr,                              0),
+		           "PRESCGA.BIN", "664a75a95340bde200a2752f54ba7aa7",   5105),
 		Common::EN_USA,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE | GF_SPLASH_PRESCGA,

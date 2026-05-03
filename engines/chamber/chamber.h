@@ -27,10 +27,9 @@
 #include "common/serializer.h"
 #include "common/rendermode.h"
 #include "engines/engine.h"
-#include "engines/advancedDetector.h"
-#include "gui/debugger.h"
 #include "chamber/renderer.h"
-#include "chamber/detection.h"
+
+struct ADGameDescription;
 
 namespace Audio {
 class SoundHandle;

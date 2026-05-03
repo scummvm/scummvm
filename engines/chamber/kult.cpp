@@ -21,9 +21,11 @@
 
 #include "common/error.h"
 #include "common/system.h"
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "chamber/chamber.h"
+#include "chamber/detection.h"
 #include "chamber/common.h"
 #include "chamber/decompr.h"
 #include "chamber/cga.h"
@@ -345,7 +347,7 @@ Common::Error ChamberEngine::init() {
 	readKeyboardChar();
 
 
-	if (!(_gameDescription->flags & GF_SPLASH_DRAP)) {
+	if (!(_gameDescription->flags & GF_SPLASH2_DRAP)) {
 		if (ifgm_loaded) {
 			/*TODO*/
 		}

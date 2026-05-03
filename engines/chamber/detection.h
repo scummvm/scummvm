@@ -29,7 +29,7 @@ enum ChamberGameFlags {
 	GF_SPLASH_PRESCGA = (1 << 0), ///< Title screen is PRESCGA.BIN (EN_USA CGA)
 	GF_SPLASH_PRES    = (1 << 1), ///< Title screen is PRES.BIN (multilingual CGA)
 	GF_SPLASH_PRESEGA = (1 << 2), ///< Title screen is PRESEGA.EGA (EGA)
-	GF_SPLASH_DRAP    = (1 << 3), ///< Has DRAP.BIN language selection screen
+	GF_SPLASH2_DRAP   = (1 << 3), ///< Has DRAP.BIN language selection screen
 };
 
 } // End of namespace Chamber
