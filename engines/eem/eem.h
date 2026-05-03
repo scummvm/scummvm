@@ -254,6 +254,11 @@ public:
 	/// ctype-bit-1 (= digit) at `29be:2be1 + char`.
 	uint16 getKDTextBalloon(byte firstChar) const;
 
+	/// Cleanup for overly tall original speech balloons. Keeps the original
+	/// bubble family and mirror bit, but picks a shorter sibling when the
+	/// wrapped text leaves enough empty lines.
+	uint16 fitBalloonToText(uint16 bubNum, const Common::String &text);
+
 	/// Substitute the 0x80..0x89 control bytes the engine uses inside
 	/// `TextBlock` strings. Mirrors `_ParseString @ 1b66:07c3`; jump
 	/// table at 1b66:0cbe. Used by every clue / hint / balloon caller.

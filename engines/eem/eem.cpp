@@ -199,6 +199,7 @@ EEMEngine::EEMEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	  _playerName("Detective"),
 	  _lastScreen(kScreenInvalid), _nextScreen(kScreenTitle), _partner(0) {
 	ConfMan.registerDefault("hide_highlight_boxes", false);
+	ConfMan.registerDefault("fit_dialog_balloons", false);
 
 	// `ADGameDescription::extra` is set by the matching entry in
 	// `gameDescriptions[]` ("CD" or "Floppy"). Keep variant detection
