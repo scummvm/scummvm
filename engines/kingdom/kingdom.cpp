@@ -504,6 +504,9 @@ void KingdomGame::playMovie(int movieNum) {
 		decoder->setAudioTrack(_sound);
 		decoder->start();
 
+		Common::String subtitlePath = Common::String::format("%s.srt", path.toString().c_str());
+		decoder->loadSubtitles(subtitlePath.c_str());
+
 		if (_frameStop) {
 			decoder->setEndFrame(_frameStop);
 		}
