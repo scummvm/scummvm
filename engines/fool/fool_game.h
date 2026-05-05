@@ -245,10 +245,10 @@ public:
 	// fool_maze.cpp
 	void mazeRun(); // sub_136_004
 	void mazeOnClick(); // sub_136_79e
-	void sub_136_994();
-	void sub_136_a22();
+	void mazeFlashWall(); // sub_136_994
+	void mazeMovePlayer(); // sub_136_a22
 	void sub_136_ade();
-	void sub_136_b00();
+	void mazeHotspot(); // sub_136_b00
 
 	void mazePrintMessage(); // sub_136_d64
 	void sub_136_e4c();
@@ -288,10 +288,10 @@ public:
 	void sub_136_2dd0();
 	void sub_136_2e52();
 	void sub_136_2ed6();
-	void sub_136_2f5c();
+	void mazeStoreState(); // sub_136_2f5c
 	void sub_136_3408();
 	void sub_136_342a();
-	void sub_136_3466();
+	void mazeLoadState(); // sub_136_3466
 	void sub_136_3a30();
 	void sub_136_3a70();
 
@@ -309,7 +309,7 @@ public:
 	void metapuzzleRun(); // sub_138_004
 	void metapuzzleOnClick(); // sub_138_1b4
 	void sub_138_21e();
-	void sub_138_3e0();
+	void metapuzzleSetupMenu(); // sub_138_3e0
 	void metapuzzleWheel(); // sub_138_49e
 	void metapuzzleSecretCode(); // sub_138_550
 	void metapuzzleSecretCodeDrawText(); // sub_138_864
@@ -528,7 +528,7 @@ private:
 	int16 var_i16_f2e;
 	Common::U32String var_str_f30;
 	int16 var_i16_1030;
-	PicHandle var_pic_1032;
+	PicHandle metapuzzleWheelPic; // var_pic_1032
 	int32 var_i32_1036;
 	int16 var_i16_103a;
 	int16 var_i16_103c;
@@ -591,7 +591,7 @@ private:
 	uint16 var_i16_1a9c;
 	int16 var_i16_1a9e;
 	int16 var_i16_1aa0;
-	int16 var_i16_1aa2;
+	int16 metapuzzleSecretCodeSpaceOffset; // var_i16_1aa2
 	int16 var_i16_1aa4;
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
@@ -610,11 +610,11 @@ private:
 	Common::String var_str_1ac8;
 	int16 var_i16_1bc8;
 
-	int16 var_i16_1bcc;
-	int16 var_i16_1bce;
+	int16 mazePlayerX; // var_i16_1bcc
+	int16 mazePlayerY; // var_i16_1bce
 	int16 var_i16_1bd0;
 
-	int16 var_i16_1bd2;
+	int16 mazePlayerDirection; // var_i16_1bd2
 	int16 var_i16_1bd4;
 	int16 var_i16_1bd6;
 	int16 var_i16_1bd8;
@@ -653,9 +653,9 @@ private:
 
 	uint16 var_i16_1f08;
 	int16 var_i16_1f0a;
-	Common::U32String var_str_1f0c;
+	Common::U32String metapuzzleSecretCodeCipher; // var_str_1f0c
 
-	int16 var_i16_200c;
+	int16 metapuzzleSecretCodeCount; // var_i16_200c
 	int16 var_i16_200e;
 	int16 var_i16_2010;
 	int16 var_i16_2012;

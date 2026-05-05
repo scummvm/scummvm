@@ -57,7 +57,7 @@ void FoolGame::metapuzzleRun() {
 	g_toolbox->InitCursor();
 	copyScreen(0, arr_bmp_b3ec);
 	if (activePuzzle == 0) {
-		sub_138_3e0();
+		metapuzzleSetupMenu();
 	}
 	// 138:0116
 	stateFlags = 0;
@@ -173,12 +173,13 @@ void FoolGame::sub_138_21e() {
 		var_i16_c00 = 0;
 		g_toolbox->PenNormal();
 		copyScreen(1, arr_bmp_b3ec);
+		metapuzzleSetupMenu();
 	}
 	// 138:03da
 	sub_128_61ec();
 }
 
-void FoolGame::sub_138_3e0() {
+void FoolGame::metapuzzleSetupMenu() {
 	// 138:03e0
 	g_zbasic->menu(8, 0, 1, g_zbasic->str(260)); // the sun's map
 	g_zbasic->menu(8, 1, 1, g_zbasic->str(261)); // return to scroll
@@ -196,7 +197,7 @@ void FoolGame::metapuzzleWheel() {
 	for (int16 i = 1; i <= 2; i++) {
 		sub_128_962(arr_i16_4d20[0x30], arr_i16_4d20[0x30 + 1], arr_i16_4d20[0x30 + 2], arr_i16_4d20[0x30 + 3], 0x6e, 7, 0x100, 0x5d, 0x1, kPatXor, 0x1a);
 	}
-	g_zbasic->picture(6, 0x6d, var_pic_1032);
+	g_zbasic->picture(6, 0x6d, metapuzzleWheelPic);
 	sub_128_2664();
 	sub_128_61c2();
 }
@@ -210,26 +211,26 @@ void FoolGame::metapuzzleSecretCode() {
 	}
 	if (activePuzzle == 0x58) {
 		var_str_1170 = g_zbasic->str(264); // treasure name
-		var_i16_1aa2 = 8;
-		var_str_1f0c = g_zbasic->str(265); // CQHXBMLGPTWIFRYASUVJZNKDOE
+		metapuzzleSecretCodeSpaceOffset = 8;
+		metapuzzleSecretCodeCipher = g_zbasic->str(265); // CQHXBMLGPTWIFRYASUVJZNKDOE
 	}
 	// 138:0650
 	if (activePuzzle == 0x59) {
 		var_str_1170 = g_zbasic->str(266); // treasure name
-		var_i16_1aa2 = 0;
-		var_str_1f0c = g_zbasic->str(267); // IEGADHFBCPLNRKQOJMZWTYVUSX
+		metapuzzleSecretCodeSpaceOffset = 0;
+		metapuzzleSecretCodeCipher = g_zbasic->str(267); // IEGADHFBCPLNRKQOJMZWTYVUSX
 	}
 	// 138:068a
 	if (activePuzzle == 0x5a) {
 		var_str_1170 = g_zbasic->str(268); // treasure name
-		var_i16_1aa2 = 5;
-		var_str_1f0c = g_zbasic->str(269); // ISDXMRCLHQYWBVPKGOUZTFNJAE
+		metapuzzleSecretCodeSpaceOffset = 5;
+		metapuzzleSecretCodeCipher = g_zbasic->str(269); // ISDXMRCLHQYWBVPKGOUZTFNJAE
 	}
 	// 138:06c4
 	if (activePuzzle == 0x5b) {
 		var_str_1170 = g_zbasic->str(270); // treasure name
-		var_i16_1aa2 = 9;
-		var_str_1f0c = g_zbasic->str(271); // ZYXWVUTSRQPONMLKJIHGFEDCBA
+		metapuzzleSecretCodeSpaceOffset = 9;
+		metapuzzleSecretCodeCipher = g_zbasic->str(271); // ZYXWVUTSRQPONMLKJIHGFEDCBA
 	}
 	// 138:06fe
 	arr_i16_1eb8[0] = 0x122;
@@ -247,11 +248,11 @@ void FoolGame::metapuzzleSecretCode() {
 	} else {
 		// 138:0778
 		var_str_1272 = activePuzzleBuffer;
-		var_i16_200c = 0;
+		metapuzzleSecretCodeCount = 0;
 		var_i16_68a = 1;
 		for (int16 i = 1; i <= (int16)var_str_1272.size(); i++) {
 			if (g_zbasic->midStr(var_str_1272, i, 1) != g_zbasic->str(273)) {
-				var_i16_200c++;
+				metapuzzleSecretCodeCount++;
 			}
 			// 138:07c2
 			sub_138_9c4();
@@ -298,14 +299,14 @@ void FoolGame::metapuzzleSecretCodeDrawText() {
 		return;
 	}
 	g_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
-	var_i16_200c++;
-	if (var_i16_1aa2 == var_i16_200c) {
-		if (g_zbasic->leftStr(var_str_1170, var_i16_1aa2 - 1) == var_str_1272) {
+	metapuzzleSecretCodeCount++;
+	if (metapuzzleSecretCodeSpaceOffset == metapuzzleSecretCodeCount) {
+		if (g_zbasic->leftStr(var_str_1170, metapuzzleSecretCodeSpaceOffset - 1) == var_str_1272) {
 			var_str_1272 += g_zbasic->str(274); // ' '
 		}
 	}
 	// 138:0946
-	var_str_d12 = g_zbasic->midStr(var_str_1f0c, keyLastPressed - 0x40, 1);
+	var_str_d12 = g_zbasic->midStr(metapuzzleSecretCodeCipher, keyLastPressed - 0x40, 1);
 	var_str_1272 += var_str_d12;
 	var_i16_484 = g_toolbox->StringWidth(var_str_1272);
 	var_i16_7e4 = g_toolbox->StringWidth(var_str_1170);
@@ -332,7 +333,7 @@ void FoolGame::sub_138_9c4() {
 void FoolGame::sub_138_a06() {
 	// 138:0a06
 	sub_128_50e(0x19, 0x64, 1);
-	if (var_i16_200c == 0)
+	if (metapuzzleSecretCodeCount == 0)
 		return;
 	metapuzzleSecretCodeReset();
 }
@@ -350,7 +351,7 @@ void FoolGame::metapuzzleSecretCodeReset() {
 	var_str_384 = g_zbasic->str(275); // if you know which is which, enter the letters you wish to switch
 	sub_128_918(var_str_384);
 	var_str_1272.clear(); // was: str(276)
-	var_i16_200c = 0;
+	metapuzzleSecretCodeCount = 0;
 }
 
 void FoolGame::sub_138_a90() {
