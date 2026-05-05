@@ -59,6 +59,7 @@ void FoolGame::sub_128_004() {
 	sunMapRestored = 0;
 	menuDisabled = false;
 	menuHidesPlayfield = false;
+	isAutoSaving = false;
 	// zero out pattern buffer; sub_129_123a uses entry
 	// 0 for filling the top bar
 	for (int i = 0; i <= 0x50; i++) {
@@ -215,7 +216,7 @@ void FoolGame::sub_128_004() {
 		if (this->stateFlags & 0x400) {
 			this->sub_128_2b0a();
 		}
-		if (this->stateFlags & 0x800) {
+		if (this->stateFlags & kStateMetapuzzleComplete) {
 			this->sub_144_004();
 		}
 	// 128:1ee2
@@ -245,10 +246,8 @@ void FoolGame::copyScreen(int16 put, BitMap &bmp) {
 	}
 }
 
-void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32String &unk1) {
+void FoolGame::openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename) {
 	// 128:011c
-	g_zbasic->stringCopy(this->var_str_272, unk1);
-	g_zbasic->stringCopy(this->var_str_172, unk2);
 	this->var_str_384 = g_zbasic->str(3);
 
 	this->var_i16_586 = 0;
@@ -262,7 +261,7 @@ void FoolGame::sub_128_11c(const Common::U32String &unk2, const Common::U32Strin
 	this->var_i32_16e = 0;
 
 	// 128:017e
-	g_toolbox->SFPutFile(this->var_ev_46.where, this->var_str_172, this->var_str_272, this->var_i32_16e, this->var_sfr_5e);
+	g_toolbox->SFPutFile(this->var_ev_46.where, title, filename, this->var_i32_16e, this->var_sfr_5e);
 	this->sub_128_6244();
 
 	this->copyScreen(1, this->arr_bmp_138bc);
@@ -752,31 +751,31 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 		}
 		// 128:1518
 		this->sub_128_61ec();
-		this->var_i16_7be = 0;
+		this->savePromptChoice = 0;
 		// 128:1522
 		do {
 			this->var_i16_7a8 = g_toolbox->GetNextEvent(0xa, this->var_ev_46);
 			g_toolbox->GlobalToLocal(this->var_ev_46.where);
 			if (this->var_ev_46.what == kMouseDown) {
 				// 128:154a
-				this->var_i16_7be = 0;
+				this->savePromptChoice = 0;
 				Common::Rect target;
 				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b7c)) {
-					this->var_i16_7be = 1;
+					this->savePromptChoice = 1;
 					target = this->arr_rect_5b7c;
 				}
 				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b84)) {
-					this->var_i16_7be = 2;
+					this->savePromptChoice = 2;
 					target = this->arr_rect_5b84;
 				}
 				if (g_toolbox->PtInRect(this->var_ev_46.where, this->arr_rect_5b8c)) {
-					this->var_i16_7be = 3;
+					this->savePromptChoice = 3;
 					target = this->arr_rect_5b8c;
 				}
 
-				if (this->var_i16_7be > 0) {
+				if (this->savePromptChoice > 0) {
 					// 128:15d2
-					this->var_i16_30 = (this->var_i16_7be - 1)*4;
+					this->var_i16_30 = (this->savePromptChoice - 1)*4;
 					do {
 						g_toolbox->InvertRoundRect(target, 0xa, 0xa);
 
@@ -803,7 +802,7 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 					} while (this->var_ev_46.what != kMouseUp);
 
 					if (!g_toolbox->PtInRect(this->var_ev_46.where, target)) {
-						this->var_i16_7be = 0;
+						this->savePromptChoice = 0;
 					}
 					this->sub_128_61ec();
 				}
@@ -812,13 +811,13 @@ void FoolGame::sub_128_dfe(int16 unk4, int16 unk3, int16 unk2, int16 unk1) {
 			if (this->var_ev_46.what == kKeyDown) {
 				this->keyLastPressed = this->var_ev_46.message & 0xff;
 				if (this->keyLastPressed == 0xd) {
-					this->var_i16_7be = 1;
+					this->savePromptChoice = 1;
 				}
 			}
 			if (this->var_ev_46.what == kNullEvent)
 				g_toolbox->Delay(0);
 		// 128:175c
-		} while (this->var_i16_7be == 0);
+		} while (this->savePromptChoice == 0);
 
 		this->sub_128_61ec();
 		this->copyScreen(1, this->arr_bmp_138bc);
@@ -1180,7 +1179,7 @@ void FoolGame::sub_128_271a() {
 void FoolGame::menuNewGame() {
 	// 128:27d6
 	this->savePrompt();
-	if (this->var_i16_7be == 3)
+	if (this->savePromptChoice == 3)
 		return;
 	if (this->var_i16_7ce & 1) {
 		this->setStateBits(kStateNewGame | kStateReturn);
@@ -1234,23 +1233,23 @@ void FoolGame::menuOpenGame() {
 	// 128:2988
 	// File -> Open
 	this->sub_128_1e4(g_zbasic->str(21)); // FOOL
-	if (this->var_str_588 == g_zbasic->str(22)) { // empty
+	if (this->var_str_588.empty()) { // was: str(22)
 		return;
 	}
 	this->sub_128_2808();
-	if (this->var_str_588 == g_zbasic->str(23)) {
+	if (this->var_str_588.empty()) { // was: str(23)
 		return;
 	}
 	this->savePrompt();
 	// 128:29d4
-	if (this->var_i16_7be != 3) {
+	if (this->savePromptChoice != 3) {
 		if ((this->var_i16_7ce & 1) != 0) {
 			this->setStateBits(kStateOpenGame | kStateReturn);
 		} else {
 			// 128:29fa
 			this->setStateBits(kStateOpenGame);
 		}
-		this->sub_128_3774();
+		this->cursorWatch();
 	}
 }
 
@@ -1260,18 +1259,18 @@ void FoolGame::menuSaveGame() {
 	this->setStateBits(kStateSaveGame);
 }
 
-void FoolGame::sub_128_2a0e() {
+void FoolGame::saveGameAs() {
 	// 128:2a0e
-	if (this->var_str_8ec == g_zbasic->str(24)) {
+	if (saveFileName.empty()) { // was: str(24)
 		// 128:2a28
-		this->sub_128_11c(g_zbasic->str(25), g_zbasic->str(26)); // name of game, blank
+		this->openSaveFileDialog(g_zbasic->str(25), g_zbasic->str(26)); // name of game, blank
 	} else {
 		// 128:2a48
-		this->sub_128_11c(g_zbasic->str(27), this->var_str_8ec); // New Name?
+		this->openSaveFileDialog(g_zbasic->str(27), saveFileName); // New Name?, old filename
 	}
 	// 128:2a60
-	if (this->var_str_486 != g_zbasic->str(28)) { // empty
-		this->var_str_8ec = this->var_str_486;
+	if (!this->var_str_486.empty()) { // was: str(28)
+		saveFileName = this->var_str_486;
 		this->var_i16_9ec = this->var_i16_586;
 		// 128:2a90
 	}
@@ -1280,8 +1279,8 @@ void FoolGame::sub_128_2a0e() {
 void FoolGame::menuSaveGameAs() {
 	// 128:2a92
 	// File -> Save As
-	this->sub_128_2a0e();
-	if (this->var_str_486 != g_zbasic->str(29)) { // empty
+	this->saveGameAs();
+	if (!this->var_str_486.empty()) { // was: str(29)
 		this->setStateBits(kStateSaveGame);
 	}
 
@@ -1291,7 +1290,7 @@ void FoolGame::menuSaveGameAs() {
 void FoolGame::menuQuit() {
 	// 128:2ab6
 	this->savePrompt();
-	if (this->var_i16_7be == 3) {
+	if (this->savePromptChoice == 3) {
 		return;
 	}
 	if ((this->var_i16_7ce & 1) != 0) {
@@ -1323,9 +1322,9 @@ void FoolGame::sub_128_2b0a() {
 void FoolGame::newGame() {
 	// 128:2bc6
 	this->clearStateBits(kStateNewGame);
-	this->sub_128_3774();
+	this->cursorWatch();
 	this->sub_128_3744();
-	this->var_str_8ec = g_zbasic->str(33);
+	saveFileName = g_zbasic->str(33);
 
 	this->var_i16_9ec = 0;
 	// set up the initially visible story chapters
@@ -1397,16 +1396,16 @@ void FoolGame::openGame() {
 	// 128:2e3e
 	// save game loading code?
 	this->clearStateBits(kStateOpenGame);
-	this->sub_128_3774();
+	this->cursorWatch();
 	this->sub_128_3744();
-	this->var_str_8ec = this->var_str_588;
+	saveFileName = this->var_str_588;
 	this->var_i16_9ec = this->var_i16_688;
 	this->var_i16_7e6 = 0;
 	// FIXME: disk error handler??
 	// 128:2e68: LEA - [0x3808],A0
 	// 128:2e6c: MOVE.L - A0,-0x8ee(A5)
 	// 128:2e70: SF - 0x8,D0
-	g_zbasic->openR(2, this->var_str_8ec, 0x400, this->var_i16_9ec);
+	g_zbasic->openR(2, saveFileName, 0x400, this->var_i16_9ec);
 
 	this->var_str_384 = g_zbasic->readFileStr(2, 0x11);
 	this->storyNextPage = g_zbasic->readFileInt(2);
@@ -1435,7 +1434,7 @@ void FoolGame::openGame() {
 	// 128:2f84
 	g_zbasic->close(2);
 	if (this->var_i16_7e6 != 0) {
-		this->arr_str_1a8d8[0] = g_zbasic->str(34) + this->var_str_8ec + g_zbasic->str(35); // file cannot be opened
+		this->arr_str_1a8d8[0] = g_zbasic->str(34) + saveFileName + g_zbasic->str(35); // file cannot be opened
 		this->arr_str_1a8d8[1] = g_zbasic->str(36);
 		this->var_i16_7e6 = 0;
 		if ((this->var_i16_7ce & 1) == 0) {
@@ -1527,26 +1526,47 @@ void FoolGame::savePrompt() {
 	if (this->var_i16_7ce == 666) {
 		return;
 	}
-	this->var_i16_7be = 0;
-	if (this->var_str_8ec == g_zbasic->str(42)) {
-		this->arr_str_1a8d8[0] = g_zbasic->str(43); // do you wish to save this game
-		this->arr_str_1a8d8[1] = g_zbasic->str(44); // yes
-		this->arr_str_1a8d8[2] = g_zbasic->str(45); // no
-		this->arr_str_1a8d8[3] = g_zbasic->str(46); // cancel
-		this->sub_128_dfe(0, 0, 3, 0);
-		if (this->var_i16_7be > 1) {
-			return;
-		}
-		this->sub_128_2a0e();
-		if (this->var_str_8ec == g_zbasic->str(47)) {
-			// 128:33da
-			this->var_i16_7be = 3;
-			return;
-		}
+	this->savePromptChoice = 0;
+	// The original code would only show the save prompt if there was
+	// no game in progress.
+	// Instead, we always show the prompt.
+
+	Common::U32String previous = saveFileName;
+	saveFileName.clear();
+	this->arr_str_1a8d8[0] = g_zbasic->str(43); // do you wish to save this game
+	this->arr_str_1a8d8[1] = g_zbasic->str(44); // yes
+	this->arr_str_1a8d8[2] = g_zbasic->str(45); // no
+	this->arr_str_1a8d8[3] = g_zbasic->str(46); // cancel
+	this->sub_128_dfe(0, 0, 3, 0);
+	if (this->savePromptChoice > 1) {
+		saveFileName = previous;
+		return;
+	}
+	this->saveGameAs();
+	if (saveFileName.empty()) { // was: str(47)
+		// 128:33da
+		this->savePromptChoice = 3;
+		saveFileName = previous;
+		return;
 	}
 	// 128:33e2
 	this->setStateBits(kStateSaveGame);
 
+}
+
+void FoolGame::autoSaveGame() {
+	// Fool's Errand had an autosave feature; once you saved or opened
+	// a game, this became the "game in progress", and on quit/load
+	// the game would do the equivalent of hitting "Save".
+	// In general, ScummVM treats user-initated save games as a snapshot,
+	// and writes any automatic progress to a dedicated "Autosave" slot.
+	// This wrapper changes the autosave behaviour to match the rest of ScummVM.
+	isAutoSaving = true;
+	Common::U32String previous = saveFileName;
+	saveFileName = Common::U32String::format("%s-Autosave.fool", g_engine->getGameId().c_str());
+	saveGame();
+	saveFileName = previous;
+	isAutoSaving = false;
 }
 
 void FoolGame::saveGame() {
@@ -1555,9 +1575,9 @@ void FoolGame::saveGame() {
 	if (this->var_i16_7ce == 666)
 		return;
 	// 128:3548
-	if (this->var_str_8ec == g_zbasic->str(57)) { // empty
-		this->sub_128_2a0e();
-		if (this->var_str_8ec == g_zbasic->str(58)) { // empty
+	if (saveFileName.empty()) { // was: str(57)
+		this->saveGameAs();
+		if (saveFileName.empty()) { // was: str(58)
 			return;
 		}
 	}
@@ -1567,13 +1587,15 @@ void FoolGame::saveGame() {
 	}
 	// 128:3594
 	do {
-		this->sub_128_3774();
+		if (!isAutoSaving) {
+			this->cursorWatch();
+		}
 		// 128:3598
 		this->var_i16_7e6 = 0;
 		// 128:359e: LEA - [0x3808],A0
 		// 128:35a2: MOVE.L - A0,-0x8ee(A5)
 		g_zbasic->defOpen(g_zbasic->str(59)); // FOOLgf87
-		g_zbasic->openW(2, this->var_str_8ec, 0x400, this->var_i16_9ec);
+		g_zbasic->openW(2, saveFileName, 0x400, this->var_i16_9ec);
 
 		if (this->var_i16_7e6 != 0xa) {
 			this->var_str_af4 = g_zbasic->str(60); // The Fool's Errand
@@ -1601,8 +1623,8 @@ void FoolGame::saveGame() {
 			// problem with saving
 			this->sub_128_388a();
 			do {
-				this->sub_128_2a0e();
-			} while (this->var_str_8ec == g_zbasic->str(61));  // empty
+				this->saveGameAs();
+			} while (saveFileName.empty());  // was: str(61)
 			// 128:3726: BRA - [0x3594]
 
 		} else {
@@ -1613,7 +1635,9 @@ void FoolGame::saveGame() {
 	// 128:372a: LEA - [0x3818],A0
 	// 128:372e: MOVE.L - A0,-0x8ee(A5)
 	if (this->stateFlags == 0) {
-		this->sub_128_37ce();
+		if (!isAutoSaving) {
+			this->cursorExplodingWatchShort();
+		}
 		g_toolbox->InitCursor();
 	}
 }
@@ -1629,7 +1653,7 @@ void FoolGame::sub_128_3744() {
 }
 
 // watch cursor
-void FoolGame::sub_128_3774() {
+void FoolGame::cursorWatch() {
 	// 128:3774
 	g_toolbox->SetCursor(this->arr_curs_4d88[3]);
 	this->var_i16_7b2 = 0xa;
@@ -1652,7 +1676,7 @@ void FoolGame::cursorExplodingWatch() {
 	this->var_i16_7b2 = 0xa;
 }
 
-void FoolGame::sub_128_37ce() {
+void FoolGame::cursorExplodingWatchShort() {
 	// 128:37ce
 	for (int i = 7; i <= 0xf; i++) {
 		g_toolbox->SetCursor(this->arr_curs_4d88[i]);
@@ -1768,6 +1792,7 @@ void FoolGame::puzzleRun() {
 	g_zbasic->indexClear(1);
 	if (this->puzzleCompletionStatus[this->storyCurrentChapter] == 0x63) {
 		this->storyUnlockChapter();
+		autoSaveGame(); // autosave on progress
 	}
 	if (this->puzzleCompletionStatus[this->storyCurrentChapter] == 0x64) {
 		// bodge for completing The Chariot
@@ -1815,12 +1840,13 @@ void FoolGame::puzzleRun() {
 			g_zbasic->menu(this->var_i16_484, this->var_i16_7e4, 1, Common::U32String());
 			this->storyUnlockChapter();
 		}
+		autoSaveGame();
 	}
 	// 128:3d82
 	this->var_i16_c02 = 0;
 	this->var_i16_c00 = 0;
 	g_toolbox->SetPort(this->var_i32_0);
-	if ((this->stateFlags & 0x38) == 0) {
+	if ((this->stateFlags & (kStateQuit | kStateOpenGame | kStateNewGame)) == 0) {
 		if ((this->var_i16_7ce & 1) == 0) {
 			this->var_i16_7ce ^= 1;
 		}
@@ -1911,7 +1937,7 @@ void FoolGame::puzzleLoadContext() {
 	this->activePuzzleBuffer = g_zbasic->indexRaw(2, this->activePuzzle);
 	if (debugChannelSet(5, kDebugLoading)) {
 		Common::String inter = this->activePuzzleBuffer;
-		debugC(5, kDebugLoading, "puzzleLoadContext: loading puzzle %d context, state %d", this->activePuzzle, this->var_i16_c04);
+		debugC(5, kDebugLoading, "puzzleLoadContext: loading puzzle %d context, state %d, size %d", this->activePuzzle, this->var_i16_c04, inter.size());
 		Common::hexdump((const byte *)inter.c_str(), inter.size());
 	}
 }
@@ -1922,7 +1948,7 @@ void FoolGame::puzzleSaveContext() {
 	g_zbasic->indexRawSet(this->activePuzzleBuffer, 2, this->activePuzzle);
 	if (debugChannelSet(5, kDebugLoading)) {
 		Common::String inter = this->activePuzzleBuffer;
-		debugC(5, kDebugLoading, "puzzleSaveContext: saving puzzle %d context, state %d", this->activePuzzle, this->var_i16_c04);
+		debugC(5, kDebugLoading, "puzzleSaveContext: saving puzzle %d context, state %d, size %d", this->activePuzzle, this->var_i16_c04, inter.size());
 		Common::hexdump((const byte *)inter.c_str(), inter.size());
 	}
 }
@@ -2092,12 +2118,12 @@ void FoolGame::sub_128_4472() {
 // about screen
 void FoolGame::menuAbout() {
 	// 128:4a92
-	if (this->var_str_8ec == g_zbasic->str(77)) {
+	if (saveFileName.empty()) { // was: str(77)
 		// untitled game in progress
 		this->arr_str_1a8d8[0] = g_zbasic->chr(0x22) + g_zbasic->str(78) + g_zbasic->chr(0x22) + g_zbasic->str(79);
 	} else {
 		// 128:4aee
-		this->arr_str_1a8d8[0] = g_zbasic->chr(0x22) + this->var_str_8ec + g_zbasic->chr(0x22) + g_zbasic->str(80);
+		this->arr_str_1a8d8[0] = g_zbasic->chr(0x22) + saveFileName + g_zbasic->chr(0x22) + g_zbasic->str(80);
 	}
 	// 128:4b28
 	this->arr_str_1a8d8[1] = g_zbasic->str(81);
@@ -2862,7 +2888,7 @@ void FoolGame::sub_129_068() {
 	// 129:0496
 	this->var_i16_7e4 = 1;
 	this->var_str_e22 = g_zbasic->str(124);
-	this->var_str_8ec = g_zbasic->str(125);
+	saveFileName = g_zbasic->str(125);
 
 	this->var_i16_484 = g_zbasic->finderInfo(this->var_i16_7e4, this->var_str_588, this->var_i32_f28, this->var_i16_688);
 
@@ -2875,7 +2901,7 @@ void FoolGame::sub_129_068() {
 			this->sub_128_2808();
 			if (this->var_str_588 != g_zbasic->str(129)) {
 				// 129:054c
-				this->var_str_8ec = this->var_str_588;
+				saveFileName = this->var_str_588;
 				this->var_i16_9ec = this->var_i16_688;
 			}
 		}
@@ -3182,13 +3208,13 @@ void FoolGame::sub_129_068() {
 
 	this->sub_128_6244();
 	// 129:11f6
-	if (g_zbasic->str(157) == this->var_str_8ec) { // empty
+	if (saveFileName.empty()) { // was: str(157)
 		// cold start
 		this->stateFlags = kStateNewGame;
 	} else {
 		// loading a save game
 		this->stateFlags = kStateOpenGame;
-		this->var_str_588 = this->var_str_8ec;
+		this->var_str_588 = saveFileName;
 		this->var_i16_688 = this->var_i16_9ec;
 	}
 	// 129:1236
@@ -3264,6 +3290,48 @@ void FoolGame::hermitRun() {
 }
 
 void FoolGame::sub_144_004() {
+	// 144:0004
+	g_toolbox->ReleaseResource(var_pic_7c2);
+	var_i32_7c8 = g_zbasic->mem(-1);
+	stateFlags = kStateQuit;
+	if (var_i16_37a == 0) {
+		g_toolbox->SetPort(var_i32_8);
+		fillRect(0, 0, 0x14, SCREEN_WIDTH, 0x47);
+	} else {
+		// 144:0046
+		sub_128_1ef8();
+	}
+	// 144:004a
+	autoSaveGame(); // was: saveGame
+	g_toolbox->InitCursor();
+	sub_128_4da(0);
+	if (var_i16_37a == 0) {
+		var_i16_42 = 0;
+		var_i16_44 = 0xab;
+	} else {
+		// 144:0070
+		var_i16_42 = 0x14;
+		var_i16_44 = 0xb5;
+		g_toolbox->SetPort(var_i32_0);
+	}
+	// 144:0082
+	g_zbasic->get(1, var_i16_42+1, SCREEN_WIDTH, SCREEN_HEIGHT-1, arr_bmp_5dfc);
+	for (int16 i = 0xa; i <= 0xf0; i += 0xa) {
+		var_i32_692 = g_toolbox->TickCount();
+		g_zbasic->put(
+			i,
+			var_i16_42 + (int16)(i*0.6f),
+			SCREEN_WIDTH - i,
+			SCREEN_HEIGHT - (int16)(i*0.6f),
+			arr_bmp_5dfc, kPutCopy);
+		// 144:015a
+		sub_128_406(0xf);
+	}
+	// 144:0170
+	sub_128_3da(0x3c);
+	var_i16_68a = 1;
+	var_i32_692 = g_toolbox->TickCount();
+	//arr_i16_4758[0], 0x100 - var_i16_68a, var_i16_44, var_i16_68a*
 	warning("STUB: %s", __func__);
 }
 
