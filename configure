@@ -5447,11 +5447,19 @@ EOF
 			if test "$_osx_tts_backend" = "NSSpeechSynthesizer" ; then
 				# Check older NSSpeechSynthesizer API.
 				cat > $TMPC << EOF
+#include <AvailabilityMacros.h>
 #include <AppKit/NSSpeechSynthesizer.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 1050
+#error Not enough NSSpeechSynthesizerDelegate features available
+#endif
+#if MAC_OS_X_VERSION_MAX_ALLOWED < 1060
+@interface SpeechDelegate : NSObject {
+#else
 @interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
+#endif
 }
 @end
-int main(void) { return 0; }
+int main(void) { return NSSpeechImmediateBoundary; }
 EOF
 				cc_objc_check && _tts=yes
 			else
