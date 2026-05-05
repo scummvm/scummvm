@@ -86,6 +86,9 @@ public:
 
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
+	Graphics::PixelFormat getPixelFormat() override {
+		return Graphics::PixelFormat::createFormatRGBA32();
+	}
 
 private:
 	void resolveColor(uint32 color, float rgba[4]) const;
@@ -572,12 +575,8 @@ void OpenGLShaderRenderer::drawSurface(const Graphics::Surface *surf, int x, int
 	// Texture params are set once at construction; just bind here.
 	glBindTexture(GL_TEXTURE_2D, _bitmapTexture);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	// The engine's surface format is PixelFormat(4,8,8,8,8,24,16,8,0) —
-	// R at bit 24, A at bit 0 — so GL_RGBA + GL_UNSIGNED_INT_8_8_8_8 reads
-	// each uint32 with the high byte mapping to R, matching the fixed-
-	// function path's drawSurface upload (renderer_opengl.cpp:725).
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0,
-		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->getPixels());
+		GL_RGBA, GL_UNSIGNED_BYTE, surf->getPixels());
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

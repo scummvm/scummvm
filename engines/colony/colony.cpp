@@ -588,7 +588,7 @@ void ColonyEngine::initMacMenus() {
 	}
 
 	// Create RGBA surface for the MacWindowManager to render into.
-	Graphics::PixelFormat rgba(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat rgba = _gfx->getPixelFormat();
 	_menuSurface = new Graphics::ManagedSurface(_width, _height, rgba);
 
 	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMNoScummVMWallpaper | Graphics::kWMModeNoSystemRedraw, nullptr, Common::UNK_LANG, rgba);

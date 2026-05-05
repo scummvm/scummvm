@@ -747,7 +747,7 @@ void ColonyEngine::drawAnimation() {
 
 	if (!_animPatternSurface) {
 		_animPatternSurface = new Graphics::Surface();
-		_animPatternSurface->create(416, 264, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		_animPatternSurface->create(416, 264, _gfx->getPixelFormat());
 	}
 
 	if (keyChanged) {
@@ -863,7 +863,7 @@ void ColonyEngine::drawAnimationImage(Image *img, Image *mask, int x, int y, uin
 
 	// Pixels written into the alpha-keyed RGBA cache. mask=0 → alpha 0
 	// (transparent), so drawSurface's alpha-blend skips them naturally.
-	const Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	const Graphics::PixelFormat fmt = _gfx->getPixelFormat();
 	const uint32 black = fmt.ARGBToColor(255, 0, 0, 0);
 	const uint32 white = fmt.ARGBToColor(255, 255, 255, 255);
 	const uint32 transparent = 0;
