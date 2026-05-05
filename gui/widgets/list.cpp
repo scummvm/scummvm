@@ -290,6 +290,8 @@ void ListWidget::setList(const Common::U32StringArray &list) {
 		_currentPos = size - 1;
 	if (_currentPos < 0)
 		_currentPos = 0;
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+	_fluidScroller->setPosition(_scrollPos, false);
 	_selectedItem = -1;
 	// Resize and clear bool array
 	_selectedItems.clear();
@@ -347,15 +349,14 @@ void ListWidget::scrollTo(int item) {
 
 void ListWidget::scrollBarRecalc() {
 	const int lineHeight = kLineHeight + _itemSpacing;
-	_scrollBar->_numEntries = _list.size();
-	_scrollBar->_entriesPerPage = _entriesPerPage;
-	int maxIndex = MAX(0, (int)_list.size() - _entriesPerPage);
-	_scrollBar->_currentPos = CLIP<int>(_currentPos, 0, maxIndex);
+	const int visibleHeight = _h - _topPadding - _bottomPadding;
+	_scrollBar->_numEntries = _list.size() * lineHeight;
+	_scrollBar->_entriesPerPage = visibleHeight;
+	int maxScroll = MAX(0, _scrollBar->_numEntries - _scrollBar->_entriesPerPage);
+	_scrollBar->_currentPos = CLIP<int>((int)_scrollPos, 0, maxScroll);
 	_scrollBar->_singleStep = lineHeight;
 	_scrollBar->recalc();
-
-	int maxScroll = MAX(0, (int)(_scrollBar->_numEntries - _scrollBar->_entriesPerPage) * lineHeight);
-	_fluidScroller->setBounds((float)maxScroll, _h - _topPadding - _bottomPadding, (float)_scrollBar->_singleStep);
+	_fluidScroller->setBounds((float)maxScroll, (float)visibleHeight, (float)_scrollBar->_singleStep);
 }
 
 void ListWidget::handleTickle() {
@@ -838,8 +839,8 @@ void ListWidget::lostFocusWidget() {
 void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
-		if (_currentPos != (int)data) {
-			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+		if ((int)_scrollPos != (int)data) {
+			_scrollPos = (float)data;
 			_fluidScroller->stopAnimation();
 			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 			applyScrollPos();
@@ -992,19 +993,16 @@ void ListWidget::scrollToCurrent() {
 
 	checkBounds();
 	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
-	_scrollBar->_currentPos = _currentPos;
+	_scrollBar->_currentPos = (int)_scrollPos;
 	_scrollBar->recalc();
 	_fluidScroller->setPosition(_scrollPos, false);
 }
 
 void ListWidget::scrollToEnd() {
-	if (_currentPos + _entriesPerPage < (int)_list.size()) {
-		_currentPos = _list.size() - _entriesPerPage;
-	} else {
-		return;
-	}
-
-	_scrollBar->_currentPos = _currentPos;
+	_currentPos = MAX(0, (int)_list.size() - _entriesPerPage);
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+	_scrollBar->_currentPos = (int)_scrollPos;
+	_fluidScroller->setPosition(_scrollPos, false);
 	_scrollBar->recalc();
 	_scrollBar->markAsDirty();
 }

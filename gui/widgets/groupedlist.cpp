@@ -146,7 +146,9 @@ void GroupedListWidget::sortGroups() {
 	checkBounds();
 	scrollBarRecalc();
 
-	_scrollBar->_currentPos = _currentPos;
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+	_scrollBar->_currentPos = (int)_scrollPos;
+	_fluidScroller->setPosition(_scrollPos, false);
 	_scrollBar->recalc();
 	// FIXME: Temporary solution to clear/display the background ofthe scrollbar when list
 	// grows too small or large during group toggle. We shouldn't have to redraw the top dialog,
@@ -247,11 +249,9 @@ void GroupedListWidget::loadSelection(const Common::Array<bool> &savedSelection)
 	}
 
 	checkBounds();
+	_scrollPos = (float)_currentPos * (kLineHeight + _itemSpacing);
+	_fluidScroller->setPosition(_scrollPos, false);
 	scrollBarRecalc();
-
-	_scrollBar->_currentPos = _currentPos;
-	_scrollBar->recalc();
-
 	markAsDirty();
 }
 
@@ -362,8 +362,8 @@ void GroupedListWidget::handleMouseWheel(int x, int y, int direction) {
 void GroupedListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kSetPositionCmd:
-		if (_currentPos != (int)data) {
-			_scrollPos = (float)data * (kLineHeight + _itemSpacing);
+		if ((int)_scrollPos != (int)data) {
+			_scrollPos = (float)data;
 			_fluidScroller->stopAnimation();
 			_scrollPos = _fluidScroller->setPosition(_scrollPos, false);
 			applyScrollPos();
