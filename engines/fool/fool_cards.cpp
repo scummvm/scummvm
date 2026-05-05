@@ -286,7 +286,7 @@ void FoolGame::cardsOnClick() {
 			if (this->var_ev_46.what == kMouseUp) {
 				this->var_i16_2014 = 1;
 			}
-			if (this->stateFlags == 4) {
+			if (this->stateFlags == kStateSaveGame) {
 				this->cardsStoreState();
 				this->saveGame();
 			}

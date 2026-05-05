@@ -41,6 +41,7 @@ enum FoolStateBits : uint16 {
 	kStateChapterSelect = 0x40,
 	kStatePuzzleSelect = 0x80,
 	kStateMetapuzzleSelect = 0x100,
+	kStateMetapuzzleComplete = 0x800,
 };
 
 enum FoolPuzzleFlags : uint16 {
@@ -59,7 +60,7 @@ public:
 
 	void sub_128_004();
 	void copyScreen(int16 put, BitMap &bmp); // sub_128_0a2
-	void sub_128_11c(const Common::U32String &unk2, const Common::U32String &unk1);
+	void openSaveFileDialog(const Common::U32String &title, const Common::U32String &filename); // sub_128_11c
 	void sub_128_1e4(const Common::U32String &unk1);
 	void sub_128_2be(int16 unk2, int16 unk1);
 	void sub_128_342(int16 unk2, int16 unk1);
@@ -103,7 +104,7 @@ public:
 	void sub_128_2808();
 	void menuOpenGame(); // sub_128_2988
 	void menuSaveGame(); // sub_128_2a06
-	void sub_128_2a0e();
+	void saveGameAs(); // sub_128_2a0e
 	void menuSaveGameAs(); // sub_128_2a92
 	void menuQuit(); // sub_128_2ab6
 	void menuPrintStory(); // sub_128_2ae8
@@ -114,11 +115,12 @@ public:
 	void sub_128_3032();
 	void sub_128_32c8();
 	void savePrompt(); // sub_128_32fa
+	void autoSaveGame();
 	void saveGame(); // sub_128_3536
 	void sub_128_3744();
-	void sub_128_3774();
+	void cursorWatch(); // sub_128_3774
 	void cursorExplodingWatch(); // sub_128_378a
-	void sub_128_37ce();
+	void cursorExplodingWatchShort(); // sub_128_37ce
 	void sub_128_388a();
 	void puzzleRun(); // sub_128_39a0
 	void storyUnlockChapter(); // sub_128_3de6
@@ -279,7 +281,7 @@ public:
 
 	void sub_136_2582();
 	void mazeDrawPlayer(); // sub_136_2664
-	void sub_136_274e();
+	void mazeSetupMenu(); // sub_136_274e
 	void sub_136_2a7c();
 	void sub_136_2b30();
 	void sub_136_2be2();
@@ -423,6 +425,7 @@ private:
 	int16 var_i16_36;
 	int16 var_i16_38;
 	int16 var_i16_3a;
+	int16 var_i16_42;
 	int16 var_i16_44;
 	EventRecord var_ev_46;
 	int16 var_i16_56;
@@ -468,6 +471,8 @@ private:
 	int16 var_i16_7b8;
 	int16 var_i16_7ba;
 	int16 var_i16_7bc;
+	// this was reused, I don't know why
+	int16 savePromptChoice; // var_i16_7be
 	int16 var_i16_7be;
 	int16 keyLastPressed; // var_i16_7c0
 	PicHandle var_pic_7c2;
@@ -489,7 +494,8 @@ private:
 	int16 var_i16_7e6;
 	Common::U32String var_str_7e8;
 	int16 var_i16_8e8;
-	Common::U32String var_str_8ec;
+	Common::U32String saveFileName; // var_str_8ec
+	bool isAutoSaving;
 	int16 var_i16_9ec;
 	int16 var_i16_9f2;
 	Common::U32String var_str_9f4;
@@ -642,6 +648,11 @@ private:
 
 	int16 var_i16_1df2;
 	int16 var_i16_1df4;
+	int16 var_i16_1df6;
+	int16 var_i16_1df8;
+	int16 var_i16_1dfa;
+	int16 var_i16_1dfc;
+	int16 var_i16_1dfe;
 
 	int16 var_i16_1e00;
 	int16 var_i16_1e02;
@@ -729,8 +740,8 @@ private:
 	Common::Rect arr_rect_5b84;
 	Common::Rect arr_rect_5b8c;
 	Common::Rect arr_rect_5b92;
-	int16 arr_i16_5bbc[0x1b];
-	int16 arr_i16_5cbc[26];
+	int16 arr_i16_5bbc[64];
+	int16 arr_i16_5cbc[64];
 	float arr_bcd_5dbc[8];
 	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
