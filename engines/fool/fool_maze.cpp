@@ -133,12 +133,12 @@ void FoolGame::mazeRun() {
 			// 136:0664
 		}
 		// 136:067e
-		var_i16_1bcc = arr_i16_1eb8[15];
-		var_i16_1bce = arr_i16_1eb8[16];
+		mazePlayerX = arr_i16_1eb8[15];
+		mazePlayerY = arr_i16_1eb8[16];
 		var_i16_1bd0 = 0;
 	} else {
 		// 136:06b0
-		sub_136_3466();
+		mazeLoadState();
 	}
 	// 136:06b4
 	var_str_1578.clear(); // was str(224)
@@ -146,7 +146,7 @@ void FoolGame::mazeRun() {
 	sub_136_ade();
 	stateFlags = kStateNull;
 	sub_128_4da(1);
-	if (var_i16_1bcc == 0x19) {
+	if (mazePlayerX == 0x19) {
 		var_i16_d0c = 1;
 	} else {
 		// 136:06f0
@@ -162,13 +162,13 @@ void FoolGame::mazeRun() {
 			if ((var_ev_46.modifiers & kModMouseButtonUp) == 0) {
 				mazeOnClick();
 			}
-			if (var_i16_1bcc == 0x19) {
+			if (mazePlayerX == 0x19) {
 				var_i16_d0c = 1;
 			}
 		}
 		// 136:074a
 		if (stateFlags == kStateSaveGame) {
-			sub_136_2f5c();
+			mazeStoreState();
 			saveGame();
 		}
 		// 136:075c
@@ -177,70 +177,70 @@ void FoolGame::mazeRun() {
 	if (var_i16_d0c != 0) {
 		sub_136_3a70();
 	}
-	sub_136_2f5c();
+	mazeStoreState();
 }
 
 void FoolGame::mazeOnClick() {
 	// 136:079e
 	sub_128_2be(var_i16_68a, var_i16_68c);
-	if ((var_i16_68a == var_i16_1bcc) && (var_i16_68c == var_i16_1bce)) {
+	if ((var_i16_68a == mazePlayerX) && (var_i16_68c == mazePlayerY)) {
 		return;
 	}
 	// 136:07e2
-	if (var_i16_1bce > var_i16_68c) {
-		var_i16_1bd2 = 2;
+	if (mazePlayerY > var_i16_68c) {
+		mazePlayerDirection = 2;
 	}
-	if (var_i16_1bcc > var_i16_68a) {
-		var_i16_1bd2 = 1;
+	if (mazePlayerX > var_i16_68a) {
+		mazePlayerDirection = 1;
 	}
-	if (var_i16_1bce < var_i16_68c) {
-		var_i16_1bd2 = 4;
+	if (mazePlayerY < var_i16_68c) {
+		mazePlayerDirection = 4;
 	}
-	if (var_i16_1bcc < var_i16_68a) {
-		var_i16_1bd2 = 3;
+	if (mazePlayerX < var_i16_68a) {
+		mazePlayerDirection = 3;
 	}
-	if (var_i16_1bd4 != var_i16_1bd2) {
-		if ((var_i16_1bd2 == 1) && ((arr_i16_3738[var_i16_1574] & 1) == 1)) {
-			sub_136_994();
+	if (var_i16_1bd4 != mazePlayerDirection) {
+		if ((mazePlayerDirection == 1) && ((arr_i16_3738[var_i16_1574] & 1) == 1)) {
+			mazeFlashWall();
 			return;
 		}
 		// 136:088a
-		if ((var_i16_1bd2 == 2) && ((arr_i16_3738[var_i16_1574] & 2) == 2)) {
-			sub_136_994();
+		if ((mazePlayerDirection == 2) && ((arr_i16_3738[var_i16_1574] & 2) == 2)) {
+			mazeFlashWall();
 			return;
 		}
-		if ((var_i16_1bd2 == 3) && ((arr_i16_3738[var_i16_1574] & 4) == 4)) {
-			sub_136_994();
+		if ((mazePlayerDirection == 3) && ((arr_i16_3738[var_i16_1574] & 4) == 4)) {
+			mazeFlashWall();
 			return;
 		}
-		if ((var_i16_1bd2 == 4) && ((arr_i16_3738[var_i16_1574] & 8) == 8)) {
-			sub_136_994();
+		if ((mazePlayerDirection == 4) && ((arr_i16_3738[var_i16_1574] & 8) == 8)) {
+			mazeFlashWall();
 			return;
 		}
 		// 136:0944
-		if (var_i16_1bd6 == var_i16_1bd2) {
+		if (var_i16_1bd6 == mazePlayerDirection) {
 			return;
 		}
 	}
 	// 136:0956
-	if (var_i16_1bd2 == 1)
-		var_i16_1bcc--;
-	if (var_i16_1bd2 == 2)
-		var_i16_1bce--;
-	if (var_i16_1bd2 == 3)
-		var_i16_1bcc++;
-	if (var_i16_1bd2 == 4)
-		var_i16_1bce++;
-	sub_136_a22();
+	if (mazePlayerDirection == 1)
+		mazePlayerX--;
+	if (mazePlayerDirection == 2)
+		mazePlayerY--;
+	if (mazePlayerDirection == 3)
+		mazePlayerX++;
+	if (mazePlayerDirection == 4)
+		mazePlayerY++;
+	mazeMovePlayer();
 }
 
-void FoolGame::sub_136_994() {
+void FoolGame::mazeFlashWall() {
 	// 136:0994
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(5, 5);
 	if (arr_i16_1eb8[21] == 0) {
 		g_toolbox->PenMode(kPatXor);
-		switch (var_i16_1bd2-1) {
+		switch (mazePlayerDirection-1) {
 		case 0:
 			sub_136_2a7c();
 			break;
@@ -254,15 +254,16 @@ void FoolGame::sub_136_994() {
 			sub_136_2c96();
 			break;
 		default:
-			warning("sub_136_994: breaking out of switch");
+			warning("mazeFlashWall: breaking out of switch");
 			break;
 		}
+		g_toolbox->Delay(0);
 	} else {
 		// 136:09de
 		g_toolbox->PenPat(arr_pat_58f4[arr_i16_1eb8[17]]);
 	}
 	// 136:0a00
-	switch (var_i16_1bd2-1) {
+	switch (mazePlayerDirection-1) {
 	case 0:
 		sub_136_2a7c();
 		break;
@@ -276,12 +277,13 @@ void FoolGame::sub_136_994() {
 		sub_136_2c96();
 		break;
 	default:
-		warning("sub_136_994: breaking out of switch");
+		warning("mazeFlashWall: breaking out of switch");
 		break;
 	}
+	g_toolbox->Delay(0);
 }
 
-void FoolGame::sub_136_a22() {
+void FoolGame::mazeMovePlayer() {
 	// 136:0a22
 	if (var_i16_1bd6 != 0) {
 		g_toolbox->PenNormal();
@@ -301,7 +303,7 @@ void FoolGame::sub_136_a22() {
 			sub_136_2ed6();
 			break;
 		default:
-			warning("sub_136_a22: breaking out of switch");
+			warning("mazeMovePlayer: breaking out of switch");
 			break;
 		}
 	}
@@ -324,7 +326,7 @@ void FoolGame::sub_136_a22() {
 			sub_136_2ed6();
 			break;
 		default:
-			warning("sub_136_a22: breaking out of switch");
+			warning("mazeMovePlayer: breaking out of switch");
 			break;
 		}
 	}
@@ -341,7 +343,7 @@ void FoolGame::sub_136_a22() {
 		g_toolbox->InvertOval(temp); // erase current spot
 		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
-		sub_136_b00();
+		mazeHotspot();
 	} while (var_i16_1bda != var_i16_1574);
 }
 
@@ -351,7 +353,7 @@ void FoolGame::sub_136_ade() {
 	// this was done by a GOTO into the previous function, so we copy most of it here.
 	mazeDrawPlayer();
 	var_i16_1bda = var_i16_1574;
-	sub_136_b00();
+	mazeHotspot();
 	while (var_i16_1bda != var_i16_1574) {
 		var_i16_1bd6 = 0;
 		var_i16_1bd4 = 0;
@@ -364,24 +366,27 @@ void FoolGame::sub_136_ade() {
 		g_toolbox->InvertOval(temp);
 		mazeDrawPlayer();
 		var_i16_1bda = var_i16_1574;
-		sub_136_b00();
+		mazeHotspot();
 	};
 }
 
-void FoolGame::sub_136_b00() {
-	warning(__func__);
+void FoolGame::mazeHotspot() {
 	// 136:0b00
-	if (arr_i16_1eb8[22] | var_i16_1bdc) {
+	if (arr_i16_1eb8[22] || var_i16_1bdc) {
 		fillRect(0x136, 0, SCREEN_HEIGHT, SCREEN_WIDTH, var_i16_1ac4);
 		var_i16_1bdc = 0;
 		var_str_1578.clear(); // was: str(225)
 	}
 	// 136:0b5e
-	if ((arr_i16_3738[var_i16_1574] & 0x1000) == 0) {
+	if ((arr_i16_3738[var_i16_1574] & 0x1000) == 0) { // cell doesn't have hotspot flag
 		var_i16_1bd0 = var_i16_1574;
 		return;
 	}
-	var_str_1ac8 = g_zbasic->indexRaw(1, arr_i16_3b38[var_i16_1bcc*32 + var_i16_1bce]);
+	var_str_1ac8 = g_zbasic->indexRaw(1, arr_i16_3b38[mazePlayerX*32 + mazePlayerY]);
+	debugC(5, kDebugLoading, "mazeHotspot: processing hotspot at (%d, %d)", mazePlayerX, mazePlayerY);
+	if (debugChannelSet(5, kDebugLoading)) {
+		Common::hexdump((const byte *)var_str_1ac8.c_str(), var_str_1ac8.size());
+	}
 	var_str_1bde = g_zbasic->strRaw(226); // CILTDABRPXMOZSFQGWEJKV
 	// 136:0bd0
 	var_i16_1cde = 1;
@@ -390,17 +395,18 @@ void FoolGame::sub_136_b00() {
 		// 136:0bde
 		var_i16_1cde = g_zbasic->instr(var_i16_1cde, var_str_1ac8, g_zbasic->strRaw(227)); // \xa5\xa5
 		if (var_i16_1cde > 0) {
-			var_i16_484 = 1;
+			// get command ID
 			for (int16 i = 1; i <= (int16)var_str_1bde.size(); i++) {
 				if (g_zbasic->midStr(var_str_1ac8, var_i16_1cde + 2, 1) == g_zbasic->midStr(var_str_1bde, i, 1)) {
 					var_i16_1a9a = i;
 				}
 				// 136:0c4c
 			}
+
 			// 136:0c5e
 			var_i16_1ce0 = g_zbasic->instr(var_i16_1cde, var_str_1ac8, g_zbasic->strRaw(228)); // <<
 			var_str_1ce2 = g_zbasic->midStr(var_str_1ac8, var_i16_1cde + 3, var_i16_1ce0 - var_i16_1cde - 3);
-			if (g_zbasic->midStr(var_str_1ac8, var_i16_1ce0 + 2, 2) == g_zbasic->strRaw(229)) {
+			if (g_zbasic->midStr(var_str_1ac8, var_i16_1ce0 + 2, 2) == g_zbasic->strRaw(229)) { // ||
 				// 136:0cdc
 				var_i16_1cde = 0;
 			} else {
@@ -408,74 +414,74 @@ void FoolGame::sub_136_b00() {
 			}
 			// 136:0cec
 			switch (var_i16_1a9a - 1) {
-			case 0:
+			case 0:	// C
 				mazePrintMessage();
 				break;
-			case 1:
+			case 1: // I
 				sub_136_e4c();
 				break;
-			case 2:
+			case 2: // L
 				sub_136_ed8();
 				break;
-			case 3:
+			case 3: // T
 				mazeWanderingWinds();
 				break;
-			case 4:
+			case 4: // D
 				sub_136_115a();
 				break;
-			case 5:
+			case 5: // A
 				sub_136_137c();
 				break;
-			case 6:
+			case 6: // B
 				sub_136_163c();
 				break;
-			case 7:
+			case 7: // R
 				sub_136_1650();
 				break;
-			case 8:
+			case 8: // P
 				mazeHiddenDoorOpen();
 				break;
-			case 9:
+			case 9: // X
 				mazeHiddenDoorShut();
 				break;
-			case 10:
+			case 10: // M
 				sub_136_1806();
 				break;
-			case 11:
+			case 11: // O
 				sub_136_185a();
 				break;
-			case 12:
+			case 12: // Z
 				sub_136_1898();
 				break;
-			case 13:
+			case 13: // S
 				sub_136_18f4();
 				break;
-			case 14:
+			case 14: // F
 				sub_136_1932();
 				break;
-			case 15:
+			case 15: // Q
 				sub_136_19d2();
 				break;
-			case 16:
+			case 16: // G
 				sub_136_1cf4();
 				break;
-			case 17:
+			case 17: // W
 				sub_136_1ddc();
 				break;
-			case 18:
+			case 18: // E
 				sub_136_1df4();
 				break;
-			case 19:
+			case 19: // J
 				sub_136_1e4c();
 				break;
-			case 20:
+			case 20: // K
 				sub_136_21fa();
 				break;
-			case 21:
+			case 21: // V
 				sub_136_2200();
 				break;
 			default:
-				warning("sub_136_b00: breaking out of switch statement");
+				warning("mazeHotspot: breaking out of switch statement");
 				break;
 			}
 		}
@@ -561,8 +567,8 @@ void FoolGame::mazeWanderingWinds() {
 	var_i16_1dec = 2;
 	mazeMovementTrail();
 	// 136:1108
-	var_i16_1bcc = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
-	var_i16_1bce = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
+	mazePlayerX = ((var_i16_1de8 - 1) % arr_i16_1eb8[0]) + 1;
+	mazePlayerY = ((var_i16_1de8 - 1) / arr_i16_1eb8[0]) + 1;
 	mazeDrawPlayer();
 }
 
@@ -671,7 +677,7 @@ void FoolGame::sub_136_137c() {
 	}
 	// 136:1612
 	if (var_i16_1df0 != 0) {
-		var_i16_1cde = g_zbasic->instr(1, var_str_1ac8, g_zbasic->strRaw(242));
+		var_i16_1cde = g_zbasic->instr(1, var_str_1ac8, g_zbasic->strRaw(242)); // ||
 	}
 	// 136:163a
 	return;
@@ -908,7 +914,7 @@ void FoolGame::sub_136_2582() {
 void FoolGame::mazeDrawPlayer() {
 	warning(__func__);
 	// 136:2664
-	var_i16_1574 = arr_i16_2f38[var_i16_1bcc*32 + var_i16_1bce];
+	var_i16_1574 = arr_i16_2f38[mazePlayerX*32 + mazePlayerY];
 	arr_i16_1eb8[24] = arr_rect_1f38[var_i16_1574].top + 4;
 	arr_i16_1eb8[25] = arr_rect_1f38[var_i16_1574].left + 4;
 	arr_i16_1eb8[26] = arr_rect_1f38[var_i16_1574].bottom - 4;
@@ -1076,14 +1082,14 @@ void FoolGame::sub_136_2ed6() {
 	);
 }
 
-void FoolGame::sub_136_2f5c() {
+void FoolGame::mazeStoreState() {
 	// 136:2f5c
-	if ((activePuzzle != 0x57) && (var_i16_d0c == 0)) {
+	if (!((activePuzzle != 0x57) && (var_i16_d0c == 0))) {
 		activePuzzleBuffer.clear(); // was: str(258)
 		return;
 	}
-	activePuzzleBuffer = g_zbasic->encodeInt(var_i16_1bcc) +
-		g_zbasic->encodeInt(var_i16_1bce) +
+	activePuzzleBuffer = g_zbasic->encodeInt(mazePlayerX) +
+		g_zbasic->encodeInt(mazePlayerY) +
 		g_zbasic->encodeInt(var_i16_1bd0) +
 		g_zbasic->encodeInt(var_i16_1bd6) +
 		g_zbasic->encodeInt(var_i16_1bd4) +
@@ -1156,6 +1162,7 @@ void FoolGame::sub_136_2f5c() {
 		}
 	}
 	// 136:33e8
+	debugC(5, kDebugLoading, "mazeStoreState: added mask %04x", var_i16_1f08);
 	activePuzzleBuffer += g_zbasic->encodeInt(var_i16_1f08);
 }
 
@@ -1168,6 +1175,7 @@ void FoolGame::sub_136_342a() {
 	// 136:342a
 	var_i16_1de6++;
 	if (var_i16_1de6 > 0xf) {
+		debugC(5, kDebugLoading, "sub_136_342a: added mask %04x", var_i16_1f08);
 		activePuzzleBuffer += g_zbasic->encodeInt(var_i16_1f08);
 		var_i16_1f08 = 0;
 		var_i16_1de6 = 0;
@@ -1175,10 +1183,10 @@ void FoolGame::sub_136_342a() {
 	// 136:3464
 }
 
-void FoolGame::sub_136_3466() {
+void FoolGame::mazeLoadState() {
 	// 136:3466
-	var_i16_1bcc = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 1, 2));
-	var_i16_1bce = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 3, 2));
+	mazePlayerX = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 1, 2));
+	mazePlayerY = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 3, 2));
 	var_i16_1bd0 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 5, 2));
 	var_i16_1bd6 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 7, 2));
 	var_i16_1bd4 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, 9, 2));
@@ -1202,7 +1210,7 @@ void FoolGame::sub_136_3466() {
 			sub_136_2ed6();
 			break;
 		default:
-			warning("sub_136_3466: breaking out of switch");
+			warning("mazeLoadState: breaking out of switch");
 			break;
 		}
 	}
@@ -1225,14 +1233,18 @@ void FoolGame::sub_136_3466() {
 			sub_136_2ed6();
 			break;
 		default:
-			warning("sub_136_3466: breaking out of switch");
+			warning("mazeLoadState: breaking out of switch");
 			break;
 		}
 	}
 	// 136:3592
 	var_i16_1f0a = 0xd;
-	var_i16_68a = 1;
-	arr_i16_5cbc[var_i16_68a] = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
+	for (int16 i = 1; i <= arr_i16_1eb8[23]; i++) {
+		arr_i16_5cbc[i] = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
+		var_i16_1f0a += 2;
+	}
+	// 136:35ec
+	var_i16_1de4 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
 	var_i16_1f0a += 2;
 	if (var_i16_1de4 > 0) {
 		g_zbasic->text(0xfb, 0xc, 0, kSrcBic);
@@ -1263,9 +1275,10 @@ void FoolGame::sub_136_3466() {
 	var_i16_1de6 = 0;
 	var_i16_1f08 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
 	// 136:3766
+	debugC(5, kDebugLoading, "mazeLoadState: mask[%d] %04x", var_i16_1f0a, var_i16_1f08);
 	var_i16_1f0a += 2;
-	for (var_i16_68c = 1; var_i16_68c <= arr_i16_1eb8[1]; var_i16_68c++) {
-		for (var_i16_68a = 1; var_i16_68a <= arr_i16_1eb8[0]; var_i16_68a++) {
+	for (int16 j = 1; j <= arr_i16_1eb8[1]; j++) {
+		for (int16 i = 1; i <= arr_i16_1eb8[0]; i++) {
 			var_i16_1574++;
 			if (arr_i16_1eb8[21] != 0) {
 				if (((arr_i16_3738[var_i16_1574] & 1) == 1) && ((arr_i16_3738[var_i16_1574] & 0x10) == 0)) {
@@ -1282,7 +1295,7 @@ void FoolGame::sub_136_3466() {
 					sub_136_3a30();
 				}
 				// 136:3886
-				if (((arr_i16_3738[var_i16_1574] & 4) == 0) && ((arr_i16_3738[var_i16_1574] & 0x40) == 0)) {
+				if (((arr_i16_3738[var_i16_1574] & 4) == 4) && ((arr_i16_3738[var_i16_1574] & 0x40) == 0)) {
 					if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
 						sub_136_2be2();
 					}
@@ -1297,7 +1310,7 @@ void FoolGame::sub_136_3466() {
 				}
 			}
 			// 136:397c
-			if (arr_i16_3b38[var_i16_68a*32 + var_i16_68c] > 0) {
+			if (arr_i16_3b38[i*32 + j] > 0) {
 				if ((var_i16_1f08 & bitLUT[var_i16_1de6]) != 0) {
 					arr_i16_3738[var_i16_1574] |= 0x1000;
 				}
@@ -1317,6 +1330,7 @@ void FoolGame::sub_136_3a30() {
 	}
 	if (var_i16_1de6 == 0) {
 		var_i16_1f08 = g_zbasic->decodeInt(g_zbasic->midStr(activePuzzleBuffer, var_i16_1f0a, 2));
+		debugC(5, kDebugLoading, "sub_136_3a80: mask[%d] %04x", var_i16_1f0a, var_i16_1f08);
 		var_i16_1f0a += 2;
 	}
 	// 136:3a6e

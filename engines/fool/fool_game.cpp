@@ -1872,6 +1872,11 @@ void FoolGame::storyUnlockChapter() {
 
 void FoolGame::sub_128_3fb6() {
 	// 128:3fb6
+	// new: delete existing menu 8
+	this->var_menu_bf8 = g_toolbox->GetMHandle(8);
+	g_toolbox->DeleteMenu(8);
+	g_toolbox->DisposeMenu(this->var_menu_bf8);
+
 	g_zbasic->menu(8, 0, 1, this->arr_str_195e8[this->activePuzzle]);
 	this->var_str_384 = g_zbasic->str(72); // return to scroll
 	if ((this->activePuzzle == 0x34) || (this->activePuzzle == 0x35)) {
@@ -2972,8 +2977,8 @@ void FoolGame::sub_129_068() {
 	// wadjet eye
 	this->var_pic_7c2 = g_toolbox->GetPicture(0x56);
 	g_toolbox->DetachResource(this->var_pic_7c2);
-	var_pic_1032 = g_toolbox->GetPicture(0xac);
-	g_toolbox->DetachResource(var_pic_1032);
+	metapuzzleWheelPic = g_toolbox->GetPicture(0xac);
+	g_toolbox->DetachResource(metapuzzleWheelPic);
 	// icon of a scroll
 	this->var_i32_c = g_toolbox->GetIcon(0x101);
 	g_toolbox->DetachResource(this->var_i32_c);
