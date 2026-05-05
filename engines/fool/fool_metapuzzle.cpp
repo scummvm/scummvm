@@ -77,7 +77,7 @@ void FoolGame::metapuzzleRun() {
 		if (activePuzzle != 0) {
 			sub_138_21e();
 		}
-		if (stateFlags == 4) {
+		if (stateFlags == kStateSaveGame) {
 			saveGame();
 		}
 		if (keyLastPressed == 0x20) {
@@ -164,6 +164,8 @@ void FoolGame::sub_138_21e() {
 		metapuzzleWheel();
 	}
 	puzzleSaveContext();
+	// any progress is good progress
+	autoSaveGame();
 	if ((activePuzzle == 0x55) && (puzzleCompletionStatus[0x55] == 0x64)) {
 		stateFlags = 0x821;
 	}
