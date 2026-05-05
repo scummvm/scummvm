@@ -96,6 +96,9 @@ public:
 	void computeScreenViewport() override;
 	void drawSurface(const Graphics::Surface *surf, int x, int y) override;
 	Graphics::Surface *getScreenshot() override;
+	Graphics::PixelFormat getPixelFormat() override {
+		return Graphics::PixelFormat::createFormatRGBA32();
+	}
 
 private:
 	void useColor(uint32 color);
@@ -747,11 +750,8 @@ void OpenGLRenderer::drawSurface(const Graphics::Surface *surf, int x, int y) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// The surface uses PixelFormat(4,8,8,8,8,24,16,8,0) = R at bit 24, A at bit 0.
-	// GL_UNSIGNED_INT_8_8_8_8 reads a uint32 and maps bits 24..31→R, 16..23→G,
-	// 8..15→B, 0..7→A, matching our pixel layout regardless of endianness.
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surf->w, surf->h, 0,
-		GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, surf->getPixels());
+		GL_RGBA, GL_UNSIGNED_BYTE, surf->getPixels());
 
 	// Draw textured quad covering the specified region
 	float dx = x * scaleX;

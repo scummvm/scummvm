@@ -201,7 +201,7 @@ Graphics::Surface *ColonyEngine::loadPictSurface(int resID) {
 			}
 
 			result = new Graphics::Surface();
-			result->create(src->w, src->h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+			result->create(src->w, src->h, _gfx->getPixelFormat());
 			for (int y = 0; y < src->h; y++) {
 				for (int x = 0; x < src->w; x++) {
 					byte r, g, b;
