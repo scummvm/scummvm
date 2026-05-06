@@ -382,6 +382,7 @@ void ScriptedMovie::update(bool pauseAtFirstFrame) {
 
 		updateVolume();
 
+		bool forceDrawNextFrame = false;
 		if (_nextFrameReadVar) {
 			int32 nextFrame = _vm->_state->getVar(_nextFrameReadVar);
 			if (nextFrame > 0 && nextFrame <= (int32)_bink.getFrameCount()) {
@@ -406,8 +407,10 @@ void ScriptedMovie::update(bool pauseAtFirstFrame) {
 							_bink.seekToFrame(nextFrame - 1);
 						}
 					}
+					forceDrawNextFrame = true;
 					if (_scriptDriven) {
 						drawNextFrameToTexture();
+						forceDrawNextFrame = false;
 					}
 				}
 
@@ -416,9 +419,8 @@ void ScriptedMovie::update(bool pauseAtFirstFrame) {
 			}
 		}
 
-		if (!_scriptDriven && (_bink.needsUpdate() || _isLastFrame)) {
+		if (!_scriptDriven && (forceDrawNextFrame || _bink.needsUpdate() || _isLastFrame)) {
 			bool complete = false;
-
 			if (_isLastFrame) {
 				_isLastFrame = false;
 				if (_loop) {
@@ -429,7 +431,9 @@ void ScriptedMovie::update(bool pauseAtFirstFrame) {
 				}
 			} else {
 				drawNextFrameToTexture();
-				_isLastFrame = _bink.getCurFrame() == effectiveEndFrame;
+				if (!forceDrawNextFrame) {
+					_isLastFrame = _bink.getCurFrame() == effectiveEndFrame;
+				}
 			}
 
 			if (_nextFrameWriteVar) {
