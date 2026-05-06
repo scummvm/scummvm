@@ -253,7 +253,8 @@ void OptionsDialog::init() {
 	_speechVolumeLabel = nullptr;
 	_muteCheckbox = nullptr;
 	_enableSubtitleSettings = false;
-	_enableSubtitleToggle = false;
+	_enableSubtitleThreeStateToggle = false;
+	_enableSubtitleOnOffWithSpeechToggle = false;
 	_subToggleDesc = nullptr;
 	_subToggleGroup = nullptr;
 	_subToggleSubOnly = nullptr;
@@ -1076,7 +1077,7 @@ void OptionsDialog::apply() {
 	// Subtitle options
 	if (_subToggleGroup) {
 		if (_enableSubtitleSettings) {
-			if (_enableSubtitleToggle) {
+			if (_enableSubtitleThreeStateToggle) {
 				bool subtitles, speech_mute;
 				switch (_subToggleGroup->getValue()) {
 				case kSubtitlesSpeech:
@@ -1097,6 +1098,15 @@ void OptionsDialog::apply() {
 					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				}
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
+			} else if (_enableSubtitleOnOffWithSpeechToggle) {
+				bool subtitles = _subToggleGroup->getValue() != kSubtitlesSpeech;
+
+				if (subtitles != ConfMan.getBool("subtitles", _domain)) {
+					ConfMan.setBool("subtitles", subtitles, _domain);
+					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+				}
+
+				ConfMan.removeKey("speech_mute", _domain);
 			} else if (!_domain.empty()) {
 				ConfMan.removeKey("subtitles", _domain);
 				_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
@@ -1418,13 +1428,22 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	bool ena;
 	_enableSubtitleSettings = enabled;
 
-	ena = enabled;
-	if ((_guioptions.contains(GUIO_NOSUBTITLES)) || (_guioptions.contains(GUIO_NOSPEECH)))
-		ena = false;
+	if (_guioptions.contains(GUIO_SPEECHOPTSUBS)) {
+		_enableSubtitleOnOffWithSpeechToggle = enabled;
+		_subToggleGroup->setEnabled(enabled);
+		_subToggleSubOnly->setEnabled(false);
+		_subToggleSubOnly->setVisible(false);
+		_subToggleDesc->setEnabled(enabled);
+	} else {
+		ena = enabled;
+		if ((_guioptions.contains(GUIO_NOSUBTITLES)) || (_guioptions.contains(GUIO_NOSPEECH)))
+			ena = false;
 
-	_enableSubtitleToggle = ena;
-	_subToggleGroup->setEnabled(ena);
-	_subToggleDesc->setEnabled(ena);
+		_enableSubtitleThreeStateToggle = ena;
+
+		_subToggleGroup->setEnabled(ena);
+		_subToggleDesc->setEnabled(ena);
+	}
 
 	ena = enabled;
 	if (_guioptions.contains(GUIO_NOSUBTITLES))
@@ -1942,7 +1961,7 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	_subSpeedLabel->setFlags(WIDGET_CLEARBG);
 
 	_enableSubtitleSettings = true;
-	_enableSubtitleToggle = true;
+	_enableSubtitleThreeStateToggle = true;
 }
 
 void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
@@ -2033,10 +2052,16 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
-	if (_guioptions.contains(GUIO_NOSUBTITLES))
-		return kSubtitlesSpeech; // Speech only
-	if (_guioptions.contains(GUIO_NOSPEECH))
-		return kSubtitlesSubs; // Subtitles only
+	// Option GUIO_SPEECHOPTSUBS means speech cannot be turned off,
+	// but subtitles are optional (can be turned on and off).
+	if (!_guioptions.contains(GUIO_SPEECHOPTSUBS)) {
+		if (_guioptions.contains(GUIO_NOSUBTITLES))
+			return kSubtitlesSpeech; // Speech only
+		if (_guioptions.contains(GUIO_NOSPEECH))
+			return kSubtitlesSubs; // Subtitles only
+	} else {
+		speech_mute = false; // Speech cannot be muted
+	}
 
 	if (!subtitles && !speech_mute) // Speech only
 		return kSubtitlesSpeech;

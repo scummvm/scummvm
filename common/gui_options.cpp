@@ -44,6 +44,8 @@ const struct GameOpt {
 
 	{ GUIO_NOLANG,        "noLang"},
 
+	{ GUIO_SPEECHOPTSUBS, "sndSpeechWithOptSubs"},
+
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
 	{ GUIO_MIDIPCSPK,    "midiPCSpk" },

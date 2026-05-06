@@ -208,7 +208,8 @@ private:
 	//
 	int getSubtitleMode(bool subtitles, bool speech_mute);
 	bool _enableSubtitleSettings;
-	bool _enableSubtitleToggle;
+	bool _enableSubtitleThreeStateToggle;
+	bool _enableSubtitleOnOffWithSpeechToggle;
 	StaticTextWidget *_subToggleDesc;
 	RadiobuttonGroup *_subToggleGroup;
 	RadiobuttonWidget *_subToggleSubOnly;

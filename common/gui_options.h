@@ -52,6 +52,11 @@
 #define GUIO_NOSPEECHVOLUME  "\x0a"
 
 #define GUIO_NOLANG          "\x0b"
+// GUIO_SPEECHOPTSUBS means speech cannot be toggled off
+// but subtitles are optional (can be toggled on/off),
+// so for "text and speech" the options should be "speech" or "both".
+#define GUIO_SPEECHOPTSUBS   "\x0c"
+
 
 // GUIO flags in range "\x80" - "\xbf" are reserved for prefixed lists of options
 
