@@ -51,6 +51,7 @@ public:
 
 protected:
 	Common::String getRecordTypeName() const override { return "MultiBuildPuzzle"; }
+	bool isValidDrop() const;
 
 	// A single puzzle piece. Each piece is its own RenderObject.
 	// Unplaced: _drawSurface shows srcRect from primary image.

@@ -244,6 +244,31 @@ void MultiBuildPuzzle::execute() {
 	}
 }
 
+bool MultiBuildPuzzle::isValidDrop() const {
+	const Piece &pp = _pieces[_pickedUpPiece];
+
+	// Geometric checks apply only to non-closeup puzzles with a win condition (e.g. books).
+	// Sand castle (no closeup image, _requiredPieces=0) allows free stacking.
+	// Sandwich puzzle (has closeup image) allows free-form placement.
+	if (!_hasCloseupImage && _requiredPieces > 0) {
+		// Boundary check: drop center must be inside the target zone
+		Common::Point dropCenter((pp.gameRect.left + pp.gameRect.right) / 2,
+								 (pp.gameRect.top + pp.gameRect.bottom) / 2);
+		if (!_targetZone.isEmpty() && !_targetZone.contains(dropCenter))
+			return false;
+
+		// Overlap check: piece must not overlap any already-placed piece
+		for (uint i = 0; i < _pieces.size(); ++i) {
+			if ((int)i != _pickedUpPiece && _pieces[i].isPlaced &&
+				pp.gameRect.intersects(_pieces[i].gameRect)) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void MultiBuildPuzzle::handleInput(NancyInput &input) {
 	if (_state != kRun || _solveState != kIdle || _isSolved || _isCancelled)
 		return;
@@ -268,8 +293,9 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		pp.gameRect.right  = newLeft + _pickedUpWidth;
 		pp.gameRect.bottom = newTop  + _pickedUpHeight;
 		updatePieceRender(_pickedUpPiece);
+		bool validDrop = isValidDrop();
 
-		g_nancy->_cursor->setCursorType(CursorManager::kCustom1);
+		g_nancy->_cursor->setCursorType(validDrop ? CursorManager::kCustom1 : CursorManager::kNormal);
 
 		// Right click: rotate the carried piece
 		if ((input.input & NancyInput::kRightMouseButtonUp) && pp.hasSurface[1]) {
@@ -286,30 +312,6 @@ void MultiBuildPuzzle::handleInput(NancyInput &input) {
 		// the piece overlaps an already-placed piece; piece returns to shelf on rejection.
 		// For closeup puzzles: no geometric checks — free-form placement.
 		if (input.input & NancyInput::kLeftMouseButtonUp) {
-			bool validDrop = true;
-
-			// Geometric checks apply only to non-closeup puzzles with a win condition (e.g. books).
-			// Sand castle (no closeup image, _requiredPieces=0) allows free stacking.
-			// Sandwich puzzle (has closeup image) allows free-form placement.
-			if (!_hasCloseupImage && _requiredPieces > 0) {
-				// Boundary check: drop center must be inside the target zone
-				Common::Point dropCenter((pp.gameRect.left + pp.gameRect.right) / 2,
-				                        (pp.gameRect.top  + pp.gameRect.bottom) / 2);
-				if (!_targetZone.isEmpty() && !_targetZone.contains(dropCenter))
-					validDrop = false;
-
-				// Overlap check: piece must not overlap any already-placed piece
-				if (validDrop) {
-					for (uint i = 0; i < _pieces.size(); ++i) {
-						if ((int)i != _pickedUpPiece && _pieces[i].isPlaced &&
-						        pp.gameRect.intersects(_pieces[i].gameRect)) {
-							validDrop = false;
-							break;
-						}
-					}
-				}
-			}
-
 			// Clear drag state BEFORE updatePieceRender so the correct visual is chosen:
 			// - valid drop:   isPlaced=true,  isDragging=false -> shows rotation surface at drop pos
 			// - invalid drop: isPlaced=false, isDragging=false -> shows shelf srcRect at homeRect
