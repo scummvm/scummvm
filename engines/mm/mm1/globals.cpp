@@ -40,6 +40,7 @@ Globals::Globals() {
 
 Globals::~Globals() {
 	delete _monsters;
+	delete _suggestedNames;
 	g_globals = nullptr;
 }
 

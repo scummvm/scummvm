@@ -60,6 +60,7 @@ public:
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
 	bool _minimapOn = false;
+	Common::Array<SuggestedName> *_suggestedNames = nullptr;
 
 	// Console flags
 	bool _intangible = false;

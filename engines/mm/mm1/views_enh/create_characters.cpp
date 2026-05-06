@@ -39,15 +39,6 @@ namespace ViewsEnh {
 #define NAME_CANCEL_X 51
 #define NAME_CONFIRM_Y 15
 
-struct SuggestedName {
-	CharacterClass _class;
-	Sex _sex;
-	Common::String _name;
-};
-
-static Common::Array<SuggestedName> g_suggestedNames;
-static bool g_suggestedNamesLoaded = false;
-
 static bool openSuggestedNamesFile(Common::File &f, Common::Path &filename) {
 	filename = Common::Path(NAMES_FILENAME);
 	if (f.open(filename))
@@ -67,21 +58,21 @@ static void addSuggestedName(CharacterClass classId, Sex sexId,
 	entry._class = classId;
 	entry._sex = sexId;
 	entry._name = name;
-	g_suggestedNames.push_back(entry);
+	g_globals->_suggestedNames->push_back(entry);
 }
 
 static void loadSuggestedNames() {
-	if (g_suggestedNamesLoaded)
+	if (g_globals->_suggestedNames)
 		return;
+
+	g_globals->_suggestedNames = new Common::Array<SuggestedName>();
 
 	Common::File f;
 	Common::Path filename;
 	if (!openSuggestedNamesFile(f, filename)) {
 		warning("MM1: Could not open suggested names file");
-		g_suggestedNamesLoaded = true;
 		return;
 	}
-	g_suggestedNamesLoaded = true;
 
 	int invalidLines = 0;
 	while (!f.eos()) {
@@ -733,20 +724,21 @@ void CreateCharacters::enterFunc(const Common::String &name) {
 
 Common::String CreateCharacters::getSuggestedName() {
 	loadSuggestedNames();
-	if (g_suggestedNames.empty()) {
+	const auto &suggestedNames = *g_globals->_suggestedNames;
+	if (suggestedNames.empty()) {
 		return "";
 	}
 
 	Common::Array<uint> matches;
-	for (uint i = 0; i < g_suggestedNames.size(); ++i) {
-		if (g_suggestedNames[i]._class == _newChar._class &&
-				g_suggestedNames[i]._sex == _newChar._sex)
+	for (uint i = 0; i < suggestedNames.size(); ++i) {
+		if (suggestedNames[i]._class == _newChar._class &&
+				suggestedNames[i]._sex == _newChar._sex)
 			matches.push_back(i);
 	}
 
 	if (matches.empty()) {
-		for (uint i = 0; i < g_suggestedNames.size(); ++i) {
-			if (g_suggestedNames[i]._class == _newChar._class)
+		for (uint i = 0; i < suggestedNames.size(); ++i) {
+			if (suggestedNames[i]._class == _newChar._class)
 				matches.push_back(i);
 		}
 	}
@@ -756,7 +748,7 @@ Common::String CreateCharacters::getSuggestedName() {
 	}
 
 	uint idx = matches.size() == 1 ? matches[0] : matches[g_engine->getRandomNumber(matches.size()) - 1];
-	return g_suggestedNames[idx]._name;
+	return suggestedNames[idx]._name;
 }
 
 void CreateCharacters::acceptName() {
