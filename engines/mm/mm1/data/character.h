@@ -603,6 +603,12 @@ struct Character : public PrimaryAttributes {
 	}
 };
 
+struct SuggestedName {
+	CharacterClass _class;
+	Sex _sex;
+	Common::String _name;
+};
+
 } // namespace MM1
 } // namespace MM
 
