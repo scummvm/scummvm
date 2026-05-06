@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-05 11:01+0000\n"
-"PO-Revision-Date: 2026-05-06 08:54+0000\n"
+"PO-Revision-Date: 2026-05-06 22:22+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -11962,38 +11962,38 @@ msgid "Toggle Chatty AI"
 msgstr "Act. / Désact. IA bavarde"
 
 #: engines/pelrock/metaengine.cpp:46
-#, fuzzy
-#| msgid "Alternative action"
 msgid "Alternate timing"
-msgstr "Action alternative"
+msgstr "Timing alternatif"
 
 #: engines/pelrock/metaengine.cpp:47
 msgid ""
 "Use ScummVM's alternate animation timing instead of the original game's "
 "slower walking and talking speed"
 msgstr ""
+"Utilise le timing d'animation alternatif de ScummVM à la place de la vitesse "
+"de marche et de dialogue plus lente du jeu original"
 
 #: engines/pelrock/metaengine.cpp:57
-#, fuzzy
-#| msgid "Play intro videos"
 msgid "Play intro"
-msgstr "Jouer les vidéos d'intro"
+msgstr "Jouer l'intro"
 
 #: engines/pelrock/metaengine.cpp:58
 msgid ""
 "Play the game's intro sequence. Plays automatically the first time the game "
 "is launched."
 msgstr ""
+"Joue la séquence d'introduction du jeu. Se lance automatiquement lors du "
+"premier démarrage du jeu."
 
 #: engines/pelrock/metaengine.cpp:68
 msgid "Disable screensaver"
-msgstr "Désactiver l’écran de veille"
+msgstr "Désactiver l’économiseur d'écran"
 
 #: engines/pelrock/metaengine.cpp:69
 msgid "Disable original screensaver slider mini-game every 60 seconds."
 msgstr ""
-"Désactive le mini-jeu slider utilisé comme écran de veille d’origine toutes "
-"les 60 secondes."
+"Désactive le mini-jeu slider utilisé comme économiseur d'écran d’origine "
+"toutes les 60 secondes."
 
 #: engines/petka/metaengine.cpp:117
 msgid "Interact / Skip dialog"
