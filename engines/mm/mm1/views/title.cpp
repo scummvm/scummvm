@@ -36,8 +36,8 @@ namespace Views {
 #define SCENE_SECONDS 5
 #define TEXT_SCENE_SECONDS 12
 
-static const Common::Rect START_GAME_BOUNDS(23, 164, 157, 173);
-static const Common::Rect SCENES_BOUNDS(162, 164, 292, 173);
+static constexpr Common::Rect START_GAME_BOUNDS(Common::Point(23, 164), 157 - 23, 173 - 164);
+static constexpr Common::Rect SCENES_BOUNDS(Common::Point(162, 164), 292 - 162, 173 - 164);
 
 Title::Title() : UIElement("Title", g_engine) {
 	_bounds = Common::Rect(0, 0, SCREEN_W, SCREEN_H);
