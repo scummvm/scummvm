@@ -104,11 +104,10 @@ void PlaySecondaryMovie::readData(Common::SeekableReadStream &stream) {
 
 void PlaySecondaryMovie::init() {
 	if (!_decoder) {
-		if (_videoType == kVideoPlaytypeAVF) {
+		if (_videoType == kVideoPlaytypeAVF)
 			_decoder.reset(new AVFDecoder());
-		} else {
+		else
 			_decoder.reset(new Video::BinkDecoder());
-		}
 	}
 
 	if (!_decoder->isVideoLoaded()) {
@@ -137,6 +136,13 @@ void PlaySecondaryMovie::init() {
 }
 
 void PlaySecondaryMovie::onPause(bool pause) {
+	if (!_decoder) {
+		if (_videoType == kVideoPlaytypeAVF)
+			_decoder.reset(new AVFDecoder());
+		else
+			_decoder.reset(new Video::BinkDecoder());
+	}
+
 	_decoder->pauseVideo(pause);
 	RenderActionRecord::onPause(pause);
 }
