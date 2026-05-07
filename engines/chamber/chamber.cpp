@@ -30,11 +30,13 @@
 #include "common/rendermode.h"
 #include "common/system.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/util.h"
 
 #include "common/gui_options.h"
 
 #include "chamber/chamber.h"
+#include "chamber/detection.h"
 #include "chamber/renderer.h"
 #include "chamber/script.h"
 #include "chamber/resdata.h"
@@ -66,7 +68,8 @@ ChamberEngine::ChamberEngine(OSystem *syst, const ADGameDescription *desc)
 	_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 	if (_renderMode == Common::kRenderEGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)
 		_videoMode = _renderMode;
-	else if (_renderMode == Common::kRenderDefault && Common::checkGameGUIOption(GUIO_RENDEREGA, Common::parseGameGUIOptions(ConfMan.get("guioptions"))))
+	else if (_renderMode == Common::kRenderDefault && ((_gameDescription->flags & GF_SPLASH_PRESEGA) ||
+	         Common::checkGameGUIOption(GUIO_RENDEREGA, Common::parseGameGUIOptions(ConfMan.get("guioptions")))))
 		_videoMode = Common::kRenderEGA;
 	else
 		_videoMode = Common::kRenderCGA;
