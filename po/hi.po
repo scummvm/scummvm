@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2026-05-05 11:01+0000\n"
+"POT-Creation-Date: 2026-05-07 18:40+0000\n"
 "PO-Revision-Date: 2026-05-04 17:22+0000\n"
 "Last-Translator: KARTIK SAXENA <kartiksaxena2005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -11241,7 +11241,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/myst3/myst3.cpp:1660 engines/pegasus/pegasus.cpp:749
+#: engines/myst3/myst3.cpp:1663 engines/pegasus/pegasus.cpp:749
 msgid "Invalid file name for saving"
 msgstr ""
 
