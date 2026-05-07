@@ -282,7 +282,7 @@ Common::Error ChamberEngine::init() {
 
 	Graphics::Surface *splash = nullptr;
 
-	if (_gameDescription->flags & GF_SPLASH_PRESEGA) {
+	if (_videoMode == Common::RenderMode::kRenderEGA) {
 		/* EGA title screen */
 		splash = ega_loadFond("PRESEGA.EGA");
 		if (!splash) {
