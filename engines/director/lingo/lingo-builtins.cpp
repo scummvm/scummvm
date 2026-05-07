@@ -2727,12 +2727,12 @@ void LB::b_editableText(int nargs) {
 	} else if (nargs == 0) {
 		g_lingo->dropStack(nargs);
 
-		if (g_lingo->_currentChannelId == -1) {
+		if (g_lingo->_state->currentChannelId == -1) {
 			warning("b_editableText: channel Id is missing");
 			return;
 		}
-		sc->getSpriteById(g_lingo->_currentChannelId)->_editable = true;
-		sc->getOriginalSpriteById(g_lingo->_currentChannelId)->_editable = true;
+		sc->getSpriteById(g_lingo->_state->currentChannelId)->_editable = true;
+		sc->getOriginalSpriteById(g_lingo->_state->currentChannelId)->_editable = true;
 	} else {
 		warning("b_editableText: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -3056,16 +3056,16 @@ void LB::b_moveableSprite(int nargs) {
 	Score *score = movie->getScore();
 	Frame *frame = score->_currentFrame;
 
-	if (g_lingo->_currentChannelId == -1) {
+	if (g_lingo->_state->currentChannelId == -1) {
 		warning("b_moveableSprite: channel Id is missing");
 		assert(0);
 		return;
 	}
 
 	// since we are using value copying, in order to make it taking effect immediately. we modify the sprites in channel
-	if (score->_channels[g_lingo->_currentChannelId])
-		score->_channels[g_lingo->_currentChannelId]->_sprite->_moveable = true;
-	frame->_sprites[g_lingo->_currentChannelId]->_moveable = true;
+	if (score->_channels[g_lingo->_state->currentChannelId])
+		score->_channels[g_lingo->_state->currentChannelId]->_sprite->_moveable = true;
+	frame->_sprites[g_lingo->_state->currentChannelId]->_moveable = true;
 }
 
 void LB::b_pasteClipBoardInto(int nargs) {
@@ -3275,11 +3275,11 @@ void LB::b_immediateSprite(int nargs) {
 	} else if (nargs == 0 && g_director->getVersion() < 400) {
 		g_lingo->dropStack(nargs);
 
-		if (g_lingo->_currentChannelId == -1) {
+		if (g_lingo->_state->currentChannelId == -1) {
 			warning("b_immediateSprite: channel Id is missing");
 			return;
 		}
-		sc->getSpriteById(g_lingo->_currentChannelId)->_immediate = true;
+		sc->getSpriteById(g_lingo->_state->currentChannelId)->_immediate = true;
 	} else {
 		warning("b_immediateSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);
@@ -3319,11 +3319,11 @@ void LB::b_puppetSprite(int nargs) {
 	} else if (nargs == 0 && g_director->getVersion() < 400) {
 		g_lingo->dropStack(nargs);
 
-		if (g_lingo->_currentChannelId == -1) {
+		if (g_lingo->_state->currentChannelId == -1) {
 			warning("b_puppetSprite: channel Id is missing");
 			return;
 		}
-		sc->getSpriteById(g_lingo->_currentChannelId)->_puppet = true;
+		sc->getSpriteById(g_lingo->_state->currentChannelId)->_puppet = true;
 	} else {
 		warning("b_puppetSprite: unexpectedly received %d arguments", nargs);
 		g_lingo->dropStack(nargs);

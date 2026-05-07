@@ -699,7 +699,7 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
 }
 
 bool Lingo::processEvent(LEvent event, ScriptType st, CastMemberID scriptId, int channelId, AbstractObject *obj) {
-	_currentChannelId = channelId;
+	_state->currentChannelId = channelId;
 
 	if (!_eventHandlerTypes.contains(event))
 		error("processEvent: Unknown event %d", event);

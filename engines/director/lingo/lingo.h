@@ -345,6 +345,7 @@ struct LingoState {
 	DatumHash *localVars = nullptr;			// current local variables
 	Datum me;								// current me object
 	StackData stack;
+	int currentChannelId = 0;
 
 	~LingoState();
 };
@@ -513,8 +514,6 @@ private:
 public:
 	LingoCompiler *_compiler;
 	LingoState *_state;
-
-	int _currentChannelId;
 
 	bool _freezeState;
 	bool _freezePlay;

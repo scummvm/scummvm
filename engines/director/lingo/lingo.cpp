@@ -174,7 +174,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
 	_state = nullptr;
-	_currentChannelId = -1;
 	_globalCounter = 0;
 	_freezeState = false;
 	_freezePlay = false;
