@@ -30,6 +30,9 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
+extern void room_102_preload();
+extern void room_102_synchronize(Common::Serializer &s);
+
 } // namespace Rooms
 } // namespace Dragonsphere
 } // namespace MADSV2
