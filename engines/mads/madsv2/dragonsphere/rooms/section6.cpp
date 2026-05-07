@@ -32,16 +32,12 @@ namespace Dragonsphere {
 namespace Rooms {
 
 extern void room_601_preload();
-extern void room_602_preload();
 extern void room_603_preload();
 extern void room_604_preload();
 extern void room_605_preload();
 extern void room_606_preload();
 extern void room_607_preload();
-extern void room_608_preload();
 extern void room_609_preload();
-extern void room_610_preload();
-extern void room_611_preload();
 extern void room_612_preload();
 extern void room_613_preload();
 extern void room_614_preload();
@@ -72,9 +68,6 @@ void section_6_constructor() {
 	case 601:
 		room_preload_code_pointer = room_601_preload;
 		break;
-	case 602:
-		room_preload_code_pointer = room_602_preload;
-		break;
 	case 603:
 		room_preload_code_pointer = room_603_preload;
 		break;
@@ -90,17 +83,8 @@ void section_6_constructor() {
 	case 607:
 		room_preload_code_pointer = room_607_preload;
 		break;
-	case 608:
-		room_preload_code_pointer = room_608_preload;
-		break;
 	case 609:
 		room_preload_code_pointer = room_609_preload;
-		break;
-	case 610:
-		room_preload_code_pointer = room_610_preload;
-		break;
-	case 611:
-		room_preload_code_pointer = room_611_preload;
 		break;
 	case 612:
 		room_preload_code_pointer = room_612_preload;

@@ -241,16 +241,12 @@ MODULE_OBJS += \
 	madsv2/dragonsphere/rooms/room512.o \
 	madsv2/dragonsphere/rooms/room557.o \
 	madsv2/dragonsphere/rooms/room601.o \
-	madsv2/dragonsphere/rooms/room602.o \
 	madsv2/dragonsphere/rooms/room603.o \
 	madsv2/dragonsphere/rooms/room604.o \
 	madsv2/dragonsphere/rooms/room605.o \
 	madsv2/dragonsphere/rooms/room606.o \
 	madsv2/dragonsphere/rooms/room607.o \
-	madsv2/dragonsphere/rooms/room608.o \
 	madsv2/dragonsphere/rooms/room609.o \
-	madsv2/dragonsphere/rooms/room610.o \
-	madsv2/dragonsphere/rooms/room611.o \
 	madsv2/dragonsphere/rooms/room612.o \
 	madsv2/dragonsphere/rooms/room613.o \
 	madsv2/dragonsphere/rooms/room614.o \
