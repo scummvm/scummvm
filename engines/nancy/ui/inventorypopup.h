@@ -45,50 +45,66 @@ public:
 	~InventoryPopup() override = default;
 
 	void init() override;
-	void registerGraphics() override;
 	void handleInput(NancyInput &input);
 
-	bool isOpen() const { return _isOpen; }
+	bool isOpen() const { return _isVisible; }
 	void open();
 	void close();
 
 	// The taskbar's inventory button toggles the popup; convenience helper.
-	void toggle() { if (_isOpen) close(); else open(); }
+	void toggle() { if (_isVisible) close(); else open(); }
 
 	// Re-render the slot grid. Called by Scene whenever the inventory
 	// contents change while the popup is open.
 	void refreshGrid();
 
-	enum FilterID {
-		kFilterAll       = 0x64, // default branch — every owned item
-		kFilterDocuments = 0x65, // keepItem == 3
-		kFilterUsable    = 0x66, // keepItem == 0/1/2
-		kFilterSpecial1  = 0x67,
-		kFilterSpecial2  = 0x68,
-		kFilterSpecial3  = 0x69
+	enum FilterType {
+		kFilterAll       = 0,
+		kFilterViewable  = 1,
+		kFilterPortable  = 2,
+	};
+
+	enum WidgetState {
+		kStatePressed = 0,
+		kStateHover = 1,
+		kStateIdle = 2,
+		kStateDisabled = 3
 	};
 
 private:
 	static const uint kSlotsPerPage = 16;
-	static const uint kNumFilters = 6;
+	static const uint kNumFilters = 3;
 
 	void drawBackground();
-	void drawSlot(uint slotIndex, int16 itemID);
+	void drawSlot(uint slotIndex, int16 itemId);
 	void drawFilterTabs();
+	void drawFilterTab(uint index, bool drawHover = false);
+	void drawFilterCaption();
+	void drawCloseButton(WidgetState state);
+	void drawScrollbar(WidgetState state);
 	void rebuildVisibleList();
+	void setActiveFilterIndex(uint index);
 
-	const UIIV *_uiivData;
-	const INV *_invData;
+	// Apply the current scrollbar position to the page index, clamping
+	// to the number of pages required by the active filter.
+	void updatePageFromScroll();
 
-	Graphics::ManagedSurface _overlayImage;  // popup background image
-	Graphics::ManagedSurface _itemIcons;     // per-item icon sheet
+	// Returns the on-popup-surface bounding rect of the slider thumb at
+	// the current scroll position (in popup-local coords).
+	Common::Rect computeSliderRect() const;
 
-	bool _isOpen;
+	const UIIV *_uiivData = nullptr;
+	const INV *_invData = nullptr;
 
-	FilterID _activeFilter;
+	Graphics::ManagedSurface _overlayImage;     // popup background image
+	Graphics::ManagedSurface _itemIcons;        // per-item icon sheet
+
+	bool _closeButtonHovered = false;
+
+	uint _activeFilterIndex = 0;
 
 	// Page index within the active filter (0-based).
-	uint _currentPage;
+	uint _currentPage = 0;
 
 	// Items the player owns that match the active filter, in inventory
 	// order. The on-screen grid is a 16-item window into this array.
@@ -96,6 +112,14 @@ private:
 
 	// Item ID currently shown in each of the 16 slots (-1 if empty).
 	int16 _slotItemIDs[kSlotsPerPage];
+
+	// Slider state. Driven by header.slider.
+	float _scrollPos = 0.0f;        // [0, 1]: 0 = top page, 1 = bottom page
+	bool _scrollbarDragging = false;
+	bool _scrollbarHovered = false;
+	int _scrollbarGrabOffset = 0;   // mouse-y minus thumb-top at click time
+
+	bool _filterHovered = false;
 };
 
 } // End of namespace UI
