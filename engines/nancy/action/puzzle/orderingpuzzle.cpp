@@ -484,6 +484,7 @@ void OrderingPuzzle::handleInput(NancyInput &input) {
 
 		if (canClick && input.input & NancyInput::kLeftMouseButtonUp) {
 			_checkButtonPressed = true;
+			g_nancy->_sound->loadSound(_pushDownSound);
 			g_nancy->_sound->playSound(_pushDownSound);
 			Common::Rect destRect = _checkButtonDest;
 			destRect.translate(-_screenPosition.left, -_screenPosition.top);
@@ -579,6 +580,7 @@ void OrderingPuzzle::pushDown(uint id) {
 	if (g_nancy->getGameType() == kGameTypeVampire) {
 		g_nancy->_sound->playSound("BUOK");
 	} else {
+		g_nancy->_sound->loadSound(_pushDownSound);
 		g_nancy->_sound->playSound(_pushDownSound);
 	}
 
@@ -591,6 +593,7 @@ void OrderingPuzzle::pushDown(uint id) {
 }
 
 void OrderingPuzzle::setToSecondState(uint id) {
+	g_nancy->_sound->loadSound(_itemSound);
 	g_nancy->_sound->playSound(_itemSound);
 
 	_secondStateItems[id] = true;
