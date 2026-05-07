@@ -61,6 +61,14 @@ static bool exit_immediately_at_end;
 static bool do_not_clear_screen;
 static bool has_sound_file;
 static char sound_file_name[80];
+static TileMapHeader picture_map, depth_map;
+static TileResource picture_res, depth_res;
+static CycleList cycle_list;
+static Buffer scr_work_orig;
+static Room *room;
+static Anim *current_anim, *current_anim2;
+static bool has_cycles;
+static int viewing_at_y2;
 
 /**
  * Initializes animview global variables
@@ -77,6 +85,16 @@ static void init_globals() {
 	do_not_clear_screen = false;
 	has_sound_file = false;
 	*sound_file_name = '\0';
+	memset(&picture_map, 0, sizeof(TileMapHeader));
+	memset(&depth_map, 0, sizeof(TileMapHeader));
+	memset(&picture_res, 0, sizeof(TileResource));
+	memset(&depth_res, 0, sizeof(TileResource));
+	memset(&cycle_list, 0, sizeof(CycleList));
+	memset(&scr_work_orig, 0, sizeof(Buffer));
+	room = nullptr;
+	current_anim = current_anim2 = nullptr;
+	has_cycles = false;
+	viewing_at_y2 = 0;
 }
 
 /**
@@ -281,10 +299,67 @@ static void animate() {
 			// TODO: Load proper driver number
 			g_engine->_soundManager->init(9);
 
-		//Anim *current_anim = anim_load()
+		if (anim_list[count].bg_load_status) {
+			buffer_free(&scr_depth);
+			buffer_free(&scr_inter);
+			tile_map_free(&picture_map);
+			tile_map_free(&depth_map);
+
+			if (room) {
+				pal_deallocate(room->color_handle);
+				mem_free(room);
+			} else {
+				pal_init(1, 8);
+				mouse_hard_cursor_mode(2, &master_palette);
+			}
+		}
+
+		int loadFlags = anim_list[count].bg_load_status ? ANIM_LOAD_BACKGROUND : 0;
+		current_anim = anim_load(buf, &scr_inter, &scr_depth,
+			&picture_map, &depth_map, &picture_res, &depth_res, &room,
+			&cycle_list, loadFlags);
+		scr_inter_orig = scr_inter;
+
+		if (!current_anim)
+			error("Could not load anim for - %s", buf);
+
+		tile_pan(&picture_map, current_anim->frame->view_x, current_anim->frame->view_y);
+		tile_pan(&depth_map, current_anim->frame->view_x, current_anim->frame->view_y);
+
+		if (current_anim->misc[1]) {
+			warning("TODO: Unknown setting up anim_series, series_page_info, series_page_table");
+		}
+
+		has_cycles = cycle_list.num_cycles > 0;
+		current_anim2 = current_anim;
+
+		int height = (scr_inter.y == 200) ? 200 : 156;
+		buffer_init(&scr_work, 320, height);
+		scr_work_orig = scr_work;
+
+		viewing_at_y = (height == 200) ? 0 : 200 - (height / 2);
+		viewing_at_y2 = viewing_at_y;
+
+		buffer_fill(scr_work, 0);
+
+		// Speech handling
+		// TODO: Other stuff
 	}
 done:
-	;
+	timer_activate_low_priority(nullptr);
+	buffer_free(&scr_work);
+	anim_unload(current_anim);
+	buffer_free(&scr_depth);
+	buffer_free(&scr_inter);
+	tile_map_free(&picture_map);
+	tile_map_free(&depth_map);
+
+	if (room)
+		mem_free(room);
+	timer_set_sound_flag(false);
+
+	timer_remove();
+	himem_shutdown();
 }
 
 void animview_main(const char *resName) {
