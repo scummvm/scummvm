@@ -61,6 +61,9 @@ private:
 	bool checkAllSolved() const;
 	bool checkAnswerForCurrentBox(); // checks, marks correct, sets event flag
 
+	Common::String readSubtitle(Common::SeekableReadStream &stream);
+	void showSubtitle(const Common::String &text);
+
 	// ---- Data (Nancy 8) ----
 	uint16 _fontID = 0;
 	uint16 _cursorBlinkInterval = 500;
@@ -75,8 +78,12 @@ private:
 	int16 _answerFlags[kMaxBoxes] = { -1, -1, -1, -1, -1, -1, -1, -1 };
 
 	SoundDescription _correctSound;  // Nancy 8: global correct sound
+	Common::String _correctText;
 	SoundDescription _wrongSound;    // Nancy 8: global wrong sound
+	Common::String _wrongText;
+
 	SoundDescription _doneSound;     // done sound (both Nancy 8 and Nancy 9)
+	Common::String _doneText;
 
 	SceneChangeWithFlag _solveScene;   // scene to go to when all boxes are solved
 	SceneChangeWithFlag _cancelScene;  // scene to go to on cancel
@@ -93,8 +100,11 @@ private:
 	// Per-box sounds for Nancy 9 (name + volume; channel from global above)
 	Common::String _boxCorrectSoundName[kMaxBoxes];
 	uint16 _boxCorrectSoundVolume[kMaxBoxes] = {};
+	Common::String _boxCorrectText[kMaxBoxes];
+
 	Common::String _boxWrongSoundName[kMaxBoxes];
 	uint16 _boxWrongSoundVolume[kMaxBoxes] = {};
+	Common::String _boxWrongText[kMaxBoxes];
 
 	// Per-box max answer length (computed from answer strings, used in auto-check mode)
 	uint16 _boxMaxLen[kMaxBoxes] = {};

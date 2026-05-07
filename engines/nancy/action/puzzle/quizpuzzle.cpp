@@ -51,6 +51,30 @@ void QuizPuzzle::init() {
 	RenderObject::init();
 }
 
+Common::String QuizPuzzle::readSubtitle(Common::SeekableReadStream &stream) {
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	assert(autotext);
+
+	Common::String result;
+	char textBuf[30];
+
+	stream.read(textBuf, 30);
+	textBuf[29] = '\0';
+	result = textBuf;
+
+	if (!result.empty() && autotext->texts.contains(result))
+		result = autotext->texts[result];
+
+	return result;
+}
+
+void QuizPuzzle::showSubtitle(const Common::String &text) {
+	if (!text.empty()) {
+		NancySceneState.getTextbox().clear();
+		NancySceneState.getTextbox().addTextLine(text);
+	}
+}
+
 // ---- Nancy 8 data format ----
 // Offset  Size  Field
 // 0x000   2     fontID
@@ -85,15 +109,17 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 		_answerFlags[i] = stream.readSint16LE();
 	}
 
+	char textBuf[30];
+
 	_correctSound.readNormal(stream);
-	stream.skip(30); // correct subtitle
+	_correctText = readSubtitle(stream);
 
 	_wrongSound.readNormal(stream);
-	stream.skip(30); // wrong subtitle
+	_wrongText = readSubtitle(stream);
 
 	_solveScene.readData(stream);
 	_doneSound.readNormal(stream);
-	stream.skip(30); // done subtitle
+	_doneText = readSubtitle(stream);
 
 	_cancelScene.readData(stream);
 }
@@ -125,6 +151,9 @@ void QuizPuzzle::readDataOld(Common::SeekableReadStream &stream) {
 // +0xB0  2   wrong sound volume
 // +0xB2  30  wrong subtitle (skip)
 void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
+	const CVTX *autotext = (const CVTX *)g_nancy->getEngineData("AUTOTEXT");
+	assert(autotext);
+
 	_fontID            = stream.readUint16LE();
 	_cursorBlinkInterval = stream.readUint16LE();
 	_cursorChar        = stream.readByte();
@@ -136,7 +165,7 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 
 	_solveScene.readData(stream);
 	_doneSound.readNormal(stream);
-	stream.skip(30); // done subtitle
+	_doneText = readSubtitle(stream);
 
 	_cancelScene.readData(stream);
 	stream.skip(16); // unknown
@@ -169,13 +198,13 @@ void QuizPuzzle::readDataNew(Common::SeekableReadStream &stream) {
 		soundNameBuf[32] = '\0';
 		_boxCorrectSoundName[i] = soundNameBuf;
 		_boxCorrectSoundVolume[i] = stream.readUint16LE();
-		stream.skip(30); // correct subtitle
+		_boxCorrectText[i] = readSubtitle(stream);
 
 		stream.read(soundNameBuf, 33);
 		soundNameBuf[32] = '\0';
 		_boxWrongSoundName[i] = soundNameBuf;
 		_boxWrongSoundVolume[i] = stream.readUint16LE();
-		stream.skip(30); // wrong subtitle
+		_boxWrongText[i] = readSubtitle(stream);
 
 		// Precompute max answer length for auto-check mode
 		_boxMaxLen[i] = 0;
@@ -258,7 +287,9 @@ void QuizPuzzle::executeOld() {
 			_solved = checkAllSolved();
 			_internalState = _solved ? kStartDone : kTyping;
 		} else {
+			g_nancy->_sound->loadSound(_correctSound);
 			g_nancy->_sound->playSound(_correctSound);
+			showSubtitle(_correctText);
 			_internalState = kWaitCorrect;
 		}
 		_nextBlinkTime = 0;
@@ -283,7 +314,9 @@ void QuizPuzzle::executeOld() {
 		if (_wrongSound.name == "NO SOUND") {
 			_internalState = kTyping;
 		} else {
+			g_nancy->_sound->loadSound(_wrongSound);
 			g_nancy->_sound->playSound(_wrongSound);
+			showSubtitle(_wrongText);
 			_internalState = kWaitWrong;
 		}
 		break;
@@ -301,7 +334,9 @@ void QuizPuzzle::executeOld() {
 		if (_doneSound.name == "NO SOUND") {
 			_internalState = kFinish;
 		} else {
+			g_nancy->_sound->loadSound(_doneSound);
 			g_nancy->_sound->playSound(_doneSound);
+			showSubtitle(_doneText);
 			_internalState = kWaitDone;
 		}
 		break;
@@ -410,6 +445,7 @@ void QuizPuzzle::executeNew() {
 		} else {
 			g_nancy->_sound->loadSound(_activeBoxSound);
 			g_nancy->_sound->playSound(_activeBoxSound);
+			showSubtitle(_boxCorrectText[_currentBox]);
 			advanceToNextBox();
 			_internalState = kWaitCorrect;
 		}
@@ -443,6 +479,7 @@ void QuizPuzzle::executeNew() {
 		} else {
 			g_nancy->_sound->loadSound(_activeBoxSound);
 			g_nancy->_sound->playSound(_activeBoxSound);
+			showSubtitle(_boxWrongText[_currentBox]);
 			_internalState = kWaitWrong;
 		}
 		break;
@@ -460,7 +497,9 @@ void QuizPuzzle::executeNew() {
 		if (_doneSound.name == "NO SOUND") {
 			_internalState = kFinish;
 		} else {
+			g_nancy->_sound->loadSound(_doneSound);
 			g_nancy->_sound->playSound(_doneSound);
+			showSubtitle(_doneText);
 			_internalState = kWaitDone;
 		}
 		break;
