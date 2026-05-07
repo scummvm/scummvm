@@ -62,8 +62,8 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 	// freeze this script context. We'll return to it after entering the next frame.
 
 	// Returning from a script with "play done" does not freeze the state. Instead it obliterates it.
-	if (!g_lingo->_playDone)
-		g_lingo->_freezeState = true;
+	if (!_playDone)
+		_freezeState = true;
 
 	if (movie.type != VOID) {
 		Common::String movieFilenameRaw = movie.asString();
@@ -74,9 +74,9 @@ void Lingo::func_goto(Datum &frame, Datum &movie, bool calledfromgo) {
 		// If we reached here from b_go, and the movie is getting swapped out,
 		// reset all of the custom event handlers.
 		if (calledfromgo)
-			g_lingo->resetLingoGo();
+			resetLingoGo();
 
-		if (g_lingo->_updateMovieEnabled) {
+		if (_updateMovieEnabled) {
 			// Save the movie when branching to another movie.
 			LB::b_saveMovie(0);
 		}
@@ -204,7 +204,7 @@ void Lingo::func_play(Datum &frame, Datum &movie) {
 	ref.frameI = _vm->getCurrentMovie()->getScore()->getCurrentFrameNum();
 
 	// if we are issuing play command from script channel script. then play done should return to next frame
-	if (g_lingo->_currentChannelId == 0)
+	if (_state->currentChannelId == 0)
 		ref.frameI++;
 
 	stage->_movieStack.push_back(ref);
