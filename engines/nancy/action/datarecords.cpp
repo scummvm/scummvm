@@ -176,14 +176,14 @@ void SetValueCombo::execute() {
 			} else {
 				if (_indices[i] < numSingleValues) {
 					// Add a single value
-					if (playerTable->singleValues[_indices[i]] != kNoTableValue) {
-						valueToAdd = playerTable->singleValues[_indices[i]];
+					if (playerTable->getSingleValue(_indices[i]) != kNoTableValue) {
+						valueToAdd = playerTable->getSingleValue(_indices[i]);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				} else {
 					// Add another combo value
-					if (playerTable->comboValues[_indices[i] - numSingleValues] != kNoTableValue) {
-						valueToAdd = playerTable->comboValues[_indices[i] - numSingleValues];
+					if (playerTable->getComboValue(_indices[i] - numSingleValues) != (float)kNoTableValue) {
+						valueToAdd = playerTable->getComboValue(_indices[i] - numSingleValues);
 						valueToAdd = valueToAdd * ((float)_percentages[i] / 100.f);
 					}
 				}
