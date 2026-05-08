@@ -18,13 +18,13 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  GLK:
    - Exposed text and engine settings in the GUI.
-   
+
  LastExpress:
    - The game has been supported for a while now (2026.1.0), we just
      forgot to add a news entry here. Whoops!
    - Several inaccuracies from the character logic have been fixed,
      which means that some rare issues concerning characters behavior
-	 should now be gone.
+	   should now be gone.
 
  MM:
    - Reworked keymapper for MM1.
