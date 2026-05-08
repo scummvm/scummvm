@@ -36,14 +36,15 @@ namespace Dragonsphere {
 namespace Rooms {
 
 struct Scratch {
-	int16 sprite[15];    // series handles; used indices 1..11
-	int16 sequence[15];  // sequence handles; used indices 1..11
-	int16 animation[4];  // animation handles; unused in room103
+	int16 sprite[15];    // ss[] — series handles
+	int16 sequence[15];  // seq[] — sequence handles
+	int16 animation[4];  // aa[]  — animation handles (unused in room 103)
 };
 
-#define ss  (scratch.sprite)
-#define seq (scratch.sequence)
-#define aa  (scratch.animation)
+#define local (&scratch)
+#define ss    local->sprite
+#define seq   local->sequence
+#define aa    local->animation
 
 /* ========================= Sprite Series =================== */
 
@@ -57,7 +58,7 @@ struct Scratch {
 #define fx_fire_sconce_3    8  /* rm103y7 */
 #define fx_door_101         9  /* rm103x0 */
 #define fx_door_102        10  /* rm103x1 */
-#define fx_open_door       11  /* kgrd_9  */
+#define fx_open_door       11  /* kgrd_8; aKgrd6+4 in disasm — TODO: confirm string */
 
 /* ========================== Triggers ======================= */
 
@@ -91,26 +92,28 @@ static Scratch scratch;
 void room_103_init() {
 	kernel.disable_fastwalk = true;
 
-	ss[fx_fire_sconce_1]   = kernel_load_series(kernel_name('y', 1), 0);
-	ss[fx_fire_sconce_2]   = kernel_load_series(kernel_name('y', 2), 0);
-	ss[fx_fire_sconce_3]   = kernel_load_series(kernel_name('y', 7), 0);
-	ss[fx_candle_flame_1]  = kernel_load_series(kernel_name('y', 0), 0);
-	ss[fx_candle_flame_2]  = kernel_load_series(kernel_name('y', 3), 0);
-	ss[fx_candle_flame_3]  = kernel_load_series(kernel_name('y', 4), 0);
-	ss[fx_candle_flame_4]  = kernel_load_series(kernel_name('y', 5), 0);
-	ss[fx_candle_flame_5]  = kernel_load_series(kernel_name('y', 6), 0);
-	ss[fx_door_101]        = kernel_load_series(kernel_name('x', 0), 0);
-	ss[fx_door_102]        = kernel_load_series(kernel_name('x', 1), 0);
-	ss[fx_open_door]       = kernel_load_series("kgrd_9", 0);
+	// Load series in disassembly order: y0..y7, x0, x1, open_door
+	ss[fx_candle_flame_1] = kernel_load_series(kernel_name('y', 0), 0);
+	ss[fx_fire_sconce_1]  = kernel_load_series(kernel_name('y', 1), 0);
+	ss[fx_fire_sconce_2]  = kernel_load_series(kernel_name('y', 2), 0);
+	ss[fx_candle_flame_2] = kernel_load_series(kernel_name('y', 3), 0);
+	ss[fx_candle_flame_3] = kernel_load_series(kernel_name('y', 4), 0);
+	ss[fx_candle_flame_4] = kernel_load_series(kernel_name('y', 5), 0);
+	ss[fx_candle_flame_5] = kernel_load_series(kernel_name('y', 6), 0);
+	ss[fx_fire_sconce_3]  = kernel_load_series(kernel_name('y', 7), 0);
+	ss[fx_door_101]       = kernel_load_series(kernel_name('x', 0), 0);
+	ss[fx_door_102]       = kernel_load_series(kernel_name('x', 1), 0);
+	ss[fx_open_door]      = kernel_load_series("kgrd_8", 0);
 
+	// Start ambient loops in disassembly order: y0..y7 with phase offsets
+	seq[fx_candle_flame_1] = kernel_seq_forward(ss[fx_candle_flame_1], false, 7, 0, 0, 0);
 	seq[fx_fire_sconce_1]  = kernel_seq_forward(ss[fx_fire_sconce_1],  false, 7, 0, 0, 0);
 	seq[fx_fire_sconce_2]  = kernel_seq_forward(ss[fx_fire_sconce_2],  false, 7, 4, 0, 0);
-	seq[fx_fire_sconce_3]  = kernel_seq_forward(ss[fx_fire_sconce_3],  false, 7, 0, 0, 0);
-	seq[fx_candle_flame_1] = kernel_seq_forward(ss[fx_candle_flame_1], false, 7, 0, 0, 0);
 	seq[fx_candle_flame_2] = kernel_seq_forward(ss[fx_candle_flame_2], false, 7, 3, 0, 0);
 	seq[fx_candle_flame_3] = kernel_seq_forward(ss[fx_candle_flame_3], false, 7, 2, 0, 0);
 	seq[fx_candle_flame_4] = kernel_seq_forward(ss[fx_candle_flame_4], false, 7, 0, 0, 0);
 	seq[fx_candle_flame_5] = kernel_seq_forward(ss[fx_candle_flame_5], false, 7, 5, 0, 0);
+	seq[fx_fire_sconce_3]  = kernel_seq_forward(ss[fx_fire_sconce_3],  false, 7, 0, 0, 0);
 
 	if (previous_room == 104 || previous_room == 105) {
 		seq[fx_door_101] = kernel_seq_stamp(ss[fx_door_101], false, KERNEL_FIRST);
@@ -354,7 +357,7 @@ void room_103_parser() {
 		if (player_parse(246, 0)) { text_show(10305); player.command_ready = false; return; }
 		if (player_parse(36, 0))  { text_show(10307); player.command_ready = false; return; }
 		if (player_parse(245, 0)) { text_show(10308); player.command_ready = false; return; }
-		if (player_parse(23, 0))  { text_show(10309); player.command_ready = false; return; }
+		if (player_parse(570, 0)) { text_show(10309); player.command_ready = false; return; }
 		if (player_parse(198, 0)) { text_show(10311); player.command_ready = false; return; }
 		if (player_parse(248, 0)) { text_show(10312); player.command_ready = false; return; }
 		if (player_parse(247, 0)) { text_show(10314); player.command_ready = false; return; }
@@ -384,7 +387,7 @@ void room_103_parser() {
 		return;
 	}
 
-	if (player_parse(6, 23, 0)) {
+	if (player_parse(6, 570, 0)) {
 		text_show(10310);
 		player.command_ready = false;
 		return;
