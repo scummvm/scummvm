@@ -162,6 +162,8 @@ public:
 
 	uint32 getType() const { return _type; }
 
+	// Check if the widget or its children contain a visible scrollbar
+	virtual bool hasVisibleScrollBar() const;
 	void setFlags(int flags);
 	void clearFlags(int flags);
 	int getFlags() const		{ return _flags; }

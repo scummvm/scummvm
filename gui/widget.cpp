@@ -186,6 +186,16 @@ Widget *Widget::findWidgetInChain(Widget *w, uint32 type) {
 	return nullptr;
 }
 
+bool Widget::hasVisibleScrollBar() const {
+	Widget *w = _firstWidget;
+	while (w) {
+		if (w->getType() == kScrollBarWidget && w->isVisible())
+			return true;
+		w = w->_next;
+	}
+	return false;
+}
+
 bool Widget::containsWidgetInChain(Widget *w, Widget *search) {
 	while (w) {
 		if (w == search || w->containsWidget(search))
