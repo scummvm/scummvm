@@ -67,6 +67,8 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 	_loop = loop;
 	_volume = volume;
 	_balance = 0;
+	_azimuth.setDegrees(0);
+	_directionality = 255;
 	_fade = false;
 	_fadeStartVol = volume;
 	_fadeEndVol = 0;
