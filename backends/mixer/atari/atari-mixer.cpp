@@ -23,7 +23,6 @@
 
 #include "backends/mixer/atari/atari-mixer.h"
 
-#include <math.h>
 #include <mint/falcon.h>
 #include <mint/osbind.h>
 #include <mint/ostruct.h>
@@ -53,18 +52,30 @@ void AtariAudioShutdown() {
 	USoundDeinitXbios(&usoundContext);
 }
 
-static volatile bool muted;
-static volatile bool endOfPlayback;
-static void __attribute__((interrupt)) timerA(void)
-{
-	if (endOfPlayback && !muted) {
-		*((volatile unsigned char *)0xFFFF8901L) &= 0xFC;	// disable playback/repeat (and triggers another interrupt)
-		muted = true;
+static volatile enum {
+	kPlaybackStopped,	// DMA not playing (initial or after starvation)
+	kPlay1stHalf,		// DMA looping [Beg, Mid)
+	kPlay2ndHalf		// DMA looping [Mid, End)
+} s_playbackState = kPlaybackStopped;
+
+static volatile uint32 s_updatePulse;
+static volatile bool s_dmaWrapped;
+static volatile bool s_isrStoppedDma;
+
+static void __attribute__((interrupt)) timerA(void) {
+	static uint32 s_lastPulseSeen;
+
+	if (s_updatePulse == s_lastPulseSeen) {
+		// update() didn't run since the previous wrap: stop the playback
+		*((volatile byte *)0xFFFF8901L) = 0;
+		s_isrStoppedDma = true;
+	} else {
+		s_dmaWrapped = true;
 	}
+	s_lastPulseSeen = s_updatePulse;
 
-	endOfPlayback = true;
-
-	*((volatile byte *)0xFFFFFA0FL) &= ~(1<<5);	// clear in service bit
+	// clear in-service bit
+	*((volatile byte *)0xFFFFFA0FL) = ~(1 << 5);
 }
 
 AtariMixerManager::AtariMixerManager() : MixerManager() {
@@ -98,10 +109,10 @@ AtariMixerManager::~AtariMixerManager() {
 	AtariAudioShutdown();
 
 	Mfree(_atariSampleBuffer);
-	_atariSampleBuffer = _atariPhysicalSampleBuffer = _atariLogicalSampleBuffer = nullptr;
+	_atariSampleBuffer = nullptr;
 
-	delete[] _sampleBuf;
-	_sampleBuf = nullptr;
+	delete[] _sampleBuffer;
+	_sampleBuffer = nullptr;
 }
 
 void AtariMixerManager::init() {
@@ -135,7 +146,7 @@ void AtariMixerManager::init() {
 	_downsample = (obtained.format == USoundFormatSigned8);
 	_samples = obtained.samples;
 
-	debug("setting %d Hz mixing frequency (%d-bit, %s)",
+	debug("setting %d Hz mixing frequency, %d-bit, %s",
 		_outputRate,
 		obtained.format == USoundFormatSigned8 ? 8 : 16,
 		_outputChannels == 2
@@ -143,14 +154,14 @@ void AtariMixerManager::init() {
 			: _emulated16bitMono
 				? "mono (emulated)"
 				: "mono");
-	debug("sample buffer size: %d", _samples);
+	debug("audio buffer size: %d", _samples);
 
-	_atariSampleBuffer = (byte*)Mxalloc(obtained.size * 2, MX_STRAM);
-	if (!_atariSampleBuffer)
+	_atariSampleBufferSize = obtained.size * 2;	// two buffers
+	_atariSampleBuffer = (byte *)Mxalloc(_atariSampleBufferSize, MX_STRAM);
+	if (!_atariSampleBuffer) {
+		_atariSampleBufferSize = 0;
 		error("Failed to allocate memory in ST RAM");
-
-	_atariPhysicalSampleBuffer = _atariSampleBuffer;
-	_atariLogicalSampleBuffer = _atariSampleBuffer + obtained.size;
+	}
 
 	Setinterrupt(SI_TIMERA, SI_PLAY);
 	Xbtimer(XB_TIMERA, 1<<3, 1, timerA);	// event count mode, count to '1'
@@ -161,8 +172,8 @@ void AtariMixerManager::init() {
 	// enable and mix both sources (ADC and connection matrix) to the output
 	Soundcmd(ADDERIN, MATIN|ADCIN);
 
-	_sampleBufSize = _samples * _outputChannels * 4;	// always 32-bit
-	_sampleBuf = new uint8[_sampleBufSize];
+	_sampleBufferSize = _samples * _outputChannels * 4;	// always 32-bit
+	_sampleBuffer = new uint8[_sampleBufferSize];
 
 	_mixer = new Audio::MixerImpl(_outputRate, _outputChannels == 2, _samples, 4, false);
 	_mixer->setReady(true);
@@ -174,7 +185,7 @@ void AtariMixerManager::suspendAudio() {
 	debug("suspendAudio");
 
 	Buffoper(0x00);
-	muted = true;
+	s_playbackState = kPlaybackStopped;
 	_audioSuspended = true;
 }
 
@@ -190,10 +201,9 @@ bool AtariMixerManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_QUIT:
 	case Common::EVENT_RETURN_TO_LAUNCHER:
-		if (!muted) {
-			Buffoper(0x00);
-			muted = true;
+		if (s_playbackState != kPlaybackStopped) {
 			debug("silencing the mixer");
+			suspendAudio();
 		}
 		return false;
 	default:
@@ -210,114 +220,146 @@ void AtariMixerManager::update() {
 
 	assert(_mixer);
 
-	int processed = -1;
+	s_updatePulse++;
 
-	if (muted || endOfPlayback) {
-		endOfPlayback = false;
-		processed = _mixer->mixCallback(_sampleBuf, _sampleBufSize);
+	// Translate ISR's starvation signal into a state transition. Done
+	// here so that update() is the only writer of s_playbackState.
+	if (s_isrStoppedDma) {
+		s_isrStoppedDma = false;
+		s_playbackState = kPlaybackStopped;
 	}
 
-	if (processed > 0) {
-		byte* tmp = _atariPhysicalSampleBuffer;
-		_atariPhysicalSampleBuffer = _atariLogicalSampleBuffer;
-		_atariLogicalSampleBuffer = tmp;
+	byte *atariSampleBuffer1stHalf = _atariSampleBuffer;
+	byte *atariSampleBuffer2ndHalf = _atariSampleBuffer + _atariSampleBufferSize/2;
+	byte *atariSampleBufferEnd     = _atariSampleBuffer + _atariSampleBufferSize;
 
-		// WARNING: loopCount, src and dst are modified by the asm code
-		int loopCount = processed * _outputChannels;
-		const byte *src = _sampleBuf;
-		byte *dst = _atariPhysicalSampleBuffer;
-		if (_downsample) {
+	bool needsMix = false;
+
+	if (s_playbackState == kPlaybackStopped) {
+		memset(_atariSampleBuffer, 0, _atariSampleBufferSize);
+		Setbuffer(SR_PLAY, atariSampleBuffer1stHalf, atariSampleBuffer2ndHalf);
+		Buffoper(SB_PLA_ENA | SB_PLA_RPT);
+		s_playbackState = kPlay1stHalf;
+		// Buffoper's 0->ENA transition can fire a spurious SI_PLAY which
+		// would set s_dmaWrapped here. The resulting extra state toggle
+		// is benign — it just shuffles which physical half holds the next
+		// mix. Audio output is continuous either way.
+		needsMix = true;
+	}
+
+	if (s_dmaWrapped) {
+		s_dmaWrapped = false;
+		if (s_playbackState == kPlay1stHalf)
+			s_playbackState = kPlay2ndHalf;
+		else if (s_playbackState == kPlay2ndHalf)
+			s_playbackState = kPlay1stHalf;
+		needsMix = true;
+	}
+
+	if (!needsMix)
+		return;
+
+	// Mix into the half DMA is NOT currently playing, and Setbuffer to
+	// it so DMA wraps there at the next frame boundary.
+	byte *buf;
+	if (s_playbackState == kPlay1stHalf) {
+		buf = atariSampleBuffer2ndHalf;
+		Setbuffer(SR_PLAY, atariSampleBuffer2ndHalf, atariSampleBufferEnd);
+	} else {
+		buf = atariSampleBuffer1stHalf;
+		Setbuffer(SR_PLAY, atariSampleBuffer1stHalf, atariSampleBuffer2ndHalf);
+	}
+
+	int processed = _mixer->mixCallback(_sampleBuffer, _sampleBufferSize);
+
+	// WARNING: loopCount, src and dst are modified by the asm code
+	int loopCount = processed * _outputChannels;
+	const byte *src = _sampleBuffer;
+	byte *dst = buf;
+
+	if (_downsample) {
+		__asm__ volatile(
+			"	subq.l	#1,%0\n"
+			"	bmi.b	3f\n"
+			"	move.l	#32768,%%d2\n"
+			"	move.l	#65535,%%d3\n"
+			"	moveq	#31,%%d4\n"
+			"	moveq	#0x7f,%%d5\n"
+			"1:	move.l	(%1)+,%%d0\n"
+			"	move.l	%%d0,%%d1\n"
+			"	add.l	%%d2,%%d1\n"
+			"	cmp.l	%%d3,%%d1\n"
+			"	bhi.b	2f\n"
+			"	asr.l	#8,%%d0\n"	// TODO: tweak (there were reports that >> 8 is too quiet)
+			"	move.b	%%d0,(%2)+\n"
+			"	dbra	%0,1b\n"
+			"	bra.b	3f\n"
+			"2:	asr.l	%%d4,%%d0\n"
+			"	eor.b	%%d5,%%d0\n"
+			"	move.b	%%d0,(%2)+\n"
+			"	dbra	%0,1b\n"
+			"3:\n"
+			: "+d"(loopCount), "+a"(src), "+a"(dst) // outputs
+			: // inputs
+			: "d0", "d1", "d2", "d3", "d4", "d5", "cc" AND_MEMORY
+		);
+		memset(buf + processed * _outputChannels *2/2, 0, (_samples - processed) * _outputChannels * 2/2);
+	} else {
+		if (!_emulated16bitMono) {
 			__asm__ volatile(
+				"	subq.l	#1,%0\n"
+				"	bmi.b	3f\n"
 				"	move.l	#32768,%%d2\n"
 				"	move.l	#65535,%%d3\n"
-				"	subq.l	#1,%0\n"
+				"	moveq	#31,%%d4\n"
+				"	move.w	#0x7fff,%%d5\n"
 				"1:	move.l	(%1)+,%%d0\n"
 				"	move.l	%%d0,%%d1\n"
 				"	add.l	%%d2,%%d1\n"
 				"	cmp.l	%%d3,%%d1\n"
-				"	bhi.b	3f\n"
-				"2:	asr.l	#8,%%d0\n"	// TODO: tweak (there were reports that >> 8 is too quiet)
-				"	move.b	%%d0,(%2)+\n"
+				"	bhi.b	2f\n"
+				"	move.w	%%d0,(%2)+\n"
 				"	dbra	%0,1b\n"
-				"	bra.b	4f\n"
-				"3:	tst.l	%%d0\n"
-				"	spl		%%d0\n"
-				"	ext.w	%%d0\n"
-				"	add.w	%%d2,%%d0\n"
-				"	bra.b	2b\n"
-				"4:\n"
+				"	bra.b	3f\n"
+				"2:	asr.l	%%d4,%%d0\n"
+				"	eor.w	%%d5,%%d0\n"
+				"	move.w	%%d0,(%2)+\n"
+				"	dbra	%0,1b\n"
+				"3:\n"
 				: "+d"(loopCount), "+a"(src), "+a"(dst) // outputs
 				: // inputs
-				: "d0", "d1", "d2", "d3", "cc" AND_MEMORY
+				: "d0", "d1", "d2", "d3", "d4", "d5", "cc" AND_MEMORY
 			);
-			memset(_atariPhysicalSampleBuffer + processed * _outputChannels * 2/2, 0, (_samples - processed) * _outputChannels * 2/2);
-			Setbuffer(SR_PLAY, _atariPhysicalSampleBuffer, _atariPhysicalSampleBuffer + _samples * _outputChannels * 2/2);
+			memset(buf + processed * _outputChannels * 2, 0, (_samples - processed) * _outputChannels * 2);
 		} else {
-			int bytesPerFrame = _outputChannels * 2;
-
-			if (!_emulated16bitMono) {
-				__asm__ volatile(
-					"	move.l	#32768,%%d2\n"
-					"	move.l	#65535,%%d3\n"
-					"	subq.l	#1,%0\n"
-					"1:	move.l	(%1)+,%%d0\n"
-					"	move.l	%%d0,%%d1\n"
-					"	add.l	%%d2,%%d1\n"
-					"	cmp.l	%%d3,%%d1\n"
-					"	bhi.b	3f\n"
-					"2:	move.w	%%d0,(%2)+\n"
-					"	dbra	%0,1b\n"
-					"	bra.b	4f\n"
-					"3:	tst.l	%%d0\n"
-					"	spl		%%d0\n"
-					"	ext.w	%%d0\n"
-					"	add.w	%%d2,%%d0\n"
-					"	bra.b	2b\n"
-					"4:\n"
-					: "+d"(loopCount), "+a"(src), "+a"(dst) // outputs
-					: // inputs
-					: "d0", "d1", "d2", "d3", "cc" AND_MEMORY
-				);
-			} else {
-				bytesPerFrame *= 2;
-
-				__asm__ volatile(
-					"	move.l	#32768,%%d2\n"
-					"	move.l	#65535,%%d3\n"
-					"	subq.l	#1,%0\n"
-					"1:	move.l	(%1)+,%%d0\n"
-					"	move.l	%%d0,%%d1\n"
-					"	add.l	%%d2,%%d1\n"
-					"	cmp.l	%%d3,%%d1\n"
-					"	bhi.b	3f\n"
-					"2:	move.w	%%d0,(%2)+\n"
-					"	move.w	%%d0,(%2)+\n"
-					"	dbra	%0,1b\n"
-					"	bra.b	4f\n"
-					"3:	tst.l	%%d0\n"
-					"	spl		%%d0\n"
-					"	ext.w	%%d0\n"
-					"	add.w	%%d2,%%d0\n"
-					"	bra.b	2b\n"
-					"4:\n"
-					: "+d"(loopCount), "+a"(src), "+a"(dst) // outputs
-					: // inputs
-					: "d0", "d1", "d2", "d3", "cc" AND_MEMORY
-				);
-			}
-			const int bufferSize = processed * bytesPerFrame;
-			memset(_atariPhysicalSampleBuffer + bufferSize, 0, (_samples - processed) * bytesPerFrame);
-			Setbuffer(SR_PLAY, _atariPhysicalSampleBuffer, _atariPhysicalSampleBuffer + _samples * bytesPerFrame);
+			__asm__ volatile(
+				"	subq.l	#1,%0\n"
+				"	bmi.b	3f\n"
+				"	move.l	#32768,%%d2\n"
+				"	move.l	#65535,%%d3\n"
+				"	moveq	#31,%%d4\n"
+				"	move.w	#0x7fff,%%d5\n"
+				"1:	move.l	(%1)+,%%d0\n"
+				"	move.l	%%d0,%%d1\n"
+				"	add.l	%%d2,%%d1\n"
+				"	cmp.l	%%d3,%%d1\n"
+				"	bhi.b	2f\n"
+				"	move.w	%%d0,(%2)+\n"
+				"	move.w	%%d0,(%2)+\n"
+				"	dbra	%0,1b\n"
+				"	bra.b	3f\n"
+				"2:	asr.l	%%d4,%%d0\n"
+				"	eor.w	%%d5,%%d0\n"
+				"	move.w	%%d0,(%2)+\n"
+				"	move.w	%%d0,(%2)+\n"
+				"	dbra	%0,1b\n"
+				"3:\n"
+				: "+d"(loopCount), "+a"(src), "+a"(dst) // outputs
+				: // inputs
+				: "d0", "d1", "d2", "d3", "d4", "d5", "cc" AND_MEMORY
+			);
+			memset(buf + processed * _outputChannels * 2*2, 0, (_samples - processed) * _outputChannels * 2*2);
 		}
-
-		if (muted) {
-			Buffoper(SB_PLA_ENA | SB_PLA_RPT);
-			endOfPlayback = true;
-			muted = false;
-		}
-	} else if (processed == 0 && !muted) {
-		Buffoper(0x00);
-		muted = true;
 	}
 
 	if (processed > 0 && processed != _samples) {
