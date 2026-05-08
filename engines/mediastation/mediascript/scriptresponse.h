@@ -38,6 +38,7 @@ public:
 
 	int64 lengthInBytes() const;
 	ScriptValue execute(uint actorId);
+	Common::String decompile() const;
 	EventType _type;
 	ScriptValue _argumentValue;
 

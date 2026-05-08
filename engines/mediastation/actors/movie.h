@@ -140,6 +140,7 @@ public:
 	virtual void loadIsComplete() override;
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual bool isActive() const override { return _isPlaying; }
 
 	virtual PreDisplaySyncState preDisplaySync() override;
 	virtual void onEvent(const ActorEvent &event) override;

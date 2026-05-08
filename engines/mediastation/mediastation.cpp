@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 
 #include "mediastation/mediastation.h"
+#include "mediastation/debugger.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/detection.h"
 #include "mediastation/boot.h"
@@ -53,6 +54,7 @@ MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *g
 }
 
 MediaStationEngine::~MediaStationEngine() {
+	// The base Engine cleans up the debugger.
 	_imtGod->destroyAllContexts();
 	delete _deviceOwner;
 	// _cacheManager->removeCache();
@@ -141,6 +143,8 @@ bool MediaStationEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error MediaStationEngine::run() {
+	_debugger = new Debugger(this);
+	setDebugger(_debugger);
 	_eventLoop = new EventLoop;
 	_timerService = new TimerService;
 	_streamFeedManager = new StreamFeedManager;

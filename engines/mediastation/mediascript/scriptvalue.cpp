@@ -320,7 +320,7 @@ BuiltInMethod ScriptValue::asMethodId() const {
 	}
 }
 
-Common::String ScriptValue::getDebugString() const {
+Common::String ScriptValue::getDebugString(bool includeDefaultName) const {
 	switch (getType()) {
 	case kScriptValueTypeEmpty:
 		return "empty";
@@ -332,7 +332,7 @@ Common::String ScriptValue::getDebugString() const {
 		return Common::String::format("float: %f", asFloat());
 
 	case kScriptValueTypeActorId: {
-		Common::String actorName = g_engine->formatActorName(asActorId(), true);
+		Common::String actorName = g_engine->formatActorName(asActorId(), true, includeDefaultName);
 		return Common::String::format("actor: %s", actorName.c_str());
 	}
 
@@ -340,7 +340,7 @@ Common::String ScriptValue::getDebugString() const {
 		return Common::String::format("time: %f", asTime());
 
 	case kScriptValueTypeParamToken: {
-		Common::String tokenName = g_engine->formatParamTokenName(asParamToken());
+		Common::String tokenName = g_engine->formatParamTokenName(asParamToken(), includeDefaultName);
 		return Common::String::format("token: %s", tokenName.c_str());
 	}
 
@@ -354,7 +354,7 @@ Common::String ScriptValue::getDebugString() const {
 	}
 
 	case kScriptValueTypeFunctionId: {
-		Common::String functionName = g_engine->formatFunctionName(asFunctionId());
+		Common::String functionName = g_engine->formatFunctionName(asFunctionId(), includeDefaultName);
 		return Common::String::format("function: %s", functionName.c_str());
 	}
 

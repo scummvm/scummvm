@@ -43,6 +43,8 @@ public:
 	~ScriptFunction();
 
 	ScriptValue execute(Common::Array<ScriptValue> &args);
+	Common::String decompile() const;
+	uint32 bytecodeSize() const { return _bytecodeSize; }
 
 	uint _contextId = 0;
 	uint _id = 0;
@@ -53,12 +55,15 @@ private:
 };
 
 class FunctionManager : public ParameterClient {
+friend class Debugger;
+
 public:
 	FunctionManager() {};
 	virtual ~FunctionManager();
 
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
 	ScriptValue call(uint functionId, Common::Array<ScriptValue> &args);
+	ScriptFunction *getFunctionById(uint functionId);
 	void deleteFunctionsForContext(uint contextId);
 
 	uint _scriptBlockCallDepth = 0;

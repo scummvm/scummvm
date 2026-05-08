@@ -73,14 +73,14 @@ class Profile {
 public:
 	void load();
 
-	Common::String formatActorName(uint actorId, bool attemptToGetType = false);
-	Common::String formatActorName(const Actor *actor);
+	Common::String formatActorName(uint actorId, bool attemptToGetType = false, bool includeDefaultName = true);
+	Common::String formatActorName(const Actor *actor, bool includeDefaultName = true);
 
-	Common::String formatFunctionName(uint assetId);
-	Common::String formatFileName(uint fileId);
-	Common::String formatVariableName(uint variableId);
-	Common::String formatParamTokenName(uint paramToken);
-	Common::String formatAssetNameForChannelIdent(uint channelIdent);
+	Common::String formatFunctionName(uint assetId, bool includeDefaultName = true);
+	Common::String formatFileName(uint fileId, bool includeDefaultName = true);
+	Common::String formatVariableName(uint variableId, bool includeDefaultName = true);
+	Common::String formatParamTokenName(uint paramToken, bool includeDefaultName = true);
+	Common::String formatAssetNameForChannelIdent(uint channelIdent, bool includeDefaultName = true);
 
 	const Common::String &getFileName(uint16 fileId) const { return _files.getValOrDefault(fileId).name; }
 	const Common::String &getResourceName(uint16 resourceId) const { return _paramTokens.getValOrDefault(resourceId).name; }

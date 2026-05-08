@@ -19,30 +19,33 @@
  *
  */
 
-#ifndef MEDIASTATION_TIMER_H
-#define MEDIASTATION_TIMER_H
+#ifndef MEDIASTATION_DEBUGGER_H
+#define MEDIASTATION_DEBUGGER_H
 
-#include "mediastation/actor.h"
-#include "mediastation/mediascript/scriptvalue.h"
-#include "mediastation/mediascript/scriptconstants.h"
+#include "gui/debugger.h"
 
 namespace MediaStation {
 
-class TimerActor : public Actor {
-public:
-	TimerActor() : Actor(kActorTypeTimer) {};
+class MediaStationEngine;
 
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void timerEvent(const TimerEvent &event) override;
-	virtual bool isActive() const override { return _startTime > 0; }
+class Debugger : public GUI::Debugger {
+public:
+	Debugger(MediaStationEngine *vm);
+	~Debugger() override {}
+
+protected:
+	bool Cmd_ListActors(int argc, const char **argv);
+	bool Cmd_PrintActor(int argc, const char **argv);
+	bool Cmd_ListFunctions(int argc, const char **argv);
+	bool Cmd_GetDocumentInfo(int argc, const char **argv);
+	bool Cmd_BranchToScreen(int argc, const char **argv);
+	bool Cmd_DecompileFunction(int argc, const char **argv);
+	bool Cmd_ListVariables(int argc, const char **argv);
 
 private:
-	uint32 _pauseStartTime = 0;
+	MediaStationEngine *_vm;
 
-	void start();
-	void stop();
-	void pause();
-	void resume(bool shouldRestart);
+	void showScreenInfo();
 };
 
 } // End of namespace MediaStation

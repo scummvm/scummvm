@@ -211,26 +211,30 @@ void Profile::parseScriptConstantInfo(const Common::String &line) {
 		__func__, line.c_str(), constantInfo.name.c_str(), constantInfo.value.c_str());
 }
 
-Common::String Profile::formatActorName(uint actorId, bool attemptToGetType) {
-	// If requested, try to get the actor type by looking up the loaded actor
+Common::String Profile::formatActorName(uint actorId, bool attemptToGetType, bool includeDefaultName) {
+	// If requested, try to get the actor type by looking up the loaded actor.
 	if (attemptToGetType) {
 		Actor *actor = g_engine->getImtGod()->getActorById(actorId);
 		if (actor != nullptr) {
-			return formatActorName(actor);
+			return formatActorName(actor, includeDefaultName);
 		}
 	}
 
 	Common::String formattedName;
 	const Common::String &actorName = _assets.getValOrDefault(actorId).name;
 	if (!actorName.empty()) {
-		formattedName = Common::String::format("%s (%d)", actorName.c_str(), actorId);
+		if (includeDefaultName) {
+			formattedName = Common::String::format("%s_%d)", actorName.c_str(), actorId);
+		} else {
+			formattedName = actorName;
+		}
 	} else {
-		formattedName = Common::String::format("%d", actorId);
+		formattedName = Common::String::format("actor_%d", actorId);
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatActorName(const Actor *actor) {
+Common::String Profile::formatActorName(const Actor *actor, bool includeDefaultName) {
 	if (actor == nullptr) {
 		return "<null>";
 	}
@@ -238,15 +242,19 @@ Common::String Profile::formatActorName(const Actor *actor) {
 	Common::String formattedName;
 	const Common::String &actorName = _assets.getValOrDefault(actor->id()).name;
 	if (!actorName.empty()) {
-		formattedName = Common::String::format("%s [%s %d]", actorName.c_str(), actorTypeToStr(actor->type()), actor->id());
+		if (includeDefaultName) {
+			formattedName = Common::String::format("%s [%s_%d]", actorName.c_str(), actorTypeToStr(actor->type()), actor->id());
+		} else {
+			formattedName = actorName;
+		}
 	} else {
 		// Even if we don't have a name, try to give at least some visibility by including the type.
-		formattedName = Common::String::format("%s %d", actorTypeToStr(actor->type()), actor->id());
+		formattedName = Common::String::format("%s_%d", actorTypeToStr(actor->type()), actor->id());
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatFunctionName(uint functionId) {
+Common::String Profile::formatFunctionName(uint functionId, bool includeDefaultName) {
 	// Only in PROFILE._ST, the function ID is reported with 19900 added,
 	// so function 100 would be reported as 20000. But in bytecode, the
 	// zero-based ID is used.
@@ -254,49 +262,66 @@ Common::String Profile::formatFunctionName(uint functionId) {
 	uint offsetFunctionId = functionId + 19900;
 	const Common::String &functionName = _assets.getValOrDefault(offsetFunctionId).name;
 	if (!functionName.empty()) {
-		// Report the function ID as it appears in bytecode, so without the odd offset added.
-		formattedName = Common::String::format("%s (%d)", functionName.c_str(), functionId);
+		if (includeDefaultName) {
+			// Report the function ID as it appears in bytecode, so without the odd offset added.
+			formattedName = Common::String::format("%s (%d)", functionName.c_str(), functionId);
+		} else {
+			formattedName = functionName;
+		}
 	} else {
 		// This might be a built-in function, in which case we can try to get the built-in name.
-		formattedName = Common::String::format("%s (%d)", builtInFunctionToStr(functionId), functionId);
+		// TODO: Check and make sure if it IS a built-in function or if we need to return the raw function ID.
+		formattedName = Common::String::format("%s_%d", builtInFunctionToStr(functionId), functionId);
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatFileName(uint fileId) {
+Common::String Profile::formatFileName(uint fileId, bool includeDefaultName) {
 	Common::String formattedName;
 	const Common::String &fileName = _files.getValOrDefault(fileId).name;
 	if (!fileName.empty()) {
-		formattedName = Common::String::format("%s (%d)", fileName.c_str(), fileId);
+		if (includeDefaultName) {
+			formattedName = Common::String::format("%s (%d)", fileName.c_str(), fileId);
+		} else {
+			formattedName = fileName;
+		}
 	} else {
 		formattedName = Common::String::format("%d", fileId);
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatVariableName(uint variableId) {
+Common::String Profile::formatVariableName(uint variableId, bool includeDefaultName) {
 	Common::String formattedName;
 	const Common::String &variableName = _variables.getValOrDefault(variableId).name;
 	if (!variableName.empty()) {
-		formattedName = Common::String::format("%s (%d)", variableName.c_str(), variableId);
+		if (includeDefaultName) {
+			formattedName = Common::String::format("%s (%d)", variableName.c_str(), variableId);
+		} else {
+			formattedName = variableName;
+		}
 	} else {
-		formattedName = Common::String::format("%d", variableId);
+		formattedName = Common::String::format("global_%d", variableId);
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatParamTokenName(uint paramToken) {
+Common::String Profile::formatParamTokenName(uint paramToken, bool includeDefaultName) {
 	Common::String formattedName;
 	const Common::String &paramTokenName = _paramTokens.getValOrDefault(paramToken).name;
 	if (!paramTokenName.empty()) {
-		formattedName = Common::String::format("%s (%d)", paramTokenName.c_str(), paramToken);
+		if (includeDefaultName) {
+			formattedName = Common::String::format("%s (%d)", paramTokenName.c_str(), paramToken);
+		} else {
+			formattedName = paramTokenName;
+		}
 	} else {
 		formattedName = Common::String::format("%d", paramToken);
 	}
 	return formattedName;
 }
 
-Common::String Profile::formatAssetNameForChannelIdent(uint channelIdentAsTag) {
+Common::String Profile::formatAssetNameForChannelIdent(uint channelIdentAsTag, bool includeDefaultName) {
 	Common::String formattedName;
 	if (channelIdentAsTag == MKTAG('i', 'g', 'o', 'd')) {
 		formattedName = "ImtGod";
@@ -305,7 +330,7 @@ Common::String Profile::formatAssetNameForChannelIdent(uint channelIdentAsTag) {
 		uint channelIdentAsInt = strtol(channelIdentAsString.c_str(), nullptr, 16);
 		if (_channelIdentsAsIntToAssetId.contains(channelIdentAsInt)) {
 			uint assetId = _channelIdentsAsIntToAssetId.getVal(channelIdentAsInt);
-			formattedName = Common::String::format("%s [%s]", channelIdentAsString.c_str(), formatActorName(assetId).c_str());
+			formattedName = Common::String::format("%s [%s]", channelIdentAsString.c_str(), formatActorName(assetId, false, includeDefaultName).c_str());
 		} else {
 			formattedName = Common::String::format("%s", tag2str(channelIdentAsTag));
 		}

@@ -68,4 +68,46 @@ int64 ScriptResponse::lengthInBytes() const {
 	return _bytecodeSize;
 }
 
+Common::String ScriptResponse::decompile() const {
+	if (_bytecodeBuffer == nullptr || _bytecodeSize == 0) {
+		return "<no code>";
+	}
+
+	// Get the code body first.
+	Common::SeekableReadStream *baseStream = new Common::MemoryReadStream(_bytecodeBuffer, _bytecodeSize, DisposeAfterUse::NO);
+	ParameterReadStream *bytecodeStream = static_cast<ParameterReadStream *>(baseStream);
+	// This code will be put in an indented On ... block, so start with one level of indentation.
+	CodeChunkDecompiler decompiler(bytecodeStream, 1);
+	Common::String decompiledBody = decompiler.decompileNextBlock();
+	delete baseStream;
+
+	// The argument format is determined by the event type, not inferred from the value type.
+	Common::String argumentText;
+	const ScriptValueType argumentType = _argumentValue.getType();
+	switch (_type) {
+	case kTimerScriptEvent:
+		argumentText = Common::String::format("%g", _argumentValue.asTime());
+		break;
+
+	case kKeyDownEvent:
+		// Key arguments are ASCII codes stored as floats but always whole numbers.
+		argumentText = Common::String::format("%d", static_cast<int>(_argumentValue.asFloat()));
+		break;
+
+	default:
+		// Don't set any argument text, as the arg is most likely empty.
+		break;
+	}
+
+	// A newline is not needed after the decompiled code because the decompiled code string
+	// already ends in a newline.
+	const bool hasArgument = (argumentType != kScriptValueTypeEmpty);
+	Common::String argumentComment = hasArgument
+		? Common::String::format(" // %s", _argumentValue.getDebugString(false).c_str())
+		: "";
+	return Common::String::format("On %s %s%s\n%sEnd\n",
+		eventTypeToStr(_type), argumentText.c_str(),
+		argumentComment.c_str(), decompiledBody.c_str());
+}
+
 } // End of namespace MediaStation

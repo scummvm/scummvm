@@ -334,4 +334,19 @@ void Document::contextAlreadyReleased(uint contextId) {
 	g_engine->getEventLoop()->queueEvent(actorEvent);
 }
 
+Common::String Document::getDebugString() {
+	return Common::String::format(
+		"currentScreen: %s\n"
+		"loadingScreen: %s\n"
+		"loadingContext: %s\n"
+		"entryScreen: %s\n"
+		"entryStream: %u",
+		g_engine->formatActorName(_currentScreenActorId).c_str(),
+		g_engine->formatActorName(_loadingScreenActorId).c_str(),
+		g_engine->formatActorName(_loadingContextId).c_str(),
+		g_engine->formatActorName(_entryPointScreenId).c_str(),
+		_entryPointStreamId
+	);
+}
+
 } // End of namespace MediaStation

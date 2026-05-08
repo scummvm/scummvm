@@ -79,6 +79,18 @@ ScriptValue ScriptFunction::execute(Common::Array<ScriptValue> &args) {
 	return returnValue;
 }
 
+Common::String ScriptFunction::decompile() const {
+	Common::String functionName = g_engine->formatFunctionName(_id, false);
+	Common::String result = "Function " + functionName + "\n";
+	Common::SeekableReadStream *baseStream = new Common::MemoryReadStream(_bytecodeBuffer, _bytecodeSize, DisposeAfterUse::NO);
+	ParameterReadStream *bytecodeStream = static_cast<ParameterReadStream *>(baseStream);
+	// The decompiled code will be put in an indented block, so start with one level of indentation.
+	CodeChunkDecompiler decompiler(bytecodeStream, 1);
+	result += decompiler.decompileNextBlock();
+	delete baseStream;
+	result += "End // " + functionName + "\n";
+	return result;
+}
 
 FunctionManager::~FunctionManager() {
 	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
@@ -255,6 +267,10 @@ ScriptValue FunctionManager::call(uint functionId, Common::Array<ScriptValue> &a
 	}
 
 	return returnValue;
+}
+
+ScriptFunction *FunctionManager::getFunctionById(uint functionId) {
+	return _functions.getValOrDefault(functionId, nullptr);
 }
 
 void FunctionManager::script_GetPlatform(Common::Array<ScriptValue> &args, ScriptValue &returnValue) {

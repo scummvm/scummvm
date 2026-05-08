@@ -43,6 +43,7 @@
 #include "mediastation/context.h"
 #include "mediastation/cursors.h"
 #include "mediastation/datafile.h"
+#include "mediastation/debugger.h"
 #include "mediastation/detection.h"
 #include "mediastation/events.h"
 #include "mediastation/graphics.h"
@@ -58,6 +59,7 @@ class RootStage;
 class PixMapImage;
 class ImtGod;
 class EventLoop;
+class Debugger;
 
 // Most Media Station titles follow this file structure from the root directory
 // of the CD-ROM:
@@ -102,13 +104,13 @@ public:
 	void unregisterAudioSequence(AudioSequence *sequence);
 	void serviceSounds();
 
-	Common::String formatActorName(uint actorId, bool attemptToGetType = false) { return _profile->formatActorName(actorId, attemptToGetType); }
-	Common::String formatActorName(const Actor *actor) { return _profile->formatActorName(actor); }
-	Common::String formatFunctionName(uint functionId) { return _profile->formatFunctionName(functionId); }
-	Common::String formatFileName(uint fileId) { return _profile->formatFileName(fileId); }
-	Common::String formatVariableName(uint variableId) { return _profile->formatVariableName(variableId); }
-	Common::String formatParamTokenName(uint paramToken) { return _profile->formatParamTokenName(paramToken); }
-	Common::String formatAssetNameForChannelIdent(uint channelIdent) { return _profile->formatAssetNameForChannelIdent(channelIdent); }
+	Common::String formatActorName(uint actorId, bool attemptToGetType = false, bool includeDefaultName = true) { return _profile->formatActorName(actorId, attemptToGetType, includeDefaultName); }
+	Common::String formatActorName(const Actor *actor, bool includeDefaultName = true) { return _profile->formatActorName(actor, includeDefaultName); }
+	Common::String formatFunctionName(uint functionId, bool includeDefaultName = true) { return _profile->formatFunctionName(functionId, includeDefaultName); }
+	Common::String formatFileName(uint fileId, bool includeDefaultName = true) { return _profile->formatFileName(fileId, includeDefaultName); }
+	Common::String formatVariableName(uint variableId, bool includeDefaultName = true) { return _profile->formatVariableName(variableId, includeDefaultName); }
+	Common::String formatParamTokenName(uint paramToken, bool includeDefaultName = true) { return _profile->formatParamTokenName(paramToken, includeDefaultName); }
+	Common::String formatAssetNameForChannelIdent(uint channelIdent, bool includeDefaultName = true) { return _profile->formatAssetNameForChannelIdent(channelIdent, includeDefaultName); }
 
 	SpatialEntity *getMouseInsideHotspot() { return _mouseInsideHotspot; }
 	void setMouseInsideHotspot(SpatialEntity *entity) { _mouseInsideHotspot = entity; }
@@ -133,6 +135,7 @@ private:
 	SpatialEntity *_mouseInsideHotspot = nullptr;
 	SpatialEntity *_mouseDownHotspot = nullptr;
 
+	Debugger *_debugger = nullptr;
 	EventLoop *_eventLoop = nullptr;
 	TimerService *_timerService = nullptr;
 	StreamFeedManager *_streamFeedManager = nullptr;
@@ -157,6 +160,7 @@ private:
 
 class ImtGod : public ChannelClient {
 friend class EventLoop;
+friend class Debugger;
 
 public:
 	ImtGod(MediaStationEngine *vm);

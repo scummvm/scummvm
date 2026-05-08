@@ -26,6 +26,8 @@
 
 namespace MediaStation {
 
+class ScreenActor;
+
 class ParameterClient {
 public:
 	ParameterClient();
@@ -54,6 +56,8 @@ enum DocumentSectionType {
 };
 
 class Document : public ParameterClient {
+friend class Debugger;
+
 public:
 	virtual bool attemptToReadFromStream(Chunk &chunk, uint sectionType) override;
 	void readStartupInformation(Chunk &chunk);
@@ -77,6 +81,8 @@ public:
 	bool isContextLoadQueued(uint contextId);
 	void contextReleaseComplete(uint contextId);
 	void contextAlreadyReleased(uint contextId);
+
+	Common::String getDebugString();
 
 private:
 	uint _currentScreenActorId = 0;

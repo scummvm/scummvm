@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	context.o \
 	cursors.o \
 	datafile.o \
+	debugger.o \
 	events.o \
 	graphics.o \
 	mediascript/codechunk.o \

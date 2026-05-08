@@ -227,6 +227,11 @@ public:
 	void setContextId(uint id) { _contextId = id; }
 	virtual bool isSpatialActor() const { return false; }
 
+	// Helper functions for the debugger.
+	virtual bool isActive() const { return true; }
+	virtual Common::String debugString() const { return "<no additional info>"; }
+	const Common::HashMap<uint, Common::Array<ScriptResponse *> > &scriptResponses() const { return _scriptResponses; }
+
 	const char *debugName() const;
 
 protected:

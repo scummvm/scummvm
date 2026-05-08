@@ -73,7 +73,7 @@ public:
 	void setToMethodId(BuiltInMethod methodId);
 	BuiltInMethod asMethodId() const;
 
-	Common::String getDebugString() const;
+	Common::String getDebugString(bool includeDefaultName = true) const;
 
 	void operator=(const ScriptValue &other);
 	bool operator==(const ScriptValue &other) const;

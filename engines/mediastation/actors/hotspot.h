@@ -35,7 +35,7 @@ public:
 
 	bool inBounds(const Common::Point &point);
 	virtual bool isVisible() const override { return false; }
-	bool isActive() const { return _isActive; }
+	virtual bool isActive() const override { return _isActive; }
 	virtual bool interactsWithMouse() const override { return isActive(); }
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
