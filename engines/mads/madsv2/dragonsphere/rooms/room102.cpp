@@ -25,7 +25,7 @@
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sound.h"
 #include "mads/madsv2/core/text.h"
-#include "mads/madsv2/dragonsphere/dragonsphere.h"
+#include "mads/madsv2/core/vocab.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room102.h"
@@ -35,519 +35,484 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
+// ---------------------------------------------------------------------------
+// Scratch layout (matches ROOM102.MAC)
+//
+//   game.scratch offsets:
+//     sprite[0..14]       = 0x00..0x1C  (int16 each)
+//     sequence[0..14]     = 0x1E..0x3A
+//     animation[0..3]     = 0x3C..0x42
+//     diary1_id           = 0x44
+//     diary2_id           = 0x46
+//     diary_frame         = 0x48
+//     animation_running   = 0x4A
+//     temp                = 0x4C
+// ---------------------------------------------------------------------------
+struct Scratch {
+	int16 sprite[15];           // ss[]  — series handles
+	int16 sequence[15];         // seq[] — sequence handles
+	int16 animation[4];         // aa[]  — animation handles
+	int16 diary1_id;            // 0x44 — dynamic hotspot handle for diary 1
+	int16 diary2_id;            // 0x46 — dynamic hotspot handle for diary 2
+	int16 diary_frame;          // 0x48 — last observed animation frame (reading)
+	int16 animation_running;    // 0x4A — which diary is being read: DIARY1 or DIARY2
+	int16 temp;                 // 0x4C — temp sprite handle for synch during door close
+};
+
+static Scratch scratch;
+
 #define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
 
-struct Scratch {
-	int16 x02;
-	int16 x04;
-	int16 x08;
-	int16 x0a;
-	int16 x0c;
-	int16 x0e;
-	int16 x10;
-	int16 x20;
-	int16 x22;
-	int16 x26;
-	int16 x28;
-	int16 x2a;
-	int16 x2c;
-	int16 x2e;
-	int16 x3c;
-	int16 x3e;
-	int16 x44;
-	int16 x46;
-	int16 x48;
-	int16 x4a;
-	int16 x4c;
-};
+// Sprite series slot indices (from ROOM102.MAC)
+#define fx_diary1        1   // rm102p0
+#define fx_diary2        2   // rm102p1
+// fx_reach_diaries  3      // kgrh_9 — defined but never loaded
+#define fx_fire          4   // rm102y0
+#define fx_fire_shadow   5   // rm102y1
+#define fx_door          6   // rm102x
+#define fx_open_door     7   // kgrd_6
+#define fx_fire_sconce   8   // rm102y2
 
-static Scratch scratch;
+// Trigger constants
+#define ROOM_102_DOOR_CLOSES  70
+
+// Walk/position constants
+#define START_X_ROOM_101     -10
+#define START_Y_ROOM_101     130
+#define WALK_TO_X_FROM_101   35
+#define WALK_TO_Y_FROM_101   144
+#define START_X_ROOM_103     170
+#define START_Y_ROOM_103     152
+#define WALK_TO_DIARIES_X    47
+#define WALK_TO_DIARIES_Y    123
+#define WALK_TO_DOOR_X       0
+#define WALK_TO_DOOR_Y       130
+
+// Animation identifiers (which diary reading sequence is active)
+#define DIARY1  1
+#define DIARY2  2
+
+// Vocabulary word IDs (from VOCAB.DB; formula: 1-based-line + 13)
+//   Hardcoded verbs (VOCABH.DB):
+//     look=3, take=4, push=5, open=6, pull=10, close=11, walk_to=13
+//   VOCAB.DB-derived nouns (verified against disassembly where noted):
+//     walk_through=37 (✓), look_at=30 (✓)
+//     floor=16, rug=18, wall=20, bed=21, chest=23, window=24, nightstand=25
+//     tapestry=26 (✓), fireplace=34, fireplace_screen=35
+//     decoration=41 (✓), ceiling=196, door_to_hallway=197
+//     wood_basket=204, door_to_king_s_room=245 (✓)
+//     flowers=251, shutters=252, bookcase=253, diaries=264, sconce=329
+
+// ---------------------------------------------------------------------------
 
 void room_102_init() {
-	// Load all required series
-	scratch.x02 = kernel_load_series(kernel_name('p', 0), 0);
-	scratch.x04 = kernel_load_series(kernel_name('p', 1), 0);
-	scratch.x08 = kernel_load_series(kernel_name('y', 0), 0);
-	scratch.x0a = kernel_load_series(kernel_name('y', 1), 0);
-	scratch.x0c = kernel_load_series(kernel_name('x', -1), 0);
-	scratch.x0e = kernel_load_series("pd", 0);
-	scratch.x10 = kernel_load_series(kernel_name('y', 2), 0);
+	// Load sprite series (fx_reach_diaries / kgrh_9 is intentionally skipped)
+	ss[fx_diary1]      = kernel_load_series(kernel_name('p', 0), false);
+	ss[fx_diary2]      = kernel_load_series(kernel_name('p', 1), false);
+	ss[fx_fire]        = kernel_load_series(kernel_name('y', 0), false);
+	ss[fx_fire_shadow] = kernel_load_series(kernel_name('y', 1), false);
+	ss[fx_door]        = kernel_load_series(kernel_name('x', -1), false);
+	ss[fx_open_door]   = kernel_load_series("*KGRD_6", false);
+	ss[fx_fire_sconce] = kernel_load_series(kernel_name('y', 2), false);
 
-	// Start looping background animations
-	scratch.x26 = kernel_seq_forward(scratch.x08, false, 7, 0, 0, 0);
-	scratch.x28 = kernel_seq_forward(scratch.x0a, false, 7, 0, 0, 0);
-	scratch.x2e = kernel_seq_forward(scratch.x10, false, 7, 0, 0, 0);
+	// Start continuous background sequences
+	seq[fx_fire]        = kernel_seq_forward(ss[fx_fire],        false, 7, 0, 0, 0);
+	seq[fx_fire_shadow] = kernel_seq_forward(ss[fx_fire_shadow], false, 7, 0, 0, 0);
+	seq[fx_fire_sconce] = kernel_seq_forward(ss[fx_fire_sconce], false, 7, 0, 0, 0);
 
-	// Stamp NPC sprites and attach them as dynamic walkers
-	scratch.x20 = kernel_seq_stamp(-1, scratch.x02, 0);
-	kernel_seq_depth(scratch.x20, 12);
-	scratch.x44 = kernel_add_dynamic(264, 13, 1, scratch.x20, 0, 0, 0, 0);
-	kernel_dynamic_walk(scratch.x44, 47, 123, 7);
+	// Stamp diary sprites and register their dynamic hotspots
+	seq[fx_diary1]      = kernel_seq_stamp(ss[fx_diary1], false, KERNEL_FIRST);
+	kernel_seq_depth(seq[fx_diary1], 12);
+	local->diary1_id    = kernel_add_dynamic(264, 13, SYNTAX_PLURAL,
+	                          seq[fx_diary1], 0, 0, 0, 0);
+	kernel_dynamic_walk(local->diary1_id, WALK_TO_DIARIES_X, WALK_TO_DIARIES_Y, FACING_NORTHWEST);
 
-	scratch.x22 = kernel_seq_stamp(-1, scratch.x04, 0);
-	kernel_seq_depth(scratch.x22, 12);
-	scratch.x46 = kernel_add_dynamic(264, 13, 1, scratch.x22, 0, 0, 0, 0);
-	kernel_dynamic_walk(scratch.x46, 47, 123, 7);
+	seq[fx_diary2]      = kernel_seq_stamp(ss[fx_diary2], false, KERNEL_FIRST);
+	kernel_seq_depth(seq[fx_diary2], 12);
+	local->diary2_id    = kernel_add_dynamic(264, 13, SYNTAX_PLURAL,
+	                          seq[fx_diary2], 0, 0, 0, 0);
+	kernel_dynamic_walk(local->diary2_id, WALK_TO_DIARIES_X, WALK_TO_DIARIES_Y, FACING_NORTHWEST);
 
-	// Position the player depending on which room they came from
 	if (previous_room == 103) {
-		// Returning from room 103: place player at a fixed position
-		player.x = 170;
-		player.y = 152;
-		player.facing = 7;
-	}
+		// Player comes from the East/West Hall (room 103)
+		player.x      = START_X_ROOM_103;
+		player.y      = START_Y_ROOM_103;
+		player.facing = FACING_NORTHWEST;
+		seq[fx_door]  = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
+		kernel_seq_depth(seq[fx_door], 5);
 
-	if (previous_room == 103 || previous_room == -2) {
-		// previous_room == 103 or 0xFFFE: stamp idle pose at frame -1
-		scratch.x2a = kernel_seq_stamp(-1, scratch.x0c, 0);
-		kernel_seq_stamp(-1, scratch.x2a, 5);
+	} else if (previous_room != KERNEL_RESTORING_GAME) {
+		// Player comes from the King's bedroom (room 101)
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_LAST);
+		kernel_seq_depth(seq[fx_door], 5);
+		player_first_walk(START_X_ROOM_101, START_Y_ROOM_101, FACING_EAST,
+		                  WALK_TO_X_FROM_101, WALK_TO_Y_FROM_101, FACING_EAST,
+		                  false);
+		player_walk_trigger(ROOM_102_DOOR_CLOSES);
+
 	} else {
-		// Normal entry: stamp the walk-entry pose at frame -2, then walk
-		// the player in from off-screen (x=-10) to (130, y) facing 6.
-		scratch.x2a = kernel_seq_stamp(-2, scratch.x0c, 0);
-		kernel_seq_depth(scratch.x2a, 5);
-		player_first_walk(-10, 130, 6, 35, 144, 6, 0);
-		player_walk_trigger(70);
-		goto music;
+		// Restoring a saved game
+		seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
+		kernel_seq_depth(seq[fx_door], 5);
 	}
 
-music:
 	section_1_music();
 }
 
 void room_102_pre_parser() {
-	// No implementation
-}
-
-void room_102_parser() {
-	// -----------------------------------------------------------------------
-	// Special case: look-around command -> show a dedicated text page and exit
-	// -----------------------------------------------------------------------
-	if (player.look_around) {
-		text_show(10201);
-		goto done;
-	}
-
-	// -----------------------------------------------------------------------
-	// Verb-group 1: verb 0xF5 with objects 0x25, 6, or 0xA
-	// -----------------------------------------------------------------------
-	if (player_parse(0xF5, 0x25, 0)
-		|| player_parse(0xF5, 6, 0)
-		|| player_parse(0xF5, 0x0A, 0)) {
-
-		switch (kernel.trigger) {
-		case 0:
-		{
-			// Trigger 0 (initial activation): disable UI, start ping-pong anim
-			// for the "pd" series, register two trigger callbacks (2 and 3),
-			// then fall through to done.
-			player.commands_allowed = 0;
-			player.walker_visible = 0;
-
-			scratch.x2c = kernel_seq_pingpong(scratch.x0e, -1, 8, 0, 0, 2);
-			kernel_seq_player(scratch.x2c, -1);
-
-			kernel_seq_trigger(scratch.x2c, 2, 1, 1);
-			kernel_seq_trigger(scratch.x2c, 0, 0, 3);
-			goto done;
-		}
-
-		case 1:
-		{
-			// Trigger 1: delete the walk-entry pose, play a sound, then
-			// start a forward anim on the 'x' series at speed 9, depth 5,
-			// and arm trigger 2 on it (falls through to the shared synch).
-			kernel_seq_delete(scratch.x2a);
-			sound_play(24);
-
-			scratch.x2a = kernel_seq_forward(scratch.x0c, false, 9, 1, 0, 0);
-			kernel_seq_depth(scratch.x2a, 5);
-
-			// Arm trigger 2 then fall into the shared kernel_synch below.
-			kernel_seq_trigger(scratch.x2a, 2, 0, 2);
-			goto done;
-		}
-
-		case 2:
-		{
-			// Trigger 2: save old walk-entry handle, stamp a new pose at
-			// frame 5, then synch the running animation (scratch.x3c) with
-			// the new pose as slave - shares the kernel_synch call path.
-			scratch.x4c = scratch.x2a;
-
-			scratch.x2a = kernel_seq_stamp(5, scratch.x0c, 0);
-			kernel_seq_depth(scratch.x2a, 5);
-
-			// kernel_synch(ax=1, dx=scratch.x2a, bx=1, push scratch.x4c, push 3)
-			// i.e. synch type 1: new pose (x2a) as master, x3c as slave (trigger 3)
-			kernel_synch(1, 1, scratch.x2a, scratch.x4c);
-			goto done;
-		}
-
-		case 3:
-		{
-			// Trigger 3: re-show the player walker and walk off to room 0x65.
-			player.walker_visible = -1;
-
-			kernel_synch(1, 2, 0, scratch.x2c);
-			player_walk(0, 0x82, 4);
-			player.walk_off_edge_to_room = 101;
-			goto done;
-		}
-
-		default:
-			goto done;
-		}
-	}
-
-	// -----------------------------------------------------------------------
-	// Verb-group 2: verb 0xC5 with objects 0x25, 6, or 0xA -> go to room 0x67
-	// -----------------------------------------------------------------------
-	if (player_parse(0xC5, 0x25, 0)
-		|| player_parse(0xC5, 6, 0)
-		|| player_parse(0xC5, 0x0A, 0)) {
-		new_room = 0x67;
-		goto done;
-	}
-
-	// -----------------------------------------------------------------------
-	// Verb-group 3: verb 0x108 with objects 4 or 6
-	// -----------------------------------------------------------------------
-	if (player_parse(0x108, 4, 0) || player_parse(0x108, 6, 0)) {
-
-		switch (kernel.trigger) {
-		case 0:
-		{
-			// Trigger 0: disable UI, set scratch.x4a=1, run the 'B' animation,
-			// then synch it (shared path with trigger 0 of the 'A' cutscene below).
-			player.commands_allowed = 0;
-			player.walker_visible = 0;
-			scratch.x4a = 1;
-
-			scratch.x3c = kernel_run_animation(kernel_name('B', -1), 1);
-
-			kernel_synch(3, scratch.x3c, 2, 0);
-			goto done;
-		}
-
-		case 1:
-		{
-			// Trigger 1: stamp NPC sprite A (x02) at frame -1, set depth 12,
-			// add it as a dynamic at sprite-id 0x108, walk it to (47,123)
-			// facing 7, re-show walker, synch x3c for trigger 2, then arm a
-			// timing trigger (6 ticks -> trigger 2).
-			scratch.x20 = kernel_seq_stamp(-1, scratch.x02, 0);
-			kernel_seq_depth(scratch.x20, 12);
-			scratch.x44 = kernel_add_dynamic(0x108, 13, 1, scratch.x20, 0, 0, 0, 0);
-			kernel_dynamic_walk(scratch.x44, 47, 123, 7);
-
-			player.walker_visible = -1;
-
-			kernel_synch(3, 2, 0, scratch.x3c);
-			kernel_timing_trigger(6, 2);
-			goto done;
-		}
-
-		case 2:
-		{
-			// Trigger 2: walk player to (0x33, 0x79) facing 7, arm trigger 3.
-			player_walk(0x33, 0x79, 7);
-			player_walk_trigger(3);
-			goto done;
-		}
-
-		case 3:
-		{
-			// Trigger 3: hide walker, set scratch.x4a=2, run the 'A' animation
-			// with flags=4, synch it - shares kernel_synch path.
-			player.walker_visible = 0;
-			scratch.x4a = 2;
-
-			scratch.x3c = kernel_run_animation(kernel_name('A', -1), 4);
-			kernel_synch(3, scratch.x3c, 2, 0);
-			goto done;
-		}
-
-		case 4:
-		{
-			// Trigger 4: stamp NPC sprite B (x04) at frame -1, set depth 12,
-			// add it as a dynamic, walk it, re-show walker and re-enable
-			// commands, synch x3c - shared kernel_synch path.
-			scratch.x22 = kernel_seq_stamp(-1, scratch.x04, 0);
-			kernel_seq_depth(scratch.x22, 12);
-			scratch.x46 = kernel_add_dynamic(0x108, 13, 1, scratch.x22, 0, 0, 0, 0);
-			kernel_dynamic_walk(scratch.x46, 47, 123, 7);
-
-			player.walker_visible = -1;
-			player.commands_allowed = -1;
-
-			kernel_synch(3, 2, 0, scratch.x3c);
-			goto done;
-		}
-
-		default:
-			goto done;
-		}
-	}
-
-	// -----------------------------------------------------------------------
-	// Look-at / examine chain: verb 3 or 0x1E (no-flag forms)
-	// -----------------------------------------------------------------------
-	if (player_parse(3, 0)
-		|| player_parse(0x1E, 0)) {
-
-		// Each object check: if matched, show the corresponding text page.
-		if (player_parse(0x22, 0)) {
-			text_show(0x27DA); goto done;
-		}
-		if (player_parse(0x15, 0)) {
-			text_show(0x27DB); goto done;
-		}
-		if (player_parse(0xFC, 0)) {
-			text_show(0x27DC); goto done;
-		}
-		if (player_parse(0x12, 0)) {
-			text_show(0x27DE); goto done;
-		}
-		if (player_parse(0xFD, 0)) {
-			text_show(0x27E0); goto done;
-		}
-		if (player_parse(0x108, 0)) {
-			text_show(0x27E1); goto done;
-		}
-		if (player_parse(0xF5, 0)) {
-			text_show(0x27E7); goto done;
-		}
-		if (player_parse(0xFB, 0)) {
-			text_show(0x27E8); goto done;
-		}
-		if (player_parse(0x18, 0)) {
-			text_show(0x27E9); goto done;
-		}
-		if (player_parse(0xCC, 0)) {
-			text_show(0x27EB); goto done;
-		}
-		if (player_parse(0x23, 0)) {
-			text_show(0x27EC); goto done;
-		}
-		if (player_parse(0x19, 0)) {
-			text_show(0x27EE); goto done;
-		}
-		if (player_parse(0xC5, 0)) {
-			text_show(0x27EF); goto done;
-		}
-		if (player_parse(0x17, 0)) {
-			text_show(0x27F0); goto done;
-		}
-		if (player_parse(0x1A, 0)) {
-			text_show(0x27F2); goto done;
-		}
-		if (player_parse(0x149, 0)) {
-			text_show(0x27F3); goto done;
-		}
-		if (player_parse(0x10, 0)) {
-			text_show(0x27F4); goto done;
-		}
-		if (player_parse(0x14, 0)) {
-			text_show(0x27F5); goto done;
-		}
-		if (player_parse(0x29, 0)) {
-			text_show(0x27F6); goto done;
-		}
-		if (player_parse(0xC4, 0)) {
-			text_show(0x27F7); goto done;
-		}
-
-		// Verb 6 variants (use/take with direction flag)
-		if (player_parse(0x17, 6, 0)) {
-			text_show(0x27F0); goto done;
-		}
-		if (player_parse(0xFB, 4, 0)) {
-			text_show(0x27F1); goto done;
-		}
-		if (player_parse(0x18, 6, 0)) {
-			text_show(0x27EA); goto done;
-		}
-
-		// Generic use/touch objects
-		if (player_parse(5, 0) || player_parse(0x0A, 0)) {
-			if (player_parse(0x23, 0)) {
-				text_show(0x27ED); goto done;
-			}
-		}
-
-		if (player_parse(0xFC, 0x0B, 0)) {
-			text_show(0x27DD); goto done;
-		}
-		if (player_parse(0x12, 0x0A, 0)) {
-			text_show(0x27DF); goto done;
-		}
-
-		// No match in examine chain - fall through to done without clearing
-		// command_ready (the retf at locret_39BE0 skips the clear).
-		return;
-	}
-
-done:
-	player.command_ready = 0;
 }
 
 void room_102_daemon() {
-	int16 var_2;
+	int16 reset_frame;
 
-	// -----------------------------------------------------------------------
-	// Animation monitor - mode 1 ('B' cutscene): frames 6, 10, 26
-	// -----------------------------------------------------------------------
-	if (scratch.x4a == 1) {
-		// Skip if animation handle is inactive (both anim words zero)
-		if (kernel_anim[scratch.x3c].anim != 0) {
+	// --- Diary 1 reading sequence ---
+	if (local->animation_running == DIARY1 && kernel_anim[aa[0]].anim != 0) {
+		if (kernel_anim[aa[0]].frame != local->diary_frame) {
+			local->diary_frame = kernel_anim[aa[0]].frame;
+			reset_frame = -1;
 
-			// Skip if frame hasn't changed since last tick
-			if (kernel_anim[scratch.x3c].frame != scratch.x48) {
-				var_2 = -1;
-				scratch.x48 = kernel_anim[scratch.x3c].frame;
+			switch (local->diary_frame) {
+			case 6:
+				kernel_seq_delete(seq[fx_diary1]);
+				kernel_synch(KERNEL_SERIES, seq[fx_diary1], KERNEL_ANIM, aa[0]);
+				break;
+			case 10:
+				sound_play(65);  // N_TurnDiaryPage
+				break;
+			case 26:
+				text_show(10210);
+				text_show(10211);
+				text_show(10212);
+				break;
+			}
 
-				if (scratch.x48 == 26) {
-					// Frame 26: show three sequential text pages (subtitles /
-					// dialogue lines for the 'B' cutscene), then check reset.
-					text_show(10210);
-					text_show(10211);
-					text_show(10212);
-				} else if (scratch.x48 < 26) {
-					int remaining = scratch.x48;
-
-					remaining -= 6;        // frame 6
-					if (remaining == 0) {
-						// Frame 6: delete the NPC-A stamp, then synch
-						// (type 1, slave = x3c, trigger 3) so the cutscene
-						// waits for the stamp removal to complete.
-						kernel_seq_delete(scratch.x20);
-						kernel_synch(3, 1, scratch.x20, scratch.x3c);
-					} else {
-						remaining -= 4;    // frame 10
-						if (remaining == 0) {
-							// Frame 10: play a sound effect.
-							sound_play(65);
-						}
-						// All other frames < 26: no action, var_2 stays -1
-					}
-				}
-				// frames > 26: no action
-
-				// If var_2 was set to a reset target (>= 0), loop the
-				// animation back to that frame unless it's already there.
-				if (var_2 >= 0) {
-					if (kernel_anim[scratch.x3c].frame != var_2) {
-						kernel_reset_animation(scratch.x3c, var_2);
-						scratch.x48 = var_2;
-					}
-				}
+			if (reset_frame >= 0 && kernel_anim[aa[0]].frame != reset_frame) {
+				kernel_reset_animation(aa[0], reset_frame);
+				local->diary_frame = reset_frame;
 			}
 		}
 	}
 
-	// -----------------------------------------------------------------------
-	// Animation monitor - mode 2 ('A' cutscene): frames 6, 26
-	// -----------------------------------------------------------------------
-	if (scratch.x4a == 2) {
-		// Skip if animation handle is inactive
-		if (kernel_anim[scratch.x3c].anim != 0) {
+	// --- Diary 2 reading sequence ---
+	if (local->animation_running == DIARY2 && kernel_anim[aa[0]].anim != 0) {
+		if (kernel_anim[aa[0]].frame != local->diary_frame) {
+			local->diary_frame = kernel_anim[aa[0]].frame;
+			reset_frame = -1;
 
-			// Skip if frame hasn't changed since last tick
-			if (kernel_anim[scratch.x3c].frame != scratch.x48) {
-				var_2 = -1;
-				scratch.x48 = kernel_anim[scratch.x3c].frame;
+			switch (local->diary_frame) {
+			case 6:
+				kernel_seq_delete(seq[fx_diary2]);
+				kernel_synch(KERNEL_SERIES, seq[fx_diary2], KERNEL_ANIM, aa[0]);
+				break;
+			case 26:
+				text_show(10213);
+				text_show(10214);
+				break;
+			}
 
-				int remaining = scratch.x48;
-
-				remaining -= 6;            // frame 6
-				if (remaining == 0) {
-					// Frame 6: delete the NPC-B stamp, synch against x3c
-					// (type 1, slave = x3c, trigger 3) - mirrors mode 1.
-					kernel_seq_delete(scratch.x22);
-					kernel_synch(3, 1, scratch.x22, scratch.x3c);
-				} else {
-					remaining -= 20;       // frame 26
-					if (remaining == 0) {
-						// Frame 26: show two text pages for the 'A' cutscene.
-						text_show(10213);
-						text_show(10214);
-					}
-					// All other frames: no action, var_2 stays -1
-				}
-
-				// Reset guard - same pattern as mode 1.
-				if (var_2 >= 0) {
-					if (kernel_anim[scratch.x3c].frame != var_2) {
-						kernel_reset_animation(scratch.x3c, var_2);
-						scratch.x48 = var_2;
-					}
-				}
+			if (reset_frame >= 0 && kernel_anim[aa[0]].frame != reset_frame) {
+				kernel_reset_animation(aa[0], reset_frame);
+				local->diary_frame = reset_frame;
 			}
 		}
 	}
 
-	// -----------------------------------------------------------------------
-	// Walk-entry trigger dispatch (fired by player_walk_trigger in init)
-	// -----------------------------------------------------------------------
-	if (kernel.trigger < 70)
+	// --- Door close trigger (fired when player walks in from room 101) ---
+	if (kernel.trigger >= ROOM_102_DOOR_CLOSES) {
+		switch (kernel.trigger) {
+		case ROOM_102_DOOR_CLOSES:
+			kernel_seq_delete(seq[fx_door]);
+			sound_play(25);  // N_DoorCloses
+			seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 9, 0, 0, 1);
+			kernel_seq_depth(seq[fx_door], 5);
+			kernel_seq_range(seq[fx_door], 1, 4);
+			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0,
+			                   ROOM_102_DOOR_CLOSES + 1);
+			break;
+
+		case ROOM_102_DOOR_CLOSES + 1:
+			local->temp  = seq[fx_door];
+			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, KERNEL_FIRST);
+			kernel_seq_depth(seq[fx_door], KERNEL_LAST);
+			kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, local->temp);
+			player.commands_allowed = true;
+			break;
+		}
+	}
+}
+
+void room_102_parser() {
+	if (player.look_around) {
+		text_show(10201);
+		player.command_ready = false;
 		return;
+	}
 
-	switch (kernel.trigger - 70) {
-	case 0:
-		// Trigger 70: walk-entry complete - delete the entry-pose stamp,
-		// play the arrival sound, then start a backward anim on the 'x'
-		// series (speed 9, range 1..4) and arm trigger 71 on it.
-		kernel_seq_delete(scratch.x2a);
-		sound_play(25);
-
-		scratch.x2a = kernel_seq_backward(scratch.x0c, false, 9, 1, 0, 0);
-		kernel_seq_depth(scratch.x2a, 5);
-		kernel_seq_range(scratch.x2a, 1, 4);
-		kernel_seq_trigger(scratch.x2a, 0, 0, 71);
+	// --- Walk through / open / pull: door to King's room (room 101) ---
+	if (player_parse(37, 245, 0) || player_parse(6, 245, 0) || player_parse(10, 245, 0)) {
+		switch (kernel.trigger) {
+		case 0:
+			player.commands_allowed = false;
+			player.walker_visible   = false;
+			seq[fx_open_door] = kernel_seq_pingpong(ss[fx_open_door], true, 8, 0, 0, 2);
+			kernel_seq_player(seq[fx_open_door], true);
+			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_SPRITE, 2, 1);
+			kernel_seq_trigger(seq[fx_open_door], KERNEL_TRIGGER_EXPIRE, 0, 3);
+			break;
+		case 1:
+			kernel_seq_delete(seq[fx_door]);
+			sound_play(24);  // N_DoorOpens
+			seq[fx_door] = kernel_seq_forward(ss[fx_door], false, 9, 0, 0, 1);
+			kernel_seq_depth(seq[fx_door], 5);
+			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 2);
+			break;
+		case 2:
+			local->temp  = seq[fx_door];
+			seq[fx_door] = kernel_seq_stamp(ss[fx_door], false, 5);
+			kernel_seq_depth(seq[fx_door], 5);
+			kernel_synch(KERNEL_SERIES, seq[fx_door], KERNEL_SERIES, local->temp);
+			break;
+		case 3:
+			player.walker_visible = true;
+			kernel_synch(KERNEL_PLAYER, 0, KERNEL_SERIES, seq[fx_open_door]);
+			player_walk(WALK_TO_DOOR_X, WALK_TO_DOOR_Y, FACING_WEST);
+			player.walk_off_edge_to_room = 101;
+			break;
+		}
+		player.command_ready = false;
 		return;
+	}
 
-	case 1:
-		// Trigger 71: backward anim finished - save old pose handle, stamp
-		// the idle pose at frame -1, set depth 0xFFFE (behind everything),
-		// synch type 1 (new pose as master, old pose as slave), then
-		// re-enable player commands.
-		scratch.x4c = scratch.x2a;
-
-		scratch.x2a = kernel_seq_stamp(-1, scratch.x0c, 0);
-		kernel_seq_depth(scratch.x2a, 0xFFFE);
-		kernel_synch(1, 1, scratch.x2a, scratch.x4c);
-
-		player.commands_allowed = -1;
+	// --- Walk through / open / pull: door to hallway (room 103) ---
+	if (player_parse(37, 197, 0) || player_parse(6, 197, 0) || player_parse(10, 197, 0)) {
+		new_room = 103;
+		player.command_ready = false;
 		return;
+	}
 
-	default:
+	// --- Take / open: diaries ---
+	if (player_parse(4, 264, 0) || player_parse(6, 264, 0)) {
+		switch (kernel.trigger) {
+		case 0:
+			player.commands_allowed  = false;
+			player.walker_visible    = false;
+			local->animation_running = DIARY1;
+			aa[0] = kernel_run_animation(kernel_name('B', -1), 1);
+			kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
+			break;
+		case 1:
+			seq[fx_diary1]   = kernel_seq_stamp(ss[fx_diary1], false, KERNEL_FIRST);
+			kernel_seq_depth(seq[fx_diary1], 12);
+			local->diary1_id = kernel_add_dynamic(264, 13, SYNTAX_PLURAL,
+			                       seq[fx_diary1], 0, 0, 0, 0);
+			kernel_dynamic_walk(local->diary1_id, WALK_TO_DIARIES_X, WALK_TO_DIARIES_Y,
+			                    FACING_NORTHWEST);
+			player.walker_visible = true;
+			kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
+			kernel_timing_trigger(TENTH_SECOND, 2);
+			break;
+		case 2:
+			player_walk(51, 121, FACING_NORTHWEST);
+			player_walk_trigger(3);
+			break;
+		case 3:
+			player.walker_visible    = false;
+			local->animation_running = DIARY2;
+			aa[0] = kernel_run_animation(kernel_name('A', -1), 4);
+			kernel_synch(KERNEL_ANIM, aa[0], KERNEL_PLAYER, 0);
+			break;
+		case 4:
+			seq[fx_diary2]   = kernel_seq_stamp(ss[fx_diary2], false, KERNEL_FIRST);
+			kernel_seq_depth(seq[fx_diary2], 12);
+			local->diary2_id = kernel_add_dynamic(264, 13, SYNTAX_PLURAL,
+			                       seq[fx_diary2], 0, 0, 0, 0);
+			kernel_dynamic_walk(local->diary2_id, WALK_TO_DIARIES_X, WALK_TO_DIARIES_Y,
+			                    FACING_NORTHWEST);
+			player.walker_visible   = true;
+			player.commands_allowed = true;
+			kernel_synch(KERNEL_PLAYER, 0, KERNEL_ANIM, aa[0]);
+			break;
+		}
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Look / look at ---
+	if (player_parse(3, 0) || player_parse(30, 0)) {
+		if (player_parse(34, 0)) {
+			text_show(10202);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(21, 0)) {
+			text_show(10203);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(252, 0)) {
+			text_show(10204);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(18, 0)) {
+			text_show(10206);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(253, 0)) {
+			text_show(10208);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(264, 0)) {
+			text_show(10209);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(245, 0)) {
+			text_show(10215);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(251, 0)) {
+			text_show(10216);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(24, 0)) {
+			text_show(10217);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(204, 0)) {
+			text_show(10219);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(35, 0)) {
+			text_show(10220);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(25, 0)) {
+			text_show(10222);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(197, 0)) {
+			text_show(10223);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(23, 0)) {
+			text_show(10224);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(26, 0)) {
+			text_show(10226);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(329, 0)) {
+			text_show(10227);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(16, 0)) {
+			text_show(10228);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(20, 0)) {
+			text_show(10229);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(41, 0)) {
+			text_show(10230);
+			player.command_ready = false;
+			return;
+		}
+		if (player_parse(196, 0)) {
+			text_show(10231);
+			player.command_ready = false;
+			return;
+		}
+		return;  // no noun matched inside look — do not clear command_ready
+	}
+
+	// --- Open chest ---
+	if (player_parse(6, 23, 0)) {
+		text_show(10224);
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Take flowers ---
+	if (player_parse(4, 251, 0)) {
+		text_show(10225);
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Open window ---
+	if (player_parse(6, 24, 0)) {
+		text_show(10218);
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Push / pull fireplace screen ---
+	if ((player_parse(5, 0) || player_parse(10, 0)) && player_parse(35, 0)) {
+		text_show(10221);
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Close shutters ---
+	if (player_parse(11, 252, 0)) {
+		text_show(10205);
+		player.command_ready = false;
+		return;
+	}
+
+	// --- Pull rug ---
+	if (player_parse(10, 18, 0)) {
+		text_show(10207);
+		player.command_ready = false;
 		return;
 	}
 }
 
 void room_102_synchronize(Common::Serializer &s) {
-	s.syncMultipleLE(
-		scratch.x02, scratch.x04, scratch.x08, scratch.x0a,
-		scratch.x0c, scratch.x0e, scratch.x10, scratch.x20,
-		scratch.x22, scratch.x26, scratch.x28, scratch.x2a,
-		scratch.x2c, scratch.x2e, scratch.x3c, scratch.x3e,
-		scratch.x44, scratch.x46, scratch.x48, scratch.x4a,
-		scratch.x4c
-	);
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	s.syncAsSint16LE(local->diary1_id);
+	s.syncAsSint16LE(local->diary2_id);
+	s.syncAsSint16LE(local->diary_frame);
+	s.syncAsSint16LE(local->animation_running);
+	s.syncAsSint16LE(local->temp);
+}
+
+void room_102_error() {
 }
 
 void room_102_preload() {
-	room_init_code_pointer = room_102_init;
+	room_init_code_pointer       = room_102_init;
 	room_pre_parser_code_pointer = room_102_pre_parser;
-	room_parser_code_pointer = room_102_parser;
-	room_daemon_code_pointer = room_102_daemon;
+	room_parser_code_pointer     = room_102_parser;
+	room_daemon_code_pointer     = room_102_daemon;
 
 	section_1_walker();
 	section_1_interface();
+
+	vocab_make_active(264);  // diaries
+	vocab_make_active(13);   // walk_to
 }
 
 } // namespace Rooms
