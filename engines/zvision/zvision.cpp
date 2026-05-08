@@ -131,6 +131,7 @@ ZVision::~ZVision() {
 	delete _rnd;
 	delete _midiManager;
 	delete _volumeManager;
+	delete _menu;
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
 }
 
