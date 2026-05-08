@@ -268,8 +268,21 @@ void Dialog::handleMouseWheel(int x, int y, int direction) {
 	Widget *w = findWidget(x, y);
 	if (!w)
 		w = _focusedWidget;
-	if (w)
+	if (w) {
 		w->handleMouseWheel(x - (w->getAbsX() - _x), y - (w->getAbsY() - _y), direction);
+		// Find the scrollable ancestor to set as the tickle target
+		Widget *scrollable = w;
+		while (scrollable) {
+			if (scrollable->hasVisibleScrollBar()) {
+				setTickleWidget(scrollable);
+				break;
+			}
+			if (scrollable->_boss == this)		
+				break;
+
+			scrollable = static_cast<Widget *>(scrollable->_boss);
+		}
+	}
 
 	_handlingMouseWheel = false;
 }
