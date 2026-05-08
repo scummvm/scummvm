@@ -63,7 +63,12 @@ void Speech::load(Common::SeekableReadStream *src) {
 	resource_id = src->readSint16LE();
 	src->read(text, 60);
 	src->read(misc, 3);
-	src->readMultipleLE(sound, x, y, display_condition);
+	src->readMultipleLE(sound);
+
+	speech = nullptr;
+	src->skip(4);
+
+	src->readMultipleLE(x, y, display_condition);
 
 	for (int i = 0; i < 2; ++i)
 		color[i].load(src);

@@ -19,6 +19,7 @@
  *
  */
 
+#include "audio/audiostream.h"
 #include "common/file.h"
 #include "mads/madsv2/core/cycle.h"
 #include "mads/madsv2/core/env.h"
@@ -28,6 +29,7 @@
 #include "mads/madsv2/core/mouse.h"
 #include "mads/madsv2/core/pack.h"
 #include "mads/madsv2/core/pal.h"
+#include "mads/madsv2/core/speech.h"
 #include "mads/madsv2/core/tile.h"
 #include "mads/madsv2/core/timer.h"
 #include "mads/madsv2/animview/animview.h"
@@ -69,6 +71,10 @@ static Room *room;
 static Anim *current_anim, *current_anim2;
 static bool has_cycles;
 static int viewing_at_y2;
+constexpr int SPEECH_LINES_COUNT = 10;
+static Audio::AudioStream *speech_lines[SPEECH_LINES_COUNT];
+static int speech_lines_count;
+static void *anim_buffer;
 
 /**
  * Initializes animview global variables
@@ -95,6 +101,9 @@ static void init_globals() {
 	current_anim = current_anim2 = nullptr;
 	has_cycles = false;
 	viewing_at_y2 = 0;
+	memset(speech_lines, 0, sizeof(speech_lines));
+	speech_lines_count = 0;
+	anim_buffer = nullptr;
 }
 
 /**
@@ -218,7 +227,7 @@ static void read_resource(Common::SeekableReadStream *src) {
 static void animate() {
 	char buf[80], speech_name[80];
 	AnimFile anim_in;
-	int count, series_ctr;
+	int count, series_ctr, ctr;
 	int soundLoadFlag = 0;
 	bool foundSound;
 	int oldMode;
@@ -315,10 +324,10 @@ static void animate() {
 		}
 
 		int loadFlags = anim_list[count].bg_load_status ? ANIM_LOAD_BACKGROUND : 0;
-		current_anim = anim_load(buf, &scr_inter, &scr_depth,
+		current_anim = anim_load(buf, &scr_work, &scr_depth,
 			&picture_map, &depth_map, &picture_res, &depth_res, &room,
 			&cycle_list, loadFlags);
-		scr_inter_orig = scr_inter;
+		scr_work_orig = scr_work;
 
 		if (!current_anim)
 			error("Could not load anim for - %s", buf);
@@ -333,17 +342,46 @@ static void animate() {
 		has_cycles = cycle_list.num_cycles > 0;
 		current_anim2 = current_anim;
 
-		int height = (scr_inter.y == 200) ? 200 : 156;
-		buffer_init(&scr_work, 320, height);
-		scr_work_orig = scr_work;
+		int height = (scr_work.y == 200) ? 200 : 156;
+		buffer_init(&scr_inter_orig, 320, height);
+		scr_inter = scr_inter_orig;
 
 		viewing_at_y = (height == 200) ? 0 : 200 - (height / 2);
 		viewing_at_y2 = viewing_at_y;
 
-		buffer_fill(scr_work, 0);
+		buffer_fill(scr_inter_orig, 0);
 
 		// Speech handling
+		speech_lines_count = 0;
+		for (ctr = 0; ctr < current_anim->num_speech; ++ctr) {
+			Speech &speech = current_anim->speech[ctr];
+			speech.speech = nullptr;
+
+			if ((speech.flags & 0x2000) && speech_lines_count < SPEECH_LINES_COUNT) {
+				// Load the speech audio
+				MADS_FORMAT(buf, current_anim->speech_file);
+				speech_lines[speech_lines_count] = speech_load(buf, speech.resource_id);
+				++speech_lines_count;
+			}
+		}
+
 		// TODO: Other stuff
+
+		for (auto &line : speech_lines) {
+			mem_free(line);
+			line = nullptr;
+		}
+
+		mem_free(anim_buffer);
+		anim_buffer = nullptr;
+
+		// Free the allocated sound driver
+		g_engine->_soundManager->closeDriver();
+
+		// Free surface
+		buffer_free(&scr_inter_orig);
+		anim_unload(current_anim);
+		current_anim = nullptr;
 	}
 done:
 	timer_activate_low_priority(nullptr);

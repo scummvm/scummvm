@@ -22,6 +22,7 @@
 #ifndef MADS_CORE_ANIM_H
 #define MADS_CORE_ANIM_H
 
+#include "audio/audiostream.h"
 #include "common/stream.h"
 #include "mads/madsv2/core/general.h"
 #include "mads/madsv2/core/font.h"
@@ -312,7 +313,7 @@ struct Speech {
 	char text[60];                /* Text to be displayed     */
 	byte misc[3];                 /* 3 extra bonus bytes      */
 	byte sound;                   /* Sound to be used         */
-	/* pl SpeechDirPtr speech;  */      /* Binary speech pointer    */
+	Audio::AudioStream *speech;	  /* Speech audio stream      */
 	int16 x, y;                   /* Text coordinates         */
 	int16 display_condition;      /* Condition for display    */
 	RGBcolor color[2];            /* Colors for text display  */
@@ -324,7 +325,7 @@ struct Speech {
 	int16 last_frame;             /* Last frame of segment    */
 	int16 first_image;            /* First image number       */
 
-	static constexpr int SIZE = 2 + 60 + 3 + 1 + 2 + 2 + 2 + 2 * RGBcolor::SIZE + 7 * 2;
+	static constexpr int SIZE = 2 + 60 + 3 + 1 + 4 + 2 + 2 + 2 + 2 * RGBcolor::SIZE + 7 * 2;
 	void load(Common::SeekableReadStream *src);
 };
 
