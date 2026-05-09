@@ -74,7 +74,13 @@ static int viewing_at_y2;
 constexpr int SPEECH_LINES_COUNT = 10;
 static Audio::AudioStream *speech_lines[SPEECH_LINES_COUNT];
 static int speech_lines_count;
+static SeriesPtr animSeries;
+static SpritePageInfoPtr pageInfo;
+static SpritePageTablePtr pageTable;
 static void *anim_buffer;
+static bool foundSeries;
+static int imageFlags, imageFlags2, imageFlags3;
+static int imageSpriteId;
 
 /**
  * Initializes animview global variables
@@ -103,7 +109,13 @@ static void init_globals() {
 	viewing_at_y2 = 0;
 	memset(speech_lines, 0, sizeof(speech_lines));
 	speech_lines_count = 0;
+	animSeries = nullptr;
+	pageInfo = nullptr;
+	pageTable = nullptr;
 	anim_buffer = nullptr;
+	foundSeries = false;
+	imageFlags = imageFlags2 = imageFlags3 = 0;
+	imageSpriteId = 0;
 }
 
 /**
@@ -220,6 +232,10 @@ static void read_resource(Common::SeekableReadStream *src) {
 	}
 }
 
+static void run_animation() {
+	// TODO
+}
+
 /**
  * Iterate over the entries in the anim_list, animating each
  * in sequence
@@ -231,6 +247,8 @@ static void animate() {
 	int soundLoadFlag = 0;
 	bool foundSound;
 	int oldMode;
+	int imageIndex;
+	static int packIndex = 0;
 
 	himem_startup();
 	(void)tile_setup();
@@ -335,8 +353,13 @@ static void animate() {
 		tile_pan(&picture_map, current_anim->frame->view_x, current_anim->frame->view_y);
 		tile_pan(&depth_map, current_anim->frame->view_x, current_anim->frame->view_y);
 
-		if (current_anim->misc[1]) {
-			warning("TODO: Unknown setting up anim_series, series_page_info, series_page_table");
+		if (current_anim->misc_any_packed) {
+			packIndex = current_anim->misc_packed_series;
+			animSeries = current_anim->series[packIndex];
+			pageInfo = animSeries->page_info;
+			pageTable = animSeries->page_table;
+			mem_free(animSeries->arena);
+			animSeries->arena = nullptr;
 		}
 
 		has_cycles = cycle_list.num_cycles > 0;
@@ -360,12 +383,32 @@ static void animate() {
 			if ((speech.flags & 0x2000) && speech_lines_count < SPEECH_LINES_COUNT) {
 				// Load the speech audio
 				MADS_FORMAT(buf, current_anim->speech_file);
-				speech_lines[speech_lines_count] = speech_load(buf, speech.resource_id);
+				speech_lines[speech_lines_count] = speech.speech =
+					speech_load(buf, speech.resource_id);
+
 				++speech_lines_count;
 			}
 		}
 
-		// TODO: Other stuff
+		foundSeries = false;
+		imageIndex = -1;
+		for (ctr = 0; ctr < current_anim->num_images; ++ctr) {
+			int seriesId = current_anim->series_id[packIndex];
+			if (current_anim->image[ctr].series_id == seriesId) {
+				imageIndex = ctr;
+				foundSeries = true;
+			}
+		}
+
+		if (foundSeries) {
+			Image &img = current_anim->image[imageIndex];
+			imageFlags = imageFlags2 = img.flags;
+			imageFlags3 = imageFlags - 1;
+			imageSpriteId = img.sprite_id;
+		}
+
+		// Run the animation
+		run_animation();
 
 		for (auto &line : speech_lines) {
 			mem_free(line);
