@@ -28,12 +28,9 @@
 
 namespace MediaStation {
 
-Common::String CodeChunk::makeDebugIndent() const {
-	Common::String indentation;
-	for (uint i = 0; i < _debugIndentLevel; ++i) {
-		indentation += "    ";
-	}
-	return indentation;
+static uint getIndentSize(uint indentLevel) {
+	constexpr uint INDENT_SIZE_IN_SPACES = 4;
+	return indentLevel * INDENT_SIZE_IN_SPACES;
 }
 
 ScriptValue CodeChunk::executeNextBlock() {
@@ -363,19 +360,19 @@ ScriptValue *CodeChunk::readAndReturnVariable() {
 
 void CodeChunk::evaluateIf() {
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "\n%*scondition: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
 		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
-		debugC(5, kDebugScript, "%s=> TRUE", makeDebugIndent().c_str());
+		debugC(5, kDebugScript, "%*s=> TRUE", getIndentSize(_debugIndentLevel), "");
 		_debugIndentLevel--;
 		executeNextBlock();
 		debugC(6, kDebugScript, "%s: Taking TRUE branch", __func__);
 	} else {
-		debugC(5, kDebugScript, "%s=> FALSE", makeDebugIndent().c_str());
+		debugC(5, kDebugScript, "%*s=> FALSE", getIndentSize(_debugIndentLevel), "");
 		_debugIndentLevel--;
 		skipNextBlock();
 		debugC(6, kDebugScript, "%s: Skipping TRUE branch", __func__);
@@ -384,14 +381,14 @@ void CodeChunk::evaluateIf() {
 
 void CodeChunk::evaluateIfElse() {
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "\n%*scondition: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
 		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
-		debugC(5, kDebugScript, "%s=> TRUE", makeDebugIndent().c_str());
+		debugC(5, kDebugScript, "%*s=> TRUE", getIndentSize(_debugIndentLevel), "");
 		_debugIndentLevel--;
 
 		debugC(6, kDebugScript, "%s: Taking TRUE branch", __func__);
@@ -400,7 +397,7 @@ void CodeChunk::evaluateIfElse() {
 		debugC(6, kDebugScript, "%s: Skipping FALSE branch", __func__);
 		skipNextBlock();
 	} else {
-		debugC(5, kDebugScript, "%s=> FALSE", makeDebugIndent().c_str());
+		debugC(5, kDebugScript, "%*s=> FALSE", getIndentSize(_debugIndentLevel), "");
 		_debugIndentLevel--;
 
 		debugC(6, kDebugScript, "%s: Skipping TRUE branch", __func__);
@@ -413,9 +410,9 @@ void CodeChunk::evaluateIfElse() {
 
 ScriptValue CodeChunk::evaluateAssign() {
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "\n%svariable: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "\n%*svariable: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue *targetVariable = readAndReturnVariable();
-	debugCN(5, kDebugScript, "%svalue: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "%*svalue: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue value = evaluateExpression();
 	_debugIndentLevel--;
 
@@ -433,9 +430,9 @@ ScriptValue CodeChunk::evaluateAssign() {
 
 ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "\n%slhs: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "\n%*slhs: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue value1 = evaluateExpression();
-	debugCN(5, kDebugScript, "%srhs: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "%*srhs: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue value2 = evaluateExpression();
 
 	ScriptValue returnValue;
@@ -505,7 +502,7 @@ ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
 	    op == kOpcodeEquals || op == kOpcodeNotEquals ||
 	    op == kOpcodeLessThan || op == kOpcodeGreaterThan ||
 	    op == kOpcodeLessThanOrEqualTo || op == kOpcodeGreaterThanOrEqualTo) {
-		debugC(5, kDebugScript, "%s=> %s", makeDebugIndent().c_str(), returnValue.asBool() ? "TRUE" : "FALSE");
+		debugC(5, kDebugScript, "%*s=> %s", getIndentSize(_debugIndentLevel), "", returnValue.asBool() ? "TRUE" : "FALSE");
 	}
 
 	_debugIndentLevel--;
@@ -515,7 +512,7 @@ ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
 ScriptValue CodeChunk::evaluateUnaryOperation() {
 	// The only supported unary operation seems to be negation.
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "\n%svalue: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "\n%*svalue: ", getIndentSize(_debugIndentLevel), "");
 	ScriptValue value = evaluateExpression();
 	_debugIndentLevel--;
 	return -value;
@@ -542,7 +539,7 @@ ScriptValue CodeChunk::evaluateFunctionCall(uint functionId, uint paramCount) {
 	Common::Array<ScriptValue> args;
 	_debugIndentLevel++;
 	for (uint i = 0; i < paramCount; i++) {
-		debugCN(5, kDebugScript, "%sparam %d: ", makeDebugIndent().c_str(), i);
+		debugCN(5, kDebugScript, "%*sparam %d: ", getIndentSize(_debugIndentLevel), "", i);
 		ScriptValue arg = evaluateExpression();
 		args.push_back(arg);
 	}
@@ -574,7 +571,7 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 	// But here, we're only looking for built-in methods.
 	debugC(5, kDebugScript, "%s (%d params)", builtInMethodToStr(method), paramCount);
 	_debugIndentLevel++;
-	debugCN(5, kDebugScript, "%sself: ", makeDebugIndent().c_str());
+	debugCN(5, kDebugScript, "%*sself: ", getIndentSize(_debugIndentLevel), "");
 
 	// Evaluate target as an lvalue to get a pointer to the actual variable if there is one.
 	ScriptValue methodCallTarget;
@@ -582,7 +579,7 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 	evaluateLValue(methodCallTargetPtr);
 	Common::Array<ScriptValue> args;
 	for (uint i = 0; i < paramCount; i++) {
-		debugCN(5, kDebugScript, "%sparam %d: ", makeDebugIndent().c_str(), i);
+		debugCN(5, kDebugScript, "%*sparam %d: ", getIndentSize(_debugIndentLevel), "", i);
 		ScriptValue arg = evaluateExpression();
 		args.push_back(arg);
 	}
@@ -649,7 +646,7 @@ void CodeChunk::evaluateWhileLoop() {
 		// Seek to the top of the loop bytecode.
 		_bytecode->seek(loopStartPosition);
 		_debugIndentLevel++;
-		debugCN(5, kDebugScript, "\n%scondition: ", makeDebugIndent().c_str());
+		debugCN(5, kDebugScript, "\n%*scondition: ", getIndentSize(_debugIndentLevel), "");
 		ScriptValue condition = evaluateExpression();
 		_debugIndentLevel--;
 		if (condition.getType() != kScriptValueTypeBool) {
@@ -661,10 +658,10 @@ void CodeChunk::evaluateWhileLoop() {
 		}
 
 		if (condition.asBool()) {
-			debugC(5, kDebugScript, "%s=> TRUE (continue loop)", makeDebugIndent().c_str());
+			debugC(5, kDebugScript, "%*s=> TRUE (continue loop)", getIndentSize(_debugIndentLevel), "");
 			executeNextBlock();
 		} else {
-			debugC(5, kDebugScript, "%s=> FALSE (exit loop)", makeDebugIndent().c_str());
+			debugC(5, kDebugScript, "%*s=> FALSE (exit loop)", getIndentSize(_debugIndentLevel), "");
 			skipNextBlock();
 			break;
 		}
