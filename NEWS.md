@@ -28,6 +28,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Reworked keymapper for MM1.
+   - Fixed MM1 Enhanced allowing trading more than the character owned.
 
  SLUDGE:
    - Added two more games to detection, "Sam and Max Flintlocked" and
