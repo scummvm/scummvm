@@ -19,21 +19,21 @@
  *
  */
 
-#ifndef MADS_DRAGONSPHERE_ROOMS_104_H
-#define MADS_DRAGONSPHERE_ROOMS_104_H
+#ifndef MADS_DRAGONSPHERE_MADS_SOUNDS_H
+#define MADS_DRAGONSPHERE_MADS_SOUNDS_H
 
-#include "common/serializer.h"
-#include "mads/madsv2/core/general.h"
+#include "common/scummsys.h"
 
 namespace MADS {
 namespace MADSV2 {
 namespace Dragonsphere {
-namespace Rooms {
 
-extern void room_104_preload();
-extern void room_104_synchronize(Common::Serializer &s);
+enum {
+	N_DoorCloses = 25,
+	N_QueenMother = 45,
+	N_McMornTipsTable = 100
+};
 
-} // namespace Rooms
 } // namespace Dragonsphere
 } // namespace MADSV2
 } // namespace MADS

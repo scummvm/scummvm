@@ -1670,6 +1670,16 @@ done:
 		error("Error flushing conversation data");
 }
 
+void conv_reset(int id) {
+	if (conv_slots[id]) {
+		mem_free(conv_data[id]);
+		mem_free(conv[id]);
+		conv_data[id] = nullptr;
+		conv[id] = nullptr;
+		conv_slots[id] = 0;
+	}
+}
+
 int conv_append(Common::WriteStream *handle) {
 	int count = 0;
 	int16 list[CONV_MAX_SLOTS];

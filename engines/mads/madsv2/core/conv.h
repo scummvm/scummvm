@@ -226,6 +226,7 @@ extern void conv_export_value(int16 value);
 extern void conv_hold();
 extern void conv_release();
 extern void conv_flush();
+extern void conv_reset(int id);
 extern int conv_append(Common::WriteStream *handle);
 extern int conv_expand(Common::SeekableReadStream *handle);
 
