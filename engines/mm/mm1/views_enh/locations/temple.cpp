@@ -117,16 +117,20 @@ void Temple::writeOption(int row, char c, const Common::String &text,
 bool Temple::msgKeypress(const KeypressMessage &msg) {
 	switch (msg.keycode) {
 	case Common::KEYCODE_h:
-		restoreHealth();
+		if (_healCost)
+			restoreHealth();
 		break;
 	case Common::KEYCODE_u:
-		uncurseItems();
+		if (_uncurseCost)
+			uncurseItems();
 		break;
 	case Common::KEYCODE_r:
-		restoreAlignment();
+		if (_alignmentCost)
+			restoreAlignment();
 		break;
 	case Common::KEYCODE_d:
-		donate();
+		if (_donateCost)
+			donate();
 		break;
 	case Common::KEYCODE_g:
 		g_globals->_currCharacter->gatherGold();
