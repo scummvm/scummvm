@@ -238,7 +238,7 @@ void NoctropolisPlayer::setDirFromScript(byte newDir) {
 void NoctropolisPlayer::synchronize(Common::Serializer &s) {
 	Player::synchronize(s);
 	s.syncAsSint16LE(_moveTo.x);
-	s.syncAsSint16LE(_moveTo.x);
+	s.syncAsSint16LE(_moveTo.y);
 	s.syncAsByte(_playerMove);
 }
 

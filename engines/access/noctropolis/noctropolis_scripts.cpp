@@ -136,7 +136,7 @@ bool NoctropolisScripts::executeSpecial(int commandIndex, int param1, int param2
 		vm->_midi->loadMusic(98, param1);
 		break;
 	case 8:
-		vm->_screen->setDarkPalette(param1 | (param1 << 8), 0, 238);
+		vm->_screen->setDarkPalette(param1 | (param1 << 8), 0, 236);
 		break;
 	case 9:
 		vm->_screen->setDarkPalette(0x3200, 192, 43);
