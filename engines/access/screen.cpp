@@ -151,12 +151,12 @@ void Screen::setIconPalette() {
 void Screen::setDarkPalette(int16 mulValue, uint firstIndex, uint count) {
 	uint lastIndex = firstIndex + count;
 	for (uint i = firstIndex; i <= lastIndex; i++) {
-		_rawPalette[i * 3 + 0] = (_rawPalette[i * 3 + 0] * mulValue) >> 16;
-		_rawPalette[i * 3 + 1] = (_rawPalette[i * 3 + 1] * mulValue) >> 16;
-		_rawPalette[i * 3 + 2] = (_rawPalette[i * 3 + 2] * mulValue) >> 16;
+		_tempPalette[i * 3 + 0] = (_rawPalette[i * 3 + 0] * mulValue) >> 16;
+		_tempPalette[i * 3 + 1] = (_rawPalette[i * 3 + 1] * mulValue) >> 16;
+		_tempPalette[i * 3 + 2] = (_rawPalette[i * 3 + 2] * mulValue) >> 16;
 	}
 
-	setPalette();
+	updatePalette();
 }
 
 
