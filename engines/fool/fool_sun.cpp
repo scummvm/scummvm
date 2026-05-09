@@ -44,7 +44,7 @@ void FoolGame::sunMapRun() {
 	for (int16 j = 0x1a; j <= 0x132; j += 0x23) {
 		for (int16 i = 0x6e; i <= 0x186; i += 0x23) {
 			this->var_i16_484++;
-			g_toolbox->SetRect(this->arr_rect_1f38[this->var_i16_484], i, j, i+0x24, j+0x24);
+			g_toolbox->SetRect(_screenGrid[this->var_i16_484], i, j, i+0x24, j+0x24);
 		}
 	}
 	// 137:00fa
@@ -58,66 +58,66 @@ void FoolGame::sunMapRun() {
 	// 137:0148
 	for (int i = 1; i <= 0x51; i++) {
 		this->var_i16_484 = this->arr_i16_4c7c[i];
-		if ((this->puzzleFlags[this->var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled)) != 0) {
-			this->arr_i32_192c0[i] = this->arr_i32_1912c[i];
+		if ((_puzzleFlags[this->var_i16_484] & (kFlagMenuDiamond | kFlagMenuEnabled)) != 0) {
+			this->arr_i32_192c0[i] = _sunMapTilePic[i];
 		} else {
 			// 137:01b2
-			this->arr_i32_192c0[i] = this->arr_i32_1912c[0x52];
+			this->arr_i32_192c0[i] = _sunMapTilePic[0x52];
 		}
 		// 137:01d8
-		if ((this->puzzleFlags[this->var_i16_484] & 4) != 0) {
-			this->puzzleFlags[this->var_i16_484] ^= 4;
-			this->puzzleFlags[i] |= kFlagMapTile;
+		if ((_puzzleFlags[this->var_i16_484] & 4) != 0) {
+			_puzzleFlags[this->var_i16_484] ^= 4;
+			_puzzleFlags[i] |= kFlagMapTile;
 		}
 		// 137:0252
-		if ((this->puzzleFlags[i] & kFlagMapTile) != 0) {
-			this->arr_i32_192c0[i] = this->arr_i32_1912c[0x53];
+		if ((_puzzleFlags[i] & kFlagMapTile) != 0) {
+			this->arr_i32_192c0[i] = _sunMapTilePic[0x53];
 		}
 		// 137:0294
 	}
 	// 137:02a2
 	this->fillRect(0x14, 0x67, 0x156, 0x1b1, 2);
 	for (int i = 1; i <= 0x51; i++) {
-		g_zbasic->picture(this->arr_rect_1f38[i].left, this->arr_rect_1f38[i].top, this->arr_i32_192c0[this->sunMapTileID[i]]);
+		g_zbasic->picture(_screenGrid[i].left, _screenGrid[i].top, this->arr_i32_192c0[_sunMapTileID[i]]);
 	}
 	// 137:0336
-	this->stateFlags = kStateNull;
+	_stateFlags = kStateNull;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->InitCursor();
 	this->sunMapCheckIfSolved();
-	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
-		while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0)) {
+	while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved)) {
+		while ((_stateFlags == kStateNull) && (!_activePuzzleSolved)) {
 			this->getNextEvent(-1);
-			if (this->var_ev_46.what == kMouseDown) {
+			if (_event.what == kMouseDown) {
 				this->sunMapOnClick();
 			}
 		}
 		// 137:038a
-		if (this->stateFlags == kStateUndo) {
+		if (_stateFlags == kStateUndo) {
 			this->sunMapUndoMove();
 		}
-		if (this->stateFlags == kStateSaveGame) {
+		if (_stateFlags == kStateSaveGame) {
 			this->saveGame();
 		}
 	}
 	// 137:03ce
-	if (this->var_i16_d0c == 0) {
+	if (!_activePuzzleSolved) {
 		return;
 	}
 	// JMP 0x1618
 	this->var_i16_68c = 0;
 	for (int j = 0; j <= 5; j++) {
 		for (int i = 1; i <= 0x51; i++) {
-			g_toolbox->InvertRect(this->arr_rect_1f38[i]);
+			g_toolbox->InvertRect(_screenGrid[i]);
 		}
 	}
 	// 137:1654
-	this->activePuzzle = 0;
-	this->var_i16_c04 = 0x64;
-	this->sunMapRestored = 1;
+	_activePuzzle = 0;
+	_activePuzzleStatus = 0x64;
+	_sunMapRestored = 1;
 	g_zbasic->menu(2, 7, 1, Common::U32String());
 	for (int i = 1; i <= 0x50; i++) {
-		this->puzzleFlags[i] = kFlagMenuEnabled;
+		_puzzleFlags[i] = kFlagMenuEnabled;
 	}
 	for (int j = 3; j <= 7; j++) {
 		for (int i = 1; i <= 0x10; i++) {
@@ -134,14 +134,14 @@ void FoolGame::sunMapOnClick() {
 		return;
 	}
 	// 137:0466
-	this->menuDisabled = true;
+	_menuDisabled = true;
 	g_zbasic->menu(8, 3, 0, Common::U32String());
 	g_toolbox->PenNormal();
 	g_toolbox->PenSize(3, 3);
 	g_toolbox->PenMode(kPatXor);
 	this->arr_i16_4758[0] = this->var_i16_68a;
 	this->arr_i16_4758[1] = this->var_i16_68c;
-	if (this->puzzleFlags[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & kFlagMapTile) {
+	if (_puzzleFlags[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] & kFlagMapTile) {
 		this->sunMapRevealPiece();
 		return;
 	}
@@ -156,7 +156,7 @@ void FoolGame::sunMapOnClick() {
 	this->sunMapCheckIfSolved();
 	this->sub_128_6186();
 	g_zbasic->menu(8, 3, 1, Common::U32String());
-	this->menuDisabled = false;
+	_menuDisabled = false;
 }
 
 void FoolGame::sunMapDragSelect() {
@@ -183,16 +183,16 @@ void FoolGame::sunMapDragSelect() {
 			this->arr_i16_4758[7] = this->arr_i16_4758[1];
 		}
 		// 137:06ce
-		this->arr_i16_4758[11] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].top;
-		this->arr_i16_4758[12] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].left;
-		this->arr_i16_4758[13] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
-		this->arr_i16_4758[14] = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
+		this->arr_i16_4758[11] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].top;
+		this->arr_i16_4758[12] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[2]*32 + this->arr_i16_4758[6]]].left;
+		this->arr_i16_4758[13] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].bottom;
+		this->arr_i16_4758[14] = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[3]*32 + this->arr_i16_4758[7]]].right;
 		// 137:084c
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->sub_128_3da(2);
 		g_toolbox->FrameRect(Common::Rect(this->arr_i16_4758[12], this->arr_i16_4758[11], this->arr_i16_4758[14], this->arr_i16_4758[13]));
 		this->sub_128_3da(1);
-	} while (this->var_ev_46.what != kMouseUp);
+	} while (_event.what != kMouseUp);
 	// 137:087e
 }
 
@@ -240,20 +240,20 @@ void FoolGame::sunMapMoveSelected() {
 			this->arr_i16_4758[9] = this->arr_i16_1eb8[1];
 		}
 		// 137:0bae
-		this->arr_rect_4776.top = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].top;
-		this->arr_rect_4776.left = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].left;
-		this->arr_rect_4776.bottom = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
-		this->arr_rect_4776.right = this->arr_rect_1f38[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
+		this->arr_rect_4776.top = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].top;
+		this->arr_rect_4776.left = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[4]*32 + this->arr_i16_4758[8]]].left;
+		this->arr_rect_4776.bottom = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].bottom;
+		this->arr_rect_4776.right = _screenGrid[this->arr_i16_2f38[this->arr_i16_4758[5]*32 + this->arr_i16_4758[9]]].right;
 		g_toolbox->FrameRect(this->arr_rect_4776);
 		this->sub_128_3da(2);
 		g_toolbox->FrameRect(this->arr_rect_4776);
 		this->sub_128_3da(1);
-	} while (this->var_ev_46.what != kMouseDown);
+	} while (_event.what != kMouseDown);
 }
 
 void FoolGame::sunMapUndoMove() {
 	// 137:0d60
-	this->stateFlags = kStateNull;
+	_stateFlags = kStateNull;
 	g_zbasic->swapInt(this->arr_i16_4758[2], this->arr_i16_4758[4]);
 	g_zbasic->swapInt(this->arr_i16_4758[3], this->arr_i16_4758[5]);
 	g_zbasic->swapInt(this->arr_i16_4758[6], this->arr_i16_4758[8]);
@@ -267,9 +267,9 @@ void FoolGame::sunMapDropSelected() {
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
 			this->var_i16_1aa4++;
-			this->arr_i16_3738[this->var_i16_1aa4] = this->sunMapTileID[this->arr_i16_2f38[i*32 + j]];
+			this->arr_i16_3738[this->var_i16_1aa4] = _sunMapTileID[this->arr_i16_2f38[i*32 + j]];
 			// 137:0e5a
-			this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = 0;
+			_sunMapTileID[this->arr_i16_2f38[i*32 + j]] = 0;
 		}
 	}
 
@@ -279,30 +279,30 @@ void FoolGame::sunMapDropSelected() {
 	for (int j = this->arr_i16_4758[8]; j <= this->arr_i16_4758[9]; j++) {
 		for (int i = this->arr_i16_4758[4]; i <= this->arr_i16_4758[5]; i++) {
 			this->var_i16_1aa4++;
-			if (this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] > 0) {
+			if (_sunMapTileID[this->arr_i16_2f38[i*32 + j]] > 0) {
 				this->var_i16_1aa6++;
-				this->arr_i16_3738[this->var_i16_1aa6] = this->sunMapTileID[this->arr_i16_2f38[i*32 + j]];
+				this->arr_i16_3738[this->var_i16_1aa6] = _sunMapTileID[this->arr_i16_2f38[i*32 + j]];
 			}
 			// 137:0f7c
-			this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
+			_sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa4];
 			g_zbasic->picture(
-				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].left,
-				this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].top,
-				this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
+				_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
+				_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
+				this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
 			);
 		}
 	}
 	this->var_i16_1aa6 = this->var_i16_1aa4;
 	for (int j = this->arr_i16_4758[6]; j <= this->arr_i16_4758[7]; j++) {
 		for (int i = this->arr_i16_4758[2]; i <= this->arr_i16_4758[3]; i++) {
-			if (this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] == 0) {
+			if (_sunMapTileID[this->arr_i16_2f38[i*32 + j]] == 0) {
 				// 137:1114
 				this->var_i16_1aa6++;
-				this->sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa6];
+				_sunMapTileID[this->arr_i16_2f38[i*32 + j]] = this->arr_i16_3738[this->var_i16_1aa6];
 				g_zbasic->picture(
-					this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].left,
-					this->arr_rect_1f38[this->arr_i16_2f38[i*32 + j]].top,
-					this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
+					_screenGrid[this->arr_i16_2f38[i*32 + j]].left,
+					_screenGrid[this->arr_i16_2f38[i*32 + j]].top,
+					this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[i*32 + j]]]
 				);
 			}
 			// 137:1214
@@ -314,40 +314,40 @@ void FoolGame::sunMapDropSelected() {
 
 void FoolGame::sunMapCheckIfSolved() {
 	// 137:124e
-	this->var_i16_d0c = 1;
+	_activePuzzleSolved = true;
 	for (int i = 1; i <= 0x51; i++) {
-		if (this->sunMapTileID[i] != i) {
-			this->var_i16_d0c = 0;
+		if (_sunMapTileID[i] != i) {
+			_activePuzzleSolved = false;
 			i = 0x51;
 		}
 	}
 	// 137:128e
-	if (this->var_i16_d0c == 1) {
+	if (_activePuzzleSolved) {
 		for (int i = 1; i <= 0x51; i++) {
 			this->var_i16_484 = this->arr_i16_4c7c[i];
-			if ((this->puzzleFlags[this->var_i16_484] & kFlagMapTile) || (this->puzzleFlags[this->var_i16_484] == kFlagMenuDisabled)) {
-				this->var_i16_d0c = 0;
+			if ((_puzzleFlags[this->var_i16_484] & kFlagMapTile) || (_puzzleFlags[this->var_i16_484] == kFlagMenuDisabled)) {
+				_activePuzzleSolved = false;
 				i = 0x51;
 			}
 			// 137:12fa
 		}
 	}
 	// 137:1306
-	if (this->var_i16_d0c != 0) {
-		this->stateFlags = kStateReturn;
+	if (_activePuzzleSolved) {
+		_stateFlags = kStateReturn;
 	}
 }
 
 void FoolGame::sunMapRevealPiece() {
 	// 137:131a
-	this->puzzleFlags[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= kFlagMapTile;
-	this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = this->arr_i32_1912c[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
+	_puzzleFlags[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] ^= kFlagMapTile;
+	this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]] = _sunMapTilePic[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]]];
 	// 137:142c
 	// unrolled loop
-	this->arr_i16_4758[0] = this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top;
-	this->arr_i16_4758[1] = this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left;
-	this->arr_i16_4758[2] = this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].bottom;
-	this->arr_i16_4758[3] = this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].right;
+	this->arr_i16_4758[0] = _screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top;
+	this->arr_i16_4758[1] = _screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left;
+	this->arr_i16_4758[2] = _screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].bottom;
+	this->arr_i16_4758[3] = _screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].right;
 	// 137:1490
 	for (int16 i = 0; i <= 0xf; i++) {
 		this->arr_i16_4758[0] += i;
@@ -364,13 +364,13 @@ void FoolGame::sunMapRevealPiece() {
 	}
 	// 137:1550
 	g_zbasic->picture(
-		this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left,
-		this->arr_rect_1f38[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top,
-		this->arr_i32_192c0[this->sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
+		_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].left,
+		_screenGrid[this->arr_i16_2f38[this->var_i16_68a*32 + this->var_i16_68c]].top,
+		this->arr_i32_192c0[_sunMapTileID[this->arr_i16_2f38[this->var_i16_68a*32+this->var_i16_68c]]]
 	);
 	this->sub_128_6186();
 	this->sunMapCheckIfSolved();
-	this->menuDisabled = false;
+	_menuDisabled = false;
 }
 
 

@@ -69,12 +69,12 @@ ZBasic::~ZBasic() {
 }
 
 void ZBasic::loadProgram(const Common::Path &path) {
-	_fileId = this->_toolbox->OpenResFile(path);
+	_fileId = _toolbox->OpenResFile(path);
 	if (_fileId == -1) {
 		warning("ZBasic::loadProgram: unable to open %s", path.toString(':').c_str());
 		return;
 	}
-	Handle scotRes = this->_toolbox->GetResource(MKTAG('S', 'C', 'O', 'T'), 1);
+	Handle scotRes = _toolbox->GetResource(MKTAG('S', 'C', 'O', 'T'), 1);
 	if (!scotRes) {
 		warning("ZBasic::loadProgram: could not find SCOT chunk");
 		return;
@@ -85,9 +85,9 @@ void ZBasic::loadProgram(const Common::Path &path) {
 
 	Common::MemoryReadStream *scot = new Common::MemoryReadStream(scotRes->data(), scotRes->size());
 
-	this->_dataTable.clear();
-	this->_dataPtr = 0;
-	this->_stringTable.clear();
+	_dataTable.clear();
+	_dataPtr = 0;
+	_stringTable.clear();
 	bool hasStringTable = false;
 	while (scot->pos() < scot->size()) {
 		uint32 offset = scot->pos();
@@ -98,8 +98,8 @@ void ZBasic::loadProgram(const Common::Path &path) {
 		}
 		switch (opcode) {
 		case kDatumNULL:
-			debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, NULL\n", this->_dataTable.size(), offset);
-			this->_dataTable.push_back(ZBasicDatum::newNull(offset));
+			debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, NULL\n", _dataTable.size(), offset);
+			_dataTable.push_back(ZBasicDatum::newNull(offset));
 			break;
 		case kDatumINT:
 			{
@@ -107,12 +107,12 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
 					result = ZBasicDatum::newInt(offset, 0);
-					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
-					this->_dataTable.push_back(result);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", _dataTable.size(), offset, result->data.i16);
+					_dataTable.push_back(result);
 				} else if (size == 2) {
 					result = ZBasicDatum::newInt(offset, scot->readSint16BE());
-					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i16);
-					this->_dataTable.push_back(result);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", _dataTable.size(), offset, result->data.i16);
+					_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for int %d", size);
 					scot->skip(size);
@@ -125,12 +125,12 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				Common::SharedPtr<ZBasicDatum> result;
 				if (size == 0) {
 					result = ZBasicDatum::newDblInt(offset, 0);
-					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
-					this->_dataTable.push_back(result);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", _dataTable.size(), offset, result->data.i32);
+					_dataTable.push_back(result);
 				} else if (size == 4) {
 					result = ZBasicDatum::newDblInt(offset, scot->readSint32BE());
-					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", this->_dataTable.size(), offset, result->data.i32);
-					this->_dataTable.push_back(result);
+					debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, %d\n", _dataTable.size(), offset, result->data.i32);
+					_dataTable.push_back(result);
 				} else {
 					warning("ZBasic::loadProgram: unexpected size for dblint %d", size);
 					scot->skip(size);
@@ -143,16 +143,16 @@ void ZBasic::loadProgram(const Common::Path &path) {
 				char *buf = (char*)calloc(size+1, 1);
 				scot->read(buf, size);
 				Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
-				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, \"%s\"\n", this->_dataTable.size(), offset, result->data.str->encode().c_str());
-				this->_dataTable.push_back(result);
+				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, \"%s\"\n", _dataTable.size(), offset, result->data.str->encode().c_str());
+				_dataTable.push_back(result);
 				free(buf);
 			}
 			break;
 		case kDatumBCD:
 			{
 				scot->seek(-1);
-				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, BCD\n", this->_dataTable.size(), offset);
-				this->_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
+				debugC(5, kDebugLoading, "ZBasic::loadProgram: _dataTable[%d]: offset %d, BCD\n", _dataTable.size(), offset);
+				_dataTable.push_back(ZBasicDatum::newBcd(offset, ZBasicBCD::read(scot)));
 			}
 			break;
 		default:
@@ -168,8 +168,8 @@ void ZBasic::loadProgram(const Common::Path &path) {
 			char *buf = (char*)calloc(size+1, 1);
 			scot->read(buf, size);
 			Common::SharedPtr<ZBasicDatum> result = ZBasicDatum::newStr(offset, Common::convertToU32String(buf, Common::kMacRoman));
-			debugC(5, kDebugLoading, "ZBasic::loadProgram: _stringTable[%d]: offset %d, \"%s\"\n", this->_stringTable.size(), offset, result->data.str->encode().c_str());
-			this->_stringTable.push_back(result);
+			debugC(5, kDebugLoading, "ZBasic::loadProgram: _stringTable[%d]: offset %d, \"%s\"\n", _stringTable.size(), offset, result->data.str->encode().c_str());
+			_stringTable.push_back(result);
 			offset += size + 1;
 			free(buf);
 			scot->skip(scot->pos() % 2);
@@ -205,14 +205,14 @@ void ZBasic::bufferFlush(const Common::U32String &str) {
 }
 
 void ZBasic::close(int16 fileNo) {
-	if (this->_fileStreams.contains(fileNo)) {
-		this->_fileStreams.erase(fileNo);
+	if (_fileStreams.contains(fileNo)) {
+		_fileStreams.erase(fileNo);
 	}
-	if (this->_fileWriteStreams.contains(fileNo)) {
-		this->_fileWriteStreams.erase(fileNo);
+	if (_fileWriteStreams.contains(fileNo)) {
+		_fileWriteStreams.erase(fileNo);
 	}
-	if (this->_fileLineSize.contains(fileNo)) {
-		this->_fileLineSize.erase(fileNo);
+	if (_fileLineSize.contains(fileNo)) {
+		_fileLineSize.erase(fileNo);
 	}
 }
 

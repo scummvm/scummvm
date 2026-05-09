@@ -32,29 +32,29 @@ extern Toolbox *g_toolbox;
 // the humbug - "irritating stick" style challenge
 void FoolGame::humbugRun() {
 	// 142:0004
-	if (this->var_i16_c04 < 0x63) {
+	if (_activePuzzleStatus < 0x63) {
 		this->humbugTrail();
-		if (this->var_i16_d0c == 0) {
+		if (!_activePuzzleSolved) {
 			return;
 		}
 		this->sub_142_5f2();
-		if (this->puzzleCompletionStatus[0x34] > 2) {
-			this->var_i16_c04 = 0x64;
+		if (_puzzleCompletionStatus[0x34] > 2) {
+			_activePuzzleStatus = 0x64;
 			return;
 		}
 		// 142:004e
-		this->var_i16_c04 = 0x63;
-		this->sub_128_962(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
+		_activePuzzleStatus = 0x63;
+		this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 2, kPatCopy, 0x19);
 		this->var_str_384 = g_zbasic->str(336); // behold the 2nd key of thoth
 		this->sub_128_178a(0x17, 0);
 	}
 	// 142:00b2
-	if (this->var_i16_c04 == 0x63) {
+	if (_activePuzzleStatus == 0x63) {
 		this->sub_142_630();
 	}
-	if (this->var_i16_c04 >= 0x64) {
+	if (_activePuzzleStatus >= 0x64) {
 		this->humbugTrail();
-		if (this->var_i16_d0c != 0) {
+		if (_activePuzzleSolved) {
 			this->sub_142_5f2();
 		}
 	}
@@ -64,7 +64,7 @@ void FoolGame::humbugRun() {
 
 void FoolGame::humbugTrail() {
 	// 142:00e6
-	if (this->puzzleCompletionStatus[0x34] < 3) {
+	if (_puzzleCompletionStatus[0x34] < 3) {
 		g_zbasic->menu(8, 3, 1, g_zbasic->str(337)); // A secret is undone
 		g_zbasic->menu(8, 4, 1, g_zbasic->str(338)); // if the two become one.
 	} else {
@@ -80,8 +80,8 @@ void FoolGame::humbugTrail() {
 	// eye button
 	g_zbasic->get(0x6c, 0x127, 0x84, 0x137, this->arr_bmp_b3ec);
 	for (int16 i = 1; i <= 0xa42; i++) {
-		this->arr_i16_9894[i] = this->puzzlesReadShort();
-		this->arr_i16_ac1c[i] = this->puzzlesReadShort();
+		this->arr_i16_9894[i] = puzzlesReadShort();
+		this->arr_i16_ac1c[i] = puzzlesReadShort();
 		g_zbasic->put(
 			this->arr_i16_9894[i],
 			this->arr_i16_ac1c[i],
@@ -101,21 +101,21 @@ void FoolGame::humbugTrail() {
 		kPutCopy
 	);
 	this->var_i16_233c = 1;
-	this->stateFlags = kStateNull;
-	this->var_i16_d0c = 0;
+	_stateFlags = kStateNull;
+	_activePuzzleSolved = false;
 	this->var_i16_1ab6 = 0;
 	this->var_i16_1ab8 = 0;
 
-	while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0)) {
+	while (((_stateFlags & kStateReturn) == 0) && !_activePuzzleSolved) {
 		// 142:02ee
 		this->getNextEvent(-1);
-		if (!((this->var_i16_1ab6 == this->var_ev_46.where.x) && (this->var_i16_1ab8 == this->var_ev_46.where.y))) {
+		if (!((this->var_i16_1ab6 == _event.where.x) && (this->var_i16_1ab8 == _event.where.y))) {
 			this->sub_142_370();
 		}
 		if (this->var_i16_233c >= 0xa42) {
-			this->var_i16_d0c = 1;
+			_activePuzzleSolved = true;
 		}
-		if (this->stateFlags == kStateSaveGame) {
+		if (_stateFlags == kStateSaveGame) {
 			this->saveGame();
 		}
 		// 142:0346
@@ -134,8 +134,8 @@ void FoolGame::sub_142_370() {
 	}
 	this->var_i16_1a9c = 0;
 	for (int16 i = this->var_i16_7e4; i >= this->var_i16_9f2; i--) {
-		this->var_i16_1a96 = this->var_ev_46.where.x - this->arr_i16_9894[i];
-		this->var_i16_1a98 = this->var_ev_46.where.y - this->arr_i16_ac1c[i];
+		this->var_i16_1a96 = _event.where.x - this->arr_i16_9894[i];
+		this->var_i16_1a98 = _event.where.y - this->arr_i16_ac1c[i];
 		if ((this->var_i16_1a96 >= -5) && (this->var_i16_1a96 <= 0x1e) && (this->var_i16_1a98 >= -5) && (this->var_i16_1a98 <= 0x19)) {
 			this->var_i16_1a9c = i + 0xa;
 		}
@@ -162,8 +162,8 @@ void FoolGame::sub_142_370() {
 			// 142:051c
 		} while (g_zbasic->incrAndCheck(this->var_i16_7a8, this->var_i16_1a9c, this->var_i16_484));
 		this->var_i16_233c = this->var_i16_1a9c;
-		this->var_i16_1ab6 = this->var_ev_46.where.x;
-		this->var_i16_1ab8 = this->var_ev_46.where.y;
+		this->var_i16_1ab6 = _event.where.x;
+		this->var_i16_1ab8 = _event.where.y;
 	} else {
 		// 142:054a
 		this->var_i16_7e4 = this->var_i16_233c - 0xa;
@@ -189,7 +189,7 @@ void FoolGame::sub_142_370() {
 
 void FoolGame::sub_142_5f2() {
 	// 142:05f2
-	this->sub_128_962(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
+	this->zoomRect(0x137, 0xc6, 0x147, 0xdd, 0x14, 0, SCREEN_HEIGHT, SCREEN_WIDTH, 1, kNotPatXor, 0x19);
 }
 
 void FoolGame::sub_142_630() {
@@ -197,7 +197,7 @@ void FoolGame::sub_142_630() {
 	g_zbasic->menu(8, 0, 1, g_zbasic->str(342)); // the 2nd key of thoth
 	g_zbasic->menu(8, 1, 1, g_zbasic->str(343)); // return to scroll
 	this->thothKey2nd();
-	if (this->var_i16_d0c == 1) {
+	if (_activePuzzleSolved) {
 		// 142:066e
 		g_toolbox->PenNormal();
 		g_zbasic->text(0xfe, 0x18, 0x19, kSrcBic);
@@ -207,7 +207,7 @@ void FoolGame::sub_142_630() {
 			temp.left = this->arr_i16_2f38[i*32+1];
 			temp.bottom = this->arr_i16_2f38[i*32+2];
 			temp.right = this->arr_i16_2f38[i*32+3];
-			g_toolbox->FillRect(temp, this->arr_pat_58f4[2]);
+			g_toolbox->FillRect(temp, _patterns[2]);
 			g_toolbox->FrameRect(temp);
 			this->var_str_384 = Common::U32String::format(" %d ", i);
 			this->var_i16_7e4 = g_toolbox->StringWidth(this->var_str_384);
@@ -226,7 +226,7 @@ void FoolGame::sub_142_630() {
 		this->var_i16_484 = 0;
 		this->var_i16_7e4 = 0;
 		this->var_i16_9f2 = 0;
-		while (this->var_ev_46.modifiers & kModMouseButtonUp) {
+		while (_event.modifiers & kModMouseButtonUp) {
 			// 142:07f8
 			this->getNextEvent(-1); // was: 0
 			this->var_i16_7e4++;

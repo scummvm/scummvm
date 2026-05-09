@@ -35,10 +35,10 @@ void FoolGame::polyominoRun() {
 	this->sub_128_271a();
 	this->var_i16_c00 = 1;
 	for (int i = 0; i <= 0x11; i++) {
-		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
+		this->arr_i16_1eb8[i] = puzzlesReadShort();
 	}
 	// 133:003c
-	this->var_str_384 = this->puzzlesReadString().decode(Common::kMacRoman);
+	this->var_str_384 = puzzlesReadString().decode(Common::kMacRoman);
 	// "the completed puzzle will reveal..."
 	this->var_str_384 = g_zbasic->str(209) + this->var_str_384 + g_zbasic->str(210);
 	g_zbasic->menu(8, 0xf, 1, this->var_str_384);
@@ -51,7 +51,7 @@ void FoolGame::polyominoRun() {
 			// 133:00b2
 			this->var_i16_484 += 1;
 			g_toolbox->SetRect(
-				this->arr_rect_1f38[this->var_i16_484],
+				_screenGrid[this->var_i16_484],
 				this->var_i16_68a,
 				this->var_i16_68c,
 				this->var_i16_68a + this->arr_i16_1eb8[13],
@@ -83,7 +83,7 @@ void FoolGame::polyominoRun() {
 	}
 	// 133:01fa
 	for (int i = 0x12; i <= 0x19; i++) {
-		this->arr_i16_1eb8[i] = this->puzzlesReadShort();
+		this->arr_i16_1eb8[i] = puzzlesReadShort();
 	}
 	// 133:0228
 	g_toolbox->SetPort(this->var_i32_f24);
@@ -92,9 +92,9 @@ void FoolGame::polyominoRun() {
 	// for each polyomino
 	for (int j = 1; j <= this->arr_i16_1eb8[0x10]; j++) {
 		// read number of coordinate parts
-		this->var_i16_103a = this->puzzlesReadShort();
+		this->var_i16_103a = puzzlesReadShort();
 		for (int i = 0; i <= 4; i++) {
-			this->arr_i16_47d8[j*8 + i] = this->puzzlesReadShort();
+			this->arr_i16_47d8[j*8 + i] = puzzlesReadShort();
 		}
 		// 133:0284
 		for (int i = 5; i <= 6; i++) {
@@ -117,19 +117,19 @@ void FoolGame::polyominoRun() {
 				this->arr_i16_47d8[j*8 + 4]
 				);
 		// 133:02de
-		if (!this->activePuzzleBuffer.empty()) { // was: str(211)
+		if (!_activePuzzleBuffer.empty()) { // was: str(211)
 			if (j == 1)  {
 				this->var_i16_1aa8 = 1;
 			}
 			for (int i = 3; i <= 4; i++) {
-				this->arr_i16_47d8[j*8 + i] = g_zbasic->decodeInt(g_zbasic->midStr(this->activePuzzleBuffer, this->var_i16_1aa8, 2));
+				this->arr_i16_47d8[j*8 + i] = g_zbasic->decodeInt(g_zbasic->midStr(_activePuzzleBuffer, this->var_i16_1aa8, 2));
 				this->var_i16_1aa8 += 2;
 			}
 		}
 		// 133:0356
 		// read coordinates. these are unsigned bytes in pixel units
 		for (int i = 0; i <= this->var_i16_103a; i++) {
-			this->arr_i16_4338[i] = this->puzzlesReadByte();
+			this->arr_i16_4338[i] = puzzlesReadByte();
 		}
 
 		// 133:0388
@@ -143,15 +143,15 @@ void FoolGame::polyominoRun() {
 
 		// 133:0408
 		// load in letter placement information
-		this->var_i16_103a = this->puzzlesReadShort();
+		this->var_i16_103a = puzzlesReadShort();
 		if (this->var_i16_103a >= 3) {
 			for (int i = 1; i <= this->var_i16_103a; i++) {
-				this->arr_i16_3738[i] = this->puzzlesReadByte();
+				this->arr_i16_3738[i] = puzzlesReadByte();
 			}
 		}
 		// 133:044a
-		this->arr_i16_1eb8[0x1a] = this->puzzlesReadShort(); // polygon fill pattern index
-		this->arr_i16_1eb8[0x1b] = this->puzzlesReadShort(); // text source mode
+		this->arr_i16_1eb8[0x1a] = puzzlesReadShort(); // polygon fill pattern index
+		this->arr_i16_1eb8[0x1b] = puzzlesReadShort(); // text source mode
 		g_toolbox->PenNormal();
 
 		// 133:0476: JSR - "PICTURE_ON"
@@ -175,8 +175,8 @@ void FoolGame::polyominoRun() {
 		// 133:0530: JSR - "PICTURE_ON"
 		// picture handle 1:
 		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_toolbox->FillPoly(this->var_poly_1aac, this->arr_pat_58f4[this->arr_i16_1eb8[0x1a]]);
-		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xf]]);
+		g_toolbox->FillPoly(this->var_poly_1aac, _patterns[this->arr_i16_1eb8[0x1a]]);
+		g_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
 		g_toolbox->FramePoly(this->var_poly_1aac);
 		// 133:0582
 		if (this->var_i16_103a >= 3) {
@@ -197,7 +197,7 @@ void FoolGame::polyominoRun() {
 		// 133:0642: JSR - "PICTURE_ON"
 		// picture handle 2: draw the shape without letters
 		handle = g_toolbox->OpenPicture(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_toolbox->PenPat(this->arr_pat_58f4[this->arr_i16_1eb8[0xf]]);
+		g_toolbox->PenPat(_patterns[this->arr_i16_1eb8[0xf]]);
 		g_toolbox->FramePoly(this->var_poly_1aac);
 		g_toolbox->PaintPoly(this->var_poly_1aac);
 		g_toolbox->ClosePicture();
@@ -213,7 +213,7 @@ void FoolGame::polyominoRun() {
 	for (int j = this->arr_i16_1eb8[0x16]; j <= this->arr_i16_1eb8[0x17]; j++) {
 		for (int i = this->arr_i16_1eb8[0x18]; i <= this->arr_i16_1eb8[0x19]; i++) {
 			this->var_i16_484++;
-			this->arr_i16_4338[this->var_i16_484] = this->puzzlesReadByte();
+			this->arr_i16_4338[this->var_i16_484] = puzzlesReadByte();
 		}
 	}
 	// 133:073c
@@ -227,26 +227,26 @@ void FoolGame::polyominoRun() {
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
 	this->polyominoCheckIfSolved();
-	this->stateFlags = kStateNull;
+	_stateFlags = kStateNull;
 	do {
 		do {
 			this->getNextEvent(-1);
-			if (this->var_ev_46.what == 1) {
+			if (_event.what == 1) {
 				this->polyominoOnClick();
 			}
 			// 133:0800
-		} while ((this->stateFlags == kStateNull) && (this->var_i16_d0c == 0));
+		} while ((_stateFlags == kStateNull) && (!_activePuzzleSolved));
 		// 133:081c
-		if (this->stateFlags == kStateUndo) {
+		if (_stateFlags == kStateUndo) {
 			this->polyominoReset();
 		}
-		if (this->stateFlags == kStateSaveGame) {
+		if (_stateFlags == kStateSaveGame) {
 			this->polyominoStoreState();
 			this->saveGame();
 		}
-	} while (((this->stateFlags & kStateReturn) == 0) && (this->var_i16_d0c == 0));
+	} while (((_stateFlags & kStateReturn) == 0) && (!_activePuzzleSolved));
 	// 133:0864
-	if (this->var_i16_d0c != 0) {
+	if (_activePuzzleSolved) {
 		this->polyominoSuccess();
 	}
 	this->polyominoStoreState();
@@ -292,7 +292,7 @@ void FoolGame::polyominoOnClick() {
 	for (int j = this->var_i16_1a98; j <= this->var_i16_1a98 + 3; j++) {
 		// 133:09dc
 		for (int i = this->var_i16_1a96; i <= this->var_i16_1a96 + 3; i++) {
-			if (this->arr_i16_47d8[this->var_i16_7cc*8] & this->bitLUT[this->var_i16_106a]) {
+			if (this->arr_i16_47d8[this->var_i16_7cc*8] & _bitLUT[this->var_i16_106a]) {
 				// erase grabbed polyomino from collision map
 				this->arr_i16_2f38[i*32 + j] = 0;
 			}
@@ -303,8 +303,8 @@ void FoolGame::polyominoOnClick() {
 	// 133:0a60
 	this->var_i16_1ab2 = this->var_i16_1a96 - this->var_i16_68a;
 	this->var_i16_1ab4 = this->var_i16_1a98 - this->var_i16_68c;
-	this->var_i16_1062 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].left;
-	this->var_i16_1064 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].top;
+	this->var_i16_1062 = _screenGrid[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].left;
+	this->var_i16_1064 = _screenGrid[this->arr_i16_3b38[this->var_i16_1a96*32 + this->var_i16_1a98]].top;
 	debug(5, "FoolGame::polyominoOnClick: Draw pic 2 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 2]);
 	// 133:0b1c
@@ -315,15 +315,15 @@ void FoolGame::polyominoOnClick() {
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 
 	// 133:0b5a: JMP - [0xde0]
-	while (this->var_ev_46.what != 2) {
+	while (_event.what != 2) {
 		// 133:0b5e
 		// 133:0d3a
-		while ((this->var_i16_1ab6 == this->var_i16_1062) && (this->var_i16_1ab8 == this->var_i16_1064) && (this->var_ev_46.what != 2)) {
+		while ((this->var_i16_1ab6 == this->var_i16_1062) && (this->var_i16_1ab8 == this->var_i16_1064) && (_event.what != 2)) {
 			// 133:0b62
 			this->getNextEvent(4);
 
-			this->var_i16_68a = this->var_i16_1ab2 + ((this->var_ev_46.where.x - this->arr_i16_1eb8[4]) / this->arr_i16_1eb8[6]);
-			this->var_i16_68c = this->var_i16_1ab4 + ((this->var_ev_46.where.y - this->arr_i16_1eb8[5]) / this->arr_i16_1eb8[7]);
+			this->var_i16_68a = this->var_i16_1ab2 + ((_event.where.x - this->arr_i16_1eb8[4]) / this->arr_i16_1eb8[6]);
+			this->var_i16_68c = this->var_i16_1ab4 + ((_event.where.y - this->arr_i16_1eb8[5]) / this->arr_i16_1eb8[7]);
 
 			if (this->var_i16_68a < 1) {
 				this->var_i16_68a = 1;
@@ -341,13 +341,13 @@ void FoolGame::polyominoOnClick() {
 				this->var_i16_68c = 0xb - this->arr_i16_47d8[this->var_i16_7cc*8 + 2];
 			}
 			// 133:0cc8
-			this->var_i16_1ab6 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
-			this->var_i16_1ab8 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
+			this->var_i16_1ab6 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
+			this->var_i16_1ab8 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
 			//debug(5, "FoolGame::polyominoOnClick: Move to (%d, %d) -> (%d, %d)", this->var_i16_68a, this->var_i16_68c, this->var_i16_1ab6, this->var_i16_1ab8);
 
 		}
 		// 133:0d78
-		if (this->var_ev_46.what != 2) {
+		if (_event.what != 2) {
 			debug(5, "FoolGame::polyominoOnClick: Draw pic 0 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 			// XOR out original position
 			g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
@@ -368,7 +368,7 @@ void FoolGame::polyominoOnClick() {
 	for (int j = this->var_i16_68c; j <= this->var_i16_68c + 3; j++) {
 		for (int i = this->var_i16_68a; i <= this->var_i16_68a + 3; i++) {
 			if (this->arr_i16_2f38[i*32 + j] > 0) {
-				this->var_i16_1a9c |= this->bitLUT[this->var_i16_106a];
+				this->var_i16_1a9c |= _bitLUT[this->var_i16_106a];
 			}
 			// 133:0e44
 			this->var_i16_106a++;
@@ -403,7 +403,7 @@ void FoolGame::polyominoMove() {
 	// add the polyomino to the collision map
 	for (int j = this->var_i16_68c; j <= this->var_i16_68c + 3; j++) {
 		for (int i = this->var_i16_68a; i <= this->var_i16_68a + 3; i++) {
-			if ((this->arr_i16_47d8[this->var_i16_7cc*8] & this->bitLUT[this->var_i16_106a]) != 0) {
+			if ((this->arr_i16_47d8[this->var_i16_7cc*8] & _bitLUT[this->var_i16_106a]) != 0) {
 				this->arr_i16_2f38[i*32 + j] = this->var_i16_7cc;
 			}
 			// 133:0f6c
@@ -421,8 +421,8 @@ void FoolGame::polyominoMove() {
 		g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4]);
 	}
 	// 133:1002
-	this->var_i16_1062 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
-	this->var_i16_1064 = this->arr_rect_1f38[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
+	this->var_i16_1062 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].left;
+	this->var_i16_1064 = _screenGrid[this->arr_i16_3b38[this->var_i16_68a*32 + this->var_i16_68c]].top;
 	debug(5, "FoolGame::polyominoMove: Draw pic 1 (%d, %d)", this->var_i16_1062, this->var_i16_1064);
 	g_zbasic->picture(this->var_i16_1062, this->var_i16_1064, this->arr_pic_49d8[this->var_i16_7cc*4 + 1]);
 
@@ -430,8 +430,8 @@ void FoolGame::polyominoMove() {
 
 void FoolGame::polyominoOnClickFixed() {
 	// 133:10a0
-	this->var_i16_484 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].left;
-	this->var_i16_7e4 = this->arr_rect_1f38[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].top;
+	this->var_i16_484 = _screenGrid[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].left;
+	this->var_i16_7e4 = _screenGrid[this->arr_i16_3b38[this->arr_i16_47d8[this->var_i16_7cc*8 + 3]*32 + this->arr_i16_47d8[this->var_i16_7cc*8 + 4]]].top;
 	// play bass tone
 	this->sub_128_50e(0x14, 0x64, 0);
 	// why do this???
@@ -466,7 +466,7 @@ void FoolGame::polyominoReset() {
 	// 133:12c2
 	this->var_i16_1ab0 = 1;
 	this->polyominoDrawFrame();
-	this->stateFlags = kStateNull;
+	_stateFlags = kStateNull;
 }
 
 void FoolGame::polyominoDrawFrame() {
@@ -484,14 +484,14 @@ void FoolGame::polyominoDrawFrame() {
 
 void FoolGame::polyominoCheckIfSolved() {
 	// 133:12f2
-	this->var_i16_d0c = 1;
+	_activePuzzleSolved = true;
 	this->var_i16_484 = 0;
 	for (int j = this->arr_i16_1eb8[0x16]; j <= this->arr_i16_1eb8[0x17]; j++) {
 		for (int i = this->arr_i16_1eb8[0x18]; i <= this->arr_i16_1eb8[0x19]; i++) {
 			this->var_i16_484++;
 			if (this->arr_i16_2f38[i*32 + j] != this->arr_i16_4338[this->var_i16_484]) {
 				// 133:1368
-				this->var_i16_d0c = 0;
+				_activePuzzleSolved = false;
 				j = this->arr_i16_1eb8[0x17];
 				i = this->arr_i16_1eb8[0x19];
 			}
@@ -499,15 +499,15 @@ void FoolGame::polyominoCheckIfSolved() {
 		}
 	}
 	// 133:13ce
-	if (this->var_i16_d0c != 0) {
-		this->stateFlags = kStateReturn;
+	if (_activePuzzleSolved) {
+		_stateFlags = kStateReturn;
 	}
 }
 
 void FoolGame::polyominoSuccess() {
 	// 133:13e2
-	if (this->var_i16_c04 < 0x64) {
-		this->var_i16_c04 = 0x64;
+	if (_activePuzzleStatus < 0x64) {
+		_activePuzzleStatus = 0x64;
 	}
 	this->sub_128_2664();
 	this->sub_128_6186();
@@ -516,12 +516,12 @@ void FoolGame::polyominoSuccess() {
 
 void FoolGame::polyominoStoreState() {
 	// 133:1452
-	this->activePuzzleBuffer = g_zbasic->str(212); // empty
+	_activePuzzleBuffer = g_zbasic->str(212); // empty
 	this->var_i16_68a = 1;
 	for (int i = 1; i <= this->arr_i16_1eb8[0x10]; i++) {
 		Common::String val1 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 3]);
 		Common::String val2 = g_zbasic->encodeInt(this->arr_i16_47d8[i*8 + 4]);
-		this->activePuzzleBuffer += val1 + val2;
+		_activePuzzleBuffer += val1 + val2;
 	}
 }
 
