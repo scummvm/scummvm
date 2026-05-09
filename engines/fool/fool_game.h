@@ -79,7 +79,7 @@ public:
 	void drawTarotCard(int16 rectID, int16 deckPos, int16 type); // sub_128_712
 	void fillRect(int16 top, int16 left, int16 bottom, int16 right, int16 patternID); // sub_128_8b4
 	void sub_128_918(const Common::U32String &unk1);
-	void sub_128_962(int16 unk11, int16 unk10, int16 unk9, int16 unk8, int16 unk7, int16 unk6, int16 unk5, int16 unk4, int16 unk3, PatternMode unk2, int16 unk1);
+	void zoomRect(int16 startTop, int16 startLeft, int16 startBottom, int16 startRight, int16 endTop, int16 endLeft, int16 endBottom, int16 endRight, int16 patternID, PatternMode mode, int16 steps); // sub_128_962
 	void sub_128_bde(int16 unk6, int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
 	void getNextEvent(uint32 mask); // sub_128_c6a
 	void sub_128_d34(int16 unk5, int16 unk4, int16 unk3, int16 unk2, int16 unk1);
@@ -410,8 +410,6 @@ public:
 	void straightPathSuccess(); // sub_143_8b0
 
 	void sub_144_004();
-	void sub_144_406();
-	void sub_144_5ca();
 
 
 private:
@@ -430,19 +428,19 @@ private:
 	int16 var_i16_3a;
 	int16 var_i16_42;
 	int16 var_i16_44;
-	EventRecord var_ev_46;
-	int16 var_i16_56;
-	int16 var_i16_58;
-	int16 var_i16_5a;
-	int16 var_i16_5c;
+	EventRecord _event; // var_ev_46
+	int16 var_i16_56; // var_i16_56
+	int16 var_i16_58; // var_i16_58
+	int16 _windowWidth; // var_i16_5a
+	int16 _windowHeight; // var_i16_5c
 	SFReply var_sfr_5e; // -> aa
 	int16 var_i16_16c;
 	ProcPtr var_i32_16e;
 	Common::U32String var_str_172;
 	Common::U32String var_str_272;
 	RGBColor var_i16_372;
-	int16 soundEnabled; // var_i16_378
-	bool screenOversized; // var_i16_37a
+	bool _soundEnabled; // var_i16_378
+	bool _screenOversized; // var_i16_37a
 	uint32 var_i32_37c;
 	Common::U32String var_str_384;
 	int16 var_i16_484;
@@ -475,30 +473,30 @@ private:
 	int16 var_i16_7ba;
 	int16 var_i16_7bc;
 	// this was reused, I don't know why
-	int16 savePromptChoice; // var_i16_7be
+	int16 _savePromptChoice; // var_i16_7be
 	int16 var_i16_7be;
-	int16 keyLastPressed; // var_i16_7c0
+	int16 _keyLastPressed; // var_i16_7c0
 	PicHandle var_pic_7c2;
-	uint16 stateFlags; // var_i16_7c6
+	uint16 _stateFlags; // var_i16_7c6
 	uint32 var_i32_7c8;
 	int16 var_i16_7cc;
 	int16 var_i16_7ce;
-	int16 storyCurrentChapter; // var_i16_7d0
-	int16 sunMapRestored; // var_i16_7d2
-	int16 storyCurrentPage; // var_i16_7d4
+	int16 _storyCurrentChapter; // var_i16_7d0
+	int16 _sunMapRestored; // var_i16_7d2
+	int16 _storyCurrentPage; // var_i16_7d4
 	int16 var_i16_7d6;
-	int16 storyNextPage; // var_i16_7d8
-	int16 storyPageCount; // var_i16_7da
-	int16 selectedMenuChapter; // var_i16_7dc
+	int16 _storyNextPage; // var_i16_7d8
+	int16 _storyPageCount; // var_i16_7da
+	int16 _selectedMenuChapter; // var_i16_7dc
 	int16 var_i16_7de;
 	int16 var_i16_7e0;
-	int16 activePuzzle; // var_i16_7e2
+	int16 _activePuzzle; // var_i16_7e2
 	int16 var_i16_7e4;
 	int16 var_i16_7e6;
 	Common::U32String var_str_7e8;
 	int16 var_i16_8e8;
-	Common::U32String saveFileName; // var_str_8ec
-	bool isAutoSaving;
+	Common::U32String _saveFileName; // var_str_8ec
+	bool _isAutoSaving;
 	int16 var_i16_9ec;
 	int16 var_i16_9f2;
 	Common::U32String var_str_9f4;
@@ -511,20 +509,20 @@ private:
 	MenuHandle var_menu_bf8;
 	int16 var_i16_c00;
 	int16 var_i16_c02;
-	int16 var_i16_c04;
-	Common::String activePuzzleBuffer; // var_str_c06
+	int16 _activePuzzleStatus; // var_i16_c04
+	Common::String _activePuzzleBuffer; // var_str_c06
 
 	int16 var_i16_d06;
 	int16 var_i16_d08;
 	int16 var_i16_d0a;
-	int16 var_i16_d0c;
+	bool _activePuzzleSolved; // var_i16_d0c
 	int16 var_i16_d0e;
 	int16 var_i16_d10;
 	Common::U32String var_str_d12;
-	bool menuDisabled; // var_i16_e12
-	bool menuHidesPlayfield; // var_i16_e14
-	int16 selectedMenuID; // var_i16_e16
-	int16 selectedMenuItem; // var_i16_e18
+	bool _menuDisabled; // var_i16_e12
+	bool _menuHidesPlayfield; // var_i16_e14
+	int16 _selectedMenuID; // var_i16_e16
+	int16 _selectedMenuItem; // var_i16_e18
 	int16 var_i16_e1a;
 	int16 var_i16_e1c;
 	int16 var_i16_e1e;
@@ -537,14 +535,14 @@ private:
 	int16 var_i16_f2e;
 	Common::U32String var_str_f30;
 	int16 var_i16_1030;
-	PicHandle metapuzzleWheelPic; // var_pic_1032
+	PicHandle _metapuzzleWheelPic; // var_pic_1032
 	int32 var_i32_1036;
 	int16 var_i16_103a;
 	int16 var_i16_103c;
 	int16 var_i16_103e;
 	int16 var_i16_1040;
-	int16 jumbleSubPuzzleCount; // var_i16_1056
-	int16 jumbleCurrentSubPuzzle; // var_i16_1058
+	int16 _jumbleSubPuzzleCount; // var_i16_1056
+	int16 _jumbleCurrentSubPuzzle; // var_i16_1058
 	int16 var_i16_105a;
 	int16 var_i16_105c;
 	int16 var_i16_105e;
@@ -552,7 +550,7 @@ private:
 	int16 var_i16_1062;
 	int16 var_i16_1064;
 	int16 var_i16_1066;
-	int16 jumbleGameType; // var_i16_1068
+	int16 _jumbleGameType; // var_i16_1068
 	int16 var_i16_106a;
 	SourceMode var_i16_106c;
 	int16 var_i16_106e;
@@ -600,7 +598,7 @@ private:
 	uint16 var_i16_1a9c;
 	int16 var_i16_1a9e;
 	int16 var_i16_1aa0;
-	int16 metapuzzleSecretCodeSpaceOffset; // var_i16_1aa2
+	int16 _metapuzzleSecretCodeSpaceOffset; // var_i16_1aa2
 	int16 var_i16_1aa4;
 	int16 var_i16_1aa6;
 	int16 var_i16_1aa8;
@@ -619,11 +617,11 @@ private:
 	Common::String var_str_1ac8;
 	int16 var_i16_1bc8;
 
-	int16 mazePlayerX; // var_i16_1bcc
-	int16 mazePlayerY; // var_i16_1bce
+	int16 _mazePlayerX; // var_i16_1bcc
+	int16 _mazePlayerY; // var_i16_1bce
 	int16 var_i16_1bd0;
 
-	int16 mazePlayerDirection; // var_i16_1bd2
+	int16 _mazePlayerDirection; // var_i16_1bd2
 	int16 var_i16_1bd4;
 	int16 var_i16_1bd6;
 	int16 var_i16_1bd8;
@@ -667,9 +665,9 @@ private:
 
 	uint16 var_i16_1f08;
 	int16 var_i16_1f0a;
-	Common::U32String metapuzzleSecretCodeCipher; // var_str_1f0c
+	Common::U32String _metapuzzleSecretCodeCipher; // var_str_1f0c
 
-	int16 metapuzzleSecretCodeCount; // var_i16_200c
+	int16 _metapuzzleSecretCodeCount; // var_i16_200c
 	int16 var_i16_200e;
 	int16 var_i16_2010;
 	int16 var_i16_2012;
@@ -685,7 +683,7 @@ private:
 	int16 var_i16_221e;
 	Common::U32String var_str_2222;
 	int16 var_i16_2322;
-	int16 hermitPathStage; // var_i16_2324
+	int16 _hermitPathStage; // var_i16_2324
 	int16 var_i16_2326;
 	int16 var_i16_2328;
 	uint32 var_ptr_232a;
@@ -694,8 +692,7 @@ private:
 
 	int16 var_i16_2330;
 	int16 var_i16_2332;
-	int16 hermitPathStartIndex; // var_i16_2334
-	int16 hermitPathEndIndex; // var_i16_2336
+
 	int16 var_i16_2338;
 	int16 var_i16_233a;
 	int16 var_i16_233e;
@@ -705,50 +702,46 @@ private:
 	int16 var_i16_2342;
 
 	// FIXME: bounds on the following are guessed! need to trace index range
-	int16 pageLineRanges[202]; // arr_i16_0
-	int16 pageLineFace[1301]; // arr_i16_194
-	int16 pageLineBreak[1301]; // arr_i16_bbe
+	int16 _pageLineRanges[202]; // arr_i16_0
+	int16 _pageLineFace[1301]; // arr_i16_194
+	int16 _pageLineBreak[1301]; // arr_i16_bbe
 	int16 arr_i16_15e8[101];
 	int16 arr_i16_16b2[0x100];
-	int16 puzzleType[101]; // arr_i16_18b2
-	int16 puzzleUnlockChapter[101]; // arr_i16_197c
-	int16 pageToChapter[101]; // arr_i16_1a46
-	int16 arr_i16_1b10[0x40];
-	int16 pageVisible[101]; // arr_i16_1b90
-	int16 puzzleCompletionStatus[101]; // arr_i16_1c5a
-	uint16 puzzleFlags[101]; // arr_i16_1d24
-	int16 arr_i16_1dee[202];
+	int16 _puzzleType[101]; // arr_i16_18b2
+	int16 _puzzleUnlockChapter[101]; // arr_i16_197c
+	int16 _pageToChapter[101]; // arr_i16_1a46
+	int16 _puzzleMenuInstructions[0x40]; // arr_i16_1b10
+	int16 _pageVisible[101]; // arr_i16_1b90
+	int16 _puzzleCompletionStatus[101]; // arr_i16_1c5a
+	uint16 _puzzleFlags[101]; // arr_i16_1d24
+	int16 _pageLines[202]; // arr_i16_1dee
 	int16 arr_i16_1eb8[0x29];
 	// used just for death?
 	Common::Rect arr_rect_1eb8;
 	Common::Rect arr_rect_1ec0;
-	Common::Rect arr_rect_1f38[0x200];
-	int16 arr_i16_2f38[0xc00]; // 96x32?
-	int16 arr_i16_3738[0x400];
-	int16 arr_i16_3b38[0xc00]; // 96x32?
+	Common::Rect _screenGrid[0x200]; // arr_rect_1f38
+	int16 arr_i16_2f38[0x400]; // arr_i16_2f38, 96x32?
+	int16 arr_i16_3738[0x200];
+	int16 arr_i16_3b38[0x400]; // 96x32?
 	Common::Rect arr_rect_4338;
 	// general-purpose puzzle buffer
 	int16 arr_i16_4338[0x200];
-	uint16 bitLUT[16]; // arr_i16_4738
+	uint16 _bitLUT[16]; // arr_i16_4738
 	int16 arr_i16_4758[15];
 	Common::Rect arr_rect_4776;
 	int16 arr_i16_47d8[0x100];
 	PicHandle arr_pic_49d8[0x80];
-	int16 sunMapTileID[0x52]; // arr_i16_4bd8
+	int16 _sunMapTileID[0x52]; // arr_i16_4bd8
 	int16 arr_i16_4c7c[0x52];
 	int16 arr_i16_4d20[52];
-	Common::SharedPtr<Cursor> arr_curs_4d88[0x2b]; // 0x44
-	Pattern arr_pat_58f4[0x51];
-	Common::Rect arr_rect_5b7c;
-	Common::Rect arr_rect_5b84;
-	Common::Rect arr_rect_5b8c;
-	Common::Rect arr_rect_5b92;
+	Common::SharedPtr<Cursor> _cursors[0x2b]; // arr_curs_4d88, 0x44
+	Pattern _patterns[0x51]; // arr_pat_58f4
 	int16 arr_i16_5bbc[64];
 	int16 arr_i16_5cbc[64];
 	float arr_bcd_5dbc[8];
 	Handle arr_bytes_5dfc; // used for data buffering
 	BitMap arr_bmp_5dfc; // 22000, close to a screen page
-	BitMap arr_jigsaw_5dfc[128];
+	BitMap _jigsawPieces[128];
 	int16 arr_i16_9894[0xa43];					// inside 5dfc, used for humbug
 	int16 arr_i16_ac1c[0xa43];					// inside 5dfc, used for humbug
 	BitMap arr_bmp_b3ec;
@@ -765,16 +758,16 @@ private:
 							// Also 109dc and 15fcc
 	Common::Rect arr_rect_1910c;
 	Common::Rect arr_rect_19114;
-	PicHandle arr_i32_1912c[0x54];
+	PicHandle _sunMapTilePic[0x54]; // arr_i32_1912c
 	PicHandle arr_i32_192c0[101];
-	PolyHandle arr_poly_192c0[101];
-	int32 puzzleDataOffsets[101]; // arr_i32_19454
-	Common::U32String arr_str_195e8[101]; // 0x20 each
+	PolyHandle _revealPoly[101]; // arr_poly_192c0
+	int32 _puzzleDataOffsets[101]; // arr_i32_19454
+	Common::U32String _puzzleName[101]; // arr_str_195e8, 0x20 each
 
-	Common::U32String arr_str_1a288[101]; // 0x10 each
+	Common::U32String _pageNumberText[101]; // arr_str_1a288, 0x10 each
 
-	Common::U32String arr_str_1a8d8[13]; // 0x66 each
-	Common::Rect arr_rect_1ae06;
+	Common::U32String _modalText[13]; // arr_str_1a8d8, 0x66 each
+	Common::Rect _screenClipRect; // arr_rect_1ae06
 };
 
 }
