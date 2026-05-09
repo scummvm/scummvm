@@ -24,6 +24,7 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sound.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/vocab.h"
 #include "mads/madsv2/dragonsphere/global.h"
@@ -180,7 +181,7 @@ void room_102_daemon() {
 				kernel_synch(KERNEL_SERIES, seq[fx_diary1], KERNEL_ANIM, aa[0]);
 				break;
 			case 10:
-				sound_play(65);  // N_TurnDiaryPage
+				sound_play(N_TurnDiaryPage);
 				break;
 			case 26:
 				text_show(10210);
@@ -225,7 +226,7 @@ void room_102_daemon() {
 		switch (kernel.trigger) {
 		case ROOM_102_DOOR_CLOSES:
 			kernel_seq_delete(seq[fx_door]);
-			sound_play(25);  // N_DoorCloses
+			sound_play(N_DoorCloses);
 			seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 9, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door], 5);
 			kernel_seq_range(seq[fx_door], 1, 4);
@@ -264,7 +265,7 @@ void room_102_parser() {
 			break;
 		case 1:
 			kernel_seq_delete(seq[fx_door]);
-			sound_play(24);  // N_DoorOpens
+			sound_play(N_DoorOpens);
 			seq[fx_door] = kernel_seq_forward(ss[fx_door], false, 9, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door], 5);
 			kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 2);

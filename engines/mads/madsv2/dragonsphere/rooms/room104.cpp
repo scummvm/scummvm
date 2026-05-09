@@ -1536,7 +1536,7 @@ void room_104_parser() {
 				break;
 			case 1:
 				kernel_seq_delete(seq[fx_door]);
-				sound_play(24);  // N_DoorOpens
+				sound_play(N_DoorOpens);
 				seq[fx_door] = kernel_seq_forward(ss[fx_door], false, 6, 0, 0, 1);
 				kernel_seq_depth(seq[fx_door], 14);
 				kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 2);
@@ -1558,7 +1558,7 @@ void room_104_parser() {
 				break;
 			case 5:
 				kernel_seq_delete(seq[fx_door]);
-				sound_play(25);  // N_DoorCloses
+				sound_play(N_DoorCloses);
 				seq[fx_door] = kernel_seq_backward(ss[fx_door], false, 7, 0, 0, 1);
 				kernel_seq_depth(seq[fx_door], 1);
 				kernel_seq_trigger(seq[fx_door], KERNEL_TRIGGER_EXPIRE, 0, 6);
@@ -1624,8 +1624,8 @@ void room_104_parser() {
 					    global[tapestry_status] == TAPESTRY_OPENED2) {
 						text_show(10428);  // text_104_28
 					} else {
-						sound_play(94);    // N_BooksRumble
-						sound_play(67);    // N_WallGrinds
+						sound_play(N_BooksRumble);
+						sound_play(N_WallGrinds);
 						text_show(10427);  // text_104_27
 					}
 				} else {
@@ -1655,8 +1655,8 @@ void room_104_parser() {
 				kernel_seq_trigger(seq[fx_pull_push_books], KERNEL_TRIGGER_EXPIRE, 0, 3);
 				break;
 			case 1:
-				sound_play(94);    // N_BooksRumble
-				sound_play(67);    // N_WallGrinds
+				sound_play(N_BooksRumble);
+				sound_play(N_WallGrinds);
 				kernel_seq_delete(seq[fx_wall_open_close]);
 				seq[fx_wall_open_close] = kernel_seq_backward(ss[fx_wall_open_close], false, 6, 0, 0, 1);
 				kernel_seq_depth(seq[fx_wall_open_close], 8);

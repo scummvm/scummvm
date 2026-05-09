@@ -25,6 +25,7 @@
 #include "mads/madsv2/core/kernel.h"
 #include "mads/madsv2/core/player.h"
 #include "mads/madsv2/core/sound.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
@@ -165,7 +166,7 @@ void room_103_daemon() {
 	switch (kernel.trigger) {
 	case ROOM_103_DOOR_CLOSES:
 		kernel_seq_delete(seq[fx_door_101]);
-		sound_play(25);
+		sound_play(N_DoorCloses);
 		seq[fx_door_101] = kernel_seq_backward(ss[fx_door_101], false, 6, 0, 0, 1);
 		kernel_seq_depth(seq[fx_door_101], 6);
 		kernel_seq_range(seq[fx_door_101], 1, 3);
@@ -182,7 +183,7 @@ void room_103_daemon() {
 
 	case ROOM_103_DOOR_CLOSES + 2:
 		kernel_seq_delete(seq[fx_door_102]);
-		sound_play(25);
+		sound_play(N_DoorCloses);
 		seq[fx_door_102] = kernel_seq_backward(ss[fx_door_102], false, 6, 0, 0, 1);
 		kernel_seq_depth(seq[fx_door_102], 6);
 		kernel_seq_range(seq[fx_door_102], 1, 3);
@@ -224,7 +225,7 @@ void room_103_parser() {
 
 		case 1:
 			kernel_seq_delete(seq[fx_door_101]);
-			sound_play(24);
+			sound_play(N_DoorOpens);
 			seq[fx_door_101] = kernel_seq_forward(ss[fx_door_101], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door_101], 8);
 			kernel_seq_trigger(seq[fx_door_101], KERNEL_TRIGGER_EXPIRE, 0, 2);
@@ -250,7 +251,7 @@ void room_103_parser() {
 
 		case 5:
 			kernel_seq_delete(seq[fx_door_101]);
-			sound_play(25);
+			sound_play(N_DoorCloses);
 			seq[fx_door_101] = kernel_seq_backward(ss[fx_door_101], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door_101], 1);
 			kernel_seq_trigger(seq[fx_door_101], KERNEL_TRIGGER_EXPIRE, 0, 6);
@@ -285,7 +286,7 @@ void room_103_parser() {
 
 		case 1:
 			kernel_seq_delete(seq[fx_door_102]);
-			sound_play(24);
+			sound_play(N_DoorOpens);
 			seq[fx_door_102] = kernel_seq_forward(ss[fx_door_102], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door_102], 8);
 			kernel_seq_trigger(seq[fx_door_102], KERNEL_TRIGGER_EXPIRE, 0, 2);
@@ -311,7 +312,7 @@ void room_103_parser() {
 
 		case 5:
 			kernel_seq_delete(seq[fx_door_102]);
-			sound_play(25);
+			sound_play(N_DoorCloses);
 			seq[fx_door_102] = kernel_seq_backward(ss[fx_door_102], false, 7, 0, 0, 1);
 			kernel_seq_depth(seq[fx_door_102], 1);
 			kernel_seq_trigger(seq[fx_door_102], KERNEL_TRIGGER_EXPIRE, 0, 6);
