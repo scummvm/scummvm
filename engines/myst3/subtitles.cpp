@@ -490,6 +490,7 @@ void Subtitles::setFrame(int32 frame) {
 	if (!phrase
 		|| (phraseIdx == _phrases.size() - 1 && phrase->string.empty())) {
 		freeTexture();
+		_frame = -1;
 		return;
 	}
 
