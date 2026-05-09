@@ -81,6 +81,9 @@ static void *anim_buffer;
 static bool foundSeries;
 static int imageFlags, imageFlags2, imageFlags3;
 static int imageSpriteId;
+static int largeBufferSize;
+static byte *largeBuffer, *largeBufferEnd;
+static byte *largeBuffer1, *largeBuffer2;
 
 /**
  * Initializes animview global variables
@@ -116,6 +119,9 @@ static void init_globals() {
 	foundSeries = false;
 	imageFlags = imageFlags2 = imageFlags3 = 0;
 	imageSpriteId = 0;
+	largeBufferSize = 0;
+	largeBuffer = largeBufferEnd = nullptr;
+	largeBuffer1 = largeBuffer2 = nullptr;
 }
 
 /**
@@ -390,21 +396,28 @@ static void animate() {
 			}
 		}
 
-		foundSeries = false;
-		imageIndex = -1;
-		for (ctr = 0; ctr < current_anim->num_images; ++ctr) {
-			int seriesId = current_anim->series_id[packIndex];
-			if (current_anim->image[ctr].series_id == seriesId) {
-				imageIndex = ctr;
-				foundSeries = true;
-			}
-		}
+		if (current_anim->misc_any_packed) {
+			largeBufferSize = 0xffff;
+			largeBuffer = (byte *)mem_get(largeBufferSize);
+			largeBufferEnd = largeBuffer + largeBufferSize - 1;
+			largeBuffer1 = largeBuffer2 = largeBuffer;
 
-		if (foundSeries) {
-			Image &img = current_anim->image[imageIndex];
-			imageFlags = imageFlags2 = img.flags;
-			imageFlags3 = imageFlags - 1;
-			imageSpriteId = img.sprite_id;
+			foundSeries = false;
+			imageIndex = -1;
+			for (ctr = 0; ctr < current_anim->num_images; ++ctr) {
+				int seriesId = current_anim->series_id[packIndex];
+				if (current_anim->image[ctr].series_id == seriesId) {
+					imageIndex = ctr;
+					foundSeries = true;
+				}
+			}
+
+			if (foundSeries) {
+				Image &img = current_anim->image[imageIndex];
+				imageFlags = imageFlags2 = img.flags;
+				imageFlags3 = imageFlags - 1;
+				imageSpriteId = img.sprite_id;
+			}
 		}
 
 		// Run the animation
