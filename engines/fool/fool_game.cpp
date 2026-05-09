@@ -2659,7 +2659,7 @@ void FoolGame::sub_128_5fb4() {
 }
 
 void FoolGame::sub_128_5fea() {
-	if (this->var_i16_37a == 1) {
+	if (this->screenOversized) {
 		g_toolbox->SetPort(this->var_i32_8);
 		g_toolbox->PenNormal();
 		this->fillRect(0x14, 0, this->var_i16_5c, this->var_i16_56-3, 2);
@@ -2794,9 +2794,9 @@ void FoolGame::sub_129_068() {
 	this->var_i16_58 = (this->var_i16_5c - SCREEN_HEIGHT)/2;
 	// 129:0138
 	if ((this->var_i16_56 == 0) && (this->var_i16_58 == 0)) {
-		this->var_i16_37a = 0;
+		this->screenOversized = false;
 	} else {
-		this->var_i16_37a = 1;
+		this->screenOversized = true;
 	}
 	// 129:0166
 	g_zbasic->window(1, g_zbasic->str(112), 0, 0, this->var_i16_5a, this->var_i16_5c, kWindowDialogOneLine);
@@ -3294,9 +3294,10 @@ void FoolGame::sub_144_004() {
 	g_toolbox->ReleaseResource(var_pic_7c2);
 	var_i32_7c8 = g_zbasic->mem(-1);
 	stateFlags = kStateQuit;
-	if (var_i16_37a == 0) {
+	if (!screenOversized) {
 		g_toolbox->SetPort(var_i32_8);
 		fillRect(0, 0, 0x14, SCREEN_WIDTH, 0x47);
+		g_toolbox->SetPort(var_i32_0);
 	} else {
 		// 144:0046
 		sub_128_1ef8();
@@ -3305,7 +3306,7 @@ void FoolGame::sub_144_004() {
 	autoSaveGame(); // was: saveGame
 	g_toolbox->InitCursor();
 	sub_128_4da(0);
-	if (var_i16_37a == 0) {
+	if (!screenOversized) {
 		var_i16_42 = 0;
 		var_i16_44 = 0xab;
 	} else {
@@ -3329,10 +3330,79 @@ void FoolGame::sub_144_004() {
 	}
 	// 144:0170
 	sub_128_3da(0x3c);
-	var_i16_68a = 1;
-	var_i32_692 = g_toolbox->TickCount();
-	//arr_i16_4758[0], 0x100 - var_i16_68a, var_i16_44, var_i16_68a*
-	warning("STUB: %s", __func__);
+	Common::Rect temp;
+	for (int16 i = 1; i <= 0x100; i++) {
+		var_i32_692 = g_toolbox->TickCount();
+
+		g_toolbox->SetRect(
+			temp,
+			0x100 - i,
+			var_i16_44 - (int16)(i*0.7f),
+			0x100 + i,
+			var_i16_44 + (int16)(i*0.7f)
+		);
+		g_toolbox->InvertRect(temp);
+		sub_128_406(1);
+	}
+	// 144:0238
+	for (int16 i = 0; i <= 0xe; i++) {
+		var_i32_692 = g_toolbox->TickCount();
+		g_toolbox->InvertRect(temp);
+		sub_128_406(1);
+	}
+	// 144:0268
+	arr_str_1a8d8[0] = g_zbasic->str(368); // what's this?
+	arr_str_1a8d8[1] = g_zbasic->str(369); // more evil treachery afoot?
+	arr_str_1a8d8[2] = g_zbasic->str(370); // has not the fool has gained the gift of wisdom?
+	arr_str_1a8d8[3] = g_zbasic->str(371); // -blank-
+	arr_str_1a8d8[4] = g_zbasic->str(372); // locate and double-click the show finale file
+	arr_str_1a8d8[5] = g_zbasic->str(373); // this will oepn the 'prologue - finale' once again
+	arr_str_1a8d8[6] = g_zbasic->str(374); // but now, you'll see the finale
+	arr_str_1a8d8[7] = g_zbasic->str(375); // -blank-
+	arr_str_1a8d8[8] = g_zbasic->str(376); // congratulations!
+	arr_str_1a8d8[9] = g_zbasic->str(377); // -blank-
+	arr_str_1a8d8[10] = g_zbasic->str(378); // quit
+	sub_128_dfe(0xfa, 9, 1, 0);
+	if (screenOversized == 0) {
+		g_toolbox->ClearMenuBar();
+		g_toolbox->DrawMenuBar();
+	}
+	sub_128_1f1e();
+	sub_128_4da(1);
+	// 144:03e2
+	//if (saveFileName.empty()) {
+	//	sub_144_5ca();
+	//}
+	//sub_144_406();
+}
+
+void FoolGame::sub_144_406() {
+	// write the finale file to the disk.
+	// we don't use this.
+	// 144:0406
+	while (true) {
+		var_str_384 = g_zbasic->str(384); // and now it is time to show the finale for the fool's errand
+		for (int16 i = 1; i <= 0xa; i++) {
+			var_str_384 += g_zbasic->chr(i);
+		}
+		var_i16_1372 = var_str_384.size();
+		g_zbasic->defOpen(g_zbasic->str(381)); // SHOWsF87
+		var_i16_7e6 = 0;
+		g_zbasic->openW(2, g_zbasic->str(382), 0x200, var_i16_9ec); // Show Finale
+		if (var_i16_7e6 == 0) {
+			g_zbasic->writeFileStr(2, var_str_384);
+		}
+		if (var_i16_7e6 == 0) {
+			g_zbasic->close(2);
+		}
+		if (var_i16_7e6 == 0)
+			return;
+	}
+	// 144:05ca
+}
+
+void FoolGame::sub_144_5ca() {
+	// 144:05ca
 }
 
 };

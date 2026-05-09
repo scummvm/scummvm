@@ -120,7 +120,7 @@ void Toolbox::_copyBits(const BitMap &srcBits, const BitMap &mask, BitMap &dstBi
 			clipDstRect.right += (clipSrcRect.right - srcRect.right)*sx;
 			clipDstRect.bottom += (clipSrcRect.bottom - srcRect.bottom)*sy;
 		}
-		subsrc->scale(clipDstRect.width(), clipDstRect.height());
+		subsrc = BitMap(subsrc->scale(clipDstRect.width(), clipDstRect.height()));
 	} else {
 		// source and destination are the same size, no scaling
 		if (clipSrcRect != srcRect) {

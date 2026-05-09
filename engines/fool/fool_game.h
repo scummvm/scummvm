@@ -410,6 +410,9 @@ public:
 	void straightPathSuccess(); // sub_143_8b0
 
 	void sub_144_004();
+	void sub_144_406();
+	void sub_144_5ca();
+
 
 private:
 	bool _quit = false;
@@ -439,7 +442,7 @@ private:
 	Common::U32String var_str_272;
 	RGBColor var_i16_372;
 	int16 soundEnabled; // var_i16_378
-	int16 var_i16_37a;
+	bool screenOversized; // var_i16_37a
 	uint32 var_i32_37c;
 	Common::U32String var_str_384;
 	int16 var_i16_484;
@@ -770,7 +773,7 @@ private:
 
 	Common::U32String arr_str_1a288[101]; // 0x10 each
 
-	Common::U32String arr_str_1a8d8[7]; // 0x66 each
+	Common::U32String arr_str_1a8d8[13]; // 0x66 each
 	Common::Rect arr_rect_1ae06;
 };
 
