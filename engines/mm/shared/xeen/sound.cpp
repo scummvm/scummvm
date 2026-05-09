@@ -293,7 +293,6 @@ void Sound::playSong(Common::SeekableReadStream &stream) {
 void Sound::playSong(const Common::Path &name, int param) {
 	if (isMusicPlaying() && name == _currentMusic)
 		return;
-	_currentMusic = name;
 
 	Common::File mf;
 	if (mf.open(name)) {
@@ -307,6 +306,8 @@ void Sound::playSong(const Common::Path &name, int param) {
 		File f(name);
 		playSong(f);
 	}
+
+	_currentMusic = name;
 }
 
 void Sound::setMusicOn(bool isOn) {

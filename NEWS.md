@@ -30,6 +30,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Reworked keymapper for MM1.
    - Fixed MM1 Enhanced allowing trading more than the character owned.
    - Fixed MM1 Enhanced allowing free temple healing where it shouldn't.
+   - MM1 Enhanced most recently played music was restarting after opening and closing the GMM.
 
  SLUDGE:
    - Added two more games to detection, "Sam and Max Flintlocked" and
