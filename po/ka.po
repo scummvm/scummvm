@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2026-05-08 05:23+0000\n"
-"PO-Revision-Date: 2026-03-27 06:22+0000\n"
+"PO-Revision-Date: 2026-05-09 12:22+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -26,10 +26,9 @@ msgstr "Apple Macintosh-ის ხმა"
 
 #. I18N: built with <compiler>
 #: gui/about.cpp:119
-#, fuzzy, c-format
-#| msgid "(built on %s with %s)"
+#, c-format
 msgid "(built with %s)"
-msgstr "(აგებულია %s-ზე %s-ით)"
+msgstr "(აგებულია %s-ით)"
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:122
@@ -1934,8 +1933,6 @@ msgid "MIDI gain:"
 msgstr "MIDI-ის გაძლიერება:"
 
 #: gui/options.cpp:1866
-#, fuzzy
-#| msgid "MT-32 Device:"
 msgid "MT-32 device:"
 msgstr "MT-32 მოწყობილობა:"
 
@@ -4602,7 +4599,7 @@ msgstr "მარცხ"
 #: backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "R"
-msgstr "წითელი"
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:63
 msgid "Circle Pad X"
@@ -7013,10 +7010,8 @@ msgid "Quit game"
 msgstr "თამაშიდან გასვლა"
 
 #: engines/bolt/metaengine.cpp:34
-#, fuzzy
-#| msgid "Enable high resolution"
 msgid "Extended game resolution"
-msgstr "მაღალი გაფართოების ჩართვა"
+msgstr "გაფართოებული თამაშის გარჩევადობა"
 
 #: engines/bolt/metaengine.cpp:35
 msgid ""
@@ -7429,10 +7424,8 @@ msgid "Rotate right"
 msgstr "მარჯვნივ შებრუნება"
 
 #: engines/colony/metaengine.cpp:147
-#, fuzzy
-#| msgid "Look down"
 msgid "Look behind"
-msgstr "დახედვა"
+msgstr "უკან გახედვა"
 
 #: engines/colony/metaengine.cpp:152
 #: engines/freescape/games/castle/castle.cpp:515
@@ -7441,28 +7434,20 @@ msgid "Face forward"
 msgstr "სახე წინ"
 
 #: engines/colony/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle mouselook"
-msgstr "დადუმების გადართვა"
+msgstr "თაგუნას გარეგნობს გადართვა"
 
 #: engines/colony/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle dashboard"
-msgstr "ხმის გადართვა"
+msgstr "სამუშაო დაფის გადართვა"
 
 #: engines/colony/metaengine.cpp:168
-#, fuzzy
-#| msgid "Toggle frame by frame"
 msgid "Toggle wireframe"
-msgstr "კადრკადრ ჩვენების გადართვა"
+msgstr "კარკასის გადართვა"
 
 #: engines/colony/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu / Skip"
 msgid "Menu / Skip intro"
-msgstr "მენიუ / გამოტოვება"
+msgstr "მენიუ / ინტროს გამოტოვება"
 
 #: engines/colony/metaengine.cpp:184 engines/ultima/ultima8/metaengine.cpp:89
 msgid "Fire weapon"
@@ -7693,10 +7678,8 @@ msgid "Brighten the graphics to simulate a Macintosh monitor"
 msgstr ""
 
 #: engines/director/metaengine.cpp:81
-#, fuzzy
-#| msgid "Force true color"
 msgid "Force true color (32bpp) mode"
-msgstr "ნამდვილი ფერების ჩართვა"
+msgstr "ნამდვილი ფერების (32bpp) რეჟიმის ნაძალადევი ჩართვა"
 
 #: engines/director/metaengine.cpp:82
 msgid ""
@@ -7750,7 +7733,7 @@ msgstr "უკან გადასვლა"
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
 msgid "Wake up champion"
-msgstr ""
+msgstr "გაღვიძე, ჩემპიონო"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -8471,73 +8454,67 @@ msgstr "სურათის ფანჯარა გადაირთო\n"
 
 #: engines/glk/dialogs.cpp:141
 msgid "white"
-msgstr ""
+msgstr "თეთრი"
 
 #: engines/glk/dialogs.cpp:142
 msgid "green"
-msgstr ""
+msgstr "მწვანე"
 
 #: engines/glk/dialogs.cpp:143
-#, fuzzy
-#| msgid "Proceed"
 msgid "red"
-msgstr "გაგრძელება"
+msgstr "წითელი"
 
 #: engines/glk/dialogs.cpp:144
 msgid "blue"
-msgstr ""
+msgstr "ლურჯი"
 
 #: engines/glk/dialogs.cpp:145
 msgid "black"
-msgstr ""
+msgstr "შავი"
 
 #: engines/glk/dialogs.cpp:146
 msgid "grey"
-msgstr ""
+msgstr "ნაცრისფერი"
 
 #: engines/glk/dialogs.cpp:195
 msgid "Monospace Regular"
-msgstr ""
+msgstr "მონოსივრცული ჩვეულებრივი"
 
 #: engines/glk/dialogs.cpp:196
 msgid "Monospace Bold"
-msgstr ""
+msgstr "მონოსივრცული სქელი"
 
 #: engines/glk/dialogs.cpp:197
 msgid "Monospace Italic"
-msgstr ""
+msgstr "მონოსივრცული კურსივი"
 
 #: engines/glk/dialogs.cpp:198
 msgid "Monospace Bold Italic"
-msgstr ""
+msgstr "მონოსივრცითი სქელი კურსივი"
 
 #: engines/glk/dialogs.cpp:199
 msgid "Proportional Regular"
-msgstr ""
+msgstr "პროპორციული ჩვეულებრივი"
 
 #: engines/glk/dialogs.cpp:200
 msgid "Proportional Bold"
-msgstr ""
+msgstr "პროპორციული სქელი"
 
 #: engines/glk/dialogs.cpp:201
 msgid "Proportional Italic"
-msgstr ""
+msgstr "პროპორციული კურსივი"
 
 #: engines/glk/dialogs.cpp:202
 msgid "Proportional Bold Italic"
-msgstr ""
+msgstr "პროპორციული სქელი კურსივი"
 
 #: engines/glk/dialogs.cpp:210
-#, fuzzy
-#| msgid "SoundFont:"
 msgid "Font"
-msgstr "ხმის ფონტი:"
+msgstr "ფონტი"
 
 #: engines/glk/dialogs.cpp:212 engines/glk/dialogs.cpp:222
-#, fuzzy
-#| msgid "ProText"
 msgid "Text:"
-msgstr "ProText"
+msgstr "ტექსტი:"
 
 #: engines/glk/dialogs.cpp:212
 msgid "Font for the text"
@@ -8545,7 +8522,7 @@ msgstr ""
 
 #: engines/glk/dialogs.cpp:216 engines/glk/dialogs.cpp:227
 msgid "Grid:"
-msgstr ""
+msgstr "ბადე:"
 
 #: engines/glk/dialogs.cpp:216
 msgid "Font for drawn graphics like maps, diagrams, puzzles, etc"
@@ -8553,95 +8530,73 @@ msgstr ""
 
 #: engines/glk/dialogs.cpp:220
 msgid "Color"
-msgstr ""
+msgstr "ფერი"
 
 #: engines/glk/dialogs.cpp:222
-#, fuzzy
-#| msgid "Move focus to interactive object"
 msgid "Color of the interactive text"
-msgstr "ფოკუსის გადატანა ინტერაქტიულ ობიექტზე"
+msgstr "ფერი ინტერაქტიური ტექსტისთვის"
 
 #: engines/glk/dialogs.cpp:225 engines/glk/dialogs.cpp:230
 #: engines/glk/dialogs.cpp:236 engines/glk/dialogs.cpp:242
 #: engines/glk/dialogs.cpp:254 engines/glk/dialogs.cpp:260
 #: engines/glk/dialogs.cpp:269
 msgid "<custom>"
-msgstr ""
+msgstr "<მორგებული>"
 
 #: engines/glk/dialogs.cpp:227
 msgid "Color for drawn graphics such as maps, diagrams, puzzles, etc"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:232
-#, fuzzy
-#| msgid "Window"
 msgid "Window:"
-msgstr "ფანჯარა"
+msgstr "ფანჯარა:"
 
 #: engines/glk/dialogs.cpp:232
-#, fuzzy
-#| msgid "Toggle windows mode"
 msgid "Color of the window (background)"
-msgstr "ფანჯრების რეჟიმის გადართვა"
+msgstr "ფანჯრის ფერი (ფონი)"
 
 #: engines/glk/dialogs.cpp:238
-#, fuzzy
-#| msgid "New order"
 msgid "Border:"
-msgstr "ახალი ბრძანება"
+msgstr "საზღვარი:"
 
 #: engines/glk/dialogs.cpp:238
-#, fuzzy
-#| msgid "Toggle windows mode"
 msgid "Color of the window border"
-msgstr "ფანჯრების რეჟიმის გადართვა"
+msgstr "ფანჯრის საზღვრის ფერი"
 
 #. I18N: This is a section for text windows border settings
 #: engines/glk/dialogs.cpp:245
-#, fuzzy
-#| msgid "New order"
 msgid "Border"
-msgstr "ახალი ბრძანება"
+msgstr "საზღვარი"
 
 #: engines/glk/dialogs.cpp:247 engines/glk/dialogs.cpp:341
 #: engines/glk/dialogs.cpp:345 engines/glk/dialogs.cpp:349
-#, fuzzy
-#| msgid "Horizontal underscan:"
 msgid "Horizontal:"
-msgstr "ჰორიზონტალური underscan:"
+msgstr "ჰორიზონტალური:"
 
 #: engines/glk/dialogs.cpp:247
-#, fuzzy
-#| msgid "Horizontal underscan:"
 msgid "Horizontal border size"
-msgstr "ჰორიზონტალური underscan:"
+msgstr "ჰორიზონტალური საზღვრის ზომა"
 
 #: engines/glk/dialogs.cpp:248 engines/glk/dialogs.cpp:342
 #: engines/glk/dialogs.cpp:346 engines/glk/dialogs.cpp:350
-#, fuzzy
-#| msgid "Vertical underscan:"
 msgid "Vertical:"
-msgstr "ვერტიკალური underscan:"
+msgstr "ვერტიკალური:"
 
 #: engines/glk/dialogs.cpp:248
-#, fuzzy
-#| msgid "Vertical underscan:"
 msgid "Vertical border size"
-msgstr "ვერტიკალური underscan:"
+msgstr "ვერტიკალური საზღვრის ზომა"
 
 #: engines/glk/dialogs.cpp:250
 msgid "Caret:"
-msgstr ""
+msgstr "კარეტა:"
 
 #: engines/glk/dialogs.cpp:250
-#, fuzzy
-#| msgid "Teleport to cursor"
 msgid "Color of the cursor"
-msgstr "ტელეპორტი კურსორთან"
+msgstr "კურსორის ზომა"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Link:"
-msgstr ""
+msgstr "ბმული:"
 
 #: engines/glk/dialogs.cpp:256
 msgid "Color for URLs if they appear in-game"
@@ -8650,43 +8605,35 @@ msgstr ""
 #. I18N: "More..." is a prompt in text windows, which appears when the text exceeds the window size
 #: engines/glk/dialogs.cpp:264
 msgid "More:"
-msgstr ""
+msgstr "მეტი:"
 
 #: engines/glk/dialogs.cpp:265
 msgid "Color for the \"More...\" markers in the text"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:272
-#, fuzzy
-#| msgid "Graphics mode:"
 msgid "Typography"
-msgstr "გრაფიკის რეჟიმი:"
+msgstr "ტიპოგრაფია"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Link style:"
-msgstr ""
+msgstr "ბმულის სტილი:"
 
 #: engines/glk/dialogs.cpp:274
 msgid "Style for URLs if they appear in-game"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:279
-#, fuzzy
-#| msgid "Change shadow type"
 msgid "Caret shape:"
-msgstr "ჩრდილის ტიპის შეცვლა"
+msgstr "კარეტის მოხაზულობა:"
 
 #: engines/glk/dialogs.cpp:279
-#, fuzzy
-#| msgid "Show mouse cursor"
 msgid "Shape of the cursor"
-msgstr "თაგუნას კურსორის ჩვენება"
+msgstr "კურსორის მოხაზულობა"
 
 #: engines/glk/dialogs.cpp:286
-#, fuzzy
-#| msgid "Quit prompt"
 msgid "More prompt:"
-msgstr "გასვლის კითხვა"
+msgstr "მეტი კითხვა:"
 
 #: engines/glk/dialogs.cpp:286
 msgid ""
@@ -8695,20 +8642,16 @@ msgid ""
 msgstr ""
 
 #: engines/glk/dialogs.cpp:288
-#, fuzzy
-#| msgid "Hide hints"
 msgid "Style hints:"
-msgstr "მინიშნებების დამალვა"
+msgstr "სტილის მინიშნებები:"
 
 #: engines/glk/dialogs.cpp:288
 msgid "Let the game suggest text styling options"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:289
-#, fuzzy
-#| msgid "Left click"
 msgid "Safe clicks:"
-msgstr "მარცხენა წკაპი"
+msgstr "უსაფრთხო წკაპები:"
 
 #: engines/glk/dialogs.cpp:289
 msgid "Safely apply clicks while input is pending"
@@ -8716,37 +8659,33 @@ msgstr ""
 
 #. I18N: This is setting for number of text columns
 #: engines/glk/dialogs.cpp:292
-#, fuzzy
-#| msgid "Volume controls"
 msgid "Column count:"
-msgstr "ხმის კონტროლები"
+msgstr "სვეტების რაოდენობა:"
 
 #: engines/glk/dialogs.cpp:292
 msgid "Number of columns"
-msgstr ""
+msgstr "სვეტების რაოდენობა"
 
 #. I18N: This is setting for number of text rows
 #: engines/glk/dialogs.cpp:294
 msgid "Rows count:"
-msgstr ""
+msgstr "მწკრივების რაოდენობა:"
 
 #: engines/glk/dialogs.cpp:294
 msgid "Number of rows"
-msgstr ""
+msgstr "მწკრივების რაოდენობა"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Lock columns:"
-msgstr ""
+msgstr "სვეტების ჩაკეტვა:"
 
 #: engines/glk/dialogs.cpp:296
 msgid "Check it to manually change the column count"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:297
-#, fuzzy
-#| msgid "Block low"
 msgid "Lock rows:"
-msgstr "დაცვა დაბლა"
+msgstr "მწკრივების ჩაკეტვა:"
 
 #: engines/glk/dialogs.cpp:297
 msgid "Check it to manually change the row count"
@@ -8755,122 +8694,106 @@ msgstr ""
 #. I18N: This is a setting for enabling text justification
 #: engines/glk/dialogs.cpp:301
 msgid "Justify:"
-msgstr ""
+msgstr "გასწორება:"
 
 #: engines/glk/dialogs.cpp:302
-#, fuzzy
-#| msgid "Enable short transitions"
 msgid "Enable text justification"
-msgstr "მოკლე გადასვლების ჩართვა"
+msgstr "ტექსტის გასწორების ჩართვა"
 
 #. I18N: These is setting for type of text quote symbols
 #: engines/glk/dialogs.cpp:305
-#, fuzzy
-#| msgid "Graphics mode:"
 msgid "Typographic quotes:"
-msgstr "გრაფიკის რეჟიმი:"
+msgstr "ტიპოგრაფიული ციტატები:"
 
 #: engines/glk/dialogs.cpp:306
-#, fuzzy
-#| msgid "Color graphics"
 msgid "Choose typographic quotes"
-msgstr "ფერადი გრაფიკა"
+msgstr "აირჩიეთ ტიპოგრაფიული ციტატები"
 
 #: engines/glk/dialogs.cpp:307
 msgctxt "quotes"
 msgid "Off"
-msgstr ""
+msgstr "გამორთ"
 
 #. I18N: This is a setting for using normal typographic quotes, which are like in most books, with the opening quote higher than the closing one
 #: engines/glk/dialogs.cpp:309
-#, fuzzy
-#| msgid "Normal"
 msgctxt "quotes"
 msgid "Normal"
-msgstr "ნორმალი"
+msgstr "ნორმალური"
 
 #. I18N: This is a setting for using "rabid" quotes, which are like normal typographic quotes but with the opening quote lower than the closing one, like in some comic books
 #: engines/glk/dialogs.cpp:311
 msgctxt "quotes"
 msgid "Rabid"
-msgstr ""
+msgstr "განსაკუთრებული"
 
 #. I18N: This is a setting for forcing all input to be in uppercase
 #: engines/glk/dialogs.cpp:314
 msgid "Caps:"
-msgstr ""
+msgstr "დიდი ასოები:"
 
 #: engines/glk/dialogs.cpp:314
 msgid "Force uppercase input"
-msgstr ""
+msgstr "ნაძალადევი შეყვანა დიდი ასოებით"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:317
 msgid "Dashes:"
-msgstr ""
+msgstr "ტირეები:"
 
 #. I18N: This is a setting for type of text dash symbols
 #: engines/glk/dialogs.cpp:319
 msgid "Types of dashes"
-msgstr ""
+msgstr "ტირეს ტიპები"
 
 #: engines/glk/dialogs.cpp:320 engines/glk/dialogs.cpp:332
 msgid "Off"
-msgstr ""
+msgstr "გამორთ"
 
 #. I18N: This is a setting for using normal typographic dashes, which are like in most books, with the em dash being the longest and the en dash being half of it
 #: engines/glk/dialogs.cpp:322
 msgid "Em dashes"
-msgstr ""
+msgstr "M-ტირე"
 
 #. I18N: This is a setting for using "en+em" dashes, which are like normal typographic dashes but with the en dash being the same length as the em dash, like in some comic books
 #: engines/glk/dialogs.cpp:324
 msgid "En+Em dashes"
-msgstr ""
+msgstr "N+M ტირეები"
 
 #: engines/glk/dialogs.cpp:326
-#, fuzzy
-#| msgid "Preferences"
 msgid "User experience"
-msgstr "მორგება"
+msgstr "მომხმარებლის გამოცდილება"
 
 #. I18N: This is a setting for type of spaces in the text
 #: engines/glk/dialogs.cpp:329
-#, fuzzy
-#| msgid "Space"
 msgid "Spaces:"
-msgstr "სივრცე"
+msgstr "სივრცეები:"
 
 #. I18N: This is a setting for type of spaces in the text
 #: engines/glk/dialogs.cpp:331
 msgid "Types of spaces"
-msgstr ""
+msgstr "ჰარეს ტიპები"
 
 #. I18N: This is a setting for compressing double spaces into single ones in text
 #: engines/glk/dialogs.cpp:334
 msgid "Compress double spaces"
-msgstr ""
+msgstr "ორმაგი ჰარეების შეკუმშვა"
 
 #. I18N: This is a setting for expanding single spaces into double ones in text
 #: engines/glk/dialogs.cpp:336
 msgid "Expand single spaces"
-msgstr ""
+msgstr "ერთმაგი ჰარეს გაფართოება"
 
 #: engines/glk/dialogs.cpp:338
-#, fuzzy
-#| msgid "Graphics"
 msgid "Graphics:"
-msgstr "გრაფიკა"
+msgstr "გრაფიკა:"
 
 #: engines/glk/dialogs.cpp:338
 msgid "Turn graphics on/off"
-msgstr ""
+msgstr "გრაფიკის ჩართ/გამორთ"
 
 #: engines/glk/dialogs.cpp:340
-#, fuzzy
-#| msgid "Window"
 msgid "Window margin"
-msgstr "ფანჯარა"
+msgstr "ფანჯრის მინდორი"
 
 #: engines/glk/dialogs.cpp:341
 msgid "Horizontal margin for window"
@@ -8881,10 +8804,8 @@ msgid "Vertical margin for window"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:344
-#, fuzzy
-#| msgid "Window"
 msgid "Window padding"
-msgstr "ფანჯარა"
+msgstr "ფანჯრის შევსება"
 
 #: engines/glk/dialogs.cpp:345
 msgid "Horizontal padding for window"
@@ -8895,10 +8816,8 @@ msgid "Vertical padding for window"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:348
-#, fuzzy
-#| msgid "Next action"
 msgid "Text margin"
-msgstr "შემდეგი ქმედება"
+msgstr "ტექსტის მინდორი"
 
 #: engines/glk/dialogs.cpp:349
 msgid "Horizontal margin for text"
@@ -8911,7 +8830,7 @@ msgstr ""
 #. I18N: This is a setting for leading, which is the vertical distance between text rows
 #: engines/glk/dialogs.cpp:353
 msgid "Leading:"
-msgstr ""
+msgstr "მწკრივთაშორისი დაშორება:"
 
 #: engines/glk/dialogs.cpp:354
 msgid "Vertical distance between text rows. Valid inputs - 12, 16, 22 etc."
@@ -8920,7 +8839,7 @@ msgstr ""
 #. I18N: This is a setting for baseline, which is the invisible horizontal line on which text sits
 #: engines/glk/dialogs.cpp:356
 msgid "Baseline:"
-msgstr ""
+msgstr "საბაზისო ხაზი:"
 
 #: engines/glk/dialogs.cpp:357
 msgid ""
@@ -8931,7 +8850,7 @@ msgstr ""
 #. I18N: Font size scaling for the monospace text font
 #: engines/glk/dialogs.cpp:360
 msgid "Monosize:"
-msgstr ""
+msgstr "მონოზომა:"
 
 #: engines/glk/dialogs.cpp:361
 msgid "Font size scaling for the monospace text font"
@@ -8940,7 +8859,7 @@ msgstr ""
 #. I18N: Font size scaling for the proportional text font
 #: engines/glk/dialogs.cpp:363
 msgid "Propsize:"
-msgstr ""
+msgstr "პროპზომა:"
 
 #: engines/glk/dialogs.cpp:364
 msgid "Font size scaling for the proportional text font"
@@ -8949,22 +8868,20 @@ msgstr ""
 #. I18N: This is a section for settings related to the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:367
 msgid "More"
-msgstr ""
+msgstr "მეტი"
 
 #. I18N: This is a setting for alignment of the "More..." prompt in text windows
 #: engines/glk/dialogs.cpp:369
 msgid "Align:"
-msgstr ""
+msgstr "სწორება:"
 
 #: engines/glk/dialogs.cpp:370
 msgid "Alignment of the \"More...\" marker on the window"
 msgstr ""
 
 #: engines/glk/dialogs.cpp:375
-#, fuzzy
-#| msgid "SoundFont:"
 msgid "Font:"
-msgstr "ხმის ფონტი:"
+msgstr "ფონტი:"
 
 #: engines/glk/dialogs.cpp:375
 msgid "Font for the \"More...\" marker"
@@ -9520,7 +9437,7 @@ msgstr "ტერიტორიის თავიდადნ დაწყე�
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "ახალი მისიის დაწყება"
 
 #: engines/hypno/metaengine.cpp:313
 msgid "Pause keymappings"
@@ -10179,10 +10096,8 @@ msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr ""
 
 #: engines/mm/metaengine.cpp:183
-#, fuzzy
-#| msgid "Might and Magic 1"
 msgid "Might and Magic"
-msgstr "Might and Magic 1"
+msgstr "Might and Magic"
 
 #: engines/mm/mm1/metaengine.cpp:59
 msgid "View party member 1"
@@ -10293,10 +10208,8 @@ msgid "Might and Magic 1 - Minimal Keys"
 msgstr "Might and Magic 1 - მინიმალური ღილაკები"
 
 #: engines/mm/mm1/metaengine.cpp:154
-#, fuzzy
-#| msgid "Might and Magic 1 - Menus"
 msgid "Might and Magic 1 - Main"
-msgstr "Might and Magic 1 - მენიუები"
+msgstr "Might and Magic 1 - მთავარი"
 
 #: engines/mm/mm1/metaengine.cpp:155
 msgid "Might and Magic 1 - Party"
@@ -10417,36 +10330,28 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/dialogs.cpp:364
-#, fuzzy
-#| msgid "Disabled"
 msgctxt "riven-transition"
 msgid "Disabled"
 msgstr "გამორთულია"
 
 #: engines/mohawk/dialogs.cpp:365
-#, fuzzy
-#| msgid "Fastest"
 msgctxt "riven-transition"
 msgid "Fastest"
 msgstr "უსწრაფესი"
 
 #: engines/mohawk/dialogs.cpp:366
-#, fuzzy
-#| msgid "Normal"
 msgctxt "riven-transition"
 msgid "Normal"
-msgstr "ნორმალი"
+msgstr "ნორმალური"
 
 #: engines/mohawk/dialogs.cpp:367
-#, fuzzy
-#| msgid "Best"
 msgctxt "riven-transition"
 msgid "Best"
 msgstr "საუკეთესო"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "გასწორდა ხმის დამახინჯება"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
@@ -10942,10 +10847,8 @@ msgid "Toggle Chatty AI"
 msgstr "მოლაყბე AI-ის გადართვა"
 
 #: engines/pelrock/metaengine.cpp:46
-#, fuzzy
-#| msgid "Alternative action"
 msgid "Alternate timing"
-msgstr "ალტერნატიული ქმედება"
+msgstr "ალტერნატიული ათვლა"
 
 #: engines/pelrock/metaengine.cpp:47
 msgid ""
@@ -10954,10 +10857,8 @@ msgid ""
 msgstr ""
 
 #: engines/pelrock/metaengine.cpp:57
-#, fuzzy
-#| msgid "Play intro videos"
 msgid "Play intro"
-msgstr "შესავალი ვიდეოების დაკვრა"
+msgstr "შესავალი ვიდეოს დაკვრა"
 
 #: engines/pelrock/metaengine.cpp:58
 msgid ""
@@ -10966,10 +10867,8 @@ msgid ""
 msgstr ""
 
 #: engines/pelrock/metaengine.cpp:68
-#, fuzzy
-#| msgid "Disable sensors"
 msgid "Disable screensaver"
-msgstr "სენსორების გამორთვა"
+msgstr "ეკრანის შემნახველის გამორთვა"
 
 #: engines/pelrock/metaengine.cpp:69
 msgid "Disable original screensaver slider mini-game every 60 seconds."
@@ -11341,7 +11240,7 @@ msgstr "მაღალი გარჩევადობის გრაფი�
 
 #: engines/sci/detection_options.h:46
 msgid "Enable high resolution graphics/content"
-msgstr ""
+msgstr "მაღალი გარჩევადობის გრაფიკის/შემცველობის ჩართვა"
 
 #: engines/sci/detection_options.h:57
 msgid "Enable black-lined video"
@@ -11353,7 +11252,7 @@ msgstr ""
 
 #: engines/sci/detection_options.h:69
 msgid "Use high-quality video scaling"
-msgstr ""
+msgstr "მაღალი ხარისხის ვიდეოს გადიდების გამოყენება"
 
 #: engines/sci/detection_options.h:70
 msgid "Use linear interpolation when upscaling videos, where possible"
@@ -12925,7 +12824,7 @@ msgstr "ხმების გადართვა"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:726
 msgid "Fade by pixel"
-msgstr ""
+msgstr "მინავლება პიქსელებით"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:732
@@ -14251,7 +14150,7 @@ msgstr "ფარი"
 
 #: engines/ultima/ultima0/metaengine.cpp:55
 msgid "Bow & arrow"
-msgstr ""
+msgstr "მშვილდისარი"
 
 #: engines/ultima/ultima0/metaengine.cpp:56
 msgid "Magic amulet"
