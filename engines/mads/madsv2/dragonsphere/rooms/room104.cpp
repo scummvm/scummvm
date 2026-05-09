@@ -33,7 +33,7 @@
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/vocab.h"
 #include "mads/madsv2/dragonsphere/global.h"
-#include "mads/madsv2/dragonsphere/mads/mads.h"
+#include "mads/madsv2/dragonsphere/mads/dragon_mads.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
 #include "mads/madsv2/dragonsphere/rooms/room104.h"
 
