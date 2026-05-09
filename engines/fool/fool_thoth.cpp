@@ -117,7 +117,7 @@ void FoolGame::highPriestessRun() {
 		this->sub_128_61c2();
 	}
 	// 140:02a2
-	if (this->var_i16_37a == 0) {
+	if (!this->screenOversized) {
 		g_toolbox->SetPort(this->var_i32_8_thoth);
 	} else {
 		this->sub_128_1ef8();
@@ -1273,7 +1273,7 @@ Common::Rect FoolGame::thothRandomVRect() {
 
 void FoolGame::sub_140_3296() {
 	// 140:3296
-	if (this->var_i16_37a == 0) {
+	if (!screenOversized) {
 		g_toolbox->SetPort(this->var_i32_8_thoth);
 	} else {
 		this->sub_128_1ef8();
