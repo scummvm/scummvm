@@ -540,6 +540,14 @@ bool Window::loadNextMovie() {
 	_newMovieStarted = true;
 	_currentPath = Common::firstPathComponents(_nextMovie.movie, g_director->_dirSeparator);
 
+	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
+	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+
+	if (_currentMovie && archivePath == _currentMovie->getArchive()->getPathName()) {
+		debug(0, "Window::loadNextMovie: next movie '%s' is the same as current movie, skipping load", archivePath.toString(Common::Path::kNativeSeparator).c_str());
+		return true;
+	}
+
 	Cast *previousSharedCast = nullptr;
 	if (_currentMovie) {
 		previousSharedCast = _currentMovie->getSharedCast();
