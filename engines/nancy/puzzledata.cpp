@@ -149,6 +149,8 @@ void JournalData::synchronize(Common::Serializer &ser) {
 				entry.push_back(Entry());
 				ser.syncString(entry.back().stringID);
 				ser.syncAsUint16LE(entry.back().mark);
+				if (g_nancy->getGameType() >= kGameTypeNancy9)
+					ser.syncAsUint16LE(entry.back().sceneID);
 			}
 		}
 	} else {
@@ -160,6 +162,8 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			for (uint i = 0; i < numStrings; ++i) {
 				ser.syncString(a._value[i].stringID);
 				ser.syncAsUint16LE(a._value[i].mark);
+				if (g_nancy->getGameType() >= kGameTypeNancy9)
+					ser.syncAsUint16LE(a._value[i].sceneID);
 			}
 		}
 	}
