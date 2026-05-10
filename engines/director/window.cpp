@@ -546,11 +546,13 @@ bool Window::loadNextMovie() {
 		_currentMovie->_sharedCast = nullptr;
 	}
 
-	delete _currentMovie;
-	_currentMovie = nullptr;
+	if (_currentMovie) {
+		debug(0, "@@@@   Unloading movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
 
-	Common::Path archivePath = Common::Path(_currentPath, g_director->_dirSeparator);
-	archivePath.appendInPlace(Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+		delete _currentMovie;
+		_currentMovie = nullptr;
+	}
+
 	Archive *mov = g_director->openArchive(archivePath);
 
 	_nextMovie.movie.clear(); // Clearing it, so we will not attempt to load again
