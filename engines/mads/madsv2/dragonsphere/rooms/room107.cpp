@@ -721,7 +721,18 @@ done:
 }
 
 void room_107_synchronize(Common::Serializer &s) {
-	
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	s.syncAsSint16LE(scratch.temp);
+	s.syncAsSint16LE(scratch.qm_frame);
+	s.syncAsSint16LE(scratch.qm_action);
+	s.syncAsSint16LE(scratch.anim_0_running);
+	s.syncAsSint16LE(scratch.q_frame);
+	s.syncAsSint16LE(scratch.q_action);
+	s.syncAsSint16LE(scratch.q_talk_count);
+	s.syncAsSint16LE(scratch.anim_1_running);
+	s.syncAsSint16LE(scratch.prevent);
 }
 
 void room_107_preload() {

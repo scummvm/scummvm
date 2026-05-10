@@ -57,6 +57,10 @@ enum {
 };
 
 enum {
+	conv005_exit_b_b = 16
+};
+
+enum {
 	conv034_five_b_b = 4,
 	conv034_seven_only = 7,
 	conv034_eight_b_b = 9,
