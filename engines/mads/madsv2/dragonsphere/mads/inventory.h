@@ -31,7 +31,13 @@ namespace Dragonsphere {
 enum {
 	dummy  = 0,
 	goblet = 5,
-	bone   = 6
+	bone   = 6,
+	rare_coin = 38,
+	crystal_flower = 39,
+	ruby_ring = 41,
+	gold_nugget = 42,
+	magic_music_box = 43,
+	emerald = 44
 };
 
 } // namespace Dragonsphere

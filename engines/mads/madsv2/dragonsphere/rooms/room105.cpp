@@ -79,7 +79,7 @@ struct Scratch {
 	int16 goblet_id;        // 0x5A
 };
 
-#define local ((Scratch *)(&game.scratch[0]))
+#define local (&scratch)
 #define ss    local->sprite
 #define seq   local->sequence
 #define aa    local->animation
@@ -165,6 +165,8 @@ struct Scratch {
 #define ROOM_105_TAKE_BONE        83
 #define ROOM_105_TAKE_BONE2       84
 #define ROOM_105_TAKE_BONE3       85
+
+static Scratch scratch;
 
 
 void room_105_init() {
@@ -767,10 +769,21 @@ done:
 	;
 }
 
-void room_105_error() {
-}
-
 void room_105_synchronize(Common::Serializer &s) {
+	for (int16 &v : scratch.sprite)    s.syncAsSint16LE(v);
+	for (int16 &v : scratch.sequence)  s.syncAsSint16LE(v);
+	for (int16 &v : scratch.animation) s.syncAsSint16LE(v);
+	s.syncAsSint16LE(scratch.temp);
+	s.syncAsSint16LE(scratch.maid_frame);
+	s.syncAsSint16LE(scratch.new_action);
+	s.syncAsSint16LE(scratch.last_action);
+	s.syncAsSint16LE(scratch.maid_talking);
+	s.syncAsSint16LE(scratch.situp);
+	s.syncAsSint16LE(scratch.good_number);
+	for (int16 &v : scratch.maid_id)   s.syncAsSint16LE(v);
+	s.syncAsSint16LE(scratch.bucket_id);
+	s.syncAsSint16LE(scratch.bone_id);
+	s.syncAsSint16LE(scratch.goblet_id);
 }
 
 void room_105_preload() {
