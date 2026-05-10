@@ -29,17 +29,22 @@ namespace MADSV2 {
 namespace Dragonsphere {
 
 enum {
-	N_DoorOpens       =  24,
-	N_DoorCloses      =  25,
-	N_TakeObjectSnd   =  26,
-	N_WayStationMus   =  37,
-	N_QueenMother     =  45,
-	N_TurnDiaryPage   =  65,
-	N_WallGrinds      =  67,
-	N_DragonInWater   =  72,
-	N_JumpDownWell    =  93,
-	N_BooksRumble     =  94,
-	N_McMornTipsTable = 100
+	N_DoorOpens          =  24,
+	N_DoorCloses         =  25,
+	N_TakeObjectSnd      =  26,
+	N_PlayerDies         =  27,
+	N_InvokeCrystalBall  =  28,
+	N_SealMus            =  35,
+	N_UnderGroundMus     =  36,
+	N_WayStationMus      =  37,
+	N_QueenMother        =  45,
+	N_TurnDiaryPage      =  65,
+	N_WallGrinds         =  67,
+	N_DragonInWater      =  72,
+	N_OldMachinery       =  74,
+	N_JumpDownWell       =  93,
+	N_BooksRumble        =  94,
+	N_McMornTipsTable    = 100
 };
 
 } // namespace Dragonsphere
