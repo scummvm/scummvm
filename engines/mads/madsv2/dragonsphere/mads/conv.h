@@ -19,5 +19,26 @@
  *
  */
 
-#include "mads/madsv2/dragonsphere/mads/inventory.h"
-#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#ifndef MADS_DRAGONSPHERE_MADS_CONV_H
+#define MADS_DRAGONSPHERE_MADS_CONV_H
+
+#include "common/scummsys.h"
+
+namespace MADS {
+namespace MADSV2 {
+namespace Dragonsphere {
+
+// Conversation node IDs are added here as each conversation is ported.
+// Each conversation gets its own enum block named after its .CON file.
+
+enum {
+	conv002_counter_only = 0,
+	conv002_banter_random = 1,
+	conv002_flirt_rand = 2
+};
+
+} // namespace Dragonsphere
+} // namespace MADSV2
+} // namespace MADS
+
+#endif

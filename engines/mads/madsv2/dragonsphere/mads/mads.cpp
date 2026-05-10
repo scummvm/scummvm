@@ -19,4 +19,7 @@
  *
  */
 
-#include "mads/madsv2/dragonsphere/mads/dragon_mads.h"
+#include "mads/madsv2/dragonsphere/mads/conv.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
