@@ -149,14 +149,16 @@ void JournalData::synchronize(Common::Serializer &ser) {
 				entry.push_back(Entry());
 				ser.syncString(entry.back().stringID);
 				ser.syncAsUint16LE(entry.back().mark);
-				// NOTE: We do not persist sceneID for journal entries in nancy9.
-				// Unfortunately, this field was added but the sync code was not
-				// updated, so it is always lost on save/load. Fortunately for us,
-				// this field is only used in scene 2491, when using the search
-				// functionality in the laptop, and it's always initialized by the
-				// game scripts, so we can use the script values instead in that
-				// scene. Refer to the workaround in ModifyListEntry::execute(),
-				// which fixes these values for that scene.
+				if (g_nancy->getGameType() >= kGameTypeNancy9) {
+					// NOTE: We did not persist sceneID for journal entries in nancy9
+					// in save versions before 4. Fortunately for us, this field is
+					// only used in scene 2491, when using the search functionality
+					// in the laptop, and it's always initialized by the game scripts,
+					// so we can use the script values instead in that scene. Refer to
+					// the workaround in ModifyListEntry::execute(), which fixes these
+					// values for that scene, in older saved games.
+					ser.syncAsUint16LE(entry.back().sceneID, 4);
+				}
 			}
 		}
 	} else {
@@ -168,6 +170,8 @@ void JournalData::synchronize(Common::Serializer &ser) {
 			for (uint i = 0; i < numStrings; ++i) {
 				ser.syncString(a._value[i].stringID);
 				ser.syncAsUint16LE(a._value[i].mark);
+				if (g_nancy->getGameType() >= kGameTypeNancy9)
+					ser.syncAsUint16LE(a._value[i].sceneID);	// added in save version 4
 			}
 		}
 	}
