@@ -30,6 +30,8 @@ namespace Dragonsphere {
 
 enum {
 	dummy  = 0,
+	shieldstone = 3,
+	sword = 4,
 	goblet = 5,
 	bone   = 6,
 	rare_coin = 38,

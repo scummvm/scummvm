@@ -44,6 +44,19 @@ enum {
 };
 
 enum {
+	conv004_seen_only = 0,
+	conv004_resolved_only = 1,
+	conv004_am_only = 2,
+	conv004_wait_only = 3,
+	conv004_thanks_only = 4,
+	conv004_nay_only = 5,
+	conv004_queen_only = 6,
+	conv004_fathers_only = 7,
+	conv004_last_only = 8,
+	conv004_exit_b_b = 10
+};
+
+enum {
 	conv034_five_b_b = 4,
 	conv034_seven_only = 7,
 	conv034_eight_b_b = 9,
