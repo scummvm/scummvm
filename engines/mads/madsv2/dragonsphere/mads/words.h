@@ -62,6 +62,8 @@ enum {
 	words_gaze_into            = 110,
 	words_tentacle_parts       = 125,
 	words_rare_coin            = 129,
+	words_touch                = 146,
+	words_throne_room          = 147,
 	words_castle               = 156,
 	words_walk_down            = 169,
 	words_brazier              = 175,

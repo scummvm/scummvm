@@ -111,6 +111,35 @@ enum {
 };
 
 enum {
+	conv017_exit_b_b    = 4,
+	conv016_exit_b_b    = 5,
+};
+
+enum {
+	conv018_exit_b_b    = 4
+};
+
+enum {
+	conv019_exit_b_b    = 4
+};
+
+enum {
+	conv020_exit_b_b    = 4
+};
+
+enum {
+	conv021_exit_b_b    = 4
+};
+
+enum {
+	conv022_exit_b_b    = 4
+};
+
+enum {
+	conv023_exit_b_b    = 6
+};
+
+enum {
 	conv034_five_b_b = 4,
 	conv034_seven_only = 7,
 	conv034_eight_b_b = 9,
