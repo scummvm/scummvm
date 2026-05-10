@@ -36,6 +36,7 @@ enum {
 	bone            =  6,
 	fruit           =  7,
 	pid_doll        =  8,
+	statue          = 15,
 	magic_belt      = 18,
 	crystal_ball    = 29,
 	shifter_ring    = 32,
