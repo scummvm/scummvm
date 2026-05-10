@@ -61,6 +61,56 @@ enum {
 };
 
 enum {
+	conv006_wares_greeting   = 0,
+	conv006_choices_chat     = 2,
+	conv006_choices_sorry    = 3,
+	conv006_exit_b_b         = 5,
+	conv006_how_only         = 6,
+	conv006_thanks_only      = 7,
+	conv006_wise_only        = 8,
+};
+
+enum {
+	conv008_query_wish       =  3,
+	conv008_query_respect    =  4,
+	conv008_query_norespect  =  5,
+	conv008_query_humans     =  6,
+	conv008_query_why_annoy  =  7,
+	conv008_query_king       =  8,
+	conv008_query_where      =  9,
+	conv008_banter_only      = 11
+};
+
+enum {
+	conv009_hello1a_only     = 1,
+	conv009_hello2a_only     = 3,
+	conv009_choices_trip     = 4,
+	conv009_choices_never    = 5,
+	conv009_choices_someday  = 6,
+	conv009_exiter_leave     = 8
+};
+
+enum {
+	conv010_hold_only  =  3,
+	conv010_leave_b_b  =  6,
+	conv010_fix_b_b    = 22,
+	conv010_die_b_b    = 31
+};
+
+enum {
+	conv012_gash_b_b   = 14
+};
+
+enum {
+	conv014_heehee_only      = 0,
+	conv014_query_wish       = 3,
+	conv014_query_respect    = 4,
+	conv014_query_humans     = 6,
+	conv014_query_why_annoy  = 7,
+	conv014_banter_only      = 8
+};
+
+enum {
 	conv034_five_b_b = 4,
 	conv034_seven_only = 7,
 	conv034_eight_b_b = 9,

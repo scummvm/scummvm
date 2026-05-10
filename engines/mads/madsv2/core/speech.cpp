@@ -186,5 +186,9 @@ void init_speech() {
 	speech_stream = nullptr;
 }
 
+int speech_status() {
+	return g_engine->isSpeechPlaying() ? 1 : 0;
+}
+
 } // namespace MADSV2
 } // namespace MADS

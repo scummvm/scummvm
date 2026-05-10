@@ -323,6 +323,10 @@ void MADSV2Engine::stopSpeech() {
 	_mixer->stopHandle(_speechHandle);
 }
 
+bool MADSV2Engine::isSpeechPlaying() const {
+	return _mixer->isSoundHandleActive(_speechHandle);
+}
+
 SaveStateList MADSV2Engine::listSaves() const {
 	return getMetaEngine()->listSaves(_targetName.c_str());
 }

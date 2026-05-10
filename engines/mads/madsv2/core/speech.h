@@ -43,6 +43,7 @@ extern void speech_go();
 extern void global_speech_load(int id);
 extern void global_speech_go(int id);
 extern void global_speech(int id);
+extern int speech_status();
 
 extern void init_speech();
 

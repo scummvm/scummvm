@@ -1497,6 +1497,10 @@ void room_106_preload() {
 	room_parser_code_pointer = room_106_parser;
 	room_daemon_code_pointer = room_106_daemon;
 
+	if (global[end_of_game]) {
+		global[no_load_walker] = true;
+	}
+
 	section_1_walker();
 	section_1_interface();
 }

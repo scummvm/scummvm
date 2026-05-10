@@ -109,6 +109,7 @@ public:
 
 	void playSpeech(Audio::AudioStream *stream);
 	void stopSpeech();
+	bool isSpeechPlaying() const;
 };
 
 extern MADSV2Engine *g_engine;

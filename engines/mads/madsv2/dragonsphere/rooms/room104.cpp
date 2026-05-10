@@ -32,6 +32,10 @@
 #include "mads/madsv2/core/speech.h"
 #include "mads/madsv2/core/text.h"
 #include "mads/madsv2/core/vocab.h"
+#include "mads/madsv2/dragonsphere/mads/conv.h"
+#include "mads/madsv2/dragonsphere/mads/inventory.h"
+#include "mads/madsv2/dragonsphere/mads/sounds.h"
+#include "mads/madsv2/dragonsphere/mads/words.h"
 #include "mads/madsv2/dragonsphere/global.h"
 #include "mads/madsv2/dragonsphere/mads/sounds.h"
 #include "mads/madsv2/dragonsphere/rooms/section1.h"
@@ -42,49 +46,6 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-// ---------------------------------------------------------------------------
-// Scratch layout (matches ROOM104.MAC)
-//
-//   game.scratch offsets:
-//     sprite[0..15]       = 0x00..0x1F
-//     sequence[0..15]     = 0x20..0x3F
-//     animation[0..5]     = 0x40..0x4B
-//     doorway_id          = 0x4C
-//     wall_panel_id       = 0x4E
-//     secret_door_id      = 0x50
-//     tapestry_frame      = 0x52
-//     animation_running   = 0x54
-//     king_frame          = 0x56
-//     king_action         = 0x58
-//     king_talk_count     = 0x5A
-//     anim_0_running      = 0x5C
-//     mac_frame           = 0x5E
-//     mac_action          = 0x60
-//     mac_talk_count      = 0x62
-//     anim_1_running      = 0x64
-//     queen_frame         = 0x66
-//     queen_action        = 0x68
-//     queen_talk_count    = 0x6A
-//     anim_2_running      = 0x6C
-//     twinkles_frame      = 0x6E
-//     twinkles_action     = 0x70
-//     twinkles_talk_count = 0x72
-//     anim_3_running      = 0x74
-//     pid_frame           = 0x76
-//     pid_action          = 0x78
-//     pid_talk_count      = 0x7A
-//     anim_4_running      = 0x7C
-//     clock               = 0x7E  (int32 — long in original)
-//     death_timer         = 0x82  (int32 — long in original)
-//     activate_timer      = 0x86
-//     has_been_bear       = 0x88
-//     mac_2_frame         = 0x8A
-//     anim_5_running      = 0x8C
-//     amulet_works        = 0x8E
-//     pid_drawn_sword     = 0x90
-//     death_frame         = 0x92
-//     anim_6_running      = 0x94
-// ---------------------------------------------------------------------------
 struct Scratch {
 	int16 sprite[16];            // ss[]  — series handles
 	int16 sequence[16];          // seq[] — sequence handles
@@ -2370,9 +2331,9 @@ void room_104_preload() {
 	section_1_walker();
 	section_1_interface();
 
-	vocab_make_active(277);  // words_doorway
-	vocab_make_active(347);  // words_Queen_Mother
-	vocab_make_active(291);  // words_king
+	vocab_make_active(words_doorway);
+	vocab_make_active(words_Queen_Mother);
+	vocab_make_active(words_king);
 }
 
 } // namespace Rooms

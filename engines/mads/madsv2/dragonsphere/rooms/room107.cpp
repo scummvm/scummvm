@@ -743,6 +743,8 @@ void room_107_preload() {
 
 	section_1_walker();
 	section_1_interface();
+
+	vocab_make_active(words_walk_to);
 }
 
 } // namespace Rooms
