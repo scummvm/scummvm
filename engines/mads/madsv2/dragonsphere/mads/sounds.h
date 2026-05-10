@@ -40,6 +40,7 @@ enum {
 	N_QueenMother        =  45,
 	N_TurnDiaryPage      =  65,
 	N_WallGrinds         =  67,
+	N_RushingWater       =  71,
 	N_DragonInWater      =  72,
 	N_OldMachinery       =  74,
 	N_DogWhimper         =  79,
