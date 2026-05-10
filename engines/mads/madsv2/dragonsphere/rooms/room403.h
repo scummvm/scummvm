@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+﻿/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -30,17 +30,8 @@ namespace MADSV2 {
 namespace Dragonsphere {
 namespace Rooms {
 
-#define local (&scratch)
-#define ss    local->sprite
-#define seq   local->sequence
-#define aa    local->animation
-
-/**
- * Room local variables
- */
-struct Scratch {
-
-};
+extern void room_403_preload();
+extern void room_403_synchronize(Common::Serializer &s);
 
 } // namespace Rooms
 } // namespace Dragonsphere
